@@ -1,5 +1,5 @@
 import { PGlite } from '@electric-sql/pglite';
-import { formatQuery } from '../formatQuery';
+import { formatQuery } from './formatQuery';
 import type { SuperUser, TestSQLParams } from './dbqueryTestUtils';
 import { dbSetup, dbTests, sqlBase, superUsers } from './dbqueryTestUtils';
 

@@ -1,8 +1,8 @@
-import { formatQuery } from '../formatQuery';
+import { formatQuery } from './formatQuery';
 import type { TestSQLParams } from './dbqueryTestUtils';
 import { superUsers, dbTests } from './dbqueryTestUtils';
 import { add_operation, apply } from 'json-logic-js';
-import { jsonLogicAdditionalOperators } from '../utils';
+import { jsonLogicAdditionalOperators } from './utils';
 
 const superUsersJsonLogic = superUsers('jsonlogic');
 

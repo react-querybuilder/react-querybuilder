@@ -1,5 +1,5 @@
 import { Database } from 'bun:sqlite';
-import { formatQuery } from '../formatQuery';
+import { formatQuery } from './formatQuery';
 import type { TestSQLParams } from './dbqueryTestUtils';
 import { dbSetup, dbTests, sqlBase, superUsers } from './dbqueryTestUtils';
 

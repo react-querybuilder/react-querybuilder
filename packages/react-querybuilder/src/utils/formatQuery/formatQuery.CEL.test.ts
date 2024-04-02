@@ -1,7 +1,7 @@
-import type { RuleGroupType, RuleProcessor } from '../../../types/index.noReact';
-import { add } from '../../queryTools';
-import { defaultRuleProcessorCEL } from '../defaultRuleProcessorCEL';
-import { formatQuery } from '../formatQuery';
+import type { RuleGroupType, RuleProcessor } from '../../types/index.noReact';
+import { add } from '../queryTools';
+import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
+import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
@@ -10,7 +10,7 @@ import {
   queryWithValueSourceField,
   testQueryDQ,
 } from './formatQueryTestUtils';
-import { defaultCELValueProcessor } from '../index';
+import { defaultCELValueProcessor } from './index';
 
 const celString =
   'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && isLucky == false && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';

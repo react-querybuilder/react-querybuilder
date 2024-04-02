@@ -3,11 +3,11 @@ import type {
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '../../../types/index.noReact';
-import { prepareRuleGroup } from '../../prepareQueryObjects';
-import { add } from '../../queryTools';
-import { defaultRuleProcessorSpEL } from '../defaultRuleProcessorSpEL';
-import { formatQuery } from '../formatQuery';
+} from '../../types/index.noReact';
+import { prepareRuleGroup } from '../prepareQueryObjects';
+import { add } from '../queryTools';
+import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
+import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
@@ -17,7 +17,7 @@ import {
   queryWithValueSourceField,
   testQuerySQ,
 } from './formatQueryTestUtils';
-import { defaultSpELValueProcessor, defaultValueProcessorByRule } from '../index';
+import { defaultSpELValueProcessor, defaultValueProcessorByRule } from './index';
 
 const spelString =
   "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and isLucky == false and !(gender == 'M' or job != 'Programmer' or email matches '@') and (!(lastName matches 'ab') or job matches '^Prog' or email matches 'com$' or !(job matches '^Man') or !(email matches 'fr$'))";

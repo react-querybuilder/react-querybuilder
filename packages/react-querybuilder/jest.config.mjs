@@ -4,9 +4,11 @@ import common from '../../jest.common.mjs';
 export default {
   ...common,
   displayName: 'rqb',
-  testPathIgnorePatterns: [
-    ...(common.testPathIgnorePatterns ?? []),
-    '/dbquery\\.',
-    '/\\w+TestUtils\\.ts',
+  coveragePathIgnorePatterns: [
+    ...(common.coveragePathIgnorePatterns ?? []),
+    'celParser.js',
+    'sqlParser.js',
+    'TestUtils.ts',
   ],
+  testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
 };

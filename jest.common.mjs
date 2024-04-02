@@ -1,13 +1,6 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  coveragePathIgnorePatterns: [
-    '/genericTests/',
-    '/dist/',
-    '/(cel|sql)Parser.js',
-    '/\\w*TestUtils.ts',
-    '/redux/Subscription.ts',
-  ],
-  globals: { __RQB_DEV__: true },
+  coveragePathIgnorePatterns: ['/genericTests/', '/dist/', 'TestUtils.ts'],
   // This path is relative to the /packages/* folders
   setupFilesAfterEnv: ['../../jestSetup.ts'],
   testEnvironment: 'jsdom',

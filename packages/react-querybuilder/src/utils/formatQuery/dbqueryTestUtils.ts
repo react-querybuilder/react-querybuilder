@@ -1,4 +1,4 @@
-import type { DefaultRuleGroupType, FormatQueryOptions } from '../../../types';
+import type { DefaultRuleGroupType, FormatQueryOptions } from '../../types';
 
 type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic';
 

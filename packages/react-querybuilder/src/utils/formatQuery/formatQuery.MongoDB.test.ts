@@ -3,10 +3,10 @@ import type {
   RuleProcessor,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '../../../types/index.noReact';
-import { prepareRuleGroup } from '../../prepareQueryObjects';
-import { defaultRuleProcessorMongoDB } from '../defaultRuleProcessorMongoDB';
-import { formatQuery } from '../formatQuery';
+} from '../../types/index.noReact';
+import { prepareRuleGroup } from '../prepareQueryObjects';
+import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   queryForNumberParsing,
@@ -14,7 +14,7 @@ import {
   queryIC,
   testQueryDQ,
 } from './formatQueryTestUtils';
-import { defaultMongoDBValueProcessor, defaultValueProcessorByRule } from '../index';
+import { defaultMongoDBValueProcessor, defaultValueProcessorByRule } from './index';
 
 const mongoQuery: RuleGroupType = {
   id: 'g-root',
