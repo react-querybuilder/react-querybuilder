@@ -7,7 +7,7 @@ import { mapSQLOperator, shouldRenderAsNumber } from './utils';
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
  */
-export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts) => {
+export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, meta) => {
   // TODO: test for this so we don't have to ignore it
   // istanbul ignore next
   const {
@@ -17,9 +17,12 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts) => 
     parseNumbers,
     paramPrefix,
     paramsKeepPrefix,
+    numberedParams,
     quoteFieldNamesWith = ['', ''] as [string, string],
     valueProcessor = defaultValueProcessorByRule,
   } = opts ?? {};
+
+  const { processedParams = [] } = meta ?? {};
 
   const parameterized = format === 'parameterized';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,7 +74,13 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts) => 
       return finalize(
         `${quoteFieldNamesWith[0]}${rule.field}${
           quoteFieldNamesWith[1]
-        } ${sqlOperator} (${splitValue.map(() => '?').join(', ')})`
+        } ${sqlOperator} (${splitValue
+          .map((_v, i) =>
+            numberedParams
+              ? `${paramPrefix}${processedParams.length + 1 + splitValue.length - (splitValue.length - i)}`
+              : '?'
+          )
+          .join(', ')})`
       );
     }
     const inParams: string[] = [];
@@ -99,7 +108,9 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts) => 
       params.push(first);
       params.push(second);
       return finalize(
-        `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${sqlOperator} ? and ?`
+        `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${sqlOperator} ${
+          numberedParams ? `${paramPrefix}${processedParams.length + 1}` : '?'
+        } and ${numberedParams ? `${paramPrefix}${processedParams.length + 2}` : '?'}`
       );
     }
     const firstParamName = getNextNamedParam!(rule.field);
@@ -131,7 +142,11 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts) => 
   }
   return finalize(
     `${quoteFieldNamesWith[0]}${rule.field}${quoteFieldNamesWith[1]} ${sqlOperator} ${
-      parameterized ? '?' : `${paramPrefix}${paramName}`
+      parameterized
+        ? numberedParams
+          ? `${paramPrefix}${processedParams.length + 1}`
+          : '?'
+        : `${paramPrefix}${paramName}`
     }`.trim()
   );
 };

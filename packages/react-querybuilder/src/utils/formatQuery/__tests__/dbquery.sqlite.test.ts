@@ -1,40 +1,14 @@
 import { Database } from 'bun:sqlite';
 import { formatQuery } from '../formatQuery';
 import type { TestSQLParams } from './dbqueryTestUtils';
-import {
-  CREATE_INDEX,
-  CREATE_TABLE,
-  INSERT_INTO,
-  sqlBase,
-  superUsers,
-  dbTests,
-} from './dbqueryTestUtils';
+import { dbSetup, dbTests, sqlBase, superUsers } from './dbqueryTestUtils';
 
 const db = new Database();
 
 const superUsersSQLite = superUsers('sqlite');
 
 beforeAll(() => {
-  db.run(CREATE_TABLE('sqlite'));
-  db.run(CREATE_INDEX);
-
-  // TODO: Return to transactional method below once PGlite also
-  // supports it: https://github.com/electric-sql/pglite/issues/17
-  for (const user of superUsersSQLite) {
-    db.run(INSERT_INTO(user, 'sqlite'));
-  }
-
-  //   const insertUser = db.prepare(`
-  // INSERT INTO users (firstName, lastName, enhanced, madeUpName, powerUpAge)
-  // VALUES ($firstName, $lastName, $enhanced, $madeUpName, $powerUpAge)`);
-  //   db.transaction((users: typeof superUsersSQLite) => {
-  //     for (const user of users) {
-  //       const userWithBindVars = Object.fromEntries(
-  //         Object.entries(user).map(([k, v]) => [`$${k}`, v])
-  //       );
-  //       insertUser.run(userWithBindVars);
-  //     }
-  //   })(superUsersSQLite);
+  db.run(dbSetup('sqlite'));
 });
 
 afterAll(() => {

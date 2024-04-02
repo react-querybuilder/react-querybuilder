@@ -117,6 +117,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let fallbackExpression = '';
   let paramPrefix = ':';
   let paramsKeepPrefix = false;
+  let numberedParams = false;
   let parseNumbers = false;
   let placeholderFieldName = defaultPlaceholderFieldName;
   let placeholderOperatorName = defaultPlaceholderOperatorName;
@@ -167,6 +168,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     fallbackExpression = options.fallbackExpression ?? '';
     paramPrefix = options.paramPrefix ?? ':';
     paramsKeepPrefix = !!options.paramsKeepPrefix;
+    numberedParams = !!options.numberedParams;
     parseNumbers = !!options.parseNumbers;
     placeholderFieldName = options.placeholderFieldName ?? defaultPlaceholderFieldName;
     placeholderOperatorName = options.placeholderOperatorName ?? defaultPlaceholderOperatorName;
@@ -356,22 +358,29 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         typeof ruleProcessorInternal === 'function'
           ? ruleProcessorInternal
           : defaultRuleProcessorParameterized
-      )(rule, {
-        getNextNamedParam,
-        fieldParamNames,
-        parseNumbers,
-        quoteFieldNamesWith,
-        fieldData,
-        format,
-        paramPrefix,
-        paramsKeepPrefix,
-        fallbackExpression,
-        valueProcessor: valueProcessorInternal,
-        fields,
-        placeholderFieldName,
-        placeholderOperatorName,
-        validator,
-      });
+      )(
+        rule,
+        {
+          getNextNamedParam,
+          fieldParamNames,
+          parseNumbers,
+          quoteFieldNamesWith,
+          fieldData,
+          format,
+          paramPrefix,
+          paramsKeepPrefix,
+          numberedParams,
+          fallbackExpression,
+          valueProcessor: valueProcessorInternal,
+          fields,
+          placeholderFieldName,
+          placeholderOperatorName,
+          validator,
+        },
+        {
+          processedParams: params,
+        }
+      );
 
       if (!isPojo(processedRule)) {
         return '';

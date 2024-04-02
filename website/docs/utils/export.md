@@ -582,6 +582,29 @@ const p = formatQuery(query, {
 //                         ^                           ^
 ```
 
+### Retain parameter prefixes
+
+`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the "parameterized_named" format, the keys of the `params` object will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ "$param_1": "val" }` instead of `{ param_1: "val" }`).
+
+### Numbered parameters
+
+For the "parameterized" format, all parameter placeholders in the generated SQL are "?" by default. When the `numberedParams` option is `true`, placeholders will instead be a numbered index beginning with `1`, incrementing by 1 from left to right. Each placeholder number will be prefixed by the configured `paramPrefix` string (default ":").
+
+:::tip
+
+For [PostgreSQL](https://www.postgresql.org/) compatibility, use `numberedParams: true` in conjunction with `paramPrefix: "$"`.
+
+:::
+
+```ts
+const p = formatQuery(query, {
+  format: 'parameterized',
+  paramPrefix: '$',
+  numberedParams: true,
+});
+// p.sql === "(firstName = $1 and lastName = $2)"
+```
+
 ### Fallback expression
 
 The `fallbackExpression` is a string that will be part of the output when `formatQuery` can't quite figure out what to do for a particular rule or group. The intent is to maintain valid syntax while (hopefully) not detrimentally affecting the query criteria. If not provided, the default fallback expression for the given format will be used (see table below).

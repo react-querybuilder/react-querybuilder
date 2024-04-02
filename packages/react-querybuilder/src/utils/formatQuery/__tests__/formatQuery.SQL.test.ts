@@ -204,6 +204,54 @@ it('handles custom fallbackExpression correctly', () => {
   expect(formatQuery(queryToTest, { format: 'sql', fallbackExpression })).toBe(fallbackExpression);
 });
 
+it('handles numberedParams correctly', () => {
+  const queryToTestNumberedParams: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'lastName', operator: 'in', value: 'Test1,Test2' },
+      { field: 'firstName', operator: '=', value: 'Test' },
+      { field: 'age', operator: 'between', value: [26, 52] },
+      {
+        combinator: 'or',
+        rules: [
+          { field: 'firstName', operator: '!=', value: 'Test' },
+          { field: 'lastName', operator: 'notIn', value: 'Test1,Test2' },
+          { field: 'age', operator: 'notBetween', value: [26, 52] },
+        ],
+      },
+    ],
+  };
+  const sqlNumberedParams = `(lastName in (:1, :2) and firstName = :3 and age between :4 and :5 and (firstName != :6 or lastName not in (:7, :8) or age not between :9 and :10))`;
+
+  expect(
+    formatQuery(queryToTestNumberedParams, { format: 'parameterized', numberedParams: true })
+  ).toEqual({
+    sql: sqlNumberedParams,
+    params: ['Test1', 'Test2', 'Test', 26, 52, 'Test', 'Test1', 'Test2', 26, 52],
+  });
+
+  const queryToTestNPaltPrefix: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'firstName', operator: '=', value: 'Test' },
+      { field: 'lastName', operator: 'in', value: 'Test1,Test2' },
+    ],
+  };
+  const sqlNPaltPrefix = `(firstName = $1 and lastName in ($2, $3))`;
+
+  // Custom param prefixes
+  expect(
+    formatQuery(queryToTestNPaltPrefix, {
+      format: 'parameterized',
+      paramPrefix: '$',
+      numberedParams: true,
+    })
+  ).toEqual({
+    sql: sqlNPaltPrefix,
+    params: ['Test', 'Test1', 'Test2'],
+  });
+});
+
 it('uses paramPrefix correctly', () => {
   const queryToTest: RuleGroupType = {
     combinator: 'and',
@@ -228,7 +276,7 @@ it('uses paramPrefix correctly', () => {
     },
   });
 
-  // Experimental - param prefixes retained
+  // Param prefixes retained
   expect(
     formatQuery(queryToTest, {
       format: 'parameterized_named',

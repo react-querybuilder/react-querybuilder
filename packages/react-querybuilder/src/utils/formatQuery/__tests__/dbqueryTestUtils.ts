@@ -63,25 +63,34 @@ const enhancedColumnType: Record<DbPlatform, string> = {
   sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
 };
 
-export const CREATE_TABLE = (dbPlatform: DbPlatform) => `CREATE TABLE superusers (
-  "firstName" TEXT NOT NULL,
-  "lastName" TEXT NOT NULL,
-  "enhanced" ${enhancedColumnType[dbPlatform]} NOT NULL,
-  "madeUpName" TEXT NOT NULL,
-  "powerUpAge" INT NULL
+const unquote = (fieldName: string, unquoted = false) =>
+  unquoted ? fieldName.toLocaleLowerCase() : `"${fieldName}"`;
+
+export const CREATE_TABLE = (
+  dbPlatform: DbPlatform,
+  { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
+) => `CREATE TABLE superusers (
+  ${unquote('firstName', unquoted)} TEXT NOT NULL,
+  ${unquote('lastName', unquoted)} TEXT NOT NULL,
+  ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
+  ${unquote('madeUpName', unquoted)} TEXT NOT NULL,
+  ${unquote('powerUpAge', unquoted)} INT NULL
   )`;
 
-export const CREATE_INDEX = `CREATE UNIQUE INDEX ndx ON superusers("firstName", "lastName")`;
+export const CREATE_INDEX = ({ unquoted = false }: { unquoted?: boolean } = { unquoted: false }) =>
+  `CREATE UNIQUE INDEX ndx ON superusers(${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
 
-// TODO: Make this parameterized once PGlite supports it:
-// https://github.com/electric-sql/pglite/issues/17
-export const INSERT_INTO = (user: SuperUser, dbPlatform: DbPlatform) => `
+export const INSERT_INTO = (
+  user: SuperUser,
+  dbPlatform: DbPlatform,
+  { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
+) => `
 INSERT INTO superusers (
-  "firstName",
-  "lastName",
-  "enhanced",
-  "madeUpName",
-  "powerUpAge"
+  ${unquote('firstName', unquoted)},
+  ${unquote('lastName', unquoted)},
+  ${unquote('enhanced', unquoted)},
+  ${unquote('madeUpName', unquoted)},
+  ${unquote('powerUpAge', unquoted)}
 ) VALUES (
   '${user.firstName}',
   '${user.lastName}',
@@ -91,6 +100,16 @@ INSERT INTO superusers (
 )`;
 
 export const sqlBase = `SELECT * FROM superusers WHERE `;
+
+export const dbSetup = (
+  dbPlatform: DbPlatform,
+  { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
+) =>
+  [
+    CREATE_TABLE(dbPlatform, { unquoted }),
+    CREATE_INDEX({ unquoted }),
+    ...superUsers(dbPlatform).map(user => INSERT_INTO(user, dbPlatform, { unquoted })),
+  ].join(';');
 
 export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> => ({
   'and/or': {

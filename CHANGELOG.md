@@ -9,13 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- To avoid confusion, the `useQueryBuilderDispatch` and `useQueryBuilderStore` hooks are no longer exported.
+- To avoid confusion with the recommended query selector and update methods (`useQueryBuilderSelector`, `props.schema.getQuery()`, and `props.schema.dispatchQuery()`), the hooks `useQueryBuilderDispatch` and `useQueryBuilderStore` are no longer exported.
 
 ### Added
 
-- New `controlClassnames` properties:
+- New "bulk add" `controlClassnames` properties. These classnames augment—rather than replace—the classnames defined for specific controls.
   - `actionElement`: Applied to all action elements like `addRuleAction`, `addGroupAction`, etc.
   - `valueSelector`: Applied to all selection elements like `combinatorSelector`, `fieldSelector`, etc.
+- New `numberedParams` option for `formatQuery`. When the format is `"parameterized"`, parameter placeholders within the generated SQL string will begin with the configured `paramPrefix` (default ":") followed by a numbered index beginning with `1` instead of using "?" as the placeholder for all parameters. This option was added primarily to reduce the code necessary for generating [PostgreSQL](https://www.postgresql.org/)-compatible SQL.
+  - now passes a third parameter to custom `ruleProcessor` functions when the format is "parameterized" or "parameterized_named". Currently the parameter is an object with a single property, `processedParams`, which represents the current state of the `params` array (for the "parameterized" format) or object (for the "parameterized_named" format) at the point the rule processor is invoked during query processing.
+  - The default `ruleProcessor` for the affected formats uses this parameter when the `numberedParams` option is `true`.
 
 ### Fixed
 
@@ -178,7 +181,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- New `paramsKeepPrefix` option for `formatQuery`, which enables compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ $param_1: 'val' }` instead of `{ param_1: 'val' }`).
+- New `paramsKeepPrefix` option for `formatQuery`, which enables compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the `"parameterized_named"` export format, the `params` object keys will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ '$param_1': 'val' }` instead of `{ param_1: 'val' }`).
 
 ### Fixed
 

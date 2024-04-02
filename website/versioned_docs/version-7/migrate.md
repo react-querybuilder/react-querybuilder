@@ -259,6 +259,10 @@ The following callback props provide the new "meta" parameter: `getDefaultOperat
 
 Custom rule processors for `formatQuery` now receive the full `Field` object in the options parameter, as long as a `fields` array is provided alongside `ruleProcessor`. In TypeScript, the member type of the `fields` array now requires a `label: string` property (just like `QueryBuilder`'s `fields` prop). Previously, only `name` was required.
 
+### Simpler PostgreSQL compatibility for `formatQuery`
+
+`formatQuery` can natively generate [PostgreSQL](https://www.postgresql.org/)-compatible parameterized SQL using the new `numberedParams` option in conjunction with `paramPrefix: "$"`. Previously, PostgreSQL compatibility required manually post-processing the generated SQL to replace the "?" placeholders with a sequential series of numbers preceded by "$".
+
 ### Shift actions
 
 A new [`showShiftActions`](./components/querybuilder#showshiftactions) prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) while clicking will clone the rule/group instead of just moving it.

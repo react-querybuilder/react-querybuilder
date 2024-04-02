@@ -102,6 +102,14 @@ export interface FormatQueryOptions {
    */
   paramsKeepPrefix?: boolean;
   /**
+   * Renders parameter placeholders as a series of sequential numbers
+   * instead of '?' like the default. This option will respect the
+   * `paramPrefix` option like the 'parameterized_named' format.
+   *
+   * @default false
+   */
+  numberedParams?: boolean;
+  /**
    * Renders values as either `number`-types or unquoted strings, as
    * appropriate and when possible. Each `string`-type value is evaluated
    * against {@link numericRegex} to determine if it can be represented as a
@@ -188,8 +196,13 @@ export type ValueProcessor = ValueProcessorLegacy;
  * | `jsonlogic`           | {@link defaultRuleProcessorJsonLogic}     |
  * | `elasticsearch`       | {@link defaultRuleProcessorElasticSearch} |
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
+export type RuleProcessor = (
+  rule: RuleType,
+  options?: ValueProcessorOptions,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  meta?: { processedParams?: Record<string, any> | any[] }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+) => any;
 
 /**
  * Object produced by {@link formatQuery} for the `"parameterized"` format.
