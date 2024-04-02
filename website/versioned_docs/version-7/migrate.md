@@ -224,6 +224,8 @@ Two "bulk override" properties have been added to the [`controlElements`](./comp
 | `valueSelector`            | `combinatorSelector`, `fieldSelector`, `operatorSelector`, `valueSourceSelector`, `valueEditor` (when rendering a value selector)                      |
 | `actionElement`            | `addGroupAction`, `addRuleAction`, `cloneGroupAction`, `cloneRuleAction`, `lockGroupAction`, `lockRuleAction`, `removeGroupAction`, `removeRuleAction` |
 
+These same two properties have also been added to the `controlClassnames` prop, but they add to, not replace, classnames declared for specific components.
+
 ### Query selector, getter, and dispatcher
 
 :::tip TL;DR
