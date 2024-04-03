@@ -128,6 +128,11 @@ export interface FormatQueryOptions {
    * @default '~'
    */
   placeholderOperatorName?: string;
+  /**
+   * Character to use for quoting string values in the SQL format.
+   * @default '''
+   */
+  quoteValuesWith?: string;
 }
 
 /**

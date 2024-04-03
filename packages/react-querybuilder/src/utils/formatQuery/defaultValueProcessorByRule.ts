@@ -2,10 +2,14 @@ import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { isValidValue, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
 
-const escapeSingleQuotes = (
+const escapeStringValueQuotes = (
   v: string | number | boolean | object | null,
+  quoteChar: string,
   escapeQuotes?: boolean
-) => (escapeQuotes && typeof v === 'string' ? v.replaceAll(`'`, `''`) : v);
+) =>
+  escapeQuotes && typeof v === 'string'
+    ? v.replaceAll(`${quoteChar}`, `${quoteChar}${quoteChar}`)
+    : v;
 
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
@@ -13,12 +17,17 @@ const escapeSingleQuotes = (
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
   // istanbul ignore next
-  { escapeQuotes, parseNumbers, quoteFieldNamesWith } = {}
+  { escapeQuotes, parseNumbers, quoteFieldNamesWith, quoteValuesWith } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const [qfnwPre, qfnwPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
   const operatorLowerCase = operator.toLowerCase();
+  const quoteChar = quoteValuesWith || "'";
 
+  const escapeValue = (v: string | number | boolean | object | null) =>
+    escapeStringValueQuotes(v, quoteChar, escapeQuotes);
+  const wrapAndEscape = (v: string | number | boolean | object | null) =>
+    `${quoteChar}${escapeValue(v)}${quoteChar}`;
   const wrapFieldName = (f: string) => `${qfnwPre}${f}${qfnwPost}`;
 
   switch (operatorLowerCase) {
@@ -37,7 +46,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
               ? wrapFieldName(v)
               : shouldRenderAsNumber(v, parseNumbers)
                 ? `${trimIfString(v)}`
-                : `'${escapeSingleQuotes(v, escapeQuotes)}'`
+                : `${wrapAndEscape(v)}`
           )
           .join(', ')})`;
       }
@@ -57,10 +66,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
           ? `${wrapFieldName(first)} and ${wrapFieldName(second)}`
           : shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers)
             ? `${trimIfString(first)} and ${trimIfString(second)}`
-            : `'${escapeSingleQuotes(first, escapeQuotes)}' and '${escapeSingleQuotes(
-                second,
-                escapeQuotes
-              )}'`;
+            : `${wrapAndEscape(first)} and ${wrapAndEscape(second)}`;
       }
       return '';
     }
@@ -68,20 +74,20 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     case 'contains':
     case 'doesnotcontain':
       return valueIsField
-        ? `'%' || ${wrapFieldName(value)} || '%'`
-        : `'%${escapeSingleQuotes(value, escapeQuotes)}%'`;
+        ? `${quoteChar}%${quoteChar} || ${wrapFieldName(value)} || ${quoteChar}%${quoteChar}`
+        : `${quoteChar}%${escapeValue(value)}%${quoteChar}`;
 
     case 'beginswith':
     case 'doesnotbeginwith':
       return valueIsField
-        ? `${wrapFieldName(value)} || '%'`
-        : `'${escapeSingleQuotes(value, escapeQuotes)}%'`;
+        ? `${wrapFieldName(value)} || ${quoteChar}%${quoteChar}`
+        : `${quoteChar}${escapeValue(value)}%${quoteChar}`;
 
     case 'endswith':
     case 'doesnotendwith':
       return valueIsField
-        ? `'%' || ${wrapFieldName(value)}`
-        : `'%${escapeSingleQuotes(value, escapeQuotes)}'`;
+        ? `${quoteChar}%${quoteChar} || ${wrapFieldName(value)}`
+        : `${quoteChar}%${escapeValue(value)}${quoteChar}`;
   }
 
   if (typeof value === 'boolean') {
@@ -92,5 +98,5 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     ? wrapFieldName(value)
     : shouldRenderAsNumber(value, parseNumbers)
       ? `${trimIfString(value)}`
-      : `'${escapeSingleQuotes(value, escapeQuotes)}'`;
+      : `${wrapAndEscape(value)}`;
 };
