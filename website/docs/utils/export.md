@@ -290,6 +290,37 @@ Output:
 { "bool": { "must": [{ "term": { "firstName": "Steve" } }, { "term": { "lastName": "Vai" } }] } }
 ```
 
+### JSONata
+
+For [JSONata](http://jsonata.org/) filters, use the "jsonata" format. The [`parseNumbers` option](#parse-numbers) is recommended.
+
+```ts
+formatQuery(query, { format: 'jsonata', parseNumbers: true });
+```
+
+Output:
+
+```ts
+`firstName = "Steve" and lastName = "Vai"`;
+```
+
+:::tip
+
+Since React Query Builder does not have an official way to determine when values should be treated as dates or date-like strings, we recommend implementing a custom rule processor to handle date rules when exporting to JSONata. The example below has no error checking or validation, among other issues, but it can be a good starting point.
+
+```ts
+const customRuleProcessor: RuleProcessor = (rule, options) => {
+  // `datatype` is a non-standard property of the field, used for this example only.
+  // Replace this condition with your own logic to determine if the value is a date.
+  if (options?.fieldData?.datatype === 'date') {
+    return `$toMillis(${rule.field}) ${rule.operator} $toMillis("${rule.value}")`;
+  }
+  return defaultRuleProcessorJSONata(rule, options);
+};
+```
+
+:::
+
 ## Configuration
 
 An object can be passed as the second argument instead of a string to have more fine-grained control over the output.

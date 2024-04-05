@@ -20630,6 +20630,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonata@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "jsonata@npm:2.0.4"
+  checksum: 10c0/0e5c3f9630dec7eb59d8c79b02aa6f6c4465af1a1638abae0b1d42df7a02f1911a3494038645d260cdc96b395f072498b5adf35927dea0918ad75a6401fb35ad
+  languageName: node
+  linkType: hard
+
 "jsonc-parser@npm:3.2.0":
   version: 3.2.0
   resolution: "jsonc-parser@npm:3.2.0"
@@ -26232,6 +26239,7 @@ __metadata:
     immer: "npm:^10.0.4"
     jscodeshift: "npm:^0.15.2"
     json-logic-js: "npm:^2.0.2"
+    jsonata: "npm:^2.0.4"
     numeric-quantity: "npm:^2.0.1"
     query-string: "npm:^9.0.0"
     react: "npm:^18.2.0"

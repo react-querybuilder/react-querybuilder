@@ -18,7 +18,8 @@ export type ExportFormat =
   | 'cel'
   | 'jsonlogic'
   | 'spel'
-  | 'elasticsearch';
+  | 'elasticsearch'
+  | 'jsonata';
 
 /**
  * Options object shape for {@link formatQuery}.
@@ -195,6 +196,7 @@ export type ValueProcessor = ValueProcessorLegacy;
  * | `spel`                | {@link defaultRuleProcessorSpEL}          |
  * | `jsonlogic`           | {@link defaultRuleProcessorJsonLogic}     |
  * | `elasticsearch`       | {@link defaultRuleProcessorElasticSearch} |
+ * | `jsonata`             | {@link defaultRuleProcessorJSONata} |
  */
 export type RuleProcessor = (
   rule: RuleType,

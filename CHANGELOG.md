@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#677] [JSONata](http://jsonata.org/) export format.
+
+### Fixed
+
+- [#677] A bug in the default SpEL and CEL rule processors for `formatQuery` caused rules to be ignored when the operator was "between" or "notBetween" and one of the values was falsey without being `null` or `undefined` (e.g, `0` or `""`).
 
 ## [v7.1.0] - 2024-04-01
 
@@ -1581,6 +1587,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#654]: https://github.com/react-querybuilder/react-querybuilder/pull/654
 [#663]: https://github.com/react-querybuilder/react-querybuilder/pull/663
 [#671]: https://github.com/react-querybuilder/react-querybuilder/pull/671
+[#677]: https://github.com/react-querybuilder/react-querybuilder/issues/677
 
 <!-- Release comparison links -->
 

@@ -111,3 +111,7 @@ export const quoteFieldNamesWithArray = (
     : typeof quoteFieldNamesWith === 'string'
       ? [quoteFieldNamesWith, quoteFieldNamesWith]
       : quoteFieldNamesWith ?? ['', ''];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const nullOrUndefinedOrEmpty = (v: any) =>
+  v === null || typeof v === 'undefined' || v === '';

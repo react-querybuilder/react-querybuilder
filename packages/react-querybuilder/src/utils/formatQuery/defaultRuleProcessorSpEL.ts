@@ -1,7 +1,7 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
-import { shouldRenderAsNumber } from './utils';
+import { nullOrUndefinedOrEmpty, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -101,7 +101,11 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     case 'between':
     case 'notBetween': {
       const valueAsArray = toArray(value);
-      if (valueAsArray.length >= 2 && !!valueAsArray[0] && !!valueAsArray[1]) {
+      if (
+        valueAsArray.length >= 2 &&
+        !nullOrUndefinedOrEmpty(valueAsArray[0]) &&
+        !nullOrUndefinedOrEmpty(valueAsArray[1])
+      ) {
         const [first, second] = valueAsArray;
         const firstNum = shouldRenderAsNumber(first, true)
           ? parseNumber(first, { parseNumbers: true })

@@ -101,6 +101,7 @@
     "concurrently": "^8.2.2",
     "jscodeshift": "^0.15.2",
     "json-logic-js": "^2.0.2",
+    "jsonata": "^2.0.4",
     "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -25,6 +25,7 @@ import { getOption, toFlatOptionArray } from '../optGroupUtils';
 import { toFullOptionList } from '../toFullOption';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
+import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
@@ -78,6 +79,15 @@ function formatQuery(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any>;
 /**
+ * Generates a JSONata query string from an RQB query object.
+ *
+ * NOTE: The `parseNumbers` option is recommended for this format.
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'jsonata' | (Omit<FormatQueryOptions, 'format'> & { format: 'jsonata' })
+): string;
+/**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  */
 function formatQuery(
@@ -91,7 +101,7 @@ function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: Exclude<
     ExportFormat,
-    'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch'
+    'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch' | 'jsonata'
   >
 ): string;
 /**
@@ -102,7 +112,7 @@ function formatQuery(
   options: Omit<FormatQueryOptions, 'format'> & {
     format: Exclude<
       ExportFormat,
-      'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch'
+      'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch' | 'jsonata'
     >;
   }
 ): string;
@@ -138,6 +148,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       ruleProcessorInternal = defaultRuleProcessorJsonLogic;
     } else if (format === 'elasticsearch') {
       ruleProcessorInternal = defaultRuleProcessorElasticSearch;
+    } else if (format === 'jsonata') {
+      ruleProcessorInternal = defaultRuleProcessorJSONata;
     }
   } else {
     format = (options.format ?? 'json').toLowerCase() as ExportFormat;
@@ -159,9 +171,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? ruleProcessorInternal ?? defaultRuleProcessorSpEL
               : format === 'jsonlogic'
                 ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
-                : format == 'elasticsearch'
+                : format === 'elasticsearch'
                   ? ruleProcessorInternal ?? defaultRuleProcessorElasticSearch
-                  : defaultValueProcessorByRule;
+                  : format === 'jsonata'
+                    ? ruleProcessorInternal ?? defaultRuleProcessorJSONata
+                    : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
     validator = options.validator ?? (() => true);
     fields = toFullOptionList(options.fields ?? []);
@@ -576,6 +590,50 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ');
 
       const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
+
+      return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
+    };
+
+    return processRuleGroup(ruleGroup, true);
+  }
+
+  /**
+   * JSONata
+   */
+  if (format === 'jsonata') {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        return outermost ? fallbackExpression : '';
+      }
+
+      const expression: string = rg.rules
+        .map(rule => {
+          if (typeof rule === 'string') {
+            return rule;
+          }
+          if (isRuleGroup(rule)) {
+            return processRuleGroup(rule);
+          }
+          const [validationResult, fieldValidator] = validateRule(rule);
+          if (
+            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+            rule.field === placeholderFieldName ||
+            rule.operator === placeholderOperatorName
+          ) {
+            return '';
+          }
+          const fieldData = getOption(fields, rule.field);
+          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
+            parseNumbers,
+            escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+            fieldData,
+            format,
+          });
+        })
+        .filter(Boolean)
+        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ');
+
+      const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '$not' : ''}(`, ')'] : ['', ''];
 
       return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
     };

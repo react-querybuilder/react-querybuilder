@@ -249,7 +249,7 @@ describe('ruleProcessor', () => {
 describe('parseNumbers', () => {
   it('parses numbers for spel', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
-      "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
+      "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
     );
     const queryForNumberParsingSpEL: RuleGroupType = {
       combinator: 'and',

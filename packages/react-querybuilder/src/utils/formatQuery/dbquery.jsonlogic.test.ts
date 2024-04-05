@@ -10,10 +10,17 @@ for (const [op, func] of Object.entries(jsonLogicAdditionalOperators)) {
   add_operation(op, func);
 }
 
-const testJsonLogic = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
+const testJsonLogic = ({
+  query,
+  expectedResult,
+  expectedResultCoercedNull,
+  fqOptions,
+}: TestSQLParams) => {
   test('jsonlogic', async () => {
     const jsonlogic = formatQuery(query, { format: 'jsonlogic', ...fqOptions });
-    expect(superUsersJsonLogic.filter(u => apply(jsonlogic, u))).toEqual(expectedResult);
+    expect(superUsersJsonLogic.filter(u => apply(jsonlogic, u))).toEqual(
+      expectedResultCoercedNull ?? expectedResult
+    );
   });
 };
 
