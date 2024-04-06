@@ -130,16 +130,23 @@ const { label: pnlabel, link: pnlink, title: pntitle } = optionsMetadata.parseNu
 const ParseNumbersOption = ({
   checked,
   setter,
+  disabled,
 }: {
   checked: boolean;
   setter: React.Dispatch<React.SetStateAction<boolean>>;
+  disabled?: boolean;
 }) => {
   return (
     <>
       <span>&nbsp;</span>
       <div className={styles.demoOption}>
         <label title={pntitle}>
-          <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
+          <input
+            type="checkbox"
+            disabled={disabled}
+            checked={checked}
+            onChange={e => !disabled && setter(e.target.checked)}
+          />
           {` ${pnlabel} `}
           <Link
             href={`${pnlink}`}
@@ -290,7 +297,9 @@ export default function Demo({
         <h4>Call</h4>
         <CodeBlock>
           {`formatQuery(query, ${
-            options.parseNumbers ? `{ format: '${format}', parseNumbers: true }` : `'${format}'`
+            options.parseNumbers || format === 'jsonata'
+              ? `{ format: '${format}', parseNumbers: true }`
+              : `'${format}'`
           })`}
         </CodeBlock>
         <h4>Return</h4>
@@ -588,6 +597,11 @@ export default function Demo({
               label: 'ElasticSearch',
               attributes: getExportTabAttributes('elasticsearch'),
             },
+            {
+              value: 'jsonata',
+              label: 'JSONata',
+              attributes: getExportTabAttributes('jsonata'),
+            },
           ]}>
           <TabItem value="code" label="Code">
             <Details summary={<summary>Dependencies</summary>}>
@@ -725,6 +739,12 @@ export default function Demo({
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="elasticsearch" />
               <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="jsonata">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="jsonata" />
             </div>
             {exportPresentation}
           </TabItem>

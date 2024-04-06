@@ -78,7 +78,10 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
 };
 
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
-  const formatQueryResult = formatQuery(query, options);
+  const formatQueryResult = formatQuery(
+    query,
+    options.format === 'jsonata' ? { ...options, parseNumbers: true } : options
+  );
   if (options.format === 'json_without_ids' || options.format === 'mongodb') {
     return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
   } else if (
