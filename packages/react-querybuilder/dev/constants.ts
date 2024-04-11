@@ -306,5 +306,6 @@ export const formatMap: [ExportFormat, string, HttpsURL][] = [
   ['cel', 'CEL', 'https://github.com/google/cel-spec'],
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
+  ['jsonata', 'JSONata', 'https://jsonata.org/'],
   ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/'],
 ];

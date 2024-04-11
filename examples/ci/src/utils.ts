@@ -1,3 +1,5 @@
+import type { RuleProcessor } from 'react-querybuilder';
+import { defaultRuleProcessorJSONata } from 'react-querybuilder';
 import type { CIOption, CIOptions, CIOptionsAction } from './types';
 
 export const defaultOptions = {
@@ -46,4 +48,11 @@ export const optionsReducer = (
 ): CIOptions => {
   const { optionName, value } = action.payload;
   return { ...state, [optionName]: value };
+};
+
+export const jsonataRuleProcessor: RuleProcessor = (rule, options) => {
+  if (options?.fieldData?.inputType === 'date') {
+    return `$toMillis(${rule.field}) ${rule.operator} $toMillis("${rule.value}")`;
+  }
+  return defaultRuleProcessorJSONata(rule, options);
 };

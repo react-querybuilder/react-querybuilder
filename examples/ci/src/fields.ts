@@ -50,4 +50,5 @@ export const fields: Field[] = [
   },
   { name: 'height', label: 'Height', validator },
   { name: 'job', label: 'Job', validator },
+  { name: 'birthDate', label: 'Birth Date', inputType: 'date' },
 ];

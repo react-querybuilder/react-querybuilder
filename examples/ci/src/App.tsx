@@ -8,7 +8,12 @@ import {
 import { fields } from './fields';
 import { initialQuery, initialQueryIC } from './initialQuery';
 import './styles.scss';
-import { defaultOptions, optionsOrder, optionsReducer } from './utils';
+import {
+  defaultOptions,
+  jsonataRuleProcessor,
+  optionsOrder,
+  optionsReducer,
+} from './utils';
 
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -132,6 +137,14 @@ export const App = () => {
           null,
           2
         )}
+      </pre>
+      <h5>JSONata</h5>
+      <pre>
+        {formatQuery(queryForFormatting, {
+          format: 'jsonata',
+          parseNumbers: true,
+          ruleProcessor: jsonataRuleProcessor,
+        })}
       </pre>
       <h5>ElasticSearch</h5>
       <pre>

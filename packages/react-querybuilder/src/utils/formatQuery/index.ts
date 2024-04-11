@@ -37,6 +37,7 @@ export const defaultCELValueProcessor = generateValueProcessor('cel');
 export const defaultSpELValueProcessor = generateValueProcessor('spel');
 
 export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
+export { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
