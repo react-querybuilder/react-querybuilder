@@ -335,22 +335,12 @@ describe('fields and getValueSources', () => {
     // fields as option groups
     testParseSpEL(
       parseSpEL(`f3 == f1`, { fields: optionGroups }),
-      wrapRule({
-        field: 'f3',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // fields as object
     testParseSpEL(
       parseSpEL(`f3 == f1`, { fields: fieldsObject }),
-      wrapRule({
-        field: 'f3',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // `f3` and `f4` allow the valueSource "field" and have no filter
     const baseFields = ['f3', 'f4'];
@@ -360,12 +350,7 @@ describe('fields and getValueSources', () => {
           parseSpEL(`${baseField} == ${f.name}`, { fields }),
           f.name === baseField
             ? wrapRule()
-            : wrapRule({
-                field: baseField,
-                operator: '=',
-                value: f.name,
-                valueSource: 'field',
-              })
+            : wrapRule({ field: baseField, operator: '=', value: f.name, valueSource: 'field' })
         );
       }
     }
@@ -374,48 +359,23 @@ describe('fields and getValueSources', () => {
   it('uses the getValueSources option', () => {
     testParseSpEL(
       parseSpEL(`f5 == f6`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f5',
-        operator: '=',
-        value: 'f6',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
     );
     testParseSpEL(
       parseSpEL(`f8 == f7`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f8',
-        operator: '=',
-        value: 'f7',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
     );
     testParseSpEL(
       parseSpEL(`f9 == f1`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f9',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
     );
     testParseSpEL(
       parseSpEL(`f10 == f7`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f10',
-        operator: '=',
-        value: 'f7',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
     );
     testParseSpEL(
       parseSpEL(`f10 == f8`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f10',
-        operator: '=',
-        value: 'f8',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
     );
   });
 
