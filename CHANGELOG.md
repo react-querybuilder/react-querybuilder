@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#682] `parseCEL` processes "like" operators ("contains"/"startsWith"/"endsWith") that are negated without parentheses, like `!f1.contains(f2)`.
 
 ## [v7.2.0] - 2024-04-15
 
@@ -1592,6 +1594,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#663]: https://github.com/react-querybuilder/react-querybuilder/pull/663
 [#671]: https://github.com/react-querybuilder/react-querybuilder/pull/671
 [#677]: https://github.com/react-querybuilder/react-querybuilder/issues/677
+[#682]: https://github.com/react-querybuilder/react-querybuilder/issues/682
 
 <!-- Release comparison links -->
 

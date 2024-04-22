@@ -13,6 +13,9 @@ import type {
   CELMap,
   CELMember,
   CELMemberIdentifierChain,
+  CELMemberNegatedIdentifier,
+  CELMemberNegatedIdentifierChain,
+  CELNegatedLikeExpression,
   CELNegation,
   CELNullLiteral,
   CELNumericLiteral,
@@ -59,6 +62,21 @@ export const isCELIdentifierOrChain = (
     isCELIdentifierOrChain(expr.left) &&
     isCELIdentifier(expr.right));
 
+export const isCELNegatedIdentifier = (expr: CELExpression): expr is CELMemberNegatedIdentifier =>
+  isCELNegation(expr) && isCELIdentifier(expr.value);
+
+export const isCELNegatedIdentifierOrChain = (
+  expr: CELExpression
+): expr is CELMemberNegatedIdentifierChain | CELMemberNegatedIdentifier =>
+  isCELNegatedIdentifier(expr) ||
+  (isCELMember(expr) &&
+    !!expr.left &&
+    !!expr.right &&
+    !expr.list &&
+    !expr.value &&
+    isCELIdentifierOrChain(expr.right) &&
+    isCELNegatedIdentifier(expr.left));
+
 export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpression =>
   isCELMember(expr) &&
   !!expr.left &&
@@ -72,12 +90,35 @@ export const isCELLikeExpression = (expr: CELExpression): expr is CELLikeExpress
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 
+export const isCELNegatedLikeExpression = (expr: CELExpression): expr is CELNegatedLikeExpression =>
+  isCELMember(expr) &&
+  !!expr.left &&
+  !!expr.right &&
+  !!expr.list &&
+  isCELNegatedIdentifierOrChain(expr.left) &&
+  isCELIdentifier(expr.right) &&
+  (expr.right.value === 'contains' ||
+    expr.right.value === 'startsWith' ||
+    expr.right.value === 'endsWith') &&
+  expr.list.value.length === 1 &&
+  (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
+
 export const getIdentifierFromChain = (expr: CELIdentifier | CELMemberIdentifierChain): string => {
   if (isCELIdentifier(expr)) {
     return expr.value;
   }
 
   return `${getIdentifierFromChain(expr.left)}.${expr.right.value}`;
+};
+
+export const getIdentifierFromNegatedChain = (
+  expr: CELMemberNegatedIdentifier | CELMemberNegatedIdentifierChain
+): string => {
+  if (isCELNegatedIdentifier(expr)) {
+    return `${``.padStart(expr.negations, `!`)}${expr.value.value}`;
+  }
+
+  return `${getIdentifierFromNegatedChain(expr.left)}.${expr.right.value}`;
 };
 
 function evalCELLiteralValue(literal: CELStringLiteral): string;

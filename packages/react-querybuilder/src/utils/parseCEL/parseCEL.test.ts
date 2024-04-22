@@ -104,35 +104,31 @@ it('handles "like" comparisons', () => {
   );
   testParseCEL(
     'f1.contains(f2)',
-    wrapRule({
-      field: 'f1',
-      operator: 'contains',
-      value: 'f2',
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
   );
   testParseCEL(
     'f1.startsWith(f2)',
-    wrapRule({
-      field: 'f1',
-      operator: 'beginsWith',
-      value: 'f2',
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'beginsWith', value: 'f2', valueSource: 'field' })
   );
   testParseCEL(
     'f1.endsWith(f2)',
-    wrapRule({
-      field: 'f1',
-      operator: 'endsWith',
-      value: 'f2',
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'endsWith', value: 'f2', valueSource: 'field' })
   );
 });
 
 it('negates "like" comparisons', () => {
-  // TODO: support negation without parentheses ('!f1.contains("Test")')
+  testParseCEL(
+    '!f1.contains("Test")',
+    wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
+  );
+  testParseCEL(
+    '!f1.contains(f2)',
+    wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'f2', valueSource: 'field' })
+  );
+  testParseCEL(
+    '!f1.f2.contains("Test")',
+    wrapRule({ field: 'f1.f2', operator: 'doesNotContain', value: 'Test' })
+  );
   testParseCEL(
     '!(f1.contains("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
@@ -140,6 +136,10 @@ it('negates "like" comparisons', () => {
   testParseCEL(
     '!(f1.startsWith("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotBeginWith', value: 'Test' })
+  );
+  testParseCEL(
+    '!(f1.f2.startsWith("Test"))',
+    wrapRule({ field: 'f1.f2', operator: 'doesNotBeginWith', value: 'Test' })
   );
   testParseCEL(
     '!(f1.endsWith("Test"))',
@@ -329,22 +329,12 @@ describe('fields and getValueSources', () => {
     // fields as option groups
     testParseCEL(
       parseCEL(`f3 == f1`, { fields: optionGroups }),
-      wrapRule({
-        field: 'f3',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // fields as object
     testParseCEL(
       parseCEL(`f3 == f1`, { fields: fieldsObject }),
-      wrapRule({
-        field: 'f3',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // `f3` and `f4` allow the valueSource "field" and have no filter
     const baseFields = ['f3', 'f4'];
@@ -354,12 +344,7 @@ describe('fields and getValueSources', () => {
           parseCEL(`${baseField} == ${f.name}`, { fields }),
           f.name === baseField
             ? wrapRule()
-            : wrapRule({
-                field: baseField,
-                operator: '=',
-                value: f.name,
-                valueSource: 'field',
-              })
+            : wrapRule({ field: baseField, operator: '=', value: f.name, valueSource: 'field' })
         );
       }
     }
@@ -368,48 +353,23 @@ describe('fields and getValueSources', () => {
   it('uses the getValueSources option', () => {
     testParseCEL(
       parseCEL(`f5 == f6`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f5',
-        operator: '=',
-        value: 'f6',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
     );
     testParseCEL(
       parseCEL(`f8 == f7`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f8',
-        operator: '=',
-        value: 'f7',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
     );
     testParseCEL(
       parseCEL(`f9 == f1`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f9',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
     );
     testParseCEL(
       parseCEL(`f10 == f7`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f10',
-        operator: '=',
-        value: 'f7',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
     );
     testParseCEL(
       parseCEL(`f10 == f8`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f10',
-        operator: '=',
-        value: 'f8',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
     );
   });
 
@@ -482,12 +442,7 @@ it('outputs lists as arrays', () => {
   );
   testParseCEL(
     parseCEL('f1 in [f2,f3]', { listsAsArrays: true }),
-    wrapRule({
-      field: 'f1',
-      operator: 'in',
-      value: ['f2', 'f3'],
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' })
   );
   testParseCEL(
     parseCEL('f1 in {f2: "v2", "f3": "v3"}', { listsAsArrays: true }),
@@ -496,6 +451,14 @@ it('outputs lists as arrays', () => {
 });
 
 it('handles multiple negations', () => {
+  testParseCEL(
+    '!!!f1.contains("Test")',
+    wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
+  );
+  testParseCEL(
+    '!!!!f1.contains("Test")',
+    wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
+  );
   testParseCEL(
     '!!!(f1.contains("Test"))',
     wrapRule({ field: 'f1', operator: 'doesNotContain', value: 'Test' })
@@ -520,6 +483,15 @@ it('handles independent combinators', () => {
       { field: 'f2', operator: '=', value: 'Test2' },
       'or',
       { field: 'f3', operator: '=', value: 'Test3' },
+    ],
+  });
+  testParseCELic('!f1.f2.startsWith("Test") && f3 > 26 || !!f4.f5.endsWith("Test")', {
+    rules: [
+      { field: 'f1.f2', operator: 'doesNotBeginWith', value: 'Test' },
+      'and',
+      { field: 'f3', operator: '>', value: 26 },
+      'or',
+      { field: 'f4.f5', operator: 'endsWith', value: 'Test' },
     ],
   });
 });
