@@ -108,6 +108,15 @@ export interface CELMemberIdentifierChain extends CELMember {
   right: CELIdentifier;
   list: never;
 }
+export interface CELMemberNegatedIdentifier extends CELNegation {
+  value: CELIdentifier;
+}
+export interface CELMemberNegatedIdentifierChain extends CELExpression {
+  value: never;
+  left: CELMemberIdentifierChain | CELMemberNegatedIdentifier;
+  right: CELIdentifier;
+  list: never;
+}
 export interface CELDynamicPropertyAccessor extends CELExpression {
   type: 'DynamicPropertyAccessor';
   left: CELMember;
@@ -207,6 +216,12 @@ export interface CELMapInit extends CELExpression {
 export interface CELLikeExpression extends CELExpression {
   type: 'LikeExpression';
   left: CELIdentifier | CELMemberIdentifierChain;
+  right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
+  list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
+}
+export interface CELNegatedLikeExpression extends CELExpression {
+  type: 'LikeExpression';
+  left: CELMemberNegatedIdentifier | CELMemberNegatedIdentifierChain;
   right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
   list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
 }

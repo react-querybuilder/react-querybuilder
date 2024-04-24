@@ -13,12 +13,13 @@ import type {
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
-import type { CELExpression, CELIdentifier, CELLiteral } from './types';
+import type { CELExpression, CELIdentifier, CELLikeExpression, CELLiteral } from './types';
 import {
   evalCELLiteralValue,
   generateFlatAndOrList,
   generateMixedAndOrList,
   getIdentifierFromChain,
+  getIdentifierFromNegatedChain,
   isCELConditionalAnd,
   isCELConditionalOr,
   isCELExpressionGroup,
@@ -27,6 +28,7 @@ import {
   isCELList,
   isCELLiteral,
   isCELMap,
+  isCELNegatedLikeExpression,
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
@@ -93,19 +95,36 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
     const { forwardNegation: forwardedNegation, groupOnlyIfNecessary } = processOpts;
     /* istanbul ignore if */
-    if (isCELNegation(expr)) {
-      const negate = expr.negations % 2 === 1;
+    if (isCELNegation(expr) || isCELNegatedLikeExpression(expr)) {
+      const negate = isCELNegation(expr)
+        ? expr.negations % 2 === 1
+        : (getIdentifierFromNegatedChain(expr.left).match(/^!+/)?.[0].length ?? 0) % 2 === 1;
       // TODO?: forwardNegation when isCELRelation(expr.value.value), in addition
-      // to CELLikeExpression? ('<=' becomes '>', 'in' becomes 'notIn', etc.)
+      // to CEL[Negated]LikeExpression? (i.e. '<=' becomes '>', 'in' becomes 'notIn', etc.)
       const negatedExpr =
-        isCELExpressionGroup(expr.value) && isCELLikeExpression(expr.value.value)
+        isCELNegation(expr) &&
+        isCELExpressionGroup(expr.value) &&
+        isCELLikeExpression(expr.value.value)
           ? processCELExpression(expr.value.value, { forwardNegation: negate })
-          : processCELExpression(expr.value, {
-              groupOnlyIfNecessary: true,
-              forwardNegation: negate,
-            });
+          : isCELNegatedLikeExpression(expr)
+            ? processCELExpression(
+                {
+                  ...expr,
+                  left: {
+                    type: 'Identifier',
+                    value: getIdentifierFromNegatedChain(expr.left).replace(/^!+/, ''),
+                  },
+                } as CELLikeExpression,
+                { forwardNegation: negate }
+              )
+            : processCELExpression(expr.value, {
+                groupOnlyIfNecessary: true,
+                forwardNegation: negate,
+              });
       if (negatedExpr) {
-        if (
+        if (isCELNegatedLikeExpression(expr)) {
+          return negatedExpr;
+        } else if (
           !negate ||
           (negate && !isRuleGroup(negatedExpr) && negatedExpr.operator.startsWith('doesNot'))
         ) {
