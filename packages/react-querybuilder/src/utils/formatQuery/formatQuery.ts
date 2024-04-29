@@ -647,7 +647,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (format === 'jsonlogic') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
-    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): RQBJsonLogic => {
+    const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): RQBJsonLogic => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return false;
       }
@@ -678,14 +678,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return false;
       }
 
-      const jsonRuleGroup: RQBJsonLogic =
-        processedRules.length === 1 && outermost
-          ? processedRules[0]
-          : ({
-              [rg.combinator]: processedRules,
-            } as {
-              [k in keyof DefaultCombinatorName]: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
-            });
+      const jsonRuleGroup: RQBJsonLogic = { [rg.combinator]: processedRules } as {
+        [k in DefaultCombinatorName]: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
+      };
 
       return rg.not ? { '!': jsonRuleGroup } : jsonRuleGroup;
     };
