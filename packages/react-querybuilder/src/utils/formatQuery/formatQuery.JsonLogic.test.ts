@@ -118,6 +118,7 @@ const jsonLogicQueryObject = {
     { '!=': [{ var: 'lastName' }, null] },
     { in: [{ var: 'firstName' }, ['Test', 'This']] },
     { '!': { in: [{ var: 'lastName' }, ['Test', 'This']] } },
+    { in: [{ var: 'firstName' }, []] },
     { '<=': ['Test', { var: 'firstName' }, 'This'] },
     { '<=': ['Test', { var: 'firstName' }, 'This'] },
     { '!': { '<=': ['Test', { var: 'lastName' }, 'This'] } },
@@ -149,25 +150,12 @@ const jsonLogicQueryObjectForValueSourceField = {
   and: [
     { '==': [{ var: 'firstName' }, null] },
     { '!=': [{ var: 'lastName' }, null] },
-    {
-      in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]],
-    },
-    {
-      '!': {
-        in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]],
-      },
-    },
-    {
-      '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }],
-    },
-    {
-      '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }],
-    },
-    {
-      '!': {
-        '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }],
-      },
-    },
+    { in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]] },
+    { '!': { in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]] } },
+    { in: [{ var: 'firstName' }, []] },
+    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
+    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
+    { '!': { '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }] } },
     { '==': [{ var: 'age' }, { var: 'iq' }] },
     { '==': [{ var: 'isMusician' }, { var: 'isCreative' }] },
     {
