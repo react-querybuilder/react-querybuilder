@@ -20,6 +20,8 @@ import { userEventSetup } from 'react-querybuilder/genericTests/index';
 import { QueryBuilderDnD } from './QueryBuilderDnD';
 import type { QueryBuilderDndProps } from './types';
 
+jest.mock('react-dom/test-utils', () => ({ act: jest.requireActual('react').act }));
+
 const user = userEventSetup();
 
 const [QBforDnD, getDndBackendOriginal] = wrapWithTestBackend(

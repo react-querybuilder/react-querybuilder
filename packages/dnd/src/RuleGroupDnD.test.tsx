@@ -15,6 +15,8 @@ import QueryBuilder, { TestID, standardClassnames as sc } from 'react-querybuild
 import { QueryBuilderDnD } from './QueryBuilderDnD';
 import type { QueryBuilderDndProps } from './types';
 
+jest.mock('react-dom/test-utils', () => ({ act: jest.requireActual('react').act }));
+
 const [QBforDnD, getDndBackendOriginal] = wrapWithTestBackend(
   ({
     canDrop,
