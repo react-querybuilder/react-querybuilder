@@ -100,7 +100,7 @@
     "all-contributors-cli": "^6.26.1",
     "concurrently": "^8.2.2",
     "esbuild-analyzer": "^0.2.0",
-    "eslint": "^9.1.1",
+    "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "fast-json-stable-stringify": "^2.1.0",
