@@ -628,6 +628,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
             format,
+            quoteFieldNamesWith,
           });
         })
         .filter(Boolean)

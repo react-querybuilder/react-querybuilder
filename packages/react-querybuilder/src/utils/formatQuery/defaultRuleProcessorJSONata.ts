@@ -1,7 +1,7 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
-import { nullOrUndefinedOrEmpty, shouldRenderAsNumber } from './utils';
+import { nullOrUndefinedOrEmpty, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -19,7 +19,7 @@ const escapeStringRegex = (s: string) =>
 export const defaultRuleProcessorJSONata: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { escapeQuotes, parseNumbers = true } = {}
+  { escapeQuotes, parseNumbers = true, quoteFieldNamesWith = ['', ''] as [string, string] } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const useBareValue =
@@ -28,6 +28,9 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
 
+  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
+  const qfn = (f: string) => `${qPre}${f}${qPost}`;
+
   switch (operator) {
     case '<':
     case '<=':
@@ -35,14 +38,18 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     case '!=':
     case '>':
     case '>=':
-      return `${field} ${operator} ${
-        valueIsField || useBareValue ? trimIfString(value) : quote(value, escapeQuotes)
+      return `${qfn(field)} ${operator} ${
+        valueIsField
+          ? qfn(trimIfString(value))
+          : useBareValue
+            ? trimIfString(value)
+            : quote(value, escapeQuotes)
       }`;
 
     case 'contains':
     case 'doesNotContain':
       return negate(
-        `$contains(${field}, ${valueIsField ? trimIfString(value) : quote(value, escapeQuotes)})`,
+        `$contains(${qfn(field)}, ${valueIsField ? qfn(trimIfString(value)) : quote(value, escapeQuotes)})`,
         shouldNegate(operator)
       );
 
@@ -50,8 +57,8 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     case 'doesNotBeginWith':
       return negate(
         valueIsField
-          ? `$substring(${field}, 0, $length(${trimIfString(value)})) = ${trimIfString(value)}`
-          : `$contains(${field}, /^${escapeStringRegex(value)}/)`,
+          ? `$substring(${qfn(field)}, 0, $length(${qfn(trimIfString(value))})) = ${qfn(trimIfString(value))}`
+          : `$contains(${qfn(field)}, /^${escapeStringRegex(value)}/)`,
         shouldNegate(operator)
       );
 
@@ -59,26 +66,28 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     case 'doesNotEndWith':
       return negate(
         valueIsField
-          ? `$substring(${field}, $length(${field}) - $length(${trimIfString(value)})) = ${trimIfString(value)}`
-          : `$contains(${field}, /${escapeStringRegex(value)}$/)`,
+          ? `$substring(${qfn(field)}, $length(${qfn(field)}) - $length(${qfn(trimIfString(value))})) = ${qfn(trimIfString(value))}`
+          : `$contains(${qfn(field)}, /${escapeStringRegex(value)}$/)`,
         shouldNegate(operator)
       );
 
     case 'null':
-      return `${field} = null`;
+      return `${qfn(field)} = null`;
 
     case 'notNull':
-      return `${field} != null`;
+      return `${qfn(field)} != null`;
 
     case 'in':
     case 'notIn': {
       const valueAsArray = toArray(value);
       return negate(
-        `${field} in [${valueAsArray
+        `${qfn(field)} in [${valueAsArray
           .map(val =>
-            valueIsField || shouldRenderAsNumber(val, parseNumbers)
-              ? `${trimIfString(val)}`
-              : quote(val, escapeQuotes)
+            valueIsField
+              ? `${qfn(trimIfString(val))}`
+              : shouldRenderAsNumber(val, parseNumbers)
+                ? `${trimIfString(val)}`
+                : quote(val, escapeQuotes)
           )
           .join(', ')}]`,
         shouldNegate(operator)
@@ -112,7 +121,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
         const renderAsNumbers =
           shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers);
 
-        const expression = `${field} >= ${valueIsField ? first : renderAsNumbers ? firstValue : quote(firstValue, escapeQuotes)} and ${field} <= ${valueIsField ? second : renderAsNumbers ? secondValue : quote(secondValue, escapeQuotes)}`;
+        const expression = `${qfn(field)} >= ${valueIsField ? qfn(first) : renderAsNumbers ? firstValue : quote(firstValue, escapeQuotes)} and ${qfn(field)} <= ${valueIsField ? qfn(second) : renderAsNumbers ? secondValue : quote(secondValue, escapeQuotes)}`;
 
         return operator === 'between' ? `(${expression})` : negate(expression, true);
       } else {
