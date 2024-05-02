@@ -73,17 +73,13 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
     case 'notIn': {
       const negate = shouldNegate(operatorTL);
       const valueAsArray = toArray(value);
-      if (valueAsArray.length > 0) {
-        return `${negate ? '!(' : ''}${field} in [${valueAsArray
-          .map(val =>
-            valueIsField || shouldRenderAsNumber(val, parseNumbers)
-              ? `${trimIfString(val)}`
-              : `"${escapeDoubleQuotes(val, escapeQuotes)}"`
-          )
-          .join(', ')}]${negate ? ')' : ''}`;
-      } else {
-        return '';
-      }
+      return `${negate ? '!(' : ''}${field} in [${valueAsArray
+        .map(val =>
+          valueIsField || shouldRenderAsNumber(val, parseNumbers)
+            ? `${trimIfString(val)}`
+            : `"${escapeDoubleQuotes(val, escapeQuotes)}"`
+        )
+        .join(', ')}]${negate ? ')' : ''}`;
     }
 
     case 'between':

@@ -105,6 +105,7 @@ const mongoQueryExpectation = {
     { lastName: { $ne: null } },
     { firstName: { $in: ['Test', 'This'] } },
     { lastName: { $nin: ['Test', 'This'] } },
+    { firstName: { $in: [] } },
     { firstName: { $gte: 'Test', $lte: 'This' } },
     { firstName: { $gte: 'Test', $lte: 'This' } },
     { $or: [{ lastName: { $lt: 'Test' } }, { lastName: { $gt: 'This' } }] },
@@ -118,7 +119,9 @@ const mongoQueryExpectation = {
     { hello: { $not: { $regex: 'com' } } },
     { job: { $not: { $regex: '^Man' } } },
     { job: { $not: { $regex: 'ger$' } } },
-    { job: 'Sales Executive' },
+    {
+      $or: [{ job: 'Sales Executive' }, { job: { $in: [] } }],
+    },
   ],
 };
 const mongoQueryExpectationForValueSourceField = {
@@ -127,6 +130,7 @@ const mongoQueryExpectationForValueSourceField = {
     { lastName: { $ne: null } },
     { $where: '[this.middleName,this.lastName].includes(this.firstName)' },
     { $where: '![this.middleName,this.lastName].includes(this.lastName)' },
+    { $where: '[].includes(this.firstName)' },
     {
       $and: [
         { $expr: { $gte: ['$firstName', '$middleName'] } },
