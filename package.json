@@ -85,13 +85,13 @@
     "@babel/preset-typescript": "^7.24.1",
     "@react-native-picker/picker": "^2.7.5",
     "@testing-library/dom": "^10.1.0",
-    "@testing-library/jest-dom": "^6.4.2",
-    "@testing-library/react": "^15.0.5",
+    "@testing-library/jest-dom": "^6.4.4",
+    "@testing-library/react": "^15.0.6",
     "@testing-library/user-event": "^14.5.2",
-    "@types/bun": "^1.1.0",
+    "@types/bun": "^1.1.1",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.8",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/web": "^0.0.143",
@@ -121,7 +121,7 @@
     "swc-loader": "^0.2.6",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
-    "vite": "^5.2.10"
+    "vite": "^5.2.11"
   },
   "packageManager": "yarn@4.1.1"
 }
