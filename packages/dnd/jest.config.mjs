@@ -5,4 +5,5 @@ export default {
   ...common,
   displayName: 'dnd',
   transformIgnorePatterns: ['/node[_]modules/(?!react-dnd|dnd-core|@react-dnd)'],
+  setupFilesAfterEnv: [...common.setupFilesAfterEnv, './jestSetup.ts'],
 };

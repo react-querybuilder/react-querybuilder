@@ -79,21 +79,17 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
     case 'in':
     case 'notIn': {
       const valueAsArray = toArray(value);
-      if (valueAsArray.length > 0) {
-        return valueIsField
-          ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valueAsArray
-              .map(val => `this.${val}`)
-              .join(',')}].includes(this.${field})"}`
-          : `{"${field}":{"${mongoOperators[operator]}":[${valueAsArray
-              .map(val =>
-                shouldRenderAsNumber(val, parseNumbers)
-                  ? `${trimIfString(val)}`
-                  : `"${escapeDoubleQuotes(val)}"`
-              )
-              .join(',')}]}}`;
-      } else {
-        return '';
-      }
+      return valueIsField
+        ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valueAsArray
+            .map(val => `this.${val}`)
+            .join(',')}].includes(this.${field})"}`
+        : `{"${field}":{"${mongoOperators[operator]}":[${valueAsArray
+            .map(val =>
+              shouldRenderAsNumber(val, parseNumbers)
+                ? `${trimIfString(val)}`
+                : `"${escapeDoubleQuotes(val)}"`
+            )
+            .join(',')}]}}`;
     }
 
     case 'between':

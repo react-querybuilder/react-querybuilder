@@ -118,6 +118,7 @@ const jsonLogicQueryObject = {
     { '!=': [{ var: 'lastName' }, null] },
     { in: [{ var: 'firstName' }, ['Test', 'This']] },
     { '!': { in: [{ var: 'lastName' }, ['Test', 'This']] } },
+    { in: [{ var: 'firstName' }, []] },
     { '<=': ['Test', { var: 'firstName' }, 'This'] },
     { '<=': ['Test', { var: 'firstName' }, 'This'] },
     { '!': { '<=': ['Test', { var: 'lastName' }, 'This'] } },
@@ -149,25 +150,12 @@ const jsonLogicQueryObjectForValueSourceField = {
   and: [
     { '==': [{ var: 'firstName' }, null] },
     { '!=': [{ var: 'lastName' }, null] },
-    {
-      in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]],
-    },
-    {
-      '!': {
-        in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]],
-      },
-    },
-    {
-      '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }],
-    },
-    {
-      '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }],
-    },
-    {
-      '!': {
-        '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }],
-      },
-    },
+    { in: [{ var: 'firstName' }, [{ var: 'middleName' }, { var: 'lastName' }]] },
+    { '!': { in: [{ var: 'lastName' }, [{ var: 'middleName' }, { var: 'lastName' }]] } },
+    { in: [{ var: 'firstName' }, []] },
+    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
+    { '<=': [{ var: 'middleName' }, { var: 'firstName' }, { var: 'lastName' }] },
+    { '!': { '<=': [{ var: 'middleName' }, { var: 'lastName' }, { var: 'lastName' }] } },
     { '==': [{ var: 'age' }, { var: 'iq' }] },
     { '==': [{ var: 'isMusician' }, { var: 'isCreative' }] },
     {
@@ -210,7 +198,7 @@ it('formats JSONLogic correctly', () => {
       },
       'jsonlogic'
     )
-  ).toEqual({ '<=': [12, { var: 'f' }, 14] });
+  ).toEqual({ and: [{ '<=': [12, { var: 'f' }, 14] }] });
   expect(
     formatQuery(
       {
@@ -278,15 +266,15 @@ describe('validation', () => {
       'should invalidate jsonlogic': false,
       'should invalidate jsonlogic even if fields are valid': false,
       'should invalidate jsonlogic rule by validator function': {
-        '==': [{ var: 'field2' }, ''],
+        and: [{ '==': [{ var: 'field2' }, ''] }],
       },
       'should invalidate jsonlogic rule specified by validationMap': {
-        '==': [{ var: 'field2' }, ''],
+        and: [{ '==': [{ var: 'field2' }, ''] }],
       },
       'should invalidate jsonlogic outermost group': false,
       'should invalidate jsonlogic inner group': false,
       'should convert jsonlogic inner group with no rules to fallbackExpression': {
-        '==': [{ var: 'field' }, ''],
+        and: [{ '==': [{ var: 'field' }, ''] }],
       },
     };
 

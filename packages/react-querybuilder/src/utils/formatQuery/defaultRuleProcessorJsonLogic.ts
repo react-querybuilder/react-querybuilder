@@ -48,13 +48,8 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
 
     case 'in':
     case 'notIn': {
-      // TODO: extract this map function
       const valueAsArray = toArray(value).map(fieldOrNumberRenderer);
-      if (valueAsArray.length > 0) {
-        const jsonRule: RQBJsonLogic = { in: [fieldObject, valueAsArray] };
-        return negateIfNotOp(operator, jsonRule);
-      }
-      return false;
+      return negateIfNotOp(operator, { in: [fieldObject, valueAsArray] });
     }
 
     case 'between':

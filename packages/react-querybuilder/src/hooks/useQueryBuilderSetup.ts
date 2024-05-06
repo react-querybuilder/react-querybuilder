@@ -295,7 +295,7 @@ export const useQueryBuilderSetup = <
 
   const getRuleDefaultValue = useCallback(
     <RT extends RuleType = R>(r: RT) => {
-      const fieldData = fieldMap[r.field as FieldName] as F;
+      const fieldData = (fieldMap[r.field as FieldName] ?? {}) as F;
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
         return fieldData.defaultValue;
       } else if (getDefaultValue) {

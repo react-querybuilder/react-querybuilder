@@ -102,3 +102,20 @@ describe('parseNumbers', () => {
     ).toBe(`$contains(f, /^1/) and $contains(f, /1$/)`);
   });
 });
+
+it('handles quoteFieldNamesWith correctly', () => {
+  const queryToTest: RuleGroupType = {
+    id: 'g-root',
+    combinator: 'and',
+    rules: [
+      { field: 'instrument', value: 'Guitar, Vocals', operator: 'in' },
+      { field: 'lastName', value: 'Vai', operator: '=' },
+      { field: 'lastName', value: 'firstName', operator: '!=', valueSource: 'field' },
+    ],
+    not: false,
+  };
+
+  expect(formatQuery(queryToTest, { format: 'jsonata', quoteFieldNamesWith: '`' })).toBe(
+    '`instrument` in ["Guitar", "Vocals"] and `lastName` = "Vai" and `lastName` != `firstName`'
+  );
+});
