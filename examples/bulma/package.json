@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@react-querybuilder/bulma": "^7.2.0",
+    "@react-querybuilder/bulma": "^7.2.1",
     "bulma": "^0.9.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-querybuilder": "^7.2.0"
+    "react-querybuilder": "^7.2.1"
   },
   "description": "React Query Builder Bulma Example",
   "devDependencies": {
