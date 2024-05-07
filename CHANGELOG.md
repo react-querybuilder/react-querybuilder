@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- N/A
+
+## [v7.2.1] - 2024-05-06
+
 ### Fixed
 
 - [#682] `parseCEL` processes "like" operators ("contains"/"startsWith"/"endsWith") that are negated without parentheses, like `!f1.contains(f2)`.
@@ -14,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - For the "jsonlogic" export format, the entire group structure is retained even if only one top-level child object exists.
   - For the "jsonlogic", "mongodb", and "cel" formats, rules where the operator is "in" or "notIn" and the value evaluates to an empty array are retained.
   - The "jsonata" format now respects the `quoteFieldNamesWith` option.
+- [#692] Custom field selectors can set their rule's `field` property to an arbitrary value without throwing an error, even if the value is not included in the `fields` prop list.
 
 ## [v7.2.0] - 2024-04-15
 
@@ -1603,7 +1608,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...HEAD
+[v7.2.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.0...v7.2.1
 [v7.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.1.0...v7.2.0
 [v7.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.2...v7.1.0
 [v7.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.1...v7.0.2
