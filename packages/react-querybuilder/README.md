@@ -4,7 +4,7 @@ _The Query Builder component for React_
 
 **React Query Builder** is a fully customizable query builder component for React, along with a collection of utility functions for [importing from](#import), and [exporting to](#export), various query languages like SQL, MongoDB, and more.
 
-<!-- ![Screenshot](../../_assets/screenshot.png) -->
+![Screenshot](../../_assets/screenshot.png)
 
 ## Documentation
 

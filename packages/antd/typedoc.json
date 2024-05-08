@@ -1,8 +1,4 @@
 {
   "entryPoints": ["src/index.tsx"],
-  "validation": {
-    "notExported": false
-  },
-  "readme": "none",
-  "pretty": true
+  "extends": ["../../typedoc.json"]
 }
