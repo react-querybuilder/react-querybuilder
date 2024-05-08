@@ -39,5 +39,3 @@ export const TremorNotToggle = ({
     </div>
   );
 };
-
-TremorNotToggle.displayName = 'TremorNotToggle';

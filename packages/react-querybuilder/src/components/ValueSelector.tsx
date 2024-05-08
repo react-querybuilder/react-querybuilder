@@ -34,5 +34,3 @@ export const ValueSelector = <Opt extends FullOption = FullOption>({
     </select>
   );
 };
-
-ValueSelector.displayName = 'ValueSelector';

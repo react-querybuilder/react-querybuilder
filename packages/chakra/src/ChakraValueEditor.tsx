@@ -191,5 +191,3 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps) => {
     />
   );
 };
-
-ChakraValueEditor.displayName = 'ChakraValueEditor';

@@ -46,5 +46,3 @@ export const ChakraNotToggle = ({
     </div>
   );
 };
-
-ChakraNotToggle.displayName = 'ChakraNotToggle';

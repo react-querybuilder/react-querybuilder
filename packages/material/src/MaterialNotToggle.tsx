@@ -73,5 +73,3 @@ export const MaterialNotToggle = ({
     />
   );
 };
-
-MaterialNotToggle.displayName = 'MaterialNotToggle';

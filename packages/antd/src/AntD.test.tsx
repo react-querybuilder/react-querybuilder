@@ -57,8 +57,8 @@ jest.mock('antd', () => {
   return { ...AntD, Select };
 });
 
-const valueEditorTitle = AntDValueEditor.displayName;
-const notToggleTitle = AntDNotToggle.displayName;
+const valueEditorTitle = 'AntDValueEditor';
+const notToggleTitle = 'AntDNotToggle';
 
 describe(notToggleTitle, () => {
   const user = userEventSetup();

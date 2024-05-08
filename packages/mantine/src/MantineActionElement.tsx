@@ -32,5 +32,3 @@ export const MantineActionElement = ({
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
-
-MantineActionElement.displayName = 'MantineActionElement';

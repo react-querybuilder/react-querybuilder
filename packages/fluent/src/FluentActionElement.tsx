@@ -34,5 +34,3 @@ export const FluentActionElement = ({
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
-
-FluentActionElement.displayName = 'FluentActionElement';

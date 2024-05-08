@@ -7,5 +7,3 @@ const { rule, ruleGroup, combinatorSelector } = defaultControlElements;
 export const QueryBuilderDndContext = createContext<QueryBuilderDndContextProps>({
   baseControls: { rule, ruleGroup, combinatorSelector },
 });
-
-QueryBuilderDndContext.displayName = 'QueryBuilderDndContext';

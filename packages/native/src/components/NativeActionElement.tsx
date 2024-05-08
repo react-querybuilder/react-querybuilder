@@ -16,5 +16,3 @@ export const NativeActionElement = ({
     onPress={_e => handleOnClick()}
   />
 );
-
-NativeActionElement.displayName = 'NativeActionElement';

@@ -74,5 +74,3 @@ export const MaterialShiftActions = ({
     </div>
   );
 };
-
-MaterialShiftActions.displayName = 'MaterialShiftActions';

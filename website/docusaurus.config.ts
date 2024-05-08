@@ -92,7 +92,6 @@ const config: Config = {
               ],
               out: './api',
               entryPointStrategy: 'packages',
-              outputFileStrategy: 'modules',
               cleanOutputDir: true,
               includeVersion: true,
               name: 'React Query Builder API',
@@ -101,10 +100,13 @@ const config: Config = {
                 'title.indexPage': 'API Index',
                 'title.memberPage': '{name}',
                 'title.modulePage': '{name}',
+                'footer.text':
+                  ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
               },
               enumMembersFormat: 'table',
               sidebar: { autoConfiguration: false, pretty: false },
               sortEntryPoints: true,
+              plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
             } satisfies Partial<
               DocusaurusPluginTypedocOptions & TypedocPluginMarkdownOptions & TypeDocOptions
             >,
@@ -117,7 +119,6 @@ const config: Config = {
         path: 'api',
         routeBasePath: 'api',
         editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
-        sidebarPath: require.resolve('./sidebarAPI.js'),
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
         versions: { current: { label: 'Latest' } },

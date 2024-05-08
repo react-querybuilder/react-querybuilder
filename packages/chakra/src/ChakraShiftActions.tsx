@@ -25,5 +25,3 @@ export const ChakraShiftActions = ({
     </Button>
   </div>
 );
-
-ChakraShiftActions.displayName = 'ChakraShiftActions';

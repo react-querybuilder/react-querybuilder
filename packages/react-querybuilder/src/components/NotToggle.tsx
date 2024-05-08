@@ -23,5 +23,3 @@ export const NotToggle = ({
     {label}
   </label>
 );
-
-NotToggle.displayName = 'NotToggle';

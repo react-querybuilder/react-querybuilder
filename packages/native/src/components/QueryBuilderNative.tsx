@@ -91,5 +91,3 @@ export const QueryBuilderNative = <
     </Provider>
   );
 };
-
-QueryBuilderNative.displayName = 'QueryBuilderNative';

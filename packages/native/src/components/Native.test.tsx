@@ -77,7 +77,7 @@ describe('NativeActionElement', () => {
     schema: {} as Schema<FullField, string>,
   };
 
-  const title = NativeActionElement.displayName;
+  const title = 'NativeActionElement';
   const testID = title;
   const props = { ...defaultActionElementProps, title, testID };
 
@@ -134,7 +134,7 @@ describe('NativeNotToggle', () => {
   const props: NotToggleNativeProps = {
     checked: false,
     handleOnChange: () => {},
-    label: NativeNotToggle.displayName,
+    label: 'NativeNotToggle',
     level: 0,
     path: [],
     // We don't use `basicSchema` here because we can't import

@@ -30,5 +30,3 @@ export const FluentShiftActions = ({
     </Button>
   </div>
 );
-
-FluentShiftActions.displayName = 'FluentShiftActions';

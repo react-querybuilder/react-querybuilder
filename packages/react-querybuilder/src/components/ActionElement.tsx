@@ -4,24 +4,16 @@ import type { ActionProps } from '../types';
 /**
  * Default `<button>` component used by {@link QueryBuilder}.
  */
-export const ActionElement = ({
-  className,
-  handleOnClick,
-  label,
-  title,
-  disabled,
-  disabledTranslation,
-  testID,
-}: ActionProps) => (
+export const ActionElement = (props: ActionProps) => (
   <button
     type="button"
-    data-testid={testID}
-    disabled={disabled && !disabledTranslation}
-    className={className}
-    title={disabledTranslation && disabled ? disabledTranslation.title : title}
-    onClick={e => handleOnClick(e)}>
-    {disabledTranslation && disabled ? disabledTranslation.label : label}
+    data-testid={props.testID}
+    disabled={props.disabled && !props.disabledTranslation}
+    className={props.className}
+    title={
+      props.disabledTranslation && props.disabled ? props.disabledTranslation.title : props.title
+    }
+    onClick={e => props.handleOnClick(e)}>
+    {props.disabledTranslation && props.disabled ? props.disabledTranslation.label : props.label}
   </button>
 );
-
-ActionElement.displayName = 'ActionElement';

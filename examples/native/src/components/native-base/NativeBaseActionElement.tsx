@@ -17,5 +17,3 @@ export const NativeBaseActionElement = ({
       : label ?? ''}
   </Button>
 );
-
-NativeBaseActionElement.displayName = 'NativeBaseActionElement';

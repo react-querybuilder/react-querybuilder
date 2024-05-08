@@ -122,5 +122,3 @@ export const BootstrapValueEditor = (props: ValueEditorProps) => {
 
   return <ValueEditor skipHook {...props} />;
 };
-
-BootstrapValueEditor.displayName = 'BootstrapValueEditor';

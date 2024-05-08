@@ -64,5 +64,3 @@ export const TremorValueSelector = ({
     </Select>
   );
 };
-
-TremorValueSelector.displayName = 'TremorValueSelector';

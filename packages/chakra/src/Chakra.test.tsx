@@ -36,7 +36,6 @@ const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
     <ChakraDragHandle {...props} ref={ref} />
   </ThemeProvider>
 ));
-WrapperDH.displayName = ChakraDragHandle.displayName;
 
 testActionElement(generateWrapper(ChakraActionElement));
 testDragHandle(WrapperDH);

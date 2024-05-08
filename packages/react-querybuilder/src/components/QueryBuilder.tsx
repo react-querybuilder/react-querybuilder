@@ -97,5 +97,3 @@ export const QueryBuilder = <
     </QueryBuilderStateProvider>
   );
 };
-
-QueryBuilder.displayName = 'QueryBuilder';

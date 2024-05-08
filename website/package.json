@@ -86,6 +86,7 @@
     "stylis-plugin-extra-scope": "^0.3.0",
     "tailwindcss": "^3.4.3",
     "typedoc": "^0.25.13",
+    "typedoc-plugin-frontmatter": "^1.0.0",
     "typedoc-plugin-markdown": "^4.0.1",
     "typescript": "^5.4.5",
     "url-loader": "^4.1.1"

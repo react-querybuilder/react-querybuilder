@@ -32,5 +32,3 @@ export const ChakraActionElement = ({
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
-
-ChakraActionElement.displayName = 'ChakraActionElement';

@@ -16,5 +16,3 @@ export const InlineCombinator = ({
     <CombinatorSelectorComponent {...props} testID={TestID.combinators} />
   </div>
 );
-
-InlineCombinator.displayName = 'InlineCombinator';

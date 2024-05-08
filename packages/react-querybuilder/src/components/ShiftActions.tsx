@@ -29,5 +29,3 @@ export const ShiftActions = ({
     </div>
   );
 };
-
-ShiftActions.displayName = 'ShiftActions';

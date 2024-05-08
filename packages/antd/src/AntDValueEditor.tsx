@@ -283,5 +283,3 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps) => {
     />
   );
 };
-
-AntDValueEditor.displayName = 'AntDValueEditor';

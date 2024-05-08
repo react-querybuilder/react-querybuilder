@@ -41,5 +41,3 @@ export const RuleGroupNative = (props: RuleGroupNativeProps) => {
     </View>
   );
 };
-
-RuleGroupNative.displayName = 'RuleGroupNative';

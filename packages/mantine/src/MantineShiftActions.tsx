@@ -32,5 +32,3 @@ export const MantineShiftActions = ({
     </Button>
   </div>
 );
-
-MantineShiftActions.displayName = 'MantineShiftActions';

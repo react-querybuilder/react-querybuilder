@@ -23,5 +23,3 @@ export const RuleGroupDnD = (props: RuleGroupProps) => {
 
   return <BaseRuleGroupComponent {...props} {...dndRefs} />;
 };
-
-RuleGroupDnD.displayName = 'RuleGroupDnD';

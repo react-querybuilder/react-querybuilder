@@ -152,7 +152,6 @@ const WrapperDH = forwardRef<
     />
   </ThemeProvider>
 ));
-WrapperDH.displayName = MaterialDragHandle.displayName;
 
 describe('action element', () => {
   testActionElement(generateWrapper(MaterialActionElement));

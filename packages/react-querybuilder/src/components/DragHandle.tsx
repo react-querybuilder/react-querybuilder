@@ -13,5 +13,3 @@ export const DragHandle = forwardRef<HTMLSpanElement, DragHandleProps>(
     </span>
   )
 );
-
-DragHandle.displayName = 'DragHandle';

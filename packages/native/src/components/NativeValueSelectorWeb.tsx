@@ -6,5 +6,3 @@ import type { FullOption } from 'react-querybuilder';
 export const NativeValueSelectorWeb = <OptType extends FullOption = FullOption>(
   props: ValueSelectorNativeProps<OptType>
 ) => <NativeValueSelector {...props} />;
-
-NativeValueSelectorWeb.displayName = 'NativeValueSelectorWeb';

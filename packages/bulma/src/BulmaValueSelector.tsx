@@ -29,5 +29,3 @@ export const BulmaValueSelector = ({
     </div>
   );
 };
-
-BulmaValueSelector.displayName = 'BulmaValueSelector';

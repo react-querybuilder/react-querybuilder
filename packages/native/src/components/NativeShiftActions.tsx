@@ -37,5 +37,3 @@ export const NativeShiftActions = ({
     </View>
   );
 };
-
-NativeShiftActions.displayName = 'NativeShiftActions';

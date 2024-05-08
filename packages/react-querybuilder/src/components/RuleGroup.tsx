@@ -42,8 +42,6 @@ export const RuleGroup = React.memo((props: RuleGroupProps) => {
   );
 });
 
-RuleGroup.displayName = 'RuleGroup';
-
 /**
  * Renders a `React.Fragment` containing an array of form controls for managing
  * a {@link RuleGroupType} or {@link RuleGroupTypeIC}.

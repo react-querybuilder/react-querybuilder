@@ -29677,6 +29677,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typedoc-plugin-frontmatter@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "typedoc-plugin-frontmatter@npm:1.0.0"
+  dependencies:
+    yaml: "npm:^2.3.4"
+  peerDependencies:
+    typedoc-plugin-markdown: ">=4.0.0"
+  checksum: 10c0/831750d43851992e7d57991d8d40dfbae8aa5e16651b2c0405b7fc31b6997377da5a924b4ca8dfc3976e0ff0950f110b9535f8862396f190a599406f416a2940
+  languageName: node
+  linkType: hard
+
 "typedoc-plugin-markdown@npm:^4.0.1":
   version: 4.0.1
   resolution: "typedoc-plugin-markdown@npm:4.0.1"
@@ -30655,6 +30666,7 @@ __metadata:
     stylis-plugin-extra-scope: "npm:^0.3.0"
     tailwindcss: "npm:^3.4.3"
     typedoc: "npm:^0.25.13"
+    typedoc-plugin-frontmatter: "npm:^1.0.0"
     typedoc-plugin-markdown: "npm:^4.0.1"
     typescript: "npm:^5.4.5"
     url-loader: "npm:^4.1.1"

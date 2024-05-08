@@ -28,5 +28,3 @@ export const BootstrapNotToggle = ({
     </div>
   );
 };
-
-BootstrapNotToggle.displayName = 'BootstrapNotToggle';

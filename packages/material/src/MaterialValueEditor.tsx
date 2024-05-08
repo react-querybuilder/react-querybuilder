@@ -227,5 +227,3 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     />
   );
 };
-
-MaterialValueEditor.displayName = 'MaterialValueEditor';

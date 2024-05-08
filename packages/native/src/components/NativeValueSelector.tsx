@@ -100,5 +100,3 @@ export const NativeValueSelector = <Opt extends FullOption = FullOption>({
     />
   );
 };
-
-NativeValueSelector.displayName = 'NativeValueSelector';
