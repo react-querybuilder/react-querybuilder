@@ -1,4 +1,4 @@
-import { errorEnabledDndWithoutReactDnD } from '../messages';
+import { messages } from '../messages';
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
@@ -13,7 +13,7 @@ export const useReactDndWarning = (enableDragAndDrop: boolean, dndRefs: boolean)
     enableDragAndDrop &&
     !dndRefs
   ) {
-    console.error(errorEnabledDndWithoutReactDnD);
+    console.error(messages.errorEnabledDndWithoutReactDnD);
     didWarnEnabledDndWithoutReactDnD = true;
   }
 };

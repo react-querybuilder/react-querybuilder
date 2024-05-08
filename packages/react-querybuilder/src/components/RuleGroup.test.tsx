@@ -8,7 +8,7 @@ import {
   ruleGroupClassnames,
 } from '../../genericTests';
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
-import { errorEnabledDndWithoutReactDnD } from '../messages';
+import { messages } from '../messages';
 import type { ActionProps, RuleGroupICArray, ValidationResult, ValueSelectorProps } from '../types';
 import { toFullOption } from '../utils';
 import { RuleGroup } from './RuleGroup';
@@ -491,6 +491,6 @@ describe('dnd warnings', () => {
         ruleGroup={{ combinator: 'and', rules: [] }}
       />
     );
-    expect(consoleError).toHaveBeenCalledWith(errorEnabledDndWithoutReactDnD);
+    expect(consoleError).toHaveBeenCalledWith(messages.errorEnabledDndWithoutReactDnD);
   });
 });

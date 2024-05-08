@@ -11,11 +11,7 @@ import {
   standardClassnames as sc,
   defaultTranslations as t,
 } from '../defaults';
-import {
-  errorBothQueryDefaultQuery,
-  errorControlledToUncontrolled,
-  errorUncontrolledToControlled,
-} from '../messages';
+import { messages } from '../messages';
 import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
@@ -2695,10 +2691,10 @@ describe('controlled/uncontrolled warnings', () => {
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
     expect(consoleError).not.toHaveBeenCalled();
     rerender(<QueryBuilder query={getQuery()} />);
-    expect(consoleError).toHaveBeenLastCalledWith(errorUncontrolledToControlled);
+    expect(consoleError).toHaveBeenLastCalledWith(messages.errorUncontrolledToControlled);
     rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
-    expect(consoleError).toHaveBeenLastCalledWith(errorBothQueryDefaultQuery);
+    expect(consoleError).toHaveBeenLastCalledWith(messages.errorBothQueryDefaultQuery);
     rerender(<QueryBuilder defaultQuery={getQuery()} />);
-    expect(consoleError).toHaveBeenLastCalledWith(errorControlledToUncontrolled);
+    expect(consoleError).toHaveBeenLastCalledWith(messages.errorControlledToUncontrolled);
   });
 });

@@ -5,10 +5,7 @@
 import { render } from '@testing-library/react';
 import * as React from 'react';
 import { consoleMocks } from '../../genericTests';
-import {
-  errorInvalidIndependentCombinatorsProp,
-  errorUnnecessaryIndependentCombinatorsProp,
-} from '../messages';
+import { messages } from '../messages';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type QB = typeof import('./QueryBuilder');
@@ -19,10 +16,12 @@ describe('deprecated props - unnecessary independentCombinators', () => {
   it('warns about unnecessary independentCombinators prop', () => {
     const { QueryBuilder } = jest.requireActual<QB>('./QueryBuilder');
     render(<QueryBuilder query={{ rules: [] }} />);
-    expect(consoleError).not.toHaveBeenCalledWith(errorUnnecessaryIndependentCombinatorsProp);
+    expect(consoleError).not.toHaveBeenCalledWith(
+      messages.errorUnnecessaryIndependentCombinatorsProp
+    );
     // independentCombinators is unnecessary even if it's false
     render(<QueryBuilder independentCombinators={false} query={{ rules: [] }} />);
-    expect(consoleError).toHaveBeenCalledWith(errorUnnecessaryIndependentCombinatorsProp);
+    expect(consoleError).toHaveBeenCalledWith(messages.errorUnnecessaryIndependentCombinatorsProp);
   });
 });
 
@@ -30,8 +29,8 @@ describe('deprecated props - invalid independentCombinators', () => {
   it('warns about invalid independentCombinators prop', () => {
     const { QueryBuilder } = jest.requireActual<QB>('./QueryBuilder');
     render(<QueryBuilder independentCombinators query={{ rules: [] }} />);
-    expect(consoleError).not.toHaveBeenCalledWith(errorInvalidIndependentCombinatorsProp);
+    expect(consoleError).not.toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
     render(<QueryBuilder independentCombinators query={{ combinator: 'and', rules: [] }} />);
-    expect(consoleError).toHaveBeenCalledWith(errorInvalidIndependentCombinatorsProp);
+    expect(consoleError).toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
   });
 });

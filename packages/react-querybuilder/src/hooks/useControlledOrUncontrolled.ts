@@ -1,8 +1,4 @@
-import {
-  errorBothQueryDefaultQuery,
-  errorControlledToUncontrolled,
-  errorUncontrolledToControlled,
-} from '../messages';
+import { messages } from '../messages';
 import type { RuleGroupTypeAny } from '../types';
 import { usePrevious } from './usePrevious';
 
@@ -28,7 +24,7 @@ export const useControlledOrUncontrolled = ({
   // istanbul ignore else
   if (process.env.NODE_ENV !== 'production') {
     if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
-      console.error(errorBothQueryDefaultQuery);
+      console.error(messages.errorBothQueryDefaultQuery);
       didWarnBothQueryDefaultQuery = true;
     } else if (
       prevQueryPresent === true &&
@@ -36,7 +32,7 @@ export const useControlledOrUncontrolled = ({
       !!defaultQuery &&
       !didWarnControlledToUncontrolled
     ) {
-      console.error(errorControlledToUncontrolled);
+      console.error(messages.errorControlledToUncontrolled);
       didWarnControlledToUncontrolled = true;
     } else if (
       prevQueryPresent === false &&
@@ -44,7 +40,7 @@ export const useControlledOrUncontrolled = ({
       !defaultQuery &&
       !didWarnUncontrolledToControlled
     ) {
-      console.error(errorUncontrolledToControlled);
+      console.error(messages.errorUncontrolledToControlled);
       didWarnUncontrolledToControlled = true;
     }
   }

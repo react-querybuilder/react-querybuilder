@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^15.0.6",
-    "@types/node": "^20.12.8",
+    "@types/node": "^20.12.10",
     "@types/react": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "concurrently": "^8.2.2",

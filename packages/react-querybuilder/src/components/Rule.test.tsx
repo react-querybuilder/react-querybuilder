@@ -9,7 +9,7 @@ import {
   ruleClassnames,
 } from '../../genericTests';
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
-import { errorDeprecatedRuleProps, errorEnabledDndWithoutReactDnD } from '../messages';
+import { messages } from '../messages';
 import type {
   FullField,
   FullOperator,
@@ -372,7 +372,7 @@ describe('deprecated props', () => {
   it('warns about deprecated props', () => {
     // @ts-expect-error rule prop is required
     render(<Rule {...getProps()} rule={undefined} field="f1" operator="=" value="v1" />);
-    expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleProps);
+    expect(consoleError).toHaveBeenCalledWith(messages.errorDeprecatedRuleProps);
   });
 });
 
@@ -384,7 +384,7 @@ describe('dnd warnings', () => {
         rule={{ field: 'f1', operator: 'and', value: 'v1' }}
       />
     );
-    expect(consoleError).toHaveBeenCalledWith(errorEnabledDndWithoutReactDnD);
+    expect(consoleError).toHaveBeenCalledWith(messages.errorEnabledDndWithoutReactDnD);
   });
 });
 

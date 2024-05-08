@@ -14,7 +14,7 @@
 
 _**Complete documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org)**._
 
-![Screenshot](_assets/screenshot.png)
+<!-- ![Screenshot](_assets/screenshot.png) -->
 
 ## Getting started
 
