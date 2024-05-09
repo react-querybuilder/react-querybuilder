@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `displayName` is no longer explicitly declared for any components.
 
+### Added
+
+- [#688] `parseJSONata`, an experimental [JSONata](https://jsonata.org/) parser.
+
 ## [v7.2.1] - 2024-05-06
 
 ### Fixed
@@ -1606,6 +1610,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#671]: https://github.com/react-querybuilder/react-querybuilder/pull/671
 [#677]: https://github.com/react-querybuilder/react-querybuilder/issues/677
 [#682]: https://github.com/react-querybuilder/react-querybuilder/issues/682
+[#688]: https://github.com/react-querybuilder/react-querybuilder/pull/688
 [#692]: https://github.com/react-querybuilder/react-querybuilder/pull/692
 
 <!-- Release comparison links -->
