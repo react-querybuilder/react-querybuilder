@@ -66,5 +66,6 @@ export function load(app) {
         label: 'Compatibility packages',
       })
     );
+    writeFileSync('./api/.gitkeep', '');
   });
 }

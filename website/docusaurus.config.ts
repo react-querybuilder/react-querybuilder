@@ -104,6 +104,7 @@ const config: Config = {
                   ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
               },
               enumMembersFormat: 'table',
+              parametersFormat: 'table',
               sidebar: { autoConfiguration: false, pretty: false },
               sortEntryPoints: true,
               plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
