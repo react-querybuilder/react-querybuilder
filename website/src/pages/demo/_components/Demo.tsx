@@ -19,6 +19,7 @@ import {
 } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
+import { parseJSONata } from 'react-querybuilder/parseJSONata';
 import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
 import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
 import { parseSpEL } from 'react-querybuilder/parseSpEL';
@@ -78,6 +79,7 @@ const initialMongoDB = JSON.stringify(
 );
 const initialSpEL = `firstName matches "^Stev" && age > 28`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
+const initialJSONata = `$contains(firstName, "Stev") and age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
 const permalinkText = 'Copy permalink';
@@ -107,6 +109,7 @@ const notesMongoDB = (
 );
 const notesSpEL = '';
 const notesCEL = '';
+const notesJSONata = '';
 const notesJsonLogic = (
   <em>
     Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
@@ -188,6 +191,9 @@ export default function Demo({
   const [isCELInputVisible, setIsCELInputVisible] = useState(false);
   const [cel, setCEL] = useState(initialCEL);
   const [celParseError, setCELParseError] = useState('');
+  const [jsonata, setJSONata] = useState(initialJSONata);
+  const [isJSONataInputVisible, setIsJSONataInputVisible] = useState(false);
+  const [jsonataParseError, setJSONataParseError] = useState('');
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
   const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
@@ -404,6 +410,19 @@ export default function Demo({
       setCELParseError((err as Error).message);
     }
   };
+  const loadFromJSONata = () => {
+    try {
+      const q = parseJSONata(jsonata);
+      const qIC = parseJSONata(jsonata, { independentCombinators: true });
+      setQuery(q);
+      setQueryIC(qIC);
+      setIsJSONataInputVisible(false);
+      setJSONataParseError('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setJSONataParseError((err as Error).message);
+    }
+  };
 
   const _getPermalinkUncompressed = () =>
     `${location.origin}${siteLocation.pathname}${permalinkHash}`;
@@ -538,6 +557,9 @@ export default function Demo({
           </button>
           <button type="button" onClick={() => setIsCELInputVisible(true)}>
             Import CEL
+          </button>
+          <button type="button" onClick={() => setIsJSONataInputVisible(true)}>
+            Import JSONata
           </button>
           <div>
             <code style={{ fontSize: '8pt', marginBottom: 'var(--ifm-global-spacing)' }}>
@@ -799,6 +821,16 @@ export default function Demo({
         error={celParseError}
         loadQueryFromCode={loadFromCEL}
         notes={notesCEL}
+      />
+      <ImportModal
+        heading="Import JSONata"
+        isOpen={isJSONataInputVisible}
+        setIsOpen={setIsJSONataInputVisible}
+        code={jsonata}
+        setCode={setJSONata}
+        error={jsonataParseError}
+        loadQueryFromCode={loadFromJSONata}
+        notes={notesJSONata}
       />
     </div>
   );

@@ -120,6 +120,7 @@ type ExportFormat =
   | 'mongodb'
   | 'cel'
   | 'jsonlogic'
+  | 'jsonata'
   | 'elasticsearch'
   | 'spel';
 

@@ -332,6 +332,44 @@ Output (`RuleGroupType`):
 }
 ```
 
+## JSONata
+
+```ts
+function parseJSONata(jsonataQuery: string, options?: ParseJSONataOptions): RuleGroupTypeAny;
+```
+
+`parseJSONata` takes a [JSONata](https://jsonata.org/) string.
+
+Click the "Import JSONata" button in [the demo](/demo) to try it out.
+
+### Usage
+
+```ts
+parseJSONata(`firstName = "Steve" and lastName in ["Vai", "Vaughan"]`);
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "Steve"
+    },
+    {
+      "field": "lastName",
+      "operator": "in",
+      "value": ["Vai", "Vaughan"]
+    }
+  ]
+}
+```
+
+JSONata lists are always translated to arrays. The [`listsAsArrays` option](#lists-as-arrays) is ignored and effectively always `true`.
+
 ## Configuration
 
 ### Lists as arrays

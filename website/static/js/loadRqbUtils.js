@@ -6,6 +6,8 @@ if (ExecutionEnvironment.canUseDOM) {
     globalThis.formatQuery = formatQuery;
     const { parseCEL } = await import('react-querybuilder/parseCEL');
     globalThis.parseCEL = parseCEL;
+    const { parseJSONata } = await import('react-querybuilder/parseJSONata');
+    globalThis.parseJSONata = parseJSONata;
     const { parseJsonLogic } = await import('react-querybuilder/parseJsonLogic');
     globalThis.parseJsonLogic = parseJsonLogic;
     const { parseMongoDB } = await import('react-querybuilder/parseMongoDB');
@@ -20,6 +22,7 @@ if (ExecutionEnvironment.canUseDOM) {
       `RQB utilities available in the console:
  • formatQuery
  • parseCEL
+ • parseJSONata
  • parseJsonLogic
  • parseMongoDB
  • parseSpEL

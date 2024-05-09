@@ -232,9 +232,7 @@ it('mixed and/or', () => {
     ],
   });
   testParseCEL(
-    parseCEL(
-      `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true`
-    ),
+    `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true`,
     {
       combinator: 'or',
       rules: [
@@ -251,9 +249,7 @@ it('mixed and/or', () => {
     }
   );
   testParseCEL(
-    parseCEL(
-      `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true || fieldName == 'Test'`
-    ),
+    `firstName == 'Steve' && lastName == 'Vai' || middleName == null || isMusician == true || fieldName == 'Test'`,
     {
       combinator: 'or',
       rules: [

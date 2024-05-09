@@ -280,6 +280,14 @@ export interface ParseCELOptions extends ParserCommonOptions {}
 export interface ParseSpELOptions extends ParserCommonOptions {}
 
 /**
+ * Options object for {@link parseJSONata}.
+ *
+ * Note: `listsAsArrays` is ignored by `parseJSONata`; lists are _always_ arrays.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ParseJSONataOptions extends ParserCommonOptions {}
+
+/**
  * Options object for {@link parseJsonLogic}.
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {

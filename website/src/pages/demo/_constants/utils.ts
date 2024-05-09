@@ -96,7 +96,11 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
 };
 
 export const getExportDisplayLanguage = (format: ExportFormat) =>
-  format === 'sql' || format === 'cel' || format === 'spel' || format === 'mongodb'
+  format === 'sql' ||
+  format === 'cel' ||
+  format === 'spel' ||
+  format === 'mongodb' ||
+  format === 'jsonata'
     ? format
     : 'json';
 

@@ -80,6 +80,7 @@ Since the [parser functions](./utils/import) are used less frequently than other
 +import { parseSQL } from "react-querybuilder/parseSQL"
  // (New in version 7)
 +import { parseSpEL } from "react-querybuilder/parseSpEL"
++import { parseJSONata } from "react-querybuilder/parseJSONata"
 ```
 
 ### Miscellaneous

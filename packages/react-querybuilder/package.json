@@ -27,6 +27,10 @@
       "types": "./dist/parseCEL.d.ts",
       "default": "./dist/parseCEL.js"
     },
+    "./parseJSONata": {
+      "types": "./dist/parseJSONata.d.ts",
+      "default": "./dist/parseJSONata.js"
+    },
     "./parseJsonLogic": {
       "types": "./dist/parseJsonLogic.d.ts",
       "default": "./dist/parseJsonLogic.js"
@@ -54,6 +58,7 @@
     "dist",
     "formatQuery",
     "parseCEL",
+    "parseJSONata",
     "parseJsonLogic",
     "parseMongoDB",
     "parseSpEL",

@@ -88,6 +88,7 @@ if (process.env.NODE_ENV === 'production') {
       entry: {
         formatQuery: 'src/utils/formatQuery/index.ts',
         parseCEL: 'src/utils/parseCEL/index.ts',
+        parseJSONata: 'src/utils/parseJSONata/index.ts',
         parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
         parseMongoDB: 'src/utils/parseMongoDB/index.ts',
         parseSpEL: 'src/utils/parseSpEL/index.ts',

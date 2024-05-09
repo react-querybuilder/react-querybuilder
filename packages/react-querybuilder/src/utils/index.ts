@@ -27,6 +27,7 @@ export * from './uniq';
 // To reduce bundle size, these are only available as
 // separate exports as of v7.
 // export * from './parseCEL';
+// export * from './parseJSONata';
 // export * from './parseJsonLogic';
 // export * from './parseMongoDB';
 // export * from './parseSpEL';
