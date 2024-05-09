@@ -260,5 +260,3 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps) => {
     />
   );
 };
-
-TremorValueEditor.displayName = 'TremorValueEditor';

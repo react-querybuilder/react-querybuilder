@@ -49,5 +49,3 @@ export const AntDValueSelector = ({
     </span>
   );
 };
-
-AntDValueSelector.displayName = 'AntDValueSelector';

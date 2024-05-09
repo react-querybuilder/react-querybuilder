@@ -72,5 +72,3 @@ export const MaterialActionElement = ({
     </Button>
   );
 };
-
-MaterialActionElement.displayName = 'MaterialActionElement';

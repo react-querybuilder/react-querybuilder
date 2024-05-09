@@ -176,5 +176,3 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps) => {
     />
   );
 };
-
-FluentValueEditor.displayName = 'FluentValueEditor';

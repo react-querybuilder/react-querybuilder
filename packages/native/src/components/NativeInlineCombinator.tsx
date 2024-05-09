@@ -27,5 +27,3 @@ export const NativeInlineCombinator = ({
     </View>
   );
 };
-
-NativeInlineCombinator.displayName = 'NativeInlineCombinator';

@@ -27,5 +27,3 @@ export const RuleDnD = (props: RuleProps) => {
     </QueryBuilderDndContext.Provider>
   );
 };
-
-RuleDnD.displayName = 'RuleDnD';

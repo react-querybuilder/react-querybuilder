@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { consoleMocks, getRuleGroupProps } from '../../genericTests';
 import { TestID, defaultCombinators } from '../defaults';
-import { errorDeprecatedRuleGroupProps } from '../messages';
+import { messages } from '../messages';
 import { add } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -39,7 +39,7 @@ it('warns about deprecated props (independent combinators)', async () => {
       combinator={undefined}
     />
   );
-  expect(consoleError).toHaveBeenCalledWith(errorDeprecatedRuleGroupProps);
+  expect(consoleError).toHaveBeenCalledWith(messages.errorDeprecatedRuleGroupProps);
 
   await user.click(screen.getByTestId(TestID.addRule));
   expect(addListener).toHaveBeenCalledTimes(1);

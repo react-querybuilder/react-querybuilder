@@ -1,8 +1,4 @@
-import {
-  errorBothQueryDefaultQuery,
-  errorControlledToUncontrolled,
-  errorUncontrolledToControlled,
-} from '../messages';
+import { messages } from '../messages';
 import type { RuleGroupTypeAny } from '../types';
 import { usePrevious } from './usePrevious';
 
@@ -19,16 +15,14 @@ let didWarnControlledToUncontrolled = false;
  * Logs a warning when the component changes from controlled to uncontrolled,
  * vice versa, or both `query` and `defaultQuery` are provided.
  */
-export const useControlledOrUncontrolled = ({
-  defaultQuery,
-  queryProp,
-}: UseControlledOrUncontrolledParams) => {
+export const useControlledOrUncontrolled = (params: UseControlledOrUncontrolledParams) => {
+  const { defaultQuery, queryProp } = params;
   const prevQueryPresent = usePrevious(!!queryProp);
 
   // istanbul ignore else
   if (process.env.NODE_ENV !== 'production') {
     if (!!queryProp && !!defaultQuery && !didWarnBothQueryDefaultQuery) {
-      console.error(errorBothQueryDefaultQuery);
+      console.error(messages.errorBothQueryDefaultQuery);
       didWarnBothQueryDefaultQuery = true;
     } else if (
       prevQueryPresent === true &&
@@ -36,7 +30,7 @@ export const useControlledOrUncontrolled = ({
       !!defaultQuery &&
       !didWarnControlledToUncontrolled
     ) {
-      console.error(errorControlledToUncontrolled);
+      console.error(messages.errorControlledToUncontrolled);
       didWarnControlledToUncontrolled = true;
     } else if (
       prevQueryPresent === false &&
@@ -44,7 +38,7 @@ export const useControlledOrUncontrolled = ({
       !defaultQuery &&
       !didWarnUncontrolledToControlled
     ) {
-      console.error(errorUncontrolledToControlled);
+      console.error(messages.errorUncontrolledToControlled);
       didWarnUncontrolledToControlled = true;
     }
   }

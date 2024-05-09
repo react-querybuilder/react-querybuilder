@@ -32,5 +32,3 @@ export const MantineNotToggle = ({
     onChange={e => handleOnChange(e.target.checked)}
   />
 );
-
-MantineNotToggle.displayName = 'MantineNotToggle';

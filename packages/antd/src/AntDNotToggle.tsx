@@ -32,5 +32,3 @@ export const AntDNotToggle = ({
     {...extraProps}
   />
 );
-
-AntDNotToggle.displayName = 'AntDNotToggle';

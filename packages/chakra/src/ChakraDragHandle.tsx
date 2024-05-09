@@ -40,5 +40,3 @@ export const ChakraDragHandle = forwardRef<HTMLSpanElement, ChakraDragHandleProp
     </span>
   )
 );
-
-ChakraDragHandle.displayName = 'ChakraDragHandle';

@@ -185,5 +185,3 @@ export const NativeBaseValueEditor = ({
     />
   );
 };
-
-NativeBaseValueEditor.displayName = 'NativeBaseValueEditor';

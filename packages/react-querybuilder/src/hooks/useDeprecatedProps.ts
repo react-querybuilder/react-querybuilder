@@ -1,9 +1,4 @@
-import {
-  errorDeprecatedRuleGroupProps,
-  errorDeprecatedRuleProps,
-  errorInvalidIndependentCombinatorsProp,
-  errorUnnecessaryIndependentCombinatorsProp,
-} from '../messages';
+import { messages } from '../messages';
 
 let didWarnUsingInvalidIndependentCombinatorsProp = false;
 let didWarnUsingUnnecessaryIndependentCombinatorsProp = false;
@@ -32,22 +27,22 @@ function useDeprecatedProps(
   if (process.env.NODE_ENV !== 'production' && logWarning) {
     if (type === 'independentCombinators') {
       if (!didWarnUsingInvalidIndependentCombinatorsProp && otherParams === 'invalid') {
-        console.error(errorInvalidIndependentCombinatorsProp);
+        console.error(messages.errorInvalidIndependentCombinatorsProp);
         didWarnUsingInvalidIndependentCombinatorsProp = true;
       }
       if (!didWarnUsingUnnecessaryIndependentCombinatorsProp && otherParams === 'unnecessary') {
-        console.error(errorUnnecessaryIndependentCombinatorsProp);
+        console.error(messages.errorUnnecessaryIndependentCombinatorsProp);
         didWarnUsingUnnecessaryIndependentCombinatorsProp = true;
       }
     }
 
     if (type === 'rule' && !didWarnUsingDeprecatedRuleProps) {
-      console.error(errorDeprecatedRuleProps);
+      console.error(messages.errorDeprecatedRuleProps);
       didWarnUsingDeprecatedRuleProps = true;
     }
 
     if (type === 'ruleGroup' && !didWarnUsingDeprecatedRuleGroupProps) {
-      console.error(errorDeprecatedRuleGroupProps);
+      console.error(messages.errorDeprecatedRuleGroupProps);
       didWarnUsingDeprecatedRuleGroupProps = true;
     }
   }

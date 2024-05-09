@@ -287,5 +287,3 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps) => {
     />
   );
 };
-
-MantineValueEditor.displayName = 'MantineValueEditor';

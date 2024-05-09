@@ -32,5 +32,3 @@ export const TremorShiftActions = ({
     </Button>
   </div>
 );
-
-TremorShiftActions.displayName = 'TremorShiftActions';

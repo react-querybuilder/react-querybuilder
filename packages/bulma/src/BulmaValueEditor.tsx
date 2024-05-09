@@ -126,5 +126,3 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
     </div>
   );
 };
-
-BulmaValueEditor.displayName = 'BulmaValueEditor';

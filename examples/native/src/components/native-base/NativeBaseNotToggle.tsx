@@ -45,5 +45,3 @@ export const NativeBaseNotToggle = ({
     </View>
   );
 };
-
-NativeBaseNotToggle.displayName = 'NativeBaseNotToggle';

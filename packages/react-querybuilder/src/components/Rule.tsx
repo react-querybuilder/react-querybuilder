@@ -31,8 +31,6 @@ export const Rule = React.memo((props: RuleProps) => {
   );
 });
 
-Rule.displayName = 'Rule';
-
 /**
  * Renders a `React.Fragment` containing an array of form controls for managing
  * a {@link RuleType}.

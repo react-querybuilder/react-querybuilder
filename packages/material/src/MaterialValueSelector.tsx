@@ -91,5 +91,3 @@ export const MaterialValueSelector = ({
     </FormControl>
   );
 };
-
-MaterialValueSelector.displayName = 'MaterialValueSelector';

@@ -29,5 +29,3 @@ export const AntDDragHandle = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
     dragRef
   ) => <HolderOutlined ref={dragRef} className={className} title={title} {...extraProps} />
 );
-
-AntDDragHandle.displayName = 'AntDDragHandle';

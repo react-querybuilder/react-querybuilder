@@ -14,5 +14,3 @@ export const FluentDragHandle = forwardRef<HTMLSpanElement, DragHandleProps & Te
     </Text>
   )
 );
-
-FluentDragHandle.displayName = 'FluentDragHandle';

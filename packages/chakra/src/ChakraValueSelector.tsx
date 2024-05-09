@@ -40,5 +40,3 @@ export const ChakraValueSelector = ({
     {toOptions(options)}
   </Select>
 );
-
-ChakraValueSelector.displayName = 'ChakraValueSelector';

@@ -39,5 +39,3 @@ export const NativeNotToggle = ({
     </View>
   );
 };
-
-NativeNotToggle.displayName = 'NativeNotToggle';

@@ -32,5 +32,3 @@ export const AntDShiftActions = ({
     </Button>
   </div>
 );
-
-AntDShiftActions.displayName = 'AntDShiftActions';

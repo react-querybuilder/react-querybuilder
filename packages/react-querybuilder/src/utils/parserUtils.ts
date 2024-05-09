@@ -20,19 +20,15 @@ export const getFieldsArray = (fields?: OptionList<FullField> | Record<string, F
   return toFlatOptionArray(fieldsArray);
 };
 
-export function fieldIsValidUtil({
-  fieldsFlat,
-  fieldName,
-  operator,
-  subordinateFieldName,
-  getValueSources,
-}: {
+export function fieldIsValidUtil(params: {
   fieldsFlat: FullField[];
   getValueSources?: (field: string, operator: string) => ValueSources;
   fieldName: string;
   operator: DefaultOperatorName;
   subordinateFieldName?: string;
 }) {
+  const { fieldsFlat, fieldName, operator, subordinateFieldName, getValueSources } = params;
+
   // If fields option was an empty array or undefined, then all identifiers
   // are considered valid.
   if (fieldsFlat.length === 0) return true;

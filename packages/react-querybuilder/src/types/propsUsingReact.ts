@@ -503,6 +503,12 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
  * then `defaultQuery` should be undefined and vice versa.
  * - If rendered initially with a `query` prop, then `query` must be defined in every
  * subsequent render or warnings will be logged (in non-production modes only).
+ *
+ * @typeParam RG - The type of the query object, inferred from either the `query` or `defaultQuery` prop.
+ * Must extend {@link RuleGroupType} or {@link RuleGroupTypeIC}.
+ * @typeParam F - The field type (see {@link Field}).
+ * @typeParam O - The operator type (see {@link Operator}).
+ * @typeParam C - The combinator type (see {@link Combinator}).
  */
 export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,

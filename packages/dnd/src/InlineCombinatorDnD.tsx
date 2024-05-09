@@ -33,5 +33,3 @@ export const InlineCombinatorDnD = ({
     </div>
   );
 };
-
-InlineCombinatorDnD.displayName = 'InlineCombinatorDnD';

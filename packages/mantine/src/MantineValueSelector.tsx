@@ -58,5 +58,3 @@ export const MantineValueSelector = ({
     />
   );
 };
-
-MantineValueSelector.displayName = 'MantineValueSelector';

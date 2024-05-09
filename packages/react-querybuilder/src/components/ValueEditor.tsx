@@ -156,5 +156,3 @@ export const ValueEditor = <F extends FullField>(allProps: ValueEditorProps<F>) 
     />
   );
 };
-
-ValueEditor.displayName = 'ValueEditor';

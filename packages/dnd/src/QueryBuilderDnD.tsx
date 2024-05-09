@@ -63,8 +63,6 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
   );
 };
 
-QueryBuilderDnD.displayName = 'QueryBuilderDnD';
-
 export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
   const rqbContext = useContext(QueryBuilderContext);
   const rqbDndContext = useContext(QueryBuilderDndContext);
@@ -127,5 +125,3 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
     </DndContext.Consumer>
   );
 };
-
-QueryBuilderDndWithoutProvider.displayName = 'QueryBuilderDndWithoutProvider';

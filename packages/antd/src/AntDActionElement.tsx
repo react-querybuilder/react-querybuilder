@@ -40,5 +40,3 @@ export const AntDActionElement = ({
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
-
-AntDActionElement.displayName = 'AntDActionElement';

@@ -33,5 +33,3 @@ export const TremorActionElement = ({
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );
-
-TremorActionElement.displayName = 'TremorActionElement';

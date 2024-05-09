@@ -5,6 +5,10 @@ import type { Config } from '@docusaurus/types';
 import { themes } from 'prism-react-renderer/dist/index.mjs';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
+import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
+import type { PluginOptions as TypedocPluginMarkdownOptions } from 'typedoc-plugin-markdown';
+import type { TypeDocOptions } from 'typedoc';
+
 const config: Config = {
   title: 'React Query Builder',
   tagline: 'The Query Builder Component for React',
@@ -86,19 +90,27 @@ const config: Config = {
                 '../packages/native',
                 '../packages/tremor',
               ],
-              out: '../api',
+              out: './api',
               entryPointStrategy: 'packages',
+              cleanOutputDir: true,
               includeVersion: true,
               name: 'React Query Builder API',
-              readme: '_API_INDEX.md',
-              indexTitle: 'React Query Builder API',
-              includeExtension: false,
-              hideMembersSymbol: true,
-              sidebar: {
-                readmeLabel: 'API Index',
-                fullNames: false,
+              readme: 'none',
+              textContentMappings: {
+                'title.indexPage': 'API Index',
+                'title.memberPage': '{name}',
+                'title.modulePage': '{name}',
+                'footer.text':
+                  ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
               },
-            },
+              enumMembersFormat: 'table',
+              parametersFormat: 'table',
+              sidebar: { autoConfiguration: false, pretty: false },
+              sortEntryPoints: true,
+              plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
+            } satisfies Partial<
+              DocusaurusPluginTypedocOptions & TypedocPluginMarkdownOptions & TypeDocOptions
+            >,
           ],
         ]),
     [
@@ -108,7 +120,6 @@ const config: Config = {
         path: 'api',
         routeBasePath: 'api',
         editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
-        sidebarPath: require.resolve('./sidebarAPI.js'),
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
         versions: { current: { label: 'Latest' } },
@@ -207,7 +218,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          to: '/api',
+          to: '/api/react-querybuilder',
           label: 'API',
           position: 'right',
         },

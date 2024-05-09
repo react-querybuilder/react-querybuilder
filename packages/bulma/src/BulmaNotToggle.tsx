@@ -19,5 +19,3 @@ export const BulmaNotToggle = ({
     {label}
   </label>
 );
-
-BulmaNotToggle.displayName = 'BulmaNotToggle';

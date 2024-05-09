@@ -32,5 +32,3 @@ export const FluentNotToggle = ({
     onChange={e => handleOnChange(e.target.checked)}
   />
 );
-
-FluentNotToggle.displayName = 'FluentNotToggle';

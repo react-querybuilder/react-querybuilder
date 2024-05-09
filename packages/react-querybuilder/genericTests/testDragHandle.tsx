@@ -12,7 +12,10 @@ export const defaultDragHandleProps = {
 } satisfies DragHandleProps;
 
 export const testDragHandle = (
-  DragHandle: React.ForwardRefExoticComponent<DragHandleProps & React.RefAttributes<any>>
+  DragHandle: React.ForwardRefExoticComponent<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    DragHandleProps & React.RefAttributes<any>
+  >
 ) => {
   const title = DragHandle.displayName ?? 'DragHandle';
   const props = { ...defaultDragHandleProps, title };

@@ -17,5 +17,3 @@ export const NativeBaseValueSelector = ({
     ))}
   </Select>
 );
-
-NativeBaseValueSelector.displayName = 'NativeBaseValueSelector';

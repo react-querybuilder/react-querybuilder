@@ -21,5 +21,3 @@ export const RuleNative = (props: RuleNativeProps) => {
     </View>
   );
 };
-
-RuleNative.displayName = 'RuleNative';
