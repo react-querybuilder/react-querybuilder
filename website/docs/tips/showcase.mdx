@@ -337,12 +337,10 @@ const initialQuery: RuleGroupType = {
 
 const RemoveRule = (props: ActionWithRulesAndAddersProps) => {
   const query = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
-  if (!query) {
-    return null;
-  }
+  if (!query) return null;
   const parentPath = getParentPath(props.path);
-  /** Count of rules in the same group */ const siblingCount =
-    (findPath(parentPath, query) as RuleGroupType).rules.length - 1;
+  /** Count of rules in the same group */
+  const siblingCount = (findPath(parentPath, query) as RuleGroupType).rules.length - 1;
   const onClick = (e: React.MouseEvent) => {
     if (siblingCount > 0) {
       // If sibling rules exist, remove the current rule
