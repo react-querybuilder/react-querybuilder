@@ -44,17 +44,19 @@ export type UseValueEditorParams = Pick<
  * `{ field: "f1", operator: "between", value: "12,14" }`
  * // If `operator` changes to "=", the value will be reset to "12".
  */
-export const useValueEditor = ({
-  handleOnChange,
-  inputType,
-  operator,
-  value,
-  listsAsArrays,
-  parseNumbers,
-  values,
-  type,
-  skipHook,
-}: UseValueEditorParams) => {
+export const useValueEditor = (props: UseValueEditorParams) => {
+  const {
+    handleOnChange,
+    inputType,
+    operator,
+    value,
+    listsAsArrays,
+    parseNumbers,
+    values,
+    type,
+    skipHook,
+  } = props;
+
   useEffect(() => {
     if (
       !skipHook &&

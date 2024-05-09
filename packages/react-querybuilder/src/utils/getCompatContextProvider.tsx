@@ -13,14 +13,17 @@ export type GetCompatContextProviderProps = Pick<
 /**
  * Generates a context provider for a compatibility package.
  */
-export const getCompatContextProvider =
-  ({
+export const getCompatContextProvider = (
+  gccpProps: GetCompatContextProviderProps
+): QueryBuilderContextProvider => {
+  const {
     key,
     controlClassnames: compatClassnames,
     controlElements: compatElements,
     translations: compatTranslations,
-  }: GetCompatContextProviderProps): QueryBuilderContextProvider =>
-  props => {
+  } = gccpProps;
+
+  return props => {
     const rqbContext = useContext(QueryBuilderContext);
 
     const classnamesObject = useMemo(
@@ -62,3 +65,4 @@ export const getCompatContextProvider =
       </QueryBuilderContext.Provider>
     );
   };
+};

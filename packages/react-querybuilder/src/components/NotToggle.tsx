@@ -4,22 +4,14 @@ import type { NotToggleProps } from '../types';
 /**
  * Default `notToggle` (aka inversion) component used by {@link QueryBuilder}.
  */
-export const NotToggle = ({
-  className,
-  handleOnChange,
-  title,
-  label,
-  checked,
-  disabled,
-  testID,
-}: NotToggleProps) => (
-  <label data-testid={testID} className={className} title={title}>
+export const NotToggle = (props: NotToggleProps) => (
+  <label data-testid={props.testID} className={props.className} title={props.title}>
     <input
       type="checkbox"
-      onChange={e => handleOnChange(e.target.checked)}
-      checked={!!checked}
-      disabled={disabled}
+      onChange={e => props.handleOnChange(e.target.checked)}
+      checked={!!props.checked}
+      disabled={props.disabled}
     />
-    {label}
+    {props.label}
   </label>
 );

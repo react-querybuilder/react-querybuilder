@@ -7,12 +7,16 @@ import type { InlineCombinatorProps } from '../types';
  * wrapper around the `combinatorSelector` component, used when either
  * `showCombinatorsBetweenRules` or `independentCombinators` are `true`.
  */
-export const InlineCombinator = ({
-  component: CombinatorSelectorComponent,
-  independentCombinators: _independentCombinators,
-  ...props
-}: InlineCombinatorProps) => (
-  <div className={standardClassnames.betweenRules} data-testid={TestID.inlineCombinator}>
-    <CombinatorSelectorComponent {...props} testID={TestID.combinators} />
-  </div>
-);
+export const InlineCombinator = (allProps: InlineCombinatorProps) => {
+  const {
+    component: CombinatorSelectorComponent,
+    independentCombinators: _ic,
+    ...props
+  } = allProps;
+
+  return (
+    <div className={standardClassnames.betweenRules} data-testid={TestID.inlineCombinator}>
+      <CombinatorSelectorComponent {...props} testID={TestID.combinators} />
+    </div>
+  );
+};

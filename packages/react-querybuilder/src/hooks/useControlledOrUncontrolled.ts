@@ -15,10 +15,8 @@ let didWarnControlledToUncontrolled = false;
  * Logs a warning when the component changes from controlled to uncontrolled,
  * vice versa, or both `query` and `defaultQuery` are provided.
  */
-export const useControlledOrUncontrolled = ({
-  defaultQuery,
-  queryProp,
-}: UseControlledOrUncontrolledParams) => {
+export const useControlledOrUncontrolled = (params: UseControlledOrUncontrolledParams) => {
+  const { defaultQuery, queryProp } = params;
   const prevQueryPresent = usePrevious(!!queryProp);
 
   // istanbul ignore else

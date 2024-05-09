@@ -22,9 +22,9 @@ export const rootPath = [] satisfies Path;
 /**
  * Context provider for the `{@link QueryBuilder}` state store.
  */
-export const QueryBuilderStateProvider = ({ children }: { children: React.ReactNode }) => (
+export const QueryBuilderStateProvider = (props: { children: React.ReactNode }) => (
   <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
-    {children}
+    {props.children}
   </Provider>
 );
 
@@ -33,13 +33,12 @@ const QueryBuilderInternal = <
   F extends FullField,
   O extends FullOperator,
   C extends FullCombinator,
->({
-  setup,
-  props,
-}: {
+>(allProps: {
   props: QueryBuilderProps<RG, F, O, C>;
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
+  const { setup, props } = allProps;
+
   const qb = useQueryBuilderSchema<RG, F, O, C>(props, setup);
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;

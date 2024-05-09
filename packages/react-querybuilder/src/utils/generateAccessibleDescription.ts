@@ -1,5 +1,5 @@
-import type { AccessibleDescriptionGenerator as ADG } from '../types/index';
+import type { AccessibleDescriptionGenerator as ADG } from '../types/index.noReact';
 import { pathsAreEqual } from './pathUtils';
 
-export const generateAccessibleDescription: ADG = ({ path, qbId: _qbID }) =>
-  pathsAreEqual([], path) ? `Query builder` : `Rule group at path ${path.join('-')}`;
+export const generateAccessibleDescription: ADG = params =>
+  pathsAreEqual([], params.path) ? `Query builder` : `Rule group at path ${params.path.join('-')}`;

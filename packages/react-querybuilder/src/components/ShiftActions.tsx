@@ -4,28 +4,19 @@ import type { ShiftActionsProps } from '../types';
 /**
  * Default "shift up"/"shift down" buttons used by {@link QueryBuilder}.
  */
-export const ShiftActions = ({
-  disabled,
-  shiftUp,
-  shiftDown,
-  shiftUpDisabled,
-  shiftDownDisabled,
-  className,
-  labels,
-  titles,
-  testID,
-}: ShiftActionsProps) => {
-  return (
-    <div data-testid={testID} className={className}>
-      <button disabled={disabled || shiftUpDisabled} onClick={shiftUp} title={titles?.shiftUp}>
-        {labels?.shiftUp}
-      </button>
-      <button
-        disabled={disabled || shiftDownDisabled}
-        onClick={shiftDown}
-        title={titles?.shiftDown}>
-        {labels?.shiftDown}
-      </button>
-    </div>
-  );
-};
+export const ShiftActions = (props: ShiftActionsProps) => (
+  <div data-testid={props.testID} className={props.className}>
+    <button
+      disabled={props.disabled || props.shiftUpDisabled}
+      onClick={props.shiftUp}
+      title={props.titles?.shiftUp}>
+      {props.labels?.shiftUp}
+    </button>
+    <button
+      disabled={props.disabled || props.shiftDownDisabled}
+      onClick={props.shiftDown}
+      title={props.titles?.shiftDown}>
+      {props.labels?.shiftDown}
+    </button>
+  </div>
+);

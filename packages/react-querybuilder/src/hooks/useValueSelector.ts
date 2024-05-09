@@ -11,12 +11,9 @@ export type UseValueSelectorParams = Pick<
  * Transforms a value into an array when appropriate and provides
  * a memoized change handler.
  */
-export const useValueSelector = ({
-  handleOnChange,
-  listsAsArrays = false,
-  multiple = false,
-  value,
-}: UseValueSelectorParams) => {
+export const useValueSelector = (props: UseValueSelectorParams) => {
+  const { handleOnChange, listsAsArrays = false, multiple = false, value } = props;
+
   const onChange = useCallback(
     (v: string | string[]) => {
       if (multiple) {
