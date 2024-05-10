@@ -21,12 +21,24 @@ const isOptionWithValue = (opt: BaseOption): opt is ValueOption =>
  * Converts an {@link Option} or {@link ValueOption} (i.e., {@link BaseOption})
  * into a {@link FullOption}. Full options are left unchanged.
  */
-function toFullOption<Opt extends BaseOption>(opt: Opt): ToFullOption<Opt> {
+function toFullOption<Opt extends BaseOption>(
+  opt: Opt,
+  baseProperties?: Record<string, unknown>
+): ToFullOption<Opt> {
   const recipe: (o: Opt) => ToFullOption<Opt> = produce(draft => {
+    const idObj: { name?: string; value?: string } = {};
+    let needsUpdating = !!baseProperties;
+
     if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
-      draft.value = draft.name;
+      idObj.value = draft.name;
+      needsUpdating = true;
     } else if (!isOptionWithName(draft) && isOptionWithValue(draft)) {
-      draft.name = draft.value;
+      idObj.name = draft.value;
+      needsUpdating = true;
+    }
+
+    if (needsUpdating) {
+      return Object.assign({}, baseProperties, draft, idObj);
     }
   });
   return recipe(opt);
@@ -37,7 +49,8 @@ function toFullOption<Opt extends BaseOption>(opt: Opt): ToFullOption<Opt> {
  * Lists of full options are left unchanged.
  */
 function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOptionList<Opt>>(
-  optList: OptList
+  optList: OptList,
+  baseProperties?: Record<string, unknown>
 ): FullOptionList<Opt> {
   if (!Array.isArray(optList)) {
     return [] as unknown as FullOptionList<Opt>;
@@ -46,10 +59,12 @@ function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOption
   const recipe: (ol: FlexibleOptionList<Opt>) => FullOptionList<Opt> = produce(draft => {
     if (isFlexibleOptionGroupArray(draft)) {
       for (const optGroup of draft) {
-        optGroup.options.forEach((opt, idx) => (optGroup.options[idx] = toFullOption(opt)));
+        optGroup.options.forEach(
+          (opt, idx) => (optGroup.options[idx] = toFullOption(opt, baseProperties))
+        );
       }
     } else {
-      (draft as Opt[]).forEach((opt, idx) => (draft[idx] = toFullOption(opt)));
+      (draft as Opt[]).forEach((opt, idx) => (draft[idx] = toFullOption(opt, baseProperties)));
     }
   });
 
@@ -61,7 +76,8 @@ function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOption
  * Lists of full options are left unchanged.
  */
 function toFullOptionMap<OptMap extends BaseOptionMap>(
-  optMap: OptMap
+  optMap: OptMap,
+  baseProperties?: Record<string, unknown>
 ): OptMap extends BaseOptionMap<infer V, infer K> ? Partial<Record<K, ToFullOption<V>>> : never {
   type FullOptMapType =
     OptMap extends BaseOptionMap<infer VT, infer KT>
@@ -69,7 +85,10 @@ function toFullOptionMap<OptMap extends BaseOptionMap>(
       : never;
 
   return Object.fromEntries(
-    (Object.entries(optMap) as [string, FlexibleOption][]).map(([k, v]) => [k, toFullOption(v)])
+    (Object.entries(optMap) as [string, FlexibleOption][]).map(([k, v]) => [
+      k,
+      toFullOption(v, baseProperties),
+    ])
   ) as FullOptMapType;
 }
 

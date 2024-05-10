@@ -136,12 +136,12 @@ export const ruleGroupClassnames = {
 
 const ruleGroupSchema = {
   qbId: 'qbId',
-  fields: [{ name: 'field1', label: 'Field 1' }].map(toFullOption),
+  fields: [{ name: 'field1', label: 'Field 1' }].map(o => toFullOption(o)),
   combinators: defaultCombinators,
   controls: { ...defaultControlElements, ...ruleGroupControls },
   classNames: { ...defaultControlClassnames, ...ruleGroupClassnames },
   getInputType: () => 'text',
-  getOperators: () => [{ name: 'operator1', label: 'Operator 1' }].map(toFullOption),
+  getOperators: () => [{ name: 'operator1', label: 'Operator 1' }].map(o => toFullOption(o)),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],

@@ -65,7 +65,7 @@ describe('toFlatOptionArray', () => {
     { name: 'test1', label: 'Test1' },
     { name: 'test2', label: 'Test2' },
     { name: 'test2', label: 'Test3' },
-  ].map(toFullOption);
+  ].map(o => toFullOption(o));
 
   it('returns option arrays as is instead of flattening', () => {
     expect(toFlatOptionArray(arr)).toEqual(arr.slice(0, 2));

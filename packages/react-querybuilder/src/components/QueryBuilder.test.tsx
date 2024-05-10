@@ -33,7 +33,14 @@ import type {
   ValidationMap,
   ValueSelectorProps,
 } from '../types';
-import { defaultValidator, findPath, generateID, numericRegex, toFullOption } from '../utils';
+import {
+  defaultValidator,
+  findPath,
+  generateID,
+  getOption,
+  numericRegex,
+  toFullOption,
+} from '../utils';
 import { QueryBuilder } from './QueryBuilder';
 import { QueryBuilderContext } from './QueryBuilderContext';
 import { defaultControlElements } from './defaults';
@@ -364,12 +371,54 @@ describe('when initial operators are provided', () => {
   });
 });
 
+describe('when base properties are provided', () => {
+  it('includes base properties', async () => {
+    const fieldSelectorReporter = jest.fn();
+    const operatorSelectorReporter = jest.fn();
+    const combinatorSelectorReporter = jest.fn();
+    const getSelector =
+      (type: 'field' | 'operator' | 'combinator') => (props: ValueSelectorProps) => {
+        const opt = getOption(props.options, props.value!);
+        ({
+          field: fieldSelectorReporter,
+          operator: operatorSelectorReporter,
+          combinator: combinatorSelectorReporter,
+        })[type](opt);
+        return null;
+      };
+    render(
+      <QueryBuilder
+        addRuleToNewGroups
+        fields={[
+          { value: 'f1', label: 'One' },
+          { value: 'f2', label: 'Two' },
+        ]}
+        baseField={{ base: 'field' }}
+        baseOperator={{ base: 'operator' }}
+        baseCombinator={{ base: 'combinator' }}
+        controlElements={{
+          fieldSelector: getSelector('field'),
+          operatorSelector: getSelector('operator'),
+          combinatorSelector: getSelector('combinator'),
+        }}
+      />
+    );
+    expect(fieldSelectorReporter).toHaveBeenCalledWith(expect.objectContaining({ base: 'field' }));
+    expect(operatorSelectorReporter).toHaveBeenCalledWith(
+      expect.objectContaining({ base: 'operator' })
+    );
+    expect(combinatorSelectorReporter).toHaveBeenCalledWith(
+      expect.objectContaining({ base: 'combinator' })
+    );
+  });
+});
+
 describe('get* callbacks', () => {
   const fields: FullField[] = [
     { name: 'firstName', label: 'First Name' },
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
-  ].map(toFullOption);
+  ].map(o => toFullOption(o));
   const rule: RuleType = {
     field: 'lastName',
     value: 'Another Test',

@@ -24,6 +24,22 @@ describe('toFullOption', () => {
       label: 'l1',
     });
   });
+
+  it('retains reference', () => {
+    const o = { name: 'n1', value: 'v1', label: 'l1' };
+    expect(toFullOption(o)).toBe(o);
+  });
+
+  it('adds base properties', () => {
+    const o = { value: 'v1', label: 'l1' };
+    const base = { someDefault: 'property' };
+    expect(toFullOption(o, base)).toEqual({
+      name: 'v1',
+      value: 'v1',
+      label: 'l1',
+      someDefault: 'property',
+    });
+  });
 });
 
 describe('toFullOptionList', () => {

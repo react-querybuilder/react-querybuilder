@@ -71,8 +71,11 @@ export const useQueryBuilderSetup = <
     query: queryProp,
     defaultQuery,
     fields: fieldsPropOriginal,
+    baseField,
     operators: operatorsProp,
+    baseOperator,
     combinators: combinatorsProp = defaultCombinators,
+    baseCombinator,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
     controlClassnames: controlClassnamesProp,
@@ -126,9 +129,9 @@ export const useQueryBuilderSetup = <
   const fields = useMemo((): FullOptionList<F> => {
     const flds = (
       Array.isArray(fieldsProp)
-        ? toFullOptionList(fieldsProp)
-        : objectKeys(toFullOptionMap(fieldsProp))
-            .map(fld => ({ ...fieldsProp[fld as unknown as FieldName], name: fld }))
+        ? toFullOptionList(fieldsProp, baseField)
+        : objectKeys(toFullOptionMap(fieldsProp, baseField))
+            .map(fld => ({ ...fieldsProp[fld as unknown as FieldName], name: fld, value: fld }))
             .sort((a, b) => a.label.localeCompare(b.label))
     ) as FullOptionList<F>;
     if (isFlexibleOptionGroupArray(flds)) {
@@ -150,11 +153,17 @@ export const useQueryBuilderSetup = <
         return uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>;
       }
     }
-  }, [autoSelectField, defaultField, fieldsProp, translations.fields.placeholderGroupLabel]);
+  }, [
+    autoSelectField,
+    baseField,
+    defaultField,
+    fieldsProp,
+    translations.fields.placeholderGroupLabel,
+  ]);
 
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) {
-      const fp = toFullOptionMap(fieldsProp) as FullOptionMap<FullField, FieldName>;
+      const fp = toFullOptionMap(fieldsProp, baseField) as FullOptionMap<FullField, FieldName>;
       if (autoSelectField) {
         return fp;
       } else {
@@ -166,22 +175,34 @@ export const useQueryBuilderSetup = <
       fields.forEach(f =>
         f.options.forEach(opt => {
           fm[(opt.value ?? /* istanbul ignore next */ opt.name) as FieldName] = toFullOption(
-            opt
+            opt,
+            baseField
           ) as FullField;
         })
       );
     } else {
       fields.forEach(f => {
         fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(
-          f
+          f,
+          baseField
         ) as FullField;
       });
     }
     return fm;
-  }, [autoSelectField, defaultField, fields, fieldsProp, translations.fields.placeholderName]);
+  }, [
+    autoSelectField,
+    baseField,
+    defaultField,
+    fields,
+    fieldsProp,
+    translations.fields.placeholderName,
+  ]);
   // #endregion
 
-  const combinators = useMemo(() => toFullOptionList(combinatorsProp), [combinatorsProp]);
+  const combinators = useMemo(
+    () => toFullOptionList(combinatorsProp, baseCombinator),
+    [baseCombinator, combinatorsProp]
+  );
 
   // #region Set up `operators`
   const defaultOperator = useMemo(
@@ -196,14 +217,14 @@ export const useQueryBuilderSetup = <
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
-      let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>);
+      let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>, baseOperator);
 
       if (fieldData?.operators) {
-        opsFinal = toFullOptionList(fieldData.operators);
+        opsFinal = toFullOptionList(fieldData.operators, baseOperator);
       } else if (getOperators) {
         const ops = getOperators(field, { fieldData }) as null | FlexibleOptionList<O>;
         if (ops) {
-          opsFinal = toFullOptionList(ops);
+          opsFinal = toFullOptionList(ops, baseOperator);
         }
       }
 
@@ -225,6 +246,7 @@ export const useQueryBuilderSetup = <
     },
     [
       autoSelectOperator,
+      baseOperator,
       defaultOperator,
       getOperators,
       operators,

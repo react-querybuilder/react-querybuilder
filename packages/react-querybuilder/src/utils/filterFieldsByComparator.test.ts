@@ -15,7 +15,7 @@ const fields = (
     { name: 'f8', label: 'f8', comparator: (f: FullField) => f.name === 'f1' },
     { name: 'f9', label: 'f9', comparator: (f: FullField) => f.group === 'g2' },
   ] satisfies Field[]
-).map(toFullOption);
+).map(o => toFullOption(o));
 const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
 
 it('filters fields by comparator', () => {

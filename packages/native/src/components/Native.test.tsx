@@ -261,7 +261,7 @@ describe('NativeValueSelector', () => {
     options: [
       { name: 'opt1', label: 'Option 1' },
       { name: 'opt2', label: 'Option 2' },
-    ].map(toFullOption),
+    ].map(o => toFullOption(o)),
     value: 'opt1',
     handleOnChange,
     level: 0,

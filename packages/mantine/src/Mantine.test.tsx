@@ -79,7 +79,7 @@ const user = userEventSetup();
 const options: FullOption[] = [
   { name: 'opt1', label: 'Option 1' },
   { name: 'opt2', label: 'Option 2' },
-].map(toFullOption);
+].map(o => toFullOption(o));
 
 const now = new Date();
 const year = now.getFullYear();

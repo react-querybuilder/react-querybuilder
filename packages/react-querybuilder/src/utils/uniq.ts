@@ -74,5 +74,5 @@ export const uniqOptList = <T extends BaseOption>(originalArray: FlexibleOptionL
   if (isFlexibleOptionGroupArray(originalArray)) {
     return uniqOptGroups(originalArray) as OptionGroup<ToFullOption<T>>[];
   }
-  return uniqByIdentifier((originalArray as BaseOption[]).map(toFullOption));
+  return uniqByIdentifier((originalArray as BaseOption[]).map(o => toFullOption(o)));
 };

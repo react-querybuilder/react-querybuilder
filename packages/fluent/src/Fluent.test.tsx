@@ -35,7 +35,7 @@ const defaultValueSelectorProps: ValueSelectorProps = {
     { name: 'foo', label: 'Foo' },
     { name: 'bar', label: 'Bar' },
     { name: 'baz', label: 'Baz' },
-  ].map(toFullOption),
+  ].map(o => toFullOption(o)),
   level: 0,
   path: [],
   schema: basicSchema,

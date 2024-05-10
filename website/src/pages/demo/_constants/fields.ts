@@ -89,4 +89,4 @@ export const fields = (
       valueSources: ['field', 'value'],
     },
   ] satisfies Field[]
-).map(toFullOption);
+).map(o => toFullOption(o));

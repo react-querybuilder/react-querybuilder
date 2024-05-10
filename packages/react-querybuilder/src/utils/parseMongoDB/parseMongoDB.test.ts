@@ -268,7 +268,7 @@ it('validates fields', () => {
     { name: 'f2', label: 'Field 2', c: '1or2', comparator: 'c' },
     { name: 'f3', label: 'Field 3', c: '3', comparator: 'c' },
     { name: 'f4', label: 'Field 4', c: '4', comparator: 'c' },
-  ].map(toFullOption);
+  ].map(o => toFullOption(o));
   const fieldsAsOptGroup = [
     { label: 'OptGroup', options: fields },
   ] satisfies OptionGroup<FullField>[];

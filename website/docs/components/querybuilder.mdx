@@ -95,6 +95,24 @@ The array of combinators that should be used for RuleGroups. The default combina
 
 %importcode /packages/react-querybuilder/src/defaults.ts#region=docs-combinators
 
+### `baseField`
+
+`Record<string, unknown>`
+
+Properties defined in this prop will be applied to each object in the `fields` prop. Corresponding properties defined for individual fields will override the "base" properties.
+
+### `baseOperator`
+
+`Record<string, unknown>`
+
+Properties defined in this prop will be applied to each object in the `operators` prop or the list returned from [`getOperators`](#getoperators). Corresponding properties defined for individual operators will override the "base" properties.
+
+### `baseCombinator`
+
+`Record<string, unknown>`
+
+Properties defined in this prop will be applied to each object in the `combinators` prop. Corresponding properties defined for individual combinators will override the "base" properties.
+
 ### `controlClassnames`
 
 `Partial<Classnames>`

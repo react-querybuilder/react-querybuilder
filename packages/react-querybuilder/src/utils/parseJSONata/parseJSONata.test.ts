@@ -293,7 +293,7 @@ describe('fields and getValueSources', () => {
       { name: 'f9', label: 'f9', comparator: (f: FullField) => f.name === 'f1' },
       { name: 'f10', label: 'f10', comparator: (f: FullField) => f.group === 'g2' },
     ] satisfies Field[]
-  ).map(toFullOption);
+  ).map(o => toFullOption(o));
   const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
   const fieldsObject: Record<string, FullField> = {};
   for (const f of fields) {
@@ -424,7 +424,7 @@ describe('fields and getValueSources', () => {
         { name: 'f1', label: 'Field 1' },
         { name: 'f3', label: 'Field 3', valueSources: ['field'] },
       ] satisfies Field[]
-    ).map(toFullOption);
+    ).map(o => toFullOption(o));
     testParseJSONataIC(
       parseJSONata('f1 = f2 and f3 = "f4" and f3 = f4', {
         fields: fieldsForIC,

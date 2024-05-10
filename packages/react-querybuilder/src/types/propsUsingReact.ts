@@ -572,6 +572,21 @@ export type QueryBuilderProps<
        */
       combinators?: FlexibleOptionList<C>;
       /**
+       * Default properties applied to all objects in the `fields` prop. Properties on
+       * individual field definitions will override these.
+       */
+      baseField?: Record<string, unknown>;
+      /**
+       * Default properties applied to all objects in the `operators` prop. Properties on
+       * individual operator definitions will override these.
+       */
+      baseOperator?: Record<string, unknown>;
+      /**
+       * Default properties applied to all objects in the `combinators` prop. Properties on
+       * individual combinator definitions will override these.
+       */
+      baseCombinator?: Record<string, unknown>;
+      /**
        * The default `field` value for new rules. This can be the field `name`
        * itself or a function that returns a valid {@link FullField} `name` given
        * the `fields` list.

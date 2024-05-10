@@ -262,7 +262,7 @@ describe('valueSource', () => {
     },
     { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
     { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
-  ].map(toFullOption) satisfies FullField[];
+  ].map(o => toFullOption(o)) satisfies FullField[];
   const fieldMap = getFieldMapFromArray(fields);
   const getValueSources = (): ValueSources => valueSources;
 

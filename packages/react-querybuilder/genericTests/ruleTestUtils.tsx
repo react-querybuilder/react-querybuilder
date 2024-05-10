@@ -30,7 +30,7 @@ export const getFieldMapFromArray = (fieldArray: FullField[]) =>
 export const ruleDefaultFields = [
   { name: 'field1', label: 'Field 1' },
   { name: 'field2', label: 'Field 2' },
-].map(toFullOption) satisfies FullField[];
+].map(o => toFullOption(o)) satisfies FullField[];
 
 export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
 
@@ -104,7 +104,7 @@ const ruleSchema = {
     [
       { name: '=', label: 'is' },
       { name: '!=', label: 'is not' },
-    ].map(toFullOption),
+    ].map(o => toFullOption(o)),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
@@ -113,7 +113,7 @@ const ruleSchema = {
     [
       { name: 'one', label: 'One' },
       { name: 'two', label: 'Two' },
-    ].map(toFullOption),
+    ].map(o => toFullOption(o)),
   getRuleClassname: () => '',
   showCloneButtons: false,
   validationMap: {},

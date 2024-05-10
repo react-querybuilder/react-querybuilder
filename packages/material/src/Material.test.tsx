@@ -259,7 +259,7 @@ describe('value selector', () => {
           handleOnChange={() => {}}
           path={[]}
           level={0}
-          options={[{ name: 'opt1', label: 'Option 1' }].map(toFullOption)}
+          options={[{ name: 'opt1', label: 'Option 1' }].map(o => toFullOption(o))}
           schema={basicSchema}
         />
       </div>
