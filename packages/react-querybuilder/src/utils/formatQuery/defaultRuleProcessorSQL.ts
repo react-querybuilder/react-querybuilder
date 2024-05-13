@@ -10,9 +10,15 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts) => {
     parseNumbers,
     escapeQuotes,
     quoteFieldNamesWith = ['', ''] as [string, string],
+    quoteValuesWith,
     valueProcessor = defaultValueProcessorByRule,
   } = opts ?? {};
-  const value = valueProcessor(rule, { parseNumbers, escapeQuotes, quoteFieldNamesWith });
+  const value = valueProcessor(rule, {
+    parseNumbers,
+    escapeQuotes,
+    quoteFieldNamesWith,
+    quoteValuesWith,
+  });
   const operator = mapSQLOperator(rule.operator);
 
   const operatorLowerCase = operator.toLowerCase();

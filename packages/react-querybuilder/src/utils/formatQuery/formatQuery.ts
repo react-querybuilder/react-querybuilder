@@ -131,6 +131,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let parseNumbers = false;
   let placeholderFieldName = defaultPlaceholderFieldName;
   let placeholderOperatorName = defaultPlaceholderOperatorName;
+  let quoteChar = "'";
 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
@@ -186,6 +187,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     parseNumbers = !!options.parseNumbers;
     placeholderFieldName = options.placeholderFieldName ?? defaultPlaceholderFieldName;
     placeholderOperatorName = options.placeholderOperatorName ?? defaultPlaceholderOperatorName;
+    quoteChar = options.quoteValuesWith ?? "'";
   }
   if (!fallbackExpression) {
     fallbackExpression =
@@ -303,6 +305,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             quoteFieldNamesWith,
             fieldData,
             format,
+            quoteValuesWith: quoteChar,
           });
         }
         // ...otherwise use default rule processor and pass in the value
@@ -314,6 +317,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           quoteFieldNamesWith,
           fieldData,
           format,
+          quoteValuesWith: quoteChar,
         });
       });
 
