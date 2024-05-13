@@ -327,6 +327,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Creeperface01",
+      "name": "Jan Bednář",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10363500?v=4",
+      "profile": "https://github.com/Creeperface01",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
