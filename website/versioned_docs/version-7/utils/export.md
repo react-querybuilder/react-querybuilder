@@ -600,6 +600,15 @@ formatQuery(query, { format: 'sql', quoteFieldNamesWith: ['[', ']'] });
 // Returns: "([firstName] = 'Steve' and [lastName] = 'Vai')"
 ```
 
+### Quote values
+
+Some database engines can accept string literals in double quotes (`"`). This can be configured with the `quoteValuesWith` option which should be assigned a one-character string.
+
+```ts
+formatQuery(query, { format: 'sql', quoteValuesWith: '"' });
+// Returns: "(firstName = "Steve" and lastName = "Vai")"
+```
+
 ### Parameter prefix
 
 If the "parameterized_named" format is used, configure the parameter prefix used in the `sql` string with the `paramPrefix` option (should the default ":" be inappropriate).

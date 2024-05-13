@@ -60,6 +60,11 @@ export interface FormatQueryOptions {
    */
   quoteFieldNamesWith?: string | [string, string];
   /**
+   * Character to use for quoting string values in the SQL format.
+   * @default `'`
+   */
+  quoteValuesWith?: string;
+  /**
    * Validator function for the entire query. Can be the same function passed
    * as `validator` prop to {@link QueryBuilder}.
    */
@@ -129,11 +134,6 @@ export interface FormatQueryOptions {
    * @default '~'
    */
   placeholderOperatorName?: string;
-  /**
-   * Character to use for quoting string values in the SQL format.
-   * @default '''
-   */
-  quoteValuesWith?: string;
 }
 
 /**

@@ -129,6 +129,7 @@ type ValueProcessor = (field: string, operator: string, value: any) => string;
 interface ValueProcessorOptions {
   parseNumbers?: boolean;
   quoteFieldNamesWith?: string | [string, string];
+  quoteValuesWith?: string;
   escapeQuotes?: boolean;
   fieldData?: Field;
 }
@@ -140,6 +141,7 @@ interface FormatQueryOptions {
   valueProcessor?: ValueProcessor;
   ruleProcessor?: RuleProcessor;
   quoteFieldNamesWith?: string | [string, string];
+  quoteValuesWith?: string;
   validator?: QueryValidator;
   fields?: OptionList<Field>;
   fallbackExpression?: string;

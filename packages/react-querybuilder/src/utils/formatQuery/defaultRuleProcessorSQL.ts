@@ -10,7 +10,7 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts) => {
     parseNumbers,
     escapeQuotes,
     quoteFieldNamesWith = ['', ''] as [string, string],
-    quoteValuesWith,
+    quoteValuesWith = `'`,
     valueProcessor = defaultValueProcessorByRule,
   } = opts ?? {};
   const value = valueProcessor(rule, {

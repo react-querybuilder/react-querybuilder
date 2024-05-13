@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#696] `baseField`, `baseOperator`, `baseCombinator` props. Properties defined in these props will be applied to each option in the `fields`, `operators`, and `combinators` lists, respectively. Corresponding properties defined for individual options will override the "base" properties.
 - [#688] `parseJSONata`, an experimental [JSONata](https://jsonata.org/) parser.
+- [#697] `quoteValuesWith` option for `formatQuery` (applicable to "sql" format only). Values will be bracketed by the provided string, e.g. double quotes (`'"'`), instead of the default single quotes.
 
 ## [v7.2.1] - 2024-05-06
 
@@ -1614,6 +1615,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#688]: https://github.com/react-querybuilder/react-querybuilder/pull/688
 [#692]: https://github.com/react-querybuilder/react-querybuilder/pull/692
 [#696]: https://github.com/react-querybuilder/react-querybuilder/pull/696
+[#697]: https://github.com/react-querybuilder/react-querybuilder/pull/697
 
 <!-- Release comparison links -->
 
