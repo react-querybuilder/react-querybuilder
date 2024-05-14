@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v7.3.0] - 2024-05-13
+
 ### Changed
 
 - `displayName` is no longer explicitly declared for any components.
@@ -1619,7 +1623,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...HEAD
+[v7.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...v7.3.0
 [v7.2.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.0...v7.2.1
 [v7.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.1.0...v7.2.0
 [v7.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.0.2...v7.1.0
