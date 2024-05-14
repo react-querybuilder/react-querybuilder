@@ -2,12 +2,12 @@ import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-con
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
-import { themes } from 'prism-react-renderer/dist/index.mjs';
-import { remarkPluginImport } from './src/plugins/remark-plugin-import';
-
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
-import type { PluginOptions as TypedocPluginMarkdownOptions } from 'typedoc-plugin-markdown';
+import path from 'node:path';
+import { themes } from 'prism-react-renderer/dist/index.mjs';
 import type { TypeDocOptions } from 'typedoc';
+import type { PluginOptions as TypedocPluginMarkdownOptions } from 'typedoc-plugin-markdown';
+import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
 const config: Config = {
   title: 'React Query Builder',
@@ -21,8 +21,8 @@ const config: Config = {
   projectName: 'react-querybuilder.github.io',
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
-  clientModules: ['/js/loadRqbUtils.js'],
-  scripts: [{ src: '/js/console.js', async: false }],
+  clientModules: [path.resolve('./static/js/loadRqbUtils.js')],
+  scripts: [{ src: path.resolve('./static/js/console.js'), async: false }],
   plugins: [
     'docusaurus-plugin-sass',
     [

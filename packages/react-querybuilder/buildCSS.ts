@@ -1,6 +1,6 @@
 import { compile } from 'sass';
 
-const src2dist = (path: string) => path.replace(/\bsrc\//, 'dist/');
+const src2dist = (path: string) => path.replace(/\bsrc\b/, 'dist/');
 const scss2css = (path: string) => path.replace(/\.scss$/, '.css');
 const full2relativePath = (path: string) => path.replace(/^.*?\/(src\/.*css$)/, '$1');
 
