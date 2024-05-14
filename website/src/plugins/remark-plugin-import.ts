@@ -9,6 +9,7 @@ const importMdRegExp = /^%importmd\s+(.*?)$/;
 const importCodeRegExp = /^%importcode\s+(.*?)$/;
 const lineNumbersRegExp = /^L(\d+)(-(L(\d+))?)?$/i;
 const regionRegExp = /^region=(.+)$/i;
+const blockRegExp = /^blockName=(.+)$/i;
 const rootDir = path.resolve(__dirname, '../../..');
 
 const getSourceLink = (filePath: string, start?: number, end?: number) => {
@@ -65,6 +66,7 @@ export const remarkPluginImport = () => async (ast, vfile) => {
           const codeLines = rawCode.split('\n');
           const lineNumbers = lineNumbersRegExp.exec(hash);
           const region = regionRegExp.exec(hash);
+          const block = blockRegExp.exec(hash);
           const lang = path.extname(codeFileAbsolutePath).replace(/^\./, '');
 
           if (lineNumbers) {
@@ -93,6 +95,22 @@ export const remarkPluginImport = () => async (ast, vfile) => {
                   meta: null,
                 },
                 getSourceLink(url, start, end),
+              ];
+            }
+          } else if (block) {
+            const start = codeLines.findIndex(v =>
+              v.match(`^(export )?(const|let|type|interface) ${block[1]} \\{$`)
+            );
+            const end = codeLines.findIndex((v, i) => i >= start && v.match(/^\}/));
+            if (start >= 0) {
+              node.children = [
+                {
+                  type: 'code',
+                  value: codeLines.slice(start, end >= 0 ? end + 1 : codeLines.length).join('\n'),
+                  lang,
+                  meta: null,
+                },
+                getSourceLink(url, start - 1, end + 1),
               ];
             }
           } else {

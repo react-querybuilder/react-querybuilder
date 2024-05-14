@@ -81,12 +81,7 @@ Adds a rule or group (and an independent combinator if necessary, to keep the qu
 
 <Details summary="AddOptions">
 
-```ts
-interface AddOptions {
-  /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
-  combinators?: OptionList;
-}
-```
+%importcode /packages/react-querybuilder/src/utils/queryTools.ts#blockName=AddOptions
 
 </Details>
 
@@ -104,20 +99,7 @@ Updates a property of a rule or group, or updates an independent combinator.
 
 <Details summary="UpdateOptions">
 
-```ts
-interface UpdateOptions {
-  /** Resets `operator` and `value` when `field` changes. Default is `true`. */
-  resetOnFieldChange?: boolean;
-  /** Resets `value` when `operator` changes. Default is `false`. */
-  resetOnOperatorChange?: boolean;
-  /** Determines the default operator name for a given field. */
-  getRuleDefaultOperator?: (field: string) => string;
-  /** Determines the valid value sources for a given field and operator. */
-  getValueSources?: (field: string, operator: string) => ValueSources;
-  /** Used when the `value` property is reset (see `resetOn*Change` options). */
-  getRuleDefaultValue?: (rule: RuleType) => any;
-}
-```
+%importcode /packages/react-querybuilder/src/utils/queryTools.ts#blockName=UpdateOptions
 
 </Details>
 
@@ -129,14 +111,7 @@ Moves (or clones, with a new `id`) a rule or group to a new location in the quer
 
 <Details summary="MoveOptions">
 
-```ts
-interface MoveOptions {
-  /** Copy the source rule/group instead of move. Default is `false`. */
-  clone?: boolean;
-  /** Only applicable for `RuleGroupTypeIC`. Default is `defaultCombinators`. */
-  combinators?: OptionList;
-}
-```
+%importcode /packages/react-querybuilder/src/utils/queryTools.ts#blockName=MoveOptions
 
 </Details>
 
