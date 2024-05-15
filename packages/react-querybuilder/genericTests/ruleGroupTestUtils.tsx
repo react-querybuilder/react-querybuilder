@@ -11,7 +11,7 @@ import type {
   ActionProps,
   Classnames,
   CombinatorSelectorProps,
-  Controls,
+  ControlElementsProp,
   DragHandleProps,
   FullField,
   FieldSelectorProps,
@@ -120,7 +120,7 @@ export const ruleGroupControls = {
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
     </div>
   ),
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const ruleGroupClassnames = {
   header: 'custom-header-class',

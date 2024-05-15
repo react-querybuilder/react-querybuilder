@@ -1,4 +1,4 @@
-import type { Classnames, Controls, FullField } from 'react-querybuilder';
+import type { Classnames, ControlElementsProp, FullField } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { TremorActionElement } from './TremorActionElement';
 import { TremorNotToggle } from './TremorNotToggle';
@@ -15,7 +15,7 @@ export const tremorControlElements = {
   notToggle: TremorNotToggle,
   valueEditor: TremorValueEditor,
   valueSelector: TremorValueSelector,
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const tremorControlClassnames = {
   notToggle: 'flex flex-row gap-1',

@@ -7,7 +7,7 @@ import {
   UnlockIcon,
 } from '@chakra-ui/icons';
 import * as React from 'react';
-import type { Controls, FullField, Translations } from 'react-querybuilder';
+import type { ControlElementsProp, FullField, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
@@ -27,7 +27,7 @@ export const chakraControlElements = {
   dragHandle: ChakraDragHandle,
   notToggle: ChakraNotToggle,
   valueEditor: ChakraValueEditor,
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const chakraTranslations = {
   removeGroup: { label: <CloseIcon /> },

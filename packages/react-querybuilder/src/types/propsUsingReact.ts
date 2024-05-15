@@ -188,7 +188,6 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
 /**
  * Subcomponents.
  */
-// TODO: remove the nulls from this interface and accept them only on the prop
 export type Controls<F extends FullField, O extends string> = Required<
   SetNonNullable<ControlElementsProp<F, O>, keyof ControlElementsProp<F, O>>
 >;
