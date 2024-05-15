@@ -1,3 +1,4 @@
+import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -99,8 +100,6 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       const negate = isCELNegation(expr)
         ? expr.negations % 2 === 1
         : (getIdentifierFromNegatedChain(expr.left).match(/^!+/)?.[0].length ?? 0) % 2 === 1;
-      // TODO?: forwardNegation when isCELRelation(expr.value.value), in addition
-      // to CEL[Negated]LikeExpression? (i.e. '<=' becomes '>', 'in' becomes 'notIn', etc.)
       const negatedExpr =
         isCELNegation(expr) &&
         isCELExpressionGroup(expr.value) &&
@@ -117,12 +116,21 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
                 } as CELLikeExpression,
                 { forwardNegation: negate }
               )
-            : processCELExpression(expr.value, {
-                groupOnlyIfNecessary: true,
-                forwardNegation: negate,
-              });
+            : isCELNegation(expr) &&
+                isCELExpressionGroup(expr.value) &&
+                isCELRelation(expr.value.value)
+              ? processCELExpression(expr.value.value, { forwardNegation: negate })
+              : processCELExpression(expr.value, {
+                  groupOnlyIfNecessary: true,
+                  forwardNegation: negate,
+                });
       if (negatedExpr) {
-        if (isCELNegatedLikeExpression(expr)) {
+        if (
+          isCELNegatedLikeExpression(expr) ||
+          (isCELNegation(expr) &&
+            isCELExpressionGroup(expr.value) &&
+            isCELRelation(expr.value.value))
+        ) {
           return negatedExpr;
         } else if (
           !negate ||
@@ -233,9 +241,12 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         }
       }
       let operator = normalizeOperator(expr.operator, flip);
+      if (forwardedNegation) {
+        operator = defaultOperatorNegationMap[operator];
+      }
       if (value === null && (operator === '=' || operator === '!=')) {
         operator = operator === '=' ? 'null' : 'notNull';
-      } else if (operator === 'in' && isCELList(right)) {
+      } else if ((operator === 'in' || operator === 'notIn') && isCELList(right)) {
         if (right.value.value.every(isCELLiteral)) {
           value = right.value.value.map(evalCELLiteralValue);
         } else {
@@ -247,7 +258,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         if (value && !listsAsArrays) {
           value = value.map((v: string | boolean | number) => `${v}`).join(',');
         }
-      } else if (operator === 'in' && isCELMap(right)) {
+      } else if ((operator === 'in' || operator === 'notIn') && isCELMap(right)) {
         const keys = right.value.value.map(v => v.left);
         if (keys.every(k => isCELLiteral(k) || isCELIdentifierOrChain(k))) {
           value = (keys as (CELLiteral | CELIdentifier)[]).map(k =>

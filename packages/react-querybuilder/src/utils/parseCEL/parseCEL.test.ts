@@ -70,6 +70,16 @@ it('works for basic relations', () => {
   testParseCEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
+it('negates basic relations', () => {
+  testParseCEL('!(f1 == "Test")', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+  testParseCEL('!(f1 != "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
+  testParseCEL('!(f1 > 1)', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
+  testParseCEL('!(f1 >= 1)', wrapRule({ field: 'f1', operator: '<', value: 1 }));
+  testParseCEL('!(f1 < 1)', wrapRule({ field: 'f1', operator: '>=', value: 1 }));
+  testParseCEL('!(f1 <= 1)', wrapRule({ field: 'f1', operator: '>', value: 1 }));
+  testParseCEL('!("Test" == f1)', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
+});
+
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
     testParseCEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
@@ -428,6 +438,10 @@ it('handles "in" operator', () => {
   testParseCEL(
     'f1 in {f2: "v2", "f3": "v3"}',
     wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3' })
+  );
+  testParseCEL(
+    '!(f1 in ["Test","Test2"])',
+    wrapRule({ field: 'f1', operator: 'notIn', value: 'Test,Test2' })
   );
 });
 
