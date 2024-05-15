@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- Most properties of the `controlElements` prop can be set to `null`. Properties set to `null` will be rendered as `() => null`.
 
 ## [v7.3.0] - 2024-05-13
 

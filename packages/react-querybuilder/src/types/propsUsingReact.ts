@@ -6,6 +6,7 @@ import type {
   Ref,
   RefAttributes,
 } from 'react';
+import type { SetNonNullable } from 'type-fest';
 import type {
   AccessibleDescriptionGenerator,
   Classname,
@@ -187,7 +188,12 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
 /**
  * Subcomponents.
  */
-export interface Controls<F extends FullField, O extends string> {
+// TODO: remove the nulls from this interface and accept them only on the prop
+export type Controls<F extends FullField, O extends string> = Required<
+  SetNonNullable<ControlElementsProp<F, O>, keyof ControlElementsProp<F, O>>
+>;
+
+export type ControlElementsProp<F extends FullField, O extends string> = Partial<{
   /**
    * Default component for all button-type controls.
    *
@@ -199,85 +205,85 @@ export interface Controls<F extends FullField, O extends string> {
    *
    * @default ActionElement
    */
-  addGroupAction: ComponentType<ActionWithRulesAndAddersProps>;
+  addGroupAction: ComponentType<ActionWithRulesAndAddersProps> | null;
   /**
    * Adds a rule to the current group.
    *
    * @default ActionElement
    */
-  addRuleAction: ComponentType<ActionWithRulesAndAddersProps>;
+  addRuleAction: ComponentType<ActionWithRulesAndAddersProps> | null;
   /**
    * Clones the current group.
    *
    * @default ActionElement
    */
-  cloneGroupAction: ComponentType<ActionWithRulesProps>;
+  cloneGroupAction: ComponentType<ActionWithRulesProps> | null;
   /**
    * Clones the current rule.
    *
    * @default ActionElement
    */
-  cloneRuleAction: ComponentType<ActionProps>;
+  cloneRuleAction: ComponentType<ActionProps> | null;
   /**
    * Selects the `combinator` property for the current group, or the current independent combinator value.
    *
    * @default ValueSelector
    */
-  combinatorSelector: ComponentType<CombinatorSelectorProps>;
+  combinatorSelector: ComponentType<CombinatorSelectorProps> | null;
   /**
    * Provides a draggable handle for reordering rules and groups.
    *
    * @default DragHandle
    */
-  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLElement>>;
+  dragHandle: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLElement>> | null;
   /**
    * Selects the `field` property for the current rule.
    *
    * @default ValueSelector
    */
-  fieldSelector: ComponentType<FieldSelectorProps<F>>;
+  fieldSelector: ComponentType<FieldSelectorProps<F>> | null;
   /**
    * A small wrapper around the `combinatorSelector` component.
    *
    * @default InlineCombinator
    */
-  inlineCombinator: ComponentType<InlineCombinatorProps>;
+  inlineCombinator: ComponentType<InlineCombinatorProps> | null;
   /**
    * Locks the current group (sets the `disabled` property to `true`).
    *
    * @default ActionElement
    */
-  lockGroupAction: ComponentType<ActionWithRulesProps>;
+  lockGroupAction: ComponentType<ActionWithRulesProps> | null;
   /**
    * Locks the current rule (sets the `disabled` property to `true`).
    *
    * @default ActionElement
    */
-  lockRuleAction: ComponentType<ActionWithRulesProps>;
+  lockRuleAction: ComponentType<ActionWithRulesProps> | null;
   /**
    * Toggles the `not` property of the current group between `true` and `false`.
    *
    * @default NotToggle
    */
-  notToggle: ComponentType<NotToggleProps>;
+  notToggle: ComponentType<NotToggleProps> | null;
   /**
    * Selects the `operator` property for the current rule.
    *
    * @default ValueSelector
    */
-  operatorSelector: ComponentType<OperatorSelectorProps>;
+  operatorSelector: ComponentType<OperatorSelectorProps> | null;
   /**
    * Removes the current group from its parent group's `rules` array.
    *
    * @default ActionElement
    */
-  removeGroupAction: ComponentType<ActionWithRulesProps>;
+  removeGroupAction: ComponentType<ActionWithRulesProps> | null;
   /**
    * Removes the current rule from its parent group's `rules` array.
    *
    * @default ActionElement
    */
-  removeRuleAction: ComponentType<ActionProps>;
+  removeRuleAction: ComponentType<ActionProps> | null;
   /**
    * Rule layout component.
    *
@@ -295,13 +301,13 @@ export interface Controls<F extends FullField, O extends string> {
    *
    * @default ShiftActions
    */
-  shiftActions: ComponentType<ShiftActionsProps>;
+  shiftActions: ComponentType<ShiftActionsProps> | null;
   /**
    * Updates the `value` property for the current rule.
    *
    * @default ValueEditor
    */
-  valueEditor: ComponentType<ValueEditorProps<F, O>>;
+  valueEditor: ComponentType<ValueEditorProps<F, O>> | null;
   /**
    * Default component for all value selector controls.
    *
@@ -313,8 +319,8 @@ export interface Controls<F extends FullField, O extends string> {
    *
    * @default ValueSelector
    */
-  valueSourceSelector: ComponentType<ValueSourceSelectorProps>;
-}
+  valueSourceSelector: ComponentType<ValueSourceSelectorProps> | null;
+}>;
 
 /**
  * Configuration options passed in the `schema` prop from
@@ -456,7 +462,7 @@ export interface QueryBuilderContextProps<F extends FullField, O extends string>
   /**
    * Defines replacement components.
    */
-  controlElements?: Partial<Controls<F, O>>;
+  controlElements?: ControlElementsProp<F, O>;
   /**
    * Set to `false` to avoid calling the `onQueryChange` callback
    * when the component mounts.
