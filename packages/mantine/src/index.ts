@@ -1,4 +1,4 @@
-import type { Controls, FullField } from 'react-querybuilder';
+import type { ControlElementsProp, FullField } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
@@ -18,7 +18,7 @@ export const mantineControlElements = {
   shiftActions: MantineShiftActions,
   valueEditor: MantineValueEditor,
   valueSelector: MantineValueSelector,
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const QueryBuilderMantine = getCompatContextProvider({
   key: 'mantine',

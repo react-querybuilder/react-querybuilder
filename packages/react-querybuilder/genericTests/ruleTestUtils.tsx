@@ -9,7 +9,7 @@ import {
 import type {
   ActionProps,
   Classnames,
-  Controls,
+  ControlElementsProp,
   DragHandleProps,
   FullField,
   FieldSelectorProps,
@@ -84,7 +84,7 @@ export const ruleControls = {
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
     </div>
   ),
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const ruleClassnames = {
   cloneRule: 'custom-cloneRule-class',

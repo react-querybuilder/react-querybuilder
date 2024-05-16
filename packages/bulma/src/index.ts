@@ -1,4 +1,4 @@
-import type { Classnames, Controls, FullField } from 'react-querybuilder';
+import type { Classnames, ControlElementsProp, FullField } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { BulmaNotToggle } from './BulmaNotToggle';
 import { BulmaValueEditor } from './BulmaValueEditor';
@@ -16,7 +16,7 @@ export const bulmaControlElements = {
   notToggle: BulmaNotToggle,
   valueEditor: BulmaValueEditor,
   valueSelector: BulmaValueSelector,
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const QueryBuilderBulma = getCompatContextProvider({
   key: 'bulma',

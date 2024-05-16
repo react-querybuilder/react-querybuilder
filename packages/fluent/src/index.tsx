@@ -8,7 +8,7 @@ import {
   UnlockIcon,
 } from '@fluentui/react-icons-mdl2';
 import * as React from 'react';
-import type { Controls, FullField, Translations } from 'react-querybuilder';
+import type { ControlElementsProp, FullField, Translations } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
@@ -28,7 +28,7 @@ export const fluentControlElements = {
   notToggle: FluentNotToggle,
   valueEditor: FluentValueEditor,
   valueSelector: FluentValueSelector,
-} satisfies Partial<Controls<FullField, string>>;
+} satisfies ControlElementsProp<FullField, string>;
 
 export const fluentTranslations = {
   removeGroup: { label: <CancelIcon /> },

@@ -15,6 +15,7 @@ import { messages } from '../messages';
 import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
+  ControlElementsProp,
   Field,
   FieldByValue,
   FieldSelectorProps,
@@ -44,6 +45,8 @@ import {
 import { QueryBuilder } from './QueryBuilder';
 import { QueryBuilderContext } from './QueryBuilderContext';
 import { defaultControlElements } from './defaults';
+import { ValueSelector } from './ValueSelector';
+import { ActionElement } from './ActionElement';
 
 const user = userEvent.setup();
 
@@ -2603,6 +2606,116 @@ describe('controlElements bulk override properties', () => {
     expect(screen.getAllByTestId(TestID.combinators)[0]).toHaveValue('v1');
     expect(screen.getAllByTestId(TestID.fields)[0]).toHaveValue('v1');
     expect(screen.getAllByTestId(TestID.operators)[0]).toHaveValue('v1');
+  });
+});
+
+describe('null controlElements', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ combinator: 'or', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }],
+  };
+  const controlElements: ControlElementsProp<FullField, string> = {
+    addGroupAction: null,
+    addRuleAction: null,
+    cloneGroupAction: null,
+    cloneRuleAction: null,
+    combinatorSelector: null,
+    dragHandle: null,
+    fieldSelector: null,
+    inlineCombinator: null,
+    lockGroupAction: null,
+    lockRuleAction: null,
+    notToggle: null,
+    operatorSelector: null,
+    removeGroupAction: null,
+    removeRuleAction: null,
+    shiftActions: null,
+    valueEditor: null,
+    valueSourceSelector: null,
+  };
+
+  const expectNothing = () => {
+    expect(screen.queryAllByTestId(TestID.addGroup)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.addRule)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.cloneGroup)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.cloneRule)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.combinators)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.dragHandle)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.fields)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.lockGroup)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.lockRule)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.notToggle)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.operators)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.removeGroup)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.removeRule)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.shiftActions)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.valueEditor)).toHaveLength(0);
+    expect(screen.queryAllByTestId(TestID.valueSourceSelector)).toHaveLength(0);
+  };
+
+  it('uses `null` from context', () => {
+    render(
+      <QueryBuilderContext.Provider value={{ controlElements }}>
+        <QueryBuilder
+          showCloneButtons
+          showLockButtons
+          showNotToggle
+          showShiftActions
+          query={query}
+        />
+      </QueryBuilderContext.Provider>
+    );
+    expectNothing();
+  });
+
+  it('uses `null` from props', () => {
+    render(
+      <QueryBuilder
+        showCloneButtons
+        showLockButtons
+        controlElements={controlElements}
+        query={query}
+      />
+    );
+    expectNothing();
+  });
+
+  it('overrides bulk overrides with `null` from context', () => {
+    render(
+      <QueryBuilderContext.Provider
+        value={{
+          controlElements: {
+            ...controlElements,
+            actionElement: ActionElement,
+            valueSelector: ValueSelector,
+          },
+        }}>
+        <QueryBuilder
+          showCloneButtons
+          showLockButtons
+          showNotToggle
+          showShiftActions
+          query={query}
+        />
+      </QueryBuilderContext.Provider>
+    );
+    expectNothing();
+  });
+
+  it('overrides bulk overrides with `null` from props', () => {
+    render(
+      <QueryBuilder
+        showCloneButtons
+        showLockButtons
+        controlElements={{
+          ...controlElements,
+          actionElement: ActionElement,
+          valueSelector: ValueSelector,
+        }}
+        query={query}
+      />
+    );
+    expectNothing();
   });
 });
 
