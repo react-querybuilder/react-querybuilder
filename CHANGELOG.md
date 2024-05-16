@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Most properties of the `controlElements` prop can be set to `null`. Properties set to `null` will be rendered as `() => null`.
 
+### Fixed
+
+- `parseCEL` no longer creates a rule group with `not: true` when parsing a single rule in a negated parenthetical group. Instead, the rule operator is inverted.
+
 ## [v7.3.0] - 2024-05-13
 
 ### Changed
