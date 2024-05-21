@@ -334,3 +334,61 @@ it('respects custom canDrop', () => {
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
+
+it('respects custom canDrop on inline combinators', () => {
+  const onQueryChange = jest.fn();
+  const canDrop = jest.fn(() => false);
+  render(
+    <QBforDnD
+      canDrop={canDrop}
+      onQueryChange={onQueryChange}
+      showCombinatorsBetweenRules
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [] },
+          { combinator: 'and', rules: [] },
+          { combinator: 'and', rules: [], not: true },
+        ],
+      }}
+    />
+  );
+  const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
+  const combinators = screen.getAllByTestId(TestID.inlineCombinator);
+  simulateDragDrop(
+    getHandlerId(ruleGroups[3], 'drag'),
+    getHandlerId(combinators[0], 'drop'),
+    getDndBackend()
+  );
+  expect(canDrop).toHaveBeenCalledWith({
+    dragging: expect.objectContaining({ path: [2], combinator: 'and', rules: [], not: true }),
+    hovering: expect.objectContaining({ path: [0], combinator: 'and', rules: [] }),
+  });
+  expect(onQueryChange).not.toHaveBeenCalled();
+});
+
+it('respects custom canDrop on independent combinators', () => {
+  const onQueryChange = jest.fn();
+  const canDrop = jest.fn(() => false);
+  render(
+    <QBforDnDIC
+      canDrop={canDrop}
+      onQueryChange={onQueryChange}
+      defaultQuery={{
+        rules: [{ rules: [] }, 'and', { rules: [] }, 'or', { rules: [], not: true }],
+      }}
+    />
+  );
+  const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
+  const combinators = screen.getAllByTestId(TestID.inlineCombinator);
+  simulateDragDrop(
+    getHandlerId(ruleGroups[3], 'drag'),
+    getHandlerId(combinators[0], 'drop'),
+    getDndBackendIC()
+  );
+  expect(canDrop).toHaveBeenCalledWith({
+    dragging: expect.objectContaining({ path: [4], rules: [], not: true }),
+    hovering: expect.objectContaining({ path: [0], rules: [] }),
+  });
+  expect(onQueryChange).not.toHaveBeenCalled();
+});

@@ -63,12 +63,14 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         }
         const parentItemPath = getParentPath(dragging.path);
         const itemIndex = dragging.path[dragging.path.length - 1];
-        // Don't allow drop if 1) item is ancestor of drop target,
-        // 2) item is first child and is dropped on its own group header,
-        // or 3) the group is dropped on itself
+        // Disallow drop if...
+        // prettier-ignore
         return !(
+          // 1) item is ancestor of drop target,
           isAncestor(dragging.path, path) ||
+          // 2) item is first child and is dropped on its own group header,
           (pathsAreEqual(path, parentItemPath) && itemIndex === 0) ||
+          // 3) the group is dropped on itself
           pathsAreEqual(path, dragging.path)
         );
       },

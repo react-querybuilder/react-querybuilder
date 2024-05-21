@@ -283,7 +283,6 @@ export const RuleGroupBodyComponents = React.memo(
                       component={CombinatorSelectorControlElement}
                       path={thisPath}
                       disabled={rg.disabled}
-                      independentCombinators={rg.schema.independentCombinators}
                       schema={rg.schema}
                     />
                   )}
@@ -302,7 +301,6 @@ export const RuleGroupBodyComponents = React.memo(
                     component={CombinatorSelectorControlElement}
                     path={thisPath}
                     disabled={thisPathDisabled}
-                    independentCombinators={rg.schema.independentCombinators}
                     schema={rg.schema}
                   />
                 ) : isRuleGroup(r) ? (

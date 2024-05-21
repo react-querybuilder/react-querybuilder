@@ -6,16 +6,17 @@ import type {
   DropCollection,
   DropEffect,
   DropResult,
-  Path,
+  InlineCombinatorProps,
+  RuleGroupTypeAny,
+  RuleType,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import type { QueryBuilderDndContextProps } from '../types';
 
-interface UseInlineCombinatorDndParams {
-  path: Path;
-  independentCombinators?: boolean;
+type UseInlineCombinatorDndParams = InlineCombinatorProps &
+  Pick<QueryBuilderDndContextProps, 'canDrop'> &
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: (typeof import('react-dnd'))['useDrop'];
-}
+  Pick<typeof import('react-dnd'), 'useDrop'>;
 
 interface UseInlineCombinatorDnD {
   isOver: boolean;
@@ -26,28 +27,45 @@ interface UseInlineCombinatorDnD {
 
 export const useInlineCombinatorDnD = ({
   path,
-  independentCombinators,
+  canDrop,
+  schema: { independentCombinators },
   useDrop,
+  rules,
 }: UseInlineCombinatorDndParams): UseInlineCombinatorDnD => {
   const dropRef = useRef<HTMLDivElement>(null);
+
+  // The "hovering" item is the rule or group which precedes this inline combinator.
+  const hoveringItem = (rules ?? /* istanbul ignore next */ [])[path[path.length - 1] - 1] as
+    | RuleType
+    | RuleGroupTypeAny;
 
   const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
-      canDrop: ({ path: itemPath }) => {
+      canDrop: dragging => {
+        const { path: itemPath } = dragging;
+        if (
+          dragging &&
+          typeof canDrop === 'function' &&
+          !canDrop({ dragging, hovering: { ...hoveringItem, path } })
+        ) {
+          return false;
+        }
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(itemPath);
         const hoverIndex = path[path.length - 1];
         const itemIndex = itemPath[itemPath.length - 1];
 
-        // Don't allow drop if 1) item is ancestor of drop target,
-        // 2) item is hovered over itself (this should never happen since
-        // combinators don't have drag handles), or 3) combinators are
-        // independent and the drop target is just above the hovering item.
+        // Disallow drop if...
+        // prettier-ignore
         return !(
+          // 1) the item is an ancestor of the drop target,
           isAncestor(itemPath, path) ||
+          // 2) the item is hovered over itself (which should never
+          // happen since combinators don't have drag handles),
           pathsAreEqual(itemPath, path) ||
           (pathsAreEqual(parentHoverPath, parentItemPath) && hoverIndex - 1 === itemIndex) ||
+          // 3) independentCombinators is true and the drop target is just above the hovering item
           (independentCombinators &&
             pathsAreEqual(parentHoverPath, parentItemPath) &&
             hoverIndex === itemIndex - 1)

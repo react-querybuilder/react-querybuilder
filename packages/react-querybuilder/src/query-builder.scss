@@ -48,36 +48,41 @@ $rqb-branch-style: $rqb-border-style !default;
 }
 
 // #region Drag-and-drop
-
 // Hover styles
-[data-inlinecombinators='disabled'] {
-  .dndOver {
-    &.rule,
-    &.ruleGroup-header {
-      border-bottom-width: $rqb-dnd-hover-border-bottom-width;
-      border-bottom-style: $rqb-dnd-hover-border-bottom-style;
-      border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+.dndOver {
+  &.rule,
+  &.ruleGroup-header {
+    border-bottom-width: $rqb-dnd-hover-border-bottom-width;
+    border-bottom-style: $rqb-dnd-hover-border-bottom-style;
+    border-bottom-color: $rqb-dnd-hover-border-bottom-color;
 
-      &.dndCopy {
-        border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
-      }
+    &.dndCopy {
+      border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
     }
   }
 }
-[data-inlinecombinators='enabled'] {
-  .dndOver {
-    &.rule:last-child,
-    &.ruleGroup-header,
-    &.rule + .betweenRules,
-    &.betweenRules {
-      border-bottom-width: $rqb-dnd-hover-border-bottom-width;
-      border-bottom-style: $rqb-dnd-hover-border-bottom-style;
-      border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+.rule,
+.ruleGroup {
+  &:has(+ .betweenRules.dndOver) {
+    border-bottom-width: $rqb-dnd-hover-border-bottom-width;
+    border-bottom-style: $rqb-dnd-hover-border-bottom-style;
+    border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+  }
 
-      &.dndCopy {
-        border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
-      }
-    }
+  &:has(+ .betweenRules.dndOver.dndCopy) {
+    border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
+  }
+}
+
+// Drag styles
+.ruleGroup,
+.rule {
+  &.dndDragging {
+    opacity: 0.5;
+  }
+
+  .queryBuilder-dragHandle {
+    cursor: move;
   }
 }
 // #endregion
