@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
 import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
 import type {
@@ -65,7 +65,7 @@ export const useQueryBuilderSetup = <
   type FieldName = GetOptionIdentifierType<F>;
   type OperatorName = GetOptionIdentifierType<O>;
 
-  const qbId = useRef(generateID());
+  const [qbId] = useState(generateID);
 
   const {
     query: queryProp,
@@ -449,7 +449,7 @@ export const useQueryBuilderSetup = <
   });
 
   return {
-    qbId: qbId.current,
+    qbId,
     rqbContext,
     fields,
     fieldMap,
