@@ -2,14 +2,57 @@
  * This file incorporates layout/structural styles and adds
  * decorative styles like colors and border styles.
  *
- * To use layout/structural styles only, import
+ * To use layout/structural styles _only_, import
  * query-builder-layout.scss directly.
  */
+
+@use 'sass:map';
 
 @import './query-builder-layout.scss';
 
 // DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
 // to generate code snippets in the documentation.
+
+$rqb-dnd-drop-indicator-defaults: (
+  'color': rebeccapurple,
+  'copy-color': #669933,
+  'style': dashed,
+  'width': 2px,
+);
+
+/*
+
+NOTE: the commented code below is obviously not used, but it gets rendered on the documentation
+site. It's a more easily readable reference, in close proximity to the real definition so as not
+to violate the "one source of truth" rule _too_ much.
+
+// #region Drag-and-drop
+$rqb-dnd-drop-indicator-color: rebeccapurple !default;
+$rqb-dnd-drop-indicator-copy-color: #669933 !default;
+$rqb-dnd-drop-indicator-style: dashed !default;
+$rqb-dnd-drop-indicator-width: 2px !default;
+
+// Deprecated variable names (still work)
+// $rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
+// $rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
+// $rqb-dnd-hover-border-bottom-style: dashed !default;
+// $rqb-dnd-hover-border-bottom-width: 2px !default;
+// #endregion
+
+*/
+
+// This function lets the user use an old variable name as long as the new
+// variable's default hasn't been overridden.
+@function prefer-new-var($old-var, $new-var, $map, $prop) {
+  // If the new variable is still the default, and the old variable
+  // does not equal the default (i.e., it's been overridden), return the
+  // old variable. Otherwise return the new variable.
+  @if $new-var == map.get($map, $prop) and $old-var != map.get($map, $prop) {
+    @return $old-var;
+  }
+
+  @return $new-var;
+}
 
 // #region Basic
 $rqb-background-color: rgba(0, 75, 183, 0.2) !default;
@@ -18,11 +61,24 @@ $rqb-border-style: solid !default;
 $rqb-border-radius: 0.25rem !default;
 // #endregion
 
-// #region Drag-and-drop
-$rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
-$rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
-$rqb-dnd-hover-border-bottom-style: dashed !default;
-$rqb-dnd-hover-border-bottom-width: 2px !default;
+// #region New drag-and-drop variables
+$rqb-dnd-drop-indicator-color: map.get($rqb-dnd-drop-indicator-defaults, 'color') !default;
+$rqb-dnd-drop-indicator-copy-color: map.get(
+  $rqb-dnd-drop-indicator-defaults,
+  'copy-color'
+) !default;
+$rqb-dnd-drop-indicator-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
+$rqb-dnd-drop-indicator-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
+// #endregion
+
+// #region Deprecated drag-and-drop variables
+$rqb-dnd-hover-border-bottom-color: map.get($rqb-dnd-drop-indicator-defaults, 'color') !default;
+$rqb-dnd-hover-copy-border-bottom-color: map.get(
+  $rqb-dnd-drop-indicator-defaults,
+  'copy-color'
+) !default;
+$rqb-dnd-hover-border-bottom-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
+$rqb-dnd-hover-border-bottom-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
 // #endregion
 
 // #region Branches
@@ -47,30 +103,68 @@ $rqb-branch-style: $rqb-border-style !default;
   }
 }
 
-// #region Drag-and-drop
+// #region Drag-and-drop styles
 // Hover styles
 .dndOver {
   &.rule,
   &.ruleGroup-header {
-    border-bottom-width: $rqb-dnd-hover-border-bottom-width;
-    border-bottom-style: $rqb-dnd-hover-border-bottom-style;
-    border-bottom-color: $rqb-dnd-hover-border-bottom-color;
+    border-bottom-width: prefer-new-var(
+      $rqb-dnd-hover-border-bottom-width,
+      $rqb-dnd-drop-indicator-width,
+      $rqb-dnd-drop-indicator-defaults,
+      'width'
+    );
+    border-bottom-style: prefer-new-var(
+      $rqb-dnd-hover-border-bottom-style,
+      $rqb-dnd-drop-indicator-style,
+      $rqb-dnd-drop-indicator-defaults,
+      'style'
+    );
+    border-bottom-color: prefer-new-var(
+      $rqb-dnd-hover-border-bottom-color,
+      $rqb-dnd-drop-indicator-color,
+      $rqb-dnd-drop-indicator-defaults,
+      'color'
+    );
 
     &.dndCopy {
-      border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
+      border-bottom-color: prefer-new-var(
+        $rqb-dnd-hover-copy-border-bottom-color,
+        $rqb-dnd-drop-indicator-copy-color,
+        $rqb-dnd-drop-indicator-defaults,
+        'copy-color'
+      );
     }
   }
-}
-.rule,
-.ruleGroup {
-  &:has(+ .betweenRules.dndOver) {
-    border-bottom-width: $rqb-dnd-hover-border-bottom-width;
-    border-bottom-style: $rqb-dnd-hover-border-bottom-style;
-    border-bottom-color: $rqb-dnd-hover-border-bottom-color;
-  }
 
-  &:has(+ .betweenRules.dndOver.dndCopy) {
-    border-bottom-color: $rqb-dnd-hover-copy-border-bottom-color;
+  &.betweenRules {
+    border-top-width: prefer-new-var(
+      $rqb-dnd-hover-border-bottom-width,
+      $rqb-dnd-drop-indicator-width,
+      $rqb-dnd-drop-indicator-defaults,
+      'width'
+    );
+    border-top-style: prefer-new-var(
+      $rqb-dnd-hover-border-bottom-style,
+      $rqb-dnd-drop-indicator-style,
+      $rqb-dnd-drop-indicator-defaults,
+      'style'
+    );
+    border-top-color: prefer-new-var(
+      $rqb-dnd-hover-border-bottom-color,
+      $rqb-dnd-drop-indicator-color,
+      $rqb-dnd-drop-indicator-defaults,
+      'color'
+    );
+
+    &.dndCopy {
+      border-top-color: prefer-new-var(
+        $rqb-dnd-hover-copy-border-bottom-color,
+        $rqb-dnd-drop-indicator-copy-color,
+        $rqb-dnd-drop-indicator-defaults,
+        'copy-color'
+      );
+    }
   }
 }
 

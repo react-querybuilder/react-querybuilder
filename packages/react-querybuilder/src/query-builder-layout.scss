@@ -72,14 +72,8 @@ $rqb-branch-width: $rqb-border-width !default;
   &.ruleGroup-header {
     padding-bottom: $rqb-spacing;
   }
-}
-.rule,
-.ruleGroup {
-  &:has(+ .betweenRules.dndOver) {
-    padding-bottom: $rqb-spacing;
-  }
-  &:has(+ .betweenRules.dndOver.dndCopy) {
-    padding-bottom: $rqb-spacing;
+  &.betweenRules {
+    padding-top: $rqb-spacing;
   }
 }
 // #endregion

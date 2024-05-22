@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The `independentCombinators` property has been removed from the `InlineCombinatorProps` interface. The value can be still be retrieved from the `schema` prop.
+- Distributed CSS files are compressed (comments and unnecessary whitespace removed).
 
 ### Added
 
