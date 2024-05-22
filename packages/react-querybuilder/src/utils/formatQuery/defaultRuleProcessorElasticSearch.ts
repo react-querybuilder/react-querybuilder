@@ -1,4 +1,4 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type { DefaultOperatorName, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, shouldRenderAsNumber } from './utils';
@@ -44,13 +44,13 @@ const negateIfNotOp = (
 
 const escapeSQ = (s: string) => s?.replace(/('|\\)/g, `\\$1`);
 
-const textFunctionMap: Record<string, string> = {
+const textFunctionMap: Partial<Record<DefaultOperatorName, string>> = {
   beginsWith: 'startsWith',
   doesNotContain: 'contains',
   doesNotBeginWith: 'startsWith',
   doesNotEndWith: 'endsWith',
 };
-const getTextScript = (f: string, o: string, v: string) => {
+const getTextScript = (f: string, o: DefaultOperatorName, v: string) => {
   const script = `doc['${f}'].${textFunctionMap[o] ?? o}(doc['${v}'])`;
   return o.startsWith('d') ? `!${script}` : script;
 };
