@@ -5,18 +5,20 @@ import { standardClassnames, TestID } from 'react-querybuilder';
 import { useInlineCombinatorDnD } from './hooks';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
+/**
+ * The drag-and-drop-enabled inline combinator component.
+ */
 export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,
-  path,
-  independentCombinators,
   ...props
 }: InlineCombinatorProps) => {
-  const { useDrop } = useContext(QueryBuilderDndContext);
+  const { canDrop, useDrop } = useContext(QueryBuilderDndContext);
 
   const { dropRef, dropMonitorId, isOver } = useInlineCombinatorDnD({
-    path,
-    independentCombinators,
+    ...props,
+    component: CombinatorSelectorComponent,
     useDrop: useDrop!,
+    canDrop,
   });
 
   const dndOver = isOver ? standardClassnames.dndOver : '';
@@ -29,7 +31,7 @@ export const InlineCombinatorDnD = ({
       className={wrapperClassName}
       data-dropmonitorid={dropMonitorId}
       data-testid={TestID.inlineCombinator}>
-      <CombinatorSelectorComponent {...props} path={path} testID={TestID.combinators} />
+      <CombinatorSelectorComponent {...props} testID={TestID.combinators} />
     </div>
   );
 };

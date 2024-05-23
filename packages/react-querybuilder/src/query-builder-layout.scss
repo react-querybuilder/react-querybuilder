@@ -66,36 +66,14 @@ $rqb-branch-width: $rqb-border-width !default;
 }
 
 // #region Drag-and-drop
-
 // Hover styles
-[data-inlinecombinators='disabled'] {
-  .dndOver {
-    &.rule,
-    &.ruleGroup-header {
-      padding-bottom: $rqb-spacing;
-    }
+.dndOver {
+  &.rule,
+  &.ruleGroup-header {
+    padding-bottom: $rqb-spacing;
   }
-}
-[data-inlinecombinators='enabled'] {
-  .dndOver {
-    &.rule:last-child,
-    &.ruleGroup-header,
-    &.rule + .betweenRules,
-    &.betweenRules {
-      padding-bottom: $rqb-spacing;
-    }
-  }
-}
-
-// Drag styles
-.ruleGroup,
-.rule {
-  &.dndDragging {
-    opacity: 0.5;
-  }
-
-  .queryBuilder-dragHandle {
-    cursor: move;
+  &.betweenRules {
+    padding-top: $rqb-spacing;
   }
 }
 // #endregion

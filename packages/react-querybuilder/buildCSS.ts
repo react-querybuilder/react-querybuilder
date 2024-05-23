@@ -15,7 +15,7 @@ await Bun.$`mkdir -p dist`;
 // Write SCSS source, compiled CSS, and source map to dist directory
 await Promise.all(
   scssPaths.map(async (file, idx) => {
-    const { css, sourceMap } = compile(file, { sourceMap: true });
+    const { css, sourceMap } = compile(file, { sourceMap: true, style: 'compressed' });
     sourceMap!.sources = sourceMap!.sources.map(s => full2relativePath(s).replace(/\bsrc\//, './'));
     const sourceMapText = JSON.stringify(sourceMap);
     return Promise.all([

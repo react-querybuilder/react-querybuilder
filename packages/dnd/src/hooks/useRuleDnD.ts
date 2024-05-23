@@ -33,7 +33,6 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
-  // const query = useQueryBuilderSelector(getQuerySelectorById(qbId));
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'rule',
@@ -53,7 +52,6 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     () => ({
       accept,
       canDrop: dragging => {
-        // const dragging = findPath(dragging.path, query);
         if (
           dragging &&
           typeof canDrop === 'function' &&
@@ -66,10 +64,12 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
         const hoverIndex = path[path.length - 1];
         const itemIndex = dragging.path[dragging.path.length - 1];
 
-        // Don't allow drop if 1) item is ancestor of drop target,
-        // or 2) item is hovered over itself or the previous item
+        // Disallow drop if...
+        // prettier-ignore
         return !(
+          // 1) item is ancestor of drop target,
           isAncestor(dragging.path, path) ||
+          // 2) item is hovered over itself or the previous item
           (pathsAreEqual(parentHoverPath, parentItemPath) &&
             (hoverIndex === itemIndex ||
               hoverIndex === itemIndex - 1 ||

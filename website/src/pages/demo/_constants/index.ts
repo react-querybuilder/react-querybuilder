@@ -251,15 +251,17 @@ const { default: _d, ...compatStyles } = styleNameMap;
 
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
 
-export const peerDependencies: Record<StyleName | 'dnd', Record<string, string>> = {
-  default: {},
-  dnd: packageJSON_rqb_dnd.peerDependencies,
-  antd: packageJSON_rqb_antd.peerDependencies,
-  bootstrap: packageJSON_rqb_bootstrap.peerDependencies,
-  bulma: packageJSON_rqb_bulma.peerDependencies,
-  chakra: packageJSON_rqb_chakra.peerDependencies,
-  fluent: packageJSON_rqb_fluent.peerDependencies,
-  mantine: packageJSON_rqb_mantine.peerDependencies,
-  material: packageJSON_rqb_material.peerDependencies,
-  tremor: packageJSON_rqb_tremor.peerDependencies,
+const noReactOrRQB = (pd: string) => pd !== 'react' && pd !== 'react-querybuilder';
+
+export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
+  default: [],
+  dnd: objectKeys(packageJSON_rqb_dnd.peerDependencies).filter(noReactOrRQB),
+  antd: objectKeys(packageJSON_rqb_antd.peerDependencies).filter(noReactOrRQB),
+  bootstrap: objectKeys(packageJSON_rqb_bootstrap.peerDependencies).filter(noReactOrRQB),
+  bulma: objectKeys(packageJSON_rqb_bulma.peerDependencies).filter(noReactOrRQB),
+  chakra: objectKeys(packageJSON_rqb_chakra.peerDependencies).filter(noReactOrRQB),
+  fluent: objectKeys(packageJSON_rqb_fluent.peerDependencies).filter(noReactOrRQB),
+  mantine: objectKeys(packageJSON_rqb_mantine.peerDependencies).filter(noReactOrRQB),
+  material: objectKeys(packageJSON_rqb_material.peerDependencies).filter(noReactOrRQB),
+  tremor: objectKeys(packageJSON_rqb_tremor.peerDependencies).filter(noReactOrRQB),
 };

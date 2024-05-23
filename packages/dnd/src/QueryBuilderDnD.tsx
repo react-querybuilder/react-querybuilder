@@ -14,6 +14,10 @@ import { RuleGroupDnD } from './RuleGroupDnD';
 import { useReactDnD } from './hooks';
 import type { QueryBuilderDndProps } from './types';
 
+/**
+ * Context provider to enable drag-and-drop. If the application already implements
+ * `react-dnd`, use {@link QueryBuilderDndWithoutProvider} instead.
+ */
 export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
   const {
     controlClassnames,
@@ -63,6 +67,10 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps) => {
   );
 };
 
+/**
+ * Context provider to enable drag-and-drop. Only use this provider if the application
+ * already implements `react-dnd`, otherwise use {@link QueryBuilderDnD}.
+ */
 export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps) => {
   const rqbContext = useContext(QueryBuilderContext);
   const rqbDndContext = useContext(QueryBuilderDndContext);

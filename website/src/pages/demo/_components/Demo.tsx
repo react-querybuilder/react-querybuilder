@@ -10,13 +10,7 @@ import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
-import {
-  QueryBuilder,
-  convertToIC,
-  defaultValidator,
-  formatQuery,
-  objectKeys,
-} from 'react-querybuilder';
+import { QueryBuilder, convertToIC, defaultValidator, formatQuery } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
@@ -325,22 +319,10 @@ export default function Demo({
   const packageNames = useMemo(
     () => [
       'react-querybuilder',
-      ...(options.enableDragAndDrop
-        ? [
-            '@react-querybuilder/dnd',
-            ...objectKeys(peerDependencies.dnd).filter(
-              pd => pd !== 'react' && pd !== 'react-querybuilder'
-            ),
-          ]
-        : []),
+      ...(options.enableDragAndDrop ? ['@react-querybuilder/dnd', ...peerDependencies.dnd] : []),
       ...(variant === 'default'
         ? []
-        : [
-            `@react-querybuilder/${variant}`,
-            ...objectKeys(peerDependencies[variant]).filter(
-              pd => pd !== 'react' && pd !== 'react-querybuilder'
-            ),
-          ]),
+        : [`@react-querybuilder/${variant}`, ...peerDependencies[variant]]),
     ],
     [options.enableDragAndDrop, variant]
   );

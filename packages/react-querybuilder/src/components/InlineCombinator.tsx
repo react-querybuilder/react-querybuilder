@@ -8,11 +8,7 @@ import type { InlineCombinatorProps } from '../types';
  * `showCombinatorsBetweenRules` or `independentCombinators` are `true`.
  */
 export const InlineCombinator = (allProps: InlineCombinatorProps) => {
-  const {
-    component: CombinatorSelectorComponent,
-    independentCombinators: _ic,
-    ...props
-  } = allProps;
+  const { component: CombinatorSelectorComponent, ...props } = allProps;
 
   return (
     <div className={standardClassnames.betweenRules} data-testid={TestID.inlineCombinator}>

@@ -4,6 +4,10 @@ import type { RuleProps } from 'react-querybuilder';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { useRuleDnD } from './hooks';
 
+/**
+ * Rule component for drag-and-drop. Renders the provided rule component
+ * ({@link Rule} by default), but forwards the drag-and-drop context.
+ */
 export const RuleDnD = (props: RuleProps) => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 

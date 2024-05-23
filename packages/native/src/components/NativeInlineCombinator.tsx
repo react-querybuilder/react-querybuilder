@@ -8,7 +8,6 @@ import type { InlineCombinatorNativeProps } from '../types';
 export const NativeInlineCombinator = ({
   component: CombinatorSelectorComponent,
   path,
-  independentCombinators: _independentCombinators,
   ...props
 }: InlineCombinatorNativeProps) => {
   const styles = useMemo(

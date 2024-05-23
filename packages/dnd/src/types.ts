@@ -3,7 +3,6 @@ import type {
   Controls,
   DraggedItem,
   FullField,
-  InlineCombinatorProps,
   Path,
   QueryActions,
   QueryBuilderContextProviderProps,
@@ -40,14 +39,6 @@ export interface RuleDndProps {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrop: (typeof import('react-dnd'))['useDrop'];
   children: ReactElement<RuleProps>;
-}
-
-/**
- * {@link InlineCombinatorDnD} props.
- */
-export interface InlineCombinatorDndProps extends InlineCombinatorProps {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: (typeof import('react-dnd'))['useDrop'];
 }
 
 /**

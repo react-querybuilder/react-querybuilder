@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The `independentCombinators` property has been removed from the `InlineCombinatorProps` interface. The value can be still be retrieved from the `schema` prop.
+- Distributed CSS files are compressed (comments and unnecessary whitespace removed).
+
 ### Added
 
 - Most properties of the `controlElements` prop can be set to `null`. Properties set to `null` will be rendered as `() => null`.
@@ -14,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `parseCEL` no longer creates a rule group with `not: true` when parsing a single rule in a negated parenthetical group. Instead, the rule operator is inverted.
+- When `enableDragAndDrop` is `true` and a rule or group is dragged over an inline combinator (such as generated when `showCombinatorsBetweenRules` is enabled or the query uses independent combinators), the "drop location" indicator (a dashed, purple line by default) will appear _above_ the inline combinator. Previously the styles placed the indicator line _below_ the inline combinator, which could be misleading, particularly for independent combinators.
 
 ## [v7.3.0] - 2024-05-13
 

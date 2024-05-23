@@ -153,7 +153,6 @@ export interface DragHandleProps extends CommonSubComponentProps {
  */
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: ComponentType<CombinatorSelectorProps>;
-  independentCombinators?: boolean;
 }
 
 /**
