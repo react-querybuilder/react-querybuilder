@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
-import { useControlledOrUncontrolled, useMergedContext } from '../hooks';
+import { useMergedContext } from '../hooks';
 import type {
   FlexibleOptionList,
   FullCombinator,
@@ -68,8 +68,6 @@ export const useQueryBuilderSetup = <
   const [qbId] = useState(generateID);
 
   const {
-    query: queryProp,
-    defaultQuery,
     fields: fieldsPropOriginal,
     baseField,
     operators: operatorsProp,
@@ -442,11 +440,6 @@ export const useQueryBuilderSetup = <
     [addRuleToNewGroups, combinators, createRule, idGenerator]
   );
   // #endregion
-
-  useControlledOrUncontrolled({
-    defaultQuery,
-    queryProp,
-  });
 
   return {
     qbId,

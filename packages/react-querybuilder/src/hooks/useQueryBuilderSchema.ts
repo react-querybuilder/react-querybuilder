@@ -41,6 +41,7 @@ import {
 } from '../utils';
 import { useDeprecatedProps } from './useDeprecatedProps';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
+import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
@@ -140,6 +141,11 @@ export function useQueryBuilderSchema<
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
   // #endregion
+
+  useControlledOrUncontrolled({
+    defaultQuery: defaultQueryProp,
+    queryProp,
+  });
 
   // #region Handle controlled mode vs uncontrolled mode
   const queryBuilderStore = useRQB_INTERNAL_QueryBuilderStore();

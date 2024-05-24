@@ -41,8 +41,21 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownA
  */
 export const useRQB_INTERNAL_QueryBuilderStore = createStoreHook(QueryBuilderStateContext);
 
-export const {
-  warnBothQueryDefaultQuery,
-  warnControlledToUncontrolled,
-  warnUncontrolledToControlled,
+const {
+  warnBothQueryDefaultQuery: _SYNC_warnBothQueryDefaultQuery,
+  warnControlledToUncontrolled: _SYNC_warnControlledToUncontrolled,
+  warnUncontrolledToControlled: _SYNC_warnUncontrolledToControlled,
 } = warningsSlice.actions;
+
+export const warnBothQueryDefaultQuery =
+  (): ThunkAction<void, RqbState, unknown, PayloadAction> => async dispatch => {
+    setTimeout(() => dispatch(_SYNC_warnBothQueryDefaultQuery()));
+  };
+export const warnControlledToUncontrolled =
+  (): ThunkAction<void, RqbState, unknown, PayloadAction> => async dispatch => {
+    setTimeout(() => dispatch(_SYNC_warnControlledToUncontrolled()));
+  };
+export const warnUncontrolledToControlled =
+  (): ThunkAction<void, RqbState, unknown, PayloadAction> => async dispatch => {
+    setTimeout(() => dispatch(_SYNC_warnUncontrolledToControlled()));
+  };

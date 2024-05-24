@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { consoleMocks } from '../../genericTests';
@@ -2845,18 +2845,47 @@ describe('debug mode', () => {
 });
 
 describe('controlled/uncontrolled warnings', () => {
-  it('tracks changes from controlled to uncontrolled and vice versa', () => {
+  it('tracks changes from controlled to uncontrolled and vice versa', async () => {
     const getQuery = (): RuleGroupType => ({
       combinator: generateID(),
       rules: [],
     });
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
     expect(consoleError).not.toHaveBeenCalled();
     rerender(<QueryBuilder query={getQuery()} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
     expect(consoleError).toHaveBeenLastCalledWith(messages.errorUncontrolledToControlled);
     rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
     expect(consoleError).toHaveBeenLastCalledWith(messages.errorBothQueryDefaultQuery);
     rerender(<QueryBuilder defaultQuery={getQuery()} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
     expect(consoleError).toHaveBeenLastCalledWith(messages.errorControlledToUncontrolled);
+
+    // Start the process over and test that the warnings are not re-triggered
+    const errorCallCount = consoleError.mock.calls.length;
+
+    rerender(<QueryBuilder query={getQuery()} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
+    rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
+    rerender(<QueryBuilder defaultQuery={getQuery()} />);
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 500));
+    });
+    expect(consoleError.mock.calls).toHaveLength(errorCallCount);
   });
 });
