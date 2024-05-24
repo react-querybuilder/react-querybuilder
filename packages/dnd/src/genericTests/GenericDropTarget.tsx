@@ -10,7 +10,7 @@ export type GenericDropTargetProps = {
 };
 
 export const GenericDropTarget = ({ useDrop, path, type, dropEffect }: GenericDropTargetProps) => {
-  const [{ dropMonitorId }] = useDrop(() => ({
+  const [{ dropMonitorId }] = useDrop!(() => ({
     accept: ['rule', 'ruleGroup'],
     canDrop: () => true,
     collect: monitor => ({

@@ -13,13 +13,13 @@ import { isRuleGroup, isRuleGroupType, pathsAreEqual } from '../utils';
 export const RuleGroup = React.memo((props: RuleGroupProps) => {
   const rg = useRuleGroup(props);
 
-  rg.addRule = useStopEventPropagation(rg.addRule);
-  rg.addGroup = useStopEventPropagation(rg.addGroup);
-  rg.cloneGroup = useStopEventPropagation(rg.cloneGroup);
-  rg.toggleLockGroup = useStopEventPropagation(rg.toggleLockGroup);
-  rg.removeGroup = useStopEventPropagation(rg.removeGroup);
-  rg.shiftGroupUp = useStopEventPropagation(rg.shiftGroupUp);
-  rg.shiftGroupDown = useStopEventPropagation(rg.shiftGroupDown);
+  const addRule = useStopEventPropagation(rg.addRule);
+  const addGroup = useStopEventPropagation(rg.addGroup);
+  const cloneGroup = useStopEventPropagation(rg.cloneGroup);
+  const toggleLockGroup = useStopEventPropagation(rg.toggleLockGroup);
+  const removeGroup = useStopEventPropagation(rg.removeGroup);
+  const shiftGroupUp = useStopEventPropagation(rg.shiftGroupUp);
+  const shiftGroupDown = useStopEventPropagation(rg.shiftGroupDown);
 
   return (
     <div
@@ -33,10 +33,28 @@ export const RuleGroup = React.memo((props: RuleGroupProps) => {
       data-level={rg.path.length}
       data-path={JSON.stringify(rg.path)}>
       <div ref={rg.dropRef} className={rg.classNames.header}>
-        <RuleGroupHeaderComponents {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])} />
+        <RuleGroupHeaderComponents
+          {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])}
+          addRule={addRule}
+          addGroup={addGroup}
+          cloneGroup={cloneGroup}
+          toggleLockGroup={toggleLockGroup}
+          removeGroup={removeGroup}
+          shiftGroupUp={shiftGroupUp}
+          shiftGroupDown={shiftGroupDown}
+        />
       </div>
       <div className={rg.classNames.body}>
-        <RuleGroupBodyComponents {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])} />
+        <RuleGroupBodyComponents
+          {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])}
+          addRule={addRule}
+          addGroup={addGroup}
+          cloneGroup={cloneGroup}
+          toggleLockGroup={toggleLockGroup}
+          removeGroup={removeGroup}
+          shiftGroupUp={shiftGroupUp}
+          shiftGroupDown={shiftGroupDown}
+        />
       </div>
     </div>
   );

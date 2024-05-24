@@ -31,7 +31,7 @@ export const useDragCommon = ({
   // independentCombinators,
   useDrag,
 }: UseDragCommonProps) =>
-  useDrag<DraggedItem, DropResult, DragCollection>(
+  useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
       item: { ...ruleOrGroup, path },

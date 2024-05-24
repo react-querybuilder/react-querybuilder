@@ -22,17 +22,24 @@ const getLink = ({
     variant === 'default' ? '' : `/${variant}`
   }${compressedState ? `#s=${compressedState}` : ''}`;
 
+const goToLink = (link: string) => {
+  location.href = link;
+};
+
 export default function Nav({ variant, compressedState }: NavProps) {
   const slId = useId();
   const siteLocation = useLocation();
 
   const goToStyle = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) =>
-      (location.href = getLink({
-        variant: e.target.value as StyleName,
-        compressedState,
-        siteLocation,
-      })),
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      goToLink(
+        getLink({
+          variant: e.target.value as StyleName,
+          compressedState,
+          siteLocation,
+        })
+      );
+    },
     [compressedState, siteLocation]
   );
 

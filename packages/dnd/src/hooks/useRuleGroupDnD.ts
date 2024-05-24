@@ -45,7 +45,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     useDrag,
   });
 
-  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
+  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop!<
     DraggedItem,
     DropResult,
     DropCollection

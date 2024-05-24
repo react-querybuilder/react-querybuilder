@@ -3,13 +3,26 @@ import { configureStore } from '@reduxjs/toolkit';
 import * as React from 'react';
 import type { ReactReduxContextValue, TypedUseSelectorHook } from 'react-redux';
 import { createSelectorHook } from 'react-redux';
+import type { QueriesSliceState } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
+import type { WarningsSliceState } from './warningsSlice';
+import { warningsSlice } from './warningsSlice';
 
-export type RqbState = { queries: ReturnType<typeof queriesSlice.getInitialState> };
-const preloadedState = { queries: queriesSlice.getInitialState() } satisfies RqbState;
+export type RqbState = {
+  queries: QueriesSliceState;
+  warnings: WarningsSliceState;
+};
+
+const preloadedState = {
+  queries: queriesSlice.getInitialState(),
+  warnings: warningsSlice.getInitialState(),
+} satisfies RqbState;
 
 export const queryBuilderStore = configureStore({
-  reducer: { queries: queriesSlice.reducer },
+  reducer: {
+    queries: queriesSlice.reducer,
+    warnings: warningsSlice.reducer,
+  },
   preloadedState,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -41,5 +54,5 @@ export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> =
  * a selector for use with `useQueryBuilderSelector`.
  */
 export const getQuerySelectorById = (qbId: string) => (state: RqbState) =>
-  queriesSlice.selectors.getQuerySelectorById(state, qbId);
+  queriesSlice.selectors.getQuerySelectorById({ queries: state.queries }, qbId);
 // #endregion
