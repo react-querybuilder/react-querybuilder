@@ -9,6 +9,7 @@ import { createDispatchHook, createStoreHook } from 'react-redux';
 import { QueryBuilderStateContext, type RqbState } from '.';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
+import type { Messages } from './warningsSlice';
 import { warningsSlice } from './warningsSlice';
 
 export const _RQB_INTERNAL_dispatchThunk =
@@ -41,21 +42,10 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownA
  */
 export const useRQB_INTERNAL_QueryBuilderStore = createStoreHook(QueryBuilderStateContext);
 
-const {
-  warnBothQueryDefaultQuery: _SYNC_warnBothQueryDefaultQuery,
-  warnControlledToUncontrolled: _SYNC_warnControlledToUncontrolled,
-  warnUncontrolledToControlled: _SYNC_warnUncontrolledToControlled,
-} = warningsSlice.actions;
+const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;
 
-export const warnBothQueryDefaultQuery =
-  (): ThunkAction<void, RqbState, unknown, PayloadAction> => async dispatch => {
-    setTimeout(() => dispatch(_SYNC_warnBothQueryDefaultQuery()));
-  };
-export const warnControlledToUncontrolled =
-  (): ThunkAction<void, RqbState, unknown, PayloadAction> => async dispatch => {
-    setTimeout(() => dispatch(_SYNC_warnControlledToUncontrolled()));
-  };
-export const warnUncontrolledToControlled =
-  (): ThunkAction<void, RqbState, unknown, PayloadAction> => async dispatch => {
-    setTimeout(() => dispatch(_SYNC_warnUncontrolledToControlled()));
+export const rqbWarn =
+  (msg: Messages): ThunkAction<void, RqbState, unknown, PayloadAction<Messages>> =>
+  dispatch => {
+    setTimeout(() => dispatch(_SYNC_rqbWarn(msg)));
   };

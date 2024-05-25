@@ -1,9 +1,5 @@
-import {
-  useRQB_INTERNAL_QueryBuilderDispatch,
-  warnBothQueryDefaultQuery,
-  warnControlledToUncontrolled,
-  warnUncontrolledToControlled,
-} from '../redux/_internal';
+import { messages } from '../messages';
+import { useRQB_INTERNAL_QueryBuilderDispatch, rqbWarn } from '../redux/_internal';
 import type { RuleGroupTypeAny } from '../types';
 import { usePrevious } from './usePrevious';
 
@@ -24,11 +20,11 @@ export const useControlledOrUncontrolled = (params: UseControlledOrUncontrolledP
   // istanbul ignore else
   if (process.env.NODE_ENV !== 'production') {
     if (!!queryProp && !!defaultQuery) {
-      dispatch(warnBothQueryDefaultQuery());
+      dispatch(rqbWarn(messages.errorBothQueryDefaultQuery));
     } else if (prevQueryPresent === true && !queryProp && !!defaultQuery) {
-      dispatch(warnControlledToUncontrolled());
+      dispatch(rqbWarn(messages.errorControlledToUncontrolled));
     } else if (prevQueryPresent === false && !!queryProp && !defaultQuery) {
-      dispatch(warnUncontrolledToControlled());
+      dispatch(rqbWarn(messages.errorUncontrolledToControlled));
     }
   }
 };

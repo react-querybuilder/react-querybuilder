@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import {
@@ -7,11 +7,17 @@ import {
   getRuleGroupProps,
   ruleGroupClassnames,
 } from '../../genericTests';
-import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
+import {
+  TestID,
+  defaultCombinators,
+  standardClassnames as sc,
+  defaultTranslations as t,
+} from '../defaults';
 import { messages } from '../messages';
 import type { ActionProps, RuleGroupICArray, ValidationResult, ValueSelectorProps } from '../types';
-import { toFullOption } from '../utils';
+import { add, toFullOption } from '../utils';
 import { RuleGroup } from './RuleGroup';
+import { render, waitABeat } from './testUtils';
 
 const user = userEvent.setup();
 
@@ -484,13 +490,59 @@ describe('dynamic classNames', () => {
 });
 
 describe('dnd warnings', () => {
-  it('warns about using dnd without react-dnd', () => {
+  it('warns about using dnd without react-dnd', async () => {
     render(
       <RuleGroup
         {...getRuleGroupProps({ enableDragAndDrop: true })}
         ruleGroup={{ combinator: 'and', rules: [] }}
       />
     );
+    await waitABeat();
     expect(consoleError).toHaveBeenCalledWith(messages.errorEnabledDndWithoutReactDnD);
   });
+});
+
+it('warns about deprecated props', async () => {
+  // @ts-expect-error ruleGroup is required
+  render(<RuleGroup {...getRuleGroupProps()} ruleGroup={undefined} rules={[]} combinator="or" />);
+  await waitABeat();
+  expect(consoleError).toHaveBeenCalledWith(messages.errorDeprecatedRuleGroupProps);
+  expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
+});
+
+it('warns about deprecated props (independent combinators)', async () => {
+  const addListener = jest.fn();
+  render(
+    <RuleGroup
+      {...getRuleGroupProps(
+        { independentCombinators: true },
+        {
+          onRuleAdd: (rOrG, parentPath) => {
+            addListener(
+              add({ rules: [{ field: 'f', operator: '=', value: 'v' }] }, rOrG, parentPath)
+            );
+          },
+        }
+      )}
+      path={[]}
+      // @ts-expect-error ruleGroup prop is required
+      ruleGroup={undefined}
+      rules={[{ field: 'f', operator: '=', value: 'v' }]}
+      combinator={undefined}
+    />
+  );
+  await waitABeat();
+  expect(consoleError).toHaveBeenCalledWith(messages.errorDeprecatedRuleGroupProps);
+
+  await user.click(screen.getByTestId(TestID.addRule));
+  expect(addListener).toHaveBeenCalledTimes(1);
+  expect(addListener).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      rules: expect.arrayContaining([
+        expect.anything(),
+        defaultCombinators[0].name,
+        expect.anything(),
+      ]),
+    })
+  );
 });
