@@ -7,19 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v7.4.0] - 2024-05-27
+
 ### Changed
 
-- The `independentCombinators` property has been removed from the `InlineCombinatorProps` interface. The value can be still be retrieved from the `schema` prop.
-- Distributed CSS files are compressed (comments and unnecessary whitespace removed).
+- [#703] The `independentCombinators` property has been removed from the `InlineCombinatorProps` interface. The value can be still be retrieved from the `schema` prop.
+- [#703] Distributed CSS files are compressed (comments and unnecessary whitespace removed).
 
 ### Added
 
-- Most properties of the `controlElements` prop can be set to `null`. Properties set to `null` will be rendered as `() => null`.
+- [#699] Most properties of the `controlElements` prop can be set to `null`. Properties set to `null` will be rendered as `() => null`.
 
 ### Fixed
 
-- `parseCEL` no longer creates a rule group with `not: true` when parsing a single rule in a negated parenthetical group. Instead, the rule operator is inverted.
-- When `enableDragAndDrop` is `true` and a rule or group is dragged over an inline combinator (such as generated when `showCombinatorsBetweenRules` is enabled or the query uses independent combinators), the "drop location" indicator (a dashed, purple line by default) will appear _above_ the inline combinator. Previously the styles placed the indicator line _below_ the inline combinator, which could be misleading, particularly for independent combinators.
+- [#700] `parseCEL` no longer creates a rule group with `not: true` when parsing a single rule in a negated parenthetical group. Instead, the rule operator is inverted.
+- [#703] When `enableDragAndDrop` is `true` and a rule or group is dragged over an inline combinator (such as generated when `showCombinatorsBetweenRules` is enabled or the query uses independent combinators), the "drop location" indicator (a dashed, purple line by default) will appear _above_ the inline combinator. Previously the styles placed the indicator line _below_ the inline combinator, which could be misleading, particularly for independent combinators.
 
 ## [v7.3.0] - 2024-05-13
 
@@ -1632,10 +1636,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#692]: https://github.com/react-querybuilder/react-querybuilder/pull/692
 [#696]: https://github.com/react-querybuilder/react-querybuilder/pull/696
 [#697]: https://github.com/react-querybuilder/react-querybuilder/pull/697
+[#699]: https://github.com/react-querybuilder/react-querybuilder/pull/699
+[#700]: https://github.com/react-querybuilder/react-querybuilder/pull/700
+[#703]: https://github.com/react-querybuilder/react-querybuilder/pull/703
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...HEAD
+[v7.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...v7.4.0
 [v7.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...v7.3.0
 [v7.2.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.0...v7.2.1
 [v7.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.1.0...v7.2.0

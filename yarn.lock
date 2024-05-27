@@ -9781,7 +9781,7 @@ __metadata:
     dayjs: "npm:^1.11.11"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -9790,7 +9790,7 @@ __metadata:
     antd: ">=5"
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -9812,7 +9812,7 @@ __metadata:
     bootstrap-icons: "npm:^1.11.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -9820,7 +9820,7 @@ __metadata:
     bootstrap: ">=5"
     bootstrap-icons: ">=1.7.0"
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -9840,14 +9840,14 @@ __metadata:
     bulma: "npm:^0.9.4"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
   peerDependencies:
     bulma: ^0.9.3
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -9872,7 +9872,7 @@ __metadata:
     framer-motion: "npm:^11.1.8"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -9884,7 +9884,7 @@ __metadata:
     "@emotion/styled": ^11
     framer-motion: ^6.3.3
     react: ">=18.1.0"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -9909,7 +9909,7 @@ __metadata:
     react-dnd-test-backend: "npm:^16.0.1"
     react-dnd-test-utils: "npm:^16.0.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -9917,7 +9917,7 @@ __metadata:
     react: ">=18"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -9939,7 +9939,7 @@ __metadata:
     dayjs: "npm:^1.11.11"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -9948,7 +9948,7 @@ __metadata:
     "@fluentui/react-icons-mdl2": ^1
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -9971,7 +9971,7 @@ __metadata:
     dayjs: "npm:^1.11.11"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -9981,7 +9981,7 @@ __metadata:
     "@mantine/hooks": ">=7"
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -10004,7 +10004,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     regenerator-runtime: "npm:^0.14.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
@@ -10015,7 +10015,7 @@ __metadata:
     "@mui/icons-material": ">=5.0.0"
     "@mui/material": ">=5.0.0"
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -10033,7 +10033,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-native: "npm:~0.74.1"
     react-native-web: "npm:~0.19.11"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     react-redux: "npm:^9.1.2"
     react-test-renderer: "npm:^18.3.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
@@ -10041,7 +10041,7 @@ __metadata:
     vite: "npm:^5.2.11"
   peerDependencies:
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
     react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
@@ -10067,7 +10067,7 @@ __metadata:
     postcss: "npm:^8.4.38"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.3.0"
+    react-querybuilder: "npm:^7.4.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     tailwindcss: "npm:^3.4.3"
     typescript: "npm:^5.4.5"
@@ -10076,7 +10076,7 @@ __metadata:
     "@tremor/react": ^3
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.3.0
+    react-querybuilder: ^7.4.0
   languageName: unknown
   linkType: soft
 
@@ -26459,7 +26459,7 @@ __metadata:
   languageName: node
   linkType: soft
 
-"react-querybuilder@npm:^7.3.0, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@npm:^7.4.0, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
