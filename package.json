@@ -103,6 +103,7 @@
     "esbuild-analyzer": "^0.2.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-c8b3f72-20240517",
     "eslint-plugin-react-hooks": "^4.6.2",
     "fast-json-stable-stringify": "^2.1.0",
     "glob": "^10.3.12",
