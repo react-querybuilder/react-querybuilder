@@ -77,7 +77,7 @@ jest.mock('@mui/material/FormControl', () => {
   const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
     <div className={className} title={title}>
       {mockIsValidElement(children)
-        ? mockCloneElement(children as ReactElement, { disabled })
+        ? mockCloneElement(children as ReactElement<HTMLInputElement>, { disabled })
         : children}
     </div>
   );

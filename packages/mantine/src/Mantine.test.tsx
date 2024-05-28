@@ -281,8 +281,8 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     await act(async () => {
       await user.click(screen.getByTestId(TestID.valueEditor));
       await new Promise(r => setTimeout(r, 500));
+      await user.click(screen.getByText('20'));
     });
-    await user.click(screen.getByText('20'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,${dateStub}20`);
     rerender(
       <MantineValueEditor
