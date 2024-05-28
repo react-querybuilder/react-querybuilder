@@ -44,7 +44,7 @@ export const testValueEditor = (
   skip: ValueEditorTestsToSkip = {}
 ) => {
   const user = userEventSetup();
-  const title = ValueEditor.displayName ?? 'ValueEditor';
+  const title = ValueEditor.name ?? 'ValueEditor';
   const props = { ...defaultValueEditorProps, title };
 
   const testCheckbox = (type: 'checkbox' | 'switch') => {

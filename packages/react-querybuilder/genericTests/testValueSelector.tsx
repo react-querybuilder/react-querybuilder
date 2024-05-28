@@ -159,7 +159,7 @@ export const testValueSelector = (
   ValueSelector: React.ComponentType<ValueSelectorProps>,
   skip: ValueSelectorTestsToSkip = {}
 ) => {
-  const title = ValueSelector.displayName ?? 'ValueSelector';
+  const title = ValueSelector.name ?? 'ValueSelector';
   const props = { ...defaultValueSelectorProps, title };
 
   testSelect(title, ValueSelector, props, skip);

@@ -17,7 +17,7 @@ export const testDragHandle = (
     DragHandleProps & React.RefAttributes<any>
   >
 ) => {
-  const title = DragHandle.displayName ?? 'DragHandle';
+  const title = DragHandle.name ?? 'DragHandle';
   const props = { ...defaultDragHandleProps, title };
 
   describe(title, () => {
