@@ -337,6 +337,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "smplman",
+      "name": "Stephen Peery",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1252607?v=4",
+      "profile": "https://smplman.com",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
