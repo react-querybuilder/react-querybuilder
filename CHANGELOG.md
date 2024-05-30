@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#706] `parseJsonLogic` no longer nests negated groups unnecessarily.
 
 ## [v7.4.0] - 2024-05-27
 
@@ -1639,6 +1641,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#699]: https://github.com/react-querybuilder/react-querybuilder/pull/699
 [#700]: https://github.com/react-querybuilder/react-querybuilder/pull/700
 [#703]: https://github.com/react-querybuilder/react-querybuilder/pull/703
+[#706]: https://github.com/react-querybuilder/react-querybuilder/pull/706
 
 <!-- Release comparison links -->
 
