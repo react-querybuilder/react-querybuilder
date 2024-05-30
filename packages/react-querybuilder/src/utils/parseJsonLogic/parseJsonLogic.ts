@@ -140,7 +140,7 @@ function parseJsonLogic(
             return { combinator: 'and', rules: [newRule] };
           }
           return newRule;
-        } else if (isJsonLogicBetweenExclusive(logic['!']) && isRuleGroupType(rule)) {
+        } else if (isJsonLogicBetweenExclusive(logic['!']) || isRuleGroupType(rule)) {
           return { ...rule, not: true };
         }
         return { combinator: 'and', rules: [rule], not: true };

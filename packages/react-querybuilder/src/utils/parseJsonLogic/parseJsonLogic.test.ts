@@ -138,6 +138,14 @@ describe('valueSource: "value"', () => {
     });
   });
 
+  it('handles negated groups', () => {
+    expect(parseJsonLogic({ '!': { and: [{ '==': [{ var: 'f1' }, 'Test'] }] } })).toEqual({
+      combinator: 'and',
+      not: true,
+      rules: [{ field: 'f1', operator: '=', value: 'Test' }],
+    });
+  });
+
   it('handles "between" and "in" operations', () => {
     expect(
       parseJsonLogic({
