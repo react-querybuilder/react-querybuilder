@@ -1,4 +1,8 @@
 {
   "presets": ["@babel/env", ["@babel/react", { "runtime": "automatic" }], "@babel/typescript"],
-  "env": { "development": { "compact": false }, "test": { "compact": false } }
+  "env": { "development": { "compact": false }, "test": { "compact": false } },
+  "plugins": [
+    ["@babel/plugin-transform-class-properties", { "loose": true }],
+    ["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+  ]
 }

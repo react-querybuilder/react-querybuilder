@@ -27,7 +27,7 @@ export const MantineActionElement = ({
     type="button"
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
-    onClick={e => handleOnClick(e)}
+    onClick={(e: React.MouseEvent) => handleOnClick(e)}
     disabled={disabled && !disabledTranslation}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>

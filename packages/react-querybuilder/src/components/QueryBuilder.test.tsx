@@ -47,6 +47,7 @@ import { QueryBuilderContext } from './QueryBuilderContext';
 import { defaultControlElements } from './defaults';
 import { ValueSelector } from './ValueSelector';
 import { ActionElement } from './ActionElement';
+import { waitABeat } from './testUtils';
 
 const user = userEvent.setup();
 
@@ -2845,18 +2846,57 @@ describe('debug mode', () => {
 });
 
 describe('controlled/uncontrolled warnings', () => {
-  it('tracks changes from controlled to uncontrolled and vice versa', () => {
+  it('tracks changes from controlled to uncontrolled and vice versa', async () => {
     const getQuery = (): RuleGroupType => ({
       combinator: generateID(),
       rules: [],
     });
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
+    await waitABeat();
     expect(consoleError).not.toHaveBeenCalled();
     rerender(<QueryBuilder query={getQuery()} />);
+    await waitABeat();
     expect(consoleError).toHaveBeenLastCalledWith(messages.errorUncontrolledToControlled);
     rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
+    await waitABeat();
     expect(consoleError).toHaveBeenLastCalledWith(messages.errorBothQueryDefaultQuery);
     rerender(<QueryBuilder defaultQuery={getQuery()} />);
+    await waitABeat();
     expect(consoleError).toHaveBeenLastCalledWith(messages.errorControlledToUncontrolled);
+
+    // Start the process over and test that the warnings are not re-triggered
+    const errorCallCount = consoleError.mock.calls.length;
+
+    rerender(<QueryBuilder query={getQuery()} />);
+    await waitABeat();
+    rerender(<QueryBuilder defaultQuery={getQuery()} query={getQuery()} />);
+    await waitABeat();
+    rerender(<QueryBuilder defaultQuery={getQuery()} />);
+    await waitABeat();
+    expect(consoleError.mock.calls).toHaveLength(errorCallCount);
+  });
+});
+
+describe('deprecated props', () => {
+  it('warns about unnecessary independentCombinators prop', async () => {
+    render(<QueryBuilder query={{ rules: [] }} />);
+    await waitABeat();
+    expect(consoleError).not.toHaveBeenCalledWith(
+      messages.errorUnnecessaryIndependentCombinatorsProp
+    );
+
+    render(<QueryBuilder independentCombinators={false} query={{ rules: [] }} />);
+    await waitABeat();
+    expect(consoleError).toHaveBeenCalledWith(messages.errorUnnecessaryIndependentCombinatorsProp);
+  });
+
+  it('warns about invalid independentCombinators prop', async () => {
+    render(<QueryBuilder independentCombinators query={{ rules: [] }} />);
+    await waitABeat();
+    expect(consoleError).not.toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
+
+    render(<QueryBuilder independentCombinators query={{ combinator: 'and', rules: [] }} />);
+    await waitABeat();
+    expect(consoleError).toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
   });
 });

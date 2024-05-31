@@ -37,8 +37,7 @@ export const useReactDnD = (dndParam?: UseReactDnD) => {
     return () => {
       didCancel = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dnd]);
 
   return dnd;
 };

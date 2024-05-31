@@ -1,9 +1,5 @@
 import { messages } from '../messages';
-
-let didWarnUsingInvalidIndependentCombinatorsProp = false;
-let didWarnUsingUnnecessaryIndependentCombinatorsProp = false;
-let didWarnUsingDeprecatedRuleProps = false;
-let didWarnUsingDeprecatedRuleGroupProps = false;
+import { rqbWarn, useRQB_INTERNAL_QueryBuilderDispatch } from '../redux/_internal';
 
 /**
  * Logs an error to the console if any of the following are true:
@@ -24,26 +20,24 @@ function useDeprecatedProps(
   logWarning: boolean,
   otherParams?: 'invalid' | 'unnecessary'
 ) {
+  const dispatch = useRQB_INTERNAL_QueryBuilderDispatch();
   if (process.env.NODE_ENV !== 'production' && logWarning) {
     if (type === 'independentCombinators') {
-      if (!didWarnUsingInvalidIndependentCombinatorsProp && otherParams === 'invalid') {
-        console.error(messages.errorInvalidIndependentCombinatorsProp);
-        didWarnUsingInvalidIndependentCombinatorsProp = true;
+      if (otherParams === 'invalid') {
+        dispatch(rqbWarn(messages.errorInvalidIndependentCombinatorsProp));
       }
-      if (!didWarnUsingUnnecessaryIndependentCombinatorsProp && otherParams === 'unnecessary') {
-        console.error(messages.errorUnnecessaryIndependentCombinatorsProp);
-        didWarnUsingUnnecessaryIndependentCombinatorsProp = true;
+
+      if (otherParams === 'unnecessary') {
+        dispatch(rqbWarn(messages.errorUnnecessaryIndependentCombinatorsProp));
       }
     }
 
-    if (type === 'rule' && !didWarnUsingDeprecatedRuleProps) {
-      console.error(messages.errorDeprecatedRuleProps);
-      didWarnUsingDeprecatedRuleProps = true;
+    if (type === 'rule') {
+      dispatch(rqbWarn(messages.errorDeprecatedRuleProps));
     }
 
-    if (type === 'ruleGroup' && !didWarnUsingDeprecatedRuleGroupProps) {
-      console.error(messages.errorDeprecatedRuleGroupProps);
-      didWarnUsingDeprecatedRuleGroupProps = true;
+    if (type === 'ruleGroup') {
+      dispatch(rqbWarn(messages.errorDeprecatedRuleGroupProps));
     }
   }
 }

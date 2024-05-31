@@ -10,11 +10,11 @@ import type { RuleProps } from '../types';
 export const Rule = React.memo((props: RuleProps) => {
   const r = useRule(props);
 
-  r.cloneRule = useStopEventPropagation(r.cloneRule);
-  r.toggleLockRule = useStopEventPropagation(r.toggleLockRule);
-  r.removeRule = useStopEventPropagation(r.removeRule);
-  r.shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
-  r.shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
+  const cloneRule = useStopEventPropagation(r.cloneRule);
+  const toggleLockRule = useStopEventPropagation(r.toggleLockRule);
+  const removeRule = useStopEventPropagation(r.removeRule);
+  const shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
+  const shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
 
   return (
     <div
@@ -26,7 +26,14 @@ export const Rule = React.memo((props: RuleProps) => {
       data-rule-id={r.id}
       data-level={r.path.length}
       data-path={JSON.stringify(r.path)}>
-      <RuleComponents {...r} />
+      <RuleComponents
+        {...r}
+        cloneRule={cloneRule}
+        toggleLockRule={toggleLockRule}
+        removeRule={removeRule}
+        shiftRuleUp={shiftRuleUp}
+        shiftRuleDown={shiftRuleDown}
+      />
     </div>
   );
 });

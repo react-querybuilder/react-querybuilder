@@ -5,10 +5,12 @@ import type {
   ThunkDispatch,
   UnknownAction,
 } from '@reduxjs/toolkit';
+import { createDispatchHook, createStoreHook } from 'react-redux';
+import { QueryBuilderStateContext, type RqbState } from '.';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
-import { QueryBuilderStateContext, type RqbState } from '.';
-import { createDispatchHook, createStoreHook } from 'react-redux';
+import type { Messages } from './warningsSlice';
+import { warningsSlice } from './warningsSlice';
 
 export const _RQB_INTERNAL_dispatchThunk =
   ({
@@ -39,3 +41,11 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownA
  * Gets the full RQB Redux store.
  */
 export const useRQB_INTERNAL_QueryBuilderStore = createStoreHook(QueryBuilderStateContext);
+
+const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;
+
+export const rqbWarn =
+  (msg: Messages): ThunkAction<void, RqbState, unknown, PayloadAction<Messages>> =>
+  dispatch => {
+    setTimeout(() => dispatch(_SYNC_rqbWarn(msg)));
+  };

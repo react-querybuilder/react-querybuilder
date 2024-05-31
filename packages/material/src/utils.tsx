@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import * as React from 'react';
 import type { OptionList } from 'react-querybuilder';
 import { isOptionGroupArray } from 'react-querybuilder';

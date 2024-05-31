@@ -22,7 +22,7 @@ export const defaultShiftActionsProps: ShiftActionsProps = {
 
 export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsProps>) => {
   const user = userEventSetup();
-  const title = ShiftActions.displayName ?? 'ShiftActions';
+  const title = ShiftActions.name ?? 'ShiftActions';
 
   const testEnabledAndOnClick = ({
     testTitle,

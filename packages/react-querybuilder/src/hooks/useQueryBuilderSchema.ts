@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LogType, standardClassnames } from '../defaults';
 import {
   _RQB_INTERNAL_dispatchThunk,
@@ -41,6 +41,7 @@ import {
 } from '../utils';
 import { useDeprecatedProps } from './useDeprecatedProps';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
+import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
@@ -141,6 +142,11 @@ export function useQueryBuilderSchema<
   const listsAsArrays = !!listsAsArraysProp;
   // #endregion
 
+  useControlledOrUncontrolled({
+    defaultQuery: defaultQueryProp,
+    queryProp,
+  });
+
   // #region Handle controlled mode vs uncontrolled mode
   const queryBuilderStore = useRQB_INTERNAL_QueryBuilderStore();
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
@@ -184,8 +190,10 @@ export function useQueryBuilderSchema<
     // 'invalid'
   );
 
-  // This effect only runs once, at the beginning of the component lifecycle.
+  const hasRunMountQueryChange = useRef(false);
   useEffect(() => {
+    if (hasRunMountQueryChange.current) return;
+    hasRunMountQueryChange.current = true;
     queryBuilderDispatch(
       _RQB_INTERNAL_dispatchThunk({
         payload: { qbId, query: rootGroup },
@@ -194,8 +202,7 @@ export function useQueryBuilderSchema<
           enableMountQueryChange && typeof onQueryChange === 'function' ? onQueryChange : undefined,
       })
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [enableMountQueryChange, onQueryChange, qbId, queryBuilderDispatch, rootGroup]);
 
   /**
    * Updates the redux-based query, then calls `onQueryChange` with the updated

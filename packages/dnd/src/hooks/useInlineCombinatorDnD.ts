@@ -39,7 +39,7 @@ export const useInlineCombinatorDnD = ({
     | RuleType
     | RuleGroupTypeAny;
 
-  const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
+  const [{ isOver, dropMonitorId }, drop] = useDrop!<DraggedItem, DropResult, DropCollection>(
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: dragging => {

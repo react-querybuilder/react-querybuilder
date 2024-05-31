@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { clsx } from 'clsx';
 import * as React from 'react';
@@ -21,6 +21,7 @@ import type {
 } from '../types';
 import { toFullOption } from '../utils';
 import { Rule } from './Rule';
+import { render, waitABeat } from './testUtils';
 
 const user = userEvent.setup();
 
@@ -369,9 +370,10 @@ describe('dynamic classNames', () => {
 });
 
 describe('deprecated props', () => {
-  it('warns about deprecated props', () => {
+  it('warns about deprecated props', async () => {
     // @ts-expect-error rule prop is required
     render(<Rule {...getProps()} rule={undefined} field="f1" operator="=" value="v1" />);
+    await waitABeat();
     expect(consoleError).toHaveBeenCalledWith(messages.errorDeprecatedRuleProps);
   });
 });
