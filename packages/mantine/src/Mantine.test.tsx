@@ -234,6 +234,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     const handleOnChange = jest.fn();
     render(<MantineValueEditor {...props} inputType="date" handleOnChange={handleOnChange} />);
     await user.click(screen.getByTestId(TestID.valueEditor));
+    await new Promise(r => setTimeout(r, 500));
     await user.click(screen.getByText('10'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10`);
   });
@@ -251,8 +252,10 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     );
     const button = screen.getByText(dayjs(dateString).format('MMMM D, YYYY'));
     await user.click(button);
+    await new Promise(r => setTimeout(r, 500));
     const day = screen.getByText('16');
     await user.click(day);
+    await new Promise(r => setTimeout(r, 500));
     expect(handleOnChange).toHaveBeenCalledWith('2002-12-16');
   });
 
@@ -267,6 +270,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       />
     );
     await user.click(screen.getByTestId(TestID.valueEditor));
+    await new Promise(r => setTimeout(r, 500));
     await user.click(screen.getByText('10'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10,`);
     rerender(
@@ -311,6 +315,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       />
     );
     await user.click(screen.getByTestId(TestID.valueEditor));
+    await new Promise(r => setTimeout(r, 500));
     await user.click(screen.getByText('16'));
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}16,`);
   });
@@ -376,6 +381,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     await act(async () => {
       await user.click(screen.getByTestId(TestID.valueEditor));
     });
+    await new Promise(r => setTimeout(r, 500));
     await user.click(screen.getByText('10'));
     expect(screen.getByTestId(TestID.valueEditor)).toHaveTextContent('');
     expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}10T00:00:00`);
@@ -416,6 +422,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       const betweenInputs = screen.getAllByRole('button');
       expect(betweenInputs).toHaveLength(2);
       await user.click(betweenInputs[0]);
+      await new Promise(r => setTimeout(r, 500));
       await act(async () => {
         await user.click(screen.getByText('12'));
         await new Promise(r => setTimeout(r, 500));
@@ -442,6 +449,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       const betweenInputs = screen.getAllByRole('button');
       expect(betweenInputs).toHaveLength(2);
       await user.click(betweenInputs[0]);
+      await new Promise(r => setTimeout(r, 500));
       await user.click(screen.getByText('12'));
       expect(handleOnChange).toHaveBeenCalledWith(`${dateStub}12T00:00:00,`);
     });
@@ -458,11 +466,13 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       const betweenInputs = screen.getAllByRole('button');
       expect(betweenInputs).toHaveLength(2);
       await user.click(betweenInputs[0]);
+      await new Promise(r => setTimeout(r, 500));
       await act(async () => {
         await user.click(screen.getByText('12'));
         await new Promise(r => setTimeout(r, 500));
       });
       await user.click(betweenInputs[1]);
+      await new Promise(r => setTimeout(r, 500));
       await act(async () => {
         await user.click(screen.getAllByText('14')[1]);
         await new Promise(r => setTimeout(r, 500));

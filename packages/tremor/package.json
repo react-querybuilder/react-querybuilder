@@ -38,7 +38,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@headlessui/tailwindcss": "^0.2.0",
+    "@headlessui/tailwindcss": "^0.2.1",
     "@tailwindcss/forms": "^0.5.7",
     "@testing-library/react": "^15.0.7",
     "@tremor/react": "^3.17.2",
@@ -53,7 +53,7 @@
     "rollup-plugin-visualizer": "^5.12.0",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "vite": "^5.2.12"
   },
   "peerDependencies": {
     "@tremor/react": "^3",
