@@ -2,6 +2,7 @@ import AnalyzerPlugin from 'esbuild-analyzer';
 import { writeFile } from 'fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
+import { ReactCompilerEsbuildPlugin } from './esbuild-plugin-react-compiler';
 
 export default defineConfig(options => {
   const commonOptions: Options = {
@@ -24,7 +25,14 @@ export default defineConfig(options => {
       ...commonOptions,
       format: ['esm'],
       clean: true,
-      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.html' })],
+      esbuildPlugins: [
+        ReactCompilerEsbuildPlugin({
+          filter: /\.tsx?$/,
+          sourceMaps: true,
+          runtimeModulePath: 'babel-plugin-react-compiler',
+        }),
+        AnalyzerPlugin({ outfile: './build-analysis.html' }),
+      ],
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {
