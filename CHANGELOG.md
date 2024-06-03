@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `insert` query utility method to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to `add` except that the new rule or group can be inserted at any path. `add` can only append a rule or group to the end of a group's `rules` array.
+
 ### Fixed
 
 - [#706] `parseJsonLogic` no longer nests negated groups unnecessarily.

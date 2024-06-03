@@ -16,19 +16,19 @@ import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 /**
- * Options object for {@link add}.
+ * Options for {@link add}.
  */
 export interface AddOptions {
   /**
    * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
-   * combinators), then the first combinator in this list will be  inserted
+   * combinators), then the first combinator in this list will be inserted
    * before the new rule/group if the parent group is not empty. This option
    * is overridden by `combinatorPreceding`.
    */
   combinators?: OptionList;
   /**
    * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
-   * combinators), then this combinator will be inserted before  the new rule/group
+   * combinators), then this combinator will be inserted before the new rule/group
    * if the parent group is not empty. This option will supersede `combinators`.
    */
   combinatorPreceding?: string;
@@ -48,7 +48,7 @@ export const add = <RG extends RuleGroupTypeAny>(
   ruleOrGroup: RG | RuleType,
   /** Path of the group to add to. */
   parentPath: Path,
-  /** Options object. */
+  /** Options. */
   {
     combinators = defaultCombinators,
     combinatorPreceding,
@@ -60,7 +60,7 @@ export const add = <RG extends RuleGroupTypeAny>(
 
     if (!parent || !isRuleGroup(parent)) return;
 
-    if (!isRuleGroupType(parent) && parent.rules.length > 0) {
+    if (isRuleGroupTypeIC(parent) && parent.rules.length > 0) {
       const prevCombinator = parent.rules[parent.rules.length - 2];
       parent.rules.push(
         // @ts-expect-error This is technically a type violation until the next push
@@ -70,12 +70,12 @@ export const add = <RG extends RuleGroupTypeAny>(
           (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
       );
     }
-    // The "as RuleType" here just avoids the ambiguity with RuleGroupTypeAny
+    // `as RuleType` in only here to avoid the ambiguity with `RuleGroupTypeAny`
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
   });
 
 /**
- * Options object for {@link update}.
+ * Options for {@link update}.
  */
 export interface UpdateOptions {
   /**
@@ -116,7 +116,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   value: any,
   /** The path of the rule or group to update. */
   path: Path,
-  /** Options object. */
+  /** Options. */
   {
     resetOnFieldChange = true,
     resetOnOperatorChange = false,
@@ -284,7 +284,7 @@ const getNextPath = (
 };
 
 /**
- * Options object for {@link move}.
+ * Options for {@link move}.
  */
 export interface MoveOptions {
   /**
@@ -314,7 +314,7 @@ export const move = <RG extends RuleGroupTypeAny>(
   oldPath: Path,
   /** Path to move the rule or group to, or a shift direction. */
   newPath: Path | 'up' | 'down',
-  /** Options object. */
+  /** Options. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ) => {
   const nextPath = getNextPath(query, oldPath, newPath);
@@ -393,7 +393,7 @@ export const move = <RG extends RuleGroupTypeAny>(
           insertRuleOrGroup(ruleOrGroup, oldNextCombinator);
         } else {
           const newNextCombinator =
-            parentToInsertInto.rules[1] || oldPrevCombinator || getFirstOption(combinators);
+            parentToInsertInto.rules[1] ?? oldPrevCombinator ?? getFirstOption(combinators);
           insertRuleOrGroup(ruleOrGroup, newNextCombinator);
         }
       } else {
@@ -401,8 +401,8 @@ export const move = <RG extends RuleGroupTypeAny>(
           insertRuleOrGroup(oldPrevCombinator, ruleOrGroup);
         } else {
           const newPrevCombinator =
-            parentToInsertInto.rules[newIndex - 2] ||
-            oldNextCombinator ||
+            parentToInsertInto.rules[newIndex - 2] ??
+            oldNextCombinator ??
             getFirstOption(combinators);
           insertRuleOrGroup(newPrevCombinator, ruleOrGroup);
         }
@@ -410,3 +410,99 @@ export const move = <RG extends RuleGroupTypeAny>(
     }
   });
 };
+
+/**
+ * Options for {@link insert}.
+ */
+export interface InsertOptions {
+  /**
+   * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
+   * combinators), then the first combinator in this list will be inserted
+   * before the new rule/group if the parent group is not empty. This option
+   * is overridden by `combinatorPreceding`.
+   */
+  combinators?: OptionList;
+  /**
+   * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
+   * combinators), then this combinator will be inserted before the new rule/group
+   * if the parent group is not empty and the new rule/group is not the first in the
+   * group (`path.at(-1) > 0`). This option will supersede `combinators`.
+   */
+  combinatorPreceding?: string;
+  /**
+   * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
+   * combinators), then this combinator will be inserted after the new rule/group
+   * if the parent group is not empty and the new rule/group is the first in the
+   * group (`path.at(-1) === 0`). This option will supersede `combinators`.
+   */
+  combinatorSucceeding?: string;
+  /**
+   * ID generator.
+   *
+   * @default generateID
+   */
+  idGenerator?: () => string;
+}
+/**
+ * Inserts a rule or group into a query.
+ * @returns The new query with the rule or group inserted.
+ */
+export const insert = <RG extends RuleGroupTypeAny>(
+  /** The query to update. */
+  query: RG,
+  /** The rule or group to insert. */
+  ruleOrGroup: RG | RuleType,
+  /** Path at which to insert the rule or group. */
+  path: number[],
+  /** Options. */
+  {
+    combinators = defaultCombinators,
+    combinatorPreceding,
+    combinatorSucceeding,
+    idGenerator = generateID,
+  }: InsertOptions = {}
+) =>
+  produce(query, draft => {
+    const parentToInsertInto = findPath(getParentPath(path), draft) as RG;
+    if (!parentToInsertInto || !isRuleGroup(parentToInsertInto)) return;
+
+    const rorg = isRuleGroup(ruleOrGroup)
+      ? regenerateIDs(ruleOrGroup, { idGenerator })
+      : regenerateID(ruleOrGroup, { idGenerator });
+    const independentCombinators = isRuleGroupTypeIC(draft);
+    const newIndex = path[path.length - 1];
+
+    /**
+     * This function 1) glosses over the need for type assertions to splice directly
+     * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const insertRuleOrGroup = (idx: number, ...args: any[]) =>
+      parentToInsertInto.rules.splice(idx, 0, ...args);
+
+    // Insert the source item at the target path
+    if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
+      insertRuleOrGroup(newIndex, rorg);
+    } else {
+      if (newIndex === 0) {
+        if (rorg.path?.at(-1) === 0 && combinatorSucceeding) {
+          insertRuleOrGroup(newIndex, rorg, combinatorSucceeding);
+        } else {
+          const newNextCombinator =
+            parentToInsertInto.rules[1] ?? combinatorPreceding ?? getFirstOption(combinators);
+          insertRuleOrGroup(newIndex, rorg, newNextCombinator);
+        }
+      } else {
+        const normalizedNewIndex = newIndex % 2 === 0 ? newIndex - 1 : newIndex;
+        if (combinatorPreceding) {
+          insertRuleOrGroup(normalizedNewIndex, combinatorPreceding, rorg);
+        } else {
+          const newPrevCombinator =
+            parentToInsertInto.rules[normalizedNewIndex - 2] ??
+            combinatorSucceeding ??
+            getFirstOption(combinators);
+          insertRuleOrGroup(normalizedNewIndex, newPrevCombinator, rorg);
+        }
+      }
+    }
+  });
