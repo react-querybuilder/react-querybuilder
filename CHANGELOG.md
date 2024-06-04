@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `insert` query utility method to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to `add` except that the new rule or group can be inserted at any path. `add` can only append a rule or group to the end of a group's `rules` array.
+- [#713] `insert` utility method to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to `add` except that the new rule or group can be inserted at any path. `add` can only append a rule or group to the end of a group's `rules` array.
+- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) when dropping the rule/group will copy it instead of move it.
 
 ### Fixed
 
@@ -1646,6 +1647,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#700]: https://github.com/react-querybuilder/react-querybuilder/pull/700
 [#703]: https://github.com/react-querybuilder/react-querybuilder/pull/703
 [#706]: https://github.com/react-querybuilder/react-querybuilder/pull/706
+[#713]: https://github.com/react-querybuilder/react-querybuilder/pull/713
 
 <!-- Release comparison links -->
 
