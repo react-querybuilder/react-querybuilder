@@ -12,7 +12,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": ["react", "@typescript-eslint", "eslint-plugin-react-compiler"],
   "root": true,
   "rules": {
     "@typescript-eslint/consistent-type-imports": "error",
@@ -22,6 +22,7 @@
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
+    "react-compiler/react-compiler": "error",
     "react/display-name": "off",
     "react/no-unstable-nested-components": "error",
     "react/prop-types": "off",
