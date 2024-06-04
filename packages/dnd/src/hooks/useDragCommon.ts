@@ -61,16 +61,17 @@ export const useDragCommon = ({
 
         if (schema.qbId !== dropResult.qbId) {
           const otherBuilderQuery = dropResult.getQuery();
+          // istanbul ignore else
           if (otherBuilderQuery) {
-            dropResult.dispatchQuery(insert(dropResult.getQuery()!, item, destinationPath));
+            dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
+            // istanbul ignore else
             if (dropResult.dropEffect !== 'copy') {
               actions.onRuleRemove(item.path);
             }
           }
-          return;
+        } else {
+          actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
         }
-
-        actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
       },
     }),
     [disabled, path]
