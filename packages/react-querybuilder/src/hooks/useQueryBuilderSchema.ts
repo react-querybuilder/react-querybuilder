@@ -237,7 +237,7 @@ export function useQueryBuilderSchema<
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
-          onLog({ type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
+          onLog({ qbId, type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
         }
         return;
       }
@@ -246,7 +246,7 @@ export function useQueryBuilderSchema<
       if (!newRule) {
         // istanbul ignore else
         if (debugMode) {
-          onLog({ type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
+          onLog({ qbId, type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
         }
         return;
       }
@@ -255,7 +255,7 @@ export function useQueryBuilderSchema<
         combinatorPreceding: newRule.combinatorPreceding ?? undefined,
       });
       if (debugMode) {
-        onLog({ type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
+        onLog({ qbId, type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
       }
       dispatchQuery(newQuery);
     },
@@ -281,6 +281,7 @@ export function useQueryBuilderSchema<
         // istanbul ignore else
         if (debugMode) {
           onLog({
+            qbId,
             type: LogType.parentPathDisabled,
             ruleGroup,
             parentPath,
@@ -294,7 +295,7 @@ export function useQueryBuilderSchema<
       if (!newGroup) {
         // istanbul ignore else
         if (debugMode) {
-          onLog({ type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
+          onLog({ qbId, type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
         }
         return;
       }
@@ -303,7 +304,7 @@ export function useQueryBuilderSchema<
         combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
       });
       if (debugMode) {
-        onLog({ type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
+        onLog({ qbId, type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
       }
       dispatchQuery(newQuery);
     },
@@ -327,7 +328,7 @@ export function useQueryBuilderSchema<
       if (!queryLocal) return;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         if (debugMode) {
-          onLog({ type: LogType.pathDisabled, path, prop, value, query: queryLocal });
+          onLog({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
         }
         return;
       }
@@ -339,7 +340,7 @@ export function useQueryBuilderSchema<
         getRuleDefaultValue,
       });
       if (debugMode) {
-        onLog({ type: LogType.update, query: queryLocal, newQuery, prop, value, path });
+        onLog({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
       }
       dispatchQuery(newQuery);
     },
@@ -367,7 +368,7 @@ export function useQueryBuilderSchema<
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
-          onLog({ type: LogType.pathDisabled, path, query: queryLocal });
+          onLog({ qbId, type: LogType.pathDisabled, path, query: queryLocal });
         }
         return;
       }
@@ -379,12 +380,12 @@ export function useQueryBuilderSchema<
         if (onRemove(ruleOrGroup, path, queryLocal, context)) {
           const newQuery = remove(queryLocal, path);
           if (debugMode) {
-            onLog({ type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
+            onLog({ qbId, type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
           }
           dispatchQuery(newQuery);
         } else {
           if (debugMode) {
-            onLog({ type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
+            onLog({ qbId, type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
           }
         }
       }
@@ -400,13 +401,13 @@ export function useQueryBuilderSchema<
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         // istanbul ignore else
         if (debugMode) {
-          onLog({ type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
+          onLog({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
         }
         return;
       }
       const newQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
       if (debugMode) {
-        onLog({ type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
+        onLog({ qbId, type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
       }
       dispatchQuery(newQuery);
     },
