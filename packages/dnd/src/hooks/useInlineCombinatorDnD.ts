@@ -28,7 +28,7 @@ interface UseInlineCombinatorDnD {
 export const useInlineCombinatorDnD = ({
   path,
   canDrop,
-  schema: { independentCombinators },
+  schema,
   useDrop,
   rules,
 }: UseInlineCombinatorDndParams): UseInlineCombinatorDnD => {
@@ -47,7 +47,7 @@ export const useInlineCombinatorDnD = ({
         if (
           dragging &&
           typeof canDrop === 'function' &&
-          !canDrop({ dragging, hovering: { ...hoveringItem, path } })
+          !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } })
         ) {
           return false;
         }
@@ -66,7 +66,7 @@ export const useInlineCombinatorDnD = ({
           pathsAreEqual(itemPath, path) ||
           (pathsAreEqual(parentHoverPath, parentItemPath) && hoverIndex - 1 === itemIndex) ||
           // 3) independentCombinators is true and the drop target is just above the hovering item
-          (independentCombinators &&
+          (schema.independentCombinators &&
             pathsAreEqual(parentHoverPath, parentItemPath) &&
             hoverIndex === itemIndex - 1)
         );
@@ -76,9 +76,13 @@ export const useInlineCombinatorDnD = ({
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
       }),
-      drop: () => ({ type: 'inlineCombinator', path }),
+      drop: () => {
+        const { qbId, getQuery, dispatchQuery } = schema;
+        // `dropEffect` gets added automatically to the object returned from `drop`:
+        return { type: 'inlineCombinator', path, qbId, getQuery, dispatchQuery };
+      },
     }),
-    [path, independentCombinators]
+    [path, schema.independentCombinators]
   );
 
   drop(dropRef);

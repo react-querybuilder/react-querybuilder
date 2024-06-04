@@ -23,8 +23,8 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     disabled,
     path,
     ruleGroup,
-    schema: { independentCombinators },
-    actions: { moveRule },
+    schema,
+    actions,
     useDrag,
     useDrop,
     canDrop,
@@ -40,8 +40,10 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     path,
     ruleOrGroup: ruleGroup,
     disabled,
-    independentCombinators,
-    moveRule,
+    independentCombinators: schema.independentCombinators,
+    moveRule: actions.moveRule,
+    schema,
+    actions,
     useDrag,
   });
 
@@ -57,10 +59,13 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
           disabled ||
           (dragging &&
             typeof canDrop === 'function' &&
-            !canDrop({ dragging, hovering: { ...hoveringItem, path } }))
+            !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } }))
         ) {
           return false;
         }
+
+        if (schema.qbId !== dragging.qbId) return true;
+
         const parentItemPath = getParentPath(dragging.path);
         const itemIndex = dragging.path[dragging.path.length - 1];
         // Disallow drop if...
@@ -79,10 +84,16 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
       }),
-      // `dropEffect` gets added automatically to the object returned from `drop`:
-      drop: (_item, monitor) => monitor.getDropResult() ?? { type: 'ruleGroup', path },
+      drop: (_item, monitor) => {
+        const { qbId, getQuery, dispatchQuery } = schema;
+
+        // `dropEffect` gets added automatically to the object returned from `drop`:
+        return (
+          monitor.getDropResult() ?? { type: 'ruleGroup', path, qbId, getQuery, dispatchQuery }
+        );
+      },
     }),
-    [disabled, moveRule, path]
+    [disabled, actions.moveRule, path]
   );
 
   if (path.length > 0) {

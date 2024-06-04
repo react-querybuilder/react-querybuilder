@@ -23,8 +23,8 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     path,
     rule,
     disabled,
-    schema: { independentCombinators },
-    actions: { moveRule },
+    schema,
+    actions,
     useDrag,
     useDrop,
     canDrop,
@@ -39,8 +39,10 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     path,
     ruleOrGroup: rule,
     disabled,
-    independentCombinators,
-    moveRule,
+    independentCombinators: schema.independentCombinators,
+    moveRule: actions.moveRule,
+    schema,
+    actions,
     useDrag,
   });
 
@@ -55,10 +57,13 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
         if (
           dragging &&
           typeof canDrop === 'function' &&
-          !canDrop({ dragging, hovering: { ...hoveringItem, path } })
+          !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } })
         ) {
           return false;
         }
+
+        if (schema.qbId !== dragging.qbId) return true;
+
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(dragging.path);
         const hoverIndex = path[path.length - 1];
@@ -73,7 +78,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
           (pathsAreEqual(parentHoverPath, parentItemPath) &&
             (hoverIndex === itemIndex ||
               hoverIndex === itemIndex - 1 ||
-              (independentCombinators && hoverIndex === itemIndex - 2)))
+              (schema.independentCombinators && hoverIndex === itemIndex - 2)))
         );
       },
       collect: monitor => ({
@@ -81,10 +86,13 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
       }),
-      // `dropEffect` gets added automatically to the object returned from `drop`:
-      drop: () => ({ type: 'rule', path }),
+      drop: () => {
+        const { qbId, getQuery, dispatchQuery } = schema;
+        // `dropEffect` gets added automatically to the object returned from `drop`:
+        return { type: 'rule', path, qbId, getQuery, dispatchQuery };
+      },
     }),
-    [disabled, independentCombinators, moveRule, path]
+    [disabled, schema.independentCombinators, actions.moveRule, path]
   );
 
   drag(dragRef);
