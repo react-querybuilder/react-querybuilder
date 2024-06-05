@@ -423,33 +423,20 @@ it('parses custom group operations', () => {
   };
 
   // and
-  expect(
-    parseJsonLogic(
-      { and: [] } as unknown as RQBJsonLogic,
-      { jsonLogicOperations }
-    )
-  ).toEqual({
+  expect(parseJsonLogic({ and: [] } as unknown as RQBJsonLogic, { jsonLogicOperations })).toEqual({
     combinator: 'fooAnd',
     rules: [],
   });
 
   // or
-  expect(
-    parseJsonLogic(
-      { or: [] } as unknown as RQBJsonLogic,
-      { jsonLogicOperations }
-    )
-  ).toEqual({
+  expect(parseJsonLogic({ or: [] } as unknown as RQBJsonLogic, { jsonLogicOperations })).toEqual({
     combinator: 'fooOr',
     rules: [],
   });
 
   // !
   expect(
-    parseJsonLogic(
-      { '!': { not: [] } } as unknown as RQBJsonLogic,
-      { jsonLogicOperations }
-    )
+    parseJsonLogic({ '!': { not: [] } } as unknown as RQBJsonLogic, { jsonLogicOperations })
   ).toEqual({
     combinator: 'fooNot',
     rules: [],
@@ -458,10 +445,7 @@ it('parses custom group operations', () => {
 
   // !!
   expect(
-    parseJsonLogic(
-      { '!!': { notNot: [] } } as unknown as RQBJsonLogic,
-      { jsonLogicOperations }
-    )
+    parseJsonLogic({ '!!': { notNot: [] } } as unknown as RQBJsonLogic, { jsonLogicOperations })
   ).toEqual({
     combinator: 'fooNotNot',
     rules: [],
