@@ -9,8 +9,6 @@ import type {
   ParseJsonLogicOptions,
   RQBJsonLogic,
   RQBJsonLogicVar,
-  RuleGroupTypeAny,
-  RuleType,
   ValueSource,
 } from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
