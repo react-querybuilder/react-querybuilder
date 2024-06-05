@@ -8543,13 +8543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-querybuilder/antd@link:../packages/antd::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/antd@link:../packages/antd::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/antd@workspace:packages/antd":
+"@react-querybuilder/antd@npm:7.4.1, @react-querybuilder/antd@workspace:packages/antd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/antd@workspace:packages/antd"
   dependencies:
@@ -8561,26 +8555,20 @@ __metadata:
     dayjs: "npm:^1.11.11"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
   peerDependencies:
-    "@ant-design/icons": ">=4.7.0"
+    "@ant-design/icons": ">=5"
     antd: ">=5"
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bootstrap@link:../packages/bootstrap::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/bootstrap@link:../packages/bootstrap::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/bootstrap@workspace:packages/bootstrap":
+"@react-querybuilder/bootstrap@npm:7.4.1, @react-querybuilder/bootstrap@workspace:packages/bootstrap":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bootstrap@workspace:packages/bootstrap"
   dependencies:
@@ -8592,7 +8580,7 @@ __metadata:
     bootstrap-icons: "npm:^1.11.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
@@ -8600,17 +8588,11 @@ __metadata:
     bootstrap: ">=5"
     bootstrap-icons: ">=1.7.0"
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/bulma@link:../packages/bulma::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/bulma@link:../packages/bulma::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/bulma@workspace:packages/bulma":
+"@react-querybuilder/bulma@npm:7.4.1, @react-querybuilder/bulma@workspace:packages/bulma":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/bulma@workspace:packages/bulma"
   dependencies:
@@ -8620,24 +8602,18 @@ __metadata:
     bulma: "npm:^0.9.4"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
   peerDependencies:
-    bulma: ^0.9.3
+    bulma: ^0.9.4
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/chakra@link:../packages/chakra::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/chakra@link:../packages/chakra::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/chakra@workspace:packages/chakra":
+"@react-querybuilder/chakra@npm:7.4.1, @react-querybuilder/chakra@workspace:packages/chakra":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/chakra@workspace:packages/chakra"
   dependencies:
@@ -8652,29 +8628,23 @@ __metadata:
     framer-motion: "npm:^11.2.10"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
   peerDependencies:
-    "@chakra-ui/icons": ">=1.0.0"
-    "@chakra-ui/react": ">=1.6.0"
-    "@chakra-ui/system": ">=1.8.0"
+    "@chakra-ui/icons": ">=2"
+    "@chakra-ui/react": ">=2"
+    "@chakra-ui/system": ">=2"
     "@emotion/react": ^11
     "@emotion/styled": ^11
-    framer-motion: ^6.3.3
-    react: ">=18.1.0"
-    react-querybuilder: ^7.4.1
+    framer-motion: ^11
+    react: ">=18"
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/dnd@link:../packages/dnd::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/dnd@link:../packages/dnd::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/dnd@workspace:packages/dnd":
+"@react-querybuilder/dnd@npm:7.4.1, @react-querybuilder/dnd@workspace:packages/dnd":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/dnd@workspace:packages/dnd"
   dependencies:
@@ -8689,7 +8659,7 @@ __metadata:
     react-dnd-test-backend: "npm:^16.0.1"
     react-dnd-test-utils: "npm:^16.0.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
@@ -8697,17 +8667,11 @@ __metadata:
     react: ">=18"
     react-dnd: ">=14.0.0"
     react-dnd-html5-backend: ">=14.0.0"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/fluent@link:../packages/fluent::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/fluent@link:../packages/fluent::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/fluent@workspace:packages/fluent":
+"@react-querybuilder/fluent@npm:7.4.1, @react-querybuilder/fluent@workspace:packages/fluent":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/fluent@workspace:packages/fluent"
   dependencies:
@@ -8719,7 +8683,7 @@ __metadata:
     dayjs: "npm:^1.11.11"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
@@ -8728,17 +8692,11 @@ __metadata:
     "@fluentui/react-icons-mdl2": ^1
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/mantine@link:../packages/mantine::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/mantine@link:../packages/mantine::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/mantine@workspace:packages/mantine":
+"@react-querybuilder/mantine@npm:7.4.1, @react-querybuilder/mantine@workspace:packages/mantine":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/mantine@workspace:packages/mantine"
   dependencies:
@@ -8751,7 +8709,7 @@ __metadata:
     dayjs: "npm:^1.11.11"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.12"
@@ -8761,17 +8719,11 @@ __metadata:
     "@mantine/hooks": ">=7"
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/material@link:../packages/material::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/material@link:../packages/material::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/material@workspace:packages/material":
+"@react-querybuilder/material@npm:7.4.1, @react-querybuilder/material@workspace:packages/material":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/material@workspace:packages/material"
   dependencies:
@@ -8784,7 +8736,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.7.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     regenerator-runtime: "npm:^0.14.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     typescript: "npm:^5.4.5"
@@ -8792,10 +8744,10 @@ __metadata:
   peerDependencies:
     "@emotion/react": ^11
     "@emotion/styled": ^11
-    "@mui/icons-material": ">=5.0.0"
-    "@mui/material": ">=5.0.0"
+    "@mui/icons-material": ">=5"
+    "@mui/material": ">=5"
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
@@ -8813,7 +8765,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-native: "npm:~0.74.1"
     react-native-web: "npm:~0.19.12"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     react-redux: "npm:^9.1.2"
     react-test-renderer: "npm:^18.3.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
@@ -8821,18 +8773,12 @@ __metadata:
     vite: "npm:^5.2.12"
   peerDependencies:
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
     react-redux: ^9.1.0
   languageName: unknown
   linkType: soft
 
-"@react-querybuilder/tremor@link:../packages/tremor::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "@react-querybuilder/tremor@link:../packages/tremor::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"@react-querybuilder/tremor@workspace:packages/tremor":
+"@react-querybuilder/tremor@npm:7.4.1, @react-querybuilder/tremor@workspace:packages/tremor":
   version: 0.0.0-use.local
   resolution: "@react-querybuilder/tremor@workspace:packages/tremor"
   dependencies:
@@ -8847,7 +8793,7 @@ __metadata:
     postcss: "npm:^8.4.38"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-querybuilder: "npm:^7.4.1"
+    react-querybuilder: "npm:7.4.1"
     rollup-plugin-visualizer: "npm:^5.12.0"
     tailwindcss: "npm:^3.4.3"
     typescript: "npm:^5.4.5"
@@ -8856,7 +8802,7 @@ __metadata:
     "@tremor/react": ^3
     dayjs: ">=1"
     react: ">=18"
-    react-querybuilder: ^7.4.1
+    react-querybuilder: 7.4.1
   languageName: unknown
   linkType: soft
 
@@ -25068,13 +25014,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-querybuilder@link:../packages/react-querybuilder::locator=website%40workspace%3Awebsite":
-  version: 0.0.0-use.local
-  resolution: "react-querybuilder@link:../packages/react-querybuilder::locator=website%40workspace%3Awebsite"
-  languageName: node
-  linkType: soft
-
-"react-querybuilder@npm:^7.4.1, react-querybuilder@workspace:packages/react-querybuilder":
+"react-querybuilder@npm:7.4.1, react-querybuilder@workspace:packages/react-querybuilder":
   version: 0.0.0-use.local
   resolution: "react-querybuilder@workspace:packages/react-querybuilder"
   dependencies:
@@ -29179,15 +29119,15 @@ __metadata:
     "@mdx-js/react": "npm:^3.0.1"
     "@mui/icons-material": "npm:^5.15.19"
     "@mui/material": "npm:^5.15.19"
-    "@react-querybuilder/antd": "link:../packages/antd"
-    "@react-querybuilder/bootstrap": "link:../packages/bootstrap"
-    "@react-querybuilder/bulma": "link:../packages/bulma"
-    "@react-querybuilder/chakra": "link:../packages/chakra"
-    "@react-querybuilder/dnd": "link:../packages/dnd"
-    "@react-querybuilder/fluent": "link:../packages/fluent"
-    "@react-querybuilder/mantine": "link:../packages/mantine"
-    "@react-querybuilder/material": "link:../packages/material"
-    "@react-querybuilder/tremor": "link:../packages/tremor"
+    "@react-querybuilder/antd": "npm:7.4.1"
+    "@react-querybuilder/bootstrap": "npm:7.4.1"
+    "@react-querybuilder/bulma": "npm:7.4.1"
+    "@react-querybuilder/chakra": "npm:7.4.1"
+    "@react-querybuilder/dnd": "npm:7.4.1"
+    "@react-querybuilder/fluent": "npm:7.4.1"
+    "@react-querybuilder/mantine": "npm:7.4.1"
+    "@react-querybuilder/material": "npm:7.4.1"
+    "@react-querybuilder/tremor": "npm:7.4.1"
     "@svgr/webpack": "npm:^8.1.0"
     "@tremor/react": "npm:^3.17.2"
     "@types/pako": "npm:^2.0.3"
@@ -29218,7 +29158,7 @@ __metadata:
     react-dnd-html5-backend: "npm:^16.0.1"
     react-dom: "npm:^18.3.1"
     react-modal: "npm:^3.16.1"
-    react-querybuilder: "link:../packages/react-querybuilder"
+    react-querybuilder: "npm:7.4.1"
     react-select: "npm:^5.8.0"
     react-slider: "npm:^2.0.6"
     sass: "npm:^1.77.4"

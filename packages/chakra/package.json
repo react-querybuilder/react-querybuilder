@@ -49,19 +49,19 @@
     "framer-motion": "^11.2.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-querybuilder": "^7.4.1",
+    "react-querybuilder": "7.4.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.12"
   },
   "peerDependencies": {
-    "@chakra-ui/icons": ">=1.0.0",
-    "@chakra-ui/react": ">=1.6.0",
-    "@chakra-ui/system": ">=1.8.0",
+    "@chakra-ui/icons": ">=2",
+    "@chakra-ui/react": ">=2",
+    "@chakra-ui/system": ">=2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "framer-motion": "^6.3.3",
-    "react": ">=18.1.0",
-    "react-querybuilder": "^7.4.1"
+    "framer-motion": "^11",
+    "react": ">=18",
+    "react-querybuilder": "7.4.1"
   }
 }

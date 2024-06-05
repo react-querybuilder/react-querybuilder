@@ -46,16 +46,16 @@
     "dayjs": "^1.11.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-querybuilder": "^7.4.1",
+    "react-querybuilder": "7.4.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.12"
   },
   "peerDependencies": {
-    "@ant-design/icons": ">=4.7.0",
+    "@ant-design/icons": ">=5",
     "antd": ">=5",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "^7.4.1"
+    "react-querybuilder": "7.4.1"
   }
 }
