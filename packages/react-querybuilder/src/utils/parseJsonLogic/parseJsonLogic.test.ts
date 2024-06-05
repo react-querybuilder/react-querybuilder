@@ -414,6 +414,61 @@ it('parses custom operations', () => {
   });
 });
 
+it('parses custom group operations', () => {
+  const jsonLogicOperations = {
+    and: () => ({ combinator: 'fooAnd', rules: [] }),
+    or: () => ({ combinator: 'fooOr', rules: [] }),
+    '!': () => ({ combinator: 'fooNot', rules: [], not: true }),
+    '!!': () => ({ combinator: 'fooNotNot', rules: [], not: true }),
+  };
+
+  // and
+  expect(
+    parseJsonLogic(
+      { and: [] } as unknown as RQBJsonLogic,
+      { jsonLogicOperations }
+    )
+  ).toEqual({
+    combinator: 'fooAnd',
+    rules: [],
+  });
+
+  // or
+  expect(
+    parseJsonLogic(
+      { or: [] } as unknown as RQBJsonLogic,
+      { jsonLogicOperations }
+    )
+  ).toEqual({
+    combinator: 'fooOr',
+    rules: [],
+  });
+
+  // !
+  expect(
+    parseJsonLogic(
+      { '!': { not: [] } } as unknown as RQBJsonLogic,
+      { jsonLogicOperations }
+    )
+  ).toEqual({
+    combinator: 'fooNot',
+    rules: [],
+    not: true,
+  });
+
+  // !!
+  expect(
+    parseJsonLogic(
+      { '!!': { notNot: [] } } as unknown as RQBJsonLogic,
+      { jsonLogicOperations }
+    )
+  ).toEqual({
+    combinator: 'fooNotNot',
+    rules: [],
+    not: true,
+  });
+});
+
 it('translates lists as arrays', () => {
   expect(
     parseJsonLogic(

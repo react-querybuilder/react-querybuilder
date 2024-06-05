@@ -9,6 +9,8 @@ import type {
   ParseJsonLogicOptions,
   RQBJsonLogic,
   RQBJsonLogicVar,
+  RuleGroupTypeAny,
+  RuleType,
   ValueSource,
 } from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
@@ -107,8 +109,17 @@ function parseJsonLogic(
     const key = Object.keys(logic)[0] as JsonLogicReservedOperations;
     // @ts-expect-error `key in logic` is always true, but TS doesn't know that
     const keyValue = logic[key];
+
+    // Custom operations process logic
+    let customProcessLogic;
+    if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
+      customProcessLogic = jsonLogicOperations[key];
+    }
     // Rule groups
     if (isJsonLogicAnd(logic)) {
+      if (customProcessLogic) {
+        return customProcessLogic(logic['and']) as DefaultRuleGroupType;
+      }
       return {
         combinator: 'and',
         rules: logic.and.map(l => processLogic(l)).filter(Boolean) as (
@@ -117,6 +128,9 @@ function parseJsonLogic(
         )[],
       };
     } else if (isJsonLogicOr(logic)) {
+      if (customProcessLogic) {
+        return customProcessLogic(logic['or']) as DefaultRuleGroupType;
+      }
       return {
         combinator: 'or',
         rules: logic.or.map(l => processLogic(l)).filter(Boolean) as (
@@ -125,6 +139,9 @@ function parseJsonLogic(
         )[],
       };
     } else if (isJsonLogicNegation(logic)) {
+      if (customProcessLogic) {
+        return customProcessLogic(logic['!']) as DefaultRuleType;
+      }
       const rule = processLogic(logic['!']);
       if (rule) {
         if (
@@ -147,6 +164,9 @@ function parseJsonLogic(
       }
       return false;
     } else if (isJsonLogicDoubleNegation(logic)) {
+      if (customProcessLogic) {
+        return customProcessLogic(logic['!!']) as DefaultRuleType;
+      }
       const rule = processLogic(logic['!!']);
       return rule || false;
     }
