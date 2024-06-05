@@ -367,12 +367,11 @@ Selects the `field` property for the current rule. Default is [`ValueSelector`](
 
 #### `inlineCombinator`
 
-A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Receives the following props per the `InlineCombinatorProps` interface (which extends `CombinatorSelectorProps`):
+A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Default is [`InlineCombinator`](./inlinecombinator). Receives the following props per the `InlineCombinatorProps` interface, which extends `CombinatorSelectorProps`:
 
-| Prop                     | Type                                       | Description                                                                    |
-| ------------------------ | ------------------------------------------ | ------------------------------------------------------------------------------ |
-| `component`              | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component                                     |
-| `independentCombinators` | `boolean`                                  | Whether the query is using [independent combinators](#independent-combinators) |
+| Prop        | Type                                       | Description                                |
+| ----------- | ------------------------------------------ | ------------------------------------------ |
+| `component` | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component |
 
 #### `lockGroupAction`
 

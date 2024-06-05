@@ -19,6 +19,7 @@ export default {
         'components/nottoggle',
         'components/draghandle',
         'components/shiftactions',
+        'components/inlinecombinator',
         'components/rulegroup',
         'components/rule',
       ],
