@@ -442,6 +442,10 @@ export interface InsertOptions {
    * @default generateID
    */
   idGenerator?: () => string;
+  /**
+   * When `true`, the new rule/group will replace the rule/group at `path`.
+   */
+  replace?: boolean;
 }
 /**
  * Inserts a rule or group into a query.
@@ -460,6 +464,7 @@ export const insert = <RG extends RuleGroupTypeAny>(
     combinatorPreceding,
     combinatorSucceeding,
     idGenerator = generateID,
+    replace = false,
   }: InsertOptions = {}
 ) =>
   produce(query, draft => {
@@ -478,11 +483,13 @@ export const insert = <RG extends RuleGroupTypeAny>(
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const insertRuleOrGroup = (idx: number, ...args: any[]) =>
-      parentToInsertInto.rules.splice(idx, 0, ...args);
+      parentToInsertInto.rules.splice(idx, replace ? args.length : 0, ...args);
 
     // Insert the source item at the target path
     if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
       insertRuleOrGroup(newIndex, rorg);
+    } else if (replace && independentCombinators) {
+      insertRuleOrGroup(newIndex + (newIndex % 2), rorg);
     } else {
       if (newIndex === 0) {
         if (rorg.path?.at(-1) === 0 && combinatorSucceeding) {

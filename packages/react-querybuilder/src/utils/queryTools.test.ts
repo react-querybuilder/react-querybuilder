@@ -6,7 +6,6 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Path,
-  RuleType,
   ValueSources,
 } from '../types/index.noReact';
 import { formatQuery } from './formatQuery';
@@ -64,33 +63,27 @@ const testQT = (
 describe('add', () => {
   describe('standard rule groups', () => {
     testQT('adds a rule', add(rg1, r1, []), { combinator: and, rules: [r1] });
-    testQT(
-      'adds another rule',
-      add({ combinator: and, rules: [r1] } as DefaultRuleGroupType, r2, []),
-      {
-        combinator: and,
-        rules: [r1, r2],
-      }
-    );
+    testQT('adds another rule', add({ combinator: and, rules: [r1] }, r2, []), {
+      combinator: and,
+      rules: [r1, r2],
+    });
     testQT('adds a group', add(rg1, rg2, []), {
       combinator: and,
       rules: [rg2],
     });
     it('adds a rule with custom idGenerator', () => {
-      expect((add(rg1, r1, [], { idGenerator }).rules[0] as RuleType).id).toMatch(numericRegex);
+      expect(add(rg1, r1, [], { idGenerator }).rules[0].id).toMatch(numericRegex);
     });
   });
 
   describe('independent combinators', () => {
     testQT('adds a rule', add(rgic1, r1, []), { rules: [r1] });
-    testQT(
-      'adds a rule and the default combinator',
-      add({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, []),
-      { rules: [r1, and, r2] }
-    );
+    testQT('adds a rule and the default combinator', add({ rules: [r1] }, r2, []), {
+      rules: [r1, and, r2],
+    });
     testQT(
       'adds a rule and a custom combinator',
-      add({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, [], {
+      add({ rules: [r1] }, r2, [], {
         combinators: defaultCombinators.map(c => ({
           ...c,
           name: `custom-${c.name}`,
@@ -102,14 +95,12 @@ describe('add', () => {
         rules: [r1, `custom-${and}`, r2],
       }
     );
-    testQT(
-      'adds a rule and copies existing combinator',
-      add({ rules: [r1, or, r2] } as DefaultRuleGroupTypeIC, r3, []),
-      { rules: [r1, or, r2, or, r3] }
-    );
+    testQT('adds a rule and copies existing combinator', add({ rules: [r1, or, r2] }, r3, []), {
+      rules: [r1, or, r2, or, r3],
+    });
     testQT(
       'adds a rule with specified combinator, ignoring defaults',
-      add({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [], {
+      add({ rules: [r1, and, r2] }, r3, [], {
         combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
         combinatorPreceding: or,
       }),
@@ -446,9 +437,7 @@ describe('move', () => {
       true
     );
     it('adds a rule with custom idGenerator', () => {
-      expect((move(rg3, [1], [0], { clone: true, idGenerator }).rules[0] as RuleType).id).toMatch(
-        numericRegex
-      );
+      expect(move(rg3, [1], [0], { clone: true, idGenerator }).rules[0].id).toMatch(numericRegex);
     });
   });
 
@@ -583,51 +572,51 @@ describe('shift', () => {
 describe('insert', () => {
   describe('standard rule groups', () => {
     testQT('inserts a rule', insert(rg1, r1, [0]), { combinator: and, rules: [r1] });
-    testQT(
-      'inserts another rule',
-      insert({ combinator: and, rules: [r1] } as DefaultRuleGroupType, r2, [0]),
-      {
-        combinator: and,
-        rules: [r2, r1],
-      }
-    );
-    testQT(
-      'inserts between two rules',
-      insert({ combinator: and, rules: [r1, r2] } as DefaultRuleGroupType, r3, [1]),
-      {
-        combinator: and,
-        rules: [r1, r3, r2],
-      }
-    );
+    testQT('inserts another rule', insert({ combinator: and, rules: [r1] }, r2, [0]), {
+      combinator: and,
+      rules: [r2, r1],
+    });
+    testQT('inserts between two rules', insert({ combinator: and, rules: [r1, r2] }, r3, [1]), {
+      combinator: and,
+      rules: [r1, r3, r2],
+    });
     testQT('inserts a group', insert(rg1, rg2, [0]), {
       combinator: and,
       rules: [rg2],
     });
     it('inserts a rule with custom idGenerator', () => {
-      expect((insert(rg1, r1, [0], { idGenerator }).rules[0] as RuleType).id).toMatch(numericRegex);
+      expect(insert(rg1, r1, [0], { idGenerator }).rules[0].id).toMatch(numericRegex);
     });
+    testQT(
+      'replaces a rule',
+      insert({ combinator: and, rules: [r1, r2, r3] }, r2, [0], { replace: true }),
+      { combinator: and, rules: [r2, r2, r3] }
+    );
+    testQT(
+      'replaces a group',
+      insert({ combinator: and, rules: [rg1, rg2, rg3] }, rg1, [2], { replace: true }),
+      { combinator: and, rules: [rg1, rg2, rg1] }
+    );
   });
 
   describe('independent combinators', () => {
     testQT('inserts a rule', insert(rgic1, r1, [0]), { rules: [r1] });
-    testQT(
-      'inserts a rule and the default combinator',
-      insert({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, [1]),
-      { rules: [r1, and, r2] }
-    );
+    testQT('inserts a rule and the default combinator', insert({ rules: [r1] }, r2, [1]), {
+      rules: [r1, and, r2],
+    });
     testQT(
       'inserts a rule and the default combinator between two rules (rule index)',
-      insert({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [2]),
+      insert({ rules: [r1, and, r2] }, r3, [2]),
       { rules: [r1, and, r3, and, r2] }
     );
     testQT(
       'inserts a rule and the default combinator between two rules (preceding combinator index)',
-      insert({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [1]),
+      insert({ rules: [r1, and, r2] }, r3, [1]),
       { rules: [r1, and, r3, and, r2] }
     );
     testQT(
       'inserts a rule and a custom combinator',
-      insert({ rules: [r1] } as DefaultRuleGroupTypeIC, r2, [1], {
+      insert({ rules: [r1] }, r2, [1], {
         combinators: defaultCombinators.map(c => ({
           ...c,
           name: `custom-${c.name}`,
@@ -653,12 +642,12 @@ describe('insert', () => {
     );
     testQT(
       'inserts a rule and copies existing combinator',
-      insert({ rules: [r1, or, r2] } as DefaultRuleGroupTypeIC, r3, [3]),
+      insert({ rules: [r1, or, r2] }, r3, [3]),
       { rules: [r1, or, r2, or, r3] }
     );
     testQT(
       'inserts a rule with specified preceding combinator, ignoring defaults (combinator index)',
-      insert({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [3], {
+      insert({ rules: [r1, and, r2] }, r3, [3], {
         combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
         combinatorPreceding: or,
       }),
@@ -666,7 +655,7 @@ describe('insert', () => {
     );
     testQT(
       'inserts a rule with specified preceding combinator, ignoring defaults (rule index)',
-      insert({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [2], {
+      insert({ rules: [r1, and, r2] }, r3, [2], {
         combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
         combinatorPreceding: or,
       }),
@@ -674,7 +663,7 @@ describe('insert', () => {
     );
     testQT(
       'inserts a rule and ignores specified combinators when new index is zero',
-      insert({ rules: [r1, and, r2] } as DefaultRuleGroupTypeIC, r3, [0], {
+      insert({ rules: [r1, and, r2] }, r3, [0], {
         combinatorPreceding: or,
         combinatorSucceeding: or,
       }),
@@ -683,6 +672,21 @@ describe('insert', () => {
     testQT('inserts a group', insert(rgic1, rgic2, []), {
       rules: [rgic2],
     });
+    testQT(
+      'replaces a rule in middle position',
+      insert({ rules: [r1, and, r2, or, r3] }, r3, [2], { replace: true }),
+      { rules: [r1, and, r3, or, r3] }
+    );
+    testQT(
+      'replaces a group in last position',
+      insert({ rules: [rgic1, and, rgic2, or, rgic2] }, rgic1, [4], { replace: true }),
+      { rules: [rgic1, and, rgic2, or, rgic1] }
+    );
+    testQT(
+      'replaces a group after independent combinator',
+      insert({ rules: [rgic1, and, rgic2, or, rgic2] }, rgic1, [3], { replace: true }),
+      { rules: [rgic1, and, rgic2, or, rgic1] }
+    );
   });
 
   testQT('bails out on bad path', insert(rg1, rg2, badPath), rg1);
