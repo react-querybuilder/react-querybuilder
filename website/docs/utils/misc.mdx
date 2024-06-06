@@ -77,7 +77,7 @@ Check out the ["External controls" Tips & Tricks page](../tips/external-controls
 
 `(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, path: Path, options: AddOptions) => RuleGroupTypeAny`
 
-Adds a rule or group (and an independent combinator if necessary, to keep the query valid).
+Adds a rule or group (and an independent combinator if necessary, to keep the query valid) to the group at the specified `path`.
 
 <Details summary="AddOptions">
 
@@ -112,6 +112,18 @@ Moves (or clones, with a new `id`) a rule or group to a new location in the quer
 <Details summary="MoveOptions">
 
 %importcode /packages/react-querybuilder/src/utils/queryTools.ts#blockName=MoveOptions
+
+</Details>
+
+### `insert`
+
+`(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, path: Path, options: InsertOptions) => RuleGroupTypeAny`
+
+Inserts a rule or group (and an independent combinator if necessary, to keep the query valid) at the specified `path`.
+
+<Details summary="InsertOptions">
+
+%importcode /packages/react-querybuilder/src/utils/queryTools.ts#blockName=InsertOptions
 
 </Details>
 

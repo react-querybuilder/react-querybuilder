@@ -7,8 +7,9 @@ import type {
   QueryActions,
   RuleGroupTypeAny,
   RuleType,
+  Schema,
 } from 'react-querybuilder';
-import { getParentPath } from 'react-querybuilder';
+import { getParentPath, insert } from 'react-querybuilder';
 
 type UseDragCommonProps = {
   path: Path;
@@ -17,6 +18,9 @@ type UseDragCommonProps = {
   disabled?: boolean;
   independentCombinators?: boolean;
   moveRule: QueryActions['moveRule'];
+  actions: QueryActions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: Schema<any, any>;
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   useDrag: (typeof import('react-dnd'))['useDrag'];
 };
@@ -26,15 +30,16 @@ export const useDragCommon = ({
   path,
   ruleOrGroup,
   disabled,
-  moveRule,
   // Unused for now
   // independentCombinators,
+  actions,
+  schema,
   useDrag,
 }: UseDragCommonProps) =>
   useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
-      item: { ...ruleOrGroup, path },
+      item: { ...ruleOrGroup, path, qbId: schema.qbId },
       canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
@@ -54,7 +59,19 @@ export const useDragCommon = ({
               ? [...parentHoverPath, hoverIndex]
               : [...parentHoverPath, hoverIndex + 1];
 
-        moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+        if (schema.qbId !== dropResult.qbId) {
+          const otherBuilderQuery = dropResult.getQuery();
+          // istanbul ignore else
+          if (otherBuilderQuery) {
+            dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
+            // istanbul ignore else
+            if (dropResult.dropEffect !== 'copy') {
+              actions.onRuleRemove(item.path);
+            }
+          }
+        } else {
+          actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+        }
       },
     }),
     [disabled, path]
