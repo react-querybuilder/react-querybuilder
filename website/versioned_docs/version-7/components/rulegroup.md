@@ -44,10 +44,17 @@ The `showCombinatorsBetweenRules` prop is ignored if the query is using independ
 :::
 
 [^1]: Only rendered if [`showShiftActions`](./querybuilder#showshiftactions) is `true`.
+
 [^2]: Only rendered if [`enableDragAndDrop`](./querybuilder#enabledraganddrop) is `true`.
+
 [^3]: Only rendered if [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is disabled and the query is not using [independent combinators](./querybuilder#independent-combinators).
+
 [^4]: Only rendered if [`showNotToggle`](./querybuilder#shownottoggle) is `true`.
+
 [^5]: Only rendered if [`showCloneButtons`](./querybuilder#showclonebuttons) is `true`.
+
 [^6]: Only rendered if [`showLockButtons`](./querybuilder#showlockbuttons) is `true`.
+
 [^7]: Only rendered if the group is not the query root.
+
 [^8]: The [`inlineCombinator`](./querybuilder#inlinecombinator) component in turn renders the configured [`combinatorSelector`](./querybuilder#combinatorselector).
