@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v7.4.3] - 2024-06-06
+
+### Fixed
+
+- Compatibility packages now specify the correct `react-querybuilder` dependency version.
+
 ## [v7.4.2] - 2024-06-06
 
 ### Added
@@ -1663,7 +1669,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...HEAD
+[v7.4.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...v7.4.3
 [v7.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...v7.4.2
 [v7.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...v7.4.1
 [v7.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...v7.4.0
