@@ -297,7 +297,7 @@ export interface ParseJSONataOptions extends ParserCommonOptions {}
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny>;
+  jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny | false>;
 }
 
 /**

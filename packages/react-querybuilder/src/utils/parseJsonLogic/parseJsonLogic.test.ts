@@ -1,10 +1,14 @@
 import type {
   DefaultRuleGroupType,
   FullField,
+  JsonLogicReservedOperations,
   OptionGroup,
   RQBJsonLogic,
+  RuleGroupType,
+  RuleType,
   ValueSources,
 } from '../../types/index.noReact';
+import { isRuleGroup } from '../isRuleGroup';
 import { toFullOption } from '../toFullOption';
 import { parseJsonLogic } from './parseJsonLogic';
 
@@ -412,6 +416,35 @@ it('parses custom operations', () => {
       { combinator: 'and', rules: [] },
     ],
   });
+});
+
+it('parses custom group operations', () => {
+  const customGroupOpTests = [
+    ['and', { combinator: 'fooAnd', rules: [] }],
+    ['and', { field: 'fooAnd', operator: '=', value: 'and' }],
+    ['and', false],
+    ['or', { combinator: 'fooOr', rules: [] }],
+    ['or', { field: 'fooOr', operator: '=', value: 'or' }],
+    ['or', false],
+    ['!', { combinator: 'fooNot', rules: [], not: true }],
+    ['!', { field: 'fooNot', operator: '=', value: '!' }],
+    ['!', false],
+    ['!!', { combinator: 'fooNotNot', rules: [], not: true }],
+    ['!!', { field: 'fooNotNot', operator: '=', value: '!!' }],
+    ['!!', false],
+  ] satisfies [JsonLogicReservedOperations, RuleGroupType | RuleType | false][];
+
+  for (const [op, result] of customGroupOpTests) {
+    expect(
+      parseJsonLogic({ [op]: [] } as RQBJsonLogic, { jsonLogicOperations: { [op]: () => result } })
+    ).toEqual(
+      !result
+        ? { combinator: 'and', rules: [] }
+        : isRuleGroup(result)
+          ? result
+          : { combinator: 'and', rules: [result] }
+    );
+  }
 });
 
 it('translates lists as arrays', () => {
