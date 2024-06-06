@@ -70,7 +70,7 @@
     "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
     "outdated": "yarn upgrade-interactive",
-    "version": "bun version.ts && yarn install && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages yarn.lock\"",
+    "version": "bun version.ts && yarn install && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages website/package.json yarn.lock\"",
     "web": "cd website && bun run start",
     "web:skiptypedoc": "cd website && RQB_TYPEDOC_DONE=true bun run start",
     "website:clearrun": "cd website && bun run clear && bun run start",

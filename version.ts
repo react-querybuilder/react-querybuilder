@@ -16,7 +16,7 @@ await Promise.all([
   ...pkgJsonPaths.map(async pkgJsonPath => {
     const pkgJson = await Bun.file(pkgJsonPath).text();
     const replacedRqbDeps = pkgJson.replaceAll(
-      /(\s+"react-querybuilder":\s+").+(",?)/g,
+      /(\s+"@?react-querybuilder(?:\/\w+)":\s+").+(",?)/g,
       `$1${version}$2`
     );
     return Bun.write(pkgJsonPath, replacedRqbDeps);
