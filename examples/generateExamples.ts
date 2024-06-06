@@ -52,7 +52,7 @@ const templateREADMEmd = await Bun.file(pathJoin(templatePath, 'README.md')).tex
 
 const templatePkgJsonNewText = (
   await Bun.file(pathJoin(templatePath, 'package.json')).text()
-).replace(/("@?react-querybuilder(?:\/\w+)?": ").*?"/g, `$1^${version}"`);
+).replace(/("@?react-querybuilder(?:\/\w+)?": ").*?"/g, `$1${version}"`);
 await Bun.write(pathJoin(templatePath, 'package.json'), templatePkgJsonNewText);
 const templatePkgJSON: PackageJSON = await Bun.file(pathJoin(templatePath, 'package.json')).json();
 

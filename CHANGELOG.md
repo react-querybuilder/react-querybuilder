@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) when dropping the rule/group will copy it instead of move it.
 - [#713] `debugMode` now logs the query builder's `qbId`.
 
+## [v7.4.1] - 2024-06-04
+
 ### Fixed
 
 - [#706] `parseJsonLogic` no longer nests negated groups unnecessarily.
@@ -1652,7 +1654,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...HEAD
+[v7.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...v7.4.1
 [v7.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...v7.4.0
 [v7.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...v7.3.0
 [v7.2.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.0...v7.2.1

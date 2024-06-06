@@ -86,7 +86,7 @@ Since the [parser functions](./utils/import) are used less frequently than other
 ### Miscellaneous
 
 - `@react-querybuilder/mantine` now requires Mantine 7 or greater.
-- The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output wihtout removing other properties. Previously this format would only _include_ specific properties, removing any custom properties. The following command will replicate the previous behavior:
+- The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output without removing other properties. Previously this format would only _include_ specific properties, removing any custom properties. The following command will replicate the previous behavior:
   <!-- prettier-ignore -->
   ```ts
   JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not', 'valueSource']);
