@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#714] `parseJsonLogic` can now override group operations ("and", "or", "!", and "!!") with the `jsonLogicOperations` option.
 
 ## [v7.4.1] - 2024-06-04
 
@@ -1646,6 +1648,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#700]: https://github.com/react-querybuilder/react-querybuilder/pull/700
 [#703]: https://github.com/react-querybuilder/react-querybuilder/pull/703
 [#706]: https://github.com/react-querybuilder/react-querybuilder/pull/706
+[#714]: https://github.com/react-querybuilder/react-querybuilder/pull/714
 
 <!-- Release comparison links -->
 
