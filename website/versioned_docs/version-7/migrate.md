@@ -248,6 +248,10 @@ Notes:
 - These functions all use a custom [Redux](https://redux.js.org/) context behind the scenes, hence the "selector" nomenclature.
 - Previously, updates that couldn't be performed with `handleOnChange` or `handleOnClick` event handlers had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities. To support this, we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary or recommended.
 
+### `insert` utility method
+
+The new [`insert`](./utils/misc#insert) utility method can be used to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to [`add`](./utils/misc#add) except that the new rule or group can be inserted at any path (`add` can only append a rule or group to the end of a group's `rules` array). The option `replace: true` will replace the rule or group at the specified path.
+
 ### Standalone layout stylesheet
 
 Default layout styles (flex direction, alignment, spacing, etc.) are now available as a standalone stylesheet `query-builder-layout.css`/`.scss`. The default stylesheet, `query-builder.css`/`.scss`, contains the layout styles along with the more decorative styles like colors and border styles. The effective styles—both layout and decorative—of the default stylesheet have not changed from version 6.
