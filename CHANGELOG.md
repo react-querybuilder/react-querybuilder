@@ -7,14 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v7.4.2] - 2024-06-06
+
 ### Added
 
 - [#713] `insert` utility method to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to `add` except that the new rule or group can be inserted at any path (`add` can only append a rule or group to the end of a group's `rules` array). The option `replace: true` will replace the rule or group at the specified path.
-- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) when dropping the rule/group will copy it instead of move it.
-- [#713] `debugMode` now logs the query builder's `qbId`.
 
 ### Fixed
 
+- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) when dropping the rule/group will copy it instead of move it.
+- [#713] `debugMode` now logs the query builder's `qbId`.
 - [#714] `parseJsonLogic` can now override group operations ("and", "or", "!", and "!!") with the `jsonLogicOperations` option.
 
 ## [v7.4.1] - 2024-06-04
@@ -1659,7 +1663,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...HEAD
+[v7.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...v7.4.2
 [v7.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...v7.4.1
 [v7.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...v7.4.0
 [v7.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...v7.3.0
