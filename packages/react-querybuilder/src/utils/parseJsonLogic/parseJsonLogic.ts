@@ -5,14 +5,13 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  JsonLogicReservedOperations,
   ParseJsonLogicOptions,
   RQBJsonLogic,
   RQBJsonLogicVar,
   ValueSource,
 } from '../../types/index.noReact';
 import { convertToIC } from '../convertQuery';
-import { isRuleGroupType } from '../isRuleGroup';
+import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
@@ -104,9 +103,18 @@ function parseJsonLogic(
     if (outermost && !isPojo(logic)) {
       return false;
     }
-    const key = Object.keys(logic)[0] as JsonLogicReservedOperations;
-    // @ts-expect-error `key in logic` is always true, but TS doesn't know that
-    const keyValue = logic[key];
+    const [key, keyValue] = Object.entries(logic)?.[0] ?? [];
+
+    // Custom operations process logic
+    if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
+      const rule = jsonLogicOperations[key](keyValue) as DefaultRuleType;
+      return !rule
+        ? false
+        : outermost && !isRuleGroup(rule)
+          ? { combinator: 'and', rules: [rule] }
+          : rule;
+    }
+
     // Rule groups
     if (isJsonLogicAnd(logic)) {
       return {
@@ -159,10 +167,7 @@ function parseJsonLogic(
     let value: any = '';
     let valueSource: ValueSource | undefined = undefined;
 
-    if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
-      // Custom operations
-      rule = jsonLogicOperations[key](keyValue) as DefaultRuleType;
-    } else if (
+    if (
       // Basic boolean operations
       isJsonLogicEqual(logic) ||
       isJsonLogicStrictEqual(logic) ||
