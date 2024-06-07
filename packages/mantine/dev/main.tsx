@@ -3,7 +3,7 @@ import '@mantine/core/styles.css';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from 'react-querybuilder/dev/index';
+import { DevLayout, useDevApp } from 'react-querybuilder/dev/index.js';
 import 'react-querybuilder/dist/query-builder.scss';
 import { QueryBuilderMantine } from '../src';
 import './styles.scss';

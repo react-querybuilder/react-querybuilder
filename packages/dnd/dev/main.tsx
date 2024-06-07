@@ -3,7 +3,7 @@ import * as ReactDnD from 'react-dnd';
 import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from 'react-querybuilder/dev/index';
+import { DevLayout, useDevApp } from 'react-querybuilder/dev/index.js';
 import 'react-querybuilder/dist/query-builder.scss';
 import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
 

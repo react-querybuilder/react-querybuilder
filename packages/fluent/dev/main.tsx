@@ -2,7 +2,7 @@ import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from 'react-querybuilder/dev/index';
+import { DevLayout, useDevApp } from 'react-querybuilder/dev/index.js';
 import 'react-querybuilder/dist/query-builder.scss';
 import { QueryBuilderFluent } from '../src';
 import './styles.scss';
