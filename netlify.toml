@@ -1,5 +1,5 @@
 [build]
-command = "bun install --frozen-lockfile && bun run build && bun run website:build"
+command = "bun upgrade && bun install --frozen-lockfile && bun run build && bun run website:build"
 publish = "website/build"
 
 [context.production.environment]
