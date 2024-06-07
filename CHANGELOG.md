@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Changed
+
+- The React Native compatibility package uses `gap` for layout spacing, which means the minimum `react-native` version is now `0.71.0`.
 
 ## [v7.4.3] - 2024-06-06
 

@@ -9,9 +9,10 @@ import { QueryBuilderNative, defaultNativeWebControlElements } from '../src';
 const styles = StyleSheet.create({
   outer: {
     padding: 10,
+    gap: 20,
   },
   code: {
-    fontFamily: 'sans-serif',
+    fontFamily: 'monospace',
   },
 });
 
