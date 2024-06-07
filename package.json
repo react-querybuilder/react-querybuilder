@@ -35,7 +35,7 @@
     "build:rqb:css": "cd packages/react-querybuilder && bun run build:css",
     "build:tremor": "cd packages/tremor && bun run build",
     "codesandbox-ci": "bash .codesandbox/ci.sh",
-    "checkall": "yarn install --immutable && concurrently --group --names pretty,lint,build --prefix-colors \"green,#4b32c3,#82a7dd\" bun:pretty-check bun:lint bun:build && concurrently --group --timings --prefix-colors \"#663399,#3178c6,green,gray\" --names attw,typecheck,test,website bun:are-the-types-wrong bun:typecheck bun:test bun:website:build",
+    "checkall": "bun install --frozen-lockfile && concurrently --group --names pretty,lint,build --prefix-colors \"green,#4b32c3,#82a7dd\" bun:pretty-check bun:lint bun:build && concurrently --group --timings --prefix-colors \"#663399,#3178c6,green,gray\" --names attw,typecheck,test,website bun:are-the-types-wrong bun:typecheck bun:test bun:website:build",
     "lint": "eslint 'packages/*/src/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
     "test": "concurrently --group --timings --names sqlite,jsonlogic,jsonata,postgres,jest \"bun test dbquery.sqlite\" \"bun test dbquery.jsonlogic\" \"bun test dbquery.jsonata\" \"bun test dbquery.postgres\" jest",
     "test:watch": "jest --watch",
@@ -69,8 +69,9 @@
     "pretty-check": "prettier --config prettier.config.mjs --check '*.{mj,t}s' 'packages/*/{src,dev,genericTests}/**' 'website/*.js' 'website/{docs,src,versioned_docs,versioned_sidebars}/**'",
     "generate-examples": "bun ./examples/generateExamples.ts",
     "generate-parsers": "cd packages/react-querybuilder && bun run generate:parsers",
-    "outdated": "yarn upgrade-interactive",
-    "version": "bun version.ts && yarn install && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages website/package.json yarn.lock\"",
+    "outdated": "rm -rf ./packages/*/node_modules ./website/node_modules && bunx npm-check-updates --interactive --format=group --workspaces --root",
+    "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lockb && bun install",
+    "version": "bun version.ts && bun install --frozen-lockfile && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages website/package.json bun.lockb\"",
     "web": "cd website && bun run start",
     "web:skiptypedoc": "cd website && RQB_TYPEDOC_DONE=true bun run start",
     "website:clearrun": "cd website && bun run clear && bun run start",
@@ -124,6 +125,5 @@
     "tsup": "^8.1.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.12"
-  },
-  "packageManager": "yarn@4.2.2"
+  }
 }

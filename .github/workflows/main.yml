@@ -20,9 +20,7 @@ jobs:
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
+      - run: bun install --frozen-lockfile
         # Only rqb needs to be built before testing everything
       - run: bun run build:rqb
       - run: bun run test
@@ -38,7 +36,5 @@ jobs:
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
+      - run: bun install --frozen-lockfile
       - run: bun run lint

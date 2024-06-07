@@ -9,7 +9,7 @@ _**First contribution?** Learn [how to contribute to an open source project on G
 [Bun][bun] is required to set up this repository.
 
 1. Fork and clone this repository.
-2. Run `yarn install` to install dependencies.
+2. Run `bun install` to install dependencies.
 3. Build the main package with `bun run build:rqb` to bootstrap type checking in the other packages.
 4. Create a branch for your PR with `git checkout -b your-branch-name`
 
