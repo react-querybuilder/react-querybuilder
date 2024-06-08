@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import queryString from 'query-string';
 import { useCallback, useMemo, useReducer, useState } from 'react';
-import type { FormatQueryOptions, RuleGroupType, RuleGroupTypeIC } from '../src';
-import { standardClassnames, defaultValidator } from '../src';
-import * as RQButils from '../src/utils';
+import type { FormatQueryOptions, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
+import { standardClassnames, defaultValidator } from 'react-querybuilder';
+import * as RQButils from 'react-querybuilder/src/utils';
 import {
   defaultOptions,
   emptyQuery,

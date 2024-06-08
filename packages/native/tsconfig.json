@@ -4,5 +4,5 @@
     "outDir": "dist/types",
     "noErrorTruncation": true
   },
-  "include": ["./src/"]
+  "include": ["./src/", "./dev/"]
 }

@@ -1,5 +1,5 @@
-import type { ExportFormat, Field, RuleGroupType, RuleType } from '../src';
-import { convertToIC, defaultOperators, generateID } from '../src';
+import type { ExportFormat, Field, RuleGroupType, RuleType } from 'react-querybuilder';
+import { convertToIC, defaultOperators, generateID } from 'react-querybuilder';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
 

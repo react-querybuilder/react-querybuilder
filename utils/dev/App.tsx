@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { QueryBuilder } from '../src';
+import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout } from './DevLayout';
 import './styles.scss';
 import { useDevApp } from './useDevApp';

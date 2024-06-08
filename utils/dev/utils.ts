@@ -1,6 +1,6 @@
 import queryString from 'query-string';
-import type { FormatQueryOptions, RuleGroupTypeAny } from '../src';
-import { formatQuery } from '../src';
+import type { FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
+import { formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './constants';
 import type { DemoOption, DemoOptions } from './types';
 

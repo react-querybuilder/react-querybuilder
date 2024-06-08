@@ -3,7 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from 'react-querybuilder/dev/index.js';
+import { DevLayout, useDevApp } from '@dev';
 import 'react-querybuilder/dist/query-builder.scss';
 import { QueryBuilderMaterial } from '../src';
 

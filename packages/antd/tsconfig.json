@@ -3,5 +3,5 @@
   "compilerOptions": {
     "outDir": "dist/types"
   },
-  "include": ["./src/"]
+  "include": ["./src/", "./dev/"]
 }

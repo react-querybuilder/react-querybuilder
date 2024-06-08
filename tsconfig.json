@@ -22,7 +22,9 @@
       "@react-querybuilder/mantine": ["./packages/mantine/src/index.ts"],
       "@react-querybuilder/material": ["./packages/material/src/index.tsx"],
       "@react-querybuilder/native": ["./packages/native/src/index.ts"],
-      "@react-querybuilder/tremor": ["./packages/tremor/src/index.tsx"]
+      "@react-querybuilder/tremor": ["./packages/tremor/src/index.tsx"],
+      "@dev": ["./utils/dev"],
+      "@test": ["./utils/test"]
     }
   },
   "include": ["./*.ts", "scripts/*.ts"]
