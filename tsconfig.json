@@ -10,7 +10,20 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "types": ["@testing-library/jest-dom", "node", "web", "bun"]
+    "types": ["@testing-library/jest-dom", "node", "web", "bun"],
+    "paths": {
+      "react-querybuilder": ["./packages/react-querybuilder/src/index.ts"],
+      "@react-querybuilder/antd": ["./packages/antd/src/index.tsx"],
+      "@react-querybuilder/bootstrap": ["./packages/bootstrap/src/index.tsx"],
+      "@react-querybuilder/bulma": ["./packages/bulma/src/index.ts"],
+      "@react-querybuilder/chakra": ["./packages/chakra/src/index.tsx"],
+      "@react-querybuilder/dnd": ["./packages/dnd/src/index.ts"],
+      "@react-querybuilder/fluent": ["./packages/fluent/src/index.tsx"],
+      "@react-querybuilder/mantine": ["./packages/mantine/src/index.ts"],
+      "@react-querybuilder/material": ["./packages/material/src/index.tsx"],
+      "@react-querybuilder/native": ["./packages/native/src/index.ts"],
+      "@react-querybuilder/tremor": ["./packages/tremor/src/index.tsx"]
+    }
   },
   "include": ["./*.ts", "scripts/*.ts"]
 }
