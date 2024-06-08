@@ -48,7 +48,7 @@
     "react-dom": "^18.3.1",
     "react-native": "~0.74.2",
     "react-native-web": "~0.19.12",
-    "react-querybuilder": "7.4.3",
+    "react-querybuilder": "workspace:*",
     "react-redux": "^9.1.2",
     "react-test-renderer": "^18.3.1",
     "rollup-plugin-visualizer": "^5.12.0",
