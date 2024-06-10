@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v7.4.4] - 2024-06-10
+
 ### Fixed
 
 - [#719] The "mongodb" export format stringifies values using `JSON.stringify`.
@@ -1672,7 +1676,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...HEAD
+[v7.4.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...v7.4.4
 [v7.4.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...v7.4.3
 [v7.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...v7.4.2
 [v7.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...v7.4.1
