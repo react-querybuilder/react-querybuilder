@@ -213,11 +213,11 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
 
     case 'beginsWith':
     case 'doesNotBeginWith':
-      return negateIfNotOp(operator, { regexp: { [field]: { value: `^${value}` } } });
+      return negateIfNotOp(operator, { regexp: { [field]: { value: `${value}.*` } } });
 
     case 'endsWith':
     case 'doesNotEndWith':
-      return negateIfNotOp(operator, { regexp: { [field]: { value: `${value}$` } } });
+      return negateIfNotOp(operator, { regexp: { [field]: { value: `.*${value}` } } });
   }
   return false;
 };
