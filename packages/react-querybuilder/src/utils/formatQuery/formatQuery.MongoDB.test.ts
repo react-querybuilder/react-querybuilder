@@ -174,6 +174,18 @@ it('formats to mongo query correctly', () => {
       })
     )
   ).toEqual(mongoQueryExpectationForValueSourceField);
+  // Test for newline in value
+  expect(
+    JSON.parse(
+      formatQuery(
+        {
+          combinator: 'and',
+          rules: [{ field: 'f1', operator: '=', value: 'value\nwith newline' }],
+        },
+        'mongodb'
+      )
+    )
+  ).toEqual({ f1: 'value\nwith newline' });
 });
 
 it('handles custom valueProcessors correctly', () => {
@@ -379,7 +391,7 @@ describe('ruleProcessor', () => {
 describe('parseNumbers', () => {
   it('parses numbers for mongodb', () => {
     expect(formatQuery(queryForNumberParsing, { format: 'mongodb', parseNumbers: true })).toBe(
-      '{"$and":[{"f":{"$gt":"NaN"}},{"f":0},{"f":0},{"f":0},{"$or":[{"f":{"$lt":1.5}},{"f":{"$gt":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":"abc"}},{"f":{"$gte":"[object Object]","$lte":"[object Object]"}}]}'
+      '{"$and":[{"f":{"$gt":"NaN"}},{"f":0},{"f":0},{"f":0},{"$or":[{"f":{"$lt":1.5}},{"f":{"$gt":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":"abc"}},{"f":{"$gte":{},"$lte":{}}}]}'
     );
   });
 });

@@ -3,9 +3,6 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
-const escapeDoubleQuotes = (v: string | number | boolean | object | null) =>
-  typeof v !== 'string' ? v : v.replaceAll('\\', '\\\\').replaceAll(`"`, `\\"`);
-
 /**
  * Default rule processor used by {@link formatQuery} for "mongodb" format.
  */
@@ -22,7 +19,7 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
     shouldRenderAsNumber(value, parseNumbers);
 
   if (operator === '=' && !valueIsField) {
-    return `{"${field}":${useBareValue ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`}}`;
+    return `{"${field}":${useBareValue ? trimIfString(value) : JSON.stringify(value)}}`;
   }
 
   switch (operator) {
@@ -36,39 +33,39 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
       return valueIsField
         ? `{"$expr":{"${mongoOperator}":["$${field}","$${value}"]}}`
         : `{"${field}":{"${mongoOperator}":${
-            useBareValue ? trimIfString(value) : `"${escapeDoubleQuotes(value)}"`
+            useBareValue ? trimIfString(value) : JSON.stringify(value)
           }}}`;
     }
 
     case 'contains':
       return valueIsField
         ? `{"$where":"this.${field}.includes(this.${value})"}`
-        : `{"${field}":{"$regex":"${escapeDoubleQuotes(value)}"}}`;
+        : `{"${field}":{"$regex":${JSON.stringify(value)}}}`;
 
     case 'beginsWith':
       return valueIsField
         ? `{"$where":"this.${field}.startsWith(this.${value})"}`
-        : `{"${field}":{"$regex":"^${escapeDoubleQuotes(value)}"}}`;
+        : `{"${field}":{"$regex":${JSON.stringify(`^${value}`)}}}`;
 
     case 'endsWith':
       return valueIsField
         ? `{"$where":"this.${field}.endsWith(this.${value})"}`
-        : `{"${field}":{"$regex":"${escapeDoubleQuotes(value)}$"}}`;
+        : `{"${field}":{"$regex":${JSON.stringify(`${value}$`)}}}`;
 
     case 'doesNotContain':
       return valueIsField
         ? `{"$where":"!this.${field}.includes(this.${value})"}`
-        : `{"${field}":{"$not":{"$regex":"${escapeDoubleQuotes(value)}"}}}`;
+        : `{"${field}":{"$not":{"$regex":${JSON.stringify(value)}}}}`;
 
     case 'doesNotBeginWith':
       return valueIsField
         ? `{"$where":"!this.${field}.startsWith(this.${value})"}`
-        : `{"${field}":{"$not":{"$regex":"^${escapeDoubleQuotes(value)}"}}}`;
+        : `{"${field}":{"$not":{"$regex":${JSON.stringify(`^${value}`)}}}}`;
 
     case 'doesNotEndWith':
       return valueIsField
         ? `{"$where":"!this.${field}.endsWith(this.${value})"}`
-        : `{"${field}":{"$not":{"$regex":"${escapeDoubleQuotes(value)}$"}}}`;
+        : `{"${field}":{"$not":{"$regex":${JSON.stringify(`${value}$`)}}}}`;
 
     case 'null':
       return `{"${field}":null}`;
@@ -85,9 +82,7 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
             .join(',')}].includes(this.${field})"}`
         : `{"${field}":{"${mongoOperators[operator]}":[${valueAsArray
             .map(val =>
-              shouldRenderAsNumber(val, parseNumbers)
-                ? `${trimIfString(val)}`
-                : `"${escapeDoubleQuotes(val)}"`
+              shouldRenderAsNumber(val, parseNumbers) ? `${trimIfString(val)}` : JSON.stringify(val)
             )
             .join(',')}]}}`;
     }
@@ -108,9 +103,9 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
           ? parseNumber(second, { parseNumbers: true })
           : NaN;
         const firstValue =
-          valueIsField || !isNaN(firstNum) ? `${first}` : `"${escapeDoubleQuotes(first)}"`;
+          valueIsField || !isNaN(firstNum) ? `${first}` : `${JSON.stringify(first)}`;
         const secondValue =
-          valueIsField || !isNaN(secondNum) ? `${second}` : `"${escapeDoubleQuotes(second)}"`;
+          valueIsField || !isNaN(secondNum) ? `${second}` : `${JSON.stringify(second)}`;
         if (operator === 'between') {
           return valueIsField
             ? `{"$and":[{"$expr":{"$gte":["$${field}","$${firstValue}"]}},{"$expr":{"$lte":["$${field}","$${secondValue}"]}}]}`
