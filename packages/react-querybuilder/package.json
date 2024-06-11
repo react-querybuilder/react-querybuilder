@@ -65,6 +65,7 @@
     "parseSQL",
     "transformQuery"
   ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",
