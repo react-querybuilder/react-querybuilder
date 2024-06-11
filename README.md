@@ -120,6 +120,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Creeperface01"><img src="https://avatars.githubusercontent.com/u/10363500?v=4?s=100" width="100px;" alt="Jan Bednář"/><br /><sub><b>Jan Bednář</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=Creeperface01" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=Creeperface01" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://smplman.com"><img src="https://avatars.githubusercontent.com/u/1252607?v=4?s=100" width="100px;" alt="Stephen Peery"/><br /><sub><b>Stephen Peery</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=smplman" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=smplman" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/stil"><img src="https://avatars.githubusercontent.com/u/714004?v=4?s=100" width="100px;" alt="stil"/><br /><sub><b>stil</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=stil" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=stil" title="Tests">⚠️</a></td>
+    </tr>
   </tbody>
 </table>
 
@@ -132,7 +135,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-35-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-36-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
