@@ -209,7 +209,7 @@ This example implements [disjunctive normal form (DNF)](https://en.wikipedia.org
 
 :::tip
 
-This example also uses some techniques which are described in more detail in the [arbitrary updates tips](./arbitrary-updates) and [hooks documentation](../utils/hooks#usequerybuilderselector).
+This example also uses some techniques which are described in more detail in the [arbitrary updates tips](./arbitrary-updates) and [hooks documentation](../utils/hooks#usequerybuilderquery).
 
 :::
 
@@ -302,9 +302,8 @@ import {
   QueryBuilder,
   findPath,
   getParentPath,
-  getQuerySelectorById,
   remove,
-  useQueryBuilderSelector,
+  useQueryBuilderQuery,
 } from 'react-querybuilder';
 
 const fields: Field[] = [
@@ -336,7 +335,7 @@ const initialQuery: RuleGroupType = {
 };
 
 const RemoveRule = (props: ActionWithRulesAndAddersProps) => {
-  const query = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
+  const query = useQueryBuilderQuery();
   if (!query) return null;
   const parentPath = getParentPath(props.path);
   /** Count of rules in the same group */

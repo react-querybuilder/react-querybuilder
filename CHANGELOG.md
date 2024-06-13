@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- The `useQueryBuilder` hook has been reinstated. It does nothing more than call `useQueryBuilderSetup` and `useQueryBuilderSchema`, which no longer need to be called from separate components.
+- `useQueryBuilderQuery` hook to retrieve the full, current query object during the render pass of a custom component. It requires no parameters and should be used in place of the previously recommended hook `useQueryBuilderSelector`, which requires a selector function generated with `getQuerySelectorById(props.schema.qbId)`. While `useQueryBuilderSelector` is not deprecated, it is no longer recommended except in very special circumstances.
+
+### Fixed
+
+- `useQueryBuilderSelector` no longer returns `undefined` during the first render pass (and neither does the new hook `useQueryBuilderQuery`).
 
 ## [v7.4.4] - 2024-06-10
 

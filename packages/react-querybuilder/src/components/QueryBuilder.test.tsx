@@ -48,6 +48,7 @@ import { defaultControlElements } from './defaults';
 import { ValueSelector } from './ValueSelector';
 import { ActionElement } from './ActionElement';
 import { waitABeat } from './testUtils';
+import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 
 const user = userEvent.setup();
 
@@ -2717,6 +2718,69 @@ describe('null controlElements', () => {
       />
     );
     expectNothing();
+  });
+});
+
+describe('selector hooks', () => {
+  const queryTracker = jest.fn();
+  const UseQueryBuilderSelector = (props: RuleGroupProps) => {
+    const q = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
+    queryTracker(q ?? false);
+    return null;
+  };
+  const UseQueryBuilderQueryPARAM = (props: RuleGroupProps) => {
+    const q = useQueryBuilderQuery(props);
+    queryTracker(q ?? false);
+    return null;
+  };
+  const UseQueryBuilderQueryNOPARAM = () => {
+    const q = useQueryBuilderQuery();
+    queryTracker(q ?? false);
+    return null;
+  };
+  const generateQuery = (value: string): RuleGroupType => ({
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: '=', value }],
+  });
+
+  beforeEach(() => {
+    queryTracker.mockClear();
+  });
+
+  describe.each([
+    { RG: UseQueryBuilderSelector, testName: 'useQueryBuilderSelector' },
+    { RG: UseQueryBuilderQueryPARAM, testName: 'useQueryBuilderQuery with parameter' },
+    { RG: UseQueryBuilderQueryNOPARAM, testName: 'useQueryBuilderQuery without parameter' },
+  ])('$testName', ({ RG }) => {
+    it('returns a query on first render without query prop', () => {
+      const query: RuleGroupType = { combinator: 'and', rules: [] };
+      render(<QueryBuilder controlElements={{ ruleGroup: RG }} />);
+      expect(queryTracker).toHaveBeenNthCalledWith(1, expect.objectContaining(query));
+    });
+
+    it('returns a query on first render with defaultQuery prop', () => {
+      const query = generateQuery('defaultQuery prop');
+      render(<QueryBuilder defaultQuery={query} controlElements={{ ruleGroup: RG }} />);
+      expect(queryTracker).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          combinator: 'and',
+          rules: [expect.objectContaining(query.rules[0])],
+        })
+      );
+    });
+
+    it('returns a query on first render with query prop', () => {
+      const query = generateQuery('query prop');
+      render(<QueryBuilder query={query} controlElements={{ ruleGroup: RG }} />);
+      expect(queryTracker).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          combinator: 'and',
+          rules: [expect.objectContaining(query.rules[0])],
+        })
+      );
+    });
   });
 });
 

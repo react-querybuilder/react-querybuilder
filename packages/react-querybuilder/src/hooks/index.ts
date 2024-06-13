@@ -3,6 +3,7 @@ export * from './useDeprecatedProps';
 export * from './useMergedContext';
 export * from './usePreferProp';
 export * from './usePrevious';
+export * from './useQueryBuilder';
 export * from './useQueryBuilderSchema';
 export * from './useQueryBuilderSetup';
 export * from './useReactDndWarning';

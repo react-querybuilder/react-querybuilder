@@ -97,6 +97,8 @@ export const useQueryBuilderSetup = <
 
   const operators = (operatorsProp ?? defaultOperators) as FlexibleOptionList<O>;
 
+  const [initialQueryProp] = useState(props.query ?? props.defaultQuery);
+
   const rqbContext = useMergedContext({
     controlClassnames: controlClassnamesProp,
     controlElements: controlElementsProp,
@@ -104,6 +106,8 @@ export const useQueryBuilderSetup = <
     enableDragAndDrop: enableDragAndDropProp,
     enableMountQueryChange: enableMountQueryChangeProp,
     translations: translationsProp,
+    initialQuery: initialQueryProp,
+    qbId: qbId,
   });
 
   const { translations } = rqbContext;

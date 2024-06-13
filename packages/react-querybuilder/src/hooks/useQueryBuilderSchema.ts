@@ -1,12 +1,12 @@
 import { clsx } from 'clsx';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LogType, standardClassnames } from '../defaults';
+import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderStore,
 } from '../redux/_internal';
-import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import type {
   FullCombinator,
   FullField,
@@ -39,9 +39,9 @@ import {
   remove,
   update,
 } from '../utils';
+import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
 import { useDeprecatedProps } from './useDeprecatedProps';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
-import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
@@ -104,7 +104,7 @@ export function useQueryBuilderSchema<
 
   const {
     qbId,
-    rqbContext,
+    rqbContext: incomingRqbContext,
     fields,
     fieldMap,
     combinators,
@@ -126,7 +126,7 @@ export function useQueryBuilderSchema<
     enableDragAndDrop,
     enableMountQueryChange,
     translations,
-  } = rqbContext;
+  } = incomingRqbContext;
 
   // #region Boolean coercion
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
@@ -151,7 +151,7 @@ export function useQueryBuilderSchema<
   const queryBuilderStore = useRQB_INTERNAL_QueryBuilderStore();
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
-  const querySelector = useMemo(() => getQuerySelectorById(setup.qbId), [setup.qbId]);
+  const querySelector = useMemo(() => getQuerySelectorById(qbId), [qbId]);
   const storeQuery = useQueryBuilderSelector(querySelector);
   const getQuery = useCallback(
     () => querySelector(queryBuilderStore.getState()),
@@ -168,10 +168,16 @@ export function useQueryBuilderSchema<
     !candidateQuery.id ? prepareRuleGroup(candidateQuery, { idGenerator }) : candidateQuery
   ) as RuleGroupTypeAny<R>;
 
+  const [initialQuery] = useState(rootGroup);
+  const rqbContext = useMemo(
+    () => ({ ...incomingRqbContext, initialQuery }),
+    [incomingRqbContext, initialQuery]
+  );
+
   // If a new `query` prop is passed in that doesn't match the query in the store,
   // update the store to match the prop _without_ calling `onQueryChange`.
   useEffect(() => {
-    if (!!queryProp && queryProp !== storeQuery) {
+    if (!!queryProp && !Object.is(queryProp, storeQuery)) {
       queryBuilderDispatch(
         _RQB_INTERNAL_dispatchThunk({
           payload: { qbId, query: queryProp },
