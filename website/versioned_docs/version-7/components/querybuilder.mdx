@@ -9,7 +9,7 @@ import { DemoLink } from '@site/src/components/DemoLink';
 
 The primary export of `react-querybuilder` is the `<QueryBuilder />` React component.
 
-`QueryBuilder` calls the [`useQueryBuilderSetup`](../utils/hooks#usequerybuildersetup) Hook to merge props and context values with defaults, generate update methods, etc. It then renders a context provider over an internal component that calls the [`useQueryBuilderSchema`](../utils/hooks#usequerybuilderschema) Hook to consume the context, prepare the query, and finalize the schema.
+`QueryBuilder` calls the [`useQueryBuilder`](../utils/hooks#usequerybuilder) Hook to merge props and context values with defaults, generate update methods, consume the context, prepare the query, and finalize the schema.
 
 ## Subcomponents
 
