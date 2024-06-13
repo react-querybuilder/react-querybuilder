@@ -160,9 +160,21 @@ function useStopEventPropagation(
 
 This hook is _not_ used in the `@react-querybuilder/native` `Rule` and `RuleGroup` components, `RuleNative` and `RuleGroupNative`.
 
+### `useQueryBuilder`
+
+Returns everything needed to render a [`QueryBuilder`](../components/querybuilder) component. Internally, this Hook simply passes the result of [`useQueryBuilderSetup`](#usequerybuildersetup) to [`useQueryBuilderSchema`](#usequerybuilderschema) and returns the result of `useQueryBuilderSchema`. The shape of the returned object is a union of the result of `useQueryBuilderSchema` and `useQueryBuilderSetup`.
+
+As with `useQueryBuilderSchema`, this Hook must be called from a descendant component of `QueryBuilderStateProvider`. See [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx) for an example.
+
+:::info
+
+This Hook is unlikely to be necessary unless you are reimplementing the entire `QueryBuilder` component structure.
+
+:::
+
 ### `useQueryBuilderSetup`
 
-Called by the [`QueryBuilder`](../components/querybuilder) component. Merges props and context values with the defaults and generates actions.
+Called by the internal component rendered by [`QueryBuilder`](../components/querybuilder). Merges props and context values with the defaults and generates actions.
 
 :::info
 
@@ -191,7 +203,7 @@ function useQueryBuilderSetup(props: QueryBuilderProps): {
 
 ### `useQueryBuilderSchema`
 
-Called by the internal component rendered by [`QueryBuilder`](../components/querybuilder). Returns everything needed to render a wrapper element (e.g., `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props and the result from [`useQueryBuilderSetup`](#usequerybuildersetup). Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
+Called by the internal component rendered by [`QueryBuilder`](../components/querybuilder). Returns everything needed to render a wrapper element (e.g., `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props and the result from [`useQueryBuilderSetup`](#usequerybuildersetup).
 
 This Hook must be called from a descendant component of `QueryBuilderStateProvider`. See [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx) for an example.
 
