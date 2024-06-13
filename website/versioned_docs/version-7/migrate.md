@@ -235,16 +235,18 @@ Passing the query object to subcomponents using the `context` prop is no longer 
 
 :::
 
-Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two methods are available on the `schema` prop which is passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning).
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two methods are available on the `schema` prop which is passed to every component, and should only be used in event handlers. The latter two methods are React Hooks and should follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning).
 
-| Method                              | Description                                                                                                                  |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `props.schema.getQuery()`           | Returns the current root query object. Use only in event handlers.                                                           |
-| `props.schema.dispatchQuery(query)` | Updates the internal query state and calls the `onQueryChange` callback. Use only in event handlers.                         |
-| `useQueryBuilderSelector(selector)` | React Hook that returns the current root query object. Generate the selector with `getQuerySelectorById(props.schema.qbId)`. |
+| Method                              | Description                                                                                          |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `props.schema.getQuery()`           | Returns the current root query object. Use only in event handlers.                                   |
+| `props.schema.dispatchQuery(query)` | Updates the internal query state and calls the `onQueryChange` callback. Use only in event handlers. |
+| `useQueryBuilderQuery()`            | React Hook that returns the current root query object.                                               |
+| `useQueryBuilderSelector(selector)` | Redux selector Hook for the internal store.                                                          |
 
 Notes:
 
+- Prefer `useQueryBuilderQuery` over `useQueryBuilderSelector`. If necessary, a selector for `useQueryBuilderSelector` that retrieves the current root query object can be generated with `getQuerySelectorById(props.schema.qbId)`.
 - These functions all use a custom [Redux](https://redux.js.org/) context behind the scenes, hence the "selector" nomenclature.
 - Previously, updates that couldn't be performed with `handleOnChange` or `handleOnClick` event handlers had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities. To support this, we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary or recommended.
 

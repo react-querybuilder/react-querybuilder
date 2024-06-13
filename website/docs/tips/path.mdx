@@ -59,7 +59,7 @@ would return this object:
 
 In most scenarios you won't need to interact with the `path` attribute, but it can come in handy in certain situations. One such situation is if you need to access other parts of the query from within a custom component.
 
-Say you have a custom value editor that needs to know the `value` of each of its sibling rules. You can get the full query object using the `useQueryBuilderSelector` hook (which connects to React Query Builder's custom Redux implementation). You can then retrieve the sibling rules with a combination of `getParentPath` and `findPath`.
+Say you have a custom value editor that needs to know the `value` of each of its sibling rules. You can get the full query object using the [`useQueryBuilderQuery`](../utils/hooks#usequerybuilderquery) hook (which connects to React Query Builder's custom Redux implementation). You can then retrieve the sibling rules with a combination of `getParentPath` and `findPath`.
 
 :::info
 
@@ -79,13 +79,12 @@ import {
   ValueEditorProps,
   findPath,
   getParentPath,
-  getQuerySelectorById,
-  useQueryBuilderSelector,
+  useQueryBuilderQuery,
 } from 'react-querybuilder';
 
 export const CustomValueEditor = (props: ValueEditorProps) => {
   // Get the full query object
-  const query = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
+  const query = useQueryBuilderQuery();
   // Get the path of this rule's parent group
   const parentPath = getParentPath(props.path);
   // Find the parent group object in the query

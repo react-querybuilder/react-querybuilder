@@ -13,12 +13,14 @@ These Hooks are used internally by React Query Builder and are exported for use 
 
 React Query Builder uses Redux to manage state within a custom React context to avoid interfering with existing Redux stores.
 
-### `useQueryBuilderSelector`
+### `useQueryBuilderQuery`
 
-Returns the current query from the Redux store when used in conjunction with `getQuerySelectorById` (see example below).
+Retrieves the full, latest query object for the nearest ancestor `QueryBuilder` component.
+
+The optional parameter should only be used when retrieving a query object from a different `QueryBuilder` than the nearest ancestor. It can be a full props object as passed to a custom component or any object matching the interface `{ schema: { qbId: string } }`.
 
 ```ts
-function useQueryBuilderSelector(selector: (state: RqbState) => RuleGroupTypeAny): RuleGroupTypeAny;
+function useQueryBuilderQuery(props?: { schema: { qbId: string } }): RuleGroupTypeAny;
 ```
 
 :::tip
@@ -28,6 +30,20 @@ As a React Hook, this function must follow the [appropriate rules](https://react
 **To access the current query from an event handler, use `props.schema.getQuery()` instead.**
 
 :::
+
+### `useQueryBuilderSelector`
+
+:::tip
+
+Prefer [`useQueryBuilderQuery`](#usequerybuilderquery) if you only need to access the query object for the nearest ancestor `QueryBuilder` component.
+
+:::
+
+Returns the current query from the Redux store when used in conjunction with `getQuerySelectorById` (see example below).
+
+```ts
+function useQueryBuilderSelector(selector: (state: RqbState) => RuleGroupTypeAny): RuleGroupTypeAny;
+```
 
 Example:
 
