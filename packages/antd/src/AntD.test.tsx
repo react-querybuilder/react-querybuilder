@@ -18,7 +18,7 @@ import {
   testValueEditor,
   testValueSelector,
   userEventSetup,
-} from 'react-querybuilder/genericTests/index';
+} from '@rqb-test';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';

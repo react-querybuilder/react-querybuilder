@@ -1,27 +1,23 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/components';
-import {
-  TestID,
-  defaultControlClassnames,
-  defaultTranslations as translations,
-} from '../src/defaults';
 import type {
   ActionProps,
   Classnames,
   ControlElementsProp,
   DragHandleProps,
   FullField,
-  FieldSelectorProps,
   FullOption,
-  OperatorSelectorProps,
   QueryActions,
   RuleProps,
   Schema,
-  ShiftActionsProps,
-  ValueEditorProps,
-} from '../src/types';
-import { toFullOption } from '../src/utils';
+} from 'react-querybuilder';
+import {
+  TestID,
+  defaultControlClassnames,
+  defaultControlElements,
+  toFullOption,
+  defaultTranslations as translations,
+} from 'react-querybuilder';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: FullField[]) =>
@@ -41,10 +37,10 @@ const Button = (props: ActionProps) => (
 );
 
 export const ruleControls = {
-  cloneRuleAction: (props: ActionProps) => (
+  cloneRuleAction: props => (
     <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
-  fieldSelector: (props: FieldSelectorProps<FullField>) => (
+  fieldSelector: props => (
     <select
       data-testid={TestID.fields}
       className={props.className}
@@ -53,7 +49,7 @@ export const ruleControls = {
       <option value="any_field">Any Field</option>
     </select>
   ),
-  operatorSelector: (props: OperatorSelectorProps) => (
+  operatorSelector: props => (
     <select
       data-testid={TestID.operators}
       className={props.className}
@@ -62,7 +58,7 @@ export const ruleControls = {
       <option value="any_operator">Any Operator</option>
     </select>
   ),
-  valueEditor: (props: ValueEditorProps) => (
+  valueEditor: props => (
     <input
       data-testid={TestID.valueEditor}
       className={props.className}
@@ -70,7 +66,7 @@ export const ruleControls = {
       onChange={e => props.handleOnChange(e.target.value)}
     />
   ),
-  removeRuleAction: (props: ActionProps) => (
+  removeRuleAction: props => (
     <Button {...props} testID={TestID.removeRule} label={translations.removeRule.label} />
   ),
   dragHandle: forwardRef<HTMLSpanElement, DragHandleProps>(({ className, label }, ref) => (
@@ -78,7 +74,7 @@ export const ruleControls = {
       {label}
     </span>
   )),
-  shiftActions: (props: ShiftActionsProps) => (
+  shiftActions: props => (
     <div data-testid={TestID.shiftActions} className={props.className}>
       <button onClick={props.shiftUp}>{props.labels?.shiftUp}</button>
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>

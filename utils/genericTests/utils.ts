@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
-import { defaultCombinators, defaultControlElements } from '../src';
-import type { Classnames, FullField, Schema } from '../src/types';
+import type { Classnames, FullField, Schema } from 'react-querybuilder';
+import { defaultCombinators, defaultControlElements } from 'react-querybuilder';
 
 export const UNUSED = 'UNUSED';
 

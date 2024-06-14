@@ -16,9 +16,7 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./dev/*": "./dev/*",
     "./dist/*": "./dist/*",
-    "./genericTests/*": "./genericTests/*",
     "./formatQuery": {
       "types": "./dist/formatQuery.d.ts",
       "default": "./dist/formatQuery.js"

@@ -1,6 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { ActionWithRulesProps } from '../src/types';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 import { basicSchema, userEventSetup } from './utils';
 
 export const defaultActionElementProps = {

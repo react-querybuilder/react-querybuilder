@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import nodeCrypto from 'node:crypto';
-import { testGenerateID } from '../../genericTests/generateIDtests';
+import { testGenerateID } from './generateIDTestUtils';
 
 const ogCrypto = globalThis.crypto;
 

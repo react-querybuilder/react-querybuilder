@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import { TestID } from '../src/defaults';
-import type { DragHandleProps } from '../src/types';
+import type { DragHandleProps } from 'react-querybuilder';
+import { TestID } from 'react-querybuilder';
 import { basicSchema } from './utils';
 
 export const defaultDragHandleProps = {

@@ -1,32 +1,27 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { defaultControlElements } from '../src/components';
-import {
-  TestID,
-  defaultCombinators,
-  defaultControlClassnames,
-  defaultTranslations as translations,
-} from '../src/defaults';
 import type {
   ActionProps,
   Classnames,
-  CombinatorSelectorProps,
   ControlElementsProp,
   DragHandleProps,
   FullField,
-  FieldSelectorProps,
-  FullOption,
-  NotToggleProps,
   FullOperator,
-  OperatorSelectorProps,
+  FullOption,
   QueryActions,
   RuleGroupProps,
   RuleType,
   Schema,
-  ShiftActionsProps,
-  ValueEditorProps,
-} from '../src/types';
-import { generateAccessibleDescription, toFullOption } from '../src/utils';
+} from 'react-querybuilder';
+import {
+  TestID,
+  defaultCombinators,
+  defaultControlClassnames,
+  defaultControlElements,
+  generateAccessibleDescription,
+  toFullOption,
+  defaultTranslations as translations,
+} from 'react-querybuilder';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number) =>
@@ -44,7 +39,7 @@ const Button = (props: ActionProps) => (
 );
 
 export const ruleGroupControls = {
-  combinatorSelector: (props: CombinatorSelectorProps) => (
+  combinatorSelector: props => (
     <select
       data-testid={TestID.combinators}
       className={props.className}
@@ -59,31 +54,31 @@ export const ruleGroupControls = {
       <option value="any_combinator_value">Any Combinator</option>
     </select>
   ),
-  addRuleAction: (props: ActionProps) => (
+  addRuleAction: props => (
     <Button {...props} testID={TestID.addRule} label={translations.addRule.label} />
   ),
-  addGroupAction: (props: ActionProps) => (
+  addGroupAction: props => (
     <Button {...props} testID={TestID.addGroup} label={translations.addGroup.label} />
   ),
-  cloneGroupAction: (props: ActionProps) => (
+  cloneGroupAction: props => (
     <Button {...props} testID={TestID.cloneGroup} label={translations.cloneRuleGroup.label} />
   ),
-  cloneRuleAction: (props: ActionProps) => (
+  cloneRuleAction: props => (
     <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
-  removeGroupAction: (props: ActionProps) => (
+  removeGroupAction: props => (
     <Button {...props} testID={TestID.removeGroup} label={translations.removeGroup.label} />
   ),
-  removeRuleAction: (props: ActionProps) => (
+  removeRuleAction: props => (
     <Button {...props} testID={TestID.removeRule} label={translations.removeRule.label} />
   ),
-  notToggle: (props: NotToggleProps) => (
+  notToggle: props => (
     <label data-testid={TestID.notToggle} className={props.className}>
       <input type="checkbox" onChange={e => props.handleOnChange(e.target.checked)} />
       {translations.notToggle.label}
     </label>
   ),
-  fieldSelector: (props: FieldSelectorProps<FullField>) => (
+  fieldSelector: props => (
     <select
       data-testid={TestID.fields}
       className={props.className}
@@ -92,7 +87,7 @@ export const ruleGroupControls = {
       <option value={(props.options[0] as FullField).name}>{props.options[0].label}</option>
     </select>
   ),
-  operatorSelector: (props: OperatorSelectorProps) => (
+  operatorSelector: props => (
     <select
       data-testid={TestID.operators}
       className={props.className}
@@ -101,7 +96,7 @@ export const ruleGroupControls = {
       <option value={(props.options[0] as FullOperator).name}>{props.options[0].label}</option>
     </select>
   ),
-  valueEditor: (props: ValueEditorProps) => (
+  valueEditor: props => (
     <input
       data-testid={TestID.valueEditor}
       className={props.className}
@@ -114,7 +109,7 @@ export const ruleGroupControls = {
       {label}
     </span>
   )),
-  shiftActions: (props: ShiftActionsProps) => (
+  shiftActions: props => (
     <div data-testid={TestID.shiftActions} className={props.className}>
       <button onClick={props.shiftUp}>{props.labels?.shiftUp}</button>
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>

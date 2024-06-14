@@ -6,7 +6,7 @@ import type {
   Schema,
   ValueEditorProps,
   ValueSelectorProps,
-} from '../src/types';
+} from 'react-querybuilder';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import { basicSchema, findInput, findInputs, findTextarea, userEventSetup } from './utils';
 

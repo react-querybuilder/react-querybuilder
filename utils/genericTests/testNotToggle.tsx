@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { NotToggleProps } from '../src/types';
+import type { NotToggleProps } from 'react-querybuilder';
 import {
   basicSchema,
   findInput,

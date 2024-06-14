@@ -24,8 +24,9 @@
       "@react-querybuilder/native": ["./packages/native/src/index.ts"],
       "@react-querybuilder/tremor": ["./packages/tremor/src/index.tsx"],
       "@dev": ["./utils/dev"],
-      "@test": ["./utils/test"]
+      "@rqb-test": ["./utils/genericTests"],
+      "@rqb-utils": ["./packages/react-querybuilder/src/utils"]
     }
   },
-  "include": ["./*.ts", "scripts/*.ts"]
+  "include": ["./*.ts", "./scripts/*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]
 }
