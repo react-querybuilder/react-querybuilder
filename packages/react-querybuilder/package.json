@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "7.4.3",
+  "version": "7.4.4",
   "description": "The React <QueryBuilder /> component for constructing queries",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -63,6 +63,7 @@
     "parseSQL",
     "transformQuery"
   ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",

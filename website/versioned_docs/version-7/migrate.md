@@ -94,7 +94,7 @@ Since the [parser functions](./utils/import) are used less frequently than other
 - `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a rule group with `not: true`, it now generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.). To prevent this behavior, set the `preventOperatorNegation` option to `true`. (This change does not apply to operators defined in the `additionalOperators` option.)
 - Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
 - The `RuleGroupTypeIC` interface now includes `combinator?: undefined` to ensure that query objects implementing [independent combinators](./components/querybuilder#independent-combinators) do not contain `combinator` properties.
-- The `useQueryBuilder` hook has been split into `useQueryBuilderSetup` and `useQueryBuilderSchema`. `useQueryBuilderSchema` must be called from a child component of one that calls `useQueryBuilderSetup` (`QueryBuilder` takes care of that internally). For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
+- The `useQueryBuilder` hook must now be called from a descendant component of `QueryBuilderStateProvider`. For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
 - The `useStopEventPropagation` hook, called from the default `Rule` and `RuleGroup` components, now takes a single function as its parameter instead of an object map of functions. It must be run for each wrapped function individually.
 
 ## New features
@@ -235,16 +235,18 @@ Passing the query object to subcomponents using the `context` prop is no longer 
 
 :::
 
-Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two methods are available on the `schema` prop which is passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning).
+Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two methods are available on the `schema` prop which is passed to every component, and should only be used in event handlers. The latter two methods are React Hooks and should follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning).
 
-| Method                              | Description                                                                                                                  |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `props.schema.getQuery()`           | Returns the current root query object. Use only in event handlers.                                                           |
-| `props.schema.dispatchQuery(query)` | Updates the internal query state and calls the `onQueryChange` callback. Use only in event handlers.                         |
-| `useQueryBuilderSelector(selector)` | React Hook that returns the current root query object. Generate the selector with `getQuerySelectorById(props.schema.qbId)`. |
+| Method                              | Description                                                                                          |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `props.schema.getQuery()`           | Returns the current root query object. Use only in event handlers.                                   |
+| `props.schema.dispatchQuery(query)` | Updates the internal query state and calls the `onQueryChange` callback. Use only in event handlers. |
+| `useQueryBuilderQuery()`            | React Hook that returns the current root query object.                                               |
+| `useQueryBuilderSelector(selector)` | Redux selector Hook for the internal store.                                                          |
 
 Notes:
 
+- Prefer `useQueryBuilderQuery` over `useQueryBuilderSelector`. If necessary, a selector for `useQueryBuilderSelector` that retrieves the current root query object can be generated with `getQuerySelectorById(props.schema.qbId)`.
 - These functions all use a custom [Redux](https://redux.js.org/) context behind the scenes, hence the "selector" nomenclature.
 - Previously, updates that couldn't be performed with `handleOnChange` or `handleOnClick` event handlers had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities. To support this, we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary or recommended.
 

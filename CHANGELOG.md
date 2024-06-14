@@ -9,7 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The React Native compatibility package uses `gap` for layout spacing, which means the minimum `react-native` version is now `0.71.0`.
+- [#716] The React Native compatibility package uses `gap` for layout spacing, which means the minimum `react-native` version is now `0.71.0`.
+
+### Added
+
+- [#723] The `useQueryBuilder` hook has been reinstated. It does nothing more than call `useQueryBuilderSetup` and `useQueryBuilderSchema`, which no longer need to be called from separate components.
+- [#723] `useQueryBuilderQuery` hook to retrieve the full, current query object during the render pass of a custom component. It requires no parameters and should be used in place of the previously recommended hook `useQueryBuilderSelector`, which requires a selector function generated with `getQuerySelectorById(props.schema.qbId)`. While `useQueryBuilderSelector` is not deprecated, it is no longer recommended except in very special circumstances.
+
+### Fixed
+
+- [#723] `useQueryBuilderSelector` no longer returns `undefined` during the first render pass (and neither does the new hook `useQueryBuilderQuery`).
+
+## [v7.4.4] - 2024-06-10
+
+### Fixed
+
+- [#719] The "mongodb" export format stringifies values using `JSON.stringify`.
 
 ## [v7.4.3] - 2024-06-06
 
@@ -1668,10 +1683,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#706]: https://github.com/react-querybuilder/react-querybuilder/pull/706
 [#713]: https://github.com/react-querybuilder/react-querybuilder/pull/713
 [#714]: https://github.com/react-querybuilder/react-querybuilder/pull/714
+[#716]: https://github.com/react-querybuilder/react-querybuilder/pull/716
+[#719]: https://github.com/react-querybuilder/react-querybuilder/issues/719
+[#723]: https://github.com/react-querybuilder/react-querybuilder/pull/723
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...HEAD
+[v7.4.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...v7.4.4
 [v7.4.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...v7.4.3
 [v7.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...v7.4.2
 [v7.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...v7.4.1

@@ -41,10 +41,10 @@ const elasticSearchQueryObject = {
         bool: {
           should: [
             { bool: { must_not: { regexp: { lastName: { value: 'ab' } } } } },
-            { regexp: { job: { value: '^Prog' } } },
-            { regexp: { email: { value: 'com$' } } },
-            { bool: { must_not: { regexp: { job: { value: '^Man' } } } } },
-            { bool: { must_not: { regexp: { email: { value: 'fr$' } } } } },
+            { regexp: { job: { value: 'Prog.*' } } },
+            { regexp: { email: { value: '.*com' } } },
+            { bool: { must_not: { regexp: { job: { value: 'Man.*' } } } } },
+            { bool: { must_not: { regexp: { email: { value: '.*fr' } } } } },
           ],
         },
       },

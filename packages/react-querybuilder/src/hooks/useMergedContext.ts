@@ -12,6 +12,7 @@ import type {
   ValueSourceSelectorProps,
   ControlElementsProp,
   DragHandleProps,
+  RuleGroupTypeAny,
 } from '../types';
 import { mergeClassnames, mergeTranslations } from '../utils';
 import { usePreferProp } from './usePreferProp';
@@ -19,7 +20,10 @@ import { usePreferProp } from './usePreferProp';
 export type UseMergedContextProps<
   F extends FullField = FullField,
   O extends string = string,
-> = QueryBuilderContextProps<F, O>;
+> = QueryBuilderContextProps<F, O> & {
+  initialQuery?: RuleGroupTypeAny;
+  qbId?: string;
+};
 
 const nullComp = () => null;
 const nullFwdComp: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLElement>> =
@@ -297,6 +301,8 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
     enableDragAndDrop,
     enableMountQueryChange,
     translations,
+    initialQuery: props.initialQuery,
+    qbId: props.qbId,
     ...otherContext,
   };
 };

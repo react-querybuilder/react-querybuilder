@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { useQueryBuilderSchema, useQueryBuilderSetup } from '../hooks';
+import { useQueryBuilder } from '../hooks';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
   FullCombinator,
@@ -33,13 +33,12 @@ const QueryBuilderInternal = <
   F extends FullField,
   O extends FullOperator,
   C extends FullCombinator,
->(allProps: {
+>({
+  props,
+}: {
   props: QueryBuilderProps<RG, F, O, C>;
-  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
-  const { setup, props } = allProps;
-
-  const qb = useQueryBuilderSchema<RG, F, O, C>(props, setup);
+  const qb = useQueryBuilder<RG, F, O, C>(props);
 
   const RuleGroupControlElement = qb.schema.controls.ruleGroup;
 
@@ -87,12 +86,8 @@ export const QueryBuilder = <
   C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
-) => {
-  const setup = useQueryBuilderSetup(props);
-
-  return (
-    <QueryBuilderStateProvider>
-      <QueryBuilderInternal props={props} setup={setup} />
-    </QueryBuilderStateProvider>
-  );
-};
+) => (
+  <QueryBuilderStateProvider>
+    <QueryBuilderInternal props={props} />
+  </QueryBuilderStateProvider>
+);

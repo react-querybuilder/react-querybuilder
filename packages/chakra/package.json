@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/chakra",
   "description": "Custom Chakra UI components for react-querybuilder",
-  "version": "7.4.3",
+  "version": "7.4.4",
   "publishConfig": {
     "access": "public"
   },
@@ -24,6 +24,7 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",
@@ -62,6 +63,6 @@
     "@emotion/styled": "^11",
     "framer-motion": "^11",
     "react": ">=18",
-    "react-querybuilder": "7.4.3"
+    "react-querybuilder": "7.4.4"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bulma",
   "description": "Custom Bulma components for react-querybuilder",
-  "version": "7.4.3",
+  "version": "7.4.4",
   "publishConfig": {
     "access": "public"
   },
@@ -24,6 +24,7 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",
@@ -52,6 +53,6 @@
   "peerDependencies": {
     "bulma": "^0.9.4",
     "react": ">=18",
-    "react-querybuilder": "7.4.3"
+    "react-querybuilder": "7.4.4"
   }
 }
