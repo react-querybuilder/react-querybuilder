@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@dev';
-import 'react-querybuilder/src/query-builder.scss';
+import { DevLayout, useDevApp } from '@rqb-devapp';
+import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderAntD } from '../src';
 import './styles.scss';
 

@@ -1,7 +1,7 @@
 import testingLibraryReactNativeJestPreset from '@testing-library/react-native/jest-preset/index.js';
 import common from '../../jest.common.mjs';
 
-const { coveragePathIgnorePatterns, globals } = common;
+const { coveragePathIgnorePatterns, globals, moduleNameMapper } = common;
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
@@ -13,4 +13,5 @@ export default {
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|react-redux|@react-native(-community|-picker)?)/)',
   ],
+  moduleNameMapper,
 };

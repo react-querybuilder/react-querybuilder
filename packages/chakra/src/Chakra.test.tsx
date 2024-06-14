@@ -12,7 +12,7 @@ import {
   testShiftActions,
   testValueEditor,
   testValueSelector,
-} from '@rqb-test';
+} from '@rqb-testing';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';

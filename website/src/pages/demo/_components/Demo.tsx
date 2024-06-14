@@ -114,7 +114,7 @@ const notesJsonLogic = (
 const defaultQueryWrapper = (props: { children: React.ReactNode }) => <>{props.children}</>;
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
-  const formatInfo = formatMap.find(([fmt]) => fmt === format);
+  const formatInfo = formatMap.find(([fmt]) => fmt === format)!;
   return (
     <>
       <Link href={`/docs/utils/export#${formatInfo[3]}`}>Documentation</Link>
@@ -130,7 +130,7 @@ const ParseNumbersOption = ({
   disabled,
 }: {
   checked: boolean;
-  setter: React.Dispatch<React.SetStateAction<boolean>>;
+  setter: (v: boolean) => unknown;
   disabled?: boolean;
 }) => {
   return (
@@ -312,7 +312,7 @@ export default function Demo({
   );
 
   const { setter: pnSetter } = useMemo(
-    () => optionsInfo.find(opt => opt.name === 'parseNumbers'),
+    () => optionsInfo.find(opt => opt.name === 'parseNumbers')!,
     [optionsInfo]
   );
 

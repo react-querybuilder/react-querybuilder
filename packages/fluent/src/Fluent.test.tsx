@@ -11,7 +11,7 @@ import {
   testValueEditor,
   testValueSelector,
   userEventSetup,
-} from '@rqb-test';
+} from '@rqb-testing';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';

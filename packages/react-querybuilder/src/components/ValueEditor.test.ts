@@ -1,4 +1,4 @@
-import { testValueEditor } from '@rqb-test';
+import { testValueEditor } from '@rqb-testing';
 import { ValueEditor } from './ValueEditor';
 
 testValueEditor(ValueEditor);

@@ -54,7 +54,7 @@ import {
   testShiftActions,
   testValueEditor,
   testValueSelector,
-} from '@rqb-test';
+} from '@rqb-testing';
 import 'regenerator-runtime/runtime';
 import { QueryBuilderMaterial } from '.';
 import type { MaterialActionProps } from './MaterialActionElement';

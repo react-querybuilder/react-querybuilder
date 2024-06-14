@@ -16,7 +16,7 @@ import type {
   RuleGroupType,
 } from 'react-querybuilder';
 import { QueryBuilder, TestID, standardClassnames as sc } from 'react-querybuilder';
-import { userEventSetup } from '@rqb-test';
+import { userEventSetup } from '@rqb-testing';
 import { QueryBuilderDnD } from './QueryBuilderDnD';
 import type { QueryBuilderDndProps } from './types';
 

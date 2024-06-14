@@ -6,8 +6,9 @@ export default defineConfig({
   plugins: [vitePluginReact()],
   resolve: {
     alias: {
-      'react-querybuilder': path.resolve(import.meta.dir, '.'),
-      '@dev': path.resolve(import.meta.dir, '../../utils/dev'),
+      'react-querybuilder': path.resolve(import.meta.dir, './src'),
+      '@rqb-devapp': path.resolve(import.meta.dir, '../../utils/devapp'),
+      '@rqb-utils': path.resolve(import.meta.dir, './src/utils'),
     },
   },
   server: {

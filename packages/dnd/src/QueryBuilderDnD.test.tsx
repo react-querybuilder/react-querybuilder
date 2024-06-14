@@ -18,7 +18,7 @@ import {
   getCompatContextProvider,
   standardClassnames,
 } from 'react-querybuilder';
-import { consoleMocks } from '@rqb-test';
+import { consoleMocks } from '@rqb-testing';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>

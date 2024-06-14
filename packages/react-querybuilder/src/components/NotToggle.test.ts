@@ -1,4 +1,4 @@
-import { testNotToggle } from '@rqb-test';
+import { testNotToggle } from '@rqb-testing';
 import { NotToggle } from './NotToggle';
 
 testNotToggle(NotToggle);

@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { consoleMocks } from '@rqb-test';
+import { consoleMocks } from '@rqb-testing';
 import {
   LogType,
   TestID,

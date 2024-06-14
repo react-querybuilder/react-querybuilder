@@ -3,8 +3,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@dev';
-import 'react-querybuilder/dist/query-builder.scss';
+import { DevLayout, useDevApp } from '@rqb-devapp';
+import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderMaterial } from '../src';
 
 const muiTheme = createTheme({

@@ -19,7 +19,7 @@ import {
   testShiftActions,
   testValueEditor,
   userEventSetup,
-} from '@rqb-test';
+} from '@rqb-testing';
 import { TremorActionElement } from './TremorActionElement';
 import { TremorNotToggle } from './TremorNotToggle';
 import { TremorShiftActions } from './TremorShiftActions';

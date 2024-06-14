@@ -18,7 +18,7 @@ import {
   testShiftActions,
   testValueEditor,
   userEventSetup,
-} from '@rqb-test';
+} from '@rqb-testing';
 import { MantineActionElement as MantineActionElement_original } from './MantineActionElement';
 import { MantineNotToggle as MantineNotToggle_original } from './MantineNotToggle';
 import { MantineShiftActions as MantineShiftActions_original } from './MantineShiftActions';

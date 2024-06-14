@@ -94,7 +94,7 @@ h1, h2, h3, h4, h5, h6 {
   //   hidden: hideStylesCSS,
   // };
 
-  const rqbDependencies =
+  const rqbDependencies: Record<string, string> =
     rqbVersion === 4
       ? { 'react-querybuilder': '^4' }
       : {

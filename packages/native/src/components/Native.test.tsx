@@ -73,7 +73,7 @@ describe('NativeActionElement', () => {
     path: [],
     ruleOrGroup: { combinator: 'and', rules: [] },
     // We don't use `basicSchema` here because we can't import
-    // from "react-querybuilder/genericTests".
+    // from "@react-querybuilder/testing".
     schema: {} as Schema<FullField, string>,
   };
 
@@ -138,7 +138,7 @@ describe('NativeNotToggle', () => {
     level: 0,
     path: [],
     // We don't use `basicSchema` here because we can't import
-    // from "react-querybuilder/genericTests".
+    // from "@react-querybuilder/testing".
     schema: {} as Schema<FullField, string>,
     testID: TestID.notToggle,
     ruleGroup: { combinator: 'and', rules: [] },
@@ -174,7 +174,7 @@ describe('NativeShiftActions', () => {
     labels,
     testID: TestID.shiftActions,
     // We don't use `basicSchema` here because we can't import
-    // from "react-querybuilder/genericTests".
+    // from "@react-querybuilder/testing".
     schema: {} as Schema<FullField, string>,
     disabled: false,
     shiftUpDisabled: false,
@@ -323,7 +323,7 @@ describe('NativeValueEditor', () => {
     path: [],
     level: 0,
     // We don't use `basicSchema` here because we can't import
-    // from "react-querybuilder/genericTests".
+    // from "@react-querybuilder/testing".
     schema: {} as Schema<FullField, string>,
     testID: TestID.valueEditor,
     rule: { field: '', operator: '', value: '' },

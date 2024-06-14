@@ -4,12 +4,12 @@
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  coveragePathIgnorePatterns: ['/genericTests/', '/dist/', 'TestUtils.ts'],
+  coveragePathIgnorePatterns: ['/utils/testing/', '/dist/', 'TestUtils.ts'],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
   testEnvironment: 'jsdom',
   // Keep these in sync with /tsconfig.json#compilerOptions#paths.
   moduleNameMapper: {
     'react-querybuilder': ['<rootDir>/../../packages/react-querybuilder/src'],
-    '@rqb-test': ['<rootDir>/../../utils/genericTests'],
+    '@rqb-testing': ['<rootDir>/../../utils/testing'],
   },
 };

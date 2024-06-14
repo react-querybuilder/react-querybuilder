@@ -6,7 +6,8 @@ export default defineConfig({
   resolve: {
     alias: {
       'react-native': 'react-native-web',
-      'react-querybuilder': path.resolve(import.meta.dir, '../react-querybuilder'),
+      'react-querybuilder': path.resolve(import.meta.dir, '../react-querybuilder/src'),
+      '@rqb-utils': path.resolve(import.meta.dir, '../react-querybuilder/src/utils'),
     },
   },
   plugins: [vitePluginReact()],
