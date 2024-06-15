@@ -427,6 +427,10 @@ it('handles "in" operator', () => {
     wrapRule({ field: 'f1', operator: 'in', value: 'Test,Test2' })
   );
   testParseCEL(
+    'f1 in ["Te,st","Test2"]',
+    wrapRule({ field: 'f1', operator: 'in', value: 'Te\\,st,Test2' })
+  );
+  testParseCEL(
     'f1 in [f2,f3]',
     wrapRule({
       field: 'f1',

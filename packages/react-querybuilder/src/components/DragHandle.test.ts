@@ -1,4 +1,4 @@
-import { testDragHandle } from '../../genericTests';
+import { testDragHandle } from '@rqb-testing';
 import { DragHandle } from './DragHandle';
 
 testDragHandle(DragHandle);

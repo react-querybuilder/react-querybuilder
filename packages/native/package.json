@@ -49,12 +49,12 @@
     "react-dom": "^18.3.1",
     "react-native": "~0.74.2",
     "react-native-web": "~0.19.12",
-    "react-querybuilder": "7.4.4",
+    "react-querybuilder": "workspace:*",
     "react-redux": "^9.1.2",
     "react-test-renderer": "^18.3.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12"
+    "vite": "^5.3.1"
   },
   "peerDependencies": {
     "react": ">=18",

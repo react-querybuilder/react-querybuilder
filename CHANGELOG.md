@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [#716] The React Native compatibility package uses `gap` for layout spacing, which means the minimum `react-native` version is now `0.71.0`.
+
 ### Added
 
-- The `useQueryBuilder` hook has been reinstated. It does nothing more than call `useQueryBuilderSetup` and `useQueryBuilderSchema`, which no longer need to be called from separate components.
-- `useQueryBuilderQuery` hook to retrieve the full, current query object during the render pass of a custom component. It requires no parameters and should be used in place of the previously recommended hook `useQueryBuilderSelector`, which requires a selector function generated with `getQuerySelectorById(props.schema.qbId)`. While `useQueryBuilderSelector` is not deprecated, it is no longer recommended except in very special circumstances.
+- [#723] The `useQueryBuilder` hook has been reinstated. It does nothing more than call `useQueryBuilderSetup` and `useQueryBuilderSchema`, which no longer need to be called from separate components.
+- [#723] `useQueryBuilderQuery` hook to retrieve the full, current query object during the render pass of a custom component. It requires no parameters and should be used in place of the previously recommended hook `useQueryBuilderSelector`, which requires a selector function generated with `getQuerySelectorById(props.schema.qbId)`. While `useQueryBuilderSelector` is not deprecated, it is no longer recommended except in very special circumstances.
 
 ### Fixed
 
-- `useQueryBuilderSelector` no longer returns `undefined` during the first render pass (and neither does the new hook `useQueryBuilderQuery`).
+- [#723] `useQueryBuilderSelector` no longer returns `undefined` during the first render pass (and neither does the new hook `useQueryBuilderQuery`).
+- [#716] `parse*` methods properly escape commas in string values for "between" and "in" operators.
 
 ## [v7.4.4] - 2024-06-10
 
@@ -1679,7 +1684,9 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#706]: https://github.com/react-querybuilder/react-querybuilder/pull/706
 [#713]: https://github.com/react-querybuilder/react-querybuilder/pull/713
 [#714]: https://github.com/react-querybuilder/react-querybuilder/pull/714
+[#716]: https://github.com/react-querybuilder/react-querybuilder/pull/716
 [#719]: https://github.com/react-querybuilder/react-querybuilder/issues/719
+[#723]: https://github.com/react-querybuilder/react-querybuilder/pull/723
 
 <!-- Release comparison links -->
 

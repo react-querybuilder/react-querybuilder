@@ -136,6 +136,10 @@ it('handles "between" operators', () => {
     'f1 between {14,12}',
     wrapRule({ field: 'f1', operator: 'between', value: '12,14' })
   );
+  testParseSpEL(
+    'f1 between {"test,comma","other value"}',
+    wrapRule({ field: 'f1', operator: 'between', value: 'other value,test\\,comma' })
+  );
   expect(parseSpEL('f1 between {12,14}', { listsAsArrays: true })).toEqual(
     wrapRule({ field: 'f1', operator: 'between', value: [12, 14] })
   );

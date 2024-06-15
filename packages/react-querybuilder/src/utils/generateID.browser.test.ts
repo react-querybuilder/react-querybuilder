@@ -1,5 +1,5 @@
-import { testGenerateID } from '../../genericTests/generateIDtests';
 import { generateID } from './generateID';
+import { testGenerateID } from './generateIDTestUtils';
 
 // These tests are run in the jsdom environment (browser-like, so crypto is
 // available), but assuming an insecure protocol (so crypto.randomUUID() is

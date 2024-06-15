@@ -7,6 +7,7 @@ import type {
   DefaultRuleType,
   ParseMongoDbOptions,
 } from '../../types/index.noReact';
+import { joinWith } from '../arrayUtils';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
@@ -131,7 +132,10 @@ function parseMongoDB(
         if (listsAsArrays) {
           value = keyValue;
         } else {
-          value = keyValue.map(v => `${v}`).join(',');
+          value = joinWith(
+            keyValue.map(v => `${v}`),
+            ','
+          );
         }
         return { field, operator: 'in', value };
       }
@@ -140,7 +144,10 @@ function parseMongoDB(
         if (listsAsArrays) {
           value = keyValue;
         } else {
-          value = keyValue.map(v => `${v}`).join(',');
+          value = joinWith(
+            keyValue.map(v => `${v}`),
+            ','
+          );
         }
         return { field, operator: 'notIn', value };
       }
@@ -183,9 +190,9 @@ function parseMongoDB(
             rule1[ruleKey1].$gte ?? rule1[ruleKey1].$lte,
             rule2[ruleKey2].$lte ?? rule2[ruleKey2].$gte,
           ];
-          let value = listsAsArrays ? [val1, val2] : `${val1},${val2}`;
+          let value = listsAsArrays ? [val1, val2] : joinWith([val1, val2], ',');
           if (val1 > val2) {
-            value = listsAsArrays ? [val2, val1] : `${val2},${val1}`;
+            value = listsAsArrays ? [val2, val1] : joinWith([val2, val1], ',');
           }
           return { field: ruleKey1, operator: 'between', value };
         }

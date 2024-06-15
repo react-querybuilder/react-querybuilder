@@ -7,7 +7,7 @@ import {
   getFieldMapFromArray,
   getRuleProps as getProps,
   ruleClassnames,
-} from '../../genericTests';
+} from '@rqb-testing';
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
 import type {

@@ -10,7 +10,36 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "types": ["@testing-library/jest-dom", "node", "web", "bun"]
+    "types": ["@testing-library/jest-dom", "node", "web", "bun"],
+    "paths": {
+      "react-querybuilder": ["./packages/react-querybuilder/src"],
+      "react-querybuilder/formatQuery": ["./packages/react-querybuilder/src/utils/formatQuery"],
+      "react-querybuilder/parseCEL": ["./packages/react-querybuilder/src/utils/parseCEL"],
+      "react-querybuilder/parseJSONata": ["./packages/react-querybuilder/src/utils/parseJSONata"],
+      "react-querybuilder/parseJsonLogic": [
+        "./packages/react-querybuilder/src/utils/parseJsonLogic"
+      ],
+      "react-querybuilder/parseMongoDB": ["./packages/react-querybuilder/src/utils/parseMongoDB"],
+      "react-querybuilder/parseSpEL": ["./packages/react-querybuilder/src/utils/parseSpEL"],
+      "react-querybuilder/parseSQL": ["./packages/react-querybuilder/src/utils/parseSQL"],
+      "react-querybuilder/transformQuery": [
+        "./packages/react-querybuilder/src/utils/transformQuery"
+      ],
+      "@react-querybuilder/antd": ["./packages/antd/src"],
+      "@react-querybuilder/bootstrap": ["./packages/bootstrap/src"],
+      "@react-querybuilder/bulma": ["./packages/bulma/src"],
+      "@react-querybuilder/chakra": ["./packages/chakra/src"],
+      "@react-querybuilder/dnd": ["./packages/dnd/src"],
+      "@react-querybuilder/fluent": ["./packages/fluent/src"],
+      "@react-querybuilder/mantine": ["./packages/mantine/src"],
+      "@react-querybuilder/material": ["./packages/material/src"],
+      "@react-querybuilder/native": ["./packages/native/src"],
+      "@react-querybuilder/tremor": ["./packages/tremor/src"],
+      // The rest are not real packages
+      "@rqb-devapp": ["./utils/devapp"],
+      "@rqb-testing": ["./utils/testing"],
+      "@rqb-utils": ["./packages/react-querybuilder/src/utils"]
+    }
   },
-  "include": ["./*.ts", "scripts/*.ts"]
+  "include": ["./*.ts", "./scripts/*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]
 }

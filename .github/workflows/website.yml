@@ -27,9 +27,7 @@ jobs:
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --immutable
+      - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run website:build
         # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes

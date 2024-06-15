@@ -1,4 +1,5 @@
 import AnalyzerPlugin from 'esbuild-analyzer';
+import { mkdir } from 'fs/promises';
 import { writeFile } from 'fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
@@ -83,8 +84,6 @@ if (process.env.NODE_ENV === 'production') {
     // CJS modules without React dependency
     {
       ...commonOptions,
-      // TODO: don't "use client" here
-      // esbuildOptions() {},
       entry: {
         formatQuery: 'src/utils/formatQuery/index.ts',
         parseCEL: 'src/utils/parseCEL/index.ts',
@@ -96,6 +95,26 @@ if (process.env.NODE_ENV === 'production') {
         transformQuery: 'src/utils/transformQuery.ts',
       },
       format: 'cjs',
+      onSuccess: async () => {
+        await Promise.all(
+          [
+            'formatQuery',
+            'parseCEL',
+            'parseJSONata',
+            'parseJsonLogic',
+            'parseMongoDB',
+            'parseSpEL',
+            'parseSQL',
+            'transformQuery',
+          ].map(async util => {
+            await mkdir(util).catch(() => {});
+            await writeFile(
+              `${util}/package.json`,
+              JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+            );
+          })
+        );
+      },
     },
   ];
 

@@ -13,7 +13,7 @@ const blockRegExp = /^blockName=(.+)$/i;
 const rootDir = path.resolve(__dirname, '../../..');
 
 const getSourceLink = (filePath: string, start?: number, end?: number) => {
-  const restOfUrl = `${filePath}${start >= 0 && end >= 0 ? `#L${start + 2}-L${end}` : ''}`;
+  const restOfUrl = `${filePath}${start && start >= 0 && end && end >= 0 ? `#L${start + 2}-L${end}` : ''}`;
   return {
     type: 'paragraph',
     children: [
@@ -37,7 +37,8 @@ const getSourceLink = (filePath: string, start?: number, end?: number) => {
   };
 };
 
-export const remarkPluginImport = () => async (ast, vfile) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const remarkPluginImport = () => async (ast: any, vfile: any) => {
   visit(ast, 'paragraph', node => {
     if (node.children?.length > 0 && node.children[0].type === 'text') {
       // #region Markdown import

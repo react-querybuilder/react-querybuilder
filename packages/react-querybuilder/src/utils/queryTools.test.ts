@@ -1,4 +1,4 @@
-import type { Equal, Expect, ExpectExtends } from '../../genericTests';
+import type { Equal, Expect, ExpectExtends } from '@rqb-testing';
 import { defaultCombinators } from '../defaults';
 import type {
   DefaultRuleGroupType,

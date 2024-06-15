@@ -1,4 +1,4 @@
-import { testValueSelector } from '../../genericTests';
+import { testValueSelector } from '@rqb-testing';
 import { ValueSelector } from './ValueSelector';
 
 testValueSelector(ValueSelector);

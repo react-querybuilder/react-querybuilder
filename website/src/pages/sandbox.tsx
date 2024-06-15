@@ -13,9 +13,9 @@ export default function SandboxRedirect() {
   useEffect(() => {
     const query = queryString.parse(window.location.search);
     const qsTemplate = query.template ?? query.t ?? 'basic-ts';
-    const template = Array.isArray(qsTemplate) ? qsTemplate[0] : qsTemplate;
+    const template = Array.isArray(qsTemplate) ? qsTemplate[0]! : qsTemplate;
     const qsPlatform = query.platform ?? query.p ?? 'csb';
-    const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0] : qsPlatform;
+    const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0]! : qsPlatform;
     const platform = ['sb', 'stackblitz'].includes(platformPrelim.toLocaleLowerCase())
       ? 'StackBlitz'
       : 'CodeSandbox';

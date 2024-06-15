@@ -2,8 +2,8 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from 'react-querybuilder/dev/index';
-import 'react-querybuilder/dist/query-builder.scss';
+import { DevLayout, useDevApp } from '@rqb-devapp';
+import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderChakra } from '../src';
 import './styles.scss';
 

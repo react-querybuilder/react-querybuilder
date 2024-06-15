@@ -13,9 +13,9 @@ import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants
 import { Buffer } from 'buffer';
 import pako from 'pako';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
-import * as parserPostCSS from 'prettier/plugins/postcss.mjs';
-import * as parserTypeScript from 'prettier/plugins/typescript.mjs';
-import * as prettierStandalone from 'prettier/standalone.mjs';
+import * as parserPostCSS from 'prettier/plugins/postcss.js';
+import * as parserTypeScript from 'prettier/plugins/typescript.js';
+import * as prettierStandalone from 'prettier/standalone.js';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
@@ -104,7 +104,7 @@ export const getExportDisplayLanguage = (format: ExportFormat) =>
     ? format
     : 'json';
 
-const getCompatWrapper = (style: StyleName): [string, string, string] => {
+const getCompatWrapper = (style?: StyleName): [string, string, string] => {
   switch (style) {
     case 'antd':
       return [

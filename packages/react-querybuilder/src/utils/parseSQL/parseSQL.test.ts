@@ -185,6 +185,9 @@ is a ''bad'' guy!`,
     expect(parseSQL(`firstName IN ('Test', 12, true, lastName)`)).toEqual(
       wrapRule({ field: 'firstName', operator: 'in', value: 'Test, 12, true' })
     );
+    expect(parseSQL(`firstName IN ('Te,st', 12, true, lastName)`)).toEqual(
+      wrapRule({ field: 'firstName', operator: 'in', value: 'Te\\,st, 12, true' })
+    );
     expect(parseSQL(`firstName NOT IN ('Test', 12, true, lastName)`)).toEqual(
       wrapRule({
         field: 'firstName',
@@ -221,6 +224,9 @@ is a ''bad'' guy!`,
     );
     expect(parseSQL(`age NOT BETWEEN 12 AND 14`)).toEqual(
       wrapRule({ field: 'age', operator: 'notBetween', value: '12, 14' })
+    );
+    expect(parseSQL(`age BETWEEN 'this, that' AND 'the other'`)).toEqual(
+      wrapRule({ field: 'age', operator: 'between', value: 'this\\, that, the other' })
     );
   });
 });

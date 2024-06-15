@@ -1,4 +1,0 @@
-{
-  "main": "../dist/parseJSONata.js",
-  "types": "../dist/parseJSONata.d.ts"
-}

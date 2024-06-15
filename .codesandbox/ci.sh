@@ -8,8 +8,8 @@
 # npm_config_user_agent environment variable. Otherwise, Bun throws
 # an error about not being compatible with Yarn because it sees Yarn's
 # user agent string since CodeSandbox always runs `yarn run ...`.
+# See https://github.com/oven-sh/bun/issues/2530.
 npm_config_user_agent="npm/? node/?" npm install --global bun
 
 # Now we can get on with business...
-yarn install --immutable
-bun run build
+bun install --frozen-lockfile

@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { testGenerateID } from '../../genericTests/generateIDtests';
 import { generateID } from './generateID';
+import { testGenerateID } from './generateIDTestUtils';
 
 testGenerateID(generateID);

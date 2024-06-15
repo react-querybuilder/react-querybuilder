@@ -1,5 +1,5 @@
 {
   "format": "table-flipped",
-  "excludeEntrypoints": ["dev/*", "dist/*", "genericTests/*"],
+  "excludeEntrypoints": ["dist/*"],
   "ignoreRules": ["false-export-default", "missing-export-equals"]
 }

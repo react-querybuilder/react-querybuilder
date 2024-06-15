@@ -20,6 +20,7 @@ import type {
 import {
   defaultOperators,
   defaultValueProcessorByRule,
+  getOption,
   QueryBuilder,
   QueryBuilderContext,
 } from 'react-querybuilder';
@@ -157,9 +158,7 @@ const LandingPage = () => {
     () =>
       exportFormat === 'sql'
         ? (rule: RuleType) =>
-            `${
-              fields.find(f => f.name === rule.field).inputType === 'date' ? `DATE ` : ''
-            }${defaultValueProcessorByRule(rule)}`
+            `${getOption(fields, rule.field)?.inputType === 'date' ? `DATE ` : ''}${defaultValueProcessorByRule(rule)}`
         : undefined,
     [exportFormat]
   );

@@ -13,7 +13,7 @@ import './_styles/rqb-antd.scss';
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
-  <AntDValueSelector {...props} getPopupContainer={() => document.getElementById('rqb-antd')} />
+  <AntDValueSelector {...props} getPopupContainer={() => document.getElementById('rqb-antd')!} />
 );
 
 function ReactQueryBuilderDemo_AntdBrowser() {
@@ -42,7 +42,7 @@ function ReactQueryBuilderDemo_AntdBrowser() {
     };
   }, [Demo]);
 
-  if (!Demo) return <Loading />;
+  if (!Demo || !ConfigProvider) return <Loading />;
 
   return (
     <ConfigProvider
