@@ -10,6 +10,7 @@ import type {
   RQBJsonLogicVar,
   ValueSource,
 } from '../../types/index.noReact';
+import { joinWith } from '../arrayUtils';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
@@ -238,7 +239,7 @@ function parseJsonLogic(
         const vars = values as RQBJsonLogicVar[];
         valueSource = 'field';
         const fieldList = vars.map(el => el.var).filter(sf => fieldIsValid(field, operator, sf));
-        value = listsAsArrays ? fieldList : fieldList.join(',');
+        value = listsAsArrays ? fieldList : joinWith(fieldList, ',');
       } else {
         // istanbul ignore else
         if (
@@ -246,7 +247,12 @@ function parseJsonLogic(
           values.every(el => typeof el === 'number') ||
           values.every(el => typeof el === 'boolean')
         ) {
-          value = listsAsArrays ? values : values.map(el => `${el}`).join(',');
+          value = listsAsArrays
+            ? values
+            : joinWith(
+                values.map(el => `${el}`),
+                ','
+              );
         }
       }
 
@@ -261,7 +267,7 @@ function parseJsonLogic(
         const fieldList = logic.in[1]
           .map(el => el.var as string)
           .filter(sf => fieldIsValid(field, operator, sf));
-        value = listsAsArrays ? fieldList : fieldList.join(',');
+        value = listsAsArrays ? fieldList : joinWith(fieldList, ',');
       } else {
         // istanbul ignore else
         if (
@@ -269,7 +275,12 @@ function parseJsonLogic(
           logic.in[1].every(el => typeof el === 'number') ||
           logic.in[1].every(el => typeof el === 'boolean')
         ) {
-          value = listsAsArrays ? logic.in[1] : logic.in[1].map(el => `${el}`).join(',');
+          value = listsAsArrays
+            ? logic.in[1]
+            : joinWith(
+                logic.in[1].map(el => `${el}`),
+                ','
+              );
         }
       }
 

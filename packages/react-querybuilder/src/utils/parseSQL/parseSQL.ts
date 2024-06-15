@@ -8,6 +8,7 @@ import type {
   DefaultRuleType,
   ParseSQLOptions,
 } from '../../types/index.noReact';
+import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { sqlParser } from './sqlParser';
@@ -239,10 +240,10 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           .filter(sf => fieldIsValid(f, operator, sf.value))
           .map(getFieldName);
         if (valueArray.length > 0) {
-          const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+          const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
           return { field: getFieldName(expr.left), operator, value };
         } else if (fieldArray.length > 0) {
-          const value = options?.listsAsArrays ? fieldArray : fieldArray.join(', ');
+          const value = options?.listsAsArrays ? fieldArray : joinWith(fieldArray, ', ');
           return {
             field: getFieldName(expr.left),
             operator,
@@ -259,7 +260,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         isSQLLiteralOrSignedNumberValue(expr.right.right)
       ) {
         const valueArray = [expr.right.left, expr.right.right].map(evalSQLLiteralValue);
-        const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+        const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
         const operator = expr.hasNot ? 'notBetween' : 'between';
         return { field: getFieldName(expr.left), operator, value };
       } else if (
@@ -271,7 +272,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         const valueArray = [expr.right.left, expr.right.right].map(getFieldName);
         const operator = expr.hasNot ? 'notBetween' : 'between';
         if (valueArray.every(sf => fieldIsValid(f, operator, sf))) {
-          const value = options?.listsAsArrays ? valueArray : valueArray.join(', ');
+          const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
           return { field: f, operator, value, valueSource: 'field' };
         }
       }

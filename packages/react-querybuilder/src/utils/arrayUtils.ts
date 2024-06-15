@@ -32,16 +32,19 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
 /**
  * Joins an array of strings using the given character (see {@link defaultJoinChar}. When
  * the given character appears in an array element, a backslash will be added just before it
- * to distinguish it from the join character. Inverse of {@link splitBy}.
+ * to distinguish it from the join character. Effectively the inverse of {@link splitBy}.
+ *
+ * TIP: The join character can actually be a string of any length. Only the first character
+ * will be searched for in the array elements and preceded by a backslash.
  *
  * @example
- * joinWith(['this,,that', '', 'the other', '', '', ','])
+ * joinWith(['this,,that', '', 'the other', '', '', ','], ', ')
  * // would return
  * 'this\\,\\,that,,the other,,,\\,'
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const joinWith = (strArr: any[], joinChar = defaultJoinChar) =>
-  strArr.map(str => `${str ?? ''}`.replaceAll(joinChar, `\\${joinChar}`)).join(joinChar);
+  strArr.map(str => `${str ?? ''}`.replaceAll(joinChar[0], `\\${joinChar[0]}`)).join(joinChar);
 
 /**
  * Trims the value if it is a string. Otherwise returns the value as is.

@@ -11,6 +11,7 @@ import type {
   ParseCELOptions,
   ValueSource,
 } from '../../types/index.noReact';
+import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { celParser } from './celParser';
@@ -256,7 +257,10 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           }
         }
         if (value && !listsAsArrays) {
-          value = value.map((v: string | boolean | number) => `${v}`).join(',');
+          value = joinWith(
+            value.map((v: string | boolean | number) => `${v}`),
+            ','
+          );
         }
       } else if ((operator === 'in' || operator === 'notIn') && isCELMap(right)) {
         const keys = right.value.value.map(v => v.left);
@@ -266,7 +270,10 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           );
         }
         if (value && !listsAsArrays) {
-          value = value.map((v: string | boolean | number) => `${v}`).join(',');
+          value = joinWith(
+            value.map((v: string | boolean | number) => `${v}`),
+            ','
+          );
         }
       }
       if (

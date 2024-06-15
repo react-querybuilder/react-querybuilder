@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#723] `useQueryBuilderSelector` no longer returns `undefined` during the first render pass (and neither does the new hook `useQueryBuilderQuery`).
+- [#716] `parse*` methods properly escape commas in string values for "between" and "in" operators.
 
 ## [v7.4.4] - 2024-06-10
 
