@@ -7,6 +7,15 @@ dist/
 coverage/
 build-analysis.*
 
+packages/react-querybuilder/formatQuery/package.json
+packages/react-querybuilder/parseCEL/package.json
+packages/react-querybuilder/parseJSONata/package.json
+packages/react-querybuilder/parseJsonLogic/package.json
+packages/react-querybuilder/parseMongoDB/package.json
+packages/react-querybuilder/parseSpEL/package.json
+packages/react-querybuilder/parseSQL/package.json
+packages/react-querybuilder/transformQuery/package.json
+
 # website/api is (re)generated when running `bun web` or `bun website:build`,
 # but it needs to exist for docusaurus to begin
 website/api/*
