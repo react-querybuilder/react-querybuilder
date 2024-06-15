@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bulma",
   "description": "Custom Bulma components for react-querybuilder",
-  "version": "7.4.4",
+  "version": "7.5.0",
   "publishConfig": {
     "access": "public"
   },
@@ -46,7 +46,7 @@
     "bulma": "^0.9.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-querybuilder": "workspace:*",
+    "react-querybuilder": "7.5.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.5",
     "vite": "^5.3.1"
@@ -54,6 +54,6 @@
   "peerDependencies": {
     "bulma": "^0.9.4",
     "react": ">=18",
-    "react-querybuilder": "7.4.4"
+    "react-querybuilder": "7.5.0"
   }
 }
