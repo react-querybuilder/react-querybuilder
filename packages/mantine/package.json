@@ -39,10 +39,11 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "^7.10.1",
-    "@mantine/dates": "^7.10.1",
-    "@mantine/hooks": "^7.10.1",
-    "@testing-library/react": "^15.0.7",
+    "@mantine/core": "^7.10.2",
+    "@mantine/dates": "^7.10.2",
+    "@mantine/hooks": "^7.10.2",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "dayjs": "^1.11.11",
@@ -51,7 +52,7 @@
     "react-querybuilder": "workspace:*",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12"
+    "vite": "^5.3.1"
   },
   "peerDependencies": {
     "@mantine/core": ">=7",
