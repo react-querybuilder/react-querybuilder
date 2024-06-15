@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v7.5.0] - 2024-06-15
+
 ### Changed
 
 - [#716] The React Native compatibility package uses `gap` for layout spacing, which means the minimum `react-native` version is now `0.71.0`.
@@ -1690,7 +1694,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.0...HEAD
+[v7.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...v7.5.0
 [v7.4.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...v7.4.4
 [v7.4.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...v7.4.3
 [v7.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...v7.4.2
