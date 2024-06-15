@@ -11,10 +11,5 @@
 # See https://github.com/oven-sh/bun/issues/2530.
 npm_config_user_agent="npm/? node/?" npm install --global bun
 
-# CodeSandbox CI runs `yarn install` unconditionally, so we need to
-# remove any new artifacts from that command.
-rm -rf node_modules ./packages/*/node_modules ./website/node_modules yarn.lock .yarn .yarnrc.yml
-
 # Now we can get on with business...
 bun install --frozen-lockfile
-bun run build
