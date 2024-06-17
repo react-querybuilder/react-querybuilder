@@ -326,7 +326,7 @@ export const useQueryBuilderSetup = <
         return getDefaultValue(r, { fieldData });
       }
 
-      let value: string | string[] | boolean = '';
+      let value: string | (string | null)[] | boolean | null = '';
 
       const values = getValuesMain(r.field as FieldName, r.operator as OperatorName, {
         fieldData,

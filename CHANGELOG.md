@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+- Option group utility functions are better at identifying what is and isn't an option group list.
 
 ## [v7.5.0] - 2024-06-15
 

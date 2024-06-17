@@ -32,6 +32,18 @@ it('gets the first option', () => {
       },
     ])
   ).toBe('test2');
+  expect(
+    getFirstOption([
+      { label: 'Empty', options: [] },
+      {
+        label: 'Test',
+        options: [
+          { name: 'test2', label: 'Test2' },
+          { name: 'test1', label: 'Test1' },
+        ],
+      },
+    ])
+  ).toBe('test2');
 });
 
 it('handles invalid inputs', () => {
@@ -42,6 +54,11 @@ it('handles invalid inputs', () => {
 });
 
 it('identifies flexible option group arrays', () => {
+  expect(isFlexibleOptionGroupArray('test')).toBe(false);
+  expect(isFlexibleOptionGroupArray([])).toBe(false);
+  expect(isFlexibleOptionGroupArray([{}])).toBe(false);
+  expect(isFlexibleOptionGroupArray([{ label: 'l', options: [] }])).toBe(false);
+  expect(isFlexibleOptionGroupArray([{ label: 'l', options: ['test'] }])).toBe(false);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ name: 'n', label: 'l' }] }])).toBe(
     true
   );
@@ -52,6 +69,11 @@ it('identifies flexible option group arrays', () => {
 });
 
 it('identifies full option group arrays', () => {
+  expect(isFullOptionGroupArray('test')).toBe(false);
+  expect(isFullOptionGroupArray([])).toBe(false);
+  expect(isFullOptionGroupArray([{}])).toBe(false);
+  expect(isFullOptionGroupArray([{ label: 'l', options: [] }])).toBe(false);
+  expect(isFullOptionGroupArray([{ label: 'l', options: ['test'] }])).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: [{ name: 'n', label: 'l' }] }])).toBe(
     false
   );
