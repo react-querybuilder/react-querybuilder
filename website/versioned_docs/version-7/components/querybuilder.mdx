@@ -946,7 +946,7 @@ This function is executed each time `QueryBuilder` renders. The return value sho
 
 ## Independent combinators
 
-The props listed above that specify `RuleGroupTypeAny` will actually be inferred as one of the more specific types, `RuleGroupType` or `RuleGroupTypeIC`. When a query is of type `RuleGroupTypeIC`, we say that it is using "independent combinators."
+The props listed above that specify `RuleGroupTypeAny` will actually be inferred as one of the more specific types, [`RuleGroupType` or `RuleGroupTypeIC`](../typescript#rules-and-groups). When a query is of type `RuleGroupTypeIC`, we say that it is using "independent combinators."
 
 What this means is that a combinator value is defined between each neighboring pair of rules/groups in a group's `rules` array (every odd-numbered index). Visually, this has a similar effect to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator is _independently_ controlled by its own selector. You may find that users take to this configuration more easily as it can allow them to express queries more like they would in natural language.
 

@@ -1,0 +1,88 @@
+---
+title: Maximizing performance
+description: How to avoid common pitfalls for a smoother experience
+---
+
+%importmd ../\_ts_admonition.md
+
+:::tip TL;DR
+
+Each prop passed to `QueryBuilder` should have a stable reference or be memoized.
+
+:::
+
+As of version 7, all `QueryBuilder` props, components, and derived values are aggressively memoized with `React.memo`, `useMemo`, `useCallback`, and immutability tools including [`immer`](https://immerjs.github.io/immer/). This can noticeably improve rendering performance for large queries, especially when using certain style libraries. To take advantage of these optimizations, _every_ prop passed to `QueryBuilder` (except `query`, if used) must have a stable reference or at least be memoized. For related reasons, we encourage using `QueryBuilder` as an uncontrolled component by specifying `defaultQuery` instead of `query`.
+
+## Avoiding common pitfalls
+
+You can avoid unstable references by moving unchanging props, including object, array, and function definitions, outside the component rendering function. This commonly includes the `fields` array and `onQueryChange` callback. For props that _must_ be defined inside the component, memoize them with `useMemo` or `useCallback`. In particular, avoid defining props inline in the JSX.
+
+- <span style={{ color: 'green', fontWeight: 'bold' }}>DO</span> define variables that will remain
+  unchanged outside the component if possible.
+- <span style={{ color: 'green', fontWeight: 'bold' }}>DO</span> memoize objects, arrays, and other
+  values that must be created and/or calculated within the component with `useMemo`.
+- <span style={{ color: 'green', fontWeight: 'bold' }}>DO</span> memoize functions that must be
+  created within the component with `useCallback`.
+- <span style={{ color: 'red', fontWeight: 'bold' }}>DO NOT</span> define objects, arrays, or
+  functions inside the JSX prop declarations (primitives like strings, numbers, and booleans are
+  usually OK, though).
+
+:::danger "Bad" example ❌
+
+```tsx
+function App() {
+  const { t } = useTranslation(); // (<-- third-party i18n library)
+  const [query, setQuery] = useState();
+
+  // This function gets recreated on each render.
+  const getOperators = (field: Field) => t(defaultOperators);
+
+  return (
+    <QueryBuilder
+      // Avoid inline function definitions. Also see note below about `useState`/`useReducer`.
+      onQueryChange={q => setQuery(q)}
+      // Avoid inline array definitions, especially when the array will never change.
+      fields={[
+        { name: 'firstName', label: 'First Name' },
+        { name: 'lastName', label: 'Last Name' },
+      ]}
+      // This function is not defined inline, but it still does not have a stable reference.
+      getOperators={getOperators}
+    />
+  );
+}
+```
+
+:::
+
+:::tip "Good" example ✅
+
+```tsx
+// The fields array never changes, so it can be defined outside the component.
+const fields: Field[] = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+];
+
+function App() {
+  const { t } = useTranslation(); // (<-- third-party i18n library)
+  const [query, setQuery] = useState();
+
+  // Memoize functions with `useCallback`. Since `t` (probably) has a
+  // stable reference, this function will rarely (if ever) be recreated.
+  const getOperators = useCallback((field: Field) => t(defaultOperators), [t]);
+
+  return (
+    <QueryBuilder
+      // React `useState`/`useReducer` setters always have a stable reference.
+      onQueryChange={setQuery}
+      // This array is defined outside the component and therefore has a stable reference.
+      fields={fields}
+      // This function is memoized with `useCallback` and therefore has a stable reference.
+      getOperators={getOperators}
+    />
+  );
+}
+```
+
+:::

@@ -34,11 +34,18 @@ interface Field {
 }
 ```
 
-[Click here](./components/valueeditor) for documentation on the available options for `valueEditorType`.
+Notes:
+
+- `Field` extends the `Option` interface, which is described [below](#option-lists).
+- More information on `valueEditorType` is available [below](#value-editor) and in the [`ValueEditor` component documentation](./components/valueeditor).
 
 ## Rules and groups
 
+_For more information about the `Path` type, see [Path concepts](./tips/path)._
+
 ```ts
+type Path = number[];
+
 type RuleType = {
   path?: Path;
   id?: string;
@@ -73,12 +80,11 @@ type RuleOrGroupArray = RuleGroupType['rules'] | RuleGroupTypeIC['rules'];
 
 :::info
 
-`RuleGroupTypeIC['rules']` is _greatly_ simplified here for brevity. In reality, the following conditions will be enforced by TypeScript:
+`RuleGroupTypeIC` (see [independent combinators](./components/querybuilder#independent-combinators)) is _greatly_ simplified here for brevity. In reality, the following conditions will be enforced by TypeScript:
 
 - All even indexes in the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
 - All odd indexes in the `rules` array must be of type `string`.
-- The first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
-- The array length must be an odd number (unless it is zero).
+- The array length must be zero or an odd number, therefore the first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
 
 For example, the following would be invalid because the first element in the `rules` array (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string`, and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also, the length is an even number (2).
 
@@ -88,7 +94,7 @@ const ruleGroupInvalid: RuleGroupTypeIC = {
 };
 ```
 
-Either removing the first element or inserting another rule before it will resolve the issue:
+We can resolve this issue by either removing the first element or inserting another rule before it:
 
 ```ts
 const ruleGroupValid1: RuleGroupTypeIC = {
@@ -209,18 +215,11 @@ type QueryValidator = (query: RuleGroupTypeAny) => boolean | ValidationMap;
 type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
 ```
 
-## Miscellaneous
+## Option lists
 
-_For more information about the `Path` type, see [Path concepts](./tips/path)._
+_As of version 7, options and lists can use `name` **or** `value` as the item identifier. Both `name` and `value` will be passed down to subcomponents, so `name` will be available even if `value` is used in props and vice versa. `name` is used in the documentation for brevity and backwards compatibility. [Click here for more information](./tips/option-lists)._
 
 ```ts
-type Path = number[];
-
-// As of version 7, options and lists can use `name` or `value`
-// as the item identifier. Both `name` and `value` will be
-// passed down to subcomponents, so `name` will be available
-// even if `value` is used in props. `name` is used in this
-// documentation for brevity and backwards compatibility.
 interface Option {
   name: string;
   label: string;
@@ -242,7 +241,13 @@ interface Operator extends Option {
   arity?: number | 'unary' | 'binary' | 'ternary';
   className?: Classname; // Assigned to rules where this operator is selected
 }
+```
 
+## Value editor
+
+See [`ValueEditor` component documentation here](./components/valueeditor).
+
+```ts
 type ValueEditorType =
   | 'text'
   | 'select'
@@ -258,7 +263,11 @@ type ValueEditorType =
 type ValueSource = 'value' | 'field';
 
 type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
+```
 
+## Miscellaneous
+
+```ts
 interface Schema {
   qbId: string;
   fields: OptionList<Field>;

@@ -3,8 +3,9 @@ title: ValueEditor
 description: Dynamic editor component
 ---
 
+import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 import { useState } from 'react';
-import { joinWith, update, toArray } from 'react-querybuilder';
+import { joinWith, update, toArray, ValueEditor } from 'react-querybuilder';
 
 %importmd ../\_ts_admonition.md
 
@@ -18,7 +19,7 @@ While React Query Builder does not restrict the rule `value` property to JavaScr
 
 ## Showcase
 
-`ValueEditor` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component, but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
+`ValueEditor` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component ([more information here](../tips/custom-with-fallback)), but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
 
 Rules 10 and 11 demonstrate the behavior when the `operator` is "between". Rule 12 demonstrates the behavior when a field's `valueSources` property is set to `["field", "value"]`.
 
@@ -31,9 +32,6 @@ This query builder has been specially configured in the following ways:
 3. To focus attention on the value editor components, all other components have been disabled or hidden.
 
 :::
-
-import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
-import { ValueEditor } from 'react-querybuilder';
 
 export const ShowcaseFieldSelector = ({ value, options, path }) => (
   <span>
