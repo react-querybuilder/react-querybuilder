@@ -6,7 +6,7 @@ import { isPojo } from './misc';
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isRuleGroup = (rg: any): rg is RuleGroupTypeAny =>
-  isPojo(rg) && 'rules' in rg && Array.isArray(rg.rules);
+  isPojo(rg) && Array.isArray(rg.rules);
 
 /**
  * Determines if an object is a {@link RuleGroupType}.

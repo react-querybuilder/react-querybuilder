@@ -67,7 +67,7 @@ const QueryBuilderInternal = <
           shiftUpDisabled
           shiftDownDisabled
           parentDisabled={qb.queryDisabled}
-          context={qb.context}
+          context={props.context}
         />
       </div>
     </QueryBuilderContext.Provider>
