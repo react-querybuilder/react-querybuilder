@@ -19,17 +19,7 @@ type UseRuleDndParams = RuleProps &
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
 export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
-  const {
-    path,
-    rule,
-    disabled,
-    schema,
-    actions,
-    useDrag,
-    useDrop,
-    canDrop,
-    rule: hoveringItem,
-  } = params;
+  const { path, rule, disabled, schema, actions, useDrag, useDrop, canDrop } = params;
 
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -57,7 +47,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
         if (
           dragging &&
           typeof canDrop === 'function' &&
-          !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } })
+          !canDrop({ dragging, hovering: { ...rule, path, qbId: schema.qbId } })
         ) {
           return false;
         }
