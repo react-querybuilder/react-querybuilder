@@ -56,7 +56,7 @@ const QueryBuilderNativeInternal = <
         id={qb.rootGroup.id}
         disabled={qb.rootGroupDisabled}
         parentDisabled={qb.queryDisabled}
-        context={qb.context}
+        context={props.context}
       />
     </QueryBuilderContext.Provider>
   );
