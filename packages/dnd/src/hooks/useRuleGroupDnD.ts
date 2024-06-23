@@ -28,7 +28,6 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'ruleGroup',
     path,
-    ruleOrGroup: ruleGroup,
     disabled,
     independentCombinators: schema.independentCombinators,
     moveRule: actions.moveRule,
