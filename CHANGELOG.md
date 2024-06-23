@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `useMergedContext` no longer returns values that are not explicitly typed in `UseMergedContextProps`.
+- [#727] `useMergedContext` no longer returns values that are not explicitly typed in `UseMergedContextProps`.
 
 ### Fixed
 
-- Option group utility functions are better at identifying what is and isn't an option group list.
+- [#727] Option group utility functions are better at identifying what is and isn't an option group list.
+- [#727] The `dragging` property of the object passed to `canDrop` is no longer a stale reference to the rule/group being dragged.
 
 ## [v7.5.0] - 2024-06-15
 
@@ -1697,6 +1698,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#716]: https://github.com/react-querybuilder/react-querybuilder/pull/716
 [#719]: https://github.com/react-querybuilder/react-querybuilder/issues/719
 [#723]: https://github.com/react-querybuilder/react-querybuilder/pull/723
+[#727]: https://github.com/react-querybuilder/react-querybuilder/pull/727
 
 <!-- Release comparison links -->
 
