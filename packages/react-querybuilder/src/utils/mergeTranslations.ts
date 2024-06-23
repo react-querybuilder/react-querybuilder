@@ -8,16 +8,19 @@ const defaultTranslationsBase: Partial<Translations> = {};
  * Merges any number of partial {@link Translations} into a single definition.
  */
 export const mergeTranslations = (
-  ...args: (Partial<Translations> | undefined)[]
-): Partial<Translations> => {
-  const [base, ...otherTranslations] = args;
-
-  return produce(base ?? defaultTranslationsBase, draft => {
+  base?: Partial<Translations>,
+  ...otherTranslations: (Partial<Translations> | undefined)[]
+): Partial<Translations> =>
+  produce(base ?? defaultTranslationsBase, draft => {
     for (const translations of otherTranslations) {
-      if (!translations) continue;
-      objectKeys(translations).forEach(t => {
-        draft[t] = { ...draft[t], ...translations[t] };
-      });
+      if (translations) {
+        objectKeys(translations).forEach(t => {
+          if (!draft[t]) {
+            Object.assign(draft, { [t]: translations[t] });
+          } else {
+            Object.assign(draft[t]!, translations[t]);
+          }
+        });
+      }
     }
   });
-};
