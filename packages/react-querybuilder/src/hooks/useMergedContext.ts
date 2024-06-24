@@ -10,10 +10,11 @@ import type {
   FullField,
   QueryBuilderContextProps,
   RuleGroupTypeAny,
+  Translations,
   TranslationsFull,
   ValueEditorProps,
 } from '../types';
-import { mergeClassnames, mergeTranslations } from '../utils';
+import { mergeClassnames, mergeTranslation } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextProps<
@@ -29,6 +30,7 @@ export type UseMergedContextProps<
    */
   finalize?: boolean;
 };
+
 export type UseMergedContextReturn<
   F extends FullField = FullField,
   O extends string = string,
@@ -54,16 +56,10 @@ const emptyObject = {} as const;
 /**
  * Merges inherited context values with props, giving precedence to props.
  */
-export function useMergedContext<F extends FullField = FullField, O extends string = string>(
-  props: UseMergedContextProps<F, O> & { finalize?: false }
-): UseMergedContextProps<F, O>;
-export function useMergedContext<F extends FullField = FullField, O extends string = string>(
-  props: UseMergedContextProps<F, O> & { finalize: true }
-): UseMergedContextReturn<F, O>;
-export function useMergedContext<F extends FullField = FullField, O extends string = string>({
+export const useMergedContext = <F extends FullField = FullField, O extends string = string>({
   finalize,
   ...props
-}: UseMergedContextProps<F, O>) {
+}: UseMergedContextProps<F, O>): UseMergedContextReturn<F, O> => {
   const rqbContext: QueryBuilderContextProps<F, O> = useContext(QueryBuilderContext);
 
   const enableMountQueryChange = usePreferProp(
@@ -84,7 +80,7 @@ export function useMergedContext<F extends FullField = FullField, O extends stri
   const cc = useMemo(
     () =>
       mergeClassnames(
-        finalize ? defaultControlClassnames : emptyObject,
+        finalize ? Object.assign({}, defaultControlClassnames) : emptyObject,
         rqbContext.controlClassnames,
         props.controlClassnames
       ),
@@ -312,136 +308,252 @@ export function useMergedContext<F extends FullField = FullField, O extends stri
     // TODO: this type should probably depend on `finalize`
   ) as Controls<F, O>;
 
-  const tl = useMemo(
-    () =>
-      mergeTranslations(
-        finalize ? defaultTranslations : emptyObject,
-        rqbContext.translations,
-        props.translations
-      ),
-    [finalize, props.translations, rqbContext.translations]
-  );
-
+  const propsT: Partial<Translations> = props.translations ?? emptyObject;
+  const contextT: Partial<Translations> = rqbContext.translations ?? emptyObject;
   const translations = useMemo(
-    () => ({
-      addGroup: {
-        label: tl.addGroup?.label,
-        title: tl.addGroup?.title,
-      },
-      addRule: {
-        label: tl.addRule?.label,
-        title: tl.addRule?.title,
-      },
-      cloneRule: {
-        label: tl.cloneRule?.label,
-        title: tl.cloneRule?.title,
-      },
-      cloneRuleGroup: {
-        label: tl.cloneRuleGroup?.label,
-        title: tl.cloneRuleGroup?.title,
-      },
-      combinators: {
-        title: tl.combinators?.title,
-      },
-      dragHandle: {
-        label: tl.dragHandle?.label,
-        title: tl.dragHandle?.title,
-      },
-      fields: {
-        placeholderGroupLabel: tl.fields?.placeholderGroupLabel,
-        placeholderLabel: tl.fields?.placeholderLabel,
-        placeholderName: tl.fields?.placeholderName,
-        title: tl.fields?.title,
-      },
-      lockGroup: {
-        label: tl.lockGroup?.label,
-        title: tl.lockGroup?.title,
-      },
-      lockGroupDisabled: {
-        label: tl.lockGroupDisabled?.label,
-        title: tl.lockGroupDisabled?.title,
-      },
-      lockRule: {
-        label: tl.lockRule?.label,
-        title: tl.lockRule?.title,
-      },
-      lockRuleDisabled: {
-        label: tl.lockRuleDisabled?.label,
-        title: tl.lockRuleDisabled?.title,
-      },
-      notToggle: {
-        label: tl.notToggle?.label,
-        title: tl.notToggle?.title,
-      },
-      operators: {
-        placeholderGroupLabel: tl.operators?.placeholderGroupLabel,
-        placeholderLabel: tl.operators?.placeholderLabel,
-        placeholderName: tl.operators?.placeholderName,
-        title: tl.operators?.title,
-      },
-      removeGroup: {
-        label: tl.removeGroup?.label,
-        title: tl.removeGroup?.title,
-      },
-      removeRule: {
-        label: tl.removeRule?.label,
-        title: tl.removeRule?.title,
-      },
-      shiftActionDown: {
-        label: tl.shiftActionDown?.label,
-        title: tl.shiftActionDown?.title,
-      },
-      shiftActionUp: {
-        label: tl.shiftActionUp?.label,
-        title: tl.shiftActionUp?.title,
-      },
-      value: {
-        title: tl.value?.title,
-      },
-      valueSourceSelector: {
-        title: tl.valueSourceSelector?.title,
-      },
-    }),
+    () =>
+      Object.assign(
+        finalize ? Object.assign({}, defaultTranslations) : {},
+        mergeTranslation(
+          'addGroup',
+          {
+            label: [propsT.addGroup?.label, contextT.addGroup?.label],
+            title: [propsT.addGroup?.title, contextT.addGroup?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'addRule',
+          {
+            label: [propsT.addRule?.label, contextT.addRule?.label],
+            title: [propsT.addRule?.title, contextT.addRule?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'cloneRule',
+          {
+            label: [propsT.cloneRule?.label, contextT.cloneRule?.label],
+            title: [propsT.cloneRule?.title, contextT.cloneRule?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'cloneRuleGroup',
+          {
+            label: [propsT.cloneRuleGroup?.label, contextT.cloneRuleGroup?.label],
+            title: [propsT.cloneRuleGroup?.title, contextT.cloneRuleGroup?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'combinators',
+          { title: [propsT.combinators?.title, contextT.combinators?.title] },
+          finalize
+        ),
+        mergeTranslation(
+          'dragHandle',
+          {
+            label: [propsT.dragHandle?.label, contextT.dragHandle?.label],
+            title: [propsT.dragHandle?.title, contextT.dragHandle?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'fields',
+          {
+            placeholderGroupLabel: [
+              propsT.fields?.placeholderGroupLabel,
+              contextT.fields?.placeholderGroupLabel,
+            ],
+            placeholderLabel: [propsT.fields?.placeholderLabel, contextT.fields?.placeholderLabel],
+            placeholderName: [propsT.fields?.placeholderName, contextT.fields?.placeholderName],
+            title: [propsT.fields?.title, contextT.fields?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'lockGroup',
+          {
+            label: [propsT.lockGroup?.label, contextT.lockGroup?.label],
+            title: [propsT.lockGroup?.title, contextT.lockGroup?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'lockGroupDisabled',
+          {
+            label: [propsT.lockGroupDisabled?.label, contextT.lockGroupDisabled?.label],
+            title: [propsT.lockGroupDisabled?.title, contextT.lockGroupDisabled?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'lockRule',
+          {
+            label: [propsT.lockRule?.label, contextT.lockRule?.label],
+            title: [propsT.lockRule?.title, contextT.lockRule?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'lockRuleDisabled',
+          {
+            label: [propsT.lockRuleDisabled?.label, contextT.lockRuleDisabled?.label],
+            title: [propsT.lockRuleDisabled?.title, contextT.lockRuleDisabled?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'notToggle',
+          {
+            label: [propsT.notToggle?.label, contextT.notToggle?.label],
+            title: [propsT.notToggle?.title, contextT.notToggle?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'operators',
+          {
+            placeholderGroupLabel: [
+              propsT.operators?.placeholderGroupLabel,
+              contextT.operators?.placeholderGroupLabel,
+            ],
+            placeholderLabel: [
+              propsT.operators?.placeholderLabel,
+              contextT.operators?.placeholderLabel,
+            ],
+            placeholderName: [
+              propsT.operators?.placeholderName,
+              contextT.operators?.placeholderName,
+            ],
+            title: [propsT.operators?.title, contextT.operators?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'removeGroup',
+          {
+            label: [propsT.removeGroup?.label, contextT.removeGroup?.label],
+            title: [propsT.removeGroup?.title, contextT.removeGroup?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'removeRule',
+          {
+            label: [propsT.removeRule?.label, contextT.removeRule?.label],
+            title: [propsT.removeRule?.title, contextT.removeRule?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'shiftActionDown',
+          {
+            label: [propsT.shiftActionDown?.label, contextT.shiftActionDown?.label],
+            title: [propsT.shiftActionDown?.title, contextT.shiftActionDown?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'shiftActionUp',
+          {
+            label: [propsT.shiftActionUp?.label, contextT.shiftActionUp?.label],
+            title: [propsT.shiftActionUp?.title, contextT.shiftActionUp?.title],
+          },
+          finalize
+        ),
+        mergeTranslation(
+          'value',
+          { title: [propsT.value?.title, contextT.value?.title] },
+          finalize
+        ),
+        mergeTranslation(
+          'valueSourceSelector',
+          { title: [propsT.valueSourceSelector?.title, contextT.valueSourceSelector?.title] },
+          finalize
+        )
+      ),
     [
-      tl.addGroup?.label,
-      tl.addGroup?.title,
-      tl.addRule?.label,
-      tl.addRule?.title,
-      tl.cloneRule?.label,
-      tl.cloneRule?.title,
-      tl.cloneRuleGroup?.label,
-      tl.cloneRuleGroup?.title,
-      tl.combinators?.title,
-      tl.dragHandle?.label,
-      tl.dragHandle?.title,
-      tl.fields?.placeholderGroupLabel,
-      tl.fields?.placeholderLabel,
-      tl.fields?.placeholderName,
-      tl.fields?.title,
-      tl.lockGroup?.label,
-      tl.lockGroup?.title,
-      tl.lockGroupDisabled?.label,
-      tl.lockGroupDisabled?.title,
-      tl.lockRule?.label,
-      tl.lockRule?.title,
-      tl.lockRuleDisabled?.label,
-      tl.lockRuleDisabled?.title,
-      tl.notToggle?.label,
-      tl.notToggle?.title,
-      tl.operators?.placeholderGroupLabel,
-      tl.operators?.placeholderLabel,
-      tl.operators?.placeholderName,
-      tl.operators?.title,
-      tl.removeGroup?.label,
-      tl.removeGroup?.title,
-      tl.removeRule?.label,
-      tl.removeRule?.title,
-      tl.shiftActionDown?.label,
-      tl.shiftActionDown?.title,
-      tl.shiftActionUp?.label,
-      tl.shiftActionUp?.title,
-      tl.value?.title,
-      tl.valueSourceSelector?.title,
+      propsT.addGroup?.label,
+      propsT.addGroup?.title,
+      propsT.addRule?.label,
+      propsT.addRule?.title,
+      propsT.cloneRule?.label,
+      propsT.cloneRule?.title,
+      propsT.cloneRuleGroup?.label,
+      propsT.cloneRuleGroup?.title,
+      propsT.combinators?.title,
+      propsT.dragHandle?.label,
+      propsT.dragHandle?.title,
+      propsT.fields?.placeholderGroupLabel,
+      propsT.fields?.placeholderLabel,
+      propsT.fields?.placeholderName,
+      propsT.fields?.title,
+      propsT.lockGroup?.label,
+      propsT.lockGroup?.title,
+      propsT.lockGroupDisabled?.label,
+      propsT.lockGroupDisabled?.title,
+      propsT.lockRule?.label,
+      propsT.lockRule?.title,
+      propsT.lockRuleDisabled?.label,
+      propsT.lockRuleDisabled?.title,
+      propsT.notToggle?.label,
+      propsT.notToggle?.title,
+      propsT.operators?.placeholderGroupLabel,
+      propsT.operators?.placeholderLabel,
+      propsT.operators?.placeholderName,
+      propsT.operators?.title,
+      propsT.removeGroup?.label,
+      propsT.removeGroup?.title,
+      propsT.removeRule?.label,
+      propsT.removeRule?.title,
+      propsT.shiftActionDown?.label,
+      propsT.shiftActionDown?.title,
+      propsT.shiftActionUp?.label,
+      propsT.shiftActionUp?.title,
+      propsT.value?.title,
+      propsT.valueSourceSelector?.title,
+      finalize,
+      contextT.addGroup?.label,
+      contextT.addGroup?.title,
+      contextT.addRule?.label,
+      contextT.addRule?.title,
+      contextT.cloneRule?.label,
+      contextT.cloneRule?.title,
+      contextT.cloneRuleGroup?.label,
+      contextT.cloneRuleGroup?.title,
+      contextT.combinators?.title,
+      contextT.dragHandle?.label,
+      contextT.dragHandle?.title,
+      contextT.fields?.placeholderGroupLabel,
+      contextT.fields?.placeholderLabel,
+      contextT.fields?.placeholderName,
+      contextT.fields?.title,
+      contextT.lockGroup?.label,
+      contextT.lockGroup?.title,
+      contextT.lockGroupDisabled?.label,
+      contextT.lockGroupDisabled?.title,
+      contextT.lockRule?.label,
+      contextT.lockRule?.title,
+      contextT.lockRuleDisabled?.label,
+      contextT.lockRuleDisabled?.title,
+      contextT.notToggle?.label,
+      contextT.notToggle?.title,
+      contextT.operators?.placeholderGroupLabel,
+      contextT.operators?.placeholderLabel,
+      contextT.operators?.placeholderName,
+      contextT.operators?.title,
+      contextT.removeGroup?.label,
+      contextT.removeGroup?.title,
+      contextT.removeRule?.label,
+      contextT.removeRule?.title,
+      contextT.shiftActionDown?.label,
+      contextT.shiftActionDown?.title,
+      contextT.shiftActionUp?.label,
+      contextT.shiftActionUp?.title,
+      contextT.value?.title,
+      contextT.valueSourceSelector?.title,
     ]
     // TODO: this type should probably depend on `finalize`
   ) as TranslationsFull;
@@ -456,4 +568,4 @@ export function useMergedContext<F extends FullField = FullField, O extends stri
     initialQuery: props.initialQuery,
     qbId: props.qbId,
   };
-}
+};
