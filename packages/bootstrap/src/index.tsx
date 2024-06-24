@@ -41,7 +41,6 @@ export const bootstrapTranslations = {
 } satisfies Partial<Translations>;
 
 export const QueryBuilderBootstrap = getCompatContextProvider({
-  key: 'bootstrap',
   controlClassnames: bootstrapControlClassnames,
   controlElements: bootstrapControlElements,
   translations: bootstrapTranslations,

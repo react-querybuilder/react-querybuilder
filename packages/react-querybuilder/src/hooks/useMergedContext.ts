@@ -62,20 +62,28 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
 }: UseMergedContextProps<F, O>): UseMergedContextReturn<F, O> => {
   const rqbContext: QueryBuilderContextProps<F, O> = useContext(QueryBuilderContext);
 
-  const enableMountQueryChange = usePreferProp(
+  const debugModePreferred = usePreferProp(false, props.debugMode, rqbContext.debugMode);
+  const debugMode = finalize
+    ? debugModePreferred
+    : props.debugMode ?? (rqbContext.debugMode as boolean);
+  const enableMountQueryChangePreferred = usePreferProp(
     true,
     props.enableMountQueryChange,
     rqbContext.enableMountQueryChange
   );
+  const enableMountQueryChange = finalize
+    ? enableMountQueryChangePreferred
+    : props.enableMountQueryChange ?? (rqbContext.enableMountQueryChange as boolean);
 
   // Drag-and-drop should be disabled if context sets it to false because
   // QueryBuilderDnD might not have loaded react-dnd yet. Therefore we prefer
   // the prop here only if context is true or undefined.
-  const enableDragAndDrop =
+  const enableDragAndDropPreferred =
     usePreferProp(false, props.enableDragAndDrop, rqbContext.enableDragAndDrop) &&
     rqbContext.enableDragAndDrop !== false;
-
-  const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
+  const enableDragAndDrop = finalize
+    ? enableDragAndDropPreferred
+    : props.enableDragAndDrop ?? (rqbContext.enableDragAndDrop as boolean);
 
   const cc = useMemo(
     () =>

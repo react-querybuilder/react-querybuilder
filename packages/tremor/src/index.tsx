@@ -22,7 +22,6 @@ export const tremorControlClassnames = {
 } satisfies Partial<Classnames>;
 
 export const QueryBuilderTremor = getCompatContextProvider({
-  key: 'tremor',
   controlClassnames: tremorControlClassnames,
   controlElements: tremorControlElements,
 });

@@ -46,7 +46,6 @@ export const antdTranslations = {
 } satisfies Partial<Translations>;
 
 export const QueryBuilderAntD = getCompatContextProvider({
-  key: 'antd',
   controlElements: antdControlElements,
   translations: antdTranslations,
 });

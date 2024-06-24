@@ -45,7 +45,6 @@ export const fluentTranslations = {
 } satisfies Partial<Translations>;
 
 export const QueryBuilderFluent = getCompatContextProvider({
-  key: 'fluent',
   controlElements: fluentControlElements,
   translations: fluentTranslations,
 });

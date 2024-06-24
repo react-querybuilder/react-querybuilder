@@ -21,6 +21,5 @@ export const mantineControlElements = {
 } satisfies ControlElementsProp<FullField, string>;
 
 export const QueryBuilderMantine = getCompatContextProvider({
-  key: 'mantine',
   controlElements: mantineControlElements,
 });

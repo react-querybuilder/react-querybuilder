@@ -19,7 +19,6 @@ export const bulmaControlElements = {
 } satisfies ControlElementsProp<FullField, string>;
 
 export const QueryBuilderBulma = getCompatContextProvider({
-  key: 'bulma',
   controlElements: bulmaControlElements,
   controlClassnames: bulmaControlClassnames,
 });
