@@ -13,7 +13,7 @@ import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { getFirstOption } from './optGroupUtils';
 import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
-import { regenerateID, regenerateIDs } from './regenerateIDs';
+import { regenerateIDs } from './regenerateIDs';
 
 /**
  * Options for {@link add}.
@@ -333,9 +333,7 @@ export const move = <RG extends RuleGroupTypeAny>(
     return query;
   }
   const ruleOrGroup = clone
-    ? isRuleGroup(ruleOrGroupOriginal)
-      ? regenerateIDs(ruleOrGroupOriginal, { idGenerator })
-      : regenerateID(ruleOrGroupOriginal, { idGenerator })
+    ? regenerateIDs(ruleOrGroupOriginal as RuleGroupTypeAny, { idGenerator })
     : ruleOrGroupOriginal;
 
   return produce(query, draft => {
@@ -471,9 +469,7 @@ export const insert = <RG extends RuleGroupTypeAny>(
     const parentToInsertInto = findPath(getParentPath(path), draft) as RG;
     if (!parentToInsertInto || !isRuleGroup(parentToInsertInto)) return;
 
-    const rorg = isRuleGroup(ruleOrGroup)
-      ? regenerateIDs(ruleOrGroup, { idGenerator })
-      : regenerateID(ruleOrGroup, { idGenerator });
+    const rorg = regenerateIDs(ruleOrGroup as RuleGroupTypeAny, { idGenerator });
     const independentCombinators = isRuleGroupTypeIC(draft);
     const newIndex = path[path.length - 1];
 

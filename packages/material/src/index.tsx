@@ -38,7 +38,6 @@ export const materialControlElements = {
 } satisfies ControlElementsProp<FullField, string>;
 
 const MaterialContextProvider = getCompatContextProvider({
-  key: 'material',
   controlElements: materialControlElements,
   translations: materialTranslations,
 });

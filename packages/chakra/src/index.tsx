@@ -43,7 +43,6 @@ export const chakraTranslations = {
 } satisfies Partial<Translations>;
 
 export const QueryBuilderChakra = getCompatContextProvider({
-  key: 'chakra',
   controlElements: chakraControlElements,
   translations: chakraTranslations,
 });

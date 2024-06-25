@@ -44,7 +44,6 @@ it('acts as a pass-through for context', async () => {
     <button className={combinatorSelectorClass}>{combinatorSelectorText}</button>
   );
   const TestCompatContextProvider = getCompatContextProvider({
-    key: 'test',
     controlElements: { combinatorSelector },
   });
   await act(async () => {

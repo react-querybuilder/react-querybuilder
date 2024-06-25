@@ -19,17 +19,7 @@ type UseRuleGroupDndParams = RuleGroupProps &
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
 export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD => {
-  const {
-    disabled,
-    path,
-    ruleGroup,
-    schema,
-    actions,
-    useDrag,
-    useDrop,
-    canDrop,
-    ruleGroup: hoveringItem,
-  } = params;
+  const { disabled, path, ruleGroup, schema, actions, useDrag, useDrop, canDrop } = params;
 
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
@@ -38,7 +28,6 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'ruleGroup',
     path,
-    ruleOrGroup: ruleGroup,
     disabled,
     independentCombinators: schema.independentCombinators,
     moveRule: actions.moveRule,
@@ -59,7 +48,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
           disabled ||
           (dragging &&
             typeof canDrop === 'function' &&
-            !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } }))
+            !canDrop({ dragging, hovering: { ...ruleGroup, path, qbId: schema.qbId } }))
         ) {
           return false;
         }

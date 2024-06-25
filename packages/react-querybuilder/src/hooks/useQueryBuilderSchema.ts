@@ -31,7 +31,6 @@ import {
   add,
   findPath,
   generateAccessibleDescription,
-  isRuleGroupType,
   isRuleGroupTypeIC,
   move,
   pathIsDisabled,
@@ -45,6 +44,8 @@ import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
+const defaultDisabledPaths: Path[] = [];
+const icCombinatorPropObject = {} as const;
 const defaultGetValueEditorSeparator = () => null;
 const defaultGetRuleClassname = () => '';
 const defaultGetRuleGroupClassname = () => '';
@@ -193,7 +194,6 @@ export function useQueryBuilderSchema<
     'independentCombinators',
     invalidIC || (!invalidIC && (props.independentCombinators ?? 'not present') !== 'not present'),
     invalidIC ? 'invalid' : 'unnecessary'
-    // 'invalid'
   );
 
   const hasRunMountQueryChange = useRef(false);
@@ -227,7 +227,10 @@ export function useQueryBuilderSchema<
   // #endregion
 
   // #region Query update methods
-  const disabledPaths = useMemo(() => (Array.isArray(disabled) && disabled) || [], [disabled]);
+  const disabledPaths = useMemo(
+    () => (Array.isArray(disabled) && disabled) || defaultDisabledPaths,
+    [disabled]
+  );
   const queryDisabled = disabled === true;
   const rootGroupDisabled = useMemo(
     () => rootGroup.disabled || disabledPaths.some(p => p.length === 0),
@@ -430,8 +433,11 @@ export function useQueryBuilderSchema<
     [independentCombinators, showCombinatorsBetweenRules]
   );
   const combinatorPropObject: Pick<RuleGroupProps, 'combinator'> = useMemo(
-    () => (isRuleGroupType(rootGroup) ? { combinator: rootGroup.combinator } : {}),
-    [rootGroup]
+    () =>
+      typeof rootGroup.combinator === 'string'
+        ? { combinator: rootGroup.combinator }
+        : icCombinatorPropObject,
+    [rootGroup.combinator]
   );
 
   const { validationResult, validationMap } = useMemo(() => {
@@ -538,7 +544,6 @@ export function useQueryBuilderSchema<
   );
 
   return {
-    ...props,
     actions,
     rootGroup,
     rootGroupDisabled,

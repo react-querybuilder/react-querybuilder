@@ -108,6 +108,7 @@ export const useQueryBuilderSetup = <
     translations: translationsProp,
     initialQuery: initialQueryProp,
     qbId: qbId,
+    finalize: true,
   });
 
   const { translations } = rqbContext;

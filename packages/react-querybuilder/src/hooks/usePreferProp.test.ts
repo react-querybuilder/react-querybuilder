@@ -1,8 +1,5 @@
 import { usePreferAnyProp, usePreferProp } from './usePreferProp';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-jest.mock('react', () => ({ useMemo: (fn: () => any) => fn() }));
-
 describe('usePreferProp', () => {
   it('prefers the prop with default true', async () => {
     expect(usePreferProp(true)).toBe(true);

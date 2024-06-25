@@ -5,15 +5,12 @@ import type {
   DropResult,
   Path,
   QueryActions,
-  RuleGroupTypeAny,
-  RuleType,
   Schema,
 } from 'react-querybuilder';
-import { getParentPath, insert } from 'react-querybuilder';
+import { findPath, getParentPath, insert } from 'react-querybuilder';
 
 type UseDragCommonProps = {
   path: Path;
-  ruleOrGroup: RuleType | RuleGroupTypeAny;
   type: DndDropTargetType;
   disabled?: boolean;
   independentCombinators?: boolean;
@@ -28,7 +25,6 @@ type UseDragCommonProps = {
 export const useDragCommon = ({
   type,
   path,
-  ruleOrGroup,
   disabled,
   // Unused for now
   // independentCombinators,
@@ -39,7 +35,7 @@ export const useDragCommon = ({
   useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
-      item: { ...ruleOrGroup, path, qbId: schema.qbId },
+      item: () => ({ ...findPath(path, schema.getQuery()!)!, path, qbId: schema.qbId }),
       canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
