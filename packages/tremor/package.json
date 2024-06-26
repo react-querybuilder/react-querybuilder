@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/tremor",
   "description": "Custom Tremor components for react-querybuilder",
-  "version": "7.5.0",
+  "version": "7.5.1",
   "publishConfig": {
     "access": "public"
   },
