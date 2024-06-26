@@ -103,7 +103,7 @@ function parseMongoDB(
           return { field, operator, value: keyValue };
         }
       }
-    } else if (mdbOperator === '$regex' && /^[^^].*[^$]$/.test(getRegExStr(keyValue))) {
+    } else if (mdbOperator === '$regex' && /^[^^$]$|^[^^].*[^$]$/.test(getRegExStr(keyValue))) {
       if (fieldIsValid(field, 'contains')) {
         return {
           field,
