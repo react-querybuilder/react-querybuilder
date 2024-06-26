@@ -71,7 +71,7 @@
     "generate-parsers": "bun run --filter react-querybuilder generate:parsers",
     "outdated": "bunx npm-check-updates --interactive --format=group --workspaces --root",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lockb && bun install",
-    "version": "bun version.ts && bun install --frozen-lockfile && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages website/package.json bun.lockb\"",
+    "version": "bun version.ts && bun install && concurrently --timings --group --names examples,packages --prefix-colors \"green,#82a7dd\" bun:generate-examples bun:build && concurrently \"git add examples packages website/package.json bun.lockb\"",
     "web": "bun run --filter website start",
     "web:skiptypedoc": "RQB_TYPEDOC_DONE=true bun run --filter website start",
     "website:clearrun": "bun run --filter website clear && bun run --filter website start",
