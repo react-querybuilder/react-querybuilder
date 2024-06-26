@@ -357,6 +357,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "weiliddat",
+      "name": "Chiawei Ong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/899658?v=4",
+      "profile": "https://github.com/weiliddat",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
