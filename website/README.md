@@ -7,7 +7,7 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 ### Installation
 
 ```sh
-yarn install
+bun install
 ```
 
 ### Local Development
@@ -26,8 +26,8 @@ bun web
 
 If the API docs have already been generated, you can skip that step of the build by running
 
-```
-RQB_TYPEDOC_DONE=true bun web
+```sh
+bun web:skiptypedoc
 ```
 
 This command starts a local development server and opens up a browser window. Most changes to the website code are reflected live without having to restart the server, but any changes to the packages would require a rebuild of any updated packages and a restart of the website server.
