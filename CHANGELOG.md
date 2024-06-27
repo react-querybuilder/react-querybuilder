@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v7.5.2] - 2024-06-27
+
+### Fixed
+
+- [#730] `parseMongoDB` was not handling the `$regex` operator correctly when its value was a single character.
+
 ## [v7.5.1] - 2024-06-25
 
 ### Changed
@@ -1705,10 +1711,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#719]: https://github.com/react-querybuilder/react-querybuilder/issues/719
 [#723]: https://github.com/react-querybuilder/react-querybuilder/pull/723
 [#727]: https://github.com/react-querybuilder/react-querybuilder/pull/727
+[#730]: https://github.com/react-querybuilder/react-querybuilder/pull/730
 
 <!-- Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.2...HEAD
+[v7.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.1...v7.5.2
 [v7.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.0...v7.5.1
 [v7.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...v7.5.0
 [v7.4.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...v7.4.4
