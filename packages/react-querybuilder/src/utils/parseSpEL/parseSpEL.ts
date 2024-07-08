@@ -178,7 +178,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         }
       }
 
-      if (/^[^^].*[^$]$/.test(regex)) {
+      if (/^(?!\^).*?(?<!\$)$/.test(regex)) {
         // istanbul ignore else
         if (fieldIsValid(field, 'contains')) {
           return {
@@ -189,7 +189,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           };
         }
       } else {
-        if (/^\^.*[^$]/.test(regex)) {
+        if (/^\^.*?(?<!\$)$/.test(regex)) {
           // istanbul ignore else
           if (fieldIsValid(field, 'beginsWith')) {
             return {
@@ -200,7 +200,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           }
         } else {
           // istanbul ignore else
-          if (/[^^].*\$/.test(regex)) {
+          if (/^(?!\^).*?\$$/.test(regex)) {
             // istanbul ignore else
             if (fieldIsValid(field, 'endsWith')) {
               return {
