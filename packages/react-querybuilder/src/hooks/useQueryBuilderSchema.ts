@@ -255,14 +255,15 @@ export function useQueryBuilderSchema<
         return;
       }
       // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
-      const newRule = onAddRule(rule, parentPath, queryLocal, context);
-      if (!newRule) {
+      const nextRule = onAddRule(rule, parentPath, queryLocal, context);
+      if (!nextRule) {
         // istanbul ignore else
         if (debugMode) {
           onLog({ qbId, type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
         }
         return;
       }
+      const newRule = nextRule === true ? rule : nextRule;
       const newQuery = add(queryLocal, newRule, parentPath, {
         combinators,
         combinatorPreceding: newRule.combinatorPreceding ?? undefined,
@@ -304,14 +305,15 @@ export function useQueryBuilderSchema<
         return;
       }
       // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
-      const newGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
-      if (!newGroup) {
+      const nextGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
+      if (!nextGroup) {
         // istanbul ignore else
         if (debugMode) {
           onLog({ qbId, type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
         }
         return;
       }
+      const newGroup = nextGroup === true ? ruleGroup : nextGroup;
       const newQuery = add(queryLocal, newGroup, parentPath, {
         combinators,
         combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,

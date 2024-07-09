@@ -981,6 +981,15 @@ describe('onAddRule prop', () => {
     );
   });
 
+  it('allows the rule addition', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(<QueryBuilder onAddRule={() => true} onQueryChange={onQueryChange} />);
+
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onQueryChange).toHaveBeenCalledTimes(2);
+    expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
+  });
+
   it('modifies the rule addition', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
@@ -1058,6 +1067,18 @@ describe('onAddGroup prop', () => {
         query: expect.anything(),
       })
     );
+  });
+
+  it('allows the group addition', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onLog = jest.fn();
+    render(
+      <QueryBuilder onAddGroup={() => true} onQueryChange={onQueryChange} debugMode onLog={onLog} />
+    );
+
+    await user.click(screen.getByTestId(TestID.addGroup));
+    expect(onQueryChange).toHaveBeenCalledTimes(2);
+    expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
   });
 
   it('modifies the group addition', async () => {

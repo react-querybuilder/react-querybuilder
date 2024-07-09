@@ -686,16 +686,18 @@ export type QueryBuilderProps<
       getRuleGroupClassname?(ruleGroup: RG): Classname;
       /**
        * This callback is invoked before a new rule is added. The function should either manipulate
-       * the rule and return the new object, or return `false` to cancel the addition of the rule.
+       * the rule and return the new object, return `true` to allow the addition to proceed as normal,
+       * or return `false` to cancel the addition of the rule.
        */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onAddRule?(rule: R, parentPath: Path, query: RG, context?: any): RuleType | false;
+      onAddRule?(rule: R, parentPath: Path, query: RG, context?: any): RuleType | boolean;
       /**
        * This callback is invoked before a new group is added. The function should either manipulate
-       * the group and return the new object, or return `false` to cancel the addition of the group.
+       * the group and return the new object, return `true` to allow the addition to proceed as normal,
+       * or return `false` to cancel the addition of the group.
        */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | false;
+      onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | boolean;
       /**
        * This callback is invoked before a rule is moved or shifted. The function should return
        * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
