@@ -432,8 +432,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
             }}
           />
         );
-        const dragRule = screen.getAllByTestId(TestID.rule)[1];
-        const dropRule = screen.getAllByTestId(TestID.rule)[3];
+        const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
         simulateDragDrop(
           getHandlerId(dragRule, 'drag'),
           getHandlerId(dropRule, 'drop'),
@@ -554,8 +553,7 @@ it('prevents changes when disabled', async () => {
       }}
     />
   );
-  const dragRule = screen.getAllByTestId(TestID.rule)[1];
-  const dropRule = screen.getAllByTestId(TestID.rule)[3];
+  const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
   expect(() =>
     simulateDragDrop(
       getHandlerId(dragRule, 'drag'),
@@ -563,6 +561,55 @@ it('prevents changes when disabled', async () => {
       getDndBackend()!
     )
   ).toThrow();
+  expect(onQueryChange).not.toHaveBeenCalled();
+});
+
+it('respects onMoveRule', async () => {
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QueryBuilder {...props} />
+      </QueryBuilderDnD>
+    )
+  );
+  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+  render(
+    <QueryBuilderWrapped
+      fields={[
+        { name: 'field0', label: 'Field 0' },
+        { name: 'field1', label: 'Field 1' },
+        { name: 'field2', label: 'Field 2' },
+        { name: 'field3', label: 'Field 3' },
+        { name: 'field4', label: 'Field 4' },
+      ]}
+      enableMountQueryChange={false}
+      onQueryChange={onQueryChange}
+      onMoveRule={() => false}
+      query={{
+        rules: [
+          { field: 'field0', operator: '=', value: '0' },
+          'and',
+          { field: 'field1', operator: '=', value: '1' },
+          'and',
+          { field: 'field2', operator: '=', value: '2' },
+          'and',
+          {
+            rules: [
+              { field: 'field3', operator: '=', value: '3' },
+              'and',
+              { field: 'field4', operator: '=', value: '4' },
+            ],
+          },
+        ],
+      }}
+    />
+  );
+  const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
+  simulateDragDrop(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropRule, 'drop'),
+    getDndBackend()!
+  );
   expect(onQueryChange).not.toHaveBeenCalled();
 });
 

@@ -302,6 +302,8 @@ export const LogType = {
   queryUpdate: 'query updated',
   onAddRuleFalse: 'onAddRule callback returned false',
   onAddGroupFalse: 'onAddGroup callback returned false',
+  onMoveRuleFalse: 'onMoveRule callback returned false',
+  onMoveGroupFalse: 'onMoveGroup callback returned false',
   onRemoveFalse: 'onRemove callback returned false',
   add: 'rule or group added',
   remove: 'rule or group removed',

@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- New callback props `onMoveRule` and `onMoveGroup`, called before a rule or group is moved (via drag-and-drop) or shifted. If the result of the callback is `false`, the move will be cancelled. If `true`, the move will proceed as normal. Alternatively, a full query object can be returned representing the new state if some other modifications were necessary.
 
 ## [v7.5.2] - 2024-06-27
 

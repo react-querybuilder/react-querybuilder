@@ -747,6 +747,46 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 
 :::
 
+### `onMoveRule`
+
+```
+<RG extends RuleGroupTypeAny>(
+  rule: RuleType,
+  fromPath: Path,
+  toPath: Path | 'up' | 'down',
+  query: RG,
+  nextQuery: RG,
+  options: MoveOptions,
+  context?: any
+) => RG | boolean;
+```
+
+This callback is invoked immediately before a rule is moved or shifted. The function should return one of three things:
+
+1. `true` to allow the move/shift to proceed as normal.
+2. `false` to cancel the move/shift.
+3. A new query object (presumably based on the `query` or `nextQuery` parameters passed to it).
+
+### `onMoveGroup`
+
+```
+<RG extends RuleGroupTypeAny>(
+  ruleGroup: RG,
+  fromPath: Path,
+  toPath: Path | 'up' | 'down',
+  query: RG,
+  nextQuery: RG,
+  options: MoveOptions,
+  context?: any
+) => RG | boolean;
+```
+
+This callback is invoked immediately before a group is moved or shifted. The function should return one of three things:
+
+1. `true` to allow the move/shift to proceed as normal.
+2. `false` to cancel the move/shift.
+3. A new query object (presumably based on the `query` or `nextQuery` parameters passed to it).
+
 ### `onRemove`
 
 `<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: Path, query: RG, context?: any) => boolean`

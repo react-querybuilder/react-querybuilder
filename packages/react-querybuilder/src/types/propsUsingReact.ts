@@ -1,3 +1,4 @@
+import type { MoveOptions } from '@rqb-utils';
 import type {
   ComponentType,
   ForwardRefExoticComponent,
@@ -12,8 +13,8 @@ import type {
   Classname,
   FullCombinator,
   FullField,
-  InputType,
   FullOperator,
+  InputType,
   ParseNumbersMethod,
   Path,
   ValueEditorType,
@@ -22,8 +23,8 @@ import type {
 } from './basic';
 import type { DropEffect } from './dnd';
 import type {
-  FlexibleOptionList,
   BaseOptionMap,
+  FlexibleOptionList,
   FullOption,
   FullOptionList,
   GetOptionIdentifierType,
@@ -695,6 +696,58 @@ export type QueryBuilderProps<
        */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | false;
+      /**
+       * This callback is invoked before a rule is moved or shifted. The function should return
+       * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
+       * a new query object (presumably based on `query` or `nextQuery`) which will become the new
+       * query state.
+       */
+      onMoveRule?(
+        /** The rule being moved. */
+        rule: R,
+        /** The original path of the rule. */
+        fromPath: Path,
+        /**
+         * The target path of the rule, or the direction of the shift. Note that the target path
+         * is not necessarily the final path since moves (particularly downward) can affect the
+         * indexes of sibling rules/groups at the original path.
+         */
+        toPath: Path | 'up' | 'down',
+        /** The current query, before the move. */
+        query: RG,
+        /** The next query, if the move is allowed to proceed. */
+        nextQuery: RG,
+        /** The options passed to {@link move} to generate `nextQuery`. */
+        options: MoveOptions,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        context?: any
+      ): RG | boolean;
+      /**
+       * This callback is invoked before a group is moved or shifted. The function should return
+       * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
+       * a new query object (presumably based on `query` or `nextQuery`) which will become the new
+       * query state.
+       */
+      onMoveGroup?(
+        /** The group being moved. */
+        ruleGroup: RG,
+        /** The original path of the group. */
+        fromPath: Path,
+        /**
+         * The target path of the group, or the direction of the shift. Note that the target path
+         * is not necessarily the final path since moves (particularly downward) can affect the
+         * indexes of sibling rules/groups at the original path.
+         */
+        toPath: Path | 'up' | 'down',
+        /** The current query, before the move. */
+        query: RG,
+        /** The next query, if the move is allowed to proceed. */
+        nextQuery: RG,
+        /** The options passed to {@link move} to generate `nextQuery`. */
+        options: MoveOptions,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        context?: any
+      ): RG | boolean;
       /**
        * This callback is invoked before a rule or group is removed. The function should return
        * `true` if the rule or group should be removed or `false` if it should not be removed.

@@ -39,6 +39,7 @@ import {
   findPath,
   generateID,
   getOption,
+  move,
   numericRegex,
   toFullOption,
 } from '../utils';
@@ -1119,6 +1120,164 @@ describe('onAddGroup prop', () => {
         rules: [expect.objectContaining({ combinator: 'fake', rules: [] })],
       })
     );
+  });
+});
+
+describe('onMoveRule prop', () => {
+  const defaultQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f3', operator: '=', value: 'v3' },
+          { field: 'f4', operator: '=', value: 'v4' },
+        ],
+      },
+    ],
+  };
+  it('cancels the rule move', async () => {
+    const onLog = jest.fn();
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onMoveRule = jest.fn(() => false);
+    render(
+      <QueryBuilder
+        onMoveRule={onMoveRule}
+        onQueryChange={onQueryChange}
+        defaultQuery={defaultQuery}
+        debugMode
+        onLog={onLog}
+        showShiftActions
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onMoveRule).toHaveBeenCalled();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+    expect(onLog).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        ruleOrGroup: expect.anything(),
+        oldPath: expect.any(Array),
+        newPath: 'down',
+        query: expect.anything(),
+        nextQuery: expect.anything(),
+      })
+    );
+  });
+
+  it('allows the rule move', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        showShiftActions
+        onMoveRule={() => true}
+        onQueryChange={onQueryChange}
+      />
+    );
+
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      move(onQueryChange.mock.calls[0][0], [0], 'down')
+    );
+  });
+
+  it('modifies the rule move', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        showShiftActions
+        onMoveRule={() => newQuery}
+        onQueryChange={onQueryChange}
+      />
+    );
+
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
+  });
+});
+
+describe('onMoveGroup prop', () => {
+  const defaultQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f3', operator: '=', value: 'v3' },
+          { field: 'f4', operator: '=', value: 'v4' },
+        ],
+      },
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+  it('cancels the group move', async () => {
+    const onLog = jest.fn();
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onMoveGroup = jest.fn(() => false);
+    render(
+      <QueryBuilder
+        onMoveGroup={onMoveGroup}
+        onQueryChange={onQueryChange}
+        defaultQuery={defaultQuery}
+        debugMode
+        onLog={onLog}
+        showShiftActions
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onMoveGroup).toHaveBeenCalled();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+    expect(onLog).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        ruleOrGroup: expect.anything(),
+        oldPath: expect.any(Array),
+        newPath: 'down',
+        query: expect.anything(),
+        nextQuery: expect.anything(),
+      })
+    );
+  });
+
+  it('allows the group move', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        showShiftActions
+        onMoveGroup={() => true}
+        onQueryChange={onQueryChange}
+      />
+    );
+
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      move(onQueryChange.mock.calls[0][0], [0], 'down')
+    );
+  });
+
+  it('modifies the group move', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        showShiftActions
+        onMoveGroup={() => newQuery}
+        onQueryChange={onQueryChange}
+      />
+    );
+
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
   });
 });
 

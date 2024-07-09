@@ -31,6 +31,7 @@ import {
   add,
   findPath,
   generateAccessibleDescription,
+  isRuleGroup,
   isRuleGroupTypeIC,
   move,
   pathIsDisabled,
@@ -52,6 +53,7 @@ const defaultGetRuleGroupClassname = () => '';
 const defaultOnAddRule = (r: RuleType) => r;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultOnAddGroup = (rg: any) => rg;
+const defaultOnMove = () => true;
 const defaultOnRemove = () => true;
 // istanbul ignore next
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,6 +84,8 @@ export function useQueryBuilderSchema<
     getRuleGroupClassname = defaultGetRuleGroupClassname,
     onAddRule = defaultOnAddRule,
     onAddGroup = defaultOnAddGroup,
+    onMoveRule = defaultOnMove,
+    onMoveGroup = defaultOnMove,
     onRemove = defaultOnRemove,
     onQueryChange,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
@@ -403,8 +407,9 @@ export function useQueryBuilderSchema<
   );
 
   const moveRule = useCallback(
-    (oldPath: Path, newPath: Path, clone?: boolean) => {
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
@@ -414,16 +419,70 @@ export function useQueryBuilderSchema<
         }
         return;
       }
-      const newQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
+      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
+      const ruleOrGroup = findPath(oldPath, queryLocal)!;
+      const isGroup = isRuleGroup(ruleOrGroup);
+      const callbackResult = (isGroup ? onMoveGroup : onMoveRule)(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ruleOrGroup as any,
+        oldPath,
+        newPath,
+        // TODO: Why is this `never`?
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        queryLocal as any,
+        // TODO: Why is this `never`?
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nextQuery as any,
+        { clone, combinators },
+        context
+      );
+      if (!callbackResult) {
+        // istanbul ignore else
+        if (debugMode) {
+          onLog({
+            qbId,
+            type: isGroup ? LogType.onMoveGroupFalse : LogType.onMoveRuleFalse,
+            ruleOrGroup,
+            oldPath,
+            newPath,
+            clone,
+            query: queryLocal,
+            nextQuery,
+          });
+        }
+        return;
+      }
+      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
       if (debugMode) {
         onLog({ qbId, type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
       }
       dispatchQuery(newQuery);
     },
-    [combinators, debugMode, dispatchQuery, onLog, qbId, queryDisabled, queryBuilderStore]
+    [
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+      combinators,
+      onMoveGroup,
+      onMoveRule,
+      debugMode,
+      dispatchQuery,
+      onLog,
+    ]
   );
   // #endregion
 
+  // #region Validation
+  const { validationResult, validationMap } = useMemo(() => {
+    const validationResult =
+      typeof validator === 'function' && rootGroup ? validator(rootGroup) : defaultValidationResult;
+    const validationMap =
+      typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
+    return { validationResult, validationMap };
+  }, [rootGroup, validator]);
+  // #endregion
+
+  // #region Miscellaneous
   const dndEnabledAttr = useMemo(
     () => (enableDragAndDrop ? 'enabled' : 'disabled'),
     [enableDragAndDrop]
@@ -439,15 +498,18 @@ export function useQueryBuilderSchema<
         : icCombinatorPropObject,
     [rootGroup.combinator]
   );
+  const wrapperClassName = useMemo(
+    () =>
+      clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
+        [standardClassnames.disabled]: queryDisabled,
+        [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
+        [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
+      }),
+    [controlClassnames.queryBuilder, queryDisabled, validationResult]
+  );
+  // #endregion
 
-  const { validationResult, validationMap } = useMemo(() => {
-    const validationResult =
-      typeof validator === 'function' && rootGroup ? validator(rootGroup) : defaultValidationResult;
-    const validationMap =
-      typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
-    return { validationResult, validationMap };
-  }, [rootGroup, validator]);
-
+  // #region Schema/actions
   const schema = useMemo(
     (): Schema<F, GetOptionIdentifierType<O>> => ({
       addRuleToNewGroups,
@@ -532,16 +594,7 @@ export function useQueryBuilderSchema<
     }),
     [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
   );
-
-  const wrapperClassName = useMemo(
-    () =>
-      clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
-        [standardClassnames.disabled]: queryDisabled,
-        [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
-        [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
-      }),
-    [controlClassnames.queryBuilder, queryDisabled, validationResult]
-  );
+  // #endregion
 
   return {
     actions,
