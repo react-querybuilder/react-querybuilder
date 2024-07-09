@@ -41,9 +41,9 @@
   "devDependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/icons-material": "^5.15.20",
-    "@mui/material": "^5.15.20",
-    "@testing-library/dom": "^10.1.0",
+    "@mui/icons-material": "^5.16.0",
+    "@mui/material": "^5.16.0",
+    "@testing-library/dom": "^10.3.1",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
     "@vitejs/plugin-react-swc": "^3.7.0",
@@ -52,8 +52,8 @@
     "react-querybuilder": "workspace:*",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.12.0",
-    "typescript": "^5.4.5",
-    "vite": "^5.3.1"
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
   },
   "peerDependencies": {
     "@emotion/react": "^11",
