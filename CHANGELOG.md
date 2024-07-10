@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New callback props `onMoveRule` and `onMoveGroup`, called before a rule or group is moved (via drag-and-drop) or shifted. If the result of the callback is `false`, the move will be cancelled. If `true`, the move will proceed as normal. Alternatively, a full query object can be returned representing the new state if some other modifications were necessary.
-- `onAddRule` and `onAddGroup` callbacks can now return `true` instead of the entire rule/group to allow the addition to proceed as normal.
+- [#734] New callback props `onMoveRule` and `onMoveGroup`, called before a rule or group is moved (via drag-and-drop) or shifted. If the result of the callback is `false`, the move will be cancelled. If `true`, the move will proceed as normal. Alternatively, a full query object can be returned representing the new state if some other modifications were necessary.
+- [#734] `onAddRule` and `onAddGroup` callbacks can now return `true` instead of the entire rule/group to allow the addition to proceed as normal.
 
 ## [v7.5.2] - 2024-06-27
 
@@ -1715,6 +1715,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#723]: https://github.com/react-querybuilder/react-querybuilder/pull/723
 [#727]: https://github.com/react-querybuilder/react-querybuilder/pull/727
 [#730]: https://github.com/react-querybuilder/react-querybuilder/pull/730
+[#734]: https://github.com/react-querybuilder/react-querybuilder/pull/734
 
 <!-- Release comparison links -->
 
