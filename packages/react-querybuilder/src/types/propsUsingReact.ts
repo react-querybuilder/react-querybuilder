@@ -1,4 +1,4 @@
-import type { MoveOptions } from '@rqb-utils';
+import type { MoveOptions } from '../utils';
 import type {
   ComponentType,
   ForwardRefExoticComponent,
