@@ -21,7 +21,6 @@ import type {
   RuleGroupProps,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-  RuleType,
   Schema,
   UpdateableProperties,
   ValidationMap,
@@ -31,6 +30,7 @@ import {
   add,
   findPath,
   generateAccessibleDescription,
+  isRuleGroup,
   isRuleGroupTypeIC,
   move,
   pathIsDisabled,
@@ -47,15 +47,10 @@ const defaultValidationMap: ValidationMap = {};
 const defaultDisabledPaths: Path[] = [];
 const icCombinatorPropObject = {} as const;
 const defaultGetValueEditorSeparator = () => null;
-const defaultGetRuleClassname = () => '';
-const defaultGetRuleGroupClassname = () => '';
-const defaultOnAddRule = (r: RuleType) => r;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const defaultOnAddGroup = (rg: any) => rg;
-const defaultOnRemove = () => true;
+const defaultGetRuleOrGroupClassname = () => '';
+const defaultOnAddMoveRemove = () => true;
 // istanbul ignore next
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const defaultOnLog = (...params: any[]) => {
+const defaultOnLog = (...params: unknown[]) => {
   console.log(...params);
 };
 
@@ -78,11 +73,13 @@ export function useQueryBuilderSchema<
     query: queryProp,
     defaultQuery: defaultQueryProp,
     getValueEditorSeparator = defaultGetValueEditorSeparator,
-    getRuleClassname = defaultGetRuleClassname,
-    getRuleGroupClassname = defaultGetRuleGroupClassname,
-    onAddRule = defaultOnAddRule,
-    onAddGroup = defaultOnAddGroup,
-    onRemove = defaultOnRemove,
+    getRuleClassname = defaultGetRuleOrGroupClassname,
+    getRuleGroupClassname = defaultGetRuleOrGroupClassname,
+    onAddRule = defaultOnAddMoveRemove,
+    onAddGroup = defaultOnAddMoveRemove,
+    onMoveRule = defaultOnAddMoveRemove,
+    onMoveGroup = defaultOnAddMoveRemove,
+    onRemove = defaultOnAddMoveRemove,
     onQueryChange,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
     showNotToggle: showNotToggleProp = false,
@@ -143,12 +140,21 @@ export function useQueryBuilderSchema<
   const listsAsArrays = !!listsAsArraysProp;
   // #endregion
 
+  const log = useCallback(
+    (...params: unknown[]) => {
+      if (debugMode) {
+        onLog(...params);
+      }
+    },
+    [debugMode, onLog]
+  );
+
+  // #region Handle controlled mode vs uncontrolled mode
   useControlledOrUncontrolled({
     defaultQuery: defaultQueryProp,
     queryProp,
   });
 
-  // #region Handle controlled mode vs uncontrolled mode
   const queryBuilderStore = useRQB_INTERNAL_QueryBuilderStore();
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
@@ -244,40 +250,24 @@ export function useQueryBuilderSchema<
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
-        // istanbul ignore else
-        if (debugMode) {
-          onLog({ qbId, type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
-        }
+        log({ qbId, type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
         return;
       }
       // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
-      const newRule = onAddRule(rule, parentPath, queryLocal, context);
-      if (!newRule) {
-        // istanbul ignore else
-        if (debugMode) {
-          onLog({ qbId, type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
-        }
+      const nextRule = onAddRule(rule, parentPath, queryLocal, context);
+      if (!nextRule) {
+        log({ qbId, type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
         return;
       }
+      const newRule = nextRule === true ? rule : nextRule;
       const newQuery = add(queryLocal, newRule, parentPath, {
         combinators,
         combinatorPreceding: newRule.combinatorPreceding ?? undefined,
       });
-      if (debugMode) {
-        onLog({ qbId, type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
-      }
+      log({ qbId, type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
       dispatchQuery(newQuery);
     },
-    [
-      combinators,
-      debugMode,
-      dispatchQuery,
-      onAddRule,
-      onLog,
-      qbId,
-      queryDisabled,
-      queryBuilderStore,
-    ]
+    [qbId, queryBuilderStore, queryDisabled, onAddRule, combinators, dispatchQuery, log]
   );
 
   const onGroupAdd = useCallback(
@@ -287,46 +277,30 @@ export function useQueryBuilderSchema<
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
-        // istanbul ignore else
-        if (debugMode) {
-          onLog({
-            qbId,
-            type: LogType.parentPathDisabled,
-            ruleGroup,
-            parentPath,
-            query: queryLocal,
-          });
-        }
+        log({
+          qbId,
+          type: LogType.parentPathDisabled,
+          ruleGroup,
+          parentPath,
+          query: queryLocal,
+        });
         return;
       }
       // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
-      const newGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
-      if (!newGroup) {
-        // istanbul ignore else
-        if (debugMode) {
-          onLog({ qbId, type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
-        }
+      const nextGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
+      if (!nextGroup) {
+        log({ qbId, type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
         return;
       }
+      const newGroup = nextGroup === true ? ruleGroup : nextGroup;
       const newQuery = add(queryLocal, newGroup, parentPath, {
         combinators,
         combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
       });
-      if (debugMode) {
-        onLog({ qbId, type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
-      }
+      log({ qbId, type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
       dispatchQuery(newQuery);
     },
-    [
-      combinators,
-      debugMode,
-      dispatchQuery,
-      onAddGroup,
-      onLog,
-      qbId,
-      queryDisabled,
-      queryBuilderStore,
-    ]
+    [qbId, queryBuilderStore, queryDisabled, onAddGroup, combinators, log, dispatchQuery]
   );
 
   const onPropChange = useCallback(
@@ -336,9 +310,7 @@ export function useQueryBuilderSchema<
       // istanbul ignore if
       if (!queryLocal) return;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
-        if (debugMode) {
-          onLog({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
-        }
+        log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
         return;
       }
       const newQuery = update(queryLocal, prop, value, path, {
@@ -348,23 +320,20 @@ export function useQueryBuilderSchema<
         getValueSources: getValueSourcesMain as (field: string) => ValueSources,
         getRuleDefaultValue,
       });
-      if (debugMode) {
-        onLog({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
-      }
+      log({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
       dispatchQuery(newQuery);
     },
     [
-      debugMode,
-      dispatchQuery,
-      getRuleDefaultOperator,
-      getRuleDefaultValue,
-      getValueSourcesMain,
-      onLog,
       qbId,
-      queryDisabled,
       queryBuilderStore,
+      queryDisabled,
       resetOnFieldChange,
       resetOnOperatorChange,
+      getRuleDefaultOperator,
+      getValueSourcesMain,
+      getRuleDefaultValue,
+      log,
+      dispatchQuery,
     ]
   );
 
@@ -375,10 +344,7 @@ export function useQueryBuilderSchema<
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
-        // istanbul ignore else
-        if (debugMode) {
-          onLog({ qbId, type: LogType.pathDisabled, path, query: queryLocal });
-        }
+        log({ qbId, type: LogType.pathDisabled, path, query: queryLocal });
         return;
       }
       const ruleOrGroup = findPath(path, queryLocal) as RG | R;
@@ -388,42 +354,73 @@ export function useQueryBuilderSchema<
         // but it doesn't matter here
         if (onRemove(ruleOrGroup, path, queryLocal, context)) {
           const newQuery = remove(queryLocal, path);
-          if (debugMode) {
-            onLog({ qbId, type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
-          }
+          log({ qbId, type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
           dispatchQuery(newQuery);
         } else {
-          if (debugMode) {
-            onLog({ qbId, type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
-          }
+          log({ qbId, type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
         }
       }
     },
-    [debugMode, dispatchQuery, onLog, onRemove, qbId, queryDisabled, queryBuilderStore]
+    [qbId, queryBuilderStore, queryDisabled, log, onRemove, dispatchQuery]
   );
 
   const moveRule = useCallback(
-    (oldPath: Path, newPath: Path, clone?: boolean) => {
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
-        // istanbul ignore else
-        if (debugMode) {
-          onLog({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
-        }
+        log({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
         return;
       }
-      const newQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
-      if (debugMode) {
-        onLog({ qbId, type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
+      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
+      const ruleOrGroup = findPath(oldPath, queryLocal)!;
+      const isGroup = isRuleGroup(ruleOrGroup);
+      const callbackResult = (
+        (isGroup ? onMoveGroup : onMoveRule) as (...args: unknown[]) => RG | boolean
+      )(ruleOrGroup, oldPath, newPath, queryLocal, nextQuery, { clone, combinators }, context);
+      if (!callbackResult) {
+        log({
+          qbId,
+          type: isGroup ? LogType.onMoveGroupFalse : LogType.onMoveRuleFalse,
+          ruleOrGroup,
+          oldPath,
+          newPath,
+          clone,
+          query: queryLocal,
+          nextQuery,
+        });
+        return;
       }
+      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
+      log({ qbId, type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
       dispatchQuery(newQuery);
     },
-    [combinators, debugMode, dispatchQuery, onLog, qbId, queryDisabled, queryBuilderStore]
+    [
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+      combinators,
+      onMoveGroup,
+      onMoveRule,
+      log,
+      dispatchQuery,
+    ]
   );
   // #endregion
 
+  // #region Validation
+  const { validationResult, validationMap } = useMemo(() => {
+    const validationResult =
+      typeof validator === 'function' && rootGroup ? validator(rootGroup) : defaultValidationResult;
+    const validationMap =
+      typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
+    return { validationResult, validationMap };
+  }, [rootGroup, validator]);
+  // #endregion
+
+  // #region Miscellaneous
   const dndEnabledAttr = useMemo(
     () => (enableDragAndDrop ? 'enabled' : 'disabled'),
     [enableDragAndDrop]
@@ -439,15 +436,18 @@ export function useQueryBuilderSchema<
         : icCombinatorPropObject,
     [rootGroup.combinator]
   );
+  const wrapperClassName = useMemo(
+    () =>
+      clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
+        [standardClassnames.disabled]: queryDisabled,
+        [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
+        [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
+      }),
+    [controlClassnames.queryBuilder, queryDisabled, validationResult]
+  );
+  // #endregion
 
-  const { validationResult, validationMap } = useMemo(() => {
-    const validationResult =
-      typeof validator === 'function' && rootGroup ? validator(rootGroup) : defaultValidationResult;
-    const validationMap =
-      typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
-    return { validationResult, validationMap };
-  }, [rootGroup, validator]);
-
+  // #region Schema/actions
   const schema = useMemo(
     (): Schema<F, GetOptionIdentifierType<O>> => ({
       addRuleToNewGroups,
@@ -532,16 +532,7 @@ export function useQueryBuilderSchema<
     }),
     [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
   );
-
-  const wrapperClassName = useMemo(
-    () =>
-      clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
-        [standardClassnames.disabled]: queryDisabled,
-        [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
-        [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
-      }),
-    [controlClassnames.queryBuilder, queryDisabled, validationResult]
-  );
+  // #endregion
 
   return {
     actions,
