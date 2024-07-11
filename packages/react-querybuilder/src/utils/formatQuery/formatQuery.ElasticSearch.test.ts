@@ -31,7 +31,7 @@ const elasticSearchQueryObject = {
               should: [
                 { term: { gender: 'M' } },
                 { bool: { must_not: { term: { job: 'Programmer' } } } },
-                { regexp: { email: { value: '@' } } },
+                { regexp: { email: { value: '.*@.*' } } },
               ],
             },
           },
@@ -40,7 +40,7 @@ const elasticSearchQueryObject = {
       {
         bool: {
           should: [
-            { bool: { must_not: { regexp: { lastName: { value: 'ab' } } } } },
+            { bool: { must_not: { regexp: { lastName: { value: '.*ab.*' } } } } },
             { regexp: { job: { value: 'Prog.*' } } },
             { regexp: { email: { value: '.*com' } } },
             { bool: { must_not: { regexp: { job: { value: 'Man.*' } } } } },
