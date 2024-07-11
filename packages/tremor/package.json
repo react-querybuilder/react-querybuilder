@@ -61,6 +61,6 @@
     "@tremor/react": "^3",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "7.5.0"
+    "react-querybuilder": "7.5.2"
   }
 }

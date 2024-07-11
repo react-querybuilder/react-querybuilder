@@ -61,6 +61,6 @@
     "@mui/icons-material": ">=5",
     "@mui/material": ">=5",
     "react": ">=18",
-    "react-querybuilder": "7.5.0"
+    "react-querybuilder": "7.5.2"
   }
 }
