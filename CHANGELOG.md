@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v7.6.0] - 2024-07-11
+
 ### Added
 
 - [#734] New callback props `onMoveRule` and `onMoveGroup`, called before a rule or group is moved (via drag-and-drop) or shifted. If the result of the callback is `false`, the move will be cancelled. If `true`, the move will proceed as normal. Alternatively, a full query object can be returned representing the new state if some other modifications were necessary.
@@ -1546,7 +1550,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-<!-- Issue and Pull Request links -->
+<!-- #region Issue and Pull Request links -->
 
 [#1]: https://github.com/react-querybuilder/react-querybuilder/pull/1
 [#6]: https://github.com/react-querybuilder/react-querybuilder/pull/6
@@ -1723,9 +1727,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#733]: https://github.com/react-querybuilder/react-querybuilder/pull/733
 [#734]: https://github.com/react-querybuilder/react-querybuilder/pull/734
 
-<!-- Release comparison links -->
+<!-- #endregion -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.2...HEAD
+<!-- #region Release comparison links -->
+
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.0...HEAD
+[v7.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.2...v7.6.0
 [v7.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.1...v7.5.2
 [v7.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.0...v7.5.1
 [v7.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...v7.5.0
@@ -1867,3 +1874,5 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [v1.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/react-querybuilder/react-querybuilder/releases/tag/v1.0.0
+
+<!-- #endregion -->
