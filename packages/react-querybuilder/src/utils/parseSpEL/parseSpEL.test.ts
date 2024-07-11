@@ -84,10 +84,7 @@ it('handles "like" comparisons', () => {
     'f1 matches "Test"',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
   );
-  testParseSpEL(
-    'f1 matches "T"',
-    wrapRule({ field: 'f1', operator: 'contains', value: 'T' })
-  );
+  testParseSpEL('f1 matches "T"', wrapRule({ field: 'f1', operator: 'contains', value: 'T' }));
   testParseSpEL(
     '"Test" matches f1',
     wrapRule({ field: 'f1', operator: 'contains', value: 'Test' })
@@ -100,18 +97,12 @@ it('handles "like" comparisons', () => {
     'f1 matches "^Test"',
     wrapRule({ field: 'f1', operator: 'beginsWith', value: 'Test' })
   );
-  testParseSpEL(
-    'f1 matches "^T"',
-    wrapRule({ field: 'f1', operator: 'beginsWith', value: 'T' })
-  );
+  testParseSpEL('f1 matches "^T"', wrapRule({ field: 'f1', operator: 'beginsWith', value: 'T' }));
   testParseSpEL(
     'f1 matches "Test$"',
     wrapRule({ field: 'f1', operator: 'endsWith', value: 'Test' })
   );
-  testParseSpEL(
-    'f1 matches "T$"',
-    wrapRule({ field: 'f1', operator: 'endsWith', value: 'T' })
-  );
+  testParseSpEL('f1 matches "T$"', wrapRule({ field: 'f1', operator: 'endsWith', value: 'T' }));
   testParseSpEL(
     'f1 matches f2',
     wrapRule({
