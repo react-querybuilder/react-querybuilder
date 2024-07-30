@@ -18,7 +18,7 @@ N/A
 
 ### Fixed
 
-- [#733] `parseSPeL` was not handling the `matches` operator correctly when its value was a single character.
+- [#733] `parseSpEL` was not handling the `matches` operator correctly when its value was a single character.
 - [#733] Improved `formatQuery` "elasticsearch" output for "contains" and "doesNotContain" operators.
 
 ## [v7.5.2] - 2024-06-27
