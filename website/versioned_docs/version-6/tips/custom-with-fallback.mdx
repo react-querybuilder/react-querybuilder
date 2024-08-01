@@ -89,6 +89,23 @@ export const CustomValueEditor = (props: ValueEditorProps) => {
 };
 ```
 
+:::tip
+
+If you're using one of the [compatibility packages](../compat), you probably want to fall back to the value editor from that package instead of `ValueEditor` from the main package. For example, when using `@react-querybuilder/antd`, fall back to `AntDValueEditor`:
+
+```diff
+-import { ValueEditor, ValueEditorProps } from 'react-querybuilder';
++import { AntDValueEditor } from '@react-querybuilder/antd';
++import { ValueEditorProps } from 'react-querybuilder';
+```
+
+```diff
+-  return <ValueEditor {...props} />;
++  return <AntDValueEditor {...props} />;
+```
+
+:::
+
 Finally, we can configure the main `QueryBuilder` component to use our custom value editor with the `controlElements` prop.
 
 ```tsx
