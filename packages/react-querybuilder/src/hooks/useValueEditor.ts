@@ -73,19 +73,19 @@ export const useValueEditor = (props: UseValueEditorParams) => {
 
   const multiValueHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (v: any, i: number) => {
-      const val = produce(valueAsArray, va => {
-        va[i] = parseNumber(v, { parseNumbers });
+    (val: any, idx: number) => {
+      const v = produce(valueAsArray, va => {
+        va[idx] = parseNumber(val, { parseNumbers });
         // Enforce an array length of (at least) two for "between"/"notBetween"
         if (
-          i === 0 &&
+          idx === 0 &&
           (operator === 'between' || operator === 'notBetween') &&
           (va.length < 2 || typeof va[1] === 'undefined')
         ) {
           va[1] = getFirstOption(values);
         }
       });
-      handleOnChange(listsAsArrays ? val : joinWith(val, ','));
+      handleOnChange(listsAsArrays ? v : joinWith(v, ','));
     },
     [handleOnChange, listsAsArrays, operator, parseNumbers, valueAsArray, values]
   );
