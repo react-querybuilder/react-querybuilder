@@ -1,45 +1,9 @@
-import type { ReactElement } from 'react';
 import type {
   Controls,
   DraggedItem,
   FullField,
-  Path,
-  QueryActions,
   QueryBuilderContextProviderProps,
-  RuleGroupProps,
-  RuleProps,
 } from 'react-querybuilder';
-
-/**
- * {@link RuleGroupDnD} props.
- */
-export interface RuleGroupDndProps {
-  disabled: boolean;
-  parentDisabled: boolean;
-  path: Path;
-  moveRule: QueryActions['moveRule'];
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: (typeof import('react-dnd'))['useDrag'];
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: (typeof import('react-dnd'))['useDrop'];
-  children: ReactElement<RuleGroupProps>;
-}
-
-/**
- * {@link RuleDnD} props.
- */
-export interface RuleDndProps {
-  moveRule: QueryActions['moveRule'];
-  disabled: boolean;
-  parentDisabled: boolean;
-  path: Path;
-  independentCombinators: boolean;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: (typeof import('react-dnd'))['useDrag'];
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop: (typeof import('react-dnd'))['useDrop'];
-  children: ReactElement<RuleProps>;
-}
 
 /**
  * Combination of all exports from `react-dnd` and `react-dnd-html5-backend`.
