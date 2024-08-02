@@ -83,6 +83,7 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
 
     const va = toArray(r.value).map(v => parseNumber(v, { parseNumbers: true }));
     if (va.every(v => typeof v === 'number')) {
+      // istanbul ignore else
       if (va.length > 1) {
         return { ...r, value: va };
       } else if (va.length === 1) {
