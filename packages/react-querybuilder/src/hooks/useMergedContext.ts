@@ -65,7 +65,7 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
   const debugModePreferred = usePreferProp(false, props.debugMode, rqbContext.debugMode);
   const debugMode = finalize
     ? debugModePreferred
-    : props.debugMode ?? (rqbContext.debugMode as boolean);
+    : (props.debugMode ?? (rqbContext.debugMode as boolean));
   const enableMountQueryChangePreferred = usePreferProp(
     true,
     props.enableMountQueryChange,
@@ -73,7 +73,7 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
   );
   const enableMountQueryChange = finalize
     ? enableMountQueryChangePreferred
-    : props.enableMountQueryChange ?? (rqbContext.enableMountQueryChange as boolean);
+    : (props.enableMountQueryChange ?? (rqbContext.enableMountQueryChange as boolean));
 
   // Drag-and-drop should be disabled if context sets it to false because
   // QueryBuilderDnD might not have loaded react-dnd yet. Therefore we prefer
@@ -83,7 +83,7 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
     rqbContext.enableDragAndDrop !== false;
   const enableDragAndDrop = finalize
     ? enableDragAndDropPreferred
-    : props.enableDragAndDrop ?? (rqbContext.enableDragAndDrop as boolean);
+    : (props.enableDragAndDrop ?? (rqbContext.enableDragAndDrop as boolean));
 
   const cc = useMemo(
     () =>
@@ -172,11 +172,11 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
       const comp =
         propComp === null
           ? nc
-          : propComp ??
+          : (propComp ??
             (finalize ? propBulkOverride : undefined) ??
             (contextComp === null
               ? nc
-              : contextComp ?? (finalize ? contextBulkOverride : undefined));
+              : (contextComp ?? (finalize ? contextBulkOverride : undefined))));
       return comp
         ? { [name]: comp }
         : finalize
@@ -240,11 +240,11 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
           valueEditor:
             propsCE.valueEditor === null
               ? nullComp
-              : propsCE.valueEditor ??
+              : (propsCE.valueEditor ??
                 (contextCE.valueEditor === null ? nullComp : contextCE.valueEditor) ??
                 (defaultControlElements.valueEditor as unknown as ComponentType<
                   ValueEditorProps<F, O>
-                >),
+                >)),
         },
         mergeControlElement(
           'valueSourceSelector',

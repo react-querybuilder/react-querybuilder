@@ -66,7 +66,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       ruleGroupProp && isRuleGroupType(ruleGroupProp)
         ? ruleGroupProp.combinator
         : !ruleGroupProp
-          ? combinatorProp ?? getFirstOption(combinators)!
+          ? (combinatorProp ?? getFirstOption(combinators)!)
           : getFirstOption(combinators)!,
     [combinatorProp, combinators, ruleGroupProp]
   );
@@ -247,7 +247,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     [validationResult]
   );
   const combinatorBasedClassName = useMemo(
-    () => (independentCombinators ? null : getOption(combinators, combinator)?.className ?? ''),
+    () => (independentCombinators ? null : (getOption(combinators, combinator)?.className ?? '')),
     [combinator, combinators, independentCombinators]
   );
 

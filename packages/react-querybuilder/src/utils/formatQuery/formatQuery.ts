@@ -166,17 +166,17 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
               : valueProcessor(r, opts)
         : format === 'mongodb'
-          ? ruleProcessorInternal ?? defaultRuleProcessorMongoDB
+          ? (ruleProcessorInternal ?? defaultRuleProcessorMongoDB)
           : format === 'cel'
-            ? ruleProcessorInternal ?? defaultRuleProcessorCEL
+            ? (ruleProcessorInternal ?? defaultRuleProcessorCEL)
             : format === 'spel'
-              ? ruleProcessorInternal ?? defaultRuleProcessorSpEL
+              ? (ruleProcessorInternal ?? defaultRuleProcessorSpEL)
               : format === 'jsonlogic'
-                ? ruleProcessorInternal ?? defaultRuleProcessorJsonLogic
+                ? (ruleProcessorInternal ?? defaultRuleProcessorJsonLogic)
                 : format === 'elasticsearch'
-                  ? ruleProcessorInternal ?? defaultRuleProcessorElasticSearch
+                  ? (ruleProcessorInternal ?? defaultRuleProcessorElasticSearch)
                   : format === 'jsonata'
-                    ? ruleProcessorInternal ?? defaultRuleProcessorJSONata
+                    ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
                     : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
     validator = options.validator ?? (() => true);

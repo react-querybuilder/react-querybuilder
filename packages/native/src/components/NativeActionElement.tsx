@@ -12,7 +12,7 @@ export const NativeActionElement = ({
   <Button
     testID={testID}
     disabled={disabled && !disabledTranslation}
-    title={`${disabledTranslation && disabled ? disabledTranslation.label ?? '' : label ?? ''}`}
+    title={`${disabledTranslation && disabled ? (disabledTranslation.label ?? '') : (label ?? '')}`}
     onPress={_e => handleOnClick()}
   />
 );
