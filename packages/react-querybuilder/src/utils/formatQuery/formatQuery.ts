@@ -198,9 +198,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           : '(1 = 1)';
   }
 
-  /**
-   * JSON
-   */
+  // #region JSON
   if (format === 'json' || format === 'json_without_ids') {
     const rg = parseNumbers ? numerifyValues(ruleGroup) : ruleGroup;
     if (format === 'json') {
@@ -261,10 +259,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     }
     return [validationResult, fieldValidator] as const;
   };
+  // #endregion
 
-  /**
-   * SQL
-   */
+  // #region SQL
   if (format === 'sql') {
     const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -332,10 +329,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     return processRuleGroup(ruleGroup, true);
   }
+  // #endregion
 
-  /**
-   * Parameterized SQL
-   */
+  // #region Parameterized SQL
   if (format === 'parameterized' || format === 'parameterized_named') {
     const parameterized = format === 'parameterized';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -454,10 +450,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     }
     return { sql: processRuleGroup(ruleGroup, true), params: paramsNamed };
   }
+  // #endregion
 
-  /**
-   * MongoDB
-   */
+  // #region MongoDB
   if (format === 'mongodb') {
     const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -508,10 +503,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     const processedQuery = processRuleGroup(rgStandard, true);
     return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
   }
+  // #endregion
 
-  /**
-   * CEL
-   */
+  // #region CEL
   if (format === 'cel') {
     const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -556,10 +550,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     return processRuleGroup(ruleGroup, true);
   }
+  // #endregion
 
-  /**
-   * SpEL
-   */
+  // #region SpEL
   if (format === 'spel') {
     const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -600,10 +593,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     return processRuleGroup(ruleGroup, true);
   }
+  // #endregion
 
-  /**
-   * JSONata
-   */
+  // #region JSONata
   if (format === 'jsonata') {
     const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -645,10 +637,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     return processRuleGroup(ruleGroup, true);
   }
+  // #endregion
 
-  /**
-   * JsonLogic
-   */
+  // #region JsonLogic
   if (format === 'jsonlogic') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 
@@ -692,10 +683,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     return processRuleGroup(query, true);
   }
+  // #endregion
 
-  /**
-   * ElasticSearch
-   */
+  // #region ElasticSearch
   if (format === 'elasticsearch') {
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
 

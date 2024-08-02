@@ -50,13 +50,11 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
     }
   }
   if (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error TS still thinks returnArray has length 0
     returnArray.length === 1 &&
     typeof returnArray[0] === 'object' &&
     isRuleGroup(returnArray[0])
   ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error TS still thinks returnArray has length 0
     return { ...rg, ...returnArray[0] };
   }
