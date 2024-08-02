@@ -1,3 +1,4 @@
+import { produce } from 'immer';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -200,16 +201,18 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
   // #region JSON
   if (format === 'json' || format === 'json_without_ids') {
-    const rg = parseNumbers ? numerifyValues(ruleGroup) : ruleGroup;
-    if (format === 'json') {
-      return JSON.stringify(rg, null, 2);
+    const rg = parseNumbers ? produce(ruleGroup, numerifyValues) : ruleGroup;
+    if (format === 'json_without_ids') {
+      return JSON.stringify(rg, (key, value) =>
+        // Remove `id` and `path` keys; leave everything else unchanged.
+        key === 'id' || key === 'path' ? undefined : value
+      );
     }
-    return JSON.stringify(rg, (key, value) =>
-      // Remove `id` and `path` keys; leave everything else unchanged.
-      key === 'id' || key === 'path' ? undefined : value
-    );
+    return JSON.stringify(rg, null, 2);
   }
+  // #endregion
 
+  // #region Validation
   // istanbul ignore else
   if (typeof validator === 'function') {
     const validationResult = validator(ruleGroup);
