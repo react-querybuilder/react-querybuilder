@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Drag-and-drop hooks are now exported from `@react-querybuilder/dnd`, including `useReactDnD`, `useRuleDnD`, `useRuleGroupDnD`, and `useInlineCombinatorDnD`.
+- `formatQuery` correctly handles values that are lists of numbers when `parseNumbers` is `true`.
 
 ## [v7.6.0] - 2024-07-11
 

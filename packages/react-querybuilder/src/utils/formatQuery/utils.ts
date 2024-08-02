@@ -4,6 +4,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { toArray } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
@@ -76,12 +77,20 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
       return numerifyValues(r);
     }
 
-    let { value } = r;
-    if (typeof value === 'string') {
-      value = parseNumber(value, { parseNumbers: true });
+    if (Array.isArray(r.value)) {
+      return { ...r, value: r.value.map(v => parseNumber(v, { parseNumbers: true })) };
     }
 
-    return { ...r, value };
+    const va = toArray(r.value).map(v => parseNumber(v, { parseNumbers: true }));
+    if (va.every(v => typeof v === 'number')) {
+      if (va.length > 1) {
+        return { ...r, value: va };
+      } else if (va.length === 1) {
+        return { ...r, value: va[0] };
+      }
+    }
+
+    return r;
   }),
 });
 
