@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Drag-and-drop hooks are now exported from `@react-querybuilder/dnd`, including `useReactDnD`, `useRuleDnD`, `useRuleGroupDnD`, and `useInlineCombinatorDnD`.
-- `formatQuery` correctly handles values that are lists of numbers when `parseNumbers` is `true`.
+- [#748] `formatQuery` correctly handles values that are lists of numbers when `parseNumbers` is `true`.
 
 ## [v7.6.0] - 2024-07-11
 
@@ -1729,6 +1729,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#730]: https://github.com/react-querybuilder/react-querybuilder/pull/730
 [#733]: https://github.com/react-querybuilder/react-querybuilder/pull/733
 [#734]: https://github.com/react-querybuilder/react-querybuilder/pull/734
+[#748]: https://github.com/react-querybuilder/react-querybuilder/pull/748
 
 <!-- #endregion -->
 
