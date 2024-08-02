@@ -391,7 +391,7 @@ function parseMongoDB(
   if (typeof mongoDbRules === 'string') {
     try {
       mongoDbPOJO = JSON.parse(mongoDbRules);
-    } catch (err) {
+    } catch {
       return emptyRuleGroup;
     }
   }

@@ -112,18 +112,18 @@ describe('add', () => {
   testQT('bails out on bad path', add(rg1, rg2, badPath), rg1);
 
   it('should have the right types', () => {
-    const newQuery = add({ ...rg1 }, { ...rg2 }, []);
-    const newDefaultQuery = add(rg1, rg2, []);
-    const newICQuery = add({ ...rgic1 }, { ...rgic2 }, []);
-    const newDefaultICQuery = add(rgic1, rgic2, []);
+    const _newQuery = add({ ...rg1 }, { ...rg2 }, []);
+    const _newDefaultQuery = add(rg1, rg2, []);
+    const _newICQuery = add({ ...rgic1 }, { ...rgic2 }, []);
+    const _newDefaultICQuery = add(rgic1, rgic2, []);
 
     type _Assertions = [
       // TODO: RuleGroup/IC should be strict enough that this first line should error
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof newQuery>,
-      ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
-      Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery>,
+      ExpectExtends<DefaultRuleGroupType, typeof _newQuery>,
+      Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery>,
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>>,
     ];
   });
 });
@@ -173,18 +173,18 @@ describe('remove', () => {
   testQT('bails out on bad path', remove(rg1, badPath), rg1);
 
   it('should have the right types', () => {
-    const newQuery = remove({ ...rg1 }, [0]);
-    const newDefaultQuery = remove(rg1, [0]);
-    const newICQuery = remove({ ...rgic1 }, [0]);
-    const newDefaultICQuery = remove(rgic1, [0]);
+    const _newQuery = remove({ ...rg1 }, [0]);
+    const _newDefaultQuery = remove(rg1, [0]);
+    const _newICQuery = remove({ ...rgic1 }, [0]);
+    const _newDefaultICQuery = remove(rgic1, [0]);
 
     type _Assertions = [
       // TODO: RuleGroup/IC should be strict enough that this first line should error
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof newQuery>,
-      ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
-      Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery>,
+      ExpectExtends<DefaultRuleGroupType, typeof _newQuery>,
+      Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery>,
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>>,
     ];
   });
 });
@@ -692,18 +692,18 @@ describe('insert', () => {
   testQT('bails out on bad path', insert(rg1, rg2, badPath), rg1);
 
   it('should have the right types', () => {
-    const newQuery = insert({ ...rg1 }, { ...rg2 }, []);
-    const newDefaultQuery = insert(rg1, rg2, []);
-    const newICQuery = insert({ ...rgic1 }, { ...rgic2 }, []);
-    const newDefaultICQuery = insert(rgic1, rgic2, []);
+    const _newQuery = insert({ ...rg1 }, { ...rg2 }, []);
+    const _newDefaultQuery = insert(rg1, rg2, []);
+    const _newICQuery = insert({ ...rgic1 }, { ...rgic2 }, []);
+    const _newDefaultICQuery = insert(rgic1, rgic2, []);
 
     type _Assertions = [
       // TODO: RuleGroup/IC should be strict enough that this first line should error
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof newQuery>,
-      ExpectExtends<DefaultRuleGroupType, typeof newQuery>,
-      Expect<Equal<DefaultRuleGroupType, typeof newDefaultQuery>>,
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof newDefaultICQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery>,
+      ExpectExtends<DefaultRuleGroupType, typeof _newQuery>,
+      Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>>,
+      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery>,
+      Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>>,
     ];
   });
 });

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "next": "14.1.0",
+    "next": "14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-querybuilder": "7.6.0"
@@ -9,11 +9,11 @@
     "@types/node": "20.6.2",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
-    "eslint": "^8.56.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "prettier": "^3",
-    "typescript": "5.2.2"
+    "typescript": "5.5.4"
   },
   "name": "react-querybuilder-next-example",
   "private": true,

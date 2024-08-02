@@ -283,7 +283,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
   let compiledSpEL: SpELExpressionNode;
   try {
     compiledSpEL = SpelExpressionEvaluator.compile(spel)._compiledExpression;
-  } catch (err) {
+  } catch {
     return emptyQuery;
   }
 

@@ -267,7 +267,7 @@ function parseJSONata(
   let jsonataExpr: jsonata.Expression;
   try {
     jsonataExpr = jsonata(jsonataInput);
-  } catch (err) {
+  } catch {
     return emptyQuery;
   }
   const jsonataAST = jsonataExpr.ast() as JSONataExprNode;

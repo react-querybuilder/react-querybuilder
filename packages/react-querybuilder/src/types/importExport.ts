@@ -275,13 +275,13 @@ export interface ParseSQLOptions extends ParserCommonOptions {
 /**
  * Options object for {@link parseCEL}.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseCELOptions extends ParserCommonOptions {}
 
 /**
  * Options object for {@link parseSpEL}.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseSpELOptions extends ParserCommonOptions {}
 
 /**
@@ -289,7 +289,7 @@ export interface ParseSpELOptions extends ParserCommonOptions {}
  *
  * Note: `listsAsArrays` is ignored by `parseJSONata`; lists are _always_ arrays.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseJSONataOptions extends ParserCommonOptions {}
 
 /**

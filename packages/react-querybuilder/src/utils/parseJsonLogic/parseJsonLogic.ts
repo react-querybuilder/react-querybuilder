@@ -297,7 +297,7 @@ function parseJsonLogic(
   if (typeof rqbJsonLogic === 'string') {
     try {
       logicRoot = JSON.parse(rqbJsonLogic);
-    } catch (err) {
+    } catch {
       return emptyRuleGroup;
     }
   }

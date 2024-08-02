@@ -36,7 +36,7 @@
   }
 }
 
-// The rest of this file was copied from @mantine/core/styles.css (v7.10.2).
+// The rest of this file was copied from @mantine/core/styles.css (v7.11.2).
 // The "CSS reset" section (except for the `html, body` styles) and the `body`
 // styles from the "Global styles" section have been commented here and copied
 // into the `.rqb-mantine` block above. The `:root { color-scheme: ... }`
@@ -61,6 +61,7 @@ button,
 select {
   text-transform: none;
 }
+*/
 
 /* ----- Global styles ----- */
 /*
@@ -850,6 +851,10 @@ body {
   border-radius: var(--popover-radius, var(--mantine-radius-default));
 }
 
+.m_38a85659:where([data-fixed]) {
+  position: fixed;
+}
+
 .m_38a85659:focus {
   outline: none;
 }
@@ -1074,11 +1079,11 @@ body {
 }
 
 :where([data-mantine-color-scheme='light']) .m_302b9fb1 {
-  background-color: rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 :where([data-mantine-color-scheme='dark']) .m_302b9fb1 {
-  background-color: rgba(0, 0, 0, 0.35);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .m_1a0f1b21 {
@@ -1265,6 +1270,7 @@ body {
   background-color: var(--mantine-color-body);
   z-index: 1000;
   min-height: calc(3.75rem * var(--mantine-scale));
+  transition: padding-inline-end 100ms;
 }
 
 .m_60c222c7 {
@@ -1279,6 +1285,16 @@ body {
 .m_fd1ab0aa {
   pointer-events: all;
   box-shadow: var(--mb-shadow, var(--mantine-shadow-xl));
+}
+
+.m_fd1ab0aa [data-mantine-scrollbar] {
+  z-index: 1001;
+}
+
+.m_fd1ab0aa:has([data-mantine-scrollbar][data-state='visible']) .m_b5489c3c {
+  padding-inline-end: calc(
+    var(--mb-padding, var(--mantine-spacing-md)) + calc(0.3125rem * var(--mantine-scale))
+  );
 }
 
 .m_606cb269 {
@@ -1999,6 +2015,15 @@ body {
   text-decoration: underline;
 }
 
+.m_849cf0da:where([data-variant='gradient']),
+.m_849cf0da:where([data-variant='gradient']):hover {
+  text-decoration: none;
+}
+
+.m_849cf0da:where([data-line-clamp]) {
+  display: -webkit-box;
+}
+
 .m_89ab340[data-resizing] {
   --app-shell-transition-duration: 0ms !important;
 }
@@ -2144,6 +2169,10 @@ body {
 .m_88b62a41 {
   --combobox-padding: calc(0.25rem * var(--mantine-scale));
   padding: var(--combobox-padding);
+}
+
+.m_88b62a41:has([data-mantine-scrollbar]) {
+  padding-inline-end: 0;
 }
 
 .m_88b62a41[data-hidden] {
@@ -2930,6 +2959,7 @@ fieldset:disabled .m_d3ea56bb,
   --burger-size-xl: calc(2.625rem * var(--mantine-scale));
 
   --burger-size: var(--burger-size-md);
+  --burger-line-size: calc(var(--burger-size) / 12);
 
   width: calc(var(--burger-size) + var(--mantine-spacing-xs));
   height: calc(var(--burger-size) + var(--mantine-spacing-xs));
@@ -2955,7 +2985,7 @@ fieldset:disabled .m_d3ea56bb,
 .m_d4fb9cad::after {
   display: block;
   width: var(--burger-size);
-  height: calc(var(--burger-size) / 12);
+  height: var(--burger-line-size);
   background-color: var(--burger-color);
   outline: calc(0.0625rem * var(--mantine-scale)) solid transparent;
   transition-property: background-color, transform;
@@ -3889,8 +3919,8 @@ fieldset:disabled .m_d3ea56bb,
   flex: var(--drawer-flex, 0 0 var(--drawer-size));
   height: var(--drawer-height, calc(100% - var(--drawer-offset) * 2));
   margin: var(--drawer-offset);
-  max-width: 100%;
-  max-height: 100%;
+  max-width: calc(100% - var(--drawer-offset) * 2);
+  max-height: calc(100% - var(--drawer-offset) * 2);
   overflow-y: auto;
 }
 
@@ -4802,7 +4832,6 @@ fieldset:disabled .m_d3ea56bb,
 }
 
 .m_80b4b171:last-of-type {
-  border-top: 1 solid var(--input-bd);
   border-radius: 0;
   border-end-end-radius: var(--control-radius);
 }
@@ -5433,6 +5462,10 @@ fieldset:disabled .m_d3ea56bb,
 
 .m_1b3c8819:where([data-multiline]) {
   white-space: normal;
+}
+
+.m_1b3c8819:where([data-fixed]) {
+  position: fixed;
 }
 
 .m_f898399f {

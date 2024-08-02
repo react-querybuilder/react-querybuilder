@@ -290,7 +290,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
   let processedCEL: CELExpression;
   try {
     processedCEL = celParser.parse(cel).value;
-  } catch (err) {
+  } catch {
     return emptyQuery;
   }
   const result = processCELExpression(processedCEL);

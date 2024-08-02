@@ -37,11 +37,13 @@ export interface BaseOption<N extends string = string> {
  * A generic option. Used directly in {@link OptionList} or
  * as the child element of an {@link OptionGroup}.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface Option<N extends string = string> extends SetOptional<FullOption<N>, 'value'> {}
 
 /**
  * Like {@link Option} but requiring `value` instead of `name`.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ValueOption<N extends string = string>
   extends SetOptional<FullOption<N>, 'name'> {}
 
@@ -72,6 +74,7 @@ export type ToFlexibleOption<Opt extends BaseOption> = WithUnknownIndex<
  * (optionally wrappped in {@link WithUnknownIndex}) instead, otherwise
  * the `unknown` index property will cause issues.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface FullOption<N extends string = string>
   extends WithUnknownIndex<SetRequired<BaseOption<N>, 'name' | 'value'>> {}
 
@@ -79,6 +82,7 @@ export interface FullOption<N extends string = string>
  * This type is identical to {@link FullOption} but without the `unknown` index
  * property. Extend from this type instead of {@link FullOption} directly.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface BaseFullOption<N extends string = string>
   extends SetRequired<BaseOption<N>, 'name' | 'value'> {}
 
@@ -95,6 +99,7 @@ export type ToFullOption<Opt extends BaseOption> = Opt extends BaseFullOption
 /**
  * @deprecated Renamed to `Option`.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface NameLabelPair<N extends string = string> extends Option<N> {}
 
 /**

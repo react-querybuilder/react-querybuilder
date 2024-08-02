@@ -46,7 +46,7 @@
     "@tremor/react": "^3.17.4",
     "@types/react": "^18.3.3",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.20",
     "dayjs": "^1.11.12",
     "postcss": "^8.4.40",
     "react": "^18.3.1",
