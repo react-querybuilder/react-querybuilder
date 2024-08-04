@@ -84,6 +84,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       header: clsx(standardClassnames.header, classNamesProp.header, {
         [standardClassnames.dndOver]: isOver,
       }),
+      title: clsx(standardClassnames.ruleGroupTitle),
       shiftActions: clsx(standardClassnames.shiftActions, classNamesProp.shiftActions),
       dragHandle: clsx(standardClassnames.dragHandle, classNamesProp.dragHandle),
       combinators: clsx(

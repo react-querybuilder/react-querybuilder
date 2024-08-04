@@ -205,6 +205,7 @@ export const standardClassnames = {
   header: 'ruleGroup-header',
   body: 'ruleGroup-body',
   combinators: 'ruleGroup-combinators',
+  ruleGroupTitle: 'ruleGroup-title',
   addRule: 'ruleGroup-addRule',
   addGroup: 'ruleGroup-addGroup',
   cloneRule: 'rule-cloneRule',

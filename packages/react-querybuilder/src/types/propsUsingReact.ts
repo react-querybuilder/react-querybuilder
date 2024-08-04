@@ -161,7 +161,7 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
  */
 export interface ValueEditorProps<F extends FullField = FullField, O extends string = string>
   extends SelectorOrEditorProps<F, O>,
-    CommonRuleSubComponentProps {
+  CommonRuleSubComponentProps {
   field: GetOptionIdentifierType<F>;
   operator: O;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -398,7 +398,7 @@ export interface UseRuleGroupDnD {
  */
 export interface RuleGroupProps<F extends FullOption = FullOption, O extends string = string>
   extends CommonRuleAndGroupProps<F, O>,
-    Partial<UseRuleGroupDnD> {
+  Partial<UseRuleGroupDnD> {
   ruleGroup: RuleGroupTypeAny<RuleType<GetOptionIdentifierType<F>, O>>;
   /**
    * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
@@ -412,6 +412,7 @@ export interface RuleGroupProps<F extends FullOption = FullOption, O extends str
    * @deprecated Use the `not` property of the `ruleGroup` prop instead
    */
   not?: boolean;
+  title?: string;
 }
 
 /**
@@ -433,7 +434,7 @@ export interface UseRuleDnD {
  */
 export interface RuleProps<F extends string = string, O extends string = string>
   extends CommonRuleAndGroupProps<FullOption<F>, O>,
-    Partial<UseRuleDnD> {
+  Partial<UseRuleDnD> {
   rule: RuleType<F, O>;
   /**
    * @deprecated Use the `field` property of the `rule` prop instead
@@ -522,361 +523,361 @@ export type QueryBuilderProps<
   C extends FullCombinator,
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
   ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
+    /**
+     * Initial query object for uncontrolled components.
+     */
+    defaultQuery?: RG;
+    /**
+     * Query object for controlled components.
+     */
+    query?: RG;
+    /**
+     * List of valid {@link FullField}s.
+     *
+     * @default []
+     */
+    fields?: FlexibleOptionList<F> | BaseOptionMap<F, GetOptionIdentifierType<F>>;
+    /**
+     * List of valid {@link FullOperator}s.
+     *
+     * @see {@link DefaultOperatorName}
+     *
+     * @default
+     * [
+     *   { name: '=', label: '=' },
+     *   { name: '!=', label: '!=' },
+     *   { name: '<', label: '<' },
+     *   { name: '>', label: '>' },
+     *   { name: '<=', label: '<=' },
+     *   { name: '>=', label: '>=' },
+     *   { name: 'contains', label: 'contains' },
+     *   { name: 'beginsWith', label: 'begins with' },
+     *   { name: 'endsWith', label: 'ends with' },
+     *   { name: 'doesNotContain', label: 'does not contain' },
+     *   { name: 'doesNotBeginWith', label: 'does not begin with' },
+     *   { name: 'doesNotEndWith', label: 'does not end with' },
+     *   { name: 'null', label: 'is null' },
+     *   { name: 'notNull', label: 'is not null' },
+     *   { name: 'in', label: 'in' },
+     *   { name: 'notIn', label: 'not in' },
+     *   { name: 'between', label: 'between' },
+     *   { name: 'notBetween', label: 'not between' },
+     * ]
+     */
+    operators?: FlexibleOptionList<O>;
+    /**
+     * List of valid {@link FullCombinator}s.
+     *
+     * @see {@link DefaultCombinatorName}
+     *
+     * @default
+     * [
+     *   {name: 'and', label: 'AND'},
+     *   {name: 'or', label: 'OR'},
+     * ]
+     */
+    combinators?: FlexibleOptionList<C>;
+    /**
+     * Default properties applied to all objects in the `fields` prop. Properties on
+     * individual field definitions will override these.
+     */
+    baseField?: Record<string, unknown>;
+    /**
+     * Default properties applied to all objects in the `operators` prop. Properties on
+     * individual operator definitions will override these.
+     */
+    baseOperator?: Record<string, unknown>;
+    /**
+     * Default properties applied to all objects in the `combinators` prop. Properties on
+     * individual combinator definitions will override these.
+     */
+    baseCombinator?: Record<string, unknown>;
+    /**
+     * The default `field` value for new rules. This can be the field `name`
+     * itself or a function that returns a valid {@link FullField} `name` given
+     * the `fields` list.
+     */
+    getDefaultField?: GetOptionIdentifierType<F> | ((fieldsData: FullOptionList<F>) => string);
+    /**
+     * The default `operator` value for new rules. This can be the operator
+     * `name` or a function that returns a valid {@link FullOperator} `name` for
+     * a given field name.
+     */
+    getDefaultOperator?:
+    | GetOptionIdentifierType<O>
+    | ((field: GetOptionIdentifierType<F>, misc: { fieldData: F }) => string);
+    /**
+     * Returns the default `value` for new rules.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    getDefaultValue?(rule: R, misc: { fieldData: F }): any;
+    /**
+     * This function should return the list of allowed {@link FullOperator}s
+     * for the given {@link FullField} `name`. If `null` is returned, the
+     * {@link DefaultOperator}s are used.
+     */
+    getOperators?(
+      field: GetOptionIdentifierType<F>,
+      misc: { fieldData: F }
+    ): FlexibleOptionList<FullOperator> | null;
+    /**
+     * This function should return the type of {@link ValueEditor} (see
+     * {@link ValueEditorType}) for the given field `name` and operator `name`.
+     */
+    getValueEditorType?(
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ): ValueEditorType;
+    /**
+     * This function should return the separator element for a given field
+     * `name` and operator `name`. The element can be any valid React element,
+     * including a bare string (e.g., "and" or "to") or an HTML element like
+     * `<span />`. It will be placed in between value editors when multiple
+     * editors are rendered, such as when the `operator` is `"between"`.
+     */
+    getValueEditorSeparator?(
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ): ReactNode;
+    /**
+     * This function should return the list of valid {@link ValueSources}
+     * for a given field `name` and operator `name`. The return value must
+     * be an array that includes at least one valid {@link ValueSource}
+     * (i.e. `["value"]`, `["field"]`, `["value", "field"]`, or
+     * `["field", "value"]`).
+     */
+    getValueSources?(
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ): ValueSources;
+    /**
+     * This function should return the `type` of `<input />`
+     * for the given field `name` and operator `name` (only applicable when
+     * `getValueEditorType` returns `"text"` or a falsy value). If no
+     * function is provided, `"text"` is used as the default.
+     */
+    getInputType?(
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ): InputType | null;
+    /**
+     * This function should return the list of allowed values for the
+     * given field `name` and operator `name` (only applicable when
+     * `getValueEditorType` returns `"select"` or `"radio"`). If no
+     * function is provided, an empty array is used as the default.
+     */
+    getValues?(
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ): FlexibleOptionList<Option>;
+    /**
+     * The return value of this function will be used to apply classnames to the
+     * outer `<div>` of the given {@link Rule}.
+     */
+    getRuleClassname?(rule: R, misc: { fieldData: F }): Classname;
+    /**
+     * The return value of this function will be used to apply classnames to the
+     * outer `<div>` of the given {@link RuleGroup}.
+     */
+    getRuleGroupClassname?(ruleGroup: RG): Classname;
+    /**
+     * This callback is invoked before a new rule is added. The function should either manipulate
+     * the rule and return the new object, return `true` to allow the addition to proceed as normal,
+     * or return `false` to cancel the addition of the rule.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onAddRule?(rule: R, parentPath: Path, query: RG, context?: any): RuleType | boolean;
+    /**
+     * This callback is invoked before a new group is added. The function should either manipulate
+     * the group and return the new object, return `true` to allow the addition to proceed as normal,
+     * or return `false` to cancel the addition of the group.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | boolean;
+    /**
+     * This callback is invoked before a rule is moved or shifted. The function should return
+     * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
+     * a new query object (presumably based on `query` or `nextQuery`) which will become the new
+     * query state.
+     */
+    onMoveRule?(
+      /** The rule being moved. */
+      rule: R,
+      /** The original path of the rule. */
+      fromPath: Path,
       /**
-       * Initial query object for uncontrolled components.
+       * The target path of the rule, or the direction of the shift. Note that the target path
+       * is not necessarily the final path since moves (particularly downward) can affect the
+       * indexes of sibling rules/groups at the original path.
        */
-      defaultQuery?: RG;
-      /**
-       * Query object for controlled components.
-       */
-      query?: RG;
-      /**
-       * List of valid {@link FullField}s.
-       *
-       * @default []
-       */
-      fields?: FlexibleOptionList<F> | BaseOptionMap<F, GetOptionIdentifierType<F>>;
-      /**
-       * List of valid {@link FullOperator}s.
-       *
-       * @see {@link DefaultOperatorName}
-       *
-       * @default
-       * [
-       *   { name: '=', label: '=' },
-       *   { name: '!=', label: '!=' },
-       *   { name: '<', label: '<' },
-       *   { name: '>', label: '>' },
-       *   { name: '<=', label: '<=' },
-       *   { name: '>=', label: '>=' },
-       *   { name: 'contains', label: 'contains' },
-       *   { name: 'beginsWith', label: 'begins with' },
-       *   { name: 'endsWith', label: 'ends with' },
-       *   { name: 'doesNotContain', label: 'does not contain' },
-       *   { name: 'doesNotBeginWith', label: 'does not begin with' },
-       *   { name: 'doesNotEndWith', label: 'does not end with' },
-       *   { name: 'null', label: 'is null' },
-       *   { name: 'notNull', label: 'is not null' },
-       *   { name: 'in', label: 'in' },
-       *   { name: 'notIn', label: 'not in' },
-       *   { name: 'between', label: 'between' },
-       *   { name: 'notBetween', label: 'not between' },
-       * ]
-       */
-      operators?: FlexibleOptionList<O>;
-      /**
-       * List of valid {@link FullCombinator}s.
-       *
-       * @see {@link DefaultCombinatorName}
-       *
-       * @default
-       * [
-       *   {name: 'and', label: 'AND'},
-       *   {name: 'or', label: 'OR'},
-       * ]
-       */
-      combinators?: FlexibleOptionList<C>;
-      /**
-       * Default properties applied to all objects in the `fields` prop. Properties on
-       * individual field definitions will override these.
-       */
-      baseField?: Record<string, unknown>;
-      /**
-       * Default properties applied to all objects in the `operators` prop. Properties on
-       * individual operator definitions will override these.
-       */
-      baseOperator?: Record<string, unknown>;
-      /**
-       * Default properties applied to all objects in the `combinators` prop. Properties on
-       * individual combinator definitions will override these.
-       */
-      baseCombinator?: Record<string, unknown>;
-      /**
-       * The default `field` value for new rules. This can be the field `name`
-       * itself or a function that returns a valid {@link FullField} `name` given
-       * the `fields` list.
-       */
-      getDefaultField?: GetOptionIdentifierType<F> | ((fieldsData: FullOptionList<F>) => string);
-      /**
-       * The default `operator` value for new rules. This can be the operator
-       * `name` or a function that returns a valid {@link FullOperator} `name` for
-       * a given field name.
-       */
-      getDefaultOperator?:
-        | GetOptionIdentifierType<O>
-        | ((field: GetOptionIdentifierType<F>, misc: { fieldData: F }) => string);
-      /**
-       * Returns the default `value` for new rules.
-       */
+      toPath: Path | 'up' | 'down',
+      /** The current query, before the move. */
+      query: RG,
+      /** The next query, if the move is allowed to proceed. */
+      nextQuery: RG,
+      /** The options passed to {@link move} to generate `nextQuery`. */
+      options: MoveOptions,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      getDefaultValue?(rule: R, misc: { fieldData: F }): any;
+      context?: any
+    ): RG | boolean;
+    /**
+     * This callback is invoked before a group is moved or shifted. The function should return
+     * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
+     * a new query object (presumably based on `query` or `nextQuery`) which will become the new
+     * query state.
+     */
+    onMoveGroup?(
+      /** The group being moved. */
+      ruleGroup: RG,
+      /** The original path of the group. */
+      fromPath: Path,
       /**
-       * This function should return the list of allowed {@link FullOperator}s
-       * for the given {@link FullField} `name`. If `null` is returned, the
-       * {@link DefaultOperator}s are used.
+       * The target path of the group, or the direction of the shift. Note that the target path
+       * is not necessarily the final path since moves (particularly downward) can affect the
+       * indexes of sibling rules/groups at the original path.
        */
-      getOperators?(
-        field: GetOptionIdentifierType<F>,
-        misc: { fieldData: F }
-      ): FlexibleOptionList<FullOperator> | null;
-      /**
-       * This function should return the type of {@link ValueEditor} (see
-       * {@link ValueEditorType}) for the given field `name` and operator `name`.
-       */
-      getValueEditorType?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): ValueEditorType;
-      /**
-       * This function should return the separator element for a given field
-       * `name` and operator `name`. The element can be any valid React element,
-       * including a bare string (e.g., "and" or "to") or an HTML element like
-       * `<span />`. It will be placed in between value editors when multiple
-       * editors are rendered, such as when the `operator` is `"between"`.
-       */
-      getValueEditorSeparator?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): ReactNode;
-      /**
-       * This function should return the list of valid {@link ValueSources}
-       * for a given field `name` and operator `name`. The return value must
-       * be an array that includes at least one valid {@link ValueSource}
-       * (i.e. `["value"]`, `["field"]`, `["value", "field"]`, or
-       * `["field", "value"]`).
-       */
-      getValueSources?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): ValueSources;
-      /**
-       * This function should return the `type` of `<input />`
-       * for the given field `name` and operator `name` (only applicable when
-       * `getValueEditorType` returns `"text"` or a falsy value). If no
-       * function is provided, `"text"` is used as the default.
-       */
-      getInputType?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): InputType | null;
-      /**
-       * This function should return the list of allowed values for the
-       * given field `name` and operator `name` (only applicable when
-       * `getValueEditorType` returns `"select"` or `"radio"`). If no
-       * function is provided, an empty array is used as the default.
-       */
-      getValues?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): FlexibleOptionList<Option>;
-      /**
-       * The return value of this function will be used to apply classnames to the
-       * outer `<div>` of the given {@link Rule}.
-       */
-      getRuleClassname?(rule: R, misc: { fieldData: F }): Classname;
-      /**
-       * The return value of this function will be used to apply classnames to the
-       * outer `<div>` of the given {@link RuleGroup}.
-       */
-      getRuleGroupClassname?(ruleGroup: RG): Classname;
-      /**
-       * This callback is invoked before a new rule is added. The function should either manipulate
-       * the rule and return the new object, return `true` to allow the addition to proceed as normal,
-       * or return `false` to cancel the addition of the rule.
-       */
+      toPath: Path | 'up' | 'down',
+      /** The current query, before the move. */
+      query: RG,
+      /** The next query, if the move is allowed to proceed. */
+      nextQuery: RG,
+      /** The options passed to {@link move} to generate `nextQuery`. */
+      options: MoveOptions,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onAddRule?(rule: R, parentPath: Path, query: RG, context?: any): RuleType | boolean;
-      /**
-       * This callback is invoked before a new group is added. The function should either manipulate
-       * the group and return the new object, return `true` to allow the addition to proceed as normal,
-       * or return `false` to cancel the addition of the group.
-       */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | boolean;
-      /**
-       * This callback is invoked before a rule is moved or shifted. The function should return
-       * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
-       * a new query object (presumably based on `query` or `nextQuery`) which will become the new
-       * query state.
-       */
-      onMoveRule?(
-        /** The rule being moved. */
-        rule: R,
-        /** The original path of the rule. */
-        fromPath: Path,
-        /**
-         * The target path of the rule, or the direction of the shift. Note that the target path
-         * is not necessarily the final path since moves (particularly downward) can affect the
-         * indexes of sibling rules/groups at the original path.
-         */
-        toPath: Path | 'up' | 'down',
-        /** The current query, before the move. */
-        query: RG,
-        /** The next query, if the move is allowed to proceed. */
-        nextQuery: RG,
-        /** The options passed to {@link move} to generate `nextQuery`. */
-        options: MoveOptions,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        context?: any
-      ): RG | boolean;
-      /**
-       * This callback is invoked before a group is moved or shifted. The function should return
-       * `true` to allow the move/shift to proceed as normal, `false` to cancel the move/shift, or
-       * a new query object (presumably based on `query` or `nextQuery`) which will become the new
-       * query state.
-       */
-      onMoveGroup?(
-        /** The group being moved. */
-        ruleGroup: RG,
-        /** The original path of the group. */
-        fromPath: Path,
-        /**
-         * The target path of the group, or the direction of the shift. Note that the target path
-         * is not necessarily the final path since moves (particularly downward) can affect the
-         * indexes of sibling rules/groups at the original path.
-         */
-        toPath: Path | 'up' | 'down',
-        /** The current query, before the move. */
-        query: RG,
-        /** The next query, if the move is allowed to proceed. */
-        nextQuery: RG,
-        /** The options passed to {@link move} to generate `nextQuery`. */
-        options: MoveOptions,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        context?: any
-      ): RG | boolean;
-      /**
-       * This callback is invoked before a rule or group is removed. The function should return
-       * `true` if the rule or group should be removed or `false` if it should not be removed.
-       */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onRemove?(ruleOrGroup: R | RG, path: Path, query: RG, context?: any): boolean;
-      /**
-       * This callback is invoked anytime the query state is updated.
-       */
-      onQueryChange?(query: RG): void;
-      /**
-       * Each log object will be passed to this function when `debugMode` is `true`.
-       *
-       * @default console.log
-       */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onLog?(obj: any): void;
-      /**
-       * Show group combinator selectors in the body of the group, between each child rule/group,
-       * instead of in the group header.
-       *
-       * @default false
-       */
-      showCombinatorsBetweenRules?: boolean;
-      /**
-       * @deprecated As of v7, this prop is ignored. To enable independent combinators, use
-       * {@link RuleGroupTypeIC} for the `query` or `defaultQuery` prop. The query builder
-       * will detect the query type and behave accordingly.
-       */
-      independentCombinators?: boolean;
-      /**
-       * Show the "not" (aka inversion) toggle for rule groups.
-       *
-       * @default false
-       */
-      showNotToggle?: boolean;
-      /**
-       * Show the "Shift up"/"Shift down" actions.
-       *
-       * @default false
-       */
-      showShiftActions?: boolean;
-      /**
-       * Show the "Clone rule" and "Clone group" buttons.
-       *
-       * @default false
-       */
-      showCloneButtons?: boolean;
-      /**
-       * Show the "Lock rule" and "Lock group" buttons.
-       *
-       * @default false
-       */
-      showLockButtons?: boolean;
-      /**
-       * Reset the `operator` and `value` when the `field` changes.
-       *
-       * @default true
-       */
-      resetOnFieldChange?: boolean;
-      /**
-       * Reset the `value` when the `operator` changes.
-       *
-       * @default false
-       */
-      resetOnOperatorChange?: boolean;
-      /**
-       * Select the first field in the array automatically.
-       *
-       * @default true
-       */
-      autoSelectField?: boolean;
-      /**
-       * Select the first operator in the array automatically.
-       *
-       * @default true
-       */
-      autoSelectOperator?: boolean;
-      /**
-       * Adds a new default rule automatically to each new group.
-       *
-       * @default false
-       */
-      addRuleToNewGroups?: boolean;
-      /**
-       * Store list-type values as native arrays instead of comma-separated strings.
-       *
-       * @default false
-       */
-      listsAsArrays?: boolean;
-      /**
-       * Store values as numbers if possible.
-       *
-       * @default false
-       */
-      parseNumbers?: ParseNumbersMethod;
-      /**
-       * Disables the entire query builder if true, or the rules and groups at
-       * the specified paths (as well as all child rules/groups and subcomponents)
-       * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
-       * no changes to the query are allowed.
-       *
-       * @default false
-       */
-      disabled?: boolean | Path[];
-      /**
-       * Query validation function.
-       */
-      validator?: QueryValidator;
-      /**
-       * `id` generator function. Should always produce a unique/random value.
-       *
-       * @default crypto.randomUUID
-       */
-      idGenerator?: () => string;
-      /**
-       * Generator function for the `title` attribute applied to the outermost `<div>` of each
-       * rule group. As this is intended to help with accessibility, the text output from this
-       * function should be meaningful, descriptive, and unique within the page.
-       */
-      accessibleDescriptionGenerator?: AccessibleDescriptionGenerator;
-      /**
-       * Container for custom props that are passed to all components.
-       */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      context?: any;
-    }
+      context?: any
+    ): RG | boolean;
+    /**
+     * This callback is invoked before a rule or group is removed. The function should return
+     * `true` if the rule or group should be removed or `false` if it should not be removed.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onRemove?(ruleOrGroup: R | RG, path: Path, query: RG, context?: any): boolean;
+    /**
+     * This callback is invoked anytime the query state is updated.
+     */
+    onQueryChange?(query: RG): void;
+    /**
+     * Each log object will be passed to this function when `debugMode` is `true`.
+     *
+     * @default console.log
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onLog?(obj: any): void;
+    /**
+     * Show group combinator selectors in the body of the group, between each child rule/group,
+     * instead of in the group header.
+     *
+     * @default false
+     */
+    showCombinatorsBetweenRules?: boolean;
+    /**
+     * @deprecated As of v7, this prop is ignored. To enable independent combinators, use
+     * {@link RuleGroupTypeIC} for the `query` or `defaultQuery` prop. The query builder
+     * will detect the query type and behave accordingly.
+     */
+    independentCombinators?: boolean;
+    /**
+     * Show the "not" (aka inversion) toggle for rule groups.
+     *
+     * @default false
+     */
+    showNotToggle?: boolean;
+    /**
+     * Show the "Shift up"/"Shift down" actions.
+     *
+     * @default false
+     */
+    showShiftActions?: boolean;
+    /**
+     * Show the "Clone rule" and "Clone group" buttons.
+     *
+     * @default false
+     */
+    showCloneButtons?: boolean;
+    /**
+     * Show the "Lock rule" and "Lock group" buttons.
+     *
+     * @default false
+     */
+    showLockButtons?: boolean;
+    /**
+     * Reset the `operator` and `value` when the `field` changes.
+     *
+     * @default true
+     */
+    resetOnFieldChange?: boolean;
+    /**
+     * Reset the `value` when the `operator` changes.
+     *
+     * @default false
+     */
+    resetOnOperatorChange?: boolean;
+    /**
+     * Select the first field in the array automatically.
+     *
+     * @default true
+     */
+    autoSelectField?: boolean;
+    /**
+     * Select the first operator in the array automatically.
+     *
+     * @default true
+     */
+    autoSelectOperator?: boolean;
+    /**
+     * Adds a new default rule automatically to each new group.
+     *
+     * @default false
+     */
+    addRuleToNewGroups?: boolean;
+    /**
+     * Store list-type values as native arrays instead of comma-separated strings.
+     *
+     * @default false
+     */
+    listsAsArrays?: boolean;
+    /**
+     * Store values as numbers if possible.
+     *
+     * @default false
+     */
+    parseNumbers?: ParseNumbersMethod;
+    /**
+     * Disables the entire query builder if true, or the rules and groups at
+     * the specified paths (as well as all child rules/groups and subcomponents)
+     * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
+     * no changes to the query are allowed.
+     *
+     * @default false
+     */
+    disabled?: boolean | Path[];
+    /**
+     * Query validation function.
+     */
+    validator?: QueryValidator;
+    /**
+     * `id` generator function. Should always produce a unique/random value.
+     *
+     * @default crypto.randomUUID
+     */
+    idGenerator?: () => string;
+    /**
+     * Generator function for the `title` attribute applied to the outermost `<div>` of each
+     * rule group. As this is intended to help with accessibility, the text output from this
+     * function should be meaningful, descriptive, and unique within the page.
+     */
+    accessibleDescriptionGenerator?: AccessibleDescriptionGenerator;
+    /**
+     * Container for custom props that are passed to all components.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context?: any;
+  }
   : never;
 
 // import { getFirstOption } from '../utils';

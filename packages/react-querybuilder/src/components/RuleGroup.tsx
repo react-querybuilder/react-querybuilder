@@ -163,6 +163,9 @@ export const RuleGroupHeaderComponents = React.memo(
             ruleGroup={rg.ruleGroup}
           />
         )}
+        {rg.title && (
+          <span className={rg.classNames.title}>{rg.title}</span>
+        )}
         <AddRuleActionControlElement
           key={TestID.addRule}
           testID={TestID.addRule}
