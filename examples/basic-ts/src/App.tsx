@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState , useDeferredValue} from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.scss';
@@ -18,6 +18,7 @@ const initialQuery: RuleGroupType = {
 
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
+  const differedQuery = useDeferredValue(query);
 
   return (
     <div>
@@ -25,7 +26,7 @@ export const App = () => {
 
       <h4>Query</h4>
       <pre>
-        <code>{formatQuery(query, 'json')}</code>
+        <code>{formatQuery(differedQuery, 'json')}</code>
       </pre>
     </div>
   );

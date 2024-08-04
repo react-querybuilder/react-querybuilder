@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState , useDeferredValue} from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
@@ -35,6 +35,7 @@ const initialQuery: RuleGroupType = {
  */
 export const NextQueryBuilder = () => {
   const [query, setQuery] = useState(initialQuery);
+  const differedQuery = useDeferredValue(query);
 
   return (
     <>
@@ -43,7 +44,7 @@ export const NextQueryBuilder = () => {
       </ClientOnly>
       <h4>Query</h4>
       <pre>
-        <code>{formatQuery(query, 'json')}</code>
+        <code>{formatQuery(differedQuery, 'json')}</code>
       </pre>
     </>
   );
