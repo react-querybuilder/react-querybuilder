@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState  , useDeferredValue} from 'react';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.css';
 
@@ -16,13 +16,13 @@ const initialQuery = {
 };
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
-
+  const differedQuery = useDeferredValue(query);
   return (
     <div>
       <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       <h4>Query</h4>
       <pre>
-        <code>{formatQuery(query, 'json')}</code>
+        <code>{formatQuery(differedQuery, 'json')}</code>
       </pre>
     </div>
   );
