@@ -15,6 +15,7 @@ export const App = () => {
           key="query"
           query={devApp.query}
           onQueryChange={devApp.onQueryChange}
+          onAddGroup={(rg, pp, q, c) => { rg.title = "okGo"; console.log("ok GO"); return rg }}
         />
       ) : (
         <QueryBuilder
@@ -22,6 +23,7 @@ export const App = () => {
           key="queryIC"
           query={devApp.queryIC}
           onQueryChange={devApp.onQueryChangeIC}
+          onAddGroup={(rg, pp, q, c) => { rg.title = "okGo"; console.log("ok GO"); return rg }}
         />
       )}
     </DevLayout>

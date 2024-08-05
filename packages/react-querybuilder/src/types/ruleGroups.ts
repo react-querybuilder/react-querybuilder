@@ -39,6 +39,7 @@ export interface RuleGroupType<R extends RuleType = RuleType, C extends string =
   combinator: C;
   rules: RuleGroupArray<RuleGroupType<R, C>, R>;
   not?: boolean;
+  title?: string;
 }
 
 /**

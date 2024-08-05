@@ -163,8 +163,8 @@ export const RuleGroupHeaderComponents = React.memo(
             ruleGroup={rg.ruleGroup}
           />
         )}
-        {rg.title && (
-          <span className={rg.classNames.title}>{rg.title}</span>
+        {rg.ruleGroup.title && (
+          <span className={rg.classNames.title}>{rg.ruleGroup.title}</span>
         )}
         <AddRuleActionControlElement
           key={TestID.addRule}

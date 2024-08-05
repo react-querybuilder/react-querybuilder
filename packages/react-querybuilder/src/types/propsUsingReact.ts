@@ -412,7 +412,6 @@ export interface RuleGroupProps<F extends FullOption = FullOption, O extends str
    * @deprecated Use the `not` property of the `ruleGroup` prop instead
    */
   not?: boolean;
-  title?: string;
 }
 
 /**
