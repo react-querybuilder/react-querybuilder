@@ -253,6 +253,16 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
         ),
         mergeControlElement('rule', propsCE.rule, contextCE.rule),
         mergeControlElement('ruleGroup', propsCE.ruleGroup, contextCE.ruleGroup),
+        mergeControlElement(
+          'ruleGroupBodyElements',
+          propsCE.ruleGroupBodyElements,
+          contextCE.ruleGroupBodyElements
+        ),
+        mergeControlElement(
+          'ruleGroupHeaderElements',
+          propsCE.ruleGroupHeaderElements,
+          contextCE.ruleGroupHeaderElements
+        ),
         {
           actionElement:
             propsCE.actionElement ??
@@ -285,6 +295,8 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
       contextCE.removeRuleAction,
       contextCE.rule,
       contextCE.ruleGroup,
+      contextCE.ruleGroupBodyElements,
+      contextCE.ruleGroupHeaderElements,
       contextCE.shiftActions,
       contextCE.valueEditor,
       contextCE.valueSelector,
@@ -308,6 +320,8 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
       propsCE.removeRuleAction,
       propsCE.rule,
       propsCE.ruleGroup,
+      propsCE.ruleGroupBodyElements,
+      propsCE.ruleGroupHeaderElements,
       propsCE.shiftActions,
       propsCE.valueEditor,
       propsCE.valueSelector,

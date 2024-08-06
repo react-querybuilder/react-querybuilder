@@ -4,7 +4,7 @@ import { DragHandle } from './DragHandle';
 import { InlineCombinator } from './InlineCombinator';
 import { NotToggle } from './NotToggle';
 import { Rule } from './Rule';
-import { RuleGroup } from './RuleGroup';
+import { RuleGroup, RuleGroupBodyComponents, RuleGroupHeaderComponents } from './RuleGroup';
 import { ShiftActions } from './ShiftActions';
 import { ValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
@@ -30,6 +30,8 @@ export const defaultControlElements = {
   removeRuleAction: ActionElement,
   rule: Rule,
   ruleGroup: RuleGroup,
+  ruleGroupBodyElements: RuleGroupBodyComponents,
+  ruleGroupHeaderElements: RuleGroupHeaderComponents,
   shiftActions: ShiftActions,
   valueEditor: ValueEditor,
   valueSelector: ValueSelector,

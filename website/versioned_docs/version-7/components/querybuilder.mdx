@@ -174,29 +174,31 @@ function App() {
 
 The following control overrides are supported per the `Controls` interface. Setting a control override to `null` will hide the element by rendering it as `() => null`.
 
-| Property                                      | Type                                                                                                                     |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| [`actionElement`](#actionelement)             | <code>React.ComponentType&lt;ActionProps&gt;</code>                                                                      |
-| [`addGroupAction`](#addgroupaction)           | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
-| [`addRuleAction`](#addruleaction)             | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
-| [`cloneGroupAction`](#clonegroupaction)       | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
-| [`cloneRuleAction`](#cloneruleaction)         | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
-| [`combinatorSelector`](#combinatorselector)   | <code>React.ComponentType&lt;CombinatorSelectorProps&gt; \| null</code>                                                  |
-| [`dragHandle`](#draghandle)                   | <code>React.ForwardRefExoticComponent&lt;DragHandleProps & React.RefAttributes&lt;HTMLSpanElement&gt;&gt; \| null</code> |
-| [`fieldSelector`](#fieldselector)             | <code>React.ComponentType&lt;FieldSelectorProps&gt; \| null</code>                                                       |
-| [`inlineCombinator`](#inlinecombinator)       | <code>React.ComponentType&lt;InlineCombinatorProps&gt; \| null</code>                                                    |
-| [`lockGroupAction`](#lockgroupaction)         | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
-| [`lockRuleAction`](#lockruleaction)           | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
-| [`notToggle`](#nottoggle)                     | <code>React.ComponentType&lt;NotToggleProps&gt; \| null</code>                                                           |
-| [`operatorSelector`](#operatorselector)       | <code>React.ComponentType&lt;OperatorSelectorProps&gt; \| null</code>                                                    |
-| [`removeGroupAction`](#removegroupaction)     | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
-| [`removeRuleAction`](#removeruleaction)       | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
-| [`rule`](#rule)                               | <code>React.ComponentType&lt;RuleProps&gt;</code>                                                                        |
-| [`ruleGroup`](#rulegroup)                     | <code>React.ComponentType&lt;RuleGroupProps&gt;</code>                                                                   |
-| [`shiftActions`](#shiftactions)               | <code>React.ComponentType&lt;ShiftActionsProps&gt; \| null</code>                                                        |
-| [`valueEditor`](#valueeditor)                 | <code>React.ComponentType&lt;ValueEditorProps&gt; \| null</code>                                                         |
-| [`valueSelector`](#valueselector)             | <code>React.ComponentType&lt;ValueSelectorProps&gt;</code>                                                               |
-| [`valueSourceSelector`](#valuesourceselector) | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt; \| null</code>                                                 |
+| Property                                              | Type                                                                                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| [`actionElement`](#actionelement)                     | <code>React.ComponentType&lt;ActionProps&gt;</code>                                                                      |
+| [`addGroupAction`](#addgroupaction)                   | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
+| [`addRuleAction`](#addruleaction)                     | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
+| [`cloneGroupAction`](#clonegroupaction)               | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
+| [`cloneRuleAction`](#cloneruleaction)                 | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`combinatorSelector`](#combinatorselector)           | <code>React.ComponentType&lt;CombinatorSelectorProps&gt; \| null</code>                                                  |
+| [`dragHandle`](#draghandle)                           | <code>React.ForwardRefExoticComponent&lt;DragHandleProps & React.RefAttributes&lt;HTMLSpanElement&gt;&gt; \| null</code> |
+| [`fieldSelector`](#fieldselector)                     | <code>React.ComponentType&lt;FieldSelectorProps&gt; \| null</code>                                                       |
+| [`inlineCombinator`](#inlinecombinator)               | <code>React.ComponentType&lt;InlineCombinatorProps&gt; \| null</code>                                                    |
+| [`lockGroupAction`](#lockgroupaction)                 | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
+| [`lockRuleAction`](#lockruleaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`notToggle`](#nottoggle)                             | <code>React.ComponentType&lt;NotToggleProps&gt; \| null</code>                                                           |
+| [`operatorSelector`](#operatorselector)               | <code>React.ComponentType&lt;OperatorSelectorProps&gt; \| null</code>                                                    |
+| [`removeGroupAction`](#removegroupaction)             | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
+| [`removeRuleAction`](#removeruleaction)               | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`rule`](#rule)                                       | <code>React.ComponentType&lt;RuleProps&gt;</code>                                                                        |
+| [`ruleGroup`](#rulegroup)                             | <code>React.ComponentType&lt;RuleGroupProps&gt;</code>                                                                   |
+| [`ruleGroupBodyElements`](#rulegroupbodyelements)     | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
+| [`ruleGroupHeaderElements`](#rulegroupheaderelements) | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
+| [`shiftActions`](#shiftactions)                       | <code>React.ComponentType&lt;ShiftActionsProps&gt; \| null</code>                                                        |
+| [`valueEditor`](#valueeditor)                         | <code>React.ComponentType&lt;ValueEditorProps&gt; \| null</code>                                                         |
+| [`valueSelector`](#valueselector)                     | <code>React.ComponentType&lt;ValueSelectorProps&gt;</code>                                                               |
+| [`valueSourceSelector`](#valuesourceselector)         | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt; \| null</code>                                                 |
 
 #### `actionElement`
 
@@ -536,6 +538,14 @@ Rule group layout component. Default is [`RuleGroup`](./rulegroup). Receives the
 If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `RuleGroup` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
 
 :::
+
+#### `ruleGroupBodyElements`
+
+Rule group body elements. Default is [`RuleGroupBodyComponents`](./rulegroup#rulegroupbodycomponents), which returns an array containing only the elements themselves (no HTML or React Native wrapper element). Receives the same props as [`ruleGroup`](#rulegroup), in addition to the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
+
+#### `ruleGroupHeaderElements`
+
+Rule group header elements. Default is [`RuleGroupHeaderComponents`](./rulegroup#rulegroupheadercomponents), which returns a React `Fragment` containing only the elements themselves (no HTML or React Native wrapper element). Receives the same props as [`ruleGroup`](#rulegroup), in addition to the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
 
 #### `shiftActions`
 
