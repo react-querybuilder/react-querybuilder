@@ -104,7 +104,7 @@
     "@vitejs/plugin-react-swc": "^3.7.0",
     "babel-plugin-istanbul": "^7.0.0",
     "concurrently": "^8.2.2",
-    "jscodeshift": "^0.16.1",
+    "jscodeshift": "^17.0.0",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.5",
     "query-string": "^9.1.0",

@@ -44,7 +44,7 @@
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "antd": "^5.19.4",
+    "antd": "^5.20.0",
     "dayjs": "^1.11.12",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
