@@ -6,7 +6,6 @@ import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus
 import path from 'node:path';
 import { themes } from 'prism-react-renderer/dist/index.mjs';
 import type { TypeDocOptions } from 'typedoc';
-import type { PluginOptions as TypedocPluginMarkdownOptions } from 'typedoc-plugin-markdown';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
 const config: Config = {
@@ -99,7 +98,9 @@ const config: Config = {
               textContentMappings: {
                 'title.indexPage': 'API Index',
                 'title.memberPage': '{name}',
-                'title.modulePage': '{name}',
+                'breadcrumbs.home': '{name}',
+                'header.title': '{name}',
+                'header.docs': '{name}',
                 'footer.text':
                   ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
               },
@@ -108,9 +109,7 @@ const config: Config = {
               sidebar: { autoConfiguration: false, pretty: false },
               sortEntryPoints: true,
               plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
-            } satisfies Partial<
-              DocusaurusPluginTypedocOptions & TypedocPluginMarkdownOptions & TypeDocOptions
-            >,
+            } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
           ],
         ]),
     [
