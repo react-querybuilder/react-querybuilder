@@ -147,7 +147,6 @@ describe('NativeNotToggle', () => {
   it('works', () => {
     const handleOnChange = jest.fn();
     render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
-    // TODO: Figure out why we have to use `as any` here
     const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch);
     fireEvent(switchEl, 'valueChange', true);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
@@ -396,7 +395,6 @@ describe('NativeValueEditor', () => {
         value={'opt1,opt1'}
       />
     );
-    // TODO: Figure out why we have to use `as any` here
     const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput);
     [0, 1].forEach(i => {
       fireEvent.changeText(selectors[i], 'opt2');

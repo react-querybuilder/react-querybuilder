@@ -2394,20 +2394,24 @@ describe('disabled', () => {
         showNotToggle
         disabled
         controlElements={{
-          ruleGroup: ({ actions }) => (
-            <div data-testid={TestID.ruleGroup}>
+          ruleGroupHeaderElements: ({ actions }) => (
+            <>
               <button onClick={() => actions.onRuleAdd(ruleToAdd, [])}>onRuleAdd</button>
               <button onClick={() => actions.onGroupAdd(groupToAdd, [])}>onGroupAdd</button>
+              <button onClick={() => actions.onPropChange('not', true, [])}>onPropChange</button>
+              <button onClick={() => actions.onGroupRemove([6])}>onGroupRemove</button>
+            </>
+          ),
+          ruleGroupBodyElements: ({ actions }) => (
+            <>
               <button onClick={() => actions.onPropChange('field', 'f2', [0])}>onPropChange</button>
               <button onClick={() => actions.onPropChange('combinator', 'or', [1])}>
                 onPropChange
               </button>
-              <button onClick={() => actions.onPropChange('not', true, [])}>onPropChange</button>
               <button onClick={() => actions.onRuleRemove([0])}>onRuleRemove</button>
-              <button onClick={() => actions.onGroupRemove([6])}>onGroupRemove</button>
               <button onClick={() => actions.moveRule([6], [0])}>moveRule</button>
               <button onClick={() => actions.moveRule([6], [0], true)}>moveRule</button>
-            </div>
+            </>
           ),
         }}
         query={{

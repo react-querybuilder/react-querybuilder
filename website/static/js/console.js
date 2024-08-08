@@ -1,5 +1,4 @@
 // Uncomment the line below to expose the `ReactQueryBuilder` object in the console
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 // var process = { env: { NODE_ENV: 'development' } };
 
 const commonStyles = 'font-family: monospace';

@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import queryString from 'query-string';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import type { FormatQueryOptions, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
@@ -40,11 +39,7 @@ export const useDevApp = () => {
       ...opts,
       fields,
       validator: opts.validateQuery ? defaultValidator : undefined,
-      controlClassnames: {
-        queryBuilder: clsx({
-          [standardClassnames.branches]: opts.showBranches,
-        }),
-      },
+      controlClassnames: { queryBuilder: opts.showBranches ? standardClassnames.branches : '' },
     };
   }, [optVals]);
 

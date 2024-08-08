@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#755] New `controlElements` properties `ruleGroupHeaderElements` and `ruleGroupBodyElements`, enabling customization/replacement/augmentation of the subcomponents within the rule group header and body wrappers without needing to reimplement the entire `RuleGroup` component.
+- [#755] New `useQueryBuilderNative` hook. Works the same as `useQueryBuilder`, but tailored for React Native implementations.
 
 ## [v7.6.1] - 2024-08-02
 
@@ -1734,6 +1737,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#733]: https://github.com/react-querybuilder/react-querybuilder/pull/733
 [#734]: https://github.com/react-querybuilder/react-querybuilder/pull/734
 [#748]: https://github.com/react-querybuilder/react-querybuilder/pull/748
+[#755]: https://github.com/react-querybuilder/react-querybuilder/pull/755
 
 <!-- #endregion -->
 

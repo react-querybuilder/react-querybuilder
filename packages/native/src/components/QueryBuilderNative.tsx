@@ -1,26 +1,24 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import type {
-  FullCombinator,
   Controls,
+  FullCombinator,
   FullField,
-  GetOptionIdentifierType,
   FullOperator,
+  GetOptionIdentifierType,
   Path,
   QueryBuilderContextProps,
-  QueryBuilderProps,
   RuleGroupTypeAny,
 } from 'react-querybuilder';
 import {
   QueryBuilderContext as _QBC,
   QueryBuilderStateContext,
   queryBuilderStore,
-  useQueryBuilderSetup,
 } from 'react-querybuilder';
 import { Provider } from 'react-redux';
 import type { QueryBuilderNativeProps } from '../types';
 import { defaultNativeControlElements } from './defaults';
-import { useQueryBuilderSchemaNative } from './useQueryBuilderSchemaNative';
+import { useQueryBuilderNative } from './useQueryBuilderNative';
 
 const rootPath = [] satisfies Path;
 
@@ -31,12 +29,23 @@ const QueryBuilderNativeInternal = <
   C extends FullCombinator,
 >({
   props,
-  setup,
 }: {
   props: QueryBuilderNativeProps<RG, F, O, C>;
-  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>;
 }) => {
-  const qb = useQueryBuilderSchemaNative<RG, F, O, C>(props, setup);
+  const controlElements = useMemo(
+    () =>
+      ({ ...defaultNativeControlElements, ...props.controlElements }) as Controls<
+        F,
+        GetOptionIdentifierType<O>
+      >,
+    [props.controlElements]
+  );
+  const qb = useQueryBuilderNative({ ...props, controlElements } as QueryBuilderNativeProps<
+    RG,
+    F,
+    O,
+    C
+  >);
 
   const { ruleGroup: RuleGroupComponent } = qb.schema.controls;
 
@@ -69,25 +78,8 @@ export const QueryBuilderNative = <
   C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
-) => {
-  const controlElements = useMemo(
-    () =>
-      ({ ...defaultNativeControlElements, ...props.controlElements }) as Controls<
-        F,
-        GetOptionIdentifierType<O>
-      >,
-    [props.controlElements]
-  );
-  const setup = useQueryBuilderSetup({ ...props, controlElements } as QueryBuilderProps<
-    RG,
-    F,
-    O,
-    C
-  >);
-
-  return (
-    <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
-      <QueryBuilderNativeInternal props={props} setup={setup} />
-    </Provider>
-  );
-};
+) => (
+  <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
+    <QueryBuilderNativeInternal props={props} />
+  </Provider>
+);

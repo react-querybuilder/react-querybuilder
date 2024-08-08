@@ -1,4 +1,3 @@
-import type { MoveOptions } from '../utils';
 import type {
   ComponentType,
   ForwardRefExoticComponent,
@@ -8,6 +7,8 @@ import type {
   RefAttributes,
 } from 'react';
 import type { SetNonNullable } from 'type-fest';
+import type { useRuleGroup } from '../hooks/useRuleGroup';
+import type { MoveOptions } from '../utils';
 import type {
   AccessibleDescriptionGenerator,
   Classname,
@@ -295,6 +296,22 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    * @default RuleGroup
    */
   ruleGroup: ComponentType<RuleGroupProps<F, O>>;
+  /**
+   * Rule group body components.
+   *
+   * @default RuleGroupBodyComponents
+   */
+  // Specifying the generics with `RuleGroupProps<F, O>` would be preferable here, but
+  // it complicates things with `QueryBuilderContextType`.
+  ruleGroupBodyElements: ComponentType<RuleGroupProps & ReturnType<typeof useRuleGroup>>;
+  /**
+   * Rule group header components.
+   *
+   * @default RuleGroupHeaderComponents
+   */
+  // Specifying the generics with `RuleGroupProps<F, O>` would be preferable here, but
+  // it complicates things with `QueryBuilderContextType`.
+  ruleGroupHeaderElements: ComponentType<RuleGroupProps & ReturnType<typeof useRuleGroup>>;
   /**
    * Shifts the current rule/group up or down in the query hierarchy.
    *

@@ -1,4 +1,3 @@
-import type { ESLint } from 'eslint';
 import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'fs/promises';
 import { join as pathJoin } from 'path';
@@ -8,8 +7,6 @@ import * as prettierPluginOrganizeImports from 'prettier-plugin-organize-imports
 import * as prettierPluginEstree from 'prettier/plugins/estree';
 import { transformWithEsbuild } from 'vite';
 import { configs } from './exampleConfigs.js';
-
-type ESLintExtendsIsArray = ESLint.ConfigData & { extends: string[] };
 
 interface PackageJSON {
   name: string;
@@ -24,9 +21,6 @@ console.log('Generating/updating examples');
 const rootPrettierConfig = await prettier.resolveConfig(import.meta.file);
 const lernaJson = Bun.file(pathJoin(import.meta.dir, '../lerna.json'));
 const { version } = await lernaJson.json();
-const eslintrc: ESLintExtendsIsArray = await Bun.file(
-  pathJoin(import.meta.dir, '../.eslintrc.json')
-).json();
 
 const compileToJS = async (code: string, fileName: string) =>
   (
@@ -36,8 +30,6 @@ const compileToJS = async (code: string, fileName: string) =>
       jsx: 'preserve',
     })
   ).code.replace(/^(const|createRoot|\s+return)/gm, '\n\n$1');
-
-const noTypeScriptESLint = (s: string) => !/@typescript-eslint/.test(s);
 
 const packagesPath = pathJoin(import.meta.dir, '../packages');
 const templatePath = pathJoin(import.meta.dir, '_template');
@@ -196,7 +188,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     delete examplePkgJSON.devDependencies['sass'];
     delete examplePkgJSON.devDependencies['typescript'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
-      if (devDep.match(/^@types(?:cript-eslint)?\//)) {
+      if (devDep.match(/^@types\//)) {
         delete examplePkgJSON.devDependencies[devDep];
       }
     }
@@ -213,25 +205,6 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   }
   toWrite.push(
     formatAndWrite(pathJoin(examplePath, 'package.json'), stableStringify(examplePkgJSON))
-  );
-  // #endregion
-
-  // #region .eslintrc.json
-  const exampleESLintRC: typeof eslintrc = JSON.parse(JSON.stringify(eslintrc));
-  delete exampleESLintRC.env?.node;
-  delete exampleESLintRC.ignorePatterns;
-  if (exampleConfig.compileToJS) {
-    exampleESLintRC.extends = exampleESLintRC.extends.filter(noTypeScriptESLint);
-    exampleESLintRC.plugins = exampleESLintRC.plugins?.filter(noTypeScriptESLint);
-    delete exampleESLintRC.parser;
-    for (const rule of Object.keys(exampleESLintRC.rules ?? {})) {
-      if (rule.match(/^@types(?:cript-eslint)?\//)) {
-        delete exampleESLintRC.rules?.[rule];
-      }
-    }
-  }
-  toWrite.push(
-    formatAndWrite(pathJoin(examplePath, '.eslintrc.json'), stableStringify(exampleESLintRC))
   );
   // #endregion
 

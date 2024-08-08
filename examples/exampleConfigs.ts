@@ -70,7 +70,10 @@ export const configs: Record<string, ExampleConfig> = {
     dependencyKeys: ['bootstrap', 'bootstrap-icons', ['@popperjs/core', '^2.11.5']],
     scssPre: [`$code-color: #333333;`, `@import 'bootstrap/scss/bootstrap.scss';`],
     scssPost: [`.queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`],
-    tsxImports: [`import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';`],
+    tsxImports: [
+      `import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';`,
+      `import 'bootstrap-icons/font/bootstrap-icons.scss';`,
+    ],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderBootstrap>', '</QueryBuilderBootstrap>'],
     props: [],

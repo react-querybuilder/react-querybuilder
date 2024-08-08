@@ -104,7 +104,7 @@
     "@vitejs/plugin-react-swc": "^3.7.0",
     "babel-plugin-istanbul": "^7.0.0",
     "concurrently": "^8.2.2",
-    "jscodeshift": "^0.16.1",
+    "jscodeshift": "^17.0.0",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.5",
     "query-string": "^9.1.0",
@@ -120,7 +120,6 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
-    "clsx": "^2.1.1",
     "immer": "^10.1.1",
     "numeric-quantity": "^2.0.1",
     "react-redux": "^9.1.2"

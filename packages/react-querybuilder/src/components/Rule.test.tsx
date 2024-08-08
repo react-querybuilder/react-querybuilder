@@ -1,13 +1,12 @@
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { clsx } from 'clsx';
-import * as React from 'react';
 import {
   consoleMocks,
   getFieldMapFromArray,
   getRuleProps as getProps,
   ruleClassnames,
 } from '@rqb-testing';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import * as React from 'react';
 import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
 import type {
@@ -20,6 +19,7 @@ import type {
   ValueSources,
 } from '../types';
 import { toFullOption } from '../utils';
+import { clsx } from '../utils/clsx';
 import { Rule } from './Rule';
 import { render, waitABeat } from './testUtils';
 

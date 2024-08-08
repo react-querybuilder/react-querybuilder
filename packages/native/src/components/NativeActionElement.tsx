@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Button } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import type { ActionNativeProps } from '../types';
+import { defaultNativeStyles } from '../styles';
 
 export const NativeActionElement = ({
   handleOnClick,
@@ -8,11 +9,17 @@ export const NativeActionElement = ({
   disabled,
   disabledTranslation,
   testID,
+  schema: _schema,
 }: ActionNativeProps) => (
-  <Button
+  <Pressable
     testID={testID}
     disabled={disabled && !disabledTranslation}
-    title={`${disabledTranslation && disabled ? (disabledTranslation.label ?? '') : (label ?? '')}`}
-    onPress={_e => handleOnClick()}
-  />
+    onPress={_e => handleOnClick()}>
+    <View style={defaultNativeStyles.actionElement}>
+      <Text
+        style={
+          defaultNativeStyles.actionElementText
+        }>{`${disabledTranslation && disabled ? (disabledTranslation.label ?? '') : (label ?? '')}`}</Text>
+    </View>
+  </Pressable>
 );

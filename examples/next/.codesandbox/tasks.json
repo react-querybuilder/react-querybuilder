@@ -1,18 +1,22 @@
 {
   "setupTasks": [
     {
+      "name": "Install Bun",
+      "command": "npm install --global bun"
+    },
+    {
       "name": "Install Dependencies",
-      "command": "yarn install"
+      "command": "bun install"
     }
   ],
   "tasks": {
     "build": {
       "name": "build",
-      "command": "yarn build"
+      "command": "bun run build"
     },
     "dev": {
       "name": "dev",
-      "command": "yarn dev",
+      "command": "bun run dev",
       "runAtStart": true,
       "preview": {
         "port": 3000
@@ -20,7 +24,7 @@
     },
     "preview": {
       "name": "preview",
-      "command": "yarn start"
+      "command": "bun run start"
     }
   }
 }

@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import type { Controls, FullField } from 'react-querybuilder';
+import { RuleGroupBodyComponents, RuleGroupHeaderComponents } from 'react-querybuilder';
 import { NativeActionElement } from './NativeActionElement';
 import { NativeInlineCombinator } from './NativeInlineCombinator';
 import { NativeNotToggle } from './NativeNotToggle';
@@ -30,6 +31,8 @@ export const defaultNativeControlElements = {
   removeRuleAction: NativeActionElement,
   rule: RuleNative,
   ruleGroup: RuleGroupNative,
+  ruleGroupBodyElements: RuleGroupBodyComponents,
+  ruleGroupHeaderElements: RuleGroupHeaderComponents,
   shiftActions: NativeShiftActions,
   valueEditor: NativeValueEditor,
   valueSelector: NativeValueSelector,

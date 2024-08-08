@@ -24,6 +24,11 @@ export * from './toFullOption';
 export * from './toOptions';
 export * from './transformQuery';
 export * from './uniq';
+
+// Don't export clsx. It should be imported from the official clsx
+// package if used outside the context of this package.
+// export * from './clsx';
+
 // To reduce bundle size, these are only available as
 // separate exports as of v7.
 // export * from './parseCEL';

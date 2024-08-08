@@ -3,11 +3,26 @@ import { StyleSheet } from 'react-native';
 import type { QueryBuilderNativeStyles } from './types';
 
 export const defaultNativeSelectStyles = {
-  selector: { borderWidth: 1, height: 32, width: 100 } as TextStyle,
+  selector: {
+    borderRadius: 4,
+    borderWidth: 1,
+    height: 32,
+    width: 100,
+    paddingLeft: 4,
+  } as TextStyle,
   option: {} as TextStyle,
 } as const;
 
 const defaultStylesObject = {
+  actionElement: {
+    borderWidth: 1,
+    borderRadius: 4,
+    height: 32,
+    padding: 8,
+    paddingBottom: 4,
+    paddingTop: 4,
+  },
+  actionElementText: {},
   combinatorOption: defaultNativeSelectStyles.option,
   combinatorSelector: defaultNativeSelectStyles.selector,
   // TODO?: implement drag-and-drop
@@ -36,7 +51,7 @@ const defaultStylesObject = {
     alignItems: 'center',
   },
   shiftActions: { flexDirection: 'column' },
-  value: { borderWidth: 1, height: 32, width: 150 },
+  value: { ...defaultNativeSelectStyles.selector, width: 150 },
   valueEditorOption: defaultNativeSelectStyles.option,
   valueEditorSelector: defaultNativeSelectStyles.selector,
   valueEditorSwitch: {},

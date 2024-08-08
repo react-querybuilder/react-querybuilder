@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LogType, standardClassnames } from '../defaults';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
@@ -38,6 +37,7 @@ import {
   remove,
   update,
 } from '../utils';
+import { clsx } from '../utils/clsx';
 import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
 import { useDeprecatedProps } from './useDeprecatedProps';
 import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
