@@ -1,6 +1,10 @@
 {
   "setupTasks": [
     {
+      "name": "Install Bun",
+      "command": "npm install --global bun"
+    },
+    {
       "name": "Install Dependencies",
       "command": "bun install"
     }
