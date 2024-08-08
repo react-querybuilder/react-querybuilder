@@ -34,6 +34,7 @@ const compileToJS = async (code: string, fileName: string) =>
 const packagesPath = pathJoin(import.meta.dir, '../packages');
 const templatePath = pathJoin(import.meta.dir, '_template');
 const templateDotCS = pathJoin(templatePath, '.codesandbox');
+const templateDotDC = pathJoin(templatePath, '.devcontainer');
 const templateSrc = pathJoin(templatePath, 'src');
 const templateDotCSTemplateJSON = await Bun.file(pathJoin(templateDotCS, 'template.json')).json();
 const templateIndexHTML = await Bun.file(pathJoin(templatePath, 'index.html')).text();
@@ -52,13 +53,14 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
   const examplePath = pathJoin(import.meta.dir, exampleID);
   const exampleDotCS = pathJoin(examplePath, '.codesandbox');
+  const exampleDotDC = pathJoin(examplePath, '.devcontainer');
   const exampleSrc = pathJoin(examplePath, 'src');
   const exampleBaseTitle = `React Query Builder ${exampleConfig.name}`;
   const exampleTitle = `${exampleBaseTitle} Example`;
   const exampleTemplateName = `${exampleBaseTitle} Template`;
   await rm(examplePath, { recursive: true, force: true });
   await mkdir(examplePath);
-  await Promise.all([mkdir(exampleDotCS), mkdir(exampleSrc)]);
+  await Promise.all([mkdir(exampleDotCS), mkdir(exampleDotDC), mkdir(exampleSrc)]);
 
   await Bun.write(
     pathJoin(examplePath, 'prettier.config.mjs'),
@@ -100,6 +102,10 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     Bun.write(
       pathJoin(exampleDotCS, 'workspace.json'),
       Bun.file(pathJoin(templateDotCS, 'workspace.json'))
+    ),
+    Bun.write(
+      pathJoin(exampleDotDC, 'devcontainer.json'),
+      Bun.file(pathJoin(templateDotDC, 'devcontainer.json'))
     ),
     Bun.write(pathJoin(examplePath, '.gitignore'), Bun.file(pathJoin(templatePath, '.gitignore'))),
     Bun.write(
