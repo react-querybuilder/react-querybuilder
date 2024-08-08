@@ -8,7 +8,7 @@ export default {
     ...(common.coveragePathIgnorePatterns ?? []),
     'celParser.js',
     'sqlParser.js',
-    'TestUtils.ts',
+    'clsx.ts',
   ],
   testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
 };

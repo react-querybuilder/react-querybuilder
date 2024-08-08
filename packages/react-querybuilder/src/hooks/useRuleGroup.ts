@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
@@ -12,6 +11,7 @@ import {
   isRuleGroupType,
   pathsAreEqual,
 } from '../utils';
+import { clsx } from '../utils/clsx';
 
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.

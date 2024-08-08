@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
@@ -10,6 +9,7 @@ import {
   getParentPath,
   getValidationClassNames,
 } from '../utils';
+import { clsx } from '../utils/clsx';
 
 /**
  * Prepares all values and methods used by the {@link Rule} component.
