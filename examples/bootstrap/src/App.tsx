@@ -1,4 +1,5 @@
 import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.scss';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
