@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import type { KeyboardType } from 'react-native';
+import type { InputModeOptions } from 'react-native';
 import { StyleSheet, Switch, TextInput, View } from 'react-native';
 import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
@@ -62,9 +62,12 @@ export const NativeValueEditor = ({
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  // TODO: coerce keyboardType appropriately
-  // const keyboardType: KeyboardType = ['in', 'notIn'].includes(operator) ? 'default' : inputType || 'default';
-  const keyboardType: KeyboardType = 'default';
+
+  const inputMode = ['in', 'notIn'].includes(operator)
+    ? 'text'
+    : inputType === 'number'
+      ? 'decimal'
+      : ((inputType ?? 'text') as InputModeOptions);
 
   if (
     (operator === 'between' || operator === 'notBetween') &&
@@ -76,7 +79,7 @@ export const NativeValueEditor = ({
           <TextInput
             key={key}
             style={styles.value}
-            keyboardType={keyboardType}
+            inputMode={inputMode}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             // TODO: disabled={disabled}
@@ -172,7 +175,7 @@ export const NativeValueEditor = ({
     <TextInput
       testID={testID}
       style={styles.value}
-      keyboardType={keyboardType}
+      inputMode={inputMode}
       placeholder={placeHolderText}
       value={value}
       onChangeText={v => handleOnChange(parseNumber(v, { parseNumbers }))}

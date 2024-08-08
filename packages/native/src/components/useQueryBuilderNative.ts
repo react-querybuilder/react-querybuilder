@@ -6,10 +6,20 @@ import type {
   FullOperator,
   QueryBuilderProps,
   RuleGroupTypeAny,
-  useQueryBuilderSetup,
 } from 'react-querybuilder';
+import { useQueryBuilderSetup } from 'react-querybuilder';
 import { useQueryBuilderSchema } from 'react-querybuilder';
 import type { QueryBuilderNativeProps } from '../types';
+
+export const useQueryBuilderNative = <
+  RG extends RuleGroupTypeAny,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
+>(
+  props: QueryBuilderNativeProps<RG, F, O, C>
+) =>
+  useQueryBuilderSchemaNative(props, useQueryBuilderSetup(props as QueryBuilderProps<RG, F, O, C>));
 
 export const useQueryBuilderSchemaNative = <
   RG extends RuleGroupTypeAny,

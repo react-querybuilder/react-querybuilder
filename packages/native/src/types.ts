@@ -36,6 +36,8 @@ export interface WithSchemaNative<F extends FullField = FullField, O extends str
 }
 
 export type QueryBuilderNativeStyles = {
+  actionElement: ViewStyle;
+  actionElementText: TextStyle;
   combinatorOption: TextStyle;
   combinatorSelector: TextStyle;
   dragHandle: ViewStyle;
