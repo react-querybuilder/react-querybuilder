@@ -13,6 +13,7 @@ type ClassValue =
   | undefined;
 type ClassArray = ClassValue[];
 
+// istanbul ignore next
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toVal(mix: any) {
   let k;
@@ -47,6 +48,7 @@ function toVal(mix: any) {
   return str;
 }
 
+// istanbul ignore next
 export function clsx(...args: ClassValue[]) {
   let i = 0;
   let tmp;

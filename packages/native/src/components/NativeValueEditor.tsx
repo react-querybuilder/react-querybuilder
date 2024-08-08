@@ -63,6 +63,7 @@ export const NativeValueEditor = ({
 
   const placeHolderText = fieldData?.placeholder ?? '';
 
+  // istanbul ignore next
   const inputMode = ['in', 'notIn'].includes(operator)
     ? 'text'
     : inputType === 'number'
