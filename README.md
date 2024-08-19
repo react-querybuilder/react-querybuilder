@@ -124,6 +124,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/stil"><img src="https://avatars.githubusercontent.com/u/714004?v=4?s=100" width="100px;" alt="stil"/><br /><sub><b>stil</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=stil" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=stil" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/weiliddat"><img src="https://avatars.githubusercontent.com/u/899658?v=4?s=100" width="100px;" alt="Chiawei Ong"/><br /><sub><b>Chiawei Ong</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=weiliddat" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=weiliddat" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.appbuilders.be"><img src="https://avatars.githubusercontent.com/u/5032389?v=4?s=100" width="100px;" alt="De Lille Felix"/><br /><sub><b>De Lille Felix</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=flieks" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=flieks" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rbideau"><img src="https://avatars.githubusercontent.com/u/7304827?v=4?s=100" width="100px;" alt="Raphaël Bideau"/><br /><sub><b>Raphaël Bideau</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=rbideau" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
@@ -137,7 +138,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-38-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-39-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 

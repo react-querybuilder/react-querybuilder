@@ -377,6 +377,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "rbideau",
+      "name": "Raphaël Bideau",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7304827?v=4",
+      "profile": "https://github.com/rbideau",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
