@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#769] `formatQuery` now accepts an optional `concatOperator` parameter to support non-standard concatenation methods in the various SQL dialects. The default is the ANSI standard `"||"`, which is supported by PostgreSQL, Oracle, SQLite, and others, while SQL Server uses `"+"`. A value of `"CONCAT"` will enable MySQL compatibility by using the `CONCAT` function (do not use this for Oracle as its `CONCAT` function is limited).
 - [#769] The `toArray` method now accepts an optional configuration parameter. If the `retainEmptyStrings` property of that object is `true`, the function will not filter out string elements that are empty or purely whitespace.
 - [#769] The object returned from `useValueEditor` now includes a `parseNumberMethod` property, which is a processed version of the `parseNumbers` prop.
+- [#769] `formatQuery` now accepts an optional `preset` option as a shortcut to configure "sql" output for different SQL dialects. Options currently include "ansi", "mssql", "oracle", "mysql", "postgres", and "sqlite".
 
 ### Fixed
 

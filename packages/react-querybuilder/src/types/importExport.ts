@@ -21,6 +21,8 @@ export type ExportFormat =
   | 'elasticsearch'
   | 'jsonata';
 
+export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
+
 /**
  * Options object shape for {@link formatQuery}.
  */
@@ -147,6 +149,10 @@ export interface FormatQueryOptions {
    * @default '||'
    */
   concatOperator?: '||' | '+' | 'CONCAT' | (string & {});
+  /**
+   * Option presets to maximize compatibility with various SQL dialects.
+   */
+  preset?: SQLPreset;
 }
 
 /**
