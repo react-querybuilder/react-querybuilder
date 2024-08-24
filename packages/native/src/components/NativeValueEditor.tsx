@@ -45,7 +45,7 @@ export const NativeValueEditor = ({
     ]
   );
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
+  const { valueAsArray, multiValueHandler, parseNumberMethod } = useValueEditor({
     skipHook,
     handleOnChange,
     inputType,
@@ -179,7 +179,7 @@ export const NativeValueEditor = ({
       inputMode={inputMode}
       placeholder={placeHolderText}
       value={value}
-      onChangeText={v => handleOnChange(parseNumber(v, { parseNumbers }))}
+      onChangeText={v => handleOnChange(parseNumber(v, { parseNumbers: parseNumberMethod }))}
     />
   );
 };
