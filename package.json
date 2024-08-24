@@ -81,6 +81,7 @@
     "website:clear": "bun run --filter website clear"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.4",
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/preset-react": "^7.24.7",
