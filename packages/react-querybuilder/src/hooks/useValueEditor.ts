@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import { useCallback, useEffect, useMemo } from 'react';
-import type { ValueEditorProps } from '../types';
+import type { ParseNumberMethod, ValueEditorProps } from '../types';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 
 export type UseValueEditorParams = Pick<
@@ -65,17 +65,32 @@ export const useValueEditor = (props: UseValueEditorParams) => {
       (Array.isArray(value) ||
         (inputType === 'number' && typeof value === 'string' && value.includes(',')))
     ) {
-      handleOnChange(toArray(value)[0] ?? '');
+      handleOnChange(toArray(value, { retainEmptyStrings: true })[0] ?? '');
     }
   }, [handleOnChange, inputType, operator, skipHook, type, value]);
 
-  const valueAsArray = useMemo(() => toArray(value), [value]);
+  const valueAsArray = useMemo(() => toArray(value, { retainEmptyStrings: true }), [value]);
+
+  const parseNumberMethod = useMemo((): ParseNumberMethod => {
+    if (typeof parseNumbers === 'string') {
+      const [method, level] = parseNumbers.split('-') as
+        | [ParseNumberMethod, 'limited']
+        | [ParseNumberMethod];
+      if (level === 'limited') {
+        return inputType === 'number' ? method : false;
+      }
+
+      return method;
+    }
+
+    return parseNumbers ? 'enhanced' : false;
+  }, [inputType, parseNumbers]);
 
   const multiValueHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (val: any, idx: number) => {
       const v = produce(valueAsArray, va => {
-        va[idx] = parseNumber(val, { parseNumbers });
+        va[idx] = parseNumber(val, { parseNumbers: parseNumberMethod });
         // Enforce an array length of (at least) two for "between"/"notBetween"
         if (
           idx === 0 &&
@@ -87,7 +102,7 @@ export const useValueEditor = (props: UseValueEditorParams) => {
       });
       handleOnChange(listsAsArrays ? v : joinWith(v, ','));
     },
-    [handleOnChange, listsAsArrays, operator, parseNumbers, valueAsArray, values]
+    [handleOnChange, listsAsArrays, operator, parseNumberMethod, valueAsArray, values]
   );
 
   return {
@@ -105,5 +120,12 @@ export const useValueEditor = (props: UseValueEditorParams) => {
      * @param {number} idx The index of the editor (and the array element to update)
      */
     multiValueHandler,
+    /**
+     * Evaluated `parseNumber` method based on `parseNumbers` prop. This property ends up
+     * being the same as the `parseNumbers` prop minus the "-limited" suffix, unless
+     * the "-limited" suffix is present and the `inputType` is not "number", in which case
+     * it's set to `false`.
+     */
+    parseNumberMethod,
   };
 };

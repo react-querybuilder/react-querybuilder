@@ -1,7 +1,10 @@
 import type { RuleProcessor } from '../../types/index.noReact';
-import { toArray, trimIfString } from '../arrayUtils';
+import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
+
+// Just a little shortcut.
+const str = JSON.stringify;
 
 /**
  * Default rule processor used by {@link formatQuery} for "mongodb" format.
@@ -12,14 +15,13 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
   { parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const useBareValue =
-    typeof value === 'number' ||
-    typeof value === 'boolean' ||
-    typeof value === 'bigint' ||
-    shouldRenderAsNumber(value, parseNumbers);
 
   if (operator === '=' && !valueIsField) {
-    return `{"${field}":${useBareValue ? trimIfString(value) : JSON.stringify(value)}}`;
+    return str({
+      [field]: shouldRenderAsNumber(value, parseNumbers)
+        ? parseNumber(value, { parseNumbers: 'enhanced' })
+        : value,
+    });
   }
 
   switch (operator) {
@@ -31,60 +33,70 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
     case '>=': {
       const mongoOperator = mongoOperators[operator];
       return valueIsField
-        ? `{"$expr":{"${mongoOperator}":["$${field}","$${value}"]}}`
-        : `{"${field}":{"${mongoOperator}":${
-            useBareValue ? trimIfString(value) : JSON.stringify(value)
-          }}}`;
+        ? str({ $expr: { [mongoOperator]: [`$${field}`, `$${value}`] } })
+        : str({
+            [field]: {
+              [mongoOperator]: shouldRenderAsNumber(value, parseNumbers)
+                ? parseNumber(value, { parseNumbers: 'enhanced' })
+                : value,
+            },
+          });
     }
 
     case 'contains':
       return valueIsField
-        ? `{"$where":"this.${field}.includes(this.${value})"}`
-        : `{"${field}":{"$regex":${JSON.stringify(value)}}}`;
+        ? str({ $where: `this.${field}.includes(this.${value})` })
+        : str({ [field]: { $regex: value } });
 
     case 'beginsWith':
       return valueIsField
-        ? `{"$where":"this.${field}.startsWith(this.${value})"}`
-        : `{"${field}":{"$regex":${JSON.stringify(`^${value}`)}}}`;
+        ? str({ $where: `this.${field}.startsWith(this.${value})` })
+        : str({ [field]: { $regex: `^${value}` } });
 
     case 'endsWith':
       return valueIsField
-        ? `{"$where":"this.${field}.endsWith(this.${value})"}`
-        : `{"${field}":{"$regex":${JSON.stringify(`${value}$`)}}}`;
+        ? str({ $where: `this.${field}.endsWith(this.${value})` })
+        : str({ [field]: { $regex: `${value}$` } });
 
     case 'doesNotContain':
       return valueIsField
-        ? `{"$where":"!this.${field}.includes(this.${value})"}`
-        : `{"${field}":{"$not":{"$regex":${JSON.stringify(value)}}}}`;
+        ? str({ $where: `!this.${field}.includes(this.${value})` })
+        : str({ [field]: { $not: { $regex: value } } });
 
     case 'doesNotBeginWith':
       return valueIsField
-        ? `{"$where":"!this.${field}.startsWith(this.${value})"}`
-        : `{"${field}":{"$not":{"$regex":${JSON.stringify(`^${value}`)}}}}`;
+        ? str({ $where: `!this.${field}.startsWith(this.${value})` })
+        : str({ [field]: { $not: { $regex: `^${value}` } } });
 
     case 'doesNotEndWith':
       return valueIsField
-        ? `{"$where":"!this.${field}.endsWith(this.${value})"}`
-        : `{"${field}":{"$not":{"$regex":${JSON.stringify(`${value}$`)}}}}`;
+        ? str({ $where: `!this.${field}.endsWith(this.${value})` })
+        : str({ [field]: { $not: { $regex: `${value}$` } } });
 
     case 'null':
-      return `{"${field}":null}`;
+      return str({ [field]: null });
 
     case 'notNull':
-      return `{"${field}":{"$ne":null}}`;
+      return str({ [field]: { $ne: null } });
 
     case 'in':
     case 'notIn': {
       const valueAsArray = toArray(value);
       return valueIsField
-        ? `{"$where":"${operator === 'notIn' ? '!' : ''}[${valueAsArray
-            .map(val => `this.${val}`)
-            .join(',')}].includes(this.${field})"}`
-        : `{"${field}":{"${mongoOperators[operator]}":[${valueAsArray
-            .map(val =>
-              shouldRenderAsNumber(val, parseNumbers) ? `${trimIfString(val)}` : JSON.stringify(val)
-            )
-            .join(',')}]}}`;
+        ? str({
+            $where: `${operator === 'notIn' ? '!' : ''}[${valueAsArray
+              .map(val => `this.${val}`)
+              .join(',')}].includes(this.${field})`,
+          })
+        : str({
+            [field]: {
+              [mongoOperators[operator]]: valueAsArray.map(val =>
+                shouldRenderAsNumber(val, parseNumbers)
+                  ? parseNumber(val, { parseNumbers: 'enhanced' })
+                  : val
+              ),
+            },
+          });
     }
 
     case 'between':
@@ -97,23 +109,31 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
       ) {
         const [first, second] = valueAsArray;
         const firstNum = shouldRenderAsNumber(first, true)
-          ? parseNumber(first, { parseNumbers: true })
+          ? parseNumber(first, { parseNumbers: 'enhanced' })
           : NaN;
         const secondNum = shouldRenderAsNumber(second, true)
-          ? parseNumber(second, { parseNumbers: true })
+          ? parseNumber(second, { parseNumbers: 'enhanced' })
           : NaN;
-        const firstValue =
-          valueIsField || !isNaN(firstNum) ? `${first}` : `${JSON.stringify(first)}`;
-        const secondValue =
-          valueIsField || !isNaN(secondNum) ? `${second}` : `${JSON.stringify(second)}`;
+        const firstValue = valueIsField ? first : !isNaN(firstNum) ? firstNum : first;
+        const secondValue = valueIsField ? second : !isNaN(secondNum) ? secondNum : second;
         if (operator === 'between') {
           return valueIsField
-            ? `{"$and":[{"$expr":{"$gte":["$${field}","$${firstValue}"]}},{"$expr":{"$lte":["$${field}","$${secondValue}"]}}]}`
-            : `{"${field}":{"$gte":${firstValue},"$lte":${secondValue}}}`;
+            ? str({
+                $and: [
+                  { $expr: { $gte: [`$${field}`, `$${firstValue}`] } },
+                  { $expr: { $lte: [`$${field}`, `$${secondValue}`] } },
+                ],
+              })
+            : str({ [field]: { $gte: firstValue, $lte: secondValue } });
         } else {
           return valueIsField
-            ? `{"$or":[{"$expr":{"$lt":["$${field}","$${firstValue}"]}},{"$expr":{"$gt":["$${field}","$${secondValue}"]}}]}`
-            : `{"$or":[{"${field}":{"$lt":${firstValue}}},{"${field}":{"$gt":${secondValue}}}]}`;
+            ? str({
+                $or: [
+                  { $expr: { $lt: [`$${field}`, `$${firstValue}`] } },
+                  { $expr: { $gt: [`$${field}`, `$${secondValue}`] } },
+                ],
+              })
+            : str({ $or: [{ [field]: { $lt: firstValue } }, { [field]: { $gt: secondValue } }] });
         }
       } else {
         return '';

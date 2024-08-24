@@ -100,7 +100,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       } ${sqlOperator} (${inParams.join(', ')})`
     );
   } else if (sqlOperatorLowerCase === 'between' || sqlOperatorLowerCase === 'not between') {
-    const valueAsArray = toArray(rule.value);
+    const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
     const [first, second] = valueAsArray
       .slice(0, 2)
       .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v));

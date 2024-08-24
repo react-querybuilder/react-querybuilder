@@ -544,6 +544,19 @@ describe('parseNumbers', () => {
       f_23: {},
     });
   });
+
+  it('orders "between" values ascending', () => {
+    const queryForBetweenSorting: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f1', operator: 'between', value: [14, 12] },
+        { field: 'f2', operator: 'notBetween', value: [14, 12] },
+      ],
+    };
+    expect(formatQuery(queryForBetweenSorting, { format: 'sql', parseNumbers: true })).toBe(
+      `(f1 between 12 and 14 and f2 not between 12 and 14)`
+    );
+  });
 });
 
 describe('placeholder names', () => {
@@ -568,6 +581,35 @@ describe('placeholder names', () => {
         placeholderOperatorName,
       })
     ).toBe(`(${defaultFieldPlaceholder} ${defaultOperatorPlaceholder} 'v1')`);
+  });
+});
+
+describe('concat operator', () => {
+  const queryForConcatOperator: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'contains', value: 'f4', valueSource: 'field' },
+      { field: 'f2', operator: 'beginsWith', value: 'f5', valueSource: 'field' },
+      { field: 'f3', operator: 'endsWith', value: 'f6', valueSource: 'field' },
+    ],
+  };
+
+  it('defaults to "||"', () => {
+    expect(formatQuery(queryForConcatOperator, { format: 'sql' })).toBe(
+      `(f1 like '%' || f4 || '%' and f2 like f5 || '%' and f3 like '%' || f6)`
+    );
+  });
+
+  it('concats with + operator', () => {
+    expect(formatQuery(queryForConcatOperator, { format: 'sql', concatOperator: '+' })).toBe(
+      `(f1 like '%' + f4 + '%' and f2 like f5 + '%' and f3 like '%' + f6)`
+    );
+  });
+
+  it('concats with CONCAT function', () => {
+    expect(formatQuery(queryForConcatOperator, { format: 'sql', concatOperator: 'CONCAT' })).toBe(
+      `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`
+    );
   });
 });
 

@@ -134,6 +134,19 @@ export interface FormatQueryOptions {
    * @default '~'
    */
   placeholderOperatorName?: string;
+  /**
+   * Operator to use when concatenating wildcard characters and field names in "sql" format.
+   * The ANSI standard is `||`, while SQL Server uses `+`. MySQL does not implement a concatenation
+   * operator by default, and therefore requires use of the `CONCAT` function.
+   *
+   * If `concatOperator` is set to `"CONCAT"` (case-insensitive), the `CONCAT` function will be
+   * used. Note that Oracle SQL does not support more than two values in the `CONCAT` function,
+   * so this option should not be used in that context. The default setting (`"||"`) is already
+   * compatible with Oracle SQL.
+   *
+   * @default '||'
+   */
+  concatOperator?: '||' | '+' | 'CONCAT' | (string & {});
 }
 
 /**

@@ -81,13 +81,15 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
       return { ...r, value: r.value.map(v => parseNumber(v, { parseNumbers: true })) };
     }
 
-    const va = toArray(r.value).map(v => parseNumber(v, { parseNumbers: true }));
-    if (va.every(v => typeof v === 'number')) {
+    const valAsArray = toArray(r.value, { retainEmptyStrings: true }).map(v =>
+      parseNumber(v, { parseNumbers: true })
+    );
+    if (valAsArray.every(v => typeof v === 'number')) {
       // istanbul ignore else
-      if (va.length > 1) {
-        return { ...r, value: va };
-      } else if (va.length === 1) {
-        return { ...r, value: va[0] };
+      if (valAsArray.length > 1) {
+        return { ...r, value: valAsArray };
+      } else if (valAsArray.length === 1) {
+        return { ...r, value: valAsArray[0] };
       }
     }
 

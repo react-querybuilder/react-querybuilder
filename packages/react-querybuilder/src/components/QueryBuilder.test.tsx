@@ -1,7 +1,7 @@
-import { render, screen, within } from '@testing-library/react';
+import { consoleMocks } from '@rqb-testing';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { consoleMocks } from '@rqb-testing';
 import {
   LogType,
   TestID,
@@ -12,6 +12,7 @@ import {
   defaultTranslations as t,
 } from '../defaults';
 import { messages } from '../messages';
+import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
@@ -25,6 +26,7 @@ import type {
   FullOption,
   Option,
   OptionGroup,
+  ParseNumbersPropConfig,
   QueryBuilderProps,
   RuleGroupProps,
   RuleGroupType,
@@ -32,6 +34,7 @@ import type {
   RuleProps,
   RuleType,
   ValidationMap,
+  ValueEditorProps,
   ValueSelectorProps,
 } from '../types';
 import {
@@ -43,13 +46,14 @@ import {
   numericRegex,
   toFullOption,
 } from '../utils';
+import { ActionElement } from './ActionElement';
+import { defaultControlElements } from './defaults';
 import { QueryBuilder } from './QueryBuilder';
 import { QueryBuilderContext } from './QueryBuilderContext';
-import { defaultControlElements } from './defaults';
-import { ValueSelector } from './ValueSelector';
-import { ActionElement } from './ActionElement';
 import { waitABeat } from './testUtils';
-import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
+import { ValueSelector } from './ValueSelector';
+import { ValueEditor } from './ValueEditor';
+import { useValueEditor } from '../hooks';
 
 const user = userEvent.setup();
 
@@ -955,6 +959,230 @@ describe('getDefaultValue prop', () => {
     await user.click(screen.getByTestId(TestID.addRule));
     expect(onQueryChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test Value' })] })
+    );
+  });
+});
+
+describe('parseNumbers prop', () => {
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1' },
+    { name: 'field2', label: 'Field 2', inputType: 'number' },
+  ];
+  const txtQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'field1', operator: '=', value: '' }],
+  };
+  const numQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'field2', operator: '=', value: '' }],
+  };
+
+  it('does not parse numbers by default', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} defaultQuery={numQuery} />);
+    await user.type(screen.getByTestId(TestID.valueEditor), '1214');
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ rules: [expect.objectContaining({ value: '1214' })] })
+    );
+  });
+
+  const ValueEditorAlwaysText = (props: ValueEditorProps) => {
+    const { parseNumberMethod } = useValueEditor({ ...props, skipHook: true });
+    return <ValueEditor {...props} skipHook inputType="text" parseNumbers={parseNumberMethod} />;
+  };
+
+  // Test result constants
+  const typedValuesArray = [' ', '1214', '1,214', '1,2,1,4', '12,14', '1\\,2,1\\,4', '1214xyz'];
+  const typedValues = typedValuesArray.map(typedValue => ({ typedValue }));
+  const inputTypeNumberAllowedAsStr = typedValuesArray.map(s => (/^\d+$/.test(s) ? s : ''));
+  const inputTypeNumberAllowedAsNum = typedValuesArray.map(s =>
+    /^\d+$/.test(s) ? parseInt(s) : ''
+  );
+  const six1214s = new Array(6).fill(1214);
+  const six1214strings = new Array(6).fill('1214');
+  const all1214sNoSpace = ['', ...six1214s];
+  const all1214sWithSpace = [' ', ...six1214s];
+  const all1214stringsNoSpace = ['', ...six1214strings];
+
+  const testCases = [
+    {
+      parseNumberMode: true,
+      textAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
+      textTyped: all1214sWithSpace,
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
+      numTextEditorTyped: all1214sWithSpace,
+    },
+    {
+      parseNumberMode: false,
+      textAtOnce: typedValuesArray,
+      textTyped: typedValuesArray,
+      numAtOnce: inputTypeNumberAllowedAsStr,
+      numTyped: all1214stringsNoSpace,
+      numTextEditorAtOnce: typedValuesArray,
+      numTextEditorTyped: typedValuesArray,
+    },
+    {
+      parseNumberMode: 'enhanced',
+      textAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
+      textTyped: all1214sWithSpace,
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
+      numTextEditorTyped: all1214sWithSpace,
+    },
+    {
+      parseNumberMode: 'enhanced-limited',
+      textAtOnce: typedValuesArray,
+      textTyped: typedValuesArray,
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
+      numTextEditorTyped: all1214sWithSpace,
+    },
+    {
+      parseNumberMode: 'native',
+      textAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
+      textTyped: [NaN, ...six1214s],
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
+      numTextEditorTyped: [NaN, ...six1214s],
+    },
+    {
+      parseNumberMode: 'native-limited',
+      textAtOnce: typedValuesArray,
+      textTyped: typedValuesArray,
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
+      numTextEditorTyped: [NaN, ...six1214s],
+    },
+    {
+      parseNumberMode: 'strict',
+      textAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      textTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+    },
+    {
+      parseNumberMode: 'strict-limited',
+      textAtOnce: typedValuesArray,
+      textTyped: typedValuesArray,
+      numAtOnce: inputTypeNumberAllowedAsNum,
+      numTyped: all1214sNoSpace,
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+    },
+  ] satisfies {
+    parseNumberMode: ParseNumbersPropConfig;
+    textAtOnce: (string | number)[];
+    textTyped: (string | number)[];
+    numAtOnce: (string | number)[];
+    numTyped: (string | number)[];
+    numTextEditorAtOnce: (string | number)[];
+    numTextEditorTyped: (string | number)[];
+  }[];
+
+  describe.each(testCases)(
+    '$parseNumberMode mode',
+    ({
+      parseNumberMode,
+      textAtOnce,
+      textTyped,
+      numAtOnce,
+      numTyped,
+      numTextEditorAtOnce,
+      numTextEditorTyped,
+    }) => {
+      describe.each([
+        {
+          inputType: 'text',
+          inputMethod: 'at once',
+          vals: textAtOnce,
+          query: txtQuery,
+        },
+        {
+          inputType: 'text',
+          inputMethod: 'typed',
+          vals: textTyped,
+          query: txtQuery,
+        },
+        {
+          inputType: 'number',
+          inputMethod: 'at once',
+          vals: numAtOnce,
+          query: numQuery,
+        },
+        {
+          inputType: 'number',
+          inputMethod: 'typed',
+          vals: numTyped,
+          query: numQuery,
+        },
+        {
+          inputType: 'number-text-editor',
+          inputMethod: 'at once',
+          vals: numTextEditorAtOnce,
+          query: numQuery,
+        },
+        {
+          inputType: 'number-text-editor',
+          inputMethod: 'typed',
+          vals: numTextEditorTyped,
+          query: numQuery,
+        },
+      ])('inputType $inputType ($inputMethod)', ({ inputMethod, inputType, vals, query }) => {
+        it.each(typedValues)(`"$typedValue"`, async ({ typedValue }) => {
+          const onQueryChange = jest.fn<never, [RuleGroupType]>();
+          const VE = inputType === 'number-text-editor' ? ValueEditorAlwaysText : ValueEditor;
+          render(
+            <QueryBuilder
+              parseNumbers={parseNumberMode}
+              fields={fields}
+              onQueryChange={onQueryChange}
+              defaultQuery={query}
+              controlElements={{ valueEditor: VE }}
+            />
+          );
+          const valueEditor = screen.getByTestId(TestID.valueEditor);
+          if (inputMethod === 'at once') {
+            fireEvent.change(valueEditor, { target: { value: typedValue } });
+          } else {
+            await user.type(valueEditor, typedValue);
+          }
+          expect(onQueryChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              rules: [
+                expect.objectContaining({
+                  value: vals[typedValues.findIndex(tv => tv.typedValue === typedValue)],
+                }),
+              ],
+            })
+          );
+        });
+      });
+    }
+  );
+
+  // TODO: Add tests for parsing values when operator is "between"
+  it.skip('parses numbers for "between" operator', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        parseNumbers="enhanced"
+        fields={fields}
+        onQueryChange={onQueryChange}
+        defaultQuery={txtQuery}
+      />
+    );
+
+    await user.type(screen.getByTestId(TestID.valueEditor), '12,14');
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ rules: [expect.objectContaining({ value: 1214 })] })
     );
   });
 });

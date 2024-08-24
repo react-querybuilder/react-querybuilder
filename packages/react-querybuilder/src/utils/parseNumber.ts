@@ -1,11 +1,11 @@
 import { numericQuantity } from 'numeric-quantity';
-import type { ParseNumbersMethod } from '../types/index.noReact';
+import type { ParseNumberMethod } from '../types/index.noReact';
 
 /**
  * Options object for {@link parseNumber}.
  */
 export interface ParseNumberOptions {
-  parseNumbers?: ParseNumbersMethod;
+  parseNumbers?: ParseNumberMethod;
 }
 
 /**

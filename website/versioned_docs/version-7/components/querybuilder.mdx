@@ -911,9 +911,15 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 ### `parseNumbers`
 
-`boolean | "strict" | "native"` (default `false`) _<DemoLink option="parseNumbers" />_
+`boolean | "enhanced" | "enhanced-limited" | "native" | "native-limited" | "strict" | "strict-limited"` (default `false`) _<DemoLink option="parseNumbers" />_
 
-Pass `true`, `"strict"`, or `"native"` to store `value` as a `number` instead of a string (when possible). Passing `"native"` will use `parseFloat` to determine if a value is numeric, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the [note about the corresponding `formatQuery` option](../utils/export#parse-numbers).
+Stores `value` as a `number` instead of a `string` whenever possible. When using one of the `"*-limited"` options, values will only be checked for numericity when the value editor's `inputType` evaluates to `"number"`.
+
+> _Tip: Try the **`"enhanced-limited"`** option first._
+
+- `true` and `"enhanced"`/`"enhanced-limited"` use [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) with default options to determine numericity.
+- `"native"`/`"native-limited"` use JavaScript's native `parseFloat` method to determine numericity.
+- `"strict"`/`"strict-limited"` use `numeric-quantity` with the `allowTrailingInvalid` option set to `false`. Values must be numeric _in their entirety_ to be considered numeric, not just _start_ with a number as with `parseFloat`. See also [the corresponding `formatQuery` option](../utils/export#parse-numbers).
 
 ### `enableDragAndDrop`
 

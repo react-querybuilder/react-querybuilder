@@ -12,12 +12,14 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts) => {
     quoteFieldNamesWith = ['', ''] as [string, string],
     quoteValuesWith = `'`,
     valueProcessor = defaultValueProcessorByRule,
+    concatOperator = '||',
   } = opts ?? {};
   const value = valueProcessor(rule, {
     parseNumbers,
     escapeQuotes,
     quoteFieldNamesWith,
     quoteValuesWith,
+    concatOperator,
   });
   const operator = mapSQLOperator(rule.operator);
 
