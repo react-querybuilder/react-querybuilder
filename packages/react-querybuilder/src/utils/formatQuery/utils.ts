@@ -3,8 +3,9 @@ import type {
   RuleGroupTypeAny,
   ValueProcessorByRule,
   ValueProcessorLegacy,
+  ValueProcessorOptions,
 } from '../../types/index.noReact';
-import { toArray } from '../arrayUtils';
+import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
@@ -122,6 +123,19 @@ export const quoteFieldNamesWithArray = (
     : typeof quoteFieldNamesWith === 'string'
       ? [quoteFieldNamesWith, quoteFieldNamesWith]
       : (quoteFieldNamesWith ?? ['', '']);
+
+export const quoteFieldName = (
+  f: string,
+  { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions
+) => {
+  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
+  return typeof fieldIdentifierSeparator === 'string' && fieldIdentifierSeparator.length > 0
+    ? joinWith(
+        splitBy(f, fieldIdentifierSeparator).map(part => `${qPre}${part}${qPost}`),
+        fieldIdentifierSeparator
+      )
+    : `${qPre}${f}${qPost}`;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const nullOrUndefinedOrEmpty = (v: any) =>
