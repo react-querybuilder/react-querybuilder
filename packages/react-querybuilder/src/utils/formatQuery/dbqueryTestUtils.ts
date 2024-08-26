@@ -1,6 +1,6 @@
 import type { DefaultRuleGroupType, FormatQueryOptions } from '../../types';
 
-type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata';
+type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql';
 
 export interface TestSQLParams {
   query: DefaultRuleGroupType;
@@ -21,6 +21,7 @@ export interface SuperUser {
 const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   jsonata: [true, false],
   jsonlogic: [true, false],
+  mssql: [1, 0],
   postgres: [true, false],
   sqlite: [1, 0],
 };
@@ -63,8 +64,17 @@ export const superUsers = (dbPlatform: DbPlatform) => {
 const enhancedColumnType: Record<DbPlatform, string> = {
   jsonata: 'N/A',
   jsonlogic: 'N/A',
+  mssql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
   postgres: 'BOOLEAN',
   sqlite: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
+};
+
+const textColumnType: Record<DbPlatform, string> = {
+  jsonata: 'TEXT',
+  jsonlogic: 'TEXT',
+  mssql: 'VARCHAR(255)',
+  postgres: 'TEXT',
+  sqlite: 'TEXT',
 };
 
 const unquote = (fieldName: string, unquoted = false) =>
@@ -74,12 +84,12 @@ export const CREATE_TABLE = (
   dbPlatform: DbPlatform,
   { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
 ) => `CREATE TABLE superusers (
-  ${unquote('firstName', unquoted)} TEXT NOT NULL,
-  ${unquote('lastName', unquoted)} TEXT NOT NULL,
+  ${unquote('firstName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
-  ${unquote('madeUpName', unquoted)} TEXT NOT NULL,
+  ${unquote('madeUpName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('powerUpAge', unquoted)} INT NULL
-  )`;
+)`;
 
 export const CREATE_INDEX = ({ unquoted = false }: { unquoted?: boolean } = { unquoted: false }) =>
   `CREATE UNIQUE INDEX ndx ON superusers(${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
