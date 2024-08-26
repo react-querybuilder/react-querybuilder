@@ -139,6 +139,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let valueProcessorInternal = defaultValueProcessorByRule;
   let ruleProcessorInternal: RuleProcessor | null = null;
   let quoteFieldNamesWith: [string, string] = ['', ''];
+  let fieldIdentifierSeparator: string = '';
   let validator: QueryValidator = () => true;
   let fields: FullOptionList<FullField> = [];
   let validationMap: ValidationMap = {};
@@ -201,6 +202,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                     ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
                     : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(optionsWithPresets.quoteFieldNamesWith);
+    fieldIdentifierSeparator = optionsWithPresets.fieldIdentifierSeparator ?? '';
     validator = optionsWithPresets.validator ?? (() => true);
     fields = toFullOptionList(optionsWithPresets.fields ?? []);
     fallbackExpression = optionsWithPresets.fallbackExpression ?? '';
@@ -327,6 +329,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parseNumbers,
             escapeQuotes,
             quoteFieldNamesWith,
+            fieldIdentifierSeparator,
             fieldData,
             format,
             quoteValuesWith,
@@ -340,6 +343,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           escapeQuotes,
           valueProcessor: valueProcessorInternal,
           quoteFieldNamesWith,
+          fieldIdentifierSeparator,
           fieldData,
           format,
           quoteValuesWith,
@@ -408,6 +412,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           fieldParamNames,
           parseNumbers,
           quoteFieldNamesWith,
+          fieldIdentifierSeparator,
           fieldData,
           format,
           paramPrefix,
@@ -654,6 +659,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             fieldData,
             format,
             quoteFieldNamesWith,
+            fieldIdentifierSeparator,
           });
         })
         .filter(Boolean)

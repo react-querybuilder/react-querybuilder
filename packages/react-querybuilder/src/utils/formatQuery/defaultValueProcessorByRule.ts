@@ -1,7 +1,7 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
+import { isValidValue, quoteFieldName, shouldRenderAsNumber } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -14,10 +14,16 @@ const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: b
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
   // istanbul ignore next - defaultRuleProcessorSQL always provides options anyway
-  { escapeQuotes, parseNumbers, quoteFieldNamesWith, quoteValuesWith, concatOperator } = {}
+  {
+    escapeQuotes,
+    parseNumbers,
+    quoteFieldNamesWith,
+    quoteValuesWith,
+    concatOperator,
+    fieldIdentifierSeparator,
+  } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const [qfnwPre, qfnwPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
   const operatorLowerCase = operator.toLowerCase();
   const quoteChar = quoteValuesWith || "'";
   const concatOp = concatOperator || '||';
@@ -25,7 +31,8 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const quoteValue = (v: unknown) => `${quoteChar}${v}${quoteChar}`;
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
-  const wrapFieldName = (f: string) => `${qfnwPre}${f}${qfnwPost}`;
+  const wrapFieldName = (v: string) =>
+    quoteFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
   const concat = (...values: string[]) =>
     concatOp.toUpperCase() === 'CONCAT'
       ? `CONCAT(${values.join(', ')})`

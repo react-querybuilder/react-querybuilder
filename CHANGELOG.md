@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#769] The `toArray` method now accepts an optional configuration parameter. If the `retainEmptyStrings` property of that object is `true`, the function will not filter out string elements that are empty or purely whitespace.
 - [#769] The object returned from `useValueEditor` now includes a `parseNumberMethod` property, which is a processed version of the `parseNumbers` prop.
 - [#769] `formatQuery` now accepts an optional `preset` option as a shortcut to configure "sql" output for different SQL dialects. Options currently include "ansi", "mssql", "oracle", "mysql", "postgres", and "sqlite".
+- [#769] `formatQuery` now accepts an optional `fieldIdentifierSeparator` string. When used in conjunction with the `quoteFieldNamesWith` option, field names will be separated by this string and bracketed individually per the `quoteFieldNamesWith` configuration (e.g., `[table name].[field name] = 'value'` instead of `[table name.field name] = 'value'`).
 
 ### Fixed
 

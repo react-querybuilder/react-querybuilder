@@ -199,6 +199,38 @@ it('handles quoteFieldNamesWith correctly', () => {
   );
 });
 
+it('handles fieldIdentifierSeparator correctly', () => {
+  const queryToTest: RuleGroupType = {
+    id: 'g-root',
+    combinator: 'and',
+    rules: [
+      { field: 'musicians.instrument', value: 'Guitar, Vocals', operator: 'in' },
+      { field: 'musicians.lastName', value: 'Vai', operator: '=' },
+      {
+        field: 'musicians.lastName',
+        value: 'musicians.firstName',
+        operator: '!=',
+        valueSource: 'field',
+      },
+    ],
+    not: false,
+  };
+
+  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })).toBe(
+    "([musicians.instrument] in ('Guitar', 'Vocals') and [musicians.lastName] = 'Vai' and [musicians.lastName] != [musicians.firstName])"
+  );
+
+  expect(
+    formatQuery(queryToTest, {
+      format: 'sql',
+      quoteFieldNamesWith: ['[', ']'],
+      fieldIdentifierSeparator: '.',
+    })
+  ).toBe(
+    "([musicians].[instrument] in ('Guitar', 'Vocals') and [musicians].[lastName] = 'Vai' and [musicians].[lastName] != [musicians].[firstName])"
+  );
+});
+
 it('handles quoteValuesWith correctly', () => {
   expect(formatQuery(query, { format: 'sql', quoteValuesWith: `'` })).toBe(sqlString);
 
