@@ -7,6 +7,7 @@ import type {
   ParameterizedSQL,
   RuleGroupType,
   RuleProcessor,
+  SQLPreset,
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
@@ -236,6 +237,12 @@ it('handles quoteValuesWith correctly', () => {
 
   expect(formatQuery(query, { format: 'sql', quoteValuesWith: `"` })).toBe(
     sqlStringQuotedWithDoubleQuotes
+  );
+});
+
+it('handles invalid preset correctly', () => {
+  expect(formatQuery(query, { format: 'sql', preset: 'invalid' as unknown as SQLPreset })).toBe(
+    sqlString
   );
 });
 
