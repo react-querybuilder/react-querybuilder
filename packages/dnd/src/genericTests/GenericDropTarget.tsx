@@ -10,6 +10,7 @@ export type GenericDropTargetProps = {
 };
 
 export const GenericDropTarget = ({ useDrop, path, type, dropEffect }: GenericDropTargetProps) => {
+  // eslint-disable-next-line react-compiler/react-compiler
   const [{ dropMonitorId }] = useDrop!(() => ({
     accept: ['rule', 'ruleGroup'],
     canDrop: () => true,
