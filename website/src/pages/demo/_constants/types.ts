@@ -38,11 +38,7 @@ export type CommonRQBProps = Pick<
   | 'validator'
   | Exclude<
       DemoOption,
-      | 'validateQuery'
-      | 'independentCombinators'
-      | 'parseNumbers'
-      | 'justifiedLayout'
-      | 'showBranches'
+      'validateQuery' | 'independentCombinators' | 'justifiedLayout' | 'showBranches'
     >
 > & { independentCombinators?: boolean; justifiedLayout?: boolean };
 

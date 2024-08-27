@@ -138,9 +138,9 @@ export const optionsMetadata = {
     title: 'Enable debug logging for QueryBuilder and React DnD (see console)',
   },
   parseNumbers: {
-    link: '/docs/utils/export#parse-numbers',
+    link: '/docs/components/querybuilder#parsenumbers',
     label: 'Parse numbers',
-    title: 'Parse real numbers from strings in rule values',
+    title: 'Parse real numbers from strings in rule values (uses "enhanced-limited" option)',
   },
   justifiedLayout: {
     link: '',
