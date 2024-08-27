@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#755] New `controlElements` properties `ruleGroupHeaderElements` and `ruleGroupBodyElements`, enabling customization/replacement/augmentation of the subcomponents within the rule group header and body wrappers without needing to reimplement the entire `RuleGroup` component.
 - [#755] New `useQueryBuilderNative` hook. Works the same as `useQueryBuilder`, but tailored for React Native implementations.
-- The `parseNumbers` prop now accepts an optional "-limited" suffix on existing string-type config values "enhanced", "strict", and "native". When the "-limited" suffix is used (e.g., `parseNumbers="enhanced-limited"`), values will only be parsed for numericity when the `inputType` of the value editor evaluates to `"number"`.
+- [#769] The `parseNumbers` prop now accepts an optional "-limited" suffix on existing `string` config values "enhanced", "strict", and "native". When the "-limited" suffix is used (e.g., `parseNumbers="enhanced-limited"`), values will only be parsed for numericity when the `inputType` of the value editor evaluates to `"number"`.
 - [#769] `formatQuery` now accepts an optional `concatOperator` parameter to support non-standard concatenation methods in the various SQL dialects. The default is the ANSI standard `"||"`, which is supported by PostgreSQL, Oracle, SQLite, and others, while SQL Server uses `"+"`. A value of `"CONCAT"` will enable MySQL compatibility by using the `CONCAT` function (do not use this for Oracle as its `CONCAT` function is limited).
 - [#769] The `toArray` method now accepts an optional configuration parameter. If the `retainEmptyStrings` property of that object is `true`, the function will not filter out string elements that are empty or purely whitespace.
 - [#769] The object returned from `useValueEditor` now includes a `parseNumberMethod` property, which is a processed version of the `parseNumbers` prop.
@@ -21,8 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#769] On rules using a "between"/"notBetween" operator, the second value no longer shifts into the first input when the first value is removed.
-- [#769] Type `ParseNumbersMethod` renamed to `ParseNumberMethod` (removed the 's') to better reflect its assocation with the `parseNumber` method.
-- [#769] Internally, the default MongoDB rule processor for `formatQuery` uses actual JSON objects instead of manually constructing valid JSON strings. This should lead to more reliably valid results.
+- [#769] Type `ParseNumbersMethod` renamed to `ParseNumberMethod` (singular) to better reflect its assocation with the `parseNumber` method as opposed to the `parseNumbers` prop.
+- [#769] Internally, the default MongoDB rule processor for `formatQuery` uses actual JSON objects instead of manually constructing `JSON.parse`-able strings. This should lead to more reliably valid results.
 - [#769] When generating SQL for a rule where (1) the `operator` is "between" or "notBetween", (2) the values are numeric, and (3) `parseNumbers` is `true`, `formatQuery` will place the smaller value first and the larger value second, regardless of their order in the rule's `value` property.
 
 ## [v7.6.1] - 2024-08-02
