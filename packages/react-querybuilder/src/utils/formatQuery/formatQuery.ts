@@ -43,13 +43,18 @@ import {
 
 const sqlDialectPresets = {
   ansi: {},
-  sqlite: { paramsKeepPrefix: true },
+  sqlite: {
+    paramsKeepPrefix: true,
+  },
   oracle: {},
   mssql: {
-    quoteFieldNamesWith: ['[', ']'],
     concatOperator: '+',
+    quoteFieldNamesWith: ['[', ']'],
+    fieldIdentifierSeparator: '.',
   },
-  mysql: { concatOperator: 'CONCAT' },
+  mysql: {
+    concatOperator: 'CONCAT',
+  },
   postgresql: {
     quoteFieldNamesWith: '"',
     numberedParams: true,
