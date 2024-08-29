@@ -645,10 +645,49 @@ describe('concat operator', () => {
     );
   });
 
+  it('concats with + operator for parameterized', () => {
+    expect(
+      formatQuery(queryForConcatOperator, { format: 'parameterized', concatOperator: '+' })
+    ).toEqual({
+      sql: `(f1 like '%' + f4 + '%' and f2 like f5 + '%' and f3 like '%' + f6)`,
+      params: [],
+    });
+  });
+
+  it('concats with + operator for parameterized_named', () => {
+    expect(
+      formatQuery(queryForConcatOperator, { format: 'parameterized_named', concatOperator: '+' })
+    ).toEqual({
+      sql: `(f1 like '%' + f4 + '%' and f2 like f5 + '%' and f3 like '%' + f6)`,
+      params: {},
+    });
+  });
+
   it('concats with CONCAT function', () => {
     expect(formatQuery(queryForConcatOperator, { format: 'sql', concatOperator: 'CONCAT' })).toBe(
       `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`
     );
+  });
+
+  it('concats with CONCAT function for parameterized', () => {
+    expect(
+      formatQuery(queryForConcatOperator, { format: 'parameterized', concatOperator: 'CONCAT' })
+    ).toEqual({
+      sql: `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`,
+      params: [],
+    });
+  });
+
+  it('concats with CONCAT function for parameterized_named', () => {
+    expect(
+      formatQuery(queryForConcatOperator, {
+        format: 'parameterized_named',
+        concatOperator: 'CONCAT',
+      })
+    ).toEqual({
+      sql: `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`,
+      params: {},
+    });
   });
 });
 

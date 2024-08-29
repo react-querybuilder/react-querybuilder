@@ -43,7 +43,7 @@ it('sets valueAsArray when operator is "between"', async () => {
 
 describe('parseNumbers', () => {
   it.each([
-    { pn: true, text: 'enhanced', number: 'enhanced' },
+    { pn: true, text: 'strict', number: 'strict' },
     { pn: false, text: false, number: false },
     { pn: 'enhanced', text: 'enhanced', number: 'enhanced' },
     { pn: 'enhanced-limited', text: false, number: 'enhanced' },

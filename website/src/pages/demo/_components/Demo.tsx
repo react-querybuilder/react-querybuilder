@@ -423,7 +423,7 @@ export default function Demo({
       fields,
       ...opts,
       validator: opts.validateQuery ? defaultValidator : undefined,
-      parseNumbers: opts.parseNumbers ? 'enhanced-limited' : false,
+      parseNumbers: opts.parseNumbers ? 'strict-limited' : false,
     };
   }, [options]);
 

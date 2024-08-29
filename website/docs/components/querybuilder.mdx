@@ -586,7 +586,7 @@ Updates the `value` property for the current rule. Default is [`ValueEditor`](./
 | `className`      | `string`                                 | CSS `classNames` to be applied                                          |
 | `valueSource`    | `ValueSource`                            | Value source for this rule                                              |
 | `listsAsArrays`  | `boolean`                                | Whether to manage value lists (i.e. "between"/"in" operators) as arrays |
-| `parseNumbers`   | `boolean`                                | Whether to parse real numbers from strings                              |
+| `parseNumbers`   | `ParseNumberMethod`                      | Whether to parse real numbers from strings                              |
 | `separator`      | `ReactNode`                              | Separator element for series of editors (i.e. "between" operator)       |
 | `level`          | `number`                                 | The `level` of this rule                                                |
 | `context`        | `any`                                    | Container for custom props that are passed to all components            |
@@ -913,13 +913,16 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 `boolean | "enhanced" | "enhanced-limited" | "native" | "native-limited" | "strict" | "strict-limited"` (default `false`) _<DemoLink option="parseNumbers" />_
 
-Stores `value` as a `number` instead of a `string` whenever possible. When using one of the `"*-limited"` options, values will only be checked for numericity when the value editor's `inputType` evaluates to `"number"`.
+Sets the `value` with type `number` instead of `string` when possible.
 
-> _Tip: Try the **`"enhanced-limited"`** option first._
+> _Tip: Try the **`"strict-limited"`** option first._
 
-- `true` and `"enhanced"`/`"enhanced-limited"` use [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) with default options to determine numericity.
-- `"native"`/`"native-limited"` use JavaScript's native `parseFloat` method to determine numericity.
-- `"strict"`/`"strict-limited"` use `numeric-quantity` with the `allowTrailingInvalid` option set to `false`. Values must be numeric _in their entirety_ to be considered numeric, not just _start_ with a number as with `parseFloat`. See also [the corresponding `formatQuery` option](../utils/export#parse-numbers).
+- The `"*-limited"` options are equivalent to their non-suffixed counterparts except that numeric parsing is only performed when the value editor's `inputType` is `"number"`.
+- `true`, `"strict"`, and `"enhanced"` will retain the original value when numeric parsing fails.
+- `"enhanced"` and `"native"` can lead to information loss since any trailing invalid characters will be removed.
+- `true` and `"strict"` determine numericity using [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) with `allowTrailingInvalid: false`. Values must be numeric _in their entirety_ to be considered numeric, not just _start_ with a number as with `parseFloat`.
+- `"enhanced"` uses `numeric-quantity` with `allowTrailingInvalid: true`.
+- `"native"` uses JavaScript's native `parseFloat` method, which is similar to the "enhanced" algorithm in that it will strip trailing invalid characters, but it will return `NaN` for non-numeric values instead of the original value.
 
 ### `enableDragAndDrop`
 

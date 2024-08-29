@@ -273,11 +273,7 @@ export type CombinatorByValue<N extends string = string> = WithUnknownIndex<
 type ParseNumberMethodName = 'enhanced' | 'native' | 'strict';
 
 /**
- * Methods used by {@link parseNumber}.
- * - `false` avoids parsing
- * - `true`/`"enhanced"` (default) uses `numeric-quantity`
- * - `"strict"` is the same as `true`, but bails out when trailing invalid characters are present
- * - `"native"` forces the use of `parseFloat`, returning `NaN` when parsing fails
+ * Parsing algorithms used by {@link parseNumber}.
  */
 export type ParseNumberMethod = boolean | ParseNumberMethodName;
 

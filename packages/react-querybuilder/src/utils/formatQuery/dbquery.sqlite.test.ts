@@ -35,7 +35,7 @@ const testSQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
     const parameterizedNamed = formatQuery(query, {
       ...fqOptions,
       format: 'parameterized_named',
-      paramsKeepPrefix: true,
+      preset: 'sqlite',
     });
     const selectParamNamed = db.prepare(`${sqlBase} ${parameterizedNamed.sql}`);
     expect(selectParamNamed.all(parameterizedNamed.params)).toEqual(expectedResult);

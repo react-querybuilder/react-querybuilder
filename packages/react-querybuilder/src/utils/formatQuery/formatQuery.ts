@@ -412,6 +412,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           fieldParamNames,
           parseNumbers,
           quoteFieldNamesWith,
+          concatOperator,
           fieldIdentifierSeparator,
           fieldData,
           format,

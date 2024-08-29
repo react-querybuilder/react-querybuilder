@@ -15,19 +15,19 @@ export interface ParseNumberOptions {
  * as-is regardless of the `parseNumbers` option.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseNumber = (val: any, opts: ParseNumberOptions = {}) => {
-  if (!opts.parseNumbers || typeof val === 'bigint' || typeof val === 'number') {
+export const parseNumber = (val: any, { parseNumbers }: ParseNumberOptions = {}) => {
+  if (!parseNumbers || typeof val === 'bigint' || typeof val === 'number') {
     return val;
   }
 
-  if (opts.parseNumbers === 'native') {
+  if (parseNumbers === 'native') {
     return parseFloat(val);
   }
 
   const valAsNum =
     // TODO: Should these options be configurable?
     numericQuantity(val, {
-      allowTrailingInvalid: opts.parseNumbers === 'enhanced',
+      allowTrailingInvalid: parseNumbers === 'enhanced',
       romanNumerals: false,
       round: false,
     });

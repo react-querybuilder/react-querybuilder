@@ -13,20 +13,19 @@ const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: b
  */
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
-  // istanbul ignore next - defaultRuleProcessorSQL always provides options anyway
+  // istanbul ignore next - defaultRuleProcessorSQL always provides options
   {
     escapeQuotes,
     parseNumbers,
     quoteFieldNamesWith,
     quoteValuesWith,
-    concatOperator,
+    concatOperator = '||',
     fieldIdentifierSeparator,
   } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
   const quoteChar = quoteValuesWith || "'";
-  const concatOp = concatOperator || '||';
 
   const quoteValue = (v: unknown) => `${quoteChar}${v}${quoteChar}`;
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
@@ -34,9 +33,9 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const wrapFieldName = (v: string) =>
     quoteFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
   const concat = (...values: string[]) =>
-    concatOp.toUpperCase() === 'CONCAT'
+    concatOperator.toUpperCase() === 'CONCAT'
       ? `CONCAT(${values.join(', ')})`
-      : values.join(` ${concatOp} `);
+      : values.join(` ${concatOperator} `);
 
   switch (operatorLowerCase) {
     case 'null':
@@ -72,10 +71,10 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
         const [first, second] = valueAsArray;
 
         const firstNum = shouldRenderAsNumber(first, parseNumbers)
-          ? parseNumber(first, { parseNumbers: 'enhanced' })
+          ? parseNumber(first, { parseNumbers: 'strict' })
           : NaN;
         const secondNum = shouldRenderAsNumber(second, parseNumbers)
-          ? parseNumber(second, { parseNumbers: 'enhanced' })
+          ? parseNumber(second, { parseNumbers: 'strict' })
           : NaN;
         const firstValue = !isNaN(firstNum) ? firstNum : valueIsField ? `${first}` : first;
         const secondValue = !isNaN(secondNum) ? secondNum : valueIsField ? `${second}` : second;
@@ -90,7 +89,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
           valueIsField
             ? valsOneAndTwoOnly.map(wrapFieldName)
             : valsOneAndTwoOnly.every(v => shouldRenderAsNumber(v, parseNumbers))
-              ? valsOneAndTwoOnly.map(v => parseNumber(v, { parseNumbers: 'enhanced' }))
+              ? valsOneAndTwoOnly.map(v => parseNumber(v, { parseNumbers: 'strict' }))
               : valsOneAndTwoOnly.map(wrapAndEscape)
         ).join(` and `);
       }

@@ -83,7 +83,7 @@ export const useValueEditor = (props: UseValueEditorParams) => {
       return method;
     }
 
-    return parseNumbers ? 'enhanced' : false;
+    return parseNumbers ? 'strict' : false;
   }, [inputType, parseNumbers]);
 
   const multiValueHandler = useCallback(

@@ -140,7 +140,7 @@ export const optionsMetadata = {
   parseNumbers: {
     link: '/docs/components/querybuilder#parsenumbers',
     label: 'Parse numbers',
-    title: 'Parse real numbers from strings in rule values (uses "enhanced-limited" option)',
+    title: 'Parse real numbers from strings in rule values (uses "strict-limited" option)',
   },
   justifiedLayout: {
     link: '',

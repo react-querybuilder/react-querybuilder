@@ -19,7 +19,7 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
   if (operator === '=' && !valueIsField) {
     return str({
       [field]: shouldRenderAsNumber(value, parseNumbers)
-        ? parseNumber(value, { parseNumbers: 'enhanced' })
+        ? parseNumber(value, { parseNumbers: 'strict' })
         : value,
     });
   }
@@ -37,7 +37,7 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
         : str({
             [field]: {
               [mongoOperator]: shouldRenderAsNumber(value, parseNumbers)
-                ? parseNumber(value, { parseNumbers: 'enhanced' })
+                ? parseNumber(value, { parseNumbers: 'strict' })
                 : value,
             },
           });
@@ -92,7 +92,7 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
             [field]: {
               [mongoOperators[operator]]: valueAsArray.map(val =>
                 shouldRenderAsNumber(val, parseNumbers)
-                  ? parseNumber(val, { parseNumbers: 'enhanced' })
+                  ? parseNumber(val, { parseNumbers: 'strict' })
                   : val
               ),
             },
@@ -109,10 +109,10 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
       ) {
         const [first, second] = valueAsArray;
         const firstNum = shouldRenderAsNumber(first, true)
-          ? parseNumber(first, { parseNumbers: 'enhanced' })
+          ? parseNumber(first, { parseNumbers: 'strict' })
           : NaN;
         const secondNum = shouldRenderAsNumber(second, true)
-          ? parseNumber(second, { parseNumbers: 'enhanced' })
+          ? parseNumber(second, { parseNumbers: 'strict' })
           : NaN;
         const firstValue = valueIsField ? first : !isNaN(firstNum) ? firstNum : first;
         const secondValue = valueIsField ? second : !isNaN(secondNum) ? secondNum : second;

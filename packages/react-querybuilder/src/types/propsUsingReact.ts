@@ -860,19 +860,20 @@ export type QueryBuilderProps<
       /**
        * Store values as numbers whenever possible.
        *
-       * _**TIP: Try `"enhanced-limited"` first.**_
+       * _**TIP: Try `"strict-limited"` first.**_
        *
-       * Options include `true`, `false`, `"enhanced"`, `"strict"`, and `"native"`. The `string` options
+       * Options include `true`, `false`, `"enhanced"`, `"native"`, and `"strict"`. The `string` options
        * can be suffixed with `"-limited"`.
        *
        * - `false` avoids numeric parsing
-       * - `true` or `"enhanced"` parses values using `numeric-quantity`
-       * - `"strict"` is the same as `true`/`"enhanced"`, but bails out (returning the original string)
-       *   when trailing invalid characters are present
+       * - `true` or `"strict"` parses values using `numeric-quantity`, bailing out (returning the original
+       *   string) when trailing invalid characters are present
+       * - `"enhanced"` is the same as `true`/`"strict"`, but ignores trailing invalid characters (CAUTION:
+       *   this can lead to information loss)
        * - `"native"` parses values using `parseFloat`, returning `NaN` when parsing fails
        *
-       * When the value is `true` or a string without the "-limited" suffix, the default {@link ValueEditor} will
-       * attempt to parse *all* inputs as numbers. **Beware: This can lead to unexpected behavior.**
+       * When the value is `true` or a string without the "-limited" suffix, the default {@link ValueEditor}
+       * will attempt to parse *all* inputs as numbers. **CAUTION: This can lead to unexpected behavior.**
        *
        * When the value is a string with the "-limited" suffix, the default {@link ValueEditor} will
        * only attempt to parse inputs as numbers when the `inputType` is `"number"`.

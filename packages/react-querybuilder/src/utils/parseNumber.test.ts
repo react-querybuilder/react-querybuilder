@@ -10,7 +10,7 @@ it('no-ops when parseNumbers is false', () => {
   }
 });
 
-// Default/enhanced parser
+// Default/strict parser
 for (const pn of [true, 'strict'] as const) {
   it(`parses numbers with ${pn === true ? 'default' : pn} parser`, () => {
     expect(parseNumber(emptyObject, { parseNumbers: pn })).toBe(emptyObject);

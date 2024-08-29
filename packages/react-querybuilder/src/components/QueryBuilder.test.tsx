@@ -1007,12 +1007,12 @@ describe('parseNumbers prop', () => {
   const testCases = [
     {
       parseNumberMode: true,
-      textAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
-      textTyped: all1214sWithSpace,
+      textAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      textTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, 1, 1214],
-      numTextEditorTyped: all1214sWithSpace,
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
     },
     {
       parseNumberMode: false,

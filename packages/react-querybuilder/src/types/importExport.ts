@@ -72,9 +72,9 @@ export interface FormatQueryOptions {
    *
    * A common value for this option is `'.'`.
    *
-   * A value of `false` will disable splitting/rejoining.
+   * A value of `''` (the empty string) will disable splitting/rejoining.
    *
-   * @default false
+   * @default ''
    *
    * @example
    * formatQuery(query, {

@@ -185,7 +185,7 @@ export const getCodeString = (
         : `${prop}={false}`
       : prop === 'parseNumbers'
         ? options[prop]
-          ? `${prop}="enhanced-limited"`
+          ? `${prop}="strict-limited"`
           : ''
         : options[prop]
           ? prop
