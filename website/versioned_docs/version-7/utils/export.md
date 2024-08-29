@@ -330,12 +330,6 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 
 An object can be passed as the second argument instead of a string to have more fine-grained control over the output.
 
-:::info
-
-`parseNumbers` is the only configuration option that applies to the "json" and "json_without_ids" formats.
-
-:::
-
 ### Parse numbers
 
 Since HTML `<input>` controls store values as strings (even for `type="number"`), exporting a query to various formats may produce a string representation of a value when a true numeric value is required or more appropriate. Set the `parseNumbers` option to `true` (or one of the specific algorithms: "enhanced", "native", or "strict"; "strict" is the same as `true`) and `formatQuery` will attempt to convert all `value` properties to type `number`. When numeric parsing fails, the original value is retained.
@@ -632,23 +626,17 @@ const p = formatQuery(query, {
 });
 /*
 p.sql === "(firstName = $firstName_1 and lastName = $lastName_1)"
-                       ^^^                         ^^^
+//                     ^^^                         ^^^
 */
 ```
 
 ### Retain parameter prefixes
 
-`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the "parameterized_named" format, the keys of the `params` object will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ "$param_1": "val" }` instead of `{ param_1: "val" }`).
+`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the "parameterized_named" format, the keys of the `params` object will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ "$param_1": "val" }` instead of `{ "param_1": "val" }`).
 
 ### Numbered parameters
 
 For the "parameterized" format, all parameter placeholders in the generated SQL are "?" by default. When the `numberedParams` option is `true`, placeholders will instead be a numbered index beginning with `1`, incrementing by 1 from left to right. Each placeholder number will be prefixed with the configured `paramPrefix` string (default `":"`).
-
-:::tip
-
-For [PostgreSQL](https://www.postgresql.org/) compatibility, use `numberedParams: true` in conjunction with `paramPrefix: "$"`.
-
-:::
 
 ```ts
 const p = formatQuery(query, {
@@ -723,17 +711,17 @@ formatQuery(query, { format: 'sql', preset: 'mssql' });
 
 The `fallbackExpression` is a string that will be part of the output when `formatQuery` can't quite figure out what to do for a particular rule or group. The intent is to maintain valid syntax while (hopefully) not detrimentally affecting the query criteria. If not provided, the default fallback expression for the given format will be used:
 
-| Format                | Default `fallbackExpression`  |
-| --------------------- | ----------------------------- |
-| "sql"                 | `'(1 = 1)'`                   |
-| "parameterized"       | `'(1 = 1)'`                   |
-| "parameterized_named" | `'(1 = 1)'`                   |
-| "mongodb"             | `'{"$and":[{"$expr":true}]}'` |
-| "cel"                 | `'1 == 1'`                    |
-| "spel"                | `'1 == 1'`                    |
-| "jsonata"             | `'(1 = 1)'`                   |
-| "jsonlogic"           | `false`                       |
-| "elasticsearch"       | `{}`                          |
+| Format                  | Default `fallbackExpression`  |
+| ----------------------- | ----------------------------- |
+| `'sql'`                 | `'(1 = 1)'`                   |
+| `'parameterized'`       | `'(1 = 1)'`                   |
+| `'parameterized_named'` | `'(1 = 1)'`                   |
+| `'mongodb'`             | `'{"$and":[{"$expr":true}]}'` |
+| `'cel'`                 | `'1 == 1'`                    |
+| `'spel'`                | `'1 == 1'`                    |
+| `'jsonata'`             | `'(1 = 1)'`                   |
+| `'jsonlogic'`           | `false`                       |
+| `'elasticsearch'`       | `{}`                          |
 
 ### Value sources
 
