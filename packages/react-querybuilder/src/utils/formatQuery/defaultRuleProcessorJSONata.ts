@@ -1,7 +1,7 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
-import { nullOrUndefinedOrEmpty, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
+import { nullOrUndefinedOrEmpty, quoteFieldName, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -19,7 +19,12 @@ const escapeStringRegex = (s: string) =>
 export const defaultRuleProcessorJSONata: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { escapeQuotes, parseNumbers = true, quoteFieldNamesWith = ['', ''] as [string, string] } = {}
+  {
+    escapeQuotes,
+    parseNumbers = true,
+    quoteFieldNamesWith = ['', ''] as [string, string],
+    fieldIdentifierSeparator = '',
+  } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const useBareValue =
@@ -28,8 +33,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
 
-  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
-  const qfn = (f: string) => `${qPre}${f}${qPost}`;
+  const qfn = (f: string) => quoteFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
   switch (operator) {
     case '<':

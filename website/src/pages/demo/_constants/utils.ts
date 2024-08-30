@@ -16,6 +16,7 @@ import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-q
 import { formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
+import clsx from 'clsx';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 const prettier = prettierStandalone as typeof import('prettier');
@@ -177,16 +178,18 @@ export const getCodeString = (
   const styleIndent = style && style !== 'default' ? '  ' : '';
   const [styleImport, styleWrapperPrefix, styleWrapperSuffix] = getCompatWrapper(style);
 
-  const getPropText = (prop: keyof DemoOptions) => {
-    if (
-      prop === 'autoSelectField' ||
-      prop === 'autoSelectOperator' ||
-      prop === 'resetOnFieldChange'
-    ) {
-      return options[prop] ? '' : `${prop}={false}`;
-    }
-    return options[prop] ? prop : '';
-  };
+  const getPropText = (prop: keyof DemoOptions) =>
+    prop === 'autoSelectField' || prop === 'autoSelectOperator' || prop === 'resetOnFieldChange'
+      ? options[prop]
+        ? ''
+        : `${prop}={false}`
+      : prop === 'parseNumbers'
+        ? options[prop]
+          ? `${prop}="strict-limited"`
+          : ''
+        : options[prop]
+          ? prop
+          : '';
 
   const props = [
     'fields={fields}',
@@ -198,6 +201,7 @@ export const getCodeString = (
     getPropText('debugMode'),
     getPropText('disabled'),
     getPropText('listsAsArrays'),
+    getPropText('parseNumbers'),
     getPropText('resetOnFieldChange'),
     getPropText('resetOnOperatorChange'),
     getPropText('showCloneButtons'),
@@ -205,7 +209,12 @@ export const getCodeString = (
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
-    options.showBranches ? `controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}` : '',
+    options.showBranches || options.justifiedLayout
+      ? `controlClassnames={{ queryBuilder: '${clsx({
+          'queryBuilder-branches': options.showBranches,
+          justifiedLayout: options.justifiedLayout,
+        })}' }}`
+      : '',
   ]
     .filter(Boolean)
     .map(opt => `\n      ${dndIndent}${styleIndent}${opt}`)

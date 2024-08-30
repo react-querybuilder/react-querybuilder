@@ -1,12 +1,9 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { isValidValue, quoteFieldNamesWithArray, shouldRenderAsNumber } from './utils';
+import { parseNumber } from '../parseNumber';
+import { isValidValue, quoteFieldName, shouldRenderAsNumber } from './utils';
 
-const escapeStringValueQuotes = (
-  v: string | number | boolean | object | null,
-  quoteChar: string,
-  escapeQuotes?: boolean
-) =>
+const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
     ? v.replaceAll(`${quoteChar}`, `${quoteChar}${quoteChar}`)
     : v;
@@ -16,19 +13,29 @@ const escapeStringValueQuotes = (
  */
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
-  // istanbul ignore next
-  { escapeQuotes, parseNumbers, quoteFieldNamesWith, quoteValuesWith } = {}
+  // istanbul ignore next - defaultRuleProcessorSQL always provides options
+  {
+    escapeQuotes,
+    parseNumbers,
+    quoteFieldNamesWith,
+    quoteValuesWith,
+    concatOperator = '||',
+    fieldIdentifierSeparator,
+  } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const [qfnwPre, qfnwPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
   const operatorLowerCase = operator.toLowerCase();
   const quoteChar = quoteValuesWith || "'";
 
-  const escapeValue = (v: string | number | boolean | object | null) =>
-    escapeStringValueQuotes(v, quoteChar, escapeQuotes);
-  const wrapAndEscape = (v: string | number | boolean | object | null) =>
-    `${quoteChar}${escapeValue(v)}${quoteChar}`;
-  const wrapFieldName = (f: string) => `${qfnwPre}${f}${qfnwPost}`;
+  const quoteValue = (v: unknown) => `${quoteChar}${v}${quoteChar}`;
+  const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
+  const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
+  const wrapFieldName = (v: string) =>
+    quoteFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+  const concat = (...values: string[]) =>
+    concatOperator.toUpperCase() === 'CONCAT'
+      ? `CONCAT(${values.join(', ')})`
+      : values.join(` ${concatOperator} `);
 
   switch (operatorLowerCase) {
     case 'null':
@@ -55,18 +62,36 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 
     case 'between':
     case 'notbetween': {
-      const valueAsArray = toArray(value);
+      const valueAsArray = toArray(value, { retainEmptyStrings: true });
       if (
         valueAsArray.length >= 2 &&
         isValidValue(valueAsArray[0]) &&
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        return valueIsField
-          ? `${wrapFieldName(first)} and ${wrapFieldName(second)}`
-          : shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers)
-            ? `${trimIfString(first)} and ${trimIfString(second)}`
-            : `${wrapAndEscape(first)} and ${wrapAndEscape(second)}`;
+
+        const firstNum = shouldRenderAsNumber(first, parseNumbers)
+          ? parseNumber(first, { parseNumbers: 'strict' })
+          : NaN;
+        const secondNum = shouldRenderAsNumber(second, parseNumbers)
+          ? parseNumber(second, { parseNumbers: 'strict' })
+          : NaN;
+        const firstValue = !isNaN(firstNum) ? firstNum : valueIsField ? `${first}` : first;
+        const secondValue = !isNaN(secondNum) ? secondNum : valueIsField ? `${second}` : second;
+
+        const valsOneAndTwoOnly = [firstValue, secondValue];
+        if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
+          valsOneAndTwoOnly[0] = secondNum;
+          valsOneAndTwoOnly[1] = firstNum;
+        }
+
+        return (
+          valueIsField
+            ? valsOneAndTwoOnly.map(wrapFieldName)
+            : valsOneAndTwoOnly.every(v => shouldRenderAsNumber(v, parseNumbers))
+              ? valsOneAndTwoOnly.map(v => parseNumber(v, { parseNumbers: 'strict' }))
+              : valsOneAndTwoOnly.map(wrapAndEscape)
+        ).join(` and `);
       }
       return '';
     }
@@ -74,20 +99,20 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     case 'contains':
     case 'doesnotcontain':
       return valueIsField
-        ? `${quoteChar}%${quoteChar} || ${wrapFieldName(value)} || ${quoteChar}%${quoteChar}`
-        : `${quoteChar}%${escapeValue(value)}%${quoteChar}`;
+        ? concat(quoteValue('%'), wrapFieldName(value), quoteValue('%'))
+        : quoteValue(`%${escapeValue(value)}%`);
 
     case 'beginswith':
     case 'doesnotbeginwith':
       return valueIsField
-        ? `${wrapFieldName(value)} || ${quoteChar}%${quoteChar}`
-        : `${quoteChar}${escapeValue(value)}%${quoteChar}`;
+        ? concat(wrapFieldName(value), quoteValue('%'))
+        : quoteValue(`${escapeValue(value)}%`);
 
     case 'endswith':
     case 'doesnotendwith':
       return valueIsField
-        ? `${quoteChar}%${quoteChar} || ${wrapFieldName(value)}`
-        : `${quoteChar}%${escapeValue(value)}${quoteChar}`;
+        ? concat(quoteValue('%'), wrapFieldName(value))
+        : quoteValue(`%${escapeValue(value)}`);
   }
 
   if (typeof value === 'boolean') {

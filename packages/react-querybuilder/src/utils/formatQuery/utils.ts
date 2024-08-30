@@ -3,8 +3,9 @@ import type {
   RuleGroupTypeAny,
   ValueProcessorByRule,
   ValueProcessorLegacy,
+  ValueProcessorOptions,
 } from '../../types/index.noReact';
-import { toArray } from '../arrayUtils';
+import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
@@ -81,13 +82,15 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
       return { ...r, value: r.value.map(v => parseNumber(v, { parseNumbers: true })) };
     }
 
-    const va = toArray(r.value).map(v => parseNumber(v, { parseNumbers: true }));
-    if (va.every(v => typeof v === 'number')) {
+    const valAsArray = toArray(r.value, { retainEmptyStrings: true }).map(v =>
+      parseNumber(v, { parseNumbers: true })
+    );
+    if (valAsArray.every(v => typeof v === 'number')) {
       // istanbul ignore else
-      if (va.length > 1) {
-        return { ...r, value: va };
-      } else if (va.length === 1) {
-        return { ...r, value: va[0] };
+      if (valAsArray.length > 1) {
+        return { ...r, value: valAsArray };
+      } else if (valAsArray.length === 1) {
+        return { ...r, value: valAsArray[0] };
       }
     }
 
@@ -120,6 +123,19 @@ export const quoteFieldNamesWithArray = (
     : typeof quoteFieldNamesWith === 'string'
       ? [quoteFieldNamesWith, quoteFieldNamesWith]
       : (quoteFieldNamesWith ?? ['', '']);
+
+export const quoteFieldName = (
+  f: string,
+  { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions
+) => {
+  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
+  return typeof fieldIdentifierSeparator === 'string' && fieldIdentifierSeparator.length > 0
+    ? joinWith(
+        splitBy(f, fieldIdentifierSeparator).map(part => `${qPre}${part}${qPost}`),
+        fieldIdentifierSeparator
+      )
+    : `${qPre}${f}${qPost}`;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const nullOrUndefinedOrEmpty = (v: any) =>

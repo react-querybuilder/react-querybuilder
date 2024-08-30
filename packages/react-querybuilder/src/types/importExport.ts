@@ -21,6 +21,8 @@ export type ExportFormat =
   | 'elasticsearch'
   | 'jsonata';
 
+export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
+
 /**
  * Options object shape for {@link formatQuery}.
  */
@@ -42,11 +44,14 @@ export interface FormatQueryOptions {
    */
   ruleProcessor?: RuleProcessor;
   /**
-   * In the "sql"/"parameterized"/"parameterized_named" export formats,
-   * field names will be bracketed by this string. If an array of strings
+   * In the "sql", "parameterized", "parameterized_named", and "jsonata" export
+   * formats, field names will be bracketed by this string. If an array of strings
    * is passed, field names will be preceded by the first element and
-   * succeeded by the second element. A common value for this option is
-   * the backtick (```'`'```).
+   * succeeded by the second element.
+   *
+   * A common value for this option is the backtick (```'`'```).
+   *
+   * Tip: Use `fieldIdentifierSeparator` to bracket identifiers individually within field names.
    *
    * @default '' // the empty string
    *
@@ -59,6 +64,27 @@ export interface FormatQueryOptions {
    * // "[First name] = 'Steve'"
    */
   quoteFieldNamesWith?: string | [string, string];
+  /**
+   * When used in conjunction with the `quoteFieldNamesWith` option, field names will
+   * be split by this string, each part being individually processed as per the rules
+   * of the `quoteFieldNamesWith` configuration. The parts will then be re-joined
+   * by the same string.
+   *
+   * A common value for this option is `'.'`.
+   *
+   * A value of `''` (the empty string) will disable splitting/rejoining.
+   *
+   * @default ''
+   *
+   * @example
+   * formatQuery(query, {
+   *   format: 'sql',
+   *   quoteFieldNamesWith: ['[', ']'],
+   *   fieldIdentifierSeparator: '.',
+   * })
+   * // "[dbo].[Musicians].[First name] = 'Steve'"
+   */
+  fieldIdentifierSeparator?: string;
   /**
    * Character to use for quoting string values in the SQL format.
    * @default `'`
@@ -134,6 +160,23 @@ export interface FormatQueryOptions {
    * @default '~'
    */
   placeholderOperatorName?: string;
+  /**
+   * Operator to use when concatenating wildcard characters and field names in "sql" format.
+   * The ANSI standard is `||`, while SQL Server uses `+`. MySQL does not implement a concatenation
+   * operator by default, and therefore requires use of the `CONCAT` function.
+   *
+   * If `concatOperator` is set to `"CONCAT"` (case-insensitive), the `CONCAT` function will be
+   * used. Note that Oracle SQL does not support more than two values in the `CONCAT` function,
+   * so this option should not be used in that context. The default setting (`"||"`) is already
+   * compatible with Oracle SQL.
+   *
+   * @default '||'
+   */
+  concatOperator?: '||' | '+' | 'CONCAT' | (string & {});
+  /**
+   * Option presets to maximize compatibility with various SQL dialects.
+   */
+  preset?: SQLPreset;
 }
 
 /**

@@ -119,3 +119,31 @@ it('handles quoteFieldNamesWith correctly', () => {
     '`instrument` in ["Guitar", "Vocals"] and `lastName` = "Vai" and `lastName` != `firstName`'
   );
 });
+
+it('handles fieldIdentifierSeparator correctly', () => {
+  const queryToTest: RuleGroupType = {
+    id: 'g-root',
+    combinator: 'and',
+    rules: [
+      { field: 'musicians.instrument', value: 'Guitar, Vocals', operator: 'in' },
+      { field: 'musicians.lastName', value: 'Vai', operator: '=' },
+      {
+        field: 'musicians.lastName',
+        value: 'musicians.firstName',
+        operator: '!=',
+        valueSource: 'field',
+      },
+    ],
+    not: false,
+  };
+
+  expect(
+    formatQuery(queryToTest, {
+      format: 'jsonata',
+      quoteFieldNamesWith: '`',
+      fieldIdentifierSeparator: '.',
+    })
+  ).toBe(
+    '`musicians`.`instrument` in ["Guitar", "Vocals"] and `musicians`.`lastName` = "Vai" and `musicians`.`lastName` != `musicians`.`firstName`'
+  );
+});

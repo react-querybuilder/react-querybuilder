@@ -586,7 +586,7 @@ Updates the `value` property for the current rule. Default is [`ValueEditor`](./
 | `className`      | `string`                                 | CSS `classNames` to be applied                                          |
 | `valueSource`    | `ValueSource`                            | Value source for this rule                                              |
 | `listsAsArrays`  | `boolean`                                | Whether to manage value lists (i.e. "between"/"in" operators) as arrays |
-| `parseNumbers`   | `boolean`                                | Whether to parse real numbers from strings                              |
+| `parseNumbers`   | `ParseNumberMethod`                      | Whether to parse real numbers from strings                              |
 | `separator`      | `ReactNode`                              | Separator element for series of editors (i.e. "between" operator)       |
 | `level`          | `number`                                 | The `level` of this rule                                                |
 | `context`        | `any`                                    | Container for custom props that are passed to all components            |
@@ -911,9 +911,18 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 ### `parseNumbers`
 
-`boolean | "strict" | "native"` (default `false`) _<DemoLink option="parseNumbers" />_
+`boolean | "enhanced" | "enhanced-limited" | "native" | "native-limited" | "strict" | "strict-limited"` (default `false`) _<DemoLink option="parseNumbers" />_
 
-Pass `true`, `"strict"`, or `"native"` to store `value` as a `number` instead of a string (when possible). Passing `"native"` will use `parseFloat` to determine if a value is numeric, while `true` or `"strict"` will use a more strict algorithm that requires the value to be numeric in its entirety (not just _start_ with a number as `parseFloat` requires). See more information in the [note about the corresponding `formatQuery` option](../utils/export#parse-numbers).
+Sets the `value` with type `number` instead of `string` when possible.
+
+> _Tip: Try the **`"strict-limited"`** option first._
+
+- The `"*-limited"` options are equivalent to their non-suffixed counterparts except that numeric parsing is only performed when the value editor's `inputType` is `"number"`.
+- `true`, `"strict"`, and `"enhanced"` will retain the original value when numeric parsing fails.
+- `"enhanced"` and `"native"` can lead to information loss since any trailing invalid characters will be removed.
+- `true` and `"strict"` determine numericity using [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) with `allowTrailingInvalid: false`. Values must be numeric _in their entirety_ to be considered numeric, not just _start_ with a number as with `parseFloat`.
+- `"enhanced"` uses `numeric-quantity` with `allowTrailingInvalid: true`.
+- `"native"` uses JavaScript's native `parseFloat` method, which is similar to the "enhanced" algorithm in that it will strip trailing invalid characters, but it will return `NaN` for non-numeric values instead of the original value.
 
 ### `enableDragAndDrop`
 

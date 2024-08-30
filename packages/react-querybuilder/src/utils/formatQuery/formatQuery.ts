@@ -15,6 +15,7 @@ import type {
   RuleProcessor,
   RuleType,
   RuleValidator,
+  SQLPreset,
   ValidationMap,
   ValidationResult,
 } from '../../types/index.noReact';
@@ -39,6 +40,27 @@ import {
   numerifyValues,
   quoteFieldNamesWithArray,
 } from './utils';
+
+const sqlDialectPresets = {
+  ansi: {},
+  sqlite: {
+    paramsKeepPrefix: true,
+  },
+  oracle: {},
+  mssql: {
+    concatOperator: '+',
+    quoteFieldNamesWith: ['[', ']'],
+    fieldIdentifierSeparator: '.',
+  },
+  mysql: {
+    concatOperator: 'CONCAT',
+  },
+  postgresql: {
+    quoteFieldNamesWith: '"',
+    numberedParams: true,
+    paramPrefix: '$',
+  },
+} satisfies Record<SQLPreset, FormatQueryOptions>;
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -122,6 +144,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let valueProcessorInternal = defaultValueProcessorByRule;
   let ruleProcessorInternal: RuleProcessor | null = null;
   let quoteFieldNamesWith: [string, string] = ['', ''];
+  let fieldIdentifierSeparator: string = '';
   let validator: QueryValidator = () => true;
   let fields: FullOptionList<FullField> = [];
   let validationMap: ValidationMap = {};
@@ -133,6 +156,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let placeholderFieldName = defaultPlaceholderFieldName;
   let placeholderOperatorName = defaultPlaceholderOperatorName;
   let quoteValuesWith = "'";
+  let concatOperator = '||';
 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
@@ -154,8 +178,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       ruleProcessorInternal = defaultRuleProcessorJSONata;
     }
   } else {
-    format = (options.format ?? 'json').toLowerCase() as ExportFormat;
-    const { valueProcessor = null, ruleProcessor = null } = options;
+    const optionsWithPresets = {
+      ...(sqlDialectPresets[options.preset ?? 'ansi'] ?? {}),
+      ...options,
+    };
+    format = (optionsWithPresets.format ?? 'json').toLowerCase() as ExportFormat;
+    const { valueProcessor = null, ruleProcessor = null } = optionsWithPresets;
     if (typeof ruleProcessor === 'function') {
       ruleProcessorInternal = ruleProcessor;
     }
@@ -178,17 +206,20 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                   : format === 'jsonata'
                     ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
                     : defaultValueProcessorByRule;
-    quoteFieldNamesWith = quoteFieldNamesWithArray(options.quoteFieldNamesWith);
-    validator = options.validator ?? (() => true);
-    fields = toFullOptionList(options.fields ?? []);
-    fallbackExpression = options.fallbackExpression ?? '';
-    paramPrefix = options.paramPrefix ?? ':';
-    paramsKeepPrefix = !!options.paramsKeepPrefix;
-    numberedParams = !!options.numberedParams;
-    parseNumbers = !!options.parseNumbers;
-    placeholderFieldName = options.placeholderFieldName ?? defaultPlaceholderFieldName;
-    placeholderOperatorName = options.placeholderOperatorName ?? defaultPlaceholderOperatorName;
-    quoteValuesWith = options.quoteValuesWith ?? "'";
+    quoteFieldNamesWith = quoteFieldNamesWithArray(optionsWithPresets.quoteFieldNamesWith);
+    fieldIdentifierSeparator = optionsWithPresets.fieldIdentifierSeparator ?? '';
+    validator = optionsWithPresets.validator ?? (() => true);
+    fields = toFullOptionList(optionsWithPresets.fields ?? []);
+    fallbackExpression = optionsWithPresets.fallbackExpression ?? '';
+    paramPrefix = optionsWithPresets.paramPrefix ?? ':';
+    paramsKeepPrefix = !!optionsWithPresets.paramsKeepPrefix;
+    numberedParams = !!optionsWithPresets.numberedParams;
+    parseNumbers = !!optionsWithPresets.parseNumbers;
+    placeholderFieldName = optionsWithPresets.placeholderFieldName ?? defaultPlaceholderFieldName;
+    placeholderOperatorName =
+      optionsWithPresets.placeholderOperatorName ?? defaultPlaceholderOperatorName;
+    quoteValuesWith = optionsWithPresets.quoteValuesWith ?? "'";
+    concatOperator = optionsWithPresets.concatOperator ?? '||';
   }
   if (!fallbackExpression) {
     fallbackExpression =
@@ -303,9 +334,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             parseNumbers,
             escapeQuotes,
             quoteFieldNamesWith,
+            fieldIdentifierSeparator,
             fieldData,
             format,
             quoteValuesWith,
+            concatOperator,
           });
         }
         // ...otherwise use default rule processor and pass in the value
@@ -315,9 +348,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           escapeQuotes,
           valueProcessor: valueProcessorInternal,
           quoteFieldNamesWith,
+          fieldIdentifierSeparator,
           fieldData,
           format,
           quoteValuesWith,
+          concatOperator,
         });
       });
 
@@ -382,6 +417,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           fieldParamNames,
           parseNumbers,
           quoteFieldNamesWith,
+          concatOperator,
+          fieldIdentifierSeparator,
           fieldData,
           format,
           paramPrefix,
@@ -628,6 +665,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             fieldData,
             format,
             quoteFieldNamesWith,
+            fieldIdentifierSeparator,
           });
         })
         .filter(Boolean)

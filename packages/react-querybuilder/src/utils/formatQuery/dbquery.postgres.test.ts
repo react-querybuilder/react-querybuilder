@@ -24,10 +24,8 @@ const testSQL = ({ query, expectedResult }: TestSQLParams) => {
 
   test('parameterized', async () => {
     const parameterized = formatQuery(query, {
-      quoteFieldNamesWith: '"',
       format: 'parameterized',
-      numberedParams: true, // Necessary for PostgreSQL compatibility
-      paramPrefix: '$', // Necessary for PostgreSQL compatibility
+      preset: 'postgresql',
     });
     const queryResult = await db.query(`${sqlBase} ${parameterized.sql}`, parameterized.params);
     expect(queryResult.rows).toEqual(expectedResult);

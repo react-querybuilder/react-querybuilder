@@ -123,40 +123,6 @@ const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   );
 };
 
-const { label: pnlabel, link: pnlink, title: pntitle } = optionsMetadata.parseNumbers;
-const ParseNumbersOption = ({
-  checked,
-  setter,
-  disabled,
-}: {
-  checked: boolean;
-  setter: (v: boolean) => unknown;
-  disabled?: boolean;
-}) => {
-  return (
-    <>
-      <span>&nbsp;</span>
-      <div className={styles.demoOption}>
-        <label title={pntitle}>
-          <input
-            type="checkbox"
-            disabled={disabled}
-            checked={checked}
-            onChange={e => !disabled && setter(e.target.checked)}
-          />
-          {` ${pnlabel} `}
-          <Link
-            href={`${pnlink}`}
-            title="Click for documentation"
-            style={{ textDecoration: 'none' }}>
-            {infoChar}
-          </Link>
-        </label>
-      </div>
-    </>
-  );
-};
-
 export default function Demo({
   variant = 'default',
   queryWrapper: QueryWrapper = defaultQueryWrapper,
@@ -170,6 +136,7 @@ export default function Demo({
     ...defaultOptions,
     ...initialOptionsFromHash,
   });
+  const [parseNumbersInExport, setParseNumbersInExport] = useState(false);
   const [isSQLInputVisible, setIsSQLInputVisible] = useState(false);
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
@@ -256,9 +223,9 @@ export default function Demo({
     (): FormatQueryOptions => ({
       format,
       fields: options.validateQuery ? fields : undefined,
-      parseNumbers: options.parseNumbers,
+      parseNumbers: parseNumbersInExport,
     }),
-    [format, options.parseNumbers, options.validateQuery]
+    [format, parseNumbersInExport, options.validateQuery]
   );
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
@@ -297,7 +264,7 @@ export default function Demo({
         <h4>Call</h4>
         <CodeBlock>
           {`formatQuery(query, ${
-            options.parseNumbers || format === 'jsonata'
+            parseNumbersInExport || format === 'jsonata'
               ? `{ format: '${format}', parseNumbers: true }`
               : `'${format}'`
           })`}
@@ -308,12 +275,30 @@ export default function Demo({
         </CodeBlock>
       </>
     ),
-    [format, formatString, options.parseNumbers]
+    [format, formatString, parseNumbersInExport]
   );
 
-  const { setter: pnSetter } = useMemo(
-    () => optionsInfo.find(opt => opt.name === 'parseNumbers')!,
-    [optionsInfo]
+  const parseNumbersOption = (
+    <>
+      <span>&nbsp;</span>
+      <div className={styles.demoOption}>
+        <label title="Parse numbers">
+          <input
+            type="checkbox"
+            disabled={options.disabled}
+            checked={parseNumbersInExport}
+            onChange={e => !options.disabled && setParseNumbersInExport(e.target.checked)}
+          />
+          {` Parse numbers in export `}
+          <Link
+            href="/docs/utils/export#parse-numbers"
+            title="Click for documentation"
+            style={{ textDecoration: 'none' }}>
+            {infoChar}
+          </Link>
+        </label>
+      </div>
+    </>
   );
 
   const packageNames = useMemo(
@@ -438,6 +423,7 @@ export default function Demo({
       fields,
       ...opts,
       validator: opts.validateQuery ? defaultValidator : undefined,
+      parseNumbers: opts.parseNumbers ? 'strict-limited' : false,
     };
   }, [options]);
 
@@ -468,32 +454,26 @@ export default function Demo({
           </Link>
         </h3>
         <div>
-          {optionsInfo
-            .filter(opt => opt.name !== 'parseNumbers')
-            .map(({ checked, label, link, setter, title }) => (
-              <div key={label} className={styles.demoOption}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={e => setter(e.target.checked)}
-                  />
-                  {` ${label}`}
-                </label>
-                {link ? (
-                  <Link
-                    href={`${link}`}
-                    title={`${title} (click for documentation)`}
-                    style={{ textDecoration: 'none' }}>
-                    {infoChar}
-                  </Link>
-                ) : (
-                  <span title={title} style={{ cursor: 'pointer' }}>
-                    {infoChar}
-                  </span>
-                )}
-              </div>
-            ))}
+          {optionsInfo.map(({ checked, label, link, setter, title }) => (
+            <div key={label} className={styles.demoOption}>
+              <label>
+                <input type="checkbox" checked={checked} onChange={e => setter(e.target.checked)} />
+                {` ${label}`}
+              </label>
+              {link ? (
+                <Link
+                  href={`${link}`}
+                  title={`${title} (click for documentation)`}
+                  style={{ textDecoration: 'none' }}>
+                  {infoChar}
+                </Link>
+              ) : (
+                <span title={title} style={{ cursor: 'pointer' }}>
+                  {infoChar}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
         <div className={styles.demoOptionCommands}>
           <div title="Reset the options above to their default values">
@@ -679,7 +659,7 @@ export default function Demo({
                 />{' '}
                 Full query object
               </label>
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>
@@ -707,42 +687,42 @@ export default function Demo({
                 />{' '}
                 Named parameters
               </label>
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>
           <TabItem value="mongodb">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="mongodb" />
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>
           <TabItem value="cel">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="cel" />
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>
           <TabItem value="spel">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="spel" />
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>
           <TabItem value="jsonlogic">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="jsonlogic" />
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>
           <TabItem value="elasticsearch">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="elasticsearch" />
-              <ParseNumbersOption checked={options.parseNumbers} setter={pnSetter} />
+              {parseNumbersOption}
             </div>
             {exportPresentation}
           </TabItem>

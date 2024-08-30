@@ -18,7 +18,6 @@ export const ValueEditor = <F extends FullField>(allProps: ValueEditorProps<F>) 
     inputType = 'text',
     values = [],
     listsAsArrays,
-    parseNumbers,
     fieldData,
     disabled,
     separator = null,
@@ -27,7 +26,7 @@ export const ValueEditor = <F extends FullField>(allProps: ValueEditorProps<F>) 
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor(allProps);
+  const { valueAsArray, multiValueHandler, parseNumberMethod } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -152,7 +151,9 @@ export const ValueEditor = <F extends FullField>(allProps: ValueEditorProps<F>) 
       title={title}
       className={className}
       disabled={disabled}
-      onChange={e => handleOnChange(parseNumber(e.target.value, { parseNumbers }))}
+      onChange={e =>
+        handleOnChange(parseNumber(e.target.value, { parseNumbers: parseNumberMethod }))
+      }
     />
   );
 };

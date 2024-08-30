@@ -270,14 +270,21 @@ export type CombinatorByValue<N extends string = string> = WithUnknownIndex<
   SetOptional<BaseFullOption<N>, 'name'> & HasOptionalClassName
 >;
 
+type ParseNumberMethodName = 'enhanced' | 'native' | 'strict';
+
 /**
- * Methods used by {@link parseNumbers}.
- * - `false` avoids parsing
- * - `true`/`"enhanced"` (default) uses `numeric-quantity`
- * - `"strict"` is the same as `true`, but bails out when trailing invalid characters are present
- * - `"native"` forces the use of `parseFloat`, returning `NaN` when parsing fails
+ * Parsing algorithms used by {@link parseNumber}.
  */
-export type ParseNumbersMethod = boolean | 'enhanced' | 'native' | 'strict';
+export type ParseNumberMethod = boolean | ParseNumberMethodName;
+
+type ParseNumbersModerationLevel = '-limited' | '';
+
+/**
+ * Options for the `parseNumbers` prop of {@link QueryBuilder}.
+ */
+export type ParseNumbersPropConfig =
+  | boolean
+  | `${ParseNumberMethodName}${ParseNumbersModerationLevel}`;
 
 /**
  * Signature of `accessibleDescriptionGenerator` prop, used by {@link QueryBuilder} to generate

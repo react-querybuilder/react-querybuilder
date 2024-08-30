@@ -130,18 +130,6 @@ type ExportFormat =
   | 'elasticsearch'
   | 'spel';
 
-type ValueProcessor = (field: string, operator: string, value: any) => string;
-
-interface ValueProcessorOptions {
-  parseNumbers?: boolean;
-  quoteFieldNamesWith?: string | [string, string];
-  quoteValuesWith?: string;
-  escapeQuotes?: boolean;
-  fieldData?: Field;
-}
-
-type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
-
 interface FormatQueryOptions {
   format?: ExportFormat;
   valueProcessor?: ValueProcessor;
@@ -152,9 +140,21 @@ interface FormatQueryOptions {
   fields?: OptionList<Field>;
   fallbackExpression?: string;
   paramPrefix?: string;
-  parseNumbers?: boolean;
+  parseNumbers?: ParseNumberMethod;
+  concatOperator?: string;
   placeholderFieldName?: string;
   placeholderOperatorName?: string;
+}
+
+type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
+
+type ValueProcessor = (field: string, operator: string, value: any) => string;
+
+interface ValueProcessorOptions extends FormatQueryOptions {
+  escapeQuotes?: boolean;
+  fieldData?: Field;
+  fieldParamNames?: Record<string, string[]>;
+  getNextNamedParam?: (field: string) => string;
 }
 
 interface ParameterizedSQL {
@@ -166,6 +166,8 @@ interface ParameterizedNamedSQL {
   sql: string;
   params: { [p: string]: any };
 }
+
+type ParseNumberMethod = boolean | 'enhanced' | 'native' | 'strict';
 ```
 
 ## Import

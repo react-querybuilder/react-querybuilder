@@ -1,11 +1,11 @@
 import { numericQuantity } from 'numeric-quantity';
-import type { ParseNumbersMethod } from '../types/index.noReact';
+import type { ParseNumberMethod } from '../types/index.noReact';
 
 /**
  * Options object for {@link parseNumber}.
  */
 export interface ParseNumberOptions {
-  parseNumbers?: ParseNumbersMethod;
+  parseNumbers?: ParseNumberMethod;
 }
 
 /**
@@ -15,19 +15,22 @@ export interface ParseNumberOptions {
  * as-is regardless of the `parseNumbers` option.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseNumber = (v: any, pno: ParseNumberOptions = {}) => {
-  if (!pno.parseNumbers || typeof v === 'bigint' || typeof v === 'number') {
-    return v;
+export const parseNumber = (val: any, { parseNumbers }: ParseNumberOptions = {}) => {
+  if (!parseNumbers || typeof val === 'bigint' || typeof val === 'number') {
+    return val;
   }
-  if (pno.parseNumbers === 'native') {
-    return parseFloat(v);
+
+  if (parseNumbers === 'native') {
+    return parseFloat(val);
   }
-  const n =
+
+  const valAsNum =
     // TODO: Should these options be configurable?
-    numericQuantity(v, {
-      allowTrailingInvalid: pno.parseNumbers === 'enhanced',
-      romanNumerals: true,
+    numericQuantity(val, {
+      allowTrailingInvalid: parseNumbers === 'enhanced',
+      romanNumerals: false,
       round: false,
     });
-  return isNaN(n) ? v : n;
+
+  return isNaN(valAsNum) ? val : valAsNum;
 };

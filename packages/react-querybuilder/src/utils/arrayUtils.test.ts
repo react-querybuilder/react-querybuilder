@@ -32,6 +32,12 @@ it('converts stuff to an array', () => {
   expect(toArray([null, 'test', 1214, '  '])).toEqual([null, 'test', 1214, '']);
 });
 
+it('retains empty strings', () => {
+  const testString = 'test,  ,,,this';
+  expect(toArray(testString, { retainEmptyStrings: true })).toEqual(['test', '', '', '', 'this']);
+  expect(toArray(testString, { retainEmptyStrings: false })).toEqual(['test', 'this']);
+});
+
 it('detects null-free arrays', () => {
   expect(nullFreeArray([])).toBe(true);
   expect(nullFreeArray([0])).toBe(true);

@@ -16,7 +16,7 @@ import type {
   FullField,
   FullOperator,
   InputType,
-  ParseNumbersMethod,
+  ParseNumbersPropConfig,
   Path,
   ValueEditorType,
   ValueSource,
@@ -175,7 +175,7 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values?: any[];
   listsAsArrays?: boolean;
-  parseNumbers?: ParseNumbersMethod;
+  parseNumbers?: ParseNumbersPropConfig;
   separator?: ReactNode;
   selectorComponent?: ComponentType<ValueSelectorProps>;
   /**
@@ -374,7 +374,7 @@ export interface Schema<F extends FullField, O extends string> {
   validationMap: ValidationMap;
   independentCombinators: boolean;
   listsAsArrays: boolean;
-  parseNumbers: ParseNumbersMethod;
+  parseNumbers: ParseNumbersPropConfig;
   disabledPaths: Path[];
 }
 
@@ -858,11 +858,29 @@ export type QueryBuilderProps<
        */
       listsAsArrays?: boolean;
       /**
-       * Store values as numbers if possible.
+       * Store values as numbers whenever possible.
+       *
+       * _**TIP: Try `"strict-limited"` first.**_
+       *
+       * Options include `true`, `false`, `"enhanced"`, `"native"`, and `"strict"`. The `string` options
+       * can be suffixed with `"-limited"`.
+       *
+       * - `false` avoids numeric parsing
+       * - `true` or `"strict"` parses values using `numeric-quantity`, bailing out (returning the original
+       *   string) when trailing invalid characters are present
+       * - `"enhanced"` is the same as `true`/`"strict"`, but ignores trailing invalid characters (CAUTION:
+       *   this can lead to information loss)
+       * - `"native"` parses values using `parseFloat`, returning `NaN` when parsing fails
+       *
+       * When the value is `true` or a string without the "-limited" suffix, the default {@link ValueEditor}
+       * will attempt to parse *all* inputs as numbers. **CAUTION: This can lead to unexpected behavior.**
+       *
+       * When the value is a string with the "-limited" suffix, the default {@link ValueEditor} will
+       * only attempt to parse inputs as numbers when the `inputType` is `"number"`.
        *
        * @default false
        */
-      parseNumbers?: ParseNumbersMethod;
+      parseNumbers?: ParseNumbersPropConfig;
       /**
        * Disables the entire query builder if true, or the rules and groups at
        * the specified paths (as well as all child rules/groups and subcomponents)

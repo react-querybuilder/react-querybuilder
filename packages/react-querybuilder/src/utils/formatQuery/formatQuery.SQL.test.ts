@@ -7,6 +7,7 @@ import type {
   ParameterizedSQL,
   RuleGroupType,
   RuleProcessor,
+  SQLPreset,
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
@@ -199,11 +200,49 @@ it('handles quoteFieldNamesWith correctly', () => {
   );
 });
 
+it('handles fieldIdentifierSeparator correctly', () => {
+  const queryToTest: RuleGroupType = {
+    id: 'g-root',
+    combinator: 'and',
+    rules: [
+      { field: 'musicians.instrument', value: 'Guitar, Vocals', operator: 'in' },
+      { field: 'musicians.lastName', value: 'Vai', operator: '=' },
+      {
+        field: 'musicians.lastName',
+        value: 'musicians.firstName',
+        operator: '!=',
+        valueSource: 'field',
+      },
+    ],
+    not: false,
+  };
+
+  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })).toBe(
+    "([musicians.instrument] in ('Guitar', 'Vocals') and [musicians.lastName] = 'Vai' and [musicians.lastName] != [musicians.firstName])"
+  );
+
+  expect(
+    formatQuery(queryToTest, {
+      format: 'sql',
+      quoteFieldNamesWith: ['[', ']'],
+      fieldIdentifierSeparator: '.',
+    })
+  ).toBe(
+    "([musicians].[instrument] in ('Guitar', 'Vocals') and [musicians].[lastName] = 'Vai' and [musicians].[lastName] != [musicians].[firstName])"
+  );
+});
+
 it('handles quoteValuesWith correctly', () => {
   expect(formatQuery(query, { format: 'sql', quoteValuesWith: `'` })).toBe(sqlString);
 
   expect(formatQuery(query, { format: 'sql', quoteValuesWith: `"` })).toBe(
     sqlStringQuotedWithDoubleQuotes
+  );
+});
+
+it('handles invalid preset correctly', () => {
+  expect(formatQuery(query, { format: 'sql', preset: 'invalid' as unknown as SQLPreset })).toBe(
+    sqlString
   );
 });
 
@@ -544,6 +583,19 @@ describe('parseNumbers', () => {
       f_23: {},
     });
   });
+
+  it('orders "between" values ascending', () => {
+    const queryForBetweenSorting: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'f1', operator: 'between', value: [14, 12] },
+        { field: 'f2', operator: 'notBetween', value: [14, 12] },
+      ],
+    };
+    expect(formatQuery(queryForBetweenSorting, { format: 'sql', parseNumbers: true })).toBe(
+      `(f1 between 12 and 14 and f2 not between 12 and 14)`
+    );
+  });
 });
 
 describe('placeholder names', () => {
@@ -568,6 +620,74 @@ describe('placeholder names', () => {
         placeholderOperatorName,
       })
     ).toBe(`(${defaultFieldPlaceholder} ${defaultOperatorPlaceholder} 'v1')`);
+  });
+});
+
+describe('concat operator', () => {
+  const queryForConcatOperator: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'contains', value: 'f4', valueSource: 'field' },
+      { field: 'f2', operator: 'beginsWith', value: 'f5', valueSource: 'field' },
+      { field: 'f3', operator: 'endsWith', value: 'f6', valueSource: 'field' },
+    ],
+  };
+
+  it('defaults to "||"', () => {
+    expect(formatQuery(queryForConcatOperator, { format: 'sql' })).toBe(
+      `(f1 like '%' || f4 || '%' and f2 like f5 || '%' and f3 like '%' || f6)`
+    );
+  });
+
+  it('concats with + operator', () => {
+    expect(formatQuery(queryForConcatOperator, { format: 'sql', concatOperator: '+' })).toBe(
+      `(f1 like '%' + f4 + '%' and f2 like f5 + '%' and f3 like '%' + f6)`
+    );
+  });
+
+  it('concats with + operator for parameterized', () => {
+    expect(
+      formatQuery(queryForConcatOperator, { format: 'parameterized', concatOperator: '+' })
+    ).toEqual({
+      sql: `(f1 like '%' + f4 + '%' and f2 like f5 + '%' and f3 like '%' + f6)`,
+      params: [],
+    });
+  });
+
+  it('concats with + operator for parameterized_named', () => {
+    expect(
+      formatQuery(queryForConcatOperator, { format: 'parameterized_named', concatOperator: '+' })
+    ).toEqual({
+      sql: `(f1 like '%' + f4 + '%' and f2 like f5 + '%' and f3 like '%' + f6)`,
+      params: {},
+    });
+  });
+
+  it('concats with CONCAT function', () => {
+    expect(formatQuery(queryForConcatOperator, { format: 'sql', concatOperator: 'CONCAT' })).toBe(
+      `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`
+    );
+  });
+
+  it('concats with CONCAT function for parameterized', () => {
+    expect(
+      formatQuery(queryForConcatOperator, { format: 'parameterized', concatOperator: 'CONCAT' })
+    ).toEqual({
+      sql: `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`,
+      params: [],
+    });
+  });
+
+  it('concats with CONCAT function for parameterized_named', () => {
+    expect(
+      formatQuery(queryForConcatOperator, {
+        format: 'parameterized_named',
+        concatOperator: 'CONCAT',
+      })
+    ).toEqual({
+      sql: `(f1 like CONCAT('%', f4, '%') and f2 like CONCAT(f5, '%') and f3 like CONCAT('%', f6))`,
+      params: {},
+    });
   });
 });
 

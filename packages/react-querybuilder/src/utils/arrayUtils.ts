@@ -1,7 +1,7 @@
 import { defaultJoinChar } from '../defaults';
 
 /**
- * Splits a string by a given character (see {@link defaultJoinChar}. Escaped characters
+ * Splits a string by a given character (see {@link defaultJoinChar}). Escaped characters
  * (characters preceded by a backslash) will not apply to the split, and the backslash will
  * be removed in the array element. Inverse of {@link joinWith}.
  *
@@ -30,7 +30,7 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
     : [];
 
 /**
- * Joins an array of strings using the given character (see {@link defaultJoinChar}. When
+ * Joins an array of strings using the given character (see {@link defaultJoinChar}). When
  * the given character appears in an array element, a backslash will be added just before it
  * to distinguish it from the join character. Effectively the inverse of {@link splitBy}.
  *
@@ -57,12 +57,12 @@ export const trimIfString = (val: any) => (typeof val === 'string' ? val.trim() 
  * any string elements are trimmed.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const toArray = (v: any) =>
+export const toArray = (v: any, { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}) =>
   Array.isArray(v)
     ? v.map(trimIfString)
     : typeof v === 'string'
       ? splitBy(v, defaultJoinChar)
-          .filter(s => !/^\s*$/.test(s))
+          .filter(retainEmptyStrings ? () => true : s => !/^\s*$/.test(s))
           .map(s => s.trim())
       : typeof v === 'number'
         ? [v]
