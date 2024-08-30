@@ -1,6 +1,8 @@
 name: Version
 
 on:
+  push:
+    # Temporary for testing
   workflow_dispatch:
     inputs:
       dryRun:
