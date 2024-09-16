@@ -1,8 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist/types",
-    "skipLibCheck": true
-  },
   "include": ["./src/", "./dev/"]
 }
