@@ -88,7 +88,7 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   try {
     expect(el).toBeChecked();
     return true;
-  } catch (er) {
+  } catch {
     if (attempt < 10) {
       return isOrInheritsChecked(el.parentElement, attempt + 1);
     }
