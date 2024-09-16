@@ -55,4 +55,4 @@ jobs:
       - name: Bump version with Lerna
         run: npx lerna version ${{ github.event.inputs.versionBump == 'custom' && github.event.inputs.customVersion || github.event.inputs.versionBump }} --yes ${{ github.event.inputs.liveRun && ' ' || '--no-git-tag-version --no-push --json' }}
         # TODO: when publishing add `--dist-tag ${{ github.event.inputs.versionTag }}`
-      - run: git diff --staged
+      - run: git diff
