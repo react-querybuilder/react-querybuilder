@@ -1,9 +1,16 @@
-import type { UnknownAction } from '@reduxjs/toolkit';
+import type {
+  EnhancedStore,
+  StoreEnhancer,
+  ThunkDispatch,
+  Tuple,
+  UnknownAction,
+} from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import * as React from 'react';
 import type { ReactReduxContextValue, TypedUseSelectorHook } from 'react-redux';
 import { createSelectorHook } from 'react-redux';
 import { QueryBuilderContext } from '../components';
+import type { RuleGroupTypeAny } from '../types';
 import type { QueriesSliceState } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
 import type { WarningsSliceState } from './warningsSlice';
@@ -19,7 +26,25 @@ const preloadedState = {
   warnings: warningsSlice.getInitialState(),
 } satisfies RqbState;
 
-export const queryBuilderStore = configureStore({
+export const queryBuilderStore: EnhancedStore<
+  {
+    queries: QueriesSliceState;
+    warnings: WarningsSliceState;
+  },
+  UnknownAction,
+  Tuple<
+    [
+      StoreEnhancer<{
+        dispatch: ThunkDispatch<
+          { queries: QueriesSliceState; warnings: WarningsSliceState },
+          undefined,
+          UnknownAction
+        >;
+      }>,
+      StoreEnhancer,
+    ]
+  >
+> = configureStore({
   reducer: {
     queries: queriesSlice.reducer,
     warnings: warningsSlice.reducer,
@@ -36,10 +61,10 @@ export const queryBuilderStore = configureStore({
     }),
 });
 
-export const QueryBuilderStateContext = React.createContext<ReactReduxContextValue<
+export const QueryBuilderStateContext: React.Context<ReactReduxContextValue<
   RqbState,
   UnknownAction
-> | null>(null);
+> | null> = React.createContext<ReactReduxContextValue<RqbState, UnknownAction> | null>(null);
 
 // #region Hooks
 const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
@@ -68,7 +93,7 @@ export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> = (selector
  *
  * Must follow React's [Rules of Hooks](https://react.dev/warnings/invalid-hook-call-warning).
  */
-export const useQueryBuilderQuery = (props?: { schema: { qbId: string } }) => {
+export const useQueryBuilderQuery = (props?: { schema: { qbId: string } }): RuleGroupTypeAny => {
   const rqbContext = React.useContext(QueryBuilderContext);
   return (
     useRQB_INTERNAL_QueryBuilderSelector(
@@ -86,6 +111,8 @@ export const useQueryBuilderQuery = (props?: { schema: { qbId: string } }) => {
  * Note that {@link useQueryBuilderQuery} is a more concise way of accessing the
  * query for the nearest ancestor {@link QueryBuilder} component.
  */
-export const getQuerySelectorById = (qbId: string) => (state: RqbState) =>
-  queriesSlice.selectors.getQuerySelectorById({ queries: state.queries }, qbId);
+export const getQuerySelectorById =
+  (qbId: string) =>
+  (state: RqbState): RuleGroupTypeAny =>
+    queriesSlice.selectors.getQuerySelectorById({ queries: state.queries }, qbId);
 // #endregion

@@ -11,7 +11,7 @@ const cryptoModule = globalThis.crypto;
  */
 // Default implementation adapted from https://stackoverflow.com/a/68141099/217579
 // istanbul ignore next
-export let generateID = () =>
+export let generateID = (): string =>
   '00-0-4-2-000'.replace(/[^-]/g, (s: string) =>
     (((Math.random() + ~~s) * 0x10000) >> parseInt(s)).toString(16).padStart(4, '0')
   );

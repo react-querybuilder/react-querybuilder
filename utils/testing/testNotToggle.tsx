@@ -9,7 +9,7 @@ import {
   userEventSetup,
 } from './utils';
 
-export const defaultNotToggleProps = {
+export const defaultNotToggleProps: NotToggleProps = {
   handleOnChange: () => {},
   level: 0,
   path: [],
@@ -17,7 +17,7 @@ export const defaultNotToggleProps = {
   ruleGroup: { combinator: 'and', rules: [] },
 } satisfies NotToggleProps;
 
-export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>) => {
+export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>): void => {
   const user = userEventSetup();
   const title = NotToggle.name ?? 'NotToggle';
   const label = 'Not';

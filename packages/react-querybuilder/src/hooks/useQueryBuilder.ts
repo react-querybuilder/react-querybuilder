@@ -15,4 +15,5 @@ export const useQueryBuilder = <
   C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
-) => useQueryBuilderSchema<RG, F, O, C>(props, useQueryBuilderSetup(props));
+): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> =>
+  useQueryBuilderSchema<RG, F, O, C>(props, useQueryBuilderSetup(props));

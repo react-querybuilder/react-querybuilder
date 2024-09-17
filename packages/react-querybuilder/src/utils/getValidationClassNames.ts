@@ -5,7 +5,9 @@ import type { ValidationResult } from '../types/index.noReact';
  * Gets the standard classname for valid or invalid components
  * based on the given validation result.
  */
-export const getValidationClassNames = (validationResult: boolean | ValidationResult) => {
+export const getValidationClassNames = (
+  validationResult: boolean | ValidationResult
+): '' | (typeof standardClassnames)['valid'] | (typeof standardClassnames)['invalid'] => {
   const valid =
     typeof validationResult === 'boolean'
       ? validationResult

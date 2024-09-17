@@ -8,6 +8,7 @@ import type {
   FullField,
   FullOption,
   QueryActions,
+  RemoveNullability,
   RuleProps,
   Schema,
 } from 'react-querybuilder';
@@ -20,15 +21,15 @@ import {
 } from 'react-querybuilder';
 import { UNUSED } from './utils';
 
-export const getFieldMapFromArray = (fieldArray: FullField[]) =>
+export const getFieldMapFromArray = (fieldArray: FullField[]): Record<string, FullField> =>
   Object.fromEntries(fieldArray.map(f => [f.name, toFullOption(f)]));
 
-export const ruleDefaultFields = [
-  { name: 'field1', label: 'Field 1' },
-  { name: 'field2', label: 'Field 2' },
-].map(o => toFullOption(o)) satisfies FullField[];
+export const ruleDefaultFields: FullField[] = [
+  { name: 'field1', value: 'field1', label: 'Field 1' },
+  { name: 'field2', value: 'field2', label: 'Field 2' },
+];
 
-export const ruleFieldMap = getFieldMapFromArray(ruleDefaultFields);
+export const ruleFieldMap: Record<string, FullField> = getFieldMapFromArray(ruleDefaultFields);
 
 const Button = (props: ActionProps) => (
   <button data-testid={props.testID} className={props.className} onClick={props.handleOnClick}>
@@ -36,7 +37,7 @@ const Button = (props: ActionProps) => (
   </button>
 );
 
-export const ruleControls = {
+export const ruleControls: RemoveNullability<ControlElementsProp<FullField, string>> = {
   cloneRuleAction: props => (
     <Button {...props} testID={TestID.cloneRule} label={translations.cloneRule.label} />
   ),
@@ -80,16 +81,16 @@ export const ruleControls = {
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
     </div>
   ),
-} satisfies ControlElementsProp<FullField, string>;
+};
 
-export const ruleClassnames = {
+export const ruleClassnames: Partial<Classnames> = {
   cloneRule: 'custom-cloneRule-class',
   dragHandle: 'custom-dragHandle-class',
   fields: 'custom-fields-class',
   operators: 'custom-operators-class',
   removeRule: { 'custom-removeRule-class': true },
   rule: ['custom-rule-class'],
-} satisfies Partial<Classnames>;
+};
 
 const ruleSchema = {
   fields: ruleDefaultFields,

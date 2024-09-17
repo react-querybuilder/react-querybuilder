@@ -4,7 +4,7 @@ import { DevLayout } from './DevLayout';
 import './styles.scss';
 import { useDevApp } from './useDevApp';
 
-export const App = () => {
+export const App = (): React.JSX.Element => {
   const devApp = useDevApp();
 
   return (

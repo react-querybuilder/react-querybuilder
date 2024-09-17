@@ -35,7 +35,10 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
   return { ...state, [optionName]: value };
 };
 
-export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
+export const getFormatQueryString = (
+  query: RuleGroupTypeAny,
+  options: FormatQueryOptions
+): string => {
   const formatQueryResult = formatQuery(query, options);
   if (options.format === 'json_without_ids' || options.format === 'mongodb') {
     return JSON.stringify(JSON.parse(formatQueryResult), null, 2);

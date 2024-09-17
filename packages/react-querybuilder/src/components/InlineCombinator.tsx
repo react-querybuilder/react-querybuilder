@@ -7,7 +7,7 @@ import type { InlineCombinatorProps } from '../types';
  * wrapper around the `combinatorSelector` component, used when either
  * `showCombinatorsBetweenRules` or `independentCombinators` are `true`.
  */
-export const InlineCombinator = (allProps: InlineCombinatorProps) => {
+export const InlineCombinator = (allProps: InlineCombinatorProps): React.JSX.Element => {
   const { component: CombinatorSelectorComponent, ...props } = allProps;
 
   return (

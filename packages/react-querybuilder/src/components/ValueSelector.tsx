@@ -8,7 +8,7 @@ import { toOptions } from '../utils';
  */
 export const ValueSelector = <Opt extends FullOption = FullOption>(
   props: ValueSelectorProps<Opt>
-) => {
+): React.JSX.Element => {
   const { onChange, val } = useValueSelector(props);
 
   const selectElementChangeHandler = useSelectElementChangeHandler({

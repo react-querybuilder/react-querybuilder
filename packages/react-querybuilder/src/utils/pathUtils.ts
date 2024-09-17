@@ -30,25 +30,25 @@ export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnTyp
 /**
  * Truncates the last element of an array and returns the result as a new array.
  */
-export const getParentPath = (path: Path) => path.slice(0, path.length - 1);
+export const getParentPath = (path: Path): Path => path.slice(0, path.length - 1);
 
 /**
  * Determines if two paths (each `Path`) are equivalent.
  */
-export const pathsAreEqual = (path1: Path, path2: Path) =>
+export const pathsAreEqual = (path1: Path, path2: Path): boolean =>
   path1.length === path2.length && path1.every((val, idx) => val === path2[idx]);
 
 /**
  * Determines if the first path is an ancestor of the second path. The first path must
  * be shorter and exactly match the second path up through the length of the first path.
  */
-export const isAncestor = (maybeAncestor: Path, path: Path) =>
+export const isAncestor = (maybeAncestor: Path, path: Path): boolean =>
   maybeAncestor.length < path.length && RegExp(`^${maybeAncestor.join('-')}`).test(path.join('-'));
 
 /**
  * Finds the deepest/longest path that two paths have in common.
  */
-export const getCommonAncestorPath = (path1: Path, path2: Path) => {
+export const getCommonAncestorPath = (path1: Path, path2: Path): Path => {
   const commonAncestorPath: Path = [];
   const parentPath1 = getParentPath(path1);
   const parentPath2 = getParentPath(path2);
@@ -66,7 +66,7 @@ export const getCommonAncestorPath = (path1: Path, path2: Path) => {
  * Determines if the rule or group at the specified path is either disabled itself
  * or disabled by an ancestor group.
  */
-export const pathIsDisabled = (path: Path, query: RuleGroupTypeAny) => {
+export const pathIsDisabled = (path: Path, query: RuleGroupTypeAny): boolean => {
   let disabled = !!query.disabled;
   let target: RuleType | RuleGroupTypeAny = query;
   let level = 0;

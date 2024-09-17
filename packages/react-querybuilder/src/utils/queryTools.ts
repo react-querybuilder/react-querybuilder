@@ -54,7 +54,7 @@ export const add = <RG extends RuleGroupTypeAny>(
     combinatorPreceding,
     idGenerator = generateID,
   }: AddOptions = {}
-) =>
+): RG =>
   produce(query, draft => {
     const parent = findPath(parentPath, draft);
 
@@ -124,7 +124,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
   }: UpdateOptions = {}
-) =>
+): RG =>
   produce(query, draft => {
     if (prop === 'combinator' && !isRuleGroupType(draft)) {
       // Independent combinators
@@ -202,7 +202,7 @@ export const remove = <RG extends RuleGroupTypeAny>(
   query: RG,
   /** Path of the rule or group to remove. */
   path: Path
-) => {
+): RG => {
   if (
     // Can't remove the root group
     path.length === 0 ||
@@ -316,7 +316,7 @@ export const move = <RG extends RuleGroupTypeAny>(
   newPath: Path | 'up' | 'down',
   /** Options. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
-) => {
+): RG => {
   const nextPath = getNextPath(query, oldPath, newPath);
 
   // Don't move to the same location or a path that doesn't exist yet
@@ -464,7 +464,7 @@ export const insert = <RG extends RuleGroupTypeAny>(
     idGenerator = generateID,
     replace = false,
   }: InsertOptions = {}
-) =>
+): RG =>
   produce(query, draft => {
     const parentToInsertInto = findPath(getParentPath(path), draft) as RG;
     if (!parentToInsertInto || !isRuleGroup(parentToInsertInto)) return;

@@ -7,42 +7,46 @@ import type { RuleProps } from '../types';
  * Default component to display {@link RuleType} objects. This is
  * actually a small wrapper around {@link RuleComponents}.
  */
-export const Rule = React.memo((props: RuleProps) => {
-  const r = useRule(props);
+export const Rule: React.MemoExoticComponent<(props: RuleProps) => React.JSX.Element> = React.memo(
+  (props: RuleProps) => {
+    const r = useRule(props);
 
-  const cloneRule = useStopEventPropagation(r.cloneRule);
-  const toggleLockRule = useStopEventPropagation(r.toggleLockRule);
-  const removeRule = useStopEventPropagation(r.removeRule);
-  const shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
-  const shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
+    const cloneRule = useStopEventPropagation(r.cloneRule);
+    const toggleLockRule = useStopEventPropagation(r.toggleLockRule);
+    const removeRule = useStopEventPropagation(r.removeRule);
+    const shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
+    const shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
 
-  return (
-    <div
-      ref={r.dndRef}
-      data-testid={TestID.rule}
-      data-dragmonitorid={r.dragMonitorId}
-      data-dropmonitorid={r.dropMonitorId}
-      className={r.outerClassName}
-      data-rule-id={r.id}
-      data-level={r.path.length}
-      data-path={JSON.stringify(r.path)}>
-      <RuleComponents
-        {...r}
-        cloneRule={cloneRule}
-        toggleLockRule={toggleLockRule}
-        removeRule={removeRule}
-        shiftRuleUp={shiftRuleUp}
-        shiftRuleDown={shiftRuleDown}
-      />
-    </div>
-  );
-});
+    return (
+      <div
+        ref={r.dndRef}
+        data-testid={TestID.rule}
+        data-dragmonitorid={r.dragMonitorId}
+        data-dropmonitorid={r.dropMonitorId}
+        className={r.outerClassName}
+        data-rule-id={r.id}
+        data-level={r.path.length}
+        data-path={JSON.stringify(r.path)}>
+        <RuleComponents
+          {...r}
+          cloneRule={cloneRule}
+          toggleLockRule={toggleLockRule}
+          removeRule={removeRule}
+          shiftRuleUp={shiftRuleUp}
+          shiftRuleDown={shiftRuleDown}
+        />
+      </div>
+    );
+  }
+);
 
 /**
  * Renders a `React.Fragment` containing an array of form controls for managing
  * a {@link RuleType}.
  */
-export const RuleComponents = React.memo((r: RuleProps & ReturnType<typeof useRule>) => {
+export const RuleComponents: React.MemoExoticComponent<
+  (r: RuleProps & ReturnType<typeof useRule>) => React.JSX.Element
+> = React.memo((r: RuleProps & ReturnType<typeof useRule>) => {
   const {
     schema: {
       controls: {

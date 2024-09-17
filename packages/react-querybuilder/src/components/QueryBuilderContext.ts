@@ -1,3 +1,4 @@
+import type { Context } from 'react';
 import { createContext } from 'react';
 import type { QueryBuilderContextProps, RuleGroupTypeAny } from '../types';
 
@@ -13,4 +14,4 @@ type QueryBuilderContextType = QueryBuilderContextProps<any, any> & QueryBuilder
  * Context provider for {@link QueryBuilder}. Any descendant query builders
  * will inherit the props from a context provider.
  */
-export const QueryBuilderContext = createContext<QueryBuilderContextType>({});
+export const QueryBuilderContext: Context<QueryBuilderContextType> = createContext({});

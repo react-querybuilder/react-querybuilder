@@ -32,7 +32,7 @@ export const DevLayout = ({
   updateOptions,
   onQueryChange,
   onQueryChangeIC,
-}: ReturnType<typeof useDevApp> & { children: React.ReactNode }) => {
+}: ReturnType<typeof useDevApp> & { children: React.ReactNode }): React.JSX.Element => {
   const [importText, setImportText] = React.useState('');
   const [importFmt, setImportFmt] = React.useState('sql');
 

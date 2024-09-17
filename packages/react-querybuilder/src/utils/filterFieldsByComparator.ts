@@ -1,4 +1,4 @@
-import type { FullField, OptionList } from '../types/index.noReact';
+import type { FullField, Option, OptionList, WithUnknownIndex } from '../types/index.noReact';
 import { isFlexibleOptionGroupArray } from './optGroupUtils';
 import { toFullOption } from './toFullOption';
 
@@ -29,7 +29,14 @@ export const filterFieldsByComparator = (
   /** The full {@link FullField} list to be filtered. */
   fields: OptionList<FullField>,
   operator: string
-) => {
+):
+  | FullField<string, string, string, Option<string>, Option<string>>[]
+  | {
+      options: WithUnknownIndex<
+        FullField<string, string, string, Option<string>, Option<string>>
+      >[];
+      label: string;
+    }[] => {
   if (!field.comparator) {
     const filterOutSameField = (f: FullField) =>
       (f.value ?? /* istanbul ignore next */ f.name) !==

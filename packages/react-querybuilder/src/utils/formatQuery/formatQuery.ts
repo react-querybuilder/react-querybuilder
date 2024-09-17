@@ -153,8 +153,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let paramsKeepPrefix = false;
   let numberedParams = false;
   let parseNumbers = false;
-  let placeholderFieldName = defaultPlaceholderFieldName;
-  let placeholderOperatorName = defaultPlaceholderOperatorName;
+  let placeholderFieldName: string = defaultPlaceholderFieldName;
+  let placeholderOperatorName: string = defaultPlaceholderOperatorName;
   let quoteValuesWith = "'";
   let concatOperator = '||';
 

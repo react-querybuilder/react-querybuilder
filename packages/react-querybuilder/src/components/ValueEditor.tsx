@@ -7,7 +7,9 @@ import { getFirstOption, parseNumber } from '../utils';
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
  */
-export const ValueEditor = <F extends FullField>(allProps: ValueEditorProps<F>) => {
+export const ValueEditor = <F extends FullField>(
+  allProps: ValueEditorProps<F>
+): React.JSX.Element | null => {
   const {
     operator,
     value,
