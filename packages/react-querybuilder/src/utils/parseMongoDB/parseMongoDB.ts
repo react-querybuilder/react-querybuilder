@@ -264,15 +264,15 @@ function parseMongoDB(
           Array.isArray(keyValue[op]) &&
           keyValue[op].length === 2 &&
           typeof keyValue[op][0] === 'string' &&
-          /^\$/.test(keyValue[op][0])
+          keyValue[op][0].startsWith('$')
         ) {
           field = keyValue[op][0].replace(/^\$/, '');
           const val = keyValue[op][1];
           if (
-            (typeof val === 'string' && /^\$/.test(val)) ||
+            (typeof val === 'string' && val.startsWith('$')) ||
             (Array.isArray(val) &&
               val.every(v => typeof v === 'string') &&
-              val.every(v => /^\$/.test(v)))
+              val.every(v => v.startsWith('$')))
           ) {
             const valForProcessing = Array.isArray(val)
               ? val.map(v => v.replace(/^\$/, ''))

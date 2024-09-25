@@ -15,15 +15,15 @@ const App = () => {
         controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
         {!devApp.optVals.independentCombinators ? (
           <QueryBuilder
-            {...devApp.commonRQBProps}
             key="query"
+            {...devApp.commonRQBProps}
             query={devApp.query}
             onQueryChange={devApp.onQueryChange}
           />
         ) : (
           <QueryBuilder
-            {...devApp.commonRQBProps}
             key="queryIC"
+            {...devApp.commonRQBProps}
             query={devApp.queryIC}
             onQueryChange={devApp.onQueryChangeIC}
           />

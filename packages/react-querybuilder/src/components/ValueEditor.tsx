@@ -57,9 +57,9 @@ export const ValueEditor = <F extends FullField>(
       }
       return (
         <SelectorComponent
+          key={key}
           {...props}
           schema={allProps.schema as unknown as Schema<FullField, string>}
-          key={key}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

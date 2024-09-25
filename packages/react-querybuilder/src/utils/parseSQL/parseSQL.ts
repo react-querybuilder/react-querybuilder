@@ -285,9 +285,9 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         /* istanbul ignore else */
         if (/^%.*%$/.test(valueWithWildcards) || valueWithWildcards === '%') {
           operator = expr.hasNot ? 'doesNotContain' : 'contains';
-        } else if (/%$/.test(valueWithWildcards)) {
+        } else if (valueWithWildcards.endsWith('%')) {
           operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
-        } else if (/^%/.test(valueWithWildcards)) {
+        } else if (valueWithWildcards.startsWith('%')) {
           operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
         }
         const f = getFieldName(expr.left);

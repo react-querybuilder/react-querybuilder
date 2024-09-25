@@ -4,6 +4,7 @@ import eslint from '@eslint/js';
 import tseslintParser from '@typescript-eslint/parser';
 import eslintPluginReact from 'eslint-plugin-react';
 import eslintPluginReactCompiler from 'eslint-plugin-react-compiler';
+import eslintPluginUnicorn from 'eslint-plugin-unicorn';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -11,7 +12,7 @@ const compat = new FlatCompat();
 
 export default [
   {
-    ignores: ['**/dist', '**/*Parser.js'],
+    ignores: ['**/dist/', '**/*Parser.js'],
   },
   ...fixupConfigRules(compat.extends('plugin:react-hooks/recommended')),
   eslint.configs.recommended,
@@ -20,6 +21,7 @@ export default [
   {
     plugins: {
       'react-compiler': eslintPluginReactCompiler,
+      unicorn: eslintPluginUnicorn,
     },
     languageOptions: {
       globals: {
@@ -49,10 +51,12 @@ export default [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'react/display-name': 'off',
+      'react/jsx-key': ['warn', { checkKeyMustBeforeSpread: true }],
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/no-unstable-nested-components': 'error',
       'react-compiler/react-compiler': 'error',
+      'unicorn/no-single-promise-in-promise-methods': 'warn',
     },
   },
 ];

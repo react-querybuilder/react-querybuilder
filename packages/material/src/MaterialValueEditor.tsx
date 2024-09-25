@@ -17,7 +17,7 @@ export type MaterialValueEditorProps = ValueEditorProps & {
   extraProps?: Record<string, any>;
 };
 
-export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
+export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.Element | null => {
   const { muiComponents: muiComponentsProp, ...propsForValueEditor } = props;
   const {
     field: _f,
@@ -99,8 +99,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...propsForValueSelector}
           key={key}
+          {...propsForValueSelector}
           path={path}
           level={level}
           className={standardClassnames.valueListItem}
@@ -127,9 +127,9 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps) => {
     case 'multiselect':
       return (
         <SelectorComponent
+          key={masterKey}
           {...propsForValueSelector}
           muiComponents={muiComponents}
-          key={masterKey}
           path={path}
           level={level}
           className={className}

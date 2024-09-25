@@ -11,7 +11,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
-export const ChakraValueEditor = (allProps: ChakraValueEditorProps) => {
+export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
     operator,
@@ -72,8 +72,8 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

@@ -193,7 +193,8 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
             return ruleProcessor(
               remapProperties(
                 {
-                  ...{ ...r, ...pathObject },
+                  ...r,
+                  ...pathObject,
                   ...('operator' in r ? { operator: operatorMap[r.operator] ?? r.operator } : {}),
                 },
                 propertyMap,

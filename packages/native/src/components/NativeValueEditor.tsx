@@ -25,7 +25,7 @@ export const NativeValueEditor = ({
   testID,
   selectorComponent: SelectorComponent = NativeValueSelector,
   ...props
-}: ValueEditorNativeProps) => {
+}: ValueEditorNativeProps): React.JSX.Element | null => {
   const styles = useMemo(
     () => ({
       value: StyleSheet.flatten([defaultNativeStyles.value, props.schema.styles?.value]),
@@ -90,8 +90,8 @@ export const NativeValueEditor = ({
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           handleOnChange={v => multiValueHandler(v, i)}
           className={className}
           disabled={disabled}

@@ -28,7 +28,7 @@ const ClearableValueSelector = (props: VersatileSelectorProps) => {
   return <TremorValueSelector {...props} enableClear />;
 };
 
-export const TremorValueEditor = (allProps: TremorValueEditorProps) => {
+export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
     operator,
@@ -94,8 +94,8 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

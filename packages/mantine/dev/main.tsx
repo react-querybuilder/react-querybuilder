@@ -17,15 +17,15 @@ const App = () => {
         <QueryBuilderMantine>
           {!devApp.optVals.independentCombinators ? (
             <QueryBuilder
-              {...devApp.commonRQBProps}
               key="query"
+              {...devApp.commonRQBProps}
               query={devApp.query}
               onQueryChange={devApp.onQueryChange}
             />
           ) : (
             <QueryBuilder
-              {...devApp.commonRQBProps}
               key="queryIC"
+              {...devApp.commonRQBProps}
               query={devApp.queryIC}
               onQueryChange={devApp.onQueryChangeIC}
             />

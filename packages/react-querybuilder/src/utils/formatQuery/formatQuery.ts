@@ -179,7 +179,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     }
   } else {
     const optionsWithPresets = {
-      ...(sqlDialectPresets[options.preset ?? 'ansi'] ?? {}),
+      ...(sqlDialectPresets[options.preset ?? 'ansi'] ?? null),
       ...options,
     };
     format = (optionsWithPresets.format ?? 'json').toLowerCase() as ExportFormat;
