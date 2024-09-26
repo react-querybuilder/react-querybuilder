@@ -133,7 +133,7 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "bunx --bun vite",
-    "build": "bun run build:main && bun run build:css",
+    "build": "bun --bun run build:main && bun run build:css",
     "build:main": "tsup",
     "build:css": "bun buildCSS.ts",
     "typecheck": "tsc --noEmit",

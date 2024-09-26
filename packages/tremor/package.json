@@ -11,16 +11,16 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/react-querybuilder_tremor.d.mts",
+        "types": "./dist/types-esm/index.d.mts",
         "default": "./dist/react-querybuilder_tremor.mjs"
       },
       "require": {
-        "types": "./dist/cjs/react-querybuilder_tremor.cjs.development.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     }
   },
-  "types": "./dist/cjs/react-querybuilder_tremor.cjs.production.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
