@@ -8,50 +8,50 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/react-querybuilder.d.mts",
+        "types": "./dist/types-esm/index.d.mts",
         "default": "./dist/react-querybuilder.mjs"
       },
       "require": {
-        "types": "./dist/cjs/react-querybuilder.cjs.development.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     },
     "./dist/*": "./dist/*",
     "./formatQuery": {
-      "types": "./dist/formatQuery.d.ts",
+      "types": "./dist/types/utils/formatQuery/index.d.ts",
       "default": "./dist/formatQuery.js"
     },
     "./parseCEL": {
-      "types": "./dist/parseCEL.d.ts",
+      "types": "./dist/types/utils/parseCEL/index.d.ts",
       "default": "./dist/parseCEL.js"
     },
     "./parseJSONata": {
-      "types": "./dist/parseJSONata.d.ts",
+      "types": "./dist/types/utils/parseJSONata/index.d.ts",
       "default": "./dist/parseJSONata.js"
     },
     "./parseJsonLogic": {
-      "types": "./dist/parseJsonLogic.d.ts",
+      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
       "default": "./dist/parseJsonLogic.js"
     },
     "./parseMongoDB": {
-      "types": "./dist/parseMongoDB.d.ts",
+      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
       "default": "./dist/parseMongoDB.js"
     },
     "./parseSpEL": {
-      "types": "./dist/parseSpEL.d.ts",
+      "types": "./dist/types/utils/parseSpEL/index.d.ts",
       "default": "./dist/parseSpEL.js"
     },
     "./parseSQL": {
-      "types": "./dist/parseSQL.d.ts",
+      "types": "./dist/types/utils/parseSQL/index.d.ts",
       "default": "./dist/parseSQL.js"
     },
     "./transformQuery": {
-      "types": "./dist/transformQuery.d.ts",
+      "types": "./dist/types/utils/transformQuery.d.ts",
       "default": "./dist/transformQuery.js"
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
-  "types": "./dist/cjs/react-querybuilder.cjs.production.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
     "formatQuery",

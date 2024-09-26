@@ -26,5 +26,5 @@
       "@rqb-utils": ["./packages/react-querybuilder/src/utils"]
     }
   },
-  "include": ["./*.ts", "./scripts/*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]
+  "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]
 }

@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "noEmit": true,
     "skipLibCheck": true,
+    "isolatedDeclarations": false,
     "allowJs": true,
     "jsx": "preserve",
     "moduleResolution": "bundler",
