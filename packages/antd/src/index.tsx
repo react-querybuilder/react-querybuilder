@@ -7,7 +7,12 @@ import {
   UpOutlined,
 } from '@ant-design/icons';
 import * as React from 'react';
-import type { ControlElementsProp, FullField, Translations } from 'react-querybuilder';
+import type {
+  ControlElementsProp,
+  FullField,
+  QueryBuilderContextProvider,
+  Translations,
+} from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
@@ -23,16 +28,16 @@ export * from './AntDShiftActions';
 export * from './AntDValueEditor';
 export * from './AntDValueSelector';
 
-export const antdControlElements = {
+export const antdControlElements: ControlElementsProp<FullField, string> = {
   actionElement: AntDActionElement,
   dragHandle: AntDDragHandle,
   notToggle: AntDNotToggle,
   shiftActions: AntDShiftActions,
   valueEditor: AntDValueEditor,
   valueSelector: AntDValueSelector,
-} satisfies ControlElementsProp<FullField, string>;
+};
 
-export const antdTranslations = {
+export const antdTranslations: Partial<Translations> = {
   removeGroup: { label: <CloseOutlined /> },
   removeRule: { label: <CloseOutlined /> },
   cloneRule: { label: <CopyOutlined /> },
@@ -43,9 +48,9 @@ export const antdTranslations = {
   lockRuleDisabled: { label: <LockOutlined /> },
   shiftActionUp: { label: <UpOutlined /> },
   shiftActionDown: { label: <DownOutlined /> },
-} satisfies Partial<Translations>;
+};
 
-export const QueryBuilderAntD = getCompatContextProvider({
+export const QueryBuilderAntD: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: antdControlElements,
   translations: antdTranslations,
 });

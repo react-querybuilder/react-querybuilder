@@ -12,7 +12,9 @@ export type MaterialDragHandleProps = DragHandleProps &
     muiComponents?: RQBMaterialComponents;
   };
 
-export const MaterialDragHandle = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(
+export const MaterialDragHandle: React.ForwardRefExoticComponent<
+  Omit<MaterialDragHandleProps, 'ref'> & React.RefAttributes<HTMLSpanElement>
+> = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(
   (
     {
       className,

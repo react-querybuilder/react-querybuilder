@@ -8,7 +8,7 @@ export const BulmaNotToggle = ({
   checked,
   title,
   disabled,
-}: NotToggleProps) => (
+}: NotToggleProps): React.JSX.Element => (
   <label className={`${className} checkbox`} title={title}>
     <input
       type="checkbox"

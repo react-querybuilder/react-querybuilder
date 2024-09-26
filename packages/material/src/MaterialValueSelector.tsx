@@ -36,7 +36,7 @@ export const MaterialValueSelector = ({
   muiComponents: muiComponentsProp,
   defaultValue: _defaultValue,
   ...otherProps
-}: MaterialValueSelectorProps) => {
+}: MaterialValueSelectorProps): React.JSX.Element => {
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
 
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });

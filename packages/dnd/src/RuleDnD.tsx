@@ -8,7 +8,7 @@ import { useRuleDnD } from './hooks';
  * Rule component for drag-and-drop. Renders the provided rule component
  * ({@link Rule} by default), but forwards the drag-and-drop context.
  */
-export const RuleDnD = (props: RuleProps) => {
+export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
   const { canDrop, useDrag, useDrop } = rqbDndContext;

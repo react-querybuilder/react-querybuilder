@@ -4,7 +4,7 @@ import type { UseReactDnD } from '../types';
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
-export const useReactDnD = (dndParam?: UseReactDnD) => {
+export const useReactDnD = (dndParam?: UseReactDnD): UseReactDnD | null => {
   const [dnd, setDnd] = useState<UseReactDnD | null>(dndParam ?? null);
 
   useEffect(() => {

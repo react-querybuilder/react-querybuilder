@@ -11,7 +11,9 @@ export type ChakraDragHandleProps = DragHandleProps &
   Omit<IBP, 'aria-label'> &
   Partial<Pick<IBP, 'aria-label'>>;
 
-export const ChakraDragHandle = forwardRef<HTMLSpanElement, ChakraDragHandleProps>(
+export const ChakraDragHandle: React.ForwardRefExoticComponent<
+  Omit<ChakraDragHandleProps, 'ref'> & React.RefAttributes<HTMLSpanElement>
+> = forwardRef<HTMLSpanElement, ChakraDragHandleProps>(
   (
     {
       className,

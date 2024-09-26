@@ -31,7 +31,7 @@ export const TremorValueSelector = ({
   rule: _rule,
   rules: _rules,
   ...otherProps
-}: TremorValueSelectorProps) => {
+}: TremorValueSelectorProps): React.JSX.Element => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const optionElements = React.useMemo(() => toSelectItems(options, multiple), [multiple, options]);

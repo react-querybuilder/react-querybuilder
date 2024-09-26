@@ -30,7 +30,7 @@ export const AntDValueSelector = ({
   fieldData: _fieldData,
   schema: _schema,
   ...extraProps
-}: AntDValueSelectorProps) => {
+}: AntDValueSelectorProps): React.JSX.Element => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const modeObj = multiple ? { mode: 'multiple' as const } : {};

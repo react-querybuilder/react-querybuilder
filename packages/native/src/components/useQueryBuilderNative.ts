@@ -4,12 +4,13 @@ import type {
   FullCombinator,
   FullField,
   FullOperator,
+  GetOptionIdentifierType,
   QueryBuilderProps,
   RuleGroupTypeAny,
 } from 'react-querybuilder';
 import { useQueryBuilderSetup } from 'react-querybuilder';
 import { useQueryBuilderSchema } from 'react-querybuilder';
-import type { QueryBuilderNativeProps } from '../types';
+import type { QueryBuilderNativeProps, SchemaNative } from '../types';
 
 export const useQueryBuilderNative = <
   RG extends RuleGroupTypeAny,
@@ -18,7 +19,7 @@ export const useQueryBuilderNative = <
   C extends FullCombinator,
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>
-) =>
+): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> =>
   useQueryBuilderSchemaNative(props, useQueryBuilderSetup(props as QueryBuilderProps<RG, F, O, C>));
 
 export const useQueryBuilderSchemaNative = <
@@ -29,7 +30,9 @@ export const useQueryBuilderSchemaNative = <
 >(
   props: QueryBuilderNativeProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
-) => {
+): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> & {
+  schema: SchemaNative<F, GetOptionIdentifierType<O>>;
+} => {
   const qb = useQueryBuilderSchema<RG, F, O, C>(props as QueryBuilderProps<RG, F, O, C>, setup);
 
   const styles = useMemo(() => StyleSheet.create(props.styles ?? {}), [props.styles]);

@@ -7,7 +7,12 @@ import {
   UnlockIcon,
 } from '@chakra-ui/icons';
 import * as React from 'react';
-import type { ControlElementsProp, FullField, Translations } from 'react-querybuilder';
+import type {
+  ControlElementsProp,
+  FullField,
+  QueryBuilderContextProvider,
+  Translations,
+} from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
@@ -21,15 +26,15 @@ export * from './ChakraNotToggle';
 export * from './ChakraValueEditor';
 export * from './ChakraValueSelector';
 
-export const chakraControlElements = {
+export const chakraControlElements: ControlElementsProp<FullField, string> = {
   actionElement: ChakraActionElement,
   valueSelector: ChakraValueSelector,
   dragHandle: ChakraDragHandle,
   notToggle: ChakraNotToggle,
   valueEditor: ChakraValueEditor,
-} satisfies ControlElementsProp<FullField, string>;
+};
 
-export const chakraTranslations = {
+export const chakraTranslations: Partial<Translations> = {
   removeGroup: { label: <CloseIcon /> },
   removeRule: { label: <CloseIcon /> },
   cloneRuleGroup: { label: <CopyIcon /> },
@@ -40,9 +45,9 @@ export const chakraTranslations = {
   lockRuleDisabled: { label: <LockIcon /> },
   shiftActionDown: { label: <ChevronDownIcon /> },
   shiftActionUp: { label: <ChevronUpIcon /> },
-} satisfies Partial<Translations>;
+};
 
-export const QueryBuilderChakra = getCompatContextProvider({
+export const QueryBuilderChakra: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: chakraControlElements,
   translations: chakraTranslations,
 });

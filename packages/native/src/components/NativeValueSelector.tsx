@@ -15,7 +15,7 @@ export const NativeValueSelector = <Opt extends FullOption = FullOption>({
   listsAsArrays,
   schema,
   testID,
-}: ValueSelectorNativeProps<Opt>) => {
+}: ValueSelectorNativeProps<Opt>): React.JSX.Element => {
   const styles = useMemo(() => {
     if (testID === TestID.combinators) {
       return {

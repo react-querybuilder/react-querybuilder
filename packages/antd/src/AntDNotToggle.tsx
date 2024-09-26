@@ -20,7 +20,7 @@ export const AntDNotToggle = ({
   schema: _schema,
   ruleGroup: _ruleGroup,
   ...extraProps
-}: AntDNotToggleProps) => (
+}: AntDNotToggleProps): React.JSX.Element => (
   <Switch
     title={title}
     className={className}

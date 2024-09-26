@@ -9,7 +9,12 @@ export type GenericDropTargetProps = {
   dropEffect: DropEffect;
 };
 
-export const GenericDropTarget = ({ useDrop, path, type, dropEffect }: GenericDropTargetProps) => {
+export const GenericDropTarget = ({
+  useDrop,
+  path,
+  type,
+  dropEffect,
+}: GenericDropTargetProps): React.JSX.Element => {
   // eslint-disable-next-line react-compiler/react-compiler
   const [{ dropMonitorId }] = useDrop!(() => ({
     accept: ['rule', 'ruleGroup'],

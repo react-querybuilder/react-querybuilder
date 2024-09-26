@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { OptionList } from 'react-querybuilder';
 import { isOptionGroupArray } from 'react-querybuilder';
 
-export const toDropdownOptions = (list: OptionList) =>
+export const toDropdownOptions = (list: OptionList): React.JSX.Element[] | null =>
   isOptionGroupArray(list)
     ? list.map(og => (
         <OptionGroup key={og.label} label={og.label}>

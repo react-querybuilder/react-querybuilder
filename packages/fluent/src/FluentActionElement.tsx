@@ -20,7 +20,7 @@ export const FluentActionElement = ({
   validation: _validation,
   schema: _schema,
   ...otherProps
-}: FluentActionProps) => (
+}: FluentActionProps): React.JSX.Element => (
   <Button
     // TODO: Find a way to do better than "as any" here
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

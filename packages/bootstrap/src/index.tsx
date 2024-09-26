@@ -1,5 +1,11 @@
 import * as React from 'react';
-import type { Classnames, ControlElementsProp, FullField, Translations } from 'react-querybuilder';
+import type {
+  Classnames,
+  ControlElementsProp,
+  FullField,
+  QueryBuilderContextProvider,
+  Translations,
+} from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
@@ -7,12 +13,12 @@ import { BootstrapValueEditor } from './BootstrapValueEditor';
 export * from './BootstrapNotToggle';
 export * from './BootstrapValueEditor';
 
-export const bootstrapControlElements = {
+export const bootstrapControlElements: ControlElementsProp<FullField, string> = {
   notToggle: BootstrapNotToggle,
   valueEditor: BootstrapValueEditor,
-} satisfies ControlElementsProp<FullField, string>;
+};
 
-export const bootstrapControlClassnames = {
+export const bootstrapControlClassnames: Partial<Classnames> = {
   actionElement: 'btn btn-sm',
   addGroup: 'btn-secondary',
   addRule: 'btn-primary',
@@ -24,9 +30,9 @@ export const bootstrapControlClassnames = {
   removeRule: 'btn-danger',
   value: 'form-control form-control-sm',
   valueSelector: 'form-select form-select-sm',
-} satisfies Partial<Classnames>;
+};
 
-export const bootstrapTranslations = {
+export const bootstrapTranslations: Partial<Translations> = {
   removeGroup: { label: <i className="bi bi-x" /> },
   removeRule: { label: <i className="bi bi-x" /> },
   cloneRule: { label: <i className="bi bi-copy" /> },
@@ -38,9 +44,9 @@ export const bootstrapTranslations = {
   lockRuleDisabled: { label: <i className="bi bi-lock" /> },
   shiftActionUp: { label: <i className="bi bi-chevron-compact-up" /> },
   shiftActionDown: { label: <i className="bi bi-chevron-compact-down" /> },
-} satisfies Partial<Translations>;
+};
 
-export const QueryBuilderBootstrap = getCompatContextProvider({
+export const QueryBuilderBootstrap: QueryBuilderContextProvider = getCompatContextProvider({
   controlClassnames: bootstrapControlClassnames,
   controlElements: bootstrapControlElements,
   translations: bootstrapTranslations,

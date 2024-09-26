@@ -31,7 +31,13 @@ export const useDragCommon = ({
   actions,
   schema,
   useDrag,
-}: UseDragCommonProps) =>
+}: UseDragCommonProps): [
+  DragCollection,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  import('react-dnd').ConnectDragSource,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  import('react-dnd').ConnectDragPreview,
+] =>
   useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,

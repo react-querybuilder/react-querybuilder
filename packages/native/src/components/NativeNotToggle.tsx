@@ -11,7 +11,7 @@ export const NativeNotToggle = ({
   disabled,
   schema,
   testID,
-}: NotToggleNativeProps) => {
+}: NotToggleNativeProps): React.JSX.Element => {
   const styles = useMemo(
     () => ({
       notToggle: StyleSheet.flatten([defaultNativeStyles.notToggle, schema.styles?.notToggle]),
