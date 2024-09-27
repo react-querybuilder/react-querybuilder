@@ -106,7 +106,6 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "babel-plugin-istanbul": "^7.0.0",
-    "concurrently": "^9.0.1",
     "jscodeshift": "^17.0.0",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.5",
