@@ -34,7 +34,7 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "bunx --bun vite",
-    "build": "tsup",
+    "build": "bunx --bun tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },

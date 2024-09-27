@@ -132,15 +132,15 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "start": "bunx --bun vite",
-    "build": "bun --bun run build:main && bun run build:css",
-    "build:main": "tsup",
+    "start": "bun --bun vite",
+    "build": "bun run build:main && bun run build:css",
+    "build:main": "bun --bun tsup",
     "build:css": "bun buildCSS.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
-    "generate:parsers": "concurrently --group --timings --names sqlParser,celParser bun:generate:sqlparser bun:generate:celparser && bun generate:parsers-codemod",
-    "generate:sqlparser": "bun x jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate:celparser": "bun x jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:parsers-codemod": "bun x jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL,SQL}/{cel,sql}Parser.js"
+    "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",
+    "generate:sqlparser": "bunx --bun jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
+    "generate:celparser": "bunx --bun jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
+    "generate:parsers-codemod": "bunx --bun jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL/cel,SQL/sql}Parser.js"
   }
 }
