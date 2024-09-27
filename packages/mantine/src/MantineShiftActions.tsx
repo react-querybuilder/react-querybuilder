@@ -12,7 +12,7 @@ export const MantineShiftActions = ({
   labels,
   titles,
   testID,
-}: ShiftActionsProps) => (
+}: ShiftActionsProps): React.JSX.Element => (
   <div data-testid={testID} className={className}>
     <Button
       type="button"

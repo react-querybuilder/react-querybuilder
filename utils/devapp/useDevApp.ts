@@ -1,6 +1,11 @@
 import queryString from 'query-string';
 import { useCallback, useMemo, useReducer, useState } from 'react';
-import type { FormatQueryOptions, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
+import type {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleGroupTypeIC,
+} from 'react-querybuilder';
 import { defaultValidator, standardClassnames } from 'react-querybuilder';
 import * as RQButils from '@rqb-utils';
 import {
@@ -12,7 +17,7 @@ import {
   initialQuery,
   initialQueryIC,
 } from './constants';
-import type { CommonRQBProps } from './types';
+import type { CommonRQBProps, DemoOption, DemoOptions } from './types';
 import { generatePermalinkHash, getFormatQueryString, optionsReducer } from './utils';
 
 Object.defineProperty(globalThis, 'RQButils', { value: RQButils });
@@ -25,7 +30,22 @@ const getOptionsFromHash = () =>
 // Initialize options from URL hash
 const initialOptionsFromHash = getOptionsFromHash();
 
-export const useDevApp = () => {
+export const useDevApp = (): {
+  actions: [string, () => void][];
+  commonRQBProps: CommonRQBProps;
+  formatQueryResults: (readonly [ExportFormat, string])[];
+  onQueryChange: (q: RuleGroupType) => void;
+  onQueryChangeIC: (q: RuleGroupTypeIC) => void;
+  optVals: DemoOptions;
+  query: RuleGroupType;
+  queryIC: RuleGroupTypeIC;
+  updateOptions: React.Dispatch<
+    | { type: 'all' }
+    | { type: 'reset' }
+    | { type: 'update'; payload: { optionName: DemoOption; value: boolean } }
+    | { type: 'replace'; payload: DemoOptions }
+  >;
+} => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, {
@@ -92,7 +112,7 @@ export const useDevApp = () => {
             setQueryIC(initialQueryIC);
           },
         ],
-      ] as const,
+      ] satisfies [string, () => void][],
     [optVals]
   );
 

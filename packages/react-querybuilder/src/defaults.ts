@@ -15,27 +15,27 @@ const placeholderLabel = '------';
 /**
  * Default `name` for placeholder option in the `fields` array.
  */
-export const defaultPlaceholderFieldName = placeholderName;
+export const defaultPlaceholderFieldName: typeof placeholderName = placeholderName;
 /**
  * Default `label` for placeholder option in the `fields` array.
  */
-export const defaultPlaceholderFieldLabel = placeholderLabel;
+export const defaultPlaceholderFieldLabel: typeof placeholderLabel = placeholderLabel;
 /**
  * Default `label` for placeholder option group in the `fields` array.
  */
-export const defaultPlaceholderFieldGroupLabel = placeholderLabel;
+export const defaultPlaceholderFieldGroupLabel: typeof placeholderLabel = placeholderLabel;
 /**
  * Default `name` for placeholder option in the `operators` array.
  */
-export const defaultPlaceholderOperatorName = placeholderName;
+export const defaultPlaceholderOperatorName: typeof placeholderName = placeholderName;
 /**
  * Default `label` for placeholder option in the `operators` array.
  */
-export const defaultPlaceholderOperatorLabel = placeholderLabel;
+export const defaultPlaceholderOperatorLabel: typeof placeholderLabel = placeholderLabel;
 /**
  * Default `label` for placeholder option group in the `operators` array.
  */
-export const defaultPlaceholderOperatorGroupLabel = placeholderLabel;
+export const defaultPlaceholderOperatorGroupLabel: typeof placeholderLabel = placeholderLabel;
 
 /**
  * Default character used to `.join` and `.split` arrays.
@@ -46,7 +46,7 @@ export const defaultJoinChar = ',';
  * Default configuration of translatable strings.
  */
 // #region docs-translations
-export const defaultTranslations = {
+export const defaultTranslations: TranslationsFull = {
   fields: {
     title: 'Fields',
     placeholderName: defaultPlaceholderFieldName,
@@ -131,7 +131,7 @@ export const defaultTranslations = {
  * Default operator list.
  */
 // #region docs-operators
-export const defaultOperators = [
+export const defaultOperators: DefaultOperator[] = [
   { name: '=', value: '=', label: '=' } as const,
   { name: '!=', value: '!=', label: '!=' } as const,
   { name: '<', value: '<', label: '<' } as const,
@@ -156,7 +156,7 @@ export const defaultOperators = [
 /**
  * Map of default operators to their respective opposite/negating operators.
  */
-export const defaultOperatorNegationMap = {
+export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
   '=': '!=',
   '!=': '=',
   '<': '>=',
@@ -181,7 +181,7 @@ export const defaultOperatorNegationMap = {
  * Default combinator list.
  */
 // #region docs-combinators
-export const defaultCombinators = [
+export const defaultCombinators: DefaultCombinator[] = [
   { name: 'and', value: 'and', label: 'AND' } as const,
   { name: 'or', value: 'or', label: 'OR' } as const,
 ] satisfies DefaultCombinator[];
@@ -190,7 +190,7 @@ export const defaultCombinators = [
 /**
  * Default combinator list, with `XOR` added.
  */
-export const defaultCombinatorsExtended = [
+export const defaultCombinatorsExtended: DefaultCombinatorExtended[] = [
   ...defaultCombinators,
   { name: 'xor', value: 'xor', label: 'XOR' } as const,
 ] satisfies DefaultCombinatorExtended[];
@@ -236,7 +236,7 @@ export const standardClassnames = {
 /**
  * Default classnames for each component.
  */
-export const defaultControlClassnames = {
+export const defaultControlClassnames: Classnames = {
   queryBuilder: '',
   ruleGroup: '',
   header: '',

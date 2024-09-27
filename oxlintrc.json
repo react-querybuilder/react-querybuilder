@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "react/display-name": "off",
+    "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/no-unstable-nested-components": "error",
+    "react-compiler/react-compiler": "error"
+  }
+}

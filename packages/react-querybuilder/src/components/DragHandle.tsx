@@ -6,7 +6,9 @@ import type { DragHandleProps } from '../types';
  * Defaut drag handle component used by {@link QueryBuilder} when
  * `enableDragAndDrop` is `true`.
  */
-export const DragHandle = forwardRef<HTMLSpanElement, DragHandleProps>((props, dragRef) => (
+export const DragHandle: React.ForwardRefExoticComponent<
+  DragHandleProps & React.RefAttributes<HTMLSpanElement>
+> = forwardRef<HTMLSpanElement, DragHandleProps>((props, dragRef) => (
   <span data-testid={props.testID} ref={dragRef} className={props.className} title={props.title}>
     {props.label}
   </span>

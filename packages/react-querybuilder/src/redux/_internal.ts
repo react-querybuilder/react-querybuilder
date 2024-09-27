@@ -1,10 +1,12 @@
 import type {
   Dispatch,
   PayloadAction,
+  Store,
   ThunkAction,
   ThunkDispatch,
   UnknownAction,
 } from '@reduxjs/toolkit';
+import type { UseStore } from 'react-redux';
 import { createDispatchHook, createStoreHook } from 'react-redux';
 import { QueryBuilderStateContext, type RqbState } from '.';
 import type { SetQueryStateParams } from './queriesSlice';
@@ -40,7 +42,8 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownA
 /**
  * Gets the full RQB Redux store.
  */
-export const useRQB_INTERNAL_QueryBuilderStore = createStoreHook(QueryBuilderStateContext);
+export const useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState, UnknownAction>> =
+  createStoreHook(QueryBuilderStateContext);
 
 const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;
 

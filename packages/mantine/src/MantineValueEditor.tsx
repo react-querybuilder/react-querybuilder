@@ -13,7 +13,7 @@ type MantineValueEditorProps = ValueEditorProps & { extraProps?: Record<string, 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
-export const MantineValueEditor = (allProps: MantineValueEditorProps) => {
+export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
     operator,
@@ -110,8 +110,8 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

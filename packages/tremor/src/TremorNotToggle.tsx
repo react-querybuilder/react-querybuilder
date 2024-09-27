@@ -20,7 +20,7 @@ export const TremorNotToggle = ({
   schema: _schema,
   ruleGroup: _ruleGroup,
   ...otherProps
-}: TremorNotToggleProps) => {
+}: TremorNotToggleProps): React.JSX.Element => {
   const id = React.useId();
   return (
     <div className={className} data-testid={testID}>

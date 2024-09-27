@@ -2,7 +2,9 @@ import { produce } from 'immer';
 import type {
   RuleGroupArray,
   RuleGroupICArray,
+  RuleGroupType,
   RuleGroupTypeAny,
+  RuleGroupTypeIC,
   RuleType,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
@@ -18,7 +20,11 @@ export interface PreparerOptions {
 /**
  * Ensures that a rule is valid by adding an `id` property if it does not already exist.
  */
-export const prepareRule = (rule: RuleType, { idGenerator = generateID }: PreparerOptions = {}) =>
+export const prepareRule = (
+  rule: RuleType,
+  { idGenerator = generateID }: PreparerOptions = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): RuleType<string, string, any, string> =>
   produce(rule, draft => {
     if (!draft.id) {
       draft.id = idGenerator();
@@ -52,4 +58,5 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
 export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(
   rg: RG | RuleType,
   { idGenerator = generateID }: PreparerOptions = {}
-) => (isRuleGroup(rg) ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator }));
+): RuleGroupType | RuleGroupTypeIC | RuleType =>
+  isRuleGroup(rg) ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator });

@@ -9,6 +9,7 @@ import type {
   FullOperator,
   FullOption,
   QueryActions,
+  RemoveNullability,
   RuleGroupProps,
   RuleType,
   Schema,
@@ -24,13 +25,12 @@ import {
 } from 'react-querybuilder';
 import { UNUSED } from './utils';
 
-export const createRule = (index: number) =>
-  ({
-    id: `rule_id_${index}`,
-    field: `field_${index}`,
-    operator: `operator_${index}`,
-    value: `value_${index}`,
-  }) satisfies RuleType;
+export const createRule = (index: number): RuleType => ({
+  id: `rule_id_${index}`,
+  field: `field_${index}`,
+  operator: `operator_${index}`,
+  value: `value_${index}`,
+});
 
 const Button = (props: ActionProps) => (
   <button data-testid={props.testID} className={props.className} onClick={props.handleOnClick}>
@@ -38,7 +38,7 @@ const Button = (props: ActionProps) => (
   </button>
 );
 
-export const ruleGroupControls = {
+export const ruleGroupControls: RemoveNullability<ControlElementsProp<FullField, string>> = {
   combinatorSelector: props => (
     <select
       data-testid={TestID.combinators}
@@ -115,9 +115,9 @@ export const ruleGroupControls = {
       <button onClick={props.shiftDown}>{props.labels?.shiftDown}</button>
     </div>
   ),
-} satisfies ControlElementsProp<FullField, string>;
+};
 
-export const ruleGroupClassnames = {
+export const ruleGroupClassnames: Partial<Classnames> = {
   header: 'custom-header-class',
   body: 'custom-body-class',
   combinators: 'custom-combinators-class',
@@ -127,7 +127,7 @@ export const ruleGroupClassnames = {
   removeGroup: 'custom-removeGroup-class',
   notToggle: { 'custom-notToggle-class': true },
   ruleGroup: ['custom-ruleGroup-class'],
-} satisfies Partial<Classnames>;
+};
 
 const ruleGroupSchema = {
   qbId: 'qbId',

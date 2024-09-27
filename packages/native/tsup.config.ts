@@ -1,13 +1,13 @@
 import { writeFile } from 'fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
+import { generateDTS } from '../../utils/generateDTS';
 
 export default defineConfig(options => {
   const commonOptions: Options = {
     entry: {
       'react-querybuilder_native': 'src/index.ts',
     },
-    dts: true,
     sourcemap: true,
     external: ['react-native'],
     ...options,
@@ -24,6 +24,7 @@ export default defineConfig(options => {
       ...commonOptions,
       format: ['esm'],
       clean: true,
+      onSuccess: () => generateDTS(import.meta.dir),
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {

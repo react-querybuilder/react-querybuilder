@@ -9,7 +9,7 @@ export const NativeInlineCombinator = ({
   component: CombinatorSelectorComponent,
   path,
   ...props
-}: InlineCombinatorNativeProps) => {
+}: InlineCombinatorNativeProps): React.JSX.Element => {
   const styles = useMemo(
     () => ({
       inlineCombinator: StyleSheet.flatten([

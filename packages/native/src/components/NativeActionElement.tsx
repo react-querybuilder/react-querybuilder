@@ -10,7 +10,7 @@ export const NativeActionElement = ({
   disabledTranslation,
   testID,
   schema: _schema,
-}: ActionNativeProps) => (
+}: ActionNativeProps): React.JSX.Element => (
   <Pressable
     testID={testID}
     disabled={disabled && !disabledTranslation}

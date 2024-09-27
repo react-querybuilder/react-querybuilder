@@ -10,7 +10,7 @@ import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
 
-export const mapSQLOperator = (op: string) => {
+export const mapSQLOperator = (op: string): string => {
   switch (op.toLowerCase()) {
     case 'null':
       return 'is null';
@@ -44,7 +44,10 @@ export const mongoOperators = {
   notIn: '$nin',
 };
 
-export const celCombinatorMap = {
+export const celCombinatorMap: {
+  and: '&&';
+  or: '||';
+} = {
   and: '&&',
   or: '||',
 } satisfies Record<DefaultCombinatorName, '&&' | '||'>;
@@ -61,10 +64,13 @@ export const celCombinatorMap = {
  * jsonLogic.apply({ "startsWith": [{ "var": "firstName" }, "Stev"] }, data);
  * ```
  */
-export const jsonLogicAdditionalOperators = {
+export const jsonLogicAdditionalOperators: Record<
+  'startsWith' | 'endsWith',
+  (a: string, b: string) => boolean
+> = {
   startsWith: (a: string, b: string) => typeof a === 'string' && a.startsWith(b),
   endsWith: (a: string, b: string) => typeof a === 'string' && a.endsWith(b),
-} satisfies Record<'startsWith' | 'endsWith', (a: string, b: string) => boolean>;
+};
 
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
@@ -99,13 +105,13 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isValidValue = (v: any) =>
+export const isValidValue = (v: any): boolean =>
   (typeof v === 'string' && v.length > 0) ||
   (typeof v === 'number' && !isNaN(v)) ||
   (typeof v !== 'string' && typeof v !== 'number');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean) =>
+export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean): boolean | undefined =>
   parseNumbers &&
   (typeof v === 'number' ||
     typeof v === 'bigint' ||
@@ -127,7 +133,7 @@ export const quoteFieldNamesWithArray = (
 export const quoteFieldName = (
   f: string,
   { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions
-) => {
+): string => {
   const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
   return typeof fieldIdentifierSeparator === 'string' && fieldIdentifierSeparator.length > 0
     ? joinWith(
@@ -138,5 +144,5 @@ export const quoteFieldName = (
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const nullOrUndefinedOrEmpty = (v: any) =>
+export const nullOrUndefinedOrEmpty = (v: any): boolean =>
   v === null || typeof v === 'undefined' || v === '';

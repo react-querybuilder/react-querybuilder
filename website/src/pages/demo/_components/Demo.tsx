@@ -538,15 +538,15 @@ export default function Demo({
             <QueryBuilderDnD>
               {options.independentCombinators ? (
                 <QueryBuilder
+                  key="queryIC"
                   {...commonRQBProps}
-                  key={'queryIC'}
                   query={queryIC}
                   onQueryChange={setQueryIC}
                 />
               ) : (
                 <QueryBuilder
+                  key="query"
                   {...commonRQBProps}
-                  key={'query'}
                   query={query}
                   onQueryChange={setQuery}
                 />

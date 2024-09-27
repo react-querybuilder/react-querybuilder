@@ -20,7 +20,7 @@ export const TremorActionElement = ({
   validation: _validation,
   schema: _schema,
   ...otherProps
-}: TremorActionProps) => (
+}: TremorActionProps): React.JSX.Element => (
   <Button
     {...otherProps}
     data-testid={testID}

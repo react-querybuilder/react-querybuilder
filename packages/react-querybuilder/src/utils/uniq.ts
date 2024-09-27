@@ -3,6 +3,7 @@ import type {
   BaseOption,
   FlexibleOptionGroup,
   FlexibleOptionList,
+  FullOption,
   OptionGroup,
   ToFullOption,
   WithUnknownIndex,
@@ -70,7 +71,9 @@ export const uniqOptGroups = <T extends BaseOption>(
  * Generates a new {@link Option} or {@link OptionGroup} array with duplicates
  * removed based on the identifier property (`value` or `name`).
  */
-export const uniqOptList = <T extends BaseOption>(originalArray: FlexibleOptionList<T>) => {
+export const uniqOptList = <T extends BaseOption>(
+  originalArray: FlexibleOptionList<T>
+): WithUnknownIndex<BaseOption & FullOption>[] | OptionGroup<ToFullOption<T>>[] => {
   if (isFlexibleOptionGroupArray(originalArray)) {
     return uniqOptGroups(originalArray) as OptionGroup<ToFullOption<T>>[];
   }

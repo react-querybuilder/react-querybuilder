@@ -20,7 +20,7 @@ export const MantineActionElement = ({
   validation: _validation,
   schema: _schema,
   ...otherProps
-}: MantineActionProps) => (
+}: MantineActionProps): React.JSX.Element => (
   <Button
     {...otherProps}
     data-testid={testID}

@@ -188,6 +188,13 @@ export type FieldByValue<
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 /**
+ * Utility type to make all properties non-nullable.
+ */
+export type RemoveNullability<T extends Record<string, unknown>> = {
+  [k in keyof T]: NonNullable<T[k]>;
+};
+
+/**
  * Allowed values of the {@link FullOperator} property `arity`. A value of `"unary"` or
  * a number less than two will cause the default {@link ValueEditor} to render `null`.
  */

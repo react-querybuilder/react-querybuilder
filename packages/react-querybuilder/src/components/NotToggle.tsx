@@ -4,7 +4,7 @@ import type { NotToggleProps } from '../types';
 /**
  * Default `notToggle` (aka inversion) component used by {@link QueryBuilder}.
  */
-export const NotToggle = (props: NotToggleProps) => (
+export const NotToggle = (props: NotToggleProps): React.JSX.Element => (
   <label data-testid={props.testID} className={props.className} title={props.title}>
     <input
       type="checkbox"

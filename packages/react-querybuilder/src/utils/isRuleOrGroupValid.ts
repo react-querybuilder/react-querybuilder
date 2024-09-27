@@ -21,7 +21,7 @@ export const isRuleOrGroupValid = (
   rg: RuleType | RuleGroupTypeAny,
   validationResult?: boolean | ValidationResult,
   validator?: RuleValidator
-) => {
+): boolean => {
   if (typeof validationResult === 'boolean') {
     return validationResult;
   }

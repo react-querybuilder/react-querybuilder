@@ -9,7 +9,7 @@ import { useRuleGroupDnD } from './hooks';
  * ({@link RuleGroup} by default), but forwards the drag-and-drop context so that child
  * rules and groups will render within the appropriate drag-and-drop wrappers.
  */
-export const RuleGroupDnD = (props: RuleGroupProps) => {
+export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
   const { canDrop, useDrag, useDrop } = rqbDndContext;

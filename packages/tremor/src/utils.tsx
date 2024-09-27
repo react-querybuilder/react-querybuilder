@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { Option, OptionList } from 'react-querybuilder';
 import { isOptionGroupArray } from 'react-querybuilder';
 
-export const toSelectItems = (list: OptionList, multi?: boolean) => {
+export const toSelectItems = (list: OptionList, multi?: boolean): React.JSX.Element[] | null => {
   let flatList: Option[];
 
   if (isOptionGroupArray(list)) {

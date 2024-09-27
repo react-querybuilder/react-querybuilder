@@ -6,7 +6,7 @@ import { isOptionGroupArray } from './optGroupUtils';
  * Generates an array of `<option>` or `<optgroup>` elements
  * from a given {@link OptionList}.
  */
-export const toOptions = (arr?: OptionList) =>
+export const toOptions = (arr?: OptionList): React.JSX.Element[] | null =>
   isOptionGroupArray(arr)
     ? arr.map(og => (
         <optgroup key={og.label} label={og.label}>

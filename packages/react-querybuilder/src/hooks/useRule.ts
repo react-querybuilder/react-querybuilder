@@ -2,7 +2,26 @@ import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
-import type { FullField, RuleProps, RuleType } from '../types';
+import type {
+  DropEffect,
+  FlexibleOptionList,
+  FullField,
+  FullOperator,
+  FullOption,
+  InputType,
+  Option,
+  OptionGroup,
+  Path,
+  QueryActions,
+  RuleProps,
+  RuleType,
+  Schema,
+  Translations,
+  ValidationResult,
+  ValueEditorType,
+  ValueSource,
+  ValueSources,
+} from '../types';
 import {
   filterFieldsByComparator,
   getOption,
@@ -14,7 +33,75 @@ import { clsx } from '../utils/clsx';
 /**
  * Prepares all values and methods used by the {@link Rule} component.
  */
-export const useRule = (props: RuleProps) => {
+export const useRule = (
+  props: RuleProps
+): {
+  classNames: {
+    shiftActions: string;
+    dragHandle: string;
+    fields: string;
+    operators: string;
+    valueSource: string;
+    value: string;
+    cloneRule: string;
+    lockRule: string;
+    removeRule: string;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cloneRule: (_event?: any, _context?: any) => void;
+  disabled: boolean;
+  dndRef: React.Ref<HTMLDivElement>;
+  dragMonitorId: string | symbol;
+  dragRef: React.Ref<HTMLSpanElement>;
+  dropMonitorId: string | symbol;
+  fieldData: FullField<string, string, string, Option<string>, Option<string>>;
+  generateOnChangeHandler: (
+    prop: Exclude<keyof RuleType, 'id' | 'path'>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => (value: any, _context?: any) => void;
+  hideValueControls: boolean;
+  inputType: InputType | null;
+  operators: FullOperator<string>[] | OptionGroup<FullOperator<string>>[];
+  outerClassName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  removeRule: (_event?: any, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rule: RuleType<string, string, any, string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  shiftRuleUp: (event?: MouseEvent, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  shiftRuleDown: (event?: MouseEvent, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  toggleLockRule: (_event?: any, _context?: any) => void;
+  validationResult: boolean | ValidationResult;
+  valueEditorSeparator: React.ReactNode;
+  valueEditorType: ValueEditorType;
+  values: FlexibleOptionList<Option<string>>;
+  valueSourceOptions: {
+    name: 'field' | 'value';
+    value: 'field' | 'value';
+    label: 'field' | 'value';
+  }[];
+  valueSources: ValueSources;
+  field?: string;
+  operator?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value?: any;
+  valueSource?: ValueSource;
+  id?: string;
+  path: Path;
+  parentDisabled?: boolean;
+  translations: Translations;
+  schema: Schema<FullOption<string>, string>;
+  actions: QueryActions;
+  shiftUpDisabled?: boolean;
+  shiftDownDisabled?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: any;
+  isDragging?: boolean | undefined;
+  isOver?: boolean | undefined;
+  dropEffect?: DropEffect | undefined;
+} => {
   const {
     id,
     path,

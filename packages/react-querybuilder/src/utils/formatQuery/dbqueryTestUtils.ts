@@ -26,7 +26,7 @@ const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   sqlite: [1, 0],
 };
 
-export const superUsers = (dbPlatform: DbPlatform) => {
+export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
   const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
 
   return [
@@ -58,7 +58,7 @@ export const superUsers = (dbPlatform: DbPlatform) => {
       madeUpName: 'Batman',
       powerUpAge: null,
     },
-  ] satisfies SuperUser[];
+  ];
 };
 
 const enhancedColumnType: Record<DbPlatform, string> = {
@@ -118,7 +118,7 @@ export const sqlBase = `SELECT * FROM superusers WHERE `;
 export const dbSetup = (
   dbPlatform: DbPlatform,
   { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
-) =>
+): string =>
   [
     CREATE_TABLE(dbPlatform, { unquoted }),
     CREATE_INDEX({ unquoted }),

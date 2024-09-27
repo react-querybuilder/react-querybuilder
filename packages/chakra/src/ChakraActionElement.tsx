@@ -22,7 +22,7 @@ export const ChakraActionElement = ({
   ruleOrGroup: _ruleOrGroup,
   schema: _schema,
   ...extraProps
-}: ChakraActionProps) => (
+}: ChakraActionProps): React.JSX.Element => (
   <Button
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}

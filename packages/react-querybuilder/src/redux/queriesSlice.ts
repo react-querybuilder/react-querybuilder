@@ -11,7 +11,23 @@ export interface SetQueryStateParams {
 
 export const initialState: QueriesSliceState = {};
 
-export const queriesSlice = createSlice({
+export const queriesSlice: Slice<
+  QueriesSliceState,
+  {
+    setQueryState: (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      state: any,
+      {
+        payload: { qbId, query },
+      }: PayloadAction<SetQueryStateParams>
+    ) => void;
+  },
+  string,
+  string,
+  {
+    getQuerySelectorById: (state: QueriesSliceState, qbId: string) => RuleGroupTypeAny;
+  }
+> = createSlice({
   name: 'queries',
   initialState,
   reducers: {

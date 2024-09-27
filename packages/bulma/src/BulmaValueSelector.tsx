@@ -12,7 +12,7 @@ export const BulmaValueSelector = ({
   disabled,
   multiple,
   listsAsArrays,
-}: ValueSelectorProps) => {
+}: ValueSelectorProps): React.JSX.Element => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const selectElementChangeHandler = useSelectElementChangeHandler({ multiple, onChange });

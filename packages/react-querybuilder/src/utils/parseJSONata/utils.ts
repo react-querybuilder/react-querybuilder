@@ -199,11 +199,17 @@ export const normalizeOperator = (
   return opType;
 };
 
-export const negatedLikeOperators = {
+export const negatedLikeOperators: Record<
+  Extract<DefaultOperatorName, 'beginsWith' | 'contains' | 'endsWith'>,
+  DefaultOperatorName
+> = {
   contains: 'doesNotContain',
   beginsWith: 'doesNotBeginWith',
   endsWith: 'doesNotEndWith',
-} satisfies Partial<Record<DefaultOperatorName, DefaultOperatorName>>;
+} satisfies Record<
+  Extract<DefaultOperatorName, 'beginsWith' | 'contains' | 'endsWith'>,
+  DefaultOperatorName
+>;
 
 export const generateFlatAndOrList = (
   expr: JSONataExprNode
@@ -220,7 +226,9 @@ export const generateFlatAndOrList = (
   return [];
 };
 
-export const generateMixedAndOrList = (expr: JSONataAnd | JSONataOr) => {
+export const generateMixedAndOrList = (
+  expr: JSONataAnd | JSONataOr
+): (JSONataExprNode | DefaultCombinatorName | (JSONataExprNode | 'and')[])[] => {
   const arr = generateFlatAndOrList(expr);
   const returnArray: (DefaultCombinatorName | JSONataExprNode | ('and' | JSONataExprNode)[])[] = [];
   let startIndex = 0;

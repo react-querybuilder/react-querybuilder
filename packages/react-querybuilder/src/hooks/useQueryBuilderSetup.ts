@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
+import type { UseMergedContextReturn } from '../hooks';
 import { useMergedContext } from '../hooks';
 import type {
+  BaseOption,
   FlexibleOptionList,
   FullCombinator,
   FullField,
@@ -12,9 +14,13 @@ import type {
   FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
+  Option,
+  OptionGroup,
   QueryBuilderProps,
+  RemoveNullability,
   RuleGroupTypeAny,
   RuleType,
+  WithUnknownIndex,
 } from '../types';
 import {
   filterFieldsByComparator,
@@ -60,7 +66,35 @@ export const useQueryBuilderSetup = <
   C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
-) => {
+): {
+  qbId: string;
+  rqbContext: UseMergedContextReturn<F, GetOptionIdentifierType<O>>;
+  fields: FullOptionList<F>;
+  fieldMap: FullOptionMap<
+    FullField<string, string, string, Option<string>, Option<string>>,
+    GetOptionIdentifierType<F>
+  >;
+  combinators:
+    | WithUnknownIndex<BaseOption<string> & FullOption<string>>[]
+    | OptionGroup<WithUnknownIndex<BaseOption<string> & FullOption<string>>>[];
+  getRuleDefaultValue: <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
+    r: RT
+  ) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
+  createRuleGroup: (independentCombinators?: boolean) => RG;
+} & RemoveNullability<{
+  getInputTypeMain: QueryBuilderProps<RG, F, O, C>['getInputType'];
+  getRuleDefaultOperator: QueryBuilderProps<RG, F, O, C>['getDefaultOperator'];
+  getValueEditorTypeMain: QueryBuilderProps<RG, F, O, C>['getValueEditorType'];
+  getValueSourcesMain: QueryBuilderProps<RG, F, O, C>['getValueSources'];
+}> & {
+    getOperatorsMain: (
+      ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getOperators']>>
+    ) => FullOptionList<O>;
+    getValuesMain: (
+      ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getValues']>>
+    ) => FullOptionList<Option>;
+  } => {
   type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   type FieldName = GetOptionIdentifierType<F>;
   type OperatorName = GetOptionIdentifierType<O>;

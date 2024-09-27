@@ -20,7 +20,7 @@ export const FluentNotToggle = ({
   schema: _schema,
   ruleGroup: _ruleGroup,
   ...otherProps
-}: FluentNotToggleProps) => (
+}: FluentNotToggleProps): React.JSX.Element => (
   <Switch
     {...otherProps}
     data-testid={testID}

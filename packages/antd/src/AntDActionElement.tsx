@@ -29,7 +29,7 @@ export const AntDActionElement = ({
   ruleOrGroup: _ruleOrGroup,
   schema: _schema,
   ...extraProps
-}: AntDActionProps) => (
+}: AntDActionProps): React.JSX.Element => (
   <Button
     type="primary"
     className={className}

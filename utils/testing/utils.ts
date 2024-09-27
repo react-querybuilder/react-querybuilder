@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import type { Classnames, FullField, Schema } from 'react-querybuilder';
@@ -57,7 +59,7 @@ export const findTextarea = (el: HTMLElement) =>
 export const findSelect = (el: HTMLElement) =>
   (el.tagName === 'SELECT' ? el : el.querySelector('select')) as HTMLSelectElement;
 
-export const hasOrInheritsClass = (el: HTMLElement | null, className: string) => {
+export const hasOrInheritsClass = (el: HTMLElement | null, className: string): boolean => {
   if (el && (el.classList.contains(className) || el.closest(`.${className}`))) {
     return true;
   }
@@ -88,7 +90,7 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   try {
     expect(el).toBeChecked();
     return true;
-  } catch (er) {
+  } catch {
     if (attempt < 10) {
       return isOrInheritsChecked(el.parentElement, attempt + 1);
     }
@@ -96,7 +98,7 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   return false;
 };
 
-export const userEventSetup = () => {
+export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
   const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
   // TODO: figure out a way to avoid these wrapper functions.
   // See http://kcd.im/react-act
@@ -115,7 +117,16 @@ export const userEventSetup = () => {
   return { ...user, click, selectOptions, type };
 };
 
-export const consoleMocks = () => {
+export const consoleMocks = (): {
+  consoleError: jest.Mock;
+  consoleErrorActual: typeof console.error;
+  consoleInfo: jest.Mock<any, any, any>;
+  consoleInfoActual: typeof console.info;
+  consoleLog: jest.Mock<any, any, any>;
+  consoleLogActual: typeof console.log;
+  consoleWarn: jest.Mock<any, any, any>;
+  consoleWarnActual: typeof console.warn;
+} => {
   // TODO: This version works for Vitest. Not sure about bun:test yet.
   /*
   const consoleLog = jest.spyOn(console, 'log');

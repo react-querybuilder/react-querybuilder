@@ -7,6 +7,8 @@ import {
   useRQB_INTERNAL_QueryBuilderStore,
 } from '../redux/_internal';
 import type {
+  Classnames,
+  Controls,
   FullCombinator,
   FullField,
   FullOperator,
@@ -18,9 +20,11 @@ import type {
   QueryBuilderProps,
   QueryValidator,
   RuleGroupProps,
+  RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   Schema,
+  TranslationsFull,
   UpdateableProperties,
   ValidationMap,
   ValueSources,
@@ -66,7 +70,30 @@ export function useQueryBuilderSchema<
 >(
   props: QueryBuilderProps<RG, F, O, C>,
   setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
-) {
+): {
+  actions: QueryActions;
+  rootGroup: RuleGroupTypeAny<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>;
+  rootGroupDisabled: boolean;
+  queryDisabled: boolean;
+  rqbContext: {
+    initialQuery:
+      | RuleGroupType<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>, string>
+      | RuleGroupTypeIC<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>, string>;
+    controlElements: Controls<F, GetOptionIdentifierType<O>>;
+    enableMountQueryChange: boolean;
+    controlClassnames: Classnames;
+    translations: TranslationsFull;
+    enableDragAndDrop: boolean;
+    debugMode: boolean;
+    qbId?: string;
+  };
+  schema: Schema<F, GetOptionIdentifierType<O>>;
+  translations: TranslationsFull;
+  wrapperClassName: string;
+  dndEnabledAttr: string;
+  inlineCombinatorsAttr: string;
+  combinatorPropObject: Pick<RuleGroupProps, 'combinator'>;
+} {
   type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
 
   const {

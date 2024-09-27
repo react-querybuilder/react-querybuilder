@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { toFullOption, toFullOptionList } from 'react-querybuilder';
+import { toFullOptionList } from 'react-querybuilder';
 import { basicSchema, findSelect, hasOrInheritsClass, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
@@ -10,17 +10,17 @@ type ValueSelectorTestsToSkip = Partial<{
   disabledOptions: boolean;
 }>;
 
-export const defaultValueSelectorProps = {
+export const defaultValueSelectorProps: ValueSelectorProps = {
   handleOnChange: () => {},
   options: [
-    { name: 'foo', label: 'Foo' },
-    { name: 'bar', label: 'Bar' },
-    { name: 'baz', label: 'Baz' },
-  ].map(o => toFullOption(o)),
+    { name: 'foo', value: 'foo', label: 'Foo' },
+    { name: 'bar', value: 'bar', label: 'Bar' },
+    { name: 'baz', value: 'baz', label: 'Baz' },
+  ],
   level: 0,
   path: [],
   schema: basicSchema,
-} satisfies ValueSelectorProps;
+};
 
 export const testSelect = (
   title: string,
@@ -28,7 +28,7 @@ export const testSelect = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: any,
   skip: ValueSelectorTestsToSkip = {}
-) => {
+): void => {
   const user = userEventSetup();
   const testValues = toFullOptionList(props.values ?? props.options) as FullOption[];
   const testVal = testValues[1];
@@ -158,7 +158,7 @@ export const testSelect = (
 export const testValueSelector = (
   ValueSelector: React.ComponentType<ValueSelectorProps>,
   skip: ValueSelectorTestsToSkip = {}
-) => {
+): void => {
   const title = ValueSelector.name ?? 'ValueSelector';
   const props = { ...defaultValueSelectorProps, title };
 

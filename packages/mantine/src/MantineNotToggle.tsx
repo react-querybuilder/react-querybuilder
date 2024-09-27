@@ -20,7 +20,7 @@ export const MantineNotToggle = ({
   schema: _schema,
   ruleGroup: _ruleGroup,
   ...otherProps
-}: MantineNotToggleProps) => (
+}: MantineNotToggleProps): React.JSX.Element => (
   <Switch
     {...otherProps}
     data-testid={testID}

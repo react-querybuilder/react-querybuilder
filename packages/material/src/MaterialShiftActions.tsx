@@ -23,7 +23,7 @@ export const MaterialShiftActions = ({
   testID,
   muiComponents: muiComponentsProp,
   ...otherProps
-}: MaterialShiftActionsProps) => {
+}: MaterialShiftActionsProps): React.JSX.Element => {
   const muiComponents = React.useContext(RQBMaterialContext) ?? muiComponentsProp;
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {

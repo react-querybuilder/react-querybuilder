@@ -21,7 +21,7 @@ export const ChakraNotToggle = ({
   schema: _schema,
   ruleGroup: _ruleGroup,
   ...extraProps
-}: ChakraNotToggleProps) => {
+}: ChakraNotToggleProps): React.JSX.Element => {
   const id = useId();
 
   return (

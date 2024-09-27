@@ -1,9 +1,15 @@
-import type { ExportFormat, Field, RuleGroupType, RuleType } from 'react-querybuilder';
+import type {
+  ExportFormat,
+  Field,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+} from 'react-querybuilder';
 import { convertToIC, defaultOperators, generateID } from 'react-querybuilder';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
 
-export const validator = (r: RuleType) => !!r.value;
+export const validator = (r: RuleType): boolean => !!r.value;
 
 export const defaultOptions: DemoOptions = {
   addRuleToNewGroups: false,
@@ -235,7 +241,7 @@ export const fields: Field[] = [
 ];
 
 export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
-export const emptyQueryIC = convertToIC(emptyQuery);
+export const emptyQueryIC: RuleGroupTypeIC = convertToIC(emptyQuery);
 
 export const initialQuery: RuleGroupType = {
   id: generateID(),
@@ -294,7 +300,7 @@ export const initialQuery: RuleGroupType = {
   ],
 };
 
-export const initialQueryIC = convertToIC(initialQuery);
+export const initialQueryIC: RuleGroupTypeIC = convertToIC(initialQuery);
 
 // prettier-ignore
 export const formatMap: [ExportFormat, string, HttpsURL][] = [

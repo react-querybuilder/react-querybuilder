@@ -9,7 +9,9 @@ export type AntDDragHandleProps = DragHandleProps & { label?: any } & ComponentP
     typeof HolderOutlined
   >;
 
-export const AntDDragHandle = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
+export const AntDDragHandle: React.ForwardRefExoticComponent<
+  Omit<AntDDragHandleProps, 'ref'> & React.RefAttributes<HTMLSpanElement>
+> = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
   (
     {
       className,

@@ -49,7 +49,7 @@ function toVal(mix: any) {
 }
 
 // istanbul ignore next
-export function clsx(...args: ClassValue[]) {
+export function clsx(...args: ClassValue[]): string {
   let i = 0;
   let tmp;
   let x;

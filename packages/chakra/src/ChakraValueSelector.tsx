@@ -29,7 +29,7 @@ export const ChakraValueSelector = ({
   listsAsArrays: _listsAsArrays,
   schema: _schema,
   ...extraProps
-}: ChakraValueSelectorProps) => (
+}: ChakraValueSelectorProps): React.JSX.Element => (
   <Select
     className={className}
     title={title}

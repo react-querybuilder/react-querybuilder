@@ -1,8 +1,8 @@
 import AnalyzerPlugin from 'esbuild-analyzer';
 import { mkdir } from 'fs/promises';
-import { writeFile } from 'fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
+import { generateDTS } from '../../utils/generateDTS';
 
 export default defineConfig(options => {
   const commonOptions: Options = {
@@ -10,7 +10,6 @@ export default defineConfig(options => {
       'react-querybuilder': 'src/index.ts',
     },
     sourcemap: true,
-    dts: true,
     ...options,
   };
 
@@ -26,6 +25,7 @@ export default defineConfig(options => {
       format: ['esm'],
       clean: true,
       esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.html' })],
+      onSuccess: () => generateDTS(import.meta.dir),
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
     {
@@ -69,7 +69,7 @@ export default defineConfig(options => {
       outDir: './dist/cjs/',
       onSuccess: async () => {
         // Write the CJS index file
-        await writeFile(
+        await Bun.write(
           'dist/cjs/index.js',
           `'use strict';
 if (process.env.NODE_ENV === 'production') {
@@ -107,10 +107,17 @@ if (process.env.NODE_ENV === 'production') {
             'parseSQL',
             'transformQuery',
           ].map(async util => {
-            await mkdir(util).catch(() => {});
-            await writeFile(
+            await mkdir(util, { recursive: true });
+            await Bun.write(
               `${util}/package.json`,
-              JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+              JSON.stringify(
+                {
+                  main: `../dist/${util}.js`,
+                  types: `../dist/types/utils/${util}${util === 'transformQuery' ? '' : '/index'}.d.ts`,
+                },
+                null,
+                2
+              )
             );
           })
         );
