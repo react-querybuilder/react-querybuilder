@@ -60,6 +60,6 @@ jobs:
           echo "versionTag:        ${{ github.event.inputs.versionTag }}"
           echo "customVersionTag:  ${{ github.event.inputs.customVersionTag }}"
       - name: Bump version with Lerna
-        run: echo "npx lerna version ${{ github.event.inputs.versionBump == 'custom' && github.event.inputs.customVersion || github.event.inputs.versionBump }} ${{ github.event.inputs.liveRun && '--yes' || '--yes --no-git-tag-version --no-push --json' }}"
+        run: echo "npx lerna version ${{ github.event.inputs.versionBump == 'custom' && github.event.inputs.customVersion || github.event.inputs.versionBump }} ${{ github.event.inputs.liveRun == true && '--yes' || '--yes --no-git-tag-version --no-push --json' }}"
         # TODO: when publishing add `--dist-tag ${{ github.event.inputs.versionTag }}`
       # - run: git diff
