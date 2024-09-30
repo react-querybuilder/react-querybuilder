@@ -1,8 +1,6 @@
 name: Publish
 
 on:
-  push:
-    # Temporary for testing
   workflow_dispatch:
     inputs:
       commitId:
