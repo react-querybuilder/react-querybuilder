@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/tremor",
   "description": "Custom Tremor components for react-querybuilder",
-  "version": "7.7.0-alpha.3",
+  "version": "7.7.0-alpha.4",
   "publishConfig": {
     "access": "public"
   },
@@ -61,6 +61,6 @@
     "@tremor/react": "^3",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "7.7.0-alpha.3"
+    "react-querybuilder": "7.7.0-alpha.4"
   }
 }
