@@ -1,0 +1,49 @@
+name: Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      runType:
+        description: 'Run type'
+        required: true
+        default: dryrun
+        type: choice
+        options:
+          - dryrun
+          - publish
+      versionBump:
+        description: 'Version bump strategy'
+        required: true
+        default: prepatch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
+          - custom
+      customVersion:
+        description: 'Custom version'
+        type: string
+
+jobs:
+  Bump_version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - name: Configure git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+      - name: Bump version
+        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'publish' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
