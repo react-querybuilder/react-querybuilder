@@ -28,50 +28,22 @@ on:
       customVersion:
         description: 'Custom version'
         type: string
-      versionTag:
-        description: 'Version tag'
-        required: true
-        default: next
-        type: choice
-        options:
-          - next
-          - latest
-          - custom
-      customVersionTag:
-        description: 'Custom version tag'
-        type: string
 
 jobs:
   Bump_version:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write
-    env:
-      NPM_CONFIG_PROVENANCE: true
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
       - uses: oven-sh/setup-bun@v1
       - run: bun install --frozen-lockfile
       - name: Configure git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-      - name: Echo variables
-        run: |
-          echo "versionBump:           ${{ inputs.versionBump }}"
-          echo "customVersion:         ${{ inputs.customVersion }}"
-          echo "runType:               ${{ inputs.runType }}"
-          echo "versionTag:            ${{ inputs.versionTag }}"
-          echo "customVersionTag:      ${{ inputs.customVersionTag }}"
-          echo "NPM_CONFIG_PROVENANCE: ${{ env.NPM_CONFIG_PROVENANCE }}"
       - name: Bump version
         run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'publish' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
-      - name: Publish
-        if: inputs.runType == 'publish'
-        run: npx lerna publish from-git --yes --dist-tag ${{ inputs.versionTag }}
