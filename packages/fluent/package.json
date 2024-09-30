@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/fluent",
   "description": "Custom Fluent UI components for react-querybuilder",
-  "version": "7.7.0-alpha.2",
+  "version": "7.7.0-alpha.3",
   "publishConfig": {
     "access": "public"
   },
@@ -58,6 +58,6 @@
     "@fluentui/react-icons-mdl2": "^1",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "7.7.0-alpha.2"
+    "react-querybuilder": "7.7.0-alpha.3"
   }
 }
