@@ -12,7 +12,7 @@ import { defaultJoinChar } from '../defaults';
  * // would return
  * ['this,,that', '', 'the other', '', '', ',']
  */
-export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
+export const splitBy = (str?: string, splitChar: string = defaultJoinChar): string[] =>
   typeof str === 'string'
     ? str
         .split(`\\${splitChar}`)
@@ -43,21 +43,25 @@ export const splitBy = (str?: string, splitChar = defaultJoinChar) =>
  * 'this\\,\\,that,,the other,,,\\,'
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const joinWith = (strArr: any[], joinChar = defaultJoinChar) =>
+export const joinWith = (strArr: any[], joinChar: string = defaultJoinChar): string =>
   strArr.map(str => `${str ?? ''}`.replaceAll(joinChar[0], `\\${joinChar[0]}`)).join(joinChar);
 
 /**
  * Trims the value if it is a string. Otherwise returns the value as is.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const trimIfString = (val: any) => (typeof val === 'string' ? val.trim() : val);
+export const trimIfString = (val: any): any => (typeof val === 'string' ? val.trim() : val);
 
 /**
  * Splits a string by comma then trims each element. Arrays are returned as is except
  * any string elements are trimmed.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const toArray = (v: any, { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}) =>
+export const toArray = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  v: any,
+  { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any[] =>
   Array.isArray(v)
     ? v.map(trimIfString)
     : typeof v === 'string'

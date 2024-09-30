@@ -8,7 +8,10 @@ export { isOptionGroupArray };
 
 type ToOptionsOptions = Pick<RQBMaterialComponents, 'ListSubheader' | 'MenuItem'>;
 
-export const toOptions = (arr: OptionList, { ListSubheader, MenuItem }: ToOptionsOptions) => {
+export const toOptions = (
+  arr: OptionList,
+  { ListSubheader, MenuItem }: ToOptionsOptions
+): JSX.Element[] | null => {
   if (isOptionGroupArray(arr)) {
     const optArray: JSX.Element[] = [];
     for (const og of arr) {

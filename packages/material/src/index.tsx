@@ -28,14 +28,14 @@ export type { RQBMaterialComponents } from './types';
 export * from './useMuiComponents';
 export { materialTranslations };
 
-export const materialControlElements = {
+export const materialControlElements: ControlElementsProp<FullField, string> = {
   actionElement: MaterialActionElement,
   dragHandle: MaterialDragHandle,
   notToggle: MaterialNotToggle,
   shiftActions: MaterialShiftActions,
   valueEditor: MaterialValueEditor,
   valueSelector: MaterialValueSelector,
-} satisfies ControlElementsProp<FullField, string>;
+};
 
 const MaterialContextProvider = getCompatContextProvider({
   controlElements: materialControlElements,

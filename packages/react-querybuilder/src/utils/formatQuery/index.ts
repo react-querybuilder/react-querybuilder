@@ -1,4 +1,4 @@
-import type { ValueProcessorLegacy } from '../../types/index.noReact';
+import type { RuleProcessor, ValueProcessorLegacy } from '../../types/index.noReact';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
@@ -22,19 +22,19 @@ const generateValueProcessor =
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
  */
-export const defaultValueProcessor = generateValueProcessor('default');
+export const defaultValueProcessor: ValueProcessorLegacy = generateValueProcessor('default');
 /**
  * @deprecated Prefer {@link defaultRuleProcessorMongoDB}.
  */
-export const defaultMongoDBValueProcessor = generateValueProcessor('mongodb');
+export const defaultMongoDBValueProcessor: ValueProcessorLegacy = generateValueProcessor('mongodb');
 /**
  * @deprecated Prefer {@link defaultRuleProcessorCEL}.
  */
-export const defaultCELValueProcessor = generateValueProcessor('cel');
+export const defaultCELValueProcessor: ValueProcessorLegacy = generateValueProcessor('cel');
 /**
  * @deprecated Prefer {@link defaultRuleProcessorSpEL}.
  */
-export const defaultSpELValueProcessor = generateValueProcessor('spel');
+export const defaultSpELValueProcessor: ValueProcessorLegacy = generateValueProcessor('spel');
 
 export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 export { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
@@ -52,12 +52,12 @@ export {
 /**
  * @deprecated Renamed to {@link defaultRuleProcessorCEL}.
  */
-export const defaultValueProcessorCELByRule = defaultRuleProcessorCEL;
+export const defaultValueProcessorCELByRule: RuleProcessor = defaultRuleProcessorCEL;
 /**
  * @deprecated Renamed to {@link defaultRuleProcessorMongoDB}.
  */
-export const defaultValueProcessorMongoDBByRule = defaultRuleProcessorMongoDB;
+export const defaultValueProcessorMongoDBByRule: RuleProcessor = defaultRuleProcessorMongoDB;
 /**
  * @deprecated Renamed to {@link defaultRuleProcessorSpEL}.
  */
-export const defaultValueProcessorSpELByRule = defaultRuleProcessorSpEL;
+export const defaultValueProcessorSpELByRule: RuleProcessor = defaultRuleProcessorSpEL;

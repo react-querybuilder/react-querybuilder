@@ -136,7 +136,9 @@ export const generateFlatAndOrList = (
   return [left, combinator, right];
 };
 
-export const generateMixedAndOrList = (expr: SpELOpAnd | SpELOpOr) => {
+export const generateMixedAndOrList = (
+  expr: SpELOpAnd | SpELOpOr
+): (DefaultCombinatorName | SpELProcessedExpression | ('and' | SpELProcessedExpression)[])[] => {
   const arr = generateFlatAndOrList(expr);
   const returnArray: (
     | DefaultCombinatorName

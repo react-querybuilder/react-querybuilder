@@ -11,16 +11,16 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/react-querybuilder_antd.d.mts",
+        "types": "./dist/types-esm/index.d.mts",
         "default": "./dist/react-querybuilder_antd.mjs"
       },
       "require": {
-        "types": "./dist/cjs/react-querybuilder_antd.cjs.development.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     }
   },
-  "types": "./dist/cjs/react-querybuilder_antd.cjs.production.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
@@ -34,24 +34,24 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "bunx --bun vite",
-    "build": "tsup",
+    "build": "bunx --bun tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.4.0",
+    "@ant-design/icons": "^5.5.1",
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.0.0",
-    "@types/react": "^18.3.4",
+    "@testing-library/react": "^16.0.1",
+    "@types/react": "^18.3.9",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "antd": "^5.20.3",
+    "antd": "^5.21.1",
     "dayjs": "^1.11.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-querybuilder": "workspace:*",
     "rollup-plugin-visualizer": "^5.12.0",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.2"
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5",

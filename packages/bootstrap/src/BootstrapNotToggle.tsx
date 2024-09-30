@@ -9,7 +9,7 @@ export const BootstrapNotToggle = ({
   label,
   checked,
   disabled,
-}: NotToggleProps) => {
+}: NotToggleProps): React.JSX.Element => {
   const id = useId();
 
   return (

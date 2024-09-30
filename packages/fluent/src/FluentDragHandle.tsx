@@ -4,7 +4,9 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-export const FluentDragHandle = forwardRef<HTMLSpanElement, DragHandleProps & TextProps>(
+export const FluentDragHandle: React.ForwardRefExoticComponent<
+  (DragHandleProps & TextProps) & React.RefAttributes<HTMLSpanElement>
+> = forwardRef<HTMLSpanElement, DragHandleProps & TextProps>(
   (
     { className, title, label, testID, schema: _schema, ruleOrGroup: _ruleOrGroup, ...otherProps },
     dragRef

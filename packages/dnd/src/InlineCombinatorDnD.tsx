@@ -11,7 +11,7 @@ import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,
   ...props
-}: InlineCombinatorProps) => {
+}: InlineCombinatorProps): React.JSX.Element => {
   const { canDrop, useDrop } = useContext(QueryBuilderDndContext);
 
   const { dropRef, dropMonitorId, isOver } = useInlineCombinatorDnD({

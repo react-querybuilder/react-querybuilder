@@ -27,7 +27,7 @@ export const FluentValueSelector = ({
   rule: _rule,
   rules: _rules,
   ...otherProps
-}: FluentValueSelectorProps) => {
+}: FluentValueSelectorProps): React.JSX.Element => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   return multiple ? (

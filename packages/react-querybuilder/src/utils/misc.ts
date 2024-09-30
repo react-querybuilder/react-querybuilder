@@ -4,7 +4,7 @@ import { numericRegex as numericQuantityRegex } from 'numeric-quantity';
  * Regex matching numeric strings. Passes for positive/negative integers, decimals,
  * and E notation, with optional surrounding whitespace.
  */
-export const numericRegex = new RegExp(
+export const numericRegex: RegExp = new RegExp(
   numericQuantityRegex.source.replace(/^\^/, '^\\s*').replace(/\$$/, '\\s*$')
 );
 

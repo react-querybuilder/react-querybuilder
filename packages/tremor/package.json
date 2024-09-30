@@ -11,16 +11,16 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/react-querybuilder_tremor.d.mts",
+        "types": "./dist/types-esm/index.d.mts",
         "default": "./dist/react-querybuilder_tremor.mjs"
       },
       "require": {
-        "types": "./dist/cjs/react-querybuilder_tremor.cjs.development.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     }
   },
-  "types": "./dist/cjs/react-querybuilder_tremor.cjs.production.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
@@ -34,28 +34,28 @@
   "homepage": "https://react-querybuilder.js.org/",
   "scripts": {
     "start": "bunx --bun vite",
-    "build": "tsup",
+    "build": "bunx --bun tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@headlessui/tailwindcss": "^0.2.1",
-    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/forms": "^0.5.9",
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.0.0",
-    "@tremor/react": "^3.17.4",
-    "@types/react": "^18.3.4",
+    "@testing-library/react": "^16.0.1",
+    "@tremor/react": "^3.18.3",
+    "@types/react": "^18.3.9",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "autoprefixer": "^10.4.20",
     "dayjs": "^1.11.13",
-    "postcss": "^8.4.41",
+    "postcss": "^8.4.47",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-querybuilder": "workspace:*",
     "rollup-plugin-visualizer": "^5.12.0",
-    "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.2"
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
   },
   "peerDependencies": {
     "@tremor/react": "^3",

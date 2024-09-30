@@ -31,7 +31,7 @@ export const mergeTranslation = (
   el: keyof Translations,
   keyPropContextMap: Record<string, [ReactNode, ReactNode]>,
   finalize?: boolean
-) => {
+): RSRSS | undefined => {
   const finalKeys = objectEntries(keyPropContextMap)
     .map(([key, [pT, cT]]) => [
       key,

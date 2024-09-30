@@ -3,16 +3,18 @@ import * as React from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 import { basicSchema, userEventSetup } from './utils';
 
-export const defaultActionElementProps = {
+export const defaultActionElementProps: ActionWithRulesProps = {
   handleOnClick: () => {},
   className: '',
   level: 0,
   path: [],
   ruleOrGroup: { combinator: 'and', rules: [] },
   schema: basicSchema,
-} satisfies ActionWithRulesProps;
+};
 
-export const testActionElement = (ActionElement: React.ComponentType<ActionWithRulesProps>) => {
+export const testActionElement = (
+  ActionElement: React.ComponentType<ActionWithRulesProps>
+): void => {
   const user = userEventSetup();
   const title = ActionElement.name ?? 'ActionElement';
   const props = { ...defaultActionElementProps, title };

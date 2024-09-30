@@ -15,7 +15,7 @@ export interface ParseNumberOptions {
  * as-is regardless of the `parseNumbers` option.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseNumber = (val: any, { parseNumbers }: ParseNumberOptions = {}) => {
+export const parseNumber = (val: any, { parseNumbers }: ParseNumberOptions = {}): any => {
   if (!parseNumbers || typeof val === 'bigint' || typeof val === 'number') {
     return val;
   }

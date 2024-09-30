@@ -20,7 +20,7 @@ export const defaultShiftActionsProps: ShiftActionsProps = {
   shiftDownDisabled: false,
 };
 
-export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsProps>) => {
+export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsProps>): void => {
   const user = userEventSetup();
   const title = ShiftActions.name ?? 'ShiftActions';
 

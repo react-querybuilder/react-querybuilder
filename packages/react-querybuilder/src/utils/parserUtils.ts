@@ -1,6 +1,7 @@
 import type {
   DefaultOperatorName,
   FullField,
+  FullOption,
   OptionList,
   ValueSources,
 } from '../types/index.noReact';
@@ -9,7 +10,9 @@ import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFlatOptionArray } from './optGroupUtils';
 import { toFullOption } from './toFullOption';
 
-export const getFieldsArray = (fields?: OptionList<FullField> | Record<string, FullField>) => {
+export const getFieldsArray = (
+  fields?: OptionList<FullField> | Record<string, FullField>
+): FullOption[] => {
   const fieldsArray = !fields
     ? []
     : Array.isArray(fields)
@@ -26,7 +29,7 @@ export function fieldIsValidUtil(params: {
   fieldName: string;
   operator: DefaultOperatorName;
   subordinateFieldName?: string;
-}) {
+}): boolean {
   const { fieldsFlat, fieldName, operator, subordinateFieldName, getValueSources } = params;
 
   // If fields option was an empty array or undefined, then all identifiers

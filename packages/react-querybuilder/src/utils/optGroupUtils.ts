@@ -80,7 +80,7 @@ export const getOption = <OptType extends Option = Option>(
  */
 export const getFirstOption = <Opt extends BaseOption>(
   arr?: FlexibleOptionGroup<Opt>[] | Opt[]
-) => {
+): GetOptionIdentifierType<Opt> | null => {
   if (!Array.isArray(arr) || arr.length === 0) {
     return null;
   } else if (isFlexibleOptionGroupArray(arr)) {

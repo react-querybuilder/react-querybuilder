@@ -4,7 +4,7 @@ import type { ActionProps } from '../types';
 /**
  * Default `<button>` component used by {@link QueryBuilder}.
  */
-export const ActionElement = (props: ActionProps) => (
+export const ActionElement = (props: ActionProps): React.JSX.Element => (
   <button
     type="button"
     data-testid={props.testID}

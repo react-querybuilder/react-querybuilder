@@ -7,7 +7,7 @@ import { getFirstOption, standardClassnames, useValueEditor } from 'react-queryb
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
-export const FluentValueEditor = (allProps: FluentValueEditorProps) => {
+export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
     operator,
@@ -71,8 +71,8 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

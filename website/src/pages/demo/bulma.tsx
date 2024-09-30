@@ -17,6 +17,7 @@ function ReactQueryBuilderDemo_BulmaBrowser() {
     let active = true;
 
     (async () => {
+      // eslint-disable-next-line unicorn/no-single-promise-in-promise-methods
       const comps = await Promise.all([(await import('./_components/Demo')).default]);
       if (active && !Demo) {
         const [ImportedDemo] = comps;

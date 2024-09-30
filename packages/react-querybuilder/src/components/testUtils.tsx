@@ -1,4 +1,4 @@
-import type { RenderOptions } from '@testing-library/react';
+import type { RenderOptions, RenderResult } from '@testing-library/react';
 import { act, render as og_render } from '@testing-library/react';
 import * as React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
@@ -8,7 +8,7 @@ import { QueryBuilderStateContext } from '../redux';
 import { warningsSlice } from '../redux/warningsSlice';
 import { queriesSlice } from '../redux/queriesSlice';
 
-export const waitABeat = async () => {
+export const waitABeat = async (): Promise<void> => {
   await act(async () => {
     await new Promise(r => setTimeout(r, 10));
   });
@@ -40,7 +40,11 @@ const Wrapper = ({ children }: React.PropsWithChildren) => {
  * Use this render instead of the one directly from `@testing-library/react` when
  * the component being tested needs access to the Redux store.
  */
-export const render = (ui: React.ReactElement, renderOptions: RenderOptions = {}) =>
+export const render = (
+  ui: React.ReactElement,
+  renderOptions: RenderOptions = {}
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+): RenderResult<typeof import('@testing-library/dom/types/queries'), HTMLElement, HTMLElement> =>
   og_render(ui, { wrapper: Wrapper, ...renderOptions });
 
 // #endregion

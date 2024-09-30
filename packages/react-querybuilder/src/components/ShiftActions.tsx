@@ -4,7 +4,7 @@ import type { ShiftActionsProps } from '../types';
 /**
  * Default "shift up"/"shift down" buttons used by {@link QueryBuilder}.
  */
-export const ShiftActions = (props: ShiftActionsProps) => (
+export const ShiftActions = (props: ShiftActionsProps): React.JSX.Element => (
   <div data-testid={props.testID} className={props.className}>
     <button
       disabled={props.disabled || props.shiftUpDisabled}

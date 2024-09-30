@@ -44,7 +44,33 @@ export type UseValueEditorParams = Pick<
  * `{ field: "f1", operator: "between", value: "12,14" }`
  * // If `operator` changes to "=", the value will be reset to "12".
  */
-export const useValueEditor = (props: UseValueEditorParams) => {
+export const useValueEditor = (
+  props: UseValueEditorParams
+): {
+  /**
+   * Array of values for when the main value represents a list, e.g. when operator
+   * is "between" or "in".
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  valueAsArray: any[];
+  /**
+   * An update handler for a series of value editors, e.g. when operator is "between".
+   * Calling this function will update a single element of the value array and leave
+   * the rest of the array as is.
+   *
+   * @param {string} val The new value for the editor
+   * @param {number} idx The index of the editor (and the array element to update)
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  multiValueHandler: (val: any, idx: number) => void;
+  /**
+   * Evaluated `parseNumber` method based on `parseNumbers` prop. This property ends up
+   * being the same as the `parseNumbers` prop minus the "-limited" suffix, unless
+   * the "-limited" suffix is present and the `inputType` is not "number", in which case
+   * it's set to `false`.
+   */
+  parseNumberMethod: ParseNumberMethod;
+} => {
   const {
     handleOnChange,
     inputType,
@@ -106,26 +132,8 @@ export const useValueEditor = (props: UseValueEditorParams) => {
   );
 
   return {
-    /**
-     * Array of values for when the main value represents a list, e.g. when operator
-     * is "between" or "in".
-     */
     valueAsArray,
-    /**
-     * An update handler for a series of value editors, e.g. when operator is "between".
-     * Calling this function will update a single element of the value array and leave
-     * the rest of the array as is.
-     *
-     * @param {string} val The new value for the editor
-     * @param {number} idx The index of the editor (and the array element to update)
-     */
     multiValueHandler,
-    /**
-     * Evaluated `parseNumber` method based on `parseNumbers` prop. This property ends up
-     * being the same as the `parseNumbers` prop minus the "-limited" suffix, unless
-     * the "-limited" suffix is present and the `inputType` is not "number", in which case
-     * it's set to `false`.
-     */
     parseNumberMethod,
   };
 };

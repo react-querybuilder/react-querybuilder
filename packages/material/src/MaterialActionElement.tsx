@@ -29,7 +29,7 @@ export const MaterialActionElement = ({
   schema,
   muiComponents: muiComponentsProp,
   ...otherProps
-}: MaterialActionProps) => {
+}: MaterialActionProps): React.JSX.Element => {
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {

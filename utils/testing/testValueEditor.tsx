@@ -27,7 +27,7 @@ interface ValueEditorAsSelectProps extends ValueEditorProps {
   testID: string;
 }
 
-export const defaultValueEditorProps = {
+export const defaultValueEditorProps: ValueEditorProps = {
   field: 'TEST',
   fieldData: { name: 'TEST', value: 'TEST', label: 'Test' },
   operator: '=',
@@ -37,12 +37,12 @@ export const defaultValueEditorProps = {
   valueSource: 'value',
   schema: basicSchema,
   rule: { field: '', operator: '', value: '' },
-} satisfies ValueEditorProps;
+};
 
 export const testValueEditor = (
   ValueEditor: React.ComponentType<ValueEditorProps>,
   skip: ValueEditorTestsToSkip = {}
-) => {
+): void => {
   const user = userEventSetup();
   const title = ValueEditor.name ?? 'ValueEditor';
   const props = { ...defaultValueEditorProps, title };

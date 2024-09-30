@@ -12,7 +12,7 @@ export const ChakraShiftActions = ({
   labels,
   titles,
   testID,
-}: ShiftActionsProps) => (
+}: ShiftActionsProps): React.JSX.Element => (
   <div data-testid={testID} className={className}>
     <Button isDisabled={disabled || shiftUpDisabled} onClick={shiftUp} title={titles?.shiftUp}>
       {labels?.shiftUp}

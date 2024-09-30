@@ -7,7 +7,7 @@ import {
   type ValueEditorProps,
 } from 'react-querybuilder';
 
-export const BulmaValueEditor = (props: ValueEditorProps) => {
+export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
   const { valueAsArray, multiValueHandler } = useValueEditor({
     handleOnChange: props.handleOnChange,
     inputType: props.inputType,
@@ -48,8 +48,8 @@ export const BulmaValueEditor = (props: ValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}

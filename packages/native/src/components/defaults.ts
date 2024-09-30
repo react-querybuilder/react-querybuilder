@@ -12,7 +12,7 @@ import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 import { RuleGroupNative } from './RuleGroupNative';
 import { RuleNative } from './RuleNative';
 
-export const defaultNativeControlElements = {
+export const defaultNativeControlElements: Controls<FullField, string> = {
   actionElement: NativeActionElement,
   addGroupAction: NativeActionElement,
   addRuleAction: NativeActionElement,
@@ -37,9 +37,9 @@ export const defaultNativeControlElements = {
   valueEditor: NativeValueEditor,
   valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelector,
-} satisfies Controls<FullField, string>;
+};
 
-export const defaultNativeWebControlElements = {
+export const defaultNativeWebControlElements: Controls<FullField, string> = {
   ...defaultNativeControlElements,
   combinatorSelector: NativeValueSelectorWeb,
   fieldSelector: NativeValueSelectorWeb,
@@ -47,4 +47,4 @@ export const defaultNativeWebControlElements = {
   valueEditor: NativeValueEditorWeb,
   valueSelector: NativeValueSelector,
   valueSourceSelector: NativeValueSelectorWeb,
-} satisfies Controls<FullField, string>;
+};

@@ -62,6 +62,7 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
     let active = true;
 
     const getComps = async () => {
+      // eslint-disable-next-line unicorn/no-single-promise-in-promise-methods
       const comps = await Promise.all([(await import('./_components/Demo')).default]);
       const [Demo] = comps;
 

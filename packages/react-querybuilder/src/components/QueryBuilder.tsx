@@ -17,12 +17,14 @@ import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
 /**
  * The {@link Path} of the root group.
  */
-export const rootPath = [] satisfies Path;
+export const rootPath: Path = [] satisfies Path;
 
 /**
  * Context provider for the `{@link QueryBuilder}` state store.
  */
-export const QueryBuilderStateProvider = (props: { children: React.ReactNode }) => (
+export const QueryBuilderStateProvider = (props: {
+  children: React.ReactNode;
+}): React.JSX.Element => (
   <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
     {props.children}
   </Provider>
@@ -86,7 +88,7 @@ export const QueryBuilder = <
   C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>
-) => (
+): React.JSX.Element => (
   <QueryBuilderStateProvider>
     <QueryBuilderInternal props={props} />
   </QueryBuilderStateProvider>

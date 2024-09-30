@@ -9,7 +9,9 @@ export interface UseSelectElementChangeHandlerParams {
 /**
  * Returns a memoized change handler for HTML `<select>` elements.
  */
-export const useSelectElementChangeHandler = (params: UseSelectElementChangeHandlerParams) => {
+export const useSelectElementChangeHandler = (
+  params: UseSelectElementChangeHandlerParams
+): ((e: ChangeEvent<HTMLSelectElement>) => void) => {
   const { multiple, onChange } = params;
   const selectElementChangeHandler = useMemo(
     () =>

@@ -163,7 +163,9 @@ export const generateFlatAndOrList = (
   return [left, combinator, right];
 };
 
-export const generateMixedAndOrList = (expr: CELConditionalAnd | CELConditionalOr) => {
+export const generateMixedAndOrList = (
+  expr: CELConditionalAnd | CELConditionalOr
+): (DefaultCombinatorName | CELExpression | ('and' | CELExpression)[])[] => {
   const arr = generateFlatAndOrList(expr);
   const returnArray: (DefaultCombinatorName | CELExpression | ('and' | CELExpression)[])[] = [];
   let startIndex = 0;

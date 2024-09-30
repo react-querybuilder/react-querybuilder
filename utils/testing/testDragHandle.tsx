@@ -4,19 +4,19 @@ import type { DragHandleProps } from 'react-querybuilder';
 import { TestID } from 'react-querybuilder';
 import { basicSchema } from './utils';
 
-export const defaultDragHandleProps = {
+export const defaultDragHandleProps: DragHandleProps = {
   level: 1,
   path: [0],
   schema: basicSchema,
   ruleOrGroup: { combinator: 'and', rules: [] },
-} satisfies DragHandleProps;
+};
 
 export const testDragHandle = (
   DragHandle: React.ForwardRefExoticComponent<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     DragHandleProps & React.RefAttributes<any>
   >
-) => {
+): void => {
   const title = DragHandle.name ?? 'DragHandle';
   const props = { ...defaultDragHandleProps, title };
 

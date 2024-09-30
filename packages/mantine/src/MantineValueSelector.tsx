@@ -27,7 +27,7 @@ export const MantineValueSelector = ({
   validation: _validation,
   schema: _schema,
   ...otherProps
-}: MantineValueSelectorProps) => {
+}: MantineValueSelectorProps): React.JSX.Element => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const data = React.useMemo(() => optionListToComboboxData(options), [options]);

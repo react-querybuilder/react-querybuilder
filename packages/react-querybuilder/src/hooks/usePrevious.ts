@@ -6,7 +6,7 @@ import { useRef } from 'react';
  *
  * Adapted from https://usehooks.com/usePrevious/.
  */
-export const usePrevious = <T>(value: T) => {
+export const usePrevious = <T>(value: T): T | null => {
   const ref = useRef<{ value: T | null; prev: T | null }>({ value, prev: null });
 
   const current = ref.current.value;

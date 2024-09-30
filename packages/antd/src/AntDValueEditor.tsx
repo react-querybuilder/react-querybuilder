@@ -12,7 +12,7 @@ type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any
 
 const DatePicker = generatePicker(dayjsGenerateConfig);
 
-export const AntDValueEditor = (allProps: AntDValueEditorProps) => {
+export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
     operator,
@@ -102,8 +102,8 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps) => {
       }
       return (
         <SelectorComponent
-          {...props}
           key={key}
+          {...props}
           className={standardClassnames.valueListItem}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}

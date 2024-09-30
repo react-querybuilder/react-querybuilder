@@ -1,4 +1,4 @@
-import type { PayloadAction, Slice } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice, SliceSelectors } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { messages } from '../messages';
 
@@ -28,7 +28,26 @@ export const initialState: WarningsSliceState = {
 //   Object.keys(messages).map(key => [key, false])
 // ) as WarningsSliceState;
 
-export const warningsSlice = createSlice({
+export const warningsSlice: Slice<
+  {
+    [messages.errorInvalidIndependentCombinatorsProp]: boolean;
+    [messages.errorUnnecessaryIndependentCombinatorsProp]: boolean;
+    [messages.errorDeprecatedRuleGroupProps]: boolean;
+    [messages.errorDeprecatedRuleProps]: boolean;
+    [messages.errorBothQueryDefaultQuery]: boolean;
+    [messages.errorUncontrolledToControlled]: boolean;
+    [messages.errorControlledToUncontrolled]: boolean;
+    [messages.errorEnabledDndWithoutReactDnD]: boolean;
+  },
+  {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rqbWarn: (state: any, { payload }: PayloadAction<Messages>) => void;
+  },
+  string,
+  string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SliceSelectors<any>
+> = createSlice({
   name: 'warnings',
   initialState,
   reducers: {

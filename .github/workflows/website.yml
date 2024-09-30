@@ -28,7 +28,7 @@ jobs:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
       - run: bun install --frozen-lockfile
-      - run: bun run build
+      - run: bun --bun run build
       - run: bun run website:build
         # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes
         if: ${{ github.event_name == 'pull_request' }}

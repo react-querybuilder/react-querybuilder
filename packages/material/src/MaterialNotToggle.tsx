@@ -30,7 +30,7 @@ export const MaterialNotToggle = ({
   ruleGroup,
   muiComponents: muiComponentsProp,
   ...otherProps
-}: MaterialNotToggleProps) => {
+}: MaterialNotToggleProps): React.JSX.Element => {
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {

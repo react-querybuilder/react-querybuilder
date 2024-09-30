@@ -7,7 +7,7 @@ const { OptGroup, Option } = Select;
 
 export { isOptionGroupArray };
 
-export const toOptions = (arr?: OptionList) =>
+export const toOptions = (arr?: OptionList): React.JSX.Element[] | null =>
   isOptionGroupArray(arr)
     ? arr.map(og => (
         <OptGroup key={og.label} label={og.label}>

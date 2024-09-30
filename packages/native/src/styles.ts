@@ -13,7 +13,7 @@ export const defaultNativeSelectStyles = {
   option: {} as TextStyle,
 } as const;
 
-const defaultStylesObject = {
+const defaultStylesObject: QueryBuilderNativeStyles = {
   actionElement: {
     borderWidth: 1,
     borderRadius: 4,
@@ -58,6 +58,6 @@ const defaultStylesObject = {
   valueList: { flexDirection: 'row' },
   valueSourceOption: defaultNativeSelectStyles.option,
   valueSourceSelector: defaultNativeSelectStyles.selector,
-} satisfies QueryBuilderNativeStyles;
+};
 
-export const defaultNativeStyles = StyleSheet.create(defaultStylesObject);
+export const defaultNativeStyles: QueryBuilderNativeStyles = StyleSheet.create(defaultStylesObject);

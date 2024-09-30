@@ -4,22 +4,22 @@ import { DevLayout } from './DevLayout';
 import './styles.scss';
 import { useDevApp } from './useDevApp';
 
-export const App = () => {
+export const App = (): React.JSX.Element => {
   const devApp = useDevApp();
 
   return (
     <DevLayout {...devApp}>
       {!devApp.optVals.independentCombinators ? (
         <QueryBuilder
-          {...devApp.commonRQBProps}
           key="query"
+          {...devApp.commonRQBProps}
           query={devApp.query}
           onQueryChange={devApp.onQueryChange}
         />
       ) : (
         <QueryBuilder
-          {...devApp.commonRQBProps}
           key="queryIC"
+          {...devApp.commonRQBProps}
           query={devApp.queryIC}
           onQueryChange={devApp.onQueryChangeIC}
         />

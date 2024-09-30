@@ -29,11 +29,11 @@ export const isSQLLiteralOrSignedNumberValue = (
 export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
   v?.type === 'Identifier';
 
-export const isWildcardsOnly = (sqlExpr: SQLExpression) =>
+export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^['"]?%+['"]?$/.test(sqlExpr.value);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getParamString = (param: any) => {
+export const getParamString = (param: any): string => {
   switch (typeof param) {
     case 'number':
       return `${param}`;
@@ -44,7 +44,7 @@ export const getParamString = (param: any) => {
   }
 };
 
-export const getFieldName = (f: string | SQLIdentifier) => {
+export const getFieldName = (f: string | SQLIdentifier): string => {
   const fieldName = typeof f === 'string' ? f : f.value;
 
   if (fieldName.startsWith('`') && fieldName.endsWith('`')) {
@@ -72,7 +72,8 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
   return op;
 };
 
-export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberValue) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberValue): any => {
   if (valueObj.type === 'String') {
     const valueString: string = valueObj.value;
     if (

@@ -2,7 +2,22 @@ import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
-import type { Path, RuleGroupProps, RuleGroupTypeAny } from '../types';
+import type {
+  DropEffect,
+  FullOption,
+  Path,
+  QueryActions,
+  RuleGroupICArray,
+  RuleGroupProps,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleOrGroupArray,
+  RuleType,
+  Schema,
+  Translations,
+  ValidationResult,
+} from '../types';
 import {
   getFirstOption,
   getOption,
@@ -16,7 +31,92 @@ import { clsx } from '../utils/clsx';
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.
  */
-export const useRuleGroup = (props: RuleGroupProps) => {
+export const useRuleGroup = (
+  props: RuleGroupProps
+): {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addGroup: (_event?: any, context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addRule: (_event?: any, context?: any) => void;
+  accessibleDescription: string;
+  classNames: {
+    header: string;
+    shiftActions: string;
+    dragHandle: string;
+    combinators: string;
+    notToggle: string;
+    addRule: string;
+    addGroup: string;
+    cloneGroup: string;
+    lockGroup: string;
+    removeGroup: string;
+    body: string;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cloneGroup: (_event?: any, _context?: any) => void;
+  combinator: string;
+  disabled: boolean;
+  dragMonitorId: string | symbol;
+  dragRef: React.Ref<HTMLSpanElement>;
+  dropMonitorId: string | symbol;
+  dropRef: React.Ref<HTMLDivElement>;
+  isDragging: boolean;
+  isOver: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onCombinatorChange: (value: any, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onGroupAdd: (group: RuleGroupTypeAny, parentPath: Path, context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onIndependentCombinatorChange: (value: any, index: number, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onNotToggleChange: (checked: boolean, _context?: any) => void;
+  outerClassName: string;
+  parentDisabled: boolean | undefined;
+  pathsMemo: {
+    path: Path;
+    disabled: boolean;
+  }[];
+  previewRef: React.Ref<HTMLDivElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  removeGroup: (_event?: any, _context?: any) => void;
+  ruleGroup: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | RuleGroupType<RuleType<string, string, any, string>, string>
+    | {
+        combinator?: string | undefined;
+        rules: RuleGroupICArray<
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          RuleGroupTypeIC<RuleType<string, string, any, string>, string>,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          RuleType<string, string, any, string>,
+          string
+        >;
+        combinatorPreceding?: string | undefined;
+        not?: boolean | undefined;
+        path?: Path | undefined;
+        id?: string | undefined;
+        disabled?: boolean | undefined;
+      };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  shiftGroupUp: (event?: MouseEvent, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  shiftGroupDown: (event?: MouseEvent, _context?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  toggleLockGroup: (_event?: any, _context?: any) => void;
+  validationClassName: string;
+  validationResult: boolean | ValidationResult;
+  rules?: RuleOrGroupArray;
+  not?: boolean;
+  id?: string;
+  path: Path;
+  translations: Translations;
+  schema: Schema<FullOption<string>, string>;
+  actions: QueryActions;
+  shiftUpDisabled?: boolean;
+  shiftDownDisabled?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: any;
+  dropEffect?: DropEffect | undefined;
+} => {
   const {
     id,
     path,

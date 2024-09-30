@@ -12,7 +12,15 @@ on:
       - 'packages/**'
 
 jobs:
-  Build_and_test:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+
+  Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +29,6 @@ jobs:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
       - run: bun install --frozen-lockfile
-        # Only rqb needs to be built before testing everything
-      - run: bun run build:rqb
       - run: bun run test
       - uses: codecov/codecov-action@v4
         env:
@@ -36,5 +42,6 @@ jobs:
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
+      - run: bunx oxlint@latest --config=./oxlintrc.json --format=github
       - run: bun install --frozen-lockfile
       - run: bun run lint

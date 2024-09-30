@@ -12,7 +12,7 @@ export const NativeShiftActions = ({
   labels,
   testID,
   schema: { styles },
-}: ShiftActionsNativeProps) => {
+}: ShiftActionsNativeProps): React.JSX.Element => {
   const style = React.useMemo(
     () => ({
       shiftActions: StyleSheet.flatten([defaultNativeStyles.shiftActions, styles?.shiftActions]),

@@ -52,7 +52,19 @@ const ShiftUpIconWrapper = () => {
   return <KeyboardArrowUpIcon />;
 };
 
-export const materialTranslations = {
+export const materialTranslations: Pick<
+  Translations,
+  | 'removeGroup'
+  | 'removeRule'
+  | 'cloneRule'
+  | 'cloneRuleGroup'
+  | 'lockGroup'
+  | 'lockRule'
+  | 'lockGroupDisabled'
+  | 'lockRuleDisabled'
+  | 'shiftActionDown'
+  | 'shiftActionUp'
+> = {
   removeGroup: { label: <CloseIconWrapper /> },
   removeRule: { label: <CloseIconWrapper /> },
   cloneRule: { label: <ContentCopyIconWrapper /> },
@@ -63,4 +75,4 @@ export const materialTranslations = {
   lockRuleDisabled: { label: <LockIconWrapper /> },
   shiftActionDown: { label: <ShiftDownIconWrapper /> },
   shiftActionUp: { label: <ShiftUpIconWrapper /> },
-} satisfies Partial<Translations>;
+};
