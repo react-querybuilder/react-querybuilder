@@ -3,10 +3,6 @@ name: Publish
 on:
   workflow_dispatch:
     inputs:
-      commitId:
-        description: 'Branch/tag/commit ref'
-        type: string
-        default: ''
       versionTag:
         description: 'Version tag'
         required: true
@@ -31,8 +27,6 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.commitId }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
