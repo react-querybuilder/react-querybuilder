@@ -67,6 +67,6 @@ jobs:
           echo "NPM_CONFIG_PROVENANCE: ${{ env.NPM_CONFIG_PROVENANCE }}"
       - name: Bump version
         run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
-      - run: git diff
+      - run: git diff --staged
       # - name: Publish
       #   run: npx lerna publish from-git --dist-tag ${{ inputs.versionTag }}
