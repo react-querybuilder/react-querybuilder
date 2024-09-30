@@ -73,4 +73,4 @@ jobs:
         run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
       - name: Publish
         if: inputs.runType == 'live'
-        run: npx lerna publish from-git --dist-tag ${{ inputs.versionTag }}
+        run: npx lerna publish from-git --yes --dist-tag ${{ inputs.versionTag }}
