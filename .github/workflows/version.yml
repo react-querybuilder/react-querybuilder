@@ -44,8 +44,11 @@ on:
 jobs:
   Bump_version:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     env:
       NPM_CONFIG_PROVENANCE: true
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -67,6 +70,6 @@ jobs:
           echo "NPM_CONFIG_PROVENANCE: ${{ env.NPM_CONFIG_PROVENANCE }}"
       - name: Bump version
         run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
-      - run: git diff --staged
-      # - name: Publish
-      #   run: npx lerna publish from-git --dist-tag ${{ inputs.versionTag }}
+      - name: Publish
+        if: inputs.runType == 'live'
+        run: npx lerna publish from-git --dist-tag ${{ inputs.versionTag }}
