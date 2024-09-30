@@ -5,11 +5,11 @@
     "@chakra-ui/system": ">=2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@react-querybuilder/chakra": "7.7.0-alpha.4",
+    "@react-querybuilder/chakra": "7.7.0-alpha.5",
     "framer-motion": "^11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-querybuilder": "7.7.0-alpha.4"
+    "react-querybuilder": "7.7.0-alpha.5"
   },
   "description": "React Query Builder Chakra UI Example",
   "devDependencies": {

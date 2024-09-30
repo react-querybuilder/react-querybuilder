@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/native",
   "description": "React Native components for react-querybuilder",
-  "version": "7.7.0-alpha.4",
+  "version": "7.7.0-alpha.5",
   "publishConfig": {
     "access": "public"
   },
@@ -58,7 +58,7 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "react-querybuilder": "7.7.0-alpha.4",
+    "react-querybuilder": "7.7.0-alpha.5",
     "react-redux": "^9.1.0"
   }
 }
