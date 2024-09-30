@@ -100,9 +100,8 @@ const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
         menu: base => ({ ...base, zIndex: 99 }),
       }}
       theme={theme =>
-        !isDarkTheme
-          ? theme
-          : {
+        isDarkTheme
+          ? {
               ...theme,
               colors: {
                 ...theme.colors,
@@ -125,6 +124,7 @@ const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
                 // neutral90: theme.colors.neutral90, // "hsl(0, 0%, 10%)",
               },
             }
+          : theme
       }
     />
   );
@@ -300,8 +300,10 @@ const LandingPage = () => {
   );
 };
 
-export default () => (
-  <StrictMode>
-    <LandingPage />
-  </StrictMode>
-);
+export default function Index() {
+  return (
+    <StrictMode>
+      <LandingPage />
+    </StrictMode>
+  );
+}

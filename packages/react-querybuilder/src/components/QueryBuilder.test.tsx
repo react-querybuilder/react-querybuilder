@@ -186,16 +186,16 @@ describe('when initial query with fields object is provided', () => {
     expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
     expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(2);
     expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option')).map(opt => opt.value)
+      [...screen.getByTestId(TestID.fields).querySelectorAll('option')].map(opt => opt.value)
     ).toEqual(['xyz', 'abc']);
     expect(screen.getByText('One')).toBeInTheDocument();
     expect(screen.getByText('Two')).toBeInTheDocument();
-    expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[0]
-    ).toHaveTextContent('One');
-    expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[1]
-    ).toHaveTextContent('Two');
+    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][0]).toHaveTextContent(
+      'One'
+    );
+    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][1]).toHaveTextContent(
+      'Two'
+    );
   });
 
   it('respects autoSelectField={false}', async () => {
@@ -213,19 +213,19 @@ describe('when initial query with fields object is provided', () => {
     expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
     expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(3);
     expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option')).map(opt => opt.value)
+      [...screen.getByTestId(TestID.fields).querySelectorAll('option')].map(opt => opt.value)
     ).toEqual([defaultPlaceholderFieldName, 'xyz', 'abc']);
     expect(screen.getByText('One')).toBeInTheDocument();
     expect(screen.getByText('Two')).toBeInTheDocument();
-    expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[0]
-    ).toHaveTextContent(defaultPlaceholderFieldLabel);
-    expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[1]
-    ).toHaveTextContent('One');
-    expect(
-      Array.from(screen.getByTestId(TestID.fields).querySelectorAll('option'))[2]
-    ).toHaveTextContent('Two');
+    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][0]).toHaveTextContent(
+      defaultPlaceholderFieldLabel
+    );
+    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][1]).toHaveTextContent(
+      'One'
+    );
+    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][2]).toHaveTextContent(
+      'Two'
+    );
   });
 
   it('does not mutate a fields array with duplicates', () => {
@@ -992,7 +992,15 @@ describe('parseNumbers prop', () => {
   };
 
   // Test result constants
-  const typedValuesArray = [' ', '1214', '1,214', '1,2,1,4', '12,14', '1\\,2,1\\,4', '1214xyz'];
+  const typedValuesArray = [
+    ' ',
+    '1214',
+    '1,214',
+    '1,2,1,4',
+    '12,14',
+    String.raw`1\,2,1\,4`,
+    '1214xyz',
+  ];
   const typedValues = typedValuesArray.map(typedValue => ({ typedValue }));
   const inputTypeNumberAllowedAsStr = typedValuesArray.map(s => (/^\d+$/.test(s) ? s : ''));
   const inputTypeNumberAllowedAsNum = typedValuesArray.map(s =>
@@ -1007,12 +1015,12 @@ describe('parseNumbers prop', () => {
   const testCases = [
     {
       parseNumberMode: true,
-      textAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
-      textTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      textAtOnce: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
+      textTyped: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
-      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
+      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
     },
     {
       parseNumberMode: false,
@@ -1061,12 +1069,12 @@ describe('parseNumbers prop', () => {
     },
     {
       parseNumberMode: 'strict',
-      textAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
-      textTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      textAtOnce: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
+      textTyped: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
-      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
+      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
     },
     {
       parseNumberMode: 'strict-limited',
@@ -1074,8 +1082,8 @@ describe('parseNumbers prop', () => {
       textTyped: typedValuesArray,
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
-      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, '1\\,2,1\\,4', '1214xyz'],
+      numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
+      numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
     },
   ] satisfies {
     parseNumberMode: ParseNumbersPropConfig;
@@ -1603,7 +1611,7 @@ describe('values property in field', () => {
 
     await user.click(screen.getByTestId(TestID.addRule));
     expect(screen.getAllByTestId(TestID.valueEditor)).toHaveLength(1);
-    expect(screen.getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(2);
+    expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('option')).toHaveLength(2);
     expect(screen.getByDisplayValue('Test value 1')).toBeInTheDocument();
   });
 
@@ -1625,7 +1633,7 @@ describe('values property in field', () => {
       .filter(bs => bs.classList.contains(sc.valueListItem));
     expect(betweenSelects).toHaveLength(2);
     for (const bs of betweenSelects) {
-      expect(bs.getElementsByTagName('option')).toHaveLength(2);
+      expect(bs.querySelectorAll('option')).toHaveLength(2);
       expect(bs).toHaveValue('test');
     }
     expect(screen.getAllByDisplayValue('Test value 1')).toHaveLength(2);
@@ -1898,7 +1906,7 @@ describe('showShiftActions', () => {
     const shiftRuleButtons = screen
       .getAllByTestId(TestID.ruleGroup)[1]
       .querySelectorAll(`.${sc.shiftActions}>button`);
-    for (const b of Array.from(shiftRuleButtons)) {
+    for (const b of shiftRuleButtons) {
       expect(b).toBeDisabled();
     }
   });
@@ -2662,7 +2670,7 @@ describe('disabled', () => {
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of Array.from(rg.querySelectorAll('button'))) {
+    for (const b of rg.querySelectorAll('button')) {
       await user.click(b);
     }
     expect(onQueryChange).not.toHaveBeenCalled();
@@ -2703,7 +2711,7 @@ describe('locked rules', () => {
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of Array.from(rg.querySelectorAll('button'))) {
+    for (const b of rg.querySelectorAll('button')) {
       await user.click(b);
     }
     expect(onQueryChange).not.toHaveBeenCalled();
@@ -2743,7 +2751,7 @@ describe('locked rules', () => {
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
-    for (const b of Array.from(rg.querySelectorAll('button'))) {
+    for (const b of rg.querySelectorAll('button')) {
       await user.click(b);
     }
     expect(onQueryChange).not.toHaveBeenCalled();
@@ -2778,7 +2786,7 @@ describe('value source field', () => {
     render(<QueryBuilder fields={fields} getDefaultField="f1" />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getByDisplayValue(fields.filter(f => f.name !== 'f1')[0].label)).toHaveClass(
+    expect(screen.getByDisplayValue(fields.find(f => f.name !== 'f1')!.label)).toHaveClass(
       sc.value
     );
   });
@@ -2790,9 +2798,7 @@ describe('value source field', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getAllByDisplayValue(fields.filter(f => f.name !== 'fb')[0].label)).toHaveLength(
-      2
-    );
+    expect(screen.getAllByDisplayValue(fields.find(f => f.name !== 'fb')!.label)).toHaveLength(2);
     expect(onQueryChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ rules: [expect.objectContaining({ value: 'f1,f1' })] })
     );
@@ -2819,7 +2825,7 @@ describe('value source field', () => {
     render(<QueryBuilder fields={fields} getDefaultField="f3" />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getByTestId(TestID.valueEditor).getElementsByTagName('option')).toHaveLength(0);
+    expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('option')).toHaveLength(0);
   });
 
   it('handles invalid valueSources property', async () => {

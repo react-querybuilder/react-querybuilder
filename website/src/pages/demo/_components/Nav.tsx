@@ -18,7 +18,7 @@ const getLink = ({
   compressedState,
   siteLocation,
 }: NavProps & { siteLocation: Location }) =>
-  `${siteLocation.pathname.replace(RegExp(`\\/(${styleNameArray.join('|')})$`), '')}${
+  `${siteLocation.pathname.replace(new RegExp(`\\/(${styleNameArray.join('|')})$`), '')}${
     variant === 'default' ? '' : `/${variant}`
   }${compressedState ? `#s=${compressedState}` : ''}`;
 

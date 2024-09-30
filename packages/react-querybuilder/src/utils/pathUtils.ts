@@ -16,11 +16,7 @@ export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnTyp
   let level = 0;
   while (level < path.length && target && isRuleGroup(target)) {
     const t: RuleGroupTypeAny | RuleType | string = target.rules[path[level]];
-    if (typeof t !== 'string') {
-      target = t;
-    } else {
-      target = null;
-    }
+    target = typeof t === 'string' ? null : t;
     level++;
   }
 
@@ -30,7 +26,7 @@ export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnTyp
 /**
  * Truncates the last element of an array and returns the result as a new array.
  */
-export const getParentPath = (path: Path): Path => path.slice(0, path.length - 1);
+export const getParentPath = (path: Path): Path => path.slice(0, -1);
 
 /**
  * Determines if two paths (each `Path`) are equivalent.
@@ -43,7 +39,8 @@ export const pathsAreEqual = (path1: Path, path2: Path): boolean =>
  * be shorter and exactly match the second path up through the length of the first path.
  */
 export const isAncestor = (maybeAncestor: Path, path: Path): boolean =>
-  maybeAncestor.length < path.length && RegExp(`^${maybeAncestor.join('-')}`).test(path.join('-'));
+  maybeAncestor.length < path.length &&
+  new RegExp(`^${maybeAncestor.join('-')}`).test(path.join('-'));
 
 /**
  * Finds the deepest/longest path that two paths have in common.

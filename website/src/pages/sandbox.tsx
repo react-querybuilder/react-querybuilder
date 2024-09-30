@@ -35,7 +35,7 @@ export default function SandboxRedirect() {
           justifyContent: 'center',
           margin: 'var(--ifm-global-spacing)',
         }}>
-        Redirecting to{'\u00a0'}
+        Redirecting to{'\u00A0'}
         <a href={finalLink}>{platform}</a>...
       </div>
     </Layout>

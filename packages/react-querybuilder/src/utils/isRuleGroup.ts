@@ -20,4 +20,4 @@ export const isRuleGroupType = (rg: any): rg is RuleGroupType =>
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isRuleGroupTypeIC = (rg: any): rg is RuleGroupTypeIC =>
-  isRuleGroup(rg) && typeof rg.combinator === 'undefined';
+  isRuleGroup(rg) && rg.combinator === undefined;

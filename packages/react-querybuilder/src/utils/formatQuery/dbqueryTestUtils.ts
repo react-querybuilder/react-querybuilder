@@ -80,9 +80,11 @@ const textColumnType: Record<DbPlatform, string> = {
 const unquote = (fieldName: string, unquoted = false) =>
   unquoted ? fieldName.toLocaleLowerCase() : `"${fieldName}"`;
 
+const unquotedFalse = { unquoted: false } as const;
+
 export const CREATE_TABLE = (
   dbPlatform: DbPlatform,
-  { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
+  { unquoted = false }: { unquoted?: boolean } = unquotedFalse
 ) => `CREATE TABLE superusers (
   ${unquote('firstName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
@@ -91,13 +93,13 @@ export const CREATE_TABLE = (
   ${unquote('powerUpAge', unquoted)} INT NULL
 )`;
 
-export const CREATE_INDEX = ({ unquoted = false }: { unquoted?: boolean } = { unquoted: false }) =>
+export const CREATE_INDEX = ({ unquoted = false }: { unquoted?: boolean } = unquotedFalse) =>
   `CREATE UNIQUE INDEX ndx ON superusers(${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
 
 export const INSERT_INTO = (
   user: SuperUser,
   dbPlatform: DbPlatform,
-  { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
+  { unquoted = false }: { unquoted?: boolean } = unquotedFalse
 ) => `
 INSERT INTO superusers (
   ${unquote('firstName', unquoted)},
@@ -117,7 +119,7 @@ export const sqlBase = `SELECT * FROM superusers WHERE `;
 
 export const dbSetup = (
   dbPlatform: DbPlatform,
-  { unquoted = false }: { unquoted?: boolean } = { unquoted: false }
+  { unquoted = false }: { unquoted?: boolean } = unquotedFalse
 ): string =>
   [
     CREATE_TABLE(dbPlatform, { unquoted }),

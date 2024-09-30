@@ -1,8 +1,8 @@
 import { joinWith, nullFreeArray, splitBy, toArray } from './arrayUtils';
 
-const commaString = 'this\\,\\,that,,the other,,,\\,';
+const commaString = String.raw`this\,\,that,,the other,,,\,`;
 const commaArray = ['this,,that', '', 'the other', '', '', ','];
-const plusString = 'this\\+\\+that++the other+++\\+';
+const plusString = String.raw`this\+\+that++the other+++\+`;
 const plusArray = ['this++that', '', 'the other', '', '', '+'];
 
 it('splits by a character', () => {

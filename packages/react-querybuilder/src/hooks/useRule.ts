@@ -147,15 +147,13 @@ export const useRule = (
 
   const rule = useMemo(
     () =>
-      ruleProp
-        ? ruleProp
-        : {
-            id,
-            field: fieldProp ?? /* istanbul ignore next */ '',
-            operator: operatorProp ?? /* istanbul ignore next */ '',
-            value: valueProp,
-            valueSource: valueSourceProp,
-          },
+      ruleProp ?? {
+        id,
+        field: fieldProp ?? /* istanbul ignore next */ '',
+        operator: operatorProp ?? /* istanbul ignore next */ '',
+        value: valueProp,
+        valueSource: valueSourceProp,
+      },
     [fieldProp, id, operatorProp, ruleProp, valueProp, valueSourceProp]
   );
 
@@ -220,7 +218,7 @@ export const useRule = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_event?: any, _context?: any) => {
       if (!disabled) {
-        const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+        const newPath = [...getParentPath(path), path.at(-1)! + 1];
         moveRule(path, newPath, true);
       }
     },

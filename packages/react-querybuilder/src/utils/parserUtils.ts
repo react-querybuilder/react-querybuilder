@@ -13,13 +13,13 @@ import { toFullOption } from './toFullOption';
 export const getFieldsArray = (
   fields?: OptionList<FullField> | Record<string, FullField>
 ): FullOption[] => {
-  const fieldsArray = !fields
-    ? []
-    : Array.isArray(fields)
+  const fieldsArray = fields
+    ? Array.isArray(fields)
       ? fields
       : Object.keys(fields)
           .map(fld => ({ ...fields[fld], name: fld }))
-          .sort((a, b) => a.label.localeCompare(b.label));
+          .sort((a, b) => a.label.localeCompare(b.label))
+    : [];
   return toFlatOptionArray(fieldsArray);
 };
 
@@ -40,20 +40,17 @@ export function fieldIsValidUtil(params: {
 
   const primaryField = toFullOption(fieldsFlat.find(ff => ff.name === fieldName)!);
   if (primaryField) {
-    if (
+    valid =
       !subordinateFieldName &&
       operator !== 'notNull' &&
       operator !== 'null' &&
-      !getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'value')
-    ) {
-      valid = false;
-    } else {
-      valid = true;
-    }
+      !getValueSourcesUtil(primaryField, operator, getValueSources).includes('value' as never)
+        ? false
+        : true;
 
     if (valid && !!subordinateFieldName) {
       if (
-        getValueSourcesUtil(primaryField, operator, getValueSources).some(vs => vs === 'field') &&
+        getValueSourcesUtil(primaryField, operator, getValueSources).includes('field' as never) &&
         fieldName !== subordinateFieldName
       ) {
         const validSubordinateFields = filterFieldsByComparator(
@@ -61,7 +58,7 @@ export function fieldIsValidUtil(params: {
           fieldsFlat,
           operator
         ) as FullField[];
-        if (!validSubordinateFields.find(vsf => vsf.name === subordinateFieldName)) {
+        if (!validSubordinateFields.some(vsf => vsf.name === subordinateFieldName)) {
           valid = false;
         }
       } else {

@@ -32,22 +32,22 @@ const componentMocks = {
 
 // We don't *actually* need to load the components, just test that
 // an attempt to load them can be successful.
-Object.entries(componentMocks).forEach(([cn, mockImpl]) => {
+for (const [cn, mockImpl] of Object.entries(componentMocks)) {
   if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
-});
+}
 
 it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {
     hookResult = renderHook(() => useMuiComponents());
   });
-  Object.keys(componentMocks).forEach(name =>
-    expect(hookResult!.result.current).toHaveProperty(name)
-  );
+  for (const name of Object.keys(componentMocks)) {
+    expect(hookResult!.result.current).toHaveProperty(name);
+  }
   hookResult!.rerender();
-  Object.keys(componentMocks).forEach(name =>
-    expect(hookResult!.result.current).toHaveProperty(name)
-  );
+  for (const name of Object.keys(componentMocks)) {
+    expect(hookResult!.result.current).toHaveProperty(name);
+  }
 });
 
 it('renders with preloaded components', async () => {
@@ -55,9 +55,9 @@ it('renders with preloaded components', async () => {
   await act(async () => {
     hookResult = renderHook(() => useMuiComponents(componentMocks));
   });
-  Object.keys(componentMocks).forEach(name =>
-    expect(hookResult!.result.current).toHaveProperty(name)
-  );
+  for (const name of Object.keys(componentMocks)) {
+    expect(hookResult!.result.current).toHaveProperty(name);
+  }
 });
 
 it('renders with context components', async () => {

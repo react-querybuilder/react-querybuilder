@@ -31,12 +31,12 @@ export const uniqByIdentifier = <
 ): T[] => {
   const names = new Set<string>();
   const newArray: T[] = [];
-  originalArray.forEach(el => {
+  for (const el of originalArray) {
     if (!names.has((el.value ?? el.name)!)) {
       names.add((el.value ?? el.name)!);
       newArray.push(el);
     }
-  });
+  }
   return originalArray.length === newArray.length ? originalArray : newArray;
 };
 
@@ -51,19 +51,19 @@ export const uniqOptGroups = <T extends BaseOption>(
   const labels = new Set<string>();
   const names = new Set<K>();
   const newArray: OptionGroup<ToFullOption<T>>[] = [];
-  originalArray.forEach(el => {
+  for (const el of originalArray) {
     if (!labels.has(el.label)) {
       labels.add(el.label);
       const optionsForThisGroup: WithUnknownIndex<ToFullOption<T>>[] = [];
-      el.options.forEach(opt => {
+      for (const opt of el.options) {
         if (!names.has((opt.value ?? opt.name) as K)) {
           names.add((opt.value ?? opt.name) as K);
           optionsForThisGroup.push(toFullOption(opt) as WithUnknownIndex<ToFullOption<T>>);
         }
-      });
+      }
       newArray.push({ ...el, options: optionsForThisGroup });
     }
-  });
+  }
   return newArray;
 };
 

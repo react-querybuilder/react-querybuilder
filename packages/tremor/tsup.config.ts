@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises';
+import { writeFile } from 'node:fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 import { generateDTS } from '../../utils/generateDTS';

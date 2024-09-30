@@ -160,22 +160,32 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
-    if (format === 'mongodb') {
-      ruleProcessorInternal = defaultRuleProcessorMongoDB;
-    } else if (format === 'parameterized') {
-      ruleProcessorInternal = defaultRuleProcessorParameterized;
-    } else if (format === 'parameterized_named') {
-      ruleProcessorInternal = defaultRuleProcessorParameterized;
-    } else if (format === 'cel') {
-      ruleProcessorInternal = defaultRuleProcessorCEL;
-    } else if (format === 'spel') {
-      ruleProcessorInternal = defaultRuleProcessorSpEL;
-    } else if (format === 'jsonlogic') {
-      ruleProcessorInternal = defaultRuleProcessorJsonLogic;
-    } else if (format === 'elasticsearch') {
-      ruleProcessorInternal = defaultRuleProcessorElasticSearch;
-    } else if (format === 'jsonata') {
-      ruleProcessorInternal = defaultRuleProcessorJSONata;
+    switch (format) {
+      case 'mongodb':
+        ruleProcessorInternal = defaultRuleProcessorMongoDB;
+        break;
+      case 'parameterized':
+        ruleProcessorInternal = defaultRuleProcessorParameterized;
+        break;
+      case 'parameterized_named':
+        ruleProcessorInternal = defaultRuleProcessorParameterized;
+        break;
+      case 'cel':
+        ruleProcessorInternal = defaultRuleProcessorCEL;
+        break;
+      case 'spel':
+        ruleProcessorInternal = defaultRuleProcessorSpEL;
+        break;
+      case 'jsonlogic':
+        ruleProcessorInternal = defaultRuleProcessorJsonLogic;
+        break;
+      case 'elasticsearch':
+        ruleProcessorInternal = defaultRuleProcessorElasticSearch;
+        break;
+      case 'jsonata':
+        ruleProcessorInternal = defaultRuleProcessorJSONata;
+        break;
+      default:
     }
   } else {
     const optionsWithPresets = {
@@ -268,22 +278,22 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
   const validatorMap: Record<string, RuleValidator> = {};
   const uniqueFields = toFlatOptionArray(fields) satisfies FullField[];
-  uniqueFields.forEach(f => {
+  for (const f of uniqueFields) {
     // istanbul ignore else
     if (typeof f.validator === 'function') {
       validatorMap[(f.value ?? /* istanbul ignore next */ f.name)!] = f.validator;
     }
-  });
+  }
 
   const validateRule = (rule: RuleType) => {
-    let validationResult: boolean | ValidationResult | undefined = undefined;
-    let fieldValidator: RuleValidator | undefined = undefined;
+    let validationResult: boolean | ValidationResult | undefined;
+    let fieldValidator: RuleValidator | undefined;
     if (rule.id) {
       validationResult = validationMap[rule.id];
     }
-    if (uniqueFields.length) {
+    if (uniqueFields.length > 0) {
       const fieldArr = uniqueFields.filter(f => f.name === rule.field);
-      if (fieldArr.length) {
+      if (fieldArr.length > 0) {
         const field = fieldArr[0];
         // istanbul ignore else
         if (typeof field.validator === 'function') {
@@ -400,10 +410,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       const fieldData = getOption(fields, rule.field);
 
       const fieldParamNames = Object.fromEntries(
-        (Array.from(fieldParams.entries()) as [string, Set<string>][]).map(([f, s]) => [
-          f,
-          Array.from(s),
-        ])
+        ([...fieldParams.entries()] as [string, Set<string>][]).map(([f, s]) => [f, [...s]])
       );
 
       const processedRule = (
@@ -454,7 +461,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         // `getNextNamedParam` already adds new params to the list, but a custom
         // rule processor might not call it so we need to make sure we add
         // any new params here.
-        Object.keys(customParams).forEach(p => fieldParams.get(rule.field)?.add(p));
+        for (const p of Object.keys(customParams)) fieldParams.get(rule.field)?.add(p);
       }
 
       return sql;
@@ -509,7 +516,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             if (processedRuleGroup) {
               hasChildRules = true;
               // Don't wrap in curly braces if the result already is.
-              return /^\{.+\}$/.test(processedRuleGroup)
+              return /^{.+}$/.test(processedRuleGroup)
                 ? processedRuleGroup
                 : `{${processedRuleGroup}}`;
             }
@@ -541,7 +548,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     const rgStandard = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
     const processedQuery = processRuleGroup(rgStandard, true);
-    return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
+    return /^{.+}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
   }
   // #endregion
 

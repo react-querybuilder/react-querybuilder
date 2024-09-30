@@ -26,12 +26,10 @@ function toVal(mix: any) {
     if (Array.isArray(mix)) {
       const len = mix.length;
       for (k = 0; k < len; k++) {
-        if (mix[k]) {
-          if ((y = toVal(mix[k]))) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-            str && (str += ' ');
-            str += y;
-          }
+        if (mix[k] && (y = toVal(mix[k]))) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          str && (str += ' ');
+          str += y;
         }
       }
     } else {
@@ -56,12 +54,10 @@ export function clsx(...args: ClassValue[]): string {
   let str = '';
   const len = args.length;
   for (; i < len; i++) {
-    if ((tmp = args[i])) {
-      if ((x = toVal(tmp))) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        str && (str += ' ');
-        str += x;
-      }
+    if ((tmp = args[i]) && (x = toVal(tmp))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      str && (str += ' ');
+      str += x;
     }
   }
   return str;

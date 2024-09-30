@@ -85,9 +85,8 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       case '<=': {
         const operatorForScript = operator === '=' ? '==' : operator;
         const valueForScript = escapeSQ(value);
-        return !valueForScript
-          ? false
-          : {
+        return valueForScript
+          ? {
               bool: {
                 filter: {
                   script: {
@@ -95,7 +94,8 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
                   },
                 },
               },
-            };
+            }
+          : false;
       }
 
       case 'in':

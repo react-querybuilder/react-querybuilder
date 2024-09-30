@@ -89,7 +89,7 @@ describe('valueSource: "value"', () => {
           ],
         },
         { field: 'f1', operator: 'between', value: 'Test,Test2' },
-        { field: 'f1', operator: 'between', value: 'Test\\,Comma,Test2' },
+        { field: 'f1', operator: 'between', value: String.raw`Test\,Comma,Test2` },
         { field: 'f1', operator: 'between', value: '12,14' },
         { field: 'f1', operator: 'between', value: 'true,false' },
       ],
@@ -199,7 +199,7 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'notBetween', value: '12,14' },
         { field: 'f1', operator: 'notBetween', value: 'true,false' },
         { field: 'f1', operator: 'notIn', value: 'Test,Test2' },
-        { field: 'f1', operator: 'notIn', value: 'Te\\,st,Test2' },
+        { field: 'f1', operator: 'notIn', value: String.raw`Te\,st,Test2` },
         { field: 'f1', operator: 'notIn', value: '12,14' },
         { field: 'f1', operator: 'notIn', value: 'true,false' },
       ],
@@ -442,11 +442,11 @@ it('parses custom group operations', () => {
     expect(
       parseJsonLogic({ [op]: [] } as RQBJsonLogic, { jsonLogicOperations: { [op]: () => result } })
     ).toEqual(
-      !result
-        ? { combinator: 'and', rules: [] }
-        : isRuleGroup(result)
+      result
+        ? isRuleGroup(result)
           ? result
           : { combinator: 'and', rules: [result] }
+        : { combinator: 'and', rules: [] }
     );
   }
 });

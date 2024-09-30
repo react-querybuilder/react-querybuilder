@@ -48,7 +48,7 @@ export const isJSONataName = (expr: Any): expr is JSONataName =>
   typeof expr.value === 'string' &&
   expr.value.length > 0;
 export const isJSONataIdentifier = (expr: Any): expr is JSONataIdentifier =>
-  isJSONataPath(expr) && expr.steps.every(isJSONataName);
+  isJSONataPath(expr) && expr.steps.every(v => isJSONataName(v));
 
 // Groups
 export const isJSONataBlock = (expr: Any): expr is JSONataBlock =>
@@ -142,9 +142,9 @@ export const isJSONataPrimitive = (expr: Any): boolean => {
   );
 };
 export const isJSONataPrimitiveList = (expr: Any): boolean =>
-  isJSONataList(expr) && expr.expressions.every(isJSONataPrimitive);
+  isJSONataList(expr) && expr.expressions.every(v => isJSONataPrimitive(v));
 export const isJSONataIdentifierList = (expr: Any): boolean =>
-  isJSONataList(expr) && expr.expressions.every(isJSONataIdentifier);
+  isJSONataList(expr) && expr.expressions.every(v => isJSONataIdentifier(v));
 export const isJSONataValidValue = (expr: Any): boolean =>
   isJSONataPrimitive(expr) ||
   isJSONataRegex(expr) ||
@@ -174,9 +174,9 @@ export const getValidValue = (expr: Any): Any => {
   } else if (isJSONataIdentifier(expr)) {
     return getFieldFromPath(expr);
   } else if (isJSONataPrimitiveList(expr)) {
-    return expr.expressions.map(getValidValue);
+    return expr.expressions.map((v: Any) => getValidValue(v));
   } else if (isJSONataIdentifierList(expr)) {
-    return expr.expressions.map(getFieldFromPath);
+    return expr.expressions.map((v: Any) => getFieldFromPath(v));
   }
   return expr.value;
 };
@@ -256,8 +256,7 @@ export const generateMixedAndOrList = (
         if (arr[i - 1] === 'and') {
           returnArray.push(arr[i + 1]);
         } else {
-          returnArray.push(arr[i]);
-          returnArray.push(arr[i + 1]);
+          returnArray.push(arr[i], arr[i + 1]);
         }
       }
     }

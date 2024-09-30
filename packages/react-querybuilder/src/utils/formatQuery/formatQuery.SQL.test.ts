@@ -128,11 +128,9 @@ it('handles custom valueProcessors correctly', () => {
   };
 
   const valueProcessorLegacy: ValueProcessorLegacy = (_field, operator, value) => {
-    if (operator === 'in') {
-      return `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`;
-    } else {
-      return `'${value}'`;
-    }
+    return operator === 'in'
+      ? `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`
+      : `'${value}'`;
   };
 
   expect(

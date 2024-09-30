@@ -150,7 +150,7 @@ it('formats ElasticSearch correctly', () => {
           // combinator: 'and', not: true
           { combinator: 'and', not: true, rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
           // Weird field names
-          { field: "f\\'1", operator: 'contains', value: 'v1', valueSource: 'field' },
+          { field: String.raw`f\'1`, operator: 'contains', value: 'v1', valueSource: 'field' },
           // Ranges
           { field: 'f1', operator: '<', value: 0 },
           { field: 'f1', operator: '<=', value: 0 },
@@ -220,7 +220,7 @@ describe('validation', () => {
     };
 
     for (const vtd of getValidationTestData('elasticsearch')) {
-      if (typeof validationResults[vtd.title] !== 'undefined') {
+      if (validationResults[vtd.title] !== undefined) {
         it(vtd.title, () => {
           expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
         });

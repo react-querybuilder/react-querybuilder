@@ -6,7 +6,7 @@
 export default {
   coveragePathIgnorePatterns: ['/utils/testing/', '/dist/', 'TestUtils.ts'],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/../../utils/fixJSDOMEnvironment.ts',
   // Keep these in sync with /tsconfig.json#compilerOptions#paths.
   moduleNameMapper: {
     'react-querybuilder': ['<rootDir>/../../packages/react-querybuilder/src'],

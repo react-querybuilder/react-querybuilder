@@ -17,7 +17,7 @@ const ruleGroupIC: RuleGroupTypeIC = {
 describe('isRuleGroup', () => {
   it('tests for null/undefined/primitives/etc', () => {
     expect(isRuleGroup(null)).toBe(false);
-    expect(isRuleGroup(undefined)).toBe(false);
+    expect((isRuleGroup as unknown as () => void)()).toBe(false);
     expect(isRuleGroup({})).toBe(false);
     expect(isRuleGroup('')).toBe(false);
     expect(isRuleGroup('string')).toBe(false);

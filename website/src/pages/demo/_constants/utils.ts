@@ -6,6 +6,7 @@ import justifiedStylesSCSS from '!!raw-loader!@site/src/css/justified.scss';
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import { Buffer } from 'buffer';
 import pako from 'pako';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
@@ -59,16 +60,20 @@ export const getStateFromHash = ({ s, ...hash }: DemoOptionsHash): DemoState => 
 };
 
 export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoOptions => {
-  if (action.type === 'reset') {
-    return defaultOptions;
-  } else if (action.type === 'all') {
-    const allSelected: DemoOptions = { ...defaultOptions };
-    for (const opt of optionOrder) {
-      allSelected[opt] = opt !== 'disabled' && opt !== 'independentCombinators';
+  switch (action.type) {
+    case 'reset': {
+      return defaultOptions;
     }
-    return allSelected;
-  } else if (action.type === 'replace') {
-    return action.payload;
+    case 'all': {
+      const allSelected: DemoOptions = { ...defaultOptions };
+      for (const opt of optionOrder) {
+        allSelected[opt] = opt !== 'disabled' && opt !== 'independentCombinators';
+      }
+      return allSelected;
+    }
+    case 'replace': {
+      return action.payload;
+    }
   }
   const { optionName, value } = action.payload;
   return { ...state, [optionName]: value };
@@ -103,12 +108,13 @@ export const getExportDisplayLanguage = (format: ExportFormat) =>
 
 const getCompatWrapper = (style?: StyleName): [string, string, string] => {
   switch (style) {
-    case 'antd':
+    case 'antd': {
       return [
         `import { QueryBuilderAntD } from '@react-querybuilder/antd';`,
         '<QueryBuilderAntD>',
         '</QueryBuilderAntD>',
       ];
+    }
     case 'bootstrap':
       return [
         `import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';

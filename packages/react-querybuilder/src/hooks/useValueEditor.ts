@@ -121,7 +121,7 @@ export const useValueEditor = (
         if (
           idx === 0 &&
           (operator === 'between' || operator === 'notBetween') &&
-          (va.length < 2 || typeof va[1] === 'undefined')
+          (va.length < 2 || va[1] === undefined)
         ) {
           va[1] = getFirstOption(values);
         }

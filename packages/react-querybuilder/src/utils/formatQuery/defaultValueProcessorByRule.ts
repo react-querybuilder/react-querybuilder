@@ -76,8 +76,8 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
         const secondNum = shouldRenderAsNumber(second, parseNumbers)
           ? parseNumber(second, { parseNumbers: 'strict' })
           : NaN;
-        const firstValue = !isNaN(firstNum) ? firstNum : valueIsField ? `${first}` : first;
-        const secondValue = !isNaN(secondNum) ? secondNum : valueIsField ? `${second}` : second;
+        const firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+        const secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
         const valsOneAndTwoOnly = [firstValue, secondValue];
         if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
@@ -87,10 +87,10 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 
         return (
           valueIsField
-            ? valsOneAndTwoOnly.map(wrapFieldName)
+            ? valsOneAndTwoOnly.map(v => wrapFieldName(v))
             : valsOneAndTwoOnly.every(v => shouldRenderAsNumber(v, parseNumbers))
               ? valsOneAndTwoOnly.map(v => parseNumber(v, { parseNumbers: 'strict' }))
-              : valsOneAndTwoOnly.map(wrapAndEscape)
+              : valsOneAndTwoOnly.map(v => wrapAndEscape(v))
         ).join(` and `);
       }
       return '';

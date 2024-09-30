@@ -45,7 +45,7 @@ const App = () => {
   );
 };
 
-createRoot(document.getElementById('app')!).render(
+createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

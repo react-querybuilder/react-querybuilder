@@ -206,7 +206,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
         ruleOrGroup={rg.ruleGroup}
         schema={rg.schema}
       />
-      {rg.schema.showCloneButtons && rg.path.length >= 1 && (
+      {rg.schema.showCloneButtons && rg.path.length > 0 && (
         <CloneGroupActionControlElement
           key={TestID.cloneGroup}
           testID={TestID.cloneGroup}

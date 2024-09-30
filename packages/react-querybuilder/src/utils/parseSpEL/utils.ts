@@ -26,7 +26,7 @@ export const isSpELPropertyNode = (expr: SpELBaseNode<SpELNodeType>): expr is Sp
   return expr.getType() === 'property' || expr.getType() === 'variable';
 };
 export const isSpELCompoundNode = (expr: SpELBaseNode<SpELNodeType>): expr is SpELCompoundNode => {
-  return expr.getType() === 'compound' && expr.getChildren().every(isSpELPropertyNode);
+  return expr.getType() === 'compound' && expr.getChildren().every(c => isSpELPropertyNode(c));
 };
 export const isSpELListNode = (expr: SpELBaseNode<SpELNodeType>): expr is SpELListNode => {
   return expr.getType() === 'list';
@@ -68,13 +68,13 @@ export const isSpELBetweenValues = (expr: SpELProcessedExpression): expr is SpEL
   isSpELIdentifier(expr.children[0]) &&
   expr.children[1].type === 'list' &&
   expr.children[1].children.length >= 2 &&
-  expr.children[1].children.every(isSpELPrimitive);
+  expr.children[1].children.every(c => isSpELPrimitive(c));
 export const isSpELBetweenFields = (expr: SpELProcessedExpression): expr is SpELBetweenFields =>
   expr.type === 'between' &&
   isSpELIdentifier(expr.children[0]) &&
   expr.children[1].type === 'list' &&
   expr.children[1].children.length >= 2 &&
-  expr.children[1].children.every(isSpELIdentifier);
+  expr.children[1].children.every(c => isSpELIdentifier(c));
 
 export const processCompiledExpression = (
   ce: SpELPropertyNode | SpELExpressionNode
@@ -91,7 +91,7 @@ export const processCompiledExpression = (
   const children =
     type === 'compound'
       ? []
-      : (isSpELListNode(ce) ? ce.getRaw : ce.getChildren)().map(processCompiledExpression);
+      : (isSpELListNode(ce) ? ce.getRaw : ce.getChildren)().map(c => processCompiledExpression(c));
   const startPosition = ce.getStartPosition();
   const endPosition = ce.getEndPosition();
   const value = ce.getValue.length === 0 ? ce.getValue() : 'N/A';
@@ -128,7 +128,7 @@ export const normalizeOperator = (opType: SpELRelOpType, flip?: boolean): Defaul
 export const generateFlatAndOrList = (
   expr: SpELProcessedExpression
 ): (DefaultCombinatorName | SpELProcessedExpression)[] => {
-  const combinator = expr.type.substring(3) as DefaultCombinatorName;
+  const combinator = expr.type.slice(3) as DefaultCombinatorName;
   const [left, right] = expr.children;
   if (left.type === 'op-and' || left.type === 'op-or') {
     return [...generateFlatAndOrList(left), combinator, right];
@@ -170,8 +170,7 @@ export const generateMixedAndOrList = (
         if (arr[i - 1] === 'and') {
           returnArray.push(arr[i + 1]);
         } else {
-          returnArray.push(arr[i]);
-          returnArray.push(arr[i + 1]);
+          returnArray.push(arr[i], arr[i + 1]);
         }
       }
     }

@@ -114,11 +114,9 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
           firstValue = tempNum;
         }
 
-        if (operator === 'between') {
-          return `(${field} >= ${firstValue} && ${field} <= ${secondValue})`;
-        } else {
-          return `(${field} < ${firstValue} || ${field} > ${secondValue})`;
-        }
+        return operator === 'between'
+          ? `(${field} >= ${firstValue} && ${field} <= ${secondValue})`
+          : `(${field} < ${firstValue} || ${field} > ${secondValue})`;
       } else {
         return '';
       }

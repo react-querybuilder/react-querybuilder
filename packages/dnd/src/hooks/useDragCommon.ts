@@ -53,7 +53,7 @@ export const useDragCommon = ({
         if (!dropResult) return;
 
         const parentHoverPath = getParentPath(dropResult.path);
-        const hoverIndex = dropResult.path[dropResult.path.length - 1];
+        const hoverIndex = dropResult.path.at(-1)!;
         const destinationPath =
           dropResult.type === 'ruleGroup'
             ? [...dropResult.path, 0]
@@ -61,7 +61,9 @@ export const useDragCommon = ({
               ? [...parentHoverPath, hoverIndex]
               : [...parentHoverPath, hoverIndex + 1];
 
-        if (schema.qbId !== dropResult.qbId) {
+        if (schema.qbId === dropResult.qbId) {
+          actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+        } else {
           const otherBuilderQuery = dropResult.getQuery();
           // istanbul ignore else
           if (otherBuilderQuery) {
@@ -71,8 +73,6 @@ export const useDragCommon = ({
               actions.onRuleRemove(item.path);
             }
           }
-        } else {
-          actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
         }
       },
     }),

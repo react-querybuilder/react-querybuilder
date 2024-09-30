@@ -5,8 +5,7 @@ it('merges translations', () => {
   expect(
     mergeTranslations(
       { addRule: { label: 'addRule label', title: 'addRule title' } },
-      { addGroup: { label: 'addGroup label', title: 'addGroup title' } },
-      undefined
+      { addGroup: { label: 'addGroup label', title: 'addGroup title' } }
     )
   ).toEqual({
     addGroup: { label: 'addGroup label', title: 'addGroup title' },

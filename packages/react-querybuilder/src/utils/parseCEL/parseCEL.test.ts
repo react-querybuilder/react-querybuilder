@@ -428,7 +428,7 @@ it('handles "in" operator', () => {
   );
   testParseCEL(
     'f1 in ["Te,st","Test2"]',
-    wrapRule({ field: 'f1', operator: 'in', value: 'Te\\,st,Test2' })
+    wrapRule({ field: 'f1', operator: 'in', value: String.raw`Te\,st,Test2` })
   );
   testParseCEL(
     'f1 in [f2,f3]',

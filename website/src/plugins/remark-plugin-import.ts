@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from 'fs';
+/* eslint-disable unicorn/prefer-module */
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
@@ -7,9 +8,9 @@ import { visit } from 'unist-util-visit';
 
 const importMdRegExp = /^%importmd\s+(.*?)$/;
 const importCodeRegExp = /^%importcode\s+(.*?)$/;
-const lineNumbersRegExp = /^L(\d+)(-(L(\d+))?)?$/i;
+const lineNumbersRegExp = /^l(\d+)(-(l(\d+))?)?$/i;
 const regionRegExp = /^region=(.+)$/i;
-const blockRegExp = /^blockName=(.+)$/i;
+const blockRegExp = /^blockname=(.+)$/i;
 const rootDir = path.resolve(__dirname, '../../..');
 
 const getSourceLink = (filePath: string, start?: number, end?: number) => {
@@ -47,7 +48,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
       if (mdImportMatches?.[1]) {
         const mdFilePath = path.resolve(vfile.path, '..', mdImportMatches[1]);
         if (existsSync(mdFilePath)) {
-          const rawMd = readFileSync(mdFilePath, 'utf-8');
+          const rawMd = readFileSync(mdFilePath, 'utf8');
           node.children = unified().use(remarkParse).use(remarkRehype).parse(rawMd).children;
         } else {
           throw new Error(`Unable to locate file at path: ${mdFilePath}`);
@@ -63,7 +64,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
         const codeFileAbsolutePath = path.join(rootDir, url);
 
         if (existsSync(codeFileAbsolutePath)) {
-          const rawCode = readFileSync(codeFileAbsolutePath, 'utf-8');
+          const rawCode = readFileSync(codeFileAbsolutePath, 'utf8');
           const codeLines = rawCode.split('\n');
           const lineNumbers = lineNumbersRegExp.exec(hash);
           const region = regionRegExp.exec(hash);
@@ -86,7 +87,9 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
             ];
           } else if (region) {
             const start = codeLines.findIndex(v => v.match(`^\\s*// #region ${region[1]}$`));
-            const end = codeLines.findIndex((v, i) => i >= start && v.match('^\\s*// #endregion'));
+            const end = codeLines.findIndex(
+              (v, i) => i >= start && v.match(String.raw`^\s*// #endregion`)
+            );
             if (start >= 0) {
               node.children = [
                 {
@@ -102,7 +105,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
             const start = codeLines.findIndex(v =>
               v.match(`^(export )?(const|let|type|interface) ${block[1]} \\{$`)
             );
-            const end = codeLines.findIndex((v, i) => i >= start && v.match(/^\}/));
+            const end = codeLines.findIndex((v, i) => i >= start && v.match(/^}/));
             if (start >= 0) {
               node.children = [
                 {

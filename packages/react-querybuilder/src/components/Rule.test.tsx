@@ -298,9 +298,9 @@ describe('valueSource', () => {
       fieldMap,
     });
     render(<Rule {...props} rule={{ ...props.rule, field: 'fvsa', valueSource: 'field' }} />);
-    expect(
-      screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
-    ).toHaveLength(2);
+    expect(screen.getByTestId(TestID.valueSourceSelector).querySelectorAll('option')).toHaveLength(
+      2
+    );
     expect(screen.getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
   });
 
@@ -311,9 +311,9 @@ describe('valueSource', () => {
       fieldMap,
     });
     render(<Rule {...props} rule={{ ...props.rule, field: 'fvsf', valueSource: 'field' }} />);
-    expect(
-      screen.getByTestId(TestID.valueSourceSelector).getElementsByTagName('option')
-    ).toHaveLength(2);
+    expect(screen.getByTestId(TestID.valueSourceSelector).querySelectorAll('option')).toHaveLength(
+      2
+    );
     expect(screen.getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
   });
 
@@ -342,9 +342,9 @@ describe('valueSource', () => {
         rule={{ ...props.rule, field: 'fvsa', value: 'fc2', valueSource: 'field' }}
       />
     );
-    expect(
-      screen.getByDisplayValue(fieldMap['fc2'].label).getElementsByTagName('option')
-    ).toHaveLength(2);
+    expect(screen.getByDisplayValue(fieldMap['fc2'].label).querySelectorAll('option')).toHaveLength(
+      2
+    );
     expect(screen.getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
   });
 });

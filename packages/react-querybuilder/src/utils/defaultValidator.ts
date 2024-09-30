@@ -56,13 +56,9 @@ export const defaultValidator: QueryValidator = query => {
     }
     /* istanbul ignore else */
     if (rg.id) {
-      if (reasons.length) {
-        result[rg.id] = { valid: false, reasons };
-      } else {
-        result[rg.id] = true;
-      }
+      result[rg.id] = reasons.length > 0 ? { valid: false, reasons } : true;
     }
-    rg.rules.forEach(r => {
+    for (const r of rg.rules) {
       if (typeof r === 'string') {
         // Validation for this case was done earlier
       } else if (isRuleGroup(r)) {
@@ -70,7 +66,7 @@ export const defaultValidator: QueryValidator = query => {
       } else {
         validateRule(r);
       }
-    });
+    }
   };
 
   validateGroup(query);

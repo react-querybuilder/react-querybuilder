@@ -18,10 +18,10 @@ export default [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginReact.configs.flat.recommended,
+  eslintPluginUnicorn.configs['flat/recommended'],
   {
     plugins: {
       'react-compiler': eslintPluginReactCompiler,
-      unicorn: eslintPluginUnicorn,
     },
     languageOptions: {
       globals: {
@@ -56,7 +56,16 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/no-unstable-nested-components': 'error',
       'react-compiler/react-compiler': 'error',
-      'unicorn/no-single-promise-in-promise-methods': 'warn',
+      'unicorn/catch-error-name': 'off',
+      'unicorn/consistent-function-scoping': 'off',
+      'unicorn/filename-case': 'off',
+      'unicorn/no-array-reduce': 'off',
+      'unicorn/no-nested-ternary': 'off',
+      'unicorn/no-null': 'off',
+      'unicorn/prefer-export-from': ['error', { ignoreUsedVariables: true }],
+      'unicorn/prefer-number-properties': 'off',
+      'unicorn/prevent-abbreviations': 'off',
+      'unicorn/switch-case-braces': 'off',
     },
   },
 ];

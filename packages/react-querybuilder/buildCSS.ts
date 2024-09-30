@@ -12,7 +12,7 @@ for await (const filePath of scssPaths) {
   const bunFile = Bun.file(filePath);
   const fileContent = await bunFile.text();
   const { css, sourceMap } = compile(filePath, { sourceMap: true, style: 'compressed' });
-  sourceMap!.sources = sourceMap!.sources.map(full2relativePath);
+  sourceMap!.sources = sourceMap!.sources.map(s => full2relativePath(s));
   const sourceMapText = JSON.stringify(sourceMap);
   const scssDistPath = src2dist(filePath);
   const cssDistPath = src2dist(scss2css(filePath));

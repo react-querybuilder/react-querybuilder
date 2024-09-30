@@ -57,7 +57,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         if (schema.qbId !== dragging.qbId) return true;
 
         const parentItemPath = getParentPath(dragging.path);
-        const itemIndex = dragging.path[dragging.path.length - 1];
+        const itemIndex = dragging.path.at(-1);
         // Disallow drop if...
         // prettier-ignore
         return !(

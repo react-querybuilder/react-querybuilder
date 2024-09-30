@@ -5,7 +5,7 @@ import { numericRegex as numericQuantityRegex } from 'numeric-quantity';
  * and E notation, with optional surrounding whitespace.
  */
 export const numericRegex: RegExp = new RegExp(
-  numericQuantityRegex.source.replace(/^\^/, '^\\s*').replace(/\$$/, '\\s*$')
+  numericQuantityRegex.source.replace(/^\^/, String.raw`^\s*`).replace(/\$$/, String.raw`\s*$`)
 );
 
 /**

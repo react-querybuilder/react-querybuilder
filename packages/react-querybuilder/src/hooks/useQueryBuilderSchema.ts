@@ -199,7 +199,7 @@ export function useQueryBuilderSchema<
   // passing back the parameter from the `onQueryChange` callback.
   const candidateQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
   const rootGroup = (
-    !candidateQuery.id ? prepareRuleGroup(candidateQuery, { idGenerator }) : candidateQuery
+    candidateQuery.id ? candidateQuery : prepareRuleGroup(candidateQuery, { idGenerator })
   ) as RuleGroupTypeAny<R>;
 
   const [initialQuery] = useState(rootGroup);

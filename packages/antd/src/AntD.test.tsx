@@ -39,7 +39,7 @@ jest.mock('antd', () => {
       onChange={e =>
         props.onChange!(
           props.mode === 'multiple'
-            ? Array.from(e.target.selectedOptions).map(opt => opt.value)
+            ? [...e.target.selectedOptions].map(opt => opt.value)
             : e.target.value,
           {
             label: '',
@@ -221,7 +221,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
     await user.click(findInput(container));
     await user.click(screen.getByTitle(today));
-    for (const el of Array.from(screen.getAllByText('02'))) {
+    for (const el of screen.getAllByText('02')) {
       await user.click(el);
     }
     await user.click(screen.getByText(/ok/i));
@@ -234,7 +234,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
     );
     await user.click(findInput(container));
-    for (const el of Array.from(screen.getAllByText('02'))) {
+    for (const el of screen.getAllByText('02')) {
       await user.click(el);
     }
     await user.click(screen.getByText(/ok/i));
@@ -246,7 +246,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       <AntDValueEditor {...props} inputType="time" value={'02:02:02'} />
     );
     await user.click(findInput(container));
-    for (const n of Array.from(screen.getAllByText('02'))) {
+    for (const n of screen.getAllByText('02')) {
       expect(hasOrInheritsClass(n, 'ant-picker-time-panel-cell-selected')).toBe(true);
     }
   });
@@ -341,7 +341,7 @@ it('renders with composition', () => {
   expect(
     screen
       .getAllByRole('button')
-      .map(b => Array.from(b.classList))
+      .map(b => [...b.classList])
       .some(el => el.some(c => c.startsWith('ant-')))
   ).toBe(true);
 });

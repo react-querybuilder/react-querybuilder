@@ -13,19 +13,19 @@ const App = () => {
     <DevLayout {...devApp}>
       <QueryBuilderTremor
         controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
-        {!devApp.optVals.independentCombinators ? (
-          <QueryBuilder
-            key="query"
-            {...devApp.commonRQBProps}
-            query={devApp.query}
-            onQueryChange={devApp.onQueryChange}
-          />
-        ) : (
+        {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"
             {...devApp.commonRQBProps}
             query={devApp.queryIC}
             onQueryChange={devApp.onQueryChangeIC}
+          />
+        ) : (
+          <QueryBuilder
+            key="query"
+            {...devApp.commonRQBProps}
+            query={devApp.query}
+            onQueryChange={devApp.onQueryChange}
           />
         )}
       </QueryBuilderTremor>
@@ -33,7 +33,7 @@ const App = () => {
   );
 };
 
-createRoot(document.getElementById('app')!).render(
+createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

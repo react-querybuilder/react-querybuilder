@@ -315,7 +315,7 @@ function parseJSONata(
       if (
         field &&
         fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
-        typeof value !== 'undefined'
+        value !== undefined
       ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }

@@ -248,10 +248,10 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       if (value === null && (operator === '=' || operator === '!=')) {
         operator = operator === '=' ? 'null' : 'notNull';
       } else if ((operator === 'in' || operator === 'notIn') && isCELList(right)) {
-        if (right.value.value.every(isCELLiteral)) {
-          value = right.value.value.map(evalCELLiteralValue);
+        if (right.value.value.every(v => isCELLiteral(v))) {
+          value = right.value.value.map(v => evalCELLiteralValue(v));
         } else {
-          if (right.value.value.every(isCELIdentifierOrChain)) {
+          if (right.value.value.every(v => isCELIdentifierOrChain(v))) {
             valueSource = 'field';
             value = right.value.value.map(id => getIdentifierFromChain(id));
           }
@@ -279,7 +279,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       if (
         field &&
         fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
-        typeof value !== 'undefined'
+        value !== undefined
       ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }

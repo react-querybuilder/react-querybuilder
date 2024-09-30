@@ -145,4 +145,4 @@ export const quoteFieldName = (
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const nullOrUndefinedOrEmpty = (v: any): boolean =>
-  v === null || typeof v === 'undefined' || v === '';
+  v === null || v === undefined || v === '';

@@ -193,7 +193,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     await act(async () => {
       await user.type(findInput(screen.getByTestId(TestID.valueEditor)), '02');
     });
-    expect(handleOnChange).toHaveBeenCalledWith(121402);
+    expect(handleOnChange).toHaveBeenCalledWith(121_402);
   });
 
   it('renders value editor as select', () => {

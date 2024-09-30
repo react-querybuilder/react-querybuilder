@@ -6,7 +6,7 @@ const colorPrimary = 'color: #82a7dd';
 const colorSecondary = 'color: #3c649f';
 const textShadowNone = 'text-shadow: none';
 const textShadow = 'text-shadow: 2px 2px 2px rgba(152, 152, 152, 0.69)';
-const s = `\u00a0`; // &nbsp;
+const s = `\u00A0`; // &nbsp;
 
 const rqb = `%c
 ██████%c╗%c${s}${s}${s}${s}${s}${s}${s}${s}█████%c╗%c${s}${s}${s}${s}${s}${s}${s}██████%c╗%c

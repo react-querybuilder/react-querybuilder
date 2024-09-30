@@ -19,6 +19,7 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
   rules: rule ? [rule] : [],
 });
 const icOpts = { independentCombinators: true } as const;
+const getValueSources = (): ValueSources => ['field'];
 
 describe('ignored/missing WHERE clauses', () => {
   it('SELECT statement without WHERE clause', () => {
@@ -186,7 +187,7 @@ is a ''bad'' guy!`,
       wrapRule({ field: 'firstName', operator: 'in', value: 'Test, 12, true' })
     );
     expect(parseSQL(`firstName IN ('Te,st', 12, true, lastName)`)).toEqual(
-      wrapRule({ field: 'firstName', operator: 'in', value: 'Te\\,st, 12, true' })
+      wrapRule({ field: 'firstName', operator: 'in', value: String.raw`Te\,st, 12, true` })
     );
     expect(parseSQL(`firstName NOT IN ('Test', 12, true, lastName)`)).toEqual(
       wrapRule({
@@ -226,7 +227,7 @@ is a ''bad'' guy!`,
       wrapRule({ field: 'age', operator: 'notBetween', value: '12, 14' })
     );
     expect(parseSQL(`age BETWEEN 'this, that' AND 'the other'`)).toEqual(
-      wrapRule({ field: 'age', operator: 'between', value: 'this\\, that, the other' })
+      wrapRule({ field: 'age', operator: 'between', value: String.raw`this\, that, the other` })
     );
   });
 });
@@ -320,7 +321,6 @@ describe('options', () => {
       ] satisfies Field[]
     ).map(o => toFullOption(o));
     const optionGroups: OptionGroup<FullField>[] = [{ label: 'Option Group1', options: fields }];
-    const getValueSources = (): ValueSources => ['field'];
 
     it('sets the valueSource when fields are valid', () => {
       expect(parseSQL(`f1 = 'Steve'`, { fields })).toEqual(
