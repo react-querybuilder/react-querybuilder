@@ -10,7 +10,7 @@ on:
         type: choice
         options:
           - dryrun
-          - live
+          - publish
       versionBump:
         description: 'Version bump strategy'
         required: true
@@ -70,7 +70,7 @@ jobs:
           echo "customVersionTag:      ${{ inputs.customVersionTag }}"
           echo "NPM_CONFIG_PROVENANCE: ${{ env.NPM_CONFIG_PROVENANCE }}"
       - name: Bump version
-        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
+        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'publish' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
       - name: Publish
-        if: inputs.runType == 'live'
+        if: inputs.runType == 'publish'
         run: npx lerna publish from-git --yes --dist-tag ${{ inputs.versionTag }}
