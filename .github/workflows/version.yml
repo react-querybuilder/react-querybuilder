@@ -14,7 +14,7 @@ on:
       versionBump:
         description: 'Version bump strategy'
         required: true
-        default: patch
+        default: prepatch
         type: choice
         options:
           - major
@@ -44,6 +44,8 @@ on:
 jobs:
   Bump_version:
     runs-on: ubuntu-latest
+    env:
+      NPM_CONFIG_PROVENANCE: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -57,12 +59,14 @@ jobs:
           git config --global user.email "actions@github.com"
       - name: Echo variables
         run: |
-          echo "versionBump:       ${{ inputs.versionBump }}"
-          echo "customVersion:     ${{ inputs.customVersion }}"
-          echo "runType:           ${{ inputs.runType }}"
-          echo "versionTag:        ${{ inputs.versionTag }}"
-          echo "customVersionTag:  ${{ inputs.customVersionTag }}"
-      - name: Bump version with Lerna
-        run: echo "npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}"
-        # TODO: when publishing add `--dist-tag ${{ inputs.versionTag }}`
-      # - run: git diff
+          echo "versionBump:           ${{ inputs.versionBump }}"
+          echo "customVersion:         ${{ inputs.customVersion }}"
+          echo "runType:               ${{ inputs.runType }}"
+          echo "versionTag:            ${{ inputs.versionTag }}"
+          echo "customVersionTag:      ${{ inputs.customVersionTag }}"
+          echo "NPM_CONFIG_PROVENANCE: ${{ env.NPM_CONFIG_PROVENANCE }}"
+      - name: Bump version
+        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
+      - run: git diff
+      # - name: Publish
+      #   run: npx lerna publish from-git --dist-tag ${{ inputs.versionTag }}
