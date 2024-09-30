@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/material",
   "description": "Custom MUI (Material Design) components for react-querybuilder",
-  "version": "7.8.0-alpha.0",
+  "version": "7.7.0-alpha.1",
   "publishConfig": {
     "access": "public"
   },
@@ -61,6 +61,6 @@
     "@mui/icons-material": ">=5",
     "@mui/material": ">=5",
     "react": ">=18",
-    "react-querybuilder": "7.8.0-alpha.0"
+    "react-querybuilder": "7.7.0-alpha.1"
   }
 }
