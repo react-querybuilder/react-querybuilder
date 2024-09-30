@@ -45,6 +45,7 @@ jobs:
   Bump_version:
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       id-token: write
     env:
       NPM_CONFIG_PROVENANCE: true
