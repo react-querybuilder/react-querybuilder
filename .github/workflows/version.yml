@@ -6,15 +6,15 @@ on:
       runType:
         description: 'Run type'
         required: true
-        default: dryrun
+        default: Dry run
         type: choice
         options:
-          - dryrun
-          - publish
+          - Dry run
+          - Live
       versionBump:
         description: 'Version bump strategy'
         required: true
-        default: prepatch
+        default: prerelease
         type: choice
         options:
           - major
@@ -46,4 +46,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
       - name: Bump version
-        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'publish' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
+        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'Live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
