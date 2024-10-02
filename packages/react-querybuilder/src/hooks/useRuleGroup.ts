@@ -3,19 +3,13 @@ import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
 import type {
-  DropEffect,
-  FullOption,
+  Classnames,
+  ActionElementEventHandler,
   Path,
-  QueryActions,
-  RuleGroupICArray,
   RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-  RuleOrGroupArray,
-  RuleType,
-  Schema,
-  Translations,
   ValidationResult,
 } from '../types';
 import {
@@ -28,95 +22,46 @@ import {
 } from '../utils';
 import { clsx } from '../utils/clsx';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type UseRuleGroup = Omit<RuleGroupProps, 'ruleGroup'> & {
+  addGroup: ActionElementEventHandler;
+  addRule: ActionElementEventHandler;
+  accessibleDescription: string;
+  classNames: Pick<
+    { [k in keyof Classnames]: string },
+    | 'header'
+    | 'shiftActions'
+    | 'dragHandle'
+    | 'combinators'
+    | 'notToggle'
+    | 'addRule'
+    | 'addGroup'
+    | 'cloneGroup'
+    | 'lockGroup'
+    | 'removeGroup'
+    | 'body'
+  >;
+  cloneGroup: ActionElementEventHandler;
+  onCombinatorChange: ActionElementEventHandler;
+  onGroupAdd: (group: RuleGroupTypeAny, parentPath: Path, context?: any) => void;
+  onIndependentCombinatorChange: (value: any, index: number, context?: any) => void;
+  onNotToggleChange: (checked: boolean, context?: any) => void;
+  outerClassName: string;
+  pathsMemo: { path: Path; disabled: boolean }[];
+  removeGroup: ActionElementEventHandler;
+  ruleGroup: RuleGroupType | RuleGroupTypeIC;
+  shiftGroupDown: (event?: MouseEvent, context?: any) => void;
+  shiftGroupUp: (event?: MouseEvent, context?: any) => void;
+  toggleLockGroup: ActionElementEventHandler;
+  validationClassName: string;
+  validationResult: boolean | ValidationResult;
+};
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.
  */
-export const useRuleGroup = (
-  props: RuleGroupProps
-): {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addGroup: (_event?: any, context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addRule: (_event?: any, context?: any) => void;
-  accessibleDescription: string;
-  classNames: {
-    header: string;
-    shiftActions: string;
-    dragHandle: string;
-    combinators: string;
-    notToggle: string;
-    addRule: string;
-    addGroup: string;
-    cloneGroup: string;
-    lockGroup: string;
-    removeGroup: string;
-    body: string;
-  };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cloneGroup: (_event?: any, _context?: any) => void;
-  combinator: string;
-  disabled: boolean;
-  dragMonitorId: string | symbol;
-  dragRef: React.Ref<HTMLSpanElement>;
-  dropMonitorId: string | symbol;
-  dropRef: React.Ref<HTMLDivElement>;
-  isDragging: boolean;
-  isOver: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onCombinatorChange: (value: any, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onGroupAdd: (group: RuleGroupTypeAny, parentPath: Path, context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onIndependentCombinatorChange: (value: any, index: number, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onNotToggleChange: (checked: boolean, _context?: any) => void;
-  outerClassName: string;
-  parentDisabled: boolean | undefined;
-  pathsMemo: {
-    path: Path;
-    disabled: boolean;
-  }[];
-  previewRef: React.Ref<HTMLDivElement>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  removeGroup: (_event?: any, _context?: any) => void;
-  ruleGroup: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | RuleGroupType<RuleType<string, string, any, string>, string>
-    | {
-        combinator?: string | undefined;
-        rules: RuleGroupICArray<
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          RuleGroupTypeIC<RuleType<string, string, any, string>, string>,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          RuleType<string, string, any, string>,
-          string
-        >;
-        combinatorPreceding?: string | undefined;
-        not?: boolean | undefined;
-        path?: Path | undefined;
-        id?: string | undefined;
-        disabled?: boolean | undefined;
-      };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  shiftGroupUp: (event?: MouseEvent, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  shiftGroupDown: (event?: MouseEvent, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toggleLockGroup: (_event?: any, _context?: any) => void;
-  validationClassName: string;
-  validationResult: boolean | ValidationResult;
-  rules?: RuleOrGroupArray;
-  not?: boolean;
-  id?: string;
-  path: Path;
-  translations: Translations;
-  schema: Schema<FullOption<string>, string>;
-  actions: QueryActions;
-  shiftUpDisabled?: boolean;
-  shiftDownDisabled?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: any;
-  dropEffect?: DropEffect | undefined;
-} => {
+export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const {
     id,
     path,
@@ -171,13 +116,18 @@ export const useRuleGroup = (
     [combinatorProp, combinators, ruleGroupProp]
   );
 
-  const ruleGroup = useMemo(
-    () =>
-      ruleGroupProp
-        ? { ...ruleGroupProp, ...(!independentCombinators ? { combinator } : {}) }
-        : ({ rules: rulesProp, not: notProp } as RuleGroupTypeAny),
-    [combinator, independentCombinators, notProp, ruleGroupProp, rulesProp]
-  );
+  // TODO: Type this properly with generics
+  const ruleGroup = useMemo((): RuleGroupTypeAny => {
+    if (ruleGroupProp) {
+      if (ruleGroupProp.combinator === combinator || independentCombinators) {
+        return ruleGroupProp;
+      }
+      const newRG = structuredClone(ruleGroupProp);
+      newRG.combinator = combinator;
+      return newRG;
+    }
+    return { rules: rulesProp, not: notProp } as RuleGroupTypeAny;
+  }, [combinator, independentCombinators, notProp, ruleGroupProp, rulesProp]);
 
   const classNames = useMemo(
     () => ({
@@ -237,9 +187,8 @@ export const useRuleGroup = (
     ]
   );
 
-  const onCombinatorChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (value: any, _context?: any) => {
+  const onCombinatorChange: ActionElementEventHandler = useCallback(
+    value => {
       if (!disabled) {
         onPropChange('combinator', value, path);
       }
@@ -267,9 +216,8 @@ export const useRuleGroup = (
     [disabled, onPropChange, path]
   );
 
-  const addRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, context?: any) => {
+  const addRule: ActionElementEventHandler = useCallback(
+    (_e, context) => {
       if (!disabled) {
         const newRule = createRule();
         onRuleAdd(newRule, path, context);
@@ -278,9 +226,8 @@ export const useRuleGroup = (
     [createRule, disabled, onRuleAdd, path]
   );
 
-  const addGroup = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, context?: any) => {
+  const addGroup: ActionElementEventHandler = useCallback(
+    (_e, context) => {
       if (!disabled) {
         const newGroup = createRuleGroup(independentCombinators);
         onGroupAdd(newGroup, path, context);
@@ -289,16 +236,12 @@ export const useRuleGroup = (
     [createRuleGroup, disabled, independentCombinators, onGroupAdd, path]
   );
 
-  const cloneGroup = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, _context?: any) => {
-      if (!disabled) {
-        const newPath = [...getParentPath(path), path[path.length - 1] + 1];
-        moveRule(path, newPath, true);
-      }
-    },
-    [disabled, moveRule, path]
-  );
+  const cloneGroup: ActionElementEventHandler = useCallback(() => {
+    if (!disabled) {
+      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+      moveRule(path, newPath, true);
+    }
+  }, [disabled, moveRule, path]);
 
   const shiftGroupUp = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -320,23 +263,15 @@ export const useRuleGroup = (
     [disabled, moveRule, path, shiftDownDisabled]
   );
 
-  const toggleLockGroup = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, _context?: any) => {
-      onPropChange('disabled', !disabled, path);
-    },
-    [disabled, onPropChange, path]
-  );
+  const toggleLockGroup: ActionElementEventHandler = useCallback(() => {
+    onPropChange('disabled', !disabled, path);
+  }, [disabled, onPropChange, path]);
 
-  const removeGroup = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, _context?: any) => {
-      if (!disabled) {
-        onGroupRemove(path);
-      }
-    },
-    [disabled, onGroupRemove, path]
-  );
+  const removeGroup: ActionElementEventHandler = useCallback(() => {
+    if (!disabled) {
+      onGroupRemove(path);
+    }
+  }, [disabled, onGroupRemove, path]);
 
   const validationResult = useMemo(
     () => validationMap[id ?? /* istanbul ignore next */ ''],

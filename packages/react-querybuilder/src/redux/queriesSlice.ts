@@ -15,18 +15,15 @@ export const queriesSlice: Slice<
   QueriesSliceState,
   {
     setQueryState: (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      state: any,
+      state: QueriesSliceState,
       {
         payload: { qbId, query },
       }: PayloadAction<SetQueryStateParams>
     ) => void;
   },
-  string,
-  string,
-  {
-    getQuerySelectorById: (state: QueriesSliceState, qbId: string) => RuleGroupTypeAny;
-  }
+  'queries',
+  'queries',
+  { getQuerySelectorById: (state: QueriesSliceState, qbId: string) => RuleGroupTypeAny }
 > = createSlice({
   name: 'queries',
   initialState,
@@ -38,4 +35,4 @@ export const queriesSlice: Slice<
   selectors: {
     getQuerySelectorById: (state: QueriesSliceState, qbId: string) => state[qbId],
   },
-}) satisfies Slice;
+});

@@ -7,8 +7,6 @@ import {
   useRQB_INTERNAL_QueryBuilderStore,
 } from '../redux/_internal';
 import type {
-  Classnames,
-  Controls,
   FullCombinator,
   FullField,
   FullOperator,
@@ -20,7 +18,6 @@ import type {
   QueryBuilderProps,
   QueryValidator,
   RuleGroupProps,
-  RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   Schema,
@@ -44,7 +41,7 @@ import {
 import { clsx } from '../utils/clsx';
 import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
 import { useDeprecatedProps } from './useDeprecatedProps';
-import type { useQueryBuilderSetup } from './useQueryBuilderSetup';
+import type { UseQueryBuilderSetup } from './useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
@@ -58,6 +55,24 @@ const defaultOnLog = (...params: unknown[]) => {
   console.log(...params);
 };
 
+export type UseQueryBuilderSchema<
+  RG extends RuleGroupTypeAny,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
+> = Pick<UseQueryBuilderSetup<RG, F, O, C>, 'rqbContext'> & {
+  actions: QueryActions;
+  rootGroup: RuleGroupTypeAny<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>;
+  rootGroupDisabled: boolean;
+  queryDisabled: boolean;
+  schema: Schema<F, GetOptionIdentifierType<O>>;
+  translations: TranslationsFull;
+  wrapperClassName: string;
+  dndEnabledAttr: string;
+  inlineCombinatorsAttr: string;
+  combinatorPropObject: Pick<RuleGroupProps, 'combinator'>;
+};
+
 /**
  * For given {@link QueryBuilderProps} and setup values from {@link useQueryBuilderSetup},
  * prepares and returns all values required to render a query builder.
@@ -69,31 +84,8 @@ export function useQueryBuilderSchema<
   C extends FullCombinator,
 >(
   props: QueryBuilderProps<RG, F, O, C>,
-  setup: ReturnType<typeof useQueryBuilderSetup<RG, F, O, C>>
-): {
-  actions: QueryActions;
-  rootGroup: RuleGroupTypeAny<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>;
-  rootGroupDisabled: boolean;
-  queryDisabled: boolean;
-  rqbContext: {
-    initialQuery:
-      | RuleGroupType<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>, string>
-      | RuleGroupTypeIC<GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>, string>;
-    controlElements: Controls<F, GetOptionIdentifierType<O>>;
-    enableMountQueryChange: boolean;
-    controlClassnames: Classnames;
-    translations: TranslationsFull;
-    enableDragAndDrop: boolean;
-    debugMode: boolean;
-    qbId?: string;
-  };
-  schema: Schema<F, GetOptionIdentifierType<O>>;
-  translations: TranslationsFull;
-  wrapperClassName: string;
-  dndEnabledAttr: string;
-  inlineCombinatorsAttr: string;
-  combinatorPropObject: Pick<RuleGroupProps, 'combinator'>;
-} {
+  setup: UseQueryBuilderSetup<RG, F, O, C>
+): UseQueryBuilderSchema<RG, F, O, C> {
   type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
 
   const {
