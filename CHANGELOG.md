@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#769] Type `ParseNumbersMethod` renamed to `ParseNumberMethod` (singular) to better reflect its assocation with the `parseNumber` method as opposed to the `parseNumbers` prop.
 - [#769] Internally, the default MongoDB rule processor for `formatQuery` uses actual JSON objects instead of manually constructing `JSON.parse`-able strings. This should lead to more reliably valid results.
 - [#769] When generating SQL for a rule where (1) the `operator` is "between" or "notBetween", (2) the values are numeric, and (3) `parseNumbers` is `true`, `formatQuery` will place the smaller value first and the larger value second, regardless of their order in the rule's `value` property.
+- `MantineValueSelector` no longer sets the value to `""` when clicking the selected option again.
 
 ## [v7.6.1] - 2024-08-02
 
