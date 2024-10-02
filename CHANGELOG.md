@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#769] Internally, the default MongoDB rule processor for `formatQuery` uses actual JSON objects instead of manually constructing `JSON.parse`-able strings. This should lead to more reliably valid results.
 - [#769] When generating SQL for a rule where (1) the `operator` is "between" or "notBetween", (2) the values are numeric, and (3) `parseNumbers` is `true`, `formatQuery` will place the smaller value first and the larger value second, regardless of their order in the rule's `value` property.
 - [#779] When `parseJSONata` encounters an expression group where only two conditions exist for the same field, one greater-than and one less-than, a single "between"/"notBetween" rule will be generated. Previously a rule group with two separate rules would be generated.
+- [#783] `MantineValueSelector` no longer sets the value to `""` when clicking the selected option again.
 
 ## [v7.6.1] - 2024-08-02
 
@@ -1754,6 +1755,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#755]: https://github.com/react-querybuilder/react-querybuilder/pull/755
 [#769]: https://github.com/react-querybuilder/react-querybuilder/pull/769
 [#779]: https://github.com/react-querybuilder/react-querybuilder/pull/779
+[#783]: https://github.com/react-querybuilder/react-querybuilder/pull/783
 
 <!-- #endregion -->
 

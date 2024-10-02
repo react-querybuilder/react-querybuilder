@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionTag:
+        description: 'Version tag'
+        required: true
+        default: next
+        type: choice
+        options:
+          - next
+          - latest
+          - custom
+      customVersionTag:
+        description: 'Custom version tag'
+        type: string
+
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      NPM_CONFIG_PROVENANCE: true
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bun --bun run build
+      - name: Publish
+        run: npx lerna publish from-git --yes --dist-tag ${{ inputs.versionTag == 'custom' && inputs.customVersionTag || inputs.versionTag }}

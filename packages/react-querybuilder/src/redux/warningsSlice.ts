@@ -1,4 +1,4 @@
-import type { PayloadAction, Slice, SliceSelectors } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { messages } from '../messages';
 
@@ -23,11 +23,6 @@ export const initialState: WarningsSliceState = {
   [messages.errorEnabledDndWithoutReactDnD]: false,
 };
 
-// export type WarningsSliceState = Record<keyof typeof messages, boolean>;
-// export const initialState = Object.fromEntries(
-//   Object.keys(messages).map(key => [key, false])
-// ) as WarningsSliceState;
-
 export const warningsSlice: Slice<
   {
     [messages.errorInvalidIndependentCombinatorsProp]: boolean;
@@ -43,10 +38,7 @@ export const warningsSlice: Slice<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rqbWarn: (state: any, { payload }: PayloadAction<Messages>) => void;
   },
-  string,
-  string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SliceSelectors<any>
+  'warnings'
 > = createSlice({
   name: 'warnings',
   initialState,
@@ -58,4 +50,4 @@ export const warningsSlice: Slice<
       }
     },
   },
-}) satisfies Slice;
+});

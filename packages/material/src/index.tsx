@@ -24,7 +24,7 @@ export * from './MaterialShiftActions';
 export * from './MaterialValueEditor';
 export * from './MaterialValueSelector';
 export * from './RQBMaterialContext';
-export type { RQBMaterialComponents } from './types';
+export * from './types';
 export * from './useMuiComponents';
 export { materialTranslations };
 

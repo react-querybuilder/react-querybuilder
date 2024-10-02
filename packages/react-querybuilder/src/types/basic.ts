@@ -46,6 +46,14 @@ export type ValueEditorType =
  */
 export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
+export type ValueSourceOptions = ToOptionArrays<ValueSources>;
+
+type ToOptionArrays<Sources extends readonly string[]> = Sources extends unknown
+  ? {
+      [K in keyof Sources]: { name: Sources[K]; value: Sources[K]; label: Sources[K] };
+    }
+  : never;
+
 interface HasOptionalClassName {
   className?: Classname;
 }
@@ -77,6 +85,9 @@ export type InputType =
   | 'url'
   | 'week'
   | (string & {});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ActionElementEventHandler = (event?: any, context?: any) => void;
 
 /**
  * Base for all Field types/interfaces.

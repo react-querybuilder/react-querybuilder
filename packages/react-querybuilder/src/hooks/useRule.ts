@@ -3,23 +3,18 @@ import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
 import type {
-  DropEffect,
+  ActionElementEventHandler,
   FlexibleOptionList,
   FullField,
   FullOperator,
-  FullOption,
   InputType,
   Option,
-  OptionGroup,
-  Path,
-  QueryActions,
+  OptionList,
   RuleProps,
   RuleType,
-  Schema,
-  Translations,
   ValidationResult,
   ValueEditorType,
-  ValueSource,
+  ValueSourceOptions,
   ValueSources,
 } from '../types';
 import {
@@ -30,12 +25,8 @@ import {
 } from '../utils';
 import { clsx } from '../utils/clsx';
 
-/**
- * Prepares all values and methods used by the {@link Rule} component.
- */
-export const useRule = (
-  props: RuleProps
-): {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type UseRule = RuleProps & {
   classNames: {
     shiftActions: string;
     dragHandle: string;
@@ -47,61 +38,32 @@ export const useRule = (
     lockRule: string;
     removeRule: string;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cloneRule: (_event?: any, _context?: any) => void;
-  disabled: boolean;
-  dndRef: React.Ref<HTMLDivElement>;
-  dragMonitorId: string | symbol;
-  dragRef: React.Ref<HTMLSpanElement>;
-  dropMonitorId: string | symbol;
+  cloneRule: ActionElementEventHandler;
   fieldData: FullField<string, string, string, Option<string>, Option<string>>;
   generateOnChangeHandler: (
     prop: Exclude<keyof RuleType, 'id' | 'path'>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ) => (value: any, _context?: any) => void;
+  ) => ActionElementEventHandler;
   hideValueControls: boolean;
   inputType: InputType | null;
-  operators: FullOperator<string>[] | OptionGroup<FullOperator<string>>[];
+  operators: OptionList<FullOperator>;
   outerClassName: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  removeRule: (_event?: any, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rule: RuleType<string, string, any, string>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  removeRule: ActionElementEventHandler;
   shiftRuleUp: (event?: MouseEvent, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   shiftRuleDown: (event?: MouseEvent, _context?: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toggleLockRule: (_event?: any, _context?: any) => void;
+  toggleLockRule: ActionElementEventHandler;
   validationResult: boolean | ValidationResult;
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
   values: FlexibleOptionList<Option<string>>;
-  valueSourceOptions: {
-    name: 'field' | 'value';
-    value: 'field' | 'value';
-    label: 'field' | 'value';
-  }[];
+  valueSourceOptions: ValueSourceOptions;
   valueSources: ValueSources;
-  field?: string;
-  operator?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value?: any;
-  valueSource?: ValueSource;
-  id?: string;
-  path: Path;
-  parentDisabled?: boolean;
-  translations: Translations;
-  schema: Schema<FullOption<string>, string>;
-  actions: QueryActions;
-  shiftUpDisabled?: boolean;
-  shiftDownDisabled?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: any;
-  isDragging?: boolean | undefined;
-  isOver?: boolean | undefined;
-  dropEffect?: DropEffect | undefined;
-} => {
+};
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+/**
+ * Prepares all values and methods used by the {@link Rule} component.
+ */
+export const useRule = (props: RuleProps): UseRule => {
   const {
     id,
     path,
@@ -214,16 +176,12 @@ export const useRule = (
     [disabled, onPropChange, path]
   );
 
-  const cloneRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, _context?: any) => {
-      if (!disabled) {
-        const newPath = [...getParentPath(path), path.at(-1)! + 1];
-        moveRule(path, newPath, true);
-      }
-    },
-    [disabled, moveRule, path]
-  );
+  const cloneRule: ActionElementEventHandler = useCallback(() => {
+    if (!disabled) {
+      const newPath = [...getParentPath(path), path.at(-1)! + 1];
+      moveRule(path, newPath, true);
+    }
+  }, [disabled, moveRule, path]);
 
   const toggleLockRule = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -308,7 +266,7 @@ export const useRule = (
     [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
   );
   const valueSourceOptions = useMemo(
-    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })),
+    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceOptions,
     [valueSources]
   );
 

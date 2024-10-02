@@ -507,6 +507,19 @@ it('warns about deprecated props', async () => {
   expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
 });
 
+it('sets default combinator when ruleGroup does not have one', () => {
+  render(
+    <RuleGroup
+      {
+        ...getRuleGroupProps(/* *not* `independentCombinators` */)
+      }
+      ruleGroup={{ rules: [] }}
+      combinator="or"
+    />
+  );
+  expect(screen.getByTestId(TestID.combinators)).toHaveValue('and');
+});
+
 it('warns about deprecated props (independent combinators)', async () => {
   const addListener = jest.fn();
   render(

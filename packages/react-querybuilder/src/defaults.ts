@@ -1,41 +1,44 @@
 import type {
   Classnames,
-  DefaultCombinator,
-  DefaultCombinatorExtended,
-  DefaultOperator,
+  DefaultCombinatorName,
+  DefaultCombinatorNameExtended,
   DefaultOperatorName,
+  FullOption,
   TranslationsFull,
 } from './types/index.noReact';
 
 // DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
 // to generate code snippets in the documentation.
 
-const placeholderName = '~';
-const placeholderLabel = '------';
+export const defaultPlaceholderName = '~';
+export const defaultPlaceholderLabel = '------';
 /**
  * Default `name` for placeholder option in the `fields` array.
  */
-export const defaultPlaceholderFieldName: typeof placeholderName = placeholderName;
+export const defaultPlaceholderFieldName: typeof defaultPlaceholderName = defaultPlaceholderName;
 /**
  * Default `label` for placeholder option in the `fields` array.
  */
-export const defaultPlaceholderFieldLabel: typeof placeholderLabel = placeholderLabel;
+export const defaultPlaceholderFieldLabel: typeof defaultPlaceholderLabel = defaultPlaceholderLabel;
 /**
  * Default `label` for placeholder option group in the `fields` array.
  */
-export const defaultPlaceholderFieldGroupLabel: typeof placeholderLabel = placeholderLabel;
+export const defaultPlaceholderFieldGroupLabel: typeof defaultPlaceholderLabel =
+  defaultPlaceholderLabel;
 /**
  * Default `name` for placeholder option in the `operators` array.
  */
-export const defaultPlaceholderOperatorName: typeof placeholderName = placeholderName;
+export const defaultPlaceholderOperatorName: typeof defaultPlaceholderName = defaultPlaceholderName;
 /**
  * Default `label` for placeholder option in the `operators` array.
  */
-export const defaultPlaceholderOperatorLabel: typeof placeholderLabel = placeholderLabel;
+export const defaultPlaceholderOperatorLabel: typeof defaultPlaceholderLabel =
+  defaultPlaceholderLabel;
 /**
  * Default `label` for placeholder option group in the `operators` array.
  */
-export const defaultPlaceholderOperatorGroupLabel: typeof placeholderLabel = placeholderLabel;
+export const defaultPlaceholderOperatorGroupLabel: typeof defaultPlaceholderLabel =
+  defaultPlaceholderLabel;
 
 /**
  * Default character used to `.join` and `.split` arrays.
@@ -127,30 +130,33 @@ export const defaultTranslations: TranslationsFull = {
 } satisfies TranslationsFull;
 // #endregion
 
+type StringUnionToFullOptionArray<Op extends string> = Op extends unknown ? FullOption<Op> : never;
+export type DefaultOperators = StringUnionToFullOptionArray<DefaultOperatorName>[];
+
 /**
  * Default operator list.
  */
 // #region docs-operators
-export const defaultOperators: DefaultOperator[] = [
-  { name: '=', value: '=', label: '=' } as const,
-  { name: '!=', value: '!=', label: '!=' } as const,
-  { name: '<', value: '<', label: '<' } as const,
-  { name: '>', value: '>', label: '>' } as const,
-  { name: '<=', value: '<=', label: '<=' } as const,
-  { name: '>=', value: '>=', label: '>=' } as const,
-  { name: 'contains', value: 'contains', label: 'contains' } as const,
-  { name: 'beginsWith', value: 'beginsWith', label: 'begins with' } as const,
-  { name: 'endsWith', value: 'endsWith', label: 'ends with' } as const,
-  { name: 'doesNotContain', value: 'doesNotContain', label: 'does not contain' } as const,
-  { name: 'doesNotBeginWith', value: 'doesNotBeginWith', label: 'does not begin with' } as const,
-  { name: 'doesNotEndWith', value: 'doesNotEndWith', label: 'does not end with' } as const,
-  { name: 'null', value: 'null', label: 'is null' } as const,
-  { name: 'notNull', value: 'notNull', label: 'is not null' } as const,
-  { name: 'in', value: 'in', label: 'in' } as const,
-  { name: 'notIn', value: 'notIn', label: 'not in' } as const,
-  { name: 'between', value: 'between', label: 'between' } as const,
-  { name: 'notBetween', value: 'notBetween', label: 'not between' } as const,
-] satisfies DefaultOperator[];
+export const defaultOperators: DefaultOperators = [
+  { name: '=', value: '=', label: '=' },
+  { name: '!=', value: '!=', label: '!=' },
+  { name: '<', value: '<', label: '<' },
+  { name: '>', value: '>', label: '>' },
+  { name: '<=', value: '<=', label: '<=' },
+  { name: '>=', value: '>=', label: '>=' },
+  { name: 'contains', value: 'contains', label: 'contains' },
+  { name: 'beginsWith', value: 'beginsWith', label: 'begins with' },
+  { name: 'endsWith', value: 'endsWith', label: 'ends with' },
+  { name: 'doesNotContain', value: 'doesNotContain', label: 'does not contain' },
+  { name: 'doesNotBeginWith', value: 'doesNotBeginWith', label: 'does not begin with' },
+  { name: 'doesNotEndWith', value: 'doesNotEndWith', label: 'does not end with' },
+  { name: 'null', value: 'null', label: 'is null' },
+  { name: 'notNull', value: 'notNull', label: 'is not null' },
+  { name: 'in', value: 'in', label: 'in' },
+  { name: 'notIn', value: 'notIn', label: 'not in' },
+  { name: 'between', value: 'between', label: 'between' },
+  { name: 'notBetween', value: 'notBetween', label: 'not between' },
+];
 // #endregion
 
 /**
@@ -177,23 +183,28 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   null: 'notNull',
 } satisfies Record<DefaultOperatorName, DefaultOperatorName>;
 
+export type DefaultCombinators = StringUnionToFullOptionArray<DefaultCombinatorName>[];
+
 /**
  * Default combinator list.
  */
 // #region docs-combinators
-export const defaultCombinators: DefaultCombinator[] = [
+export const defaultCombinators: DefaultCombinators = [
   { name: 'and', value: 'and', label: 'AND' } as const,
   { name: 'or', value: 'or', label: 'OR' } as const,
-] satisfies DefaultCombinator[];
+];
 // #endregion
+
+export type DefaultCombinatorsExtended =
+  StringUnionToFullOptionArray<DefaultCombinatorNameExtended>[];
 
 /**
  * Default combinator list, with `XOR` added.
  */
-export const defaultCombinatorsExtended: DefaultCombinatorExtended[] = [
+export const defaultCombinatorsExtended: DefaultCombinatorsExtended = [
   ...defaultCombinators,
   { name: 'xor', value: 'xor', label: 'XOR' } as const,
-] satisfies DefaultCombinatorExtended[];
+];
 
 /**
  * Standard classnames applied to each component.

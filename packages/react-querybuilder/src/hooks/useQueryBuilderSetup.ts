@@ -56,18 +56,12 @@ const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) 
   return firstOption;
 };
 
-/**
- * Massages the props as necessary and prepares the basic update/generate methods
- * for use by the {@link QueryBuilder} component.
- */
-export const useQueryBuilderSetup = <
+export type UseQueryBuilderSetup<
   RG extends RuleGroupTypeAny,
   F extends FullField,
   O extends FullOperator,
   C extends FullCombinator,
->(
-  props: QueryBuilderProps<RG, F, O, C>
-): {
+> = {
   qbId: string;
   rqbContext: UseMergedContextReturn<F, GetOptionIdentifierType<O>>;
   fields: FullOptionList<F>;
@@ -95,7 +89,20 @@ export const useQueryBuilderSetup = <
     getValuesMain: (
       ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getValues']>>
     ) => FullOptionList<Option>;
-  } => {
+  };
+
+/**
+ * Massages the props as necessary and prepares the basic update/generate methods
+ * for use by the {@link QueryBuilder} component.
+ */
+export const useQueryBuilderSetup = <
+  RG extends RuleGroupTypeAny,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
+>(
+  props: QueryBuilderProps<RG, F, O, C>
+): UseQueryBuilderSetup<RG, F, O, C> => {
   type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   type FieldName = GetOptionIdentifierType<F>;
   type OperatorName = GetOptionIdentifierType<O>;
