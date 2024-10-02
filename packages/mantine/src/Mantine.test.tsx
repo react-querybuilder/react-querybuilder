@@ -118,7 +118,7 @@ describe('MantineValueSelector', () => {
       />
     );
     await user.click(screen.getByRole('textbox').querySelector('button')!);
-    expect(handleOnChange).toHaveBeenNthCalledWith(2, '');
+    expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt2');
   });
 
   it('handles multiselect', async () => {
