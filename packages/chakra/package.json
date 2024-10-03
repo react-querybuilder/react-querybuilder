@@ -39,8 +39,8 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@chakra-ui/icons": "^2.2.2",
-    "@chakra-ui/react": "^2.9.3",
+    "@chakra-ui/icons": "^2.2.3",
+    "@chakra-ui/react": "^2.9.4",
     "@chakra-ui/system": "^2.6.2",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -48,7 +48,7 @@
     "@testing-library/react": "^16.0.1",
     "@types/react": "^18.3.11",
     "@vitejs/plugin-react-swc": "^3.7.1",
-    "framer-motion": "^11.9.0",
+    "framer-motion": "^11.11.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-querybuilder": "workspace:*",

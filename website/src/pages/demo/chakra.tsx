@@ -5,8 +5,8 @@ import {
   ColorModeScript,
   extendTheme,
   useColorMode as useChakraColorMode,
+  withDefaultVariant,
 } from '@chakra-ui/react';
-import { withDefaultVariant } from '@chakra-ui/theme-utils';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
