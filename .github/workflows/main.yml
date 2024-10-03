@@ -42,6 +42,5 @@ jobs:
         with:
           node-version: '20'
       - uses: oven-sh/setup-bun@v1
-      - run: bunx oxlint@latest --config=./oxlintrc.json --format=github
       - run: bun install --frozen-lockfile
-      - run: bun run lint
+      - run: bun --bun run lint

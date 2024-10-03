@@ -78,7 +78,7 @@ body {
 }
 @media screen and (max-device-width: 31.25em) {
   body {
-    -webkit-text-size-adjust: 100%
+    -webkit-text-size-adjust: 100%;
   }
 }
 */
@@ -114,6 +114,10 @@ body {
 
 .mantine-active:active {
   transform: translateY(calc(0.0625rem * var(--mantine-scale)));
+}
+
+fieldset:disabled .mantine-active:active {
+  transform: none;
 }
 
 :where([dir='rtl']) .mantine-rotate-rtl {
@@ -748,7 +752,7 @@ body {
 }
 
 .m_d8b5e363::before {
-  content: '""';
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -2175,6 +2179,10 @@ body {
   padding-inline-end: 0;
 }
 
+.m_88b62a41:has([data-mantine-scrollbar]) .m_985517d8 {
+  max-width: calc(100% + var(--combobox-padding));
+}
+
 .m_88b62a41[data-hidden] {
   display: none;
 }
@@ -2800,7 +2808,8 @@ fieldset:disabled .m_d3ea56bb,
   --badge-lh: calc(var(--badge-height) - calc(0.125rem * var(--mantine-scale)));
   --badge-color: var(--mantine-color-white);
   --badge-bg: var(--mantine-primary-color-filled);
-  --badge-bd: calc(0.0625rem * var(--mantine-scale)) solid transparent;
+  --badge-border-width: calc(0.0625rem * var(--mantine-scale));
+  --badge-bd: var(--badge-border-width) solid transparent;
 
   -webkit-tap-highlight-color: transparent;
   font-size: var(--badge-fz);
@@ -2809,7 +2818,7 @@ fieldset:disabled .m_d3ea56bb,
   line-height: var(--badge-lh);
   text-decoration: none;
   padding: 0 var(--badge-padding-x);
-  display: inline-flex;
+  display: inline-grid;
   align-items: center;
   justify-content: center;
   width: fit-content;
@@ -2824,6 +2833,18 @@ fieldset:disabled .m_d3ea56bb,
   border: var(--badge-bd);
 }
 
+.m_347db0ec:where([data-with-right-section]) {
+  grid-template-columns: 1fr auto;
+}
+
+.m_347db0ec:where([data-with-left-section], [data-variant='dot']) {
+  grid-template-columns: auto 1fr;
+}
+
+.m_347db0ec:where([data-with-left-section][data-with-right-section]) {
+  grid-template-columns: auto 1fr auto;
+}
+
 .m_347db0ec:where([data-block]) {
   display: flex;
   width: 100%;
@@ -2831,6 +2852,7 @@ fieldset:disabled .m_d3ea56bb,
 
 .m_347db0ec:where([data-circle]) {
   padding-inline: calc(0.125rem * var(--mantine-scale));
+  display: flex;
   width: var(--badge-height);
 }
 
@@ -2864,6 +2886,7 @@ fieldset:disabled .m_d3ea56bb,
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
 }
 
 .m_91fdda9b {
@@ -2872,6 +2895,7 @@ fieldset:disabled .m_d3ea56bb,
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  max-height: calc(var(--badge-height) - var(--badge-border-width) * 2);
 }
 
 .m_91fdda9b:where([data-position='left']) {
@@ -2927,6 +2951,7 @@ fieldset:disabled .m_d3ea56bb,
 .m_8b3717df {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .m_f678d540 {
@@ -3337,7 +3362,7 @@ fieldset:disabled .m_d3ea56bb,
   --chip-checked-padding-sm: calc(0.625rem * var(--mantine-scale));
   --chip-checked-padding-md: calc(0.73125rem * var(--mantine-scale));
   --chip-checked-padding-lg: calc(0.84375rem * var(--mantine-scale));
-  --chip-checked-padding-xl: calc(0.78125rem * var(--mantine-scale));
+  --chip-checked-padding-xl: calc(0.98125rem * var(--mantine-scale));
 
   --chip-spacing-xs: calc(0.625rem * var(--mantine-scale));
   --chip-spacing-sm: calc(0.75rem * var(--mantine-scale));
@@ -3980,6 +4005,10 @@ fieldset:disabled .m_d3ea56bb,
   margin-bottom: var(--mantine-spacing-sm);
 }
 
+.m_8478a6da {
+  container: mantine-grid / inline-size;
+}
+
 .m_410352e9 {
   --grid-overflow: visible;
   --grid-margin: calc(var(--grid-gutter) / -2);
@@ -4413,6 +4442,8 @@ fieldset:disabled .m_d3ea56bb,
   padding-inline-start: 0.1em;
   padding-inline-end: 0.3em;
   flex: 0;
+  border-end-end-radius: var(--pill-radius, 50%);
+  border-start-end-radius: var(--pill-radius, 50%);
 }
 
 .m_7cda1cd6[data-disabled] > .m_ae386778,
@@ -6055,7 +6086,7 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
   height: var(--slider-size);
   width: var(--slider-size);
   border-radius: calc(62.5rem * var(--mantine-scale));
-  transform: translateX((calc(var(--slider-size) / -2)));
+  transform: translateX(calc(var(--slider-size) / -2));
   background-color: var(--mantine-color-white);
   pointer-events: none;
 }
@@ -6435,6 +6466,10 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
   color: var(--switch-text-color);
 }
 
+.m_9307d992:where([data-without-labels]) {
+  width: var(--switch-width);
+}
+
 .m_926b4011:focus-visible + .m_9307d992 {
   outline: 2px solid var(--mantine-primary-color-filled);
   outline-offset: calc(0.125rem * var(--mantine-scale));
@@ -6611,7 +6646,7 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
 
 .m_b242d975 {
   top: var(--table-sticky-header-offset, 0);
-  z-index: 1;
+  z-index: 3;
 }
 
 .m_b242d975:where([data-sticky]) {
@@ -7447,30 +7482,35 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
   caption-side: bottom;
   margin-bottom: var(--mantine-spacing-md);
 }
+:where([data-mantine-color-scheme='light']) .m_d6493fad :where(table) {
+  --table-border-color: var(--mantine-color-gray-3);
+}
+:where([data-mantine-color-scheme='dark']) .m_d6493fad :where(table) {
+  --table-border-color: var(--mantine-color-dark-4);
+}
 .m_d6493fad :where(table) :where(caption) {
   margin-top: var(--mantine-spacing-xs);
   font-size: var(--mantine-font-size-sm);
-  color: var(--mantine-color-gray-6);
+  color: var(--mantine-color-dimmed);
 }
 .m_d6493fad :where(table) :where(th) {
   text-align: left;
   font-weight: bold;
-  color: var(--mantine-color-gray-7);
   font-size: var(--mantine-font-size-sm);
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
 }
 .m_d6493fad :where(table) :where(thead th) {
   border-bottom: calc(0.0625rem * var(--mantine-scale)) solid;
-  border-color: var(--mantine-color-gray-3);
+  border-color: var(--table-border-color);
 }
 .m_d6493fad :where(table) :where(tfoot th) {
   border-top: calc(0.0625rem * var(--mantine-scale)) solid;
-  border-color: var(--mantine-color-gray-3);
+  border-color: var(--table-border-color);
 }
 .m_d6493fad :where(table) :where(td) {
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-bottom: calc(0.0625rem * var(--mantine-scale)) solid;
-  border-color: var(--mantine-color-gray-3);
+  border-color: var(--table-border-color);
   font-size: var(--mantine-font-size-sm);
 }
 .m_d6493fad :where(table) :where(tr:last-of-type td) {
