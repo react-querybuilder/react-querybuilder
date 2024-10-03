@@ -40,6 +40,7 @@ const testParseSpELic = (
       : parseResult
   ).toEqual(expectedResult);
 };
+const getValueSources = (): ValueSources => ['field'];
 
 it('works for basic relations', () => {
   testParseSpEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
@@ -141,7 +142,7 @@ it('handles "between" operators', () => {
   );
   testParseSpEL(
     'f1 between {"test,comma","other value"}',
-    wrapRule({ field: 'f1', operator: 'between', value: 'other value,test\\,comma' })
+    wrapRule({ field: 'f1', operator: 'between', value: String.raw`other value,test\,comma` })
   );
   expect(parseSpEL('f1 between {12,14}', { listsAsArrays: true })).toEqual(
     wrapRule({ field: 'f1', operator: 'between', value: [12, 14] })
@@ -332,7 +333,6 @@ describe('fields and getValueSources', () => {
   for (const f of fields) {
     fieldsObject[f.name] = f;
   }
-  const getValueSources = (): ValueSources => ['field'];
 
   it('sets the valueSource when fields are valid', () => {
     testParseSpEL(

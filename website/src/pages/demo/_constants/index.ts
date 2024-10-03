@@ -251,8 +251,10 @@ const { default: _d, ...compatStyles } = styleNameMap;
 
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
 
-const noReactOrRQB = (pd: string) => pd !== 'react' && pd !== 'react-querybuilder';
+const noReactOrRQB = (pd: string, _i: number, _a: Array<unknown>) =>
+  pd !== 'react' && pd !== 'react-querybuilder';
 
+/* eslint-disable unicorn/no-array-callback-reference */
 export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   default: [],
   dnd: objectKeys(packageJSON_rqb_dnd.peerDependencies).filter(noReactOrRQB),
@@ -265,3 +267,4 @@ export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   material: objectKeys(packageJSON_rqb_material.peerDependencies).filter(noReactOrRQB),
   tremor: objectKeys(packageJSON_rqb_tremor.peerDependencies).filter(noReactOrRQB),
 };
+/* eslint-enable unicorn/no-array-callback-reference */

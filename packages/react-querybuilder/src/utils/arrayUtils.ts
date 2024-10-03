@@ -21,11 +21,7 @@ export const splitBy = (str?: string, splitChar: string = defaultJoinChar): stri
           if (idx === 0) {
             return curr;
           }
-          return [
-            ...prev.slice(0, prev.length - 1),
-            `${prev[prev.length - 1]}${splitChar}${curr[0]}`,
-            ...curr.slice(1),
-          ];
+          return [...prev.slice(0, -1), `${prev.at(-1)}${splitChar}${curr[0]}`, ...curr.slice(1)];
         }, [])
     : [];
 
@@ -63,7 +59,7 @@ export const toArray = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any[] =>
   Array.isArray(v)
-    ? v.map(trimIfString)
+    ? v.map(v => trimIfString(v))
     : typeof v === 'string'
       ? splitBy(v, defaultJoinChar)
           .filter(retainEmptyStrings ? () => true : s => !/^\s*$/.test(s))

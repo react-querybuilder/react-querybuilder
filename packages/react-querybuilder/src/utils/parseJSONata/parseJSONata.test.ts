@@ -76,6 +76,21 @@ it('works for basic relations', () => {
   testParseJSONata('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
+it.each([
+  { t: testParseJSONata, w: wrapRule, rgt: '' },
+  { t: testParseJSONataIC, w: wrapRuleIC, rgt: ' (ic)' },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+])('compacts "between" rule groups$rgt', ({ t, w }: any) => {
+  t('f1 >= 0 and f1 <= 1', w({ field: 'f1', operator: 'between', value: [0, 1] }));
+  t('f1 <= 1 and f1 >= 0', w({ field: 'f1', operator: 'between', value: [0, 1] }));
+  t('f1 < 0 or f1 > 1', w({ field: 'f1', operator: 'notBetween', value: [0, 1] }));
+  t('f1 > 1 or f1 < 0', w({ field: 'f1', operator: 'notBetween', value: [0, 1] }));
+  t(
+    'f1 >= f2 and f1 <= f3',
+    w({ field: 'f1', operator: 'between', value: ['f2', 'f3'], valueSource: 'field' })
+  );
+});
+
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
     testParseJSONata(`f1 = "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
@@ -100,6 +115,7 @@ it('handles "like" comparisons', () => {
   );
   testParseJSONata(
     '$contains(f1, /Test/i)',
+    // eslint-disable-next-line unicorn/better-regex
     wrapRule({ field: 'f1', operator: 'contains', value: /Test/gi })
   );
   testParseJSONata(

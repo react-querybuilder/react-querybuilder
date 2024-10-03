@@ -56,8 +56,8 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
 
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(dragging.path);
-        const hoverIndex = path[path.length - 1];
-        const itemIndex = dragging.path[dragging.path.length - 1];
+        const hoverIndex = path.at(-1);
+        const itemIndex = dragging.path.at(-1)!;
 
         // Disallow drop if...
         // prettier-ignore

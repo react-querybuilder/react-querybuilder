@@ -22,7 +22,7 @@ export interface RegenerateIdOptions {
 export const regenerateID = (
   rule: RuleType,
   { idGenerator = generateID }: RegenerateIdOptions = {}
-): RuleType => JSON.parse(JSON.stringify({ ...rule, id: idGenerator() }));
+): RuleType => structuredClone({ ...rule, id: idGenerator() });
 
 /**
  * Recursively generates new `id` properties for a group and all its rules and subgroups.
@@ -34,7 +34,11 @@ export const regenerateIDs = (
   if (!isPojo(ruleOrGroup)) return ruleOrGroup;
 
   if (!isRuleGroup(ruleOrGroup)) {
-    return JSON.parse(JSON.stringify({ ...(ruleOrGroup as RuleType), id: idGenerator() }));
+    return structuredClone({
+      ...(ruleOrGroup as RuleType),
+      id: idGenerator(),
+    }) as unknown as RuleGroupType;
+    // ^ this is a lie, but it shouldn't matter
   }
 
   if (isRuleGroupType(ruleOrGroup)) {

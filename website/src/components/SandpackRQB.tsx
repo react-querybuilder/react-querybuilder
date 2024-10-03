@@ -34,14 +34,18 @@ export const SandpackRQB = ({
       fileHidden = params.includes('hidden');
       fileActive = params.includes('active');
     } else {
-      if (props.className === 'language-tsx') {
-        filePath = '/App.tsx';
-      } else if (props.className === 'language-js') {
-        filePath = '/App.js';
-      } else if (props.className === 'language-css') {
-        filePath = '/styles.css';
-      } else {
-        throw new Error(`Code block is missing a filename: ${props.children}`);
+      switch (props.className) {
+        case 'language-tsx':
+          filePath = '/App.tsx';
+          break;
+        case 'language-js':
+          filePath = '/App.js';
+          break;
+        case 'language-css':
+          filePath = '/styles.css';
+          break;
+        default:
+          throw new Error(`Code block is missing a filename: ${props.children}`);
       }
     }
     if (files[filePath]) {
@@ -59,9 +63,9 @@ export const SandpackRQB = ({
     };
   }
 
-  const rqbCSSimport = RegExp(`^import +'react-querybuilder/dist/query-builder\\.s?css';?$`).test(
-    files['/App.tsx']?.code
-  )
+  const rqbCSSimport = new RegExp(
+    `^import +'react-querybuilder/dist/query-builder\\.s?css';?$`
+  ).test(files['/App.tsx']?.code)
     ? ''
     : `@import 'react-querybuilder/dist/query-builder.css';`;
   const sandboxStyle = `

@@ -202,6 +202,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           // istanbul ignore else
           if (/^(?!\^).*?\$$/.test(regex)) {
             // istanbul ignore else
+            // eslint-disable-next-line unicorn/no-lonely-if
             if (fieldIsValid(field, 'endsWith')) {
               return {
                 field,
@@ -272,7 +273,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       if (
         field &&
         fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
-        typeof value !== 'undefined'
+        value !== undefined
       ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }

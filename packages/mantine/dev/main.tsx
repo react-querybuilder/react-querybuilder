@@ -15,19 +15,19 @@ const App = () => {
     <DevLayout {...devApp}>
       <MantineProvider>
         <QueryBuilderMantine>
-          {!devApp.optVals.independentCombinators ? (
-            <QueryBuilder
-              key="query"
-              {...devApp.commonRQBProps}
-              query={devApp.query}
-              onQueryChange={devApp.onQueryChange}
-            />
-          ) : (
+          {devApp.optVals.independentCombinators ? (
             <QueryBuilder
               key="queryIC"
               {...devApp.commonRQBProps}
               query={devApp.queryIC}
               onQueryChange={devApp.onQueryChangeIC}
+            />
+          ) : (
+            <QueryBuilder
+              key="query"
+              {...devApp.commonRQBProps}
+              query={devApp.query}
+              onQueryChange={devApp.onQueryChange}
             />
           )}
         </QueryBuilderMantine>
@@ -36,7 +36,7 @@ const App = () => {
   );
 };
 
-createRoot(document.getElementById('app')!).render(
+createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

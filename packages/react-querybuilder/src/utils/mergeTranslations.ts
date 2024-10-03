@@ -13,14 +13,15 @@ export const mergeTranslations = (
 ): Partial<Translations> =>
   produce(base, draft => {
     for (const translations of otherTranslations) {
+      // istanbul ignore else
       if (translations) {
-        objectKeys(translations).forEach(t => {
-          if (!draft[t]) {
-            Object.assign(draft, { [t]: translations[t] });
-          } else {
+        for (const t of objectKeys(translations)) {
+          if (draft[t]) {
             Object.assign(draft[t]!, translations[t]);
+          } else {
+            Object.assign(draft, { [t]: translations[t] });
           }
-        });
+        }
       }
     }
   });

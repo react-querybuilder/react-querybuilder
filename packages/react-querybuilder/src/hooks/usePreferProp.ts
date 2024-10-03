@@ -20,8 +20,8 @@ export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): 
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any): any =>
-  typeof prop !== 'undefined' && prop != null
+  prop !== undefined && prop != null
     ? prop
-    : typeof context !== 'undefined' && context != null
+    : context !== undefined && context != null
       ? context
       : def;

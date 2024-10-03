@@ -110,9 +110,9 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     () =>
       ruleGroupProp && isRuleGroupType(ruleGroupProp)
         ? ruleGroupProp.combinator
-        : !ruleGroupProp
-          ? (combinatorProp ?? getFirstOption(combinators)!)
-          : getFirstOption(combinators)!,
+        : ruleGroupProp
+          ? getFirstOption(combinators)!
+          : (combinatorProp ?? getFirstOption(combinators)!),
     [combinatorProp, combinators, ruleGroupProp]
   );
 
@@ -200,7 +200,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (value: any, index: number, _context?: any) => {
       if (!disabled) {
-        onPropChange('combinator', value, path.concat([index]));
+        onPropChange('combinator', value, [...path, index]);
       }
     },
     [disabled, onPropChange, path]
@@ -238,7 +238,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const cloneGroup: ActionElementEventHandler = useCallback(() => {
     if (!disabled) {
-      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+      const newPath = [...getParentPath(path), path.at(-1)! + 1];
       moveRule(path, newPath, true);
     }
   }, [disabled, moveRule, path]);

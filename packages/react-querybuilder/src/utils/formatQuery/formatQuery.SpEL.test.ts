@@ -59,11 +59,9 @@ it('handles custom valueProcessors correctly', () => {
   };
 
   const valueProcessorLegacy: ValueProcessorLegacy = (_field, operator, value) => {
-    if (operator === 'in') {
-      return `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`;
-    } else {
-      return `'${value}'`;
-    }
+    return operator === 'in'
+      ? `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`
+      : `'${value}'`;
   };
 
   expect(
@@ -224,7 +222,7 @@ describe('validation', () => {
     };
 
     for (const vtd of getValidationTestData('spel')) {
-      if (typeof validationResults[vtd.title] !== 'undefined') {
+      if (validationResults[vtd.title] !== undefined) {
         it(vtd.title, () => {
           expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
         });

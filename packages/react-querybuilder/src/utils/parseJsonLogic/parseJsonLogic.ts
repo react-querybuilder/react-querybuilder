@@ -109,11 +109,11 @@ function parseJsonLogic(
     // Custom operations process logic
     if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {
       const rule = jsonLogicOperations[key](keyValue) as DefaultRuleType;
-      return !rule
-        ? false
-        : outermost && !isRuleGroup(rule)
+      return rule
+        ? outermost && !isRuleGroup(rule)
           ? { combinator: 'and', rules: [rule] }
-          : rule;
+          : rule
+        : false;
     }
 
     // Rule groups
@@ -220,7 +220,7 @@ function parseJsonLogic(
       const values = [logic['<'][0], logic['<'][2]];
       // istanbul ignore else
       if (
-        values.every(isRQBJsonLogicVar) ||
+        values.every(v => isRQBJsonLogicVar(v)) ||
         values.every(el => typeof el === 'string') ||
         values.every(el => typeof el === 'number') ||
         values.every(el => typeof el === 'boolean')
@@ -235,7 +235,7 @@ function parseJsonLogic(
       field = logic['<='][1].var;
       operator = 'between';
       const values = [logic['<='][0], logic['<='][2]];
-      if (logic['<='].every(isRQBJsonLogicVar)) {
+      if (logic['<='].every(v => isRQBJsonLogicVar(v))) {
         const vars = values as RQBJsonLogicVar[];
         valueSource = 'field';
         const fieldList = vars.map(el => el.var).filter(sf => fieldIsValid(field, operator, sf));
@@ -262,7 +262,7 @@ function parseJsonLogic(
     } else if (isJsonLogicInArray(logic) && isRQBJsonLogicVar(keyValue[0])) {
       field = keyValue[0].var;
       operator = 'in';
-      if (logic.in[1].every(isRQBJsonLogicVar)) {
+      if (logic.in[1].every(v => isRQBJsonLogicVar(v))) {
         valueSource = 'field';
         const fieldList = logic.in[1]
           .map(el => el.var as string)
@@ -290,7 +290,7 @@ function parseJsonLogic(
       }
     }
 
-    return !rule ? false : outermost ? { combinator: 'and', rules: [rule] } : rule;
+    return rule ? (outermost ? { combinator: 'and', rules: [rule] } : rule) : false;
   }
 
   let logicRoot = rqbJsonLogic;
@@ -303,7 +303,7 @@ function parseJsonLogic(
   }
 
   const result = processLogic(logicRoot, true);
-  const finalQuery: DefaultRuleGroupType = !result ? emptyRuleGroup : result;
+  const finalQuery: DefaultRuleGroupType = result || emptyRuleGroup;
   return options.independentCombinators
     ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery)
     : finalQuery;

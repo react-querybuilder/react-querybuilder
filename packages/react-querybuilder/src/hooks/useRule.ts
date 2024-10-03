@@ -109,15 +109,13 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const rule = useMemo(
     () =>
-      ruleProp
-        ? ruleProp
-        : {
-            id,
-            field: fieldProp ?? /* istanbul ignore next */ '',
-            operator: operatorProp ?? /* istanbul ignore next */ '',
-            value: valueProp,
-            valueSource: valueSourceProp,
-          },
+      ruleProp ?? {
+        id,
+        field: fieldProp ?? /* istanbul ignore next */ '',
+        operator: operatorProp ?? /* istanbul ignore next */ '',
+        value: valueProp,
+        valueSource: valueSourceProp,
+      },
     [fieldProp, id, operatorProp, ruleProp, valueProp, valueSourceProp]
   );
 
@@ -180,7 +178,7 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const cloneRule: ActionElementEventHandler = useCallback(() => {
     if (!disabled) {
-      const newPath = [...getParentPath(path), path[path.length - 1] + 1];
+      const newPath = [...getParentPath(path), path.at(-1)! + 1];
       moveRule(path, newPath, true);
     }
   }, [disabled, moveRule, path]);

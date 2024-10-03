@@ -103,7 +103,7 @@ function parseMongoDB(
           return { field, operator, value: keyValue };
         }
       }
-    } else if (mdbOperator === '$regex' && /^[^^$]$|^[^^].*[^$]$/.test(getRegExStr(keyValue))) {
+    } else if (mdbOperator === '$regex' && /^[^$^]$|^[^^].*[^$]$/.test(getRegExStr(keyValue))) {
       if (fieldIsValid(field, 'contains')) {
         return {
           field,
@@ -129,28 +129,22 @@ function parseMongoDB(
       }
     } else if (mdbOperator === '$in' && Array.isArray(keyValue)) {
       if (fieldIsValid(field, 'in')) {
-        if (listsAsArrays) {
-          value = keyValue;
-        } else {
-          value = joinWith(
-            keyValue.map(v => `${v}`),
-            ','
-          );
-        }
+        value = listsAsArrays
+          ? keyValue
+          : joinWith(
+              keyValue.map(v => `${v}`),
+              ','
+            );
         return { field, operator: 'in', value };
       }
-    } else if (mdbOperator === '$nin' && Array.isArray(keyValue)) {
-      if (fieldIsValid(field, 'notIn')) {
-        if (listsAsArrays) {
-          value = keyValue;
-        } else {
-          value = joinWith(
+    } else if (mdbOperator === '$nin' && Array.isArray(keyValue) && fieldIsValid(field, 'notIn')) {
+      value = listsAsArrays
+        ? keyValue
+        : joinWith(
             keyValue.map(v => `${v}`),
             ','
           );
-        }
-        return { field, operator: 'notIn', value };
-      }
+      return { field, operator: 'notIn', value };
     }
 
     return false;
@@ -165,7 +159,7 @@ function parseMongoDB(
 
     // istanbul ignore else
     if (key === '$and') {
-      if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(isPojo)) {
+      if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
         return false;
       }
 
@@ -205,7 +199,7 @@ function parseMongoDB(
 
       return rules.length > 0 ? { combinator: 'and', rules } : false;
     } else if (key === '$or') {
-      if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(isPojo)) {
+      if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
         return false;
       }
 
@@ -259,37 +253,36 @@ function parseMongoDB(
       return false;
     } else if (key === '$expr') {
       const op = objectKeys(keyValue)[0] as MongoDbSupportedOperators;
-      if (/^\$(eq|gte?|lte?|n?in)$/.test(op)) {
+      if (
+        /^\$(eq|gte?|lte?|n?in)$/.test(op) &&
+        Array.isArray(keyValue[op]) &&
+        keyValue[op].length === 2 &&
+        typeof keyValue[op][0] === 'string' &&
+        keyValue[op][0].startsWith('$')
+      ) {
+        field = keyValue[op][0].replace(/^\$/, '');
+        const val = keyValue[op][1];
         if (
-          Array.isArray(keyValue[op]) &&
-          keyValue[op].length === 2 &&
-          typeof keyValue[op][0] === 'string' &&
-          keyValue[op][0].startsWith('$')
+          (typeof val === 'string' && val.startsWith('$')) ||
+          (Array.isArray(val) &&
+            val.every(v => typeof v === 'string') &&
+            val.every(v => v.startsWith('$')))
         ) {
-          field = keyValue[op][0].replace(/^\$/, '');
-          const val = keyValue[op][1];
-          if (
-            (typeof val === 'string' && val.startsWith('$')) ||
-            (Array.isArray(val) &&
-              val.every(v => typeof v === 'string') &&
-              val.every(v => v.startsWith('$')))
-          ) {
-            const valForProcessing = Array.isArray(val)
-              ? val.map(v => v.replace(/^\$/, ''))
-              : val.replace(/^\$/, '');
-            const tempRule = processMongoDbQueryBooleanOperator(field, op, valForProcessing);
-            if (tempRule) {
-              if (
-                typeof tempRule.value === 'string' &&
-                !fieldIsValid(field, tempRule.operator, tempRule.value)
-              ) {
-                return false;
-              }
-              return { ...tempRule, valueSource: 'field' };
+          const valForProcessing = Array.isArray(val)
+            ? val.map(v => v.replace(/^\$/, ''))
+            : val.replace(/^\$/, '');
+          const tempRule = processMongoDbQueryBooleanOperator(field, op, valForProcessing);
+          if (tempRule) {
+            if (
+              typeof tempRule.value === 'string' &&
+              !fieldIsValid(field, tempRule.operator, tempRule.value)
+            ) {
+              return false;
             }
+            return { ...tempRule, valueSource: 'field' };
           }
-          return processMongoDbQueryBooleanOperator(field, op, keyValue[op][1]);
         }
+        return processMongoDbQueryBooleanOperator(field, op, keyValue[op][1]);
       }
     } else if (/^[^$]/.test(key)) {
       field = key;

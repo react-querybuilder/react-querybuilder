@@ -61,7 +61,7 @@ export const add = <RG extends RuleGroupTypeAny>(
     if (!parent || !isRuleGroup(parent)) return;
 
     if (isRuleGroupTypeIC(parent) && parent.rules.length > 0) {
-      const prevCombinator = parent.rules[parent.rules.length - 2];
+      const prevCombinator = parent.rules.at(-2);
       parent.rules.push(
         // @ts-expect-error This is technically a type violation until the next push
         // to the rules array, but that happens immediately and unconditionally so
@@ -130,8 +130,8 @@ export const update = <RG extends RuleGroupTypeAny>(
       // Independent combinators
       const parentRules = (findPath(getParentPath(path), draft) as RG).rules;
       // Only update an independent combinator if it occupies an odd index
-      if (path[path.length - 1] % 2 === 1) {
-        parentRules[path[path.length - 1]] = value;
+      if (path.at(-1)! % 2 === 1) {
+        parentRules[path.at(-1)!] = value;
       }
       return;
     }
@@ -213,7 +213,7 @@ export const remove = <RG extends RuleGroupTypeAny>(
   }
 
   return produce(query, draft => {
-    const index = path[path.length - 1];
+    const index = path.at(-1)!;
     const parent = findPath(getParentPath(path), draft);
     if (parent && isRuleGroup(parent)) {
       if (!isRuleGroupType(parent) && parent.rules.length > 1) {
@@ -339,7 +339,7 @@ export const move = <RG extends RuleGroupTypeAny>(
   return produce(query, draft => {
     const independentCombinators = isRuleGroupTypeIC(draft);
     const parentOfRuleToRemove = findPath(getParentPath(oldPath), draft) as RG;
-    const ruleToRemoveIndex = oldPath[oldPath.length - 1];
+    const ruleToRemoveIndex = oldPath.at(-1)!;
     const oldPrevCombinator =
       independentCombinators && ruleToRemoveIndex > 0
         ? (parentOfRuleToRemove.rules[ruleToRemoveIndex - 1] as string)
@@ -372,7 +372,7 @@ export const move = <RG extends RuleGroupTypeAny>(
     }
     const newNewParentPath = getParentPath(newNewPath);
     const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
-    const newIndex = newNewPath[newNewPath.length - 1];
+    const newIndex = newNewPath.at(-1)!;
 
     /**
      * This function 1) glosses over the need for type assertions to splice directly
@@ -471,7 +471,7 @@ export const insert = <RG extends RuleGroupTypeAny>(
 
     const rorg = regenerateIDs(ruleOrGroup as RuleGroupTypeAny, { idGenerator });
     const independentCombinators = isRuleGroupTypeIC(draft);
-    const newIndex = path[path.length - 1];
+    const newIndex = path.at(-1)!;
 
     /**
      * This function 1) glosses over the need for type assertions to splice directly

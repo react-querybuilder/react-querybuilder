@@ -82,20 +82,18 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     case 'notIn': {
       const negate = shouldNegate(operatorTL) ? '!' : '';
       const valueAsArray = toArray(value);
-      if (valueAsArray.length > 0) {
-        return `${negate}(${valueAsArray
-          .map(
-            val =>
-              `${field} == ${
-                valueIsField || shouldRenderAsNumber(val, parseNumbers)
-                  ? `${trimIfString(val)}`
-                  : `'${escapeSingleQuotes(val, escapeQuotes)}'`
-              }`
-          )
-          .join(' or ')})`;
-      } else {
-        return '';
-      }
+      return valueAsArray.length > 0
+        ? `${negate}(${valueAsArray
+            .map(
+              val =>
+                `${field} == ${
+                  valueIsField || shouldRenderAsNumber(val, parseNumbers)
+                    ? `${trimIfString(val)}`
+                    : `'${escapeSingleQuotes(val, escapeQuotes)}'`
+                }`
+            )
+            .join(' or ')})`
+        : '';
     }
 
     case 'between':
@@ -128,11 +126,9 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
           secondValue = firstNum;
           firstValue = tempNum;
         }
-        if (operator === 'between') {
-          return `(${field} >= ${firstValue} and ${field} <= ${secondValue})`;
-        } else {
-          return `(${field} < ${firstValue} or ${field} > ${secondValue})`;
-        }
+        return operator === 'between'
+          ? `(${field} >= ${firstValue} and ${field} <= ${secondValue})`
+          : `(${field} < ${firstValue} or ${field} > ${secondValue})`;
       } else {
         return '';
       }

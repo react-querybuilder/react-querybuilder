@@ -4,6 +4,7 @@ import type { UseMergedContextReturn } from '../hooks';
 import { useMergedContext } from '../hooks';
 import type {
   BaseOption,
+  FlexibleOptionGroup,
   FlexibleOptionList,
   FullCombinator,
   FullField,
@@ -179,23 +180,19 @@ export const useQueryBuilderSetup = <
             .sort((a, b) => a.label.localeCompare(b.label))
     ) as FullOptionList<F>;
     if (isFlexibleOptionGroupArray(flds)) {
-      if (autoSelectField) {
-        return uniqOptGroups(flds) as FullOptionList<F>;
-      } else {
-        return uniqOptGroups([
-          {
-            label: translations.fields.placeholderGroupLabel,
-            options: [defaultField],
-          },
-          ...flds,
-        ]) as FullOptionList<F>;
-      }
+      return autoSelectField
+        ? (uniqOptGroups(flds) as FullOptionList<F>)
+        : (uniqOptGroups([
+            {
+              label: translations.fields.placeholderGroupLabel,
+              options: [defaultField],
+            },
+            ...flds,
+          ]) as FullOptionList<F>);
     } else {
-      if (autoSelectField) {
-        return uniqByIdentifier(flds as F[]) as FullOptionList<F>;
-      } else {
-        return uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>;
-      }
+      return autoSelectField
+        ? (uniqByIdentifier(flds as F[]) as FullOptionList<F>)
+        : (uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>);
     }
   }, [
     autoSelectField,
@@ -208,29 +205,27 @@ export const useQueryBuilderSetup = <
   const fieldMap = useMemo(() => {
     if (!Array.isArray(fieldsProp)) {
       const fp = toFullOptionMap(fieldsProp, baseField) as FullOptionMap<FullField, FieldName>;
-      if (autoSelectField) {
-        return fp;
-      } else {
-        return { ...fp, [translations.fields.placeholderName]: defaultField };
-      }
+      return autoSelectField ? fp : { ...fp, [translations.fields.placeholderName]: defaultField };
     }
     const fm: Partial<FullOptionRecord<FullField>> = {};
     if (isFlexibleOptionGroupArray(fields)) {
-      fields.forEach(f =>
-        f.options.forEach(opt => {
+      // TODO: this `as` cast shouldn't be necessary with the type guard above
+      for (const f of fields as FlexibleOptionGroup[]) {
+        for (const opt of f.options) {
           fm[(opt.value ?? /* istanbul ignore next */ opt.name) as FieldName] = toFullOption(
             opt,
             baseField
           ) as FullField;
-        })
-      );
+        }
+      }
     } else {
-      fields.forEach(f => {
+      // TODO: this `as` cast shouldn't be necessary with the type guard above
+      for (const f of fields as FullField[]) {
         fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(
           f,
           baseField
         ) as FullField;
-      });
+      }
     }
     return fm;
   }, [
@@ -273,17 +268,15 @@ export const useQueryBuilderSetup = <
       }
 
       if (!autoSelectOperator) {
-        if (isFlexibleOptionGroupArray(opsFinal)) {
-          opsFinal = [
-            {
-              label: translations.operators.placeholderGroupLabel,
-              options: [defaultOperator],
-            },
-            ...opsFinal,
-          ];
-        } else {
-          opsFinal = [defaultOperator, ...opsFinal];
-        }
+        opsFinal = isFlexibleOptionGroupArray(opsFinal)
+          ? [
+              {
+                label: translations.operators.placeholderGroupLabel,
+                options: [defaultOperator],
+              },
+              ...opsFinal,
+            ]
+          : [defaultOperator, ...opsFinal];
       }
 
       return uniqOptList(opsFinal) as FullOptionList<O>;
@@ -307,11 +300,9 @@ export const useQueryBuilderSetup = <
       }
 
       if (getDefaultOperator) {
-        if (typeof getDefaultOperator === 'function') {
-          return getDefaultOperator(field, { fieldData }) as OperatorName;
-        } else {
-          return getDefaultOperator;
-        }
+        return typeof getDefaultOperator === 'function'
+          ? (getDefaultOperator(field, { fieldData }) as OperatorName)
+          : getDefaultOperator;
       }
 
       const ops = getOperatorsMain(field, { fieldData }) ?? /* istanbul ignore next */ [];
@@ -376,12 +367,9 @@ export const useQueryBuilderSetup = <
 
       if (r.valueSource === 'field') {
         const filteredFields = filterFieldsByComparator(fieldData, fields, r.operator);
-        if (filteredFields.length > 0) {
-          value = getFirstOptionsFrom(filteredFields, r, listsAsArrays);
-        } else {
-          value = '';
-        }
-      } else if (values.length) {
+        value =
+          filteredFields.length > 0 ? getFirstOptionsFrom(filteredFields, r, listsAsArrays) : '';
+      } else if (values.length > 0) {
         const editorType = getValueEditorTypeMain(
           r.field as FieldName,
           r.operator as OperatorName,

@@ -13,7 +13,7 @@ import './_styles/rqb-antd.scss';
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
-  <AntDValueSelector {...props} getPopupContainer={() => document.getElementById('rqb-antd')!} />
+  <AntDValueSelector {...props} getPopupContainer={() => document.querySelector('#rqb-antd')!} />
 );
 
 function ReactQueryBuilderDemo_AntdBrowser() {
@@ -27,13 +27,10 @@ function ReactQueryBuilderDemo_AntdBrowser() {
     let active = true;
 
     (async () => {
-      const comps = await Promise.all([
-        (await import('antd')).ConfigProvider,
-        (await import('./_components/Demo')).default,
-      ]);
+      const comps = await Promise.all([import('antd'), import('./_components/Demo')]);
       if (active && !Demo) {
-        const [ImportedConfigProvider, ImportedDemo] = comps;
-        setComponents({ ConfigProvider: ImportedConfigProvider, Demo: ImportedDemo });
+        const [antd, ImportedDemo] = comps;
+        setComponents({ ConfigProvider: antd.ConfigProvider, Demo: ImportedDemo.default });
       }
     })();
 

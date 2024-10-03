@@ -128,14 +128,20 @@ function evalCELLiteralValue(literal: CELBytesLiteral): null;
 function evalCELLiteralValue(literal: CELNullLiteral): null;
 function evalCELLiteralValue(literal: CELLiteral): string | boolean | number | null;
 function evalCELLiteralValue(literal: CELLiteral) {
-  if (literal.type === 'StringLiteral') {
-    return literal.value.replace(/^((?:'''|"""|'|")?)([\s\S]*?)\1$/gm, '$2');
-  } else if (literal.type === 'BooleanLiteral') {
-    return literal.value;
-  } else if (literal.type === 'NullLiteral' || literal.type === 'BytesLiteral') {
-    return null;
+  switch (literal.type) {
+    case 'StringLiteral': {
+      return literal.value.replaceAll(/^((?:'''|"""|'|")?)([\S\s]*?)\1$/gm, '$2');
+    }
+    case 'BooleanLiteral': {
+      return literal.value;
+    }
+    case 'NullLiteral':
+    case 'BytesLiteral': {
+      return null;
+    }
+    default:
+      return literal.value;
   }
-  return literal.value;
 }
 
 export const normalizeCombinator = (c: '&&' | '||'): DefaultCombinatorName =>
@@ -193,8 +199,7 @@ export const generateMixedAndOrList = (
         if (arr[i - 1] === 'and') {
           returnArray.push(arr[i + 1]);
         } else {
-          returnArray.push(arr[i]);
-          returnArray.push(arr[i + 1]);
+          returnArray.push(arr[i], arr[i + 1]);
         }
       }
     }

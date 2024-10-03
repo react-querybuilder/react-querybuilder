@@ -281,7 +281,7 @@ describe('TremorValueEditor as "between" select', () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
     const betweenSelects = (
-      Array.from(document.getElementsByClassName(standardClassnames.valueListItem)) as HTMLElement[]
+      [...document.querySelectorAll(`.${standardClassnames.valueListItem}`)] as HTMLElement[]
     ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
@@ -302,7 +302,7 @@ describe('TremorValueEditor as "between" select', () => {
       />
     );
     const betweenSelects = (
-      Array.from(document.getElementsByClassName(standardClassnames.valueListItem)) as HTMLElement[]
+      [...document.querySelectorAll(`.${standardClassnames.valueListItem}`)] as HTMLElement[]
     ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);
@@ -316,7 +316,7 @@ describe('TremorValueEditor as "between" select', () => {
       <TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
     );
     const betweenSelects = (
-      Array.from(document.getElementsByClassName(standardClassnames.valueListItem)) as HTMLElement[]
+      [...document.querySelectorAll(`.${standardClassnames.valueListItem}`)] as HTMLElement[]
     ).map(e => e.querySelector('button')!);
     expect(betweenSelects).toHaveLength(2);
     await user.click(betweenSelects[0]);

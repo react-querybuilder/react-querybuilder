@@ -4,13 +4,7 @@ import type { Option, OptionList } from 'react-querybuilder';
 import { isOptionGroupArray } from 'react-querybuilder';
 
 export const toSelectItems = (list: OptionList, multi?: boolean): React.JSX.Element[] | null => {
-  let flatList: Option[];
-
-  if (isOptionGroupArray(list)) {
-    flatList = list.flatMap(og => og.options);
-  } else {
-    flatList = list;
-  }
+  const flatList: Option[] = isOptionGroupArray(list) ? list.flatMap(og => og.options) : list;
 
   // istanbul ignore else
   if (Array.isArray(flatList)) {

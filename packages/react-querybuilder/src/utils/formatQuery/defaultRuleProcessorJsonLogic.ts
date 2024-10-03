@@ -6,7 +6,7 @@ import { isValidValue, shouldRenderAsNumber } from './utils';
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
   op
     .replace(/^(=)$/, '$1=')
-    .replace(/^notNull$/i, '!=')
+    .replace(/^notnull$/i, '!=')
     .replace(/^null$/i, '==') as '<' | '<=' | '==' | '!=' | '===' | '!==' | '>' | '>=';
 
 const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
@@ -48,7 +48,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
 
     case 'in':
     case 'notIn': {
-      const valueAsArray = toArray(value).map(fieldOrNumberRenderer);
+      const valueAsArray = toArray(value).map(v => fieldOrNumberRenderer(v));
       return negateIfNotOp(operator, { in: [fieldObject, valueAsArray] });
     }
 

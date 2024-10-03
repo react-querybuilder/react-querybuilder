@@ -30,7 +30,7 @@ export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
   v?.type === 'Identifier';
 
 export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
-  isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^['"]?%+['"]?$/.test(sqlExpr.value);
+  isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^["']?%+["']?$/.test(sqlExpr.value);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getParamString = (param: any): string => {
@@ -52,7 +52,7 @@ export const getFieldName = (f: string | SQLIdentifier): string => {
   } else if (fieldName.startsWith('"') && fieldName.endsWith('"')) {
     return fieldName.replaceAll(/(^"|"$)/g, '').replaceAll('""', '"');
   } else if (fieldName.startsWith('[') && fieldName.endsWith(']')) {
-    return fieldName.replaceAll(/(^\[|\]$)/g, '').replaceAll(']]', ']');
+    return fieldName.replaceAll(/(^\[|]$)/g, '').replaceAll(']]', ']');
   }
 
   return fieldName;
@@ -80,7 +80,7 @@ export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberV
       (valueString.startsWith(`'`) && valueString.endsWith(`'`)) ||
       (valueString.startsWith(`"`) && valueString.endsWith(`"`))
     ) {
-      const innerString = valueString.substring(1, valueString.length - 1);
+      const innerString = valueString.slice(1, -1);
       return innerString.replaceAll(/''/gm, "'");
     }
     // Theoretically we should never get here since all strings will be wrapped in
@@ -164,18 +164,24 @@ export const generateMixedAndXorOrList = (
       }
     } else {
       // If here, then levelDelta === 0
-      // istanbul ignore else
-      if (currentLevel === 0) {
-        if (i === 0 || (i > 3 && arr[i - 3] !== 'or')) {
-          orArray.expressions.push(arr[i] as SQLExpression);
+      switch (currentLevel) {
+        case 0: {
+          if (i === 0 || (i > 3 && arr[i - 3] !== 'or')) {
+            orArray.expressions.push(arr[i] as SQLExpression);
+          }
+          if (i >= arr.length - 3 || arr[i + 3] === 'or') {
+            orArray.expressions.push(arr[i + 2] as SQLExpression);
+          }
+          break;
         }
-        if (i >= arr.length - 3 || arr[i + 3] === 'or') {
-          orArray.expressions.push(arr[i + 2] as SQLExpression);
+        case 1: {
+          xorArray.expressions.push(arr[i + 2] as SQLExpression);
+          break;
         }
-      } else if (currentLevel === 1) {
-        xorArray.expressions.push(arr[i + 2] as SQLExpression);
-      } else if (currentLevel === 2) {
-        andArray.expressions.push(arr[i + 2] as SQLExpression);
+        case 2: {
+          andArray.expressions.push(arr[i + 2] as SQLExpression);
+          break;
+        }
       }
     }
   }
@@ -192,14 +198,10 @@ export const generateMixedAndXorOrList = (
 
   // Collapse single-element arrays, in case there are only AND, only XOR, or only XOR/AND combinators
   if (orArray.expressions.length === 1 && 'combinator' in orArray.expressions[0]) {
-    if (
-      orArray.expressions[0].expressions.length === 1 &&
+    return orArray.expressions[0].expressions.length === 1 &&
       'combinator' in orArray.expressions[0].expressions[0]
-    ) {
-      return orArray.expressions[0].expressions[0] as MixedAndXorOrList;
-    } else {
-      return orArray.expressions[0] as MixedAndXorOrList;
-    }
+      ? (orArray.expressions[0].expressions[0] as MixedAndXorOrList)
+      : (orArray.expressions[0] as MixedAndXorOrList);
   }
 
   const returnArray: MixedAndXorOrList = { combinator: 'or', expressions: [] };

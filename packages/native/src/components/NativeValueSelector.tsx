@@ -17,58 +17,65 @@ export const NativeValueSelector = <Opt extends FullOption = FullOption>({
   testID,
 }: ValueSelectorNativeProps<Opt>): React.JSX.Element => {
   const styles = useMemo(() => {
-    if (testID === TestID.combinators) {
-      return {
-        selector: StyleSheet.flatten([
-          defaultNativeStyles.combinatorSelector,
-          schema.styles?.combinatorSelector,
-        ]),
-        option: StyleSheet.flatten([
-          defaultNativeStyles.combinatorOption,
-          schema.styles?.combinatorOption,
-        ]),
-      };
-    } else if (testID === TestID.fields) {
-      return {
-        selector: StyleSheet.flatten([
-          defaultNativeStyles.fieldSelector,
-          schema.styles?.fieldSelector,
-        ]),
-        option: StyleSheet.flatten([defaultNativeStyles.fieldOption, schema.styles?.fieldOption]),
-      };
-    } else if (testID === TestID.operators) {
-      return {
-        selector: StyleSheet.flatten([
-          defaultNativeStyles.operatorSelector,
-          schema.styles?.operatorSelector,
-        ]),
-        option: StyleSheet.flatten([
-          defaultNativeStyles.operatorOption,
-          schema.styles?.operatorOption,
-        ]),
-      };
-    } else if (testID === TestID.valueSourceSelector) {
-      return {
-        selector: StyleSheet.flatten([
-          defaultNativeStyles.valueSourceSelector,
-          schema.styles?.valueSourceSelector,
-        ]),
-        option: StyleSheet.flatten([
-          defaultNativeStyles.valueSourceOption,
-          schema.styles?.valueSourceOption,
-        ]),
-      };
-    } else if (testID === TestID.valueEditor) {
-      return {
-        selector: StyleSheet.flatten([
-          defaultNativeStyles.valueEditorSelector,
-          schema.styles?.valueEditorSelector,
-        ]),
-        option: StyleSheet.flatten([
-          defaultNativeStyles.valueEditorOption,
-          schema.styles?.valueEditorOption,
-        ]),
-      };
+    switch (testID) {
+      case TestID.combinators: {
+        return {
+          selector: StyleSheet.flatten([
+            defaultNativeStyles.combinatorSelector,
+            schema.styles?.combinatorSelector,
+          ]),
+          option: StyleSheet.flatten([
+            defaultNativeStyles.combinatorOption,
+            schema.styles?.combinatorOption,
+          ]),
+        };
+      }
+      case TestID.fields: {
+        return {
+          selector: StyleSheet.flatten([
+            defaultNativeStyles.fieldSelector,
+            schema.styles?.fieldSelector,
+          ]),
+          option: StyleSheet.flatten([defaultNativeStyles.fieldOption, schema.styles?.fieldOption]),
+        };
+      }
+      case TestID.operators: {
+        return {
+          selector: StyleSheet.flatten([
+            defaultNativeStyles.operatorSelector,
+            schema.styles?.operatorSelector,
+          ]),
+          option: StyleSheet.flatten([
+            defaultNativeStyles.operatorOption,
+            schema.styles?.operatorOption,
+          ]),
+        };
+      }
+      case TestID.valueSourceSelector: {
+        return {
+          selector: StyleSheet.flatten([
+            defaultNativeStyles.valueSourceSelector,
+            schema.styles?.valueSourceSelector,
+          ]),
+          option: StyleSheet.flatten([
+            defaultNativeStyles.valueSourceOption,
+            schema.styles?.valueSourceOption,
+          ]),
+        };
+      }
+      case TestID.valueEditor: {
+        return {
+          selector: StyleSheet.flatten([
+            defaultNativeStyles.valueEditorSelector,
+            schema.styles?.valueEditorSelector,
+          ]),
+          option: StyleSheet.flatten([
+            defaultNativeStyles.valueEditorOption,
+            schema.styles?.valueEditorOption,
+          ]),
+        };
+      }
+      default:
     }
     return StyleSheet.create(defaultNativeSelectStyles);
   }, [

@@ -44,10 +44,10 @@ export const filterFieldsByComparator = (
     if (isFlexibleOptionGroupArray(fields)) {
       return fields.map(og => ({
         ...og,
-        options: og.options.filter(filterOutSameField),
+        options: og.options.filter(v => filterOutSameField(v)),
       }));
     }
-    return fields.filter(filterOutSameField);
+    return fields.filter(v => filterOutSameField(v));
   }
 
   if (isFlexibleOptionGroupArray(fields)) {

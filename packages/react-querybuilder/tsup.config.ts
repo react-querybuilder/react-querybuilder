@@ -1,5 +1,5 @@
 import AnalyzerPlugin from 'esbuild-analyzer';
-import { mkdir } from 'fs/promises';
+import { mkdir } from 'node:fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 import { generateDTS } from '../../utils/generateDTS';

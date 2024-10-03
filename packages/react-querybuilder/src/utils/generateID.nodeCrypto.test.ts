@@ -9,7 +9,7 @@ const ogCrypto = globalThis.crypto;
 globalThis.crypto = nodeCrypto as unknown as Crypto;
 
 // Delay the loading of generateID until after crypto has been defined
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-require-imports, unicorn/prefer-module
 const { generateID } = require('./generateID');
 
 // TODO: When our test runner supports ESM, we can do this instead:

@@ -380,9 +380,9 @@ describe('NativeValueEditor', () => {
       />
     );
     const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(NativeValueSelector);
-    [0, 1].forEach(i => {
+    for (const i of [0, 1]) {
       expect(selectors[i].props).toHaveProperty('value', 'opt1');
-    });
+    }
   });
 
   it('changes the value of each select', () => {
@@ -396,9 +396,9 @@ describe('NativeValueEditor', () => {
       />
     );
     const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput);
-    [0, 1].forEach(i => {
+    for (const i of [0, 1]) {
       fireEvent.changeText(selectors[i], 'opt2');
-    });
+    }
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2,opt1');
     expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt1,opt2');
   });

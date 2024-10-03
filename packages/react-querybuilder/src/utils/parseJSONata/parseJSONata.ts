@@ -129,6 +129,37 @@ function parseJSONata(
         if (!rules.every(Boolean)) {
           return null;
         }
+
+        // Reduce this group to a single between/notBetween rule if possible
+        if (
+          ((rs: unknown[]): rs is [DefaultRuleType, DefaultCombinatorName, DefaultRuleType] =>
+            rs.length === 3 &&
+            (rs[1] === 'and' || rs[1] === 'or') &&
+            !isRuleGroup(rs[0]) &&
+            !isRuleGroup(rs[2]))(rules) &&
+          rules[0].field === rules[2].field &&
+          (rules[0].valueSource ?? 'value') === (rules[2].valueSource ?? 'value') &&
+          ((rules[1] === 'and' &&
+            ((rules[0].operator === '>=' && rules[2].operator === '<=') ||
+              (rules[0].operator === '<=' && rules[2].operator === '>='))) ||
+            (rules[1] === 'or' &&
+              ((rules[0].operator === '>' && rules[2].operator === '<') ||
+                (rules[0].operator === '<' && rules[2].operator === '>'))))
+        ) {
+          return {
+            field: (rules[0] as DefaultRuleType).field,
+            operator: rules[1] === 'and' ? 'between' : 'notBetween',
+            value:
+              (rules[1] === 'and' && rules[0].operator === '<=') ||
+              (rules[1] === 'or' && rules[0].operator === '>')
+                ? [rules[2].value, rules[0].value]
+                : [rules[0].value, rules[2].value],
+            ...((rules[0] as DefaultRuleType).valueSource
+              ? { valueSource: (rules[0] as DefaultRuleType).valueSource }
+              : null),
+          };
+        }
+
         return {
           rules: rules as DefaultRuleGroupICArray,
         };
@@ -151,6 +182,34 @@ function parseJSONata(
           return parseJSONataAST(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
         .filter(Boolean) as DefaultRuleGroupArray;
+
+      // Reduce this group to a single between/notBetween rule if possible
+      if (
+        ((rs: unknown[]): rs is [DefaultRuleType, DefaultRuleType] =>
+          rs.length === 2 && !isRuleGroup(rs[0]) && !isRuleGroup(rs[1]))(rules) &&
+        rules[0].field === rules[1].field &&
+        (rules[0].valueSource ?? 'value') === (rules[1].valueSource ?? 'value') &&
+        ((combinator === 'and' &&
+          ((rules[0].operator === '>=' && rules[1].operator === '<=') ||
+            (rules[0].operator === '<=' && rules[1].operator === '>='))) ||
+          (combinator === 'or' &&
+            ((rules[0].operator === '>' && rules[1].operator === '<') ||
+              (rules[0].operator === '<' && rules[1].operator === '>'))))
+      ) {
+        return {
+          field: (rules[0] as DefaultRuleType).field,
+          operator: combinator === 'and' ? 'between' : 'notBetween',
+          value:
+            (combinator === 'and' && rules[0].operator === '<=') ||
+            (combinator === 'or' && rules[0].operator === '>')
+              ? [rules[1].value, rules[0].value]
+              : [rules[0].value, rules[1].value],
+          ...((rules[0] as DefaultRuleType).valueSource
+            ? { valueSource: (rules[0] as DefaultRuleType).valueSource }
+            : null),
+        };
+      }
+
       // istanbul ignore else
       if (rules.length > 0) {
         return { combinator, rules };
@@ -256,7 +315,7 @@ function parseJSONata(
       if (
         field &&
         fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
-        typeof value !== 'undefined'
+        value !== undefined
       ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }

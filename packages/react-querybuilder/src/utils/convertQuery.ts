@@ -27,7 +27,7 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
       }
       returnArray.push({
         // @ts-expect-error Too complicated to keep track of odd/even indexes in TS
-        rules: rg.rules.slice(startIndex, i + 1).map(processRuleOrStringOrRuleGroupIC),
+        rules: rg.rules.slice(startIndex, i + 1).map(v => processRuleOrStringOrRuleGroupIC(v)),
       });
       i -= 2;
     } else if (rg.rules[i + 1] === 'or') {
@@ -97,7 +97,7 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
   const { length } = rg.rules;
-  rg.rules.forEach((r, idx) => {
+  for (const [idx, r] of rg.rules.entries()) {
     if (isRuleGroup(r)) {
       rules.push(convertToIC(r));
     } else {
@@ -106,7 +106,7 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
     if (combinator && idx < length - 1) {
       rules.push(combinator);
     }
-  });
+  }
   return { ...queryWithoutCombinator, rules } as RGIC;
 };
 

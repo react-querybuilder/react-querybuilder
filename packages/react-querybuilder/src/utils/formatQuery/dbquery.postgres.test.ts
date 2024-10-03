@@ -64,7 +64,8 @@ describe('unquoted field names', async () => {
       },
       { format: 'sql' }
     );
-    expect((await unquotedDb.query(`${sqlBase} ${sql}`)).rows).toEqual(
+    const result = await unquotedDb.query(`${sqlBase} ${sql}`);
+    expect(result.rows).toEqual(
       superUsersPostgres
         .filter(u => u.madeUpName.startsWith('S'))
         .map(u =>

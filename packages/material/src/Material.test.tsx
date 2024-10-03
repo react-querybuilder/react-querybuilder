@@ -94,7 +94,7 @@ jest.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) 
         {
           target: {
             value: props.multiple
-              ? Array.from(e.target.selectedOptions).map(opt => opt.value)
+              ? [...e.target.selectedOptions].map(opt => opt.value)
               : e.target.value,
           },
         } as SelectChangeEvent<string | string[]>,
@@ -317,7 +317,7 @@ it('renders with composition', async () => {
   });
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   expect(
-    Array.from(screen.getByText(defaultTranslations.addRule.label).classList).some(c =>
+    [...screen.getByText(defaultTranslations.addRule.label).classList].some(c =>
       c.startsWith('MuiButton')
     )
   ).toBe(true);

@@ -8,6 +8,6 @@ export const DemoLink = ({
   text?: string;
 }) => (
   <a href={`/demo#${option}=${!disabled}`}>
-    {text ? text : `Click here for demo${disabled ? ' with this feature disabled' : ''}`}
+    {text || `Click here for demo${disabled ? ' with this feature disabled' : ''}`}
   </a>
 );

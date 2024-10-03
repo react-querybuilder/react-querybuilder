@@ -644,7 +644,7 @@ it('can move rules/groups to different query builders', async () => {
     )
   );
   render(<QueryBuilderWrapped fields={fields} enableDragAndDrop onQueryChange={onQueryChange} />);
-  const [dropRule, , , dragRule] = screen.getAllByTestId(TestID.rule);
+  const [dropRule, _1, _2, dragRule] = screen.getAllByTestId(TestID.rule);
   simulateDragDrop(
     getHandlerId(dragRule, 'drag'),
     getHandlerId(dropRule, 'drop'),

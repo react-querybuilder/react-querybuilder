@@ -169,7 +169,7 @@ describe('valueSource: "value"', () => {
       combinator: 'or',
       rules: [
         { field: 'f1', operator: 'between', value: 'Test,Test2' },
-        { field: 'f1', operator: 'between', value: 'Test\\,Comma,Test2' },
+        { field: 'f1', operator: 'between', value: String.raw`Test\,Comma,Test2` },
         { field: 'f1', operator: 'between', value: '12,14' },
         { field: 'f1', operator: 'between', value: '12,14' },
         { field: 'f1', operator: 'between', value: 'false,true' },
@@ -198,7 +198,7 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'notBetween', value: '12,14' },
         { field: 'f1', operator: 'notBetween', value: 'false,true' },
         { field: 'f1', operator: 'in', value: 'Test,Test2' },
-        { field: 'f1', operator: 'in', value: 'Te\\,st,Test2' },
+        { field: 'f1', operator: 'in', value: String.raw`Te\,st,Test2` },
         { field: 'f1', operator: 'in', value: '12,14' },
         { field: 'f1', operator: 'in', value: 'true,false' },
         { field: 'f1', operator: 'notIn', value: 'Test,Test2' },

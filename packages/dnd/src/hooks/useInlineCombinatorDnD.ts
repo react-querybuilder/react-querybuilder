@@ -35,7 +35,7 @@ export const useInlineCombinatorDnD = ({
   const dropRef = useRef<HTMLDivElement>(null);
 
   // The "hovering" item is the rule or group which precedes this inline combinator.
-  const hoveringItem = (rules ?? /* istanbul ignore next */ [])[path[path.length - 1] - 1] as
+  const hoveringItem = (rules ?? /* istanbul ignore next */ [])[path.at(-1)! - 1] as
     | RuleType
     | RuleGroupTypeAny;
 
@@ -54,8 +54,8 @@ export const useInlineCombinatorDnD = ({
         }
         const parentHoverPath = getParentPath(path);
         const parentItemPath = getParentPath(itemPath);
-        const hoverIndex = path[path.length - 1];
-        const itemIndex = itemPath[itemPath.length - 1];
+        const hoverIndex = path.at(-1)!;
+        const itemIndex = itemPath.at(-1)!;
 
         // Disallow drop if...
         // prettier-ignore

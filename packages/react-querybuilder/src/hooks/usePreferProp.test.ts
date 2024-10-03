@@ -28,7 +28,7 @@ describe('usePreferProp', () => {
 
 describe('usePreferAnyProp', () => {
   it('prefers the prop with default undefined', async () => {
-    expect(usePreferAnyProp(undefined)).toBeUndefined();
+    expect(usePreferAnyProp()).toBeUndefined();
     expect(usePreferAnyProp(undefined, true)).toBe(true);
     expect(usePreferAnyProp(undefined, false)).toBe(false);
     expect(usePreferAnyProp(undefined, undefined, true)).toBe(true);

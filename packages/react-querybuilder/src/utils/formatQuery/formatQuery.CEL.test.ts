@@ -62,7 +62,7 @@ describe('validation', () => {
     };
 
     for (const vtd of getValidationTestData('cel')) {
-      if (typeof validationResults[vtd.title] !== 'undefined') {
+      if (validationResults[vtd.title] !== undefined) {
         it(vtd.title, () => {
           expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
         });

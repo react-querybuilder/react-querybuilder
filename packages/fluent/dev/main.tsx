@@ -14,19 +14,19 @@ const App = () => {
     <DevLayout {...devApp}>
       <FluentProvider theme={webLightTheme}>
         <QueryBuilderFluent>
-          {!devApp.optVals.independentCombinators ? (
-            <QueryBuilder
-              key="query"
-              {...devApp.commonRQBProps}
-              query={devApp.query}
-              onQueryChange={devApp.onQueryChange}
-            />
-          ) : (
+          {devApp.optVals.independentCombinators ? (
             <QueryBuilder
               key="queryIC"
               {...devApp.commonRQBProps}
               query={devApp.queryIC}
               onQueryChange={devApp.onQueryChangeIC}
+            />
+          ) : (
+            <QueryBuilder
+              key="query"
+              {...devApp.commonRQBProps}
+              query={devApp.query}
+              onQueryChange={devApp.onQueryChange}
             />
           )}
         </QueryBuilderFluent>
@@ -35,7 +35,7 @@ const App = () => {
   );
 };
 
-createRoot(document.getElementById('app')!).render(
+createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

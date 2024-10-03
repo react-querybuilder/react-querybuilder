@@ -114,8 +114,8 @@ export const defaultRuleProcessorMongoDB: RuleProcessor = (
         const secondNum = shouldRenderAsNumber(second, true)
           ? parseNumber(second, { parseNumbers: 'strict' })
           : NaN;
-        const firstValue = valueIsField ? first : !isNaN(firstNum) ? firstNum : first;
-        const secondValue = valueIsField ? second : !isNaN(secondNum) ? secondNum : second;
+        const firstValue = valueIsField ? first : isNaN(firstNum) ? first : firstNum;
+        const secondValue = valueIsField ? second : isNaN(secondNum) ? second : secondNum;
         if (operator === 'between') {
           return valueIsField
             ? str({

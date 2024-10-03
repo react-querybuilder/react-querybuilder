@@ -61,9 +61,9 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   } else if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {
     const splitValue = toArray(rule.value);
     if (parameterized) {
-      splitValue.forEach(v =>
-        params.push(shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v)
-      );
+      for (const v of splitValue) {
+        params.push(shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v);
+      }
       return finalize(
         `${qPre}${rule.field}${qPost} ${sqlOperator} (${splitValue
           .map((_v, i) =>
@@ -75,7 +75,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       );
     }
     const inParams: string[] = [];
-    splitValue.forEach(v => {
+    for (const v of splitValue) {
       const thisParamName = getNextNamedParam!(rule.field);
       inParams.push(`${paramPrefix}${thisParamName}`);
       paramsNamed[`${paramsKeepPrefix ? paramPrefix : ''}${thisParamName}`] = shouldRenderAsNumber(
@@ -84,7 +84,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       )
         ? parseNumber(v, { parseNumbers })
         : v;
-    });
+    }
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} (${inParams.join(', ')})`);
   } else if (sqlOperatorLowerCase === 'between' || sqlOperatorLowerCase === 'not between') {
     const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
@@ -92,8 +92,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       .slice(0, 2)
       .map(v => (shouldRenderAsNumber(v, parseNumbers) ? parseNumber(v, { parseNumbers }) : v));
     if (parameterized) {
-      params.push(first);
-      params.push(second);
+      params.push(first, second);
       return finalize(
         `${qPre}${rule.field}${qPost} ${sqlOperator} ${
           numberedParams ? `${paramPrefix}${processedParams.length + 1}` : '?'
@@ -117,7 +116,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       // Note that we're using `value` here, which has been processed through
       // a `valueProcessor`, as opposed to `rule.value` which has not
       paramValue = /^'.*'$/g.test(value)
-        ? value.replace(/(^'|'$)/g, '')
+        ? value.replaceAll(/(^'|'$)/g, '')
         : /* istanbul ignore next */ value;
     }
   }

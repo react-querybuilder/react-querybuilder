@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable unicorn/prefer-module */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import { Loading } from '../_utils';

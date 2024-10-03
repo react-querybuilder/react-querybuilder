@@ -199,8 +199,7 @@ const generateConfig: GenerateConfig<Dayjs> = {
     format: (locale, date, format) => date.locale(parseLocale(locale)).format(format),
     parse: (locale, text, formats) => {
       const localeStr = parseLocale(locale);
-      for (let i = 0; i < formats.length; i += 1) {
-        const format = formats[i];
+      for (const format of formats) {
         const formatText = text;
         if (format.includes('wo') || format.includes('Wo')) {
           // parse Wo

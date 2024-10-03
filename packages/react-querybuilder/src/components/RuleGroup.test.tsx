@@ -104,6 +104,7 @@ describe('addRule', () => {
         value: 'value_0',
       }),
       [0],
+      // eslint-disable-next-line unicorn/no-useless-undefined
       undefined
     );
   });
@@ -119,6 +120,7 @@ describe('addGroup', () => {
     expect(onGroupAdd).toHaveBeenLastCalledWith(
       expect.objectContaining({ id: expect.any(String), rules: [] }),
       [0],
+      // eslint-disable-next-line unicorn/no-useless-undefined
       undefined
     );
   });
