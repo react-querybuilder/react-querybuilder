@@ -195,7 +195,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     delete examplePkgJSON.devDependencies['sass'];
     delete examplePkgJSON.devDependencies['typescript'];
     for (const devDep of Object.keys(examplePkgJSON.devDependencies)) {
-      if (/^@types\//.test(devDep)) {
+      if (devDep.startsWith('@types/')) {
         delete examplePkgJSON.devDependencies[devDep];
       }
     }
