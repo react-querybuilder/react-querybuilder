@@ -30,6 +30,7 @@ export const defaultOptions: DemoOptions = {
   validateQuery: false,
   showBranches: false,
   showShiftActions: false,
+  suppressStandardClassnames: false,
 };
 
 export const optionOrder: DemoOption[] = [
@@ -50,6 +51,7 @@ export const optionOrder: DemoOption[] = [
   'showLockButtons',
   'showNotToggle',
   'showBranches',
+  'suppressStandardClassnames',
   'validateQuery',
 ];
 
@@ -136,6 +138,12 @@ export const optionsMetadata: Record<
     link: '/docs/components/querybuilder#showlockbuttons',
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
+  },
+  suppressStandardClassnames: {
+    link: '/docs/components/querybuilder#suppressstandardclassnames',
+    label: 'Suppress standard classnames',
+    title:
+      'Disable application of any standard classes, including validation- and event-based classes',
   },
   debugMode: {
     link: '/docs/components/querybuilder#debugmode',

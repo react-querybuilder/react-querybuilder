@@ -26,7 +26,8 @@ export type DemoOption =
   | 'debugMode'
   | 'parseNumbers'
   | 'justifiedLayout'
-  | 'showBranches';
+  | 'showBranches'
+  | 'suppressStandardClassnames';
 
 export type DemoOptions = Record<DemoOption, boolean>;
 

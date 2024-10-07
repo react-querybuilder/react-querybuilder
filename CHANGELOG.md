@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#755] New `controlElements` properties `ruleGroupHeaderElements` and `ruleGroupBodyElements`, enabling customization/replacement/augmentation of the subcomponents within the rule group header and body wrappers without needing to reimplement the entire `RuleGroup` component.
-- [#785] New prop `suppressStandardClassnames`. When `true`, no classes will be added automatically to any elements (`controlClassnames` will still apply). This includes conditional and event-based classes for validation, drag-and-drop, etc.
+- [#785] New prop `suppressStandardClassnames`. When `true`, no classes will be added automatically to any elements (custom classes defined in `controlClassnames` will still be applied). This includes conditional and event-based classes for validation, drag-and-drop, etc.
+- [#785] A "dndCopy" class will be added when drag-and-drop is enabled and the modifier key (`Alt` or `Option ⌥`) is pressed while the drag phase begins. When using the default styles, the drag-and-drop indicator line will be green (`#669933`) instead of `rebeccapurple` (`#663399`).
 - [#755] New `useQueryBuilderNative` hook. Works the same as `useQueryBuilder`, but tailored for React Native implementations.
 - [#769] The `parseNumbers` prop now accepts an optional "-limited" suffix on existing `string` config values "enhanced", "strict", and "native". When the "-limited" suffix is used (e.g., `parseNumbers="strict-limited"`), values will only be parsed for numericity when the `inputType` is `"number"`.
 - [#769] `formatQuery` now accepts an optional `concatOperator` parameter to support non-standard concatenation methods in the various SQL dialects. The default is the ANSI standard `"||"`, which is supported by PostgreSQL, Oracle, SQLite, and various others, while SQL Server uses `"+"`. A value of `"CONCAT"` will enable MySQL compatibility by using the `CONCAT` function (do not use this for Oracle as its `CONCAT` function is limited).
@@ -106,7 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) when dropping the rule/group will copy it instead of move it.
+- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option ⌥` on Mac) when dropping the rule/group will copy it instead of move it.
 - [#713] `debugMode` now logs the query builder's `qbId`.
 - [#714] `parseJsonLogic` can now override group operations ("and", "or", "!", and "!!") with the `jsonLogicOperations` option.
 
