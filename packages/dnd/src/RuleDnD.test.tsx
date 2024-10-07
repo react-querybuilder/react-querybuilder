@@ -1,3 +1,4 @@
+import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
@@ -16,7 +17,6 @@ import type {
   RuleGroupType,
 } from 'react-querybuilder';
 import { QueryBuilder, TestID, standardClassnames as sc } from 'react-querybuilder';
-import { userEventSetup } from '@rqb-testing';
 import { QueryBuilderDnD } from './QueryBuilderDnD';
 import type { QueryBuilderDndProps } from './types';
 
@@ -47,16 +47,18 @@ it('does not have the drag class if not dragging', () => {
 });
 
 it('has the drag class if dragging', () => {
-  render(<QBforDnD addRuleToNewGroups />);
+  const dndDragging = 'my-dnd-dragging-class';
+  render(<QBforDnD addRuleToNewGroups controlClassnames={{ dndDragging }} />);
   const rule = screen.getByTestId(TestID.rule);
   simulateDrag(getHandlerId(rule, 'drag'), getDndBackend());
-  expect(rule).toHaveClass(sc.dndDragging);
+  expect(rule).toHaveClass(sc.dndDragging, dndDragging);
   act(() => {
     getDndBackend().simulateEndDrag();
   });
 });
 
 it('has the over class if hovered', () => {
+  const dndOver = 'my-dnd-over-class';
   render(
     <QBforDnD
       defaultQuery={{
@@ -66,6 +68,7 @@ it('has the over class if hovered', () => {
           { field: 'f1', operator: '=', value: 'v1' },
         ],
       }}
+      controlClassnames={{ dndOver }}
     />
   );
   const rules = screen.getAllByTestId(TestID.rule);
@@ -74,9 +77,37 @@ it('has the over class if hovered', () => {
     getHandlerId(rules[1], 'drop'),
     getDndBackend()
   );
-  expect(rules[1]).toHaveClass(sc.dndOver);
+  expect(rules[1]).toHaveClass(sc.dndOver, dndOver);
   act(() => {
     getDndBackend().simulateEndDrag();
+  });
+});
+
+it('has the copy class if hovered over while modifier key is pressed', async () => {
+  const dndCopy = 'my-dnd-copy-class';
+  render(
+    <QBforDnD
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      }}
+      controlClassnames={{ dndCopy }}
+    />
+  );
+  const rules = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Alt>}');
+  simulateDragHover(
+    getHandlerId(rules[0], 'drag'),
+    getHandlerId(rules[1], 'drop'),
+    getDndBackend()
+  );
+  expect(rules[1]).toHaveClass(sc.dndCopy, dndCopy);
+  await act(async () => {
+    getDndBackend().simulateEndDrag();
+    await user.keyboard('{/Alt}');
   });
 });
 

@@ -1,11 +1,35 @@
 import { renderHook } from '@testing-library/react';
-import type { ParseNumberMethod, ParseNumbersPropConfig } from '../types';
+import type {
+  FullField,
+  ParseNumberMethod,
+  ParseNumbersPropConfig,
+  Schema,
+  ValueEditorProps,
+} from '../types';
 import { useValueEditor } from './useValueEditor';
+
+const baseValueEditorProps: ValueEditorProps = {
+  field: 'f',
+  operator: '=',
+  valueSource: 'value',
+  fieldData: { name: 'f', value: 'f', label: 'F' },
+  schema: { classNames: {} } as unknown as Schema<FullField, string>,
+  handleOnChange: () => {},
+  path: [],
+  level: 0,
+  rule: { field: 'f', operator: '=', value: '' },
+  value: '',
+};
 
 it('calls handleOnChange when operator is not "between"/"in" and value is an array', async () => {
   const handleOnChange = jest.fn();
   renderHook(() =>
-    useValueEditor({ handleOnChange, operator: '=', value: ['twelve', 'fourteen'] })
+    useValueEditor({
+      ...baseValueEditorProps,
+      handleOnChange,
+      operator: '=',
+      value: ['twelve', 'fourteen'],
+    })
   );
   expect(handleOnChange).toHaveBeenCalledWith('twelve');
 });
@@ -13,7 +37,13 @@ it('calls handleOnChange when operator is not "between"/"in" and value is an arr
 it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is an array', async () => {
   const handleOnChange = jest.fn();
   renderHook(() =>
-    useValueEditor({ handleOnChange, operator: '=', inputType: 'number', value: [12, 14] })
+    useValueEditor({
+      ...baseValueEditorProps,
+      handleOnChange,
+      operator: '=',
+      inputType: 'number',
+      value: [12, 14],
+    })
   );
   expect(handleOnChange).toHaveBeenCalledWith(12);
 });
@@ -21,7 +51,13 @@ it('calls handleOnChange when inputType is number, operator is not "between"/"in
 it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is a string with a comma', async () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
-    useValueEditor({ handleOnChange, operator: '=', inputType: 'number', value: '12, 14' })
+    useValueEditor({
+      ...baseValueEditorProps,
+      handleOnChange,
+      operator: '=',
+      inputType: 'number',
+      value: '12, 14',
+    })
   );
   expect(handleOnChange).toHaveBeenCalledWith('12');
   expect(hr.result.current.valueAsArray).toEqual(['12', '14']);
@@ -31,6 +67,7 @@ it('sets valueAsArray when operator is "between"', async () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
     useValueEditor({
+      ...baseValueEditorProps,
       handleOnChange,
       operator: 'between',
       inputType: 'number',
@@ -59,6 +96,7 @@ describe('parseNumbers', () => {
     const handleOnChangeText = jest.fn();
     const hrText = renderHook(() =>
       useValueEditor({
+        ...baseValueEditorProps,
         handleOnChange: handleOnChangeText,
         operator: '=',
         inputType: 'text',
@@ -70,6 +108,7 @@ describe('parseNumbers', () => {
     const handleOnChangeNumber = jest.fn();
     const hrNumber = renderHook(() =>
       useValueEditor({
+        ...baseValueEditorProps,
         handleOnChange: handleOnChangeNumber,
         operator: '=',
         inputType: 'number',
@@ -84,6 +123,7 @@ it('does not call handleOnChange when type is "multiselect"', async () => {
   const handleOnChange = jest.fn();
   renderHook(() =>
     useValueEditor({
+      ...baseValueEditorProps,
       handleOnChange,
       type: 'multiselect',
       operator: 'custom',
@@ -97,6 +137,7 @@ it('does not call handleOnChange when skipHook is true', async () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
     useValueEditor({
+      ...baseValueEditorProps,
       handleOnChange,
       operator: '=',
       inputType: 'number',

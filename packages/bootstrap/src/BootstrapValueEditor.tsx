@@ -5,22 +5,12 @@ import {
   standardClassnames,
   useValueEditor,
   ValueEditor,
-  ValueSelector,
 } from 'react-querybuilder';
 
 export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange: props.handleOnChange,
-    inputType: props.inputType,
-    operator: props.operator,
-    value: props.value,
-    type: props.type,
-    listsAsArrays: props.listsAsArrays,
-    parseNumbers: props.parseNumbers,
-    values: props.values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(props);
 
-  const { selectorComponent: SelectorComponent = ValueSelector } = props;
+  const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
 
   if (props.operator === 'null' || props.operator === 'notNull') {
     return null;
@@ -40,7 +30,7 @@ export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element
             type={props.inputType || 'text'}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            className={`${standardClassnames.valueListItem} form-control form-control-sm`}
+            className={`${valueListItemClassName} form-control form-control-sm`}
             disabled={props.disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
           />
@@ -50,7 +40,7 @@ export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element
         <SelectorComponent
           key={key}
           {...props}
-          className={`${standardClassnames.valueListItem} form-select form-select-sm`}
+          className={`${valueListItemClassName} form-select form-select-sm`}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}
           value={valueAsArray[i] ?? getFirstOption(props.values)}

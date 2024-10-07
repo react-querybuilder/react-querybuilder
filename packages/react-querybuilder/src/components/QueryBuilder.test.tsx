@@ -70,6 +70,37 @@ describe('when rendered', () => {
     expect(screen.getByRole('form')).toHaveClass(sc.queryBuilder);
   });
 
+  it('respects suppressStandardClassnames', () => {
+    const { container } = render(
+      <QueryBuilder
+        suppressStandardClassnames
+        showCombinatorsBetweenRules
+        showCloneButtons
+        showLockButtons
+        showNotToggle
+        showShiftActions
+        fields={[
+          { name: 'f1', label: 'Field 1' },
+          { name: 'f2', label: 'Field 2', valueSources: ['field', 'value'] },
+          { name: 'f3', label: 'Field 3' },
+        ]}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            { field: 'f1', operator: '=', value: 'v1' },
+            { field: 'f2', operator: '=', value: 'f1', valueSource: 'field' },
+            { field: 'f3', operator: 'between', value: 'v3,v4' },
+            { combinator: 'and', rules: [] },
+          ],
+        }}
+      />
+    );
+
+    for (const c of Object.values(sc)) {
+      expect(container.querySelectorAll(`.${c}`)).toHaveLength(0);
+    }
+  });
+
   it('renders the root RuleGroup', () => {
     render(<QueryBuilder />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
@@ -1617,12 +1648,14 @@ describe('values property in field', () => {
 
   it('sets the values list for "between" operator', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const valueListItem = 'my-value-list-item-class';
     render(
       <QueryBuilder
         getValueEditorType={() => 'select'}
         getDefaultOperator="between"
         fields={fields}
         onQueryChange={onQueryChange}
+        controlClassnames={{ valueListItem }}
       />
     );
 
@@ -1630,7 +1663,9 @@ describe('values property in field', () => {
     expect(screen.getAllByTestId(TestID.valueEditor)).toHaveLength(1);
     const betweenSelects = screen
       .getAllByRole('combobox')
-      .filter(bs => bs.classList.contains(sc.valueListItem));
+      .filter(
+        bs => bs.classList.contains(sc.valueListItem) && bs.classList.contains(valueListItem)
+      );
     expect(betweenSelects).toHaveLength(2);
     for (const bs of betweenSelects) {
       expect(bs.querySelectorAll('option')).toHaveLength(2);
@@ -2467,9 +2502,11 @@ describe('independent combinators', () => {
 
 describe('validation', () => {
   it('does not validate if no validator function is provided', () => {
-    render(<QueryBuilder />);
-    expect(screen.getByRole('form')).not.toHaveClass(sc.valid);
-    expect(screen.getByRole('form')).not.toHaveClass(sc.invalid);
+    const valid = 'my-valid-class';
+    const invalid = 'my-invalid-class';
+    render(<QueryBuilder controlClassnames={{ valid, invalid }} />);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.valid, valid);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.invalid, invalid);
   });
 
   it('validates groups if default validator function is provided', async () => {
@@ -2484,18 +2521,22 @@ describe('validation', () => {
 
   it('uses custom validator function returning false', () => {
     const validator = jest.fn(() => false);
-    render(<QueryBuilder validator={validator} />);
+    const valid = 'my-valid-class';
+    const invalid = 'my-invalid-class';
+    render(<QueryBuilder validator={validator} controlClassnames={{ valid, invalid }} />);
     expect(validator).toHaveBeenCalled();
-    expect(screen.getByRole('form')).not.toHaveClass(sc.valid);
-    expect(screen.getByRole('form')).toHaveClass(sc.invalid);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.valid, valid);
+    expect(screen.getByRole('form')).toHaveClass(sc.invalid, invalid);
   });
 
   it('uses custom validator function returning true', () => {
     const validator = jest.fn(() => true);
-    render(<QueryBuilder validator={validator} />);
+    const valid = 'my-valid-class';
+    const invalid = 'my-invalid-class';
+    render(<QueryBuilder validator={validator} controlClassnames={{ valid, invalid }} />);
     expect(validator).toHaveBeenCalled();
-    expect(screen.getByRole('form')).toHaveClass(sc.valid);
-    expect(screen.getByRole('form')).not.toHaveClass(sc.invalid);
+    expect(screen.getByRole('form')).toHaveClass(sc.valid, valid);
+    expect(screen.getByRole('form')).not.toHaveClass(sc.invalid, invalid);
   });
 
   it('passes down validationMap to children', () => {
@@ -2517,15 +2558,20 @@ describe('validation', () => {
 
 describe('disabled', () => {
   it('has the correct classname', () => {
-    const { container } = render(<QueryBuilder disabled />);
-    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled);
+    const disabled = 'my-disabled-class';
+    const { container } = render(<QueryBuilder disabled controlClassnames={{ disabled }} />);
+    expect(container.querySelectorAll('div')[0]).toHaveClass(sc.disabled, disabled);
   });
 
   it('has the correct classname when disabled prop is false but root group is disabled', () => {
+    const disabled = 'my-disabled-class';
     const { container } = render(
-      <QueryBuilder query={{ disabled: true, combinator: 'and', rules: [] }} />
+      <QueryBuilder
+        query={{ disabled: true, combinator: 'and', rules: [] }}
+        controlClassnames={{ disabled }}
+      />
     );
-    expect(container.querySelectorAll('div')[0]).not.toHaveClass(sc.disabled);
+    expect(container.querySelectorAll('div')[0]).not.toHaveClass(sc.disabled, disabled);
   });
 
   it('prevents changes when disabled', async () => {

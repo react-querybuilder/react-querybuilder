@@ -45,6 +45,7 @@ export const basicSchema: Schema<FullField, string> = {
   listsAsArrays: false,
   parseNumbers: false,
   disabledPaths: [],
+  suppressStandardClassnames: false,
 };
 
 export const findInput = (el: HTMLElement) =>
@@ -74,7 +75,7 @@ export const hasOrInheritsData = (
   if (!el || el.tagName === 'BODY') {
     return false;
   }
-  if (typeof el.dataset[dataAttr] !== 'undefined') {
+  if (el.dataset[dataAttr] !== undefined) {
     return true;
   }
   if (attempt >= 10) {

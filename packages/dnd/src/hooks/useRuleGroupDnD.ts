@@ -8,6 +8,7 @@ import type {
   UseRuleGroupDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import { dropEffectListener } from '../dropEffectListener';
 import type { QueryBuilderDndContextProps } from '../types';
 import { useDragCommon } from './useDragCommon';
 
@@ -72,7 +73,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
+        dropEffect: monitor.getDropResult()?.dropEffect ?? dropEffectListener,
       }),
       drop: (_item, monitor) => {
         const { qbId, getQuery, dispatchQuery } = schema;

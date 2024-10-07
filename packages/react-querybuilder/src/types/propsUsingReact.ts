@@ -376,6 +376,7 @@ export interface Schema<F extends FullField, O extends string> {
   listsAsArrays: boolean;
   parseNumbers: ParseNumbersPropConfig;
   disabledPaths: Path[];
+  suppressStandardClassnames: boolean;
 }
 
 /**
@@ -906,6 +907,11 @@ export type QueryBuilderProps<
        * function should be meaningful, descriptive, and unique within the page.
        */
       accessibleDescriptionGenerator?: AccessibleDescriptionGenerator;
+      /**
+       * Prevent _any_ assignment of standard classes to elements. This includes conditional
+       * and event-based classes for validation, drag-and-drop, etc.
+       */
+      suppressStandardClassnames?: boolean;
       /**
        * Container for custom props that are passed to all components.
        */

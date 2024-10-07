@@ -5,7 +5,7 @@ export default {
   ...common,
   displayName: 'rqb',
   coveragePathIgnorePatterns: [
-    ...(common.coveragePathIgnorePatterns ?? []),
+    ...common.coveragePathIgnorePatterns,
     'celParser.js',
     'sqlParser.js',
   ],

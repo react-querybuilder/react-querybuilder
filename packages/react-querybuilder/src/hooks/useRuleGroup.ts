@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import { useDeprecatedProps, useReactDndWarning } from '../hooks';
 import type {
-  Classnames,
   ActionElementEventHandler,
+  Classnames,
   Path,
   RuleGroupProps,
   RuleGroupType,
@@ -78,6 +78,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       validationMap,
       enableDragAndDrop,
       getRuleGroupClassname,
+      suppressStandardClassnames,
     },
     actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
     disabled: disabledProp,
@@ -88,6 +89,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     rules: rulesProp,
     not: notProp,
     // Drag-and-drop
+    dropEffect = 'move',
     dragMonitorId = '',
     dropMonitorId = '',
     previewRef = null,
@@ -131,43 +133,62 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const classNames = useMemo(
     () => ({
-      header: clsx(standardClassnames.header, classNamesProp.header, {
-        [standardClassnames.dndOver]: isOver,
-      }),
-      shiftActions: clsx(standardClassnames.shiftActions, classNamesProp.shiftActions),
-      dragHandle: clsx(standardClassnames.dragHandle, classNamesProp.dragHandle),
+      header: clsx(
+        suppressStandardClassnames || standardClassnames.header,
+        classNamesProp.header,
+        isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        suppressStandardClassnames || {
+          [standardClassnames.dndOver]: isOver,
+          [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+        }
+      ),
+      shiftActions: clsx(
+        suppressStandardClassnames || standardClassnames.shiftActions,
+        classNamesProp.shiftActions
+      ),
+      dragHandle: clsx(
+        suppressStandardClassnames || standardClassnames.dragHandle,
+        classNamesProp.dragHandle
+      ),
       combinators: clsx(
-        standardClassnames.combinators,
+        suppressStandardClassnames || standardClassnames.combinators,
         classNamesProp.valueSelector,
         classNamesProp.combinators
       ),
-      notToggle: clsx(standardClassnames.notToggle, classNamesProp.notToggle),
+      // betweenRules: clsx(
+      //   suppressStandardClassnames || standardClassnames.betweenRules,
+      //   classNamesProp.betweenRules
+      // ),
+      notToggle: clsx(
+        suppressStandardClassnames || standardClassnames.notToggle,
+        classNamesProp.notToggle
+      ),
       addRule: clsx(
-        standardClassnames.addRule,
+        suppressStandardClassnames || standardClassnames.addRule,
         classNamesProp.actionElement,
         classNamesProp.addRule
       ),
       addGroup: clsx(
-        standardClassnames.addGroup,
+        suppressStandardClassnames || standardClassnames.addGroup,
         classNamesProp.actionElement,
         classNamesProp.addGroup
       ),
       cloneGroup: clsx(
-        standardClassnames.cloneGroup,
+        suppressStandardClassnames || standardClassnames.cloneGroup,
         classNamesProp.actionElement,
         classNamesProp.cloneGroup
       ),
       lockGroup: clsx(
-        standardClassnames.lockGroup,
+        suppressStandardClassnames || standardClassnames.lockGroup,
         classNamesProp.actionElement,
         classNamesProp.lockGroup
       ),
       removeGroup: clsx(
-        standardClassnames.removeGroup,
+        suppressStandardClassnames || standardClassnames.removeGroup,
         classNamesProp.actionElement,
         classNamesProp.removeGroup
       ),
-      body: clsx(standardClassnames.body, classNamesProp.body),
+      body: clsx(suppressStandardClassnames || standardClassnames.body, classNamesProp.body),
     }),
     [
       classNamesProp.actionElement,
@@ -176,6 +197,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.body,
       classNamesProp.cloneGroup,
       classNamesProp.combinators,
+      classNamesProp.dndCopy,
       classNamesProp.dragHandle,
       classNamesProp.header,
       classNamesProp.lockGroup,
@@ -183,7 +205,9 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.removeGroup,
       classNamesProp.shiftActions,
       classNamesProp.valueSelector,
+      dropEffect,
       isOver,
+      suppressStandardClassnames,
     ]
   );
 
@@ -296,20 +320,25 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       clsx(
         ruleGroupClassname,
         combinatorBasedClassName,
-        standardClassnames.ruleGroup,
+        suppressStandardClassnames || standardClassnames.ruleGroup,
         classNamesProp.ruleGroup,
-        {
+        disabled && classNamesProp.disabled,
+        isDragging && classNamesProp.dndDragging,
+        suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
           [standardClassnames.dndDragging]: isDragging,
         },
         validationClassName
       ),
     [
+      classNamesProp.disabled,
+      classNamesProp.dndDragging,
       classNamesProp.ruleGroup,
       combinatorBasedClassName,
       disabled,
-      ruleGroupClassname,
       isDragging,
+      ruleGroupClassname,
+      suppressStandardClassnames,
       validationClassName,
     ]
   );

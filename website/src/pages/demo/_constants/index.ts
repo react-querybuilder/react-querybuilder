@@ -31,6 +31,7 @@ export const defaultOptions = {
   justifiedLayout: false,
   showBranches: false,
   showShiftActions: false,
+  suppressStandardClassnames: false,
 } satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
@@ -53,6 +54,7 @@ export const optionOrder: DemoOption[] = [
   'parseNumbers',
   'justifiedLayout',
   'showBranches',
+  'suppressStandardClassnames',
 ];
 
 export const optionsMetadata = {
@@ -141,6 +143,12 @@ export const optionsMetadata = {
     link: '/docs/components/querybuilder#parsenumbers',
     label: 'Parse numbers',
     title: 'Parse real numbers from strings in rule values (uses "strict-limited" option)',
+  },
+  suppressStandardClassnames: {
+    link: '/docs/components/querybuilder#suppressstandardclassnames',
+    label: 'Suppress standard classes',
+    title:
+      'Disable application of any standard classes, including validation- and event-based classes',
   },
   justifiedLayout: {
     link: '',

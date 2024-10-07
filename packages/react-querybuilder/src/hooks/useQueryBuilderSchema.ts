@@ -105,6 +105,7 @@ export function useQueryBuilderSchema<
     showShiftActions: showShiftActionsProp = false,
     showCloneButtons: showCloneButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
+    suppressStandardClassnames: suppressStandardClassnamesProp = false,
     resetOnFieldChange: resetOnFieldChangeProp = true,
     resetOnOperatorChange: resetOnOperatorChangeProp = false,
     autoSelectField: autoSelectFieldProp = true,
@@ -157,6 +158,7 @@ export function useQueryBuilderSchema<
   const autoSelectOperator = !!autoSelectOperatorProp;
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
+  const suppressStandardClassnames = !!suppressStandardClassnamesProp;
   // #endregion
 
   const log = useCallback(
@@ -457,12 +459,29 @@ export function useQueryBuilderSchema<
   );
   const wrapperClassName = useMemo(
     () =>
-      clsx(standardClassnames.queryBuilder, clsx(controlClassnames.queryBuilder), {
-        [standardClassnames.disabled]: queryDisabled,
-        [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
-        [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
-      }),
-    [controlClassnames.queryBuilder, queryDisabled, validationResult]
+      clsx(
+        suppressStandardClassnames || standardClassnames.queryBuilder,
+        clsx(controlClassnames.queryBuilder),
+        // custom conditional classes
+        queryDisabled && controlClassnames.disabled,
+        typeof validationResult === 'boolean' && validationResult && controlClassnames.valid,
+        typeof validationResult === 'boolean' && !validationResult && controlClassnames.invalid,
+        // standard conditional classes
+        suppressStandardClassnames || {
+          [standardClassnames.disabled]: queryDisabled,
+          [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
+          [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
+        }
+      ),
+    [
+      controlClassnames.disabled,
+      controlClassnames.invalid,
+      controlClassnames.queryBuilder,
+      controlClassnames.valid,
+      queryDisabled,
+      suppressStandardClassnames,
+      validationResult,
+    ]
   );
   // #endregion
 
@@ -501,11 +520,12 @@ export function useQueryBuilderSchema<
       showLockButtons,
       showNotToggle,
       showShiftActions,
+      suppressStandardClassnames,
       validationMap,
     }),
     [
-      addRuleToNewGroups,
       accessibleDescriptionGenerator,
+      addRuleToNewGroups,
       autoSelectField,
       autoSelectOperator,
       combinators,
@@ -514,19 +534,19 @@ export function useQueryBuilderSchema<
       createRule,
       createRuleGroup,
       disabledPaths,
+      dispatchQuery,
       enableDragAndDrop,
       fieldMap,
       fields,
-      dispatchQuery,
-      getQuery,
       getInputTypeMain,
       getOperatorsMain,
+      getQuery,
       getRuleClassname,
       getRuleGroupClassname,
+      getValueEditorSeparator,
       getValueEditorTypeMain,
       getValuesMain,
       getValueSourcesMain,
-      getValueEditorSeparator,
       independentCombinators,
       listsAsArrays,
       parseNumbers,
@@ -536,6 +556,7 @@ export function useQueryBuilderSchema<
       showLockButtons,
       showNotToggle,
       showShiftActions,
+      suppressStandardClassnames,
       validationMap,
     ]
   );

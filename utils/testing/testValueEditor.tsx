@@ -7,8 +7,16 @@ import type {
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
+import { standardClassnames } from 'react-querybuilder';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
-import { basicSchema, findInput, findInputs, findTextarea, userEventSetup } from './utils';
+import {
+  basicSchema,
+  findInput,
+  findInputs,
+  findTextarea,
+  hasOrInheritsClass,
+  userEventSetup,
+} from './utils';
 
 type ValueEditorTestsToSkip = Partial<{
   def: boolean;
@@ -232,9 +240,7 @@ export const testValueEditor = (
 
         it('should render the radio buttons with labels', () => {
           render(<ValueEditor {...radioProps} />);
-          const radioButtons = Array.from(
-            screen.getByTitle(title).querySelectorAll('input[type="radio"]')
-          );
+          const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           expect(radioButtons).toHaveLength(2);
           for (const r of radioButtons) {
             expect(r).toHaveAttribute('type', 'radio');
@@ -244,9 +250,7 @@ export const testValueEditor = (
         it('should call the onChange handler', async () => {
           const handleOnChange = jest.fn();
           render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} />);
-          const radioButtons = Array.from(
-            screen.getByTitle(title).querySelectorAll('input[type="radio"]')
-          );
+          const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           for (const r of radioButtons) {
             await user.click(r);
           }
@@ -257,9 +261,7 @@ export const testValueEditor = (
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
           render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} disabled />);
-          const radioButtons = Array.from(
-            screen.getByTitle(title).querySelectorAll('input[type="radio"]')
-          );
+          const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           for (const r of radioButtons) {
             expect(r).toBeDisabled();
             await user.click(r);
@@ -283,7 +285,21 @@ export const testValueEditor = (
           const betweenInputs = screen.getAllByRole('textbox');
           expect(betweenInputs).toHaveLength(2);
           expect(betweenInputs[0]).toHaveValue('test1');
+          hasOrInheritsClass(betweenInputs[0], standardClassnames.valueListItem);
           expect(betweenInputs[1]).toHaveValue('test2');
+          hasOrInheritsClass(betweenInputs[1], standardClassnames.valueListItem);
+        });
+
+        it('should respect suppressStandardClassnames', () => {
+          render(
+            <ValueEditor
+              {...betweenTextProps}
+              schema={{ ...betweenTextProps.schema, suppressStandardClassnames: true }}
+            />
+          );
+          const betweenInputs = screen.getAllByRole('textbox');
+          expect(betweenInputs[0]).not.toHaveClass(standardClassnames.valueListItem);
+          expect(betweenInputs[1]).not.toHaveClass(standardClassnames.valueListItem);
         });
 
         it('should call the onChange handler', async () => {
@@ -391,7 +407,7 @@ export const testValueEditor = (
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
           render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} disabled />);
-          const betweenInputs = Array.from(findInputs(screen.getByTitle(title)));
+          const betweenInputs = findInputs(screen.getByTitle(title));
           expect(betweenInputs).toHaveLength(2);
           for (const r of betweenInputs) {
             expect(r).toBeDisabled();

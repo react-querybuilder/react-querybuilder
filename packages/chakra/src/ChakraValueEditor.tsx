@@ -1,12 +1,7 @@
 import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import {
-  ValueSelector,
-  getFirstOption,
-  standardClassnames,
-  useValueEditor,
-} from 'react-querybuilder';
+import { ValueSelector, getFirstOption, useValueEditor } from 'react-querybuilder';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
@@ -23,7 +18,6 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
     inputType,
     values = [],
     listsAsArrays,
-    parseNumbers,
     separator,
     valueSource: _vs,
     testID,
@@ -33,16 +27,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -63,7 +48,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
             type={inputTypeCoerced}
             value={valueAsArray[i] ?? ''}
             isDisabled={disabled}
-            className={standardClassnames.valueListItem}
+            className={valueListItemClassName}
             placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
             {...extraProps}
@@ -74,7 +59,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
         <SelectorComponent
           key={key}
           {...props}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}

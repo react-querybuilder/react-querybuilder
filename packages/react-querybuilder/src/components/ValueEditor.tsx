@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { standardClassnames } from '../defaults';
 import { useValueEditor } from '../hooks';
 import type { FullField, Schema, ValueEditorProps } from '../types';
 import { getFirstOption, parseNumber } from '../utils';
@@ -28,7 +27,8 @@ export const ValueEditor = <F extends FullField>(
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, parseNumberMethod } = useValueEditor(allProps);
+  const { valueAsArray, multiValueHandler, parseNumberMethod, valueListItemClassName } =
+    useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -49,7 +49,7 @@ export const ValueEditor = <F extends FullField>(
             type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            className={standardClassnames.valueListItem}
+            className={valueListItemClassName}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
           />
@@ -60,7 +60,7 @@ export const ValueEditor = <F extends FullField>(
           key={key}
           {...props}
           schema={allProps.schema as unknown as Schema<FullField, string>}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}
