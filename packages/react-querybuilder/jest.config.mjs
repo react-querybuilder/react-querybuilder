@@ -9,5 +9,5 @@ export default {
     'celParser.js',
     'sqlParser.js',
   ],
-  testPathIgnorePatterns: [...common.testPathIgnorePatterns, 'dbquery'],
+  testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
 };

@@ -71,8 +71,34 @@ describe('when rendered', () => {
   });
 
   it('respects suppressStandardClassnames', () => {
-    render(<QueryBuilder suppressStandardClassnames />);
-    expect(screen.getByRole('form')).not.toHaveClass(sc.queryBuilder);
+    const { container } = render(
+      <QueryBuilder
+        suppressStandardClassnames
+        showCombinatorsBetweenRules
+        showCloneButtons
+        showLockButtons
+        showNotToggle
+        showShiftActions
+        fields={[
+          { name: 'f1', label: 'Field 1' },
+          { name: 'f2', label: 'Field 2', valueSources: ['field', 'value'] },
+          { name: 'f3', label: 'Field 3' },
+        ]}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            { field: 'f1', operator: '=', value: 'v1' },
+            { field: 'f2', operator: '=', value: 'f1', valueSource: 'field' },
+            { field: 'f3', operator: 'between', value: 'v3,v4' },
+            { combinator: 'and', rules: [] },
+          ],
+        }}
+      />
+    );
+
+    for (const c of Object.values(sc)) {
+      expect(container.querySelectorAll(`.${c}`)).toHaveLength(0);
+    }
   });
 
   it('renders the root RuleGroup', () => {
