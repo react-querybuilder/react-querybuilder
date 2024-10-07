@@ -145,7 +145,7 @@ export const optionsMetadata = {
     title: 'Parse real numbers from strings in rule values (uses "strict-limited" option)',
   },
   suppressStandardClassnames: {
-    link: '/docs/styling/overview#suppressstandardclassnames',
+    link: '/docs/components/querybuilder#suppressstandardclassnames',
     label: 'Suppress standard classes',
     title:
       'Disable application of any standard classes, including validation- and event-based classes',
