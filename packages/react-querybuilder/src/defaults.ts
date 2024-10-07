@@ -271,6 +271,15 @@ export const defaultControlClassnames: Classnames = {
   valueSource: '',
   actionElement: '',
   valueSelector: '',
+  betweenRules: '',
+  valid: '',
+  invalid: '',
+  dndDragging: '',
+  dndOver: '',
+  dndCopy: '',
+  disabled: '',
+  valueListItem: '',
+  branches: '',
 } satisfies Classnames;
 
 /**

@@ -32,6 +32,11 @@ it('has correct classNames', () => {
   expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.rule, clsx(ruleClassnames.rule));
 });
 
+it('respects suppressStandardClassnames', () => {
+  render(<Rule {...getProps({ suppressStandardClassnames: true })} />);
+  expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.rule);
+});
+
 describe('onElementChanged methods', () => {
   describe('onFieldChanged', () => {
     it('calls onPropChange with the rule path', async () => {

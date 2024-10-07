@@ -5,9 +5,9 @@ export default {
   ...common,
   displayName: 'rqb',
   coveragePathIgnorePatterns: [
-    ...(common.coveragePathIgnorePatterns ?? []),
+    ...common.coveragePathIgnorePatterns,
     'celParser.js',
     'sqlParser.js',
   ],
-  testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
+  testPathIgnorePatterns: [...common.testPathIgnorePatterns, 'dbquery'],
 };

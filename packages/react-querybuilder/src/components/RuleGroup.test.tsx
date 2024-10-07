@@ -5,11 +5,18 @@ import * as React from 'react';
 import {
   TestID,
   defaultCombinators,
+  defaultControlClassnames,
   standardClassnames as sc,
   defaultTranslations as t,
 } from '../defaults';
 import { messages } from '../messages';
-import type { ActionProps, RuleGroupICArray, ValidationResult, ValueSelectorProps } from '../types';
+import type {
+  ActionProps,
+  RuleGroupICArray,
+  RuleGroupTypeIC,
+  ValidationResult,
+  ValueSelectorProps,
+} from '../types';
 import { add, toFullOption } from '../utils';
 import { RuleGroup } from './RuleGroup';
 import { render, waitABeat } from './testUtils';
@@ -36,6 +43,14 @@ it('has correct classNames', () => {
   expect(screen.getByTestId(TestID.ruleGroup).querySelector(`.${sc.body}`)!.classList).toContain(
     ruleGroupClassnames.body
   );
+});
+
+it('respects suppressStandardClassnames', () => {
+  render(<RuleGroup {...getRuleGroupProps({ suppressStandardClassnames: true })} />);
+  const ruleGroup = screen.getByTestId(TestID.ruleGroup);
+  expect(ruleGroup).not.toHaveClass(sc.ruleGroup);
+  expect(ruleGroup.querySelectorAll('div')[0].classList).not.toContain(sc.header);
+  expect(ruleGroup.querySelectorAll('div')[1].classList).not.toContain(sc.body);
 });
 
 describe('when 2 rules exist', () => {
@@ -255,18 +270,35 @@ describe('showCloneButtons', () => {
 
 describe('independent combinators', () => {
   it('renders combinator selector for string elements', () => {
-    const rules: RuleGroupICArray = [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      'and',
-      { rules: [] },
-    ];
+    const queryIC: RuleGroupTypeIC = {
+      rules: [{ field: 'firstName', operator: '=', value: 'Test' }, 'and', { rules: [] }],
+    };
     render(
-      <RuleGroup {...getRuleGroupProps({ independentCombinators: true })} ruleGroup={{ rules }} />
+      <RuleGroup {...getRuleGroupProps({ independentCombinators: true })} ruleGroup={queryIC} />
     );
     const inlineCombinator = screen.getByTestId(TestID.inlineCombinator);
     const combinatorSelector = screen.getByTestId(TestID.combinators);
     expect(inlineCombinator).toHaveClass(sc.betweenRules);
     expect(combinatorSelector).toHaveValue('and');
+  });
+
+  it('respects suppressStandardClassnames', () => {
+    const queryIC: RuleGroupTypeIC = {
+      rules: [{ field: 'firstName', operator: '=', value: 'Test' }, 'and', { rules: [] }],
+    };
+    render(
+      <RuleGroup
+        {...getRuleGroupProps({
+          independentCombinators: true,
+          suppressStandardClassnames: true,
+          classNames: { ...defaultControlClassnames, ...sc, betweenRules: 'custom-between-rules' },
+        })}
+        ruleGroup={queryIC}
+      />
+    );
+    const inlineCombinator = screen.getByTestId(TestID.inlineCombinator);
+    expect(inlineCombinator).not.toHaveClass(sc.betweenRules);
+    expect(inlineCombinator).toHaveClass('custom-between-rules');
   });
 
   it('calls handleOnChange for string elements', async () => {

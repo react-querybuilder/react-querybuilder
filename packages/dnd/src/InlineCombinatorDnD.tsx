@@ -21,8 +21,13 @@ export const InlineCombinatorDnD = ({
     canDrop,
   });
 
-  const dndOver = isOver ? standardClassnames.dndOver : '';
-  const wrapperClassName = `${standardClassnames.betweenRules}${dndOver ? ` ${dndOver}` : ''}`;
+  const wrapperClassName = [
+    props.schema.suppressStandardClassnames || standardClassnames.betweenRules,
+    (isOver && !props.schema.classNames.dndOver) || false,
+    (isOver && !props.schema.suppressStandardClassnames && standardClassnames.dndOver) || false,
+  ]
+    .filter(c => typeof c === 'string')
+    .join(' ');
 
   return (
     <div

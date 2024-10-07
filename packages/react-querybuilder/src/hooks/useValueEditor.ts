@@ -1,20 +1,9 @@
 import { produce } from 'immer';
 import { useCallback, useEffect, useMemo } from 'react';
-import type { ParseNumberMethod, ValueEditorProps } from '../types';
+import type { FullField, ParseNumberMethod, ValueEditorProps } from '../types';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
-
-export type UseValueEditorParams = Pick<
-  ValueEditorProps,
-  | 'handleOnChange'
-  | 'inputType'
-  | 'operator'
-  | 'value'
-  | 'listsAsArrays'
-  | 'type'
-  | 'values'
-  | 'parseNumbers'
-  | 'skipHook'
->;
+import clsx from '../utils/clsx';
+import { standardClassnames } from '../defaults';
 
 /**
  * This hook is primarily concerned with multi-value editors like date range
@@ -44,8 +33,8 @@ export type UseValueEditorParams = Pick<
  * `{ field: "f1", operator: "between", value: "12,14" }`
  * // If `operator` changes to "=", the value will be reset to "12".
  */
-export const useValueEditor = (
-  props: UseValueEditorParams
+export const useValueEditor = <F extends FullField = FullField, O extends string = string>(
+  props: ValueEditorProps<F, O>
 ): {
   /**
    * Array of values for when the main value represents a list, e.g. when operator
@@ -70,6 +59,10 @@ export const useValueEditor = (
    * it's set to `false`.
    */
   parseNumberMethod: ParseNumberMethod;
+  /**
+   * Class for items in a value editor series (e.g. "between" value editors).
+   */
+  valueListItemClassName: string;
 } => {
   const {
     handleOnChange,
@@ -81,6 +74,7 @@ export const useValueEditor = (
     values,
     type,
     skipHook,
+    schema: { classNames: classNamesProp, suppressStandardClassnames },
   } = props;
 
   useEffect(() => {
@@ -131,9 +125,16 @@ export const useValueEditor = (
     [handleOnChange, listsAsArrays, operator, parseNumberMethod, valueAsArray, values]
   );
 
+  const valueListItemClassName = clsx(
+    suppressStandardClassnames || standardClassnames.valueListItem,
+    // Optional chaining is necessary for QueryBuilderNative
+    classNamesProp?.valueListItem
+  );
+
   return {
     valueAsArray,
     multiValueHandler,
     parseNumberMethod,
+    valueListItemClassName,
   };
 };

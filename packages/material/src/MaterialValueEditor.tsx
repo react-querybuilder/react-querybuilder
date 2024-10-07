@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import {
-  getFirstOption,
-  standardClassnames,
-  useValueEditor,
-  ValueEditor,
-} from 'react-querybuilder';
+import { getFirstOption, useValueEditor, ValueEditor } from 'react-querybuilder';
 import type { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
@@ -33,7 +28,6 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     inputType,
     values = [],
     listsAsArrays,
-    parseNumbers,
     separator,
     valueSource: _vs,
     disabled,
@@ -44,16 +38,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } =
+    useValueEditor(propsForValueEditor);
 
   const masterKey = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
@@ -88,7 +74,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
           <Input
             key={key}
             type={inputTypeCoerced}
-            className={standardClassnames.valueListItem}
+            className={valueListItemClassName}
             value={valueAsArray[i] ?? ''}
             disabled={disabled}
             placeholder={placeHolderText}
@@ -103,7 +89,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
           {...propsForValueSelector}
           path={path}
           level={level}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           muiComponents={muiComponents}
           disabled={disabled}

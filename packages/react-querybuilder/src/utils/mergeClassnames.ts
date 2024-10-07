@@ -1,35 +1,47 @@
 import { clsx } from './clsx';
 import type { Classnames } from '../types';
 
+type MergeClassnamesParams = (Partial<Classnames> | undefined)[];
+
+const joinClassnamesByName = (name: keyof Classnames, args: MergeClassnamesParams) =>
+  clsx(args.map(c => clsx(c?.[name])));
+
 /**
  * Merges a list of partial {@link Classnames} definitions into a single definition.
  */
-export const mergeClassnames = (...args: (Partial<Classnames> | undefined)[]): Classnames => {
-  const joinClassnamesByName = (name: keyof Classnames) => clsx(args.map(c => clsx(c?.[name])));
-
+export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => {
   return {
-    queryBuilder: joinClassnamesByName('queryBuilder'),
-    ruleGroup: joinClassnamesByName('ruleGroup'),
-    header: joinClassnamesByName('header'),
-    body: joinClassnamesByName('body'),
-    combinators: joinClassnamesByName('combinators'),
-    addRule: joinClassnamesByName('addRule'),
-    addGroup: joinClassnamesByName('addGroup'),
-    cloneRule: joinClassnamesByName('cloneRule'),
-    cloneGroup: joinClassnamesByName('cloneGroup'),
-    removeGroup: joinClassnamesByName('removeGroup'),
-    rule: joinClassnamesByName('rule'),
-    fields: joinClassnamesByName('fields'),
-    operators: joinClassnamesByName('operators'),
-    value: joinClassnamesByName('value'),
-    removeRule: joinClassnamesByName('removeRule'),
-    notToggle: joinClassnamesByName('notToggle'),
-    shiftActions: joinClassnamesByName('shiftActions'),
-    dragHandle: joinClassnamesByName('dragHandle'),
-    lockRule: joinClassnamesByName('lockRule'),
-    lockGroup: joinClassnamesByName('lockGroup'),
-    valueSource: joinClassnamesByName('valueSource'),
-    actionElement: joinClassnamesByName('actionElement'),
-    valueSelector: joinClassnamesByName('valueSelector'),
+    queryBuilder: joinClassnamesByName('queryBuilder', args),
+    ruleGroup: joinClassnamesByName('ruleGroup', args),
+    header: joinClassnamesByName('header', args),
+    body: joinClassnamesByName('body', args),
+    combinators: joinClassnamesByName('combinators', args),
+    addRule: joinClassnamesByName('addRule', args),
+    addGroup: joinClassnamesByName('addGroup', args),
+    cloneRule: joinClassnamesByName('cloneRule', args),
+    cloneGroup: joinClassnamesByName('cloneGroup', args),
+    removeGroup: joinClassnamesByName('removeGroup', args),
+    rule: joinClassnamesByName('rule', args),
+    fields: joinClassnamesByName('fields', args),
+    operators: joinClassnamesByName('operators', args),
+    value: joinClassnamesByName('value', args),
+    removeRule: joinClassnamesByName('removeRule', args),
+    notToggle: joinClassnamesByName('notToggle', args),
+    shiftActions: joinClassnamesByName('shiftActions', args),
+    dragHandle: joinClassnamesByName('dragHandle', args),
+    lockRule: joinClassnamesByName('lockRule', args),
+    lockGroup: joinClassnamesByName('lockGroup', args),
+    valueSource: joinClassnamesByName('valueSource', args),
+    actionElement: joinClassnamesByName('actionElement', args),
+    valueSelector: joinClassnamesByName('valueSelector', args),
+    betweenRules: joinClassnamesByName('betweenRules', args),
+    valid: joinClassnamesByName('valid', args),
+    invalid: joinClassnamesByName('invalid', args),
+    dndDragging: joinClassnamesByName('dndDragging', args),
+    dndOver: joinClassnamesByName('dndOver', args),
+    dndCopy: joinClassnamesByName('dndCopy', args),
+    disabled: joinClassnamesByName('disabled', args),
+    valueListItem: joinClassnamesByName('valueListItem', args),
+    branches: joinClassnamesByName('branches', args),
   };
 };

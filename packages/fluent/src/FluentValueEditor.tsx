@@ -2,7 +2,7 @@ import type { InputProps } from '@fluentui/react-components';
 import { Checkbox, Input, Radio, RadioGroup, Switch, Textarea } from '@fluentui/react-components';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
+import { getFirstOption, useValueEditor } from 'react-querybuilder';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
@@ -19,7 +19,6 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     inputType,
     values = [],
     listsAsArrays,
-    parseNumbers,
     separator,
     valueSource: _vs,
     disabled,
@@ -30,16 +29,7 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -62,7 +52,7 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
             type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            className={`${standardClassnames.valueListItem} input`}
+            className={`${valueListItemClassName} input`}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
             {...extraProps}
@@ -73,7 +63,7 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
         <SelectorComponent
           key={key}
           {...props}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}

@@ -1,23 +1,13 @@
 import * as React from 'react';
 import {
   getFirstOption,
-  standardClassnames,
   useValueEditor,
   ValueEditor,
   type ValueEditorProps,
 } from 'react-querybuilder';
 
 export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange: props.handleOnChange,
-    inputType: props.inputType,
-    operator: props.operator,
-    value: props.value,
-    type: props.type,
-    listsAsArrays: props.listsAsArrays,
-    parseNumbers: props.parseNumbers,
-    values: props.values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(props);
 
   const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
 
@@ -40,7 +30,7 @@ export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | n
             type={props.inputType || 'text'}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            className={`${standardClassnames.valueListItem} input`}
+            className={`${valueListItemClassName} input`}
             disabled={props.disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
           />
@@ -50,7 +40,7 @@ export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | n
         <SelectorComponent
           key={key}
           {...props}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={props.disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}

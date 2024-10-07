@@ -68,7 +68,21 @@ export const useRule = (props: RuleProps): UseRule => {
     id,
     path,
     rule: ruleProp,
-    schema,
+    schema: {
+      classNames: classNamesProp,
+      fields,
+      fieldMap,
+      getInputType,
+      getOperators,
+      getValueEditorType,
+      getValueEditorSeparator,
+      getValueSources,
+      getValues,
+      validationMap,
+      enableDragAndDrop,
+      getRuleClassname,
+      suppressStandardClassnames,
+    },
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
     parentDisabled,
@@ -78,6 +92,8 @@ export const useRule = (props: RuleProps): UseRule => {
     operator: operatorProp,
     value: valueProp,
     valueSource: valueSourceProp,
+    // Drag-and-drop
+    dropEffect = 'move',
     dragMonitorId = '',
     dropMonitorId = '',
     dndRef = null,
@@ -85,21 +101,6 @@ export const useRule = (props: RuleProps): UseRule => {
     isDragging = false,
     isOver = false,
   } = props;
-
-  const {
-    classNames: classNamesProp,
-    fields,
-    fieldMap,
-    getInputType,
-    getOperators,
-    getValueEditorType,
-    getValueEditorSeparator,
-    getValueSources,
-    getValues,
-    validationMap,
-    enableDragAndDrop,
-    getRuleClassname,
-  } = schema;
 
   useDeprecatedProps('rule', !ruleProp);
 
@@ -121,34 +122,48 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const classNames = useMemo(
     () => ({
-      shiftActions: clsx(standardClassnames.shiftActions, classNamesProp.shiftActions),
-      dragHandle: clsx(standardClassnames.dragHandle, classNamesProp.dragHandle),
-      fields: clsx(standardClassnames.fields, classNamesProp.valueSelector, classNamesProp.fields),
+      shiftActions: clsx(
+        suppressStandardClassnames || standardClassnames.shiftActions,
+        classNamesProp.shiftActions
+      ),
+      dragHandle: clsx(
+        suppressStandardClassnames || standardClassnames.dragHandle,
+        classNamesProp.dragHandle
+      ),
+      fields: clsx(
+        suppressStandardClassnames || standardClassnames.fields,
+        classNamesProp.valueSelector,
+        classNamesProp.fields
+      ),
       operators: clsx(
-        standardClassnames.operators,
+        suppressStandardClassnames || standardClassnames.operators,
         classNamesProp.valueSelector,
         classNamesProp.operators
       ),
       valueSource: clsx(
-        standardClassnames.valueSource,
+        suppressStandardClassnames || standardClassnames.valueSource,
         classNamesProp.valueSelector,
         classNamesProp.valueSource
       ),
-      value: clsx(standardClassnames.value, classNamesProp.value),
+      value: clsx(suppressStandardClassnames || standardClassnames.value, classNamesProp.value),
       cloneRule: clsx(
-        standardClassnames.cloneRule,
+        suppressStandardClassnames || standardClassnames.cloneRule,
         classNamesProp.actionElement,
         classNamesProp.cloneRule
       ),
       lockRule: clsx(
-        standardClassnames.lockRule,
+        suppressStandardClassnames || standardClassnames.lockRule,
         classNamesProp.actionElement,
         classNamesProp.lockRule
       ),
       removeRule: clsx(
-        standardClassnames.removeRule,
+        suppressStandardClassnames || standardClassnames.removeRule,
         classNamesProp.actionElement,
         classNamesProp.removeRule
+      ),
+      valueListItem: clsx(
+        suppressStandardClassnames || standardClassnames.valueListItem,
+        classNamesProp.valueListItem
       ),
     }),
     [
@@ -163,6 +178,8 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.cloneRule,
       classNamesProp.lockRule,
       classNamesProp.removeRule,
+      classNamesProp.valueListItem,
+      suppressStandardClassnames,
     ]
   );
 
@@ -286,18 +303,46 @@ export const useRule = (props: RuleProps): UseRule => {
     [operatorObject?.className]
   );
 
-  const outerClassName = clsx(
-    getRuleClassname(rule, { fieldData }),
-    fieldBasedClassName,
-    operatorBasedClassName,
-    standardClassnames.rule,
-    classNamesProp.rule,
-    {
-      [standardClassnames.disabled]: disabled,
-      [standardClassnames.dndDragging]: isDragging,
-      [standardClassnames.dndOver]: isOver,
-    },
-    validationClassName
+  const outerClassName = useMemo(
+    () =>
+      clsx(
+        getRuleClassname(rule, { fieldData }),
+        fieldBasedClassName,
+        operatorBasedClassName,
+        suppressStandardClassnames || standardClassnames.rule,
+        classNamesProp.rule,
+        // custom conditional classes
+        disabled && classNamesProp.disabled,
+        isDragging && classNamesProp.dndDragging,
+        isOver && classNamesProp.dndOver,
+        isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        // standard conditional classes
+        suppressStandardClassnames || {
+          [standardClassnames.disabled]: disabled,
+          [standardClassnames.dndDragging]: isDragging,
+          [standardClassnames.dndOver]: isOver,
+          [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+        },
+        validationClassName
+      ),
+    [
+      classNamesProp.disabled,
+      classNamesProp.dndCopy,
+      classNamesProp.dndDragging,
+      classNamesProp.dndOver,
+      classNamesProp.rule,
+      disabled,
+      dropEffect,
+      fieldBasedClassName,
+      fieldData,
+      getRuleClassname,
+      isDragging,
+      isOver,
+      operatorBasedClassName,
+      rule,
+      suppressStandardClassnames,
+      validationClassName,
+    ]
   );
 
   return {

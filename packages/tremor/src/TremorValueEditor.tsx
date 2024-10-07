@@ -10,12 +10,7 @@ import {
 import dayjs from 'dayjs';
 import * as React from 'react';
 import type { ValueEditorProps, VersatileSelectorProps } from 'react-querybuilder';
-import {
-  ValueEditor,
-  getFirstOption,
-  standardClassnames,
-  useValueEditor,
-} from 'react-querybuilder';
+import { ValueEditor, getFirstOption, useValueEditor } from 'react-querybuilder';
 import { TremorValueSelector } from './TremorValueSelector';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,16 +46,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -85,7 +71,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
             type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            className={`${standardClassnames.valueListItem} input`}
+            className={`${valueListItemClassName} input`}
             disabled={disabled}
             onValueChange={v => multiValueHandler(v, i)}
             {...extraProps}
@@ -96,7 +82,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
         <SelectorComponent
           key={key}
           {...props}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}

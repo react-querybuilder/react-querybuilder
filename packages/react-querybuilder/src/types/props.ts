@@ -240,6 +240,43 @@ export interface Classnames {
    * Classnames applied to all select elements.
    */
   valueSelector: Classname;
+  /**
+   * Classname(s) applied to inline combinator elements.
+   */
+  betweenRules: Classname;
+  /**
+   * Classname(s) applied to valid rules and groups.
+   */
+  valid: Classname;
+  /**
+   * Classname(s) applied to invalid rules and groups.
+   */
+  invalid: Classname;
+  /**
+   * Classname(s) applied to rules and groups while being dragged.
+   */
+  dndDragging: Classname;
+  /**
+   * Classname(s) applied to rules and groups hovered over by a dragged element.
+   */
+  dndOver: Classname;
+  /**
+   * Classname(s) applied to rules and groups hovered over by a dragged element
+   * when the drop effect is "copy" (modifier key is pressed).
+   */
+  dndCopy: Classname;
+  /**
+   * Classname(s) applied to disabled elements.
+   */
+  disabled: Classname;
+  /**
+   * Classname(s) applied to each element in a series of value editors.
+   */
+  valueListItem: Classname;
+  /**
+   * Not applied, but see SCSS styles.
+   */
+  branches: Classname;
 }
 
 /**

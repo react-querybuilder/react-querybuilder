@@ -4,7 +4,7 @@ import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, standardClassnames, useValueEditor } from 'react-querybuilder';
+import { getFirstOption, useValueEditor } from 'react-querybuilder';
 import { toNumberInputValue } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +25,6 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
     inputType,
     values = [],
     listsAsArrays,
-    parseNumbers,
     separator,
     valueSource: _vs,
     disabled,
@@ -36,16 +35,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -67,7 +57,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
             key={key}
             placeholder={placeHolderText}
             value={toNumberInputValue(valueAsArray[i])}
-            className={`${standardClassnames.valueListItem} input`}
+            className={`${valueListItemClassName} input`}
             disabled={disabled}
             onChange={v => multiValueHandler(toNumberInputValue(v), i)}
             {...extraProps}
@@ -81,7 +71,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
           <DateTimePicker
             key={key}
             value={dateTimeValue}
-            className={standardClassnames.valueListItem}
+            className={valueListItemClassName}
             disabled={disabled}
             withSeconds
             onChange={d =>
@@ -101,7 +91,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
             type={inputTypeCoerced}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
-            className={`${standardClassnames.valueListItem} input`}
+            className={`${valueListItemClassName} input`}
             disabled={disabled}
             onChange={e => multiValueHandler(e.target.value, i)}
             {...extraProps}
@@ -112,7 +102,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
         <SelectorComponent
           key={key}
           {...props}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}

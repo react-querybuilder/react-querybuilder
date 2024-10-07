@@ -4,7 +4,7 @@ import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, joinWith, standardClassnames, useValueEditor } from 'react-querybuilder';
+import { getFirstOption, joinWith, useValueEditor } from 'react-querybuilder';
 import dayjsGenerateConfig from './dayjs';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,7 +24,6 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     inputType,
     values = [],
     listsAsArrays,
-    parseNumbers,
     separator,
     valueSource: _vs,
     disabled,
@@ -34,16 +33,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     ...props
   } = allProps;
 
-  const { valueAsArray, multiValueHandler } = useValueEditor({
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -66,7 +56,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             <DatePicker.TimePicker
               key={key}
               value={valueAsArray[i] ? dayjs(valueAsArray[i], 'HH:mm:ss') : null}
-              className={standardClassnames.valueListItem}
+              className={valueListItemClassName}
               disabled={disabled}
               placeholder={placeHolderText}
               onChange={d => multiValueHandler(d?.format('HH:mm:ss') ?? '', i)}
@@ -79,7 +69,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
               key={key}
               type={inputTypeCoerced}
               value={valueAsArray[i] ?? ''}
-              className={standardClassnames.valueListItem}
+              className={valueListItemClassName}
               disabled={disabled}
               placeholder={placeHolderText}
               onChange={v => multiValueHandler(v, i)}
@@ -92,7 +82,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             key={key}
             type={inputTypeCoerced}
             value={valueAsArray[i] ?? ''}
-            className={standardClassnames.valueListItem}
+            className={valueListItemClassName}
             disabled={disabled}
             placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
@@ -104,7 +94,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
         <SelectorComponent
           key={key}
           {...props}
-          className={standardClassnames.valueListItem}
+          className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
           value={valueAsArray[i] ?? getFirstOption(values)}

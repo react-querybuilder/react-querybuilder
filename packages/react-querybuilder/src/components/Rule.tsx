@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { TestID } from '../defaults';
+import type { UseRule } from '../hooks';
 import { useRule, useStopEventPropagation } from '../hooks';
 import type { RuleProps } from '../types';
 
@@ -45,7 +46,7 @@ export const Rule: React.MemoExoticComponent<(props: RuleProps) => React.JSX.Ele
  * a {@link RuleType}.
  */
 export const RuleComponents: React.MemoExoticComponent<
-  (r: RuleProps & ReturnType<typeof useRule>) => React.JSX.Element
+  (r: RuleProps & UseRule) => React.JSX.Element
 > = React.memo((r: RuleProps & ReturnType<typeof useRule>) => {
   const {
     schema: {

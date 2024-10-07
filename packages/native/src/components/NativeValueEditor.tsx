@@ -5,27 +5,26 @@ import { StyleSheet, Switch, TextInput, View } from 'react-native';
 import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
 import type { ValueEditorNativeProps } from '../types';
-import { NativeValueSelector } from './NativeValueSelector';
 
-export const NativeValueEditor = ({
-  operator,
-  value,
-  handleOnChange,
-  title,
-  className,
-  type = 'text',
-  inputType = 'text',
-  values = [],
-  listsAsArrays,
-  parseNumbers,
-  fieldData,
-  disabled,
-  separator = null,
-  skipHook = false,
-  testID,
-  selectorComponent: SelectorComponent = NativeValueSelector,
-  ...props
-}: ValueEditorNativeProps): React.JSX.Element | null => {
+export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.Element | null => {
+  const {
+    operator,
+    value,
+    handleOnChange,
+    title,
+    className,
+    type = 'text',
+    inputType = 'text',
+    values = [],
+    listsAsArrays,
+    fieldData,
+    disabled,
+    separator = null,
+    testID,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    ...props
+  } = allProps;
+
   const styles = useMemo(
     () => ({
       value: StyleSheet.flatten([defaultNativeStyles.value, props.schema.styles?.value]),
@@ -45,17 +44,7 @@ export const NativeValueEditor = ({
     ]
   );
 
-  const { valueAsArray, multiValueHandler, parseNumberMethod } = useValueEditor({
-    skipHook,
-    handleOnChange,
-    inputType,
-    operator,
-    value,
-    type,
-    listsAsArrays,
-    parseNumbers,
-    values,
-  });
+  const { valueAsArray, multiValueHandler, parseNumberMethod } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;

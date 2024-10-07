@@ -1,7 +1,13 @@
+import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
-import { simulateDrag, simulateDragDrop, wrapWithTestBackend } from 'react-dnd-test-utils';
+import {
+  simulateDrag,
+  simulateDragDrop,
+  simulateDragHover,
+  wrapWithTestBackend,
+} from 'react-dnd-test-utils';
 import * as reactDnD from 'react-dnd/dist/index.js';
 import type {
   FullCombinator,
@@ -14,6 +20,8 @@ import type {
 import QueryBuilder, { TestID, standardClassnames as sc } from 'react-querybuilder';
 import { QueryBuilderDnD } from './QueryBuilderDnD';
 import type { QueryBuilderDndProps } from './types';
+
+const user = userEventSetup();
 
 const [QBforDnD, getDndBackendOriginal] = wrapWithTestBackend(
   ({
@@ -52,12 +60,47 @@ it('does not have the drag class if not dragging', () => {
 });
 
 it('has the drag class if dragging', () => {
-  render(<QBforDnD query={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }} />);
+  const dndDragging = 'my-dnd-dragging-class';
+  render(
+    <QBforDnD
+      query={{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }}
+      controlClassnames={{ dndDragging }}
+    />
+  );
   const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[1];
   simulateDrag(getHandlerId(ruleGroup, 'drag'), getDndBackend());
-  expect(ruleGroup).toHaveClass(sc.dndDragging);
+  expect(ruleGroup).toHaveClass(sc.dndDragging, dndDragging);
   act(() => {
     getDndBackend().simulateEndDrag();
+  });
+});
+
+it('has the copy class if hovered over while modifier key is pressed', async () => {
+  const dndCopy = 'my-dnd-copy-class';
+  render(
+    <QBforDnD
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [] },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      }}
+      controlClassnames={{ dndCopy }}
+    />
+  );
+  const rule = screen.getByTestId(TestID.rule);
+  const ruleGroupTarget = screen.getAllByTestId(TestID.ruleGroup)[1];
+  await user.keyboard('{Alt>}');
+  simulateDragHover(
+    getHandlerId(rule, 'drag'),
+    getHandlerId(ruleGroupTarget, 'drop'),
+    getDndBackend()
+  );
+  expect(ruleGroupTarget.querySelector(`.${sc.header}`)).toHaveClass(sc.dndCopy, dndCopy);
+  await act(async () => {
+    getDndBackend().simulateEndDrag();
+    await user.keyboard('{/Alt}');
   });
 });
 
@@ -81,9 +124,9 @@ it('handles a dropped rule group', () => {
     getHandlerId(ruleGroups[1], 'drop'),
     getDndBackend()
   );
-  for (const x of [0, 1, 2]) {
-    expect(ruleGroups[x]).not.toHaveClass(sc.dndDragging);
-    expect(ruleGroups[x]).not.toHaveClass(sc.dndOver);
+  for (const rg of ruleGroups) {
+    expect(rg).not.toHaveClass(sc.dndDragging);
+    expect(rg).not.toHaveClass(sc.dndOver);
   }
   expect(onQueryChange).toHaveBeenCalledWith(
     expect.objectContaining({
