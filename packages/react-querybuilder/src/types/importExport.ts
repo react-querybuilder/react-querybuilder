@@ -1,4 +1,4 @@
-import type { FullField, ValueSource, ValueSources } from './basic';
+import type { FullField, FullOperator, ValueSource, ValueSources } from './basic';
 import type { RulesLogic } from 'json-logic-js';
 import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -19,7 +19,8 @@ export type ExportFormat =
   | 'jsonlogic'
   | 'spel'
   | 'elasticsearch'
-  | 'jsonata';
+  | 'jsonata'
+  | 'natural_language';
 
 export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
 
@@ -103,6 +104,16 @@ export interface FormatQueryOptions {
    * matches the rule's `field`, will be passed to the rule processor.
    */
   fields?: FlexibleOptionList<FullField>;
+  /**
+   * This can be the same `getOperators` function passed to {@link QueryBuilder}.
+   *
+   * The full operator object from this array, where the operator's identifying property
+   * matches the rule's `operator`, will be passed to the rule processor.
+   */
+  getOperators?(
+    field: string,
+    misc: { fieldData: FullField }
+  ): FlexibleOptionList<FullOperator> | null;
   /**
    * This string will be inserted in place of invalid groups for non-JSON formats.
    * Defaults to `'(1 = 1)'` for "sql"/"parameterized"/"parameterized_named" and

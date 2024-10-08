@@ -114,11 +114,11 @@ const notesJsonLogic = (
 const defaultQueryWrapper = (props: { children: React.ReactNode }) => <>{props.children}</>;
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
-  const formatInfo = formatMap.find(([fmt]) => fmt === format)!;
+  const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
   return (
     <>
-      <Link href={`/docs/utils/export#${formatInfo[3]}`}>Documentation</Link>
-      <Link href={formatInfo[2]}>Format info</Link>
+      <Link href={`/docs/utils/export#${exportDocsAnchorName}`}>Documentation</Link>
+      <Link href={formatInfo}>Format info</Link>
     </>
   );
 };
@@ -263,10 +263,23 @@ export default function Demo({
       <>
         <h4>Call</h4>
         <CodeBlock>
-          {`formatQuery(query, ${
+          {`${
+            format === 'natural_language'
+              ? `import { defaultOperators } from 'react-querybuilder';
+import { fields } from './fields';
+`
+              : ''
+          }formatQuery(query, ${
             parseNumbersInExport || format === 'jsonata'
               ? `{ format: '${format}', parseNumbers: true }`
-              : `'${format}'`
+              : format === 'natural_language'
+                ? `{
+  format: '${format}',
+  parseNumbers: true,
+  fields,
+  getOperators: () => defaultOperators
+}`
+                : `'${format}'`
           })`}
         </CodeBlock>
         <h4>Return</h4>
@@ -586,6 +599,11 @@ export default function Demo({
               label: 'JSONata',
               attributes: getExportTabAttributes('jsonata'),
             },
+            {
+              value: 'natural_language',
+              label: 'Natural language',
+              attributes: getExportTabAttributes('natural_language'),
+            },
           ]}>
           <TabItem value="code" label="Code">
             <Details summary={<summary>Dependencies</summary>}>
@@ -729,6 +747,12 @@ export default function Demo({
           <TabItem value="jsonata">
             <div className={styles.exportOptions}>
               <ExportInfoLinks format="jsonata" />
+            </div>
+            {exportPresentation}
+          </TabItem>
+          <TabItem value="natural_language">
+            <div className={styles.exportOptions}>
+              <ExportInfoLinks format="natural_language" />
             </div>
             {exportPresentation}
           </TabItem>

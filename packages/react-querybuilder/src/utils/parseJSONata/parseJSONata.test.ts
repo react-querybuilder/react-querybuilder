@@ -115,8 +115,7 @@ it('handles "like" comparisons', () => {
   );
   testParseJSONata(
     '$contains(f1, /Test/i)',
-    // eslint-disable-next-line unicorn/better-regex
-    wrapRule({ field: 'f1', operator: 'contains', value: /Test/gi })
+    wrapRule({ field: 'f1', operator: 'contains', value: new RegExp('Test', 'gi') })
   );
   testParseJSONata(
     '$contains(f1, f2)',
