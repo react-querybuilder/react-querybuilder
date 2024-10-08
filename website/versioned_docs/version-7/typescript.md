@@ -128,7 +128,8 @@ type ExportFormat =
   | 'jsonlogic'
   | 'jsonata'
   | 'elasticsearch'
-  | 'spel';
+  | 'spel'
+  | 'natural_language';
 
 interface FormatQueryOptions {
   format?: ExportFormat;

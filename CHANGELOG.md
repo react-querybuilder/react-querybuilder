@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#769] The object returned from `useValueEditor` now includes a `parseNumberMethod` property, which is a processed version of the `parseNumbers` prop.
 - [#769] `formatQuery` now accepts an optional `preset` option as a shortcut to configure the output for improved compatibility with different query language dialects. Options include "ansi", "mssql", "mysql", "oracle", "postgres", and "sqlite".
 - [#769] `formatQuery` now accepts an optional `fieldIdentifierSeparator` string. When used in conjunction with the `quoteFieldNamesWith` option, field names will be separated by this string and bracketed individually per the `quoteFieldNamesWith` configuration (e.g., `[table name].[field name] = 'value'` instead of `[table name.field name] = 'value'`).
+- New `formatQuery` export format "natural_language", similar to the "sql" or "cel" formats but with English-language operators.
 
 ### Fixed
 

@@ -27,6 +27,7 @@ function formatQuery(
 - JsonLogic
 - ElasticSearch
 - JSONata
+- Natural language
 
 For the next few sections (unless otherwise noted), assume the `query` variable has been defined as:
 
@@ -325,6 +326,29 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 ```
 
 :::
+
+### Natural language
+
+To produce a natural language query, use the "natural_language" format. Use the `getOperators` and `fields` options to render field and operator labels instead of values.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  parseNumbers: true,
+  getOperators: () => defaultOperators,
+  fields: [
+    { value: 'firstName', label: 'First Name' },
+    { value: 'lastName', label: 'Last Name' },
+    { value: 'age', label: 'Age' },
+  ],
+});
+```
+
+Output:
+
+```ts
+`First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52`;
+```
 
 ## Configuration
 

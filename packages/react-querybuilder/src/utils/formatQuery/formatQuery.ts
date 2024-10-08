@@ -5,6 +5,7 @@ import type {
   ExportFormat,
   FormatQueryOptions,
   FullField,
+  FullOperator,
   FullOptionList,
   ParameterizedNamedSQL,
   ParameterizedSQL,
@@ -34,12 +35,14 @@ import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParamet
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
+import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
   celCombinatorMap,
   isValueProcessorLegacy,
   numerifyValues,
   quoteFieldNamesWithArray,
 } from './utils';
+import { defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 
 const sqlDialectPresets = {
   ansi: {},
@@ -147,6 +150,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   let fieldIdentifierSeparator: string = '';
   let validator: QueryValidator = () => true;
   let fields: FullOptionList<FullField> = [];
+  let getOperators: (
+    field: string,
+    misc: { fieldData: FullField }
+  ) => FullOptionList<FullOperator> | null = () => [];
   let validationMap: ValidationMap = {};
   let fallbackExpression = '';
   let paramPrefix = ':';
@@ -161,6 +168,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   if (typeof options === 'string') {
     format = options.toLowerCase() as ExportFormat;
     switch (format) {
+      case 'natural_language':
+        ruleProcessorInternal = defaultRuleProcessorNL;
+        break;
       case 'mongodb':
         ruleProcessorInternal = defaultRuleProcessorMongoDB;
         break;
@@ -203,23 +213,26 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             isValueProcessorLegacy(valueProcessor)
               ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
               : valueProcessor(r, opts)
-        : format === 'mongodb'
-          ? (ruleProcessorInternal ?? defaultRuleProcessorMongoDB)
-          : format === 'cel'
-            ? (ruleProcessorInternal ?? defaultRuleProcessorCEL)
-            : format === 'spel'
-              ? (ruleProcessorInternal ?? defaultRuleProcessorSpEL)
-              : format === 'jsonlogic'
-                ? (ruleProcessorInternal ?? defaultRuleProcessorJsonLogic)
-                : format === 'elasticsearch'
-                  ? (ruleProcessorInternal ?? defaultRuleProcessorElasticSearch)
-                  : format === 'jsonata'
-                    ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
-                    : defaultValueProcessorByRule;
+        : format === 'natural_language'
+          ? defaultValueProcessorNL
+          : format === 'mongodb'
+            ? (ruleProcessorInternal ?? defaultRuleProcessorMongoDB)
+            : format === 'cel'
+              ? (ruleProcessorInternal ?? defaultRuleProcessorCEL)
+              : format === 'spel'
+                ? (ruleProcessorInternal ?? defaultRuleProcessorSpEL)
+                : format === 'jsonlogic'
+                  ? (ruleProcessorInternal ?? defaultRuleProcessorJsonLogic)
+                  : format === 'elasticsearch'
+                    ? (ruleProcessorInternal ?? defaultRuleProcessorElasticSearch)
+                    : format === 'jsonata'
+                      ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
+                      : defaultValueProcessorByRule;
     quoteFieldNamesWith = quoteFieldNamesWithArray(optionsWithPresets.quoteFieldNamesWith);
     fieldIdentifierSeparator = optionsWithPresets.fieldIdentifierSeparator ?? '';
     validator = optionsWithPresets.validator ?? (() => true);
     fields = toFullOptionList(optionsWithPresets.fields ?? []);
+    getOperators = (f, m) => toFullOptionList(optionsWithPresets.getOperators?.(f, m) ?? []);
     fallbackExpression = optionsWithPresets.fallbackExpression ?? '';
     paramPrefix = optionsWithPresets.paramPrefix ?? ':';
     paramsKeepPrefix = !!optionsWithPresets.paramsKeepPrefix;
@@ -237,7 +250,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         ? '"$and":[{"$expr":true}]'
         : format === 'cel' || format === 'spel'
           ? '1 == 1'
-          : '(1 = 1)';
+          : format === 'natural_language'
+            ? '1 is 1'
+            : '(1 = 1)';
   }
 
   // #region JSON
@@ -782,6 +797,88 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     const processedRuleGroup = processRuleGroup(query);
     return processedRuleGroup === false ? {} : processedRuleGroup;
   }
+  // #endregion
+
+  // #region Natural language
+  if (format === 'natural_language') {
+    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        // TODO: test for the last case and remove "ignore" comment
+        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
+      }
+
+      const processedRules = rg.rules.map(rule => {
+        // Independent combinators
+        if (typeof rule === 'string') {
+          return `, ${rule} `;
+        }
+
+        // Groups
+        if (isRuleGroup(rule)) {
+          return processRuleGroup(rule, rg.rules.length === 1);
+        }
+
+        // Basic rule validation
+        const [validationResult, fieldValidator] = validateRule(rule);
+        if (
+          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+          rule.field === placeholderFieldName ||
+          rule.operator === placeholderOperatorName
+        ) {
+          return '';
+        }
+
+        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
+
+        const fieldData = getOption(fields, rule.field);
+
+        // Use custom rule processor if provided...
+        if (typeof ruleProcessorInternal === 'function') {
+          return ruleProcessorInternal(rule, {
+            fields,
+            parseNumbers,
+            escapeQuotes,
+            quoteFieldNamesWith,
+            fieldIdentifierSeparator,
+            fieldData,
+            format,
+            quoteValuesWith,
+            concatOperator,
+            getOperators,
+          });
+        }
+        // ...otherwise use default rule processor and pass in the value
+        // processor (which may be custom)
+        return defaultRuleProcessorNL(rule, {
+          fields,
+          parseNumbers,
+          escapeQuotes,
+          valueProcessor: valueProcessorInternal,
+          quoteFieldNamesWith,
+          fieldIdentifierSeparator,
+          fieldData,
+          format,
+          quoteValuesWith,
+          concatOperator,
+          getOperators,
+        });
+      });
+
+      if (processedRules.length === 0) {
+        return fallbackExpression;
+      }
+
+      const prefix = rg.not || !outermostOrLonelyInGroup ? '(' : '';
+      const suffix = rg.not || !outermostOrLonelyInGroup ? `) is${rg.not ? ' not' : ''} true` : '';
+
+      return `${prefix}${processedRules
+        .filter(Boolean)
+        .join(isRuleGroupType(rg) ? `, ${rg.combinator} ` : '')}${suffix}`;
+    };
+
+    return processRuleGroup(ruleGroup, true);
+  }
+  // #endregion
 
   return '';
 }
