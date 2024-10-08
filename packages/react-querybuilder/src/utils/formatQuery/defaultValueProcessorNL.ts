@@ -51,7 +51,10 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
       if (valueAsArray.length === 0) return '';
       const valStringArray = valueAsArray.map(v =>
         valueIsField
-          ? wrapFieldName(getOption((fields as FullField[]) ?? [], rule.value)?.label ?? v)
+          ? wrapFieldName(
+              getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], rule.value)
+                ?.label ?? v
+            )
           : shouldRenderAsNumber(v, parseNumbers)
             ? `${trimIfString(v)}`
             : `${wrapAndEscape(v)}`
@@ -68,7 +71,10 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   }
 
   return valueIsField
-    ? wrapFieldName(getOption((fields as FullField[]) ?? [], rule.value)?.label ?? rule.value)
+    ? wrapFieldName(
+        getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], rule.value)?.label ??
+          rule.value
+      )
     : shouldRenderAsNumber(rule.value, parseNumbers)
       ? `${trimIfString(rule.value)}`
       : `${wrapAndEscape(rule.value)}`;

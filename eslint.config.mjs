@@ -63,9 +63,11 @@ export default [
       'unicorn/no-nested-ternary': 'off',
       'unicorn/no-null': 'off',
       'unicorn/prefer-export-from': ['error', { ignoreUsedVariables: true }],
+      'unicorn/prefer-global-this': 'off',
       'unicorn/prefer-number-properties': 'off',
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/switch-case-braces': 'off',
+      'unicorn/consistent-existence-index-check': 'off',
     },
   },
 ];
