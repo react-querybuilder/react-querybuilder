@@ -14,10 +14,11 @@ import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettierStandalone from 'prettier/standalone.js';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
+import { defaultOperators, formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 import clsx from 'clsx';
+import { fields } from './fields';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 const prettier = prettierStandalone as typeof import('prettier');
@@ -82,7 +83,11 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
   const formatQueryResult = formatQuery(
     query,
-    options.format === 'jsonata' ? { ...options, parseNumbers: true } : options
+    options.format === 'jsonata'
+      ? { ...options, parseNumbers: true }
+      : options.format === 'natural_language'
+        ? { ...options, parseNumbers: true, fields, getOperators: () => defaultOperators }
+        : options
   );
   if (options.format === 'json_without_ids' || options.format === 'mongodb') {
     return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
@@ -102,7 +107,8 @@ export const getExportDisplayLanguage = (format: ExportFormat) =>
   format === 'cel' ||
   format === 'spel' ||
   format === 'mongodb' ||
-  format === 'jsonata'
+  format === 'jsonata' ||
+  format === 'natural_language'
     ? format
     : 'json';
 

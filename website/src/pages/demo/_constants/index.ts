@@ -241,6 +241,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
   ['jsonata', 'JSONata', 'https://jsonata.org/', 'jsonata'],
   ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/', 'elasticsearch'],
+  ['natural_language', 'Natural language', 'https://en.wikipedia.org/wiki/English_language', 'natural-language'],
 ];
 
 export const styleNameMap: Record<StyleName, string> = {
