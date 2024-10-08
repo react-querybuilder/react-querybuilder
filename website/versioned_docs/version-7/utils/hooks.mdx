@@ -90,13 +90,14 @@ function useRuleGroup(props: RuleGroupProps): {
 
 ### `useValueEditor`
 
-Called by the [`ValueEditor`](../components/valueeditor) component. Accepts the same `ValueEditorProps` as the component and returns an object with the following properties: the value as an array, a multi-value handler, and a processed version of the `parseNumbers` prop.
+Called by the [`ValueEditor`](../components/valueeditor) component. Accepts the same `ValueEditorProps` as the component and returns an object with the following properties: the value as an array, a multi-value handler, a processed version of the `parseNumbers` prop, and the classname(s) to be applied to each editor in editor series.
 
 ```ts
 function useValueEditor(props: ValueEditorProps): {
   valueAsArray: any[];
   multiValueHandler: (val: string, idx: number) => void;
   parseNumberMethod: ParseNumberMethod;
+  valueListItemClassName: string;
 };
 ```
 

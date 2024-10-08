@@ -9,8 +9,10 @@ import { standardClassnames } from '../defaults';
  * This hook is primarily concerned with multi-value editors like date range
  * pickers, editors for 'in' and 'between' operators, etc.
  *
- * @returns The value as an array (`valueAsArray`) and a change handler for
- * series of editors (`multiValueHandler`).
+ * @returns The value as an array (`valueAsArray`), a change handler for
+ * series of editors (`multiValueHandler`), a processed version of the
+ * `parseNumbers` prop (`parseNumberMethod`), and the classname(s) to be applied
+ * to each editor in editor series (`valueListItemClassName`).
  *
  * **NOTE:** The following logic only applies if `skipHook` is not `true`. To avoid
  * automatically updating the `value`, pass `{ skipHook: true }`.
