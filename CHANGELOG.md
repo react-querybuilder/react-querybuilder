@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- N/A
+
+## [v7.7.0] - 2024-10-08
+
 ### Changed
 
 - The `useValueEditor` hook now requires the entire `ValueEditorProps` object instead of only requiring a subset of the props.
@@ -1770,7 +1774,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.0...HEAD
+[v7.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.1...v7.7.0
 [v7.6.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.0...v7.6.1
 [v7.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.2...v7.6.0
 [v7.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.1...v7.5.2
