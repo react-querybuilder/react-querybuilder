@@ -36,7 +36,7 @@ export const splitBy = (str?: string, splitChar: string = defaultJoinChar): stri
  * @example
  * joinWith(['this,,that', '', 'the other', '', '', ','], ', ')
  * // would return
- * 'this\\,\\,that,,the other,,,\\,'
+ * 'this\\,\\,that, , the other, , , \\,'
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const joinWith = (strArr: any[], joinChar: string = defaultJoinChar): string =>
