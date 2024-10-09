@@ -132,9 +132,9 @@
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "start": "bun --bun vite",
-    "build": "bun run build:main && bun run build:css",
+    "build": "bun --bun run build:main && bun run build:css",
     "build:main": "bun --bun tsup",
-    "build:css": "bun buildCSS.ts",
+    "build:css": "mkdir -p dist && cp ./src/*.scss dist && bunx sass --style=compressed ./dist/query-builder-layout.scss:./dist/query-builder-layout.css ./dist/query-builder.scss:./dist/query-builder.css",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",
