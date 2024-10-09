@@ -8,6 +8,7 @@ import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { Buffer } from 'buffer';
+import clsx from 'clsx';
 import pako from 'pako';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
@@ -17,8 +18,6 @@ import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-q
 import { defaultOperators, formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
-import clsx from 'clsx';
-import { fields } from './fields';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 const prettier = prettierStandalone as typeof import('prettier');
@@ -86,20 +85,65 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
     options.format === 'jsonata'
       ? { ...options, parseNumbers: true }
       : options.format === 'natural_language'
-        ? { ...options, parseNumbers: true, fields, getOperators: () => defaultOperators }
+        ? { ...options, parseNumbers: true, getOperators: () => defaultOperators }
         : options
   );
-  if (options.format === 'json_without_ids' || options.format === 'mongodb') {
-    return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
-  } else if (
-    options.format === 'parameterized' ||
-    options.format === 'parameterized_named' ||
-    options.format === 'jsonlogic' ||
-    options.format === 'elasticsearch'
-  ) {
-    return JSON.stringify(formatQueryResult, null, 2);
+
+  switch (options.format) {
+    case 'json_without_ids':
+    case 'mongodb':
+      return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
+    case 'parameterized':
+    case 'parameterized_named':
+    case 'jsonlogic':
+    case 'elasticsearch':
+      return JSON.stringify(formatQueryResult, null, 2);
   }
+
   return formatQueryResult;
+};
+
+export const getExportCall = async (
+  { format, parseNumbers, preset }: FormatQueryOptions,
+  { validateQuery }: Pick<DemoOptions, 'validateQuery'>
+) => {
+  const rqbImports = ['formatQuery'];
+  if (format === 'natural_language') {
+    rqbImports.push('defaultOperators');
+  }
+  const fqOpts: FormatQueryOptions = { format };
+
+  if (
+    (format === 'sql' || format === 'parameterized' || format === 'parameterized_named') &&
+    preset !== 'ansi'
+  ) {
+    fqOpts.preset = preset;
+  }
+
+  if (parseNumbers || format === 'jsonata') {
+    fqOpts.parseNumbers = true;
+  }
+
+  let optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
+
+  if (validateQuery || format === 'natural_language') {
+    optionsString = optionsString.replace('}', ', fields }');
+  }
+
+  if (format === 'natural_language') {
+    optionsString = optionsString.replace('}', ', getOperators: () => defaultOperators }');
+  }
+
+  return prettier.format(
+    `import { ${rqbImports.join(', ')} } from 'react-querybuilder';
+${validateQuery || format === 'natural_language' ? `import { fields } from './fields';\n` : ''}
+formatQuery(query, ${optionsString})`,
+    {
+      filepath: 'exportCall.ts',
+      plugins: [parserTypeScript, prettierPluginEstree],
+      singleQuote: true,
+    }
+  );
 };
 
 export const getExportDisplayLanguage = (format: ExportFormat) =>

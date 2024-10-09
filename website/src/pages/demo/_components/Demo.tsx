@@ -9,7 +9,7 @@ import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import type { ExportFormat, FormatQueryOptions } from 'react-querybuilder';
+import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
 import { QueryBuilder, convertToIC, defaultValidator, formatQuery } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
@@ -33,6 +33,7 @@ import {
   extraStyles,
   fieldsTsString,
   getCodeString,
+  getExportCall,
   getExportDisplayLanguage,
   getFormatQueryString,
   getHashFromState,
@@ -132,6 +133,7 @@ export default function Demo({
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [format, setFormat] = useState<ExportFormat>('json_without_ids');
+  const [sqlDialect, setSQLDialect] = useState<SQLPreset>('ansi');
   const [options, setOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
     ...initialOptionsFromHash,
@@ -152,6 +154,7 @@ export default function Demo({
   const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
   const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
+  const [exportCall, setExportCall] = useState('');
   const [codeStringState, setCodeStringState] = useState('');
   const [extraStylesState, setExtraStylesState] = useState({ css: '', scss: '' });
   const [fieldsTsStringState, setFieldsTsStringState] = useState('');
@@ -197,6 +200,17 @@ export default function Demo({
     getCodeString(options, variant, styleLanguage).then(cs => setCodeStringState(cs));
   }, [options, styleLanguage, variant]);
 
+  useEffect(() => {
+    getExportCall(
+      {
+        format,
+        parseNumbers: parseNumbersInExport,
+        preset: sqlDialect,
+      },
+      { validateQuery: options.validateQuery }
+    ).then(ec => setExportCall(ec));
+  }, [format, options.validateQuery, parseNumbersInExport, sqlDialect]);
+
   const optionsInfo = useMemo(
     () =>
       optionOrderByLabel.map(opt => ({
@@ -216,10 +230,11 @@ export default function Demo({
   const formatOptions = useMemo(
     (): FormatQueryOptions => ({
       format,
-      fields: options.validateQuery ? fields : undefined,
+      fields: options.validateQuery || format === 'natural_language' ? fields : undefined,
       parseNumbers: parseNumbersInExport,
+      preset: sqlDialect,
     }),
-    [format, parseNumbersInExport, options.validateQuery]
+    [format, options.validateQuery, parseNumbersInExport, sqlDialect]
   );
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
@@ -251,33 +266,14 @@ export default function Demo({
     () => (
       <>
         <h4>Call</h4>
-        <CodeBlock>
-          {`${
-            format === 'natural_language'
-              ? `import { defaultOperators } from 'react-querybuilder';
-import { fields } from './fields';
-`
-              : ''
-          }formatQuery(query, ${
-            parseNumbersInExport || format === 'jsonata'
-              ? `{ format: '${format}', parseNumbers: true }`
-              : format === 'natural_language'
-                ? `{
-  format: '${format}',
-  parseNumbers: true,
-  fields,
-  getOperators: () => defaultOperators
-}`
-                : `'${format}'`
-          })`}
-        </CodeBlock>
+        <CodeBlock>{exportCall}</CodeBlock>
         <h4>Return</h4>
         <CodeBlock language={getExportDisplayLanguage(format)} className={styles.wsPreWrap}>
           {formatString}
         </CodeBlock>
       </>
     ),
-    [format, formatString, parseNumbersInExport]
+    [exportCall, format, formatString]
   );
 
   const parseNumbersOption = (
@@ -291,7 +287,7 @@ import { fields } from './fields';
             checked={parseNumbersInExport}
             onChange={e => !options.disabled && setParseNumbersInExport(e.target.checked)}
           />
-          {` Parse numbers in export `}
+          {` Parse numbers `}
           <Link
             href="/docs/utils/export#parse-numbers"
             title="Click for documentation"
@@ -574,8 +570,13 @@ import { fields } from './fields';
           </TabItem>
           <TabItem value="export" label="Export">
             <Tabs
-              defaultValue="sql"
+              defaultValue="json"
               values={[
+                {
+                  value: 'json',
+                  label: 'JSON',
+                  attributes: getExportTabAttributes('json_without_ids', ['json']),
+                },
                 {
                   value: 'sql',
                   label: 'SQL',
@@ -583,11 +584,6 @@ import { fields } from './fields';
                     'parameterized',
                     'parameterized_named',
                   ]),
-                },
-                {
-                  value: 'json',
-                  label: 'JSON',
-                  attributes: getExportTabAttributes('json_without_ids', ['json']),
                 },
                 {
                   value: 'mongodb',
@@ -627,7 +623,7 @@ import { fields } from './fields';
                       checked={format === 'json_without_ids'}
                       onChange={() => setFormat('json_without_ids')}
                     />{' '}
-                    Without <code>id</code> and <code>path</code>
+                    Without <code>id</code> or <code>path</code>
                   </label>
                   <label key="json">
                     <input
@@ -669,6 +665,27 @@ import { fields } from './fields';
                     />{' '}
                     Named parameters
                   </label>
+                  <div>
+                    <label>
+                      Dialect{' '}
+                      <Link
+                        href="/docs/utils/export#presets"
+                        title="Click for documentation"
+                        style={{ textDecoration: 'none' }}>
+                        {infoChar}
+                      </Link>{' '}
+                      <select
+                        value={sqlDialect}
+                        onChange={e => setSQLDialect(e.target.value as SQLPreset)}>
+                        <option value="ansi">ANSI (default)</option>
+                        <option value="mssql">SQL Server</option>
+                        <option value="mysql">MySQL</option>
+                        <option value="oracle">Oracle</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="sqlite">SQLite</option>
+                      </select>
+                    </label>
+                  </div>
                   {parseNumbersOption}
                 </div>
                 {exportPresentation}
