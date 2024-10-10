@@ -1,5 +1,7 @@
 [build]
-command = "bun upgrade && rm -rf node_modules packages/*/node_modules website/node_modules && git reset --hard HEAD && bun install --frozen-lockfile && bun --bun run build && cd website && npm run build"
+command = "curl -fsSL https://bun.sh/install | bash -s 'bun-v1.1.29' && rm -rf node_modules packages/*/node_modules website/node_modules && git reset --hard HEAD && bun install --frozen-lockfile && bun --bun run build && bun run website:build"
+# Use this once https://github.com/oven-sh/bun/issues/14414 is fixed
+# command = "bun upgrade && rm -rf node_modules packages/*/node_modules website/node_modules && git reset --hard HEAD && bun install --frozen-lockfile && bun --bun run build && bun run website:build"
 publish = "website/build"
 
 [context.production.environment]

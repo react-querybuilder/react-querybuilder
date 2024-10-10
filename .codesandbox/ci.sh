@@ -9,7 +9,9 @@
 # an error about not being compatible with Yarn because it sees Yarn's
 # user agent string since CodeSandbox always runs `yarn run ...`.
 # See https://github.com/oven-sh/bun/issues/2530.
-npm_config_user_agent="npm/? node/?" npm install --global bun
+npm_config_user_agent="npm/? node/?" npm install --global bun@1.1.29
+# Use this once https://github.com/oven-sh/bun/issues/14414 is fixed:
+# npm_config_user_agent="npm/? node/?" npm install --global bun
 
 # Now we can get on with business...
 bun install --frozen-lockfile
