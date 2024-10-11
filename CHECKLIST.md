@@ -11,8 +11,10 @@
 
 #### From GitHub
 
-3. Manually run the [Version](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/version.yml) workflow.
-4. Manually run the [Publish](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/version.yml) workflow.
+> Note: The "Version" and "Publish" workflows are separate so that the "Publish" workflow can be run against the commit created by the "Version" workflow. This ensures that the provenance statements point to the commit with the latest version tag and not its parent commit.
+
+1. Manually run the [Version](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/version.yml) workflow.
+2. Manually run the [Publish](https://github.com/react-querybuilder/react-querybuilder/actions/workflows/publish.yml) workflow.
 
 #### Manual
 
