@@ -42,7 +42,7 @@ export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
-export { jsonLogicAdditionalOperators } from './utils';
+export * from './utils';
 export {
   defaultRuleProcessorCEL,
   defaultRuleProcessorMongoDB,
