@@ -2,13 +2,13 @@
 title: Compatibility packages
 ---
 
-The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./components/querybuilder#controlclassnames)). However, some style libraries require different HTML structure to style their form controls correctly.
+The default React Query Builder components, being basic HTML5 form controls, are very flexible when it comes to styling (primarily through the [`controlClassnames` prop](./components/querybuilder#controlclassnames)). However, some style libraries require custom components or different HTML structure to style their form controls correctly.
 
 ## Packages
 
 Official component packages compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
 
-You can see each alternate component package in action by clicking the corresponding link on the [demo page](/demo). The "Demo" links in the table below will load the demo with the respective style library preselected, and the CodeSandbox links will open [codesandbox.io](https://codesandbox.io) with an editable example of the library preloaded.
+You can see each alternate component package in action by choosing the corresponding "Style library" option on the right-hand side of the [demo page](/demo). The "Demo" links in the table below will load the demo with that style library preselected, and the [CodeSandbox](https://codesandbox.io)/[StackBlitz](https://stackblitz.com) links will open a sandbox on the respective platform with an editable example of the library preloaded.
 
 | Official site                                       | Compatibility package                                                                        | Demo                    | CodeSandbox                                                                                                               | StackBlitz                                                                                                                      |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -223,6 +223,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  // Replace `Input` with `TextField` in versions greater than 7.7.0
   Input,
   ListSubheader,
   MenuItem,
@@ -241,6 +242,7 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
+  // Replace `Input` with `TextField` in versions greater than 7.7.0
   Input,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
