@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, useValueEditor, ValueEditor } from 'react-querybuilder';
+import { getFirstOption, parseNumber, useValueEditor, ValueEditor } from 'react-querybuilder';
 import type { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
@@ -38,7 +38,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
-  const { valueAsArray, multiValueHandler, valueListItemClassName } =
+  const { valueAsArray, multiValueHandler, parseNumberMethod, valueListItemClassName } =
     useValueEditor(propsForValueEditor);
 
   const masterKey = muiComponents ? 'mui' : 'no-mui';
@@ -50,11 +50,11 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     Checkbox,
     FormControl,
     FormControlLabel,
-    Input,
     Radio,
     RadioGroup,
     Switch,
     TextareaAutosize,
+    TextField,
   } = muiComponents;
 
   if (operator === 'null' || operator === 'notNull') {
@@ -71,13 +71,14 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     const editors = ['from', 'to'].map((key, i) => {
       if (type === 'text') {
         return (
-          <Input
+          <TextField
             key={key}
+            variant="standard"
             type={inputTypeCoerced}
             className={valueListItemClassName}
+            placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             disabled={disabled}
-            placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
             {...extraProps}
           />
@@ -100,11 +101,16 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
       );
     });
     return (
-      <span key={masterKey} data-testid={testID} className={className} title={title}>
+      <FormControl
+        key={masterKey}
+        data-testid={testID}
+        className={className}
+        title={title}
+        disabled={disabled}>
         {editors[0]}
         {separator}
         {editors[1]}
-      </span>
+      </FormControl>
     );
   }
 
@@ -200,7 +206,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
    */
 
   return (
-    <Input
+    <TextField
+      variant="standard"
       key={masterKey}
       type={inputTypeCoerced}
       value={value}
@@ -208,7 +215,9 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
       disabled={disabled}
       className={className}
       placeholder={placeHolderText}
-      onChange={e => handleOnChange(e.target.value)}
+      onChange={e =>
+        handleOnChange(parseNumber(e.target.value, { parseNumbers: parseNumberMethod }))
+      }
       {...extraProps}
     />
   );

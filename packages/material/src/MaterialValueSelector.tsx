@@ -82,7 +82,12 @@ export const MaterialValueSelector = ({
       className={className}
       title={title}
       disabled={disabled}>
-      <Select value={val} onChange={muiSelectChangeHandler} multiple={multiple} {...otherProps}>
+      <Select
+        value={val}
+        onChange={muiSelectChangeHandler}
+        multiple={multiple}
+        disabled={disabled}
+        {...otherProps}>
         {toOptions(options ?? /* istanbul ignore next */ [], {
           ListSubheader,
           MenuItem,

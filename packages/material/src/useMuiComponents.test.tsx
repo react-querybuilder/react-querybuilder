@@ -16,7 +16,6 @@ const componentMocks = {
   DragIndicator: () => <>DragIndicator</>,
   FormControl: () => <>FormControl</>,
   FormControlLabel: () => <>FormControlLabel</>,
-  Input: () => <>Input</>,
   ListSubheader: () => <>ListSubheader</>,
   LockIcon: () => <>LockIcon</>,
   LockOpenIcon: () => <>LockOpenIcon</>,
@@ -28,6 +27,7 @@ const componentMocks = {
   TextareaAutosize: () => <>TextareaAutosize</>,
   KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
   KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
+  TextField: () => <>TextField</>,
 } as unknown as RQBMaterialComponents;
 
 // We don't *actually* need to load the components, just test that
