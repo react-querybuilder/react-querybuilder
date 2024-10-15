@@ -1,7 +1,6 @@
 import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
-import { useDeprecatedProps, useReactDndWarning } from '../hooks';
 import type {
   ActionElementEventHandler,
   FlexibleOptionList,
@@ -24,6 +23,8 @@ import {
   getValidationClassNames,
 } from '../utils';
 import { clsx } from '../utils/clsx';
+import { useDeprecatedProps } from './useDeprecatedProps';
+import { useReactDndWarning } from './useReactDndWarning';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type UseRule = RuleProps & {

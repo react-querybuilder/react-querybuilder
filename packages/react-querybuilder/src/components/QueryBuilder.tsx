@@ -12,7 +12,7 @@ import type {
   QueryBuilderProps,
   RuleGroupTypeAny,
 } from '../types';
-import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
+import { QueryBuilderContext as _QBC } from '../context';
 
 /**
  * The {@link Path} of the root group.
