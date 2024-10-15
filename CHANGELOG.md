@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+### Changed
+
+- [#791] The `@react-querybuilder/material` package uses the `TextField` component from `@mui/material` (previous versions used `Input`). Implementations that preload MUI components may need to be updated.
+
+### Fixed
+
+- [#791] The `extraProps` prop of `MaterialValueEditor` works properly.
 
 ## [v7.7.0] - 2024-10-08
 
@@ -1769,6 +1775,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#783]: https://github.com/react-querybuilder/react-querybuilder/pull/783
 [#785]: https://github.com/react-querybuilder/react-querybuilder/pull/785
 [#786]: https://github.com/react-querybuilder/react-querybuilder/pull/786
+[#791]: https://github.com/react-querybuilder/react-querybuilder/pull/791
 
 <!-- #endregion -->
 

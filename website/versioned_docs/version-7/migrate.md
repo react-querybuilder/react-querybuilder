@@ -85,7 +85,7 @@ Since the [parser functions](./utils/import) are used less frequently than other
 
 ### Miscellaneous
 
-- `@react-querybuilder/material` uses the MUI `TextField` component instead of `Input` in versions greater than 7.7.0.
+- `@react-querybuilder/material` uses the MUI `TextField` component instead of `Input` in versions greater than 7.7.0. See [Preload MUI components](./compat#preload-mui-components).
 - `@react-querybuilder/mantine` now requires Mantine 7 or greater.
 - The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output without removing other properties. Previously this format would only _include_ specific properties, removing any custom properties. The following command will replicate the previous behavior:
   <!-- prettier-ignore -->

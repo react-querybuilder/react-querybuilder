@@ -223,8 +223,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  // Replace `Input` with `TextField` in versions greater than 7.7.0
-  Input,
+  Input, // <-- Replace `Input` with `TextField` in versions > 7.7.0
   ListSubheader,
   MenuItem,
   Radio,
@@ -242,8 +241,7 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
-  // Replace `Input` with `TextField` in versions greater than 7.7.0
-  Input,
+  Input, // <-- Replace `Input` with `TextField` in versions > 7.7.0
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
