@@ -76,7 +76,8 @@
     "web": "bun run --filter website start",
     "web:skiptypedoc": "RQB_TYPEDOC_DONE=true bun run --filter website start",
     "website:clearrun": "bun run --filter website clear && bun run --filter website start",
-    "website:build": "bun run --filter website clear && bun run --filter website build",
+    "website:clearbuild": "bun run --filter website clear && bun run --filter website build",
+    "website:build": "bun run --filter website build",
     "website:serve": "bun run --filter website serve",
     "website:deploy": "bun run --filter website deploy",
     "website:clear": "bun run --filter website clear"
