@@ -1,7 +1,7 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, quoteFieldName, shouldRenderAsNumber } from './utils';
+import { isValidValue, getQuotedFieldName, shouldRenderAsNumber } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -31,7 +31,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: string) =>
-    quoteFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
   const concat = (...values: string[]) =>
     concatOperator.toUpperCase() === 'CONCAT'
       ? `CONCAT(${values.join(', ')})`

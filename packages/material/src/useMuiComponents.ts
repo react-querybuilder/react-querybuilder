@@ -12,7 +12,6 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  Input,
   ListSubheader,
   MenuItem,
   Radio,
@@ -20,6 +19,7 @@ import {
   Select,
   Switch,
   TextareaAutosize,
+  TextField,
 } from '@mui/material';
 import { useContext, useMemo } from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
@@ -33,7 +33,6 @@ export const defaultMuiComponents: RQBMaterialComponents = {
   ContentCopyIcon,
   FormControl,
   FormControlLabel,
-  Input,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -45,6 +44,7 @@ export const defaultMuiComponents: RQBMaterialComponents = {
   Select,
   Switch,
   TextareaAutosize,
+  TextField,
 };
 
 export const useMuiComponents = (

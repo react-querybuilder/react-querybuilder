@@ -10,8 +10,11 @@ import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
 
-export const mapSQLOperator = (op: string): string => {
-  switch (op.toLowerCase()) {
+/**
+ * Maps a {@link DefaultOperatorName} to a SQL operator.
+ */
+export const mapSQLOperator = (rqbOperator: string): string => {
+  switch (rqbOperator.toLowerCase()) {
     case 'null':
       return 'is null';
     case 'notnull':
@@ -29,10 +32,13 @@ export const mapSQLOperator = (op: string): string => {
     case 'doesnotendwith':
       return 'not like';
     default:
-      return op;
+      return rqbOperator;
   }
 };
 
+/**
+ * Maps a {@link DefaultOperatorName} to a MongoDB operator.
+ */
 export const mongoOperators = {
   '=': '$eq',
   '!=': '$ne',
@@ -44,6 +50,9 @@ export const mongoOperators = {
   notIn: '$nin',
 };
 
+/**
+ * Maps a {@link DefaultCombinatorName} to a CEL combinator.
+ */
 export const celCombinatorMap: {
   and: '&&';
   or: '||';
@@ -72,6 +81,11 @@ export const jsonLogicAdditionalOperators: Record<
   endsWith: (a: string, b: string) => typeof a === 'string' && a.endsWith(b),
 };
 
+/**
+ * Converts all `string`-type `value` properties of a query object into `number` where appropriate.
+ *
+ * Used by {@link formatQuery} for the `json*` formats when `parseNumbers` is `true`.
+ */
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
   // @ts-expect-error TS doesn't keep track of odd/even indexes here
@@ -104,24 +118,45 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   }),
 });
 
+/**
+ * Determines whether a value is _anything_ except an empty `string` or `NaN`.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isValidValue = (v: any): boolean =>
-  (typeof v === 'string' && v.length > 0) ||
-  (typeof v === 'number' && !isNaN(v)) ||
-  (typeof v !== 'string' && typeof v !== 'number');
+export const isValidValue = (value: any): boolean =>
+  (typeof value === 'string' && value.length > 0) ||
+  (typeof value === 'number' && !isNaN(value)) ||
+  (typeof value !== 'string' && typeof value !== 'number');
 
+/**
+ * Determines whether {@link formatQuery} should render the given value as a number.
+ * As long as `parseNumbers` is `true`, `number` and `bigint` values will return `true` and
+ * `string` values will return `true` if they test positive against {@link numericRegex}.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const shouldRenderAsNumber = (v: any, parseNumbers?: boolean): boolean | undefined =>
-  parseNumbers &&
-  (typeof v === 'number' ||
-    typeof v === 'bigint' ||
-    (typeof v === 'string' && numericRegex.test(v)));
+export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean | undefined): boolean =>
+  !!parseNumbers &&
+  (typeof value === 'number' ||
+    typeof value === 'bigint' ||
+    (typeof value === 'string' && numericRegex.test(value)));
 
+/**
+ * Used by {@link formatQuery} to determine whether the given value processor is a
+ * "legacy" value processor by counting the number of arguments. Legacy value
+ * processors take 3 arguments (not counting any arguments with default values), while
+ * rule-based value processors take no more than 2 arguments.
+ */
 export const isValueProcessorLegacy = (
-  vp: ValueProcessorLegacy | ValueProcessorByRule
-): vp is ValueProcessorLegacy => vp.length >= 3;
+  valueProcessor: ValueProcessorLegacy | ValueProcessorByRule
+): valueProcessor is ValueProcessorLegacy => valueProcessor.length >= 3;
 
-export const quoteFieldNamesWithArray = (
+/**
+ * Converts the `quoteFieldNamesWith` option into an array of two strings.
+ * If the option is a string, the array elements are both that string.
+ *
+ * @default
+ * ['', '']
+ */
+export const getQuoteFieldNamesWithArray = (
   quoteFieldNamesWith: null | string | [string, string] = ['', '']
 ): [string, string] =>
   Array.isArray(quoteFieldNamesWith)
@@ -130,19 +165,26 @@ export const quoteFieldNamesWithArray = (
       ? [quoteFieldNamesWith, quoteFieldNamesWith]
       : (quoteFieldNamesWith ?? ['', '']);
 
-export const quoteFieldName = (
-  f: string,
+/**
+ * Given a field name and relevant {@link ValueProcessorOptions}, returns the field name
+ * wrapped in the configured quote character(s).
+ */
+export const getQuotedFieldName = (
+  fieldName: string,
   { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions
 ): string => {
-  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
+  const [qPre, qPost] = getQuoteFieldNamesWithArray(quoteFieldNamesWith);
   return typeof fieldIdentifierSeparator === 'string' && fieldIdentifierSeparator.length > 0
     ? joinWith(
-        splitBy(f, fieldIdentifierSeparator).map(part => `${qPre}${part}${qPost}`),
+        splitBy(fieldName, fieldIdentifierSeparator).map(part => `${qPre}${part}${qPost}`),
         fieldIdentifierSeparator
       )
-    : `${qPre}${f}${qPost}`;
+    : `${qPre}${fieldName}${qPost}`;
 };
 
+/**
+ * Simple helper to determine whether a value is null, undefined, or an empty string.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const nullOrUndefinedOrEmpty = (v: any): boolean =>
-  v === null || v === undefined || v === '';
+export const nullOrUndefinedOrEmpty = (value: any): value is null | undefined | '' =>
+  value === null || value === undefined || value === '';

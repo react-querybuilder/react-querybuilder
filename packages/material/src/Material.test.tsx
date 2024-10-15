@@ -8,7 +8,6 @@ import {
   LockOpen as LockOpenIcon,
 } from '@mui/icons-material';
 import type {
-  FormControlProps,
   ListSubheaderProps,
   MenuItemProps,
   SelectChangeEvent,
@@ -19,32 +18,16 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  Input,
   ListSubheader,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
   Switch,
+  TextField,
   TextareaAutosize,
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { act, render, screen } from '@testing-library/react';
-import type { ComponentPropsWithoutRef, ReactElement } from 'react';
-import * as React from 'react';
-import {
-  forwardRef,
-  cloneElement as mockCloneElement,
-  isValidElement as mockIsValidElement,
-} from 'react';
-import type { DragHandleProps, RuleGroupType } from 'react-querybuilder';
-import {
-  QueryBuilder,
-  TestID,
-  defaultTranslations,
-  objectEntries,
-  toFullOption,
-} from 'react-querybuilder';
 import {
   basicSchema,
   defaultShiftActionsProps,
@@ -55,6 +38,18 @@ import {
   testValueEditor,
   testValueSelector,
 } from '@rqb-testing';
+import { act, render, screen } from '@testing-library/react';
+import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
+import { forwardRef } from 'react';
+import type { DragHandleProps, RuleGroupType } from 'react-querybuilder';
+import {
+  QueryBuilder,
+  TestID,
+  defaultTranslations,
+  objectEntries,
+  toFullOption,
+} from 'react-querybuilder';
 import 'regenerator-runtime/runtime';
 import { QueryBuilderMaterial } from '.';
 import type { MaterialActionProps } from './MaterialActionElement';
@@ -73,17 +68,6 @@ jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps
 jest.mock('@mui/material/MenuItem', () => ({ value, children }: MenuItemProps) => (
   <option value={value}>{children}</option>
 ));
-jest.mock('@mui/material/FormControl', () => {
-  const FormControl = ({ className, disabled, title, children }: FormControlProps) => (
-    <div className={className} title={title}>
-      {mockIsValidElement(children)
-        ? mockCloneElement(children as ReactElement<HTMLInputElement>, { disabled })
-        : children}
-    </div>
-  );
-  FormControl.useFormControl = () => {};
-  return FormControl;
-});
 jest.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) => (
   <select
     disabled={!!props.disabled}
@@ -113,7 +97,6 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
-  Input,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -125,19 +108,19 @@ const muiComponents = {
   Select,
   Switch,
   TextareaAutosize,
+  TextField,
 };
 const theme = createTheme();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
-  const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
+  const MuiWrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
       <RQBComponent muiComponents={muiComponents} {...props} />
     </ThemeProvider>
   );
-  Wrapper.displayName = RQBComponent.displayName;
-  return Wrapper;
+  return MuiWrapper;
 };
-const WrapperDH = forwardRef<
+const MuiWrapperDragHandle = forwardRef<
   HTMLSpanElement,
   DragHandleProps & {
     muiComponents?: Partial<RQBMaterialComponents> | null;
@@ -173,12 +156,12 @@ describe('action element', () => {
 });
 
 describe('drag handle', () => {
-  testDragHandle(WrapperDH);
+  testDragHandle(MuiWrapperDragHandle);
 
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
-        <WrapperDH
+        <MuiWrapperDragHandle
           path={[]}
           level={0}
           muiComponents={null}

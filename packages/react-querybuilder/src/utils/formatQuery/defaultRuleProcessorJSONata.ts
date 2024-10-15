@@ -1,7 +1,7 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
-import { nullOrUndefinedOrEmpty, quoteFieldName, shouldRenderAsNumber } from './utils';
+import { nullOrUndefinedOrEmpty, getQuotedFieldName, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -33,7 +33,8 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
 
-  const qfn = (f: string) => quoteFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
+  const qfn = (f: string) =>
+    getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
   switch (operator) {
     case '<':

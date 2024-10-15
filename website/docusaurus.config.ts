@@ -76,19 +76,7 @@ const config: Config = {
           [
             'docusaurus-plugin-typedoc',
             {
-              entryPoints: [
-                '../packages/react-querybuilder',
-                '../packages/antd',
-                '../packages/bootstrap',
-                '../packages/bulma',
-                '../packages/chakra',
-                '../packages/dnd',
-                '../packages/fluent',
-                '../packages/mantine',
-                '../packages/material',
-                '../packages/native',
-                '../packages/tremor',
-              ],
+              entryPoints: ['../packages/*'],
               out: './api',
               entryPointStrategy: 'packages',
               cleanOutputDir: true,

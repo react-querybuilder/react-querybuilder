@@ -21,8 +21,8 @@ React Query Builder can be used directly in the browser without a build step usi
   <body>
     <div id="root"></div>
     <script type="module">
-      import React from 'https://cdn.jsdelivr.net/npm/react@18.2.0/+esm';
-      import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm';
+      import React from 'https://cdn.jsdelivr.net/npm/react@18/+esm';
+      import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18/+esm';
       import { QueryBuilder } from 'https://cdn.jsdelivr.net/npm/react-querybuilder@latest/+esm';
       // Make the imports available to the Babel script below
       window.React = React;
@@ -77,13 +77,22 @@ To add drag-and-drop capability, import `react-dnd`, `react-dnd-html5-backend`, 
   </head>
   <body>
     <div id="root"></div>
+    <!-- (This importmap fixes an issue with react-dnd trying to use React 18.2.0 instead of 18.3.1.) -->
+    <script type="importmap">
+      {
+        "imports": {
+          "https://cdn.jsdelivr.net/npm/react@18.2.0/+esm": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+          "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/+esm"
+        }
+      }
+    </script>
     <script type="module">
-      import React from 'https://cdn.jsdelivr.net/npm/react@18.2.0/+esm';
-      import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm';
+      import React from 'https://cdn.jsdelivr.net/npm/react@18/+esm';
+      import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18/+esm';
       import { QueryBuilder } from 'https://cdn.jsdelivr.net/npm/react-querybuilder@latest/+esm';
       // highlight-start
-      import * as ReactDnD from 'https://cdn.jsdelivr.net/npm/react-dnd@16.0.0/+esm';
-      import * as ReactDndHtml5Backend from 'https://cdn.jsdelivr.net/npm/react-dnd-html5-backend@16.0.0/+esm';
+      import * as ReactDnD from 'https://cdn.jsdelivr.net/npm/react-dnd@16/+esm';
+      import * as ReactDndHtml5Backend from 'https://cdn.jsdelivr.net/npm/react-dnd-html5-backend@16/+esm';
       import { QueryBuilderDnD } from 'https://cdn.jsdelivr.net/npm/@react-querybuilder/dnd@latest/+esm';
       // highlight-end
       // Make the imports available to the Babel script below

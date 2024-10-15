@@ -12,7 +12,6 @@ import type {
   Checkbox,
   FormControl,
   FormControlLabel,
-  Input,
   ListSubheader,
   MenuItem,
   Radio,
@@ -20,6 +19,7 @@ import type {
   Select,
   Switch,
   TextareaAutosize,
+  TextField,
 } from '@mui/material';
 
 export type RQBMaterialComponents = {
@@ -30,7 +30,6 @@ export type RQBMaterialComponents = {
   DragIndicator: typeof DragIndicator;
   FormControl: typeof FormControl;
   FormControlLabel: typeof FormControlLabel;
-  Input: typeof Input;
   ListSubheader: typeof ListSubheader;
   LockIcon: typeof LockIcon;
   LockOpenIcon: typeof LockOpenIcon;
@@ -42,6 +41,7 @@ export type RQBMaterialComponents = {
   Select: typeof Select;
   Switch: typeof Switch;
   TextareaAutosize: typeof TextareaAutosize;
+  TextField: typeof TextField;
 };
 
 export type MuiComponentName = keyof RQBMaterialComponents;

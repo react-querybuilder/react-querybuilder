@@ -17,7 +17,6 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Input from '@mui/material/Input';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import Radio from '@mui/material/Radio';
@@ -25,6 +24,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
+import TextField from '@mui/material/TextField';
 
 import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
@@ -38,7 +38,6 @@ const muiComponents = {
   ContentCopyIcon,
   FormControl,
   FormControlLabel,
-  Input,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -50,6 +49,7 @@ const muiComponents = {
   Select,
   Switch,
   TextareaAutosize,
+  TextField,
 };
 
 function ReactQueryBuilderDemo_MaterialBrowser() {
