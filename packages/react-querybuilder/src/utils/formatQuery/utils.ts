@@ -1,3 +1,4 @@
+import { isRuleGroup, joinWith, numericRegex, parseNumber, splitBy, toArray } from '..';
 import type {
   DefaultCombinatorName,
   RuleGroupTypeAny,
@@ -5,10 +6,6 @@ import type {
   ValueProcessorLegacy,
   ValueProcessorOptions,
 } from '../../types/index.noReact';
-import { joinWith, splitBy, toArray } from '../arrayUtils';
-import { isRuleGroup } from '../isRuleGroup';
-import { numericRegex } from '../misc';
-import { parseNumber } from '../parseNumber';
 
 /**
  * Maps a {@link DefaultOperatorName} to a SQL operator.
@@ -156,7 +153,7 @@ export const isValueProcessorLegacy = (
  * @default
  * ['', '']
  */
-export const quoteFieldNamesWithArray = (
+export const getQuoteFieldNamesWithArray = (
   quoteFieldNamesWith: null | string | [string, string] = ['', '']
 ): [string, string] =>
   Array.isArray(quoteFieldNamesWith)
@@ -169,11 +166,11 @@ export const quoteFieldNamesWithArray = (
  * Given a field name and relevant {@link ValueProcessorOptions}, returns the field name
  * wrapped in the configured quote character(s).
  */
-export const quoteFieldName = (
+export const getQuotedFieldName = (
   fieldName: string,
   { quoteFieldNamesWith, fieldIdentifierSeparator }: ValueProcessorOptions
 ): string => {
-  const [qPre, qPost] = quoteFieldNamesWithArray(quoteFieldNamesWith);
+  const [qPre, qPost] = getQuoteFieldNamesWithArray(quoteFieldNamesWith);
   return typeof fieldIdentifierSeparator === 'string' && fieldIdentifierSeparator.length > 0
     ? joinWith(
         splitBy(fieldName, fieldIdentifierSeparator).map(part => `${qPre}${part}${qPost}`),

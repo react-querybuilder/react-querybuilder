@@ -2,7 +2,7 @@ import type { FullField, ValueProcessorByRule } from '../../types/index.noReact'
 import { toArray, trimIfString } from '../arrayUtils';
 import { getOption } from '../optGroupUtils';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { quoteFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -33,7 +33,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: string) =>
-    quoteFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
   switch (operatorLowerCase) {
     case 'null':

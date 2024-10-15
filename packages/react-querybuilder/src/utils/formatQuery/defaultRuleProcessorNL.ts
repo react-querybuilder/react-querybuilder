@@ -2,7 +2,7 @@ import type { FullOption, RuleProcessor, ValueSource } from '../../types/index.n
 import { getOption } from '../optGroupUtils';
 import { toFullOptionList } from '../toFullOption';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { quoteFieldName } from './utils';
+import { getQuotedFieldName } from './utils';
 
 const nlOperator = (operator: FullOption, valueSource: ValueSource = 'value') => {
   switch (operator.value.toLowerCase()) {
@@ -92,7 +92,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     return '';
   }
 
-  const processedField = quoteFieldName(fieldData?.label ?? rule.field, {
+  const processedField = getQuotedFieldName(fieldData?.label ?? rule.field, {
     quoteFieldNamesWith,
     fieldIdentifierSeparator,
   });

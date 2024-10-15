@@ -40,7 +40,7 @@ import {
   celCombinatorMap,
   isValueProcessorLegacy,
   numerifyValues,
-  quoteFieldNamesWithArray,
+  getQuoteFieldNamesWithArray,
 } from './utils';
 import { defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 
@@ -74,23 +74,21 @@ function formatQuery(ruleGroup: RuleGroupTypeAny): string;
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: 'parameterized' | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized' })
+  options: 'parameterized' | (FormatQueryOptions & { format: 'parameterized' })
 ): ParameterizedSQL;
 /**
  * Generates a {@link ParameterizedNamedSQL} object from a query object.
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options:
-    | 'parameterized_named'
-    | (Omit<FormatQueryOptions, 'format'> & { format: 'parameterized_named' })
+  options: 'parameterized_named' | (FormatQueryOptions & { format: 'parameterized_named' })
 ): ParameterizedNamedSQL;
 /**
  * Generates a {@link JsonLogic} object from a query object.
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: 'jsonlogic' | (Omit<FormatQueryOptions, 'format'> & { format: 'jsonlogic' })
+  options: 'jsonlogic' | (FormatQueryOptions & { format: 'jsonlogic' })
 ): RQBJsonLogic;
 /**
  * Generates an ElasticSearch query object from an RQB query object.
@@ -101,7 +99,7 @@ function formatQuery(
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: 'elasticsearch' | (Omit<FormatQueryOptions, 'format'> & { format: 'elasticsearch' })
+  options: 'elasticsearch' | (FormatQueryOptions & { format: 'elasticsearch' })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any>;
 /**
@@ -111,15 +109,12 @@ function formatQuery(
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: 'jsonata' | (Omit<FormatQueryOptions, 'format'> & { format: 'jsonata' })
+  options: 'jsonata' | (FormatQueryOptions & { format: 'jsonata' })
 ): string;
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  */
-function formatQuery(
-  ruleGroup: RuleGroupTypeAny,
-  options: Omit<FormatQueryOptions, 'format'>
-): string;
+function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions): string;
 /**
  * Generates a query string in the requested format.
  */
@@ -135,7 +130,7 @@ function formatQuery(
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: Omit<FormatQueryOptions, 'format'> & {
+  options: FormatQueryOptions & {
     format: Exclude<
       ExportFormat,
       'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch' | 'jsonata'
@@ -228,7 +223,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                     : format === 'jsonata'
                       ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
                       : defaultValueProcessorByRule;
-    quoteFieldNamesWith = quoteFieldNamesWithArray(optionsWithPresets.quoteFieldNamesWith);
+    quoteFieldNamesWith = getQuoteFieldNamesWithArray(optionsWithPresets.quoteFieldNamesWith);
     fieldIdentifierSeparator = optionsWithPresets.fieldIdentifierSeparator ?? '';
     validator = optionsWithPresets.validator ?? (() => true);
     fields = toFullOptionList(optionsWithPresets.fields ?? []);

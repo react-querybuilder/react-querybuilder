@@ -3,7 +3,7 @@ import { convertToIC } from '../convertQuery';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import { formatQuery } from './formatQuery';
 import { query, queryForNumberParsing, queryWithValueSourceField } from './formatQueryTestUtils';
-import { quoteFieldNamesWithArray } from './utils';
+import { getQuoteFieldNamesWithArray } from './utils';
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -200,6 +200,6 @@ describe('parseNumbers', () => {
 
 describe('misc', () => {
   it('quoteFieldNamesWithArray handles null', () => {
-    expect(quoteFieldNamesWithArray(null)).toEqual(['', '']);
+    expect(getQuoteFieldNamesWithArray(null)).toEqual(['', '']);
   });
 });
