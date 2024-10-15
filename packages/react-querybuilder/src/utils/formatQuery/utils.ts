@@ -1,4 +1,3 @@
-import { isRuleGroup, joinWith, numericRegex, parseNumber, splitBy, toArray } from '..';
 import type {
   DefaultCombinatorName,
   RuleGroupTypeAny,
@@ -6,6 +5,10 @@ import type {
   ValueProcessorLegacy,
   ValueProcessorOptions,
 } from '../../types/index.noReact';
+import { joinWith, splitBy, toArray } from '../arrayUtils';
+import { isRuleGroup } from '../isRuleGroup';
+import { numericRegex } from '../misc';
+import { parseNumber } from '../parseNumber';
 
 /**
  * Maps a {@link DefaultOperatorName} to a SQL operator.
