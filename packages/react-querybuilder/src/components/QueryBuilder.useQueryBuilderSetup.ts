@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
+import type { UseMergedContextReturn } from '../hooks';
+import { useMergedContext } from '../hooks';
 import type {
   BaseOption,
   FlexibleOptionGroup,
@@ -36,8 +38,6 @@ import {
   uniqOptGroups,
   uniqOptList,
 } from '../utils';
-import type { UseMergedContextReturn } from './useMergedContext';
-import { useMergedContext } from './useMergedContext';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {

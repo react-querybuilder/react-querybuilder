@@ -3,6 +3,8 @@ export * from './DragHandle';
 export * from './InlineCombinator';
 export * from './NotToggle';
 export * from './QueryBuilder';
+export * from './QueryBuilder.useQueryBuilderSchema';
+export * from './QueryBuilder.useQueryBuilderSetup';
 export * from './Rule';
 export * from './RuleGroup';
 export * from './ShiftActions';

@@ -13,7 +13,6 @@ import {
   standardClassnames as sc,
   defaultTranslations as t,
 } from '../defaults';
-import { useValueEditor } from '../hooks';
 import { messages } from '../messages';
 import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 import type {
@@ -52,7 +51,7 @@ import {
 import { ActionElement } from './ActionElement';
 import { QueryBuilder } from './QueryBuilder';
 import { waitABeat } from './testUtils';
-import { ValueEditor } from './ValueEditor';
+import { ValueEditor, useValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
 
 const user = userEvent.setup();
