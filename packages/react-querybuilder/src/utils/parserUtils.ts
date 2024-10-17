@@ -7,8 +7,7 @@ import type {
 } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
-import { toFlatOptionArray } from './optGroupUtils';
-import { toFullOption } from './toFullOption';
+import { toFlatOptionArray, toFullOption } from './optGroupUtils';
 
 export const getFieldsArray = (
   fields?: OptionList<FullField> | Record<string, FullField>

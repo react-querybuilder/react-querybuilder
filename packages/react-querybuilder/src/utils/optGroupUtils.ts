@@ -1,6 +1,9 @@
+import { produce } from 'immer';
 import type { RequireAtLeastOne } from 'type-fest';
 import type {
   BaseOption,
+  BaseOptionMap,
+  FlexibleOption,
   FlexibleOptionGroup,
   FlexibleOptionList,
   FullOption,
@@ -10,10 +13,90 @@ import type {
   OptionGroup,
   OptionList,
   ToFullOption,
+  ValueOption,
   WithUnknownIndex,
 } from '../types/index.noReact';
 import { isPojo } from './misc';
-import { toFullOption } from './toFullOption';
+
+const isOptionWithName = (opt: BaseOption): opt is Option =>
+  isPojo(opt) && 'name' in opt && typeof opt.name === 'string';
+const isOptionWithValue = (opt: BaseOption): opt is ValueOption =>
+  isPojo(opt) && 'value' in opt && typeof opt.value === 'string';
+
+/**
+ * Converts an {@link Option} or {@link ValueOption} (i.e., {@link BaseOption})
+ * into a {@link FullOption}. Full options are left unchanged.
+ */
+export function toFullOption<Opt extends BaseOption>(
+  opt: Opt,
+  baseProperties?: Record<string, unknown>
+): ToFullOption<Opt> {
+  const recipe: (o: Opt) => ToFullOption<Opt> = produce(draft => {
+    const idObj: { name?: string; value?: string } = {};
+    let needsUpdating = !!baseProperties;
+
+    if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
+      idObj.value = draft.name;
+      needsUpdating = true;
+    } else if (!isOptionWithName(draft) && isOptionWithValue(draft)) {
+      idObj.name = draft.value;
+      needsUpdating = true;
+    }
+
+    if (needsUpdating) {
+      return Object.assign({}, baseProperties, draft, idObj);
+    }
+  });
+  return recipe(opt);
+}
+
+/**
+ * Converts an {@link OptionList} or {@link FlexibleOptionList} into a {@link FullOptionList}.
+ * Lists of full options are left unchanged.
+ */
+export function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOptionList<Opt>>(
+  optList: OptList,
+  baseProperties?: Record<string, unknown>
+): FullOptionList<Opt> {
+  if (!Array.isArray(optList)) {
+    return [] as unknown as FullOptionList<Opt>;
+  }
+
+  const recipe: (ol: FlexibleOptionList<Opt>) => FullOptionList<Opt> = produce(draft => {
+    if (isFlexibleOptionGroupArray(draft)) {
+      for (const optGroup of draft) {
+        for (const [idx, opt] of optGroup.options.entries())
+          optGroup.options[idx] = toFullOption(opt, baseProperties);
+      }
+    } else {
+      for (const [idx, opt] of (draft as Opt[]).entries())
+        draft[idx] = toFullOption(opt, baseProperties);
+    }
+  });
+
+  return recipe(optList);
+}
+
+/**
+ * Converts a {@link FlexibleOptionList} into a {@link FullOptionList}.
+ * Lists of full options are left unchanged.
+ */
+export function toFullOptionMap<OptMap extends BaseOptionMap>(
+  optMap: OptMap,
+  baseProperties?: Record<string, unknown>
+): OptMap extends BaseOptionMap<infer V, infer K> ? Partial<Record<K, ToFullOption<V>>> : never {
+  type FullOptMapType =
+    OptMap extends BaseOptionMap<infer VT, infer KT>
+      ? Partial<Record<KT, ToFullOption<VT>>>
+      : never;
+
+  return Object.fromEntries(
+    (Object.entries(optMap) as [string, FlexibleOption][]).map(([k, v]) => [
+      k,
+      toFullOption(v, baseProperties),
+    ])
+  ) as FullOptMapType;
+}
 
 /**
  * @deprecated Renamed to {@link uniqByIdentifier}.
