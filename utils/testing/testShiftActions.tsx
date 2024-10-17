@@ -36,7 +36,7 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
       shiftDown.mockClear();
     });
 
-    it(testTitle ?? 'works', async () => {
+    describe(testTitle ?? 'works', () => {
       const disabledProps: ShiftActionsProps = {
         ...defaultShiftActionsProps,
         disabled: true,
@@ -44,55 +44,59 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
         shiftDown,
       };
 
-      // Fully disabled
-      const { rerender } = render(<ShiftActions {...disabledProps} {...additionalProps} />);
-      const btns = screen.getAllByRole('button');
-      for (const btn of btns) {
-        expect(btn).toBeDisabled();
-        await user.click(btn);
-        expect(shiftUp).not.toHaveBeenCalled();
-        expect(shiftDown).not.toHaveBeenCalled();
-      }
-
-      // Up disabled
-      const upDisabledProps = {
-        ...defaultShiftActionsProps,
-        shiftUp,
-        shiftDown,
-        shiftUpDisabled: true,
-      };
-      rerender(<ShiftActions {...upDisabledProps} {...additionalProps} />);
-      const btnsUpDisabledProps = screen.getAllByRole('button');
-      await act(async () => {
-        await user.click(btnsUpDisabledProps[0]);
-        expect(shiftUp).not.toHaveBeenCalled();
+      it('fully disabled', async () => {
+        render(<ShiftActions {...disabledProps} {...additionalProps} />);
+        const btns = screen.getAllByRole('button');
+        for (const btn of btns) {
+          expect(btn).toBeDisabled();
+          await user.click(btn);
+          expect(shiftUp).not.toHaveBeenCalled();
+          expect(shiftDown).not.toHaveBeenCalled();
+        }
       });
 
-      // Down disabled
-      const downDisabledProps = {
-        ...defaultShiftActionsProps,
-        shiftUp,
-        shiftDown,
-        shiftDownDisabled: true,
-      };
-      rerender(<ShiftActions {...downDisabledProps} {...additionalProps} />);
-      const btnsDownDisabledProps = screen.getAllByRole('button');
-      await act(async () => {
-        await user.click(btnsDownDisabledProps[1]);
-        expect(shiftDown).not.toHaveBeenCalled();
+      it('up disabled', async () => {
+        const upDisabledProps = {
+          ...defaultShiftActionsProps,
+          shiftUp,
+          shiftDown,
+          shiftUpDisabled: true,
+        };
+        render(<ShiftActions {...upDisabledProps} {...additionalProps} />);
+        const btnsUpDisabledProps = screen.getAllByRole('button');
+        await act(async () => {
+          await user.click(btnsUpDisabledProps[0]);
+          expect(shiftUp).not.toHaveBeenCalled();
+        });
       });
 
-      // Enabled
-      const enabledProps = { ...defaultShiftActionsProps, shiftUp, shiftDown };
-      rerender(<ShiftActions {...enabledProps} {...additionalProps} />);
-      const btnsEnabled = screen.getAllByRole('button');
-      await act(async () => {
-        await user.click(btnsEnabled[0]);
-        expect(shiftUp).toHaveBeenCalled();
+      it('down disabled', async () => {
+        const downDisabledProps = {
+          ...defaultShiftActionsProps,
+          shiftUp,
+          shiftDown,
+          shiftDownDisabled: true,
+        };
+        render(<ShiftActions {...downDisabledProps} {...additionalProps} />);
+        const btnsDownDisabledProps = screen.getAllByRole('button');
+        await act(async () => {
+          await user.click(btnsDownDisabledProps[1]);
+          expect(shiftDown).not.toHaveBeenCalled();
+        });
       });
-      await act(async () => {
-        await user.click(btnsEnabled[1]);
-        expect(shiftDown).toHaveBeenCalled();
+
+      it('enabled', async () => {
+        const enabledProps = { ...defaultShiftActionsProps, shiftUp, shiftDown };
+        render(<ShiftActions {...enabledProps} {...additionalProps} />);
+        const btnsEnabled = screen.getAllByRole('button');
+        await act(async () => {
+          await user.click(btnsEnabled[0]);
+          expect(shiftUp).toHaveBeenCalled();
+        });
+        await act(async () => {
+          await user.click(btnsEnabled[1]);
+          expect(shiftDown).toHaveBeenCalled();
+        });
       });
     });
   };

@@ -1,5 +1,5 @@
 import type { FullField, GetOptionIdentifierType, ValueSources } from '../types/index.noReact';
-import { toFullOption } from './toFullOption';
+import { toFullOption } from './optGroupUtils';
 
 const defaultValueSourcesArray: ValueSources = ['value'];
 

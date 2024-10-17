@@ -1,6 +1,6 @@
 import type { FullField } from '../types/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
-import { toFullOption } from './toFullOption';
+import { toFullOption } from './optGroupUtils';
 
 const f: FullField = toFullOption({ name: 'f', label: 'FullField' });
 const f1: FullField = toFullOption({ name: 'f1', label: 'F1', valueSources: ['value'] });

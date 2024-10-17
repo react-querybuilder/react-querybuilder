@@ -40,7 +40,7 @@ const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
 testActionElement(generateWrapper(ChakraActionElement));
 testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(ChakraNotToggle));
-testShiftActions(ChakraShiftActions);
+testShiftActions(generateWrapper(ChakraShiftActions));
 testValueEditor(generateWrapper(ChakraValueEditor));
 testValueSelector(generateWrapper(ChakraValueSelector), { multi: true });
 

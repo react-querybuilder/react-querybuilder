@@ -1,13 +1,17 @@
-import type { Controls, FullField } from '../types';
-import { ActionElement } from './ActionElement';
-import { DragHandle } from './DragHandle';
-import { InlineCombinator } from './InlineCombinator';
-import { NotToggle } from './NotToggle';
-import { Rule } from './Rule';
-import { RuleGroup, RuleGroupBodyComponents, RuleGroupHeaderComponents } from './RuleGroup';
-import { ShiftActions } from './ShiftActions';
-import { ValueEditor } from './ValueEditor';
-import { ValueSelector } from './ValueSelector';
+import { ActionElement } from './components/ActionElement';
+import { DragHandle } from './components/DragHandle';
+import { InlineCombinator } from './components/InlineCombinator';
+import { NotToggle } from './components/NotToggle';
+import { Rule } from './components/Rule';
+import {
+  RuleGroup,
+  RuleGroupBodyComponents,
+  RuleGroupHeaderComponents,
+} from './components/RuleGroup';
+import { ShiftActions } from './components/ShiftActions';
+import { ValueEditor } from './components/ValueEditor';
+import { ValueSelector } from './components/ValueSelector';
+import type { Controls, FullField } from './types';
 
 /**
  * Default components used by {@link QueryBuilder}.

@@ -24,13 +24,13 @@ import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { isPojo } from '../misc';
-import { getOption, toFlatOptionArray } from '../optGroupUtils';
-import { toFullOptionList } from '../toFullOption';
+import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
@@ -38,11 +38,10 @@ import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
   celCombinatorMap,
+  getQuoteFieldNamesWithArray,
   isValueProcessorLegacy,
   numerifyValues,
-  getQuoteFieldNamesWithArray,
 } from './utils';
-import { defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 
 const sqlDialectPresets = {
   ansi: {},

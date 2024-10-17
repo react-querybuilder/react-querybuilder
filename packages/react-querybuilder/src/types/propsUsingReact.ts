@@ -7,7 +7,7 @@ import type {
   RefAttributes,
 } from 'react';
 import type { SetNonNullable } from 'type-fest';
-import type { useRuleGroup } from '../hooks/useRuleGroup';
+import type { UseRuleGroup } from '../components';
 import type { MoveOptions } from '../utils';
 import type {
   AccessibleDescriptionGenerator,
@@ -303,7 +303,7 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   // Specifying the generics with `RuleGroupProps<F, O>` would be preferable here, but
   // it complicates things with `QueryBuilderContextType`.
-  ruleGroupBodyElements: ComponentType<RuleGroupProps & ReturnType<typeof useRuleGroup>>;
+  ruleGroupBodyElements: ComponentType<RuleGroupProps & UseRuleGroup>;
   /**
    * Rule group header components.
    *
@@ -311,7 +311,7 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   // Specifying the generics with `RuleGroupProps<F, O>` would be preferable here, but
   // it complicates things with `QueryBuilderContextType`.
-  ruleGroupHeaderElements: ComponentType<RuleGroupProps & ReturnType<typeof useRuleGroup>>;
+  ruleGroupHeaderElements: ComponentType<RuleGroupProps & UseRuleGroup>;
   /**
    * Shifts the current rule/group up or down in the query hierarchy.
    *

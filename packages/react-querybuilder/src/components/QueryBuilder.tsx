@@ -1,18 +1,20 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { useQueryBuilder } from '../hooks';
+import { QueryBuilderContext as _QBC } from '../context';
 import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 import type {
   FullCombinator,
   FullField,
-  GetOptionIdentifierType,
   FullOperator,
+  GetOptionIdentifierType,
   Path,
   QueryBuilderContextProps,
   QueryBuilderProps,
   RuleGroupTypeAny,
 } from '../types';
-import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
+import type { UseQueryBuilderSchema } from './QueryBuilder.useQueryBuilderSchema';
+import { useQueryBuilderSchema } from './QueryBuilder.useQueryBuilderSchema';
+import { useQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
 /**
  * The {@link Path} of the root group.
@@ -93,3 +95,18 @@ export const QueryBuilder = <
     <QueryBuilderInternal props={props} />
   </QueryBuilderStateProvider>
 );
+
+/**
+ * Calls {@link useQueryBuilderSetup} to massage the props and prepare basic
+ * update/generate methods, then passes the result to {@link useQueryBuilderSchema}
+ * to prepare and return all values required to render {@link QueryBuilder}.
+ */
+export const useQueryBuilder = <
+  RG extends RuleGroupTypeAny,
+  F extends FullField,
+  O extends FullOperator,
+  C extends FullCombinator,
+>(
+  props: QueryBuilderProps<RG, F, O, C>
+): UseQueryBuilderSchema<RG, F, O, C> =>
+  useQueryBuilderSchema<RG, F, O, C>(props, useQueryBuilderSetup(props));

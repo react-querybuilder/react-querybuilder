@@ -9,7 +9,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import * as React from 'react';
 import type { ReactReduxContextValue, TypedUseSelectorHook } from 'react-redux';
 import { createSelectorHook } from 'react-redux';
-import { QueryBuilderContext } from '../components';
+import { QueryBuilderContext } from '../context';
 import type { RuleGroupTypeAny } from '../types';
 import type { QueriesSliceState } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';

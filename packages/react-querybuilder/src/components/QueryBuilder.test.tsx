@@ -2,6 +2,8 @@ import { consoleMocks } from '@rqb-testing';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
+import { QueryBuilderContext } from '../context';
+import { defaultControlElements } from '../defaultControlElements';
 import {
   LogType,
   TestID,
@@ -47,13 +49,10 @@ import {
   toFullOption,
 } from '../utils';
 import { ActionElement } from './ActionElement';
-import { defaultControlElements } from './defaults';
 import { QueryBuilder } from './QueryBuilder';
-import { QueryBuilderContext } from './QueryBuilderContext';
 import { waitABeat } from './testUtils';
+import { ValueEditor, useValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
-import { ValueEditor } from './ValueEditor';
-import { useValueEditor } from '../hooks';
 
 const user = userEvent.setup();
 
