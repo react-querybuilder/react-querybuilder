@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#791] The `extraProps` prop of `MaterialValueEditor` works properly.
-- `FluentShiftActions` and `TremorShiftActions` are now applied by default in their respective compatibility packages.
+- [#796] `FluentShiftActions` and `TremorShiftActions` are now applied by default in their respective compatibility packages.
 
 ## [v7.7.0] - 2024-10-08
 
@@ -1777,6 +1777,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#785]: https://github.com/react-querybuilder/react-querybuilder/pull/785
 [#786]: https://github.com/react-querybuilder/react-querybuilder/pull/786
 [#791]: https://github.com/react-querybuilder/react-querybuilder/pull/791
+[#796]: https://github.com/react-querybuilder/react-querybuilder/pull/796
 
 <!-- #endregion -->
 
