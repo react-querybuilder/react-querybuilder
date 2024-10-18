@@ -1,6 +1,6 @@
 import type { Field, FullField, OptionGroup } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
-import { toFullOption } from './toFullOption';
+import { toFullOption } from './optGroupUtils';
 
 const fields = (
   [

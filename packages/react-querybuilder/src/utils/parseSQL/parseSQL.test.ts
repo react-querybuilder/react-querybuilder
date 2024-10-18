@@ -7,7 +7,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
-import { toFullOption } from '../toFullOption';
+import { toFullOption } from '../optGroupUtils';
 import { parseSQL } from './parseSQL';
 import { isWildcardsOnly } from './utils';
 

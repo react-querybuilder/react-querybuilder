@@ -1,10 +1,9 @@
 ## @react-querybuilder/native
 
-Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [React Native](https://reactnative.dev/).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [React Native](https://reactnative.dev/).
 
-To see them in action, [load the example in Expo Snack](TODO: url here).
-
-**[Full documentation](https://react-querybuilder.js.org/)**
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=native) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=native) example projects
 
 ## Installation
 

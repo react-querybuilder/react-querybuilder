@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import * as React from 'react';
-import { QueryBuilderContext } from '../components';
+import { QueryBuilderContext } from '../context';
 import { useMergedContext } from '../hooks';
 import type {
   FullField,

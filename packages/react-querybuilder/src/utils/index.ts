@@ -20,10 +20,8 @@ export * from './pathUtils';
 export * from './prepareQueryObjects';
 export * from './queryTools';
 export * from './regenerateIDs';
-export * from './toFullOption';
 export * from './toOptions';
 export * from './transformQuery';
-export * from './uniq';
 
 // Don't export clsx. It should be imported from the official clsx
 // package if used outside the context of this package.

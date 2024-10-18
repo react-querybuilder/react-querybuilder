@@ -18,12 +18,14 @@ import { getCompatContextProvider } from 'react-querybuilder';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';
+import { FluentShiftActions } from './FluentShiftActions';
 import { FluentValueEditor } from './FluentValueEditor';
 import { FluentValueSelector } from './FluentValueSelector';
 
 export * from './FluentActionElement';
 export * from './FluentDragHandle';
 export * from './FluentNotToggle';
+export * from './FluentShiftActions';
 export * from './FluentValueEditor';
 export * from './FluentValueSelector';
 
@@ -31,6 +33,7 @@ export const fluentControlElements: ControlElementsProp<FullField, string> = {
   actionElement: FluentActionElement,
   dragHandle: FluentDragHandle,
   notToggle: FluentNotToggle,
+  shiftActions: FluentShiftActions,
   valueEditor: FluentValueEditor,
   valueSelector: FluentValueSelector,
 };
