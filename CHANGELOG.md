@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#791] The `extraProps` prop of `MaterialValueEditor` works properly.
+- `FluentShiftActions` and `TremorShiftActions` are now applied by default in their respective compatibility packages.
 
 ## [v7.7.0] - 2024-10-08
 
