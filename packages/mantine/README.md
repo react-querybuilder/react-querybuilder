@@ -1,42 +1,49 @@
 ## @react-querybuilder/mantine
 
-Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Mantine](https://mantine.dev/).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Mantine](https://mantine.dev/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/mantine) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/mantine).
-
-**[Full documentation](https://react-querybuilder.js.org/)**
+- [Demo](https://react-querybuilder.js.org/demo/mantine)
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=mantine) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=mantine) example projects
 
 ## Installation
 
 ```bash
-npm i react-querybuilder @react-querybuilder/mantine @mantine/core @mantine/hooks
+npm i react-querybuilder @react-querybuilder/mantine @mantine/core @mantine/dates @mantine/hooks
 # OR yarn add / pnpm add / bun add
 ```
 
 ## Usage
 
-To render Mantine-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderMantine />`.
+To configure the query builder to use Mantine-compatible components, place `QueryBuilderMantine` above `QueryBuilder` in the component hierarchy.
 
 ```tsx
 import { QueryBuilderMantine } from '@react-querybuilder/mantine';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
-const fields = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
 
-const App = () => {
+export function App() {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
     <QueryBuilderMantine>
-      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
     </QueryBuilderMantine>
   );
-};
+}
 ```
 
-## Notes
+`QueryBuilderMantine` is a React context provider that assigns the following props to all descendant `QueryBuilder` elements. The props can be overridden on the `QueryBuilder` or used directly without the context provider.
 
-- This package exports `mantineControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but wrapping `<QueryBuilder />` in `<QueryBuilderMantine />` is the recommended method.
+| Export                   | `QueryBuilder` prop             |
+| ------------------------ | ------------------------------- |
+| `mantineControlElements` | `controlElements`               |
+| `MantineActionElement`   | `controlElements.actionElement` |
+| `MantineNotToggle`       | `controlElements.notToggle`     |
+| `MantineShiftActions`    | `controlElements.shiftActions`  |
+| `MantineValueEditor`     | `controlElements.valueEditor`   |
+| `MantineValueSelector`   | `controlElements.valueSelector` |
