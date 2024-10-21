@@ -8,7 +8,7 @@ import type {
   OptionGroup,
   ValueSources,
 } from '../../types/index.noReact';
-import { toFullOption } from '../toFullOption';
+import { toFullOption } from '../optGroupUtils';
 import { parseSpEL } from './parseSpEL';
 
 const wrapRule = (

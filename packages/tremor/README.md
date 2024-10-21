@@ -1,10 +1,12 @@
 ## @react-querybuilder/tremor
 
-Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Tremor](https://www.tremor.so/).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Tremor](https://www.tremor.so/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/tremor) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/tremor).
+- [Demo](https://react-querybuilder.js.org/demo/tremor)
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=tremor) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=tremor) example projects
 
-**[Full documentation](https://react-querybuilder.js.org/)**
+![Screenshot](../../_assets/screenshot-tremor.png)
 
 ## Installation
 
@@ -15,28 +17,37 @@ npm i react-querybuilder @react-querybuilder/tremor @tremor/react
 
 ## Usage
 
-To render Tremor-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderTremor />`.
+To configure the query builder to use Tremor-compatible components, place `QueryBuilderTremor` above `QueryBuilder` in the component hierarchy.
 
 ```tsx
+import { useState } from 'react';
 import { QueryBuilderTremor } from '@react-querybuilder/tremor';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
-const fields = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
 
-const App = () => {
+export function App() {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
     <QueryBuilderTremor>
-      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
     </QueryBuilderTremor>
   );
-};
+}
 ```
 
-## Notes
+`QueryBuilderTremor` is a React context provider that assigns the following props to all descendant `QueryBuilder` elements. The props can be overridden on the `QueryBuilder` or used directly without the context provider.
 
-- This package exports `tremorControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but wrapping `<QueryBuilder />` in `<QueryBuilderTremor />` is the recommended method.
+| Export                    | `QueryBuilder` prop             |
+| ------------------------- | ------------------------------- |
+| `tremorControlElements`   | `controlElements`               |
+| `tremorControlClassnames` | `controlClassnames`             |
+| `TremorActionElement`     | `controlElements.actionElement` |
+| `TremorNotToggle`         | `controlElements.notToggle`     |
+| `TremorShiftActions`      | `controlElements.shiftActions`  |
+| `TremorValueEditor`       | `controlElements.valueEditor`   |
+| `TremorValueSelector`     | `controlElements.valueSelector` |

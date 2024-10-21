@@ -1,6 +1,5 @@
 import type { FullField, Option, OptionList, WithUnknownIndex } from '../types/index.noReact';
-import { isFlexibleOptionGroupArray } from './optGroupUtils';
-import { toFullOption } from './toFullOption';
+import { isFlexibleOptionGroupArray, toFullOption } from './optGroupUtils';
 
 const filterByComparator = (field: FullField, operator: string, fieldToCompare: FullField) => {
   const fullField = toFullOption(field);

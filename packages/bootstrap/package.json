@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bootstrap",
   "description": "Custom Bootstrap components for react-querybuilder",
-  "version": "7.7.0",
+  "version": "7.7.1-rc.1",
   "publishConfig": {
     "access": "public"
   },
@@ -32,6 +32,18 @@
   },
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
+  "keywords": [
+    "react",
+    "querybuilder",
+    "bootstrap",
+    "query",
+    "builder",
+    "operators",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
   "scripts": {
     "start": "bunx --bun vite",
     "build": "bunx --bun tsup",
@@ -51,12 +63,12 @@
     "react-querybuilder": "workspace:*",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.9"
   },
   "peerDependencies": {
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
     "react": ">=18",
-    "react-querybuilder": "7.7.0"
+    "react-querybuilder": "7.7.1-rc.1"
   }
 }

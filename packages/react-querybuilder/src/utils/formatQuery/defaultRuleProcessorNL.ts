@@ -1,6 +1,5 @@
 import type { FullOption, RuleProcessor, ValueSource } from '../../types/index.noReact';
-import { getOption } from '../optGroupUtils';
-import { toFullOptionList } from '../toFullOption';
+import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuotedFieldName } from './utils';
 

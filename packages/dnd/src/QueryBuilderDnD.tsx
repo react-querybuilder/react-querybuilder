@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import type { FullField, QueryBuilderContextProps } from 'react-querybuilder';
 import {
+  messages,
   QueryBuilderContext,
   useMergedContext,
   usePreferAnyProp,
@@ -11,8 +12,7 @@ import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
-import { useReactDnD } from './hooks';
-import type { QueryBuilderDndProps } from './types';
+import type { QueryBuilderDndProps, UseReactDnD } from './types';
 
 /**
  * Context provider to enable drag-and-drop. If the application already implements
@@ -84,6 +84,47 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   );
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
+  const baseControls = useMemo(
+    () => ({
+      rule:
+        props.controlElements?.rule ??
+        rqbContext.controlElements?.rule ??
+        rqbDndContext.baseControls.rule,
+      ruleGroup:
+        props.controlElements?.ruleGroup ??
+        rqbContext.controlElements?.ruleGroup ??
+        rqbDndContext.baseControls.ruleGroup,
+      combinatorSelector:
+        props.controlElements?.combinatorSelector ??
+        rqbContext.controlElements?.combinatorSelector ??
+        rqbDndContext.baseControls.combinatorSelector,
+    }),
+    [
+      props.controlElements?.combinatorSelector,
+      props.controlElements?.rule,
+      props.controlElements?.ruleGroup,
+      rqbContext.controlElements?.combinatorSelector,
+      rqbContext.controlElements?.rule,
+      rqbContext.controlElements?.ruleGroup,
+      rqbDndContext.baseControls.combinatorSelector,
+      rqbDndContext.baseControls.rule,
+      rqbDndContext.baseControls.ruleGroup,
+    ]
+  );
+
+  const newContext: QueryBuilderContextProps<FullField, string> = useMemo(
+    () => ({
+      ...rqbContext,
+      controlElements: {
+        ...rqbContext.controlElements,
+        ruleGroup: RuleGroupDnD,
+        rule: RuleDnD,
+        inlineCombinator: InlineCombinatorDnD,
+      },
+    }),
+    [rqbContext]
+  );
+
   if (!enableDragAndDrop || !dnd) {
     return (
       <QueryBuilderContext.Provider
@@ -96,31 +137,6 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
 
   const { DndContext, useDrag, useDrop } = dnd;
 
-  const baseControls = {
-    rule:
-      props.controlElements?.rule ??
-      rqbContext.controlElements?.rule ??
-      rqbDndContext.baseControls.rule,
-    ruleGroup:
-      props.controlElements?.ruleGroup ??
-      rqbContext.controlElements?.ruleGroup ??
-      rqbDndContext.baseControls.ruleGroup,
-    combinatorSelector:
-      props.controlElements?.combinatorSelector ??
-      rqbContext.controlElements?.combinatorSelector ??
-      rqbDndContext.baseControls.combinatorSelector,
-  };
-
-  const newContext: QueryBuilderContextProps<FullField, string> = {
-    ...rqbContext,
-    controlElements: {
-      ...rqbContext.controlElements,
-      ruleGroup: RuleGroupDnD,
-      rule: RuleDnD,
-      inlineCombinator: InlineCombinatorDnD,
-    },
-  };
-
   return (
     <DndContext.Consumer key={key}>
       {() => (
@@ -132,4 +148,44 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       )}
     </DndContext.Consumer>
   );
+};
+
+let didWarnEnabledDndWithoutReactDnD = false;
+
+export const useReactDnD = (dndParam?: UseReactDnD): UseReactDnD | null => {
+  const [dnd, setDnd] = useState<UseReactDnD | null>(dndParam ?? null);
+
+  useEffect(() => {
+    let didCancel = false;
+
+    const getDnD = async () => {
+      const [reactDnD, reactDnDHTML5Be] = await Promise.all([
+        import('react-dnd').catch(() => null),
+        import('react-dnd-html5-backend').catch(() => null),
+      ]);
+
+      // istanbul ignore else
+      if (!didCancel) {
+        if (reactDnD && reactDnDHTML5Be) {
+          setDnd(() => ({ ...reactDnD, ...reactDnDHTML5Be }));
+        } else {
+          // istanbul ignore else
+          if (process.env.NODE_ENV !== 'production' && !didWarnEnabledDndWithoutReactDnD) {
+            console.error(messages.errorEnabledDndWithoutReactDnD);
+            didWarnEnabledDndWithoutReactDnD = true;
+          }
+        }
+      }
+    };
+
+    if (!dnd) {
+      getDnD();
+    }
+
+    return () => {
+      didCancel = true;
+    };
+  }, [dnd]);
+
+  return dnd;
 };

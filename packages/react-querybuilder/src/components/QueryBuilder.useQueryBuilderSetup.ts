@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
-import type { UseMergedContextReturn } from '../hooks';
-import { useMergedContext } from '../hooks';
+import type { UseMergedContextReturn } from '../hooks/useMergedContext';
+import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
   FlexibleOptionGroup,

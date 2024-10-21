@@ -6,27 +6,23 @@ _The Query Builder component for React_
 
 ![Screenshot](../../_assets/screenshot.png)
 
-## Documentation
-
-Complete documentation is available at https://react-querybuilder.js.org.
-
-## Demo
-
-[Click here to see a live, interactive demo](https://react-querybuilder.js.org/demo).
+- [Demo](https://react-querybuilder.js.org/demo)
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz) example projects
 
 Custom components are not limited to the following libraries, but these have first-class support through their respective compatibility packages:
 
-| Library                                            | Compatibility package                                                                        | Demo                                                     | Example                                                                                                               |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| [Ant Design](https://ant.design/)                  | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [demo](https://react-querybuilder.js.org/demo/antd)      | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/antd)      |
-| [Bootstrap](https://getbootstrap.com/)             | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [demo](https://react-querybuilder.js.org/demo/bootstrap) | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap) |
-| [Bulma](https://bulma.io/)                         | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [demo](https://react-querybuilder.js.org/demo/bulma)     | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma)     |
-| [Chakra UI](https://chakra-ui.com/)                | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [demo](https://react-querybuilder.js.org/demo/chakra)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra)    |
-| [Fluent UI](https://github.com/microsoft/fluentui) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [demo](https://react-querybuilder.js.org/demo/fluent)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/fluent)    |
-| [Mantine](https://mantine.dev/)                    | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [demo](https://react-querybuilder.js.org/demo/mantine)   | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine)   |
-| [MUI](https://mui.com/)                            | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/material)  |
-| [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       |                                                          | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/native)    |
-| [Tremor](https://www.tremor.so/)                   | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [demo](https://react-querybuilder.js.org/demo/tremor)    | [example](https://codesandbox.io/p/sandbox/github/react-querybuilder/react-querybuilder/tree/main/examples/tremor)    |
+| Library                                            | Compatibility package                                                                        | Demo                                                     | Example projects                                                                                                                           |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Ant Design](https://ant.design/)                  | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [demo](https://react-querybuilder.js.org/demo/antd)      | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=antd) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=antd)           |
+| [Bootstrap](https://getbootstrap.com/)             | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [demo](https://react-querybuilder.js.org/demo/bootstrap) | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=bootstrap) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=bootstrap) |
+| [Bulma](https://bulma.io/)                         | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [demo](https://react-querybuilder.js.org/demo/bulma)     | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=bulma) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=bulma)         |
+| [Chakra UI](https://chakra-ui.com/)                | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [demo](https://react-querybuilder.js.org/demo/chakra)    | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=chakra) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=chakra)       |
+| [Fluent UI](https://github.com/microsoft/fluentui) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [demo](https://react-querybuilder.js.org/demo/fluent)    | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=fluent) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=fluent)       |
+| [Mantine](https://mantine.dev/)                    | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [demo](https://react-querybuilder.js.org/demo/mantine)   | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=mantine) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=mantine)     |
+| [MUI](https://mui.com/)                            | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [demo](https://react-querybuilder.js.org/demo/material)  | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=material) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=material)   |
+| [React Native](https://reactnative.dev/)           | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       |                                                          | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=native) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=native)       |
+| [Tremor](https://www.tremor.so/)                   | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [demo](https://react-querybuilder.js.org/demo/tremor)    | [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=tremor) · [StackBlitz](https://react-querybuilder.js.org/sandbox?t=tremor)       |
 
 ## Basic usage
 
@@ -59,11 +55,13 @@ const initialQuery: RuleGroupType = {
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
-  return <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />;
+  return <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />;
 };
 ```
 
-To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/dnd) and nest `<QueryBuilder />` under `<QueryBuilderDnD />`.
+> [!TIP]
+>
+> To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/dnd) and nest `QueryBuilder` under `QueryBuilderDnD`.
 
 ## Export
 
@@ -94,7 +92,9 @@ console.log(sqlWhere);
 
 To [import queries](https://react-querybuilder.js.org/docs/utils/import) use `parseSQL`, `parseMongoDB`, `parseJsonLogic`, `parseJSONata`, `parseCEL`, or `parseSpEL` depending on the source.
 
-**Tip:** `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself (everything but the expressions in the `WHERE` clause will be ignored). Trailing semicolon is optional.
+> [!TIP]
+>
+> `parseSQL` will accept a full `SELECT` statement or the `WHERE` clause by itself (everything but the expressions in the `WHERE` clause will be ignored). Trailing semicolon is optional.
 
 ```ts
 const query = parseSQL(

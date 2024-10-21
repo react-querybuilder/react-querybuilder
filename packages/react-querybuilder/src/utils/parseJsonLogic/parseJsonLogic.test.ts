@@ -9,7 +9,7 @@ import type {
   ValueSources,
 } from '../../types/index.noReact';
 import { isRuleGroup } from '../isRuleGroup';
-import { toFullOption } from '../toFullOption';
+import { toFullOption } from '../optGroupUtils';
 import { parseJsonLogic } from './parseJsonLogic';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };

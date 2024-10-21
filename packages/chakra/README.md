@@ -1,10 +1,12 @@
 ## @react-querybuilder/chakra
 
-Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Chakra UI](https://chakra-ui.com/).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Chakra UI](https://chakra-ui.com/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/chakra) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/chakra).
+- [Demo](https://react-querybuilder.js.org/demo/chakra)
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=chakra) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=chakra) example projects
 
-**[Full documentation](https://react-querybuilder.js.org/)**
+![Screenshot](../../_assets/screenshot-chakra.png)
 
 ## Installation
 
@@ -15,51 +17,70 @@ npm i react-querybuilder @react-querybuilder/chakra @chakra-ui/icons @chakra-ui/
 
 ## Usage
 
-To render Chakra-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderChakra />`.
+To configure the query builder to use Chakra-compatible components, place `QueryBuilderChakra` above `QueryBuilder` and beneath `ChakraProvider` in the component hierarchy.
 
 ```tsx
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { useState } from 'react';
+import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const chakraTheme = extendTheme();
 
-const fields = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
 
-const App = () => {
+export function App() {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
     <ChakraProvider theme={chakraTheme}>
       <QueryBuilderChakra>
-        <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+        <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
       </QueryBuilderChakra>
     </ChakraProvider>
   );
-};
+}
 ```
 
-## Notes
+> [!NOTE]
+>
+> Some additional styling may be necessary. We recommend the following:
+>
+> ```css
+> .queryBuilder .chakra-select__wrapper {
+>   width: fit-content;
+>   display: inline-block;
+> }
+>
+> .queryBuilder .chakra-input {
+>   width: auto;
+>   display: inline-block;
+> }
+>
+> .queryBuilder .chakra-radio-group {
+>   display: inline-block;
+> }
+> ```
 
-- Some additional styling may be necessary, e.g.:
+`QueryBuilderChakra` is a React context provider that assigns the following props to all descendant `QueryBuilder` elements. The props can be overridden on the `QueryBuilder` or used directly without the context provider.
 
-  ```css
-  .queryBuilder .chakra-select__wrapper {
-    width: fit-content;
-    display: inline-block;
-  }
+| Export                  | `QueryBuilder` prop             |
+| ----------------------- | ------------------------------- |
+| `chakraControlElements` | `controlElements`               |
+| `chakraTranslations`    | `translations`                  |
+| `ChakraActionElement`   | `controlElements.actionElement` |
+| `ChakraDragHandle`      | `controlElements.dragHandle`    |
+| `ChakraNotToggle`       | `controlElements.notToggle`     |
+| `ChakraValueEditor`     | `controlElements.valueEditor`   |
+| `ChakraValueSelector`   | `controlElements.valueSelector` |
 
-  .queryBuilder .chakra-input {
-    width: auto;
-    display: inline-block;
-  }
-
-  .queryBuilder .chakra-radio-group {
-    display: inline-block;
-  }
-  ```
-
-- This package exports `chakraControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but this method does not support customized Chakra themes like `<QueryBuilderChakra />`.
+> [!TIP]
+>
+> By default, this package uses icons from `@chakra-ui/icons` for button labels. To reset button labels to their default strings, use `defaultTranslations` from `react-querybuilder`.
+>
+> ```tsx
+> <QueryBuilderChakra translations={defaultTranslations}>
+> ```

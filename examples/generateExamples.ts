@@ -234,7 +234,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     `## ${exampleTitle}` +
     '\n\n' +
     templateREADMEmd
-      .replaceAll(/(\/?examples?[/-])_template/g, `$1${exampleID}`)
+      .replaceAll(/(\/?examples?[/-])?_template/g, `$1${exampleID}`)
       .replaceAll('App.tsx', exampleConfig.compileToJS ? 'App.jsx' : '$&') +
     '\n\n' +
     '> _Development note: Do not modify the files in this folder directly. Edit corresponding ' +

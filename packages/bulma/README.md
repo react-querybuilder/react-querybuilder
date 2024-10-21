@@ -1,10 +1,12 @@
 ## @react-querybuilder/bulma
 
-Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) components for [Bulma](https://bulma.io/).
+Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) compatibility package for [Bulma](https://bulma.io/).
 
-To see them in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo/bulma) or [load the example in CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/bulma).
+- [Demo](https://react-querybuilder.js.org/demo/bulma)
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=bulma) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=bulma) example projects
 
-**[Full documentation](https://react-querybuilder.js.org/)**
+![Screenshot](../../_assets/screenshot-bulma.png)
 
 ## Installation
 
@@ -15,37 +17,45 @@ npm i react-querybuilder @react-querybuilder/bulma bulma
 
 ## Usage
 
-To render Bulma-compatible components in the query builder, wrap the `<QueryBuilder />` element in `<QueryBuilderBulma />`.
+To configure the query builder to use Bulma-compatible components, place `QueryBuilderBulma` above `QueryBuilder` in the component hierarchy.
 
 ```tsx
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
-import 'bulma/bulma.sass';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { useState } from 'react';
+import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
-const fields = [
+const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
 
-const App = () => {
+export function App() {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
     <QueryBuilderBulma>
-      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
     </QueryBuilderBulma>
   );
-};
+}
 ```
 
-## Notes
+> [!NOTE]
+>
+> Some additional styling may be necessary. We recommend the following:
+>
+> ```css
+> .queryBuilder .input {
+>   width: auto;
+> }
+> ```
 
-- Some additional styling may be necessary, e.g.:
+`QueryBuilderBulma` is a React context provider that assigns the following props to all descendant `QueryBuilder` elements. The props can be overridden on the `QueryBuilder` or used directly without the context provider.
 
-  ```css
-  .queryBuilder .input {
-    width: auto;
-  }
-  ```
-
-- This package exports `bulmaControlElements` which can be assigned directly to the `controlElements` prop on `<QueryBuilder />` (and also exports each component individually), but wrapping `<QueryBuilder />` in `<QueryBuilderBulma />` is the recommended method.
+| Export                   | `QueryBuilder` prop             |
+| ------------------------ | ------------------------------- |
+| `bulmaControlClassnames` | `controlClassnames`             |
+| `bulmaControlElements`   | `controlElements`               |
+| `BulmaNotToggle`         | `controlElements.notToggle`     |
+| `BulmaValueEditor`       | `controlElements.valueEditor`   |
+| `BulmaValueSelector`     | `controlElements.valueSelector` |

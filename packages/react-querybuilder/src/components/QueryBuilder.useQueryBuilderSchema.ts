@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LogType, standardClassnames } from '../defaults';
+import { useControlledOrUncontrolled } from '../hooks/useControlledOrUncontrolled';
+import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,
@@ -39,9 +41,7 @@ import {
   update,
 } from '../utils';
 import { clsx } from '../utils/clsx';
-import { useControlledOrUncontrolled } from './useControlledOrUncontrolled';
-import { useDeprecatedProps } from './useDeprecatedProps';
-import type { UseQueryBuilderSetup } from './useQueryBuilderSetup';
+import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
 const defaultValidationMap: ValidationMap = {};
