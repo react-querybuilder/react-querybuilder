@@ -74,10 +74,10 @@
   },
   "keywords": [
     "react",
+    "querybuilder",
     "query",
     "builder",
     "operators",
-    "ui",
     "component",
     "clause",
     "expression",

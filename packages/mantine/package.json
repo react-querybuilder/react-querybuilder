@@ -32,6 +32,18 @@
   },
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
+  "keywords": [
+    "react",
+    "querybuilder",
+    "mantine",
+    "query",
+    "builder",
+    "operators",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
   "scripts": {
     "start": "bunx --bun vite",
     "build": "bunx --bun tsup",
