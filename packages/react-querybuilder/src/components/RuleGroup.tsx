@@ -2,7 +2,9 @@ import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
 import { standardClassnames, TestID } from '../defaults';
-import { useDeprecatedProps, useReactDndWarning, useStopEventPropagation } from '../hooks';
+import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
+import { useReactDndWarning } from '../hooks/useReactDndWarning';
+import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,

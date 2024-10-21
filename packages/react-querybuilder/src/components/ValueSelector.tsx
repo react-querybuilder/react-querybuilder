@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { useSelectElementChangeHandler } from '../hooks';
+import { useSelectElementChangeHandler } from '../hooks/useSelectElementChangeHandler';
 import type { FullOption, ValueSelectorProps } from '../types';
 import { joinWith, toArray, toOptions } from '../utils';
 

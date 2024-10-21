@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import type { FullField, QueryBuilderContextProps } from 'react-querybuilder';
 import {
+  messages,
   QueryBuilderContext,
   useMergedContext,
   usePreferAnyProp,
@@ -11,8 +12,7 @@ import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
-import { useReactDnD } from './hooks';
-import type { QueryBuilderDndProps } from './types';
+import type { QueryBuilderDndProps, UseReactDnD } from './types';
 
 /**
  * Context provider to enable drag-and-drop. If the application already implements
@@ -148,4 +148,44 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       )}
     </DndContext.Consumer>
   );
+};
+
+let didWarnEnabledDndWithoutReactDnD = false;
+
+export const useReactDnD = (dndParam?: UseReactDnD): UseReactDnD | null => {
+  const [dnd, setDnd] = useState<UseReactDnD | null>(dndParam ?? null);
+
+  useEffect(() => {
+    let didCancel = false;
+
+    const getDnD = async () => {
+      const [reactDnD, reactDnDHTML5Be] = await Promise.all([
+        import('react-dnd').catch(() => null),
+        import('react-dnd-html5-backend').catch(() => null),
+      ]);
+
+      // istanbul ignore else
+      if (!didCancel) {
+        if (reactDnD && reactDnDHTML5Be) {
+          setDnd(() => ({ ...reactDnD, ...reactDnDHTML5Be }));
+        } else {
+          // istanbul ignore else
+          if (process.env.NODE_ENV !== 'production' && !didWarnEnabledDndWithoutReactDnD) {
+            console.error(messages.errorEnabledDndWithoutReactDnD);
+            didWarnEnabledDndWithoutReactDnD = true;
+          }
+        }
+      }
+    };
+
+    if (!dnd) {
+      getDnD();
+    }
+
+    return () => {
+      didCancel = true;
+    };
+  }, [dnd]);
+
+  return dnd;
 };
