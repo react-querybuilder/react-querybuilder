@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=chakra) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=chakra) example projects
 
+![Screenshot](../../_assets/screenshot-chakra.png)
+
 ## Installation
 
 ```bash
@@ -20,6 +22,7 @@ To configure the query builder to use Chakra-compatible components, place `Query
 ```tsx
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const chakraTheme = extendTheme();

@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=fluent) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=fluent) example projects
 
+![Screenshot](../../_assets/screenshot-fluent.png)
+
 ## Installation
 
 ```bash
@@ -20,6 +22,7 @@ To configure the query builder to use Fluent-compatible components, place `Query
 ```tsx
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { QueryBuilderFluent } from '@react-querybuilder/fluent';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const fields: Field[] = [

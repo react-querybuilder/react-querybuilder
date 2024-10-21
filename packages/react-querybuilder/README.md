@@ -6,13 +6,9 @@ _The Query Builder component for React_
 
 ![Screenshot](../../_assets/screenshot.png)
 
-## Documentation
-
-Complete documentation is available at https://react-querybuilder.js.org.
-
-## Demo
-
-[Click here to see a live, interactive demo](https://react-querybuilder.js.org/demo).
+- [Demo](https://react-querybuilder.js.org/demo)
+- [Full documentation](https://react-querybuilder.js.org/)
+- [CodeSandbox](https://react-querybuilder.js.org/sandbox) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz) example projects
 
 Custom components are not limited to the following libraries, but these have first-class support through their respective compatibility packages:
 
@@ -64,6 +60,7 @@ export const App = () => {
 ```
 
 > [!TIP]
+>
 > To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/dnd) and nest `QueryBuilder` under `QueryBuilderDnD`.
 
 ## Export

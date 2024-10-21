@@ -6,6 +6,8 @@ To see this in action, check out the [`react-querybuilder` demo](https://react-q
 
 **[Full documentation](https://react-querybuilder.js.org/)**
 
+![Screenshot](../../_assets/screenshot-dnd.png)
+
 ## Installation
 
 ```bash
@@ -19,6 +21,7 @@ To enable the drag-and-drop functionality of a query builder, nest the `QueryBui
 
 ```tsx
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { useState } from 'react';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
@@ -49,6 +52,7 @@ const App = () => {
 
   ```tsx
   import { QueryBuilderDndWithoutProvider } from '@react-querybuilder/dnd';
+  import { useState } from 'react';
   import * as ReactDnD from 'react-dnd';
   import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
   import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';

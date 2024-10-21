@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=mantine) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=mantine) example projects
 
+![Screenshot](../../_assets/screenshot-mantine.png)
+
 ## Installation
 
 ```bash
@@ -19,6 +21,7 @@ To configure the query builder to use Mantine-compatible components, place `Quer
 
 ```tsx
 import { QueryBuilderMantine } from '@react-querybuilder/mantine';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const fields: Field[] = [

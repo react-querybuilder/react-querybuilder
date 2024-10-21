@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=tremor) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=tremor) example projects
 
+![Screenshot](../../_assets/screenshot-tremor.png)
+
 ## Installation
 
 ```bash

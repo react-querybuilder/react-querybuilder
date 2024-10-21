@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=bulma) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=bulma) example projects
 
+![Screenshot](../../_assets/screenshot-bulma.png)
+
 ## Installation
 
 ```bash
@@ -19,6 +21,7 @@ To configure the query builder to use Bulma-compatible components, place `QueryB
 
 ```tsx
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const fields: Field[] = [

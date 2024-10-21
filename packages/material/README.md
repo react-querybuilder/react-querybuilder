@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=material) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=material) example projects
 
+![Screenshot](../../_assets/screenshot-material.png)
+
 ## Installation
 
 ```bash
@@ -20,6 +22,7 @@ To configure the query builder to use Material-compatible components, place `Que
 ```tsx
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const muiTheme = createTheme();

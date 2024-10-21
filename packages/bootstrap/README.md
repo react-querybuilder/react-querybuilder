@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=bootstrap) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=bootstrap) example projects
 
+![Screenshot](../../_assets/screenshot-bootstrap.png)
+
 ## Installation
 
 ```bash
@@ -21,6 +23,7 @@ To configure the query builder to use Bootstrap-compatible components, place `Qu
 import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 import 'bootstrap/scss/bootstrap.scss';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const fields: Field[] = [

@@ -6,6 +6,8 @@ Official [react-querybuilder](https://npmjs.com/package/react-querybuilder) comp
 - [Full documentation](https://react-querybuilder.js.org/)
 - [CodeSandbox](https://react-querybuilder.js.org/sandbox?t=antd) / [StackBlitz](https://react-querybuilder.js.org/sandbox?p=stackblitz&t=antd) example projects
 
+![Screenshot](../../_assets/screenshot-antd.png)
+
 ## Installation
 
 ```bash
@@ -19,6 +21,7 @@ To configure the query builder to use Ant Design-compatible components, place `Q
 
 ```tsx
 import { QueryBuilderAntD } from '@react-querybuilder/antd';
+import { useState } from 'react';
 import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
 
 const fields: Field[] = [

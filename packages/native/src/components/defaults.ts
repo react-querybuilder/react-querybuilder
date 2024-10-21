@@ -45,6 +45,6 @@ export const defaultNativeWebControlElements: Controls<FullField, string> = {
   fieldSelector: NativeValueSelectorWeb,
   operatorSelector: NativeValueSelectorWeb,
   valueEditor: NativeValueEditorWeb,
-  valueSelector: NativeValueSelector,
+  valueSelector: NativeValueSelectorWeb,
   valueSourceSelector: NativeValueSelectorWeb,
 };
