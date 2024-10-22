@@ -3,20 +3,22 @@ import { mkdir } from 'node:fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 import { generateDTS } from '../../utils/generateDTS';
+import { ReactCompilerEsbuildPlugin } from '../../utils/esbuild-plugin-react-compiler';
 
 export default defineConfig(options => {
-  const commonOptions: Options = {
+  const commonOptions = {
     entry: {
       'react-querybuilder': 'src/index.ts',
     },
     sourcemap: true,
+    esbuildPlugins: [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
     ...options,
-  };
+  } satisfies Options;
 
-  const productionOptions: Options = {
+  const productionOptions = {
     minify: true,
     replaceNodeEnv: true,
-  };
+  } satisfies Options;
 
   const opts: Options[] = [
     // ESM, standard bundler dev, embedded `process` references
@@ -24,7 +26,10 @@ export default defineConfig(options => {
       ...commonOptions,
       format: ['esm'],
       clean: true,
-      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.html' })],
+      esbuildPlugins: [
+        ...commonOptions.esbuildPlugins,
+        AnalyzerPlugin({ outfile: './build-analysis.html' }),
+      ],
       onSuccess: () => generateDTS(import.meta.dir),
     },
     // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
@@ -47,7 +52,10 @@ export default defineConfig(options => {
       },
       format: ['esm'],
       outExtension: () => ({ js: '.mjs' }),
-      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.production.html' })],
+      esbuildPlugins: [
+        ...commonOptions.esbuildPlugins,
+        AnalyzerPlugin({ outfile: './build-analysis.production.html' }),
+      ],
     },
     // CJS development
     {
