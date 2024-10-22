@@ -57,7 +57,7 @@
     "@testing-library/react": "^16.0.1",
     "@tremor/react": "^3.18.3",
     "@types/react": "^18.3.11",
-    "@vitejs/plugin-react-swc": "^3.7.1",
+    "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "dayjs": "^1.11.13",
     "postcss": "^8.4.47",
