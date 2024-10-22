@@ -16,6 +16,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   ValidationResult,
+  ValueChangeEventHandler,
 } from '../types';
 import {
   getFirstOption,
@@ -34,7 +35,7 @@ import { clsx } from '../utils/clsx';
  * and {@link RuleGroupBodyComponents}.
  */
 export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => React.JSX.Element> =
-  React.memo((props: RuleGroupProps) => {
+  React.memo(function RuleGroup(props: RuleGroupProps) {
     const rg = useRuleGroup(props);
 
     const {
@@ -99,7 +100,9 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
   (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => React.JSX.Element
-> = React.memo((rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => {
+> = React.memo(function RuleGroupHeaderComponents(
+  rg: RuleGroupProps & ReturnType<typeof useRuleGroup>
+) {
   const {
     schema: {
       controls: {
@@ -293,8 +296,10 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
  * {@link RuleGroup}, or (2) {@link Rule}, {@link RuleGroup}, and {@link InlineCombinator}.
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => React.JSX.Element[]
-> = React.memo((rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => {
+  (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => React.JSX.Element
+> = React.memo(function RuleGroupBodyComponents(
+  rg: RuleGroupProps & ReturnType<typeof useRuleGroup>
+) {
   const {
     schema: {
       controls: {
@@ -306,94 +311,98 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
     },
   } = rg;
 
-  return (rg.ruleGroup.rules as RuleGroupICArray | RuleGroupArray).map(
-    (r, idx, { length: ruleArrayLength }) => {
-      const thisPathMemo = rg.pathsMemo[idx];
-      const thisPath = thisPathMemo.path;
-      const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
-      const shiftUpDisabled = pathsAreEqual([0], thisPath);
-      const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
-      const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
-      return (
-        <Fragment key={key}>
-          {idx > 0 &&
-            !rg.schema.independentCombinators &&
-            rg.schema.showCombinatorsBetweenRules && (
-              <InlineCombinatorControlElement
-                key={TestID.inlineCombinator}
-                options={rg.schema.combinators}
-                value={rg.combinator}
-                title={rg.translations.combinators.title}
-                className={rg.classNames.combinators}
-                handleOnChange={rg.onCombinatorChange}
-                rules={rg.ruleGroup.rules}
-                level={rg.path.length}
-                context={rg.context}
-                validation={rg.validationResult}
-                component={CombinatorSelectorControlElement}
-                path={thisPath}
-                disabled={rg.disabled}
-                schema={rg.schema}
-              />
-            )}
-          {typeof r === 'string' ? (
-            <InlineCombinatorControlElement
-              key={`${TestID.inlineCombinator}-independent`}
-              options={rg.schema.combinators}
-              value={r}
-              title={rg.translations.combinators.title}
-              className={rg.classNames.combinators}
-              handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
-              rules={rg.ruleGroup.rules}
-              level={rg.path.length}
-              context={rg.context}
-              validation={rg.validationResult}
-              component={CombinatorSelectorControlElement}
-              path={thisPath}
-              disabled={thisPathDisabled}
-              schema={rg.schema}
-            />
-          ) : isRuleGroup(r) ? (
-            <RuleGroupControlElement
-              key={TestID.ruleGroup}
-              id={r.id}
-              schema={rg.schema}
-              actions={rg.actions}
-              path={thisPath}
-              translations={rg.translations}
-              ruleGroup={r}
-              rules={r.rules}
-              combinator={isRuleGroupType(r) ? r.combinator : undefined}
-              not={!!r.not}
-              disabled={thisPathDisabled}
-              parentDisabled={rg.parentDisabled || rg.disabled}
-              shiftUpDisabled={shiftUpDisabled}
-              shiftDownDisabled={shiftDownDisabled}
-              context={rg.context}
-            />
-          ) : (
-            <RuleControlElement
-              key={TestID.rule}
-              id={r.id!}
-              rule={r}
-              field={r.field}
-              operator={r.operator}
-              value={r.value}
-              valueSource={r.valueSource}
-              schema={rg.schema}
-              actions={rg.actions}
-              path={thisPath}
-              disabled={thisPathDisabled}
-              parentDisabled={rg.parentDisabled || rg.disabled}
-              translations={rg.translations}
-              shiftUpDisabled={shiftUpDisabled}
-              shiftDownDisabled={shiftDownDisabled}
-              context={rg.context}
-            />
-          )}
-        </Fragment>
-      );
-    }
+  return (
+    <>
+      {(rg.ruleGroup.rules as RuleGroupICArray | RuleGroupArray).map(
+        (r, idx, { length: ruleArrayLength }) => {
+          const thisPathMemo = rg.pathsMemo[idx];
+          const thisPath = thisPathMemo.path;
+          const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
+          const shiftUpDisabled = pathsAreEqual([0], thisPath);
+          const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
+          const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
+          return (
+            <Fragment key={key}>
+              {idx > 0 &&
+                !rg.schema.independentCombinators &&
+                rg.schema.showCombinatorsBetweenRules && (
+                  <InlineCombinatorControlElement
+                    key={TestID.inlineCombinator}
+                    options={rg.schema.combinators}
+                    value={rg.combinator}
+                    title={rg.translations.combinators.title}
+                    className={rg.classNames.combinators}
+                    handleOnChange={rg.onCombinatorChange}
+                    rules={rg.ruleGroup.rules}
+                    level={rg.path.length}
+                    context={rg.context}
+                    validation={rg.validationResult}
+                    component={CombinatorSelectorControlElement}
+                    path={thisPath}
+                    disabled={rg.disabled}
+                    schema={rg.schema}
+                  />
+                )}
+              {typeof r === 'string' ? (
+                <InlineCombinatorControlElement
+                  key={`${TestID.inlineCombinator}-independent`}
+                  options={rg.schema.combinators}
+                  value={r}
+                  title={rg.translations.combinators.title}
+                  className={rg.classNames.combinators}
+                  handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
+                  rules={rg.ruleGroup.rules}
+                  level={rg.path.length}
+                  context={rg.context}
+                  validation={rg.validationResult}
+                  component={CombinatorSelectorControlElement}
+                  path={thisPath}
+                  disabled={thisPathDisabled}
+                  schema={rg.schema}
+                />
+              ) : isRuleGroup(r) ? (
+                <RuleGroupControlElement
+                  key={TestID.ruleGroup}
+                  id={r.id}
+                  schema={rg.schema}
+                  actions={rg.actions}
+                  path={thisPath}
+                  translations={rg.translations}
+                  ruleGroup={r}
+                  rules={r.rules}
+                  combinator={isRuleGroupType(r) ? r.combinator : undefined}
+                  not={!!r.not}
+                  disabled={thisPathDisabled}
+                  parentDisabled={rg.parentDisabled || rg.disabled}
+                  shiftUpDisabled={shiftUpDisabled}
+                  shiftDownDisabled={shiftDownDisabled}
+                  context={rg.context}
+                />
+              ) : (
+                <RuleControlElement
+                  key={TestID.rule}
+                  id={r.id!}
+                  rule={r}
+                  field={r.field}
+                  operator={r.operator}
+                  value={r.value}
+                  valueSource={r.valueSource}
+                  schema={rg.schema}
+                  actions={rg.actions}
+                  path={thisPath}
+                  disabled={thisPathDisabled}
+                  parentDisabled={rg.parentDisabled || rg.disabled}
+                  translations={rg.translations}
+                  shiftUpDisabled={shiftUpDisabled}
+                  shiftDownDisabled={shiftDownDisabled}
+                  context={rg.context}
+                />
+              )}
+            </Fragment>
+          );
+        }
+      )}
+    </>
   );
 });
 
@@ -417,7 +426,7 @@ export type UseRuleGroup = Omit<RuleGroupProps, 'ruleGroup'> & {
     | 'body'
   >;
   cloneGroup: ActionElementEventHandler;
-  onCombinatorChange: ActionElementEventHandler;
+  onCombinatorChange: ValueChangeEventHandler;
   onGroupAdd: (group: RuleGroupTypeAny, parentPath: Path, context?: any) => void;
   onIndependentCombinatorChange: (value: any, index: number, context?: any) => void;
   onNotToggleChange: (checked: boolean, context?: any) => void;
@@ -586,7 +595,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     ]
   );
 
-  const onCombinatorChange: ActionElementEventHandler = useCallback(
+  const onCombinatorChange: ValueChangeEventHandler = useCallback(
     value => {
       if (!disabled) {
         onPropChange('combinator', value, path);

@@ -16,6 +16,7 @@ import type {
   RuleProps,
   RuleType,
   ValidationResult,
+  ValueChangeEventHandler,
   ValueEditorType,
   ValueSourceOptions,
   ValueSources,
@@ -32,8 +33,8 @@ import { clsx } from '../utils/clsx';
  * Default component to display {@link RuleType} objects. This is
  * actually a small wrapper around {@link RuleComponents}.
  */
-export const Rule: React.MemoExoticComponent<(props: RuleProps) => React.JSX.Element> = React.memo(
-  (props: RuleProps) => {
+export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element> = React.memo(
+  function Rule(props: RuleProps): React.JSX.Element {
     const r = useRule(props);
 
     const cloneRule = useStopEventPropagation(r.cloneRule);
@@ -71,7 +72,7 @@ export const Rule: React.MemoExoticComponent<(props: RuleProps) => React.JSX.Ele
  */
 export const RuleComponents: React.MemoExoticComponent<
   (r: RuleProps & UseRule) => React.JSX.Element
-> = React.memo((r: RuleProps & ReturnType<typeof useRule>) => {
+> = React.memo(function RuleComponents(r: RuleProps & ReturnType<typeof useRule>) {
   const {
     schema: {
       controls: {
@@ -92,6 +93,7 @@ export const RuleComponents: React.MemoExoticComponent<
     <>
       {r.schema.showShiftActions && (
         <ShiftActionsControlElement
+          key={TestID.shiftActions}
           testID={TestID.shiftActions}
           level={r.path.length}
           path={r.path}
@@ -117,6 +119,7 @@ export const RuleComponents: React.MemoExoticComponent<
       )}
       {r.schema.enableDragAndDrop && (
         <DragHandleControlElement
+          key={TestID.dragHandle}
           testID={TestID.dragHandle}
           ref={r.dragRef}
           level={r.path.length}
@@ -132,13 +135,14 @@ export const RuleComponents: React.MemoExoticComponent<
         />
       )}
       <FieldSelectorControlElement
+        key={TestID.fields}
         testID={TestID.fields}
         options={r.schema.fields}
         title={r.translations.fields.title}
         value={r.rule.field}
         operator={r.rule.operator}
         className={r.classNames.fields}
-        handleOnChange={r.generateOnChangeHandler('field')}
+        handleOnChange={r.onChangeField}
         level={r.path.length}
         path={r.path}
         disabled={r.disabled}
@@ -150,6 +154,7 @@ export const RuleComponents: React.MemoExoticComponent<
       {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
         <>
           <OperatorSelectorControlElement
+            key={TestID.operators}
             testID={TestID.operators}
             field={r.rule.field}
             fieldData={r.fieldData}
@@ -157,7 +162,7 @@ export const RuleComponents: React.MemoExoticComponent<
             options={r.operators}
             value={r.rule.operator}
             className={r.classNames.operators}
-            handleOnChange={r.generateOnChangeHandler('operator')}
+            handleOnChange={r.onChangeOperator}
             level={r.path.length}
             path={r.path}
             disabled={r.disabled}
@@ -172,6 +177,7 @@ export const RuleComponents: React.MemoExoticComponent<
               <>
                 {!['null', 'notNull'].includes(r.rule.operator) && r.valueSources.length > 1 && (
                   <ValueSourceSelectorControlElement
+                    key={TestID.valueSourceSelector}
                     testID={TestID.valueSourceSelector}
                     field={r.rule.field}
                     fieldData={r.fieldData}
@@ -179,7 +185,7 @@ export const RuleComponents: React.MemoExoticComponent<
                     options={r.valueSourceOptions}
                     value={r.rule.valueSource ?? 'value'}
                     className={r.classNames.valueSource}
-                    handleOnChange={r.generateOnChangeHandler('valueSource')}
+                    handleOnChange={r.onChangeValueSource}
                     level={r.path.length}
                     path={r.path}
                     disabled={r.disabled}
@@ -190,6 +196,7 @@ export const RuleComponents: React.MemoExoticComponent<
                   />
                 )}
                 <ValueEditorControlElement
+                  key={TestID.valueEditor}
                   testID={TestID.valueEditor}
                   field={r.rule.field}
                   fieldData={r.fieldData}
@@ -204,7 +211,7 @@ export const RuleComponents: React.MemoExoticComponent<
                   parseNumbers={r.schema.parseNumbers}
                   separator={r.valueEditorSeparator}
                   className={r.classNames.value}
-                  handleOnChange={r.generateOnChangeHandler('value')}
+                  handleOnChange={r.onChangeValue}
                   level={r.path.length}
                   path={r.path}
                   disabled={r.disabled}
@@ -219,6 +226,7 @@ export const RuleComponents: React.MemoExoticComponent<
       )}
       {r.schema.showCloneButtons && (
         <CloneRuleActionControlElement
+          key={TestID.cloneRule}
           testID={TestID.cloneRule}
           label={r.translations.cloneRule.label}
           title={r.translations.cloneRule.title}
@@ -235,6 +243,7 @@ export const RuleComponents: React.MemoExoticComponent<
       )}
       {r.schema.showLockButtons && (
         <LockRuleActionControlElement
+          key={TestID.lockRule}
           testID={TestID.lockRule}
           label={r.translations.lockRule.label}
           title={r.translations.lockRule.title}
@@ -251,6 +260,7 @@ export const RuleComponents: React.MemoExoticComponent<
         />
       )}
       <RemoveRuleActionControlElement
+        key={TestID.removeRule}
         testID={TestID.removeRule}
         label={r.translations.removeRule.label}
         title={r.translations.removeRule.title}
@@ -285,7 +295,11 @@ export type UseRule = RuleProps & {
   fieldData: FullField<string, string, string, Option<string>, Option<string>>;
   generateOnChangeHandler: (
     prop: Exclude<keyof RuleType, 'id' | 'path'>
-  ) => ActionElementEventHandler;
+  ) => ValueChangeEventHandler;
+  onChangeValueSource: ValueChangeEventHandler;
+  onChangeField: ValueChangeEventHandler;
+  onChangeOperator: ValueChangeEventHandler;
+  onChangeValue: ValueChangeEventHandler;
   hideValueControls: boolean;
   inputType: InputType | null;
   operators: OptionList<FullOperator>;
@@ -426,34 +440,38 @@ export const useRule = (props: RuleProps): UseRule => {
     ]
   );
 
-  const generateOnChangeHandler = useCallback(
+  const getChangeHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, _context?: any) => {
+    (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, context?: any) => {
       if (!disabled) {
-        onPropChange(prop, value, path);
+        onPropChange(prop, value, path, context);
       }
     },
     [disabled, onPropChange, path]
   );
 
-  const cloneRule: ActionElementEventHandler = useCallback(() => {
-    if (!disabled) {
-      const newPath = [...getParentPath(path), path.at(-1)! + 1];
-      moveRule(path, newPath, true);
-    }
-  }, [disabled, moveRule, path]);
+  const onChangeField = useMemo(() => getChangeHandler('field'), [getChangeHandler]);
+  const onChangeOperator = useMemo(() => getChangeHandler('operator'), [getChangeHandler]);
+  const onChangeValueSource = useMemo(() => getChangeHandler('valueSource'), [getChangeHandler]);
+  const onChangeValue = useMemo(() => getChangeHandler('value'), [getChangeHandler]);
 
-  const toggleLockRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, _context?: any) => {
-      onPropChange('disabled', !disabled, path);
+  const cloneRule: ActionElementEventHandler = useCallback(
+    (_event, context) => {
+      if (!disabled) {
+        const newPath = [...getParentPath(path), path.at(-1)! + 1];
+        moveRule(path, newPath, true, context);
+      }
     },
+    [disabled, moveRule, path]
+  );
+
+  const toggleLockRule: ActionElementEventHandler = useCallback(
+    (_event, context) => onPropChange('disabled', !disabled, path, context),
     [disabled, onPropChange, path]
   );
 
-  const removeRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (_event?: any, _context?: any) => {
+  const removeRule: ActionElementEventHandler = useCallback(
+    (_event, _context) => {
       if (!disabled) {
         onRuleRemove(path);
       }
@@ -461,21 +479,19 @@ export const useRule = (props: RuleProps): UseRule => {
     [disabled, onRuleRemove, path]
   );
 
-  const shiftRuleUp = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (event?: MouseEvent, _context?: any) => {
+  const shiftRuleUp: ActionElementEventHandler = useCallback(
+    (event, context) => {
       if (!disabled && !shiftUpDisabled) {
-        moveRule(path, 'up', event?.altKey);
+        moveRule(path, 'up', (event as MouseEvent)?.altKey, context);
       }
     },
     [disabled, moveRule, path, shiftUpDisabled]
   );
 
-  const shiftRuleDown = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (event?: MouseEvent, _context?: any) => {
+  const shiftRuleDown: ActionElementEventHandler = useCallback(
+    (event, context) => {
       if (!disabled && !shiftDownDisabled) {
-        moveRule(path, 'down', event?.altKey);
+        moveRule(path, 'down', (event as MouseEvent)?.altKey, context);
       }
     },
     [disabled, moveRule, path, shiftDownDisabled]
@@ -598,7 +614,11 @@ export const useRule = (props: RuleProps): UseRule => {
     dragRef,
     dropMonitorId,
     fieldData,
-    generateOnChangeHandler,
+    generateOnChangeHandler: getChangeHandler,
+    onChangeField,
+    onChangeOperator,
+    onChangeValueSource,
+    onChangeValue,
     hideValueControls,
     inputType,
     operators,
