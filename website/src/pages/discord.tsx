@@ -1,7 +1,6 @@
 import Layout from '@theme/Layout';
 import { useEffect } from 'react';
-
-const discordLink = 'https://discord.gg/MnAQWyUtEg';
+import { discordLink } from '../constants';
 
 export default function DiscordRedirect() {
   useEffect(() => {

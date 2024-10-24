@@ -72,7 +72,7 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
  */
 export const RuleComponents: React.MemoExoticComponent<
   (r: RuleProps & UseRule) => React.JSX.Element
-> = React.memo(function RuleComponents(r: RuleProps & ReturnType<typeof useRule>) {
+> = React.memo(function RuleComponents(r: RuleProps & UseRule) {
   const {
     schema: {
       controls: {

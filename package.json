@@ -35,7 +35,7 @@
     "codesandbox-ci": "bash .codesandbox/ci.sh",
     "checkall": "bun install --frozen-lockfile && bun run build && concurrently --group --names pretty,lint,typecheck,test --prefix-colors \"#56B3B4,#4b32c3,#3178c6,#99425B\" bun:pretty-check bun:lint bun:typecheck bun:test && bun run are-the-types-wrong && bun run website:build",
     "lint": "bun --bun run lint:oxlint && bun --bun run lint:eslint",
-    "lint:eslint": "eslint 'packages/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
+    "lint:eslint": "eslint 'packages/**/*.{ts,tsx}' 'examples/**/*.{js,ts,tsx}' 'utils/**/*.{js,ts,tsx}' 'website/{docs,src,static}/**/*.{js,ts,tsx}'",
     "lint:oxlint": "oxlint --config=./oxlintrc.json --ignore-path=.oxlintignore --format=github",
     "test": "bun test dbquery && bunx jest",
     "test:watch": "jest --watch",

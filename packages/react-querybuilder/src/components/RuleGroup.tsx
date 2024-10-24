@@ -99,10 +99,8 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
  * a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => React.JSX.Element
-> = React.memo(function RuleGroupHeaderComponents(
-  rg: RuleGroupProps & ReturnType<typeof useRuleGroup>
-) {
+  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupHeaderComponents(rg: RuleGroupProps & UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -296,10 +294,8 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
  * {@link RuleGroup}, or (2) {@link Rule}, {@link RuleGroup}, and {@link InlineCombinator}.
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & ReturnType<typeof useRuleGroup>) => React.JSX.Element
-> = React.memo(function RuleGroupBodyComponents(
-  rg: RuleGroupProps & ReturnType<typeof useRuleGroup>
-) {
+  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupBodyComponents(rg: RuleGroupProps & UseRuleGroup) {
   const {
     schema: {
       controls: {
