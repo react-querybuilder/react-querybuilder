@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@chakra-ui/icons": ">=2",
-    "@chakra-ui/react": ">=2",
-    "@chakra-ui/system": ">=2",
+    "@chakra-ui/icons": "^2",
+    "@chakra-ui/react": "^2",
+    "@chakra-ui/system": "^2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@react-querybuilder/chakra": "7.7.1",
