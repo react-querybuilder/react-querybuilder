@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 import { generateDTS } from '../../utils/generateDTS';
-import { ReactCompilerEsbuildPlugin } from '../../utils/react-compiler/esbuild-plugin-react-compiler';
+// import { ReactCompilerEsbuildPlugin } from '../../utils/react-compiler/esbuild-plugin-react-compiler';
 
 export default defineConfig(options => {
   const commonOptions = {
@@ -10,7 +10,7 @@ export default defineConfig(options => {
       'react-querybuilder_mantine': 'src/index.ts',
     },
     sourcemap: true,
-    esbuildPlugins: [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
+    // esbuildPlugins: [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
     ...options,
   } satisfies Options;
 

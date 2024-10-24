@@ -1,6 +1,9 @@
 /* eslint-disable unicorn/prefer-module */
 module.exports = {
-  plugins: process.env.NODE_ENV === 'test' ? [] : [['react-compiler', { target: '18' }]],
+  plugins: [
+    'babel-plugin-syntax-hermes-parser',
+    ...(process.env.NODE_ENV === 'test' ? [] : [['react-compiler', { target: '18' }]]),
+  ],
   presets: [
     '@babel/env',
     '@babel/flow',
