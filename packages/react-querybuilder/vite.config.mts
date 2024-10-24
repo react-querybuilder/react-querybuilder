@@ -15,6 +15,10 @@ export default defineConfig({
       '@rqb-parsespel': path.resolve(import.meta.dir, './src/utils/parseSpEL'),
       '@rqb-parsesql': path.resolve(import.meta.dir, './src/utils/parseSQL'),
       '@rqb-utils': path.resolve(import.meta.dir, './src/utils'),
+      'react-compiler-runtime': path.resolve(
+        import.meta.dir,
+        '../../utils/react-compiler/react-compiler-runtime'
+      ),
     },
   },
   server: {

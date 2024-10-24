@@ -44,7 +44,7 @@ export const ReactCompilerEsbuildPlugin = ({
       }
 
       const output = build.esbuild.transformSync(contents, {
-        loader: /\.tsx$/.test(args.path) ? 'tsx' : 'ts',
+        loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts',
         jsx: 'automatic',
         define: build.initialOptions.define,
         target: build.initialOptions.target,

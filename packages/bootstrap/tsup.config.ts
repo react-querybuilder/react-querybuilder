@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 import { generateDTS } from '../../utils/generateDTS';
-import { ReactCompilerEsbuildPlugin } from '../../utils/esbuild-plugin-react-compiler';
+import { ReactCompilerEsbuildPlugin } from '../../utils/react-compiler/esbuild-plugin-react-compiler';
 
 export default defineConfig(options => {
   const commonOptions = {
