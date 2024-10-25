@@ -282,21 +282,21 @@ export interface Classnames {
 /**
  * Functions included in the `actions` prop passed to every subcomponent.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface QueryActions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onGroupAdd(group: RuleGroupTypeAny, parentPath: Path, context?: any): void;
   onGroupRemove(path: Path): void;
   onPropChange(
     prop: Exclude<keyof RuleType | keyof RuleGroupType, 'id' | 'path'>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
-    path: Path
+    path: Path,
+    context?: any
   ): void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onRuleAdd(rule: RuleType, parentPath: Path, context?: any): void;
   onRuleRemove(path: Path): void;
-  moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean): void;
+  moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any): void;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * A translation for a component with `title` only.

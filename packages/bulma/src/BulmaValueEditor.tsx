@@ -1,85 +1,40 @@
 import * as React from 'react';
-import {
-  getFirstOption,
-  useValueEditor,
-  ValueEditor,
-  type ValueEditorProps,
-} from 'react-querybuilder';
+import { useValueEditor, ValueEditor, type ValueEditorProps } from 'react-querybuilder';
 
 export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
-  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(props);
-
-  const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
+  const { valueListItemClassName } = useValueEditor(props);
 
   if (props.operator === 'null' || props.operator === 'notNull') {
     return null;
   }
 
-  const placeHolderText = props.fieldData?.placeholder ?? '';
   const { values = [] } = props;
 
-  if (
-    (props.operator === 'between' || props.operator === 'notBetween') &&
-    (props.type === 'select' || props.type === 'text')
-  ) {
-    const editors = ['from', 'to'].map((key, i) => {
-      if (props.type === 'text') {
-        return (
-          <input
-            key={key}
-            type={props.inputType || 'text'}
-            placeholder={placeHolderText}
-            value={valueAsArray[i] ?? ''}
-            className={`${valueListItemClassName} input`}
-            disabled={props.disabled}
-            onChange={e => multiValueHandler(e.target.value, i)}
-          />
-        );
-      }
-      return (
-        <SelectorComponent
-          key={key}
-          {...props}
-          className={valueListItemClassName}
-          handleOnChange={v => multiValueHandler(v, i)}
-          disabled={props.disabled}
-          value={valueAsArray[i] ?? getFirstOption(values)}
-          options={values}
-          listsAsArrays={props.listsAsArrays}
-        />
-      );
-    });
-
+  if ((props.operator === 'between' || props.operator === 'notBetween') && props.type === 'text') {
     return (
-      <span data-testid={props.testID} className={props.className} title={props.title}>
-        {editors[0]}
-        {props.separator}
-        {editors[1]}
-      </span>
+      <ValueEditor
+        {...props}
+        skipHook
+        schema={{
+          ...props.schema,
+          classNames: {
+            ...props.schema.classNames,
+            valueListItem: `${valueListItemClassName} input`,
+          },
+        }}
+      />
     );
   }
 
   switch (props.type) {
     case 'select':
     case 'multiselect':
-      return (
-        <SelectorComponent
-          {...props}
-          title={props.title}
-          className={props.className}
-          handleOnChange={props.handleOnChange}
-          options={values}
-          value={props.value}
-          disabled={props.disabled}
-          multiple={props.type === 'multiselect'}
-          listsAsArrays={props.listsAsArrays}
-        />
-      );
+      return <ValueEditor {...props} skipHook />;
 
     case 'textarea':
       return (
         <div className={`${props.className} control`}>
-          <ValueEditor skipHook {...props} className="textarea" />
+          <ValueEditor {...props} skipHook className="textarea" />
         </div>
       );
 
@@ -87,7 +42,7 @@ export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | n
     case 'checkbox':
       return (
         <label title={props.title} className={`${props.className} checkbox`}>
-          <ValueEditor skipHook {...props} title="" className="" />
+          <ValueEditor {...props} skipHook title="" className="" />
         </label>
       );
 
@@ -112,7 +67,7 @@ export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | n
 
   return (
     <div className={`${props.className} control`}>
-      <ValueEditor skipHook {...props} disabled={props.disabled} className="input" />
+      <ValueEditor {...props} skipHook disabled={props.disabled} className="input" />
     </div>
   );
 };

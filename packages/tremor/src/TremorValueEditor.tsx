@@ -10,7 +10,7 @@ import {
 import dayjs from 'dayjs';
 import * as React from 'react';
 import type { ValueEditorProps, VersatileSelectorProps } from 'react-querybuilder';
-import { ValueEditor, getFirstOption, useValueEditor } from 'react-querybuilder';
+import { ValueEditor, useValueEditor } from 'react-querybuilder';
 import { TremorValueSelector } from './TremorValueSelector';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,9 +19,9 @@ type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, a
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
-const ClearableValueSelector = (props: VersatileSelectorProps) => {
-  return <TremorValueSelector {...props} enableClear />;
-};
+const ClearableValueSelector = (props: VersatileSelectorProps) => (
+  <TremorValueSelector {...props} enableClear />
+);
 
 export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.Element | null => {
   const {
@@ -33,17 +33,16 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     className,
     type,
     inputType,
-    values = [],
+    values: _v,
     listsAsArrays,
-    parseNumbers,
+    parseNumbers: _parseNumbers,
     separator,
     valueSource: _vs,
     disabled,
     testID,
-    selectorComponent: SelectorComponent = ClearableValueSelector,
+    selectorComponent = ClearableValueSelector,
     validation: _validation,
     extraProps,
-    ...props
   } = allProps;
 
   const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
@@ -63,8 +62,8 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     // Date and time ranges are handled differently in Tremor--see below
     (inputTypeCoerced as string) !== 'date'
   ) {
-    const editors = ['from', 'to'].map((key, i) => {
-      if (type === 'text') {
+    if (type === 'text') {
+      const editors = ['from', 'to'].map((key, i) => {
         return (
           <TextInput
             key={key}
@@ -77,46 +76,23 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
             {...extraProps}
           />
         );
-      }
+      });
       return (
-        <SelectorComponent
-          key={key}
-          {...props}
-          className={valueListItemClassName}
-          handleOnChange={v => multiValueHandler(v, i)}
-          disabled={disabled}
-          value={valueAsArray[i] ?? getFirstOption(values)}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+        <span data-testid={testID} className={className} title={title}>
+          {editors[0]}
+          {separator}
+          {editors[1]}
+        </span>
       );
-    });
+    }
 
-    return (
-      <span data-testid={testID} className={className} title={title}>
-        {editors[0]}
-        {separator}
-        {editors[1]}
-      </span>
-    );
+    return <ValueEditor {...allProps} skipHook selectorComponent={selectorComponent} />;
   }
 
   switch (type) {
     case 'select':
     case 'multiselect':
-      return (
-        <SelectorComponent
-          {...props}
-          title={title}
-          className={className}
-          handleOnChange={handleOnChange}
-          options={values}
-          value={value}
-          disabled={disabled}
-          multiple={type === 'multiselect'}
-          listsAsArrays={listsAsArrays}
-        />
-      );
+      return <ValueEditor {...allProps} skipHook selectorComponent={selectorComponent} />;
 
     case 'textarea':
       return (
@@ -145,28 +121,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
 
     case 'checkbox':
     case 'radio':
-      return (
-        <ValueEditor
-          {...{
-            fieldData,
-            operator,
-            value,
-            handleOnChange,
-            title,
-            className,
-            type,
-            inputType,
-            values,
-            listsAsArrays,
-            parseNumbers,
-            separator,
-            valueSource: _vs,
-            disabled,
-            testID,
-          }}
-          {...props}
-        />
-      );
+      return <ValueEditor {...allProps} skipHook />;
   }
 
   if ((inputTypeCoerced as string) === 'date') {

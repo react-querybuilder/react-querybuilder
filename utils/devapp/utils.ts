@@ -20,16 +20,18 @@ type OptionsAction =
     };
 
 export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoOptions => {
-  if (action.type === 'reset') {
-    return defaultOptions;
-  } else if (action.type === 'all') {
-    const allSelected: DemoOptions = { ...defaultOptions };
-    for (const opt of optionOrder) {
-      allSelected[opt] = opt !== 'disabled' && opt !== 'independentCombinators';
+  switch (action.type) {
+    case 'reset':
+      return defaultOptions;
+    case 'all': {
+      const allSelected: DemoOptions = { ...defaultOptions };
+      for (const opt of optionOrder) {
+        allSelected[opt] = opt !== 'disabled' && opt !== 'independentCombinators';
+      }
+      return allSelected;
     }
-    return allSelected;
-  } else if (action.type === 'replace') {
-    return action.payload;
+    case 'replace':
+      return action.payload;
   }
   const { optionName, value } = action.payload;
   return { ...state, [optionName]: value };

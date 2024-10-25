@@ -48,7 +48,7 @@ describe('onElementChanged methods', () => {
         screen.getByTestId(TestID.rule).querySelector(`select.${sc.fields}`)!,
         'any_field'
       );
-      expect(onPropChange).toHaveBeenCalledWith('field', 'any_field', [0]);
+      expect(onPropChange).toHaveBeenCalledWith('field', 'any_field', [0], undefined);
     });
   });
 
@@ -62,7 +62,7 @@ describe('onElementChanged methods', () => {
         screen.getByTestId(TestID.rule).querySelector(`select.${sc.operators}`)!,
         'any_operator'
       );
-      expect(onPropChange).toHaveBeenCalledWith('operator', 'any_operator', [0]);
+      expect(onPropChange).toHaveBeenCalledWith('operator', 'any_operator', [0], undefined);
     });
   });
 
@@ -76,7 +76,7 @@ describe('onElementChanged methods', () => {
         screen.getByTestId(TestID.rule).querySelector(`input.${sc.value}`)!,
         'any_value'
       );
-      expect(onPropChange).toHaveBeenCalledWith('value', 'any_value', [0]);
+      expect(onPropChange).toHaveBeenCalledWith('value', 'any_value', [0], undefined);
     });
   });
 });
@@ -87,7 +87,7 @@ describe('cloneRule', () => {
     render(<Rule {...getProps({ showCloneButtons: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.cloneRule.label));
-    expect(moveRule).toHaveBeenCalledWith([0], [1], true);
+    expect(moveRule).toHaveBeenCalledWith([0], [1], true, undefined);
   });
 });
 
@@ -112,20 +112,24 @@ describe('shiftRuleUp/Down', () => {
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.shiftActionUp.label));
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false);
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false, undefined);
 
     await user.click(screen.getByText(t.shiftActionDown.label));
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false);
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.keyboard('{/Alt}');
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true);
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionDown.label));
     await user.keyboard('{/Alt}');
-    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true);
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true, undefined);
   });
 });
 
@@ -240,7 +244,7 @@ describe('locked rule', () => {
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} />);
 
     await user.click(screen.getByTestId(TestID.lockRule));
-    expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0]);
+    expect(onPropChange).toHaveBeenCalledWith('disabled', true, [0], undefined);
   });
 
   it('unsets the disabled property', async () => {
@@ -248,7 +252,7 @@ describe('locked rule', () => {
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
 
     await user.click(screen.getByTestId(TestID.lockRule));
-    expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0]);
+    expect(onPropChange).toHaveBeenCalledWith('disabled', false, [0], undefined);
   });
 });
 

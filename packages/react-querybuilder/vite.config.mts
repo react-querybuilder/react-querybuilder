@@ -1,9 +1,9 @@
-import vitePluginReact from '@vitejs/plugin-react-swc';
+import vitePluginReact from '@vitejs/plugin-react';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [vitePluginReact()],
+  plugins: [vitePluginReact({ babel: { plugins: [['react-compiler', { target: '18' }]] } })],
   resolve: {
     alias: {
       'react-querybuilder': path.resolve(import.meta.dir, './src'),
@@ -15,6 +15,10 @@ export default defineConfig({
       '@rqb-parsespel': path.resolve(import.meta.dir, './src/utils/parseSpEL'),
       '@rqb-parsesql': path.resolve(import.meta.dir, './src/utils/parseSQL'),
       '@rqb-utils': path.resolve(import.meta.dir, './src/utils'),
+      'react-compiler-runtime': path.resolve(
+        import.meta.dir,
+        '../../utils/react-compiler/react-compiler-runtime'
+      ),
     },
   },
   server: {

@@ -4,7 +4,7 @@ import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, useValueEditor } from 'react-querybuilder';
+import { getFirstOption, useValueEditor, ValueEditor } from 'react-querybuilder';
 import { toNumberInputValue } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +32,8 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     validation: _validation,
     extraProps,
-    ...props
+    parseNumbers: _parseNumbers,
+    ...propsForValueSelector
   } = allProps;
 
   const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
@@ -101,7 +102,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
       return (
         <SelectorComponent
           key={key}
-          {...props}
+          {...propsForValueSelector}
           className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
@@ -124,19 +125,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
   switch (type) {
     case 'select':
     case 'multiselect':
-      return (
-        <SelectorComponent
-          {...props}
-          title={title}
-          className={className}
-          handleOnChange={handleOnChange}
-          options={values}
-          value={value}
-          disabled={disabled}
-          multiple={type === 'multiselect'}
-          listsAsArrays={listsAsArrays}
-        />
-      );
+      return <ValueEditor {...allProps} skipHook />;
 
     case 'textarea':
       return (

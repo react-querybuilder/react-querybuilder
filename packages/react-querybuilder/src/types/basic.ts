@@ -88,6 +88,8 @@ export type InputType =
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionElementEventHandler = (event?: any, context?: any) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ValueChangeEventHandler = (value?: any, context?: any) => void;
 
 /**
  * Base for all Field types/interfaces.

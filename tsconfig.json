@@ -23,7 +23,8 @@
       "@rqb-parsesql": ["./packages/react-querybuilder/src/utils/parseSQL"],
       "@rqb-devapp": ["./utils/devapp"],
       "@rqb-testing": ["./utils/testing"],
-      "@rqb-utils": ["./packages/react-querybuilder/src/utils"]
+      "@rqb-utils": ["./packages/react-querybuilder/src/utils"],
+      "react-compiler-runtime": ["./utils/react-compiler/react-compiler-runtime.ts"]
     }
   },
   "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]

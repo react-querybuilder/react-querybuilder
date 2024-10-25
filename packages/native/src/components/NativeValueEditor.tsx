@@ -22,25 +22,25 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
     separator = null,
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
-    ...props
+    ...propsForValueSelector
   } = allProps;
 
   const styles = useMemo(
     () => ({
-      value: StyleSheet.flatten([defaultNativeStyles.value, props.schema.styles?.value]),
+      value: StyleSheet.flatten([defaultNativeStyles.value, allProps.schema.styles?.value]),
       valueEditorSwitch: StyleSheet.flatten([
         defaultNativeStyles.valueEditorSwitch,
-        props.schema.styles?.valueEditorSwitch,
+        allProps.schema.styles?.valueEditorSwitch,
       ]),
       valueList: StyleSheet.flatten([
         defaultNativeStyles.valueList,
-        props.schema.styles?.valueList,
+        allProps.schema.styles?.valueList,
       ]),
     }),
     [
-      props.schema.styles?.value,
-      props.schema.styles?.valueEditorSwitch,
-      props.schema.styles?.valueList,
+      allProps.schema.styles?.value,
+      allProps.schema.styles?.valueEditorSwitch,
+      allProps.schema.styles?.valueList,
     ]
   );
 
@@ -80,7 +80,7 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
       return (
         <SelectorComponent
           key={key}
-          {...props}
+          {...propsForValueSelector}
           handleOnChange={v => multiValueHandler(v, i)}
           className={className}
           disabled={disabled}
@@ -105,7 +105,7 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
     case 'multiselect':
       return (
         <SelectorComponent
-          {...props}
+          {...propsForValueSelector}
           testID={testID}
           className={className}
           title={title}

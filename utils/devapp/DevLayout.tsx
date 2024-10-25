@@ -38,12 +38,12 @@ export const DevLayout = ({
 
   const onImportClick = () => {
     const parser = parserMap[importFmt] ?? ((text: string) => JSON.parse(text));
-    if (!optVals.independentCombinators) {
-      onQueryChange(regenerateIDs(parser(importText)) as RuleGroupType);
-    } else {
+    if (optVals.independentCombinators) {
       onQueryChangeIC(
         regenerateIDs(parser(importText, { independentCombinators: true })) as RuleGroupTypeIC
       );
+    } else {
+      onQueryChange(regenerateIDs(parser(importText)) as RuleGroupType);
     }
   };
 

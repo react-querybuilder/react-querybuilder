@@ -1,112 +1,37 @@
 import AnalyzerPlugin from 'esbuild-analyzer';
 import { mkdir } from 'node:fs/promises';
-import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
-import { generateDTS } from '../../utils/generateDTS';
+import { tsupCommonConfig } from '../../utils/tsup.common';
 
-export default defineConfig(options => {
-  const commonOptions: Options = {
-    entry: {
-      'react-querybuilder': 'src/index.ts',
-    },
-    sourcemap: true,
-    ...options,
-  };
+export default defineConfig(async options => {
+  const buildConfig = await tsupCommonConfig(import.meta.dir)(options);
 
-  const productionOptions: Options = {
-    minify: true,
-    replaceNodeEnv: true,
-  };
+  buildConfig[0].esbuildPlugins!.push(AnalyzerPlugin({ outfile: './build-analysis.html' }));
+  buildConfig[2].esbuildPlugins!.push(
+    AnalyzerPlugin({ outfile: './build-analysis.production.html' })
+  );
 
-  const opts: Options[] = [
-    // ESM, standard bundler dev, embedded `process` references
+  const cjsEntryPoints = {
+    formatQuery: 'src/utils/formatQuery/index.ts',
+    parseCEL: 'src/utils/parseCEL/index.ts',
+    parseJSONata: 'src/utils/parseJSONata/index.ts',
+    parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
+    parseMongoDB: 'src/utils/parseMongoDB/index.ts',
+    parseSpEL: 'src/utils/parseSpEL/index.ts',
+    parseSQL: 'src/utils/parseSQL/index.ts',
+    transformQuery: 'src/utils/transformQuery.ts',
+  } as const;
+
+  return [
+    ...buildConfig,
     {
-      ...commonOptions,
-      format: ['esm'],
-      clean: true,
-      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.html' })],
-      onSuccess: () => generateDTS(import.meta.dir),
-    },
-    // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
-    {
-      ...commonOptions,
-      entry: {
-        'react-querybuilder.legacy-esm': 'src/index.ts',
-      },
-      // ESBuild outputs `'.mjs'` by default for the 'esm' format. Force '.js'
-      outExtension: () => ({ js: '.js' }),
-      target: 'es2017',
-      format: ['esm'],
-    },
-    // ESM for use in browsers. Minified, with `process` compiled away
-    {
-      ...commonOptions,
-      ...productionOptions,
-      entry: {
-        'react-querybuilder.production': 'src/index.ts',
-      },
-      format: ['esm'],
-      outExtension: () => ({ js: '.mjs' }),
-      esbuildPlugins: [AnalyzerPlugin({ outfile: './build-analysis.production.html' })],
-    },
-    // CJS development
-    {
-      ...commonOptions,
-      entry: {
-        'react-querybuilder.cjs.development': 'src/index.ts',
-      },
-      format: 'cjs',
-      outDir: './dist/cjs/',
-    },
-    // CJS production
-    {
-      ...commonOptions,
-      ...productionOptions,
-      entry: {
-        'react-querybuilder.cjs.production': 'src/index.ts',
-      },
-      format: 'cjs',
-      outDir: './dist/cjs/',
-      onSuccess: async () => {
-        // Write the CJS index file
-        await Bun.write(
-          'dist/cjs/index.js',
-          `'use strict';
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./react-querybuilder.cjs.production.js');
-} else {
-  module.exports = require('./react-querybuilder.cjs.development.js');
-}
-`
-        );
-      },
-    },
-    // CJS modules without React dependency
-    {
-      ...commonOptions,
-      entry: {
-        formatQuery: 'src/utils/formatQuery/index.ts',
-        parseCEL: 'src/utils/parseCEL/index.ts',
-        parseJSONata: 'src/utils/parseJSONata/index.ts',
-        parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
-        parseMongoDB: 'src/utils/parseMongoDB/index.ts',
-        parseSpEL: 'src/utils/parseSpEL/index.ts',
-        parseSQL: 'src/utils/parseSQL/index.ts',
-        transformQuery: 'src/utils/transformQuery.ts',
-      },
+      ...options,
+      entry: cjsEntryPoints,
+      sourcemap: true,
       format: 'cjs',
       onSuccess: async () => {
         await Promise.all(
-          [
-            'formatQuery',
-            'parseCEL',
-            'parseJSONata',
-            'parseJsonLogic',
-            'parseMongoDB',
-            'parseSpEL',
-            'parseSQL',
-            'transformQuery',
-          ].map(async util => {
+          Object.keys(cjsEntryPoints).map(async util => {
             await mkdir(util, { recursive: true });
             await Bun.write(
               `${util}/package.json`,
@@ -124,6 +49,4 @@ if (process.env.NODE_ENV === 'production') {
       },
     },
   ];
-
-  return opts;
 });

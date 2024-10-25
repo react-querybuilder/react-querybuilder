@@ -27,7 +27,7 @@ export const ValueEditor = <F extends FullField>(
     separator = null,
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
-    ...props
+    ...propsForValueSelector
   } = allProps;
 
   const { valueAsArray, multiValueHandler, parseNumberMethod, valueListItemClassName } =
@@ -61,7 +61,7 @@ export const ValueEditor = <F extends FullField>(
       return (
         <SelectorComponent
           key={key}
-          {...props}
+          {...propsForValueSelector}
           schema={allProps.schema as unknown as Schema<FullField, string>}
           className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
@@ -87,7 +87,7 @@ export const ValueEditor = <F extends FullField>(
     case 'multiselect':
       return (
         <SelectorComponent
-          {...props}
+          {...propsForValueSelector}
           schema={allProps.schema as unknown as Schema<FullField, string>}
           testID={testID}
           className={className}
