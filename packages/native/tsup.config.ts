@@ -1,85 +1,11 @@
-import { writeFile } from 'node:fs/promises';
-import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
-import { generateDTS } from '../../utils/generateDTS';
+import { tsupCommonConfig } from '../../utils/tsup.common';
 
-export default defineConfig(options => {
-  const commonOptions: Options = {
-    entry: {
-      'react-querybuilder_native': 'src/index.ts',
-    },
-    sourcemap: true,
+export default defineConfig(async options => {
+  const buildConfig = await tsupCommonConfig(import.meta.dir)(options);
+
+  return buildConfig.map(config => ({
+    ...config,
     external: ['react-native'],
-    ...options,
-  };
-
-  const productionOptions: Options = {
-    minify: true,
-    replaceNodeEnv: true,
-  };
-
-  const opts: Options[] = [
-    // ESM, standard bundler dev, embedded `process` references
-    {
-      ...commonOptions,
-      format: ['esm'],
-      clean: true,
-      onSuccess: () => generateDTS(import.meta.dir),
-    },
-    // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
-    {
-      ...commonOptions,
-      entry: {
-        'react-querybuilder_native.legacy-esm': 'src/index.ts',
-      },
-      // ESBuild outputs `'.mjs'` by default for the 'esm' format. Force '.js'
-      outExtension: () => ({ js: '.js' }),
-      target: 'es2017',
-      format: ['esm'],
-    },
-    // ESM for use in browsers. Minified, with `process` compiled away
-    {
-      ...commonOptions,
-      ...productionOptions,
-      entry: {
-        'react-querybuilder_native.production': 'src/index.ts',
-      },
-      format: ['esm'],
-      outExtension: () => ({ js: '.mjs' }),
-    },
-    // CJS development
-    {
-      ...commonOptions,
-      entry: {
-        'react-querybuilder_native.cjs.development': 'src/index.ts',
-      },
-      format: 'cjs',
-      outDir: './dist/cjs/',
-    },
-    // CJS production
-    {
-      ...commonOptions,
-      ...productionOptions,
-      entry: {
-        'react-querybuilder_native.cjs.production': 'src/index.ts',
-      },
-      format: 'cjs',
-      outDir: './dist/cjs/',
-      onSuccess: async () => {
-        // Write the CJS index file
-        await writeFile(
-          'dist/cjs/index.js',
-          `'use strict';
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./react-querybuilder_native.cjs.production.js');
-} else {
-  module.exports = require('./react-querybuilder_native.cjs.development.js');
-}
-`
-        );
-      },
-    },
-  ];
-
-  return opts;
+  }));
 });

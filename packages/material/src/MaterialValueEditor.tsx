@@ -35,6 +35,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     selectorComponent: SelectorComponent = props.schema.controls
       .valueSelector as typeof MaterialValueSelector,
     extraProps,
+    parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;

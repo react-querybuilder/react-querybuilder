@@ -27,7 +27,14 @@ export const ValueEditor = <F extends FullField>(
     separator = null,
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
-    ...props
+    // Some value selectors spread all extra props to the rendered component, so
+    // we cherry pick these out of `propsForValueSelector` to keep them from being
+    // assigned to DOM elements. (The props with mixed case are the only ones that
+    // really matter. Props in all lowercase don't emit warnings.)
+    parseNumbers: _parseNumbers,
+    skipHook: _skipHook,
+    valueSource: _valueSource,
+    ...propsForValueSelector
   } = allProps;
 
   const { valueAsArray, multiValueHandler, parseNumberMethod, valueListItemClassName } =
@@ -61,7 +68,7 @@ export const ValueEditor = <F extends FullField>(
       return (
         <SelectorComponent
           key={key}
-          {...props}
+          {...propsForValueSelector}
           schema={allProps.schema as unknown as Schema<FullField, string>}
           className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
@@ -87,7 +94,7 @@ export const ValueEditor = <F extends FullField>(
     case 'multiselect':
       return (
         <SelectorComponent
-          {...props}
+          {...propsForValueSelector}
           schema={allProps.schema as unknown as Schema<FullField, string>}
           testID={testID}
           className={className}
