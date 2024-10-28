@@ -1,23 +1,21 @@
-"use client"
+'use client'
 
-import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react"
-import { ColorModeProvider } from "./color-mode"
+import { ChakraProvider, createSystem, defaultConfig, defineRecipe } from '@chakra-ui/react'
+import { ColorModeProvider } from './color-mode'
+
+const buttonRecipe = defineRecipe({
+  base: {
+    color: 'rebeccapurple',
+    fontWeight: 'bold', // Normally "semibold"
+  },
+})
 
 const chakraTheme = createSystem(defaultConfig, {
   theme: {
     recipes: {
-      button: {
-        // baseStyle: {
-        //   color: 'rebeccapurple',
-        //   fontWeight: 'bold', // Normally "semibold"
-        // },
-      },
+      button: buttonRecipe,
     },
   },
-  // config: {
-  //   initialColorMode: 'light',
-  //   useSystemColorMode: false,
-  // },
 });
 
 export function Provider(props: React.PropsWithChildren) {
