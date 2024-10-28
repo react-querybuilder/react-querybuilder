@@ -129,7 +129,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           checked={!!value}
           title={title}
           disabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.checked)}
           {...extraProps}
         />
       );
@@ -140,7 +140,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           disabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.checked)}
           checked={!!value}
           {...extraProps}
         />

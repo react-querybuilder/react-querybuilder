@@ -1,11 +1,4 @@
-import {
-  FaCopy,
-  FaChevronDown,
-  FaChevronUp,
-  FaTimes,
-  FaLock,
-  FaLockOpen,
-} from 'react-icons/fa';
+import { FaCopy, FaChevronDown, FaChevronUp, FaTimes, FaLock, FaLockOpen } from 'react-icons/fa';
 import * as React from 'react';
 import type {
   ControlElementsProp,

@@ -17,10 +17,7 @@ export const ChakraShiftActions = ({
     <Button disabled={disabled || shiftUpDisabled} onClick={shiftUp} title={titles?.shiftUp}>
       {labels?.shiftUp}
     </Button>
-    <Button
-      disabled={disabled || shiftDownDisabled}
-      onClick={shiftDown}
-      title={titles?.shiftDown}>
+    <Button disabled={disabled || shiftDownDisabled} onClick={shiftDown} title={titles?.shiftDown}>
       {labels?.shiftDown}
     </Button>
   </div>

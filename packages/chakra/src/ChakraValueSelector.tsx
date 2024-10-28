@@ -30,16 +30,8 @@ export const ChakraValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ChakraValueSelectorProps): React.JSX.Element => (
-  <NativeSelectRoot
-    className={className}
-    title={title}
-    disabled={disabled}
-    {...extraProps}
-  >
-    <NativeSelectField
-      value={value}
-      onChange={e => handleOnChange(e.target.value)}
-    >
+  <NativeSelectRoot className={className} title={title} disabled={disabled} {...extraProps}>
+    <NativeSelectField value={value} onChange={e => handleOnChange(e.target.value)}>
       {toOptions(options)}
     </NativeSelectField>
   </NativeSelectRoot>

@@ -1,10 +1,9 @@
-'use client'
+'use client';
 
-import { ThemeProvider, useTheme } from 'next-themes'
-import type { ThemeProviderProps } from 'next-themes/dist/types'
+import { ThemeProvider } from 'next-themes';
+import type { ThemeProviderProps } from 'next-themes/dist/types';
+import * as React from 'react';
 
-export function ColorModeProvider(props: ThemeProviderProps) {
-  return (
-    <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
-  )
+export function ColorModeProvider(props: ThemeProviderProps): React.JSX.Element {
+  return <ThemeProvider attribute="class" disableTransitionOnChange {...props} />;
 }

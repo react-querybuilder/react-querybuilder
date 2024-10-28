@@ -33,14 +33,13 @@ export const ChakraNotToggle = ({
         alignItems="center"
         className={className}
         title={title}
-        disabled={disabled}
-      >
+        disabled={disabled}>
         <Fieldset.Content>
           <Switch
             id={id}
             checked={checked}
             disabled={disabled}
-            onChange={e => handleOnChange(e.target.checked)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.checked)}
             {...extraProps}
           />
           <Field marginBottom={0} htmlFor={id}>
