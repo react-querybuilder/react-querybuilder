@@ -1,4 +1,3 @@
-import { theme, ThemeProvider } from '@chakra-ui/react';
 import { render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
@@ -13,6 +12,7 @@ import {
   testValueEditor,
   testValueSelector,
 } from '@rqb-testing';
+import { Provider } from './snippets/provider';
 import { ChakraActionElement } from './ChakraActionElement';
 import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
@@ -24,17 +24,17 @@ import { QueryBuilderChakra } from './index';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
-    <ThemeProvider theme={theme}>
+    <Provider>
       <RQBComponent {...props} />
-    </ThemeProvider>
+    </Provider>
   );
   Wrapper.displayName = RQBComponent.displayName;
   return Wrapper;
 };
 const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
-  <ThemeProvider theme={{}}>
+  <Provider>
     <ChakraDragHandle {...props} ref={ref} />
-  </ThemeProvider>
+  </Provider>
 ));
 
 testActionElement(generateWrapper(ChakraActionElement));
@@ -46,11 +46,11 @@ testValueSelector(generateWrapper(ChakraValueSelector), { multi: true });
 
 it('renders with composition', () => {
   render(
-    <ThemeProvider theme={theme}>
+    <Provider>
       <QueryBuilderChakra>
         <QueryBuilder />
       </QueryBuilderChakra>
-    </ThemeProvider>
+    </Provider>
   );
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   expect(screen.getByTestId(TestID.ruleGroup).querySelector('button')).toHaveClass('chakra-button');

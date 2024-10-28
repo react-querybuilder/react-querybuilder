@@ -1,8 +1,8 @@
-import { DragHandleIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
 import type { ComponentPropsWithRef } from 'react';
 import * as React from 'react';
 import { forwardRef } from 'react';
+import { MdDragIndicator } from "react-icons/md";
 import type { DragHandleProps } from 'react-querybuilder';
 
 type IBP = ComponentPropsWithRef<typeof IconButton>;
@@ -34,11 +34,12 @@ export const ChakraDragHandle: React.ForwardRefExoticComponent<
   ) => (
     <span ref={dragRef} className={className} title={title}>
       <IconButton
-        isDisabled={disabled}
-        icon={<DragHandleIcon />}
+        disabled={disabled}
         aria-label={title ?? /* istanbul ignore next */ ''}
         {...extraProps}
-      />
+      >
+        <MdDragIndicator />
+      </IconButton>
     </span>
   )
 );

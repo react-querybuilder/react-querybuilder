@@ -1,11 +1,11 @@
 import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CloseIcon,
-  CopyIcon,
-  LockIcon,
-  UnlockIcon,
-} from '@chakra-ui/icons';
+  FaCopy,
+  FaChevronDown,
+  FaChevronUp,
+  FaTimes,
+  FaLock,
+  FaLockOpen,
+} from 'react-icons/fa';
 import * as React from 'react';
 import type {
   ControlElementsProp,
@@ -35,16 +35,16 @@ export const chakraControlElements: ControlElementsProp<FullField, string> = {
 };
 
 export const chakraTranslations: Partial<Translations> = {
-  removeGroup: { label: <CloseIcon /> },
-  removeRule: { label: <CloseIcon /> },
-  cloneRuleGroup: { label: <CopyIcon /> },
-  cloneRule: { label: <CopyIcon /> },
-  lockGroup: { label: <UnlockIcon /> },
-  lockRule: { label: <UnlockIcon /> },
-  lockGroupDisabled: { label: <LockIcon /> },
-  lockRuleDisabled: { label: <LockIcon /> },
-  shiftActionDown: { label: <ChevronDownIcon /> },
-  shiftActionUp: { label: <ChevronUpIcon /> },
+  removeGroup: { label: <FaTimes /> },
+  removeRule: { label: <FaTimes /> },
+  cloneRuleGroup: { label: <FaCopy /> },
+  cloneRule: { label: <FaCopy /> },
+  lockGroup: { label: <FaLockOpen /> },
+  lockRule: { label: <FaLockOpen /> },
+  lockGroupDisabled: { label: <FaLock /> },
+  lockRuleDisabled: { label: <FaLock /> },
+  shiftActionDown: { label: <FaChevronDown /> },
+  shiftActionUp: { label: <FaChevronUp /> },
 };
 
 export const QueryBuilderChakra: QueryBuilderContextProvider = getCompatContextProvider({

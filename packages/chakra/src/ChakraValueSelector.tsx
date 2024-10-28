@@ -1,11 +1,11 @@
-import { Select } from '@chakra-ui/react';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
+import { NativeSelectRoot, NativeSelectField } from './snippets/native-select';
 
 export type ChakraValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<typeof Select>;
+  ComponentPropsWithoutRef<typeof NativeSelectRoot>;
 
 export const ChakraValueSelector = ({
   className,
@@ -30,13 +30,17 @@ export const ChakraValueSelector = ({
   schema: _schema,
   ...extraProps
 }: ChakraValueSelectorProps): React.JSX.Element => (
-  <Select
+  <NativeSelectRoot
     className={className}
     title={title}
-    value={value}
     disabled={disabled}
-    onChange={e => handleOnChange(e.target.value)}
-    {...extraProps}>
-    {toOptions(options)}
-  </Select>
+    {...extraProps}
+  >
+    <NativeSelectField
+      value={value}
+      onChange={e => handleOnChange(e.target.value)}
+    >
+      {toOptions(options)}
+    </NativeSelectField>
+  </NativeSelectRoot>
 );

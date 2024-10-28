@@ -1,33 +1,18 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
 import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderChakra } from '../src';
+import { Provider } from '../src/snippets/provider';
 import './styles.scss';
-
-const chakraTheme = extendTheme({
-  components: {
-    Button: {
-      baseStyle: {
-        color: 'rebeccapurple',
-        fontWeight: 'bold', // Normally "semibold"
-      },
-    },
-  },
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
-  },
-});
 
 const App = () => {
   const devApp = useDevApp();
 
   return (
     <DevLayout {...devApp}>
-      <ChakraProvider theme={chakraTheme}>
+      <Provider>
         <QueryBuilderChakra>
           {devApp.optVals.independentCombinators ? (
             <QueryBuilder
@@ -45,7 +30,7 @@ const App = () => {
             />
           )}
         </QueryBuilderChakra>
-      </ChakraProvider>
+      </Provider>
     </DevLayout>
   );
 };
