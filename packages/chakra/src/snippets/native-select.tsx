@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { NativeSelect as Select } from "@chakra-ui/react"
-import { forwardRef, useMemo } from "react"
+import { NativeSelect as Select } from '@chakra-ui/react'
+import { forwardRef, useMemo } from 'react'
 
 interface NativeSelectRootProps extends Select.RootProps {
   icon?: React.ReactNode
@@ -39,7 +39,7 @@ export const NativeSelectField = forwardRef<
   const items = useMemo(
     () =>
       itemsProp?.map((item) =>
-        typeof item === "string" ? { label: item, value: item } : item,
+        typeof item === 'string' ? { label: item, value: item } : item,
       ),
     [itemsProp],
   )
