@@ -21,15 +21,29 @@ import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 import { QueryBuilderChakra } from './index';
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
-  const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
+  const ChakraWrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <Provider>
       <RQBComponent {...props} />
     </Provider>
   );
-  Wrapper.displayName = RQBComponent.displayName;
-  return Wrapper;
+  ChakraWrapper.displayName = RQBComponent.displayName || RQBComponent.name;
+  return ChakraWrapper;
 };
 const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
   <Provider>

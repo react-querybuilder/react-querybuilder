@@ -130,7 +130,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           value={value}
-          onChange={handleOnChange}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.value)}
           disabled={disabled}
           {...extraProps}>
           <Stack direction="row">

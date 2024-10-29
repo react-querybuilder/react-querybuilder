@@ -1,10 +1,7 @@
-import { Fieldset } from '@chakra-ui/react';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
-import { useId } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 import { Switch } from './snippets/switch';
-import { Field } from './snippets/field';
 
 export type ChakraNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
 
@@ -23,30 +20,14 @@ export const ChakraNotToggle = ({
   schema: _schema,
   ruleGroup: _ruleGroup,
   ...extraProps
-}: ChakraNotToggleProps): React.JSX.Element => {
-  const id = useId();
-
-  return (
-    <div style={{ display: 'inline-block' }}>
-      <Fieldset.Root
-        display="flex"
-        alignItems="center"
-        className={className}
-        title={title}
-        disabled={disabled}>
-        <Fieldset.Content>
-          <Switch
-            id={id}
-            checked={checked}
-            disabled={disabled}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.checked)}
-            {...extraProps}
-          />
-          <Field marginBottom={0} htmlFor={id}>
-            {label}
-          </Field>
-        </Fieldset.Content>
-      </Fieldset.Root>
-    </div>
-  );
-};
+}: ChakraNotToggleProps): React.JSX.Element => (
+  <Switch
+    title={title}
+    className={className}
+    disabled={disabled}
+    checked={checked}
+    onCheckedChange={(e: { checked: boolean }) => handleOnChange(e.checked)}
+    {...extraProps}>
+    {label}
+  </Switch>
+);
