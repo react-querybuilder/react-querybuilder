@@ -70,7 +70,17 @@
   "peerDependencies": {
     "@chakra-ui/react": "^3",
     "@emotion/react": "^11",
+    "next-themes": "^0.3.0",
     "react": ">=18",
+    "react-icons": "^5",
     "react-querybuilder": "7.7.1"
+  },
+  "peerDependenciesMeta": {
+    "next-themes": {
+      "optional": true
+    },
+    "react-icons": {
+      "optional": true
+    }
   }
 }
