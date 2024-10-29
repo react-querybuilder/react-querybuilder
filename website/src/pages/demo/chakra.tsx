@@ -1,37 +1,27 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
+import { ChakraProvider, defaultSystem, Theme } from '@chakra-ui/react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
+import { ThemeProvider } from 'next-themes';
+import type { ThemeProviderProps } from 'next-themes/dist/types';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
 
-import { ChakraProvider, createSystem, defaultConfig, defineRecipe } from '@chakra-ui/react';
-import * as React from 'react';
-
-const buttonRecipe = defineRecipe({
-  base: {
-    color: 'rebeccapurple',
-    fontWeight: 'bold', // Normally "semibold"
-  },
-});
-
-const chakraTheme = createSystem(defaultConfig, {
-  theme: {
-    recipes: {
-      button: buttonRecipe,
-    },
-  },
-});
+const ColorModeProvider = (props: ThemeProviderProps) => (
+  <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
+);
 
 const Provider = (props: React.PropsWithChildren): React.JSX.Element => (
-  <ChakraProvider value={chakraTheme}>{props.children}</ChakraProvider>
+  <ChakraProvider value={defaultSystem}>
+    <ColorModeProvider>{props.children}</ColorModeProvider>
+  </ChakraProvider>
 );
 
 function ReactQueryBuilderDemo_ChakraBrowser() {
-  const { colorMode } = useColorMode();
   const [{ Demo }, setComponents] = useState<{
     Demo?: typeof import('./_components/Demo').default;
   }>({});
@@ -55,11 +45,11 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
 
   return (
     <Provider>
-      <div className={colorMode}>
+      <Theme colorPalette="teal">
         <QueryBuilderChakra>
           <Demo variant="chakra" />
         </QueryBuilderChakra>
-      </div>
+      </Theme>
     </Provider>
   );
 }
