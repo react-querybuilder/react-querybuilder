@@ -2,7 +2,7 @@ import type { InputProps } from '@fluentui/react-components';
 import { Checkbox, Input, Radio, RadioGroup, Switch, Textarea } from '@fluentui/react-components';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, useValueEditor } from 'react-querybuilder';
+import { useValueEditor, ValueEditor } from 'react-querybuilder';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
@@ -18,15 +18,16 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     type,
     inputType,
     values = [],
-    listsAsArrays,
+    listsAsArrays: _listsAsArrays,
     separator,
     valueSource: _vs,
     disabled,
     testID,
-    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
+    selectorComponent: _SelectorComponent,
     validation: _validation,
     extraProps,
-    ...props
+    parseNumbers: _parseNumbers,
+    ..._propsForValueSelector
   } = allProps;
 
   const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
@@ -44,8 +45,8 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     (operator === 'between' || operator === 'notBetween') &&
     (type === 'select' || type === 'text')
   ) {
-    const editors = ['from', 'to'].map((key, i) => {
-      if (type === 'text') {
+    if (type === 'text') {
+      const editors = ['from', 'to'].map((key, i) => {
         return (
           <Input
             key={key}
@@ -58,46 +59,22 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
             {...extraProps}
           />
         );
-      }
+      });
       return (
-        <SelectorComponent
-          key={key}
-          {...props}
-          className={valueListItemClassName}
-          handleOnChange={v => multiValueHandler(v, i)}
-          disabled={disabled}
-          value={valueAsArray[i] ?? getFirstOption(values)}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+        <span data-testid={testID} className={className} title={title}>
+          {editors[0]}
+          {separator}
+          {editors[1]}
+        </span>
       );
-    });
-
-    return (
-      <span data-testid={testID} className={className} title={title}>
-        {editors[0]}
-        {separator}
-        {editors[1]}
-      </span>
-    );
+    }
+    return <ValueEditor {...allProps} skipHook />;
   }
 
   switch (type) {
     case 'select':
     case 'multiselect':
-      return (
-        <SelectorComponent
-          {...props}
-          title={title}
-          className={className}
-          handleOnChange={handleOnChange}
-          options={values}
-          value={value}
-          disabled={disabled}
-          multiple={type === 'multiselect'}
-          listsAsArrays={listsAsArrays}
-        />
-      );
+      return <ValueEditor {...allProps} skipHook />;
 
     case 'textarea':
       return (

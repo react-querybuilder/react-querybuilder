@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-module */
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
@@ -7,6 +8,7 @@ import path from 'node:path';
 import { themes } from 'prism-react-renderer/dist/index.mjs';
 import type { TypeDocOptions } from 'typedoc';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
+import { discordLink } from './src/constants';
 
 const config: Config = {
   title: 'React Query Builder',
@@ -20,8 +22,10 @@ const config: Config = {
   projectName: 'react-querybuilder.github.io',
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
-  clientModules: [path.resolve('./static/js/loadRqbUtils.js')],
-  scripts: [{ src: path.resolve('./static/js/console.js'), async: false }],
+  clientModules: [
+    path.resolve('./static/js/console.js'),
+    path.resolve('./static/js/loadRqbUtils.js'),
+  ],
   plugins: [
     'docusaurus-plugin-sass',
     [
@@ -51,8 +55,10 @@ const config: Config = {
     async (_context, _options) => ({
       name: 'docusaurus-tailwindcss',
       configurePostCss: postcssOptions => {
-        postcssOptions.plugins.push(require.resolve('tailwindcss'));
-        postcssOptions.plugins.push(require.resolve('autoprefixer'));
+        postcssOptions.plugins.push(
+          require.resolve('tailwindcss'),
+          require.resolve('autoprefixer')
+        );
         return postcssOptions;
       },
     }),
@@ -265,7 +271,7 @@ const config: Config = {
             },
             {
               label: 'Discord',
-              to: '/discord',
+              href: discordLink,
             },
             {
               label: 'npm',

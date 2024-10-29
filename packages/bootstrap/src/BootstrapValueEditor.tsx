@@ -1,61 +1,32 @@
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import {
-  getFirstOption,
-  standardClassnames,
-  useValueEditor,
-  ValueEditor,
-} from 'react-querybuilder';
+import { standardClassnames, useValueEditor, ValueEditor } from 'react-querybuilder';
 
 export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
-  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(props);
-
-  const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
+  const { valueListItemClassName } = useValueEditor(props);
 
   if (props.operator === 'null' || props.operator === 'notNull') {
     return null;
   }
 
-  const placeHolderText = props.fieldData?.placeholder ?? '';
-
   if (
     (props.operator === 'between' || props.operator === 'notBetween') &&
     (props.type === 'select' || props.type === 'text')
   ) {
-    const editors = ['from', 'to'].map((key, i) => {
-      if (props.type === 'text') {
-        return (
-          <input
-            key={key}
-            type={props.inputType || 'text'}
-            placeholder={placeHolderText}
-            value={valueAsArray[i] ?? ''}
-            className={`${valueListItemClassName} form-control form-control-sm`}
-            disabled={props.disabled}
-            onChange={e => multiValueHandler(e.target.value, i)}
-          />
-        );
-      }
-      return (
-        <SelectorComponent
-          key={key}
-          {...props}
-          className={`${valueListItemClassName} form-select form-select-sm`}
-          handleOnChange={v => multiValueHandler(v, i)}
-          disabled={props.disabled}
-          value={valueAsArray[i] ?? getFirstOption(props.values)}
-          options={props.values ?? []}
-          listsAsArrays={props.listsAsArrays}
-        />
-      );
-    });
-
+    const listItemClasses =
+      props.type === 'text' ? 'form-control form-control-sm' : 'form-select form-select-sm';
     return (
-      <span data-testid={props.testID} className={standardClassnames.value} title={props.title}>
-        {editors[0]}
-        {props.separator}
-        {editors[1]}
-      </span>
+      <ValueEditor
+        {...props}
+        skipHook
+        schema={{
+          ...props.schema,
+          classNames: {
+            ...props.schema.classNames,
+            valueListItem: `${valueListItemClassName} ${listItemClasses}`,
+          },
+        }}
+      />
     );
   }
 
@@ -64,15 +35,15 @@ export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element
     case 'multiselect':
       return (
         <ValueEditor
-          skipHook
           {...props}
+          skipHook
           className={`${props.className} form-select form-select-sm`}
         />
       );
 
     case 'switch':
       return (
-        <span className={`custom-control custom-switch ${props.className}`}>
+        <span className={`${props.className} custom-control custom-switch`}>
           <input
             type="checkbox"
             className="form-check-input custom-control-input"
@@ -85,7 +56,7 @@ export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element
       );
 
     case 'checkbox':
-      return <ValueEditor skipHook {...props} className={`form-check-input ${props.className}`} />;
+      return <ValueEditor {...props} skipHook className={`${props.className} form-check-input`} />;
 
     case 'radio':
       return (

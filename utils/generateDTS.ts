@@ -4,7 +4,7 @@ import path from 'node:path';
 export const generateDTS = async (projDir: string): Promise<void> => {
   const g = new Bun.Glob('**/*.{ts,tsx}');
 
-  const files = g.scan(`${projDir}/src`);
+  const files = g.scan(path.join(projDir, '/src/'));
 
   let fileCount = 0;
 
@@ -17,11 +17,11 @@ export const generateDTS = async (projDir: string): Promise<void> => {
       continue;
     }
 
-    const originalSource = await Bun.file(`${projDir}/src/${filePath}`).text();
+    const originalSource = await Bun.file(path.join(projDir, '/src/', filePath)).text();
     const { code } = isolatedDeclaration(filePath, originalSource);
 
     // Write the CJS DTS file
-    await Bun.write(`${projDir}/dist/types/${filePath.replace(/\.tsx?$/, '.d.ts')}`, code);
+    await Bun.write(path.join(projDir, '/dist/types/', filePath.replace(/\.tsx?$/, '.d.ts')), code);
 
     // Convert DTS file to ESM-in-CJS-context
     const lines = code.split('\n');
@@ -44,7 +44,7 @@ export const generateDTS = async (projDir: string): Promise<void> => {
       }
     }
     await Bun.write(
-      `${projDir}/dist/types-esm/${filePath.replace(/\.tsx?$/, '.d.mts')}`,
+      path.join(projDir, '/dist/types-esm/', filePath.replace(/\.tsx?$/, '.d.mts')),
       lines.join('\n')
     );
 

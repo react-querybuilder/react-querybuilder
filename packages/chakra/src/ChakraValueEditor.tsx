@@ -1,7 +1,7 @@
 import { Input, Stack, Textarea } from '@chakra-ui/react';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { ValueSelector, getFirstOption, useValueEditor } from 'react-querybuilder';
+import { ValueEditor, useValueEditor } from 'react-querybuilder';
 import { Checkbox } from './snippets/checkbox';
 import { Radio, RadioGroup } from './snippets/radio';
 import { Switch } from './snippets/switch';
@@ -20,14 +20,15 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
     type,
     inputType,
     values = [],
-    listsAsArrays,
+    listsAsArrays: _listsAsArrays,
     separator,
     valueSource: _vs,
     testID,
     disabled,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     extraProps,
-    ...props
+    parseNumbers: _parseNumbers,
+    ...propsForValueSelector
   } = allProps;
 
   const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
@@ -43,8 +44,8 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
     (operator === 'between' || operator === 'notBetween') &&
     (type === 'select' || type === 'text')
   ) {
-    const editors = ['from', 'to'].map((key, i) => {
-      if (type === 'text') {
+    if (type === 'text') {
+      const editors = ['from', 'to'].map((key, i) => {
         return (
           <Input
             key={key}
@@ -57,34 +58,23 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
             {...extraProps}
           />
         );
-      }
+      });
       return (
-        <SelectorComponent
-          key={key}
-          {...props}
-          className={valueListItemClassName}
-          handleOnChange={v => multiValueHandler(v, i)}
-          disabled={disabled}
-          value={valueAsArray[i] ?? getFirstOption(values)}
-          options={values}
-          listsAsArrays={listsAsArrays}
-        />
+        <span data-testid={testID} className={className} title={title}>
+          {editors[0]}
+          {separator}
+          {editors[1]}
+        </span>
       );
-    });
-    return (
-      <span data-testid={testID} className={className} title={title}>
-        {editors[0]}
-        {separator}
-        {editors[1]}
-      </span>
-    );
+    }
+    return <ValueEditor {...allProps} skipHook />;
   }
 
   switch (type) {
     case 'select':
       return (
         <SelectorComponent
-          {...props}
+          {...propsForValueSelector}
           className={className}
           title={title}
           value={value}
@@ -95,19 +85,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
       );
 
     case 'multiselect':
-      return (
-        <ValueSelector
-          {...props}
-          className={className}
-          title={title}
-          value={value}
-          disabled={disabled}
-          handleOnChange={handleOnChange}
-          options={values}
-          multiple
-          listsAsArrays={listsAsArrays}
-        />
-      );
+      return <ValueEditor {...allProps} skipHook />;
 
     case 'textarea':
       return (
