@@ -1,30 +1,37 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
-import {
-  ChakraProvider,
-  ColorModeProvider,
-  ColorModeScript,
-  extendTheme,
-  useColorMode as useChakraColorMode,
-  withDefaultVariant,
-} from '@chakra-ui/react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.scss';
 import './_styles/rqb-chakra.scss';
 
-const chakraTheme = extendTheme(
-  { config: { initialColorMode: 'light', useSystemColorMode: false } },
-  withDefaultVariant({ variant: 'solid' })
+import { ChakraProvider, createSystem, defaultConfig, defineRecipe } from '@chakra-ui/react';
+import * as React from 'react';
+
+const buttonRecipe = defineRecipe({
+  base: {
+    color: 'rebeccapurple',
+    fontWeight: 'bold', // Normally "semibold"
+  },
+});
+
+const chakraTheme = createSystem(defaultConfig, {
+  theme: {
+    recipes: {
+      button: buttonRecipe,
+    },
+  },
+});
+
+const Provider = (props: React.PropsWithChildren): React.JSX.Element => (
+  <ChakraProvider value={chakraTheme}>{props.children}</ChakraProvider>
 );
 
 function ReactQueryBuilderDemo_ChakraBrowser() {
   const { colorMode } = useColorMode();
-  const { colorMode: chakraColorMode, setColorMode } = useChakraColorMode();
-  const firstRender = useRef(true);
   const [{ Demo }, setComponents] = useState<{
     Demo?: typeof import('./_components/Demo').default;
   }>({});
@@ -44,37 +51,24 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
     };
   }, [Demo]);
 
-  useEffect(() => {
-    const doReload = !firstRender.current && colorMode !== chakraColorMode;
-    setColorMode(colorMode);
-    if (doReload)
-      setTimeout(() => {
-        window.location.reload();
-      });
-    firstRender.current = false;
-  }, [chakraColorMode, colorMode, setColorMode]);
-
   if (!Demo) return <Loading />;
 
   return (
-    <ChakraProvider theme={chakraTheme} resetCSS={false}>
-      <QueryBuilderChakra>
-        <Demo variant="chakra" />
-      </QueryBuilderChakra>
-    </ChakraProvider>
+    <Provider>
+      <div className={colorMode}>
+        <QueryBuilderChakra>
+          <Demo variant="chakra" />
+        </QueryBuilderChakra>
+      </div>
+    </Provider>
   );
 }
 
 export default function ReactQueryBuilderDemo_Chakra() {
   return (
     <Layout description="React Query Builder Demo">
-      <ColorModeScript />
       <BrowserOnly fallback={<Loading />}>
-        {() => (
-          <ColorModeProvider>
-            <ReactQueryBuilderDemo_ChakraBrowser />
-          </ColorModeProvider>
-        )}
+        {() => <ReactQueryBuilderDemo_ChakraBrowser />}
       </BrowserOnly>
     </Layout>
   );
