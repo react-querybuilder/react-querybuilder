@@ -1,5 +1,13 @@
-import { FaCopy, FaChevronDown, FaChevronUp, FaTimes, FaLock, FaLockOpen } from 'react-icons/fa';
 import * as React from 'react';
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaCopy,
+  FaGripVertical,
+  FaLock,
+  FaLockOpen,
+  FaTimes,
+} from 'react-icons/fa';
 import type {
   ControlElementsProp,
   FullField,
@@ -8,13 +16,11 @@ import type {
 } from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
-import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 
 export * from './ChakraActionElement';
-export * from './ChakraDragHandle';
 export * from './ChakraNotToggle';
 export * from './ChakraValueEditor';
 export * from './ChakraValueSelector';
@@ -22,12 +28,12 @@ export * from './ChakraValueSelector';
 export const chakraControlElements: ControlElementsProp<FullField, string> = {
   actionElement: ChakraActionElement,
   valueSelector: ChakraValueSelector,
-  dragHandle: ChakraDragHandle,
   notToggle: ChakraNotToggle,
   valueEditor: ChakraValueEditor,
 };
 
 export const chakraTranslations: Partial<Translations> = {
+  dragHandle: { label: <FaGripVertical /> },
   removeGroup: { label: <FaTimes /> },
   removeRule: { label: <FaTimes /> },
   cloneRuleGroup: { label: <FaCopy /> },

@@ -1,25 +1,21 @@
-import { render, screen } from '@testing-library/react';
-import type { ComponentPropsWithoutRef } from 'react';
-import * as React from 'react';
-import { forwardRef } from 'react';
-import type { DragHandleProps } from 'react-querybuilder';
-import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   testActionElement,
-  testDragHandle,
   testNotToggle,
   testShiftActions,
   testValueEditor,
   testValueSelector,
 } from '@rqb-testing';
-import { Provider } from './snippets/provider';
+import { render, screen } from '@testing-library/react';
+import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
+import { QueryBuilder, TestID } from 'react-querybuilder';
 import { ChakraActionElement } from './ChakraActionElement';
-import { ChakraDragHandle } from './ChakraDragHandle';
 import { ChakraNotToggle } from './ChakraNotToggle';
 import { ChakraShiftActions } from './ChakraShiftActions';
 import { ChakraValueEditor } from './ChakraValueEditor';
 import { ChakraValueSelector } from './ChakraValueSelector';
 import { QueryBuilderChakra } from './index';
+import { Provider } from './snippets/provider';
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -45,14 +41,8 @@ const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   ChakraWrapper.displayName = RQBComponent.displayName || RQBComponent.name;
   return ChakraWrapper;
 };
-const WrapperDH = forwardRef<HTMLSpanElement, DragHandleProps>((props, ref) => (
-  <Provider>
-    <ChakraDragHandle {...props} ref={ref} />
-  </Provider>
-));
 
 testActionElement(generateWrapper(ChakraActionElement));
-testDragHandle(WrapperDH);
 testNotToggle(generateWrapper(ChakraNotToggle));
 testShiftActions(generateWrapper(ChakraShiftActions));
 testValueEditor(generateWrapper(ChakraValueEditor));
