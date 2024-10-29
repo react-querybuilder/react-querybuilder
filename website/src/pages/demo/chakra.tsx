@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { ChakraProvider, defaultSystem, Theme } from '@chakra-ui/react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
+import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import Layout from '@theme/Layout';
 import { ThemeProvider } from 'next-themes';
@@ -15,11 +16,14 @@ const ColorModeProvider = (props: ThemeProviderProps) => (
   <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
 );
 
-const Provider = (props: React.PropsWithChildren): React.JSX.Element => (
-  <ChakraProvider value={defaultSystem}>
-    <ColorModeProvider>{props.children}</ColorModeProvider>
-  </ChakraProvider>
-);
+const Provider = (props: React.PropsWithChildren): React.JSX.Element => {
+  const { colorMode } = useColorMode();
+  return (
+    <ChakraProvider value={defaultSystem}>
+      <ColorModeProvider forcedTheme={colorMode}>{props.children}</ColorModeProvider>
+    </ChakraProvider>
+  );
+};
 
 function ReactQueryBuilderDemo_ChakraBrowser() {
   const [{ Demo }, setComponents] = useState<{
