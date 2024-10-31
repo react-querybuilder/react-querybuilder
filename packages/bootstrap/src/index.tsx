@@ -28,7 +28,8 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   lockRule: 'btn-secondary',
   removeGroup: 'btn-danger',
   removeRule: 'btn-danger',
-  value: 'form-control form-control-sm',
+  // BootstrapValueEditor adds its own classnames
+  // value: '',
   valueSelector: 'form-select form-select-sm',
 };
 
