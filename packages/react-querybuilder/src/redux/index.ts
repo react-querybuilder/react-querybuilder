@@ -45,6 +45,7 @@ export const queryBuilderStore: EnhancedStore<
     ]
   >
 > = configureStore({
+  devTools: { name: 'React Query Builder' },
   reducer: {
     queries: queriesSlice.reducer,
     warnings: warningsSlice.reducer,
@@ -55,7 +56,7 @@ export const queryBuilderStore: EnhancedStore<
       // Ignore non-serializable values in setQueryState actions and rule `value`s
       // https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
       serializableCheck: {
-        ignoredActions: ['queries/setQueryState'],
+        ignoredActions: [queriesSlice.actions.setQueryState.type],
         ignoredPaths: [/^queries\b.*\.rules\.\d+\.value$/],
       },
     }),
