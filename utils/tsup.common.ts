@@ -28,10 +28,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
         ...commonOptions,
         format: ['esm'],
         clean: true,
-        onSuccess: async () => {
-          generateDTS(sourceDir);
-          console.log(sourceDir);
-        },
+        onSuccess: () => generateDTS(sourceDir),
       },
       // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
       {
