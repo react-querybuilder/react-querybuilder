@@ -1,7 +1,13 @@
 $code: #333333;
 $code-background: unset;
 
-@import 'bulma/bulma.sass';
+@use 'sass:meta';
+
+.donut-hole {
+  @include meta.load-css('bulma');
+
+  overflow-y: initial !important;
+}
 
 pre {
   white-space: pre-wrap;

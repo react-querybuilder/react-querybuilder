@@ -1,0 +1,8 @@
+@use 'react-querybuilder/query-builder.scss' as *;
+
+.donut-hole {
+  .shiftActions > button {
+    min-width: unset;
+    padding: 0 $rqb-spacing;
+  }
+}

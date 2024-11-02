@@ -103,7 +103,7 @@ export const DevLayout = ({
         </button>
       </div>
       <div>
-        {children}
+        <div className="donut-hole">{children}</div>
         <div id="exports">
           {formatQueryResults.map(([fmt, result]) => (
             <Fragment key={fmt}>

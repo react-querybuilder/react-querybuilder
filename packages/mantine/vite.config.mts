@@ -1,6 +1,7 @@
 import vitePluginReact from '@vitejs/plugin-react';
 import path from 'node:path';
 import { defineConfig } from 'vite';
+import postcssScopedDonut from '../../utils/devapp/postcss-scoped-donut';
 
 export default defineConfig({
   plugins: [vitePluginReact({ babel: { plugins: [['react-compiler', { target: '18' }]] } })],
@@ -26,6 +27,7 @@ export default defineConfig({
       '@rqb-utils': path.resolve(import.meta.dir, '../react-querybuilder/src/utils'),
     },
   },
+  css: { postcss: { plugins: [postcssScopedDonut] } },
   server: {
     port: 3109,
   },

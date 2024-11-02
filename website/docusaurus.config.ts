@@ -57,7 +57,8 @@ const config: Config = {
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
           require.resolve('tailwindcss'),
-          require.resolve('autoprefixer')
+          require.resolve('autoprefixer'),
+          require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;
       },

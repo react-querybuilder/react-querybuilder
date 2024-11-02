@@ -3,7 +3,6 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
-import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderChakra } from '../src';
 import './styles.scss';
 

@@ -4,7 +4,6 @@ import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
-import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
 
 const App = () => {
