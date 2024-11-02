@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+### Fixed
+
+- Redux DevTools will display the name "React Query Builder" for the Redux store registered by `QueryBuilder`.
+- `bootstrapClassnames` no longer includes `value: "form-control form-control-sm"`. The classes are added by `BootstrapValueEditor` only when necessary.
 
 ## [v7.7.1] - 2024-10-21
 
