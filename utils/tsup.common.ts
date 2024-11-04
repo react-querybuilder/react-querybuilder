@@ -13,7 +13,9 @@ export const tsupCommonConfig = (sourceDir: string) =>
     const commonOptions = {
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
-      esbuildPlugins: [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
+      esbuildPlugins: process.env.RQB_SKIP_REACT_COMPILER
+        ? []
+        : [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
       ...options,
     } satisfies Options;
 
