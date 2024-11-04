@@ -3,7 +3,6 @@ import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderChakra } from '../src';
 import { ColorModeButton } from '../src/snippets/color-mode';
 import { Provider } from '../src/snippets/provider';

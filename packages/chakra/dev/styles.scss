@@ -1,13 +1,15 @@
-.chakra-native-select__root {
-  width: fit-content !important;
-  display: inline-block;
-}
+.donut-hole {
+  .chakra-native-select__root {
+    width: fit-content !important;
+    display: inline-block;
+  }
 
-.chakra-input {
-  width: auto !important;
-  display: inline-block;
-}
+  .chakra-input {
+    width: auto !important;
+    display: inline-block;
+  }
 
-.chakra-radio-group {
-  display: inline-block;
+  .chakra-radio-group {
+    display: inline-block;
+  }
 }

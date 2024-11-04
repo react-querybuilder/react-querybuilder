@@ -1,0 +1,5 @@
+@use 'sass:meta';
+
+.donut-hole {
+  @include meta.load-css('@mantine/core/styles.css');
+}

@@ -81,5 +81,11 @@ export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element
       );
   }
 
-  return <ValueEditor skipHook {...props} />;
+  return (
+    <ValueEditor
+      skipHook
+      {...props}
+      className={`${props.className} form-control form-control-sm`}
+    />
+  );
 };

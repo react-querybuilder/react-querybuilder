@@ -1,5 +1,7 @@
-.rqb-bulma {
-  @import 'bulma/bulma.sass';
+@use 'sass:meta';
+
+.rqb-bulma.donut-hole {
+  @include meta.load-css('bulma');
 
   .input {
     width: auto;

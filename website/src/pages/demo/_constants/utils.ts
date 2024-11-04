@@ -67,7 +67,10 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
     case 'all': {
       const allSelected: DemoOptions = { ...defaultOptions };
       for (const opt of optionOrder) {
-        allSelected[opt] = opt !== 'disabled' && opt !== 'independentCombinators';
+        allSelected[opt] =
+          opt !== 'disabled' &&
+          opt !== 'independentCombinators' &&
+          opt !== 'suppressStandardClassnames';
       }
       return allSelected;
     }

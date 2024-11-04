@@ -13,7 +13,9 @@ export const tsupCommonConfig = (sourceDir: string) =>
     const commonOptions = {
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
-      esbuildPlugins: [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
+      esbuildPlugins: process.env.RQB_SKIP_REACT_COMPILER
+        ? []
+        : [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
       ...options,
     } satisfies Options;
 
@@ -28,10 +30,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
         ...commonOptions,
         format: ['esm'],
         clean: true,
-        onSuccess: async () => {
-          generateDTS(sourceDir);
-          console.log(sourceDir);
-        },
+        onSuccess: () => generateDTS(sourceDir),
       },
       // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
       {

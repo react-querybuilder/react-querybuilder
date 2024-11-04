@@ -422,7 +422,8 @@ export default function Demo({
           justifiedLayout: options.justifiedLayout,
           'queryBuilder-branches': options.showBranches,
         },
-        variant === 'default' ? '' : qbWrapperId
+        variant === 'default' ? '' : qbWrapperId,
+        'donut-hole'
       ),
     [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
   );

@@ -12,7 +12,8 @@
     .rule-operators,
     .rule-value,
     .control,
-    .chakra-select__wrapper {
+    .chakra-select__wrapper,
+    .mantine-InputWrapper-root + input[type='hidden'] {
       & + button.rule-cloneRule,
       & + button.rule-lock,
       & + button.rule-remove {
