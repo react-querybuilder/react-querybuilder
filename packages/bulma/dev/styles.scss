@@ -6,7 +6,7 @@ $code-background: unset;
 .donut-hole {
   @include meta.load-css('bulma');
 
-  overflow-y: initial !important;
+  overflow-y: unset !important;
 }
 
 pre {
