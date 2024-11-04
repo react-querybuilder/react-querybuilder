@@ -1,13 +1,11 @@
-$code-color: #333333;
+@use 'sass:meta';
 
-@import 'bootstrap/scss/bootstrap.scss';
+.donut-hole {
+  @include meta.load-css('bootstrap');
 
-#app > div:first-child > label > input {
-  margin: 3px;
-}
-
-.form-control,
-.form-select {
-  display: inline-block;
-  width: auto;
+  .form-control,
+  .form-select {
+    display: inline-block;
+    width: auto;
+  }
 }

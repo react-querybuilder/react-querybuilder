@@ -1,7 +1,18 @@
-.rqb-tremor {
+.rqb-tremor.donut-hole {
   * {
     border-style: solid;
     border-width: 0;
+  }
+  .tremor-NumberInput-root,
+  .tremor-TextInput-root,
+  .text-tremor-default {
+    width: auto;
+  }
+  .ruleGroup .ruleGroup {
+    &::before,
+    &::after {
+      left: calc(-0.5rem - 1px);
+    }
   }
   // TODO: find out why this is necessary
   button:has(> svg.tremor-DateRangePicker-clearIcon),

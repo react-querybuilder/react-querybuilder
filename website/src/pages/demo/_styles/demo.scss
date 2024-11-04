@@ -4,6 +4,10 @@
   fill: var(--ifm-font-color-base);
 }
 
+.donut-hole {
+  overflow-y: unset !important;
+}
+
 .queryBuilder {
   min-width: 420px;
 }

@@ -26,6 +26,9 @@ const config: Config = {
     path.resolve('./static/js/console.js'),
     path.resolve('./static/js/loadRqbUtils.js'),
   ],
+  future: {
+    experimental_faster: true,
+  },
   plugins: [
     'docusaurus-plugin-sass',
     [
@@ -57,17 +60,11 @@ const config: Config = {
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
           require.resolve('tailwindcss'),
-          require.resolve('autoprefixer')
+          require.resolve('autoprefixer'),
+          require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;
       },
-    }),
-    () => ({
-      // Avoid warning about require not being statically analyzable
-      name: 'rqb-avoid-require-warning',
-      configureWebpack: () => ({
-        module: { unknownContextCritical: false },
-      }),
     }),
     () => ({
       // This is not actually used, only here just in case

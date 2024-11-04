@@ -1,10 +1,8 @@
 import { MantineProvider } from '@mantine/core';
-import '@mantine/core/styles.css';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
-import 'react-querybuilder/query-builder.scss';
 import { QueryBuilderMantine } from '../src';
 import './styles.scss';
 

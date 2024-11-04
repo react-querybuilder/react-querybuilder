@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-module, @typescript-eslint/no-require-imports */
 /** @type {import('tailwindcss').Config} */
 import colors from 'tailwindcss/colors';
 
