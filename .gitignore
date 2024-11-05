@@ -7,6 +7,7 @@ dist/
 coverage/
 build-analysis.*
 
+packages/react-querybuilder/debug/package.json
 packages/react-querybuilder/formatQuery/package.json
 packages/react-querybuilder/parseCEL/package.json
 packages/react-querybuilder/parseJSONata/package.json

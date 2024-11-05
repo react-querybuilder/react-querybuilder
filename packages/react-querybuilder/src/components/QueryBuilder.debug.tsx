@@ -7,7 +7,7 @@ import type {
   RuleGroupTypeAny,
 } from '../types';
 import { QueryBuilderInternal } from './QueryBuilderInternal';
-import { QueryBuilderStateProvider } from './QueryBuilderStateProvider';
+import { QueryBuilderStateProvider } from './QueryBuilderStateProvider.debug';
 
 /**
  * The query builder component for React.

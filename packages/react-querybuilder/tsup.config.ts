@@ -1,7 +1,7 @@
 import AnalyzerPlugin from 'esbuild-analyzer';
 import { mkdir } from 'node:fs/promises';
 import { defineConfig } from 'tsup';
-import { tsupCommonConfig } from '../../utils/tsup.common';
+import { tsupCommonConfig, getCjsIndexWriter } from '../../utils/tsup.common';
 
 export default defineConfig(async options => {
   const buildConfig = await tsupCommonConfig(import.meta.dir)(options);
@@ -11,7 +11,22 @@ export default defineConfig(async options => {
     AnalyzerPlugin({ outfile: './build-analysis.production.html' })
   );
 
-  const cjsEntryPoints = {
+  for (const bc of buildConfig) {
+    const entryKey = Object.keys(bc.entry!)[0];
+    bc.entry![`${entryKey}.debug`] = bc.entry![entryKey].replace('.ts', '.debug.ts');
+
+    if (bc === buildConfig.at(-1)) {
+      const onSuccess = bc.onSuccess as () => Promise<void>;
+      bc.onSuccess = async () => {
+        // Call original onSuccess first to write the non-debug index
+        await onSuccess();
+        console.log(entryKey);
+        await getCjsIndexWriter('react-querybuilder', true)();
+      };
+    }
+  }
+
+  const utilEntryPoints = {
     formatQuery: 'src/utils/formatQuery/index.ts',
     parseCEL: 'src/utils/parseCEL/index.ts',
     parseJSONata: 'src/utils/parseJSONata/index.ts',
@@ -26,12 +41,12 @@ export default defineConfig(async options => {
     ...buildConfig,
     {
       ...options,
-      entry: cjsEntryPoints,
+      entry: utilEntryPoints,
       sourcemap: true,
       format: 'cjs',
       onSuccess: async () => {
         await Promise.all(
-          Object.keys(cjsEntryPoints).map(async util => {
+          Object.keys(utilEntryPoints).map(async util => {
             await mkdir(util, { recursive: true });
             await Bun.write(
               `${util}/package.json`,
