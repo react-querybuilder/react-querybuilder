@@ -1,6 +1,8 @@
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import queryString from 'query-string';
 import { useState } from 'react';
+import { Loading } from './_utils';
 
 const ghPathMain = 'react-querybuilder/react-querybuilder/tree/main/examples/_template';
 const ghPathChakra2 = 'react-querybuilder/react-querybuilder-chakra2/tree/main/example';
@@ -14,7 +16,7 @@ const getFinalLink = (platform: 'StackBlitz' | 'CodeSandbox', template: string) 
     : `https://codesandbox.io/s/github/${ghPath}?file=/src/${fileName}`;
 };
 
-export default function SandboxRedirect() {
+function SandboxRedirectTimer() {
   const query = queryString.parse(window.location.search);
   const qsTemplate = query.template ?? query.t ?? 'basic-ts';
   const template = Array.isArray(qsTemplate) ? qsTemplate[0]! : qsTemplate;
@@ -47,4 +49,8 @@ export default function SandboxRedirect() {
       </div>
     </Layout>
   );
+}
+
+export default function SandboxRedirect() {
+  return <BrowserOnly fallback={<Loading />}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
 }
