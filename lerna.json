@@ -3,5 +3,5 @@
   "version": "7.7.1",
   "npmClient": "npm",
   "forcePublish": true,
-  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
+  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json"
 }
