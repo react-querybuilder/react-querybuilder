@@ -1,9 +1,9 @@
-import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
+import type { SwitchProps } from './snippets/switch';
 import { Switch } from './snippets/switch';
 
-export type ChakraNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
+export type ChakraNotToggleProps = NotToggleProps & Omit<SwitchProps, 'label'>;
 
 export const ChakraNotToggle = ({
   className,

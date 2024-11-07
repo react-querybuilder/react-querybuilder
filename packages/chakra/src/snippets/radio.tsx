@@ -5,7 +5,7 @@ export interface RadioProps extends ChakraRadioGroup.ItemProps {
   rootRef?: React.Ref<HTMLLabelElement>;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   children?: React.ReactNode;
-  value?: string;
+  value: string;
 }
 
 // TODO: fix types

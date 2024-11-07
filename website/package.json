@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
-    "@chakra-ui/react": "^3.0.1",
+    "@chakra-ui/react": "^3.1.0",
     "@codesandbox/sandpack-react": "^2.19.9",
     "@docusaurus/core": "^3.6.0",
     "@docusaurus/plugin-client-redirects": "^3.6.0",
@@ -48,7 +48,7 @@
     "bulma": "^1.0.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
-    "next-themes": "^0.3.0",
+    "next-themes": "^0.4.3",
     "pako": "^2.1.0",
     "prism-react-renderer": "^2.4.0",
     "query-string": "^9.1.1",

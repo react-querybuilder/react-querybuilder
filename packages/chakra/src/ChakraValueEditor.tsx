@@ -107,7 +107,8 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           checked={!!value}
           title={title}
           disabled={disabled}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.checked)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => handleOnChange(e.target.checked)}
           {...extraProps}
         />
       );
@@ -118,7 +119,8 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           disabled={disabled}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.checked)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => handleOnChange(e.target.checked)}
           checked={!!value}
           {...extraProps}
         />
@@ -130,7 +132,8 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           value={value}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(e.target.value)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => handleOnChange(e.target.value)}
           disabled={disabled}
           {...extraProps}>
           <Stack direction="row">
