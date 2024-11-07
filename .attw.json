@@ -1,5 +1,4 @@
 {
-  "format": "table-flipped",
   "excludeEntrypoints": ["dist/*"],
-  "ignoreRules": ["false-export-default", "missing-export-equals"]
+  "ignoreRules": ["false-export-default"]
 }

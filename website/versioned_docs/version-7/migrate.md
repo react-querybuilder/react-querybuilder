@@ -249,6 +249,7 @@ Notes:
 
 - Prefer `useQueryBuilderQuery` over `useQueryBuilderSelector`. If necessary, a selector for `useQueryBuilderSelector` that retrieves the current root query object can be generated with `getQuerySelectorById(props.schema.qbId)`.
 - These functions all use a custom [Redux](https://redux.js.org/) context behind the scenes, hence the "selector" nomenclature.
+  - To register the React Query Builder Redux store with Redux DevTools, change all `"react-querybuilder"` imports to `"react-querybuilder/debug"`.
 - Previously, updates that couldn't be performed with `handleOnChange` or `handleOnClick` event handlers had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities. To support this, we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary or recommended.
 
 ### `insert` utility method

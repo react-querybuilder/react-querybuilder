@@ -48,4 +48,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
       - name: Bump version
-        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'Live' && '--yes' || '--yes --no-git-tag-version --no-push --json' }}
+        run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'Live' && '--yes' || '--yes --dry-run' }}

@@ -8,9 +8,10 @@ import type {
 } from '@reduxjs/toolkit';
 import type { UseStore } from 'react-redux';
 import { createDispatchHook, createStoreHook } from 'react-redux';
-import { QueryBuilderStateContext, type RqbState } from '.';
+import type { RqbState } from '.';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
+import { QueryBuilderStateContext } from './QueryBuilderStateContext';
 import type { Messages } from './warningsSlice';
 import { warningsSlice } from './warningsSlice';
 
@@ -52,3 +53,27 @@ export const rqbWarn =
   dispatch => {
     setTimeout(() => dispatch(_SYNC_rqbWarn(msg)));
   };
+
+import type { ConfigureStoreOptions } from '@reduxjs/toolkit';
+
+const preloadedState = {
+  queries: queriesSlice.getInitialState(),
+  warnings: warningsSlice.getInitialState(),
+} satisfies RqbState;
+
+export const storeCommon: ConfigureStoreOptions = {
+  reducer: {
+    queries: queriesSlice.reducer,
+    warnings: warningsSlice.reducer,
+  },
+  preloadedState,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      // Ignore non-serializable values in setQueryState actions and rule `value`s
+      // https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
+      serializableCheck: {
+        ignoredActions: [queriesSlice.actions.setQueryState.type],
+        ignoredPaths: [/^queries\b.*\.rules\.\d+\.value$/],
+      },
+    }),
+};

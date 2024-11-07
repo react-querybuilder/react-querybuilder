@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Debug build which registers the internal Redux store with Redux DevTools (more "debug" functionality may be added in the future). To use the debug build, update all `"react-querybuilder"` imports to `"react-querybuilder/debug"`.
+
 ### Fixed
 
-- Redux DevTools will display the name "React Query Builder" for the Redux store registered by `QueryBuilder`.
+- The internal Redux store is no longer registered with Redux DevTools by default.
 - `bootstrapClassnames` no longer includes `value: "form-control form-control-sm"`. The classes are added by `BootstrapValueEditor` only when necessary.
 - `@react-querybuilder/bulma` properly indicates compatibility with Bulma v1 in its `peerDependencies`, and the website demo now uses Bulma v1.
 

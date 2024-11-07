@@ -4,6 +4,19 @@ import { generateDTS } from './generateDTS';
 import { ReactCompilerEsbuildPlugin } from './react-compiler/esbuild-plugin-react-compiler';
 import path from 'node:path';
 
+export const getCjsIndexWriter = (pkgName: string, debug?: boolean) => async (): Promise<void> => {
+  await writeFile(
+    `dist/cjs/${debug ? 'debug' : 'index'}.js`,
+    `'use strict';
+if (process.env.NODE_ENV === 'production') {
+  module.exports = require('./${pkgName}.cjs.production${debug ? '.debug' : ''}.js');
+} else {
+  module.exports = require('./${pkgName}.cjs.development${debug ? '.debug' : ''}.js');
+}
+`
+  );
+};
+
 export const tsupCommonConfig = (sourceDir: string) =>
   (async options => {
     const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').pop()}`}`;
@@ -28,7 +41,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
       // ESM, standard bundler dev, embedded `process` references
       {
         ...commonOptions,
-        format: ['esm'],
+        format: 'esm',
         clean: true,
         onSuccess: () => generateDTS(sourceDir),
       },
@@ -39,14 +52,14 @@ export const tsupCommonConfig = (sourceDir: string) =>
         // ESBuild outputs `'.mjs'` by default for the 'esm' format. Force '.js'
         outExtension: () => ({ js: '.js' }),
         target: 'es2017',
-        format: ['esm'],
+        format: 'esm',
       },
       // ESM for use in browsers. Minified, with `process` compiled away
       {
         ...commonOptions,
         ...productionOptions,
         entry: { [`${pkgName}.production`]: entryPoint },
-        format: ['esm'],
+        format: 'esm',
         outExtension: () => ({ js: '.mjs' }),
       },
       // CJS development
@@ -63,19 +76,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
         entry: { [`${pkgName}.cjs.production`]: entryPoint },
         format: 'cjs',
         outDir: './dist/cjs/',
-        onSuccess: async () => {
-          // Write the CJS index file
-          await writeFile(
-            'dist/cjs/index.js',
-            `'use strict';
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./${pkgName}.cjs.production.js');
-} else {
-  module.exports = require('./${pkgName}.cjs.development.js');
-}
-`
-          );
-        },
+        onSuccess: getCjsIndexWriter(pkgName, false),
       },
     ];
 

@@ -16,6 +16,16 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./debug": {
+      "import": {
+        "types": "./dist/types-esm/index.d.mts",
+        "default": "./dist/react-querybuilder.debug.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/debug.js"
+      }
+    },
     "./dist/*": "./dist/*",
     "./formatQuery": {
       "types": "./dist/types/utils/formatQuery/index.d.ts",

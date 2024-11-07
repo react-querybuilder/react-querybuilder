@@ -1,30 +1,36 @@
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import queryString from 'query-string';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Loading } from './_utils';
 
-const csbTemplateLink =
-  'https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/_template?file=/src/App.tsx';
-const sbTemplateLink =
-  'https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/_template?file=src/App.tsx';
+const ghPathMain = 'react-querybuilder/react-querybuilder/tree/main/examples/_template';
+const ghPathChakra2 = 'react-querybuilder/react-querybuilder-chakra2/tree/main/example';
 
-export default function SandboxRedirect() {
-  const [{ platform, finalLink }, setLinkInfo] = useState({ platform: '', finalLink: '' });
+const getFinalLink = (platform: 'StackBlitz' | 'CodeSandbox', template: string) => {
+  let ghPath = template === 'chakra2' ? ghPathChakra2 : ghPathMain;
+  ghPath = ghPath.replace('_template', template);
+  const fileName = template === 'basic' ? 'App.js' : 'App.tsx';
+  return platform === 'StackBlitz'
+    ? `https://stackblitz.com/github/${ghPath}?file=src/${fileName}`
+    : `https://codesandbox.io/s/github/${ghPath}?file=/src/${fileName}`;
+};
 
-  useEffect(() => {
-    const query = queryString.parse(window.location.search);
-    const qsTemplate = query.template ?? query.t ?? 'basic-ts';
-    const template = Array.isArray(qsTemplate) ? qsTemplate[0]! : qsTemplate;
-    const qsPlatform = query.platform ?? query.p ?? 'csb';
-    const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0]! : qsPlatform;
-    const platform = ['sb', 'stackblitz'].includes(platformPrelim.toLocaleLowerCase())
-      ? 'StackBlitz'
-      : 'CodeSandbox';
-    const finalLink = (platform === 'StackBlitz' ? sbTemplateLink : csbTemplateLink)
-      .replace(/\b_template\b/, template)
-      .replace(/(\/App.tsx\b)/, template === 'basic' ? '/App.js' : '$1');
-    setLinkInfo({ platform, finalLink });
+function SandboxRedirectTimer() {
+  const query = queryString.parse(window.location.search);
+  const qsTemplate = query.template ?? query.t ?? 'basic-ts';
+  const template = Array.isArray(qsTemplate) ? qsTemplate[0]! : qsTemplate;
+  const qsPlatform = query.platform ?? query.p ?? 'csb';
+  const platformPrelim = Array.isArray(qsPlatform) ? qsPlatform[0]! : qsPlatform;
+  const platform = ['sb', 'stackblitz'].includes(platformPrelim.toLocaleLowerCase())
+    ? 'StackBlitz'
+    : 'CodeSandbox';
+  const finalLink = getFinalLink(platform, template);
+
+  const [_timerIsSet] = useState(() => {
     setTimeout(() => window.location.replace(finalLink), 500);
-  }, []);
+    return true;
+  });
 
   return (
     <Layout>
@@ -36,8 +42,15 @@ export default function SandboxRedirect() {
           margin: 'var(--ifm-global-spacing)',
         }}>
         Redirecting to{'\u00A0'}
-        <a href={finalLink}>{platform}</a>...
+        <a href={finalLink}>
+          {template} example on {platform}
+        </a>
+        ...
       </div>
     </Layout>
   );
+}
+
+export default function SandboxRedirect() {
+  return <BrowserOnly fallback={<Loading />}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
 }

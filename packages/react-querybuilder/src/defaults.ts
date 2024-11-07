@@ -4,6 +4,7 @@ import type {
   DefaultCombinatorNameExtended,
   DefaultOperatorName,
   FullOption,
+  Path,
   TranslationsFull,
 } from './types/index.noReact';
 
@@ -330,3 +331,8 @@ export const LogType = {
   update: 'rule or group updated',
   move: 'rule or group moved',
 } as const;
+
+/**
+ * The {@link Path} of the root group.
+ */
+export const rootPath: Path = [] satisfies Path;
