@@ -156,7 +156,7 @@ const config: Config = {
             4: { label: 'v4' },
             5: { label: 'v5' },
             6: { label: 'v6' },
-            7: { label: 'v7' },
+            7: { label: 'v7 / v8' },
             current: { label: 'Next' },
           },
         },

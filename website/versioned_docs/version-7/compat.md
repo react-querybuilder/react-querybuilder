@@ -169,7 +169,7 @@ This list shows which library components' props will be accepted by the compatib
 | `AntDValueSelector`                | `VersatileSelectorProps` | `import { Select } from 'antd'`                                 |
 | **`@react-querybuilder/chakra`**   |                          |                                                                 |
 | `ChakraActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                     |
-| `ChakraDragHandle`                 | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
+| `ChakraDragHandle` (removed in v8) | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
 | `ChakraNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
 | `ChakraValueSelector`              | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
 | **`@react-querybuilder/fluent`**   |                          |                                                                 |

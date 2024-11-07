@@ -1,6 +1,23 @@
 ---
-title: Migrating to v7
+title: Migrating to v7 or v8
 ---
+
+:::info Regarding version 8
+
+React Query Builder version 8 is fully compatible with version 7 except for `@react-querybuilder/chakra` (see [Compatibility packages](./compat)). If you are not using `@react-querybuilder/chakra`, you can migrate from v7 to v8 with no code changes.
+
+<details>
+<summary>More information</summary>
+
+- `@react-querybuilder/chakra@7` supports Chakra UI version 2.
+- `@react-querybuilder/chakra@8` supports Chakra UI version 3.
+- [`@react-querybuilder/chakra2`](https://npmjs.com/package/@react-querybuilder/chakra2) is a fork of `@react-querybuilder/chakra@7.7.1` that will continue to support Chakra UI version 2 going forward.
+- React Query Builder version 8 would have been a small patch release to version 7 if not for the Chakra UI breaking changes.
+- Chakra UI version 3 required breaking changes in `@react-querybuilder/chakra`, which led to the major version bump of all packages since we maintain consistent version numbers across all packages.
+
+</details>
+
+:::
 
 Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-list-value-identifiers) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
 
