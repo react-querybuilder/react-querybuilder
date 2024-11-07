@@ -27,7 +27,7 @@ export const ChakraActionElement = ({
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
     onClick={e => handleOnClick(e)}
-    isDisabled={disabled && !disabledTranslation}
+    disabled={disabled && !disabledTranslation}
     {...extraProps}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>

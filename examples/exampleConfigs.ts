@@ -96,37 +96,33 @@ export const configs: Record<string, ExampleConfig> = {
   },
   chakra: {
     name: 'Chakra UI',
-    dependencyKeys: [
-      '@chakra-ui/icons',
-      '@chakra-ui/react',
-      '@chakra-ui/system',
-      '@emotion/react',
-      '@emotion/styled',
-      'framer-motion',
-    ],
+    dependencyKeys: ['@chakra-ui/react', '@emotion/react', 'next-themes', 'react-icons'],
     scssPre: [],
     scssPost: [
       `.queryBuilder {
-  .chakra-select__wrapper {width: fit-content;display: inline-block;}
-  .chakra-input {width: auto;display: inline-block;}
-  .chakra-radio-group {display: inline-block;}
+  .chakra-native-select__root {width:fit-content;display:inline-block;}
+  .chakra-input {width:auto;display:inline-block;}
 }`,
     ],
     tsxImports: [
-      `import { ChakraProvider, extendTheme } from '@chakra-ui/react';`,
+      `import { ChakraProvider, Theme, createSystem, defaultConfig } from '@chakra-ui/react';`,
       `import { QueryBuilderChakra } from '@react-querybuilder/chakra';`,
+      `import { ThemeProvider } from 'next-themes';`,
     ],
     additionalDeclarations: [
-      `const chakraTheme = extendTheme({
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
-  }
-});`,
+      `const chakraTheme = createSystem(defaultConfig);
+
+const Provider = (props: React.PropsWithChildren) => (
+  <ChakraProvider value={chakraTheme}>
+    <ThemeProvider attribute="class" disableTransitionOnChange>
+      {props.children}
+    </ThemeProvider>
+  </ChakraProvider>
+);`,
     ],
     wrapper: [
-      '<ChakraProvider theme={chakraTheme}><QueryBuilderChakra>',
-      '</QueryBuilderChakra></ChakraProvider>',
+      '<Provider><Theme colorPalette="teal"><QueryBuilderChakra>',
+      '</QueryBuilderChakra></Theme></Provider>',
     ],
     props: [],
     compileToJS: false,
