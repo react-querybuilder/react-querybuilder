@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `@react-querybuilder/chakra` now supports Chakra UI version 3 and no longer supports version 2. For Chakra UI version 2 support, use `@react-querybuilder/chakra2`.
+- `ChakraDragHandle` has been removed. In Chakra UI version 3 environments, the default `DragHandle` component works without augmentation.
 
 ### Added
 
