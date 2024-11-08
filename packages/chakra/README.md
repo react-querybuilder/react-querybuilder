@@ -15,6 +15,12 @@ npm i react-querybuilder @react-querybuilder/chakra @chakra-ui/react @emotion/re
 # OR yarn add / pnpm add / bun add
 ```
 
+> [!NOTE]
+>
+> As of version 8, this package is no longer compatible with Chakra UI version 2.
+>
+> For compatibility with Chakra UI version 2, use [`@react-querybuilder/chakra2`](https://npmjs.com/package/@react-querybuilder/chakra2).
+
 ## Usage
 
 To configure the query builder to use Chakra-compatible components, place `QueryBuilderChakra` above `QueryBuilder` and beneath `ChakraProvider` in the component hierarchy.
