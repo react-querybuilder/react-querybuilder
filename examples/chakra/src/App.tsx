@@ -1,16 +1,25 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import {
+  ChakraProvider,
+  Theme,
+  createSystem,
+  defaultConfig,
+} from '@chakra-ui/react';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
+import { ThemeProvider } from 'next-themes';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.scss';
 
-const chakraTheme = extendTheme({
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
-  },
-});
+const chakraTheme = createSystem(defaultConfig);
+
+const Provider = (props: React.PropsWithChildren) => (
+  <ChakraProvider value={chakraTheme}>
+    <ThemeProvider attribute="class" disableTransitionOnChange>
+      {props.children}
+    </ThemeProvider>
+  </ChakraProvider>
+);
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -30,15 +39,17 @@ export const App = () => {
 
   return (
     <div>
-      <ChakraProvider theme={chakraTheme}>
-        <QueryBuilderChakra>
-          <QueryBuilder
-            fields={fields}
-            query={query}
-            onQueryChange={setQuery}
-          />
-        </QueryBuilderChakra>
-      </ChakraProvider>
+      <Provider>
+        <Theme colorPalette="teal">
+          <QueryBuilderChakra>
+            <QueryBuilder
+              fields={fields}
+              query={query}
+              onQueryChange={setQuery}
+            />
+          </QueryBuilderChakra>
+        </Theme>
+      </Provider>
       <h4>Query</h4>
       <pre>
         <code>{formatQuery(query, 'json')}</code>

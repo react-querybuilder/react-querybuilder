@@ -1,6 +1,23 @@
 ---
-title: Migrating to v7
+title: Migrating to v7 or v8
 ---
+
+:::info Regarding version 8
+
+React Query Builder version 8 is fully compatible with version 7 except for `@react-querybuilder/chakra` (see [Compatibility packages](./compat)). If you are not using `@react-querybuilder/chakra`, you can migrate from v7 to v8 with no code changes.
+
+<details>
+<summary>More information</summary>
+
+- `@react-querybuilder/chakra@7` supports Chakra UI version 2.
+- `@react-querybuilder/chakra@8` supports Chakra UI version 3.
+- [`@react-querybuilder/chakra2`](https://npmjs.com/package/@react-querybuilder/chakra2) is a fork of `@react-querybuilder/chakra@7.7.1` that will continue to support Chakra UI version 2 going forward.
+- React Query Builder version 8 would have been a small patch release to version 7 if not for the Chakra UI breaking changes.
+- Chakra UI version 3 required breaking changes in `@react-querybuilder/chakra`, which led to the major version bump of all packages since we maintain consistent version numbers across all packages.
+
+</details>
+
+:::
 
 Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-list-value-identifiers) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
 
@@ -354,20 +371,21 @@ Icon package: [`bootstrap-icons`](https://npmjs.com/package/bootstrap-icons)
 
 #### Chakra UI (`@react-querybuilder/chakra`)
 
-Icon package: [`@chakra-ui/icons`](https://npmjs.com/package/@chakra-ui/icons)
+Chakra UI published its own icon package for version 2 ([`@chakra-ui/icons`](https://npmjs.com/package/@chakra-ui/icons)), but recommends [`react-icons`](https://www.npmjs.com/package/react-icons) for version 3. `@react-querybuilder/chakra` version 8 has been updated accordingly, using icons from `react-icons/fa` by default.
 
-| Key                                    | Icon                  |
-| -------------------------------------- | --------------------- |
-| `translations.removeGroup.label`       | `<CloseIcon />`       |
-| `translations.removeRule.label`        | `<CloseIcon />`       |
-| `translations.cloneRuleGroup.label`    | `<CopyIcon />`        |
-| `translations.cloneRule.label`         | `<CopyIcon />`        |
-| `translations.lockGroup.label`         | `<UnlockIcon />`      |
-| `translations.lockRule.label`          | `<UnlockIcon />`      |
-| `translations.lockGroupDisabled.label` | `<LockIcon />`        |
-| `translations.lockRuleDisabled.label`  | `<LockIcon />`        |
-| `translations.shiftActionDown.label`   | `<ChevronDownIcon />` |
-| `translations.shiftActionUp.label`     | `<ChevronUpIcon />`   |
+| Key                                    | Chakra UI v2 Icon<br />_(`@react-querybuilder/chakra@7`,<br />`@react-querybuilder/chakra2@*`)_ | Chakra UI v3 Icon<br />_(`@react-querybuilder/chakra@8`)_ |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `translations.dragHandle.label`        | `<DragHandleIcon />`<br />_(via `ChakraDragHandle`, not `translations`)_                        | `<FaGripVertical />`                                      |
+| `translations.removeGroup.label`       | `<CloseIcon />`                                                                                 | `<FaTimes />`                                             |
+| `translations.removeRule.label`        | `<CloseIcon />`                                                                                 | `<FaTimes />`                                             |
+| `translations.cloneRuleGroup.label`    | `<CopyIcon />`                                                                                  | `<FaCopy />`                                              |
+| `translations.cloneRule.label`         | `<CopyIcon />`                                                                                  | `<FaCopy />`                                              |
+| `translations.lockGroup.label`         | `<UnlockIcon />`                                                                                | `<FaLockOpen />`                                          |
+| `translations.lockRule.label`          | `<UnlockIcon />`                                                                                | `<FaLockOpen />`                                          |
+| `translations.lockGroupDisabled.label` | `<LockIcon />`                                                                                  | `<FaLock />`                                              |
+| `translations.lockRuleDisabled.label`  | `<LockIcon />`                                                                                  | `<FaLock />`                                              |
+| `translations.shiftActionDown.label`   | `<ChevronDownIcon />`                                                                           | `<FaChevronDown />`                                       |
+| `translations.shiftActionUp.label`     | `<ChevronUpIcon />`                                                                             | `<FaChevronUp />`                                         |
 
 #### Fluent UI (`@react-querybuilder/fluent`)
 

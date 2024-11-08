@@ -19,7 +19,7 @@ export const defaultNotToggleProps: NotToggleProps = {
 
 export const testNotToggle = (NotToggle: React.ComponentType<NotToggleProps>): void => {
   const user = userEventSetup();
-  const title = NotToggle.name ?? 'NotToggle';
+  const title = NotToggle.displayName ?? NotToggle.name ?? 'NotToggle';
   const label = 'Not';
   const props = { ...defaultNotToggleProps, label, title };
 

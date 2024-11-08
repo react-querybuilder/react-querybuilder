@@ -17,8 +17,7 @@
 }
 
 .demoOptionCommands {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
   gap: var(--ifm-global-spacing);
   margin: var(--ifm-global-spacing) 0;
 }
@@ -37,6 +36,19 @@
 
 .demoImportCommands button {
   padding: 0.4rem;
+}
+
+.demoResponsiveContent {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--ifm-global-spacing);
+}
+
+@media screen and (min-width: 1400px) {
+  .demoResponsiveContent {
+    display: grid;
+    grid-template-columns: 1fr 250px;
+  }
 }
 
 .exportOptions {

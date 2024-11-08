@@ -104,7 +104,7 @@ function parseJsonLogic(
     if (outermost && !isPojo(logic)) {
       return false;
     }
-    const [key, keyValue] = Object.entries(logic)?.[0] ?? [];
+    const [key, keyValue] = Object.entries(logic || {})?.[0] ?? [];
 
     // Custom operations process logic
     if (jsonLogicOperations && objectKeys(jsonLogicOperations).includes(key)) {

@@ -1,4 +1,4 @@
-export default function CodeSandBoxLogo() {
+export default function CodeSandboxLogo() {
   return (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Open a live example in CodeSandbox</title>

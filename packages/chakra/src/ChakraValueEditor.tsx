@@ -1,7 +1,10 @@
-import { Checkbox, Input, Radio, RadioGroup, Stack, Switch, Textarea } from '@chakra-ui/react';
+import { Input, Stack, Textarea } from '@chakra-ui/react';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { ValueEditor, useValueEditor } from 'react-querybuilder';
+import { Checkbox } from './snippets/checkbox';
+import { Radio, RadioGroup } from './snippets/radio';
+import { Switch } from './snippets/switch';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
@@ -48,7 +51,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
             key={key}
             type={inputTypeCoerced}
             value={valueAsArray[i] ?? ''}
-            isDisabled={disabled}
+            disabled={disabled}
             className={valueListItemClassName}
             placeholder={placeHolderText}
             onChange={e => multiValueHandler(e.target.value, i)}
@@ -89,7 +92,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
         <Textarea
           value={value}
           title={title}
-          isDisabled={disabled}
+          disabled={disabled}
           className={className}
           placeholder={placeHolderText}
           onChange={e => handleOnChange(e.target.value)}
@@ -101,10 +104,11 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
       return (
         <Switch
           className={className}
-          isChecked={!!value}
+          checked={!!value}
           title={title}
-          isDisabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
+          disabled={disabled}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => handleOnChange(e.target.checked)}
           {...extraProps}
         />
       );
@@ -114,9 +118,10 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
         <Checkbox
           className={className}
           title={title}
-          isDisabled={disabled}
-          onChange={e => handleOnChange(e.target.checked)}
-          isChecked={!!value}
+          disabled={disabled}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => handleOnChange(e.target.checked)}
+          checked={!!value}
           {...extraProps}
         />
       );
@@ -127,8 +132,9 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           value={value}
-          onChange={handleOnChange}
-          isDisabled={disabled}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => handleOnChange(e.target.value)}
+          disabled={disabled}
           {...extraProps}>
           <Stack direction="row">
             {values.map(v => (
@@ -146,7 +152,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
       type={inputTypeCoerced}
       value={value}
       title={title}
-      isDisabled={disabled}
+      disabled={disabled}
       className={className}
       placeholder={placeHolderText}
       onChange={e => handleOnChange(e.target.value)}

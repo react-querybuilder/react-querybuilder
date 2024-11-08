@@ -16,7 +16,7 @@ export const testActionElement = (
   ActionElement: React.ComponentType<ActionWithRulesProps>
 ): void => {
   const user = userEventSetup();
-  const title = ActionElement.name ?? 'ActionElement';
+  const title = ActionElement.displayName ?? ActionElement.name ?? 'ActionElement';
   const props = { ...defaultActionElementProps, title };
   const dt: ActionWithRulesProps['disabledTranslation'] = { label: '🔒', title: 'Unlock' };
 

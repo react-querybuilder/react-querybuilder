@@ -1,10 +1,10 @@
+import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import type { Location } from 'history';
-import type { ChangeEvent } from 'react';
-import { useCallback, useId } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { styleNameArray, styleNameMap } from '../_constants';
 import type { StyleName } from '../_constants/types';
-import CodeSandBoxLogo from './Logo-CodeSandbox';
+import CodeSandboxLogo from './Logo-CodeSandbox';
 import StackBlitzLogo from './Logo-StackBlitz';
 import styles from './Nav.module.css';
 
@@ -29,12 +29,13 @@ const goToLink = (link: string) => {
 export default function Nav({ variant, compressedState }: NavProps) {
   const slId = useId();
   const siteLocation = useLocation();
+  const [copyPermalinkStatus, setCopyPermalinkStatus] = useState('');
 
   const goToStyle = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
+    (variant: StyleName) => {
       goToLink(
         getLink({
-          variant: e.target.value as StyleName,
+          variant,
           compressedState,
           siteLocation,
         })
@@ -43,40 +44,62 @@ export default function Nav({ variant, compressedState }: NavProps) {
     [compressedState, siteLocation]
   );
 
+  const onClickCopyPermalink = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `${location.origin}${siteLocation.pathname}#s=${compressedState}`
+      );
+      setCopyPermalinkStatus('✓');
+    } catch (e) {
+      console.error('Clipboard error', e);
+      setCopyPermalinkStatus('☹ Clipboard error!');
+    }
+    setTimeout(() => setCopyPermalinkStatus(''), 1214);
+  };
+
   return (
     <div className={styles.demoNav}>
       <div className={styles.demoNavPackageLinks}>
-        <a
-          href={`https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/${
-            variant === 'default' ? 'basic-ts' : variant
-          }?file=/src/App.tsx`}
+        <Link
+          href={`/sandbox?t=${variant === 'default' ? 'basic-ts' : variant}&p=codesandbox`}
           className="svg-font-color"
           target="_blank"
           rel="noreferrer"
           style={{ minWidth: '1rem' }}>
-          <CodeSandBoxLogo />
-        </a>
-        <a
-          href={`https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/${
-            variant === 'default' ? 'basic-ts' : variant
-          }?file=src/App.tsx`}
+          <CodeSandboxLogo />
+        </Link>
+        <Link
+          href={`/sandbox?t=${variant === 'default' ? 'basic-ts' : variant}&p=stackblitz`}
           className="svg-font-color"
           target="_blank"
           rel="noreferrer"
           style={{ minWidth: '1rem' }}>
           <StackBlitzLogo />
-        </a>
-        <a
-          href={getLink({ variant, compressedState, siteLocation })}
-          className={styles.smallerAnchor}
-          target="_blank"
-          rel="noreferrer">
-          Permalink
-        </a>
+        </Link>
+        <div className={styles.demoNavPermalink}>
+          <a
+            href={getLink({ variant, compressedState, siteLocation })}
+            className={styles.smallerAnchor}
+            target="_blank"
+            rel="noreferrer">
+            Permalink
+          </a>
+          <span
+            className={styles.demoNavPermalinkCopy}
+            onClick={onClickCopyPermalink}
+            title="Copy permalink">
+            ⧉
+          </span>
+          <span>{copyPermalinkStatus}</span>
+        </div>
       </div>
       <div className={styles.demoNavStyleLinks}>
-        <label htmlFor={slId}>Style library:</label>
-        <select name={slId} id={slId} value={variant} onChange={goToStyle}>
+        <label htmlFor={slId}>Style library</label>
+        <select
+          name={slId}
+          id={slId}
+          value={variant}
+          onChange={e => goToStyle(e.target.value as StyleName)}>
           {styleNameArray.map(s => (
             <option key={s} value={s}>
               {styleNameMap[s]}
@@ -84,6 +107,25 @@ export default function Nav({ variant, compressedState }: NavProps) {
           ))}
         </select>
       </div>
+      <nav className={styles.demoNavStyleTOC}>
+        <ul className="table-of-contents">
+          <li>
+            Style library
+            <ul>
+              {styleNameArray.map(s => (
+                <li key={s}>
+                  <Link
+                    href="#"
+                    onClick={() => goToStyle(s)}
+                    className={`table-of-contents__link toc-highlight ${s === variant ? 'table-of-contents__link--active' : ''}`}>
+                    {styleNameMap[s]}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
