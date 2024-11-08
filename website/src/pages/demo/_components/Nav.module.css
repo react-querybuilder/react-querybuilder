@@ -1,8 +1,16 @@
 .demoNav,
-.demoNavPackageLinks,
-.demoNavStyleLinks {
+.demoNavPackageLinks {
   display: flex;
   gap: var(--ifm-global-spacing);
+}
+
+.demoNavPermalink,
+.demoNavStyleLinks {
+  display: flex;
+  gap: calc(var(--ifm-global-spacing) / 4);
+}
+.demoNavPermalinkCopy:hover {
+  cursor: pointer;
 }
 
 .demoNav {
@@ -11,9 +19,31 @@
   font-size: smaller;
 }
 
+@media screen and (max-width: 1399px) {
+  .demoNavStyleTOC {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 966px) {
   .demoNav {
     flex-direction: column;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .demoNav {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .demoNavPackageLinks {
+    justify-content: space-between;
+  }
+  .demoNavPermalink {
+    margin-left: auto;
+  }
+  .demoNavStyleLinks {
+    display: none;
   }
 }
 

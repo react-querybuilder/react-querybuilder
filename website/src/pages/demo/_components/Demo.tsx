@@ -77,9 +77,6 @@ const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJSONata = `$contains(firstName, "Stev") and age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
 
-const permalinkText = 'Copy permalink';
-const permalinkCopiedText = 'Copied permalink';
-
 interface DemoProps {
   variant?: StyleName;
   queryWrapper?: React.ComponentType<{ children: React.ReactNode }>;
@@ -151,7 +148,6 @@ export default function Demo({
   const [celParseError, setCELParseError] = useState('');
   const [jsonata, setJSONata] = useState(initialJSONata);
   const [jsonataParseError, setJSONataParseError] = useState('');
-  const [copyPermalinkText, setCopyPermalinkText] = useState(permalinkText);
   const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
   const [exportCall, setExportCall] = useState('');
@@ -390,19 +386,6 @@ export default function Demo({
       })
     );
 
-  const getPermalinkCompressed = () =>
-    `${location.origin}${siteLocation.pathname}#s=${getCompressedState()}`;
-
-  const onClickCopyPermalink = async () => {
-    try {
-      await navigator.clipboard.writeText(getPermalinkCompressed());
-      setCopyPermalinkText(permalinkCopiedText);
-    } catch (e) {
-      console.error('Clipboard error', e);
-    }
-    setTimeout(() => setCopyPermalinkText(permalinkText), 1214);
-  };
-
   const commonRQBProps = useMemo((): CommonRQBProps => {
     const { independentCombinators: _ic, ...opts } = options;
     return {
@@ -463,20 +446,15 @@ export default function Demo({
           ))}
         </div>
         <div className={styles.demoOptionCommands}>
-          <div title="Reset the options above to their default values">
-            <button type="button" onClick={() => setOptions({ type: 'reset' })}>
-              Reset
-            </button>
-          </div>
           <div
-            title={`Enable all features except "${optionsMetadata.disabled.label}" and "${optionsMetadata.independentCombinators.label}"`}>
+            title={`Enable all features except "${optionsMetadata.disabled.label}", "${optionsMetadata.independentCombinators.label}", and "${optionsMetadata.suppressStandardClassnames.label}"`}>
             <button type="button" onClick={() => setOptions({ type: 'all' })}>
               Select all
             </button>
           </div>
-          <div title="Copy a URL that will load this demo with the same query and the options as currently set">
-            <button type="button" onClick={onClickCopyPermalink}>
-              {copyPermalinkText}
+          <div title="Reset the options above to their default values">
+            <button type="button" onClick={() => setOptions({ type: 'reset' })}>
+              Reset to defaults
             </button>
           </div>
         </div>
@@ -486,334 +464,336 @@ export default function Demo({
           </code>
         </div>
       </div>
-      <div
-        style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
-        <Nav variant={variant} compressedState={getCompressedState()} />
-        <div id={qbWrapperId} className={qbWrapperClassName}>
-          <QueryWrapper>
-            <QueryBuilderDnD>
-              {options.independentCombinators ? (
-                <QueryBuilder
-                  key="queryIC"
-                  {...commonRQBProps}
-                  query={queryIC}
-                  onQueryChange={setQueryIC}
-                />
-              ) : (
-                <QueryBuilder
-                  key="query"
-                  {...commonRQBProps}
-                  query={query}
-                  onQueryChange={setQuery}
-                />
-              )}
-            </QueryBuilderDnD>
-          </QueryWrapper>
-        </div>
-        <Tabs
-          defaultValue="code"
-          values={[
-            { value: 'code', label: 'Code' },
-            { value: 'export', label: 'Export' },
-            { value: 'import', label: 'Import' },
-          ]}>
-          <TabItem value="code" label="Code">
-            <Details summary={<summary>Dependencies</summary>}>
-              <Tabs>
-                <TabItem value="npm" label="npm">
-                  <CodeBlock language="shell">npm install {packageNames.join(' ')}</CodeBlock>
+      <div className={styles.demoResponsiveContent}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
+          <div id={qbWrapperId} className={qbWrapperClassName}>
+            <QueryWrapper>
+              <QueryBuilderDnD>
+                {options.independentCombinators ? (
+                  <QueryBuilder
+                    key="queryIC"
+                    {...commonRQBProps}
+                    query={queryIC}
+                    onQueryChange={setQueryIC}
+                  />
+                ) : (
+                  <QueryBuilder
+                    key="query"
+                    {...commonRQBProps}
+                    query={query}
+                    onQueryChange={setQuery}
+                  />
+                )}
+              </QueryBuilderDnD>
+            </QueryWrapper>
+          </div>
+          <Tabs
+            defaultValue="code"
+            values={[
+              { value: 'code', label: 'Code' },
+              { value: 'export', label: 'Export' },
+              { value: 'import', label: 'Import' },
+            ]}>
+            <TabItem value="code" label="Code">
+              <Details summary={<summary>Dependencies</summary>}>
+                <Tabs>
+                  <TabItem value="npm" label="npm">
+                    <CodeBlock language="shell">npm install {packageNames.join(' ')}</CodeBlock>
+                  </TabItem>
+                  <TabItem value="bun" label="Bun">
+                    <CodeBlock language="shell">bun add {packageNames.join(' ')}</CodeBlock>
+                  </TabItem>
+                  <TabItem value="yarn" label="Yarn">
+                    <CodeBlock language="shell">yarn add {packageNames.join(' ')}</CodeBlock>
+                  </TabItem>
+                  <TabItem value="pnpm" label="pnpm">
+                    <CodeBlock language="shell">pnpm add {packageNames.join(' ')}</CodeBlock>
+                  </TabItem>
+                </Tabs>
+              </Details>
+              <CodeBlock language="tsx" title="App.tsx">
+                {codeStringState}
+              </CodeBlock>
+              <Details summary={<summary>Styles</summary>}>
+                <div className={styles.exportOptions}>
+                  <label key="scss">
+                    <input
+                      type="radio"
+                      checked={styleLanguage === 'scss'}
+                      onChange={() => setStyleLanguage('scss')}
+                    />{' '}
+                    SCSS
+                  </label>
+                  <label key="css">
+                    <input
+                      type="radio"
+                      checked={styleLanguage === 'css'}
+                      onChange={() => setStyleLanguage('css')}
+                    />{' '}
+                    CSS
+                  </label>
+                </div>
+                <CodeBlock language={styleLanguage} title={`styles.${styleLanguage}`}>
+                  {extraStylesState[styleLanguage]}
+                </CodeBlock>
+              </Details>
+              <Details summary={<summary>Other files</summary>}>
+                <CodeBlock language="ts" title="fields.ts">
+                  {fieldsTsStringState}
+                </CodeBlock>
+                <CodeBlock language="ts" title="musicalInstruments.ts">
+                  {musicalInstrumentsTsStringState}
+                </CodeBlock>
+              </Details>
+            </TabItem>
+            <TabItem value="export" label="Export">
+              <Tabs
+                defaultValue="json"
+                values={[
+                  {
+                    value: 'json',
+                    label: 'JSON',
+                    attributes: getExportTabAttributes('json_without_ids', ['json']),
+                  },
+                  {
+                    value: 'sql',
+                    label: 'SQL',
+                    attributes: getExportTabAttributes('sql', [
+                      'parameterized',
+                      'parameterized_named',
+                    ]),
+                  },
+                  {
+                    value: 'mongodb',
+                    label: 'MongoDB',
+                    attributes: getExportTabAttributes('mongodb'),
+                  },
+                  { value: 'cel', label: 'CEL', attributes: getExportTabAttributes('cel') },
+                  { value: 'spel', label: 'SpEL', attributes: getExportTabAttributes('spel') },
+                  {
+                    value: 'jsonlogic',
+                    label: 'JsonLogic',
+                    attributes: getExportTabAttributes('jsonlogic'),
+                  },
+                  {
+                    value: 'elasticsearch',
+                    label: 'ElasticSearch',
+                    attributes: getExportTabAttributes('elasticsearch'),
+                  },
+                  {
+                    value: 'jsonata',
+                    label: 'JSONata',
+                    attributes: getExportTabAttributes('jsonata'),
+                  },
+                  {
+                    value: 'natural_language',
+                    label: 'Natural language',
+                    attributes: getExportTabAttributes('natural_language'),
+                  },
+                ]}>
+                <TabItem value="json">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="json" />
+                    <span>&nbsp;</span>
+                    <label key="json_without_ids">
+                      <input
+                        type="radio"
+                        checked={format === 'json_without_ids'}
+                        onChange={() => setFormat('json_without_ids')}
+                      />{' '}
+                      Without <code>id</code> or <code>path</code>
+                    </label>
+                    <label key="json">
+                      <input
+                        type="radio"
+                        checked={format === 'json'}
+                        onChange={() => setFormat('json')}
+                      />{' '}
+                      Full query object
+                    </label>
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
                 </TabItem>
-                <TabItem value="bun" label="Bun">
-                  <CodeBlock language="shell">bun add {packageNames.join(' ')}</CodeBlock>
+                <TabItem value="sql">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="sql" />
+                    <span>&nbsp;</span>
+                    <label key="sql">
+                      <input
+                        type="radio"
+                        checked={format === 'sql'}
+                        onChange={() => setFormat('sql')}
+                      />{' '}
+                      Inline
+                    </label>
+                    <label key="parameterized">
+                      <input
+                        type="radio"
+                        checked={'parameterized' === format}
+                        onChange={() => setFormat('parameterized')}
+                      />{' '}
+                      Parameterized
+                    </label>
+                    <label key="parameterized_named">
+                      <input
+                        type="radio"
+                        checked={'parameterized_named' === format}
+                        onChange={() => setFormat('parameterized_named')}
+                      />{' '}
+                      Named parameters
+                    </label>
+                    <div>
+                      <label>
+                        Dialect{' '}
+                        <Link
+                          href="/docs/utils/export#presets"
+                          title="Click for documentation"
+                          style={{ textDecoration: 'none' }}>
+                          {infoChar}
+                        </Link>{' '}
+                        <select
+                          value={sqlDialect}
+                          onChange={e => setSQLDialect(e.target.value as SQLPreset)}>
+                          <option value="ansi">ANSI (default)</option>
+                          <option value="mssql">SQL Server</option>
+                          <option value="mysql">MySQL</option>
+                          <option value="oracle">Oracle</option>
+                          <option value="postgresql">PostgreSQL</option>
+                          <option value="sqlite">SQLite</option>
+                        </select>
+                      </label>
+                    </div>
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
                 </TabItem>
-                <TabItem value="yarn" label="Yarn">
-                  <CodeBlock language="shell">yarn add {packageNames.join(' ')}</CodeBlock>
+                <TabItem value="mongodb">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="mongodb" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
                 </TabItem>
-                <TabItem value="pnpm" label="pnpm">
-                  <CodeBlock language="shell">pnpm add {packageNames.join(' ')}</CodeBlock>
+                <TabItem value="cel">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="cel" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="spel">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="spel" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="jsonlogic">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="jsonlogic" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="elasticsearch">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="elasticsearch" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="jsonata">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="jsonata" />
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="natural_language">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="natural_language" />
+                  </div>
+                  {exportPresentation}
                 </TabItem>
               </Tabs>
-            </Details>
-            <CodeBlock language="tsx" title="App.tsx">
-              {codeStringState}
-            </CodeBlock>
-            <Details summary={<summary>Styles</summary>}>
-              <div className={styles.exportOptions}>
-                <label key="scss">
-                  <input
-                    type="radio"
-                    checked={styleLanguage === 'scss'}
-                    onChange={() => setStyleLanguage('scss')}
-                  />{' '}
-                  SCSS
-                </label>
-                <label key="css">
-                  <input
-                    type="radio"
-                    checked={styleLanguage === 'css'}
-                    onChange={() => setStyleLanguage('css')}
-                  />{' '}
-                  CSS
-                </label>
-              </div>
-              <CodeBlock language={styleLanguage} title={`styles.${styleLanguage}`}>
-                {extraStylesState[styleLanguage]}
-              </CodeBlock>
-            </Details>
-            <Details summary={<summary>Other files</summary>}>
-              <CodeBlock language="ts" title="fields.ts">
-                {fieldsTsStringState}
-              </CodeBlock>
-              <CodeBlock language="ts" title="musicalInstruments.ts">
-                {musicalInstrumentsTsStringState}
-              </CodeBlock>
-            </Details>
-          </TabItem>
-          <TabItem value="export" label="Export">
-            <Tabs
-              defaultValue="json"
-              values={[
-                {
-                  value: 'json',
-                  label: 'JSON',
-                  attributes: getExportTabAttributes('json_without_ids', ['json']),
-                },
-                {
-                  value: 'sql',
-                  label: 'SQL',
-                  attributes: getExportTabAttributes('sql', [
-                    'parameterized',
-                    'parameterized_named',
-                  ]),
-                },
-                {
-                  value: 'mongodb',
-                  label: 'MongoDB',
-                  attributes: getExportTabAttributes('mongodb'),
-                },
-                { value: 'cel', label: 'CEL', attributes: getExportTabAttributes('cel') },
-                { value: 'spel', label: 'SpEL', attributes: getExportTabAttributes('spel') },
-                {
-                  value: 'jsonlogic',
-                  label: 'JsonLogic',
-                  attributes: getExportTabAttributes('jsonlogic'),
-                },
-                {
-                  value: 'elasticsearch',
-                  label: 'ElasticSearch',
-                  attributes: getExportTabAttributes('elasticsearch'),
-                },
-                {
-                  value: 'jsonata',
-                  label: 'JSONata',
-                  attributes: getExportTabAttributes('jsonata'),
-                },
-                {
-                  value: 'natural_language',
-                  label: 'Natural language',
-                  attributes: getExportTabAttributes('natural_language'),
-                },
-              ]}>
-              <TabItem value="json">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="json" />
-                  <span>&nbsp;</span>
-                  <label key="json_without_ids">
-                    <input
-                      type="radio"
-                      checked={format === 'json_without_ids'}
-                      onChange={() => setFormat('json_without_ids')}
-                    />{' '}
-                    Without <code>id</code> or <code>path</code>
-                  </label>
-                  <label key="json">
-                    <input
-                      type="radio"
-                      checked={format === 'json'}
-                      onChange={() => setFormat('json')}
-                    />{' '}
-                    Full query object
-                  </label>
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="sql">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="sql" />
-                  <span>&nbsp;</span>
-                  <label key="sql">
-                    <input
-                      type="radio"
-                      checked={format === 'sql'}
-                      onChange={() => setFormat('sql')}
-                    />{' '}
-                    Inline
-                  </label>
-                  <label key="parameterized">
-                    <input
-                      type="radio"
-                      checked={'parameterized' === format}
-                      onChange={() => setFormat('parameterized')}
-                    />{' '}
-                    Parameterized
-                  </label>
-                  <label key="parameterized_named">
-                    <input
-                      type="radio"
-                      checked={'parameterized_named' === format}
-                      onChange={() => setFormat('parameterized_named')}
-                    />{' '}
-                    Named parameters
-                  </label>
-                  <div>
-                    <label>
-                      Dialect{' '}
-                      <Link
-                        href="/docs/utils/export#presets"
-                        title="Click for documentation"
-                        style={{ textDecoration: 'none' }}>
-                        {infoChar}
-                      </Link>{' '}
-                      <select
-                        value={sqlDialect}
-                        onChange={e => setSQLDialect(e.target.value as SQLPreset)}>
-                        <option value="ansi">ANSI (default)</option>
-                        <option value="mssql">SQL Server</option>
-                        <option value="mysql">MySQL</option>
-                        <option value="oracle">Oracle</option>
-                        <option value="postgresql">PostgreSQL</option>
-                        <option value="sqlite">SQLite</option>
-                      </select>
-                    </label>
-                  </div>
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="mongodb">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="mongodb" />
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="cel">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="cel" />
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="spel">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="spel" />
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="jsonlogic">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="jsonlogic" />
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="elasticsearch">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="elasticsearch" />
-                  {parseNumbersOption}
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="jsonata">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="jsonata" />
-                </div>
-                {exportPresentation}
-              </TabItem>
-              <TabItem value="natural_language">
-                <div className={styles.exportOptions}>
-                  <ExportInfoLinks format="natural_language" />
-                </div>
-                {exportPresentation}
-              </TabItem>
-            </Tabs>
-          </TabItem>
-          <TabItem value="import">
-            <Tabs
-              defaultValue="sql"
-              values={[
-                { value: 'sql', label: 'SQL' },
-                { value: 'mongodb', label: 'MongoDB' },
-                { value: 'jsonlogic', label: 'JsonLogic' },
-                { value: 'spel', label: 'SpEL' },
-                { value: 'cel', label: 'CEL' },
-                { value: 'jsonata', label: 'JSONata' },
-              ]}>
-              <TabItem value="sql">
-                <ImportTab
-                  heading="Import SQL"
-                  code={sql}
-                  setCode={setSQL}
-                  error={sqlParseError}
-                  loadQueryFromCode={loadFromSQL}
-                  notes={notesSQL}
-                />
-              </TabItem>
-              <TabItem value="mongodb">
-                <ImportTab
-                  heading="Import MongoDB"
-                  code={mongoDB}
-                  setCode={setMongoDB}
-                  error={mongoDbParseError}
-                  loadQueryFromCode={loadFromMongoDB}
-                  notes={notesMongoDB}
-                />
-              </TabItem>
-              <TabItem value="jsonlogic">
-                <ImportTab
-                  heading="Import JsonLogic"
-                  code={jsonLogic}
-                  setCode={setJsonLogic}
-                  error={jsonLogicParseError}
-                  loadQueryFromCode={loadFromJsonLogic}
-                  notes={notesJsonLogic}
-                />
-              </TabItem>
-              <TabItem value="spel">
-                <ImportTab
-                  heading="Import SpEL"
-                  code={spel}
-                  setCode={setSpEL}
-                  error={spelParseError}
-                  loadQueryFromCode={loadFromSpEL}
-                  notes={notesSpEL}
-                />
-              </TabItem>
-              <TabItem value="cel">
-                <ImportTab
-                  heading="Import CEL"
-                  code={cel}
-                  setCode={setCEL}
-                  error={celParseError}
-                  loadQueryFromCode={loadFromCEL}
-                  notes={notesCEL}
-                />
-              </TabItem>
-              <TabItem value="jsonata">
-                <ImportTab
-                  heading="Import JSONata"
-                  code={jsonata}
-                  setCode={setJSONata}
-                  error={jsonataParseError}
-                  loadQueryFromCode={loadFromJSONata}
-                  notes={notesJSONata}
-                />
-              </TabItem>
-            </Tabs>
-          </TabItem>
-        </Tabs>
+            </TabItem>
+            <TabItem value="import">
+              <Tabs
+                defaultValue="sql"
+                values={[
+                  { value: 'sql', label: 'SQL' },
+                  { value: 'mongodb', label: 'MongoDB' },
+                  { value: 'jsonlogic', label: 'JsonLogic' },
+                  { value: 'spel', label: 'SpEL' },
+                  { value: 'cel', label: 'CEL' },
+                  { value: 'jsonata', label: 'JSONata' },
+                ]}>
+                <TabItem value="sql">
+                  <ImportTab
+                    heading="Import SQL"
+                    code={sql}
+                    setCode={setSQL}
+                    error={sqlParseError}
+                    loadQueryFromCode={loadFromSQL}
+                    notes={notesSQL}
+                  />
+                </TabItem>
+                <TabItem value="mongodb">
+                  <ImportTab
+                    heading="Import MongoDB"
+                    code={mongoDB}
+                    setCode={setMongoDB}
+                    error={mongoDbParseError}
+                    loadQueryFromCode={loadFromMongoDB}
+                    notes={notesMongoDB}
+                  />
+                </TabItem>
+                <TabItem value="jsonlogic">
+                  <ImportTab
+                    heading="Import JsonLogic"
+                    code={jsonLogic}
+                    setCode={setJsonLogic}
+                    error={jsonLogicParseError}
+                    loadQueryFromCode={loadFromJsonLogic}
+                    notes={notesJsonLogic}
+                  />
+                </TabItem>
+                <TabItem value="spel">
+                  <ImportTab
+                    heading="Import SpEL"
+                    code={spel}
+                    setCode={setSpEL}
+                    error={spelParseError}
+                    loadQueryFromCode={loadFromSpEL}
+                    notes={notesSpEL}
+                  />
+                </TabItem>
+                <TabItem value="cel">
+                  <ImportTab
+                    heading="Import CEL"
+                    code={cel}
+                    setCode={setCEL}
+                    error={celParseError}
+                    loadQueryFromCode={loadFromCEL}
+                    notes={notesCEL}
+                  />
+                </TabItem>
+                <TabItem value="jsonata">
+                  <ImportTab
+                    heading="Import JSONata"
+                    code={jsonata}
+                    setCode={setJSONata}
+                    error={jsonataParseError}
+                    loadQueryFromCode={loadFromJSONata}
+                    notes={notesJSONata}
+                  />
+                </TabItem>
+              </Tabs>
+            </TabItem>
+          </Tabs>
+        </div>
+        <Nav variant={variant} compressedState={getCompressedState()} />
       </div>
     </div>
   );
