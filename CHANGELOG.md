@@ -7,20 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- N/A
+
+## [v8.0.0] - 2024-11-08
+
 ### Changed
 
-- `@react-querybuilder/chakra` now supports Chakra UI version 3 and no longer supports version 2. For Chakra UI version 2 support, use `@react-querybuilder/chakra2`.
-- `ChakraDragHandle` has been removed. In Chakra UI version 3 environments, the default `DragHandle` component works without augmentation.
+- [#805] `@react-querybuilder/chakra` now supports Chakra UI version 3 and no longer supports version 2. For Chakra UI version 2 support, use `@react-querybuilder/chakra2`.
+- [#805] `ChakraDragHandle` has been removed. In Chakra UI version 3 environments, the default `DragHandle` component works without augmentation.
 
 ### Added
 
-- Debug build which registers the internal Redux store with Redux DevTools (more "debug" functionality may be added in the future). To use the debug build, update all `"react-querybuilder"` imports to `"react-querybuilder/debug"`.
+- [#814] Debug build which registers the internal Redux store with Redux DevTools (more "debug" functionality may be added in the future). To use the debug build, update all `"react-querybuilder"` imports to `"react-querybuilder/debug"`.
 
 ### Fixed
 
-- The internal Redux store is no longer registered with Redux DevTools by default.
+- [#814] The internal Redux store is no longer registered with Redux DevTools by default.
 - `bootstrapClassnames` no longer includes `value: "form-control form-control-sm"`. The classes are added by `BootstrapValueEditor` only when necessary.
-- `@react-querybuilder/bulma` properly indicates compatibility with Bulma v1 in its `peerDependencies`, and the website demo now uses Bulma v1.
+- [#812] `@react-querybuilder/bulma` properly indicates compatibility with Bulma v1 in its `peerDependencies`, and the website demo now uses Bulma v1.
 
 ## [v7.7.1] - 2024-10-21
 
@@ -1795,12 +1799,16 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#786]: https://github.com/react-querybuilder/react-querybuilder/pull/786
 [#791]: https://github.com/react-querybuilder/react-querybuilder/pull/791
 [#796]: https://github.com/react-querybuilder/react-querybuilder/pull/796
+[#805]: https://github.com/react-querybuilder/react-querybuilder/pull/805
+[#812]: https://github.com/react-querybuilder/react-querybuilder/pull/812
+[#814]: https://github.com/react-querybuilder/react-querybuilder/pull/814
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.0.0...HEAD
+[v8.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.1...v8.0.0
 [v7.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.0...v7.7.1
 [v7.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.1...v7.7.0
 [v7.6.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.0...v7.6.1
