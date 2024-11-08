@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/material",
   "description": "Custom MUI (Material Design) components for react-querybuilder",
-  "version": "8.0.0-alpha.0",
+  "version": "8.0.0",
   "publishConfig": {
     "access": "public"
   },
@@ -62,7 +62,7 @@
     "@vitejs/plugin-react": "^4.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-querybuilder": "8.0.0-alpha.0",
+    "react-querybuilder": "8.0.0",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.6.3",
@@ -74,6 +74,6 @@
     "@mui/icons-material": ">=5",
     "@mui/material": ">=5",
     "react": ">=18",
-    "react-querybuilder": "8.0.0-alpha.0"
+    "react-querybuilder": "8.0.0"
   }
 }
