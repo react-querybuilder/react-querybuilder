@@ -373,19 +373,19 @@ Icon package: [`bootstrap-icons`](https://npmjs.com/package/bootstrap-icons)
 
 Chakra UI published its own icon package for version 2 ([`@chakra-ui/icons`](https://npmjs.com/package/@chakra-ui/icons)), but recommends [`react-icons`](https://www.npmjs.com/package/react-icons) for version 3. `@react-querybuilder/chakra` version 8 has been updated accordingly, using icons from `react-icons/fa` by default.
 
-| Key                                    | Chakra UI v2 Icon<br>_(`@react-querybuilder/chakra@7`,<br>`@react-querybuilder/chakra2@*`)_ | Chakra UI v3 Icon<br>_(`@react-querybuilder/chakra@8`)_ |
-| -------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `translations.dragHandle.label`        | `<DragHandleIcon />`<br>_(via `ChakraDragHandle`, not `translations`)_                      | `<FaGripVertical />`                                    |
-| `translations.removeGroup.label`       | `<CloseIcon />`                                                                             | `<FaTimes />`                                           |
-| `translations.removeRule.label`        | `<CloseIcon />`                                                                             | `<FaTimes />`                                           |
-| `translations.cloneRuleGroup.label`    | `<CopyIcon />`                                                                              | `<FaCopy />`                                            |
-| `translations.cloneRule.label`         | `<CopyIcon />`                                                                              | `<FaCopy />`                                            |
-| `translations.lockGroup.label`         | `<UnlockIcon />`                                                                            | `<FaLockOpen />`                                        |
-| `translations.lockRule.label`          | `<UnlockIcon />`                                                                            | `<FaLockOpen />`                                        |
-| `translations.lockGroupDisabled.label` | `<LockIcon />`                                                                              | `<FaLock />`                                            |
-| `translations.lockRuleDisabled.label`  | `<LockIcon />`                                                                              | `<FaLock />`                                            |
-| `translations.shiftActionDown.label`   | `<ChevronDownIcon />`                                                                       | `<FaChevronDown />`                                     |
-| `translations.shiftActionUp.label`     | `<ChevronUpIcon />`                                                                         | `<FaChevronUp />`                                       |
+| Key                                    | Chakra UI v2 Icon<br />_(`@react-querybuilder/chakra@7`,<br />`@react-querybuilder/chakra2@*`)_ | Chakra UI v3 Icon<br />_(`@react-querybuilder/chakra@8`)_ |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `translations.dragHandle.label`        | `<DragHandleIcon />`<br />_(via `ChakraDragHandle`, not `translations`)_                        | `<FaGripVertical />`                                      |
+| `translations.removeGroup.label`       | `<CloseIcon />`                                                                                 | `<FaTimes />`                                             |
+| `translations.removeRule.label`        | `<CloseIcon />`                                                                                 | `<FaTimes />`                                             |
+| `translations.cloneRuleGroup.label`    | `<CopyIcon />`                                                                                  | `<FaCopy />`                                              |
+| `translations.cloneRule.label`         | `<CopyIcon />`                                                                                  | `<FaCopy />`                                              |
+| `translations.lockGroup.label`         | `<UnlockIcon />`                                                                                | `<FaLockOpen />`                                          |
+| `translations.lockRule.label`          | `<UnlockIcon />`                                                                                | `<FaLockOpen />`                                          |
+| `translations.lockGroupDisabled.label` | `<LockIcon />`                                                                                  | `<FaLock />`                                              |
+| `translations.lockRuleDisabled.label`  | `<LockIcon />`                                                                                  | `<FaLock />`                                              |
+| `translations.shiftActionDown.label`   | `<ChevronDownIcon />`                                                                           | `<FaChevronDown />`                                       |
+| `translations.shiftActionUp.label`     | `<ChevronUpIcon />`                                                                             | `<FaChevronUp />`                                         |
 
 #### Fluent UI (`@react-querybuilder/fluent`)
 
