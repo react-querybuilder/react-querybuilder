@@ -1,4 +1,4 @@
-.rqb-mantine {
+.rqb-mantine.donut-hole {
   *,
   *::before,
   *::after {
@@ -2825,7 +2825,7 @@ fieldset:disabled .m_d3ea56bb,
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: calc(0.015625rem * var(--mantine-scale));
-  cursor: inherit;
+  cursor: default;
   text-overflow: ellipsis;
   overflow: hidden;
   color: var(--badge-color);
@@ -2833,15 +2833,18 @@ fieldset:disabled .m_d3ea56bb,
   border: var(--badge-bd);
 }
 
-.m_347db0ec:where([data-with-right-section]) {
-  grid-template-columns: 1fr auto;
-}
-
 .m_347db0ec:where([data-with-left-section], [data-variant='dot']) {
   grid-template-columns: auto 1fr;
 }
 
-.m_347db0ec:where([data-with-left-section][data-with-right-section]) {
+.m_347db0ec:where([data-with-right-section]) {
+  grid-template-columns: 1fr auto;
+}
+
+.m_347db0ec:where(
+    [data-with-left-section][data-with-right-section],
+    [data-variant='dot'][data-with-right-section]
+  ) {
   grid-template-columns: auto 1fr auto;
 }
 
@@ -2887,6 +2890,7 @@ fieldset:disabled .m_d3ea56bb,
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+  cursor: inherit;
 }
 
 .m_91fdda9b {
@@ -3224,7 +3228,7 @@ fieldset:disabled .m_d3ea56bb,
   display: flex;
 }
 
-.m_80d6d844 :where(*):focus {
+.m_80d6d844 :where(.m_77c9d27d):focus {
   position: relative;
   z-index: 1;
 }
@@ -6086,7 +6090,6 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
   height: var(--slider-size);
   width: var(--slider-size);
   border-radius: calc(62.5rem * var(--mantine-scale));
-  transform: translateX(calc(var(--slider-size) / -2));
   background-color: var(--mantine-color-white);
   pointer-events: none;
 }

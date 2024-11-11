@@ -18,9 +18,8 @@ export default defineConfig(async options => {
     if (bc === buildConfig.at(-1)) {
       const onSuccess = bc.onSuccess as () => Promise<void>;
       bc.onSuccess = async () => {
-        // Call original onSuccess first to write the non-debug index
+        // Call original `onSuccess` first to write the non-debug index
         await onSuccess();
-        console.log(entryKey);
         await getCjsIndexWriter('react-querybuilder', true)();
       };
     }
@@ -45,6 +44,17 @@ export default defineConfig(async options => {
       sourcemap: true,
       format: 'cjs',
       onSuccess: async () => {
+        // Write /debug/package.json for node10 resolution
+        await mkdir('debug', { recursive: true });
+        await Bun.write(
+          'debug/package.json',
+          JSON.stringify(
+            { main: '../dist/cjs/debug.js', types: '../dist/types/index.debug.d.ts' },
+            null,
+            2
+          )
+        );
+        // Write the other {util}/package.json's for node10 resolution
         await Promise.all(
           Object.keys(utilEntryPoints).map(async util => {
             await mkdir(util, { recursive: true });
