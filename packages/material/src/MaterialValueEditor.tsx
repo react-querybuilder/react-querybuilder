@@ -25,7 +25,6 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     type,
     path,
     level,
-    inputType,
     values = [],
     listsAsArrays,
     separator,
@@ -35,12 +34,18 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     selectorComponent: SelectorComponent = props.schema.controls
       .valueSelector as typeof MaterialValueSelector,
     extraProps,
+    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = propsForValueEditor;
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
-  const { valueAsArray, multiValueHandler, parseNumberMethod, valueListItemClassName } =
-    useValueEditor(propsForValueEditor);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    parseNumberMethod,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(propsForValueEditor);
 
   const masterKey = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
@@ -63,7 +68,6 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
   if (
     (operator === 'between' || operator === 'notBetween') &&

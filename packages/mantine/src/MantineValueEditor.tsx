@@ -22,7 +22,6 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
     title,
     className,
     type,
-    inputType,
     values = [],
     listsAsArrays,
     separator,
@@ -32,18 +31,19 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     validation: _validation,
     extraProps,
+    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
+  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
+    useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
   if (
     (operator === 'between' || operator === 'notBetween') &&
