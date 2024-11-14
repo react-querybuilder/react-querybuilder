@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -19,6 +20,7 @@ import type {
   SQLPreset,
   ValidationMap,
   ValidationResult,
+  ValueProcessorByRule,
 } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
@@ -43,8 +45,8 @@ import {
   numerifyValues,
 } from './utils';
 
-const sqlDialectPresets = {
-  ansi: {},
+export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
+  ansi: {}, // This should always be empty
   sqlite: {
     paramsKeepPrefix: true,
   },
@@ -62,7 +64,60 @@ const sqlDialectPresets = {
     numberedParams: true,
     paramPrefix: '$',
   },
-} satisfies Record<SQLPreset, FormatQueryOptions>;
+};
+
+const defaultRuleProcessors = {
+  natural_language: defaultRuleProcessorNL,
+  mongodb: defaultRuleProcessorMongoDB,
+  parameterized: defaultRuleProcessorParameterized,
+  parameterized_named: defaultRuleProcessorParameterized,
+  cel: defaultRuleProcessorCEL,
+  spel: defaultRuleProcessorSpEL,
+  jsonlogic: defaultRuleProcessorJsonLogic,
+  elasticsearch: defaultRuleProcessorElasticSearch,
+  jsonata: defaultRuleProcessorJSONata,
+  json: defaultRuleProcessorSQL,
+  json_without_ids: defaultRuleProcessorSQL,
+  sql: defaultRuleProcessorSQL,
+} satisfies Record<ExportFormat, RuleProcessor>;
+
+const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
+  cel: '1 == 1',
+  mongodb: '"$and":[{"$expr":true}]',
+  natural_language: '1 is 1',
+  spel: '1 == 1',
+  sql: '(1 = 1)',
+};
+
+type MostFormatQueryOptions = SetOptional<
+  Required<FormatQueryOptions>,
+  'fallbackExpression' | 'ruleProcessor' | 'validator' | 'valueProcessor'
+>;
+
+const defaultFormatQueryOptions = {
+  format: 'json',
+  fields: [] as FullOptionList<FullField>,
+  quoteFieldNamesWith: ['', ''],
+  fieldIdentifierSeparator: '',
+  getOperators: () => [] as FullOptionList<FullOperator>,
+  paramPrefix: ':',
+  paramsKeepPrefix: false,
+  numberedParams: false,
+  parseNumbers: false,
+  placeholderFieldName: defaultPlaceholderFieldName,
+  placeholderOperatorName: defaultPlaceholderOperatorName,
+  quoteValuesWith: "'",
+  concatOperator: '||',
+  preset: 'ansi',
+} satisfies MostFormatQueryOptions;
+
+const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
+  format === 'mongodb' ||
+  format === 'cel' ||
+  format === 'spel' ||
+  format === 'jsonlogic' ||
+  format === 'elasticsearch' ||
+  format === 'jsonata';
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -137,117 +192,73 @@ function formatQuery(
   }
 ): string;
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
-  let format: ExportFormat = 'json';
-  let valueProcessorInternal = defaultValueProcessorByRule;
-  let ruleProcessorInternal: RuleProcessor | null = null;
-  let quoteFieldNamesWith: [string, string] = ['', ''];
-  let fieldIdentifierSeparator: string = '';
-  let validator: QueryValidator = () => true;
-  let fields: FullOptionList<FullField> = [];
-  let getOperators: (
-    field: string,
-    misc: { fieldData: FullField }
-  ) => FullOptionList<FullOperator> | null = () => [];
-  let validationMap: ValidationMap = {};
-  let fallbackExpression = '';
-  let paramPrefix = ':';
-  let paramsKeepPrefix = false;
-  let numberedParams = false;
-  let parseNumbers = false;
-  let placeholderFieldName: string = defaultPlaceholderFieldName;
-  let placeholderOperatorName: string = defaultPlaceholderOperatorName;
-  let quoteValuesWith = "'";
-  let concatOperator = '||';
+  const optObj: MostFormatQueryOptions = {
+    ...defaultFormatQueryOptions,
+    ...(sqlDialectPresets[(options as FormatQueryOptions).preset ?? 'ansi'] ?? null),
+    ...(typeof options === 'string' ? { format: options } : options),
+    ...(typeof options !== 'string' &&
+      !options.format &&
+      (Object.keys(sqlDialectPresets).includes(options.preset ?? '') ? { format: 'sql' } : null)),
+  };
 
-  if (typeof options === 'string') {
-    format = options.toLowerCase() as ExportFormat;
-    switch (format) {
-      case 'natural_language':
-        ruleProcessorInternal = defaultRuleProcessorNL;
-        break;
-      case 'mongodb':
-        ruleProcessorInternal = defaultRuleProcessorMongoDB;
-        break;
-      case 'parameterized':
-        ruleProcessorInternal = defaultRuleProcessorParameterized;
-        break;
-      case 'parameterized_named':
-        ruleProcessorInternal = defaultRuleProcessorParameterized;
-        break;
-      case 'cel':
-        ruleProcessorInternal = defaultRuleProcessorCEL;
-        break;
-      case 'spel':
-        ruleProcessorInternal = defaultRuleProcessorSpEL;
-        break;
-      case 'jsonlogic':
-        ruleProcessorInternal = defaultRuleProcessorJsonLogic;
-        break;
-      case 'elasticsearch':
-        ruleProcessorInternal = defaultRuleProcessorElasticSearch;
-        break;
-      case 'jsonata':
-        ruleProcessorInternal = defaultRuleProcessorJSONata;
-        break;
-      default:
-    }
-  } else {
-    const optionsWithPresets = {
-      ...(sqlDialectPresets[options.preset ?? 'ansi'] ?? null),
-      ...options,
-    };
-    format = (optionsWithPresets.format ?? 'json').toLowerCase() as ExportFormat;
-    const { valueProcessor = null, ruleProcessor = null } = optionsWithPresets;
-    if (typeof ruleProcessor === 'function') {
-      ruleProcessorInternal = ruleProcessor;
-    }
-    valueProcessorInternal =
-      typeof valueProcessor === 'function'
-        ? (r, opts) =>
-            isValueProcessorLegacy(valueProcessor)
-              ? valueProcessor(r.field, r.operator, r.value, r.valueSource)
-              : valueProcessor(r, opts)
-        : format === 'natural_language'
-          ? defaultValueProcessorNL
-          : format === 'mongodb'
-            ? (ruleProcessorInternal ?? defaultRuleProcessorMongoDB)
-            : format === 'cel'
-              ? (ruleProcessorInternal ?? defaultRuleProcessorCEL)
-              : format === 'spel'
-                ? (ruleProcessorInternal ?? defaultRuleProcessorSpEL)
-                : format === 'jsonlogic'
-                  ? (ruleProcessorInternal ?? defaultRuleProcessorJsonLogic)
-                  : format === 'elasticsearch'
-                    ? (ruleProcessorInternal ?? defaultRuleProcessorElasticSearch)
-                    : format === 'jsonata'
-                      ? (ruleProcessorInternal ?? defaultRuleProcessorJSONata)
-                      : defaultValueProcessorByRule;
-    quoteFieldNamesWith = getQuoteFieldNamesWithArray(optionsWithPresets.quoteFieldNamesWith);
-    fieldIdentifierSeparator = optionsWithPresets.fieldIdentifierSeparator ?? '';
-    validator = optionsWithPresets.validator ?? (() => true);
-    fields = toFullOptionList(optionsWithPresets.fields ?? []);
-    getOperators = (f, m) => toFullOptionList(optionsWithPresets.getOperators?.(f, m) ?? []);
-    fallbackExpression = optionsWithPresets.fallbackExpression ?? '';
-    paramPrefix = optionsWithPresets.paramPrefix ?? ':';
-    paramsKeepPrefix = !!optionsWithPresets.paramsKeepPrefix;
-    numberedParams = !!optionsWithPresets.numberedParams;
-    parseNumbers = !!optionsWithPresets.parseNumbers;
-    placeholderFieldName = optionsWithPresets.placeholderFieldName ?? defaultPlaceholderFieldName;
-    placeholderOperatorName =
-      optionsWithPresets.placeholderOperatorName ?? defaultPlaceholderOperatorName;
-    quoteValuesWith = optionsWithPresets.quoteValuesWith ?? "'";
-    concatOperator = optionsWithPresets.concatOperator ?? '||';
-  }
-  if (!fallbackExpression) {
-    fallbackExpression =
-      format === 'mongodb'
-        ? '"$and":[{"$expr":true}]'
-        : format === 'cel' || format === 'spel'
-          ? '1 == 1'
-          : format === 'natural_language'
-            ? '1 is 1'
-            : '(1 = 1)';
-  }
+  const {
+    fallbackExpression: optionFallbackExpression,
+    getOperators: optionGetOperators,
+    parseNumbers,
+    placeholderFieldName,
+    placeholderOperatorName,
+    quoteFieldNamesWith: optionQuoteFieldNamesWith,
+    ruleProcessor: optionRuleProcessor,
+    validator,
+    valueProcessor: optionValueProcessor,
+  } = optObj;
+
+  const format = optObj.format.toLowerCase() as ExportFormat;
+
+  const valueProcessor: ValueProcessorByRule =
+    typeof optionValueProcessor === 'function'
+      ? isValueProcessorLegacy(optionValueProcessor)
+        ? r => optionValueProcessor(r.field, r.operator, r.value, r.valueSource)
+        : optionValueProcessor
+      : format === 'natural_language'
+        ? defaultValueProcessorNL
+        : valueProcessorCanActAsRuleProcessor(format)
+          ? (optionRuleProcessor ?? defaultRuleProcessors[format])
+          : defaultValueProcessorByRule;
+
+  const ruleProcessor =
+    (typeof optionRuleProcessor === 'function' ? optionRuleProcessor : null) ??
+    (valueProcessorCanActAsRuleProcessor(format) &&
+    typeof optionRuleProcessor !== 'function' &&
+    optionValueProcessor
+      ? valueProcessor
+      : null) ??
+    defaultRuleProcessors[format] ??
+    defaultRuleProcessorSQL;
+
+  const quoteFieldNamesWith = getQuoteFieldNamesWithArray(optionQuoteFieldNamesWith);
+  const fields = toFullOptionList(optObj.fields) as FullOptionList<FullField>;
+  const getOperators: FormatQueryOptions['getOperators'] = (f, m) =>
+    toFullOptionList(optionGetOperators(f, m) ?? /* istanbul ignore next */ []);
+
+  const fallbackExpression =
+    optionFallbackExpression ??
+    defaultFallbackExpressions[format] ??
+    defaultFallbackExpressions.sql!;
+
+  const finalOptions: Required<Omit<FormatQueryOptions, 'valueProcessor' | 'validator'>> & {
+    valueProcessor: ValueProcessorByRule;
+    validator?: QueryValidator;
+  } = {
+    ...optObj,
+    fallbackExpression,
+    fields,
+    format,
+    getOperators,
+    quoteFieldNamesWith,
+    ruleProcessor,
+    valueProcessor,
+  };
 
   // #region JSON
   if (format === 'json' || format === 'json_without_ids') {
@@ -263,10 +274,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   // #endregion
 
   // #region Validation
+  let validationMap: ValidationMap = {};
+
   // istanbul ignore else
   if (typeof validator === 'function') {
     const validationResult = validator(ruleGroup);
     if (typeof validationResult === 'boolean') {
+      // istanbul ignore else
       if (validationResult === false) {
         return format === 'parameterized'
           ? { sql: fallbackExpression, params: [] }
@@ -347,31 +361,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         const fieldData = getOption(fields, rule.field);
 
-        // Use custom rule processor if provided...
-        if (typeof ruleProcessorInternal === 'function') {
-          return ruleProcessorInternal(rule, {
-            parseNumbers,
-            escapeQuotes,
-            quoteFieldNamesWith,
-            fieldIdentifierSeparator,
-            fieldData,
-            format,
-            quoteValuesWith,
-            concatOperator,
-          });
-        }
-        // ...otherwise use default rule processor and pass in the value
-        // processor (which may be custom)
-        return defaultRuleProcessorSQL(rule, {
-          parseNumbers,
+        return ruleProcessor(rule, {
+          ...finalOptions,
           escapeQuotes,
-          valueProcessor: valueProcessorInternal,
-          quoteFieldNamesWith,
-          fieldIdentifierSeparator,
           fieldData,
-          format,
-          quoteValuesWith,
-          concatOperator,
         });
       });
 
@@ -422,34 +415,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         ([...fieldParams.entries()] as [string, Set<string>][]).map(([f, s]) => [f, [...s]])
       );
 
-      const processedRule = (
-        typeof ruleProcessorInternal === 'function'
-          ? ruleProcessorInternal
-          : defaultRuleProcessorParameterized
-      )(
+      const processedRule = ruleProcessor(
         rule,
-        {
-          getNextNamedParam,
-          fieldParamNames,
-          parseNumbers,
-          quoteFieldNamesWith,
-          concatOperator,
-          fieldIdentifierSeparator,
-          fieldData,
-          format,
-          paramPrefix,
-          paramsKeepPrefix,
-          numberedParams,
-          fallbackExpression,
-          valueProcessor: valueProcessorInternal,
-          fields,
-          placeholderFieldName,
-          placeholderOperatorName,
-          validator,
-        },
-        {
-          processedParams: params,
-        }
+        { ...finalOptions, getNextNamedParam, fieldParamNames, fieldData },
+        { processedParams: params }
       );
 
       if (!isPojo(processedRule)) {
@@ -540,10 +509,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
           const fieldData = getOption(fields, rule.field);
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
-            parseNumbers,
+          return ruleProcessor(rule, {
+            ...finalOptions,
             fieldData,
-            format,
           });
         })
         .filter(Boolean);
@@ -585,11 +553,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
           const fieldData = getOption(fields, rule.field);
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
-            parseNumbers,
+          return ruleProcessor(rule, {
+            ...finalOptions,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
-            format,
           });
         })
         .filter(Boolean)
@@ -632,11 +599,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
           const fieldData = getOption(fields, rule.field);
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
-            parseNumbers,
+          return ruleProcessor(rule, {
+            ...finalOptions,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
-            format,
           });
         })
         .filter(Boolean)
@@ -675,13 +641,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
           const fieldData = getOption(fields, rule.field);
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
-            parseNumbers,
+          return ruleProcessor(rule, {
+            ...finalOptions,
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
-            format,
-            quoteFieldNamesWith,
-            fieldIdentifierSeparator,
           });
         })
         .filter(Boolean)
@@ -719,10 +682,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
-            parseNumbers,
+          return ruleProcessor(rule, {
+            ...finalOptions,
             fieldData,
-            format,
           });
         })
         .filter(Boolean);
@@ -766,10 +728,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return (ruleProcessorInternal ?? valueProcessorInternal)(rule, {
-            parseNumbers,
+          return ruleProcessor(rule, {
+            ...finalOptions,
             fieldData,
-            format,
           });
         })
         .filter(Boolean);
@@ -826,35 +787,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         const fieldData = getOption(fields, rule.field);
 
-        // Use custom rule processor if provided...
-        if (typeof ruleProcessorInternal === 'function') {
-          return ruleProcessorInternal(rule, {
-            fields,
-            parseNumbers,
-            escapeQuotes,
-            quoteFieldNamesWith,
-            fieldIdentifierSeparator,
-            fieldData,
-            format,
-            quoteValuesWith,
-            concatOperator,
-            getOperators,
-          });
-        }
-        // ...otherwise use default rule processor and pass in the value
-        // processor (which may be custom)
-        return defaultRuleProcessorNL(rule, {
-          fields,
-          parseNumbers,
+        return ruleProcessor(rule, {
+          ...finalOptions,
           escapeQuotes,
-          valueProcessor: valueProcessorInternal,
-          quoteFieldNamesWith,
-          fieldIdentifierSeparator,
           fieldData,
-          format,
-          quoteValuesWith,
-          concatOperator,
-          getOperators,
         });
       });
 

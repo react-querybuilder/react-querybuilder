@@ -35,12 +35,12 @@ export interface FormatQueryOptions {
   /**
    * This function will be used to process the `value` from each rule
    * for query language formats. If not defined, the appropriate
-   * `defaultValueProcessor` for the format will be used.
+   * `defaultValueProcessor*` for the format will be used.
    */
   valueProcessor?: ValueProcessorLegacy | ValueProcessorByRule;
   /**
    * This function will be used to process each rule for query language
-   * formats. If not defined, the appropriate `defaultRuleProcessor`
+   * formats. If not defined, the appropriate `defaultRuleProcessor*`
    * for the format will be used.
    */
   ruleProcessor?: RuleProcessor;
@@ -202,12 +202,6 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    */
   fieldData?: FullField;
   /**
-   * Included for the "parameterized" format only. Represents the total number of
-   * parameters for all query rules processed up to that point.
-   */
-  // TODO: Is this actually useful?
-  // paramCount?: number;
-  /**
    * Included for the "parameterized_named" format only. Keys of this object represent
    * field names and values represent the current list of parameter names for that
    * field based on the query rules processed up to that point. Use this list to
@@ -219,6 +213,11 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    * field name to get a unique parameter name, as yet unused during query processing.
    */
   getNextNamedParam?: (field: string) => string;
+  /**
+   * Additional prefix and suffix characters to wrap the value in. Useful for augmenting
+   * the default value processor results with special syntax (e.g., for dates).
+   */
+  wrapValueWith?: [string, string];
 }
 
 /**

@@ -11,6 +11,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { formatQuery } from './formatQuery';
 import {
@@ -23,7 +24,6 @@ import {
   queryWithValueSourceField,
 } from './formatQueryTestUtils';
 import { defaultValueProcessor, defaultValueProcessorByRule } from './index';
-import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 
 export const sqlString =
   "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and isLucky = FALSE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
@@ -92,6 +92,11 @@ it('formats SQL correctly', () => {
   expect(formatQuery(query, { format: 'sql', valueProcessor: defaultValueProcessor })).toBe(
     sqlString
   );
+});
+
+it('assumes "sql" format when preset matches a SQL preset', () => {
+  expect(formatQuery(query, { preset: 'ansi' })).toBe(sqlString);
+  expect(formatQuery(query, { preset: 'sqlite' })).toBe(sqlString);
 });
 
 it('formats parameterized SQL correctly', () => {
