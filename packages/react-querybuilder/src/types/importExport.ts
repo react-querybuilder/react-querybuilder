@@ -215,9 +215,12 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
   getNextNamedParam?: (field: string) => string;
   /**
    * Additional prefix and suffix characters to wrap the value in. Useful for augmenting
-   * the default value processor results with special syntax (e.g., for dates).
+   * the default value processor results with special syntax (e.g., for dates or function
+   * calls).
    */
   wrapValueWith?: [string, string];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: Record<string, any>;
 }
 
 /**
@@ -259,8 +262,12 @@ export type ValueProcessor = ValueProcessorLegacy;
 export type RuleProcessor = (
   rule: RuleType,
   options?: ValueProcessorOptions,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  meta?: { processedParams?: Record<string, any> | any[] }
+  meta?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    processedParams?: Record<string, any> | any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context?: Record<string, any>;
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ) => any;
 
