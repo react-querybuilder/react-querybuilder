@@ -35,6 +35,7 @@
     "@react-querybuilder/bootstrap": "workspace:*",
     "@react-querybuilder/bulma": "workspace:*",
     "@react-querybuilder/chakra": "workspace:*",
+    "@react-querybuilder/datetime": "workspace:*",
     "@react-querybuilder/dnd": "workspace:*",
     "@react-querybuilder/fluent": "workspace:*",
     "@react-querybuilder/mantine": "workspace:*",

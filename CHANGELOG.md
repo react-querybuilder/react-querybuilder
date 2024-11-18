@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+### Added
+
+- New `@react-querybuilder/datetime` package with enhanced functionality for date and time fields. Includes components `DateValueEditor` and `DateTimeValueEditor`, as well as `formatQuery` rule/value processors tailored to different database platforms.
+- `formatQuery` will assume a format of "sql" if no format is provided as long as `preset` matches one of the supported values.
+- New `formatQuery` option `wrapValueWith`, an array of two strings to act as a prefix and suffix for values (outside of any quotes).
+- `formatQuery` value processors now accept an optional `context` parameter, which can be used to pass additional information to the processor.
 
 ## [v8.0.0] - 2024-11-08
 

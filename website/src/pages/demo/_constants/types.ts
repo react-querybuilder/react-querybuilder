@@ -27,7 +27,8 @@ export type DemoOption =
   | 'parseNumbers'
   | 'justifiedLayout'
   | 'showBranches'
-  | 'suppressStandardClassnames';
+  | 'suppressStandardClassnames'
+  | 'useDateTimePackage';
 
 export type DemoOptions = Record<DemoOption, boolean>;
 
@@ -39,7 +40,11 @@ export type CommonRQBProps = Pick<
   | 'validator'
   | Exclude<
       DemoOption,
-      'validateQuery' | 'independentCombinators' | 'justifiedLayout' | 'showBranches'
+      | 'validateQuery'
+      | 'independentCombinators'
+      | 'justifiedLayout'
+      | 'showBranches'
+      | 'useDateTimePackage'
     >
 > & { independentCombinators?: boolean; justifiedLayout?: boolean };
 

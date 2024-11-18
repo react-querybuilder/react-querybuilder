@@ -24,6 +24,7 @@
       "@react-querybuilder/bootstrap": ["../packages/bootstrap/src"],
       "@react-querybuilder/bulma": ["../packages/bulma/src"],
       "@react-querybuilder/chakra": ["../packages/chakra/src"],
+      "@react-querybuilder/datetime": ["../packages/datetime/src"],
       "@react-querybuilder/dnd": ["../packages/dnd/src"],
       "@react-querybuilder/fluent": ["../packages/fluent/src"],
       "@react-querybuilder/mantine": ["../packages/mantine/src"],
