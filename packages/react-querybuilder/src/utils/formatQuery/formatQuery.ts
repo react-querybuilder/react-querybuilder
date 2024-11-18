@@ -336,45 +336,45 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
-      const processedRules = rg.rules.map(rule => {
-        // Independent combinators
-        if (typeof rule === 'string') {
-          return rule;
-        }
+      const processedRules = rg.rules
+        .map(rule => {
+          // Independent combinators
+          if (typeof rule === 'string') {
+            return rule;
+          }
 
-        // Groups
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(rule, rg.rules.length === 1);
-        }
+          // Groups
+          if (isRuleGroup(rule)) {
+            return processRuleGroup(rule, rg.rules.length === 1);
+          }
 
-        // Basic rule validation
-        const [validationResult, fieldValidator] = validateRule(rule);
-        if (
-          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-          rule.field === placeholderFieldName ||
-          rule.operator === placeholderOperatorName
-        ) {
-          return '';
-        }
+          // Basic rule validation
+          const [validationResult, fieldValidator] = validateRule(rule);
+          if (
+            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+            rule.field === placeholderFieldName ||
+            rule.operator === placeholderOperatorName
+          ) {
+            return '';
+          }
 
-        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
+          const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
 
-        const fieldData = getOption(fields, rule.field);
+          const fieldData = getOption(fields, rule.field);
 
-        return ruleProcessor(rule, {
-          ...finalOptions,
-          escapeQuotes,
-          fieldData,
-        });
-      });
+          return ruleProcessor(rule, {
+            ...finalOptions,
+            escapeQuotes,
+            fieldData,
+          });
+        })
+        .filter(Boolean);
 
       if (processedRules.length === 0) {
         return fallbackExpression;
       }
 
-      return `${rg.not ? 'NOT ' : ''}(${processedRules
-        .filter(Boolean)
-        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
+      return `${rg.not ? 'NOT ' : ''}(${processedRules.join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
     };
 
     return processRuleGroup(ruleGroup, true);
@@ -451,23 +451,23 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
-      const processedRules = rg.rules.map(rule => {
-        if (typeof rule === 'string') {
-          return rule;
-        }
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(rule, rg.rules.length === 1);
-        }
-        return processRule(rule);
-      });
+      const processedRules = rg.rules
+        .map(rule => {
+          if (typeof rule === 'string') {
+            return rule;
+          }
+          if (isRuleGroup(rule)) {
+            return processRuleGroup(rule, rg.rules.length === 1);
+          }
+          return processRule(rule);
+        })
+        .filter(Boolean);
 
       if (processedRules.length === 0) {
         return fallbackExpression;
       }
 
-      return `${rg.not ? 'NOT ' : ''}(${processedRules
-        .filter(Boolean)
-        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
+      return `${rg.not ? 'NOT ' : ''}(${processedRules.join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
     };
 
     if (parameterized) {

@@ -490,7 +490,7 @@ describe('ruleProcessor', () => {
       const ruleProcessor: RuleProcessor = () => 'invalid';
       expect(
         formatQuery(queryForRuleProcessor, { format: 'parameterized', ruleProcessor })
-      ).toEqual({ sql: '()', params: [] }); // Is '()' right/acceptable?
+      ).toEqual({ sql: '(1 = 1)', params: [] });
     });
   });
 
@@ -515,7 +515,7 @@ describe('ruleProcessor', () => {
       const ruleProcessor: RuleProcessor = () => 'invalid';
       expect(
         formatQuery(queryForRuleProcessor, { format: 'parameterized_named', ruleProcessor })
-      ).toEqual({ sql: '()', params: {} }); // Is '()' right/acceptable?
+      ).toEqual({ sql: '(1 = 1)', params: {} });
     });
   });
 });
