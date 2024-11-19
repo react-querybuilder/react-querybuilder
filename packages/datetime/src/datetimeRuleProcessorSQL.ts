@@ -76,7 +76,7 @@ const presetToValueProcessorMap = {
   sqlite: datetimeValueProcessorANSI,
 } satisfies Record<SQLPreset, DateTimeValueProcessor>;
 
-export const datetimeRuleProcessor: RuleProcessor = (rule, options) => {
+export const datetimeRuleProcessorSQL: RuleProcessor = (rule, options) => {
   const opts = options ?? /* istanbul ignore next */ {};
   const operator = mapSQLOperator(rule.operator);
   const operatorLowerCase = operator.toLowerCase();

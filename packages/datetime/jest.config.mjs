@@ -4,5 +4,9 @@ import common from '../../jest.common.mjs';
 export default {
   ...common,
   displayName: 'datetime',
-  testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
+  testPathIgnorePatterns: [
+    ...(common.testPathIgnorePatterns ?? []),
+    'dbquery.postgres',
+    'dbquery.sqlite',
+  ],
 };
