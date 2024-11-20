@@ -14,7 +14,7 @@ export default defineConfig(async options => {
       bc.onSuccess = async () => {
         // Call original `onSuccess` first to write the non-debug index
         await onSuccess();
-        for await (const util of ['dayjs', 'date-fns']) {
+        for await (const util of ['dayjs', 'date-fns', 'luxon']) {
           getCjsIndexWriter('react-querybuilder_datetime', util)();
         }
       };

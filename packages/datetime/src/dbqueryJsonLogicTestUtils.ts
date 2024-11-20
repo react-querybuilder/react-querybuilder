@@ -18,7 +18,6 @@ import type { RQBDateTimeOperators } from './types';
 const musicianRecords = CREATE_MUSICIANS_TABLE('jsonlogic');
 
 export function runJsonLogicTests(operators: RQBDateTimeOperators): void {
-  const ops = jsonLogicDateTimeOperators(operators);
   const today = operators.format(new Date(), operators.iso8601DateOnly);
   const comparisonYearBefore = operators.format(
     comparisonDate
@@ -28,7 +27,7 @@ export function runJsonLogicTests(operators: RQBDateTimeOperators): void {
     operators.iso8601DateOnly
   );
 
-  for (const [op, func] of Object.entries(ops)) {
+  for (const [op, func] of Object.entries(jsonLogicDateTimeOperators(operators))) {
     add_operation(op, func);
   }
 
@@ -44,6 +43,7 @@ export function runJsonLogicTests(operators: RQBDateTimeOperators): void {
       if (expectedLastName === 'all') {
         expect(result).toHaveLength(musicianRecords.length);
       } else {
+        expect(result).toHaveLength(1);
         expect(result[0].last_name).toBe(expectedLastName);
       }
     });

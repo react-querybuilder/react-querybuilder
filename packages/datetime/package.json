@@ -38,6 +38,16 @@
         "types": "./dist/types/index.dayjs.d.ts",
         "default": "./dist/cjs/dayjs.js"
       }
+    },
+    "./luxon": {
+      "import": {
+        "types": "./dist/types-esm/index.luxon.d.mts",
+        "default": "./dist/react-querybuilder_datetime.luxon.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.luxon.d.ts",
+        "default": "./dist/cjs/luxon.js"
+      }
     }
   },
   "types": "./dist/types/index.d.ts",
@@ -70,11 +80,13 @@
     "@electric-sql/pglite": "^0.2.12",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.1",
+    "@types/luxon": "^3.4.2",
     "@types/react": "^18.3.12",
     "@vitejs/plugin-react": "^4.3.3",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "json-logic-js": "^2.0.5",
+    "luxon": "^3.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-querybuilder": "8.0.0",
@@ -86,13 +98,17 @@
     "react": ">=18",
     "react-querybuilder": "8.0.0",
     "date-fns": "^4.1.0",
-    "dayjs": "^1.11.13"
+    "dayjs": "^1.11.13",
+    "luxon": "^3.5.0"
   },
   "peerDependenciesMeta": {
     "date-fns": {
       "optional": true
     },
     "dayjs": {
+      "optional": true
+    },
+    "luxon": {
       "optional": true
     }
   }

@@ -1,8 +1,6 @@
 import { formatQuery, type RuleGroupType, type SQLPreset } from 'react-querybuilder';
-import { fields } from './dbqueryTestUtils';
 import { datetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
-import { rqbDateTimeOperatorsDayjs } from './operators.dayjs';
-import { rqbDateTimeOperatorsDateFns } from './operators.date-fns';
+import { dateLibraryFunctions, fields } from './dbqueryTestUtils';
 
 const now = new Date().toISOString();
 const nowOracle = now.replace('T', ' ').replace('Z', ' UTC');
@@ -64,30 +62,30 @@ const testCases: Record<string, [RuleGroupType, Record<SQLPreset, string>]> = {
   ],
 };
 
-for (const [testCase, [query, presets]] of Object.entries(testCases)) {
-  describe(`case: ${testCase}`, () => {
-    for (const [preset, expected] of Object.entries(presets) as [SQLPreset, string][]) {
-      for (const [libName, ops] of [
-        ['Day.js', rqbDateTimeOperatorsDayjs],
-        ['date-fns', rqbDateTimeOperatorsDateFns],
-      ] as const)
-        test(`${preset} (${libName})`, () => {
-          const fieldsMapped =
-            preset === 'mssql'
-              ? fields.map(f =>
-                  typeof f.datatype === 'string'
-                    ? { ...f, datatype: f.datatype.replace(/.*timestamp.*/i, 'datetimeoffset') }
-                    : f
-                )
-              : fields;
-          expect(
-            formatQuery(query, {
-              preset,
-              fields: fieldsMapped,
-              ruleProcessor: datetimeRuleProcessorSQL(ops),
-            })
-          ).toBe(expected);
-        });
+for (const [libName, ops] of dateLibraryFunctions) {
+  describe(libName, () => {
+    for (const [testCase, [query, presets]] of Object.entries(testCases)) {
+      describe(`case: ${testCase}`, () => {
+        for (const [preset, expected] of Object.entries(presets) as [SQLPreset, string][]) {
+          test(preset, () => {
+            const fieldsMapped =
+              preset === 'mssql'
+                ? fields.map(f =>
+                    typeof f.datatype === 'string'
+                      ? { ...f, datatype: f.datatype.replace(/.*timestamp.*/i, 'datetimeoffset') }
+                      : f
+                  )
+                : fields;
+            expect(
+              formatQuery(query, {
+                preset,
+                fields: fieldsMapped,
+                ruleProcessor: datetimeRuleProcessorSQL(ops),
+              })
+            ).toBe(expected);
+          });
+        }
+      });
     }
   });
 }
