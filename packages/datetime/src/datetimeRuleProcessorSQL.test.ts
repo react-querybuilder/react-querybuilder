@@ -62,7 +62,7 @@ const testCases: Record<string, [RuleGroupType, Record<SQLPreset, string>]> = {
   ],
 };
 
-for (const [libName, ops] of dateLibraryFunctions) {
+for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
     for (const [testCase, [query, presets]] of Object.entries(testCases)) {
       describe(`case: ${testCase}`, () => {
@@ -80,7 +80,7 @@ for (const [libName, ops] of dateLibraryFunctions) {
               formatQuery(query, {
                 preset,
                 fields: fieldsMapped,
-                ruleProcessor: datetimeRuleProcessorSQL(ops),
+                ruleProcessor: datetimeRuleProcessorSQL(apiFns),
               })
             ).toBe(expected);
           });

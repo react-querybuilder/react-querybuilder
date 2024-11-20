@@ -4,7 +4,7 @@ import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import {
   datetimeRuleProcessorJsonLogic,
-  jsonLogicDateTimeOperators,
+  jsonLogicDateTimeOperations,
 } from './datetimeRuleProcessorJsonLogic';
 import {
   comparisonDate,
@@ -13,21 +13,21 @@ import {
   fields,
   testCases,
 } from './dbqueryTestUtils';
-import type { RQBDateTimeOperators } from './types';
+import type { RQBDateTimeLibraryAPI } from './types';
 
 const musicianRecords = CREATE_MUSICIANS_TABLE('jsonlogic');
 
-export function runJsonLogicTests(operators: RQBDateTimeOperators): void {
-  const today = operators.format(new Date(), operators.iso8601DateOnly);
-  const comparisonYearBefore = operators.format(
+export function runJsonLogicTests(apiFns: RQBDateTimeLibraryAPI): void {
+  const today = apiFns.format(new Date(), apiFns.iso8601DateOnly);
+  const comparisonYearBefore = apiFns.format(
     comparisonDate
       .split('-')
       .map((v, i) => `${parseInt(v, 10) - (i === 0 ? 1 : 0)}`.padStart(2, '0'))
       .join('-'),
-    operators.iso8601DateOnly
+    apiFns.iso8601DateOnly
   );
 
-  for (const [op, func] of Object.entries(jsonLogicDateTimeOperators(operators))) {
+  for (const [op, func] of Object.entries(jsonLogicDateTimeOperations(apiFns))) {
     add_operation(op, func);
   }
 

@@ -1,4 +1,4 @@
 import { runJsonLogicTests } from './dbqueryJsonLogicTestUtils';
-import { rqbDateTimeOperatorsLuxon } from './operators.luxon';
+import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.luxon';
 
-runJsonLogicTests(rqbDateTimeOperatorsLuxon);
+runJsonLogicTests(rqbDateTimeLibraryAPI);

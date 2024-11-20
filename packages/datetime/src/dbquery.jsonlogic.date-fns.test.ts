@@ -1,4 +1,4 @@
 import { runJsonLogicTests } from './dbqueryJsonLogicTestUtils';
-import { rqbDateTimeOperatorsDateFns } from './operators.date-fns';
+import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.date-fns';
 
-runJsonLogicTests(rqbDateTimeOperatorsDateFns);
+runJsonLogicTests(rqbDateTimeLibraryAPI);

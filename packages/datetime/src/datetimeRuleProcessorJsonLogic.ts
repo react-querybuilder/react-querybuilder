@@ -2,8 +2,8 @@ import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from 'react-que
 import { defaultRuleProcessorJsonLogic, toArray } from 'react-querybuilder';
 import type {
   RQBDateTimeJsonLogic,
-  RQBDateTimeOperators,
-  RQBJsonLogicDateTimeOperators,
+  RQBDateTimeLibraryAPI,
+  RQBJsonLogicDateTimeOperations,
 } from './types';
 
 const dateOperationMap = {
@@ -69,11 +69,11 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
   return defaultRuleProcessorJsonLogic(rule, options);
 };
 
-export const jsonLogicDateTimeOperators = ({
+export const jsonLogicDateTimeOperations = ({
   isAfter,
   isBefore,
   isSame,
-}: RQBDateTimeOperators): RQBJsonLogicDateTimeOperators => ({
+}: RQBDateTimeLibraryAPI): RQBJsonLogicDateTimeOperations => ({
   dateAfter: (a, b) => isAfter(a, b),
   dateBefore: (a, b) => isBefore(a, b),
   dateBetween: (a, b, c) =>

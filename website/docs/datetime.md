@@ -27,13 +27,13 @@ The `datetimeRuleProcessorSQL` rule processor will produce different output base
 
 ### JsonLogic
 
-The `datetimeRuleProcessorJsonLogic` rule processor produces custom JsonLogic operations to indicate that rules should be handled as date/time values. As with [`jsonLogicAdditionalOperators`](./utils/export#jsonlogic) from the `react-querybuilder` package, the date/time package provides an easy way to add support for its custom operations with the `jsonLogicDateTimeOperators` object.
+The `datetimeRuleProcessorJsonLogic` rule processor produces custom JsonLogic operations to indicate that rules should be handled as date/time values. As with [`jsonLogicAdditionalOperators`](./utils/export#jsonlogic) from the `react-querybuilder` package, the date/time package provides an easy way to add support for its custom operations with the `jsonLogicDateTimeOperations` object.
 
 ```ts
 import { add_operation, apply } from 'json-logic-js';
-import { jsonLogicDateTimeOperators } from '@react-querybuilder/datetime/dayjs';
+import { jsonLogicDateTimeOperations } from '@react-querybuilder/datetime/dayjs';
 
-for (const [op, func] of Object.entries(jsonLogicDateTimeOperators)) {
+for (const [op, func] of Object.entries(jsonLogicDateTimeOperations)) {
   add_operation(op, func);
 }
 ```

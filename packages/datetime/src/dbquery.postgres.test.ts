@@ -38,14 +38,14 @@ afterAll(async () => {
   await db.close();
 });
 
-for (const [libName, ops] of dateLibraryFunctions) {
+for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
     for (const [testCaseName, testCase] of Object.entries(testCases)) {
       test(testCaseName, async () => {
         const sql = formatQuery(testCase[0], {
           preset: 'postgresql',
           fields,
-          ruleProcessor: datetimeRuleProcessorSQL(ops),
+          ruleProcessor: datetimeRuleProcessorSQL(apiFns),
         });
         const { rows: result } = await db.query<Result>(`${sqlBase} ${sql}`);
         if (testCase[1] === 'all') {

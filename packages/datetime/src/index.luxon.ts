@@ -1,5 +1,5 @@
 import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
-import { jsonLogicDateTimeOperators as get_jsonLogicDateTimeOperators } from './datetimeRuleProcessorJsonLogic';
+import { jsonLogicDateTimeOperations as get_jsonLogicDateTimeOperations } from './datetimeRuleProcessorJsonLogic';
 import {
   datetimeRuleProcessorSQL as get_datetimeRuleProcessorSQL,
   datetimeValueProcessorANSI as get_datetimeValueProcessorANSI,
@@ -8,25 +8,25 @@ import {
   datetimeValueProcessorOracle as get_datetimeValueProcessorOracle,
   datetimeValueProcessorPostgreSQL as get_datetimeValueProcessorPostgreSQL,
 } from './datetimeRuleProcessorSQL';
-import { rqbDateTimeOperatorsLuxon } from './operators.luxon';
-import type { RQBJsonLogicDateTimeOperators } from './types';
+import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.luxon';
+import type { RQBJsonLogicDateTimeOperations } from './types';
 
-export const jsonLogicDateTimeOperators: RQBJsonLogicDateTimeOperators =
-  get_jsonLogicDateTimeOperators(rqbDateTimeOperatorsLuxon);
+export const jsonLogicDateTimeOperations: RQBJsonLogicDateTimeOperations =
+  get_jsonLogicDateTimeOperations(rqbDateTimeLibraryAPI);
 export { datetimeRuleProcessorJsonLogic } from './datetimeRuleProcessorJsonLogic';
 
 export const datetimeRuleProcessorSQL: RuleProcessor =
-  get_datetimeRuleProcessorSQL(rqbDateTimeOperatorsLuxon);
+  get_datetimeRuleProcessorSQL(rqbDateTimeLibraryAPI);
 export const datetimeValueProcessorANSI: ValueProcessorByRule =
-  get_datetimeValueProcessorANSI(rqbDateTimeOperatorsLuxon);
+  get_datetimeValueProcessorANSI(rqbDateTimeLibraryAPI);
 export const datetimeValueProcessorMSSQL: ValueProcessorByRule =
-  get_datetimeValueProcessorMSSQL(rqbDateTimeOperatorsLuxon);
+  get_datetimeValueProcessorMSSQL(rqbDateTimeLibraryAPI);
 export const datetimeValueProcessorMySQL: ValueProcessorByRule =
-  get_datetimeValueProcessorMySQL(rqbDateTimeOperatorsLuxon);
+  get_datetimeValueProcessorMySQL(rqbDateTimeLibraryAPI);
 export const datetimeValueProcessorOracle: ValueProcessorByRule =
-  get_datetimeValueProcessorOracle(rqbDateTimeOperatorsLuxon);
+  get_datetimeValueProcessorOracle(rqbDateTimeLibraryAPI);
 export const datetimeValueProcessorPostgreSQL: ValueProcessorByRule =
-  get_datetimeValueProcessorPostgreSQL(rqbDateTimeOperatorsLuxon);
+  get_datetimeValueProcessorPostgreSQL(rqbDateTimeLibraryAPI);
 
-export * from './operators.luxon';
+export * from './rqbDateTimeLibraryAPI.luxon';
 export * from './types';

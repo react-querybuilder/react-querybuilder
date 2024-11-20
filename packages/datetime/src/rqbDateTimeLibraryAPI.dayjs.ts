@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import type { RQBDateTimeOperators } from './types';
+import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly } from './utils';
 
-export const rqbDateTimeOperatorsDayjs: RQBDateTimeOperators = {
+export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   iso8601DateOnly: 'YYYY-MM-DD',
   format: (a, f) => dayjs(a).format(f),
   isAfter: (a, b) => dayjs(a).isAfter(b),

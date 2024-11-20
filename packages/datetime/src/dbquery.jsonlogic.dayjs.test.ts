@@ -1,4 +1,4 @@
 import { runJsonLogicTests } from './dbqueryJsonLogicTestUtils';
-import { rqbDateTimeOperatorsDayjs } from './operators.dayjs';
+import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.dayjs';
 
-runJsonLogicTests(rqbDateTimeOperatorsDayjs);
+runJsonLogicTests(rqbDateTimeLibraryAPI);

@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
-import type { RQBDateTimeOperators } from './types';
+import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly } from './utils';
 
 const toDateTime = (a: string | Date) =>
   typeof a === 'string' ? DateTime.fromISO(a) : DateTime.fromJSDate(a);
 const iso8601DateOnly = 'yyyy-MM-dd';
 
-export const rqbDateTimeOperatorsLuxon: RQBDateTimeOperators = {
+export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   iso8601DateOnly,
   format: (a, f) => toDateTime(a).toFormat(f.replace('YYYY-MM-DD', iso8601DateOnly)),
   isAfter: (a, b) => toDateTime(a) > toDateTime(b),

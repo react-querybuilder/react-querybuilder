@@ -1,13 +1,13 @@
 import type { Field, RuleGroupType } from 'react-querybuilder';
-import { rqbDateTimeOperatorsDateFns } from './operators.date-fns';
-import { rqbDateTimeOperatorsDayjs } from './operators.dayjs';
-import { rqbDateTimeOperatorsLuxon } from './operators.luxon';
-import type { RQBDateTimeOperators } from './types';
+import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDateFns } from './rqbDateTimeLibraryAPI.date-fns';
+import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDayjs } from './rqbDateTimeLibraryAPI.dayjs';
+import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPILuxon } from './rqbDateTimeLibraryAPI.luxon';
+import type { RQBDateTimeLibraryAPI } from './types';
 
-export const dateLibraryFunctions: [string, RQBDateTimeOperators][] = [
-  ['Day.js', rqbDateTimeOperatorsDayjs],
-  ['date-fns', rqbDateTimeOperatorsDateFns],
-  ['luxon', rqbDateTimeOperatorsLuxon],
+export const dateLibraryFunctions: [string, RQBDateTimeLibraryAPI][] = [
+  ['Day.js', rqbDateTimeLibraryAPIDayjs],
+  ['date-fns', rqbDateTimeLibraryAPIDateFns],
+  ['Luxon', rqbDateTimeLibraryAPILuxon],
 ];
 
 export const comparisonDate = '1957-01-01';

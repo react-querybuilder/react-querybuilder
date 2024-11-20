@@ -6,11 +6,11 @@ import {
   mapSQLOperator,
   toArray,
 } from 'react-querybuilder';
-import type { RQBDateTimeOperators } from './types';
+import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly } from './utils';
 
 export const datetimeValueProcessorANSI =
-  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeOperators): ValueProcessorByRule =>
+  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     if (isISOStringDateOnly(opts?.context?.originalValue)) {
       return defaultValueProcessorByRule(
@@ -22,7 +22,7 @@ export const datetimeValueProcessorANSI =
   };
 
 export const datetimeValueProcessorMSSQL =
-  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeOperators): ValueProcessorByRule =>
+  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^(?:small)?datetime/i.test(opts?.fieldData?.datatype as string)
       ? 'datetimeoffset'
@@ -36,7 +36,7 @@ export const datetimeValueProcessorMSSQL =
   };
 
 export const datetimeValueProcessorMySQL =
-  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeOperators): ValueProcessorByRule =>
+  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^(?:datetime|timestamp)/i.test(opts?.fieldData?.datatype as string)
       ? 'datetime'
@@ -50,7 +50,7 @@ export const datetimeValueProcessorMySQL =
   };
 
 export const datetimeValueProcessorOracle =
-  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeOperators): ValueProcessorByRule =>
+  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     // Oracle date format for _reading_ ISO 8601: 'YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"'
     const datatype = /^timestamp/i.test(opts?.fieldData?.datatype as string) ? 'timestamp' : 'date';
@@ -65,7 +65,7 @@ export const datetimeValueProcessorOracle =
   };
 
 export const datetimeValueProcessorPostgreSQL =
-  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeOperators): ValueProcessorByRule =>
+  ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^timestamp/i.test(opts?.fieldData?.datatype as string) ? 'timestamp' : 'date';
     const value =
@@ -83,10 +83,10 @@ const presetToValueProcessorMap = {
   oracle: datetimeValueProcessorOracle,
   postgresql: datetimeValueProcessorPostgreSQL,
   sqlite: datetimeValueProcessorANSI,
-} satisfies Record<SQLPreset, (ops: RQBDateTimeOperators) => ValueProcessorByRule>;
+} satisfies Record<SQLPreset, (apiFns: RQBDateTimeLibraryAPI) => ValueProcessorByRule>;
 
 export const datetimeRuleProcessorSQL =
-  (ops: RQBDateTimeOperators): RuleProcessor =>
+  (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* istanbul ignore next */ {};
     const operator = mapSQLOperator(rule.operator);
@@ -103,12 +103,12 @@ export const datetimeRuleProcessorSQL =
       return defaultRuleProcessorSQL(rule, opts);
     }
 
-    const valueProcessor = presetToValueProcessorMap[opts.preset!](ops);
+    const valueProcessor = presetToValueProcessorMap[opts.preset!](apiFns);
 
     const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
-      .map((v): [string, Date] => [v, ops.toDate(v)])
-      .filter(v => ops.isValid(v[1]));
+      .map((v): [string, Date] => [v, apiFns.toDate(v)])
+      .filter(v => apiFns.isValid(v[1]));
 
     switch (operatorLowerCase) {
       case 'in':
@@ -131,7 +131,7 @@ export const datetimeRuleProcessorSQL =
         {
           if (valueAsDateArray.length < 2) return '';
           const [first, second] = valueAsDateArray;
-          const orderedArray = ops.isBefore(first[1], second[1])
+          const orderedArray = apiFns.isBefore(first[1], second[1])
             ? [first, second]
             : [second, first];
           finalValue = orderedArray
