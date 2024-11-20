@@ -18,6 +18,26 @@
         "types": "./dist/types/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
+    },
+    "./date-fns": {
+      "import": {
+        "types": "./dist/types-esm/index.date-fns.d.mts",
+        "default": "./dist/react-querybuilder_datetime.date-fns.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.date-fns.d.ts",
+        "default": "./dist/cjs/date-fns.js"
+      }
+    },
+    "./dayjs": {
+      "import": {
+        "types": "./dist/types-esm/index.dayjs.d.mts",
+        "default": "./dist/react-querybuilder_datetime.dayjs.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.dayjs.d.ts",
+        "default": "./dist/cjs/dayjs.js"
+      }
     }
   },
   "types": "./dist/types/index.d.ts",
@@ -64,6 +84,16 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "react-querybuilder": "8.0.0"
+    "react-querybuilder": "8.0.0",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13"
+  },
+  "peerDependenciesMeta": {
+    "date-fns": {
+      "optional": true
+    },
+    "dayjs": {
+      "optional": true
+    }
   }
 }

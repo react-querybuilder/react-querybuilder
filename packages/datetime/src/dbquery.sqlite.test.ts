@@ -1,15 +1,18 @@
 import type { SQLQueryBindings } from 'bun:sqlite';
 import { Database } from 'bun:sqlite';
+import { formatQuery } from 'react-querybuilder';
+import { datetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   fields,
   FIND_MUSICIANS_TABLE,
-  formatQueryDateTime,
   INSERT_MUSICIANS,
+  musicians,
   sqlBase,
   testCases,
-  musicians,
 } from './dbqueryTestUtils';
+import { rqbDateTimeOperatorsDateFns } from './operators.date-fns';
+import { rqbDateTimeOperatorsDayjs } from './operators.dayjs';
 
 type Result = {
   first_name: string;
@@ -38,12 +41,18 @@ afterAll(() => {
 
 for (const [testCaseName, testCase] of Object.entries(testCases)) {
   test(testCaseName, async () => {
-    const sql = formatQueryDateTime(testCase[0], { preset: 'sqlite', fields });
-    const result = db.prepare<Result, SQLQueryBindings[]>(`${sqlBase} ${sql}`).all();
-    if (testCase[1] === 'all') {
-      expect(result).toHaveLength(musicians.length);
-    } else {
-      expect(result[0].last_name).toBe(testCase[1]);
+    for (const ops of [rqbDateTimeOperatorsDayjs, rqbDateTimeOperatorsDateFns]) {
+      const sql = formatQuery(testCase[0], {
+        preset: 'sqlite',
+        fields,
+        ruleProcessor: datetimeRuleProcessorSQL(ops),
+      });
+      const result = db.prepare<Result, SQLQueryBindings[]>(`${sqlBase} ${sql}`).all();
+      if (testCase[1] === 'all') {
+        expect(result).toHaveLength(musicians.length);
+      } else {
+        expect(result[0].last_name).toBe(testCase[1]);
+      }
     }
   });
 }

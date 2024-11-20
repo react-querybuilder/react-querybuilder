@@ -1,9 +1,4 @@
-import type { Field, FormatQueryOptions, RuleGroupType } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
-import { datetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
-
-export const formatQueryDateTime = (query: RuleGroupType, options: FormatQueryOptions): string =>
-  formatQuery(query, { ...options, ruleProcessor: datetimeRuleProcessorSQL });
+import type { Field, RuleGroupType } from 'react-querybuilder';
 
 export const comparisonDate = '1957-01-01';
 export const comparisonDate2 = '1969-01-01';

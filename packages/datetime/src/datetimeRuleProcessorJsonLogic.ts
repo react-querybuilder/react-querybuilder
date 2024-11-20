@@ -1,7 +1,10 @@
-import dayjs from 'dayjs';
 import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorJsonLogic, toArray } from 'react-querybuilder';
-import type { RQBDateTimeJsonLogic } from './types';
+import type {
+  RQBDateTimeJsonLogic,
+  RQBDateTimeOperators,
+  RQBJsonLogicDateTimeOperators,
+} from './types';
 
 const dateOperationMap = {
   '!=': 'dateNotOn',
@@ -66,47 +69,27 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
   return defaultRuleProcessorJsonLogic(rule, options);
 };
 
-const isSame = (a: string | Date, b: string | Date) =>
-  dayjs(a).isSame(
-    b,
-    (typeof a === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(a)) ||
-      (typeof b === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(b))
-      ? 'd'
-      : 'ms'
-  );
-
-type FnDateDate = (a: string | Date, b: string | Date) => boolean;
-type FnDateArrayOfDates = (a: string | Date, b: (string | Date)[]) => boolean;
-type FnDateDateDate = (a: string | Date, b: string | Date, c: string | Date) => boolean;
-
-export const jsonLogicDateTimeOperators: {
-  dateAfter: FnDateDate;
-  dateBefore: FnDateDate;
-  dateBetween: FnDateDateDate;
-  dateIn: FnDateArrayOfDates;
-  dateNotBetween: FnDateDateDate;
-  dateNotIn: FnDateArrayOfDates;
-  dateNotOn: FnDateDate;
-  dateOn: FnDateDate;
-  dateOnOrAfter: FnDateDate;
-  dateOnOrBefore: FnDateDate;
-} = {
-  dateAfter: (a: string | Date, b: string | Date) => dayjs(a).isAfter(b),
-  dateBefore: (a: string | Date, b: string | Date) => dayjs(a).isBefore(b),
-  dateBetween: (a: string | Date, b: string | Date, c: string | Date) =>
+export const jsonLogicDateTimeOperators = ({
+  isAfter,
+  isBefore,
+  isSame,
+}: RQBDateTimeOperators): RQBJsonLogicDateTimeOperators => ({
+  dateAfter: (a, b) => isAfter(a, b),
+  dateBefore: (a, b) => isBefore(a, b),
+  dateBetween: (a, b, c) =>
     isSame(b, a) ||
     isSame(b, c) ||
-    (dayjs(b).isAfter(a) && dayjs(b).isBefore(c)) ||
-    (dayjs(b).isAfter(c) && dayjs(b).isBefore(a)),
-  dateNotBetween: (a: string | Date, b: string | Date, c: string | Date) =>
+    (isAfter(b, a) && isBefore(b, c)) ||
+    (isAfter(b, c) && isBefore(b, a)),
+  dateNotBetween: (a, b, c) =>
     !isSame(b, a) &&
     !isSame(b, c) &&
-    ((dayjs(a).isBefore(c) && (dayjs(b).isBefore(a) || dayjs(b).isAfter(c))) ||
-      (dayjs(a).isAfter(c) && (dayjs(b).isBefore(c) || dayjs(b).isAfter(a)))),
-  dateIn: (a: string | Date, b: (string | Date)[]) => b.some(v => isSame(a, v)),
-  dateNotIn: (a: string | Date, b: (string | Date)[]) => b.every(v => !isSame(a, v)),
-  dateNotOn: (a: string | Date, b: string | Date) => !isSame(a, b),
-  dateOn: (a: string | Date, b: string | Date) => isSame(a, b),
-  dateOnOrAfter: (a: string | Date, b: string | Date) => dayjs(a).isAfter(b) || isSame(a, b),
-  dateOnOrBefore: (a: string | Date, b: string | Date) => dayjs(a).isBefore(b) || isSame(a, b),
-};
+    ((isBefore(a, c) && (isBefore(b, a) || isAfter(b, c))) ||
+      (isAfter(a, c) && (isBefore(b, c) || isAfter(b, a)))),
+  dateIn: (a, b) => b.some(v => isSame(a, v)),
+  dateNotIn: (a, b) => b.every(v => !isSame(a, v)),
+  dateNotOn: (a, b) => !isSame(a, b),
+  dateOn: (a, b) => isSame(a, b),
+  dateOnOrAfter: (a, b) => isAfter(a, b) || isSame(a, b),
+  dateOnOrBefore: (a, b) => isBefore(a, b) || isSame(a, b),
+});

@@ -1,6 +1,10 @@
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
-import { datetimeRuleProcessor, QueryBuilderDateTime } from '@react-querybuilder/datetime';
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+import {
+  datetimeRuleProcessorJsonLogic,
+  datetimeRuleProcessorSQL,
+} from '@react-querybuilder/datetime/dayjs';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -238,7 +242,12 @@ export default function Demo({
           : undefined,
       parseNumbers: parseNumbersInExport,
       preset: sqlDialect,
-      ...(options.useDateTimePackage ? { ruleProcessor: datetimeRuleProcessor } : null),
+      ...(options.useDateTimePackage
+        ? {
+            ruleProcessor:
+              format === 'sql' ? datetimeRuleProcessorSQL : datetimeRuleProcessorJsonLogic,
+          }
+        : null),
     }),
     [format, options.useDateTimePackage, options.validateQuery, parseNumbersInExport, sqlDialect]
   );

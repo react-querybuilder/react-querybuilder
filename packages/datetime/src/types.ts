@@ -50,3 +50,30 @@ export type RQBDateTimeJsonLogic =
       | RQBJsonLogicDateOnOrAfter
       | RQBJsonLogicDateOnOrBefore
     >;
+
+export interface RQBDateTimeOperators {
+  iso8601DateOnly: `YYYY-MM-DD` | `yyyy-MM-dd`;
+  format: (a: string | Date, f: string) => string;
+  isAfter: (a: string | Date, b: string | Date) => boolean;
+  isBefore: (a: string | Date, b: string | Date) => boolean;
+  isSame: (a: string | Date, b: string | Date) => boolean;
+  isValid: (a: string | Date) => boolean;
+  toDate: (a: string | Date) => Date;
+  toISOString: (a: string | Date) => string;
+}
+
+type FnDateDate = (a: string | Date, b: string | Date) => boolean;
+type FnDateArrayOfDates = (a: string | Date, b: (string | Date)[]) => boolean;
+type FnDateDateDate = (a: string | Date, b: string | Date, c: string | Date) => boolean;
+export type RQBJsonLogicDateTimeOperators = {
+  dateAfter: FnDateDate;
+  dateBefore: FnDateDate;
+  dateBetween: FnDateDateDate;
+  dateIn: FnDateArrayOfDates;
+  dateNotBetween: FnDateDateDate;
+  dateNotIn: FnDateArrayOfDates;
+  dateNotOn: FnDateDate;
+  dateOn: FnDateDate;
+  dateOnOrAfter: FnDateDate;
+  dateOnOrBefore: FnDateDate;
+};
