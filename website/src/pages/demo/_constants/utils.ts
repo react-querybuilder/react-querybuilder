@@ -96,6 +96,8 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
     case 'json_without_ids':
     case 'mongodb':
       return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
+    case 'mongodb_query':
+      return JSON.stringify(formatQueryResult, null, 2);
     case 'parameterized':
     case 'parameterized_named':
     case 'jsonlogic':
@@ -157,7 +159,9 @@ export const getExportDisplayLanguage = (format: ExportFormat) =>
   format === 'jsonata' ||
   format === 'natural_language'
     ? format
-    : 'json';
+    : format === 'mongodb_query'
+      ? 'mongodb'
+      : 'json';
 
 const getCompatWrapper = (style?: StyleName): [string, string, string] => {
   switch (style) {

@@ -4,6 +4,7 @@ import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../
 import type {
   DefaultCombinatorName,
   ExportFormat,
+  ExportObjectFormats,
   FormatQueryOptions,
   FullField,
   FullOperator,
@@ -32,6 +33,7 @@ import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElastic
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 import { defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
@@ -69,6 +71,7 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
 const defaultRuleProcessors = {
   natural_language: defaultRuleProcessorNL,
   mongodb: defaultRuleProcessorMongoDB,
+  mongodb_query: defaultRuleProcessorMongoDBQuery,
   parameterized: defaultRuleProcessorParameterized,
   parameterized_named: defaultRuleProcessorParameterized,
   cel: defaultRuleProcessorCEL,
@@ -88,6 +91,8 @@ const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
   spel: '1 == 1',
   sql: '(1 = 1)',
 };
+
+const mongoDbFallback = { $and: [{ $expr: true }] } as const;
 
 type MostFormatQueryOptions = SetOptional<
   Required<FormatQueryOptions>,
@@ -113,6 +118,7 @@ const defaultFormatQueryOptions = {
 
 const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
   format === 'mongodb' ||
+  format === 'mongodb_query' ||
   format === 'cel' ||
   format === 'spel' ||
   format === 'jsonlogic' ||
@@ -157,6 +163,29 @@ function formatQuery(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any>;
 /**
+ * Generates a MongoDB query object from an RQB query object.
+ *
+ * This is equivalent to the "mongodb" format, but returns a JSON object
+ * instead of a string.
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'mongodb_query' | (FormatQueryOptions & { format: 'mongodb_query' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Record<string, any>;
+/**
+ * Generates a JSON.stringify'd MongoDB query object from an RQB query object.
+ *
+ * This is equivalent to the "mongodb_query" format, but returns a string
+ * instead of a JSON object.
+ *
+ * @deprecated Use the "mongodb_query" format for greater flexibility.
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'mongodb' | (FormatQueryOptions & { format: 'mongodb' })
+): string;
+/**
  * Generates a JSONata query string from an RQB query object.
  *
  * NOTE: The `parseNumbers` option is recommended for this format.
@@ -174,22 +203,14 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions): 
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: Exclude<
-    ExportFormat,
-    'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch' | 'jsonata'
-  >
+  options: Exclude<ExportFormat, ExportObjectFormats>
 ): string;
 /**
  * Generates a query string in the requested format.
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: FormatQueryOptions & {
-    format: Exclude<
-      ExportFormat,
-      'parameterized' | 'parameterized_named' | 'jsonlogic' | 'elasticsearch' | 'jsonata'
-    >;
-  }
+  options: FormatQueryOptions & { format: Exclude<ExportFormat, ExportObjectFormats> }
 ): string;
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
   const optObj: MostFormatQueryOptions = {
@@ -288,11 +309,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             ? { sql: fallbackExpression, params: {} }
             : format === 'mongodb'
               ? `{${fallbackExpression}}`
-              : format === 'jsonlogic'
-                ? false
-                : format === 'elasticsearch'
-                  ? {}
-                  : fallbackExpression;
+              : format === 'mongodb_query'
+                ? mongoDbFallback
+                : format === 'jsonlogic'
+                  ? false
+                  : format === 'elasticsearch'
+                    ? {}
+                    : fallbackExpression;
       }
     } else {
       validationMap = validationResult;
@@ -494,7 +517,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             if (processedRuleGroup) {
               hasChildRules = true;
               // Don't wrap in curly braces if the result already is.
-              return /^{.+}$/.test(processedRuleGroup)
+              return /^\{.+\}$/.test(processedRuleGroup)
                 ? processedRuleGroup
                 : `{${processedRuleGroup}}`;
             }
@@ -509,10 +532,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            fieldData,
-          });
+          return ruleProcessor(rule, { ...finalOptions, fieldData });
         })
         .filter(Boolean);
 
@@ -525,7 +545,53 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     const rgStandard = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
     const processedQuery = processRuleGroup(rgStandard, true);
-    return /^{.+}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
+    return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
+  }
+  // #endregion
+
+  // #region MongoDB Query
+  if (format === 'mongodb_query') {
+    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
+      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+        return outermost ? mongoDbFallback : false;
+      }
+
+      const combinator = `$${rg.combinator.toLowerCase()}`;
+      let hasChildRules = false;
+
+      const expressions: Record<string, unknown>[] = rg.rules
+        .map(rule => {
+          if (isRuleGroup(rule)) {
+            const processedRuleGroup = processRuleGroup(rule);
+            if (processedRuleGroup) {
+              hasChildRules = true;
+              return processedRuleGroup;
+            }
+            return false;
+          }
+          const [validationResult, fieldValidator] = validateRule(rule);
+          if (
+            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+            rule.field === placeholderFieldName ||
+            rule.operator === placeholderOperatorName
+          ) {
+            return false;
+          }
+          const fieldData = getOption(fields, rule.field);
+          return ruleProcessor(rule, { ...finalOptions, fieldData });
+        })
+        .filter(Boolean);
+
+      return expressions.length > 0
+        ? expressions.length === 1 && !hasChildRules
+          ? expressions[0]
+          : { [combinator]: expressions }
+        : mongoDbFallback;
+    };
+
+    // const processedQuery = processRuleGroup(convertFromIC(ruleGroup), true);
+    // return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
+    return processRuleGroup(convertFromIC(ruleGroup), true);
   }
   // #endregion
 
@@ -682,10 +748,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            fieldData,
-          });
+          return ruleProcessor(rule, { ...finalOptions, fieldData });
         })
         .filter(Boolean);
 
@@ -728,10 +791,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            fieldData,
-          });
+          return ruleProcessor(rule, { ...finalOptions, fieldData });
         })
         .filter(Boolean);
 
@@ -787,11 +847,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         const fieldData = getOption(fields, rule.field);
 
-        return ruleProcessor(rule, {
-          ...finalOptions,
-          escapeQuotes,
-          fieldData,
-        });
+        return ruleProcessor(rule, { ...finalOptions, escapeQuotes, fieldData });
       });
 
       if (processedRules.length === 0) {

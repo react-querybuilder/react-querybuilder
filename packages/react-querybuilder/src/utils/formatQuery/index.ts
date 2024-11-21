@@ -40,6 +40,7 @@ export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElastic
 export { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
+export { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export * from './utils';

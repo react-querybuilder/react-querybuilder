@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#820] `formatQuery` will assume a format of "sql" if no format is provided as long as `preset` matches one of the supported values.
 - [#820] New `formatQuery` option `wrapValueWith`, an array of two strings to act as a prefix and suffix for values (outside of any quotes).
 - [#820] `formatQuery` value processors now accept an optional `context` parameter, which can be used to pass additional information to the processor.
+- [#820] New "mongodb_query" export format. This format is exactly the same as "mongodb" except that it returns an actual JSON object instead of a `JSON.stringify`d version. The "mongodb" format is deprecated.
 
 ## [v8.0.0] - 2024-11-08
 

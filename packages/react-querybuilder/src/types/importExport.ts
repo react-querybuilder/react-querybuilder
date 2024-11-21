@@ -15,12 +15,21 @@ export type ExportFormat =
   | 'parameterized'
   | 'parameterized_named'
   | 'mongodb'
+  | 'mongodb_query'
   | 'cel'
   | 'jsonlogic'
   | 'spel'
   | 'elasticsearch'
   | 'jsonata'
   | 'natural_language';
+
+export type ExportObjectFormats =
+  | 'parameterized'
+  | 'parameterized_named'
+  | 'jsonlogic'
+  | 'elasticsearch'
+  | 'jsonata'
+  | 'mongodb_query';
 
 export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
 
@@ -247,17 +256,18 @@ export type ValueProcessor = ValueProcessorLegacy;
  * {@link RuleType} object.
  *
  * See the default rule processor for each format to know what type to return.
- * | Format                | Default rule processor                    |
- * | --------------------- | ----------------------------------------- |
- * | `sql`                 | {@link defaultRuleProcessorSQL}           |
- * | `parameterized`       | {@link defaultRuleProcessorParameterized} |
- * | `parameterized_named` | {@link defaultRuleProcessorParameterized} |
- * | `mongodb`             | {@link defaultRuleProcessorMongoDB}       |
- * | `cel`                 | {@link defaultRuleProcessorCEL}           |
- * | `spel`                | {@link defaultRuleProcessorSpEL}          |
- * | `jsonlogic`           | {@link defaultRuleProcessorJsonLogic}     |
- * | `elasticsearch`       | {@link defaultRuleProcessorElasticSearch} |
- * | `jsonata`             | {@link defaultRuleProcessorJSONata} |
+ * | Format                 | Default rule processor                    |
+ * | ---------------------- | ----------------------------------------- |
+ * | `sql`                  | {@link defaultRuleProcessorSQL}           |
+ * | `parameterized`        | {@link defaultRuleProcessorParameterized} |
+ * | `parameterized_named`  | {@link defaultRuleProcessorParameterized} |
+ * | `mongodb` (deprecated) | {@link defaultRuleProcessorMongoDB}       |
+ * | `mongodb_query`        | {@link defaultRuleProcessorMongoDBQuery}  |
+ * | `cel`                  | {@link defaultRuleProcessorCEL}           |
+ * | `spel`                 | {@link defaultRuleProcessorSpEL}          |
+ * | `jsonlogic`            | {@link defaultRuleProcessorJsonLogic}     |
+ * | `elasticsearch`        | {@link defaultRuleProcessorElasticSearch} |
+ * | `jsonata`              | {@link defaultRuleProcessorJSONata} |
  */
 export type RuleProcessor = (
   rule: RuleType,

@@ -124,6 +124,7 @@ type ExportFormat =
   | 'parameterized'
   | 'parameterized_named'
   | 'mongodb'
+  | 'mongodb_query'
   | 'cel'
   | 'jsonlogic'
   | 'jsonata'
