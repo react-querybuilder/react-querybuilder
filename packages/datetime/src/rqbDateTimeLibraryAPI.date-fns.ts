@@ -23,7 +23,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     isISOStringDateOnly(a) || isISOStringDateOnly(b)
       ? isSameDay(toDate(a), toDate(b))
       : isSameSecond(toDate(a), toDate(b)),
-  isValid,
+  isValid: a => isValid(toDate(a)),
   toDate,
   toISOString: a => toDate(a).toISOString(),
 };

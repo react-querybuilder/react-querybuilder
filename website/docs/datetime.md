@@ -25,6 +25,10 @@ The date/time package provides `formatQuery` rule processors that handle date/ti
 
 The `datetimeRuleProcessorSQL` rule processor will produce different output based on the `preset` option, defaulting to "ansi". For example, if `preset` is "postgresql", date values will be prefixed with `date` (e.g. `date'2000-01-01'`), but for "mssql" they will be wrapped in `cast([...] as date)` (e.g. `cast('2000-01-01' as date)`).
 
+### MongoDB
+
+The `datetimeRuleProcessorMongoDBQuery` rule processor should be used in conjunction with the "mongodb_query" format.
+
 ### JsonLogic
 
 The `datetimeRuleProcessorJsonLogic` rule processor produces custom JsonLogic operations to indicate that rules should be handled as date/time values. As with [`jsonLogicAdditionalOperators`](./utils/export#jsonlogic) from the `react-querybuilder` package, the date/time package provides an easy way to add support for its custom operations with the `jsonLogicDateTimeOperations` object.

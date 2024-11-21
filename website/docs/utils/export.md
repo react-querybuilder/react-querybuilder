@@ -203,7 +203,13 @@ See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#g
 
 ### MongoDB
 
-MongoDB-compatible query objects can be produced as a JSON object or as a `string`. The "mongodb_query" format will produce a JSON object and is the recommended format. The deprecated "mongodb" format is merely a `JSON.stringify`'d version of the "mongodb_query" format.
+MongoDB-compatible query objects can be produced as a JSON object or as a `string`. The "mongodb_query" format will produce a JSON object and is the recommended format. The "mongodb" format is merely a `JSON.stringify`'d version of the "mongodb_query" format.
+
+:::info
+
+The "mongodb_query" export format was introduced, and the "mongodb" format was deprecated, in version 8.1.0.
+
+:::
 
 ```ts
 formatQuery(query, 'mongodb_query');

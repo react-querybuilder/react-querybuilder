@@ -87,6 +87,8 @@
     "dayjs": "^1.11.13",
     "json-logic-js": "^2.0.5",
     "luxon": "^3.5.0",
+    "mongodb-memory-server-core": "^10.1.2",
+    "mongoose": "^8.8.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-querybuilder": "8.0.0",
