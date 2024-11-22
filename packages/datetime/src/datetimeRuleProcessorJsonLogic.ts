@@ -69,7 +69,7 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
   return defaultRuleProcessorJsonLogic(rule, options);
 };
 
-export const jsonLogicDateTimeOperations = ({
+export const getJsonLogicDateTimeOperations = ({
   isAfter,
   isBefore,
   isSame,

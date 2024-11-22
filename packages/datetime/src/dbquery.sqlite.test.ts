@@ -1,7 +1,7 @@
 import type { SQLQueryBindings } from 'bun:sqlite';
 import { Database } from 'bun:sqlite';
 import { formatQuery } from 'react-querybuilder';
-import { datetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -45,7 +45,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         const sql = formatQuery(testCase[0], {
           preset: 'sqlite',
           fields,
-          ruleProcessor: datetimeRuleProcessorSQL(apiFns),
+          ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
         const result = db.prepare<Result, SQLQueryBindings[]>(`${sqlBase} ${sql}`).all();
         if (testCase[1] === 'all') {

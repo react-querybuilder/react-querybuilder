@@ -1,5 +1,5 @@
 import { formatQuery, type RuleGroupType, type SQLPreset } from 'react-querybuilder';
-import { datetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
 import { dateLibraryFunctions, fields } from './dbqueryTestUtils';
 
 const now = new Date().toISOString();
@@ -80,7 +80,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
               formatQuery(query, {
                 preset,
                 fields: fieldsMapped,
-                ruleProcessor: datetimeRuleProcessorSQL(apiFns),
+                ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
               })
             ).toBe(expected);
           });

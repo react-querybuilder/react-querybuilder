@@ -5,7 +5,7 @@ import type { RQBDateTimeLibraryAPI } from './types';
 /**
  * Default rule processor used by {@link formatQuery} for "mongodb_query" format.
  */
-export const datetimeRuleProcessorMongoDBQuery =
+export const getDatetimeRuleProcessorMongoDBQuery =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* istanbul ignore next */ {};

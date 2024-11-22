@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/prefer-structured-clone */
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { datetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
+import { getDatetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields } from './dbqueryTestUtils';
 
 const now = new Date().toISOString();
@@ -56,7 +56,7 @@ const testCases: Record<string, [RuleGroupType, Record<string, unknown>]> = {
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
-    const ruleProcessor = datetimeRuleProcessorMongoDBQuery(apiFns);
+    const ruleProcessor = getDatetimeRuleProcessorMongoDBQuery(apiFns);
 
     // Common tests
     for (const [testCase, [query, expected]] of Object.entries(testCases)) {

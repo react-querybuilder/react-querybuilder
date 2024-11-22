@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-await-expression-member */
 import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from 'react-querybuilder';
-import { datetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -45,7 +45,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         const sql = formatQuery(testCase[0], {
           preset: 'postgresql',
           fields,
-          ruleProcessor: datetimeRuleProcessorSQL(apiFns),
+          ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
         const { rows: result } = await db.query<Result>(`${sqlBase} ${sql}`);
         if (testCase[1] === 'all') {

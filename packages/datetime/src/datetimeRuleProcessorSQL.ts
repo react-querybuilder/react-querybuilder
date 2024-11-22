@@ -9,7 +9,7 @@ import {
 import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly } from './utils';
 
-export const datetimeValueProcessorANSI =
+export const getDatetimeValueProcessorANSI =
   ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     if (isISOStringDateOnly(opts?.context?.originalValue)) {
@@ -21,7 +21,7 @@ export const datetimeValueProcessorANSI =
     return defaultValueProcessorByRule({ ...rule, value: toISOString(rule.value as Date) }, opts);
   };
 
-export const datetimeValueProcessorMSSQL =
+export const getDatetimeValueProcessorMSSQL =
   ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^(?:small)?datetime/i.test(opts?.fieldData?.datatype as string)
@@ -35,7 +35,7 @@ export const datetimeValueProcessorMSSQL =
     );
   };
 
-export const datetimeValueProcessorMySQL =
+export const getDatetimeValueProcessorMySQL =
   ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^(?:datetime|timestamp)/i.test(opts?.fieldData?.datatype as string)
@@ -49,7 +49,7 @@ export const datetimeValueProcessorMySQL =
     );
   };
 
-export const datetimeValueProcessorOracle =
+export const getDatetimeValueProcessorOracle =
   ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     // Oracle date format for _reading_ ISO 8601: 'YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"'
@@ -64,7 +64,7 @@ export const datetimeValueProcessorOracle =
     );
   };
 
-export const datetimeValueProcessorPostgreSQL =
+export const getDatetimeValueProcessorPostgreSQL =
   ({ format, iso8601DateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^timestamp/i.test(opts?.fieldData?.datatype as string) ? 'timestamp' : 'date';
@@ -77,15 +77,15 @@ export const datetimeValueProcessorPostgreSQL =
   };
 
 const presetToValueProcessorMap = {
-  ansi: datetimeValueProcessorANSI,
-  mssql: datetimeValueProcessorMSSQL,
-  mysql: datetimeValueProcessorMySQL,
-  oracle: datetimeValueProcessorOracle,
-  postgresql: datetimeValueProcessorPostgreSQL,
-  sqlite: datetimeValueProcessorANSI,
+  ansi: getDatetimeValueProcessorANSI,
+  mssql: getDatetimeValueProcessorMSSQL,
+  mysql: getDatetimeValueProcessorMySQL,
+  oracle: getDatetimeValueProcessorOracle,
+  postgresql: getDatetimeValueProcessorPostgreSQL,
+  sqlite: getDatetimeValueProcessorANSI,
 } satisfies Record<SQLPreset, (apiFns: RQBDateTimeLibraryAPI) => ValueProcessorByRule>;
 
-export const datetimeRuleProcessorSQL =
+export const getDatetimeRuleProcessorSQL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* istanbul ignore next */ {};

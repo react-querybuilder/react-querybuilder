@@ -3,7 +3,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
 import { formatQuery } from 'react-querybuilder';
-import { datetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
+import { getDatetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields, musicians, testCases } from './dbqueryTestUtils';
 
 const mongoServer = new MongoMemoryServer();
@@ -50,7 +50,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         const mdbQuery = formatQuery(testCase[0], {
           format: 'mongodb_query',
           fields,
-          ruleProcessor: datetimeRuleProcessorMongoDBQuery(apiFns),
+          ruleProcessor: getDatetimeRuleProcessorMongoDBQuery(apiFns),
         });
         const result = await Musician.find(mdbQuery);
         if (testCase[1] === 'all') {

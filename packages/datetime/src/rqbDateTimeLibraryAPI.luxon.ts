@@ -17,6 +17,5 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
       : +toDateTime(a) === +toDateTime(b),
   isValid: a => toDateTime(a).isValid,
   toDate: a => toDateTime(a).toJSDate(),
-  toISOString: a =>
-    (toDateTime(a).toUTC().toISO() ?? /* istanbul ignore next */ '').replace(/\+00:00$/, 'Z'),
+  toISOString: a => toDateTime(a).toJSDate().toISOString(),
 };
