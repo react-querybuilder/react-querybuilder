@@ -3,8 +3,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
-import { dateLibraryFunctions, fields, musicians, testCases } from './dbqueryTestUtils';
+import { getDatetimeRuleProcessorMongoDBQuery } from '../datetimeRuleProcessorMongoDBQuery';
+import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 
 const mongoServer = new MongoMemoryServer();
 

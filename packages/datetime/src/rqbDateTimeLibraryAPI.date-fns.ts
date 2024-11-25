@@ -4,7 +4,6 @@ import {
   isAfter,
   isBefore,
   isSameDay,
-  isSameSecond,
   isValid,
   parseISO,
 } from 'date-fns';
@@ -15,15 +14,24 @@ const toDate: typeof dateFnsToDate = a => (typeof a === 'string' ? parseISO(a) :
 const iso8601DateOnly = 'yyyy-MM-dd';
 
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
-  iso8601DateOnly,
-  format: (a, f) => format(toDate(a), f.replace('YYYY-MM-DD', iso8601DateOnly)),
+  format: (d, fmt) => format(toDate(d), fmt.replace('YYYY-MM-DD', iso8601DateOnly)),
   isAfter,
   isBefore,
-  isSame: (a, b) =>
-    isISOStringDateOnly(a) || isISOStringDateOnly(b)
-      ? isSameDay(toDate(a), toDate(b))
-      : isSameSecond(toDate(a), toDate(b)),
-  isValid: a => isValid(toDate(a)),
+  isSame: (a, b) => {
+    const aToDate = toDate(a);
+    const bToDate = toDate(b);
+    return isISOStringDateOnly(a) || isISOStringDateOnly(b)
+      ? isSameDay(aToDate, bToDate)
+      : aToDate.getTime() === bToDate.getTime();
+  },
+  isValid: d => isValid(toDate(d)),
   toDate,
-  toISOString: a => toDate(a).toISOString(),
+  toISOString: d => {
+    const dToDate = toDate(d);
+    return isValid(dToDate) ? dToDate.toISOString() : '';
+  },
+  toISOStringDayOnly: d => {
+    const dToDate = toDate(d);
+    return isValid(dToDate) ? format(dToDate, iso8601DateOnly) : '';
+  },
 };

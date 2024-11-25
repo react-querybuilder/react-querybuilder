@@ -1,7 +1,7 @@
 import type { SQLQueryBindings } from 'bun:sqlite';
 import { Database } from 'bun:sqlite';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorSQL } from '../datetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -11,7 +11,7 @@ import {
   musicians,
   sqlBase,
   testCases,
-} from './dbqueryTestUtils';
+} from '../dbqueryTestUtils';
 
 type Result = {
   first_name: string;

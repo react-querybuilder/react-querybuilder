@@ -1,6 +1,7 @@
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDateFns } from './rqbDateTimeLibraryAPI.date-fns';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDayjs } from './rqbDateTimeLibraryAPI.dayjs';
+import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIJS } from './rqbDateTimeLibraryAPI.jsdate';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPILuxon } from './rqbDateTimeLibraryAPI.luxon';
 import type { RQBDateTimeLibraryAPI } from './types';
 
@@ -8,6 +9,7 @@ export const dateLibraryFunctions: [string, RQBDateTimeLibraryAPI][] = [
   ['Day.js', rqbDateTimeLibraryAPIDayjs],
   ['date-fns', rqbDateTimeLibraryAPIDateFns],
   ['Luxon', rqbDateTimeLibraryAPILuxon],
+  ['JS Date', rqbDateTimeLibraryAPIJS],
 ];
 
 export const comparisonDate = '1957-01-01';

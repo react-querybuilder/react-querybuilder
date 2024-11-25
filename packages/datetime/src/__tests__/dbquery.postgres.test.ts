@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-await-expression-member */
 import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorSQL } from './datetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorSQL } from '../datetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -11,7 +11,7 @@ import {
   musicians,
   sqlBase,
   testCases,
-} from './dbqueryTestUtils';
+} from '../dbqueryTestUtils';
 
 type Result = {
   first_name: string;

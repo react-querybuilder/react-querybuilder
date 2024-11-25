@@ -10,22 +10,21 @@ import {
   comparisonDate,
   comparisonDate2,
   CREATE_MUSICIANS_TABLE,
-  dateLibraryFunctions,
   fields,
   testCases,
 } from './dbqueryTestUtils';
+import type { RQBDateTimeLibraryAPI } from './types';
 
 const musicianRecords = CREATE_MUSICIANS_TABLE('jsonlogic');
 
-for (const [libName, apiFns] of dateLibraryFunctions) {
+export function runJsonLogicTests(libName: string, apiFns: RQBDateTimeLibraryAPI): void {
   describe(libName, () => {
-    const today = apiFns.format(new Date(), apiFns.iso8601DateOnly);
-    const comparisonYearBefore = apiFns.format(
+    const today = apiFns.toISOStringDayOnly(new Date());
+    const comparisonYearBefore = apiFns.toISOStringDayOnly(
       comparisonDate
         .split('-')
         .map((v, i) => `${parseInt(v, 10) - (i === 0 ? 1 : 0)}`.padStart(2, '0'))
-        .join('-'),
-      apiFns.iso8601DateOnly
+        .join('-')
     );
 
     for (const [op, func] of Object.entries(getJsonLogicDateTimeOperations(apiFns))) {

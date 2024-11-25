@@ -1,8 +1,8 @@
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { datetimeRuleProcessorJsonLogic } from './datetimeRuleProcessorJsonLogic';
-import { fields } from './dbqueryTestUtils';
-import type { RQBDateTimeJsonLogic } from './types';
+import { datetimeRuleProcessorJsonLogic } from '../datetimeRuleProcessorJsonLogic';
+import { fields } from '../dbqueryTestUtils';
+import type { RQBDateTimeJsonLogic } from '../types';
 
 const now = new Date().toISOString();
 

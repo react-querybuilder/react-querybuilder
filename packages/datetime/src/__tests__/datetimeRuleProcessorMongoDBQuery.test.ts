@@ -1,8 +1,8 @@
 /* eslint-disable unicorn/prefer-structured-clone */
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
-import { dateLibraryFunctions, fields } from './dbqueryTestUtils';
+import { getDatetimeRuleProcessorMongoDBQuery } from '../datetimeRuleProcessorMongoDBQuery';
+import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 
 const now = new Date().toISOString();
 const d = (s: string) => `${s}T00:00:00.000Z`;

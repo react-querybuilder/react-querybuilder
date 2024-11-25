@@ -7,15 +7,21 @@ const toDateTime = (a: string | Date) =>
 const iso8601DateOnly = 'yyyy-MM-dd';
 
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
-  iso8601DateOnly,
-  format: (a, f) => toDateTime(a).toFormat(f.replace('YYYY-MM-DD', iso8601DateOnly)),
+  format: (d, fmt) => toDateTime(d).toFormat(fmt.replace('YYYY-MM-DD', iso8601DateOnly)),
   isAfter: (a, b) => toDateTime(a) > toDateTime(b),
   isBefore: (a, b) => toDateTime(a) < toDateTime(b),
   isSame: (a, b) =>
     isISOStringDateOnly(a) || isISOStringDateOnly(b)
       ? toDateTime(a).hasSame(toDateTime(b), 'day')
       : +toDateTime(a) === +toDateTime(b),
-  isValid: a => toDateTime(a).isValid,
-  toDate: a => toDateTime(a).toJSDate(),
-  toISOString: a => toDateTime(a).toJSDate().toISOString(),
+  isValid: d => toDateTime(d).isValid,
+  toDate: d => toDateTime(d).toJSDate(),
+  toISOString: d => {
+    const dToDate = toDateTime(d);
+    return dToDate.isValid ? dToDate.toJSDate().toISOString() : '';
+  },
+  toISOStringDayOnly: d => {
+    const dToDate = toDateTime(d);
+    return dToDate.isValid ? dToDate.toFormat(iso8601DateOnly) : '';
+  },
 };
