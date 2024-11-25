@@ -39,6 +39,16 @@
         "default": "./dist/cjs/dayjs.js"
       }
     },
+    "./jsdate": {
+      "import": {
+        "types": "./dist/types-esm/index.jsdate.d.mts",
+        "default": "./dist/react-querybuilder_datetime.jsdate.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.jsdate.d.ts",
+        "default": "./dist/cjs/jsdate.js"
+      }
+    },
     "./luxon": {
       "import": {
         "types": "./dist/types-esm/index.luxon.d.mts",
