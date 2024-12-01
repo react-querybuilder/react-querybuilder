@@ -435,3 +435,42 @@ it('respects custom canDrop on independent combinators', () => {
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
+
+it('respects updates canDrop function between renders', () => {
+  const firstCanDrop = jest.fn(() => false);
+  const secondCanDrop = jest.fn(() => false);
+
+  const query = {
+    combinator: 'and',
+    rules: [
+      { combinator: 'and', rules: [] },
+      { combinator: 'and', rules: [] },
+    ],
+  };
+
+  const { rerender } = render(<QBforDnD canDrop={firstCanDrop} query={query} />);
+
+  // First drag attempt - should use firstCanDrop
+  const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
+  simulateDragDrop(
+    getHandlerId(ruleGroups[2], 'drag'),
+    getHandlerId(ruleGroups[1], 'drop'),
+    getDndBackend()
+  );
+
+  const firstCanDropCallCount = firstCanDrop.mock.calls.length;
+
+  // Rerender with secondCanDrop
+  rerender(<QBforDnD canDrop={secondCanDrop} query={query} />);
+
+  // Second drag attempt - should use secondCanDrop
+  simulateDragDrop(
+    getHandlerId(ruleGroups[2], 'drag'),
+    getHandlerId(ruleGroups[1], 'drop'),
+    getDndBackend()
+  );
+
+  // Verify that only secondCanDrop was called in the second attempt
+  expect(firstCanDrop).toHaveBeenCalledTimes(firstCanDropCallCount);
+  expect(secondCanDrop).toHaveBeenCalled();
+});

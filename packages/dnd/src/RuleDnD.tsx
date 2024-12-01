@@ -67,7 +67,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
   });
 
   // eslint-disable-next-line react-compiler/react-compiler
-  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop!<
+  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
     DraggedItem,
     DropResult,
     DropCollection
@@ -113,7 +113,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
         return { type: 'rule', path, qbId, getQuery, dispatchQuery };
       },
     }),
-    [disabled, schema.independentCombinators, actions.moveRule, path]
+    [disabled, actions.moveRule, path, canDrop, rule, schema]
   );
 
   drag(dragRef);

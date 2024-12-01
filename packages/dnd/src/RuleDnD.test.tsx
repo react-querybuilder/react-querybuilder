@@ -240,3 +240,47 @@ it('respects custom canDrop', () => {
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
+
+it('respects updates canDrop function between renders', () => {
+  const firstCanDrop = jest.fn(() => false);
+  const secondCanDrop = jest.fn(() => false);
+  const onQueryChange = jest.fn();
+
+  const query = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  const { rerender } = render(
+    <QBforDnD canDrop={firstCanDrop} query={query} onQueryChange={onQueryChange} />
+  );
+
+  // First drag attempt - should use firstCanDrop
+  const rules = screen.getAllByTestId(TestID.rule);
+  simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
+
+  expect(firstCanDrop).toHaveBeenCalledWith({
+    dragging: expect.objectContaining({ path: [1], field: 'f2', operator: '=', value: 'v2' }),
+    hovering: expect.objectContaining({ path: [0], field: 'f1', operator: '=', value: 'v1' }),
+  });
+
+  const firstCanDropCallCount = firstCanDrop.mock.calls.length;
+
+  // Rerender with secondCanDrop
+  rerender(<QBforDnD canDrop={secondCanDrop} query={query} onQueryChange={onQueryChange} />);
+
+  // Second drag attempt - should use secondCanDrop
+  simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
+
+  expect(secondCanDrop).toHaveBeenCalledWith({
+    dragging: expect.objectContaining({ path: [1], field: 'f2', operator: '=', value: 'v2' }),
+    hovering: expect.objectContaining({ path: [0], field: 'f1', operator: '=', value: 'v1' }),
+  });
+
+  // Verify that only secondCanDrop was called in the second attempt
+  expect(firstCanDrop).toHaveBeenCalledTimes(firstCanDropCallCount);
+  expect(secondCanDrop).toHaveBeenCalled();
+});
