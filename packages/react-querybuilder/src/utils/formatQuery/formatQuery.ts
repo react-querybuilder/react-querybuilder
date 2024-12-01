@@ -96,7 +96,7 @@ const mongoDbFallback = { $and: [{ $expr: true }] } as const;
 
 type MostFormatQueryOptions = SetOptional<
   Required<FormatQueryOptions>,
-  'fallbackExpression' | 'ruleProcessor' | 'validator' | 'valueProcessor'
+  'context' | 'fallbackExpression' | 'ruleProcessor' | 'validator' | 'valueProcessor'
 >;
 
 const defaultFormatQueryOptions = {
@@ -267,7 +267,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     defaultFallbackExpressions[format] ??
     defaultFallbackExpressions.sql!;
 
-  const finalOptions: Required<Omit<FormatQueryOptions, 'valueProcessor' | 'validator'>> & {
+  const finalOptions: Required<
+    Omit<FormatQueryOptions, 'context' | 'valueProcessor' | 'validator'>
+  > & {
     valueProcessor: ValueProcessorByRule;
     validator?: QueryValidator;
   } = {

@@ -10,9 +10,9 @@ The `@react-querybuilder/datetime` package adds enhanced date/time functionality
 
 A date/time processor library with parsing and formatting capability must be used in conjunction with `@react-querybuilder/datetime`. Ready-to-use plugins are provided for [Day.js](https://day.js.org/), [date-fns](https://date-fns.org/), and [Luxon](https://moment.github.io/luxon/), but any third-party or custom date/time library can be used.
 
-A plugin using only native JavaScript `Date` and `String` functionality is available, but we don't recommended it except as a last resort since it has not gone through the rigorous testing that the popular libraries have.
+> _A plugin using only native JavaScript `Date` and `String` functionality is available, but we don't recommended it except as a last resort since it has limited formatting capability (full ISO strings in UTC only) and has not passed rigorous testing like the popular libraries._
 
-The documentation below assumes the use of the Day.js plugin. To use one of the others, replace `@react-querybuilder/datetime/dayjs` with `@react-querybuilder/datetime/date-fns` or `@react-querybuilder/datetime/luxon`. Information on creating and using custom plugins is [below](#custom-plugins).
+The documentation below assumes the use of the Day.js plugin. To use one of the others, replace `@react-querybuilder/datetime/dayjs` with `@react-querybuilder/datetime/date-fns` or `@react-querybuilder/datetime/luxon`. Information on creating and using your own date/time plugin is [below](#custom-plugins).
 
 ## Export
 
@@ -25,13 +25,77 @@ import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 
 The date/time package provides `formatQuery` rule processors that handle date/time fields in a manner appropriate for the target platform.
 
+### Conditional use
+
+By default, the date/time rule processors will only treat a rule value as a date (or series of dates) if the `field` configuration has a `datatype` property starting with "date", "datetime", "datetimeoffset", or "timestamp" (using the `defaultIsDateField` function). Otherwise rule processing will be passed off to the default rule processor for that export format.
+
+You can customize the algorithm by passing a `context.isDateField` configuration in the `formatQuery` options. `isDateField` can be a `boolean`, a function that returns a `boolean`, an object matching `field` properties, or an array of objects matching `field` properties.
+
+As a `boolean`, `true` will cause the rule value to be treated as a date, and `false` will cause it to be processed by the default rule processor.
+
+As a `function`, the function will be passed the rule object and the options object (the same two arguments as the rule processor). The function should return a `boolean` that indicates whether the rule value should be treated as a date.
+
+As an object, fields that match all the properties of the object will be treated as dates.
+
+As an array of objects, fields that match all properties of at least one of the objects in the array will be treated as dates.
+
+In the example below, the value in the "birthDate" rule matches the regular expression in the `isDateField` function, so the corresponding SQL output has the `date` keyword prepended to the value string. The "mathNotDate" rule value does _not_ match the pattern and is therefore processed by the default SQL rule processor.
+
+```ts
+// Returns true if the value appears to be an ISO date-only string (YYYY-MM-DD)
+const isDateField = (rule, opts) => /^\d\d\d\d-\d\d-\d\d$/.test(rule.value);
+
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'birthDate', operator: '<', value: '1950-01-01' },
+    { field: 'mathNotDate', operator: '=', value: '1950-1-1' },
+  ],
+};
+
+formatQuery(query, {
+  preset: 'postgresql',
+  ruleProcessor: datetimeRuleProcessorSQL,
+  context: { isDateField },
+});
+// `(birthDate < date'1950-01-01' and mathNotDate = '1950-1-1')`
+```
+
+In the next example, `isDateField` is an array of objects. If the field object (`options.fieldData`) matches all properties of any element in the array, the field will be treated as a date. Note that this method depends on the `fields` array being passed in the `formatQuery` options.
+
+```ts
+// Returns true if the value appears to be an ISO date-only string (YYYY-MM-DD)
+const isDateField = [{ datatype: 'date' }, { inputType: 'datetime-local' }];
+
+const fields: Field[] = [
+  { name: 'birthDate', label: 'Birth Date', datatype: 'date' },
+  { name: 'mathNotDate', label: 'Math, Not Date', datatype: 'number' },
+];
+
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'birthDate', operator: '<', value: '1950-01-01' },
+    { field: 'mathNotDate', operator: '=', value: '1950-1-1' },
+  ],
+};
+
+formatQuery(query, {
+  preset: 'postgresql',
+  fields,
+  ruleProcessor: datetimeRuleProcessorSQL,
+  context: { isDateField },
+});
+// `(birthDate < date'1950-01-01' and mathNotDate = '1950-1-1')`
+```
+
 ### SQL
 
-The `datetimeRuleProcessorSQL` rule processor will produce different output based on the `preset` option, defaulting to "ansi". For example, if `preset` is "postgresql", date values will be prefixed with `date` (e.g. `date'2000-01-01'`), but for "mssql" they will be wrapped in `cast([...] as date)` (e.g. `cast('2000-01-01' as date)`).
+The `datetimeRuleProcessorSQL` rule processor will produce different output based on the `preset` option, which defaults to "ansi". For example, if `preset` is "postgresql", date values will be prefixed with `date` (e.g. `date'2000-01-01'`), but for "mssql" they will be wrapped in `cast([...] as date)` (e.g. `cast('2000-01-01' as date)`).
 
 ### MongoDB
 
-The `datetimeRuleProcessorMongoDBQuery` rule processor should be used in conjunction with the "mongodb_query" format.
+The `datetimeRuleProcessorMongoDBQuery` rule processor should be used in conjunction with the "mongodb_query" format, not "mongodb".
 
 ### JsonLogic
 
@@ -71,7 +135,7 @@ interface RQBDateTimeLibraryAPI {
   isSame: (a: DateOrString, b: DateOrString) => boolean;
   /** `d` is, or evaluates to, a valid Date object */
   isValid: (d: DateOrString) => boolean;
-  /** Convert a string to a Date object (return Dates unchanged) */
+  /** Convert a string to a Date object (returns a Date unchanged) */
   toDate: (d: DateOrString) => Date;
   /** 'YYYY-MM-DDTHH:mm:ss.SSSZ' format */
   toISOString: (d: DateOrString) => string;
@@ -80,7 +144,7 @@ interface RQBDateTimeLibraryAPI {
 }
 ```
 
-Most exports from the date/time library have a corresponding `get*` method that accepts a processor plugin and returns a method or component ready to use in the typical fashion within React Query Builder. For example:
+Most exports from the date/time library have a corresponding `get*` method that accepts a processor plugin and returns a method or component ready to use in the typical fashion within React Query Builder. For example, to generate a rule processor for `formatQuery` that uses a custom date/time plugin `myDateTimeLibraryAPI`, pass it to the `getDatetimeRuleProcessorSQL` function like this:
 
 ```ts
 const mySQLRuleProcessor = getDatetimeRuleProcessorSQL(myDateTimeLibraryAPI);

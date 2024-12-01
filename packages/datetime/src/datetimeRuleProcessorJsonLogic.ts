@@ -5,6 +5,7 @@ import type {
   RQBDateTimeLibraryAPI,
   RQBJsonLogicDateTimeOperations,
 } from './types';
+import { processIsDateField } from './utils';
 
 const dateOperationMap = {
   '!=': 'dateNotOn',
@@ -28,7 +29,7 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
 ): RQBDateTimeJsonLogic => {
   const opts = options ?? /* istanbul ignore next */ {};
 
-  if (!/^(?:date|datetime|datetimeoffset|timestamp)\b/i.test(opts.fieldData?.datatype as string)) {
+  if (!processIsDateField(opts.context?.isDateField, rule, opts)) {
     return defaultRuleProcessorJsonLogic(rule, opts);
   }
 

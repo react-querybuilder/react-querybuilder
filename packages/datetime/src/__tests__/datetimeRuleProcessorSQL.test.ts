@@ -1,6 +1,7 @@
 import { formatQuery, type RuleGroupType, type SQLPreset } from 'react-querybuilder';
 import { getDatetimeRuleProcessorSQL } from '../datetimeRuleProcessorSQL';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
+import type { IsDateField } from '../types';
 
 const now = new Date().toISOString();
 const nowOracle = now.replace('T', ' ').replace('Z', ' UTC');
@@ -89,3 +90,31 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
     }
   });
 }
+
+describe('isDateField', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'firstName', operator: '=', value: '1954-10-03' }],
+  };
+  const isDateFieldOptions: [string, IsDateField][] = [
+    ['function', (rule, _opts) => /^\d\d\d\d-\d\d-\d\d$/.test(rule.value)],
+    ['boolean', true],
+    ['object', { name: 'firstName', label: 'First Name' }],
+    ['array', [{ name: 'firstName' }, { name: 'invalidField' }]],
+  ];
+
+  for (const [idfName, isDateField] of isDateFieldOptions) {
+    test(`as ${idfName}`, () => {
+      expect(
+        formatQuery(query, {
+          preset: 'postgresql',
+          fields,
+          ruleProcessor: getDatetimeRuleProcessorSQL(
+            dateLibraryFunctions.find(([name]) => name === 'date-fns')![1]
+          ),
+          context: { isDateField },
+        })
+      ).toBe(`("firstName" = date'1954-10-03')`);
+    });
+  }
+});

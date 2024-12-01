@@ -2,7 +2,7 @@ import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { datetimeRuleProcessorJsonLogic } from '../datetimeRuleProcessorJsonLogic';
 import { fields } from '../dbqueryTestUtils';
-import type { RQBDateTimeJsonLogic } from '../types';
+import type { IsDateField, RQBDateTimeJsonLogic } from '../types';
 
 const now = new Date().toISOString();
 
@@ -37,6 +37,7 @@ const testCases: Record<string, [RuleGroupType, RQBDateTimeJsonLogic]> = {
         { field: 'firstName', operator: '!=', value: 'lastName', valueSource: 'field' },
         { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
         { field: 'birthdate', operator: 'null', value: null },
+        { field: 'birthdate', operator: 'custom_op', value: null },
       ],
     },
     {
@@ -72,3 +73,29 @@ for (const [testCase, [query, expectation]] of Object.entries(testCases)) {
     ).toEqual(expectation);
   });
 }
+
+describe('isDateField', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'firstName', operator: '=', value: '1954-10-03' }],
+  };
+  const isDateFieldOptions: [string, IsDateField][] = [
+    ['function', (rule, _opts) => /^\d\d\d\d-\d\d-\d\d$/.test(rule.value)],
+    ['boolean', true],
+    ['object', { name: 'firstName', label: 'First Name' }],
+    ['array', [{ name: 'firstName' }, { name: 'invalidField' }]],
+  ];
+
+  for (const [idfName, isDateField] of isDateFieldOptions) {
+    test(`as ${idfName}`, () => {
+      expect(
+        formatQuery(query, {
+          format: 'jsonlogic',
+          fields,
+          ruleProcessor: datetimeRuleProcessorJsonLogic,
+          context: { isDateField },
+        })
+      ).toEqual({ and: [{ dateOn: [{ var: 'firstName' }, '1954-10-03'] }] });
+    });
+  }
+});

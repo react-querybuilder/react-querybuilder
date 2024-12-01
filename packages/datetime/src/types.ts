@@ -1,5 +1,5 @@
 import type { RulesLogic } from 'json-logic-js';
-import type { RQBJsonLogic } from 'react-querybuilder';
+import type { RQBJsonLogic, RuleProcessor } from 'react-querybuilder';
 
 export interface RQBJsonLogicDateBetween {
   dateBetween: [RQBJsonLogic, RQBJsonLogic, RQBJsonLogic];
@@ -124,3 +124,10 @@ export type RQBJsonLogicDateTimeOperations = {
   /** Determines if the first date is either the same as the second date or before it. */
   dateOnOrBefore: FnDateDate;
 };
+
+export type IsDateField =
+  | ((...[rule, opts]: Parameters<RuleProcessor>) => boolean)
+  | Record<string, unknown>
+  | Record<string, unknown>[]
+  | boolean
+  | undefined;

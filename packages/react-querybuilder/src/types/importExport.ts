@@ -197,6 +197,8 @@ export interface FormatQueryOptions {
    * Option presets to maximize compatibility with various SQL dialects.
    */
   preset?: SQLPreset;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: Record<string, any>;
 }
 
 /**
@@ -228,8 +230,6 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    * calls).
    */
   wrapValueWith?: [string, string];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: Record<string, any>;
 }
 
 /**

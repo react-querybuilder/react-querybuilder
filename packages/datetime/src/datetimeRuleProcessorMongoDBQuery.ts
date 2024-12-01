@@ -1,6 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorMongoDBQuery, mongoOperators, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
+import { processIsDateField } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "mongodb_query" format.
@@ -11,10 +12,7 @@ export const getDatetimeRuleProcessorMongoDBQuery =
     const opts = options ?? /* istanbul ignore next */ {};
     const { field, operator, value, valueSource } = rule;
 
-    if (
-      valueSource === 'field' ||
-      !/^(?:date|datetime|datetimeoffset|timestamp)\b/i.test(opts.fieldData?.datatype as string)
-    ) {
+    if (valueSource === 'field' || !processIsDateField(opts.context?.isDateField, rule, opts)) {
       return defaultRuleProcessorMongoDBQuery(rule, opts);
     }
 

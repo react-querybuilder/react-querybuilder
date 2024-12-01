@@ -3,6 +3,7 @@ import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { getDatetimeRuleProcessorMongoDBQuery } from '../datetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
+import type { IsDateField } from '../types';
 
 const now = new Date().toISOString();
 const d = (s: string) => `${s}T00:00:00.000Z`;
@@ -35,6 +36,7 @@ const testCases: Record<string, [RuleGroupType, Record<string, unknown>]> = {
       rules: [
         { field: 'firstName', operator: '!=', value: 'lastName', valueSource: 'field' },
         { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        { field: 'birthdate', operator: 'custom_op', value: null },
       ],
     },
     {
@@ -105,3 +107,31 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
     });
   });
 }
+
+describe('isDateField', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'firstName', operator: '=', value: '1954-10-03' }],
+  };
+  const isDateFieldOptions: [string, IsDateField][] = [
+    ['function', (rule, _opts) => /^\d\d\d\d-\d\d-\d\d$/.test(rule.value)],
+    ['boolean', true],
+    ['object', { name: 'firstName', label: 'First Name' }],
+    ['array', [{ name: 'firstName' }, { name: 'invalidField' }]],
+  ];
+
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+
+  for (const [idfName, isDateField] of isDateFieldOptions) {
+    test(`as ${idfName}`, () => {
+      expect(
+        formatQuery(query, {
+          format: 'mongodb_query',
+          fields,
+          ruleProcessor: getDatetimeRuleProcessorMongoDBQuery(apiFns),
+          context: { isDateField },
+        })
+      ).toEqual({ firstName: apiFns.toDate('1954-10-03') });
+    });
+  }
+});

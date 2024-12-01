@@ -7,7 +7,7 @@ import {
   toArray,
 } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly } from './utils';
+import { isISOStringDateOnly, processIsDateField } from './utils';
 
 export const getDatetimeValueProcessorANSI =
   ({ toISOStringDayOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
@@ -89,14 +89,14 @@ export const getDatetimeRuleProcessorSQL =
     const operator = mapSQLOperator(rule.operator);
     const operatorLowerCase = operator.toLowerCase();
     // istanbul ignore next
-    const { quoteFieldNamesWith = ['', ''] as [string, string], fieldIdentifierSeparator = '' } =
-      opts;
+    const {
+      quoteFieldNamesWith = ['', ''] as [string, string],
+      fieldIdentifierSeparator = '',
+      context = {},
+    } = opts;
     let finalValue = '';
 
-    if (
-      rule.valueSource === 'field' ||
-      !/^(?:date|datetime|datetimeoffset|timestamp)\b/i.test(opts.fieldData?.datatype as string)
-    ) {
+    if (rule.valueSource === 'field' || !processIsDateField(context.isDateField, rule, opts)) {
       return defaultRuleProcessorSQL(rule, opts);
     }
 
