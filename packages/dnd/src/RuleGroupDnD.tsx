@@ -65,7 +65,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
   });
 
   // eslint-disable-next-line react-compiler/react-compiler
-  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop!<
+  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
     DraggedItem,
     DropResult,
     DropCollection
@@ -111,7 +111,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         );
       },
     }),
-    [disabled, actions.moveRule, path]
+    [disabled, actions.moveRule, path, canDrop, ruleGroup, schema]
   );
 
   if (path.length > 0) {
