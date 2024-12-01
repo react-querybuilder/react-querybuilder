@@ -395,6 +395,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Romander",
+      "name": "Roman Ogoreltsev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13166357?v=4",
+      "profile": "https://github.com/Romander",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
