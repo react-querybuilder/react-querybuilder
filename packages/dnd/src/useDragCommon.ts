@@ -1,3 +1,4 @@
+import type { useDrag as originalUseDrag } from 'react-dnd';
 import type {
   DndDropTargetType,
   DragCollection,
@@ -18,8 +19,7 @@ type UseDragCommonProps = {
   actions: QueryActions;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: Schema<any, any>;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag: (typeof import('react-dnd'))['useDrag'];
+  useDrag: typeof originalUseDrag;
 };
 
 export const useDragCommon = ({

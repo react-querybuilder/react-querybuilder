@@ -1,3 +1,6 @@
+import type * as ReactDnD from 'react-dnd';
+import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
+import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type {
   Controls,
   DraggedItem,
@@ -8,8 +11,7 @@ import type {
 /**
  * Combination of all exports from `react-dnd` and `react-dnd-html5-backend`.
  */
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-export type UseReactDnD = typeof import('react-dnd') & typeof import('react-dnd-html5-backend');
+export type UseReactDnD = typeof ReactDnD & typeof ReactDndHtml5Backend;
 
 /**
  * Parameters passed to custom `canDrop` functions.
@@ -35,10 +37,8 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
 };
 
 export interface QueryBuilderDndContextProps {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrag?: (typeof import('react-dnd'))['useDrag'];
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  useDrop?: (typeof import('react-dnd'))['useDrop'];
+  useDrag?: typeof useDragOriginal;
+  useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
   canDrop?: (params: CustomCanDropParams) => boolean;
 }

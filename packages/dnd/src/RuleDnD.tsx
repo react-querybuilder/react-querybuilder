@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useContext, useRef } from 'react';
+import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
 import type {
   DndDropTargetType,
   DraggedItem,
@@ -43,9 +44,10 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
 };
 
 type UseRuleDndParams = RuleProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop'> &
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
+  Pick<QueryBuilderDndContextProps, 'canDrop'> & {
+    useDrag: typeof useDragOriginal;
+    useDrop: typeof useDropOriginal;
+  };
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
