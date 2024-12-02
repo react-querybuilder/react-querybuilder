@@ -84,7 +84,7 @@ export const useInlineCombinatorDnD = ({
     | RuleGroupTypeAny;
 
   // eslint-disable-next-line react-compiler/react-compiler
-  const [{ isOver, dropMonitorId }, drop] = useDrop!<DraggedItem, DropResult, DropCollection>(
+  const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: dragging => {
@@ -127,7 +127,7 @@ export const useInlineCombinatorDnD = ({
         return { type: 'inlineCombinator', path, qbId, getQuery, dispatchQuery };
       },
     }),
-    [path, schema.independentCombinators]
+    [canDrop, hoveringItem, path, schema]
   );
 
   drop(dropRef);
