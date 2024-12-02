@@ -23,7 +23,6 @@ export const getDatetimeRuleProcessorMongoDBQuery =
     switch (operator) {
       case '<':
       case '<=':
-      case '=':
       case '!=':
       case '>':
       case '>=':

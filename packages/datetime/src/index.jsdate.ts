@@ -1,4 +1,5 @@
 import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
+import { getDatetimeRuleProcessorCEL } from './datetimeRuleProcessorCEL';
 import { getJsonLogicDateTimeOperations } from './datetimeRuleProcessorJsonLogic';
 import { getDatetimeRuleProcessorMongoDBQuery } from './datetimeRuleProcessorMongoDBQuery';
 import {
@@ -28,6 +29,9 @@ export const datetimeValueProcessorOracle: ValueProcessorByRule =
   getDatetimeValueProcessorOracle(rqbDateTimeLibraryAPI);
 export const datetimeValueProcessorPostgreSQL: ValueProcessorByRule =
   getDatetimeValueProcessorPostgreSQL(rqbDateTimeLibraryAPI);
+
+export const datetimeValueProcessorCEL: ValueProcessorByRule =
+  getDatetimeRuleProcessorCEL(rqbDateTimeLibraryAPI);
 
 export const datetimeValueProcessorMongoDBQuery: ValueProcessorByRule =
   getDatetimeRuleProcessorMongoDBQuery(rqbDateTimeLibraryAPI);

@@ -1,4 +1,5 @@
-import { formatQuery, type RuleGroupType, type SQLPreset } from 'react-querybuilder';
+import type { RuleGroupType, SQLPreset } from 'react-querybuilder';
+import { formatQuery } from 'react-querybuilder';
 import { getDatetimeRuleProcessorSQL } from '../datetimeRuleProcessorSQL';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 import type { IsDateField } from '../types';
