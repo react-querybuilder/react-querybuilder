@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
@@ -33,7 +34,7 @@ function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGr
 function parseMongoDB(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mongoDbRules: string | Record<string, any>,
-  options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
+  options: Except<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
@@ -45,7 +46,7 @@ function parseMongoDB(
 function parseMongoDB(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mongoDbRules: string | Record<string, any>,
-  options: Omit<ParseMongoDbOptions, 'independentCombinators'> & {
+  options: Except<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

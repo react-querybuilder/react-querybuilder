@@ -1,5 +1,5 @@
 import { produce } from 'immer';
-import type { SetOptional } from 'type-fest';
+import type { Except, SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -268,7 +268,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     defaultFallbackExpressions.sql!;
 
   const finalOptions: Required<
-    Omit<FormatQueryOptions, 'context' | 'valueProcessor' | 'validator'>
+    Except<FormatQueryOptions, 'context' | 'valueProcessor' | 'validator'>
   > & {
     valueProcessor: ValueProcessorByRule;
     validator?: QueryValidator;

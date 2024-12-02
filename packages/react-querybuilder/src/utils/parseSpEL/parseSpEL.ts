@@ -1,4 +1,5 @@
 import { SpelExpressionEvaluator } from 'spel2js';
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -43,7 +44,7 @@ function parseSpEL(spel: string): DefaultRuleGroupType;
  */
 function parseSpEL(
   spel: string,
-  options: Omit<ParseSpELOptions, 'independentCombinators'> & {
+  options: Except<ParseSpELOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
@@ -54,7 +55,7 @@ function parseSpEL(
  */
 function parseSpEL(
   spel: string,
-  options: Omit<ParseSpELOptions, 'independentCombinators'> & {
+  options: Except<ParseSpELOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

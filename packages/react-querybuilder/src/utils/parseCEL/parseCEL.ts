@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -50,7 +51,7 @@ function parseCEL(cel: string): DefaultRuleGroupType;
  */
 function parseCEL(
   cel: string,
-  options: Omit<ParseCELOptions, 'independentCombinators'> & {
+  options: Except<ParseCELOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
@@ -61,7 +62,7 @@ function parseCEL(
  */
 function parseCEL(
   cel: string,
-  options: Omit<ParseCELOptions, 'independentCombinators'> & {
+  options: Except<ParseCELOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;
