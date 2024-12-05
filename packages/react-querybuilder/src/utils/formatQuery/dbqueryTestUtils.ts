@@ -1,6 +1,6 @@
 import type { DefaultRuleGroupType, FormatQueryOptions } from '../../types';
 
-type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql';
+type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql' | 'cel';
 
 export interface TestSQLParams {
   query: DefaultRuleGroupType;
@@ -19,6 +19,7 @@ export interface SuperUser {
 }
 
 const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
+  cel: [true, false],
   jsonata: [true, false],
   jsonlogic: [true, false],
   mssql: [1, 0],
@@ -62,6 +63,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
 };
 
 const enhancedColumnType: Record<DbPlatform, string> = {
+  cel: 'N/A',
   jsonata: 'N/A',
   jsonlogic: 'N/A',
   mssql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
@@ -70,6 +72,7 @@ const enhancedColumnType: Record<DbPlatform, string> = {
 };
 
 const textColumnType: Record<DbPlatform, string> = {
+  cel: 'TEXT',
   jsonata: 'TEXT',
   jsonlogic: 'TEXT',
   mssql: 'VARCHAR(255)',
