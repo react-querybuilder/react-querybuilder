@@ -5,6 +5,8 @@ import { transformQuery } from '../transformQuery';
 import { dbTests, superUsers } from './dbqueryTestUtils';
 import { formatQuery } from './formatQuery';
 
+const skipGoCompiledTestsEnvVar = 'RQB_SKIP_GO_COMPILED_TESTS';
+
 const repoRootDir = path.join(import.meta.dir, '../../../../..');
 $.nothrow();
 $.cwd(repoRootDir);
@@ -14,6 +16,9 @@ const { exitCode: whichGoExitCode } = await $`go version`.quiet();
 if (whichGoExitCode > 0) {
   // Bail out if Go is not installed
   test.skip('CEL dbquery tests skipped - Go not installed');
+} else if (process.env[skipGoCompiledTestsEnvVar]) {
+  // Bail out if we don't even want to try to run Go compiled tests
+  test.skip(`CEL dbquery tests skipped - ${skipGoCompiledTestsEnvVar} env var set`);
 } else {
   const { mtimeMs: srcLastModified } = await stat(
     `${repoRootDir}/utils/cel-evaluator/cel-evaluator.go`
