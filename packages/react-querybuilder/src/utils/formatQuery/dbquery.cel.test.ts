@@ -14,7 +14,7 @@ if (whichGoExitCode > 0) {
   // Bail out if Go is not installed
   test.skip('CEL dbquery tests skipped - Go is not installed');
 } else {
-  const { exitCode: goBuildExitCode } = await $`go build -o cel-evaluator main.go`.cwd(
+  const { exitCode: goBuildExitCode } = await $`go build cel-evaluator.go`.cwd(
     `${repoRootDir}/utils/cel-evaluator`
   );
 
