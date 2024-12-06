@@ -1,12 +1,12 @@
 import type { RuleProcessor } from 'react-querybuilder';
-import type { IsDateField } from './types';
+import type { IsDateField, IsDateFieldFunction } from './types';
 
 export const isISOStringDateOnly = (
   date: unknown
 ): date is `${number}${number}${number}${number}-${number}${number}-${number}${number}` =>
   typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date);
 
-export const defaultIsDateField: IsDateField = (
+export const defaultIsDateField: IsDateFieldFunction = (
   ...[rule, opts]: Parameters<RuleProcessor>
 ): boolean =>
   rule.operator !== 'contains' &&

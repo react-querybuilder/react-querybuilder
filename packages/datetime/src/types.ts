@@ -125,8 +125,9 @@ export type RQBJsonLogicDateTimeOperations = {
   dateOnOrBefore: FnDateDate;
 };
 
+export type IsDateFieldFunction = (...[rule, opts]: Parameters<RuleProcessor>) => boolean;
 export type IsDateField =
-  | ((...[rule, opts]: Parameters<RuleProcessor>) => boolean)
+  | IsDateFieldFunction
   | Record<string, unknown>
   | Record<string, unknown>[]
   | boolean

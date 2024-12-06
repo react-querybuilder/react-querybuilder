@@ -68,12 +68,12 @@ export const FIND_MUSICIANS_TABLE = (platform: string): string =>
     postgresql: `SELECT * FROM pg_tables WHERE tablename = 'musicians'`,
   })[platform]!;
 
-export function CREATE_MUSICIANS_TABLE(platform: 'jsonlogic'): MusicianRecord[];
+export function CREATE_MUSICIANS_TABLE(platform: 'jsonlogic' | 'cel'): MusicianRecord[];
 export function CREATE_MUSICIANS_TABLE(platform: 'sqlite' | 'postgresql'): string;
 export function CREATE_MUSICIANS_TABLE(
-  platform: 'sqlite' | 'postgresql' | 'jsonlogic'
+  platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel'
 ): string | MusicianRecord[] {
-  if (platform === 'jsonlogic') {
+  if (platform === 'jsonlogic' || platform === 'cel') {
     const now = new Date().toISOString();
     return musicians.map<MusicianRecord>(musician => ({
       ...musician,
@@ -108,7 +108,7 @@ VALUES ('${musician.first_name}', '${musician.middle_name}', '${musician.last_na
     .join(';\n');
 };
 
-export const testCases: Record<string, [RuleGroupType, string | number]> = {
+export const testCases: Record<string, [RuleGroupType, string]> = {
   basic: [
     {
       combinator: 'and',
