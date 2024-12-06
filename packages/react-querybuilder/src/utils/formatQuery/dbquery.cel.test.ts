@@ -1,4 +1,5 @@
 import { $ } from 'bun';
+import { stat } from 'node:fs/promises';
 import path from 'node:path';
 import { transformQuery } from '../transformQuery';
 import { dbTests, superUsers } from './dbqueryTestUtils';
@@ -12,13 +13,26 @@ const { exitCode: whichGoExitCode } = await $`go version`.quiet();
 
 if (whichGoExitCode > 0) {
   // Bail out if Go is not installed
-  test.skip('CEL dbquery tests skipped - Go is not installed');
+  test.skip('CEL dbquery tests skipped - Go not installed');
 } else {
-  const { exitCode: goBuildExitCode } = await $`go build cel-evaluator.go`.cwd(
-    `${repoRootDir}/utils/cel-evaluator`
+  const { mtimeMs: srcLastModified } = await stat(
+    `${repoRootDir}/utils/cel-evaluator/cel-evaluator.go`
   );
+  const { mtimeMs: binLastModified } = await stat(
+    `${repoRootDir}/utils/cel-evaluator/cel-evaluator${process.platform === 'win32' ? '.exe' : ''}`
+  ).catch(() => ({ mtimeMs: 0 }));
 
-  if (goBuildExitCode > 0) {
+  let buildInvalid = binLastModified === 0;
+  const buildOutdated = srcLastModified > binLastModified;
+
+  if (buildInvalid || buildOutdated) {
+    const { exitCode: goBuildExitCode } = await $`go build cel-evaluator.go`.cwd(
+      `${repoRootDir}/utils/cel-evaluator`
+    );
+    buildInvalid = goBuildExitCode > 0;
+  }
+
+  if (buildInvalid) {
     // Bail out if Go build fails
     test.skip('CEL dbquery tests skipped - Go build failed');
   } else {
