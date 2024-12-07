@@ -1,3 +1,5 @@
+/* @jest-environment node */
+
 /* eslint-disable unicorn/no-await-expression-member */
 import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from 'react-querybuilder';
@@ -23,6 +25,10 @@ type Result = {
 };
 
 const db = new PGlite(import.meta.dir + '/dbquery.postgresql.cache_db');
+// To run this file with Jest, use something like this:
+// > NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules" npx jest
+// and use an in-memory database instead of the cached one:
+// const db = new PGlite();
 
 beforeAll(async () => {
   if ((await db.query(FIND_MUSICIANS_TABLE('postgresql'))).rows.length === 0) {

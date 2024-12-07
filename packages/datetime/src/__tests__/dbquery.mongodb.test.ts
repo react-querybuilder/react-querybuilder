@@ -6,6 +6,11 @@ import { formatQuery } from 'react-querybuilder';
 import { getDatetimeRuleProcessorMongoDBQuery } from '../datetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 
+if (process.env.JEST_WORKER_ID) {
+  // Give MongoDB time to download
+  jest.setTimeout(60_000);
+}
+
 const mongoServer = new MongoMemoryServer();
 
 type Result = {

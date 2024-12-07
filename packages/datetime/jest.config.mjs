@@ -6,6 +6,7 @@ export default {
   displayName: 'datetime',
   testPathIgnorePatterns: [
     ...(common.testPathIgnorePatterns ?? []),
+    'dbquery.cel',
     'dbquery.postgres',
     'dbquery.sqlite',
   ],

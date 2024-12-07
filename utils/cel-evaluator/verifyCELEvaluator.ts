@@ -4,7 +4,9 @@ import { stat } from 'node:fs/promises';
 
 const skipGoCompiledTestsEnvVar = 'RQB_SKIP_GO_COMPILED_TESTS';
 
-export const verifyCELEvaluator = async (): Promise<boolean> => {
+type CelEvaluator = (param: { data: unknown[]; cel: string }) => Promise<unknown[]>;
+
+export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
   $.nothrow();
   $.cwd(import.meta.dir);
 
@@ -60,5 +62,10 @@ export const verifyCELEvaluator = async (): Promise<boolean> => {
     }
   }
 
-  return !buildInvalid && !buildOutdated;
+  return (
+    !buildInvalid &&
+    !buildOutdated &&
+    (async ({ data, cel }) =>
+      JSON.parse(await $`./cel-evaluator ${JSON.stringify(data)} ${cel}`.text()))
+  );
 };

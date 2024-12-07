@@ -1,8 +1,6 @@
-import { $ } from 'bun';
-import path from 'node:path';
 import { formatQuery, transformQuery } from 'react-querybuilder';
-import { verifyCELEvaluator } from '../../../../utils/cel-evaluator/verifyCELEvaluator';
 import { getDatetimeRuleProcessorCEL } from '../datetimeRuleProcessorCEL';
+import type { MusicianRecord } from '../dbqueryTestUtils';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -12,13 +10,12 @@ import {
 import type { IsDateFieldFunction } from '../types';
 import { defaultIsDateField } from '../utils';
 
-const repoRootDir = path.join(import.meta.dir, '../../../..');
-const celEvaluatorDir = `${repoRootDir}/utils/cel-evaluator`;
-$.nothrow();
-$.cwd(repoRootDir);
+const { verifyCELEvaluator } = await import('../../../../utils/cel-evaluator/verifyCELEvaluator');
 
-if (await verifyCELEvaluator()) {
-  const musiciansCEL = CREATE_MUSICIANS_TABLE('cel');
+const celEvaluator = await verifyCELEvaluator();
+
+if (celEvaluator) {
+  const data = CREATE_MUSICIANS_TABLE('cel');
 
   const isDateField: IsDateFieldFunction = (rule, opts = {}) => {
     const { fieldData } = opts;
@@ -39,7 +36,7 @@ if (await verifyCELEvaluator()) {
           const query = transformQuery(testCase[0], {
             ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
           });
-          const celQuery = formatQuery(query, {
+          const cel = formatQuery(query, {
             format: 'cel',
             parseNumbers: true,
             fields: itemFields,
@@ -48,11 +45,9 @@ if (await verifyCELEvaluator()) {
           })
             .replaceAll('item.created_at', 'timestamp(item.created_at)')
             .replaceAll('item.birthdate', 'timestamp(item.birthdate + "T00:00:00.000Z")');
-          const result = JSON.parse(
-            await $`${celEvaluatorDir}/cel-evaluator ${JSON.stringify(musiciansCEL)} ${celQuery}`.text()
-          );
+          const result = (await celEvaluator({ data, cel })) as MusicianRecord[];
           if (testCase[1] === 'all') {
-            expect(result).toHaveLength(musiciansCEL.length);
+            expect(result).toHaveLength(data.length);
           } else {
             expect(result[0].last_name).toBe(testCase[1]);
           }
