@@ -4,10 +4,10 @@ import { stat } from 'node:fs/promises';
 
 const skipGoCompiledTestsEnvVar = 'RQB_SKIP_GO_COMPILED_TESTS';
 
-$.nothrow();
-$.cwd(import.meta.dir);
-
 export const verifyCELEvaluator = async (): Promise<boolean> => {
+  $.nothrow();
+  $.cwd(import.meta.dir);
+
   let buildInvalid = true;
   let buildOutdated = true;
 
