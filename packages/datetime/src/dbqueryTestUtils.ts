@@ -37,7 +37,7 @@ export const fields: Field[] = [
 
 export interface Musician {
   first_name: string;
-  middle_name: string | null;
+  middle_name: string | null | undefined;
   last_name: string;
   birthdate: string;
 }
@@ -50,7 +50,7 @@ export interface MusicianRecord extends Musician {
 export const musicians: Musician[] = [
   {
     first_name: 'Steve',
-    middle_name: null,
+    middle_name: undefined,
     last_name: 'Vai',
     birthdate: '1960-06-06',
   },
