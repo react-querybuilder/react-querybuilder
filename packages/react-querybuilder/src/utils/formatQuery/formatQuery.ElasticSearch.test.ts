@@ -184,91 +184,83 @@ it('formats ElasticSearch correctly', () => {
   });
 });
 
-describe('independent combinators', () => {
-  it('handles independent combinators for elasticsearch', () => {
-    expect(formatQuery(queryIC, 'elasticsearch')).toEqual({
-      bool: {
-        should: [
-          {
-            bool: {
-              must: [{ term: { firstName: 'Test' } }, { term: { middleName: 'Test' } }],
-            },
+it('independent combinators', () => {
+  expect(formatQuery(queryIC, 'elasticsearch')).toEqual({
+    bool: {
+      should: [
+        {
+          bool: {
+            must: [{ term: { firstName: 'Test' } }, { term: { middleName: 'Test' } }],
           },
-          { term: { lastName: 'Test' } },
-        ],
-      },
-    });
+        },
+        { term: { lastName: 'Test' } },
+      ],
+    },
   });
 });
 
 describe('validation', () => {
-  describe('elasticsearch', () => {
-    const validationResults: Record<string, object> = {
-      'should invalidate elasticsearch': {},
-      'should invalidate elasticsearch even if fields are valid': {},
-      'should invalidate elasticsearch rule by validator function': {
-        bool: { must: [{ term: { field2: '' } }] },
-      },
-      'should invalidate elasticsearch rule specified by validationMap': {
-        bool: { must: [{ term: { field2: '' } }] },
-      },
-      'should invalidate elasticsearch outermost group': {},
-      'should invalidate elasticsearch inner group': {},
-      'should convert elasticsearch inner group with no rules to fallbackExpression': {
-        bool: { must: [{ term: { field: '' } }] },
-      },
-    };
+  const validationResults: Record<string, object> = {
+    'should invalidate elasticsearch': {},
+    'should invalidate elasticsearch even if fields are valid': {},
+    'should invalidate elasticsearch rule by validator function': {
+      bool: { must: [{ term: { field2: '' } }] },
+    },
+    'should invalidate elasticsearch rule specified by validationMap': {
+      bool: { must: [{ term: { field2: '' } }] },
+    },
+    'should invalidate elasticsearch outermost group': {},
+    'should invalidate elasticsearch inner group': {},
+    'should convert elasticsearch inner group with no rules to fallbackExpression': {
+      bool: { must: [{ term: { field: '' } }] },
+    },
+  };
 
-    for (const vtd of getValidationTestData('elasticsearch')) {
-      if (validationResults[vtd.title] !== undefined) {
-        it(vtd.title, () => {
-          expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
-        });
-      }
+  for (const vtd of getValidationTestData('elasticsearch')) {
+    if (validationResults[vtd.title] !== undefined) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
+      });
     }
+  }
+});
+
+it('ruleProcessor', () => {
+  const customResult = { bool: { must: [{ term: { custom: 'custom' } }] } };
+  const ruleProcessor: RuleProcessor = r =>
+    r.operator === 'custom_operator' ? customResult : defaultRuleProcessorElasticSearch(r);
+  expect(formatQuery(queryForRuleProcessor, { format: 'elasticsearch', ruleProcessor })).toEqual({
+    bool: { must: [customResult, { term: { f2: 'v2' } }] },
+  });
+  expect(
+    formatQuery(queryForRuleProcessor, { format: 'elasticsearch', valueProcessor: ruleProcessor })
+  ).toEqual({
+    bool: { must: [customResult, { term: { f2: 'v2' } }] },
   });
 });
 
-describe('ruleProcessor', () => {
-  it('handles custom ElasticSearch rule processor', () => {
-    const customResult = { bool: { must: [{ term: { custom: 'custom' } }] } };
-    const ruleProcessor: RuleProcessor = r =>
-      r.operator === 'custom_operator' ? customResult : defaultRuleProcessorElasticSearch(r);
-    expect(formatQuery(queryForRuleProcessor, { format: 'elasticsearch', ruleProcessor })).toEqual({
-      bool: { must: [customResult, { term: { f2: 'v2' } }] },
-    });
-    expect(
-      formatQuery(queryForRuleProcessor, { format: 'elasticsearch', valueProcessor: ruleProcessor })
-    ).toEqual({
-      bool: { must: [customResult, { term: { f2: 'v2' } }] },
-    });
-  });
-});
-
-describe('parseNumbers', () => {
-  it('parses numbers for elasticsearch', () => {
-    expect(
-      formatQuery(queryForNumberParsing, {
-        format: 'elasticsearch',
-        parseNumbers: true,
-      })
-    ).toEqual({
-      bool: {
-        must: [
-          { range: { f: { gt: 'NaN' } } },
-          { term: { f: 0 } },
-          { term: { f: 0 } },
-          { term: { f: 0 } },
-          { bool: { should: [{ range: { f: { lt: 1.5 } } }, { range: { f: { gt: 1.5 } } }] } },
-          { bool: { should: [{ term: { f: 0 } }, { term: { f: 1 } }, { term: { f: 2 } }] } },
-          { bool: { should: [{ term: { f: 0 } }, { term: { f: 1 } }, { term: { f: 2 } }] } },
-          { bool: { should: [{ term: { f: 0 } }, { term: { f: 'abc' } }, { term: { f: 2 } }] } },
-          { range: { f: { gte: 0, lte: 1 } } },
-          { range: { f: { gte: 0, lte: 1 } } },
-          { range: { f: { gte: '0', lte: 'abc' } } },
-          { range: { f: { gte: {}, lte: {} } } },
-        ],
-      },
-    });
+it('parseNumbers', () => {
+  expect(
+    formatQuery(queryForNumberParsing, {
+      format: 'elasticsearch',
+      parseNumbers: true,
+    })
+  ).toEqual({
+    bool: {
+      must: [
+        { range: { f: { gt: 'NaN' } } },
+        { term: { f: 0 } },
+        { term: { f: 0 } },
+        { term: { f: 0 } },
+        { bool: { should: [{ range: { f: { lt: 1.5 } } }, { range: { f: { gt: 1.5 } } }] } },
+        { bool: { should: [{ term: { f: 0 } }, { term: { f: 1 } }, { term: { f: 2 } }] } },
+        { bool: { should: [{ term: { f: 0 } }, { term: { f: 1 } }, { term: { f: 2 } }] } },
+        { bool: { should: [{ term: { f: 0 } }, { term: { f: 'abc' } }, { term: { f: 2 } }] } },
+        { range: { f: { gte: 0, lte: 1 } } },
+        { range: { f: { gte: 0, lte: 1 } } },
+        { range: { f: { gte: '0', lte: 'abc' } } },
+        { range: { f: { gte: {}, lte: {} } } },
+      ],
+    },
   });
 });

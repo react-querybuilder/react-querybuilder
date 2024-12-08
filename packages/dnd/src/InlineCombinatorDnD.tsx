@@ -1,6 +1,7 @@
 import type { Ref } from 'react';
 import * as React from 'react';
 import { useContext, useRef } from 'react';
+import type { useDrop as useDropOriginal } from 'react-dnd';
 import type {
   DndDropTargetType,
   DraggedItem,
@@ -58,9 +59,7 @@ export const InlineCombinatorDnD = ({
 };
 
 type UseInlineCombinatorDndParams = InlineCombinatorProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop'> &
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  Pick<typeof import('react-dnd'), 'useDrop'>;
+  Pick<QueryBuilderDndContextProps, 'canDrop'> & { useDrop: typeof useDropOriginal };
 
 interface UseInlineCombinatorDnD {
   isOver: boolean;
