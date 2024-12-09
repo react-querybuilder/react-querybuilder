@@ -15,7 +15,7 @@ export interface SuperUser {
   lastName: string;
   enhanced: 1 | 0 | boolean;
   madeUpName: string;
-  powerUpAge: number | null;
+  powerUpAge: number | null | undefined;
 }
 
 const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
@@ -57,7 +57,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       lastName: 'Wayne',
       enhanced: isNotEnhanced,
       madeUpName: 'Batman',
-      powerUpAge: null,
+      powerUpAge: dbPlatform === 'cel' ? undefined : null,
     },
   ];
 };
