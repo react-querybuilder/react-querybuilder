@@ -46,18 +46,18 @@ afterAll(async () => {
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
-    for (const [testCaseName, testCase] of Object.entries(testCases)) {
+    for (const [testCaseName, [query, expectation]] of Object.entries(testCases)) {
       test(testCaseName, async () => {
-        const sql = formatQuery(testCase[0], {
+        const sql = formatQuery(query, {
           preset: 'postgresql',
           fields,
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
         const { rows: result } = await db.query<Result>(`${sqlBase} ${sql}`);
-        if (testCase[1] === 'all') {
+        if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
-          expect(result[0].last_name).toBe(testCase[1]);
+          expect(result[0].last_name).toBe(expectation);
         }
       });
     }

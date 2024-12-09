@@ -20,7 +20,7 @@ const typemap = {
   last_name: 'string',
   birthdate: 'date',
   created_at: 'timestamp',
-  updated_at: 'string',
+  updated_at: 'timestamp',
 };
 
 if (celEvaluator) {
@@ -39,10 +39,10 @@ if (celEvaluator) {
 
   for (const [libName, apiFns] of dateLibraryFunctions) {
     describe(libName, () => {
-      for (const [testCaseName, testCase] of Object.entries(testCases)) {
+      for (const [testCaseName, [testQuery, expectation]] of Object.entries(testCases)) {
         test(testCaseName, async () => {
           const itemFields = fields.map(f => ({ ...f, name: `item.${f.name}` }));
-          const query = transformQuery(testCase[0], {
+          const query = transformQuery(testQuery, {
             ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
           });
           const cel = formatQuery(query, {
@@ -53,10 +53,10 @@ if (celEvaluator) {
             context: { isDateField },
           });
           const result = (await celEvaluator({ data, cel, typemap })) as MusicianRecord[];
-          if (testCase[1] === 'all') {
+          if (expectation === 'all') {
             expect(result).toHaveLength(data.length);
           } else {
-            expect(result[0].last_name).toBe(testCase[1]);
+            expect(result[0].last_name).toBe(expectation);
           }
         });
       }

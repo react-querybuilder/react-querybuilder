@@ -50,18 +50,18 @@ afterAll(async () => {
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
-    for (const [testCaseName, testCase] of Object.entries(testCases)) {
+    for (const [testCaseName, [query, expectation]] of Object.entries(testCases)) {
       test(testCaseName, async () => {
-        const mdbQuery = formatQuery(testCase[0], {
+        const mdbQuery = formatQuery(query, {
           format: 'mongodb_query',
           fields,
           ruleProcessor: getDatetimeRuleProcessorMongoDBQuery(apiFns),
         });
         const result = await Musician.find(mdbQuery);
-        if (testCase[1] === 'all') {
+        if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
-          expect(result[0].last_name).toBe(testCase[1]);
+          expect(result[0].last_name).toBe(expectation);
         }
       });
     }

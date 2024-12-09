@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import { getDatetimeRuleProcessorCEL } from '../datetimeRuleProcessorCEL';
@@ -5,19 +6,19 @@ import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 import type { IsDateField } from '../types';
 
 const now = new Date().toISOString();
-const d = (s: string) => `${s}T00:00:00.000Z`;
-const ts = (s: string) => `timestamp("${s}T00:00:00.000Z")`;
+const d = (s: string) => dayjs(s).toISOString();
+const ts = (s: string) => `timestamp("${dayjs(s).toISOString()}")`;
 
 const testCases: Record<string, [RuleGroupType, string]> = {
   valid: [
     {
       combinator: 'and',
       rules: [
-        { field: 'birthdate', operator: '>', value: d('1957-01-01') },
-        { field: 'birthdate', operator: 'between', value: [d('1957-01-01'), d('1969-01-01')] },
-        { field: 'birthdate', operator: 'notBetween', value: [d('1969-01-01'), d('1957-01-01')] },
-        { field: 'birthdate', operator: 'in', value: [d('1954-10-03'), d('1960-06-06')] },
-        { field: 'birthdate', operator: 'notIn', value: [d('1957-01-01')] },
+        { field: 'birthdate', operator: '>', value: '1957-01-01' },
+        { field: 'birthdate', operator: 'between', value: ['1957-01-01', '1969-01-01'] },
+        { field: 'birthdate', operator: 'notBetween', value: ['1969-01-01', '1957-01-01'] },
+        { field: 'birthdate', operator: 'in', value: ['1954-10-03', '1960-06-06'] },
+        { field: 'birthdate', operator: 'notIn', value: ['1957-01-01'] },
         { field: 'created_at', operator: '<', value: now },
       ],
     },
@@ -38,7 +39,7 @@ const testCases: Record<string, [RuleGroupType, string]> = {
     {
       combinator: 'and',
       rules: [
-        { field: 'birthdate', operator: 'between', value: d('1957-01-01') },
+        { field: 'birthdate', operator: 'between', value: '1957-01-01' },
         { field: 'birthdate', operator: 'in', value: 'Stev' },
       ],
     },
