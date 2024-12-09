@@ -7,6 +7,7 @@ const compatPackageNames = {
   bootstrap: 'Bootstrap',
   bulma: 'Bulma',
   chakra: 'Chakra UI',
+  datetime: 'Date/Time',
   dnd: 'Drag-and-Drop',
   fluent: 'Fluent UI',
   mantine: 'Mantine',

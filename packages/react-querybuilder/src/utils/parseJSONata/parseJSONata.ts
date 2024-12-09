@@ -1,4 +1,5 @@
 import jsonata from 'jsonata';
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -48,7 +49,7 @@ function parseJSONata(jsonataInput: string): DefaultRuleGroupType;
  */
 function parseJSONata(
   jsonataInput: string,
-  options: Omit<ParseJSONataOptions, 'independentCombinators'> & {
+  options: Except<ParseJSONataOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
@@ -59,7 +60,7 @@ function parseJSONata(
  */
 function parseJSONata(
   jsonataInput: string,
-  options: Omit<ParseJSONataOptions, 'independentCombinators'> & {
+  options: Except<ParseJSONataOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

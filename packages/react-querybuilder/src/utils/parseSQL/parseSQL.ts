@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -37,7 +38,7 @@ function parseSQL(sql: string): DefaultRuleGroupType;
  */
 function parseSQL(
   sql: string,
-  options: Omit<ParseSQLOptions, 'independentCombinators'> & {
+  options: Except<ParseSQLOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
@@ -48,7 +49,7 @@ function parseSQL(
  */
 function parseSQL(
   sql: string,
-  options: Omit<ParseSQLOptions, 'independentCombinators'> & {
+  options: Except<ParseSQLOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

@@ -32,7 +32,6 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     title,
     className,
     type,
-    inputType,
     values: _v,
     listsAsArrays,
     parseNumbers: _parseNumbers,
@@ -41,20 +40,19 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     disabled,
     testID,
     selectorComponent = ClearableValueSelector,
+    inputType: _inputType,
     validation: _validation,
     extraProps,
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
+  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
+    useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = (
-    ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text'
-  ) as TextInputProps['type'];
 
   if (
     (operator === 'between' || operator === 'notBetween') &&
@@ -67,7 +65,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
         return (
           <TextInput
             key={key}
-            type={inputTypeCoerced}
+            type={inputTypeCoerced as TextInputProps['type']}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             className={`${valueListItemClassName} input`}
@@ -193,7 +191,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
       title={title}
       className={className}
       placeholder={placeHolderText}
-      type={inputTypeCoerced}
+      type={inputTypeCoerced as TextInputProps['type']}
       disabled={disabled}
       value={value}
       onValueChange={handleOnChange}

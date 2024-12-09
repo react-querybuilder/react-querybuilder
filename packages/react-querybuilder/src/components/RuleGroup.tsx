@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
+import type { Except } from 'type-fest';
 import { standardClassnames, TestID } from '../defaults';
 import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
 import { useReactDndWarning } from '../hooks/useReactDndWarning';
@@ -403,7 +404,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
 });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRuleGroup = Omit<RuleGroupProps, 'ruleGroup'> & {
+export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
   accessibleDescription: string;

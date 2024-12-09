@@ -196,75 +196,65 @@ it('uses paramPrefix correctly', () => {
 });
 
 describe('escapes quotes when appropriate', () => {
-  it(`escapes single quotes (if appropriate) for spel export`, () => {
-    expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te\\'st'`);
-  });
+  expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te\\'st'`);
 });
 
 describe('independent combinators', () => {
-  it('handles independent combinators for spel', () => {
-    expect(formatQuery(queryIC, 'spel')).toBe(
-      `firstName == 'Test' and middleName == 'Test' or lastName == 'Test'`
-    );
-  });
+  expect(formatQuery(queryIC, 'spel')).toBe(
+    `firstName == 'Test' and middleName == 'Test' or lastName == 'Test'`
+  );
 });
 
 describe('validation', () => {
-  describe('spel', () => {
-    const validationResults: Record<string, string> = {
-      'should invalidate spel': '1 == 1',
-      'should invalidate spel even if fields are valid': '1 == 1',
-      'should invalidate spel rule by validator function': `field2 == ''`,
-      'should invalidate spel rule specified by validationMap': `field2 == ''`,
-      'should invalidate spel outermost group': '1 == 1',
-      'should invalidate spel inner group': '1 == 1',
-      'should convert spel inner group with no rules to fallbackExpression': `field == '' and 1 == 1`,
-    };
+  const validationResults: Record<string, string> = {
+    'should invalidate spel': '1 == 1',
+    'should invalidate spel even if fields are valid': '1 == 1',
+    'should invalidate spel rule by validator function': `field2 == ''`,
+    'should invalidate spel rule specified by validationMap': `field2 == ''`,
+    'should invalidate spel outermost group': '1 == 1',
+    'should invalidate spel inner group': '1 == 1',
+    'should convert spel inner group with no rules to fallbackExpression': `field == '' and 1 == 1`,
+  };
 
-    for (const vtd of getValidationTestData('spel')) {
-      if (validationResults[vtd.title] !== undefined) {
-        it(vtd.title, () => {
-          expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
-        });
-      }
+  for (const vtd of getValidationTestData('spel')) {
+    if (validationResults[vtd.title] !== undefined) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+      });
     }
-  });
+  }
 });
 
 describe('ruleProcessor', () => {
-  it('handles custom SpEL rule processor', () => {
-    const ruleProcessor: RuleProcessor = r =>
-      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSpEL(r);
-    expect(formatQuery(queryForRuleProcessor, { format: 'spel', ruleProcessor })).toBe(
-      "custom_operator and f2 == 'v2'"
-    );
-    expect(
-      formatQuery(queryForRuleProcessor, { format: 'spel', valueProcessor: ruleProcessor })
-    ).toBe("custom_operator and f2 == 'v2'");
-  });
+  const ruleProcessor: RuleProcessor = r =>
+    r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSpEL(r);
+  expect(formatQuery(queryForRuleProcessor, { format: 'spel', ruleProcessor })).toBe(
+    "custom_operator and f2 == 'v2'"
+  );
+  expect(
+    formatQuery(queryForRuleProcessor, { format: 'spel', valueProcessor: ruleProcessor })
+  ).toBe("custom_operator and f2 == 'v2'");
 });
 
 describe('parseNumbers', () => {
-  it('parses numbers for spel', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
-      "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
-    );
-    const queryForNumberParsingSpEL: RuleGroupType = {
-      combinator: 'and',
-      rules: [
-        { field: 'f', operator: 'beginsWith', value: 1 },
-        { field: 'f', operator: 'beginsWith', value: '^hasCaret' },
-        { field: 'f', operator: 'endsWith', value: 1 },
-        { field: 'f', operator: 'endsWith', value: 'hasDollarSign$' },
-      ],
-    };
-    expect(
-      formatQuery(queryForNumberParsingSpEL, {
-        format: 'spel',
-        parseNumbers: true,
-      })
-    ).toBe(
-      `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
-    );
-  });
+  expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
+    "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
+  );
+  const queryForNumberParsingSpEL: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'beginsWith', value: 1 },
+      { field: 'f', operator: 'beginsWith', value: '^hasCaret' },
+      { field: 'f', operator: 'endsWith', value: 1 },
+      { field: 'f', operator: 'endsWith', value: 'hasDollarSign$' },
+    ],
+  };
+  expect(
+    formatQuery(queryForNumberParsingSpEL, {
+      format: 'spel',
+      parseNumbers: true,
+    })
+  ).toBe(
+    `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
+  );
 });

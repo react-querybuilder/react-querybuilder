@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
@@ -53,7 +54,7 @@ function parseJsonLogic(rqbJsonLogic: string | RQBJsonLogic): DefaultRuleGroupTy
  */
 function parseJsonLogic(
   rqbJsonLogic: string | RQBJsonLogic,
-  options: Omit<ParseJsonLogicOptions, 'independentCombinators'> & {
+  options: Except<ParseJsonLogicOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
@@ -64,7 +65,7 @@ function parseJsonLogic(
  */
 function parseJsonLogic(
   rqbJsonLogic: string | RQBJsonLogic,
-  options: Omit<ParseJsonLogicOptions, 'independentCombinators'> & {
+  options: Except<ParseJsonLogicOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;
