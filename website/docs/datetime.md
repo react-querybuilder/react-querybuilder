@@ -95,7 +95,13 @@ The `datetimeRuleProcessorSQL` rule processor will produce different output base
 
 ### MongoDB
 
-The `datetimeRuleProcessorMongoDBQuery` rule processor should be used in conjunction with the "mongodb_query" format, not "mongodb".
+Since the `datetimeRuleProcessorMongoDBQuery` rule processor handles real date/time values (as `Date` objects), it should be used in conjunction with the "mongodb_query" format and not "mongodb".
+
+```ts
+import { datetimeRuleProcessorMongoDBQuery } from '@react-querybuilder/datetime/dayjs';
+
+formatQuery(query, { format: 'mongodb_query', ruleProcessor: datetimeRuleProcessorMongoDBQuery });
+```
 
 ### JsonLogic
 
@@ -108,6 +114,22 @@ import { jsonLogicDateTimeOperations } from '@react-querybuilder/datetime/dayjs'
 for (const [op, func] of Object.entries(jsonLogicDateTimeOperations)) {
   add_operation(op, func);
 }
+```
+
+### Common Expression Language (CEL)
+
+```ts
+import { datetimeRuleProcessorCEL } from '@react-querybuilder/datetime/dayjs';
+
+formatQuery(query, { format: 'cel', ruleProcessor: datetimeRuleProcessorCEL });
+```
+
+### JSONata
+
+```ts
+import { datetimeRuleProcessorJSONata } from '@react-querybuilder/datetime/dayjs';
+
+formatQuery(query, { format: 'jsonata', ruleProcessor: datetimeRuleProcessorJSONata });
 ```
 
 ## Value editor
@@ -129,8 +151,8 @@ interface RQBDateTimeLibraryAPI {
   /** `a` is before `b`. */
   isBefore: (a: DateOrString, b: DateOrString) => boolean;
   /**
-   * `a` evaluates to the same timestamp as `b`. If `a` or `b` are an
-   * ISO date-only string, they are the same date (no time component).
+   * `a` evaluates to the same timestamp as `b`. If either `a` or `b` is an
+   * ISO date-only string, they are the same date (time component is ignored).
    */
   isSame: (a: DateOrString, b: DateOrString) => boolean;
   /** `d` is, or evaluates to, a valid Date object */

@@ -95,6 +95,7 @@
     "@vitejs/plugin-react": "^4.3.3",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "jsonata": "^2.0.5",
     "json-logic-js": "^2.0.5",
     "luxon": "^3.5.0",
     "mongodb-memory-server-core": "^10.1.2",
