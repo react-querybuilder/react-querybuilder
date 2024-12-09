@@ -15,10 +15,10 @@ test('format', () => {
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
-    test('toISOStringDayOnly', () => {
-      expect(apiFns.toISOStringDayOnly('2002-12-14')).toBe('2002-12-14');
-      expect(apiFns.toISOStringDayOnly(new Date(2002, 12 - 1, 14))).toBe('2002-12-14');
-      expect(apiFns.toISOStringDayOnly('invalid')).toBe('');
+    test('toISOStringDateOnly', () => {
+      expect(apiFns.toISOStringDateOnly('2002-12-14')).toBe('2002-12-14');
+      expect(apiFns.toISOStringDateOnly(new Date(2002, 12 - 1, 14))).toBe('2002-12-14');
+      expect(apiFns.toISOStringDateOnly('invalid')).toBe('');
     });
     test('isAfter', () => {
       expect(apiFns.isAfter('2002-12-14', '2002-12-25')).toBe(false);

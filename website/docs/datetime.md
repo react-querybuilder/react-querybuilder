@@ -162,7 +162,7 @@ interface RQBDateTimeLibraryAPI {
   /** 'YYYY-MM-DDTHH:mm:ss.SSSZ' format */
   toISOString: (d: DateOrString) => string;
   /** Format Date or ISO 8601 string in ISO date-only format ('YYYY-MM-DD') */
-  toISOStringDayOnly: (d: DateOrString) => string;
+  toISOStringDateOnly: (d: DateOrString) => string;
 }
 ```
 

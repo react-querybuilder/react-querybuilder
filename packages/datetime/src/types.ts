@@ -62,7 +62,7 @@ export interface RQBDateTimeLibraryAPI {
    * Formats a date as an ISO 8601 string, only including
    * the year, month, and day ('YYYY-MM-DD').
    */
-  toISOStringDayOnly: (d: DateOrString) => string;
+  toISOStringDateOnly: (d: DateOrString) => string;
   /**
    * Determines whether the first date is after the second date.
    */

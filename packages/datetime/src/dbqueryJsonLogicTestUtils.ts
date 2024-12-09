@@ -19,8 +19,8 @@ const musicianRecords = CREATE_MUSICIANS_TABLE('jsonlogic');
 
 export function runJsonLogicTests(libName: string, apiFns: RQBDateTimeLibraryAPI): void {
   describe(libName, () => {
-    const today = apiFns.toISOStringDayOnly(new Date());
-    const comparisonYearBefore = apiFns.toISOStringDayOnly(
+    const today = apiFns.toISOStringDateOnly(new Date());
+    const comparisonYearBefore = apiFns.toISOStringDateOnly(
       comparisonDate
         .split('-')
         .map((v, i) => `${parseInt(v, 10) - (i === 0 ? 1 : 0)}`.padStart(2, '0'))

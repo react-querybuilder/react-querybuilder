@@ -20,7 +20,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const dToDate = toDateTime(d);
     return dToDate.isValid ? dToDate.toJSDate().toISOString() : '';
   },
-  toISOStringDayOnly: d => {
+  toISOStringDateOnly: d => {
     const dToDate = toDateTime(d);
     return dToDate.isValid ? dToDate.toFormat(iso8601DateOnly) : '';
   },

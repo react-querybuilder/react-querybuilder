@@ -29,7 +29,7 @@ const isValid = (d: string | Date) => {
   return dToDate instanceof Date && !isNaN(dToDate.getTime());
 };
 
-const toISOStringDayOnly = (d: string | Date) => {
+const toISOStringDateOnly = (d: string | Date) => {
   const dToDate = toDate(d);
   return isValid(dToDate) ? dToDate.toISOString().slice(0, 10) : '';
 };
@@ -50,7 +50,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const aToDate = toDate(a);
     const bToDate = toDate(b);
     return isISOStringDateOnly(a) || isISOStringDateOnly(b)
-      ? toISOStringDayOnly(a) === toISOStringDayOnly(b)
+      ? toISOStringDateOnly(a) === toISOStringDateOnly(b)
       : aToDate.getTime() === bToDate.getTime();
   },
   isValid,
@@ -59,5 +59,5 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const dToDate = toDate(d);
     return isValid(dToDate) ? dToDate.toISOString() : '';
   },
-  toISOStringDayOnly,
+  toISOStringDateOnly,
 };

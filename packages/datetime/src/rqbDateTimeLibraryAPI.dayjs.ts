@@ -14,7 +14,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const dToDate = dayjs(d);
     return dToDate.isValid() ? dToDate.toISOString() : '';
   },
-  toISOStringDayOnly: d => {
+  toISOStringDateOnly: d => {
     const dToDate = dayjs(d);
     return dToDate.isValid() ? dToDate.format('YYYY-MM-DD') : '';
   },

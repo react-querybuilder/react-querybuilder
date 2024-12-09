@@ -30,7 +30,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const dToDate = toDate(d);
     return isValid(dToDate) ? dToDate.toISOString() : '';
   },
-  toISOStringDayOnly: d => {
+  toISOStringDateOnly: d => {
     const dToDate = toDate(d);
     return isValid(dToDate) ? format(dToDate, iso8601DateOnly) : '';
   },

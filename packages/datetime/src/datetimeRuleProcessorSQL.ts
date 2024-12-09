@@ -10,22 +10,22 @@ import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly, processIsDateField } from './utils';
 
 export const getDatetimeValueProcessorANSI =
-  ({ toISOStringDayOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
+  ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     if (isISOStringDateOnly(opts?.context?.originalValue)) {
-      return defaultValueProcessorByRule({ ...rule, value: toISOStringDayOnly(rule.value) }, opts);
+      return defaultValueProcessorByRule({ ...rule, value: toISOStringDateOnly(rule.value) }, opts);
     }
     return defaultValueProcessorByRule({ ...rule, value: toISOString(rule.value as Date) }, opts);
   };
 
 export const getDatetimeValueProcessorMSSQL =
-  ({ toISOStringDayOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
+  ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^(?:small)?datetime/i.test(opts?.fieldData?.datatype as string)
       ? 'datetimeoffset'
       : 'date';
     const value =
-      datatype === 'datetimeoffset' ? toISOString(rule.value) : toISOStringDayOnly(rule.value);
+      datatype === 'datetimeoffset' ? toISOString(rule.value) : toISOStringDateOnly(rule.value);
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [`cast(`, ` as ${datatype})`] }
@@ -33,13 +33,13 @@ export const getDatetimeValueProcessorMSSQL =
   };
 
 export const getDatetimeValueProcessorMySQL =
-  ({ toISOStringDayOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
+  ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^(?:datetime|timestamp)/i.test(opts?.fieldData?.datatype as string)
       ? 'datetime'
       : 'date';
     const value =
-      datatype === 'datetime' ? toISOString(rule.value) : toISOStringDayOnly(rule.value);
+      datatype === 'datetime' ? toISOString(rule.value) : toISOStringDateOnly(rule.value);
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [`cast(`, ` as ${datatype})`] }
@@ -47,14 +47,14 @@ export const getDatetimeValueProcessorMySQL =
   };
 
 export const getDatetimeValueProcessorOracle =
-  ({ toISOStringDayOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
+  ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     // Oracle date format for _reading_ ISO 8601: 'YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"'
     const datatype = /^timestamp/i.test(opts?.fieldData?.datatype as string) ? 'timestamp' : 'date';
     const value =
       datatype === 'timestamp'
         ? toISOString(rule.value).replaceAll('T', ' ').replace('Z', ' UTC')
-        : toISOStringDayOnly(rule.value);
+        : toISOStringDateOnly(rule.value);
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [datatype, ``] }
@@ -62,11 +62,11 @@ export const getDatetimeValueProcessorOracle =
   };
 
 export const getDatetimeValueProcessorPostgreSQL =
-  ({ toISOStringDayOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
+  ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
     const datatype = /^timestamp/i.test(opts?.fieldData?.datatype as string) ? 'timestamp' : 'date';
     const value =
-      datatype === 'timestamp' ? toISOString(rule.value) : toISOStringDayOnly(rule.value);
+      datatype === 'timestamp' ? toISOString(rule.value) : toISOStringDateOnly(rule.value);
     return defaultValueProcessorByRule(
       { ...rule, value },
       { ...opts, wrapValueWith: [datatype, ``] }
