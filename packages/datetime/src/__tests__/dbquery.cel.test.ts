@@ -52,8 +52,6 @@ if (celEvaluator) {
             ruleProcessor: getDatetimeRuleProcessorCEL(apiFns),
             context: { isDateField },
           });
-          // .replaceAll('item.created_at', 'timestamp(item.created_at)')
-          // .replaceAll('item.birthdate', 'timestamp(item.birthdate + "T00:00:00.000Z")');
           const result = (await celEvaluator({ data, cel, typemap })) as MusicianRecord[];
           if (testCase[1] === 'all') {
             expect(result).toHaveLength(data.length);
