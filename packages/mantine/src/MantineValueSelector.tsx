@@ -37,6 +37,7 @@ export const MantineValueSelector = ({
 
   return multiple ? (
     <MultiSelect
+      comboboxProps={{ withinPortal: false }}
       {...(otherProps as MultiSelectProps)}
       data-testid={testID}
       title={title}
@@ -48,6 +49,7 @@ export const MantineValueSelector = ({
     />
   ) : (
     <Select
+      comboboxProps={{ withinPortal: false }}
       {...otherProps}
       data-testid={testID}
       title={title}

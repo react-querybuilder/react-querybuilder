@@ -81,6 +81,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
                 i
               )
             }
+            popoverProps={{ withinPortal: false }}
             {...extraProps}
           />
         );
@@ -201,6 +202,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
             const dateArray = dates.map(d => (d ? dayjs(d).format(dateFormat) : ''));
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
           }}
+          popoverProps={{ withinPortal: false }}
           {...extraProps}
         />
       );
@@ -217,6 +219,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
           onChange={d =>
             handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
           }
+          popoverProps={{ withinPortal: false }}
           {...extraProps}
         />
       );
@@ -232,6 +235,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
         onChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
         }
+        popoverProps={{ withinPortal: false }}
         {...extraProps}
       />
     );
