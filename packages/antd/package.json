@@ -68,7 +68,7 @@
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5",
-    "antd": ">=5",
+    "antd": ">=5.11.0",
     "dayjs": ">=1",
     "react": ">=18",
     "react-querybuilder": "8.1.0"

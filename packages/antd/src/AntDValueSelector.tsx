@@ -2,8 +2,7 @@ import { Select } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
-import { useValueSelector } from 'react-querybuilder';
-import { toOptions } from './utils';
+import { toFullOptionList, useValueSelector } from 'react-querybuilder';
 
 export type AntDValueSelectorProps = VersatileSelectorProps &
   Omit<ComponentPropsWithoutRef<typeof Select>, 'onChange' | 'defaultValue'>;
@@ -43,8 +42,10 @@ export const AntDValueSelector = ({
         disabled={disabled}
         value={val}
         onChange={onChange}
-        {...extraProps}>
-        {toOptions(options)}
+        showSearch
+        {...extraProps}
+        optionFilterProp="label"
+        options={toFullOptionList(options)}>
       </Select>
     </span>
   );
