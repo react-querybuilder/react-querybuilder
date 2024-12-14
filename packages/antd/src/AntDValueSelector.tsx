@@ -43,9 +43,9 @@ export const AntDValueSelector = ({
         value={val}
         onChange={onChange}
         showSearch
-        {...extraProps}
         optionFilterProp="label"
-        options={toFullOptionList(options)}>
+        options={toFullOptionList(options)}
+        {...extraProps}>
       </Select>
     </span>
   );
