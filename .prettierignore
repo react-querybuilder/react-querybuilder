@@ -15,6 +15,9 @@ bun.lockb
 *.jison
 *.toml
 CNAME
+*.go
+go.mod
+go.sum
 
 # Misc
 lerna.json
