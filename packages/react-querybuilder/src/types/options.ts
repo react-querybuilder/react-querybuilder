@@ -20,6 +20,7 @@ export type GetOptionIdentifierType<Opt extends BaseOption> = Opt extends
  */
 export type WithUnknownIndex<T> = T & { [key: string]: unknown };
 
+//TODO: the below link to BaseOption seems unintuitive. It says don't use this(BaseOption) type use Option, ValueOption,FullOption or BaseOption. The one we shouldn't use ...
 /**
  * Do not use this type directly. Use {@link Option}, {@link ValueOption},
  * {@link FullOption}, or {@link BaseOption} instead. For specific
