@@ -1,7 +1,10 @@
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
-import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
-import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
+import {
+  datetimeRuleProcessorJsonLogic,
+  getDatetimeRuleProcessorSQL,
+  rqbDateTimeLibraryAPI,
+} from '@react-querybuilder/datetime';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -240,7 +243,9 @@ export default function Demo({
       ...(options.useDateTimePackage
         ? {
             ruleProcessor:
-              format === 'sql' ? datetimeRuleProcessorSQL : datetimeRuleProcessorJsonLogic,
+              format === 'sql'
+                ? getDatetimeRuleProcessorSQL(rqbDateTimeLibraryAPI)
+                : datetimeRuleProcessorJsonLogic,
           }
         : null),
     }),

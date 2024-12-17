@@ -36,6 +36,9 @@ const toISOStringDateOnly = (d: string | Date) => {
 
 /**
  * {@link RQBDateTimeLibraryAPI} for JavaScript `Date`
+ *
+ * @deprecated This API will not be removed, but we recommend using one of the other
+ * {@link RQBDateTimeLibraryAPI}s based on a popular library instead.
  */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: d => toDate(d).toISOString(),
