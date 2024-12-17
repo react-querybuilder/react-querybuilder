@@ -103,8 +103,8 @@ const presetToValueProcessorMap = {
 } satisfies Record<SQLPreset, (apiFns: RQBDateTimeLibraryAPI) => ValueProcessorByRule>;
 
 /**
- * Generates a rule processor with date/time features for use by
- * {@link react-querybuilder!index.formatQuery formatQuery} with the "sql" format.
+ * Generates a rule processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * the "sql" format.
  */
 export const getDatetimeRuleProcessorSQL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
