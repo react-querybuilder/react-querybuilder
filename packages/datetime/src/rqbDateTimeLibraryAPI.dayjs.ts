@@ -2,6 +2,9 @@ import dayjs from 'dayjs';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly } from './utils';
 
+/**
+ * {@link RQBDateTimeLibraryAPI} for Day.js
+ */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: (d, fmt) => dayjs(d).format(fmt),
   isAfter: (a, b) => dayjs(a).isAfter(b),

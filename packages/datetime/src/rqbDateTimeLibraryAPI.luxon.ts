@@ -6,6 +6,9 @@ const toDateTime = (a: string | Date) =>
   typeof a === 'string' ? DateTime.fromISO(a) : DateTime.fromJSDate(a);
 const iso8601DateOnly = 'yyyy-MM-dd';
 
+/**
+ * {@link RQBDateTimeLibraryAPI} for Luxon
+ */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: (d, fmt) => toDateTime(d).toFormat(fmt.replace('YYYY-MM-DD', iso8601DateOnly)),
   isAfter: (a, b) => toDateTime(a) > toDateTime(b),

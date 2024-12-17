@@ -33,14 +33,14 @@ import {
 
 /**
  * Converts a SpEL string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSpEL(spel: string): DefaultRuleGroupType;
 /**
  * Converts a SpEL string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSpEL(
   spel: string,
@@ -50,8 +50,8 @@ function parseSpEL(
 ): DefaultRuleGroupType;
 /**
  * Converts a SpEL string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupTypeIC}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseSpEL(
   spel: string,

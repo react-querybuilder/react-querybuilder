@@ -9,6 +9,10 @@ import {
 import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly, processIsDateField } from './utils';
 
+/**
+ * Generates a value processor with date/time features for use by
+ * {@link react-querybuilder!index.formatQuery formatQuery} with the "sql" format and "ansi" preset.
+ */
 export const getDatetimeValueProcessorANSI =
   ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
@@ -18,6 +22,10 @@ export const getDatetimeValueProcessorANSI =
     return defaultValueProcessorByRule({ ...rule, value: toISOString(rule.value as Date) }, opts);
   };
 
+/**
+ * Generates a value processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * the "sql" format and "mssql" preset.
+ */
 export const getDatetimeValueProcessorMSSQL =
   ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
@@ -32,6 +40,10 @@ export const getDatetimeValueProcessorMSSQL =
     );
   };
 
+/**
+ * Generates a value processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * the "sql" format and "mysql" preset.
+ */
 export const getDatetimeValueProcessorMySQL =
   ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
@@ -46,6 +58,10 @@ export const getDatetimeValueProcessorMySQL =
     );
   };
 
+/**
+ * Generates a value processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * the "sql" format and "oracle" preset.
+ */
 export const getDatetimeValueProcessorOracle =
   ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
@@ -61,6 +77,10 @@ export const getDatetimeValueProcessorOracle =
     );
   };
 
+/**
+ * Generates a value processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * the "sql" format and "postgresql" preset.
+ */
 export const getDatetimeValueProcessorPostgreSQL =
   ({ toISOStringDateOnly, toISOString }: RQBDateTimeLibraryAPI): ValueProcessorByRule =>
   (rule, opts) => {
@@ -82,6 +102,10 @@ const presetToValueProcessorMap = {
   sqlite: getDatetimeValueProcessorANSI,
 } satisfies Record<SQLPreset, (apiFns: RQBDateTimeLibraryAPI) => ValueProcessorByRule>;
 
+/**
+ * Generates a rule processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * the "sql" format.
+ */
 export const getDatetimeRuleProcessorSQL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {

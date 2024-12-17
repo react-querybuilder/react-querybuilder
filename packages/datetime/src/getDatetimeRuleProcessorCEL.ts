@@ -5,6 +5,10 @@ import { processIsDateField } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
+/**
+ * Generates a rule processor with date/time features for use by
+ * {@link react-querybuilder!index.formatQuery formatQuery} with the "cel" format.
+ */
 export const getDatetimeRuleProcessorCEL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {

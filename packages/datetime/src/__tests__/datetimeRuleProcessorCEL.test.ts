@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorCEL } from '../datetimeRuleProcessorCEL';
+import { getDatetimeRuleProcessorCEL } from '../getDatetimeRuleProcessorCEL';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 import type { IsDateField } from '../types';
 

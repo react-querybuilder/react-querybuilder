@@ -12,6 +12,10 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` : `${clause}`);
 
+/**
+ * Generates a rule processor with date/time features for use by
+ * {@link react-querybuilder!index.formatQuery formatQuery} with the "jsonata" format.
+ */
 export const getDatetimeRuleProcessorJSONata =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {

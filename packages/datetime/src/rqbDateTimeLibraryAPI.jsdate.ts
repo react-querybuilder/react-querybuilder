@@ -34,6 +34,9 @@ const toISOStringDateOnly = (d: string | Date) => {
   return isValid(dToDate) ? dToDate.toISOString().slice(0, 10) : '';
 };
 
+/**
+ * {@link RQBDateTimeLibraryAPI} for JavaScript `Date`
+ */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: d => toDate(d).toISOString(),
   isAfter: (a, b) => {

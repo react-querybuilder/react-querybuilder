@@ -1,4 +1,10 @@
 {
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": [
+    "src/index.ts",
+    "src/index.date-fns.ts",
+    "src/index.dayjs.ts",
+    "src/index.jsdate.ts",
+    "src/index.luxon.ts"
+  ],
   "extends": ["../../typedoc.json"]
 }

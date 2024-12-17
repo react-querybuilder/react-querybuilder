@@ -130,21 +130,21 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
  */
 function formatQuery(ruleGroup: RuleGroupTypeAny): string;
 /**
- * Generates a {@link ParameterizedSQL} object from a query object.
+ * Generates a {@link index!ParameterizedSQL ParameterizedSQL} object from a query object.
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'parameterized' | (FormatQueryOptions & { format: 'parameterized' })
 ): ParameterizedSQL;
 /**
- * Generates a {@link ParameterizedNamedSQL} object from a query object.
+ * Generates a {@link index!ParameterizedNamedSQL ParameterizedNamedSQL} object from a query object.
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'parameterized_named' | (FormatQueryOptions & { format: 'parameterized_named' })
 ): ParameterizedNamedSQL;
 /**
- * Generates a {@link JsonLogic} object from a query object.
+ * Generates a {@link index!RQBJsonLogic JsonLogic} object from a query object.
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,

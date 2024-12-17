@@ -13,6 +13,9 @@ import { isISOStringDateOnly } from './utils';
 const toDate: typeof dateFnsToDate = a => (typeof a === 'string' ? parseISO(a) : dateFnsToDate(a));
 const iso8601DateOnly = 'yyyy-MM-dd';
 
+/**
+ * {@link RQBDateTimeLibraryAPI} for date-fns
+ */
 export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
   format: (d, fmt) => format(toDate(d), fmt.replace('YYYY-MM-DD', iso8601DateOnly)),
   isAfter,

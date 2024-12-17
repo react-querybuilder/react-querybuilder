@@ -1,7 +1,7 @@
 {
   "name": "react-querybuilder",
   "version": "8.0.0",
-  "description": "The React <QueryBuilder /> component for constructing queries",
+  "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
   "exports": {

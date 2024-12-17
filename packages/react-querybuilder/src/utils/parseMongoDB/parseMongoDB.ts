@@ -21,15 +21,15 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
- * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGroupType;
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
- * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseMongoDB(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,8 +40,8 @@ function parseMongoDB(
 ): DefaultRuleGroupType;
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
- * for the {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupTypeIC}).
+ * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseMongoDB(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

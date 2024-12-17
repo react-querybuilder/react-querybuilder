@@ -3,7 +3,7 @@
 /* eslint-disable unicorn/no-await-expression-member */
 import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorSQL } from '../datetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorSQL } from '../getDatetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
