@@ -1,10 +1,7 @@
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
-import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
-import {
-  datetimeRuleProcessorJsonLogic,
-  datetimeRuleProcessorSQL,
-} from '@react-querybuilder/datetime/dayjs';
+import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
+import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -114,12 +111,10 @@ const notesJsonLogic = (
   </em>
 );
 
-const defaultQueryWrapper = (props: { children: React.ReactNode; useDateTimePackage?: boolean }) =>
-  props.useDateTimePackage ? (
-    <QueryBuilderDateTime>{props.children}</QueryBuilderDateTime>
-  ) : (
-    <>{props.children}</>
-  );
+const defaultQueryWrapper = (props: {
+  children: React.ReactNode;
+  useDateTimePackage?: boolean;
+}) => <>{props.children}</>;
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
