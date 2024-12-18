@@ -16,21 +16,16 @@ const rootDir = path.resolve(__dirname, '../../..');
 const getSourceLink = (filePath: string, start?: number, end?: number) => {
   const restOfUrl = `${filePath}${start && start >= 0 && end && end >= 0 ? `#L${start + 2}-L${end}` : ''}`;
   return {
-    type: 'paragraph',
+    type: 'blockquote',
     children: [
       {
-        type: 'blockquote',
+        type: 'emphasis',
         children: [
+          { type: 'text', value: 'Source: ' },
           {
-            type: 'emphasis',
-            children: [
-              { type: 'text', value: 'Source: ' },
-              {
-                type: 'link',
-                url: `https://github.com/react-querybuilder/react-querybuilder/blob/main${restOfUrl}`,
-                children: [{ type: 'text', value: restOfUrl }],
-              },
-            ],
+            type: 'link',
+            url: `https://github.com/react-querybuilder/react-querybuilder/blob/main${restOfUrl}`,
+            children: [{ type: 'text', value: restOfUrl }],
           },
         ],
       },
@@ -49,6 +44,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
         const mdFilePath = path.resolve(vfile.path, '..', mdImportMatches[1]);
         if (existsSync(mdFilePath)) {
           const rawMd = readFileSync(mdFilePath, 'utf8');
+          node.data = { ...node.data, hName: 'div' };
           node.children = unified().use(remarkParse).use(remarkRehype).parse(rawMd).children;
         } else {
           throw new Error(`Unable to locate file at path: ${mdFilePath}`);
@@ -91,6 +87,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
               (v, i) => i >= start && v.match(String.raw`^\s*// #endregion`)
             );
             if (start >= 0) {
+              node.data = { ...node.data, hName: 'div' };
               node.children = [
                 {
                   type: 'code',
@@ -107,6 +104,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
             );
             const end = codeLines.findIndex((v, i) => i >= start && v.match(/^}/));
             if (start >= 0) {
+              node.data = { ...node.data, hName: 'div' };
               node.children = [
                 {
                   type: 'code',
@@ -118,6 +116,7 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
               ];
             }
           } else {
+            node.data = { ...node.data, hName: 'div' };
             node.children = [
               {
                 type: 'code',

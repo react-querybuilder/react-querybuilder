@@ -203,21 +203,27 @@ See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#g
 
 ### MongoDB
 
-For MongoDB-compatible output, use the "mongodb" format.
+MongoDB-compatible query objects can be produced as a JSON object or as a `string`. The "mongodb_query" format will produce a JSON object and is the recommended format. The "mongodb" format is merely a `JSON.stringify`'d version of the "mongodb_query" format.
+
+:::info
+
+The "mongodb_query" export format was introduced, and the "mongodb" format was deprecated, in version 8.1.0.
+
+:::
 
 ```ts
-formatQuery(query, 'mongodb');
+formatQuery(query, 'mongodb_query');
 ```
 
 Output:
 
-```ts
-`{"$and":[{"firstName":"Steve"},{"lastName":"Vai"}]}`;
+```json
+{ "$and": [{ "firstName": "Steve" }, { "lastName": "Vai" }] }
 ```
 
 :::info
 
-The MongoDB export format does not support the inversion operator (setting `not: true` for a rule group). However, rules _can_ be created using the `"!="` operator.
+The MongoDB export formats do not support the inversion operator (setting `not: true` for a rule group). However, rules _can_ be created using the `"!="` operator.
 
 :::
 
@@ -420,6 +426,7 @@ The default rule processors for each format are available as exports from `react
 - `defaultRuleProcessorJSONata`
 - `defaultRuleProcessorJsonLogic`
 - `defaultRuleProcessorMongoDB`
+- `defaultRuleProcessorMongoDBQuery`
 - `defaultRuleProcessorSpEL`
 - `defaultRuleProcessorSQL`
 - `defaultRuleProcessorParameterized`
@@ -741,6 +748,7 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 | `'parameterized'`       | `'(1 = 1)'`                   |
 | `'parameterized_named'` | `'(1 = 1)'`                   |
 | `'mongodb'`             | `'{"$and":[{"$expr":true}]}'` |
+| `'mongodb_query'`       | `'{"$and":[{"$expr":true}]}'` |
 | `'cel'`                 | `'1 == 1'`                    |
 | `'spel'`                | `'1 == 1'`                    |
 | `'jsonata'`             | `'(1 = 1)'`                   |

@@ -1,11 +1,11 @@
 import type {
+  FormatQueryOptions,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleProcessor,
-  ValueProcessorByRule,
-  ValueProcessorLegacy,
 } from '../../types/index.noReact';
-import { prepareRuleGroup } from '../prepareQueryObjects';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
@@ -14,7 +14,30 @@ import {
   queryIC,
   testQueryDQ,
 } from './formatQueryTestUtils';
-import { defaultMongoDBValueProcessor, defaultValueProcessorByRule } from './index';
+import { defaultMongoDBValueProcessor } from './index';
+
+const testBoth = (
+  query: RuleGroupTypeAny,
+  expectation: unknown,
+  fqOptions?: FormatQueryOptions
+) => {
+  testMongoDB(query, expectation, fqOptions);
+  testMongoDBQuery(query, expectation, fqOptions);
+};
+const testMongoDB = (
+  query: RuleGroupTypeAny,
+  expectation: unknown,
+  fqOptions?: FormatQueryOptions
+) => {
+  expect(JSON.parse(formatQuery(query, { ...fqOptions, format: 'mongodb' }))).toEqual(expectation);
+};
+const testMongoDBQuery = (
+  query: RuleGroupTypeAny,
+  expectation: unknown,
+  fqOptions?: FormatQueryOptions
+) => {
+  expect(formatQuery(query, { ...fqOptions, format: 'mongodb_query' })).toEqual(expectation);
+};
 
 const mongoQuery: RuleGroupType = {
   id: 'g-root',
@@ -162,234 +185,114 @@ const mongoQueryExpectationForValueSourceField = {
 };
 
 it('formats to mongo query correctly', () => {
-  expect(JSON.parse(formatQuery(mongoQuery, 'mongodb'))).toEqual(mongoQueryExpectation);
-  expect(JSON.parse(formatQuery(mongoQueryWithValueSourceField, 'mongodb'))).toEqual(
-    mongoQueryExpectationForValueSourceField
-  );
-  expect(
-    JSON.parse(
-      formatQuery(mongoQueryWithValueSourceField, {
-        format: 'mongodb',
-        valueProcessor: defaultMongoDBValueProcessor,
-      })
-    )
-  ).toEqual(mongoQueryExpectationForValueSourceField);
+  testBoth(mongoQuery, mongoQueryExpectation);
+  testBoth(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField);
   // Test for newline in value
-  expect(
-    JSON.parse(
-      formatQuery(
-        {
-          combinator: 'and',
-          rules: [{ field: 'f1', operator: '=', value: 'value\nwith newline' }],
-        },
-        'mongodb'
-      )
-    )
-  ).toEqual({ f1: 'value\nwith newline' });
-});
-
-it('handles custom valueProcessors correctly', () => {
-  const queryWithArrayValue: RuleGroupType = {
-    id: 'g-root',
-    combinator: 'and',
-    rules: [
-      { field: 'instrument', value: ['Guitar', 'Vocals'], operator: 'in' },
-      { field: 'lastName', value: 'Vai', operator: '=' },
-    ],
-    not: false,
-  };
-
-  const valueProcessorLegacy: ValueProcessorLegacy = (_field, operator, value) => {
-    return operator === 'in'
-      ? `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`
-      : `'${value}'`;
-  };
-
-  expect(
-    formatQuery(queryWithArrayValue, {
-      format: 'sql',
-      valueProcessor: valueProcessorLegacy,
-    })
-  ).toBe(`(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`);
-
-  const queryForNewValueProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `v'1`, valueSource: 'value' }],
-  };
-
-  const valueProcessor: ValueProcessorByRule = (
-    { field, operator, value, valueSource },
-    opts = {}
-  ) => `${field}-${operator}-${value}-${valueSource}-${!!opts.parseNumbers}-${!!opts.escapeQuotes}`;
-
-  expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      parseNumbers: true,
-      valueProcessor,
-    })
-  ).toBe(`(f1 = f1-=-v'1-value-true-true)`);
-
-  const valueProcessorAsPassThrough: ValueProcessorByRule = (r, opts) =>
-    defaultValueProcessorByRule(r, opts);
-
-  // handles escapeQuotes correctly
-  expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      valueProcessor: valueProcessorAsPassThrough,
-    })
-  ).toBe(`(f1 = 'v''1')`);
-  // handles escapeQuotes exactly the same as defaultValueProcessorByRule
-  expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      valueProcessor: valueProcessorAsPassThrough,
-    })
-  ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
-});
-
-it('handles quoteFieldNamesWith correctly', () => {
-  const queryToTest: RuleGroupType = {
-    id: 'g-root',
-    combinator: 'and',
-    rules: [
-      { field: 'instrument', value: 'Guitar, Vocals', operator: 'in' },
-      { field: 'lastName', value: 'Vai', operator: '=' },
-      { field: 'lastName', value: 'firstName', operator: '!=', valueSource: 'field' },
-    ],
-    not: false,
-  };
-
-  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
-    "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai' and `lastName` != `firstName`)"
+  testBoth(
+    { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'value\nwith newline' }] },
+    { f1: 'value\nwith newline' }
   );
-
-  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })).toBe(
-    "([instrument] in ('Guitar', 'Vocals') and [lastName] = 'Vai' and [lastName] != [firstName])"
-  );
-});
-
-it('handles custom fallbackExpression correctly', () => {
-  const fallbackExpression = 'fallbackExpression';
-  const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
-
-  expect(formatQuery(queryToTest, { format: 'sql', fallbackExpression })).toBe(fallbackExpression);
-});
-
-it('handles json_without_ids correctly', () => {
-  const queryToTest: RuleGroupType & { extraProperty: string } = {
-    id: 'root',
-    combinator: 'and',
-    rules: [{ field: 'firstName', value: '', operator: 'null', valueSource: 'value' }],
-    not: false,
-    extraProperty: 'extraProperty',
-  };
-  const expectedResult = JSON.parse(
-    '{"rules":[{"field":"firstName","value":"","operator":"null","valueSource":"value"}],"combinator":"and","not":false,"extraProperty":"extraProperty"}'
-  );
-  expect(JSON.parse(formatQuery(prepareRuleGroup(queryToTest), 'json_without_ids'))).toEqual(
-    expectedResult
-  );
-});
-
-it('uses paramPrefix correctly', () => {
-  const queryToTest: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      { field: 'lastName', operator: 'in', value: 'Test1,Test2' },
-      { field: 'age', operator: 'between', value: [26, 52] },
-    ],
-  };
-  const sql = `(firstName = $firstName_1 and lastName in ($lastName_1, $lastName_2) and age between $age_1 and $age_2)`;
-  const paramPrefix = '$';
-
-  // Control (default) - param prefixes removed
-  expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix })).toEqual({
-    sql,
-    params: {
-      firstName_1: 'Test',
-      lastName_1: 'Test1',
-      lastName_2: 'Test2',
-      age_1: 26,
-      age_2: 52,
-    },
-  });
-
-  // Experimental - param prefixes retained
-  expect(
-    formatQuery(queryToTest, {
-      format: 'parameterized_named',
-      paramPrefix,
-      paramsKeepPrefix: true,
-    })
-  ).toEqual({
-    sql,
-    params: {
-      [`${paramPrefix}firstName_1`]: 'Test',
-      [`${paramPrefix}lastName_1`]: 'Test1',
-      [`${paramPrefix}lastName_2`]: 'Test2',
-      [`${paramPrefix}age_1`]: 26,
-      [`${paramPrefix}age_2`]: 52,
-    },
+  testMongoDB(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField, {
+    format: 'mongodb',
+    valueProcessor: defaultMongoDBValueProcessor,
   });
 });
 
-describe('escapes quotes when appropriate', () => {
-  it('escapes double quotes (if appropriate) for mongodb', () => {
-    expect(formatQuery(testQueryDQ, 'mongodb')).toEqual(`{"f1":"Te\\"st"}`);
-  });
+it.todo(
+  'handles custom fallbackExpression correctly'
+  // , () => {
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   const fallbackExpression: any = { fallback: true };
+  //   const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
+  //   testBoth(queryToTest, fallbackExpression, { fallbackExpression });
+  // }
+);
+
+it('escapes quotes when appropriate', () => {
+  testBoth(testQueryDQ, { f1: `Te"st` });
 });
 
-describe('independent combinators', () => {
-  it('handles independent combinators for mongodb', () => {
-    expect(formatQuery(queryIC, 'mongodb')).toBe(
-      '{"$or":[{"$and":[{"firstName":"Test"},{"middleName":"Test"}]},{"lastName":"Test"}]}'
-    );
+it('independent combinators', () => {
+  testBoth(queryIC, {
+    $or: [{ $and: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
   });
 });
 
 describe('validation', () => {
-  describe('mongodb', () => {
-    const validationResults: Record<string, string> = {
-      'should invalidate mongodb': '{"$and":[{"$expr":true}]}',
-      'should invalidate mongodb even if fields are valid': '{"$and":[{"$expr":true}]}',
-      'should invalidate mongodb rule by validator function': '{"field2":""}',
-      'should invalidate mongodb rule specified by validationMap': '{"field2":""}',
-      'should invalidate mongodb outermost group': '{"$and":[{"$expr":true}]}',
-      'should invalidate mongodb inner group': '{"$and":[{"$expr":true}]}',
-      'should convert mongodb inner group with no rules to fallbackExpression':
-        '{"$and":[{"field":""},{"$and":[{"$expr":true}]}]}',
+  for (const fmt of ['mongodb', 'mongodb_query'] as const) {
+    const validationResults: Record<string, unknown> = {
+      [`should invalidate ${fmt}`]: { $and: [{ $expr: true }] },
+      [`should invalidate ${fmt} even if fields are valid`]: { $and: [{ $expr: true }] },
+      [`should invalidate ${fmt} rule by validator function`]: { field2: '' },
+      [`should invalidate ${fmt} rule specified by validationMap`]: { field2: '' },
+      [`should invalidate ${fmt} outermost group`]: { $and: [{ $expr: true }] },
+      [`should invalidate ${fmt} inner group`]: { $and: [{ $expr: true }] },
+      [`should convert ${fmt} inner group with no rules to fallbackExpression`]: {
+        $and: [{ field: '' }, { $and: [{ $expr: true }] }],
+      },
     };
 
-    for (const vtd of getValidationTestData('mongodb')) {
+    for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
         it(vtd.title, () => {
-          expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
+          (fmt === 'mongodb' ? testMongoDB : testMongoDBQuery)(
+            vtd.query,
+            validationResults[vtd.title],
+            vtd.options
+          );
         });
       }
     }
-  });
+  }
 });
 
-describe('ruleProcessor', () => {
-  it('handles custom MongoDB rule processor', () => {
-    const ruleProcessor: RuleProcessor = r =>
-      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorMongoDB(r);
-    expect(formatQuery(queryForRuleProcessor, { format: 'mongodb', ruleProcessor })).toBe(
-      '{"$and":[custom_operator,{"f2":"v2"}]}'
-    );
-    expect(
-      formatQuery(queryForRuleProcessor, { format: 'mongodb', valueProcessor: ruleProcessor })
-    ).toBe('{"$and":[custom_operator,{"f2":"v2"}]}');
-  });
+it('ruleProcessor', () => {
+  const ruleProcessor: RuleProcessor = r =>
+    r.operator === 'custom_operator' ? `{"${r.operator}":true}` : defaultRuleProcessorMongoDB(r);
+  testMongoDB(
+    queryForRuleProcessor,
+    { $and: [{ custom_operator: true }, { f2: 'v2' }] },
+    { ruleProcessor }
+  );
+  testMongoDB(
+    queryForRuleProcessor,
+    { $and: [{ custom_operator: true }, { f2: 'v2' }] },
+    { valueProcessor: ruleProcessor }
+  );
+
+  const ruleProcessorMDBQuery: RuleProcessor = r =>
+    r.operator === 'custom_operator' ? { [r.operator]: true } : defaultRuleProcessorMongoDBQuery(r);
+  testMongoDBQuery(
+    queryForRuleProcessor,
+    { $and: [{ custom_operator: true }, { f2: 'v2' }] },
+    { ruleProcessor: ruleProcessorMDBQuery }
+  );
+  testMongoDBQuery(
+    queryForRuleProcessor,
+    { $and: [{ custom_operator: true }, { f2: 'v2' }] },
+    { valueProcessor: ruleProcessorMDBQuery }
+  );
 });
 
-describe('parseNumbers', () => {
-  it('parses numbers for mongodb', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'mongodb', parseNumbers: true })).toBe(
-      '{"$and":[{"f":{"$gt":"NaN"}},{"f":0},{"f":0},{"f":0},{"$or":[{"f":{"$lt":1.5}},{"f":{"$gt":1.5}}]},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,1,2]}},{"f":{"$in":[0,"abc",2]}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":1}},{"f":{"$gte":0,"$lte":"abc"}},{"f":{"$gte":{},"$lte":{}}}]}'
-    );
-  });
+it('parseNumbers', () => {
+  testBoth(
+    queryForNumberParsing,
+    {
+      $and: [
+        { f: { $gt: 'NaN' } },
+        { f: 0 },
+        { f: 0 },
+        { f: 0 },
+        { $or: [{ f: { $lt: 1.5 } }, { f: { $gt: 1.5 } }] },
+        { f: { $in: [0, 1, 2] } },
+        { f: { $in: [0, 1, 2] } },
+        { f: { $in: [0, 'abc', 2] } },
+        { f: { $gte: 0, $lte: 1 } },
+        { f: { $gte: 0, $lte: 1 } },
+        { f: { $gte: 0, $lte: 'abc' } },
+        { f: { $gte: {}, $lte: {} } },
+      ],
+    },
+    { parseNumbers: true }
+  );
 });

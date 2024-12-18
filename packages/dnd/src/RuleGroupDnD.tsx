@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useContext, useRef } from 'react';
+import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
 import type {
   DndDropTargetType,
   DraggedItem,
@@ -10,14 +11,14 @@ import type {
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 import { dropEffectListener } from './dropEffectListener';
-import { useDragCommon } from './useDragCommon';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
+import { useDragCommon } from './useDragCommon';
 
 /**
  * Rule group component for drag-and-drop. Renders the provided rule group component
- * ({@link RuleGroup} by default), but forwards the drag-and-drop context so that child
- * rules and groups will render within the appropriate drag-and-drop wrappers.
+ * ({@link react-querybuilder!index.RuleGroup RuleGroup} by default), but forwards the drag-and-drop
+ * context so that child rules and groups will render within the appropriate drag-and-drop wrappers.
  */
 export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
@@ -40,9 +41,10 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
 };
 
 type UseRuleGroupDndParams = RuleGroupProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop'> &
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
+  Pick<QueryBuilderDndContextProps, 'canDrop'> & {
+    useDrag: typeof useDragOriginal;
+    useDrop: typeof useDropOriginal;
+  };
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
