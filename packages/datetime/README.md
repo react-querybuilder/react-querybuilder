@@ -1,10 +1,10 @@
 ## @react-querybuilder/datetime
 
-Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with date and time functionality.
+Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with enhanced date/time functionality.
 
 To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo#datetime=true) with the "date/time" option enabled.
 
-**[Full documentation](https://react-querybuilder.js.org/)**
+**[Full documentation](https://react-querybuilder.js.org/docs/datetime)**
 
 ![Screenshot](../../_assets/screenshot.png)
 

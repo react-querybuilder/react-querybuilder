@@ -2,17 +2,17 @@
 title: Date/time features
 ---
 
-By default, the components and utilities provided by React Query Builder handle dates and times in a very generic, unopinionated way. We recommend storing dates as strings in an ISO 8601-compatible format and taking advantage of built-in date/time functionality like "date" and "datetime-local" inputs.
+By default, the components and utilities provided by React Query Builder handle dates and times in a very generic, unopinionated way. We recommend storing dates as strings in an ISO 8601-compatible format and taking advantage of built-in date/time functionality like "date" and "datetime-local" inputs (see [`inputType`](./components/querybuilder#getinputtype)).
 
-The `@react-querybuilder/datetime` package adds enhanced date/time functionality to various features of React Query Builder.
+The `@react-querybuilder/datetime` package augments React Query Builder with enhanced date/time functionality.
 
 ## Initialization
 
-A date/time processor library with parsing and formatting capability must be used in conjunction with `@react-querybuilder/datetime`. Ready-to-use plugins are provided for [Day.js](https://day.js.org/), [date-fns](https://date-fns.org/), and [Luxon](https://moment.github.io/luxon/), but any third-party or custom date/time library can be used.
+A date/time processor library with parsing and formatting capability must be used in conjunction with `@react-querybuilder/datetime`. Ready-to-use plugins are provided for [Day.js](https://day.js.org/), [date-fns](https://date-fns.org/), and [Luxon](https://moment.github.io/luxon/). Other third-party or custom date/time libraries can be used (see [below](#custom-plugins)).
 
 > _A plugin using only native JavaScript `Date` and `String` functionality is available, but we don't recommended it except as a last resort since it has limited formatting capability (full ISO strings in UTC only) and has not passed rigorous testing like the popular libraries._
 
-The documentation below assumes the use of the Day.js plugin. To use one of the others, replace `@react-querybuilder/datetime/dayjs` with `@react-querybuilder/datetime/date-fns` or `@react-querybuilder/datetime/luxon`. Information on creating and using your own date/time plugin is [below](#custom-plugins).
+The documentation below assumes the use of the Day.js plugin. To use one of the others, replace `@react-querybuilder/datetime/dayjs` with `@react-querybuilder/datetime/date-fns` or `@react-querybuilder/datetime/luxon`.
 
 ## Export
 
@@ -31,15 +31,12 @@ By default, the date/time rule processors will only treat a rule value as a date
 
 You can customize the algorithm by passing a `context.isDateField` configuration in the `formatQuery` options. `isDateField` can be a `boolean`, a function that returns a `boolean`, an object matching `field` properties, or an array of objects matching `field` properties.
 
-As a `boolean`, `true` will cause the rule value to be treated as a date, and `false` will cause it to be processed by the default rule processor.
+- As a `boolean`, `true` will cause the rule value to be treated as a date, and `false` will fall back to the default rule processor.
+- As a `function`, the function will be passed the rule object and the options object (the same two arguments as the rule processor). The function should return a `boolean` that indicates whether the rule value should be treated as a date.
+- As an object, fields that match _all_ the properties of the object will be treated as dates.
+- As an array of objects, fields that match all properties of _at least one_ of the objects in the array will be treated as dates.
 
-As a `function`, the function will be passed the rule object and the options object (the same two arguments as the rule processor). The function should return a `boolean` that indicates whether the rule value should be treated as a date.
-
-As an object, fields that match all the properties of the object will be treated as dates.
-
-As an array of objects, fields that match all properties of at least one of the objects in the array will be treated as dates.
-
-In the example below, the value in the "birthDate" rule matches the regular expression in the `isDateField` function, so the corresponding SQL output has the `date` keyword prepended to the value string. The "mathNotDate" rule value does _not_ match the pattern and is therefore processed by the default SQL rule processor.
+In the example below, the value in the "birthDate" rule matches the regular expression in the `isDateField` function, so the corresponding SQL output has the `date` keyword prepended to the value string (per the "postgresql" preset). The "mathNotDate" rule value does _not_ match the pattern and is therefore processed by the default SQL rule processor.
 
 ```ts
 // Returns true if the value appears to be an ISO date-only string (YYYY-MM-DD)
@@ -100,7 +97,10 @@ Since the `datetimeRuleProcessorMongoDBQuery` rule processor handles real date/t
 ```ts
 import { datetimeRuleProcessorMongoDBQuery } from '@react-querybuilder/datetime/dayjs';
 
-formatQuery(query, { format: 'mongodb_query', ruleProcessor: datetimeRuleProcessorMongoDBQuery });
+const mongodbQuery = formatQuery(query, {
+  format: 'mongodb_query',
+  ruleProcessor: datetimeRuleProcessorMongoDBQuery,
+});
 ```
 
 ### JsonLogic
@@ -114,6 +114,13 @@ import { jsonLogicDateTimeOperations } from '@react-querybuilder/datetime/dayjs'
 for (const [op, func] of Object.entries(jsonLogicDateTimeOperations)) {
   add_operation(op, func);
 }
+
+const jsonLogic = formatQuery(query, {
+  format: 'jsonlogic',
+  ruleProcessor: datetimeRuleProcessorJsonLogic,
+});
+
+const results = data.filter(d => apply(jsonLogic, d));
 ```
 
 ### Common Expression Language (CEL)
@@ -121,7 +128,7 @@ for (const [op, func] of Object.entries(jsonLogicDateTimeOperations)) {
 ```ts
 import { datetimeRuleProcessorCEL } from '@react-querybuilder/datetime/dayjs';
 
-formatQuery(query, { format: 'cel', ruleProcessor: datetimeRuleProcessorCEL });
+const cel = formatQuery(query, { format: 'cel', ruleProcessor: datetimeRuleProcessorCEL });
 ```
 
 ### JSONata
@@ -129,12 +136,17 @@ formatQuery(query, { format: 'cel', ruleProcessor: datetimeRuleProcessorCEL });
 ```ts
 import { datetimeRuleProcessorJSONata } from '@react-querybuilder/datetime/dayjs';
 
-formatQuery(query, { format: 'jsonata', ruleProcessor: datetimeRuleProcessorJSONata });
+const jsonata = formatQuery(query, {
+  format: 'jsonata',
+  ruleProcessor: datetimeRuleProcessorJSONata,
+});
 ```
 
+<!--
 ## Value editor
 
 Augments [`ValueEditor`](./components/valueeditor) with date/time functionality.
+-->
 
 ## Custom plugins
 
@@ -144,7 +156,7 @@ If the official date/time processor plugins do not meet your requirements, you c
 type DateOrString = string | Date;
 
 interface RQBDateTimeLibraryAPI {
-  /** Format a Date or ISO 8601 string with format `fmt` */
+  /** Format a `Date` or ISO 8601 string with format `fmt` */
   format: (d: DateOrString, fmt: string) => string;
   /** `a` is after `b`. */
   isAfter: (a: DateOrString, b: DateOrString) => boolean;
@@ -155,13 +167,13 @@ interface RQBDateTimeLibraryAPI {
    * ISO date-only string, they are the same date (time component is ignored).
    */
   isSame: (a: DateOrString, b: DateOrString) => boolean;
-  /** `d` is, or evaluates to, a valid Date object */
+  /** `d` is, or evaluates to, a valid `Date` object */
   isValid: (d: DateOrString) => boolean;
-  /** Convert a string to a Date object (returns a Date unchanged) */
+  /** Convert a string to a `Date` object (returns a `Date` unchanged) */
   toDate: (d: DateOrString) => Date;
   /** 'YYYY-MM-DDTHH:mm:ss.SSSZ' format */
   toISOString: (d: DateOrString) => string;
-  /** Format Date or ISO 8601 string in ISO date-only format ('YYYY-MM-DD') */
+  /** Format `Date` or ISO 8601 string in ISO date-only format ('YYYY-MM-DD') */
   toISOStringDateOnly: (d: DateOrString) => string;
 }
 ```
