@@ -2,6 +2,7 @@ import type {
   RuleGroupArray,
   RuleGroupICArray,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
 } from '../types/index.noReact';
@@ -68,10 +69,10 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
  * returned as-is.
  */
 export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
-  rg: RuleGroupTypeIC
+  rg: RuleGroupTypeAny
 ): RG => {
   if (isRuleGroupType(rg)) {
-    return rg;
+    return rg as RG;
   }
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
   const rulesAsMixedList = processedRG.rules.map(r =>
@@ -89,10 +90,10 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
  * returned as-is.
  */
 export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
-  rg: RuleGroupType
+  rg: RuleGroupTypeAny
 ): RGIC => {
   if (isRuleGroupTypeIC(rg)) {
-    return rg;
+    return rg as RGIC;
   }
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];

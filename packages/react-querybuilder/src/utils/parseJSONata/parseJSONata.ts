@@ -1,4 +1,5 @@
 import jsonata from 'jsonata';
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -37,29 +38,29 @@ import {
 
 /**
  * Converts a JSONata string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseJSONata(jsonataInput: string): DefaultRuleGroupType;
 /**
  * Converts a JSONata string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseJSONata(
   jsonataInput: string,
-  options: Omit<ParseJSONataOptions, 'independentCombinators'> & {
+  options: Except<ParseJSONataOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
 /**
  * Converts a JSONata string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupTypeIC}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseJSONata(
   jsonataInput: string,
-  options: Omit<ParseJSONataOptions, 'independentCombinators'> & {
+  options: Except<ParseJSONataOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

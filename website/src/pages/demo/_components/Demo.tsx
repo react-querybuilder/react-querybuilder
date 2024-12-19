@@ -1,5 +1,7 @@
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
+import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
+import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -10,7 +12,7 @@ import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
-import { QueryBuilder, convertToIC, defaultValidator, formatQuery } from 'react-querybuilder';
+import { convertToIC, defaultValidator, formatQuery, QueryBuilder } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
@@ -79,7 +81,7 @@ const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), 
 
 interface DemoProps {
   variant?: StyleName;
-  queryWrapper?: React.ComponentType<{ children: React.ReactNode }>;
+  queryWrapper?: React.ComponentType<{ children: React.ReactNode; useDateTimePackage?: boolean }>;
 }
 
 const notesSQL = (
@@ -109,7 +111,10 @@ const notesJsonLogic = (
   </em>
 );
 
-const defaultQueryWrapper = (props: { children: React.ReactNode }) => <>{props.children}</>;
+const defaultQueryWrapper = (props: {
+  children: React.ReactNode;
+  useDateTimePackage?: boolean;
+}) => <>{props.children}</>;
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
@@ -226,11 +231,20 @@ export default function Demo({
   const formatOptions = useMemo(
     (): FormatQueryOptions => ({
       format,
-      fields: options.validateQuery || format === 'natural_language' ? fields : undefined,
+      fields:
+        options.validateQuery || format === 'natural_language' || options.useDateTimePackage
+          ? fields
+          : undefined,
       parseNumbers: parseNumbersInExport,
       preset: sqlDialect,
+      ...(options.useDateTimePackage
+        ? {
+            ruleProcessor:
+              format === 'sql' ? datetimeRuleProcessorSQL : datetimeRuleProcessorJsonLogic,
+          }
+        : null),
     }),
-    [format, options.validateQuery, parseNumbersInExport, sqlDialect]
+    [format, options.useDateTimePackage, options.validateQuery, parseNumbersInExport, sqlDialect]
   );
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
@@ -468,7 +482,7 @@ export default function Demo({
         <div
           style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
-            <QueryWrapper>
+            <QueryWrapper useDateTimePackage={options.useDateTimePackage}>
               <QueryBuilderDnD>
                 {options.independentCombinators ? (
                   <QueryBuilder

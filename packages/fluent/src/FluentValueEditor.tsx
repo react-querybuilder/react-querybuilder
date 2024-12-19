@@ -16,7 +16,6 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     title,
     className,
     type,
-    inputType,
     values = [],
     listsAsArrays: _listsAsArrays,
     separator,
@@ -26,20 +25,18 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     selectorComponent: _SelectorComponent,
     validation: _validation,
     extraProps,
+    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ..._propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
+  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
+    useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
-
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = (
-    ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text'
-  ) as InputProps['type'];
 
   if (
     (operator === 'between' || operator === 'notBetween') &&
@@ -50,7 +47,7 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
         return (
           <Input
             key={key}
-            type={inputTypeCoerced}
+            type={inputTypeCoerced as InputProps['type']}
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             className={`${valueListItemClassName} input`}
@@ -135,7 +132,7 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
       title={title}
       className={className}
       placeholder={placeHolderText}
-      type={inputTypeCoerced}
+      type={inputTypeCoerced as InputProps['type']}
       disabled={disabled}
       value={value}
       onChange={e => handleOnChange(e.target.value)}

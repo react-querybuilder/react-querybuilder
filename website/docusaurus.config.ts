@@ -79,26 +79,30 @@ const config: Config = {
           [
             'docusaurus-plugin-typedoc',
             {
+              entryPointStrategy: 'packages',
               entryPoints: ['../packages/*'],
               out: './api',
-              entryPointStrategy: 'packages',
               cleanOutputDir: true,
               includeVersion: true,
               name: 'React Query Builder API',
               readme: 'none',
               textContentMappings: {
-                'title.indexPage': 'API Index',
+                'title.indexPage': 'React Query Builder API',
                 'title.memberPage': '{name}',
                 'breadcrumbs.home': '{name}',
-                'header.title': '{name}',
-                'header.docs': '{name}',
+                // @ts-expect-error TODO: find out why this is not in the types because it works
                 'footer.text':
                   ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
               },
               enumMembersFormat: 'table',
               parametersFormat: 'table',
+              propertiesFormat: 'list',
+              indexFormat: 'table',
               sidebar: { autoConfiguration: false, pretty: false },
               sortEntryPoints: true,
+              pretty: true,
+              expandObjects: true,
+              expandParameters: true,
               plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
             } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
           ],
@@ -195,7 +199,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          to: '/api/react-querybuilder',
+          to: '/api',
           label: 'API',
           position: 'right',
         },

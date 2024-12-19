@@ -1,3 +1,11 @@
+/**
+ * Recursively steps through a query object ({@link index!RuleGroupType RuleGroupType} or {@link index!RuleGroupTypeIC RuleGroupTypeIC}),
+ * passing each {@link index!RuleType RuleType} object to a provided `ruleProcessor` function and returning a
+ * new query object if there were any referential changes.
+ *
+ * @module transformQuery
+ */
+
 import { produce } from 'immer';
 import type {
   RuleGroupType,
@@ -27,7 +35,7 @@ const remapProperties = (
   });
 
 /**
- * Options object for {@link transformQuery}.
+ * Options object for {@link index!transformQuery transformQuery}.
  */
 export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupType> {
   /**
@@ -104,7 +112,7 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
    */
   operatorMap?: Record<string, string>;
   /**
-   * Prevents the `path` property (see {@link Path}) from being added to each
+   * Prevents the `path` property (see {@link index!Path Path}) from being added to each
    * rule and group in the hierarchy.
    *
    * @defaultValue `false`

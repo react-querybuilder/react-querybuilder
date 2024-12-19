@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useContext, useRef } from 'react';
+import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
 import type {
   DndDropTargetType,
   DraggedItem,
@@ -16,7 +17,8 @@ import type { QueryBuilderDndContextProps } from './types';
 
 /**
  * Rule component for drag-and-drop. Renders the provided rule component
- * ({@link Rule} by default), but forwards the drag-and-drop context.
+ * ({@link react-querybuilder!index.Rule Rule} by default), but forwards the
+ * drag-and-drop context.
  */
 export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
@@ -43,9 +45,10 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
 };
 
 type UseRuleDndParams = RuleProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop'> &
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  Pick<typeof import('react-dnd'), 'useDrag' | 'useDrop'>;
+  Pick<QueryBuilderDndContextProps, 'canDrop'> & {
+    useDrag: typeof useDragOriginal;
+    useDrop: typeof useDropOriginal;
+  };
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 

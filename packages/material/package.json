@@ -54,8 +54,8 @@
   "devDependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.1.10",
-    "@mui/material": "^6.1.10",
+    "@mui/icons-material": "^6.2.1",
+    "@mui/material": "^6.2.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
     "@types/react": "^18.3.12",
