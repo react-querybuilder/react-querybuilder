@@ -4,7 +4,7 @@ import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
 import {
   datetimeRuleProcessorJsonLogic,
-  getJsonLogicDateTimeOperations,
+  getDatetimeJsonLogicOperations,
 } from './datetimeRuleProcessorJsonLogic';
 import {
   comparisonDate,
@@ -27,7 +27,7 @@ export function runJsonLogicTests(libName: string, apiFns: RQBDateTimeLibraryAPI
         .join('-')
     );
 
-    for (const [op, func] of Object.entries(getJsonLogicDateTimeOperations(apiFns))) {
+    for (const [op, func] of Object.entries(getDatetimeJsonLogicOperations(apiFns))) {
       add_operation(op, func);
     }
 

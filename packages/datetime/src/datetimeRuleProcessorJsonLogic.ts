@@ -1,10 +1,6 @@
 import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorJsonLogic, toArray } from 'react-querybuilder';
-import type {
-  RQBDateTimeJsonLogic,
-  RQBDateTimeLibraryAPI,
-  RQBJsonLogicDateTimeOperations,
-} from './types';
+import type { RQBDateTimeJsonLogic } from './types';
 import { processIsDateField } from './utils';
 
 const dateOperationMap = {
@@ -23,6 +19,10 @@ const dateOperationMap = {
 /**
  * Date/time rule processor for use by {@link react-querybuilder!index.formatQuery formatQuery}
  * with the "jsonlogic" format.
+ *
+ * Note: Unlike other date/time rule processors from this library, this function does
+ * not require a date/time library API. Instead, the date/time library API is used by
+ * {@link getDatetimeJsonLogicOperations} during the evaluation process.
  */
 export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
   rule,
@@ -70,28 +70,3 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
 
   return defaultRuleProcessorJsonLogic(rule, options);
 };
-
-export const getJsonLogicDateTimeOperations = ({
-  isAfter,
-  isBefore,
-  isSame,
-}: RQBDateTimeLibraryAPI): RQBJsonLogicDateTimeOperations => ({
-  dateAfter: (a, b) => isAfter(a, b),
-  dateBefore: (a, b) => isBefore(a, b),
-  dateBetween: (a, b, c) =>
-    isSame(b, a) ||
-    isSame(b, c) ||
-    (isAfter(b, a) && isBefore(b, c)) ||
-    (isAfter(b, c) && isBefore(b, a)),
-  dateNotBetween: (a, b, c) =>
-    !isSame(b, a) &&
-    !isSame(b, c) &&
-    ((isBefore(a, c) && (isBefore(b, a) || isAfter(b, c))) ||
-      (isAfter(a, c) && (isBefore(b, c) || isAfter(b, a)))),
-  dateIn: (a, b) => b.some(v => isSame(a, v)),
-  dateNotIn: (a, b) => b.every(v => !isSame(a, v)),
-  dateNotOn: (a, b) => !isSame(a, b),
-  dateOn: (a, b) => isSame(a, b),
-  dateOnOrAfter: (a, b) => isAfter(a, b) || isSame(a, b),
-  dateOnOrBefore: (a, b) => isBefore(a, b) || isSame(a, b),
-});

@@ -1,4 +1,5 @@
 export * from './datetimeRuleProcessorJsonLogic';
+export * from './getDatetimeJsonLogicOperations';
 export * from './getDatetimeRuleProcessorCEL';
 export * from './getDatetimeRuleProcessorJSONata';
 export * from './getDatetimeRuleProcessorMongoDBQuery';

@@ -5,7 +5,7 @@
  */
 
 import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
-import { getJsonLogicDateTimeOperations } from './datetimeRuleProcessorJsonLogic';
+import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import {
@@ -23,7 +23,7 @@ import type { RQBJsonLogicDateTimeOperations } from './types';
  * Custom JsonLogic date/time operations using Day.js
  */
 export const jsonLogicDateTimeOperations: RQBJsonLogicDateTimeOperations =
-  getJsonLogicDateTimeOperations(rqbDateTimeLibraryAPI);
+  getDatetimeJsonLogicOperations(rqbDateTimeLibraryAPI);
 
 /**
  * {@link react-querybuilder!index.formatQuery formatQuery} rule processor for "sql" format using Day.js
