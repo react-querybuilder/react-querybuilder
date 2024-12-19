@@ -42,7 +42,7 @@
     "test": "bun test:bun && bunx jest",
     "test:bun": "bun test dbquery packages/react-querybuilder/src/utils/parse* formatQuery transformQuery datetimeRuleProcessor",
     "test:watch": "jest --watch",
-    "typecheck": "concurrently --timings --max-processes 14 --prefix-colors \"#0958d9,#712cf9,#00d1b2,#81e6d9,cyan,#4078c0,#7fba00,#339af0,#007fff,#61dafb,#82a7dd,#60a5fa,darkgray,gray,blue\" --names antd,bootstrap,bulma,chakra,dnd,fluent,mantine,material,native,rqb,tremor,utils,examples,website bun:typecheck:antd bun:typecheck:bootstrap bun:typecheck:bulma bun:typecheck:chakra bun:typecheck:datetime bun:typecheck:dnd bun:typecheck:fluent bun:typecheck:mantine bun:typecheck:material bun:typecheck:native bun:typecheck:rqb bun:typecheck:tremor bun:typecheck:utils bun:typecheck:examples bun:typecheck:website",
+    "typecheck": "concurrently --timings --max-processes 14 --prefix-colors \"#0958d9,#712cf9,#00d1b2,#81e6d9,cyan,#4078c0,#7fba00,#339af0,#007fff,#61dafb,#82a7dd,#60a5fa,darkgray,gray,blue\" --names antd,bootstrap,bulma,chakra,datetime,dnd,fluent,mantine,material,native,rqb,tremor,utils,examples,website bun:typecheck:antd bun:typecheck:bootstrap bun:typecheck:bulma bun:typecheck:chakra bun:typecheck:datetime bun:typecheck:dnd bun:typecheck:fluent bun:typecheck:mantine bun:typecheck:material bun:typecheck:native bun:typecheck:rqb bun:typecheck:tremor bun:typecheck:utils bun:typecheck:examples bun:typecheck:website",
     "typecheck:antd": "tsc -p packages/antd",
     "typecheck:bootstrap": "tsc -p packages/bootstrap",
     "typecheck:bulma": "tsc -p packages/bulma",

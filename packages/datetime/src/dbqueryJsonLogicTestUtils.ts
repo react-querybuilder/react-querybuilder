@@ -2,10 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import { add_operation, apply } from 'json-logic-js';
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import {
-  datetimeRuleProcessorJsonLogic,
-  getDatetimeJsonLogicOperations,
-} from './datetimeRuleProcessorJsonLogic';
+import { datetimeRuleProcessorJsonLogic } from './datetimeRuleProcessorJsonLogic';
 import {
   comparisonDate,
   comparisonDate2,
@@ -13,6 +10,7 @@ import {
   fields,
   testCases,
 } from './dbqueryTestUtils';
+import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import type { RQBDateTimeLibraryAPI } from './types';
 
 const musicianRecords = CREATE_MUSICIANS_TABLE('jsonlogic');
