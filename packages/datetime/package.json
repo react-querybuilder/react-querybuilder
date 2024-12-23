@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@react-querybuilder/datetime",
   "description": "Date/time features for react-querybuilder",
   "version": "8.0.0",
