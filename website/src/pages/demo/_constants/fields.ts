@@ -57,8 +57,13 @@ export const fields = (
     { name: 'height', label: 'Height', validator },
     { name: 'job', label: 'Job', validator },
     { name: 'description', label: 'Description', valueEditorType: 'textarea' },
-    { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
-    { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
+    { name: 'birthdate', label: 'Birth Date', inputType: 'date', datatype: 'date' },
+    {
+      name: 'datetime',
+      label: 'Show Time',
+      inputType: 'datetime-local',
+      datatype: 'timestamp with time zone',
+    },
     { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
     {
       name: 'groupedField1',

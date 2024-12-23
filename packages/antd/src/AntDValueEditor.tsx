@@ -21,7 +21,6 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     title,
     className,
     type,
-    inputType,
     values = [],
     listsAsArrays,
     separator,
@@ -30,18 +29,19 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     testID,
     selectorComponent: _SelectorComponent,
     extraProps,
+    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ..._propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName } = useValueEditor(allProps);
+  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
+    useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
   if (
     (operator === 'between' || operator === 'notBetween') &&

@@ -1,3 +1,9 @@
+/**
+ * Converts a given query object into one of the supported {@link index!ExportFormat ExportFormat} formats.
+ *
+ * @module formatQuery
+ */
+
 import type { RuleProcessor, ValueProcessorLegacy } from '../../types/index.noReact';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
@@ -40,6 +46,7 @@ export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElastic
 export { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
+export { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 export * from './formatQuery';
 export * from './utils';

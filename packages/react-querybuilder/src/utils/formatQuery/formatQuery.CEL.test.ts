@@ -35,40 +35,34 @@ it('formats CEL correctly', () => {
   ).toBe('(f >= 12 && f <= 14)');
 });
 
-describe('escapes quotes when appropriate', () => {
-  it(`escapes double quotes (if appropriate) for "cel" export`, () => {
-    expect(formatQuery(testQueryDQ, 'cel')).toEqual(`f1 == "Te\\"st"`);
-  });
+it('escapes quotes when appropriate', () => {
+  expect(formatQuery(testQueryDQ, 'cel')).toEqual(`f1 == "Te\\"st"`);
 });
 
-describe('independent combinators', () => {
-  it('handles independent combinators for cel', () => {
-    expect(formatQuery(queryIC, 'cel')).toBe(
-      `firstName == "Test" && middleName == "Test" || lastName == "Test"`
-    );
-  });
+it('independent combinators', () => {
+  expect(formatQuery(queryIC, 'cel')).toBe(
+    `firstName == "Test" && middleName == "Test" || lastName == "Test"`
+  );
 });
 
 describe('validation', () => {
-  describe('cel', () => {
-    const validationResults: Record<string, string> = {
-      'should invalidate cel': '1 == 1',
-      'should invalidate cel even if fields are valid': '1 == 1',
-      'should invalidate cel rule by validator function': `field2 == ""`,
-      'should invalidate cel rule specified by validationMap': `field2 == ""`,
-      'should invalidate cel outermost group': '1 == 1',
-      'should invalidate cel inner group': '1 == 1',
-      'should convert cel inner group with no rules to fallbackExpression': 'field == "" && 1 == 1',
-    };
+  const validationResults: Record<string, string> = {
+    'should invalidate cel': '1 == 1',
+    'should invalidate cel even if fields are valid': '1 == 1',
+    'should invalidate cel rule by validator function': `field2 == ""`,
+    'should invalidate cel rule specified by validationMap': `field2 == ""`,
+    'should invalidate cel outermost group': '1 == 1',
+    'should invalidate cel inner group': '1 == 1',
+    'should convert cel inner group with no rules to fallbackExpression': 'field == "" && 1 == 1',
+  };
 
-    for (const vtd of getValidationTestData('cel')) {
-      if (validationResults[vtd.title] !== undefined) {
-        it(vtd.title, () => {
-          expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
-        });
-      }
+  for (const vtd of getValidationTestData('cel')) {
+    if (validationResults[vtd.title] !== undefined) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+      });
     }
-  });
+  }
 });
 
 describe('ruleProcessor', () => {

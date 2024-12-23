@@ -397,7 +397,7 @@ interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends str
 }
 
 /**
- * Return type of {@link useRuleGroupDnD} hook.
+ * Return type of {@link @react-querybuilder/dnd!useRuleGroupDnD} hook.
  */
 export interface UseRuleGroupDnD {
   isDragging: boolean;
@@ -433,7 +433,7 @@ export interface RuleGroupProps<F extends FullOption = FullOption, O extends str
 }
 
 /**
- * Return type of {@link useRuleDnD} hook.
+ * Return type of {@link @react-querybuilder/dnd!useRuleDnD} hook.
  */
 export interface UseRuleDnD {
   isDragging: boolean;

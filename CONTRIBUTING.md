@@ -33,6 +33,7 @@ Each compatibility package has its own `start:*`, `build:*`, and `typecheck:*` s
 | `@react-querybuilder/bootstrap` | `bun start:bootstrap` | `bun build:bootstrap` | `bun typecheck:bootstrap` |
 | `@react-querybuilder/bulma`     | `bun start:bulma`     | `bun build:bulma`     | `bun typecheck:bulma`     |
 | `@react-querybuilder/chakra`    | `bun start:chakra`    | `bun build:chakra`    | `bun typecheck:chakra`    |
+| `@react-querybuilder/datetime`  | `bun start:datetime`  | `bun build:datetime`  | `bun typecheck:datetime`  |
 | `@react-querybuilder/dnd`       | `bun start:dnd`       | `bun build:dnd`       | `bun typecheck:dnd`       |
 | `@react-querybuilder/fluent`    | `bun start:fluent`    | `bun build:fluent`    | `bun typecheck:fluent`    |
 | `@react-querybuilder/mantine`   | `bun start:mantine`   | `bun build:mantine`   | `bun typecheck:mantine`   |
@@ -92,6 +93,7 @@ Generated folders:
 - [examples/bootstrap](./examples/bootstrap)
 - [examples/bulma](./examples/bulma)
 - [examples/chakra](./examples/chakra)
+- [examples/datetime](./examples/datetime)
 - [examples/dnd](./examples/dnd)
 - [examples/fluent](./examples/fluent)
 - [examples/mantine](./examples/mantine)

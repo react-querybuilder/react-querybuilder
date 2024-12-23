@@ -124,6 +124,7 @@ type ExportFormat =
   | 'parameterized'
   | 'parameterized_named'
   | 'mongodb'
+  | 'mongodb_query'
   | 'cel'
   | 'jsonlogic'
   | 'jsonata'
@@ -136,15 +137,24 @@ interface FormatQueryOptions {
   valueProcessor?: ValueProcessor;
   ruleProcessor?: RuleProcessor;
   quoteFieldNamesWith?: string | [string, string];
+  fieldIdentifierSeparator?: string;
   quoteValuesWith?: string;
   validator?: QueryValidator;
   fields?: OptionList<Field>;
+  getOperators?: (
+    field: string,
+    misc: { fieldData: FullField }
+  ) => FlexibleOptionList<FullOperator> | null;
   fallbackExpression?: string;
   paramPrefix?: string;
+  paramsKeepPrefix?: boolean;
+  numberedParams?: boolean;
   parseNumbers?: ParseNumberMethod;
-  concatOperator?: string;
   placeholderFieldName?: string;
   placeholderOperatorName?: string;
+  concatOperator?: string;
+  preset?: SQLPreset;
+  context?: Record<string, any>;
 }
 
 type RuleProcessor = (rule: RuleType, options?: ValueProcessorOptions) => any;
@@ -156,6 +166,7 @@ interface ValueProcessorOptions extends FormatQueryOptions {
   fieldData?: Field;
   fieldParamNames?: Record<string, string[]>;
   getNextNamedParam?: (field: string) => string;
+  wrapValueWith?: [string, string];
 }
 
 interface ParameterizedSQL {

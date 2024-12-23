@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -26,29 +27,29 @@ import {
 
 /**
  * Converts a SQL `SELECT` statement into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSQL(sql: string): DefaultRuleGroupType;
 /**
  * Converts a SQL `SELECT` statement into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSQL(
   sql: string,
-  options: Omit<ParseSQLOptions, 'independentCombinators'> & {
+  options: Except<ParseSQLOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
 /**
  * Converts a SQL `SELECT` statement into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseSQL(
   sql: string,
-  options: Omit<ParseSQLOptions, 'independentCombinators'> & {
+  options: Except<ParseSQLOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

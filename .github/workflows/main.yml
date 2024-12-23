@@ -22,6 +22,19 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
 
+  Typecheck:
+    runs-on: ubuntu-latest
+    env:
+      RQB_SKIP_REACT_COMPILER: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        # with:
+        #   bun-version: 1.1.29
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run typecheck
+
   Test:
     runs-on: ubuntu-latest
     steps:

@@ -198,8 +198,6 @@ describe('parseNumbers', () => {
   });
 });
 
-describe('misc', () => {
-  it('quoteFieldNamesWithArray handles null', () => {
-    expect(getQuoteFieldNamesWithArray(null)).toEqual(['', '']);
-  });
+it('quoteFieldNamesWithArray handles null', () => {
+  expect(getQuoteFieldNamesWithArray(null)).toEqual(['', '']);
 });

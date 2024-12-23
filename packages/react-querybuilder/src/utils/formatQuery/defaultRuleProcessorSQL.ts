@@ -5,19 +5,16 @@ import { mapSQLOperator, getQuotedFieldName } from './utils';
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
  */
-export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts) => {
+export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
   const {
-    parseNumbers,
-    escapeQuotes,
     quoteFieldNamesWith = ['', ''] as [string, string],
     fieldIdentifierSeparator = '',
     quoteValuesWith = `'`,
     valueProcessor = defaultValueProcessorByRule,
     concatOperator = '||',
-  } = opts ?? {};
+  } = opts;
   const value = valueProcessor(rule, {
-    parseNumbers,
-    escapeQuotes,
+    ...opts,
     quoteFieldNamesWith,
     fieldIdentifierSeparator,
     quoteValuesWith,

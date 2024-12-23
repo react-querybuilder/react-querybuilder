@@ -20,7 +20,7 @@ export default defineConfig(async options => {
       bc.onSuccess = async () => {
         // Call original `onSuccess` first to write the non-debug index
         await onSuccess();
-        await getCjsIndexWriter('react-querybuilder', true)();
+        await getCjsIndexWriter('react-querybuilder', 'debug')();
       };
     }
   }

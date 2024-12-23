@@ -27,44 +27,38 @@ it('formats JSONata correctly', () => {
   ).toBe('(f >= "12" and f <= "14")');
 });
 
-describe('escapes quotes when appropriate', () => {
-  it(`escapes double quotes (if appropriate) for "jsonata" export`, () => {
-    expect(formatQuery(testQueryDQ, 'jsonata')).toEqual(`f1 = "Te\\"st"`);
-  });
+it('escapes quotes when appropriate', () => {
+  expect(formatQuery(testQueryDQ, 'jsonata')).toEqual(`f1 = "Te\\"st"`);
 });
 
-describe('independent combinators', () => {
-  it('handles independent combinators for jsonata', () => {
-    expect(formatQuery(queryIC, 'jsonata')).toBe(
-      `firstName = "Test" and middleName = "Test" or lastName = "Test"`
-    );
-  });
+it('independent combinators', () => {
+  expect(formatQuery(queryIC, 'jsonata')).toBe(
+    `firstName = "Test" and middleName = "Test" or lastName = "Test"`
+  );
 });
 
 describe('validation', () => {
-  describe('jsonata', () => {
-    const validationResults: Record<string, string> = {
-      'should invalidate jsonata': '(1 = 1)',
-      'should invalidate jsonata even if fields are valid': '(1 = 1)',
-      'should invalidate jsonata rule by validator function': `field2 = ""`,
-      'should invalidate jsonata rule specified by validationMap': `field2 = ""`,
-      'should invalidate jsonata outermost group': '(1 = 1)',
-      'should invalidate jsonata inner group': '(1 = 1)',
-      'should convert jsonata inner group with no rules to fallbackExpression':
-        'field = "" and (1 = 1)',
-    };
+  const validationResults: Record<string, string> = {
+    'should invalidate jsonata': '(1 = 1)',
+    'should invalidate jsonata even if fields are valid': '(1 = 1)',
+    'should invalidate jsonata rule by validator function': `field2 = ""`,
+    'should invalidate jsonata rule specified by validationMap': `field2 = ""`,
+    'should invalidate jsonata outermost group': '(1 = 1)',
+    'should invalidate jsonata inner group': '(1 = 1)',
+    'should convert jsonata inner group with no rules to fallbackExpression':
+      'field = "" and (1 = 1)',
+  };
 
-    for (const vtd of getValidationTestData('jsonata')) {
-      if (validationResults[vtd.title] !== undefined) {
-        it(vtd.title, () => {
-          expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
-        });
-      }
+  for (const vtd of getValidationTestData('jsonata')) {
+    if (validationResults[vtd.title] !== undefined) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+      });
     }
-  });
+  }
 });
 
-describe('ruleProcessor', () => {
+it('ruleProcessor', () => {
   const queryForRuleProcessor: RuleGroupType = {
     combinator: 'and',
     rules: [
@@ -73,34 +67,30 @@ describe('ruleProcessor', () => {
     ],
   };
 
-  it('handles custom JSONata rule processor', () => {
-    const ruleProcessor: RuleProcessor = r =>
-      r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorJSONata(r);
-    expect(formatQuery(queryForRuleProcessor, { format: 'jsonata', ruleProcessor })).toBe(
-      'custom_operator and f2 = "v2"'
-    );
-    expect(
-      formatQuery(queryForRuleProcessor, { format: 'jsonata', valueProcessor: ruleProcessor })
-    ).toBe('custom_operator and f2 = "v2"');
-  });
+  const ruleProcessor: RuleProcessor = r =>
+    r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorJSONata(r);
+  expect(formatQuery(queryForRuleProcessor, { format: 'jsonata', ruleProcessor })).toBe(
+    'custom_operator and f2 = "v2"'
+  );
+  expect(
+    formatQuery(queryForRuleProcessor, { format: 'jsonata', valueProcessor: ruleProcessor })
+  ).toBe('custom_operator and f2 = "v2"');
 });
 
-describe('parseNumbers', () => {
-  it('parses numbers for jsonata', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'jsonata', parseNumbers: true })).toBe(
-      'f > "NaN" and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in [0, 1, 2] and f in [0, 1, 2] and f in [0, "abc", 2] and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= "0" and f <= "abc") and (f >= "[object Object]" and f <= "[object Object]")'
-    );
-    const queryForNumberParsingJSONata: RuleGroupType = {
-      combinator: 'and',
-      rules: [
-        { field: 'f', operator: 'beginsWith', value: 1 },
-        { field: 'f', operator: 'endsWith', value: 1 },
-      ],
-    };
-    expect(
-      formatQuery(queryForNumberParsingJSONata, { format: 'jsonata', parseNumbers: true })
-    ).toBe(`$contains(f, /^1/) and $contains(f, /1$/)`);
-  });
+it('parseNumbers', () => {
+  expect(formatQuery(queryForNumberParsing, { format: 'jsonata', parseNumbers: true })).toBe(
+    'f > "NaN" and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in [0, 1, 2] and f in [0, 1, 2] and f in [0, "abc", 2] and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= "0" and f <= "abc") and (f >= "[object Object]" and f <= "[object Object]")'
+  );
+  const queryForNumberParsingJSONata: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f', operator: 'beginsWith', value: 1 },
+      { field: 'f', operator: 'endsWith', value: 1 },
+    ],
+  };
+  expect(formatQuery(queryForNumberParsingJSONata, { format: 'jsonata', parseNumbers: true })).toBe(
+    `$contains(f, /^1/) and $contains(f, /1$/)`
+  );
 });
 
 it('handles quoteFieldNamesWith correctly', () => {

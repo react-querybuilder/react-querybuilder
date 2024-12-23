@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
-import type { FullField, ParseNumberMethod, Schema, ValueEditorProps } from '../types';
+import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps } from '../types';
 import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
 import clsx from '../utils/clsx';
 
@@ -19,7 +19,6 @@ export const ValueEditor = <F extends FullField>(
     title,
     className,
     type = 'text',
-    inputType = 'text',
     values = [],
     listsAsArrays,
     fieldData,
@@ -31,21 +30,26 @@ export const ValueEditor = <F extends FullField>(
     // we cherry pick these out of `propsForValueSelector` to keep them from being
     // assigned to DOM elements. (The props with mixed case are the only ones that
     // really matter. Props in all lowercase don't emit warnings.)
+    inputType: _inputType,
     parseNumbers: _parseNumbers,
     skipHook: _skipHook,
     valueSource: _valueSource,
     ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, parseNumberMethod, valueListItemClassName } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    parseNumberMethod,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
-  const inputTypeCoerced = ['in', 'notIn'].includes(operator) ? 'text' : inputType || 'text';
 
   if (
     (operator === 'between' || operator === 'notBetween') &&
@@ -230,6 +234,10 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
    * Class for items in a value editor series (e.g. "between" value editors).
    */
   valueListItemClassName: string;
+  /**
+   * Coerced `inputType` based on `inputType` and `operator`.
+   */
+  inputTypeCoerced: InputType;
 } => {
   const {
     handleOnChange,
@@ -298,10 +306,13 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
     classNamesProp?.valueListItem
   );
 
+  const inputTypeCoerced = operator === 'in' || operator === 'notIn' ? 'text' : inputType || 'text';
+
   return {
     valueAsArray,
     multiValueHandler,
     parseNumberMethod,
     valueListItemClassName,
+    inputTypeCoerced,
   };
 };

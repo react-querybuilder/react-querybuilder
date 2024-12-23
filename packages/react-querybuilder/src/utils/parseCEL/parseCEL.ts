@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -39,29 +40,29 @@ import {
 
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseCEL(cel: string): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupType}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseCEL(
   cel: string,
-  options: Omit<ParseCELOptions, 'independentCombinators'> & {
+  options: Except<ParseCELOptions, 'independentCombinators'> & {
     independentCombinators?: false;
   }
 ): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
- * {@link QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link DefaultRuleGroupTypeIC}).
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseCEL(
   cel: string,
-  options: Omit<ParseCELOptions, 'independentCombinators'> & {
+  options: Except<ParseCELOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;

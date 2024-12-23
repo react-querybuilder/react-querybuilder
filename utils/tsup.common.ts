@@ -4,14 +4,14 @@ import { generateDTS } from './generateDTS';
 import { ReactCompilerEsbuildPlugin } from './react-compiler/esbuild-plugin-react-compiler';
 import path from 'node:path';
 
-export const getCjsIndexWriter = (pkgName: string, debug?: boolean) => async (): Promise<void> => {
+export const getCjsIndexWriter = (pkgName: string, altPath?: string) => async (): Promise<void> => {
   await writeFile(
-    `dist/cjs/${debug ? 'debug' : 'index'}.js`,
+    `dist/cjs/${altPath ?? 'index'}.js`,
     `'use strict';
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./${pkgName}.cjs.production${debug ? '.debug' : ''}.js');
+  module.exports = require('./${pkgName}.cjs.production${altPath ? `.${altPath}` : ''}.js');
 } else {
-  module.exports = require('./${pkgName}.cjs.development${debug ? '.debug' : ''}.js');
+  module.exports = require('./${pkgName}.cjs.development${altPath ? `.${altPath}` : ''}.js');
 }
 `
   );
@@ -76,7 +76,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
         entry: { [`${pkgName}.cjs.production`]: entryPoint },
         format: 'cjs',
         outDir: './dist/cjs/',
-        onSuccess: getCjsIndexWriter(pkgName, false),
+        onSuccess: getCjsIndexWriter(pkgName),
       },
     ];
 

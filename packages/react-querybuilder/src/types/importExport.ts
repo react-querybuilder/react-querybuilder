@@ -15,12 +15,21 @@ export type ExportFormat =
   | 'parameterized'
   | 'parameterized_named'
   | 'mongodb'
+  | 'mongodb_query'
   | 'cel'
   | 'jsonlogic'
   | 'spel'
   | 'elasticsearch'
   | 'jsonata'
   | 'natural_language';
+
+export type ExportObjectFormats =
+  | 'parameterized'
+  | 'parameterized_named'
+  | 'jsonlogic'
+  | 'elasticsearch'
+  | 'jsonata'
+  | 'mongodb_query';
 
 export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
 
@@ -35,12 +44,12 @@ export interface FormatQueryOptions {
   /**
    * This function will be used to process the `value` from each rule
    * for query language formats. If not defined, the appropriate
-   * `defaultValueProcessor` for the format will be used.
+   * `defaultValueProcessor*` for the format will be used.
    */
   valueProcessor?: ValueProcessorLegacy | ValueProcessorByRule;
   /**
    * This function will be used to process each rule for query language
-   * formats. If not defined, the appropriate `defaultRuleProcessor`
+   * formats. If not defined, the appropriate `defaultRuleProcessor*`
    * for the format will be used.
    */
   ruleProcessor?: RuleProcessor;
@@ -50,15 +59,13 @@ export interface FormatQueryOptions {
    * is passed, field names will be preceded by the first element and
    * succeeded by the second element.
    *
-   * A common value for this option is the backtick (```'`'```).
-   *
    * Tip: Use `fieldIdentifierSeparator` to bracket identifiers individually within field names.
    *
    * @default '' // the empty string
    *
    * @example
-   * formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' })
-   * // "`First name` = 'Steve'"
+   * formatQuery(query, { format: 'sql', quoteFieldNamesWith: '"' })
+   * // `"First name" = 'Steve'`
    *
    * @example
    * formatQuery(query, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })
@@ -188,6 +195,8 @@ export interface FormatQueryOptions {
    * Option presets to maximize compatibility with various SQL dialects.
    */
   preset?: SQLPreset;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: Record<string, any>;
 }
 
 /**
@@ -202,12 +211,6 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    */
   fieldData?: FullField;
   /**
-   * Included for the "parameterized" format only. Represents the total number of
-   * parameters for all query rules processed up to that point.
-   */
-  // TODO: Is this actually useful?
-  // paramCount?: number;
-  /**
    * Included for the "parameterized_named" format only. Keys of this object represent
    * field names and values represent the current list of parameter names for that
    * field based on the query rules processed up to that point. Use this list to
@@ -219,6 +222,12 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    * field name to get a unique parameter name, as yet unused during query processing.
    */
   getNextNamedParam?: (field: string) => string;
+  /**
+   * Additional prefix and suffix characters to wrap the value in. Useful for augmenting
+   * the default value processor results with special syntax (e.g., for dates or function
+   * calls).
+   */
+  wrapValueWith?: [string, string];
 }
 
 /**
@@ -245,23 +254,28 @@ export type ValueProcessor = ValueProcessorLegacy;
  * {@link RuleType} object.
  *
  * See the default rule processor for each format to know what type to return.
- * | Format                | Default rule processor                    |
- * | --------------------- | ----------------------------------------- |
- * | `sql`                 | {@link defaultRuleProcessorSQL}           |
- * | `parameterized`       | {@link defaultRuleProcessorParameterized} |
- * | `parameterized_named` | {@link defaultRuleProcessorParameterized} |
- * | `mongodb`             | {@link defaultRuleProcessorMongoDB}       |
- * | `cel`                 | {@link defaultRuleProcessorCEL}           |
- * | `spel`                | {@link defaultRuleProcessorSpEL}          |
- * | `jsonlogic`           | {@link defaultRuleProcessorJsonLogic}     |
- * | `elasticsearch`       | {@link defaultRuleProcessorElasticSearch} |
- * | `jsonata`             | {@link defaultRuleProcessorJSONata} |
+ * | Format                   | Default rule processor                    |
+ * | ------------------------ | ----------------------------------------- |
+ * | `sql`                    | {@link defaultRuleProcessorSQL}           |
+ * | `parameterized`          | {@link defaultRuleProcessorParameterized} |
+ * | `parameterized_named`    | {@link defaultRuleProcessorParameterized} |
+ * | `mongodb` _(deprecated)_ | {@link defaultRuleProcessorMongoDB}       |
+ * | `mongodb_query`          | {@link defaultRuleProcessorMongoDBQuery}  |
+ * | `cel`                    | {@link defaultRuleProcessorCEL}           |
+ * | `spel`                   | {@link defaultRuleProcessorSpEL}          |
+ * | `jsonlogic`              | {@link defaultRuleProcessorJsonLogic}     |
+ * | `elasticsearch`          | {@link defaultRuleProcessorElasticSearch} |
+ * | `jsonata`                | {@link defaultRuleProcessorJSONata} |
  */
 export type RuleProcessor = (
   rule: RuleType,
   options?: ValueProcessorOptions,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  meta?: { processedParams?: Record<string, any> | any[] }
+  meta?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    processedParams?: Record<string, any> | any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context?: Record<string, any>;
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ) => any;
 
@@ -303,7 +317,7 @@ export interface RQBJsonLogicVar {
 }
 /**
  * JsonLogic rule object with additional operators generated by {@link formatQuery}
- * and accepted by {@link parseJsonLogic}.
+ * and accepted by {@link parseJsonLogic!parseJsonLogic}.
  */
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
 
@@ -318,7 +332,7 @@ interface ParserCommonOptions {
 }
 
 /**
- * Options object for {@link parseSQL}.
+ * Options object for {@link parseSQL!parseSQL}.
  */
 export interface ParseSQLOptions extends ParserCommonOptions {
   paramPrefix?: string;
@@ -327,19 +341,19 @@ export interface ParseSQLOptions extends ParserCommonOptions {
 }
 
 /**
- * Options object for {@link parseCEL}.
+ * Options object for {@link parseCEL!parseCEL}.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseCELOptions extends ParserCommonOptions {}
 
 /**
- * Options object for {@link parseSpEL}.
+ * Options object for {@link parseSpEL!parseSpEL}.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseSpELOptions extends ParserCommonOptions {}
 
 /**
- * Options object for {@link parseJSONata}.
+ * Options object for {@link parseJSONata!parseJSONata}.
  *
  * Note: `listsAsArrays` is ignored by `parseJSONata`; lists are _always_ arrays.
  */
@@ -347,7 +361,7 @@ export interface ParseSpELOptions extends ParserCommonOptions {}
 export interface ParseJSONataOptions extends ParserCommonOptions {}
 
 /**
- * Options object for {@link parseJsonLogic}.
+ * Options object for {@link parseJsonLogic!parseJsonLogic}.
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -355,7 +369,7 @@ export interface ParseJsonLogicOptions extends ParserCommonOptions {
 }
 
 /**
- * Options object for {@link parseMongoDB}.
+ * Options object for {@link parseMongoDB!parseMongoDB}.
  */
 export interface ParseMongoDbOptions extends ParserCommonOptions {
   /**
@@ -392,12 +406,12 @@ export interface ParseMongoDbOptions extends ParserCommonOptions {
   preventOperatorNegation?: boolean;
   /**
    * Map of additional operators to their respective processing functions. Operators
-   * must begin with `"$"`. Processing functions should return either a {@link RuleType}
-   * or {@link RuleGroupType}.
+   * must begin with `"$"`. Processing functions should return either a {@link index!RuleType RuleType}
+   * or {@link index!RuleGroupType RuleGroupType}.
    *
-   * (The functions should _not_ return {@link RuleGroupTypeIC}, even if using independent
+   * (The functions should _not_ return {@link index!RuleGroupTypeIC RuleGroupTypeIC}, even if using independent
    * combinators. If the `independentCombinators` option is `true`, `parseMongoDB`
-   * will convert the final query to {@link RuleGroupTypeIC} before returning it.)
+   * will convert the final query to {@link index!RuleGroupTypeIC RuleGroupTypeIC} before returning it.)
    *
    * @default {}
    */

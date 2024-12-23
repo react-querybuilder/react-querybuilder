@@ -71,15 +71,15 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
 
     case 'in':
     case 'notIn': {
-      const negate = shouldNegate(operatorTL);
+      const [prefix, suffix] = shouldNegate(operatorTL) ? ['!(', ')'] : ['', ''];
       const valueAsArray = toArray(value);
-      return `${negate ? '!(' : ''}${field} in [${valueAsArray
+      return `${prefix}${field} in [${valueAsArray
         .map(val =>
           valueIsField || shouldRenderAsNumber(val, parseNumbers)
             ? `${trimIfString(val)}`
             : `"${escapeDoubleQuotes(val, escapeQuotes)}"`
         )
-        .join(', ')}]${negate ? ')' : ''}`;
+        .join(', ')}]${suffix}`;
     }
 
     case 'between':

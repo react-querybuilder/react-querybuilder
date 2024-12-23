@@ -225,32 +225,28 @@ describe('escapes quotes when appropriate', () => {
   }
 });
 
-describe('independent combinators', () => {
-  it('handles independent combinators for natural language', () => {
-    expect(formatQuery(queryIC, 'natural_language')).toBe(
-      `firstName is 'Test', and middleName is 'Test', or lastName is 'Test'`
-    );
-  });
+it('independent combinators', () => {
+  expect(formatQuery(queryIC, 'natural_language')).toBe(
+    `firstName is 'Test', and middleName is 'Test', or lastName is 'Test'`
+  );
 });
 
 describe('validation', () => {
-  describe('natural_language', () => {
-    const validationResults: Record<string, string> = {
-      'should invalidate natural_language': '1 is 1',
-      'should invalidate natural_language even if fields are valid': '1 is 1',
-      'should invalidate natural_language rule by validator function': `field2 is ''`,
-      'should invalidate natural_language rule specified by validationMap': `field2 is ''`,
-      'should invalidate natural_language outermost group': '1 is 1',
-      'should invalidate natural_language inner group': '1 is 1',
-      'should convert natural_language inner group with no rules to fallbackExpression': `field is '', and 1 is 1`,
-    };
+  const validationResults: Record<string, string> = {
+    'should invalidate natural_language': '1 is 1',
+    'should invalidate natural_language even if fields are valid': '1 is 1',
+    'should invalidate natural_language rule by validator function': `field2 is ''`,
+    'should invalidate natural_language rule specified by validationMap': `field2 is ''`,
+    'should invalidate natural_language outermost group': '1 is 1',
+    'should invalidate natural_language inner group': '1 is 1',
+    'should convert natural_language inner group with no rules to fallbackExpression': `field is '', and 1 is 1`,
+  };
 
-    for (const vtd of getValidationTestData('natural_language')) {
-      it(vtd.title, () => {
-        expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
-      });
-    }
-  });
+  for (const vtd of getValidationTestData('natural_language')) {
+    it(vtd.title, () => {
+      expect(formatQuery(vtd.query, vtd.options)).toBe(validationResults[vtd.title]);
+    });
+  }
 });
 
 describe('parseNumbers', () => {
@@ -301,8 +297,6 @@ describe('placeholder names', () => {
   });
 });
 
-describe('non-standard combinators', () => {
-  it('handles XOR operator', () => {
-    expect(formatQuery(queryForXor, 'natural_language')).toBe(`f1 is 'v1', xor f2 is 'v2'`);
-  });
+it('handles XOR operator', () => {
+  expect(formatQuery(queryForXor, 'natural_language')).toBe(`f1 is 'v1', xor f2 is 'v2'`);
 });

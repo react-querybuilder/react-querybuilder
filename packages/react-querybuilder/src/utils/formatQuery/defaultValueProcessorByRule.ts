@@ -21,13 +21,15 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     quoteValuesWith,
     concatOperator = '||',
     fieldIdentifierSeparator,
+    wrapValueWith = ['', ''],
   } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = operator.toLowerCase();
   const quoteChar = quoteValuesWith || "'";
 
-  const quoteValue = (v: unknown) => `${quoteChar}${v}${quoteChar}`;
+  const quoteValue = (v: unknown) =>
+    `${wrapValueWith[0]}${quoteChar}${v}${quoteChar}${wrapValueWith[1]}`;
   const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: string) =>
