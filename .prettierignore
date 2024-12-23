@@ -21,3 +21,4 @@ go.sum
 
 # Misc
 lerna.json
+bun.lock
