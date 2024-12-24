@@ -6,6 +6,7 @@ build/
 dist/
 coverage/
 build-analysis.*
+dbquery.*.cache_db
 utils/cel-evaluator/cel-evaluator
 utils/cel-evaluator/cel-evaluator.exe
 

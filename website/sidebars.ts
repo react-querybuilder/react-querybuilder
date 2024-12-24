@@ -69,6 +69,7 @@ export default {
       ],
     },
     'compat',
+    'datetime',
     'typescript',
     'buildless',
     'migrate',

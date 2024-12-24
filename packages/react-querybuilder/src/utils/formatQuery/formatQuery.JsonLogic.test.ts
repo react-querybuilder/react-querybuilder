@@ -12,7 +12,6 @@ import {
   queryForRuleProcessor,
   queryForXor,
   queryIC,
-  testQuerySQ,
 } from './formatQueryTestUtils';
 import { jsonLogicAdditionalOperators } from './utils';
 
@@ -216,143 +215,100 @@ it('formats JSONLogic correctly', () => {
   ).toEqual({ and: [{ '<=': [12, { var: 'f' }, 14] }, { or: [{ '==': [{ var: 'f' }, '26'] }] }] });
 });
 
-describe('escapes quotes when appropriate', () => {
-  for (const attempt of [
-    { fmt: 'sql', result: `(f1 = 'Te''st')` },
-    { fmt: 'parameterized', result: { sql: `(f1 = ?)`, params: [`Te'st`] } },
-    { fmt: 'parameterized_named', result: { sql: `(f1 = :f1_1)`, params: { f1_1: `Te'st` } } },
-    { fmt: 'spel', result: `f1 == 'Te\\'st'` },
-  ]) {
-    it(`escapes single quotes (if appropriate) for ${attempt.fmt} export`, () => {
-      // @ts-expect-error Conflicting formatQuery overloads
-      expect(formatQuery(testQuerySQ, attempt.fmt)).toEqual(attempt.result);
-    });
-  }
-
-  const testQueryDQ: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
-  };
-
-  for (const attempt of [
-    { fmt: 'mongodb', result: `{"f1":"Te\\"st"}` },
-    { fmt: 'cel', result: `f1 == "Te\\"st"` },
-  ]) {
-    it(`escapes double quotes (if appropriate) for ${attempt.fmt} export`, () => {
-      expect(formatQuery(testQueryDQ, attempt.fmt as 'cel' | 'mongodb')).toEqual(attempt.result);
-    });
-  }
-});
-
-describe('independent combinators', () => {
-  it('handles independent combinators for jsonlogic', () => {
-    expect(formatQuery(queryIC, 'jsonlogic')).toEqual({
-      or: [
-        {
-          and: [
-            { '==': [{ var: 'firstName' }, 'Test'] },
-            { '==': [{ var: 'middleName' }, 'Test'] },
-          ],
-        },
-        { '==': [{ var: 'lastName' }, 'Test'] },
-      ],
-    });
+it('independent combinators', () => {
+  expect(formatQuery(queryIC, 'jsonlogic')).toEqual({
+    or: [
+      {
+        and: [{ '==': [{ var: 'firstName' }, 'Test'] }, { '==': [{ var: 'middleName' }, 'Test'] }],
+      },
+      { '==': [{ var: 'lastName' }, 'Test'] },
+    ],
   });
 });
 
 describe('validation', () => {
-  describe('jsonlogic', () => {
-    const validationResults: Record<string, RQBJsonLogic> = {
-      'should invalidate jsonlogic': false,
-      'should invalidate jsonlogic even if fields are valid': false,
-      'should invalidate jsonlogic rule by validator function': {
-        and: [{ '==': [{ var: 'field2' }, ''] }],
-      },
-      'should invalidate jsonlogic rule specified by validationMap': {
-        and: [{ '==': [{ var: 'field2' }, ''] }],
-      },
-      'should invalidate jsonlogic outermost group': false,
-      'should invalidate jsonlogic inner group': false,
-      'should convert jsonlogic inner group with no rules to fallbackExpression': {
-        and: [{ '==': [{ var: 'field' }, ''] }],
-      },
-    };
+  const validationResults: Record<string, RQBJsonLogic> = {
+    'should invalidate jsonlogic': false,
+    'should invalidate jsonlogic even if fields are valid': false,
+    'should invalidate jsonlogic rule by validator function': {
+      and: [{ '==': [{ var: 'field2' }, ''] }],
+    },
+    'should invalidate jsonlogic rule specified by validationMap': {
+      and: [{ '==': [{ var: 'field2' }, ''] }],
+    },
+    'should invalidate jsonlogic outermost group': false,
+    'should invalidate jsonlogic inner group': false,
+    'should convert jsonlogic inner group with no rules to fallbackExpression': {
+      and: [{ '==': [{ var: 'field' }, ''] }],
+    },
+  };
 
-    for (const vtd of getValidationTestData('jsonlogic')) {
-      if (validationResults[vtd.title] !== undefined) {
-        it(vtd.title, () => {
-          expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
-        });
-      }
+  for (const vtd of getValidationTestData('jsonlogic')) {
+    if (validationResults[vtd.title] !== undefined) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toEqual(validationResults[vtd.title]);
+      });
     }
+  }
+});
+
+it('ruleProcessor', () => {
+  const ruleProcessor: RuleProcessor = r =>
+    r.operator === 'custom_operator'
+      ? { [r.operator]: [{ var: r.field }, r.value] }
+      : defaultRuleProcessorJsonLogic(r);
+  expect(formatQuery(queryForRuleProcessor, { format: 'jsonlogic', ruleProcessor })).toEqual({
+    and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
+  });
+  expect(
+    formatQuery(queryForRuleProcessor, { format: 'jsonlogic', valueProcessor: ruleProcessor })
+  ).toEqual({
+    and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
   });
 });
 
-describe('ruleProcessor', () => {
-  it('handles custom JsonLogic rule processor', () => {
-    const ruleProcessor: RuleProcessor = r =>
-      r.operator === 'custom_operator'
-        ? { [r.operator]: [{ var: r.field }, r.value] }
-        : defaultRuleProcessorJsonLogic(r);
-    expect(formatQuery(queryForRuleProcessor, { format: 'jsonlogic', ruleProcessor })).toEqual({
-      and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
-    });
-    expect(
-      formatQuery(queryForRuleProcessor, { format: 'jsonlogic', valueProcessor: ruleProcessor })
-    ).toEqual({
-      and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
-    });
+it('parseNumbers', () => {
+  expect(
+    formatQuery(queryForNumberParsing, {
+      format: 'jsonlogic',
+      parseNumbers: true,
+    })
+  ).toEqual({
+    and: [
+      { '>': [{ var: 'f' }, 'NaN'] },
+      { '==': [{ var: 'f' }, 0] },
+      { '==': [{ var: 'f' }, 0] },
+      { '==': [{ var: 'f' }, 0] },
+      { or: [{ '<': [{ var: 'f' }, 1.5] }, { '>': [{ var: 'f' }, 1.5] }] },
+      { in: [{ var: 'f' }, [0, 1, 2]] },
+      { in: [{ var: 'f' }, [0, 1, 2]] },
+      { in: [{ var: 'f' }, [0, 'abc', 2]] },
+      { '<=': [0, { var: 'f' }, 1] },
+      { '<=': [0, { var: 'f' }, 1] },
+      { '<=': ['0', { var: 'f' }, 'abc'] },
+      { '<=': [{}, { var: 'f' }, {}] },
+    ],
   });
 });
 
-describe('parseNumbers', () => {
-  it('parses numbers for jsonlogic', () => {
-    expect(
-      formatQuery(queryForNumberParsing, {
-        format: 'jsonlogic',
-        parseNumbers: true,
-      })
-    ).toEqual({
-      and: [
-        { '>': [{ var: 'f' }, 'NaN'] },
-        { '==': [{ var: 'f' }, 0] },
-        { '==': [{ var: 'f' }, 0] },
-        { '==': [{ var: 'f' }, 0] },
-        { or: [{ '<': [{ var: 'f' }, 1.5] }, { '>': [{ var: 'f' }, 1.5] }] },
-        { in: [{ var: 'f' }, [0, 1, 2]] },
-        { in: [{ var: 'f' }, [0, 1, 2]] },
-        { in: [{ var: 'f' }, [0, 'abc', 2]] },
-        { '<=': [0, { var: 'f' }, 1] },
-        { '<=': [0, { var: 'f' }, 1] },
-        { '<=': ['0', { var: 'f' }, 'abc'] },
-        { '<=': [{}, { var: 'f' }, {}] },
-      ],
-    });
-  });
+it('handles XOR operator', () => {
+  expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
 });
 
-describe('non-standard combinators', () => {
-  it('handles XOR operator', () => {
-    expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
-  });
-});
-
-describe('misc', () => {
-  it('runs the jsonLogic additional operators', () => {
-    const { startsWith, endsWith } = jsonLogicAdditionalOperators;
-    expect(startsWith('TestString', 'Test')).toBe(true);
-    // @ts-expect-error null is not valid
-    expect(startsWith(null, 'Test')).toBe(false);
-    // @ts-expect-error [] is not valid
-    expect(startsWith([], 'Test')).toBe(false);
-    // @ts-expect-error {} is not valid
-    expect(startsWith({}, 'Test')).toBe(false);
-    expect(endsWith('TestString', 'String')).toBe(true);
-    // @ts-expect-error null is not valid
-    expect(endsWith(null, 'String')).toBe(false);
-    // @ts-expect-error [] is not valid
-    expect(endsWith([], 'String')).toBe(false);
-    // @ts-expect-error {} is not valid
-    expect(endsWith({}, 'String')).toBe(false);
-  });
+it('runs the jsonLogic additional operators', () => {
+  const { startsWith, endsWith } = jsonLogicAdditionalOperators;
+  expect(startsWith('TestString', 'Test')).toBe(true);
+  // @ts-expect-error null is not valid
+  expect(startsWith(null, 'Test')).toBe(false);
+  // @ts-expect-error [] is not valid
+  expect(startsWith([], 'Test')).toBe(false);
+  // @ts-expect-error {} is not valid
+  expect(startsWith({}, 'Test')).toBe(false);
+  expect(endsWith('TestString', 'String')).toBe(true);
+  // @ts-expect-error null is not valid
+  expect(endsWith(null, 'String')).toBe(false);
+  // @ts-expect-error [] is not valid
+  expect(endsWith([], 'String')).toBe(false);
+  // @ts-expect-error {} is not valid
+  expect(endsWith({}, 'String')).toBe(false);
 });

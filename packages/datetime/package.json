@@ -1,0 +1,128 @@
+{
+  "name": "@react-querybuilder/datetime",
+  "description": "Date/time features for react-querybuilder",
+  "version": "8.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_datetime.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/types-esm/index.d.mts",
+        "default": "./dist/react-querybuilder_datetime.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./date-fns": {
+      "import": {
+        "types": "./dist/types-esm/index.date-fns.d.mts",
+        "default": "./dist/react-querybuilder_datetime.date-fns.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.date-fns.d.ts",
+        "default": "./dist/cjs/date-fns.js"
+      }
+    },
+    "./dayjs": {
+      "import": {
+        "types": "./dist/types-esm/index.dayjs.d.mts",
+        "default": "./dist/react-querybuilder_datetime.dayjs.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.dayjs.d.ts",
+        "default": "./dist/cjs/dayjs.js"
+      }
+    },
+    "./jsdate": {
+      "import": {
+        "types": "./dist/types-esm/index.jsdate.d.mts",
+        "default": "./dist/react-querybuilder_datetime.jsdate.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.jsdate.d.ts",
+        "default": "./dist/cjs/jsdate.js"
+      }
+    },
+    "./luxon": {
+      "import": {
+        "types": "./dist/types-esm/index.luxon.d.mts",
+        "default": "./dist/react-querybuilder_datetime.luxon.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.luxon.d.ts",
+        "default": "./dist/cjs/luxon.js"
+      }
+    }
+  },
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/datetime"
+  },
+  "keywords": [
+    "react",
+    "querybuilder",
+    "date",
+    "time",
+    "datetime",
+    "datepicker"
+  ],
+  "scripts": {
+    "start": "bunx --bun vite",
+    "build": "bunx --bun tsup",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@date-fns/tz": "^1.2.0",
+    "@electric-sql/pglite": "^0.2.15",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.1.0",
+    "@types/luxon": "^3.4.2",
+    "@types/react": "^18.3.12",
+    "@vitejs/plugin-react": "^4.3.4",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "jsonata": "^2.0.6",
+    "json-logic-js": "^2.0.5",
+    "luxon": "^3.5.0",
+    "mongodb-memory-server-core": "^10.1.2",
+    "mongoose": "^8.9.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-querybuilder": "8.0.0",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-querybuilder": "8.0.0",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "luxon": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "date-fns": {
+      "optional": true
+    },
+    "dayjs": {
+      "optional": true
+    },
+    "luxon": {
+      "optional": true
+    }
+  }
+}

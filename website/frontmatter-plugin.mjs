@@ -2,11 +2,12 @@
 import { writeFileSync } from 'node:fs';
 import { MarkdownPageEvent, MarkdownRendererEvent } from 'typedoc-plugin-markdown';
 
-const compatPackageNames = {
+const _compatPackageNames = {
   antd: 'Ant Design',
   bootstrap: 'Bootstrap',
   bulma: 'Bulma',
   chakra: 'Chakra UI',
+  datetime: 'Date/Time',
   dnd: 'Drag-and-Drop',
   fluent: 'Fluent UI',
   mantine: 'Mantine',
@@ -14,8 +15,6 @@ const compatPackageNames = {
   native: 'React Native',
   tremor: 'Tremor',
 };
-
-const re = /\/@react-querybuilder\/(\w+)\/index\.md$/;
 
 /**
  * Amends the frontmatter of API documentation pages.
@@ -27,45 +26,31 @@ export function load(app) {
     MarkdownPageEvent.BEGIN,
     /** @param {import('typedoc-plugin-markdown').MarkdownPageEvent} page */
     page => {
-      if (page.filename.endsWith('/api/index.md')) {
+      if (/\/(api|index)\/index\.md$/gi.test(page.filename)) {
         page.frontmatter = {
           ...page.frontmatter,
-          // Index should be first in sidebar
+          // Index modules should be first in sidebar
           sidebar_position: 0,
         };
       }
 
-      // Update sidebar label for main package
-      if (page.filename.endsWith('/react-querybuilder/index.md')) {
+      // Update sidebar label and title for submodules
+      const mainPkgSubModuleMatch = page.filename.match(
+        /\/api\/(@?(?:react-querybuilder)(\/[\w-]+)*\/([\w-]+))\/index.md$/i
+      );
+      if (mainPkgSubModuleMatch) {
         page.frontmatter = {
           ...page.frontmatter,
-          sidebar_label: 'React Query Builder',
-        };
-      }
-      // Update sidebar labels for compat packages
-      const reMatch = page.filename.match(re);
-      if (reMatch) {
-        page.frontmatter = {
-          ...page.frontmatter,
-          sidebar_label: compatPackageNames[reMatch[1]],
+          sidebar_label:
+            mainPkgSubModuleMatch[3] === 'index' ? '/' : `/${mainPkgSubModuleMatch[3]}`,
+          title: mainPkgSubModuleMatch[1],
         };
       }
     }
   );
   app.renderer.on(MarkdownRendererEvent.END, () => {
-    writeFileSync(
-      './api/react-querybuilder/_category_.json',
-      JSON.stringify({
-        position: 1,
-      })
-    );
-    writeFileSync(
-      './api/@react-querybuilder/_category_.json',
-      JSON.stringify({
-        position: 2,
-        label: 'Compatibility packages',
-      })
-    );
+    writeFileSync('./api/react-querybuilder/_category_.json', JSON.stringify({ position: 1 }));
+    writeFileSync('./api/@react-querybuilder/_category_.json', JSON.stringify({ position: 2 }));
     writeFileSync('./api/.gitkeep', '');
   });
 }

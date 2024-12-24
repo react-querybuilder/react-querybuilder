@@ -103,36 +103,37 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     case 'notBetween': {
       const valueAsArray = toArray(value);
       if (
-        valueAsArray.length >= 2 &&
-        !nullOrUndefinedOrEmpty(valueAsArray[0]) &&
-        !nullOrUndefinedOrEmpty(valueAsArray[1])
+        valueAsArray.length < 2 ||
+        nullOrUndefinedOrEmpty(valueAsArray[0]) ||
+        nullOrUndefinedOrEmpty(valueAsArray[1])
       ) {
-        const [first, second] = valueAsArray;
-        const firstNum = shouldRenderAsNumber(first, true)
-          ? parseNumber(first, { parseNumbers: true })
-          : NaN;
-        const secondNum = shouldRenderAsNumber(second, true)
-          ? parseNumber(second, { parseNumbers: true })
-          : NaN;
-        let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-        let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
-
-        if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
-          const tempNum = secondNum;
-          secondValue = firstNum;
-          firstValue = tempNum;
-        }
-
-        const renderAsNumbers =
-          shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers);
-
-        const expression = `${qfn(field)} >= ${valueIsField ? qfn(first) : renderAsNumbers ? firstValue : quote(firstValue, escapeQuotes)} and ${qfn(field)} <= ${valueIsField ? qfn(second) : renderAsNumbers ? secondValue : quote(secondValue, escapeQuotes)}`;
-
-        return operator === 'between' ? `(${expression})` : negate(expression, true);
-      } else {
         return '';
       }
+
+      const [first, second] = valueAsArray;
+      const firstNum = shouldRenderAsNumber(first, true)
+        ? parseNumber(first, { parseNumbers: true })
+        : NaN;
+      const secondNum = shouldRenderAsNumber(second, true)
+        ? parseNumber(second, { parseNumbers: true })
+        : NaN;
+      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+
+      if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
+        const tempNum = secondNum;
+        secondValue = firstNum;
+        firstValue = tempNum;
+      }
+
+      const renderAsNumbers =
+        shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers);
+
+      const expression = `${qfn(field)} >= ${valueIsField ? qfn(first) : renderAsNumbers ? firstValue : quote(firstValue, escapeQuotes)} and ${qfn(field)} <= ${valueIsField ? qfn(second) : renderAsNumbers ? secondValue : quote(secondValue, escapeQuotes)}`;
+
+      return operator === 'between' ? `(${expression})` : negate(expression, true);
     }
   }
+
   return '';
 };

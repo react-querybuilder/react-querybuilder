@@ -157,6 +157,7 @@ export const isValueProcessorLegacy = (
  * ['', '']
  */
 export const getQuoteFieldNamesWithArray = (
+  // istanbul ignore next
   quoteFieldNamesWith: null | string | [string, string] = ['', '']
 ): [string, string] =>
   Array.isArray(quoteFieldNamesWith)

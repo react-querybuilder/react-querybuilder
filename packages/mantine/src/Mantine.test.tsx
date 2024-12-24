@@ -1,5 +1,15 @@
-import { MantineProvider } from '@mantine/core';
-import { act, render, screen } from '@testing-library/react';
+import { createTheme, MantineProvider } from '@mantine/core';
+import {
+  basicSchema,
+  findInput,
+  testActionElement,
+  testNotToggle,
+  testShiftActions,
+  testValueEditor,
+  userEventSetup,
+} from '@rqb-testing';
+import type { RenderOptions } from '@testing-library/react';
+import { act, render as render_original, screen } from '@testing-library/react';
 import dayjs from 'dayjs';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
@@ -10,20 +20,11 @@ import type {
   VersatileSelectorProps,
 } from 'react-querybuilder';
 import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
-import {
-  basicSchema,
-  findInput,
-  testActionElement,
-  testNotToggle,
-  testShiftActions,
-  testValueEditor,
-  userEventSetup,
-} from '@rqb-testing';
-import { MantineActionElement as MantineActionElement_original } from './MantineActionElement';
-import { MantineNotToggle as MantineNotToggle_original } from './MantineNotToggle';
-import { MantineShiftActions as MantineShiftActions_original } from './MantineShiftActions';
-import { MantineValueEditor as MantineValueEditor_original } from './MantineValueEditor';
-import { MantineValueSelector as MantineValueSelector_original } from './MantineValueSelector';
+import { MantineActionElement } from './MantineActionElement';
+import { MantineNotToggle } from './MantineNotToggle';
+import { MantineShiftActions } from './MantineShiftActions';
+import { MantineValueEditor } from './MantineValueEditor';
+import { MantineValueSelector } from './MantineValueSelector';
 import { QueryBuilderMantine } from './index';
 
 jest.setTimeout(30_000);
@@ -48,10 +49,12 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+const theme = createTheme({});
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
-    <MantineProvider>
+    <MantineProvider theme={theme}>
       <RQBComponent {...props} />
     </MantineProvider>
   );
@@ -59,27 +62,30 @@ const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   return Wrapper;
 };
 
-const MantineActionElement = generateWrapper(MantineActionElement_original);
-const MantineNotToggle = generateWrapper(MantineNotToggle_original);
-const MantineShiftActions = generateWrapper(MantineShiftActions_original);
-const MantineValueEditor = generateWrapper(MantineValueEditor_original);
-const MantineValueSelector = generateWrapper(MantineValueSelector_original);
-
-testActionElement(MantineActionElement);
-testNotToggle(MantineNotToggle);
-testShiftActions(MantineShiftActions);
-testValueEditor(MantineValueEditor, {
+testActionElement(generateWrapper(MantineActionElement));
+testNotToggle(generateWrapper(MantineNotToggle));
+testShiftActions(generateWrapper(MantineShiftActions));
+testValueEditor(generateWrapper(MantineValueEditor), {
   select: true,
   multiselect: true,
   betweenSelect: true,
 });
 
+const render = (
+  ui: React.ReactNode,
+  options: RenderOptions = {}
+): ReturnType<typeof render_original> =>
+  render_original(ui, {
+    wrapper: ({ children }) => <MantineProvider>{children}</MantineProvider>,
+    ...options,
+  });
+
 const user = userEventSetup();
 
-const options: FullOption[] = [
+const options = [
   { name: 'opt1', label: 'Option 1' },
   { name: 'opt2', label: 'Option 2' },
-].map(o => toFullOption(o));
+].map<FullOption>(o => toFullOption(o));
 
 const now = new Date();
 const year = now.getFullYear();
@@ -149,7 +155,8 @@ describe('MantineValueSelector', () => {
       <MantineValueSelector
         {...props}
         testID={TestID.fields}
-        options={optGroup}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        options={optGroup as any}
         handleOnChange={handleOnChange}
       />
     );

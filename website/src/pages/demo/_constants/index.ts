@@ -32,6 +32,7 @@ export const defaultOptions = {
   showBranches: false,
   showShiftActions: false,
   suppressStandardClassnames: false,
+  useDateTimePackage: false,
 } satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
@@ -55,6 +56,7 @@ export const optionOrder: DemoOption[] = [
   'justifiedLayout',
   'showBranches',
   'suppressStandardClassnames',
+  'useDateTimePackage',
 ];
 
 export const optionsMetadata = {
@@ -159,6 +161,11 @@ export const optionsMetadata = {
     link: '/docs/styling/overview#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
+  },
+  useDateTimePackage: {
+    link: '/docs/compat#datetime',
+    label: 'Use date/time package',
+    title: 'Use the Date/Time package',
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 
