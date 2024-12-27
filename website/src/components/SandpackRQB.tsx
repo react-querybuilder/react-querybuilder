@@ -16,7 +16,8 @@ export const SandpackRQB = ({
   rqbVersion = 7,
 }: SandpackRQBProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
-  const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const codeSnippets = React.Children.toArray(children) as React.ReactElement<any>[];
   const bkgdColor = isDarkTheme ? '#343a46' : '#ffffff';
   let hideStylesCSS = true;
 

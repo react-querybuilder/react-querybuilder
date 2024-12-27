@@ -112,8 +112,8 @@
     "@types/jscodeshift": "^0.12.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^22.10.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-istanbul": "^7.0.0",
     "jscodeshift": "^17.1.1",
@@ -122,15 +122,15 @@
     "mongodb-memory-server-core": "^10.1.2",
     "mongoose": "^8.9.2",
     "query-string": "^9.1.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.83.0",
     "spel2js": "^0.2.8",
     "type-fest": "^4.30.2",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "vite": "^6.0.5"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
@@ -143,7 +143,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "start": "bun --bun vite",
+    "start": "vite",
     "build": "bun run build:main && bun run build:css",
     "build:main": "bun --bun tsup",
     "build:css": "mkdir -p dist && cp ./src/*.scss dist && bunx sass --style=compressed ./dist/query-builder-layout.scss:./dist/query-builder-layout.css ./dist/query-builder.scss:./dist/query-builder.css",

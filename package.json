@@ -106,8 +106,8 @@
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "@types/web": "^0.0.188",
     "@typescript-eslint/parser": "^8.18.2",
     "babel-plugin-react-compiler": "^19.0.0-beta-b2e8e9c-20241220",
@@ -128,16 +128,16 @@
     "postcss": "^8.4.49",
     "prettier": "3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "react": "^18.3.1",
+    "react": "^19.0.0",
     "react-dnd": "^16.0.1",
     "react-dnd-test-backend": "^16.0.1",
     "react-dnd-test-utils": "^16.0.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.0.0",
     "regenerator-runtime": "^0.14.1",
     "swc-loader": "^0.2.6",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^5.4.11"
+    "vite": "^6.0.5"
   }
 }
