@@ -135,10 +135,11 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   toWrite.push(formatAndWrite(path.join(examplePath, 'index.html'), exampleIndexHTML));
   // #endregion
 
-  // #region src/index.scss
+  // #region src/styles.scss
   const processedTemplateSCSS = templateStylesSCSS
     .replace('// __SCSS_PRE__', exampleConfig.scssPre.join('\n'))
     .replace('// __SCSS_POST__', exampleConfig.scssPost.join('\n'))
+    .replaceAll(/(@use )/g, exampleConfig.compileToJS ? '@import ' : '$1')
     .replaceAll(/((query-builder\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
   toWrite.push(
     formatAndWrite(

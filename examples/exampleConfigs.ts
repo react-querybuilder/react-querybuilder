@@ -68,7 +68,7 @@ export const configs: Record<string, ExampleConfig> = {
   bootstrap: {
     name: 'Bootstrap',
     dependencyKeys: ['bootstrap', 'bootstrap-icons', ['@popperjs/core', '^2.11.5']],
-    scssPre: [`$code-color: #333333;`, `@import 'bootstrap/scss/bootstrap.scss';`],
+    scssPre: [`$code-color: #333333;`, `@use 'bootstrap/scss/bootstrap.scss';`],
     scssPost: [`.queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`],
     tsxImports: [
       `import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';`,
@@ -84,7 +84,7 @@ export const configs: Record<string, ExampleConfig> = {
   bulma: {
     name: 'Bulma',
     dependencyKeys: ['bulma'],
-    scssPre: [`$code: #333333;`, `$code-background: unset;`, `@import 'bulma/bulma.sass';`],
+    scssPre: [`$code: #333333;`, `$code-background: unset;`, `@use 'bulma/bulma.scss';`],
     scssPost: [`.queryBuilder{.input{width: auto;}}`],
     tsxImports: [`import { QueryBuilderBulma } from '@react-querybuilder/bulma';`],
     additionalDeclarations: [],
@@ -151,7 +151,7 @@ const Provider = (props: React.PropsWithChildren) => (
   mantine: {
     name: 'Mantine',
     dependencyKeys: ['@mantine/core', '@mantine/dates', '@mantine/hooks', 'dayjs'],
-    scssPre: [`@import '@mantine/core/styles.css';`],
+    scssPre: [`@use '@mantine/core/styles.css';`],
     scssPost: [],
     tsxImports: [
       `import { MantineProvider } from '@mantine/core';`,

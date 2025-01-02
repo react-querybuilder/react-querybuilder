@@ -1,6 +1,6 @@
 $code-color: #333333;
-@import 'bootstrap/scss/bootstrap.scss';
-@import 'react-querybuilder/dist/query-builder.scss';
+@use 'bootstrap/scss/bootstrap.scss';
+@use 'react-querybuilder/dist/query-builder.scss';
 
 body {
   margin: 0.5rem !important;
