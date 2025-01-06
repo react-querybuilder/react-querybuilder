@@ -55,7 +55,7 @@
     "@babel/preset-flow": "^7.25.9",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^12.9.0",
-    "@types/react": "^19.0.2",
+    "@types/react": "^19.0.3",
     "@types/react-test-renderer": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-syntax-hermes-parser": "^0.26.0",
@@ -66,9 +66,9 @@
     "react-querybuilder": "8.0.0",
     "react-redux": "^9.2.0",
     "react-test-renderer": "^19.0.0",
-    "rollup-plugin-visualizer": "^5.12.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5"
+    "vite": "^6.0.7"
   },
   "peerDependencies": {
     "react": ">=18",

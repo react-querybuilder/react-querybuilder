@@ -73,40 +73,38 @@ const config: Config = {
         module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
       }),
     }),
-    ...(process.env.RQB_TYPEDOC_DONE
-      ? []
+    process.env.RQB_TYPEDOC_DONE
+      ? null
       : [
-          [
-            'docusaurus-plugin-typedoc',
-            {
-              entryPointStrategy: 'packages',
-              entryPoints: ['../packages/*'],
-              out: './api',
-              cleanOutputDir: true,
-              includeVersion: true,
-              name: 'React Query Builder API',
-              readme: 'none',
-              textContentMappings: {
-                'title.indexPage': 'React Query Builder API',
-                'title.memberPage': '{name}',
-                'breadcrumbs.home': '{name}',
-                // @ts-expect-error TODO: find out why this is not in the types because it works
-                'footer.text':
-                  ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
-              },
-              enumMembersFormat: 'table',
-              parametersFormat: 'table',
-              propertiesFormat: 'list',
-              indexFormat: 'table',
-              sidebar: { autoConfiguration: false, pretty: false },
-              sortEntryPoints: true,
-              pretty: true,
-              expandObjects: true,
-              expandParameters: true,
-              plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
-            } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
-          ],
-        ]),
+          'docusaurus-plugin-typedoc',
+          {
+            entryPointStrategy: 'packages',
+            entryPoints: ['../packages/*'],
+            out: './api',
+            cleanOutputDir: true,
+            includeVersion: true,
+            name: 'React Query Builder API',
+            readme: 'none',
+            textContentMappings: {
+              'title.indexPage': 'React Query Builder API',
+              'title.memberPage': '{name}',
+              // @ts-expect-error TODO: find out why this is not in the types because it works
+              'footer.text':
+                ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
+            },
+            enumMembersFormat: 'table',
+            parametersFormat: 'table',
+            propertiesFormat: 'list',
+            indexFormat: 'table',
+            sidebar: { autoConfiguration: true, pretty: true },
+            sortEntryPoints: true,
+            hideGroupHeadings: true,
+            pretty: true,
+            expandObjects: true,
+            expandParameters: true,
+            plugin: ['typedoc-plugin-frontmatter', './api-gitkeep.mjs'],
+          } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
+        ],
     [
       'content-docs',
       {
@@ -118,6 +116,7 @@ const config: Config = {
         showLastUpdateTime: true,
         versions: { current: { label: 'Latest' } },
         breadcrumbs: false,
+        sidebarPath: require.resolve('./sidebar-api.js'),
       } satisfies PluginContentDocsOptions,
     ],
   ],
@@ -128,17 +127,7 @@ const config: Config = {
         docs: {
           beforeDefaultRemarkPlugins: [remarkPluginImport],
           remarkPlugins: [
-            [
-              remarkPluginNpm2Yarn,
-              {
-                sync: true,
-                converters: [
-                  ['Bun', (npmCode: string) => npmCode.replace(/npm i(nstall)? /, 'bun add ')],
-                  'yarn',
-                  'pnpm',
-                ],
-              },
-            ],
+            [remarkPluginNpm2Yarn, { sync: true, converters: ['bun', 'yarn', 'pnpm'] }],
           ],
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
