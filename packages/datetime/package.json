@@ -81,7 +81,7 @@
   ],
   "scripts": {
     "start": "vite",
-    "build": "bunx --bun tsup",
+    "build": "bun --bun tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },

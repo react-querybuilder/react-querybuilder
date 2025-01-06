@@ -279,7 +279,9 @@ parse: function parse(input) {
           if (this.terminals_[p] && p > TERROR)
             expected.push("'" + this.terminals_[p] + "'");
         if (lexer.showPosition)
-          errStr = "Parse error on line " + (yylineno + 1) + ":\n" + lexer.showPosition() + "\nExpecting " + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symbol) + "'";
+          errStr = "Parse error on line " + (yylineno + 1) + `:
+` + lexer.showPosition() + `
+Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symbol) + "'";
         else
           errStr = "Parse error on line " + (yylineno + 1) + ": Unexpected " + (symbol == EOF ? "end of input" : "'" + (this.terminals_[symbol] || symbol) + "'");
         this.parseError(errStr, {
@@ -450,7 +452,8 @@ reject:function() {
       if (this.options.backtrack_lexer)
         this._backtrack = !0;
       else
-        return this.parseError("Lexical error on line " + (this.yylineno + 1) + ". You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n" + this.showPosition(), {
+        return this.parseError("Lexical error on line " + (this.yylineno + 1) + `. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).
+` + this.showPosition(), {
           text: "",
           token: null,
           line: this.yylineno
@@ -480,7 +483,8 @@ upcomingInput:function() {
 // displays the character position where the lexing error occurred, i.e. for error messages
 showPosition:function() {
       var pre = this.pastInput(), c = new Array(pre.length + 1).join("-");
-      return pre + this.upcomingInput() + "\n" + c + "^";
+      return pre + this.upcomingInput() + `
+` + c + "^";
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
@@ -581,7 +585,8 @@ next:function() {
       if (this._input === "")
         return this.EOF;
       else
-        return this.parseError("Lexical error on line " + (this.yylineno + 1) + ". Unrecognized text.\n" + this.showPosition(), {
+        return this.parseError("Lexical error on line " + (this.yylineno + 1) + `. Unrecognized text.
+` + this.showPosition(), {
           text: "",
           token: null,
           line: this.yylineno
