@@ -81,7 +81,7 @@ const config: Config = {
             entryPointStrategy: 'packages',
             entryPoints: ['../packages/*'],
             out: './api',
-            cleanOutputDir: true,
+            cleanOutputDir: false,
             includeVersion: true,
             name: 'React Query Builder API',
             readme: 'none',

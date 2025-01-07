@@ -1,14 +1,17 @@
 // @ts-check
-import { writeFileSync } from 'node:fs';
-import { MarkdownRendererEvent } from 'typedoc-plugin-markdown';
+import { existsSync } from 'node:fs';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 
 /**
  * @param {import('typedoc-plugin-markdown').MarkdownApplication} app
  */
 export function load(app) {
-  // Add a .gitkeep file to the API documentation folder in case the
-  // API docs do not get generated.
-  app.renderer.on(MarkdownRendererEvent.END, () => {
-    writeFileSync('./api/.gitkeep', '');
+  app.renderer.preRenderAsyncJobs.push(async output => {
+    if (existsSync(output.outputDirectory)) {
+      await rm(output.outputDirectory, { recursive: true });
+    }
+    await mkdir(output.outputDirectory, { recursive: true });
+    await writeFile(path.join(output.outputDirectory, '.gitkeep'), '');
   });
 }
