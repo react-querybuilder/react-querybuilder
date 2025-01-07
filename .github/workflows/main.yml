@@ -21,6 +21,15 @@ jobs:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
       - run: bun run build
+      - run: |
+          mkdir -p ${{ github.workspace }}/packs
+          for dir in $(ls packages); do
+            (cd packages/$dir && bun pm pack --destination ${{ github.workspace }}/packs)
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packs
+          path: packages/*/*.tgz
 
   Typecheck:
     runs-on: ubuntu-latest
@@ -63,3 +72,33 @@ jobs:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
       - run: bun --bun run lint
+
+  Typecheck_React_18:
+    name: Typecheck React 18
+    needs: [Build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - uses: actions/download-artifact@v4
+        with:
+          name: packs
+          path: packs
+          merge-multiple: true
+      - run: |
+          sed -i -E 's/("(@types\/)?react(-dom)?": "\^?1)9/\18/g' ./*/package.json
+          for dir in $(find examples -mindepth 1 -maxdepth 1 -type d); do
+            echo "$dir"
+            if [ "$dir" != "examples/_template" ] \
+            && [ "$dir" != "examples/basic" ] \
+            && [ "$dir" != "examples/next" ]; then
+              cd $dir
+              pwd
+              bun i
+              find ../../packs -name "react-querybuilder*.tgz" -exec bun add {} \;
+              bunx tsc --noEmit
+              cd ../..
+            else
+              echo "SKIPPING $dir";
+            fi
+          done
