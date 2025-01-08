@@ -85,6 +85,8 @@ export type ValueEditorNativeProps = ValueEditorProps &
     selectorComponent?: ComponentType<ValueSelectorNativeProps>;
   };
 
+// TODO: Something is wrong with this. Implementations
+// (see /examples/native) don't pass typechecking.
 export type QueryBuilderNativeProps<
   RG extends RuleGroupTypeAny,
   F extends FullField,
