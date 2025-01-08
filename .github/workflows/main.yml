@@ -85,7 +85,8 @@ jobs:
           name: packs
           path: packs
           merge-multiple: true
-      - run: |
+      - name: Typecheck with React 18
+        run: |
           TSC_FAILED=0
           for dir in $(find examples -mindepth 1 -maxdepth 1 -type d); do
             echo "$dir"
@@ -96,7 +97,7 @@ jobs:
               echo "::group::Typechecking $dir with React 18"
 
               # Get list of all react-querybuilder packages
-              RQB_PACKS=$(bun .github/get_pack_paths.ts)
+              RQB_PACKS=$(bun ${{ github.workspace }}/.github/get_pack_paths.ts)
 
               # Set all react dependencies to v18
               sed -i -E 's/("(@types\/)?react(-dom)?": ")\^?19.*"/\1^18"/g' ./package.json
