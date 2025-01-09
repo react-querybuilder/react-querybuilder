@@ -58,7 +58,7 @@
     },
     "packages/antd": {
       "name": "@react-querybuilder/antd",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@ant-design/icons": "^5.5.2",
         "@testing-library/dom": "^10.4.0",
@@ -84,7 +84,7 @@
     },
     "packages/bootstrap": {
       "name": "@react-querybuilder/bootstrap",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@popperjs/core": "^2.11.8",
         "@testing-library/dom": "^10.4.0",
@@ -109,7 +109,7 @@
     },
     "packages/bulma": {
       "name": "@react-querybuilder/bulma",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.1.0",
@@ -131,7 +131,7 @@
     },
     "packages/chakra": {
       "name": "@react-querybuilder/chakra",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@chakra-ui/react": "^3.3.0",
         "@emotion/react": "^11.14.0",
@@ -163,7 +163,7 @@
     },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@date-fns/tz": "^1.2.0",
         "@electric-sql/pglite": "^0.2.15",
@@ -201,7 +201,7 @@
     },
     "packages/dnd": {
       "name": "@react-querybuilder/dnd",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.1.0",
@@ -228,7 +228,7 @@
     },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@fluentui/react-components": "^9.57.0",
         "@fluentui/react-icons-mdl2": "^1.3.82",
@@ -254,7 +254,7 @@
     },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@mantine/core": "7.15.3",
         "@mantine/dates": "7.15.3",
@@ -282,7 +282,7 @@
     },
     "packages/material": {
       "name": "@react-querybuilder/material",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
@@ -311,7 +311,7 @@
     },
     "packages/native": {
       "name": "@react-querybuilder/native",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@babel/preset-flow": "^7.25.9",
         "@testing-library/jest-native": "^5.4.3",
@@ -339,7 +339,7 @@
     },
     "packages/react-querybuilder": {
       "name": "react-querybuilder",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "dependencies": {
         "@reduxjs/toolkit": "^2.5.0",
         "immer": "^10.1.1",
@@ -385,7 +385,7 @@
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
-      "version": "8.0.0",
+      "version": "8.1.0",
       "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.1",
         "@tailwindcss/forms": "^0.5.10",
