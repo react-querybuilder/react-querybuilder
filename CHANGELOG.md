@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.1.0] - 2025-01-09
+
 ### Added
 
 - [#820] New `@react-querybuilder/datetime` package with enhanced functionality for managing date/time data. Includes rule/value processors for `formatQuery` tailored to different database platforms and date/time libraries.
@@ -15,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#820] `formatQuery` value processors now accept an optional `context` parameter, which can be used to pass additional information to the processor.
 - [#820] New "mongodb_query" export format. This format is exactly the same as "mongodb" except it returns an actual JSON object instead of a `JSON.stringify`d version. The "mongodb" format is deprecated, but will not be removed.
 - [#820] Default SCSS stylesheet `query-builder.scss` now uses `@use` instead of the deprecated `@import`.
+- [#834] React 19 support (verification only, no meaningful code changes were necessary).
 
 ## [v8.0.0] - 2024-11-08
 
@@ -1810,12 +1815,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#812]: https://github.com/react-querybuilder/react-querybuilder/pull/812
 [#814]: https://github.com/react-querybuilder/react-querybuilder/pull/814
 [#820]: https://github.com/react-querybuilder/react-querybuilder/pull/820
+[#834]: https://github.com/react-querybuilder/react-querybuilder/pull/834
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.0.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.0...HEAD
+[v8.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.0.0...v8.1.0
 [v8.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.1...v8.0.0
 [v7.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.0...v7.7.1
 [v7.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.1...v7.7.0
