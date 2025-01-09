@@ -154,17 +154,19 @@ export const defaultQuery = {
   ],
 };
 
-<QueryBuilderDnD>
-  <QueryBuilderEmbed
-    showNotToggle
-    showCloneButtons
-    showLockButtons
-    enableDragAndDrop
-    fields={fields}
-    combinators={combinators}
-    getOperators={getOperators}
-    controlClassnames={controlClassnames}
-    translations={translations}
-    defaultQuery={defaultQuery}
-  />
-</QueryBuilderDnD>
+<div className="rqb-structure-wrapper">
+  <QueryBuilderDnD>
+    <QueryBuilderEmbed
+      showNotToggle
+      showCloneButtons
+      showLockButtons
+      enableDragAndDrop
+      fields={fields}
+      combinators={combinators}
+      getOperators={getOperators}
+      controlClassnames={controlClassnames}
+      translations={translations}
+      defaultQuery={defaultQuery}
+    />
+  </QueryBuilderDnD>
+</div>
