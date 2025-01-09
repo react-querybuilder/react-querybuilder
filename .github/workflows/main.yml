@@ -89,25 +89,34 @@ jobs:
         run: |
           TSC_FAILED=0
           for dir in $(find examples -mindepth 1 -maxdepth 1 -type d); do
-            echo "$dir"
             if [ "$dir" != "examples/_template" ] \
             && [ "$dir" != "examples/basic" ] \
             && [ "$dir" != "examples/next" ]; then
               cd $dir
               echo "::group::Typechecking $dir with React 18"
 
-              # Get list of all react-querybuilder packages
-              RQB_PACKS=$(bun ${{ github.workspace }}/.github/get_pack_paths.ts)
+              # Get list of all RQB dependencies in this example
+              RQB_DEPS=$(grep -oE '"@?react-querybuilder(\/\w+)?": ' ./package.json \
+                | sed -E 's/^"@?//; s/": $//; s/\//-/' \
+                | tr '\n' '|' \
+                | sed -E 's/\|+$//')
+              ALL_PACKS=$(ls ../../packs)
+              FILTERED_PACKS=$(echo "$ALL_PACKS" \
+                | grep -E "($RQB_DEPS)-[0-9]+\.[0-9]+\.[0-9]+.*\.tgz")
+              RQB_DEP_PACKS=$(echo "$FILTERED_PACKS" | sort -k1,1 -n | awk '{print "../../packs/" $0}')
 
-              # Set all react dependencies to v18
+              # Set all React dependencies to v18
               sed -i -E 's/("(@types\/)?react(-dom)?": ")\^?19.*"/\1^18"/g' ./package.json
-              # Remove all react-querybuilder dependencies
+
+              # Remove all RQB version-based dependencies
               sed -i -E '/"@?react-querybuilder(\/\w+)?":/d' ./package.json
 
-              # Install non-RQB dependencies
+              # Install remaining non-RQB dependencies
               bun install
-              # Add all RQB packages (`-n 1` to add one at a time, otherwise get DependencyLoop errors)
-              echo "$RQB_PACKS" | xargs -n 1 bun add
+
+              # Add back all RQB packages from the packs directory
+              # (`-n 1` to add them one at a time, otherwise we get DependencyLoop errors)
+              echo "$RQB_DEP_PACKS" | xargs -n 1 bun add
 
               # Typecheck
               bunx tsc --noEmit || TSC_FAILED=1
