@@ -26,6 +26,8 @@ export const App = () => {
     <View style={styles.outer}>
       <Text style={styles.outer}>React Query Builder React Native Example</Text>
       <QueryBuilderNative
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         fields={fields}
         query={query}
         onQueryChange={setQuery}

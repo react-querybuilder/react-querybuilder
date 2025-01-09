@@ -1,7 +1,7 @@
 $code: #333333;
 $code-background: unset;
-@import 'bulma/bulma.sass';
-@import 'react-querybuilder/dist/query-builder.scss';
+@use 'bulma/bulma.scss';
+@use 'react-querybuilder/dist/query-builder.scss';
 
 body {
   margin: 0.5rem !important;

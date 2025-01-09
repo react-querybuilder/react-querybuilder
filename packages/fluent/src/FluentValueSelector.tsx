@@ -1,4 +1,4 @@
-import type { DropdownProps, SelectProps } from '@fluentui/react-components';
+import type { DropdownProps, OptionOnSelectData, SelectProps } from '@fluentui/react-components';
 import { Dropdown, Select } from '@fluentui/react-components';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
@@ -40,7 +40,7 @@ export const FluentValueSelector = ({
       value={toArray(val).join(', ')}
       placeholder={placeholder}
       selectedOptions={toArray(val)}
-      onOptionSelect={(_e, data) => onChange(data.selectedOptions)}>
+      onOptionSelect={(_e: unknown, data: OptionOnSelectData) => onChange(data.selectedOptions)}>
       {toDropdownOptions(options)}
     </Dropdown>
   ) : (

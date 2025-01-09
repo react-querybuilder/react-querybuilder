@@ -1809,6 +1809,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#805]: https://github.com/react-querybuilder/react-querybuilder/pull/805
 [#812]: https://github.com/react-querybuilder/react-querybuilder/pull/812
 [#814]: https://github.com/react-querybuilder/react-querybuilder/pull/814
+[#820]: https://github.com/react-querybuilder/react-querybuilder/pull/820
 
 <!-- #endregion -->
 

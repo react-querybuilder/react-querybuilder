@@ -141,9 +141,9 @@ const ExtendedValueEditor_Slider = (props: ValueEditorProps) => (
       className="slider"
       value={props.value}
       onChange={v => props.handleOnChange(v)}
-      renderThumb={({ key, ...props }, state) => (
+      renderThumb={({ key, ref: _ref, ...props }, { valueNow }) => (
         <div key={key} {...props}>
-          {state.valueNow}
+          {valueNow}
         </div>
       )}
       min={0}

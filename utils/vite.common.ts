@@ -2,9 +2,7 @@ import vitePluginReact from '@vitejs/plugin-react';
 import path from 'node:path';
 import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports, unicorn/prefer-module
-const postcssScopedDonut = require('./devapp/postcss-scoped-donut');
+import postcssScopedDonut from './devapp/postcss-scoped-donut';
 
 const rqbSrc = '../react-querybuilder/src';
 
@@ -30,6 +28,9 @@ export const getCommonViteConfig = ({
         ),
       },
     },
-    ...(scopedDonut && { css: { postcss: { plugins: scopedDonut ? [postcssScopedDonut] : [] } } }),
+    css: {
+      // preprocessorOptions: { scss: { api: 'legacy' } },
+      postcss: { plugins: scopedDonut ? [postcssScopedDonut] : [] },
+    },
     server: { port },
   }) satisfies UserConfig as UserConfig;

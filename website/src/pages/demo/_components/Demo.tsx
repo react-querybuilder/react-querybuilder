@@ -50,10 +50,10 @@ import Nav from './Nav';
 import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
 import ImportTab from './ImportTab';
 declare module '@theme/TabItem' {
-  export default function TabItem(props: TabItemProps): JSX.Element;
+  export default function TabItem(props: TabItemProps): React.JSX.Element;
 }
 declare module '@theme/Tabs' {
-  export default function Tabs(props: TabsProps): JSX.Element;
+  export default function Tabs(props: TabsProps): React.JSX.Element;
 }
 
 const { version: rqbVersion } = rqbPkgJson;

@@ -4,19 +4,19 @@
     "@react-querybuilder/bootstrap": "8.0.0",
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19",
+    "react-dom": "^19",
     "react-querybuilder": "8.0.0"
   },
   "description": "React Query Builder Bootstrap Example",
   "devDependencies": {
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
     "prettier": "^3",
-    "sass": "^1.77.8",
-    "typescript": "^5.5.4",
-    "vite": "^5.3.5"
+    "sass": "^1.83.0",
+    "typescript": "^5.7.2",
+    "vite": "^6"
   },
   "name": "react-querybuilder-bootstrap-example",
   "private": true,

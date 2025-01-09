@@ -22,14 +22,12 @@ export const FluentActionElement = ({
   ...otherProps
 }: FluentActionProps): React.JSX.Element => (
   <Button
-    // TODO: Find a way to do better than "as any" here
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    {...(otherProps as any)}
+    {...otherProps}
     data-testid={testID}
     type="button"
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
-    onClick={e => handleOnClick(e)}
+    onClick={(e: React.MouseEvent) => handleOnClick(e)}
     disabled={disabled && !disabledTranslation}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>

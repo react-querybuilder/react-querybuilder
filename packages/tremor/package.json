@@ -45,8 +45,8 @@
     "sql"
   ],
   "scripts": {
-    "start": "bunx --bun vite",
-    "build": "bunx --bun tsup",
+    "start": "vite",
+    "build": "bun --bun tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
@@ -56,18 +56,18 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
     "@tremor/react": "^3.18.6",
-    "@types/react": "^18.3.12",
+    "@types/react": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "dayjs": "^1.11.13",
     "postcss": "^8.4.49",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-querybuilder": "8.0.0",
-    "rollup-plugin-visualizer": "^5.12.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "vite": "^6.0.7"
   },
   "peerDependencies": {
     "@tremor/react": "^3",

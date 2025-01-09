@@ -21,6 +21,15 @@ jobs:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
       - run: bun run build
+      - run: |
+          mkdir -p ${{ github.workspace }}/packs
+          for dir in $(ls packages); do
+            (cd packages/$dir && bun pm pack --destination ${{ github.workspace }}/packs)
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packs
+          path: packs/*.tgz
 
   Typecheck:
     runs-on: ubuntu-latest
@@ -63,3 +72,61 @@ jobs:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
       - run: bun --bun run lint
+
+  Typecheck_React_18:
+    name: Typecheck React 18
+    needs: [Build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - uses: actions/download-artifact@v4
+        with:
+          name: packs
+          path: packs
+          merge-multiple: true
+      - name: Typecheck with React 18
+        run: |
+          TSC_FAILED=0
+          for dir in $(find examples -mindepth 1 -maxdepth 1 -type d); do
+            if [ "$dir" != "examples/_template" ] \
+            && [ "$dir" != "examples/basic" ] \
+            && [ "$dir" != "examples/next" ]; then
+              cd $dir
+              echo "::group::Typechecking $dir with React 18"
+
+              # Get list of all RQB dependencies in this example
+              RQB_DEPS=$(grep -oE '"@?react-querybuilder(\/\w+)?": ' ./package.json \
+                | sed -E 's/^"@?//; s/": $//; s/\//-/' \
+                | tr '\n' '|' \
+                | sed -E 's/\|+$//')
+              ALL_PACKS=$(ls ../../packs)
+              FILTERED_PACKS=$(echo "$ALL_PACKS" \
+                | grep -E "($RQB_DEPS)-[0-9]+\.[0-9]+\.[0-9]+.*\.tgz")
+              RQB_DEP_PACKS=$(echo "$FILTERED_PACKS" | sort -k1,1 -n | awk '{print "../../packs/" $0}')
+
+              # Set all React dependencies to v18
+              sed -i -E 's/("(@types\/)?react(-dom)?": ")\^?19.*"/\1^18"/g' ./package.json
+
+              # Remove all RQB version-based dependencies
+              sed -i -E '/"@?react-querybuilder(\/\w+)?":/d' ./package.json
+
+              # Install remaining non-RQB dependencies
+              bun install
+
+              # Add back all RQB packages from the packs directory
+              # (`-n 1` to add them one at a time, otherwise we get DependencyLoop errors)
+              echo "$RQB_DEP_PACKS" | xargs -n 1 bun add
+
+              # Typecheck
+              bunx tsc --noEmit || TSC_FAILED=1
+
+              echo "::endgroup::"
+              cd ../..
+            else
+              echo "SKIPPING $dir"
+            fi
+            if [ $TSC_FAILED -ne 0 ]; then
+              exit 1
+            fi
+          done

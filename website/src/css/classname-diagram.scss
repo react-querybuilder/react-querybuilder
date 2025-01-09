@@ -1,8 +1,13 @@
 $structure-border-width: 4px;
 $structure-padding: 14px;
 
+.rqb-structure-wrapper {
+  box-shadow: 0 0 0.7rem 0 #ffffff26;
+}
+
 .rqb-structure {
   &.queryBuilder {
+    box-shadow: 0 0 0.7rem 0 #ffffff26 inset;
     border: $structure-border-width solid black;
     padding: $structure-padding;
   }
