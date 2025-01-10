@@ -46,6 +46,7 @@ export const AntDValueSelector = ({
       showSearch
       optionFilterProp="label"
       options={options}
-      {...extraProps}></Select>
+      {...extraProps}
+    />
   );
 };

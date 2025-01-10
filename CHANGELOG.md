@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#836] `AntDValueSelector` now filters on the `label` property and defines options with the `options` prop instead of a `children` array of `<Select.OptGroup>`/`<Select.Option>`.
 
 ## [v8.1.0] - 2025-01-09
 
@@ -1816,6 +1818,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#814]: https://github.com/react-querybuilder/react-querybuilder/pull/814
 [#820]: https://github.com/react-querybuilder/react-querybuilder/pull/820
 [#834]: https://github.com/react-querybuilder/react-querybuilder/pull/834
+[#836]: https://github.com/react-querybuilder/react-querybuilder/pull/836
 
 <!-- #endregion -->
 
