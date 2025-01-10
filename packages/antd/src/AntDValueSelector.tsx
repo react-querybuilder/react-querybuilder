@@ -2,7 +2,7 @@ import { Select } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
-import { toFullOptionList, useValueSelector } from 'react-querybuilder';
+import { useValueSelector } from 'react-querybuilder';
 
 export type AntDValueSelectorProps = VersatileSelectorProps &
   Omit<ComponentPropsWithoutRef<typeof Select>, 'onChange' | 'defaultValue'>;
@@ -35,18 +35,17 @@ export const AntDValueSelector = ({
   const modeObj = multiple ? { mode: 'multiple' as const } : {};
 
   return (
-    <span title={title} className={className}>
-      <Select
-        {...modeObj}
-        popupMatchSelectWidth={false}
-        disabled={disabled}
-        value={val}
-        onChange={onChange}
-        showSearch
-        optionFilterProp="label"
-        options={toFullOptionList(options)}
-        {...extraProps}>
-      </Select>
-    </span>
+    <Select
+      {...modeObj}
+      title={title}
+      className={className}
+      popupMatchSelectWidth={false}
+      disabled={disabled}
+      value={val}
+      onChange={onChange}
+      showSearch
+      optionFilterProp="label"
+      options={options}
+      {...extraProps}></Select>
   );
 };
