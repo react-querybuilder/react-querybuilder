@@ -66,6 +66,7 @@
       ]
     },
     "compat",
+    "datetime",
     "typescript",
     "buildless",
     "migrate"

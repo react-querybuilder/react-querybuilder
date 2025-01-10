@@ -63,6 +63,10 @@ export const App = () => {
 >
 > To enable drag-and-drop, install the [`@react-querybuilder/dnd` package](https://www.npmjs.com/package/@react-querybuilder/dnd) and nest `QueryBuilder` under `QueryBuilderDnD`.
 
+> [!TIP]
+>
+> For enhanced date/time support, use the [`@react-querybuilder/datetime` package](https://www.npmjs.com/package/@react-querybuilder/datetime).
+
 ## Export
 
 To [export queries](https://react-querybuilder.js.org/docs/utils/export) as SQL, MongoDB, or one of several other formats, use the `formatQuery` function.
