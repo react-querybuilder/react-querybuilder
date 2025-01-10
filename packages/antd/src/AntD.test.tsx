@@ -1,11 +1,3 @@
-import { act, render, screen } from '@testing-library/react';
-import type { SelectProps } from 'antd';
-import type { OptionProps } from 'antd/es/select';
-import dayjs from 'dayjs';
-import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
-import * as React from 'react';
-import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
   defaultValueEditorProps,
@@ -19,6 +11,19 @@ import {
   testValueSelector,
   userEventSetup,
 } from '@rqb-testing';
+import { act, render, screen } from '@testing-library/react';
+import type { SelectProps } from 'antd';
+import type { OptionProps } from 'antd/es/select';
+import dayjs from 'dayjs';
+import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
+import * as React from 'react';
+import type {
+  NotToggleProps,
+  Option,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from 'react-querybuilder';
+import { QueryBuilder, TestID } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
@@ -30,9 +35,12 @@ import { QueryBuilderAntD } from './index';
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.
   const AntD = jest.requireActual('antd');
+  const toOptions = jest.requireActual('react-querybuilder').toOptions;
 
   const Select = (props: SelectProps) => (
     <select
+      title={props.title}
+      className={props.className}
       multiple={props.mode === 'multiple'}
       disabled={props.disabled}
       value={props.value}
@@ -46,7 +54,7 @@ jest.mock('antd', () => {
           }
         )
       }>
-      {props.children}
+      {toOptions(props.options as Option[])}
     </select>
   );
   Select.Option = ({ value, children }: OptionProps) => <option value={value}>{children}</option>;
