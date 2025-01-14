@@ -26,6 +26,9 @@ import {
   getOption,
   getParentPath,
   getValidationClassNames,
+  isFlexibleOptionArray,
+  isFlexibleOptionGroupArray,
+  toFullOptionList,
 } from '../utils';
 import { clsx } from '../utils/clsx';
 
@@ -534,13 +537,13 @@ export const useRule = (props: RuleProps): UseRule => {
     () => getValueEditorSeparator(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorSeparator, rule.field, rule.operator]
   );
-  const values = useMemo(
-    () =>
+  const values = useMemo(() => {
+    const v =
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : (fieldData.values ?? getValues(rule.field, rule.operator, { fieldData })),
-    [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
-  );
+        : (fieldData.values ?? getValues(rule.field, rule.operator, { fieldData }));
+    return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
+  }, [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]);
   const valueSourceOptions = useMemo(
     () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceOptions,
     [valueSources]

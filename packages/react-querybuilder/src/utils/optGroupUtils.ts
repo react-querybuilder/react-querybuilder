@@ -139,21 +139,61 @@ export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =
   Array.isArray(arr[0].options);
 
 /**
- * Determines if a {@link FlexibleOptionList} is a {@link FlexibleOptionGroup} array.
+ * Determines if an array is a flat array of {@link FlexibleOption}.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isFlexibleOptionGroupArray = (arr: any): arr is FlexibleOptionGroup[] => {
+export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
+  let isFOA = false;
+  if (Array.isArray(arr)) {
+    for (const o of arr) {
+      if (isOptionWithName(o) || isOptionWithValue(o)) {
+        isFOA = true;
+      } else {
+        return false;
+      }
+    }
+  }
+  return isFOA;
+};
+
+/**
+ * Determines if an array is a flat array of {@link FullOption}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isFullOptionArray = (arr: any): arr is FullOption[] => {
+  let isFOA = false;
+  if (Array.isArray(arr)) {
+    for (const o of arr) {
+      if (isOptionWithName(o) && isOptionWithValue(o)) {
+        isFOA = true;
+      } else {
+        return false;
+      }
+    }
+  }
+  return isFOA;
+};
+
+/**
+ * Determines if a {@link FlexibleOptionList} is a {@link FlexibleOptionGroup} array.
+ */
+export const isFlexibleOptionGroupArray = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  arr: any,
+  { allowEmpty = false }: { allowEmpty?: boolean } = {}
+): arr is FlexibleOptionGroup[] => {
   let isFOGA = false;
   if (Array.isArray(arr)) {
     for (const og of arr) {
-      if (isPojo(og) && 'options' in og) {
-        for (const opt of og.options) {
-          if (isOptionWithName(opt) || isOptionWithValue(opt)) {
-            isFOGA = true;
-          } else {
-            return false;
-          }
-        }
+      if (
+        isPojo(og) &&
+        'options' in og &&
+        (isFlexibleOptionArray(og.options) ||
+          (allowEmpty && Array.isArray(og.options) && og.options.length === 0))
+      ) {
+        isFOGA = true;
+      } else {
+        return false;
       }
     }
   }
@@ -164,19 +204,23 @@ export const isFlexibleOptionGroupArray = (arr: any): arr is FlexibleOptionGroup
  * Determines if a {@link FlexibleOptionList} is a {@link OptionGroup} array of
  * {@link FullOption}.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isFullOptionGroupArray = (arr: any): arr is OptionGroup<FullOption>[] => {
+export const isFullOptionGroupArray = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  arr: any,
+  { allowEmpty = false }: { allowEmpty?: boolean } = {}
+): arr is OptionGroup<FullOption>[] => {
   let isFOGA = false;
   if (Array.isArray(arr)) {
     for (const og of arr) {
-      if (isPojo(og) && 'options' in og) {
-        for (const opt of og.options) {
-          if (isOptionWithName(opt) && isOptionWithValue(opt)) {
-            isFOGA = true;
-          } else {
-            return false;
-          }
-        }
+      if (
+        isPojo(og) &&
+        'options' in og &&
+        (isFullOptionArray(og.options) ||
+          (allowEmpty && Array.isArray(og.options) && og.options.length === 0))
+      ) {
+        isFOGA = true;
+      } else {
+        return false;
       }
     }
   }
@@ -191,9 +235,10 @@ export const getOption = <OptType extends Option = Option>(
   arr: OptionList<OptType>,
   name: string
 ): OptType | undefined =>
-  (isOptionGroupArray(arr) ? arr.flatMap(og => og.options) : arr).find(
-    op => op.value === name || op.name === name
-  );
+  (isFlexibleOptionGroupArray(arr, { allowEmpty: true })
+    ? arr.flatMap(og => og.options)
+    : arr
+  ).find(op => op.value === name || op.name === name);
 
 /**
  * Gets the first option from an {@link OptionList}.
@@ -203,7 +248,7 @@ export const getFirstOption = <Opt extends BaseOption>(
 ): GetOptionIdentifierType<Opt> | null => {
   if (!Array.isArray(arr) || arr.length === 0) {
     return null;
-  } else if (isFlexibleOptionGroupArray(arr)) {
+  } else if (isFlexibleOptionGroupArray(arr, { allowEmpty: true })) {
     for (const og of arr) {
       if (og.options.length > 0) {
         return (og.options[0].value ?? og.options[0].name) as GetOptionIdentifierType<Opt>;
