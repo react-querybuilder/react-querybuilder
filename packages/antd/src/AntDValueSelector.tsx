@@ -68,7 +68,6 @@ export const AntDValueSelector = ({
       disabled={disabled}
       value={val}
       onChange={onChange}
-      showSearch
       optionFilterProp="label"
       options={options}
       {...extraProps}
