@@ -27,11 +27,11 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     valueSource: _vs,
     disabled,
     testID,
-    selectorComponent: _SelectorComponent,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     extraProps,
     inputType: _inputType,
     parseNumbers: _parseNumbers,
-    ..._propsForValueSelector
+    ...propsForValueSelector
   } = allProps;
 
   const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
@@ -106,7 +106,20 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
   switch (type) {
     case 'select':
     case 'multiselect':
-      return <ValueEditor {...allProps} skipHook />;
+      return (
+        <SelectorComponent
+          {...propsForValueSelector}
+          className={className}
+          title={title}
+          value={value}
+          disabled={disabled}
+          listsAsArrays={listsAsArrays}
+          multiple={type === 'multiselect'}
+          handleOnChange={handleOnChange}
+          options={values}
+          {...extraProps}
+        />
+      );
 
     case 'textarea':
       return (

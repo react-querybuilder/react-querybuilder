@@ -13,9 +13,7 @@ import {
 } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
-import type { OptionProps } from 'antd/es/select';
 import dayjs from 'dayjs';
-import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
 import * as React from 'react';
 import type {
   NotToggleProps,
@@ -57,10 +55,6 @@ jest.mock('antd', () => {
       {toOptions(props.options as Option[])}
     </select>
   );
-  Select.Option = ({ value, children }: OptionProps) => <option value={value}>{children}</option>;
-  Select.OptGroup = (({ label, children }) => (
-    <optgroup label={label}>{children}</optgroup>
-  )) as OptionGroupFC;
 
   return { ...AntD, Select };
 });
