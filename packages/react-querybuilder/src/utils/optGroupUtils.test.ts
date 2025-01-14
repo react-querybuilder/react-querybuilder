@@ -386,7 +386,31 @@ it('identifies flexible option group arrays', () => {
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ value: 'v', label: 'l' }] }])).toBe(
     true
   );
+  expect(
+    isFlexibleOptionGroupArray([
+      {
+        label: 'l',
+        options: [
+          { name: 'n', label: 'l' },
+          { value: 'v', label: 'l' },
+        ],
+      },
+    ])
+  ).toBe(true);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ label: 'l' }] }])).toBe(false);
+  expect(
+    isFlexibleOptionGroupArray([
+      {
+        label: 'l',
+        options: [
+          { name: 'n', label: 'l' },
+          { value: 'v', label: 'l' },
+          { name: 'n', value: 'v', label: 'l' },
+          { label: 'l' },
+        ],
+      },
+    ])
+  ).toBe(false);
 });
 
 it('identifies full option group arrays', () => {
@@ -401,6 +425,17 @@ it('identifies full option group arrays', () => {
   expect(
     isFullOptionGroupArray([{ label: 'l', options: [{ name: 'n', value: 'v', label: 'l' }] }])
   ).toBe(true);
+  expect(
+    isFullOptionGroupArray([
+      {
+        label: 'l',
+        options: [
+          { name: 'n', value: 'v', label: 'l' },
+          { name: 'n', label: 'l' },
+        ],
+      },
+    ])
+  ).toBe(false);
 });
 
 describe('toFlatOptionArray', () => {

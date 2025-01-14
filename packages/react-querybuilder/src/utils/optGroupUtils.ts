@@ -143,19 +143,21 @@ export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isFlexibleOptionGroupArray = (arr: any): arr is FlexibleOptionGroup[] => {
+  let isFOGA = false;
   if (Array.isArray(arr)) {
     for (const og of arr) {
       if (isPojo(og) && 'options' in og) {
         for (const opt of og.options) {
-          if (isPojo(opt) && ('name' in opt || 'value' in opt)) {
-            return true;
+          if (isOptionWithName(opt) || isOptionWithValue(opt)) {
+            isFOGA = true;
+          } else {
+            return false;
           }
-          return false;
         }
       }
     }
   }
-  return false;
+  return isFOGA;
 };
 
 /**
@@ -164,19 +166,21 @@ export const isFlexibleOptionGroupArray = (arr: any): arr is FlexibleOptionGroup
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isFullOptionGroupArray = (arr: any): arr is OptionGroup<FullOption>[] => {
+  let isFOGA = false;
   if (Array.isArray(arr)) {
     for (const og of arr) {
       if (isPojo(og) && 'options' in og) {
         for (const opt of og.options) {
-          if (isPojo(opt) && 'name' in opt && 'value' in opt) {
-            return true;
+          if (isOptionWithName(opt) && isOptionWithValue(opt)) {
+            isFOGA = true;
+          } else {
+            return false;
           }
-          return false;
         }
       }
     }
   }
-  return false;
+  return isFOGA;
 };
 
 /**
