@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#836] `AntDValueSelector` now filters on the `label` property and defines options with the `options` prop instead of a `children` array of `<Select.OptGroup>`/`<Select.Option>`.
 - [#836] Utilities that determine whether arrays are valid option lists (`isFullOptionArray`, `isFlexibleOptionArray`, `isFullOptionGroupArray`, `isFlexibleOptionGroupArray`) are now more strict: All leaf elements must conform to the operative type, not just the first element.
+- The "mssql" `formatQuery` preset now sets `paramPrefix: '@'`.
 
 ## [v8.1.0] - 2025-01-09
 

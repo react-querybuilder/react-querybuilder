@@ -57,6 +57,7 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
     concatOperator: '+',
     quoteFieldNamesWith: ['[', ']'],
     fieldIdentifierSeparator: '.',
+    paramPrefix: '@',
   },
   mysql: {
     concatOperator: 'CONCAT',
