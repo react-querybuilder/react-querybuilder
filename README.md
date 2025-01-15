@@ -38,6 +38,8 @@ For a more complete introduction, see the [main package README](packages/react-q
 
 To enable drag-and-drop functionality, use the [`@react-querybuilder/dnd` package](packages/dnd).
 
+For enhanced date/time support, use the [`@react-querybuilder/datetime` package](packages/datetime).
+
 _For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
 
 ## Compatibility packages
