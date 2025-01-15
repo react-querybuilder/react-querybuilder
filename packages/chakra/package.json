@@ -52,11 +52,11 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@chakra-ui/react": "^3.3.0",
+    "@chakra-ui/react": "^3.3.1",
     "@emotion/react": "^11.14.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
-    "@types/react": "^19.0.4",
+    "@types/react": "^19.0.7",
     "@vitejs/plugin-react": "^4.3.4",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",

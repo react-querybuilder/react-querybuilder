@@ -12,13 +12,14 @@ import { messages } from '../messages';
 import type {
   FullField,
   FullOperator,
+  FullOption,
   Operator,
   RuleType,
   ValidationResult,
   ValueSelectorProps,
   ValueSources,
 } from '../types';
-import { toFullOption } from '../utils';
+import { isFullOptionArray, toFullOption } from '../utils';
 import { clsx } from '../utils/clsx';
 import { Rule } from './Rule';
 import { render, waitABeat } from './testUtils';
@@ -356,6 +357,35 @@ describe('valueSource', () => {
     );
     expect(screen.getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
   });
+});
+
+it('makes the values array a FullOption array when appropriate', () => {
+  const controls = getProps().schema.controls;
+  const fields = [
+    { name: 'f1', value: 'f1', label: 'f1', values: [{ name: 'f1v1', label: 'f1v1' }] },
+    { name: 'f2', value: 'f2', label: 'f2', values: ['f2v1', 'f2v2'] as unknown as FullOption[] },
+  ];
+  const fieldMap = getFieldMapFromArray(fields);
+  const props = getProps({
+    fields,
+    fieldMap,
+    controls: {
+      ...controls,
+      valueEditor: ({ field, values }) => (
+        <div>
+          {field === 'f1'
+            ? `${isFullOptionArray(values)}`
+            : `${values?.every(v => typeof v === 'string')}`}
+        </div>
+      ),
+    },
+  });
+  const { rerender } = render(
+    <Rule {...props} rule={{ ...props.rule, field: 'f1', value: 'v1' }} />
+  );
+  // expect(screen.getByText('true')).toBeInTheDocument();
+  rerender(<Rule {...props} rule={{ ...props.rule, field: 'f2', value: 'v2' }} />);
+  expect(screen.getByText('true')).toBeInTheDocument();
 });
 
 describe('dynamic classNames', () => {

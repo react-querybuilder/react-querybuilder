@@ -54,7 +54,7 @@
     "@popperjs/core": "^2.11.8",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
-    "@types/react": "^19.0.4",
+    "@types/react": "^19.0.7",
     "@vitejs/plugin-react": "^4.3.4",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

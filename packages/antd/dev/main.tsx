@@ -1,7 +1,8 @@
+import '@ant-design/v5-patch-for-react-19';
+import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderAntD } from '../src';
 import './styles.scss';
 

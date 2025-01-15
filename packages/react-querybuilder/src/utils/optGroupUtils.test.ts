@@ -1,7 +1,9 @@
 import type { FullOption } from '../types';
 import {
   getFirstOption,
+  isFlexibleOptionArray,
   isFlexibleOptionGroupArray,
+  isFullOptionArray,
   isFullOptionGroupArray,
   isOptionGroupArray,
   toFlatOptionArray,
@@ -374,11 +376,56 @@ it('handles invalid inputs', () => {
   expect(isFlexibleOptionGroupArray({})).toBe(false);
 });
 
+it('identifies flexible option arrays', () => {
+  expect(isFlexibleOptionArray('test')).toBe(false);
+  expect(isFlexibleOptionArray([])).toBe(false);
+  expect(isFlexibleOptionArray([{}])).toBe(false);
+  expect(isFlexibleOptionArray(['test'])).toBe(false);
+  expect(isFlexibleOptionArray([{ name: 'n', label: 'l' }])).toBe(true);
+  expect(isFlexibleOptionArray([{ value: 'v', label: 'l' }])).toBe(true);
+  expect(
+    isFlexibleOptionArray([
+      { name: 'n', label: 'l' },
+      { value: 'v', label: 'l' },
+    ])
+  ).toBe(true);
+  expect(isFlexibleOptionArray([{ name: 'n', value: 'v', label: 'l' }])).toBe(true);
+  expect(
+    isFlexibleOptionArray([
+      { name: 'n', label: 'l' },
+      { value: 'v', label: 'l' },
+      { label: 'invalid' },
+    ])
+  ).toBe(false);
+});
+
+it('identifies full option arrays', () => {
+  expect(isFullOptionArray('test')).toBe(false);
+  expect(isFullOptionArray([])).toBe(false);
+  expect(isFullOptionArray([{}])).toBe(false);
+  expect(isFullOptionArray(['test'])).toBe(false);
+  expect(isFullOptionArray([{ name: 'n', label: 'l' }])).toBe(false);
+  expect(isFullOptionArray([{ value: 'v', label: 'l' }])).toBe(false);
+  expect(
+    isFullOptionArray([
+      { name: 'n', label: 'l' },
+      { value: 'v', label: 'l' },
+    ])
+  ).toBe(false);
+  expect(isFullOptionArray([{ name: 'n', value: 'v', label: 'l' }])).toBe(true);
+  expect(isFullOptionArray([{ name: 'n', value: 'v', label: 'l' }, { label: 'invalid' }])).toBe(
+    false
+  );
+});
+
 it('identifies flexible option group arrays', () => {
   expect(isFlexibleOptionGroupArray('test')).toBe(false);
   expect(isFlexibleOptionGroupArray([])).toBe(false);
   expect(isFlexibleOptionGroupArray([{}])).toBe(false);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [] }])).toBe(false);
+  expect(isFlexibleOptionGroupArray([{ label: 'l', options: [] }], { allowEmpty: true })).toBe(
+    true
+  );
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: ['test'] }])).toBe(false);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ name: 'n', label: 'l' }] }])).toBe(
     true
@@ -386,7 +433,31 @@ it('identifies flexible option group arrays', () => {
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ value: 'v', label: 'l' }] }])).toBe(
     true
   );
+  expect(
+    isFlexibleOptionGroupArray([
+      {
+        label: 'l',
+        options: [
+          { name: 'n', label: 'l' },
+          { value: 'v', label: 'l' },
+        ],
+      },
+    ])
+  ).toBe(true);
   expect(isFlexibleOptionGroupArray([{ label: 'l', options: [{ label: 'l' }] }])).toBe(false);
+  expect(
+    isFlexibleOptionGroupArray([
+      {
+        label: 'l',
+        options: [
+          { name: 'n', label: 'l' },
+          { value: 'v', label: 'l' },
+          { name: 'n', value: 'v', label: 'l' },
+          { label: 'l' },
+        ],
+      },
+    ])
+  ).toBe(false);
 });
 
 it('identifies full option group arrays', () => {
@@ -394,6 +465,7 @@ it('identifies full option group arrays', () => {
   expect(isFullOptionGroupArray([])).toBe(false);
   expect(isFullOptionGroupArray([{}])).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: [] }])).toBe(false);
+  expect(isFullOptionGroupArray([{ label: 'l', options: [] }], { allowEmpty: true })).toBe(true);
   expect(isFullOptionGroupArray([{ label: 'l', options: ['test'] }])).toBe(false);
   expect(isFullOptionGroupArray([{ label: 'l', options: [{ name: 'n', label: 'l' }] }])).toBe(
     false
@@ -401,6 +473,23 @@ it('identifies full option group arrays', () => {
   expect(
     isFullOptionGroupArray([{ label: 'l', options: [{ name: 'n', value: 'v', label: 'l' }] }])
   ).toBe(true);
+  expect(
+    isFullOptionGroupArray([
+      { label: 'l', options: [{ name: 'n', value: 'v', label: 'l' }] },
+      { label: 'invalid' },
+    ])
+  ).toBe(false);
+  expect(
+    isFullOptionGroupArray([
+      {
+        label: 'l',
+        options: [
+          { name: 'n', value: 'v', label: 'l' },
+          { name: 'n', label: 'l' },
+        ],
+      },
+    ])
+  ).toBe(false);
 });
 
 describe('toFlatOptionArray', () => {

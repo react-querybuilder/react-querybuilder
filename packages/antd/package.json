@@ -53,11 +53,12 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^5.5.2",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
-    "@types/react": "^19.0.4",
+    "@types/react": "^19.0.7",
     "@vitejs/plugin-react": "^4.3.4",
-    "antd": "^5.23.0",
+    "antd": "^5.23.1",
     "dayjs": "^1.11.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -68,7 +69,7 @@
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5",
-    "antd": ">=5",
+    "antd": ">=5.11.0",
     "dayjs": ">=1",
     "react": ">=18",
     "react-querybuilder": "8.1.0"
