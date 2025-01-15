@@ -36,9 +36,9 @@ export function App() {
 
 For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/intro), or browse the [example projects](./examples/).
 
-To enable drag-and-drop functionality, use the [`@react-querybuilder/dnd` package](packages/dnd).
+To enable drag-and-drop functionality, use [`@react-querybuilder/dnd`](packages/dnd).
 
-For enhanced date/time support, use the [`@react-querybuilder/datetime` package](packages/datetime).
+For enhanced date/time support, use [`@react-querybuilder/datetime`](packages/datetime).
 
 _For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
 
