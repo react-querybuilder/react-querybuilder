@@ -405,6 +405,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "A-EbrahimRSA",
+      "name": "Abdullah Ebrahim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61310161?v=4",
+      "profile": "https://github.com/A-EbrahimRSA",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
