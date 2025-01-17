@@ -1,4 +1,4 @@
-import type { RequireAtLeastOne, SetRequired } from 'type-fest';
+import type { RequireAtLeastOne, SetRequired, Simplify } from 'type-fest';
 
 /**
  * Extracts the {@link Option} type from a {@link FlexibleOptionList}.
@@ -38,16 +38,16 @@ export interface BaseOption<N extends string = string> {
  * A generic option. Used directly in {@link OptionList} or
  * as the child element of an {@link OptionGroup}.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface Option<N extends string = string>
-  extends WithUnknownIndex<SetRequired<BaseOption<N>, 'name'>> {}
+export type Option<N extends string = string> = Simplify<
+  WithUnknownIndex<SetRequired<BaseOption<N>, 'name'>>
+>;
 
 /**
  * Like {@link Option} but requiring `value` instead of `name`.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface ValueOption<N extends string = string>
-  extends WithUnknownIndex<SetRequired<BaseOption<N>, 'value'>> {}
+export type ValueOption<N extends string = string> = Simplify<
+  WithUnknownIndex<SetRequired<BaseOption<N>, 'value'>>
+>;
 
 /**
  * A generic {@link Option} with either a `name` or `value` as its primary identifier.
@@ -55,16 +55,16 @@ export interface ValueOption<N extends string = string>
  * but corresponding props passed down to subcomponents will always be translated
  * to {@link FullOption} first.
  */
-export type FlexibleOption<N extends string = string> = WithUnknownIndex<
-  RequireAtLeastOne<BaseOption<N>, 'name' | 'value'>
+export type FlexibleOption<N extends string = string> = Simplify<
+  WithUnknownIndex<RequireAtLeastOne<BaseOption<N>, 'name' | 'value'>>
 >;
 
 /**
  * Utility type to turn an {@link Option}, {@link ValueOption}, or {@link BaseOption}
  * into a {@link FlexibleOption}.
  */
-export type ToFlexibleOption<Opt extends BaseOption> = WithUnknownIndex<
-  RequireAtLeastOne<Opt, 'name' | 'value'>
+export type ToFlexibleOption<Opt extends BaseOption> = Simplify<
+  WithUnknownIndex<RequireAtLeastOne<Opt, 'name' | 'value'>>
 >;
 
 /**
@@ -78,17 +78,17 @@ export type ToFlexibleOption<Opt extends BaseOption> = WithUnknownIndex<
  * the `unknown` index property will cause issues. See {@link Option} and
  * {@link ValueOption} for examples.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface FullOption<N extends string = string>
-  extends WithUnknownIndex<SetRequired<BaseOption<N>, 'name' | 'value'>> {}
+export type FullOption<N extends string = string> = Simplify<
+  WithUnknownIndex<SetRequired<BaseOption<N>, 'name' | 'value'>>
+>;
 
 /**
  * This type is identical to {@link FullOption} but without the `unknown` index
  * property. Extend from this type instead of {@link FullOption} directly.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface BaseFullOption<N extends string = string>
-  extends SetRequired<BaseOption<N>, 'name' | 'value'> {}
+export type BaseFullOption<N extends string = string> = Simplify<
+  SetRequired<BaseOption<N>, 'name' | 'value'>
+>;
 
 /**
  * Utility type to turn an {@link Option}, {@link ValueOption} or
@@ -103,8 +103,7 @@ export type ToFullOption<Opt extends BaseOption> = Opt extends BaseFullOption
 /**
  * @deprecated Renamed to `Option`.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface NameLabelPair<N extends string = string> extends Option<N> {}
+export type NameLabelPair<N extends string = string> = Option<N>;
 
 /**
  * A group of {@link Option}s, usually within an {@link OptionList}.

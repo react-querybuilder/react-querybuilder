@@ -1,4 +1,4 @@
-import type { SetOptional } from 'type-fest';
+import type { SetOptional, Simplify } from 'type-fest';
 import type {
   BaseFullOption,
   FlexibleOptionList,
@@ -54,9 +54,7 @@ type ToOptionArrays<Sources extends readonly string[]> = Sources extends unknown
     }
   : never;
 
-interface HasOptionalClassName {
-  className?: Classname;
-}
+type WithOptionalClassName<T> = T & { className?: Classname };
 
 /**
  * HTML5 input types
@@ -100,8 +98,7 @@ interface BaseFullField<
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
   ValueObj extends Option = Option<ValueName>,
-> extends BaseFullOption<FieldName>,
-    HasOptionalClassName {
+> extends WithOptionalClassName<BaseFullOption<FieldName>> {
   id?: string;
   operators?: FlexibleOptionList<OperatorObj>;
   valueEditorType?: ValueEditorType | ((operator: OperatorName) => ValueEditorType);
@@ -126,14 +123,15 @@ interface BaseFullField<
  * The `name`/`value`, `operators`, and `values` properties of this interface
  * can be narrowed with generics.
  */
-export interface FullField<
+export type FullField<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
   OperatorObj extends Option = Option<OperatorName>,
   ValueObj extends Option = Option<ValueName>,
-> extends FullOption<FieldName>,
-    BaseFullField<FieldName, OperatorName, ValueName, OperatorObj, ValueObj> {}
+> = Simplify<
+  FullOption<FieldName> & BaseFullField<FieldName, OperatorName, ValueName, OperatorObj, ValueObj>
+>;
 
 /**
  * Field definition used in the `fields` prop of {@link QueryBuilder}.
@@ -175,26 +173,6 @@ export type FieldByValue<
   >
 >;
 
-// TODO: Dynamically generate the list of explicitly-named properties.
-// The code below is a non-working attempt.
-// export type Field<
-//   FieldName extends string = string,
-//   OperatorName extends string = string,
-//   ValueName extends string = string,
-//   OperatorObj extends Option = Option<OperatorName>,
-// > = { value?: FieldName } & Pick<
-//   FullField<FieldName, OperatorName, ValueName, OperatorObj>,
-//   Exclude<keyof FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>
-// > & { [key: string]: unknown };
-
-// Another non-working way of defining `Field`:
-// export type Field<
-//   FieldName extends string = string,
-//   OperatorName extends string = string,
-//   ValueName extends string = string,
-//   OperatorObj extends Option = Option<OperatorName>,
-// > = SetOptional<FullField<FieldName, OperatorName, ValueName, OperatorObj>, 'value'>;
-
 /**
  * Utility type to make one or more properties required.
  */
@@ -223,8 +201,7 @@ export type Arity = number | 'unary' | 'binary' | 'ternary';
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
 export interface FullOperator<N extends string = string>
-  extends FullOption<N>,
-    HasOptionalClassName {
+  extends WithOptionalClassName<FullOption<N>> {
   arity?: Arity;
 }
 
@@ -237,9 +214,9 @@ export interface FullOperator<N extends string = string>
  */
 export type Operator<N extends string = string> = WithUnknownIndex<
   SetOptional<BaseFullOption<N>, 'value'> &
-    HasOptionalClassName & {
+    WithOptionalClassName<{
       arity?: Arity;
-    }
+    }>
 >;
 
 /**
@@ -251,9 +228,9 @@ export type Operator<N extends string = string> = WithUnknownIndex<
  */
 export type OperatorByValue<N extends string = string> = WithUnknownIndex<
   SetOptional<BaseFullOption<N>, 'name'> &
-    HasOptionalClassName & {
+    WithOptionalClassName<{
       arity?: Arity;
-    }
+    }>
 >;
 
 /**
@@ -264,9 +241,7 @@ export type OperatorByValue<N extends string = string> = WithUnknownIndex<
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
-export interface FullCombinator<N extends string = string>
-  extends FullOption<N>,
-    HasOptionalClassName {}
+export type FullCombinator<N extends string = string> = WithOptionalClassName<FullOption<N>>;
 
 /**
  * Combinator definition used in the `combinators` prop of {@link QueryBuilder}.
@@ -276,7 +251,7 @@ export interface FullCombinator<N extends string = string>
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
 export type Combinator<N extends string = string> = WithUnknownIndex<
-  SetOptional<BaseFullOption<N>, 'value'> & HasOptionalClassName
+  WithOptionalClassName<SetOptional<BaseFullOption<N>, 'value'>>
 >;
 
 /**
@@ -287,7 +262,7 @@ export type Combinator<N extends string = string> = WithUnknownIndex<
  * The `name`/`value` properties of this interface can be narrowed with generics.
  */
 export type CombinatorByValue<N extends string = string> = WithUnknownIndex<
-  SetOptional<BaseFullOption<N>, 'name'> & HasOptionalClassName
+  WithOptionalClassName<SetOptional<BaseFullOption<N>, 'name'>>
 >;
 
 type ParseNumberMethodName = 'enhanced' | 'native' | 'strict';
