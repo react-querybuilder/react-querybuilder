@@ -19,7 +19,7 @@ const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
  */
 export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> = (selector, other) => {
   const rqbContext = React.useContext(QueryBuilderContext);
-  // TODO: `as` shouldn't be necessary here, right?
+  // TODO: Why is `as` necessary here?
   const result = useRQB_INTERNAL_QueryBuilderSelector(selector, other as undefined);
   return result ?? rqbContext?.initialQuery;
 };

@@ -13,7 +13,6 @@ import './styles.scss';
 import type { useDevApp } from './useDevApp';
 import { generatePermalinkHash, optionsReducer } from './utils';
 
-// TODO: Type this better
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parserMap: Record<string, any> = {
   sql: parseSQL,

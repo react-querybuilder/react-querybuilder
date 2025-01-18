@@ -1,4 +1,5 @@
 import type {
+  ConfigureStoreOptions,
   Dispatch,
   PayloadAction,
   Store,
@@ -9,6 +10,7 @@ import type {
 import type { UseStore } from 'react-redux';
 import { createDispatchHook, createStoreHook } from 'react-redux';
 import type { RqbState } from '.';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
 import { QueryBuilderStateContext } from './QueryBuilderStateContext';
@@ -21,14 +23,12 @@ export const _RQB_INTERNAL_dispatchThunk =
     onQueryChange,
   }: {
     payload: SetQueryStateParams;
-    // TODO: Why doesn't `(query: RuleGroupTypeAny) => void` work here?
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onQueryChange?: (query: any) => void;
+    onQueryChange?: ((query: RuleGroupType) => void) | ((query: RuleGroupTypeIC) => void);
   }): ThunkAction<void, RqbState, unknown, PayloadAction<SetQueryStateParams>> =>
   dispatch => {
     dispatch(queriesSlice.actions.setQueryState(payload));
     if (typeof onQueryChange === 'function') {
-      onQueryChange(payload.query);
+      onQueryChange(payload.query as never /* ??? */);
     }
   };
 
@@ -53,8 +53,6 @@ export const rqbWarn =
   dispatch => {
     setTimeout(() => dispatch(_SYNC_rqbWarn(msg)));
   };
-
-import type { ConfigureStoreOptions } from '@reduxjs/toolkit';
 
 const preloadedState = {
   queries: queriesSlice.getInitialState(),
