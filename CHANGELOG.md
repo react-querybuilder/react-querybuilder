@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The behavior and the list of valid options for the `formatQuery` option `parseNumbers` now aligns with the `QueryBuilder` prop of the same name when a `fields` array is provided.
+
 ### Fixed
 
 - [#836] `AntDValueSelector` now filters on the `label` property and defines options with the `options` prop instead of a `children` array of `<Select.OptGroup>`/`<Select.Option>`.

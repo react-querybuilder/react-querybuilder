@@ -9,6 +9,7 @@ import type {
   FullField,
   FullOperator,
   FullOptionList,
+  InputType,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   QueryValidator,
@@ -24,6 +25,7 @@ import type {
   ValueProcessorByRule,
 } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
+import { getParseNumberMethod } from '../getParseNumberMethod';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { isPojo } from '../misc';
@@ -235,6 +237,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     valueProcessor: optionValueProcessor,
   } = optObj;
 
+  const getParseNumberBoolean = (inputType?: InputType | null) =>
+    !!getParseNumberMethod({ parseNumbers, inputType });
+
   const format = optObj.format.toLowerCase() as ExportFormat;
 
   const valueProcessor: ValueProcessorByRule =
@@ -286,7 +291,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
   // #region JSON
   if (format === 'json' || format === 'json_without_ids') {
-    const rg = parseNumbers ? produce(ruleGroup, numerifyValues) : ruleGroup;
+    const rg = parseNumbers ? produce(ruleGroup, g => numerifyValues(g, finalOptions)) : ruleGroup;
     if (format === 'json_without_ids') {
       return JSON.stringify(rg, (key, value) =>
         // Remove `id` and `path` keys; leave everything else unchanged.
@@ -390,6 +395,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
           return ruleProcessor(rule, {
             ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
             escapeQuotes,
             fieldData,
           });
@@ -443,7 +449,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
       const processedRule = ruleProcessor(
         rule,
-        { ...finalOptions, getNextNamedParam, fieldParamNames, fieldData },
+        {
+          ...finalOptions,
+          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+          getNextNamedParam,
+          fieldParamNames,
+          fieldData,
+        },
         { processedParams: params }
       );
 
@@ -535,7 +547,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return '';
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, { ...finalOptions, fieldData });
+          return ruleProcessor(rule, {
+            ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          });
         })
         .filter(Boolean);
 
@@ -581,7 +597,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, { ...finalOptions, fieldData });
+          return ruleProcessor(rule, {
+            ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          });
         })
         .filter(Boolean);
 
@@ -624,6 +644,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           const fieldData = getOption(fields, rule.field);
           return ruleProcessor(rule, {
             ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
           });
@@ -670,6 +691,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           const fieldData = getOption(fields, rule.field);
           return ruleProcessor(rule, {
             ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
           });
@@ -712,6 +734,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           const fieldData = getOption(fields, rule.field);
           return ruleProcessor(rule, {
             ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
             escapeQuotes: (rule.valueSource ?? 'value') === 'value',
             fieldData,
           });
@@ -751,7 +774,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, { ...finalOptions, fieldData });
+          return ruleProcessor(rule, {
+            ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          });
         })
         .filter(Boolean);
 
@@ -794,7 +821,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
             return false;
           }
           const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, { ...finalOptions, fieldData });
+          return ruleProcessor(rule, {
+            ...finalOptions,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          });
         })
         .filter(Boolean);
 
@@ -850,7 +881,12 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         const fieldData = getOption(fields, rule.field);
 
-        return ruleProcessor(rule, { ...finalOptions, escapeQuotes, fieldData });
+        return ruleProcessor(rule, {
+          ...finalOptions,
+          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+          escapeQuotes,
+          fieldData,
+        });
       });
 
       if (processedRules.length === 0) {

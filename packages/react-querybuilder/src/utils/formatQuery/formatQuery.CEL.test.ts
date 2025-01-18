@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleProcessor } from '../../types/index.noReact';
+import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
 import { add } from '../queryTools';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { formatQuery } from './formatQuery';
@@ -88,9 +88,15 @@ describe('ruleProcessor', () => {
 
 describe('parseNumbers', () => {
   it('parses numbers for cel', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'cel', parseNumbers: true })).toBe(
-      'f > "NaN" && f == 0 && f == 0 && f == 0 && (f < 1.5 || f > 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")'
-    );
+    const allNumbersParsed =
+      'f > "NaN" && f == 0 && f == 0 && f == 0 && (f < 1.5 || f > 1.5) && f in [0, 1, 2] && f in [0, 1, 2] && f in [0, "abc", 2] && (f >= 0 && f <= 1) && (f >= 0 && f <= 1) && (f >= 0 && f <= "abc") && (f >= "[object Object]" && f <= "[object Object]")';
+    for (const opts of [
+      { parseNumbers: true },
+      { parseNumbers: 'strict' },
+      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+    ] as FormatQueryOptions[]) {
+      expect(formatQuery(queryForNumberParsing, { ...opts, format: 'cel' })).toBe(allNumbersParsed);
+    }
     const queryForNumberParsingCEL: RuleGroupType = {
       combinator: 'and',
       rules: [

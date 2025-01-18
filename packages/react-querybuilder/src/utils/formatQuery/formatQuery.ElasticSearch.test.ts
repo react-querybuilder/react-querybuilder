@@ -1,4 +1,4 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type { FormatQueryOptions, RuleProcessor } from '../../types/index.noReact';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { formatQuery } from './formatQuery';
 import {
@@ -240,12 +240,7 @@ it('ruleProcessor', () => {
 });
 
 it('parseNumbers', () => {
-  expect(
-    formatQuery(queryForNumberParsing, {
-      format: 'elasticsearch',
-      parseNumbers: true,
-    })
-  ).toEqual({
+  const allNumbersParsed = {
     bool: {
       must: [
         { range: { f: { gt: 'NaN' } } },
@@ -262,5 +257,14 @@ it('parseNumbers', () => {
         { range: { f: { gte: {}, lte: {} } } },
       ],
     },
-  });
+  };
+  for (const opts of [
+    { parseNumbers: true },
+    { parseNumbers: 'strict' },
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ] as FormatQueryOptions[]) {
+    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
+      allNumbersParsed
+    );
+  }
 });
