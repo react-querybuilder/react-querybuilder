@@ -8,7 +8,7 @@ import { mapSQLOperator, shouldRenderAsNumber } from './utils';
  * Default rule processor used by {@link formatQuery} for "sql" format.
  */
 export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, meta) => {
-  // TODO: test for this so we don't have to ignore it
+  // TODO?: test for this so we don't have to ignore it
   // istanbul ignore next
   const {
     fieldData,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import type { RuleGroupType, RuleProcessor } from '../../types/index.noReact';
+import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
 import { add } from '../queryTools';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { formatQuery } from './formatQuery';
@@ -78,9 +78,17 @@ it('ruleProcessor', () => {
 });
 
 it('parseNumbers', () => {
-  expect(formatQuery(queryForNumberParsing, { format: 'jsonata', parseNumbers: true })).toBe(
-    'f > "NaN" and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in [0, 1, 2] and f in [0, 1, 2] and f in [0, "abc", 2] and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= "0" and f <= "abc") and (f >= "[object Object]" and f <= "[object Object]")'
-  );
+  const allNumbersParsed =
+    'f > "NaN" and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in [0, 1, 2] and f in [0, 1, 2] and f in [0, "abc", 2] and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= "0" and f <= "abc") and (f >= "[object Object]" and f <= "[object Object]")';
+  for (const opts of [
+    { parseNumbers: true },
+    { parseNumbers: 'strict' },
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ] as FormatQueryOptions[]) {
+    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'jsonata' })).toBe(
+      allNumbersParsed
+    );
+  }
   const queryForNumberParsingJSONata: RuleGroupType = {
     combinator: 'and',
     rules: [

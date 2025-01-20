@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
 import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps } from '../types';
-import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
+import { getFirstOption, getParseNumberMethod, joinWith, parseNumber, toArray } from '../utils';
 import clsx from '../utils/clsx';
 
 /**
@@ -266,20 +266,10 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
 
   const valueAsArray = useMemo(() => toArray(value, { retainEmptyStrings: true }), [value]);
 
-  const parseNumberMethod = useMemo((): ParseNumberMethod => {
-    if (typeof parseNumbers === 'string') {
-      const [method, level] = parseNumbers.split('-') as
-        | [ParseNumberMethod, 'limited']
-        | [ParseNumberMethod];
-      if (level === 'limited') {
-        return inputType === 'number' ? method : false;
-      }
-
-      return method;
-    }
-
-    return parseNumbers ? 'strict' : false;
-  }, [inputType, parseNumbers]);
+  const parseNumberMethod = useMemo(
+    () => getParseNumberMethod({ parseNumbers, inputType }),
+    [inputType, parseNumbers]
+  );
 
   const multiValueHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

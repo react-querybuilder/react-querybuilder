@@ -117,14 +117,13 @@ describe('add', () => {
     const _newICQuery = add({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = add(rgic1, rgic2, []);
 
-    type _Assertions = [
-      // TODO: RuleGroup/IC should be strict enough that this first line should error
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery>,
-      ExpectExtends<DefaultRuleGroupType, typeof _newQuery>,
-      Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>>,
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>>,
-    ];
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
   });
 });
 
@@ -178,14 +177,13 @@ describe('remove', () => {
     const _newICQuery = remove({ ...rgic1 }, [0]);
     const _newDefaultICQuery = remove(rgic1, [0]);
 
-    type _Assertions = [
-      // TODO: RuleGroup/IC should be strict enough that this first line should error
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery>,
-      ExpectExtends<DefaultRuleGroupType, typeof _newQuery>,
-      Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>>,
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>>,
-    ];
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
   });
 });
 
@@ -342,6 +340,21 @@ describe('update', () => {
   });
 
   testQT('bails out on bad path', update(rg1, 'value', 'test', badPath), rg1);
+
+  it('should have the right types', () => {
+    const _newQuery = update({ ...rg1 }, 'combinator', 'and', []);
+    const _newDefaultQuery = update(rg1, 'combinator', 'and', []);
+    const _newICQuery = update({ ...rgic1 }, 'disabled', false, []);
+    const _newDefaultICQuery = update(rgic1, 'disabled', false, []);
+
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+  });
 });
 
 describe('move', () => {
@@ -495,6 +508,21 @@ describe('move', () => {
   });
 
   testQT('bails out on bad path', move(rg1, [1], badPath), rg1);
+
+  it('should have the right types', () => {
+    const _newQuery = move({ ...rg1 }, [1], [0]);
+    const _newDefaultQuery = move(rg1, [1], [0]);
+    const _newICQuery = move({ ...rgic1 }, [1], [0]);
+    const _newDefaultICQuery = move(rgic1, [1], [0]);
+
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+  });
 });
 
 describe('shift', () => {
@@ -567,6 +595,21 @@ describe('shift', () => {
 
   // @ts-expect-error 'x' is not assignable to 'up' | 'down'
   testQT('does not alter query for invalid direction', move(rg3, [0], 'x'), rg3, true);
+
+  it('should have the right types', () => {
+    const _newQuery = move({ ...rg1 }, [1], 'up');
+    const _newDefaultQuery = move(rg1, [1], 'up');
+    const _newICQuery = move({ ...rgic1 }, [1], 'up');
+    const _newDefaultICQuery = move(rgic1, [1], 'up');
+
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+  });
 });
 
 describe('insert', () => {
@@ -697,13 +740,12 @@ describe('insert', () => {
     const _newICQuery = insert({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = insert(rgic1, rgic2, []);
 
-    type _Assertions = [
-      // TODO: RuleGroup/IC should be strict enough that this first line should error
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery>,
-      ExpectExtends<DefaultRuleGroupType, typeof _newQuery>,
-      Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>>,
-      ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery>,
-      Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>>,
-    ];
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
   });
 });

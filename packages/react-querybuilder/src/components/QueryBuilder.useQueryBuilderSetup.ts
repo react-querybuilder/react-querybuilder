@@ -4,7 +4,6 @@ import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
-  FlexibleOptionGroup,
   FlexibleOptionList,
   FullCombinator,
   FullField,
@@ -63,7 +62,7 @@ export type UseQueryBuilderSetup<
   C extends FullCombinator,
 > = {
   qbId: string;
-  rqbContext: UseMergedContextReturn<F, GetOptionIdentifierType<O>>;
+  rqbContext: UseMergedContextReturn<F, GetOptionIdentifierType<O>, true>;
   fields: FullOptionList<F>;
   fieldMap: FullOptionMap<
     FullField<string, string, string, Option<string>, Option<string>>,
@@ -171,7 +170,7 @@ export const useQueryBuilderSetup = <
     [defaultField, fieldsPropOriginal]
   );
 
-  const fields = useMemo((): FullOptionList<F> => {
+  const fields = useMemo((): F[] | OptionGroup<F>[] => {
     const flds = (
       Array.isArray(fieldsProp)
         ? toFullOptionList(fieldsProp, baseField)
@@ -209,8 +208,7 @@ export const useQueryBuilderSetup = <
     }
     const fm: Partial<FullOptionRecord<FullField>> = {};
     if (isFlexibleOptionGroupArray(fields)) {
-      // TODO: this `as` cast shouldn't be necessary with the type guard above
-      for (const f of fields as FlexibleOptionGroup[]) {
+      for (const f of fields) {
         for (const opt of f.options) {
           fm[(opt.value ?? /* istanbul ignore next */ opt.name) as FieldName] = toFullOption(
             opt,
@@ -219,8 +217,7 @@ export const useQueryBuilderSetup = <
         }
       }
     } else {
-      // TODO: this `as` cast shouldn't be necessary with the type guard above
-      for (const f of fields as FullField[]) {
+      for (const f of fields) {
         fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(
           f,
           baseField
@@ -478,7 +475,8 @@ export const useQueryBuilderSetup = <
   return {
     qbId,
     rqbContext,
-    fields,
+    // TODO: Why is a cast necessary here?
+    fields: fields as FullOptionList<F>,
     fieldMap,
     combinators,
     getOperatorsMain,

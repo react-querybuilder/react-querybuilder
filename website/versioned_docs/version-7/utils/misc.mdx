@@ -127,6 +127,69 @@ Inserts a rule or group (and an independent combinator if necessary, to keep the
 
 </Details>
 
+## Number parsing
+
+HTML `<input>` controls store values as strings (even for `type="number"`), but your requirements may call for true numeric values. The [`parseNumbers`](../components/querybuilder#parsenumbers) prop on the `QueryBuilder` component and the `formatQuery` function's [`parseNumbers`](./export#parsenumbers) option can be used to convert values to numeric types from the UI or during export, respectively. Both configuration options have the same valid values (per the type below) and behave similarly.
+
+`boolean | "enhanced" | "enhanced-limited" | "native" | "native-limited" | "strict" | "strict-limited"`
+
+> _Tip: Try the **`"strict-limited"`** option first._
+
+- The `"*-limited"` options are equivalent to their non-suffixed counterparts except that numeric parsing is only performed when the value editor's `inputType` is `"number"`.
+  - Being based on the `inputType`, the `"*-limited"` suffix can only affect `formatQuery` output when a `fields` array is also provided.
+- `true`, `"strict"`, and `"enhanced"` will retain the original value when numeric parsing fails.
+- `"enhanced"` and `"native"` can lead to information loss since any trailing invalid characters will be removed.
+- `true` and `"strict"` determine numericity using [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) with `allowTrailingInvalid: false`. Values must be numeric _in their entirety_ to be considered numeric, not just _start_ with a number as with `parseFloat`.
+- `"enhanced"` uses `numeric-quantity` with `allowTrailingInvalid: true`.
+- `"native"` uses JavaScript's native `parseFloat` method, which is similar to the "enhanced" algorithm in that it will strip trailing invalid characters, but it will return `NaN` for non-numeric values instead of the original value.
+
+#### Examples
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  not: false,
+  rules: [
+    { field: 'digits', operator: '=', value: '20' },
+    { field: 'age', operator: 'between', value: '26, 52' },
+    { field: 'lastName', operator: '=', value: 'Vai' },
+  ],
+};
+
+// Default configuration - all values are strings:
+formatQuery(query, { format: 'sql' });
+// "(digits = '20' and age between '26' and '52' and lastName = 'Vai')"
+
+// `parseNumbers: true` - numeric strings converted to actual numbers:
+formatQuery(query, { format: 'sql', parseNumbers: true });
+// "(digits = 20 and age between 26 and 52 and lastName = 'Vai')"
+```
+
+:::info More about the "strict" option
+
+To avoid information loss, the `true` and `"strict*"` options are more strict about what qualifies as "numeric" than [the standard `parseFloat` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat). To oversimplify a bit, `parseFloat` works with any string that _starts_ with a numeric sequence, ignoring the rest of the string beginning with the first non-numeric character. In contrast, when `parseNumbers` is `true`, `formatQuery` will only convert a `value` to a `number` if it appears to be numeric _in its entirety_ (after trimming whitespace).
+
+Each of the following expressions evaluates to `true`:
+
+```ts
+// Everything after the '3' is ignored by `parseFloat`
+parseFloat('000123abcdef') === 123;
+
+// `value` contains non-numeric characters, so remains as-is
+formatQuery(
+  { rules: [{ field: 'f', operator: '=', value: '000123abcdef' }] },
+  { format: 'sql', parseNumbers: true }
+) === "(f = '000123abcdef')";
+
+// `value` is wholly numeric (after trimming whitespace) so it gets converted to a number
+formatQuery(
+  { rules: [{ field: 'f', operator: '=', value: '  000123  ' }] },
+  { format: 'sql', parseNumbers: true }
+) === '(f = 123)';
+```
+
+:::
+
 ## Defaults
 
 The default configuration objects are exported for convenience, including the following.

@@ -481,7 +481,6 @@ describe('options', () => {
       });
     });
 
-    // TODO: this can be removed when sqlParser properly handles the `||` operator
     it('identifies wildcards', () => {
       expect(isWildcardsOnly({ type: 'RegexpPredicate' })).toBe(false);
       expect(isWildcardsOnly({ type: 'String', value: '""' })).toBe(false);

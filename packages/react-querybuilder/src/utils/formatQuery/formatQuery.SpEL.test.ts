@@ -1,4 +1,5 @@
 import type {
+  FormatQueryOptions,
   RuleGroupType,
   RuleProcessor,
   ValueProcessorByRule,
@@ -195,11 +196,11 @@ it('uses paramPrefix correctly', () => {
   });
 });
 
-describe('escapes quotes when appropriate', () => {
+it('escapes quotes when appropriate', () => {
   expect(formatQuery(testQuerySQ, 'spel')).toEqual(`f1 == 'Te\\'st'`);
 });
 
-describe('independent combinators', () => {
+it('independent combinators', () => {
   expect(formatQuery(queryIC, 'spel')).toBe(
     `firstName == 'Test' and middleName == 'Test' or lastName == 'Test'`
   );
@@ -225,7 +226,7 @@ describe('validation', () => {
   }
 });
 
-describe('ruleProcessor', () => {
+it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSpEL(r);
   expect(formatQuery(queryForRuleProcessor, { format: 'spel', ruleProcessor })).toBe(
@@ -236,10 +237,16 @@ describe('ruleProcessor', () => {
   ).toBe("custom_operator and f2 == 'v2'");
 });
 
-describe('parseNumbers', () => {
-  expect(formatQuery(queryForNumberParsing, { format: 'spel', parseNumbers: true })).toBe(
-    "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')"
-  );
+it('parseNumbers', () => {
+  const allNumbersParsed =
+    "f > 'NaN' and f == 0 and f == 0 and f == 0 and (f < 1.5 or f > 1.5) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 1 or f == 2) and (f == 0 or f == 'abc' or f == 2) and (f >= 0 and f <= 1) and (f >= 0 and f <= 1) and (f >= 0 and f <= 'abc') and (f >= '[object Object]' and f <= '[object Object]')";
+  for (const opts of [
+    { parseNumbers: true },
+    { parseNumbers: 'strict' },
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ] as FormatQueryOptions[]) {
+    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'spel' })).toBe(allNumbersParsed);
+  }
   const queryForNumberParsingSpEL: RuleGroupType = {
     combinator: 'and',
     rules: [

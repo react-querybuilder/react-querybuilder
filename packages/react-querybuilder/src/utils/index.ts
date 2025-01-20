@@ -6,6 +6,7 @@ export * from './formatQuery';
 export * from './generateAccessibleDescription';
 export * from './generateID';
 export * from './getCompatContextProvider';
+export * from './getParseNumberMethod';
 export * from './getValidationClassNames';
 export * from './getValueSourcesUtil';
 export * from './isRuleGroup';

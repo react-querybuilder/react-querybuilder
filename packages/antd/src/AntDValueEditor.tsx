@@ -191,7 +191,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             disabled={disabled}
             placeholder={[placeHolderText, placeHolderText]}
             // TODO: the function below is currently untested (see the
-            // "should render a date range picker" test in ./AntD.test.tsx)
+            // "renders a date range picker" test in ./AntD.test.tsx)
             onChange={
               /* istanbul ignore next */
               dates => {

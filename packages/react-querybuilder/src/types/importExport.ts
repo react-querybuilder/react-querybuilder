@@ -1,4 +1,10 @@
-import type { FullField, FullOperator, ValueSource, ValueSources } from './basic';
+import type {
+  FullField,
+  FullOperator,
+  ParseNumbersPropConfig,
+  ValueSource,
+  ValueSources,
+} from './basic';
 import type { RulesLogic } from 'json-logic-js';
 import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
@@ -165,7 +171,7 @@ export interface FormatQueryOptions {
    * against {@link numericRegex} to determine if it can be represented as a
    * plain numeric value. If so, `parseFloat` is used to convert it to a number.
    */
-  parseNumbers?: boolean;
+  parseNumbers?: ParseNumbersPropConfig;
   /**
    * Any rules where the field is equal to this value will be ignored.
    *
@@ -228,6 +234,7 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    * calls).
    */
   wrapValueWith?: [string, string];
+  parseNumbers?: boolean;
 }
 
 /**

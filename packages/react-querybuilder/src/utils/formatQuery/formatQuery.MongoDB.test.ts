@@ -275,24 +275,27 @@ it('ruleProcessor', () => {
 });
 
 it('parseNumbers', () => {
-  testBoth(
-    queryForNumberParsing,
-    {
-      $and: [
-        { f: { $gt: 'NaN' } },
-        { f: 0 },
-        { f: 0 },
-        { f: 0 },
-        { $or: [{ f: { $lt: 1.5 } }, { f: { $gt: 1.5 } }] },
-        { f: { $in: [0, 1, 2] } },
-        { f: { $in: [0, 1, 2] } },
-        { f: { $in: [0, 'abc', 2] } },
-        { f: { $gte: 0, $lte: 1 } },
-        { f: { $gte: 0, $lte: 1 } },
-        { f: { $gte: 0, $lte: 'abc' } },
-        { f: { $gte: {}, $lte: {} } },
-      ],
-    },
-    { parseNumbers: true }
-  );
+  const allNumbersParsed = {
+    $and: [
+      { f: { $gt: 'NaN' } },
+      { f: 0 },
+      { f: 0 },
+      { f: 0 },
+      { $or: [{ f: { $lt: 1.5 } }, { f: { $gt: 1.5 } }] },
+      { f: { $in: [0, 1, 2] } },
+      { f: { $in: [0, 1, 2] } },
+      { f: { $in: [0, 'abc', 2] } },
+      { f: { $gte: 0, $lte: 1 } },
+      { f: { $gte: 0, $lte: 1 } },
+      { f: { $gte: 0, $lte: 'abc' } },
+      { f: { $gte: {}, $lte: {} } },
+    ],
+  };
+  for (const opts of [
+    { parseNumbers: true },
+    { parseNumbers: 'strict' },
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ] as FormatQueryOptions[]) {
+    testBoth(queryForNumberParsing, allNumbersParsed, opts);
+  }
 });

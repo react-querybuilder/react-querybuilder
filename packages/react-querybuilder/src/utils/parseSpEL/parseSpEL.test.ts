@@ -115,7 +115,6 @@ it('handles "like" comparisons', () => {
   );
 });
 
-// TODO:
 it('negates "matches" comparisons appropriately', () => {
   testParseSpEL(
     '!(f1 matches "Test")',

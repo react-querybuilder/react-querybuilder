@@ -1,13 +1,19 @@
+import type { SetRequired } from 'type-fest';
 import type {
   DefaultCombinatorName,
+  FormatQueryOptions,
+  FullField,
+  OptionList,
   RuleGroupTypeAny,
   ValueProcessorByRule,
   ValueProcessorLegacy,
   ValueProcessorOptions,
 } from '../../types/index.noReact';
 import { joinWith, splitBy, toArray } from '../arrayUtils';
+import { getParseNumberMethod } from '../getParseNumberMethod';
 import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
+import { getOption } from '../optGroupUtils';
 import { parseNumber } from '../parseNumber';
 
 /**
@@ -86,7 +92,10 @@ export const jsonLogicAdditionalOperators: Record<
  *
  * Used by {@link formatQuery} for the `json*` formats when `parseNumbers` is `true`.
  */
-export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
+export const numerifyValues = (
+  rg: RuleGroupTypeAny,
+  options: SetRequired<FormatQueryOptions, 'fields'>
+): RuleGroupTypeAny => ({
   ...rg,
   // @ts-expect-error TS doesn't keep track of odd/even indexes here
   rules: rg.rules.map(r => {
@@ -95,15 +104,21 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
     }
 
     if (isRuleGroup(r)) {
-      return numerifyValues(r);
+      return numerifyValues(r, options);
     }
 
+    const fieldData = getOption(options.fields as OptionList<FullField>, r.field);
+    const parseNumbers = getParseNumberMethod({
+      parseNumbers: options.parseNumbers,
+      inputType: fieldData?.inputType,
+    });
+
     if (Array.isArray(r.value)) {
-      return { ...r, value: r.value.map(v => parseNumber(v, { parseNumbers: true })) };
+      return { ...r, value: r.value.map(v => parseNumber(v, { parseNumbers })) };
     }
 
     const valAsArray = toArray(r.value, { retainEmptyStrings: true }).map(v =>
-      parseNumber(v, { parseNumbers: true })
+      parseNumber(v, { parseNumbers })
     );
     if (valAsArray.every(v => typeof v === 'number')) {
       // istanbul ignore else

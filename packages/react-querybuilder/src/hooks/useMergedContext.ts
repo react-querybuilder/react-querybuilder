@@ -21,6 +21,7 @@ import { usePreferProp } from './usePreferProp';
 export type UseMergedContextProps<
   F extends FullField = FullField,
   O extends string = string,
+  Finalize extends boolean | undefined = undefined,
 > = QueryBuilderContextProps<F, O> & {
   initialQuery?: RuleGroupTypeAny;
   qbId?: string;
@@ -29,19 +30,20 @@ export type UseMergedContextProps<
    * are defined. Action elements and value selectors are merged with their respective
    * bulk override components. Only needs to be true when run from `QueryBuilder`.
    */
-  finalize?: boolean;
+  finalize?: Finalize;
 };
 
 export type UseMergedContextReturn<
   F extends FullField = FullField,
   O extends string = string,
+  Finalize extends boolean | undefined = undefined,
 > = QueryBuilderContextProps<F, O> & {
   initialQuery?: RuleGroupTypeAny;
   qbId?: string;
 } & {
-  controlElements: Controls<F, O>;
+  controlElements: Finalize extends true ? Controls<F, O> : Partial<Controls<F, O>>;
   controlClassnames: Classnames;
-  translations: TranslationsFull;
+  translations: Finalize extends true ? TranslationsFull : Partial<Translations>;
 } & Required<
     Pick<
       QueryBuilderContextProps<F, O>,
@@ -57,10 +59,14 @@ const emptyObject = {} as const;
 /**
  * Merges inherited context values with props, giving precedence to props.
  */
-export const useMergedContext = <F extends FullField = FullField, O extends string = string>({
+export const useMergedContext = <
+  F extends FullField = FullField,
+  O extends string = string,
+  Finalize extends boolean | undefined = undefined,
+>({
   finalize,
   ...props
-}: UseMergedContextProps<F, O>): UseMergedContextReturn<F, O> => {
+}: UseMergedContextProps<F, O, Finalize>): UseMergedContextReturn<F, O, Finalize> => {
   const rqbContext: QueryBuilderContextProps<F, O> = useContext(QueryBuilderContext);
 
   const debugModePreferred = usePreferProp(false, props.debugMode, rqbContext.debugMode);
@@ -294,8 +300,7 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
             contextCE.valueSelector ??
             (finalize ? defaultControlElements.valueSelector : undefined),
         }
-        // TODO: this type should probably depend on `finalize`
-      ) as ControlElementsProp<F, O>,
+      ) as Finalize extends true ? ControlElementsProp<F, O> : Partial<ControlElementsProp<F, O>>,
     [
       contextCE.actionElement,
       contextCE.addGroupAction,
@@ -346,8 +351,7 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
       propsCE.valueSelector,
       propsCE.valueSourceSelector,
     ]
-    // TODO: this type should probably depend on `finalize`
-  ) as Controls<F, O>;
+  ) as Finalize extends true ? Controls<F, O> : Partial<Controls<F, O>>;
 
   const propsT: Partial<Translations> = props.translations ?? emptyObject;
   const contextT: Partial<Translations> = rqbContext.translations ?? emptyObject;
@@ -596,8 +600,7 @@ export const useMergedContext = <F extends FullField = FullField, O extends stri
       contextT.value?.title,
       contextT.valueSourceSelector?.title,
     ]
-    // TODO: this type should probably depend on `finalize`
-  ) as TranslationsFull;
+  ) as Finalize extends true ? TranslationsFull : Partial<Translations>;
 
   return {
     controlClassnames,

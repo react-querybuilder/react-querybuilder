@@ -2,7 +2,12 @@ import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
 } from '../../defaults';
-import type { RQBJsonLogic, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryOptions,
+  RQBJsonLogic,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { add } from '../queryTools';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { formatQuery } from './formatQuery';
@@ -268,12 +273,7 @@ it('ruleProcessor', () => {
 });
 
 it('parseNumbers', () => {
-  expect(
-    formatQuery(queryForNumberParsing, {
-      format: 'jsonlogic',
-      parseNumbers: true,
-    })
-  ).toEqual({
+  const allNumbersParsed = {
     and: [
       { '>': [{ var: 'f' }, 'NaN'] },
       { '==': [{ var: 'f' }, 0] },
@@ -288,7 +288,16 @@ it('parseNumbers', () => {
       { '<=': ['0', { var: 'f' }, 'abc'] },
       { '<=': [{}, { var: 'f' }, {}] },
     ],
-  });
+  };
+  for (const opts of [
+    { parseNumbers: true },
+    { parseNumbers: 'strict' },
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ] as FormatQueryOptions[]) {
+    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'jsonlogic' })).toEqual(
+      allNumbersParsed
+    );
+  }
 });
 
 it('handles XOR operator', () => {

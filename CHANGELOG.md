@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#840] The behavior and the list of valid options for the `formatQuery` option `parseNumbers` now aligns with the `QueryBuilder` prop of the same name when a `fields` array is provided.
+
 ### Fixed
 
 - [#836] `AntDValueSelector` now filters on the `label` property and defines options with the `options` prop instead of a `children` array of `<Select.OptGroup>`/`<Select.Option>`.
@@ -1821,6 +1825,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#820]: https://github.com/react-querybuilder/react-querybuilder/pull/820
 [#834]: https://github.com/react-querybuilder/react-querybuilder/pull/834
 [#836]: https://github.com/react-querybuilder/react-querybuilder/pull/836
+[#840]: https://github.com/react-querybuilder/react-querybuilder/pull/840
 
 <!-- #endregion -->
 

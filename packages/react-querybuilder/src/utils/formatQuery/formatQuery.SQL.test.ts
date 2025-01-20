@@ -3,6 +3,7 @@ import {
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
 } from '../../defaults';
 import type {
+  FormatQueryOptions,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   RuleGroupType,
@@ -522,69 +523,65 @@ describe('ruleProcessor', () => {
 
 describe('parseNumbers', () => {
   it('parses numbers for sql', () => {
-    expect(formatQuery(queryForNumberParsing, { format: 'sql', parseNumbers: true })).toBe(
-      "(f > 'NaN' and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')"
-    );
+    const allNumbersParsed =
+      "(f > 'NaN' and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')";
+    for (const opts of [
+      { parseNumbers: true },
+      { parseNumbers: 'strict' },
+      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+    ] as FormatQueryOptions[]) {
+      expect(formatQuery(queryForNumberParsing, { ...opts, format: 'sql' })).toBe(allNumbersParsed);
+    }
+  });
+
+  it('parses numbers for sql only when inputType is number', () => {
+    expect(
+      formatQuery(
+        {
+          rules: [
+            { field: 'f1', operator: '=', value: '123' },
+            'and',
+            { field: 'f2', operator: '=', value: '123' },
+          ],
+        },
+        {
+          format: 'sql',
+          parseNumbers: 'strict-limited',
+          fields: [
+            { name: 'f1', label: 'f', inputType: 'number' },
+            { name: 'f2', label: 'f' },
+          ],
+        }
+      )
+    ).toBe("(f1 = 123 and f2 = '123')");
   });
 
   it('parses numbers for parameterized', () => {
-    expect(
-      formatQuery(queryForNumberParsing, { format: 'parameterized', parseNumbers: true })
-    ).toHaveProperty('params', [
-      'NaN',
-      0,
-      0,
-      0,
-      1.5,
-      1.5,
-      0,
-      1,
-      2,
-      0,
-      1,
-      2,
-      0,
-      'abc',
-      2,
-      0,
-      1,
-      0,
-      1,
-      0,
-      'abc',
-      {},
-      {},
-    ]);
+    // prettier-ignore
+    const allNumbersParsed = ['NaN', 0, 0, 0, 1.5, 1.5, 0, 1, 2, 0, 1, 2, 0, 'abc', 2, 0, 1, 0, 1, 0, 'abc', {}, {}];
+    for (const opts of [
+      { parseNumbers: true },
+      { parseNumbers: 'strict' },
+      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+    ] as FormatQueryOptions[]) {
+      expect(
+        formatQuery(queryForNumberParsing, { ...opts, format: 'parameterized' })
+      ).toHaveProperty('params', allNumbersParsed);
+    }
   });
 
   it('parses numbers for parameterized_named', () => {
-    expect(
-      formatQuery(queryForNumberParsing, { format: 'parameterized_named', parseNumbers: true })
-    ).toHaveProperty('params', {
-      f_1: 'NaN',
-      f_2: 0,
-      f_3: 0,
-      f_4: 0,
-      f_5: 1.5,
-      f_6: 1.5,
-      f_7: 0,
-      f_8: 1,
-      f_9: 2,
-      f_10: 0,
-      f_11: 1,
-      f_12: 2,
-      f_13: 0,
-      f_14: 'abc',
-      f_15: 2,
-      f_16: 0,
-      f_17: 1,
-      f_18: 0,
-      f_19: 1,
-      f_20: 0,
-      f_21: 'abc',
-      f_22: {},
-      f_23: {},
-    });
+    // prettier-ignore
+    const allNumbersParsed = { f_1: 'NaN', f_2: 0, f_3: 0, f_4: 0, f_5: 1.5, f_6: 1.5, f_7: 0, f_8: 1, f_9: 2, f_10: 0, f_11: 1, f_12: 2, f_13: 0, f_14: 'abc', f_15: 2, f_16: 0, f_17: 1, f_18: 0, f_19: 1, f_20: 0, f_21: 'abc', f_22: {}, f_23: {} };
+    for (const opts of [
+      { parseNumbers: true },
+      { parseNumbers: 'strict' },
+      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+    ] as FormatQueryOptions[]) {
+      expect(
+        formatQuery(queryForNumberParsing, { ...opts, format: 'parameterized_named' })
+      ).toHaveProperty('params', allNumbersParsed);
+    }
   });
 
   it('orders "between" values ascending', () => {

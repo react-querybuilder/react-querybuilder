@@ -3,6 +3,7 @@ import {
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
 } from '../../defaults';
 import type {
+  FormatQueryOptions,
   RuleGroupType,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -251,11 +252,17 @@ describe('validation', () => {
 
 describe('parseNumbers', () => {
   it('parses numbers for natural_language', () => {
-    expect(
-      formatQuery(queryForNumberParsing, { format: 'natural_language', parseNumbers: true })
-    ).toBe(
-      "f is greater than 'NaN', and f is 0, and f is 0, and f is 0, and (f is less than 1.5, or f is greater than 1.5) is true, and f is one of the values 0, 1, or 2, and f is one of the values 0, 1, or 2, and f is one of the values 0, 'abc', or 2, and f is between 0 and 1, and f is between 0 and 1, and f is between '0' and 'abc', and f is between '[object Object]' and '[object Object]'"
-    );
+    const allNumbersParsed =
+      "f is greater than 'NaN', and f is 0, and f is 0, and f is 0, and (f is less than 1.5, or f is greater than 1.5) is true, and f is one of the values 0, 1, or 2, and f is one of the values 0, 1, or 2, and f is one of the values 0, 'abc', or 2, and f is between 0 and 1, and f is between 0 and 1, and f is between '0' and 'abc', and f is between '[object Object]' and '[object Object]'";
+    for (const opts of [
+      { parseNumbers: true },
+      { parseNumbers: 'strict' },
+      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+    ] as FormatQueryOptions[]) {
+      expect(formatQuery(queryForNumberParsing, { ...opts, format: 'natural_language' })).toBe(
+        allNumbersParsed
+      );
+    }
   });
 
   it('orders "between" values ascending', () => {

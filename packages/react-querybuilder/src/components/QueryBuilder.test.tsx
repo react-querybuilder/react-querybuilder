@@ -385,13 +385,7 @@ describe('when initial operators are provided', () => {
   const query: RuleGroupType = {
     combinator: 'and',
     not: false,
-    rules: [
-      {
-        field: 'firstName',
-        value: 'Test',
-        operator: '=',
-      },
-    ],
+    rules: [{ field: 'firstName', value: 'Test', operator: '=' }],
   };
 
   const setup = () => ({
@@ -1115,7 +1109,7 @@ describe('parseNumbers prop', () => {
       numTextEditorAtOnce: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
       numTextEditorTyped: [' ', 1214, 1214, 1214, 1214, String.raw`1\,2,1\,4`, '1214xyz'],
     },
-  ] satisfies {
+  ] as const satisfies {
     parseNumberMode: ParseNumbersPropConfig;
     textAtOnce: (string | number)[];
     textTyped: (string | number)[];
@@ -1136,44 +1130,17 @@ describe('parseNumbers prop', () => {
       numTextEditorAtOnce,
       numTextEditorTyped,
     }) => {
-      describe.each([
-        {
-          inputType: 'text',
-          inputMethod: 'at once',
-          vals: textAtOnce,
-          query: txtQuery,
-        },
-        {
-          inputType: 'text',
-          inputMethod: 'typed',
-          vals: textTyped,
-          query: txtQuery,
-        },
-        {
-          inputType: 'number',
-          inputMethod: 'at once',
-          vals: numAtOnce,
-          query: numQuery,
-        },
-        {
-          inputType: 'number',
-          inputMethod: 'typed',
-          vals: numTyped,
-          query: numQuery,
-        },
-        {
-          inputType: 'number-text-editor',
-          inputMethod: 'at once',
-          vals: numTextEditorAtOnce,
-          query: numQuery,
-        },
-        {
-          inputType: 'number-text-editor',
-          inputMethod: 'typed',
-          vals: numTextEditorTyped,
-          query: numQuery,
-        },
-      ])('inputType $inputType ($inputMethod)', ({ inputMethod, inputType, vals, query }) => {
+      describe.each(
+        // prettier-ignore
+        [
+          { inputType: 'text', inputMethod: 'at once', vals: textAtOnce, query: txtQuery },
+          { inputType: 'text', inputMethod: 'typed', vals: textTyped, query: txtQuery },
+          { inputType: 'number', inputMethod: 'at once', vals: numAtOnce, query: numQuery },
+          { inputType: 'number', inputMethod: 'typed', vals: numTyped, query: numQuery },
+          { inputType: 'number-text-editor', inputMethod: 'at once', vals: numTextEditorAtOnce, query: numQuery },
+          { inputType: 'number-text-editor', inputMethod: 'typed', vals: numTextEditorTyped, query: numQuery },
+        ]
+      )('inputType $inputType ($inputMethod)', ({ inputMethod, inputType, vals, query }) => {
         it.each(typedValues)(`"$typedValue"`, async ({ typedValue }) => {
           const onQueryChange = jest.fn<never, [RuleGroupType]>();
           const VE = inputType === 'number-text-editor' ? ValueEditorAlwaysText : ValueEditor;
@@ -1206,21 +1173,35 @@ describe('parseNumbers prop', () => {
     }
   );
 
-  // TODO: Add tests for parsing values when operator is "between"
-  it.skip('parses numbers for "between" operator', async () => {
+  it('parses numbers for "between" operator', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const defaultQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'field1', operator: 'between', value: '12abc,14abc' }],
+    };
     render(
       <QueryBuilder
         parseNumbers="enhanced"
+        listsAsArrays
         fields={fields}
         onQueryChange={onQueryChange}
-        defaultQuery={txtQuery}
+        defaultQuery={defaultQuery}
       />
     );
 
-    await user.type(screen.getByTestId(TestID.valueEditor), '12,14');
+    const ves = screen.getByTestId(TestID.valueEditor).querySelectorAll(`.${sc.valueListItem}`);
+    await user.type(ves[0], 'd');
+    await user.type(ves[1], 'd');
+
+    expect(onQueryChange).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ rules: [expect.objectContaining({ value: '12abc,14abc' })] })
+    );
+    expect(onQueryChange).toHaveBeenCalledWith(
+      expect.objectContaining({ rules: [expect.objectContaining({ value: [12, '14abc'] })] })
+    );
     expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 1214 })] })
+      expect.objectContaining({ rules: [expect.objectContaining({ value: [12, 14] })] })
     );
   });
 });
@@ -2935,14 +2916,7 @@ describe('redux functions', () => {
     expect(testFunc.mock.lastCall?.[0]).toMatchObject({
       combinator: 'and',
       not: false,
-      rules: [
-        {
-          field: '~',
-          operator: '=',
-          value: '',
-          valueSource: 'value',
-        },
-      ],
+      rules: [{ field: '~', operator: '=', value: '', valueSource: 'value' }],
     });
 
     await user.click(screen.getByText(dispatchQueryBtnText));

@@ -159,7 +159,6 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       );
       await new Promise(r => setTimeout(r, 500));
     });
-    // TODO: figure out why this test is NOT flaky like the range test below
     expect(onChange).toHaveBeenCalledWith(today);
   });
 
@@ -176,6 +175,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     const { container } = render(
       <AntDValueEditor
         {...props}
+        rule={{ field: '', operator: 'between', value: 'invalid' }}
         inputType="date"
         operator="between"
         handleOnChange={onChange}
@@ -194,8 +194,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       await user.click(screen.getAllByTitle(tomorrow)[0]);
       await new Promise(r => setTimeout(r, 500));
     });
-    // TODO: figure out why this test is flaky, then uncomment it
-    // expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
+    expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });
 
   it('renders a date range picker with a preset value', async () => {
