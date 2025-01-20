@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+N/A
 
-- [#840] The behavior and the list of valid options for the `formatQuery` option `parseNumbers` now aligns with the `QueryBuilder` prop of the same name when a `fields` array is provided.
+## [v8.1.1] - 2025-01-20
 
 ### Fixed
 
+- [#840] The behavior and list of valid values for the `formatQuery` option `parseNumbers` now aligns with the corresponding `QueryBuilder` prop, as long as a `fields` array is also provided.
 - [#836] `AntDValueSelector` now filters on the `label` property and defines options with the `options` prop instead of a `children` array of `<Select.OptGroup>`/`<Select.Option>`.
 - [#836] Utilities that determine whether arrays are valid option lists (`isFullOptionArray`, `isFlexibleOptionArray`, `isFullOptionGroupArray`, `isFlexibleOptionGroupArray`) are now more strict: All leaf elements must conform to the operative type, not just the first element.
 - The "mssql" `formatQuery` preset now sets `paramPrefix: '@'`.
@@ -1831,7 +1832,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.1...HEAD
+[v8.1.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.0...v8.1.1
 [v8.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.0.0...v8.1.0
 [v8.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.1...v8.0.0
 [v7.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.0...v7.7.1
