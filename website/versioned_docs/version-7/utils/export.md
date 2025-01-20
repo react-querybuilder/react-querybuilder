@@ -362,52 +362,7 @@ An object can be passed as the second argument instead of a string to have more 
 
 ### Parse numbers
 
-Since HTML `<input>` controls store values as strings (even for `type="number"`), exporting a query to various formats may produce a string representation of a value when a true numeric value is required or more appropriate. Set the `parseNumbers` option to `true` (or one of the specific algorithms: "enhanced", "native", or "strict"; "strict" is the same as `true`) and `formatQuery` will attempt to convert all `value` properties to type `number`. When numeric parsing fails, the original value is retained.
-
-```ts
-const query: RuleGroupType = {
-  combinator: 'and',
-  not: false,
-  rules: [
-    { field: 'digits', operator: '=', value: '20' },
-    { field: 'age', operator: 'between', value: '26, 52' },
-    { field: 'lastName', operator: '=', value: 'Vai' },
-  ],
-};
-
-// Default configuration - all values are strings:
-formatQuery(query, { format: 'sql' });
-// "(digits = '20' and age between '26' and '52' and lastName = 'Vai')"
-
-// `parseNumbers: true` - numeric strings converted to actual numbers:
-formatQuery(query, { format: 'sql', parseNumbers: true });
-// "(digits = 20 and age between 26 and 52 and lastName = 'Vai')"
-```
-
-:::info
-
-To avoid information loss, this option is more strict about what qualifies as "numeric" than [the standard `parseFloat` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat). To oversimplify a bit, `parseFloat` works with any string that _starts_ with a numeric sequence, ignoring the rest of the string beginning with the first non-numeric character. In contrast, when `parseNumbers` is `true`, `formatQuery` will only convert a `value` to a `number` if it appears to be numeric _in its entirety_ (after trimming whitespace).
-
-Each of the following expressions evaluates to `true`:
-
-```ts
-// Everything after the '3' is ignored by `parseFloat`
-parseFloat('000123abcdef') === 123;
-
-// `value` contains non-numeric characters, so remains as-is
-formatQuery(
-  { rules: [{ field: 'f', operator: '=', value: '000123abcdef' }] },
-  { format: 'sql', parseNumbers: true }
-) === "(f = '000123abcdef')";
-
-// `value` is wholly numeric (after trimming whitespace) so it gets converted to a number
-formatQuery(
-  { rules: [{ field: 'f', operator: '=', value: '  000123  ' }] },
-  { format: 'sql', parseNumbers: true }
-) === '(f = 123)';
-```
-
-:::
+To render values as numbers instead of quoted strings when possible, set the `parseNumbers` option to `true`. See [Number parsing](./misc#number-parsing) for more details and advanced options.
 
 ### Rule processor
 

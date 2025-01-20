@@ -1046,16 +1046,13 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 `boolean | "enhanced" | "enhanced-limited" | "native" | "native-limited" | "strict" | "strict-limited"` (default `false`) _<DemoLink option="parseNumbers" />_
 
-Sets the `value` with type `number` instead of `string` when possible.
+Sets the `value` with type `number` instead of `string` when possible. See [Number parsing](../utils/misc#number-parsing) for more details. See also [the `formatQuery` option of the same name](../utils/export#parse-numbers).
 
-> _Tip: Try the **`"strict-limited"`** option first._
+:::info
 
-- The `"*-limited"` options are equivalent to their non-suffixed counterparts except that numeric parsing is only performed when the value editor's `inputType` is `"number"`.
-- `true`, `"strict"`, and `"enhanced"` will retain the original value when numeric parsing fails.
-- `"enhanced"` and `"native"` can lead to information loss since any trailing invalid characters will be removed.
-- `true` and `"strict"` determine numericity using [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) with `allowTrailingInvalid: false`. Values must be numeric _in their entirety_ to be considered numeric, not just _start_ with a number as with `parseFloat`.
-- `"enhanced"` uses `numeric-quantity` with `allowTrailingInvalid: true`.
-- `"native"` uses JavaScript's native `parseFloat` method, which is similar to the "enhanced" algorithm in that it will strip trailing invalid characters, but it will return `NaN` for non-numeric values instead of the original value.
+This behavior is implemented within the standard [`ValueEditor`](./valueeditor) component, not `QueryBuilder`. If a [custom value editor](#valueeditor) is implemented, the `parseNumbers` prop will be passed to it but the prop will have no effect unless the custom value editor detects it and reacts to it.
+
+:::
 
 ### `enableDragAndDrop`
 
