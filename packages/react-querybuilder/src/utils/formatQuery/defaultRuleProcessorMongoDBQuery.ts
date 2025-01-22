@@ -21,14 +21,15 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
     };
   }
 
-  switch (operator) {
+  const operatorLC = operator.toLowerCase();
+  switch (operatorLC) {
     case '<':
     case '<=':
     case '=':
     case '!=':
     case '>':
     case '>=': {
-      const mongoOperator = mongoOperators[operator];
+      const mongoOperator = mongoOperators[operatorLC];
       return valueIsField
         ? { $expr: { [mongoOperator]: [`$${field}`, `$${value}`] } }
         : {
@@ -45,27 +46,27 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         ? { $where: `this.${field}.includes(this.${value})` }
         : { [field]: { $regex: value } };
 
-    case 'beginsWith':
+    case 'beginswith':
       return valueIsField
         ? { $where: `this.${field}.startsWith(this.${value})` }
         : { [field]: { $regex: `^${value}` } };
 
-    case 'endsWith':
+    case 'endswith':
       return valueIsField
         ? { $where: `this.${field}.endsWith(this.${value})` }
         : { [field]: { $regex: `${value}$` } };
 
-    case 'doesNotContain':
+    case 'doesnotcontain':
       return valueIsField
         ? { $where: `!this.${field}.includes(this.${value})` }
         : { [field]: { $not: { $regex: value } } };
 
-    case 'doesNotBeginWith':
+    case 'doesnotbeginwith':
       return valueIsField
         ? { $where: `!this.${field}.startsWith(this.${value})` }
         : { [field]: { $not: { $regex: `^${value}` } } };
 
-    case 'doesNotEndWith':
+    case 'doesnotendwith':
       return valueIsField
         ? { $where: `!this.${field}.endsWith(this.${value})` }
         : { [field]: { $not: { $regex: `${value}$` } } };
@@ -73,21 +74,21 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
     case 'null':
       return { [field]: null };
 
-    case 'notNull':
+    case 'notnull':
       return { [field]: { $ne: null } };
 
     case 'in':
-    case 'notIn': {
+    case 'notin': {
       const valueAsArray = toArray(value);
       return valueIsField
         ? {
-            $where: `${operator === 'notIn' ? '!' : ''}[${valueAsArray
+            $where: `${operatorLC === 'notin' ? '!' : ''}[${valueAsArray
               .map(val => `this.${val}`)
               .join(',')}].includes(this.${field})`,
           }
         : {
             [field]: {
-              [mongoOperators[operator]]: valueAsArray.map(val =>
+              [mongoOperators[operatorLC]]: valueAsArray.map(val =>
                 shouldRenderAsNumber(val, parseNumbers)
                   ? parseNumber(val, { parseNumbers: 'strict' })
                   : val
@@ -97,7 +98,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
     }
 
     case 'between':
-    case 'notBetween': {
+    case 'notbetween': {
       const valueAsArray = toArray(value);
       if (
         valueAsArray.length >= 2 &&
@@ -113,7 +114,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
           : NaN;
         const firstValue = valueIsField ? first : isNaN(firstNum) ? first : firstNum;
         const secondValue = valueIsField ? second : isNaN(secondNum) ? second : secondNum;
-        if (operator === 'between') {
+        if (operatorLC === 'between') {
           return valueIsField
             ? {
                 $and: [

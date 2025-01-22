@@ -10,7 +10,7 @@ const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
     .replace(/^null$/i, '==') as '<' | '<=' | '==' | '!=' | '===' | '!==' | '>' | '>=';
 
 const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
-  /^(does)?not/i.test(op) ? { '!': jsonRule } : jsonRule;
+  op.startsWith('not') || op.startsWith('doesnot') ? { '!': jsonRule } : jsonRule;
 
 /**
  * Default rule processor used by {@link formatQuery} for "jsonlogic" format.
@@ -28,7 +28,8 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ? parseNumber(v, { parseNumbers })
         : v;
 
-  switch (operator) {
+  const operatorLC = operator.toLowerCase();
+  switch (operatorLC) {
     case '<':
     case '<=':
     case '=':
@@ -36,24 +37,24 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
     case '>':
     case '>=':
       return {
-        [convertOperator(operator)]: [fieldObject, fieldOrNumberRenderer(value)],
+        [convertOperator(operatorLC)]: [fieldObject, fieldOrNumberRenderer(value)],
       } as RQBJsonLogic;
 
     case 'null':
-    case 'notNull': {
+    case 'notnull': {
       return {
-        [`${operator === 'notNull' ? '!' : '='}=`]: [fieldObject, null],
+        [`${operatorLC === 'notnull' ? '!' : '='}=`]: [fieldObject, null],
       } as RQBJsonLogic;
     }
 
     case 'in':
-    case 'notIn': {
+    case 'notin': {
       const valueAsArray = toArray(value).map(v => fieldOrNumberRenderer(v));
-      return negateIfNotOp(operator, { in: [fieldObject, valueAsArray] });
+      return negateIfNotOp(operatorLC, { in: [fieldObject, valueAsArray] });
     }
 
     case 'between':
-    case 'notBetween': {
+    case 'notbetween': {
       const valueAsArray = toArray(value);
       if (
         valueAsArray.length >= 2 &&
@@ -81,33 +82,33 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
           second = { var: second };
         }
         const jsonRule: RQBJsonLogic = { '<=': [first, fieldObject, second] };
-        return negateIfNotOp(operator, jsonRule);
+        return negateIfNotOp(operatorLC, jsonRule);
       }
       return false;
     }
 
     case 'contains':
-    case 'doesNotContain': {
+    case 'doesnotcontain': {
       const jsonRule: RQBJsonLogic = {
         in: [fieldOrNumberRenderer(value), fieldObject],
       };
-      return negateIfNotOp(operator, jsonRule);
+      return negateIfNotOp(operatorLC, jsonRule);
     }
 
-    case 'beginsWith':
-    case 'doesNotBeginWith': {
+    case 'beginswith':
+    case 'doesnotbeginwith': {
       const jsonRule: RQBJsonLogic = {
         startsWith: [fieldObject, fieldOrNumberRenderer(value)],
       };
-      return negateIfNotOp(operator, jsonRule);
+      return negateIfNotOp(operatorLC, jsonRule);
     }
 
-    case 'endsWith':
-    case 'doesNotEndWith': {
+    case 'endswith':
+    case 'doesnotendwith': {
       const jsonRule: RQBJsonLogic = {
         endsWith: [fieldObject, fieldOrNumberRenderer(value)],
       };
-      return negateIfNotOp(operator, jsonRule);
+      return negateIfNotOp(operatorLC, jsonRule);
     }
   }
   return false;

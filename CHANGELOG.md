@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+## Added
+
+- New `formatQuery` option `operatorProcessor`. Currently only applies to "sql", "parameterized", "parameterized_named", and "natural_language" formats.
+
+## Fixed
+
+- `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
 
 ## [v8.1.1] - 2025-01-20
 
@@ -228,7 +234,7 @@ N/A
 
 ### Added
 
-- New "bulk add" `controlClassnames` properties. These classnames augment—rather than replace—the classnames defined for specific controls.
+- New "bulk add" `controlClassnames` properties. These classnames augment&mdash;rather than replace&mdash;the classnames defined for specific controls.
   - `actionElement`: Applied to all action elements like `addRuleAction`, `addGroupAction`, etc.
   - `valueSelector`: Applied to all selection elements like `combinatorSelector`, `fieldSelector`, etc.
 - New `numberedParams` option for `formatQuery`. When the format is `"parameterized"`, parameter placeholders within the generated SQL string will begin with the configured `paramPrefix` (default ":") followed by a numbered index beginning with `1` instead of using "?" as the placeholder for all parameters. This option was added primarily to reduce the code necessary for generating [PostgreSQL](https://www.postgresql.org/)-compatible SQL.

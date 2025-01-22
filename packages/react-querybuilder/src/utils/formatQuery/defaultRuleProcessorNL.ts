@@ -1,55 +1,53 @@
-import type { FullOption, RuleProcessor, ValueSource } from '../../types/index.noReact';
+import type { FullOption, RuleProcessor } from '../../types/index.noReact';
 import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuotedFieldName } from './utils';
 
-const nlOperator = (operator: FullOption, valueSource: ValueSource = 'value') => {
-  switch (operator.value.toLowerCase()) {
-    case '=':
-      return valueSource === 'field' ? 'is the same as the value in' : 'is';
-    case '!=':
-      return valueSource === 'field' ? 'is not the same as the value in' : 'is not';
-    case '<':
-      return valueSource === 'field' ? 'is less than the value in' : 'is less than';
-    case '>':
-      return valueSource === 'field' ? 'is greater than the value in' : 'is greater than';
-    case '<=':
-      return valueSource === 'field'
-        ? 'is less than or equal to the value in'
-        : 'is less than or equal to';
-    case '>=':
-      return valueSource === 'field'
-        ? 'is greater than or equal to the value in'
-        : 'is greater than or equal to';
-    case 'contains':
-      return valueSource === 'field' ? 'contains the value in' : 'contains';
-    case 'beginswith':
-      return valueSource === 'field' ? 'starts with the value in' : 'starts with';
-    case 'endswith':
-      return valueSource === 'field' ? 'ends with the value in' : 'ends with';
-    case 'doesnotcontain':
-      return valueSource === 'field' ? 'does not contain the value in' : 'does not contain';
-    case 'doesnotbeginwith':
-      return valueSource === 'field' ? 'does not start with the value in' : 'does not start with';
-    case 'doesnotendwith':
-      return valueSource === 'field' ? 'does not end with the value in' : 'does not end with';
-    case 'null':
-      return 'is null';
-    case 'notnull':
-      return 'is not null';
-    case 'in':
-      return valueSource === 'field' ? 'is the same as a value in' : 'is one of the values';
-    case 'notin':
-      return valueSource === 'field'
-        ? 'is not the same as any value in'
-        : 'is not one of the values';
-    case 'between':
-      return valueSource === 'field' ? 'is between the values in' : 'is between';
-    case 'notbetween':
-      return valueSource === 'field' ? 'is not between the values in' : 'is not between';
-    default:
-      return operator.label;
-  }
+const nlOperatorMap: Record<string, [string, string]> = {
+  '=': ['is the same as the value in', 'is'],
+  '!=': ['is not the same as the value in', 'is not'],
+  '<': ['is less than the value in', 'is less than'],
+  '>': ['is greater than the value in', 'is greater than'],
+  '<=': ['is less than or equal to the value in', 'is less than or equal to'],
+  '>=': ['is greater than or equal to the value in', 'is greater than or equal to'],
+  contains: ['contains the value in', 'contains'],
+  beginswith: ['starts with the value in', 'starts with'],
+  endswith: ['ends with the value in', 'ends with'],
+  doesnotcontain: ['does not contain the value in', 'does not contain'],
+  doesnotbeginwith: ['does not start with the value in', 'does not start with'],
+  doesnotendwith: ['does not end with the value in', 'does not end with'],
+  null: ['is null', 'is null'],
+  notnull: ['is not null', 'is not null'],
+  in: ['is the same as a value in', 'is one of the values'],
+  notin: ['is not the same as any value in', 'is not one of the values'],
+  between: ['is between the values in', 'is between'],
+  notbetween: ['is not between the values in', 'is not between'],
+};
+
+export const defaultOperatorProcessorNL: RuleProcessor = (
+  rule,
+  opts = /* istanbul ignore next */ {}
+) => {
+  const { valueSource = 'value' } = rule;
+  const { getOperators = () => [] } = opts;
+  const { value: operator, label } = getOption(
+    toFullOptionList(
+      getOperators(rule.field, {
+        fieldData: opts.fieldData ?? {
+          name: rule.field,
+          value: rule.field,
+          label: rule.field,
+        },
+      }) ?? /* istanbul ignore next */ []
+    ) as FullOption[],
+    rule.operator
+  ) ?? {
+    name: rule.operator,
+    value: rule.operator,
+    label: rule.operator,
+  };
+
+  return (nlOperatorMap[operator.toLowerCase()] ?? [label, label])[valueSource === 'field' ? 0 : 1];
 };
 
 /**
@@ -65,9 +63,9 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     quoteFieldNamesWith = ['', ''] as [string, string],
     fieldIdentifierSeparator = '',
     quoteValuesWith = `'`,
+    operatorProcessor = defaultOperatorProcessorNL,
     valueProcessor = defaultValueProcessorNL,
     concatOperator = '||',
-    getOperators = () => [],
   } = opts ?? /* istanbul ignore next */ {};
 
   const value = valueProcessor(rule, {
@@ -96,25 +94,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     fieldIdentifierSeparator,
   });
 
-  const processedOperator = nlOperator(
-    getOption(
-      toFullOptionList(
-        getOperators(rule.field, {
-          fieldData: fieldData ?? {
-            name: rule.field,
-            value: rule.field,
-            label: rule.field,
-          },
-        }) ?? /* istanbul ignore next */ []
-      ) as FullOption[],
-      rule.operator
-    ) ?? {
-      name: rule.operator,
-      value: rule.operator,
-      label: rule.operator,
-    },
-    rule.valueSource
-  );
+  const processedOperator = operatorProcessor(rule, opts);
 
   return `${processedField} ${processedOperator} ${value}`.trim();
 };

@@ -3,7 +3,7 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { nullOrUndefinedOrEmpty, getQuotedFieldName, shouldRenderAsNumber } from './utils';
 
-const shouldNegate = (op: string) => /^(does)?not/i.test(op);
+const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
 const quote = (v: string | number | boolean | object | null, escapeQuotes?: boolean) =>
   `"${typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`"`, `\\"`)}"`;
@@ -36,14 +36,15 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
   const qfn = (f: string) =>
     getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
-  switch (operator) {
+  const operatorLC = operator.toLowerCase();
+  switch (operatorLC) {
     case '<':
     case '<=':
     case '=':
     case '!=':
     case '>':
     case '>=':
-      return `${qfn(field)} ${operator} ${
+      return `${qfn(field)} ${operatorLC} ${
         valueIsField
           ? qfn(trimIfString(value))
           : useBareValue
@@ -52,38 +53,38 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       }`;
 
     case 'contains':
-    case 'doesNotContain':
+    case 'doesnotcontain':
       return negate(
         `$contains(${qfn(field)}, ${valueIsField ? qfn(trimIfString(value)) : quote(value, escapeQuotes)})`,
-        shouldNegate(operator)
+        shouldNegate(operatorLC)
       );
 
-    case 'beginsWith':
-    case 'doesNotBeginWith':
+    case 'beginswith':
+    case 'doesnotbeginwith':
       return negate(
         valueIsField
           ? `$substring(${qfn(field)}, 0, $length(${qfn(trimIfString(value))})) = ${qfn(trimIfString(value))}`
           : `$contains(${qfn(field)}, /^${escapeStringRegex(value)}/)`,
-        shouldNegate(operator)
+        shouldNegate(operatorLC)
       );
 
-    case 'endsWith':
-    case 'doesNotEndWith':
+    case 'endswith':
+    case 'doesnotendwith':
       return negate(
         valueIsField
           ? `$substring(${qfn(field)}, $length(${qfn(field)}) - $length(${qfn(trimIfString(value))})) = ${qfn(trimIfString(value))}`
           : `$contains(${qfn(field)}, /${escapeStringRegex(value)}$/)`,
-        shouldNegate(operator)
+        shouldNegate(operatorLC)
       );
 
     case 'null':
       return `${qfn(field)} = null`;
 
-    case 'notNull':
+    case 'notnull':
       return `${qfn(field)} != null`;
 
     case 'in':
-    case 'notIn': {
+    case 'notin': {
       const valueAsArray = toArray(value);
       return negate(
         `${qfn(field)} in [${valueAsArray
@@ -95,12 +96,12 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
                 : quote(val, escapeQuotes)
           )
           .join(', ')}]`,
-        shouldNegate(operator)
+        shouldNegate(operatorLC)
       );
     }
 
     case 'between':
-    case 'notBetween': {
+    case 'notbetween': {
       const valueAsArray = toArray(value);
       if (
         valueAsArray.length < 2 ||
@@ -131,7 +132,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
 
       const expression = `${qfn(field)} >= ${valueIsField ? qfn(first) : renderAsNumbers ? firstValue : quote(firstValue, escapeQuotes)} and ${qfn(field)} <= ${valueIsField ? qfn(second) : renderAsNumbers ? secondValue : quote(secondValue, escapeQuotes)}`;
 
-      return operator === 'between' ? `(${expression})` : negate(expression, true);
+      return operatorLC === 'between' ? `(${expression})` : negate(expression, true);
     }
   }
 

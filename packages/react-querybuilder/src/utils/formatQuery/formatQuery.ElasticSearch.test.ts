@@ -4,6 +4,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForRuleProcessor,
   queryIC,
@@ -182,6 +184,12 @@ it('formats ElasticSearch correctly', () => {
       ],
     },
   });
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'elasticsearch')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'elasticsearch')
+  );
 });
 
 it('independent combinators', () => {

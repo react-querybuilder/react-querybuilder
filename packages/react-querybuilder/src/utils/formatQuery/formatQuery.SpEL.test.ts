@@ -12,6 +12,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForRuleProcessor,
   queryIC,
@@ -41,6 +43,12 @@ it('formats SpEL correctly', () => {
       'spel'
     )
   ).toBe('(f >= 12 and f <= 14)');
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'spel')).toBe(
+    formatQuery(queryAllOperatorsRandomCase, 'spel')
+  );
 });
 
 it('handles invalid type correctly', () => {

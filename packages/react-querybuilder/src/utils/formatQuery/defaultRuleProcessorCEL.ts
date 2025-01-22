@@ -3,7 +3,7 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { nullOrUndefinedOrEmpty, shouldRenderAsNumber } from './utils';
 
-const shouldNegate = (op: string) => /^(does)?not/i.test(op);
+const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
 const escapeDoubleQuotes = (
   v: string | number | boolean | object | null,
@@ -19,7 +19,7 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const operatorTL = operator.replace(/^=$/, '==');
+  const operatorTL = (operator === '=' ? '==' : operator).toLowerCase();
   const useBareValue =
     typeof value === 'number' ||
     typeof value === 'boolean' ||
@@ -40,23 +40,23 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
       }`;
 
     case 'contains':
-    case 'doesNotContain': {
+    case 'doesnotcontain': {
       const negate = shouldNegate(operatorTL) ? '!' : '';
       return `${negate}${field}.contains(${
         valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value, escapeQuotes)}"`
       })`;
     }
 
-    case 'beginsWith':
-    case 'doesNotBeginWith': {
+    case 'beginswith':
+    case 'doesnotbeginwith': {
       const negate = shouldNegate(operatorTL) ? '!' : '';
       return `${negate}${field}.startsWith(${
         valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value, escapeQuotes)}"`
       })`;
     }
 
-    case 'endsWith':
-    case 'doesNotEndWith': {
+    case 'endswith':
+    case 'doesnotendwith': {
       const negate = shouldNegate(operatorTL) ? '!' : '';
       return `${negate}${field}.endsWith(${
         valueIsField ? trimIfString(value) : `"${escapeDoubleQuotes(value, escapeQuotes)}"`
@@ -66,11 +66,11 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
     case 'null':
       return `${field} == null`;
 
-    case 'notNull':
+    case 'notnull':
       return `${field} != null`;
 
     case 'in':
-    case 'notIn': {
+    case 'notin': {
       const [prefix, suffix] = shouldNegate(operatorTL) ? ['!(', ')'] : ['', ''];
       const valueAsArray = toArray(value);
       return `${prefix}${field} in [${valueAsArray
@@ -83,7 +83,7 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
     }
 
     case 'between':
-    case 'notBetween': {
+    case 'notbetween': {
       const valueAsArray = toArray(value);
       if (
         valueAsArray.length >= 2 &&
@@ -114,7 +114,7 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
           firstValue = tempNum;
         }
 
-        return operator === 'between'
+        return operatorTL === 'between'
           ? `(${field} >= ${firstValue} && ${field} <= ${secondValue})`
           : `(${field} < ${firstValue} || ${field} > ${secondValue})`;
       } else {

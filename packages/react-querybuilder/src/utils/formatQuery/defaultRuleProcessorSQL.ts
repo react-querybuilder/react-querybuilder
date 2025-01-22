@@ -2,6 +2,9 @@ import type { RuleProcessor } from '../../types/index.noReact';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { mapSQLOperator, getQuotedFieldName } from './utils';
 
+export const defaultOperatorProcessorSQL: RuleProcessor = rule =>
+  mapSQLOperator(rule.operator).toLowerCase();
+
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
  */
@@ -10,9 +13,11 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
     quoteFieldNamesWith = ['', ''] as [string, string],
     fieldIdentifierSeparator = '',
     quoteValuesWith = `'`,
+    operatorProcessor = defaultOperatorProcessorSQL,
     valueProcessor = defaultValueProcessorByRule,
     concatOperator = '||',
   } = opts;
+
   const value = valueProcessor(rule, {
     ...opts,
     quoteFieldNamesWith,
@@ -20,7 +25,8 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
     quoteValuesWith,
     concatOperator,
   });
-  const operator = mapSQLOperator(rule.operator);
+
+  const operator = operatorProcessor(rule, opts);
 
   const operatorLowerCase = operator.toLowerCase();
   if (

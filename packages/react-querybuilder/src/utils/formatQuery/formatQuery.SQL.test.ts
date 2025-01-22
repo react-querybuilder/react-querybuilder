@@ -18,6 +18,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForRuleProcessor,
   queryForXor,
@@ -120,6 +122,18 @@ it('formats parameterized named SQL correctly', () => {
     sql: sqlStringForValueSourceField,
     params: {},
   });
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'sql')).toBe(
+    formatQuery(queryAllOperatorsRandomCase, 'sql')
+  );
+  expect(formatQuery(queryAllOperators, 'parameterized')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'parameterized')
+  );
+  expect(formatQuery(queryAllOperators, 'parameterized_named')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'parameterized_named')
+  );
 });
 
 it('handles custom valueProcessors correctly', () => {

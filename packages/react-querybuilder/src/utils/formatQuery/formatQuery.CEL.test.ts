@@ -5,6 +5,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryIC,
   queryWithValueSourceField,
@@ -33,6 +35,12 @@ it('formats CEL correctly', () => {
       'cel'
     )
   ).toBe('(f >= 12 && f <= 14)');
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'cel')).toBe(
+    formatQuery(queryAllOperatorsRandomCase, 'cel')
+  );
 });
 
 it('escapes quotes when appropriate', () => {

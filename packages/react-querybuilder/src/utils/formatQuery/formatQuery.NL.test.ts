@@ -13,6 +13,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForXor,
   queryIC,
@@ -54,6 +56,12 @@ it('formats nature language correctly', () => {
     )
   ).toBe(
     `f1 is greater than 1, and f1 is greater than the value in f2, and f1 is greater than or equal to 1, and f1 is greater than or equal to the value in f2, and f1 is less than 1, and f1 is less than the value in f2, and f1 is less than or equal to 1, and f1 is less than or equal to the value in f2`
+  );
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'natural_language')).toBe(
+    formatQuery(queryAllOperatorsRandomCase, 'natural_language')
   );
 });
 

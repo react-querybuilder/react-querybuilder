@@ -53,7 +53,8 @@ export const mongoOperators = {
   '>': '$gt',
   '>=': '$gte',
   in: '$in',
-  notIn: '$nin',
+  notin: '$nin',
+  notIn: '$nin', // only here for backwards compatibility
 };
 
 /**
