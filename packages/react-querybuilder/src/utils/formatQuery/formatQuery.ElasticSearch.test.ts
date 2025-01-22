@@ -59,16 +59,32 @@ const elasticSearchQueryObjectForValueSourceField = {
       {
         bool: {
           should: [
-            { bool: { filter: { script: { script: `doc['firstName'] == doc['middleName']` } } } },
-            { bool: { filter: { script: { script: `doc['firstName'] == doc['lastName']` } } } },
+            {
+              bool: {
+                filter: { script: { script: `doc['firstName'].value == doc['middleName'].value` } },
+              },
+            },
+            {
+              bool: {
+                filter: { script: { script: `doc['firstName'].value == doc['lastName'].value` } },
+              },
+            },
           ],
         },
       },
       {
         bool: {
           must_not: [
-            { bool: { filter: { script: { script: `doc['lastName'] == doc['middleName']` } } } },
-            { bool: { filter: { script: { script: `doc['lastName'] == doc['lastName']` } } } },
+            {
+              bool: {
+                filter: { script: { script: `doc['lastName'].value == doc['middleName'].value` } },
+              },
+            },
+            {
+              bool: {
+                filter: { script: { script: `doc['lastName'].value == doc['lastName'].value` } },
+              },
+            },
           ],
         },
       },
@@ -76,7 +92,7 @@ const elasticSearchQueryObjectForValueSourceField = {
         bool: {
           filter: {
             script: {
-              script: `doc['firstName'] >= doc['middleName'] && doc['firstName'] <= doc['lastName']`,
+              script: `doc['firstName'].value >= doc['middleName'].value && doc['firstName'].value <= doc['lastName'].value`,
             },
           },
         },
@@ -85,7 +101,7 @@ const elasticSearchQueryObjectForValueSourceField = {
         bool: {
           filter: {
             script: {
-              script: `doc['firstName'] >= doc['middleName'] && doc['firstName'] <= doc['lastName']`,
+              script: `doc['firstName'].value >= doc['middleName'].value && doc['firstName'].value <= doc['lastName'].value`,
             },
           },
         },
@@ -94,22 +110,42 @@ const elasticSearchQueryObjectForValueSourceField = {
         bool: {
           filter: {
             script: {
-              script: `!(doc['lastName'] >= doc['middleName'] && doc['lastName'] <= doc['lastName'])`,
+              script: `!(doc['lastName'].value >= doc['middleName'].value && doc['lastName'].value <= doc['lastName'].value)`,
             },
           },
         },
       },
-      { bool: { filter: { script: { script: `doc['age'] == doc['iq']` } } } },
-      { bool: { filter: { script: { script: `doc['isMusician'] == doc['isCreative']` } } } },
+      { bool: { filter: { script: { script: `doc['age'].value == doc['iq'].value` } } } },
+      {
+        bool: {
+          filter: { script: { script: `doc['isMusician'].value == doc['isCreative'].value` } },
+        },
+      },
       {
         bool: {
           must_not: {
             bool: {
               should: [
-                { bool: { filter: { script: { script: `doc['gender'] == doc['someLetter']` } } } },
-                { bool: { filter: { script: { script: `doc['job'] != doc['isBetweenJobs']` } } } },
                 {
-                  bool: { filter: { script: { script: `doc['email'].contains(doc['atSign'])` } } },
+                  bool: {
+                    filter: {
+                      script: { script: `doc['gender'].value == doc['someLetter'].value` },
+                    },
+                  },
+                },
+                {
+                  bool: {
+                    filter: {
+                      script: { script: `doc['job'].value != doc['isBetweenJobs'].value` },
+                    },
+                  },
+                },
+                {
+                  bool: {
+                    filter: {
+                      script: { script: `doc['email'].value.contains(doc['atSign'].value)` },
+                    },
+                  },
                 },
               ],
             },
@@ -121,14 +157,36 @@ const elasticSearchQueryObjectForValueSourceField = {
           should: [
             {
               bool: {
-                filter: { script: { script: `!doc['lastName'].contains(doc['firstName'])` } },
+                filter: {
+                  script: { script: `!doc['lastName'].value.contains(doc['firstName'].value)` },
+                },
               },
             },
-            { bool: { filter: { script: { script: `doc['job'].startsWith(doc['jobPrefix'])` } } } },
-            { bool: { filter: { script: { script: `doc['email'].endsWith(doc['dotCom'])` } } } },
-            { bool: { filter: { script: { script: `!doc['job'].startsWith(doc['hasNoJob'])` } } } },
             {
-              bool: { filter: { script: { script: `!doc['email'].endsWith(doc['isInvalid'])` } } },
+              bool: {
+                filter: {
+                  script: { script: `doc['job'].value.startsWith(doc['jobPrefix'].value)` },
+                },
+              },
+            },
+            {
+              bool: {
+                filter: { script: { script: `doc['email'].value.endsWith(doc['dotCom'].value)` } },
+              },
+            },
+            {
+              bool: {
+                filter: {
+                  script: { script: `!doc['job'].value.startsWith(doc['hasNoJob'].value)` },
+                },
+              },
+            },
+            {
+              bool: {
+                filter: {
+                  script: { script: `!doc['email'].value.endsWith(doc['isInvalid'].value)` },
+                },
+              },
             },
           ],
         },
@@ -173,7 +231,11 @@ it('formats ElasticSearch correctly', () => {
     bool: {
       must: [
         { bool: { must_not: [{ term: { f1: 'v1' } }] } },
-        { bool: { filter: { script: { script: `doc['f\\\\\\'1'].contains(doc['v1'])` } } } },
+        {
+          bool: {
+            filter: { script: { script: `doc['f\\\\\\'1'].value.contains(doc['v1'].value)` } },
+          },
+        },
         { range: { f1: { lt: 0 } } },
         { range: { f1: { lte: 0 } } },
         { range: { f1: { gt: 0 } } },
