@@ -18,17 +18,17 @@ type ElasticSearchRule =
   | { regexp: { [k: string]: { value: string } } };
 type ElasticSearchQuery = {
   bool:
-  | { filter: { script: { script: string } } }
-  | { must: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[] }
-  | {
-    must_not:
-    | ElasticSearchRule
-    | ElasticSearchQuery
-    | (ElasticSearchRule | ElasticSearchQuery)[];
-  }
-  | {
-    should: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[];
-  };
+    | { filter: { script: { script: string } } }
+    | { must: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[] }
+    | {
+        must_not:
+          | ElasticSearchRule
+          | ElasticSearchQuery
+          | (ElasticSearchRule | ElasticSearchQuery)[];
+      }
+    | {
+        should: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[];
+      };
 };
 
 const rangeOperatorMap = { '<': 'lt', '<=': 'lte', '>': 'gt', '>=': 'gte' } satisfies Record<
@@ -87,14 +87,14 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         const valueForScript = escapeSQ(value);
         return valueForScript
           ? {
-            bool: {
-              filter: {
-                script: {
-                  script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
+              bool: {
+                filter: {
+                  script: {
+                    script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
+                  },
                 },
               },
-            },
-          }
+            }
           : false;
       }
 
@@ -103,7 +103,9 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         const valueAsArray = toArray(value);
         if (valueAsArray.length > 0) {
           const arr = valueAsArray.map(v => ({
-            bool: { filter: { script: { script: `doc['${fieldForScript}'].value == doc['${v}'].value` } } },
+            bool: {
+              filter: { script: { script: `doc['${fieldForScript}'].value == doc['${v}'].value` } },
+            },
           }));
           return { bool: operator === 'in' ? { should: arr } : { must_not: arr } };
         }

@@ -59,16 +59,32 @@ const elasticSearchQueryObjectForValueSourceField = {
       {
         bool: {
           should: [
-            { bool: { filter: { script: { script: `doc['firstName'].value == doc['middleName'].value` } } } },
-            { bool: { filter: { script: { script: `doc['firstName'].value == doc['lastName'].value` } } } },
+            {
+              bool: {
+                filter: { script: { script: `doc['firstName'].value == doc['middleName'].value` } },
+              },
+            },
+            {
+              bool: {
+                filter: { script: { script: `doc['firstName'].value == doc['lastName'].value` } },
+              },
+            },
           ],
         },
       },
       {
         bool: {
           must_not: [
-            { bool: { filter: { script: { script: `doc['lastName'].value == doc['middleName'].value` } } } },
-            { bool: { filter: { script: { script: `doc['lastName'].value == doc['lastName'].value` } } } },
+            {
+              bool: {
+                filter: { script: { script: `doc['lastName'].value == doc['middleName'].value` } },
+              },
+            },
+            {
+              bool: {
+                filter: { script: { script: `doc['lastName'].value == doc['lastName'].value` } },
+              },
+            },
           ],
         },
       },
@@ -100,16 +116,36 @@ const elasticSearchQueryObjectForValueSourceField = {
         },
       },
       { bool: { filter: { script: { script: `doc['age'].value == doc['iq'].value` } } } },
-      { bool: { filter: { script: { script: `doc['isMusician'].value == doc['isCreative'].value` } } } },
+      {
+        bool: {
+          filter: { script: { script: `doc['isMusician'].value == doc['isCreative'].value` } },
+        },
+      },
       {
         bool: {
           must_not: {
             bool: {
               should: [
-                { bool: { filter: { script: { script: `doc['gender'].value == doc['someLetter'].value` } } } },
-                { bool: { filter: { script: { script: `doc['job'].value != doc['isBetweenJobs'].value` } } } },
                 {
-                  bool: { filter: { script: { script: `doc['email'].value.contains(doc['atSign'].value)` } } },
+                  bool: {
+                    filter: {
+                      script: { script: `doc['gender'].value == doc['someLetter'].value` },
+                    },
+                  },
+                },
+                {
+                  bool: {
+                    filter: {
+                      script: { script: `doc['job'].value != doc['isBetweenJobs'].value` },
+                    },
+                  },
+                },
+                {
+                  bool: {
+                    filter: {
+                      script: { script: `doc['email'].value.contains(doc['atSign'].value)` },
+                    },
+                  },
                 },
               ],
             },
@@ -121,14 +157,36 @@ const elasticSearchQueryObjectForValueSourceField = {
           should: [
             {
               bool: {
-                filter: { script: { script: `!doc['lastName'].value.contains(doc['firstName'].value)` } },
+                filter: {
+                  script: { script: `!doc['lastName'].value.contains(doc['firstName'].value)` },
+                },
               },
             },
-            { bool: { filter: { script: { script: `doc['job'].value.startsWith(doc['jobPrefix'].value)` } } } },
-            { bool: { filter: { script: { script: `doc['email'].value.endsWith(doc['dotCom'].value)` } } } },
-            { bool: { filter: { script: { script: `!doc['job'].value.startsWith(doc['hasNoJob'].value)` } } } },
             {
-              bool: { filter: { script: { script: `!doc['email'].value.endsWith(doc['isInvalid'].value)` } } },
+              bool: {
+                filter: {
+                  script: { script: `doc['job'].value.startsWith(doc['jobPrefix'].value)` },
+                },
+              },
+            },
+            {
+              bool: {
+                filter: { script: { script: `doc['email'].value.endsWith(doc['dotCom'].value)` } },
+              },
+            },
+            {
+              bool: {
+                filter: {
+                  script: { script: `!doc['job'].value.startsWith(doc['hasNoJob'].value)` },
+                },
+              },
+            },
+            {
+              bool: {
+                filter: {
+                  script: { script: `!doc['email'].value.endsWith(doc['isInvalid'].value)` },
+                },
+              },
             },
           ],
         },
@@ -173,7 +231,11 @@ it('formats ElasticSearch correctly', () => {
     bool: {
       must: [
         { bool: { must_not: [{ term: { f1: 'v1' } }] } },
-        { bool: { filter: { script: { script: `doc['f\\\\\\'1'].value.contains(doc['v1'].value)` } } } },
+        {
+          bool: {
+            filter: { script: { script: `doc['f\\\\\\'1'].value.contains(doc['v1'].value)` } },
+          },
+        },
         { range: { f1: { lt: 0 } } },
         { range: { f1: { lte: 0 } } },
         { range: { f1: { gt: 0 } } },
