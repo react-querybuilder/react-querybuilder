@@ -131,6 +131,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Romander"><img src="https://avatars.githubusercontent.com/u/13166357?v=4?s=100" width="100px;" alt="Roman Ogoreltsev"/><br /><sub><b>Roman Ogoreltsev</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=Romander" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=Romander" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/A-EbrahimRSA"><img src="https://avatars.githubusercontent.com/u/61310161?v=4?s=100" width="100px;" alt="Abdullah Ebrahim"/><br /><sub><b>Abdullah Ebrahim</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=A-EbrahimRSA" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sajov"><img src="https://avatars.githubusercontent.com/u/2475348?v=4?s=100" width="100px;" alt="sajov"/><br /><sub><b>sajov</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Tests">⚠️</a></td>
+    </tr>
   </tbody>
 </table>
 
@@ -143,7 +146,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-42-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-43-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
