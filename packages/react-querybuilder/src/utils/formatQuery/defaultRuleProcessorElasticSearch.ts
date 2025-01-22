@@ -18,17 +18,17 @@ type ElasticSearchRule =
   | { regexp: { [k: string]: { value: string } } };
 type ElasticSearchQuery = {
   bool:
-    | { filter: { script: { script: string } } }
-    | { must: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[] }
-    | {
-        must_not:
-          | ElasticSearchRule
-          | ElasticSearchQuery
-          | (ElasticSearchRule | ElasticSearchQuery)[];
-      }
-    | {
-        should: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[];
-      };
+  | { filter: { script: { script: string } } }
+  | { must: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[] }
+  | {
+    must_not:
+    | ElasticSearchRule
+    | ElasticSearchQuery
+    | (ElasticSearchRule | ElasticSearchQuery)[];
+  }
+  | {
+    should: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[];
+  };
 };
 
 const rangeOperatorMap = { '<': 'lt', '<=': 'lte', '>': 'gt', '>=': 'gte' } satisfies Record<
@@ -51,7 +51,7 @@ const textFunctionMap: Partial<Record<DefaultOperatorName, string>> = {
   doesNotEndWith: 'endsWith',
 };
 const getTextScript = (f: string, o: DefaultOperatorName, v: string) => {
-  const script = `doc['${f}'].${textFunctionMap[o] ?? o}(doc['${v}'])`;
+  const script = `doc['${f}'].value.${textFunctionMap[o] ?? o}(doc['${v}'].value)`;
   return o.startsWith('d') ? `!${script}` : script;
 };
 
@@ -87,14 +87,14 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         const valueForScript = escapeSQ(value);
         return valueForScript
           ? {
-              bool: {
-                filter: {
-                  script: {
-                    script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
-                  },
+            bool: {
+              filter: {
+                script: {
+                  script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
                 },
               },
-            }
+            },
+          }
           : false;
       }
 
