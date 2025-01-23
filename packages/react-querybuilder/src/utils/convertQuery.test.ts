@@ -142,6 +142,40 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
       convertQuery({
         rules: [
           { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'or',
+          { field: 'middleName', operator: 'null', value: null },
+          'xor',
+          { field: 'isMusician', operator: '=', value: true },
+          'or',
+          { field: 'fieldName', operator: '=', value: 'Test' },
+        ],
+      })
+    ).toEqual({
+      combinator: 'or',
+      rules: [
+        {
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+          ],
+        },
+        {
+          combinator: 'xor',
+          rules: [
+            { field: 'middleName', operator: 'null', value: null },
+            { field: 'isMusician', operator: '=', value: true },
+          ],
+        },
+        { field: 'fieldName', operator: '=', value: 'Test' },
+      ],
+    });
+    expect(
+      convertQuery({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
           'or',
           { field: 'lastName', operator: '=', value: 'Vai' },
           'or',

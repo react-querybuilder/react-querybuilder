@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#844] The `formatQuery` export format "elasticsearch" now includes the `.value` property when outputting Painless scripts.
 - [#845] `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
+- The `convertQuery*` functions now support the "xor" combinator.
 
 ## [v8.1.1] - 2025-01-20
 
