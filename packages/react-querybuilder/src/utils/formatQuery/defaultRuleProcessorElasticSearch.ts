@@ -54,7 +54,7 @@ const textFunctionMap: Partial<Record<Lowercase<DefaultOperatorName>, string>> =
   endswith: 'endsWith',
 };
 const getTextScript = (f: string, o: Lowercase<DefaultOperatorName>, v: string) => {
-  const script = `doc['${f}'].${textFunctionMap[o] ?? o}(doc['${v}'])`;
+  const script = `doc['${f}'].value.${textFunctionMap[o] ?? o}(doc['${v}'].value)`;
   return o.startsWith('d') ? `!${script}` : script;
 };
 
@@ -95,7 +95,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
               bool: {
                 filter: {
                   script: {
-                    script: `doc['${fieldForScript}'] ${operatorForScript} doc['${valueForScript}']`,
+                    script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
                   },
                 },
               },
@@ -108,7 +108,9 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         const valueAsArray = toArray(value);
         if (valueAsArray.length > 0) {
           const arr = valueAsArray.map(v => ({
-            bool: { filter: { script: { script: `doc['${fieldForScript}'] == doc['${v}']` } } },
+            bool: {
+              filter: { script: { script: `doc['${fieldForScript}'].value == doc['${v}'].value` } },
+            },
           }));
           return { bool: operatorLC === 'in' ? { should: arr } : { must_not: arr } };
         }
@@ -119,7 +121,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       case 'notbetween': {
         const valueAsArray = toArray(value);
         if (valueAsArray.length >= 2 && valueAsArray[0] && valueAsArray[1]) {
-          const script = `doc['${fieldForScript}'] >= doc['${valueAsArray[0]}'] && doc['${fieldForScript}'] <= doc['${valueAsArray[1]}']`;
+          const script = `doc['${fieldForScript}'].value >= doc['${valueAsArray[0]}'].value && doc['${fieldForScript}'].value <= doc['${valueAsArray[1]}'].value`;
           return {
             bool: {
               filter: { script: { script: operatorLC === 'notbetween' ? `!(${script})` : script } },
