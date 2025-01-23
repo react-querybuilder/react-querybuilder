@@ -352,7 +352,7 @@ export interface Schema<F extends FullField, O extends string> {
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
   dispatchQuery(query: RuleGroupTypeAny): void;
-  getQuery(): RuleGroupTypeAny | undefined;
+  getQuery(): RuleGroupTypeAny;
   getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
