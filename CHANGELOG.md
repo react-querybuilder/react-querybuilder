@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- New `formatQuery` option `operatorProcessor`. Currently only applies to "sql", "parameterized", "parameterized_named", and "natural_language" formats.
+- [#845] New `formatQuery` option `operatorProcessor`. Currently only applies to "sql", "parameterized", "parameterized_named", and "natural_language" formats.
 
 ## Fixed
 
-- `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
+- [#844] The `formatQuery` export format "elasticsearch" now includes the `.value` property when outputting Painless scripts.
+- [#845] `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
 
 ## [v8.1.1] - 2025-01-20
 
@@ -1833,6 +1834,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#834]: https://github.com/react-querybuilder/react-querybuilder/pull/834
 [#836]: https://github.com/react-querybuilder/react-querybuilder/pull/836
 [#840]: https://github.com/react-querybuilder/react-querybuilder/pull/840
+[#844]: https://github.com/react-querybuilder/react-querybuilder/pull/844
+[#845]: https://github.com/react-querybuilder/react-querybuilder/pull/845
 
 <!-- #endregion -->
 
