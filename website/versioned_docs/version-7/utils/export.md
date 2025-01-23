@@ -557,6 +557,10 @@ Versions of the default value processors using the newer `fn(rule, options)` sig
   - `defaultCELValueProcessor`
   - `defaultSpELValueProcessor`
 
+### Operator processor
+
+`operatorProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "operator" portion of the output for the "sql", "parameterized", "parameterized_named", and "natural_language" formats.
+
 ### Quote field names
 
 Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option which can be assigned a string or an array of two strings.

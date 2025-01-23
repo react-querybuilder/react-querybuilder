@@ -40,17 +40,20 @@ const negateIfNotOp = (
   op: string,
   elasticSearchRule: ElasticSearchRule
 ): ElasticSearchQuery | ElasticSearchRule =>
-  /^(does)?not/i.test(op) ? { bool: { must_not: elasticSearchRule } } : elasticSearchRule;
+  op.startsWith('not') || op.startsWith('doesnot')
+    ? { bool: { must_not: elasticSearchRule } }
+    : elasticSearchRule;
 
 const escapeSQ = (s: string) => s?.replace(/('|\\)/g, `\\$1`);
 
-const textFunctionMap: Partial<Record<DefaultOperatorName, string>> = {
-  beginsWith: 'startsWith',
-  doesNotContain: 'contains',
-  doesNotBeginWith: 'startsWith',
-  doesNotEndWith: 'endsWith',
+const textFunctionMap: Partial<Record<Lowercase<DefaultOperatorName>, string>> = {
+  beginswith: 'startsWith',
+  doesnotbeginwith: 'startsWith',
+  doesnotcontain: 'contains',
+  doesnotendwith: 'endsWith',
+  endswith: 'endsWith',
 };
-const getTextScript = (f: string, o: DefaultOperatorName, v: string) => {
+const getTextScript = (f: string, o: Lowercase<DefaultOperatorName>, v: string) => {
   const script = `doc['${f}'].value.${textFunctionMap[o] ?? o}(doc['${v}'].value)`;
   return o.startsWith('d') ? `!${script}` : script;
 };
@@ -70,20 +73,22 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
   { field, operator, value, valueSource },
   { parseNumbers } = {}
 ): ElasticSearchQuery | ElasticSearchRule | false => {
+  const operatorLC = operator.toLowerCase() as Lowercase<DefaultOperatorName>;
+
   if (valueSource === 'field') {
     // Bail out if not all values are strings
     if (toArray(value).some(v => typeof v !== 'string')) return false;
 
     const fieldForScript = escapeSQ(field);
 
-    switch (operator) {
+    switch (operatorLC) {
       case '=':
       case '!=':
       case '>':
       case '>=':
       case '<':
       case '<=': {
-        const operatorForScript = operator === '=' ? '==' : operator;
+        const operatorForScript = operatorLC === '=' ? '==' : operatorLC;
         const valueForScript = escapeSQ(value);
         return valueForScript
           ? {
@@ -99,7 +104,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       }
 
       case 'in':
-      case 'notIn': {
+      case 'notin': {
         const valueAsArray = toArray(value);
         if (valueAsArray.length > 0) {
           const arr = valueAsArray.map(v => ({
@@ -107,19 +112,19 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
               filter: { script: { script: `doc['${fieldForScript}'].value == doc['${v}'].value` } },
             },
           }));
-          return { bool: operator === 'in' ? { should: arr } : { must_not: arr } };
+          return { bool: operatorLC === 'in' ? { should: arr } : { must_not: arr } };
         }
         return false;
       }
 
       case 'between':
-      case 'notBetween': {
+      case 'notbetween': {
         const valueAsArray = toArray(value);
         if (valueAsArray.length >= 2 && valueAsArray[0] && valueAsArray[1]) {
           const script = `doc['${fieldForScript}'].value >= doc['${valueAsArray[0]}'].value && doc['${fieldForScript}'].value <= doc['${valueAsArray[1]}'].value`;
           return {
             bool: {
-              filter: { script: { script: operator === 'notBetween' ? `!(${script})` : script } },
+              filter: { script: { script: operatorLC === 'notbetween' ? `!(${script})` : script } },
             },
           };
         }
@@ -127,14 +132,14 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       }
 
       case 'contains':
-      case 'doesNotContain':
-      case 'beginsWith':
-      case 'doesNotBeginWith':
-      case 'endsWith':
-      case 'doesNotEndWith': {
+      case 'doesnotcontain':
+      case 'beginswith':
+      case 'doesnotbeginwith':
+      case 'endswith':
+      case 'doesnotendwith': {
         const valueForScript = escapeSQ(value);
         if (!valueForScript) return false;
-        const script = getTextScript(fieldForScript, operator, valueForScript);
+        const script = getTextScript(fieldForScript, operatorLC, valueForScript);
         return {
           bool: {
             filter: {
@@ -148,7 +153,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
     }
   }
 
-  switch (operator) {
+  switch (operatorLC) {
     case '<':
     case '<=':
     case '>':
@@ -156,7 +161,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       return {
         range: {
           [field]: {
-            [rangeOperatorMap[operator]]: valueRenderer(value, parseNumbers),
+            [rangeOperatorMap[operatorLC]]: valueRenderer(value, parseNumbers),
           } as RangeRule,
         },
       };
@@ -170,21 +175,21 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
     case 'null':
       return { bool: { must_not: { exists: { field } } } };
 
-    case 'notNull':
+    case 'notnull':
       return { exists: { field } };
 
     case 'in':
-    case 'notIn': {
+    case 'notin': {
       const valueAsArray = toArray(value).map(v => valueRenderer(v, parseNumbers));
       if (valueAsArray.length > 0) {
         const arr = valueAsArray.map(v => ({ term: { [field]: valueRenderer(v, parseNumbers) } }));
-        return { bool: operator === 'in' ? { should: arr } : { must_not: arr } };
+        return { bool: operatorLC === 'in' ? { should: arr } : { must_not: arr } };
       }
       return false;
     }
 
     case 'between':
-    case 'notBetween': {
+    case 'notbetween': {
       const valueAsArray = toArray(value);
       if (
         valueAsArray.length >= 2 &&
@@ -204,22 +209,22 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
             second = secondNum;
           }
         }
-        return negateIfNotOp(operator, { range: { [field]: { gte: first, lte: second } } });
+        return negateIfNotOp(operatorLC, { range: { [field]: { gte: first, lte: second } } });
       }
       return false;
     }
 
     case 'contains':
-    case 'doesNotContain':
-      return negateIfNotOp(operator, { regexp: { [field]: { value: `.*${value}.*` } } });
+    case 'doesnotcontain':
+      return negateIfNotOp(operatorLC, { regexp: { [field]: { value: `.*${value}.*` } } });
 
-    case 'beginsWith':
-    case 'doesNotBeginWith':
-      return negateIfNotOp(operator, { regexp: { [field]: { value: `${value}.*` } } });
+    case 'beginswith':
+    case 'doesnotbeginwith':
+      return negateIfNotOp(operatorLC, { regexp: { [field]: { value: `${value}.*` } } });
 
-    case 'endsWith':
-    case 'doesNotEndWith':
-      return negateIfNotOp(operator, { regexp: { [field]: { value: `.*${value}` } } });
+    case 'endswith':
+    case 'doesnotendwith':
+      return negateIfNotOp(operatorLC, { regexp: { [field]: { value: `.*${value}` } } });
   }
   return false;
 };

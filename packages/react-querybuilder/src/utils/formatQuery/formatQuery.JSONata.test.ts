@@ -6,6 +6,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryIC,
   queryWithValueSourceField,
@@ -25,6 +27,12 @@ it('formats JSONata correctly', () => {
       'jsonata'
     )
   ).toBe('(f >= "12" and f <= "14")');
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'jsonata')).toBe(
+    formatQuery(queryAllOperatorsRandomCase, 'jsonata')
+  );
 });
 
 it('escapes quotes when appropriate', () => {

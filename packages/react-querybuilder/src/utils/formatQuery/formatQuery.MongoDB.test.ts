@@ -9,6 +9,8 @@ import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQ
 import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForRuleProcessor,
   queryIC,
@@ -196,6 +198,12 @@ it('formats to mongo query correctly', () => {
     format: 'mongodb',
     valueProcessor: defaultMongoDBValueProcessor,
   });
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'mongodb_query')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'mongodb_query')
+  );
 });
 
 it.todo(

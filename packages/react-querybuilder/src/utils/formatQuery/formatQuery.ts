@@ -36,10 +36,10 @@ import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
-import { defaultRuleProcessorNL } from './defaultRuleProcessorNL';
+import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
-import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
+import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
@@ -72,19 +72,37 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
 };
 
 const defaultRuleProcessors = {
-  natural_language: defaultRuleProcessorNL,
-  mongodb: defaultRuleProcessorMongoDB,
-  mongodb_query: defaultRuleProcessorMongoDBQuery,
-  parameterized: defaultRuleProcessorParameterized,
-  parameterized_named: defaultRuleProcessorParameterized,
   cel: defaultRuleProcessorCEL,
-  spel: defaultRuleProcessorSpEL,
-  jsonlogic: defaultRuleProcessorJsonLogic,
   elasticsearch: defaultRuleProcessorElasticSearch,
-  jsonata: defaultRuleProcessorJSONata,
-  json: defaultRuleProcessorSQL,
   json_without_ids: defaultRuleProcessorSQL,
+  json: defaultRuleProcessorSQL,
+  jsonata: defaultRuleProcessorJSONata,
+  jsonlogic: defaultRuleProcessorJsonLogic,
+  mongodb_query: defaultRuleProcessorMongoDBQuery,
+  mongodb: defaultRuleProcessorMongoDB,
+  natural_language: defaultRuleProcessorNL,
+  parameterized_named: defaultRuleProcessorParameterized,
+  parameterized: defaultRuleProcessorParameterized,
+  spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
+} satisfies Record<ExportFormat, RuleProcessor>;
+
+/* istanbul ignore next */
+const defaultOperatorProcessor: RuleProcessor = r => r.operator;
+const defaultOperatorProcessors = {
+  cel: defaultOperatorProcessor,
+  elasticsearch: defaultOperatorProcessor,
+  json_without_ids: defaultOperatorProcessor,
+  json: defaultOperatorProcessor,
+  jsonata: defaultOperatorProcessor,
+  jsonlogic: defaultOperatorProcessor,
+  mongodb_query: defaultOperatorProcessor,
+  mongodb: defaultOperatorProcessor,
+  natural_language: defaultOperatorProcessorNL,
+  parameterized_named: defaultOperatorProcessorSQL,
+  parameterized: defaultOperatorProcessorSQL,
+  spel: defaultOperatorProcessor,
+  sql: defaultOperatorProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
@@ -99,7 +117,12 @@ const mongoDbFallback = { $and: [{ $expr: true }] } as const;
 
 type MostFormatQueryOptions = SetOptional<
   Required<FormatQueryOptions>,
-  'context' | 'fallbackExpression' | 'ruleProcessor' | 'validator' | 'valueProcessor'
+  | 'context'
+  | 'fallbackExpression'
+  | 'operatorProcessor'
+  | 'ruleProcessor'
+  | 'validator'
+  | 'valueProcessor'
 >;
 
 const defaultFormatQueryOptions = {
@@ -226,15 +249,16 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   };
 
   const {
-    fallbackExpression: optionFallbackExpression,
-    getOperators: optionGetOperators,
+    fallbackExpression: fallbackExpression_option,
+    getOperators: getOperators_option,
+    operatorProcessor: operatorProcessor_option,
     parseNumbers,
     placeholderFieldName,
     placeholderOperatorName,
-    quoteFieldNamesWith: optionQuoteFieldNamesWith,
-    ruleProcessor: optionRuleProcessor,
+    quoteFieldNamesWith: quoteFieldNamesWith_option,
+    ruleProcessor: ruleProcessor_option,
     validator,
-    valueProcessor: optionValueProcessor,
+    valueProcessor: valueProcessor_option,
   } = optObj;
 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
@@ -242,34 +266,39 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
   const format = optObj.format.toLowerCase() as ExportFormat;
 
+  const operatorProcessor =
+    typeof operatorProcessor_option === 'function'
+      ? operatorProcessor_option
+      : (defaultOperatorProcessors[format] ?? defaultOperatorProcessor);
+
   const valueProcessor: ValueProcessorByRule =
-    typeof optionValueProcessor === 'function'
-      ? isValueProcessorLegacy(optionValueProcessor)
-        ? r => optionValueProcessor(r.field, r.operator, r.value, r.valueSource)
-        : optionValueProcessor
+    typeof valueProcessor_option === 'function'
+      ? isValueProcessorLegacy(valueProcessor_option)
+        ? r => valueProcessor_option(r.field, r.operator, r.value, r.valueSource)
+        : valueProcessor_option
       : format === 'natural_language'
         ? defaultValueProcessorNL
         : valueProcessorCanActAsRuleProcessor(format)
-          ? (optionRuleProcessor ?? defaultRuleProcessors[format])
+          ? (ruleProcessor_option ?? defaultRuleProcessors[format])
           : defaultValueProcessorByRule;
 
   const ruleProcessor =
-    (typeof optionRuleProcessor === 'function' ? optionRuleProcessor : null) ??
+    (typeof ruleProcessor_option === 'function' ? ruleProcessor_option : null) ??
     (valueProcessorCanActAsRuleProcessor(format) &&
-    typeof optionRuleProcessor !== 'function' &&
-    optionValueProcessor
+    typeof ruleProcessor_option !== 'function' &&
+    valueProcessor_option
       ? valueProcessor
       : null) ??
     defaultRuleProcessors[format] ??
     defaultRuleProcessorSQL;
 
-  const quoteFieldNamesWith = getQuoteFieldNamesWithArray(optionQuoteFieldNamesWith);
+  const quoteFieldNamesWith = getQuoteFieldNamesWithArray(quoteFieldNamesWith_option);
   const fields = toFullOptionList(optObj.fields) as FullOptionList<FullField>;
   const getOperators: FormatQueryOptions['getOperators'] = (f, m) =>
-    toFullOptionList(optionGetOperators(f, m) ?? /* istanbul ignore next */ []);
+    toFullOptionList(getOperators_option(f, m) ?? /* istanbul ignore next */ []);
 
   const fallbackExpression =
-    optionFallbackExpression ??
+    fallbackExpression_option ??
     defaultFallbackExpressions[format] ??
     defaultFallbackExpressions.sql!;
 
@@ -285,6 +314,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     format,
     getOperators,
     quoteFieldNamesWith,
+    operatorProcessor,
     ruleProcessor,
     valueProcessor,
   };

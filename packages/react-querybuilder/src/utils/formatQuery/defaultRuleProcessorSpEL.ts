@@ -3,7 +3,7 @@ import { toArray, trimIfString } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { nullOrUndefinedOrEmpty, shouldRenderAsNumber } from './utils';
 
-const shouldNegate = (op: string) => /^(does)?not/i.test(op);
+const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
 const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : `${clause}`);
 
@@ -21,7 +21,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
   { escapeQuotes, parseNumbers } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const operatorTL = operator.replace(/^=$/, '==');
+  const operatorTL = (operator === '=' ? '==' : operator).toLowerCase();
   const useBareValue =
     typeof value === 'number' ||
     typeof value === 'boolean' ||
@@ -42,7 +42,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
       }`;
 
     case 'contains':
-    case 'doesNotContain':
+    case 'doesnotcontain':
       return wrapInNegation(
         `${field} matches ${
           valueIsField || useBareValue
@@ -52,8 +52,8 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
         shouldNegate(operatorTL)
       );
 
-    case 'beginsWith':
-    case 'doesNotBeginWith': {
+    case 'beginswith':
+    case 'doesnotbeginwith': {
       const valueTL = valueIsField
         ? `'^'.concat(${trimIfString(value)})`
         : `'${
@@ -62,8 +62,8 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
       return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
 
-    case 'endsWith':
-    case 'doesNotEndWith': {
+    case 'endswith':
+    case 'doesnotendwith': {
       const valueTL = valueIsField
         ? `${trimIfString(value)}.concat('$')`
         : `'${escapeSingleQuotes(value, escapeQuotes)}${
@@ -75,11 +75,11 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     case 'null':
       return `${field} == null`;
 
-    case 'notNull':
+    case 'notnull':
       return `${field} != null`;
 
     case 'in':
-    case 'notIn': {
+    case 'notin': {
       const negate = shouldNegate(operatorTL) ? '!' : '';
       const valueAsArray = toArray(value);
       return valueAsArray.length > 0
@@ -97,7 +97,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     }
 
     case 'between':
-    case 'notBetween': {
+    case 'notbetween': {
       const valueAsArray = toArray(value);
       if (
         valueAsArray.length >= 2 &&
@@ -126,7 +126,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
           secondValue = firstNum;
           firstValue = tempNum;
         }
-        return operator === 'between'
+        return operatorTL === 'between'
           ? `(${field} >= ${firstValue} and ${field} <= ${secondValue})`
           : `(${field} < ${firstValue} or ${field} > ${secondValue})`;
       } else {

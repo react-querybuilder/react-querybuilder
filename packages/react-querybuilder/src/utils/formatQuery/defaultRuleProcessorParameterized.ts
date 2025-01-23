@@ -1,8 +1,9 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
+import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { mapSQLOperator, shouldRenderAsNumber } from './utils';
+import { shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
@@ -20,6 +21,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     numberedParams,
     quoteFieldNamesWith = ['', ''] as [string, string],
     concatOperator,
+    operatorProcessor = defaultOperatorProcessorSQL,
     valueProcessor = defaultValueProcessorByRule,
   } = opts ?? {};
 
@@ -42,7 +44,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     format,
   });
 
-  const sqlOperator = mapSQLOperator(rule.operator);
+  const sqlOperator = operatorProcessor(rule, opts);
   const sqlOperatorLowerCase = sqlOperator.toLowerCase();
   const [qPre, qPost] = quoteFieldNamesWith;
 

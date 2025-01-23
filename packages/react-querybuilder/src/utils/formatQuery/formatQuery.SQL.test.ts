@@ -18,6 +18,8 @@ import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
   query,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForRuleProcessor,
   queryForXor,
@@ -122,6 +124,18 @@ it('formats parameterized named SQL correctly', () => {
   });
 });
 
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'sql')).toBe(
+    formatQuery(queryAllOperatorsRandomCase, 'sql')
+  );
+  expect(formatQuery(queryAllOperators, 'parameterized')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'parameterized')
+  );
+  expect(formatQuery(queryAllOperators, 'parameterized_named')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'parameterized_named')
+  );
+});
+
 it('handles custom valueProcessors correctly', () => {
   const queryWithArrayValue: RuleGroupType = {
     id: 'g-root',
@@ -181,6 +195,25 @@ it('handles custom valueProcessors correctly', () => {
       valueProcessor: valueProcessorAsPassThrough,
     })
   ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
+});
+
+it('handles custom operatorProcessor correctly', () => {
+  const queryWithCustomOperator: RuleGroupType = {
+    id: 'g-root',
+    combinator: 'and',
+    rules: [{ field: 'instrument', operator: 'is one of', value: ['Guitar', 'Vocals'] }],
+    not: false,
+  };
+
+  const operatorProcessor: ValueProcessorByRule = r =>
+    r.operator === 'is one of' ? 'in' : r.operator;
+
+  expect(
+    formatQuery(queryWithCustomOperator, {
+      format: 'sql',
+      operatorProcessor,
+    })
+  ).toBe(`(instrument in 'Guitar,Vocals')`);
 });
 
 it('handles quoteFieldNamesWith correctly', () => {

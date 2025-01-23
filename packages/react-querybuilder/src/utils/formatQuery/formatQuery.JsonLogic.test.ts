@@ -13,6 +13,8 @@ import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { formatQuery } from './formatQuery';
 import {
   getValidationTestData,
+  queryAllOperators,
+  queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryForRuleProcessor,
   queryForXor,
@@ -218,6 +220,12 @@ it('formats JSONLogic correctly', () => {
       'jsonlogic'
     )
   ).toEqual({ and: [{ '<=': [12, { var: 'f' }, 14] }, { or: [{ '==': [{ var: 'f' }, '26'] }] }] });
+});
+
+it('handles operator case variations', () => {
+  expect(formatQuery(queryAllOperators, 'jsonlogic')).toEqual(
+    formatQuery(queryAllOperatorsRandomCase, 'jsonlogic')
+  );
 });
 
 it('independent combinators', () => {

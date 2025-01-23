@@ -48,6 +48,12 @@ export interface FormatQueryOptions {
    */
   format?: ExportFormat;
   /**
+   * This function will be used to process the `operator` from each rule
+   * for query language formats. If not defined, the appropriate
+   * `defaultOperatorProcessor*` for the format will be used.
+   */
+  operatorProcessor?: RuleProcessor;
+  /**
    * This function will be used to process the `value` from each rule
    * for query language formats. If not defined, the appropriate
    * `defaultValueProcessor*` for the format will be used.

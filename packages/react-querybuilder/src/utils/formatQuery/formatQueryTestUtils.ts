@@ -1,20 +1,25 @@
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
+  defaultOperators,
 } from '../../defaults';
 import type {
+  DefaultRuleGroupType,
+  DefaultRuleGroupTypeIC,
   ExportFormat,
   FormatQueryOptions,
   RuleGroupType,
   RuleGroupTypeAny,
-  RuleGroupTypeIC,
 } from '../../types';
+import { transformQuery } from '../transformQuery';
 
-export const query: RuleGroupType = {
+export const query: DefaultRuleGroupType = {
   id: 'g-root',
   rules: [
+    // @ts-expect-error Invalid operator
     { field: defaultFieldPlaceholder, operator: defaultOperatorPlaceholder, value: 'Placeholder' },
     { field: defaultFieldPlaceholder, operator: '=', value: 'Placeholder' },
+    // @ts-expect-error Invalid operator
     { field: 'firstName', operator: defaultOperatorPlaceholder, value: 'Placeholder' },
     { field: 'firstName', operator: 'null', value: '' },
     { field: 'lastName', operator: 'notNull', value: '' },
@@ -58,7 +63,7 @@ export const query: RuleGroupType = {
   not: false,
 };
 
-export const queryWithValueSourceField: RuleGroupType = {
+export const queryWithValueSourceField: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [
     { field: 'firstName', operator: 'null', value: '', valueSource: 'field' },
@@ -107,17 +112,17 @@ export const queryWithValueSourceField: RuleGroupType = {
   ],
 };
 
-export const testQueryDQ: RuleGroupType = {
+export const testQueryDQ: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
 };
 
-export const testQuerySQ: RuleGroupType = {
+export const testQuerySQ: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'f1', operator: '=', value: `Te'st` }],
 };
 
-export const queryIC: RuleGroupTypeIC = {
+export const queryIC: DefaultRuleGroupTypeIC = {
   rules: [
     { field: 'firstName', operator: '=', value: 'Test' },
     'and',
@@ -127,15 +132,16 @@ export const queryIC: RuleGroupTypeIC = {
   ],
 };
 
-export const queryForRuleProcessor: RuleGroupType = {
+export const queryForRuleProcessor: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [
+    // @ts-expect-error Invalid operator
     { field: 'f1', operator: 'custom_operator', value: 'v1' },
     { field: 'f2', operator: '=', value: 'v2' },
   ],
 };
 
-export const queryForNumberParsing: RuleGroupType = {
+export const queryForNumberParsing: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [
     { field: 'f', operator: '>', value: 'NaN' },
@@ -162,7 +168,7 @@ export const queryForNumberParsing: RuleGroupType = {
   ],
 };
 
-export const queryForXor: RuleGroupType = {
+export const queryForXor: DefaultRuleGroupType = {
   combinator: 'xor',
   rules: [
     { field: 'f1', operator: '=', value: 'v1' },
@@ -254,3 +260,37 @@ export const getValidationTestData = (
     },
   ];
 };
+
+export const queryAllOperators: DefaultRuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'f', operator: '!=', value: 'v' },
+    { field: 'f', operator: '<', value: 123 },
+    { field: 'f', operator: '<=', value: 123 },
+    { field: 'f', operator: '=', value: 'v' },
+    { field: 'f', operator: '>', value: 123 },
+    { field: 'f', operator: '>=', value: 123 },
+    { field: 'f', operator: 'beginsWith', value: 'v' },
+    { field: 'f', operator: 'between', value: '123,456' },
+    { field: 'f', operator: 'contains', value: 'v' },
+    { field: 'f', operator: 'doesNotBeginWith', value: 'v' },
+    { field: 'f', operator: 'doesNotContain', value: 'v' },
+    { field: 'f', operator: 'doesNotEndWith', value: 'v' },
+    { field: 'f', operator: 'endsWith', value: 'v' },
+    { field: 'f', operator: 'in', value: 'v,x' },
+    { field: 'f', operator: 'notBetween', value: '123,456' },
+    { field: 'f', operator: 'notIn', value: 'v,x' },
+    { field: 'f', operator: 'notNull', value: null },
+    { field: 'f', operator: 'null', value: null },
+  ],
+};
+
+export const queryAllOperatorsRandomCase: RuleGroupType = transformQuery(queryAllOperators, {
+  operatorMap: Object.fromEntries(
+    defaultOperators.map(o => [
+      o.name,
+      // Randomize case
+      [...o.name].map(c => (Math.random() < 0.5 ? c.toUpperCase() : c.toLowerCase())).join(''),
+    ])
+  ),
+});
