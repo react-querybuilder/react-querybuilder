@@ -197,6 +197,25 @@ it('handles custom valueProcessors correctly', () => {
   ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
 });
 
+it('handles custom operatorProcessor correctly', () => {
+  const queryWithCustomOperator: RuleGroupType = {
+    id: 'g-root',
+    combinator: 'and',
+    rules: [{ field: 'instrument', operator: 'is one of', value: ['Guitar', 'Vocals'] }],
+    not: false,
+  };
+
+  const operatorProcessor: ValueProcessorByRule = r =>
+    r.operator === 'is one of' ? 'in' : r.operator;
+
+  expect(
+    formatQuery(queryWithCustomOperator, {
+      format: 'sql',
+      operatorProcessor,
+    })
+  ).toBe(`(instrument in 'Guitar,Vocals')`);
+});
+
 it('handles quoteFieldNamesWith correctly', () => {
   const queryToTest: RuleGroupType = {
     id: 'g-root',

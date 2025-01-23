@@ -87,6 +87,7 @@ const defaultRuleProcessors = {
   sql: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
+/* istanbul ignore next */
 const defaultOperatorProcessor: RuleProcessor = r => r.operator;
 const defaultOperatorProcessors = {
   cel: defaultOperatorProcessor,

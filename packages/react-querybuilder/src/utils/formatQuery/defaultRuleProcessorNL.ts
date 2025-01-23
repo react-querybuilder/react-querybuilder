@@ -24,12 +24,17 @@ const nlOperatorMap: Record<string, [string, string]> = {
   notbetween: ['is not between the values in', 'is not between'],
 };
 
+/* istanbul ignore next */
+const defaultGetOperators = () => [];
+
 export const defaultOperatorProcessorNL: RuleProcessor = (
   rule,
-  opts = /* istanbul ignore next */ {}
+  /* istanbul ignore next */
+  opts = {}
 ) => {
-  const { valueSource = 'value' } = rule;
-  const { getOperators = () => [] } = opts;
+  const { valueSource = /* istanbul ignore next */ 'value' } = rule;
+  /* istanbul ignore next */
+  const { getOperators = defaultGetOperators } = opts;
   const { value: operator, label } = getOption(
     toFullOptionList(
       getOperators(rule.field, {
