@@ -17,7 +17,7 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   { field, operator, value, valueSource },
-  { parseNumbers } = {}
+  { parseNumbers, preserveValueOrder } = {}
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
@@ -69,7 +69,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ) {
           const firstNum = parseNumber(first, { parseNumbers: true });
           const secondNum = parseNumber(second, { parseNumbers: true });
-          if (secondNum < firstNum) {
+          if (!preserveValueOrder && secondNum < firstNum) {
             const tempNum = secondNum;
             second = firstNum;
             first = tempNum;

@@ -15,62 +15,67 @@ beforeAll(async () => {
  * Tests both SQL variations that PostgreSQL supports.
  * (PostgreSQL does not support named parameters.)
  */
-const testSQL = ({ query, expectedResult }: TestSQLParams) => {
+const testSQL = ({ query, expectedResult, skipParameterized, fqOptions }: TestSQLParams) => {
   test('sql', async () => {
-    const sql = formatQuery(query, { format: 'sql', quoteFieldNamesWith: '"' });
+    const sql = formatQuery(query, { ...fqOptions, preset: 'postgresql' });
     const queryResult = await db.query(`${sqlBase} ${sql}`);
     expect(queryResult.rows).toEqual(expectedResult);
   });
 
-  test('parameterized', async () => {
-    const parameterized = formatQuery(query, {
-      format: 'parameterized',
-      preset: 'postgresql',
+  if (!skipParameterized) {
+    test('parameterized', async () => {
+      const parameterized = formatQuery(query, {
+        ...fqOptions,
+        format: 'parameterized',
+        preset: 'postgresql',
+      });
+      const queryResult = await db.query(`${sqlBase} ${parameterized.sql}`, parameterized.params);
+      expect(queryResult.rows).toEqual(expectedResult);
     });
-    const queryResult = await db.query(`${sqlBase} ${parameterized.sql}`, parameterized.params);
-    expect(queryResult.rows).toEqual(expectedResult);
-  });
+  }
 };
 
-// Common tests
-for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
-  describe(name, () => {
-    testSQL(t);
-  });
-}
+describe('PostgreSQL', async () => {
+  // Common tests
+  for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
+    describe(name, () => {
+      testSQL(t);
+    });
+  }
 
-// Postgres-specific tests
-describe('unquoted field names', async () => {
-  const unquotedDb = new PGlite();
+  // Postgres-specific tests
+  describe('unquoted field names', async () => {
+    const unquotedDb = new PGlite();
 
-  beforeAll(async () => {
-    await unquotedDb.exec(dbSetup('postgres', { unquoted: true }));
-  });
+    beforeAll(async () => {
+      await unquotedDb.exec(dbSetup('postgres', { unquoted: true }));
+    });
 
-  test('unquoted field names', async () => {
-    const sql = formatQuery(
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'firstName', operator: 'beginsWith', value: 'P' },
-          {
-            combinator: 'and',
-            rules: [
-              { field: 'madeUpName', operator: 'doesNotContain', value: 'Bat' },
-              { field: 'madeUpName', operator: 'endsWith', value: 'man' },
-            ],
-          },
-        ],
-      },
-      { format: 'sql' }
-    );
-    const result = await unquotedDb.query(`${sqlBase} ${sql}`);
-    expect(result.rows).toEqual(
-      superUsersPostgres
-        .filter(u => u.madeUpName.startsWith('S'))
-        .map(u =>
-          Object.fromEntries(Object.entries(u).map(([k, v]) => [k.toLocaleLowerCase(), v]))
-        ) as unknown as SuperUser[]
-    );
+    test('unquoted field names', async () => {
+      const sql = formatQuery(
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'firstName', operator: 'beginsWith', value: 'P' },
+            {
+              combinator: 'and',
+              rules: [
+                { field: 'madeUpName', operator: 'doesNotContain', value: 'Bat' },
+                { field: 'madeUpName', operator: 'endsWith', value: 'man' },
+              ],
+            },
+          ],
+        },
+        { format: 'sql' }
+      );
+      const result = await unquotedDb.query(`${sqlBase} ${sql}`);
+      expect(result.rows).toEqual(
+        superUsersPostgres
+          .filter(u => u.madeUpName.startsWith('S'))
+          .map(u =>
+            Object.fromEntries(Object.entries(u).map(([k, v]) => [k.toLocaleLowerCase(), v]))
+          ) as unknown as SuperUser[]
+      );
+    });
   });
 });

@@ -22,6 +22,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
   {
     escapeQuotes,
     parseNumbers = true,
+    preserveValueOrder,
     quoteFieldNamesWith = ['', ''] as [string, string],
     fieldIdentifierSeparator = '',
   } = {}
@@ -121,7 +122,12 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
       let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
-      if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
+      if (
+        !preserveValueOrder &&
+        firstValue === firstNum &&
+        secondValue === secondNum &&
+        secondNum < firstNum
+      ) {
         const tempNum = secondNum;
         secondValue = firstNum;
         firstValue = tempNum;

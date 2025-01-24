@@ -8,6 +8,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { convertToIC } from '../convertQuery';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { formatQuery } from './formatQuery';
 import {
@@ -16,6 +17,7 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryForXor,
   queryIC,
   queryWithValueSourceField,
@@ -312,6 +314,30 @@ describe('placeholder names', () => {
   });
 });
 
+it('preserveValueOrder', () => {
+  expect(
+    formatQuery(queryForPreserveValueOrder, { format: 'natural_language', parseNumbers: true })
+  ).toBe(`f1 is between 12 and 14, and f2 is between 12 and 14`);
+  expect(
+    formatQuery(queryForPreserveValueOrder, {
+      format: 'natural_language',
+      parseNumbers: true,
+      preserveValueOrder: true,
+    })
+  ).toBe(`f1 is between 12 and 14, and f2 is between 14 and 12`);
+});
+
 it('handles XOR operator', () => {
-  expect(formatQuery(queryForXor, 'natural_language')).toBe(`f1 is 'v1', xor f2 is 'v2'`);
+  expect(formatQuery(queryForXor, 'natural_language')).toBe(
+    `exactly one of (f1 is 'v1', or f2 is 'v2') is true`
+  );
+  expect(formatQuery({ ...queryForXor, not: true }, 'natural_language')).toBe(
+    `either zero or more than one of (f1 is 'v1', or f2 is 'v2') is true`
+  );
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(queryForXor)] },
+      'natural_language'
+    )
+  ).toBe(`f1 is 'v1', and exactly one of (f1 is 'v1', or f2 is 'v2') is true`);
 });

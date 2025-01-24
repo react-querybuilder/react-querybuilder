@@ -26,7 +26,7 @@ import type {
 } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { getParseNumberMethod } from '../getParseNumberMethod';
-import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
+import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { isPojo } from '../misc';
 import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
@@ -135,6 +135,7 @@ const defaultFormatQueryOptions = {
   paramsKeepPrefix: false,
   numberedParams: false,
   parseNumbers: false,
+  preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
   quoteValuesWith: "'",
@@ -886,7 +887,16 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
       }
 
-      const processedRules = rg.rules.map(rule => {
+      let rg2 = rg;
+
+      if (
+        isRuleGroupTypeIC(rg) &&
+        rg.rules.some(r => typeof r === 'string' && r.toLowerCase() === 'xor')
+      ) {
+        rg2 = convertFromIC(rg);
+      }
+
+      const processedRules = rg2.rules.map(rule => {
         // Independent combinators
         if (typeof rule === 'string') {
           return `, ${rule} `;
@@ -894,7 +904,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
         // Groups
         if (isRuleGroup(rule)) {
-          return processRuleGroup(rule, rg.rules.length === 1);
+          return processRuleGroup(
+            rule,
+            rg2.rules.length === 1 && !(rg2.not || rg2.combinator === 'xor')
+          );
         }
 
         // Basic rule validation
@@ -923,12 +936,18 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return fallbackExpression;
       }
 
-      const prefix = rg.not || !outermostOrLonelyInGroup ? '(' : '';
-      const suffix = rg.not || !outermostOrLonelyInGroup ? `) is${rg.not ? ' not' : ''} true` : '';
+      const isXOR = rg2.combinator === 'xor';
+      const combinator = isXOR ? rg2.combinator!.slice(1) : rg2.combinator;
+      const mustWrap = rg2.not || !outermostOrLonelyInGroup || (isXOR && processedRules.length > 1);
+
+      const prefix = mustWrap
+        ? `${isXOR ? (rg2.not ? 'either zero or more than one of ' : 'exactly one of ') : ''}(`
+        : '';
+      const suffix = mustWrap ? `) is${rg2.not && !isXOR ? ' not' : ''} true` : '';
 
       return `${prefix}${processedRules
         .filter(Boolean)
-        .join(isRuleGroupType(rg) ? `, ${rg.combinator} ` : '')}${suffix}`;
+        .join(isRuleGroupType(rg2) ? `, ${combinator} ` : '')}${suffix}`;
     };
 
     return processRuleGroup(ruleGroup, true);

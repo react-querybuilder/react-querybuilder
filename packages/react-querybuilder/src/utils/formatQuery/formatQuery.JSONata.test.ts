@@ -1,4 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
 import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
 import { add } from '../queryTools';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
@@ -9,6 +8,7 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryIC,
   queryWithValueSourceField,
   testQueryDQ,
@@ -152,4 +152,17 @@ it('handles fieldIdentifierSeparator correctly', () => {
   ).toBe(
     '`musicians`.`instrument` in ["Guitar", "Vocals"] and `musicians`.`lastName` = "Vai" and `musicians`.`lastName` != `musicians`.`firstName`'
   );
+});
+
+it('preserveValueOrder', () => {
+  expect(formatQuery(queryForPreserveValueOrder, { format: 'jsonata', parseNumbers: true })).toBe(
+    `(f1 >= 12 and f1 <= 14) and (f2 >= 12 and f2 <= 14)`
+  );
+  expect(
+    formatQuery(queryForPreserveValueOrder, {
+      format: 'jsonata',
+      parseNumbers: true,
+      preserveValueOrder: true,
+    })
+  ).toBe(`(f1 >= 12 and f1 <= 14) and (f2 >= 14 and f2 <= 12)`);
 });

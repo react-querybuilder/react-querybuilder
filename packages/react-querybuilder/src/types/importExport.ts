@@ -172,6 +172,11 @@ export interface FormatQueryOptions {
    */
   numberedParams?: boolean;
   /**
+   * Preserves the order of values for "between" and "notBetween" rules, even if a larger
+   * value comes before a smaller value (which will always evaluate to false).
+   */
+  preserveValueOrder?: boolean;
+  /**
    * Renders values as either `number`-types or unquoted strings, as
    * appropriate and when possible. Each `string`-type value is evaluated
    * against {@link numericRegex} to determine if it can be represented as a
@@ -240,6 +245,11 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    * calls).
    */
   wrapValueWith?: [string, string];
+  /**
+   * Parse numbers in the rule value.
+   *
+   * @default false
+   */
   parseNumbers?: boolean;
 }
 

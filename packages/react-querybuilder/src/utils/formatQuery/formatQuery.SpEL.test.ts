@@ -15,6 +15,7 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
   queryWithValueSourceField,
@@ -272,4 +273,17 @@ it('parseNumbers', () => {
   ).toBe(
     `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
   );
+});
+
+it('preserveValueOrder', () => {
+  expect(formatQuery(queryForPreserveValueOrder, { format: 'spel', parseNumbers: true })).toBe(
+    `(f1 >= 12 and f1 <= 14) and (f2 >= 12 and f2 <= 14)`
+  );
+  expect(
+    formatQuery(queryForPreserveValueOrder, {
+      format: 'spel',
+      parseNumbers: true,
+      preserveValueOrder: true,
+    })
+  ).toBe(`(f1 >= 12 and f1 <= 14) and (f2 >= 14 and f2 <= 12)`);
 });

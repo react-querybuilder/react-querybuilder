@@ -19,10 +19,10 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
   for (let i = 0; i < rg.rules.length; i += 2) {
     if (rg.rules.length === 1) {
       push(rg.rules[0]);
-    } else if (rg.rules[i + 1] === 'and') {
+    } else if (rg.rules[i + 1] === 'and' || rg.rules[i + 1] === 'xor') {
       startIndex = i;
       let j = 1;
-      while (rg.rules[startIndex + j] === 'and') {
+      while (rg.rules[startIndex + j] === rg.rules[startIndex + 1]) {
         i += 2;
         j += 2;
       }
@@ -33,7 +33,7 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
       i -= 2;
     } else if (rg.rules[i + 1] === 'or') {
       if (i === 0 || i === rg.rules.length - 3) {
-        if (i === 0 || rg.rules[i - 1] === 'or') {
+        if (i === 0 || rg.rules[i - 1] === rg.rules[i + 1]) {
           push(rg.rules[i]);
         }
         push(rg.rules[i + 1]);
@@ -41,7 +41,7 @@ const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): Rule
           push(rg.rules[i + 2]);
         }
       } else {
-        if (rg.rules[i - 1] === 'and') {
+        if (rg.rules[i - 1] === 'and' || rg.rules[i - 1] === 'xor') {
           push(rg.rules[i + 1]);
         } else {
           push(rg.rules[i]);

@@ -7,6 +7,7 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
   queryWithValueSourceField,
@@ -337,4 +338,24 @@ it('parseNumbers', () => {
       allNumbersParsed
     );
   }
+});
+it('preserveValueOrder', () => {
+  expect(
+    formatQuery(queryForPreserveValueOrder, { format: 'elasticsearch', parseNumbers: true })
+  ).toEqual({
+    bool: {
+      must: [{ range: { f1: { gte: 12, lte: 14 } } }, { range: { f2: { gte: 12, lte: 14 } } }],
+    },
+  });
+  expect(
+    formatQuery(queryForPreserveValueOrder, {
+      format: 'elasticsearch',
+      parseNumbers: true,
+      preserveValueOrder: true,
+    })
+  ).toEqual({
+    bool: {
+      must: [{ range: { f1: { gte: 12, lte: 14 } } }, { range: { f2: { gte: 14, lte: 12 } } }],
+    },
+  });
 });

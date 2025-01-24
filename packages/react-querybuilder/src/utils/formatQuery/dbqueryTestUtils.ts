@@ -8,6 +8,7 @@ export interface TestSQLParams {
   expectedResultCoercedNull?: SuperUser[];
   fqOptions?: FormatQueryOptions;
   guardAgainstNull?: [string, ...string[]];
+  skipParameterized?: boolean;
 }
 
 export interface SuperUser {
@@ -278,6 +279,30 @@ export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> 
     expectedResult: superUsers.filter(
       u => (u.powerUpAge ?? 0) >= 10 && (u.powerUpAge ?? 999) <= 30
     ),
+  },
+  manipulateValueOrder: {
+    guardAgainstNull: ['powerUpAge'],
+    skipParameterized: true,
+    query: {
+      combinator: 'and',
+      rules: [{ field: 'powerUpAge', operator: 'between', value: [100, 0] }],
+    },
+    expectedResult: superUsers.filter(
+      u => (u.powerUpAge ?? 999) >= 0 && (u.powerUpAge ?? 999) <= 100
+    ),
+    expectedResultCoercedNull: superUsers.filter(u => u.powerUpAge! >= 0 && u.powerUpAge! <= 100),
+    fqOptions: { preserveValueOrder: false, parseNumbers: true },
+  },
+  preserveValueOrder: {
+    guardAgainstNull: ['powerUpAge'],
+    skipParameterized: true,
+    query: {
+      combinator: 'and',
+      rules: [{ field: 'powerUpAge', operator: 'between', value: [100, 0] }],
+    },
+    expectedResult: [],
+    expectedResultCoercedNull: [],
+    fqOptions: { preserveValueOrder: true, parseNumbers: true },
   },
   'in/notIn': {
     query: {

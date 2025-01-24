@@ -18,7 +18,7 @@ const escapeSingleQuotes = (
 export const defaultRuleProcessorSpEL: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { escapeQuotes, parseNumbers } = {}
+  { escapeQuotes, parseNumbers, preserveValueOrder } = {}
 ) => {
   const valueIsField = valueSource === 'field';
   const operatorTL = (operator === '=' ? '==' : operator).toLowerCase();
@@ -121,7 +121,12 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
             ? `${second}`
             : `'${escapeSingleQuotes(second, escapeQuotes)}'`
           : secondNum;
-        if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
+        if (
+          !preserveValueOrder &&
+          firstValue === firstNum &&
+          secondValue === secondNum &&
+          secondNum < firstNum
+        ) {
           const tempNum = secondNum;
           secondValue = firstNum;
           firstValue = tempNum;

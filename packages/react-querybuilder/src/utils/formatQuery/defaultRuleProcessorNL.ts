@@ -61,10 +61,7 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
 export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
   // istanbul ignore next
   const {
-    fields,
     fieldData,
-    parseNumbers,
-    escapeQuotes,
     quoteFieldNamesWith = ['', ''] as [string, string],
     fieldIdentifierSeparator = '',
     quoteValuesWith = `'`,
@@ -74,9 +71,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
   } = opts ?? /* istanbul ignore next */ {};
 
   const value = valueProcessor(rule, {
-    fields,
-    parseNumbers,
-    escapeQuotes,
+    ...opts,
     quoteFieldNamesWith,
     fieldIdentifierSeparator,
     quoteValuesWith,

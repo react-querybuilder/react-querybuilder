@@ -12,6 +12,7 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
   testQueryDQ,
@@ -279,6 +280,19 @@ it('ruleProcessor', () => {
     queryForRuleProcessor,
     { $and: [{ custom_operator: true }, { f2: 'v2' }] },
     { valueProcessor: ruleProcessorMDBQuery }
+  );
+});
+
+it('preserveValueOrder', () => {
+  testMongoDB(
+    queryForPreserveValueOrder,
+    { $and: [{ f1: { $gte: 12, $lte: 14 } }, { f2: { $gte: 12, $lte: 14 } }] },
+    {}
+  );
+  testMongoDB(
+    queryForPreserveValueOrder,
+    { $and: [{ f1: { $gte: 12, $lte: 14 } }, { f2: { $gte: 14, $lte: 12 } }] },
+    { preserveValueOrder: true }
   );
 });
 

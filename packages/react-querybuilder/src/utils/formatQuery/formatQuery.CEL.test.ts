@@ -117,3 +117,19 @@ describe('parseNumbers', () => {
     );
   });
 });
+
+it('preserveValueOrder', () => {
+  const queryForPreserveValueOrder: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'between', value: '12,14' },
+      { field: 'f2', operator: 'between', value: '14,12' },
+    ],
+  };
+  expect(formatQuery(queryForPreserveValueOrder, { format: 'cel' })).toBe(
+    `(f1 >= 12 && f1 <= 14) && (f2 >= 12 && f2 <= 14)`
+  );
+  expect(formatQuery(queryForPreserveValueOrder, { format: 'cel', preserveValueOrder: true })).toBe(
+    `(f1 >= 12 && f1 <= 14) && (f2 >= 14 && f2 <= 12)`
+  );
+});

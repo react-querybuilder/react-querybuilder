@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
@@ -16,8 +17,8 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryForRuleProcessor,
-  queryForXor,
   queryIC,
 } from './formatQueryTestUtils';
 import { jsonLogicAdditionalOperators } from './utils';
@@ -308,8 +309,17 @@ it('parseNumbers', () => {
   }
 });
 
-it('handles XOR operator', () => {
-  expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
+it('preserveValueOrder', () => {
+  expect(
+    formatQuery(queryForPreserveValueOrder, { format: 'jsonlogic', parseNumbers: true })
+  ).toEqual({ and: [{ '<=': [12, { var: 'f1' }, 14] }, { '<=': [12, { var: 'f2' }, 14] }] });
+  expect(
+    formatQuery(queryForPreserveValueOrder, {
+      format: 'jsonlogic',
+      parseNumbers: true,
+      preserveValueOrder: true,
+    })
+  ).toEqual({ and: [{ '<=': [12, { var: 'f1' }, 14] }, { '<=': [14, { var: 'f2' }, 12] }] });
 });
 
 it('runs the jsonLogic additional operators', () => {
