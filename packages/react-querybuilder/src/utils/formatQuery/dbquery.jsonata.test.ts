@@ -6,8 +6,11 @@ import { formatQuery } from './formatQuery';
 
 const superUsersJSONata = superUsers('jsonata');
 
-const testJSONata = ({ query, expectedResult, fqOptions, guardAgainstNull }: TestSQLParams) => {
-  test('jsonata', async () => {
+const testJSONata = (
+  name: string,
+  { query, expectedResult, fqOptions, guardAgainstNull }: TestSQLParams
+) => {
+  test(name, async () => {
     const guardedQuery =
       guardAgainstNull && guardAgainstNull.length > 0
         ? ({
@@ -18,7 +21,7 @@ const testJSONata = ({ query, expectedResult, fqOptions, guardAgainstNull }: Tes
             ],
           } as DefaultRuleGroupType)
         : query;
-    const queryAsJSONata = `*[${formatQuery(guardedQuery, { format: 'jsonata', parseNumbers: true, ...fqOptions })}]`;
+    const queryAsJSONata = `*[${formatQuery(guardedQuery, { ...fqOptions, format: 'jsonata', parseNumbers: true })}]`;
     const expression = jsonata(queryAsJSONata);
     const result = await expression.evaluate(superUsersJSONata);
 
@@ -27,8 +30,8 @@ const testJSONata = ({ query, expectedResult, fqOptions, guardAgainstNull }: Tes
 };
 
 // Common tests
-for (const [name, t] of Object.entries(dbTests(superUsersJSONata))) {
-  describe(name, () => {
-    testJSONata(t);
-  });
-}
+describe('JSONata', () => {
+  for (const [name, t] of Object.entries(dbTests(superUsersJSONata))) {
+    testJSONata(name, t);
+  }
+});

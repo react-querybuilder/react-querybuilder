@@ -36,17 +36,21 @@ afterAll(async () => {
 });
 
 // Common tests
-for (const [name, { query, expectedResult }] of Object.entries(dbTests(superUsersMongoDB))) {
-  describe(name, () => {
-    test('mongodb', async () => {
-      const mongoDbQuery = formatQuery(query, 'mongodb');
-      const queryResult = await SuperHero.find(JSON.parse(mongoDbQuery));
-      expect(queryResult).toEqual(expectedResult.map(er => expect.objectContaining(er)));
+describe('MongoDB', () => {
+  for (const [name, { query, expectedResult, fqOptions }] of Object.entries(
+    dbTests(superUsersMongoDB)
+  )) {
+    describe(name, () => {
+      test('mongodb', async () => {
+        const mongoDbQuery = formatQuery(query, { ...fqOptions, format: 'mongodb' });
+        const queryResult = await SuperHero.find(JSON.parse(mongoDbQuery));
+        expect(queryResult).toEqual(expectedResult.map(er => expect.objectContaining(er)));
+      });
+      test('mongodb_query', async () => {
+        const mongoDbQuery = formatQuery(query, { ...fqOptions, format: 'mongodb_query' });
+        const queryResult = await SuperHero.find(mongoDbQuery);
+        expect(queryResult).toEqual(expectedResult.map(er => expect.objectContaining(er)));
+      });
     });
-    test('mongodb_query', async () => {
-      const mongoDbQuery = formatQuery(query, 'mongodb_query');
-      const queryResult = await SuperHero.find(mongoDbQuery);
-      expect(queryResult).toEqual(expectedResult.map(er => expect.objectContaining(er)));
-    });
-  });
-}
+  }
+});

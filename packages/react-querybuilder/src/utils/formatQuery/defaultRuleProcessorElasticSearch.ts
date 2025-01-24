@@ -71,7 +71,7 @@ const valueRenderer = (v: any, parseNumbers?: boolean) =>
  */
 export const defaultRuleProcessorElasticSearch: RuleProcessor = (
   { field, operator, value, valueSource },
-  { parseNumbers } = {}
+  { parseNumbers, preserveValueOrder } = {}
 ): ElasticSearchQuery | ElasticSearchRule | false => {
   const operatorLC = operator.toLowerCase() as Lowercase<DefaultOperatorName>;
 
@@ -200,7 +200,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         if (shouldRenderAsNumber(first, true) && shouldRenderAsNumber(second, true)) {
           const firstNum = parseNumber(first, { parseNumbers: true });
           const secondNum = parseNumber(second, { parseNumbers: true });
-          if (secondNum < firstNum) {
+          if (!preserveValueOrder && secondNum < firstNum) {
             const tempNum = secondNum;
             second = firstNum;
             first = tempNum;

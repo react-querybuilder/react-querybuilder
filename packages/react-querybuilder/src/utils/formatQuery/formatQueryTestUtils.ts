@@ -176,6 +176,14 @@ export const queryForXor: DefaultRuleGroupType = {
   ],
 };
 
+export const queryForPreserveValueOrder: DefaultRuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'f1', operator: 'between', value: '12,14' },
+    { field: 'f2', operator: 'between', value: '14,12' },
+  ],
+};
+
 export const getValidationTestData = (
   format: ExportFormat
 ): { title: string; query: RuleGroupTypeAny; options: FormatQueryOptions }[] => {

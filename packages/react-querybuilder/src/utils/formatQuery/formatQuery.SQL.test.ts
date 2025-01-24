@@ -12,6 +12,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { convertToIC } from '../convertQuery';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { formatQuery } from './formatQuery';
@@ -21,6 +22,7 @@ import {
   queryAllOperators,
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
+  queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryForXor,
   queryIC,
@@ -631,6 +633,19 @@ describe('parseNumbers', () => {
   });
 });
 
+it('preserveValueOrder', () => {
+  expect(formatQuery(queryForPreserveValueOrder, { format: 'sql', parseNumbers: true })).toBe(
+    `(f1 between 12 and 14 and f2 between 12 and 14)`
+  );
+  expect(
+    formatQuery(queryForPreserveValueOrder, {
+      format: 'sql',
+      parseNumbers: true,
+      preserveValueOrder: true,
+    })
+  ).toBe(`(f1 between 12 and 14 and f2 between 14 and 12)`);
+});
+
 describe('placeholder names', () => {
   const placeholderFieldName = 'placeholderFieldName';
   const placeholderOperatorName = 'placeholderOperatorName';
@@ -727,5 +742,11 @@ describe('concat operator', () => {
 describe('non-standard combinators', () => {
   it('handles XOR operator', () => {
     expect(formatQuery(queryForXor, 'sql')).toBe(`(f1 = 'v1' xor f2 = 'v2')`);
+    expect(
+      formatQuery(
+        { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(queryForXor)] },
+        'sql'
+      )
+    ).toBe(`(f1 = 'v1' and (f1 = 'v1' xor f2 = 'v2'))`);
   });
 });

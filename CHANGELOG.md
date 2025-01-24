@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 
 - [#845] New `formatQuery` option `operatorProcessor`. Currently only applies to "sql", "parameterized", "parameterized_named", and "natural_language" formats.
+- New `formatQuery` option `preserveValueOrder`. Preserves the order of values when exporting rules with "between"/"notBetween" operators, even if the larger value comes first.
 
 ## Fixed
 
 - [#844] The `formatQuery` export format "elasticsearch" now includes the `.value` property when outputting Painless scripts.
 - [#845] `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
 - The `convertQuery*` functions now support the "xor" combinator.
+- The `formatQuery` export format "natural_language" now supports the "xor" combinator.
 
 ## [v8.1.1] - 2025-01-20
 

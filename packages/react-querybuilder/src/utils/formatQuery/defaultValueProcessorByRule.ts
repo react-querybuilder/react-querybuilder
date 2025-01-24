@@ -17,6 +17,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   {
     escapeQuotes,
     parseNumbers,
+    preserveValueOrder,
     quoteFieldNamesWith,
     quoteValuesWith,
     concatOperator = '||',
@@ -82,7 +83,12 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
         const secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
         const valsOneAndTwoOnly = [firstValue, secondValue];
-        if (firstValue === firstNum && secondValue === secondNum && secondNum < firstNum) {
+        if (
+          !preserveValueOrder &&
+          firstValue === firstNum &&
+          secondValue === secondNum &&
+          secondNum < firstNum
+        ) {
           valsOneAndTwoOnly[0] = secondNum;
           valsOneAndTwoOnly[1] = firstNum;
         }

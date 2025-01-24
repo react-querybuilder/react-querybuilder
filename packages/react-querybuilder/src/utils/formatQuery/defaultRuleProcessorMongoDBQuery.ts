@@ -9,7 +9,7 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers } = {}
+  { parseNumbers, preserveValueOrder } = {}
 ) => {
   const valueIsField = valueSource === 'field';
 
@@ -112,8 +112,19 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         const secondNum = shouldRenderAsNumber(second, true)
           ? parseNumber(second, { parseNumbers: 'strict' })
           : NaN;
-        const firstValue = valueIsField ? first : isNaN(firstNum) ? first : firstNum;
-        const secondValue = valueIsField ? second : isNaN(secondNum) ? second : secondNum;
+        let firstValue = valueIsField ? first : isNaN(firstNum) ? first : firstNum;
+        let secondValue = valueIsField ? second : isNaN(secondNum) ? second : secondNum;
+        if (
+          !preserveValueOrder &&
+          firstValue === firstNum &&
+          secondValue === secondNum &&
+          secondNum < firstNum
+        ) {
+          const tempNum = secondNum;
+          secondValue = firstNum;
+          firstValue = tempNum;
+        }
+
         if (operatorLC === 'between') {
           return valueIsField
             ? {
