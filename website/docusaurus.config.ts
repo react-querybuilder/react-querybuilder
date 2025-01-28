@@ -96,7 +96,11 @@ const config: Config = {
             parametersFormat: 'table',
             propertiesFormat: 'list',
             indexFormat: 'table',
-            sidebar: { autoConfiguration: true, pretty: true },
+            sidebar: {
+              autoConfiguration: true,
+              deprecatedItemClassName: 'deprecated',
+              pretty: true,
+            },
             sortEntryPoints: true,
             hideGroupHeadings: true,
             pretty: true,
