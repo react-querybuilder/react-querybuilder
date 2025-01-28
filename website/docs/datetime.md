@@ -61,7 +61,7 @@ formatQuery(query, {
 In the next example, `isDateField` is an array of objects. If the field object (`options.fieldData`) matches all properties of any element in the array, the field will be treated as a date. Note that this method depends on the `fields` array being passed in the `formatQuery` options.
 
 ```ts
-// Returns true if the value appears to be an ISO date-only string (YYYY-MM-DD)
+// Triggers date processing if the field has `datatype: "date"` _or_ `inputType: "datetime-local"`
 const isDateField = [{ datatype: 'date' }, { inputType: 'datetime-local' }];
 
 const fields: Field[] = [

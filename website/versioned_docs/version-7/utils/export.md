@@ -11,7 +11,7 @@ Use the `formatQuery` function to export queries in various formats. The functio
 function formatQuery(
   query: RuleGroupTypeAny,
   options?: ExportFormat | FormatQueryOptions
-): string | ParameterizedSQL | ParameterizedNamedSQL | RQBJsonLogic;
+): string | ParameterizedSQL | ParameterizedNamedSQL | RQBJsonLogic | Record<string, any>;
 ```
 
 `formatQuery` converts a given query object into one of the following formats:
@@ -21,7 +21,8 @@ function formatQuery(
 - SQL `WHERE` clause
 - Parameterized SQL, anonymous parameters
 - Parameterized SQL, named parameters
-- MongoDB
+- MongoDB query object
+- ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
 - Spring Expression Language (SpEL)
 - JsonLogic
@@ -55,24 +56,21 @@ const query: RuleGroupType = {
 
 :::tip
 
-> **_<abbr title="Too long; didn't read">TL;DR</abbr>: For best results, use the [default combinators and operators](./misc#defaults) or map your custom combinators/operators to the defaults with [`transformQuery`](./misc#transformquery)._**
+For best results, use the [default combinators and operators](./misc#defaults) or map your custom combinators/operators to the defaults with [`transformQuery`](./misc#transformquery).
+
+<details>
+<summary>More information...</summary>
 
 While `formatQuery` technically accepts query objects of type `RuleGroupTypeAny` (i.e., `RuleGroupType` or `RuleGroupTypeIC`), it is not guaranteed to process a query correctly unless the query also conforms to the type `DefaultRuleGroupTypeAny` (i.e., `DefaultRuleGroupType` or `DefaultRuleGroupTypeIC`).
 
-In practice, this means that all `combinator` and `operator` properties in the query must match the `name` of an element in [`defaultCombinators` or `defaultOperators`](./misc#defaults), respectively. If you implement custom combinator and/or operator names, you can use the [`transformQuery` function](./misc#transformquery) to map your query properties to the defaults.
+In practice, this means that all `combinator` and `operator` properties in the query must match (case-insensitively) the `name` of an element in [`defaultCombinators` or `defaultOperators`](./misc#defaults), respectively. If you implement custom combinator and/or operator names, you can use the [`transformQuery` function](./misc#transformquery) to map your query properties to the defaults before passing the query to `formatQuery`.
 
 For example, assume your implementation replaces the default "between" operator (`{ name: "between", label: "between" }`) with `{ name: "b/w", label: "b/w" }`. Any rules using this operator would have `operator: "b/w"` instead of `operator: "between"`. So if a query looked like this...
 
 ```json
 {
   "combinator": "and",
-  "rules": [
-    {
-      "field": "someNumber",
-      "operator": "b/w",
-      "value": "12,14"
-    }
-  ]
+  "rules": [{ "field": "someNumber", "operator": "b/w", "value": "12,14" }]
 }
 ```
 
@@ -83,18 +81,14 @@ const newQuery = transformQuery(query, { operatorMap: { 'b/w': 'between' } });
 /*
 {
   "combinator": "and",
-  "rules": [
-    {
-      "field": "someNumber",
-      "operator": "between",
-      "value": "12,14"
-    }
-  ]
+  "rules": [{ "field": "someNumber", "operator": "between", "value": "12,14" }]
 }
 */
 ```
 
 The `newQuery` object would be ready for processing by `formatQuery`, including special handling of the "between" operator.
+
+</details>
 
 :::
 
@@ -207,7 +201,7 @@ MongoDB-compatible query objects can be produced as a JSON object or as a `strin
 
 :::info
 
-The "mongodb_query" export format was introduced, and the "mongodb" format was deprecated, in version 8.1.0.
+The "mongodb" format was deprecated when the "mongodb_query" export format was introduced, in version 8.1.0.
 
 :::
 
@@ -316,9 +310,11 @@ Output:
 `firstName = "Steve" and lastName = "Vai"`;
 ```
 
-:::tip
+:::tip Handling date values in JSONata
 
-Since React Query Builder does not have an official way to determine when values should be treated as dates or date-like strings, we recommend implementing a custom rule processor to handle date rules when exporting to JSONata. The example below has no error checking or validation (among other issues), but it can be a good starting point.
+The `react-querybuilder` package itself does not have a standard way to determine when values should be treated as dates or date-like strings, so we recommend using `datetimeRuleProcessorJSONata` from the [`@react-querybuilder/datetime`](../datetime#jsonata) package.
+
+If you need more control over the output, you can implement a custom rule processor like the example below. (It has no error checking or validation&mdash;among other issues&mdash;but it can be a good starting point.)
 
 ```ts
 const customRuleProcessor: RuleProcessor = (rule, options) => {
@@ -382,6 +378,7 @@ The default rule processors for each format are available as exports from `react
 - `defaultRuleProcessorJsonLogic`
 - `defaultRuleProcessorMongoDB`
 - `defaultRuleProcessorMongoDBQuery`
+- `defaultRuleProcessorNL`
 - `defaultRuleProcessorSpEL`
 - `defaultRuleProcessorSQL`
 - `defaultRuleProcessorParameterized`
@@ -450,7 +447,8 @@ The "parameterized" and "parameterized_named" formats require rule processors to
 const customRuleProcessor: RuleProcessor = (rule, options) => {
   if (rule.operator === 'has') {
     // TIP: `getNextNamedParam` can be called multiple times in case your SQL
-    // requires multiple unique parameters. Each call will generate a new name.
+    // requires multiple unique parameters (e.g., in a "between" condition).
+    // Each call will generate a new name.
     const paramName = options.getNextNamedParam!(rule.field);
     return {
       sql: `UPPER(${rule.field}) LIKE UPPER('%' || ${options.paramPrefix}${paramName} || '%')`,
@@ -544,22 +542,31 @@ formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
 */
 ```
 
-Versions of the default value processors using the newer `fn(rule, options)` signature as well as the legacy signature are available for all query language formats except "jsonlogic" ([use `ruleProcessor` instead](#rule-processor)).
+Versions of the default value processors using the legacy signature are still available for some query language formats.
 
-- Current signature (recommended):
-  - `defaultValueProcessorByRule` (for all SQL-based formats)
-  - `defaultValueProcessorCELByRule`
-  - `defaultValueProcessorMongoDBByRule`
-  - `defaultValueProcessorSpELByRule`
-- Legacy signature:
-  - `defaultValueProcessor` (for all SQL-based formats)
-  - `defaultMongoDBValueProcessor`
-  - `defaultCELValueProcessor`
-  - `defaultSpELValueProcessor`
+| Format                | Current signature (recommended)      | Legacy signature (not recommended) |
+| --------------------- | ------------------------------------ | ---------------------------------- |
+| "sql"                 | `defaultValueProcessorByRule`        | `defaultValueProcessor`            |
+| "parameterized"       | `defaultValueProcessorByRule`        | `defaultValueProcessor`            |
+| "parameterized_named" | `defaultValueProcessorByRule`        | `defaultValueProcessor`            |
+| "cel"                 | `defaultValueProcessorCELByRule`     | `defaultCELValueProcessor`         |
+| "mongodb"             | `defaultValueProcessorMongoDBByRule` | `defaultMongoDBValueProcessor`     |
+| "spel"                | `defaultValueProcessorSpELByRule`    | `defaultSpELValueProcessor`        |
 
 ### Operator processor
 
 `operatorProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "operator" portion of the output for the "sql", "parameterized", "parameterized_named", and "natural_language" formats.
+
+```ts
+formatQuery(query, {
+  format: 'sql',
+  // Convert all operators to uppercase
+  operatorProcessor: (rule, options) => defaultOperatorProcessorSQL(rule, options).toUpperCase(),
+});
+/*
+"(firstName LIKE 'Stev%' and lastName IN ('Vai', 'Vaughan'))"
+*/
+```
 
 ### Quote field names
 
@@ -622,7 +629,7 @@ p.sql === "(firstName = $firstName_1 and lastName = $lastName_1)"
 
 ### Retain parameter prefixes
 
-`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the "parameterized_named" format, the keys of the `params` object will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ "$param_1": "val" }` instead of `{ "param_1": "val" }`).
+`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the "parameterized_named" format, the keys of the `params` object will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ ":param_1": "val" }` instead of `{ "param_1": "val" }`).
 
 ### Numbered parameters
 
@@ -673,14 +680,86 @@ formatQuery(query, { format: 'sql', concatOperator: 'CONCAT' });
 
 The `preset` option configures options known to enable (or at least improve) compatibility with particular query language dialects. Individual options will override their respective preset values. The following presets are available:
 
-| Dialect        | Preset options                                                                            |
-| -------------- | ----------------------------------------------------------------------------------------- |
-| `'ansi'`       | N/A                                                                                       |
-| `'sqlite'`     | `paramsKeepPrefix: true`                                                                  |
-| `'oracle'`     | N/A                                                                                       |
-| `'mssql'`      | `quoteFieldNamesWith: ['[', ']']`, `concatOperator: '+'`, `fieldIdentifierSeparator: '.'` |
-| `'mysql'`      | `concatOperator: 'CONCAT'`                                                                |
-| `'postgresql'` | `quoteFieldNamesWith: '"'`, `numberedParams: true`, `paramPrefix: '$'`                    |
+<table>
+  <thead>
+    <tr><th>Dialect</th><th>Preset options</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>
+
+`'ansi'`
+
+</td><td>
+
+```json
+{}
+```
+
+</td></tr>
+    <tr><td>
+
+`'sqlite'`
+
+</td><td>
+
+```json
+{ "paramsKeepPrefix": true }
+```
+
+</td></tr>
+    <tr><td>
+
+`'oracle'`
+
+</td><td>
+
+```json
+{}
+```
+
+</td></tr>
+    <tr><td>
+
+`'mssql'`
+
+</td><td>
+
+```json
+{
+  "quoteFieldNamesWith": ["[", "]"],
+  "concatOperator": "+",
+  "fieldIdentifierSeparator": ".",
+  "paramPrefix": "@"
+}
+```
+
+</td></tr>
+    <tr><td>
+
+`'mysql'`
+
+</td><td>
+
+```json
+{ "concatOperator": "CONCAT" }
+```
+
+</td></tr>
+    <tr><td>
+
+`'postgresql'`
+
+</td><td>
+
+```json
+{ "quoteFieldNamesWith": "\"", "numberedParams": true, "paramPrefix": "$" }
+```
+
+</td></tr>
+  </tbody>
+</table>
+
+Examples:
 
 ```ts
 formatQuery(query, { format: 'parameterized', preset: 'postgresql' });
