@@ -867,10 +867,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       return {
         bool: rg.not
           ? {
-              must_not:
-                rg.combinator === 'or' ? { bool: { should: processedRules } } : processedRules,
+              must_not: /^or$/i.test(rg.combinator)
+                ? { bool: { should: processedRules } }
+                : processedRules,
             }
-          : { [rg.combinator === 'or' ? 'should' : 'must']: processedRules },
+          : { [/^or$/i.test(rg.combinator) ? 'should' : 'must']: processedRules },
       };
     };
 
@@ -906,7 +907,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         if (isRuleGroup(rule)) {
           return processRuleGroup(
             rule,
-            rg2.rules.length === 1 && !(rg2.not || rg2.combinator === 'xor')
+            rg2.rules.length === 1 &&
+              !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
           );
         }
 
@@ -936,7 +938,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return fallbackExpression;
       }
 
-      const isXOR = rg2.combinator === 'xor';
+      const isXOR = /^xor$/i.test(rg2.combinator ?? '');
       const combinator = isXOR ? rg2.combinator!.slice(1) : rg2.combinator;
       const mustWrap = rg2.not || !outermostOrLonelyInGroup || (isXOR && processedRules.length > 1);
 

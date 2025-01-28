@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#845] `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
 - [#846] The `convertQuery*` functions now support the "xor" combinator.
 - [#846] The `formatQuery` export format "natural_language" now supports the "xor" combinator.
+- `formatQuery` handles combinator values case-insensitively in all cases.
 
 ## [v8.1.1] - 2025-01-20
 
