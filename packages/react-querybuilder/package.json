@@ -100,8 +100,8 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
+    "@babel/core": "^7.26.7",
+    "@babel/preset-env": "^7.26.7",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
     "@electric-sql/pglite": "^0.2.16",
@@ -111,7 +111,7 @@
     "@types/hoist-non-react-statics": "^3.3.6",
     "@types/jscodeshift": "^0.12.0",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^22.10.10",
+    "@types/node": "^22.12.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
@@ -133,7 +133,7 @@
     "vite": "^6.0.11"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.5.0",
+    "@reduxjs/toolkit": "^2.5.1",
     "immer": "^10.1.1",
     "numeric-quantity": "^2.0.1",
     "react-redux": "^9.2.0"
