@@ -1,9 +1,9 @@
 import type { ButtonProps } from '@mantine/core';
 import { Button } from '@mantine/core';
 import * as React from 'react';
-import type { ActionProps } from 'react-querybuilder';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 
-export type MantineActionProps = ActionProps & Partial<ButtonProps>;
+export type MantineActionProps = ActionWithRulesProps & Partial<ButtonProps>;
 
 export const MantineActionElement = ({
   className,
@@ -13,6 +13,7 @@ export const MantineActionElement = ({
   disabled,
   disabledTranslation,
   testID,
+  rules: _rules,
   ruleOrGroup: _rg,
   path: _path,
   level: _level,

@@ -9,7 +9,6 @@ export const NativeActionElement = ({
   disabled,
   disabledTranslation,
   testID,
-  schema: _schema,
 }: ActionNativeProps): React.JSX.Element => (
   <Pressable
     testID={testID}

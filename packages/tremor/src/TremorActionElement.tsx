@@ -1,9 +1,9 @@
 import type { ButtonProps } from '@tremor/react';
 import { Button } from '@tremor/react';
 import * as React from 'react';
-import type { ActionProps } from 'react-querybuilder';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 
-export type TremorActionProps = ActionProps & ButtonProps;
+export type TremorActionProps = ActionWithRulesProps & ButtonProps;
 
 export const TremorActionElement = ({
   className,
@@ -13,6 +13,7 @@ export const TremorActionElement = ({
   disabled,
   disabledTranslation,
   testID,
+  rules: _rules,
   ruleOrGroup: _rg,
   path: _path,
   level: _level,

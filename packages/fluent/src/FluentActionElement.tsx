@@ -1,9 +1,9 @@
 import type { ButtonProps } from '@fluentui/react-components';
 import { Button } from '@fluentui/react-components';
 import * as React from 'react';
-import type { ActionProps } from 'react-querybuilder';
+import type { ActionWithRulesProps } from 'react-querybuilder';
 
-export type FluentActionProps = ActionProps & ButtonProps;
+export type FluentActionProps = ActionWithRulesProps & ButtonProps;
 
 export const FluentActionElement = ({
   className,
@@ -13,6 +13,7 @@ export const FluentActionElement = ({
   disabled,
   disabledTranslation,
   testID,
+  rules: _rules,
   ruleOrGroup: _rg,
   path: _path,
   level: _level,
