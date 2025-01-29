@@ -1,3 +1,4 @@
+import { produce } from 'immer';
 import type {
   RuleGroupArray,
   RuleGroupType,
@@ -26,46 +27,46 @@ const generateRuleGroupICWithConsistentCombinators = (
       : rg;
   }
 
-  let cursor = 0;
+  return produce(rg, draft => {
+    let cursor = 0;
 
-  // Group all chains of combinators in the rule array that are not the base combinator
-  while (cursor < rg.rules.length - 2) {
-    if (isSameString(rg.rules[cursor + 1], baseCombinator)) {
-      cursor += 2;
-      continue;
-    }
+    // Group all chains of combinators in the rule array that are not the base combinator
+    while (cursor < draft.rules.length - 2) {
+      if (isSameString(draft.rules[cursor + 1], baseCombinator)) {
+        cursor += 2;
+        continue;
+      }
 
-    const nextBaseCombinatorIndex = rg.rules.findIndex(
-      (r, i) => i > cursor && typeof r === 'string' && r.toLowerCase() === baseCombinator
-    );
-
-    if (nextBaseCombinatorIndex === -1) {
-      // No more instances of this combinator, so group all remaining rules and exit the loop
-      rg.rules.splice(
-        cursor,
-        rg.rules.length,
-        generateRuleGroupICWithConsistentCombinators(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          { rules: rg.rules.slice(cursor) as any },
-          baseCombinatorLevel + 1
-        )
+      const nextBaseCombinatorIndex = draft.rules.findIndex(
+        (r, i) => i > cursor && typeof r === 'string' && r.toLowerCase() === baseCombinator
       );
-      break;
-    } else {
-      // Group all rules between the current cursor and the next instance of the base combinator
-      rg.rules.splice(
-        cursor,
-        nextBaseCombinatorIndex - cursor,
-        generateRuleGroupICWithConsistentCombinators(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          { rules: rg.rules.slice(cursor, nextBaseCombinatorIndex) as any },
-          baseCombinatorLevel + 1
-        )
-      );
-    }
-  }
 
-  return rg;
+      if (nextBaseCombinatorIndex === -1) {
+        // No more instances of this combinator, so group all remaining rules and exit the loop
+        draft.rules.splice(
+          cursor,
+          draft.rules.length,
+          generateRuleGroupICWithConsistentCombinators(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { rules: draft.rules.slice(cursor) as any },
+            baseCombinatorLevel + 1
+          )
+        );
+        break;
+      } else {
+        // Group all rules between the current cursor and the next instance of the base combinator
+        draft.rules.splice(
+          cursor,
+          nextBaseCombinatorIndex - cursor,
+          generateRuleGroupICWithConsistentCombinators(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            { rules: draft.rules.slice(cursor, nextBaseCombinatorIndex) as any },
+            baseCombinatorLevel + 1
+          )
+        );
+      }
+    }
+  });
 };
 
 /**
