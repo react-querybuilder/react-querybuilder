@@ -1,6 +1,5 @@
 import type {
   RuleGroupArray,
-  RuleGroupICArray,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
@@ -8,58 +7,65 @@ import type {
 } from '../types/index.noReact';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 
-const processRuleOrStringOrRuleGroupIC = (r: string | RuleType | RuleGroupTypeIC) =>
-  isRuleGroup(r) ? generateRuleGroupICWithConsistentCombinators(r) : r;
+const combinatorLevels = ['or', 'xor', 'and'] as const;
 
-const generateRuleGroupICWithConsistentCombinators = (rg: RuleGroupTypeIC): RuleGroupTypeIC => {
-  const returnArray: RuleGroupICArray = [];
-  const push = (r: string | RuleType | RuleGroupTypeIC) =>
-    returnArray.push(processRuleOrStringOrRuleGroupIC(r) as RuleType | RuleGroupTypeIC);
-  let startIndex = 0;
-  for (let i = 0; i < rg.rules.length; i += 2) {
-    if (rg.rules.length === 1) {
-      push(rg.rules[0]);
-    } else if (rg.rules[i + 1] === 'and' || rg.rules[i + 1] === 'xor') {
-      startIndex = i;
-      let j = 1;
-      while (rg.rules[startIndex + j] === rg.rules[startIndex + 1]) {
-        i += 2;
-        j += 2;
-      }
-      returnArray.push({
-        // @ts-expect-error Too complicated to keep track of odd/even indexes in TS
-        rules: rg.rules.slice(startIndex, i + 1).map(v => processRuleOrStringOrRuleGroupIC(v)),
-      });
-      i -= 2;
-    } else if (rg.rules[i + 1] === 'or') {
-      if (i === 0 || i === rg.rules.length - 3) {
-        if (i === 0 || rg.rules[i - 1] === rg.rules[i + 1]) {
-          push(rg.rules[i]);
-        }
-        push(rg.rules[i + 1]);
-        if (i === rg.rules.length - 3) {
-          push(rg.rules[i + 2]);
-        }
-      } else {
-        if (rg.rules[i - 1] === 'and' || rg.rules[i - 1] === 'xor') {
-          push(rg.rules[i + 1]);
-        } else {
-          push(rg.rules[i]);
-          push(rg.rules[i + 1]);
-        }
-      }
+const isSameString = (a: unknown, b: string) => typeof a === 'string' && a.toLowerCase() === b;
+
+const generateRuleGroupICWithConsistentCombinators = (
+  rg: RuleGroupTypeIC,
+  baseCombinatorLevel: number = 0
+): RuleGroupTypeIC => {
+  const baseCombinator = combinatorLevels[baseCombinatorLevel];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!rg.rules.includes(baseCombinator as any)) {
+    // No instances of this combinator, so group based on the next
+    // combinator level if at least two levels remain
+    return baseCombinatorLevel < combinatorLevels.length - 2
+      ? generateRuleGroupICWithConsistentCombinators(rg, baseCombinatorLevel + 1)
+      : rg;
+  }
+
+  let cursor = 0;
+
+  // Group all chains of combinators in the rule array that are not the base combinator
+  while (cursor < rg.rules.length - 2) {
+    if (isSameString(rg.rules[cursor + 1], baseCombinator)) {
+      cursor += 2;
+      continue;
+    }
+
+    const nextBaseCombinatorIndex = rg.rules.findIndex(
+      (r, i) => i > cursor && typeof r === 'string' && r.toLowerCase() === baseCombinator
+    );
+
+    if (nextBaseCombinatorIndex === -1) {
+      // No more instances of this combinator, so group all remaining rules and exit the loop
+      rg.rules.splice(
+        cursor,
+        rg.rules.length,
+        generateRuleGroupICWithConsistentCombinators(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { rules: rg.rules.slice(cursor) as any },
+          baseCombinatorLevel + 1
+        )
+      );
+      break;
+    } else {
+      // Group all rules between the current cursor and the next instance of the base combinator
+      rg.rules.splice(
+        cursor,
+        nextBaseCombinatorIndex - cursor,
+        generateRuleGroupICWithConsistentCombinators(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { rules: rg.rules.slice(cursor, nextBaseCombinatorIndex) as any },
+          baseCombinatorLevel + 1
+        )
+      );
     }
   }
-  if (
-    // @ts-expect-error TS still thinks returnArray has length 0
-    returnArray.length === 1 &&
-    typeof returnArray[0] === 'object' &&
-    isRuleGroup(returnArray[0])
-  ) {
-    // @ts-expect-error TS still thinks returnArray has length 0
-    return { ...rg, ...returnArray[0] };
-  }
-  return { ...rg, rules: returnArray };
+
+  return rg;
 };
 
 /**

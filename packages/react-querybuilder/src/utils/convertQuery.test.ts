@@ -148,6 +148,8 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
           { field: 'middleName', operator: 'null', value: null },
           'xor',
           { field: 'isMusician', operator: '=', value: true },
+          'and',
+          { field: 'lastName', operator: '=', value: 'Vai' },
           'or',
           { field: 'fieldName', operator: '=', value: 'Test' },
         ],
@@ -166,12 +168,46 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
           combinator: 'xor',
           rules: [
             { field: 'middleName', operator: 'null', value: null },
-            { field: 'isMusician', operator: '=', value: true },
+            {
+              combinator: 'and',
+              rules: [
+                { field: 'isMusician', operator: '=', value: true },
+                { field: 'lastName', operator: '=', value: 'Vai' },
+              ],
+            },
           ],
         },
         { field: 'fieldName', operator: '=', value: 'Test' },
       ],
     });
+
+    // XOR edge cases
+    const r = { field: 'f1', operator: '=', value: 'v1' };
+    expect(
+      convertQuery({
+        rules: [r, 'and', r, 'or', r, 'Or', r, 'xor', r, 'and', r, 'AND', r, 'and', r, 'or', r],
+      })
+    ).toEqual({
+      combinator: 'or',
+      rules: [
+        { combinator: 'and', rules: [r, r] },
+        r,
+        { combinator: 'xor', rules: [r, { combinator: 'and', rules: [r, r, r, r] }] },
+        r,
+      ],
+    });
+    expect(convertQuery({ rules: [r, 'or', r, 'or', r, 'xor', r, 'or', r] })).toEqual({
+      combinator: 'or',
+      rules: [r, r, { combinator: 'xor', rules: [r, r] }, r],
+    });
+    expect(convertQuery({ rules: [r, 'and', r, 'and', r, 'xor', r, 'and', r, 'and', r] })).toEqual({
+      combinator: 'xor',
+      rules: [
+        { combinator: 'and', rules: [r, r, r] },
+        { combinator: 'and', rules: [r, r, r] },
+      ],
+    });
+
     expect(
       convertQuery({
         rules: [
