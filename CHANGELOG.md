@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.2.0] - 2025-01-28
+
 ## Added
 
 - [#845] New `formatQuery` option `operatorProcessor`. Currently only applies to "sql", "parameterized", "parameterized_named", and "natural_language" formats.
@@ -14,11 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 
-- [#844] The `formatQuery` export format "elasticsearch" now includes the `.value` property when outputting Painless scripts.
-- [#845] `formatQuery` will treat all case variations of standard `operator` names the same (e.g., "doesNotContain", "doesnotcontain", and "DoEsNoTcOnTaIn"&mdash;all else equal&mdash;will produce the same output).
-- [#846] The `convertQuery*` functions now support the "xor" combinator.
-- [#846] The `formatQuery` export format "natural_language" now supports the "xor" combinator.
-- `formatQuery` handles combinator values case-insensitively in all cases.
+- [#844] The `formatQuery` "elasticsearch" export format now includes the `.value` property when outputting Painless scripts.
+- [#845] `formatQuery` handles `combinator` and `operator` values case-insensitively.
+- [#846] `convertQuery`, `convertToIC`, and `convertFromIC` now support the "xor" combinator, as does the "natural_language" export format.
 
 ## [v8.1.1] - 2025-01-20
 
@@ -1846,7 +1848,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.2.0...HEAD
+[v8.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.1...v8.2.0
 [v8.1.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.0...v8.1.1
 [v8.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.0.0...v8.1.0
 [v8.0.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.7.1...v8.0.0
