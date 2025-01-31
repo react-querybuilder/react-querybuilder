@@ -360,6 +360,34 @@ An object can be passed as the second argument instead of a string to have more 
 
 To render values as numbers instead of quoted strings when possible, set the `parseNumbers` option to `true`. See [Number parsing](./misc#number-parsing) for more details and advanced options.
 
+#### Preserve value order
+
+By default, `formatQuery` will sort values in ascending order in the output for rules with "between" or "notBetween" operators when the `parseNumbers` configuration causes values to be rendered as numbers. This re-ordering can be disabled with the `preserveValueOrder` option.
+
+```ts
+const query = {
+  rules: [{ field: 'age', operator: 'between', value: [30, 20] }],
+};
+
+formatQuery(query, { format: 'sql', parseNumbers: true });
+/*
+"(age between 20 and 30)"
+*/
+
+formatQuery(query, { format: 'sql', parseNumbers: true, preserveValueOrder: true });
+/*
+"(age between 30 and 20)"
+*/
+```
+
+:::caution
+
+Enabling this option can produce conditions that will _always_ evaluate to false. For example, the SQL expression `X BETWEEN Y AND Z` is equivalent to `X >= Y AND X <= Z` no matter what the values of Y and Z are. Therefore, if Y is greater than Z, no value of X can ever satisfy both conditions.
+
+`formatQuery` makes the assumption that the user probably means "X represents a point on the line between points Y and Z"&mdash;irrespective of direction&mdash;and is not concerned with the more esoteric SQL semantics.
+
+:::
+
 ### Rule processor
 
 To customize the output for individual rules, use the `ruleProcessor` configuration option. Rules will only be passed to the provided processor function if they first pass [validation](#validation). The function will be called like this:
