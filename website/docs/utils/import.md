@@ -37,6 +37,8 @@ These functions were available as separate exports in version 6 (along with [`fo
 ## SQL
 
 ```ts
+import { parseSQL } from 'react-querybuilder/parseSQL';
+
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 ```
 
@@ -118,6 +120,8 @@ const App = () => {
 ## MongoDB
 
 ```ts
+import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+
 function parseMongoDB(
   mongoDbQuery: string | Record<string, any>,
   options?: ParseMongoDbOptions
@@ -203,6 +207,8 @@ Valid MongoDB query strings may not strictly conform to the JSON specification. 
 ## JsonLogic
 
 ```ts
+import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
+
 function parseJsonLogic(
   jsonLogic: string | JsonLogic,
   options?: ParseJsonLogicOptions
@@ -288,6 +294,8 @@ Output (`RuleGroupType`):
 ## Spring Expression Language (SpEL)
 
 ```ts
+import { parseSpEL } from 'react-querybuilder/parseSpEL';
+
 function parseSpEL(spelQuery: string, options?: ParseSpELOptions): RuleGroupTypeAny;
 ```
 
@@ -324,6 +332,8 @@ Output (`RuleGroupType`):
 ## Common Expression Language (CEL)
 
 ```ts
+import { parseCEL } from 'react-querybuilder/parseCEL';
+
 function parseCEL(celQuery: string, options?: ParseCELOptions): RuleGroupTypeAny;
 ```
 
@@ -360,6 +370,8 @@ Output (`RuleGroupType`):
 ## JSONata
 
 ```ts
+import { parseJSONata } from 'react-querybuilder/parseJSONata';
+
 function parseJSONata(jsonataQuery: string, options?: ParseJSONataOptions): RuleGroupTypeAny;
 ```
 
