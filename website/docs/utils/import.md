@@ -9,6 +9,31 @@ Import/parser functions take a string or object representing a query in a specif
 
 The optional second parameter is an options object to configure the parsing behavior or query generation (see [Configuration](#configuration)).
 
+:::info Importing `parse*` functions
+
+Since the `parse*` functions are used less frequently than other utility functions&mdash;and not generally alongside each other&mdash;they were removed from the main export in version 7.
+
+```diff
+ // Version 6 only
+-import { parseCEL } from "react-querybuilder"
+-import { parseJsonLogic } from "react-querybuilder"
+-import { parseMongoDB } from "react-querybuilder"
+-import { parseSQL } from "react-querybuilder"
+
+ // Version 6 or 7
++import { parseCEL } from "react-querybuilder/parseCEL"
++import { parseJsonLogic } from "react-querybuilder/parseJsonLogic"
++import { parseMongoDB } from "react-querybuilder/parseMongoDB"
++import { parseSQL } from "react-querybuilder/parseSQL"
+ // (New in version 7)
++import { parseSpEL } from "react-querybuilder/parseSpEL"
++import { parseJSONata } from "react-querybuilder/parseJSONata"
+```
+
+These functions were available as separate exports in version 6 (along with [`formatQuery`](./export) and [`transformQuery`](./misc#transformquery)), but they could also be imported from `"react-querybuilder"`. In version 7, they are _only_ available as separate exports. (This change reduced the main bundle size by almost 50%.)
+
+:::
+
 ## SQL
 
 ```ts
