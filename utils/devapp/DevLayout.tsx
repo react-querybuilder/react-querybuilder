@@ -47,8 +47,8 @@ export const DevLayout = ({
   };
 
   return (
-    <>
-      <div>
+    <div id="dev-layout">
+      <div className="dev-layout-child">
         {optionOrder.map(opt => (
           <label key={opt}>
             <input
@@ -101,7 +101,7 @@ export const DevLayout = ({
           Import
         </button>
       </div>
-      <div>
+      <div className="dev-layout-child">
         <div className="donut-hole">{children}</div>
         <div id="exports">
           {formatQueryResults.map(([fmt, result]) => (
@@ -120,6 +120,6 @@ export const DevLayout = ({
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

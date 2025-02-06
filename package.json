@@ -6,7 +6,7 @@
     "website"
   ],
   "scripts": {
-    "start": "bun run --filter react-querybuilder start",
+    "start": "bun --hot ./utils/devapp/server.ts",
     "start:antd": "bun run --filter @react-querybuilder/antd start",
     "start:bootstrap": "bun run --filter @react-querybuilder/bootstrap start",
     "start:bulma": "bun run --filter @react-querybuilder/bulma start",
@@ -17,6 +17,7 @@
     "start:mantine": "bun run --filter @react-querybuilder/mantine start",
     "start:material": "bun run --filter @react-querybuilder/material start",
     "start:native": "bun run --filter @react-querybuilder/native start",
+    "start:rqb": "bun run --filter react-querybuilder start",
     "start:tremor": "bun run --filter @react-querybuilder/tremor start",
     "build": "concurrently --timings --max-processes 14 --prefix-colors \"#82a7dd,#0958d9,#712cf9,#00d1b2,#81e6d9,cyan,#4078c0,#7fba00,#339af0,#007fff,#61dafb,#60a5fa\" --names rqb,antd,bootstrap,bulma,chakra,datetime,dnd,fluent,mantine,material,native,tremor bun:build:rqb bun:build:antd bun:build:bootstrap bun:build:bulma bun:build:chakra bun:build:datetime bun:build:dnd bun:build:fluent bun:build:mantine bun:build:material bun:build:native bun:build:tremor",
     "build:sequential": "bun --bun run build:rqb && bun --bun run build:antd && bun --bun run build:bootstrap && bun --bun run build:bulma && bun --bun run build:chakra && bun --bun run build:datetime && bun --bun run build:dnd && bun --bun run build:fluent && bun --bun run build:mantine && bun --bun run build:material && bun --bun run build:native && bun --bun run build:tremor",
@@ -108,9 +109,11 @@
     "@types/node": "^22.13.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@types/react-native-web": "^0.19.0",
     "@types/web": "^0.0.200",
     "@typescript-eslint/parser": "^8.22.0",
     "babel-plugin-react-compiler": "^19.0.0-beta-e552027-20250112",
+    "bun-plugin-tailwind": "^0.0.14",
     "concurrently": "^9.1.2",
     "esbuild-analyzer": "^0.2.0",
     "eslint": "^9.19.0",
@@ -140,5 +143,8 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.22.0",
     "vite": "^6.0.11"
+  },
+  "patchedDependencies": {
+    "bun-plugin-tailwind@0.0.14": "patches/bun-plugin-tailwind@0.0.14.patch"
   }
 }

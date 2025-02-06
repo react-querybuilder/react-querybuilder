@@ -1,17 +1,17 @@
+import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
-import { QueryBuilderTremor } from '../src';
-import './styles.css';
+import { DevLayout } from '../DevLayout';
+import { useDevApp } from '../useDevApp';
+// import './styles.scss';
 
 const App = () => {
   const devApp = useDevApp();
 
   return (
     <DevLayout {...devApp}>
-      <QueryBuilderTremor
-        controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
+      <QueryBuilderBulma>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"
@@ -27,7 +27,7 @@ const App = () => {
             onQueryChange={devApp.onQueryChange}
           />
         )}
-      </QueryBuilderTremor>
+      </QueryBuilderBulma>
     </DevLayout>
   );
 };

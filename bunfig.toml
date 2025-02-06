@@ -1,0 +1,2 @@
+[serve.static]
+plugins = [ "./utils/devapp/bun-plugin-sass.ts", "bun-plugin-tailwind" ]

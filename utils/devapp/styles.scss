@@ -1,4 +1,4 @@
-@use 'react-querybuilder/query-builder.scss';
+@use '../../packages/react-querybuilder/src/query-builder.scss';
 
 body {
   margin: 0;
@@ -13,13 +13,13 @@ pre {
   padding: 0.5rem;
 }
 
-#app {
+#dev-layout {
   margin: 1rem;
   display: flex;
   justify-content: space-between;
   column-gap: 1.5rem;
 
-  & > *:nth-child(1) {
+  .dev-layout-child:nth-of-type(1) {
     flex-basis: content;
     white-space: nowrap;
     display: flex;
@@ -27,7 +27,7 @@ pre {
     row-gap: 0.5rem;
   }
 
-  & > *:nth-child(2) {
+  .dev-layout-child:nth-of-type(2) {
     flex-grow: 1;
     min-width: 0;
   }
