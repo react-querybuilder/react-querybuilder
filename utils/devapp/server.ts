@@ -30,8 +30,10 @@ const indexHTMLs = {
   '/tremor': tremorIndexHTML,
 };
 
+const port = process.env.PORT || 3100;
+
 const server = Bun.serve({
-  port: 3100,
+  port,
   static: indexHTMLs,
   async fetch() {
     return new Response('Page not found', { status: 404 });
