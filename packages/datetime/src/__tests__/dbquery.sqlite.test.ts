@@ -1,4 +1,5 @@
 import type { SQLQueryBindings } from 'bun:sqlite';
+import { Database } from 'bun:sqlite';
 import { formatQuery } from 'react-querybuilder';
 import {
   CREATE_MUSICIANS_TABLE,
@@ -11,8 +12,6 @@ import {
   testCases,
 } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorSQL } from '../getDatetimeRuleProcessorSQL';
-// @ts-expect-error - TODO: find out how to avoid this error
-import db from './dbquery.sqlite.cache_db' with { type: 'sqlite' };
 
 type Result = {
   first_name: string;
@@ -22,6 +21,8 @@ type Result = {
   created_at: string;
   updated_at: string;
 };
+
+const db = new Database(import.meta.dir + '/dbquery.sqlite.cache_db');
 
 beforeAll(() => {
   if (db.query(FIND_MUSICIANS_TABLE('sqlite')).all().length === 0) {
