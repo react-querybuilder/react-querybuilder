@@ -23,43 +23,19 @@ The following examples demonstrate the extensive customization capability of Rea
 These CSS rules will push any "clone", "lock", or "remove" buttons to the right edge, giving the query builder a more "justified" appearance. <DemoLink option="justifiedLayout" text="The demo has an option to enable this technique" />.
 
 <details>
-  <summary>SCSS</summary>
+  <summary>CSS</summary>
 
-```scss
-.queryBuilder {
-  .ruleGroup-addGroup {
-    & + button.ruleGroup-cloneGroup,
-    & + button.ruleGroup-lock,
-    & + button.ruleGroup-remove {
-      margin-left: auto !important;
-    }
-  }
-  .rule-operators,
-  .rule-value {
-    & + button.rule-cloneRule,
-    & + button.rule-lock,
-    & + button.rule-remove {
-      margin-left: auto !important;
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-  <summary>CSS (compiled from SCSS)</summary>
-
+{/* prettier-ignore */}
 ```css
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-lock,
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-remove,
-.queryBuilder .rule-operators + button.rule-cloneRule,
-.queryBuilder .rule-operators + button.rule-lock,
-.queryBuilder .rule-operators + button.rule-remove,
-.queryBuilder .rule-value + button.rule-cloneRule,
-.queryBuilder .rule-value + button.rule-lock,
-.queryBuilder .rule-value + button.rule-remove {
+.queryBuilder .rule-operators     + button.rule-cloneRule,
+.queryBuilder .rule-operators     + button.rule-lock,
+.queryBuilder .rule-operators     + button.rule-remove,
+.queryBuilder .rule-value         + button.rule-cloneRule,
+.queryBuilder .rule-value         + button.rule-lock,
+.queryBuilder .rule-value         + button.rule-remove {
   margin-left: auto !important;
 }
 ```

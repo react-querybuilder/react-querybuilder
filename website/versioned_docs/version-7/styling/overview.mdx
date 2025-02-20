@@ -37,11 +37,19 @@ import 'react-querybuilder/dist/query-builder-layout.css';
 
 The default SCSS variables for layout include:
 
-%importcode /packages/react-querybuilder/src/query-builder-layout.scss#region=Basic
+```scss
+$rqb-spacing: 0.5rem !default;
+$rqb-border-width: 1px !default;
+```
 
 And the variables for decorative styles are:
 
-%importcode /packages/react-querybuilder/src/query-builder.scss#region=Basic
+```scss
+$rqb-background-color: rgba(0, 75, 183, 0.2) !default;
+$rqb-border-color: #8081a2 !default;
+$rqb-border-style: solid !default;
+$rqb-border-radius: 0.25rem !default;
+```
 
 ## Branch lines
 
@@ -82,15 +90,31 @@ export const fields = [
 
 The branch lines are colored <span style={{ color: 'red' }}>red</span> in the example above to stand out, but by default the branch lines use the same color, width, and style as the group borders. The following SCSS variables can be overridden to customize the branch lines.
 
-%importcode /packages/react-querybuilder/src/query-builder-layout.scss#region=Branches
+```scss
+$rqb-branch-indent: $rqb-spacing !default;
+$rqb-branch-width: $rqb-border-width !default;
 
-%importcode /packages/react-querybuilder/src/query-builder.scss#region=Branches
+$rqb-branch-color: $rqb-border-color !default;
+$rqb-branch-radius: $rqb-border-radius !default;
+$rqb-branch-style: $rqb-border-style !default;
+```
 
 ## Drag-and-drop
 
 When [drag-and-drop is enabled](../components/querybuilder#enabledraganddrop), the following variables control styles for the dragged and hovered elements.
 
-%importcode /packages/react-querybuilder/src/query-builder.scss#region=Drag-and-drop
+```scss
+$rqb-dnd-drop-indicator-color: rebeccapurple !default;
+$rqb-dnd-drop-indicator-copy-color: #669933 !default;
+$rqb-dnd-drop-indicator-style: dashed !default;
+$rqb-dnd-drop-indicator-width: 2px !default;
+
+// Deprecated variable names (still work)
+// $rqb-dnd-hover-border-bottom-color: rebeccapurple !default;
+// $rqb-dnd-hover-copy-border-bottom-color: #669933 !default;
+// $rqb-dnd-hover-border-bottom-style: dashed !default;
+// $rqb-dnd-hover-border-bottom-width: 2px !default;
+```
 
 You can also assign styles to the following classes.
 

@@ -274,7 +274,7 @@ export interface Classnames {
    */
   valueListItem: Classname;
   /**
-   * Not applied, but see SCSS styles.
+   * Not applied, but see CSS styles.
    */
   branches: Classname;
 }
