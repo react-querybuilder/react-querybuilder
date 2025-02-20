@@ -1,0 +1,9 @@
+@use '@rqb-devapp/styles.css';
+
+@use '../src/query-builder' with (
+  $rqb-var-prefix: not-rqb-
+);
+
+:root {
+  --not-rqb-spacing: 0.7rem;
+}

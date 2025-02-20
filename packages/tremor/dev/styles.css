@@ -1,3 +1,6 @@
+@import '@rqb-devapp/styles.css';
+@import '../../react-querybuilder/dist/query-builder.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

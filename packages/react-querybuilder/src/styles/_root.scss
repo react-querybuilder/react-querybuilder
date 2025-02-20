@@ -1,0 +1,59 @@
+@use './functions' as *;
+@use './variables' as *;
+
+$rqb-internal_dnd-drop-indicator-color: prefer-new-var(
+  $rqb-dnd-hover-border-bottom-color,
+  $rqb-dnd-drop-indicator-color,
+  $rqb-dnd-drop-indicator-defaults,
+  'color'
+);
+$rqb-internal_dnd-drop-indicator-copy-color: prefer-new-var(
+  $rqb-dnd-hover-copy-border-bottom-color,
+  $rqb-dnd-drop-indicator-copy-color,
+  $rqb-dnd-drop-indicator-defaults,
+  'copy-color'
+);
+$rqb-internal_dnd-drop-indicator-style: prefer-new-var(
+  $rqb-dnd-hover-border-bottom-style,
+  $rqb-dnd-drop-indicator-style,
+  $rqb-dnd-drop-indicator-defaults,
+  'style'
+);
+$rqb-internal_dnd-drop-indicator-width: prefer-new-var(
+  $rqb-dnd-hover-border-bottom-width,
+  $rqb-dnd-drop-indicator-width,
+  $rqb-dnd-drop-indicator-defaults,
+  'width'
+);
+
+:root {
+  /* #region Basic layout */
+  --#{$rqb-var-prefix}spacing: #{$rqb-spacing};
+  --#{$rqb-var-prefix}border-width: #{$rqb-border-width};
+  /* #endregion */
+
+  /* #region Branches layout */
+  --#{$rqb-var-prefix}branch-indent: var(--#{$rqb-var-prefix}spacing);
+  --#{$rqb-var-prefix}branch-width: var(--#{$rqb-var-prefix}border-width);
+  /* #endregion */
+
+  /* #region Basic aesthetic */
+  --#{$rqb-var-prefix}background-color: #{$rqb-background-color};
+  --#{$rqb-var-prefix}border-color: #{$rqb-border-color};
+  --#{$rqb-var-prefix}border-style: #{$rqb-border-style};
+  --#{$rqb-var-prefix}border-radius: #{$rqb-border-radius};
+  /* #endregion */
+
+  /* #region Drag-and-drop aesthetic */
+  --#{$rqb-var-prefix}dnd-drop-indicator-color: #{$rqb-internal_dnd-drop-indicator-color};
+  --#{$rqb-var-prefix}dnd-drop-indicator-copy-color: #{$rqb-internal_dnd-drop-indicator-copy-color};
+  --#{$rqb-var-prefix}dnd-drop-indicator-style: #{$rqb-internal_dnd-drop-indicator-style};
+  --#{$rqb-var-prefix}dnd-drop-indicator-width: #{$rqb-internal_dnd-drop-indicator-width};
+  /* #endregion */
+
+  /* #region Branches aesthetic */
+  --#{$rqb-var-prefix}branch-color: var(--#{$rqb-var-prefix}border-color);
+  --#{$rqb-var-prefix}branch-radius: var(--#{$rqb-var-prefix}border-radius);
+  --#{$rqb-var-prefix}branch-style: var(--#{$rqb-var-prefix}border-style);
+  /* #endregion */
+}

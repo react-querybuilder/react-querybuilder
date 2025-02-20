@@ -1,0 +1,88 @@
+/**
+ * Decorative/aesthetic styles
+ */
+
+// DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
+// to generate code snippets in the documentation.
+
+@use './variables' as *;
+
+/* Default styles */
+.ruleGroup {
+  border-color: var(--#{$rqb-var-prefix}border-color);
+  border-style: var(--#{$rqb-var-prefix}border-style);
+  border-radius: var(--#{$rqb-var-prefix}border-radius);
+  background: var(--#{$rqb-var-prefix}background-color);
+
+  .shiftActions {
+    & > * {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+/* #region Drag-and-drop styles */
+/* Hover styles */
+.dndOver {
+  &.rule,
+  &.ruleGroup-header {
+    border-bottom-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-width);
+    border-bottom-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-style);
+    border-bottom-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-color);
+
+    &.dndCopy {
+      border-bottom-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-color);
+    }
+  }
+
+  &.betweenRules {
+    border-top-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-width);
+    border-top-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-style);
+    border-top-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-color);
+
+    &.dndCopy {
+      border-top-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-color);
+    }
+  }
+}
+
+/* Drag styles */
+.ruleGroup,
+.rule {
+  &.dndDragging {
+    opacity: 0.5;
+  }
+
+  .queryBuilder-dragHandle {
+    cursor: move;
+  }
+}
+/* #endregion */
+
+/* #region Branch styles */
+.queryBuilder-branches {
+  .rule,
+  .ruleGroup .ruleGroup {
+    &::before,
+    &::after {
+      border-color: var(--#{$rqb-var-prefix}branch-color);
+      border-style: var(--#{$rqb-var-prefix}branch-style);
+    }
+
+    &:last-child::before {
+      border-bottom-left-radius: var(--#{$rqb-var-prefix}branch-radius);
+    }
+  }
+
+  .betweenRules {
+    position: relative;
+
+    &::before {
+      border-color: var(--#{$rqb-var-prefix}branch-color);
+      border-style: var(--#{$rqb-var-prefix}branch-style);
+    }
+  }
+}
+/* #endregion */

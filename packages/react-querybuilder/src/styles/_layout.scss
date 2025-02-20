@@ -1,0 +1,147 @@
+/**
+ * Layout/structural styles
+ */
+
+// DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
+// to generate code snippets in the documentation.
+
+@use './variables' as *;
+
+/* Basic */
+.ruleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--#{$rqb-var-prefix}spacing);
+  padding: var(--#{$rqb-var-prefix}spacing);
+  border-width: var(--#{$rqb-var-prefix}border-width);
+
+  .ruleGroup-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--#{$rqb-var-prefix}spacing);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .ruleGroup-header,
+  .rule {
+    display: flex;
+    gap: var(--#{$rqb-var-prefix}spacing);
+    align-items: center;
+  }
+
+  .rule {
+    .rule-value:has(.rule-value-list-item) {
+      display: flex;
+      gap: var(--#{$rqb-var-prefix}spacing);
+      align-items: baseline;
+    }
+  }
+
+  .betweenRules {
+    display: flex;
+  }
+
+  .shiftActions {
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+      padding: 0;
+    }
+  }
+}
+
+/* #region Drag-and-drop */
+/* Hover styles */
+.dndOver {
+  &.rule,
+  &.ruleGroup-header {
+    padding-bottom: var(--#{$rqb-var-prefix}spacing);
+  }
+  &.betweenRules {
+    padding-top: var(--#{$rqb-var-prefix}spacing);
+  }
+}
+/* #endregion */
+
+/* #region Branches */
+.queryBuilder-branches {
+  .ruleGroup-body {
+    margin-left: calc(2 * var(--#{$rqb-var-prefix}branch-indent));
+  }
+
+  .rule,
+  .ruleGroup .ruleGroup {
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      width: var(--#{$rqb-var-prefix}branch-indent);
+      left: calc(
+        -1 * (var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width))
+      );
+      border-radius: 0;
+      position: absolute;
+    }
+
+    &::before {
+      top: calc(-1 * var(--#{$rqb-var-prefix}spacing));
+      height: calc(50% + var(--#{$rqb-var-prefix}spacing));
+      border-width: 0 0 var(--#{$rqb-var-prefix}branch-width) var(--#{$rqb-var-prefix}branch-width);
+    }
+
+    &::after {
+      top: 50%;
+      height: 50%;
+      border-width: 0 0 0 var(--#{$rqb-var-prefix}branch-width);
+    }
+
+    &:last-child::after {
+      display: none;
+    }
+  }
+
+  .ruleGroup .ruleGroup {
+    &::before,
+    &::after {
+      left: calc(
+        -1 *
+          (
+            var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width) +
+              var(--#{$rqb-var-prefix}border-width)
+          )
+      );
+    }
+
+    &::before {
+      top: calc(-1 * (var(--#{$rqb-var-prefix}spacing) + var(--#{$rqb-var-prefix}border-width)));
+      height: calc(50% + var(--#{$rqb-var-prefix}spacing) + var(--#{$rqb-var-prefix}border-width));
+    }
+
+    &::after {
+      height: calc(50% + var(--#{$rqb-var-prefix}border-width));
+    }
+  }
+
+  .betweenRules {
+    position: relative;
+
+    &::before {
+      content: '';
+      width: var(--#{$rqb-var-prefix}branch-indent);
+      left: calc(
+        -1 * (var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width))
+      );
+      border-radius: 0;
+      position: absolute;
+      top: calc(-1 * var(--#{$rqb-var-prefix}spacing));
+      height: calc(100% + var(--#{$rqb-var-prefix}spacing));
+      border-width: 0 0 0 var(--#{$rqb-var-prefix}branch-width);
+    }
+  }
+}
+/* #endregion */

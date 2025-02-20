@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderMaterial } from '../src';
+import './styles.scss';
 
 const muiTheme = createTheme({
   palette: {

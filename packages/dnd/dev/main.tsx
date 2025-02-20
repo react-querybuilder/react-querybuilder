@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
+import './styles.scss';
 
 const App = () => {
   const devApp = useDevApp();

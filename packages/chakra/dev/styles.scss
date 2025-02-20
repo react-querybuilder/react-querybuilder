@@ -1,3 +1,6 @@
+@use '@rqb-devapp/styles.css';
+@use '../../react-querybuilder/src/query-builder';
+
 .donut-hole {
   .chakra-native-select__root {
     width: fit-content !important;

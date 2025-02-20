@@ -146,7 +146,7 @@
     "start": "vite",
     "build": "bun run build:main && bun run build:css",
     "build:main": "bun --bun tsup",
-    "build:css": "mkdir -p dist && cp ./src/*.scss dist && bun sass --style=compressed ./dist/query-builder-layout.scss:./dist/query-builder-layout.css ./dist/query-builder.scss:./dist/query-builder.css",
+    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed src:dist",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",

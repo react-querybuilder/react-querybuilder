@@ -1,2 +1,4 @@
 @use '@mantine/core/styles.css' as core;
 @use '@mantine/dates/styles.css' as styles;
+@use '@rqb-devapp/styles.css' as devapp;
+@use '../../react-querybuilder/src/query-builder' as *;
