@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout } from '../DevLayout';
 import { useDevApp } from '../useDevApp';
-// import './styles.scss';
 
 const App = () => {
   const devApp = useDevApp();

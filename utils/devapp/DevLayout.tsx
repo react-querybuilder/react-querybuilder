@@ -1,5 +1,5 @@
 import { parseCEL } from '@rqb-parsecel';
-import { parseJSONata } from '@rqb-parsejsonata';
+// import { parseJSONata } from '@rqb-parsejsonata';
 import { parseJsonLogic } from '@rqb-parsejsonlogic';
 import { parseMongoDB } from '@rqb-parsemongodb';
 import { parseSpEL } from '@rqb-parsespel';
@@ -9,7 +9,6 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import type { RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import { optionOrder } from './constants';
-import './styles.scss';
 import type { useDevApp } from './useDevApp';
 import { generatePermalinkHash, optionsReducer } from './utils';
 
@@ -20,7 +19,7 @@ const parserMap: Record<string, any> = {
   spel: parseSpEL,
   mongodb: parseMongoDB,
   jsonlogic: parseJsonLogic,
-  jsonata: parseJSONata,
+  // jsonata: parseJSONata,
 };
 
 export const DevLayout = ({

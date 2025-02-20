@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout } from './DevLayout';
-// import './styles.scss';
 import { useDevApp } from './useDevApp';
 
 export const App = (): React.JSX.Element => {

@@ -1,4 +1,4 @@
-@use '../../packages/react-querybuilder/src/query-builder.scss';
+@import '../../packages/react-querybuilder/dist/query-builder.css';
 
 body {
   margin: 0;
@@ -39,24 +39,24 @@ pre {
   row-gap: 1rem;
   margin-top: 1rem;
 
-  > *:nth-child(odd) {
+  & > *:nth-child(odd) {
     font-weight: bold;
   }
 
-  .codeBlock {
+  & .codeBlock {
     position: relative;
   }
 
-  .copyButton {
+  & .copyButton {
     border-color: #00000000;
     background-color: #00000000;
     position: absolute;
     top: 10px;
     right: 10px;
     opacity: 0.4;
+  }
 
-    &:hover {
-      opacity: 1;
-    }
+  & .copyButton:hover {
+    opacity: 1;
   }
 }

@@ -1,0 +1,4 @@
+.donut-hole .shiftActions > button {
+  min-width: unset;
+  padding: 0 0.5rem;
+}
