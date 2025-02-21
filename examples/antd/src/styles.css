@@ -1,7 +1,4 @@
-$code: #333333;
-$code-background: unset;
-@use 'bulma/bulma.scss';
-@use 'react-querybuilder/dist/query-builder.scss';
+@import 'react-querybuilder/dist/query-builder.css';
 
 body {
   margin: 0.5rem !important;
@@ -12,7 +9,7 @@ code {
 }
 
 .queryBuilder {
-  .input {
+  .ant-input {
     width: auto;
   }
 }

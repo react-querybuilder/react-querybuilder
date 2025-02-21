@@ -12,7 +12,6 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.3.4",
     "prettier": "^3",
-    "sass": "^1.83.0",
     "typescript": "^5.7.2",
     "vite": "^6"
   },

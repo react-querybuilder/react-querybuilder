@@ -1,4 +1,5 @@
-@use 'react-querybuilder/dist/query-builder.scss';
+@import 'bulma/css/bulma.css';
+@import 'react-querybuilder/dist/query-builder.css';
 
 body {
   margin: 0.5rem !important;
@@ -8,8 +9,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+:root {
+  --bulma-code: #333333;
+  --bulma-code-background: unset;
+}
 .queryBuilder {
-  .ant-input {
+  .input {
     width: auto;
   }
 }

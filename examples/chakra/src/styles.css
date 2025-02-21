@@ -1,0 +1,18 @@
+@import 'react-querybuilder/dist/query-builder.css';
+
+body {
+  margin: 0.5rem !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.queryBuilder .chakra-native-select__root {
+  width: fit-content;
+  display: inline-block;
+}
+.queryBuilder .chakra-input {
+  width: auto;
+  display: inline-block;
+}

@@ -1,8 +1,8 @@
 interface ExampleConfig {
   name: string;
   dependencyKeys: (string | [string, string])[];
-  scssPre: string[];
-  scssPost: string[];
+  cssPre: string[];
+  cssPost: string[];
   tsxImports: string[];
   additionalDeclarations: string[];
   wrapper: [string, string] | null;
@@ -16,8 +16,8 @@ export const configs: Record<string, ExampleConfig> = {
   basic: {
     name: 'Basic',
     dependencyKeys: [],
-    scssPre: [],
-    scssPost: [],
+    cssPre: [],
+    cssPost: [],
     tsxImports: [],
     additionalDeclarations: [],
     wrapper: null,
@@ -29,8 +29,8 @@ export const configs: Record<string, ExampleConfig> = {
   'basic-ts': {
     name: 'Basic TypeScript',
     dependencyKeys: [],
-    scssPre: [],
-    scssPost: [],
+    cssPre: [],
+    cssPost: [],
     tsxImports: [],
     additionalDeclarations: [],
     wrapper: null,
@@ -42,8 +42,8 @@ export const configs: Record<string, ExampleConfig> = {
   dnd: {
     name: 'Drag-and-drop',
     dependencyKeys: ['react-dnd', 'react-dnd-html5-backend'],
-    scssPre: [],
-    scssPost: [],
+    cssPre: [],
+    cssPost: [],
     tsxImports: [`import { QueryBuilderDnD } from '@react-querybuilder/dnd';`],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderDnD>', '</QueryBuilderDnD>'],
@@ -55,8 +55,8 @@ export const configs: Record<string, ExampleConfig> = {
   antd: {
     name: 'Ant Design',
     dependencyKeys: ['@ant-design/icons', 'antd'],
-    scssPre: [],
-    scssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
+    cssPre: [],
+    cssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
     tsxImports: [`import { QueryBuilderAntD } from '@react-querybuilder/antd';`],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderAntD>', '</QueryBuilderAntD>'],
@@ -68,11 +68,13 @@ export const configs: Record<string, ExampleConfig> = {
   bootstrap: {
     name: 'Bootstrap',
     dependencyKeys: ['bootstrap', 'bootstrap-icons', ['@popperjs/core', '^2.11.5']],
-    scssPre: [`$code-color: #333333;`, `@use 'bootstrap/scss/bootstrap.scss';`],
-    scssPost: [`.queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`],
+    cssPre: [`@import 'bootstrap/dist/css/bootstrap.css';`],
+    cssPost: [
+      `:root{--bs-code-color: #333333;} .queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`,
+    ],
     tsxImports: [
       `import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';`,
-      `import 'bootstrap-icons/font/bootstrap-icons.scss';`,
+      `import 'bootstrap-icons/font/bootstrap-icons.css';`,
     ],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderBootstrap>', '</QueryBuilderBootstrap>'],
@@ -84,8 +86,10 @@ export const configs: Record<string, ExampleConfig> = {
   bulma: {
     name: 'Bulma',
     dependencyKeys: ['bulma'],
-    scssPre: [`$code: #333333;`, `$code-background: unset;`, `@use 'bulma/bulma.scss';`],
-    scssPost: [`.queryBuilder{.input{width: auto;}}`],
+    cssPre: [`@import 'bulma/css/bulma.css';`],
+    cssPost: [
+      `:root{--bulma-code: #333333;--bulma-code-background:unset;} .queryBuilder{.input{width: auto;}}`,
+    ],
     tsxImports: [`import { QueryBuilderBulma } from '@react-querybuilder/bulma';`],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderBulma>', '</QueryBuilderBulma>'],
@@ -97,12 +101,10 @@ export const configs: Record<string, ExampleConfig> = {
   chakra: {
     name: 'Chakra UI',
     dependencyKeys: ['@chakra-ui/react', '@emotion/react', 'next-themes', 'react-icons'],
-    scssPre: [],
-    scssPost: [
-      `.queryBuilder {
-  .chakra-native-select__root {width:fit-content;display:inline-block;}
-  .chakra-input {width:auto;display:inline-block;}
-}`,
+    cssPre: [],
+    cssPost: [
+      `.queryBuilder .chakra-native-select__root {width:fit-content;display:inline-block;}
+  .queryBuilder .chakra-input {width:auto;display:inline-block;}`,
     ],
     tsxImports: [
       `import { ChakraProvider, Theme, createSystem, defaultConfig } from '@chakra-ui/react';`,
@@ -132,8 +134,8 @@ const Provider = (props: React.PropsWithChildren) => (
   fluent: {
     name: 'Fluent UI',
     dependencyKeys: ['@fluentui/react-components'],
-    scssPre: [],
-    scssPost: [],
+    cssPre: [],
+    cssPost: [],
     tsxImports: [
       `import { FluentProvider, webLightTheme } from '@fluentui/react-components';`,
       `import { QueryBuilderFluent } from '@react-querybuilder/fluent';`,
@@ -151,8 +153,8 @@ const Provider = (props: React.PropsWithChildren) => (
   mantine: {
     name: 'Mantine',
     dependencyKeys: ['@mantine/core', '@mantine/dates', '@mantine/hooks', 'dayjs'],
-    scssPre: [`@use '@mantine/core/styles.css';`],
-    scssPost: [],
+    cssPre: [`@import '@mantine/core/styles.css';`],
+    cssPost: [],
     tsxImports: [
       `import { MantineProvider } from '@mantine/core';`,
       `import { QueryBuilderMantine } from '@react-querybuilder/mantine';`,
@@ -167,8 +169,8 @@ const Provider = (props: React.PropsWithChildren) => (
   material: {
     name: 'MUI/Material',
     dependencyKeys: ['@emotion/react', '@emotion/styled', '@mui/icons-material', '@mui/material'],
-    scssPre: [],
-    scssPost: [],
+    cssPre: [],
+    cssPost: [],
     tsxImports: [
       `import { teal } from "@mui/material/colors";`,
       `import { createTheme, ThemeProvider } from '@mui/material/styles';`,

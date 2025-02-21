@@ -1,5 +1,5 @@
-@use '@mantine/core/styles.css';
-@use 'react-querybuilder/dist/query-builder.scss';
+@import '@mantine/core/styles.css';
+@import 'react-querybuilder/dist/query-builder.css';
 
 body {
   margin: 0.5rem !important;

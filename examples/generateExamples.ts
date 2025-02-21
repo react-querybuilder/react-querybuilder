@@ -39,7 +39,7 @@ const templateDotCSTemplateJSON = await Bun.file(path.join(templateDotCS, 'templ
 const templateIndexHTML = await Bun.file(path.join(templatePath, 'index.html')).text();
 const templateIndexTSX = await Bun.file(path.join(templateSrc, 'index.tsx')).text();
 const templateAppTSX = await Bun.file(path.join(templateSrc, 'App.tsx')).text();
-const templateStylesSCSS = await Bun.file(path.join(templateSrc, 'styles.scss')).text();
+const templateStylesCSS = await Bun.file(path.join(templateSrc, 'styles.css')).text();
 const templateREADMEmd = await Bun.file(path.join(templatePath, 'README.md')).text();
 
 const templatePkgJsonNewTextRaw = await Bun.file(path.join(templatePath, 'package.json')).text();
@@ -135,28 +135,17 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   toWrite.push(formatAndWrite(path.join(examplePath, 'index.html'), exampleIndexHTML));
   // #endregion
 
-  // #region src/styles.scss
-  const processedTemplateSCSS = templateStylesSCSS
-    .replace('// __SCSS_PRE__', exampleConfig.scssPre.join('\n'))
-    .replace('// __SCSS_POST__', exampleConfig.scssPost.join('\n'))
-    .replaceAll(/(@use )/g, exampleConfig.compileToJS ? '@import ' : '$1')
-    .replaceAll(/((query-builder\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
-  toWrite.push(
-    formatAndWrite(
-      path.join(exampleSrc, `styles.${exampleConfig.compileToJS ? '' : 's'}css`),
-      processedTemplateSCSS
-    )
-  );
+  // #region src/styles.css
+  const processedTemplateCSS = templateStylesCSS
+    .replace('/* __CSS_PRE__ */', exampleConfig.cssPre.join('\n'))
+    .replace('/* __CSS_POST__ */', exampleConfig.cssPost.join('\n'));
+  toWrite.push(formatAndWrite(path.join(exampleSrc, `styles.css`), processedTemplateCSS));
   // #endregion
 
   // #region src/index.tsx
-  const processedTemplateIndexTSX = templateIndexTSX.replaceAll(
-    'styles.scss',
-    exampleConfig.compileToJS ? 'styles.css' : '$&'
-  );
   const exampleIndexSourceCode = exampleConfig.compileToJS
-    ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
-    : processedTemplateIndexTSX;
+    ? await compileToJS(templateIndexTSX, 'index.tsx')
+    : templateIndexTSX;
   toWrite.push(
     formatAndWrite(
       path.join(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
@@ -171,8 +160,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
     .replace('{/* __WRAPPER_OPEN__ */}', exampleConfig.wrapper?.[0] ?? '')
     .replace('{/* __WRAPPER_CLOSE__ */}', exampleConfig.wrapper?.[1] ?? '')
-    .replace('// __RQB_PROPS__', exampleConfig.props.join('\n'))
-    .replaceAll('styles.scss', exampleConfig.compileToJS ? 'styles.css' : '$&');
+    .replace('// __RQB_PROPS__', exampleConfig.props.join('\n'));
   const exampleAppSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateAppTSX, 'App.tsx')
     : processedTemplateAppTSX;
