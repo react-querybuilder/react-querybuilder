@@ -38,7 +38,7 @@
   }
 }
 
-// The rest of this file was copied from node_modules/@mantine/core/styles.css (v7.16.0).
+// The rest of this file was copied from node_modules/@mantine/core/styles.css (v7.17.0).
 // The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 // the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 // block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -129,7 +129,7 @@ fieldset:disabled .mantine-active:active {
 /* ----- Default CSS variables ----- */
 
 :root {
-  color-scheme: var(--mantine-color-scheme);
+  // color-scheme: var(--mantine-color-scheme);
 
   --mantine-z-index-app: 100;
   --mantine-z-index-modal: 200;
@@ -145,12 +145,14 @@ fieldset:disabled .mantine-active:active {
   --mantine-color-white: #fff;
   --mantine-color-black: #000;
   --mantine-line-height: 1.55;
-  --mantine-font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial,
-    sans-serif, Apple Color Emoji, Segoe UI Emoji;
-  --mantine-font-family-monospace: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    Liberation Mono, Courier New, monospace;
-  --mantine-font-family-headings: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  --mantine-font-family:
+    -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji;
+  --mantine-font-family-monospace:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+  --mantine-font-family-headings:
+    -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji;
   --mantine-heading-font-weight: 700;
   --mantine-radius-default: calc(0.25rem * var(--mantine-scale));
   --mantine-primary-color-0: var(--mantine-color-blue-0);
@@ -188,30 +190,35 @@ fieldset:disabled .mantine-active:active {
   --mantine-line-height-md: 1.55;
   --mantine-line-height-lg: 1.6;
   --mantine-line-height-xl: 1.65;
-  --mantine-shadow-xs: 0 calc(0.0625rem * var(--mantine-scale))
-      calc(0.1875rem * var(--mantine-scale)) rgba(0, 0, 0, 0.05),
+  --mantine-shadow-xs:
+    0 calc(0.0625rem * var(--mantine-scale)) calc(0.1875rem * var(--mantine-scale))
+      rgba(0, 0, 0, 0.05),
     0 calc(0.0625rem * var(--mantine-scale)) calc(0.125rem * var(--mantine-scale))
       rgba(0, 0, 0, 0.1);
-  --mantine-shadow-sm: 0 calc(0.0625rem * var(--mantine-scale))
-      calc(0.1875rem * var(--mantine-scale)) rgba(0, 0, 0, 0.05),
+  --mantine-shadow-sm:
+    0 calc(0.0625rem * var(--mantine-scale)) calc(0.1875rem * var(--mantine-scale))
+      rgba(0, 0, 0, 0.05),
     rgba(0, 0, 0, 0.05) 0 calc(0.625rem * var(--mantine-scale))
       calc(0.9375rem * var(--mantine-scale)) calc(-0.3125rem * var(--mantine-scale)),
     rgba(0, 0, 0, 0.04) 0 calc(0.4375rem * var(--mantine-scale))
       calc(0.4375rem * var(--mantine-scale)) calc(-0.3125rem * var(--mantine-scale));
-  --mantine-shadow-md: 0 calc(0.0625rem * var(--mantine-scale))
-      calc(0.1875rem * var(--mantine-scale)) rgba(0, 0, 0, 0.05),
+  --mantine-shadow-md:
+    0 calc(0.0625rem * var(--mantine-scale)) calc(0.1875rem * var(--mantine-scale))
+      rgba(0, 0, 0, 0.05),
     rgba(0, 0, 0, 0.05) 0 calc(1.25rem * var(--mantine-scale))
       calc(1.5625rem * var(--mantine-scale)) calc(-0.3125rem * var(--mantine-scale)),
     rgba(0, 0, 0, 0.04) 0 calc(0.625rem * var(--mantine-scale))
       calc(0.625rem * var(--mantine-scale)) calc(-0.3125rem * var(--mantine-scale));
-  --mantine-shadow-lg: 0 calc(0.0625rem * var(--mantine-scale))
-      calc(0.1875rem * var(--mantine-scale)) rgba(0, 0, 0, 0.05),
+  --mantine-shadow-lg:
+    0 calc(0.0625rem * var(--mantine-scale)) calc(0.1875rem * var(--mantine-scale))
+      rgba(0, 0, 0, 0.05),
     rgba(0, 0, 0, 0.05) 0 calc(1.75rem * var(--mantine-scale))
       calc(1.4375rem * var(--mantine-scale)) calc(-0.4375rem * var(--mantine-scale)),
     rgba(0, 0, 0, 0.04) 0 calc(0.75rem * var(--mantine-scale)) calc(0.75rem * var(--mantine-scale))
       calc(-0.4375rem * var(--mantine-scale));
-  --mantine-shadow-xl: 0 calc(0.0625rem * var(--mantine-scale))
-      calc(0.1875rem * var(--mantine-scale)) rgba(0, 0, 0, 0.05),
+  --mantine-shadow-xl:
+    0 calc(0.0625rem * var(--mantine-scale)) calc(0.1875rem * var(--mantine-scale))
+      rgba(0, 0, 0, 0.05),
     rgba(0, 0, 0, 0.05) 0 calc(2.25rem * var(--mantine-scale)) calc(1.75rem * var(--mantine-scale))
       calc(-0.4375rem * var(--mantine-scale)),
     rgba(0, 0, 0, 0.04) 0 calc(1.0625rem * var(--mantine-scale))
@@ -646,6 +653,7 @@ fieldset:disabled .mantine-active:active {
 
 .m_c0783ff9 {
   scrollbar-width: none;
+  overscroll-behavior: var(--scrollarea-over-scroll-behavior);
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   width: 100%;
@@ -2070,6 +2078,22 @@ fieldset:disabled .mantine-active:active {
   }
 }
 
+.m_849cf0da:where([data-underline='not-hover']) {
+  text-decoration: underline;
+}
+
+@media (hover: hover) {
+  .m_849cf0da:where([data-underline='not-hover']):hover {
+    text-decoration: none;
+  }
+}
+
+@media (hover: none) {
+  .m_849cf0da:where([data-underline='not-hover']):active {
+    text-decoration: none;
+  }
+}
+
 .m_849cf0da:where([data-underline='always']) {
   text-decoration: underline;
 }
@@ -2337,12 +2361,12 @@ fieldset:disabled .mantine-active:active {
   padding: var(--combobox-padding);
 }
 
-.m_88b62a41:has([data-mantine-scrollbar]) {
-  padding-inline-end: 0;
-}
-
 .m_88b62a41:has([data-mantine-scrollbar]) .m_985517d8 {
   max-width: calc(100% + var(--combobox-padding));
+}
+
+.m_88b62a41[data-composed] {
+  padding-inline-end: 0;
 }
 
 .m_88b62a41[data-hidden] {
@@ -2518,18 +2542,20 @@ fieldset:disabled .mantine-active:active {
   --combobox-chevron-size-lg: calc(1.5rem * var(--mantine-scale));
   --combobox-chevron-size-xl: calc(1.75rem * var(--mantine-scale));
   --combobox-chevron-size: var(--combobox-chevron-size-sm);
-
-  width: var(--combobox-chevron-size);
-  height: var(--combobox-chevron-size);
 }
 :where([data-mantine-color-scheme='light']) .m_2943220b {
-  color: var(--mantine-color-gray-6);
+  --_combobox-chevron-color: var(--combobox-chevron-color, var(--mantine-color-gray-6));
 }
 :where([data-mantine-color-scheme='dark']) .m_2943220b {
-  color: var(--mantine-color-dark-3);
+  --_combobox-chevron-color: var(--combobox-chevron-color, var(--mantine-color-dark-3));
+}
+.m_2943220b {
+  width: var(--combobox-chevron-size);
+  height: var(--combobox-chevron-size);
+  color: var(--_combobox-chevron-color);
 }
 .m_2943220b:where([data-error]) {
-  color: var(--mantine-color-error);
+  color: var(--combobox-chevron-color, var(--mantine-color-error));
 }
 
 /* ------- OptionsDropdown ------- */
@@ -3850,7 +3876,8 @@ fieldset:disabled .m_d3ea56bb,
     0 calc(0.25rem * var(--mantine-scale)),
     calc(0.25rem * var(--mantine-scale)) calc(-0.25rem * var(--mantine-scale)),
     calc(-0.25rem * var(--mantine-scale)) 0;
-  background-image: linear-gradient(45deg, var(--alpha-overlay-color) 25%, transparent 25%),
+  background-image:
+    linear-gradient(45deg, var(--alpha-overlay-color) 25%, transparent 25%),
     linear-gradient(-45deg, var(--alpha-overlay-color) 25%, transparent 25%),
     linear-gradient(45deg, transparent 75%, var(--alpha-overlay-color) 75%),
     linear-gradient(-45deg, var(--alpha-overlay-bg) 75%, var(--alpha-overlay-color) 75%);
@@ -4496,14 +4523,16 @@ fieldset:disabled .m_d3ea56bb,
 .m_99ac2aa1:where([data-disabled], :disabled) {
   color: var(--mantine-color-dimmed);
   opacity: 0.6;
-  pointer-events: none;
+  cursor: not-allowed;
 }
 
-:where([data-mantine-color-scheme='light']) .m_99ac2aa1:where([data-hovered]) {
+:where([data-mantine-color-scheme='light'])
+  .m_99ac2aa1:where([data-hovered]):where(:not(:disabled, [data-disabled])) {
   background-color: var(--menu-item-hover, var(--mantine-color-gray-1));
 }
 
-:where([data-mantine-color-scheme='dark']) .m_99ac2aa1:where([data-hovered]) {
+:where([data-mantine-color-scheme='dark'])
+  .m_99ac2aa1:where([data-hovered]):where(:not(:disabled, [data-disabled])) {
   background-color: var(--menu-item-hover, var(--mantine-color-dark-4));
 }
 
@@ -6883,19 +6912,19 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
   border-inline-end: calc(0.0625rem * var(--mantine-scale)) solid var(--table-border-color);
 }
 
-.m_b2404537 :where(tr):where([data-with-row-border]:last-of-type) {
+.m_b2404537 > :where(tr):where([data-with-row-border]:last-of-type) {
   border-bottom: none;
 }
 
-.m_b2404537 :where(tr):where([data-striped='odd']:nth-of-type(odd)) {
+.m_b2404537 > :where(tr):where([data-striped='odd']:nth-of-type(odd)) {
   background-color: var(--table-striped-color);
 }
 
-.m_b2404537 :where(tr):where([data-striped='even']:nth-of-type(even)) {
+.m_b2404537 > :where(tr):where([data-striped='even']:nth-of-type(even)) {
   background-color: var(--table-striped-color);
 }
 
-.m_b2404537 :where(tr)[data-hover] {
+.m_b2404537 > :where(tr)[data-hover] {
   --tr-hover-bg: var(--table-highlight-on-hover-color, var(--table-hover-color));
 }
 
