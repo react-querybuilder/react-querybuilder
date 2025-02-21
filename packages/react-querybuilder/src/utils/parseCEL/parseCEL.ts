@@ -37,6 +37,7 @@ import {
   isCELStringLiteral,
   normalizeOperator,
 } from './utils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 
 /**
  * Converts a CEL string expression into a query suitable for the
@@ -288,21 +289,23 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
     return null;
   };
 
+  const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
+
   let processedCEL: CELExpression;
   try {
     processedCEL = celParser.parse(cel).value;
   } catch {
-    return emptyQuery;
+    return prepare(emptyQuery);
   }
   const result = processCELExpression(processedCEL);
   if (result) {
     if (isRuleGroup(result)) {
-      return result;
+      return prepare(result);
     }
-    return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
+    return prepare({ rules: [result], ...(ic ? {} : { combinator: 'and' }) });
   }
 
-  return emptyQuery;
+  return prepare(emptyQuery);
 }
 
 export { parseCEL };

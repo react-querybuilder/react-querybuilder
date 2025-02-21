@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 
 - [#855] CSS variables, enabling customization of the default stylesheet without using SCSS.
+- [#855] New option `generateIDs` for all `parse*` methods. When true, the output query object will be processed through `prepareRuleGroup` to add `id`s.
 
 ## [v8.2.0] - 2025-01-28
 

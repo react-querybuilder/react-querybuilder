@@ -12,6 +12,7 @@ import type {
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import { sqlParser } from './sqlParser';
 import type { MixedAndXorOrList, SQLExpression, SQLIdentifier } from './types';
 import {
@@ -369,17 +370,19 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
     return null;
   };
 
+  const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
+
   const { where } = sqlParser.parse(sqlString).value;
   if (where) {
     const result = processSQLExpression(where);
     if (result) {
       if (isRuleGroup(result)) {
-        return result;
+        return prepare(result);
       }
-      return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
+      return prepare({ rules: [result], ...(ic ? {} : { combinator: 'and' }) });
     }
   }
-  return { rules: [], ...(ic ? {} : { combinator: 'and' }) };
+  return prepare({ rules: [], ...(ic ? {} : { combinator: 'and' }) });
 }
 
 export { parseSQL };

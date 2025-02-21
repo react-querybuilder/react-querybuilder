@@ -16,6 +16,7 @@ import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import type { MongoDbSupportedOperators } from './types';
 import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
@@ -381,18 +382,20 @@ function parseMongoDB(
     return rules.length === 1 ? rules[0] : rules.length > 1 ? { combinator: 'and', rules } : false;
   }
 
+  const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
+
   let mongoDbPOJO = mongoDbRules;
   if (typeof mongoDbRules === 'string') {
     try {
       mongoDbPOJO = JSON.parse(mongoDbRules);
     } catch {
-      return emptyRuleGroup;
+      return prepare(emptyRuleGroup);
     }
   }
 
   // Bail if the mongoDbPOJO is not actually a POJO
   if (!isPojo(mongoDbPOJO)) {
-    return emptyRuleGroup;
+    return prepare(emptyRuleGroup);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -402,9 +405,9 @@ function parseMongoDB(
       ? result
       : { combinator: 'and', rules: [result] }
     : emptyRuleGroup;
-  return options.independentCombinators
-    ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery)
-    : finalQuery;
+  return prepare(
+    options.independentCombinators ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery) : finalQuery
+  );
 }
 
 export { parseMongoDB };

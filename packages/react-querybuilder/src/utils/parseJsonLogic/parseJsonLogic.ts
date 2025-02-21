@@ -38,6 +38,7 @@ import {
   isRQBJsonLogicStartsWith,
   isRQBJsonLogicVar,
 } from './utils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 
@@ -294,20 +295,22 @@ function parseJsonLogic(
     return rule ? (outermost ? { combinator: 'and', rules: [rule] } : rule) : false;
   }
 
+  const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
+
   let logicRoot = rqbJsonLogic;
   if (typeof rqbJsonLogic === 'string') {
     try {
       logicRoot = JSON.parse(rqbJsonLogic);
     } catch {
-      return emptyRuleGroup;
+      return prepare(emptyRuleGroup);
     }
   }
 
   const result = processLogic(logicRoot, true);
   const finalQuery: DefaultRuleGroupType = result || emptyRuleGroup;
-  return options.independentCombinators
-    ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery)
-    : finalQuery;
+  return prepare(
+    options.independentCombinators ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery) : finalQuery
+  );
 }
 
 export { parseJsonLogic };

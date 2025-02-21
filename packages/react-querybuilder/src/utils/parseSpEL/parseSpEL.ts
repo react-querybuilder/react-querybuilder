@@ -30,6 +30,7 @@ import {
   normalizeOperator,
   processCompiledExpression,
 } from './utils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 
 /**
  * Converts a SpEL string expression into a query suitable for the
@@ -282,11 +283,13 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
     return null;
   };
 
+  const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
+
   let compiledSpEL: SpELExpressionNode;
   try {
     compiledSpEL = SpelExpressionEvaluator.compile(spel)._compiledExpression;
   } catch {
-    return emptyQuery;
+    return prepare(emptyQuery);
   }
 
   const processedSpEL = processCompiledExpression(compiledSpEL);
@@ -294,12 +297,12 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
   const result = parseProcessedSpEL(processedSpEL);
   if (result) {
     if (isRuleGroup(result)) {
-      return result;
+      return prepare(result);
     }
-    return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
+    return prepare({ rules: [result], ...(ic ? {} : { combinator: 'and' }) });
   }
 
-  return emptyQuery;
+  return prepare(emptyQuery);
 }
 
 export { parseSpEL };

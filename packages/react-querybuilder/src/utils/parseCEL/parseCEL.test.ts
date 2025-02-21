@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupType,
@@ -6,6 +7,7 @@ import type {
   Field,
   FullField,
   OptionGroup,
+  ParseCELOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
@@ -24,19 +26,21 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
 
 const testParseCEL = (
   parseResult: DefaultRuleGroupType | string,
-  expectedResult: DefaultRuleGroupType
+  expectedResult: DefaultRuleGroupType,
+  options: Except<ParseCELOptions, 'independentCombinators'> = {}
 ) => {
-  expect(typeof parseResult === 'string' ? parseCEL(parseResult) : parseResult).toEqual(
+  expect(typeof parseResult === 'string' ? parseCEL(parseResult, options) : parseResult).toEqual(
     expectedResult
   );
 };
 const testParseCELic = (
   parseResult: DefaultRuleGroupTypeIC | string,
-  expectedResult: DefaultRuleGroupTypeIC
+  expectedResult: DefaultRuleGroupTypeIC,
+  options: Except<ParseCELOptions, 'independentCombinators'> = {}
 ) => {
   expect(
     typeof parseResult === 'string'
-      ? parseCEL(parseResult, { independentCombinators: true })
+      ? parseCEL(parseResult, { ...options, independentCombinators: true })
       : parseResult
   ).toEqual(expectedResult);
 };
@@ -508,6 +512,17 @@ it('handles independent combinators', () => {
       { field: 'f4.f5', operator: 'endsWith', value: 'Test' },
     ],
   });
+});
+
+it('generates IDs', () => {
+  testParseCEL(
+    `firstName == "Steve"`,
+    expect.objectContaining({
+      id: expect.any(String),
+      ...wrapRule({ id: expect.any(String), field: 'firstName', operator: '=', value: 'Steve' }),
+    }),
+    { generateIDs: true }
+  );
 });
 
 it('ignores things', () => {

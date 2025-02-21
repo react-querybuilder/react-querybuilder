@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupType,
@@ -6,6 +7,7 @@ import type {
   Field,
   FullField,
   OptionGroup,
+  ParseSpELOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
@@ -24,19 +26,21 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
 
 const testParseSpEL = (
   parseResult: DefaultRuleGroupType | string,
-  expectedResult: DefaultRuleGroupType
+  expectedResult: DefaultRuleGroupType,
+  options: Except<ParseSpELOptions, 'independentCombinators'> = {}
 ) => {
-  expect(typeof parseResult === 'string' ? parseSpEL(parseResult) : parseResult).toEqual(
+  expect(typeof parseResult === 'string' ? parseSpEL(parseResult, options) : parseResult).toEqual(
     expectedResult
   );
 };
 const testParseSpELic = (
   parseResult: DefaultRuleGroupTypeIC | string,
-  expectedResult: DefaultRuleGroupTypeIC
+  expectedResult: DefaultRuleGroupTypeIC,
+  options: Except<ParseSpELOptions, 'independentCombinators'> = {}
 ) => {
   expect(
     typeof parseResult === 'string'
-      ? parseSpEL(parseResult, { independentCombinators: true })
+      ? parseSpEL(parseResult, { ...options, independentCombinators: true })
       : parseResult
   ).toEqual(expectedResult);
 };
@@ -478,6 +482,17 @@ it('handles independent combinators', () => {
       { field: 'f3', operator: '=', value: 'Test3' },
     ],
   });
+});
+
+it('generates IDs', () => {
+  testParseSpEL(
+    `firstName == "Steve"`,
+    expect.objectContaining({
+      id: expect.any(String),
+      ...wrapRule({ id: expect.any(String), field: 'firstName', operator: '=', value: 'Steve' }),
+    }),
+    { generateIDs: true }
+  );
 });
 
 it('ignores things', () => {

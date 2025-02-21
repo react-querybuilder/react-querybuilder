@@ -509,6 +509,10 @@ Output:
 }
 ```
 
+### Generating `id`s
+
+When the `generateIDs` option is `true`, `parse*` functions will generate a unique `id` property for the output query object and each nested rule and group using `prepareRuleGroup`.
+
 :::note
 
 `parse*` functions will only validate clauses where "field" is the _only_ detected value source. Operators like "between" and "in" that take multiple values must only have field names or only scalar values to the right of the operator, not a mix of field names and scalar values. See examples below.

@@ -497,6 +497,16 @@ it('generates query with independent combinators', () => {
   });
 });
 
+it('generates IDs', () => {
+  expect(parseJsonLogic({ '===': [{ var: 'firstName' }, 'Steve'] }, { generateIDs: true })).toEqual(
+    expect.objectContaining({
+      id: expect.any(String),
+      combinator: 'and',
+      rules: [{ id: expect.any(String), field: 'firstName', operator: '=', value: 'Steve' }],
+    })
+  );
+});
+
 it('handles empty options object', () => {
   expect(parseJsonLogic({ '===': [{ var: 'f1' }, 1] }, {})).toEqual({
     combinator: 'and',

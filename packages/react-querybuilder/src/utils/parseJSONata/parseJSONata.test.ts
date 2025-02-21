@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupType,
@@ -6,6 +7,7 @@ import type {
   Field,
   FullField,
   OptionGroup,
+  ParseJSONataOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
@@ -24,19 +26,21 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
 
 const testParseJSONata = (
   parseResult: DefaultRuleGroupType | string,
-  expectedResult: DefaultRuleGroupType
+  expectedResult: DefaultRuleGroupType,
+  options: Except<ParseJSONataOptions, 'independentCombinators'> = {}
 ) => {
-  expect(typeof parseResult === 'string' ? parseJSONata(parseResult) : parseResult).toEqual(
-    expectedResult
-  );
+  expect(
+    typeof parseResult === 'string' ? parseJSONata(parseResult, options) : parseResult
+  ).toEqual(expectedResult);
 };
 const testParseJSONataIC = (
   parseResult: DefaultRuleGroupTypeIC | string,
-  expectedResult: DefaultRuleGroupTypeIC
+  expectedResult: DefaultRuleGroupTypeIC,
+  options: Except<ParseJSONataOptions, 'independentCombinators'> = {}
 ) => {
   expect(
     typeof parseResult === 'string'
-      ? parseJSONata(parseResult, { independentCombinators: true })
+      ? parseJSONata(parseResult, { ...options, independentCombinators: true })
       : parseResult
   ).toEqual(expectedResult);
 };
@@ -517,6 +521,17 @@ it('handles independent combinators', () => {
       { field: 'f3', operator: '=', value: 'Test3' },
     ],
   });
+});
+
+it('generates IDs', () => {
+  testParseJSONata(
+    `firstName = "Steve"`,
+    expect.objectContaining({
+      id: expect.any(String),
+      ...wrapRule({ id: expect.any(String), field: 'firstName', operator: '=', value: 'Steve' }),
+    }),
+    { generateIDs: true }
+  );
 });
 
 it('ignores things', () => {

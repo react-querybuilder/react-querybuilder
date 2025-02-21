@@ -266,6 +266,15 @@ describe('options', () => {
     );
   });
 
+  it('generates IDs', () => {
+    expect(parseSQL(`firstName = 'Steve'`, { generateIDs: true })).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        ...wrapRule({ id: expect.any(String), field: 'firstName', operator: '=', value: 'Steve' }),
+      })
+    );
+  });
+
   it('independent combinators', () => {
     expect(parseSQL(`firstName = 'Steve'`, icOpts)).toEqual(
       wrapRuleIC({ field: 'firstName', operator: '=', value: 'Steve' })

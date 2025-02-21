@@ -35,6 +35,7 @@ import {
   negatedLikeOperators,
   normalizeOperator,
 } from './utils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 
 /**
  * Converts a JSONata string expression into a query suitable for the
@@ -324,23 +325,25 @@ function parseJSONata(
     return null;
   };
 
+  const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
+
   let jsonataExpr: jsonata.Expression;
   try {
     jsonataExpr = jsonata(jsonataInput);
   } catch {
-    return emptyQuery;
+    return prepare(emptyQuery);
   }
   const jsonataAST = jsonataExpr.ast() as JSONataExprNode;
 
   const result = parseJSONataAST(jsonataAST);
   if (result) {
     if (isRuleGroup(result)) {
-      return result;
+      return prepare(result);
     }
-    return { rules: [result], ...(ic ? {} : { combinator: 'and' }) };
+    return prepare({ rules: [result], ...(ic ? {} : { combinator: 'and' }) });
   }
 
-  return emptyQuery;
+  return prepare(emptyQuery);
 }
 
 export { parseJSONata };
