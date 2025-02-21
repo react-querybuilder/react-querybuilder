@@ -27,16 +27,20 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
 const testParseCEL = (
   parseResult: DefaultRuleGroupType | string,
   expectedResult: DefaultRuleGroupType,
-  options: Except<ParseCELOptions, 'independentCombinators'> = {}
+  options?: Except<ParseCELOptions, 'independentCombinators'>
 ) => {
-  expect(typeof parseResult === 'string' ? parseCEL(parseResult, options) : parseResult).toEqual(
-    expectedResult
-  );
+  expect(
+    typeof parseResult === 'string'
+      ? options
+        ? parseCEL(parseResult, options)
+        : parseCEL(parseResult)
+      : parseResult
+  ).toEqual(expectedResult);
 };
 const testParseCELic = (
   parseResult: DefaultRuleGroupTypeIC | string,
   expectedResult: DefaultRuleGroupTypeIC,
-  options: Except<ParseCELOptions, 'independentCombinators'> = {}
+  options?: Except<ParseCELOptions, 'independentCombinators'>
 ) => {
   expect(
     typeof parseResult === 'string'

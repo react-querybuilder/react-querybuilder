@@ -27,16 +27,20 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
 const testParseJSONata = (
   parseResult: DefaultRuleGroupType | string,
   expectedResult: DefaultRuleGroupType,
-  options: Except<ParseJSONataOptions, 'independentCombinators'> = {}
+  options?: Except<ParseJSONataOptions, 'independentCombinators'>
 ) => {
   expect(
-    typeof parseResult === 'string' ? parseJSONata(parseResult, options) : parseResult
+    typeof parseResult === 'string'
+      ? options
+        ? parseJSONata(parseResult, options)
+        : parseJSONata(parseResult)
+      : parseResult
   ).toEqual(expectedResult);
 };
 const testParseJSONataIC = (
   parseResult: DefaultRuleGroupTypeIC | string,
   expectedResult: DefaultRuleGroupTypeIC,
-  options: Except<ParseJSONataOptions, 'independentCombinators'> = {}
+  options?: Except<ParseJSONataOptions, 'independentCombinators'>
 ) => {
   expect(
     typeof parseResult === 'string'
