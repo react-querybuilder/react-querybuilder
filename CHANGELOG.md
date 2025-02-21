@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.3.0] - 2025-02-21
+
 ## Added
 
 - [#855] CSS variables, enabling customization of the default stylesheet without using SCSS.
@@ -1852,7 +1856,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.2.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.3.0...HEAD
+[v8.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.2.0...v8.3.0
 [v8.2.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.1...v8.2.0
 [v8.1.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.1.0...v8.1.1
 [v8.1.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.0.0...v8.1.0
