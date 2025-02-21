@@ -44,11 +44,12 @@ import {
   optionsReducer,
 } from '../_constants/utils';
 import styles from './Demo.module.css';
+import ImportTab from './ImportTab';
 import Nav from './Nav';
+import { ThemeBuilder } from './ThemeBuilder';
 
 // TODO: Find out why this is necessary
 import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
-import ImportTab from './ImportTab';
 declare module '@theme/TabItem' {
   export default function TabItem(props: TabItemProps): React.JSX.Element;
 }
@@ -508,6 +509,7 @@ export default function Demo({
               { value: 'code', label: 'Code' },
               { value: 'export', label: 'Export' },
               { value: 'import', label: 'Import' },
+              { value: 'theme', label: 'Theme builder' },
             ]}>
             <TabItem value="code" label="Code">
               <Details summary={<summary>Dependencies</summary>}>
@@ -804,6 +806,9 @@ export default function Demo({
                   />
                 </TabItem>
               </Tabs>
+            </TabItem>
+            <TabItem value="theme">
+              <ThemeBuilder />
             </TabItem>
           </Tabs>
         </div>
