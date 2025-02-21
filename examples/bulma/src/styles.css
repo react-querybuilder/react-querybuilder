@@ -9,12 +9,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-:root {
-  --bulma-code: #333333;
-  --bulma-code-background: unset;
-}
-.queryBuilder {
-  .input {
-    width: auto;
-  }
+.queryBuilder .input {
+  width: auto;
 }

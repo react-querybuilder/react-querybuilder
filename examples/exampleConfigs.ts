@@ -56,7 +56,7 @@ export const configs: Record<string, ExampleConfig> = {
     name: 'Ant Design',
     dependencyKeys: ['@ant-design/icons', 'antd'],
     cssPre: [],
-    cssPost: [`.queryBuilder{.ant-input{width:auto;}}`],
+    cssPost: [`.queryBuilder .ant-input{width:auto;}`],
     tsxImports: [`import { QueryBuilderAntD } from '@react-querybuilder/antd';`],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderAntD>', '</QueryBuilderAntD>'],
@@ -70,7 +70,7 @@ export const configs: Record<string, ExampleConfig> = {
     dependencyKeys: ['bootstrap', 'bootstrap-icons', ['@popperjs/core', '^2.11.5']],
     cssPre: [`@import 'bootstrap/dist/css/bootstrap.css';`],
     cssPost: [
-      `:root{--bs-code-color: #333333;} .queryBuilder{.form-control,.form-select{display:inline-block;width:auto;}}`,
+      `.queryBuilder .form-control,.queryBuilder .form-select{display:inline-block;width:auto;}`,
     ],
     tsxImports: [
       `import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';`,
@@ -87,9 +87,7 @@ export const configs: Record<string, ExampleConfig> = {
     name: 'Bulma',
     dependencyKeys: ['bulma'],
     cssPre: [`@import 'bulma/css/bulma.css';`],
-    cssPost: [
-      `:root{--bulma-code: #333333;--bulma-code-background:unset;} .queryBuilder{.input{width: auto;}}`,
-    ],
+    cssPost: [`.queryBuilder .input{width: auto;}`],
     tsxImports: [`import { QueryBuilderBulma } from '@react-querybuilder/bulma';`],
     additionalDeclarations: [],
     wrapper: ['<QueryBuilderBulma>', '</QueryBuilderBulma>'],

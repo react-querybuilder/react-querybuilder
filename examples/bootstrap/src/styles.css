@@ -9,13 +9,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-:root {
-  --bs-code-color: #333333;
-}
-.queryBuilder {
-  .form-control,
-  .form-select {
-    display: inline-block;
-    width: auto;
-  }
+.queryBuilder .form-control,
+.queryBuilder .form-select {
+  display: inline-block;
+  width: auto;
 }
