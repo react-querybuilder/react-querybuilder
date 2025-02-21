@@ -7,7 +7,7 @@ import {
 } from 'react-querybuilder';
 import { fields } from './fields';
 import { initialQuery, initialQueryIC } from './initialQuery';
-import './styles.scss';
+import './styles.css';
 import {
   defaultOptions,
   jsonataRuleProcessor,
