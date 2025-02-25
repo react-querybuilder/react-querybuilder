@@ -1,5 +1,4 @@
 import jsonata from 'jsonata';
-import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,11 +8,13 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   ParseJSONataOptions,
   ValueSource,
 } from '../../types/index.noReact';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { JSONataExprNode } from './types';
 import {
   generateFlatAndOrList,
@@ -35,7 +36,6 @@ import {
   negatedLikeOperators,
   normalizeOperator,
 } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
 
 /**
  * Converts a JSONata string expression into a query suitable for the

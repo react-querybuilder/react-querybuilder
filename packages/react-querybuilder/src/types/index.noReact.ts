@@ -1,6 +1,3 @@
-export * from './basic';
-export * from './dnd';
-export * from './importExport';
 export type {
   JsonLogicAnd,
   JsonLogicDoubleNegation,
@@ -20,8 +17,12 @@ export type {
   JsonLogicStrictNotEqual,
   JsonLogicVar,
 } from 'json-logic-js';
+export * from './basic';
+export * from './dnd';
+export * from './importExport';
 export * from './options';
 export * from './props';
 export * from './ruleGroups';
 export * from './ruleGroupsIC';
+export * from './type-fest';
 export * from './validation';

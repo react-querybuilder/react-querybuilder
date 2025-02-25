@@ -1,5 +1,4 @@
 import { SpelExpressionEvaluator } from 'spel2js';
-import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,12 +8,14 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   ParseSpELOptions,
   ValueSource,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { SpELExpressionNode, SpELProcessedExpression } from './types';
 import {
   generateFlatAndOrList,
@@ -30,7 +31,6 @@ import {
   normalizeOperator,
   processCompiledExpression,
 } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
 
 /**
  * Converts a SpEL string expression into a query suitable for the

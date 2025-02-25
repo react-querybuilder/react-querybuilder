@@ -6,7 +6,6 @@ import type {
   Ref,
   RefAttributes,
 } from 'react';
-import type { SetNonNullable } from 'type-fest';
 import type { UseRuleGroup } from '../components';
 import type { MoveOptions } from '../utils';
 import type {
@@ -47,6 +46,7 @@ import type {
 } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
+import type { SetNonNullable } from './type-fest';
 import type { QueryValidator, ValidationMap } from './validation';
 
 /**

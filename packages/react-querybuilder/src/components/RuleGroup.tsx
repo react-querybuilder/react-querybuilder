@@ -1,7 +1,6 @@
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
-import type { Except } from 'type-fest';
 import { standardClassnames, TestID } from '../defaults';
 import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
 import { useReactDndWarning } from '../hooks/useReactDndWarning';
@@ -9,6 +8,7 @@ import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,
+  Except,
   Path,
   RuleGroupProps,
   RuleGroupType,

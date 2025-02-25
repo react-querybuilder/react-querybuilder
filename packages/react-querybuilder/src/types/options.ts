@@ -1,4 +1,4 @@
-import type { RequireAtLeastOne, SetRequired, Simplify } from 'type-fest';
+import type { RequireAtLeastOne, SetRequired, Simplify } from './type-fest';
 
 /**
  * Extracts the {@link Option} type from a {@link FlexibleOptionList}.

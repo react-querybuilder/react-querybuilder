@@ -1,10 +1,10 @@
-import type { SetRequired } from 'type-fest';
 import type {
   DefaultCombinatorName,
   FormatQueryOptions,
   FullField,
   OptionList,
   RuleGroupTypeAny,
+  SetRequired,
   ValueProcessorByRule,
   ValueProcessorLegacy,
   ValueProcessorOptions,
