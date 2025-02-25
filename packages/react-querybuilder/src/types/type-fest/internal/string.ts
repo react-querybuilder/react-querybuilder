@@ -34,9 +34,6 @@ type NegativeInfinity = StringToNumber<'-Infinity'>;
 //=> -Infinity
 ```
 
-@category String
-@category Numeric
-@category Template literal
 */
 export type StringToNumber<S extends string> = S extends `${infer N extends number}`
 	? N
@@ -64,8 +61,6 @@ StartsWith<'abcde', string>;
 //=> never
 ```
 
-@category String
-@category Template literal
 */
 export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
 	? never
@@ -85,7 +80,6 @@ StringToArray<string>;
 //=> never
 ```
 
-@category String
 */
 export type StringToArray<S extends string, Result extends string[] = []> = string extends S
 	? never
@@ -105,8 +99,6 @@ StringLength<string>;
 //=> never
 ```
 
-@category String
-@category Template literal
 */
 export type StringLength<S extends string> = string extends S
 	? never

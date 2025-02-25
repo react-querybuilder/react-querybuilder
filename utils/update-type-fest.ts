@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/no-process-exit */
+/* eslint-disable unicorn/no-process-exit, unicorn/no-await-expression-member */
 
 import { $, file, Glob, semver, write } from 'bun';
 import { version as typeFestVersion } from 'type-fest/package.json';
@@ -10,6 +10,9 @@ const forceMode = process.argv.includes('--force');
 
 const srcTypeFestDir = `${import.meta.dir}/../node_modules/type-fest/source`;
 const rqbTypeFestDir = `${import.meta.dir}/../packages/react-querybuilder/src/types/type-fest`;
+
+// Capture contents of type-fest/README.md
+const rqbTypeFestReadMe = await file(`${rqbTypeFestDir}/README.md`).text();
 
 // Capture contents of current type-fest/index.ts
 const rqbTypeFestIndex = file(`${rqbTypeFestDir}/index.ts`);
@@ -51,6 +54,9 @@ if (forceMode) {
 
 console.log(`Updating vendored type-fest from ${rqbTypeFestVersion} to ${typeFestVersion}...`);
 
+const removeCategoryTags = async (filePath: string) =>
+  (await file(filePath).text()).replaceAll(/@category .*\n/g, '');
+
 // Get list of files to copy from source
 const rqbTypeFestFileList = rqbTypeFestIndexContents
   .matchAll(/'\.\/(.*)'/g)
@@ -63,7 +69,7 @@ await $`mkdir -p ${rqbTypeFestDir}/internal`;
 
 // Copy source .d.ts files as .ts
 for (const f of rqbTypeFestFileList) {
-  await write(`${rqbTypeFestDir}/${f}.ts`, file(`${srcTypeFestDir}/${f}.d.ts`));
+  await write(`${rqbTypeFestDir}/${f}.ts`, await removeCategoryTags(`${srcTypeFestDir}/${f}.d.ts`));
 }
 
 // Copy all source/internal/*.d.ts files as .ts
@@ -72,9 +78,12 @@ const srcTypeFestInternalFiles = dtsGlob.scan(`${srcTypeFestDir}/internal`);
 for await (const f of srcTypeFestInternalFiles) {
   await write(
     `${rqbTypeFestDir}/internal/${f.replace(/\.d\.ts$/, '.ts')}`,
-    file(`${srcTypeFestDir}/internal/${f}`)
+    await removeCategoryTags(`${srcTypeFestDir}/internal/${f}`)
   );
 }
+
+// Rebuild type-fest/README.md
+await write(`${rqbTypeFestDir}/README.md`, rqbTypeFestReadMe);
 
 // Rebuild type-fest/index.ts with source version number
 await write(

@@ -111,8 +111,6 @@ type L2 = Length<`${number}`>;
 //=> number
 ```
 
-@category Type Guard
-@category Utilities
 */
 export type IsStringLiteral<T> = IfNever<T, false,
 // If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
@@ -166,8 +164,6 @@ endsWith('abc123', end);
 //=> boolean
 ```
 
-@category Type Guard
-@category Utilities
 */
 export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
@@ -206,8 +202,6 @@ const eitherId = getId({asString: runtimeBoolean});
 //=> number | string
 ```
 
-@category Type Guard
-@category Utilities
 */
 export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 
@@ -241,8 +235,6 @@ get({[symbolValue]: 1} as const, symbolValue);
 //=> number
 ```
 
-@category Type Guard
-@category Utilities
 */
 export type IsSymbolLiteral<T> = LiteralCheck<T, symbol>;
 
@@ -287,8 +279,6 @@ stripLeading(str, 'abc');
 //=> string
 ```
 
-@category Type Guard
-@category Utilities
 */
 export type IsLiteral<T> =
 	IsPrimitive<T> extends true

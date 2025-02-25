@@ -83,7 +83,6 @@ type Key4 = ExactKey<Object, 1>;
 //=> '1'
 ```
 
-@category Object
 */
 export type ExactKey<T extends object, Key extends PropertyKey> =
 Key extends keyof T

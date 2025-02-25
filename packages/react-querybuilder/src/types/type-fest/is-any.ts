@@ -27,7 +27,5 @@ const anyA = get(anyObject, 'a');
 //=> any
 ```
 
-@category Type Guard
-@category Utilities
 */
 export type IsAny<T> = 0 extends 1 & NoInfer<T> ? true : false;

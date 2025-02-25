@@ -41,7 +41,6 @@ type ExampleIndexSignature = PickIndexSignature<Example>;
 ```
 
 @see OmitIndexSignature
-@category Object
 */
 export type PickIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown>

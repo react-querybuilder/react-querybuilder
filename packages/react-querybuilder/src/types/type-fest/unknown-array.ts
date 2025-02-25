@@ -19,7 +19,5 @@ type C = IsArray<string>;
 //=> false
 ```
 
-@category Type
-@category Array
 */
 export type UnknownArray = readonly unknown[];

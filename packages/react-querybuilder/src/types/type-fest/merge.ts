@@ -39,7 +39,6 @@ export type FooBar = Merge<Foo, Bar>;
 // }
 ```
 
-@category Object
 */
 export type Merge<Destination, Source> =
 Simplify<

@@ -91,7 +91,6 @@ type PostPayload = Except<UserData, 'email'>;
 //=> type PostPayload = { [x: string]: string; name: string; role: 'admin' | 'user'; }
 ```
 
-@category Object
 */
 export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {requireExactProps: false}> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];

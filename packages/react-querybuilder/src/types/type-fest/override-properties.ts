@@ -21,7 +21,6 @@ type Fizz = OverrideProperties<Foo, {b: number; c: number}>
 // Error, type '{ b: number; c: number; }' does not satisfy the constraint '{ b: number; c: never; }'
 ```
 
-@category Object
 */
 export type OverrideProperties<
 	TOriginal,
