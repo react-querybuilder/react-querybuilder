@@ -12,7 +12,11 @@ const compat = new FlatCompat();
 
 export default [
   {
-    ignores: ['**/dist/', '**/*Parser.js'],
+    ignores: [
+      'packages/*/dist/',
+      'packages/react-querybuilder/src/utils/**/*Parser.js',
+      'packages/react-querybuilder/src/types/type-fest/',
+    ],
   },
   ...fixupConfigRules(compat.extends('plugin:react-hooks/recommended')),
   eslint.configs.recommended,

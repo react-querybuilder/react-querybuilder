@@ -1,9 +1,9 @@
-import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   Field,
   FullField,
   OptionGroup,

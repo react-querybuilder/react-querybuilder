@@ -1,4 +1,4 @@
-import type { SetOptional, Simplify } from 'type-fest';
+import type { SetOptional, Simplify } from './type-fest';
 import type {
   BaseFullOption,
   FlexibleOptionList,

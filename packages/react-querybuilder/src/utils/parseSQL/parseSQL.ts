@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -7,6 +6,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   ParseSQLOptions,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';

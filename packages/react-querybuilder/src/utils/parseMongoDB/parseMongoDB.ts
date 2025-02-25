@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
@@ -6,6 +5,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   ParseMongoDbOptions,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
@@ -14,9 +14,9 @@ import { isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { MongoDbSupportedOperators } from './types';
 import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 

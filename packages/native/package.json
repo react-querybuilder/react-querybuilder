@@ -68,7 +68,7 @@
     "react-test-renderer": "^19.0.0",
     "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.7.3",
-    "vite": "^6.1.1"
+    "vite": "^6.2.0"
   },
   "peerDependencies": {
     "react": ">=18",

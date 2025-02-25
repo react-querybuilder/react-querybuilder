@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import type { BaseOption, GetOptionIdentifierType } from './options';
 import type {
   DefaultCombinatorName,
@@ -10,6 +9,7 @@ import type {
   RuleType,
 } from './ruleGroups';
 import type { MappedTuple } from './ruleGroupsIC.utils';
+import type { Except } from './type-fest';
 
 /**
  * The main rule group interface when using independent combinators. This type is used

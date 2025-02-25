@@ -61,7 +61,7 @@
     "react-querybuilder": "8.3.0",
     "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.7.3",
-    "vite": "^6.1.1"
+    "vite": "^6.2.0"
   },
   "peerDependencies": {
     "bulma": "^0.9.4 || ^1",

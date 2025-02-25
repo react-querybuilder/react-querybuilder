@@ -1,4 +1,3 @@
-import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
@@ -6,6 +5,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   ParseJsonLogicOptions,
   RQBJsonLogic,
   RQBJsonLogicVar,
@@ -17,6 +17,7 @@ import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import {
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
@@ -38,7 +39,6 @@ import {
   isRQBJsonLogicStartsWith,
   isRQBJsonLogicVar,
 } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 

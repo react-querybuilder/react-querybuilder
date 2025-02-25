@@ -1,3 +1,4 @@
+import type { RulesLogic } from 'json-logic-js';
 import type {
   FullField,
   FullOperator,
@@ -5,7 +6,6 @@ import type {
   ValueSource,
   ValueSources,
 } from './basic';
-import type { RulesLogic } from 'json-logic-js';
 import type { FlexibleOptionList, OptionList } from './options';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';

@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+## Fixed
+
+- [#858] The `type-fest` library has been (partially) vendored into `react-querybuilder` to avoid requiring it as a dependency.
 
 ## [v8.3.0] - 2025-02-21
 
@@ -1851,6 +1853,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#845]: https://github.com/react-querybuilder/react-querybuilder/pull/845
 [#846]: https://github.com/react-querybuilder/react-querybuilder/pull/846
 [#855]: https://github.com/react-querybuilder/react-querybuilder/pull/855
+[#858]: https://github.com/react-querybuilder/react-querybuilder/pull/858
 
 <!-- #endregion -->
 
