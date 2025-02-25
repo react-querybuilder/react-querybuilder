@@ -5,6 +5,8 @@ import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "mongodb_query" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   { field, operator, value, valueSource },

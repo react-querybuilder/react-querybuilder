@@ -6,6 +6,9 @@ import { RuleComponents, TestID, useRule } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
 import type { RuleNativeProps, SchemaNative } from '../types';
 
+/**
+ * @group Components
+ */
 export const RuleNative = (props: RuleNativeProps): React.JSX.Element => {
   const r = useRule(props);
   const schema = r.schema as SchemaNative<FullField, string>;

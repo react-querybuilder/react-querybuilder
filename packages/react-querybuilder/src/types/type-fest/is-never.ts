@@ -36,5 +36,6 @@ endIfEqual('abc', '123');
 //=> void
 ```
 
+@group type-fest
 */
 export type IsNever<T> = [T] extends [never] ? true : false;

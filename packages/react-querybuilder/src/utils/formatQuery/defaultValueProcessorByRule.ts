@@ -10,6 +10,8 @@ const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: b
 
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
+ *
+ * @group Export
  */
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },

@@ -1,4 +1,5 @@
 import { defaultOperatorNegationMap } from '../../defaults';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,7 +10,6 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Except,
-  ParseCELOptions,
   ValueSource,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
@@ -38,6 +38,12 @@ import {
   isCELStringLiteral,
   normalizeOperator,
 } from './utils';
+
+/**
+ * Options object for {@link parseCEL}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ParseCELOptions extends ParserCommonOptions {}
 
 /**
  * Converts a CEL string expression into a query suitable for the

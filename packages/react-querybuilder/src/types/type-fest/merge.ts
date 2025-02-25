@@ -39,6 +39,7 @@ export type FooBar = Merge<Foo, Bar>;
 // }
 ```
 
+@group type-fest
 */
 export type Merge<Destination, Source> =
 Simplify<

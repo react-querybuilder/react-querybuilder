@@ -3,16 +3,22 @@ import type {Primitive} from '../primitive';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
+
+@group type-fest
 */
 export type BuiltIns = Primitive | void | Date | RegExp;
 
 /**
 Matches non-recursive types.
+
+@group type-fest
 */
 export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown);
 
 /**
 Returns a boolean for whether the two given types extends the base type.
+
+@group type-fest
 */
 export type IsBothExtends<BaseType, FirstType, SecondType> = FirstType extends BaseType
 	? SecondType extends BaseType
@@ -27,6 +33,8 @@ Needed to handle the case of a single call signature with properties.
 
 Multiple call signatures cannot currently be supported due to a TypeScript limitation.
 @see https://github.com/microsoft/TypeScript/issues/29732
+
+@group type-fest
 */
 export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknown> =
 	T extends {(...arguments_: infer A): unknown; (...arguments_: infer B): unknown}
@@ -39,6 +47,8 @@ export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknow
 
 /**
 Returns a boolean for whether the given `boolean` is not `false`.
+
+@group type-fest
 */
 export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;
 
@@ -56,6 +66,8 @@ IsPrimitive<string>
 IsPrimitive<Object>
 //=> false
 ```
+
+@group type-fest
 */
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
@@ -70,6 +82,8 @@ Not<true>;
 Not<false>;
 //=> true
 ```
+
+@group type-fest
 */
 export type Not<A extends boolean> = A extends true
 	? false
@@ -88,6 +102,8 @@ type A = IsUnion<string | number>;
 type B = IsUnion<string>;
 //=> false
 ```
+
+@group type-fest
 */
 export type IsUnion<T> = InternalIsUnion<T>;
 

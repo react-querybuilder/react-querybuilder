@@ -4,5 +4,21 @@
     "notExported": false
   },
   "readme": "none",
+  "groupOrder": [
+    "Components",
+    "Props",
+    "Hooks",
+    "Export",
+    "Defaults",
+    "Option lists",
+    "Query tools",
+    "Functions",
+    "Interfaces",
+    "Type Aliases",
+    "Variables",
+    "Utility types",
+    "*",
+    "type-fest"
+  ],
   "pretty": true
 }

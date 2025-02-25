@@ -19,6 +19,8 @@ import type { QueryBuilderDndContextProps } from './types';
  * Rule component for drag-and-drop. Renders the provided rule component
  * ({@link react-querybuilder!index.Rule Rule} by default), but forwards the
  * drag-and-drop context.
+ *
+ * @group Components
  */
 export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
@@ -52,6 +54,9 @@ type UseRuleDndParams = RuleProps &
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
+/**
+ * @group Hooks
+ */
 export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
   const { path, rule, disabled, schema, actions, useDrag, useDrop, canDrop } = params;
 

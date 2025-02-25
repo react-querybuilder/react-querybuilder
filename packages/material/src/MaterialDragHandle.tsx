@@ -7,11 +7,17 @@ import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
+/**
+ * @group Props
+ */
 export type MaterialDragHandleProps = DragHandleProps &
   Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> & {
     muiComponents?: RQBMaterialComponents;
   };
 
+/**
+ * @group Components
+ */
 export const MaterialDragHandle: React.ForwardRefExoticComponent<
   Omit<MaterialDragHandleProps, 'ref'> & React.RefAttributes<HTMLSpanElement>
 > = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(

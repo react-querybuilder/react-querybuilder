@@ -8,6 +8,8 @@ export interface UseSelectElementChangeHandlerParams {
 
 /**
  * Returns a memoized change handler for HTML `<select>` elements.
+ *
+ * @group Hooks
  */
 export const useSelectElementChangeHandler = (
   params: UseSelectElementChangeHandlerParams

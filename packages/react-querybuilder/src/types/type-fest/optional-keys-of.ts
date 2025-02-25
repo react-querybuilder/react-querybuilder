@@ -29,6 +29,7 @@ const update2: UpdateOperation<User> = {
 };
 ```
 
+@group type-fest
 */
 export type OptionalKeysOf<BaseType extends object> = Exclude<{
 	[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]>

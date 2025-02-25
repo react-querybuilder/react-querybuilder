@@ -7,6 +7,8 @@ import { shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, meta) => {
   // TODO?: test for this so we don't have to ignore it

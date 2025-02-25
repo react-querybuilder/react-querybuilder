@@ -19,6 +19,7 @@ const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 };
 ```
 
+@group type-fest
 */
 export type RequireAtLeastOne<
 	ObjectType,

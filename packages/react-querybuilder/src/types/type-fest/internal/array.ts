@@ -10,12 +10,16 @@ type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: inf
 
 /**
 Matches any unknown array or tuple.
+
+@group type-fest
 */
 export type UnknownArrayOrTuple = readonly [...unknown[]];
 // TODO: should unknown-array be updated?
 
 /**
 Extracts the type of the first element of an array or tuple.
+
+@group type-fest
 */
 export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
 	? THead
@@ -27,6 +31,8 @@ Extract the element of an array that also works for array union.
 Returns `never` if T is not an array.
 
 It creates a type-safe way to access the element type of `unknown` type.
+
+@group type-fest
 */
 export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
 
@@ -39,6 +45,8 @@ type A = [string, number, boolean, ...string[]];
 type B = StaticPartOfArray<A>;
 //=> [string, number, boolean]
 ```
+
+@group type-fest
 */
 export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
@@ -58,6 +66,8 @@ type A = [string, number, boolean, ...string[]];
 type B = VariablePartOfArray<A>;
 //=> string[]
 ```
+
+@group type-fest
 */
 export type VariablePartOfArray<T extends UnknownArray> =
 	T extends unknown
@@ -80,6 +90,8 @@ type ReadonlyResult = SetArrayAccess<NormalArray, true>;
 type NormalResult = SetArrayAccess<ReadonlyArray, false>;
 //=> string[]
 ```
+
+@group type-fest
 */
 export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
 T extends readonly [...infer U] ?
@@ -90,6 +102,8 @@ T extends readonly [...infer U] ?
 
 /**
 Returns whether the given array `T` is readonly.
+
+@group type-fest
 */
 export type IsArrayReadonly<T extends UnknownArray> = IfNever<T, false, T extends unknown[] ? false : true>;
 
@@ -119,6 +133,8 @@ type ShouldBeTrue = IfArrayReadonly<readonly unknown[]>;
 type ShouldBeBar = IfArrayReadonly<unknown[], 'foo', 'bar'>;
 //=> 'bar'
 ```
+
+@group type-fest
 */
 export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, TypeIfNotArrayReadonly = false> =
 	IsArrayReadonly<T> extends infer Result

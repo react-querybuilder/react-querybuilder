@@ -9,9 +9,15 @@ type RemoveDataIndexKeys<T> = {
   [K in keyof T as `data-${string}` extends K ? never : K]: T[K];
 };
 
+/**
+ * @group Props
+ */
 export type AntDActionProps = ActionWithRulesProps &
   RemoveDataIndexKeys<ComponentPropsWithoutRef<typeof Button>>;
 
+/**
+ * @group Components
+ */
 export const AntDActionElement = ({
   className,
   handleOnClick,

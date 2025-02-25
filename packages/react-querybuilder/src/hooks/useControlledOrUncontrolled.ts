@@ -11,6 +11,8 @@ export interface UseControlledOrUncontrolledParams {
 /**
  * Logs a warning when the component changes from controlled to uncontrolled,
  * vice versa, or both `query` and `defaultQuery` are provided.
+ *
+ * @group Hooks
  */
 export const useControlledOrUncontrolled = (params: UseControlledOrUncontrolledParams): void => {
   const dispatch = useRQB_INTERNAL_QueryBuilderDispatch();

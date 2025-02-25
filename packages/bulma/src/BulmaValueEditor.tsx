@@ -2,6 +2,9 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { useValueEditor, ValueEditor } from 'react-querybuilder';
 
+/**
+ * @group Components
+ */
 export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
   const { valueListItemClassName } = useValueEditor(props);
 

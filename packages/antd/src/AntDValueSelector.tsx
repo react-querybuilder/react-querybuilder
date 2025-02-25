@@ -4,9 +4,15 @@ import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { joinWith, useValueSelector } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 export type AntDValueSelectorProps = VersatileSelectorProps &
   Omit<ComponentPropsWithoutRef<typeof Select>, 'onChange' | 'defaultValue'>;
 
+/**
+ * @group Components
+ */
 export const AntDValueSelector = ({
   className,
   handleOnChange,

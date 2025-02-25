@@ -20,6 +20,8 @@ type A = BuildObject<'a', string>;
 type B = BuildObject<'a', string, {readonly a?: any}>;
 //=> {readonly a?: string}
 ```
+
+@group type-fest
 */
 export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
 	Key extends keyof CopiedFrom
@@ -32,6 +34,8 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 
 /**
 Returns a boolean for whether the given type is a plain key-value object.
+
+@group type-fest
 */
 export type IsPlainObject<T> =
 	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
@@ -44,6 +48,8 @@ export type IsPlainObject<T> =
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
 
 It creates a type-safe way to access the member type of `unknown` type.
+
+@group type-fest
 */
 export type ObjectValue<T, K> =
 	K extends keyof T
@@ -72,6 +78,8 @@ type OptionalizedUser = UndefinedToOptional<User>;
 // 	lastName?: string;
 // }
 ```
+
+@group type-fest
 */
 export type UndefinedToOptional<T extends object> = Simplify<
 {
@@ -119,6 +127,8 @@ type Any = HomomorphicPick<{a: 1; b: 2} | {c: 3}, any>;
 // Doesn't pick `number` from a `string` index signature
 type IndexSignature = HomomorphicPick<{[k: string]: unknown}, number>;
 //=> {}
+
+@group type-fest
 */
 export type HomomorphicPick<T, Keys extends KeysOfUnion<T>> = {
 	[P in keyof T as Extract<P, Keys>]: T[P]
@@ -132,6 +142,8 @@ Extract all possible values for a given key from a union of object types.
 type Statuses = ValueOfUnion<{ id: 1, status: "open" } | { id: 2, status: "closed" }, "status">;
 //=> "open" | "closed"
 ```
+
+@group type-fest
 */
 export type ValueOfUnion<Union, Key extends KeysOfUnion<Union>> =
 	Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
@@ -155,6 +167,8 @@ type Post = {
 type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 //=> "id" | "author"
 ```
+
+@group type-fest
 */
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never

@@ -13,8 +13,11 @@ import type { ValueEditorProps, VersatileSelectorProps } from 'react-querybuilde
 import { ValueEditor, useValueEditor } from 'react-querybuilder';
 import { TremorValueSelector } from './TremorValueSelector';
 
+/**
+ * @group Props
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
@@ -23,6 +26,9 @@ const ClearableValueSelector = (props: VersatileSelectorProps) => (
   <TremorValueSelector {...props} enableClear />
 );
 
+/**
+ * @group Components
+ */
 export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,

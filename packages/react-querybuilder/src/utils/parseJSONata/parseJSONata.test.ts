@@ -7,10 +7,10 @@ import type {
   Field,
   FullField,
   OptionGroup,
-  ParseJSONataOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
+import type { ParseJSONataOptions } from './parseJSONata';
 import { parseJSONata } from './parseJSONata';
 
 const wrapRule = (

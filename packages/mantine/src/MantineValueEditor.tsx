@@ -7,12 +7,18 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, useValueEditor, ValueEditor } from 'react-querybuilder';
 import { toNumberInputValue } from './utils';
 
+/**
+ * @group Props
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type MantineValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export type MantineValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
 
+/**
+ * @group Components
+ */
 export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,

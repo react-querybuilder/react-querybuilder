@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 
 - [#858] The `type-fest` library has been (partially) vendored into `react-querybuilder` to avoid requiring it as a dependency.
+- [#858] `UseMergedContextProps` renamed to `UseMergedContextParams` (_technically_ a breaking change, but probably won't affect anyone).
+- [#858] All `Parse*Options` types have been removed from the main export. They are now only available on their respective `react-querybuilder/parse*` exports (another _technically_ breaking change that probably won't affect anyone).
 
 ## [v8.3.0] - 2025-02-21
 

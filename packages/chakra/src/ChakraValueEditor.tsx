@@ -6,9 +6,15 @@ import { Checkbox } from './snippets/checkbox';
 import { Radio, RadioGroup } from './snippets/radio';
 import { Switch } from './snippets/switch';
 
+/**
+ * @group Props
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
+/**
+ * @group Components
+ */
 export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,

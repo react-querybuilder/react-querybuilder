@@ -13,6 +13,8 @@ import { QueryBuilderStateProvider } from './QueryBuilderStateProvider';
  * The query builder component for React.
  *
  * See https://react-querybuilder.js.org/ for demos and documentation.
+ *
+ * @group Components
  */
 export const QueryBuilder = <
   RG extends RuleGroupTypeAny,

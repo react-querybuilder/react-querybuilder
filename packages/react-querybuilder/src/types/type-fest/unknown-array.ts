@@ -19,5 +19,6 @@ type C = IsArray<string>;
 //=> false
 ```
 
+@group type-fest
 */
 export type UnknownArray = readonly unknown[];

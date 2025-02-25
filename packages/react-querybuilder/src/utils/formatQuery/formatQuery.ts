@@ -50,6 +50,9 @@ import {
   numerifyValues,
 } from './utils';
 
+/**
+ * @group Export
+ */
 export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
   ansi: {}, // This should always be empty
   sqlite: {
@@ -155,10 +158,14 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
+ *
+ * @group Export
  */
 function formatQuery(ruleGroup: RuleGroupTypeAny): string;
 /**
  * Generates a {@link index!ParameterizedSQL ParameterizedSQL} object from a query object.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -166,6 +173,8 @@ function formatQuery(
 ): ParameterizedSQL;
 /**
  * Generates a {@link index!ParameterizedNamedSQL ParameterizedNamedSQL} object from a query object.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -173,6 +182,8 @@ function formatQuery(
 ): ParameterizedNamedSQL;
 /**
  * Generates a {@link index!RQBJsonLogic JsonLogic} object from a query object.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -184,6 +195,8 @@ function formatQuery(
  * NOTE: Support for the ElasticSearch format is experimental.
  * You may have better results exporting "sql" format then using
  * [ElasticSearch SQL](https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-sql.html).
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -195,6 +208,8 @@ function formatQuery(
  *
  * This is equivalent to the "mongodb" format, but returns a JSON object
  * instead of a string.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -208,6 +223,8 @@ function formatQuery(
  * instead of a JSON object.
  *
  * @deprecated Use the "mongodb_query" format for greater flexibility.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -217,6 +234,8 @@ function formatQuery(
  * Generates a JSONata query string from an RQB query object.
  *
  * NOTE: The `parseNumbers` option is recommended for this format.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -224,10 +243,14 @@ function formatQuery(
 ): string;
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
+ *
+ * @group Export
  */
 function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions): string;
 /**
  * Generates a query string in the requested format.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
@@ -235,6 +258,8 @@ function formatQuery(
 ): string;
 /**
  * Generates a query string in the requested format.
+ *
+ * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,

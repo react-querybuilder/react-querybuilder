@@ -8,11 +8,17 @@ import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 import { toOptions } from './utils';
 
+/**
+ * @group Props
+ */
 export type MaterialValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof Select> & {
     muiComponents?: RQBMaterialComponents;
   };
 
+/**
+ * @group Components
+ */
 export const MaterialValueSelector = ({
   className,
   handleOnChange,

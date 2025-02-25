@@ -1,4 +1,5 @@
 import { defaultOperatorNegationMap } from '../../defaults';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
@@ -6,9 +7,10 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Except,
-  ParseJsonLogicOptions,
   RQBJsonLogic,
   RQBJsonLogicVar,
+  RuleGroupTypeAny,
+  RuleType,
   ValueSource,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
@@ -39,6 +41,14 @@ import {
   isRQBJsonLogicStartsWith,
   isRQBJsonLogicVar,
 } from './utils';
+
+/**
+ * Options object for {@link parseJsonLogic}.
+ */
+export interface ParseJsonLogicOptions extends ParserCommonOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny | false>;
+}
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 

@@ -14,6 +14,8 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
 
 /**
  * Default rule processor used by {@link formatQuery} for "jsonlogic" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   { field, operator, value, valueSource },

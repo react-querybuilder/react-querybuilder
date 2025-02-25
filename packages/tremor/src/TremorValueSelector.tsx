@@ -5,12 +5,18 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toArray, useValueSelector } from 'react-querybuilder';
 import { toSelectItems } from './utils';
 
+/**
+ * @group Props
+ */
 export type TremorValueSelectorProps = VersatileSelectorProps &
   Omit<SelectProps & MultiSelectProps, 'children' | 'value'> & {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value?: any;
   };
 
+/**
+ * @group Components
+ */
 export const TremorValueSelector = ({
   className,
   handleOnChange,

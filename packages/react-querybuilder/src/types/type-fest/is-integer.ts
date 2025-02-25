@@ -35,6 +35,8 @@ type BinaryInteger: IsInteger<0b10>;
 type HexadecimalInteger: IsInteger<0x10>;
 //=> true
 ```
+
+@group type-fest
 */
 export type IsInteger<T> =
 T extends bigint

@@ -1,4 +1,5 @@
 import { defaultOperatorNegationMap } from '../../defaults';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
@@ -6,7 +7,8 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Except,
-  ParseMongoDbOptions,
+  RuleGroupType,
+  RuleType,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
 import { convertToIC } from '../convertQuery';
@@ -17,6 +19,65 @@ import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { MongoDbSupportedOperators } from './types';
 import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
+
+/**
+ * Options object for {@link parseMongoDB}.
+ */
+export interface ParseMongoDbOptions extends ParserCommonOptions {
+  /**
+   * When `true`, MongoDB rules in the form of `{ fieldName: { $not: { <...rule> } } }`
+   * will be parsed into a rule group with the `not` attribute set to `true`. By default
+   * (i.e., when this attribute is `false`), such "`$not`" rules will be parsed into a
+   * rule with a negated operator.
+   *
+   * For example, with `preventOperatorNegation` set to `true`, a MongoDB rule like this...
+   *
+   * ```ts
+   * { fieldName: { $not: { $eq: 1 } } }
+   * ```
+   *
+   * ...would yield a rule group like this:
+   *
+   * ```ts
+   * {
+   *   combinator: 'and',
+   *   not: true,
+   *   rules: [{ field: 'fieldName', operator: '=', value: 1 }]
+   * }
+   * ```
+   *
+   * By default, the same MongoDB rule would yield a rule like this:
+   *
+   * ```ts
+   * { field: 'fieldName', operator: '!=', value: 1 }
+   * //              negated operator ^
+   * ```
+   *
+   * @default false
+   */
+  preventOperatorNegation?: boolean;
+  /**
+   * Map of additional operators to their respective processing functions. Operators
+   * must begin with `"$"`. Processing functions should return either a {@link index!RuleType RuleType}
+   * or {@link index!RuleGroupType RuleGroupType}.
+   *
+   * (The functions should _not_ return {@link index!RuleGroupTypeIC RuleGroupTypeIC}, even if using independent
+   * combinators. If the `independentCombinators` option is `true`, `parseMongoDB`
+   * will convert the final query to {@link index!RuleGroupTypeIC RuleGroupTypeIC} before returning it.)
+   *
+   * @default {}
+   */
+  additionalOperators?: Record<
+    `$${string}`,
+    (
+      field: string,
+      operator: string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      value: any,
+      options: ParserCommonOptions
+    ) => RuleType | RuleGroupType
+  >;
+}
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 

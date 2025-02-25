@@ -16,6 +16,7 @@ type ShouldBeBar = IfNever<'not never', 'foo', 'bar'>;
 //=> 'bar'
 ```
 
+@group type-fest
 */
 export type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = (
 	IsNever<T> extends true ? TypeIfNever : TypeIfNotNever

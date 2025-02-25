@@ -21,6 +21,7 @@ type Includes<Value extends readonly any[], Item> =
 		: false;
 ```
 
+@group type-fest
 */
 export type IsEqual<A, B> =
 	(<G>() => G extends A & G | G ? 1 : 2) extends

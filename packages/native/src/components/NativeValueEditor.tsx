@@ -6,6 +6,9 @@ import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder'
 import { defaultNativeStyles } from '../styles';
 import type { ValueEditorNativeProps } from '../types';
 
+/**
+ * @group Components
+ */
 export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.Element | null => {
   const {
     operator,

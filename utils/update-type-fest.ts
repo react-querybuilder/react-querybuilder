@@ -54,8 +54,14 @@ if (forceMode) {
 
 console.log(`Updating vendored type-fest from ${rqbTypeFestVersion} to ${typeFestVersion}...`);
 
-const removeCategoryTags = async (filePath: string) =>
-  (await file(filePath).text()).replaceAll(/@category .*\n/g, '');
+const updateBlockTags = async (filePath: string) =>
+  (await file(filePath).text())
+    .replaceAll(/(?:@category .*?\n)+/g, '')
+    .replaceAll(/\n+\*\/((?:\n\/\/.*?)*)\nexport /g, '\n\n@group type-fest\n*/$1\nexport ')
+    .replaceAll(
+      /(\n\nexport (type|interface) )/g,
+      filePath.endsWith('/merge.d.ts') ? '$1' : '\n\n/**\n@group type-fest\n*/\nexport $2 '
+    );
 
 // Get list of files to copy from source
 const rqbTypeFestFileList = rqbTypeFestIndexContents
@@ -69,7 +75,7 @@ await $`mkdir -p ${rqbTypeFestDir}/internal`;
 
 // Copy source .d.ts files as .ts
 for (const f of rqbTypeFestFileList) {
-  await write(`${rqbTypeFestDir}/${f}.ts`, await removeCategoryTags(`${srcTypeFestDir}/${f}.d.ts`));
+  await write(`${rqbTypeFestDir}/${f}.ts`, await updateBlockTags(`${srcTypeFestDir}/${f}.d.ts`));
 }
 
 // Copy all source/internal/*.d.ts files as .ts
@@ -78,7 +84,7 @@ const srcTypeFestInternalFiles = dtsGlob.scan(`${srcTypeFestDir}/internal`);
 for await (const f of srcTypeFestInternalFiles) {
   await write(
     `${rqbTypeFestDir}/internal/${f.replace(/\.d\.ts$/, '.ts')}`,
-    await removeCategoryTags(`${srcTypeFestDir}/internal/${f}`)
+    await updateBlockTags(`${srcTypeFestDir}/internal/${f}`)
   );
 }
 

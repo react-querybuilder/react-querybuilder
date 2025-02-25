@@ -3,6 +3,9 @@ import { Button, StyleSheet, View } from 'react-native';
 import { defaultNativeStyles } from '../styles';
 import type { ShiftActionsNativeProps } from '../types';
 
+/**
+ * @group Components
+ */
 export const NativeShiftActions = ({
   shiftUp,
   shiftDown,

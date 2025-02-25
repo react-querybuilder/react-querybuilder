@@ -11,6 +11,8 @@ const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: b
 
 /**
  * Default value processor used by {@link formatQuery} for "natural_language" format.
+ *
+ * @group Export
  */
 export const defaultValueProcessorNL: ValueProcessorByRule = (
   rule,

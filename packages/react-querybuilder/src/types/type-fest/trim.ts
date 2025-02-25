@@ -21,5 +21,6 @@ Trim<' foo '>
 //=> 'foo'
 ```
 
+@group type-fest
 */
 export type Trim<V extends string> = TrimLeft<TrimRight<V>>;

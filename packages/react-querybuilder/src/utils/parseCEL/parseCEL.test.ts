@@ -7,10 +7,10 @@ import type {
   Field,
   FullField,
   OptionGroup,
-  ParseCELOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
+import type { ParseCELOptions } from './parseCEL';
 import { parseCEL } from './parseCEL';
 
 const wrapRule = (

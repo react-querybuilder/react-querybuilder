@@ -6,12 +6,18 @@ import type { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
+/**
+ * @group Props
+ */
 export type MaterialValueEditorProps = ValueEditorProps & {
   muiComponents?: RQBMaterialComponents;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extraProps?: Record<string, any>;
 };
 
+/**
+ * @group Components
+ */
 export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.Element | null => {
   const { muiComponents: muiComponentsProp, ...propsForValueEditor } = props;
   const {

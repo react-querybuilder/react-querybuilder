@@ -3,8 +3,14 @@ import { Button } from '@mantine/core';
 import * as React from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 export type MantineActionProps = ActionWithRulesProps & Partial<ButtonProps>;
 
+/**
+ * @group Components
+ */
 export const MantineActionElement = ({
   className,
   handleOnClick,

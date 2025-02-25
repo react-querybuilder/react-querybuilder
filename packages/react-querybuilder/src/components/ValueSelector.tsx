@@ -6,6 +6,8 @@ import { joinWith, toArray, toOptions } from '../utils';
 
 /**
  * Default `<select>` component used by {@link QueryBuilder}.
+ *
+ * @group Components
  */
 export const ValueSelector = <Opt extends FullOption = FullOption>(
   props: ValueSelectorProps<Opt>
@@ -37,8 +39,9 @@ export type UseValueSelectorParams = Pick<
 >;
 
 /**
- * Transforms a value into an array when appropriate and provides
- * a memoized change handler.
+ * Transforms a value into an array when appropriate and provides a memoized change handler.
+ *
+ * @group Hooks
  */
 export const useValueSelector = (
   props: UseValueSelectorParams

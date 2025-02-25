@@ -7,6 +7,9 @@ import { NotToggle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
+/**
+ * @group Props
+ */
 export type MaterialNotToggleProps = NotToggleProps &
   ComponentPropsWithoutRef<typeof Switch> & {
     muiComponents?: RQBMaterialComponents;
@@ -14,6 +17,9 @@ export type MaterialNotToggleProps = NotToggleProps &
 
 type MaterialNotToggleComponents = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
 
+/**
+ * @group Components
+ */
 export const MaterialNotToggle = ({
   className,
   handleOnChange,

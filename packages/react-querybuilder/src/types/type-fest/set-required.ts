@@ -32,6 +32,7 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 //=> [number, number, number?]
 ```
 
+@group type-fest
 */
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
 	BaseType extends UnknownArray

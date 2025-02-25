@@ -20,6 +20,8 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 
 /**
 Returns the required keys.
+
+@group type-fest
 */
 export type FilterDefinedKeys<T extends object> = Exclude<
 {
@@ -36,6 +38,8 @@ undefined
 
 /**
 Returns the optional keys.
+
+@group type-fest
 */
 export type FilterOptionalKeys<T extends object> = Exclude<
 {
@@ -52,11 +56,15 @@ undefined
 
 /**
 Disallows any of the given keys.
+
+@group type-fest
 */
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
 
 /**
 Utility type to retrieve only literal keys from type.
+
+@group type-fest
 */
 export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
 
@@ -83,6 +91,7 @@ type Key4 = ExactKey<Object, 1>;
 //=> '1'
 ```
 
+@group type-fest
 */
 export type ExactKey<T extends object, Key extends PropertyKey> =
 Key extends keyof T

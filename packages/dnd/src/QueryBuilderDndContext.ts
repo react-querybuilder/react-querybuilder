@@ -5,6 +5,9 @@ import type { QueryBuilderDndContextProps } from './types';
 
 const { rule, ruleGroup, combinatorSelector } = defaultControlElements;
 
+/**
+ * @group Components
+ */
 export const QueryBuilderDndContext: Context<QueryBuilderDndContextProps> =
   createContext<QueryBuilderDndContextProps>({
     baseControls: { rule, ruleGroup, combinatorSelector },

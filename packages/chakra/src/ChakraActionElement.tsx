@@ -3,8 +3,14 @@ import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 export type ChakraActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;
 
+/**
+ * @group Components
+ */
 export const ChakraActionElement = ({
   className,
   handleOnClick,

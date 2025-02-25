@@ -16,6 +16,8 @@ NumberAbsolute<1>;
 NumberAbsolute<NegativeInfinity>
 //=> PositiveInfinity
 ```
+
+@group type-fest
 */
 export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
@@ -37,6 +39,8 @@ type C = IsNumberLike<1>;
 
 type D = IsNumberLike<'a'>;
 //=> false
+
+@group type-fest
 */
 export type IsNumberLike<N> =
 	N extends number ? true
@@ -56,6 +60,8 @@ Note: Just supports numbers from 0 to 999.
 type A = UnionMin<3 | 1 | 2>;
 //=> 1
 ```
+
+@group type-fest
 */
 export type UnionMin<N extends number> = InternalUnionMin<N>;
 
@@ -77,6 +83,8 @@ Note: Just supports numbers from 0 to 999.
 type A = UnionMax<1 | 3 | 2>;
 //=> 3
 ```
+
+@group type-fest
 */
 export type UnionMax<N extends number> = InternalUnionMax<N>;
 

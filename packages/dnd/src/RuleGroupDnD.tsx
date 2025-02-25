@@ -19,6 +19,8 @@ import { useDragCommon } from './useDragCommon';
  * Rule group component for drag-and-drop. Renders the provided rule group component
  * ({@link react-querybuilder!index.RuleGroup RuleGroup} by default), but forwards the drag-and-drop
  * context so that child rules and groups will render within the appropriate drag-and-drop wrappers.
+ *
+ * @group Components
  */
 export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
@@ -48,6 +50,9 @@ type UseRuleGroupDndParams = RuleGroupProps &
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
+/**
+ * @group Hooks
+ */
 export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD => {
   const { disabled, path, ruleGroup, schema, actions, useDrag, useDrop, canDrop } = params;
 

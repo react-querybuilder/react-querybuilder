@@ -7,10 +7,10 @@ import type {
   Field,
   FullField,
   OptionGroup,
-  ParseSpELOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
+import type { ParseSpELOptions } from './parseSpEL';
 import { parseSpEL } from './parseSpEL';
 
 const wrapRule = (

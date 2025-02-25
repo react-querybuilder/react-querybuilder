@@ -27,5 +27,6 @@ const anyA = get(anyObject, 'a');
 //=> any
 ```
 
+@group type-fest
 */
 export type IsAny<T> = 0 extends 1 & NoInfer<T> ? true : false;

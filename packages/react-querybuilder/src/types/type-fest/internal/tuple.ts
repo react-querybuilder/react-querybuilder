@@ -20,6 +20,8 @@ type Array = TupleLength<string[]>;
 type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
 //=> 1 | 3
 ```
+
+@group type-fest
 */
 export type TupleLength<T extends UnknownArray> =
 	// `extends unknown` is used to convert `T` (if `T` is a union type) to
@@ -36,6 +38,8 @@ Create a tuple type of the given length `<L>` and fill it with the given type `<
 If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
+
+@group type-fest
 */
 export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = number extends L
 	? Fill[]
@@ -57,6 +61,8 @@ ArrayMax<[1, 2, 5, 3]>;
 ArrayMax<[1, 2, 5, 3, 99, -1]>;
 //=> 99
 ```
+
+@group type-fest
 */
 export type TupleMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
 	? never :
@@ -80,6 +86,8 @@ ArrayMin<[1, 2, 5, 3]>;
 ArrayMin<[1, 2, 5, 3, -5]>;
 //=> -5
 ```
+
+@group type-fest
 */
 export type TupleMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
 	? never

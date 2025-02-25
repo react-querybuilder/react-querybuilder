@@ -30,6 +30,7 @@ type AllNonNullable = SetNonNullable<Foo>;
 // }
 ```
 
+@group type-fest
 */
 export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
 	[Key in keyof BaseType]: Key extends Keys

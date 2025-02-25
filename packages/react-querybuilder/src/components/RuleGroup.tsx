@@ -32,6 +32,8 @@ import { clsx } from '../utils/clsx';
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
  * objects. This is actually a small wrapper around {@link RuleGroupHeaderComponents}
  * and {@link RuleGroupBodyComponents}.
+ *
+ * @group Components
  */
 export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => React.JSX.Element> =
   React.memo(function RuleGroup(props: RuleGroupProps) {
@@ -96,6 +98,8 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
 /**
  * Renders a `React.Fragment` containing an array of form controls for managing
  * a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
+ *
+ * @group Components
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
   (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
@@ -291,6 +295,8 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
 /**
  * Renders a `React.Fragment` containing an array of either (1) {@link Rule} and
  * {@link RuleGroup}, or (2) {@link Rule}, {@link RuleGroup}, and {@link InlineCombinator}.
+ *
+ * @group Components
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
   (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
@@ -437,6 +443,8 @@ export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
 
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.
+ *
+ * @group Hooks
  */
 export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const {

@@ -13,11 +13,17 @@ import { BootstrapValueEditor } from './BootstrapValueEditor';
 export * from './BootstrapNotToggle';
 export * from './BootstrapValueEditor';
 
+/**
+ * @group Props
+ */
 export const bootstrapControlElements: ControlElementsProp<FullField, string> = {
   notToggle: BootstrapNotToggle,
   valueEditor: BootstrapValueEditor,
 };
 
+/**
+ * @group Props
+ */
 export const bootstrapControlClassnames: Partial<Classnames> = {
   actionElement: 'btn btn-sm',
   addGroup: 'btn-secondary',
@@ -33,6 +39,9 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   valueSelector: 'form-select form-select-sm',
 };
 
+/**
+ * @group Props
+ */
 export const bootstrapTranslations: Partial<Translations> = {
   removeGroup: { label: <i className="bi bi-x" /> },
   removeRule: { label: <i className="bi bi-x" /> },
@@ -47,6 +56,9 @@ export const bootstrapTranslations: Partial<Translations> = {
   shiftActionDown: { label: <i className="bi bi-chevron-compact-down" /> },
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderBootstrap: QueryBuilderContextProvider = getCompatContextProvider({
   controlClassnames: bootstrapControlClassnames,
   controlElements: bootstrapControlElements,

@@ -22,6 +22,8 @@ type NegativeFloat = IsInteger<-1.5>;
 type Infinity_ = IsInteger<Infinity>;
 //=> false
 ```
+
+@group type-fest
 */
 export type IsFloat<T> =
 T extends number

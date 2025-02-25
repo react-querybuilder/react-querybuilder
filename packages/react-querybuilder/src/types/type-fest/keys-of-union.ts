@@ -35,6 +35,7 @@ type AllKeys = KeysOfUnion<Union>;
 //=> 'common' | 'a' | 'b' | 'c'
 ```
 
+@group type-fest
 */
 export type KeysOfUnion<ObjectType> =
   // Hack to fix https://github.com/sindresorhus/type-fest/issues/1008

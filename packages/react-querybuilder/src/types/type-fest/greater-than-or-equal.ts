@@ -16,6 +16,8 @@ GreaterThanOrEqual<1, 1>;
 GreaterThanOrEqual<1, 5>;
 //=> false
 ```
+
+@group type-fest
 */
 export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
 	? never

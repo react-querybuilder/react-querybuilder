@@ -10,6 +10,8 @@ export const preferProp = (def: boolean, prop?: boolean, context?: boolean): boo
 /**
  * For given default, prop, and context values, return the first provided of prop,
  * context, and default, in that order.
+ *
+ * @group Hooks
  */
 export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): boolean =>
   preferProp(def, prop, context);
@@ -17,6 +19,8 @@ export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): 
 /**
  * For given default, prop, and context values, return the first provided of prop,
  * context, and default, in that order.
+ *
+ * @group Hooks
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any): any =>

@@ -7,6 +7,8 @@ import type {BuildTuple} from './tuple';
 Return a string representation of the given string or number.
 
 Note: This type is not the return type of the `.toString()` function.
+
+@group type-fest
 */
 export type ToString<T> = T extends string | number ? `${T}` : never;
 
@@ -34,6 +36,7 @@ type NegativeInfinity = StringToNumber<'-Infinity'>;
 //=> -Infinity
 ```
 
+@group type-fest
 */
 export type StringToNumber<S extends string> = S extends `${infer N extends number}`
 	? N
@@ -61,6 +64,7 @@ StartsWith<'abcde', string>;
 //=> never
 ```
 
+@group type-fest
 */
 export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
 	? never
@@ -80,6 +84,7 @@ StringToArray<string>;
 //=> never
 ```
 
+@group type-fest
 */
 export type StringToArray<S extends string, Result extends string[] = []> = string extends S
 	? never
@@ -99,6 +104,7 @@ StringLength<string>;
 //=> never
 ```
 
+@group type-fest
 */
 export type StringLength<S extends string> = string extends S
 	? never
@@ -106,16 +112,22 @@ export type StringLength<S extends string> = string extends S
 
 /**
 Returns a boolean for whether the string is lowercased.
+
+@group type-fest
 */
 export type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
 
 /**
 Returns a boolean for whether the string is uppercased.
+
+@group type-fest
 */
 export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
 
 /**
 Returns a boolean for whether a string is whitespace.
+
+@group type-fest
 */
 export type IsWhitespace<T extends string> = T extends Whitespace
 	? true
@@ -127,6 +139,8 @@ export type IsWhitespace<T extends string> = T extends Whitespace
 Returns a boolean for whether the string is numeric.
 
 This type is a workaround for [Microsoft/TypeScript#46109](https://github.com/microsoft/TypeScript/issues/46109#issuecomment-930307987).
+
+@group type-fest
 */
 export type IsNumeric<T extends string> = T extends `${number}`
 	? Trim<T> extends T
@@ -170,6 +184,8 @@ PositiveNumericStringGt<'1', '1'>;
 PositiveNumericStringGt<'1', '500'>;
 //=> false
 ```
+
+@group type-fest
 */
 export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false

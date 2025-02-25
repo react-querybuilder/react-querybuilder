@@ -1,4 +1,5 @@
 import { SpelExpressionEvaluator } from 'spel2js';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,7 +10,6 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Except,
-  ParseSpELOptions,
   ValueSource,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
@@ -31,6 +31,12 @@ import {
   normalizeOperator,
   processCompiledExpression,
 } from './utils';
+
+/**
+ * Options object for {@link parseSpEL!parseSpEL}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ParseSpELOptions extends ParserCommonOptions {}
 
 /**
  * Converts a SpEL string expression into a query suitable for the

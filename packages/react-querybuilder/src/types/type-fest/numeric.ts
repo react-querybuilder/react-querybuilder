@@ -1,8 +1,14 @@
 import type {IsFloat} from './is-float';
 import type {IsInteger} from './is-integer';
 
+/**
+@group type-fest
+*/
 export type Numeric = number | bigint;
 
+/**
+@group type-fest
+*/
 export type Zero = 0 | 0n;
 
 /**
@@ -12,6 +18,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277)
 
 @see NegativeInfinity
 
+@group type-fest
 */
 // See https://github.com/microsoft/TypeScript/issues/31752
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
@@ -24,6 +31,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277)
 
 @see PositiveInfinity
 
+@group type-fest
 */
 // See https://github.com/microsoft/TypeScript/issues/31752
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
@@ -44,6 +52,7 @@ import type {Finite} from 'type-fest';
 declare function setScore<T extends number>(length: Finite<T>): void;
 ```
 
+@group type-fest
 */
 export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfinity ? never : T;
 
@@ -88,6 +97,7 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 @see NegativeInteger
 @see NonNegativeInteger
 
+@group type-fest
 */
 // `${bigint}` is a type that matches a valid bigint literal without the `n` (ex. 1, 0b1, 0o1, 0x1)
 // Because T is a number and not a string we can effectively use this to filter out any numbers containing decimal points
@@ -112,6 +122,7 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 
 @see Integer
 
+@group type-fest
 */
 export type Float<T> =
 T extends unknown // To distributive type
@@ -127,6 +138,7 @@ Use-case: Validating and documenting parameters.
 @see Negative
 @see Float
 
+@group type-fest
 */
 export type NegativeFloat<T extends number> = Negative<Float<T>>;
 
@@ -138,6 +150,7 @@ Use-case: Validating and documenting parameters.
 @see NegativeInteger
 @see NonNegative
 
+@group type-fest
 */
 export type Negative<T extends Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
 
@@ -152,6 +165,7 @@ Use-case: Validating and documenting parameters.
 @see Negative
 @see Integer
 
+@group type-fest
 */
 export type NegativeInteger<T extends number> = Negative<Integer<T>>;
 
@@ -170,6 +184,7 @@ import type {NonNegative} from 'type-fest';
 declare function setLength<T extends number>(length: NonNegative<T>): void;
 ```
 
+@group type-fest
 */
 export type NonNegative<T extends Numeric> = T extends Zero ? T : Negative<T> extends never ? T : never;
 
@@ -191,6 +206,7 @@ import type {NonNegativeInteger} from 'type-fest';
 declare function setLength<T extends number>(length: NonNegativeInteger<T>): void;
 ```
 
+@group type-fest
 */
 export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 
@@ -207,5 +223,6 @@ type ShouldBeFalse = IsNegative<1>;
 type ShouldBeTrue = IsNegative<-1>;
 ```
 
+@group type-fest
 */
 export type IsNegative<T extends Numeric> = T extends Negative<T> ? true : false;

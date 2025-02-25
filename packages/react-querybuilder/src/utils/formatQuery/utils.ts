@@ -18,6 +18,8 @@ import { parseNumber } from '../parseNumber';
 
 /**
  * Maps a {@link DefaultOperatorName} to a SQL operator.
+ *
+ * @group Export
  */
 export const mapSQLOperator = (rqbOperator: string): string => {
   switch (rqbOperator.toLowerCase()) {
@@ -44,6 +46,8 @@ export const mapSQLOperator = (rqbOperator: string): string => {
 
 /**
  * Maps a {@link DefaultOperatorName} to a MongoDB operator.
+ *
+ * @group Export
  */
 export const mongoOperators = {
   '=': '$eq',
@@ -59,6 +63,8 @@ export const mongoOperators = {
 
 /**
  * Maps a {@link DefaultCombinatorName} to a CEL combinator.
+ *
+ * @group Export
  */
 export const celCombinatorMap: {
   and: '&&';
@@ -79,6 +85,8 @@ export const celCombinatorMap: {
  * }
  * jsonLogic.apply({ "startsWith": [{ "var": "firstName" }, "Stev"] }, data);
  * ```
+ *
+ * @group Export
  */
 export const jsonLogicAdditionalOperators: Record<
   'startsWith' | 'endsWith',
@@ -92,6 +100,8 @@ export const jsonLogicAdditionalOperators: Record<
  * Converts all `string`-type `value` properties of a query object into `number` where appropriate.
  *
  * Used by {@link formatQuery} for the `json*` formats when `parseNumbers` is `true`.
+ *
+ * @group Export
  */
 export const numerifyValues = (
   rg: RuleGroupTypeAny,
@@ -136,6 +146,8 @@ export const numerifyValues = (
 
 /**
  * Determines whether a value is _anything_ except an empty `string` or `NaN`.
+ *
+ * @group Export
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isValidValue = (value: any): boolean =>
@@ -147,6 +159,8 @@ export const isValidValue = (value: any): boolean =>
  * Determines whether {@link formatQuery} should render the given value as a number.
  * As long as `parseNumbers` is `true`, `number` and `bigint` values will return `true` and
  * `string` values will return `true` if they test positive against {@link numericRegex}.
+ *
+ * @group Export
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean | undefined): boolean =>
@@ -160,6 +174,8 @@ export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean | undefi
  * "legacy" value processor by counting the number of arguments. Legacy value
  * processors take 3 arguments (not counting any arguments with default values), while
  * rule-based value processors take no more than 2 arguments.
+ *
+ * @group Export
  */
 export const isValueProcessorLegacy = (
   valueProcessor: ValueProcessorLegacy | ValueProcessorByRule
@@ -171,6 +187,8 @@ export const isValueProcessorLegacy = (
  *
  * @default
  * ['', '']
+ *
+ * @group Export
  */
 export const getQuoteFieldNamesWithArray = (
   // istanbul ignore next
@@ -185,6 +203,8 @@ export const getQuoteFieldNamesWithArray = (
 /**
  * Given a field name and relevant {@link ValueProcessorOptions}, returns the field name
  * wrapped in the configured quote character(s).
+ *
+ * @group Export
  */
 export const getQuotedFieldName = (
   fieldName: string,
@@ -198,10 +218,3 @@ export const getQuotedFieldName = (
       )
     : `${qPre}${fieldName}${qPost}`;
 };
-
-/**
- * Simple helper to determine whether a value is null, undefined, or an empty string.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const nullOrUndefinedOrEmpty = (value: any): value is null | undefined | '' =>
-  value === null || value === undefined || value === '';

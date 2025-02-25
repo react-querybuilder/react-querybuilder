@@ -19,7 +19,8 @@ export type {
 } from 'json-logic-js';
 export * from './basic';
 export * from './dnd';
-export * from './importExport';
+export * from './export';
+// export * from './import';
 export * from './options';
 export * from './props';
 export * from './ruleGroups';

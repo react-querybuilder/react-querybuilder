@@ -16,6 +16,8 @@ LessThan<1, 1>;
 LessThan<1, 5>;
 //=> true
 ```
+
+@group type-fest
 */
 export type LessThan<A extends number, B extends number> = number extends A | B
 	? never
