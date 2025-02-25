@@ -85,20 +85,20 @@ export type DefaultRuleType<F extends string = string> = RuleType<F, DefaultOper
 /**
  * Default allowed values for the `combinator` property.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type DefaultCombinatorName = 'and' | 'or';
 /**
  * Default allowed values for the `combinator` property, plus `"xor"`.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type DefaultCombinatorNameExtended = DefaultCombinatorName | 'xor';
 
 /**
  * Default values for the `operator` property.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type DefaultOperatorName =
   | '='
@@ -123,20 +123,20 @@ export type DefaultOperatorName =
 /**
  * A {@link FullCombinator} definition with a {@link DefaultCombinatorName} `name` property.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type DefaultCombinator = FullCombinator<DefaultCombinatorName>;
 
 /**
  * A {@link FullCombinator} definition with a {@link DefaultCombinatorNameExtended} `name` property.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type DefaultCombinatorExtended = FullCombinator<DefaultCombinatorNameExtended>;
 
 /**
  * An {@link FullOperator} definition with a {@link DefaultOperatorName} `name` property.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type DefaultOperator = FullOperator<DefaultOperatorName>;

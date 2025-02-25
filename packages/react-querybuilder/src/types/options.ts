@@ -3,7 +3,7 @@ import type { RequireAtLeastOne, SetRequired, Simplify } from './type-fest';
 /**
  * Extracts the {@link Option} type from a {@link FlexibleOptionList}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type GetOptionType<OL extends FlexibleOptionList<FullOption>> =
   OL extends FlexibleOptionList<infer Opt> ? Opt : never;
@@ -12,7 +12,7 @@ export type GetOptionType<OL extends FlexibleOptionList<FullOption>> =
  * Extracts the type of the identifying property from a {@link Option},
  * {@link ValueOption}, or {@link FullOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type GetOptionIdentifierType<Opt extends BaseOption> = Opt extends
   | Option<infer NameType>
@@ -31,7 +31,7 @@ export type WithUnknownIndex<T> = T & { [key: string]: unknown };
  * {@link FullField}, {@link FullOperator}, or {@link FullCombinator},
  * all of which extend {@link FullOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export interface BaseOption<N extends string = string> {
   name?: N;
@@ -44,7 +44,7 @@ export interface BaseOption<N extends string = string> {
  * A generic option. Used directly in {@link OptionList} or
  * as the child element of an {@link OptionGroup}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type Option<N extends string = string> = Simplify<
   WithUnknownIndex<SetRequired<BaseOption<N>, 'name'>>
@@ -53,7 +53,7 @@ export type Option<N extends string = string> = Simplify<
 /**
  * Like {@link Option} but requiring `value` instead of `name`.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type ValueOption<N extends string = string> = Simplify<
   WithUnknownIndex<SetRequired<BaseOption<N>, 'value'>>
@@ -65,7 +65,7 @@ export type ValueOption<N extends string = string> = Simplify<
  * but corresponding props passed down to subcomponents will always be translated
  * to {@link FullOption} first.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FlexibleOption<N extends string = string> = Simplify<
   WithUnknownIndex<RequireAtLeastOne<BaseOption<N>, 'name' | 'value'>>
@@ -75,7 +75,7 @@ export type FlexibleOption<N extends string = string> = Simplify<
  * Utility type to turn an {@link Option}, {@link ValueOption}, or {@link BaseOption}
  * into a {@link FlexibleOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type ToFlexibleOption<Opt extends BaseOption> = Simplify<
   WithUnknownIndex<RequireAtLeastOne<Opt, 'name' | 'value'>>
@@ -92,7 +92,7 @@ export type ToFlexibleOption<Opt extends BaseOption> = Simplify<
  * the `unknown` index property will cause issues. See {@link Option} and
  * {@link ValueOption} for examples.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FullOption<N extends string = string> = Simplify<
   WithUnknownIndex<SetRequired<BaseOption<N>, 'name' | 'value'>>
@@ -102,7 +102,7 @@ export type FullOption<N extends string = string> = Simplify<
  * This type is identical to {@link FullOption} but without the `unknown` index
  * property. Extend from this type instead of {@link FullOption} directly.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type BaseFullOption<N extends string = string> = Simplify<
   SetRequired<BaseOption<N>, 'name' | 'value'>
@@ -112,7 +112,7 @@ export type BaseFullOption<N extends string = string> = Simplify<
  * Utility type to turn an {@link Option}, {@link ValueOption} or
  * {@link BaseOption} into a {@link FullOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type ToFullOption<Opt extends BaseOption> = Opt extends BaseFullOption
   ? Opt
@@ -123,14 +123,14 @@ export type ToFullOption<Opt extends BaseOption> = Opt extends BaseFullOption
 /**
  * @deprecated Renamed to {@link Option}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type NameLabelPair<N extends string = string> = Option<N>;
 
 /**
  * A group of {@link Option}s, usually within an {@link OptionList}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export interface OptionGroup<Opt extends BaseOption = FlexibleOption> {
   label: string;
@@ -140,7 +140,7 @@ export interface OptionGroup<Opt extends BaseOption = FlexibleOption> {
 /**
  * A group of {@link BaseOption}s, usually within a {@link FlexibleOptionList}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FlexibleOptionGroup<Opt extends BaseOption = BaseOption> = {
   label: string;
@@ -150,7 +150,7 @@ export type FlexibleOptionGroup<Opt extends BaseOption = BaseOption> = {
 /**
  * Either an array of {@link Option}s or an array of {@link OptionGroup}s.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[];
 
@@ -158,7 +158,7 @@ export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[]
  * An array of options or option groups, like {@link OptionList}, but the option type
  * may use either `name` or `value` as the primary identifier.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FlexibleOptionList<Opt extends BaseOption> =
   | ToFlexibleOption<Opt>[]
@@ -169,7 +169,7 @@ export type FlexibleOptionList<Opt extends BaseOption> =
  * {@link FullOption} instead of {@link Option}. This means that every member is
  * guaranteed to have both `name` and `value`.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FullOptionList<Opt extends BaseOption> = Opt extends BaseFullOption
   ? Opt[] | OptionGroup<Opt>[]
@@ -178,7 +178,7 @@ export type FullOptionList<Opt extends BaseOption> = Opt extends BaseFullOption
 /**
  * Map of option identifiers to their respective {@link Option}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type BaseOptionMap<
   V extends BaseOption = BaseOption,
@@ -190,7 +190,7 @@ export type BaseOptionMap<
 /**
  * Map of option identifiers to their respective {@link FullOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FullOptionMap<
   V extends BaseFullOption,
@@ -203,7 +203,7 @@ export type FullOptionMap<
  * Map of option identifiers to their respective {@link FullOption}.
  * Must include all possible strings from the identifier type.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FullOptionRecord<
   V extends BaseFullOption,

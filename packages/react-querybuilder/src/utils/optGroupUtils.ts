@@ -27,7 +27,7 @@ const isOptionWithValue = (opt: BaseOption): opt is ValueOption =>
  * Converts an {@link Option} or {@link ValueOption} (i.e., {@link BaseOption})
  * into a {@link FullOption}. Full options are left unchanged.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export function toFullOption<Opt extends BaseOption>(
   opt: Opt,
@@ -56,7 +56,7 @@ export function toFullOption<Opt extends BaseOption>(
  * Converts an {@link OptionList} or {@link FlexibleOptionList} into a {@link FullOptionList}.
  * Lists of full options are left unchanged.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOptionList<Opt>>(
   optList: OptList,
@@ -85,7 +85,7 @@ export function toFullOptionList<Opt extends BaseOption, OptList extends Flexibl
  * Converts a {@link FlexibleOptionList} into a {@link FullOptionList}.
  * Lists of full options are left unchanged.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export function toFullOptionMap<OptMap extends BaseOptionMap>(
   optMap: OptMap,
@@ -107,7 +107,7 @@ export function toFullOptionMap<OptMap extends BaseOptionMap>(
 /**
  * @deprecated Renamed to {@link uniqByIdentifier}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const uniqByName = <
   T extends { name: string; value?: string } | { name?: string; value: string },
@@ -119,7 +119,7 @@ export const uniqByName = <
  * Generates a new array of objects with duplicates removed based
  * on the identifying property (`value` or `name`)
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const uniqByIdentifier = <
   T extends RequireAtLeastOne<{ name: string; value: string }, 'name' | 'value'>,
@@ -140,7 +140,7 @@ export const uniqByIdentifier = <
 /**
  * Determines if an {@link OptionList} is an {@link OptionGroup} array.
  *
- * @group Option lists
+ * @group Option Lists
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =>
@@ -153,7 +153,7 @@ export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =
 /**
  * Determines if an array is a flat array of {@link FlexibleOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
@@ -173,7 +173,7 @@ export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
 /**
  * Determines if an array is a flat array of {@link FullOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isFullOptionArray = (arr: any): arr is FullOption[] => {
@@ -193,7 +193,7 @@ export const isFullOptionArray = (arr: any): arr is FullOption[] => {
 /**
  * Determines if a {@link FlexibleOptionList} is a {@link FlexibleOptionGroup} array.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const isFlexibleOptionGroupArray = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -221,7 +221,7 @@ export const isFlexibleOptionGroupArray = (
 /**
  * Determines if a {@link FlexibleOptionList} is a {@link OptionGroup} array of {@link FullOption}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const isFullOptionGroupArray = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,7 +250,7 @@ export const isFullOptionGroupArray = (
  * Gets the option from an {@link OptionList} with the given `name`. Handles
  * {@link Option} arrays as well as {@link OptionGroup} arrays.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const getOption = <OptType extends Option = Option>(
   arr: OptionList<OptType>,
@@ -264,7 +264,7 @@ export const getOption = <OptType extends Option = Option>(
 /**
  * Gets the first option from an {@link OptionList}.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const getFirstOption = <Opt extends BaseOption>(
   arr?: FlexibleOptionGroup<Opt>[] | Opt[]
@@ -288,7 +288,7 @@ export const getFirstOption = <Opt extends BaseOption>(
  * Flattens {@link FlexibleOptionGroup} arrays into {@link BaseOption} arrays.
  * If the array is already flat, it is returned as is.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const toFlatOptionArray = <T extends FullOption, OL extends FullOptionList<T>>(arr: OL) =>
   uniqByIdentifier(isOptionGroupArray(arr) ? arr.flatMap(og => og.options) : arr) as T[];
@@ -297,7 +297,7 @@ export const toFlatOptionArray = <T extends FullOption, OL extends FullOptionLis
  * Generates a new {@link OptionGroup} array with duplicates
  * removed based on the identifying property (`value` or `name`).
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const uniqOptGroups = <T extends BaseOption>(
   originalArray: FlexibleOptionGroup<T>[]
@@ -326,7 +326,7 @@ export const uniqOptGroups = <T extends BaseOption>(
  * Generates a new {@link Option} or {@link OptionGroup} array with duplicates
  * removed based on the identifier property (`value` or `name`).
  *
- * @group Option lists
+ * @group Option Lists
  */
 export const uniqOptList = <T extends BaseOption>(
   originalArray: FlexibleOptionList<T>

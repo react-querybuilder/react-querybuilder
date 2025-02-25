@@ -123,7 +123,7 @@ interface BaseFullField<
  * The `name`/`value`, `operators`, and `values` properties of this interface
  * can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FullField<
   FieldName extends string = string,
@@ -143,7 +143,7 @@ export type FullField<
  * The `name`/`value`, `operators`, and `values` properties of this interface
  * can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type Field<
   FieldName extends string = string,
@@ -165,7 +165,7 @@ export type Field<
  * The `name`/`value`, `operators`, and `values` properties of this interface
  * can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FieldByValue<
   FieldName extends string = string,
@@ -206,7 +206,7 @@ export type Arity = number | 'unary' | 'binary' | 'ternary';
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export interface FullOperator<N extends string = string>
   extends WithOptionalClassName<FullOption<N>> {
@@ -220,7 +220,7 @@ export interface FullOperator<N extends string = string>
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type Operator<N extends string = string> = WithUnknownIndex<
   SetOptional<BaseFullOption<N>, 'value'> &
@@ -236,7 +236,7 @@ export type Operator<N extends string = string> = WithUnknownIndex<
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type OperatorByValue<N extends string = string> = WithUnknownIndex<
   SetOptional<BaseFullOption<N>, 'name'> &
@@ -253,7 +253,7 @@ export type OperatorByValue<N extends string = string> = WithUnknownIndex<
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type FullCombinator<N extends string = string> = WithOptionalClassName<FullOption<N>>;
 
@@ -264,7 +264,7 @@ export type FullCombinator<N extends string = string> = WithOptionalClassName<Fu
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type Combinator<N extends string = string> = WithUnknownIndex<
   WithOptionalClassName<SetOptional<BaseFullOption<N>, 'value'>>
@@ -277,7 +277,7 @@ export type Combinator<N extends string = string> = WithUnknownIndex<
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
  *
- * @group Option lists
+ * @group Option Lists
  */
 export type CombinatorByValue<N extends string = string> = WithUnknownIndex<
   WithOptionalClassName<SetOptional<BaseFullOption<N>, 'name'>>
