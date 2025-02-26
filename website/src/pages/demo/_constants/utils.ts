@@ -1,7 +1,5 @@
-// @ts-expect-error !!raw-loader!
-import demoStylesSCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.scss';
-// @ts-expect-error !!raw-loader!
-import justifiedStylesSCSS from '!!raw-loader!@site/src/css/justified.scss';
+import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
+import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 // @ts-expect-error !!raw-loader!
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
@@ -19,7 +17,7 @@ import { defaultOperators, formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
-const extraStylesSCSS = `${demoStylesSCSS}\n\n${justifiedStylesSCSS}`;
+const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
 
 type OptionsAction =
   | { type: 'all' }
@@ -320,21 +318,12 @@ export const App = () => {
   });
 };
 
-export const extraStyles = async () => {
-  const { compileString } = await import('sass');
-  return Promise.all([
-    prettier.format(compileString(extraStylesSCSS).css, {
-      filepath: 'styles.css',
-      plugins: [parserPostCSS],
-      printWidth: 100,
-    }),
-    prettier.format(extraStylesSCSS, {
-      filepath: 'styles.scss',
-      plugins: [parserPostCSS],
-      printWidth: 100,
-    }),
-  ]).then(([css, scss]) => ({ css, scss }));
-};
+export const extraStyles = () =>
+  prettier.format(extraStylesCSS, {
+    filepath: 'styles.css',
+    plugins: [parserPostCSS],
+    printWidth: 100,
+  });
 
 export const fieldsTsString = prettier.format(fieldsCode, {
   filepath: 'fields.ts',

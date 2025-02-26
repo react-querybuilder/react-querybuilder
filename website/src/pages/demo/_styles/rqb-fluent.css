@@ -1,5 +1,5 @@
 .rqb-fluent.donut-hole {
-  .shiftActions > button {
+  & .shiftActions > button {
     min-width: unset;
     padding: 0 0.5rem;
   }

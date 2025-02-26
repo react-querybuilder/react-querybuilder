@@ -2,7 +2,6 @@ import type { SandpackFile, SandpackProps } from '@codesandbox/sandpack-react';
 import { Sandpack } from '@codesandbox/sandpack-react';
 import { useColorMode } from '@docusaurus/theme-common';
 import * as React from 'react';
-import './SandpackRQB.scss';
 
 interface SandpackRQBProps extends SandpackProps {
   children: React.ReactNode;

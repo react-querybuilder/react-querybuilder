@@ -4,7 +4,7 @@ import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
+import './_styles/demo.css';
 import './_styles/rqb-bulma.scss';
 
 function ReactQueryBuilderDemo_BulmaBrowser() {

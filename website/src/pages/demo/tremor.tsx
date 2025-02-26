@@ -5,8 +5,8 @@ import { QueryBuilderTremor } from '@react-querybuilder/tremor';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
-import './_styles/rqb-tremor.scss';
+import './_styles/demo.css';
+import './_styles/rqb-tremor.css';
 
 function ReactQueryBuilderDemo_TremorBrowser() {
   const { colorMode: _cm } = useColorMode();

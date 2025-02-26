@@ -3,8 +3,8 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
 import { useEffect, useMemo, useState } from 'react';
-import './_styles/demo.scss';
-import './_styles/rqb-material.scss';
+import './_styles/demo.css';
+import './_styles/rqb-material.css';
 
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';

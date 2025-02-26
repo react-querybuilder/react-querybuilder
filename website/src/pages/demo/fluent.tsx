@@ -6,8 +6,8 @@ import { QueryBuilderFluent } from '@react-querybuilder/fluent';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
-import './_styles/rqb-fluent.scss';
+import './_styles/demo.css';
+import './_styles/rqb-fluent.css';
 
 function ReactQueryBuilderDemo_FluentBrowser() {
   const { colorMode } = useColorMode();
