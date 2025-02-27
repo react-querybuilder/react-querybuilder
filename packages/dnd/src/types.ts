@@ -10,6 +10,8 @@ import type {
 
 /**
  * Combination of all exports from `react-dnd` and `react-dnd-html5-backend`.
+ *
+ * @group Hooks
  */
 export type UseReactDnD = typeof ReactDnD & typeof ReactDndHtml5Backend;
 
@@ -23,6 +25,8 @@ export interface CustomCanDropParams {
 
 /**
  * {@link QueryBuilderDnD} props.
+ *
+ * @group Props
  */
 export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   /**
@@ -36,6 +40,9 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   canDrop?(params: CustomCanDropParams): boolean;
 };
 
+/**
+ * @group Props
+ */
 export interface QueryBuilderDndContextProps {
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;

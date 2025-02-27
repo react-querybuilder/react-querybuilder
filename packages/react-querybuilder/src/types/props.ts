@@ -14,6 +14,8 @@ import type { ValidationResult } from './validation';
 
 /**
  * Base interface for all subcomponents.
+ *
+ * @group Props
  */
 export interface CommonSubComponentProps<
   F extends FullOption = FullField,
@@ -64,6 +66,8 @@ export interface CommonSubComponentProps<
 
 /**
  * Base interface for selectors and editors.
+ *
+ * @group Props
  */
 export interface SelectorOrEditorProps<F extends FullOption = FullField, O extends string = string>
   extends CommonSubComponentProps<F, O> {
@@ -74,6 +78,8 @@ export interface SelectorOrEditorProps<F extends FullOption = FullField, O exten
 
 /**
  * Base interface for all rule subcomponents.
+ *
+ * @group Props
  */
 export interface CommonRuleSubComponentProps {
   rule: RuleType;
@@ -89,6 +95,8 @@ interface BaseSelectorProps<OptType extends Option>
 
 /**
  * Props for all `value` selector components.
+ *
+ * @group Props
  */
 export interface ValueSelectorProps<OptType extends Option = FullOption>
   extends BaseSelectorProps<OptType> {
@@ -98,6 +106,8 @@ export interface ValueSelectorProps<OptType extends Option = FullOption>
 
 /**
  * Props for `combinatorSelector` components.
+ *
+ * @group Props
  */
 export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
   options: FullOptionList<FullCombinator>;
@@ -106,6 +116,8 @@ export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
 
 /**
  * Props for `fieldSelector` components.
+ *
+ * @group Props
  */
 export interface FieldSelectorProps<F extends FullField = FullField>
   extends BaseSelectorProps<F>,
@@ -115,6 +127,8 @@ export interface FieldSelectorProps<F extends FullField = FullField>
 
 /**
  * Props for `operatorSelector` components.
+ *
+ * @group Props
  */
 export interface OperatorSelectorProps
   extends BaseSelectorProps<FullOption>,
@@ -126,6 +140,8 @@ export interface OperatorSelectorProps
 
 /**
  * Props for `valueSourceSelector` components.
+ *
+ * @group Props
  */
 export interface ValueSourceSelectorProps
   extends BaseSelectorProps<FullOption>,
@@ -138,6 +154,8 @@ export interface ValueSourceSelectorProps
 /**
  * Utility type representing props for selector components
  * that could potentially be any of the standard selector types.
+ *
+ * @group Props
  */
 export type VersatileSelectorProps = ValueSelectorProps &
   Partial<FieldSelectorProps<FullField>> &
@@ -146,6 +164,8 @@ export type VersatileSelectorProps = ValueSelectorProps &
 
 /**
  * Classnames applied to each component.
+ *
+ * @group Props
  */
 export interface Classnames {
   /**
@@ -281,6 +301,8 @@ export interface Classnames {
 
 /**
  * Functions included in the `actions` prop passed to every subcomponent.
+ *
+ * @group Props
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface QueryActions {
@@ -300,12 +322,16 @@ export interface QueryActions {
 
 /**
  * A translation for a component with `title` only.
+ *
+ * @group Props
  */
 export interface Translation {
   title?: string;
 }
 /**
  * A translation for a component with `title` and a placeholder.
+ *
+ * @group Props
  */
 export interface TranslationWithPlaceholders extends Translation {
   /**
@@ -326,6 +352,8 @@ export interface TranslationWithPlaceholders extends Translation {
 }
 /**
  * The shape of the `translations` prop.
+ *
+ * @group Props
  */
 export interface Translations {
   fields: TranslationWithPlaceholders;
@@ -350,6 +378,8 @@ export interface Translations {
 }
 /**
  * The full `translations` interface with all properties required.
+ *
+ * @group Props
  */
 export type TranslationsFull = {
   [K in keyof Translations]: { [T in keyof Translations[K]]-?: string };

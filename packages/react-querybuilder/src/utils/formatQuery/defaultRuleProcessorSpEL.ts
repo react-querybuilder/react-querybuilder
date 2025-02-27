@@ -1,7 +1,8 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { nullOrUndefinedOrEmpty, shouldRenderAsNumber } from './utils';
+import { shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -14,6 +15,8 @@ const escapeSingleQuotes = (
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorSpEL: RuleProcessor = (
   { field, operator, value, valueSource },

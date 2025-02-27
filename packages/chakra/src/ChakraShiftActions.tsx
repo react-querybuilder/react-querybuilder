@@ -2,6 +2,9 @@ import { Button } from '@chakra-ui/react';
 import * as React from 'react';
 import type { ShiftActionsProps } from 'react-querybuilder';
 
+/**
+ * @group Components
+ */
 export const ChakraShiftActions = ({
   shiftUp,
   shiftDown,

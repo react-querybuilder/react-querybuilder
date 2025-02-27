@@ -1,7 +1,8 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { nullOrUndefinedOrEmpty, getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -15,6 +16,8 @@ const escapeStringRegex = (s: string) =>
 
 /**
  * Default rule processor used by {@link formatQuery} for "jsonata" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorJSONata: RuleProcessor = (
   { field, operator, value, valueSource },

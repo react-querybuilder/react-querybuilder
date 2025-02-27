@@ -9,8 +9,8 @@ import { ThemeProvider } from 'next-themes';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
-import './_styles/rqb-chakra.scss';
+import './_styles/demo.css';
+import './_styles/rqb-chakra.css';
 
 const ColorModeProvider = (props: ThemeProviderProps) => (
   <ThemeProvider attribute="class" disableTransitionOnChange {...props} />

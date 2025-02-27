@@ -47,6 +47,9 @@ export const defaultMuiComponents: RQBMaterialComponents = {
   TextField,
 };
 
+/**
+ * @group Hooks
+ */
 export const useMuiComponents = (
   preloadedComponents?: RQBMaterialComponents
 ): RQBMaterialComponents => {

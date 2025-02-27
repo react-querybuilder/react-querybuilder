@@ -1,5 +1,5 @@
 import jsonata from 'jsonata';
-import type { Except } from 'type-fest';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,11 +9,12 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  ParseJSONataOptions,
+  Except,
   ValueSource,
 } from '../../types/index.noReact';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import type { JSONataExprNode } from './types';
 import {
   generateFlatAndOrList,
@@ -35,7 +36,14 @@ import {
   negatedLikeOperators,
   normalizeOperator,
 } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
+
+/**
+ * Options object for {@link parseJSONata}.
+ *
+ * Note: `listsAsArrays` is ignored by `parseJSONata`; lists are _always_ arrays.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ParseJSONataOptions extends ParserCommonOptions {}
 
 /**
  * Converts a JSONata string expression into a query suitable for the

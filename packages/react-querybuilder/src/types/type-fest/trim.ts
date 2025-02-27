@@ -1,0 +1,26 @@
+import type {Whitespace} from './internal';
+
+/**
+Remove spaces from the left side.
+*/
+type TrimLeft<V extends string> = V extends `${Whitespace}${infer R}` ? TrimLeft<R> : V;
+
+/**
+Remove spaces from the right side.
+*/
+type TrimRight<V extends string> = V extends `${infer R}${Whitespace}` ? TrimRight<R> : V;
+
+/**
+Remove leading and trailing spaces from a string.
+
+@example
+```
+import type {Trim} from 'type-fest';
+
+Trim<' foo '>
+//=> 'foo'
+```
+
+@group type-fest
+*/
+export type Trim<V extends string> = TrimLeft<TrimRight<V>>;

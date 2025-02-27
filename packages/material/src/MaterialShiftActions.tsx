@@ -5,11 +5,17 @@ import { ShiftActions } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
+/**
+ * @group Props
+ */
 export type MaterialShiftActionsProps = ShiftActionsProps &
   React.ComponentPropsWithoutRef<typeof Button> & {
     muiComponents?: RQBMaterialComponents;
   };
 
+/**
+ * @group Components
+ */
 export const MaterialShiftActions = ({
   path,
   shiftUp,

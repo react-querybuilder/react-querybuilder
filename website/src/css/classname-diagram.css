@@ -1,0 +1,63 @@
+:root {
+  --rqb-structure-border-width: 4px;
+  --rqb-structure-padding: 14px;
+}
+
+.rqb-structure-wrapper {
+  box-shadow: 0 0 0.7rem 0 #ffffff26;
+}
+
+.rqb-structure {
+  &.queryBuilder {
+    box-shadow: 0 0 0.7rem 0 #ffffff26 inset;
+    border: var(--rqb-structure-border-width) solid black;
+    padding: var(--rqb-structure-padding);
+  }
+
+  .ruleGroup {
+    background-color: #00000011;
+    border: var(--rqb-structure-border-width) solid maroon;
+    padding: var(--rqb-structure-padding);
+    row-gap: var(--rqb-structure-padding) !important;
+  }
+
+  .ruleGroup-header {
+    border: var(--rqb-structure-border-width) solid rebeccapurple;
+    padding: var(--rqb-structure-padding);
+  }
+
+  .ruleGroup-body {
+    border: var(--rqb-structure-border-width) solid blue;
+    padding: var(--rqb-structure-padding);
+    row-gap: var(--rqb-structure-padding) !important;
+  }
+
+  .rule {
+    border: var(--rqb-structure-border-width) solid gray;
+    padding: var(--rqb-structure-padding);
+    column-gap: 1rem !important;
+
+    &.queryBuilder-disabled {
+      border-color: gray !important;
+    }
+
+    &.queryBuilder-valid {
+      border-color: green;
+    }
+
+    &.queryBuilder-invalid {
+      border-color: red;
+    }
+  }
+
+  .queryBuilder-dragHandle,
+  .ruleGroup-notToggle {
+    border: var(--rqb-structure-border-width) dotted gray;
+    padding: 4px;
+  }
+
+  .shiftActions {
+    border: var(--rqb-structure-border-width) dotted #ff7e16;
+    padding: 4px;
+  }
+}

@@ -17,6 +17,8 @@ import { regenerateIDs } from './regenerateIDs';
 
 /**
  * Options for {@link add}.
+ *
+ * @group Query Tools
  */
 export interface AddOptions {
   /**
@@ -40,6 +42,8 @@ export interface AddOptions {
 /**
  * Adds a rule or group to a query.
  * @returns The new query with the rule or group added.
+ *
+ * @group Query Tools
  */
 export const add = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
@@ -76,6 +80,8 @@ export const add = <RG extends RuleGroupTypeAny>(
 
 /**
  * Options for {@link update}.
+ *
+ * @group Query Tools
  */
 export interface UpdateOptions {
   /**
@@ -105,6 +111,8 @@ export interface UpdateOptions {
 /**
  * Updates a property of a rule or group within a query.
  * @returns The new query with the rule or group property updated.
+ *
+ * @group Query Tools
  */
 export const update = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
@@ -196,6 +204,8 @@ export const update = <RG extends RuleGroupTypeAny>(
 /**
  * Removes a rule or group from a query.
  * @returns The new query with the rule or group removed.
+ *
+ * @group Query Tools
  */
 export const remove = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
@@ -285,6 +295,8 @@ const getNextPath = (
 
 /**
  * Options for {@link move}.
+ *
+ * @group Query Tools
  */
 export interface MoveOptions {
   /**
@@ -306,6 +318,8 @@ export interface MoveOptions {
  * Moves a rule or group from one path to another. In the options parameter, pass
  * `{ clone: true }` to copy instead of move.
  * @returns The new query with the rule or group moved or cloned.
+ *
+ * @group Query Tools
  */
 export const move = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
@@ -411,6 +425,8 @@ export const move = <RG extends RuleGroupTypeAny>(
 
 /**
  * Options for {@link insert}.
+ *
+ * @group Query Tools
  */
 export interface InsertOptions {
   /**
@@ -448,6 +464,8 @@ export interface InsertOptions {
 /**
  * Inserts a rule or group into a query.
  * @returns The new query with the rule or group inserted.
+ *
+ * @group Query Tools
  */
 export const insert = <RG extends RuleGroupTypeAny>(
   /** The query to update. */

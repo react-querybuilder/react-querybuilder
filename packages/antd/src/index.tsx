@@ -28,6 +28,9 @@ export * from './AntDShiftActions';
 export * from './AntDValueEditor';
 export * from './AntDValueSelector';
 
+/**
+ * @group Props
+ */
 export const antdControlElements: ControlElementsProp<FullField, string> = {
   actionElement: AntDActionElement,
   dragHandle: AntDDragHandle,
@@ -37,6 +40,9 @@ export const antdControlElements: ControlElementsProp<FullField, string> = {
   valueSelector: AntDValueSelector,
 };
 
+/**
+ * @group Props
+ */
 export const antdTranslations: Partial<Translations> = {
   removeGroup: { label: <CloseOutlined /> },
   removeRule: { label: <CloseOutlined /> },
@@ -50,6 +56,9 @@ export const antdTranslations: Partial<Translations> = {
   shiftActionDown: { label: <DownOutlined /> },
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderAntD: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: antdControlElements,
   translations: antdTranslations,

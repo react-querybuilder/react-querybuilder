@@ -76,6 +76,8 @@ export type UseQueryBuilderSchema<
 /**
  * For given {@link QueryBuilderProps} and setup values from {@link useQueryBuilderSetup},
  * prepares and returns all values required to render a query builder.
+ *
+ * @group Hooks
  */
 export function useQueryBuilderSchema<
   RG extends RuleGroupTypeAny,

@@ -1,16 +1,16 @@
-import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   Field,
   FullField,
   OptionGroup,
-  ParseJSONataOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
+import type { ParseJSONataOptions } from './parseJSONata';
 import { parseJSONata } from './parseJSONata';
 
 const wrapRule = (

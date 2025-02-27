@@ -4,9 +4,15 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { useValueEditor, ValueEditor } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
+/**
+ * @group Components
+ */
 export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,

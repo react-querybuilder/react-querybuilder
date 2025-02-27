@@ -1,6 +1,6 @@
 .rqb-antd {
-  .queryBuilder {
-    .ant-input {
+  & .queryBuilder {
+    & .ant-input {
       width: auto;
     }
   }

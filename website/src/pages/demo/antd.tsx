@@ -8,8 +8,8 @@ import { theme } from 'antd';
 import { useEffect, useState } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
-import './_styles/rqb-antd.scss';
+import './_styles/demo.css';
+import './_styles/rqb-antd.css';
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 

@@ -151,7 +151,7 @@ const config: Config = {
         // },
         blog: false,
         theme: {
-          customCss: require.resolve('./src/css/custom.scss'),
+          customCss: require.resolve('./src/css/custom.css'),
         },
         gtag: {
           trackingID: 'G-7VHBQ0YBTJ',

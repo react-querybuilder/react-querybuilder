@@ -24,6 +24,8 @@ import type { QueryBuilderDndContextProps } from './types';
 
 /**
  * The drag-and-drop-enabled inline combinator component.
+ *
+ * @group Components
  */
 export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,
@@ -68,6 +70,9 @@ interface UseInlineCombinatorDnD {
   dropEffect?: DropEffect;
 }
 
+/**
+ * @group Hooks
+ */
 export const useInlineCombinatorDnD = ({
   path,
   canDrop,

@@ -11,43 +11,65 @@ import type {
 // DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
 // to generate code snippets in the documentation.
 
+/**
+ * @group Defaults
+ */
 export const defaultPlaceholderName = '~';
+/**
+ * @group Defaults
+ */
 export const defaultPlaceholderLabel = '------';
 /**
  * Default `name` for placeholder option in the `fields` array.
+ *
+ * @group Defaults
  */
 export const defaultPlaceholderFieldName: typeof defaultPlaceholderName = defaultPlaceholderName;
 /**
  * Default `label` for placeholder option in the `fields` array.
+ *
+ * @group Defaults
  */
 export const defaultPlaceholderFieldLabel: typeof defaultPlaceholderLabel = defaultPlaceholderLabel;
 /**
  * Default `label` for placeholder option group in the `fields` array.
+ *
+ * @group Defaults
  */
 export const defaultPlaceholderFieldGroupLabel: typeof defaultPlaceholderLabel =
   defaultPlaceholderLabel;
 /**
  * Default `name` for placeholder option in the `operators` array.
+ *
+ * @group Defaults
  */
 export const defaultPlaceholderOperatorName: typeof defaultPlaceholderName = defaultPlaceholderName;
 /**
  * Default `label` for placeholder option in the `operators` array.
+ *
+ * @group Defaults
  */
 export const defaultPlaceholderOperatorLabel: typeof defaultPlaceholderLabel =
   defaultPlaceholderLabel;
 /**
  * Default `label` for placeholder option group in the `operators` array.
+ *
+ * @group Defaults
  */
 export const defaultPlaceholderOperatorGroupLabel: typeof defaultPlaceholderLabel =
   defaultPlaceholderLabel;
 
 /**
  * Default character used to `.join` and `.split` arrays.
+ *
+ * @group Defaults
  */
 export const defaultJoinChar = ',';
 
 /**
  * Default configuration of translatable strings.
+ *
+ * @group Defaults
  */
 // #region docs-translations
 export const defaultTranslations: TranslationsFull = {
@@ -136,6 +158,8 @@ export type DefaultOperators = StringUnionToFullOptionArray<DefaultOperatorName>
 
 /**
  * Default operator list.
+ *
+ * @group Defaults
  */
 // #region docs-operators
 export const defaultOperators: DefaultOperators = [
@@ -162,6 +186,8 @@ export const defaultOperators: DefaultOperators = [
 
 /**
  * Map of default operators to their respective opposite/negating operators.
+ *
+ * @group Defaults
  */
 export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOperatorName> = {
   '=': '!=',
@@ -188,6 +214,8 @@ export type DefaultCombinators = StringUnionToFullOptionArray<DefaultCombinatorN
 
 /**
  * Default combinator list.
+ *
+ * @group Defaults
  */
 // #region docs-combinators
 export const defaultCombinators: DefaultCombinators = [
@@ -201,6 +229,8 @@ export type DefaultCombinatorsExtended =
 
 /**
  * Default combinator list, with `XOR` added.
+ *
+ * @group Defaults
  */
 export const defaultCombinatorsExtended: DefaultCombinatorsExtended = [
   ...defaultCombinators,
@@ -209,6 +239,8 @@ export const defaultCombinatorsExtended: DefaultCombinatorsExtended = [
 
 /**
  * Standard classnames applied to each component.
+ *
+ * @group Defaults
  */
 // #region docs-standardclassnames
 export const standardClassnames = {
@@ -247,6 +279,8 @@ export const standardClassnames = {
 
 /**
  * Default classnames for each component.
+ *
+ * @group Defaults
  */
 export const defaultControlClassnames: Classnames = {
   queryBuilder: '',
@@ -285,6 +319,8 @@ export const defaultControlClassnames: Classnames = {
 
 /**
  * Default reason codes for a group being invalid.
+ *
+ * @group Defaults
  */
 export const groupInvalidReasons = {
   empty: 'empty',
@@ -294,6 +330,8 @@ export const groupInvalidReasons = {
 
 /**
  * Component identifiers for testing.
+ *
+ * @group Defaults
  */
 export const TestID = {
   rule: 'rule',
@@ -334,5 +372,7 @@ export const LogType = {
 
 /**
  * The {@link Path} of the root group.
+ *
+ * @group Defaults
  */
 export const rootPath: Path = [] satisfies Path;

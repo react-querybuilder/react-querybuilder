@@ -7,11 +7,17 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { joinWith, useValueEditor, ValueEditor } from 'react-querybuilder';
 import dayjsGenerateConfig from './dayjs';
 
+/**
+ * @group Props
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
 
 const DatePicker = generatePicker(dayjsGenerateConfig);
 
+/**
+ * @group Components
+ */
 export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,

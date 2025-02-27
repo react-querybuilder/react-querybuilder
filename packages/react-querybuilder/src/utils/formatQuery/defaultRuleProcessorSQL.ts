@@ -7,6 +7,8 @@ export const defaultOperatorProcessorSQL: RuleProcessor = rule =>
 
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
   const {

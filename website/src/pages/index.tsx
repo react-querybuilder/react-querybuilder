@@ -26,7 +26,7 @@ import {
 } from 'react-querybuilder';
 import Select from 'react-select';
 import Slider from 'react-slider';
-import '../css/index.scss';
+import '../css/index.css';
 import { formatMap, initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 import { musicalInstruments } from './demo/_constants/musicalInstruments';

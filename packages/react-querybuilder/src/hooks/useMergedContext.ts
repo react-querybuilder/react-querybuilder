@@ -18,7 +18,7 @@ import type {
 import { mergeClassnames, mergeTranslation } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
-export type UseMergedContextProps<
+export type UseMergedContextParams<
   F extends FullField = FullField,
   O extends string = string,
   Finalize extends boolean | undefined = undefined,
@@ -58,6 +58,8 @@ const emptyObject = {} as const;
 
 /**
  * Merges inherited context values with props, giving precedence to props.
+ *
+ * @group Hooks
  */
 export const useMergedContext = <
   F extends FullField = FullField,
@@ -66,7 +68,7 @@ export const useMergedContext = <
 >({
   finalize,
   ...props
-}: UseMergedContextProps<F, O, Finalize>): UseMergedContextReturn<F, O, Finalize> => {
+}: UseMergedContextParams<F, O, Finalize>): UseMergedContextReturn<F, O, Finalize> => {
   const rqbContext: QueryBuilderContextProps<F, O> = useContext(QueryBuilderContext);
 
   const debugModePreferred = usePreferProp(false, props.debugMode, rqbContext.debugMode);

@@ -6,6 +6,8 @@ import { rqbWarn, useRQB_INTERNAL_QueryBuilderDispatch } from '../redux/_interna
  * - `QueryBuilder` is rendered with an `independentCombinators` prop
  * - `RuleGroup` is rendered with `combinator` or `rules` props (deprecated in favor of `ruleGroup`)
  * - `Rule` is rendered with `field`, `operator`, or `value` props (deprecated in favor of `rule`)
+ *
+ * @group Hooks
  */
 function useDeprecatedProps(
   type: 'independentCombinators',

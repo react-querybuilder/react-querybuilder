@@ -13,6 +13,8 @@ import { useQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
  * Calls {@link useQueryBuilderSetup} to massage the props and prepare basic
  * update/generate methods, then passes the result to {@link useQueryBuilderSchema}
  * to prepare and return all values required to render {@link QueryBuilder}.
+ *
+ * @group Hooks
  */
 export const useQueryBuilder = <
   RG extends RuleGroupTypeAny,

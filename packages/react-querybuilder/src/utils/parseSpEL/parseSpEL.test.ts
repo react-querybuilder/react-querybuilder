@@ -1,16 +1,16 @@
-import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  Except,
   Field,
   FullField,
   OptionGroup,
-  ParseSpELOptions,
   ValueSources,
 } from '../../types/index.noReact';
 import { toFullOption } from '../optGroupUtils';
+import type { ParseSpELOptions } from './parseSpEL';
 import { parseSpEL } from './parseSpEL';
 
 const wrapRule = (

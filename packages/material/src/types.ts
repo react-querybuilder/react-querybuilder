@@ -22,6 +22,9 @@ import type {
   TextField,
 } from '@mui/material';
 
+/**
+ * @group Props
+ */
 export type RQBMaterialComponents = {
   Button: typeof Button;
   Checkbox: typeof Checkbox;
@@ -44,4 +47,7 @@ export type RQBMaterialComponents = {
   TextField: typeof TextField;
 };
 
+/**
+ * @group Props
+ */
 export type MuiComponentName = keyof RQBMaterialComponents;

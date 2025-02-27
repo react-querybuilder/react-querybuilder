@@ -27,6 +27,11 @@ const nlOperatorMap: Record<string, [string, string]> = {
 /* istanbul ignore next */
 const defaultGetOperators = () => [];
 
+/**
+ * Default operator processor used by {@link formatQuery} for "natural_language" format.
+ *
+ * @group Export
+ */
 export const defaultOperatorProcessorNL: RuleProcessor = (
   rule,
   /* istanbul ignore next */
@@ -57,6 +62,8 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
 
 /**
  * Default rule processor used by {@link formatQuery} for "natural_language" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
   // istanbul ignore next

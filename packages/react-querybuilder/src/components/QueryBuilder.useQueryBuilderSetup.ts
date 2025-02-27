@@ -93,6 +93,8 @@ export type UseQueryBuilderSetup<
 /**
  * Massages the props as necessary and prepares the basic update/generate methods
  * for use by the {@link QueryBuilder} component.
+ *
+ * @group Hooks
  */
 export const useQueryBuilderSetup = <
   RG extends RuleGroupTypeAny,

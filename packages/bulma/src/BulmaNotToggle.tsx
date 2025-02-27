@@ -1,6 +1,9 @@
 import * as React from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
+/**
+ * @group Components
+ */
 export const BulmaNotToggle = ({
   className,
   handleOnChange,

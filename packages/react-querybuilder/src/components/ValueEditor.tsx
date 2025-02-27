@@ -8,6 +8,8 @@ import clsx from '../utils/clsx';
 
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
+ *
+ * @group Components
  */
 export const ValueEditor = <F extends FullField>(
   allProps: ValueEditorProps<F>
@@ -203,6 +205,8 @@ export const ValueEditor = <F extends FullField>(
  * // Consider the following rule:
  * `{ field: "f1", operator: "between", value: "12,14" }`
  * // If `operator` changes to "=", the value will be reset to "12".
+ *
+ * @group Hooks
  */
 export const useValueEditor = <F extends FullField = FullField, O extends string = string>(
   props: ValueEditorProps<F, O>

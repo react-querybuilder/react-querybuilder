@@ -1,19 +1,19 @@
-// Styles for when "Justified layout" option is selected
+/* Styles for when "Justified layout" option is selected */
 .justifiedLayout {
-  .queryBuilder {
-    // Push the clone, lock, and remove buttons to the right edge
-    .ruleGroup-addGroup {
+  & .queryBuilder {
+    /* Push the clone, lock, and remove buttons to the right edge */
+    & .ruleGroup-addGroup {
       & + button.ruleGroup-cloneGroup,
       & + button.ruleGroup-lock,
       & + button.ruleGroup-remove {
         margin-left: auto !important;
       }
     }
-    .rule-operators,
-    .rule-value,
-    .control,
-    .chakra-select__wrapper,
-    .mantine-InputWrapper-root + input[type='hidden'] {
+    & .rule-operators,
+    & .rule-value,
+    & .control,
+    & .chakra-select__wrapper,
+    & .mantine-InputWrapper-root + input[type='hidden'] {
       & + button.rule-cloneRule,
       & + button.rule-lock,
       & + button.rule-remove {

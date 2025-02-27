@@ -5,8 +5,14 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { optionListToComboboxData } from './utils';
 
+/**
+ * @group Props
+ */
 export type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
 
+/**
+ * @group Components
+ */
 export const MantineValueSelector = ({
   className,
   handleOnChange,

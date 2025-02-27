@@ -3,8 +3,14 @@ import { Switch } from '@tremor/react';
 import * as React from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 export type TremorNotToggleProps = NotToggleProps & Omit<Partial<SwitchProps>, 'label'>;
 
+/**
+ * @group Components
+ */
 export const TremorNotToggle = ({
   className,
   handleOnChange,

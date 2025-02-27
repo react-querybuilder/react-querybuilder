@@ -1,14 +1,16 @@
-import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  ParseJsonLogicOptions,
+  Except,
   RQBJsonLogic,
   RQBJsonLogicVar,
+  RuleGroupTypeAny,
+  RuleType,
   ValueSource,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
@@ -17,6 +19,7 @@ import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import {
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
@@ -38,7 +41,14 @@ import {
   isRQBJsonLogicStartsWith,
   isRQBJsonLogicVar,
 } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
+
+/**
+ * Options object for {@link parseJsonLogic}.
+ */
+export interface ParseJsonLogicOptions extends ParserCommonOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny | false>;
+}
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
 

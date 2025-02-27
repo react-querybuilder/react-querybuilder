@@ -21,6 +21,8 @@ const filterByComparator = (field: FullField, operator: string, fieldToCompare: 
  * for that property will be included. If `comparator` is a function, each
  * field will be passed to the function along with the `operator` and fields
  * for which the function returns `true` will be included.
+ *
+ * @group Option Lists
  */
 export const filterFieldsByComparator = (
   /** The field in question. */

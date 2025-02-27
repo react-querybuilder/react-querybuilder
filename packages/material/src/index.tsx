@@ -28,6 +28,9 @@ export * from './types';
 export * from './useMuiComponents';
 export { materialTranslations };
 
+/**
+ * @group Props
+ */
 export const materialControlElements: ControlElementsProp<FullField, string> = {
   actionElement: MaterialActionElement,
   dragHandle: MaterialDragHandle,
@@ -42,6 +45,9 @@ const MaterialContextProvider = getCompatContextProvider({
   translations: materialTranslations,
 });
 
+/**
+ * @group Components
+ */
 export const QueryBuilderMaterial: QueryBuilderContextProvider<{
   muiComponents?: RQBMaterialComponents;
 }> = ({ muiComponents: muiComponentsProp, ...props }) => {

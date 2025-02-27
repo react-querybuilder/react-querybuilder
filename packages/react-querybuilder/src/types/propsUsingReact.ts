@@ -6,7 +6,6 @@ import type {
   Ref,
   RefAttributes,
 } from 'react';
-import type { SetNonNullable } from 'type-fest';
 import type { UseRuleGroup } from '../components';
 import type { MoveOptions } from '../utils';
 import type {
@@ -47,16 +46,21 @@ import type {
 } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
+import type { SetNonNullable } from './type-fest';
 import type { QueryValidator, ValidationMap } from './validation';
 
 /**
  * A translation for a component with `title` and `label`.
+ *
+ * @group Props
  */
 export interface TranslationWithLabel extends Translation {
   label?: ReactNode;
 }
 /**
  * Props passed to every action component (rendered as `<button>` by default).
+ *
+ * @group Props
  */
 export interface ActionProps extends CommonSubComponentProps {
   /** Visible text. */
@@ -77,6 +81,8 @@ export interface ActionProps extends CommonSubComponentProps {
 
 /**
  * Props passed to every group action component.
+ *
+ * @group Props
  */
 export interface ActionWithRulesProps extends ActionProps {
   /**
@@ -87,6 +93,8 @@ export interface ActionWithRulesProps extends ActionProps {
 
 /**
  * Props passed to every action component that adds a rule or group.
+ *
+ * @group Props
  */
 export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
   /**
@@ -99,6 +107,8 @@ export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
 
 /**
  * Props for `notToggle` components.
+ *
+ * @group Props
  */
 export interface NotToggleProps extends CommonSubComponentProps {
   checked?: boolean;
@@ -109,6 +119,8 @@ export interface NotToggleProps extends CommonSubComponentProps {
 
 /**
  * Props passed to `shiftActions` components.
+ *
+ * @group Props
  */
 export interface ShiftActionsProps extends CommonSubComponentProps {
   /**
@@ -144,6 +156,8 @@ export interface ShiftActionsProps extends CommonSubComponentProps {
 
 /**
  * Props for `dragHandle` components.
+ *
+ * @group Props
  */
 export interface DragHandleProps extends CommonSubComponentProps {
   label?: ReactNode;
@@ -152,6 +166,8 @@ export interface DragHandleProps extends CommonSubComponentProps {
 
 /**
  * Props passed to `inlineCombinator` components.
+ *
+ * @group Props
  */
 export interface InlineCombinatorProps extends CombinatorSelectorProps {
   component: ComponentType<CombinatorSelectorProps>;
@@ -159,6 +175,8 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
 
 /**
  * Props passed to `valueEditor` components.
+ *
+ * @group Props
  */
 export interface ValueEditorProps<F extends FullField = FullField, O extends string = string>
   extends SelectorOrEditorProps<F, O>,
@@ -187,12 +205,19 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
 }
 
 /**
- * Subcomponents.
+ * All subcomponents.
+ *
+ * @group Props
  */
 export type Controls<F extends FullField, O extends string> = Required<
   SetNonNullable<ControlElementsProp<F, O>, keyof ControlElementsProp<F, O>>
 >;
 
+/**
+ * Subcomponents.
+ *
+ * @group Props
+ */
 export type ControlElementsProp<F extends FullField, O extends string> = Partial<{
   /**
    * Default component for all button-type controls.
@@ -341,6 +366,8 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
 /**
  * Configuration options passed in the `schema` prop from
  * {@link QueryBuilder} to each subcomponent.
+ *
+ * @group Props
  */
 export interface Schema<F extends FullField, O extends string> {
   qbId: string;
@@ -413,6 +440,8 @@ export interface UseRuleGroupDnD {
 
 /**
  * {@link RuleGroup} props.
+ *
+ * @group Props
  */
 export interface RuleGroupProps<F extends FullOption = FullOption, O extends string = string>
   extends CommonRuleAndGroupProps<F, O>,
@@ -448,6 +477,8 @@ export interface UseRuleDnD {
 
 /**
  * {@link Rule} props.
+ *
+ * @group Props
  */
 export interface RuleProps<F extends string = string, O extends string = string>
   extends CommonRuleAndGroupProps<FullOption<F>, O>,
@@ -474,6 +505,8 @@ export interface RuleProps<F extends string = string, O extends string = string>
 
 /**
  * Props passed down through context from a {@link QueryBuilderContextProvider}.
+ *
+ * @group Props
  */
 export interface QueryBuilderContextProps<F extends FullField, O extends string> {
   /**
@@ -511,9 +544,16 @@ export interface QueryBuilderContextProps<F extends FullField, O extends string>
   debugMode?: boolean;
 }
 
+/**
+ * @group Props
+ */
 export type QueryBuilderContextProviderProps = QueryBuilderContextProps<FullField, string> & {
   children?: ReactNode;
 };
+
+/**
+ * @group Components
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
   ComponentType<QueryBuilderContextProviderProps & ExtraProps>;
@@ -532,6 +572,8 @@ export type QueryBuilderContextProvider<ExtraProps extends object = Record<strin
  * @typeParam F - The field type (see {@link Field}).
  * @typeParam O - The operator type (see {@link Operator}).
  * @typeParam C - The combinator type (see {@link Combinator}).
+ *
+ * @group Props
  */
 export type QueryBuilderProps<
   RG extends RuleGroupTypeAny,

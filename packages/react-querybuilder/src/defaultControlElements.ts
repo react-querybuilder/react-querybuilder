@@ -15,6 +15,8 @@ import type { Controls, FullField } from './types';
 
 /**
  * Default components used by {@link QueryBuilder}.
+ *
+ * @group Defaults
  */
 export const defaultControlElements: {
   actionElement: typeof ActionElement;

@@ -13,16 +13,26 @@ export * from './BulmaNotToggle';
 export * from './BulmaValueEditor';
 export * from './BulmaValueSelector';
 
+/**
+ * @group Props
+ */
+
 export const bulmaControlClassnames: Partial<Classnames> = {
   actionElement: 'button',
 };
 
+/**
+ * @group Props
+ */
 export const bulmaControlElements: ControlElementsProp<FullField, string> = {
   notToggle: BulmaNotToggle,
   valueEditor: BulmaValueEditor,
   valueSelector: BulmaValueSelector,
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderBulma: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: bulmaControlElements,
   controlClassnames: bulmaControlClassnames,

@@ -1,4 +1,4 @@
-import type { Except } from 'type-fest';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -7,7 +7,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  ParseSQLOptions,
+  Except,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
@@ -26,6 +26,14 @@ import {
   normalizeOperator,
 } from './utils';
 
+/**
+ * Options object for {@link parseSQL}.
+ */
+export interface ParseSQLOptions extends ParserCommonOptions {
+  paramPrefix?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params?: any[] | Record<string, any>;
+}
 /**
  * Converts a SQL `SELECT` statement into a query suitable for the
  * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props

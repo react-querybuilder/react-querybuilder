@@ -27,18 +27,26 @@ const generateValueProcessor =
 // TODO: Deprecate defaultValueProcessor.
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
+ *
+ * @group Export
  */
 export const defaultValueProcessor: ValueProcessorLegacy = generateValueProcessor('default');
 /**
  * @deprecated Prefer {@link defaultRuleProcessorMongoDB}.
+ *
+ * @group Export
  */
 export const defaultMongoDBValueProcessor: ValueProcessorLegacy = generateValueProcessor('mongodb');
 /**
  * @deprecated Prefer {@link defaultRuleProcessorCEL}.
+ *
+ * @group Export
  */
 export const defaultCELValueProcessor: ValueProcessorLegacy = generateValueProcessor('cel');
 /**
  * @deprecated Prefer {@link defaultRuleProcessorSpEL}.
+ *
+ * @group Export
  */
 export const defaultSpELValueProcessor: ValueProcessorLegacy = generateValueProcessor('spel');
 
@@ -58,13 +66,19 @@ export {
 };
 /**
  * @deprecated Renamed to {@link defaultRuleProcessorCEL}.
+ *
+ * @group Export
  */
 export const defaultValueProcessorCELByRule: RuleProcessor = defaultRuleProcessorCEL;
 /**
  * @deprecated Renamed to {@link defaultRuleProcessorMongoDB}.
+ *
+ * @group Export
  */
 export const defaultValueProcessorMongoDBByRule: RuleProcessor = defaultRuleProcessorMongoDB;
 /**
  * @deprecated Renamed to {@link defaultRuleProcessorSpEL}.
+ *
+ * @group Export
  */
 export const defaultValueProcessorSpELByRule: RuleProcessor = defaultRuleProcessorSpEL;

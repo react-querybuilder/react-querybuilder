@@ -25,6 +25,9 @@ export * from './ChakraNotToggle';
 export * from './ChakraValueEditor';
 export * from './ChakraValueSelector';
 
+/**
+ * @group Props
+ */
 export const chakraControlElements: ControlElementsProp<FullField, string> = {
   actionElement: ChakraActionElement,
   valueSelector: ChakraValueSelector,
@@ -32,6 +35,9 @@ export const chakraControlElements: ControlElementsProp<FullField, string> = {
   valueEditor: ChakraValueEditor,
 };
 
+/**
+ * @group Props
+ */
 export const chakraTranslations: Partial<Translations> = {
   dragHandle: { label: <FaGripVertical /> },
   removeGroup: { label: <FaTimes /> },
@@ -46,6 +52,9 @@ export const chakraTranslations: Partial<Translations> = {
   shiftActionUp: { label: <FaChevronUp /> },
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderChakra: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: chakraControlElements,
   translations: chakraTranslations,

@@ -154,11 +154,10 @@ export default function Demo({
   const [celParseError, setCELParseError] = useState('');
   const [jsonata, setJSONata] = useState(initialJSONata);
   const [jsonataParseError, setJSONataParseError] = useState('');
-  const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
   const [exportCall, setExportCall] = useState('');
   const [codeStringState, setCodeStringState] = useState('');
-  const [extraStylesState, setExtraStylesState] = useState({ css: '', scss: '' });
+  const [extraStylesState, setExtraStylesState] = useState('');
   const [fieldsTsStringState, setFieldsTsStringState] = useState('');
   const [musicalInstrumentsTsStringState, setMusicalInstrumentsTsStringState] = useState('');
 
@@ -199,8 +198,8 @@ export default function Demo({
   }, []);
 
   useEffect(() => {
-    getCodeString(options, variant, styleLanguage).then(cs => setCodeStringState(cs));
-  }, [options, styleLanguage, variant]);
+    getCodeString(options, variant, 'css').then(cs => setCodeStringState(cs));
+  }, [options, variant]);
 
   useEffect(() => {
     getExportCall(
@@ -532,26 +531,8 @@ export default function Demo({
                 {codeStringState}
               </CodeBlock>
               <Details summary={<summary>Styles</summary>}>
-                <div className={styles.exportOptions}>
-                  <label key="scss">
-                    <input
-                      type="radio"
-                      checked={styleLanguage === 'scss'}
-                      onChange={() => setStyleLanguage('scss')}
-                    />{' '}
-                    SCSS
-                  </label>
-                  <label key="css">
-                    <input
-                      type="radio"
-                      checked={styleLanguage === 'css'}
-                      onChange={() => setStyleLanguage('css')}
-                    />{' '}
-                    CSS
-                  </label>
-                </div>
-                <CodeBlock language={styleLanguage} title={`styles.${styleLanguage}`}>
-                  {extraStylesState[styleLanguage]}
+                <CodeBlock language="css" title="styles.css">
+                  {extraStylesState}
                 </CodeBlock>
               </Details>
               <Details summary={<summary>Other files</summary>}>

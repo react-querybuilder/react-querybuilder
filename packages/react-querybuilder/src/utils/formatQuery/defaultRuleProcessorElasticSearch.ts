@@ -68,6 +68,8 @@ const valueRenderer = (v: any, parseNumbers?: boolean) =>
 
 /**
  * Default rule processor used by {@link formatQuery} for "elasticsearch" format.
+ *
+ * @group Export
  */
 export const defaultRuleProcessorElasticSearch: RuleProcessor = (
   { field, operator, value, valueSource },

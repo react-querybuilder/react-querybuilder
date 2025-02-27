@@ -17,6 +17,8 @@ import type { QueryBuilderDndProps, UseReactDnD } from './types';
 /**
  * Context provider to enable drag-and-drop. If the application already implements
  * `react-dnd`, use {@link QueryBuilderDndWithoutProvider} instead.
+ *
+ * @group Components
  */
 export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element => {
   const {
@@ -70,6 +72,8 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
 /**
  * Context provider to enable drag-and-drop. Only use this provider if the application
  * already implements `react-dnd`, otherwise use {@link QueryBuilderDnD}.
+ *
+ * @group Components
  */
 export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): React.JSX.Element => {
   const rqbContext = useContext(QueryBuilderContext);
@@ -152,6 +156,9 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
+/**
+ * @group Hooks
+ */
 export const useReactDnD = (dndParam?: UseReactDnD): UseReactDnD | null => {
   const [dnd, setDnd] = useState<UseReactDnD | null>(dndParam ?? null);
 

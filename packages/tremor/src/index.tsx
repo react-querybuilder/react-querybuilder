@@ -17,6 +17,9 @@ export * from './TremorShiftActions';
 export * from './TremorValueEditor';
 export * from './TremorValueSelector';
 
+/**
+ * @group Props
+ */
 export const tremorControlElements: ControlElementsProp<FullField, string> = {
   actionElement: TremorActionElement,
   notToggle: TremorNotToggle,
@@ -25,10 +28,16 @@ export const tremorControlElements: ControlElementsProp<FullField, string> = {
   valueSelector: TremorValueSelector,
 };
 
+/**
+ * @group Props
+ */
 export const tremorControlClassnames: Partial<Classnames> = {
   notToggle: 'flex flex-row gap-1',
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderTremor: QueryBuilderContextProvider = getCompatContextProvider({
   controlClassnames: tremorControlClassnames,
   controlElements: tremorControlElements,

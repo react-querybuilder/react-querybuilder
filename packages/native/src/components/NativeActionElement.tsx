@@ -3,6 +3,9 @@ import { Pressable, Text, View } from 'react-native';
 import type { ActionNativeProps } from '../types';
 import { defaultNativeStyles } from '../styles';
 
+/**
+ * @group Components
+ */
 export const NativeActionElement = ({
   handleOnClick,
   label,

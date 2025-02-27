@@ -3,7 +3,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
+import './_styles/demo.css';
 
 export default function ReactQueryBuilderDemo() {
   return (

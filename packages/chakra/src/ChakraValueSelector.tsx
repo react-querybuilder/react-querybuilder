@@ -4,9 +4,15 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toOptions } from './utils';
 import { NativeSelectRoot, NativeSelectField } from './snippets/native-select';
 
+/**
+ * @group Props
+ */
 export type ChakraValueSelectorProps = VersatileSelectorProps &
   ComponentPropsWithoutRef<typeof NativeSelectRoot>;
 
+/**
+ * @group Components
+ */
 export const ChakraValueSelector = ({
   className,
   handleOnChange,

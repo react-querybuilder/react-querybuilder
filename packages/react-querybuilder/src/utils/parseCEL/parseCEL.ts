@@ -1,5 +1,5 @@
-import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
+import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -9,12 +9,13 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  ParseCELOptions,
+  Except,
   ValueSource,
 } from '../../types/index.noReact';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
+import { prepareRuleGroup } from '../prepareQueryObjects';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLikeExpression, CELLiteral } from './types';
 import {
@@ -37,7 +38,12 @@ import {
   isCELStringLiteral,
   normalizeOperator,
 } from './utils';
-import { prepareRuleGroup } from '../prepareQueryObjects';
+
+/**
+ * Options object for {@link parseCEL}.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface ParseCELOptions extends ParserCommonOptions {}
 
 /**
  * Converts a CEL string expression into a query suitable for the

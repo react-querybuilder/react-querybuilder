@@ -3,8 +3,14 @@ import { Button } from '@fluentui/react-components';
 import * as React from 'react';
 import type { ActionWithRulesProps } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 export type FluentActionProps = ActionWithRulesProps & ButtonProps;
 
+/**
+ * @group Components
+ */
 export const FluentActionElement = ({
   className,
   handleOnClick,

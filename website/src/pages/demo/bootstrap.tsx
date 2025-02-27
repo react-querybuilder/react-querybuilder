@@ -7,7 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.scss';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
+import './_styles/demo.css';
 import './_styles/rqb-bootstrap.scss';
 
 const getQueryWrapper =

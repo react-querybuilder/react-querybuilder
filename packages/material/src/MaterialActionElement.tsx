@@ -7,11 +7,17 @@ import { ActionElement } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 
+/**
+ * @group Props
+ */
 export type MaterialActionProps = ActionWithRulesProps &
   ComponentPropsWithoutRef<typeof Button> & {
     muiComponents?: RQBMaterialComponents;
   };
 
+/**
+ * @group Components
+ */
 export const MaterialActionElement = ({
   className,
   handleOnClick,

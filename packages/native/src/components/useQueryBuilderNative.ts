@@ -12,6 +12,9 @@ import { useQueryBuilderSetup } from 'react-querybuilder';
 import { useQueryBuilderSchema } from 'react-querybuilder';
 import type { QueryBuilderNativeProps, SchemaNative } from '../types';
 
+/**
+ * @group Hooks
+ */
 export const useQueryBuilderNative = <
   RG extends RuleGroupTypeAny,
   F extends FullField,
@@ -22,6 +25,9 @@ export const useQueryBuilderNative = <
 ): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> =>
   useQueryBuilderSchemaNative(props, useQueryBuilderSetup(props as QueryBuilderProps<RG, F, O, C>));
 
+/**
+ * @group Hooks
+ */
 export const useQueryBuilderSchemaNative = <
   RG extends RuleGroupTypeAny,
   F extends FullField,

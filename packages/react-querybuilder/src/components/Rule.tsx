@@ -35,6 +35,8 @@ import { clsx } from '../utils/clsx';
 /**
  * Default component to display {@link RuleType} objects. This is
  * actually a small wrapper around {@link RuleComponents}.
+ *
+ * @group Components
  */
 export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element> = React.memo(
   function Rule(props: RuleProps): React.JSX.Element {
@@ -70,8 +72,9 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
 );
 
 /**
- * Renders a `React.Fragment` containing an array of form controls for managing
- * a {@link RuleType}.
+ * Renders a `React.Fragment` containing an array of form controls for managing a {@link RuleType}.
+ *
+ * @group Components
  */
 export const RuleComponents: React.MemoExoticComponent<
   (r: RuleProps & UseRule) => React.JSX.Element
@@ -322,6 +325,8 @@ export type UseRule = RuleProps & {
 
 /**
  * Prepares all values and methods used by the {@link Rule} component.
+ *
+ * @group Hooks
  */
 export const useRule = (props: RuleProps): UseRule => {
   const {

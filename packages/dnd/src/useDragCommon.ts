@@ -22,6 +22,9 @@ type UseDragCommonProps = {
   useDrag: typeof originalUseDrag;
 };
 
+/**
+ * @group Hooks
+ */
 export const useDragCommon = ({
   type,
   path,

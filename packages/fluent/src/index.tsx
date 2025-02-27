@@ -29,6 +29,9 @@ export * from './FluentShiftActions';
 export * from './FluentValueEditor';
 export * from './FluentValueSelector';
 
+/**
+ * @group Props
+ */
 export const fluentControlElements: ControlElementsProp<FullField, string> = {
   actionElement: FluentActionElement,
   dragHandle: FluentDragHandle,
@@ -38,6 +41,9 @@ export const fluentControlElements: ControlElementsProp<FullField, string> = {
   valueSelector: FluentValueSelector,
 };
 
+/**
+ * @group Props
+ */
 export const fluentTranslations: Partial<Translations> = {
   removeGroup: { label: <CancelIcon /> },
   removeRule: { label: <CancelIcon /> },
@@ -52,6 +58,9 @@ export const fluentTranslations: Partial<Translations> = {
   shiftActionUp: { label: <ChevronUpIcon /> },
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderFluent: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: fluentControlElements,
   translations: fluentTranslations,
