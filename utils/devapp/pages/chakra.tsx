@@ -7,6 +7,7 @@ import { ColorModeButton } from '../../../packages/chakra/src/snippets/color-mod
 import { Provider } from '../../../packages/chakra/src/snippets/provider';
 import { DevLayout } from '../DevLayout';
 import { useDevApp } from '../useDevApp';
+import './chakra.css';
 
 const App = () => {
   const devApp = useDevApp();

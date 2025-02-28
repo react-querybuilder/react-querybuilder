@@ -3,6 +3,7 @@ import { QueryBuilderMantine } from '@react-querybuilder/mantine';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '../App';
+import './mantine.css';
 
 createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>

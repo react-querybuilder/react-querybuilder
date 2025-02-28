@@ -34,7 +34,7 @@ const port = process.env.PORT || 3100;
 
 const server = Bun.serve({
   port,
-  static: indexHTMLs,
+  routes: indexHTMLs,
   async fetch() {
     return new Response('Page not found', { status: 404 });
   },

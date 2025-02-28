@@ -3,6 +3,7 @@ import { QueryBuilderFluent } from '@react-querybuilder/fluent';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '../App';
+import './fluent.css';
 
 createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
