@@ -16,18 +16,16 @@ const indexHTMLs = {
   '/bootstrap': bootstrapIndexHTML,
   '/bulma': bulmaIndexHTML,
   '/chakra': chakraIndexHTML,
-  '/datetime': datetimeIndexHTML,
+  '/datetime': datetimeIndexHTML, // Not implemented
   '/dnd': dndIndexHTML,
   '/fluent': fluentIndexHTML,
   '/mantine': mantineIndexHTML,
   '/material': materialIndexHTML,
-  // Not working:
-  '/native': nativeIndexHTML,
+  '/native': nativeIndexHTML, // Flow transpilation not working
   '/': rqbIndexHTML,
   '/rqb': rqbIndexHTML,
   '/react-querybuilder': rqbIndexHTML,
-  // Not working:
-  '/tremor': tremorIndexHTML,
+  '/tremor': tremorIndexHTML, // Tailwind v3 not working
 };
 
 const port = process.env.PORT || 3100;
