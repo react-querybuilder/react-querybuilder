@@ -11,9 +11,9 @@ import type {
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
-import { dropEffectListener } from './dropEffectListener';
-import { useDragCommon } from './useDragCommon';
+import { getDropEffect, getGroupItemsFlag } from './dropEffectListener';
 import type { QueryBuilderDndContextProps } from './types';
+import { useDragCommon } from './useDragCommon';
 
 /**
  * Rule component for drag-and-drop. Renders the provided rule component
@@ -58,10 +58,12 @@ const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
  * @group Hooks
  */
 export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
-  const { path, rule, disabled, schema, actions, useDrag, useDrop, canDrop } = params;
-
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
+
+  const { path, rule, disabled, schema, actions, useDrag, useDrop, canDrop } = params;
+
+  const groupItems = getGroupItemsFlag();
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'rule',
@@ -84,9 +86,10 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
       accept,
       canDrop: dragging => {
         if (
-          dragging &&
-          typeof canDrop === 'function' &&
-          !canDrop({ dragging, hovering: { ...rule, path, qbId: schema.qbId } })
+          (getGroupItemsFlag() && disabled) ||
+          (dragging &&
+            typeof canDrop === 'function' &&
+            !canDrop({ dragging, hovering: { ...rule, path, qbId: schema.qbId } }))
         ) {
           return false;
         }
@@ -101,31 +104,44 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
         // Disallow drop if...
         // prettier-ignore
         return !(
-          // 1) item is ancestor of drop target,
+          // 1) item is ancestor of drop target, OR
           isAncestor(dragging.path, path) ||
-          // 2) item is hovered over itself or the previous item
-          (pathsAreEqual(parentHoverPath, parentItemPath) &&
-            (hoverIndex === itemIndex ||
-              hoverIndex === itemIndex - 1 ||
+          // 2) item is hovered over itself, OR
+          (pathsAreEqual(path, dragging.path)) ||
+          // 3) item is hovered over the previous item AND this is a move, not a group
+          (!getGroupItemsFlag() && pathsAreEqual(parentHoverPath, parentItemPath) &&
+            (hoverIndex === itemIndex - 1 ||
               (schema.independentCombinators && hoverIndex === itemIndex - 2)))
         );
       },
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: monitor.getDropResult()?.dropEffect ?? dropEffectListener,
+        dropEffect: monitor.getDropResult()?.dropEffect ?? getDropEffect(),
+        groupItems: getGroupItemsFlag(),
       }),
       drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
+        const groupItems = getGroupItemsFlag();
+
         // `dropEffect` gets added automatically to the object returned from `drop`:
-        return { type: 'rule', path, qbId, getQuery, dispatchQuery };
+        return { type: 'rule', path, qbId, getQuery, dispatchQuery, groupItems };
       },
     }),
-    [disabled, actions.moveRule, path, canDrop, rule, schema]
+    [disabled, actions.moveRule, path, canDrop, rule, schema, groupItems]
   );
 
   drag(dragRef);
   preview(drop(dndRef));
 
-  return { isDragging, dragMonitorId, isOver, dropMonitorId, dndRef, dragRef, dropEffect };
+  return {
+    isDragging,
+    dragMonitorId,
+    isOver,
+    dropMonitorId,
+    dndRef,
+    dragRef,
+    dropEffect,
+    groupItems,
+  };
 };

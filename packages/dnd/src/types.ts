@@ -21,6 +21,7 @@ export type UseReactDnD = typeof ReactDnD & typeof ReactDndHtml5Backend;
 export interface CustomCanDropParams {
   dragging: DraggedItem;
   hovering: DraggedItem;
+  groupItems?: boolean;
 }
 
 /**

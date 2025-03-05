@@ -8,7 +8,7 @@ import type {
   QueryActions,
   Schema,
 } from 'react-querybuilder';
-import { findPath, getParentPath, insert } from 'react-querybuilder';
+import { add, findPath, getParentPath, group, insert } from 'react-querybuilder';
 
 type UseDragCommonProps = {
   path: Path;
@@ -57,20 +57,36 @@ export const useDragCommon = ({
 
         const parentHoverPath = getParentPath(dropResult.path);
         const hoverIndex = dropResult.path.at(-1)!;
-        const destinationPath =
-          dropResult.type === 'ruleGroup'
+        const destinationPath = dropResult.groupItems
+          ? dropResult.path
+          : dropResult.type === 'ruleGroup'
             ? [...dropResult.path, 0]
             : dropResult.type === 'inlineCombinator'
               ? [...parentHoverPath, hoverIndex]
               : [...parentHoverPath, hoverIndex + 1];
 
         if (schema.qbId === dropResult.qbId) {
-          actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+          if (dropResult.groupItems) {
+            actions.groupRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+          } else {
+            actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+          }
         } else {
           const otherBuilderQuery = dropResult.getQuery();
           // istanbul ignore else
           if (otherBuilderQuery) {
-            dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
+            if (dropResult.groupItems) {
+              dropResult.dispatchQuery(
+                group(
+                  add(otherBuilderQuery, item, []),
+                  [otherBuilderQuery.rules.length],
+                  destinationPath,
+                  { clone: false }
+                )
+              );
+            } else {
+              dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
+            }
             // istanbul ignore else
             if (dropResult.dropEffect !== 'copy') {
               actions.onRuleRemove(item.path);

@@ -32,6 +32,7 @@ import {
   add,
   findPath,
   generateAccessibleDescription,
+  group,
   isRuleGroup,
   isRuleGroupTypeIC,
   move,
@@ -100,6 +101,8 @@ export function useQueryBuilderSchema<
     onAddGroup = defaultOnAddMoveRemove,
     onMoveRule = defaultOnAddMoveRemove,
     onMoveGroup = defaultOnAddMoveRemove,
+    onGroupRule = defaultOnAddMoveRemove,
+    onGroupGroup = defaultOnAddMoveRemove,
     onRemove = defaultOnAddMoveRemove,
     onQueryChange,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
@@ -431,6 +434,67 @@ export function useQueryBuilderSchema<
       dispatchQuery,
     ]
   );
+
+  const groupRule = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
+      // istanbul ignore if
+      if (!queryLocal) return;
+      if (pathIsDisabled(sourcePath, queryLocal) || queryDisabled) {
+        log({ qbId, type: LogType.pathDisabled, sourcePath, targetPath, query: queryLocal });
+        return;
+      }
+      const nextQuery = group(queryLocal, sourcePath, targetPath, { clone, combinators });
+      const ruleOrGroup = findPath(sourcePath, queryLocal)!;
+      const isGroup = isRuleGroup(ruleOrGroup);
+      const callbackResult = (
+        (isGroup ? onGroupGroup : onGroupRule) as (...args: unknown[]) => RG | boolean
+      )(
+        ruleOrGroup,
+        sourcePath,
+        targetPath,
+        queryLocal,
+        nextQuery,
+        { clone, combinators },
+        context
+      );
+      if (!callbackResult) {
+        log({
+          qbId,
+          type: isGroup ? LogType.onGroupGroupFalse : LogType.onGroupRuleFalse,
+          ruleOrGroup,
+          sourcePath,
+          targetPath,
+          clone,
+          query: queryLocal,
+          nextQuery,
+        });
+        return;
+      }
+      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
+      log({
+        qbId,
+        type: LogType.group,
+        query: queryLocal,
+        newQuery,
+        sourcePath,
+        targetPath,
+        clone,
+      });
+      dispatchQuery(newQuery);
+    },
+    [
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+      combinators,
+      onGroupGroup,
+      onGroupRule,
+      log,
+      dispatchQuery,
+    ]
+  );
   // #endregion
 
   // #region Validation
@@ -571,8 +635,9 @@ export function useQueryBuilderSchema<
       onPropChange,
       onRuleAdd,
       onRuleRemove: onRuleOrGroupRemove,
+      groupRule,
     }),
-    [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
+    [groupRule, moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
   );
   // #endregion
 

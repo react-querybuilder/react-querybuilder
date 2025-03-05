@@ -267,6 +267,7 @@ export const standardClassnames = {
   dndDragging: 'dndDragging',
   dndOver: 'dndOver',
   dndCopy: 'dndCopy',
+  dndGroup: 'dndGroup',
   dragHandle: 'queryBuilder-dragHandle',
   disabled: 'queryBuilder-disabled',
   lockRule: 'rule-lock',
@@ -311,6 +312,7 @@ export const defaultControlClassnames: Classnames = {
   invalid: '',
   dndDragging: '',
   dndOver: '',
+  dndGroup: '',
   dndCopy: '',
   disabled: '',
   valueListItem: '',
@@ -361,6 +363,8 @@ export const LogType = {
   queryUpdate: 'query updated',
   onAddRuleFalse: 'onAddRule callback returned false',
   onAddGroupFalse: 'onAddGroup callback returned false',
+  onGroupRuleFalse: 'onGroupRule callback returned false',
+  onGroupGroupFalse: 'onGroupGroup callback returned false',
   onMoveRuleFalse: 'onMoveRule callback returned false',
   onMoveGroupFalse: 'onMoveGroup callback returned false',
   onRemoveFalse: 'onRemove callback returned false',
@@ -368,6 +372,7 @@ export const LogType = {
   remove: 'rule or group removed',
   update: 'rule or group updated',
   move: 'rule or group moved',
+  group: 'rule or group grouped with another',
 } as const;
 
 /**

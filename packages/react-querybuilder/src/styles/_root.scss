@@ -46,9 +46,14 @@ $rqb-internal_dnd-drop-indicator-width: prefer-new-var(
 
   /* #region Drag-and-drop aesthetic */
   --#{$rqb-var-prefix}dnd-drop-indicator-color: #{$rqb-internal_dnd-drop-indicator-color};
-  --#{$rqb-var-prefix}dnd-drop-indicator-copy-color: #{$rqb-internal_dnd-drop-indicator-copy-color};
   --#{$rqb-var-prefix}dnd-drop-indicator-style: #{$rqb-internal_dnd-drop-indicator-style};
   --#{$rqb-var-prefix}dnd-drop-indicator-width: #{$rqb-internal_dnd-drop-indicator-width};
+  --#{$rqb-var-prefix}dnd-drop-indicator-copy-color: #{$rqb-internal_dnd-drop-indicator-copy-color};
+  --#{$rqb-var-prefix}dnd-drop-indicator-copy-style: #{$rqb-internal_dnd-drop-indicator-style};
+  --#{$rqb-var-prefix}dnd-drop-indicator-copy-width: #{$rqb-internal_dnd-drop-indicator-width};
+  --#{$rqb-var-prefix}dnd-drop-indicator-group-color: #{$rqb-dnd-drop-indicator-group-color};
+  --#{$rqb-var-prefix}dnd-drop-indicator-group-style: #{$rqb-dnd-drop-indicator-group-style};
+  --#{$rqb-var-prefix}dnd-drop-indicator-group-width: #{$rqb-dnd-drop-indicator-group-width};
   /* #endregion */
 
   /* #region Branches aesthetic */

@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+## Added
+
+- "Group" feature of `@react-querybuilder/dnd`. Pressing the `Ctrl` key while dragging a rule/group will form a new group at the target path with the target rule/group and the dragged rule/group in its `rules` array.
+- New `group` query tool which creates a new group at a target path with its `rules` array containing the objects from a source path and the target path.
 
 ## [v8.3.1] - 2025-02-27
 

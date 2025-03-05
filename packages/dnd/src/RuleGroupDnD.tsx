@@ -10,7 +10,7 @@ import type {
   UseRuleGroupDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
-import { dropEffectListener } from './dropEffectListener';
+import { getDropEffect, getGroupItemsFlag } from './dropEffectListener';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
 import { useDragCommon } from './useDragCommon';
@@ -54,11 +54,13 @@ const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
  * @group Hooks
  */
 export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD => {
-  const { disabled, path, ruleGroup, schema, actions, useDrag, useDrop, canDrop } = params;
-
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+
+  const { disabled, path, ruleGroup, schema, actions, useDrag, useDrop, canDrop } = params;
+
+  const groupItems = getGroupItemsFlag();
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'ruleGroup',
@@ -96,9 +98,9 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         // Disallow drop if...
         // prettier-ignore
         return !(
-          // 1) item is ancestor of drop target,
+          // 1) item is ancestor of drop target, OR
           isAncestor(dragging.path, path) ||
-          // 2) item is first child and is dropped on its own group header,
+          // 2) item is first child and is dropped on its own group header, OR
           (pathsAreEqual(path, parentItemPath) && itemIndex === 0) ||
           // 3) the group is dropped on itself
           pathsAreEqual(path, dragging.path)
@@ -107,18 +109,18 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: monitor.getDropResult()?.dropEffect ?? dropEffectListener,
+        dropEffect: monitor.getDropResult()?.dropEffect ?? getDropEffect(),
+        groupItems: getGroupItemsFlag(),
       }),
-      drop: (_item, monitor) => {
+      drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
+        const groupItems = getGroupItemsFlag();
 
         // `dropEffect` gets added automatically to the object returned from `drop`:
-        return (
-          monitor.getDropResult() ?? { type: 'ruleGroup', path, qbId, getQuery, dispatchQuery }
-        );
+        return { type: 'ruleGroup', path, qbId, getQuery, dispatchQuery, groupItems };
       },
     }),
-    [disabled, actions.moveRule, path, canDrop, ruleGroup, schema]
+    [disabled, actions.moveRule, path, canDrop, ruleGroup, schema, groupItems]
   );
 
   if (path.length > 0) {
@@ -136,5 +138,6 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     dragRef,
     dropRef,
     dropEffect,
+    groupItems,
   };
 };

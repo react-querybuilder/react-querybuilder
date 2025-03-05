@@ -128,17 +128,10 @@ it('handles a dropped rule group', () => {
     expect(rg).not.toHaveClass(sc.dndDragging);
     expect(rg).not.toHaveClass(sc.dndOver);
   }
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      rules: expect.arrayContaining([
-        expect.objectContaining({
-          rules: expect.arrayContaining([
-            expect.objectContaining({ combinator: 'and', rules: [] }),
-          ]),
-        }),
-      ]),
-    })
-  );
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }],
+  });
 });
 
 it('aborts move if dropped on itself', () => {
@@ -263,21 +256,21 @@ it('handles rule group drops on independent combinators', () => {
   );
   expect(ruleGroups[2]).not.toHaveClass(sc.dndDragging);
   expect(combinatorEls[1]).not.toHaveClass(sc.dndOver);
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      rules: expect.arrayContaining([
-        expect.objectContaining({
-          rules: expect.arrayContaining([
-            expect.objectContaining({ id: 'Steve' }),
-            'and',
-            expect.objectContaining({ rules: [] }),
-            'and',
-            expect.objectContaining({ id: 'Steve' }),
-          ]),
-        }),
-      ]),
-    })
-  );
+  expect(onQueryChange).toHaveBeenCalledWith({
+    id: expect.any(String),
+    rules: [
+      {
+        id: expect.any(String),
+        rules: [
+          { id: 'Steve', field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { id: expect.any(String), rules: [] },
+          'and',
+          { id: 'Vai', field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      },
+    ],
+  });
 });
 
 it('handles rule drops on independent combinators', () => {
@@ -307,21 +300,21 @@ it('handles rule drops on independent combinators', () => {
     getHandlerId(combinatorEls[0], 'drop'),
     getDndBackendIC()
   );
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      rules: expect.arrayContaining([
-        expect.objectContaining({
-          rules: expect.arrayContaining([
-            expect.objectContaining({ id: 'Steve' }),
-            'and',
-            expect.objectContaining({ id: '28' }),
-            'and',
-            expect.objectContaining({ id: 'Vai' }),
-          ]),
-        }),
-      ]),
-    })
-  );
+  expect(onQueryChange).toHaveBeenCalledWith({
+    id: expect.any(String),
+    rules: [
+      {
+        id: expect.any(String),
+        rules: [
+          { id: 'Steve', field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { id: '28', field: 'age', operator: '>', value: 28 },
+          'and',
+          { id: 'Vai', field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      },
+    ],
+  });
 });
 
 it('prevents drops when locked', () => {
@@ -333,7 +326,7 @@ it('prevents drops when locked', () => {
       query={{
         combinator: 'and',
         rules: [
-          { combinator: 'and', rules: [], disabled: true },
+          { combinator: 'and', rules: [] },
           { combinator: 'and', rules: [] },
         ],
       }}
@@ -372,8 +365,14 @@ it('respects custom canDrop', () => {
     getDndBackend()
   );
   expect(canDrop).toHaveBeenCalledWith({
-    dragging: expect.objectContaining({ path: [1], combinator: 'and', rules: [] }),
-    hovering: expect.objectContaining({ path: [0], combinator: 'and', rules: [] }),
+    dragging: { path: [1], combinator: 'and', rules: [], qbId: expect.any(String) },
+    hovering: {
+      path: [0],
+      combinator: 'and',
+      rules: [],
+      qbId: expect.any(String),
+      id: expect.any(String),
+    },
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
@@ -404,8 +403,21 @@ it('respects custom canDrop on inline combinators', () => {
     getDndBackend()
   );
   expect(canDrop).toHaveBeenCalledWith({
-    dragging: expect.objectContaining({ path: [2], combinator: 'and', rules: [], not: true }),
-    hovering: expect.objectContaining({ path: [0], combinator: 'and', rules: [] }),
+    dragging: {
+      path: [2],
+      combinator: 'and',
+      rules: [],
+      not: true,
+      qbId: expect.any(String),
+      id: expect.any(String),
+    },
+    hovering: {
+      path: [0],
+      combinator: 'and',
+      rules: [],
+      qbId: expect.any(String),
+      id: expect.any(String),
+    },
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
@@ -430,13 +442,13 @@ it('respects custom canDrop on independent combinators', () => {
     getDndBackendIC()
   );
   expect(canDrop).toHaveBeenCalledWith({
-    dragging: expect.objectContaining({ path: [4], rules: [], not: true }),
-    hovering: expect.objectContaining({ path: [0], rules: [] }),
+    dragging: { path: [4], rules: [], not: true, qbId: expect.any(String), id: expect.any(String) },
+    hovering: { path: [0], rules: [], qbId: expect.any(String), id: expect.any(String) },
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
 
-it('respects updates canDrop function between renders', () => {
+it('respects updated canDrop function between renders', () => {
   const firstCanDrop = jest.fn(() => false);
   const secondCanDrop = jest.fn(() => false);
 

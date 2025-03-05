@@ -14,7 +14,8 @@ $rqb-branch-width: $rqb-border-width !default;
 
 $rqb-dnd-drop-indicator-defaults: (
   'color': rebeccapurple,
-  'copy-color': #669933,
+  'copy-color': #693,
+  'group-color': #369,
   'style': dashed,
   'width': 2px,
 );
@@ -28,12 +29,22 @@ $rqb-border-radius: 0.25rem !default;
 
 // #region New drag-and-drop variables
 $rqb-dnd-drop-indicator-color: map.get($rqb-dnd-drop-indicator-defaults, 'color') !default;
+$rqb-dnd-drop-indicator-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
+$rqb-dnd-drop-indicator-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
+
 $rqb-dnd-drop-indicator-copy-color: map.get(
   $rqb-dnd-drop-indicator-defaults,
   'copy-color'
 ) !default;
-$rqb-dnd-drop-indicator-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
-$rqb-dnd-drop-indicator-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
+$rqb-dnd-drop-indicator-copy-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
+$rqb-dnd-drop-indicator-copy-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
+
+$rqb-dnd-drop-indicator-group-color: map.get(
+  $rqb-dnd-drop-indicator-defaults,
+  'group-color'
+) !default;
+$rqb-dnd-drop-indicator-group-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
+$rqb-dnd-drop-indicator-group-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
 // #endregion
 
 // #region Deprecated drag-and-drop variables

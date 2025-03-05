@@ -359,6 +359,7 @@ export const useRule = (props: RuleProps): UseRule => {
     valueSource: valueSourceProp,
     // Drag-and-drop
     dropEffect = 'move',
+    groupItems = false,
     dragMonitorId = '',
     dropMonitorId = '',
     dndRef = null,
@@ -583,12 +584,14 @@ export const useRule = (props: RuleProps): UseRule => {
         isDragging && classNamesProp.dndDragging,
         isOver && classNamesProp.dndOver,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        isOver && groupItems && classNamesProp.dndGroup,
         // standard conditional classes
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
           [standardClassnames.dndDragging]: isDragging,
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+          [standardClassnames.dndGroup]: isOver && groupItems,
         },
         validationClassName
       ),
@@ -596,6 +599,7 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.disabled,
       classNamesProp.dndCopy,
       classNamesProp.dndDragging,
+      classNamesProp.dndGroup,
       classNamesProp.dndOver,
       classNamesProp.rule,
       disabled,
@@ -603,6 +607,7 @@ export const useRule = (props: RuleProps): UseRule => {
       fieldBasedClassName,
       fieldData,
       getRuleClassname,
+      groupItems,
       isDragging,
       isOver,
       operatorBasedClassName,

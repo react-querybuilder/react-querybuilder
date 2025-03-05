@@ -65,6 +65,12 @@
     padding-top: var(--#{$rqb-var-prefix}spacing);
   }
 }
+.dndGroup {
+  &.rule.dndOver,
+  &.ruleGroup:has(.ruleGroup-header.dndOver) {
+    padding: var(--#{$rqb-var-prefix}spacing);
+  }
+}
 /* #endregion */
 
 /* #region Branches */

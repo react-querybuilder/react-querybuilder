@@ -21,6 +21,7 @@ import {
 } from 'react-querybuilder';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
+import { getDropEffect, getGroupItemsFlag } from './dropEffectListener';
 
 /**
  * The drag-and-drop-enabled inline combinator component.
@@ -68,6 +69,7 @@ interface UseInlineCombinatorDnD {
   dropMonitorId: string | symbol | null;
   dropRef: Ref<HTMLDivElement>;
   dropEffect?: DropEffect;
+  groupItems?: boolean;
 }
 
 /**
@@ -82,21 +84,28 @@ export const useInlineCombinatorDnD = ({
 }: UseInlineCombinatorDndParams): UseInlineCombinatorDnD => {
   const dropRef = useRef<HTMLDivElement>(null);
 
+  const groupItems = getGroupItemsFlag();
+
   // The "hovering" item is the rule or group which precedes this inline combinator.
   const hoveringItem = (rules ?? /* istanbul ignore next */ [])[path.at(-1)! - 1] as
     | RuleType
     | RuleGroupTypeAny;
 
   // eslint-disable-next-line react-compiler/react-compiler
-  const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
+  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
+    DraggedItem,
+    DropResult,
+    DropCollection
+  >(
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: dragging => {
         const { path: itemPath } = dragging;
         if (
-          dragging &&
-          typeof canDrop === 'function' &&
-          !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } })
+          getGroupItemsFlag() ||
+          (dragging &&
+            typeof canDrop === 'function' &&
+            !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } }))
         ) {
           return false;
         }
@@ -123,12 +132,15 @@ export const useInlineCombinatorDnD = ({
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
+        dropEffect: monitor.getDropResult()?.dropEffect ?? getDropEffect(),
+        groupItems: getGroupItemsFlag(),
       }),
       drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
+        const groupItems = getGroupItemsFlag();
+
         // `dropEffect` gets added automatically to the object returned from `drop`:
-        return { type: 'inlineCombinator', path, qbId, getQuery, dispatchQuery };
+        return { type: 'inlineCombinator', path, qbId, getQuery, dispatchQuery, groupItems };
       },
     }),
     [canDrop, hoveringItem, path, schema]
@@ -136,5 +148,5 @@ export const useInlineCombinatorDnD = ({
 
   drop(dropRef);
 
-  return { dropRef, dropMonitorId, isOver };
+  return { dropRef, dropMonitorId, isOver, dropEffect, groupItems };
 };

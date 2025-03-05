@@ -475,6 +475,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     not: notProp,
     // Drag-and-drop
     dropEffect = 'move',
+    groupItems = false,
     dragMonitorId = '',
     dropMonitorId = '',
     previewRef = null,
@@ -540,10 +541,6 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.valueSelector,
         classNamesProp.combinators
       ),
-      // betweenRules: clsx(
-      //   suppressStandardClassnames || standardClassnames.betweenRules,
-      //   classNamesProp.betweenRules
-      // ),
       notToggle: clsx(
         suppressStandardClassnames || standardClassnames.notToggle,
         classNamesProp.notToggle
@@ -709,19 +706,24 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.ruleGroup,
         disabled && classNamesProp.disabled,
         isDragging && classNamesProp.dndDragging,
+        isOver && groupItems && classNamesProp.dndGroup,
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
           [standardClassnames.dndDragging]: isDragging,
+          [standardClassnames.dndGroup]: isOver && groupItems,
         },
         validationClassName
       ),
     [
       classNamesProp.disabled,
       classNamesProp.dndDragging,
+      classNamesProp.dndGroup,
       classNamesProp.ruleGroup,
       combinatorBasedClassName,
       disabled,
+      groupItems,
       isDragging,
+      isOver,
       ruleGroupClassname,
       suppressStandardClassnames,
       validationClassName,

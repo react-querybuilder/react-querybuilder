@@ -28,3 +28,4 @@ export * from './simplify';
 export * from './trim';
 export * from './union-to-intersection';
 export * from './unknown-array';
+export * from './writable';

@@ -527,3 +527,112 @@ export const insert = <RG extends RuleGroupTypeAny>(
       }
     }
   });
+
+/**
+ * Options for {@link group}.
+ *
+ * @group Query Tools
+ */
+export interface GroupOptions {
+  /**
+   * When `true`, the source rule/group will not be removed from its original path.
+   */
+  clone?: boolean;
+  /**
+   * If the query extends `RuleGroupTypeIC` (i.e. the query is using independent
+   * combinators), then the first combinator in this list will be inserted between
+   * the two rules/groups.
+   */
+  combinators?: OptionList;
+  /**
+   * ID generator.
+   */
+  idGenerator?: () => string;
+}
+/**
+ * Creates a new group at a target path with its `rules` array containing the current
+ * objects at the target path and the source path. In the options parameter, pass
+ * `{ clone: true }` to copy the source rule/group instead of move.
+ *
+ * @returns The new query with the rules or groups grouped.
+ *
+ * @group Query Tools
+ */
+export const group = <RG extends RuleGroupTypeAny>(
+  /** The query to update. */
+  query: RG,
+  /** Path of the rule/group to move or clone. */
+  sourcePath: Path,
+  /** Path of the target rule/group, which will become the path of the new group. */
+  targetPath: Path,
+  /** Options. */
+  { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
+): RG => {
+  const nextPath = getNextPath(query, sourcePath, targetPath);
+
+  // Don't move to the same location or a path that doesn't exist yet
+  if (
+    sourcePath.length === 0 ||
+    pathsAreEqual(sourcePath, nextPath) ||
+    !findPath(getParentPath(nextPath), query)
+  ) {
+    return query;
+  }
+
+  const sourceRuleOrGroupOriginal = findPath(sourcePath, query);
+  const targetRuleOrGroup = findPath(targetPath, query);
+  if (!sourceRuleOrGroupOriginal || !targetRuleOrGroup) {
+    return query;
+  }
+  const sourceRuleOrGroup = clone
+    ? regenerateIDs(sourceRuleOrGroupOriginal as RuleGroupTypeAny, { idGenerator })
+    : sourceRuleOrGroupOriginal;
+
+  return produce(query, draft => {
+    const independentCombinators = isRuleGroupTypeIC(draft);
+    const parentOfRuleToRemove = findPath(getParentPath(sourcePath), draft) as RG;
+    const ruleToRemoveIndex = sourcePath.at(-1)!;
+
+    // Remove the source item if not cloning
+    if (!clone) {
+      const idxStartDelete = independentCombinators
+        ? Math.max(0, ruleToRemoveIndex - 1)
+        : ruleToRemoveIndex;
+      const deleteLength = independentCombinators ? 2 : 1;
+      parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+    }
+
+    const newNewPath = [...nextPath];
+    const commonAncestorPath = getCommonAncestorPath(sourcePath, nextPath);
+    if (
+      !clone &&
+      sourcePath.length === commonAncestorPath.length + 1 &&
+      nextPath[commonAncestorPath.length] > sourcePath[commonAncestorPath.length]
+    ) {
+      // Getting here means there will be a shift of paths upward at the common
+      // ancestor level because the object at `oldPath` will be spliced out. The
+      // real new path should therefore be one or two higher than `newPathCalc`.
+      newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
+    }
+    const newNewParentPath = getParentPath(newNewPath);
+    const parentOfTargetPath = findPath(newNewParentPath, draft) as RG;
+    const targetPathIndex = newNewPath.at(-1)!;
+
+    // Convert the target path to a group and insert the source and target items as children
+    parentOfTargetPath.rules.splice(
+      targetPathIndex,
+      1,
+      prepareRuleOrGroup(
+        (independentCombinators
+          ? { rules: [targetRuleOrGroup, getFirstOption(combinators), sourceRuleOrGroup] }
+          : {
+              combinator: getFirstOption(combinators),
+              rules: [targetRuleOrGroup, sourceRuleOrGroup],
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            }) as any,
+        { idGenerator }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ) as any
+    );
+  });
+};

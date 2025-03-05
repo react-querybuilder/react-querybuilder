@@ -27,12 +27,14 @@
 /* Hover styles */
 .dndOver {
   &.rule,
-  &.ruleGroup-header {
+  &.ruleGroup-header:not(.dndGroup .ruleGroup-header) {
     border-bottom-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-width);
     border-bottom-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-style);
     border-bottom-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-color);
 
     &.dndCopy {
+      border-bottom-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-width);
+      border-bottom-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-style);
       border-bottom-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-color);
     }
   }
@@ -43,7 +45,25 @@
     border-top-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-color);
 
     &.dndCopy {
+      border-top-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-width);
+      border-top-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-style);
       border-top-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-color);
+    }
+  }
+}
+
+.dndGroup {
+  &.rule.dndOver,
+  &.ruleGroup:has(> .ruleGroup-header.dndOver) {
+    border-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-group-width);
+    border-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-group-style);
+    border-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-group-color);
+    border-radius: var(--#{$rqb-var-prefix}border-radius);
+
+    &.dndCopy {
+      border-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-color);
+      border-width: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-width);
+      border-style: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-style);
     }
   }
 }
