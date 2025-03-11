@@ -29,6 +29,8 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
     enableMountQueryChange,
     translations,
     canDrop,
+    copyModeModifierKey,
+    groupModeModifierKey,
   } = props;
 
   const rqbContext = useMergedContext({
@@ -61,7 +63,11 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
       <QueryBuilderContext.Provider
         key={key}
         value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
-        <QueryBuilderDndWithoutProvider dnd={dnd} canDrop={canDrop}>
+        <QueryBuilderDndWithoutProvider
+          dnd={dnd}
+          canDrop={canDrop}
+          copyModeModifierKey={copyModeModifierKey}
+          groupModeModifierKey={groupModeModifierKey}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -81,6 +87,16 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   const dnd = useReactDnD(props.dnd);
   const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
   const canDrop = usePreferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
+  const copyModeModifierKey = usePreferAnyProp(
+    undefined,
+    props.copyModeModifierKey,
+    rqbDndContext.copyModeModifierKey
+  );
+  const groupModeModifierKey = usePreferAnyProp(
+    undefined,
+    props.groupModeModifierKey,
+    rqbDndContext.groupModeModifierKey
+  );
   const enableDragAndDrop = usePreferProp(
     true,
     props.enableDragAndDrop,
@@ -132,8 +148,8 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   const { DndContext, useDrag, useDrop } = dnd ?? {};
 
   const dndContextValue: QueryBuilderDndContextProps = useMemo(
-    () => ({ useDrag, useDrop, baseControls, canDrop }),
-    [baseControls, canDrop, useDrag, useDrop]
+    () => ({ baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop }),
+    [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop]
   );
 
   if (!enableDragAndDrop || !DndContext) {

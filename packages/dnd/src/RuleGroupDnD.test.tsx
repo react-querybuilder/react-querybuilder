@@ -265,7 +265,7 @@ it('copies a dropped rule group on a rule group for grouping', async () => {
     getHandlerId(ruleGroups[1], 'drop'),
     getDndBackend()
   );
-  await user.keyboard('{/Control}{/Alt}');
+  await user.keyboard('{/Alt}{/Control}');
   for (const rg of ruleGroups) {
     expect(rg).not.toHaveClass(sc.dndDragging);
     expect(rg).not.toHaveClass(sc.dndOver);

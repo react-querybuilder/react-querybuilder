@@ -38,17 +38,31 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * once those packages have loaded.
    */
   dnd?: UseReactDnD;
-  canDrop?(params: CustomCanDropParams): boolean;
+  canDrop?: (params: CustomCanDropParams) => boolean;
+  /**
+   * Key code for the modifier key that puts a drag-and-drop action in "copy" mode.
+   * Can be combined with "group" modifier key.
+   *
+   * @default "alt"
+   */
+  copyModeModifierKey?: string;
+  /**
+   * Key code for the modifier key that puts a drag-and-drop action in "group" mode.
+   * Can be combined with "copy" modifier key.
+   *
+   * @default "ctrl"
+   */
+  groupModeModifierKey?: string;
 };
 
 /**
+ * {@link QueryBuilderDndContext} props.
+ *
  * @group Props
  */
-export interface QueryBuilderDndContextProps {
+export interface QueryBuilderDndContextProps
+  extends Pick<QueryBuilderDndProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> {
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
-  canDrop?: (params: CustomCanDropParams) => boolean;
-  copyModeModifierKey?: string;
-  groupModeModifierKey?: string;
 }

@@ -1,4 +1,4 @@
-import { consoleMocks, userEventSetup } from '@rqb-testing';
+import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import * as reactDnD from 'react-dnd';
@@ -26,7 +26,10 @@ const user = userEventSetup();
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
-consoleMocks();
+afterEach(() => {
+  // Clear pressed keys
+  window.dispatchEvent(new Event('blur'));
+});
 
 it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
   await act(async () => {
@@ -119,6 +122,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
     );
     const gDnDBe = () => getBackend()!;
     const gDnDBeIC = () => getBackendIC()!;
+
     describe('standard rule groups', () => {
       it('sets data-dnd attribute appropriately', () => {
         const { container, rerender } = render(<QBforDnD enableDragAndDrop={false} />);
@@ -596,53 +600,109 @@ it('prevents changes when disabled', async () => {
   expect(onQueryChange).not.toHaveBeenCalled();
 });
 
-it('respects onMoveRule', async () => {
+it('respects custom copyModeModifierKey', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
-    (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
-      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+    (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD
+        dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}
+        // "ctrl" instead of default "alt"
+        copyModeModifierKey="ctrl"
+        // "shift" instead of default "ctrl"
+        groupModeModifierKey="shift">
         <QueryBuilder {...props} />
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+  const onQueryChange = jest.fn<never, [RuleGroupType]>();
   render(
     <QueryBuilderWrapped
       fields={[
-        { name: 'field0', label: 'Field 0' },
         { name: 'field1', label: 'Field 1' },
         { name: 'field2', label: 'Field 2' },
         { name: 'field3', label: 'Field 3' },
-        { name: 'field4', label: 'Field 4' },
       ]}
       enableMountQueryChange={false}
       onQueryChange={onQueryChange}
-      onMoveRule={() => false}
       query={{
+        combinator: 'and',
         rules: [
-          { field: 'field0', operator: '=', value: '0' },
-          'and',
           { field: 'field1', operator: '=', value: '1' },
-          'and',
           { field: 'field2', operator: '=', value: '2' },
-          'and',
-          {
-            rules: [
-              { field: 'field3', operator: '=', value: '3' },
-              'and',
-              { field: 'field4', operator: '=', value: '4' },
-            ],
-          },
+          { field: 'field3', operator: '=', value: '3' },
         ],
       }}
     />
   );
-  const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
+  const [dropRule, , dragRule] = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
   simulateDragDrop(
     getHandlerId(dragRule, 'drag'),
     getHandlerId(dropRule, 'drop'),
     getDndBackend()!
   );
-  expect(onQueryChange).not.toHaveBeenCalled();
+  await user.keyboard('{/Control}');
+  expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+    combinator: 'and',
+    rules: [
+      { field: 'field1', operator: '=', value: '1' },
+      { id: expect.any(String), field: 'field3', operator: '=', value: '3' },
+      { field: 'field2', operator: '=', value: '2' },
+      { field: 'field3', operator: '=', value: '3' },
+    ],
+  });
+});
+
+it('respects custom groupModeModifierKey', async () => {
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD
+        dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}
+        // "ctrl" instead of default "alt"
+        copyModeModifierKey="ctrl"
+        // "shift" instead of default "ctrl"
+        groupModeModifierKey="shift">
+        <QueryBuilder {...props} />
+      </QueryBuilderDnD>
+    )
+  );
+  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  render(
+    <QueryBuilderWrapped
+      fields={[
+        { name: 'field1', label: 'Field 1' },
+        { name: 'field2', label: 'Field 2' },
+      ]}
+      enableMountQueryChange={false}
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { field: 'field1', operator: '=', value: '1' },
+          { field: 'field2', operator: '=', value: '2' },
+        ],
+      }}
+    />
+  );
+  const [dropRule, dragRule] = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Shift>}');
+  simulateDragDrop(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropRule, 'drop'),
+    getDndBackend()!
+  );
+  await user.keyboard('{/Shift}');
+  expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+    combinator: 'and',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'field1', operator: '=', value: '1' },
+          { field: 'field2', operator: '=', value: '2' },
+        ],
+      },
+    ],
+  });
 });
 
 it('can move rules/groups to different query builders', async () => {

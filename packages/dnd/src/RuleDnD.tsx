@@ -81,10 +81,11 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     path,
     disabled,
     independentCombinators: schema.independentCombinators,
-    moveRule: actions.moveRule,
     schema,
     actions,
     useDrag,
+    copyModeModifierKey,
+    groupModeModifierKey,
   });
 
   // eslint-disable-next-line react-compiler/react-compiler

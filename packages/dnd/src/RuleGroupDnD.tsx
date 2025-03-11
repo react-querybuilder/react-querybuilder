@@ -81,10 +81,11 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     path,
     disabled,
     independentCombinators: schema.independentCombinators,
-    moveRule: actions.moveRule,
     schema,
     actions,
     useDrag,
+    copyModeModifierKey,
+    groupModeModifierKey,
   });
 
   // eslint-disable-next-line react-compiler/react-compiler
@@ -134,7 +135,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         return { type: 'ruleGroup', path, qbId, getQuery, dispatchQuery, groupItems, dropEffect };
       },
     }),
-    [disabled, actions.moveRule, path, canDrop, ruleGroup, schema]
+    [disabled, actions.groupRule, actions.moveRule, path, canDrop, ruleGroup, schema]
   );
 
   if (path.length > 0) {

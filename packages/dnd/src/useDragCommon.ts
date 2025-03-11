@@ -9,18 +9,19 @@ import type {
   Schema,
 } from 'react-querybuilder';
 import { add, findPath, getParentPath, group, insert } from 'react-querybuilder';
+import { isHotkeyPressed } from './isHotkeyPressed';
+import type { QueryBuilderDndProps } from './types';
 
 type UseDragCommonProps = {
   path: Path;
   type: DndDropTargetType;
   disabled?: boolean;
   independentCombinators?: boolean;
-  moveRule: QueryActions['moveRule'];
   actions: QueryActions;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: Schema<any, any>;
   useDrag: typeof originalUseDrag;
-};
+} & Required<Pick<QueryBuilderDndProps, 'copyModeModifierKey' | 'groupModeModifierKey'>>;
 
 /**
  * @group Hooks
@@ -34,6 +35,8 @@ export const useDragCommon = ({
   actions,
   schema,
   useDrag,
+  copyModeModifierKey,
+  groupModeModifierKey,
 }: UseDragCommonProps): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
   useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
@@ -49,9 +52,12 @@ export const useDragCommon = ({
 
         if (!dropResult) return;
 
+        const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+        const groupItems = isHotkeyPressed(groupModeModifierKey);
+
         const parentHoverPath = getParentPath(dropResult.path);
         const hoverIndex = dropResult.path.at(-1)!;
-        const destinationPath = dropResult.groupItems
+        const destinationPath = groupItems
           ? dropResult.path
           : dropResult.type === 'ruleGroup'
             ? [...dropResult.path, 0]
@@ -60,16 +66,16 @@ export const useDragCommon = ({
               : [...parentHoverPath, hoverIndex + 1];
 
         if (schema.qbId === dropResult.qbId) {
-          if (dropResult.groupItems) {
-            actions.groupRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+          if (groupItems) {
+            actions.groupRule(item.path, destinationPath, dropEffect === 'copy');
           } else {
-            actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+            actions.moveRule(item.path, destinationPath, dropEffect === 'copy');
           }
         } else {
           const otherBuilderQuery = dropResult.getQuery();
           // istanbul ignore else
           if (otherBuilderQuery) {
-            if (dropResult.groupItems) {
+            if (groupItems) {
               dropResult.dispatchQuery(
                 group(
                   add(otherBuilderQuery, item, []),
@@ -82,12 +88,12 @@ export const useDragCommon = ({
               dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
             }
             // istanbul ignore else
-            if (dropResult.dropEffect !== 'copy') {
+            if (dropEffect !== 'copy') {
               actions.onRuleRemove(item.path);
             }
           }
         }
       },
     }),
-    [disabled, path]
+    [actions.groupRule, actions.moveRule, disabled, path]
   );
