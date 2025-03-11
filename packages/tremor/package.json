@@ -58,7 +58,7 @@
     "@tremor/react": "^3.18.7",
     "@types/react": "^19.0.10",
     "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.20",
+    "autoprefixer": "^10.4.21",
     "dayjs": "^1.11.13",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
@@ -66,8 +66,8 @@
     "react-querybuilder": "8.3.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.3",
-    "vite": "^6.2.0"
+    "typescript": "^5.8.2",
+    "vite": "^6.2.1"
   },
   "peerDependencies": {
     "@tremor/react": "^3",
