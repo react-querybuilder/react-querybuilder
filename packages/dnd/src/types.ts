@@ -49,4 +49,6 @@ export interface QueryBuilderDndContextProps {
   useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
   canDrop?: (params: CustomCanDropParams) => boolean;
+  copyModeModifierKey?: string;
+  groupModeModifierKey?: string;
 }

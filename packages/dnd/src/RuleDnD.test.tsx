@@ -40,6 +40,11 @@ const getDndBackend = () => getDndBackendOriginal()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
+afterEach(() => {
+  // Clear pressed keys
+  window.dispatchEvent(new Event('blur'));
+});
+
 it('does not have the drag class if not dragging', () => {
   render(<QBforDnD addRuleToNewGroups />);
   const rule = screen.getByTestId(TestID.rule);
@@ -105,9 +110,37 @@ it('has the copy class if hovered over while Alt key is pressed', async () => {
     getDndBackend()
   );
   expect(rules[1]).toHaveClass(sc.dndCopy, dndCopy);
+  act(() => {
+    getDndBackend().simulateEndDrag();
+  });
+  await user.keyboard('{/Alt}');
+});
+
+it('has the group class if hovered over while Ctrl key is pressed', async () => {
+  const dndGroup = 'my-dnd-group-class';
+  render(
+    <QBforDnD
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      }}
+      controlClassnames={{ dndGroup }}
+    />
+  );
+  const rules = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
+  simulateDragHover(
+    getHandlerId(rules[0], 'drag'),
+    getHandlerId(rules[1], 'drop'),
+    getDndBackend()
+  );
+  expect(rules[1]).toHaveClass(sc.dndGroup, dndGroup);
   await act(async () => {
     getDndBackend().simulateEndDrag();
-    await user.keyboard('{/Alt}');
+    await user.keyboard('{/Control}');
   });
 });
 
@@ -186,16 +219,12 @@ it('copies a dropped rule', async () => {
     />
   );
   const rules = screen.getAllByTestId(TestID.rule);
-  await act(async () => {
-    await user.keyboard('{Alt>}');
-  });
+  await user.keyboard('{Alt>}');
   simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), getDndBackend());
-  await act(async () => {
-    await user.keyboard('{/Alt}');
-  });
+  await user.keyboard('{/Alt}');
   expect(rules[0]).not.toHaveClass(sc.dndDragging);
   expect(rules[1]).not.toHaveClass(sc.dndOver);
-  expect(onQueryChange.mock.calls[0][0]).toMatchObject({
+  expect(onQueryChange.mock.calls[0][0]).toMatchObject<RuleGroupType>({
     combinator: 'and',
     rules: [
       { field: 'f1', operator: '=', value: 'v1' },
@@ -220,9 +249,9 @@ it('copies a dropped rule for grouping', async () => {
     />
   );
   const rules = screen.getAllByTestId(TestID.rule);
-  await user.keyboard('{Alt>}{Control>}');
+  await user.keyboard('{Control>}{Alt>}');
   simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), getDndBackend());
-  await user.keyboard('{/Control}{/Alt}');
+  await user.keyboard('{/Alt}{/Control}');
   expect(rules[0]).not.toHaveClass(sc.dndDragging);
   expect(rules[1]).not.toHaveClass(sc.dndOver);
   expect(onQueryChange.mock.calls[0][0]).toMatchObject<RuleGroupType>({

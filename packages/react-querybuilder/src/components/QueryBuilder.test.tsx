@@ -44,6 +44,7 @@ import {
   findPath,
   generateID,
   getOption,
+  group,
   move,
   numericRegex,
   toFullOption,
@@ -608,7 +609,7 @@ describe('actions', () => {
     );
   });
 
-  it('creates a new rule and remove that rule', async () => {
+  it('creates a new rule and removes that rule', async () => {
     const { onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -623,7 +624,7 @@ describe('actions', () => {
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
   });
 
-  it('creates a new group and remove that group', async () => {
+  it('creates a new group and removes that group', async () => {
     const { onQueryChange } = setup();
     expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
 
@@ -1406,6 +1407,7 @@ describe('onMoveRule prop', () => {
       },
     ],
   };
+
   it('cancels the rule move', async () => {
     const onLog = jest.fn();
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
@@ -1425,15 +1427,7 @@ describe('onMoveRule prop', () => {
     await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
     expect(onMoveRule).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        ruleOrGroup: expect.anything(),
-        oldPath: expect.any(Array),
-        newPath: 'down',
-        query: expect.anything(),
-        nextQuery: expect.anything(),
-      })
-    );
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.onMoveRuleFalse });
   });
 
   it('allows the rule move', async () => {
@@ -1485,6 +1479,7 @@ describe('onMoveGroup prop', () => {
       { field: 'f2', operator: '=', value: 'v2' },
     ],
   };
+
   it('cancels the group move', async () => {
     const onLog = jest.fn();
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
@@ -1545,6 +1540,175 @@ describe('onMoveGroup prop', () => {
     );
 
     await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
+  });
+});
+
+describe('onGroupRule prop', () => {
+  const defaultQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f3', operator: '=', value: 'v3' },
+          { field: 'f4', operator: '=', value: 'v4' },
+        ],
+      },
+    ],
+  };
+
+  const RuleGroupOG = defaultControlElements.ruleGroup;
+  const controlElements: ControlElementsProp<FullField, string> = {
+    ruleGroup: props => (
+      <div>
+        <button onClick={() => props.actions.groupRule([1], [0])}>groupRule</button>
+        <RuleGroupOG {...props} />
+      </div>
+    ),
+  };
+
+  it('cancels the rule grouping', async () => {
+    const onLog = jest.fn();
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onGroupRule = jest.fn(() => false);
+    render(
+      <QueryBuilder
+        onGroupRule={onGroupRule}
+        onQueryChange={onQueryChange}
+        defaultQuery={defaultQuery}
+        debugMode
+        onLog={onLog}
+        controlElements={controlElements}
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onGroupRule).toHaveBeenCalled();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.onGroupRuleFalse });
+  });
+
+  it('allows the rule grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupRule={() => true}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      group(onQueryChange.mock.calls[0][0], [1], [0], { idGenerator: () => expect.any(String) })
+    );
+  });
+
+  it('modifies the rule grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupRule={() => newQuery}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
+  });
+});
+
+describe('onGroupGroup prop', () => {
+  const defaultQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f3', operator: '=', value: 'v3' },
+          { field: 'f4', operator: '=', value: 'v4' },
+        ],
+      },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      },
+    ],
+  };
+
+  const RuleGroupOG = defaultControlElements.ruleGroup;
+  const controlElements: ControlElementsProp<FullField, string> = {
+    ruleGroup: props => (
+      <div>
+        <button onClick={() => props.actions.groupRule([1], [0])}>groupGroup</button>
+        <RuleGroupOG {...props} />
+      </div>
+    ),
+  };
+
+  it('cancels the group grouping', async () => {
+    const onLog = jest.fn();
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onGroupGroup = jest.fn(() => false);
+    render(
+      <QueryBuilder
+        onGroupGroup={onGroupGroup}
+        onQueryChange={onQueryChange}
+        defaultQuery={defaultQuery}
+        debugMode
+        onLog={onLog}
+        controlElements={controlElements}
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getAllByText('groupGroup')[0]);
+    expect(onGroupGroup).toHaveBeenCalled();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.onGroupGroupFalse });
+  });
+
+  it('allows the group grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupGroup={() => true}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupGroup')[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      group(onQueryChange.mock.calls[0][0], [1], [0], { idGenerator: () => expect.any(String) })
+    );
+  });
+
+  it('modifies the group grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupGroup={() => newQuery}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupGroup')[0]);
     expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
   });
 });
@@ -3240,6 +3404,7 @@ describe('debug mode', () => {
           ruleGroup: props => (
             <div>
               <button onClick={() => props.actions.moveRule([1], [0])}>moveRule</button>
+              <button onClick={() => props.actions.groupRule([1], [0])}>groupRule</button>
               <RuleGroupOG {...props} />
             </div>
           ),
@@ -3248,25 +3413,28 @@ describe('debug mode', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.add }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.add });
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.update }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.update });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.add }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.add });
 
     await user.click(screen.getByText('moveRule'));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.move }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.move });
 
     await user.click(screen.getAllByTestId(TestID.removeRule)[0]);
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.remove }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.remove });
 
     await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.add }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.add });
 
     await user.click(screen.getByTestId(TestID.removeGroup));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.remove }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.remove });
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.group });
   });
 
   it('logs failed additions and removals due to onAdd/Remove handlers', async () => {
@@ -3312,7 +3480,7 @@ describe('debug mode', () => {
     };
     const ruleGroup = ({
       path,
-      actions: { moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
+      actions: { groupRule, moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
     }: RuleGroupProps) => (
       <>
         <button onClick={() => onPropChange('combinator', 'or', [])}>Change Combinator</button>
@@ -3322,6 +3490,7 @@ describe('debug mode', () => {
         <button onClick={() => onGroupAdd({ combinator: 'and', rules: [] }, [])}>Add Group</button>
         <button onClick={() => moveRule(path, [0], true)}>Clone Group</button>
         <button onClick={() => onGroupRemove(path)}>Remove Group</button>
+        <button onClick={() => groupRule(path, [0])}>Group Group</button>
       </>
     );
     render(
@@ -3333,16 +3502,18 @@ describe('debug mode', () => {
         controlElements={{ ruleGroup }}
       />
     );
-    for (const btnText of [
+    const btnTexts = [
       'Change Combinator',
       'Add Rule',
       'Add Group',
       'Clone Group',
       'Remove Group',
-    ]) {
+      'Group Group',
+    ] as const;
+    for (const btnText of btnTexts) {
       await user.click(screen.getAllByText(btnText)[0]);
     }
-    expect(onLog).toHaveBeenCalledTimes(5);
+    expect(onLog).toHaveBeenCalledTimes(btnTexts.length);
   });
 });
 

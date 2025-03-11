@@ -53,6 +53,11 @@ const getDndBackendIC = () => getDndBackendOriginalIC()!;
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
+afterEach(() => {
+  // Clear pressed keys
+  window.dispatchEvent(new Event('blur'));
+});
+
 it('does not have the drag class if not dragging', () => {
   render(<QBforDnD />);
   const ruleGroup = screen.getByTestId(TestID.ruleGroup);
@@ -75,7 +80,7 @@ it('has the drag class if dragging', () => {
   });
 });
 
-it('has the copy class if hovered over while modifier key is pressed', async () => {
+it('has the copy class if hovered over while Alt key is pressed', async () => {
   const dndCopy = 'my-dnd-copy-class';
   render(
     <QBforDnD
@@ -98,13 +103,42 @@ it('has the copy class if hovered over while modifier key is pressed', async () 
     getDndBackend()
   );
   expect(ruleGroupTarget.querySelector(`.${sc.header}`)).toHaveClass(sc.dndCopy, dndCopy);
-  await act(async () => {
+  act(() => {
     getDndBackend().simulateEndDrag();
-    await user.keyboard('{/Alt}');
   });
+  await user.keyboard('{/Alt}');
 });
 
-it('handles a dropped rule group', () => {
+it('has the copy class if hovered over while Ctrl key is pressed', async () => {
+  const dndGroup = 'my-dnd-group-class';
+  render(
+    <QBforDnD
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [] },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      }}
+      controlClassnames={{ dndGroup }}
+    />
+  );
+  const rule = screen.getByTestId(TestID.rule);
+  const ruleGroupTarget = screen.getAllByTestId(TestID.ruleGroup)[1];
+  await user.keyboard('{Control>}');
+  simulateDragHover(
+    getHandlerId(rule, 'drag'),
+    getHandlerId(ruleGroupTarget, 'drop'),
+    getDndBackend()
+  );
+  expect(ruleGroupTarget).toHaveClass(sc.dndGroup, dndGroup);
+  act(() => {
+    getDndBackend().simulateEndDrag();
+  });
+  await user.keyboard('{/Control}');
+});
+
+it('handles a dropped rule group on a rule group', () => {
   const onQueryChange = jest.fn();
   render(
     <QBforDnD
@@ -131,6 +165,124 @@ it('handles a dropped rule group', () => {
   expect(onQueryChange).toHaveBeenCalledWith({
     combinator: 'and',
     rules: [{ combinator: 'and', rules: [{ combinator: 'and', rules: [] }] }],
+  });
+});
+
+it('copies a dropped rule group on a rule group', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [] },
+          { combinator: 'and', rules: [] },
+        ],
+      }}
+    />
+  );
+  const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
+  await user.keyboard('{Alt>}');
+  simulateDragDrop(
+    getHandlerId(ruleGroups[2], 'drag'),
+    getHandlerId(ruleGroups[1], 'drop'),
+    getDndBackend()
+  );
+  await user.keyboard('{/Alt}');
+  for (const rg of ruleGroups) {
+    expect(rg).not.toHaveClass(sc.dndDragging);
+    expect(rg).not.toHaveClass(sc.dndOver);
+  }
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [
+      { combinator: 'and', rules: [{ id: expect.any(String), combinator: 'and', rules: [] }] },
+      { combinator: 'and', rules: [] },
+    ],
+  });
+});
+
+it('groups a dropped rule group on a rule group', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [] },
+          { combinator: 'and', rules: [] },
+        ],
+      }}
+    />
+  );
+  const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
+  await user.keyboard('{Control>}');
+  simulateDragDrop(
+    getHandlerId(ruleGroups[2], 'drag'),
+    getHandlerId(ruleGroups[1], 'drop'),
+    getDndBackend()
+  );
+  await user.keyboard('{/Control}');
+  for (const rg of ruleGroups) {
+    expect(rg).not.toHaveClass(sc.dndDragging);
+    expect(rg).not.toHaveClass(sc.dndOver);
+  }
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [
+      {
+        id: expect.any(String),
+        combinator: 'and',
+        rules: [
+          { id: expect.any(String), combinator: 'and', rules: [] },
+          { id: expect.any(String), combinator: 'and', rules: [] },
+        ],
+      },
+    ],
+  });
+});
+
+it('copies a dropped rule group on a rule group for grouping', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { combinator: 'and', rules: [] },
+          { combinator: 'and', rules: [] },
+        ],
+      }}
+    />
+  );
+  const ruleGroups = screen.getAllByTestId(TestID.ruleGroup);
+  await user.keyboard('{Control>}{Alt>}');
+  simulateDragDrop(
+    getHandlerId(ruleGroups[2], 'drag'),
+    getHandlerId(ruleGroups[1], 'drop'),
+    getDndBackend()
+  );
+  await user.keyboard('{/Control}{/Alt}');
+  for (const rg of ruleGroups) {
+    expect(rg).not.toHaveClass(sc.dndDragging);
+    expect(rg).not.toHaveClass(sc.dndOver);
+  }
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [
+      {
+        id: expect.any(String),
+        combinator: 'and',
+        rules: [
+          { id: expect.any(String), combinator: 'and', rules: [] },
+          { id: expect.any(String), combinator: 'and', rules: [] },
+        ],
+      },
+      { combinator: 'and', rules: [] },
+    ],
   });
 });
 

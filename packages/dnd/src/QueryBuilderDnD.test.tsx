@@ -364,6 +364,45 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         });
       });
 
+      it('copies a rule by dropping on inline combinator with alt key pressed', async () => {
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        render(
+          <QBforDnDIC
+            onQueryChange={onQueryChange}
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' },
+              ],
+            }}
+          />
+        );
+        const rules = screen.getAllByTestId(TestID.rule);
+        const combinators = screen.getAllByTestId(TestID.inlineCombinator);
+        await user.keyboard('{Alt>}');
+        simulateDragDrop(
+          getHandlerId(rules[2], 'drag'),
+          getHandlerId(combinators[0], 'drop'),
+          gDnDBeIC()
+        );
+        await user.keyboard('{/Alt}');
+        expect(onQueryChange).toHaveBeenCalledTimes(2);
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { id: expect.any(String), field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+          ],
+        });
+      });
+
       it('moves a first-child rule to a different group as the first child', () => {
         const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
         render(

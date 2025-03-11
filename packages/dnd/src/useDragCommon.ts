@@ -1,4 +1,4 @@
-import type { useDrag as originalUseDrag } from 'react-dnd';
+import type { ConnectDragPreview, ConnectDragSource, useDrag as originalUseDrag } from 'react-dnd';
 import type {
   DndDropTargetType,
   DragCollection,
@@ -34,13 +34,7 @@ export const useDragCommon = ({
   actions,
   schema,
   useDrag,
-}: UseDragCommonProps): [
-  DragCollection,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  import('react-dnd').ConnectDragSource,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  import('react-dnd').ConnectDragPreview,
-] =>
+}: UseDragCommonProps): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
   useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,

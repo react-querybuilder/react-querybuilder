@@ -12,7 +12,7 @@ import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
-import type { QueryBuilderDndProps, UseReactDnD } from './types';
+import type { QueryBuilderDndContextProps, QueryBuilderDndProps, UseReactDnD } from './types';
 
 /**
  * Context provider to enable drag-and-drop. If the application already implements
@@ -129,7 +129,14 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     [rqbContext]
   );
 
-  if (!enableDragAndDrop || !dnd) {
+  const { DndContext, useDrag, useDrop } = dnd ?? {};
+
+  const dndContextValue: QueryBuilderDndContextProps = useMemo(
+    () => ({ useDrag, useDrop, baseControls, canDrop }),
+    [baseControls, canDrop, useDrag, useDrop]
+  );
+
+  if (!enableDragAndDrop || !DndContext) {
     return (
       <QueryBuilderContext.Provider
         key={key}
@@ -139,13 +146,11 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     );
   }
 
-  const { DndContext, useDrag, useDrop } = dnd;
-
   return (
     <DndContext.Consumer key={key}>
       {() => (
         <QueryBuilderContext.Provider key={key} value={newContext}>
-          <QueryBuilderDndContext.Provider value={{ useDrag, useDrop, baseControls, canDrop }}>
+          <QueryBuilderDndContext.Provider value={dndContextValue}>
             {props.children}
           </QueryBuilderDndContext.Provider>
         </QueryBuilderContext.Provider>
