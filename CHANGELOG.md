@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- "Group" feature of `@react-querybuilder/dnd`. Pressing the `Ctrl` key while dragging a rule/group will form a new group at the target path with the target rule/group and the dragged rule/group in its `rules` array.
-- New `group` query tool which creates a new group at a target path with its `rules` array containing the objects from a source path and the target path.
+- [#860] "Group" feature of `@react-querybuilder/dnd`. Pressing the `Ctrl` key while dragging a rule/group will form a new group at the target path with the target rule/group and the dragged rule/group in its `rules` array.
+- [#860] New `group` query tool which creates a new group at a target path with its `rules` array containing the objects from a source path and the target path.
 
 ## [v8.3.1] - 2025-02-27
 
@@ -1863,6 +1863,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#846]: https://github.com/react-querybuilder/react-querybuilder/pull/846
 [#855]: https://github.com/react-querybuilder/react-querybuilder/pull/855
 [#858]: https://github.com/react-querybuilder/react-querybuilder/pull/858
+[#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
 
 <!-- #endregion -->
 
