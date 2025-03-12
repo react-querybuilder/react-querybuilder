@@ -566,7 +566,7 @@ export const group = <RG extends RuleGroupTypeAny>(
   /** Path of the target rule/group, which will become the path of the new group. */
   targetPath: Path,
   /** Options. */
-  { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
+  { clone = false, combinators = defaultCombinators, idGenerator = generateID }: GroupOptions = {}
 ): RG => {
   const nextPath = getNextPath(query, sourcePath, targetPath);
 
