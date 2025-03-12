@@ -293,7 +293,7 @@ Custom rule processors for `formatQuery` now receive the full `Field` object in 
 
 ### Shift actions
 
-A new [`showShiftActions`](./components/querybuilder#showshiftactions) prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) while clicking will clone the rule/group instead of just moving it.
+A new [`showShiftActions`](./components/querybuilder#showshiftactions) prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (<kbd>Alt</kbd> on Windows/Linux, <kbd>Option</kbd>/<kbd>⌥</kbd> on Mac) while clicking will clone the rule/group instead of just moving it.
 
 Related additions:
 

@@ -195,7 +195,7 @@ The branch lines are colored <span style={{ color: 'red' }}>red</span> in the ex
 
 ## Drag-and-drop
 
-When [drag-and-drop is enabled](../components/querybuilder#enabledraganddrop), the following variables control styles for the dragged and hovered elements.
+When [drag-and-drop is enabled](../dnd), the following variables control styles for the dragged and hovered elements.
 
 <Tabs groupId="css-vs-scss">
   <TabItem value="css" label="CSS">
@@ -232,4 +232,5 @@ You can also assign styles to the following classes.
 
 - `dndDragging`: Assigned to the clone of the dragged element (the "ghost" that follows the mouse cursor)
 - `dndOver`: Assigned to a drop target when the cursor hovers over it
-- `dndCopy`: Assigned to a drop target when the cursor hovers over it while the modifier key is pressed (`Alt` on Windows/Linux, `Option`/`⌥` on Mac)
+- `dndCopy`: Assigned to a drop target when the cursor hovers over it while the "copy" modifier key is pressed (<kbd>Alt</kbd> on Windows/Linux, <kbd>Option</kbd>/<kbd>⌥</kbd> on macOS; see [Drag-and-drop § Cloning and grouping](../dnd#cloning-and-grouping) for more information)
+- `dndGroup`: Assigned to a drop target when the cursor hovers over it while the "group" modifier key is pressed (<kbd>Ctrl</kbd>; see [Drag-and-drop § Cloning and grouping](../dnd#cloning-and-grouping) for more information)
