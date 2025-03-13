@@ -4,6 +4,7 @@
     "react": "^19",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
+    "react-dnd-touch-backend": ">=14.0.0",
     "react-dom": "^19",
     "react-querybuilder": "8.3.1"
   },

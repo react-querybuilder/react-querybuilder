@@ -1,19 +1,37 @@
 import type * as ReactDnD from 'react-dnd';
 import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
 import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import type * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 import type {
   Controls,
   DraggedItem,
   FullField,
   QueryBuilderContextProviderProps,
+  SetOptional,
 } from 'react-querybuilder';
 
+type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
+
+interface OptionalKnownDndBackends
+  extends Partial<Pick<typeof ReactDndHtml5Backend, 'HTML5Backend'>>,
+    Partial<Pick<typeof ReactDndTouchBackend, 'TouchBackend'>> {}
+
 /**
- * Combination of all exports from `react-dnd` and `react-dnd-html5-backend`.
+ * Combination of all exports from `react-dnd` and the backends from
+ * `react-dnd-html5-backend` and `react-dnd-touch-backend`.
  *
  * @group Hooks
  */
-export type UseReactDnD = typeof ReactDnD & typeof ReactDndHtml5Backend;
+export type UseReactDnD = typeof ReactDnD & {
+  ReactDndBackend: ReactDndBackendFactory;
+} & OptionalKnownDndBackends;
+
+/**
+ * Type of the `dnd` prop on `QueryBuilderDnD`/`QueryBuilderDndWithoutProvider`.
+ *
+ * @group Props
+ */
+export type DndProp = SetOptional<UseReactDnD, 'ReactDndBackend'> & OptionalKnownDndBackends;
 
 /**
  * Parameters passed to custom `canDrop` functions.
@@ -33,11 +51,11 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
   /**
    * Provide this prop if `enableDragAndDrop` is `true` for the child element and
    * you want the component to render immediately with drag-and-drop enabled.
-   * Otherwise, the component will asynchronously load `react-dnd` and
-   * `react-dnd-html5-backend` and drag-and-drop features will only be enabled
+   * Otherwise, the component will asynchronously load `react-dnd`, `react-dnd-html5-backend`,
+   * and `react-dnd-touch-backend`. Drag-and-drop features will only be enabled
    * once those packages have loaded.
    */
-  dnd?: UseReactDnD;
+  dnd?: DndProp;
   canDrop?: (params: CustomCanDropParams) => boolean;
   /**
    * Key code for the modifier key that puts a drag-and-drop action in "copy" mode.

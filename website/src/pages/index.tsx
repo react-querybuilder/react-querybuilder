@@ -10,6 +10,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 import type {
   ExportFormat,
   RuleGroupType,
@@ -272,7 +273,8 @@ const LandingPage = () => {
               />
             </div>
             <div className="custom-styling">
-              <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+              <QueryBuilderDnD
+                dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>
                 <QueryBuilder
                   query={query}
                   onQueryChange={setQuery}

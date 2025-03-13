@@ -3,6 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import * as reactDnD from 'react-dnd';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
+import * as reactDnDTouchBackend from 'react-dnd-touch-backend';
 import { simulateDragDrop, simulateDragHover, wrapWithTestBackend } from 'react-dnd-test-utils';
 import type {
   Field,
@@ -115,7 +116,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
     );
     const [QBforDnDIC, getBackendIC] = wrapWithTestBackend(
       (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
-        <QBctx dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QBctx dnd={{ ...reactDnD, ...reactDnDTouchBackend }}>
           <QueryBuilder {...props} />
         </QBctx>
       )

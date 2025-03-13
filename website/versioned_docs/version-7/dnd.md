@@ -8,24 +8,25 @@ The [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilde
 
 ## Usage
 
-To enable drag-and-drop on a query builder, install [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) and render the `QueryBuilderDnD` context provider somewhere higher in the component tree than `QueryBuilder`.
+To enable drag-and-drop on a query builder, install [`react-dnd`](https://www.npmjs.com/package/react-dnd) and either [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) or [`react-dnd-touch-backend`](https://www.npmjs.com/package/react-dnd-touch-backend) (or both), then render the `QueryBuilderDnD` context provider somewhere higher in the component tree than `QueryBuilder`.
 
 > _**Note:** The [`enableDragAndDrop`](./components/querybuilder#enabledraganddrop) prop does not need to be set directly on the [`QueryBuilder`](./components/querybuilder) component unless it is explicitly `false` to override the implicit `true` value set by `QueryBuilderDnD`._
 
 When the `enableDragAndDrop` prop is `true`, a [drag handle](./components/draghandle) is displayed on the left-hand side of each rule and each group header. Clicking and dragging the handle element allows users to visually reorder the rules and groups.
 
 ```bash npm2yarn
-npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend react-dnd-touch-backend
 ```
 
 ```tsx
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 import { QueryBuilder } from 'react-querybuilder';
 
 const App = () => (
-  <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+  <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>
     <QueryBuilder />
   </QueryBuilderDnD>
 );
@@ -41,7 +42,7 @@ By default, as successful drag-and-drop action will move a rule or group to a ne
 
 - **Clone**: Hold down the <kbd>Alt</kbd> key (<kbd>⌥ Option</kbd> on macOS) before and during the drag to clone the dragged rule/group instead of moving it. The original object will be left in place and the clone will be inserted at the drop location.
 - **Group**: Hold down the <kbd>Ctrl</kbd> key before and during the drag to create a new group at the drop location. The `rules` array of the new group will contain the rule or group originally at the drop location and the dragged rule/group, in that order. (This operation is similar to how new folders are created on iOS by dragging one app icon on top of another.)
-- **Clone into group**: Hold down the <kbd>Alt</kbd>/<kbd>⌥</kbd> _and_ <kbd>Ctrl</kbd> keys before and during the drag to create a new group at the drop location, but clone the dragged rule/group into the new group instead of moving it.
+- **Clone into group**: Hold down the <kbd>Alt</kbd>/<kbd>⌥ Option</kbd> _and_ <kbd>Ctrl</kbd> keys before and during the drag to create a new group at the drop location, but clone the dragged rule/group into the new group instead of moving it.
 
 The keys that determine alternate behaviors are configurable. See [`copyModeModifierKey`](#copymodemodifierkey) and [`groupModeModifierKey`](#groupmodemodifierkey).
 
@@ -55,9 +56,11 @@ The following props are accepted on the `QueryBuilderDnD` and `QueryBuilderDndWi
 
 ### `dnd`
 
-`typeof import('react-dnd') & typeof import('react-dnd-html5-backend')`
+`typeof import('react-dnd') & { ReactDndBackend?: BackendFactory; HTML5Backend?: BackendFactory; TouchBackend?: BackendFactory; }`
 
-Provide this prop if you want the query builder to render immediately with drag-and-drop enabled. Otherwise, the component will asynchronously load `react-dnd` and `react-dnd-html5-backend`. Drag-and-drop features will only be enabled once those packages have loaded.
+Provide this prop if you want the query builder to render immediately with drag-and-drop enabled. Otherwise, the component will asynchronously load `react-dnd`, `react-dnd-html5-backend`, and `react-dnd-touch-backend`. Drag-and-drop features will only be enabled once those packages have loaded.
+
+When both backends are provided, the touch backend will be preferred when a touch device is detected.
 
 ### `canDrop`
 

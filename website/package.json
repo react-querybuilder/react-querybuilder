@@ -58,6 +58,7 @@
     "react-datepicker": "^8.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
+    "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^19.0.0",
     "react-modal": "^3.16.3",
     "react-querybuilder": "workspace:*",

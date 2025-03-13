@@ -41,7 +41,7 @@ export const configs: Record<string, ExampleConfig> = {
   },
   dnd: {
     name: 'Drag-and-drop',
-    dependencyKeys: ['react-dnd', 'react-dnd-html5-backend'],
+    dependencyKeys: ['react-dnd', 'react-dnd-html5-backend', 'react-dnd-touch-backend'],
     cssPre: [],
     cssPost: [
       `kbd{color:#333;border:1px solid #ccc;border-radius:4px;display:inline-block;font-size:12px;font-weight:700;line-height:1;padding:3px 4px;margin:1px 2px;white-space:nowrap;box-shadow:1px 1px gray;}`,

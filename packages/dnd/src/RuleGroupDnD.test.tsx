@@ -1,14 +1,14 @@
 import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
+import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
 import {
   simulateDrag,
   simulateDragDrop,
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import * as reactDnD from 'react-dnd/dist/index.js';
+import * as ReactDnD from 'react-dnd';
 import type {
   FullCombinator,
   FullField,
@@ -29,7 +29,7 @@ const [QBforDnD, getDndBackendOriginal] = wrapWithTestBackend(
     ...props
   }: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator> &
     Pick<QueryBuilderDndProps, 'canDrop'>) => (
-    <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} canDrop={canDrop}>
+    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend }} canDrop={canDrop}>
       <QueryBuilder enableMountQueryChange={false} {...props} />
     </QueryBuilderDnD>
   )
@@ -40,7 +40,7 @@ const [QBforDnDIC, getDndBackendOriginalIC] = wrapWithTestBackend(
     ...props
   }: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator> &
     Pick<QueryBuilderDndProps, 'canDrop'>) => (
-    <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} canDrop={canDrop}>
+    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend }} canDrop={canDrop}>
       <QueryBuilder enableMountQueryChange={false} {...props} />
     </QueryBuilderDnD>
   )

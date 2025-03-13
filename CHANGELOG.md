@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
+- [#860] `@react-querybuilder/dnd` now supports `react-dnd-touch-backend` as a drop-in replacement for `react-dnd-html5-backend`. If both are provided, the touch backend will be preferred when a touch device is detected.
 - [#860] "Group" feature of `@react-querybuilder/dnd`. Pressing the `Ctrl` key while dragging a rule/group will form a new group at the target path with the target rule/group and the dragged rule/group in its `rules` array. Pressing the `Alt`/`⌥ Option` key at the same time will leave the rule/group in its original location and clone it for the new group.
 - [#860] Modifier keys used drag-and-drop to indicate cloning and grouping (by default `Alt`/`⌥ Option` and `Ctrl`, respectively) are now configurable on the `QueryBuilderDnD` component with the `copyModeModifierKey` and `groupModeModifierKey` props.
 - [#860] New `group` query tool which creates a new group at a target path with its `rules` array containing the objects from a source path and the target path.
