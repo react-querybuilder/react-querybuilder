@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+
+- [#860] The `idGenerator` prop is respected for all operations that create new rules or groups.
+
 ## Added
 
 - [#860] `@react-querybuilder/dnd` now supports `react-dnd-touch-backend` as a drop-in replacement for `react-dnd-html5-backend`. If both are provided, the touch backend will be preferred when a touch device is detected.

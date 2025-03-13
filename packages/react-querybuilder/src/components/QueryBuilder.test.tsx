@@ -2357,7 +2357,7 @@ describe('idGenerator', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const rule = (props: RuleProps) => (
       <div>
-        <button type="button" onClick={() => props.actions.moveRule(props.path, [0], true)}>
+        <button type="button" onClick={() => props.actions.moveRule(props.path, [2], true)}>
           clone
         </button>
       </div>
@@ -2390,6 +2390,7 @@ describe('idGenerator', () => {
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
       rules: [
         { id: expect.stringMatching(numericRegex) },
+        { id: expect.stringMatching(numericRegex), rules: [] },
         { id: expect.stringMatching(numericRegex) },
       ],
     });

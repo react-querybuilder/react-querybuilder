@@ -289,11 +289,21 @@ export function useQueryBuilderSchema<
       const newQuery = add(queryLocal, newRule, parentPath, {
         combinators,
         combinatorPreceding: newRule.combinatorPreceding ?? undefined,
+        idGenerator,
       });
       log({ qbId, type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
       dispatchQuery(newQuery);
     },
-    [qbId, queryBuilderStore, queryDisabled, onAddRule, combinators, dispatchQuery, log]
+    [
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+      onAddRule,
+      combinators,
+      idGenerator,
+      log,
+      dispatchQuery,
+    ]
   );
 
   const onGroupAdd = useCallback(
@@ -322,11 +332,21 @@ export function useQueryBuilderSchema<
       const newQuery = add(queryLocal, newGroup, parentPath, {
         combinators,
         combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
+        idGenerator,
       });
       log({ qbId, type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
       dispatchQuery(newQuery);
     },
-    [qbId, queryBuilderStore, queryDisabled, onAddGroup, combinators, log, dispatchQuery]
+    [
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+      onAddGroup,
+      combinators,
+      idGenerator,
+      log,
+      dispatchQuery,
+    ]
   );
 
   const onPropChange = useCallback(
@@ -400,7 +420,7 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
         return;
       }
-      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
+      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators, idGenerator });
       const ruleOrGroup = findPath(oldPath, queryLocal)!;
       const isGroup = isRuleGroup(ruleOrGroup);
       const callbackResult = (
@@ -428,6 +448,7 @@ export function useQueryBuilderSchema<
       queryBuilderStore,
       queryDisabled,
       combinators,
+      idGenerator,
       onMoveGroup,
       onMoveRule,
       log,
@@ -445,7 +466,11 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, sourcePath, targetPath, query: queryLocal });
         return;
       }
-      const nextQuery = group(queryLocal, sourcePath, targetPath, { clone, combinators });
+      const nextQuery = group(queryLocal, sourcePath, targetPath, {
+        clone,
+        combinators,
+        idGenerator,
+      });
       const ruleOrGroup = findPath(sourcePath, queryLocal)!;
       const isGroup = isRuleGroup(ruleOrGroup);
       const callbackResult = (
@@ -489,6 +514,7 @@ export function useQueryBuilderSchema<
       queryBuilderStore,
       queryDisabled,
       combinators,
+      idGenerator,
       onGroupGroup,
       onGroupRule,
       log,
