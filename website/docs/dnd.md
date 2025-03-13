@@ -39,9 +39,9 @@ Special styles are applied by the default stylesheet during drag-and-drop operat
 
 By default, as successful drag-and-drop action will move a rule or group to a new location within the query builder, but there are also three alternative behaviors:
 
-- **Clone**: Hold down the <kbd>Alt</kbd> key (<kbd>Option</kbd>/<kbd>⌥</kbd> on macOS) before and during the drag to clone the dragged rule/group instead of moving it. The original object will be left in place and the clone will be inserted at the drop location.
+- **Clone**: Hold down the <kbd>Alt</kbd> key (<kbd>⌥ Option</kbd> on macOS) before and during the drag to clone the dragged rule/group instead of moving it. The original object will be left in place and the clone will be inserted at the drop location.
 - **Group**: Hold down the <kbd>Ctrl</kbd> key before and during the drag to create a new group at the drop location. The `rules` array of the new group will contain the rule or group originally at the drop location and the dragged rule/group, in that order. (This operation is similar to how new folders are created on iOS by dragging one app icon on top of another.)
-- **Clone into group**: Hold down the <kbd>Alt</kbd>/<kbd>⌥</kbd> _and_ <kbd>Ctrl</kbd> keys before and during the drag to create a new group at the drop location, but clone the dragged rule/group into the new group instead of moving it.
+- **Clone into group**: Hold down the <kbd>Alt</kbd>/<kbd>⌥ Option</kbd> _and_ <kbd>Ctrl</kbd> keys before and during the drag to create a new group at the drop location, but clone the dragged rule/group into the new group instead of moving it.
 
 The keys that determine alternate behaviors are configurable. See [`copyModeModifierKey`](#copymodemodifierkey) and [`groupModeModifierKey`](#groupmodemodifierkey).
 
@@ -69,7 +69,7 @@ This function determines whether a "drop" at the current hover location is valid
 
 `string`
 
-Key code for the modifier key that puts a drag-and-drop action in ["copy" mode](#cloning-and-grouping). Default is `"alt"` (<kbd>Alt</kbd> on Windows and Linux, <kbd>Option</kbd>/<kbd>⌥</kbd> on macOS).
+Key code for the modifier key that puts a drag-and-drop action in ["copy" mode](#cloning-and-grouping). Default is `"alt"` (<kbd>Alt</kbd> on Windows and Linux, <kbd>⌥ Option</kbd> on macOS).
 
 ### `groupModeModifierKey`
 
