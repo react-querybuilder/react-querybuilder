@@ -88,7 +88,7 @@ jobs:
         run: |
           for pkgjson in $(find packages/*/package.json; echo "website/package.json"; echo "package.json"); do
             # Set all React dependencies to v18
-            sed -i -E 's/("((@types\/)?react(-dom)?|react-test-renderer)": ")\^?19.*"/\1^18"/g' $pkgjson
+            sed -i -E 's/("(@types\/)?react(-dom|-test-renderer)?": ")\^?19.*"/\1^18"/g' $pkgjson
           done
           rm bun.lock
           bun install
