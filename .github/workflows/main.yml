@@ -92,8 +92,7 @@ jobs:
           done
           rm bun.lock
           bun install
-          # TODO: Remove echo and just fail the job if tests fail
-          bunx jest --coverage=false || echo 'TESTS FAIL WITH REACT 18'
+          bunx jest --coverage=false
 
   Typecheck_React_18:
     name: Typecheck React 18
