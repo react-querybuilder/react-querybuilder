@@ -25,7 +25,7 @@ import type {
 /**
  * @group Props
  */
-export type RQBMaterialComponents = {
+export interface RQBMaterialComponents {
   Button: typeof Button;
   Checkbox: typeof Checkbox;
   CloseIcon: typeof CloseIcon;
@@ -45,7 +45,7 @@ export type RQBMaterialComponents = {
   Switch: typeof Switch;
   TextareaAutosize: typeof TextareaAutosize;
   TextField: typeof TextField;
-};
+}
 
 /**
  * @group Props

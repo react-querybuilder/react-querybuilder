@@ -8,7 +8,6 @@ import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,
-  Except,
   Path,
   RuleGroupProps,
   RuleGroupType,
@@ -102,8 +101,8 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
  * @group Components
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupHeaderComponents(rg: RuleGroupProps & UseRuleGroup) {
+  (rg: UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupHeaderComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -299,8 +298,8 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
  * @group Components
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupBodyComponents(rg: RuleGroupProps & UseRuleGroup) {
+  (rg: UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupBodyComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -406,7 +405,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
 });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
+export type UseRuleGroup = RuleGroupProps & {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
   accessibleDescription: string;
