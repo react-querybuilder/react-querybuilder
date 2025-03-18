@@ -22,7 +22,7 @@ export default [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginReact.configs.flat.recommended,
-  eslintPluginUnicorn.configs['flat/recommended'],
+  eslintPluginUnicorn.configs['recommended'],
   {
     plugins: {
       'react-compiler': eslintPluginReactCompiler,

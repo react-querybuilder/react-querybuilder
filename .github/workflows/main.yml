@@ -73,6 +73,27 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun --bun run lint
 
+  Test_React_18:
+    runs-on: ubuntu-latest
+    needs: [Test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: oven-sh/setup-bun@v1
+        # with:
+        #   bun-version: 1.1.29
+      - name: Install React 18 and Run Tests
+        run: |
+          for pkgjson in $(find packages/*/package.json; echo "website/package.json"; echo "package.json"); do
+            # Set all React dependencies to v18
+            sed -i -E 's/("(@types\/)?react(-dom|-test-renderer)?": ")\^?19.*"/\1^18"/g' $pkgjson
+          done
+          rm bun.lock
+          bun install
+          bunx jest --coverage=false
+
   Typecheck_React_18:
     name: Typecheck React 18
     needs: [Build]

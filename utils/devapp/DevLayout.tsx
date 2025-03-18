@@ -8,7 +8,7 @@ import { regenerateIDs } from '@rqb-utils';
 import * as React from 'react';
 import { Fragment } from 'react';
 import type { RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import 'react-querybuilder/dist/query-builder.css';
+import '../../packages/react-querybuilder/dist/query-builder.css';
 import './styles.css';
 import { optionOrder } from './constants';
 import type { useDevApp } from './useDevApp';

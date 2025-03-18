@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+## Fixed
+
+- [#860] The `idGenerator` prop is respected for all operations that create new rules or groups.
+
+## Added
+
+- [#860] `@react-querybuilder/dnd` now supports `react-dnd-touch-backend` as a drop-in replacement for `react-dnd-html5-backend`. If both are provided, the touch backend will be preferred when a touch device is detected.
+- [#860] "Group" feature of `@react-querybuilder/dnd`. Pressing the `Ctrl` key while dragging a rule/group will form a new group at the target path with the target rule/group and the dragged rule/group in its `rules` array. Pressing the `Alt`/`⌥ Option` key at the same time will leave the rule/group in its original location and clone it for the new group.
+- [#860] Modifier keys used drag-and-drop to indicate cloning and grouping (by default `Alt`/`⌥ Option` and `Ctrl`, respectively) are now configurable on the `QueryBuilderDnD` component with the `copyModeModifierKey` and `groupModeModifierKey` props.
+- [#860] New `group` query tool which creates a new group at a target path with its `rules` array containing the objects from a source path and the target path.
 
 ## [v8.3.1] - 2025-02-27
 
@@ -96,7 +105,7 @@ N/A
 
 - [#755] New `controlElements` properties `ruleGroupHeaderElements` and `ruleGroupBodyElements`, enabling customization/replacement/augmentation of the subcomponents within the rule group header and body wrappers without needing to reimplement the entire `RuleGroup` component.
 - [#785] New prop `suppressStandardClassnames`. When `true`, no classes will be added automatically to any elements (custom classes defined in `controlClassnames` will still be applied). This includes conditional and event-based classes for validation, drag-and-drop, etc.
-- [#785] A "dndCopy" class will be added when drag-and-drop is enabled and the modifier key (`Alt` or `Option ⌥`) is pressed while the drag phase begins. When using the default styles, the drag-and-drop indicator line will be green (`#669933`) instead of `rebeccapurple` (`#663399`).
+- [#785] A "dndCopy" class will be added when drag-and-drop is enabled and the modifier key (`Alt`/`⌥ Option`) is pressed while the drag phase begins. When using the default styles, the drag-and-drop indicator line will be green (`#669933`) instead of `rebeccapurple` (`#663399`).
 - [#755] New `useQueryBuilderNative` hook. Works the same as `useQueryBuilder`, but tailored for React Native implementations.
 - [#769] The `parseNumbers` prop now accepts an optional "-limited" suffix on existing `string` config values "enhanced", "strict", and "native". When the "-limited" suffix is used (e.g., `parseNumbers="strict-limited"`), values will only be parsed for numericity when the `inputType` is `"number"`.
 - [#769] `formatQuery` now accepts an optional `concatOperator` parameter to support non-standard concatenation methods in the various SQL dialects. The default is the ANSI standard `"||"`, which is supported by PostgreSQL, Oracle, SQLite, and various others, while SQL Server uses `"+"`. A value of `"CONCAT"` will enable MySQL compatibility by using the `CONCAT` function (do not use this for Oracle as its `CONCAT` function is limited).
@@ -189,7 +198,7 @@ N/A
 
 ### Fixed
 
-- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option ⌥` on Mac) when dropping the rule/group will copy it instead of move it.
+- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `⌥ Option` on Mac) when dropping the rule/group will copy it instead of move it.
 - [#713] `debugMode` now logs the query builder's `qbId`.
 - [#714] `parseJsonLogic` can now override group operations ("and", "or", "!", and "!!") with the `jsonLogicOperations` option.
 
@@ -356,7 +365,7 @@ N/A
   | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
   | `valueSelector`            | `combinatorSelector`, `fieldSelector`, `operatorSelector`, `valueSourceSelector`, `valueEditor` (when rendering a value selector)                      |
   | `actionElement`            | `addGroupAction`, `addRuleAction`, `cloneGroupAction`, `cloneRuleAction`, `lockGroupAction`, `lockRuleAction`, `removeGroupAction`, `removeRuleAction` |
-- [#577] A new `showShiftActions` prop provides first-class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) while clicking a shift action will clone the rule or group instead of just moving it. A `ShiftActions` component has been added, along with a corresponding component for each compatibility package. New `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button within the new component.
+- [#577] A new `showShiftActions` prop provides first-class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (`Alt` on Windows/Linux, `⌥ Option` on Mac) while clicking a shift action will clone the rule or group instead of just moving it. A `ShiftActions` component has been added, along with a corresponding component for each compatibility package. New `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button within the new component.
 - [#512] Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop.
 - [#537]/[#589] Three new methods make it easier to manage arbitrary query updates from custom components. (Previously we recommended including the query object as a property of the `context` prop, but that workaround is no longer necessary.) The first two methods are available from the `schema` prop passed to every component, and should only be used in event handlers. The third is a React Hook and should follow the appropriate rules.
   - `getQuery()`: returns the current root query object.
@@ -408,7 +417,7 @@ N/A
 
 - [#574] `transformQuery` enhancements:
   - `rules` properties are no longer retained unconditionally. The `rules` property can be copied or renamed like any other property using the `propertyMap` option.
-  - `propertyMap` keys can now have `false` values. Properties matching a `propertyMap` key with a value of `false` will be removed without further processing (including the `rules` property, which would avoid recursion through the hierarchy althogether).
+  - `propertyMap` keys can now have `false` values. Properties matching a `propertyMap` key with a value of `false` will be removed without further processing (including the `rules` property, which would avoid recursion through the hierarchy altogether).
   - New boolean option `omitPath`. When `true`, a `path` property will _not_ be added to each rule and group in the query hierarchy.
 
 ## Fixed
@@ -741,7 +750,7 @@ N/A
 
 - Each [compatibility package](https://react-querybuilder.js.org/docs/compat) now exports its own context provider that injects the appropriate `controlElements` and `controlClassnames` properties into any descendant `QueryBuilder` components (composition FTW!). This is now the recommended usage for all compatibility packages.
 - The [`onAddRule`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddrule) and [`onAddGroup`](https://react-querybuilder.js.org/docs/api/querybuilder#onaddgroup) callback props now receive an optional "context" parameter as the fourth argument. This parameter can be provided by a custom `addRuleAction`/`addGroupAction` component to its `handleOnClick` prop. This allows users to alter or replace the default rule based on arbitrary data. For example, the `addRuleAction` component could render two "add rule" buttons which add different rules depending on which one was clicked, as long as they provided a different `context` parameter.
-- When drag-and-drop is enabled, rules will be copied instead of moved if the user has a modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) pressed when the drop occurs.
+- When drag-and-drop is enabled, rules will be copied instead of moved if the user has a modifier key (`Alt` on Windows/Linux, `⌥ Option` on Mac) pressed when the drop occurs.
 - `formatQuery` has a new `ruleProcessor` configuration option applicable to non-SQL query language formats. When provided, the entire rule output will be determined by the function. For the relevant formats, `valueProcessor` already behaved this way; the default "value" processors have been renamed to `defaultRuleProcessor[Format]` to clarify the behavior. The default processors' original "value" names are deprecated but still available (with no immediate plans to remove them).
 - `parseSQL` will now ignore a leading `WHERE` keyword, e.g. `parseSQL("WHERE firstName = 'Steve'")` will not fail to produce a query rule like in v4.
 
@@ -1860,6 +1869,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#846]: https://github.com/react-querybuilder/react-querybuilder/pull/846
 [#855]: https://github.com/react-querybuilder/react-querybuilder/pull/855
 [#858]: https://github.com/react-querybuilder/react-querybuilder/pull/858
+[#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
 
 <!-- #endregion -->
 

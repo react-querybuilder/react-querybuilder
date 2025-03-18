@@ -22,6 +22,16 @@ export const App = () => {
 
   return (
     <div>
+      <ul>
+        <li>
+          Hold <kbd>Alt</kbd>/<kbd>⌥ Option</kbd> before and during dragging to
+          clone the source rule.
+        </li>
+        <li>
+          Hold <kbd>Ctrl</kbd> before and during dragging to create a new group
+          with the target and source rules.
+        </li>
+      </ul>
       <QueryBuilderDnD>
         <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
       </QueryBuilderDnD>

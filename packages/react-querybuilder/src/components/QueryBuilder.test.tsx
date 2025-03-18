@@ -44,6 +44,7 @@ import {
   findPath,
   generateID,
   getOption,
+  group,
   move,
   numericRegex,
   toFullOption,
@@ -119,9 +120,7 @@ describe('when rendered with defaultQuery only', () => {
       />
     );
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ id: expect.any(String) })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ id: expect.any(String) });
     expect(screen.getAllByTestId(TestID.rule)).toHaveLength(1);
 
     await user.click(screen.getByTestId(TestID.addRule));
@@ -603,79 +602,65 @@ describe('actions', () => {
     });
     const input = screen.getAllByRole('textbox')[0];
     await user.type(input, 'f', { initialSelectionStart: 0, initialSelectionEnd: 10 });
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ field: 'f' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ field: 'f' }] });
   });
 
-  it('creates a new rule and remove that rule', async () => {
+  it('creates a new rule and removes that rule', async () => {
     const { onQueryChange } = setup();
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
 
     await user.click(screen.getByTestId(TestID.addRule));
     expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.anything()] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{}] });
 
     await user.click(screen.getByTestId(TestID.removeRule));
     expect(screen.queryByTestId(TestID.rule)).toBeNull();
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
   });
 
-  it('creates a new group and remove that group', async () => {
+  it('creates a new group and removes that group', async () => {
     const { onQueryChange } = setup();
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
 
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(2);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.anything()] })
-    );
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ combinator: 'and' }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [expect.anything()] });
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ combinator: 'and' });
 
     await user.click(screen.getByTestId(TestID.removeGroup));
     expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
   });
 
   it('creates a new rule and change the fields', async () => {
     const { onQueryChange } = setup();
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.anything()] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [expect.anything()] });
 
     await user.selectOptions(screen.getByTestId(TestID.fields), 'field2');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ field: 'field2' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ field: 'field2' }] });
   });
 
   it('creates a new rule and change the operator', async () => {
     const { onQueryChange } = setup();
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.anything()] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [expect.anything()] });
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '!=');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '!=' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '!=' }] });
   });
 
   it('changes the combinator of the root group', async () => {
     const { onQueryChange } = setup();
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
 
     await user.selectOptions(screen.getByTestId(TestID.combinators), 'or');
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ rules: [] }));
-    expect(onQueryChange).toHaveBeenLastCalledWith(expect.objectContaining({ combinator: 'or' }));
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [] });
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ combinator: 'or' });
   });
 
   it('sets default value for a rule', async () => {
@@ -702,23 +687,17 @@ describe('actions', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: '' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: '' }] });
 
     await user.selectOptions(screen.getByTestId(TestID.fields), 'field2');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ field: 'field2', value: false })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ field: 'field2', value: false }],
+    });
 
     await user.selectOptions(screen.getByTestId(TestID.fields), 'field3');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ field: 'field3', value: 'value1' })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ field: 'field3', value: 'value1' }],
+    });
   });
 
   it('sets default value for a "radio" rule', async () => {
@@ -736,11 +715,9 @@ describe('actions', () => {
     const { onQueryChange } = setup({ fields: fs });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ value: 'value1' })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ value: 'value1' }],
+    });
   });
 });
 
@@ -763,19 +740,15 @@ describe('resetOnFieldChange prop', () => {
 
     await user.click(screen.getByTestId(TestID.addRule));
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '>' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
 
     await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
 
     await user.selectOptions(screen.getByTestId(TestID.fields), 'field2');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '=', value: '' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: '=', value: '' }],
+    });
   });
 
   it('does not reset the operator and value when false', async () => {
@@ -789,21 +762,15 @@ describe('resetOnFieldChange prop', () => {
 
     await user.click(screen.getByTestId(TestID.addRule));
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '>' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
 
     await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
 
     await user.selectOptions(screen.getByTestId(TestID.fields), 'field2');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ operator: '>', value: 'Test' })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: '>', value: 'Test' }],
+    });
   });
 });
 
@@ -833,28 +800,22 @@ describe('resetOnOperatorChange prop', () => {
     );
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '>' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
 
     await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '=');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '=', value: '' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: '=', value: '' }],
+    });
 
     // Does not choose a value from the values list when the operator changes
     await user.selectOptions(screen.getByTestId(TestID.fields), 'field3');
     await user.selectOptions(screen.getByTestId(TestID.operators), 'beginsWith');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ operator: 'beginsWith', value: '' })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: 'beginsWith', value: '' }],
+    });
   });
 
   it('does not reset the value when false', async () => {
@@ -869,21 +830,15 @@ describe('resetOnOperatorChange prop', () => {
     );
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: '>' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
 
     await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '=');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ operator: '=', value: 'Test' })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: '=', value: 'Test' }],
+    });
   });
 });
 
@@ -898,9 +853,7 @@ describe('getDefaultField prop', () => {
     render(<QueryBuilder getDefaultField="field2" fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ field: 'field2' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ field: 'field2' }] });
   });
 
   it('sets the default field as a function', async () => {
@@ -914,9 +867,7 @@ describe('getDefaultField prop', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ field: 'field2' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ field: 'field2' }] });
   });
 });
 
@@ -930,9 +881,9 @@ describe('getDefaultOperator prop', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: 'beginsWith' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: 'beginsWith' }],
+    });
   });
 
   it('sets the default operator as a function', async () => {
@@ -946,9 +897,9 @@ describe('getDefaultOperator prop', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: 'beginsWith' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: 'beginsWith' }],
+    });
   });
 });
 
@@ -959,9 +910,9 @@ describe('defaultOperator property in field', () => {
     render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ operator: 'beginsWith' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ operator: 'beginsWith' }],
+    });
   });
 });
 
@@ -981,9 +932,7 @@ describe('getDefaultValue prop', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test Value' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test Value' }] });
   });
 });
 
@@ -1005,9 +954,7 @@ describe('parseNumbers prop', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} defaultQuery={numQuery} />);
     await user.type(screen.getByTestId(TestID.valueEditor), '1214');
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: '1214' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: '1214' }] });
   });
 
   const ValueEditorAlwaysText = (props: ValueEditorProps) => {
@@ -1159,15 +1106,13 @@ describe('parseNumbers prop', () => {
           } else {
             await user.type(valueEditor, typedValue);
           }
-          expect(onQueryChange).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-              rules: [
-                expect.objectContaining({
-                  value: vals[typedValues.findIndex(tv => tv.typedValue === typedValue)],
-                }),
-              ],
-            })
-          );
+          expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+            rules: [
+              {
+                value: vals[typedValues.findIndex(tv => tv.typedValue === typedValue)],
+              },
+            ],
+          });
         });
       });
     }
@@ -1200,9 +1145,7 @@ describe('parseNumbers prop', () => {
     expect(onQueryChange).toHaveBeenCalledWith(
       expect.objectContaining({ rules: [expect.objectContaining({ value: [12, '14abc'] })] })
     );
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: [12, 14] })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: [12, 14] }] });
   });
 });
 
@@ -1219,13 +1162,11 @@ describe('onAddRule prop', () => {
     await user.click(screen.getByTestId(TestID.addRule));
     expect(onAddRule).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rule: expect.anything(),
-        parentPath: expect.any(Array),
-        query: expect.anything(),
-      })
-    );
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({
+      rule: expect.anything(),
+      parentPath: expect.any(Array),
+      query: expect.anything(),
+    });
   });
 
   it('allows the rule addition', async () => {
@@ -1243,9 +1184,7 @@ describe('onAddRule prop', () => {
     render(<QueryBuilder onAddRule={() => rule} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'modified' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'modified' }] });
   });
 
   it('specifies the preceding combinator', async () => {
@@ -1260,9 +1199,7 @@ describe('onAddRule prop', () => {
     render(<QueryBuilder onAddRule={() => rule} onQueryChange={onQueryChange} defaultQuery={dq} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: expect.arrayContaining([expect.anything(), 'or']) })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{}, 'or', {}] });
     expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
   });
 
@@ -1288,9 +1225,7 @@ describe('onAddRule prop', () => {
     expect(onQueryChange).not.toHaveBeenCalled();
 
     await user.click(screen.getByText('Succeed'));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'modified' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'modified' }] });
   });
 });
 
@@ -1307,13 +1242,11 @@ describe('onAddGroup prop', () => {
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(onAddGroup).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        ruleGroup: expect.anything(),
-        parentPath: expect.any(Array),
-        query: expect.anything(),
-      })
-    );
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({
+      ruleGroup: expect.anything(),
+      parentPath: expect.any(Array),
+      query: expect.anything(),
+    });
   });
 
   it('allows the group addition', async () => {
@@ -1334,12 +1267,10 @@ describe('onAddGroup prop', () => {
     render(<QueryBuilder onAddGroup={() => group} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        combinator: 'and',
-        rules: [expect.objectContaining({ combinator: 'fake', rules: [] })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      combinator: 'and',
+      rules: [{ combinator: 'fake', rules: [] }],
+    });
   });
 
   it('specifies the preceding combinator', async () => {
@@ -1354,9 +1285,7 @@ describe('onAddGroup prop', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: expect.arrayContaining([expect.anything(), 'or']) })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{}, 'or', {}] });
     expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
   });
 
@@ -1382,12 +1311,10 @@ describe('onAddGroup prop', () => {
     expect(onQueryChange).not.toHaveBeenCalled();
 
     await user.click(screen.getByText('Succeed'));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        combinator: 'and',
-        rules: [expect.objectContaining({ combinator: 'fake', rules: [] })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      combinator: 'and',
+      rules: [{ combinator: 'fake', rules: [] }],
+    });
   });
 });
 
@@ -1406,6 +1333,7 @@ describe('onMoveRule prop', () => {
       },
     ],
   };
+
   it('cancels the rule move', async () => {
     const onLog = jest.fn();
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
@@ -1425,15 +1353,7 @@ describe('onMoveRule prop', () => {
     await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
     expect(onMoveRule).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        ruleOrGroup: expect.anything(),
-        oldPath: expect.any(Array),
-        newPath: 'down',
-        query: expect.anything(),
-        nextQuery: expect.anything(),
-      })
-    );
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.onMoveRuleFalse });
   });
 
   it('allows the rule move', async () => {
@@ -1485,6 +1405,7 @@ describe('onMoveGroup prop', () => {
       { field: 'f2', operator: '=', value: 'v2' },
     ],
   };
+
   it('cancels the group move', async () => {
     const onLog = jest.fn();
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
@@ -1504,15 +1425,13 @@ describe('onMoveGroup prop', () => {
     await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
     expect(onMoveGroup).toHaveBeenCalled();
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        ruleOrGroup: expect.anything(),
-        oldPath: expect.any(Array),
-        newPath: 'down',
-        query: expect.anything(),
-        nextQuery: expect.anything(),
-      })
-    );
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({
+      ruleOrGroup: expect.anything(),
+      oldPath: expect.any(Array),
+      newPath: 'down',
+      query: expect.anything(),
+      nextQuery: expect.anything(),
+    });
   });
 
   it('allows the group move', async () => {
@@ -1545,6 +1464,175 @@ describe('onMoveGroup prop', () => {
     );
 
     await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
+  });
+});
+
+describe('onGroupRule prop', () => {
+  const defaultQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f3', operator: '=', value: 'v3' },
+          { field: 'f4', operator: '=', value: 'v4' },
+        ],
+      },
+    ],
+  };
+
+  const RuleGroupOG = defaultControlElements.ruleGroup;
+  const controlElements: ControlElementsProp<FullField, string> = {
+    ruleGroup: props => (
+      <div>
+        <button onClick={() => props.actions.groupRule([1], [0])}>groupRule</button>
+        <RuleGroupOG {...props} />
+      </div>
+    ),
+  };
+
+  it('cancels the rule grouping', async () => {
+    const onLog = jest.fn();
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onGroupRule = jest.fn(() => false);
+    render(
+      <QueryBuilder
+        onGroupRule={onGroupRule}
+        onQueryChange={onQueryChange}
+        defaultQuery={defaultQuery}
+        debugMode
+        onLog={onLog}
+        controlElements={controlElements}
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onGroupRule).toHaveBeenCalled();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.onGroupRuleFalse });
+  });
+
+  it('allows the rule grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupRule={() => true}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      group(onQueryChange.mock.calls[0][0], [1], [0], { idGenerator: () => expect.any(String) })
+    );
+  });
+
+  it('modifies the rule grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupRule={() => newQuery}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
+  });
+});
+
+describe('onGroupGroup prop', () => {
+  const defaultQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f3', operator: '=', value: 'v3' },
+          { field: 'f4', operator: '=', value: 'v4' },
+        ],
+      },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      },
+    ],
+  };
+
+  const RuleGroupOG = defaultControlElements.ruleGroup;
+  const controlElements: ControlElementsProp<FullField, string> = {
+    ruleGroup: props => (
+      <div>
+        <button onClick={() => props.actions.groupRule([1], [0])}>groupGroup</button>
+        <RuleGroupOG {...props} />
+      </div>
+    ),
+  };
+
+  it('cancels the group grouping', async () => {
+    const onLog = jest.fn();
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const onGroupGroup = jest.fn(() => false);
+    render(
+      <QueryBuilder
+        onGroupGroup={onGroupGroup}
+        onQueryChange={onQueryChange}
+        defaultQuery={defaultQuery}
+        debugMode
+        onLog={onLog}
+        controlElements={controlElements}
+      />
+    );
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getAllByText('groupGroup')[0]);
+    expect(onGroupGroup).toHaveBeenCalled();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.onGroupGroupFalse });
+  });
+
+  it('allows the group grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupGroup={() => true}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupGroup')[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(
+      group(onQueryChange.mock.calls[0][0], [1], [0], { idGenerator: () => expect.any(String) })
+    );
+  });
+
+  it('modifies the group grouping', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={defaultQuery}
+        onGroupGroup={() => newQuery}
+        onQueryChange={onQueryChange}
+        controlElements={controlElements}
+      />
+    );
+
+    await user.click(screen.getAllByText('groupGroup')[0]);
     expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
   });
 });
@@ -1585,9 +1673,9 @@ describe('defaultValue property in field', () => {
     render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'Test Value 1' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ value: 'Test Value 1' }],
+    });
   });
 });
 
@@ -1879,15 +1967,13 @@ describe('addRuleToNewGroups', () => {
 
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(onQueryChange).toHaveBeenCalledTimes(2);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [
-          expect.objectContaining({
-            rules: [expect.objectContaining({ field: defaultPlaceholderFieldName })],
-          }),
-        ],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [
+        {
+          rules: [{ field: defaultPlaceholderFieldName }],
+        },
+      ],
+    });
   });
 
   it('adds a rule when mounted if no initial query is provided', () => {
@@ -1947,15 +2033,13 @@ describe('showShiftActions', () => {
 
       await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          combinator: 'and',
-          rules: [
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        combinator: 'and',
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
     });
 
     it('clones rules', async () => {
@@ -1980,16 +2064,14 @@ describe('showShiftActions', () => {
       await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
       await user.keyboard('{/Alt}');
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          combinator: 'and',
-          rules: [
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
     });
 
     it('shifts rule groups', async () => {
@@ -2013,20 +2095,16 @@ describe('showShiftActions', () => {
 
       await user.click(screen.getAllByText(t.shiftActionUp.label)[1]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          combinator: 'and',
-          rules: [
-            expect.objectContaining({
-              combinator: 'or',
-              rules: [
-                expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-              ],
-            }),
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+          },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      });
     });
   });
 
@@ -2051,15 +2129,13 @@ describe('showShiftActions', () => {
 
       await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          rules: [
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-            'and',
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
     });
 
     it('clones rules with independent combinators', async () => {
@@ -2084,17 +2160,15 @@ describe('showShiftActions', () => {
       await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
       await user.keyboard('{/Alt}');
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          rules: [
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            'and',
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-            'and',
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
     });
 
     it('shifts first rule with independent combinators', async () => {
@@ -2115,15 +2189,13 @@ describe('showShiftActions', () => {
 
       await user.click(screen.getAllByText(t.shiftActionUp.label)[1]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          rules: [
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-            'and',
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        rules: [
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
     });
   });
 });
@@ -2148,16 +2220,14 @@ describe('showCloneButtons', () => {
 
       await user.click(screen.getAllByText(t.cloneRule.label)[0]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          combinator: 'and',
-          rules: [
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      });
     });
 
     it('clones rule groups', async () => {
@@ -2181,26 +2251,20 @@ describe('showCloneButtons', () => {
 
       await user.click(screen.getAllByText(t.cloneRule.label)[0]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          combinator: 'and',
-          rules: [
-            expect.objectContaining({
-              combinator: 'or',
-              rules: [
-                expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-              ],
-            }),
-            expect.objectContaining({
-              combinator: 'or',
-              rules: [
-                expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-              ],
-            }),
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+          },
+          {
+            combinator: 'or',
+            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
+          },
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      });
     });
   });
 
@@ -2219,15 +2283,13 @@ describe('showCloneButtons', () => {
 
       await user.click(screen.getByText(t.cloneRule.label));
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          rules: [
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            'and',
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+        ],
+      });
     });
 
     it('clones first rule with independent combinators', async () => {
@@ -2248,17 +2310,15 @@ describe('showCloneButtons', () => {
 
       await user.click(screen.getAllByText(t.cloneRule.label)[0]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          rules: [
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            'and',
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            'and',
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'and',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      });
     });
 
     it('clones last rule with independent combinators', async () => {
@@ -2279,17 +2339,15 @@ describe('showCloneButtons', () => {
 
       await user.click(screen.getAllByText(t.cloneRule.label)[1]);
       expect(onQueryChange).toHaveBeenCalledTimes(2);
-      expect(onQueryChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          rules: [
-            expect.objectContaining({ field: 'firstName', operator: '=', value: 'Steve' }),
-            'or',
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-            'or',
-            expect.objectContaining({ field: 'lastName', operator: '=', value: 'Vai' }),
-          ],
-        })
-      );
+      expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+        rules: [
+          { field: 'firstName', operator: '=', value: 'Steve' },
+          'or',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+          'or',
+          { field: 'lastName', operator: '=', value: 'Vai' },
+        ],
+      });
     });
   });
 });
@@ -2299,7 +2357,7 @@ describe('idGenerator', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const rule = (props: RuleProps) => (
       <div>
-        <button type="button" onClick={() => props.actions.moveRule(props.path, [0], true)}>
+        <button type="button" onClick={() => props.actions.moveRule(props.path, [2], true)}>
           clone
         </button>
       </div>
@@ -2311,36 +2369,31 @@ describe('idGenerator', () => {
         controlElements={{ rule }}
       />
     );
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ id: expect.stringMatching(numericRegex) })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      id: expect.stringMatching(numericRegex),
+    });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [expect.objectContaining({ id: expect.stringMatching(numericRegex) })],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ id: expect.stringMatching(numericRegex) }],
+    });
 
     await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [
-          expect.objectContaining({ id: expect.stringMatching(numericRegex) }),
-          expect.objectContaining({ id: expect.stringMatching(numericRegex) }),
-        ],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [
+        { id: expect.stringMatching(numericRegex) },
+        { id: expect.stringMatching(numericRegex) },
+      ],
+    });
 
     await user.click(screen.getByText('clone'));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [
-          expect.objectContaining({ id: expect.stringMatching(numericRegex) }),
-          expect.objectContaining({ id: expect.stringMatching(numericRegex) }),
-        ],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [
+        { id: expect.stringMatching(numericRegex) },
+        { id: expect.stringMatching(numericRegex), rules: [] },
+        { id: expect.stringMatching(numericRegex) },
+      ],
+    });
   });
 });
 
@@ -2424,26 +2477,20 @@ describe('independent combinators', () => {
     expect(screen.getAllByTestId(TestID.combinators)).toHaveLength(2);
 
     await user.click(screen.getAllByTestId(TestID.removeRule)[1]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [
-          { field: 'firstName', operator: '=', value: '1' },
-          'or',
-          { field: 'firstName', operator: '=', value: '3' },
-        ],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [
+        { field: 'firstName', operator: '=', value: '1' },
+        'or',
+        { field: 'firstName', operator: '=', value: '3' },
+      ],
+    });
 
     rerender(
       <QueryBuilder query={onQueryChange.mock.lastCall?.[0]} onQueryChange={onQueryChange} />
     );
 
     await user.click(screen.getAllByTestId(TestID.removeRule)[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: expect.arrayContaining([expect.objectContaining({ value: '3' })]),
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: '3' }] });
   });
 
   it('removes groups along with independent combinators', async () => {
@@ -2459,24 +2506,16 @@ describe('independent combinators', () => {
 
     await user.click(screen.getAllByTestId(TestID.removeGroup)[1]);
     expect(onQueryChange).toHaveBeenCalledTimes(2);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        rules: [
-          expect.objectContaining({ rules: [] }),
-          'or',
-          expect.objectContaining({ rules: [] }),
-        ],
-      })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+      rules: [{ rules: [] }, 'or', { rules: [] }],
+    });
 
     rerender(
       <QueryBuilder query={onQueryChange.mock.lastCall?.[0]} onQueryChange={onQueryChange} />
     );
 
     await user.click(screen.getAllByTestId(TestID.removeGroup)[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ rules: [] })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ rules: [] }] });
   });
 });
 
@@ -2825,9 +2864,7 @@ describe('value source field', () => {
 
     await user.click(screen.getByTestId(TestID.addRule));
     expect(screen.getAllByDisplayValue(fields.find(f => f.name !== 'fb')!.label)).toHaveLength(2);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: 'f1,f1' })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'f1,f1' }] });
   });
 
   it('sets the right default value for "between" operator and listsAsArrays', async () => {
@@ -2842,9 +2879,7 @@ describe('value source field', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ rules: [expect.objectContaining({ value: ['f1', 'f1'] })] })
-    );
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: ['f1', 'f1'] }] });
   });
 
   it('handles empty comparator results', async () => {
@@ -3240,6 +3275,7 @@ describe('debug mode', () => {
           ruleGroup: props => (
             <div>
               <button onClick={() => props.actions.moveRule([1], [0])}>moveRule</button>
+              <button onClick={() => props.actions.groupRule([1], [0])}>groupRule</button>
               <RuleGroupOG {...props} />
             </div>
           ),
@@ -3248,25 +3284,28 @@ describe('debug mode', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.add }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.add });
 
     await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.update }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.update });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.add }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.add });
 
     await user.click(screen.getByText('moveRule'));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.move }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.move });
 
     await user.click(screen.getAllByTestId(TestID.removeRule)[0]);
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.remove }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.remove });
 
     await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.add }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.add });
 
     await user.click(screen.getByTestId(TestID.removeGroup));
-    expect(onLog).toHaveBeenLastCalledWith(expect.objectContaining({ type: LogType.remove }));
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.remove });
+
+    await user.click(screen.getAllByText('groupRule')[0]);
+    expect(onLog.mock.calls.at(-1)[0]).toMatchObject({ type: LogType.group });
   });
 
   it('logs failed additions and removals due to onAdd/Remove handlers', async () => {
@@ -3288,19 +3327,13 @@ describe('debug mode', () => {
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({ type: LogType.onAddRuleFalse })
-    );
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.onAddRuleFalse });
 
     await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({ type: LogType.onAddGroupFalse })
-    );
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.onAddGroupFalse });
 
     await user.click(screen.getByTestId(TestID.removeRule));
-    expect(onLog).toHaveBeenLastCalledWith(
-      expect.objectContaining({ type: LogType.onRemoveFalse })
-    );
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.onRemoveFalse });
   });
 
   it('logs failed query updates due to disabled prop', async () => {
@@ -3312,7 +3345,7 @@ describe('debug mode', () => {
     };
     const ruleGroup = ({
       path,
-      actions: { moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
+      actions: { groupRule, moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
     }: RuleGroupProps) => (
       <>
         <button onClick={() => onPropChange('combinator', 'or', [])}>Change Combinator</button>
@@ -3322,6 +3355,7 @@ describe('debug mode', () => {
         <button onClick={() => onGroupAdd({ combinator: 'and', rules: [] }, [])}>Add Group</button>
         <button onClick={() => moveRule(path, [0], true)}>Clone Group</button>
         <button onClick={() => onGroupRemove(path)}>Remove Group</button>
+        <button onClick={() => groupRule(path, [0])}>Group Group</button>
       </>
     );
     render(
@@ -3333,16 +3367,18 @@ describe('debug mode', () => {
         controlElements={{ ruleGroup }}
       />
     );
-    for (const btnText of [
+    const btnTexts = [
       'Change Combinator',
       'Add Rule',
       'Add Group',
       'Clone Group',
       'Remove Group',
-    ]) {
+      'Group Group',
+    ] as const;
+    for (const btnText of btnTexts) {
       await user.click(screen.getAllByText(btnText)[0]);
     }
-    expect(onLog).toHaveBeenCalledTimes(5);
+    expect(onLog).toHaveBeenCalledTimes(btnTexts.length);
   });
 });
 

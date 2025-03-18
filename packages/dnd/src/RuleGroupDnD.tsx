@@ -10,7 +10,7 @@ import type {
   UseRuleGroupDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
-import { dropEffectListener } from './dropEffectListener';
+import { isHotkeyPressed } from './isHotkeyPressed';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
 import { useDragCommon } from './useDragCommon';
@@ -25,25 +25,30 @@ import { useDragCommon } from './useDragCommon';
 export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
-  const { canDrop, useDrag, useDrop } = rqbDndContext;
-
-  const disabled = !!props.parentDisabled || !!props.disabled;
+  const {
+    canDrop,
+    baseControls: { ruleGroup: BaseRuleGroupComponent },
+    useDrag,
+    useDrop,
+    copyModeModifierKey,
+    groupModeModifierKey,
+  } = rqbDndContext;
 
   const dndRefs = useRuleGroupDnD({
     ...props,
-    disabled,
+    disabled: !!props.parentDisabled || !!props.disabled,
     useDrag: useDrag!,
     useDrop: useDrop!,
     canDrop,
+    copyModeModifierKey,
+    groupModeModifierKey,
   });
-
-  const { ruleGroup: BaseRuleGroupComponent } = rqbDndContext.baseControls;
 
   return <BaseRuleGroupComponent {...props} {...dndRefs} />;
 };
 
 type UseRuleGroupDndParams = RuleGroupProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop'> & {
+  Pick<QueryBuilderDndContextProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> & {
     useDrag: typeof useDragOriginal;
     useDrop: typeof useDropOriginal;
   };
@@ -54,25 +59,37 @@ const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
  * @group Hooks
  */
 export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD => {
-  const { disabled, path, ruleGroup, schema, actions, useDrag, useDrop, canDrop } = params;
-
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+
+  const {
+    disabled,
+    path,
+    ruleGroup,
+    schema,
+    actions,
+    useDrag,
+    useDrop,
+    canDrop,
+    copyModeModifierKey = 'alt',
+    groupModeModifierKey = 'ctrl',
+  } = params;
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
     type: 'ruleGroup',
     path,
     disabled,
     independentCombinators: schema.independentCombinators,
-    moveRule: actions.moveRule,
     schema,
     actions,
     useDrag,
+    copyModeModifierKey,
+    groupModeModifierKey,
   });
 
   // eslint-disable-next-line react-compiler/react-compiler
-  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
+  const [{ isOver, dropMonitorId, dropEffect, groupItems }, drop] = useDrop<
     DraggedItem,
     DropResult,
     DropCollection
@@ -96,9 +113,9 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         // Disallow drop if...
         // prettier-ignore
         return !(
-          // 1) item is ancestor of drop target,
+          // 1) item is ancestor of drop target, OR
           isAncestor(dragging.path, path) ||
-          // 2) item is first child and is dropped on its own group header,
+          // 2) item is first child and is dropped on its own group header, OR
           (pathsAreEqual(path, parentItemPath) && itemIndex === 0) ||
           // 3) the group is dropped on itself
           pathsAreEqual(path, dragging.path)
@@ -107,18 +124,18 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
       collect: monitor => ({
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: monitor.getDropResult()?.dropEffect ?? dropEffectListener,
+        dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
+        groupItems: isHotkeyPressed(groupModeModifierKey),
       }),
-      drop: (_item, monitor) => {
+      drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
+        const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+        const groupItems = isHotkeyPressed(groupModeModifierKey);
 
-        // `dropEffect` gets added automatically to the object returned from `drop`:
-        return (
-          monitor.getDropResult() ?? { type: 'ruleGroup', path, qbId, getQuery, dispatchQuery }
-        );
+        return { type: 'ruleGroup', path, qbId, getQuery, dispatchQuery, groupItems, dropEffect };
       },
     }),
-    [disabled, actions.moveRule, path, canDrop, ruleGroup, schema]
+    [disabled, actions.groupRule, actions.moveRule, path, canDrop, ruleGroup, schema]
   );
 
   if (path.length > 0) {
@@ -136,5 +153,6 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     dragRef,
     dropRef,
     dropEffect,
+    groupItems,
   };
 };

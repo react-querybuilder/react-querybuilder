@@ -15,6 +15,7 @@ export interface DropResult {
   path: Path;
   type: DndDropTargetType;
   dropEffect?: DropEffect;
+  groupItems?: boolean;
   qbId: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getQuery: Schema<any, any>['getQuery'];
@@ -29,4 +30,5 @@ export interface DropCollection {
   isOver: boolean;
   dropMonitorId: string | symbol;
   dropEffect?: DropEffect;
+  groupItems?: boolean;
 }

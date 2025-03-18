@@ -1,15 +1,12 @@
 import Link from '@docusaurus/Link';
 import { useColorMode } from '@docusaurus/theme-common';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import { forwardRef, StrictMode, useEffect, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import * as ReactDnD from 'react-dnd';
-import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type {
   ExportFormat,
   RuleGroupType,
@@ -32,6 +29,7 @@ import { fields } from './demo/_constants/fields';
 import { musicalInstruments } from './demo/_constants/musicalInstruments';
 import { getFormatQueryString, getExportDisplayLanguage } from './demo/_constants/utils';
 import styles from './index.module.css';
+import { CustomStylesQB } from './_CustomStylesQB';
 
 const datePickerFields = fields.filter(f => f.name === 'birthdate');
 const initialDatePickerQuery: RuleGroupType = {
@@ -272,17 +270,7 @@ const LandingPage = () => {
               />
             </div>
             <div className="custom-styling">
-              <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
-                <QueryBuilder
-                  query={query}
-                  onQueryChange={setQuery}
-                  fields={fields}
-                  translations={{ dragHandle: { label: '⇅' } }}
-                  controlClassnames={{
-                    queryBuilder: ['queryBuilder-branches', 'green-branch-lines'],
-                  }}
-                />
-              </QueryBuilderDnD>
+              <CustomStylesQB />
             </div>
             <div>
               <h2>Flexible styling</h2>

@@ -4,7 +4,8 @@ let didWarnEnabledDndWithoutReactDnD = false;
 
 /**
  * Logs a warning if drag-and-drop is enabled but the required dependencies
- * (`react-dnd` and `react-dnd-html5-backend`) were not detected.
+ * (`react-dnd` and either `react-dnd-html5-backend` or `react-dnd-touch-backend`)
+ * were not detected.
  *
  * @group Hooks
  */

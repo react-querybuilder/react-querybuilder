@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
+import * as ReactDnDTouchBackend from 'react-dnd-touch-backend';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
 import { DevLayout, useDevApp } from '@rqb-devapp';
@@ -12,7 +13,7 @@ const App = () => {
 
   return (
     <DevLayout {...devApp}>
-      <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend }}>
+      <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend, ...ReactDnDTouchBackend }}>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"

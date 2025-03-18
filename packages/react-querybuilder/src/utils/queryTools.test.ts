@@ -6,12 +6,13 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Path,
+  RuleGroupType,
   ValueSources,
 } from '../types/index.noReact';
 import { formatQuery } from './formatQuery';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { numericRegex } from './misc';
-import { add, insert, move, remove, update } from './queryTools';
+import { add, group, insert, move, remove, update } from './queryTools';
 
 const [and, or] = defaultCombinators.map(c => c.name);
 const [value, field] = ['value', 'field'] as ValueSources;
@@ -739,6 +740,169 @@ describe('insert', () => {
     const _newDefaultQuery = insert(rg1, rg2, []);
     const _newICQuery = insert({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = insert(rgic1, rgic2, []);
+
+    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
+    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
+    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
+    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
+    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
+    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+  });
+});
+
+describe('group', () => {
+  describe('standard rule groups', () => {
+    testQT(
+      'groups a rule down within the same group',
+      group({ combinator: and, rules: [r1, r2] }, [0], [1]),
+      { combinator: and, rules: [{ combinator: and, rules: [r2, r1] }] }
+    );
+    // Shouldn't target an ancestor group?
+    // testQT(
+    //   'groups a rule to a different group with a common ancestor',
+    //   group({ combinator: and, rules: [r1, r2, rg1] }, [1], [2, 0]),
+    //   {
+    //     combinator: and,
+    //     rules: [r1, { ...rg1, rules: [r2] }],
+    //   }
+    // );
+    // Can't target an ancestor group?
+    // testQT(
+    //   "groups a rule up to its parent group's parent group",
+    //   group({ combinator: and, rules: [rg3] }, [0, 1], [0]),
+    //   {
+    //     combinator: and,
+    //     rules: [r2, rg3],
+    //   }
+    // );
+    testQT(
+      'groups a rule up to a sibling group',
+      group(
+        {
+          combinator: and,
+          rules: [
+            { combinator: and, rules: [r1] },
+            { combinator: and, rules: [r2, r3] },
+          ],
+        },
+        [1, 1],
+        [0, 0]
+      ),
+      {
+        combinator: and,
+        rules: [
+          { combinator: and, rules: [{ combinator: and, rules: [r1, r3] }] },
+          { combinator: and, rules: [r2] },
+        ],
+      }
+    );
+    testQT(
+      'groups a rule down to a sibling group',
+      group(
+        {
+          combinator: and,
+          rules: [
+            { combinator: and, rules: [r1, r2] },
+            { combinator: and, rules: [r3, r4] },
+          ],
+        },
+        [0, 1],
+        [1, 1]
+      ),
+      {
+        combinator: and,
+        rules: [
+          { combinator: and, rules: [r1] },
+          { combinator: and, rules: [r3, { combinator: and, rules: [r4, r2] }] },
+        ],
+      }
+    );
+    testQT('clones a rule', group(rg3, [1], [0], { clone: true }), {
+      combinator: and,
+      rules: [{ combinator: and, rules: [r1, r2] }, r2, r3],
+    });
+    testQT(
+      'clones a group',
+      group({ combinator: and, rules: [r1, rg3, r2] }, [1], [0], { clone: true }),
+      {
+        combinator: and,
+        rules: [{ combinator: and, rules: [r1, rg3] }, rg3, r2],
+      }
+    );
+    testQT(
+      'does not alter the query if the old and new paths are the same',
+      group(rg3, [1], [1]),
+      rg3,
+      true
+    );
+    it('adds a rule with custom idGenerator', () => {
+      expect(
+        (group(rg3, [1], [0], { clone: true, idGenerator }).rules[0] as RuleGroupType).rules[1].id
+      ).toMatch(numericRegex);
+    });
+  });
+
+  describe('independent combinators', () => {
+    testQT('groups the only two rules in a group, last as target', group(rgic2, [0], [2]), {
+      rules: [{ rules: [r2, and, r1] }],
+    });
+    testQT('groups the only two rules in a group, first as target', group(rgic2, [2], [0]), {
+      rules: [{ rules: [r1, and, r2] }],
+    });
+    testQT(
+      'groups a rule from first to last within the same group',
+      group({ rules: [r1, and, r2, or, r3] }, [0], [4]),
+      { rules: [r2, or, { rules: [r3, and, r1] }] }
+    );
+    testQT(
+      'groups a rule from last to first within the same group',
+      group({ rules: [r1, and, r2, or, r3] }, [4], [0]),
+      { rules: [{ rules: [r1, and, r3] }, and, r2] }
+    );
+    testQT('groups a rule from last to middle', group({ rules: [r1, and, r2, or, r3] }, [4], [2]), {
+      rules: [r1, and, { rules: [r2, and, r3] }],
+    });
+    testQT(
+      'groups a first-child rule to a different group with one rule',
+      group({ rules: [r1, and, { rules: [r2, and, r3] }] }, [0], [2, 0]),
+      { rules: [{ rules: [{ rules: [r2, and, r1] }, and, r3] }] }
+    );
+    testQT(
+      'groups a middle-child rule to a different group with multiple rules',
+      group({ rules: [r1, and, r2, and, r3, and, { rules: [r4, and, r5] }] }, [2], [6, 0]),
+      { rules: [r1, and, r3, and, { rules: [{ rules: [r4, and, r2] }, and, r5] }] }
+    );
+    testQT(
+      'groups an only-child rule up to a different group with only one existing child',
+      group({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }, [2, 0], [0, 0]),
+      { rules: [{ rules: [{ rules: [r1, and, r2] }] }, and, { rules: [] }] }
+    );
+    testQT(
+      'groups an only-child rule up to a different group with only one existing child group',
+      group({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }, [2, 0], [0, 0]),
+      { rules: [{ rules: [{ rules: [r1, and, r2] }] }, and, { rules: [] }] }
+    );
+    testQT(
+      'groups a middle-child rule up to a different group with only one existing child',
+      group({ rules: [{ rules: [r1] }, and, { rules: [r2, and, r3, and, r4] }] }, [2, 2], [0, 0]),
+      { rules: [{ rules: [{ rules: [r1, and, r3] }] }, and, { rules: [r2, and, r4] }] }
+    );
+    testQT(
+      'does not alter the query if the old path is to a combinator',
+      group(rgic2, [1], [0]),
+      rgic2,
+      true
+    );
+  });
+
+  testQT('bails out on bad path', group(rg1, [1], badPath), rg1);
+
+  it('should have the right types', () => {
+    const _newQuery = group({ ...rg1 }, [1], [0]);
+    const _newDefaultQuery = group(rg1, [1], [0]);
+    const _newICQuery = group({ ...rgic1 }, [1], [0]);
+    const _newDefaultICQuery = group(rgic1, [1], [0]);
 
     const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
     const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;

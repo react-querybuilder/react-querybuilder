@@ -284,6 +284,7 @@ ${
     ? `import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 `
     : ''
 }import type { ${queryType} } from 'react-querybuilder';
@@ -303,7 +304,7 @@ export const App = () => {
 
   return (${
     options.enableDragAndDrop
-      ? '<QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>'
+      ? '<QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>'
       : ''
   }${styleWrapperPrefix}<QueryBuilder ${props} />${styleWrapperSuffix}${
     options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''

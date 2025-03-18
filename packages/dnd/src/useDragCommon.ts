@@ -1,4 +1,4 @@
-import type { useDrag as originalUseDrag } from 'react-dnd';
+import type { ConnectDragPreview, ConnectDragSource, useDrag as originalUseDrag } from 'react-dnd';
 import type {
   DndDropTargetType,
   DragCollection,
@@ -8,19 +8,20 @@ import type {
   QueryActions,
   Schema,
 } from 'react-querybuilder';
-import { findPath, getParentPath, insert } from 'react-querybuilder';
+import { add, findPath, getParentPath, group, insert } from 'react-querybuilder';
+import { isHotkeyPressed } from './isHotkeyPressed';
+import type { QueryBuilderDndProps } from './types';
 
 type UseDragCommonProps = {
   path: Path;
   type: DndDropTargetType;
   disabled?: boolean;
   independentCombinators?: boolean;
-  moveRule: QueryActions['moveRule'];
   actions: QueryActions;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: Schema<any, any>;
   useDrag: typeof originalUseDrag;
-};
+} & Required<Pick<QueryBuilderDndProps, 'copyModeModifierKey' | 'groupModeModifierKey'>>;
 
 /**
  * @group Hooks
@@ -34,13 +35,9 @@ export const useDragCommon = ({
   actions,
   schema,
   useDrag,
-}: UseDragCommonProps): [
-  DragCollection,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  import('react-dnd').ConnectDragSource,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  import('react-dnd').ConnectDragPreview,
-] =>
+  copyModeModifierKey,
+  groupModeModifierKey,
+}: UseDragCommonProps): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
   useDrag!<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
@@ -55,29 +52,48 @@ export const useDragCommon = ({
 
         if (!dropResult) return;
 
+        const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+        const groupItems = isHotkeyPressed(groupModeModifierKey);
+
         const parentHoverPath = getParentPath(dropResult.path);
         const hoverIndex = dropResult.path.at(-1)!;
-        const destinationPath =
-          dropResult.type === 'ruleGroup'
+        const destinationPath = groupItems
+          ? dropResult.path
+          : dropResult.type === 'ruleGroup'
             ? [...dropResult.path, 0]
             : dropResult.type === 'inlineCombinator'
               ? [...parentHoverPath, hoverIndex]
               : [...parentHoverPath, hoverIndex + 1];
 
         if (schema.qbId === dropResult.qbId) {
-          actions.moveRule(item.path, destinationPath, dropResult.dropEffect === 'copy');
+          if (groupItems) {
+            actions.groupRule(item.path, destinationPath, dropEffect === 'copy');
+          } else {
+            actions.moveRule(item.path, destinationPath, dropEffect === 'copy');
+          }
         } else {
           const otherBuilderQuery = dropResult.getQuery();
           // istanbul ignore else
           if (otherBuilderQuery) {
-            dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
+            if (groupItems) {
+              dropResult.dispatchQuery(
+                group(
+                  add(otherBuilderQuery, item, []),
+                  [otherBuilderQuery.rules.length],
+                  destinationPath,
+                  { clone: false }
+                )
+              );
+            } else {
+              dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
+            }
             // istanbul ignore else
-            if (dropResult.dropEffect !== 'copy') {
+            if (dropEffect !== 'copy') {
               actions.onRuleRemove(item.path);
             }
           }
         }
       },
     }),
-    [disabled, path]
+    [actions.groupRule, actions.moveRule, disabled, path]
   );

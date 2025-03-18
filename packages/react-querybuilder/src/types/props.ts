@@ -286,6 +286,11 @@ export interface Classnames {
    */
   dndCopy: Classname;
   /**
+   * Classname(s) applied to rules and groups hovered over by a dragged element
+   * when the Ctrl key is pressed, indicating the items will form a new group.
+   */
+  dndGroup: Classname;
+  /**
    * Classname(s) applied to disabled elements.
    */
   disabled: Classname;
@@ -317,6 +322,7 @@ export interface QueryActions {
   onRuleAdd(rule: RuleType, parentPath: Path, context?: any): void;
   onRuleRemove(path: Path): void;
   moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any): void;
+  groupRule(sourcePath: Path, targetPath: Path, clone?: boolean, context?: any): void;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 

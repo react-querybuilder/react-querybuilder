@@ -127,6 +127,18 @@ Inserts a rule or group (and an independent combinator if necessary, to keep the
 
 </Details>
 
+### `group`
+
+`(query: RuleGroupTypeAny, sourcePath: Path, targetPath: Path, options: GroupOptions) => RuleGroupTypeAny`
+
+Creates a new group at the target path containing the existing rule/group at that path and the rule/group at the source path (in that order) in its `rules` array.
+
+<Details summary="GroupOptions">
+
+%importcode /packages/react-querybuilder/src/utils/queryTools.ts#blockName=GroupOptions
+
+</Details>
+
 ## Number parsing
 
 HTML `<input>` controls store values as strings (even for `type="number"`), but your requirements may call for true numeric values. The [`parseNumbers`](../components/querybuilder#parsenumbers) prop on the `QueryBuilder` component and the `formatQuery` function's [`parseNumbers`](./export#parse-numbers) option can be used to convert values to numeric types from the UI or during export, respectively. Both configuration options have the same valid values (per the type below) and behave similarly.

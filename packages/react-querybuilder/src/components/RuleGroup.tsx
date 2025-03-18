@@ -8,7 +8,6 @@ import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,
-  Except,
   Path,
   RuleGroupProps,
   RuleGroupType,
@@ -102,8 +101,8 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
  * @group Components
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupHeaderComponents(rg: RuleGroupProps & UseRuleGroup) {
+  (rg: UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupHeaderComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -299,8 +298,8 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
  * @group Components
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupBodyComponents(rg: RuleGroupProps & UseRuleGroup) {
+  (rg: UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupBodyComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -406,7 +405,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
 });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
+export type UseRuleGroup = RuleGroupProps & {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
   accessibleDescription: string;
@@ -475,6 +474,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     not: notProp,
     // Drag-and-drop
     dropEffect = 'move',
+    groupItems = false,
     dragMonitorId = '',
     dropMonitorId = '',
     previewRef = null,
@@ -540,10 +540,6 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.valueSelector,
         classNamesProp.combinators
       ),
-      // betweenRules: clsx(
-      //   suppressStandardClassnames || standardClassnames.betweenRules,
-      //   classNamesProp.betweenRules
-      // ),
       notToggle: clsx(
         suppressStandardClassnames || standardClassnames.notToggle,
         classNamesProp.notToggle
@@ -709,19 +705,24 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.ruleGroup,
         disabled && classNamesProp.disabled,
         isDragging && classNamesProp.dndDragging,
+        isOver && groupItems && classNamesProp.dndGroup,
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
           [standardClassnames.dndDragging]: isDragging,
+          [standardClassnames.dndGroup]: isOver && groupItems,
         },
         validationClassName
       ),
     [
       classNamesProp.disabled,
       classNamesProp.dndDragging,
+      classNamesProp.dndGroup,
       classNamesProp.ruleGroup,
       combinatorBasedClassName,
       disabled,
+      groupItems,
       isDragging,
+      isOver,
       ruleGroupClassname,
       suppressStandardClassnames,
       validationClassName,

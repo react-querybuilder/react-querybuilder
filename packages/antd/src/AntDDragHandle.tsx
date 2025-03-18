@@ -35,5 +35,5 @@ export const AntDDragHandle: React.ForwardRefExoticComponent<
       ...extraProps
     },
     dragRef
-  ) => <HolderOutlined ref={dragRef} className={className} title={title} {...extraProps} />
+  ) => <HolderOutlined className={className} title={title} {...extraProps} ref={dragRef} />
 );

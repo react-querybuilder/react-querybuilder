@@ -28,6 +28,8 @@ import { NativeValueSelector } from './NativeValueSelector';
 import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 import { QueryBuilderNative } from './QueryBuilderNative';
 
+jest.setTimeout(30_000);
+
 const query: RuleGroupType = {
   combinator: 'and',
   rules: [

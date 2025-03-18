@@ -7,7 +7,7 @@ import type {
   RefAttributes,
 } from 'react';
 import type { UseRuleGroup } from '../components';
-import type { MoveOptions } from '../utils';
+import type { GroupOptions, MoveOptions } from '../utils';
 import type {
   AccessibleDescriptionGenerator,
   Classname,
@@ -436,6 +436,8 @@ export interface UseRuleGroupDnD {
   dropRef: Ref<HTMLDivElement>;
   /** `"move"` by default; `"copy"` if the modifier key is pressed. */
   dropEffect?: DropEffect;
+  /** True if the dragged and hovered items should form a new group. */
+  groupItems?: boolean;
 }
 
 /**
@@ -473,6 +475,8 @@ export interface UseRuleDnD {
   dndRef: Ref<HTMLDivElement>;
   /** `"move"` by default; `"copy"` if the modifier key is pressed. */
   dropEffect?: DropEffect;
+  /** True if the dragged and hovered items should form a new group. */
+  groupItems?: boolean;
 }
 
 /**
@@ -807,6 +811,58 @@ export type QueryBuilderProps<
         nextQuery: RG,
         /** The options passed to {@link move} to generate `nextQuery`. */
         options: MoveOptions,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        context?: any
+      ): RG | boolean;
+      /**
+       * This callback is invoked before a rule is grouped with another object. The function should
+       * return `true` to allow the grouping to proceed as normal, `false` to cancel the grouping,
+       * or a new query object (presumably based on `query` or `nextQuery`) which will become the new
+       * query state.
+       */
+      onGroupRule?(
+        /** The rule being moved. */
+        rule: R,
+        /** The original path of the rule. */
+        fromPath: Path,
+        /**
+         * The path of the target object to group the rule with. Note that the target path
+         * is not necessarily the final path since moves (particularly downward) can affect the
+         * indexes of sibling rules/groups at the original path.
+         */
+        toPath: Path,
+        /** The current query, before the group. */
+        query: RG,
+        /** The next query, if the group is allowed to proceed. */
+        nextQuery: RG,
+        /** The options passed to {@link group} to generate `nextQuery`. */
+        options: GroupOptions,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        context?: any
+      ): RG | boolean;
+      /**
+       * This callback is invoked before a group is grouped with another object. The function should
+       * return `true` to allow the grouping to proceed as normal, `false` to cancel the grouping,
+       * or a new query object (presumably based on `query` or `nextQuery`) which will become the new
+       * query state.
+       */
+      onGroupGroup?(
+        /** The group being moved. */
+        ruleGroup: RG,
+        /** The original path of the group. */
+        fromPath: Path,
+        /**
+         * The path of the target object to group the group with. Note that the target path
+         * is not necessarily the final path since moves (particularly downward) can affect the
+         * indexes of sibling rules/groups at the original path.
+         */
+        toPath: Path,
+        /** The current query, before the group. */
+        query: RG,
+        /** The next query, if the group is allowed to proceed. */
+        nextQuery: RG,
+        /** The options passed to {@link group} to generate `nextQuery`. */
+        options: GroupOptions,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         context?: any
       ): RG | boolean;
