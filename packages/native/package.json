@@ -55,7 +55,7 @@
     "@babel/preset-flow": "^7.25.9",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.2.0",
-    "@types/react": "^19.0.10",
+    "@types/react": "^19.0.11",
     "@types/react-test-renderer": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-syntax-hermes-parser": "^0.26.0",

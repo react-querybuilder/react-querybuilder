@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from node_modules/@mantine/core/styles.css (v7.17.0).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v7.17.2).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -131,7 +131,7 @@ fieldset:disabled .mantine-active:active {
 /* ----- Default CSS variables ----- */
 
 :root {
-  /* color-scheme: var(--mantine-color-scheme); */
+  color-scheme: var(--mantine-color-scheme);
 
   --mantine-z-index-app: 100;
   --mantine-z-index-modal: 200;
@@ -668,16 +668,35 @@ fieldset:disabled .mantine-active:active {
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='y']):where(
     [data-offset-scrollbars='xy'],
-    [data-offset-scrollbars='y']
-  ) {
+    [data-offset-scrollbars='y'],
+    [data-offset-scrollbars='present']
+  ):where([data-vertical-hidden]) {
+  padding-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+.m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='y']):where(
+    [data-offset-scrollbars='xy'],
+    [data-offset-scrollbars='y'],
+    [data-offset-scrollbars='present']
+  ):not([data-vertical-hidden]) {
   padding-inline-end: var(--scrollarea-scrollbar-size);
   padding-inline-start: unset;
 }
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='x']):where(
     [data-offset-scrollbars='xy'],
-    [data-offset-scrollbars='x']
-  ) {
+    [data-offset-scrollbars='x'],
+    [data-offset-scrollbars='present']
+  ):where([data-horizontal-hidden]) {
+  padding-bottom: 0;
+}
+
+.m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='x']):where(
+    [data-offset-scrollbars='xy'],
+    [data-offset-scrollbars='x'],
+    [data-offset-scrollbars='present']
+  ):not([data-horizontal-hidden]) {
   padding-bottom: var(--scrollarea-scrollbar-size);
 }
 
