@@ -1,4 +1,4 @@
-import type { DragIndicator } from '@mui/icons-material';
+import type DragIndicator from '@mui/icons-material/DragIndicator';
 import type { ComponentPropsWithRef } from 'react';
 import * as React from 'react';
 import { forwardRef, useContext } from 'react';
