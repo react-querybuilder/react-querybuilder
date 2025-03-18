@@ -52,8 +52,8 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.60.0",
-    "@fluentui/react-icons-mdl2": "^1.3.83",
+    "@fluentui/react-components": "^9.60.1",
+    "@fluentui/react-icons-mdl2": "^1.3.84",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/react": "^19.0.10",
@@ -64,7 +64,7 @@
     "react-querybuilder": "8.3.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.8.2",
-    "vite": "^6.2.1"
+    "vite": "^6.2.2"
   },
   "peerDependencies": {
     "@fluentui/react-components": "^9",

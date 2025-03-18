@@ -100,7 +100,7 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.26.9",
+    "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
@@ -130,7 +130,7 @@
     "spel2js": "^0.2.8",
     "type-fest": "^4.37.0",
     "typescript": "^5.8.2",
-    "vite": "^6.2.1"
+    "vite": "^6.2.2"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",

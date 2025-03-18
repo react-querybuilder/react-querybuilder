@@ -92,15 +92,15 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@babel/core": "^7.26.9",
+    "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
     "@eslint/compat": "^1.2.7",
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.22.0",
-    "@lerna-lite/cli": "^3.12.1",
-    "@lerna-lite/publish": "^3.12.2",
+    "@lerna-lite/cli": "^3.12.3",
+    "@lerna-lite/publish": "^3.12.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -112,7 +112,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/react-native-web": "^0.19.0",
-    "@types/web": "^0.0.209",
+    "@types/web": "^0.0.212",
     "@typescript-eslint/parser": "^8.26.1",
     "babel-plugin-react-compiler": "^19.0.0-beta-e552027-20250112",
     "bun-plugin-tailwind": "^0.0.15",
@@ -129,8 +129,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-watch-typeahead": "^2.2.2",
     "jsdom-testing-mocks": "^1.13.1",
-    "oxc-transform": "^0.57.0",
-    "oxlint": "^0.15.14",
+    "oxc-transform": "^0.58.1",
+    "oxlint": "^0.16.0",
     "postcss": "^8.5.3",
     "prettier": "3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
@@ -144,7 +144,7 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1",
-    "vite": "^6.2.1"
+    "vite": "^6.2.2"
   },
   "patchedDependencies": {
     "bun-plugin-tailwind@0.0.14": "patches/bun-plugin-tailwind@0.0.14.patch"
