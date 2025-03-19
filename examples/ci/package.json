@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@react-querybuilder/dnd": "8.3.1",
+    "@react-querybuilder/dnd": "8.4.0",
     "react": "^19",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
     "react-dnd-touch-backend": ">=14.0.0",
     "react-dom": "^19",
-    "react-querybuilder": "8.3.1"
+    "react-querybuilder": "8.4.0"
   },
   "description": "React Query Builder CI Base",
   "devDependencies": {

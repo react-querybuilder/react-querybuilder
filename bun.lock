@@ -62,7 +62,7 @@
     },
     "packages/antd": {
       "name": "@react-querybuilder/antd",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@ant-design/icons": "^5.6.1",
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
@@ -74,7 +74,7 @@
         "dayjs": "^1.11.13",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -84,12 +84,12 @@
         "antd": ">=5.11.0",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "packages/bootstrap": {
       "name": "@react-querybuilder/bootstrap",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@popperjs/core": "^2.11.8",
         "@testing-library/dom": "^10.4.0",
@@ -100,7 +100,7 @@
         "bootstrap-icons": "^1.11.3",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -109,12 +109,12 @@
         "bootstrap": ">=5",
         "bootstrap-icons": ">=1.7.0",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "packages/bulma": {
       "name": "@react-querybuilder/bulma",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.2.0",
@@ -123,7 +123,7 @@
         "bulma": "^1.0.3",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -131,12 +131,12 @@
       "peerDependencies": {
         "bulma": "^0.9.4 || ^1",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "packages/chakra": {
       "name": "@react-querybuilder/chakra",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@chakra-ui/react": "^3.13.0",
         "@emotion/react": "^11.14.0",
@@ -148,7 +148,7 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-icons": "^5.5.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -159,7 +159,7 @@
         "next-themes": "^0.3.0",
         "react": ">=18",
         "react-icons": "^5",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
       "optionalPeers": [
         "next-themes",
@@ -168,7 +168,7 @@
     },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@date-fns/tz": "^1.2.0",
         "@electric-sql/pglite": "^0.2.17",
@@ -187,7 +187,7 @@
         "mongoose": "^8.12.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -197,7 +197,7 @@
         "dayjs": "^1.11.13",
         "luxon": "^3.5.0",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
       "optionalPeers": [
         "date-fns",
@@ -207,7 +207,7 @@
     },
     "packages/dnd": {
       "name": "@react-querybuilder/dnd",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.2.0",
@@ -221,7 +221,7 @@
         "react-dnd-test-utils": "^16.0.1",
         "react-dnd-touch-backend": "^16.0.1",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -231,7 +231,7 @@
         "react-dnd": ">=14.0.0",
         "react-dnd-html5-backend": ">=14.0.0",
         "react-dnd-touch-backend": ">=14.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
       "optionalPeers": [
         "react-dnd-html5-backend",
@@ -240,7 +240,7 @@
     },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@fluentui/react-components": "^9.60.1",
         "@fluentui/react-icons-mdl2": "^1.3.84",
@@ -251,7 +251,7 @@
         "dayjs": "^1.11.13",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -261,12 +261,12 @@
         "@fluentui/react-icons-mdl2": "^1",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@mantine/core": "7.17.2",
         "@mantine/dates": "7.17.2",
@@ -278,7 +278,7 @@
         "dayjs": "^1.11.13",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
         "vite": "^6.2.2",
@@ -289,12 +289,12 @@
         "@mantine/hooks": ">=7",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "packages/material": {
       "name": "@react-querybuilder/material",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
@@ -306,7 +306,7 @@
         "@vitejs/plugin-react": "^4.3.4",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "regenerator-runtime": "^0.14.1",
         "rollup-plugin-visualizer": "^5.14.0",
         "typescript": "^5.8.2",
@@ -318,12 +318,12 @@
         "@mui/icons-material": ">=5",
         "@mui/material": ">=5",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "packages/native": {
       "name": "@react-querybuilder/native",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@babel/preset-flow": "^7.25.9",
         "@testing-library/jest-native": "^5.4.3",
@@ -336,7 +336,7 @@
         "react-dom": "^19.0.0",
         "react-native": "~0.78.0",
         "react-native-web": "~0.19.13",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "react-redux": "^9.2.0",
         "react-test-renderer": "^19.0.0",
         "rollup-plugin-visualizer": "^5.14.0",
@@ -345,13 +345,13 @@
       },
       "peerDependencies": {
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "react-redux": "^9.1.0",
       },
     },
     "packages/react-querybuilder": {
       "name": "react-querybuilder",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "dependencies": {
         "@reduxjs/toolkit": "^2.6.1",
         "immer": "^10.1.1",
@@ -397,7 +397,7 @@
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
-      "version": "8.3.1",
+      "version": "8.4.0",
       "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.2",
         "@tailwindcss/forms": "^0.5.10",
@@ -411,7 +411,7 @@
         "postcss": "^8.5.3",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
         "rollup-plugin-visualizer": "^5.14.0",
         "tailwindcss": "^3.4.17",
         "typescript": "^5.8.2",
@@ -421,7 +421,7 @@
         "@tremor/react": "^3",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.3.1",
+        "react-querybuilder": "8.4.0",
       },
     },
     "website": {
