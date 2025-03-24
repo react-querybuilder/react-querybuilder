@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.4.1] - 2025-03-24
+
+## Fixed
+
+- [#868] Using `QueryBuilderDndWithoutProvider` on its own now correctly implies `enableDragAndDrop={true}` for each descendant `QueryBuilder`.
+
 ## [v8.4.0] - 2025-03-18
 
 ## Fixed
@@ -1874,12 +1880,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#855]: https://github.com/react-querybuilder/react-querybuilder/pull/855
 [#858]: https://github.com/react-querybuilder/react-querybuilder/pull/858
 [#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
+[#868]: https://github.com/react-querybuilder/react-querybuilder/pull/868
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.1...HEAD
+[v8.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.0...v8.4.1
 [v8.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.3.1...v8.4.0
 [v8.3.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.3.0...v8.3.1
 [v8.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.2.0...v8.3.0
