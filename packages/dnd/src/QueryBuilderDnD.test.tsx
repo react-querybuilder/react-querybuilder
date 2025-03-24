@@ -73,10 +73,7 @@ it('renders base QueryBuilder without dnd provider without enableDragAndDrop pro
       </QBWoDndProvider>
     );
   });
-  expect(screen.getByTestId(TestID.ruleGroup).parentElement).toHaveAttribute(
-    'data-dnd',
-    'disabled'
-  );
+  expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
 });
 
 it('renders with dnd provider without dnd prop', async () => {
@@ -99,10 +96,10 @@ it('renders without dnd provider without dnd prop', async () => {
       </QBWoDndProvider>
     );
   });
-  expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
+  expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
 });
 
-// The drag-and-drop tests run once for QueryBuilderOriginal and once again
+// The drag-and-drop tests run once for QueryBuilderDnD and once again
 // for QueryBuilderDndWithoutProvider.
 describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvider }])(
   'enableDragAndDrop ($QBctx.displayName)',
@@ -128,7 +125,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       it('sets data-dnd attribute appropriately', () => {
         const { container, rerender } = render(<QBforDnD enableDragAndDrop={false} />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('disabled');
-        rerender(<QBforDnD enableDragAndDrop />);
+        rerender(<QBforDnD />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('enabled');
       });
 
