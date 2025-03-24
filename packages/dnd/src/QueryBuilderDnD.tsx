@@ -141,6 +141,8 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   const newContext: QueryBuilderContextProps<FullField, string> = useMemo(
     () => ({
       ...rqbContext,
+      enableDragAndDrop,
+      debugMode,
       controlElements: {
         ...rqbContext.controlElements,
         ruleGroup: RuleGroupDnD,
@@ -148,7 +150,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
         inlineCombinator: InlineCombinatorDnD,
       },
     }),
-    [rqbContext]
+    [debugMode, enableDragAndDrop, rqbContext]
   );
 
   const { DndContext, useDrag, useDrop } = dnd ?? {};
