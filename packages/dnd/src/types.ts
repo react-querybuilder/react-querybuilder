@@ -71,6 +71,16 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * @default "ctrl"
    */
   groupModeModifierKey?: string;
+  /**
+   * Number of milliseconds after which a drag-and-drop action will change to "copy" mode.
+   * Useful in touch-based environments where a modifier key is not applicable.
+   */
+  copyModeAfterHoverMs?: number;
+  /**
+   * Number of milliseconds after which a drag-and-drop action will change to "group" mode.
+   * Useful in touch-based environments where a modifier key is not applicable.
+   */
+  groupModeAfterHoverMs?: number;
 };
 
 /**
@@ -79,7 +89,14 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
  * @group Props
  */
 export interface QueryBuilderDndContextProps
-  extends Pick<QueryBuilderDndProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> {
+  extends Pick<
+    QueryBuilderDndProps,
+    | 'canDrop'
+    | 'copyModeModifierKey'
+    | 'groupModeModifierKey'
+    | 'copyModeAfterHoverMs'
+    | 'groupModeAfterHoverMs'
+  > {
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;

@@ -37,6 +37,8 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
     canDrop,
     copyModeModifierKey,
     groupModeModifierKey,
+    copyModeAfterHoverMs,
+    groupModeAfterHoverMs,
   } = props;
 
   const rqbContext = useMergedContext({
@@ -73,7 +75,9 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
           dnd={dnd}
           canDrop={canDrop}
           copyModeModifierKey={copyModeModifierKey}
-          groupModeModifierKey={groupModeModifierKey}>
+          groupModeModifierKey={groupModeModifierKey}
+          copyModeAfterHoverMs={copyModeAfterHoverMs}
+          groupModeAfterHoverMs={groupModeAfterHoverMs}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -102,6 +106,16 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     undefined,
     props.groupModeModifierKey,
     rqbDndContext.groupModeModifierKey
+  );
+  const copyModeAfterHoverMs = usePreferAnyProp(
+    undefined,
+    props.copyModeAfterHoverMs,
+    rqbDndContext.copyModeAfterHoverMs
+  );
+  const groupModeAfterHoverMs = usePreferAnyProp(
+    undefined,
+    props.groupModeAfterHoverMs,
+    rqbDndContext.groupModeAfterHoverMs
   );
   const enableDragAndDrop = usePreferProp(
     true,
@@ -156,8 +170,28 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   const { DndContext, useDrag, useDrop } = dnd ?? {};
 
   const dndContextValue: QueryBuilderDndContextProps = useMemo(
-    () => ({ baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop }),
-    [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop]
+    () => ({
+      baseControls,
+      canDrop,
+      copyModeAfterHoverMs,
+      copyModeModifierKey,
+      enableDragAndDrop,
+      groupModeAfterHoverMs,
+      groupModeModifierKey,
+      useDrag,
+      useDrop,
+    }),
+    [
+      baseControls,
+      canDrop,
+      copyModeAfterHoverMs,
+      copyModeModifierKey,
+      enableDragAndDrop,
+      groupModeAfterHoverMs,
+      groupModeModifierKey,
+      useDrag,
+      useDrop,
+    ]
   );
 
   if (!enableDragAndDrop || !DndContext) {

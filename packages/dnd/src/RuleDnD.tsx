@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
 import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
 import type {
   DndDropTargetType,
@@ -25,7 +25,15 @@ import { useDragCommon } from './useDragCommon';
 export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
-  const { canDrop, useDrag, useDrop, copyModeModifierKey, groupModeModifierKey } = rqbDndContext;
+  const {
+    canDrop,
+    useDrag,
+    useDrop,
+    copyModeModifierKey,
+    groupModeModifierKey,
+    copyModeAfterHoverMs,
+    groupModeAfterHoverMs,
+  } = rqbDndContext;
 
   const disabled = !!props.parentDisabled || !!props.disabled;
 
@@ -37,6 +45,8 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
     canDrop,
     copyModeModifierKey,
     groupModeModifierKey,
+    copyModeAfterHoverMs,
+    groupModeAfterHoverMs,
   });
 
   const { rule: BaseRuleComponent } = rqbDndContext.baseControls;
@@ -49,7 +59,14 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
 };
 
 type UseRuleDndParams = RuleProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> & {
+  Pick<
+    QueryBuilderDndContextProps,
+    | 'canDrop'
+    | 'copyModeModifierKey'
+    | 'groupModeModifierKey'
+    | 'copyModeAfterHoverMs'
+    | 'groupModeAfterHoverMs'
+  > & {
     useDrag: typeof useDragOriginal;
     useDrop: typeof useDropOriginal;
   };
@@ -62,6 +79,10 @@ const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
   const dndRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLSpanElement>(null);
+
+  // const [copyModeOverride, setCopyModeOverride] = useState(false);
+  // const [isOverState, setIsOverState] = useState(false);
+  // const hoverTimerRef = useRef<number>(null);
 
   const {
     path,
@@ -139,6 +160,33 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
 
         return { type: 'rule', path, qbId, getQuery, dispatchQuery, groupItems, dropEffect };
       },
+      // hover: (_item, monitor) => {
+      //   console.log('START hover: copyModeOverride', copyModeOverride);
+      //   if (!isOverState && monitor.isOver()) {
+      //     setIsOverState(true);
+      //     if (hoverTimerRef.current) {
+      //       //
+      //     } else {
+      //       clearTimeout(hoverTimerRef.current ?? -Infinity);
+      //       hoverTimerRef.current = setTimeout(
+      //         (() => {
+      //           console.log('timed out', hoverTimerRef.current);
+      //           setCopyModeOverride(true);
+      //         }) as TimerHandler,
+      //         1000
+      //       );
+      //       console.log('set timer', hoverTimerRef.current);
+      //     }
+      //     console.log('copyModeOverride', copyModeOverride);
+      //     console.log('is over', isOverState);
+      //   } else if (!monitor.isOver()) {
+      //     setIsOverState(false);
+      //     clearTimeout(hoverTimerRef.current ?? -Infinity);
+      //     hoverTimerRef.current = null;
+      //     // setCopyModeOverride(false);
+      //     console.log('is NOT over', isOverState);
+      //   }
+      // },
     }),
     [disabled, actions.moveRule, path, canDrop, rule, schema]
   );

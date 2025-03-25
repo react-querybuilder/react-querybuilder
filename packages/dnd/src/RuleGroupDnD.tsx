@@ -48,7 +48,14 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
 };
 
 type UseRuleGroupDndParams = RuleGroupProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> & {
+  Pick<
+    QueryBuilderDndContextProps,
+    | 'canDrop'
+    | 'copyModeModifierKey'
+    | 'groupModeModifierKey'
+    | 'copyModeAfterHoverMs'
+    | 'groupModeAfterHoverMs'
+  > & {
     useDrag: typeof useDragOriginal;
     useDrop: typeof useDropOriginal;
   };
