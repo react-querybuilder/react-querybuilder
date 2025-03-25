@@ -237,7 +237,10 @@ export const getCodeString = (
   const [styleImport, styleWrapperPrefix, styleWrapperSuffix] = getCompatWrapper(style);
 
   const getPropText = (prop: keyof DemoOptions) =>
-    prop === 'autoSelectField' || prop === 'autoSelectOperator' || prop === 'resetOnFieldChange'
+    prop === 'autoSelectField' ||
+    prop === 'autoSelectOperator' ||
+    prop === 'autoSelectValue' ||
+    prop === 'resetOnFieldChange'
       ? options[prop]
         ? ''
         : `${prop}={false}`
@@ -256,6 +259,7 @@ export const getCodeString = (
     getPropText('addRuleToNewGroups'),
     getPropText('autoSelectField'),
     getPropText('autoSelectOperator'),
+    getPropText('autoSelectValue'),
     getPropText('debugMode'),
     getPropText('disabled'),
     getPropText('listsAsArrays'),
@@ -266,6 +270,9 @@ export const getCodeString = (
     getPropText('showCombinatorsBetweenRules'),
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
+    getPropText('showShiftActions'),
+    getPropText('suppressStandardClassnames'),
+    getPropText('useDateTimePackage'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({

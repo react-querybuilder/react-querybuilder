@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New prop `autoSelectValue` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectvalue)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield)/[`autoSelectOperator`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator) but for the value editor when it renders a select list.
+- [#873] New prop `autoSelectValue` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectvalue)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield)/[`autoSelectOperator`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator) but for the value editor when it renders a select list.
   - The `translations` prop object has a new property `values` that accepts `placeholderName`, `placeholderLabel`, and `placeholderGroupLabel` properties ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#translations)). These translatable strings set the default values and labels when `autoSelectValue` is set to `false`.
   - A corresponding option was also added to [`formatQuery`](https://react-querybuilder.js.org/docs/utils/export#placeholder-values), which will now ignore rules where the `value` matches the placeholder value as long as `placeholderValueName` is defined (this behavior differs from `placeholderFieldName` and `placeholderOperatorName`, which do not need to be defined).
 
@@ -1885,6 +1885,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#858]: https://github.com/react-querybuilder/react-querybuilder/pull/858
 [#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
 [#868]: https://github.com/react-querybuilder/react-querybuilder/pull/868
+[#873]: https://github.com/react-querybuilder/react-querybuilder/pull/873
 
 <!-- #endregion -->
 

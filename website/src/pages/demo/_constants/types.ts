@@ -17,6 +17,7 @@ export type DemoOption =
   | 'resetOnOperatorChange'
   | 'autoSelectField'
   | 'autoSelectOperator'
+  | 'autoSelectValue'
   | 'addRuleToNewGroups'
   | 'validateQuery'
   | 'independentCombinators'
