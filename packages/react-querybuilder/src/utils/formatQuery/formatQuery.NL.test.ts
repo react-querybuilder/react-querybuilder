@@ -292,6 +292,7 @@ describe('parseNumbers', () => {
 describe('placeholder names', () => {
   const placeholderFieldName = 'placeholderFieldName';
   const placeholderOperatorName = 'placeholderOperatorName';
+  const placeholderValueName = 'placeholderValueName';
 
   const queryForPlaceholders: RuleGroupType = {
     combinator: 'and',
@@ -300,6 +301,7 @@ describe('placeholder names', () => {
       { field: placeholderFieldName, operator: '=', value: 'v2' },
       { field: 'f3', operator: placeholderOperatorName, value: 'v3' },
       { field: placeholderFieldName, operator: placeholderOperatorName, value: 'v4' },
+      { field: 'f5', operator: '=', value: placeholderValueName },
     ],
   };
 
@@ -309,6 +311,7 @@ describe('placeholder names', () => {
         format: 'natural_language',
         placeholderFieldName,
         placeholderOperatorName,
+        placeholderValueName,
       })
     ).toBe(`${defaultFieldPlaceholder} ${defaultOperatorPlaceholder} 'v1'`);
   });

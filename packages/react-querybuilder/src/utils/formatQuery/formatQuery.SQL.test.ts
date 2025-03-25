@@ -1,6 +1,7 @@
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
+  defaultPlaceholderValueName as defaultValuePlaceholder,
 } from '../../defaults';
 import type {
   FormatQueryOptions,
@@ -649,14 +650,20 @@ it('preserveValueOrder', () => {
 describe('placeholder names', () => {
   const placeholderFieldName = 'placeholderFieldName';
   const placeholderOperatorName = 'placeholderOperatorName';
+  const placeholderValueName = 'placeholderValueName';
 
   const queryForPlaceholders: RuleGroupType = {
     combinator: 'and',
     rules: [
-      { field: defaultFieldPlaceholder, operator: defaultOperatorPlaceholder, value: 'v1' },
+      {
+        field: defaultFieldPlaceholder,
+        operator: defaultOperatorPlaceholder,
+        value: defaultValuePlaceholder,
+      },
       { field: placeholderFieldName, operator: '=', value: 'v2' },
       { field: 'f3', operator: placeholderOperatorName, value: 'v3' },
       { field: placeholderFieldName, operator: placeholderOperatorName, value: 'v4' },
+      { field: 'f5', operator: '=', value: placeholderValueName },
     ],
   };
 
@@ -666,8 +673,20 @@ describe('placeholder names', () => {
         format: 'sql',
         placeholderFieldName,
         placeholderOperatorName,
+        placeholderValueName,
       })
-    ).toBe(`(${defaultFieldPlaceholder} ${defaultOperatorPlaceholder} 'v1')`);
+    ).toBe(
+      `(${defaultFieldPlaceholder} ${defaultOperatorPlaceholder} '${defaultValuePlaceholder}')`
+    );
+  });
+
+  it('does not hide rules where value is defaultPlaceholderValueName if placeholderValueName is not defined', () => {
+    expect(
+      formatQuery(
+        { rules: [{ field: 'f1', operator: '=', value: defaultValuePlaceholder }] },
+        'sql'
+      )
+    ).toBe(`(f1 = '${defaultValuePlaceholder}')`);
   });
 });
 

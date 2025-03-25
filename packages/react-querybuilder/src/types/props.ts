@@ -364,6 +364,7 @@ export interface TranslationWithPlaceholders extends Translation {
 export interface Translations {
   fields: TranslationWithPlaceholders;
   operators: TranslationWithPlaceholders;
+  values: TranslationWithPlaceholders;
   value: Translation;
   removeRule: TranslationWithLabel;
   removeGroup: TranslationWithLabel;

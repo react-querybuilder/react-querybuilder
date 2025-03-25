@@ -38,6 +38,7 @@ export const basicSchema: Schema<FullField, string> = {
   showLockButtons: false,
   autoSelectField: true,
   autoSelectOperator: true,
+  autoSelectValue: true,
   addRuleToNewGroups: false,
   enableDragAndDrop: false,
   validationMap: {},

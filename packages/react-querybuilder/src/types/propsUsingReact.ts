@@ -396,6 +396,7 @@ export interface Schema<F extends FullField, O extends string> {
   showLockButtons: boolean;
   autoSelectField: boolean;
   autoSelectOperator: boolean;
+  autoSelectValue: boolean;
   addRuleToNewGroups: boolean;
   enableDragAndDrop: boolean;
   validationMap: ValidationMap;
@@ -944,6 +945,12 @@ export type QueryBuilderProps<
        * @default true
        */
       autoSelectOperator?: boolean;
+      /**
+       * Select the first value in the array automatically. Only applicable when the value editor renders a select list.
+       *
+       * @default false
+       */
+      autoSelectValue?: boolean;
       /**
        * Adds a new default rule automatically to each new group.
        *

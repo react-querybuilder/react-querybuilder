@@ -131,6 +131,7 @@ export const useQueryBuilderSetup = <
     getValues,
     autoSelectField = true,
     autoSelectOperator = true,
+    autoSelectValue = true,
     addRuleToNewGroups = false,
     enableDragAndDrop: enableDragAndDropProp,
     listsAsArrays = false,
@@ -332,21 +333,40 @@ export const useQueryBuilderSetup = <
     [fieldMap, getValueSources]
   );
 
+  const defaultValueOption = useMemo(
+    (): FullOption<OperatorName> => ({
+      id: translations.values.placeholderName,
+      name: translations.values.placeholderName as OperatorName,
+      value: translations.values.placeholderName as OperatorName,
+      label: translations.values.placeholderLabel,
+    }),
+    [translations.values.placeholderLabel, translations.values.placeholderName]
+  );
+
   const getValuesMain = useCallback(
     (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) => {
-      // Ignore this in tests because Rule already checks for
-      // the presence of the values property in fieldData.
-      /* istanbul ignore if */
+      let valsFinal: FullOptionList<BaseOption> = [];
       if (fieldData?.values) {
-        return toFullOptionList(fieldData.values);
+        valsFinal = toFullOptionList(fieldData.values);
       }
       if (getValues) {
-        return toFullOptionList(getValues(field, operator, { fieldData }));
+        valsFinal = toFullOptionList(getValues(field, operator, { fieldData }));
       }
 
-      return [];
+      if (!autoSelectValue) {
+        valsFinal = isFlexibleOptionGroupArray(valsFinal)
+          ? [
+              {
+                label: translations.values.placeholderGroupLabel,
+                options: [defaultValueOption],
+              },
+              ...valsFinal,
+            ]
+          : [defaultValueOption, ...valsFinal];
+      }
+      return valsFinal;
     },
-    [getValues]
+    [autoSelectValue, defaultValueOption, getValues, translations.values.placeholderGroupLabel]
   );
 
   const getRuleDefaultValue = useCallback(

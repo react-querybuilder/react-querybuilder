@@ -849,7 +849,7 @@ Output:
 
 ### Placeholder values
 
-Any rule where the `field` or `operator` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName` and/or `placeholderOperatorName` options. These correspond to the `fields.placeholderName` and `operators.placeholderName` properties on the main component's [`translations` prop](../components/querybuilder#translations) object.
+Any rule where the `field`, `operator`, or `value` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName`, `placeholderOperatorName`, or `placeholderValueName` options. These correspond to the `fields.placeholderName`, `operators.placeholderName`, and `values.placeholderName` properties on the main component's [`translations` prop](../components/querybuilder#translations) object. Note that this behavior with regard to the `value` property will only be applied if `placeholderValueName` is explicitly set in the options. The others will act on their defaults if not defined.
 
 ## Validation
 
@@ -905,4 +905,10 @@ To minimize the chance of invalid syntax, some basic validation will be performe
 
 - Rules with an `operator` of "in" or "notIn" will be deemed invalid if the rule's `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
 - Rules with an `operator` of "between" or "notBetween" will be deemed invalid if the rule's `value` is neither an array with length of at least two (`value.length >= 2`) nor a string with at least one comma that isn't the first or last character (`value.split(',').length >= 2`, and neither element is an empty string).
-- Rules where either the `field` or `operator` match their respective placeholder will be deemed invalid (`field === placeholderFieldName || operator === placeholderOperatorName`).
+- Rules where either the `field`, `operator`, or `value` match their respective placeholder will be deemed invalid:
+  <!-- prettier-ignore -->
+  ```ts
+  field === placeholderFieldName ||
+    operator === placeholderOperatorName ||
+    (placeholderValueName !== undefined && value === placeholderValueName)
+  ```
