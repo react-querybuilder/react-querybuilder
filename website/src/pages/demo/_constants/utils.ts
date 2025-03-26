@@ -104,7 +104,7 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
 };
 
 export const getExportCall = async (
-  { format, parseNumbers, preset }: FormatQueryOptions,
+  { format, parseNumbers, preset, placeholderValueName }: FormatQueryOptions,
   { validateQuery }: Pick<DemoOptions, 'validateQuery'>
 ) => {
   const rqbImports = ['formatQuery'];
@@ -122,6 +122,10 @@ export const getExportCall = async (
 
   if (parseNumbers || format === 'jsonata') {
     fqOpts.parseNumbers = true;
+  }
+
+  if (placeholderValueName !== undefined) {
+    fqOpts.placeholderValueName = placeholderValueName;
   }
 
   let optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
