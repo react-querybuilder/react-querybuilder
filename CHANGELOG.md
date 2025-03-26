@@ -7,21 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#873] New prop `autoSelectValue` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectvalue)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield)/[`autoSelectOperator`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator) but for the value editor when it renders a select list.
+  - The `translations` prop object has a new property `values` that accepts `placeholderName`, `placeholderLabel`, and `placeholderGroupLabel` properties ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#translations)). These translatable strings set the default values and labels when `autoSelectValue` is set to `false`.
+  - A corresponding option was also added to [`formatQuery`](https://react-querybuilder.js.org/docs/utils/export#placeholder-values), which will now ignore rules where the `value` matches the placeholder value as long as `placeholderValueName` is defined (this behavior differs from `placeholderFieldName` and `placeholderOperatorName`, which do not need to be defined).
 
 ## [v8.4.1] - 2025-03-24
 
-## Fixed
+### Fixed
 
 - [#868] Using `QueryBuilderDndWithoutProvider` on its own now correctly implies `enableDragAndDrop={true}` for each descendant `QueryBuilder`.
 
 ## [v8.4.0] - 2025-03-18
 
-## Fixed
+### Fixed
 
 - [#860] The `idGenerator` prop is respected for all operations that create new rules or groups.
 
-## Added
+### Added
 
 - [#860] `@react-querybuilder/dnd` now supports `react-dnd-touch-backend` as a drop-in replacement for `react-dnd-html5-backend`. If both are provided, the touch backend will be preferred when a touch device is detected.
 - [#860] "Group" feature of `@react-querybuilder/dnd`. Pressing the <kbd>Ctrl</kbd> key while dragging a rule/group will form a new group at the target path with the target rule/group and the dragged rule/group in its `rules` array. Pressing the <kbd>Alt</kbd>/<kbd>⌥ Option</kbd> key at the same time will leave the rule/group in its original location and clone it for the new group.
@@ -30,7 +34,7 @@ N/A
 
 ## [v8.3.1] - 2025-02-27
 
-## Fixed
+### Fixed
 
 - [#858] The `type-fest` library has been (partially) vendored into `react-querybuilder` to avoid requiring it as a dependency.
 - [#858] `UseMergedContextProps` renamed to `UseMergedContextParams` (_technically_ a breaking change, but probably won't affect anyone).
@@ -38,19 +42,19 @@ N/A
 
 ## [v8.3.0] - 2025-02-21
 
-## Added
+### Added
 
 - [#855] CSS variables, enabling customization of the default stylesheet without using SCSS.
 - [#855] New option `generateIDs` for all `parse*` methods. When true, the output query object will be processed through `prepareRuleGroup` to add `id`s.
 
 ## [v8.2.0] - 2025-01-28
 
-## Added
+### Added
 
 - [#845] New `formatQuery` option `operatorProcessor`. Currently only applies to "sql", "parameterized", "parameterized_named", and "natural_language" formats.
 - [#846] New `formatQuery` option `preserveValueOrder`. Preserves the order of values when exporting rules with "between"/"notBetween" operators, even if the larger value comes first.
 
-## Fixed
+### Fixed
 
 - [#844] The `formatQuery` "elasticsearch" export format now includes the `.value` property when outputting Painless scripts.
 - [#845] `formatQuery` handles `combinator` and `operator` values case-insensitively.
@@ -430,7 +434,7 @@ N/A
   - `propertyMap` keys can now have `false` values. Properties matching a `propertyMap` key with a value of `false` will be removed without further processing (including the `rules` property, which would avoid recursion through the hierarchy altogether).
   - New boolean option `omitPath`. When `true`, a `path` property will _not_ be added to each rule and group in the query hierarchy.
 
-## Fixed
+### Fixed
 
 - `paramsKeepPrefix` was not applying to bind variables generated from rules with an `operator` of "between", "notBetween", "in", or "notIn".
 
@@ -1881,6 +1885,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#858]: https://github.com/react-querybuilder/react-querybuilder/pull/858
 [#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
 [#868]: https://github.com/react-querybuilder/react-querybuilder/pull/868
+[#873]: https://github.com/react-querybuilder/react-querybuilder/pull/873
 
 <!-- #endregion -->
 

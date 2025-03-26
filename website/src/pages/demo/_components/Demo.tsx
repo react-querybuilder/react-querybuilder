@@ -12,7 +12,13 @@ import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
-import { convertToIC, defaultValidator, formatQuery, QueryBuilder } from 'react-querybuilder';
+import {
+  convertToIC,
+  defaultPlaceholderValueName,
+  defaultValidator,
+  formatQuery,
+  QueryBuilder,
+} from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
@@ -207,10 +213,11 @@ export default function Demo({
         format,
         parseNumbers: parseNumbersInExport,
         preset: sqlDialect,
+        ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
       },
       { validateQuery: options.validateQuery }
     ).then(ec => setExportCall(ec));
-  }, [format, options.validateQuery, parseNumbersInExport, sqlDialect]);
+  }, [format, options.autoSelectValue, options.validateQuery, parseNumbersInExport, sqlDialect]);
 
   const optionsInfo = useMemo(
     () =>
@@ -236,6 +243,7 @@ export default function Demo({
           ? fields
           : undefined,
       parseNumbers: parseNumbersInExport,
+      ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
       preset: sqlDialect,
       ...(options.useDateTimePackage
         ? {
@@ -244,7 +252,14 @@ export default function Demo({
           }
         : null),
     }),
-    [format, options.useDateTimePackage, options.validateQuery, parseNumbersInExport, sqlDialect]
+    [
+      format,
+      options.autoSelectValue,
+      options.useDateTimePackage,
+      options.validateQuery,
+      parseNumbersInExport,
+      sqlDialect,
+    ]
   );
   const q = options.independentCombinators ? queryIC : query;
   const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);

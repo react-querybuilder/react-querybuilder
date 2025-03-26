@@ -104,7 +104,7 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
 };
 
 export const getExportCall = async (
-  { format, parseNumbers, preset }: FormatQueryOptions,
+  { format, parseNumbers, preset, placeholderValueName }: FormatQueryOptions,
   { validateQuery }: Pick<DemoOptions, 'validateQuery'>
 ) => {
   const rqbImports = ['formatQuery'];
@@ -122,6 +122,10 @@ export const getExportCall = async (
 
   if (parseNumbers || format === 'jsonata') {
     fqOpts.parseNumbers = true;
+  }
+
+  if (placeholderValueName !== undefined) {
+    fqOpts.placeholderValueName = placeholderValueName;
   }
 
   let optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
@@ -237,7 +241,10 @@ export const getCodeString = (
   const [styleImport, styleWrapperPrefix, styleWrapperSuffix] = getCompatWrapper(style);
 
   const getPropText = (prop: keyof DemoOptions) =>
-    prop === 'autoSelectField' || prop === 'autoSelectOperator' || prop === 'resetOnFieldChange'
+    prop === 'autoSelectField' ||
+    prop === 'autoSelectOperator' ||
+    prop === 'autoSelectValue' ||
+    prop === 'resetOnFieldChange'
       ? options[prop]
         ? ''
         : `${prop}={false}`
@@ -256,6 +263,7 @@ export const getCodeString = (
     getPropText('addRuleToNewGroups'),
     getPropText('autoSelectField'),
     getPropText('autoSelectOperator'),
+    getPropText('autoSelectValue'),
     getPropText('debugMode'),
     getPropText('disabled'),
     getPropText('listsAsArrays'),
@@ -266,6 +274,9 @@ export const getCodeString = (
     getPropText('showCombinatorsBetweenRules'),
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
+    getPropText('showShiftActions'),
+    getPropText('suppressStandardClassnames'),
+    getPropText('useDateTimePackage'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({

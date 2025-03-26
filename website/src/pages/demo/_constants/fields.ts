@@ -32,7 +32,8 @@ export const fields = (
       label: 'Primary instrument',
       valueEditorType: 'select',
       values: musicalInstruments,
-      defaultValue: 'Cowbell',
+      // This must be commented out to properly demonstrate `autoSelectValue={false}`
+      // defaultValue: 'Cowbell',
       operators: defaultOperators.filter(op => op.name === '='),
     },
     {

@@ -203,6 +203,12 @@ export interface FormatQueryOptions {
    */
   placeholderOperatorName?: string;
   /**
+   * Any rules where the value is equal to this value will be ignored.
+   *
+   * @default '~'
+   */
+  placeholderValueName?: string;
+  /**
    * Operator to use when concatenating wildcard characters and field names in "sql" format.
    * The ANSI standard is `||`, while SQL Server uses `+`. MySQL does not implement a concatenation
    * operator by default, and therefore requires use of the `CONCAT` function.

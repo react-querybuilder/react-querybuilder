@@ -127,6 +127,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'ruleProcessor'
   | 'validator'
   | 'valueProcessor'
+  | 'placeholderValueName'
 >;
 
 const defaultFormatQueryOptions = {
@@ -142,6 +143,7 @@ const defaultFormatQueryOptions = {
   preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
+  // placeholderValueName: defaultPlaceholderValueName,
   quoteValuesWith: "'",
   concatOperator: '||',
   preset: 'ansi',
@@ -282,6 +284,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     parseNumbers,
     placeholderFieldName,
     placeholderOperatorName,
+    placeholderValueName,
     quoteFieldNamesWith: quoteFieldNamesWith_option,
     ruleProcessor: ruleProcessor_option,
     validator,
@@ -330,7 +333,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     defaultFallbackExpressions.sql!;
 
   const finalOptions: Required<
-    Except<FormatQueryOptions, 'context' | 'valueProcessor' | 'validator'>
+    Except<FormatQueryOptions, 'context' | 'valueProcessor' | 'validator' | 'placeholderValueName'>
   > & {
     valueProcessor: ValueProcessorByRule;
     validator?: QueryValidator;
@@ -441,7 +444,8 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return '';
           }
@@ -493,7 +497,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       if (
         !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
         rule.field === placeholderFieldName ||
-        rule.operator === placeholderOperatorName
+        rule.operator === placeholderOperatorName ||
+        /* istanbul ignore next */
+        (placeholderValueName !== undefined && rule.value === placeholderValueName)
       ) {
         return '';
       }
@@ -599,7 +605,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return '';
           }
@@ -649,7 +657,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return false;
           }
@@ -694,7 +704,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return '';
           }
@@ -741,7 +753,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return '';
           }
@@ -784,7 +798,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return '';
           }
@@ -826,7 +842,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return false;
           }
@@ -873,7 +891,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
           if (
             !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
             rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName
+            rule.operator === placeholderOperatorName ||
+            /* istanbul ignore next */
+            (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
             return false;
           }
@@ -943,7 +963,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         if (
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
-          rule.operator === placeholderOperatorName
+          rule.operator === placeholderOperatorName ||
+          /* istanbul ignore next */
+          (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return '';
         }

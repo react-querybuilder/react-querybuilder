@@ -1890,6 +1890,60 @@ describe('autoSelectOperator', () => {
   });
 });
 
+describe('autoSelectValue', () => {
+  const values = [{ name: '=', label: '=' }];
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1', values, valueEditorType: 'select' },
+    { name: 'field2', label: 'Field 2', values, valueEditorType: 'select' },
+  ];
+
+  // it('initially hides the value editor', async () => {
+  //   const { container } = render(<QueryBuilder fields={fields} autoSelectValue={false} />);
+  //   await user.click(screen.getByTestId(TestID.addRule));
+  //   expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
+  //   expect(container.querySelectorAll(`select.${sc.values}`)).toHaveLength(1);
+  //   expect(screen.getByTestId(TestID.values)).toHaveValue(defaultPlaceholderValueName);
+  //   expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
+  // });
+
+  it('uses the placeholderLabel and placeholderName', async () => {
+    const placeholderName = 'Test placeholder name';
+    const placeholderLabel = 'Test placeholder label';
+    render(
+      <QueryBuilder
+        fields={fields}
+        autoSelectValue={false}
+        operators={values}
+        translations={{ values: { placeholderLabel, placeholderName } }}
+      />
+    );
+
+    await user.click(screen.getByTestId(TestID.addRule));
+
+    expect(screen.getByDisplayValue(placeholderLabel)).toHaveValue(placeholderName);
+  });
+
+  it('uses the placeholderGroupLabel', async () => {
+    const placeholderGroupLabel = 'Test group placeholder';
+    const { container } = render(
+      <QueryBuilder
+        fields={fields.map(f => ({
+          ...f,
+          values: [{ label: 'Values', options: values }],
+        }))}
+        autoSelectValue={false}
+        translations={{ values: { placeholderGroupLabel } }}
+      />
+    );
+
+    await user.click(screen.getByTestId(TestID.addRule));
+
+    expect(
+      container.querySelector(`optgroup[label="${placeholderGroupLabel}"]`)
+    ).toBeInTheDocument();
+  });
+});
+
 describe('valueEditorType "multiselect" default values', () => {
   const fields: Field[] = [
     {

@@ -20,6 +20,7 @@ export const defaultOptions = {
   resetOnOperatorChange: false,
   autoSelectField: true,
   autoSelectOperator: true,
+  autoSelectValue: true,
   addRuleToNewGroups: false,
   validateQuery: false,
   independentCombinators: false,
@@ -45,6 +46,7 @@ export const optionOrder: DemoOption[] = [
   'resetOnOperatorChange',
   'autoSelectField',
   'autoSelectOperator',
+  'autoSelectValue',
   'addRuleToNewGroups',
   'validateQuery',
   'independentCombinators',
@@ -99,6 +101,12 @@ export const optionsMetadata = {
     link: '/docs/components/querybuilder#autoselectoperator',
     label: 'Auto-select operator',
     title: 'The default operator will be automatically selected for new rules',
+  },
+  autoSelectValue: {
+    link: '/docs/components/querybuilder#autoselectvalue',
+    label: 'Auto-select value',
+    title:
+      'The default value will be automatically selected for rules where the value editor is a select list',
   },
   addRuleToNewGroups: {
     link: '/docs/components/querybuilder#addruletonewgroups',

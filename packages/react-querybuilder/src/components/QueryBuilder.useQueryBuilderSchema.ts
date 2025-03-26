@@ -115,6 +115,7 @@ export function useQueryBuilderSchema<
     resetOnOperatorChange: resetOnOperatorChangeProp = false,
     autoSelectField: autoSelectFieldProp = true,
     autoSelectOperator: autoSelectOperatorProp = true,
+    autoSelectValue: autoSelectValueProp = true,
     addRuleToNewGroups: addRuleToNewGroupsProp = false,
     listsAsArrays: listsAsArraysProp = false,
     parseNumbers = false,
@@ -161,6 +162,7 @@ export function useQueryBuilderSchema<
   const resetOnOperatorChange = !!resetOnOperatorChangeProp;
   const autoSelectField = !!autoSelectFieldProp;
   const autoSelectOperator = !!autoSelectOperatorProp;
+  const autoSelectValue = !!autoSelectValueProp;
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
@@ -584,6 +586,7 @@ export function useQueryBuilderSchema<
       accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
+      autoSelectValue,
       classNames: controlClassnames,
       combinators,
       controls,
@@ -620,6 +623,7 @@ export function useQueryBuilderSchema<
       addRuleToNewGroups,
       autoSelectField,
       autoSelectOperator,
+      autoSelectValue,
       combinators,
       controlClassnames,
       controls,

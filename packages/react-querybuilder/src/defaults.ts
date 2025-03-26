@@ -58,6 +58,25 @@ export const defaultPlaceholderOperatorLabel: typeof defaultPlaceholderLabel =
  */
 export const defaultPlaceholderOperatorGroupLabel: typeof defaultPlaceholderLabel =
   defaultPlaceholderLabel;
+/**
+ * Default `name` for placeholder option in the `values` array.
+ *
+ * @group Defaults
+ */
+export const defaultPlaceholderValueName: typeof defaultPlaceholderName = defaultPlaceholderName;
+/**
+ * Default `label` for placeholder option in the `values` array.
+ *
+ * @group Defaults
+ */
+export const defaultPlaceholderValueLabel: typeof defaultPlaceholderLabel = defaultPlaceholderLabel;
+/**
+ * Default `label` for placeholder option group in the `values` array.
+ *
+ * @group Defaults
+ */
+export const defaultPlaceholderValueGroupLabel: typeof defaultPlaceholderLabel =
+  defaultPlaceholderLabel;
 
 /**
  * Default character used to `.join` and `.split` arrays.
@@ -84,6 +103,12 @@ export const defaultTranslations: TranslationsFull = {
     placeholderName: defaultPlaceholderOperatorName,
     placeholderLabel: defaultPlaceholderOperatorLabel,
     placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
+  } as const,
+  values: {
+    title: 'Values',
+    placeholderName: defaultPlaceholderValueName,
+    placeholderLabel: defaultPlaceholderValueLabel,
+    placeholderGroupLabel: defaultPlaceholderValueGroupLabel,
   } as const,
   value: {
     title: 'Value',

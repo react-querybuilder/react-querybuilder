@@ -546,7 +546,7 @@ export const useRule = (props: RuleProps): UseRule => {
     const v =
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : (fieldData.values ?? getValues(rule.field, rule.operator, { fieldData }));
+        : getValues(rule.field, rule.operator, { fieldData });
     return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
   }, [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]);
   const valueSourceOptions = useMemo(
