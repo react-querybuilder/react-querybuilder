@@ -1,9 +1,9 @@
-import type { FullOption, RuleProcessor } from '../../types/index.noReact';
+import type { DefaultOperatorName, FullOption, RuleProcessor } from '../../types/index.noReact';
 import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { getQuotedFieldName } from './utils';
+import { getQuotedFieldName, normalizeConstituentWordOrder } from './utils';
 
-const nlOperatorMap: Record<string, [string, string]> = {
+const nlOperatorMap: Record<Lowercase<DefaultOperatorName>, [string, string]> = {
   '=': ['is the same as the value in', 'is'],
   '!=': ['is not the same as the value in', 'is not'],
   '<': ['is less than the value in', 'is less than'],
@@ -57,7 +57,10 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
     label: rule.operator,
   };
 
-  return (nlOperatorMap[operator.toLowerCase()] ?? [label, label])[valueSource === 'field' ? 0 : 1];
+  return (nlOperatorMap[operator.toLowerCase() as Lowercase<DefaultOperatorName>] ?? [
+    label,
+    label,
+  ])[valueSource === 'field' ? 0 : 1];
 };
 
 /**
@@ -75,6 +78,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     operatorProcessor = defaultOperatorProcessorNL,
     valueProcessor = defaultValueProcessorNL,
     concatOperator = '||',
+    wordOrder = 'SVO',
   } = opts ?? /* istanbul ignore next */ {};
 
   const value = valueProcessor(rule, {
@@ -103,5 +107,14 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
 
   const processedOperator = operatorProcessor(rule, opts);
 
-  return `${processedField} ${processedOperator} ${value}`.trim();
+  const wordOrderMap = {
+    S: processedField,
+    V: processedOperator,
+    O: value,
+  };
+
+  return normalizeConstituentWordOrder(wordOrder)
+    .map(term => `${wordOrderMap[term]}`)
+    .join(' ')
+    .trim();
 };

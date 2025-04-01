@@ -143,10 +143,10 @@ const defaultFormatQueryOptions = {
   preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
-  // placeholderValueName: defaultPlaceholderValueName,
   quoteValuesWith: "'",
   concatOperator: '||',
   preset: 'ansi',
+  wordOrder: 'SVO',
 } satisfies MostFormatQueryOptions;
 
 const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
@@ -986,7 +986,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return fallbackExpression;
       }
 
-      const isXOR = /^xor$/i.test(rg2.combinator ?? '');
+      const isXOR = (rg2.combinator ?? '').toLowerCase() === 'xor';
       const combinator = isXOR ? rg2.combinator!.slice(1) : rg2.combinator;
       const mustWrap = rg2.not || !outermostOrLonelyInGroup || (isXOR && processedRules.length > 1);
 

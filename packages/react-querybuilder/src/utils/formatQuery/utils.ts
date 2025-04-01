@@ -1,4 +1,5 @@
 import type {
+  ConstituentWordOrder,
   DefaultCombinatorName,
   FormatQueryOptions,
   FullField,
@@ -217,4 +218,37 @@ export const getQuotedFieldName = (
         fieldIdentifierSeparator
       )
     : `${qPre}${fieldName}${qPost}`;
+};
+
+const defaultWordOrder = ['S', 'V', 'O'];
+
+/**
+ * Given a [Constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders)
+ * like "svo" or "sov", returns a permutation of `["S", "V", "O"]` based on the first occurrence of
+ * each letter in the input string (case insensitive). This widens the valid input from abbreviations
+ * like "svo" to more expressive strings like "subject-verb-object" or "sub ver obj". Any missing
+ * letters are appended in the default order "SVO" (e.g., "object" would yield `["O", "S", "V"]`).
+ *
+ * @group Export
+ */
+export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrder => {
+  const result: string[] = [];
+  const letterSet = new Set(defaultWordOrder);
+
+  for (const char of input.toUpperCase()) {
+    if (letterSet.has(char)) {
+      result.push(char);
+      letterSet.delete(char);
+      if (letterSet.size === 0) break;
+    }
+  }
+
+  // Add any missing letters in default order
+  for (const letter of defaultWordOrder) {
+    if (letterSet.has(letter)) {
+      result.push(letter);
+    }
+  }
+
+  return result as ConstituentWordOrder;
 };
