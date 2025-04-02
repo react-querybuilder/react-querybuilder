@@ -40,3 +40,40 @@ export type Whitespace =
 @group type-fest
 */
 export type WordSeparators = '-' | '_' | Whitespace;
+
+/**
+@group type-fest
+*/
+export type AsciiPunctuation =
+	| '!'
+	| '"'
+	| '#'
+	| '$'
+	| '%'
+	| '&'
+	| '\''
+	| '('
+	| ')'
+	| '*'
+	| '+'
+	| ','
+	| '-'
+	| '.'
+	| '/'
+	| ':'
+	| ';'
+	| '<'
+	| '='
+	| '>'
+	| '?'
+	| '@'
+	| '['
+	| '\\'
+	| ']'
+	| '^'
+	| '_'
+	| '`'
+	| '{'
+	| '|'
+	| '}'
+	| '~';
