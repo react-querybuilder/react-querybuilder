@@ -417,6 +417,8 @@ export type GroupVariantCondition = 'not' | 'xor';
 export type NLTranslationKey =
   | 'and'
   | 'or'
+  | 'true'
+  | 'false'
   | `groupPrefix${ZeroOrMoreGroupVariants}`
   | `groupSuffix${ZeroOrMoreGroupVariants}`;
 

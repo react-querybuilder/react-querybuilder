@@ -4,6 +4,7 @@ import {
 } from '../../defaults';
 import type {
   FormatQueryOptions,
+  NLTranslations,
   RuleGroupType,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -383,9 +384,11 @@ it('translations', () => {
     ],
   };
 
-  const translations = {
+  const translations: NLTranslations = {
     and: 'PLUS',
     or: 'OR',
+    true: 'YES',
+    false: 'NO',
     groupPrefix_xor: 'precisely one of',
     groupPrefix_xor_not: 'multiple or none of',
     groupSuffix: 'has been verified',
@@ -419,7 +422,7 @@ it('translations', () => {
       { format: 'natural_language', translations }
     )
   ).toBe(`f1 is 'v1', PLUS precisely one of (f1 is 'v1', OR f2 is 'v2') has been verified`);
-  // And/or
+  // and/or/true/false
   expect(
     formatQuery(
       {
@@ -427,11 +430,13 @@ it('translations', () => {
         rules: [
           { field: 'f1', operator: 'in', value: 'v1, v11' },
           { field: 'f2', operator: 'in', value: 'v2,v22,v222' },
+          { field: 'f3', operator: '=', value: true },
+          { field: 'f4', operator: '=', value: false },
         ],
       },
       { format: 'natural_language', translations }
     )
   ).toBe(
-    `f1 is one of the values 'v1' OR 'v11', PLUS f2 is one of the values 'v2', 'v22', OR 'v222'`
+    `f1 is one of the values 'v1' OR 'v11', PLUS f2 is one of the values 'v2', 'v22', OR 'v222', PLUS f3 is YES, PLUS f4 is NO`
   );
 });

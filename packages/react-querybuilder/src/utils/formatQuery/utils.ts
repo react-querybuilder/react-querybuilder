@@ -257,15 +257,17 @@ export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrd
 };
 
 export const defaultNLTranslations: NLTranslations = {
-  and: 'and',
-  or: 'or',
+  // and: 'and',
+  // or: 'or',
+  // true: 'true',
+  // false: 'false',
   groupPrefix: '',
-  groupPrefix_not_xor: 'either zero or more than one of',
   // groupPrefix_not: '',
+  groupPrefix_not_xor: 'either zero or more than one of',
   groupPrefix_xor: 'exactly one of',
   groupSuffix: 'is true',
-  // groupSuffix_not_xor: 'is true',
   groupSuffix_not: 'is not true',
+  // groupSuffix_not_xor: 'is true',
   // groupSuffix_xor: 'is true',
 };
 
