@@ -195,11 +195,11 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
     let didCancel = false;
 
     const getDnD = async () => {
-      const [reactDnD, reactDndHTML5Be, reactDndTouchBe] = await Promise.all([
-        import('react-dnd').catch(() => null),
-        import('react-dnd-html5-backend').catch(() => null),
-        import('react-dnd-touch-backend').catch(() => null),
-      ]);
+      const [reactDnD, reactDndHTML5Be, reactDndTouchBe] = await Promise.all(
+        ['', '-html5-backend', '-touch-backend'].map(pn =>
+          import(`react-dnd${pn}`).catch(() => null)
+        )
+      );
 
       // istanbul ignore else
       if (!didCancel) {
