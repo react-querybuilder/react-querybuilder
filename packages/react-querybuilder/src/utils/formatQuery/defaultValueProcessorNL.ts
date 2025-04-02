@@ -26,6 +26,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
     quoteFieldNamesWith,
     quoteValuesWith,
     fieldIdentifierSeparator,
+    translations,
   } = opts;
   const valueIsField = rule.valueSource === 'field';
   const operatorLowerCase = rule.operator.toLowerCase();
@@ -61,10 +62,11 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
             ? `${trimIfString(v)}`
             : `${wrapAndEscape(v)}`
       );
+      const or = (translations ?? /* istanbul ignore next */ {}).or ?? 'or';
       if (valStringArray.length <= 2) {
-        return valStringArray.join(' or ');
+        return valStringArray.join(` ${or} `);
       }
-      return `${valStringArray.slice(0, -1).join(', ')}, or ${valStringArray.at(-1)}`;
+      return `${valStringArray.slice(0, -1).join(', ')}, ${or} ${valStringArray.at(-1)}`;
     }
   }
 

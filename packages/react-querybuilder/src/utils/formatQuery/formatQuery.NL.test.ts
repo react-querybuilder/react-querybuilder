@@ -373,3 +373,65 @@ it('constituent word order', () => {
     )
   ).toBe(`f1 'v1' is, and (f1 'v1' is, or f2 'v2' is) is true`);
 });
+
+it('translations', () => {
+  const q: RuleGroupType = {
+    combinator: 'or',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  const translations = {
+    and: 'PLUS',
+    or: 'OR',
+    groupPrefix_xor: 'precisely one of',
+    groupPrefix_xor_not: 'multiple or none of',
+    groupSuffix: 'has been verified',
+    groupSuffix_not: 'has not been verified',
+    groupSuffix_xor: 'has been verified',
+    groupSuffix_xor_not: 'have been verified',
+  };
+
+  expect(formatQuery(q, { format: 'natural_language', translations })).toBe(
+    `f1 is 'v1', OR f2 is 'v2'`
+  );
+  expect(formatQuery({ ...q, not: true }, { format: 'natural_language', translations })).toBe(
+    `(f1 is 'v1', OR f2 is 'v2') has not been verified`
+  );
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(q)] },
+      { format: 'natural_language', translations }
+    )
+  ).toBe(`f1 is 'v1', PLUS (f1 is 'v1', OR f2 is 'v2') has been verified`);
+  // XOR
+  expect(formatQuery(queryForXor, { format: 'natural_language', translations })).toBe(
+    `precisely one of (f1 is 'v1', OR f2 is 'v2') has been verified`
+  );
+  expect(
+    formatQuery({ ...queryForXor, not: true }, { format: 'natural_language', translations })
+  ).toBe(`multiple or none of (f1 is 'v1', OR f2 is 'v2') have been verified`);
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(queryForXor)] },
+      { format: 'natural_language', translations }
+    )
+  ).toBe(`f1 is 'v1', PLUS precisely one of (f1 is 'v1', OR f2 is 'v2') has been verified`);
+  // And/or
+  expect(
+    formatQuery(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: 'in', value: 'v1, v11' },
+          { field: 'f2', operator: 'in', value: 'v2,v22,v222' },
+        ],
+      },
+      { format: 'natural_language', translations }
+    )
+  ).toBe(
+    `f1 is one of the values 'v1' OR 'v11', PLUS f2 is one of the values 'v2', 'v22', OR 'v222'`
+  );
+});

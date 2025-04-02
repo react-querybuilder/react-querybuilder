@@ -3,6 +3,9 @@ import type {
   DefaultCombinatorName,
   FormatQueryOptions,
   FullField,
+  GroupVariantCondition,
+  NLTranslationKey,
+  NLTranslations,
   OptionList,
   RuleGroupTypeAny,
   SetRequired,
@@ -252,3 +255,51 @@ export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrd
 
   return result as ConstituentWordOrder;
 };
+
+export const defaultNLTranslations: NLTranslations = {
+  and: 'and',
+  or: 'or',
+  groupPrefix: '',
+  groupPrefix_not_xor: 'either zero or more than one of',
+  // groupPrefix_not: '',
+  groupPrefix_xor: 'exactly one of',
+  groupSuffix: 'is true',
+  // groupSuffix_not_xor: 'is true',
+  groupSuffix_not: 'is not true',
+  // groupSuffix_xor: 'is true',
+};
+
+/**
+ * Note: This function assumes `conditions.length > 0`
+ */
+const translationMatchFilter = (
+  key: NLTranslationKey,
+  keyToTest: string,
+  conditions: GroupVariantCondition[]
+) =>
+  // The translation matches the base key
+  keyToTest.startsWith(key) &&
+  // The translation specifies all conditions
+  conditions.every(
+    c =>
+      // This translation specifies _this_ condition
+      keyToTest.includes(`_${c}`) &&
+      // This translation specifies the same _total number_ of conditions
+      keyToTest.match(/_/g)?.length === conditions.length
+  );
+
+export const getNLTranslataion = (
+  key: NLTranslationKey,
+  translations: NLTranslations,
+  conditions: GroupVariantCondition[] = []
+): string =>
+  conditions.length === 0
+    ? (translations[key] ?? defaultNLTranslations[key] ?? /* istanbul ignore next */ '')
+    : (Object.entries(translations).find(([keyToTest]) =>
+        translationMatchFilter(key, keyToTest, conditions)
+      )?.[1] ??
+      Object.entries(defaultNLTranslations).find(([keyToTest]) =>
+        translationMatchFilter(key, keyToTest, conditions)
+      )?.[1] ??
+      defaultNLTranslations[key] ??
+      /* istanbul ignore next */ '');

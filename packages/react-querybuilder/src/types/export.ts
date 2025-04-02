@@ -235,6 +235,10 @@ export interface FormatQueryOptions {
    * - Object = value
    */
   wordOrder?: ConstituentWordOrderString | Lowercase<ConstituentWordOrderString> | ({} & string);
+  /**
+   * Translatable strings used by the "natural_language" format.
+   */
+  translations?: Partial<Record<NLTranslationKey, string>>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context?: Record<string, any>;
 }
@@ -402,3 +406,18 @@ export type ConstituentWordOrder =
   | ['V', 'O', 'S'];
 
 export type ConstituentWordOrderString = 'SVO' | 'SOV' | 'OSV' | 'OVS' | 'VSO' | 'VOS';
+
+// Update the number after `Depth['length'] extends` if/when another condition is added:
+type RepeatStrings<S extends string[], Depth extends number[] = []> = Depth['length'] extends 2
+  ? ''
+  : '' | `_${S[number]}${RepeatStrings<S, [...Depth, 1]>}`;
+type ZeroOrMoreGroupVariants = RepeatStrings<['xor', 'not']>;
+
+export type GroupVariantCondition = 'not' | 'xor';
+export type NLTranslationKey =
+  | 'and'
+  | 'or'
+  | `groupPrefix${ZeroOrMoreGroupVariants}`
+  | `groupSuffix${ZeroOrMoreGroupVariants}`;
+
+export type NLTranslations = Partial<Record<NLTranslationKey, string>>;
