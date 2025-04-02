@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The `translations` prop object has a new property `values` that accepts `placeholderName`, `placeholderLabel`, and `placeholderGroupLabel` properties ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#translations)). These translatable strings set the default values and labels when `autoSelectValue` is set to `false`.
   - A corresponding option was also added to [`formatQuery`](https://react-querybuilder.js.org/docs/utils/export#placeholder-values), which will now ignore rules where the `value` matches the placeholder value as long as `placeholderValueName` is defined (this behavior differs from `placeholderFieldName` and `placeholderOperatorName`, which do not need to be defined).
 
+### Fixed
+
+- [#877] Dynamic imports of `react-dnd` and related packages are now obfuscated to discourage bundlers like webpack from pre-processing those imports.
+
 ## [v8.4.1] - 2025-03-24
 
 ### Fixed
@@ -1886,6 +1890,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
 [#868]: https://github.com/react-querybuilder/react-querybuilder/pull/868
 [#873]: https://github.com/react-querybuilder/react-querybuilder/pull/873
+[#877]: https://github.com/react-querybuilder/react-querybuilder/pull/877
 
 <!-- #endregion -->
 
