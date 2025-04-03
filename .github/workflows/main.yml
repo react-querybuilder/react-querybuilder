@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
@@ -37,7 +37,7 @@ jobs:
       RQB_SKIP_REACT_COMPILER: 'true'
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
@@ -81,7 +81,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
       - name: Install React 18 and Run Tests
@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/download-artifact@v4
         with:
           name: packs
