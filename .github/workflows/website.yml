@@ -36,7 +36,7 @@ jobs:
       - run: bun run website:build
         # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes
         if: ${{ github.event_name == 'pull_request' }}
-      - uses: webfactory/ssh-agent@v0.9.0
+      - uses: webfactory/ssh-agent@v0.9.1
         # Only run when pushing to the `main` branch
         if: ${{ github.event_name != 'pull_request' }}
         with:
