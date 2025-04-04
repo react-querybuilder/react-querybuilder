@@ -4,6 +4,7 @@ import {
 } from '../../defaults';
 import type {
   FormatQueryOptions,
+  NLTranslations,
   RuleGroupType,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -23,21 +24,21 @@ import {
   queryWithValueSourceField,
 } from './formatQueryTestUtils';
 
-export const sqlString =
+export const nlString =
   "firstName is null, and lastName is not null, and firstName is one of the values 'Test' or 'This', and lastName is not one of the values 'Test' or 'This', and firstName is between 'Test' and 'This', and firstName is between 'Test' and 'This', and lastName is not between 'Test' and 'This', and age is between '12' and '14', and age is '26', and isMusician is true, and isLucky is false, and (gender is 'M', or job is not 'Programmer', or email contains '@') is not true, and (lastName does not contain 'ab', or job starts with 'Prog', or email ends with 'com', or job does not start with 'Man', or email does not end with 'fr') is true";
-export const sqlStringForValueSourceField =
+export const nlStringForValueSourceField =
   'firstName is null, and lastName is not null, and firstName is the same as a value in middleName or lastName, and lastName is not the same as any value in middleName or lastName, and firstName is between the values in middleName and lastName, and firstName is between the values in middleName and lastName, and lastName is not between the values in middleName and lastName, and age is the same as the value in iq, and isMusician is the same as the value in isCreative, and (gender is the same as the value in someLetter, or job is not the same as the value in isBetweenJobs, or email contains the value in atSign) is not true, and (lastName does not contain the value in firstName, or job starts with the value in jobPrefix, or email ends with the value in dotCom, or job does not start with the value in hasNoJob, or email does not end with the value in isInvalid) is true';
-export const sqlStringQuotedWithDoubleQuotes =
+export const nlStringQuotedWithDoubleQuotes =
   'firstName is null, and lastName is not null, and firstName is one of the values "Test" or "This", and lastName is not one of the values "Test" or "This", and firstName is between "Test" and "This", and firstName is between "Test" and "This", and lastName is not between "Test" and "This", and age is between "12" and "14", and age is "26", and isMusician is true, and isLucky is false, and (gender is "M", or job is not "Programmer", or email contains "@") is not true, and (lastName does not contain "ab", or job starts with "Prog", or email ends with "com", or job does not start with "Man", or email does not end with "fr") is true';
 
-it('formats nature language correctly', () => {
-  expect(formatQuery(query, 'natural_language')).toBe(sqlString);
+it('formats natural language correctly', () => {
+  expect(formatQuery(query, 'natural_language')).toBe(nlString);
   expect(formatQuery(queryWithValueSourceField, 'natural_language')).toBe(
-    sqlStringForValueSourceField
+    nlStringForValueSourceField
   );
   expect(
     formatQuery(query, { format: 'natural_language', valueProcessor: defaultValueProcessorNL })
-  ).toBe(sqlString);
+  ).toBe(nlString);
   // Cover the operators that the standard tests don't cover
   expect(
     formatQuery(
@@ -206,10 +207,10 @@ it('handles fieldIdentifierSeparator correctly', () => {
 });
 
 it('handles quoteValuesWith correctly', () => {
-  expect(formatQuery(query, { format: 'natural_language', quoteValuesWith: `'` })).toBe(sqlString);
+  expect(formatQuery(query, { format: 'natural_language', quoteValuesWith: `'` })).toBe(nlString);
 
   expect(formatQuery(query, { format: 'natural_language', quoteValuesWith: `"` })).toBe(
-    sqlStringQuotedWithDoubleQuotes
+    nlStringQuotedWithDoubleQuotes
   );
 });
 
@@ -343,4 +344,99 @@ it('handles XOR operator', () => {
       'natural_language'
     )
   ).toBe(`f1 is 'v1', and exactly one of (f1 is 'v1', or f2 is 'v2') is true`);
+});
+
+it('constituent word order', () => {
+  const q: RuleGroupType = {
+    combinator: 'or',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  expect(formatQuery(q, { format: 'natural_language', wordOrder: 'SOV' })).toBe(
+    `f1 'v1' is, or f2 'v2' is`
+  );
+  expect(formatQuery(q, { format: 'natural_language', wordOrder: 'subject-object-verb' })).toBe(
+    `f1 'v1' is, or f2 'v2' is`
+  );
+  expect(formatQuery(q, { format: 'natural_language', wordOrder: 'VERB SUBJECT' })).toBe(
+    `is f1 'v1', or is f2 'v2'`
+  );
+  expect(formatQuery({ ...q, not: true }, { format: 'natural_language', wordOrder: 'SOV' })).toBe(
+    `(f1 'v1' is, or f2 'v2' is) is not true`
+  );
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(q)] },
+      { format: 'natural_language', wordOrder: 'SOV' }
+    )
+  ).toBe(`f1 'v1' is, and (f1 'v1' is, or f2 'v2' is) is true`);
+});
+
+it('translations', () => {
+  const q: RuleGroupType = {
+    combinator: 'or',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  const translations: NLTranslations = {
+    and: 'PLUS',
+    or: 'OR',
+    true: 'YES',
+    false: 'NO',
+    groupPrefix_xor: 'precisely one of',
+    groupPrefix_xor_not: 'multiple or none of',
+    groupSuffix: 'has been verified',
+    groupSuffix_not: 'has not been verified',
+    groupSuffix_xor: 'has been verified',
+    groupSuffix_xor_not: 'have been verified',
+  };
+
+  expect(formatQuery(q, { format: 'natural_language', translations })).toBe(
+    `f1 is 'v1', OR f2 is 'v2'`
+  );
+  expect(formatQuery({ ...q, not: true }, { format: 'natural_language', translations })).toBe(
+    `(f1 is 'v1', OR f2 is 'v2') has not been verified`
+  );
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(q)] },
+      { format: 'natural_language', translations }
+    )
+  ).toBe(`f1 is 'v1', PLUS (f1 is 'v1', OR f2 is 'v2') has been verified`);
+  // XOR
+  expect(formatQuery(queryForXor, { format: 'natural_language', translations })).toBe(
+    `precisely one of (f1 is 'v1', OR f2 is 'v2') has been verified`
+  );
+  expect(
+    formatQuery({ ...queryForXor, not: true }, { format: 'natural_language', translations })
+  ).toBe(`multiple or none of (f1 is 'v1', OR f2 is 'v2') have been verified`);
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f1', operator: '=', value: 'v1' }, 'and', convertToIC(queryForXor)] },
+      { format: 'natural_language', translations }
+    )
+  ).toBe(`f1 is 'v1', PLUS precisely one of (f1 is 'v1', OR f2 is 'v2') has been verified`);
+  // and/or/true/false
+  expect(
+    formatQuery(
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: 'in', value: 'v1, v11' },
+          { field: 'f2', operator: 'in', value: 'v2,v22,v222' },
+          { field: 'f3', operator: '=', value: true },
+          { field: 'f4', operator: '=', value: false },
+        ],
+      },
+      { format: 'natural_language', translations }
+    )
+  ).toBe(
+    `f1 is one of the values 'v1' OR 'v11', PLUS f2 is one of the values 'v2', 'v22', OR 'v222', PLUS f3 is YES, PLUS f4 is NO`
+  );
 });

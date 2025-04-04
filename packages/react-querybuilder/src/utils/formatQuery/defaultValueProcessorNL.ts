@@ -26,6 +26,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
     quoteFieldNamesWith,
     quoteValuesWith,
     fieldIdentifierSeparator,
+    translations,
   } = opts;
   const valueIsField = rule.valueSource === 'field';
   const operatorLowerCase = rule.operator.toLowerCase();
@@ -36,6 +37,11 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: string) =>
     getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+
+  const t = translations ?? /* istanbul ignore next */ {};
+  const orTL = t.or ?? 'or';
+  const trueTL = t.true ?? 'true';
+  const falseTL = t.false ?? 'false';
 
   switch (operatorLowerCase) {
     case 'null':
@@ -62,14 +68,14 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
             : `${wrapAndEscape(v)}`
       );
       if (valStringArray.length <= 2) {
-        return valStringArray.join(' or ');
+        return valStringArray.join(` ${orTL} `);
       }
-      return `${valStringArray.slice(0, -1).join(', ')}, or ${valStringArray.at(-1)}`;
+      return `${valStringArray.slice(0, -1).join(', ')}, ${orTL} ${valStringArray.at(-1)}`;
     }
   }
 
   if (typeof rule.value === 'boolean') {
-    return rule.value ? 'true' : 'false';
+    return rule.value ? trueTL : falseTL;
   }
 
   return valueIsField

@@ -225,6 +225,20 @@ export interface FormatQueryOptions {
    * Option presets to maximize compatibility with various SQL dialects.
    */
   preset?: SQLPreset;
+  /**
+   * [Constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders)
+   * for the "natural_language" format. Can be abbreviated like "SVO" or spelled out like
+   * "subject-verb-object".
+   *
+   * - Subject = field
+   * - Verb = operator
+   * - Object = value
+   */
+  wordOrder?: ConstituentWordOrderString | Lowercase<ConstituentWordOrderString> | ({} & string);
+  /**
+   * Translatable strings used by the "natural_language" format.
+   */
+  translations?: Partial<Record<NLTranslationKey, string>>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context?: Record<string, any>;
 }
@@ -382,3 +396,30 @@ export interface RQBJsonLogicVar {
  * @group Export
  */
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
+
+export type ConstituentWordOrder =
+  | ['S', 'V', 'O']
+  | ['S', 'O', 'V']
+  | ['O', 'S', 'V']
+  | ['O', 'V', 'S']
+  | ['V', 'S', 'O']
+  | ['V', 'O', 'S'];
+
+export type ConstituentWordOrderString = 'SVO' | 'SOV' | 'OSV' | 'OVS' | 'VSO' | 'VOS';
+
+// Update the number after `Depth['length'] extends` if/when another condition is added:
+type RepeatStrings<S extends string[], Depth extends number[] = []> = Depth['length'] extends 2
+  ? ''
+  : '' | `_${S[number]}${RepeatStrings<S, [...Depth, 1]>}`;
+type ZeroOrMoreGroupVariants = RepeatStrings<['xor', 'not']>;
+
+export type GroupVariantCondition = 'not' | 'xor';
+export type NLTranslationKey =
+  | 'and'
+  | 'or'
+  | 'true'
+  | 'false'
+  | `groupPrefix${ZeroOrMoreGroupVariants}`
+  | `groupSuffix${ZeroOrMoreGroupVariants}`;
+
+export type NLTranslations = Partial<Record<NLTranslationKey, string>>;
