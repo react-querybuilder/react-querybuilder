@@ -1,7 +1,7 @@
 import type { RulesLogic } from 'json-logic-js';
 import type { FullField, FullOperator, ParseNumbersPropConfig, ValueSource } from './basic';
 import type { FlexibleOptionList } from './options';
-import type { RuleType } from './ruleGroups';
+import type { DefaultOperatorName, RuleType } from './ruleGroups';
 import type { QueryValidator } from './validation';
 
 /**
@@ -43,6 +43,10 @@ export type ExportObjectFormats =
  * @group Export
  */
 export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
+
+export type ExportOperatorMap = Partial<
+  Record<Lowercase<DefaultOperatorName> | DefaultOperatorName, string | [string, string]>
+>;
 
 /**
  * Options object shape for {@link formatQuery}.
@@ -226,6 +230,10 @@ export interface FormatQueryOptions {
    */
   preset?: SQLPreset;
   /**
+   * Map of operators to their translations for the "natural_language" format.
+   */
+  operatorMap?: ExportOperatorMap;
+  /**
    * [Constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders)
    * for the "natural_language" format. Can be abbreviated like "SVO" or spelled out like
    * "subject-verb-object".
@@ -397,6 +405,15 @@ export interface RQBJsonLogicVar {
  */
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
 
+/**
+ * Constituent word order (as array) for the "natural_language" format.
+ *
+ * - S (subject) = field
+ * - V (verb) = operator
+ * - O (object) = value
+ *
+ * @group Export
+ */
 export type ConstituentWordOrder =
   | ['S', 'V', 'O']
   | ['S', 'O', 'V']
@@ -405,15 +422,36 @@ export type ConstituentWordOrder =
   | ['V', 'S', 'O']
   | ['V', 'O', 'S'];
 
+/**
+ * Constituent word order (as string) for the "natural_language" format.
+ *
+ * - S (subject) = field
+ * - V (verb) = operator
+ * - O (object) = value
+ *
+ * @group Export
+ */
 export type ConstituentWordOrderString = 'SVO' | 'SOV' | 'OSV' | 'OVS' | 'VSO' | 'VOS';
 
-// Update the number after `Depth['length'] extends` if/when another condition is added:
+// Update the number at the end if another condition is added:
 type RepeatStrings<S extends string[], Depth extends number[] = []> = Depth['length'] extends 2
   ? ''
   : '' | `_${S[number]}${RepeatStrings<S, [...Depth, 1]>}`;
+// Update the array at the end if another condition is added:
 type ZeroOrMoreGroupVariants = RepeatStrings<['xor', 'not']>;
 
+/**
+ * Rule group condition identifier for the "natural_language" format.
+ *
+ * @group Export
+ */
 export type GroupVariantCondition = 'not' | 'xor';
+
+/**
+ * Keys for the `translations` config object used by the "natural_language" format.
+ *
+ * @group Export
+ */
 export type NLTranslationKey =
   | 'and'
   | 'or'
@@ -422,4 +460,9 @@ export type NLTranslationKey =
   | `groupPrefix${ZeroOrMoreGroupVariants}`
   | `groupSuffix${ZeroOrMoreGroupVariants}`;
 
+/**
+ * `translations` config object for "natural_language" format.
+ *
+ * @group Export
+ */
 export type NLTranslations = Partial<Record<NLTranslationKey, string>>;

@@ -1,27 +1,32 @@
-import type { DefaultOperatorName, FullOption, RuleProcessor } from '../../types/index.noReact';
+import type {
+  DefaultOperatorName,
+  ExportOperatorMap,
+  FullOption,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuotedFieldName, normalizeConstituentWordOrder } from './utils';
 
-const nlOperatorMap: Record<Lowercase<DefaultOperatorName>, [string, string]> = {
-  '=': ['is the same as the value in', 'is'],
-  '!=': ['is not the same as the value in', 'is not'],
-  '<': ['is less than the value in', 'is less than'],
-  '>': ['is greater than the value in', 'is greater than'],
-  '<=': ['is less than or equal to the value in', 'is less than or equal to'],
-  '>=': ['is greater than or equal to the value in', 'is greater than or equal to'],
-  contains: ['contains the value in', 'contains'],
-  beginswith: ['starts with the value in', 'starts with'],
-  endswith: ['ends with the value in', 'ends with'],
-  doesnotcontain: ['does not contain the value in', 'does not contain'],
-  doesnotbeginwith: ['does not start with the value in', 'does not start with'],
-  doesnotendwith: ['does not end with the value in', 'does not end with'],
-  null: ['is null', 'is null'],
-  notnull: ['is not null', 'is not null'],
-  in: ['is the same as a value in', 'is one of the values'],
-  notin: ['is not the same as any value in', 'is not one of the values'],
-  between: ['is between the values in', 'is between'],
-  notbetween: ['is not between the values in', 'is not between'],
+export const defaultExportOperatorMap: ExportOperatorMap = {
+  '=': ['is', 'is the same as the value in'],
+  '!=': ['is not', 'is not the same as the value in'],
+  '<': ['is less than', 'is less than the value in'],
+  '>': ['is greater than', 'is greater than the value in'],
+  '<=': ['is less than or equal to', 'is less than or equal to the value in'],
+  '>=': ['is greater than or equal to', 'is greater than or equal to the value in'],
+  contains: ['contains', 'contains the value in'],
+  beginswith: ['starts with', 'starts with the value in'],
+  endswith: ['ends with', 'ends with the value in'],
+  doesnotcontain: ['does not contain', 'does not contain the value in'],
+  doesnotbeginwith: ['does not start with', 'does not start with the value in'],
+  doesnotendwith: ['does not end with', 'does not end with the value in'],
+  null: 'is null',
+  notnull: 'is not null',
+  in: ['is one of the values', 'is the same as a value in'],
+  notin: ['is not one of the values', 'is not the same as any value in'],
+  between: ['is between', 'is between the values in'],
+  notbetween: ['is not between', 'is not between the values in'],
 };
 
 /* istanbul ignore next */
@@ -34,12 +39,24 @@ const defaultGetOperators = () => [];
  */
 export const defaultOperatorProcessorNL: RuleProcessor = (
   rule,
-  /* istanbul ignore next */
+  // istanbul ignore next
   opts = {}
 ) => {
-  const { valueSource = /* istanbul ignore next */ 'value' } = rule;
-  /* istanbul ignore next */
-  const { getOperators = defaultGetOperators } = opts;
+  const { valueSource = 'value' } = rule;
+  // istanbul ignore next
+  const {
+    getOperators = defaultGetOperators,
+    operatorMap: operatorMapParam = defaultExportOperatorMap,
+  } = opts;
+
+  const mapOperatorMap = new Map<string, string | [string, string]>(
+    Object.entries(defaultExportOperatorMap)
+  );
+  for (const [key, value] of Object.entries(operatorMapParam)) {
+    mapOperatorMap.set(key.toLowerCase(), value);
+  }
+  const operatorMap = Object.fromEntries(mapOperatorMap);
+
   const { value: operator, label } = getOption(
     toFullOptionList(
       getOperators(rule.field, {
@@ -57,10 +74,10 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
     label: rule.operator,
   };
 
-  return (nlOperatorMap[operator.toLowerCase() as Lowercase<DefaultOperatorName>] ?? [
-    label,
-    label,
-  ])[valueSource === 'field' ? 0 : 1];
+  const operatorTL = operatorMap[operator as DefaultOperatorName] ??
+    operatorMap[operator.toLowerCase() as Lowercase<DefaultOperatorName>] ?? [label, label];
+
+  return typeof operatorTL === 'string' ? operatorTL : operatorTL[valueSource === 'field' ? 1 : 0];
 };
 
 /**

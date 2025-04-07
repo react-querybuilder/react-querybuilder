@@ -25,6 +25,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     concatOperator = '||',
     fieldIdentifierSeparator,
     wrapValueWith = ['', ''],
+    translations,
   } = {}
 ) => {
   const valueIsField = valueSource === 'field';
@@ -69,41 +70,47 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     case 'notbetween': {
       const valueAsArray = toArray(value, { retainEmptyStrings: true });
       if (
-        valueAsArray.length >= 2 &&
-        isValidValue(valueAsArray[0]) &&
-        isValidValue(valueAsArray[1])
+        valueAsArray.length < 2 ||
+        !isValidValue(valueAsArray[0]) ||
+        !isValidValue(valueAsArray[1])
       ) {
-        const [first, second] = valueAsArray;
+        return '';
+      }
 
-        const firstNum = shouldRenderAsNumber(first, parseNumbers)
-          ? parseNumber(first, { parseNumbers: 'strict' })
-          : NaN;
-        const secondNum = shouldRenderAsNumber(second, parseNumbers)
-          ? parseNumber(second, { parseNumbers: 'strict' })
-          : NaN;
-        const firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-        const secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+      const [first, second] = valueAsArray;
 
-        const valsOneAndTwoOnly = [firstValue, secondValue];
-        if (
-          !preserveValueOrder &&
-          firstValue === firstNum &&
-          secondValue === secondNum &&
-          secondNum < firstNum
-        ) {
-          valsOneAndTwoOnly[0] = secondNum;
-          valsOneAndTwoOnly[1] = firstNum;
-        }
+      const firstNum = shouldRenderAsNumber(first, parseNumbers)
+        ? parseNumber(first, { parseNumbers: 'strict' })
+        : NaN;
+      const secondNum = shouldRenderAsNumber(second, parseNumbers)
+        ? parseNumber(second, { parseNumbers: 'strict' })
+        : NaN;
+      const firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      const secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
-        return (
+      const valsOneAndTwoOnly = [firstValue, secondValue];
+      if (
+        !preserveValueOrder &&
+        firstValue === firstNum &&
+        secondValue === secondNum &&
+        secondNum < firstNum
+      ) {
+        valsOneAndTwoOnly[0] = secondNum;
+        valsOneAndTwoOnly[1] = firstNum;
+      }
+
+      return (
+        (
           valueIsField
             ? valsOneAndTwoOnly.map(v => wrapFieldName(v))
             : valsOneAndTwoOnly.every(v => shouldRenderAsNumber(v, parseNumbers))
               ? valsOneAndTwoOnly.map(v => parseNumber(v, { parseNumbers: 'strict' }))
               : valsOneAndTwoOnly.map(v => wrapAndEscape(v))
-        ).join(` and `);
-      }
-      return '';
+        )
+          // Note: `translations` should not be used for SQL.
+          // This is only here to support the "natural_language" format.
+          .join(` ${translations?.and ?? 'and'} `)
+      );
     }
 
     case 'contains':

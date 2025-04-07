@@ -150,6 +150,7 @@ const defaultFormatQueryOptions = {
   preset: 'ansi',
   wordOrder: 'SVO',
   translations: {},
+  operatorMap: {},
 } satisfies MostFormatQueryOptions;
 
 const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
