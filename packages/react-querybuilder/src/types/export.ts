@@ -44,6 +44,14 @@ export type ExportObjectFormats =
  */
 export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
 
+/**
+ * A map of operators to strings to be used in the output of {@link formatQuery}. If the
+ * result can differ based on the `valueSource`, the key should map to an array where the
+ * second element represents the string to be used when `valueSource` is "field". The first
+ * element will be used in all other cases.
+ *
+ * @group Export
+ */
 export type ExportOperatorMap = Partial<
   Record<Lowercase<DefaultOperatorName> | DefaultOperatorName, string | [string, string]>
 >;
@@ -230,7 +238,10 @@ export interface FormatQueryOptions {
    */
   preset?: SQLPreset;
   /**
-   * Map of operators to their translations for the "natural_language" format.
+   * Map of operators to their translations for the "natural_language" format. If the
+   * result can differ based on the `valueSource`, the key should map to an array where the
+   * second element represents the string to be used when `valueSource` is "field". The first
+   * element will be used in all other cases.
    */
   operatorMap?: ExportOperatorMap;
   /**
