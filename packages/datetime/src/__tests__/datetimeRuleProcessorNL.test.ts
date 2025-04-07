@@ -156,36 +156,41 @@ it('works with no field data', () => {
 
 it('uses custom date formats', () => {
   const d = '1969-01-01';
+  const dt = '1969-01-01T12:14:26.052';
+  const context = {
+    isDateField: true,
+    dateFormat: { dateStyle: 'short' },
+    dateTimeFormat: { dateStyle: 'short', timeStyle: 'medium' },
+  } as const;
   expect(
     formatQuery(
       { rules: [{ field: 'birthdate', operator: '=', value: d }] },
       {
         format: 'natural_language',
         fields,
-        context: { isDateField: true, dateStyle: 'short' },
+        context,
         ruleProcessor: getDatetimeRuleProcessorNL(
           dateLibraryFunctions.find(([name]) => name === 'date-fns')![1]
         ),
       }
     )
   ).toBe(
-    `Birthdate is ${new Intl.DateTimeFormat(undefined, { dateStyle: 'short' }).format(dayjs(d).toDate())}`
+    `Birthdate is ${new Intl.DateTimeFormat(undefined, context.dateFormat).format(dayjs(d).toDate())}`
   );
 
-  const dt = '1969-01-01T12:14:26.052';
   expect(
     formatQuery(
       { rules: [{ field: 'created_at', operator: '<', value: dt }] },
       {
         format: 'natural_language',
         fields,
-        context: { isDateField: true, dateStyle: 'short', timeStyle: 'medium' },
+        context,
         ruleProcessor: getDatetimeRuleProcessorNL(
           dateLibraryFunctions.find(([name]) => name === 'date-fns')![1]
         ),
       }
     )
   ).toBe(
-    `Created At is before ${new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'medium' }).format(dayjs(dt).toDate())}`
+    `Created At is before ${new Intl.DateTimeFormat(undefined, context.dateTimeFormat).format(dayjs(dt).toDate())}`
   );
 });

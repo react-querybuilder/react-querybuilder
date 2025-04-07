@@ -30,13 +30,13 @@ export const datetimeValueProcessorNL: ValueProcessorByRule = (rule, opts) => {
   if (isISOStringDateOnly(opts?.context?.originalValue)) {
     return new Intl.DateTimeFormat(opts?.context?.locales, {
       dateStyle: 'full',
-      ...opts?.context,
+      ...opts?.context?.dateFormat,
     }).format(rule.value);
   }
   return new Intl.DateTimeFormat(opts?.context?.locales, {
     dateStyle: 'full',
     timeStyle: 'long',
-    ...opts?.context,
+    ...opts?.context?.dateTimeFormat,
   }).format(rule.value);
 };
 
