@@ -1,4 +1,4 @@
-// Version 4.39.0
+// Version 4.39.1
 export * from './and';
 export * from './except';
 export * from './greater-than';
