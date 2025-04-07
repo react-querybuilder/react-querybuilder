@@ -34,15 +34,16 @@ const testCases: Record<string, [RuleGroupType, Record<SQLPreset, string>]> = {
       rules: [
         { field: 'firstName', operator: '!=', value: 'lastName', valueSource: 'field' },
         { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        { field: 'birthdate', operator: 'custom_op', value: null },
       ],
     },
     {
-      ansi: `(firstName != lastName and firstName like 'Stev%')`,
-      mssql: `([firstName] != [lastName] and [firstName] like 'Stev%')`,
-      mysql: `(firstName != lastName and firstName like 'Stev%')`,
-      oracle: `(firstName != lastName and firstName like 'Stev%')`,
-      postgresql: `("firstName" != "lastName" and "firstName" like 'Stev%')`,
-      sqlite: `(firstName != lastName and firstName like 'Stev%')`,
+      ansi: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op '')`,
+      mssql: `([firstName] != [lastName] and [firstName] like 'Stev%' and [birthdate] custom_op cast('' as date))`,
+      mysql: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op cast('' as date))`,
+      oracle: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op date'')`,
+      postgresql: `("firstName" != "lastName" and "firstName" like 'Stev%' and "birthdate" custom_op date'')`,
+      sqlite: `(firstName != lastName and firstName like 'Stev%' and birthdate custom_op '')`,
     },
   ],
   invalid: [
