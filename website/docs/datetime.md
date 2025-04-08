@@ -142,6 +142,34 @@ const jsonata = formatQuery(query, {
 });
 ```
 
+### Natural language
+
+The `datetimeRuleProcessorNL` will format date/time values using `Intl.DateTimeFormat`. By default, the formatter will be instantiated as follows:
+
+```ts
+// For date-only values, e.g. "1969-01-01":
+new Intl.DateTimeFormat(undefined, { dateStyle: 'full' });
+
+// For date+time values, e.g. "1969-01-01T12:14:26.052Z":
+new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'long' });
+```
+
+To customize the output, use the `context` option. The `locales` property will be passed as the first argument to the `Intl.DateTimeFormat` constructor, and either `dateFormat` or `dateTimeFormat`&mdash;depending on the rule&mdash;will be passed as the second argument.
+
+```ts
+import { datetimeRuleProcessorNL } from '@react-querybuilder/datetime/dayjs';
+
+const nl = formatQuery(query, {
+  format: 'natural_language',
+  ruleProcessor: datetimeRuleProcessorNL,
+  context: {
+    locales: 'en-GB',
+    dateFormat: { dateStyle: 'full' },
+    dateTimeFormat: { dateStyle: 'full', timeStyle: 'long' },
+  },
+});
+```
+
 <!--
 ## Value editor
 

@@ -331,7 +331,7 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 
 ### Natural language
 
-To produce a natural language query, use the "natural_language" format. Use the `getOperators` and `fields` options to render field and operator labels instead of values.
+To produce a natural language query, use the "natural_language" format. Use the `getOperators` and `fields` options to render field and operator labels instead of values. Also see the [i18n options](#internationalization) below.
 
 ```ts
 formatQuery(query, {
@@ -850,6 +850,67 @@ Output:
 ### Placeholder values
 
 Any rule where the `field`, `operator`, or `value` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName`, `placeholderOperatorName`, or `placeholderValueName` options. These correspond to the `fields.placeholderName`, `operators.placeholderName`, and `values.placeholderName` properties on the main component's [`translations` prop](../components/querybuilder#translations) object. Note that this behavior with regard to the `value` property will only be applied if `placeholderValueName` is explicitly set in the options. The others will act on their defaults if not defined.
+
+### Internationalization
+
+These i18n options are specific to the ["natural_language"](#natural-language) format.
+
+#### Word order
+
+Based on the linguistic concept of [constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders), the `wordOrder` option accepts all permutations of "SVO" ("SOV", "VSO", etc.) and outputs the field, operator, and value in the corresponding order (S = field, V = operator, O = value).
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'SOV',
+});
+// `First Name 'Steve' is`
+```
+
+#### Translations
+
+Map of the words "and", "or", "true", and "false" to their translated equivalents, plus prefix and suffix options for rule groups.
+
+The base prefix/suffix options are "groupPrefix" and "groupSuffix". The applicability of a group-related translation is determined by two conditions: (1) whether the group's `not` property is true, and (2) whether the combinator for the group is `"xor"`. The base `"group*"` translations are the fallbacks for when neither condition is true. When one or more conditions are true, `formatQuery` will look for a property on the `translations` object that matches the base property with a suffix of underscore (`"_"`) plus the condition ID (`"not"` or `"xor"`).
+
+For example, when a group has a `not: true` property, but the `combinator` is something other than `"xor"`, `formatQuery` will look for the `groupSuffix_not` key. For example:
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: {
+    groupSuffix: 'is def the truth',
+    groupSuffix_not: 'is so not true',
+  },
+});
+// Given the following query:
+// const query = {
+//   rules: [
+//     { rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
+//     'and',
+//     { not: true, rules: [{ field: 'firstName', operator: '=', value: 'Vai' }] },
+//   ]
+// };
+// ...potential output could be:
+// `(First Name is 'Steve') is def the truth, and (Last Name is 'Vai') is so not true`
+```
+
+When `not` is falsy but the `combinator` is `"xor"`, `groupSuffix_xor` will be used if it exists. Otherwise it will fall back to the default. If both conditions are true, the order of the suffixes doesn't matter: both "groupSuffix_not_xor" and "groupSuffix_xor_not" would be valid (although there is no guarantee which one will be used if both are present).
+
+#### Operator map
+
+`operatorMap` is a map of operators to their natural language equivalents. If the result can differ based on the `valueSource`, the key should map to an array where the second element represents the string to be used when `valueSource` is "field"; the first element will be used in all other cases.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  operatorMap: {
+    '=': 'is most assuredly',
+    '!=': ['is not', 'differs from'],
+  },
+});
+// `First Name is most assuredly 'Steve', and Last Name differs from First Name`
+```
 
 ## Validation
 
