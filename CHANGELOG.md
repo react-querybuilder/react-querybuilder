@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.5.0] - 2025-04-07
+
 ### Added
 
 - [#873] New prop `autoSelectValue` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectvalue)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield)/[`autoSelectOperator`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator) but for the value editor when it renders a select list.
@@ -1902,7 +1906,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.5.0...HEAD
+[v8.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.1...v8.5.0
 [v8.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.0...v8.4.1
 [v8.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.3.1...v8.4.0
 [v8.3.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.3.0...v8.3.1
