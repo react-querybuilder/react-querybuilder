@@ -1,7 +1,12 @@
 import '@testing-library/jest-dom';
-import { mockResizeObserver } from 'jsdom-testing-mocks';
+import { mockAnimationsApi, mockResizeObserver } from 'jsdom-testing-mocks';
 import 'regenerator-runtime/runtime';
 
-if (typeof Element !== 'undefined') Element.prototype.scrollIntoView = jest.fn();
+if (typeof Element !== 'undefined') {
+  Element.prototype.scrollIntoView = jest.fn();
+}
 
-if (typeof window !== 'undefined') mockResizeObserver();
+if (typeof window !== 'undefined') {
+  mockAnimationsApi();
+  mockResizeObserver();
+}
