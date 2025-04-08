@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "8.4.1",
+  "version": "8.5.0",
   "npmClient": "npm",
   "forcePublish": true,
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json"
