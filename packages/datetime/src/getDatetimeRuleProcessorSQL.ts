@@ -167,7 +167,7 @@ export const getDatetimeRuleProcessorSQL =
         break;
 
       default: {
-        const [originalValue, value] = valueAsDateArray[0];
+        const [originalValue, value] = valueAsDateArray[0] ?? ['', ''];
         finalValue = valueProcessor(
           { field: rule.field, operator: '=', value },
           { ...opts, context: { originalValue } }

@@ -41,7 +41,18 @@ const testCases: Record<string, [RuleGroupType, string]> = {
         },
       ],
     },
-    `${tsf('birthdate')} > ${tsv('1957-01-01')} and (${tsf('birthdate')} >= ${tsv('1957-01-01')} and ${tsf('birthdate')} <= ${tsv('1969-01-01')}) and $not(${tsf('birthdate')} >= ${tsv('1957-01-01')} and ${tsf('birthdate')} <= ${tsv('1969-01-01')}) and ${tsf('birthdate')} in [${tsv('1954-10-03')}, ${tsv('1960-06-06')}] and $not(${tsf('birthdate')} in [${tsv('1957-01-01')}]) and ${tsf('created_at')} < $toMillis("${now}") and ${tsf('created_at')} > ${tsf('birthdate')} and (${tsf('birthdate')} >= ${tsf('created_at')} and ${tsf('birthdate')} <= ${tsf('updated_at')}) and $not(${tsf('birthdate')} >= ${tsf('created_at')} and ${tsf('birthdate')} <= ${tsf('updated_at')}) and ${tsf('birthdate')} in [${tsf('created_at')}, ${tsf('updated_at')}]`,
+    [
+      `${tsf('birthdate')} > ${tsv('1957-01-01')}`,
+      `(${tsf('birthdate')} >= ${tsv('1957-01-01')} and ${tsf('birthdate')} <= ${tsv('1969-01-01')})`,
+      `$not(${tsf('birthdate')} >= ${tsv('1957-01-01')} and ${tsf('birthdate')} <= ${tsv('1969-01-01')})`,
+      `${tsf('birthdate')} in [${tsv('1954-10-03')}, ${tsv('1960-06-06')}]`,
+      `$not(${tsf('birthdate')} in [${tsv('1957-01-01')}])`,
+      `${tsf('created_at')} < $toMillis("${now}")`,
+      `${tsf('created_at')} > ${tsf('birthdate')}`,
+      `(${tsf('birthdate')} >= ${tsf('created_at')} and ${tsf('birthdate')} <= ${tsf('updated_at')})`,
+      `$not(${tsf('birthdate')} >= ${tsf('created_at')} and ${tsf('birthdate')} <= ${tsf('updated_at')})`,
+      `${tsf('birthdate')} in [${tsf('created_at')}, ${tsf('updated_at')}]`,
+    ].join(' and '),
   ],
   fallback: [
     {

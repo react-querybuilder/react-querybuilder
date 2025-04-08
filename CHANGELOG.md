@@ -11,7 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#873] New prop `autoSelectValue` ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectvalue)) behaves like [`autoSelectField`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectfield)/[`autoSelectOperator`](https://react-querybuilder.js.org/docs/api/querybuilder#autoselectoperator) but for the value editor when it renders a select list.
   - The `translations` prop object has a new property `values` that accepts `placeholderName`, `placeholderLabel`, and `placeholderGroupLabel` properties ([documentation](https://react-querybuilder.js.org/docs/api/querybuilder#translations)). These translatable strings set the default values and labels when `autoSelectValue` is set to `false`.
-  - A corresponding option was also added to [`formatQuery`](https://react-querybuilder.js.org/docs/utils/export#placeholder-values), which will now ignore rules where the `value` matches the placeholder value as long as `placeholderValueName` is defined (this behavior differs from `placeholderFieldName` and `placeholderOperatorName`, which do not need to be defined).
+  - A corresponding `placeholderValueName` option was added to [`formatQuery`](https://react-querybuilder.js.org/docs/utils/export#placeholder-values), which will now ignore rules where the `value` matches the placeholder value as long as `placeholderValueName` is defined (this behavior differs from `placeholderFieldName` and `placeholderOperatorName`, which do not need to be defined).
+- [#876] Miscellaneous i18n enhancements for the "natural_language" export format:
+  - `translations` option: Map of the words "and", "or", "true", and "false" to their translated equivalents. Also covers prefix and suffix options for rule groups.
+  - `wordOrder` option: Based on the linguistic concept of [constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders), this option accepts all permutations of "SVO" ("SOV", "VSO", etc.) and outputs the field, operator, and value in the corresponding order (S = field, V = operator, O = value).
+  - `operatorMap` option: Map of operators to their natural language equivalents. If the result can differ based on the `valueSource`, the key should map to an array where the second element represents the string to be used when `valueSource` is "field". The first element will be used in all other cases.
+  - Date/time formatting support: The `@react-querybuilder/datetime` package now supports the "natural_language" format for date-type rules. Formatting can be customized by passing `locales`, `dateFormat`, or `dateTimeFormat` as properties of the `context` parameter. These options are passed to a `Intl.DateTimeFormat` constructor.
 
 ### Fixed
 
@@ -1890,6 +1895,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#860]: https://github.com/react-querybuilder/react-querybuilder/pull/860
 [#868]: https://github.com/react-querybuilder/react-querybuilder/pull/868
 [#873]: https://github.com/react-querybuilder/react-querybuilder/pull/873
+[#876]: https://github.com/react-querybuilder/react-querybuilder/pull/876
 [#877]: https://github.com/react-querybuilder/react-querybuilder/pull/877
 
 <!-- #endregion -->

@@ -10,6 +10,7 @@ import type {
   FullOperator,
   FullOptionList,
   InputType,
+  NLTranslationKey,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   QueryValidator,
@@ -45,6 +46,7 @@ import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
   celCombinatorMap,
+  getNLTranslataion,
   getQuoteFieldNamesWithArray,
   isValueProcessorLegacy,
   numerifyValues,
@@ -143,10 +145,12 @@ const defaultFormatQueryOptions = {
   preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
-  // placeholderValueName: defaultPlaceholderValueName,
   quoteValuesWith: "'",
   concatOperator: '||',
   preset: 'ansi',
+  wordOrder: 'SVO',
+  translations: {},
+  operatorMap: {},
 } satisfies MostFormatQueryOptions;
 
 const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
@@ -289,6 +293,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     ruleProcessor: ruleProcessor_option,
     validator,
     valueProcessor: valueProcessor_option,
+    translations,
   } = optObj;
 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
@@ -946,7 +951,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       const processedRules = rg2.rules.map(rule => {
         // Independent combinators
         if (typeof rule === 'string') {
-          return `, ${rule} `;
+          return `, ${translations[rule as NLTranslationKey] ?? rule} `;
         }
 
         // Groups
@@ -986,18 +991,30 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         return fallbackExpression;
       }
 
-      const isXOR = /^xor$/i.test(rg2.combinator ?? '');
+      const isXOR = (rg2.combinator ?? '').toLowerCase() === 'xor';
       const combinator = isXOR ? rg2.combinator!.slice(1) : rg2.combinator;
       const mustWrap = rg2.not || !outermostOrLonelyInGroup || (isXOR && processedRules.length > 1);
 
-      const prefix = mustWrap
-        ? `${isXOR ? (rg2.not ? 'either zero or more than one of ' : 'exactly one of ') : ''}(`
-        : '';
-      const suffix = mustWrap ? `) is${rg2.not && !isXOR ? ' not' : ''} true` : '';
+      const [prefixTL, suffixTL] = (['groupPrefix', 'groupSuffix'] as const).map(key =>
+        rg2.not
+          ? isXOR
+            ? getNLTranslataion(key, translations, ['not', 'xor'])
+            : getNLTranslataion(key, translations, ['not'])
+          : isXOR
+            ? getNLTranslataion(key, translations, ['xor'])
+            : getNLTranslataion(key, translations)
+      );
+
+      const prefix = mustWrap ? `${prefixTL} (`.trim() : '';
+      const suffix = mustWrap ? `) ${suffixTL}`.trim() : '';
 
       return `${prefix}${processedRules
         .filter(Boolean)
-        .join(isRuleGroupType(rg2) ? `, ${combinator} ` : '')}${suffix}`;
+        .join(
+          isRuleGroupType(rg2)
+            ? `, ${translations[combinator as NLTranslationKey] ?? combinator} `
+            : ''
+        )}${suffix}`;
     };
 
     return processRuleGroup(ruleGroup, true);

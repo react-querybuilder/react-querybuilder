@@ -53,9 +53,11 @@ export const defaultSpELValueProcessor: ValueProcessorLegacy = generateValueProc
 export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 export { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
-export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 export { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
+export * from './defaultRuleProcessorNL';
+export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
+export { defaultValueProcessorNL } from './defaultValueProcessorNL';
 export * from './formatQuery';
 export * from './utils';
 export {

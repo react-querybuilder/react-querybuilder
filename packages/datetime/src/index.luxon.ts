@@ -8,6 +8,7 @@ import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
+import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
 import {
   getDatetimeRuleProcessorSQL,
   getDatetimeValueProcessorANSI,
@@ -67,5 +68,11 @@ export const datetimeRuleProcessorCEL: ValueProcessorByRule =
  */
 export const datetimeRuleProcessorMongoDBQuery: ValueProcessorByRule =
   getDatetimeRuleProcessorMongoDBQuery(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link react-querybuilder!index.formatQuery formatQuery} rule processor for "natural_language" format using Luxon
+ */
+export const datetimeRuleProcessorNL: ValueProcessorByRule =
+  getDatetimeRuleProcessorNL(rqbDateTimeLibraryAPI);
 
 export * from './rqbDateTimeLibraryAPI.luxon';

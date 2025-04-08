@@ -1,7 +1,7 @@
 import type { RulesLogic } from 'json-logic-js';
 import type { FullField, FullOperator, ParseNumbersPropConfig, ValueSource } from './basic';
 import type { FlexibleOptionList } from './options';
-import type { RuleType } from './ruleGroups';
+import type { DefaultOperatorName, RuleType } from './ruleGroups';
 import type { QueryValidator } from './validation';
 
 /**
@@ -43,6 +43,18 @@ export type ExportObjectFormats =
  * @group Export
  */
 export type SQLPreset = 'ansi' | 'sqlite' | 'postgresql' | 'mysql' | 'mssql' | 'oracle';
+
+/**
+ * A map of operators to strings to be used in the output of {@link formatQuery}. If the
+ * result can differ based on the `valueSource`, the key should map to an array where the
+ * second element represents the string to be used when `valueSource` is "field". The first
+ * element will be used in all other cases.
+ *
+ * @group Export
+ */
+export type ExportOperatorMap = Partial<
+  Record<Lowercase<DefaultOperatorName> | DefaultOperatorName, string | [string, string]>
+>;
 
 /**
  * Options object shape for {@link formatQuery}.
@@ -225,6 +237,27 @@ export interface FormatQueryOptions {
    * Option presets to maximize compatibility with various SQL dialects.
    */
   preset?: SQLPreset;
+  /**
+   * Map of operators to their translations for the "natural_language" format. If the
+   * result can differ based on the `valueSource`, the key should map to an array where the
+   * second element represents the string to be used when `valueSource` is "field". The first
+   * element will be used in all other cases.
+   */
+  operatorMap?: ExportOperatorMap;
+  /**
+   * [Constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders)
+   * for the "natural_language" format. Can be abbreviated like "SVO" or spelled out like
+   * "subject-verb-object".
+   *
+   * - Subject = field
+   * - Verb = operator
+   * - Object = value
+   */
+  wordOrder?: ConstituentWordOrderString | Lowercase<ConstituentWordOrderString> | ({} & string);
+  /**
+   * Translatable strings used by the "natural_language" format.
+   */
+  translations?: Partial<Record<NLTranslationKey, string>>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context?: Record<string, any>;
 }
@@ -382,3 +415,65 @@ export interface RQBJsonLogicVar {
  * @group Export
  */
 export type RQBJsonLogic = RulesLogic<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith>;
+
+/**
+ * Constituent word order (as array) for the "natural_language" format.
+ *
+ * - S (subject) = field
+ * - V (verb) = operator
+ * - O (object) = value
+ *
+ * @group Export
+ */
+export type ConstituentWordOrder =
+  | ['S', 'V', 'O']
+  | ['S', 'O', 'V']
+  | ['O', 'S', 'V']
+  | ['O', 'V', 'S']
+  | ['V', 'S', 'O']
+  | ['V', 'O', 'S'];
+
+/**
+ * Constituent word order (as string) for the "natural_language" format.
+ *
+ * - S (subject) = field
+ * - V (verb) = operator
+ * - O (object) = value
+ *
+ * @group Export
+ */
+export type ConstituentWordOrderString = 'SVO' | 'SOV' | 'OSV' | 'OVS' | 'VSO' | 'VOS';
+
+// Update the number at the end if another condition is added:
+type RepeatStrings<S extends string[], Depth extends number[] = []> = Depth['length'] extends 2
+  ? ''
+  : '' | `_${S[number]}${RepeatStrings<S, [...Depth, 1]>}`;
+// Update the array at the end if another condition is added:
+type ZeroOrMoreGroupVariants = RepeatStrings<['xor', 'not']>;
+
+/**
+ * Rule group condition identifier for the "natural_language" format.
+ *
+ * @group Export
+ */
+export type GroupVariantCondition = 'not' | 'xor';
+
+/**
+ * Keys for the `translations` config object used by the "natural_language" format.
+ *
+ * @group Export
+ */
+export type NLTranslationKey =
+  | 'and'
+  | 'or'
+  | 'true'
+  | 'false'
+  | `groupPrefix${ZeroOrMoreGroupVariants}`
+  | `groupSuffix${ZeroOrMoreGroupVariants}`;
+
+/**
+ * `translations` config object for "natural_language" format.
+ *
+ * @group Export
+ */
+export type NLTranslations = Partial<Record<NLTranslationKey, string>>;

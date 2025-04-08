@@ -2,7 +2,7 @@ import type { FullField, ValueProcessorByRule } from '../../types/index.noReact'
 import { toArray, trimIfString } from '../arrayUtils';
 import { getOption } from '../optGroupUtils';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -26,6 +26,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
     quoteFieldNamesWith,
     quoteValuesWith,
     fieldIdentifierSeparator,
+    translations,
   } = opts;
   const valueIsField = rule.valueSource === 'field';
   const operatorLowerCase = rule.operator.toLowerCase();
@@ -37,6 +38,11 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const wrapFieldName = (v: string) =>
     getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
+  const t = translations ?? /* istanbul ignore next */ {};
+  const orTL = t.or ?? 'or';
+  const trueTL = t.true ?? 'true';
+  const falseTL = t.false ?? 'false';
+
   switch (operatorLowerCase) {
     case 'null':
     case 'notnull': {
@@ -44,8 +50,27 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
     }
 
     case 'between':
-    case 'notbetween':
-      return defaultValueProcessorByRule(rule, opts);
+    case 'notbetween': {
+      if (!valueIsField) {
+        return defaultValueProcessorByRule(rule, opts);
+      }
+
+      const valueAsArray = toArray(rule.value, { retainEmptyStrings: true })
+        .slice(0, 2)
+        .map(v =>
+          wrapFieldName(
+            getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], v)?.label ?? v
+          )
+        );
+      if (
+        valueAsArray.length < 2 ||
+        !isValidValue(valueAsArray[0]) ||
+        !isValidValue(valueAsArray[1])
+      ) {
+        return '';
+      }
+      return defaultValueProcessorByRule({ ...rule, value: valueAsArray }, opts);
+    }
 
     case 'in':
     case 'notin': {
@@ -54,22 +79,18 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
       const valStringArray = valueAsArray.map(v =>
         valueIsField
           ? wrapFieldName(
-              getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], rule.value)
-                ?.label ?? v
+              getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], v)?.label ?? v
             )
           : shouldRenderAsNumber(v, parseNumbers)
             ? `${trimIfString(v)}`
             : `${wrapAndEscape(v)}`
       );
-      if (valStringArray.length <= 2) {
-        return valStringArray.join(' or ');
-      }
-      return `${valStringArray.slice(0, -1).join(', ')}, or ${valStringArray.at(-1)}`;
+      return `${valStringArray.slice(0, -1).join(', ')}${valStringArray.length > 2 ? ',' : ''} ${orTL} ${valStringArray.at(-1)}`;
     }
   }
 
   if (typeof rule.value === 'boolean') {
-    return rule.value ? 'true' : 'false';
+    return rule.value ? trueTL : falseTL;
   }
 
   return valueIsField

@@ -1,7 +1,11 @@
 import type {
+  ConstituentWordOrder,
   DefaultCombinatorName,
   FormatQueryOptions,
   FullField,
+  GroupVariantCondition,
+  NLTranslationKey,
+  NLTranslations,
   OptionList,
   RuleGroupTypeAny,
   SetRequired,
@@ -218,3 +222,86 @@ export const getQuotedFieldName = (
       )
     : `${qPre}${fieldName}${qPost}`;
 };
+
+const defaultWordOrder = ['S', 'V', 'O'];
+
+/**
+ * Given a [Constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders)
+ * like "svo" or "sov", returns a permutation of `["S", "V", "O"]` based on the first occurrence of
+ * each letter in the input string (case insensitive). This widens the valid input from abbreviations
+ * like "svo" to more expressive strings like "subject-verb-object" or "sub ver obj". Any missing
+ * letters are appended in the default order "SVO" (e.g., "object" would yield `["O", "S", "V"]`).
+ *
+ * @group Export
+ */
+export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrder => {
+  const result: string[] = [];
+  const letterSet = new Set(defaultWordOrder);
+
+  for (const char of input.toUpperCase()) {
+    if (letterSet.has(char)) {
+      result.push(char);
+      letterSet.delete(char);
+      if (letterSet.size === 0) break;
+    }
+  }
+
+  // Add any missing letters in default order
+  for (const letter of defaultWordOrder) {
+    if (letterSet.has(letter)) {
+      result.push(letter);
+    }
+  }
+
+  return result as ConstituentWordOrder;
+};
+
+export const defaultNLTranslations: NLTranslations = {
+  // and: 'and',
+  // or: 'or',
+  // true: 'true',
+  // false: 'false',
+  groupPrefix: '',
+  // groupPrefix_not: '',
+  groupPrefix_not_xor: 'either zero or more than one of',
+  groupPrefix_xor: 'exactly one of',
+  groupSuffix: 'is true',
+  groupSuffix_not: 'is not true',
+  // groupSuffix_not_xor: 'is true',
+  // groupSuffix_xor: 'is true',
+};
+
+/**
+ * Note: This function assumes `conditions.length > 0`
+ */
+const translationMatchFilter = (
+  key: NLTranslationKey,
+  keyToTest: string,
+  conditions: GroupVariantCondition[]
+) =>
+  // The translation matches the base key
+  keyToTest.startsWith(key) &&
+  // The translation specifies all conditions
+  conditions.every(
+    c =>
+      // This translation specifies _this_ condition
+      keyToTest.includes(`_${c}`) &&
+      // This translation specifies the same _total number_ of conditions
+      keyToTest.match(/_/g)?.length === conditions.length
+  );
+
+export const getNLTranslataion = (
+  key: NLTranslationKey,
+  translations: NLTranslations,
+  conditions: GroupVariantCondition[] = []
+): string =>
+  conditions.length === 0
+    ? (translations[key] ?? defaultNLTranslations[key] ?? /* istanbul ignore next */ '')
+    : (Object.entries(translations).find(([keyToTest]) =>
+        translationMatchFilter(key, keyToTest, conditions)
+      )?.[1] ??
+      Object.entries(defaultNLTranslations).find(([keyToTest]) =>
+        translationMatchFilter(key, keyToTest, conditions)
+      )?.[1] ??
+      defaultNLTranslations[key] ??
+      /* istanbul ignore next */ '');
