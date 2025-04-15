@@ -12,7 +12,9 @@ The following examples should provide a good starting point for developing such 
 - `inputType` will be normalized to an HTML5 input type, or `null` if one cannot be reliably inferred. You may want to remove any instances of the string `, "inputType": null` from the output.
 - None of the properties assigned below are required in the `fields` prop except for `label` and at least one of `name` or `value`.
 
-## PostgreSQL
+## Relational databases
+
+### PostgreSQL
 
 ```sql
 SELECT json_agg(
@@ -34,7 +36,7 @@ FROM information_schema.columns
 WHERE table_name = 'my_table';
 ```
 
-## MySQL
+### MySQL
 
 ```sql
 SELECT JSON_ARRAYAGG(
@@ -56,7 +58,7 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME = 'my_table';
 ```
 
-## SQLite
+### SQLite
 
 ```sql
 SELECT json_group_array(
@@ -81,7 +83,7 @@ SELECT json_group_array(
  ORDER BY cid;
 ```
 
-## SQL Server
+### SQL Server
 
 ```sql
 SELECT (
@@ -104,7 +106,7 @@ SELECT (
 ) AS [fields];
 ```
 
-## Oracle
+### Oracle
 
 ```sql
 SELECT json_arrayagg(
@@ -124,3 +126,11 @@ SELECT json_arrayagg(
   FROM all_tab_cols
  WHERE table_name = 'my_table';
 ```
+
+## MongoDB
+
+_Coming soon_
+
+## ElasticSearch
+
+_Coming soon_
