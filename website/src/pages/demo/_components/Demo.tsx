@@ -335,7 +335,7 @@ export default function Demo({
     [options.enableDragAndDrop, variant]
   );
 
-  const loadFromSQL = () => {
+  const loadFromSQL = useCallback(() => {
     try {
       const q = parseSQL(sql);
       const qIC = parseSQL(sql, { independentCombinators: true });
@@ -345,8 +345,8 @@ export default function Demo({
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
-  };
-  const loadFromMongoDB = () => {
+  }, [sql]);
+  const loadFromMongoDB = useCallback(() => {
     try {
       const q = parseMongoDB(mongoDB);
       const qIC = convertToIC(q);
@@ -356,8 +356,8 @@ export default function Demo({
     } catch (err) {
       setMongoDbParseError((err as Error).message);
     }
-  };
-  const loadFromJsonLogic = () => {
+  }, [mongoDB]);
+  const loadFromJsonLogic = useCallback(() => {
     try {
       const q = parseJsonLogic(jsonLogic);
       const qIC = convertToIC(q);
@@ -367,8 +367,8 @@ export default function Demo({
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
     }
-  };
-  const loadFromSpEL = () => {
+  }, [jsonLogic]);
+  const loadFromSpEL = useCallback(() => {
     try {
       const q = parseSpEL(spel);
       const qIC = parseSpEL(spel, { independentCombinators: true });
@@ -378,8 +378,8 @@ export default function Demo({
     } catch (err) {
       setSpELParseError((err as Error).message);
     }
-  };
-  const loadFromCEL = () => {
+  }, [spel]);
+  const loadFromCEL = useCallback(() => {
     try {
       const q = parseCEL(cel);
       const qIC = parseCEL(cel, { independentCombinators: true });
@@ -389,8 +389,8 @@ export default function Demo({
     } catch (err) {
       setCELParseError((err as Error).message);
     }
-  };
-  const loadFromJSONata = () => {
+  }, [cel]);
+  const loadFromJSONata = useCallback(() => {
     try {
       const q = parseJSONata(jsonata);
       const qIC = parseJSONata(jsonata, { independentCombinators: true });
@@ -400,7 +400,7 @@ export default function Demo({
     } catch (err) {
       setJSONataParseError((err as Error).message);
     }
-  };
+  }, [jsonata]);
 
   const _getPermalinkUncompressed = () =>
     `${location.origin}${siteLocation.pathname}${permalinkHash}`;
@@ -497,7 +497,9 @@ export default function Demo({
         <div
           style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
-            <QueryWrapper useDateTimePackage={options.useDateTimePackage}>
+            <QueryWrapper
+              key={`${query.id}-${queryIC.id}`}
+              useDateTimePackage={options.useDateTimePackage}>
               <QueryBuilderDnD>
                 {options.independentCombinators ? (
                   <QueryBuilder
