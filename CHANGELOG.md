@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#883] New utility methods:
+  - `findID`: Returns the rule or group with the given `id` property within a query hierarchy (similar to `findPath`).
+  - `getPathOfID`: Returns the `path` of the rule or group with the given `id`.
+- [#883] Query tools `add`, `update`, `remove`, `move`, and `group` can accept a `string` in place of `Path`-type arguments (`Path` arguments still work as they always have). The tools work the same, but a string represents the `id` property of the subject rule/group.
 
 ## [v8.5.0] - 2025-04-07
 

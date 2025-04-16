@@ -24,6 +24,55 @@ export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnTyp
 };
 
 /**
+ * Returns the {@link RuleType} or {@link RuleGroupType}/{@link RuleGroupTypeIC}
+ * with the given `id` within a query.
+ */
+export const findID = (id: string, query: RuleGroupTypeAny): FindPathReturnType => {
+  if (query.id === id) {
+    return query;
+  }
+
+  for (const rule of query.rules) {
+    if (typeof rule === 'string') continue;
+    if (rule.id === id) {
+      return rule;
+    } else if (isRuleGroup(rule)) {
+      const subRule = findID(id, rule);
+      if (subRule) {
+        return subRule;
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Returns the {@link Path} of the {@link RuleType} or {@link RuleGroupType}/{@link RuleGroupTypeIC}
+ * with the given `id` within a query.
+ */
+export const getPathOfID = (id: string, query: RuleGroupTypeAny): Path | null => {
+  if (query.id === id) return [];
+
+  const idx = query.rules.findIndex(r => !(typeof r === 'string') && r.id === id);
+
+  if (idx >= 0) {
+    return [idx];
+  }
+
+  for (const [i, r] of Object.entries(query.rules)) {
+    if (isRuleGroup(r)) {
+      const subPath = getPathOfID(id, r);
+      if (Array.isArray(subPath)) {
+        return [parseInt(i), ...subPath];
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
  * Truncates the last element of an array and returns the result as a new array.
  */
 export const getParentPath = (path: Path): Path => path.slice(0, -1);
