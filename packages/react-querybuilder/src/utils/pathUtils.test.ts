@@ -1,8 +1,10 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
 import {
+  findID,
   findPath,
   getCommonAncestorPath,
   getParentPath,
+  getPathOfID,
   isAncestor,
   pathIsDisabled,
   pathsAreEqual,
@@ -93,6 +95,66 @@ describe('findPath', () => {
     it('should return null for combinator elements', () => {
       expect(findPath([1], queryIC)).toBeNull();
       expect(findPath([3], queryIC)).toBeNull();
+    });
+  });
+});
+
+describe('findID', () => {
+  describe('standard rule groups', () => {
+    it('should find a root rule', () => {
+      expect(findID('111', query)).toHaveProperty('id', '111');
+    });
+
+    it('should find a sub rule', () => {
+      expect(findID('555', query)).toHaveProperty('id', '555');
+    });
+
+    it('should not find an invalid path', () => {
+      expect(findID('777', query)).toBeNull();
+    });
+  });
+
+  describe('independent combinators', () => {
+    it('should find a root rule', () => {
+      expect(findID('111', queryIC)).toHaveProperty('id', '111');
+    });
+
+    it('should find a sub rule', () => {
+      expect(findID('555', queryIC)).toHaveProperty('id', '555');
+    });
+
+    it('should not find an invalid path', () => {
+      expect(findID('777', queryIC)).toBeNull();
+    });
+  });
+});
+
+describe('getPathOfID', () => {
+  describe('standard rule groups', () => {
+    it('should find a root rule', () => {
+      expect(getPathOfID('111', query)).toEqual([]);
+    });
+
+    it('should find a sub rule', () => {
+      expect(getPathOfID('555', query)).toEqual([2, 0]);
+    });
+
+    it('should not find an invalid path', () => {
+      expect(getPathOfID('777', query)).toBeNull();
+    });
+  });
+
+  describe('independent combinators', () => {
+    it('should find a root rule', () => {
+      expect(getPathOfID('111', queryIC)).toEqual([]);
+    });
+
+    it('should find a sub rule', () => {
+      expect(getPathOfID('555', queryIC)).toEqual([4, 0]);
+    });
+
+    it('should not find an invalid path', () => {
+      expect(getPathOfID('777', queryIC)).toBeNull();
     });
   });
 });

@@ -11,7 +11,14 @@ import type {
 import { generateID } from './generateID';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { getFirstOption } from './optGroupUtils';
-import { findPath, getCommonAncestorPath, getParentPath, pathsAreEqual } from './pathUtils';
+import {
+  findID,
+  findPath,
+  getCommonAncestorPath,
+  getParentPath,
+  getPathOfID,
+  pathsAreEqual,
+} from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateIDs } from './regenerateIDs';
 
@@ -50,8 +57,8 @@ export const add = <RG extends RuleGroupTypeAny>(
   query: RG,
   /** The rule or group to add. */
   ruleOrGroup: RG | RuleType,
-  /** Path of the group to add to. */
-  parentPath: Path,
+  /** Path or ID of the group to add to. */
+  parentPathOrID: Path | string,
   /** Options. */
   {
     combinators = defaultCombinators,
@@ -60,7 +67,9 @@ export const add = <RG extends RuleGroupTypeAny>(
   }: AddOptions = {}
 ): RG =>
   produce(query, draft => {
-    const parent = findPath(parentPath, draft);
+    const parent = Array.isArray(parentPathOrID)
+      ? findPath(parentPathOrID, draft)
+      : findID(parentPathOrID, draft);
 
     if (!parent || !isRuleGroup(parent)) return;
 
@@ -122,8 +131,8 @@ export const update = <RG extends RuleGroupTypeAny>(
   /** The new value of the property. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  /** The path of the rule or group to update. */
-  path: Path,
+  /** The path or ID of the rule or group to update. */
+  pathOrID: Path | string,
   /** Options. */
   {
     resetOnFieldChange = true,
@@ -134,8 +143,13 @@ export const update = <RG extends RuleGroupTypeAny>(
   }: UpdateOptions = {}
 ): RG =>
   produce(query, draft => {
+    const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, draft);
+
+    // Ignore invalid paths/ids
+    if (!path) return;
+
+    // Independent combinators
     if (prop === 'combinator' && !isRuleGroupType(draft)) {
-      // Independent combinators
       const parentRules = (findPath(getParentPath(path), draft) as RG).rules;
       // Only update an independent combinator if it occupies an odd index
       if (path.at(-1)! % 2 === 1) {
@@ -210,9 +224,14 @@ export const update = <RG extends RuleGroupTypeAny>(
 export const remove = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
   query: RG,
-  /** Path of the rule or group to remove. */
-  path: Path
+  /** The path or ID of the rule or group to remove. */
+  pathOrID: Path | string
 ): RG => {
+  const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
+
+  // Ignore invalid paths/ids
+  if (!path) return query;
+
   if (
     // Can't remove the root group
     path.length === 0 ||
@@ -324,13 +343,18 @@ export interface MoveOptions {
 export const move = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
   query: RG,
-  /** Original path of the rule or group to move. */
-  oldPath: Path,
+  /** ID or original path of the rule or group to move. */
+  oldPathOrID: Path | string,
   /** Path to move the rule or group to, or a shift direction. */
   newPath: Path | 'up' | 'down',
   /** Options. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
 ): RG => {
+  const oldPath = Array.isArray(oldPathOrID) ? oldPathOrID : getPathOfID(oldPathOrID, query);
+
+  // Ignore invalid paths/ids
+  if (!oldPath) return query;
+
   const nextPath = getNextPath(query, oldPath, newPath);
 
   // Don't move to the same location or a path that doesn't exist yet
@@ -562,12 +586,22 @@ export const group = <RG extends RuleGroupTypeAny>(
   /** The query to update. */
   query: RG,
   /** Path of the rule/group to move or clone. */
-  sourcePath: Path,
+  sourcePathOrID: Path | string,
   /** Path of the target rule/group, which will become the path of the new group. */
-  targetPath: Path,
+  targetPathOrID: Path | string,
   /** Options. */
   { clone = false, combinators = defaultCombinators, idGenerator = generateID }: GroupOptions = {}
 ): RG => {
+  const sourcePath = Array.isArray(sourcePathOrID)
+    ? sourcePathOrID
+    : getPathOfID(sourcePathOrID, query);
+  const targetPath = Array.isArray(targetPathOrID)
+    ? targetPathOrID
+    : getPathOfID(targetPathOrID, query);
+
+  // Ignore invalid paths/ids
+  if (!sourcePath || !targetPath) return query;
+
   const nextPath = getNextPath(query, sourcePath, targetPath);
 
   // Don't move to the same location or a path that doesn't exist yet

@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#883] Query tools `add`, `update`, `remove`, `move`, and `group` can now accept a `string` or `Path` where they previously accepted only `Path`-type arguments. A `string` would represent the `id` property of the subject rule/group, but otherwise the functionality of each tool is the same.
+- [#883] New utility methods: `findID` returns the rule or group with the given `id` property within a query hierarchy (similar to `findPath`), and `getPathOfID` returns the `path` of the rule or group with the given `id`.
 
 ## [v8.5.0] - 2025-04-07
 
@@ -1901,6 +1904,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#873]: https://github.com/react-querybuilder/react-querybuilder/pull/873
 [#876]: https://github.com/react-querybuilder/react-querybuilder/pull/876
 [#877]: https://github.com/react-querybuilder/react-querybuilder/pull/877
+[#883]: https://github.com/react-querybuilder/react-querybuilder/pull/883
 
 <!-- #endregion -->
 

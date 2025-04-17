@@ -29,27 +29,9 @@ import { QueryBuilderMantine } from './index';
 
 jest.setTimeout(30_000);
 
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+const theme = createTheme({
+  respectReducedMotion: true,
 });
-
-const theme = createTheme({});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
@@ -97,7 +79,6 @@ const defaultDateTimePickerLabelValueFormat = 'DD/MM/YYYY HH:mm:ss';
 const toDateTimePickerLabel = (s: string) => dayjs(s).format(defaultDateTimePickerLabelValueFormat);
 
 describe('MantineValueSelector', () => {
-  window.ResizeObserver = ResizeObserver;
   const props: VersatileSelectorProps = {
     testID: TestID.fields,
     options,

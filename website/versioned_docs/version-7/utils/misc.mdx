@@ -48,12 +48,20 @@ You can see an example of the default validator in action in the [demo](/demo) i
 ### `findPath`
 
 ```ts
-function findPath(path: Path, query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny;
+function findPath(path: Path, query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny | null;
 ```
 
 `findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](../components/querybuilder#onaddrule) and [`onAddGroup`](../components/querybuilder#onaddgroup) functions.
 
 More extensive documentation on the `path` property is [here](../tips/path).
+
+### `findID`
+
+```ts
+function findID(id: string, query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny | null;
+```
+
+`findID` is a utility function for finding the rule or group within the query hierarchy that has a given `id`.
 
 ### `convertQuery`
 
@@ -75,9 +83,9 @@ Check out the ["External controls" Tips & Tricks page](../tips/external-controls
 
 ### `add`
 
-`(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, path: Path, options: AddOptions) => RuleGroupTypeAny`
+`(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, parentPathOrID: Path | string, options: AddOptions) => RuleGroupTypeAny`
 
-Adds a rule or group (and an independent combinator if necessary, to keep the query valid) to the group at the specified `path`.
+Adds a rule or group (and an independent combinator if necessary, to keep the query valid) to the group at the specified `path` or with the given `id`.
 
 <Details summary="AddOptions">
 
@@ -87,15 +95,15 @@ Adds a rule or group (and an independent combinator if necessary, to keep the qu
 
 ### `remove`
 
-`(query: RuleGroupTypeAny, path: Path) => RuleGroupTypeAny`
+`(query: RuleGroupTypeAny, pathOrID: Path | string) => RuleGroupTypeAny`
 
-Removes a rule or group (and the preceding independent combinator, if one exists).
+Removes a rule or group (and the preceding independent combinator, if one exists) at the specified `path` or with the given `id`.
 
 ### `update`
 
-`(query: RuleGroupTypeAny, prop: string, value: any, path: Path, options: UpdateOptions) => RuleGroupTypeAny`
+`(query: RuleGroupTypeAny, prop: string, value: any, pathOrID: Path | string, options: UpdateOptions) => RuleGroupTypeAny`
 
-Updates a property of a rule or group, or updates an independent combinator.
+Updates a property of a rule or group, or updates an independent combinator, at the specified `path` or with the given `id`.
 
 <Details summary="UpdateOptions">
 
@@ -105,9 +113,9 @@ Updates a property of a rule or group, or updates an independent combinator.
 
 ### `move`
 
-`(query: RuleGroupTypeAny, oldPath: Path, newPath: Path, options: MoveOptions) => RuleGroupTypeAny`
+`(query: RuleGroupTypeAny, oldPathOrID: Path | string, newPath: Path | 'up' | 'down', options: MoveOptions) => RuleGroupTypeAny`
 
-Moves (or clones, with a new `id`) a rule or group to a new location in the query tree.
+Moves (or clones, with a new `id`) a rule or group at the specified `path` or with the given `id` to a new location in the query tree. Using `"up"` or `"down"` as the `newPath` will "shift" the rule or group higher or lower, respectively.
 
 <Details summary="MoveOptions">
 
@@ -129,9 +137,9 @@ Inserts a rule or group (and an independent combinator if necessary, to keep the
 
 ### `group`
 
-`(query: RuleGroupTypeAny, sourcePath: Path, targetPath: Path, options: GroupOptions) => RuleGroupTypeAny`
+`(query: RuleGroupTypeAny, sourcePathOrID: Path | string, targetPathOrID: Path | string, options: GroupOptions) => RuleGroupTypeAny`
 
-Creates a new group at the target path containing the existing rule/group at that path and the rule/group at the source path (in that order) in its `rules` array.
+Creates a new group at the target `path` (based on the specified `path` or the given `id`), containing the existing rule/group at that path and the rule/group at the source path (or with the source `id`), in that order, in its `rules` array.
 
 <Details summary="GroupOptions">
 
