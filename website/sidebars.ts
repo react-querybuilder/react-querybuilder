@@ -57,7 +57,7 @@ export default {
         'tips/showcase',
         'tips/option-lists',
         'tips/maximizing-performance',
-        'tips/field-generation',
+        'tips/managing-fields',
         'tips/managing-operators',
         'tips/custom-with-fallback',
         'tips/arbitrary-updates',
