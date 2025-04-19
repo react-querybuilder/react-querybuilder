@@ -6,7 +6,7 @@ import type { ActionWithRulesProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type MantineActionProps = ActionWithRulesProps & Partial<ButtonProps>;
+export interface MantineActionProps extends ActionWithRulesProps, Partial<ButtonProps> {}
 
 /**
  * @group Components

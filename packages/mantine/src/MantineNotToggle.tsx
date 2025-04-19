@@ -6,7 +6,7 @@ import type { NotToggleProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type MantineNotToggleProps = NotToggleProps & Partial<SwitchProps>;
+export interface MantineNotToggleProps extends NotToggleProps, Partial<SwitchProps> {}
 
 /**
  * @group Components

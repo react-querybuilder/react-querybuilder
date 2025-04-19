@@ -7,8 +7,10 @@ interface QueryBuilderContextInternals {
   qbId?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type QueryBuilderContextType = QueryBuilderContextProps<any, any> & QueryBuilderContextInternals;
+interface QueryBuilderContextType
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extends QueryBuilderContextProps<any, any>,
+    QueryBuilderContextInternals {}
 
 /**
  * Context provider for {@link QueryBuilder}. Any descendant query builders

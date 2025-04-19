@@ -552,9 +552,10 @@ export interface QueryBuilderContextProps<F extends FullField, O extends string>
 /**
  * @group Props
  */
-export type QueryBuilderContextProviderProps = QueryBuilderContextProps<FullField, string> & {
+export interface QueryBuilderContextProviderProps
+  extends QueryBuilderContextProps<FullField, string> {
   children?: ReactNode;
-};
+}
 
 /**
  * @group Components

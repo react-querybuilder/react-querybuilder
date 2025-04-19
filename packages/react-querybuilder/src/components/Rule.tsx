@@ -284,7 +284,7 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
   });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRule = RuleProps & {
+export interface UseRule extends RuleProps {
   classNames: {
     shiftActions: string;
     dragHandle: string;
@@ -319,7 +319,7 @@ export type UseRule = RuleProps & {
   values: FlexibleOptionList<Option<string>>;
   valueSourceOptions: ValueSourceOptions;
   valueSources: ValueSources;
-};
+}
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**

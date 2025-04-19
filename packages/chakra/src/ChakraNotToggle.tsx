@@ -6,7 +6,7 @@ import { Switch } from './snippets/switch';
 /**
  * @group Props
  */
-export type ChakraNotToggleProps = NotToggleProps & Omit<SwitchProps, 'label'>;
+export interface ChakraNotToggleProps extends NotToggleProps, Omit<SwitchProps, 'label'> {}
 
 /**
  * @group Components

@@ -8,7 +8,10 @@ import { toDropdownOptions } from './utils';
 /**
  * @group Props
  */
-export type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
+export interface FluentValueSelectorProps
+  extends VersatileSelectorProps,
+    SelectProps,
+    DropdownProps {}
 
 /**
  * @group Components

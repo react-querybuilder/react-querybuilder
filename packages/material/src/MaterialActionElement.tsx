@@ -10,10 +10,11 @@ import type { RQBMaterialComponents } from './types';
 /**
  * @group Props
  */
-export type MaterialActionProps = ActionWithRulesProps &
-  ComponentPropsWithoutRef<typeof Button> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+export interface MaterialActionProps
+  extends ActionWithRulesProps,
+    ComponentPropsWithoutRef<typeof Button> {
+  muiComponents?: RQBMaterialComponents;
+}
 
 /**
  * @group Components

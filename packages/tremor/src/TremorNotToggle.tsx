@@ -6,7 +6,7 @@ import type { NotToggleProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type TremorNotToggleProps = NotToggleProps & Omit<Partial<SwitchProps>, 'label'>;
+export interface TremorNotToggleProps extends NotToggleProps, Omit<Partial<SwitchProps>, 'label'> {}
 
 /**
  * @group Components

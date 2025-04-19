@@ -10,8 +10,9 @@ import { toNumberInputValue } from './utils';
 /**
  * @group Props
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MantineValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export interface MantineValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;

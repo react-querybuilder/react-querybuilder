@@ -9,8 +9,9 @@ import { Switch } from './snippets/switch';
 /**
  * @group Props
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export interface ChakraValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 /**
  * @group Components

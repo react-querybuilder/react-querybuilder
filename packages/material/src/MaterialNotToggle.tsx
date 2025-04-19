@@ -10,10 +10,11 @@ import type { RQBMaterialComponents } from './types';
 /**
  * @group Props
  */
-export type MaterialNotToggleProps = NotToggleProps &
-  ComponentPropsWithoutRef<typeof Switch> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+export interface MaterialNotToggleProps
+  extends NotToggleProps,
+    ComponentPropsWithoutRef<typeof Switch> {
+  muiComponents?: RQBMaterialComponents;
+}
 
 type MaterialNotToggleComponents = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
 
