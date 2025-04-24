@@ -2,9 +2,9 @@ import { produce } from 'immer';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   DefaultCombinatorName,
-  Except,
   ExportFormat,
   ExportObjectFormats,
+  FormatQueryFinalOptions,
   FormatQueryOptions,
   FullField,
   FullOperator,
@@ -13,8 +13,8 @@ import type {
   NLTranslationKey,
   ParameterizedNamedSQL,
   ParameterizedSQL,
-  QueryValidator,
   RQBJsonLogic,
+  RuleGroupProcessor,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleProcessor,
@@ -126,6 +126,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'context'
   | 'fallbackExpression'
   | 'operatorProcessor'
+  | 'ruleGroupProcessor'
   | 'ruleProcessor'
   | 'validator'
   | 'valueProcessor'
@@ -168,6 +169,15 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
  * @group Export
  */
 function formatQuery(ruleGroup: RuleGroupTypeAny): string;
+/**
+ * Generates a result based on the provided rule group processor.
+ *
+ * @group Export
+ */
+function formatQuery<TResult = unknown>(
+  ruleGroup: RuleGroupTypeAny,
+  options: FormatQueryOptions & { ruleGroupProcessor: RuleGroupProcessor<TResult> }
+): TResult;
 /**
  * Generates a {@link index!ParameterizedSQL ParameterizedSQL} object from a query object.
  *
@@ -290,6 +300,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     placeholderOperatorName,
     placeholderValueName,
     quoteFieldNamesWith: quoteFieldNamesWith_option,
+    ruleGroupProcessor: ruleGroupProcessor_option,
     ruleProcessor: ruleProcessor_option,
     validator,
     valueProcessor: valueProcessor_option,
@@ -336,36 +347,6 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     fallbackExpression_option ??
     defaultFallbackExpressions[format] ??
     defaultFallbackExpressions.sql!;
-
-  const finalOptions: Required<
-    Except<FormatQueryOptions, 'context' | 'valueProcessor' | 'validator' | 'placeholderValueName'>
-  > & {
-    valueProcessor: ValueProcessorByRule;
-    validator?: QueryValidator;
-  } = {
-    ...optObj,
-    fallbackExpression,
-    fields,
-    format,
-    getOperators,
-    quoteFieldNamesWith,
-    operatorProcessor,
-    ruleProcessor,
-    valueProcessor,
-  };
-
-  // #region JSON
-  if (format === 'json' || format === 'json_without_ids') {
-    const rg = parseNumbers ? produce(ruleGroup, g => numerifyValues(g, finalOptions)) : ruleGroup;
-    if (format === 'json_without_ids') {
-      return JSON.stringify(rg, (key, value) =>
-        // Remove `id` and `path` keys; leave everything else unchanged.
-        key === 'id' || key === 'path' ? undefined : value
-      );
-    }
-    return JSON.stringify(rg, null, 2);
-  }
-  // #endregion
 
   // #region Validation
   let validationMap: ValidationMap = {};
@@ -422,6 +403,38 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     }
     return [validationResult, fieldValidator] as const;
   };
+  // #endregion
+
+  const finalOptions: FormatQueryFinalOptions = {
+    ...optObj,
+    fallbackExpression,
+    fields,
+    format,
+    getOperators,
+    getParseNumberBoolean,
+    quoteFieldNamesWith,
+    operatorProcessor,
+    ruleProcessor,
+    valueProcessor,
+    validateRule,
+    validationMap,
+  };
+
+  if (typeof ruleGroupProcessor_option === 'function') {
+    return ruleGroupProcessor_option(ruleGroup, finalOptions);
+  }
+
+  // #region JSON
+  if (format === 'json' || format === 'json_without_ids') {
+    const rg = parseNumbers ? produce(ruleGroup, g => numerifyValues(g, finalOptions)) : ruleGroup;
+    if (format === 'json_without_ids') {
+      return JSON.stringify(rg, (key, value) =>
+        // Remove `id` and `path` keys; leave everything else unchanged.
+        key === 'id' || key === 'path' ? undefined : value
+      );
+    }
+    return JSON.stringify(rg, null, 2);
+  }
   // #endregion
 
   // #region SQL

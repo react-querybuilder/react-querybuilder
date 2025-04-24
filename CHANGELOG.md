@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- `@react-querybuilder/drizzle` with Drizzle ORM integration for `formatQuery`.
+- New `formatQuery` option `ruleGroupProcessor` enabling development of custom output formats without completely reimplementing `formatQuery`. All existing formats are now implemented using this option.
 
 ## [v8.5.0] - 2025-04-07
 
