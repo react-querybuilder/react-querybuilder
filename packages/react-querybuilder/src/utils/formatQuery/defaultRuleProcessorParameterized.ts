@@ -6,7 +6,8 @@ import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { shouldRenderAsNumber } from './utils';
 
 /**
- * Default rule processor used by {@link formatQuery} for "sql" format.
+ * Default rule processor used by {@link formatQuery} for "parameterized" and
+ * "parameterized_named" formats.
  *
  * @group Export
  */

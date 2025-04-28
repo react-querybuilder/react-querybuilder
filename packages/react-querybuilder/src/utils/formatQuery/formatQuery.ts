@@ -1,7 +1,6 @@
 import { produce } from 'immer';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
-  DefaultCombinatorName,
   ExportFormat,
   ExportObjectFormats,
   FormatQueryFinalOptions,
@@ -10,12 +9,10 @@ import type {
   FullOperator,
   FullOptionList,
   InputType,
-  NLTranslationKey,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   RQBJsonLogic,
   RuleGroupProcessor,
-  RuleGroupType,
   RuleGroupTypeAny,
   RuleProcessor,
   RuleType,
@@ -26,12 +23,21 @@ import type {
   ValidationResult,
   ValueProcessorByRule,
 } from '../../types/index.noReact';
-import { convertFromIC } from '../convertQuery';
 import { getParseNumberMethod } from '../getParseNumberMethod';
-import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from '../isRuleGroup';
-import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
-import { isPojo } from '../misc';
-import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
+import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
+import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
+import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
+import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
+import { defaultRuleGroupProcessorMongoDB } from './defaultRuleGroupProcessorMongoDB';
+import {
+  defaultRuleGroupProcessorMongoDBQuery,
+  mongoDbFallback,
+} from './defaultRuleGroupProcessorMongoDBQuery';
+import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
+import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
+import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
+import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
@@ -44,13 +50,7 @@ import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import {
-  celCombinatorMap,
-  getNLTranslataion,
-  getQuoteFieldNamesWithArray,
-  isValueProcessorLegacy,
-  numerifyValues,
-} from './utils';
+import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
 
 /**
  * @group Export
@@ -118,8 +118,6 @@ const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
   spel: '1 == 1',
   sql: '(1 = 1)',
 };
-
-const mongoDbFallback = { $and: [{ $expr: true }] } as const;
 
 type MostFormatQueryOptions = SetOptional<
   Required<FormatQueryOptions>,
@@ -296,15 +294,11 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     getOperators: getOperators_option,
     operatorProcessor: operatorProcessor_option,
     parseNumbers,
-    placeholderFieldName,
-    placeholderOperatorName,
-    placeholderValueName,
     quoteFieldNamesWith: quoteFieldNamesWith_option,
     ruleGroupProcessor: ruleGroupProcessor_option,
     ruleProcessor: ruleProcessor_option,
     validator,
     valueProcessor: valueProcessor_option,
-    translations,
   } = optObj;
 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
@@ -424,617 +418,55 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     return ruleGroupProcessor_option(ruleGroup, finalOptions);
   }
 
-  // #region JSON
-  if (format === 'json' || format === 'json_without_ids') {
-    const rg = parseNumbers ? produce(ruleGroup, g => numerifyValues(g, finalOptions)) : ruleGroup;
-    if (format === 'json_without_ids') {
-      return JSON.stringify(rg, (key, value) =>
-        // Remove `id` and `path` keys; leave everything else unchanged.
-        key === 'id' || key === 'path' ? undefined : value
-      );
-    }
-    return JSON.stringify(rg, null, 2);
-  }
-  // #endregion
-
-  // #region SQL
-  if (format === 'sql') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        // TODO: test for the last case and remove "ignore" comment
-        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
-      }
-
-      const processedRules = rg.rules
-        .map(rule => {
-          // Independent combinators
-          if (typeof rule === 'string') {
-            return rule;
-          }
-
-          // Groups
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule, rg.rules.length === 1);
-          }
-
-          // Basic rule validation
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return '';
-          }
-
-          const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
-
-          const fieldData = getOption(fields, rule.field);
-
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            escapeQuotes,
-            fieldData,
-          });
-        })
-        .filter(Boolean);
-
-      if (processedRules.length === 0) {
-        return fallbackExpression;
-      }
-
-      return `${rg.not ? 'NOT ' : ''}(${processedRules.join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
-    };
-
-    return processRuleGroup(ruleGroup, true);
-  }
-  // #endregion
-
-  // #region Parameterized SQL
-  if (format === 'parameterized' || format === 'parameterized_named') {
-    const parameterized = format === 'parameterized';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const params: any[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const paramsNamed: Record<string, any> = {};
-    const fieldParams: Map<string, Set<string>> = new Map();
-
-    const getNextNamedParam = (field: string) => {
-      if (!fieldParams.has(field)) {
-        fieldParams.set(field, new Set());
-      }
-      const nextNamedParam = `${field}_${fieldParams.get(field)!.size + 1}`;
-      fieldParams.get(field)!.add(nextNamedParam);
-      return nextNamedParam;
-    };
-
-    const processRule = (rule: RuleType) => {
-      const [validationResult, fieldValidator] = validateRule(rule);
-      if (
-        !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-        rule.field === placeholderFieldName ||
-        rule.operator === placeholderOperatorName ||
-        /* istanbul ignore next */
-        (placeholderValueName !== undefined && rule.value === placeholderValueName)
-      ) {
-        return '';
-      }
-
-      const fieldData = getOption(fields, rule.field);
-
-      const fieldParamNames = Object.fromEntries(
-        ([...fieldParams.entries()] as [string, Set<string>][]).map(([f, s]) => [f, [...s]])
-      );
-
-      const processedRule = ruleProcessor(
-        rule,
-        {
-          ...finalOptions,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          getNextNamedParam,
-          fieldParamNames,
-          fieldData,
-        },
-        { processedParams: params }
-      );
-
-      if (!isPojo(processedRule)) {
-        return '';
-      }
-
-      const { sql, params: customParams } = processedRule;
-
-      if (typeof sql !== 'string' || !sql) {
-        return '';
-      }
-
-      // istanbul ignore else
-      if (format === 'parameterized' && Array.isArray(customParams)) {
-        params.push(...customParams);
-      } else if (format === 'parameterized_named' && isPojo(customParams)) {
-        Object.assign(paramsNamed, customParams);
-        // `getNextNamedParam` already adds new params to the list, but a custom
-        // rule processor might not call it so we need to make sure we add
-        // any new params here.
-        for (const p of Object.keys(customParams)) fieldParams.get(rule.field)?.add(p);
-      }
-
-      return sql;
-    };
-
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        // TODO: test for the last case and remove "ignore" comment
-        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
-      }
-
-      const processedRules = rg.rules
-        .map(rule => {
-          if (typeof rule === 'string') {
-            return rule;
-          }
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule, rg.rules.length === 1);
-          }
-          return processRule(rule);
-        })
-        .filter(Boolean);
-
-      if (processedRules.length === 0) {
-        return fallbackExpression;
-      }
-
-      return `${rg.not ? 'NOT ' : ''}(${processedRules.join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ')})`;
-    };
-
-    if (parameterized) {
-      return { sql: processRuleGroup(ruleGroup, true), params };
-    }
-    return { sql: processRuleGroup(ruleGroup, true), params: paramsNamed };
-  }
-  // #endregion
-
-  // #region MongoDB
-  if (format === 'mongodb') {
-    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
-
-      const combinator = `"$${rg.combinator.toLowerCase()}"`;
-      let hasChildRules = false;
-
-      const expressions: string[] = rg.rules
-        .map(rule => {
-          if (isRuleGroup(rule)) {
-            const processedRuleGroup = processRuleGroup(rule);
-            if (processedRuleGroup) {
-              hasChildRules = true;
-              // Don't wrap in curly braces if the result already is.
-              return /^\{.+\}$/.test(processedRuleGroup)
-                ? processedRuleGroup
-                : `{${processedRuleGroup}}`;
-            }
-            return '';
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return '';
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            fieldData,
-          });
-        })
-        .filter(Boolean);
-
-      return expressions.length > 0
-        ? expressions.length === 1 && !hasChildRules
-          ? expressions[0]
-          : `${combinator}:[${expressions.join(',')}]`
-        : fallbackExpression;
-    };
-
-    const rgStandard = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
-    const processedQuery = processRuleGroup(rgStandard, true);
-    return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
-  }
-  // #endregion
-
-  // #region MongoDB Query
-  if (format === 'mongodb_query') {
-    const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? mongoDbFallback : false;
-      }
-
-      const combinator = `$${rg.combinator.toLowerCase()}`;
-      let hasChildRules = false;
-
-      const expressions: Record<string, unknown>[] = rg.rules
-        .map(rule => {
-          if (isRuleGroup(rule)) {
-            const processedRuleGroup = processRuleGroup(rule);
-            if (processedRuleGroup) {
-              hasChildRules = true;
-              return processedRuleGroup;
-            }
-            return false;
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return false;
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            fieldData,
-          });
-        })
-        .filter(Boolean);
-
-      return expressions.length > 0
-        ? expressions.length === 1 && !hasChildRules
-          ? expressions[0]
-          : { [combinator]: expressions }
-        : mongoDbFallback;
-    };
-
-    // const processedQuery = processRuleGroup(convertFromIC(ruleGroup), true);
-    // return /^\{.+\}$/.test(processedQuery) ? processedQuery : `{${processedQuery}}`;
-    return processRuleGroup(convertFromIC(ruleGroup), true);
-  }
-  // #endregion
-
-  // #region CEL
-  if (format === 'cel') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
-
-      const expression: string = rg.rules
-        .map(rule => {
-          if (typeof rule === 'string') {
-            return celCombinatorMap[rule as DefaultCombinatorName];
-          }
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule);
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return '';
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            escapeQuotes: (rule.valueSource ?? 'value') === 'value',
-            fieldData,
-          });
-        })
-        .filter(Boolean)
-        .join(
-          isRuleGroupType(rg)
-            ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} `
-            : ' '
+  switch (format) {
+    case 'json':
+    case 'json_without_ids': {
+      const rg = parseNumbers
+        ? produce(ruleGroup, g => numerifyValues(g, finalOptions))
+        : ruleGroup;
+      if (format === 'json_without_ids') {
+        return JSON.stringify(rg, (key, value) =>
+          // Remove `id` and `path` keys; leave everything else unchanged.
+          key === 'id' || key === 'path' ? undefined : value
         );
+      }
+      return JSON.stringify(rg, null, 2);
+    }
 
-      const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
+    case 'sql':
+      return defaultRuleGroupProcessorSQL(ruleGroup, finalOptions);
 
-      return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
-    };
+    case 'parameterized':
+    case 'parameterized_named':
+      return defaultRuleGroupProcessorParameterized(ruleGroup, finalOptions);
 
-    return processRuleGroup(ruleGroup, true);
+    case 'mongodb':
+      return defaultRuleGroupProcessorMongoDB(ruleGroup, finalOptions);
+
+    case 'mongodb_query':
+      return defaultRuleGroupProcessorMongoDBQuery(ruleGroup, finalOptions);
+
+    case 'cel':
+      return defaultRuleGroupProcessorCEL(ruleGroup, finalOptions);
+
+    case 'spel':
+      return defaultRuleGroupProcessorSpEL(ruleGroup, finalOptions);
+
+    case 'jsonata':
+      return defaultRuleGroupProcessorJSONata(ruleGroup, finalOptions);
+
+    case 'jsonlogic':
+      return defaultRuleGroupProcessorJsonLogic(ruleGroup, finalOptions);
+
+    case 'elasticsearch':
+      return defaultRuleGroupProcessorElasticSearch(ruleGroup, finalOptions);
+
+    case 'natural_language':
+      return defaultRuleGroupProcessorNL(ruleGroup, finalOptions);
+
+    default:
+      return '';
   }
-  // #endregion
-
-  // #region SpEL
-  if (format === 'spel') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
-
-      const expression: string = rg.rules
-        .map(rule => {
-          if (typeof rule === 'string') {
-            return rule;
-          }
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule);
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return '';
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            escapeQuotes: (rule.valueSource ?? 'value') === 'value',
-            fieldData,
-          });
-        })
-        .filter(Boolean)
-        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ');
-
-      const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
-
-      return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
-    };
-
-    return processRuleGroup(ruleGroup, true);
-  }
-  // #endregion
-
-  // #region JSONata
-  if (format === 'jsonata') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return outermost ? fallbackExpression : '';
-      }
-
-      const expression: string = rg.rules
-        .map(rule => {
-          if (typeof rule === 'string') {
-            return rule;
-          }
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule);
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return '';
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            escapeQuotes: (rule.valueSource ?? 'value') === 'value',
-            fieldData,
-          });
-        })
-        .filter(Boolean)
-        .join(isRuleGroupType(rg) ? ` ${rg.combinator} ` : ' ');
-
-      const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '$not' : ''}(`, ')'] : ['', ''];
-
-      return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
-    };
-
-    return processRuleGroup(ruleGroup, true);
-  }
-  // #endregion
-
-  // #region JsonLogic
-  if (format === 'jsonlogic') {
-    const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
-
-    const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): RQBJsonLogic => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return false;
-      }
-
-      const processedRules = rg.rules
-        .map(rule => {
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule);
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return false;
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            fieldData,
-          });
-        })
-        .filter(Boolean);
-
-      if (processedRules.length === 0) {
-        return false;
-      }
-
-      const jsonRuleGroup: RQBJsonLogic = { [rg.combinator]: processedRules } as {
-        [k in DefaultCombinatorName]: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
-      };
-
-      return rg.not ? { '!': jsonRuleGroup } : jsonRuleGroup;
-    };
-
-    return processRuleGroup(query, true);
-  }
-  // #endregion
-
-  // #region ElasticSearch
-  if (format === 'elasticsearch') {
-    const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return false;
-      }
-
-      const processedRules = rg.rules
-        .map(rule => {
-          if (isRuleGroup(rule)) {
-            return processRuleGroup(rule);
-          }
-          const [validationResult, fieldValidator] = validateRule(rule);
-          if (
-            !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-            rule.field === placeholderFieldName ||
-            rule.operator === placeholderOperatorName ||
-            /* istanbul ignore next */
-            (placeholderValueName !== undefined && rule.value === placeholderValueName)
-          ) {
-            return false;
-          }
-          const fieldData = getOption(fields, rule.field);
-          return ruleProcessor(rule, {
-            ...finalOptions,
-            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-            fieldData,
-          });
-        })
-        .filter(Boolean);
-
-      if (processedRules.length === 0) {
-        return false;
-      }
-
-      return {
-        bool: rg.not
-          ? {
-              must_not: /^or$/i.test(rg.combinator)
-                ? { bool: { should: processedRules } }
-                : processedRules,
-            }
-          : { [/^or$/i.test(rg.combinator) ? 'should' : 'must']: processedRules },
-      };
-    };
-
-    const processedRuleGroup = processRuleGroup(query);
-    return processedRuleGroup === false ? {} : processedRuleGroup;
-  }
-  // #endregion
-
-  // #region Natural language
-  if (format === 'natural_language') {
-    const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        // TODO: test for the last case and remove "ignore" comment
-        return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
-      }
-
-      let rg2 = rg;
-
-      if (
-        isRuleGroupTypeIC(rg) &&
-        rg.rules.some(r => typeof r === 'string' && r.toLowerCase() === 'xor')
-      ) {
-        rg2 = convertFromIC(rg);
-      }
-
-      const processedRules = rg2.rules.map(rule => {
-        // Independent combinators
-        if (typeof rule === 'string') {
-          return `, ${translations[rule as NLTranslationKey] ?? rule} `;
-        }
-
-        // Groups
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(
-            rule,
-            rg2.rules.length === 1 &&
-              !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
-          );
-        }
-
-        // Basic rule validation
-        const [validationResult, fieldValidator] = validateRule(rule);
-        if (
-          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-          rule.field === placeholderFieldName ||
-          rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
-          (placeholderValueName !== undefined && rule.value === placeholderValueName)
-        ) {
-          return '';
-        }
-
-        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
-
-        const fieldData = getOption(fields, rule.field);
-
-        return ruleProcessor(rule, {
-          ...finalOptions,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          escapeQuotes,
-          fieldData,
-        });
-      });
-
-      if (processedRules.length === 0) {
-        return fallbackExpression;
-      }
-
-      const isXOR = (rg2.combinator ?? '').toLowerCase() === 'xor';
-      const combinator = isXOR ? rg2.combinator!.slice(1) : rg2.combinator;
-      const mustWrap = rg2.not || !outermostOrLonelyInGroup || (isXOR && processedRules.length > 1);
-
-      const [prefixTL, suffixTL] = (['groupPrefix', 'groupSuffix'] as const).map(key =>
-        rg2.not
-          ? isXOR
-            ? getNLTranslataion(key, translations, ['not', 'xor'])
-            : getNLTranslataion(key, translations, ['not'])
-          : isXOR
-            ? getNLTranslataion(key, translations, ['xor'])
-            : getNLTranslataion(key, translations)
-      );
-
-      const prefix = mustWrap ? `${prefixTL} (`.trim() : '';
-      const suffix = mustWrap ? `) ${suffixTL}`.trim() : '';
-
-      return `${prefix}${processedRules
-        .filter(Boolean)
-        .join(
-          isRuleGroupType(rg2)
-            ? `, ${translations[combinator as NLTranslationKey] ?? combinator} `
-            : ''
-        )}${suffix}`;
-    };
-
-    return processRuleGroup(ruleGroup, true);
-  }
-  // #endregion
-
-  return '';
 }
 
 export { formatQuery };
