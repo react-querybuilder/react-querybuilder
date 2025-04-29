@@ -11,5 +11,8 @@ export default {
   moduleNameMapper: {
     'react-querybuilder': ['<rootDir>/../../packages/react-querybuilder/src'],
     '@rqb-testing': ['<rootDir>/../../utils/testing'],
+    '@rqb-dbquerytestutils': [
+      '<rootDir>/../../packages/react-querybuilder/src/utils/formatQuery/dbqueryTestUtils',
+    ],
   },
 };

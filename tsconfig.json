@@ -23,6 +23,9 @@
       "@rqb-parsesql": ["./packages/react-querybuilder/src/utils/parseSQL"],
       "@rqb-devapp": ["./utils/devapp"],
       "@rqb-testing": ["./utils/testing"],
+      "@rqb-dbquerytestutils": [
+        "./packages/react-querybuilder/src/utils/formatQuery/dbqueryTestUtils"
+      ],
       "@rqb-utils": ["./packages/react-querybuilder/src/utils"],
       "react-compiler-runtime": ["./utils/react-compiler/react-compiler-runtime.ts"]
     }

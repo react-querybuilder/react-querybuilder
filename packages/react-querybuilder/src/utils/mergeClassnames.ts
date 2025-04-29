@@ -1,5 +1,5 @@
 import { clsx } from './clsx';
-import type { Classnames } from '../types';
+import type { Classnames } from '../types/index.noReact';
 
 type MergeClassnamesParams = (Partial<Classnames> | undefined)[];
 

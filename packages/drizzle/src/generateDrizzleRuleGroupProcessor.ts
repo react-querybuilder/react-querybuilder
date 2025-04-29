@@ -13,7 +13,7 @@ import { generateDrizzleRuleProcessor } from './generateDrizzleRuleProcessor';
 export const generateDrizzleRuleGroupProcessor =
   (
     table: Table | Record<string, Column<ColumnBaseConfig<ColumnDataType, string>>>
-  ): RuleGroupProcessor<false | SQL> =>
+  ): RuleGroupProcessor<SQL | undefined> =>
   (ruleGroup, options, _meta) => {
     const {
       fields,
@@ -27,9 +27,9 @@ export const generateDrizzleRuleGroupProcessor =
     const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
     const ruleProcessor = generateDrizzleRuleProcessor(table);
 
-    const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | false => {
+    const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | undefined => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return false;
+        return;
       }
 
       const processedRules = rg.rules
@@ -45,7 +45,7 @@ export const generateDrizzleRuleGroupProcessor =
             /* istanbul ignore next */
             (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
-            return false;
+            return;
           }
           const fieldData = getOption(fields, rule.field);
           return ruleProcessor(rule, {
@@ -57,13 +57,13 @@ export const generateDrizzleRuleGroupProcessor =
         .filter(Boolean);
 
       if (processedRules.length === 0) {
-        return false;
+        return;
       }
 
-      const ruleGroupSQL: SQL | undefined =
-        rg.combinator === 'or' ? or(...processedRules) : and(...processedRules);
+      const ruleGroupSQL: SQL =
+        rg.combinator === 'or' ? or(...processedRules)! : and(...processedRules)!;
 
-      return ruleGroupSQL ? (rg.not ? not(ruleGroupSQL) : ruleGroupSQL) : false;
+      return rg.not ? not(ruleGroupSQL) : ruleGroupSQL;
     };
 
     return processRuleGroup(query, true);

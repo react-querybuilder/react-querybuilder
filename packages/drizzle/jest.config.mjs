@@ -4,5 +4,9 @@ import common from '../../jest.common.mjs';
 export default {
   ...common,
   displayName: 'drizzle',
-  testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'drizzle'],
+  testPathIgnorePatterns: [
+    ...(common.testPathIgnorePatterns ?? []),
+    // Ignore everything if we're not specifically testing drizzle for coverage.
+    process.env.RQB_DRIZZLE_COVERAGE ? 'drizzle.sqlite' : 'drizzle',
+  ],
 };

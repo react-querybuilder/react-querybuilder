@@ -10,7 +10,7 @@ import type {
   FormatQueryOptions,
   RuleGroupType,
   RuleGroupTypeAny,
-} from '../../types';
+} from '../../types/index.noReact';
 import { transformQuery } from '../transformQuery';
 
 export const query: DefaultRuleGroupType = {

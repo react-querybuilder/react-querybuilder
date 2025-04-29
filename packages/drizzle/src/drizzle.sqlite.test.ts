@@ -1,27 +1,23 @@
 /* @jest-environment node */
 
 import { Database } from 'bun:sqlite';
-import type { SQL } from 'drizzle-orm';
-import { drizzle as drizzleSQLite } from 'drizzle-orm/bun-sqlite';
-import { integer as sqliteInt, sqliteTable, text as sqliteText } from 'drizzle-orm/sqlite-core';
-import { formatQuery } from 'react-querybuilder';
-import type { TestSQLParams } from '../../react-querybuilder/src/utils/formatQuery/dbqueryTestUtils';
-import {
-  dbSetup,
-  dbTests,
-  superUsers,
-} from '../../react-querybuilder/src/utils/formatQuery/dbqueryTestUtils';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { convertToIC, formatQuery } from 'react-querybuilder';
+import type { TestSQLParams } from './drizzleTestUtils';
+import { dbSetup, dbTestsDrizzle, superUsers } from './drizzleTestUtils';
 import { generateDrizzleRuleGroupProcessor } from './generateDrizzleRuleGroupProcessor';
 
 const bunSQLiteDB = new Database();
-const drizzleSQLiteDB = drizzleSQLite(bunSQLiteDB);
+const drizzleSQLiteDB = drizzle(bunSQLiteDB);
 
 const columnsSQLite = {
-  firstName: sqliteText().notNull(),
-  lastName: sqliteText().notNull(),
-  enhanced: sqliteInt({ mode: 'number' }).notNull(),
-  madeUpName: sqliteText().notNull(),
-  powerUpAge: sqliteInt({ mode: 'number' }),
+  firstName: text().notNull(),
+  lastName: text().notNull(),
+  enhanced: integer().notNull(),
+  madeUpName: text().notNull(),
+  nickname: text().notNull(),
+  powerUpAge: integer(),
 };
 
 const tableSQLite = sqliteTable('superusers', columnsSQLite);
@@ -29,17 +25,14 @@ const tableSQLite = sqliteTable('superusers', columnsSQLite);
 const superUsersSQLite = superUsers('sqlite');
 
 const testSQLite = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
-  test('sql', () => {
-    const sql = formatQuery(query, {
+  test.each(['standard', 'independent combinators'])('%s', async testType => {
+    const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
+    const sql = formatQuery(queryToTest, {
       ...fqOptions,
       ruleGroupProcessor: generateDrizzleRuleGroupProcessor(tableSQLite),
     });
-    expect(sql).toBeTruthy();
-    const result = drizzleSQLiteDB
-      .select()
-      .from(tableSQLite)
-      .where(sql as SQL)
-      .all();
+    const q = drizzleSQLiteDB.select().from(tableSQLite).where(sql);
+    const result = q.all();
     expect(result).toEqual(expectedResult);
   });
 };
@@ -54,7 +47,7 @@ describe('Drizzle (SQLite)', () => {
   });
 
   // Common tests
-  for (const [name, t] of Object.entries(dbTests(superUsersSQLite))) {
+  for (const [name, t] of Object.entries(dbTestsDrizzle(superUsersSQLite))) {
     describe(name, () => {
       testSQLite(t);
     });

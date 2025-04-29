@@ -10,6 +10,7 @@ const typemap = {
   lastName: 'string',
   enhanced: 'boolean',
   madeUpName: 'string',
+  nickname: 'string',
   powerUpAge: 'number',
 };
 

@@ -1,4 +1,4 @@
-import type { DefaultRuleGroupType, FormatQueryOptions } from '../../types';
+import type { DefaultRuleGroupType, Field, FormatQueryOptions } from '../../types/index.noReact';
 
 type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql' | 'mongodb' | 'cel';
 
@@ -16,6 +16,7 @@ export interface SuperUser {
   lastName: string;
   enhanced: 1 | 0 | boolean;
   madeUpName: string;
+  nickname: string;
   powerUpAge: number | null | undefined;
 }
 
@@ -29,6 +30,19 @@ const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   sqlite: [1, 0],
 };
 
+export const fields: Field[] = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+  { name: 'enhanced', label: 'Enhanced' },
+  { name: 'madeUpName', label: 'Made Up Name' },
+  { name: 'nickname', label: 'Nickname' },
+  {
+    name: 'powerUpAge',
+    label: 'Power Up Age',
+    validator: r => !(r.value === 99 && r.field === 'powerUpAge'),
+  },
+];
+
 export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
   const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
 
@@ -38,6 +52,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       lastName: 'Parker',
       enhanced: isEnhanced,
       madeUpName: 'Spider-Man',
+      nickname: 'Spidey',
       powerUpAge: 15,
     },
     {
@@ -45,6 +60,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       lastName: 'Kent',
       enhanced: isEnhanced,
       madeUpName: 'Superman',
+      nickname: 'Supes',
       powerUpAge: 0,
     },
     {
@@ -52,6 +68,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       lastName: 'Rogers',
       enhanced: isEnhanced,
       madeUpName: 'Captain America',
+      nickname: 'Cap',
       powerUpAge: 20,
     },
     {
@@ -59,6 +76,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       lastName: 'Wayne',
       enhanced: isNotEnhanced,
       madeUpName: 'Batman',
+      nickname: 'The Dark Knight',
       powerUpAge: dbPlatform === 'cel' ? undefined : null,
     },
   ];
@@ -97,6 +115,7 @@ export const CREATE_TABLE = (
   ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
   ${unquote('madeUpName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('nickname', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('powerUpAge', unquoted)} INT NULL
 )`;
 
@@ -113,12 +132,14 @@ INSERT INTO superusers (
   ${unquote('lastName', unquoted)},
   ${unquote('enhanced', unquoted)},
   ${unquote('madeUpName', unquoted)},
+  ${unquote('nickname', unquoted)},
   ${unquote('powerUpAge', unquoted)}
 ) VALUES (
   '${user.firstName}',
   '${user.lastName}',
   ${platformBoolean[dbPlatform][user.enhanced ? 0 : 1]},
   '${user.madeUpName}',
+  '${user.nickname}',
   ${typeof user.powerUpAge === 'number' ? user.powerUpAge : 'NULL'}
 )`;
 
@@ -154,6 +175,26 @@ export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> 
         u.firstName.startsWith('P') ||
         (!u.madeUpName.includes('Bat') && u.madeUpName.endsWith('man'))
     ),
+  },
+  '=': {
+    query: {
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: '=', value: 'Peter' },
+        { field: 'lastName', operator: '=', value: 'Parker' },
+      ],
+    },
+    expectedResult: superUsers.filter(u => u.firstName === 'Peter' && u.lastName === 'Parker'),
+  },
+  '!=': {
+    query: {
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: '!=', value: 'Peter' },
+        { field: 'lastName', operator: '!=', value: 'Parker' },
+      ],
+    },
+    expectedResult: superUsers.filter(u => u.firstName !== 'Peter' && u.lastName !== 'Parker'),
   },
   beginsWith: {
     query: {

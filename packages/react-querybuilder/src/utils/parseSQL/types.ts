@@ -1,4 +1,4 @@
-import type { DefaultCombinatorNameExtended } from '../../types';
+import type { DefaultCombinatorNameExtended } from '../../types/index.noReact';
 
 type AnyCase<T extends string> = string extends T
   ? string

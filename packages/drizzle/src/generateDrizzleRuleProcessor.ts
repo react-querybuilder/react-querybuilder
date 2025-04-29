@@ -25,7 +25,11 @@ import { isValidValue, parseNumber, shouldRenderAsNumber, toArray } from 'react-
 export const generateDrizzleRuleProcessor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (table: Table | Record<string, Column<any>>): RuleProcessor =>
-    (rule, { preserveValueOrder } = {}) => {
+    (
+      rule,
+      // istanbul ignore next
+      { preserveValueOrder } = {}
+    ) => {
       const { field, operator, value, valueSource } = rule;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const column = table[field as keyof typeof table] as Column<any>;
@@ -34,7 +38,8 @@ export const generateDrizzleRuleProcessor =
       const valueIsField = valueSource === 'field';
       const asFieldOrValue = (v: string) => (valueIsField ? table[v as keyof typeof table] : v);
 
-      if (!column) return null;
+      // TODO?: istanbul ignore next
+      if (!column) return;
 
       switch (operatorLC) {
         case '=':
@@ -53,19 +58,19 @@ export const generateDrizzleRuleProcessor =
         case 'doesnotbeginwith':
           return (operatorLC === 'doesnotbeginwith' ? notLike : like)(
             column,
-            valueIsField ? sql`${column} || '%'` : `${value}%`
+            valueIsField ? sql`${asFieldOrValue(value)} || '%'` : `${value}%`
           );
         case 'contains':
         case 'doesnotcontain':
           return (operatorLC === 'doesnotcontain' ? notLike : like)(
             column,
-            valueIsField ? sql`'%' || ${column} || '%'` : `%${value}%`
+            valueIsField ? sql`'%' || ${asFieldOrValue(value)} || '%'` : `%${value}%`
           );
         case 'endswith':
         case 'doesnotendwith':
           return (operatorLC === 'doesnotendwith' ? notLike : like)(
             column,
-            valueIsField ? sql`'%' || ${column}` : `%${value}`
+            valueIsField ? sql`'%' || ${asFieldOrValue(value)}` : `%${value}`
           );
         case 'null':
           return isNull(column);
@@ -102,17 +107,20 @@ export const generateDrizzleRuleProcessor =
                 first = firstNum;
                 second = secondNum;
               }
-            } else if (valueIsField) {
-              first = asFieldOrValue(first);
-              second = asFieldOrValue(second);
+            } else {
+              // istanbul ignore else
+              if (valueIsField) {
+                first = asFieldOrValue(first);
+                second = asFieldOrValue(second);
+              }
             }
             return operatorLC === 'notbetween'
               ? notBetween(column, first, second)
               : between(column, first, second);
           }
-          return false;
+          return;
         }
         default:
-          return false;
+          return;
       }
     };
