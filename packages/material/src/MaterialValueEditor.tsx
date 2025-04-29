@@ -9,11 +9,10 @@ import type { RQBMaterialComponents } from './types';
 /**
  * @group Props
  */
-export type MaterialValueEditorProps = ValueEditorProps & {
+export interface MaterialValueEditorProps extends ValueEditorProps {
   muiComponents?: RQBMaterialComponents;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  extraProps?: Record<string, any>;
-};
+  extraProps?: Record<string, unknown>;
+}
 
 /**
  * @group Components

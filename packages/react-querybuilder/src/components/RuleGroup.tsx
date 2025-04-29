@@ -405,7 +405,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
 });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRuleGroup = RuleGroupProps & {
+export interface UseRuleGroup extends RuleGroupProps {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
   accessibleDescription: string;
@@ -437,7 +437,7 @@ export type UseRuleGroup = RuleGroupProps & {
   toggleLockGroup: ActionElementEventHandler;
   validationClassName: string;
   validationResult: boolean | ValidationResult;
-};
+}
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**

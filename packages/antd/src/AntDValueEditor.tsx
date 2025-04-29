@@ -10,8 +10,9 @@ import dayjsGenerateConfig from './dayjs';
 /**
  * @group Props
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export interface AntDValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 const DatePicker = generatePicker(dayjsGenerateConfig);
 

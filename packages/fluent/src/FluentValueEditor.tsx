@@ -7,8 +7,9 @@ import { useValueEditor, ValueEditor } from 'react-querybuilder';
 /**
  * @group Props
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export interface FluentValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 /**
  * @group Components

@@ -6,7 +6,7 @@ import type { ActionWithRulesProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type FluentActionProps = ActionWithRulesProps & ButtonProps;
+export interface FluentActionProps extends ActionWithRulesProps, ButtonProps {}
 
 /**
  * @group Components

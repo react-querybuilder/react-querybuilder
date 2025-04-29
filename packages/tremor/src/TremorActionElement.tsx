@@ -6,7 +6,7 @@ import type { ActionWithRulesProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type TremorActionProps = ActionWithRulesProps & ButtonProps;
+export interface TremorActionProps extends ActionWithRulesProps, ButtonProps {}
 
 /**
  * @group Components

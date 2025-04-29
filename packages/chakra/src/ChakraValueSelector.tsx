@@ -7,8 +7,9 @@ import { NativeSelectRoot, NativeSelectField } from './snippets/native-select';
 /**
  * @group Props
  */
-export type ChakraValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<typeof NativeSelectRoot>;
+export interface ChakraValueSelectorProps
+  extends VersatileSelectorProps,
+    ComponentPropsWithoutRef<typeof NativeSelectRoot> {}
 
 /**
  * @group Components

@@ -6,7 +6,7 @@ import type { NotToggleProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type FluentNotToggleProps = NotToggleProps & Omit<Partial<SwitchProps>, 'label'>;
+export interface FluentNotToggleProps extends NotToggleProps, Omit<Partial<SwitchProps>, 'label'> {}
 
 /**
  * @group Components

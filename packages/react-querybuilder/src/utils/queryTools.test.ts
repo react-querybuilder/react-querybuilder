@@ -13,6 +13,7 @@ import { formatQuery } from './formatQuery';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { numericRegex } from './misc';
 import { add, group, insert, move, remove, update } from './queryTools';
+import { transformQuery } from './transformQuery';
 
 const [and, or] = defaultCombinators.map(c => c.name);
 const [value, field] = ['value', 'field'] as ValueSources;
@@ -20,7 +21,15 @@ const [value, field] = ['value', 'field'] as ValueSources;
 const stripIDs = (query: DefaultRuleGroupTypeAny) =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
+const id = <T extends object>(x: T, id: string): T => ({ id, ...x });
+
 const idGenerator = () => `${Math.random()}`;
+
+const pathsAsIDs = (rg: DefaultRuleGroupTypeAny) =>
+  transformQuery(rg as DefaultRuleGroupType, {
+    ruleProcessor: r => ({ ...r, id: JSON.stringify(r.path) }),
+    ruleGroupProcessor: r => ({ ...r, id: JSON.stringify(r.path) }),
+  });
 
 const badPath: Path = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
@@ -44,6 +53,9 @@ const rgvsf: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [{ ...r1, valueSource: 'field' }],
 };
+const rg1wID: DefaultRuleGroupType = { id: '[]', ...rg1 };
+const rgic1wID: DefaultRuleGroupTypeIC = { id: '[]', ...rgic1 };
+const rg3wIDs = pathsAsIDs(rg3);
 
 const testQT = (
   title: string,
@@ -61,30 +73,35 @@ const testQT = (
   });
 };
 
+const testLoop = [
+  ['path', (x: Path) => x],
+  ['id', (x: Path) => JSON.stringify(x)],
+] as const;
+
 describe('add', () => {
-  describe('standard rule groups', () => {
-    testQT('adds a rule', add(rg1, r1, []), { combinator: and, rules: [r1] });
-    testQT('adds another rule', add({ combinator: and, rules: [r1] }, r2, []), {
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
+    testQT('adds a rule', add(rg1wID, r1, p([])), { combinator: and, rules: [r1] });
+    testQT('adds another rule', add({ id: '[]', combinator: and, rules: [r1] }, r2, p([])), {
       combinator: and,
       rules: [r1, r2],
     });
-    testQT('adds a group', add(rg1, rg2, []), {
+    testQT('adds a group', add(rg1wID, rg2, p([])), {
       combinator: and,
       rules: [rg2],
     });
     it('adds a rule with custom idGenerator', () => {
-      expect(add(rg1, r1, [], { idGenerator }).rules[0].id).toMatch(numericRegex);
+      expect(add(rg1wID, r1, p([]), { idGenerator }).rules[0].id).toMatch(numericRegex);
     });
   });
 
-  describe('independent combinators', () => {
-    testQT('adds a rule', add(rgic1, r1, []), { rules: [r1] });
-    testQT('adds a rule and the default combinator', add({ rules: [r1] }, r2, []), {
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testQT('adds a rule', add(rgic1wID, r1, p([])), { rules: [r1] });
+    testQT('adds a rule and the default combinator', add({ id: '[]', rules: [r1] }, r2, p([])), {
       rules: [r1, and, r2],
     });
     testQT(
       'adds a rule and a custom combinator',
-      add({ rules: [r1] }, r2, [], {
+      add({ id: '[]', rules: [r1] }, r2, p([]), {
         combinators: defaultCombinators.map(c => ({
           ...c,
           name: `custom-${c.name}`,
@@ -96,21 +113,25 @@ describe('add', () => {
         rules: [r1, `custom-${and}`, r2],
       }
     );
-    testQT('adds a rule and copies existing combinator', add({ rules: [r1, or, r2] }, r3, []), {
-      rules: [r1, or, r2, or, r3],
-    });
+    testQT(
+      'adds a rule and copies existing combinator',
+      add({ id: '[]', rules: [r1, or, r2] }, r3, p([])),
+      { rules: [r1, or, r2, or, r3] }
+    );
     testQT(
       'adds a rule with specified combinator, ignoring defaults',
-      add({ rules: [r1, and, r2] }, r3, [], {
+      add({ id: '[]', rules: [r1, and, r2] }, r3, p([]), {
         combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
         combinatorPreceding: or,
       }),
       { rules: [r1, and, r2, or, r3] }
     );
-    testQT('adds a group', add(rgic1, rgic2, []), { rules: [rgic2] });
+    testQT('adds a group', add(rgic1wID, rgic2, p([])), { rules: [rgic2] });
   });
 
-  testQT('bails out on bad path', add(rg1, rg2, badPath), rg1);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testQT('bails out', add(rg1, rg2, p(badPath)), rg1, true);
+  });
 
   it('should have the right types', () => {
     const _newQuery = add({ ...rg1 }, { ...rg2 }, []);
@@ -129,48 +150,53 @@ describe('add', () => {
 });
 
 describe('remove', () => {
-  describe('standard rule groups', () => {
-    testQT('removes the first of two rules', remove({ combinator: and, rules: [r1, r2] }, [0]), {
-      combinator: and,
-      rules: [r2],
-    });
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
+    testQT(
+      'removes the first of two rules',
+      remove({ combinator: and, rules: [id(r1, '[0]'), r2] }, p([0])),
+      { combinator: and, rules: [r2] }
+    );
     testQT(
       'removes the second of three rules',
-      remove({ combinator: and, rules: [r1, r2, r3] }, [1]),
-      {
-        combinator: and,
-        rules: [r1, r3],
-      }
+      remove({ combinator: and, rules: [r1, id(r2, '[1]'), r3] }, p([1])),
+      { combinator: and, rules: [r1, r3] }
     );
-    testQT('removes a group', remove({ combinator: and, rules: [r1, rg1] }, [1]), {
+    testQT('removes a group', remove({ combinator: and, rules: [r1, id(rg1, '[1]')] }, p([1])), {
       combinator: and,
       rules: [r1],
     });
-    testQT('does not remove the root group', remove(rg1, []), rg1, true);
+    testQT('does not remove the root group', remove(rg1wID, p([])), rg1wID, true);
   });
 
-  describe('independent combinators', () => {
-    testQT('removes a lonely rule', remove({ rules: [r1] }, [0]), rgic1);
-    testQT('removes the second of two rules', remove(rgic2, [2]), {
-      rules: [r1],
-    });
-    testQT('removes the first of three rules', remove({ rules: [r1, and, r2, or, r3] }, [0]), {
-      rules: [r2, or, r3],
-    });
-    testQT('removes the second of three rules', remove({ rules: [r1, and, r2, or, r3] }, [2]), {
-      rules: [r1, or, r3],
-    });
-    testQT('removes the third of three rules', remove({ rules: [r1, and, r2, or, r3] }, [4]), {
-      rules: [r1, and, r2],
-    });
-    testQT('removes a group', remove({ rules: [rgic1, and, rgic2] }, [0]), {
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testQT('removes a lonely rule', remove({ rules: [id(r1, '[0]')] }, p([0])), rgic1);
+    const tempRGIC: DefaultRuleGroupTypeIC = { rules: [r1, and, id(r2, '[2]')] };
+    testQT('removes the second of two rules', remove(tempRGIC, p([2])), { rules: [r1] });
+    testQT(
+      'removes the first of three rules',
+      remove({ rules: [id(r1, '[0]'), and, r2, or, r3] }, p([0])),
+      { rules: [r2, or, r3] }
+    );
+    testQT(
+      'removes the second of three rules',
+      remove({ rules: [r1, and, id(r2, '[2]'), or, r3] }, p([2])),
+      { rules: [r1, or, r3] }
+    );
+    testQT(
+      'removes the third of three rules',
+      remove({ rules: [r1, and, r2, or, id(r3, '[4]')] }, p([4])),
+      { rules: [r1, and, r2] }
+    );
+    testQT('removes a group', remove({ rules: [id(rgic1, '[0]'), and, rgic2] }, p([0])), {
       rules: [rgic2],
     });
-    testQT('does not remove the root group', remove(rgic1, []), rgic1, true);
+    testQT('does not remove the root group', remove(rgic1wID, p([])), rgic1wID, true);
     testQT('does not remove independent combinators', remove(rgic2, [1]), rgic2, true);
   });
 
-  testQT('bails out on bad path', remove(rg1, badPath), rg1);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testQT('bails out', remove(rg1, p(badPath)), rg1, true);
+  });
 
   it('should have the right types', () => {
     const _newQuery = remove({ ...rg1 }, [0]);
@@ -189,86 +215,68 @@ describe('remove', () => {
 });
 
 describe('update', () => {
-  describe('standard rule groups', () => {
-    testQT('updates a rule', update(rg3, 'field', 'fu', [0]), {
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
+    testQT('updates a rule', update(rg3wIDs, 'field', 'fu', p([0])), {
       combinator: and,
       rules: [{ ...r1, field: 'fu', value: '' }, r2, r3],
     });
     testQT(
       'updates a rule and resets the value by default',
       update(
-        {
-          combinator: and,
-          rules: [{ field: 'f1', operator: '<', value: 'v1' }],
-        },
+        { combinator: and, rules: [{ id: '[0]', field: 'f1', operator: '<', value: 'v1' }] },
         'field',
         'fu',
-        [0]
+        p([0])
       ),
-      {
-        combinator: and,
-        rules: [{ ...r1, field: 'fu', value: '' }],
-      }
+      { combinator: and, rules: [{ ...r1, field: 'fu', value: '' }] }
     );
     testQT(
       'updates a rule and does not reset the value',
-      update(rg3, 'field', 'fu', [0], { resetOnFieldChange: false }),
-      {
-        combinator: and,
-        rules: [{ ...r1, field: 'fu' }, r2, r3],
-      }
+      update(rg3wIDs, 'field', 'fu', p([0]), { resetOnFieldChange: false }),
+      { combinator: and, rules: [{ ...r1, field: 'fu' }, r2, r3] }
     );
     testQT(
       'updates a rule operator and does not reset the value',
-      update(rg3, 'operator', 'between', [1]),
-      {
-        combinator: and,
-        rules: [r1, { ...r2, operator: 'between' }, r3],
-      }
+      update(rg3wIDs, 'operator', 'between', p([1])),
+      { combinator: and, rules: [r1, { ...r2, operator: 'between' }, r3] }
     );
     testQT(
       'updates a rule operator and resets the value',
-      update(rg3, 'operator', 'between', [1], { resetOnOperatorChange: true }),
+      update(rg3wIDs, 'operator', 'between', p([1]), { resetOnOperatorChange: true }),
       {
         combinator: and,
         rules: [r1, { ...r2, operator: 'between', value: '' }, r3],
       }
     );
-    testQT('updates a rule value', update(rg3, 'value', 'vu', [2]), {
+    testQT('updates a rule value', update(rg3wIDs, 'value', 'vu', p([2])), {
       combinator: and,
       rules: [r1, r2, { ...r3, value: 'vu' }],
     });
-    testQT('updates a group combinator', update(rg1, 'combinator', or, []), rg2);
-    testQT('updates a group "not" value', update(rg1, 'not', true, []), {
+    testQT('updates a group combinator', update(rg1wID, 'combinator', or, p([])), rg2);
+    testQT('updates a group "not" value', update(rg1wID, 'not', true, p([])), {
       ...rg1,
       not: true,
     });
     testQT(
       'updates a child group combinator',
-      update({ combinator: and, rules: [rg1] }, 'combinator', or, [0]),
-      {
-        combinator: and,
-        rules: [rg2],
-      }
+      update(pathsAsIDs({ combinator: and, rules: [rg1] }), 'combinator', or, p([0])),
+      { combinator: and, rules: [rg2] }
     );
     testQT(
       'updates a child group "not" value',
-      update({ combinator: and, rules: [rg1] }, 'not', true, [0]),
-      {
-        combinator: and,
-        rules: [{ ...rg1, not: true }],
-      }
+      update(pathsAsIDs({ combinator: and, rules: [rg1] }), 'not', true, p([0])),
+      { combinator: and, rules: [{ ...rg1, not: true }] }
     );
     testQT(
       'does not reset operator or value when the field is the same',
-      update(rg3, 'field', 'f1', [0], { resetOnFieldChange: true }),
-      rg3,
+      update(rg3wIDs, 'field', 'f1', p([0]), { resetOnFieldChange: true }),
+      rg3wIDs,
       true
     );
     testQT(
       'does not reset value when the operator is the same',
-      update(rg3, 'operator', '=', [0], { resetOnOperatorChange: true }),
-      rg3,
+      update(rg3wIDs, 'operator', '=', p([0]), { resetOnOperatorChange: true }),
+      rg3wIDs,
       true
     );
   });
@@ -285,49 +293,43 @@ describe('update', () => {
     );
   });
 
-  describe('value sources', () => {
+  describe.each(testLoop)('value sources by %s', (_, p) => {
     testQT(
       'updates value source from undefined to field',
-      update(rgvsu, 'valueSource', field, [0]),
+      update(pathsAsIDs(rgvsu), 'valueSource', field, p([0])),
       { combinator: 'and', rules: [{ ...r1, value: '', valueSource: 'field' }] }
     );
-    testQT('updates value source from field to value', update(rgvsf, 'valueSource', value, [0]), {
-      combinator: 'and',
-      rules: [{ ...r1, value: '', valueSource: 'value' }],
-    });
-    testQT('resets value source to default on field change', update(rgvsf, 'field', 'fu', [0]), {
-      combinator: 'and',
-      rules: [{ ...r1, field: 'fu', value: '', valueSource: 'value' }],
-    });
+    testQT(
+      'updates value source from field to value',
+      update(pathsAsIDs(rgvsf), 'valueSource', value, p([0])),
+      { combinator: 'and', rules: [{ ...r1, value: '', valueSource: 'value' }] }
+    );
+    testQT(
+      'resets value source to default on field change',
+      update(pathsAsIDs(rgvsf), 'field', 'fu', p([0])),
+      { combinator: 'and', rules: [{ ...r1, field: 'fu', value: '', valueSource: 'value' }] }
+    );
     testQT(
       'resets value source to default of "field" on field change',
-      update(rgvsv, 'field', 'fu', [0], {
+      update(pathsAsIDs(rgvsv), 'field', 'fu', p([0]), {
         getValueSources: () => ['field', 'value'],
       }),
-      {
-        combinator: 'and',
-        rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
-      }
+      { combinator: 'and', rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }] }
     );
     testQT(
       'resets value source to default of "field" on field change when Field specifies value sources',
-      update(rgvsv, 'field', 'fu', [0], {
+      update(pathsAsIDs(rgvsv), 'field', 'fu', p([0]), {
         getValueSources: (fld, op) =>
           getValueSourcesUtil(
             { name: fld, value: fld, label: 'Fld', valueSources: ['field', 'value'] },
             op
           ),
       }),
-      {
-        combinator: 'and',
-        rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }],
-      }
+      { combinator: 'and', rules: [{ ...r1, field: 'fu', value: '', valueSource: 'field' }] }
     );
     testQT(
       'resets value source to default on operator change',
-      update(rgvsf, 'operator', 'between', [0], {
-        resetOnOperatorChange: true,
-      }),
+      update(pathsAsIDs(rgvsf), 'operator', 'between', p([0]), { resetOnOperatorChange: true }),
       {
         combinator: 'and',
         rules: [{ ...r1, operator: 'between', value: '', valueSource: 'value' }],
@@ -335,12 +337,14 @@ describe('update', () => {
     );
     testQT(
       'updates undefined value source to default when set explicitly',
-      update(rgvsu, 'valueSource', value, [0]),
+      update(pathsAsIDs(rgvsu), 'valueSource', value, p([0])),
       rgvsv
     );
   });
 
-  testQT('bails out on bad path', update(rg1, 'value', 'test', badPath), rg1);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testQT('bails out', update(rg1wID, 'value', 'test', p(badPath)), rg1wID, true);
+  });
 
   it('should have the right types', () => {
     const _newQuery = update({ ...rg1 }, 'combinator', 'and', []);
@@ -359,46 +363,33 @@ describe('update', () => {
 });
 
 describe('move', () => {
-  describe('standard rule groups', () => {
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
     testQT(
       'moves a rule down within the same group',
-      move(
-        {
-          combinator: and,
-          rules: [r1, r2],
-        },
-        [0],
-        [2]
-      ),
+      move(pathsAsIDs({ combinator: and, rules: [r1, r2] }), p([0]), [2]),
       { combinator: and, rules: [r2, r1] }
     );
     testQT(
       'moves a rule to a different group with a common ancestor',
-      move({ combinator: and, rules: [r1, r2, rg1] }, [1], [2, 0]),
-      {
-        combinator: and,
-        rules: [r1, { ...rg1, rules: [r2] }],
-      }
+      move(pathsAsIDs({ combinator: and, rules: [r1, r2, rg1] }), p([1]), [2, 0]),
+      { combinator: and, rules: [r1, { ...rg1, rules: [r2] }] }
     );
     testQT(
-      "moves a rule up to its parent group's parent group",
-      move({ combinator: and, rules: [rg3] }, [0, 1], [0]),
-      {
-        combinator: and,
-        rules: [r2, { combinator: and, rules: [r1, r3] }],
-      }
+      'moves a rule up to its grandparent group',
+      move(pathsAsIDs({ combinator: and, rules: [rg3] }), p([0, 1]), [0]),
+      { combinator: and, rules: [r2, { combinator: and, rules: [r1, r3] }] }
     );
     testQT(
       'moves a rule up to a sibling group',
       move(
-        {
+        pathsAsIDs({
           combinator: and,
           rules: [
             { combinator: and, rules: [r1] },
             { combinator: and, rules: [r2, r3] },
           ],
-        },
-        [1, 1],
+        }),
+        p([1, 1]),
         [0, 1]
       ),
       {
@@ -412,14 +403,14 @@ describe('move', () => {
     testQT(
       'moves a rule down to a sibling group',
       move(
-        {
+        pathsAsIDs({
           combinator: and,
           rules: [
             { combinator: and, rules: [r1, r2] },
             { combinator: and, rules: [r3, r4] },
           ],
-        },
-        [0, 1],
+        }),
+        p([0, 1]),
         [1, 1]
       ),
       {
@@ -430,85 +421,99 @@ describe('move', () => {
         ],
       }
     );
-    testQT('clones a rule', move(rg3, [1], [0], { clone: true }), {
+    testQT('clones a rule', move(rg3wIDs, [1], [0], { clone: true }), {
       combinator: and,
       rules: [r2, r1, r2, r3],
     });
     testQT(
       'clones a group',
-      move({ combinator: and, rules: [r1, rg3, r2] }, [1], [0], {
-        clone: true,
-      }),
-      {
-        combinator: and,
-        rules: [rg3, r1, rg3, r2],
-      }
+      move(pathsAsIDs({ combinator: and, rules: [r1, rg3, r2] }), p([1]), [0], { clone: true }),
+      { combinator: and, rules: [rg3, r1, rg3, r2] }
     );
     testQT(
       'does not alter the query if the old and new paths are the same',
-      move(rg3, [1], [1]),
-      rg3,
+      move(rg3wIDs, p([1]), [1]),
+      rg3wIDs,
       true
     );
     it('adds a rule with custom idGenerator', () => {
-      expect(move(rg3, [1], [0], { clone: true, idGenerator }).rules[0].id).toMatch(numericRegex);
+      expect(move(rg3wIDs, p([1]), [0], { clone: true, idGenerator }).rules[0].id).toMatch(
+        numericRegex
+      );
     });
   });
 
-  describe('independent combinators', () => {
-    testQT('swaps the first rule with the last within the same group', move(rgic2, [0], [3]), {
-      rules: [r2, and, r1],
-    });
-    testQT('swaps the last rule with the first within the same group', move(rgic2, [2], [0]), {
-      rules: [r2, and, r1],
-    });
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testQT(
+      'swaps the first rule with the last within the same group',
+      move(pathsAsIDs(rgic2), p([0]), [3]),
+      { rules: [r2, and, r1] }
+    );
+    testQT(
+      'swaps the last rule with the first within the same group',
+      move(pathsAsIDs(rgic2), p([2]), [0]),
+      { rules: [r2, and, r1] }
+    );
     testQT(
       'moves a rule from first to last within the same group',
-      move({ rules: [r1, and, r2, or, r3] }, [0], [5]),
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [5]),
       { rules: [r2, or, r3, or, r1] }
     );
     testQT(
       'moves a rule from last to first within the same group',
-      move({ rules: [r1, and, r2, or, r3] }, [4], [0]),
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([4]), [0]),
       { rules: [r3, and, r1, and, r2] }
     );
     testQT(
       'moves a rule from last to middle by dropping on inline combinator',
-      move({ rules: [r1, and, r2, or, r3] }, [4], [1]),
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([4]), [1]),
       { rules: [r1, or, r3, and, r2] }
     );
     testQT(
       'moves a first-child rule to a different group as the first child',
-      move({ rules: [r1, and, { rules: [r2, and, r3] }] }, [0], [2, 0]),
+      move(pathsAsIDs({ rules: [r1, and, { rules: [r2, and, r3] }] }), p([0]), [2, 0]),
       { rules: [{ rules: [r1, and, r2, and, r3] }] }
     );
     testQT(
       'moves a middle-child rule to a different group as a middle child',
-      move({ rules: [r1, and, r2, and, r3, and, { rules: [r4, and, r5] }] }, [2], [6, 1]),
+      move(
+        pathsAsIDs({ rules: [r1, and, r2, and, r3, and, { rules: [r4, and, r5] }] }),
+        p([2]),
+        [6, 1]
+      ),
       { rules: [r1, and, r3, and, { rules: [r4, and, r2, and, r5] }] }
     );
     testQT(
       'moves an only-child rule up to a different group with only one existing child',
-      move({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }, [2, 0], [0, 1]),
+      move(pathsAsIDs({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }), p([2, 0]), [0, 1]),
       { rules: [{ rules: [r1, and, r2] }, and, { rules: [] }] }
     );
-    testQT('', move({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }, [2, 0], [0, 0]), {
-      rules: [{ rules: [r2, and, r1] }, and, { rules: [] }],
-    });
     testQT(
-      'moves a middle-child rule up to a different group with only one existing child',
-      move({ rules: [{ rules: [r1] }, and, { rules: [r2, and, r3, and, r4] }] }, [2, 2], [0, 1]),
-      { rules: [{ rules: [r1, and, r3] }, and, { rules: [r2, and, r4] }] }
+      '',
+      move(pathsAsIDs({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }), p([2, 0]), [0, 0]),
+      { rules: [{ rules: [r2, and, r1] }, and, { rules: [] }] }
     );
     testQT(
+      'moves a middle-child rule up to a different group with only one existing child',
+      move(
+        pathsAsIDs({ rules: [{ rules: [r1] }, and, { rules: [r2, and, r3, and, r4] }] }),
+        p([2, 2]),
+        [0, 1]
+      ),
+      { rules: [{ rules: [r1, and, r3] }, and, { rules: [r2, and, r4] }] }
+    );
+    const tempRGIC: DefaultRuleGroupTypeIC = pathsAsIDs(rgic2);
+    testQT(
       'does not alter the query if the old path is to a combinator',
-      move(rgic2, [1], [0]),
-      rgic2,
+      move(tempRGIC, p([1]), [0]),
+      tempRGIC,
       true
     );
   });
 
-  testQT('bails out on bad path', move(rg1, [1], badPath), rg1);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testQT('bails out', move(rg1wID, p([1]), badPath), rg1wID, true);
+  });
 
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], [0]);
@@ -527,75 +532,92 @@ describe('move', () => {
 });
 
 describe('shift', () => {
-  describe('standard rule groups', () => {
-    testQT('shifts a rule down within the same group', move(rg3, [0], 'down'), {
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
+    testQT('shifts a rule down within the same group', move(rg3wIDs, p([0]), 'down'), {
       combinator: and,
       rules: [r2, r1, r3],
     });
-    testQT('clones a rule down within the same group', move(rg3, [0], 'down', { clone: true }), {
-      combinator: and,
-      rules: [r1, r2, r1, r3],
-    });
+    testQT(
+      'clones a rule down within the same group',
+      move(rg3wIDs, p([0]), 'down', { clone: true }),
+      { combinator: and, rules: [r1, r2, r1, r3] }
+    );
     testQT(
       'shifts a rule down into a subgroup',
-      move({ combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }] }, [0], 'down'),
+      move(
+        pathsAsIDs({ combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }] }),
+        p([0]),
+        'down'
+      ),
       { combinator: and, rules: [{ combinator: and, rules: [r1, r2, r3] }] }
     );
     testQT(
       'shifts a rule down out of a subgroup',
-      move({ combinator: and, rules: [rg3] }, [0, 2], 'down'),
+      move(pathsAsIDs({ combinator: and, rules: [rg3] }), p([0, 2]), 'down'),
       { combinator: and, rules: [{ combinator: and, rules: [r1, r2] }, r3] }
     );
-    testQT('shifts a rule up within the same group', move(rg3, [1], 'up'), {
+    testQT('shifts a rule up within the same group', move(rg3wIDs, p([1]), 'up'), {
       combinator: and,
       rules: [r2, r1, r3],
     });
     testQT(
       'shifts a rule up out of a sub group',
-      move({ combinator: and, rules: [rg3] }, [0, 0], 'up'),
+      move(pathsAsIDs({ combinator: and, rules: [rg3] }), p([0, 0]), 'up'),
       { combinator: and, rules: [r1, { combinator: and, rules: [r2, r3] }] }
     );
     testQT(
       'shifts a rule up into a subgroup',
-      move({ combinator: and, rules: [{ combinator: and, rules: [r1, r2] }, r3] }, [1], 'up'),
+      move(
+        pathsAsIDs({ combinator: and, rules: [{ combinator: and, rules: [r1, r2] }, r3] }),
+        p([1]),
+        'up'
+      ),
       { combinator: and, rules: [rg3] }
     );
-    testQT('does not shift first rule up', move(rg3, [0], 'up'), rg3, true);
-    testQT('does not shift last rule down', move(rg3, [2], 'down'), rg3, true);
+    testQT('does not shift first rule up', move(rg3wIDs, p([0]), 'up'), rg3wIDs, true);
+    testQT('does not shift last rule down', move(rg3wIDs, p([2]), 'down'), rg3wIDs, true);
   });
 
-  describe('independent combinators', () => {
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
     testQT(
       'shifts a rule down within the same group',
-      move({ rules: [r1, and, r2, or, r3] }, [0], 'down'),
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), 'down'),
       { rules: [r2, and, r1, or, r3] }
     );
     testQT(
       'clones a rule down within the same group',
-      move({ rules: [r1, and, r2, or, r3] }, [0], 'down', { clone: true }),
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), 'down', { clone: true }),
       { rules: [r1, and, r2, and, r1, or, r3] }
     );
     testQT(
       'shifts a rule down into a subgroup',
-      move({ rules: [r1, or, { rules: [r2, and, r3] }] }, [0], 'down'),
+      move(pathsAsIDs({ rules: [r1, or, { rules: [r2, and, r3] }] }), p([0]), 'down'),
       { rules: [{ rules: [r1, or, r2, and, r3] }] }
     );
-    testQT('shifts a rule down out of a subgroup', move({ rules: [rgic2] }, [0, 2], 'down'), {
-      rules: [{ rules: [r1] }, and, r2],
-    });
-    testQT('shifts a rule up within the same group', move(rgic2, [2], 'up'), {
+    testQT(
+      'shifts a rule down out of a subgroup',
+      move(pathsAsIDs({ rules: [rgic2] }), p([0, 2]), 'down'),
+      { rules: [{ rules: [r1] }, and, r2] }
+    );
+    testQT('shifts a rule up within the same group', move(pathsAsIDs(rgic2), p([2]), 'up'), {
       rules: [r2, and, r1],
     });
-    testQT('shifts a rule up out of a sub group', move({ rules: [rgic2] }, [0, 0], 'up'), {
-      rules: [r1, and, { rules: [r2] }],
-    });
-    testQT('shifts a rule up into a subgroup', move({ rules: [rgic2, or, r3] }, [2], 'up'), {
-      rules: [{ rules: [r1, and, r2, or, r3] }],
-    });
+    testQT(
+      'shifts a rule up out of a sub group',
+      move(pathsAsIDs({ rules: [rgic2] }), p([0, 0]), 'up'),
+      { rules: [r1, and, { rules: [r2] }] }
+    );
+    testQT(
+      'shifts a rule up into a subgroup',
+      move(pathsAsIDs({ rules: [rgic2, or, r3] }), p([2]), 'up'),
+      { rules: [{ rules: [r1, and, r2, or, r3] }] }
+    );
   });
 
-  // @ts-expect-error 'x' is not assignable to 'up' | 'down'
-  testQT('does not alter query for invalid direction', move(rg3, [0], 'x'), rg3, true);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    // @ts-expect-error 'x' is not assignable to 'up' | 'down'
+    testQT('does not alter query for invalid direction', move(rg3, p([0]), 'x'), rg3, true);
+  });
 
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], 'up');
@@ -752,10 +774,10 @@ describe('insert', () => {
 });
 
 describe('group', () => {
-  describe('standard rule groups', () => {
+  describe.each(testLoop)('standard rule groups by %s', (_, p) => {
     testQT(
       'groups a rule down within the same group',
-      group({ combinator: and, rules: [r1, r2] }, [0], [1]),
+      group(pathsAsIDs({ combinator: and, rules: [r1, r2] }), p([0]), p([1])),
       { combinator: and, rules: [{ combinator: and, rules: [r2, r1] }] }
     );
     // Shouldn't target an ancestor group?
@@ -779,15 +801,15 @@ describe('group', () => {
     testQT(
       'groups a rule up to a sibling group',
       group(
-        {
+        pathsAsIDs({
           combinator: and,
           rules: [
             { combinator: and, rules: [r1] },
             { combinator: and, rules: [r2, r3] },
           ],
-        },
-        [1, 1],
-        [0, 0]
+        }),
+        p([1, 1]),
+        p([0, 0])
       ),
       {
         combinator: and,
@@ -800,15 +822,15 @@ describe('group', () => {
     testQT(
       'groups a rule down to a sibling group',
       group(
-        {
+        pathsAsIDs({
           combinator: and,
           rules: [
             { combinator: and, rules: [r1, r2] },
             { combinator: and, rules: [r3, r4] },
           ],
-        },
-        [0, 1],
-        [1, 1]
+        }),
+        p([0, 1]),
+        p([1, 1])
       ),
       {
         combinator: and,
@@ -818,13 +840,13 @@ describe('group', () => {
         ],
       }
     );
-    testQT('clones a rule', group(rg3, [1], [0], { clone: true }), {
+    testQT('clones a rule', group(rg3wIDs, p([1]), p([0]), { clone: true }), {
       combinator: and,
       rules: [{ combinator: and, rules: [r1, r2] }, r2, r3],
     });
     testQT(
       'clones a group',
-      group({ combinator: and, rules: [r1, rg3, r2] }, [1], [0], { clone: true }),
+      group(pathsAsIDs({ combinator: and, rules: [r1, rg3, r2] }), p([1]), p([0]), { clone: true }),
       {
         combinator: and,
         rules: [{ combinator: and, rules: [r1, rg3] }, rg3, r2],
@@ -832,71 +854,91 @@ describe('group', () => {
     );
     testQT(
       'does not alter the query if the old and new paths are the same',
-      group(rg3, [1], [1]),
-      rg3,
+      group(rg3wIDs, p([1]), p([1])),
+      rg3wIDs,
       true
     );
     it('adds a rule with custom idGenerator', () => {
       expect(
-        (group(rg3, [1], [0], { clone: true, idGenerator }).rules[0] as RuleGroupType).rules[1].id
+        (group(rg3wIDs, p([1]), p([0]), { clone: true, idGenerator }).rules[0] as RuleGroupType)
+          .rules[1].id
       ).toMatch(numericRegex);
     });
   });
 
-  describe('independent combinators', () => {
-    testQT('groups the only two rules in a group, last as target', group(rgic2, [0], [2]), {
-      rules: [{ rules: [r2, and, r1] }],
-    });
-    testQT('groups the only two rules in a group, first as target', group(rgic2, [2], [0]), {
-      rules: [{ rules: [r1, and, r2] }],
-    });
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testQT(
+      'groups the only two rules in a group, last as target',
+      group(pathsAsIDs(rgic2), p([0]), p([2])),
+      { rules: [{ rules: [r2, and, r1] }] }
+    );
+    testQT(
+      'groups the only two rules in a group, first as target',
+      group(pathsAsIDs(rgic2), p([2]), p([0])),
+      { rules: [{ rules: [r1, and, r2] }] }
+    );
     testQT(
       'groups a rule from first to last within the same group',
-      group({ rules: [r1, and, r2, or, r3] }, [0], [4]),
+      group(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), p([4])),
       { rules: [r2, or, { rules: [r3, and, r1] }] }
     );
     testQT(
       'groups a rule from last to first within the same group',
-      group({ rules: [r1, and, r2, or, r3] }, [4], [0]),
+      group(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([4]), p([0])),
       { rules: [{ rules: [r1, and, r3] }, and, r2] }
     );
-    testQT('groups a rule from last to middle', group({ rules: [r1, and, r2, or, r3] }, [4], [2]), {
-      rules: [r1, and, { rules: [r2, and, r3] }],
-    });
+    testQT(
+      'groups a rule from last to middle',
+      group(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([4]), p([2])),
+      {
+        rules: [r1, and, { rules: [r2, and, r3] }],
+      }
+    );
     testQT(
       'groups a first-child rule to a different group with one rule',
-      group({ rules: [r1, and, { rules: [r2, and, r3] }] }, [0], [2, 0]),
+      group(pathsAsIDs({ rules: [r1, and, { rules: [r2, and, r3] }] }), p([0]), p([2, 0])),
       { rules: [{ rules: [{ rules: [r2, and, r1] }, and, r3] }] }
     );
     testQT(
       'groups a middle-child rule to a different group with multiple rules',
-      group({ rules: [r1, and, r2, and, r3, and, { rules: [r4, and, r5] }] }, [2], [6, 0]),
+      group(
+        pathsAsIDs({ rules: [r1, and, r2, and, r3, and, { rules: [r4, and, r5] }] }),
+        p([2]),
+        p([6, 0])
+      ),
       { rules: [r1, and, r3, and, { rules: [{ rules: [r4, and, r2] }, and, r5] }] }
     );
     testQT(
       'groups an only-child rule up to a different group with only one existing child',
-      group({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }, [2, 0], [0, 0]),
+      group(pathsAsIDs({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }), p([2, 0]), p([0, 0])),
       { rules: [{ rules: [{ rules: [r1, and, r2] }] }, and, { rules: [] }] }
     );
     testQT(
       'groups an only-child rule up to a different group with only one existing child group',
-      group({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }, [2, 0], [0, 0]),
+      group(pathsAsIDs({ rules: [{ rules: [r1] }, and, { rules: [r2] }] }), p([2, 0]), p([0, 0])),
       { rules: [{ rules: [{ rules: [r1, and, r2] }] }, and, { rules: [] }] }
     );
     testQT(
       'groups a middle-child rule up to a different group with only one existing child',
-      group({ rules: [{ rules: [r1] }, and, { rules: [r2, and, r3, and, r4] }] }, [2, 2], [0, 0]),
+      group(
+        pathsAsIDs({ rules: [{ rules: [r1] }, and, { rules: [r2, and, r3, and, r4] }] }),
+        p([2, 2]),
+        p([0, 0])
+      ),
       { rules: [{ rules: [{ rules: [r1, and, r3] }] }, and, { rules: [r2, and, r4] }] }
     );
+    const tempRGIC: DefaultRuleGroupTypeIC = pathsAsIDs({ rules: [r1, and, r2] });
     testQT(
       'does not alter the query if the old path is to a combinator',
-      group(rgic2, [1], [0]),
-      rgic2,
+      group(tempRGIC, p([1]), p([0])),
+      tempRGIC,
       true
     );
   });
 
-  testQT('bails out on bad path', group(rg1, [1], badPath), rg1);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testQT('bails out', group(rg1wID, p([1]), badPath), rg1wID, true);
+  });
 
   it('should have the right types', () => {
     const _newQuery = group({ ...rg1 }, [1], [0]);

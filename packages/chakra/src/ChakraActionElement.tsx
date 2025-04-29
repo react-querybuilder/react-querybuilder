@@ -6,7 +6,9 @@ import type { ActionWithRulesProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type ChakraActionProps = ActionWithRulesProps & ComponentPropsWithoutRef<typeof Button>;
+export interface ChakraActionProps
+  extends ActionWithRulesProps,
+    ComponentPropsWithoutRef<typeof Button> {}
 
 /**
  * @group Components
