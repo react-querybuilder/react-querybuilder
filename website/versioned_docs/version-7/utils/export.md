@@ -19,8 +19,9 @@ function formatQuery(
 - Formatted `JSON.stringify` result
 - Unformatted `JSON.stringify` result with all `id` and `path` properties removed
 - SQL `WHERE` clause
-- Parameterized SQL, anonymous parameters
-- Parameterized SQL, named parameters
+  - Parameterized with anonymous parameters
+  - Parameterized with named parameters
+  - Drizzle ORM query object
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -194,6 +195,39 @@ Output:
 ```
 
 See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#generating-parameter-names).
+
+#### Drizzle ORM
+
+Drizzle integration is available with the `@react-querybuilder/drizzle` package.
+
+Generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query.
+
+```ts
+import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { formatQuery } from 'react-querybuilder';
+
+const db = drizzle(process.env.DB_FILE_NAME!);
+
+const table = sqliteTable('musicians', {
+  firstName: text('firstName'),
+  lastName: text('lastName'),
+});
+
+const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
+
+const whereClause = formatQuery(query, { ruleGroupProcessor });
+
+const query = db.select().from(table).where(whereClause);
+console.log(query.toSQL());
+// {
+//   sql: 'select "firstName", "lastName" from "musicians" where ("musicians"."firstName" = ? and "musicians"."lastName" = ?)',
+//   params: ['Steve', 'Vai']
+// }
+
+console.log(query.all());
+// [{ firstName: 'Steve', lastName: 'Vai' }]
+```
 
 ### MongoDB
 
@@ -910,6 +944,60 @@ formatQuery(query, {
   },
 });
 // `First Name is most assuredly 'Steve', and Last Name differs from First Name`
+```
+
+### Rule group processor
+
+`formatQuery` massages, coerces, validates, and augments the configuration options before passing the query and the "final" options object to the appropriate rule group processor for the requested format.
+
+To take advantage of this pre-processing but generate custom output, use the `ruleGroupProcessor` option. The function will be called with the rule group and a "final" prepared options object, like this:
+
+```ts
+ruleGroupProcessor(ruleGroup, finalOptions);
+```
+
+> **_Note: The `ruleGroupProcessor` option overrides the `format` option._**
+
+The default rule group processors for each format are available as exports from `react-querybuilder`:
+
+- `defaultRuleGroupProcessorCEL`
+- `defaultRuleGroupProcessorElasticSearch`
+- `defaultRuleGroupProcessorJSONata`
+- `defaultRuleGroupProcessorJsonLogic`
+- `defaultRuleGroupProcessorMongoDB`
+- `defaultRuleGroupProcessorMongoDBQuery`
+- `defaultRuleGroupProcessorNL`
+- `defaultRuleGroupProcessorSpEL`
+- `defaultRuleGroupProcessorSQL`
+- `defaultRuleGroupProcessorParameterized`
+
+You can use the appropriate default rule group processor as a fallback so your custom rule group processor doesn't have to cover all cases, as shown below.
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  not: false,
+  rules: [
+    { combinator: 'and', rules: [] },
+    // empty rules array ^^^^^^^^^
+    { field: 'firstName', operator: 'beginsWith', value: 'S' },
+  ],
+};
+
+const customRuleGroupProcessor: RuleGroupProcessor<string> = (ruleGroup, options) => {
+  if (ruleGroup.rules.length === 0) {
+    // Normally, empty rule groups are ignored, but here they evaluate to false
+    return '(1 = 0)';
+  }
+
+  // Defer to the default rule group processor for all other operators
+  return defaultRuleGroupProcessorSQL(ruleGroup, options);
+};
+
+formatQuery(query, { ruleGroupProcessor: customRuleGroupProcessor });
+/*
+"((1 = 0) and firstName LIKE 'S%')"
+*/
 ```
 
 ## Validation
