@@ -412,8 +412,12 @@
         "vite": "^6.2.5",
       },
       "peerDependencies": {
+        "json-logic-js": "^2",
         "react": ">=18",
       },
+      "optionalPeers": [
+        "json-logic-js",
+      ],
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
