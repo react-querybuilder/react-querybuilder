@@ -10,10 +10,11 @@ import type { RQBMaterialComponents } from './types';
 /**
  * @group Props
  */
-export type MaterialDragHandleProps = DragHandleProps &
-  Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+export interface MaterialDragHandleProps
+  extends DragHandleProps,
+    Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> {
+  muiComponents?: RQBMaterialComponents;
+}
 
 /**
  * @group Components

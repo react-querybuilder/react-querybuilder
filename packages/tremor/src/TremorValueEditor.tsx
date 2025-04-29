@@ -16,8 +16,9 @@ import { TremorValueSelector } from './TremorValueSelector';
 /**
  * @group Props
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+export interface TremorValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;

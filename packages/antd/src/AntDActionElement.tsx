@@ -12,8 +12,9 @@ type RemoveDataIndexKeys<T> = {
 /**
  * @group Props
  */
-export type AntDActionProps = ActionWithRulesProps &
-  RemoveDataIndexKeys<ComponentPropsWithoutRef<typeof Button>>;
+export interface AntDActionProps
+  extends ActionWithRulesProps,
+    RemoveDataIndexKeys<ComponentPropsWithoutRef<typeof Button>> {}
 
 /**
  * @group Components

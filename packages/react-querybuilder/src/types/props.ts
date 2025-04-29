@@ -157,6 +157,11 @@ export interface ValueSourceSelectorProps
  *
  * @group Props
  */
+// TODO: Use interface instead:
+// export interface VersatileSelectorProps extends ValueSelectorProps,
+//   Partial<FieldSelectorProps<FullField>>,
+//   Partial<OperatorSelectorProps>,
+//   Partial<CombinatorSelectorProps> {}
 export type VersatileSelectorProps = ValueSelectorProps &
   Partial<FieldSelectorProps<FullField>> &
   Partial<OperatorSelectorProps> &

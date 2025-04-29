@@ -47,7 +47,7 @@ export interface CustomCanDropParams {
  *
  * @group Props
  */
-export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
+export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
   /**
    * Provide this prop if `enableDragAndDrop` is `true` for the child element and
    * you want the component to render immediately with drag-and-drop enabled.
@@ -71,7 +71,7 @@ export type QueryBuilderDndProps = QueryBuilderContextProviderProps & {
    * @default "ctrl"
    */
   groupModeModifierKey?: string;
-};
+}
 
 /**
  * {@link QueryBuilderDndContext} props.

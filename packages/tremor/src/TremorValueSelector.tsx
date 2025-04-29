@@ -8,11 +8,12 @@ import { toSelectItems } from './utils';
 /**
  * @group Props
  */
-export type TremorValueSelectorProps = VersatileSelectorProps &
-  Omit<SelectProps & MultiSelectProps, 'children' | 'value'> & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value?: any;
-  };
+export interface TremorValueSelectorProps
+  extends VersatileSelectorProps,
+    Omit<SelectProps & MultiSelectProps, 'children' | 'value'> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value?: any;
+}
 
 /**
  * @group Components

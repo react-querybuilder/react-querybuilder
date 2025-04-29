@@ -8,10 +8,11 @@ import type { RQBMaterialComponents } from './types';
 /**
  * @group Props
  */
-export type MaterialShiftActionsProps = ShiftActionsProps &
-  React.ComponentPropsWithoutRef<typeof Button> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+export interface MaterialShiftActionsProps
+  extends ShiftActionsProps,
+    React.ComponentPropsWithoutRef<typeof Button> {
+  muiComponents?: RQBMaterialComponents;
+}
 
 /**
  * @group Components

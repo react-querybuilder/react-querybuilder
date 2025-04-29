@@ -21,7 +21,11 @@
       font-weight: bold !important;
     }
 
-    & > .ruleGroup-header::after {
+    & > .ruleGroup-body {
+      display: block;
+    }
+
+    & > .ruleGroup-body::after {
       /* Message to user about empty groups */
       content: 'Empty groups are considered invalid. Avoid them by using addRuleToNewGroups.';
       color: white;

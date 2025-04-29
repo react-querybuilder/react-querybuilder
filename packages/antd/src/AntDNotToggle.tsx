@@ -6,7 +6,9 @@ import type { NotToggleProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-export type AntDNotToggleProps = NotToggleProps & ComponentPropsWithoutRef<typeof Switch>;
+export interface AntDNotToggleProps
+  extends NotToggleProps,
+    ComponentPropsWithoutRef<typeof Switch> {}
 
 /**
  * @group Components
