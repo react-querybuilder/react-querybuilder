@@ -306,12 +306,17 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           const valueWithoutWildcards = valueWithWildcards.replaceAll(/(^%)|(%$)/g, '');
           let operator: DefaultOperatorName = '=';
           /* istanbul ignore else */
-          if (/^%.*%$/.test(valueWithWildcards) || valueWithWildcards === '%') {
+          if (
+            (valueWithWildcards.endsWith('%') && valueWithWildcards.startsWith('%')) ||
+            valueWithWildcards === '%'
+          ) {
             operator = expr.hasNot ? 'doesNotContain' : 'contains';
           } else if (valueWithWildcards.endsWith('%')) {
             operator = expr.hasNot ? 'doesNotBeginWith' : 'beginsWith';
           } else if (valueWithWildcards.startsWith('%')) {
             operator = expr.hasNot ? 'doesNotEndWith' : 'endsWith';
+          } else if (expr.hasNot && operator === '=') {
+            operator = '!=';
           }
           const f = getFieldName(expr.left);
           /* istanbul ignore else */

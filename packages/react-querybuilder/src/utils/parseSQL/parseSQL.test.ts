@@ -217,6 +217,12 @@ is a ''bad'' guy!`,
     expect(parseSQL(`firstName NOT LIKE '%Steve'`)).toEqual(
       wrapRule({ field: 'firstName', operator: 'doesNotEndWith', value: 'Steve' })
     );
+    expect(parseSQL(`firstName LIKE 'Steve'`)).toEqual(
+      wrapRule({ field: 'firstName', operator: '=', value: 'Steve' })
+    );
+    expect(parseSQL(`firstName NOT LIKE 'Steve'`)).toEqual(
+      wrapRule({ field: 'firstName', operator: '!=', value: 'Steve' })
+    );
   });
 
   it('between/notBetween', () => {
