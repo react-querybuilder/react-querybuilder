@@ -332,7 +332,7 @@ Output:
 
 ### JSONata
 
-For [JSONata](http://jsonata.org/) filters, use the "jsonata" format. Use the [`parseNumbers` option](#parse-numbers) to ensure that numeric values are rendered as numbers in the output since JSONata does not automatically cast strings to numbers.
+For [JSONata](https://jsonata.org/) filters, use the "jsonata" format. Use the [`parseNumbers` option](#parse-numbers) to ensure that numeric values are rendered as numbers in the output since JSONata does not automatically cast strings to numbers.
 
 ```ts
 formatQuery(query, { format: 'jsonata', parseNumbers: true });
@@ -362,6 +362,22 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 ```
 
 :::
+
+### LDAP
+
+For [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) filters, use the "ldap" format.
+
+> _Note: LDAP filters do not support direct comparison between the values of two attributes within the same entry, so rules with `valueSource: "field"` will always be invalid._
+
+```ts
+formatQuery(query, 'ldap');
+```
+
+Output:
+
+```ts
+`(&(givenName=Steve)(sn=Vai))`;
+```
 
 ### Natural language
 
@@ -847,8 +863,10 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 | `'sql'`                 | `'(1 = 1)'`                   |
 | `'parameterized'`       | `'(1 = 1)'`                   |
 | `'parameterized_named'` | `'(1 = 1)'`                   |
+| `'ldap'`                | `''`                          |
 | `'mongodb'`             | `'{"$and":[{"$expr":true}]}'` |
 | `'mongodb_query'`       | `'{"$and":[{"$expr":true}]}'` |
+| `'natural_language'`    | `'1 is 1'`                    |
 | `'cel'`                 | `'1 == 1'`                    |
 | `'spel'`                | `'1 == 1'`                    |
 | `'jsonata'`             | `'(1 = 1)'`                   |

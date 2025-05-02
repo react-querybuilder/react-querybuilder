@@ -128,6 +128,7 @@ type ExportFormat =
   | 'cel'
   | 'jsonlogic'
   | 'jsonata'
+  | 'ldap'
   | 'elasticsearch'
   | 'spel'
   | 'natural_language';

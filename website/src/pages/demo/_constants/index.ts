@@ -255,6 +255,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref', 'spring-expression-language'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
   ['jsonata', 'JSONata', 'https://jsonata.org/', 'jsonata'],
+  ['ldap', 'LDAP', 'https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol', 'ldap'],
   ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/', 'elasticsearch'],
   ['natural_language', 'Natural language', 'https://en.wikipedia.org/wiki/English_language', 'natural-language'],
 ];

@@ -1,25 +1,18 @@
-import type {
-  DefaultCombinatorName,
-  RQBJsonLogic,
-  RuleGroupProcessor,
-  RuleGroupType,
-} from '../../types/index.noReact';
+import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
 
 /**
- * Rule group processor used by {@link formatQuery} for "jsonlogic" format.
+ * Rule group processor used by {@link formatQuery} for "ldap" format.
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorJsonLogic: RuleGroupProcessor<RQBJsonLogic> = (
-  ruleGroup,
-  options
-) => {
+export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGroup, options) => {
   const {
     fields,
+    fallbackExpression,
     getParseNumberBoolean,
     placeholderFieldName,
     placeholderOperatorName,
@@ -31,12 +24,12 @@ export const defaultRuleGroupProcessorJsonLogic: RuleGroupProcessor<RQBJsonLogic
 
   const query = convertFromIC(ruleGroup);
 
-  const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): RQBJsonLogic => {
+  const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-      return false;
+      return outermost ? fallbackExpression : '';
     }
 
-    const processedRules = rg.rules
+    const rules: string[] = rg.rules
       .map(rule => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);
@@ -49,26 +42,27 @@ export const defaultRuleGroupProcessorJsonLogic: RuleGroupProcessor<RQBJsonLogic
           /* istanbul ignore next */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
-          return false;
+          return '';
         }
         const fieldData = getOption(fields, rule.field);
         return ruleProcessor(rule, {
           ...options,
           parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+          escapeQuotes: (rule.valueSource ?? 'value') === 'value',
           fieldData,
         });
       })
       .filter(Boolean);
 
-    if (processedRules.length === 0) {
-      return false;
-    }
+    const expression = rules.join('');
 
-    const jsonRuleGroup: RQBJsonLogic = { [rg.combinator]: processedRules } as {
-      [k in DefaultCombinatorName]: [RQBJsonLogic, RQBJsonLogic, ...RQBJsonLogic[]];
-    };
+    const [notPrefix, notSuffix] = rg.not ? ['(!', ')'] : ['', ''];
+    const [prefix, suffix] =
+      rules.length > 1
+        ? [`${notPrefix}(${rg.combinator === 'or' ? '|' : '&'}`, `)${notSuffix}`]
+        : [notPrefix, notSuffix];
 
-    return rg.not ? { '!': jsonRuleGroup } : jsonRuleGroup;
+    return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
   };
 
   return processRuleGroup(query, true);

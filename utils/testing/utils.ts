@@ -103,7 +103,7 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
 export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
   const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
   // TODO: figure out a way to avoid these wrapper functions.
-  // See http://kcd.im/react-act
+  // See https://kcd.im/react-act
   const click: (typeof userEvent)['click'] = async el =>
     act(async () => {
       await user.click(el);

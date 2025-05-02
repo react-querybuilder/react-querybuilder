@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#885] [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) export format.
 - [#885] New package `@react-querybuilder/drizzle` with Drizzle ORM integration.
 - [#885] New `formatQuery` option `ruleGroupProcessor` enabling development of custom output formats without completely reimplementing `formatQuery`.
   - The rule group processors for each of the existing formats have been extracted from `formatQuery` and can be used independently or as fallbacks from custom processors.

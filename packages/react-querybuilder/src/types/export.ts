@@ -30,7 +30,8 @@ export type ExportFormat =
   | 'spel'
   | 'elasticsearch'
   | 'jsonata'
-  | 'natural_language';
+  | 'natural_language'
+  | 'ldap';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.

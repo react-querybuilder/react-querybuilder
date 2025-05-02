@@ -51,6 +51,8 @@ import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultR
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
+import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
+import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
 
 /**
  * @group Export
@@ -84,6 +86,7 @@ const defaultRuleProcessors = {
   json: defaultRuleProcessorSQL,
   jsonata: defaultRuleProcessorJSONata,
   jsonlogic: defaultRuleProcessorJsonLogic,
+  ldap: defaultRuleProcessorLDAP,
   mongodb_query: defaultRuleProcessorMongoDBQuery,
   mongodb: defaultRuleProcessorMongoDB,
   natural_language: defaultRuleProcessorNL,
@@ -102,6 +105,7 @@ const defaultOperatorProcessors = {
   json: defaultOperatorProcessor,
   jsonata: defaultOperatorProcessor,
   jsonlogic: defaultOperatorProcessor,
+  ldap: defaultOperatorProcessor,
   mongodb_query: defaultOperatorProcessor,
   mongodb: defaultOperatorProcessor,
   natural_language: defaultOperatorProcessorNL,
@@ -113,6 +117,7 @@ const defaultOperatorProcessors = {
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
   cel: '1 == 1',
+  ldap: '',
   mongodb: '"$and":[{"$expr":true}]',
   natural_language: '1 is 1',
   spel: '1 == 1',
@@ -159,7 +164,8 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
   format === 'spel' ||
   format === 'jsonlogic' ||
   format === 'elasticsearch' ||
-  format === 'jsonata';
+  format === 'jsonata' ||
+  format === 'ldap';
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -254,6 +260,15 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'jsonata' | (FormatQueryOptions & { format: 'jsonata' })
+): string;
+/**
+ * Generates an LDAP query string from an RQB query object.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'ldap' | (FormatQueryOptions & { format: 'ldap' })
 ): string;
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -463,6 +478,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     case 'natural_language':
       return defaultRuleGroupProcessorNL(ruleGroup, finalOptions);
+
+    case 'ldap':
+      return defaultRuleGroupProcessorLDAP(ruleGroup, finalOptions);
 
     default:
       return '';

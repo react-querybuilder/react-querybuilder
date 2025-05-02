@@ -1,6 +1,6 @@
 import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
-import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
+import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
 
@@ -24,7 +24,7 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
     validationMap,
   } = options;
 
-  const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
+  const query = convertFromIC(ruleGroup);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
