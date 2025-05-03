@@ -1,5 +1,4 @@
 import type { Path } from './basic';
-import type { Schema } from './propsUsingReact';
 import type { RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
 
@@ -17,10 +16,8 @@ export interface DropResult {
   dropEffect?: DropEffect;
   groupItems?: boolean;
   qbId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getQuery: Schema<any, any>['getQuery'];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatchQuery: Schema<any, any>['dispatchQuery'];
+  getQuery: () => RuleGroupTypeAny;
+  dispatchQuery: (query: RuleGroupTypeAny) => void;
 }
 export interface DragCollection {
   isDragging: boolean;

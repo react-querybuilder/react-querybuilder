@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#885] `parseSQL` was translating `NOT LIKE '[...]'` (no leading or trailing wildcards) to `operator: "="` instead of `operator: "!="`.
+- [#885] Importing from `react-querybuilder/formatQuery` no longer has a dependency on `react`.
 
 ## [v8.5.0] - 2025-04-07
 

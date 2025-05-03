@@ -6,7 +6,7 @@ import type {
   FullOption,
   Path,
   TranslationsFull,
-} from './types/index.noReact';
+} from './types';
 
 // DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
 // to generate code snippets in the documentation.

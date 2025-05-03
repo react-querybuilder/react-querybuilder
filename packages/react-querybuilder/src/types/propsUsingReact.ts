@@ -29,25 +29,159 @@ import type {
   FullOptionList,
   GetOptionIdentifierType,
   Option,
+  ToFullOption,
 } from './options';
-import type {
-  Classnames,
-  CombinatorSelectorProps,
-  CommonRuleSubComponentProps,
-  CommonSubComponentProps,
-  FieldSelectorProps,
-  OperatorSelectorProps,
-  QueryActions,
-  SelectorOrEditorProps,
-  Translation,
-  Translations,
-  ValueSelectorProps,
-  ValueSourceSelectorProps,
-} from './props';
+import type { Classnames, CommonRuleSubComponentProps, QueryActions } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
 import type { SetNonNullable } from './type-fest';
-import type { QueryValidator, ValidationMap } from './validation';
+import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
+
+/**
+ * Base interface for all subcomponents.
+ *
+ * @group Props
+ */
+export interface CommonSubComponentProps<
+  F extends FullOption = FullField,
+  O extends string = string,
+> {
+  /**
+   * CSS classNames to be applied.
+   *
+   * This is `string` and not {@link Classname} because the {@link Rule}
+   * and {@link RuleGroup} components run `clsx()` to produce the `className`
+   * that gets passed to each subcomponent.
+   */
+  className?: string;
+  /**
+   * Path to this subcomponent's rule/group within the query.
+   */
+  path: Path;
+  /**
+   * The level of the current group. Always equal to `path.length`.
+   */
+  level: number;
+  /**
+   * The title/tooltip for this control.
+   */
+  title?: string;
+  /**
+   * Disables the control.
+   */
+  disabled?: boolean;
+  /**
+   * Container for custom props that are passed to all components.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: any;
+  /**
+   * Validation result of the parent rule/group.
+   */
+  validation?: boolean | ValidationResult;
+  /**
+   * Test ID for this component.
+   */
+  testID?: string;
+  /**
+   * All subcomponents receive the configuration schema as a prop.
+   */
+  schema: Schema<F, O>;
+}
+
+/**
+ * Base interface for selectors and editors.
+ *
+ * @group Props
+ */
+export interface SelectorOrEditorProps<F extends FullOption = FullField, O extends string = string>
+  extends CommonSubComponentProps<F, O> {
+  value?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleOnChange(value: any): void;
+}
+
+/**
+ * Base interface for selector components.
+ */
+interface BaseSelectorProps<OptType extends Option>
+  extends SelectorOrEditorProps<ToFullOption<OptType>> {
+  options: FullOptionList<OptType>;
+}
+
+/**
+ * Props for all `value` selector components.
+ *
+ * @group Props
+ */
+export interface ValueSelectorProps<OptType extends Option = FullOption>
+  extends BaseSelectorProps<OptType> {
+  multiple?: boolean;
+  listsAsArrays?: boolean;
+}
+
+/**
+ * Props for `combinatorSelector` components.
+ *
+ * @group Props
+ */
+export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
+  options: FullOptionList<FullCombinator>;
+  rules?: RuleOrGroupArray;
+}
+
+/**
+ * Props for `fieldSelector` components.
+ *
+ * @group Props
+ */
+export interface FieldSelectorProps<F extends FullField = FullField>
+  extends BaseSelectorProps<F>,
+    CommonRuleSubComponentProps {
+  operator?: F extends FullField<string, infer OperatorName> ? OperatorName : string;
+}
+
+/**
+ * Props for `operatorSelector` components.
+ *
+ * @group Props
+ */
+export interface OperatorSelectorProps
+  extends BaseSelectorProps<FullOption>,
+    CommonRuleSubComponentProps {
+  options: FullOptionList<FullOperator>;
+  field: string;
+  fieldData: FullField;
+}
+
+/**
+ * Props for `valueSourceSelector` components.
+ *
+ * @group Props
+ */
+export interface ValueSourceSelectorProps
+  extends BaseSelectorProps<FullOption>,
+    CommonRuleSubComponentProps {
+  options: FullOptionList<FullOption<ValueSource>>;
+  field: string;
+  fieldData: FullField;
+}
+
+/**
+ * Utility type representing props for selector components
+ * that could potentially be any of the standard selector types.
+ *
+ * @group Props
+ */
+// TODO: Use interface instead:
+// export interface VersatileSelectorProps extends ValueSelectorProps,
+//   Partial<FieldSelectorProps<FullField>>,
+//   Partial<OperatorSelectorProps>,
+//   Partial<CombinatorSelectorProps> {}
+export type VersatileSelectorProps = ValueSelectorProps &
+  Partial<FieldSelectorProps<FullField>> &
+  Partial<OperatorSelectorProps> &
+  Partial<CombinatorSelectorProps>;
 
 /**
  * A translation for a component with `title` and `label`.
@@ -57,6 +191,72 @@ import type { QueryValidator, ValidationMap } from './validation';
 export interface TranslationWithLabel extends Translation {
   label?: ReactNode;
 }
+/**
+ * A translation for a component with `title` only.
+ *
+ * @group Props
+ */
+export interface Translation {
+  title?: string;
+}
+/**
+ * A translation for a component with `title` and a placeholder.
+ *
+ * @group Props
+ */
+export interface TranslationWithPlaceholders extends Translation {
+  /**
+   * Value for the placeholder field option if autoSelectField is false,
+   * or the placeholder operator option if autoSelectOperator is false.
+   */
+  placeholderName?: string;
+  /**
+   * Label for the placeholder field option if autoSelectField is false,
+   * or the placeholder operator option if autoSelectOperator is false.
+   */
+  placeholderLabel?: string;
+  /**
+   * Label for the placeholder field optgroup if autoSelectField is false,
+   * or the placeholder operator optgroup if autoSelectOperator is false.
+   */
+  placeholderGroupLabel?: string;
+}
+/**
+ * The shape of the `translations` prop.
+ *
+ * @group Props
+ */
+export interface Translations {
+  fields: TranslationWithPlaceholders;
+  operators: TranslationWithPlaceholders;
+  values: TranslationWithPlaceholders;
+  value: Translation;
+  removeRule: TranslationWithLabel;
+  removeGroup: TranslationWithLabel;
+  addRule: TranslationWithLabel;
+  addGroup: TranslationWithLabel;
+  combinators: Translation;
+  notToggle: TranslationWithLabel;
+  cloneRule: TranslationWithLabel;
+  cloneRuleGroup: TranslationWithLabel;
+  shiftActionUp: TranslationWithLabel;
+  shiftActionDown: TranslationWithLabel;
+  dragHandle: TranslationWithLabel;
+  lockRule: TranslationWithLabel;
+  lockGroup: TranslationWithLabel;
+  lockRuleDisabled: TranslationWithLabel;
+  lockGroupDisabled: TranslationWithLabel;
+  valueSourceSelector: Translation;
+}
+/**
+ * The full `translations` interface with all properties required.
+ *
+ * @group Props
+ */
+export type TranslationsFull = {
+  [K in keyof Translations]: { [T in keyof Translations[K]]-?: string };
+};
+
 /**
  * Props passed to every action component (rendered as `<button>` by default).
  *

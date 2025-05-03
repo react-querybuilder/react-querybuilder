@@ -1,6 +1,6 @@
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { RuleGroupTypeAny } from '../types';
+import type { RuleGroupTypeAny } from '../types/index.noReact';
 
 export type QueriesSliceState = Record<string, RuleGroupTypeAny>;
 
