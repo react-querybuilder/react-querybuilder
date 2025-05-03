@@ -137,10 +137,10 @@ To export the internal query representation without formatting (single-line, no 
 formatQuery(query, 'json_without_ids');
 ```
 
-Output:
+Output (string):
 
-```ts
-`{"combinator":"and","not":false,"rules":[{"field":"firstName","value":"Steve","operator":"="},{"field":"lastName","value":"Vai","operator":"="}]}`;
+```
+{"combinator":"and","not":false,"rules":[{"field":"firstName","value":"Steve","operator":"="},{"field":"lastName","value":"Vai","operator":"="}]}
 ```
 
 ### SQL
@@ -151,10 +151,10 @@ To export a SQL `WHERE` clause, use the "sql" format. The output should be large
 formatQuery(query, 'sql');
 ```
 
-Output:
+Output (string):
 
-```ts
-`(firstName = 'Steve' and lastName = 'Vai')`;
+```
+(firstName = 'Steve' and lastName = 'Vai')
 ```
 
 #### Parameterized SQL
@@ -165,7 +165,7 @@ To export a SQL `WHERE` clause with bind variables instead of inline values, use
 formatQuery(query, 'parameterized');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 {
@@ -182,7 +182,7 @@ If anonymous parameters (aka bind variables) are not acceptable, `formatQuery` c
 formatQuery(query, 'parameterized_named');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 {
@@ -210,8 +210,8 @@ import { formatQuery } from 'react-querybuilder';
 const db = drizzle(process.env.DB_FILE_NAME!);
 
 const table = sqliteTable('musicians', {
-  firstName: text('firstName'),
-  lastName: text('lastName'),
+  firstName: text(),
+  lastName: text(),
 });
 
 const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
@@ -243,7 +243,7 @@ The "mongodb" format was deprecated when the "mongodb_query" export format was i
 formatQuery(query, 'mongodb_query');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 { "$and": [{ "firstName": "Steve" }, { "lastName": "Vai" }] }
@@ -263,10 +263,10 @@ For Common Expression Language (CEL) output, use the "cel" format.
 formatQuery(query, 'cel');
 ```
 
-Output:
+Output (string):
 
-```ts
-`firstName = "Steve" && lastName = "Vai"`;
+```
+firstName = "Steve" && lastName = "Vai"
 ```
 
 ### Spring Expression Language
@@ -277,10 +277,10 @@ For Spring Expression Language (SpEL) output, use the "spel" format.
 formatQuery(query, 'spel');
 ```
 
-Output:
+Output (string):
 
-```ts
-`firstName == 'Steve' and lastName == 'Vai'`;
+```
+firstName == 'Steve' and lastName == 'Vai'
 ```
 
 ### JsonLogic
@@ -291,7 +291,7 @@ The "jsonlogic" format produces an object that can be processed by the JsonLogic
 formatQuery(query, 'jsonlogic');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 { "and": [{ "==": [{ "var": "firstName" }, "Steve"] }, { "==": [{ "var": "lastName" }, "Vai"] }] }
@@ -324,7 +324,7 @@ The "elasticsearch" format produces an object that can be processed by [ElasticS
 formatQuery(query, 'elasticsearch');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 { "bool": { "must": [{ "term": { "firstName": "Steve" } }, { "term": { "lastName": "Vai" } }] } }
@@ -338,10 +338,10 @@ For [JSONata](https://jsonata.org/) filters, use the "jsonata" format. Use the [
 formatQuery(query, { format: 'jsonata', parseNumbers: true });
 ```
 
-Output:
+Output (string):
 
-```ts
-`firstName = "Steve" and lastName = "Vai"`;
+```
+firstName = "Steve" and lastName = "Vai"
 ```
 
 :::tip Handling date values in JSONata
@@ -373,10 +373,10 @@ For [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) 
 formatQuery(query, 'ldap');
 ```
 
-Output:
+Output (string):
 
-```ts
-`(&(givenName=Steve)(sn=Vai))`;
+```
+(&(givenName=Steve)(sn=Vai))
 ```
 
 ### Natural language
@@ -396,10 +396,10 @@ formatQuery(query, {
 });
 ```
 
-Output:
+Output (string):
 
-```ts
-`First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52`;
+```
+First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52
 ```
 
 ## Configuration
@@ -890,7 +890,7 @@ const pf = formatQuery(
 );
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 {
