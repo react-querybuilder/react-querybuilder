@@ -1,8 +1,8 @@
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../context';
-import { defaultControlElements } from '../defaultControlElements';
-import { defaultControlClassnames, defaultTranslations } from '../defaults';
+import { defaultControlElements, defaultTranslations } from '../defaultControlElements';
+import { defaultControlClassnames } from '../defaults';
 import type {
   Classnames,
   ControlElementsProp,

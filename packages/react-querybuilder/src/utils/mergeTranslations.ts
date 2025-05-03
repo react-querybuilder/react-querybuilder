@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import type { ReactNode } from 'react';
-import { defaultTranslations } from '../defaults';
+import { defaultTranslations } from '../defaultControlElements';
 import type { Translations } from '../types';
 import { objectEntries, objectKeys } from './objectUtils';
 

@@ -5,8 +5,7 @@ import type {
   DefaultOperatorName,
   FullOption,
   Path,
-  TranslationsFull,
-} from './types';
+} from './types/index.noReact';
 
 // DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
 // to generate code snippets in the documentation.
@@ -84,99 +83,6 @@ export const defaultPlaceholderValueGroupLabel: typeof defaultPlaceholderLabel =
  * @group Defaults
  */
 export const defaultJoinChar = ',';
-
-/**
- * Default configuration of translatable strings.
- *
- * @group Defaults
- */
-// #region docs-translations
-export const defaultTranslations: TranslationsFull = {
-  fields: {
-    title: 'Fields',
-    placeholderName: defaultPlaceholderFieldName,
-    placeholderLabel: defaultPlaceholderFieldLabel,
-    placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
-  } as const,
-  operators: {
-    title: 'Operators',
-    placeholderName: defaultPlaceholderOperatorName,
-    placeholderLabel: defaultPlaceholderOperatorLabel,
-    placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
-  } as const,
-  values: {
-    title: 'Values',
-    placeholderName: defaultPlaceholderValueName,
-    placeholderLabel: defaultPlaceholderValueLabel,
-    placeholderGroupLabel: defaultPlaceholderValueGroupLabel,
-  } as const,
-  value: {
-    title: 'Value',
-  } as const,
-  removeRule: {
-    label: '⨯',
-    title: 'Remove rule',
-  } as const,
-  removeGroup: {
-    label: '⨯',
-    title: 'Remove group',
-  } as const,
-  addRule: {
-    label: '+ Rule',
-    title: 'Add rule',
-  } as const,
-  addGroup: {
-    label: '+ Group',
-    title: 'Add group',
-  } as const,
-  combinators: {
-    title: 'Combinators',
-  } as const,
-  notToggle: {
-    label: 'Not',
-    title: 'Invert this group',
-  } as const,
-  cloneRule: {
-    label: '⧉',
-    title: 'Clone rule',
-  } as const,
-  cloneRuleGroup: {
-    label: '⧉',
-    title: 'Clone group',
-  } as const,
-  shiftActionUp: {
-    label: '˄',
-    title: 'Shift up',
-  } as const,
-  shiftActionDown: {
-    label: '˅',
-    title: 'Shift down',
-  } as const,
-  dragHandle: {
-    label: '⁞⁞',
-    title: 'Drag handle',
-  } as const,
-  lockRule: {
-    label: '🔓',
-    title: 'Lock rule',
-  } as const,
-  lockGroup: {
-    label: '🔓',
-    title: 'Lock group',
-  } as const,
-  lockRuleDisabled: {
-    label: '🔒',
-    title: 'Unlock rule',
-  } as const,
-  lockGroupDisabled: {
-    label: '🔒',
-    title: 'Unlock group',
-  } as const,
-  valueSourceSelector: {
-    title: 'Value source',
-  } as const,
-} satisfies TranslationsFull;
-// #endregion
 
 type StringUnionToFullOptionArray<Op extends string> = Op extends unknown ? FullOption<Op> : never;
 export type DefaultOperators = StringUnionToFullOptionArray<DefaultOperatorName>[];

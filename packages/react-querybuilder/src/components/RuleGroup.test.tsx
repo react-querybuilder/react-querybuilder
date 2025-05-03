@@ -2,12 +2,12 @@ import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
+import { defaultTranslations as t } from '../defaultControlElements';
 import {
   TestID,
   defaultCombinators,
   defaultControlClassnames,
   standardClassnames as sc,
-  defaultTranslations as t,
 } from '../defaults';
 import { messages } from '../messages';
 import type {

@@ -7,7 +7,8 @@ import {
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
+import { defaultTranslations as t } from '../defaultControlElements';
+import { TestID, standardClassnames as sc } from '../defaults';
 import { messages } from '../messages';
 import type {
   FullField,

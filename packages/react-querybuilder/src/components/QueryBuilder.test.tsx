@@ -3,7 +3,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { QueryBuilderContext } from '../context';
-import { defaultControlElements } from '../defaultControlElements';
+import { defaultControlElements, defaultTranslations as t } from '../defaultControlElements';
 import {
   LogType,
   TestID,
@@ -11,7 +11,6 @@ import {
   defaultPlaceholderFieldName,
   defaultPlaceholderOperatorName,
   standardClassnames as sc,
-  defaultTranslations as t,
 } from '../defaults';
 import { messages } from '../messages';
 import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
