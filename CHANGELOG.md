@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The rule group processors for each of the existing formats have been extracted from `formatQuery` and can be used independently or as fallbacks from custom processors.
 - [#883] Query tools `add`, `update`, `remove`, `move`, and `group` can now accept a `string` or `Path` where they previously accepted only `Path`-type arguments. A `string` would represent the `id` property of the subject rule/group, but otherwise the functionality of each tool is the same.
 - [#883] New utility methods: `findID` returns the rule or group with the given `id` property within a query hierarchy (similar to `findPath`), and `getPathOfID` returns the `path` of the rule or group with the given `id`.
+- [#885] Confirmed Mantine v8 support (no changes).
 
 ### Fixed
 

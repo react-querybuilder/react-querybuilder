@@ -110,7 +110,7 @@ describe('MantineValueSelector', () => {
 
   it('handles multiselect', async () => {
     const handleOnChange = jest.fn();
-    const { rerender } = render(
+    const { container, rerender } = render(
       <MantineValueSelector {...props} multiple handleOnChange={handleOnChange} listsAsArrays />
     );
     await user.click(screen.getByTestId(TestID.fields));
@@ -125,7 +125,7 @@ describe('MantineValueSelector', () => {
         listsAsArrays
       />
     );
-    await user.click(screen.getByRole('listbox').querySelector('button')!);
+    await user.click(container.querySelector('button')!);
     expect(handleOnChange).toHaveBeenNthCalledWith(2, []);
   });
 
