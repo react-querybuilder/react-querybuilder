@@ -64,7 +64,7 @@ See [the contribution guidelines](./CONTRIBUTING.md).
 
 This component was inspired by prior work from:
 
-- [jQuery QueryBuilder](http://querybuilder.js.org/)
+- [jQuery QueryBuilder](https://querybuilder.js.org/)
 - [Angular QueryBuilder](https://github.com/mfauveau/angular-query-builder)
 - [React Awesome Query Builder](https://github.com/ukrbublik/react-awesome-query-builder)
 

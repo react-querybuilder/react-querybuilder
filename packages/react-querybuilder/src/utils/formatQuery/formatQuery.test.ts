@@ -246,3 +246,7 @@ describe('parseNumbers', () => {
 it('quoteFieldNamesWithArray handles null', () => {
   expect(getQuoteFieldNamesWithArray(null)).toEqual(['', '']);
 });
+
+it('handles custom ruleGroupProcessor correctly', () => {
+  expect(formatQuery(query, { ruleGroupProcessor: () => '' })).toBe('');
+});

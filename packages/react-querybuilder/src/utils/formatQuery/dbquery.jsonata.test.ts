@@ -1,5 +1,5 @@
 import jsonata from 'jsonata';
-import type { DefaultRuleGroupType } from '../../types';
+import type { DefaultRuleGroupType } from '../../types/index.noReact';
 import type { TestSQLParams } from './dbqueryTestUtils';
 import { dbTests, superUsers } from './dbqueryTestUtils';
 import { formatQuery } from './formatQuery';

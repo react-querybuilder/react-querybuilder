@@ -19,8 +19,9 @@ function formatQuery(
 - Formatted `JSON.stringify` result
 - Unformatted `JSON.stringify` result with all `id` and `path` properties removed
 - SQL `WHERE` clause
-- Parameterized SQL, anonymous parameters
-- Parameterized SQL, named parameters
+  - Parameterized with anonymous parameters
+  - Parameterized with named parameters
+  - Drizzle ORM query object
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -136,10 +137,10 @@ To export the internal query representation without formatting (single-line, no 
 formatQuery(query, 'json_without_ids');
 ```
 
-Output:
+Output (string):
 
-```ts
-`{"combinator":"and","not":false,"rules":[{"field":"firstName","value":"Steve","operator":"="},{"field":"lastName","value":"Vai","operator":"="}]}`;
+```
+{"combinator":"and","not":false,"rules":[{"field":"firstName","value":"Steve","operator":"="},{"field":"lastName","value":"Vai","operator":"="}]}
 ```
 
 ### SQL
@@ -150,10 +151,10 @@ To export a SQL `WHERE` clause, use the "sql" format. The output should be large
 formatQuery(query, 'sql');
 ```
 
-Output:
+Output (string):
 
-```ts
-`(firstName = 'Steve' and lastName = 'Vai')`;
+```
+(firstName = 'Steve' and lastName = 'Vai')
 ```
 
 #### Parameterized SQL
@@ -164,7 +165,7 @@ To export a SQL `WHERE` clause with bind variables instead of inline values, use
 formatQuery(query, 'parameterized');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 {
@@ -181,7 +182,7 @@ If anonymous parameters (aka bind variables) are not acceptable, `formatQuery` c
 formatQuery(query, 'parameterized_named');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 {
@@ -194,6 +195,39 @@ Output:
 ```
 
 See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#generating-parameter-names).
+
+#### Drizzle ORM
+
+Drizzle integration is available with the `@react-querybuilder/drizzle` package.
+
+Generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query.
+
+```ts
+import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { formatQuery } from 'react-querybuilder';
+
+const db = drizzle(process.env.DB_FILE_NAME!);
+
+const table = sqliteTable('musicians', {
+  firstName: text(),
+  lastName: text(),
+});
+
+const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
+
+const whereClause = formatQuery(query, { ruleGroupProcessor });
+
+const query = db.select().from(table).where(whereClause);
+console.log(query.toSQL());
+// {
+//   sql: 'select "firstName", "lastName" from "musicians" where ("musicians"."firstName" = ? and "musicians"."lastName" = ?)',
+//   params: ['Steve', 'Vai']
+// }
+
+console.log(query.all());
+// [{ firstName: 'Steve', lastName: 'Vai' }]
+```
 
 ### MongoDB
 
@@ -209,7 +243,7 @@ The "mongodb" format was deprecated when the "mongodb_query" export format was i
 formatQuery(query, 'mongodb_query');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 { "$and": [{ "firstName": "Steve" }, { "lastName": "Vai" }] }
@@ -229,10 +263,10 @@ For Common Expression Language (CEL) output, use the "cel" format.
 formatQuery(query, 'cel');
 ```
 
-Output:
+Output (string):
 
-```ts
-`firstName = "Steve" && lastName = "Vai"`;
+```
+firstName = "Steve" && lastName = "Vai"
 ```
 
 ### Spring Expression Language
@@ -243,10 +277,10 @@ For Spring Expression Language (SpEL) output, use the "spel" format.
 formatQuery(query, 'spel');
 ```
 
-Output:
+Output (string):
 
-```ts
-`firstName == 'Steve' and lastName == 'Vai'`;
+```
+firstName == 'Steve' and lastName == 'Vai'
 ```
 
 ### JsonLogic
@@ -257,7 +291,7 @@ The "jsonlogic" format produces an object that can be processed by the JsonLogic
 formatQuery(query, 'jsonlogic');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 { "and": [{ "==": [{ "var": "firstName" }, "Steve"] }, { "==": [{ "var": "lastName" }, "Vai"] }] }
@@ -290,7 +324,7 @@ The "elasticsearch" format produces an object that can be processed by [ElasticS
 formatQuery(query, 'elasticsearch');
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 { "bool": { "must": [{ "term": { "firstName": "Steve" } }, { "term": { "lastName": "Vai" } }] } }
@@ -298,16 +332,16 @@ Output:
 
 ### JSONata
 
-For [JSONata](http://jsonata.org/) filters, use the "jsonata" format. Use the [`parseNumbers` option](#parse-numbers) to ensure that numeric values are rendered as numbers in the output since JSONata does not automatically cast strings to numbers.
+For [JSONata](https://jsonata.org/) filters, use the "jsonata" format. Use the [`parseNumbers` option](#parse-numbers) to ensure that numeric values are rendered as numbers in the output since JSONata does not automatically cast strings to numbers.
 
 ```ts
 formatQuery(query, { format: 'jsonata', parseNumbers: true });
 ```
 
-Output:
+Output (string):
 
-```ts
-`firstName = "Steve" and lastName = "Vai"`;
+```
+firstName = "Steve" and lastName = "Vai"
 ```
 
 :::tip Handling date values in JSONata
@@ -329,6 +363,22 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 
 :::
 
+### LDAP
+
+For [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) filters, use the "ldap" format.
+
+> _Note: LDAP filters do not support direct comparison between the values of two attributes within the same entry, so rules with `valueSource: "field"` will always be invalid._
+
+```ts
+formatQuery(query, 'ldap');
+```
+
+Output (string):
+
+```
+(&(givenName=Steve)(sn=Vai))
+```
+
 ### Natural language
 
 To produce a natural language query, use the "natural_language" format. Use the `getOperators` and `fields` options to render field and operator labels instead of values. Also see the [i18n options](#internationalization) below.
@@ -346,10 +396,10 @@ formatQuery(query, {
 });
 ```
 
-Output:
+Output (string):
 
-```ts
-`First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52`;
+```
+First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52
 ```
 
 ## Configuration
@@ -813,8 +863,10 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 | `'sql'`                 | `'(1 = 1)'`                   |
 | `'parameterized'`       | `'(1 = 1)'`                   |
 | `'parameterized_named'` | `'(1 = 1)'`                   |
+| `'ldap'`                | `''`                          |
 | `'mongodb'`             | `'{"$and":[{"$expr":true}]}'` |
 | `'mongodb_query'`       | `'{"$and":[{"$expr":true}]}'` |
+| `'natural_language'`    | `'1 is 1'`                    |
 | `'cel'`                 | `'1 == 1'`                    |
 | `'spel'`                | `'1 == 1'`                    |
 | `'jsonata'`             | `'(1 = 1)'`                   |
@@ -838,7 +890,7 @@ const pf = formatQuery(
 );
 ```
 
-Output:
+Output (JSON object):
 
 ```json
 {
@@ -910,6 +962,60 @@ formatQuery(query, {
   },
 });
 // `First Name is most assuredly 'Steve', and Last Name differs from First Name`
+```
+
+### Rule group processor
+
+`formatQuery` massages, coerces, validates, and augments the configuration options before passing the query and the "final" options object to the appropriate rule group processor for the requested format.
+
+To take advantage of this pre-processing but generate custom output, use the `ruleGroupProcessor` option. The function will be called with the rule group and a "final" prepared options object, like this:
+
+```ts
+ruleGroupProcessor(ruleGroup, finalOptions);
+```
+
+> **_Note: The `ruleGroupProcessor` option overrides the `format` option._**
+
+The default rule group processors for each format are available as exports from `react-querybuilder`:
+
+- `defaultRuleGroupProcessorCEL`
+- `defaultRuleGroupProcessorElasticSearch`
+- `defaultRuleGroupProcessorJSONata`
+- `defaultRuleGroupProcessorJsonLogic`
+- `defaultRuleGroupProcessorMongoDB`
+- `defaultRuleGroupProcessorMongoDBQuery`
+- `defaultRuleGroupProcessorNL`
+- `defaultRuleGroupProcessorSpEL`
+- `defaultRuleGroupProcessorSQL`
+- `defaultRuleGroupProcessorParameterized`
+
+You can use the appropriate default rule group processor as a fallback so your custom rule group processor doesn't have to cover all cases, as shown below.
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  not: false,
+  rules: [
+    { combinator: 'and', rules: [] },
+    // empty rules array ^^^^^^^^^
+    { field: 'firstName', operator: 'beginsWith', value: 'S' },
+  ],
+};
+
+const customRuleGroupProcessor: RuleGroupProcessor<string> = (ruleGroup, options) => {
+  if (ruleGroup.rules.length === 0) {
+    // Normally, empty rule groups are ignored, but here they evaluate to false
+    return '(1 = 0)';
+  }
+
+  // Defer to the default rule group processor for all other operators
+  return defaultRuleGroupProcessorSQL(ruleGroup, options);
+};
+
+formatQuery(query, { ruleGroupProcessor: customRuleGroupProcessor });
+/*
+"((1 = 0) and firstName LIKE 'S%')"
+*/
 ```
 
 ## Validation

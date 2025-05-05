@@ -256,6 +256,11 @@ export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrd
   return result as ConstituentWordOrder;
 };
 
+/**
+ * Default translations used by {@link formatQuery} for "natural_language" format.
+ *
+ * @group Export
+ */
 export const defaultNLTranslations: NLTranslations = {
   // and: 'and',
   // or: 'or',
@@ -290,6 +295,12 @@ const translationMatchFilter = (
       keyToTest.match(/_/g)?.length === conditions.length
   );
 
+/**
+ * Used by {@link formatQuery} to get a translation based on certain conditions
+ * for the "natural_language" format.
+ *
+ * @group Export
+ */
 export const getNLTranslataion = (
   key: NLTranslationKey,
   translations: NLTranslations,

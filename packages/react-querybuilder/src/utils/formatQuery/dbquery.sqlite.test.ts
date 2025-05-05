@@ -1,7 +1,7 @@
 import { Database } from 'bun:sqlite';
 import { formatQuery } from './formatQuery';
 import type { TestSQLParams } from './dbqueryTestUtils';
-import { dbSetup, dbTests, sqlBase, superUsers } from './dbqueryTestUtils';
+import { dbSetup, dbTests, getSqlOrderBy, sqlBase, superUsers } from './dbqueryTestUtils';
 
 const db = new Database();
 
@@ -21,14 +21,14 @@ afterAll(() => {
 const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQLParams) => {
   test('sql', () => {
     const sql = formatQuery(query, { format: 'sql', ...fqOptions });
-    const select = db.prepare(`${sqlBase} ${sql}`);
+    const select = db.prepare(`${sqlBase} ${sql} ${getSqlOrderBy()}`);
     expect(select.all()).toEqual(expectedResult);
   });
 
   if (!skipParameterized) {
     test('parameterized', () => {
       const parameterized = formatQuery(query, { ...fqOptions, format: 'parameterized' });
-      const selectParam = db.prepare(`${sqlBase} ${parameterized.sql}`);
+      const selectParam = db.prepare(`${sqlBase} ${parameterized.sql} ${getSqlOrderBy()}`);
       if (fqOptions?.preserveValueOrder) {
         console.log({ sql: parameterized.sql, params: parameterized.params });
       }

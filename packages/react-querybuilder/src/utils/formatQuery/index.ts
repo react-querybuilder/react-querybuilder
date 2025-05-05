@@ -4,60 +4,72 @@
  * @module formatQuery
  */
 
-import type { RuleProcessor, ValueProcessorLegacy } from '../../types/index.noReact';
+import type {
+  RuleProcessor,
+  ValueProcessorByRule,
+  ValueProcessorLegacy,
+} from '../../types/index.noReact';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 
-const internalValueProcessors = {
-  default: defaultValueProcessorByRule,
-  mongodb: defaultRuleProcessorMongoDB,
-  cel: defaultRuleProcessorCEL,
-  spel: defaultRuleProcessorSpEL,
-} as const;
-
 const generateValueProcessor =
-  (format: 'default' | 'mongodb' | 'cel' | 'spel'): ValueProcessorLegacy =>
+  (vpbr: ValueProcessorByRule): ValueProcessorLegacy =>
   (field, operator, value, valueSource) =>
-    internalValueProcessors[format](
-      { field, operator, value, valueSource },
-      { parseNumbers: false }
-    );
+    vpbr({ field, operator, value, valueSource }, { parseNumbers: false });
 // TODO: Deprecate defaultValueProcessor.
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
  *
  * @group Export
  */
-export const defaultValueProcessor: ValueProcessorLegacy = generateValueProcessor('default');
+export const defaultValueProcessor: ValueProcessorLegacy = generateValueProcessor(
+  defaultValueProcessorByRule
+);
 /**
  * @deprecated Prefer {@link defaultRuleProcessorMongoDB}.
  *
  * @group Export
  */
-export const defaultMongoDBValueProcessor: ValueProcessorLegacy = generateValueProcessor('mongodb');
+export const defaultMongoDBValueProcessor: ValueProcessorLegacy = generateValueProcessor(
+  defaultRuleProcessorMongoDB
+);
 /**
  * @deprecated Prefer {@link defaultRuleProcessorCEL}.
  *
  * @group Export
  */
-export const defaultCELValueProcessor: ValueProcessorLegacy = generateValueProcessor('cel');
+export const defaultCELValueProcessor: ValueProcessorLegacy =
+  generateValueProcessor(defaultRuleProcessorCEL);
 /**
  * @deprecated Prefer {@link defaultRuleProcessorSpEL}.
  *
  * @group Export
  */
-export const defaultSpELValueProcessor: ValueProcessorLegacy = generateValueProcessor('spel');
+export const defaultSpELValueProcessor: ValueProcessorLegacy =
+  generateValueProcessor(defaultRuleProcessorSpEL);
 
-export { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
-export { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
-export { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
-export { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
+export * from './defaultRuleGroupProcessorCEL';
+export * from './defaultRuleGroupProcessorElasticSearch';
+export * from './defaultRuleGroupProcessorJSONata';
+export * from './defaultRuleGroupProcessorJsonLogic';
+export * from './defaultRuleGroupProcessorLDAP';
+export * from './defaultRuleGroupProcessorMongoDB';
+export * from './defaultRuleGroupProcessorMongoDBQuery';
+export * from './defaultRuleGroupProcessorNL';
+export * from './defaultRuleGroupProcessorParameterized';
+export * from './defaultRuleGroupProcessorSpEL';
+export * from './defaultRuleGroupProcessorSQL';
+export * from './defaultRuleProcessorElasticSearch';
+export * from './defaultRuleProcessorJSONata';
+export * from './defaultRuleProcessorJsonLogic';
+export * from './defaultRuleProcessorLDAP';
+export * from './defaultRuleProcessorMongoDBQuery';
 export * from './defaultRuleProcessorNL';
-export { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
-export { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
-export { defaultValueProcessorNL } from './defaultValueProcessorNL';
+export * from './defaultRuleProcessorParameterized';
+export * from './defaultRuleProcessorSQL';
+export * from './defaultValueProcessorNL';
 export * from './formatQuery';
 export * from './utils';
 export {

@@ -1,8 +1,16 @@
 import type { RulesLogic } from 'json-logic-js';
-import type { FullField, FullOperator, ParseNumbersPropConfig, ValueSource } from './basic';
-import type { FlexibleOptionList } from './options';
+import type {
+  FullField,
+  FullOperator,
+  InputType,
+  ParseNumbersPropConfig,
+  ValueSource,
+} from './basic';
+import type { FlexibleOptionList, FullOptionList } from './options';
 import type { DefaultOperatorName, RuleType } from './ruleGroups';
-import type { QueryValidator } from './validation';
+import type { RuleGroupTypeAny } from './ruleGroupsIC';
+import type { Except } from './type-fest';
+import type { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from './validation';
 
 /**
  * Available export formats for {@link formatQuery}.
@@ -22,7 +30,8 @@ export type ExportFormat =
   | 'spel'
   | 'elasticsearch'
   | 'jsonata'
-  | 'natural_language';
+  | 'natural_language'
+  | 'ldap';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.
@@ -79,11 +88,18 @@ export interface FormatQueryOptions {
    */
   valueProcessor?: ValueProcessorLegacy | ValueProcessorByRule;
   /**
-   * This function will be used to process each rule for query language
-   * formats. If not defined, the appropriate `defaultRuleProcessor*`
-   * for the format will be used.
+   * This function will be used to process each rule. If not defined, the appropriate
+   * `defaultRuleProcessor*` for the given format will be used.
    */
   ruleProcessor?: RuleProcessor;
+  /**
+   * This function will be used to process each rule group. If not defined, the appropriate
+   * `defaultRuleGroupProcessor*` for the format will be used.
+   *
+   * If this function is defined, it will override the `format` option. This also allows
+   * `formatQuery` to produce completely custom output formats.
+   */
+  ruleGroupProcessor?: RuleGroupProcessor;
   /**
    * In the "sql", "parameterized", "parameterized_named", and "jsonata" export
    * formats, field names will be bracketed by this string. If an array of strings
@@ -302,6 +318,27 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
 }
 
 /**
+ * Options object curated by {@link formatQuery} and passed to a {@link RuleGroupProcessor}.
+ *
+ * @group Export
+ */
+export interface FormatQueryFinalOptions
+  extends Required<
+    Except<
+      FormatQueryOptions,
+      'context' | 'valueProcessor' | 'validator' | 'placeholderValueName' | 'ruleGroupProcessor'
+    >
+  > {
+  fields: FullOptionList<FullField>;
+  getParseNumberBoolean: (inputType?: InputType | null) => boolean;
+  placeholderValueName?: string | undefined;
+  valueProcessor: ValueProcessorByRule;
+  validator?: QueryValidator;
+  validateRule: FormatQueryValidateRule;
+  validationMap: ValidationMap;
+}
+
+/**
  * Function that produces a processed value for a given {@link RuleType}.
  *
  * @group Export
@@ -343,7 +380,7 @@ export type ValueProcessor = ValueProcessorLegacy;
  * | `spel`                   | {@link defaultRuleProcessorSpEL}          |
  * | `jsonlogic`              | {@link defaultRuleProcessorJsonLogic}     |
  * | `elasticsearch`          | {@link defaultRuleProcessorElasticSearch} |
- * | `jsonata`                | {@link defaultRuleProcessorJSONata} |
+ * | `jsonata`                | {@link defaultRuleProcessorJSONata}       |
  *
  * @group Export
  */
@@ -358,6 +395,46 @@ export type RuleProcessor = (
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ) => any;
+
+/**
+ * Function to produce a result that {@link formatQuery} uses when processing a
+ * {@link RuleGroupType} or {@link RuleGroupTypeIC} object.
+ *
+ * See the default rule group processor for each format to know what type to return.
+ * | Format                   | Default rule group processor                   |
+ * | ------------------------ | ---------------------------------------------- |
+ * | `sql`                    | {@link defaultRuleGroupProcessorSQL}           |
+ * | `parameterized`          | {@link defaultRuleGroupProcessorParameterized} |
+ * | `parameterized_named`    | {@link defaultRuleGroupProcessorParameterized} |
+ * | `mongodb` _(deprecated)_ | {@link defaultRuleGroupProcessorMongoDB}       |
+ * | `mongodb_query`          | {@link defaultRuleGroupProcessorMongoDBQuery}  |
+ * | `cel`                    | {@link defaultRuleGroupProcessorCEL}           |
+ * | `spel`                   | {@link defaultRuleGroupProcessorSpEL}          |
+ * | `jsonlogic`              | {@link defaultRuleGroupProcessorJsonLogic}     |
+ * | `elasticsearch`          | {@link defaultRuleGroupProcessorElasticSearch} |
+ * | `jsonata`                | {@link defaultRuleGroupProcessorJSONata}       |
+ *
+ * @group Export
+ */
+export type RuleGroupProcessor<TResult = unknown> = (
+  ruleGroup: RuleGroupTypeAny,
+  options: FormatQueryFinalOptions,
+  meta?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    processedParams?: Record<string, any> | any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context?: Record<string, any>;
+  }
+) => TResult;
+
+/**
+ * Rule validator for {@link formatQuery}.
+ *
+ * @group Export
+ */
+export type FormatQueryValidateRule = (
+  rule: RuleType
+) => readonly [boolean | ValidationResult | undefined, RuleValidator | undefined];
 
 /**
  * Object produced by {@link formatQuery} for the `"parameterized"` format.

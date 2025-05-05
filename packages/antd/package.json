@@ -56,16 +56,16 @@
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.1.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "antd": "^5.24.6",
+    "@types/react": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "antd": "^5.24.9",
     "dayjs": "^1.11.13",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-querybuilder": "8.5.0",
     "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.8.3",
-    "vite": "^6.2.5"
+    "vite": "^6.3.5"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5",

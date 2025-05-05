@@ -1,4 +1,4 @@
-import type { InputType, ParseNumberMethod, ParseNumbersPropConfig } from '../types';
+import type { InputType, ParseNumberMethod, ParseNumbersPropConfig } from '../types/index.noReact';
 
 export const getParseNumberMethod = ({
   parseNumbers,

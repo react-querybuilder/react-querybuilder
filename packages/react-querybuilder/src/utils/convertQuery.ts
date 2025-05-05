@@ -74,6 +74,8 @@ const generateRuleGroupICWithConsistentCombinators = (
  *
  * This function is idempotent: {@link RuleGroupType} queries will be
  * returned as-is.
+ *
+ * @group Query Tools
  */
 export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
   rg: RuleGroupTypeAny
@@ -95,6 +97,8 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
  *
  * This function is idempotent: {@link RuleGroupTypeIC} queries will be
  * returned as-is.
+ *
+ * @group Query Tools
  */
 export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   rg: RuleGroupTypeAny
@@ -121,11 +125,15 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
 /**
  * Converts a {@link RuleGroupType} to {@link RuleGroupTypeIC}. For a more explicit
  * operation, use {@link convertToIC}.
+ *
+ * @group Query Tools
  */
 function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
 /**
  * Converts a {@link RuleGroupTypeIC} to {@link RuleGroupType}. For a more explicit
  * operation, use {@link convertFromIC}.
+ *
+ * @group Query Tools
  */
 function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 function convertQuery(query: RuleGroupType | RuleGroupTypeIC): RuleGroupType | RuleGroupTypeIC {

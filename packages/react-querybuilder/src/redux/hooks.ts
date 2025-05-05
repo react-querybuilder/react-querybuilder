@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { createSelectorHook } from 'react-redux';
 import { QueryBuilderContext } from '../context';
-import type { RuleGroupTypeAny } from '../types';
+import type { RuleGroupTypeAny } from '../types/index.noReact';
 import { QueryBuilderStateContext } from './QueryBuilderStateContext';
 import { getQuerySelectorById } from './selectors';
 import type { RqbState } from './types';

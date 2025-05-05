@@ -1,4 +1,4 @@
-import type { DefaultOperatorName } from '../../types';
+import type { DefaultOperatorName } from '../../types/index.noReact';
 import type { MongoDbSupportedOperators } from './types';
 
 export const getRegExStr = (re: string | RegExp): string =>

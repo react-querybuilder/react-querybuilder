@@ -601,6 +601,11 @@ export default function Demo({
                     attributes: getExportTabAttributes('jsonata'),
                   },
                   {
+                    value: 'ldap',
+                    label: 'LDAP',
+                    attributes: getExportTabAttributes('ldap'),
+                  },
+                  {
                     value: 'natural_language',
                     label: 'Natural language',
                     attributes: getExportTabAttributes('natural_language'),
@@ -721,6 +726,12 @@ export default function Demo({
                 <TabItem value="jsonata">
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="jsonata" />
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="ldap">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="ldap" />
                   </div>
                   {exportPresentation}
                 </TabItem>

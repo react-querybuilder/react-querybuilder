@@ -1,4 +1,4 @@
-import type { FullOption } from '../types';
+import type { FullOption } from '../types/index.noReact';
 import {
   getFirstOption,
   isFlexibleOptionArray,

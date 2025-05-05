@@ -20,6 +20,7 @@ const superHeroSchema = {
   lastName: { type: String, required: true },
   enhanced: { type: Boolean },
   madeUpName: { type: String, required: true },
+  nickname: { type: String, required: true },
   powerUpAge: { type: Number },
 } as const;
 
