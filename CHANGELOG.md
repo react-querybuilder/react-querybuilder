@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.6.0] - 2025-05-05
+
 ### Added
 
-- [#885] [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) export format.
 - [#885] New package `@react-querybuilder/drizzle` with Drizzle ORM integration.
+- [#885] [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) export format.
 - [#885] New `formatQuery` option `ruleGroupProcessor` enabling development of custom output formats without completely reimplementing `formatQuery`.
   - The rule group processors for each of the existing formats have been extracted from `formatQuery` and can be used independently or as fallbacks from custom processors.
 - [#883] Query tools `add`, `update`, `remove`, `move`, and `group` can now accept a `string` or `Path` where they previously accepted only `Path`-type arguments. A `string` would represent the `id` property of the subject rule/group, but otherwise the functionality of each tool is the same.
@@ -1921,7 +1923,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.5.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.0...HEAD
+[v8.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.5.0...v8.6.0
 [v8.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.1...v8.5.0
 [v8.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.0...v8.4.1
 [v8.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.3.1...v8.4.0
