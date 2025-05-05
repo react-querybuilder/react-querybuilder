@@ -100,6 +100,7 @@ const config: Config = {
               autoConfiguration: true,
               deprecatedItemClassName: 'deprecated',
               pretty: true,
+              typescript: false,
             },
             sortEntryPoints: true,
             hideGroupHeadings: true,

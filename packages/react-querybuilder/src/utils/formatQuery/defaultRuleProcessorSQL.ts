@@ -2,6 +2,11 @@ import type { RuleProcessor } from '../../types/index.noReact';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { mapSQLOperator, getQuotedFieldName } from './utils';
 
+/**
+ * Default operator processor used by {@link formatQuery} for "sql" and "parameterized*" formats.
+ *
+ * @group Export
+ */
 export const defaultOperatorProcessorSQL: RuleProcessor = rule =>
   mapSQLOperator(rule.operator).toLowerCase();
 

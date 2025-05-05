@@ -10,6 +10,10 @@ import {
 } from 'react-querybuilder';
 import { generateDrizzleRuleProcessor } from './generateDrizzleRuleProcessor';
 
+/**
+ * Given a Drizzle table config, returns a {@link react-querybuilder!index.RuleGroupProcessor RuleGroupProcessor}
+ * for use by {@link react-querybuilder!index.formatQuery formatQuery}.
+ */
 export const generateDrizzleRuleGroupProcessor =
   (
     table: Table | Record<string, Column<ColumnBaseConfig<ColumnDataType, string>>>

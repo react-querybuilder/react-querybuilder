@@ -427,6 +427,11 @@ export type RuleGroupProcessor<TResult = unknown> = (
   }
 ) => TResult;
 
+/**
+ * Rule validator for {@link formatQuery}.
+ *
+ * @group Export
+ */
 export type FormatQueryValidateRule = (
   rule: RuleType
 ) => readonly [boolean | ValidationResult | undefined, RuleValidator | undefined];

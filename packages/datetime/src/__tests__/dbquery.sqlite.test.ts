@@ -51,6 +51,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         if (testCase[1] === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
+          expect(result).toHaveLength(1);
           expect(result[0].last_name).toBe(testCase[1]);
         }
       });

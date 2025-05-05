@@ -4,6 +4,11 @@ import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
 
+/**
+ * Default fallback object used by {@link formatQuery} for "mongodb_query" format.
+ *
+ * @group Export
+ */
 export const mongoDbFallback = { $and: [{ $expr: true }] } as const;
 
 /**

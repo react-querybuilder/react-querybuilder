@@ -8,6 +8,11 @@ import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuotedFieldName, normalizeConstituentWordOrder } from './utils';
 
+/**
+ * Default operator map used by {@link formatQuery} for "natural_language" format.
+ *
+ * @group Export
+ */
 export const defaultExportOperatorMap: ExportOperatorMap = {
   '=': ['is', 'is the same as the value in'],
   '!=': ['is not', 'is not the same as the value in'],

@@ -46,7 +46,24 @@ export const fields: Field[] = [
 export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
   const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
 
+  // Sorted by `madeUpName`
   return [
+    {
+      firstName: 'Bruce',
+      lastName: 'Wayne',
+      enhanced: isNotEnhanced,
+      madeUpName: 'Batman',
+      nickname: 'The Dark Knight',
+      powerUpAge: dbPlatform === 'cel' ? undefined : null,
+    },
+    {
+      firstName: 'Steve',
+      lastName: 'Rogers',
+      enhanced: isEnhanced,
+      madeUpName: 'Captain America',
+      nickname: 'Cap',
+      powerUpAge: 20,
+    },
     {
       firstName: 'Peter',
       lastName: 'Parker',
@@ -62,22 +79,6 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       madeUpName: 'Superman',
       nickname: 'Supes',
       powerUpAge: 0,
-    },
-    {
-      firstName: 'Steve',
-      lastName: 'Rogers',
-      enhanced: isEnhanced,
-      madeUpName: 'Captain America',
-      nickname: 'Cap',
-      powerUpAge: 20,
-    },
-    {
-      firstName: 'Bruce',
-      lastName: 'Wayne',
-      enhanced: isNotEnhanced,
-      madeUpName: 'Batman',
-      nickname: 'The Dark Knight',
-      powerUpAge: dbPlatform === 'cel' ? undefined : null,
     },
   ];
 };
@@ -144,6 +145,7 @@ INSERT INTO superusers (
 )`;
 
 export const sqlBase = `SELECT * FROM superusers WHERE `;
+export const getSqlOrderBy = (unquoted = false) => ` ORDER BY ${unquote('madeUpName', unquoted)}`;
 
 export const dbSetup = (
   dbPlatform: DbPlatform,

@@ -56,6 +56,7 @@ if (celEvaluator) {
           if (expectation === 'all') {
             expect(result).toHaveLength(data.length);
           } else {
+            expect(result).toHaveLength(1);
             expect(result[0].last_name).toBe(expectation);
           }
         });

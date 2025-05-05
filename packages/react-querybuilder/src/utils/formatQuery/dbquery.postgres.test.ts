@@ -1,7 +1,7 @@
 import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from './formatQuery';
 import type { SuperUser, TestSQLParams } from './dbqueryTestUtils';
-import { dbSetup, dbTests, sqlBase, superUsers } from './dbqueryTestUtils';
+import { dbSetup, dbTests, getSqlOrderBy, sqlBase, superUsers } from './dbqueryTestUtils';
 
 const db = new PGlite();
 
@@ -18,7 +18,7 @@ beforeAll(async () => {
 const testSQL = ({ query, expectedResult, skipParameterized, fqOptions }: TestSQLParams) => {
   test('sql', async () => {
     const sql = formatQuery(query, { ...fqOptions, preset: 'postgresql' });
-    const queryResult = await db.query(`${sqlBase} ${sql}`);
+    const queryResult = await db.query(`${sqlBase} ${sql} ${getSqlOrderBy()}`);
     expect(queryResult.rows).toEqual(expectedResult);
   });
 
@@ -29,7 +29,10 @@ const testSQL = ({ query, expectedResult, skipParameterized, fqOptions }: TestSQ
         format: 'parameterized',
         preset: 'postgresql',
       });
-      const queryResult = await db.query(`${sqlBase} ${parameterized.sql}`, parameterized.params);
+      const queryResult = await db.query(
+        `${sqlBase} ${parameterized.sql} ${getSqlOrderBy()}`,
+        parameterized.params
+      );
       expect(queryResult.rows).toEqual(expectedResult);
     });
   }
@@ -52,7 +55,7 @@ describe('PostgreSQL', async () => {
     });
 
     test('unquoted field names', async () => {
-      const sql = formatQuery(
+      const sqlWhere = formatQuery(
         {
           combinator: 'or',
           rules: [
@@ -68,7 +71,7 @@ describe('PostgreSQL', async () => {
         },
         { format: 'sql' }
       );
-      const result = await unquotedDb.query(`${sqlBase} ${sql}`);
+      const result = await unquotedDb.query(`${sqlBase} ${sqlWhere} ${getSqlOrderBy(true)}`);
       expect(result.rows).toEqual(
         superUsersPostgres
           .filter(u => u.madeUpName.startsWith('S'))

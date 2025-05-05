@@ -23,10 +23,7 @@ for (const item of typedocGeneratedSidebarItems) {
       shiftToTop(item.items, subItem);
     }
   }
-  if (
-    item.type === 'category' &&
-    (item.link as SidebarItemCategoryLinkDoc | undefined)?.id === 'react-querybuilder/index'
-  ) {
+  if (item.type === 'category' && item.label === 'react-querybuilder') {
     shiftToTop(typedocGeneratedSidebarItems, item);
   }
 }
@@ -38,6 +35,6 @@ export default {
       label: 'React Query Builder API',
       id: 'index',
     },
-    ...typedocGeneratedSidebarItems,
+    ...JSON.parse(JSON.stringify(typedocGeneratedSidebarItems).replaceAll('"../api/', '"')),
   ],
 } satisfies SidebarsConfig;
