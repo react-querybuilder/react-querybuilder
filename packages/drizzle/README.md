@@ -4,7 +4,7 @@ Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with
 
 To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo) and select Export > Drizzle.
 
-**[Full documentation](https://react-querybuilder.js.org/docs/drizzle)**
+**[Full documentation](https://react-querybuilder.js.org/docs/utils/export#drizzle-orm)**
 
 <!-- ![Screenshot](../../_assets/screenshot.png) -->
 
@@ -21,20 +21,22 @@ To produce a Drizzle query based on a React Query Builder query object, first ge
 
 ```ts
 import { formatQuery } from 'react-querybuilder';
-import { getDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
-import 'dotenv/config';
+import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { sqliteTable } from 'drizzle-orm/sqlite-core';
+import { fields } from './fields';
 
 const db = drizzle(process.env.DB_FILE_NAME!);
 
-// Assume `table` was created with something like the following:
-// const table = pgTable('table', { ... });
-// const table = sqliteTable('table', { ... });
-// const table = mysqlTable('table', { ... });
+const table = sqliteTable('table', {
+  // Column definitions...
+});
 
 const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
 
-const results = db.select().from(table).where(formatQuery(query, { fields, ruleGroupProcessor }));
+const sqlWhere = formatQuery(query, { fields, ruleGroupProcessor });
+
+const results = db.select().from(table).where(sqlWhere);
 ```
 
 <!-- ## Notes -->
