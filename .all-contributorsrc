@@ -424,6 +424,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "yywing",
+      "name": "yywing",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22928185?v=4",
+      "profile": "https://github.com/yywing",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

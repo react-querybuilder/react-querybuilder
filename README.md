@@ -133,6 +133,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sajov"><img src="https://avatars.githubusercontent.com/u/2475348?v=4?s=100" width="100px;" alt="sajov"/><br /><sub><b>sajov</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/yywing"><img src="https://avatars.githubusercontent.com/u/22928185?v=4?s=100" width="100px;" alt="yywing"/><br /><sub><b>yywing</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=yywing" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
@@ -146,7 +147,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-43-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-44-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 
