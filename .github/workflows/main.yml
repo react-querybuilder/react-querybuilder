@@ -90,7 +90,7 @@ jobs:
             # Set all React dependencies to v18
             sed -i -E 's/("(@types\/)?react(-dom|-test-renderer)?": ")\^?19.*"/\1^18"/g' $pkgjson
           done
-          rm bun.lock
+          # rm bun.lock
           bun install
           bunx jest --coverage=false
 
