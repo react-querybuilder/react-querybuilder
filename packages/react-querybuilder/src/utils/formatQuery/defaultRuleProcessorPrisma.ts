@@ -11,7 +11,7 @@ import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
 export const defaultRuleProcessorPrisma: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers, preserveValueOrder } = {}
+  { parseNumbers = true, preserveValueOrder } = {}
 ) => {
   if (valueSource === 'field') return;
 
@@ -49,19 +49,19 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       return { [field]: { endsWith: value } };
 
     case 'doesnotcontain':
-      return { [field]: { NOT: { contains: value } } };
+      return { NOT: { [field]: { contains: value } } };
 
     case 'doesnotbeginwith':
-      return { [field]: { NOT: { startsWith: value } } };
+      return { NOT: { [field]: { startsWith: value } } };
 
     case 'doesnotendwith':
-      return { [field]: { NOT: { endsWith: value } } };
+      return { NOT: { [field]: { endsWith: value } } };
 
     case 'null':
       return { [field]: null };
 
     case 'notnull':
-      return { NOT: { [field]: null } };
+      return { [field]: { not: null } };
 
     case 'in':
     case 'notin': {

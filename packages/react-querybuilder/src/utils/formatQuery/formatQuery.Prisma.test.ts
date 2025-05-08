@@ -70,7 +70,7 @@ const prismaQuery: RuleGroupType = {
 const prismaQueryExpectation = {
   AND: [
     { firstName: null },
-    { NOT: { lastName: null } },
+    { lastName: { not: null } },
     { firstName: { in: ['Test', 'This'] } },
     { lastName: { notIn: ['Test', 'This'] } },
     { firstName: { in: [] } },
@@ -84,9 +84,9 @@ const prismaQueryExpectation = {
     { email: { contains: '@' } },
     { email: { startsWith: 'ab' } },
     { email: { endsWith: 'com' } },
-    { hello: { NOT: { contains: 'com' } } },
-    { job: { NOT: { startsWith: 'Man' } } },
-    { job: { NOT: { endsWith: 'ger' } } },
+    { NOT: { hello: { contains: 'com' } } },
+    { NOT: { job: { startsWith: 'Man' } } },
+    { NOT: { job: { endsWith: 'ger' } } },
     {
       OR: [{ job: 'Sales Executive' }, { job: { in: [] } }],
     },
