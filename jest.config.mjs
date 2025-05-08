@@ -7,6 +7,8 @@ const zeroCoverage = { branches: 0, functions: 0, lines: 0, statements: 0 };
 export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',
+  // We have to run the Drizzle tests separately for now because they have
+  // to be run with the `--experimental-vm-modules` flag.
   ...(process.env.RQB_DRIZZLE_COVERAGE
     ? {
         coverageReporters: [],
