@@ -21,7 +21,7 @@ function formatQuery(
 - SQL `WHERE` clause
   - Parameterized with anonymous parameters
   - Parameterized with named parameters
-  - Drizzle ORM query object
+- ORM query objects (Prisma, Drizzle)
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -29,6 +29,7 @@ function formatQuery(
 - JsonLogic
 - ElasticSearch
 - JSONata
+- LDAP
 - Natural language
 
 For the next few sections (unless otherwise noted), assume the `query` variable has been defined as:
@@ -195,6 +196,23 @@ Output (JSON object):
 ```
 
 See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#generating-parameter-names).
+
+### ORMs
+
+#### Prisma ORM
+
+To produce an object suitable for the `where` property of a Prisma ORM query, use the "prisma" format.
+
+> _Note: Prisma does not support field-to-field comparisons, so rules with `valueSource: "field"` will always be invalid._
+
+```ts
+const where = formatQuery(query, 'prisma');
+
+console.log(where);
+// { AND: [{ firstName: 'Steve' }, { lastName: 'Vai' }] }
+
+const users = await prisma.user.findMany({ where });
+```
 
 #### Drizzle ORM
 

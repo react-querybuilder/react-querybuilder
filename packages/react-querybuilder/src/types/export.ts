@@ -31,7 +31,8 @@ export type ExportFormat =
   | 'elasticsearch'
   | 'jsonata'
   | 'natural_language'
-  | 'ldap';
+  | 'ldap'
+  | 'prisma';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.

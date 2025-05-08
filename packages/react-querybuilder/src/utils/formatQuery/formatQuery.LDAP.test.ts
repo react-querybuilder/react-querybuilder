@@ -112,51 +112,6 @@ it('parseNumbers', () => {
   );
 });
 
-// it('handles quoteFieldNamesWith correctly', () => {
-//   const queryToTest: RuleGroupType = {
-//     id: 'g-root',
-//     combinator: 'and',
-//     rules: [
-//       { field: 'instrument', value: 'Guitar, Vocals', operator: 'in' },
-//       { field: 'lastName', value: 'Vai', operator: '=' },
-//       { field: 'lastName', value: 'firstName', operator: '!=', valueSource: 'field' },
-//     ],
-//     not: false,
-//   };
-
-//   expect(formatQuery(queryToTest, { format: 'ldap', quoteFieldNamesWith: '`' })).toBe(
-//     '`instrument` in ["Guitar", "Vocals"] and `lastName` = "Vai" and `lastName` != `firstName`'
-//   );
-// });
-
-// it('handles fieldIdentifierSeparator correctly', () => {
-//   const queryToTest: RuleGroupType = {
-//     id: 'g-root',
-//     combinator: 'and',
-//     rules: [
-//       { field: 'musicians.instrument', value: 'Guitar, Vocals', operator: 'in' },
-//       { field: 'musicians.lastName', value: 'Vai', operator: '=' },
-//       {
-//         field: 'musicians.lastName',
-//         value: 'musicians.firstName',
-//         operator: '!=',
-//         valueSource: 'field',
-//       },
-//     ],
-//     not: false,
-//   };
-
-//   expect(
-//     formatQuery(queryToTest, {
-//       format: 'ldap',
-//       quoteFieldNamesWith: '`',
-//       fieldIdentifierSeparator: '.',
-//     })
-//   ).toBe(
-//     '`musicians`.`instrument` in ["Guitar", "Vocals"] and `musicians`.`lastName` = "Vai" and `musicians`.`lastName` != `musicians`.`firstName`'
-//   );
-// });
-
 it('preserveValueOrder', () => {
   expect(formatQuery(queryForPreserveValueOrder, { format: 'ldap', parseNumbers: true })).toBe(
     `(&(&(f1>=12)(f1<=14))(&(f2>=12)(f2<=14)))`

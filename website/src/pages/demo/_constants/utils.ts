@@ -92,11 +92,11 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
     case 'mongodb':
       return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
     case 'mongodb_query':
-      return JSON.stringify(formatQueryResult, null, 2);
     case 'parameterized':
     case 'parameterized_named':
     case 'jsonlogic':
     case 'elasticsearch':
+    case 'prisma':
       return JSON.stringify(formatQueryResult, null, 2);
   }
 

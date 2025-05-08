@@ -29,6 +29,7 @@ import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
+import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
 import { defaultRuleGroupProcessorMongoDB } from './defaultRuleGroupProcessorMongoDB';
 import {
   defaultRuleGroupProcessorMongoDBQuery,
@@ -36,23 +37,24 @@ import {
 } from './defaultRuleGroupProcessorMongoDBQuery';
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
+import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
+import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
-import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
-import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
 
 /**
  * @group Export
@@ -92,6 +94,7 @@ const defaultRuleProcessors = {
   natural_language: defaultRuleProcessorNL,
   parameterized_named: defaultRuleProcessorParameterized,
   parameterized: defaultRuleProcessorParameterized,
+  prisma: defaultRuleProcessorPrisma,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
@@ -111,6 +114,7 @@ const defaultOperatorProcessors = {
   natural_language: defaultOperatorProcessorNL,
   parameterized_named: defaultOperatorProcessorSQL,
   parameterized: defaultOperatorProcessorSQL,
+  prisma: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
@@ -165,7 +169,8 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
   format === 'jsonlogic' ||
   format === 'elasticsearch' ||
   format === 'jsonata' ||
-  format === 'ldap';
+  format === 'ldap' ||
+  format === 'prisma';
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -250,6 +255,16 @@ function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'mongodb' | (FormatQueryOptions & { format: 'mongodb' })
 ): string;
+/**
+ * Generates a Prisma ORM query object from an RQB query object.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'prisma' | (FormatQueryOptions & { format: 'prisma' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Record<string, any>;
 /**
  * Generates a JSONata query string from an RQB query object.
  *
@@ -374,11 +389,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? `{${fallbackExpression}}`
               : format === 'mongodb_query'
                 ? mongoDbFallback
-                : format === 'jsonlogic'
-                  ? false
-                  : format === 'elasticsearch'
-                    ? {}
-                    : fallbackExpression;
+                : format === 'prisma'
+                  ? prismaFallback
+                  : format === 'jsonlogic'
+                    ? false
+                    : format === 'elasticsearch'
+                      ? {}
+                      : fallbackExpression;
       }
     } else {
       validationMap = validationResult;
@@ -481,6 +498,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     case 'ldap':
       return defaultRuleGroupProcessorLDAP(ruleGroup, finalOptions);
+
+    case 'prisma':
+      return defaultRuleGroupProcessorPrisma(ruleGroup, finalOptions);
 
     default:
       return '';
