@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [Prisma ORM](https://www.prisma.io/) export format.
+- [#891] [Prisma ORM](https://www.prisma.io/) export format.
 
 ## [v8.6.1] - 2025-05-06
 
@@ -1930,6 +1930,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#883]: https://github.com/react-querybuilder/react-querybuilder/pull/883
 [#885]: https://github.com/react-querybuilder/react-querybuilder/pull/885
 [#890]: https://github.com/react-querybuilder/react-querybuilder/pull/890
+[#891]: https://github.com/react-querybuilder/react-querybuilder/pull/891
 
 <!-- #endregion -->
 
