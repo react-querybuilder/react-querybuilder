@@ -5,8 +5,8 @@
  */
 
 import type { Column } from 'drizzle-orm';
-import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
-import { formatQuery } from './formatQuery';
+import { defaultRuleProcessorDrizzle } from '../defaultRuleProcessorDrizzle';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,
@@ -14,7 +14,7 @@ import {
   queryForPreserveValueOrder,
   queryIC,
   queryWithValueSourceField,
-} from './formatQueryTestUtils';
+} from '../formatQueryTestUtils';
 
 const operatorStub = (...x: unknown[]) => x;
 

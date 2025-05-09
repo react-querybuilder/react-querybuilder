@@ -3,10 +3,10 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleProcessor,
-} from '../../types/index.noReact';
-import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
-import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
-import { formatQuery } from './formatQuery';
+} from '../../../types/index.noReact';
+import { defaultRuleProcessorMongoDB } from '../defaultRuleProcessorMongoDB';
+import { defaultRuleProcessorMongoDBQuery } from '../defaultRuleProcessorMongoDBQuery';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   queryAllOperators,
@@ -16,8 +16,8 @@ import {
   queryForRuleProcessor,
   queryIC,
   testQueryDQ,
-} from './formatQueryTestUtils';
-import { defaultMongoDBValueProcessor } from './index';
+} from '../formatQueryTestUtils';
+import { defaultMongoDBValueProcessor } from '../index';
 
 const testBoth = (
   query: RuleGroupTypeAny,

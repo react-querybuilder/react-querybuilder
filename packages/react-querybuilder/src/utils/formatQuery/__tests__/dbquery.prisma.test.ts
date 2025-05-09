@@ -1,9 +1,9 @@
 import { PGlite } from '@electric-sql/pglite';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPGlite } from 'pglite-prisma-adapter';
-import type { TestSQLParams } from './dbqueryTestUtils';
-import { CREATE_INDEX, CREATE_TABLE, dbTests, fields, superUsers } from './dbqueryTestUtils';
-import { formatQuery } from './formatQuery';
+import type { TestSQLParams } from '../dbqueryTestUtils';
+import { CREATE_INDEX, CREATE_TABLE, dbTests, fields, superUsers } from '../dbqueryTestUtils';
+import { formatQuery } from '../formatQuery';
 
 const db = new PGlite();
 

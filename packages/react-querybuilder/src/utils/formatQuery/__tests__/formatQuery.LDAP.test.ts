@@ -1,7 +1,11 @@
-import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
-import { add } from '../queryTools';
-import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
-import { formatQuery } from './formatQuery';
+import type {
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../../types/index.noReact';
+import { add } from '../../queryTools';
+import { defaultRuleProcessorLDAP } from '../defaultRuleProcessorLDAP';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,
@@ -12,7 +16,7 @@ import {
   queryIC,
   queryWithValueSourceField,
   testQueryDQ,
-} from './formatQueryTestUtils';
+} from '../formatQueryTestUtils';
 
 const ldapString = `(&(firstName=*)(!(lastName=*))(|(firstName=Test)(firstName=This))(!(|(lastName=Test)(lastName=This)))(|)(&(firstName>=Test)(firstName<=This))(&(firstName>=Test)(firstName<=This))(!(&(lastName>=Test)(lastName<=This)))(&(age>=12)(age<=14))(age=26)(isMusician=true)(isLucky=false)(!(|(gender=M)(!(job=Programmer))(email=*@*)))(|(!(lastName=*ab*))(job=Prog*)(email=*com)(!(job=Man*))(!(email=*fr))))`;
 const ldapStringForValueSourceField = ``;

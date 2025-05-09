@@ -1,9 +1,9 @@
-import type { FormatQueryOptions, RuleGroupType, RuleType } from '../../types/index.noReact';
-import { convertToIC } from '../convertQuery';
-import { prepareRuleGroup } from '../prepareQueryObjects';
-import { formatQuery } from './formatQuery';
-import { query, queryForNumberParsing, queryWithValueSourceField } from './formatQueryTestUtils';
-import { getQuoteFieldNamesWithArray } from './utils';
+import type { FormatQueryOptions, RuleGroupType, RuleType } from '../../../types/index.noReact';
+import { convertToIC } from '../../convertQuery';
+import { prepareRuleGroup } from '../../prepareQueryObjects';
+import { formatQuery } from '../formatQuery';
+import { query, queryForNumberParsing, queryWithValueSourceField } from '../formatQueryTestUtils';
+import { getQuoteFieldNamesWithArray } from '../utils';
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));

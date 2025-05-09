@@ -4,9 +4,9 @@ import { Database } from 'bun:sqlite';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { convertToIC, formatQuery } from 'react-querybuilder';
-import type { TestSQLParams } from './dbqueryTestUtils';
-import { dbSetup, superUsers } from './dbqueryTestUtils';
-import { dbTestsDrizzle } from './dbqueryDrizzleTestUtils';
+import type { TestSQLParams } from '../dbqueryTestUtils';
+import { dbSetup, superUsers } from '../dbqueryTestUtils';
+import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
 
 const bunSQLiteDB = new Database();
 

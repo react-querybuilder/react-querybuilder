@@ -3,9 +3,9 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleProcessor,
-} from '../../types/index.noReact';
-import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
-import { formatQuery } from './formatQuery';
+} from '../../../types/index.noReact';
+import { defaultRuleProcessorMongoDBQuery } from '../defaultRuleProcessorMongoDBQuery';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   queryAllOperators,
@@ -15,7 +15,7 @@ import {
   queryForRuleProcessor,
   queryIC,
   testQueryDQ,
-} from './formatQueryTestUtils';
+} from '../formatQueryTestUtils';
 
 const testPrisma = (
   query: RuleGroupTypeAny,
