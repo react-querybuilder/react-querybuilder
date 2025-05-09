@@ -211,14 +211,27 @@ const where = formatQuery(query, 'prisma');
 console.log(where);
 // { AND: [{ firstName: 'Steve' }, { lastName: 'Vai' }] }
 
-const users = await prisma.user.findMany({ where });
+const users = await prisma.users.findMany({ where });
 ```
 
 #### Drizzle ORM
 
-Drizzle integration is available with the `@react-querybuilder/drizzle` package.
+##### Relational Queries API
 
-Generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query.
+To produce a function suitable for the `where` property of Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb), use the "drizzle" format:
+
+```ts
+const where = formatQuery(query, 'drizzle');
+// typeof where === 'function'
+// where.length === 2
+const results = db.query.users.findMany({ where });
+```
+
+##### Query Builder API
+
+Use the [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select).
+
+First, generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config (or a plain object mapping field names to Drizzle `Column` definitions) to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query builder chain.
 
 ```ts
 import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
@@ -234,9 +247,10 @@ const table = sqliteTable('musicians', {
 
 const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
 
-const whereClause = formatQuery(query, { ruleGroupProcessor });
+// Tip: `format` is not required when `ruleGroupProcessor` is provided
+const where = formatQuery(query, { ruleGroupProcessor });
 
-const query = db.select().from(table).where(whereClause);
+const query = db.select().from(table).where(where);
 console.log(query.toSQL());
 // {
 //   sql: 'select "firstName", "lastName" from "musicians" where ("musicians"."firstName" = ? and "musicians"."lastName" = ?)',
@@ -246,6 +260,20 @@ console.log(query.toSQL());
 console.log(query.all());
 // [{ firstName: 'Steve', lastName: 'Vai' }]
 ```
+
+:::tip
+
+When using a Drizzle rule group processor like above, the object produced by `formatQuery` can be passed to Drizzle operators to augment the query with conditions not present in the original query object.
+
+```ts
+import { and, ne } from 'drizzle-orm';
+const where = formatQuery(query, { ruleGroupProcessor });
+// All conditions from the original query object _and_ `id != 123`
+const augmentedWhere = and(where, ne(table.id, 123));
+const query = db.select().from(table).where(augmentedWhere);
+```
+
+:::
 
 ### MongoDB
 

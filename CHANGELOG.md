@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#891] [Prisma ORM](https://www.prisma.io/) export format.
+- [#891] New "drizzle" export format for integration with the Drizzle ORM relational queries API.
 
 ## [v8.6.1] - 2025-05-06
 
@@ -22,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#885] New package `@react-querybuilder/drizzle` with Drizzle ORM integration.
+- [#885] New package `@react-querybuilder/drizzle` for integration with the Drizzle ORM query builder API.
 - [#885] [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) export format.
 - [#885] New `formatQuery` option `ruleGroupProcessor` enabling development of custom output formats without completely reimplementing `formatQuery`.
   - The rule group processors for each of the existing formats have been extracted from `formatQuery` and can be used independently or as fallbacks from custom processors.

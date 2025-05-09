@@ -4,9 +4,11 @@ import { Database } from 'bun:sqlite';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { convertToIC, formatQuery } from 'react-querybuilder';
-import type { TestSQLParams } from './drizzleTestUtils';
-import { dbSetup, dbTestsDrizzle, superUsers } from './drizzleTestUtils';
-import { generateDrizzleRuleGroupProcessor } from './generateDrizzleRuleGroupProcessor';
+import type { TestSQLParams } from './dbqueryTestUtils';
+import { dbSetup, superUsers } from './dbqueryTestUtils';
+import { dbTestsDrizzle } from './dbqueryDrizzleTestUtils';
+
+const bunSQLiteDB = new Database();
 
 const columnsSQLite = {
   firstName: text().notNull(),
@@ -17,26 +19,22 @@ const columnsSQLite = {
   powerUpAge: integer(),
 };
 
-const tableSQLite = sqliteTable('superusers', columnsSQLite);
-const superusers = superUsers('sqlite');
+const superusers = sqliteTable('superusers', columnsSQLite);
 
-const bunSQLiteDB = new Database();
-const drizzleSQLiteDB = drizzle({ client: bunSQLiteDB, schema: { superusers } });
+const drizzleSQLiteDB = drizzle({ schema: { superusers }, client: bunSQLiteDB });
+
+const superUsersSQLite = superUsers('sqlite');
 
 const testSQLite = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   test.each(['standard', 'independent combinators'])('%s', async testType => {
     const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
-    const sql = formatQuery(queryToTest, {
-      ...fqOptions,
-      ruleGroupProcessor: generateDrizzleRuleGroupProcessor(tableSQLite),
-    });
-    const q = drizzleSQLiteDB.select().from(tableSQLite).where(sql);
-    const result = q.all();
+    const where = formatQuery(queryToTest, { ...fqOptions, format: 'drizzle' });
+    const result = await drizzleSQLiteDB.query.superusers.findMany({ where });
     expect(result).toEqual(expectedResult);
   });
 };
 
-describe('Drizzle (SQLite)', () => {
+describe('Drizzle relational queries (SQLite)', () => {
   beforeAll(() => {
     bunSQLiteDB.run(dbSetup('sqlite'));
   });
@@ -46,7 +44,7 @@ describe('Drizzle (SQLite)', () => {
   });
 
   // Common tests
-  for (const [name, t] of Object.entries(dbTestsDrizzle(superusers))) {
+  for (const [name, t] of Object.entries(dbTestsDrizzle(superUsersSQLite))) {
     describe(name, () => {
       testSQLite(t);
     });
@@ -63,7 +61,7 @@ describe('Drizzle (SQLite)', () => {
             { field: 'enhanced', operator: '>', value: '0' },
           ],
         },
-        expectedResult: superusers.filter(u => u.enhanced),
+        expectedResult: superUsersSQLite.filter(u => u.enhanced),
         fqOptions: { quoteFieldNamesWith: q },
       });
     });

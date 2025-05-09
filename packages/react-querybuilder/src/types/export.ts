@@ -32,6 +32,7 @@ export type ExportFormat =
   | 'jsonata'
   | 'natural_language'
   | 'ldap'
+  | 'drizzle'
   | 'prisma';
 
 /**
@@ -337,6 +338,7 @@ export interface FormatQueryFinalOptions
   validator?: QueryValidator;
   validateRule: FormatQueryValidateRule;
   validationMap: ValidationMap;
+  context?: Record<string, unknown>;
 }
 
 /**

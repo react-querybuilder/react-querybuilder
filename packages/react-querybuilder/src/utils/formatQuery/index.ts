@@ -51,6 +51,7 @@ export const defaultSpELValueProcessor: ValueProcessorLegacy =
   generateValueProcessor(defaultRuleProcessorSpEL);
 
 export * from './defaultRuleGroupProcessorCEL';
+export * from './defaultRuleGroupProcessorDrizzle';
 export * from './defaultRuleGroupProcessorElasticSearch';
 export * from './defaultRuleGroupProcessorJSONata';
 export * from './defaultRuleGroupProcessorJsonLogic';
@@ -62,6 +63,7 @@ export * from './defaultRuleGroupProcessorParameterized';
 export * from './defaultRuleGroupProcessorPrisma';
 export * from './defaultRuleGroupProcessorSpEL';
 export * from './defaultRuleGroupProcessorSQL';
+export * from './defaultRuleProcessorDrizzle';
 export * from './defaultRuleProcessorElasticSearch';
 export * from './defaultRuleProcessorJSONata';
 export * from './defaultRuleProcessorJsonLogic';

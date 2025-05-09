@@ -26,6 +26,7 @@ import type {
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
@@ -41,6 +42,7 @@ import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGr
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
+import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
@@ -83,6 +85,7 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
 
 const defaultRuleProcessors = {
   cel: defaultRuleProcessorCEL,
+  drizzle: defaultRuleProcessorDrizzle,
   elasticsearch: defaultRuleProcessorElasticSearch,
   json_without_ids: defaultRuleProcessorSQL,
   json: defaultRuleProcessorSQL,
@@ -103,6 +106,7 @@ const defaultRuleProcessors = {
 const defaultOperatorProcessor: RuleProcessor = r => r.operator;
 const defaultOperatorProcessors = {
   cel: defaultOperatorProcessor,
+  drizzle: defaultOperatorProcessor,
   elasticsearch: defaultOperatorProcessor,
   json_without_ids: defaultOperatorProcessor,
   json: defaultOperatorProcessor,
@@ -170,7 +174,8 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
   format === 'elasticsearch' ||
   format === 'jsonata' ||
   format === 'ldap' ||
-  format === 'prisma';
+  format === 'prisma' ||
+  format === 'drizzle';
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -266,6 +271,16 @@ function formatQuery(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any>;
 /**
+ * Generates a Drizzle ORM query function from an RQB query object. The function can
+ * be assigned to the `where` property in the Drizzle relational queries API.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'drizzle' | (FormatQueryOptions & { format: 'drizzle' })
+): ReturnType<typeof defaultRuleGroupProcessorDrizzle>;
+/**
  * Generates a JSONata query string from an RQB query object.
  *
  * NOTE: The `parseNumbers` option is recommended for this format.
@@ -329,6 +344,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     ruleProcessor: ruleProcessor_option,
     validator,
     valueProcessor: valueProcessor_option,
+    context,
   } = optObj;
 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
@@ -395,7 +411,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                     ? false
                     : format === 'elasticsearch'
                       ? {}
-                      : fallbackExpression;
+                      : format === 'drizzle'
+                        ? undefined
+                        : fallbackExpression;
       }
     } else {
       validationMap = validationResult;
@@ -444,6 +462,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     valueProcessor,
     validateRule,
     validationMap,
+    context,
   };
 
   if (typeof ruleGroupProcessor_option === 'function') {
@@ -501,6 +520,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     case 'prisma':
       return defaultRuleGroupProcessorPrisma(ruleGroup, finalOptions);
+
+    case 'drizzle':
+      return defaultRuleGroupProcessorDrizzle(ruleGroup, finalOptions);
 
     default:
       return '';
