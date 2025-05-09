@@ -77,8 +77,8 @@ export type FlexibleOption<N extends string = string> = Simplify<
  *
  * @group Option Lists
  */
-export type ToFlexibleOption<Opt extends BaseOption> = Simplify<
-  WithUnknownIndex<RequireAtLeastOne<Opt, 'name' | 'value'>>
+export type ToFlexibleOption<Opt extends BaseOption> = WithUnknownIndex<
+  RequireAtLeastOne<Opt, 'name' | 'value'>
 >;
 
 /**

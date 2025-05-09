@@ -1,7 +1,7 @@
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
-} from '../../defaults';
+} from '../../../defaults';
 import type {
   ExportOperatorMap,
   FormatQueryOptions,
@@ -9,11 +9,11 @@ import type {
   RuleGroupType,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '../../types/index.noReact';
-import { convertToIC } from '../convertQuery';
-import { defaultExportOperatorMap } from './defaultRuleProcessorNL';
-import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { formatQuery } from './formatQuery';
+} from '../../../types/index.noReact';
+import { convertToIC } from '../../convertQuery';
+import { defaultExportOperatorMap } from '../defaultRuleProcessorNL';
+import { defaultValueProcessorNL } from '../defaultValueProcessorNL';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,
@@ -24,7 +24,7 @@ import {
   queryForXor,
   queryIC,
   queryWithValueSourceField,
-} from './formatQueryTestUtils';
+} from '../formatQueryTestUtils';
 
 export const nlString =
   "firstName is null, and lastName is not null, and firstName is one of the values 'Test' or 'This', and lastName is not one of the values 'Test' or 'This', and firstName is between 'Test' and 'This', and firstName is between 'Test' and 'This', and lastName is not between 'Test' and 'This', and age is between '12' and '14', and age is '26', and isMusician is true, and isLucky is false, and (gender is 'M', or job is not 'Programmer', or email contains '@') is not true, and (lastName does not contain 'ab', or job starts with 'Prog', or email ends with 'com', or job does not start with 'Man', or email does not end with 'fr') is true";

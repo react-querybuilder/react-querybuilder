@@ -1,7 +1,11 @@
-import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../types/index.noReact';
-import { add } from '../queryTools';
-import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
-import { formatQuery } from './formatQuery';
+import type {
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../../types/index.noReact';
+import { add } from '../../queryTools';
+import { defaultRuleProcessorJSONata } from '../defaultRuleProcessorJSONata';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,
@@ -12,7 +16,7 @@ import {
   queryIC,
   queryWithValueSourceField,
   testQueryDQ,
-} from './formatQueryTestUtils';
+} from '../formatQueryTestUtils';
 
 const jsonataString = `firstName = null and lastName != null and firstName in ["Test", "This"] and $not(lastName in ["Test", "This"]) and firstName in [] and (firstName >= "Test" and firstName <= "This") and (firstName >= "Test" and firstName <= "This") and $not(lastName >= "Test" and lastName <= "This") and (age >= "12" and age <= "14") and age = "26" and isMusician = true and isLucky = false and $not(gender = "M" or job != "Programmer" or $contains(email, "@")) and ($not($contains(lastName, "ab")) or $contains(job, /^Prog/) or $contains(email, /com$/) or $not($contains(job, /^Man/)) or $not($contains(email, /fr$/)))`;
 const jsonataStringForValueSourceField = `firstName = null and lastName != null and firstName in [middleName, lastName] and $not(lastName in [middleName, lastName]) and firstName in [] and (firstName >= middleName and firstName <= lastName) and (firstName >= middleName and firstName <= lastName) and $not(lastName >= middleName and lastName <= lastName) and age = iq and isMusician = isCreative and $not(gender = someLetter or job != isBetweenJobs or $contains(email, atSign)) and ($not($contains(lastName, firstName)) or $substring(job, 0, $length(jobPrefix)) = jobPrefix or $substring(email, $length(email) - $length(dotCom)) = dotCom or $not($substring(job, 0, $length(hasNoJob)) = hasNoJob) or $not($substring(email, $length(email) - $length(isInvalid)) = isInvalid))`;

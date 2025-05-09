@@ -49,7 +49,7 @@ export const mapSQLOperator = (rqbOperator: string): string => {
 };
 
 /**
- * Maps a {@link DefaultOperatorName} to a MongoDB operator.
+ * Maps a (lowercase) {@link DefaultOperatorName} to a MongoDB operator.
  *
  * @group Export
  */
@@ -63,6 +63,22 @@ export const mongoOperators = {
   in: '$in',
   notin: '$nin',
   notIn: '$nin', // only here for backwards compatibility
+};
+
+/**
+ * Maps a (lowercase) {@link DefaultOperatorName} to a Prisma ORM operator.
+ *
+ * @group Export
+ */
+export const prismaOperators = {
+  '=': 'equals',
+  '!=': 'not',
+  '<': 'lt',
+  '<=': 'lte',
+  '>': 'gt',
+  '>=': 'gte',
+  in: 'in',
+  notin: 'notIn',
 };
 
 /**

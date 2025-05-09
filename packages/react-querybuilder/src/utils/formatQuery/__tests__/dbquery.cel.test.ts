@@ -1,7 +1,7 @@
-import { verifyCELEvaluator } from '../../../../../utils/cel-evaluator/verifyCELEvaluator';
-import { transformQuery } from '../transformQuery';
-import { dbTests, superUsers } from './dbqueryTestUtils';
-import { formatQuery } from './formatQuery';
+import { verifyCELEvaluator } from '../../../../../../utils/cel-evaluator/verifyCELEvaluator';
+import { transformQuery } from '../../transformQuery';
+import { dbTests, superUsers } from '../dbqueryTestUtils';
+import { formatQuery } from '../formatQuery';
 
 const celEvaluator = await verifyCELEvaluator();
 

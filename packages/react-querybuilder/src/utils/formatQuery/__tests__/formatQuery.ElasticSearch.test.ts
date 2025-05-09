@@ -1,6 +1,6 @@
-import type { FormatQueryOptions, RuleProcessor } from '../../types/index.noReact';
-import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
-import { formatQuery } from './formatQuery';
+import type { FormatQueryOptions, RuleProcessor } from '../../../types/index.noReact';
+import { defaultRuleProcessorElasticSearch } from '../defaultRuleProcessorElasticSearch';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,
@@ -11,7 +11,7 @@ import {
   queryForRuleProcessor,
   queryIC,
   queryWithValueSourceField,
-} from './formatQueryTestUtils';
+} from '../formatQueryTestUtils';
 
 const elasticSearchQueryObject = {
   bool: {

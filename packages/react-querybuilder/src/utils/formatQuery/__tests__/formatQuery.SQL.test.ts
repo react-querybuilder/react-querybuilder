@@ -2,7 +2,7 @@ import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
   defaultPlaceholderValueName as defaultValuePlaceholder,
-} from '../../defaults';
+} from '../../../defaults';
 import type {
   FormatQueryOptions,
   ParameterizedNamedSQL,
@@ -12,11 +12,11 @@ import type {
   SQLPreset,
   ValueProcessorByRule,
   ValueProcessorLegacy,
-} from '../../types/index.noReact';
-import { convertToIC } from '../convertQuery';
-import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
-import { defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
-import { formatQuery } from './formatQuery';
+} from '../../../types/index.noReact';
+import { convertToIC } from '../../convertQuery';
+import { defaultRuleProcessorParameterized } from '../defaultRuleProcessorParameterized';
+import { defaultRuleProcessorSQL } from '../defaultRuleProcessorSQL';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   query,
@@ -28,8 +28,8 @@ import {
   queryForXor,
   queryIC,
   queryWithValueSourceField,
-} from './formatQueryTestUtils';
-import { defaultValueProcessor, defaultValueProcessorByRule } from './index';
+} from '../formatQueryTestUtils';
+import { defaultValueProcessor, defaultValueProcessorByRule } from '../index';
 
 export const sqlString =
   "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and isLucky = FALSE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
