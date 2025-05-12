@@ -31,7 +31,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor = (ruleGroup, o
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-      return outermost ? prismaFallback : false;
+      return outermost ? prismaFallback : undefined;
     }
 
     const combinator = rg.combinator.toUpperCase();
@@ -45,7 +45,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor = (ruleGroup, o
             hasChildRules = true;
             return processedRuleGroup;
           }
-          return false;
+          return;
         }
         const [validationResult, fieldValidator] = validateRule(rule);
         if (
@@ -55,7 +55,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor = (ruleGroup, o
           /* istanbul ignore next */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
-          return false;
+          return;
         }
         const fieldData = getOption(fields, rule.field);
         return ruleProcessor(rule, {
