@@ -39,6 +39,7 @@ import {
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
+import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
@@ -52,6 +53,7 @@ import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQ
 import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
+import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
@@ -98,6 +100,7 @@ const defaultRuleProcessors = {
   parameterized_named: defaultRuleProcessorParameterized,
   parameterized: defaultRuleProcessorParameterized,
   prisma: defaultRuleProcessorPrisma,
+  sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
@@ -119,6 +122,7 @@ const defaultOperatorProcessors = {
   parameterized_named: defaultOperatorProcessorSQL,
   parameterized: defaultOperatorProcessorSQL,
   prisma: defaultOperatorProcessor,
+  sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
@@ -175,7 +179,8 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
   format === 'jsonata' ||
   format === 'ldap' ||
   format === 'prisma' ||
-  format === 'drizzle';
+  format === 'drizzle' ||
+  format === 'sequelize';
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -280,6 +285,16 @@ function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'drizzle' | (FormatQueryOptions & { format: 'drizzle' })
 ): ReturnType<typeof defaultRuleGroupProcessorDrizzle>;
+/**
+ * Generates a Sequelize query object from an RQB query object. The object can
+ * be assigned to the `where` property in the Sequelize query functions.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'sequelize' | (FormatQueryOptions & { format: 'sequelize' })
+): ReturnType<typeof defaultRuleGroupProcessorSequelize>;
 /**
  * Generates a JSONata query string from an RQB query object.
  *
@@ -411,7 +426,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
                     ? false
                     : format === 'elasticsearch'
                       ? {}
-                      : format === 'drizzle'
+                      : format === 'drizzle' || format === 'sequelize'
                         ? undefined
                         : fallbackExpression;
       }
@@ -523,6 +538,9 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     case 'drizzle':
       return defaultRuleGroupProcessorDrizzle(ruleGroup, finalOptions);
+
+    case 'sequelize':
+      return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
 
     default:
       return '';

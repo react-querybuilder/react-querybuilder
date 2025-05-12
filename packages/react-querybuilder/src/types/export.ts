@@ -33,7 +33,8 @@ export type ExportFormat =
   | 'natural_language'
   | 'ldap'
   | 'drizzle'
-  | 'prisma';
+  | 'prisma'
+  | 'sequelize';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.

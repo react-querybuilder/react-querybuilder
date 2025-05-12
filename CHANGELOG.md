@@ -9,8 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#891] [Prisma ORM](https://www.prisma.io/) export format.
-- [#891] New "drizzle" export format for integration with the Drizzle ORM relational queries API.
+- [#891] Support for several ORM query formats:
+  - [Prisma ORM](https://www.prisma.io/).
+  - [Sequelize](https://sequelize.org/).
+  - New "drizzle" export format for Drizzle ORM relational queries API (this effectively eliminates the need for the `@react-querybuilder/drizzle` package).
 
 ## [v8.6.1] - 2025-05-06
 

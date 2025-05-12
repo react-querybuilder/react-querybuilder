@@ -1,4 +1,4 @@
-import type { Column, Operators, SQL, TableRelationalConfig } from 'drizzle-orm';
+import type { Column, Operators, SQL, Table } from 'drizzle-orm';
 import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReact';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
@@ -19,13 +19,10 @@ import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
  * @group Export
  */
 export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
-  (columns: Record<string, Column>, drizzleOperators: Operators) => SQL | undefined
+  (columns: Record<string, Column> | Table, drizzleOperators: Operators) => SQL | undefined
 > =
   (ruleGroup, options, _meta) =>
-  (
-    columns: TableRelationalConfig['columns'] | Record<string, Column>,
-    drizzleOperators: Operators
-  ) => {
+  (columns: Table | Record<string, Column>, drizzleOperators: Operators) => {
     const {
       fields,
       getParseNumberBoolean,

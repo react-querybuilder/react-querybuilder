@@ -130,7 +130,9 @@
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "sass": "^1.87.0",
+    "sequelize": "^6.37.7",
     "spel2js": "^0.2.8",
+    "sqlite3": "^5.1.7",
     "type-fest": "^4.41.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
@@ -144,13 +146,17 @@
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
     "json-logic-js": ">=2",
-    "react": ">=18"
+    "react": ">=18",
+    "sequelize": ">=6"
   },
   "peerDependenciesMeta": {
     "drizzle-orm": {
       "optional": true
     },
     "json-logic-js": {
+      "optional": true
+    },
+    "sequelize": {
       "optional": true
     }
   },

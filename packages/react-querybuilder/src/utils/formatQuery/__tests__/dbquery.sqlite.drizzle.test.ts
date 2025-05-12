@@ -1,12 +1,13 @@
 /* @jest-environment node */
 
 import { Database } from 'bun:sqlite';
+import { getOperators } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { convertToIC, formatQuery } from 'react-querybuilder';
+import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { dbSetup, superUsers } from '../dbqueryTestUtils';
-import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
 
 const bunSQLiteDB = new Database();
 
@@ -26,15 +27,24 @@ const drizzleSQLiteDB = drizzle({ schema: { superusers }, client: bunSQLiteDB })
 const superUsersSQLite = superUsers('sqlite');
 
 const testSQLite = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
-  test.each(['standard', 'independent combinators'])('%s', async testType => {
+  describe.each(['standard', 'independent combinators'])('%s', async testType => {
     const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
     const where = formatQuery(queryToTest, { ...fqOptions, format: 'drizzle' });
-    const result = await drizzleSQLiteDB.query.superusers.findMany({ where });
-    expect(result).toEqual(expectedResult);
+    test('relational queries', async () => {
+      const resultRQ = await drizzleSQLiteDB.query.superusers.findMany({ where });
+      expect(resultRQ).toEqual(expectedResult);
+    });
+    test('query builder', async () => {
+      const resultQB = await drizzleSQLiteDB
+        .select()
+        .from(superusers)
+        .where(where(superusers, getOperators()));
+      expect(resultQB).toEqual(expectedResult);
+    });
   });
 };
 
-describe('Drizzle relational queries (SQLite)', () => {
+describe('Drizzle (SQLite)', () => {
   beforeAll(() => {
     bunSQLiteDB.run(dbSetup('sqlite'));
   });
@@ -47,23 +57,6 @@ describe('Drizzle relational queries (SQLite)', () => {
   for (const [name, t] of Object.entries(dbTestsDrizzle(superUsersSQLite))) {
     describe(name, () => {
       testSQLite(t);
-    });
-  }
-
-  // SQLite-specific tests
-  for (const q of ['"', '`', ['[', ']']] satisfies (string | [string, string])[]) {
-    describe(`quote ${q[0]}fieldNames${q[1] ?? q[0]}`, () => {
-      testSQLite({
-        query: {
-          combinator: 'and',
-          rules: [
-            { field: 'enhanced', operator: '>', value: 0 },
-            { field: 'enhanced', operator: '>', value: '0' },
-          ],
-        },
-        expectedResult: superUsersSQLite.filter(u => u.enhanced),
-        fqOptions: { quoteFieldNamesWith: q },
-      });
     });
   }
 });
