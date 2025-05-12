@@ -8,14 +8,6 @@ import { getOption } from '../optGroupUtils';
 type OpTypes = typeof _OpTypes;
 
 /**
- * Default fallback object used by {@link formatQuery} for "sequelize" format.
- *
- * @group Export
- */
-// TODO?: make this configurable
-export const sequelizeFallback = {} as const;
-
-/**
  * Rule group processor used by {@link formatQuery} for "sequelize" format.
  *
  * @group Export
@@ -24,6 +16,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
   ruleGroup,
   options
 ) => {
+  // istanbul ignore next
   const {
     fields,
     getParseNumberBoolean,
@@ -42,9 +35,9 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
 
   if (!Op) return;
 
-  const processRuleGroup = (rg: RuleGroupType, outermost?: boolean): WhereOptions | undefined => {
+  const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-      return outermost ? sequelizeFallback : undefined;
+      return;
     }
 
     const combinator = rg.combinator.toUpperCase();
@@ -79,14 +72,15 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
       })
       .filter(Boolean);
 
-    return expressions.length > 0
-      ? expressions.length === 1 && !hasChildRules
+    if (expressions.length === 0) return;
+
+    const result =
+      expressions.length === 1 && !hasChildRules
         ? expressions[0]
-        : { [combinator.toLowerCase() === 'or' ? Op.or : Op.and]: expressions }
-      : sequelizeFallback;
+        : { [combinator.toLowerCase() === 'or' ? Op.or : Op.and]: expressions };
+
+    return rg.not ? { [Op.not]: result } : result;
   };
 
-  const result = processRuleGroup(convertFromIC(ruleGroup), true);
-
-  return ruleGroup.not ? { [Op.not]: result } : result;
+  return processRuleGroup(convertFromIC(ruleGroup), true);
 };

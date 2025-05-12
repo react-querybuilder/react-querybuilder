@@ -13,8 +13,11 @@ type FnType = typeof _fnType;
  *
  * @group Export
  */
-export const defaultRuleProcessorSequelize: RuleProcessor = (rule, opts = {}): unknown => {
-  const { parseNumbers, preserveValueOrder, context = {} } = opts;
+export const defaultRuleProcessorSequelize: RuleProcessor = (
+  rule,
+  // istanbul ignore next
+  { parseNumbers, preserveValueOrder, context = {} } = {}
+): Record<string, unknown> | undefined => {
   const {
     sequelizeOperators: Op,
     sequelizeCol: col,
