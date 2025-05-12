@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [v8.6.2] - 2025-05-12
+
+### Fixed
+
+- [#893] ESM import errors with certain build tools when using `@react-querybuilder/material`.
+
 ## [v8.6.1] - 2025-05-06
 
 ### Fixed
@@ -1928,12 +1934,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#883]: https://github.com/react-querybuilder/react-querybuilder/pull/883
 [#885]: https://github.com/react-querybuilder/react-querybuilder/pull/885
 [#890]: https://github.com/react-querybuilder/react-querybuilder/pull/890
+[#893]: https://github.com/react-querybuilder/react-querybuilder/pull/893
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.2...HEAD
+[v8.6.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.1...v8.6.2
 [v8.6.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.0...v8.6.1
 [v8.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.5.0...v8.6.0
 [v8.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.4.1...v8.5.0
