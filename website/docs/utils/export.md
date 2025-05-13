@@ -232,12 +232,12 @@ const results = db.query.users.findMany({ where });
 To produce an object suitable for the `.where()` function of Drizzle's [query builder API](https://orm.drizzle.team/docs/select), pass a table definition and the Drizzle operators into the function produced by `formatQuery`:
 
 ```ts
-import { and, ne, getOperators } from 'drizzle-orm';
+import { getOperators } from 'drizzle-orm';
 
 const whereFn = formatQuery(query, 'drizzle');
-const where = whereFn(table, getOperators());
+const whereObj = whereFn(table, getOperators());
 
-const query = db.select().from(table).where(where);
+const query = db.select().from(table).where(whereObj);
 ```
 
 :::tip
@@ -249,10 +249,10 @@ import { and, ne, getOperators } from 'drizzle-orm';
 
 // Conditions from the React Query Builder query object:
 const whereFn = formatQuery(query, 'drizzle');
-const where = whereFn(table, getOperators());
+const whereObj = whereFn(table, getOperators());
 
 // All conditions from the original query object _and_ `id != 123`:
-const augmentedWhere = and(where, ne(table.id, 123));
+const augmentedWhere = and(whereObj, ne(table.id, 123));
 const query = db.select().from(table).where(augmentedWhere);
 ```
 
