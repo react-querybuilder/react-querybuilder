@@ -6,36 +6,36 @@ Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with
 
 > [!TIP]
 >
-> This package is unnecessary, and only supports Drizzle's [query builder API](https://orm.drizzle.team/docs/select) (like `db.select().from(table).where(...)`).
->
-> For use with Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb), use `formatQuery` directly from `react-querybuilder` with the "drizzle" format:
->
-> ```ts
-> import { formatQuery } from 'react-querybuilder/formatQuery';
-> const where = formatQuery(query, 'drizzle');
-> const results = db.query.myTable.findMany({ where });
-> ```
->
-> For use with Drizzle's [query builder API](https://orm.drizzle.team/docs/rqb), use `formatQuery` in the same way as above and then pass a table definition and Drizzle operators into the generated function. Pass the result to the `.where()` call:
->
-> ```ts
-> import { getOperators } from 'drizzle-orm';
-> import { drizzle } from 'drizzle-orm/bun-sqlite';
-> import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
-> import { formatQuery } from 'react-querybuilder/formatQuery';
->
-> const db = drizzle(process.env.DB_FILE_NAME!);
-> const table = sqliteTable('musicians', {
->   firstName: text(),
->   lastName: text(),
-> });
->
-> const whereFn = formatQuery(query, 'drizzle');
-> const whereObj = whereFn(table, getOperators());
-> const results = db.select().from(table).where(whereObj);
-> ```
+> This package is unnecessary, and only supports Drizzle's [query builder API](https://orm.drizzle.team/docs/select) (like `db.select().from(table).where(...)`) anyway.
 
-<!-- ![Screenshot](../../_assets/screenshot.png) -->
+## Recommended alternatives
+
+For Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb), use `formatQuery` from `react-querybuilder` with the "drizzle" format. Assign the result to the `where` property of `.findMany()` or a related function, like so:
+
+```ts
+import { formatQuery } from 'react-querybuilder/formatQuery';
+const where = formatQuery(query, 'drizzle');
+const results = db.query.myTable.findMany({ where });
+```
+
+For Drizzle's [query builder API](https://orm.drizzle.team/docs/rqb), use the "drizzle" format in the same way as above and then pass a table definition and Drizzle operators into the generated function. Pass the result of _that_ call to `.where()`, like so:
+
+```ts
+import { getOperators } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { formatQuery } from 'react-querybuilder/formatQuery';
+
+const db = drizzle(process.env.DB_FILE_NAME!);
+const table = sqliteTable('musicians', {
+  firstName: text(),
+  lastName: text(),
+});
+
+const whereFn = formatQuery(query, 'drizzle');
+const whereObj = whereFn(table, getOperators());
+const results = db.select().from(table).where(whereObj);
+```
 
 ## Installation
 
@@ -68,5 +68,3 @@ const sqlWhere = formatQuery(query, { fields, ruleGroupProcessor });
 
 const results = db.select().from(table).where(sqlWhere);
 ```
-
-<!-- ## Notes -->

@@ -21,7 +21,7 @@ function formatQuery(
 - SQL `WHERE` clause
   - Parameterized with anonymous parameters
   - Parameterized with named parameters
-- ORM query objects (Prisma, Drizzle)
+- ORM query objects (Drizzle, Prisma, Sequelize)
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -260,7 +260,7 @@ const query = db.select().from(table).where(augmentedWhere);
 
 <details>
 
-<summary>`@react-querybuilder/drizzle` (deprecated)</summary>
+<summary>`@react-querybuilder/drizzle` _(deprecated)_</summary>
 
 Use the [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select).
 
