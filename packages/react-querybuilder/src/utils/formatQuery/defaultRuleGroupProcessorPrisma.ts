@@ -17,7 +17,9 @@ export const prismaFallback = {} as const;
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor = (ruleGroup, options) => {
+export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
+  Record<string, unknown> | undefined
+> = (ruleGroup, options) => {
   const {
     fields,
     getParseNumberBoolean,
