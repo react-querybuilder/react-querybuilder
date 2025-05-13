@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "8.6.2",
+  "version": "8.7.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -122,8 +122,8 @@
     "jsonata": "^2.0.6",
     "mongodb-memory-server-core": "^10.1.4",
     "mongoose": "^8.14.2",
-    "prisma": "^6.7.0",
     "pglite-prisma-adapter": "^0.5.0",
+    "prisma": "^6.7.0",
     "query-string": "^9.1.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
