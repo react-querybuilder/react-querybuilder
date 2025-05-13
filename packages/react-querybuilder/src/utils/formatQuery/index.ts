@@ -51,6 +51,7 @@ export const defaultSpELValueProcessor: ValueProcessorLegacy =
   generateValueProcessor(defaultRuleProcessorSpEL);
 
 export * from './defaultRuleGroupProcessorCEL';
+export * from './defaultRuleGroupProcessorDrizzle';
 export * from './defaultRuleGroupProcessorElasticSearch';
 export * from './defaultRuleGroupProcessorJSONata';
 export * from './defaultRuleGroupProcessorJsonLogic';
@@ -59,8 +60,11 @@ export * from './defaultRuleGroupProcessorMongoDB';
 export * from './defaultRuleGroupProcessorMongoDBQuery';
 export * from './defaultRuleGroupProcessorNL';
 export * from './defaultRuleGroupProcessorParameterized';
+export * from './defaultRuleGroupProcessorPrisma';
+export * from './defaultRuleGroupProcessorSequelize';
 export * from './defaultRuleGroupProcessorSpEL';
 export * from './defaultRuleGroupProcessorSQL';
+export * from './defaultRuleProcessorDrizzle';
 export * from './defaultRuleProcessorElasticSearch';
 export * from './defaultRuleProcessorJSONata';
 export * from './defaultRuleProcessorJsonLogic';
@@ -68,6 +72,8 @@ export * from './defaultRuleProcessorLDAP';
 export * from './defaultRuleProcessorMongoDBQuery';
 export * from './defaultRuleProcessorNL';
 export * from './defaultRuleProcessorParameterized';
+export * from './defaultRuleProcessorPrisma';
+export * from './defaultRuleProcessorSequelize';
 export * from './defaultRuleProcessorSQL';
 export * from './defaultValueProcessorNL';
 export * from './formatQuery';

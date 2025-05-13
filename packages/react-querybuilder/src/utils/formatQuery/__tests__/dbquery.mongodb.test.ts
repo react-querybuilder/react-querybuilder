@@ -1,8 +1,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
-import type { SuperUser } from './dbqueryTestUtils';
-import { dbTests, superUsers } from './dbqueryTestUtils';
-import { formatQuery } from './formatQuery';
+import type { SuperUser } from '../dbqueryTestUtils';
+import { dbTests, superUsers } from '../dbqueryTestUtils';
+import { formatQuery } from '../formatQuery';
 
 const mongoServer = new MongoMemoryServer();
 

@@ -8,9 +8,6 @@ import type { TestSQLParams } from './drizzleTestUtils';
 import { dbSetup, dbTestsDrizzle, superUsers } from './drizzleTestUtils';
 import { generateDrizzleRuleGroupProcessor } from './generateDrizzleRuleGroupProcessor';
 
-const bunSQLiteDB = new Database();
-const drizzleSQLiteDB = drizzle(bunSQLiteDB);
-
 const columnsSQLite = {
   firstName: text().notNull(),
   lastName: text().notNull(),
@@ -21,8 +18,10 @@ const columnsSQLite = {
 };
 
 const tableSQLite = sqliteTable('superusers', columnsSQLite);
+const superusers = superUsers('sqlite');
 
-const superUsersSQLite = superUsers('sqlite');
+const bunSQLiteDB = new Database();
+const drizzleSQLiteDB = drizzle({ client: bunSQLiteDB, schema: { superusers } });
 
 const testSQLite = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   test.each(['standard', 'independent combinators'])('%s', async testType => {
@@ -47,7 +46,7 @@ describe('Drizzle (SQLite)', () => {
   });
 
   // Common tests
-  for (const [name, t] of Object.entries(dbTestsDrizzle(superUsersSQLite))) {
+  for (const [name, t] of Object.entries(dbTestsDrizzle(superusers))) {
     describe(name, () => {
       testSQLite(t);
     });
@@ -64,7 +63,7 @@ describe('Drizzle (SQLite)', () => {
             { field: 'enhanced', operator: '>', value: '0' },
           ],
         },
-        expectedResult: superUsersSQLite.filter(u => u.enhanced),
+        expectedResult: superusers.filter(u => u.enhanced),
         fqOptions: { quoteFieldNamesWith: q },
       });
     });

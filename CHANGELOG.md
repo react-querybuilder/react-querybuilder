@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [v8.7.0] - 2025-05-13
+
+### Added
+
+- [#891] Support for several ORM query formats:
+  - New "prisma" format for [Prisma ORM](https://www.prisma.io/).
+  - New "sequelize" format for [Sequelize](https://sequelize.org/).
+  - New "drizzle" format for Drizzle ORM relational queries API.
+    - Can also be used for the Drizzle query builder API, which eliminates the need for the `@react-querybuilder/drizzle` package.
+
 ## [v8.6.2] - 2025-05-12
 
 ### Fixed
@@ -26,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#885] New package `@react-querybuilder/drizzle` with Drizzle ORM integration.
+- [#885] New package `@react-querybuilder/drizzle` for integration with the Drizzle ORM query builder API.
 - [#885] [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) export format.
 - [#885] New `formatQuery` option `ruleGroupProcessor` enabling development of custom output formats without completely reimplementing `formatQuery`.
   - The rule group processors for each of the existing formats have been extracted from `formatQuery` and can be used independently or as fallbacks from custom processors.
@@ -1934,13 +1944,15 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#883]: https://github.com/react-querybuilder/react-querybuilder/pull/883
 [#885]: https://github.com/react-querybuilder/react-querybuilder/pull/885
 [#890]: https://github.com/react-querybuilder/react-querybuilder/pull/890
+[#891]: https://github.com/react-querybuilder/react-querybuilder/pull/891
 [#893]: https://github.com/react-querybuilder/react-querybuilder/pull/893
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.0...HEAD
+[v8.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.2...v8.7.0
 [v8.6.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.1...v8.6.2
 [v8.6.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.0...v8.6.1
 [v8.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.5.0...v8.6.0

@@ -11,10 +11,10 @@ export interface TestSQLParams {
   skipParameterized?: boolean;
 }
 
-export interface SuperUser {
+export interface SuperUser<EnhancedType = 0 | 1 | boolean> {
   firstName: string;
   lastName: string;
-  enhanced: 1 | 0 | boolean;
+  enhanced: EnhancedType;
   madeUpName: string;
   nickname: string;
   powerUpAge: number | null | undefined;
@@ -39,11 +39,14 @@ export const fields: Field[] = [
   {
     name: 'powerUpAge',
     label: 'Power Up Age',
+    inputType: 'number',
     validator: r => !(r.value === 99 && r.field === 'powerUpAge'),
   },
 ];
 
-export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
+export const superUsers = <DBP extends DbPlatform>(
+  dbPlatform: DBP
+): DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[] => {
   const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
 
   // Sorted by `madeUpName`
@@ -80,7 +83,7 @@ export const superUsers = (dbPlatform: DbPlatform): SuperUser[] => {
       nickname: 'Supes',
       powerUpAge: 0,
     },
-  ];
+  ] as DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
 };
 
 const enhancedColumnType: Record<DbPlatform, string> = {

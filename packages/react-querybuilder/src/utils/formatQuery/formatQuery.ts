@@ -26,9 +26,11 @@ import type {
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
+import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
 import { defaultRuleGroupProcessorMongoDB } from './defaultRuleGroupProcessorMongoDB';
 import {
   defaultRuleGroupProcessorMongoDBQuery,
@@ -36,23 +38,27 @@ import {
 } from './defaultRuleGroupProcessorMongoDBQuery';
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
+import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
+import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
+import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
+import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQuery';
 import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
+import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
+import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
-import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
-import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
 
 /**
  * @group Export
@@ -81,6 +87,7 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
 
 const defaultRuleProcessors = {
   cel: defaultRuleProcessorCEL,
+  drizzle: defaultRuleProcessorDrizzle,
   elasticsearch: defaultRuleProcessorElasticSearch,
   json_without_ids: defaultRuleProcessorSQL,
   json: defaultRuleProcessorSQL,
@@ -92,6 +99,8 @@ const defaultRuleProcessors = {
   natural_language: defaultRuleProcessorNL,
   parameterized_named: defaultRuleProcessorParameterized,
   parameterized: defaultRuleProcessorParameterized,
+  prisma: defaultRuleProcessorPrisma,
+  sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
@@ -100,6 +109,7 @@ const defaultRuleProcessors = {
 const defaultOperatorProcessor: RuleProcessor = r => r.operator;
 const defaultOperatorProcessors = {
   cel: defaultOperatorProcessor,
+  drizzle: defaultOperatorProcessor,
   elasticsearch: defaultOperatorProcessor,
   json_without_ids: defaultOperatorProcessor,
   json: defaultOperatorProcessor,
@@ -111,6 +121,8 @@ const defaultOperatorProcessors = {
   natural_language: defaultOperatorProcessorNL,
   parameterized_named: defaultOperatorProcessorSQL,
   parameterized: defaultOperatorProcessorSQL,
+  prisma: defaultOperatorProcessor,
+  sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
@@ -165,7 +177,10 @@ const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
   format === 'jsonlogic' ||
   format === 'elasticsearch' ||
   format === 'jsonata' ||
-  format === 'ldap';
+  format === 'ldap' ||
+  format === 'prisma' ||
+  format === 'drizzle' ||
+  format === 'sequelize';
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -251,6 +266,36 @@ function formatQuery(
   options: 'mongodb' | (FormatQueryOptions & { format: 'mongodb' })
 ): string;
 /**
+ * Generates a Prisma ORM query object from an RQB query object.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'prisma' | (FormatQueryOptions & { format: 'prisma' })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Record<string, any>;
+/**
+ * Generates a Drizzle ORM query function from an RQB query object. The function can
+ * be assigned to the `where` property in the Drizzle relational queries API.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'drizzle' | (FormatQueryOptions & { format: 'drizzle' })
+): ReturnType<typeof defaultRuleGroupProcessorDrizzle>;
+/**
+ * Generates a Sequelize query object from an RQB query object. The object can
+ * be assigned to the `where` property in the Sequelize query functions.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'sequelize' | (FormatQueryOptions & { format: 'sequelize' })
+): ReturnType<typeof defaultRuleGroupProcessorSequelize>;
+/**
  * Generates a JSONata query string from an RQB query object.
  *
  * NOTE: The `parseNumbers` option is recommended for this format.
@@ -314,6 +359,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     ruleProcessor: ruleProcessor_option,
     validator,
     valueProcessor: valueProcessor_option,
+    context,
   } = optObj;
 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
@@ -374,11 +420,15 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
               ? `{${fallbackExpression}}`
               : format === 'mongodb_query'
                 ? mongoDbFallback
-                : format === 'jsonlogic'
-                  ? false
-                  : format === 'elasticsearch'
-                    ? {}
-                    : fallbackExpression;
+                : format === 'prisma'
+                  ? prismaFallback
+                  : format === 'jsonlogic'
+                    ? false
+                    : format === 'elasticsearch'
+                      ? {}
+                      : format === 'drizzle' || format === 'sequelize'
+                        ? undefined
+                        : fallbackExpression;
       }
     } else {
       validationMap = validationResult;
@@ -427,6 +477,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     valueProcessor,
     validateRule,
     validationMap,
+    context,
   };
 
   if (typeof ruleGroupProcessor_option === 'function') {
@@ -481,6 +532,15 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
 
     case 'ldap':
       return defaultRuleGroupProcessorLDAP(ruleGroup, finalOptions);
+
+    case 'prisma':
+      return defaultRuleGroupProcessorPrisma(ruleGroup, finalOptions);
+
+    case 'drizzle':
+      return defaultRuleGroupProcessorDrizzle(ruleGroup, finalOptions);
+
+    case 'sequelize':
+      return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
 
     default:
       return '';

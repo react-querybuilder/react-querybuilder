@@ -21,7 +21,7 @@ function formatQuery(
 - SQL `WHERE` clause
   - Parameterized with anonymous parameters
   - Parameterized with named parameters
-  - Drizzle ORM query object
+- ORM query objects (Drizzle, Prisma, Sequelize)
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -29,6 +29,7 @@ function formatQuery(
 - JsonLogic
 - ElasticSearch
 - JSONata
+- LDAP
 - Natural language
 
 For the next few sections (unless otherwise noted), assume the `query` variable has been defined as:
@@ -196,11 +197,74 @@ Output (JSON object):
 
 See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#generating-parameter-names).
 
+### ORMs
+
+#### Prisma ORM
+
+To produce an object suitable for the `where` property of a Prisma ORM query, use the "prisma" format.
+
+> _Note: Prisma does not support field-to-field comparisons, so rules with `valueSource: "field"` will always be invalid._
+
+```ts
+const where = formatQuery(query, 'prisma');
+
+console.log(where);
+// { AND: [{ firstName: 'Steve' }, { lastName: 'Vai' }] }
+
+const users = await prisma.users.findMany({ where });
+```
+
 #### Drizzle ORM
 
-Drizzle integration is available with the `@react-querybuilder/drizzle` package.
+##### Relational Queries API
 
-Generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query.
+To produce a function suitable for the `where` property of Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb), use the "drizzle" format:
+
+```ts
+const where = formatQuery(query, 'drizzle');
+// typeof where === 'function'
+// where.length === 2
+const results = db.query.users.findMany({ where });
+```
+
+##### Query Builder API
+
+To produce an object suitable for the `.where()` function of Drizzle's [query builder API](https://orm.drizzle.team/docs/select), pass a table definition and the Drizzle operators into the function produced by `formatQuery`:
+
+```ts
+import { getOperators } from 'drizzle-orm';
+
+const whereFn = formatQuery(query, 'drizzle');
+const whereObj = whereFn(table, getOperators());
+
+const query = db.select().from(table).where(whereObj);
+```
+
+:::tip
+
+Objects produced for the query builder API can be passed directly to other Drizzle operators, allowing one to augment the query with conditions not present in the original query object.
+
+```ts
+import { and, ne, getOperators } from 'drizzle-orm';
+
+// Conditions from the React Query Builder query object:
+const whereFn = formatQuery(query, 'drizzle');
+const whereObj = whereFn(table, getOperators());
+
+// All conditions from the original query object _and_ `id != 123`:
+const augmentedWhere = and(whereObj, ne(table.id, 123));
+const query = db.select().from(table).where(augmentedWhere);
+```
+
+:::
+
+<details>
+
+<summary>`@react-querybuilder/drizzle` _(deprecated)_</summary>
+
+Use the [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select).
+
+First, generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config (or a plain object mapping field names to Drizzle `Column` definitions) to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query builder chain.
 
 ```ts
 import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
@@ -216,9 +280,10 @@ const table = sqliteTable('musicians', {
 
 const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
 
-const whereClause = formatQuery(query, { ruleGroupProcessor });
+// Tip: `format` is not required when `ruleGroupProcessor` is provided
+const where = formatQuery(query, { ruleGroupProcessor });
 
-const query = db.select().from(table).where(whereClause);
+const query = db.select().from(table).where(where);
 console.log(query.toSQL());
 // {
 //   sql: 'select "firstName", "lastName" from "musicians" where ("musicians"."firstName" = ? and "musicians"."lastName" = ?)',
@@ -227,6 +292,26 @@ console.log(query.toSQL());
 
 console.log(query.all());
 // [{ firstName: 'Steve', lastName: 'Vai' }]
+```
+
+</details>
+
+#### Sequelize
+
+To produce an object suitable for the `where` property of a Sequelize `findAll` query, use the "sequelize" format. This format has a few special requirements:
+
+- Sequelize uses `Symbol`s for operator keys, so they must be provided through the `context` option as `sequelizeOperators` (see example below).
+- If any rules have `valueSource: "field"`, then the Sequelize `col` function must be provided as `sequelizeCol`.
+- If any rules have `valueSource: "field"` and use one of the `doesNot*` operators, then the Sequelize `fn` function must be provided as `sequelizeFn`.
+
+```ts
+import { col, fn, Op } from 'sequelize';
+const where = formatQuery(query, {
+  format: 'sequelize',
+  context: { sequelizeOperators: Op, sequelizeCol: col, sequelizeFn: fn },
+});
+
+const users = await Users.findAll({ where });
 ```
 
 ### MongoDB

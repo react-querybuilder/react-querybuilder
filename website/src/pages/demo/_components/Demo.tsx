@@ -596,6 +596,11 @@ export default function Demo({
                     attributes: getExportTabAttributes('elasticsearch'),
                   },
                   {
+                    value: 'prisma',
+                    label: 'Prisma ORM',
+                    attributes: getExportTabAttributes('prisma'),
+                  },
+                  {
                     value: 'jsonata',
                     label: 'JSONata',
                     attributes: getExportTabAttributes('jsonata'),
@@ -720,6 +725,12 @@ export default function Demo({
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="elasticsearch" />
                     {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="prisma">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="prisma" />
                   </div>
                   {exportPresentation}
                 </TabItem>

@@ -2,16 +2,16 @@ import { describe, expect, it } from '@jest/globals';
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,
-} from '../../defaults';
+} from '../../../defaults';
 import type {
   FormatQueryOptions,
   RQBJsonLogic,
   RuleGroupType,
   RuleProcessor,
-} from '../../types/index.noReact';
-import { add } from '../queryTools';
-import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
-import { formatQuery } from './formatQuery';
+} from '../../../types/index.noReact';
+import { add } from '../../queryTools';
+import { defaultRuleProcessorJsonLogic } from '../defaultRuleProcessorJsonLogic';
+import { formatQuery } from '../formatQuery';
 import {
   getValidationTestData,
   queryAllOperators,
@@ -20,8 +20,8 @@ import {
   queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
-} from './formatQueryTestUtils';
-import { jsonLogicAdditionalOperators } from './utils';
+} from '../formatQueryTestUtils';
+import { jsonLogicAdditionalOperators } from '../utils';
 
 const query: RuleGroupType = {
   id: 'g-root',

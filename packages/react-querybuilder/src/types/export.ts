@@ -31,7 +31,10 @@ export type ExportFormat =
   | 'elasticsearch'
   | 'jsonata'
   | 'natural_language'
-  | 'ldap';
+  | 'ldap'
+  | 'drizzle'
+  | 'prisma'
+  | 'sequelize';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.
@@ -336,6 +339,7 @@ export interface FormatQueryFinalOptions
   validator?: QueryValidator;
   validateRule: FormatQueryValidateRule;
   validationMap: ValidationMap;
+  context?: Record<string, unknown>;
 }
 
 /**

@@ -2,11 +2,40 @@
 
 Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with Drizzle ORM integration.
 
-To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo) and select Export > Drizzle.
-
 **[Full documentation](https://react-querybuilder.js.org/docs/utils/export#drizzle-orm)**
 
-<!-- ![Screenshot](../../_assets/screenshot.png) -->
+> [!TIP]
+>
+> This package is unnecessary, and only supports Drizzle's [query builder API](https://orm.drizzle.team/docs/select) (like `db.select().from(table).where(...)`) anyway.
+
+## Recommended alternatives
+
+For Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb), use `formatQuery` from `react-querybuilder` with the "drizzle" format. Assign the result to the `where` property of `.findMany()` or a related function, like so:
+
+```ts
+import { formatQuery } from 'react-querybuilder/formatQuery';
+const where = formatQuery(query, 'drizzle');
+const results = db.query.myTable.findMany({ where });
+```
+
+For Drizzle's [query builder API](https://orm.drizzle.team/docs/rqb), use the "drizzle" format in the same way as above and then pass a table definition and Drizzle operators into the generated function. Pass the result of _that_ call to `.where()`, like so:
+
+```ts
+import { getOperators } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { formatQuery } from 'react-querybuilder/formatQuery';
+
+const db = drizzle(process.env.DB_FILE_NAME!);
+const table = sqliteTable('musicians', {
+  firstName: text(),
+  lastName: text(),
+});
+
+const whereFn = formatQuery(query, 'drizzle');
+const whereObj = whereFn(table, getOperators());
+const results = db.select().from(table).where(whereObj);
+```
 
 ## Installation
 
@@ -17,7 +46,7 @@ npm i react-querybuilder @react-querybuilder/drizzle
 
 ## Usage
 
-To produce a Drizzle query based on a React Query Builder query object, first generate a rule group processor with `generateDrizzleRuleGroupProcessor` from `@react-querybuilder/drizzle` using your table config (or a simple object mapping `field` names to table columns). Then run `formatQuery`, assigning your rule group processor as `ruleGroupProcessor`.
+To produce a Drizzle query based on a React Query Builder query object, first generate a rule group processor with `generateDrizzleRuleGroupProcessor` using your table config (or a plain object mapping `field` names to Drizzle `Column`s). Then run `formatQuery`, assigning your rule group processor as `ruleGroupProcessor`.
 
 ```ts
 import { formatQuery } from 'react-querybuilder';
@@ -29,7 +58,8 @@ import { fields } from './fields';
 const db = drizzle(process.env.DB_FILE_NAME!);
 
 const table = sqliteTable('table', {
-  // Column definitions...
+  firstName: text(),
+  lastName: text(),
 });
 
 const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
@@ -38,5 +68,3 @@ const sqlWhere = formatQuery(query, { fields, ruleGroupProcessor });
 
 const results = db.select().from(table).where(sqlWhere);
 ```
-
-<!-- ## Notes -->

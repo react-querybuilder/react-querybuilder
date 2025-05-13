@@ -1,8 +1,8 @@
 import jsonata from 'jsonata';
-import type { DefaultRuleGroupType } from '../../types/index.noReact';
-import type { TestSQLParams } from './dbqueryTestUtils';
-import { dbTests, superUsers } from './dbqueryTestUtils';
-import { formatQuery } from './formatQuery';
+import type { DefaultRuleGroupType } from '../../../types/index.noReact';
+import type { TestSQLParams } from '../dbqueryTestUtils';
+import { dbTests, superUsers } from '../dbqueryTestUtils';
+import { formatQuery } from '../formatQuery';
 
 const superUsersJSONata = superUsers('jsonata');
 
