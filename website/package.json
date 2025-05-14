@@ -43,9 +43,9 @@
     "@react-querybuilder/material": "workspace:*",
     "@react-querybuilder/tremor": "workspace:*",
     "@tremor/react": "^3.18.7",
-    "antd": "^5.25.0",
+    "antd": "^5.25.1",
     "bootstrap": "^5.3.6",
-    "bootstrap-icons": "^1.12.1",
+    "bootstrap-icons": "^1.13.1",
     "buffer": "^6.0.3",
     "bulma": "^1.0.4",
     "clsx": "^2.1.1",
@@ -64,7 +64,7 @@
     "react-querybuilder": "workspace:*",
     "react-select": "^5.10.1",
     "react-slider": "^2.0.6",
-    "sass": "^1.87.0"
+    "sass": "^1.88.0"
   },
   "devDependencies": {
     "@docusaurus/faster": "^3.7.0",
