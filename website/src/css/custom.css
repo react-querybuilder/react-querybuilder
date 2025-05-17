@@ -72,6 +72,11 @@ html[data-theme='dark'] .header-discord-link:before {
   font-style: italic;
 }
 
+.docs-doc-id-changelog h2 {
+  border-bottom: 1px solid #8888;
+  padding-bottom: 0.5rem;
+}
+
 .queryBuilderEmbed,
 .sandpackrqb {
   margin-bottom: var(--ifm-leading);
