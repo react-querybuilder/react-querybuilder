@@ -7,7 +7,7 @@ const VAR_DEFAULTS = {
   rqb_spacing: '0.5rem',
   rqb_border_width: '1px',
   rqb_base_color: '#004bb8',
-  rqb_background_color: '#004bb833',
+  rqb_background_color: 'color-mix(in srgb, transparent, var(--rqb-base-color) 20%)',
   rqb_border_color: '#8081a2',
   rqb_border_style: 'solid',
   rqb_border_radius: '0.25rem',
