@@ -1,24 +1,17 @@
-.rqb-tremor.donut-hole {
-  & * {
-    border-style: solid;
-    border-width: 0;
-  }
-  & .tremor-NumberInput-root,
-  & .tremor-TextInput-root,
-  & .text-tremor-default {
-    width: auto;
-  }
-  & .ruleGroup .ruleGroup {
-    &::before,
-    &::after {
-      left: calc(-0.5rem - 1px);
-    }
-  }
-  /* TODO: find out why this is necessary */
-  & button:has(> svg.tremor-DateRangePicker-clearIcon),
-  & button:has(> svg.tremor-MultiSelect-clearIcon),
-  & button:has(> svg.tremor-SearchSelect-clearIcon),
-  & button:has(> svg.tremor-Select-clearIcon) {
-    background-color: transparent;
-  }
+@import 'tailwindcss';
+
+@config "../../../../../packages/tremor/tailwind.config.mjs";
+
+@source "../../../../../node_modules/@tremor";
+
+@source "../../../../../node_modules/@headlessui";
+
+@source inline("{hover:,ui-selected:,}{bg,text,border}-{slate,gray,zinc,neutral,stone,red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-{50,{100..900..100},950}");
+
+@source inline("{ring,stroke,fill}-{slate,gray,zinc,neutral,stone,red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-{50,{100..900..100},950}");
+
+.tremor-NumberInput-root,
+.tremor-TextInput-root,
+.text-tremor-default {
+  width: auto;
 }

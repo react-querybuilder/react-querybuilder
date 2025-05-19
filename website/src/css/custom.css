@@ -1,20 +1,32 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import 'react-querybuilder/dist/query-builder.css';
 @import './classname-diagram.css';
 @import './justified.css';
 
 :root {
   /* This is the effective color of a level 3 group when using the default stylesheet on a white background. */
-  --ifm-color-primary: #82a7dd;
-  --ifm-color-primary-dark: rgb(102, 147, 213);
-  --ifm-color-primary-darker: rgb(77, 130, 206);
-  --ifm-color-primary-darkest: rgb(55, 114, 200);
-  --ifm-color-primary-light: rgb(142, 175, 224);
-  --ifm-color-primary-lighter: rgb(153, 183, 227);
-  --ifm-color-primary-lightest: rgb(163, 190, 230);
+  --ifm-color-primary: color-mix(
+    in srgb,
+    color-mix(
+      in srgb,
+      color-mix(in srgb, white, var(--rqb-base-color) 20%),
+      var(--rqb-base-color) 20%
+    ),
+    var(--rqb-base-color) 20%
+  );
+  --ifm-color-primary-dark: color-mix(in srgb, var(--ifm-color-primary), var(--rqb-base-color) 20%);
+  --ifm-color-primary-darker: color-mix(
+    in srgb,
+    var(--ifm-color-primary-dark),
+    var(--rqb-base-color) 20%
+  );
+  --ifm-color-primary-darkest: color-mix(
+    in srgb,
+    var(--ifm-color-primary-darker),
+    var(--rqb-base-color) 20%
+  );
+  --ifm-color-primary-light: color-mix(in srgb, var(--ifm-color-primary), white 20%);
+  --ifm-color-primary-lighter: color-mix(in srgb, var(--ifm-color-primary-light), white 20%);
+  --ifm-color-primary-lightest: color-mix(in srgb, var(--ifm-color-primary-lighter), white 20%);
   --ifm-code-font-size: 95%;
   --ifm-footer-background-color: #3c649f;
 

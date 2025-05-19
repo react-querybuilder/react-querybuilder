@@ -60,9 +60,13 @@ const config: Config = {
       name: 'docusaurus-tailwindcss',
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
-          require.resolve('tailwindcss'),
-          require.resolve('autoprefixer'),
-          require.resolve('../utils/devapp/postcss-scoped-donut')
+          require.resolve('@tailwindcss/postcss'),
+          require.resolve('../utils/devapp/postcss-scoped-donut'),
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          require('postcss-prefix-selector')({
+            prefix: '.rqb-tremor',
+            includeFiles: [/rqb-tremor.css/],
+          })
         );
         return postcssOptions;
       },
