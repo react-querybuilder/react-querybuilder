@@ -61,12 +61,12 @@ const config: Config = {
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
           require.resolve('@tailwindcss/postcss'),
-          require.resolve('../utils/devapp/postcss-scoped-donut'),
           // eslint-disable-next-line @typescript-eslint/no-require-imports
           require('postcss-prefix-selector')({
             prefix: '.rqb-tremor',
             includeFiles: [/rqb-tremor.css/],
-          })
+          }),
+          require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;
       },
