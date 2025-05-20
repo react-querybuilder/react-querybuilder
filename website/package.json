@@ -64,7 +64,7 @@
     "react-querybuilder": "workspace:*",
     "react-select": "^5.10.1",
     "react-slider": "^2.0.6",
-    "sass": "^1.88.0"
+    "sass": "^1.89.0"
   },
   "devDependencies": {
     "@docusaurus/faster": "^3.7.0",

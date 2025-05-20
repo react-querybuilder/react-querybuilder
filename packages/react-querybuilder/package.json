@@ -129,7 +129,7 @@
     "react-dom": "^19.1.0",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^5.14.0",
-    "sass": "^1.88.0",
+    "sass": "^1.89.0",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.8",
     "sqlite3": "^5.1.7",
