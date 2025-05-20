@@ -111,7 +111,7 @@
     "@types/hoist-non-react-statics": "^3.3.6",
     "@types/jscodeshift": "^17.3.0",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^22.15.18",
+    "@types/node": "^22.15.20",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.4.1",
@@ -138,7 +138,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.8.1",
+    "@reduxjs/toolkit": "^2.8.2",
     "immer": "^10.1.1",
     "numeric-quantity": "^2.0.1",
     "react-redux": "^9.2.0"
