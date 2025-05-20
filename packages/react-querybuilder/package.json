@@ -124,7 +124,7 @@
     "mongoose": "^8.14.3",
     "pglite-prisma-adapter": "^0.5.0",
     "prisma": "^6.7.0",
-    "query-string": "^9.1.2",
+    "query-string": "^9.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "regenerator-runtime": "^0.14.1",
