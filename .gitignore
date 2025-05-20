@@ -9,7 +9,6 @@ build-analysis.*
 dbquery.*.cache_db
 utils/cel-evaluator/cel-evaluator
 utils/cel-evaluator/cel-evaluator.exe
-prisma-client
 
 packages/react-querybuilder/debug/package.json
 packages/react-querybuilder/formatQuery/package.json
