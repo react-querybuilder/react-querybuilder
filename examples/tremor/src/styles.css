@@ -22,3 +22,9 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.tremor-NumberInput-root,
+.tremor-TextInput-root,
+.text-tremor-default {
+  width: auto;
+}
