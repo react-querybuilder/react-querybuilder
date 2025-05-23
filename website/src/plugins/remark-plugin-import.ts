@@ -1,6 +1,8 @@
 /* eslint-disable unicorn/prefer-module */
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import rehypeRaw from 'rehype-raw';
+import remarkGFM from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
@@ -41,11 +43,18 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
       const mdImportMatches = importMdRegExp.exec(node.children[0].value || '');
 
       if (mdImportMatches?.[1]) {
-        const mdFilePath = path.resolve(vfile.path, '..', mdImportMatches[1]);
+        const mdFilePath = mdImportMatches[1].startsWith('/')
+          ? path.resolve(mdImportMatches[1].replace(/^\//, '../')) // relative to `/website`
+          : path.resolve(vfile.path, '..', mdImportMatches[1]);
         if (existsSync(mdFilePath)) {
           const rawMd = readFileSync(mdFilePath, 'utf8');
           node.data = { ...node.data, hName: 'div' };
-          node.children = unified().use(remarkParse).use(remarkRehype).parse(rawMd).children;
+          node.children = unified()
+            .use(remarkParse)
+            .use(remarkGFM)
+            .use(remarkRehype, { allowDangerousHtml: true })
+            .use(rehypeRaw)
+            .parse(rawMd).children;
         } else {
           throw new Error(`Unable to locate file at path: ${mdFilePath}`);
         }

@@ -6,6 +6,7 @@ import type { Config } from '@docusaurus/types';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
 import path from 'node:path';
 import { themes } from 'prism-react-renderer/dist/index.mjs';
+import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 import { discordLink } from './src/constants';
@@ -59,20 +60,24 @@ const config: Config = {
       name: 'docusaurus-tailwindcss',
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
-          require.resolve('tailwindcss'),
-          require.resolve('autoprefixer'),
+          require.resolve('@tailwindcss/postcss'),
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          require('postcss-prefix-selector')({
+            prefix: '.rqb-tremor',
+            includeFiles: [/rqb-tremor.css/],
+          }),
           require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;
       },
     }),
-    () => ({
-      // This is not actually used, only here just in case
-      name: 'rqb-wp5-raw-loader',
-      configureWebpack: () => ({
-        module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
-      }),
-    }),
+    // () => ({
+    //   // This is not actually used, only here just in case
+    //   name: 'rqb-wp5-raw-loader',
+    //   configureWebpack: () => ({
+    //     module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
+    //   }),
+    // }),
     process.env.RQB_TYPEDOC_DONE
       ? null
       : [
@@ -133,6 +138,20 @@ const config: Config = {
           beforeDefaultRemarkPlugins: [remarkPluginImport],
           remarkPlugins: [
             [remarkPluginNpm2Yarn, { sync: true, converters: ['bun', 'yarn', 'pnpm'] }],
+          ],
+          rehypePlugins: [
+            [
+              rehypeRaw,
+              {
+                passThrough: [
+                  'mdxFlowExpression',
+                  'mdxjsEsm',
+                  'mdxJsxFlowElement',
+                  'mdxJsxTextElement',
+                  'mdxTextExpression',
+                ],
+              },
+            ],
           ],
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
@@ -237,6 +256,10 @@ const config: Config = {
             {
               label: 'Showcase',
               to: '/demo',
+            },
+            {
+              label: 'Changelog',
+              to: '/docs/changelog',
             },
           ],
         },

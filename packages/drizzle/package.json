@@ -46,9 +46,9 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.1",
-    "@types/react": "^19.1.4",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@electric-sql/pglite": "^0.3.2",
+    "@types/react": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.0",
     "drizzle-orm": "^0.43.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

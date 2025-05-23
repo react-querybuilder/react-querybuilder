@@ -75,5 +75,6 @@ export default {
     'typescript',
     'buildless',
     'migrate',
+    'changelog',
   ],
 } satisfies SidebarsConfig;
