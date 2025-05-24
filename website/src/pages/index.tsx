@@ -212,7 +212,7 @@ const LandingPage = () => {
               <CodeBlock
                 className={`${styles.wsPreWrap} ${styles.scrollVert200}`}
                 language={getExportDisplayLanguage(exportFormat)}>
-                {getFormatQueryString(query, { format: exportFormat, valueProcessor })}
+                {getFormatQueryString(query, { format: exportFormat, valueProcessor, fields })}
               </CodeBlock>
             </div>
             <div>
@@ -284,6 +284,16 @@ const LandingPage = () => {
                 <Link href="/docs/styling/classnames">Documentation</Link>
                 <Link href="/docs/styling/overview">Tips</Link>
               </div>
+            </div>
+            <div>
+              <h2>RTL support</h2>
+              <p>
+                Easily <Link href="/docs/components/querybuilder#translations">translate</Link> and
+                adapt your layout for right-to-left languages.
+              </p>
+            </div>
+            <div dir="rtl">
+              <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
             </div>
           </div>
         </QueryBuilderContext.Provider>
