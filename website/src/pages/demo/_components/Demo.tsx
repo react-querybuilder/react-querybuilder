@@ -11,6 +11,8 @@ import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import * as ReactDnD from 'react-dnd';
+import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
 import {
   convertToIC,
@@ -500,7 +502,7 @@ export default function Demo({
             <QueryWrapper
               key={`${query.id}-${queryIC.id}`}
               useDateTimePackage={options.useDateTimePackage}>
-              <QueryBuilderDnD>
+              <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
                 {options.independentCombinators ? (
                   <QueryBuilder
                     key="queryIC"
