@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - CSS/SCSS variable `rqb-base-color`. `rqb-background-color` is `rqb-base-color` with 20% opacity (effectively the same color as before, just calculated differently).
+- `maxLevels` prop to limit the addition of new rule groups beyond the specified nesting level. Default is `Infinity` (allows unlimited levels), and values other than 1 or greater will be ignored.
 
 ## [v8.7.0] - 2025-05-13
 

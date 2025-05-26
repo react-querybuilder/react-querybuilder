@@ -1139,6 +1139,12 @@ Used to generate `id`s for rules and groups without them (or clones that need a 
 
 Used to generate the `title` attribute applied to the outermost `<div>` of each rule group. As this is intended to help with accessibility, the text output from this function should be meaningful, descriptive, and unique within the page.
 
+### `maxLevels`
+
+`number` (default `Infinity`)
+
+This prop limits the number of levels of nesting allowed in the query. If a user attempts to add a group that would exceed this limit, the action will be ignored. This is useful for preventing overly complex queries that may be difficult to understand or manage.
+
 ### `validator`
 
 `QueryValidator` _<DemoLink option="validateQuery" />_
