@@ -47,6 +47,7 @@ export const basicSchema: Schema<FullField, string> = {
   parseNumbers: false,
   disabledPaths: [],
   suppressStandardClassnames: false,
+  maxLevels: Infinity,
 };
 
 export const findInput = (el: HTMLElement) =>
