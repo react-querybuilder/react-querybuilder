@@ -1,12 +1,8 @@
-.rqb-chakra.donut-hole {
-  & .queryBuilder {
-    & .chakra-native-select__root {
-      width: fit-content;
-      display: inline-block;
-    }
-    & .chakra-input {
-      width: auto;
-      display: inline-block;
-    }
-  }
+.chakra-native-select__root {
+  width: fit-content;
+  display: inline-block;
+}
+.chakra-input {
+  width: auto;
+  display: inline-block;
 }

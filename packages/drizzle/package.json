@@ -47,13 +47,13 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.2",
-    "@types/react": "^19.1.5",
+    "@types/react": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.0",
     "drizzle-orm": "^0.43.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-querybuilder": "8.7.0",
-    "rollup-plugin-visualizer": "^5.14.0",
+    "rollup-plugin-visualizer": "^6.0.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   },

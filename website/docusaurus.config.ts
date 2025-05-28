@@ -5,7 +5,7 @@ import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
 import path from 'node:path';
-import { themes } from 'prism-react-renderer/dist/index.mjs';
+import { themes } from 'prism-react-renderer';
 import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
@@ -29,6 +29,7 @@ const config: Config = {
   ],
   future: {
     experimental_faster: true,
+    v4: true,
   },
   plugins: [
     'docusaurus-plugin-sass',
@@ -192,6 +193,9 @@ const config: Config = {
       sidebar: {
         hideable: true,
       },
+    },
+    colorMode: {
+      respectPrefersColorScheme: true,
     },
     navbar: {
       title: 'React Query Builder',
