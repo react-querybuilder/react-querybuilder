@@ -13,7 +13,7 @@ import { discordLink } from './src/constants';
 
 const config: Config = {
   title: 'React Query Builder',
-  tagline: 'The Query Builder Component for React',
+  tagline: 'A minimally opinionated, fully customizable query builder solution',
   url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
   onBrokenLinks: 'throw',
