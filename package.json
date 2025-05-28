@@ -115,12 +115,12 @@
     "@types/bun": "^1.2.14",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.23",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
     "@types/react-native-web": "^0.19.1",
     "@types/web": "^0.0.235",
-    "@typescript-eslint/parser": "^8.32.1",
+    "@typescript-eslint/parser": "^8.33.0",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "bun-plugin-tailwind": "^0.0.15",
     "concurrently": "^9.1.2",
@@ -136,7 +136,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-watch-typeahead": "^2.2.2",
     "jsdom-testing-mocks": "^1.13.1",
-    "oxc-transform": "^0.72.0",
+    "oxc-transform": "^0.72.1",
     "oxlint": "^0.16.12",
     "postcss": "^8.5.3",
     "prettier": "3.5.3",
@@ -150,7 +150,7 @@
     "swc-loader": "^0.2.6",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.1",
+    "typescript-eslint": "^8.33.0",
     "vite": "^6.3.5"
   }
 }

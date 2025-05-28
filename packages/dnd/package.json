@@ -54,7 +54,7 @@
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.23",
     "@types/react": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.0",
     "react": "^19.1.0",
@@ -65,7 +65,7 @@
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^19.1.0",
     "react-querybuilder": "8.7.0",
-    "rollup-plugin-visualizer": "^6.0.0",
+    "rollup-plugin-visualizer": "^6.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   },
