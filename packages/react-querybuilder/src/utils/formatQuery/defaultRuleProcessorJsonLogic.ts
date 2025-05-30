@@ -18,7 +18,7 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  * @group Export
  */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
-  { field, operator, value, valueSource },
+  { field, operator, value, valueSource, matchMode },
   { parseNumbers, preserveValueOrder } = {}
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
@@ -29,6 +29,64 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
       : shouldRenderAsNumber(v, parseNumbers)
         ? parseNumber(v, { parseNumbers })
         : v;
+
+  const matchModeLC = Array.isArray(matchMode)
+    ? matchMode[0].toLowerCase()
+    : (matchMode?.toLowerCase() ?? false);
+
+  const matchModeCoerced =
+    matchModeLC === 'atleast' && (matchMode as ['atLeast', number])[1] === 1
+      ? 'some'
+      : matchModeLC === 'atmost' && (matchMode as ['atMost', number])[1] === 0
+        ? 'none'
+        : matchModeLC;
+
+  switch (matchModeCoerced) {
+    case 'all':
+    case 'none':
+    case 'some':
+      return {
+        [matchModeCoerced]: [
+          { var: field },
+          defaultRuleProcessorJsonLogic(
+            { field: '', operator, value, valueSource },
+            { parseNumbers, preserveValueOrder }
+          ),
+        ],
+      } as RQBJsonLogic;
+    case 'atleast':
+    case 'atmost':
+    case 'exactly': {
+      if (!Array.isArray(matchMode)) return false;
+      const op =
+        matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '==';
+      const [, threshold] = matchMode;
+
+      if (typeof threshold !== 'number' || threshold < 0) return false;
+      const filteredCount = {
+        reduce: [
+          {
+            filter: [
+              { var: field },
+              defaultRuleProcessorJsonLogic(
+                { field: '', operator, value, valueSource },
+                { parseNumbers, preserveValueOrder }
+              ),
+            ],
+          },
+          { '+': [1, { var: 'accumulator' }] },
+          0,
+        ],
+      };
+      if (threshold > 0 && threshold < 1) {
+        const totalCount = {
+          reduce: [{ var: field }, { '+': [1, { var: 'accumulator' }] }, 0],
+        };
+        return { [op]: [filteredCount, { '*': [totalCount, threshold] }] } as RQBJsonLogic;
+      }
+      return { [op]: [filteredCount, threshold] } as RQBJsonLogic;
+    }
+  }
 
   const operatorLC = operator.toLowerCase();
   switch (operatorLC) {

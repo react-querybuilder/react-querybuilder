@@ -322,7 +322,7 @@ it('preserveValueOrder', () => {
   ).toEqual({ and: [{ '<=': [12, { var: 'f1' }, 14] }, { '<=': [14, { var: 'f2' }, 12] }] });
 });
 
-it('runs the jsonLogic additional operators', () => {
+it('runs the JsonLogic additional operators', () => {
   const { startsWith, endsWith } = jsonLogicAdditionalOperators;
   expect(startsWith('TestString', 'Test')).toBe(true);
   // @ts-expect-error null is not valid
@@ -338,4 +338,117 @@ it('runs the jsonLogic additional operators', () => {
   expect(endsWith([], 'String')).toBe(false);
   // @ts-expect-error {} is not valid
   expect(endsWith({}, 'String')).toBe(false);
+});
+
+it('handles match modes', () => {
+  const queryWithMatchModes: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: 'all' },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: 'none' },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: 'some' },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['atLeast', 1] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['atMost', 0] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['atLeast', 2] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['atLeast', 0.5] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['atMost', 2] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['atMost', 0.5] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['exactly', 2] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['exactly', 0.5] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['exactly', -1] },
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: ['exactly', '-1' as any] },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: 'atMost' as any },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: 'atLeast' as any },
+      { field: 'fs', operator: 'contains', value: 'S', matchMode: 'exactly' as any },
+      /* eslint-enable @typescript-eslint/no-explicit-any */
+    ],
+  };
+  expect(formatQuery(queryWithMatchModes, 'jsonlogic')).toEqual({
+    and: [
+      { all: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      {
+        '<=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '<=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      {
+        '==': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '==': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+    ],
+  });
 });
