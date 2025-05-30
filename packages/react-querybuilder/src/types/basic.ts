@@ -84,6 +84,21 @@ export type InputType =
   | 'week'
   | (string & {});
 
+/**
+ * Quantification mode describing how many values are required for a rule to pass.
+ *
+ * For the methods with an accompanying numeric value, the number will be treated as
+ * a percentage if the number is less than 1. Non-numeric values and numbers less than
+ * 0 will be ignored.
+ */
+export type MatchMode =
+  | 'all'
+  | 'some'
+  | 'none'
+  | ['atLeast', number]
+  | ['atMost', number]
+  | ['exactly', number];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionElementEventHandler = (event?: any, context?: any) => void;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,6 +120,7 @@ interface BaseFullField<
   valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
   inputType?: InputType | null;
   values?: FlexibleOptionList<ValueObj>;
+  matchModes?: boolean | MatchMode[] | ((operator: OperatorName) => boolean | MatchMode[]);
   defaultOperator?: OperatorName;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue?: any;

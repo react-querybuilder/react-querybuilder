@@ -1,4 +1,4 @@
-import type { FullCombinator, FullOperator, Path, ValueSource } from './basic';
+import type { FullCombinator, FullOperator, MatchMode, Path, ValueSource } from './basic';
 
 /**
  * Properties common to both rules and groups.
@@ -24,6 +24,7 @@ export interface RuleType<
   operator: O;
   value: V;
   valueSource?: ValueSource;
+  matchMode?: MatchMode;
   /**
    * Only used when adding a rule to a query that uses independent combinators.
    */
