@@ -1206,10 +1206,10 @@ describe('onAddRule prop', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
     const AddRuleAction = (props: ActionWithRulesAndAddersProps) => (
-      <>
+      <React.Fragment>
         <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
         <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
-      </>
+      </React.Fragment>
     );
     render(
       <QueryBuilder
@@ -1292,10 +1292,10 @@ describe('onAddGroup prop', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const ruleGroup: RuleGroupType = { combinator: 'fake', rules: [] };
     const AddGroupAction = (props: ActionWithRulesAndAddersProps) => (
-      <>
+      <React.Fragment>
         <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
         <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
-      </>
+      </React.Fragment>
     );
     render(
       <QueryBuilder
@@ -2749,15 +2749,15 @@ describe('disabled', () => {
         disabled
         controlElements={{
           ruleGroupHeaderElements: ({ actions }) => (
-            <>
+            <React.Fragment>
               <button onClick={() => actions.onRuleAdd(ruleToAdd, [])}>onRuleAdd</button>
               <button onClick={() => actions.onGroupAdd(groupToAdd, [])}>onGroupAdd</button>
               <button onClick={() => actions.onPropChange('not', true, [])}>onPropChange</button>
               <button onClick={() => actions.onGroupRemove([6])}>onGroupRemove</button>
-            </>
+            </React.Fragment>
           ),
           ruleGroupBodyElements: ({ actions }) => (
-            <>
+            <React.Fragment>
               <button onClick={() => actions.onPropChange('field', 'f2', [0])}>onPropChange</button>
               <button onClick={() => actions.onPropChange('combinator', 'or', [1])}>
                 onPropChange
@@ -2765,7 +2765,7 @@ describe('disabled', () => {
               <button onClick={() => actions.onRuleRemove([0])}>onRuleRemove</button>
               <button onClick={() => actions.moveRule([6], [0])}>moveRule</button>
               <button onClick={() => actions.moveRule([6], [0], true)}>moveRule</button>
-            </>
+            </React.Fragment>
           ),
         }}
         query={{
@@ -2989,13 +2989,13 @@ describe('redux functions', () => {
     const getQueryBtnText = 'Get Query';
     const dispatchQueryBtnText = 'Dispatch Query';
     const rule = ({ schema: { getQuery, dispatchQuery } }: RuleProps) => (
-      <>
+      <React.Fragment>
         <button onClick={() => testFunc(getQuery())}>{getQueryBtnText}</button>
         <button onClick={() => dispatchQuery({ combinator: 'or', rules: [] })}>
           {' '}
           {dispatchQueryBtnText}{' '}
         </button>
-      </>
+      </React.Fragment>
     );
     render(<QueryBuilder onQueryChange={onQueryChange} controlElements={{ rule }} />);
 
@@ -3017,12 +3017,12 @@ describe('redux functions', () => {
       const [q, sq] = React.useState(query);
 
       return (
-        <>
+        <React.Fragment>
           <button type="button" onClick={() => sq(emptyQuery)}>
             Reset
           </button>
           <QueryBuilder query={q} onQueryChange={sq} enableMountQueryChange={false} />
-        </>
+        </React.Fragment>
       );
     };
 
@@ -3400,7 +3400,7 @@ describe('debug mode', () => {
       path,
       actions: { groupRule, moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
     }: RuleGroupProps) => (
-      <>
+      <React.Fragment>
         <button onClick={() => onPropChange('combinator', 'or', [])}>Change Combinator</button>
         <button onClick={() => onRuleAdd({ field: 'f', operator: '=', value: 'v' }, [])}>
           Add Rule
@@ -3409,7 +3409,7 @@ describe('debug mode', () => {
         <button onClick={() => moveRule(path, [0], true)}>Clone Group</button>
         <button onClick={() => onGroupRemove(path)}>Remove Group</button>
         <button onClick={() => groupRule(path, [0])}>Group Group</button>
-      </>
+      </React.Fragment>
     );
     render(
       <QueryBuilder

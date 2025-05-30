@@ -120,7 +120,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
   } = rg;
 
   return (
-    <>
+    <Fragment>
       {rg.schema.showShiftActions && rg.path.length > 0 && (
         <ShiftActionsControlElement
           key={TestID.shiftActions}
@@ -287,7 +287,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           schema={rg.schema}
         />
       )}
-    </>
+    </Fragment>
   );
 });
 
@@ -312,7 +312,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
   } = rg;
 
   return (
-    <>
+    <Fragment>
       {rg.ruleGroup.rules.map((r, idx, { length: ruleArrayLength }) => {
         const thisPathMemo = rg.pathsMemo[idx];
         const thisPath = thisPathMemo.path;
@@ -400,7 +400,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
           </Fragment>
         );
       })}
-    </>
+    </Fragment>
   );
 });
 

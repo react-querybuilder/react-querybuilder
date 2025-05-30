@@ -95,7 +95,7 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
     } = r;
 
     return (
-      <>
+      <React.Fragment>
         {r.schema.showShiftActions && (
           <ShiftActionsControlElement
             key={TestID.shiftActions}
@@ -157,7 +157,7 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
           rule={r.rule}
         />
         {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
-          <>
+          <React.Fragment>
             <OperatorSelectorControlElement
               key={TestID.operators}
               testID={TestID.operators}
@@ -179,7 +179,7 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
             {(r.schema.autoSelectOperator ||
               r.rule.operator !== r.translations.operators.placeholderName) &&
               !r.hideValueControls && (
-                <>
+                <React.Fragment>
                   {!['null', 'notNull'].includes(r.rule.operator) && r.valueSources.length > 1 && (
                     <ValueSourceSelectorControlElement
                       key={TestID.valueSourceSelector}
@@ -225,9 +225,9 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
                     schema={r.schema}
                     rule={r.rule}
                   />
-                </>
+                </React.Fragment>
               )}
-          </>
+          </React.Fragment>
         )}
         {r.schema.showCloneButtons && (
           <CloneRuleActionControlElement
@@ -279,7 +279,7 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
           ruleOrGroup={r.rule}
           schema={r.schema}
         />
-      </>
+      </React.Fragment>
     );
   });
 
