@@ -21,6 +21,7 @@ import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import {
+  isJsonLogicAll,
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
   isJsonLogicBetweenInclusive,
@@ -33,8 +34,10 @@ import {
   isJsonLogicLessThan,
   isJsonLogicLessThanOrEqual,
   isJsonLogicNegation,
+  isJsonLogicNone,
   isJsonLogicNotEqual,
   isJsonLogicOr,
+  isJsonLogicSome,
   isJsonLogicStrictEqual,
   isJsonLogicStrictNotEqual,
   isRQBJsonLogicEndsWith,
@@ -227,6 +230,24 @@ function parseJsonLogic(
       if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         rule = { field, operator, value, valueSource };
       }
+    } else if (
+      (isJsonLogicAll(logic) && isRQBJsonLogicVar(logic['all'][0])) ||
+      (isJsonLogicNone(logic) && isRQBJsonLogicVar(logic['none'][0])) ||
+      (isJsonLogicSome(logic) && isRQBJsonLogicVar(logic['some'][0]))
+    ) {
+      // The array coverage functions must have a field as their first element.
+      // Otherwise we'd be comparing values to values, which is not supported.
+      const matchMode = isJsonLogicNone(logic) ? 'none' : isJsonLogicSome(logic) ? 'some' : 'all';
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const [{ var: field }, operation] = (logic as any)[matchMode];
+      const matcher = processLogic(operation);
+
+      // TODO: Support operations that result in groups
+      // TODO: Support operations that evaluate array member properties
+      if (!matcher || isRuleGroup(matcher) || matcher.field !== '') return false;
+
+      rule = { ...matcher, field, matchMode };
     } else if (isJsonLogicBetweenExclusive(logic) && isRQBJsonLogicVar(logic['<'][1])) {
       field = logic['<'][1].var;
       const values = [logic['<'][0], logic['<'][2]];
