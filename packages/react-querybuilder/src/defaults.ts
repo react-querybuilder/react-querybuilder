@@ -188,6 +188,8 @@ export const standardClassnames = {
   notToggle: 'ruleGroup-notToggle',
   rule: 'rule',
   fields: 'rule-fields',
+  matchMode: 'rule-matchMode',
+  matchThreshold: 'rule-matchThreshold',
   operators: 'rule-operators',
   value: 'rule-value',
   removeRule: 'rule-remove',
@@ -228,6 +230,8 @@ export const defaultControlClassnames: Classnames = {
   notToggle: '',
   rule: '',
   fields: '',
+  matchMode: '',
+  matchThreshold: '',
   operators: '',
   value: '',
   removeRule: '',
@@ -286,6 +290,7 @@ export const TestID = {
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',
   valueSourceSelector: 'value-source-selector',
+  matchModeSelector: 'match-mode-selector',
 } as const;
 
 export const LogType = {

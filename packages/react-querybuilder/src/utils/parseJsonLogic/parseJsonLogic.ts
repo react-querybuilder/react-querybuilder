@@ -7,6 +7,7 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Except,
+  MatchMode,
   RQBJsonLogic,
   RQBJsonLogicVar,
   RuleGroupTypeAny,
@@ -237,10 +238,12 @@ function parseJsonLogic(
     ) {
       // The array coverage functions must have a field as their first element.
       // Otherwise we'd be comparing values to values, which is not supported.
-      const matchMode = isJsonLogicNone(logic) ? 'none' : isJsonLogicSome(logic) ? 'some' : 'all';
+      const matchMode: MatchMode = {
+        mode: isJsonLogicNone(logic) ? 'none' : isJsonLogicSome(logic) ? 'some' : 'all',
+      };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const [{ var: field }, operation] = (logic as any)[matchMode];
+      const [{ var: field }, operation] = (logic as any)[matchMode.mode];
       const matcher = processLogic(operation);
 
       // TODO: Support operations that result in groups

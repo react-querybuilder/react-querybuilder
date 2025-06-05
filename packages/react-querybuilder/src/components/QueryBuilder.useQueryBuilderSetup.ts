@@ -14,6 +14,7 @@ import type {
   FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
+  MatchModeOptions,
   Option,
   OptionGroup,
   QueryBuilderProps,
@@ -26,6 +27,7 @@ import {
   filterFieldsByComparator,
   generateID,
   getFirstOption,
+  getMatchModesUtil,
   getValueSourcesUtil,
   isFlexibleOptionGroupArray,
   joinWith,
@@ -78,6 +80,12 @@ export type UseQueryBuilderSetup<
   createRuleGroup: (independentCombinators?: boolean) => RG;
 } & RemoveNullability<{
   getInputTypeMain: QueryBuilderProps<RG, F, O, C>['getInputType'];
+  getMatchModesMain: (
+    ...params: Parameters<
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Extract<QueryBuilderProps<RG, F, O, C>['getMatchModes'], (...p: any[]) => any>
+    >
+  ) => MatchModeOptions;
   getRuleDefaultOperator: QueryBuilderProps<RG, F, O, C>['getDefaultOperator'];
   getValueEditorTypeMain: QueryBuilderProps<RG, F, O, C>['getValueEditorType'];
   getValueSourcesMain: QueryBuilderProps<RG, F, O, C>['getValueSources'];
@@ -124,6 +132,7 @@ export const useQueryBuilderSetup = <
     getDefaultField,
     getDefaultOperator,
     getDefaultValue,
+    getMatchModes,
     getOperators,
     getValueEditorType,
     getValueSources,
@@ -333,6 +342,12 @@ export const useQueryBuilderSetup = <
     [fieldMap, getValueSources]
   );
 
+  const getMatchModesMain = useCallback(
+    (field: FieldName, operator: OperatorName | null, _misc: { fieldData: F }) =>
+      getMatchModesUtil<F, OperatorName>(fieldMap[field] as F, operator, getMatchModes),
+    [fieldMap, getMatchModes]
+  );
+
   const defaultValueOption = useMemo(
     (): FullOption<OperatorName> => ({
       id: translations.values.placeholderName,
@@ -501,6 +516,7 @@ export const useQueryBuilderSetup = <
     fields: fields as FullOptionList<F>,
     fieldMap,
     combinators,
+    getMatchModesMain,
     getOperatorsMain,
     getRuleDefaultOperator,
     getValueEditorTypeMain,

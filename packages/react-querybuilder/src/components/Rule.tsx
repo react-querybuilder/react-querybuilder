@@ -11,6 +11,7 @@ import type {
   FullField,
   FullOperator,
   InputType,
+  MatchModeOptions,
   Option,
   OptionList,
   RuleProps,
@@ -84,6 +85,7 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
           shiftActions: ShiftActionsControlElement,
           dragHandle: DragHandleControlElement,
           fieldSelector: FieldSelectorControlElement,
+          matchModeSelector: MatchModeSelectorControlElement,
           operatorSelector: OperatorSelectorControlElement,
           valueSourceSelector: ValueSourceSelectorControlElement,
           valueEditor: ValueEditorControlElement,
@@ -158,75 +160,101 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
         />
         {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
           <React.Fragment>
-            <OperatorSelectorControlElement
-              key={TestID.operators}
-              testID={TestID.operators}
-              field={r.rule.field}
-              fieldData={r.fieldData}
-              title={r.translations.operators.title}
-              options={r.operators}
-              value={r.rule.operator}
-              className={r.classNames.operators}
-              handleOnChange={r.onChangeOperator}
-              level={r.path.length}
-              path={r.path}
-              disabled={r.disabled}
-              context={r.context}
-              validation={r.validationResult}
-              schema={r.schema}
-              rule={r.rule}
-            />
-            {(r.schema.autoSelectOperator ||
-              r.rule.operator !== r.translations.operators.placeholderName) &&
-              !r.hideValueControls && (
-                <React.Fragment>
-                  {!['null', 'notNull'].includes(r.rule.operator) && r.valueSources.length > 1 && (
-                    <ValueSourceSelectorControlElement
-                      key={TestID.valueSourceSelector}
-                      testID={TestID.valueSourceSelector}
-                      field={r.rule.field}
-                      fieldData={r.fieldData}
-                      title={r.translations.valueSourceSelector.title}
-                      options={r.valueSourceOptions}
-                      value={r.rule.valueSource ?? 'value'}
-                      className={r.classNames.valueSource}
-                      handleOnChange={r.onChangeValueSource}
-                      level={r.path.length}
-                      path={r.path}
-                      disabled={r.disabled}
-                      context={r.context}
-                      validation={r.validationResult}
-                      schema={r.schema}
-                      rule={r.rule}
-                    />
+            {r.matchModes.length > 0 ? (
+              <MatchModeSelectorControlElement
+                key={TestID.matchModeSelector}
+                testID={TestID.matchModeSelector}
+                field={r.rule.field}
+                fieldData={r.fieldData}
+                title={r.translations.matchModes.title}
+                options={r.matchModes}
+                // TODO: Support `defaultMatchMode` at query or field level?
+                matchMode={r.rule.matchMode ?? { mode: 'all' }}
+                className={r.classNames.matchMode}
+                classNames={r.classNames}
+                handleOnChange={r.onChangeMatchMode}
+                level={r.path.length}
+                path={r.path}
+                disabled={r.disabled}
+                context={r.context}
+                validation={r.validationResult}
+                schema={r.schema}
+                rule={r.rule}
+              />
+            ) : (
+              <React.Fragment>
+                <OperatorSelectorControlElement
+                  key={TestID.operators}
+                  testID={TestID.operators}
+                  field={r.rule.field}
+                  fieldData={r.fieldData}
+                  title={r.translations.operators.title}
+                  options={r.operators}
+                  value={r.rule.operator}
+                  className={r.classNames.operators}
+                  handleOnChange={r.onChangeOperator}
+                  level={r.path.length}
+                  path={r.path}
+                  disabled={r.disabled}
+                  context={r.context}
+                  validation={r.validationResult}
+                  schema={r.schema}
+                  rule={r.rule}
+                />
+                {(r.schema.autoSelectOperator ||
+                  r.rule.operator !== r.translations.operators.placeholderName) &&
+                  !r.hideValueControls && (
+                    <React.Fragment>
+                      {!['null', 'notnull'].includes(`${r.rule.operator}`.toLowerCase()) &&
+                        r.valueSources.length > 1 && (
+                          <ValueSourceSelectorControlElement
+                            key={TestID.valueSourceSelector}
+                            testID={TestID.valueSourceSelector}
+                            field={r.rule.field}
+                            fieldData={r.fieldData}
+                            title={r.translations.valueSourceSelector.title}
+                            options={r.valueSourceOptions}
+                            value={r.rule.valueSource ?? 'value'}
+                            className={r.classNames.valueSource}
+                            handleOnChange={r.onChangeValueSource}
+                            level={r.path.length}
+                            path={r.path}
+                            disabled={r.disabled}
+                            context={r.context}
+                            validation={r.validationResult}
+                            schema={r.schema}
+                            rule={r.rule}
+                          />
+                        )}
+                      <ValueEditorControlElement
+                        key={TestID.valueEditor}
+                        testID={TestID.valueEditor}
+                        field={r.rule.field}
+                        fieldData={r.fieldData}
+                        title={r.translations.value.title}
+                        operator={r.rule.operator}
+                        value={r.rule.value}
+                        valueSource={r.rule.valueSource ?? 'value'}
+                        type={r.valueEditorType}
+                        inputType={r.inputType}
+                        values={r.values}
+                        listsAsArrays={r.schema.listsAsArrays}
+                        parseNumbers={r.schema.parseNumbers}
+                        separator={r.valueEditorSeparator}
+                        className={r.classNames.value}
+                        handleOnChange={r.onChangeValue}
+                        level={r.path.length}
+                        path={r.path}
+                        disabled={r.disabled}
+                        context={r.context}
+                        validation={r.validationResult}
+                        schema={r.schema}
+                        rule={r.rule}
+                      />
+                    </React.Fragment>
                   )}
-                  <ValueEditorControlElement
-                    key={TestID.valueEditor}
-                    testID={TestID.valueEditor}
-                    field={r.rule.field}
-                    fieldData={r.fieldData}
-                    title={r.translations.value.title}
-                    operator={r.rule.operator}
-                    value={r.rule.value}
-                    valueSource={r.rule.valueSource ?? 'value'}
-                    type={r.valueEditorType}
-                    inputType={r.inputType}
-                    values={r.values}
-                    listsAsArrays={r.schema.listsAsArrays}
-                    parseNumbers={r.schema.parseNumbers}
-                    separator={r.valueEditorSeparator}
-                    className={r.classNames.value}
-                    handleOnChange={r.onChangeValue}
-                    level={r.path.length}
-                    path={r.path}
-                    disabled={r.disabled}
-                    context={r.context}
-                    validation={r.validationResult}
-                    schema={r.schema}
-                    rule={r.rule}
-                  />
-                </React.Fragment>
-              )}
+              </React.Fragment>
+            )}
           </React.Fragment>
         )}
         {r.schema.showCloneButtons && (
@@ -289,6 +317,8 @@ export interface UseRule extends RuleProps {
     shiftActions: string;
     dragHandle: string;
     fields: string;
+    matchMode: string;
+    matchThreshold: string;
     operators: string;
     valueSource: string;
     value: string;
@@ -303,10 +333,12 @@ export interface UseRule extends RuleProps {
   ) => ValueChangeEventHandler;
   onChangeValueSource: ValueChangeEventHandler;
   onChangeField: ValueChangeEventHandler;
+  onChangeMatchMode: ValueChangeEventHandler;
   onChangeOperator: ValueChangeEventHandler;
   onChangeValue: ValueChangeEventHandler;
   hideValueControls: boolean;
   inputType: InputType | null;
+  matchModes: MatchModeOptions;
   operators: OptionList<FullOperator>;
   outerClassName: string;
   removeRule: ActionElementEventHandler;
@@ -337,6 +369,7 @@ export const useRule = (props: RuleProps): UseRule => {
       fields,
       fieldMap,
       getInputType,
+      getMatchModes,
       getOperators,
       getValueEditorType,
       getValueEditorSeparator,
@@ -349,6 +382,7 @@ export const useRule = (props: RuleProps): UseRule => {
     },
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
+    translations,
     parentDisabled,
     shiftUpDisabled,
     shiftDownDisabled,
@@ -400,6 +434,16 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.valueSelector,
         classNamesProp.fields
       ),
+      matchMode: clsx(
+        suppressStandardClassnames || standardClassnames.matchMode,
+        classNamesProp.valueSelector,
+        classNamesProp.matchMode
+      ),
+      matchThreshold: clsx(
+        suppressStandardClassnames || standardClassnames.matchThreshold,
+        classNamesProp.valueSelector,
+        classNamesProp.matchThreshold
+      ),
       operators: clsx(
         suppressStandardClassnames || standardClassnames.operators,
         classNamesProp.valueSelector,
@@ -436,6 +480,8 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.dragHandle,
       classNamesProp.valueSelector,
       classNamesProp.fields,
+      classNamesProp.matchMode,
+      classNamesProp.matchThreshold,
       classNamesProp.operators,
       classNamesProp.valueSource,
       classNamesProp.value,
@@ -460,6 +506,7 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const onChangeField = useMemo(() => getChangeHandler('field'), [getChangeHandler]);
   const onChangeOperator = useMemo(() => getChangeHandler('operator'), [getChangeHandler]);
+  const onChangeMatchMode = useMemo(() => getChangeHandler('matchMode'), [getChangeHandler]);
   const onChangeValueSource = useMemo(() => getChangeHandler('valueSource'), [getChangeHandler]);
   const onChangeValue = useMemo(() => getChangeHandler('value'), [getChangeHandler]);
 
@@ -513,6 +560,15 @@ export const useRule = (props: RuleProps): UseRule => {
     () => fieldData.inputType ?? getInputType(rule.field, rule.operator, { fieldData }),
     [fieldData, getInputType, rule.field, rule.operator]
   );
+  const matchModes = useMemo(
+    () =>
+      getMatchModes(
+        rule.field,
+        rule.operator === translations.operators.placeholderName ? null : rule.operator,
+        { fieldData }
+      ),
+    [fieldData, getMatchModes, rule.field, rule.operator, translations.operators.placeholderName]
+  );
   const operators = useMemo(
     () => getOperators(rule.field, { fieldData }),
     [fieldData, getOperators, rule.field]
@@ -530,6 +586,10 @@ export const useRule = (props: RuleProps): UseRule => {
         ? fieldData.valueSources(rule.operator)
         : (fieldData.valueSources ?? getValueSources(rule.field, rule.operator, { fieldData })),
     [fieldData, getValueSources, rule.field, rule.operator]
+  );
+  const valueSourceOptions = useMemo(
+    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceOptions,
+    [valueSources]
   );
   const valueEditorType = useMemo(
     () =>
@@ -549,10 +609,6 @@ export const useRule = (props: RuleProps): UseRule => {
         : getValues(rule.field, rule.operator, { fieldData });
     return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
   }, [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]);
-  const valueSourceOptions = useMemo(
-    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceOptions,
-    [valueSources]
-  );
 
   const validationResult = useMemo(
     () =>
@@ -628,11 +684,13 @@ export const useRule = (props: RuleProps): UseRule => {
     fieldData,
     generateOnChangeHandler: getChangeHandler,
     onChangeField,
+    onChangeMatchMode,
     onChangeOperator,
     onChangeValueSource,
     onChangeValue,
     hideValueControls,
     inputType,
+    matchModes,
     operators,
     outerClassName,
     removeRule,

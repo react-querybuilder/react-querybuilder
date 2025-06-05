@@ -1,7 +1,7 @@
-import { formatQuery } from '../formatQuery';
-import type { TestSQLParams } from '../dbqueryTestUtils';
-import { superUsers, dbTests } from '../dbqueryTestUtils';
 import { add_operation, apply } from 'json-logic-js';
+import type { TestSQLParams } from '../dbqueryTestUtils';
+import { dbTests, superUsers } from '../dbqueryTestUtils';
+import { formatQuery } from '../formatQuery';
 import { jsonLogicAdditionalOperators } from '../utils';
 
 const superUsersJsonLogic = superUsers('jsonlogic');
@@ -48,7 +48,9 @@ describe('JsonLogic', () => {
       {
         query: {
           combinator: 'and',
-          rules: [{ field: 'nicknames', operator: 'contains', value: 'S', matchMode: 'all' }],
+          rules: [
+            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: { mode: 'all' } },
+          ],
         },
         expectedResult: augmentedSuperUsers.filter(u => u.nicknames.every(n => n.includes('S'))),
       },
@@ -59,7 +61,9 @@ describe('JsonLogic', () => {
       {
         query: {
           combinator: 'and',
-          rules: [{ field: 'nicknames', operator: 'contains', value: 'S', matchMode: 'none' }],
+          rules: [
+            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: { mode: 'none' } },
+          ],
         },
         expectedResult: augmentedSuperUsers.filter(u => u.nicknames.every(n => !n.includes('S'))),
       },
@@ -70,7 +74,9 @@ describe('JsonLogic', () => {
       {
         query: {
           combinator: 'and',
-          rules: [{ field: 'nicknames', operator: 'contains', value: 'S', matchMode: 'some' }],
+          rules: [
+            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: { mode: 'some' } },
+          ],
         },
         expectedResult: augmentedSuperUsers.filter(u => u.nicknames.some(n => n.includes('S'))),
       },
@@ -82,7 +88,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['atMost', 0] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'atMost', threshold: 0 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(u => u.nicknames.every(n => !n.includes('S'))),
@@ -95,7 +106,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['atLeast', 1] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'atLeast', threshold: 1 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(u => u.nicknames.some(n => n.includes('S'))),
@@ -108,7 +124,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['atLeast', 2] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'atLeast', threshold: 2 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(
@@ -123,7 +144,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['atLeast', 0.5] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'atLeast', threshold: 0.5 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(
@@ -138,7 +164,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['atMost', 2] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'atMost', threshold: 2 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(
@@ -153,7 +184,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['atMost', 0.5] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'atMost', threshold: 0.5 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(
@@ -168,7 +204,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['exactly', 2] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'exactly', threshold: 2 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(
@@ -183,7 +224,12 @@ describe('JsonLogic', () => {
         query: {
           combinator: 'and',
           rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', matchMode: ['exactly', 0.5] },
+            {
+              field: 'nicknames',
+              operator: 'contains',
+              value: 'S',
+              matchMode: { mode: 'exactly', threshold: 0.5 },
+            },
           ],
         },
         expectedResult: augmentedSuperUsers.filter(

@@ -105,6 +105,7 @@ const ruleSchema = {
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
+  getMatchModes: () => [],
   getInputType: () => 'text',
   getValues: () =>
     [

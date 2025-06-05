@@ -483,15 +483,15 @@ it('translates lists as arrays', () => {
 it('parses array match modes', () => {
   expect(parseJsonLogic({ all: [{ var: 'f1' }, { '<': [{ var: '' }, 14] }] })).toEqual({
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '<', value: 14, matchMode: 'all' }],
+    rules: [{ field: 'f1', operator: '<', value: 14, matchMode: { mode: 'all' } }],
   });
   expect(parseJsonLogic({ none: [{ var: 'f1' }, { '<': [{ var: '' }, 14] }] })).toEqual({
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '<', value: 14, matchMode: 'none' }],
+    rules: [{ field: 'f1', operator: '<', value: 14, matchMode: { mode: 'none' } }],
   });
   expect(parseJsonLogic({ some: [{ var: 'f1' }, { '<': [{ var: '' }, 14] }] })).toEqual({
     combinator: 'and',
-    rules: [{ field: 'f1', operator: '<', value: 14, matchMode: 'some' }],
+    rules: [{ field: 'f1', operator: '<', value: 14, matchMode: { mode: 'some' } }],
   });
   expect(parseJsonLogic({ all: [{ var: 'f1' }, { '<': [{ var: 'age' }, 14] }] })).toEqual({
     combinator: 'and',

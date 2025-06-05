@@ -85,19 +85,21 @@ export type InputType =
   | (string & {});
 
 /**
- * Quantification mode describing how many values are required for a rule to pass.
+ * Quantification mode describing how many elements of the value array must pass
+ * the filter for the rule itself to pass.
  *
- * For the methods with an accompanying numeric value, the number will be treated as
- * a percentage if the number is less than 1. Non-numeric values and numbers less than
- * 0 will be ignored.
+ * For "atLeast", "atMost", and "exactly", the threshold value will be converted to
+ * a percentage if the number is less than 1. Non-numeric values and numbers less
+ * than 0 will be ignored.
  */
-export type MatchMode =
-  | 'all'
-  | 'some'
-  | 'none'
-  | ['atLeast', number]
-  | ['atMost', number]
-  | ['exactly', number];
+export interface MatchMode {
+  mode: MatchModeName;
+  threshold?: number | null | undefined;
+}
+
+export type MatchModeName = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly';
+export type MatchModes = MatchModeName[];
+export type MatchModeOptions = FullOption<MatchModeName>[];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionElementEventHandler = (event?: any, context?: any) => void;
@@ -120,7 +122,9 @@ interface BaseFullField<
   valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
   inputType?: InputType | null;
   values?: FlexibleOptionList<ValueObj>;
-  matchModes?: boolean | MatchMode[] | ((operator: OperatorName) => boolean | MatchMode[]);
+  matchModes?: boolean | MatchModes | ((operator: OperatorName) => boolean | MatchModes);
+  /** Properties of items in the value. */
+  subproperties?: FlexibleOptionList<ValueObj>;
   defaultOperator?: OperatorName;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue?: any;

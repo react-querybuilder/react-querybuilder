@@ -23,6 +23,7 @@ export const basicSchema: Schema<FullField, string> = {
   dispatchQuery: admonish('dispatchQuery'),
   getQuery: admonish('getQuery'),
   getOperators: admonish('getOperators'),
+  getMatchModes: admonish('getMatchModes'),
   getValueEditorType: admonish('getValueEditorType'),
   getValueEditorSeparator: admonish('getValueEditorSeparator'),
   getValueSources: admonish('getValueSources'),

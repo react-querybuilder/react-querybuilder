@@ -138,6 +138,8 @@ export const useMergedContext = <
       dndGroup: cc.dndGroup,
       disabled: cc.disabled,
       valueListItem: cc.valueListItem,
+      matchMode: cc.matchMode,
+      matchThreshold: cc.matchThreshold,
       branches: cc.branches,
     }),
     [
@@ -161,6 +163,8 @@ export const useMergedContext = <
       cc.invalid,
       cc.lockGroup,
       cc.lockRule,
+      cc.matchMode,
+      cc.matchThreshold,
       cc.notToggle,
       cc.operators,
       cc.queryBuilder,
@@ -280,6 +284,11 @@ export const useMergedContext = <
           propsCE.valueSourceSelector,
           contextCE.valueSourceSelector
         ),
+        mergeControlElement(
+          'matchModeSelector',
+          propsCE.matchModeSelector,
+          contextCE.matchModeSelector
+        ),
         mergeControlElement('rule', propsCE.rule, contextCE.rule),
         mergeControlElement('ruleGroup', propsCE.ruleGroup, contextCE.ruleGroup),
         mergeControlElement(
@@ -317,6 +326,7 @@ export const useMergedContext = <
       contextCE.inlineCombinator,
       contextCE.lockGroupAction,
       contextCE.lockRuleAction,
+      contextCE.matchModeSelector,
       contextCE.notToggle,
       contextCE.operatorSelector,
       contextCE.removeGroupAction,
@@ -342,6 +352,7 @@ export const useMergedContext = <
       propsCE.inlineCombinator,
       propsCE.lockGroupAction,
       propsCE.lockRuleAction,
+      propsCE.matchModeSelector,
       propsCE.notToggle,
       propsCE.operatorSelector,
       propsCE.removeGroupAction,

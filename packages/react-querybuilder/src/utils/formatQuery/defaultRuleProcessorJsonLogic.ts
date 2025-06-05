@@ -30,14 +30,13 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ? parseNumber(v, { parseNumbers })
         : v;
 
-  const matchModeLC = Array.isArray(matchMode)
-    ? matchMode[0].toLowerCase()
-    : (matchMode?.toLowerCase() ?? false);
+  const { mode, threshold } = matchMode ?? {};
+  const matchModeLC = mode?.toLowerCase();
 
   const matchModeCoerced =
-    matchModeLC === 'atleast' && (matchMode as ['atLeast', number])[1] === 1
+    matchModeLC === 'atleast' && matchMode?.threshold === 1
       ? 'some'
-      : matchModeLC === 'atmost' && (matchMode as ['atMost', number])[1] === 0
+      : matchModeLC === 'atmost' && matchMode?.threshold === 0
         ? 'none'
         : matchModeLC;
 
@@ -54,15 +53,15 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
           ),
         ],
       } as RQBJsonLogic;
+
     case 'atleast':
     case 'atmost':
     case 'exactly': {
-      if (!Array.isArray(matchMode)) return false;
+      if (typeof threshold !== 'number' || threshold < 0) return false;
+
       const op =
         matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '==';
-      const [, threshold] = matchMode;
 
-      if (typeof threshold !== 'number' || threshold < 0) return false;
       const filteredCount = {
         reduce: [
           {
@@ -78,6 +77,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
           0,
         ],
       };
+
       if (threshold > 0 && threshold < 1) {
         const totalCount = {
           reduce: [{ var: field }, { '+': [1, { var: 'accumulator' }] }, 0],

@@ -1,6 +1,7 @@
 export * from './ActionElement';
 export * from './DragHandle';
 export * from './InlineCombinator';
+export * from './MatchModeSelector';
 export * from './NotToggle';
 export * from './QueryBuilder.useQueryBuilder';
 export * from './QueryBuilder.useQueryBuilderSchema';

@@ -139,6 +139,7 @@ const ruleGroupSchema = {
   getOperators: () => [{ name: 'operator1', label: 'Operator 1' }].map(o => toFullOption(o)),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
+  getMatchModes: () => [],
   getValueSources: () => ['value'],
   getValues: () => [],
   getRuleClassname: () => '',
