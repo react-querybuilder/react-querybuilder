@@ -25,7 +25,7 @@ import Select from 'react-select';
 import Slider from 'react-slider';
 import '../css/index.css';
 import { CustomStylesQB } from './_CustomStylesQB';
-import * as rtl from './_rtl';
+// import * as rtl from './_rtl';
 import { formatMap, initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 import { musicalInstruments } from './demo/_constants/musicalInstruments';
@@ -286,6 +286,7 @@ const LandingPage = () => {
                 <Link href="/docs/styling/overview">Tips</Link>
               </div>
             </div>
+            {/*
             <div>
               <h2>Translatable / RTL support</h2>
               <p>
@@ -305,6 +306,7 @@ const LandingPage = () => {
                 showNotToggle
               />
             </div>
+            */}
           </div>
         </QueryBuilderContext.Provider>
       </main>
