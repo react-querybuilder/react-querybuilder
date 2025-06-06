@@ -1,5 +1,8 @@
+export * from './defaults';
 export * from './NativeActionElement';
 export * from './NativeInlineCombinator';
+export * from './NativeMatchModeSelector';
+export * from './NativeMatchModeSelectorWeb';
 export * from './NativeNotToggle';
 export * from './NativeShiftActions';
 export * from './NativeValueEditor';
@@ -9,4 +12,3 @@ export * from './NativeValueSelectorWeb';
 export * from './QueryBuilderNative';
 export * from './RuleGroupNative';
 export * from './RuleNative';
-export * from './defaults';
