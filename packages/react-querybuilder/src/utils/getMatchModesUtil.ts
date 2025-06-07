@@ -1,10 +1,10 @@
+import { defaultMatchModes } from '../defaults';
 import type {
   FlexibleOption,
   FullField,
   GetOptionIdentifierType,
-  MatchModeName,
+  MatchMode,
   MatchModeOptions,
-  MatchModes,
 } from '../types/index.noReact';
 import { isFlexibleOptionArray, toFullOption, toFullOptionList } from './optGroupUtils';
 
@@ -21,14 +21,12 @@ const dummyFD = {
  * `matchModes` property, the `getMatchModes` prop is used.
  * Returns `["value"]` by default.
  */
-export const getMatchModesUtil = <F extends FullField, O extends string>(
+export const getMatchModesUtil = <F extends FullField>(
   fieldData: F,
-  operator: string | null,
   getMatchModes?: (
     field: GetOptionIdentifierType<F>,
-    operator: O | null,
     misc: { fieldData: F }
-  ) => boolean | MatchModes | FlexibleOption<MatchModeName>[]
+  ) => boolean | MatchMode[] | FlexibleOption<MatchMode>[]
 ): MatchModeOptions => {
   // TypeScript doesn't allow it directly, but in practice
   // `fieldData` can end up being undefined or null. The nullish
@@ -36,20 +34,16 @@ export const getMatchModesUtil = <F extends FullField, O extends string>(
   // "TypeError: Cannot read properties of undefined (reading 'name')"
   const fd = fieldData ? toFullOption(fieldData) : /* istanbul ignore else */ dummyFD;
 
-  let matchModes: boolean | MatchModes | FlexibleOption<MatchModeName>[] = false;
+  let matchModes: boolean | MatchMode[] | FlexibleOption<MatchMode>[] = fd.matchModes ?? false;
 
-  if (fd.matchModes) {
-    matchModes = typeof fd.matchModes === 'function' ? fd.matchModes(operator as O) : fd.matchModes;
-  }
-
-  if (!fd.matchModes && !!getMatchModes) {
-    matchModes = getMatchModes(fd.value as GetOptionIdentifierType<F>, operator as O, {
+  if (!matchModes && getMatchModes) {
+    matchModes = getMatchModes(fd.value as GetOptionIdentifierType<F>, {
       fieldData: fd as F,
     });
   }
 
   if (matchModes === true) {
-    matchModes = ['all', 'none', 'some', 'atLeast', 'atMost', 'exactly'];
+    return defaultMatchModes;
   } else if (matchModes === false) {
     return [];
   }
@@ -58,5 +52,12 @@ export const getMatchModesUtil = <F extends FullField, O extends string>(
     return toFullOptionList(matchModes) as MatchModeOptions;
   }
 
-  return matchModes.map(mm => ({ name: mm, value: mm, label: mm })) as MatchModeOptions;
+  return matchModes.map(
+    mm =>
+      defaultMatchModes.find(dmm => dmm.value === mm.toLowerCase()) ?? {
+        name: mm,
+        value: mm,
+        label: mm,
+      }
+  ) as MatchModeOptions;
 };

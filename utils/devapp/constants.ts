@@ -199,6 +199,7 @@ export const fields: Field[] = [
     values: musicalInstruments,
     defaultValue: 'More cowbell',
     operators: defaultOperators.filter(op => op.name === 'in'),
+    matchModes: true,
   },
   {
     name: 'gender',

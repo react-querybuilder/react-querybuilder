@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { TextInput } from 'react-native';
-import type { MatchModeName } from 'react-querybuilder';
+import type { MatchMode } from 'react-querybuilder';
 import { parseNumber } from 'react-querybuilder';
 import type { MatchModeSelectorNativeProps } from '../types';
 
@@ -14,7 +14,7 @@ export const NativeMatchModeSelector = (
   allProps: MatchModeSelectorNativeProps
 ): React.JSX.Element | null => {
   const {
-    matchMode,
+    match,
     options,
     handleOnChange,
     className,
@@ -23,19 +23,19 @@ export const NativeMatchModeSelector = (
     ...propsForValueSelector
   } = allProps;
 
-  const { mode, threshold } = matchMode;
+  const { mode, threshold } = match;
   const matchModeLC = mode.toLowerCase();
   const thresholdNum = typeof threshold === 'number' ? Math.max(0, threshold) : 1;
 
   const handleChange = useCallback(
-    (value: MatchModeName | number) => {
+    (value: MatchMode | number) => {
       if (typeof value === 'number') {
-        handleOnChange({ ...matchMode, threshold: value });
+        handleOnChange({ ...match, threshold: value });
       } else {
-        handleOnChange({ ...matchMode, mode: value });
+        handleOnChange({ ...match, mode: value });
       }
     },
-    [handleOnChange, matchMode]
+    [handleOnChange, match]
   );
 
   return (

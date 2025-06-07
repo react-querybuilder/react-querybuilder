@@ -18,7 +18,7 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  * @group Export
  */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
-  { field, operator, value, valueSource, matchMode },
+  { field, operator, value, valueSource, match },
   { parseNumbers, preserveValueOrder } = {}
 ): RQBJsonLogic => {
   const valueIsField = valueSource === 'field';
@@ -30,13 +30,13 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ? parseNumber(v, { parseNumbers })
         : v;
 
-  const { mode, threshold } = matchMode ?? {};
+  const { mode, threshold } = match ?? {};
   const matchModeLC = mode?.toLowerCase();
 
   const matchModeCoerced =
-    matchModeLC === 'atleast' && matchMode?.threshold === 1
+    matchModeLC === 'atleast' && match?.threshold === 1
       ? 'some'
-      : matchModeLC === 'atmost' && matchMode?.threshold === 0
+      : matchModeLC === 'atmost' && match?.threshold === 0
         ? 'none'
         : matchModeLC;
 

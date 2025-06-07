@@ -68,7 +68,7 @@ export interface Classnames {
   /**
    * Classnames applied to the `<select>` control for match modes.
    */
-  matchMode: Classname;
+  match: Classname;
   /**
    * Classnames applied to the `<input>` for match thresholds.
    */

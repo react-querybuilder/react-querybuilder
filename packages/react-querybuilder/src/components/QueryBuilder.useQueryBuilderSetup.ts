@@ -343,8 +343,8 @@ export const useQueryBuilderSetup = <
   );
 
   const getMatchModesMain = useCallback(
-    (field: FieldName, operator: OperatorName | null, _misc: { fieldData: F }) =>
-      getMatchModesUtil<F, OperatorName>(fieldMap[field] as F, operator, getMatchModes),
+    (field: FieldName, _misc: { fieldData: F }) =>
+      getMatchModesUtil<F>(fieldMap[field] as F, getMatchModes),
     [fieldMap, getMatchModes]
   );
 

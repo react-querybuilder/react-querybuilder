@@ -4,6 +4,7 @@ import type {
   FlexibleOptionList,
   FullOption,
   Option,
+  StringUnionToFullOptionArray,
   WithUnknownIndex,
 } from './options';
 import type { RuleValidator } from './validation';
@@ -92,14 +93,13 @@ export type InputType =
  * a percentage if the number is less than 1. Non-numeric values and numbers less
  * than 0 will be ignored.
  */
-export interface MatchMode {
-  mode: MatchModeName;
+export interface MatchConfig {
+  mode: MatchMode;
   threshold?: number | null | undefined;
 }
 
-export type MatchModeName = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly';
-export type MatchModes = MatchModeName[];
-export type MatchModeOptions = FullOption<MatchModeName>[];
+export type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly';
+export type MatchModeOptions = StringUnionToFullOptionArray<MatchMode>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionElementEventHandler = (event?: any, context?: any) => void;
@@ -122,7 +122,7 @@ interface BaseFullField<
   valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
   inputType?: InputType | null;
   values?: FlexibleOptionList<ValueObj>;
-  matchModes?: boolean | MatchModes | ((operator: OperatorName) => boolean | MatchModes);
+  matchModes?: boolean | MatchMode[];
   /** Properties of items in the value. */
   subproperties?: FlexibleOptionList<ValueObj>;
   defaultOperator?: OperatorName;

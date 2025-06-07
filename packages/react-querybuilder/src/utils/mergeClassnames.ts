@@ -43,7 +43,7 @@ export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => {
     dndGroup: joinClassnamesByName('dndGroup', args),
     disabled: joinClassnamesByName('disabled', args),
     valueListItem: joinClassnamesByName('valueListItem', args),
-    matchMode: joinClassnamesByName('matchMode', args),
+    match: joinClassnamesByName('match', args),
     matchThreshold: joinClassnamesByName('matchThreshold', args),
     branches: joinClassnamesByName('branches', args),
   };

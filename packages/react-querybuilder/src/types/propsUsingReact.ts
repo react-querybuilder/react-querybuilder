@@ -15,10 +15,9 @@ import type {
   FullField,
   FullOperator,
   InputType,
+  MatchConfig,
   MatchMode,
-  MatchModeName,
   MatchModeOptions,
-  MatchModes,
   ParseNumbersPropConfig,
   Path,
   ValueEditorType,
@@ -154,10 +153,10 @@ export interface FieldSelectorProps<F extends FullField = FullField>
 export interface MatchModeSelectorProps
   extends BaseSelectorProps<FullOption>,
     CommonRuleSubComponentProps {
-  matchMode: MatchMode;
+  match: MatchConfig;
   selectorComponent?: ComponentType<ValueSelectorProps>;
-  classNames: { matchMode: string; matchThreshold: string };
-  options: FullOptionList<FullOption<MatchModeName>>;
+  classNames: { match: string; matchThreshold: string };
+  options: FullOptionList<FullOption<MatchMode>>;
   field: string;
   fieldData: FullField;
 }
@@ -509,7 +508,7 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   lockRuleAction: ComponentType<ActionWithRulesProps> | null;
   /**
-   * Selects the `matchMode` property for the current rule.
+   * Selects the `match` property for the current rule.
    *
    * @default ValueSelector
    */
@@ -615,7 +614,7 @@ export interface Schema<F extends FullField, O extends string> {
   getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSources;
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
-  getMatchModes(field: string, operator: string | null, misc: { fieldData: F }): MatchModeOptions;
+  getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
   getRuleClassname(rule: RuleType, misc: { fieldData: F }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   accessibleDescriptionGenerator: AccessibleDescriptionGenerator;
@@ -971,17 +970,16 @@ export type QueryBuilderProps<
         misc: { fieldData: F }
       ): FlexibleOptionList<Option>;
       /**
-       * This function should return the list of valid {@link MatchMode}s
-       * for a given field `name` and operator `name`. The return value must
+       * This function should return the list of valid {@link MatchMode}s or
+       * {@link MatchConfig}s for a given field `name`. The return value must
        * be an array that includes at least one valid {@link MatchMode}, or `true`
        * to indicate that all match modes are allowed. Any other return value
        * will be ignored (no match modes will be allowed).
        */
       getMatchModes?(
         field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O> | null,
         misc: { fieldData: F }
-      ): boolean | MatchModes | FlexibleOption<MatchModeName>[];
+      ): boolean | MatchMode[] | FlexibleOption<MatchMode>[];
       /**
        * The return value of this function will be used to apply classnames to the
        * outer `<div>` of the given {@link Rule}.

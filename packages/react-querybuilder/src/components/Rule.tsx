@@ -33,6 +33,8 @@ import {
 } from '../utils';
 import { clsx } from '../utils/clsx';
 
+const defaultMatch = { mode: 'all' } as const;
+
 /**
  * Default component to display {@link RuleType} objects. This is
  * actually a small wrapper around {@link RuleComponents}.
@@ -169,8 +171,8 @@ export const RuleComponents: React.MemoExoticComponent<(r: UseRule) => React.JSX
                 title={r.translations.matchModes.title}
                 options={r.matchModes}
                 // TODO: Support `defaultMatchMode` at query or field level?
-                matchMode={r.rule.matchMode ?? { mode: 'all' }}
-                className={r.classNames.matchMode}
+                match={r.rule.match ?? defaultMatch}
+                className={r.classNames.match}
                 classNames={r.classNames}
                 handleOnChange={r.onChangeMatchMode}
                 level={r.path.length}
@@ -317,7 +319,7 @@ export interface UseRule extends RuleProps {
     shiftActions: string;
     dragHandle: string;
     fields: string;
-    matchMode: string;
+    match: string;
     matchThreshold: string;
     operators: string;
     valueSource: string;
@@ -382,7 +384,6 @@ export const useRule = (props: RuleProps): UseRule => {
     },
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
-    translations,
     parentDisabled,
     shiftUpDisabled,
     shiftDownDisabled,
@@ -434,10 +435,10 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.valueSelector,
         classNamesProp.fields
       ),
-      matchMode: clsx(
-        suppressStandardClassnames || standardClassnames.matchMode,
+      match: clsx(
+        suppressStandardClassnames || standardClassnames.match,
         classNamesProp.valueSelector,
-        classNamesProp.matchMode
+        classNamesProp.match
       ),
       matchThreshold: clsx(
         suppressStandardClassnames || standardClassnames.matchThreshold,
@@ -480,7 +481,7 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.dragHandle,
       classNamesProp.valueSelector,
       classNamesProp.fields,
-      classNamesProp.matchMode,
+      classNamesProp.match,
       classNamesProp.matchThreshold,
       classNamesProp.operators,
       classNamesProp.valueSource,
@@ -506,7 +507,7 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const onChangeField = useMemo(() => getChangeHandler('field'), [getChangeHandler]);
   const onChangeOperator = useMemo(() => getChangeHandler('operator'), [getChangeHandler]);
-  const onChangeMatchMode = useMemo(() => getChangeHandler('matchMode'), [getChangeHandler]);
+  const onChangeMatchMode = useMemo(() => getChangeHandler('match'), [getChangeHandler]);
   const onChangeValueSource = useMemo(() => getChangeHandler('valueSource'), [getChangeHandler]);
   const onChangeValue = useMemo(() => getChangeHandler('value'), [getChangeHandler]);
 
@@ -561,13 +562,8 @@ export const useRule = (props: RuleProps): UseRule => {
     [fieldData, getInputType, rule.field, rule.operator]
   );
   const matchModes = useMemo(
-    () =>
-      getMatchModes(
-        rule.field,
-        rule.operator === translations.operators.placeholderName ? null : rule.operator,
-        { fieldData }
-      ),
-    [fieldData, getMatchModes, rule.field, rule.operator, translations.operators.placeholderName]
+    () => getMatchModes(rule.field, { fieldData }),
+    [fieldData, getMatchModes, rule.field]
   );
   const operators = useMemo(
     () => getOperators(rule.field, { fieldData }),
