@@ -1,7 +1,3 @@
-import type { Plugin } from 'postcss';
-
-const postcssScopedDonut: Plugin;
-
-export const postcss: true;
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const postcssScopedDonut: any;
 export default postcssScopedDonut;
