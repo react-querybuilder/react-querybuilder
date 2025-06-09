@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- N/A
+
+## [v8.7.1] - 2025-06-09
+
 #### Added
 
 - CSS/SCSS variable `rqb-base-color`. `rqb-background-color` is `rqb-base-color` with 20% opacity (effectively the same color as before, just calculated differently).
@@ -1921,7 +1925,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.1...HEAD
+[v8.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.0...v8.7.1
 [v8.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.2...v8.7.0
 [v8.6.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.1...v8.6.2
 [v8.6.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.0...v8.6.1
