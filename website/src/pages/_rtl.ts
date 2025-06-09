@@ -23,8 +23,10 @@ export const operators: Operator[] = [
   { name: 'notNull', label: 'אינו ריק' },
   { name: 'in', label: 'אחד מ־' },
   { name: 'notIn', label: 'לא אחד מ־' },
-  { name: 'between', label: 'בין … ל־' }, // is the ellipsis appropriate?
-  { name: 'notBetween', label: 'לא בין … ל־' }, // is the ellipsis appropriate?
+  // { name: 'between', label: 'בין … ל־' },
+  { name: 'between', label: 'בין' },
+  // { name: 'notBetween', label: 'לא בין … ל־' },
+  { name: 'notBetween', label: 'לא בין' },
 ];
 
 const rtlLabels: Record<string, string> = {
@@ -82,11 +84,13 @@ export const translations: Partial<Translations> = {
     title: 'הוסף קבוצה',
   },
   combinators: {
-    title: 'מחברים',
+    // title: 'מחברים',
+    title: 'מילות קישור', // Conjunctions / linking words
   },
   notToggle: {
     label: 'לא',
-    title: 'הפוך קבוצה זו',
+    // title: 'הפוך קבוצה זו',
+    title: 'הפוך את המשמעות של קבוצה לוגית זו',
   },
   cloneRule: {
     title: 'שכפל',
