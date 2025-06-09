@@ -152,7 +152,7 @@ export function useQueryBuilderSchema<
     translations,
   } = incomingRqbContext;
 
-  // #region Boolean coercion
+  // #region Type coercions
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
@@ -166,6 +166,7 @@ export function useQueryBuilderSchema<
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
+  const maxLevels = (props.maxLevels ?? 0) > 0 ? Number(props.maxLevels) : Infinity;
   // #endregion
 
   const log = useCallback(
@@ -177,7 +178,7 @@ export function useQueryBuilderSchema<
     [debugMode, onLog]
   );
 
-  // #region Handle controlled mode vs uncontrolled mode
+  // #region Controlled vs uncontrolled mode
   useControlledOrUncontrolled({
     defaultQuery: defaultQueryProp,
     queryProp,
@@ -297,20 +298,21 @@ export function useQueryBuilderSchema<
       dispatchQuery(newQuery);
     },
     [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      onAddRule,
       qbId,
       queryBuilderStore,
       queryDisabled,
-      onAddRule,
-      combinators,
-      idGenerator,
-      log,
-      dispatchQuery,
     ]
   );
 
   const onGroupAdd = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ruleGroup: RG, parentPath: Path, context?: any) => {
+      if (parentPath.length >= maxLevels) return;
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
@@ -340,14 +342,15 @@ export function useQueryBuilderSchema<
       dispatchQuery(newQuery);
     },
     [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      maxLevels,
+      onAddGroup,
       qbId,
       queryBuilderStore,
       queryDisabled,
-      onAddGroup,
-      combinators,
-      idGenerator,
-      log,
-      dispatchQuery,
     ]
   );
 
@@ -372,16 +375,16 @@ export function useQueryBuilderSchema<
       dispatchQuery(newQuery);
     },
     [
+      dispatchQuery,
+      getRuleDefaultOperator,
+      getRuleDefaultValue,
+      getValueSourcesMain,
+      log,
       qbId,
       queryBuilderStore,
       queryDisabled,
       resetOnFieldChange,
       resetOnOperatorChange,
-      getRuleDefaultOperator,
-      getValueSourcesMain,
-      getRuleDefaultValue,
-      log,
-      dispatchQuery,
     ]
   );
 
@@ -409,7 +412,7 @@ export function useQueryBuilderSchema<
         }
       }
     },
-    [qbId, queryBuilderStore, queryDisabled, log, onRemove, dispatchQuery]
+    [dispatchQuery, log, onRemove, qbId, queryBuilderStore, queryDisabled]
   );
 
   const moveRule = useCallback(
@@ -446,15 +449,15 @@ export function useQueryBuilderSchema<
       dispatchQuery(newQuery);
     },
     [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      onMoveGroup,
+      onMoveRule,
       qbId,
       queryBuilderStore,
       queryDisabled,
-      combinators,
-      idGenerator,
-      onMoveGroup,
-      onMoveRule,
-      log,
-      dispatchQuery,
     ]
   );
 
@@ -512,15 +515,15 @@ export function useQueryBuilderSchema<
       dispatchQuery(newQuery);
     },
     [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      onGroupGroup,
+      onGroupRule,
       qbId,
       queryBuilderStore,
       queryDisabled,
-      combinators,
-      idGenerator,
-      onGroupGroup,
-      onGroupRule,
-      log,
-      dispatchQuery,
     ]
   );
   // #endregion
@@ -608,6 +611,7 @@ export function useQueryBuilderSchema<
       getValueSources: getValueSourcesMain,
       independentCombinators,
       listsAsArrays,
+      maxLevels,
       parseNumbers,
       qbId,
       showCloneButtons,
@@ -645,6 +649,7 @@ export function useQueryBuilderSchema<
       getValueSourcesMain,
       independentCombinators,
       listsAsArrays,
+      maxLevels,
       parseNumbers,
       qbId,
       showCloneButtons,

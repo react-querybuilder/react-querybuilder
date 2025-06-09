@@ -80,6 +80,18 @@
 .featureContainer > *:nth-child(8) {
   order: 7;
 }
+.featureContainer > *:nth-child(9) {
+  order: 9;
+}
+.featureContainer > *:nth-child(10) {
+  order: 10;
+}
+.featureContainer > *:nth-child(11) {
+  order: 12;
+}
+.featureContainer > *:nth-child(12) {
+  order: 11;
+}
 
 .featureContainer > * > *:last-child {
   margin-bottom: 0;

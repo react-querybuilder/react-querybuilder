@@ -157,6 +157,7 @@ const ruleGroupSchema = {
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],
+  maxLevels: Infinity,
 } satisfies Partial<Schema<FullOption, string>>;
 
 const ruleGroupActions = {

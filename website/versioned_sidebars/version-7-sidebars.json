@@ -71,6 +71,7 @@
     "datetime",
     "typescript",
     "buildless",
-    "migrate"
+    "migrate",
+    "changelog"
   ]
 }

@@ -5,14 +5,15 @@ import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
 import path from 'node:path';
-import { themes } from 'prism-react-renderer/dist/index.mjs';
+import { themes } from 'prism-react-renderer';
+import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
 import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 import { discordLink } from './src/constants';
 
 const config: Config = {
   title: 'React Query Builder',
-  tagline: 'The Query Builder Component for React',
+  tagline: 'A minimally opinionated, fully customizable query builder solution',
   url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -28,6 +29,7 @@ const config: Config = {
   ],
   future: {
     experimental_faster: true,
+    v4: true,
   },
   plugins: [
     'docusaurus-plugin-sass',
@@ -59,20 +61,24 @@ const config: Config = {
       name: 'docusaurus-tailwindcss',
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
-          require.resolve('tailwindcss'),
-          require.resolve('autoprefixer'),
+          require.resolve('@tailwindcss/postcss'),
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          require('postcss-prefix-selector')({
+            prefix: '.rqb-tremor',
+            includeFiles: [/rqb-tremor.css/],
+          }),
           require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;
       },
     }),
-    () => ({
-      // This is not actually used, only here just in case
-      name: 'rqb-wp5-raw-loader',
-      configureWebpack: () => ({
-        module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
-      }),
-    }),
+    // () => ({
+    //   // This is not actually used, only here just in case
+    //   name: 'rqb-wp5-raw-loader',
+    //   configureWebpack: () => ({
+    //     module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
+    //   }),
+    // }),
     process.env.RQB_TYPEDOC_DONE
       ? null
       : [
@@ -134,6 +140,20 @@ const config: Config = {
           remarkPlugins: [
             [remarkPluginNpm2Yarn, { sync: true, converters: ['bun', 'yarn', 'pnpm'] }],
           ],
+          rehypePlugins: [
+            [
+              rehypeRaw,
+              {
+                passThrough: [
+                  'mdxFlowExpression',
+                  'mdxjsEsm',
+                  'mdxJsxFlowElement',
+                  'mdxJsxTextElement',
+                  'mdxTextExpression',
+                ],
+              },
+            ],
+          ],
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/react-querybuilder/react-querybuilder/edit/main/website/',
           versions: {
@@ -173,6 +193,9 @@ const config: Config = {
       sidebar: {
         hideable: true,
       },
+    },
+    colorMode: {
+      respectPrefersColorScheme: true,
     },
     navbar: {
       title: 'React Query Builder',
@@ -237,6 +260,10 @@ const config: Config = {
             {
               label: 'Showcase',
               to: '/demo',
+            },
+            {
+              label: 'Changelog',
+              to: '/docs/changelog',
             },
           ],
         },

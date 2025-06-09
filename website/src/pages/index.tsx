@@ -24,12 +24,13 @@ import {
 import Select from 'react-select';
 import Slider from 'react-slider';
 import '../css/index.css';
+import { CustomStylesQB } from './_CustomStylesQB';
+import * as rtl from './_rtl';
 import { formatMap, initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 import { musicalInstruments } from './demo/_constants/musicalInstruments';
-import { getFormatQueryString, getExportDisplayLanguage } from './demo/_constants/utils';
+import { getExportDisplayLanguage, getFormatQueryString } from './demo/_constants/utils';
 import styles from './index.module.css';
-import { CustomStylesQB } from './_CustomStylesQB';
 
 const datePickerFields = fields.filter(f => f.name === 'birthdate');
 const initialDatePickerQuery: RuleGroupType = {
@@ -212,7 +213,7 @@ const LandingPage = () => {
               <CodeBlock
                 className={`${styles.wsPreWrap} ${styles.scrollVert200}`}
                 language={getExportDisplayLanguage(exportFormat)}>
-                {getFormatQueryString(query, { format: exportFormat, valueProcessor })}
+                {getFormatQueryString(query, { format: exportFormat, valueProcessor, fields })}
               </CodeBlock>
             </div>
             <div>
@@ -284,6 +285,25 @@ const LandingPage = () => {
                 <Link href="/docs/styling/classnames">Documentation</Link>
                 <Link href="/docs/styling/overview">Tips</Link>
               </div>
+            </div>
+            <div>
+              <h2>Translatable / RTL support</h2>
+              <p>
+                Easily <Link href="/docs/components/querybuilder#translations">translate</Link> and
+                adapt your layout for any language.
+              </p>
+            </div>
+            <div dir="rtl">
+              <QueryBuilder
+                fields={rtl.fields}
+                query={query}
+                onQueryChange={setQuery}
+                operators={rtl.operators}
+                combinators={rtl.combinators}
+                translations={rtl.translations}
+                showCloneButtons
+                showNotToggle
+              />
             </div>
           </div>
         </QueryBuilderContext.Provider>
