@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
+import { useFields } from '../hooks';
 import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
@@ -11,7 +12,6 @@ import type {
   FullOption,
   FullOptionList,
   FullOptionMap,
-  FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
   MatchModeOptions,
@@ -31,12 +31,7 @@ import {
   getValueSourcesUtil,
   isFlexibleOptionGroupArray,
   joinWith,
-  objectKeys,
-  toFullOption,
   toFullOptionList,
-  toFullOptionMap,
-  uniqByIdentifier,
-  uniqOptGroups,
   uniqOptList,
 } from '../utils';
 
@@ -119,7 +114,7 @@ export const useQueryBuilderSetup = <
   const [qbId] = useState(generateID);
 
   const {
-    fields: fieldsPropOriginal,
+    fields: fieldsProp,
     baseField,
     operators: operatorsProp,
     baseOperator,
@@ -167,84 +162,12 @@ export const useQueryBuilderSetup = <
   const { translations } = rqbContext;
 
   // #region Set up `fields`
-  const defaultField = useMemo(
-    () =>
-      ({
-        id: translations.fields.placeholderName,
-        name: translations.fields.placeholderName,
-        value: translations.fields.placeholderName,
-        label: translations.fields.placeholderLabel,
-      }) as FullField,
-    [translations.fields.placeholderLabel, translations.fields.placeholderName]
-  );
-  const fieldsProp = useMemo(
-    () => fieldsPropOriginal ?? ([defaultField] as FlexibleOptionList<F>),
-    [defaultField, fieldsPropOriginal]
-  );
-
-  const fields = useMemo((): F[] | OptionGroup<F>[] => {
-    const flds = (
-      Array.isArray(fieldsProp)
-        ? toFullOptionList(fieldsProp, baseField)
-        : (objectKeys(toFullOptionMap(fieldsProp, baseField)) as unknown as FieldName[])
-            .map(fld => ({ ...fieldsProp[fld], name: fld, value: fld }))
-            .sort((a, b) => a.label.localeCompare(b.label))
-    ) as FullOptionList<F>;
-    if (isFlexibleOptionGroupArray(flds)) {
-      return autoSelectField
-        ? (uniqOptGroups(flds) as FullOptionList<F>)
-        : (uniqOptGroups([
-            {
-              label: translations.fields.placeholderGroupLabel,
-              options: [defaultField],
-            },
-            ...flds,
-          ]) as FullOptionList<F>);
-    } else {
-      return autoSelectField
-        ? (uniqByIdentifier(flds as F[]) as FullOptionList<F>)
-        : (uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>);
-    }
-  }, [
-    autoSelectField,
+  const { fields, fieldMap } = useFields({
+    fields: fieldsProp,
     baseField,
-    defaultField,
-    fieldsProp,
-    translations.fields.placeholderGroupLabel,
-  ]);
-
-  const fieldMap = useMemo(() => {
-    if (!Array.isArray(fieldsProp)) {
-      const fp = toFullOptionMap(fieldsProp, baseField) as FullOptionMap<FullField, FieldName>;
-      return autoSelectField ? fp : { ...fp, [translations.fields.placeholderName]: defaultField };
-    }
-    const fm: Partial<FullOptionRecord<FullField>> = {};
-    if (isFlexibleOptionGroupArray(fields)) {
-      for (const f of fields) {
-        for (const opt of f.options) {
-          fm[(opt.value ?? /* istanbul ignore next */ opt.name) as FieldName] = toFullOption(
-            opt,
-            baseField
-          ) as FullField;
-        }
-      }
-    } else {
-      for (const f of fields) {
-        fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(
-          f,
-          baseField
-        ) as FullField;
-      }
-    }
-    return fm;
-  }, [
     autoSelectField,
-    baseField,
-    defaultField,
-    fields,
-    fieldsProp,
-    translations.fields.placeholderName,
-  ]);
+    translations,
+  });
   // #endregion
 
   const combinators = useMemo(
