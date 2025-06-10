@@ -21,7 +21,8 @@ $rqb-dnd-drop-indicator-defaults: (
 );
 
 // #region Basic aesthetic
-$rqb-background-color: #004bb733 !default;
+$rqb-base-color: #004bb8 !default;
+$rqb-background-color: color-mix(in srgb, transparent, $rqb-base-color 20%) !default;
 $rqb-border-color: #8081a2 !default;
 $rqb-border-style: solid !default;
 $rqb-border-radius: 0.25rem !default;

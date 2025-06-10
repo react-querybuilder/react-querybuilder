@@ -216,22 +216,24 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
         ruleOrGroup={rg.ruleGroup}
         schema={rg.schema}
       />
-      <AddGroupActionControlElement
-        key={TestID.addGroup}
-        testID={TestID.addGroup}
-        label={rg.translations.addGroup.label}
-        title={rg.translations.addGroup.title}
-        className={rg.classNames.addGroup}
-        handleOnClick={rg.addGroup}
-        rules={rg.ruleGroup.rules}
-        level={rg.path.length}
-        path={rg.path}
-        disabled={rg.disabled}
-        context={rg.context}
-        validation={rg.validationResult}
-        ruleOrGroup={rg.ruleGroup}
-        schema={rg.schema}
-      />
+      {rg.schema.maxLevels > rg.path.length && (
+        <AddGroupActionControlElement
+          key={TestID.addGroup}
+          testID={TestID.addGroup}
+          label={rg.translations.addGroup.label}
+          title={rg.translations.addGroup.title}
+          className={rg.classNames.addGroup}
+          handleOnClick={rg.addGroup}
+          rules={rg.ruleGroup.rules}
+          level={rg.path.length}
+          path={rg.path}
+          disabled={rg.disabled}
+          context={rg.context}
+          validation={rg.validationResult}
+          ruleOrGroup={rg.ruleGroup}
+          schema={rg.schema}
+        />
+      )}
       {rg.schema.showCloneButtons && rg.path.length > 0 && (
         <CloneGroupActionControlElement
           key={TestID.cloneGroup}

@@ -115,6 +115,7 @@ const ruleSchema = {
   getRuleClassname: () => '',
   showCloneButtons: false,
   validationMap: {},
+  maxLevels: Infinity,
 } satisfies Partial<Schema<FullOption, string>>;
 
 const ruleActions = {

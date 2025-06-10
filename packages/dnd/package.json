@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/dnd",
   "description": "Drag-and-drop-enabled version of react-querybuilder",
-  "version": "8.7.0",
+  "version": "8.7.1",
   "publishConfig": {
     "access": "public"
   },
@@ -54,9 +54,9 @@
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
-    "@types/node": "^22.15.18",
-    "@types/react": "^19.1.4",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@types/node": "^22.15.30",
+    "@types/react": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.1",
     "react": "^19.1.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
@@ -64,8 +64,8 @@
     "react-dnd-test-utils": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^19.1.0",
-    "react-querybuilder": "8.7.0",
-    "rollup-plugin-visualizer": "^5.14.0",
+    "react-querybuilder": "8.7.1",
+    "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   },
@@ -74,7 +74,7 @@
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
     "react-dnd-touch-backend": ">=14.0.0",
-    "react-querybuilder": "8.7.0"
+    "react-querybuilder": "8.7.1"
   },
   "peerDependenciesMeta": {
     "react-dnd-html5-backend": {

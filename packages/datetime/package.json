@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/datetime",
   "description": "Date/time features for react-querybuilder",
-  "version": "8.7.0",
+  "version": "8.7.1",
   "publishConfig": {
     "access": "public"
   },
@@ -87,24 +87,24 @@
   },
   "devDependencies": {
     "@date-fns/tz": "^1.2.0",
-    "@electric-sql/pglite": "^0.3.1",
+    "@electric-sql/pglite": "^0.3.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "14.6.1",
+    "@testing-library/user-event": "14.5.2",
     "@types/luxon": "^3.6.2",
-    "@types/react": "^19.1.4",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@types/react": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.6",
     "luxon": "^3.6.1",
     "mongodb-memory-server-core": "^10.1.4",
-    "mongoose": "^8.14.3",
+    "mongoose": "^8.15.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-querybuilder": "8.7.0",
-    "rollup-plugin-visualizer": "^5.14.0",
+    "react-querybuilder": "8.7.1",
+    "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   },
@@ -113,7 +113,7 @@
     "dayjs": "^1.11.13",
     "luxon": "^3.5.0",
     "react": ">=18",
-    "react-querybuilder": "8.7.0"
+    "react-querybuilder": "8.7.1"
   },
   "peerDependenciesMeta": {
     "date-fns": {

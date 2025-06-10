@@ -38,6 +38,7 @@ $rqb-internal_dnd-drop-indicator-width: prefer-new-var(
   /* #endregion */
 
   /* #region Basic aesthetic */
+  --#{$rqb-var-prefix}base-color: #{$rqb-base-color};
   --#{$rqb-var-prefix}background-color: #{$rqb-background-color};
   --#{$rqb-var-prefix}border-color: #{$rqb-border-color};
   --#{$rqb-var-prefix}border-style: #{$rqb-border-style};

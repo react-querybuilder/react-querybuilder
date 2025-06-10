@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/drizzle",
   "description": "Drizzle ORM integration for React Query Builder",
-  "version": "8.7.0",
+  "version": "8.7.1",
   "publishConfig": {
     "access": "public"
   },
@@ -46,19 +46,19 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.1",
-    "@types/react": "^19.1.4",
-    "@vitejs/plugin-react": "^4.4.1",
-    "drizzle-orm": "^0.43.1",
+    "@electric-sql/pglite": "^0.3.3",
+    "@types/react": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.1",
+    "drizzle-orm": "^0.44.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-querybuilder": "8.7.0",
-    "rollup-plugin-visualizer": "^5.14.0",
+    "react-querybuilder": "8.7.1",
+    "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
-    "react-querybuilder": "8.7.0"
+    "react-querybuilder": "8.7.1"
   }
 }

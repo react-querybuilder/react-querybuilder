@@ -1,12 +1,12 @@
 {
   "dependencies": {
     "@popperjs/core": "^2.11.5",
-    "@react-querybuilder/bootstrap": "8.7.0",
+    "@react-querybuilder/bootstrap": "8.7.1",
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.7.0"
+    "react-querybuilder": "8.7.1"
   },
   "description": "React Query Builder Bootstrap Example",
   "devDependencies": {

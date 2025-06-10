@@ -634,6 +634,7 @@ export interface Schema<F extends FullField, O extends string> {
   parseNumbers: ParseNumbersPropConfig;
   disabledPaths: Path[];
   suppressStandardClassnames: boolean;
+  maxLevels: number;
 }
 
 /**
@@ -1258,6 +1259,11 @@ export type QueryBuilderProps<
        * and event-based classes for validation, drag-and-drop, etc.
        */
       suppressStandardClassnames?: boolean;
+      /**
+       * Maximum number of levels deep the query is allowed to go. The minimum is 1; values
+       * less than 1 will be ignored.
+       */
+      maxLevels?: number;
       /**
        * Container for custom props that are passed to all components.
        */

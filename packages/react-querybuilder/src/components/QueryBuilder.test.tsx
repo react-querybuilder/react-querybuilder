@@ -50,6 +50,8 @@ import {
 } from '../utils';
 import { ActionElement } from './ActionElement';
 import { QueryBuilder } from './QueryBuilder';
+import type { UseRuleGroup } from './RuleGroup';
+import { RuleGroupHeaderComponents } from './RuleGroup';
 import { waitABeat } from './testUtils';
 import { ValueEditor, useValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
@@ -2955,6 +2957,76 @@ describe('value source field', () => {
     await user.click(screen.getByTestId(TestID.addRule));
     await user.selectOptions(screen.getByTestId(TestID.fields), 'f5');
     expect(screen.getByTestId(TestID.valueSourceSelector)).toHaveValue('field');
+  });
+});
+
+describe('max levels', () => {
+  it('respects maxLevels prop', () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        maxLevels={2}
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            {
+              combinator: 'and',
+              rules: [
+                {
+                  combinator: 'and',
+                  rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
+                },
+              ],
+            },
+          ],
+        }}
+      />
+    );
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(3);
+    expect(screen.getAllByTestId(TestID.addGroup)).toHaveLength(2);
+    expect(onQueryChange).toHaveBeenCalledTimes(0);
+  });
+  it('respects maxLevels prop within API', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const ruleGroupHeaderElements = (props: UseRuleGroup) => {
+      return (
+        <>
+          <RuleGroupHeaderComponents {...props} />
+          <button
+            type="button"
+            onClick={() => props.actions.onGroupAdd({ combinator: 'and', rules: [] }, props.path)}>
+            API Add Group
+          </button>
+        </>
+      );
+    };
+    render(
+      <QueryBuilder
+        maxLevels={2}
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+        controlElements={{ ruleGroupHeaderElements }}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            {
+              combinator: 'and',
+              rules: [
+                {
+                  combinator: 'and',
+                  rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
+                },
+              ],
+            },
+          ],
+        }}
+      />
+    );
+    await user.click(screen.getAllByText('API Add Group').at(-1)!);
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(3);
+    expect(onQueryChange).toHaveBeenCalledTimes(0);
   });
 });
 
