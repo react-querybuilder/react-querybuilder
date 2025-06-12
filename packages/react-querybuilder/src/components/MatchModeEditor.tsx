@@ -4,6 +4,7 @@ import type { FullField, MatchMode, MatchModeEditorProps, Schema } from '../type
 import { parseNumber } from '../utils';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
+
 /**
  * Default `matchModeEditor` component used by {@link QueryBuilder}.
  *
