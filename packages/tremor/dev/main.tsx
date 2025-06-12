@@ -11,7 +11,12 @@ const App = () => {
   return (
     <DevLayout {...devApp}>
       <QueryBuilderTremor
-        controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
+        controlClassnames={{
+          fields: 'w-max',
+          operators: 'w-max',
+          combinators: 'w-max',
+          matchMode: 'w-max',
+        }}>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"

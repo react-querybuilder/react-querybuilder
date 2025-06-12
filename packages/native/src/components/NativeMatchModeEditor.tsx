@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import type { FullField, MatchMode, MatchModeSelectorProps, Schema } from '../types';
-import { parseNumber } from '../utils';
+import { TextInput } from 'react-native';
+import type { MatchMode } from 'react-querybuilder';
+import { parseNumber } from 'react-querybuilder';
+import type { MatchModeEditorNativeProps } from '../types';
 
 /**
- * Default `matchModeSelector` component used by {@link QueryBuilder}.
+ * Default `matchModeEditor` component used by {@link QueryBuilder}.
  *
  * @group Components
  */
-export const MatchModeSelector = (allProps: MatchModeSelectorProps): React.JSX.Element | null => {
+export const NativeMatchModeEditor = (
+  allProps: MatchModeEditorNativeProps
+): React.JSX.Element | null => {
   const {
     match,
     options,
     handleOnChange,
-    title,
     className,
     disabled,
-    testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     ...propsForValueSelector
   } = allProps;
@@ -40,28 +42,21 @@ export const MatchModeSelector = (allProps: MatchModeSelectorProps): React.JSX.E
     <React.Fragment>
       <SelectorComponent
         {...propsForValueSelector}
-        schema={allProps.schema as unknown as Schema<FullField, string>}
-        testID={testID}
-        className={className}
-        title={title}
         handleOnChange={handleChange}
+        className={className}
         disabled={disabled}
         value={mode}
         options={options}
-        multiple={false}
         listsAsArrays={false}
       />
       {['atleast', 'atmost', 'exactly'].includes(matchModeLC) && (
-        <input
-          data-testid={testID}
-          type="number"
-          // TODO: Implement `matchThresholdPlaceholderText`?
+        <TextInput
+          // style={styles.value}
+          inputMode="decimal"
           // placeholder={placeHolderText}
-          value={thresholdNum}
-          title={title}
-          className={className}
-          disabled={disabled}
-          onChange={e => handleChange(parseNumber(e.target.value, { parseNumbers: true }))}
+          value={`${thresholdNum}`}
+          // TODO: disabled={disabled}
+          onChangeText={v => handleChange(parseNumber(v, { parseNumbers: true }))}
         />
       )}
     </React.Fragment>

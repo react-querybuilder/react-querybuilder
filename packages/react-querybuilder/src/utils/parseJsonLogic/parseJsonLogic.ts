@@ -246,11 +246,15 @@ function parseJsonLogic(
       const [{ var: field }, operation] = (logic as any)[match.mode];
       const matcher = processLogic(operation);
 
-      // TODO: Support operations that result in groups
       // TODO: Support operations that evaluate array member properties
-      if (!matcher || isRuleGroup(matcher) || matcher.field !== '') return false;
+      if (!matcher) return false;
 
-      rule = { ...matcher, field, match };
+      rule = {
+        field,
+        operator: '=',
+        match,
+        value: isRuleGroup(matcher) ? matcher : { combinator: 'and', rules: [matcher] },
+      };
     } else if (isJsonLogicBetweenExclusive(logic) && isRQBJsonLogicVar(logic['<'][1])) {
       field = logic['<'][1].var;
       const values = [logic['<'][0], logic['<'][2]];

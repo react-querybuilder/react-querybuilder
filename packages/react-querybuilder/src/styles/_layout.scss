@@ -38,6 +38,17 @@
       gap: var(--#{$rqb-var-prefix}spacing);
       align-items: baseline;
     }
+
+    // TODO: improve this selector
+    &:has(.ruleGroup-header) {
+      flex-wrap: wrap;
+      padding: var(--#{$rqb-var-prefix}spacing);
+      border-width: var(--#{$rqb-var-prefix}border-width);
+
+      .ruleGroup-body {
+        flex-basis: 100%;
+      }
+    }
   }
 
   .betweenRules {
@@ -111,6 +122,7 @@
     }
   }
 
+  .rule:has(.ruleGroup-header),
   .ruleGroup .ruleGroup {
     &::before,
     &::after {

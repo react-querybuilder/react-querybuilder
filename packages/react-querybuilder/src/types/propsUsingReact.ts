@@ -37,7 +37,12 @@ import type {
 } from './options';
 import type { Classnames, CommonRuleSubComponentProps, QueryActions } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
-import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
+import type {
+  GenericizeRuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleOrGroupArray,
+} from './ruleGroupsIC';
 import type { SetNonNullable } from './type-fest';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
 
@@ -146,16 +151,17 @@ export interface FieldSelectorProps<F extends FullField = FullField>
 }
 
 /**
- * Props for `matchModeSelector` components.
+ * Props for `matchModeEditor` components.
  *
  * @group Props
  */
-export interface MatchModeSelectorProps
+export interface MatchModeEditorProps
   extends BaseSelectorProps<FullOption>,
     CommonRuleSubComponentProps {
   match: MatchConfig;
   selectorComponent?: ComponentType<ValueSelectorProps>;
-  classNames: { match: string; matchThreshold: string };
+  numericEditorComponent?: ComponentType<ValueEditorProps>;
+  classNames: { matchMode: string; matchThreshold: string };
   options: FullOptionList<FullOption<MatchMode>>;
   field: string;
   fieldData: FullField;
@@ -250,7 +256,7 @@ export interface Translations {
   fields: TranslationWithPlaceholders;
   operators: TranslationWithPlaceholders;
   values: TranslationWithPlaceholders;
-  matchModes: Translation;
+  matchMode: Translation;
   matchThreshold: Translation;
   value: Translation;
   removeRule: TranslationWithLabel;
@@ -510,9 +516,9 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
   /**
    * Selects the `match` property for the current rule.
    *
-   * @default ValueSelector
+   * @default MatchModeEditor
    */
-  matchModeSelector: ComponentType<MatchModeSelectorProps> | null;
+  matchModeEditor: ComponentType<MatchModeEditorProps> | null;
   /**
    * Toggles the `not` property of the current group between `true` and `false`.
    *
@@ -615,6 +621,10 @@ export interface Schema<F extends FullField, O extends string> {
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
   getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
+  getSubQueryBuilderProps(
+    field: GetOptionIdentifierType<F>,
+    misc: { fieldData: F }
+  ): QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>;
   getRuleClassname(rule: RuleType, misc: { fieldData: F }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   accessibleDescriptionGenerator: AccessibleDescriptionGenerator;
@@ -981,6 +991,15 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         misc: { fieldData: F }
       ): boolean | MatchMode[] | FlexibleOption<MatchMode>[];
+      /**
+       * This function should return any props that a subquery (see {@link MatchMode})
+       * should override from the props provided to this query builder. Note that certain
+       * props like `query`, `onQueryChange`, and `enableDragAndDrop` will be ignored.
+       */
+      getSubQueryBuilderProps?(
+        field: GetOptionIdentifierType<F>,
+        misc: { fieldData: F }
+      ): QueryBuilderProps<GenericizeRuleGroupType<RG>, FullOption, FullOption, FullOption>;
       /**
        * The return value of this function will be used to apply classnames to the
        * outer `<div>` of the given {@link Rule}.

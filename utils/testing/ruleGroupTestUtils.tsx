@@ -140,6 +140,7 @@ const ruleGroupSchema = {
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getMatchModes: () => [],
+  getSubQueryBuilderProps: () => ({}),
   getValueSources: () => ['value'],
   getValues: () => [],
   getRuleClassname: () => '',

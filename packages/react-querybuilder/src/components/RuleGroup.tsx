@@ -55,6 +55,19 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
     const shiftGroupUp = useStopEventPropagation(rg.shiftGroupUp);
     const shiftGroupDown = useStopEventPropagation(rg.shiftGroupDown);
 
+    const actions = useMemo(
+      () => ({
+        addRule,
+        addGroup,
+        cloneGroup,
+        toggleLockGroup,
+        removeGroup,
+        shiftGroupUp,
+        shiftGroupDown,
+      }),
+      [addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup, shiftGroupUp, shiftGroupDown]
+    );
+
     return (
       <div
         ref={rg.previewRef}
@@ -69,25 +82,13 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         <div ref={rg.dropRef} className={rg.classNames.header}>
           <RuleGroupHeaderElements
             {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])}
-            addRule={addRule}
-            addGroup={addGroup}
-            cloneGroup={cloneGroup}
-            toggleLockGroup={toggleLockGroup}
-            removeGroup={removeGroup}
-            shiftGroupUp={shiftGroupUp}
-            shiftGroupDown={shiftGroupDown}
+            {...actions}
           />
         </div>
         <div className={rg.classNames.body}>
           <RuleGroupBodyElements
             {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])}
-            addRule={addRule}
-            addGroup={addGroup}
-            cloneGroup={cloneGroup}
-            toggleLockGroup={toggleLockGroup}
-            removeGroup={removeGroup}
-            shiftGroupUp={shiftGroupUp}
-            shiftGroupDown={shiftGroupDown}
+            {...actions}
           />
         </div>
       </div>
@@ -119,14 +120,27 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
     },
   } = rg;
 
+  const commonSubcomponentProps = useMemo(
+    () => ({
+      level: rg.path.length,
+      path: rg.path,
+      disabled: rg.disabled,
+      context: rg.context,
+      validation: rg.validationResult,
+      schema: rg.schema,
+      ruleOrGroup: rg.ruleGroup,
+      ruleGroup: rg.ruleGroup,
+    }),
+    [rg.path, rg.disabled, rg.context, rg.validationResult, rg.schema, rg.ruleGroup]
+  );
+
   return (
     <Fragment>
       {rg.schema.showShiftActions && rg.path.length > 0 && (
         <ShiftActionsControlElement
           key={TestID.shiftActions}
+          {...commonSubcomponentProps}
           testID={TestID.shiftActions}
-          level={rg.path.length}
-          path={rg.path}
           titles={{
             shiftUp: rg.translations.shiftActionUp.title,
             shiftDown: rg.translations.shiftActionDown.title,
@@ -136,37 +150,27 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
             shiftDown: rg.translations.shiftActionDown.label,
           }}
           className={rg.classNames.shiftActions}
-          disabled={rg.disabled}
           shiftUp={rg.shiftGroupUp}
           shiftDown={rg.shiftGroupDown}
           shiftUpDisabled={rg.shiftUpDisabled}
           shiftDownDisabled={rg.shiftDownDisabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
-          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
         <DragHandleControlElement
           key={TestID.dragHandle}
+          {...commonSubcomponentProps}
           testID={TestID.dragHandle}
           ref={rg.dragRef}
-          level={rg.path.length}
-          path={rg.path}
           title={rg.translations.dragHandle.title}
           label={rg.translations.dragHandle.label}
           className={rg.classNames.dragHandle}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
-          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
         <CombinatorSelectorControlElement
           key={TestID.combinators}
+          {...commonSubcomponentProps}
           testID={TestID.combinators}
           options={rg.schema.combinators}
           value={rg.combinator}
@@ -174,119 +178,77 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.combinators}
           handleOnChange={rg.onCombinatorChange}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
         />
       )}
       {rg.schema.showNotToggle && (
         <NotToggleControlElement
           key={TestID.notToggle}
+          {...commonSubcomponentProps}
           testID={TestID.notToggle}
           className={rg.classNames.notToggle}
           title={rg.translations.notToggle.title}
           label={rg.translations.notToggle.label}
           checked={rg.ruleGroup.not}
           handleOnChange={rg.onNotToggleChange}
-          level={rg.path.length}
-          disabled={rg.disabled}
-          path={rg.path}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
-          ruleGroup={rg.ruleGroup}
         />
       )}
       <AddRuleActionControlElement
         key={TestID.addRule}
+        {...commonSubcomponentProps}
         testID={TestID.addRule}
         label={rg.translations.addRule.label}
         title={rg.translations.addRule.title}
         className={rg.classNames.addRule}
         handleOnClick={rg.addRule}
         rules={rg.ruleGroup.rules}
-        level={rg.path.length}
-        path={rg.path}
-        disabled={rg.disabled}
-        context={rg.context}
-        validation={rg.validationResult}
-        ruleOrGroup={rg.ruleGroup}
-        schema={rg.schema}
       />
       {rg.schema.maxLevels > rg.path.length && (
         <AddGroupActionControlElement
           key={TestID.addGroup}
+          {...commonSubcomponentProps}
           testID={TestID.addGroup}
           label={rg.translations.addGroup.label}
           title={rg.translations.addGroup.title}
           className={rg.classNames.addGroup}
           handleOnClick={rg.addGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
         />
       )}
       {rg.schema.showCloneButtons && rg.path.length > 0 && (
         <CloneGroupActionControlElement
           key={TestID.cloneGroup}
+          {...commonSubcomponentProps}
           testID={TestID.cloneGroup}
           label={rg.translations.cloneRuleGroup.label}
           title={rg.translations.cloneRuleGroup.title}
           className={rg.classNames.cloneGroup}
           handleOnClick={rg.cloneGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
         />
       )}
       {rg.schema.showLockButtons && (
         <LockGroupActionControlElement
           key={TestID.lockGroup}
+          {...commonSubcomponentProps}
           testID={TestID.lockGroup}
           label={rg.translations.lockGroup.label}
           title={rg.translations.lockGroup.title}
           className={rg.classNames.lockGroup}
           handleOnClick={rg.toggleLockGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
           disabledTranslation={rg.parentDisabled ? undefined : rg.translations.lockGroupDisabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
         />
       )}
       {rg.path.length > 0 && (
         <RemoveGroupActionControlElement
           key={TestID.removeGroup}
+          {...commonSubcomponentProps}
           testID={TestID.removeGroup}
           label={rg.translations.removeGroup.label}
           title={rg.translations.removeGroup.title}
           className={rg.classNames.removeGroup}
           handleOnClick={rg.removeGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
         />
       )}
     </Fragment>

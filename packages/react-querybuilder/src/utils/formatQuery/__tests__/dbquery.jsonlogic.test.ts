@@ -1,4 +1,5 @@
 import { add_operation, apply } from 'json-logic-js';
+import type { DefaultRuleGroupType, MatchConfig } from '../../../types';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { dbTests, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
@@ -43,198 +44,71 @@ describe('JsonLogic', () => {
 
   // JsonLogic-specific tests
   describe('match modes', () => {
-    testJsonLogic(
-      '"all"',
-      {
-        query: {
-          combinator: 'and',
-          rules: [{ field: 'nicknames', operator: 'contains', value: 'S', match: { mode: 'all' } }],
+    const genQuery = (match: MatchConfig): DefaultRuleGroupType => ({
+      combinator: 'and',
+      rules: [
+        {
+          field: 'nicknames',
+          operator: '=',
+          value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+          match,
         },
-        expectedResult: augmentedSuperUsers.filter(u => u.nicknames.every(n => n.includes('S'))),
-      },
-      augmentedSuperUsers
-    );
-    testJsonLogic(
-      '"none"',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', match: { mode: 'none' } },
-          ],
+      ],
+    });
+
+    const runTest = (
+      name: string,
+      matchConfig: MatchConfig,
+      filterFn: (u: (typeof augmentedSuperUsers)[number]) => boolean
+    ) => {
+      testJsonLogic(
+        name,
+        {
+          query: genQuery(matchConfig),
+          expectedResult: augmentedSuperUsers.filter(u => filterFn(u)),
         },
-        expectedResult: augmentedSuperUsers.filter(u => u.nicknames.every(n => !n.includes('S'))),
-      },
-      augmentedSuperUsers
+        augmentedSuperUsers
+      );
+    };
+
+    runTest('"all"', { mode: 'all' }, u => u.nicknames.every(n => n.includes('S')));
+    runTest('"none"', { mode: 'none' }, u => u.nicknames.every(n => !n.includes('S')));
+    runTest('"some"', { mode: 'some' }, u => u.nicknames.some(n => n.includes('S')));
+    runTest('"none" as atMost 0', { mode: 'atMost', threshold: 0 }, u =>
+      u.nicknames.every(n => !n.includes('S'))
     );
-    testJsonLogic(
-      '"some"',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            { field: 'nicknames', operator: 'contains', value: 'S', match: { mode: 'some' } },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(u => u.nicknames.some(n => n.includes('S'))),
-      },
-      augmentedSuperUsers
+    runTest('"some" as atLeast 1', { mode: 'atLeast', threshold: 1 }, u =>
+      u.nicknames.some(n => n.includes('S'))
     );
-    testJsonLogic(
-      '"none" as atMost 0',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'atMost', threshold: 0 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(u => u.nicknames.every(n => !n.includes('S'))),
-      },
-      augmentedSuperUsers
-    );
-    testJsonLogic(
-      '"some" as atLeast 1',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'atLeast', threshold: 1 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(u => u.nicknames.some(n => n.includes('S'))),
-      },
-      augmentedSuperUsers
-    );
-    testJsonLogic(
+    runTest(
       '"atLeast" integer',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'atLeast', threshold: 2 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(
-          u => u.nicknames.filter(n => n.includes('S')).length >= 2
-        ),
-      },
-      augmentedSuperUsers
+      { mode: 'atLeast', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length >= 2
     );
-    testJsonLogic(
+    runTest(
       '"atLeast" decimal',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'atLeast', threshold: 0.5 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(
-          u => u.nicknames.filter(n => n.includes('S')).length >= u.nicknames.length / 2
-        ),
-      },
-      augmentedSuperUsers
+      { mode: 'atLeast', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length >= u.nicknames.length / 2
     );
-    testJsonLogic(
+    runTest(
       '"atMost" integer',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'atMost', threshold: 2 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(
-          u => u.nicknames.filter(n => n.includes('S')).length <= 2
-        ),
-      },
-      augmentedSuperUsers
+      { mode: 'atMost', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length <= 2
     );
-    testJsonLogic(
+    runTest(
       '"atMost" decimal',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'atMost', threshold: 0.5 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(
-          u => u.nicknames.filter(n => n.includes('S')).length <= u.nicknames.length / 2
-        ),
-      },
-      augmentedSuperUsers
+      { mode: 'atMost', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length <= u.nicknames.length / 2
     );
-    testJsonLogic(
+    runTest(
       '"exactly" integer',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'exactly', threshold: 2 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(
-          u => u.nicknames.filter(n => n.includes('S')).length === 2
-        ),
-      },
-      augmentedSuperUsers
+      { mode: 'exactly', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length === 2
     );
-    testJsonLogic(
+    runTest(
       '"exactly" decimal',
-      {
-        query: {
-          combinator: 'and',
-          rules: [
-            {
-              field: 'nicknames',
-              operator: 'contains',
-              value: 'S',
-              match: { mode: 'exactly', threshold: 0.5 },
-            },
-          ],
-        },
-        expectedResult: augmentedSuperUsers.filter(
-          u => u.nicknames.filter(n => n.includes('S')).length === u.nicknames.length / 2
-        ),
-      },
-      augmentedSuperUsers
+      { mode: 'exactly', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length === u.nicknames.length / 2
     );
   });
 });

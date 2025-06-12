@@ -32,6 +32,7 @@ import {
   add,
   findPath,
   generateAccessibleDescription,
+  getFirstOption,
   group,
   isRuleGroup,
   isRuleGroupTypeIC,
@@ -90,6 +91,7 @@ export function useQueryBuilderSchema<
   setup: UseQueryBuilderSetup<RG, F, O, C>
 ): UseQueryBuilderSchema<RG, F, O, C> {
   type R = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
+  type FieldName = GetOptionIdentifierType<F>;
 
   const {
     query: queryProp,
@@ -135,6 +137,7 @@ export function useQueryBuilderSchema<
     getOperatorsMain,
     getMatchModesMain,
     getRuleDefaultOperator,
+    getSubQueryBuilderPropsMain,
     getValueEditorTypeMain,
     getValueSourcesMain,
     getValuesMain,
@@ -365,8 +368,35 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
         return;
       }
-      const newQuery = update(queryLocal, prop, value, path, {
-        resetOnFieldChange,
+
+      let rofc = resetOnFieldChange;
+
+      const ruleOrGroup = findPath(path, queryLocal);
+      let intermediateQuery = queryLocal;
+      if (
+        !!ruleOrGroup &&
+        prop === 'field' &&
+        typeof ruleOrGroup !== 'string' &&
+        !isRuleGroup(ruleOrGroup)
+      ) {
+        const fieldDataFrom = fieldMap[ruleOrGroup.field as FieldName] as F;
+        const fieldDataTo = fieldMap[value as FieldName] as F;
+
+        const matchMode =
+          ruleOrGroup.match ?? getFirstOption(getMatchModesMain(value, { fieldData: fieldDataTo }));
+        if (matchMode) {
+          intermediateQuery = update(queryLocal, 'match', { mode: matchMode, threshold: 1 }, path);
+        }
+        if (
+          getMatchModesMain(ruleOrGroup.field as FieldName, { fieldData: fieldDataFrom }).length > 0
+        ) {
+          // Force `resetOnFieldChange: true` when field is updated from one that has match modes
+          rofc = true;
+        }
+      }
+
+      const newQuery = update(intermediateQuery, prop, value, path, {
+        resetOnFieldChange: rofc,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
         getValueSources: getValueSourcesMain as (field: string) => ValueSources,
@@ -377,6 +407,8 @@ export function useQueryBuilderSchema<
     },
     [
       dispatchQuery,
+      fieldMap,
+      getMatchModesMain,
       getRuleDefaultOperator,
       getRuleDefaultValue,
       getValueSourcesMain,
@@ -607,6 +639,7 @@ export function useQueryBuilderSchema<
       getMatchModes: getMatchModesMain,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderProps: getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorType: getValueEditorTypeMain,
       getValues: getValuesMain,
@@ -646,6 +679,7 @@ export function useQueryBuilderSchema<
       getQuery,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorTypeMain,
       getValuesMain,

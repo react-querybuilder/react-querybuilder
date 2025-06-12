@@ -7,7 +7,7 @@ import type {
   FullOperator,
   FullOption,
   InlineCombinatorProps,
-  MatchModeSelectorProps,
+  MatchModeEditorProps,
   NotToggleProps,
   QueryBuilderProps,
   RuleGroupProps,
@@ -129,7 +129,7 @@ export type ValueEditorNativeProps = ValueEditorProps &
 /**
  * @group Props
  */
-export type MatchModeSelectorNativeProps = MatchModeSelectorProps &
+export type MatchModeEditorNativeProps = MatchModeEditorProps &
   WithSchemaNative & {
     selectorComponent?: ComponentType<ValueSelectorNativeProps>;
   };

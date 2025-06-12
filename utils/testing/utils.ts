@@ -31,6 +31,7 @@ export const basicSchema: Schema<FullField, string> = {
   getValues: admonish('getValues'),
   getRuleClassname: admonish('getRuleClassname'),
   getRuleGroupClassname: admonish('getRuleGroupClassname'),
+  getSubQueryBuilderProps: admonish('getSubQueryBuilderProps'),
   accessibleDescriptionGenerator: admonish('accessibleDescriptionGenerator'),
   showCombinatorsBetweenRules: false,
   showNotToggle: false,

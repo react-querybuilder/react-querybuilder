@@ -1,6 +1,13 @@
-import type { JsonLogicVar, RQBJsonLogic, RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  JsonLogicVar,
+  RQBJsonLogic,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
+import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
@@ -19,8 +26,9 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  */
 export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   { field, operator, value, valueSource, match },
-  { parseNumbers, preserveValueOrder } = {}
+  options = {}
 ): RQBJsonLogic => {
+  const { parseNumbers, preserveValueOrder } = options;
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
   const fieldOrNumberRenderer = (v: string) =>
@@ -40,6 +48,8 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ? 'none'
         : matchModeLC;
 
+  if (matchModeCoerced && !isRuleGroup(value)) return false;
+
   switch (matchModeCoerced) {
     case 'all':
     case 'none':
@@ -47,10 +57,9 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
       return {
         [matchModeCoerced]: [
           { var: field },
-          defaultRuleProcessorJsonLogic(
-            { field: '', operator, value, valueSource },
-            { parseNumbers, preserveValueOrder }
-          ),
+          value.rules.length === 1 && !isRuleGroup(value.rules[0])
+            ? defaultRuleProcessorJsonLogic(value.rules[0], options)
+            : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
         ],
       } as RQBJsonLogic;
 
@@ -67,10 +76,9 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
           {
             filter: [
               { var: field },
-              defaultRuleProcessorJsonLogic(
-                { field: '', operator, value, valueSource },
-                { parseNumbers, preserveValueOrder }
-              ),
+              value.rules.length === 1 && !isRuleGroup(value.rules[0])
+                ? defaultRuleProcessorJsonLogic(value.rules[0], options)
+                : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
             ],
           },
           { '+': [1, { var: 'accumulator' }] },
