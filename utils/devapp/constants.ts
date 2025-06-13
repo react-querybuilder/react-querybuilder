@@ -197,9 +197,14 @@ export const fields: Field[] = [
     label: 'Also plays',
     valueEditorType: 'multiselect',
     values: musicalInstruments,
+    // defaultValue: { id: generateID(), combinator: 'and', rules: [] },
     defaultValue: 'More cowbell',
     operators: defaultOperators.filter(op => op.name === 'in'),
     matchModes: true,
+    subproperties: [
+      { name: 'instrumentClass', label: 'Instrument Class' },
+      { name: 'instrumentName', label: 'Instrument Name' },
+    ],
   },
   {
     name: 'gender',

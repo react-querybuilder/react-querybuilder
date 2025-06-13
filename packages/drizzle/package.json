@@ -47,8 +47,8 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.3",
-    "@types/react": "^19.1.6",
-    "@vitejs/plugin-react": "^4.5.1",
+    "@types/react": "^19.1.8",
+    "@vitejs/plugin-react": "^4.5.2",
     "drizzle-orm": "^0.44.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

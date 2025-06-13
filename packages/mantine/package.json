@@ -51,13 +51,13 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "8.0.2",
-    "@mantine/dates": "8.0.2",
-    "@mantine/hooks": "8.0.2",
+    "@mantine/core": "8.1.0",
+    "@mantine/dates": "8.1.0",
+    "@mantine/hooks": "8.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.1.6",
-    "@vitejs/plugin-react": "^4.5.1",
+    "@types/react": "^19.1.8",
+    "@vitejs/plugin-react": "^4.5.2",
     "dayjs": "^1.11.13",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
