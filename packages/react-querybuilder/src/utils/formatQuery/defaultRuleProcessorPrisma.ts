@@ -3,6 +3,11 @@ import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
 
+const processNumber = <T>(value: unknown, fallback: T, parseNumbers: boolean) =>
+  shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
+    ? Number(parseNumber(value, { parseNumbers: 'strict' }))
+    : fallback;
+
 /**
  * Default rule processor used by {@link formatQuery} for "prisma" format.
  *
@@ -18,11 +23,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
   const operatorLC = operator.toLowerCase();
   switch (operatorLC) {
     case '=':
-      return {
-        [field]: shouldRenderAsNumber(value, parseNumbers)
-          ? parseNumber(value, { parseNumbers: 'strict' })
-          : value,
-      };
+      return { [field]: processNumber(value, value, parseNumbers) };
 
     case '!=':
     case '<':
@@ -32,9 +33,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       const prismaOperator = prismaOperators[operatorLC];
       return {
         [field]: {
-          [prismaOperator]: shouldRenderAsNumber(value, parseNumbers)
-            ? parseNumber(value, { parseNumbers: 'strict' })
-            : value,
+          [prismaOperator]: processNumber(value, value, parseNumbers),
         },
       };
     }
@@ -69,9 +68,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       return {
         [field]: {
           [prismaOperators[operatorLC]]: valueAsArray.map(val =>
-            shouldRenderAsNumber(val, parseNumbers)
-              ? parseNumber(val, { parseNumbers: 'strict' })
-              : val
+            processNumber(val, val, parseNumbers)
           ),
         },
       };
@@ -86,12 +83,8 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = shouldRenderAsNumber(first, true)
-          ? parseNumber(first, { parseNumbers: 'strict' })
-          : NaN;
-        const secondNum = shouldRenderAsNumber(second, true)
-          ? parseNumber(second, { parseNumbers: 'strict' })
-          : NaN;
+        const firstNum = processNumber(first, NaN, true);
+        const secondNum = processNumber(second, NaN, true);
         let firstValue = isNaN(firstNum) ? first : firstNum;
         let secondValue = isNaN(secondNum) ? second : secondNum;
         if (
