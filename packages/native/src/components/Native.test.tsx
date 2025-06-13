@@ -149,7 +149,8 @@ describe('NativeNotToggle', () => {
   it('works', () => {
     const handleOnChange = jest.fn();
     render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
-    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch as any);
     fireEvent(switchEl, 'valueChange', true);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
     fireEvent(switchEl, 'valueChange', false);
@@ -232,7 +233,8 @@ describe('NativeShiftActions', () => {
     // Enabled
     const enabledProps = { ...defaultProps, shiftUp, shiftDown };
     render(<NativeShiftActions {...enabledProps} />);
-    const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button as any);
     await act(() => {
       fireEvent.press(btnsEnabled[0]);
       expect(shiftUp).toHaveBeenCalled();
@@ -399,7 +401,8 @@ describe('NativeValueEditor', () => {
         value={'opt1,opt1'}
       />
     );
-    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput as any);
     for (const i of [0, 1]) {
       fireEvent.changeText(selectors[i], 'opt2');
     }

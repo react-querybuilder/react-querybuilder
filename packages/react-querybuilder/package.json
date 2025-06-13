@@ -111,10 +111,10 @@
     "@types/hoist-non-react-statics": "^3.3.6",
     "@types/jscodeshift": "^17.3.0",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^22.15.30",
-    "@types/react": "^19.1.6",
+    "@types/node": "^24.0.1",
+    "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.5.1",
+    "@vitejs/plugin-react": "^4.5.2",
     "babel-plugin-istanbul": "^7.0.0",
     "drizzle-orm": "^0.44.2",
     "jscodeshift": "^17.3.0",
@@ -129,7 +129,7 @@
     "react-dom": "^19.1.0",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^6.0.3",
-    "sass": "^1.89.1",
+    "sass": "^1.89.2",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.8",
     "sqlite3": "^5.1.7",
@@ -140,7 +140,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "immer": "^10.1.1",
-    "numeric-quantity": "^2.0.1",
+    "numeric-quantity": "^2.1.0",
     "react-redux": "^9.2.0"
   },
   "peerDependencies": {

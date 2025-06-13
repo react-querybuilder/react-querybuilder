@@ -34,7 +34,12 @@ function ReactQueryBuilderDemo_TremorBrowser() {
 
   return (
     <QueryBuilderTremor
-      controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
+      controlClassnames={{
+        fields: 'w-max',
+        operators: 'w-max',
+        combinators: 'w-max',
+        matchMode: 'w-max',
+      }}>
       <Demo variant="tremor" />
     </QueryBuilderTremor>
   );

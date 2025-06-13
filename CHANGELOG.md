@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+#### Added
+
+- Extracted `fields` prop processing logic to new `useFields` hook.
 
 ## [v8.7.1] - 2025-06-09
 
