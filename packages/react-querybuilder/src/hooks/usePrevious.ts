@@ -1,4 +1,3 @@
-/* eslint-disable react-compiler/react-compiler */
 import { useRef } from 'react';
 
 /**

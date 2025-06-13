@@ -6,6 +6,11 @@ import type { ParseNumberMethod } from '../types/index.noReact';
  */
 export interface ParseNumberOptions {
   parseNumbers?: ParseNumberMethod;
+  /**
+   * Generates a `bigint` value if the string represents a valid integer
+   * outside the safe boundaries of the `number` type.
+   */
+  bigIntOnOverflow?: boolean;
 }
 
 /**
@@ -14,8 +19,12 @@ export interface ParseNumberOptions {
  * If that returns `NaN`, the string is returned unchanged. Numeric values are returned
  * as-is regardless of the `parseNumbers` option.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseNumber = (val: any, { parseNumbers }: ParseNumberOptions = {}): any => {
+export const parseNumber = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  val: any,
+  { parseNumbers, bigIntOnOverflow }: ParseNumberOptions = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any => {
   if (!parseNumbers || typeof val === 'bigint' || typeof val === 'number') {
     return val;
   }
@@ -24,13 +33,14 @@ export const parseNumber = (val: any, { parseNumbers }: ParseNumberOptions = {})
     return parseFloat(val);
   }
 
-  const valAsNum =
+  const valAsNum: number | bigint =
     // TODO: Should these options be configurable?
     numericQuantity(val, {
       allowTrailingInvalid: parseNumbers === 'enhanced',
+      bigIntOnOverflow,
       romanNumerals: false,
       round: false,
     });
 
-  return isNaN(valAsNum) ? val : valAsNum;
+  return typeof valAsNum === 'bigint' || !isNaN(valAsNum) ? valAsNum : val;
 };
