@@ -16,4 +16,9 @@ export interface ParserCommonOptions {
    * When true, a unique `id` will be generated for each rule and group in the query.
    */
   generateIDs?: boolean;
+  /**
+   * Generates a `bigint` value if the string represents a valid integer
+   * outside the safe boundaries of the `number` type.
+   */
+  bigIntOnOverflow?: boolean;
 }

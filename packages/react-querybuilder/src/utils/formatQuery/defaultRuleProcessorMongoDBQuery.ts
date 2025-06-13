@@ -3,6 +3,11 @@ import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
 
+const processNumber = <T>(value: unknown, fallback: T, parseNumbers = false) =>
+  shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
+    ? Number(parseNumber(value, { parseNumbers: 'strict' }))
+    : fallback;
+
 /**
  * Default rule processor used by {@link formatQuery} for "mongodb_query" format.
  *
@@ -16,11 +21,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   const valueIsField = valueSource === 'field';
 
   if (operator === '=' && !valueIsField) {
-    return {
-      [field]: shouldRenderAsNumber(value, parseNumbers)
-        ? parseNumber(value, { parseNumbers: 'strict' })
-        : value,
-    };
+    return { [field]: processNumber(value, value, parseNumbers) };
   }
 
   const operatorLC = operator.toLowerCase();
@@ -34,13 +35,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
       const mongoOperator = mongoOperators[operatorLC];
       return valueIsField
         ? { $expr: { [mongoOperator]: [`$${field}`, `$${value}`] } }
-        : {
-            [field]: {
-              [mongoOperator]: shouldRenderAsNumber(value, parseNumbers)
-                ? parseNumber(value, { parseNumbers: 'strict' })
-                : value,
-            },
-          };
+        : { [field]: { [mongoOperator]: processNumber(value, value, parseNumbers) } };
     }
 
     case 'contains':
@@ -91,9 +86,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         : {
             [field]: {
               [mongoOperators[operatorLC]]: valueAsArray.map(val =>
-                shouldRenderAsNumber(val, parseNumbers)
-                  ? parseNumber(val, { parseNumbers: 'strict' })
-                  : val
+                processNumber(val, val, parseNumbers)
               ),
             },
           };
@@ -108,12 +101,8 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = shouldRenderAsNumber(first, true)
-          ? parseNumber(first, { parseNumbers: 'strict' })
-          : NaN;
-        const secondNum = shouldRenderAsNumber(second, true)
-          ? parseNumber(second, { parseNumbers: 'strict' })
-          : NaN;
+        const firstNum = processNumber(first, NaN, true);
+        const secondNum = processNumber(second, NaN, true);
         let firstValue = valueIsField ? first : isNaN(firstNum) ? first : firstNum;
         let secondValue = valueIsField ? second : isNaN(secondNum) ? second : secondNum;
         if (

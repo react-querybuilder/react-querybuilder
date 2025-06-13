@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+#### Added
+
+- New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
+
+#### Fixed
+
+- `parseSQL` maintains precision for large integers by generating a `bigint` instead of a `number` when necessary.
 
 ## [v8.7.1] - 2025-06-09
 
