@@ -39,3 +39,12 @@ it('parses numbers with enhanced parser', () => {
   expect(parseNumber('1', { parseNumbers: 'enhanced' })).toBe(1);
   expect(parseNumber('1abc', { parseNumbers: 'enhanced' })).toBe(1);
 });
+
+it('parses numbers as bigints', () => {
+  expect(parseNumber('9007199254740991', { parseNumbers: true, bigIntOnOverflow: true })).toBe(
+    9_007_199_254_740_991
+  );
+  expect(parseNumber('9007199254740992', { parseNumbers: true, bigIntOnOverflow: true })).toBe(
+    9_007_199_254_740_992n
+  );
+});

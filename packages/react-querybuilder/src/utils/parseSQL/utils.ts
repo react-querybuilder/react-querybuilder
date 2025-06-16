@@ -1,5 +1,6 @@
 import type { DefaultCombinatorNameExtended, DefaultOperatorName } from '../../types/index.noReact';
 import { parseNumber } from '../parseNumber';
+import type { ParseSQLOptions } from './parseSQL';
 import type {
   AndOperator,
   ComparisonOperator,
@@ -72,8 +73,11 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
   return op;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberValue): any => {
+export const evalSQLLiteralValue = (
+  valueObj: SQLLiteralValue | SQLSignedNumberValue,
+  { bigIntOnOverflow }: ParseSQLOptions = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any => {
   if (valueObj.type === 'String') {
     const valueString: string = valueObj.value;
     if (
@@ -89,9 +93,12 @@ export const evalSQLLiteralValue = (valueObj: SQLLiteralValue | SQLSignedNumberV
   } else if (valueObj.type === 'Boolean') {
     return valueObj.value.toLowerCase() === 'true';
   } else if (isSQLSignedNumber(valueObj)) {
-    return parseNumber(`${valueObj.prefix}${valueObj.value.value}`, { parseNumbers: true });
+    return parseNumber(`${valueObj.prefix}${valueObj.value.value}`, {
+      parseNumbers: true,
+      bigIntOnOverflow,
+    });
   }
-  return parseNumber(valueObj.value, { parseNumbers: true });
+  return parseNumber(valueObj.value, { parseNumbers: true, bigIntOnOverflow });
 };
 
 export const generateFlatAndOrList = (
