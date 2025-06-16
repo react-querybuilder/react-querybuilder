@@ -326,6 +326,15 @@ export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> 
       u => (u.powerUpAge ?? 0) >= 10 && (u.powerUpAge ?? 999) <= 30
     ),
   },
+  bigint: {
+    guardAgainstNull: ['powerUpAge'],
+    query: {
+      combinator: 'and',
+      rules: [{ field: 'powerUpAge', operator: '<', value: 20n }],
+    },
+    expectedResult: superUsers.filter(u => (u.powerUpAge ?? 999) < 20n),
+    expectedResultCoercedNull: superUsers.filter(u => u.powerUpAge! < 20n),
+  },
   manipulateValueOrder: {
     guardAgainstNull: ['powerUpAge'],
     skipParameterized: true,
