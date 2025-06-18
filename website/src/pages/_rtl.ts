@@ -1,4 +1,4 @@
-import type { Combinator, Field, Operator, Translations } from 'react-querybuilder';
+import type { Combinator, Field, Operator, Translations } from 'react-querybuilder/debug';
 import { fields as demoFields } from './demo/_constants/fields';
 
 export const combinators: Combinator[] = [

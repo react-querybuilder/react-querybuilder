@@ -13,14 +13,14 @@ import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
+import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder/debug';
 import {
   convertToIC,
   defaultPlaceholderValueName,
   defaultValidator,
   formatQuery,
   QueryBuilder,
-} from 'react-querybuilder';
+} from 'react-querybuilder/debug';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';

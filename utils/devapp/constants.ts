@@ -197,13 +197,19 @@ export const fields: Field[] = [
     label: 'Also plays',
     valueEditorType: 'multiselect',
     values: musicalInstruments,
-    // defaultValue: { id: generateID(), combinator: 'and', rules: [] },
     defaultValue: 'More cowbell',
     operators: defaultOperators.filter(op => op.name === 'in'),
+  },
+  {
+    name: 'tourStops',
+    label: 'Tour stops',
     matchModes: true,
     subproperties: [
-      { name: 'instrumentClass', label: 'Instrument Class' },
-      { name: 'instrumentName', label: 'Instrument Name' },
+      { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
+      { name: 'venue', label: 'Venue' },
+      { name: 'city', label: 'City' },
+      { name: 'state', label: 'State/Province' },
+      { name: 'country', label: 'Country' },
     ],
   },
   {

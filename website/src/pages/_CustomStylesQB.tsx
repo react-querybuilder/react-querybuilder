@@ -3,7 +3,7 @@ import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
-import { QueryBuilder } from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder/debug';
 import { Loading } from './_utils';
 import { initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
