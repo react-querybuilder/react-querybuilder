@@ -1,10 +1,14 @@
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import Link from '@docusaurus/Link';
 import { useColorMode } from '@docusaurus/theme-common';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { createTheme, ThemeProvider } from '@mui/material';
+import Slider from '@mui/material/Slider';
+import { MaterialValueEditor, QueryBuilderMaterial } from '@react-querybuilder/material';
 import CodeBlock from '@theme/CodeBlock';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
-import { forwardRef, StrictMode, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, StrictMode, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import type {
@@ -20,9 +24,9 @@ import {
   getOption,
   QueryBuilder,
   QueryBuilderContext,
+  ValueEditor,
 } from 'react-querybuilder';
 import Select from 'react-select';
-import Slider from 'react-slider';
 import '../css/index.css';
 import { CustomStylesQB } from './_CustomStylesQB';
 import * as rtl from './_rtl';
@@ -43,14 +47,17 @@ const DateButton = forwardRef<HTMLButtonElement>(({ value, onClick }: any, ref) 
     {value} 📅
   </button>
 ));
-const ExtendedValueEditor_DatePicker = (props: ValueEditorProps) => (
-  <DatePicker
-    selected={props.value}
-    onChange={d => props.handleOnChange(d)}
-    customInput={<DateButton />}
-    dateFormat="yyyy-MM-dd"
-  />
-);
+const ExtendedValueEditor_DatePicker = (props: ValueEditorProps) =>
+  props.field === 'birthdate' ? (
+    <DatePicker
+      selected={props.value}
+      onChange={d => props.handleOnChange(d)}
+      customInput={<DateButton />}
+      dateFormat="yyyy-MM-dd"
+    />
+  ) : (
+    <ValueEditor {...props} />
+  );
 
 const selectFields = fields.filter(f => f.name === 'alsoPlays');
 const selectOptions = musicalInstruments.map(og => ({
@@ -72,23 +79,10 @@ const initialSelectQuery: RuleGroupType = {
 };
 const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
-  const [state, setState] = useState(false);
-  const isFirstRender = useRef(true);
 
-  // For some reason simply setting the `key` on the `Select` component
-  // doesn't trigger the dark mode styles on initial render if the user
-  // already has dark mode selected, so this Effect refreshes the component
-  // after a short delay.
-  useEffect(() => {
-    if (isFirstRender.current) {
-      setTimeout(() => setState(true), 1000);
-      isFirstRender.current = false;
-    }
-  }, []);
-
-  return (
+  return props.field === 'alsoPlays' ? (
     <Select
-      key={`${isDarkTheme}-${state}`}
+      key={`${isDarkTheme}`}
       value={props.value}
       isMulti
       onChange={v => props.handleOnChange(v)}
@@ -104,28 +98,19 @@ const ExtendedValueEditor_Select = (props: ValueEditorProps) => {
               ...theme,
               colors: {
                 ...theme.colors,
-                // primary: theme.colors.primary, // "#2684FF",
-                // primary75: theme.colors.primary75, // "#4C9AFF",
-                // primary50: theme.colors.primary50, // "#B2D4FF",
                 primary25: '#768cad', // "#DEEBFF",
                 danger: theme.colors.dangerLight, // "#DE350B",
                 dangerLight: theme.colors.danger, // "#FFBDAD",
                 neutral0: '#222222', // "hsl(0, 0%, 100%)",
-                // neutral5: theme.colors.neutral5, // "hsl(0, 0%, 95%)",
                 neutral10: '#525252', // "hsl(0, 0%, 90%)",
-                // neutral20: theme.colors.neutral20, // "hsl(0, 0%, 80%)",
-                // neutral30: theme.colors.neutral30, // "hsl(0, 0%, 70%)",
-                // neutral40: theme.colors.neutral40, // "hsl(0, 0%, 60%)",
-                // neutral50: theme.colors.neutral50, // "hsl(0, 0%, 50%)",
-                // neutral60: theme.colors.neutral60, // "hsl(0, 0%, 40%)",
-                // neutral70: theme.colors.neutral70, // "hsl(0, 0%, 30%)",
                 neutral80: '#ffffff', // "hsl(0, 0%, 20%)",
-                // neutral90: theme.colors.neutral90, // "hsl(0, 0%, 10%)",
               },
             }
           : theme
       }
     />
+  ) : (
+    <ValueEditor {...props} />
   );
 };
 
@@ -134,23 +119,40 @@ const initialSliderQuery: RuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'age', operator: 'between', value: [20, 60] }],
 };
-const ExtendedValueEditor_Slider = (props: ValueEditorProps) => (
-  <div className="slider-wrapper">
-    <Slider
-      className="slider"
-      value={props.value}
-      onChange={v => props.handleOnChange(v)}
-      renderThumb={({ key, ref: _ref, ...props }, { valueNow }) => (
-        <div key={key} {...props}>
-          {valueNow}
-        </div>
-      )}
-      min={0}
-      max={100}
-      step={10}
-    />
-  </div>
-);
+const ExtendedValueEditor_Slider = (props: ValueEditorProps) =>
+  props.field === 'age' ? (
+    <div className="slider-wrapper">
+      <Slider
+        track={props.rule.operator.startsWith('not') ? 'inverted' : 'normal'}
+        value={props.value}
+        onChange={(e, v) => props.handleOnChange(v)}
+        valueLabelDisplay="on"
+        step={10}
+        min={0}
+        max={100}
+      />
+    </div>
+  ) : (
+    <MaterialValueEditor {...props} />
+  );
+
+const SliderDemo = () => {
+  const { colorMode } = useColorMode();
+  const muiTheme = useMemo(() => createTheme({ palette: { mode: colorMode } }), [colorMode]);
+
+  return (
+    <ThemeProvider theme={muiTheme}>
+      <QueryBuilderMaterial>
+        <QueryBuilder
+          fields={sliderFields}
+          defaultQuery={initialSliderQuery}
+          controlElements={{ valueEditor: ExtendedValueEditor_Slider }}
+          getOperators={() => defaultOperators.filter(op => op.name.endsWith('tween'))}
+        />
+      </QueryBuilderMaterial>
+    </ThemeProvider>
+  );
+};
 
 const LandingPage = () => {
   const { siteConfig } = useDocusaurusContext();
@@ -260,15 +262,12 @@ const LandingPage = () => {
                 controlElements={{ valueEditor: ExtendedValueEditor_Select }}
                 getOperators={() => defaultOperators.filter(op => op.name === 'in')}
               />
-              <Link href="https://zillow.github.io/react-slider/" style={{ whiteSpace: 'nowrap' }}>
-                <code>react-slider</code>
+              <Link
+                href="https://mui.com/material-ui/react-slider/"
+                style={{ whiteSpace: 'nowrap' }}>
+                <code>@mui/material/Slider</code>
               </Link>
-              <QueryBuilder
-                fields={sliderFields}
-                defaultQuery={initialSliderQuery}
-                controlElements={{ valueEditor: ExtendedValueEditor_Slider }}
-                getOperators={() => defaultOperators.filter(op => op.name === 'between')}
-              />
+              <BrowserOnly>{() => <SliderDemo />}</BrowserOnly>
             </div>
             <div className="custom-styling">
               <CustomStylesQB />

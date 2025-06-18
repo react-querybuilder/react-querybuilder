@@ -7,11 +7,7 @@ export default {
   coveragePathIgnorePatterns: ['/utils/testing/', '/dist/', 'TestUtils.ts'],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
   testEnvironment: '<rootDir>/../../utils/fixJSDOMEnvironment.ts',
-  testEnvironmentOptions: {
-    globalsCleanup: 'on',
-    // url: 'http://localhost:3000',  // or any http:// URL
-    // pretendToBeVisual: true,
-  },
+  testEnvironmentOptions: { globalsCleanup: 'on' },
   // Keep these in sync with /tsconfig.json#compilerOptions#paths.
   moduleNameMapper: {
     'react-querybuilder': ['<rootDir>/../../packages/react-querybuilder/src'],
