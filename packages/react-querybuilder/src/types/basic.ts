@@ -124,7 +124,7 @@ interface BaseFullField<
   values?: FlexibleOptionList<ValueObj>;
   matchModes?: boolean | MatchMode[] | FlexibleOption<MatchMode>[];
   /** Properties of items in the value. */
-  subproperties?: FlexibleOptionList<ValueObj>;
+  subproperties?: FlexibleOptionList<FullField>;
   defaultOperator?: OperatorName;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue?: any;

@@ -86,7 +86,7 @@ export type UseQueryBuilderSetup<
     ) => Record<string, unknown>;
     getMatchModesMain: (
       field: GetOptionIdentifierType<F>,
-      misc: { fieldData: F }
+      misc?: { fieldData: F }
     ) => MatchModeOptions;
     getOperatorsMain: (
       ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getOperators']>>
@@ -270,7 +270,7 @@ export const useQueryBuilderSetup = <
   );
 
   const getMatchModesMain = useCallback(
-    (field: FieldName, _misc: { fieldData: F }) =>
+    (field: FieldName, _misc?: { fieldData: F }) =>
       getMatchModesUtil<F>(fieldMap[field] as F, getMatchModes),
     [fieldMap, getMatchModes]
   );

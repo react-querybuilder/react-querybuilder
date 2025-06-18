@@ -279,6 +279,63 @@ describe('update', () => {
       rg3wIDs,
       true
     );
+    testQT('updates a rule match', update(rg3wIDs, 'match', { mode: 'all' }, p([0])), {
+      combinator: and,
+      rules: [{ ...r1, match: { mode: 'all' } }, r2, r3],
+    });
+    testQT(
+      'updates a rule match when field has match modes',
+      update(rg3wIDs, 'field', 'fmm', p([0]), {
+        getMatchModes: () => [{ name: 'some', value: 'some', label: 'some' }],
+        getRuleDefaultValue: () => ({ combinator: and, rules: [] }),
+      }),
+      {
+        combinator: and,
+        rules: [
+          {
+            ...r1,
+            field: 'fmm',
+            value: { combinator: and, rules: [] },
+            match: { mode: 'some', threshold: 1 },
+          },
+          r2,
+          r3,
+        ],
+      }
+    );
+    testQT(
+      'does not update a match mode when it is valid for new field',
+      update(
+        pathsAsIDs({
+          combinator: and,
+          rules: [{ field: 'fmm1', operator: '=', value: '', match: { mode: 'none' } }],
+        }),
+        'field',
+        'fmm2',
+        p([0]),
+        {
+          getMatchModes: f =>
+            f === 'fmm2'
+              ? [
+                  { name: 'some', value: 'some', label: 'some' },
+                  { name: 'none', value: 'none', label: 'none' },
+                ]
+              : [],
+          getRuleDefaultValue: () => ({ combinator: and, rules: [] }),
+        }
+      ),
+      {
+        combinator: and,
+        rules: [
+          {
+            field: 'fmm2',
+            operator: '=',
+            value: { combinator: and, rules: [] },
+            match: { mode: 'none' },
+          },
+        ],
+      }
+    );
   });
 
   describe('independent combinators', () => {
