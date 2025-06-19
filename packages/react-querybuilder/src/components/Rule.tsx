@@ -96,6 +96,10 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
 
 interface RuleComponentsProps extends UseRule {
   subQuery?: UseRuleGroup;
+  groupComponentsWrapper?: React.ComponentType<{
+    children: React.ReactNode;
+    className: string;
+  }>;
 }
 
 /**
@@ -123,6 +127,7 @@ export const RuleComponents: React.MemoExoticComponent<
         ruleGroupHeaderElements: RuleGroupHeaderControlElements,
       },
     },
+    groupComponentsWrapper: GroupComponentsWrapper = React.Fragment,
   } = r;
 
   const commonSubcomponentProps = useMemo(
@@ -292,9 +297,9 @@ export const RuleComponents: React.MemoExoticComponent<
         />
       )}
       {r.subQuery && (
-        <div className={r.subQuery.classNames.header}>
+        <GroupComponentsWrapper className={r.subQuery.classNames.header}>
           <RuleGroupHeaderControlElements {...r.subQuery} />
-        </div>
+        </GroupComponentsWrapper>
       )}
       <RemoveRuleActionControlElement
         key={TestID.removeRule}
@@ -306,15 +311,19 @@ export const RuleComponents: React.MemoExoticComponent<
         handleOnClick={r.removeRule}
       />
       {r.subQuery && (
-        <div className={r.subQuery.classNames.body}>
+        <GroupComponentsWrapper className={r.subQuery.classNames.body}>
           <RuleGroupBodyControlElements {...r.subQuery} />
-        </div>
+        </GroupComponentsWrapper>
       )}
     </React.Fragment>
   );
 });
 
-const RuleComponentsWithSubQuery: React.MemoExoticComponent<
+export const RuleWithSubQueryGroupComponentsWrapper = (
+  props: React.PropsWithChildren<unknown>
+): React.JSX.Element => <div {...props} />;
+
+export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   (r: RuleComponentsProps) => React.JSX.Element
 > = React.memo(function RuleComponentsWithSubQuery(r: RuleComponentsProps) {
   const initialQuery = useMemo(() => r.schema.createRuleGroup() as RuleGroupType, [r.schema]);
@@ -324,7 +333,6 @@ const RuleComponentsWithSubQuery: React.MemoExoticComponent<
     fields: r.subproperties.fields,
     // Update the value on first render if the value is not a valid rule group
     enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
-    // enableMountQueryChange: false,
     query: isRuleGroup(r.rule.value) ? (r.rule.value as RuleGroupType) : initialQuery,
     onQueryChange: r.onChangeValue,
   });
@@ -348,6 +356,7 @@ const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   return (
     <RuleComponents
       {...r}
+      groupComponentsWrapper={r.groupComponentsWrapper ?? RuleWithSubQueryGroupComponentsWrapper}
       subQuery={{
         ...subQuery,
         addRule,

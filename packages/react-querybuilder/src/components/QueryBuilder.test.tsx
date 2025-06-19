@@ -2961,9 +2961,10 @@ describe('value source field', () => {
 });
 
 describe('match modes', () => {
+  const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
+
   it('renders the match mode editor with invalid value', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
     render(
       <QueryBuilder
         fields={fields}
@@ -3000,7 +3001,6 @@ describe('match modes', () => {
 
   it('renders the match mode editor for new rule', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
     render(
       <QueryBuilder
         fields={fields}

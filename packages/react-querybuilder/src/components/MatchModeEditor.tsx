@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import type { FullField, MatchMode, MatchModeEditorProps, Path, Schema } from '../types';
+import type { FullField, MatchMode, MatchModeEditorProps, Path, RuleType, Schema } from '../types';
 import { parseNumber } from '../utils';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
@@ -13,57 +13,26 @@ const dummyPath: Path = [];
  *
  * @group Components
  */
-export const MatchModeEditor = (allProps: MatchModeEditorProps): React.JSX.Element | null => {
+export const MatchModeEditor = (props: MatchModeEditorProps): React.JSX.Element | null => {
   const {
     match,
     options,
-    handleOnChange,
     title,
     className,
     disabled,
     testID,
-    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
-    numericEditorComponent: NumericEditorComponent = allProps.schema.controls.valueEditor,
-    // fieldData: _fieldData,
-    // ...propsForValueSelector
-  } = allProps;
+    schema,
+    selectorComponent: SelectorComponent = props.schema.controls.valueSelector,
+    numericEditorComponent: NumericEditorComponent = props.schema.controls.valueEditor,
+  } = props;
 
-  const thresholdNum = React.useMemo(
-    () => (typeof match.threshold === 'number' ? Math.max(0, match.threshold) : 1),
-    [match.threshold]
-  );
-  const thresholdRule = React.useMemo(
-    () => ({ field: '', operator: '=', value: thresholdNum }),
-    [thresholdNum]
-  );
-  const thresholdSchema = React.useMemo(
-    () => ({ ...allProps.schema, parseNumbers: true }),
-    [allProps.schema]
-  );
-
-  const handleChangeMode = useCallback(
-    (mode: MatchMode) => {
-      if (requiresThreshold(mode) && typeof match.threshold !== 'number') {
-        handleOnChange({ ...match, mode, threshold: 1 });
-      } else {
-        handleOnChange({ ...match, mode });
-      }
-    },
-    [handleOnChange, match]
-  );
-
-  const handleChangeThreshold = useCallback(
-    (threshold: number) => {
-      handleOnChange({ ...match, threshold: parseNumber(threshold, { parseNumbers: true }) });
-    },
-    [handleOnChange, match]
-  );
+  const { thresholdNum, thresholdRule, thresholdSchema, handleChangeMode, handleChangeThreshold } =
+    useMatchModeEditor(props);
 
   return (
     <React.Fragment>
       <SelectorComponent
-        // {...propsForValueSelector}
-        schema={allProps.schema as unknown as Schema<FullField, string>}
+        schema={schema}
         testID={testID}
         className={className}
         title={title}
@@ -79,7 +48,7 @@ export const MatchModeEditor = (allProps: MatchModeEditorProps): React.JSX.Eleme
       {requiresThreshold(match.mode) && (
         <NumericEditorComponent
           skipHook
-          data-testid={testID}
+          testID={testID}
           inputType="number"
           // TODO: Implement `matchThresholdPlaceholderText`?
           // placeholder={placeHolderText}
@@ -100,4 +69,54 @@ export const MatchModeEditor = (allProps: MatchModeEditorProps): React.JSX.Eleme
       )}
     </React.Fragment>
   );
+};
+
+export interface UseMatchModeEditor {
+  thresholdNum: number;
+  thresholdRule: RuleType;
+  thresholdSchema: Schema<FullField, string>;
+  handleChangeMode: (mode: MatchMode) => void;
+  handleChangeThreshold: (threshold: number) => void;
+}
+export const useMatchModeEditor = (props: MatchModeEditorProps): UseMatchModeEditor => {
+  const { match, handleOnChange } = props;
+
+  const thresholdNum = React.useMemo(
+    () => (typeof match.threshold === 'number' ? Math.max(0, match.threshold) : 1),
+    [match.threshold]
+  );
+  const thresholdRule = React.useMemo(
+    () => ({ field: '', operator: '=', value: thresholdNum }),
+    [thresholdNum]
+  );
+  const thresholdSchema = React.useMemo(
+    () => ({ ...props.schema, parseNumbers: true }),
+    [props.schema]
+  );
+
+  const handleChangeMode = useCallback(
+    (mode: MatchMode) => {
+      if (requiresThreshold(mode) && typeof match.threshold !== 'number') {
+        handleOnChange({ ...match, mode, threshold: 1 });
+      } else {
+        handleOnChange({ ...match, mode });
+      }
+    },
+    [handleOnChange, match]
+  );
+
+  const handleChangeThreshold = useCallback(
+    (threshold: number) => {
+      handleOnChange({ ...match, threshold: parseNumber(threshold, { parseNumbers: true }) });
+    },
+    [handleOnChange, match]
+  );
+
+  return {
+    thresholdNum,
+    thresholdRule,
+    thresholdSchema,
+    handleChangeMode,
+    handleChangeThreshold,
+  };
 };

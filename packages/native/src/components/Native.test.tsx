@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type {
   ActionWithRulesProps,
+  Field,
   FullField,
   Option,
   RuleGroupType,
@@ -20,6 +21,7 @@ import type {
   ValueSelectorNativeProps,
 } from '../types';
 import { NativeActionElement } from './NativeActionElement';
+import { NativeMatchModeEditorWeb } from './NativeMatchModeEditorWeb';
 import { NativeNotToggle } from './NativeNotToggle';
 import { NativeShiftActions } from './NativeShiftActions';
 import { NativeValueEditor } from './NativeValueEditor';
@@ -63,6 +65,29 @@ describe('QueryBuilderNative', () => {
     render(<QueryBuilderNative query={queryIC} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.inlineCombinator)).toBeOnTheScreen();
+  });
+});
+
+describe('NativeMatchModeEditor', () => {
+  const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
+
+  it('renders match mode editor', () => {
+    render(<QueryBuilderNative fields={fields} addRuleToNewGroups />);
+    expect(screen.getByDisplayValue('all')).toBeOnTheScreen();
+    fireEvent.changeText(screen.getByDisplayValue('all'), 'atLeast');
+    expect(screen.getByDisplayValue('1')).toBeOnTheScreen();
+  });
+
+  it('renders on web platform', () => {
+    Platform.OS = 'web';
+    render(
+      <QueryBuilderNative
+        fields={fields}
+        addRuleToNewGroups
+        controlElements={{ matchModeEditor: NativeMatchModeEditorWeb }}
+      />
+    );
+    expect(screen.getByDisplayValue('all')).toBeOnTheScreen();
   });
 });
 
