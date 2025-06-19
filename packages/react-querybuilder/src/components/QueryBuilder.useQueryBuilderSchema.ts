@@ -588,6 +588,19 @@ export function useQueryBuilderSchema<
   );
   // #endregion
 
+  // #region Setup overrides
+  /**
+   * This function overrides `createRuleGroup` from `useQueryBuilderSetup`, removing the
+   * requirement to pass a `boolean` parameter. If `independentCombinators` is `true`, it will
+   * always create a `RuleGroupTypeIC` even if called with no parameters. (We have to override
+   * it here because `independentCombinators` is not evaluated in `useQueryBuilderSetup`.)
+   */
+  const createRuleGroupOverride = useCallback(
+    (ic?: boolean) => createRuleGroup(ic ?? independentCombinators),
+    [createRuleGroup, independentCombinators]
+  );
+  // #endregion
+
   // #region Schema/actions
   const schema = useMemo(
     (): Schema<F, GetOptionIdentifierType<O>> => ({
@@ -600,7 +613,7 @@ export function useQueryBuilderSchema<
       combinators,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroup: createRuleGroupOverride,
       disabledPaths,
       enableDragAndDrop,
       fieldMap: fieldMap as FullOptionMap<F>,
@@ -640,7 +653,7 @@ export function useQueryBuilderSchema<
       controlClassnames,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroupOverride,
       disabledPaths,
       dispatchQuery,
       enableDragAndDrop,

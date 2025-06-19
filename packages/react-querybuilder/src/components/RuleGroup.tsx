@@ -598,11 +598,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const addGroup: ActionElementEventHandler = useCallback(
     (_e, context) => {
       if (!disabled) {
-        const newGroup = createRuleGroup(independentCombinators);
+        const newGroup = createRuleGroup();
         onGroupAdd(newGroup, path, context);
       }
     },
-    [createRuleGroup, disabled, independentCombinators, onGroupAdd, path]
+    [createRuleGroup, disabled, onGroupAdd, path]
   );
 
   const cloneGroup: ActionElementEventHandler = useCallback(() => {

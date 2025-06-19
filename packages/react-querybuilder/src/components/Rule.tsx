@@ -196,81 +196,78 @@ export const RuleComponents: React.MemoExoticComponent<
           handleOnChange={r.onChangeField}
         />
       )}
-      {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
-        <React.Fragment>
-          {r.subQuery ? (
-            <MatchModeEditorControlElement
-              key={TestID.matchModeEditor}
+      {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) &&
+        (r.subQuery ? (
+          <MatchModeEditorControlElement
+            key={TestID.matchModeEditor}
+            {...commonSubcomponentProps}
+            testID={TestID.matchModeEditor}
+            field={r.rule.field}
+            fieldData={r.fieldData}
+            title={r.translations.matchMode.title}
+            options={r.matchModes}
+            // TODO: Support `defaultMatchMode` at query or field level?
+            match={r.rule.match ?? /* istanbul ignore next */ defaultMatch}
+            className={r.classNames.matchMode}
+            classNames={r.classNames}
+            handleOnChange={r.onChangeMatchMode}
+          />
+        ) : (
+          <React.Fragment>
+            <OperatorSelectorControlElement
+              key={TestID.operators}
               {...commonSubcomponentProps}
-              testID={TestID.matchModeEditor}
+              testID={TestID.operators}
               field={r.rule.field}
               fieldData={r.fieldData}
-              title={r.translations.matchMode.title}
-              options={r.matchModes}
-              // TODO: Support `defaultMatchMode` at query or field level?
-              match={r.rule.match ?? defaultMatch}
-              className={r.classNames.matchMode}
-              classNames={r.classNames}
-              handleOnChange={r.onChangeMatchMode}
+              title={r.translations.operators.title}
+              options={r.operators}
+              value={r.rule.operator}
+              className={r.classNames.operators}
+              handleOnChange={r.onChangeOperator}
             />
-          ) : (
-            <React.Fragment>
-              <OperatorSelectorControlElement
-                key={TestID.operators}
-                {...commonSubcomponentProps}
-                testID={TestID.operators}
-                field={r.rule.field}
-                fieldData={r.fieldData}
-                title={r.translations.operators.title}
-                options={r.operators}
-                value={r.rule.operator}
-                className={r.classNames.operators}
-                handleOnChange={r.onChangeOperator}
-              />
-              {(r.schema.autoSelectOperator ||
-                r.rule.operator !== r.translations.operators.placeholderName) &&
-                !r.hideValueControls && (
-                  <React.Fragment>
-                    {!['null', 'notnull'].includes(`${r.rule.operator}`.toLowerCase()) &&
-                      r.valueSources.length > 1 && (
-                        <ValueSourceSelectorControlElement
-                          key={TestID.valueSourceSelector}
-                          {...commonSubcomponentProps}
-                          testID={TestID.valueSourceSelector}
-                          field={r.rule.field}
-                          fieldData={r.fieldData}
-                          title={r.translations.valueSourceSelector.title}
-                          options={r.valueSourceOptions}
-                          value={r.rule.valueSource ?? 'value'}
-                          className={r.classNames.valueSource}
-                          handleOnChange={r.onChangeValueSource}
-                        />
-                      )}
-                    <ValueEditorControlElement
-                      key={TestID.valueEditor}
-                      {...commonSubcomponentProps}
-                      testID={TestID.valueEditor}
-                      field={r.rule.field}
-                      fieldData={r.fieldData}
-                      title={r.translations.value.title}
-                      operator={r.rule.operator}
-                      value={r.rule.value}
-                      valueSource={r.rule.valueSource ?? 'value'}
-                      type={r.valueEditorType}
-                      inputType={r.inputType}
-                      values={r.values}
-                      listsAsArrays={r.schema.listsAsArrays}
-                      parseNumbers={r.schema.parseNumbers}
-                      separator={r.valueEditorSeparator}
-                      className={r.classNames.value}
-                      handleOnChange={r.onChangeValue}
-                    />
-                  </React.Fragment>
-                )}
-            </React.Fragment>
-          )}
-        </React.Fragment>
-      )}
+            {(r.schema.autoSelectOperator ||
+              r.rule.operator !== r.translations.operators.placeholderName) &&
+              !r.hideValueControls && (
+                <React.Fragment>
+                  {!['null', 'notnull'].includes(`${r.rule.operator}`.toLowerCase()) &&
+                    r.valueSources.length > 1 && (
+                      <ValueSourceSelectorControlElement
+                        key={TestID.valueSourceSelector}
+                        {...commonSubcomponentProps}
+                        testID={TestID.valueSourceSelector}
+                        field={r.rule.field}
+                        fieldData={r.fieldData}
+                        title={r.translations.valueSourceSelector.title}
+                        options={r.valueSourceOptions}
+                        value={r.rule.valueSource ?? 'value'}
+                        className={r.classNames.valueSource}
+                        handleOnChange={r.onChangeValueSource}
+                      />
+                    )}
+                  <ValueEditorControlElement
+                    key={TestID.valueEditor}
+                    {...commonSubcomponentProps}
+                    testID={TestID.valueEditor}
+                    field={r.rule.field}
+                    fieldData={r.fieldData}
+                    title={r.translations.value.title}
+                    operator={r.rule.operator}
+                    value={r.rule.value}
+                    valueSource={r.rule.valueSource ?? 'value'}
+                    type={r.valueEditorType}
+                    inputType={r.inputType}
+                    values={r.values}
+                    listsAsArrays={r.schema.listsAsArrays}
+                    parseNumbers={r.schema.parseNumbers}
+                    separator={r.valueEditorSeparator}
+                    className={r.classNames.value}
+                    handleOnChange={r.onChangeValue}
+                  />
+                </React.Fragment>
+              )}
+          </React.Fragment>
+        ))}
       {r.schema.showCloneButtons && (
         <CloneRuleActionControlElement
           key={TestID.cloneRule}
@@ -320,16 +317,16 @@ export const RuleComponents: React.MemoExoticComponent<
 const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   (r: RuleComponentsProps) => React.JSX.Element
 > = React.memo(function RuleComponentsWithSubQuery(r: RuleComponentsProps) {
+  const initialQuery = useMemo(() => r.schema.createRuleGroup() as RuleGroupType, [r.schema]);
   const subQB = useQueryBuilder({
     ...r.subQueryBuilderProps,
     enableDragAndDrop: false,
     fields: r.subproperties.fields,
     // Update the value on first render if the value is not a valid rule group
     enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
-    query: isRuleGroup(r.rule.value)
-      ? (r.rule.value as RuleGroupType)
-      : (r.schema.createRuleGroup(r.schema.independentCombinators) as RuleGroupType),
-    onQueryChange: (q: RuleGroupType) => r.onChangeValue(q),
+    // enableMountQueryChange: false,
+    query: isRuleGroup(r.rule.value) ? (r.rule.value as RuleGroupType) : initialQuery,
+    onQueryChange: r.onChangeValue,
   });
   const subQuery = useRuleGroup({
     ...subQB,
