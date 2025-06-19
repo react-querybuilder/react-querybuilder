@@ -204,8 +204,9 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
       // istanbul ignore else
       if (!didCancel) {
         if (reactDnD) {
-          // istanbul ignore else
+          // istanbul ignore next
           // Only prefer HTML5 backend if not touch device or we don't have the touch backend
+          // (Can't test this since jsdom unconditionally defines `window.ontouchstart`.)
           if (reactDndHTML5Be && (!reactDndTouchBe || (reactDndTouchBe && !isTouchDevice()))) {
             setDnd(() => ({
               ...reactDnD,
