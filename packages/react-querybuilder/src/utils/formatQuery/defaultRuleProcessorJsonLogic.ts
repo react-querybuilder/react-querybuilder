@@ -39,60 +39,65 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         : v;
 
   const { mode, threshold } = match ?? {};
-  const matchModeLC = mode?.toLowerCase();
 
-  const matchModeCoerced =
-    matchModeLC === 'atleast' && match?.threshold === 1
-      ? 'some'
-      : matchModeLC === 'atmost' && match?.threshold === 0
-        ? 'none'
-        : matchModeLC;
+  if (mode) {
+    const matchModeLC = mode?.toLowerCase();
 
-  if (matchModeCoerced && !isRuleGroup(value)) return false;
+    if (!isRuleGroup(value)) return false;
 
-  switch (matchModeCoerced) {
-    case 'all':
-    case 'none':
-    case 'some':
-      return {
-        [matchModeCoerced]: [
-          { var: field },
-          value.rules.length === 1 && !isRuleGroup(value.rules[0])
-            ? defaultRuleProcessorJsonLogic(value.rules[0], options)
-            : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
-        ],
-      } as RQBJsonLogic;
+    const matchModeCoerced =
+      matchModeLC === 'atleast' && match?.threshold === 1
+        ? 'some'
+        : matchModeLC === 'atmost' && match?.threshold === 0
+          ? 'none'
+          : matchModeLC;
 
-    case 'atleast':
-    case 'atmost':
-    case 'exactly': {
-      if (typeof threshold !== 'number' || threshold < 0) return false;
+    if (matchModeCoerced && !isRuleGroup(value)) return false;
 
-      const op =
-        matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '==';
+    switch (matchModeCoerced) {
+      case 'all':
+      case 'none':
+      case 'some':
+        return {
+          [matchModeCoerced]: [
+            { var: field },
+            value.rules.length === 1 && !isRuleGroup(value.rules[0])
+              ? defaultRuleProcessorJsonLogic(value.rules[0], options)
+              : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
+          ],
+        } as RQBJsonLogic;
 
-      const filteredCount = {
-        reduce: [
-          {
-            filter: [
-              { var: field },
-              value.rules.length === 1 && !isRuleGroup(value.rules[0])
-                ? defaultRuleProcessorJsonLogic(value.rules[0], options)
-                : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
-            ],
-          },
-          { '+': [1, { var: 'accumulator' }] },
-          0,
-        ],
-      };
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        if (typeof threshold !== 'number' || threshold < 0) return false;
 
-      if (threshold > 0 && threshold < 1) {
-        const totalCount = {
-          reduce: [{ var: field }, { '+': [1, { var: 'accumulator' }] }, 0],
+        const op =
+          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '==';
+
+        const filteredCount = {
+          reduce: [
+            {
+              filter: [
+                { var: field },
+                value.rules.length === 1 && !isRuleGroup(value.rules[0])
+                  ? defaultRuleProcessorJsonLogic(value.rules[0], options)
+                  : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
+              ],
+            },
+            { '+': [1, { var: 'accumulator' }] },
+            0,
+          ],
         };
-        return { [op]: [filteredCount, { '*': [totalCount, threshold] }] } as RQBJsonLogic;
+
+        if (threshold > 0 && threshold < 1) {
+          const totalCount = {
+            reduce: [{ var: field }, { '+': [1, { var: 'accumulator' }] }, 0],
+          };
+          return { [op]: [filteredCount, { '*': [totalCount, threshold] }] } as RQBJsonLogic;
+        }
+        return { [op]: [filteredCount, threshold] } as RQBJsonLogic;
       }
-      return { [op]: [filteredCount, threshold] } as RQBJsonLogic;
     }
   }
 

@@ -20,6 +20,7 @@ import {
   queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
+  queryWithMatchModes,
 } from '../formatQueryTestUtils';
 import { jsonLogicAdditionalOperators } from '../utils';
 
@@ -341,148 +342,10 @@ it('runs the JsonLogic additional operators', () => {
 });
 
 it('handles match modes', () => {
-  const queryWithMatchModes: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'all' },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'none' },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'some' },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atLeast', threshold: 1 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atMost', threshold: 0 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atLeast', threshold: 2 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atLeast', threshold: 0.5 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atMost', threshold: 2 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atMost', threshold: 0.5 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'exactly', threshold: 2 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'exactly', threshold: 0.5 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'exactly', threshold: -1 },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'exactly', threshold: -1 },
-      },
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'exactly', threshold: '-1' as any },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atMost' as any },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'atLeast' as any },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-        match: { mode: 'exactly' as any },
-      },
-      /* eslint-enable @typescript-eslint/no-explicit-any */
-      {
-        field: 'fs',
-        operator: '=',
-        value: {
-          combinator: 'and',
-          rules: [
-            { field: '', operator: 'contains', value: 'S' },
-            { field: '', operator: 'contains', value: 'S' },
-          ],
-        },
-        match: { mode: 'all' },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: { field: '', operator: 'contains', value: 'S' },
-        match: { mode: 'all' },
-      },
-      {
-        field: 'fs',
-        operator: '=',
-        value: {
-          combinator: 'and',
-          rules: [
-            { field: '', operator: 'contains', value: 'S' },
-            { field: '', operator: 'contains', value: 'S' },
-          ],
-        },
-        match: { mode: 'atLeast', threshold: 2 },
-      },
-    ],
-  };
   expect(formatQuery(queryWithMatchModes, 'jsonlogic')).toEqual({
     and: [
       { all: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { all: [{ var: 'fs' }, { in: ['S', { var: 'fv' }] }] },
       { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
       { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
       { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
@@ -492,6 +355,18 @@ it('handles match modes', () => {
           {
             reduce: [
               { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: 'fv' }] }] },
               { '+': [1, { var: 'accumulator' }] },
               0,
             ],
