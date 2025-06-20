@@ -20,6 +20,12 @@ export interface SuperUser<EnhancedType = 0 | 1 | boolean> {
   powerUpAge: number | null | undefined;
 }
 
+export interface AugmentedSuperUser<EnhancedType = 0 | 1 | boolean>
+  extends SuperUser<EnhancedType> {
+  nicknames: string[];
+  earlyPencilers: { firstName: string; lastName: string; generationalSuffix?: string }[];
+}
+
 const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   cel: [true, false],
   jsonata: [true, false],
@@ -85,6 +91,79 @@ export const superUsers = <DBP extends DbPlatform>(
     },
   ] as DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
 };
+
+export const nicknameMap: Record<string, string[]> = {
+  Batman: ['The Caped Crusader'],
+  Superman: ['The Man of Steel', 'The Last Son of Krypton'],
+  'Spider-Man': ['Web-Slinger', 'Menace to Society'],
+  'Captain America': ['The First Avenger'],
+};
+
+export const earlyPencilersMap: Record<
+  string,
+  { firstName: string; lastName: string; generationalSuffix?: string }[]
+> = {
+  Batman: [
+    { firstName: 'Bob', lastName: 'Kane' },
+    { firstName: 'Jerry', lastName: 'Robinson' },
+    { firstName: 'Sheldon', lastName: 'Moldoff' },
+    { firstName: 'Dick', lastName: 'Sprang' },
+    { firstName: 'Carmine', lastName: 'Infantino' },
+    { firstName: 'Neal', lastName: 'Adams' },
+    { firstName: 'Jim', lastName: 'Aparo' },
+    { firstName: 'Marshall', lastName: 'Rogers' },
+    { firstName: 'Don', lastName: 'Newton' },
+    { firstName: 'Gene', lastName: 'Colan' },
+    { firstName: 'Ernie', lastName: 'Chan' },
+  ],
+  Superman: [
+    { firstName: 'Joe', lastName: 'Shuster' },
+    { firstName: 'Wayne', lastName: 'Boring' },
+    { firstName: 'Curt', lastName: 'Swan' },
+    { firstName: 'Jose‑Luis', lastName: 'Garcia‑Lopez' },
+    { firstName: 'Mike', lastName: 'Grell' },
+    { firstName: 'George', lastName: 'Pérez' },
+  ],
+  'Spider-Man': [
+    { firstName: 'Steve', lastName: 'Ditko' },
+    { firstName: 'John', lastName: 'Romita', generationalSuffix: 'Sr.' },
+    { firstName: 'Larry', lastName: 'Lieber' },
+    { firstName: 'Don', lastName: 'Heck' },
+    { firstName: 'Jim', lastName: 'Mooney' },
+    { firstName: 'John', lastName: 'Buscema' },
+    { firstName: 'Gil', lastName: 'Kane' },
+    { firstName: 'Ross', lastName: 'Andru' },
+    { firstName: 'Sal', lastName: 'Buscema' },
+    { firstName: 'Keith', lastName: 'Pollard' },
+  ],
+  'Captain America': [
+    { firstName: 'Jack', lastName: 'Kirby' },
+    { firstName: 'Al', lastName: 'Avison' },
+    { firstName: 'Syd', lastName: 'Shores' },
+    { firstName: 'Vince', lastName: 'Alascia' },
+    { firstName: 'Ken', lastName: 'Bald' },
+    { firstName: 'George', lastName: 'Tuska' },
+    { firstName: 'Gil', lastName: 'Kane' },
+    { firstName: 'Jim', lastName: 'Steranko' },
+    { firstName: 'Gene', lastName: 'Colan' },
+    { firstName: 'Sal', lastName: 'Buscema' },
+    { firstName: 'Herb', lastName: 'Trimpe' },
+    { firstName: 'Alan', lastName: 'Weiss' },
+    { firstName: 'John', lastName: 'Romita', generationalSuffix: 'Sr.' },
+    { firstName: 'Pablo', lastName: 'Marcos' },
+    { firstName: 'Don', lastName: 'Perlin' },
+    { firstName: 'John', lastName: 'Byrne' },
+  ],
+};
+
+export const augmentedSuperUsers = <DBP extends DbPlatform>(dbPlatform: DBP) =>
+  superUsers(dbPlatform).map(u => ({
+    ...u,
+    nicknames: [u.nickname, ...nicknameMap[u.madeUpName]],
+    earlyPencilers: earlyPencilersMap[u.madeUpName],
+  })) as DBP extends 'mssql' | 'sqlite'
+    ? AugmentedSuperUser<0 | 1>[]
+    : AugmentedSuperUser<boolean>[];
 
 const enhancedColumnType: Record<DbPlatform, string> = {
   cel: 'N/A',

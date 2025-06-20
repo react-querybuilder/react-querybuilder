@@ -7,8 +7,8 @@ import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
-import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder/debug';
+import { convertToIC, generateID, objectKeys } from 'react-querybuilder/debug';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
 export const defaultOptions = {

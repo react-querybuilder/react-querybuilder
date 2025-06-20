@@ -1,5 +1,5 @@
-import type { Field, RuleType } from 'react-querybuilder';
-import { defaultOperators, toFullOption } from 'react-querybuilder';
+import type { Field, RuleType } from 'react-querybuilder/debug';
+import { defaultOperators, toFullOption } from 'react-querybuilder/debug';
 import { musicalInstruments } from './musicalInstruments';
 
 export const validator = (r: RuleType) => !!r.value;
@@ -43,6 +43,18 @@ export const fields = (
       values: musicalInstruments,
       defaultValue: 'More cowbell',
       operators: defaultOperators.filter(op => op.name === 'in'),
+    },
+    {
+      name: 'tourStops',
+      label: 'Tour stops',
+      matchModes: true,
+      subproperties: [
+        { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
+        { name: 'venue', label: 'Venue' },
+        { name: 'city', label: 'City' },
+        { name: 'state', label: 'State/Province' },
+        { name: 'country', label: 'Country' },
+      ],
     },
     {
       name: 'gender',

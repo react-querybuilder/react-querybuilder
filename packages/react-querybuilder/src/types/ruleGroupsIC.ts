@@ -119,3 +119,10 @@ export type GetRuleTypeFromGroupWithFieldAndOperator<
           >
     : never
   : never;
+
+/**
+ * Converts a narrowed rule group type to its most generic form.
+ */
+export type GenericizeRuleGroupType<RG> = RG extends RuleGroupType
+  ? RuleGroupType
+  : RuleGroupTypeIC;

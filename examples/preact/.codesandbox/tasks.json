@@ -1,0 +1,30 @@
+{
+  "setupTasks": [
+    {
+      "name": "Install Bun",
+      "command": "npm install --global bun"
+    },
+    {
+      "name": "Install Dependencies",
+      "command": "bun install"
+    }
+  ],
+  "tasks": {
+    "build": {
+      "name": "build",
+      "command": "bun run build"
+    },
+    "dev": {
+      "name": "dev",
+      "command": "bun run dev",
+      "runAtStart": true,
+      "preview": {
+        "port": 5173
+      }
+    },
+    "preview": {
+      "name": "preview",
+      "command": "bun run preview"
+    }
+  }
+}

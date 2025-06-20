@@ -39,7 +39,7 @@ export const getValueSourcesUtil = <F extends FullField, O extends string>(
   }
   if (getValueSources) {
     const vals = getValueSources(fd.value as GetOptionIdentifierType<F>, operator as O, {
-      fieldData: toFullOption(fd) as F,
+      fieldData: fd as F,
     });
     /* istanbul ignore else */
     if (vals) return vals;

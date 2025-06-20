@@ -12,8 +12,8 @@ import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
-import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
-import { defaultOperators, formatQuery } from 'react-querybuilder';
+import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder/debug';
+import { defaultOperators, formatQuery } from 'react-querybuilder/debug';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 

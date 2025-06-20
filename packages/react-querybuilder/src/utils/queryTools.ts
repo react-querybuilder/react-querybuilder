@@ -1,6 +1,7 @@
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
+  MatchModeOptions,
   OptionList,
   Path,
   RuleGroupTypeAny,
@@ -10,7 +11,7 @@ import type {
 } from '../types/index.noReact';
 import { generateID } from './generateID';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
-import { getFirstOption } from './optGroupUtils';
+import { getFirstOption, getOption } from './optGroupUtils';
 import {
   findID,
   findPath,
@@ -116,6 +117,10 @@ export interface UpdateOptions {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getRuleDefaultValue?: (rule: RuleType) => any;
+  /**
+   * Determines the valid match modes for a given field.
+   */
+  getMatchModes?: (field: string) => MatchModeOptions;
 }
 /**
  * Updates a property of a rule or group within a query.
@@ -140,6 +145,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     getRuleDefaultOperator = () => '=',
     getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
+    getMatchModes = () => [],
   }: UpdateOptions = {}
 ): RG =>
   produce(query, draft => {
@@ -180,6 +186,25 @@ export const update = <RG extends RuleGroupTypeAny>(
 
     let resetValueSource = false;
     let resetValue = false;
+
+    if (prop === 'field' && !isGroup) {
+      const fromFieldMatchModes = getMatchModes(ruleOrGroup.field);
+      const toFieldMatchModes = getMatchModes(value);
+
+      const nextMatchMode =
+        ruleOrGroup.match?.mode &&
+        toFieldMatchModes.length > 0 &&
+        getOption(toFieldMatchModes, ruleOrGroup.match.mode)
+          ? null
+          : getFirstOption(toFieldMatchModes);
+      if (nextMatchMode) {
+        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
+      }
+      if (fromFieldMatchModes.length > 0 || toFieldMatchModes.length > 0) {
+        // Force `resetOnFieldChange` when field is updated FROM or TO one that has match modes
+        resetOnFieldChange = true;
+      }
+    }
 
     // Set default operator, valueSource, and value for field change
     if (resetOnFieldChange && prop === 'field') {

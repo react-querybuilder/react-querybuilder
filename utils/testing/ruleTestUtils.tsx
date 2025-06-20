@@ -105,6 +105,8 @@ const ruleSchema = {
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
   getValueSources: () => ['value'],
+  getMatchModes: () => [],
+  getSubQueryBuilderProps: () => ({}),
   getInputType: () => 'text',
   getValues: () =>
     [

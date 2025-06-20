@@ -201,6 +201,18 @@ export const fields: Field[] = [
     operators: defaultOperators.filter(op => op.name === 'in'),
   },
   {
+    name: 'tourStops',
+    label: 'Tour stops',
+    matchModes: true,
+    subproperties: [
+      { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
+      { name: 'venue', label: 'Venue' },
+      { name: 'city', label: 'City' },
+      { name: 'state', label: 'State/Province' },
+      { name: 'country', label: 'Country' },
+    ],
+  },
+  {
     name: 'gender',
     label: 'Gender',
     operators: defaultOperators.filter(op => op.name === '='),

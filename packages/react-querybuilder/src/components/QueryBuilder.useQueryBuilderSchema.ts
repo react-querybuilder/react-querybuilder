@@ -15,6 +15,7 @@ import type {
   FullOptionMap,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
+  MatchModeOptions,
   Path,
   QueryActions,
   QueryBuilderProps,
@@ -133,7 +134,9 @@ export function useQueryBuilderSchema<
     fieldMap,
     combinators,
     getOperatorsMain,
+    getMatchModesMain,
     getRuleDefaultOperator,
+    getSubQueryBuilderPropsMain,
     getValueEditorTypeMain,
     getValueSourcesMain,
     getValuesMain,
@@ -364,18 +367,21 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
         return;
       }
+
       const newQuery = update(queryLocal, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
         getValueSources: getValueSourcesMain as (field: string) => ValueSources,
         getRuleDefaultValue,
+        getMatchModes: getMatchModesMain as (field: string) => MatchModeOptions,
       });
       log({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
       dispatchQuery(newQuery);
     },
     [
       dispatchQuery,
+      getMatchModesMain,
       getRuleDefaultOperator,
       getRuleDefaultValue,
       getValueSourcesMain,
@@ -582,6 +588,19 @@ export function useQueryBuilderSchema<
   );
   // #endregion
 
+  // #region Setup overrides
+  /**
+   * This function overrides `createRuleGroup` from `useQueryBuilderSetup`, removing the
+   * requirement to pass a `boolean` parameter. If `independentCombinators` is `true`, it will
+   * always create a `RuleGroupTypeIC` even if called with no parameters. (We have to override
+   * it here because `independentCombinators` is not evaluated in `useQueryBuilderSetup`.)
+   */
+  const createRuleGroupOverride = useCallback(
+    (ic?: boolean) => createRuleGroup(ic ?? independentCombinators),
+    [createRuleGroup, independentCombinators]
+  );
+  // #endregion
+
   // #region Schema/actions
   const schema = useMemo(
     (): Schema<F, GetOptionIdentifierType<O>> => ({
@@ -594,7 +613,7 @@ export function useQueryBuilderSchema<
       combinators,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroup: createRuleGroupOverride,
       disabledPaths,
       enableDragAndDrop,
       fieldMap: fieldMap as FullOptionMap<F>,
@@ -603,8 +622,10 @@ export function useQueryBuilderSchema<
       getQuery,
       getInputType: getInputTypeMain,
       getOperators: getOperatorsMain,
+      getMatchModes: getMatchModesMain,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderProps: getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorType: getValueEditorTypeMain,
       getValues: getValuesMain,
@@ -632,7 +653,7 @@ export function useQueryBuilderSchema<
       controlClassnames,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroupOverride,
       disabledPaths,
       dispatchQuery,
       enableDragAndDrop,
@@ -640,9 +661,11 @@ export function useQueryBuilderSchema<
       fields,
       getInputTypeMain,
       getOperatorsMain,
+      getMatchModesMain,
       getQuery,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorTypeMain,
       getValuesMain,
