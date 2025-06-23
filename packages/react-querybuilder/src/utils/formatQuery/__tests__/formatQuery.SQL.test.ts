@@ -104,6 +104,7 @@ it('formats SQL correctly', () => {
     sqlString
   );
   expect(formatQuery(queryWithMatchModes, { preset: 'postgresql' })).toBe(sqlStringForMatchModes);
+  expect(formatQuery(queryWithMatchModes, 'sql')).toBe(`(1 = 1)`);
 });
 
 it('assumes "sql" format when preset matches a SQL preset', () => {
@@ -126,6 +127,7 @@ it('formats parameterized SQL correctly', () => {
     sql: parameterizedSqlStringForMatchModes,
     params: parametersForMatchModes,
   });
+  expect(formatQuery(queryWithMatchModes, 'parameterized')).toEqual({ sql: `(1 = 1)`, params: [] });
 });
 
 it('formats parameterized named SQL correctly', () => {

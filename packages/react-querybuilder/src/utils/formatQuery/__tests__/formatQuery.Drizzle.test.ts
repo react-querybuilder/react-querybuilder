@@ -94,6 +94,9 @@ it('handles nested arrays', () => {
       drizzleOperators
     )
   ).toBeTruthy();
+  expect(
+    formatQuery(queryWithMatchModes, { format: 'drizzle' })(fields, drizzleOperators)
+  ).not.toBeTruthy();
 });
 
 it('bails on invalid operator', () => {
