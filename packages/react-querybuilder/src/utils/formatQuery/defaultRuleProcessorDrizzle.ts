@@ -1,7 +1,14 @@
-import type { Column, Operators, SQL } from 'drizzle-orm';
-import type { RuleProcessor } from '../../types/index.noReact';
+import type { Column, Operators, SQL, SQLWrapper } from 'drizzle-orm';
+import type {
+  FormatQueryFinalOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
 /**
@@ -9,14 +16,14 @@ import { isValidValue, shouldRenderAsNumber } from './utils';
  *
  * @group Export
  */
-export const defaultRuleProcessorDrizzle: RuleProcessor = (
-  rule,
+export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL | undefined => {
+  const opts = _options ?? /* istanbul ignore next */ {};
   // istanbul ignore next
-  { preserveValueOrder, context = {} } = {}
-): SQL | undefined => {
-  const { columns, drizzleOperators } = context as {
+  const { preserveValueOrder, context = {} } = opts;
+  const { columns, drizzleOperators, useRawFields } = context as {
     columns: Record<string, Column>;
     drizzleOperators: Operators;
+    useRawFields?: boolean;
   };
 
   if (!columns || !drizzleOperators) return;
@@ -40,13 +47,69 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (
   } = drizzleOperators;
 
   const { field, operator, value, valueSource } = rule;
-  const column = columns[field];
+  // TODO: Improve field validation
+  const column =
+    useRawFields && /[a-z][a-z0-9]*/i.test(field)
+      ? (sql.raw(field) as Exclude<SQLWrapper, SQL.Aliased | Column>)
+      : columns[field];
   const operatorLC = operator.toLowerCase();
 
   const valueIsField = valueSource === 'field';
   const asFieldOrValue = (v: string) => (valueIsField ? columns[v] : v);
 
   if (!column) return;
+
+  // We only support PostgreSQL nested arrays
+  const { mode, threshold } = rule.match ?? {};
+
+  if (mode) {
+    if (opts.preset !== 'postgresql' || !isRuleGroup(rule.value)) return;
+
+    const matchModeLC = mode?.toLowerCase();
+
+    const matchModeCoerced =
+      matchModeLC === 'atleast' && rule.match?.threshold === 1
+        ? 'some'
+        : matchModeLC === 'atmost' && rule.match?.threshold === 0
+          ? 'none'
+          : matchModeLC;
+
+    // TODO?: Randomize this alias
+    const arrayElementAlias = 'elem_alias';
+
+    const sqlQuery = transformQuery(rule.value as RuleGroupType, {
+      ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
+    });
+
+    const nestedArrayFilter = defaultRuleGroupProcessorDrizzle(sqlQuery, {
+      ...opts,
+      context: { ...opts.context, useRawFields: true },
+    } as unknown as FormatQueryFinalOptions);
+
+    switch (matchModeCoerced) {
+      case 'all':
+        return sql`(select count(*) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) = array_length(${column}, 1)`;
+
+      case 'none':
+        return sql`not exists (select 1 from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)})`;
+
+      case 'some':
+        return sql`exists (select 1 from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)})`;
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        if (typeof threshold !== 'number' || threshold < 0) return;
+
+        const op =
+          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '=';
+
+        return threshold > 0 && threshold < 1
+          ? sql`(select count(*) / array_length(${column}, 1) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`
+          : sql`(select count(*) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`;
+      }
+    }
+  }
 
   switch (operatorLC) {
     case '=':
@@ -64,19 +127,19 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (
     case 'beginswith':
     case 'doesnotbeginwith':
       return (operatorLC === 'doesnotbeginwith' ? notLike : like)(
-        column,
+        column as SQL,
         valueIsField ? sql`${asFieldOrValue(value)} || '%'` : `${value}%`
       );
     case 'contains':
     case 'doesnotcontain':
       return (operatorLC === 'doesnotcontain' ? notLike : like)(
-        column,
+        column as SQL,
         valueIsField ? sql`'%' || ${asFieldOrValue(value)} || '%'` : `%${value}%`
       );
     case 'endswith':
     case 'doesnotendwith':
       return (operatorLC === 'doesnotendwith' ? notLike : like)(
-        column,
+        column as SQL,
         valueIsField ? sql`'%' || ${asFieldOrValue(value)}` : `%${value}`
       );
     case 'null':

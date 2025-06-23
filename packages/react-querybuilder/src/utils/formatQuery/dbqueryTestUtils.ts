@@ -193,43 +193,61 @@ const textColumnType: Record<DbPlatform, string> = {
 const unquote = (fieldName: string, unquoted = false) =>
   unquoted ? fieldName.toLocaleLowerCase() : `"${fieldName}"`;
 
-const unquotedFalse = { unquoted: false } as const;
+const defaultTableName = 'superusers';
+const defaultDbCommandOptions = { unquoted: false } as const;
+
+interface DBCommandOptions {
+  unquoted?: boolean;
+  includeNestedArrays?: boolean;
+  tableName?: string;
+}
 
 export const CREATE_TABLE = (
   dbPlatform: DbPlatform,
-  opts: { unquoted?: boolean; includeNestedArrays?: boolean } = unquotedFalse
-) => `CREATE TABLE superusers (
-  ${unquote('firstName', opts.unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('lastName', opts.unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('enhanced', opts.unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
-  ${unquote('madeUpName', opts.unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('nickname', opts.unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('powerUpAge', opts.unquoted)} INT NULL${
-    opts.includeNestedArrays
+  {
+    unquoted = false,
+    includeNestedArrays = false,
+    tableName = defaultTableName,
+  }: DBCommandOptions = defaultDbCommandOptions
+) => `CREATE TABLE ${tableName ?? defaultTableName} (
+  ${unquote('firstName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
+  ${unquote('madeUpName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('nickname', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
+  ${unquote('powerUpAge', unquoted)} INT NULL${
+    includeNestedArrays
       ? `,
-  ${unquote('nicknames', opts.unquoted)} ${textColumnType[dbPlatform]}[]`
+  ${unquote('nicknames', unquoted)} ${textColumnType[dbPlatform]}[]`
       : ``
   }
 )`;
 
-export const CREATE_INDEX = ({ unquoted = false }: { unquoted?: boolean } = unquotedFalse) =>
-  `CREATE UNIQUE INDEX ndx ON superusers(${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
+export const CREATE_INDEX = ({
+  unquoted = false,
+  tableName = defaultTableName,
+}: DBCommandOptions = defaultDbCommandOptions) =>
+  `CREATE UNIQUE INDEX ndx${tableName} ON ${tableName} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
 
 export const INSERT_INTO = (
   user: AugmentedSuperUser,
   dbPlatform: DbPlatform,
-  opts: { unquoted?: boolean; includeNestedArrays?: boolean } = unquotedFalse
+  {
+    unquoted = false,
+    includeNestedArrays = false,
+    tableName = defaultTableName,
+  }: DBCommandOptions = defaultDbCommandOptions
 ) => `
-INSERT INTO superusers (
-  ${unquote('firstName', opts.unquoted)},
-  ${unquote('lastName', opts.unquoted)},
-  ${unquote('enhanced', opts.unquoted)},
-  ${unquote('madeUpName', opts.unquoted)},
-  ${unquote('nickname', opts.unquoted)},
-  ${unquote('powerUpAge', opts.unquoted)}${
-    opts.includeNestedArrays
+INSERT INTO ${tableName ?? defaultTableName} (
+  ${unquote('firstName', unquoted)},
+  ${unquote('lastName', unquoted)},
+  ${unquote('enhanced', unquoted)},
+  ${unquote('madeUpName', unquoted)},
+  ${unquote('nickname', unquoted)},
+  ${unquote('powerUpAge', unquoted)}${
+    includeNestedArrays
       ? `,
-  ${unquote('nicknames', opts.unquoted)}`
+  ${unquote('nicknames', unquoted)}`
       : ``
   }
 ) VALUES (
@@ -239,7 +257,7 @@ INSERT INTO superusers (
   '${user.madeUpName}',
   '${user.nickname}',
   ${typeof user.powerUpAge === 'number' ? user.powerUpAge : 'NULL'}${
-    opts.includeNestedArrays
+    includeNestedArrays
       ? `,
   ARRAY[${user.nicknames.map(nn => `'${nn}'`)}]`
       : ``
@@ -251,7 +269,7 @@ export const getSqlOrderBy = (unquoted = false) => ` ORDER BY ${unquote('madeUpN
 
 export const dbSetup = (
   dbPlatform: DbPlatform,
-  opts: { unquoted?: boolean; includeNestedArrays?: boolean } = unquotedFalse
+  opts: DBCommandOptions = defaultDbCommandOptions
 ): string =>
   [
     CREATE_TABLE(dbPlatform, opts),
@@ -259,7 +277,9 @@ export const dbSetup = (
     ...augmentedSuperUsers(dbPlatform).map(user => INSERT_INTO(user, dbPlatform, opts)),
   ].join(';');
 
-export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> => ({
+export const dbTests = (
+  superUsers: SuperUser[] | AugmentedSuperUser[]
+): Record<string, TestSQLParams> => ({
   'and/or': {
     query: {
       combinator: 'or',
@@ -519,6 +539,7 @@ export type MatchModeTests = Record<
   [string, MatchConfig, (u: AugmentedSuperUser) => boolean][]
 >;
 
+// TODO: Add variation to the queries so they all produce _some_ results
 export const matchModeTests: MatchModeTests = {
   strings: [
     ['"all"', { mode: 'all' }, u => u.nicknames.every(n => n.includes('S'))],

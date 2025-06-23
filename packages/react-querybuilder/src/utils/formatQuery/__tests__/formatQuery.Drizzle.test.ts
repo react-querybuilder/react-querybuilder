@@ -15,10 +15,15 @@ import {
   queryAllOperatorsRandomCase,
   queryForPreserveValueOrder,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 
 const operatorStub = (...x: unknown[]) => x;
+function sqlStub(...x: unknown[]) {
+  return x;
+}
+sqlStub.raw = () => 'raw sql';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const drizzleOperators: any = {
@@ -43,7 +48,7 @@ const drizzleOperators: any = {
   notIlike: operatorStub,
   notInArray: operatorStub,
   or: operatorStub,
-  sql: operatorStub,
+  sql: sqlStub,
 };
 
 const fields = {
@@ -59,6 +64,7 @@ const fields = {
   job: { name: 'job', label: 'Job' },
   isLucky: { name: 'isLucky', label: 'Is Lucky' },
   isMusician: { name: 'isMusician', label: 'Is Musician' },
+  fs: { name: 'fs', label: 'FS' },
 } as unknown as Record<string, Column>;
 
 it('covers Drizzle', () => {
@@ -78,6 +84,15 @@ it('covers Drizzle', () => {
 it('handles operator case variations', () => {
   expect(
     formatQuery(queryAllOperatorsRandomCase, 'drizzle')(fields, drizzleOperators)
+  ).toBeTruthy();
+});
+
+it('handles nested arrays', () => {
+  expect(
+    formatQuery(queryWithMatchModes, { format: 'drizzle', preset: 'postgresql' })(
+      fields,
+      drizzleOperators
+    )
   ).toBeTruthy();
 });
 
