@@ -5,13 +5,12 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
-import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "parameterized" and
@@ -52,20 +51,16 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
   const ruleField = wrapFieldName(rule.field);
-  const { mode, threshold } = rule.match ?? {};
 
-  if (mode) {
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
     // We only support PostgreSQL nested arrays
-    if (opts?.preset !== 'postgresql' || !isRuleGroup(rule.value)) return finalize('');
+    if (opts?.preset !== 'postgresql') return finalize('');
 
-    const matchModeLC = mode?.toLowerCase();
-
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && rule.match?.threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && rule.match?.threshold === 0
-          ? 'none'
-          : matchModeLC;
+    const { mode, threshold } = matchEval;
 
     // TODO?: Randomize this alias
     const arrayElementAlias = 'elem_alias';
@@ -84,7 +79,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       Object.assign(paramsNamed, nestedParams);
     }
 
-    switch (matchModeCoerced) {
+    switch (mode) {
       case 'all':
         return finalize(
           `(select count(*) from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) = array_length(${ruleField}, 1)`
@@ -103,10 +98,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        if (typeof threshold !== 'number' || threshold < 0) return finalize('');
-
-        const op =
-          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '=';
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
         return finalize(
           `(select count(*)${threshold > 0 && threshold < 1 ? ` / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) ${op} ${threshold}`

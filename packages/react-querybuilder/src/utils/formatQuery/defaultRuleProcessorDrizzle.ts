@@ -5,11 +5,10 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
-import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for the "drizzle" format.
@@ -59,20 +58,15 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
 
   if (!column) return;
 
-  const { mode, threshold } = rule.match ?? {};
+  const matchEval = processMatchMode(rule);
 
-  if (mode) {
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
     // We only support PostgreSQL nested arrays
-    if (opts.preset !== 'postgresql' || !isRuleGroup(rule.value)) return;
+    if (opts.preset !== 'postgresql') return;
 
-    const matchModeLC = mode?.toLowerCase();
-
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && rule.match?.threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && rule.match?.threshold === 0
-          ? 'none'
-          : matchModeLC;
+    const { mode, threshold } = matchEval;
 
     // TODO?: Randomize this alias
     const arrayElementAlias = 'elem_alias';
@@ -86,7 +80,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
       context: { ...opts.context, useRawFields: true },
     } as unknown as FormatQueryFinalOptions);
 
-    switch (matchModeCoerced) {
+    switch (mode) {
       case 'all':
         return sql`(select count(*) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) = array_length(${column}, 1)`;
 
@@ -99,10 +93,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        if (typeof threshold !== 'number' || threshold < 0) return;
-
-        const op =
-          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '=';
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
         return threshold > 0 && threshold < 1
           ? sql`(select count(*) / array_length(${column}, 1) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`

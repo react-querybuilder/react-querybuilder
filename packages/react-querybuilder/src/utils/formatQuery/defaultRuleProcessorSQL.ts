@@ -3,11 +3,10 @@ import type {
   RuleGroupType,
   RuleProcessor,
 } from '../../types/index.noReact';
-import { isRuleGroup } from '../isRuleGroup';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { mapSQLOperator, getQuotedFieldName } from './utils';
+import { getQuotedFieldName, mapSQLOperator, processMatchMode } from './utils';
 
 /**
  * Default operator processor used by {@link formatQuery} for "sql" and "parameterized*" formats.
@@ -37,20 +36,15 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
 
   const ruleField = wrapFieldName(rule.field);
 
-  // We only support PostgreSQL nested arrays
-  const { mode, threshold } = rule.match ?? {};
+  const matchEval = processMatchMode(rule);
 
-  if (mode) {
-    if (opts.preset !== 'postgresql' || !isRuleGroup(rule.value)) return false;
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
+    // We only support PostgreSQL nested arrays
+    if (opts?.preset !== 'postgresql') return '';
 
-    const matchModeLC = mode?.toLowerCase();
-
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && rule.match?.threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && rule.match?.threshold === 0
-          ? 'none'
-          : matchModeLC;
+    const { mode, threshold } = matchEval;
 
     // TODO?: Randomize this alias
     const arrayElementAlias = 'elem_alias';
@@ -62,7 +56,7 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
       opts as FormatQueryFinalOptions
     );
 
-    switch (matchModeCoerced) {
+    switch (mode) {
       case 'all':
         return `(select count(*) from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedArrayFilter}) = array_length(${ruleField}, 1)`;
 
@@ -75,10 +69,7 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        if (typeof threshold !== 'number' || threshold < 0) return '';
-
-        const op =
-          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '=';
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
         return `(select count(*)${threshold > 0 && threshold < 1 ? ` / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedArrayFilter}) ${op} ${threshold}`;
       }

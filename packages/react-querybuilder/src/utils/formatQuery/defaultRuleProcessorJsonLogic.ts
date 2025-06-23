@@ -8,7 +8,7 @@ import { toArray } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
   op
@@ -24,10 +24,8 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  *
  * @group Export
  */
-export const defaultRuleProcessorJsonLogic: RuleProcessor = (
-  { field, operator, value, valueSource, match },
-  options = {}
-): RQBJsonLogic => {
+export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {}): RQBJsonLogic => {
+  const { field, operator, value, valueSource } = rule;
   const { parseNumbers, preserveValueOrder } = options;
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
@@ -38,26 +36,19 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ? parseNumber(v, { parseNumbers })
         : v;
 
-  const { mode, threshold } = match ?? {};
+  const matchEval = processMatchMode(rule);
 
-  if (mode) {
-    if (!isRuleGroup(value)) return false;
+  if (matchEval === false) {
+    return false;
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
 
-    const matchModeLC = mode.toLowerCase();
-
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && match?.threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && match?.threshold === 0
-          ? 'none'
-          : matchModeLC;
-
-    switch (matchModeCoerced) {
+    switch (mode) {
       case 'all':
       case 'none':
       case 'some':
         return {
-          [matchModeCoerced]: [
+          [mode]: [
             { var: field },
             value.rules.length === 1 && !isRuleGroup(value.rules[0])
               ? defaultRuleProcessorJsonLogic(value.rules[0], options)
@@ -68,10 +59,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        if (typeof threshold !== 'number' || threshold < 0) return false;
-
-        const op =
-          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '==';
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '==';
 
         const filteredCount = {
           reduce: [

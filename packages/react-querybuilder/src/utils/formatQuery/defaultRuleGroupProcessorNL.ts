@@ -34,14 +34,11 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    let rg2 = rg;
-
-    if (
+    const rg2 =
       isRuleGroupTypeIC(rg) &&
       rg.rules.some(r => typeof r === 'string' && r.toLowerCase() === 'xor')
-    ) {
-      rg2 = convertFromIC(rg);
-    }
+        ? convertFromIC(rg)
+        : rg;
 
     const processedRules = rg2.rules.map(rule => {
       // Independent combinators

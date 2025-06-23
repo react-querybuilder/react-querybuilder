@@ -4,11 +4,10 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
-import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorMongoDBQuery } from './defaultRuleGroupProcessorMongoDBQuery';
-import { isValidValue, mongoOperators, shouldRenderAsNumber } from './utils';
+import { isValidValue, mongoOperators, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const processNumber = <T>(value: unknown, fallback: T, parseNumbers = false) =>
   shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
@@ -21,27 +20,22 @@ const processNumber = <T>(value: unknown, fallback: T, parseNumbers = false) =>
  * @group Export
  */
 export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
-  { field, operator, value, valueSource, match },
+  rule,
   // istanbul ignore next
   options = {}
 ) => {
+  const { field, operator, value, valueSource } = rule;
   const { parseNumbers, preserveValueOrder, context } = options;
   const valueIsField = valueSource === 'field';
 
   const { avoidFieldsAsKeys } = (context ?? {}) as { avoidFieldsAsKeys?: boolean };
-  const { mode, threshold } = match ?? {};
 
-  if (mode) {
-    if (!isRuleGroup(value)) return false;
+  const matchEval = processMatchMode(rule);
 
-    const matchModeLC = mode?.toLowerCase();
-
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && match?.threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && match?.threshold === 0
-          ? 'none'
-          : matchModeLC;
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
 
     const totalCount = { $size: { $ifNull: [`$${field}`, []] } };
     const subQueryNoAggCtx = defaultRuleGroupProcessorMongoDBQuery(
@@ -76,7 +70,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
       },
     };
 
-    switch (matchModeCoerced) {
+    switch (mode) {
       case 'all':
         return { $expr: { $eq: [filteredCount, totalCount] } };
 
@@ -89,12 +83,10 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        if (typeof threshold !== 'number' || threshold < 0) return false;
-
         const op =
-          matchModeCoerced === 'atleast'
+          mode === 'atleast'
             ? mongoOperators['>=']
-            : matchModeCoerced === 'atmost'
+            : mode === 'atmost'
               ? mongoOperators['<=']
               : mongoOperators['='];
 

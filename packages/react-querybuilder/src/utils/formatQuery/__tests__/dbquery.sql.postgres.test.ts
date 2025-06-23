@@ -129,7 +129,6 @@ describe('PostgreSQL', async () => {
           `${sqlBase} ${parameterized.sql} ${getSqlOrderBy(true)}`,
           parameterized.params
         );
-        console.log({ parameterized });
         expect(queryResult.rows).toEqual(
           expectedResult.map(u =>
             Object.fromEntries(

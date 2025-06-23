@@ -4,12 +4,11 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { isRuleGroup } from '../isRuleGroup';
 import { nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
-import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -27,10 +26,11 @@ const escapeStringRegex = (s: string) =>
  * @group Export
  */
 export const defaultRuleProcessorJSONata: RuleProcessor = (
-  { field, operator, value, valueSource, match },
+  rule,
   // istanbul ignore next
   options = {}
 ) => {
+  const { field, operator, value, valueSource } = rule;
   const {
     escapeQuotes,
     parseNumbers = true,
@@ -49,19 +49,12 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
   const qfn = (f: string) =>
     getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
-  const { mode, threshold } = match ?? {};
+  const matchEval = processMatchMode(rule);
 
-  if (mode) {
-    if (!isRuleGroup(value)) return false;
-
-    const matchModeLC = mode?.toLowerCase();
-
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && match?.threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && match?.threshold === 0
-          ? 'none'
-          : matchModeLC;
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
 
     const totalCount = `$count(${qfn(field)})`;
     const filteredCount = `$count($filter(${qfn(field)}, function($v) {${defaultRuleGroupProcessorJSONata(
@@ -71,7 +64,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       options as FormatQueryFinalOptions
     )}}))`;
 
-    switch (matchModeCoerced) {
+    switch (mode) {
       case 'all':
         return `${filteredCount} = ${totalCount}`;
 
@@ -84,10 +77,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        if (typeof threshold !== 'number' || threshold < 0) return false;
-
-        const op =
-          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '=';
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
         if (threshold > 0 && threshold < 1) {
           return `${filteredCount} ${op} (${totalCount} * ${threshold})`;
