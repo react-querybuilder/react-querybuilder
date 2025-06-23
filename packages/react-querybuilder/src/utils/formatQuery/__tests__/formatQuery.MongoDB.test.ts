@@ -15,6 +15,7 @@ import {
   queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
+  queryWithMatchModes,
   testQueryDQ,
 } from '../formatQueryTestUtils';
 import { defaultMongoDBValueProcessor } from '../index';
@@ -150,6 +151,31 @@ const mongoQueryExpectation = {
     },
   ],
 };
+const mongoQueryExpectationForAvoidFieldsAsKeys = {
+  $and: [
+    { $eq: ['$firstName', null] },
+    { $ne: ['$lastName', null] },
+    { $in: ['$firstName', ['Test', 'This']] },
+    { $not: { $in: ['$lastName', ['Test', 'This']] } },
+    { $in: ['$firstName', []] },
+    { $and: [{ $gte: ['$firstName', 'Test'] }, { $lte: ['$firstName', 'This'] }] },
+    { $and: [{ $gte: ['$firstName', 'Test'] }, { $lte: ['$firstName', 'This'] }] },
+    { $or: [{ $lt: ['$lastName', 'Test'] }, { $gt: ['$lastName', 'This'] }] },
+    { $and: [{ $gte: ['$age', 12] }, { $lte: ['$age', 14] }] },
+    { $eq: ['$age', '26'] },
+    { $eq: ['$isMusician', true] },
+    { $eq: ['$isLucky', false] },
+    { $regexMatch: { input: '$email', regex: '@' } },
+    { $regexMatch: { input: '$email', regex: '^ab' } },
+    { $regexMatch: { input: '$email', regex: 'com$' } },
+    { $not: { $regexMatch: { input: '$hello', regex: 'com' } } },
+    { $not: { $regexMatch: { input: '$job', regex: '^Man' } } },
+    { $not: { $regexMatch: { input: '$job', regex: 'ger$' } } },
+    {
+      $or: [{ $eq: ['$job', 'Sales Executive'] }, { $in: ['$job', []] }],
+    },
+  ],
+};
 const mongoQueryExpectationForValueSourceField = {
   $and: [
     { firstName: null },
@@ -157,38 +183,231 @@ const mongoQueryExpectationForValueSourceField = {
     { $where: '[this.middleName,this.lastName].includes(this.firstName)' },
     { $where: '![this.middleName,this.lastName].includes(this.lastName)' },
     { $where: '[].includes(this.firstName)' },
+    { $gte: ['$firstName', '$middleName'], $lte: ['$firstName', '$lastName'] },
+    { $gte: ['$firstName', '$middleName'], $lte: ['$firstName', '$lastName'] },
     {
-      $and: [
-        { $expr: { $gte: ['$firstName', '$middleName'] } },
-        { $expr: { $lte: ['$firstName', '$lastName'] } },
-      ],
+      $or: [{ $lt: ['$lastName', '$middleName'] }, { $gt: ['$lastName', '$lastName'] }],
     },
-    {
-      $and: [
-        { $expr: { $gte: ['$firstName', '$middleName'] } },
-        { $expr: { $lte: ['$firstName', '$lastName'] } },
-      ],
-    },
-    {
-      $or: [
-        { $expr: { $lt: ['$lastName', '$middleName'] } },
-        { $expr: { $gt: ['$lastName', '$lastName'] } },
-      ],
-    },
-    { $expr: { $eq: ['$age', '$iq'] } },
-    { $expr: { $eq: ['$isMusician', '$isCreative'] } },
+    { $eq: ['$age', '$iq'] },
+    { $eq: ['$isMusician', '$isCreative'] },
     { $where: 'this.email.includes(this.atSign)' },
     { $where: 'this.email.startsWith(this.name)' },
     { $where: 'this.email.endsWith(this.dotCom)' },
     { $where: '!this.hello.includes(this.dotCom)' },
     { $where: '!this.job.startsWith(this.noJob)' },
     { $where: '!this.job.endsWith(this.noJob)' },
-    { $expr: { $eq: ['$job', '$executiveJobName'] } },
+    { $eq: ['$job', '$executiveJobName'] },
+  ],
+};
+
+const mongoQueryExpectationForMatchModes = {
+  $and: [
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          { $size: '$fs' },
+        ],
+      },
+    },
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          { $size: '$fs' },
+        ],
+      },
+    },
+    { $nor: [{ fs: { $regex: 'S' } }] },
+    { fs: { $regex: 'S' } },
+    { fs: { $regex: 'S' } },
+    { $nor: [{ fs: { $regex: 'S' } }] },
+    {
+      $expr: {
+        $gte: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          2,
+        ],
+      },
+    },
+    {
+      $expr: {
+        $gte: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          2,
+        ],
+      },
+    },
+    {
+      $expr: {
+        $gte: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          { $multiply: [{ $size: '$fs' }, 0.5] },
+        ],
+      },
+    },
+    {
+      $expr: {
+        $lte: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          2,
+        ],
+      },
+    },
+    {
+      $expr: {
+        $lte: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          { $multiply: [{ $size: '$fs' }, 0.5] },
+        ],
+      },
+    },
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          2,
+        ],
+      },
+    },
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                input: '$fs',
+              },
+            },
+          },
+          { $multiply: [{ $size: '$fs' }, 0.5] },
+        ],
+      },
+    },
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: {
+                  $and: [
+                    {
+                      $and: [
+                        { $regexMatch: { input: '$$item', regex: 'S' } },
+                        { $regexMatch: { input: '$$item', regex: 'S' } },
+                      ],
+                    },
+                  ],
+                },
+                input: '$fs',
+              },
+            },
+          },
+          { $size: '$fs' },
+        ],
+      },
+    },
+    {
+      $expr: {
+        $gte: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: {
+                  $and: [
+                    {
+                      $and: [
+                        { $regexMatch: { input: '$$item', regex: 'S' } },
+                        { $regexMatch: { input: '$$item', regex: 'S' } },
+                      ],
+                    },
+                  ],
+                },
+                input: '$fs',
+              },
+            },
+          },
+          2,
+        ],
+      },
+    },
   ],
 };
 
 it('formats to mongo query correctly', () => {
   testBoth(mongoQuery, mongoQueryExpectation);
+  testBoth(mongoQuery, mongoQueryExpectationForAvoidFieldsAsKeys, {
+    context: { avoidFieldsAsKeys: true },
+  });
   testBoth(mongoQueryWithValueSourceField, mongoQueryExpectationForValueSourceField);
   // Test for newline in value
   testBoth(
@@ -199,6 +418,37 @@ it('formats to mongo query correctly', () => {
     format: 'mongodb',
     valueProcessor: defaultMongoDBValueProcessor,
   });
+  testBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
+  // Just a coverage thing here:
+  testBoth(
+    {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'fs',
+          operator: '=',
+          value: { combinator: 'and', rules: [{ field: '', operator: '>=', value: 12 }] },
+          match: { mode: 'all' },
+        },
+      ],
+    },
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                as: 'item',
+                cond: { $and: [{ $and: [{ $ne: ['$$item', null] }, { $gte: ['$$item', 12] }] }] },
+                input: '$fs',
+              },
+            },
+          },
+          { $size: '$fs' },
+        ],
+      },
+    }
+  );
 });
 
 it('handles operator case variations', () => {

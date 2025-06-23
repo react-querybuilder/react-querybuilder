@@ -1,4 +1,9 @@
-import type { DefaultRuleGroupType, Field, FormatQueryOptions } from '../../types/index.noReact';
+import type {
+  DefaultRuleGroupType,
+  Field,
+  FormatQueryOptions,
+  MatchConfig,
+} from '../../types/index.noReact';
 
 type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql' | 'mongodb' | 'cel';
 
@@ -463,3 +468,137 @@ export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> 
     expectedResult: superUsers.filter(u => u.powerUpAge === null && u.madeUpName !== null),
   },
 });
+
+export const genStringsMatchQuery = (match: MatchConfig): DefaultRuleGroupType => ({
+  combinator: 'and',
+  rules: [
+    {
+      field: 'nicknames',
+      operator: '=',
+      value: {
+        combinator: 'and',
+        rules: [{ field: '', operator: 'contains', value: 'S' }],
+      },
+      match,
+    },
+  ],
+});
+
+export const genObjectsMatchQuery = (match: MatchConfig): DefaultRuleGroupType => ({
+  combinator: 'and',
+  rules: [
+    {
+      field: 'earlyPencilers',
+      operator: '=',
+      value: {
+        combinator: 'and',
+        rules: [{ field: 'lastName', operator: 'contains', value: 'S' }],
+      },
+      match,
+    },
+  ],
+});
+
+export type MatchModeTests = Record<
+  'strings' | 'objects',
+  [string, MatchConfig, (u: AugmentedSuperUser) => boolean][]
+>;
+
+export const matchModeTests: MatchModeTests = {
+  strings: [
+    ['"all"', { mode: 'all' }, u => u.nicknames.every(n => n.includes('S'))],
+    ['"none"', { mode: 'none' }, u => u.nicknames.every(n => !n.includes('S'))],
+    ['"some"', { mode: 'some' }, u => u.nicknames.some(n => n.includes('S'))],
+    [
+      '"none" as atMost 0',
+      { mode: 'atMost', threshold: 0 },
+      u => u.nicknames.every(n => !n.includes('S')),
+    ],
+    [
+      '"some" as atLeast 1',
+      { mode: 'atLeast', threshold: 1 },
+      u => u.nicknames.some(n => n.includes('S')),
+    ],
+    [
+      '"atLeast" integer',
+      { mode: 'atLeast', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length >= 2,
+    ],
+    [
+      '"atLeast" decimal',
+      { mode: 'atLeast', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length >= u.nicknames.length / 2,
+    ],
+    [
+      '"atMost" integer',
+      { mode: 'atMost', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length <= 2,
+    ],
+    [
+      '"atMost" decimal',
+      { mode: 'atMost', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length <= u.nicknames.length / 2,
+    ],
+    [
+      '"exactly" integer',
+      { mode: 'exactly', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length === 2,
+    ],
+    [
+      '"exactly" decimal',
+      { mode: 'exactly', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length === u.nicknames.length / 2,
+    ],
+  ],
+  objects: [
+    ['"all"', { mode: 'all' }, u => u.earlyPencilers.every(n => n.lastName.includes('S'))],
+    ['"none"', { mode: 'none' }, u => u.earlyPencilers.every(n => !n.lastName.includes('S'))],
+    ['"some"', { mode: 'some' }, u => u.earlyPencilers.some(n => n.lastName.includes('S'))],
+    [
+      '"none" as atMost 0',
+      { mode: 'atMost', threshold: 0 },
+      u => u.earlyPencilers.every(n => !n.lastName.includes('S')),
+    ],
+    [
+      '"some" as atLeast 1',
+      { mode: 'atLeast', threshold: 1 },
+      u => u.earlyPencilers.some(n => n.lastName.includes('S')),
+    ],
+    [
+      '"atLeast" integer',
+      { mode: 'atLeast', threshold: 2 },
+      u => u.earlyPencilers.filter(n => n.lastName.includes('S')).length >= 2,
+    ],
+    [
+      '"atLeast" decimal',
+      { mode: 'atLeast', threshold: 0.5 },
+      u =>
+        u.earlyPencilers.filter(n => n.lastName.includes('S')).length >=
+        u.earlyPencilers.length / 2,
+    ],
+    [
+      '"atMost" integer',
+      { mode: 'atMost', threshold: 2 },
+      u => u.earlyPencilers.filter(n => n.lastName.includes('S')).length <= 2,
+    ],
+    [
+      '"atMost" decimal',
+      { mode: 'atMost', threshold: 0.5 },
+      u =>
+        u.earlyPencilers.filter(n => n.lastName.includes('S')).length <=
+        u.earlyPencilers.length / 2,
+    ],
+    [
+      '"exactly" integer',
+      { mode: 'exactly', threshold: 2 },
+      u => u.earlyPencilers.filter(n => n.lastName.includes('S')).length === 2,
+    ],
+    [
+      '"exactly" decimal',
+      { mode: 'exactly', threshold: 0.5 },
+      u =>
+        u.earlyPencilers.filter(n => n.lastName.includes('S')).length ===
+        u.earlyPencilers.length / 2,
+    ],
+  ],
+};

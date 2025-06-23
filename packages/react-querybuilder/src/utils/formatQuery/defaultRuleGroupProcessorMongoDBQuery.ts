@@ -16,7 +16,11 @@ export const mongoDbFallback = { $and: [{ $expr: true }] } as const;
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (ruleGroup, options) => {
+export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
+  ruleGroup,
+  options,
+  meta
+) => {
   const {
     fields,
     getParseNumberBoolean,
@@ -57,11 +61,15 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (ruleGr
           return false;
         }
         const fieldData = getOption(fields, rule.field);
-        return ruleProcessor(rule, {
-          ...options,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          fieldData,
-        });
+        return ruleProcessor(
+          rule,
+          {
+            ...options,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          },
+          meta
+        );
       })
       .filter(Boolean);
 

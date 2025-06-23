@@ -41,7 +41,7 @@ const testCases: Record<string, [RuleGroupType, Record<string, unknown>]> = {
       ],
     },
     {
-      $and: [{ $expr: { $ne: ['$firstName', '$lastName'] } }, { firstName: { $regex: `^Stev` } }],
+      $and: [{ $ne: ['$firstName', '$lastName'] }, { firstName: { $regex: `^Stev` } }],
     },
   ],
   invalid: [

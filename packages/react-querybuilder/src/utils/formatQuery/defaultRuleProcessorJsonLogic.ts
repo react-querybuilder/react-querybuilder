@@ -41,9 +41,9 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
   const { mode, threshold } = match ?? {};
 
   if (mode) {
-    const matchModeLC = mode.toLowerCase();
-
     if (!isRuleGroup(value)) return false;
+
+    const matchModeLC = mode.toLowerCase();
 
     const matchModeCoerced =
       matchModeLC === 'atleast' && match?.threshold === 1
