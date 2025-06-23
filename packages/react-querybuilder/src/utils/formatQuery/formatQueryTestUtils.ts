@@ -450,7 +450,7 @@ export const queryAllOperatorsRandomCase: RuleGroupType = transformQuery(queryAl
     defaultOperators.map(o => [
       o.name,
       // Randomize case
-      [...o.name].map(c => (Math.random() < 0.5 ? c.toUpperCase() : c.toLowerCase())).join(''),
+      [...o.name].map(c => (Math.random() < 0.5 ? c.toUpperCase() : c)).join(''),
     ])
   ),
 });

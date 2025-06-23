@@ -1,7 +1,8 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -29,7 +30,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const operatorLowerCase = operator.toLowerCase();
+  const operatorLowerCase = lc(operator);
   const quoteChar = quoteValuesWith || "'";
 
   const quoteValue = (v: unknown) =>

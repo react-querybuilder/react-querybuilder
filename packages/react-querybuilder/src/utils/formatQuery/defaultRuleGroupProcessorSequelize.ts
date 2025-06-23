@@ -3,6 +3,7 @@ import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReac
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 
 type OpTypes = typeof _OpTypes;
@@ -77,7 +78,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
     const result =
       expressions.length === 1 && !hasChildRules
         ? expressions[0]
-        : { [combinator.toLowerCase() === 'or' ? Op.or : Op.and]: expressions };
+        : { [lc(combinator) === 'or' ? Op.or : Op.and]: expressions };
 
     return rg.not ? { [Op.not]: result } : result;
   };

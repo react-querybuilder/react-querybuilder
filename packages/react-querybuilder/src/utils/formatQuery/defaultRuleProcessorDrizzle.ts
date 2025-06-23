@@ -9,6 +9,7 @@ import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
+import { lc } from '../misc';
 
 /**
  * Default rule processor used by {@link formatQuery} for the "drizzle" format.
@@ -51,7 +52,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
     useRawFields && /[a-z][a-z0-9]*/i.test(field)
       ? (sql.raw(field) as Exclude<SQLWrapper, SQL.Aliased | Column>)
       : columns[field];
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
 
   const valueIsField = valueSource === 'field';
   const asFieldOrValue = (v: string) => (valueIsField ? columns[v] : v);

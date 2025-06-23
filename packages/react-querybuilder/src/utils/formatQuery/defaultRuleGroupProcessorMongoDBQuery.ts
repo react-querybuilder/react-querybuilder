@@ -2,6 +2,7 @@ import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReac
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 
 /**
@@ -37,7 +38,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
       return outermost ? mongoDbFallback : false;
     }
 
-    const combinator = `$${rg.combinator.toLowerCase()}`;
+    const combinator = `$${lc(rg.combinator)}`;
     let hasChildRules = false;
 
     const expressions: Record<string, unknown>[] = rg.rules

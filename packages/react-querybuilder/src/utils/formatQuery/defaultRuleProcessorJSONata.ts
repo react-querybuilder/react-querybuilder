@@ -4,7 +4,7 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { nullOrUndefinedOrEmpty } from '../misc';
+import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
@@ -87,7 +87,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     }
   }
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '<':
     case '<=':

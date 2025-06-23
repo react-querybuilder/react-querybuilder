@@ -3,6 +3,7 @@ import type {
   RuleGroupType,
   RuleProcessor,
 } from '../../types/index.noReact';
+import { lc } from '../misc';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
@@ -13,8 +14,7 @@ import { getQuotedFieldName, mapSQLOperator, processMatchMode } from './utils';
  *
  * @group Export
  */
-export const defaultOperatorProcessorSQL: RuleProcessor = rule =>
-  mapSQLOperator(rule.operator).toLowerCase();
+export const defaultOperatorProcessorSQL: RuleProcessor = rule => lc(mapSQLOperator(rule.operator));
 
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
@@ -86,7 +86,7 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
 
   const operator = operatorProcessor(rule, opts);
 
-  const operatorLowerCase = operator.toLowerCase();
+  const operatorLowerCase = lc(operator);
   if (
     (operatorLowerCase === 'in' ||
       operatorLowerCase === 'not in' ||

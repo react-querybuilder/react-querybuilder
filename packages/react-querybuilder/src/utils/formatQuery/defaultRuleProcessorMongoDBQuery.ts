@@ -4,6 +4,7 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorMongoDBQuery } from './defaultRuleGroupProcessorMongoDBQuery';
@@ -104,7 +105,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
       : { [field]: processNumber(value, value, parseNumbers) };
   }
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '<':
     case '<=':

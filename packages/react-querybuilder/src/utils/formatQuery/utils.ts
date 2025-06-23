@@ -18,7 +18,7 @@ import type {
 import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { isRuleGroup } from '../isRuleGroup';
-import { numericRegex } from '../misc';
+import { lc, numericRegex } from '../misc';
 import { getOption } from '../optGroupUtils';
 import { parseNumber } from '../parseNumber';
 
@@ -28,7 +28,7 @@ import { parseNumber } from '../parseNumber';
  * @group Export
  */
 export const mapSQLOperator = (rqbOperator: string): string => {
-  switch (rqbOperator.toLowerCase()) {
+  switch (lc(rqbOperator)) {
     case 'null':
       return 'is null';
     case 'notnull':
@@ -351,7 +351,7 @@ export const processMatchMode = (rule: RuleType): void | false | ProcessedMatchM
   if (mode) {
     if (!isRuleGroup(rule.value)) return false;
 
-    const matchModeLC = mode.toLowerCase() as Lowercase<MatchMode>;
+    const matchModeLC = lc(mode) as Lowercase<MatchMode>;
 
     const matchModeCoerced =
       matchModeLC === 'atleast' && threshold === 1

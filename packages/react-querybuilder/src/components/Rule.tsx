@@ -36,6 +36,7 @@ import {
   isFlexibleOptionGroupArray,
   isPojo,
   isRuleGroup,
+  lc,
   toFullOptionList,
 } from '../utils';
 import { clsx } from '../utils/clsx';
@@ -235,7 +236,7 @@ export const RuleComponents: React.MemoExoticComponent<
               r.rule.operator !== r.translations.operators.placeholderName) &&
               !r.hideValueControls && (
                 <React.Fragment>
-                  {!['null', 'notnull'].includes(`${r.rule.operator}`.toLowerCase()) &&
+                  {!['null', 'notnull'].includes(lc(`${r.rule.operator}`)) &&
                     r.valueSources.length > 1 && (
                       <ValueSourceSelectorControlElement
                         key={TestID.valueSourceSelector}

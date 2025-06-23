@@ -6,6 +6,7 @@ import type {
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
 import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
@@ -87,7 +88,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {})
     }
   }
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '<':
     case '<=':

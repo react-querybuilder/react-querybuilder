@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import type { FullField, MatchMode, MatchModeEditorProps, Path, RuleType, Schema } from '../types';
-import { parseNumber } from '../utils';
+import { lc, parseNumber } from '../utils';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
 const requiresThreshold = (mm?: string | null | undefined) =>
-  ['atleast', 'atmost', 'exactly'].includes(mm?.toLowerCase() ?? /* istanbul ignore next */ '');
+  ['atleast', 'atmost', 'exactly'].includes(lc(mm) ?? /* istanbul ignore next */ '');
 const dummyPath: Path = [];
 
 /**

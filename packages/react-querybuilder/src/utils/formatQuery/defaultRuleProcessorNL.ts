@@ -5,6 +5,7 @@ import type {
   FullOption,
   RuleProcessor,
 } from '../../types/index.noReact';
+import { lc } from '../misc';
 import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
@@ -60,7 +61,7 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
     Object.entries(defaultExportOperatorMap)
   );
   for (const [key, value] of Object.entries(operatorMapParam)) {
-    mapOperatorMap.set(key.toLowerCase(), value);
+    mapOperatorMap.set(lc(key), value);
   }
   const operatorMap = Object.fromEntries(mapOperatorMap);
 
@@ -82,7 +83,7 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
   };
 
   const operatorTL = operatorMap[operatorNL as DefaultOperatorName] ??
-    operatorMap[operatorNL.toLowerCase() as Lowercase<DefaultOperatorName>] ?? [label, label];
+    operatorMap[lc(operatorNL) as Lowercase<DefaultOperatorName>] ?? [label, label];
 
   return typeof operatorTL === 'string' ? operatorTL : operatorTL[valueSource === 'field' ? 1 : 0];
 };
@@ -156,7 +157,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     concatOperator,
   });
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
   if (
     (operatorLC === 'in' ||
       operatorLC === 'notin' ||

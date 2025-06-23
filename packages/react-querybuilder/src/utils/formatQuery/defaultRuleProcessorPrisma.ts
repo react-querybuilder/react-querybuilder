@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
 
@@ -20,7 +21,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
 ) => {
   if (valueSource === 'field') return;
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '=':
       return { [field]: processNumber(value, value, parseNumbers) };

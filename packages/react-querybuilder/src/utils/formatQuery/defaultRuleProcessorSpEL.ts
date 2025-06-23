@@ -1,6 +1,6 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { nullOrUndefinedOrEmpty } from '../misc';
+import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { shouldRenderAsNumber } from './utils';
 
@@ -24,7 +24,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
   { escapeQuotes, parseNumbers, preserveValueOrder } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const operatorTL = (operator === '=' ? '==' : operator).toLowerCase();
+  const operatorTL = lc(operator === '=' ? '==' : operator);
   const useBareValue =
     typeof value === 'number' ||
     typeof value === 'boolean' ||

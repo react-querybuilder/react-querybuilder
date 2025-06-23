@@ -24,6 +24,7 @@ import type {
   ValueProcessorByRule,
 } from '../../types/index.noReact';
 import { getParseNumberMethod } from '../getParseNumberMethod';
+import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
@@ -365,7 +366,7 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
     !!getParseNumberMethod({ parseNumbers, inputType });
 
-  const format = optObj.format.toLowerCase() as ExportFormat;
+  const format = lc(optObj.format) as ExportFormat;
 
   const operatorProcessor =
     typeof operatorProcessor_option === 'function'

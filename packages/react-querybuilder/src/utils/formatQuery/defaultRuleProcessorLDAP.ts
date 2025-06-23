@@ -1,6 +1,6 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { nullOrUndefinedOrEmpty } from '../misc';
+import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { shouldRenderAsNumber } from './utils';
 
@@ -22,7 +22,7 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
   // istanbul ignore next
   { preserveValueOrder } = {}
 ) => {
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
 
   // Bail out if either:
   // 1. This is a field comparison (which LDAP does not support), or

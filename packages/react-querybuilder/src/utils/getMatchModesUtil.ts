@@ -6,6 +6,7 @@ import type {
   MatchMode,
   MatchModeOptions,
 } from '../types/index.noReact';
+import { lc } from './misc';
 import { isFlexibleOptionArray, toFullOption, toFullOptionList } from './optGroupUtils';
 
 const dummyFD = {
@@ -54,7 +55,7 @@ export const getMatchModesUtil = <F extends FullField>(
 
   return (matchModes?.map(
     mm =>
-      defaultMatchModes.find(dmm => dmm.value === mm.toLowerCase()) ?? {
+      defaultMatchModes.find(dmm => dmm.value === lc(mm)) ?? {
         name: mm,
         value: mm,
         label: mm,

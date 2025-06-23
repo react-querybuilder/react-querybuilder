@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useMatchModeEditor, type FullField, type Path } from 'react-querybuilder';
+import { lc, useMatchModeEditor, type FullField, type Path } from 'react-querybuilder';
 import type { MatchModeEditorNativeProps } from '../types';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
 const requiresThreshold = (mm?: string | null | undefined) =>
-  ['atleast', 'atmost', 'exactly'].includes(mm?.toLowerCase() ?? /* istanbul ignore next */ '');
+  ['atleast', 'atmost', 'exactly'].includes(lc(mm) ?? /* istanbul ignore next */ '');
 const dummyPath: Path = [];
 
 /**

@@ -1,5 +1,6 @@
 import type { DefaultOperatorName, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, shouldRenderAsNumber } from './utils';
 
@@ -75,7 +76,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
   { field, operator, value, valueSource },
   { parseNumbers, preserveValueOrder } = {}
 ): ElasticSearchQuery | ElasticSearchRule | false => {
-  const operatorLC = operator.toLowerCase() as Lowercase<DefaultOperatorName>;
+  const operatorLC = lc(operator) as Lowercase<DefaultOperatorName>;
 
   if (valueSource === 'field') {
     // Bail out if not all values are strings

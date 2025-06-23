@@ -5,6 +5,7 @@ import type {
   RuleProcessor,
 } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
@@ -116,7 +117,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   });
 
   const sqlOperator = operatorProcessor(rule, opts);
-  const sqlOperatorLowerCase = sqlOperator.toLowerCase();
+  const sqlOperatorLowerCase = lc(sqlOperator);
   const [qPre, qPost] = quoteFieldNamesWith;
 
   if (
