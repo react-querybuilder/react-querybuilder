@@ -1,9 +1,17 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  FullField,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { isRuleGroup } from '../isRuleGroup';
 import { parseNumber } from '../parseNumber';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "parameterized" and
@@ -23,6 +31,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     paramsKeepPrefix,
     numberedParams,
     quoteFieldNamesWith = ['', ''] as [string, string],
+    fieldIdentifierSeparator,
     concatOperator,
     operatorProcessor = defaultOperatorProcessorSQL,
     valueProcessor = defaultValueProcessorByRule,
@@ -38,6 +47,73 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
 
   const finalize = (sql: string) =>
     parameterized ? { sql, params } : { sql, params: paramsNamed };
+
+  const wrapFieldName = (v: string) =>
+    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+
+  const ruleField = wrapFieldName(rule.field);
+  const { mode, threshold } = rule.match ?? {};
+
+  if (mode) {
+    // We only support PostgreSQL nested arrays
+    if (opts?.preset !== 'postgresql' || !isRuleGroup(rule.value)) return finalize('');
+
+    const matchModeLC = mode?.toLowerCase();
+
+    const matchModeCoerced =
+      matchModeLC === 'atleast' && rule.match?.threshold === 1
+        ? 'some'
+        : matchModeLC === 'atmost' && rule.match?.threshold === 0
+          ? 'none'
+          : matchModeLC;
+
+    // TODO?: Randomize this alias
+    const arrayElementAlias = 'elem_alias';
+
+    const { sql: nestedSQL, params: nestedParams } = defaultRuleGroupProcessorParameterized(
+      transformQuery(rule.value as RuleGroupType, {
+        ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
+      }),
+      { ...opts, fields: [] as FullField[] } as FormatQueryFinalOptions
+    );
+    // Ignore the "parameterized_named" case because PostgreSQL doesn't support named parameters
+    // istanbul ignore else
+    if (Array.isArray(nestedParams)) {
+      params.push(...nestedParams);
+    } else {
+      Object.assign(paramsNamed, nestedParams);
+    }
+
+    switch (matchModeCoerced) {
+      case 'all':
+        return finalize(
+          `(select count(*) from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) = array_length(${ruleField}, 1)`
+        );
+
+      case 'none':
+        return finalize(
+          `not exists (select 1 from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL})`
+        );
+
+      case 'some':
+        return finalize(
+          `exists (select 1 from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL})`
+        );
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        if (typeof threshold !== 'number' || threshold < 0) return finalize('');
+
+        const op =
+          matchModeCoerced === 'atleast' ? '>=' : matchModeCoerced === 'atmost' ? '<=' : '=';
+
+        return finalize(
+          `(select count(*)${threshold > 0 && threshold < 1 ? ` / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) ${op} ${threshold}`
+        );
+      }
+    }
+  }
 
   const value = valueProcessor(rule, {
     parseNumbers,

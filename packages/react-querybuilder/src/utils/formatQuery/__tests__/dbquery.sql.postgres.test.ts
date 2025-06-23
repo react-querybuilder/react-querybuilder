@@ -119,27 +119,27 @@ describe('PostgreSQL', async () => {
         );
       });
 
-      // test(`${name} (parameterized)`, async () => {
-      //   const parameterized = formatQuery(query, {
-      //     ...fqOptions,
-      //     format: 'parameterized',
-      //     preset: 'postgresql',
-      //   });
-      //   const queryResult = await nestedArrayDb.query(
-      //     `${sqlBase} ${parameterized.sql} ${getSqlOrderBy(true)}`,
-      //     parameterized.params
-      //   );
-      //   console.log({ parameterized });
-      //   expect(queryResult.rows).toEqual(
-      //     expectedResult.map(u =>
-      //       Object.fromEntries(
-      //         Object.entries(u)
-      //           .filter(([k]) => !k.startsWith('early'))
-      //           .map(([k, v]) => [k.toLocaleLowerCase(), v])
-      //       )
-      //     )
-      //   );
-      // });
+      test(`${name} (parameterized)`, async () => {
+        const parameterized = formatQuery(query, {
+          ...fqOptions,
+          format: 'parameterized',
+          preset: 'postgresql',
+        });
+        const queryResult = await nestedArrayDb.query(
+          `${sqlBase} ${parameterized.sql} ${getSqlOrderBy(true)}`,
+          parameterized.params
+        );
+        console.log({ parameterized });
+        expect(queryResult.rows).toEqual(
+          expectedResult.map(u =>
+            Object.fromEntries(
+              Object.entries(u)
+                .filter(([k]) => !k.startsWith('early'))
+                .map(([k, v]) => [k.toLocaleLowerCase(), v])
+            )
+          )
+        );
+      });
     };
 
     describe('strings', () => {

@@ -59,10 +59,10 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
 
   if (!column) return;
 
-  // We only support PostgreSQL nested arrays
   const { mode, threshold } = rule.match ?? {};
 
   if (mode) {
+    // We only support PostgreSQL nested arrays
     if (opts.preset !== 'postgresql' || !isRuleGroup(rule.value)) return;
 
     const matchModeLC = mode?.toLowerCase();

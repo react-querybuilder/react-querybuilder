@@ -93,6 +93,9 @@ export const params_named = {
   job_3: 'Man%',
   email_3: '%fr',
 };
+const parameterizedSqlStringForMatchModes = `((select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = array_length("fs", 1) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) >= 2 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) >= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) >= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) <= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) <= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1 and "elem_alias" like $2)) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1 and "elem_alias" like $2)) >= 2)`;
+// prettier-ignore
+const parametersForMatchModes: unknown[] = ['%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%'];
 
 it('formats SQL correctly', () => {
   expect(formatQuery(query, 'sql')).toBe(sqlString);
@@ -116,6 +119,12 @@ it('formats parameterized SQL correctly', () => {
   expect(formatQuery(queryWithValueSourceField, 'parameterized')).toEqual({
     sql: sqlStringForValueSourceField,
     params: [],
+  });
+  expect(
+    formatQuery(queryWithMatchModes, { format: 'parameterized', preset: 'postgresql' })
+  ).toEqual({
+    sql: parameterizedSqlStringForMatchModes,
+    params: parametersForMatchModes,
   });
 });
 
