@@ -207,14 +207,19 @@ const mongoQueryExpectationForMatchModes = {
         $eq: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
-          { $size: '$fs' },
+          { $size: { $ifNull: ['$fs', []] } },
         ],
       },
     },
@@ -223,14 +228,19 @@ const mongoQueryExpectationForMatchModes = {
         $eq: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
-          { $size: '$fs' },
+          { $size: { $ifNull: ['$fs', []] } },
         ],
       },
     },
@@ -243,11 +253,16 @@ const mongoQueryExpectationForMatchModes = {
         $gte: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
           2,
@@ -259,11 +274,16 @@ const mongoQueryExpectationForMatchModes = {
         $gte: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item.fv', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
           2,
@@ -275,14 +295,19 @@ const mongoQueryExpectationForMatchModes = {
         $gte: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
-          { $multiply: [{ $size: '$fs' }, 0.5] },
+          { $multiply: [{ $size: { $ifNull: ['$fs', []] } }, 0.5] },
         ],
       },
     },
@@ -291,11 +316,16 @@ const mongoQueryExpectationForMatchModes = {
         $lte: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
           2,
@@ -307,14 +337,19 @@ const mongoQueryExpectationForMatchModes = {
         $lte: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
-          { $multiply: [{ $size: '$fs' }, 0.5] },
+          { $multiply: [{ $size: { $ifNull: ['$fs', []] } }, 0.5] },
         ],
       },
     },
@@ -323,11 +358,16 @@ const mongoQueryExpectationForMatchModes = {
         $eq: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
           2,
@@ -339,14 +379,19 @@ const mongoQueryExpectationForMatchModes = {
         $eq: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: { $and: [{ $regexMatch: { input: '$$item', regex: 'S' } }] },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
-          { $multiply: [{ $size: '$fs' }, 0.5] },
+          { $multiply: [{ $size: { $ifNull: ['$fs', []] } }, 0.5] },
         ],
       },
     },
@@ -355,23 +400,28 @@ const mongoQueryExpectationForMatchModes = {
         $eq: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: {
-                  $and: [
-                    {
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: {
                       $and: [
-                        { $regexMatch: { input: '$$item', regex: 'S' } },
-                        { $regexMatch: { input: '$$item', regex: 'S' } },
+                        {
+                          $and: [
+                            { $regexMatch: { input: '$$item', regex: 'S' } },
+                            { $regexMatch: { input: '$$item', regex: 'S' } },
+                          ],
+                        },
                       ],
                     },
-                  ],
+                    input: '$fs',
+                  },
                 },
-                input: '$fs',
-              },
+                [],
+              ],
             },
           },
-          { $size: '$fs' },
+          { $size: { $ifNull: ['$fs', []] } },
         ],
       },
     },
@@ -380,20 +430,25 @@ const mongoQueryExpectationForMatchModes = {
         $gte: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: {
-                  $and: [
-                    {
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: {
                       $and: [
-                        { $regexMatch: { input: '$$item', regex: 'S' } },
-                        { $regexMatch: { input: '$$item', regex: 'S' } },
+                        {
+                          $and: [
+                            { $regexMatch: { input: '$$item', regex: 'S' } },
+                            { $regexMatch: { input: '$$item', regex: 'S' } },
+                          ],
+                        },
                       ],
                     },
-                  ],
+                    input: '$fs',
+                  },
                 },
-                input: '$fs',
-              },
+                [],
+              ],
             },
           },
           2,
@@ -437,14 +492,21 @@ it('formats to mongo query correctly', () => {
         $eq: [
           {
             $size: {
-              $filter: {
-                as: 'item',
-                cond: { $and: [{ $and: [{ $ne: ['$$item', null] }, { $gte: ['$$item', 12] }] }] },
-                input: '$fs',
-              },
+              $ifNull: [
+                {
+                  $filter: {
+                    as: 'item',
+                    cond: {
+                      $and: [{ $and: [{ $ne: ['$$item', null] }, { $gte: ['$$item', 12] }] }],
+                    },
+                    input: '$fs',
+                  },
+                },
+                [],
+              ],
             },
           },
-          { $size: '$fs' },
+          { $size: { $ifNull: ['$fs', []] } },
         ],
       },
     }

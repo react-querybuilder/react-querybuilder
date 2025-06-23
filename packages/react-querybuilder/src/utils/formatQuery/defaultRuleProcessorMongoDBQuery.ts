@@ -43,7 +43,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
           ? 'none'
           : matchModeLC;
 
-    const totalCount = { $size: `$${field}` };
+    const totalCount = { $size: { $ifNull: [`$${field}`, []] } };
     const subQueryNoAggCtx = defaultRuleGroupProcessorMongoDBQuery(
       transformQuery(value as RuleGroupType, {
         ruleProcessor: r => ({ ...r, field: r.field ? `${field}.${r.field}` : field }),
@@ -68,7 +68,12 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
     );
 
     const filteredCount = {
-      $size: { $filter: { input: `$${field}`, as: 'item', cond: { $and: [subQueryWithAggCtx] } } },
+      $size: {
+        $ifNull: [
+          { $filter: { input: `$${field}`, as: 'item', cond: { $and: [subQueryWithAggCtx] } } },
+          [],
+        ],
+      },
     };
 
     switch (matchModeCoerced) {
