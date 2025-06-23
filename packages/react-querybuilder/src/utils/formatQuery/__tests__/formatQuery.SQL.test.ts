@@ -27,6 +27,7 @@ import {
   queryForRuleProcessor,
   queryForXor,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 import { defaultValueProcessor, defaultValueProcessorByRule } from '../index';
@@ -41,6 +42,7 @@ export const parameterizedNamedSQLString =
   '(firstName is null and lastName is not null and firstName in (:firstName_1, :firstName_2) and lastName not in (:lastName_1, :lastName_2) and firstName between :firstName_3 and :firstName_4 and firstName between :firstName_5 and :firstName_6 and lastName not between :lastName_3 and :lastName_4 and age between :age_1 and :age_2 and age = :age_3 and isMusician = :isMusician_1 and isLucky = :isLucky_1 and NOT (gender = :gender_1 or job != :job_1 or email like :email_1) and (lastName not like :lastName_5 or job like :job_2 or email like :email_2 or job not like :job_3 or email not like :email_3))';
 export const sqlStringQuotedWithDoubleQuotes =
   '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and firstName between "Test" and "This" and firstName between "Test" and "This" and lastName not between "Test" and "This" and age between "12" and "14" and age = "26" and isMusician = TRUE and isLucky = FALSE and NOT (gender = "M" or job != "Programmer" or email like "%@%") and (lastName not like "%ab%" or job like "Prog%" or email like "%com" or job not like "Man%" or email not like "%fr"))';
+export const sqlStringForMatchModes = `((select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = array_length("fs", 1) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) >= 2 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) >= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) >= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) <= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) <= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%' and "elem_alias" like '%S%')) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%' and "elem_alias" like '%S%')) >= 2)`;
 export const params: unknown[] = [
   'Test',
   'This',
@@ -98,6 +100,7 @@ it('formats SQL correctly', () => {
   expect(formatQuery(query, { format: 'sql', valueProcessor: defaultValueProcessor })).toBe(
     sqlString
   );
+  expect(formatQuery(queryWithMatchModes, { preset: 'postgresql' })).toBe(sqlStringForMatchModes);
 });
 
 it('assumes "sql" format when preset matches a SQL preset', () => {
