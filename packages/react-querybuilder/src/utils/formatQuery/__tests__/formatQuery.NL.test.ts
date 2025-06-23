@@ -23,6 +23,7 @@ import {
   queryForPreserveValueOrder,
   queryForXor,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 
@@ -461,4 +462,23 @@ it('operatorMap', () => {
     )
   );
   expect(formatQuery(query, { format: 'natural_language', operatorMap })).toBe(nlStringOperatorMap);
+});
+
+describe('match modes', () => {
+  it('strings', () => {
+    expect(formatQuery(queryWithMatchModes, { format: 'natural_language' })).toBe(
+      `(every element in fs contains 'S'), and (every element in fs fv contains 'S'), and (no element in fs contains 'S'), and (at least one element in fs contains 'S'), and (at least one element in fs contains 'S'), and (no element in fs contains 'S'), and (at least 2 of the elements in fs contains 'S'), and (at least 2 of the elements in fs fv contains 'S'), and (at least 50% of the elements in fs contains 'S'), and (at most 2 of the elements in fs contains 'S'), and (at most 50% of the elements in fs contains 'S'), and (exactly 2 of the elements in fs contains 'S'), and (exactly 50% of the elements in fs contains 'S'), and (every element in fs contains 'S', and contains 'S'), and (at least 2 of the elements in fs contains 'S', and contains 'S')`
+    );
+  });
+
+  it('objects', () => {
+    expect(
+      formatQuery(queryWithMatchModes, {
+        format: 'natural_language',
+        fields: [{ name: 'fs', label: 'FS', subproperties: [{ name: 'sp', label: 'SP' }] }],
+      })
+    ).toBe(
+      `(for every element in FS, contains 'S'), and (for every element in FS, fv contains 'S'), and (for no element in FS, contains 'S'), and (for at least one element in FS, contains 'S'), and (for at least one element in FS, contains 'S'), and (for no element in FS, contains 'S'), and (for at least 2 of the elements in FS, contains 'S'), and (for at least 2 of the elements in FS, fv contains 'S'), and (for at least 50% of the elements in FS, contains 'S'), and (for at most 2 of the elements in FS, contains 'S'), and (for at most 50% of the elements in FS, contains 'S'), and (for exactly 2 of the elements in FS, contains 'S'), and (for exactly 50% of the elements in FS, contains 'S'), and (for every element in FS, contains 'S', and contains 'S'), and (for at least 2 of the elements in FS, contains 'S', and contains 'S')`
+    );
+  });
 });

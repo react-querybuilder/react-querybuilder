@@ -1,12 +1,14 @@
 import type {
   DefaultOperatorName,
   ExportOperatorMap,
+  FormatQueryFinalOptions,
   FullOption,
   RuleProcessor,
 } from '../../types/index.noReact';
 import { getOption, toFullOptionList } from '../optGroupUtils';
+import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { getQuotedFieldName, normalizeConstituentWordOrder } from './utils';
+import { getQuotedFieldName, normalizeConstituentWordOrder, processMatchMode } from './utils';
 
 /**
  * Default operator map used by {@link formatQuery} for "natural_language" format.
@@ -47,7 +49,7 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
   // istanbul ignore next
   opts = {}
 ) => {
-  const { valueSource = 'value' } = rule;
+  const { field, operator, valueSource = 'value' } = rule;
   // istanbul ignore next
   const {
     getOperators = defaultGetOperators,
@@ -62,25 +64,25 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
   }
   const operatorMap = Object.fromEntries(mapOperatorMap);
 
-  const { value: operator, label } = getOption(
+  const { value: operatorNL, label } = getOption(
     toFullOptionList(
-      getOperators(rule.field, {
+      getOperators(field, {
         fieldData: opts.fieldData ?? {
-          name: rule.field,
-          value: rule.field,
-          label: rule.field,
+          name: field,
+          value: field,
+          label: field,
         },
       }) ?? /* istanbul ignore next */ []
     ) as FullOption[],
-    rule.operator
+    operator
   ) ?? {
-    name: rule.operator,
-    value: rule.operator,
-    label: rule.operator,
+    name: operator,
+    value: operator,
+    label: operator,
   };
 
-  const operatorTL = operatorMap[operator as DefaultOperatorName] ??
-    operatorMap[operator.toLowerCase() as Lowercase<DefaultOperatorName>] ?? [label, label];
+  const operatorTL = operatorMap[operatorNL as DefaultOperatorName] ??
+    operatorMap[operatorNL.toLowerCase() as Lowercase<DefaultOperatorName>] ?? [label, label];
 
   return typeof operatorTL === 'string' ? operatorTL : operatorTL[valueSource === 'field' ? 1 : 0];
 };
@@ -91,6 +93,7 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
  * @group Export
  */
 export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
+  const { field, operator } = rule;
   // istanbul ignore next
   const {
     fieldData,
@@ -103,6 +106,48 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     wordOrder = 'SVO',
   } = opts ?? /* istanbul ignore next */ {};
 
+  const processedField = getQuotedFieldName(fieldData?.label ?? field, {
+    quoteFieldNamesWith,
+    fieldIdentifierSeparator,
+  });
+
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return '';
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
+
+    const nestedArrayFilter = defaultRuleGroupProcessorNL(
+      rule.value,
+      opts as FormatQueryFinalOptions
+    );
+
+    // (H)as (S)ub(P)roperties
+    const hsp = (fieldData?.subproperties?.length ?? 0) > 0;
+
+    switch (mode) {
+      case 'all':
+        return `(${hsp ? 'for ' : ''}every element in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+
+      case 'none':
+        return `(${hsp ? 'for ' : ''}no element in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+
+      case 'some':
+        return `(${hsp ? 'for ' : ''}at least one element in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        const mm = mode.replace('at', 'at ');
+        if (threshold > 0 && threshold < 1) {
+          return `(${hsp ? 'for ' : ''}${mm} ${threshold * 100}% of the elements in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+        }
+        return `(${hsp ? 'for ' : ''}${mm} ${threshold} of the elements in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+      }
+    }
+  }
+
   const value = valueProcessor(rule, {
     ...opts,
     quoteFieldNamesWith,
@@ -111,7 +156,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     concatOperator,
   });
 
-  const operatorLC = rule.operator.toLowerCase();
+  const operatorLC = operator.toLowerCase();
   if (
     (operatorLC === 'in' ||
       operatorLC === 'notin' ||
@@ -121,11 +166,6 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
   ) {
     return '';
   }
-
-  const processedField = getQuotedFieldName(fieldData?.label ?? rule.field, {
-    quoteFieldNamesWith,
-    fieldIdentifierSeparator,
-  });
 
   const processedOperator = operatorProcessor(rule, opts);
 

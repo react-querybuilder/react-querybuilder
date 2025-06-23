@@ -4,10 +4,12 @@ import type {
   FormatQueryOptions,
   FullField,
   GroupVariantCondition,
+  MatchMode,
   NLTranslationKey,
   NLTranslations,
   OptionList,
   RuleGroupTypeAny,
+  RuleType,
   SetRequired,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -277,6 +279,8 @@ export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrd
  *
  * @group Export
  */
+// The ones commented below are unnecessary for the default implementation,
+// but they can be overridden for customized implementations.
 export const defaultNLTranslations: NLTranslations = {
   // and: 'and',
   // or: 'or',
@@ -332,3 +336,39 @@ export const getNLTranslataion = (
       )?.[1] ??
       defaultNLTranslations[key] ??
       /* istanbul ignore next */ '');
+
+type ProcessedMatchMode =
+  | { mode: 'all'; threshold?: number | null | undefined }
+  | { mode: 'none'; threshold?: number | null | undefined }
+  | { mode: 'some'; threshold?: number | null | undefined }
+  | { mode: 'atleast'; threshold: number }
+  | { mode: 'atmost'; threshold: number }
+  | { mode: 'exactly'; threshold: number };
+
+export const processMatchMode = (rule: RuleType): void | false | ProcessedMatchMode => {
+  const { mode, threshold } = rule.match ?? {};
+
+  if (mode) {
+    if (!isRuleGroup(rule.value)) return false;
+
+    const matchModeLC = mode.toLowerCase() as Lowercase<MatchMode>;
+
+    const matchModeCoerced =
+      matchModeLC === 'atleast' && threshold === 1
+        ? 'some'
+        : matchModeLC === 'atmost' && threshold === 0
+          ? 'none'
+          : matchModeLC;
+
+    if (
+      (matchModeCoerced === 'atleast' ||
+        matchModeCoerced === 'atmost' ||
+        matchModeCoerced === 'exactly') &&
+      (typeof threshold !== 'number' || threshold < 0)
+    ) {
+      return false;
+    }
+
+    return { mode: matchModeCoerced, threshold: threshold! };
+  }
+};
