@@ -1,8 +1,14 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { shouldRenderAsNumber } from './utils';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -17,10 +23,12 @@ const escapeDoubleQuotes = (
  * @group Export
  */
 export const defaultRuleProcessorCEL: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  { escapeQuotes, parseNumbers, preserveValueOrder } = {}
+  opts = {}
 ) => {
+  const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
+  const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
   const operatorTL = lc(operator === '=' ? '==' : operator);
   const useBareValue =
@@ -28,6 +36,48 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
     typeof value === 'boolean' ||
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
+
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return '';
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
+
+    // TODO?: Randomize this alias
+    const arrayElementAlias = 'elem_alias';
+
+    const celQuery = transformQuery(rule.value as RuleGroupType, {
+      ruleProcessor: r => ({ ...r, field: `${arrayElementAlias}${r.field ? `.${r.field}` : ''}` }),
+    });
+    const nestedArrayFilter = defaultRuleGroupProcessorCEL(
+      celQuery,
+      opts as FormatQueryFinalOptions
+    );
+
+    switch (mode) {
+      case 'all':
+        return `${field}.all(${arrayElementAlias}, ${nestedArrayFilter})`;
+
+      case 'none':
+      case 'some':
+        return `${mode === 'none' ? '!' : ''}${field}.exists(${arrayElementAlias}, ${nestedArrayFilter})`;
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        const totalCount = `double(${field}.size())`;
+        const filteredCount = `${field}.filter(${arrayElementAlias}, ${nestedArrayFilter}).size()`;
+
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '==';
+
+        if (threshold > 0 && threshold < 1) {
+          return `${filteredCount} ${op} (${totalCount} * ${threshold})`;
+        }
+        return `${filteredCount} ${op} ${threshold}`;
+      }
+    }
+  }
 
   switch (operatorTL) {
     case '<':
