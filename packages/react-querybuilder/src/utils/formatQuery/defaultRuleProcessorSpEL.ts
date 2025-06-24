@@ -1,8 +1,14 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { shouldRenderAsNumber } from './utils';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
+import { processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -19,10 +25,12 @@ const escapeSingleQuotes = (
  * @group Export
  */
 export const defaultRuleProcessorSpEL: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  { escapeQuotes, parseNumbers, preserveValueOrder } = {}
+  opts = {}
 ) => {
+  const { field, operator, value, valueSource } = rule;
+  const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
   const valueIsField = valueSource === 'field';
   const operatorTL = lc(operator === '=' ? '==' : operator);
   const useBareValue =
@@ -30,6 +38,46 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
     typeof value === 'boolean' ||
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
+
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return '';
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
+
+    const nestedArrayFilter = defaultRuleGroupProcessorSpEL(
+      transformQuery(rule.value as RuleGroupType, {
+        ruleProcessor: r => ({ ...r, field: `${r.field || '#this'}` }),
+      }),
+      opts as FormatQueryFinalOptions
+    );
+
+    const totalCount = `${field}.size()`;
+    const filteredCount = `${field}.?[${nestedArrayFilter}].size()`;
+
+    switch (mode) {
+      case 'all':
+        return `${filteredCount} == ${totalCount}`;
+
+      case 'none':
+        return `${filteredCount} == 0`;
+
+      case 'some':
+        return `${filteredCount} >= 1`;
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '==';
+
+        if (threshold > 0 && threshold < 1) {
+          return `${filteredCount} ${op} (${totalCount} * ${threshold})`;
+        }
+        return `${filteredCount} ${op} ${threshold}`;
+      }
+    }
+  }
 
   switch (operatorTL) {
     case '<':
