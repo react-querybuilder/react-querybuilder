@@ -9,12 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
+- [#900] Support for matching elements of a nested array.
+  - New `RuleType` property `match: { mode: MatchMode, threshold?: number }`
+    - `type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly'`
+    - In most contexts, `operator` will be ignored when `match` is present and valid.
+  - New component `MatchModeEditor`, which renders the configured `valueSelector` and, when a threshold is appropriate, the configured `valueEditor` with `inputType: "number"`.
+  - New props `getMatchModes` and `getSubQueryBuilderProps` to manage these configurations at the top level.
+  - New `Field` properties `matchModes` and `subproperties` to manage these configurations at the field level.
+  - `parseJsonLogic` support for "all", "none", and "some" operations to a rule's `match` property.
+  - `formatQuery` support for the `match` property when export format is "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", or "cel" (the SQL-based formats only work when `preset` is "postgresql").
 - New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
 - Extracted `fields` prop processing logic to new `useFields` hook.
 
 #### Fixed
 
 - `parseSQL` maintains precision for large integers by generating a `bigint` instead of a `number` when necessary.
+- Preact compatibility improved by using `React.Fragment` explicitly instead of the shorthand `<>...</>`.
 
 ## [v8.7.1] - 2025-06-09
 
@@ -1927,6 +1937,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#890]: https://github.com/react-querybuilder/react-querybuilder/pull/890
 [#891]: https://github.com/react-querybuilder/react-querybuilder/pull/891
 [#893]: https://github.com/react-querybuilder/react-querybuilder/pull/893
+[#900]: https://github.com/react-querybuilder/react-querybuilder/pull/900
 
 <!-- #endregion -->
 
