@@ -692,6 +692,7 @@ export const useRule = (props: RuleProps): UseRule => {
     () => operatorObject?.className ?? '',
     [operatorObject?.className]
   );
+  const hasSubQuery = useMemo(() => matchModes.length > 0, [matchModes.length]);
 
   const outerClassName = useMemo(
     () =>
@@ -707,6 +708,7 @@ export const useRule = (props: RuleProps): UseRule => {
         isOver && classNamesProp.dndOver,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
         isOver && groupItems && classNamesProp.dndGroup,
+        hasSubQuery && classNamesProp.hasSubQuery,
         // standard conditional classes
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
@@ -714,6 +716,7 @@ export const useRule = (props: RuleProps): UseRule => {
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
           [standardClassnames.dndGroup]: isOver && groupItems,
+          [standardClassnames.hasSubQuery]: hasSubQuery,
         },
         validationClassName
       ),
@@ -723,6 +726,7 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.dndDragging,
       classNamesProp.dndGroup,
       classNamesProp.dndOver,
+      classNamesProp.hasSubQuery,
       classNamesProp.rule,
       disabled,
       dropEffect,
@@ -730,6 +734,7 @@ export const useRule = (props: RuleProps): UseRule => {
       fieldData,
       getRuleClassname,
       groupItems,
+      hasSubQuery,
       isDragging,
       isOver,
       operatorBasedClassName,

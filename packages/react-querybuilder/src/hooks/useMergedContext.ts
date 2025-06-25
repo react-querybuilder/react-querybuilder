@@ -141,6 +141,7 @@ export const useMergedContext = <
       matchMode: cc.matchMode,
       matchThreshold: cc.matchThreshold,
       branches: cc.branches,
+      hasSubQuery: cc.hasSubQuery,
     }),
     [
       cc.actionElement,
@@ -159,6 +160,7 @@ export const useMergedContext = <
       cc.dndOver,
       cc.dragHandle,
       cc.fields,
+      cc.hasSubQuery,
       cc.header,
       cc.invalid,
       cc.lockGroup,

@@ -226,6 +226,7 @@ export const standardClassnames = {
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
+  hasSubQuery: 'rule-hasSubQuery',
 } as const;
 // #endregion
 
@@ -270,6 +271,7 @@ export const defaultControlClassnames: Classnames = {
   disabled: '',
   valueListItem: '',
   branches: '',
+  hasSubQuery: '',
 } satisfies Classnames;
 
 /**

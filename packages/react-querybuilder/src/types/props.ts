@@ -159,6 +159,10 @@ export interface Classnames {
    * Not applied, but see CSS styles.
    */
   branches: Classname;
+  /**
+   * Classname(s) rules that render a subquery.
+   */
+  hasSubQuery: Classname;
 }
 
 /**

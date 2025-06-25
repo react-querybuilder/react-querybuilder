@@ -39,8 +39,7 @@
       align-items: baseline;
     }
 
-    // TODO: improve this selector
-    &:has(.ruleGroup-header) {
+    &.rule-hasSubQuery {
       flex-wrap: wrap;
       padding: var(--#{$rqb-var-prefix}spacing);
       border-width: var(--#{$rqb-var-prefix}border-width);
@@ -122,7 +121,7 @@
     }
   }
 
-  .rule:has(.ruleGroup-header),
+  .rule-hasSubQuery,
   .ruleGroup .ruleGroup {
     &::before,
     &::after {

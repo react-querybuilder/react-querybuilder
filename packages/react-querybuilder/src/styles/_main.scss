@@ -9,7 +9,7 @@
 
 /* Default styles */
 .ruleGroup,
-.rule:has(.ruleGroup-header) {
+.rule-hasSubQuery {
   border-color: var(--#{$rqb-var-prefix}border-color);
   border-style: var(--#{$rqb-var-prefix}border-style);
   border-radius: var(--#{$rqb-var-prefix}border-radius);
