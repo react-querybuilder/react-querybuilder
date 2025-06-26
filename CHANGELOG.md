@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#903] `parseSQL` maintains precision for large integers by generating a `bigint` instead of a `number` when necessary.
 - [#900] Preact compatibility improved by using `React.Fragment` explicitly instead of the shorthand `<>...</>`.
+- [#900] If the `preset` option for `formatQuery` is one from `sqlDialectPresets`, it will only apply if the `format` is undefined or one of the SQL-based formats.
 
 ## [v8.7.1] - 2025-06-09
 

@@ -62,6 +62,8 @@ import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
 
 /**
+ * A collection of option presets for {@link formatQuery}, specifically for SQL-based formats.
+ *
  * @group Export
  */
 export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
@@ -84,6 +86,15 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
     numberedParams: true,
     paramPrefix: '$',
   },
+};
+
+/**
+ * A collection of option presets for {@link formatQuery}.
+ *
+ * @group Export
+ */
+export const formatQueryOptionPresets: Record<string, FormatQueryOptions> = {
+  ...sqlDialectPresets,
 };
 
 const defaultRuleProcessors = {
@@ -170,18 +181,28 @@ const defaultFormatQueryOptions = {
   operatorMap: {},
 } satisfies MostFormatQueryOptions;
 
-const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
-  format === 'mongodb' ||
-  format === 'mongodb_query' ||
-  format === 'cel' ||
-  format === 'spel' ||
-  format === 'jsonlogic' ||
-  format === 'elasticsearch' ||
-  format === 'jsonata' ||
-  format === 'ldap' ||
-  format === 'prisma' ||
-  format === 'drizzle' ||
-  format === 'sequelize';
+const valueProcessorCanActAsRuleProcessor = new Set<ExportFormat>([
+  'cel',
+  'drizzle',
+  'elasticsearch',
+  'jsonata',
+  'jsonlogic',
+  'ldap',
+  'mongodb_query',
+  'mongodb',
+  'prisma',
+  'sequelize',
+  'spel',
+]);
+
+const sqlFormats = new Set<ExportFormat>([
+  'sql',
+  'parameterized',
+  'parameterized_named',
+  'drizzle',
+  'prisma',
+  'sequelize',
+]);
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -340,15 +361,23 @@ function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: FormatQueryOptions & { format: Exclude<ExportFormat, ExportObjectFormats> }
 ): string;
-function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  optionParam: FormatQueryOptions | ExportFormat = {}
+) {
+  const options = typeof optionParam === 'string' ? { format: lc(optionParam) } : optionParam;
+
   const optObj: MostFormatQueryOptions = {
     ...defaultFormatQueryOptions,
-    ...(sqlDialectPresets[(options as FormatQueryOptions).preset ?? 'ansi'] ?? null),
-    ...(typeof options === 'string' ? { format: options } : options),
-    ...(typeof options !== 'string' &&
-      !options.format &&
+    ...(!options.format || sqlFormats.has(options.format)
+      ? (sqlDialectPresets[options.preset ?? 'ansi'] ?? null)
+      : null),
+    ...options,
+    ...(!options.format &&
       (Object.keys(sqlDialectPresets).includes(options.preset ?? '') ? { format: 'sql' } : null)),
   };
+
+  const format = lc(optObj.format);
 
   const {
     fallbackExpression: fallbackExpression_option,
@@ -366,8 +395,6 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
   const getParseNumberBoolean = (inputType?: InputType | null) =>
     !!getParseNumberMethod({ parseNumbers, inputType });
 
-  const format = lc(optObj.format) as ExportFormat;
-
   const operatorProcessor =
     typeof operatorProcessor_option === 'function'
       ? operatorProcessor_option
@@ -380,13 +407,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         : valueProcessor_option
       : format === 'natural_language'
         ? defaultValueProcessorNL
-        : valueProcessorCanActAsRuleProcessor(format)
+        : valueProcessorCanActAsRuleProcessor.has(format)
           ? (ruleProcessor_option ?? defaultRuleProcessors[format])
           : defaultValueProcessorByRule;
 
   const ruleProcessor =
     (typeof ruleProcessor_option === 'function' ? ruleProcessor_option : null) ??
-    (valueProcessorCanActAsRuleProcessor(format) &&
+    (valueProcessorCanActAsRuleProcessor.has(format) &&
     typeof ruleProcessor_option !== 'function' &&
     valueProcessor_option
       ? valueProcessor
