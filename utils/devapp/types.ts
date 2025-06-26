@@ -25,6 +25,7 @@ export type DemoOption =
   | 'debugMode'
   | 'parseNumbers'
   | 'showBranches'
+  | 'justifiedLayout'
   | 'suppressStandardClassnames';
 
 export type DemoOptions = Record<DemoOption, boolean>;
@@ -37,7 +38,11 @@ export type CommonRQBProps = Pick<
   | 'controlElements'
   | Exclude<
       DemoOption,
-      'validateQuery' | 'independentCombinators' | 'parseNumbers' | 'showBranches'
+      | 'validateQuery'
+      | 'independentCombinators'
+      | 'parseNumbers'
+      | 'showBranches'
+      | 'justifiedLayout'
     >
 > & { independentCombinators?: boolean };
 

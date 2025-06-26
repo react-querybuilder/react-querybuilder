@@ -226,6 +226,7 @@ export const standardClassnames = {
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
+  justified: 'queryBuilder-justified',
   hasSubQuery: 'rule-hasSubQuery',
 } as const;
 // #endregion

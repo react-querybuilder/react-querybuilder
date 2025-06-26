@@ -161,9 +161,10 @@ export const optionsMetadata = {
       'Disable application of any standard classes, including validation- and event-based classes',
   },
   justifiedLayout: {
-    link: '',
+    link: '/docs/styling/overview#justified-layout',
     label: 'Justified layout',
-    title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
+    title:
+      'Add `.queryBuilder-justified` class to push the "+ Rule", "+ Group", "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
     link: '/docs/styling/overview#branch-lines',

@@ -29,6 +29,7 @@ export const defaultOptions: DemoOptions = {
   showNotToggle: false,
   validateQuery: false,
   showBranches: false,
+  justifiedLayout: false,
   showShiftActions: false,
   suppressStandardClassnames: false,
 };
@@ -51,6 +52,7 @@ export const optionOrder: DemoOption[] = [
   'showLockButtons',
   'showNotToggle',
   'showBranches',
+  'justifiedLayout',
   'suppressStandardClassnames',
   'validateQuery',
 ];
@@ -159,6 +161,11 @@ export const optionsMetadata: Record<
     link: '/docs/styling/overview#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
+  },
+  justifiedLayout: {
+    link: '/docs/styling/overview#justified-layout',
+    label: 'Justified layout',
+    title: 'Add the `.queryBuilder-justified` class to justify the layout',
   },
 };
 

@@ -13,13 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `RuleType` property `match: { mode: MatchMode, threshold?: number }`
     - `type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly'`
     - In most contexts, `operator` will be ignored when `match` is present and valid.
-  - New component `MatchModeEditor`, which renders the configured `valueSelector` and, when a threshold is appropriate, the configured `valueEditor` with `inputType: "number"`.
+  - New component `MatchModeEditor`, which renders when a field is determined to have one or more match modes. The mode selector is the configured `valueSelector` and&mdash;when a threshold is appropriate&mdash;the threshold editor is the configured `valueEditor` with `inputType: "number"`.
   - New props `getMatchModes` and `getSubQueryBuilderProps` to manage these configurations at the top level.
   - New `Field` properties `matchModes` and `subproperties` to manage these configurations at the field level.
-  - `parseJsonLogic` support for "all", "none", and "some" operations to a rule's `match` property.
-  - `formatQuery` support for the `match` property when export format is "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", or "cel" (the SQL-based formats only work when `preset` is "postgresql").
+  - `parseJsonLogic` support for "all", "none", and "some" operations.
+  - `formatQuery` (partial) support for the `match` rule property.
+    - Supported formats include "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", or "cel".
+    - To avoid invalid syntax, the SQL-based formats only work with `preset: "postgresql"`, and only with nested arrays of primitives like strings or numbers.
 - [#903] New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
 - [#900] Extracted `fields` prop processing logic to new `useFields` hook.
+- [#900] "Justified layout" styles from the demo (push the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge) are now included in the default stylesheet. To apply the styles, add the `queryBuilder-justified` class to the query builder using the `controlClassnames` prop, or to any ancestor element.
 
 #### Fixed
 

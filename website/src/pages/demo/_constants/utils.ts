@@ -1,4 +1,4 @@
-import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
+// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
 import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 // @ts-expect-error !!raw-loader!
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
@@ -13,11 +13,12 @@ import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder/debug';
-import { defaultOperators, formatQuery } from 'react-querybuilder/debug';
+import { defaultOperators, formatQuery, standardClassnames } from 'react-querybuilder/debug';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
-const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
+// const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
+const extraStylesCSS = demoStylesCSS;
 
 type OptionsAction =
   | { type: 'all' }
@@ -280,8 +281,8 @@ export const getCodeString = (
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
-          'queryBuilder-branches': options.showBranches,
-          justifiedLayout: options.justifiedLayout,
+          [standardClassnames.branches]: options.showBranches,
+          [standardClassnames.justified]: options.justifiedLayout,
         })}' }}`
       : '',
   ]

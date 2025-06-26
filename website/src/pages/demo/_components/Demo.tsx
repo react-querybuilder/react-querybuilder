@@ -20,6 +20,7 @@ import {
   defaultValidator,
   formatQuery,
   QueryBuilder,
+  standardClassnames,
 } from 'react-querybuilder/debug';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
@@ -433,8 +434,8 @@ export default function Demo({
       clsx(
         {
           validateQuery: options.validateQuery,
-          justifiedLayout: options.justifiedLayout,
-          'queryBuilder-branches': options.showBranches,
+          [standardClassnames.justified]: options.justifiedLayout,
+          [standardClassnames.branches]: options.showBranches,
         },
         variant === 'default' ? '' : qbWrapperId,
         'donut-hole'
