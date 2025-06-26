@@ -139,7 +139,6 @@ export const RuleComponents: React.MemoExoticComponent<
       context: r.context,
       validation: r.validationResult,
       schema: r.schema,
-      ruleOrGroup: r.rule,
       rule: r.rule,
     }),
     [r.path, r.disabled, r.context, r.validationResult, r.schema, r.rule]
@@ -172,6 +171,7 @@ export const RuleComponents: React.MemoExoticComponent<
             shiftDown: r.translations.shiftActionDown.label,
           }}
           className={r.classNames.shiftActions}
+          ruleOrGroup={r.rule}
           shiftUp={r.shiftRuleUp}
           shiftDown={r.shiftRuleDown}
           shiftUpDisabled={r.shiftUpDisabled}
@@ -187,6 +187,7 @@ export const RuleComponents: React.MemoExoticComponent<
           title={r.translations.dragHandle.title}
           label={r.translations.dragHandle.label}
           className={r.classNames.dragHandle}
+          ruleOrGroup={r.rule}
         />
       )}
       {showFieldSelector && (
@@ -274,6 +275,11 @@ export const RuleComponents: React.MemoExoticComponent<
               )}
           </React.Fragment>
         ))}
+      {r.subQuery && (
+        <GroupComponentsWrapper className={r.subQuery.classNames.header}>
+          <RuleGroupHeaderControlElements {...r.subQuery} />
+        </GroupComponentsWrapper>
+      )}
       {r.schema.showCloneButtons && (
         <CloneRuleActionControlElement
           key={TestID.cloneRule}
@@ -282,6 +288,7 @@ export const RuleComponents: React.MemoExoticComponent<
           label={r.translations.cloneRule.label}
           title={r.translations.cloneRule.title}
           className={r.classNames.cloneRule}
+          ruleOrGroup={r.rule}
           handleOnClick={r.cloneRule}
         />
       )}
@@ -293,14 +300,10 @@ export const RuleComponents: React.MemoExoticComponent<
           label={r.translations.lockRule.label}
           title={r.translations.lockRule.title}
           className={r.classNames.lockRule}
+          ruleOrGroup={r.rule}
           handleOnClick={r.toggleLockRule}
           disabledTranslation={r.parentDisabled ? undefined : r.translations.lockRuleDisabled}
         />
-      )}
-      {r.subQuery && (
-        <GroupComponentsWrapper className={r.subQuery.classNames.header}>
-          <RuleGroupHeaderControlElements {...r.subQuery} />
-        </GroupComponentsWrapper>
       )}
       <RemoveRuleActionControlElement
         key={TestID.removeRule}
@@ -309,6 +312,7 @@ export const RuleComponents: React.MemoExoticComponent<
         label={r.translations.removeRule.label}
         title={r.translations.removeRule.title}
         className={r.classNames.removeRule}
+        ruleOrGroup={r.rule}
         handleOnClick={r.removeRule}
       />
       {r.subQuery && (
@@ -331,6 +335,7 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   const subQB = useQueryBuilder({
     ...r.subQueryBuilderProps,
     enableDragAndDrop: false,
+    disabled: r.disabled,
     fields: r.subproperties.fields,
     // Update the value on first render if the value is not a valid rule group
     enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
@@ -341,6 +346,7 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
     ...subQB,
     ruleGroup: subQB.rootGroup,
     path: rootPath,
+    disabled: r.disabled,
     parentDisabled: subQB.queryDisabled,
     id: subQB.rootGroup.id,
     shiftUpDisabled: true,
