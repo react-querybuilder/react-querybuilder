@@ -2,7 +2,7 @@ import type { DefaultOperatorName, RuleProcessor } from '../../types/index.noRea
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte';
 type RangeRule = (
@@ -73,10 +73,15 @@ const valueRenderer = (v: any, parseNumbers?: boolean) =>
  * @group Export
  */
 export const defaultRuleProcessorElasticSearch: RuleProcessor = (
-  { field, operator, value, valueSource },
-  { parseNumbers, preserveValueOrder } = {}
+  rule,
+  options = {}
 ): ElasticSearchQuery | ElasticSearchRule | false => {
+  const { field, operator, value, valueSource } = rule;
+  const { parseNumbers, preserveValueOrder } = options;
   const operatorLC = lc(operator) as Lowercase<DefaultOperatorName>;
+
+  // Match modes are not supported in this format
+  if (processMatchMode(rule)) return false;
 
   if (valueSource === 'field') {
     // Bail out if not all values are strings

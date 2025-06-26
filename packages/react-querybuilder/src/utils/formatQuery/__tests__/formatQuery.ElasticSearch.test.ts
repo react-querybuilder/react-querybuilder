@@ -226,6 +226,13 @@ it('formats ElasticSearch correctly', () => {
           { field: 'f1', operator: 'contains', value: '', valueSource: 'field' },
           // Empty group
           { combinator: 'or', rules: [] },
+          // Match mode
+          {
+            field: 'f1',
+            operator: 'contains',
+            value: { combinator: 'and', rules: [] },
+            match: { mode: 'all' },
+          },
         ],
       },
       'elasticsearch'

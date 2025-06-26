@@ -129,22 +129,22 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
 
     switch (mode) {
       case 'all':
-        return `(${hsp ? 'for ' : ''}every element in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+        return `(${hsp ? 'for ' : ''}every item in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
 
       case 'none':
-        return `(${hsp ? 'for ' : ''}no element in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+        return `(${hsp ? 'for ' : ''}no item in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
 
       case 'some':
-        return `(${hsp ? 'for ' : ''}at least one element in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+        return `(${hsp ? 'for ' : ''}at least one item in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
 
       case 'atleast':
       case 'atmost':
       case 'exactly': {
         const mm = mode.replace('at', 'at ');
         if (threshold > 0 && threshold < 1) {
-          return `(${hsp ? 'for ' : ''}${mm} ${threshold * 100}% of the elements in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+          return `(${hsp ? 'for ' : ''}${mm} ${threshold * 100}% of the items in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
         }
-        return `(${hsp ? 'for ' : ''}${mm} ${threshold} of the elements in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
+        return `(${hsp ? 'for ' : ''}${mm} ${threshold} of the items in ${processedField}${hsp ? ',' : ''} ${nestedArrayFilter})`;
       }
     }
   }

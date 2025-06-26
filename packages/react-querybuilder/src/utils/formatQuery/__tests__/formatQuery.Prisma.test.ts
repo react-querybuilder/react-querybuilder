@@ -96,6 +96,10 @@ const prismaQueryExpectation = {
 it('formats to prisma query correctly', () => {
   testPrisma(prismaQuery, prismaQueryExpectation);
   testPrisma({ rules: [{ field: 'f', operator: '=', value: 'v', valueSource: 'field' }] }, {});
+  testPrisma(
+    { rules: [{ field: 'f', operator: '=', value: { rules: [] }, match: { mode: 'all' } }] },
+    {}
+  );
   // Test for newline in value and `not` at top level
   testPrisma(
     {
