@@ -70,6 +70,9 @@
     "vite": "^6.3.5"
   },
   "peerDependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": ">=1.0.0",
+    "@dnd-kit/core": ">=6.0.0",
+    "@hello-pangea/dnd": ">=16.0.0",
     "react": ">=18",
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
@@ -77,6 +80,18 @@
     "react-querybuilder": "8.7.1"
   },
   "peerDependenciesMeta": {
+    "@atlaskit/pragmatic-drag-and-drop": {
+      "optional": true
+    },
+    "@dnd-kit/core": {
+      "optional": true
+    },
+    "@hello-pangea/dnd": {
+      "optional": true
+    },
+    "react-dnd": {
+      "optional": true
+    },
     "react-dnd-html5-backend": {
       "optional": true
     },
