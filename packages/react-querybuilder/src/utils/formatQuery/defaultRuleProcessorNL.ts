@@ -119,10 +119,10 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
   } else if (matchEval) {
     const { mode, threshold } = matchEval;
 
-    const nestedArrayFilter = defaultRuleGroupProcessorNL(
-      rule.value,
-      opts as FormatQueryFinalOptions
-    );
+    const nestedArrayFilter = defaultRuleGroupProcessorNL(rule.value, {
+      ...(opts as FormatQueryFinalOptions),
+      fields: toFullOptionList(fieldData?.subproperties ?? []),
+    });
 
     // (H)as (S)ub(P)roperties
     const hsp = (fieldData?.subproperties?.length ?? 0) > 0;

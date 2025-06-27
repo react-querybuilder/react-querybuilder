@@ -77,9 +77,9 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
     });
 
     const nestedArrayFilter = defaultRuleGroupProcessorDrizzle(sqlQuery, {
-      ...opts,
+      ...(opts as FormatQueryFinalOptions),
       context: { ...opts.context, useRawFields: true },
-    } as unknown as FormatQueryFinalOptions);
+    });
 
     switch (mode) {
       case 'all':

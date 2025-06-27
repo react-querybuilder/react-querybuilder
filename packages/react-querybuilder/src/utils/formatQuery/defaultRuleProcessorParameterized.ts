@@ -70,7 +70,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       transformQuery(rule.value as RuleGroupType, {
         ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
       }),
-      { ...opts, fields: [] as FullField[] } as FormatQueryFinalOptions
+      { ...(opts as FormatQueryFinalOptions), fields: [] as FullField[] }
     );
     // Ignore the "parameterized_named" case because PostgreSQL doesn't support named parameters
     // istanbul ignore else

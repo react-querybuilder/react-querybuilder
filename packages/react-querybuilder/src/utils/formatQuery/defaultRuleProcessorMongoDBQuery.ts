@@ -44,22 +44,22 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         ruleProcessor: r => ({ ...r, field: r.field ? `${field}.${r.field}` : field }),
       }),
       {
-        ...options,
+        ...(options as FormatQueryFinalOptions),
         // We have to override `ruleProcessor` in case original `format` is "mongodb"
         ruleProcessor: defaultRuleProcessorMongoDBQuery,
         context: { ...options.context, avoidFieldsAsKeys: false },
-      } as unknown as FormatQueryFinalOptions
+      }
     );
     const subQueryWithAggCtx = defaultRuleGroupProcessorMongoDBQuery(
       transformQuery(value as RuleGroupType, {
         ruleProcessor: r => ({ ...r, field: r.field ? `$item.${r.field}` : '$item' }),
       }),
       {
-        ...options,
+        ...(options as FormatQueryFinalOptions),
         // We have to override `ruleProcessor` in case original `format` is "mongodb"
         ruleProcessor: defaultRuleProcessorMongoDBQuery,
         context: { ...options.context, avoidFieldsAsKeys: true },
-      } as unknown as FormatQueryFinalOptions
+      }
     );
 
     const filteredCount = {

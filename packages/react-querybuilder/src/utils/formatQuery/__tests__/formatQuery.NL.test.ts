@@ -475,10 +475,10 @@ describe('match modes', () => {
     expect(
       formatQuery(queryWithMatchModes, {
         format: 'natural_language',
-        fields: [{ name: 'fs', label: 'FS', subproperties: [{ name: 'sp', label: 'SP' }] }],
+        fields: [{ name: 'fs', label: 'FS', subproperties: [{ name: 'fv', label: 'FV' }] }],
       })
     ).toBe(
-      `(for every item in FS, contains 'S'), and (for every item in FS, fv contains 'S'), and (for no item in FS, contains 'S'), and (for at least one item in FS, contains 'S'), and (for at least one item in FS, contains 'S'), and (for no item in FS, contains 'S'), and (for at least 2 of the items in FS, contains 'S'), and (for at least 2 of the items in FS, fv contains 'S'), and (for at least 50% of the items in FS, contains 'S'), and (for at most 2 of the items in FS, contains 'S'), and (for at most 50% of the items in FS, contains 'S'), and (for exactly 2 of the items in FS, contains 'S'), and (for exactly 50% of the items in FS, contains 'S'), and (for every item in FS, contains 'S', and contains 'S'), and (for at least 2 of the items in FS, contains 'S', and contains 'S')`
+      `(for every item in FS, contains 'S'), and (for every item in FS, FV contains 'S'), and (for no item in FS, contains 'S'), and (for at least one item in FS, contains 'S'), and (for at least one item in FS, contains 'S'), and (for no item in FS, contains 'S'), and (for at least 2 of the items in FS, contains 'S'), and (for at least 2 of the items in FS, FV contains 'S'), and (for at least 50% of the items in FS, contains 'S'), and (for at most 2 of the items in FS, contains 'S'), and (for at most 50% of the items in FS, contains 'S'), and (for exactly 2 of the items in FS, contains 'S'), and (for exactly 50% of the items in FS, contains 'S'), and (for every item in FS, contains 'S', and contains 'S'), and (for at least 2 of the items in FS, contains 'S', and contains 'S')`
     );
   });
 });
