@@ -35,7 +35,7 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
     // a valid `match` property is found (match modes are not supported in this format)
     processMatchMode(rule)
   ) {
-    return;
+    return '';
   }
 
   switch (operatorLC) {
