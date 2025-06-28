@@ -20,6 +20,7 @@ export const defaultOptions = {
   listsAsArrays: false,
   showBranches: false,
   showShiftActions: false,
+  justifiedLayout: false,
 } satisfies CIOptions;
 
 export const optionsOrder: CIOption[] = [
@@ -40,6 +41,7 @@ export const optionsOrder: CIOption[] = [
   'listsAsArrays',
   'parseNumbers',
   'showBranches',
+  'justifiedLayout',
 ];
 
 export const optionsReducer = (

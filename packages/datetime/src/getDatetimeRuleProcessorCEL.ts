@@ -1,5 +1,5 @@
 import type { RuleProcessor } from 'react-querybuilder';
-import { defaultRuleProcessorCEL, toArray } from 'react-querybuilder';
+import { defaultRuleProcessorCEL, lc, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { processIsDateField } from './utils';
 
@@ -21,7 +21,7 @@ export const getDatetimeRuleProcessorCEL =
 
     const ts = (d: string | Date) => `timestamp("${apiFns.toISOString(d)}")`;
 
-    const operatorTL = rule.operator.replace(/^=$/, '==').toLowerCase();
+    const operatorTL = lc(rule.operator.replace(/^=$/, '=='));
 
     switch (operatorTL) {
       case '<':

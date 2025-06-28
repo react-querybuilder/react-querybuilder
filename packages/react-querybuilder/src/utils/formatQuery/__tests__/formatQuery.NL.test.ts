@@ -23,6 +23,7 @@ import {
   queryForPreserveValueOrder,
   queryForXor,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 
@@ -461,4 +462,23 @@ it('operatorMap', () => {
     )
   );
   expect(formatQuery(query, { format: 'natural_language', operatorMap })).toBe(nlStringOperatorMap);
+});
+
+describe('match modes', () => {
+  it('strings', () => {
+    expect(formatQuery(queryWithMatchModes, { format: 'natural_language' })).toBe(
+      `(every item in fs contains 'S'), and (every item in fs fv contains 'S'), and (no item in fs contains 'S'), and (at least one item in fs contains 'S'), and (at least one item in fs contains 'S'), and (no item in fs contains 'S'), and (at least 2 of the items in fs contains 'S'), and (at least 2 of the items in fs fv contains 'S'), and (at least 50% of the items in fs contains 'S'), and (at most 2 of the items in fs contains 'S'), and (at most 50% of the items in fs contains 'S'), and (exactly 2 of the items in fs contains 'S'), and (exactly 50% of the items in fs contains 'S'), and (every item in fs contains 'S', and contains 'S'), and (at least 2 of the items in fs contains 'S', and contains 'S')`
+    );
+  });
+
+  it('objects', () => {
+    expect(
+      formatQuery(queryWithMatchModes, {
+        format: 'natural_language',
+        fields: [{ name: 'fs', label: 'FS', subproperties: [{ name: 'fv', label: 'FV' }] }],
+      })
+    ).toBe(
+      `(for every item in FS, contains 'S'), and (for every item in FS, FV contains 'S'), and (for no item in FS, contains 'S'), and (for at least one item in FS, contains 'S'), and (for at least one item in FS, contains 'S'), and (for no item in FS, contains 'S'), and (for at least 2 of the items in FS, contains 'S'), and (for at least 2 of the items in FS, FV contains 'S'), and (for at least 50% of the items in FS, contains 'S'), and (for at most 2 of the items in FS, contains 'S'), and (for at most 50% of the items in FS, contains 'S'), and (for exactly 2 of the items in FS, contains 'S'), and (for exactly 50% of the items in FS, contains 'S'), and (for every item in FS, contains 'S', and contains 'S'), and (for at least 2 of the items in FS, contains 'S', and contains 'S')`
+    );
+  });
 });

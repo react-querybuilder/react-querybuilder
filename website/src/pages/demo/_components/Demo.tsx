@@ -13,14 +13,15 @@ import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
+import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder/debug';
 import {
   convertToIC,
   defaultPlaceholderValueName,
   defaultValidator,
   formatQuery,
   QueryBuilder,
-} from 'react-querybuilder';
+  standardClassnames,
+} from 'react-querybuilder/debug';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
@@ -237,16 +238,23 @@ export default function Demo({
     [options]
   );
 
+  const baseFormatOptions = useMemo(
+    () => ({
+      format,
+      parseNumbers: parseNumbersInExport,
+      preset: sqlDialect,
+      ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
+    }),
+    [format, parseNumbersInExport, sqlDialect, options.autoSelectValue]
+  );
+
   const formatOptions = useMemo(
     (): FormatQueryOptions => ({
-      format,
+      ...baseFormatOptions,
       fields:
         options.validateQuery || format === 'natural_language' || options.useDateTimePackage
           ? fields
           : undefined,
-      parseNumbers: parseNumbersInExport,
-      ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
-      preset: sqlDialect,
       ...(options.useDateTimePackage
         ? {
             ruleProcessor:
@@ -254,17 +262,27 @@ export default function Demo({
           }
         : null),
     }),
-    [
-      format,
-      options.autoSelectValue,
-      options.useDateTimePackage,
-      options.validateQuery,
-      parseNumbersInExport,
-      sqlDialect,
-    ]
+    [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format]
   );
-  const q = options.independentCombinators ? queryIC : query;
-  const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
+  const q = useMemo(
+    () => (options.independentCombinators ? queryIC : query),
+    [options.independentCombinators, queryIC, query]
+  );
+
+  // Debounce query updates
+  const [debouncedQuery, setDebouncedQuery] = useState(q);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(q), 300);
+    return () => clearTimeout(timer);
+  }, [q]);
+
+  const formatString = useMemo(
+    () =>
+      queryString.parse(siteLocation.search).outputMode === 'export'
+        ? getFormatQueryString(debouncedQuery, formatOptions)
+        : '',
+    [debouncedQuery, formatOptions, siteLocation.search]
+  );
 
   const getExportTabAttributes = useCallback(
     (fmt: ExportFormat, others: ExportFormat[] = []) => {
@@ -433,8 +451,8 @@ export default function Demo({
       clsx(
         {
           validateQuery: options.validateQuery,
-          justifiedLayout: options.justifiedLayout,
-          'queryBuilder-branches': options.showBranches,
+          [standardClassnames.justified]: options.justifiedLayout,
+          [standardClassnames.branches]: options.showBranches,
         },
         variant === 'default' ? '' : qbWrapperId,
         'donut-hole'
@@ -522,6 +540,7 @@ export default function Demo({
             </QueryWrapper>
           </div>
           <Tabs
+            queryString="outputMode"
             defaultValue="code"
             values={[
               { value: 'code', label: 'Code' },
@@ -565,6 +584,7 @@ export default function Demo({
             </TabItem>
             <TabItem value="export" label="Export">
               <Tabs
+                queryString="exportFormat"
                 defaultValue="json"
                 values={[
                   {
@@ -758,6 +778,7 @@ export default function Demo({
             </TabItem>
             <TabItem value="import">
               <Tabs
+                queryString="importFormat"
                 defaultValue="sql"
                 values={[
                   { value: 'sql', label: 'SQL' },

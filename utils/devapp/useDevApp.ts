@@ -59,7 +59,12 @@ export const useDevApp = (): {
       ...opts,
       fields,
       validator: opts.validateQuery ? defaultValidator : undefined,
-      controlClassnames: { queryBuilder: opts.showBranches ? standardClassnames.branches : '' },
+      controlClassnames: {
+        queryBuilder: {
+          [standardClassnames.branches]: opts.showBranches,
+          [standardClassnames.justified]: opts.justifiedLayout,
+        },
+      },
     };
   }, [optVals]);
 

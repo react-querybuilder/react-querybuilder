@@ -6,6 +6,7 @@ import type {
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 import { getNLTranslataion } from './utils';
 
@@ -34,14 +35,10 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    let rg2 = rg;
-
-    if (
-      isRuleGroupTypeIC(rg) &&
-      rg.rules.some(r => typeof r === 'string' && r.toLowerCase() === 'xor')
-    ) {
-      rg2 = convertFromIC(rg);
-    }
+    const rg2 =
+      isRuleGroupTypeIC(rg) && rg.rules.some(r => typeof r === 'string' && lc(r) === 'xor')
+        ? convertFromIC(rg)
+        : rg;
 
     const processedRules = rg2.rules.map(rule => {
       // Independent combinators
@@ -86,7 +83,7 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
       return fallbackExpression;
     }
 
-    const isXOR = (rg2.combinator ?? '').toLowerCase() === 'xor';
+    const isXOR = lc(rg2.combinator ?? '') === 'xor';
     const combinator = isXOR ? rg2.combinator!.slice(1) : rg2.combinator;
     const mustWrap = rg2.not || !outermostOrLonelyInGroup || (isXOR && processedRules.length > 1);
 

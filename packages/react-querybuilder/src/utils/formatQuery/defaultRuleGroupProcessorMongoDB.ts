@@ -2,6 +2,7 @@ import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReac
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 
 const isBracketed = (str: string) => str.startsWith('{') && str.endsWith('}');
@@ -15,7 +16,8 @@ const isBracketed = (str: string) => str.startsWith('{') && str.endsWith('}');
  */
 export const defaultRuleGroupProcessorMongoDB: RuleGroupProcessor<string> = (
   ruleGroup,
-  options
+  options,
+  meta
 ) => {
   const {
     fields,
@@ -34,7 +36,7 @@ export const defaultRuleGroupProcessorMongoDB: RuleGroupProcessor<string> = (
       return outermost ? fallbackExpression : '';
     }
 
-    const combinator = `"$${rg.combinator.toLowerCase()}"`;
+    const combinator = `"$${lc(rg.combinator)}"`;
     let hasChildRules = false;
 
     const expressions: string[] = rg.rules
@@ -59,11 +61,15 @@ export const defaultRuleGroupProcessorMongoDB: RuleGroupProcessor<string> = (
           return '';
         }
         const fieldData = getOption(fields, rule.field);
-        return ruleProcessor(rule, {
-          ...options,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          fieldData,
-        });
+        return ruleProcessor(
+          rule,
+          {
+            ...options,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          },
+          meta
+        );
       })
       .filter(Boolean);
 

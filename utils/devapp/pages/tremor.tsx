@@ -7,7 +7,12 @@ import './tremor.css';
 createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
     <QueryBuilderTremor
-      controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
+      controlClassnames={{
+        fields: 'w-max',
+        operators: 'w-max',
+        combinators: 'w-max',
+        matchMode: 'w-max',
+      }}>
       <App />
     </QueryBuilderTremor>
   </React.StrictMode>

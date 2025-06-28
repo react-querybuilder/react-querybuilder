@@ -9,11 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
-- New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
+- [#900] Support for matching elements of a nested array.
+  - New `RuleType` property `match: { mode: MatchMode, threshold?: number }`
+    - `type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly'`
+    - In most contexts, `operator` will be ignored when `match` is present and valid.
+  - New component `MatchModeEditor`, which renders when a field is determined to have one or more match modes. The mode selector is the configured `valueSelector` and&mdash;when a threshold is appropriate&mdash;the threshold editor is the configured `valueEditor` with `inputType: "number"`.
+  - New props `getMatchModes` and `getSubQueryBuilderProps` to manage these configurations at the top level.
+  - New `Field` properties `matchModes` and `subproperties` to manage these configurations at the field level.
+  - `parseJsonLogic` support for "all", "none", and "some" operations.
+  - `formatQuery` (partial) support for the `match` rule property.
+    - Supported formats include "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", or "cel".
+    - To avoid invalid syntax, the SQL-based formats only work with `preset: "postgresql"`, and only with nested arrays of primitives like strings or numbers.
+- [#903] New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
+- [#900] Extracted `fields` prop processing logic to new `useFields` hook.
+- [#900] "Justified layout" styles from the demo (push the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge) are now included in the default stylesheet. To apply the styles, add the `queryBuilder-justified` class to the query builder using the `controlClassnames` prop, or to any ancestor element.
 
 #### Fixed
 
-- `parseSQL` maintains precision for large integers by generating a `bigint` instead of a `number` when necessary.
+- [#903] `parseSQL` maintains precision for large integers by generating a `bigint` instead of a `number` when necessary.
+- [#900] Preact compatibility improved by using `React.Fragment` explicitly instead of the shorthand `<>...</>`.
+- [#900] If the `preset` option for `formatQuery` is one from `sqlDialectPresets`, it will only apply if the `format` is undefined or one of the SQL-based formats.
 
 ## [v8.7.1] - 2025-06-09
 
@@ -1926,6 +1941,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#890]: https://github.com/react-querybuilder/react-querybuilder/pull/890
 [#891]: https://github.com/react-querybuilder/react-querybuilder/pull/891
 [#893]: https://github.com/react-querybuilder/react-querybuilder/pull/893
+[#900]: https://github.com/react-querybuilder/react-querybuilder/pull/900
+[#903]: https://github.com/react-querybuilder/react-querybuilder/pull/903
 
 <!-- #endregion -->
 

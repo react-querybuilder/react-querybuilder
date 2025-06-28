@@ -1,4 +1,9 @@
-import type { DefaultRuleGroupType, Field, FormatQueryOptions } from '../../types/index.noReact';
+import type {
+  DefaultRuleGroupType,
+  Field,
+  FormatQueryOptions,
+  MatchConfig,
+} from '../../types/index.noReact';
 
 type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql' | 'mongodb' | 'cel';
 
@@ -18,6 +23,12 @@ export interface SuperUser<EnhancedType = 0 | 1 | boolean> {
   madeUpName: string;
   nickname: string;
   powerUpAge: number | null | undefined;
+}
+
+export interface AugmentedSuperUser<EnhancedType = 0 | 1 | boolean>
+  extends SuperUser<EnhancedType> {
+  nicknames: string[];
+  earlyPencilers: { firstName: string; lastName: string; generationalSuffix?: string }[];
 }
 
 const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
@@ -86,6 +97,79 @@ export const superUsers = <DBP extends DbPlatform>(
   ] as DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
 };
 
+export const nicknameMap: Record<string, string[]> = {
+  Batman: ['The Caped Crusader'],
+  Superman: ['The Man of Steel', 'The Last Son of Krypton'],
+  'Spider-Man': ['Web-Slinger', 'Menace to Society'],
+  'Captain America': ['The First Avenger'],
+};
+
+export const earlyPencilersMap: Record<
+  string,
+  { firstName: string; lastName: string; generationalSuffix?: string }[]
+> = {
+  Batman: [
+    { firstName: 'Bob', lastName: 'Kane' },
+    { firstName: 'Jerry', lastName: 'Robinson' },
+    { firstName: 'Sheldon', lastName: 'Moldoff' },
+    { firstName: 'Dick', lastName: 'Sprang' },
+    { firstName: 'Carmine', lastName: 'Infantino' },
+    { firstName: 'Neal', lastName: 'Adams' },
+    { firstName: 'Jim', lastName: 'Aparo' },
+    { firstName: 'Marshall', lastName: 'Rogers' },
+    { firstName: 'Don', lastName: 'Newton' },
+    { firstName: 'Gene', lastName: 'Colan' },
+    { firstName: 'Ernie', lastName: 'Chan' },
+  ],
+  Superman: [
+    { firstName: 'Joe', lastName: 'Shuster' },
+    { firstName: 'Wayne', lastName: 'Boring' },
+    { firstName: 'Curt', lastName: 'Swan' },
+    { firstName: 'Jose‑Luis', lastName: 'Garcia‑Lopez' },
+    { firstName: 'Mike', lastName: 'Grell' },
+    { firstName: 'George', lastName: 'Pérez' },
+  ],
+  'Spider-Man': [
+    { firstName: 'Steve', lastName: 'Ditko' },
+    { firstName: 'John', lastName: 'Romita', generationalSuffix: 'Sr.' },
+    { firstName: 'Larry', lastName: 'Lieber' },
+    { firstName: 'Don', lastName: 'Heck' },
+    { firstName: 'Jim', lastName: 'Mooney' },
+    { firstName: 'John', lastName: 'Buscema' },
+    { firstName: 'Gil', lastName: 'Kane' },
+    { firstName: 'Ross', lastName: 'Andru' },
+    { firstName: 'Sal', lastName: 'Buscema' },
+    { firstName: 'Keith', lastName: 'Pollard' },
+  ],
+  'Captain America': [
+    { firstName: 'Jack', lastName: 'Kirby' },
+    { firstName: 'Al', lastName: 'Avison' },
+    { firstName: 'Syd', lastName: 'Shores' },
+    { firstName: 'Vince', lastName: 'Alascia' },
+    { firstName: 'Ken', lastName: 'Bald' },
+    { firstName: 'George', lastName: 'Tuska' },
+    { firstName: 'Gil', lastName: 'Kane' },
+    { firstName: 'Jim', lastName: 'Steranko' },
+    { firstName: 'Gene', lastName: 'Colan' },
+    { firstName: 'Sal', lastName: 'Buscema' },
+    { firstName: 'Herb', lastName: 'Trimpe' },
+    { firstName: 'Alan', lastName: 'Weiss' },
+    { firstName: 'John', lastName: 'Romita', generationalSuffix: 'Sr.' },
+    { firstName: 'Pablo', lastName: 'Marcos' },
+    { firstName: 'Don', lastName: 'Perlin' },
+    { firstName: 'John', lastName: 'Byrne' },
+  ],
+};
+
+export const augmentedSuperUsers = <DBP extends DbPlatform>(dbPlatform: DBP) =>
+  superUsers(dbPlatform).map(u => ({
+    ...u,
+    nicknames: [u.nickname, ...nicknameMap[u.madeUpName]],
+    earlyPencilers: earlyPencilersMap[u.madeUpName],
+  })) as DBP extends 'mssql' | 'sqlite'
+    ? AugmentedSuperUser<0 | 1>[]
+    : AugmentedSuperUser<boolean>[];
+
 const enhancedColumnType: Record<DbPlatform, string> = {
   cel: 'N/A',
   jsonata: 'N/A',
@@ -109,42 +193,75 @@ const textColumnType: Record<DbPlatform, string> = {
 const unquote = (fieldName: string, unquoted = false) =>
   unquoted ? fieldName.toLocaleLowerCase() : `"${fieldName}"`;
 
-const unquotedFalse = { unquoted: false } as const;
+const defaultTableName = 'superusers';
+const defaultDbCommandOptions = { unquoted: false } as const;
+
+interface DBCommandOptions {
+  unquoted?: boolean;
+  includeNestedArrays?: boolean;
+  tableName?: string;
+}
 
 export const CREATE_TABLE = (
   dbPlatform: DbPlatform,
-  { unquoted = false }: { unquoted?: boolean } = unquotedFalse
-) => `CREATE TABLE superusers (
+  {
+    unquoted = false,
+    includeNestedArrays = false,
+    tableName = defaultTableName,
+  }: DBCommandOptions = defaultDbCommandOptions
+) => `CREATE TABLE ${tableName ?? defaultTableName} (
   ${unquote('firstName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
   ${unquote('madeUpName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('nickname', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
-  ${unquote('powerUpAge', unquoted)} INT NULL
+  ${unquote('powerUpAge', unquoted)} INT NULL${
+    includeNestedArrays
+      ? `,
+  ${unquote('nicknames', unquoted)} ${textColumnType[dbPlatform]}[]`
+      : ``
+  }
 )`;
 
-export const CREATE_INDEX = ({ unquoted = false }: { unquoted?: boolean } = unquotedFalse) =>
-  `CREATE UNIQUE INDEX ndx ON superusers(${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
+export const CREATE_INDEX = ({
+  unquoted = false,
+  tableName = defaultTableName,
+}: DBCommandOptions = defaultDbCommandOptions) =>
+  `CREATE UNIQUE INDEX ndx${tableName} ON ${tableName} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
 
 export const INSERT_INTO = (
-  user: SuperUser,
+  user: AugmentedSuperUser,
   dbPlatform: DbPlatform,
-  { unquoted = false }: { unquoted?: boolean } = unquotedFalse
+  {
+    unquoted = false,
+    includeNestedArrays = false,
+    tableName = defaultTableName,
+  }: DBCommandOptions = defaultDbCommandOptions
 ) => `
-INSERT INTO superusers (
+INSERT INTO ${tableName ?? defaultTableName} (
   ${unquote('firstName', unquoted)},
   ${unquote('lastName', unquoted)},
   ${unquote('enhanced', unquoted)},
   ${unquote('madeUpName', unquoted)},
   ${unquote('nickname', unquoted)},
-  ${unquote('powerUpAge', unquoted)}
+  ${unquote('powerUpAge', unquoted)}${
+    includeNestedArrays
+      ? `,
+  ${unquote('nicknames', unquoted)}`
+      : ``
+  }
 ) VALUES (
   '${user.firstName}',
   '${user.lastName}',
   ${platformBoolean[dbPlatform][user.enhanced ? 0 : 1]},
   '${user.madeUpName}',
   '${user.nickname}',
-  ${typeof user.powerUpAge === 'number' ? user.powerUpAge : 'NULL'}
+  ${typeof user.powerUpAge === 'number' ? user.powerUpAge : 'NULL'}${
+    includeNestedArrays
+      ? `,
+  ARRAY[${user.nicknames.map(nn => `'${nn}'`)}]`
+      : ``
+  }
 )`;
 
 export const sqlBase = `SELECT * FROM superusers WHERE `;
@@ -152,15 +269,17 @@ export const getSqlOrderBy = (unquoted = false) => ` ORDER BY ${unquote('madeUpN
 
 export const dbSetup = (
   dbPlatform: DbPlatform,
-  { unquoted = false }: { unquoted?: boolean } = unquotedFalse
+  opts: DBCommandOptions = defaultDbCommandOptions
 ): string =>
   [
-    CREATE_TABLE(dbPlatform, { unquoted }),
-    CREATE_INDEX({ unquoted }),
-    ...superUsers(dbPlatform).map(user => INSERT_INTO(user, dbPlatform, { unquoted })),
+    CREATE_TABLE(dbPlatform, opts),
+    CREATE_INDEX(opts),
+    ...augmentedSuperUsers(dbPlatform).map(user => INSERT_INTO(user, dbPlatform, opts)),
   ].join(';');
 
-export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> => ({
+export const dbTests = (
+  superUsers: SuperUser[] | AugmentedSuperUser[]
+): Record<string, TestSQLParams> => ({
   'and/or': {
     query: {
       combinator: 'or',
@@ -384,3 +503,138 @@ export const dbTests = (superUsers: SuperUser[]): Record<string, TestSQLParams> 
     expectedResult: superUsers.filter(u => u.powerUpAge === null && u.madeUpName !== null),
   },
 });
+
+export const genStringsMatchQuery = (match: MatchConfig): DefaultRuleGroupType => ({
+  combinator: 'and',
+  rules: [
+    {
+      field: 'nicknames',
+      operator: '=',
+      value: {
+        combinator: 'and',
+        rules: [{ field: '', operator: 'contains', value: 'S' }],
+      },
+      match,
+    },
+  ],
+});
+
+export const genObjectsMatchQuery = (match: MatchConfig): DefaultRuleGroupType => ({
+  combinator: 'and',
+  rules: [
+    {
+      field: 'earlyPencilers',
+      operator: '=',
+      value: {
+        combinator: 'and',
+        rules: [{ field: 'lastName', operator: 'contains', value: 'S' }],
+      },
+      match,
+    },
+  ],
+});
+
+export type MatchModeTests = Record<
+  'strings' | 'objects',
+  [string, MatchConfig, (u: AugmentedSuperUser) => boolean][]
+>;
+
+// TODO: Add variation to the queries so they all produce _some_ results
+export const matchModeTests: MatchModeTests = {
+  strings: [
+    ['"all"', { mode: 'all' }, u => u.nicknames.every(n => n.includes('S'))],
+    ['"none"', { mode: 'none' }, u => u.nicknames.every(n => !n.includes('S'))],
+    ['"some"', { mode: 'some' }, u => u.nicknames.some(n => n.includes('S'))],
+    [
+      '"none" as atMost 0',
+      { mode: 'atMost', threshold: 0 },
+      u => u.nicknames.every(n => !n.includes('S')),
+    ],
+    [
+      '"some" as atLeast 1',
+      { mode: 'atLeast', threshold: 1 },
+      u => u.nicknames.some(n => n.includes('S')),
+    ],
+    [
+      '"atLeast" integer',
+      { mode: 'atLeast', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length >= 2,
+    ],
+    [
+      '"atLeast" decimal',
+      { mode: 'atLeast', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length >= u.nicknames.length / 2,
+    ],
+    [
+      '"atMost" integer',
+      { mode: 'atMost', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length <= 2,
+    ],
+    [
+      '"atMost" decimal',
+      { mode: 'atMost', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length <= u.nicknames.length / 2,
+    ],
+    [
+      '"exactly" integer',
+      { mode: 'exactly', threshold: 2 },
+      u => u.nicknames.filter(n => n.includes('S')).length === 2,
+    ],
+    [
+      '"exactly" decimal',
+      { mode: 'exactly', threshold: 0.5 },
+      u => u.nicknames.filter(n => n.includes('S')).length === u.nicknames.length / 2,
+    ],
+  ],
+  objects: [
+    ['"all"', { mode: 'all' }, u => u.earlyPencilers.every(n => n.lastName.includes('S'))],
+    ['"none"', { mode: 'none' }, u => u.earlyPencilers.every(n => !n.lastName.includes('S'))],
+    ['"some"', { mode: 'some' }, u => u.earlyPencilers.some(n => n.lastName.includes('S'))],
+    [
+      '"none" as atMost 0',
+      { mode: 'atMost', threshold: 0 },
+      u => u.earlyPencilers.every(n => !n.lastName.includes('S')),
+    ],
+    [
+      '"some" as atLeast 1',
+      { mode: 'atLeast', threshold: 1 },
+      u => u.earlyPencilers.some(n => n.lastName.includes('S')),
+    ],
+    [
+      '"atLeast" integer',
+      { mode: 'atLeast', threshold: 2 },
+      u => u.earlyPencilers.filter(n => n.lastName.includes('S')).length >= 2,
+    ],
+    [
+      '"atLeast" decimal',
+      { mode: 'atLeast', threshold: 0.5 },
+      u =>
+        u.earlyPencilers.filter(n => n.lastName.includes('S')).length >=
+        u.earlyPencilers.length / 2,
+    ],
+    [
+      '"atMost" integer',
+      { mode: 'atMost', threshold: 2 },
+      u => u.earlyPencilers.filter(n => n.lastName.includes('S')).length <= 2,
+    ],
+    [
+      '"atMost" decimal',
+      { mode: 'atMost', threshold: 0.5 },
+      u =>
+        u.earlyPencilers.filter(n => n.lastName.includes('S')).length <=
+        u.earlyPencilers.length / 2,
+    ],
+    [
+      '"exactly" integer',
+      { mode: 'exactly', threshold: 2 },
+      u => u.earlyPencilers.filter(n => n.lastName.includes('S')).length === 2,
+    ],
+    [
+      '"exactly" decimal',
+      { mode: 'exactly', threshold: 0.5 },
+      u =>
+        u.earlyPencilers.filter(n => n.lastName.includes('S')).length ===
+        u.earlyPencilers.length / 2,
+    ],
+  ],
+};

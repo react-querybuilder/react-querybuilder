@@ -3,6 +3,7 @@ import {
   defaultRuleProcessorSQL,
   defaultValueProcessorByRule,
   getQuotedFieldName,
+  lc,
   mapSQLOperator,
   toArray,
 } from 'react-querybuilder';
@@ -111,7 +112,7 @@ export const getDatetimeRuleProcessorSQL =
   (rule, options) => {
     const opts = options ?? /* istanbul ignore next */ {};
     const operator = mapSQLOperator(rule.operator);
-    const operatorLowerCase = operator.toLowerCase();
+    const operatorLowerCase = lc(operator);
     // istanbul ignore next
     const {
       quoteFieldNamesWith = ['', ''] as [string, string],

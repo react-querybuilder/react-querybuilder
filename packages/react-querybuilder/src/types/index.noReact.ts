@@ -1,4 +1,5 @@
 export type {
+  JsonLogicAll,
   JsonLogicAnd,
   JsonLogicDoubleNegation,
   JsonLogicEqual,
@@ -9,10 +10,12 @@ export type {
   JsonLogicLessThan,
   JsonLogicLessThanOrEqual,
   JsonLogicNegation,
+  JsonLogicNone,
   JsonLogicNotEqual,
   JsonLogicOr,
   ReservedOperations as JsonLogicReservedOperations,
   RulesLogic as JsonLogicRulesLogic,
+  JsonLogicSome,
   JsonLogicStrictEqual,
   JsonLogicStrictNotEqual,
   JsonLogicVar,

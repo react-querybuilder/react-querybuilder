@@ -1,7 +1,8 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
+import { isValidValue, prismaOperators, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const processNumber = <T>(value: unknown, fallback: T, parseNumbers: boolean) =>
   shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
@@ -14,13 +15,18 @@ const processNumber = <T>(value: unknown, fallback: T, parseNumbers: boolean) =>
  * @group Export
  */
 export const defaultRuleProcessorPrisma: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  { parseNumbers = true, preserveValueOrder } = {}
+  options = {}
 ) => {
-  if (valueSource === 'field') return;
+  const { field, operator, value, valueSource } = rule;
+  // istanbul ignore next
+  const { parseNumbers = true, preserveValueOrder } = options;
 
-  const operatorLC = operator.toLowerCase();
+  // Neither field-to-field comparisons nor match modes are supported in this format
+  if (valueSource === 'field' || processMatchMode(rule)) return;
+
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '=':
       return { [field]: processNumber(value, value, parseNumbers) };

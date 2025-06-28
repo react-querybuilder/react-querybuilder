@@ -8,6 +8,6 @@
     "noEmit": true,
     "resolveJsonModule": true
   },
-  "exclude": ["./next/app/layout.tsx"],
+  "exclude": ["./next/app/layout.tsx", "./preact/src/index.tsx"],
   "include": ["./*/src", "./next/app"]
 }
