@@ -37,6 +37,7 @@ bun run build
 - `bun typecheck` - TypeScript checking across all packages
 - `bun lint` - ESLint + Oxlint checking
 - `bun pretty-print` - Prettier formatting
+  - Run this command from the root of the repository after any changes to ensure correct formatting
 
 **Documentation:**
 
