@@ -83,19 +83,19 @@ const formatQueryCache = new Map();
 
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
   const cacheKey = JSON.stringify([query, options]);
-  
+
   if (formatQueryCache.has(cacheKey)) {
     return formatQueryCache.get(cacheKey);
   }
 
   const result = formatQueryUncached(query, options);
-  
+
   // Limit cache size to prevent memory leaks
   if (formatQueryCache.size > 50) {
     const firstKey = formatQueryCache.keys().next().value;
     formatQueryCache.delete(firstKey);
   }
-  
+
   formatQueryCache.set(cacheKey, result);
   return result;
 };
