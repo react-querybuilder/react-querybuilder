@@ -900,11 +900,14 @@ _TL;DR: These are probably not breaking changes._
 
 - [#319] `formatQuery` will now invoke custom `valueProcessor` functions with different arguments based on the function's `.length` property, which is the number of arguments a function accepts excluding those with default values:
   - If the `valueProcessor` function accepts fewer than three (3) arguments, it will be called like this:
+
   ```ts
   valueProcessor(rule, { parseNumbers });
   ```
+
   The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`, which is a subset of `FormatQueryOptions` (currently `{ parseNumbers?: boolean; }`).
   - To maintain the current behavior (`valueProcessor(field, operator, value, valueSource)`), make sure the `valueProcessor` function accepts at least three arguments _with no default values_ (do not use `=` for the first three arguments). For example, the following code will log `length: 1`:
+
   ```ts
   const valueProcessor = (field: string, operator = '=', value = '') => '...';
   console.log(`length: ${valueProcessor.length}`);
