@@ -7,10 +7,11 @@ import type {
   RuleType,
 } from '../types/index.noReact';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
+import { lc } from './misc';
 
 const combinatorLevels = ['or', 'xor', 'and'] as const;
 
-const isSameString = (a: unknown, b: string) => typeof a === 'string' && a.toLowerCase() === b;
+const isSameString = (a: unknown, b: string) => lc(a) === b;
 
 const generateRuleGroupICWithConsistentCombinators = (
   rg: RuleGroupTypeIC,
@@ -38,7 +39,7 @@ const generateRuleGroupICWithConsistentCombinators = (
       }
 
       const nextBaseCombinatorIndex = draft.rules.findIndex(
-        (r, i) => i > cursor && typeof r === 'string' && r.toLowerCase() === baseCombinator
+        (r, i) => i > cursor && typeof r === 'string' && lc(r) === baseCombinator
       );
 
       if (nextBaseCombinatorIndex === -1) {

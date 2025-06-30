@@ -72,9 +72,10 @@ export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
   return (
     !buildInvalid &&
     !buildOutdated &&
-    (async ({ data, cel, typemap }) =>
-      JSON.parse(
-        await $`./cel-evaluator --json=${JSON.stringify(data)} --query=${cel} --types=${JSON.stringify(typemap)}`.text()
-      ))
+    (async ({ data, cel, typemap }) => {
+      const result =
+        await $`./cel-evaluator --json=${JSON.stringify(data)} --query=${cel} --types=${JSON.stringify(typemap)}`.text();
+      return JSON.parse(result || 'null');
+    })
   );
 };

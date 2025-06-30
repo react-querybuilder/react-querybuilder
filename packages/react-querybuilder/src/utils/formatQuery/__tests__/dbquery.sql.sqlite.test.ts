@@ -29,9 +29,6 @@ const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQ
     test('parameterized', () => {
       const parameterized = formatQuery(query, { ...fqOptions, format: 'parameterized' });
       const selectParam = db.prepare(`${sqlBase} ${parameterized.sql} ${getSqlOrderBy()}`);
-      if (fqOptions?.preserveValueOrder) {
-        console.log({ sql: parameterized.sql, params: parameterized.params });
-      }
       expect(selectParam.all(...parameterized.params)).toEqual(expectedResult);
     });
 
@@ -42,9 +39,6 @@ const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQ
         preset: 'sqlite',
       });
       const selectParamNamed = db.prepare(`${sqlBase} ${parameterizedNamed.sql}`);
-      if (fqOptions?.preserveValueOrder) {
-        console.log({ sql: parameterizedNamed.sql, params: parameterizedNamed.params });
-      }
       expect(selectParamNamed.all(parameterizedNamed.params)).toEqual(expectedResult);
     });
   }

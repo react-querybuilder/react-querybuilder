@@ -16,6 +16,7 @@
     "/examples/material",
     "/examples/native",
     "/examples/next",
+    "/examples/preact",
     "/examples/tremor"
   ],
   "node": "18"

@@ -195,6 +195,40 @@ The branch lines are colored <span style={{ color: 'red' }}>red</span> in the ex
   </TabItem>
 </Tabs>
 
+## Justified layout
+
+For a "justified" layout, add the `queryBuilder-justified` class to the query builder using the [`controlClassnames` prop](../components/querybuilder#controlclassnames), or to any ancestor element.
+
+Justified layout styles augment the default styles by pushing the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge of their respective containers. This can
+
+```tsx
+<QueryBuilder
+  // highlight-start
+  controlClassnames={{ queryBuilder: 'queryBuilder-justified' }}
+  // highlight-end
+/>
+```
+
+<BrowserWindow>
+  <QueryBuilderEmbed
+    fields={fields}
+    controlClassnames={{ queryBuilder: 'queryBuilder-justified' }}
+    defaultQuery={{
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            { field: 'lastName', operator: '=', value: 'Vaughan' },
+          ],
+        },
+      ],
+    }}
+  />
+</BrowserWindow>
+
 ## Drag-and-drop
 
 When [drag-and-drop is enabled](../dnd), the following variables control styles for the dragged and hovered elements.

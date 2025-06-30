@@ -6,14 +6,18 @@ import type { NotToggleProps } from '../types';
  *
  * @group Components
  */
-export const NotToggle = (props: NotToggleProps): React.JSX.Element => (
-  <label data-testid={props.testID} className={props.className} title={props.title}>
-    <input
-      type="checkbox"
-      onChange={e => props.handleOnChange(e.target.checked)}
-      checked={!!props.checked}
-      disabled={props.disabled}
-    />
-    {props.label}
-  </label>
-);
+export const NotToggle = (props: NotToggleProps): React.JSX.Element => {
+  const id = React.useId();
+  return (
+    <label data-testid={props.testID} className={props.className} title={props.title} htmlFor={id}>
+      <input
+        id={id}
+        type="checkbox"
+        onChange={e => props.handleOnChange(e.target.checked)}
+        checked={!!props.checked}
+        disabled={props.disabled}
+      />
+      {props.label}
+    </label>
+  );
+};

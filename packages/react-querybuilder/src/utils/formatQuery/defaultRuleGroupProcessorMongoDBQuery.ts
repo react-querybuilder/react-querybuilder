@@ -2,6 +2,7 @@ import type { RuleGroupProcessor, RuleGroupType } from '../../types/index.noReac
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 
 /**
@@ -16,7 +17,11 @@ export const mongoDbFallback = { $and: [{ $expr: true }] } as const;
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (ruleGroup, options) => {
+export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
+  ruleGroup,
+  options,
+  meta
+) => {
   const {
     fields,
     getParseNumberBoolean,
@@ -33,7 +38,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (ruleGr
       return outermost ? mongoDbFallback : false;
     }
 
-    const combinator = `$${rg.combinator.toLowerCase()}`;
+    const combinator = `$${lc(rg.combinator)}`;
     let hasChildRules = false;
 
     const expressions: Record<string, unknown>[] = rg.rules
@@ -57,11 +62,15 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (ruleGr
           return false;
         }
         const fieldData = getOption(fields, rule.field);
-        return ruleProcessor(rule, {
-          ...options,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          fieldData,
-        });
+        return ruleProcessor(
+          rule,
+          {
+            ...options,
+            parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+            fieldData,
+          },
+          meta
+        );
       })
       .filter(Boolean);
 

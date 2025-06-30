@@ -2,6 +2,30 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { useValueEditor, ValueEditor } from 'react-querybuilder';
 
+// Extracted from callback so we can use `useId`
+const RadioButton = (props: {
+  name: string;
+  disabled?: boolean;
+  checked: boolean;
+  handleOnChange: (v: string) => void;
+  label: string;
+}) => {
+  const id = React.useId();
+  return (
+    <label className="radio" htmlFor={id}>
+      <input
+        id={id}
+        type="radio"
+        value={props.name}
+        checked={props.checked}
+        onChange={() => props.handleOnChange(props.name)}
+        disabled={props.disabled}
+      />
+      {props.label}
+    </label>
+  );
+};
+
 /**
  * @group Components
  */
@@ -54,16 +78,14 @@ export const BulmaValueEditor = (props: ValueEditorProps): React.JSX.Element | n
       return (
         <div className={`${props.className} control`} title={props.title}>
           {values.map(v => (
-            <label key={v.name} className="radio">
-              <input
-                type="radio"
-                value={v.name}
-                checked={props.value === v.name}
-                onChange={() => props.handleOnChange(v.name)}
-                disabled={props.disabled}
-              />
-              {v.label}
-            </label>
+            <RadioButton
+              key={v.name}
+              name={v.name}
+              disabled={props.disabled}
+              checked={props.value === v.name}
+              handleOnChange={props.handleOnChange}
+              label={v.label}
+            />
           ))}
         </div>
       );

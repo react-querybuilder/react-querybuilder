@@ -29,6 +29,7 @@ export const defaultOptions: DemoOptions = {
   showNotToggle: false,
   validateQuery: false,
   showBranches: false,
+  justifiedLayout: false,
   showShiftActions: false,
   suppressStandardClassnames: false,
 };
@@ -51,6 +52,7 @@ export const optionOrder: DemoOption[] = [
   'showLockButtons',
   'showNotToggle',
   'showBranches',
+  'justifiedLayout',
   'suppressStandardClassnames',
   'validateQuery',
 ];
@@ -160,6 +162,11 @@ export const optionsMetadata: Record<
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
+  justifiedLayout: {
+    link: '/docs/styling/overview#justified-layout',
+    label: 'Justified layout',
+    title: 'Add the `.queryBuilder-justified` class to justify the layout',
+  },
 };
 
 export const fields: Field[] = [
@@ -199,6 +206,18 @@ export const fields: Field[] = [
     values: musicalInstruments,
     defaultValue: 'More cowbell',
     operators: defaultOperators.filter(op => op.name === 'in'),
+  },
+  {
+    name: 'tourStops',
+    label: 'Tour stops',
+    matchModes: true,
+    subproperties: [
+      { name: 'city', label: 'City' },
+      { name: 'state', label: 'State/Province' },
+      { name: 'venue', label: 'Venue' },
+      { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
+      { name: 'country', label: 'Country' },
+    ],
   },
   {
     name: 'gender',

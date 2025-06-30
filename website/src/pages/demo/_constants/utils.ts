@@ -1,4 +1,4 @@
-import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
+// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
 import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 // @ts-expect-error !!raw-loader!
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
@@ -12,12 +12,13 @@ import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
-import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
-import { defaultOperators, formatQuery } from 'react-querybuilder';
+import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder/debug';
+import { defaultOperators, formatQuery, standardClassnames } from 'react-querybuilder/debug';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
-const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
+// const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
+const extraStylesCSS = demoStylesCSS;
 
 type OptionsAction =
   | { type: 'all' }
@@ -77,7 +78,30 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
   return { ...state, [optionName]: value };
 };
 
+// Cache for expensive formatting operations
+const formatQueryCache = new Map();
+
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
+  const cacheKey = JSON.stringify([query, options]);
+
+  if (formatQueryCache.has(cacheKey)) {
+    return formatQueryCache.get(cacheKey);
+  }
+
+  const result = formatQueryUncached(query, options);
+
+  // Limit cache size to prevent memory leaks
+  if (formatQueryCache.size > 50) {
+    const firstKey = formatQueryCache.keys().next().value;
+    formatQueryCache.delete(firstKey);
+  }
+
+  formatQueryCache.set(cacheKey, result);
+  return result;
+};
+
+// Rename existing function
+const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
   const formatQueryResult = formatQuery(
     query,
     options.format === 'jsonata'
@@ -280,8 +304,8 @@ export const getCodeString = (
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
-          'queryBuilder-branches': options.showBranches,
-          justifiedLayout: options.justifiedLayout,
+          [standardClassnames.branches]: options.showBranches,
+          [standardClassnames.justified]: options.justifiedLayout,
         })}' }}`
       : '',
   ]

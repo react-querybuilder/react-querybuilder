@@ -1,5 +1,6 @@
 import type { FullField, ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils';
@@ -29,7 +30,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
     translations,
   } = opts;
   const valueIsField = rule.valueSource === 'field';
-  const operatorLowerCase = rule.operator.toLowerCase();
+  const operatorLowerCase = lc(rule.operator);
   const quoteChar = quoteValuesWith || /* istanbul ignore next */ "'";
 
   const quoteValue = (v: unknown) => `${quoteChar}${v}${quoteChar}`;

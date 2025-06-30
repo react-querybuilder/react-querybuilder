@@ -24,7 +24,8 @@ export type CIOption =
   | 'debugMode'
   | 'parseNumbers'
   | 'listsAsArrays'
-  | 'showBranches';
+  | 'showBranches'
+  | 'justifiedLayout';
 
 export type CIOptions = Record<CIOption, boolean>;
 

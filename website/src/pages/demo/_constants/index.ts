@@ -7,8 +7,8 @@ import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
-import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder/debug';
+import { convertToIC, generateID, objectKeys } from 'react-querybuilder/debug';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
 export const defaultOptions = {
@@ -161,9 +161,10 @@ export const optionsMetadata = {
       'Disable application of any standard classes, including validation- and event-based classes',
   },
   justifiedLayout: {
-    link: '',
+    link: '/docs/styling/overview#justified-layout',
     label: 'Justified layout',
-    title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
+    title:
+      'Add `.queryBuilder-justified` class to push the "+ Rule", "+ Group", "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
     link: '/docs/styling/overview#branch-lines',

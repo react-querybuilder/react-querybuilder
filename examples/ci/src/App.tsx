@@ -4,6 +4,7 @@ import {
   QueryBuilder,
   defaultValidator,
   formatQuery,
+  standardClassnames,
 } from 'react-querybuilder';
 import { fields } from './fields';
 import { initialQuery, initialQueryIC } from './initialQuery';
@@ -24,6 +25,7 @@ export const App = () => {
     independentCombinators,
     parseNumbers,
     showBranches,
+    justifiedLayout,
     ...commonOptions
   } = options;
 
@@ -33,7 +35,10 @@ export const App = () => {
     <div>
       <QueryBuilderDnD
         controlClassnames={{
-          queryBuilder: showBranches ? 'queryBuilder-branches' : '',
+          queryBuilder: {
+            [standardClassnames.branches]: showBranches,
+            [standardClassnames.justified]: justifiedLayout,
+          },
         }}>
         {independentCombinators ? (
           <QueryBuilder

@@ -61,6 +61,13 @@ it('covers Sequelize', () => {
       }
     )
   ).toBeTruthy();
+
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f', operator: '=', value: { rules: [] }, match: { mode: 'all' } }] },
+      { format: 'sequelize', context: contextWithAllReqs }
+    )
+  ).toBeUndefined();
 });
 
 it('handles operator case variations', () => {

@@ -1,8 +1,9 @@
 import type { Op as _OpTypes, col as _colType, fn as _fnType } from 'sequelize';
 import type { RuleProcessor, Simplify } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 type OpTypes = Simplify<typeof _OpTypes>;
 type ColType = typeof _colType;
@@ -28,10 +29,13 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
     sequelizeFn?: FnType;
   };
 
+  // Match modes are not supported in this format
+  if (processMatchMode(rule)) return;
+
   const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
 
   if (
     // Bail out if we don't have the Op symbols

@@ -12,7 +12,7 @@ Some query builder implementations are required to maintain a flat, rule-only hi
 
 ## Prevent creation of new groups
 
-The simplest way to prevent creation of new groups is to unconditionally hide the "+ Group" button. Returning `null` from a custom `addGroupAction` function component is one way to accomplish this.
+The simplest way to prevent creation of new groups is to unconditionally hide the "+ Group" button. Setting the `addGroupAction` component to `null` (or `() => null`) is one way to accomplish this.
 
 ```tsx
 <QueryBuilder
@@ -21,7 +21,7 @@ The simplest way to prevent creation of new groups is to unconditionally hide th
   onQueryChange={setQuery}
   controlElements={{
     // highlight-start
-    addGroupAction: () => null,
+    addGroupAction: null,
     // highlight-end
   }}
 />
@@ -38,7 +38,7 @@ To hide the "+ Group" button with CSS, use the `ruleGroup-addGroup` class which 
 Either of those methods will generate a query builder like this:
 
 <BrowserWindow>
-  <QueryBuilderEmbed controlElements={{ addGroupAction: () => null }} />
+  <QueryBuilderEmbed controlElements={{ addGroupAction: null }} />
 </BrowserWindow>
 
 ## Conditionally allow new groups

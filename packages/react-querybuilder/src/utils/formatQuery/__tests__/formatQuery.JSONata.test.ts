@@ -14,6 +14,7 @@ import {
   queryForNumberParsing,
   queryForPreserveValueOrder,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
   testQueryDQ,
 } from '../formatQueryTestUtils';
@@ -169,4 +170,10 @@ it('preserveValueOrder', () => {
       preserveValueOrder: true,
     })
   ).toBe(`(f1 >= 12 and f1 <= 14) and (f2 >= 14 and f2 <= 12)`);
+});
+
+it('handles match modes', () => {
+  expect(formatQuery(queryWithMatchModes, 'jsonata')).toBe(
+    `$count($filter(fs, function($v) {$contains($v, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v.fv, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v, "S")})) = 0 and $count($filter(fs, function($v) {$contains($v, "S")})) > 0 and $count($filter(fs, function($v) {$contains($v, "S")})) > 0 and $count($filter(fs, function($v) {$contains($v, "S")})) = 0 and $count($filter(fs, function($v) {$contains($v, "S")})) >= 2 and $count($filter(fs, function($v) {$contains($v.fv, "S")})) >= 2 and $count($filter(fs, function($v) {$contains($v, "S")})) >= ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S")})) <= 2 and $count($filter(fs, function($v) {$contains($v, "S")})) <= ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S")})) = 2 and $count($filter(fs, function($v) {$contains($v, "S")})) = ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S") and $contains($v, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v, "S") and $contains($v, "S")})) >= 2`
+  );
 });
