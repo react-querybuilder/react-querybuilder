@@ -900,7 +900,6 @@ _TL;DR: These are probably not breaking changes._
 <summary>While a breaking change in a minor release technically violates <a href="https://semver.org/">semver</a>, the change in question is only "breaking" in a very rare--possibly non-existent--case. The <em>only</em> case where this change will break anything is if you use <code>formatQuery</code> with a custom <code>valueProcessor</code> that accepts fewer than three (3) arguments. Click for details...</summary>
 
 - [#319] `formatQuery` will now invoke custom `valueProcessor` functions with different arguments based on the function's `.length` property, which is the number of arguments a function accepts excluding those with default values:
-
   - If the `valueProcessor` function accepts fewer than three (3) arguments, it will be called like this:
 
   ```ts
@@ -908,7 +907,6 @@ _TL;DR: These are probably not breaking changes._
   ```
 
   The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`, which is a subset of `FormatQueryOptions` (currently `{ parseNumbers?: boolean; }`).
-
   - To maintain the current behavior (`valueProcessor(field, operator, value, valueSource)`), make sure the `valueProcessor` function accepts at least three arguments _with no default values_ (do not use `=` for the first three arguments). For example, the following code will log `length: 1`:
 
   ```ts
