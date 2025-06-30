@@ -49,10 +49,10 @@ export const fields = (
       label: 'Tour stops',
       matchModes: true,
       subproperties: [
-        { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
-        { name: 'venue', label: 'Venue' },
         { name: 'city', label: 'City' },
         { name: 'state', label: 'State/Province' },
+        { name: 'venue', label: 'Venue' },
+        { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
         { name: 'country', label: 'Country' },
       ],
     },
