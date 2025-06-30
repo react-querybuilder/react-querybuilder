@@ -6,6 +6,30 @@ import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps 
 import { getFirstOption, getParseNumberMethod, joinWith, parseNumber, toArray } from '../utils';
 import clsx from '../utils/clsx';
 
+// Extracted from callback so we can use `useId`
+const RadioButton = (props: {
+  name: string;
+  disabled?: boolean;
+  checked: boolean;
+  handleOnChange: (v: string) => void;
+  label: string;
+}) => {
+  const id = React.useId();
+  return (
+    <label htmlFor={id}>
+      <input
+        id={id}
+        type="radio"
+        value={props.name}
+        disabled={props.disabled}
+        checked={props.checked}
+        onChange={e => props.handleOnChange(e.target.value)}
+      />
+      {props.label}
+    </label>
+  );
+};
+
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
  *
@@ -145,16 +169,14 @@ export const ValueEditor = <F extends FullField>(
       return (
         <span data-testid={testID} className={className} title={title}>
           {values.map(v => (
-            <label key={v.name}>
-              <input
-                type="radio"
-                value={v.name}
-                disabled={disabled}
-                checked={value === v.name}
-                onChange={e => handleOnChange(e.target.value)}
-              />
-              {v.label}
-            </label>
+            <RadioButton
+              key={v.name}
+              name={v.name}
+              disabled={disabled}
+              checked={value === v.name}
+              handleOnChange={handleOnChange}
+              label={v.label}
+            />
           ))}
         </span>
       );
