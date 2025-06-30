@@ -4,12 +4,13 @@ import { PrismaPGlite } from 'pglite-prisma-adapter';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { CREATE_INDEX, CREATE_TABLE, dbTests, fields, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+import type { SqlDriverAdapterFactory } from '@prisma/client/runtime/library';
 
 const db = new PGlite();
 
 const superUsersPostgres = superUsers('postgres');
 
-const adapter = new PrismaPGlite(db);
+const adapter = new PrismaPGlite(db) as SqlDriverAdapterFactory;
 const prisma = new PrismaClient({ adapter });
 
 beforeAll(async () => {

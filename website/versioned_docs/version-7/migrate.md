@@ -39,7 +39,6 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 - The query type (extending `RuleGroupType` or `RuleGroupTypeIC`) will be automatically inferred from the `query` or `defaultQuery` prop instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](./components/querybuilder#independent-combinators).
 - `QueryBuilderProps` now requires four generic arguments.
-
   - This shouldn't affect JSX which renders a `<QueryBuilder />` component since the generic types can almost always be inferred from the props.
   - While all props are technically still optional, TypeScript may have problems inferring the generics if `fields` and `query`/`defaultQuery` are not provided.
   - The four generic arguments of `QueryBuilderProps` represent, respectively, the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type, the operator type, and the combinator type. The latter three must extend `FullOption` or the more specific and expressive `FullField`/`FullOperator`/`FullCombinator`.
