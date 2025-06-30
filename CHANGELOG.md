@@ -10,19 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - [#900] Support for matching elements of a nested array.
-  - New `RuleType` property `match: { mode: MatchMode, threshold?: number }`
+  - New optional `RuleType` property `match?: { mode: MatchMode, threshold?: number }`
     - `type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly'`
-    - In most contexts, `operator` will be ignored when `match` is present and valid.
+    - In most contexts, a rule's `operator` will be ignored when `match` is present and valid.
   - New component `MatchModeEditor`, which renders when a field is determined to have one or more match modes. The mode selector is the configured `valueSelector` and&mdash;when a threshold is appropriate&mdash;the threshold editor is the configured `valueEditor` with `inputType: "number"`.
   - New props `getMatchModes` and `getSubQueryBuilderProps` to manage these configurations at the top level.
   - New `Field` properties `matchModes` and `subproperties` to manage these configurations at the field level.
   - `parseJsonLogic` support for "all", "none", and "some" operations.
   - `formatQuery` (partial) support for the `match` rule property.
-    - Supported formats include "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", or "cel".
+    - Supported formats include "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", and "cel".
     - To avoid invalid syntax, the SQL-based formats only work with `preset: "postgresql"`, and only with nested arrays of primitives like strings or numbers.
 - [#903] New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
 - [#900] Extracted `fields` prop processing logic to new `useFields` hook.
 - [#900] "Justified layout" styles from the demo (push the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge) are now included in the default stylesheet. To apply the styles, add the `queryBuilder-justified` class to the query builder using the `controlClassnames` prop, or to any ancestor element.
+- [#900] All components that render `<label>` elements now have `htmlFor` attributes linking their corresponding `<input>` elements using an `id` generated with `useId()`.
 
 #### Fixed
 
@@ -899,6 +900,7 @@ _TL;DR: These are probably not breaking changes._
 <summary>While a breaking change in a minor release technically violates <a href="https://semver.org/">semver</a>, the change in question is only "breaking" in a very rare--possibly non-existent--case. The <em>only</em> case where this change will break anything is if you use <code>formatQuery</code> with a custom <code>valueProcessor</code> that accepts fewer than three (3) arguments. Click for details...</summary>
 
 - [#319] `formatQuery` will now invoke custom `valueProcessor` functions with different arguments based on the function's `.length` property, which is the number of arguments a function accepts excluding those with default values:
+
   - If the `valueProcessor` function accepts fewer than three (3) arguments, it will be called like this:
 
   ```ts
@@ -906,6 +908,7 @@ _TL;DR: These are probably not breaking changes._
   ```
 
   The first argument is the `RuleType` object directly from the query. The second argument is of type `ValueProcessorOptions`, which is a subset of `FormatQueryOptions` (currently `{ parseNumbers?: boolean; }`).
+
   - To maintain the current behavior (`valueProcessor(field, operator, value, valueSource)`), make sure the `valueProcessor` function accepts at least three arguments _with no default values_ (do not use `=` for the first three arguments). For example, the following code will log `length: 1`:
 
   ```ts
