@@ -10,10 +10,16 @@ import Tabs from '@theme/Tabs';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder/debug';
+import type {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  SQLPreset,
+} from 'react-querybuilder/debug';
 import {
   convertToIC,
   defaultPlaceholderValueName,
@@ -264,24 +270,34 @@ export default function Demo({
     }),
     [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format]
   );
+
+  const timerRG = useRef<ReturnType<typeof setTimeout>>(setTimeout(() => {}));
+  const timerRGIC = useRef<ReturnType<typeof setTimeout>>(setTimeout(() => {}));
+  const onQueryChangeRG = useCallback((newQuery: RuleGroupType) => {
+    clearTimeout(timerRG.current);
+    timerRG.current = setTimeout(() => {
+      setQuery(newQuery);
+    }, 300);
+  }, []);
+
+  const onQueryChangeRGIC = useCallback((newQuery: RuleGroupTypeIC) => {
+    clearTimeout(timerRGIC.current);
+    timerRGIC.current = setTimeout(() => {
+      setQueryIC(newQuery);
+    }, 300);
+  }, []);
+
   const q = useMemo(
     () => (options.independentCombinators ? queryIC : query),
     [options.independentCombinators, queryIC, query]
   );
 
-  // Debounce query updates
-  const [debouncedQuery, setDebouncedQuery] = useState(q);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(q), 300);
-    return () => clearTimeout(timer);
-  }, [q]);
-
   const formatString = useMemo(
     () =>
       queryString.parse(siteLocation.search).outputMode === 'export'
-        ? getFormatQueryString(debouncedQuery, formatOptions)
+        ? getFormatQueryString(q, formatOptions)
         : '',
-    [debouncedQuery, formatOptions, siteLocation.search]
+    [q, formatOptions, siteLocation.search]
   );
 
   const getExportTabAttributes = useCallback(
@@ -460,6 +476,8 @@ export default function Demo({
     [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
   );
 
+  const queryWrapperKey = useMemo(() => `${query.id}-${queryIC.id}`, [query.id, queryIC.id]);
+
   return (
     <div className={styles.demoLayout}>
       <div>
@@ -517,23 +535,21 @@ export default function Demo({
         <div
           style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
-            <QueryWrapper
-              key={`${query.id}-${queryIC.id}`}
-              useDateTimePackage={options.useDateTimePackage}>
+            <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
               <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
                 {options.independentCombinators ? (
                   <QueryBuilder
                     key="queryIC"
                     {...commonRQBProps}
-                    query={queryIC}
-                    onQueryChange={setQueryIC}
+                    defaultQuery={queryIC}
+                    onQueryChange={onQueryChangeRGIC}
                   />
                 ) : (
                   <QueryBuilder
                     key="query"
                     {...commonRQBProps}
-                    query={query}
-                    onQueryChange={setQuery}
+                    defaultQuery={query}
+                    onQueryChange={onQueryChangeRG}
                   />
                 )}
               </QueryBuilderDnD>

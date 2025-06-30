@@ -20,7 +20,7 @@ const getLink = ({
 }: NavProps & { siteLocation: Location }) =>
   `${siteLocation.pathname.replace(new RegExp(`\\/(${styleNameArray.join('|')})$`), '')}${
     variant === 'default' ? '' : `/${variant}`
-  }${compressedState ? `#s=${compressedState}` : ''}`;
+  }${siteLocation.search ?? ''}${compressedState ? `#s=${compressedState}` : ''}`;
 
 const goToLink = (link: string) => {
   location.href = link;
@@ -47,7 +47,7 @@ export default function Nav({ variant, compressedState }: NavProps) {
   const onClickCopyPermalink = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${location.origin}${siteLocation.pathname}#s=${compressedState}`
+        `${location.origin}${siteLocation.pathname}${siteLocation.search}#s=${compressedState}`
       );
       setCopyPermalinkStatus('✓');
     } catch (e) {
