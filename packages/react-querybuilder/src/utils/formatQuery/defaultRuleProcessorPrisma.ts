@@ -11,7 +11,7 @@ import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
 export const defaultRuleProcessorPrisma: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { parseNumbers = true, preserveValueOrder } = {}
+  { parseNumbers, preserveValueOrder } = {}
 ) => {
   if (valueSource === 'field') return;
 
@@ -20,7 +20,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
     case '=':
       return {
         [field]: shouldRenderAsNumber(value, parseNumbers)
-          ? parseNumber(value, { parseNumbers: 'strict' })
+          ? parseNumber(value, { parseNumbers })
           : value,
       };
 
@@ -33,7 +33,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       return {
         [field]: {
           [prismaOperator]: shouldRenderAsNumber(value, parseNumbers)
-            ? parseNumber(value, { parseNumbers: 'strict' })
+            ? parseNumber(value, { parseNumbers })
             : value,
         },
       };
@@ -69,9 +69,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       return {
         [field]: {
           [prismaOperators[operatorLC]]: valueAsArray.map(val =>
-            shouldRenderAsNumber(val, parseNumbers)
-              ? parseNumber(val, { parseNumbers: 'strict' })
-              : val
+            shouldRenderAsNumber(val, parseNumbers) ? parseNumber(val, { parseNumbers }) : val
           ),
         },
       };
@@ -86,11 +84,14 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = shouldRenderAsNumber(first, true)
-          ? parseNumber(first, { parseNumbers: 'strict' })
+        // For backwards compatibility, default to parsing numbers for between operators
+        // unless parseNumbers is explicitly set to false
+        const shouldParseNumbers = parseNumbers === false ? false : true;
+        const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
+          ? parseNumber(first, { parseNumbers })
           : NaN;
-        const secondNum = shouldRenderAsNumber(second, true)
-          ? parseNumber(second, { parseNumbers: 'strict' })
+        const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
+          ? parseNumber(second, { parseNumbers })
           : NaN;
         let firstValue = isNaN(firstNum) ? first : firstNum;
         let secondValue = isNaN(secondNum) ? second : secondNum;

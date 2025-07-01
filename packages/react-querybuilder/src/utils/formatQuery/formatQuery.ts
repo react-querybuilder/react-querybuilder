@@ -146,6 +146,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'validator'
   | 'valueProcessor'
   | 'placeholderValueName'
+  | 'parseNumbers'
 >;
 
 const defaultFormatQueryOptions = {
@@ -157,7 +158,6 @@ const defaultFormatQueryOptions = {
   paramPrefix: ':',
   paramsKeepPrefix: false,
   numberedParams: false,
-  parseNumbers: false,
   preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
@@ -298,7 +298,8 @@ function formatQuery(
 /**
  * Generates a JSONata query string from an RQB query object.
  *
- * NOTE: The `parseNumbers` option is recommended for this format.
+ * NOTE: Either `parseNumbers: "strict-limited"` or `parseNumbers: true`
+ * are recommended for this format.
  *
  * @group Export
  */
@@ -362,8 +363,14 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     context,
   } = optObj;
 
-  const getParseNumberBoolean = (inputType?: InputType | null) =>
-    !!getParseNumberMethod({ parseNumbers, inputType });
+  const getParseNumberBoolean = (inputType?: InputType | null): boolean | undefined => {
+    const parseNumberMethod = getParseNumberMethod({ parseNumbers, inputType });
+    return typeof parseNumberMethod === 'string'
+      ? true
+      : typeof parseNumbers === 'boolean'
+        ? parseNumbers
+        : undefined;
+  };
 
   const format = optObj.format.toLowerCase() as ExportFormat;
 

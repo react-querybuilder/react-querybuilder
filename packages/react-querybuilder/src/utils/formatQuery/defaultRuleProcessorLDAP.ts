@@ -20,7 +20,7 @@ const ldapEscape = (s: unknown) =>
 export const defaultRuleProcessorLDAP: RuleProcessor = (
   { field, operator, value, valueSource },
   // istanbul ignore next
-  { preserveValueOrder } = {}
+  { parseNumbers, preserveValueOrder } = {}
 ) => {
   const operatorLC = operator.toLowerCase();
 
@@ -84,11 +84,15 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
       }
 
       const [first, second] = valueAsArray;
-      const firstNum = shouldRenderAsNumber(first, true)
-        ? parseNumber(first, { parseNumbers: true })
+      // For backwards compatibility, default to parsing numbers for between operators
+      // unless parseNumbers is explicitly set to false
+      // istanbul ignore next
+      const shouldParseNumbers = parseNumbers === false ? false : true;
+      const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
+        ? parseNumber(first, { parseNumbers: shouldParseNumbers })
         : NaN;
-      const secondNum = shouldRenderAsNumber(second, true)
-        ? parseNumber(second, { parseNumbers: true })
+      const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
+        ? parseNumber(second, { parseNumbers: shouldParseNumbers })
         : NaN;
       let firstValue = isNaN(firstNum) ? first : firstNum;
       let secondValue = isNaN(secondNum) ? second : secondNum;
