@@ -202,7 +202,10 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         // For backwards compatibility, default to parsing numbers for between operators
         // unless parseNumbers is explicitly set to false
         const shouldParseNumbers = parseNumbers === false ? false : true;
-        if (shouldRenderAsNumber(first, shouldParseNumbers) && shouldRenderAsNumber(second, shouldParseNumbers)) {
+        if (
+          shouldRenderAsNumber(first, shouldParseNumbers) &&
+          shouldRenderAsNumber(second, shouldParseNumbers)
+        ) {
           const firstNum = parseNumber(first, { parseNumbers: shouldParseNumbers });
           const secondNum = parseNumber(second, { parseNumbers: shouldParseNumbers });
           if (!preserveValueOrder && secondNum < firstNum) {

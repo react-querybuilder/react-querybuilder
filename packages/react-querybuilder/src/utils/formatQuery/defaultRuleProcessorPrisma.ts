@@ -1,7 +1,16 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type { ParseNumbersPropConfig, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
+
+const processNumber = <T>(
+  value: unknown,
+  fallback: T,
+  parseNumbers?: ParseNumbersPropConfig | undefined
+) =>
+  shouldRenderAsNumber(value, !!parseNumbers || typeof value === 'bigint')
+    ? Number(parseNumber(value, { parseNumbers: !!parseNumbers }))
+    : fallback;
 
 /**
  * Default rule processor used by {@link formatQuery} for "prisma" format.
@@ -18,11 +27,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
   const operatorLC = operator.toLowerCase();
   switch (operatorLC) {
     case '=':
-      return {
-        [field]: shouldRenderAsNumber(value, parseNumbers)
-          ? parseNumber(value, { parseNumbers })
-          : value,
-      };
+      return { [field]: processNumber(value, value, parseNumbers) };
 
     case '!=':
     case '<':
@@ -32,9 +37,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       const prismaOperator = prismaOperators[operatorLC];
       return {
         [field]: {
-          [prismaOperator]: shouldRenderAsNumber(value, parseNumbers)
-            ? parseNumber(value, { parseNumbers })
-            : value,
+          [prismaOperator]: processNumber(value, value, parseNumbers),
         },
       };
     }
@@ -69,7 +72,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
       return {
         [field]: {
           [prismaOperators[operatorLC]]: valueAsArray.map(val =>
-            shouldRenderAsNumber(val, parseNumbers) ? parseNumber(val, { parseNumbers }) : val
+            processNumber(val, val, parseNumbers)
           ),
         },
       };

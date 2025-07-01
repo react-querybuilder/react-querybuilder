@@ -343,7 +343,10 @@ it('parseNumbers with between operators', () => {
 
   // parseNumbers: false - should NOT parse numbers (keep as strings)
   expect(formatQuery(betweenQuery, { format: 'jsonlogic', parseNumbers: false })).toEqual({
-    and: [{ '<=': ['22', { var: 'age' }, '34'] }, { '!': { '<=': ['10', { var: 'score' }, '20'] } }],
+    and: [
+      { '<=': ['22', { var: 'age' }, '34'] },
+      { '!': { '<=': ['10', { var: 'score' }, '20'] } },
+    ],
   });
 });
 

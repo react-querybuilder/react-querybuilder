@@ -63,7 +63,9 @@ function parseSQL(
   }
 ): DefaultRuleGroupTypeIC;
 function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupTypeAny {
-  const { params, paramPrefix, independentCombinators, fields, getValueSources } = options;
+  const { params, paramPrefix, independentCombinators, fields, getValueSources, bigIntOnOverflow } =
+    options;
+
   let sqlString = /^\s*select\b/i.test(sql)
     ? sql
     : /^\s*where\b/i.test(sql)
@@ -225,7 +227,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
               return {
                 field: f,
                 operator,
-                value: evalSQLLiteralValue(valueObj),
+                value: evalSQLLiteralValue(valueObj, { bigIntOnOverflow }),
               };
             }
           }
@@ -250,7 +252,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           const f = getFieldName(expr.left);
           const valueArray = expr.right.value
             .filter(v => isSQLLiteralOrSignedNumberValue(v))
-            .map(v => evalSQLLiteralValue(v));
+            .map(v => evalSQLLiteralValue(v, { bigIntOnOverflow }));
           const operator = expr.hasNot ? 'notIn' : 'in';
           const fieldArray = expr.right.value
             .filter(v => isSQLIdentifier(v))
@@ -279,7 +281,9 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
           isSQLLiteralOrSignedNumberValue(expr.right.left) &&
           isSQLLiteralOrSignedNumberValue(expr.right.right)
         ) {
-          const valueArray = [expr.right.left, expr.right.right].map(v => evalSQLLiteralValue(v));
+          const valueArray = [expr.right.left, expr.right.right].map(v =>
+            evalSQLLiteralValue(v, { bigIntOnOverflow })
+          );
           const value = options?.listsAsArrays ? valueArray : joinWith(valueArray, ', ');
           const operator = expr.hasNot ? 'notBetween' : 'between';
           return { field: getFieldName(expr.left), operator, value };
