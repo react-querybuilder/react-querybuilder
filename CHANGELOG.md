@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
+- [#911] Support for `inputType: "bigint"` in all value editors, which will render a "text"-type input but will store the value as a `bigint` if a valid integer is entered.
 
 #### Fixed
 
@@ -1926,6 +1927,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#890]: https://github.com/react-querybuilder/react-querybuilder/pull/890
 [#891]: https://github.com/react-querybuilder/react-querybuilder/pull/891
 [#893]: https://github.com/react-querybuilder/react-querybuilder/pull/893
+[#911]: https://github.com/react-querybuilder/react-querybuilder/pull/911
 
 <!-- #endregion -->
 

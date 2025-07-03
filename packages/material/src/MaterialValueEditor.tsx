@@ -28,6 +28,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     title,
     className,
     type,
+    inputType,
     path,
     level,
     values = [],
@@ -39,7 +40,6 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     selectorComponent: SelectorComponent = props.schema.controls
       .valueSelector as typeof MaterialValueSelector,
     extraProps,
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = propsForValueEditor;
@@ -47,6 +47,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
   const {
     valueAsArray,
     multiValueHandler,
+    bigIntValueHandler,
     parseNumberMethod,
     valueListItemClassName,
     inputTypeCoerced,
@@ -214,6 +215,22 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
    * "date", "datetime-local", and "time", with components from `@mui/x-date-pickers`
    * (`<DatePicker />`, `<DateTimePicker />`, and `<TimePicker />`, respecitively).
    */
+
+  if (inputType === 'bigint') {
+    return (
+      <TextField
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
+  }
 
   return (
     <TextField

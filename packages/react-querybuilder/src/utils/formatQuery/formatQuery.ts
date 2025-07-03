@@ -58,7 +58,12 @@ import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
+import {
+  bigIntJsonStringifyReplacer,
+  getQuoteFieldNamesWithArray,
+  isValueProcessorLegacy,
+  numerifyValues,
+} from './utils';
 
 /**
  * @group Export
@@ -500,10 +505,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       if (format === 'json_without_ids') {
         return JSON.stringify(rg, (key, value) =>
           // Remove `id` and `path` keys; leave everything else unchanged.
-          key === 'id' || key === 'path' ? undefined : value
+          key === 'id' || key === 'path' ? undefined : bigIntJsonStringifyReplacer(key, value)
         );
       }
-      return JSON.stringify(rg, null, 2);
+      return JSON.stringify(rg, bigIntJsonStringifyReplacer, 2);
     }
 
     case 'sql':
