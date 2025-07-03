@@ -66,6 +66,7 @@ export const fields = (
       datatype: 'timestamp with time zone',
     },
     { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
+    { name: 'bign', label: 'Big Int', inputType: 'bigint' },
     {
       name: 'groupedField1',
       label: 'Grouped Field 1',

@@ -329,11 +329,17 @@ export interface FormatQueryFinalOptions
   extends Required<
     Except<
       FormatQueryOptions,
-      'context' | 'valueProcessor' | 'validator' | 'placeholderValueName' | 'ruleGroupProcessor'
+      | 'context'
+      | 'valueProcessor'
+      | 'validator'
+      | 'placeholderValueName'
+      | 'ruleGroupProcessor'
+      | 'parseNumbers'
     >
   > {
   fields: FullOptionList<FullField>;
-  getParseNumberBoolean: (inputType?: InputType | null) => boolean;
+  getParseNumberBoolean: (inputType?: InputType | null) => boolean | undefined;
+  parseNumbers?: ParseNumbersPropConfig | undefined;
   placeholderValueName?: string | undefined;
   valueProcessor: ValueProcessorByRule;
   validator?: QueryValidator;

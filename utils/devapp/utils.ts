@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import type { FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
+import { bigIntJsonStringifyReplacer, formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './constants';
 import type { DemoOption, DemoOptions } from './types';
 
@@ -54,7 +54,7 @@ export const getFormatQueryString = (
     options.format === 'elasticsearch' ||
     options.format === 'mongodb_query'
   ) {
-    return JSON.stringify(formatQueryResult, null, 2);
+    return JSON.stringify(formatQueryResult, bigIntJsonStringifyReplacer, 2);
   }
   return formatQueryResult;
 };

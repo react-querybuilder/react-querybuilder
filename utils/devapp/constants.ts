@@ -218,6 +218,7 @@ export const fields: Field[] = [
   { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
   { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
   { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
+  { name: 'bign', label: 'BigInt', inputType: 'bigint' },
   {
     name: 'groupedField1',
     label: 'Grouped Field 1',

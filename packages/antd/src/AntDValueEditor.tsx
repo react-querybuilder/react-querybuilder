@@ -28,6 +28,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     title,
     className,
     type,
+    inputType,
     values = [],
     listsAsArrays,
     separator,
@@ -36,13 +37,17 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     extraProps,
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    bigIntValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -257,6 +262,22 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
         />
       );
     }
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <Input
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
   }
 
   return (

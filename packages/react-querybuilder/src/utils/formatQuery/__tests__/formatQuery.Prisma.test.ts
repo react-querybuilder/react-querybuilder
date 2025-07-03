@@ -77,7 +77,7 @@ const prismaQueryExpectation = {
     { firstName: { gte: 'Test', lte: 'This' } },
     { firstName: { gte: 'Test', lte: 'This' } },
     { OR: [{ lastName: { lt: 'Test' } }, { lastName: { gt: 'This' } }] },
-    { age: { gte: 12, lte: 14 } },
+    { age: { gte: '12', lte: '14' } },
     { age: '26' },
     { isMusician: true },
     { isLucky: false },
@@ -87,9 +87,7 @@ const prismaQueryExpectation = {
     { NOT: { hello: { contains: 'com' } } },
     { NOT: { job: { startsWith: 'Man' } } },
     { NOT: { job: { endsWith: 'ger' } } },
-    {
-      OR: [{ job: 'Sales Executive' }, { job: { in: [] } }],
-    },
+    { OR: [{ job: 'Sales Executive' }, { job: { in: [] } }] },
   ],
 };
 
@@ -175,13 +173,23 @@ it('ruleProcessor', () => {
 it('preserveValueOrder', () => {
   testPrisma(
     queryForPreserveValueOrder,
-    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 12, lte: 14 } }] },
+    { AND: [{ f1: { gte: '12', lte: '14' } }, { f2: { gte: '12', lte: '14' } }] },
     {}
   );
   testPrisma(
     queryForPreserveValueOrder,
-    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 14, lte: 12 } }] },
+    { AND: [{ f1: { gte: '12', lte: '14' } }, { f2: { gte: '14', lte: '12' } }] },
     { preserveValueOrder: true }
+  );
+  testPrisma(
+    queryForPreserveValueOrder,
+    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 12, lte: 14 } }] },
+    { parseNumbers: true }
+  );
+  testPrisma(
+    queryForPreserveValueOrder,
+    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 14, lte: 12 } }] },
+    { parseNumbers: true, preserveValueOrder: true }
   );
 });
 
@@ -209,4 +217,21 @@ it('parseNumbers', () => {
   ] as FormatQueryOptions[]) {
     testPrisma(queryForNumberParsing, allNumbersParsed, opts);
   }
+  const noNumbersParsed = {
+    AND: [
+      { f: { gt: 'NaN' } },
+      { f: '0' },
+      { f: '    0    ' },
+      { f: 0 },
+      { OR: [{ f: { lt: '1.5' } }, { f: { gt: 1.5 } }] },
+      { f: { in: ['0', '1', '2'] } },
+      { f: { in: [0, 1, 2] } },
+      { f: { in: ['0', 'abc', '2'] } },
+      { f: { gte: '0', lte: '1' } },
+      { f: { gte: 0, lte: 1 } },
+      { f: { gte: '0', lte: 'abc' } },
+      { f: { gte: {}, lte: {} } },
+    ],
+  };
+  testPrisma(queryForNumberParsing, noNumbersParsed, { parseNumbers: false });
 });
