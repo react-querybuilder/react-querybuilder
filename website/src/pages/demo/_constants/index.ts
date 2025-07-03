@@ -250,7 +250,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['parameterized_named', 'SQL (named parameters)', 'https://en.wikipedia.org/wiki/SQL', 'named-parameters'],
   ['json_without_ids', 'JSON (no identifiers)', 'https://en.wikipedia.org/wiki/JSON', 'json-without-identifiers'],
   ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON', 'json'],
-  ['mongodb', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
+  ['mongodb_query', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
   ['cel', 'CEL', 'https://github.com/google/cel-spec', 'common-expression-language'],
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref', 'spring-expression-language'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
