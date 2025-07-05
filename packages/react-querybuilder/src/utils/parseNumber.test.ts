@@ -3,11 +3,11 @@ import { parseNumber } from './parseNumber';
 const emptyObject = {};
 const emptyArray = [] as const;
 
-it('no-ops when parseNumbers is false', () => {
-  for (const v of [emptyObject, emptyArray, '', '0', '1', '1abc', 0]) {
+describe('no-ops when parseNumbers is false', () => {
+  it.each([[emptyObject], [emptyArray], [''], ['0'], ['1'], ['1abc'], [0]])('%p', v => {
     expect(parseNumber(v)).toBe(v);
     expect(parseNumber(v, { parseNumbers: false })).toBe(v);
-  }
+  });
 });
 
 // Default/strict parser

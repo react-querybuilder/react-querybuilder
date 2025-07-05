@@ -93,6 +93,7 @@ const prismaQueryExpectation = {
   ],
 };
 
+// oxlint-disable-next-line expect-expect
 it('formats to prisma query correctly', () => {
   testPrisma(prismaQuery, prismaQueryExpectation);
   testPrisma({ rules: [{ field: 'f', operator: '=', value: 'v', valueSource: 'field' }] }, {});
@@ -127,10 +128,12 @@ it.todo(
   // }
 );
 
+// oxlint-disable-next-line expect-expect
 it('escapes quotes when appropriate', () => {
   testPrisma(testQueryDQ, { f1: `Te"st` });
 });
 
+// oxlint-disable-next-line expect-expect
 it('independent combinators', () => {
   testPrisma(queryIC, {
     OR: [{ AND: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
@@ -153,6 +156,7 @@ describe('validation', () => {
 
     for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
+        // oxlint-disable-next-line expect-expect
         it(vtd.title, () => {
           testPrisma(vtd.query, validationResults[vtd.title], vtd.options);
         });
@@ -161,6 +165,7 @@ describe('validation', () => {
   }
 });
 
+// oxlint-disable-next-line expect-expect
 it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? { [r.operator]: true } : defaultRuleProcessorMongoDBQuery(r);
@@ -176,6 +181,7 @@ it('ruleProcessor', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
   testPrisma(
     queryForPreserveValueOrder,
@@ -189,6 +195,7 @@ it('preserveValueOrder', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     AND: [

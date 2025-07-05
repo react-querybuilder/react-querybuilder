@@ -1,3 +1,5 @@
+/* oxlint-disable prefer-global-this */
+
 import {
   testActionElement,
   testNotToggle,

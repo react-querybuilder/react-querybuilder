@@ -1,3 +1,5 @@
+/* oxlint-disable prefer-global-this */
+
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import queryString from 'query-string';

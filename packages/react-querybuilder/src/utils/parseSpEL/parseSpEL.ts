@@ -210,7 +210,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           // istanbul ignore else
           if (/^(?!\^).*?\$$/.test(regex)) {
             // istanbul ignore else
-            // eslint-disable-next-line unicorn/no-lonely-if
+            // oxlint-disable-next-line unicorn/no-lonely-if
             if (fieldIsValid(field, 'endsWith')) {
               return {
                 field,

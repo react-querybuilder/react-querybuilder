@@ -1,3 +1,5 @@
+/* oxlint-disable prefer-global-this */
+
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';

@@ -186,10 +186,12 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
 
   it('renders value editor as select', () => {
     render(<MantineValueEditor {...props} type="select" />);
+    expect(screen.getByTestId(TestID.valueEditor)).toBeInTheDocument();
   });
 
   it('renders value editor as multiselect', () => {
     render(<MantineValueEditor {...props} type="multiselect" />);
+    expect(screen.getByTestId(TestID.valueEditor)).toBeInTheDocument();
   });
 
   it('handles "between" select', async () => {
@@ -293,6 +295,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     });
     // TODO: Figure out why this doesn't work in React < 19
     if (parseInt(React.version, 10) >= 19) {
+      // oxlint-disable-next-line no-conditional-expect
       expect(handleOnChange).toHaveBeenCalledWith([`${dateStub}12`, `${dateStub}14`]);
     }
   });

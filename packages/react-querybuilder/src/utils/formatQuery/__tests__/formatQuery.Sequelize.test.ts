@@ -162,11 +162,13 @@ describe('validation', () => {
         format: 'sequelize',
         context: contextWithAllReqs,
       });
+      // oxlint-disable no-conditional-expect
       if (validationResults[vtd.title]) {
         expect(where).toBeTruthy();
       } else {
         expect(where).toBeUndefined();
       }
+      // oxlint-enable no-conditional-expect
     });
   }
 });

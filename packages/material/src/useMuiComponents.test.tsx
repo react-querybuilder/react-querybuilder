@@ -1,5 +1,5 @@
 import type { RenderHookResult } from '@testing-library/react';
-import { act, render, renderHook } from '@testing-library/react';
+import { act, render, renderHook, screen } from '@testing-library/react';
 import * as React from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import { QueryBuilderMaterial } from './index';
@@ -36,6 +36,7 @@ for (const [cn, mockImpl] of Object.entries(componentMocks)) {
   if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
 }
 
+// oxlint-disable-next-line expect-expect
 it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {
@@ -50,6 +51,7 @@ it('returns the MUI components', async () => {
   }
 });
 
+// oxlint-disable-next-line expect-expect
 it('renders with preloaded components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {
@@ -70,6 +72,7 @@ it('renders with context components', async () => {
       </RQBMaterialContext.Provider>
     );
   });
+  expect(screen.getByText('material')).toBeInTheDocument();
 });
 
 it('renders with context AND preloaded components', async () => {
@@ -82,4 +85,5 @@ it('renders with context AND preloaded components', async () => {
       </RQBMaterialContext.Provider>
     );
   });
+  expect(screen.getByText('material')).toBeInTheDocument();
 });

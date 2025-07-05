@@ -114,23 +114,19 @@ describe('shiftRuleUp/Down', () => {
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.shiftActionUp.label));
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false, undefined);
 
     await user.click(screen.getByText(t.shiftActionDown.label));
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.keyboard('{/Alt}');
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionDown.label));
     await user.keyboard('{/Alt}');
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true, undefined);
   });
 });
@@ -360,6 +356,7 @@ describe('valueSource', () => {
   });
 });
 
+// oxlint-disable-next-line no-disabled-tests
 it.skip('makes the values array a FullOption array when appropriate', () => {
   const controls = getProps().schema.controls;
   const fields = [

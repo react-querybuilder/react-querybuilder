@@ -1,0 +1,62 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
+  "ignorePatterns": ["**/*Parser.js", "type-fest"],
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jest", "promise", "react-perf"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "jest/require-to-throw-message": "off",
+    "jest/valid-title": "off",
+    "react/display-name": "off",
+    "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/no-unstable-nested-components": "error",
+    // TODO: enable this when oxlint plugin is available
+    // "react-compiler/react-compiler": "error",
+    "unicorn/catch-error-name": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/filename-case": "off",
+    "unicorn/no-array-reduce": "off",
+    "unicorn/no-nested-ternary": "off",
+    "unicorn/no-null": "off",
+    "unicorn/prefer-export-from": ["error", { "ignoreUsedVariables": true }],
+    "unicorn/prefer-global-this": "error",
+    "unicorn/prefer-module": "error",
+    "unicorn/prefer-node-protocol": "error",
+    // TODO: convert to "error"
+    "unicorn/prefer-number-properties": "off",
+    "unicorn/prevent-abbreviations": "off",
+    "unicorn/switch-case-braces": "off",
+    "unicorn/consistent-existence-index-check": "off"
+  },
+  "overrides": [
+    {
+      "files": ["utils/testing/**", "*.test.ts{,x}"],
+      "rules": {
+        "no-await-in-loop": "off",
+        "jsx-no-new-function-as-prop": "off",
+        "jsx-no-new-object-as-prop": "off",
+        "jsx-no-new-array-as-prop": "off"
+      }
+    },
+    {
+      "files": ["website/**"],
+      "rules": {
+        "jsx-no-new-function-as-prop": "off",
+        "jsx-no-new-object-as-prop": "off",
+        "jsx-no-new-array-as-prop": "off"
+      }
+    }
+  ]
+}

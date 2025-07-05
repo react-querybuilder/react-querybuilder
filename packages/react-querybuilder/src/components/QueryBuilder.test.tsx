@@ -71,6 +71,7 @@ describe('when rendered', () => {
     expect(screen.getByRole('form')).toHaveClass(sc.queryBuilder);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('respects suppressStandardClassnames', () => {
     const { container } = render(
       <QueryBuilder
@@ -1898,15 +1899,6 @@ describe('autoSelectValue', () => {
     { name: 'field2', label: 'Field 2', values, valueEditorType: 'select' },
   ];
 
-  // it('initially hides the value editor', async () => {
-  //   const { container } = render(<QueryBuilder fields={fields} autoSelectValue={false} />);
-  //   await user.click(screen.getByTestId(TestID.addRule));
-  //   expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
-  //   expect(container.querySelectorAll(`select.${sc.values}`)).toHaveLength(1);
-  //   expect(screen.getByTestId(TestID.values)).toHaveValue(defaultPlaceholderValueName);
-  //   expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
-  // });
-
   it('uses the placeholderLabel and placeholderName', async () => {
     const placeholderName = 'Test placeholder name';
     const placeholderLabel = 'Test placeholder label';
@@ -2062,6 +2054,8 @@ describe('showShiftActions', () => {
     const shiftRuleButtons = screen
       .getAllByTestId(TestID.ruleGroup)[1]
       .querySelectorAll(`.${sc.shiftActions}>button`);
+
+    expect(shiftRuleButtons.length).toBeGreaterThanOrEqual(1);
     for (const b of shiftRuleButtons) {
       expect(b).toBeDisabled();
     }

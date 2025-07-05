@@ -27,13 +27,13 @@ import {
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 
-export const nlString =
+const nlString =
   "firstName is null, and lastName is not null, and firstName is one of the values 'Test' or 'This', and lastName is not one of the values 'Test' or 'This', and firstName is between 'Test' and 'This', and firstName is between 'Test' and 'This', and lastName is not between 'Test' and 'This', and age is between '12' and '14', and age is '26', and isMusician is true, and isLucky is false, and (gender is 'M', or job is not 'Programmer', or email contains '@') is not true, and (lastName does not contain 'ab', or job starts with 'Prog', or email ends with 'com', or job does not start with 'Man', or email does not end with 'fr') is true";
-export const nlStringForValueSourceField =
+const nlStringForValueSourceField =
   'firstName is null, and lastName is not null, and firstName is the same as a value in middleName or lastName, and lastName is not the same as any value in middleName or lastName, and firstName is between the values in middleName and lastName, and firstName is between the values in middleName and lastName, and lastName is not between the values in middleName and lastName, and age is the same as the value in iq, and isMusician is the same as the value in isCreative, and (gender is the same as the value in someLetter, or job is not the same as the value in isBetweenJobs, or email contains the value in atSign) is not true, and (lastName does not contain the value in firstName, or job starts with the value in jobPrefix, or email ends with the value in dotCom, or job does not start with the value in hasNoJob, or email does not end with the value in isInvalid) is true';
-export const nlStringQuotedWithDoubleQuotes =
+const nlStringQuotedWithDoubleQuotes =
   'firstName is null, and lastName is not null, and firstName is one of the values "Test" or "This", and lastName is not one of the values "Test" or "This", and firstName is between "Test" and "This", and firstName is between "Test" and "This", and lastName is not between "Test" and "This", and age is between "12" and "14", and age is "26", and isMusician is true, and isLucky is false, and (gender is "M", or job is not "Programmer", or email contains "@") is not true, and (lastName does not contain "ab", or job starts with "Prog", or email ends with "com", or job does not start with "Man", or email does not end with "fr") is true';
-export const nlStringOperatorMap =
+const nlStringOperatorMap =
   "firstName IS NULL, and lastName IS NOT NULL, and firstName IS ONE OF THE VALUES 'Test' or 'This', and lastName IS NOT ONE OF THE VALUES 'Test' or 'This', and firstName IS BETWEEN 'Test' and 'This', and firstName IS BETWEEN 'Test' and 'This', and lastName IS NOT BETWEEN 'Test' and 'This', and age IS BETWEEN '12' and '14', and age IS '26', and isMusician IS true, and isLucky IS false, and (gender IS 'M', or job IS NOT 'Programmer', or email CONTAINS '@') is not true, and (lastName DOES NOT CONTAIN 'ab', or job STARTS WITH 'Prog', or email ENDS WITH 'com', or job DOES NOT START WITH 'Man', or email DOES NOT END WITH 'fr') is true";
 
 it('formats natural language correctly', () => {
@@ -235,7 +235,7 @@ describe('escapes quotes when appropriate', () => {
   };
 
   for (const attempt of [{ fmt: 'natural_language', result: `f1 is 'Te''st'` }]) {
-    it(`escapes single quotes (if appropriate) for ${attempt.fmt} export`, () => {
+    it(`escapes single quotes (if appropriate) for ${attempt.fmt} `, () => {
       // @ts-expect-error Conflicting formatQuery overloads
       expect(formatQuery(testQuerySQ, attempt.fmt)).toEqual(attempt.result);
     });
@@ -267,19 +267,23 @@ describe('validation', () => {
 });
 
 describe('parseNumbers', () => {
-  it('parses numbers for natural_language', () => {
-    const allNumbersParsed =
-      "f is greater than 'NaN', and f is 0, and f is 0, and f is 0, and (f is less than 1.5, or f is greater than 1.5) is true, and f is one of the values 0, 1, or 2, and f is one of the values 0, 1, or 2, and f is one of the values 0, 'abc', or 2, and f is between 0 and 1, and f is between 0 and 1, and f is between '0' and 'abc', and f is between '[object Object]' and '[object Object]'";
-    for (const opts of [
-      { parseNumbers: true },
-      { parseNumbers: 'strict' },
+  const allNumbersParsed =
+    "f is greater than 'NaN', and f is 0, and f is 0, and f is 0, and (f is less than 1.5, or f is greater than 1.5) is true, and f is one of the values 0, 1, or 2, and f is one of the values 0, 1, or 2, and f is one of the values 0, 'abc', or 2, and f is between 0 and 1, and f is between 0 and 1, and f is between '0' and 'abc', and f is between '[object Object]' and '[object Object]'";
+  it.each([
+    ['true', { parseNumbers: true }],
+    ['strict', { parseNumbers: 'strict' }],
+    [
+      'strict-limited',
       { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-    ] as FormatQueryOptions[]) {
+    ],
+  ] satisfies [string, FormatQueryOptions][])(
+    'parses numbers for natural_language (%s)',
+    (_, opts) => {
       expect(formatQuery(queryForNumberParsing, { ...opts, format: 'natural_language' })).toBe(
         allNumbersParsed
       );
     }
-  });
+  );
 
   it('orders "between" values ascending', () => {
     const queryForBetweenSorting: RuleGroupType = {

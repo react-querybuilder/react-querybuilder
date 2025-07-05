@@ -38,12 +38,14 @@ export function runJsonLogicTests(libName: string, apiFns: RQBDateTimeLibraryAPI
           ruleProcessor: datetimeRuleProcessorJsonLogic,
         });
         const result = musicianRecords.filter(u => apply(jsonlogic, u));
+        // oxlint-disable no-conditional-expect
         if (expectedLastName === 'all') {
           expect(result).toHaveLength(musicianRecords.length);
         } else {
           expect(result).toHaveLength(1);
           expect(result[0].last_name).toBe(expectedLastName);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
 

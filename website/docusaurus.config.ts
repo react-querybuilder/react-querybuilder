@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';

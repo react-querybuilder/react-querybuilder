@@ -141,6 +141,7 @@ describe('validation', () => {
   for (const vtd of getValidationTestData('drizzle')) {
     it(vtd.title, () => {
       const where = formatQuery(vtd.query, vtd.options as { format: 'drizzle' });
+      // oxlint-disable no-conditional-expect
       if (typeof where === 'function') {
         // if (validationResults[vtd.title]) {
         //   expect(where(fields, drizzleOperators)).toBeTruthy();
@@ -150,6 +151,7 @@ describe('validation', () => {
       } else {
         expect(where).toBeUndefined();
       }
+      // oxlint-enable no-conditional-expect
     });
   }
 });

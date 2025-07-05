@@ -16,7 +16,7 @@ export function c(size: number): unknown[] {
       $[$empty] = true;
       return $;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line exhaustive-deps
     []
   );
 }

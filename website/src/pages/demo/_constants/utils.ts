@@ -4,7 +4,7 @@ import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
-// eslint-disable-next-line unicorn/prefer-node-protocol
+// oxlint-disable-next-line unicorn/prefer-node-protocol
 import { Buffer } from 'buffer';
 import clsx from 'clsx';
 import pako from 'pako';

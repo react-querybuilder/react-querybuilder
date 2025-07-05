@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable @typescript-eslint/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';

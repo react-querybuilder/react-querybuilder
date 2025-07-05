@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/no-process-exit, unicorn/no-await-expression-member */
-
 import { $, file, Glob, semver, write } from 'bun';
 import { version as typeFestVersion } from 'type-fest/package.json';
 

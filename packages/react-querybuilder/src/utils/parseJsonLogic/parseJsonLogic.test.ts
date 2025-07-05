@@ -422,23 +422,22 @@ it('parses custom operations', () => {
   });
 });
 
-it('parses custom group operations', () => {
-  const customGroupOpTests = [
-    ['and', { combinator: 'fooAnd', rules: [] }],
-    ['and', { field: 'fooAnd', operator: '=', value: 'and' }],
-    ['and', false],
-    ['or', { combinator: 'fooOr', rules: [] }],
-    ['or', { field: 'fooOr', operator: '=', value: 'or' }],
-    ['or', false],
-    ['!', { combinator: 'fooNot', rules: [], not: true }],
-    ['!', { field: 'fooNot', operator: '=', value: '!' }],
-    ['!', false],
-    ['!!', { combinator: 'fooNotNot', rules: [], not: true }],
-    ['!!', { field: 'fooNotNot', operator: '=', value: '!!' }],
-    ['!!', false],
-  ] satisfies [JsonLogicReservedOperations, RuleGroupType | RuleType | false][];
-
-  for (const [op, result] of customGroupOpTests) {
+it.each([
+  ['and group', 'and', { combinator: 'fooAnd', rules: [] }],
+  ['and rule', 'and', { field: 'fooAnd', operator: '=', value: 'and' }],
+  ['and false', 'and', false],
+  ['or group', 'or', { combinator: 'fooOr', rules: [] }],
+  ['or rule', 'or', { field: 'fooOr', operator: '=', value: 'or' }],
+  ['or false', 'or', false],
+  ['! group', '!', { combinator: 'fooNot', rules: [], not: true }],
+  ['! rule', '!', { field: 'fooNot', operator: '=', value: '!' }],
+  ['! false', '!', false],
+  ['!! group', '!!', { combinator: 'fooNotNot', rules: [], not: true }],
+  ['!! rule', '!!', { field: 'fooNotNot', operator: '=', value: '!!' }],
+  ['!! false', '!!', false],
+] satisfies [string, JsonLogicReservedOperations, RuleGroupType | RuleType | false][])(
+  'parses custom group operations (%s)',
+  (_, op, result) => {
     expect(
       parseJsonLogic({ [op]: [] } as RQBJsonLogic, { jsonLogicOperations: { [op]: () => result } })
     ).toEqual(
@@ -449,7 +448,7 @@ it('parses custom group operations', () => {
         : { combinator: 'and', rules: [] }
     );
   }
-});
+);
 
 it('translates lists as arrays', () => {
   expect(

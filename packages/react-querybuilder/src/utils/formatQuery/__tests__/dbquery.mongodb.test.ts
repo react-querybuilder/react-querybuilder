@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-array-method-this-argument */
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
 import type { DefaultRuleGroupType, ExportFormat } from '../../../types';

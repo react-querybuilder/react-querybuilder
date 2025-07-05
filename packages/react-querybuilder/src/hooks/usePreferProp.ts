@@ -1,8 +1,8 @@
 const preferPropDefaultTrue = (prop?: boolean, context?: boolean) =>
-  prop === false ? false : prop ? true : context === false ? false : true;
+  prop === false ? false : prop ? true : !(context === false);
 
 const preferPropDefaultFalse = (prop?: boolean, context?: boolean) =>
-  prop ? true : prop === false ? false : context ? true : false;
+  prop ? true : prop === false ? false : !!context;
 
 export const preferProp = (def: boolean, prop?: boolean, context?: boolean): boolean =>
   def ? preferPropDefaultTrue(prop, context) : preferPropDefaultFalse(prop, context);

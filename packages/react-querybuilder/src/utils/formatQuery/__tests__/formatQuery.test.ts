@@ -53,7 +53,14 @@ it('handles json_without_ids correctly', () => {
 });
 
 describe('parseNumbers', () => {
-  it('parses numbers for json', () => {
+  it.each([
+    ['true', { parseNumbers: true }],
+    ['strict', { parseNumbers: 'strict' }],
+    [
+      'strict-limited',
+      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+    ],
+  ] satisfies [string, FormatQueryOptions][])('parses numbers for json (%s)', (_, opts) => {
     const allNumbersParsed = `{
   "combinator": "and",
   "rules": [
@@ -163,26 +170,22 @@ describe('parseNumbers', () => {
     }
   ]
 }`;
-    for (const opts of [
-      { parseNumbers: true },
-      { parseNumbers: 'strict' },
-      { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-    ] as FormatQueryOptions[]) {
-      expect(formatQuery(queryForNumberParsing, { ...opts, format: 'json' })).toBe(
-        allNumbersParsed
-      );
-    }
+    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'json' })).toBe(allNumbersParsed);
   });
 
-  it('parses numbers for json_without_ids', () => {
-    const allNumbersParsed = JSON.parse(
-      '{"rules":[{"field":"f","value":"NaN","operator":">"},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"<"},{"field":"f","value":1.5,"operator":">"}],"combinator":"or"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
-    );
-    for (const opts of [
-      { parseNumbers: true },
-      { parseNumbers: 'strict' },
+  it.each([
+    ['true', { parseNumbers: true }],
+    ['strict', { parseNumbers: 'strict' }],
+    [
+      'strict-limited',
       { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-    ] as FormatQueryOptions[]) {
+    ],
+  ] satisfies [string, FormatQueryOptions][])(
+    'parses numbers for json_without_ids (%s)',
+    (_, opts) => {
+      const allNumbersParsed = JSON.parse(
+        '{"rules":[{"field":"f","value":"NaN","operator":">"},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"field":"f","value":0,"operator":"="},{"rules":[{"field":"f","value":1.5,"operator":"<"},{"field":"f","value":1.5,"operator":">"}],"combinator":"or"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":[0,1,2],"operator":"in"},{"field":"f","value":"0, abc, 2","operator":"in"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":[0,1],"operator":"between"},{"field":"f","value":"0, abc","operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":1,"operator":"between"},{"field":"f","value":[1],"operator":"between"},{"field":"f","value":[{},{}],"operator":"between"}],"combinator":"and"}'
+      );
       expect(
         JSON.parse(
           formatQuery(prepareRuleGroup(queryForNumberParsing), {
@@ -192,17 +195,21 @@ describe('parseNumbers', () => {
         )
       ).toEqual(allNumbersParsed);
     }
-  });
+  );
 
-  it('parses numbers for json_without_ids with independentCombinators', () => {
-    const allNumbersParsed = JSON.parse(
-      '{"rules":[{"field":"f","value":"NaN","operator":">"},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"<"},"or",{"field":"f","value":1.5,"operator":">"}]},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
-    );
-    for (const opts of [
-      { parseNumbers: true },
-      { parseNumbers: 'strict' },
+  it.each([
+    ['true', { parseNumbers: true }],
+    ['strict', { parseNumbers: 'strict' }],
+    [
+      'strict-limited',
       { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-    ] as FormatQueryOptions[]) {
+    ],
+  ] satisfies [string, FormatQueryOptions][])(
+    'parses numbers for json_without_ids with independentCombinators (%s)',
+    (_, opts) => {
+      const allNumbersParsed = JSON.parse(
+        '{"rules":[{"field":"f","value":"NaN","operator":">"},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"field":"f","value":0,"operator":"="},"and",{"rules":[{"field":"f","value":1.5,"operator":"<"},"or",{"field":"f","value":1.5,"operator":">"}]},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":[0,1,2],"operator":"in"},"and",{"field":"f","value":"0, abc, 2","operator":"in"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":[0,1],"operator":"between"},"and",{"field":"f","value":"0, abc","operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":1,"operator":"between"},"and",{"field":"f","value":[1],"operator":"between"},"and",{"field":"f","value":[{},{}],"operator":"between"}]}'
+      );
       expect(
         JSON.parse(
           formatQuery(prepareRuleGroup(convertToIC(queryForNumberParsing)), {
@@ -212,7 +219,7 @@ describe('parseNumbers', () => {
         )
       ).toEqual(allNumbersParsed);
     }
-  });
+  );
 
   it('parses numbers only when inputType is number', () => {
     expect(

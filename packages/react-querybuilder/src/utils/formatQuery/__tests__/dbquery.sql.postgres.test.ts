@@ -44,9 +44,9 @@ const testSQL = ({ query, expectedResult, skipParameterized, fqOptions }: TestSQ
   }
 };
 
-describe('PostgreSQL', async () => {
+describe('PostgreSQL', () => {
   // Common tests
-  describe('common', async () => {
+  describe('common', () => {
     beforeAll(async () => {
       await db.exec(dbSetup('postgres'));
     });
@@ -59,7 +59,7 @@ describe('PostgreSQL', async () => {
   });
 
   // Postgres-specific tests
-  describe('unquoted field names', async () => {
+  describe('unquoted field names', () => {
     const unquotedDb = new PGlite();
 
     beforeAll(async () => {
@@ -94,7 +94,7 @@ describe('PostgreSQL', async () => {
     });
   });
 
-  describe('match modes (nested arrays)', async () => {
+  describe('match modes (nested arrays)', () => {
     const nestedArrayDb = new PGlite();
 
     beforeAll(async () => {

@@ -29,7 +29,7 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
 
 afterEach(() => {
   // Clear pressed keys
-  window.dispatchEvent(new Event('blur'));
+  globalThis.dispatchEvent(new Event('blur'));
 });
 
 it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
@@ -497,6 +497,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
   }
 );
 
+// oxlint-disable-next-line expect-expect
 it('does not pass dnd classes down to nested rules and groups', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
     (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (

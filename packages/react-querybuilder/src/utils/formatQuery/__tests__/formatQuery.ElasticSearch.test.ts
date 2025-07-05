@@ -317,7 +317,14 @@ it('ruleProcessor', () => {
   });
 });
 
-it('parseNumbers', () => {
+it.each([
+  ['true', { parseNumbers: true }],
+  ['strict', { parseNumbers: 'strict' }],
+  [
+    'strict-limited',
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ],
+] satisfies [string, FormatQueryOptions][])('parses numbers (%s)', (_, opts) => {
   const allNumbersParsed = {
     bool: {
       must: [
@@ -336,15 +343,9 @@ it('parseNumbers', () => {
       ],
     },
   };
-  for (const opts of [
-    { parseNumbers: true },
-    { parseNumbers: 'strict' },
-    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-  ] as FormatQueryOptions[]) {
-    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
-      allNumbersParsed
-    );
-  }
+  expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
+    allNumbersParsed
+  );
 });
 it('preserveValueOrder', () => {
   expect(

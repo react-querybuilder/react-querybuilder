@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable @typescript-eslint/consistent-type-imports */
 import demoStyles from '!!raw-loader!./_styles/demo.css';
 import rqbChakraStyles from '!!raw-loader!./_styles/rqb-chakra.css';
 import rqbStyles from '!!raw-loader!react-querybuilder/dist/query-builder.css';

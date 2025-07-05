@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable @typescript-eslint/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { QueryBuilderBulma } from '@react-querybuilder/bulma';
 import Layout from '@theme/Layout';

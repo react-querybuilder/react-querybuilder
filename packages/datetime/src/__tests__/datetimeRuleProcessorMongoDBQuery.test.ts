@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-structured-clone */
 import dayjs from 'dayjs';
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';

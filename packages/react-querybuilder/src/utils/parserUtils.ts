@@ -39,13 +39,12 @@ export function fieldIsValidUtil(params: {
 
   const primaryField = toFullOption(fieldsFlat.find(ff => ff.name === fieldName)!);
   if (primaryField) {
-    valid =
+    valid = !(
       !subordinateFieldName &&
       operator !== 'notNull' &&
       operator !== 'null' &&
       !getValueSourcesUtil(primaryField, operator, getValueSources).includes('value' as never)
-        ? false
-        : true;
+    );
 
     if (valid && !!subordinateFieldName) {
       if (

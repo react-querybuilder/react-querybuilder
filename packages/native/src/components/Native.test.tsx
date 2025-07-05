@@ -260,14 +260,14 @@ describe('NativeShiftActions', () => {
     render(<NativeShiftActions {...enabledProps} />);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button as any);
-    await act(() => {
+    act(() => {
       fireEvent.press(btnsEnabled[0]);
-      expect(shiftUp).toHaveBeenCalled();
     });
-    await act(() => {
+    expect(shiftUp).toHaveBeenCalled();
+    act(() => {
       fireEvent.press(btnsEnabled[1]);
-      expect(shiftDown).toHaveBeenCalled();
     });
+    expect(shiftDown).toHaveBeenCalled();
   });
 });
 
@@ -411,9 +411,8 @@ describe('NativeValueEditor', () => {
       />
     );
     const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(NativeValueSelector);
-    for (const i of [0, 1]) {
-      expect(selectors[i].props).toHaveProperty('value', 'opt1');
-    }
+    expect(selectors[0].props).toHaveProperty('value', 'opt1');
+    expect(selectors[1].props).toHaveProperty('value', 'opt1');
   });
 
   it('changes the value of each select', () => {

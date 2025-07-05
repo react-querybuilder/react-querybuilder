@@ -458,6 +458,7 @@ const mongoQueryExpectationForMatchModes = {
   ],
 };
 
+// oxlint-disable-next-line expect-expect
 it('formats to mongo query correctly', () => {
   testBoth(mongoQuery, mongoQueryExpectation);
   testBoth(mongoQuery, mongoQueryExpectationForAvoidFieldsAsKeys, {
@@ -529,10 +530,12 @@ it.todo(
   // }
 );
 
+// oxlint-disable-next-line expect-expect
 it('escapes quotes when appropriate', () => {
   testBoth(testQueryDQ, { f1: `Te"st` });
 });
 
+// oxlint-disable-next-line expect-expect
 it('independent combinators', () => {
   testBoth(queryIC, {
     $or: [{ $and: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
@@ -555,6 +558,7 @@ describe('validation', () => {
 
     for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
+        // oxlint-disable-next-line expect-expect
         it(vtd.title, () => {
           (fmt === 'mongodb' ? testMongoDB : testMongoDBQuery)(
             vtd.query,
@@ -567,6 +571,7 @@ describe('validation', () => {
   }
 });
 
+// oxlint-disable-next-line expect-expect
 it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? `{"${r.operator}":true}` : defaultRuleProcessorMongoDB(r);
@@ -595,6 +600,7 @@ it('ruleProcessor', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
   testMongoDB(
     queryForPreserveValueOrder,
@@ -608,6 +614,7 @@ it('preserveValueOrder', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     $and: [

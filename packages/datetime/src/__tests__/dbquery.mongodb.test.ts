@@ -58,12 +58,14 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           ruleProcessor: getDatetimeRuleProcessorMongoDBQuery(apiFns),
         });
         const result = await Musician.find(mdbQuery);
+        // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
           expect(result).toHaveLength(1);
           expect(result[0].last_name).toBe(expectation);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
   });

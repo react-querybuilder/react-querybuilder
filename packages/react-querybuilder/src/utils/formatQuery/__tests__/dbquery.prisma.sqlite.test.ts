@@ -39,7 +39,7 @@ const testPrisma = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   });
 };
 
-describe('Prisma', async () => {
+describe('Prisma', () => {
   // Common tests
   for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
     describe(name, () => {
