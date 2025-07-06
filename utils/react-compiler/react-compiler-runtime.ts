@@ -3,7 +3,6 @@ import * as React from 'react';
 const $empty: unique symbol = Symbol.for('react.memo_cache_sentinel');
 
 export function c(size: number): unknown[] {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   return React.useMemo<Array<unknown>>(
     () => {
       const $ = new Array(size);
