@@ -8,8 +8,10 @@ import { Loading } from './_utils';
 import { initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 
+const loading = <Loading />;
+
 export const CustomStylesQB = () => (
-  <BrowserOnly fallback={<Loading />}>
+  <BrowserOnly fallback={loading}>
     {() => (
       <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>
         <QueryBuilder

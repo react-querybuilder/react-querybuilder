@@ -7,6 +7,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-bulma.scss';
 
+const loading = <Loading />;
+
 function ReactQueryBuilderDemo_BulmaBrowser() {
   const [{ Demo }, setComponents] = useState<{
     Demo?: typeof import('./_components/Demo').default;
@@ -39,9 +41,7 @@ function ReactQueryBuilderDemo_BulmaBrowser() {
 export default function ReactQueryBuilderDemo_Bulma() {
   return (
     <Layout description="React Query Builder Bulma Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_BulmaBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_BulmaBrowser />}</BrowserOnly>
     </Layout>
   );
 }

@@ -144,6 +144,10 @@ const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   );
 };
 
+const dependenciesSummary = <summary>Dependencies</summary>;
+const stylesSummary = <summary>Styles</summary>;
+const otherFilesSummary = <summary>Other files</summary>;
+
 export default function Demo({
   variant = 'default',
   queryWrapper: QueryWrapper = defaultQueryWrapper,
@@ -567,7 +571,7 @@ export default function Demo({
               { value: 'theme', label: 'Theme builder' },
             ]}>
             <TabItem value="code" label="Code">
-              <Details summary={<summary>Dependencies</summary>}>
+              <Details summary={dependenciesSummary}>
                 <Tabs>
                   <TabItem value="npm" label="npm">
                     <CodeBlock language="shell">npm install {packageNames.join(' ')}</CodeBlock>
@@ -586,12 +590,12 @@ export default function Demo({
               <CodeBlock language="tsx" title="App.tsx">
                 {codeStringState}
               </CodeBlock>
-              <Details summary={<summary>Styles</summary>}>
+              <Details summary={stylesSummary}>
                 <CodeBlock language="css" title="styles.css">
                   {extraStylesState}
                 </CodeBlock>
               </Details>
-              <Details summary={<summary>Other files</summary>}>
+              <Details summary={otherFilesSummary}>
                 <CodeBlock language="ts" title="fields.ts">
                   {fieldsTsStringState}
                 </CodeBlock>

@@ -40,12 +40,14 @@ export function ColorModeIcon(): React.JSX.Element {
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
 
+const skeletonFallback = <Skeleton boxSize="8" />;
+
 export const ColorModeButton: React.ForwardRefExoticComponent<
   ColorModeButtonProps & React.RefAttributes<HTMLButtonElement>
 > = React.forwardRef<HTMLButtonElement, ColorModeButtonProps>(function ColorModeButton(props, ref) {
   const { toggleColorMode } = useColorMode();
   return (
-    <ClientOnly fallback={<Skeleton boxSize="8" />}>
+    <ClientOnly fallback={skeletonFallback}>
       <IconButton
         onClick={toggleColorMode}
         variant="ghost"

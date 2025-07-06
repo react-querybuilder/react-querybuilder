@@ -9,6 +9,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-fluent.css';
 
+const loading = <Loading />;
+
 function ReactQueryBuilderDemo_FluentBrowser() {
   const { colorMode } = useColorMode();
   const [{ Demo }, setComponents] = useState<{
@@ -45,9 +47,7 @@ function ReactQueryBuilderDemo_FluentBrowser() {
 export default function ReactQueryBuilderDemo_Fluent() {
   return (
     <Layout description="React Query Builder Fluent Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_FluentBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_FluentBrowser />}</BrowserOnly>
     </Layout>
   );
 }

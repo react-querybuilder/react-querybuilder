@@ -30,6 +30,8 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { Loading } from '../_utils';
 
+const loading = <Loading />;
+
 const muiComponents = {
   DragIndicator,
   Button,
@@ -91,7 +93,7 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
 export default function ReactQueryBuilderDemo_Material() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<Loading />}>
+      <BrowserOnly fallback={loading}>
         {() => <ReactQueryBuilderDemo_MaterialBrowser />}
       </BrowserOnly>
     </Layout>

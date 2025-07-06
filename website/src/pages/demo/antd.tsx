@@ -11,6 +11,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-antd.css';
 
+const loading = <Loading />;
+
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 const AntDValueSelectorWrapper = (props: ValueSelectorProps) => (
@@ -57,9 +59,7 @@ function ReactQueryBuilderDemo_AntdBrowser() {
 export default function ReactQueryBuilderDemo_AntD() {
   return (
     <Layout description="React Query Builder Ant Design Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_AntdBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_AntdBrowser />}</BrowserOnly>
     </Layout>
   );
 }

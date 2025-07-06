@@ -10,6 +10,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-bootstrap.scss';
 
+const loading = <Loading />;
+
 const getQueryWrapper =
   ({ colorMode }: { colorMode: 'dark' | 'light' }) =>
   ({ children }: { children: ReactNode }) => <div data-bs-theme={colorMode}>{children}</div>;
@@ -49,7 +51,7 @@ function ReactQueryBuilderDemo_BootstrapBrowser() {
 export default function ReactQueryBuilderDemo_Bootstrap() {
   return (
     <Layout description="React Query Builder Bootstrap Demo">
-      <BrowserOnly fallback={<Loading />}>
+      <BrowserOnly fallback={loading}>
         {() => <ReactQueryBuilderDemo_BootstrapBrowser />}
       </BrowserOnly>
     </Layout>

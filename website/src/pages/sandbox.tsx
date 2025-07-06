@@ -18,6 +18,8 @@ const getFinalLink = (platform: 'StackBlitz' | 'CodeSandbox', template: string) 
     : `https://codesandbox.io/s/github/${ghPath}?file=/src/${fileName}`;
 };
 
+const loading = <Loading />;
+
 function SandboxRedirectTimer() {
   const query = queryString.parse(window.location.search);
   const qsTemplate = query.template ?? query.t ?? 'basic-ts';
@@ -54,5 +56,5 @@ function SandboxRedirectTimer() {
 }
 
 export default function SandboxRedirect() {
-  return <BrowserOnly fallback={<Loading />}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
+  return <BrowserOnly fallback={loading}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
 }

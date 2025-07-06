@@ -8,6 +8,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-tremor.css';
 
+const loading = <Loading />;
+
 function ReactQueryBuilderDemo_TremorBrowser() {
   const { colorMode: _cm } = useColorMode();
   const [{ Demo }, setComponents] = useState<{
@@ -48,9 +50,7 @@ function ReactQueryBuilderDemo_TremorBrowser() {
 export default function ReactQueryBuilderDemo_Tremor() {
   return (
     <Layout description="React Query Builder Tremor Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_TremorBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_TremorBrowser />}</BrowserOnly>
     </Layout>
   );
 }

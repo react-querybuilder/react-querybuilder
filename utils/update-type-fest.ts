@@ -72,9 +72,11 @@ await $`rm -rf ${rqbTypeFestDir}`;
 await $`mkdir -p ${rqbTypeFestDir}/internal`;
 
 // Copy source .d.ts files as .ts
-for (const f of rqbTypeFestFileList) {
-  await write(`${rqbTypeFestDir}/${f}.ts`, await updateBlockTags(`${srcTypeFestDir}/${f}.d.ts`));
-}
+await Promise.all(
+  rqbTypeFestFileList.map(async f =>
+    write(`${rqbTypeFestDir}/${f}.ts`, await updateBlockTags(`${srcTypeFestDir}/${f}.d.ts`))
+  )
+);
 
 // Copy all source/internal/*.d.ts files as .ts
 const dtsGlob = new Glob(`*.d.ts`);

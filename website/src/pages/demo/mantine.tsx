@@ -9,6 +9,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-mantine.css';
 
+const loading = <Loading />;
+
 function ReactQueryBuilderDemo_MantineBrowser() {
   const { colorMode } = useColorMode();
   const [{ Demo }, setComponents] = useState<{
@@ -47,9 +49,7 @@ function ReactQueryBuilderDemo_MantineBrowser() {
 export default function ReactQueryBuilderDemo_Mantine() {
   return (
     <Layout description="React Query Builder Mantine Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_MantineBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_MantineBrowser />}</BrowserOnly>
     </Layout>
   );
 }

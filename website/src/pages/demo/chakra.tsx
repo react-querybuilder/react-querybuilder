@@ -25,6 +25,8 @@ import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-chakra.css';
 
+const loading = <Loading />;
+
 const varRoot = ':host';
 const config = defineConfig({
   cssVarsRoot: varRoot,
@@ -111,9 +113,7 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
 export default function ReactQueryBuilderDemo_Chakra() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_ChakraBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_ChakraBrowser />}</BrowserOnly>
     </Layout>
   );
 }

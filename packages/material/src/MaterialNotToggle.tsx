@@ -1,7 +1,7 @@
 import type { Switch } from '@mui/material';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 import { NotToggle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
@@ -38,6 +38,19 @@ export const MaterialNotToggle = ({
   ...otherProps
 }: MaterialNotToggleProps): React.JSX.Element => {
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
+  const { FormControlLabel, Switch } = (muiComponents ?? {}) as MaterialNotToggleComponents;
+  const switchControl = useMemo(
+    () =>
+      Switch && (
+        <Switch
+          checked={!!checked}
+          onChange={e => handleOnChange(e.target.checked)}
+          {...otherProps}
+        />
+      ),
+    [checked, handleOnChange, otherProps, Switch]
+  );
+
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
     return (
@@ -60,21 +73,13 @@ export const MaterialNotToggle = ({
     );
   }
 
-  const { FormControlLabel, Switch } = muiComponents as MaterialNotToggleComponents;
-
   return (
     <FormControlLabel
       key={key}
       className={className}
       title={title}
       disabled={disabled}
-      control={
-        <Switch
-          checked={!!checked}
-          onChange={e => handleOnChange(e.target.checked)}
-          {...otherProps}
-        />
-      }
+      control={switchControl}
       label={label ?? /* istanbul ignore next */ ''}
     />
   );
