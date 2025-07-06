@@ -623,9 +623,9 @@ export default function Demo({
                     ]),
                   },
                   {
-                    value: 'mongodb',
+                    value: 'mongodb_query',
                     label: 'MongoDB',
-                    attributes: getExportTabAttributes('mongodb'),
+                    attributes: getExportTabAttributes('mongodb_query'),
                   },
                   { value: 'cel', label: 'CEL', attributes: getExportTabAttributes('cel') },
                   { value: 'spel', label: 'SpEL', attributes: getExportTabAttributes('spel') },
@@ -737,9 +737,9 @@ export default function Demo({
                   </div>
                   {exportPresentation}
                 </TabItem>
-                <TabItem value="mongodb">
+                <TabItem value="mongodb_query">
                   <div className={styles.exportOptions}>
-                    <ExportInfoLinks format="mongodb" />
+                    <ExportInfoLinks format="mongodb_query" />
                     {parseNumbersOption}
                   </div>
                   {exportPresentation}

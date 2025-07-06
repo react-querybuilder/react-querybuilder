@@ -12,8 +12,14 @@ import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
-import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder/debug';
-import { defaultOperators, formatQuery, standardClassnames } from 'react-querybuilder/debug';
+import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
+import {
+  bigIntJsonParseReviver,
+  bigIntJsonStringifyReplacer,
+  defaultOperators,
+  formatQuery,
+  standardClassnames,
+} from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
@@ -36,12 +42,12 @@ type OptionsAction =
     };
 
 export const getHashFromState = (s: DemoState) =>
-  Buffer.from(pako.deflate(JSON.stringify(s))).toString('base64');
+  Buffer.from(pako.deflate(JSON.stringify(s, bigIntJsonStringifyReplacer))).toString('base64');
 
 export const unzip = (b64string: string) => {
   const buff = Buffer.from(b64string, 'base64');
   const result = pako.inflate(buff, { to: 'string' });
-  return JSON.parse(result);
+  return JSON.parse(result, bigIntJsonParseReviver);
 };
 
 export const getStateFromHash = ({ s, ...hash }: DemoOptionsHash): DemoState => {
@@ -81,6 +87,12 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
 // Cache for expensive formatting operations
 const formatQueryCache = new Map();
 
+const stringify = (o: unknown) =>
+  JSON.stringify(o, bigIntJsonStringifyReplacer, 2).replaceAll(
+    /\{\s*"\$bigint":\s*"(\d+)"\s*\}/gm,
+    '$1n'
+  );
+
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
   const cacheKey = JSON.stringify([query, options]);
 
@@ -112,16 +124,24 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
   );
 
   switch (options.format) {
+    case 'json':
     case 'json_without_ids':
+    case 'ldap':
     case 'mongodb':
-      return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
+    case 'natural_language': {
+      return `\`${JSON.stringify(formatQueryResult)
+        .replaceAll(String.raw`\n`, '\n')
+        .replaceAll(String.raw`\"`, '"')
+        .replaceAll('`', '\\`')
+        .slice(1, -1)}\``;
+    }
     case 'mongodb_query':
     case 'parameterized':
     case 'parameterized_named':
     case 'jsonlogic':
     case 'elasticsearch':
     case 'prisma':
-      return JSON.stringify(formatQueryResult, null, 2);
+      return stringify(formatQueryResult);
   }
 
   return formatQueryResult;
@@ -174,17 +194,27 @@ formatQuery(query, ${optionsString})`,
   );
 };
 
-export const getExportDisplayLanguage = (format: ExportFormat) =>
-  format === 'sql' ||
-  format === 'cel' ||
-  format === 'spel' ||
-  format === 'mongodb' ||
-  format === 'jsonata' ||
-  format === 'natural_language'
-    ? format
-    : format === 'mongodb_query'
-      ? 'mongodb'
-      : 'json';
+export const getExportDisplayLanguage = (format: ExportFormat) => {
+  switch (format) {
+    case 'sql':
+    case 'cel':
+    case 'spel':
+    case 'jsonata':
+      return format;
+
+    case 'mongodb_query':
+      return 'mongodb';
+
+    case 'json':
+    case 'json_without_ids':
+    case 'ldap':
+    case 'mongodb':
+    case 'natural_language':
+      return 'js';
+  }
+
+  return 'json';
+};
 
 const getCompatWrapper = (style?: StyleName): [string, string, string] => {
   switch (style) {

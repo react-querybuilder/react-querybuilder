@@ -3,7 +3,11 @@ import { convertToIC } from '../../convertQuery';
 import { prepareRuleGroup } from '../../prepareQueryObjects';
 import { formatQuery } from '../formatQuery';
 import { query, queryForNumberParsing, queryWithValueSourceField } from '../formatQueryTestUtils';
-import { getQuoteFieldNamesWithArray } from '../utils';
+import {
+  bigIntJsonParseReviver,
+  bigIntJsonStringifyReplacer,
+  getQuoteFieldNamesWithArray,
+} from '../utils';
 
 it('formats JSON correctly', () => {
   expect(formatQuery(query)).toBe(JSON.stringify(query, null, 2));
@@ -256,4 +260,21 @@ it('quoteFieldNamesWithArray handles null', () => {
 
 it('handles custom ruleGroupProcessor correctly', () => {
   expect(formatQuery(query, { ruleGroupProcessor: () => '' })).toBe('');
+});
+
+describe('JSON.stringify/parse utils', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'f', operator: '=', value: 1214n }],
+  };
+  const queryAsString = `{"combinator":"and","rules":[{"field":"f","operator":"=","value":{"$bigint":"1214"}}]}`;
+
+  it('stringifies bigints correctly', () => {
+    expect(JSON.stringify(query, bigIntJsonStringifyReplacer)).toMatch(
+      `"value":{"$bigint":"1214"}`
+    );
+  });
+  it('parses bigints correctly', () => {
+    expect(JSON.parse(queryAsString, bigIntJsonParseReviver)).toEqual(query);
+  });
 });

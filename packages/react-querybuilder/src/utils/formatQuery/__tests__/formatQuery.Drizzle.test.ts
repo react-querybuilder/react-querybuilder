@@ -18,6 +18,7 @@ import {
   queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
+import type { RuleGroupType } from '../../../types';
 
 const operatorStub = (...x: unknown[]) => x;
 function sqlStub(...x: unknown[]) {
@@ -169,5 +170,28 @@ it('preserveValueOrder', () => {
       parseNumbers: true,
       preserveValueOrder: true,
     })(fields, drizzleOperators)
+  ).toBeTruthy();
+});
+
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'age', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'drizzle' })(fields, drizzleOperators)).toBeTruthy();
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(
+    formatQuery(betweenQuery, { format: 'drizzle', parseNumbers: true })(fields, drizzleOperators)
+  ).toBeTruthy();
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(
+    formatQuery(betweenQuery, { format: 'drizzle', parseNumbers: false })(fields, drizzleOperators)
   ).toBeTruthy();
 });

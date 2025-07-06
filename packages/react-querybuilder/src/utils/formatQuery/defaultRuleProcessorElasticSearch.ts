@@ -205,9 +205,15 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         let [first, second] = valueAsArray;
-        if (shouldRenderAsNumber(first, true) && shouldRenderAsNumber(second, true)) {
-          const firstNum = parseNumber(first, { parseNumbers: true });
-          const secondNum = parseNumber(second, { parseNumbers: true });
+        // For backwards compatibility, default to parsing numbers for between operators
+        // unless parseNumbers is explicitly set to false
+        const shouldParseNumbers = !(parseNumbers === false);
+        if (
+          shouldRenderAsNumber(first, shouldParseNumbers) &&
+          shouldRenderAsNumber(second, shouldParseNumbers)
+        ) {
+          const firstNum = parseNumber(first, { parseNumbers: shouldParseNumbers });
+          const secondNum = parseNumber(second, { parseNumbers: shouldParseNumbers });
           if (!preserveValueOrder && secondNum < firstNum) {
             const tempNum = secondNum;
             second = firstNum;

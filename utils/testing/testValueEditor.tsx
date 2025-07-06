@@ -31,6 +31,7 @@ type ValueEditorTestsToSkip = Partial<{
   switch: boolean;
   between: boolean;
   betweenSelect: boolean;
+  bigint: boolean;
 }>;
 interface ValueEditorAsSelectProps extends ValueEditorProps {
   values: OptionList;
@@ -516,6 +517,39 @@ export const testValueEditor = (
           render(<ValueEditor {...props} type="textarea" handleOnChange={onChange} />);
           await user.type(findTextarea(screen.getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
+        });
+      });
+    }
+
+    if (!skip.bigint) {
+      describe('when rendering a bigint editor', () => {
+        const bi = BigInt(Number.MAX_VALUE) + 10n;
+        const bigIntProps: ValueEditorProps = {
+          ...props,
+          inputType: 'bigint',
+          parseNumbers: true,
+        };
+
+        it('should have the value passed into the <input /> as text', () => {
+          render(<ValueEditor {...bigIntProps} value={bi} />);
+          expect(findInput(screen.getByTitle(title))).toHaveValue(`${bi}`);
+        });
+
+        it('should call the onChange method passed in', async () => {
+          const onChange = jest.fn();
+          render(<ValueEditor {...bigIntProps} value={bi} handleOnChange={onChange} />);
+          await user.type(findInput(screen.getByTitle(title)), '2');
+          expect(onChange).toHaveBeenCalledWith(bi * 10n + 2n);
+        });
+
+        it('should maintain non-bigint values', async () => {
+          const onChange = jest.fn();
+          render(<ValueEditor {...bigIntProps} value={'bi'} handleOnChange={onChange} />);
+          await user.type(findInput(screen.getByTitle(title)), 't', {
+            // initialSelectionStart: 0,
+            // initialSelectionEnd: 9999,
+          });
+          expect(onChange).toHaveBeenCalledWith('bit');
         });
       });
     }

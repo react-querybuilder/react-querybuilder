@@ -141,3 +141,28 @@ it('preserveValueOrder', () => {
     `(f1 >= 12 && f1 <= 14) && (f2 >= 14 && f2 <= 12)`
   );
 });
+
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'cel' })).toBe(
+    '(age >= 22 && age <= 34) && (score < 10 || score > 20)'
+  );
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'cel', parseNumbers: true })).toBe(
+    '(age >= 22 && age <= 34) && (score < 10 || score > 20)'
+  );
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'cel', parseNumbers: false })).toBe(
+    '(age >= "22" && age <= "34") && (score < "10" || score > "20")'
+  );
+});

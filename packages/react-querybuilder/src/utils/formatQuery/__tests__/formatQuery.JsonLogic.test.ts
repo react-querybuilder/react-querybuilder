@@ -324,6 +324,34 @@ it('preserveValueOrder', () => {
   ).toEqual({ and: [{ '<=': [12, { var: 'f1' }, 14] }, { '<=': [14, { var: 'f2' }, 12] }] });
 });
 
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'jsonlogic' })).toEqual({
+    and: [{ '<=': [22, { var: 'age' }, 34] }, { '!': { '<=': [10, { var: 'score' }, 20] } }],
+  });
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'jsonlogic', parseNumbers: true })).toEqual({
+    and: [{ '<=': [22, { var: 'age' }, 34] }, { '!': { '<=': [10, { var: 'score' }, 20] } }],
+  });
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'jsonlogic', parseNumbers: false })).toEqual({
+    and: [
+      { '<=': ['22', { var: 'age' }, '34'] },
+      { '!': { '<=': ['10', { var: 'score' }, '20'] } },
+    ],
+  });
+});
+
 it('runs the JsonLogic additional operators', () => {
   const { startsWith, endsWith } = jsonLogicAdditionalOperators;
   expect(startsWith('TestString', 'Test')).toBe(true);

@@ -1,12 +1,16 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type { ParseNumbersPropConfig, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, prismaOperators, processMatchMode, shouldRenderAsNumber } from './utils';
 
-const processNumber = <T>(value: unknown, fallback: T, parseNumbers: boolean) =>
-  shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
-    ? Number(parseNumber(value, { parseNumbers: 'strict' }))
+const processNumber = <T>(
+  value: unknown,
+  fallback: T,
+  parseNumbers?: ParseNumbersPropConfig | undefined
+) =>
+  shouldRenderAsNumber(value, !!parseNumbers || typeof value === 'bigint')
+    ? Number(parseNumber(value, { parseNumbers: !!parseNumbers }))
     : fallback;
 
 /**
@@ -89,8 +93,15 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = processNumber(first, Number.NaN, true);
-        const secondNum = processNumber(second, Number.NaN, true);
+        // For backwards compatibility, default to parsing numbers for between operators
+        // unless parseNumbers is explicitly set to false
+        const shouldParseNumbers = !(parseNumbers === false);
+        const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
+          ? parseNumber(first, { parseNumbers })
+          : Number.NaN;
+        const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
+          ? parseNumber(second, { parseNumbers })
+          : Number.NaN;
         let firstValue = Number.isNaN(firstNum) ? first : firstNum;
         let secondValue = Number.isNaN(secondNum) ? second : secondNum;
         if (

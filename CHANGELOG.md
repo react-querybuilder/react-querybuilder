@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
+- New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
+- [#911] Support for `inputType: "bigint"` in all value editors, which will render a "text"-type input but will store the value as a `bigint` if a valid integer is entered.
 - [#900] Support for matching elements of a nested array.
   - New optional `RuleType` property `match?: { mode: MatchMode, threshold?: number }`
     - `type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly'`
@@ -1948,6 +1950,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#893]: https://github.com/react-querybuilder/react-querybuilder/pull/893
 [#900]: https://github.com/react-querybuilder/react-querybuilder/pull/900
 [#903]: https://github.com/react-querybuilder/react-querybuilder/pull/903
+[#911]: https://github.com/react-querybuilder/react-querybuilder/pull/911
 
 <!-- #endregion -->
 
