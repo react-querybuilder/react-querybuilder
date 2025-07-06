@@ -174,7 +174,7 @@ export const numerifyValues = (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isValidValue = (value: any): boolean =>
   (typeof value === 'string' && value.length > 0) ||
-  (typeof value === 'number' && !isNaN(value)) ||
+  (typeof value === 'number' && !Number.isNaN(value)) ||
   (typeof value !== 'string' && typeof value !== 'number');
 
 /**

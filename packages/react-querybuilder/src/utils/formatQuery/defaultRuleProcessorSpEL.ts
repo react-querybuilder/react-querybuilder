@@ -158,16 +158,16 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
         const [first, second] = valueAsArray;
         const firstNum = shouldRenderAsNumber(first, true)
           ? parseNumber(first, { parseNumbers: true })
-          : NaN;
+          : Number.NaN;
         const secondNum = shouldRenderAsNumber(second, true)
           ? parseNumber(second, { parseNumbers: true })
-          : NaN;
-        let firstValue = isNaN(firstNum)
+          : Number.NaN;
+        let firstValue = Number.isNaN(firstNum)
           ? valueIsField
             ? `${first}`
             : `'${escapeSingleQuotes(first, escapeQuotes)}'`
           : firstNum;
-        let secondValue = isNaN(secondNum)
+        let secondValue = Number.isNaN(secondNum)
           ? valueIsField
             ? `${second}`
             : `'${escapeSingleQuotes(second, escapeQuotes)}'`

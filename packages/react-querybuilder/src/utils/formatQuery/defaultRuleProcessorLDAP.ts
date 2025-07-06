@@ -90,12 +90,12 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
       const [first, second] = valueAsArray;
       const firstNum = shouldRenderAsNumber(first, true)
         ? parseNumber(first, { parseNumbers: true })
-        : NaN;
+        : Number.NaN;
       const secondNum = shouldRenderAsNumber(second, true)
         ? parseNumber(second, { parseNumbers: true })
-        : NaN;
-      let firstValue = isNaN(firstNum) ? first : firstNum;
-      let secondValue = isNaN(secondNum) ? second : secondNum;
+        : Number.NaN;
+      let firstValue = Number.isNaN(firstNum) ? first : firstNum;
+      let secondValue = Number.isNaN(secondNum) ? second : secondNum;
 
       if (
         !preserveValueOrder &&

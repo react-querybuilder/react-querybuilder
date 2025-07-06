@@ -34,8 +34,7 @@
     "unicorn/prefer-global-this": "error",
     "unicorn/prefer-module": "error",
     "unicorn/prefer-node-protocol": "error",
-    // TODO: convert to "error"
-    "unicorn/prefer-number-properties": "off",
+    "unicorn/prefer-number-properties": "error",
     "unicorn/prevent-abbreviations": "off",
     "unicorn/switch-case-braces": "off",
     "unicorn/consistent-existence-index-check": "off"

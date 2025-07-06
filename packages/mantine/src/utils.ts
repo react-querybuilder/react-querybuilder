@@ -13,6 +13,6 @@ export const optionListToComboboxData = (list: FullOptionList<FullOption>): Comb
 export const toNumberInputValue = (val: number | string): any => {
   if (typeof val === 'number') return val;
   const valParsed = parseNumber(val, { parseNumbers: 'native' });
-  if (!isNaN(valParsed)) return valParsed;
+  if (!Number.isNaN(valParsed)) return valParsed;
   return '';
 };

@@ -217,10 +217,10 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = processNumber(first, NaN, true);
-        const secondNum = processNumber(second, NaN, true);
-        let firstValue = valueIsField ? first : isNaN(firstNum) ? first : firstNum;
-        let secondValue = valueIsField ? second : isNaN(secondNum) ? second : secondNum;
+        const firstNum = processNumber(first, Number.NaN, true);
+        const secondNum = processNumber(second, Number.NaN, true);
+        let firstValue = valueIsField ? first : Number.isNaN(firstNum) ? first : firstNum;
+        let secondValue = valueIsField ? second : Number.isNaN(secondNum) ? second : secondNum;
         if (
           !preserveValueOrder &&
           firstValue === firstNum &&

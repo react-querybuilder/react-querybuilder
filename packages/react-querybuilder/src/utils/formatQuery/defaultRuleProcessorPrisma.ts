@@ -89,10 +89,10 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = processNumber(first, NaN, true);
-        const secondNum = processNumber(second, NaN, true);
-        let firstValue = isNaN(firstNum) ? first : firstNum;
-        let secondValue = isNaN(secondNum) ? second : secondNum;
+        const firstNum = processNumber(first, Number.NaN, true);
+        const secondNum = processNumber(second, Number.NaN, true);
+        let firstValue = Number.isNaN(firstNum) ? first : firstNum;
+        let secondValue = Number.isNaN(secondNum) ? second : secondNum;
         if (
           !preserveValueOrder &&
           firstValue === firstNum &&

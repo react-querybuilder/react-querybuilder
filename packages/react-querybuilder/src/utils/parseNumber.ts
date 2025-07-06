@@ -30,7 +30,7 @@ export const parseNumber = (
   }
 
   if (parseNumbers === 'native') {
-    return parseFloat(val);
+    return Number.parseFloat(val);
   }
 
   const valAsNum: number | bigint =
@@ -42,5 +42,5 @@ export const parseNumber = (
       round: false,
     });
 
-  return typeof valAsNum === 'bigint' || !isNaN(valAsNum) ? valAsNum : val;
+  return typeof valAsNum === 'bigint' || !Number.isNaN(valAsNum) ? valAsNum : val;
 };

@@ -82,12 +82,16 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 
       const firstNum = shouldRenderAsNumber(first, parseNumbers)
         ? parseNumber(first, { parseNumbers: 'strict' })
-        : NaN;
+        : Number.NaN;
       const secondNum = shouldRenderAsNumber(second, parseNumbers)
         ? parseNumber(second, { parseNumbers: 'strict' })
-        : NaN;
-      const firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-      const secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+        : Number.NaN;
+      const firstValue = Number.isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      const secondValue = Number.isNaN(secondNum)
+        ? valueIsField
+          ? `${second}`
+          : second
+        : secondNum;
 
       const valsOneAndTwoOnly = [firstValue, secondValue];
       if (

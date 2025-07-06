@@ -165,12 +165,12 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       const [first, second] = valueAsArray;
       const firstNum = shouldRenderAsNumber(first, true)
         ? parseNumber(first, { parseNumbers: true })
-        : NaN;
+        : Number.NaN;
       const secondNum = shouldRenderAsNumber(second, true)
         ? parseNumber(second, { parseNumbers: true })
-        : NaN;
-      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+        : Number.NaN;
+      let firstValue = Number.isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      let secondValue = Number.isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
       if (
         !preserveValueOrder &&

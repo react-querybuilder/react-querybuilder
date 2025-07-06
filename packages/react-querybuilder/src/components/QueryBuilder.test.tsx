@@ -977,7 +977,7 @@ describe('parseNumbers prop', () => {
   const typedValues = typedValuesArray.map(typedValue => ({ typedValue }));
   const inputTypeNumberAllowedAsStr = typedValuesArray.map(s => (/^\d+$/.test(s) ? s : ''));
   const inputTypeNumberAllowedAsNum = typedValuesArray.map(s =>
-    /^\d+$/.test(s) ? parseInt(s) : ''
+    /^\d+$/.test(s) ? Number.parseInt(s) : ''
   );
   const six1214s = Array.from<number>({ length: 6 }).fill(1214);
   const six1214strings = Array.from<string>({ length: 6 }).fill('1214');
@@ -1024,12 +1024,12 @@ describe('parseNumbers prop', () => {
     },
     {
       parseNumberMode: 'native',
-      textAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
-      textTyped: [NaN, ...six1214s],
+      textAtOnce: [Number.NaN, 1214, 1, 1, 12, 1, 1214],
+      textTyped: [Number.NaN, ...six1214s],
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
-      numTextEditorTyped: [NaN, ...six1214s],
+      numTextEditorAtOnce: [Number.NaN, 1214, 1, 1, 12, 1, 1214],
+      numTextEditorTyped: [Number.NaN, ...six1214s],
     },
     {
       parseNumberMode: 'native-limited',
@@ -1037,8 +1037,8 @@ describe('parseNumbers prop', () => {
       textTyped: typedValuesArray,
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
-      numTextEditorTyped: [NaN, ...six1214s],
+      numTextEditorAtOnce: [Number.NaN, 1214, 1, 1, 12, 1, 1214],
+      numTextEditorTyped: [Number.NaN, ...six1214s],
     },
     {
       parseNumberMode: 'strict',

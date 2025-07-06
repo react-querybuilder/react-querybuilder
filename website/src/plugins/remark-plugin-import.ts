@@ -76,9 +76,9 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
           const lang = path.extname(codeFileAbsolutePath).replace(/^\./, '');
 
           if (lineNumbers) {
-            const start = parseInt(lineNumbers[1]);
+            const start = Number.parseInt(lineNumbers[1]);
             const end =
-              (lineNumbers[4] ? parseInt(lineNumbers[4]) : null) ??
+              (lineNumbers[4] ? Number.parseInt(lineNumbers[4]) : null) ??
               (lineNumbers[2] ? codeLines.length : start);
             node.children = [
               {

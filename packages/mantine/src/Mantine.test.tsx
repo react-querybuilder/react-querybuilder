@@ -294,7 +294,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       await user.click(screen.getByText('14'));
     });
     // TODO: Figure out why this doesn't work in React < 19
-    if (parseInt(React.version, 10) >= 19) {
+    if (Number.parseInt(React.version, 10) >= 19) {
       // oxlint-disable-next-line no-conditional-expect
       expect(handleOnChange).toHaveBeenCalledWith([`${dateStub}12`, `${dateStub}14`]);
     }

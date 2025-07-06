@@ -142,12 +142,12 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
 
       const firstNum = shouldRenderAsNumber(first, parseNumbers)
         ? parseNumber(first, { parseNumbers: 'strict' })
-        : NaN;
+        : Number.NaN;
       const secondNum = shouldRenderAsNumber(second, parseNumbers)
         ? parseNumber(second, { parseNumbers: 'strict' })
-        : NaN;
-      const firstValue = isNaN(firstNum) ? first : firstNum;
-      const secondValue = isNaN(secondNum) ? second : secondNum;
+        : Number.NaN;
+      const firstValue = Number.isNaN(firstNum) ? first : firstNum;
+      const secondValue = Number.isNaN(secondNum) ? second : secondNum;
       const valsOneAndTwoOnly = [firstValue, secondValue];
       if (
         !preserveValueOrder &&

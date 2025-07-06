@@ -16,7 +16,7 @@ const cryptoModule = globalThis.crypto;
 // istanbul ignore next
 export let generateID = (): UUID =>
   '00-0-4-2-000'.replaceAll(/[^-]/g, s =>
-    (((Math.random() + Math.trunc(s as unknown as number)) * 0x1_00_00) >> parseInt(s))
+    (((Math.random() + Math.trunc(s as unknown as number)) * 0x1_00_00) >> Number.parseInt(s))
       .toString(16)
       .padStart(4, '0')
   ) as UUID;

@@ -64,7 +64,7 @@ export const getPathOfID = (id: string, query: RuleGroupTypeAny): Path | null =>
     if (isRuleGroup(r)) {
       const subPath = getPathOfID(id, r);
       if (Array.isArray(subPath)) {
-        return [parseInt(i), ...subPath];
+        return [Number.parseInt(i), ...subPath];
       }
     }
   }
