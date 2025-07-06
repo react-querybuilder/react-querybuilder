@@ -62,7 +62,7 @@ if (celEvaluator) {
             parseNumbers: true,
           });
           const result = await celEvaluator({ data, cel, typemap: augmentedTypemap });
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           const expectedResult = data.filter((d: any) => fn(d));
           expect(result).toEqual(expectedResult.length > 0 ? expectedResult : null);
         });

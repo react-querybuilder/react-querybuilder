@@ -407,7 +407,7 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   );
 });
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable typescript/no-explicit-any */
 export interface UseRule extends RuleProps {
   classNames: {
     shiftActions: string;
@@ -450,7 +450,7 @@ export interface UseRule extends RuleProps {
   valueSourceOptions: ValueSourceOptions;
   valueSources: ValueSources;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
+/* oxlint-enable typescript/no-explicit-any */
 
 /**
  * Prepares all values and methods used by the {@link Rule} component.
@@ -593,7 +593,7 @@ export const useRule = (props: RuleProps): UseRule => {
   );
 
   const getChangeHandler = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, context?: any) => {
       if (!disabled) {
         onPropChange(prop, value, path, context);

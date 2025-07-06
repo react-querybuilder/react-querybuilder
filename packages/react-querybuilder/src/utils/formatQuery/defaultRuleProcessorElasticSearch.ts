@@ -13,7 +13,7 @@ type RangeRule = (
 ) & { [k in RangeOperator]?: string | number };
 type ElasticSearchRule =
   | { range: Record<string, RangeRule> }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   | { term: Record<string, any> }
   | { exists: { field: string } }
   | { regexp: { [k: string]: { value: string } } };
@@ -59,7 +59,7 @@ const getTextScript = (f: string, o: Lowercase<DefaultOperatorName>, v: string) 
   return o.startsWith('d') ? `!${script}` : script;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const valueRenderer = (v: any, parseNumbers?: boolean) =>
   typeof v === 'boolean'
     ? v

@@ -13,7 +13,7 @@ export const defaultDragHandleProps: DragHandleProps = {
 
 export const testDragHandle = (
   DragHandle: React.ForwardRefExoticComponent<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     DragHandleProps & React.RefAttributes<any>
   >
 ): void => {

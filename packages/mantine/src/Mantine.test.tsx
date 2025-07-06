@@ -33,7 +33,7 @@ const theme = createTheme({
   respectReducedMotion: true,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <MantineProvider theme={theme}>
@@ -136,7 +136,7 @@ describe('MantineValueSelector', () => {
       <MantineValueSelector
         {...props}
         testID={TestID.fields}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         options={optGroup as any}
         handleOnChange={handleOnChange}
       />

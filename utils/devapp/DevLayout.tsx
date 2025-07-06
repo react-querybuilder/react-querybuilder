@@ -17,7 +17,7 @@ import type { DemoOption, DemoOptions } from './types';
 import type { useDevApp } from './useDevApp';
 import { generatePermalinkHash, optionsReducer } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const parserMap: Record<string, any> = {
   sql: parseSQL,
   cel: parseCEL,

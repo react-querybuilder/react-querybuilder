@@ -276,7 +276,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleAdd = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (rule: R, parentPath: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -313,7 +313,7 @@ export function useQueryBuilderSchema<
   );
 
   const onGroupAdd = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (ruleGroup: RG, parentPath: Path, context?: any) => {
       if (parentPath.length >= maxLevels) return;
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
@@ -358,7 +358,7 @@ export function useQueryBuilderSchema<
   );
 
   const onPropChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (prop: UpdateableProperties, value: any, path: Path) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
       // istanbul ignore if
@@ -395,7 +395,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleOrGroupRemove = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (path: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -422,7 +422,7 @@ export function useQueryBuilderSchema<
   );
 
   const moveRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -468,7 +468,7 @@ export function useQueryBuilderSchema<
   );
 
   const groupRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if

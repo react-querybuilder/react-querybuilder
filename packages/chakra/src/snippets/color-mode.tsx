@@ -37,7 +37,6 @@ export function ColorModeIcon(): React.JSX.Element {
   return colorMode === 'light' ? <LuSun /> : <LuMoon />;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
 
 const skeletonFallback = <Skeleton boxSize="8" />;

@@ -34,7 +34,7 @@ export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
 export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^["']?%+["']?$/.test(sqlExpr.value);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const getParamString = (param: any): string => {
   switch (typeof param) {
     case 'number':
@@ -77,7 +77,7 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
 export const evalSQLLiteralValue = (
   valueObj: SQLLiteralValue | SQLSignedNumberValue,
   { bigIntOnOverflow }: ParseSQLOptions = {}
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any => {
   if (valueObj.type === 'String') {
     const valueString: string = valueObj.value;

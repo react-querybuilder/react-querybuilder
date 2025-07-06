@@ -7,7 +7,7 @@ import type { DragHandleProps } from 'react-querybuilder';
 /**
  * @group Props
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type AntDDragHandleProps = DragHandleProps & { label?: any } & ComponentPropsWithRef<
     typeof HolderOutlined
   >;

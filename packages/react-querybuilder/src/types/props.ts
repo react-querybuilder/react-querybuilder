@@ -170,7 +170,7 @@ export interface Classnames {
  *
  * @group Props
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable typescript/no-explicit-any */
 export interface QueryActions {
   onGroupAdd(group: RuleGroupTypeAny, parentPath: Path, context?: any): void;
   onGroupRemove(path: Path): void;
@@ -185,4 +185,4 @@ export interface QueryActions {
   moveRule(oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any): void;
   groupRule(sourcePath: Path, targetPath: Path, clone?: boolean, context?: any): void;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
+/* oxlint-enable typescript/no-explicit-any */

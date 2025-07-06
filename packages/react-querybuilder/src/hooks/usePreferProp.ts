@@ -22,7 +22,7 @@ export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): 
  *
  * @group Hooks
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any): any =>
   prop !== undefined && prop != null
     ? prop

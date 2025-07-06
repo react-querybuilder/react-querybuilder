@@ -38,14 +38,14 @@ export const splitBy = (str?: string, splitChar: string = defaultJoinChar): stri
  * // would return
  * 'this\\,\\,that, , the other, , , \\,'
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const joinWith = (strArr: any[], joinChar: string = defaultJoinChar): string =>
   strArr.map(str => `${str ?? ''}`.replaceAll(joinChar[0], `\\${joinChar[0]}`)).join(joinChar);
 
 /**
  * Trims the value if it is a string. Otherwise returns the value as is.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const trimIfString = (val: any): any => (typeof val === 'string' ? val.trim() : val);
 
 /**
@@ -53,10 +53,10 @@ export const trimIfString = (val: any): any => (typeof val === 'string' ? val.tr
  * any string elements are trimmed.
  */
 export const toArray = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   v: any,
   { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any[] =>
   Array.isArray(v)
     ? v.map(v => trimIfString(v))

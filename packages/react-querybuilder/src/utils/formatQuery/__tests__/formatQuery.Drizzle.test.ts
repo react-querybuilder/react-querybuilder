@@ -26,7 +26,7 @@ function sqlStub(...x: unknown[]) {
 }
 sqlStub.raw = () => 'raw sql';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const drizzleOperators: any = {
   and: operatorStub,
   between: operatorStub,
@@ -111,7 +111,7 @@ it('bails on invalid operator', () => {
 
 it('bails when either columns or drizzle operators are not found', () => {
   expect(formatQuery(query, 'drizzle')({}, drizzleOperators)).toBeUndefined();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   expect(formatQuery(query, 'drizzle')(fields, null as any)).toBeUndefined();
   expect(
     defaultRuleProcessorDrizzle(

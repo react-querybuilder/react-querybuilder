@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* oxlint-disable typescript/no-require-imports */
 import colors from 'tailwindcss/colors';
 
 /** @type {import('tailwindcss').Config} */

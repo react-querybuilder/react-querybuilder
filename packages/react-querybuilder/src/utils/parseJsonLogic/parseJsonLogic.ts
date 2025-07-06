@@ -50,7 +50,7 @@ import {
  * Options object for {@link parseJsonLogic}.
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny | false>;
 }
 
@@ -180,7 +180,7 @@ function parseJsonLogic(
     let rule: DefaultRuleType | false = false;
     let field = '';
     let operator: DefaultOperatorName = '=';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let value: any = '';
     let valueSource: ValueSource | undefined = undefined;
 
@@ -242,7 +242,7 @@ function parseJsonLogic(
         mode: isJsonLogicNone(logic) ? 'none' : isJsonLogicSome(logic) ? 'some' : 'all',
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       const [{ var: field }, operation] = (logic as any)[match.mode];
       const matcher = processLogic(operation);
 

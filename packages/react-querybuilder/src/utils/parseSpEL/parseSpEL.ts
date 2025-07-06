@@ -35,7 +35,6 @@ import {
 /**
  * Options object for {@link parseSpEL!parseSpEL}.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseSpELOptions extends ParserCommonOptions {}
 
 /**
@@ -222,7 +221,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         }
       }
     } else if (isSpELBetweenValues(expr) || isSpELBetweenFields(expr)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       let values: [any, any] = [null, null];
       let valueSource: ValueSource | undefined = undefined;
       const [
@@ -252,7 +251,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       }
     } else if (isSpELRelationOp(expr)) {
       let field: string | null = null;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       let value: any = undefined;
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;

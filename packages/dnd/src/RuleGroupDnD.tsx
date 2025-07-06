@@ -88,7 +88,6 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     groupModeModifierKey,
   });
 
-  // eslint-disable-next-line react-compiler/react-compiler
   const [{ isOver, dropMonitorId, dropEffect, groupItems }, drop] = useDrop<
     DraggedItem,
     DropResult,

@@ -523,7 +523,7 @@ it('handles operator case variations', () => {
 it.todo(
   'handles custom fallbackExpression correctly'
   // , () => {
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   // oxlint-disable-next-line typescript/no-explicit-any
   //   const fallbackExpression: any = { fallback: true };
   //   const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
   //   testBoth(queryToTest, fallbackExpression, { fallbackExpression });

@@ -40,9 +40,9 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   const { processedParams = [] } = meta ?? {};
 
   const parameterized = format === 'parameterized';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const params: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const paramsNamed: Record<string, any> = {};
 
   const finalize = (sql: string) =>

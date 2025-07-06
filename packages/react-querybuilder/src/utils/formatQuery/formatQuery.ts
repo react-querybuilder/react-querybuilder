@@ -263,7 +263,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'elasticsearch' | (FormatQueryOptions & { format: 'elasticsearch' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a MongoDB query object from an RQB query object.
@@ -276,7 +276,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'mongodb_query' | (FormatQueryOptions & { format: 'mongodb_query' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a JSON.stringify'd MongoDB query object from an RQB query object.
@@ -300,7 +300,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'prisma' | (FormatQueryOptions & { format: 'prisma' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a Drizzle ORM query function from an RQB query object. The function can

@@ -205,7 +205,7 @@ export const queryWithMatchModes: DefaultRuleGroupType = {
       value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
       match: { mode: 'exactly', threshold: -1 },
     },
-    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* oxlint-disable typescript/no-explicit-any */
     {
       field: 'fs',
       operator: '=',
@@ -230,7 +230,7 @@ export const queryWithMatchModes: DefaultRuleGroupType = {
       value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
       match: { mode: 'exactly' as any },
     },
-    /* eslint-enable @typescript-eslint/no-explicit-any */
+    /* oxlint-enable typescript/no-explicit-any */
     {
       field: 'fs',
       operator: '=',

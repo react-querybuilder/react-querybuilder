@@ -188,9 +188,9 @@ export const useMergedContext = <
   const mergeControlElement = useCallback(
     (
       name: keyof Controls<F, O>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       propComp: ComponentType<any> | null | undefined,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       contextComp: ComponentType<any> | null | undefined
     ) => {
       const nc = name === 'dragHandle' ? nullFwdComp : nullComp;

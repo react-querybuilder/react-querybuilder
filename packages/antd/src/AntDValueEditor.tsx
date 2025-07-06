@@ -193,7 +193,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     case 'date':
     case 'datetime-local': {
       if (operator === 'between' || operator === 'notBetween') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const dayjsArray = valueAsArray.slice(0, 2).map((v: any) => dayjs(v)) as [Dayjs, Dayjs];
         return (
           <DatePicker.RangePicker

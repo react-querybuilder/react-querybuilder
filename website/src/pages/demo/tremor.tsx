@@ -1,4 +1,4 @@
-/* oxlint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderTremor } from '@react-querybuilder/tremor';

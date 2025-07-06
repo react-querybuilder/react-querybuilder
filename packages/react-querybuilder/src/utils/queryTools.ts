@@ -115,7 +115,7 @@ export interface UpdateOptions {
   /**
    * Gets the default value for a given rule, in case the value needs to be reset.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   getRuleDefaultValue?: (rule: RuleType) => any;
   /**
    * Determines the valid match modes for a given field.
@@ -134,7 +134,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   /** The name of the property to update. */
   prop: UpdateableProperties,
   /** The new value of the property. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
   /** The path or ID of the rule or group to update. */
   pathOrID: Path | string,
@@ -441,7 +441,7 @@ export const move = <RG extends RuleGroupTypeAny>(
      * This function 1) glosses over the need for type assertions to splice directly
      * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const insertRuleOrGroup = (...args: any[]) =>
       parentToInsertInto.rules.splice(newIndex, 0, ...args);
 
@@ -544,7 +544,7 @@ export const insert = <RG extends RuleGroupTypeAny>(
      * This function 1) glosses over the need for type assertions to splice directly
      * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const insertRuleOrGroup = (idx: number, ...args: any[]) =>
       parentToInsertInto.rules.splice(idx, replace ? args.length : 0, ...args);
 
@@ -687,10 +687,10 @@ export const group = <RG extends RuleGroupTypeAny>(
           : {
               combinator: getFirstOption(combinators),
               rules: [targetRuleOrGroup, sourceRuleOrGroup],
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // oxlint-disable-next-line typescript/no-explicit-any
             }) as any,
         { idGenerator }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
       ) as any
     );
   });

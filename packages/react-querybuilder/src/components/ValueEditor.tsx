@@ -222,7 +222,7 @@ export interface UseValueEditor {
    * Array of values for when the main value represents a list, e.g. when operator
    * is "between" or "in".
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   valueAsArray: any[];
   /**
    * An update handler for a series of value editors, e.g. when operator is "between".
@@ -323,7 +323,7 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
   );
 
   const multiValueHandler = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (val: any, idx: number) => {
       const v = produce(valueAsArray, va => {
         va[idx] = parseNumber(val, { parseNumbers: parseNumberMethod });

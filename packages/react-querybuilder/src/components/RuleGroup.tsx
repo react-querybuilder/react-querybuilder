@@ -385,7 +385,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
   );
 });
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable typescript/no-explicit-any */
 export interface UseRuleGroup extends RuleGroupProps {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
@@ -419,7 +419,7 @@ export interface UseRuleGroup extends RuleGroupProps {
   validationClassName: string;
   validationResult: boolean | ValidationResult;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
+/* oxlint-enable typescript/no-explicit-any */
 
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.
@@ -583,7 +583,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const onIndependentCombinatorChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (value: any, index: number, _context?: any) => {
       if (!disabled) {
         onPropChange('combinator', value, [...path, index]);
@@ -593,7 +593,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const onNotToggleChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (checked: boolean, _context?: any) => {
       if (!disabled) {
         onPropChange('not', checked, path);
@@ -630,7 +630,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   }, [disabled, moveRule, path]);
 
   const shiftGroupUp = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftUpDisabled) {
         moveRule(path, 'up', event?.altKey);
@@ -640,7 +640,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const shiftGroupDown = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftDownDisabled) {
         moveRule(path, 'down', event?.altKey);

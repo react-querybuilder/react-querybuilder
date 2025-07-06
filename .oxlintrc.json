@@ -8,9 +8,11 @@
     "perf": "warn"
   },
   "rules": {
+    "@typescript-eslint/ban-ts-comment": "error",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
@@ -22,7 +24,7 @@
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/no-unstable-nested-components": "error",
-    // TODO: enable this when oxlint plugin is available
+    // TODO?: enable this when oxlint plugin is available
     // "react-compiler/react-compiler": "error",
     "unicorn/catch-error-name": "off",
     "unicorn/consistent-function-scoping": "off",

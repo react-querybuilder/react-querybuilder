@@ -89,7 +89,7 @@ it('works for basic relations', () => {
 it.each([
   { t: testParseJSONata, w: wrapRule, rgt: '' },
   { t: testParseJSONataIC, w: wrapRuleIC, rgt: ' (ic)' },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ])('compacts "between" rule groups$rgt', ({ t, w }: any) => {
   t('f1 >= 0 and f1 <= 1', w({ field: 'f1', operator: 'between', value: [0, 1] }));
   t('f1 <= 1 and f1 >= 0', w({ field: 'f1', operator: 'between', value: [0, 1] }));

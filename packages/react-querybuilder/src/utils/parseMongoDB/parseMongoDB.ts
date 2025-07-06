@@ -72,7 +72,7 @@ export interface ParseMongoDbOptions extends ParserCommonOptions {
     (
       field: string,
       operator: string,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       value: any,
       options: ParserCommonOptions
     ) => RuleType | RuleGroupType
@@ -86,7 +86,7 @@ const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
  * for the {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGroupType;
 /**
  * Converts a MongoDB query object or parseable string into a query suitable
@@ -94,7 +94,7 @@ function parseMongoDB(mongoDbRules: string | Record<string, any>): DefaultRuleGr
  * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
  */
 function parseMongoDB(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   mongoDbRules: string | Record<string, any>,
   options: Except<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators?: false;
@@ -106,14 +106,14 @@ function parseMongoDB(
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
 function parseMongoDB(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   mongoDbRules: string | Record<string, any>,
   options: Except<ParseMongoDbOptions, 'independentCombinators'> & {
     independentCombinators: true;
   }
 ): DefaultRuleGroupTypeIC;
 function parseMongoDB(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   mongoDbRules: string | Record<string, any>,
   options: ParseMongoDbOptions = {}
 ): DefaultRuleGroupTypeAny {
@@ -140,11 +140,11 @@ function parseMongoDB(
   function processMongoDbQueryBooleanOperator(
     field: string,
     mdbOperator: MongoDbSupportedOperators,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     keyValue: any
   ): DefaultRuleType | false {
     let operator: DefaultOperatorName = '=';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let value: any = '';
 
     // istanbul ignore else
@@ -215,7 +215,7 @@ function parseMongoDB(
 
   function processMongoDbQueryObjectKey(
     key: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     keyValue: any
   ): DefaultRuleType | DefaultRuleGroupType | false {
     let field = '';
@@ -434,7 +434,7 @@ function parseMongoDB(
   }
 
   function processMongoDbQueryObject(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     mongoDbQueryObject: Record<string, any>
   ): DefaultRuleGroupType | DefaultRuleType | false {
     const rules = objectKeys(mongoDbQueryObject)
@@ -459,7 +459,7 @@ function parseMongoDB(
     return prepare(emptyRuleGroup);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const result = processMongoDbQueryObject(mongoDbPOJO as Record<string, any>);
   const finalQuery: DefaultRuleGroupType = result
     ? isRuleGroupType(result)

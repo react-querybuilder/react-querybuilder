@@ -19,7 +19,7 @@ export type Path = number[];
  * keys are classnames and those with truthy values will be included.
  * Suitable for passing to the `clsx` package.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type Classname = string | string[] | Record<string, any>;
 
 /**
@@ -104,9 +104,9 @@ export interface MatchConfig {
 export type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly';
 export type MatchModeOptions = StringUnionToFullOptionArray<MatchMode>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type ActionElementEventHandler = (event?: any, context?: any) => void;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type ValueChangeEventHandler = (value?: any, context?: any) => void;
 
 /**
@@ -129,7 +129,7 @@ interface BaseFullField<
   /** Properties of items in the value. */
   subproperties?: FlexibleOptionList<FullField>;
   defaultOperator?: OperatorName;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;

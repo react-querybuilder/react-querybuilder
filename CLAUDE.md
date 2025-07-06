@@ -35,7 +35,7 @@ bun run build
 - `bun run test` - Run all tests (Bun tests + Jest)
   - Always include the "run" part of this command to run Jest tests&mdash;`bun test` doesn't run the "test" script in `package.json`
 - `bun typecheck` - TypeScript checking across all packages
-- `bun lint` - ESLint + Oxlint checking
+- `bun lint` - Oxlint checking
 - `bun pretty-print` - Prettier formatting
   - Run this command from the root of the repository after any changes to ensure correct formatting
 
@@ -249,7 +249,7 @@ import { generateID, isRuleGroup } from '../utils';
 
 **Recommended extensions:**
 
-- ESLint
+- Oxc
 - Prettier
 - TypeScript
 - SCSS IntelliSense
@@ -257,7 +257,6 @@ import { generateID, isRuleGroup } from '../utils';
 **Settings:**
 
 - Format on save with Prettier
-- Auto-fix ESLint errors
 - TypeScript strict mode
 - Show inline type hints
 

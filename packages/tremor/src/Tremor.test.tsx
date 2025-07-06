@@ -74,7 +74,7 @@ const valueEditorAsSelectProps: ValueEditorProps = {
 const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any
 ) => {
   const testValues = toFullOptionList(props.values ?? props.options) as FullOption[];

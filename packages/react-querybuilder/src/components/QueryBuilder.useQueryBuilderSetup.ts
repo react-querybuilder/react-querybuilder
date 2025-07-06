@@ -36,7 +36,7 @@ import {
   uniqOptList,
 } from '../utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
   const firstOption = getFirstOption(opts);
 
@@ -71,7 +71,7 @@ export type UseQueryBuilderSetup<
     | OptionGroup<WithUnknownIndex<BaseOption<string> & FullOption>>[];
   getRuleDefaultValue: <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
     r: RT
-  ) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   createRuleGroup: (independentCombinators?: boolean) => RG;
 } & RemoveNullability<{
@@ -277,7 +277,7 @@ export const useQueryBuilderSetup = <
 
   const getSubQueryBuilderPropsMain = useCallback(
     (field: FieldName, misc: { fieldData: F }): Record<string, unknown> =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       getSubQueryBuilderProps?.(field, misc) ?? ({} as any),
     [getSubQueryBuilderProps]
   );

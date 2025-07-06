@@ -20,10 +20,10 @@ export interface ParseNumberOptions {
  * as-is regardless of the `parseNumbers` option.
  */
 export const parseNumber = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   val: any,
   { parseNumbers, bigIntOnOverflow }: ParseNumberOptions = {}
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any => {
   if (!parseNumbers || typeof val === 'bigint' || typeof val === 'number') {
     return val;

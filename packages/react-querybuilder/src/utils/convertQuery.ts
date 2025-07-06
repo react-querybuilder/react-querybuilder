@@ -19,7 +19,7 @@ const generateRuleGroupICWithConsistentCombinators = (
 ): RuleGroupTypeIC => {
   const baseCombinator = combinatorLevels[baseCombinatorLevel];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   if (!rg.rules.includes(baseCombinator as any)) {
     // No instances of this combinator, so group based on the next
     // combinator level if at least two levels remain
@@ -48,7 +48,7 @@ const generateRuleGroupICWithConsistentCombinators = (
           cursor,
           draft.rules.length,
           generateRuleGroupICWithConsistentCombinators(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // oxlint-disable-next-line typescript/no-explicit-any
             { rules: draft.rules.slice(cursor) as any },
             baseCombinatorLevel + 1
           )
@@ -60,7 +60,7 @@ const generateRuleGroupICWithConsistentCombinators = (
           cursor,
           nextBaseCombinatorIndex - cursor,
           generateRuleGroupICWithConsistentCombinators(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // oxlint-disable-next-line typescript/no-explicit-any
             { rules: draft.rules.slice(cursor, nextBaseCombinatorIndex) as any },
             baseCombinatorLevel + 1
           )

@@ -17,7 +17,7 @@ const f6: FullField = toFullOption({ name: 'f', label: 'FullField', matchModes: 
 const f7: FullField = toFullOption({
   name: 'f4',
   label: 'F4',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   matchModes: ['custom', 'matchmode'] as any[],
 });
 

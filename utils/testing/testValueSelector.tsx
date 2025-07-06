@@ -25,7 +25,7 @@ export const defaultValueSelectorProps: ValueSelectorProps = {
 export const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any,
   skip: ValueSelectorTestsToSkip = {}
 ): void => {

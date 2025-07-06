@@ -34,7 +34,7 @@ const getSourceLink = (filePath: string, start?: number, end?: number) => {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const remarkPluginImport = () => async (ast: any, vfile: any) => {
   visit(ast, 'paragraph', node => {
     if (node.children?.length > 0 && node.children[0].type === 'text') {

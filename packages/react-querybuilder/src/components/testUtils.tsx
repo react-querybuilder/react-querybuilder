@@ -43,7 +43,7 @@ const Wrapper = ({ children }: React.PropsWithChildren) => {
 export const render = (
   ui: React.ReactElement,
   renderOptions: RenderOptions = {}
-  // oxlint-disable-next-line @typescript-eslint/consistent-type-imports
+  // oxlint-disable-next-line typescript/consistent-type-imports
 ): RenderResult<typeof import('@testing-library/dom/types/queries'), HTMLElement, HTMLElement> =>
   og_render(ui, { wrapper: Wrapper, ...renderOptions });
 
