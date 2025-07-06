@@ -979,8 +979,8 @@ describe('parseNumbers prop', () => {
   const inputTypeNumberAllowedAsNum = typedValuesArray.map(s =>
     /^\d+$/.test(s) ? Number.parseInt(s) : ''
   );
-  const six1214s = Array.from<number>({ length: 6 }).fill(1214);
-  const six1214strings = Array.from<string>({ length: 6 }).fill('1214');
+  const six1214s = new Array<number>(6).fill(1214);
+  const six1214strings = new Array<string>(6).fill('1214');
   const all1214sNoSpace = ['', ...six1214s];
   const all1214sWithSpace = [' ', ...six1214s];
   const all1214stringsNoSpace = ['', ...six1214strings];

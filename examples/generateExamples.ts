@@ -189,14 +189,16 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       }
     }
   }
-  for (const depKey of exampleConfig.dependencyKeys) {
+  if (exampleConfig.dependencyKeys.length > 0) {
     const compatPkgJson: PackageJSON = await Bun.file(
       path.join(packagesPath, `${exampleID}/package.json`)
     ).json();
-    if (Array.isArray(depKey)) {
-      examplePkgJSON.dependencies[depKey[0]] = depKey[1];
-    } else {
-      examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
+    for (const depKey of exampleConfig.dependencyKeys) {
+      if (Array.isArray(depKey)) {
+        examplePkgJSON.dependencies[depKey[0]] = depKey[1];
+      } else {
+        examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
+      }
     }
   }
   toWrite.push(

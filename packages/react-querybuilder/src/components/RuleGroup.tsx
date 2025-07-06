@@ -13,6 +13,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
+  ShiftActionsProps,
   ValidationResult,
   ValueChangeEventHandler,
 } from '../types';
@@ -134,6 +135,27 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
     [rg.path, rg.disabled, rg.context, rg.validationResult, rg.schema, rg.ruleGroup]
   );
 
+  const shiftTitles = useMemo(
+    (): ShiftActionsProps['titles'] =>
+      rg.schema.showShiftActions
+        ? {
+            shiftUp: rg.translations.shiftActionUp.title,
+            shiftDown: rg.translations.shiftActionDown.title,
+          }
+        : undefined,
+    [rg.schema.showShiftActions, rg.translations]
+  );
+  const shiftLabels = useMemo(
+    (): ShiftActionsProps['labels'] =>
+      rg.schema.showShiftActions
+        ? {
+            shiftUp: rg.translations.shiftActionUp.label,
+            shiftDown: rg.translations.shiftActionDown.label,
+          }
+        : undefined,
+    [rg.schema.showShiftActions, rg.translations]
+  );
+
   return (
     <Fragment>
       {rg.schema.showShiftActions && rg.path.length > 0 && (
@@ -141,14 +163,8 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           key={TestID.shiftActions}
           {...commonSubcomponentProps}
           testID={TestID.shiftActions}
-          titles={{
-            shiftUp: rg.translations.shiftActionUp.title,
-            shiftDown: rg.translations.shiftActionDown.title,
-          }}
-          labels={{
-            shiftUp: rg.translations.shiftActionUp.label,
-            shiftDown: rg.translations.shiftActionDown.label,
-          }}
+          titles={shiftTitles}
+          labels={shiftLabels}
           className={rg.classNames.shiftActions}
           shiftUp={rg.shiftGroupUp}
           shiftDown={rg.shiftGroupDown}
@@ -313,6 +329,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
                 value={r}
                 title={rg.translations.combinators.title}
                 className={rg.classNames.combinators}
+                // oxlint-disable-next-line jsx-no-new-function-as-prop
                 handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
                 rules={rg.ruleGroup.rules}
                 level={rg.path.length}

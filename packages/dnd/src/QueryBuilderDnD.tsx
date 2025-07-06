@@ -9,6 +9,7 @@ import {
   usePreferProp,
 } from 'react-querybuilder';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
+import { isTouchDevice } from './isTouchDevice';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
@@ -18,7 +19,8 @@ import type {
   QueryBuilderDndProps,
   UseReactDnD,
 } from './types';
-import { isTouchDevice } from './isTouchDevice';
+
+const emptyObject = {} as UseReactDnD;
 
 /**
  * Context provider to enable drag-and-drop. If the application already implements
@@ -52,13 +54,20 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
   const dnd = useReactDnD(props.dnd);
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
-  const { DndProvider, ReactDndBackend } = dnd ?? {};
+  const { DndProvider, ReactDndBackend } = dnd ?? emptyObject;
+
+  const contextWithoutDnD = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
+    [rqbContext, debugMode]
+  );
+  const contextWithDnD = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop, debugMode }),
+    [rqbContext, debugMode, enableDragAndDrop]
+  );
 
   if (!enableDragAndDrop || !dnd || !DndProvider || !ReactDndBackend) {
     return (
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={contextWithoutDnD}>
         {props.children}
       </QueryBuilderContext.Provider>
     );
@@ -66,9 +75,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
 
   return (
     <DndProvider key={key} backend={ReactDndBackend} debugMode={debugMode}>
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={contextWithDnD}>
         <QueryBuilderDndWithoutProvider
           dnd={dnd}
           canDrop={canDrop}
@@ -160,11 +167,14 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop]
   );
 
+  const contextWithoutDnD = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
+    [rqbContext, debugMode]
+  );
+
   if (!enableDragAndDrop || !DndContext) {
     return (
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={contextWithoutDnD}>
         {props.children}
       </QueryBuilderContext.Provider>
     );

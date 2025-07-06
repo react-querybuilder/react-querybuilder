@@ -1,6 +1,6 @@
 'use client';
 
-import type { IconButtonProps } from '@chakra-ui/react';
+import type { IconButtonProps, SystemStyleObject } from '@chakra-ui/react';
 import { ClientOnly, IconButton, Skeleton } from '@chakra-ui/react';
 import type { ThemeProviderProps } from 'next-themes';
 import { ThemeProvider, useTheme } from 'next-themes';
@@ -42,6 +42,8 @@ interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
 
 const skeletonFallback = <Skeleton boxSize="8" />;
 
+const css: SystemStyleObject = { _icon: { width: 5, height: 5 } };
+
 export const ColorModeButton: React.ForwardRefExoticComponent<
   ColorModeButtonProps & React.RefAttributes<HTMLButtonElement>
 > = React.forwardRef<HTMLButtonElement, ColorModeButtonProps>(function ColorModeButton(props, ref) {
@@ -55,7 +57,7 @@ export const ColorModeButton: React.ForwardRefExoticComponent<
         size="sm"
         ref={ref}
         {...props}
-        css={{ _icon: { width: '5', height: '5' } }}>
+        css={css}>
         <ColorModeIcon />
       </IconButton>
     </ClientOnly>

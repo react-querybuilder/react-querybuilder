@@ -20,6 +20,7 @@ import type {
   RuleGroupType,
   RuleProps,
   RuleType,
+  ShiftActionsProps,
   TranslationsFull,
   ValidationResult,
   ValueChangeEventHandler,
@@ -155,6 +156,27 @@ export const RuleComponents: React.MemoExoticComponent<
     [r.schema.fields]
   );
 
+  const shiftTitles = useMemo(
+    (): ShiftActionsProps['titles'] =>
+      r.schema.showShiftActions
+        ? {
+            shiftUp: r.translations.shiftActionUp.title,
+            shiftDown: r.translations.shiftActionDown.title,
+          }
+        : undefined,
+    [r.schema.showShiftActions, r.translations]
+  );
+  const shiftLabels = useMemo(
+    (): ShiftActionsProps['labels'] =>
+      r.schema.showShiftActions
+        ? {
+            shiftUp: r.translations.shiftActionUp.label,
+            shiftDown: r.translations.shiftActionDown.label,
+          }
+        : undefined,
+    [r.schema.showShiftActions, r.translations]
+  );
+
   return (
     <React.Fragment>
       {r.schema.showShiftActions && (
@@ -162,14 +184,8 @@ export const RuleComponents: React.MemoExoticComponent<
           key={TestID.shiftActions}
           {...commonSubcomponentProps}
           testID={TestID.shiftActions}
-          titles={{
-            shiftUp: r.translations.shiftActionUp.title,
-            shiftDown: r.translations.shiftActionDown.title,
-          }}
-          labels={{
-            shiftUp: r.translations.shiftActionUp.label,
-            shiftDown: r.translations.shiftActionDown.label,
-          }}
+          titles={shiftTitles}
+          labels={shiftLabels}
           className={r.classNames.shiftActions}
           ruleOrGroup={r.rule}
           shiftUp={r.shiftRuleUp}
@@ -359,21 +375,34 @@ export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   const removeGroup = useStopEventPropagation(subQuery.removeGroup);
   const shiftGroupUp = useStopEventPropagation(subQuery.shiftGroupUp);
   const shiftGroupDown = useStopEventPropagation(subQuery.shiftGroupDown);
+  const memoizedSubQuery = useMemo(
+    () => ({
+      ...subQuery,
+      addGroup,
+      addRule,
+      cloneGroup,
+      removeGroup,
+      shiftGroupDown,
+      shiftGroupUp,
+      toggleLockGroup,
+    }),
+    [
+      addGroup,
+      addRule,
+      cloneGroup,
+      removeGroup,
+      shiftGroupDown,
+      shiftGroupUp,
+      subQuery,
+      toggleLockGroup,
+    ]
+  );
 
   return (
     <RuleComponents
       {...r}
       groupComponentsWrapper={r.groupComponentsWrapper ?? RuleWithSubQueryGroupComponentsWrapper}
-      subQuery={{
-        ...subQuery,
-        addRule,
-        addGroup,
-        cloneGroup,
-        toggleLockGroup,
-        removeGroup,
-        shiftGroupUp,
-        shiftGroupDown,
-      }}
+      subQuery={memoizedSubQuery}
     />
   );
 });

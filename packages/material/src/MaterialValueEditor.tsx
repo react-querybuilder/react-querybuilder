@@ -64,8 +64,6 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     TextField,
   } = useMemo(() => (muiComponents ?? {}) as RQBMaterialComponents, [muiComponents]);
 
-  const radioControl = useMemo(() => <Radio />, [Radio]);
-
   if (!muiComponents) {
     return <ValueEditor skipHook key={masterKey} {...propsForValueEditor} />;
   }
@@ -202,7 +200,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
                 key={v.name}
                 disabled={disabled}
                 value={v.name}
-                control={radioControl}
+                // oxlint-disable-next-line jsx-no-jsx-as-prop
+                control={<Radio />}
                 name={v.name}
                 label={v.label}
               />

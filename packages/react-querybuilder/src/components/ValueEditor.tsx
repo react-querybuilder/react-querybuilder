@@ -6,26 +6,27 @@ import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps 
 import { getFirstOption, getParseNumberMethod, joinWith, parseNumber, toArray } from '../utils';
 import clsx from '../utils/clsx';
 
-// Extracted from callback so we can use `useId`
-const RadioButton = (props: {
+interface RadioButtonProps {
   name: string;
   disabled?: boolean;
   checked: boolean;
-  handleOnChange: (v: string) => void;
+  handleOnChange: (v: unknown) => void;
   label: string;
-}) => {
+}
+// Extracted from callback so we can use `useId`
+const RadioButton = ({ name, disabled, checked, label, handleOnChange }: RadioButtonProps) => {
   const id = React.useId();
   return (
     <label htmlFor={id}>
       <input
         id={id}
         type="radio"
-        value={props.name}
-        disabled={props.disabled}
-        checked={props.checked}
-        onChange={e => props.handleOnChange(e.target.value)}
+        value={name}
+        disabled={disabled}
+        checked={checked}
+        onChange={e => handleOnChange(e.target.value)}
       />
-      {props.label}
+      {label}
     </label>
   );
 };

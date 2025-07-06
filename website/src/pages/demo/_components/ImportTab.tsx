@@ -15,7 +15,7 @@ interface ImportModalProps {
 const fieldList = (
   <div>
     {fields.map((f, i) => (
-      <Fragment key={i}>
+      <Fragment key={f.name}>
         {i > 0 ? ', ' : ''}
         <code key={f.name}>{f.name}</code>
       </Fragment>

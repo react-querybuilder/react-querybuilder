@@ -6,7 +6,7 @@ export function c(size: number): unknown[] {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return React.useMemo<Array<unknown>>(
     () => {
-      const $ = Array.from({ length: size });
+      const $ = new Array(size);
       for (let ii = 0; ii < size; ii++) {
         $[ii] = $empty;
       }
