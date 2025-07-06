@@ -16,7 +16,7 @@ import type {
 import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { isRuleGroup } from '../isRuleGroup';
-import { numericRegex } from '../misc';
+import { isPojo, numericRegex } from '../misc';
 import { getOption } from '../optGroupUtils';
 import { parseNumber } from '../parseNumber';
 
@@ -332,3 +332,28 @@ export const getNLTranslataion = (
       )?.[1] ??
       defaultNLTranslations[key] ??
       /* istanbul ignore next */ '');
+
+/**
+ * "Replacer" method for JSON.stringify's second argument. Converts `bigint` values to
+ * objects with a `$bigint` property having a value of a string representation of
+ * the actual `bigint`-type value.
+ *
+ * Inverse of {@link bigIntJsonParseReviver}.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
+ */
+export const bigIntJsonStringifyReplacer = (_key: string, value: unknown): unknown =>
+  typeof value === 'bigint' ? { $bigint: value.toString() } : value;
+
+/**
+ * "Reviver" method for JSON.parse's second argument. Converts objects having a single
+ * `$bigint: string` property to an actual `bigint` value.
+ *
+ * Inverse of {@link bigIntJsonStringifyReplacer}.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
+ */
+export const bigIntJsonParseReviver = (_key: string, value: unknown): unknown =>
+  isPojo(value) && Object.keys(value).length === 1 && typeof value.$bigint === 'string'
+    ? BigInt(value.$bigint)
+    : value;

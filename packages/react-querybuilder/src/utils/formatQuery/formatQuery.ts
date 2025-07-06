@@ -58,7 +58,12 @@ import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
+import {
+  bigIntJsonStringifyReplacer,
+  getQuoteFieldNamesWithArray,
+  isValueProcessorLegacy,
+  numerifyValues,
+} from './utils';
 
 /**
  * @group Export
@@ -146,6 +151,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'validator'
   | 'valueProcessor'
   | 'placeholderValueName'
+  | 'parseNumbers'
 >;
 
 const defaultFormatQueryOptions = {
@@ -157,7 +163,6 @@ const defaultFormatQueryOptions = {
   paramPrefix: ':',
   paramsKeepPrefix: false,
   numberedParams: false,
-  parseNumbers: false,
   preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
@@ -298,7 +303,8 @@ function formatQuery(
 /**
  * Generates a JSONata query string from an RQB query object.
  *
- * NOTE: The `parseNumbers` option is recommended for this format.
+ * NOTE: Either `parseNumbers: "strict-limited"` or `parseNumbers: true`
+ * are recommended for this format.
  *
  * @group Export
  */
@@ -362,8 +368,14 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     context,
   } = optObj;
 
-  const getParseNumberBoolean = (inputType?: InputType | null) =>
-    !!getParseNumberMethod({ parseNumbers, inputType });
+  const getParseNumberBoolean = (inputType?: InputType | null): boolean | undefined => {
+    const parseNumberMethod = getParseNumberMethod({ parseNumbers, inputType });
+    return typeof parseNumberMethod === 'string'
+      ? true
+      : typeof parseNumbers === 'boolean'
+        ? parseNumbers
+        : undefined;
+  };
 
   const format = optObj.format.toLowerCase() as ExportFormat;
 
@@ -493,10 +505,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       if (format === 'json_without_ids') {
         return JSON.stringify(rg, (key, value) =>
           // Remove `id` and `path` keys; leave everything else unchanged.
-          key === 'id' || key === 'path' ? undefined : value
+          key === 'id' || key === 'path' ? undefined : bigIntJsonStringifyReplacer(key, value)
         );
       }
-      return JSON.stringify(rg, null, 2);
+      return JSON.stringify(rg, bigIntJsonStringifyReplacer, 2);
     }
 
     case 'sql':

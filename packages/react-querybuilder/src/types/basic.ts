@@ -82,6 +82,9 @@ export type InputType =
   | 'time'
   | 'url'
   | 'week'
+  // "bigint" is not supported by browsers directly, but it can
+  // be used to trigger alternate value editor functionality
+  | 'bigint'
   | (string & {});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
