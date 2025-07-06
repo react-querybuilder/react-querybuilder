@@ -25,7 +25,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
 ) => {
   const { field, operator, value, valueSource } = rule;
   // istanbul ignore next
-  const { parseNumbers = true, preserveValueOrder } = options;
+  const { parseNumbers, preserveValueOrder } = options;
 
   // Neither field-to-field comparisons nor match modes are supported in this format
   if (valueSource === 'field' || processMatchMode(rule)) return;
