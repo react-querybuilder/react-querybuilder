@@ -6,7 +6,7 @@
   "dependencies": {
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.8.0-alpha.0"
+    "react-querybuilder": "8.8.0-alpha.1"
   },
   "devDependencies": {
     "@types/react": "^19",
