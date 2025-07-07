@@ -12,6 +12,7 @@ import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
  * `validator` prop. It assumes that you want to validate groups, and has a no-op
  * for validating rules which you can replace with your own implementation.
  */
+// oxlint-disable-next-line consistent-function-scoping
 export const defaultValidator: QueryValidator = query => {
   const result: ValidationMap = {};
 
