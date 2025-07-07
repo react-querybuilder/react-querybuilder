@@ -47,12 +47,17 @@ export type ValueEditorType =
  */
 export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
-export type ValueSourceOptions = ToOptionArrays<ValueSources>;
+// export type ValueSourceOptions_CAN_BE_EMPTY = StringUnionToFullOptionArray<ValueSource>;
+// export type ValueSourceFlexibleOptions_CAN_BE_EMPTY = StringUnionToFlexibleOptionArray<ValueSource>;
 
+export type ValueSourceFlexibleOptions = ToFlexibleOptionArrays<ValueSources>;
+
+export type ValueSourceFullOptions = ToOptionArrays<ValueSources>;
 type ToOptionArrays<Sources extends readonly string[]> = Sources extends unknown
-  ? {
-      [K in keyof Sources]: { name: Sources[K]; value: Sources[K]; label: Sources[K] };
-    }
+  ? { [K in keyof Sources]: { name: Sources[K]; value: Sources[K]; label: string } }
+  : never;
+type ToFlexibleOptionArrays<Sources extends readonly string[]> = Sources extends unknown
+  ? { [K in keyof Sources]: FlexibleOption<Sources[K]> }
   : never;
 
 type WithOptionalClassName<T> = T & { className?: Classname };
@@ -122,7 +127,10 @@ interface BaseFullField<
   id?: string;
   operators?: FlexibleOptionList<OperatorObj>;
   valueEditorType?: ValueEditorType | ((operator: OperatorName) => ValueEditorType);
-  valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
+  valueSources?:
+    | ValueSources
+    | ValueSourceFlexibleOptions
+    | ((operator: OperatorName) => ValueSources | ValueSourceFlexibleOptions);
   inputType?: InputType | null;
   values?: FlexibleOptionList<ValueObj>;
   matchModes?: boolean | MatchMode[] | FlexibleOption<MatchMode>[];

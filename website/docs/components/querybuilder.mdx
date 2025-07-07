@@ -842,9 +842,11 @@ This function is invoked to get the type of [`ValueEditor`](./valueeditor) for t
 
 ### `getValueSources`
 
-`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources`;
+`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources | ValueSourceFullOptions`;
 
-This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
+This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). The array members can also be a `FlexibleOption` as long as the `name` and/or `value` are `"value"` or `"field"`, in the same pattern as the string-based configuration.
+
+If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
 
 `fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 

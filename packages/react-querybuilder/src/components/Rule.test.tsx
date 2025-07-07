@@ -18,7 +18,7 @@ import type {
   RuleType,
   ValidationResult,
   ValueSelectorProps,
-  ValueSources,
+  ValueSourceFullOptions,
 } from '../types';
 import { isFullOptionArray, toFullOption } from '../utils';
 import { clsx } from '../utils/clsx';
@@ -255,7 +255,10 @@ describe('locked rule', () => {
 });
 
 describe('valueSource', () => {
-  const valueSources: ValueSources = ['value', 'field'];
+  const valueSources: ValueSourceFullOptions = [
+    { name: 'value', value: 'value', label: 'value' },
+    { name: 'field', value: 'field', label: 'field' },
+  ];
   const fields = [
     {
       name: 'fvsa',
@@ -272,7 +275,7 @@ describe('valueSource', () => {
     { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
   ].map(o => toFullOption(o)) satisfies FullField[];
   const fieldMap = getFieldMapFromArray(fields);
-  const getValueSources = (): ValueSources => valueSources;
+  const getValueSources = (): ValueSourceFullOptions => valueSources;
 
   it('does not display value source selector by default', () => {
     render(<Rule {...getProps()} />);
@@ -300,7 +303,7 @@ describe('valueSource', () => {
 
   it('valueSources as array', () => {
     const props = getProps({
-      getValueSources: () => ['value'],
+      getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
       fields,
       fieldMap,
     });
@@ -313,7 +316,7 @@ describe('valueSource', () => {
 
   it('valueSources as function', () => {
     const props = getProps({
-      getValueSources: () => ['value'],
+      getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
       fields,
       fieldMap,
     });

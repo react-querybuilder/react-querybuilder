@@ -1,7 +1,16 @@
-import type { FullField, GetOptionIdentifierType, ValueSources } from '../types/index.noReact';
-import { toFullOption } from './optGroupUtils';
+import type {
+  FullField,
+  GetOptionIdentifierType,
+  ValueSourceFlexibleOptions,
+  ValueSourceFullOptions,
+  ValueSources,
+} from '../types/index.noReact';
+import { lc } from './misc';
+import { isFlexibleOptionArray, toFullOption, toFullOptionList } from './optGroupUtils';
 
-const defaultValueSourcesArray: ValueSources = ['value'];
+const defaultValueSourcesArray: ValueSourceFullOptions = [
+  { name: 'value', value: 'value', label: 'value' },
+];
 
 const dummyFD = {
   name: 'name',
@@ -14,7 +23,7 @@ const dummyFD = {
  * Utility function to get the value sources array for the given
  * field and operator. If the field definition does not define a
  * `valueSources` property, the `getValueSources` prop is used.
- * Returns `["value"]` by default.
+ * Returns `[FullOption<"value">]` by default.
  */
 export const getValueSourcesUtil = <F extends FullField, O extends string>(
   fieldData: F,
@@ -23,27 +32,44 @@ export const getValueSourcesUtil = <F extends FullField, O extends string>(
     field: GetOptionIdentifierType<F>,
     operator: O,
     misc: { fieldData: F }
-  ) => ValueSources
-): ValueSources => {
+  ) => ValueSources | ValueSourceFlexibleOptions
+): ValueSourceFullOptions => {
   // TypeScript doesn't allow it directly, but in practice
   // `fieldData` can end up being undefined or null. The nullish
   // coalescing assignment below avoids errors like
   // "TypeError: Cannot read properties of undefined (reading 'name')"
   const fd = fieldData ? toFullOption(fieldData) : /* istanbul ignore else */ dummyFD;
 
-  if (fd.valueSources) {
-    if (typeof fd.valueSources === 'function') {
-      return fd.valueSources(operator as O);
-    }
-    return fd.valueSources;
-  }
-  if (getValueSources) {
-    const vals = getValueSources(fd.value as GetOptionIdentifierType<F>, operator as O, {
-      fieldData: fd as F,
-    });
-    /* istanbul ignore else */
-    if (vals) return vals;
+  let valueSourcesNEW:
+    | false
+    | ValueSources
+    | ValueSourceFlexibleOptions
+    | ((operator: string) => ValueSources | ValueSourceFlexibleOptions) = fd.valueSources ?? false;
+
+  if (typeof valueSourcesNEW === 'function') {
+    valueSourcesNEW = valueSourcesNEW(operator as O);
   }
 
-  return defaultValueSourcesArray;
+  if (!valueSourcesNEW && getValueSources) {
+    valueSourcesNEW = getValueSources(fd.value as GetOptionIdentifierType<F>, operator as O, {
+      fieldData: fd as F,
+    });
+  }
+
+  if (!valueSourcesNEW) {
+    return defaultValueSourcesArray;
+  }
+
+  if (isFlexibleOptionArray(valueSourcesNEW)) {
+    return toFullOptionList(valueSourcesNEW as ValueSourceFullOptions) as ValueSourceFullOptions;
+  }
+
+  return valueSourcesNEW.map(
+    vs =>
+      defaultValueSourcesArray.find(dmm => dmm.value === lc(vs)) ?? {
+        name: vs,
+        value: vs,
+        label: vs,
+      }
+  ) as ValueSourceFullOptions;
 };

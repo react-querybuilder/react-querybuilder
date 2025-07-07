@@ -27,7 +27,7 @@ import type {
   TranslationsFull,
   UpdateableProperties,
   ValidationMap,
-  ValueSources,
+  ValueSourceFullOptions,
 } from '../types';
 import {
   add,
@@ -372,7 +372,10 @@ export function useQueryBuilderSchema<
         resetOnFieldChange,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
-        getValueSources: getValueSourcesMain as (field: string) => ValueSources,
+        getValueSources: getValueSourcesMain as (
+          field: string,
+          operator: string
+        ) => ValueSourceFullOptions,
         getRuleDefaultValue,
         getMatchModes: getMatchModesMain as (field: string) => MatchModeOptions,
       });

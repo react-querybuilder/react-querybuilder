@@ -25,7 +25,7 @@ import type {
   ValidationResult,
   ValueChangeEventHandler,
   ValueEditorType,
-  ValueSourceOptions,
+  ValueSourceFullOptions,
   ValueSources,
 } from '../types';
 import {
@@ -447,7 +447,7 @@ export interface UseRule extends RuleProps {
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
   values: FlexibleOptionList<Option<string>>;
-  valueSourceOptions: ValueSourceOptions;
+  valueSourceOptions: ValueSourceFullOptions;
   valueSources: ValueSources;
 }
 /* oxlint-enable typescript/no-explicit-any */
@@ -673,16 +673,19 @@ export const useRule = (props: RuleProps): UseRule => {
   const arity = operatorObject?.arity;
   const hideValueControls =
     (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
+  const valueSourceOptions = useMemo(() => {
+    const configuredVSs = getValueSources(rule.field, rule.operator, { fieldData });
+    if (rule.valueSource && !getOption(configuredVSs, rule.valueSource)) {
+      return [
+        ...configuredVSs,
+        { name: rule.valueSource, value: rule.valueSource, label: rule.valueSource },
+      ] as ValueSourceFullOptions;
+    }
+    return configuredVSs;
+  }, [fieldData, getValueSources, rule.field, rule.operator, rule.valueSource]);
   const valueSources = useMemo(
-    () =>
-      typeof fieldData.valueSources === 'function'
-        ? fieldData.valueSources(rule.operator)
-        : (fieldData.valueSources ?? getValueSources(rule.field, rule.operator, { fieldData })),
-    [fieldData, getValueSources, rule.field, rule.operator]
-  );
-  const valueSourceOptions = useMemo(
-    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceOptions,
-    [valueSources]
+    () => valueSourceOptions.map(({ value }) => value) as ValueSources,
+    [valueSourceOptions]
   );
   const valueEditorType = useMemo(
     () =>

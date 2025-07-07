@@ -1,6 +1,14 @@
-import type { FullField } from '../types/index.noReact';
+import type { FullField, ValueSourceFullOptions, ValueSources } from '../types/index.noReact';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFullOption } from './optGroupUtils';
+
+const toVSO = (vss: ValueSources) =>
+  vss.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceFullOptions;
+
+const fvsV = toVSO(['value']);
+const fvsF = toVSO(['field']);
+const fvsVF = toVSO(['value', 'field']);
+const fvsFV = toVSO(['field', 'value']);
 
 const f: FullField = toFullOption({ name: 'f', label: 'FullField' });
 const f1: FullField = toFullOption({ name: 'f1', label: 'F1', valueSources: ['value'] });
@@ -41,29 +49,29 @@ const f4fo: FullField = toFullOption({
 });
 
 it('gets the correct value sources array', () => {
-  expect(getValueSourcesUtil(f, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f1, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f2, '=')).toEqual(['field']);
-  expect(getValueSourcesUtil(f3, '=')).toEqual(['value', 'field']);
-  expect(getValueSourcesUtil(f4, '=')).toEqual(['field', 'value']);
-  expect(getValueSourcesUtil(f1f, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f2f, '=')).toEqual(['field']);
-  expect(getValueSourcesUtil(f3f, '=')).toEqual(['value', 'field']);
-  expect(getValueSourcesUtil(f4f, '=')).toEqual(['field', 'value']);
-  expect(getValueSourcesUtil(f1fo, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f2fo, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f3fo, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f4fo, '=')).toEqual(['value']);
-  expect(getValueSourcesUtil(f1fo, '>')).toEqual(['value']);
-  expect(getValueSourcesUtil(f2fo, '>')).toEqual(['field']);
-  expect(getValueSourcesUtil(f3fo, '>')).toEqual(['value', 'field']);
-  expect(getValueSourcesUtil(f4fo, '>')).toEqual(['field', 'value']);
-  expect(getValueSourcesUtil(f, '=', () => ['value'])).toEqual(['value']);
+  expect(getValueSourcesUtil(f, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f1, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f2, '=')).toEqual(fvsF);
+  expect(getValueSourcesUtil(f3, '=')).toEqual(fvsVF);
+  expect(getValueSourcesUtil(f4, '=')).toEqual(fvsFV);
+  expect(getValueSourcesUtil(f1f, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f2f, '=')).toEqual(fvsF);
+  expect(getValueSourcesUtil(f3f, '=')).toEqual(fvsVF);
+  expect(getValueSourcesUtil(f4f, '=')).toEqual(fvsFV);
+  expect(getValueSourcesUtil(f1fo, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f2fo, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f3fo, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f4fo, '=')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f1fo, '>')).toEqual(fvsV);
+  expect(getValueSourcesUtil(f2fo, '>')).toEqual(fvsF);
+  expect(getValueSourcesUtil(f3fo, '>')).toEqual(fvsVF);
+  expect(getValueSourcesUtil(f4fo, '>')).toEqual(fvsFV);
+  expect(getValueSourcesUtil(f, '=', () => ['value'])).toEqual(fvsV);
 });
 
 it('calls the custom getValueSources function correctly', () => {
-  const getValueSources = jest.fn();
+  const getValueSources = jest.fn(() => fvsF);
   getValueSourcesUtil(f, '=', getValueSources);
   expect(getValueSources).toHaveBeenCalledWith(f.name, '=', { fieldData: toFullOption(f) });
 });

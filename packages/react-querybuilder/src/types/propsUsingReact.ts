@@ -22,6 +22,8 @@ import type {
   Path,
   ValueEditorType,
   ValueSource,
+  ValueSourceFlexibleOptions,
+  ValueSourceFullOptions,
   ValueSources,
 } from './basic';
 import type { DropEffect } from './dnd';
@@ -617,7 +619,7 @@ export interface Schema<F extends FullField, O extends string> {
   getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
-  getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSources;
+  getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSourceFullOptions;
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
   getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
@@ -957,7 +959,7 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
         misc: { fieldData: F }
-      ): ValueSources;
+      ): ValueSources | ValueSourceFlexibleOptions;
       /**
        * This function should return the `type` of `<input />`
        * for the given field `name` and operator `name` (only applicable when

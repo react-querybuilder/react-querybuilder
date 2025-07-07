@@ -17,10 +17,10 @@ const dummyFD = {
 };
 
 /**
- * Utility function to get the value sources array for the given
- * field and operator. If the field definition does not define a
- * `matchModes` property, the `getMatchModes` prop is used.
- * Returns `["value"]` by default.
+ * Utility function to get the match modes array for the given
+ * field. If the field definition does not define a `matchModes`
+ * property, the `getMatchModes` prop is used. Returns
+ * `FullOption<MatchMode>[]` of all match modes by default.
  */
 export const getMatchModesUtil = <F extends FullField>(
   fieldData: F,

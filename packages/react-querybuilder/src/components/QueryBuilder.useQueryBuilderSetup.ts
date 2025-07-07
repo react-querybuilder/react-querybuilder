@@ -21,6 +21,7 @@ import type {
   RemoveNullability,
   RuleGroupTypeAny,
   RuleType,
+  ValueSourceFullOptions,
   WithUnknownIndex,
 } from '../types';
 import {
@@ -78,8 +79,12 @@ export type UseQueryBuilderSetup<
   getInputTypeMain: QueryBuilderProps<RG, F, O, C>['getInputType'];
   getRuleDefaultOperator: QueryBuilderProps<RG, F, O, C>['getDefaultOperator'];
   getValueEditorTypeMain: QueryBuilderProps<RG, F, O, C>['getValueEditorType'];
-  getValueSourcesMain: QueryBuilderProps<RG, F, O, C>['getValueSources'];
 }> & {
+    getValueSourcesMain: (
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ) => ValueSourceFullOptions;
     getSubQueryBuilderPropsMain: (
       field: GetOptionIdentifierType<F>,
       misc: { fieldData: F }
@@ -264,7 +269,7 @@ export const useQueryBuilderSetup = <
   );
 
   const getValueSourcesMain = useCallback(
-    (field: FieldName, operator: OperatorName) =>
+    (field: FieldName, operator: OperatorName, _misc?: { fieldData: F }) =>
       getValueSourcesUtil<F, OperatorName>(fieldMap[field] as F, operator, getValueSources),
     [fieldMap, getValueSources]
   );
@@ -399,7 +404,10 @@ export const useQueryBuilderSetup = <
 
     const operator = getRuleDefaultOperator(field);
 
-    const valueSource = getValueSourcesMain(field, operator)[0] ?? 'value';
+    const valueSource =
+      getFirstOption(
+        getValueSourcesMain(field, operator, { fieldData: getOption(flds, field) as F })
+      ) ?? 'value';
 
     const matchMode = getFirstOption(
       getMatchModesMain(field, { fieldData: getOption(flds, field) as F })

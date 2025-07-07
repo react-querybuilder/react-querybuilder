@@ -7,9 +7,11 @@ import type {
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
+  ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { getFirstOption, getOption } from './optGroupUtils';
 import {
@@ -111,7 +113,7 @@ export interface UpdateOptions {
   /**
    * Determines the valid value sources for a given field and operator.
    */
-  getValueSources?: (field: string, operator: string) => ValueSources;
+  getValueSources?: (field: string, operator: string) => ValueSources | ValueSourceFlexibleOptions;
   /**
    * Gets the default value for a given rule, in case the value needs to be reset.
    */
@@ -219,7 +221,12 @@ export const update = <RG extends RuleGroupTypeAny>(
       resetValue = true;
     }
 
-    const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
+    const valueSources = getValueSourcesUtil(
+      { name: ruleOrGroup.field, value: ruleOrGroup.field, label: '' },
+      ruleOrGroup.operator,
+      getValueSources
+    );
+    const defaultValueSource = getFirstOption(valueSources);
     if (
       (resetValueSource &&
         ruleOrGroup.valueSource &&

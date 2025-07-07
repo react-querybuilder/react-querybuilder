@@ -1,4 +1,11 @@
-import type { Combinator, Field, Operator, Translations } from 'react-querybuilder/debug';
+import type {
+  Combinator,
+  Field,
+  Operator,
+  Translations,
+  ValueSource,
+  ValueSourceFullOptions,
+} from 'react-querybuilder/debug';
 import { fields as demoFields } from './demo/_constants/fields';
 
 export const combinators: Combinator[] = [
@@ -29,6 +36,11 @@ export const operators: Operator[] = [
   { name: 'notBetween', label: 'לא בין' },
 ];
 
+const valueSourceLabelMap: Record<ValueSource, string> = {
+  value: 'ערך',
+  field: 'שדה',
+};
+
 const rtlLabels: Record<string, string> = {
   firstName: 'שם פרטי',
   lastName: 'שם משפחה',
@@ -53,6 +65,13 @@ const rtlLabels: Record<string, string> = {
 export const fields: Field[] = demoFields.map(f => ({
   ...f,
   label: rtlLabels[f.name] ?? f.label,
+  ...(f.valueSources && {
+    valueSources: f.valueSources.map(vs => ({
+      name: vs,
+      value: vs,
+      label: valueSourceLabelMap[vs],
+    })) as ValueSourceFullOptions,
+  }),
 }));
 
 export const translations: Partial<Translations> = {
