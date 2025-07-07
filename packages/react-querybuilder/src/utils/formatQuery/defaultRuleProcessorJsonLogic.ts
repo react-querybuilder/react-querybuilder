@@ -1,7 +1,15 @@
-import type { JsonLogicVar, RQBJsonLogic, RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  JsonLogicVar,
+  RQBJsonLogic,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { isRuleGroup } from '../isRuleGroup';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const convertOperator = (op: '<' | '<=' | '=' | '!=' | '>' | '>=') =>
   op
@@ -17,10 +25,9 @@ const negateIfNotOp = (op: string, jsonRule: RQBJsonLogic) =>
  *
  * @group Export
  */
-export const defaultRuleProcessorJsonLogic: RuleProcessor = (
-  { field, operator, value, valueSource },
-  { parseNumbers, preserveValueOrder } = {}
-): RQBJsonLogic => {
+export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {}): RQBJsonLogic => {
+  const { field, operator, value, valueSource } = rule;
+  const { parseNumbers, preserveValueOrder } = options;
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
   const fieldOrNumberRenderer = (v: string) =>
@@ -30,7 +37,58 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         ? parseNumber(v, { parseNumbers })
         : v;
 
-  const operatorLC = operator.toLowerCase();
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return false;
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
+
+    switch (mode) {
+      case 'all':
+      case 'none':
+      case 'some':
+        return {
+          [mode]: [
+            { var: field },
+            value.rules.length === 1 && !isRuleGroup(value.rules[0])
+              ? defaultRuleProcessorJsonLogic(value.rules[0], options)
+              : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
+          ],
+        } as RQBJsonLogic;
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '==';
+
+        const filteredCount = {
+          reduce: [
+            {
+              filter: [
+                { var: field },
+                value.rules.length === 1 && !isRuleGroup(value.rules[0])
+                  ? defaultRuleProcessorJsonLogic(value.rules[0], options)
+                  : defaultRuleGroupProcessorJsonLogic(value, options as FormatQueryFinalOptions),
+              ],
+            },
+            { '+': [1, { var: 'accumulator' }] },
+            0,
+          ],
+        };
+
+        if (threshold > 0 && threshold < 1) {
+          const totalCount = {
+            reduce: [{ var: field }, { '+': [1, { var: 'accumulator' }] }, 0],
+          };
+          return { [op]: [filteredCount, { '*': [totalCount, threshold] }] } as RQBJsonLogic;
+        }
+        return { [op]: [filteredCount, threshold] } as RQBJsonLogic;
+      }
+    }
+  }
+
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '<':
     case '<=':
@@ -66,7 +124,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (
         let [first, second] = valueAsArray;
         // For backwards compatibility, default to parsing numbers for between operators
         // unless parseNumbers is explicitly set to false
-        const shouldParseNumbers = parseNumbers === false ? false : true;
+        const shouldParseNumbers = !(parseNumbers === false);
         if (
           !valueIsField &&
           shouldRenderAsNumber(first, shouldParseNumbers) &&

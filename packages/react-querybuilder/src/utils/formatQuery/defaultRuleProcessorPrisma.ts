@@ -1,7 +1,8 @@
 import type { ParseNumbersPropConfig, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
+import { isValidValue, prismaOperators, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const processNumber = <T>(
   value: unknown,
@@ -18,13 +19,18 @@ const processNumber = <T>(
  * @group Export
  */
 export const defaultRuleProcessorPrisma: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  { parseNumbers, preserveValueOrder } = {}
+  options = {}
 ) => {
-  if (valueSource === 'field') return;
+  const { field, operator, value, valueSource } = rule;
+  // istanbul ignore next
+  const { parseNumbers, preserveValueOrder } = options;
 
-  const operatorLC = operator.toLowerCase();
+  // Neither field-to-field comparisons nor match modes are supported in this format
+  if (valueSource === 'field' || processMatchMode(rule)) return;
+
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '=':
       return { [field]: processNumber(value, value, parseNumbers) };
@@ -89,15 +95,15 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
         const [first, second] = valueAsArray;
         // For backwards compatibility, default to parsing numbers for between operators
         // unless parseNumbers is explicitly set to false
-        const shouldParseNumbers = parseNumbers === false ? false : true;
+        const shouldParseNumbers = !(parseNumbers === false);
         const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
           ? parseNumber(first, { parseNumbers })
-          : NaN;
+          : Number.NaN;
         const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
           ? parseNumber(second, { parseNumbers })
-          : NaN;
-        let firstValue = isNaN(firstNum) ? first : firstNum;
-        let secondValue = isNaN(secondNum) ? second : secondNum;
+          : Number.NaN;
+        let firstValue = Number.isNaN(firstNum) ? first : firstNum;
+        let secondValue = Number.isNaN(secondNum) ? second : secondNum;
         if (
           !preserveValueOrder &&
           firstValue === firstNum &&

@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-structured-clone */
 import dayjs from 'dayjs';
 import type { RuleGroupType } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
@@ -41,7 +40,7 @@ const testCases: Record<string, [RuleGroupType, Record<string, unknown>]> = {
       ],
     },
     {
-      $and: [{ $expr: { $ne: ['$firstName', '$lastName'] } }, { firstName: { $regex: `^Stev` } }],
+      $and: [{ $ne: ['$firstName', '$lastName'] }, { firstName: { $regex: `^Stev` } }],
     },
   ],
   invalid: [

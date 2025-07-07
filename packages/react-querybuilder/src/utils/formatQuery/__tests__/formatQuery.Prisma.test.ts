@@ -91,9 +91,14 @@ const prismaQueryExpectation = {
   ],
 };
 
+// oxlint-disable-next-line expect-expect
 it('formats to prisma query correctly', () => {
   testPrisma(prismaQuery, prismaQueryExpectation);
   testPrisma({ rules: [{ field: 'f', operator: '=', value: 'v', valueSource: 'field' }] }, {});
+  testPrisma(
+    { rules: [{ field: 'f', operator: '=', value: { rules: [] }, match: { mode: 'all' } }] },
+    {}
+  );
   // Test for newline in value and `not` at top level
   testPrisma(
     {
@@ -114,17 +119,19 @@ it('handles operator case variations', () => {
 it.todo(
   'handles custom fallbackExpression correctly'
   // , () => {
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   // oxlint-disable-next-line typescript/no-explicit-any
   //   const fallbackExpression: any = { fallback: true };
   //   const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
   //   testBoth(queryToTest, fallbackExpression, { fallbackExpression });
   // }
 );
 
+// oxlint-disable-next-line expect-expect
 it('escapes quotes when appropriate', () => {
   testPrisma(testQueryDQ, { f1: `Te"st` });
 });
 
+// oxlint-disable-next-line expect-expect
 it('independent combinators', () => {
   testPrisma(queryIC, {
     OR: [{ AND: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
@@ -147,6 +154,7 @@ describe('validation', () => {
 
     for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
+        // oxlint-disable-next-line expect-expect
         it(vtd.title, () => {
           testPrisma(vtd.query, validationResults[vtd.title], vtd.options);
         });
@@ -155,6 +163,7 @@ describe('validation', () => {
   }
 });
 
+// oxlint-disable-next-line expect-expect
 it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? { [r.operator]: true } : defaultRuleProcessorMongoDBQuery(r);
@@ -170,6 +179,7 @@ it('ruleProcessor', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
   testPrisma(
     queryForPreserveValueOrder,
@@ -193,6 +203,7 @@ it('preserveValueOrder', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     AND: [

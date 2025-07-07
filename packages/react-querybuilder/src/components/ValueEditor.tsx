@@ -6,6 +6,31 @@ import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps 
 import { getFirstOption, getParseNumberMethod, joinWith, parseNumber, toArray } from '../utils';
 import clsx from '../utils/clsx';
 
+interface RadioButtonProps {
+  name: string;
+  disabled?: boolean;
+  checked: boolean;
+  handleOnChange: (v: unknown) => void;
+  label: string;
+}
+// Extracted from callback so we can use `useId`
+const RadioButton = ({ name, disabled, checked, label, handleOnChange }: RadioButtonProps) => {
+  const id = React.useId();
+  return (
+    <label htmlFor={id}>
+      <input
+        id={id}
+        type="radio"
+        value={name}
+        disabled={disabled}
+        checked={checked}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+      {label}
+    </label>
+  );
+};
+
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
  *
@@ -146,16 +171,14 @@ export const ValueEditor = <F extends FullField>(
       return (
         <span data-testid={testID} className={className} title={title}>
           {values.map(v => (
-            <label key={v.name}>
-              <input
-                type="radio"
-                value={v.name}
-                disabled={disabled}
-                checked={value === v.name}
-                onChange={e => handleOnChange(e.target.value)}
-              />
-              {v.label}
-            </label>
+            <RadioButton
+              key={v.name}
+              name={v.name}
+              disabled={disabled}
+              checked={value === v.name}
+              handleOnChange={handleOnChange}
+              label={v.label}
+            />
           ))}
         </span>
       );
@@ -199,7 +222,7 @@ export interface UseValueEditor {
    * Array of values for when the main value represents a list, e.g. when operator
    * is "between" or "in".
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   valueAsArray: any[];
   /**
    * An update handler for a series of value editors, e.g. when operator is "between".
@@ -300,7 +323,7 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
   );
 
   const multiValueHandler = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (val: any, idx: number) => {
       const v = produce(valueAsArray, va => {
         va[idx] = parseNumber(val, { parseNumbers: parseNumberMethod });

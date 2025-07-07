@@ -30,11 +30,13 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         const queryAsJSONata = `*[${formatQuery(query, { format: 'jsonata', parseNumbers: true, fields, ruleProcessor: getDatetimeRuleProcessorJSONata(apiFns) })}]`;
         const expression = jsonata(queryAsJSONata);
         const result = await expression.evaluate(musiciansJSONata);
+        // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
           expect(result.last_name).toBe(expectation);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
   });

@@ -1,7 +1,8 @@
 import type { ValueProcessorByRule } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -29,7 +30,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   } = {}
 ) => {
   const valueIsField = valueSource === 'field';
-  const operatorLowerCase = operator.toLowerCase();
+  const operatorLowerCase = lc(operator);
   const quoteChar = quoteValuesWith || "'";
 
   const quoteValue = (v: unknown) =>
@@ -81,12 +82,16 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 
       const firstNum = shouldRenderAsNumber(first, parseNumbers)
         ? parseNumber(first, { parseNumbers: 'strict' })
-        : NaN;
+        : Number.NaN;
       const secondNum = shouldRenderAsNumber(second, parseNumbers)
         ? parseNumber(second, { parseNumbers: 'strict' })
-        : NaN;
-      const firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-      const secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+        : Number.NaN;
+      const firstValue = Number.isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      const secondValue = Number.isNaN(secondNum)
+        ? valueIsField
+          ? `${second}`
+          : second
+        : secondNum;
 
       const valsOneAndTwoOnly = [firstValue, secondValue];
       if (

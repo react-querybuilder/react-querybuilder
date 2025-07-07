@@ -843,6 +843,12 @@ formatQuery(query, { format: 'sql', concatOperator: 'CONCAT' });
 
 The `preset` option configures options known to enable (or at least improve) compatibility with particular query language dialects. Individual options will override their respective preset values. The following presets are available:
 
+:::info
+
+If the `preset` option is one from `sqlDialectPresets`, it will only apply if the `format` is undefined or one of the SQL-based formats.
+
+:::
+
 <table>
   <thead>
     <tr><th>Dialect</th><th>Preset options</th></tr>

@@ -27,7 +27,7 @@ const drizzleSQLiteDB = drizzle({ schema: { superusers }, client: bunSQLiteDB })
 const superUsersSQLite = superUsers('sqlite');
 
 const testSQLite = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
-  describe.each(['standard', 'independent combinators'])('%s', async testType => {
+  describe.each(['standard', 'independent combinators'])('%s', testType => {
     const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
     const where = formatQuery(queryToTest, { ...fqOptions, format: 'drizzle' });
     test('relational queries', async () => {

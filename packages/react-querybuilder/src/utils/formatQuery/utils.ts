@@ -4,10 +4,12 @@ import type {
   FormatQueryOptions,
   FullField,
   GroupVariantCondition,
+  MatchMode,
   NLTranslationKey,
   NLTranslations,
   OptionList,
   RuleGroupTypeAny,
+  RuleType,
   SetRequired,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -16,7 +18,7 @@ import type {
 import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { isRuleGroup } from '../isRuleGroup';
-import { isPojo, numericRegex } from '../misc';
+import { isPojo, lc, numericRegex } from '../misc';
 import { getOption } from '../optGroupUtils';
 import { parseNumber } from '../parseNumber';
 
@@ -26,7 +28,7 @@ import { parseNumber } from '../parseNumber';
  * @group Export
  */
 export const mapSQLOperator = (rqbOperator: string): string => {
-  switch (rqbOperator.toLowerCase()) {
+  switch (lc(rqbOperator)) {
     case 'null':
       return 'is null';
     case 'notnull':
@@ -169,10 +171,10 @@ export const numerifyValues = (
  *
  * @group Export
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isValidValue = (value: any): boolean =>
   (typeof value === 'string' && value.length > 0) ||
-  (typeof value === 'number' && !isNaN(value)) ||
+  (typeof value === 'number' && !Number.isNaN(value)) ||
   (typeof value !== 'string' && typeof value !== 'number');
 
 /**
@@ -182,7 +184,7 @@ export const isValidValue = (value: any): boolean =>
  *
  * @group Export
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean | undefined): boolean =>
   !!parseNumbers &&
   (typeof value === 'number' ||
@@ -277,6 +279,8 @@ export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrd
  *
  * @group Export
  */
+// The ones commented below are unnecessary for the default implementation,
+// but they can be overridden for customized implementations.
 export const defaultNLTranslations: NLTranslations = {
   // and: 'and',
   // or: 'or',
@@ -332,6 +336,42 @@ export const getNLTranslataion = (
       )?.[1] ??
       defaultNLTranslations[key] ??
       /* istanbul ignore next */ '');
+
+type ProcessedMatchMode =
+  | { mode: 'all'; threshold?: number | null | undefined }
+  | { mode: 'none'; threshold?: number | null | undefined }
+  | { mode: 'some'; threshold?: number | null | undefined }
+  | { mode: 'atleast'; threshold: number }
+  | { mode: 'atmost'; threshold: number }
+  | { mode: 'exactly'; threshold: number };
+
+export const processMatchMode = (rule: RuleType): void | false | ProcessedMatchMode => {
+  const { mode, threshold } = rule.match ?? {};
+
+  if (mode) {
+    if (!isRuleGroup(rule.value)) return false;
+
+    const matchModeLC = lc(mode) as Lowercase<MatchMode>;
+
+    const matchModeCoerced =
+      matchModeLC === 'atleast' && threshold === 1
+        ? 'some'
+        : matchModeLC === 'atmost' && threshold === 0
+          ? 'none'
+          : matchModeLC;
+
+    if (
+      (matchModeCoerced === 'atleast' ||
+        matchModeCoerced === 'atmost' ||
+        matchModeCoerced === 'exactly') &&
+      (typeof threshold !== 'number' || threshold < 0)
+    ) {
+      return false;
+    }
+
+    return { mode: matchModeCoerced, threshold: threshold! };
+  }
+};
 
 /**
  * "Replacer" method for JSON.stringify's second argument. Converts `bigint` values to

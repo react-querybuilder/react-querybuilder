@@ -131,30 +131,44 @@ function App() {
 }
 ```
 
-| Property        | Classes are applied to...                                                              |
-| --------------- | -------------------------------------------------------------------------------------- |
-| `queryBuilder`  | ...the outermost <code>&lt;div&gt;</code> element                                      |
-| `ruleGroup`     | ...each <code>&lt;div&gt;</code> wrapping a group                                      |
-| `header`        | ...each <code>&lt;div&gt;</code> wrapping a group's header controls                    |
-| `body`          | ...each <code>&lt;div&gt;</code> wrapping a group's body elements (child rules/groups) |
-| `combinators`   | ...each <code>&lt;select&gt;</code> control for combinators                            |
-| `addRule`       | ...each <code>&lt;button&gt;</code> that adds a rule                                   |
-| `addGroup`      | ...each <code>&lt;button&gt;</code> that adds a group                                  |
-| `cloneRule`     | ...each <code>&lt;button&gt;</code> that clones a rule                                 |
-| `cloneGroup`    | ...each <code>&lt;button&gt;</code> that clones a group                                |
-| `removeGroup`   | ...each <code>&lt;button&gt;</code> that removes a group                               |
-| `lockRule`      | ...each <code>&lt;button&gt;</code> that locks/disables a rule                         |
-| `lockGroup`     | ...each <code>&lt;button&gt;</code> that locks/disables a group                        |
-| `notToggle`     | ...each <code>&lt;label&gt;</code> on a "not" (aka "inversion") toggle                 |
-| `rule`          | ...each <code>&lt;div&gt;</code> containing a rule                                     |
-| `fields`        | ...each <code>&lt;select&gt;</code> control for selecting a field                      |
-| `operators`     | ...each <code>&lt;select&gt;</code> control for selecting an operator                  |
-| `value`         | ...each <code>&lt;input&gt;</code> for entering a value                                |
-| `removeRule`    | ...each <code>&lt;button&gt;</code> that removes a rule                                |
-| `dragHandle`    | ...each <code>&lt;span&gt;</code> acting as a drag handle                              |
-| `valueSource`   | ...each <code>&lt;select&gt;</code> control for selecting a value source               |
-| `actionElement` | ...each <code>&lt;button&gt;</code> control                                            |
-| `valueSelector` | ...each <code>&lt;select&gt;</code> control                                            |
+| Property         | Class(es) applied to...                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| `queryBuilder`   | the outermost <code>&lt;div&gt;</code> element                                             |
+| `ruleGroup`      | each <code>&lt;div&gt;</code> wrapping a group                                             |
+| `header`         | each <code>&lt;div&gt;</code> wrapping a group's header controls                           |
+| `body`           | each <code>&lt;div&gt;</code> wrapping a group's body elements (child rules/groups)        |
+| `combinators`    | each <code>&lt;select&gt;</code> control for combinators                                   |
+| `addRule`        | each <code>&lt;button&gt;</code> that adds a rule                                          |
+| `addGroup`       | each <code>&lt;button&gt;</code> that adds a group                                         |
+| `cloneRule`      | each <code>&lt;button&gt;</code> that clones a rule                                        |
+| `cloneGroup`     | each <code>&lt;button&gt;</code> that clones a group                                       |
+| `removeGroup`    | each <code>&lt;button&gt;</code> that removes a group                                      |
+| `lockRule`       | each <code>&lt;button&gt;</code> that locks/disables a rule                                |
+| `lockGroup`      | each <code>&lt;button&gt;</code> that locks/disables a group                               |
+| `notToggle`      | each <code>&lt;label&gt;</code> on a "not" (aka "inversion") toggle                        |
+| `rule`           | each <code>&lt;div&gt;</code> containing a rule                                            |
+| `fields`         | each <code>&lt;select&gt;</code> control for selecting a field                             |
+| `matchMode`      | each <code>&lt;select&gt;</code> control for match modes                                   |
+| `matchThreshold` | each <code>&lt;input&gt;</code> for match thresholds                                       |
+| `operators`      | each <code>&lt;select&gt;</code> control for selecting an operator                         |
+| `value`          | each <code>&lt;input&gt;</code> for entering a value                                       |
+| `removeRule`     | each <code>&lt;button&gt;</code> that removes a rule                                       |
+| `shiftActions`   | each <code>&lt;span&gt;</code> wrapping the up/down controls for shifting rules/groups     |
+| `dragHandle`     | each <code>&lt;span&gt;</code> acting as a drag handle                                     |
+| `valueSource`    | each <code>&lt;select&gt;</code> control for selecting a value source                      |
+| `actionElement`  | each <code>&lt;button&gt;</code> control                                                   |
+| `valueSelector`  | each <code>&lt;select&gt;</code> control                                                   |
+| `betweenRules`   | inline combinator elements                                                                 |
+| `valid`          | valid rules and groups                                                                     |
+| `invalid`        | invalid rules and groups                                                                   |
+| `dndDragging`    | rules and groups while being dragged                                                       |
+| `dndOver`        | rules and groups hovered over by a dragged element                                         |
+| `dndCopy`        | rules and groups hovered over by a dragged element when the drop effect is "copy"          |
+| `dndGroup`       | rules and groups hovered over by a dragged element when the <kbd>Ctrl</kbd> key is pressed |
+| `disabled`       | disabled elements                                                                          |
+| `valueListItem`  | each element in a series of value editors                                                  |
+| `branches`       | (not applied, but see [Styling overview](../styling/overview))                             |
+| `hasSubQuery`    | rules that render a subquery                                                               |
 
 ### `controlElements`
 
@@ -187,6 +201,7 @@ The following control overrides are supported per the `Controls` interface. Sett
 | [`inlineCombinator`](#inlinecombinator)               | <code>React.ComponentType&lt;InlineCombinatorProps&gt; \| null</code>                                                    |
 | [`lockGroupAction`](#lockgroupaction)                 | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
 | [`lockRuleAction`](#lockruleaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`matchModeEditor`](#matchmodeeditor)                 | <code>React.ComponentType&lt;MatchModeEditorProps&gt; \| null</code>                                                     |
 | [`notToggle`](#nottoggle)                             | <code>React.ComponentType&lt;NotToggleProps&gt; \| null</code>                                                           |
 | [`operatorSelector`](#operatorselector)               | <code>React.ComponentType&lt;OperatorSelectorProps&gt; \| null</code>                                                    |
 | [`removeGroupAction`](#removegroupaction)             | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
@@ -481,6 +496,37 @@ Per the `ActionWithRulesProps` interface:
 | `disabledTranslation` | `string`                                 | `translations.lockRuleDisabled` if parent group is not disabled, otherwise `undefined`                               |
 | `path`                | `Path`                                   | [Path](../tips/path) of this rule                                                                                    |
 | `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                          |
+
+</details>
+
+#### `matchModeEditor`
+
+Manages the `match` property for the current rule, including the `mode` and `threshold` (see [Subqueries](../tips/subqueries)). Default is [`MatchModeEditor`](./matchmodeeditor).
+
+<details>
+<summary>Props for `matchModeEditor`</summary>
+
+Per the `MatchModeEditorProps` interface:
+
+| Prop                     | Type                                            | Description                                                  |
+| ------------------------ | ----------------------------------------------- | ------------------------------------------------------------ |
+| `match`                  | `MatchConfig`                                   | Current match configuration for this rule                    |
+| `options`                | <code>OptionList&lt;MatchMode&gt;</code>        | Available match modes for the current field                  |
+| `field`                  | `string`                                        | Field name corresponding to this rule                        |
+| `fieldData`              | `FullField`                                     | The entire object from the fields array for this field       |
+| `rule`                   | `RuleType`                                      | This rule                                                    |
+| `selectorComponent`      | `ComponentType<ValueSelectorProps>`             | Component to use for the match mode selector                 |
+| `numericEditorComponent` | `ComponentType<ValueEditorProps>`               | Component to use for the match threshold editor              |
+| `classNames`             | `{ matchMode: string; matchThreshold: string }` | CSS classNames for sub-components                            |
+| `value`                  | `string`                                        | Current match mode value                                     |
+| `className`              | `string`                                        | CSS `classNames` to be applied                               |
+| `handleOnChange`         | `(value: any) => void`                          | Updates the rule's match configuration                       |
+| `level`                  | `number`                                        | The `level` of this rule                                     |
+| `context`                | `any`                                           | Container for custom props that are passed to all components |
+| `validation`             | <code>boolean \| ValidationResult</code>        | Validation result of this rule                               |
+| `disabled`               | `boolean`                                       | Whether this rule is disabled/locked                         |
+| `path`                   | `Path`                                          | [Path](../tips/path) of this rule                            |
+| `schema`                 | `Schema`                                        | Query [schema](../typescript#miscellaneous)                  |
 
 </details>
 
@@ -796,9 +842,11 @@ This function is invoked to get the type of [`ValueEditor`](./valueeditor) for t
 
 ### `getValueSources`
 
-`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources`;
+`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources | ValueSourceFullOptions`;
 
-This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
+This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). The array members can also be a `FlexibleOption` as long as the `name` and/or `value` are `"value"` or `"field"`, in the same pattern as the string-based configuration.
+
+If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
 
 `fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 
@@ -823,6 +871,22 @@ This function is invoked to get the `type` attribute which will be applied to th
 `(field: string, operator: string, misc: { fieldData: Field }) => OptionList`
 
 This function is invoked to get the list of allowed values for the given `field` and `operator`. This prop is only applicable when [`getValueEditorType`](#getvalueeditortype) returns `"select"`, `"multiselect"`, or `"radio"`. If no function is provided, an empty array is used.
+
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
+### `getMatchModes`
+
+`(field: string, misc: { fieldData: Field }) => boolean | MatchMode[] | FlexibleOption<MatchMode>[]`
+
+This function indicate the valid `MatchMode`s for a given field identifier. The return value must be `MatchMode[]`, `Option<MatchMode>[]`, or `boolean`. A value of `true` indicates that all match modes are allowed. Any other return value will be ignored (no match modes will be allowed).
+
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
+### `getSubQueryBuilderProps`
+
+`(field: string, misc: { fieldData: Field }) => QueryBuilderProps`
+
+This function should return any props that a subquery (see [Subqueries](../tips/subqueries)) should override from the props provided to the parent query builder. Note that certain props like `query`, `onQueryChange`, and `enableDragAndDrop` will be ignored for subquery builders.
 
 `fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 

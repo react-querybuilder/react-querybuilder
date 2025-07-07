@@ -1,17 +1,24 @@
+import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
+import type { Classnames } from 'react-querybuilder';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderTremor } from '../src';
 import './styles.css';
+
+const controlClassnames: Partial<Classnames> = {
+  fields: 'w-max',
+  operators: 'w-max',
+  combinators: 'w-max',
+  matchMode: 'w-max',
+};
 
 const App = () => {
   const devApp = useDevApp();
 
   return (
     <DevLayout {...devApp}>
-      <QueryBuilderTremor
-        controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
+      <QueryBuilderTremor controlClassnames={controlClassnames}>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"

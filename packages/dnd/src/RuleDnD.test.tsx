@@ -42,7 +42,7 @@ const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
 
 afterEach(() => {
   // Clear pressed keys
-  window.dispatchEvent(new Event('blur'));
+  globalThis.dispatchEvent(new Event('blur'));
 });
 
 it('does not have the drag class if not dragging', () => {

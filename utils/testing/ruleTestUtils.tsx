@@ -104,7 +104,9 @@ const ruleSchema = {
     ].map(o => toFullOption(o)),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
-  getValueSources: () => ['value'],
+  getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
+  getMatchModes: () => [],
+  getSubQueryBuilderProps: () => ({}),
   getInputType: () => 'text',
   getValues: () =>
     [

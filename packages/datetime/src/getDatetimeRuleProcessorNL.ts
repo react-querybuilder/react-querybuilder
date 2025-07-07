@@ -3,6 +3,7 @@ import {
   defaultOperatorProcessorNL,
   defaultRuleProcessorNL,
   getQuotedFieldName,
+  lc,
   normalizeConstituentWordOrder,
   toArray,
 } from 'react-querybuilder';
@@ -48,7 +49,7 @@ export const getDatetimeRuleProcessorNL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* istanbul ignore next */ {};
-    const operatorLowerCase = rule.operator.toLowerCase();
+    const operatorLowerCase = lc(rule.operator);
     let finalValue = '';
 
     // istanbul ignore next

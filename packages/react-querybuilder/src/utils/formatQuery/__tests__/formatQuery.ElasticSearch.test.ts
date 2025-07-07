@@ -230,6 +230,13 @@ it('formats ElasticSearch correctly', () => {
           { field: 'f1', operator: 'contains', value: '', valueSource: 'field' },
           // Empty group
           { combinator: 'or', rules: [] },
+          // Match mode
+          {
+            field: 'f1',
+            operator: 'contains',
+            value: { combinator: 'and', rules: [] },
+            match: { mode: 'all' },
+          },
         ],
       },
       'elasticsearch'
@@ -314,7 +321,14 @@ it('ruleProcessor', () => {
   });
 });
 
-it('parseNumbers', () => {
+it.each([
+  ['true', { parseNumbers: true }],
+  ['strict', { parseNumbers: 'strict' }],
+  [
+    'strict-limited',
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ],
+] satisfies [string, FormatQueryOptions][])('parses numbers (%s)', (_, opts) => {
   const allNumbersParsed = {
     bool: {
       must: [
@@ -333,15 +347,9 @@ it('parseNumbers', () => {
       ],
     },
   };
-  for (const opts of [
-    { parseNumbers: true },
-    { parseNumbers: 'strict' },
-    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-  ] as FormatQueryOptions[]) {
-    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
-      allNumbersParsed
-    );
-  }
+  expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
+    allNumbersParsed
+  );
 });
 it('preserveValueOrder', () => {
   expect(

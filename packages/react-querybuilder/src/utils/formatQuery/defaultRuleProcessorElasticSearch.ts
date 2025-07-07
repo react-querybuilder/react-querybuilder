@@ -1,7 +1,8 @@
 import type { DefaultOperatorName, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte';
 type RangeRule = (
@@ -12,7 +13,7 @@ type RangeRule = (
 ) & { [k in RangeOperator]?: string | number };
 type ElasticSearchRule =
   | { range: Record<string, RangeRule> }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   | { term: Record<string, any> }
   | { exists: { field: string } }
   | { regexp: { [k: string]: { value: string } } };
@@ -58,7 +59,7 @@ const getTextScript = (f: string, o: Lowercase<DefaultOperatorName>, v: string) 
   return o.startsWith('d') ? `!${script}` : script;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const valueRenderer = (v: any, parseNumbers?: boolean) =>
   typeof v === 'boolean'
     ? v
@@ -72,10 +73,15 @@ const valueRenderer = (v: any, parseNumbers?: boolean) =>
  * @group Export
  */
 export const defaultRuleProcessorElasticSearch: RuleProcessor = (
-  { field, operator, value, valueSource },
-  { parseNumbers, preserveValueOrder } = {}
+  rule,
+  options = {}
 ): ElasticSearchQuery | ElasticSearchRule | false => {
-  const operatorLC = operator.toLowerCase() as Lowercase<DefaultOperatorName>;
+  const { field, operator, value, valueSource } = rule;
+  const { parseNumbers, preserveValueOrder } = options;
+  const operatorLC = lc(operator) as Lowercase<DefaultOperatorName>;
+
+  // Match modes are not supported in this format
+  if (processMatchMode(rule)) return false;
 
   if (valueSource === 'field') {
     // Bail out if not all values are strings
@@ -201,7 +207,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         let [first, second] = valueAsArray;
         // For backwards compatibility, default to parsing numbers for between operators
         // unless parseNumbers is explicitly set to false
-        const shouldParseNumbers = parseNumbers === false ? false : true;
+        const shouldParseNumbers = !(parseNumbers === false);
         if (
           shouldRenderAsNumber(first, shouldParseNumbers) &&
           shouldRenderAsNumber(second, shouldParseNumbers)

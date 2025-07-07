@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable typescript/no-explicit-any */
 
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
@@ -23,6 +23,7 @@ export const basicSchema: Schema<FullField, string> = {
   dispatchQuery: admonish('dispatchQuery'),
   getQuery: admonish('getQuery'),
   getOperators: admonish('getOperators'),
+  getMatchModes: admonish('getMatchModes'),
   getValueEditorType: admonish('getValueEditorType'),
   getValueEditorSeparator: admonish('getValueEditorSeparator'),
   getValueSources: admonish('getValueSources'),
@@ -30,6 +31,7 @@ export const basicSchema: Schema<FullField, string> = {
   getValues: admonish('getValues'),
   getRuleClassname: admonish('getRuleClassname'),
   getRuleGroupClassname: admonish('getRuleGroupClassname'),
+  getSubQueryBuilderProps: admonish('getSubQueryBuilderProps'),
   accessibleDescriptionGenerator: admonish('accessibleDescriptionGenerator'),
   showCombinatorsBetweenRules: false,
   showNotToggle: false,

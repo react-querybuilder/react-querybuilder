@@ -1,6 +1,7 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 
 if (ExecutionEnvironment.canUseDOM) {
+  // oxlint-disable-next-line consistent-function-scoping
   const loadRqbUtils = async () => {
     const { formatQuery } = await import('react-querybuilder/formatQuery');
     globalThis.formatQuery = formatQuery;

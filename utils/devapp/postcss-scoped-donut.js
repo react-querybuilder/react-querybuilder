@@ -1,5 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
-
 /** @type {import('postcss').Plugin} */
 function plugin() {
   return {

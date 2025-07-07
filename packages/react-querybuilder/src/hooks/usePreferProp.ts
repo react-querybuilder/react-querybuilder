@@ -1,8 +1,8 @@
 const preferPropDefaultTrue = (prop?: boolean, context?: boolean) =>
-  prop === false ? false : prop ? true : context === false ? false : true;
+  prop === false ? false : prop ? true : !(context === false);
 
 const preferPropDefaultFalse = (prop?: boolean, context?: boolean) =>
-  prop ? true : prop === false ? false : context ? true : false;
+  prop ? true : prop === false ? false : !!context;
 
 export const preferProp = (def: boolean, prop?: boolean, context?: boolean): boolean =>
   def ? preferPropDefaultTrue(prop, context) : preferPropDefaultFalse(prop, context);
@@ -22,7 +22,7 @@ export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): 
  *
  * @group Hooks
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any): any =>
   prop !== undefined && prop != null
     ? prop

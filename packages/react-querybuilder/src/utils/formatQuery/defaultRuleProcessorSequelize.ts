@@ -1,8 +1,9 @@
 import type { Op as _OpTypes, col as _colType, fn as _fnType } from 'sequelize';
 import type { RuleProcessor, Simplify } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, shouldRenderAsNumber } from './utils';
+import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 type OpTypes = Simplify<typeof _OpTypes>;
 type ColType = typeof _colType;
@@ -28,10 +29,13 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
     sequelizeFn?: FnType;
   };
 
+  // Match modes are not supported in this format
+  if (processMatchMode(rule)) return;
+
   const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
 
-  const operatorLC = operator.toLowerCase();
+  const operatorLC = lc(operator);
 
   if (
     // Bail out if we don't have the Op symbols
@@ -138,12 +142,12 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
 
       const firstNum = shouldRenderAsNumber(first, parseNumbers)
         ? parseNumber(first, { parseNumbers: 'strict' })
-        : NaN;
+        : Number.NaN;
       const secondNum = shouldRenderAsNumber(second, parseNumbers)
         ? parseNumber(second, { parseNumbers: 'strict' })
-        : NaN;
-      const firstValue = isNaN(firstNum) ? first : firstNum;
-      const secondValue = isNaN(secondNum) ? second : secondNum;
+        : Number.NaN;
+      const firstValue = Number.isNaN(firstNum) ? first : firstNum;
+      const secondValue = Number.isNaN(secondNum) ? second : secondNum;
       const valsOneAndTwoOnly = [firstValue, secondValue];
       if (
         !preserveValueOrder &&

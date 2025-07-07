@@ -18,7 +18,7 @@ type UseDragCommonProps = {
   disabled?: boolean;
   independentCombinators?: boolean;
   actions: QueryActions;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   schema: Schema<any, any>;
   useDrag: typeof originalUseDrag;
 } & Required<Pick<QueryBuilderDndProps, 'copyModeModifierKey' | 'groupModeModifierKey'>>;

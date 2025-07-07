@@ -49,6 +49,7 @@ const testParseJSONataIC = (
   ).toEqual(expectedResult);
 };
 
+// oxlint-disable-next-line expect-expect
 it('works for basic relations', () => {
   testParseJSONata('f1 = "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   testParseJSONata('f1.f2 = "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
@@ -84,10 +85,11 @@ it('works for basic relations', () => {
   testParseJSONata('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
+// oxlint-disable-next-line expect-expect
 it.each([
   { t: testParseJSONata, w: wrapRule, rgt: '' },
   { t: testParseJSONataIC, w: wrapRuleIC, rgt: ' (ic)' },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ])('compacts "between" rule groups$rgt', ({ t, w }: any) => {
   t('f1 >= 0 and f1 <= 1', w({ field: 'f1', operator: 'between', value: [0, 1] }));
   t('f1 <= 1 and f1 >= 0', w({ field: 'f1', operator: 'between', value: [0, 1] }));
@@ -99,12 +101,14 @@ it.each([
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
     testParseJSONata(`f1 = "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
   }
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles multi-line strings', () => {
   testParseJSONata(
     `f1 = "multi-line\nstring"`,
@@ -112,6 +116,7 @@ it('handles multi-line strings', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles "like" comparisons', () => {
   testParseJSONata(
     '$contains(f1, "Test")',
@@ -136,6 +141,7 @@ it('handles "like" comparisons', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('negates "like" comparisons', () => {
   testParseJSONata(
     '$not($contains(f1, "Test"))',
@@ -143,6 +149,7 @@ it('negates "like" comparisons', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles date values', () => {
   testParseJSONata(
     'birthDate = $toMillis("1954-10-03")',
@@ -154,6 +161,7 @@ it('handles date values', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('groups only when necessary', () => {
   testParseJSONata('(f1 = "Test" or f2 = "Test2")', {
     combinator: 'or',
@@ -171,6 +179,7 @@ it('groups only when necessary', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles parentheses', () => {
   testParseJSONata('(f1 = "Test" or f2 = "Test2") and f3 = "Test3"', {
     combinator: 'and',
@@ -191,6 +200,7 @@ it('handles parentheses', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('works for conditional and/or', () => {
   testParseJSONata(
     'f1 = "Test" and f2 = "Test2"',
@@ -224,6 +234,7 @@ it('works for conditional and/or', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('mixed and/or', () => {
   testParseJSONata(`firstName = 'Steve' and lastName = 'Vai' or middleName = null`, {
     combinator: 'or',
@@ -324,6 +335,7 @@ describe('fields and getValueSources', () => {
   }
   const getValueSources = (): ValueSources => ['field'];
 
+  // oxlint-disable-next-line expect-expect
   it('sets the valueSource when fields are valid', () => {
     testParseJSONata(
       parseJSONata(`f1 = 'Steve'`, { fields }),
@@ -368,6 +380,7 @@ describe('fields and getValueSources', () => {
     }
   });
 
+  // oxlint-disable-next-line expect-expect
   it('uses the getValueSources option', () => {
     testParseJSONata(
       parseJSONata(`f5 = f6`, { fields, getValueSources }),
@@ -416,6 +429,7 @@ describe('fields and getValueSources', () => {
     );
   });
 
+  // oxlint-disable-next-line expect-expect
   it('ignores invalid fields', () => {
     // `firstName` is not in the field list
     testParseJSONata(parseJSONata(`firstName = 'Steve'`, { fields }), wrapRule());
@@ -458,6 +472,7 @@ describe('fields and getValueSources', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles "in" operator', () => {
   testParseJSONata(
     'f1 in ["Test","Test2"]',
@@ -474,6 +489,7 @@ it('handles "in" operator', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles multiple negations', () => {
   testParseJSONata('$not($not($not($contains(f1, "Test"))))', {
     combinator: 'and',
@@ -505,6 +521,7 @@ it('handles multiple negations', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('handles independent combinators', () => {
   testParseJSONataIC('f1 = "Test"', {
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],
@@ -527,6 +544,7 @@ it('handles independent combinators', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('generates IDs', () => {
   testParseJSONata(
     `firstName = "Steve"`,
@@ -538,6 +556,7 @@ it('generates IDs', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('ignores things', () => {
   const expressionsToIgnore = [
     '',

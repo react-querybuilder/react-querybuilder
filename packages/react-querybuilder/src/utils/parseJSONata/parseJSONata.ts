@@ -42,7 +42,6 @@ import {
  *
  * Note: `listsAsArrays` is ignored by `parseJSONata`; lists are _always_ arrays.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ParseJSONataOptions extends ParserCommonOptions {}
 
 /**
@@ -286,7 +285,7 @@ function parseJSONata(
         valueSource = 'field';
       }
       if (isJSONataValidValue(expr.rhs)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const value: any[] = getValidValue(expr.rhs);
         // istanbul ignore else
         if (
@@ -298,7 +297,7 @@ function parseJSONata(
       }
     } else if (isJSONataComparison(expr)) {
       let field: string | null = null;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       let value: any = undefined;
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;

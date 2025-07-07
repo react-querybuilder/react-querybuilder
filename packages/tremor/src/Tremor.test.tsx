@@ -74,7 +74,7 @@ const valueEditorAsSelectProps: ValueEditorProps = {
 const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any
 ) => {
   const testValues = toFullOptionList(props.values ?? props.options) as FullOption[];
@@ -104,6 +104,7 @@ const testSelect = (
 
     // Test as multiselect for <TremorValueEditor type="multiselect" /> and <ValueSelector />
     if (('values' in props && props.type === 'multiselect') || 'options' in props) {
+      // oxlint-disable-next-line expect-expect
       it('has the values passed into the <select multiple />', async () => {
         const onChange = jest.fn();
         const value = testValues.map(v => v.name).join(',');
@@ -276,6 +277,7 @@ describe('TremorValueEditor as "between" select', () => {
   });
 
   // TODO: Fix this. It hasn't worked since @tremor/react@3.18.6
+  // oxlint-disable-next-line no-disabled-tests
   it.skip('calls the onChange handler', async () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
@@ -309,7 +311,8 @@ describe('TremorValueEditor as "between" select', () => {
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test1');
   });
 
-  // TODO: Fix this. It hasn't worked since @tremor/react@3.18.6
+  // FIX: It hasn't worked since @tremor/react@3.18.6
+  // oxlint-disable-next-line no-disabled-tests
   it.skip('calls the onChange handler with lists as arrays', async () => {
     const handleOnChange = jest.fn();
     render(

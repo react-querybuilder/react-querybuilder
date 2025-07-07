@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, parseNumber, useValueEditor, ValueEditor } from 'react-querybuilder';
 import type { MaterialValueSelector } from './MaterialValueSelector';
@@ -54,10 +54,6 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
   } = useValueEditor(propsForValueEditor);
 
   const masterKey = muiComponents ? 'mui' : 'no-mui';
-  if (!muiComponents) {
-    return <ValueEditor skipHook key={masterKey} {...propsForValueEditor} />;
-  }
-
   const {
     Checkbox,
     FormControl,
@@ -67,7 +63,11 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     Switch,
     TextareaAutosize,
     TextField,
-  } = muiComponents;
+  } = useMemo(() => (muiComponents ?? {}) as RQBMaterialComponents, [muiComponents]);
+
+  if (!muiComponents) {
+    return <ValueEditor skipHook key={masterKey} {...propsForValueEditor} />;
+  }
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -198,10 +198,12 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
           <RadioGroup value={value} onChange={e => handleOnChange(e.target.value)}>
             {values.map(v => (
               <FormControlLabel
-                disabled={disabled}
                 key={v.name}
+                disabled={disabled}
                 value={v.name}
+                // oxlint-disable-next-line jsx-no-jsx-as-prop
                 control={<Radio />}
+                name={v.name}
                 label={v.label}
               />
             ))}

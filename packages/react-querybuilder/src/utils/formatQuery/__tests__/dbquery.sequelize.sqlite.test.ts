@@ -24,7 +24,7 @@ SequelizeSuperUser.init(
 
 beforeAll(async () => {
   await SequelizeSuperUser.sync({ force: true, logging: false });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   await SequelizeSuperUser.bulkCreate(superUsersSQLite as any, { logging: false });
 });
 

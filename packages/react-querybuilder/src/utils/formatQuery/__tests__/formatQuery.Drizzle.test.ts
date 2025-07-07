@@ -15,13 +15,18 @@ import {
   queryAllOperatorsRandomCase,
   queryForPreserveValueOrder,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 import type { RuleGroupType } from '../../../types';
 
 const operatorStub = (...x: unknown[]) => x;
+function sqlStub(...x: unknown[]) {
+  return x;
+}
+sqlStub.raw = () => 'raw sql';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const drizzleOperators: any = {
   and: operatorStub,
   between: operatorStub,
@@ -44,7 +49,7 @@ const drizzleOperators: any = {
   notIlike: operatorStub,
   notInArray: operatorStub,
   or: operatorStub,
-  sql: operatorStub,
+  sql: sqlStub,
 };
 
 const fields = {
@@ -60,6 +65,7 @@ const fields = {
   job: { name: 'job', label: 'Job' },
   isLucky: { name: 'isLucky', label: 'Is Lucky' },
   isMusician: { name: 'isMusician', label: 'Is Musician' },
+  fs: { name: 'fs', label: 'FS' },
 } as unknown as Record<string, Column>;
 
 it('covers Drizzle', () => {
@@ -82,6 +88,18 @@ it('handles operator case variations', () => {
   ).toBeTruthy();
 });
 
+it('handles nested arrays', () => {
+  expect(
+    formatQuery(queryWithMatchModes, { format: 'drizzle', preset: 'postgresql' })(
+      fields,
+      drizzleOperators
+    )
+  ).toBeTruthy();
+  expect(
+    formatQuery(queryWithMatchModes, { format: 'drizzle' })(fields, drizzleOperators)
+  ).not.toBeTruthy();
+});
+
 it('bails on invalid operator', () => {
   expect(
     formatQuery({ rules: [{ field: 'f', operator: 'invalid', value: 'v' }] }, 'drizzle')(
@@ -93,7 +111,7 @@ it('bails on invalid operator', () => {
 
 it('bails when either columns or drizzle operators are not found', () => {
   expect(formatQuery(query, 'drizzle')({}, drizzleOperators)).toBeUndefined();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   expect(formatQuery(query, 'drizzle')(fields, null as any)).toBeUndefined();
   expect(
     defaultRuleProcessorDrizzle(
@@ -124,6 +142,7 @@ describe('validation', () => {
   for (const vtd of getValidationTestData('drizzle')) {
     it(vtd.title, () => {
       const where = formatQuery(vtd.query, vtd.options as { format: 'drizzle' });
+      // oxlint-disable no-conditional-expect
       if (typeof where === 'function') {
         // if (validationResults[vtd.title]) {
         //   expect(where(fields, drizzleOperators)).toBeTruthy();
@@ -133,6 +152,7 @@ describe('validation', () => {
       } else {
         expect(where).toBeUndefined();
       }
+      // oxlint-enable no-conditional-expect
     });
   }
 });

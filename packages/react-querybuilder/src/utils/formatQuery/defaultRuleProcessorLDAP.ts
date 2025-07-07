@@ -1,8 +1,8 @@
 import type { RuleProcessor } from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { nullOrUndefinedOrEmpty } from '../misc';
+import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { shouldRenderAsNumber } from './utils';
+import { processMatchMode, shouldRenderAsNumber } from './utils';
 
 const negateIf = (clause: string, negate: boolean) => (negate ? `(!${clause})` : `${clause}`);
 
@@ -18,20 +18,24 @@ const ldapEscape = (s: unknown) =>
  * @group Export
  */
 export const defaultRuleProcessorLDAP: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  { parseNumbers, preserveValueOrder } = {}
+  options = {}
 ) => {
-  const operatorLC = operator.toLowerCase();
+  const { field, operator, value, valueSource } = rule;
+  const { preserveValueOrder } = options;
+  const operatorLC = lc(operator);
 
-  // Bail out if either:
-  // 1. This is a field comparison (which LDAP does not support), or
-  // 2. `value` is null/undefined/empty and the operator is not unary
+  // Bail out if...
   if (
+    // This is a field comparison (which LDAP does not support), or
     valueSource === 'field' ||
-    (nullOrUndefinedOrEmpty(value) && operatorLC !== 'null' && operatorLC !== 'notnull')
+    // `value` is null/undefined/empty and the operator is not unary, or
+    (nullOrUndefinedOrEmpty(value) && operatorLC !== 'null' && operatorLC !== 'notnull') ||
+    // a valid `match` property is found (match modes are not supported in this format)
+    processMatchMode(rule)
   ) {
-    return;
+    return '';
   }
 
   switch (operatorLC) {
@@ -84,18 +88,14 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
       }
 
       const [first, second] = valueAsArray;
-      // For backwards compatibility, default to parsing numbers for between operators
-      // unless parseNumbers is explicitly set to false
-      // istanbul ignore next
-      const shouldParseNumbers = parseNumbers === false ? false : true;
-      const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
-        ? parseNumber(first, { parseNumbers: shouldParseNumbers })
-        : NaN;
-      const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
-        ? parseNumber(second, { parseNumbers: shouldParseNumbers })
-        : NaN;
-      let firstValue = isNaN(firstNum) ? first : firstNum;
-      let secondValue = isNaN(secondNum) ? second : secondNum;
+      const firstNum = shouldRenderAsNumber(first, true)
+        ? parseNumber(first, { parseNumbers: true })
+        : Number.NaN;
+      const secondNum = shouldRenderAsNumber(second, true)
+        ? parseNumber(second, { parseNumbers: true })
+        : Number.NaN;
+      let firstValue = Number.isNaN(firstNum) ? first : firstNum;
+      let secondValue = Number.isNaN(secondNum) ? second : secondNum;
 
       if (
         !preserveValueOrder &&

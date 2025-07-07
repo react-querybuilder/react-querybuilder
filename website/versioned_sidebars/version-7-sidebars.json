@@ -18,6 +18,7 @@
         "components/draghandle",
         "components/shiftactions",
         "components/inlinecombinator",
+        "components/matchmodeeditor",
         "components/rulegroup",
         "components/rule"
       ]
@@ -57,6 +58,7 @@
         "tips/managing-fields",
         "tips/managing-operators",
         "tips/custom-with-fallback",
+        "tips/subqueries",
         "tips/arbitrary-updates",
         "tips/external-controls",
         "tips/limit-groups",

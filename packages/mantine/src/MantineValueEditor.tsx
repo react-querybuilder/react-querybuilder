@@ -16,6 +16,7 @@ export interface MantineValueEditorProps extends ValueEditorProps {
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
+const withinPortalFalse = { withinPortal: false } as const;
 
 /**
  * @group Components
@@ -93,7 +94,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
                 i
               )
             }
-            popoverProps={{ withinPortal: false }}
+            popoverProps={withinPortalFalse}
             {...extraProps}
           />
         );
@@ -214,7 +215,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
             const dateArray = dates.map(d => (d ? dayjs(d).format(dateFormat) : ''));
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
           }}
-          popoverProps={{ withinPortal: false }}
+          popoverProps={withinPortalFalse}
           {...extraProps}
         />
       );
@@ -231,7 +232,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
           onChange={d =>
             handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
           }
-          popoverProps={{ withinPortal: false }}
+          popoverProps={withinPortalFalse}
           {...extraProps}
         />
       );
@@ -247,7 +248,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
         onChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
         }
-        popoverProps={{ withinPortal: false }}
+        popoverProps={withinPortalFalse}
         {...extraProps}
       />
     );

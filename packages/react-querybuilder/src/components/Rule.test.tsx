@@ -18,7 +18,7 @@ import type {
   RuleType,
   ValidationResult,
   ValueSelectorProps,
-  ValueSources,
+  ValueSourceFullOptions,
 } from '../types';
 import { isFullOptionArray, toFullOption } from '../utils';
 import { clsx } from '../utils/clsx';
@@ -114,23 +114,19 @@ describe('shiftRuleUp/Down', () => {
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.shiftActionUp.label));
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false, undefined);
 
     await user.click(screen.getByText(t.shiftActionDown.label));
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.keyboard('{/Alt}');
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionDown.label));
     await user.keyboard('{/Alt}');
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true, undefined);
   });
 });
@@ -259,7 +255,10 @@ describe('locked rule', () => {
 });
 
 describe('valueSource', () => {
-  const valueSources: ValueSources = ['value', 'field'];
+  const valueSources: ValueSourceFullOptions = [
+    { name: 'value', value: 'value', label: 'value' },
+    { name: 'field', value: 'field', label: 'field' },
+  ];
   const fields = [
     {
       name: 'fvsa',
@@ -276,7 +275,7 @@ describe('valueSource', () => {
     { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
   ].map(o => toFullOption(o)) satisfies FullField[];
   const fieldMap = getFieldMapFromArray(fields);
-  const getValueSources = (): ValueSources => valueSources;
+  const getValueSources = (): ValueSourceFullOptions => valueSources;
 
   it('does not display value source selector by default', () => {
     render(<Rule {...getProps()} />);
@@ -304,7 +303,7 @@ describe('valueSource', () => {
 
   it('valueSources as array', () => {
     const props = getProps({
-      getValueSources: () => ['value'],
+      getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
       fields,
       fieldMap,
     });
@@ -317,7 +316,7 @@ describe('valueSource', () => {
 
   it('valueSources as function', () => {
     const props = getProps({
-      getValueSources: () => ['value'],
+      getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
       fields,
       fieldMap,
     });
@@ -360,6 +359,7 @@ describe('valueSource', () => {
   });
 });
 
+// oxlint-disable-next-line no-disabled-tests
 it.skip('makes the values array a FullOption array when appropriate', () => {
   const controls = getProps().schema.controls;
   const fields = [

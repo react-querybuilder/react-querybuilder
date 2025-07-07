@@ -8,7 +8,7 @@ interface QueryBuilderContextInternals {
 }
 
 interface QueryBuilderContextType
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   extends QueryBuilderContextProps<any, any>,
     QueryBuilderContextInternals {}
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
@@ -29,6 +29,8 @@ import TextField from '@mui/material/TextField';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { Loading } from '../_utils';
+
+const loading = <Loading />;
 
 const muiComponents = {
   DragIndicator,
@@ -91,7 +93,7 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
 export default function ReactQueryBuilderDemo_Material() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<Loading />}>
+      <BrowserOnly fallback={loading}>
         {() => <ReactQueryBuilderDemo_MaterialBrowser />}
       </BrowserOnly>
     </Layout>

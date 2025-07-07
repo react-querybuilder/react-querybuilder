@@ -20,6 +20,7 @@ import {
   queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
+  queryWithMatchModes,
 } from '../formatQueryTestUtils';
 import { jsonLogicAdditionalOperators } from '../utils';
 
@@ -281,6 +282,7 @@ it('ruleProcessor', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     and: [
@@ -350,7 +352,7 @@ it('parseNumbers with between operators', () => {
   });
 });
 
-it('runs the jsonLogic additional operators', () => {
+it('runs the JsonLogic additional operators', () => {
   const { startsWith, endsWith } = jsonLogicAdditionalOperators;
   expect(startsWith('TestString', 'Test')).toBe(true);
   // @ts-expect-error null is not valid
@@ -366,4 +368,125 @@ it('runs the jsonLogic additional operators', () => {
   expect(endsWith([], 'String')).toBe(false);
   // @ts-expect-error {} is not valid
   expect(endsWith({}, 'String')).toBe(false);
+});
+
+it('handles match modes', () => {
+  expect(formatQuery(queryWithMatchModes, 'jsonlogic')).toEqual({
+    and: [
+      { all: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { all: [{ var: 'fs' }, { in: ['S', { var: 'fv' }] }] },
+      { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: 'fv' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      {
+        '<=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '<=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      {
+        '==': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '==': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      { all: [{ var: 'fs' }, { and: [{ in: ['S', { var: '' }] }, { in: ['S', { var: '' }] }] }] },
+      {
+        '>=': [
+          {
+            reduce: [
+              {
+                filter: [
+                  { var: 'fs' },
+                  { and: [{ in: ['S', { var: '' }] }, { in: ['S', { var: '' }] }] },
+                ],
+              },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+    ],
+  });
 });

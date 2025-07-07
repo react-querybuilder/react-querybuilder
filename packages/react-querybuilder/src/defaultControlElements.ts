@@ -1,6 +1,7 @@
 import { ActionElement } from './components/ActionElement';
 import { DragHandle } from './components/DragHandle';
 import { InlineCombinator } from './components/InlineCombinator';
+import { MatchModeEditor } from './components/MatchModeEditor';
 import { NotToggle } from './components/NotToggle';
 import { Rule } from './components/Rule';
 import {
@@ -48,6 +49,12 @@ export const defaultTranslations: TranslationsFull = {
     placeholderName: defaultPlaceholderValueName,
     placeholderLabel: defaultPlaceholderValueLabel,
     placeholderGroupLabel: defaultPlaceholderValueGroupLabel,
+  } as const,
+  matchMode: {
+    title: 'Match mode',
+  } as const,
+  matchThreshold: {
+    title: 'Match threshold',
   } as const,
   value: {
     title: 'Value',
@@ -134,6 +141,7 @@ export const defaultControlElements: {
   inlineCombinator: typeof InlineCombinator;
   lockGroupAction: typeof ActionElement;
   lockRuleAction: typeof ActionElement;
+  matchModeEditor: typeof MatchModeEditor;
   notToggle: typeof NotToggle;
   operatorSelector: typeof ValueSelector;
   removeGroupAction: typeof ActionElement;
@@ -158,6 +166,7 @@ export const defaultControlElements: {
   inlineCombinator: InlineCombinator,
   lockGroupAction: ActionElement,
   lockRuleAction: ActionElement,
+  matchModeEditor: MatchModeEditor,
   notToggle: NotToggle,
   operatorSelector: ValueSelector,
   removeGroupAction: ActionElement,

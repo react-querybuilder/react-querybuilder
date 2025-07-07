@@ -6,6 +6,7 @@ if (typeof Element !== 'undefined') {
   Element.prototype.scrollIntoView = jest.fn();
 }
 
+// oxlint-disable-next-line prefer-global-this
 if (typeof window !== 'undefined') {
   mockAnimationsApi();
   mockResizeObserver();

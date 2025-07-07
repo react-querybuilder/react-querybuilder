@@ -1,5 +1,12 @@
 import type { RequireAtLeastOne, SetRequired, Simplify } from './type-fest';
 
+export type StringUnionToFlexibleOptionArray<Op extends string> = Array<
+  Op extends unknown ? FlexibleOption<Op> : never
+>;
+export type StringUnionToFullOptionArray<Op extends string> = Array<
+  Op extends unknown ? FullOption<Op> : never
+>;
+
 /**
  * Extracts the {@link Option} type from a {@link FlexibleOptionList}.
  *

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
+  "ignorePatterns": ["**/*Parser.js", "type-fest"],
+  "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "settings": {
+    "jsdoc": {
+      "tagNamePreference": {
+        "defaultValue": "defaultValue",
+        "group": "group",
+        "typeParam": "typeParam"
+      }
+    }
+  },
+  "rules": {
+    "typescript/ban-ts-comment": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "jest/require-to-throw-message": "off",
+    "jest/valid-title": "off",
+    "react/display-name": "off",
+    "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "error",
+    "react/no-unstable-nested-components": "error",
+    // TODO?: enable this when oxlint plugin is available
+    // "react-compiler/react-compiler": "error",
+    "unicorn/catch-error-name": "off",
+    "unicorn/consistent-function-scoping": "error",
+    "unicorn/filename-case": "off",
+    "unicorn/no-array-reduce": "off",
+    "unicorn/no-nested-ternary": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/no-null": "off",
+    "unicorn/prefer-export-from": ["error", { "ignoreUsedVariables": true }],
+    "unicorn/prefer-global-this": "error",
+    "unicorn/prefer-module": "error",
+    "unicorn/prefer-node-protocol": "error",
+    "unicorn/prefer-number-properties": "error",
+    "unicorn/prevent-abbreviations": "off",
+    "unicorn/switch-case-braces": "off",
+    "unicorn/consistent-existence-index-check": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "packages/*/src/**/*{ActionElement,DragHandle,MatchModeEditor,NotToggle,ShiftActions,ValueEditor,ValueSelector}.tsx"
+      ],
+      // These are always leaf elements, so new functions/objects/arrays
+      // within their JSX have negligible performance impact.
+      "rules": {
+        "jsx-no-new-array-as-prop": "off",
+        "jsx-no-new-function-as-prop": "off",
+        "jsx-no-new-object-as-prop": "off"
+      }
+    },
+    {
+      "files": ["utils/testing/**", "*.test.ts", "*.test.tsx"],
+      "rules": {
+        "no-await-in-loop": "off",
+        "jsx-no-new-array-as-prop": "off",
+        "jsx-no-new-function-as-prop": "off",
+        "jsx-no-new-object-as-prop": "off",
+        "unicorn/consistent-function-scoping": "off"
+      }
+    },
+    {
+      "files": ["examples/**"],
+      "rules": {
+        "react/react-in-jsx-scope": "off"
+      }
+    },
+    {
+      "files": ["website/**"],
+      "rules": {
+        "jsx-no-new-array-as-prop": "off",
+        "jsx-no-new-function-as-prop": "off",
+        "jsx-no-new-object-as-prop": "off",
+        "react/react-in-jsx-scope": "off"
+      }
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import type { OverrideProperties } from '../../types/index.noReact';
 // Functionally equivalent to jsonata.ExprNode except `lhs` property is not an array
 export interface JSONataExprNode {
   type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value?: any;
   position?: number;
   arguments?: JSONataExprNode[];

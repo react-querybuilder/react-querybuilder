@@ -142,7 +142,7 @@ export const uniqByIdentifier = <
  *
  * @group Option Lists
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =>
   Array.isArray(arr) &&
   arr.length > 0 &&
@@ -155,7 +155,7 @@ export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =
  *
  * @group Option Lists
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
   let isFOA = false;
   if (Array.isArray(arr)) {
@@ -175,7 +175,7 @@ export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
  *
  * @group Option Lists
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isFullOptionArray = (arr: any): arr is FullOption[] => {
   let isFOA = false;
   if (Array.isArray(arr)) {
@@ -196,7 +196,7 @@ export const isFullOptionArray = (arr: any): arr is FullOption[] => {
  * @group Option Lists
  */
 export const isFlexibleOptionGroupArray = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   arr: any,
   { allowEmpty = false }: { allowEmpty?: boolean } = {}
 ): arr is FlexibleOptionGroup[] => {
@@ -224,7 +224,7 @@ export const isFlexibleOptionGroupArray = (
  * @group Option Lists
  */
 export const isFullOptionGroupArray = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   arr: any,
   { allowEmpty = false }: { allowEmpty?: boolean } = {}
 ): arr is OptionGroup<FullOption>[] => {

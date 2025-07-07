@@ -1,6 +1,6 @@
 // Adapted from https://github.com/lukeed/clsx/tree/925494cf31bcd97d3337aacd34e659e80cae7fe2
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 type ClassDictionary = Record<string, any>;
 type ClassValue =
   | ClassArray
@@ -14,7 +14,7 @@ type ClassValue =
 type ClassArray = ClassValue[];
 
 // istanbul ignore next
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 function toVal(mix: any) {
   let k;
   let y;
@@ -27,7 +27,7 @@ function toVal(mix: any) {
       const len = mix.length;
       for (k = 0; k < len; k++) {
         if (mix[k] && (y = toVal(mix[k]))) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          // oxlint-disable-next-line typescript/no-unused-expressions
           str && (str += ' ');
           str += y;
         }
@@ -35,7 +35,7 @@ function toVal(mix: any) {
     } else {
       for (y in mix) {
         if (mix[y]) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          // oxlint-disable-next-line typescript/no-unused-expressions
           str && (str += ' ');
           str += y;
         }
@@ -55,7 +55,7 @@ export function clsx(...args: ClassValue[]): string {
   const len = args.length;
   for (; i < len; i++) {
     if ((tmp = args[i]) && (x = toVal(tmp))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // oxlint-disable-next-line typescript/no-unused-expressions
       str && (str += ' ');
       str += x;
     }

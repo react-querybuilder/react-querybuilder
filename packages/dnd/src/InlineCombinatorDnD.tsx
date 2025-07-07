@@ -100,7 +100,6 @@ export const useInlineCombinatorDnD = (
     | RuleType
     | RuleGroupTypeAny;
 
-  // eslint-disable-next-line react-compiler/react-compiler
   const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
     DraggedItem,
     DropResult,

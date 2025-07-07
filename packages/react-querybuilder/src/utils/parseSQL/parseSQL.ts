@@ -31,7 +31,7 @@ import {
  */
 export interface ParseSQLOptions extends ParserCommonOptions {
   paramPrefix?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   params?: any[] | Record<string, any>;
 }
 /**

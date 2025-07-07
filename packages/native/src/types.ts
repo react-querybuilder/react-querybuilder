@@ -7,6 +7,7 @@ import type {
   FullOperator,
   FullOption,
   InlineCombinatorProps,
+  MatchModeEditorProps,
   NotToggleProps,
   QueryBuilderProps,
   RuleGroupProps,
@@ -121,6 +122,14 @@ export type ValueSelectorNativeProps<OptType extends FullOption = FullOption> =
  * @group Props
  */
 export type ValueEditorNativeProps = ValueEditorProps &
+  WithSchemaNative & {
+    selectorComponent?: ComponentType<ValueSelectorNativeProps>;
+  };
+
+/**
+ * @group Props
+ */
+export type MatchModeEditorNativeProps = MatchModeEditorProps &
   WithSchemaNative & {
     selectorComponent?: ComponentType<ValueSelectorNativeProps>;
   };
