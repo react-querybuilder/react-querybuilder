@@ -1,11 +1,20 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
   "ignorePatterns": ["**/*Parser.js", "type-fest"],
-  "plugins": ["typescript", "unicorn", "oxc", "react", "jest", "promise", "react-perf"],
+  "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
     "perf": "warn"
+  },
+  "settings": {
+    "jsdoc": {
+      "tagNamePreference": {
+        "defaultValue": "defaultValue",
+        "group": "group",
+        "typeParam": "typeParam"
+      }
+    }
   },
   "rules": {
     "typescript/ban-ts-comment": "error",

@@ -1,6 +1,5 @@
-/**
- * @jest-environment node
- */
+/* @jest-environment node */
+
 import nodeCrypto from 'node:crypto';
 import { testGenerateID } from './generateIDTestUtils';
 
