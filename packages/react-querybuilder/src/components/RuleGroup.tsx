@@ -1,3 +1,13 @@
+import {
+  clsx,
+  getFirstOption,
+  getOption,
+  getParentPath,
+  getValidationClassNames,
+  isRuleGroup,
+  isRuleGroupType,
+  pathsAreEqual,
+} from '@react-querybuilder/core';
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
@@ -17,16 +27,6 @@ import type {
   ValidationResult,
   ValueChangeEventHandler,
 } from '../types';
-import {
-  getFirstOption,
-  getOption,
-  getParentPath,
-  getValidationClassNames,
-  isRuleGroup,
-  isRuleGroupType,
-  pathsAreEqual,
-} from '../utils';
-import { clsx } from '../utils/clsx';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}

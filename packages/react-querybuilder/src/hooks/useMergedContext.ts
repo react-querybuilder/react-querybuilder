@@ -1,3 +1,4 @@
+import { mergeClassnames } from '@react-querybuilder/core';
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../context';
@@ -15,7 +16,7 @@ import type {
   TranslationsFull,
   ValueEditorProps,
 } from '../types';
-import { mergeClassnames, mergeTranslation } from '../utils';
+import { mergeTranslation } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextParams<

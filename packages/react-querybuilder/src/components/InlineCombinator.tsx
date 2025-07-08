@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { standardClassnames, TestID } from '../defaults';
 import type { InlineCombinatorProps } from '../types';
-import { clsx } from '../utils/clsx';
+import { clsx } from '@react-querybuilder/core';
 
 /**
  * Default `inlineCombinator` component used by {@link QueryBuilder}. A small `<div>`

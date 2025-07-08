@@ -4,12 +4,19 @@
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  coveragePathIgnorePatterns: ['/utils/testing/', '/dist/', 'TestUtils.ts'],
+  coveragePathIgnorePatterns: [
+    '/utils/testing/',
+    '/dist/',
+    'TestUtils.ts',
+    'celParser.js',
+    'sqlParser.js',
+  ],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
   testEnvironment: '<rootDir>/../../utils/fixJSDOMEnvironment.ts',
   testEnvironmentOptions: { globalsCleanup: 'on' },
   // Keep these in sync with /tsconfig.json#compilerOptions#paths.
   moduleNameMapper: {
+    '@react-querybuilder/core': ['<rootDir>/../../packages/core/src'],
     'react-querybuilder': ['<rootDir>/../../packages/react-querybuilder/src'],
     '@rqb-testing': ['<rootDir>/../../utils/testing'],
     '@rqb-dbquerytestutils': [

@@ -1,3 +1,4 @@
+import { clsx, isFullOptionArray, toFullOption } from '@react-querybuilder/core';
 import {
   consoleMocks,
   getFieldMapFromArray,
@@ -20,8 +21,6 @@ import type {
   ValueSelectorProps,
   ValueSourceFullOptions,
 } from '../types';
-import { isFullOptionArray, toFullOption } from '../utils';
-import { clsx } from '../utils/clsx';
 import { Rule } from './Rule';
 import { render, waitABeat } from './testUtils';
 

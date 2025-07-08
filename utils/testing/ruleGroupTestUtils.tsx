@@ -19,10 +19,10 @@ import {
   defaultCombinators,
   defaultControlClassnames,
   defaultControlElements,
-  generateAccessibleDescription,
   toFullOption,
   defaultTranslations as translations,
 } from 'react-querybuilder';
+import { generateAccessibleDescription } from '@react-querybuilder/core';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => ({

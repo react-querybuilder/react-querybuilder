@@ -1,3 +1,4 @@
+export * from '@react-querybuilder/core';
 export * from './context';
 export * from './defaultControlElements';
 export * from './defaults';

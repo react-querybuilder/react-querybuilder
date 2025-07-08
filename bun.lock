@@ -53,7 +53,7 @@
     },
     "packages/antd": {
       "name": "@react-querybuilder/antd",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@ant-design/icons": "^6.0.0",
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
@@ -65,7 +65,7 @@
         "dayjs": "^1.11.13",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -75,12 +75,12 @@
         "antd": ">=5.11.0",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/bootstrap": {
       "name": "@react-querybuilder/bootstrap",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@popperjs/core": "^2.11.8",
         "@testing-library/dom": "^10.4.0",
@@ -91,7 +91,7 @@
         "bootstrap-icons": "^1.13.1",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -100,12 +100,12 @@
         "bootstrap": ">=5",
         "bootstrap-icons": ">=1.7.0",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/bulma": {
       "name": "@react-querybuilder/bulma",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.3.0",
@@ -114,7 +114,7 @@
         "bulma": "^1.0.4",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -122,12 +122,12 @@
       "peerDependencies": {
         "bulma": "^0.9.4 || ^1",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/chakra": {
       "name": "@react-querybuilder/chakra",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@chakra-ui/react": "^3.21.1",
         "@emotion/react": "^11.14.0",
@@ -139,7 +139,7 @@
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
         "react-icons": "^5.5.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -150,16 +150,57 @@
         "next-themes": "^0.3.0",
         "react": ">=18",
         "react-icons": "^5",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
       "optionalPeers": [
         "next-themes",
         "react-icons",
       ],
     },
+    "packages/core": {
+      "name": "@react-querybuilder/core",
+      "version": "8.8.0-alpha.1",
+      "dependencies": {
+        "immer": "^10.1.1",
+        "numeric-quantity": "^2.1.0",
+      },
+      "devDependencies": {
+        "@babel/core": "^7.28.0",
+        "@babel/preset-env": "^7.28.0",
+        "@babel/preset-typescript": "^7.27.1",
+        "@electric-sql/pglite": "^0.3.4",
+        "@types/json-logic-js": "^2.0.8",
+        "@types/node": "^24.0.10",
+        "drizzle-orm": "^0.44.2",
+        "jscodeshift": "^17.3.0",
+        "json-logic-js": "^2.0.5",
+        "jsonata": "^2.0.6",
+        "mongodb-memory-server-core": "^10.1.4",
+        "mongoose": "^8.16.1",
+        "pglite-prisma-adapter": "^0.6.1",
+        "prisma": "^6.11.1",
+        "query-string": "^9.2.2",
+        "regenerator-runtime": "^0.14.1",
+        "sequelize": "^6.37.7",
+        "spel2js": "^0.2.8",
+        "sqlite3": "^5.1.7",
+        "type-fest": "^4.41.0",
+        "typescript": "^5.8.3",
+      },
+      "peerDependencies": {
+        "drizzle-orm": ">=0.38.0",
+        "json-logic-js": ">=2",
+        "sequelize": ">=6",
+      },
+      "optionalPeers": [
+        "drizzle-orm",
+        "json-logic-js",
+        "sequelize",
+      ],
+    },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@date-fns/tz": "^1.2.0",
         "@electric-sql/pglite": "^0.3.4",
@@ -178,7 +219,7 @@
         "mongoose": "^8.16.1",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -188,7 +229,7 @@
         "dayjs": "^1.11.13",
         "luxon": "^3.5.0",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
       "optionalPeers": [
         "date-fns",
@@ -198,7 +239,7 @@
     },
     "packages/dnd": {
       "name": "@react-querybuilder/dnd",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.3.0",
@@ -212,7 +253,7 @@
         "react-dnd-test-utils": "^16.0.1",
         "react-dnd-touch-backend": "^16.0.1",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -222,7 +263,7 @@
         "react-dnd": ">=14.0.0",
         "react-dnd-html5-backend": ">=14.0.0",
         "react-dnd-touch-backend": ">=14.0.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
       "optionalPeers": [
         "react-dnd-html5-backend",
@@ -231,7 +272,7 @@
     },
     "packages/drizzle": {
       "name": "@react-querybuilder/drizzle",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@electric-sql/pglite": "^0.3.4",
         "@types/react": "^19.1.8",
@@ -251,7 +292,7 @@
     },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@fluentui/react-components": "^9.66.6",
         "@fluentui/react-icons-mdl2": "^1.3.87",
@@ -262,7 +303,7 @@
         "dayjs": "^1.11.13",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -272,12 +313,12 @@
         "@fluentui/react-icons-mdl2": "^1",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@mantine/core": "8.1.2",
         "@mantine/dates": "8.1.2",
@@ -289,7 +330,7 @@
         "dayjs": "^1.11.13",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
@@ -300,12 +341,12 @@
         "@mantine/hooks": ">=7",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/material": {
       "name": "@react-querybuilder/material",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -317,7 +358,7 @@
         "@vitejs/plugin-react": "^4.6.0",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "regenerator-runtime": "^0.14.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
@@ -329,12 +370,12 @@
         "@mui/icons-material": ">=5",
         "@mui/material": ">=5",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/native": {
       "name": "@react-querybuilder/native",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@babel/preset-flow": "^7.27.1",
         "@testing-library/jest-native": "^5.4.3",
@@ -362,8 +403,9 @@
     },
     "packages/react-querybuilder": {
       "name": "react-querybuilder",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "dependencies": {
+        "@react-querybuilder/core": "^8.8.0-alpha.1",
         "@reduxjs/toolkit": "^2.8.2",
         "immer": "^10.1.1",
         "numeric-quantity": "^2.1.0",
@@ -387,7 +429,6 @@
         "@vitejs/plugin-react": "^4.6.0",
         "babel-plugin-istanbul": "^7.0.0",
         "drizzle-orm": "^0.44.2",
-        "jscodeshift": "^17.3.0",
         "json-logic-js": "^2.0.5",
         "jsonata": "^2.0.6",
         "mongodb-memory-server-core": "^10.1.4",
@@ -421,7 +462,7 @@
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
-      "version": "8.8.0-alpha.0",
+      "version": "8.8.0-alpha.1",
       "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.2",
         "@tailwindcss/forms": "^0.5.10",
@@ -436,7 +477,7 @@
         "postcss": "^8.5.6",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "tailwindcss": "^4.1.11",
         "typescript": "^5.8.3",
@@ -446,7 +487,7 @@
         "@tremor/react": "^3",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "website": {
@@ -474,6 +515,7 @@
         "@react-querybuilder/bootstrap": "workspace:*",
         "@react-querybuilder/bulma": "workspace:*",
         "@react-querybuilder/chakra": "workspace:*",
+        "@react-querybuilder/core": "workspace:*",
         "@react-querybuilder/datetime": "workspace:*",
         "@react-querybuilder/dnd": "workspace:*",
         "@react-querybuilder/fluent": "workspace:*",
@@ -1705,6 +1747,8 @@
     "@react-querybuilder/bulma": ["@react-querybuilder/bulma@workspace:packages/bulma"],
 
     "@react-querybuilder/chakra": ["@react-querybuilder/chakra@workspace:packages/chakra"],
+
+    "@react-querybuilder/core": ["@react-querybuilder/core@workspace:packages/core"],
 
     "@react-querybuilder/datetime": ["@react-querybuilder/datetime@workspace:packages/datetime"],
 
@@ -3642,7 +3686,7 @@
 
     "magic-string": ["magic-string@0.30.17", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0" } }, "sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA=="],
 
-    "make-dir": ["make-dir@3.1.0", "", { "dependencies": { "semver": "^6.0.0" } }, "sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw=="],
+    "make-dir": ["make-dir@2.1.0", "", { "dependencies": { "pify": "^4.0.1", "semver": "^5.6.0" } }, "sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA=="],
 
     "make-fetch-happen": ["make-fetch-happen@14.0.3", "", { "dependencies": { "@npmcli/agent": "^3.0.0", "cacache": "^19.0.1", "http-cache-semantics": "^4.1.1", "minipass": "^7.0.2", "minipass-fetch": "^4.0.0", "minipass-flush": "^1.0.5", "minipass-pipeline": "^1.2.4", "negotiator": "^1.0.0", "proc-log": "^5.0.0", "promise-retry": "^2.0.1", "ssri": "^12.0.0" } }, "sha512-QMjGbFTP0blj97EeidG5hk/QhKQ3T4ICckQGLgz38QF7Vgbk6e6FTARN8KhKxyBbWn8R0HU+bnw8aSoFPD4qtQ=="],
 
@@ -5240,8 +5284,6 @@
 
     "@babel/register/find-cache-dir": ["find-cache-dir@2.1.0", "", { "dependencies": { "commondir": "^1.0.1", "make-dir": "^2.0.0", "pkg-dir": "^3.0.0" } }, "sha512-Tq6PixE0w/VMFfCgbONnkiQIVol/JJL7nRMi20fqzA4NRs9AfeqMGeRdPi3wIhYkxjeBaWh2rxwapn5Tu3IqOQ=="],
 
-    "@babel/register/make-dir": ["make-dir@2.1.0", "", { "dependencies": { "pify": "^4.0.1", "semver": "^5.6.0" } }, "sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA=="],
-
     "@babel/template/@babel/parser": ["@babel/parser@7.27.2", "", { "dependencies": { "@babel/types": "^7.27.1" }, "bin": "./bin/babel-parser.js" }, "sha512-QYLs8299NA7WM/bZAdp+CviYYkVoYXlDW2rzliy3chxd1PQjej7JORuMJDJXJUb9g0TT+B99EwaVLKmX+sPXWw=="],
 
     "@babel/template/@babel/types": ["@babel/types@7.27.1", "", { "dependencies": { "@babel/helper-string-parser": "^7.27.1", "@babel/helper-validator-identifier": "^7.27.1" } }, "sha512-+EzkxvLNfiUeKMgy/3luqfsCWFRXLb7U6wNQTk60tovuckwB15B191tJWvpp4HjiQWdJkCxO3Wbvc6jlk3Xb2Q=="],
@@ -5754,6 +5796,8 @@
 
     "finalhandler/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
 
+    "find-cache-dir/make-dir": ["make-dir@3.1.0", "", { "dependencies": { "semver": "^6.0.0" } }, "sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw=="],
+
     "gauge/signal-exit": ["signal-exit@3.0.7", "", {}, "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="],
 
     "gauge/strip-ansi": ["strip-ansi@6.0.1", "", { "dependencies": { "ansi-regex": "^5.0.1" } }, "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A=="],
@@ -5948,7 +5992,9 @@
 
     "lighthouse-logger/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
 
-    "make-dir/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
+    "make-dir/pify": ["pify@4.0.1", "", {}, "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g=="],
+
+    "make-dir/semver": ["semver@5.7.2", "", { "bin": { "semver": "bin/semver" } }, "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="],
 
     "marked-terminal/ansi-regex": ["ansi-regex@6.1.0", "", {}, "sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA=="],
 
@@ -6393,10 +6439,6 @@
     "@babel/plugin-transform-typescript/@babel/helper-annotate-as-pure/@babel/types": ["@babel/types@7.27.1", "", { "dependencies": { "@babel/helper-string-parser": "^7.27.1", "@babel/helper-validator-identifier": "^7.27.1" } }, "sha512-+EzkxvLNfiUeKMgy/3luqfsCWFRXLb7U6wNQTk60tovuckwB15B191tJWvpp4HjiQWdJkCxO3Wbvc6jlk3Xb2Q=="],
 
     "@babel/register/find-cache-dir/pkg-dir": ["pkg-dir@3.0.0", "", { "dependencies": { "find-up": "^3.0.0" } }, "sha512-/E57AYkoeQ25qkxMj5PBOVgF8Kiu/h7cYS30Z5+R7WaiCCBfLq58ZI/dSeaEKb9WVJV5n/03QwrN3IeWIFllvw=="],
-
-    "@babel/register/make-dir/pify": ["pify@4.0.1", "", {}, "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g=="],
-
-    "@babel/register/make-dir/semver": ["semver@5.7.2", "", { "bin": { "semver": "bin/semver" } }, "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="],
 
     "@docusaurus/babel/@babel/core/@babel/parser": ["@babel/parser@7.27.5", "", { "dependencies": { "@babel/types": "^7.27.3" }, "bin": "./bin/babel-parser.js" }, "sha512-OsQd175SxWkGlzbny8J3K8TnnDD0N3lrIUtB92xwyRpzaenGZhxDvxN/JgU00U3CDZNj9tPuDJ5H0WS4Nt3vKg=="],
 
@@ -6861,6 +6903,8 @@
     "express/debug/ms": ["ms@2.0.0", "", {}, "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="],
 
     "finalhandler/debug/ms": ["ms@2.0.0", "", {}, "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="],
+
+    "find-cache-dir/make-dir/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
 
     "hpack.js/readable-stream/safe-buffer": ["safe-buffer@5.1.2", "", {}, "sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g=="],
 

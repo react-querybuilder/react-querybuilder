@@ -1,3 +1,16 @@
+import {
+  clsx,
+  filterFieldsByComparator,
+  getOption,
+  getParentPath,
+  getValidationClassNames,
+  isFlexibleOptionArray,
+  isFlexibleOptionGroupArray,
+  isPojo,
+  isRuleGroup,
+  lc,
+  toFullOptionList,
+} from '@react-querybuilder/core';
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
@@ -28,19 +41,6 @@ import type {
   ValueSourceFullOptions,
   ValueSources,
 } from '../types';
-import {
-  filterFieldsByComparator,
-  getOption,
-  getParentPath,
-  getValidationClassNames,
-  isFlexibleOptionArray,
-  isFlexibleOptionGroupArray,
-  isPojo,
-  isRuleGroup,
-  lc,
-  toFullOptionList,
-} from '../utils';
-import { clsx } from '../utils/clsx';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
 import type { UseRuleGroup } from './RuleGroup';
 import { useRuleGroup } from './RuleGroup';

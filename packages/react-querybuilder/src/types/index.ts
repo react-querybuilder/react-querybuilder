@@ -1,2 +1,2 @@
-export * from './index.noReact';
-export * from './propsUsingReact';
+export * from '@react-querybuilder/core';
+export * from './props';
