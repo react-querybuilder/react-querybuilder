@@ -11,8 +11,6 @@ import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
   CombinatorOptions,
-  DefaultCombinatorNameExtended,
-  DefaultOperatorName,
   FlexibleOption,
   FlexibleOptionList,
   FullCombinator,
@@ -47,65 +45,37 @@ import {
   uniqOptList,
 } from '../utils';
 
+const isString = <T>(item: unknown): item is T => typeof item === 'string';
+
 /**
  * Converts mixed arrays to FlexibleOptionList format
  */
-const normalizeMixedArray = <T extends string>(
-  arr: (T | FlexibleOption<T>)[],
-  labelMap: Record<T, string>
-): FlexibleOptionList<FullOption<T>> => {
-  return arr.map(item => {
-    if (typeof item === 'string') {
-      return {
-        name: item as T,
-        value: item as T,
-        label: labelMap[item as T] ?? item,
-      };
-    }
-    // It's already a FlexibleOption
-    return item;
-  }) as FlexibleOptionList<FullOption<T>>;
-};
+const normalizeMixedArray = <T extends string>(arr: unknown[], labelMap: Record<string, string>) =>
+  (arr.some(isString)
+    ? arr.map(item =>
+        isString<T>(item) ? { name: item, value: item, label: labelMap[item] ?? item } : item
+      )
+    : arr) as FlexibleOptionList<FlexibleOption<T>>;
 
 /**
- * Converts OperatorOptions to FlexibleOptionList format
+ * Converts OperatorOptions or CombinatorOptions to FlexibleOptionList format
  */
-const normalizeOperatorOptions = <O extends FullOperator>(
-  options: OperatorOptions<O>
-): FlexibleOptionList<O> => {
-  // Check if array contains any strings
-  const hasStrings = options.some(item => typeof item === 'string');
-
-  if (hasStrings) {
-    return normalizeMixedArray(
-      options as (DefaultOperatorName | FlexibleOption<DefaultOperatorName>)[],
-      defaultOperatorLabelMap
-    ) as FlexibleOptionList<O>;
-  }
-
-  // All items are already FlexibleOptions
-  return options as FlexibleOptionList<O>;
-};
-
-/**
- * Converts CombinatorOptions to FlexibleOptionList format
- */
-const normalizeCombinatorOptions = <C extends FullCombinator>(
-  options: CombinatorOptions<C>
-): FlexibleOptionList<C> => {
-  // Check if array contains any strings
-  const hasStrings = options.some(item => typeof item === 'string');
-
-  if (hasStrings) {
-    return normalizeMixedArray(
-      options as (DefaultCombinatorNameExtended | FlexibleOption<DefaultCombinatorNameExtended>)[],
-      defaultCombinatorLabelMap
-    ) as FlexibleOptionList<C>;
-  }
-
-  // All items are already FlexibleOptions
-  return options as FlexibleOptionList<C>;
-};
+function normalizeOptions<T extends FullOperator>(
+  options: OperatorOptions<T>,
+  labelMap: Record<string, string>
+): FlexibleOptionList<T>;
+function normalizeOptions<T extends FullCombinator>(
+  options: CombinatorOptions<T>,
+  labelMap: Record<string, string>
+): FlexibleOptionList<T>;
+function normalizeOptions<T extends FullOperator | FullCombinator>(
+  options: OperatorOptions<T> | CombinatorOptions<T>,
+  labelMap: Record<string, string>
+): FlexibleOptionList<T> {
+  return options.some(isString<string>)
+    ? (normalizeMixedArray(options, labelMap) as FlexibleOptionList<T>)
+    : (options as FlexibleOptionList<T>);
+}
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
@@ -196,7 +166,7 @@ export const useQueryBuilderSetup = <
     baseField,
     operators: operatorsProp,
     baseOperator,
-    combinators: combinatorsProp = defaultCombinators,
+    combinators: combinatorsProp,
     baseCombinator,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
@@ -221,10 +191,6 @@ export const useQueryBuilderSetup = <
     debugMode: debugModeProp = false,
     idGenerator = generateID,
   } = props;
-
-  const operators = normalizeOperatorOptions(
-    (operatorsProp ?? defaultOperators) as OperatorOptions<O>
-  );
 
   const [initialQueryProp] = useState(props.query ?? props.defaultQuery);
 
@@ -251,12 +217,28 @@ export const useQueryBuilderSetup = <
   });
   // #endregion
 
+  // #region Set up `combinators`
   const combinators = useMemo(
-    () => toFullOptionList(normalizeCombinatorOptions(combinatorsProp), baseCombinator),
+    () =>
+      combinatorsProp
+        ? toFullOptionList(
+            normalizeOptions(combinatorsProp, defaultCombinatorLabelMap),
+            baseCombinator
+          )
+        : defaultCombinators,
     [baseCombinator, combinatorsProp]
   );
+  // #endregion
 
   // #region Set up `operators`
+  const operators = useMemo(
+    () =>
+      operatorsProp
+        ? toFullOptionList(normalizeOptions(operatorsProp, defaultOperatorLabelMap))
+        : defaultOperators,
+    [operatorsProp]
+  );
+
   const defaultOperator = useMemo(
     (): FullOption<OperatorName> => ({
       id: translations.operators.placeholderName,
@@ -269,18 +251,18 @@ export const useQueryBuilderSetup = <
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
-      let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>, baseOperator);
+      let opsFinal = operators;
 
       if (fieldData?.operators) {
         opsFinal = toFullOptionList(
-          normalizeOperatorOptions(fieldData.operators as OperatorOptions<O>),
+          normalizeOptions(fieldData.operators as OperatorOptions<O>, defaultOperatorLabelMap),
           baseOperator
         );
       } else if (getOperators) {
         const ops = getOperators(field, { fieldData });
         if (ops) {
           opsFinal = toFullOptionList(
-            normalizeOperatorOptions(ops as OperatorOptions<O>),
+            normalizeOptions(ops as OperatorOptions<O>, defaultOperatorLabelMap),
             baseOperator
           );
         }
