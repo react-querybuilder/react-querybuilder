@@ -6,7 +6,7 @@
     "react-querybuilder": "8.8.0"
   },
   "devDependencies": {
-    "@types/node": "20.6.2",
+    "@types/node": "24.0.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "prettier": "^3",

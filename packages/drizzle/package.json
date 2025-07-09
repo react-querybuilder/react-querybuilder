@@ -55,7 +55,7 @@
     "react-querybuilder": "8.8.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
-    "vite": "^7.0.2"
+    "vite": "^7.0.3"
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
