@@ -7,12 +7,7 @@
  */
 
 import { produce } from 'immer';
-import type {
-  RuleGroupType,
-  RuleGroupTypeAny,
-  RuleGroupTypeIC,
-  RuleType,
-} from '../types';
+import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC, RuleType } from '../types';
 import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 const remapProperties = (

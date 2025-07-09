@@ -1,9 +1,4 @@
-import type {
-  FormatQueryFinalOptions,
-  FullField,
-  RuleGroupType,
-  RuleProcessor,
-} from '../../types';
+import type { FormatQueryFinalOptions, FullField, RuleGroupType, RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';

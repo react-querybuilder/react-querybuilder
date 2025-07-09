@@ -1,8 +1,4 @@
-import type {
-  FormatQueryOptions,
-  RuleGroupType,
-  RuleProcessor,
-} from '../../../types';
+import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../../types';
 import { add } from '../../queryTools';
 import { defaultRuleProcessorJSONata } from '../defaultRuleProcessorJSONata';
 import { formatQuery } from '../formatQuery';

@@ -146,5 +146,8 @@
   },
   "overrides": {
     "@testing-library/user-event": "14.5.2"
+  },
+  "patchedDependencies": {
+    "spel2js@0.2.8": "patches/spel2js@0.2.8.patch"
   }
 }

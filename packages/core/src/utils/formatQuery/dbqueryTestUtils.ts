@@ -1,9 +1,4 @@
-import type {
-  DefaultRuleGroupType,
-  Field,
-  FormatQueryOptions,
-  MatchConfig,
-} from '../../types';
+import type { DefaultRuleGroupType, Field, FormatQueryOptions, MatchConfig } from '../../types';
 
 type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql' | 'mongodb' | 'cel';
 

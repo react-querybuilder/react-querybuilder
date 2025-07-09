@@ -1,9 +1,4 @@
-import type {
-  RuleGroupTypeAny,
-  RuleType,
-  RuleValidator,
-  ValidationResult,
-} from '../types';
+import type { RuleGroupTypeAny, RuleType, RuleValidator, ValidationResult } from '../types';
 import { isRuleGroup } from './isRuleGroup';
 import { isPojo } from './misc';
 

@@ -1,8 +1,4 @@
-import type {
-  FormatQueryFinalOptions,
-  RuleGroupType,
-  RuleProcessor,
-} from '../../types';
+import type { FormatQueryFinalOptions, RuleGroupType, RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';

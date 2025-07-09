@@ -1,8 +1,4 @@
-import type {
-  FormatQueryOptions,
-  RuleGroupType,
-  RuleProcessor,
-} from '../../../types';
+import type { FormatQueryOptions, RuleGroupType, RuleProcessor } from '../../../types';
 import { defaultRuleProcessorElasticSearch } from '../defaultRuleProcessorElasticSearch';
 import { formatQuery } from '../formatQuery';
 import {

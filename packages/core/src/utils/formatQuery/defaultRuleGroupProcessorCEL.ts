@@ -1,8 +1,4 @@
-import type {
-  DefaultCombinatorName,
-  RuleGroupProcessor,
-  RuleGroupTypeAny,
-} from '../../types';
+import type { DefaultCombinatorName, RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';

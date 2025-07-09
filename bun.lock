@@ -280,14 +280,14 @@
         "drizzle-orm": "^0.44.2",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "rollup-plugin-visualizer": "^6.0.3",
         "typescript": "^5.8.3",
         "vite": "^7.0.2",
       },
       "peerDependencies": {
         "drizzle-orm": ">=0.38.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
       },
     },
     "packages/fluent": {
@@ -388,7 +388,7 @@
         "react-dom": "^19.1.0",
         "react-native": "~0.80.1",
         "react-native-web": "~0.20.0",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "react-redux": "^9.2.0",
         "react-test-renderer": "^19.1.0",
         "rollup-plugin-visualizer": "^6.0.3",
@@ -397,7 +397,7 @@
       },
       "peerDependencies": {
         "react": ">=18",
-        "react-querybuilder": "8.8.0-alpha.0",
+        "react-querybuilder": "8.8.0-alpha.1",
         "react-redux": "^9.1.0",
       },
     },
@@ -405,7 +405,7 @@
       "name": "react-querybuilder",
       "version": "8.8.0-alpha.1",
       "dependencies": {
-        "@react-querybuilder/core": "^8.8.0-alpha.1",
+        "@react-querybuilder/core": "8.8.0-alpha.1",
         "@reduxjs/toolkit": "^2.8.2",
         "immer": "^10.1.1",
         "numeric-quantity": "^2.1.0",
@@ -579,6 +579,9 @@
         "url-loader": "^4.1.1",
       },
     },
+  },
+  "patchedDependencies": {
+    "spel2js@0.2.8": "patches/spel2js@0.2.8.patch",
   },
   "overrides": {
     "@testing-library/user-event": "14.5.2",

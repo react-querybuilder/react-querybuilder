@@ -1,9 +1,5 @@
 import type { Column, Operators, SQL, SQLWrapper } from 'drizzle-orm';
-import type {
-  FormatQueryFinalOptions,
-  RuleGroupType,
-  RuleProcessor,
-} from '../../types';
+import type { FormatQueryFinalOptions, RuleGroupType, RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';

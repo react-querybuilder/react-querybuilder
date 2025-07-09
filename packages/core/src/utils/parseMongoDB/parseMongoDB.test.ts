@@ -1,9 +1,4 @@
-import type {
-  DefaultRuleGroupType,
-  FullField,
-  OptionGroup,
-  ValueSources,
-} from '../../types';
+import type { DefaultRuleGroupType, FullField, OptionGroup, ValueSources } from '../../types';
 import { toFullOption } from '../optGroupUtils';
 import { parseMongoDB } from './parseMongoDB';
 

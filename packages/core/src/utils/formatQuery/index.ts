@@ -4,11 +4,7 @@
  * @module formatQuery
  */
 
-import type {
-  RuleProcessor,
-  ValueProcessorByRule,
-  ValueProcessorLegacy,
-} from '../../types';
+import type { RuleProcessor, ValueProcessorByRule, ValueProcessorLegacy } from '../../types';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorMongoDB } from './defaultRuleProcessorMongoDB';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';

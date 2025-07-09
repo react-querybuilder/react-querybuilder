@@ -1,10 +1,5 @@
 import { defaultCombinators, groupInvalidReasons } from '../defaults';
-import type {
-  QueryValidator,
-  RuleGroupTypeAny,
-  RuleType,
-  ValidationMap,
-} from '../types';
+import type { QueryValidator, RuleGroupTypeAny, RuleType, ValidationMap } from '../types';
 import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 /**

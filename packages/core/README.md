@@ -41,8 +41,8 @@ const query = {
   combinator: 'and',
   rules: [
     { field: 'name', operator: '=', value: 'John' },
-    { field: 'age', operator: '>', value: 25 }
-  ]
+    { field: 'age', operator: '>', value: 25 },
+  ],
 };
 
 // Format query to SQL
@@ -75,32 +75,34 @@ const elasticQuery = formatQuery(query, 'elasticsearch');
 ### Working with Types
 
 ```typescript
-import type { 
-  RuleGroupType, 
-  Rule, 
-  Field, 
+import type {
+  RuleGroupType,
+  Rule,
+  Field,
   Operator,
-  QueryBuilderProps 
+  QueryBuilderProps,
 } from '@react-querybuilder/core';
 
 const fields: Field[] = [
   { name: 'name', label: 'Name' },
-  { name: 'age', label: 'Age' }
+  { name: 'age', label: 'Age' },
 ];
 
 const operators: Operator[] = [
   { name: '=', label: 'equals' },
-  { name: '>', label: 'greater than' }
+  { name: '>', label: 'greater than' },
 ];
 ```
 
 ## Available Exports
 
 ### Types
+
 - All type definitions from React Query Builder
 - `RuleGroupType`, `Rule`, `Field`, `Operator`, etc.
 
 ### Utilities
+
 - `formatQuery` - Export queries to various formats
 - `parseSQL`, `parseCEL`, `parseJSONata`, etc. - Import from various formats
 - `defaultValidator` - Validate queries
@@ -110,9 +112,11 @@ const operators: Operator[] = [
 - And many more...
 
 ### Formatters
+
 - SQL, MongoDB, JSON Logic, Elasticsearch, LDAP, Natural Language, etc.
 
 ### Parsers
+
 - SQL, CEL, JSONata, JSON Logic, MongoDB, SpEL
 
 ## Documentation

@@ -1,8 +1,4 @@
-import type {
-  FormatQueryFinalOptions,
-  RuleGroupType,
-  RuleProcessor,
-} from '../../types';
+import type { FormatQueryFinalOptions, RuleGroupType, RuleProcessor } from '../../types';
 import { lc } from '../misc';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';

@@ -1,8 +1,4 @@
-import type {
-  JsonLogicLessThan,
-  JsonLogicLessThanOrEqual,
-  JsonLogicRulesLogic,
-} from '../../types';
+import type { JsonLogicLessThan, JsonLogicLessThanOrEqual, JsonLogicRulesLogic } from '../../types';
 
 export interface JsonLogicBetweenExclusive extends JsonLogicLessThan {
   '<': [JsonLogicRulesLogic, JsonLogicRulesLogic, JsonLogicRulesLogic];

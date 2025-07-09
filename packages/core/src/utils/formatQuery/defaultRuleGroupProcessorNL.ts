@@ -1,8 +1,4 @@
-import type {
-  NLTranslationKey,
-  RuleGroupProcessor,
-  RuleGroupTypeAny,
-} from '../../types';
+import type { NLTranslationKey, RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
