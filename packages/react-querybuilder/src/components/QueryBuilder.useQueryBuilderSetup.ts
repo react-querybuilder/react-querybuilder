@@ -10,6 +10,7 @@ import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
+  FlexibleOptionListProp,
   FullCombinator,
   FullField,
   FullOperator,
@@ -19,7 +20,6 @@ import type {
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
   MatchModeOptions,
-  OperatorOptions,
   Option,
   OptionGroup,
   QueryBuilderProps,
@@ -217,7 +217,7 @@ export const useQueryBuilderSetup = <
 
       if (fieldData?.operators) {
         opsFinal = toFullOptionList(
-          fieldData.operators as OperatorOptions<O>,
+          fieldData.operators as FlexibleOptionListProp<O>,
           baseOperator,
           defaultOperatorLabelMap
         );
@@ -225,7 +225,7 @@ export const useQueryBuilderSetup = <
         const ops = getOperators(field, { fieldData });
         if (ops) {
           opsFinal = toFullOptionList(
-            ops as OperatorOptions<O>,
+            ops as FlexibleOptionListProp<O>,
             baseOperator,
             defaultOperatorLabelMap
           );

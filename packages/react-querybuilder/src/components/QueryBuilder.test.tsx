@@ -3701,6 +3701,47 @@ describe('string array options', () => {
     };
   };
 
+  describe('fields prop with string arrays', () => {
+    it('accepts array of field strings', () => {
+      setupWithStringArrays({ fields: ['and', 'or'] });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('and');
+      expect(options[0]).toHaveValue('and');
+      expect(options[1]).toHaveTextContent('or');
+      expect(options[1]).toHaveValue('or');
+    });
+
+    it('accepts extended field strings including xor', () => {
+      setupWithStringArrays({ fields: ['and', 'or', 'xor'] });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveTextContent('and');
+      expect(options[1]).toHaveTextContent('or');
+      expect(options[2]).toHaveTextContent('xor');
+      expect(options[2]).toHaveValue('xor');
+    });
+
+    it('uses default labels from defaultfieldsExtended for string arrays', () => {
+      setupWithStringArrays({ fields: ['and', 'xor'] });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('and');
+      expect(options[0]).toHaveTextContent('and');
+      expect(options[1]).toHaveValue('xor');
+      expect(options[1]).toHaveTextContent('xor');
+    });
+  });
+
   describe('combinators prop with string arrays', () => {
     it('accepts array of combinator strings', () => {
       setupWithStringArrays({ combinators: ['and', 'or'] });
@@ -3739,22 +3780,6 @@ describe('string array options', () => {
       expect(options[0]).toHaveTextContent('AND');
       expect(options[1]).toHaveValue('xor');
       expect(options[1]).toHaveTextContent('XOR');
-    });
-
-    it('maintains backward compatibility with FlexibleOption arrays', () => {
-      setupWithStringArrays({
-        combinators: [
-          { name: 'and', label: 'Custom AND' },
-          { name: 'or', label: 'Custom OR' },
-        ],
-      });
-
-      const combinatorSelector = screen.getByTestId(TestID.combinators);
-      const options = combinatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent('Custom AND');
-      expect(options[1]).toHaveTextContent('Custom OR');
     });
   });
 
@@ -3805,22 +3830,6 @@ describe('string array options', () => {
       expect(options[0]).toHaveTextContent('between');
       expect(options[1]).toHaveValue('notBetween');
       expect(options[1]).toHaveTextContent('not between');
-    });
-
-    it('maintains backward compatibility with FullOperator arrays', () => {
-      setupWithStringArrays({
-        operators: [
-          { name: '=', label: 'Equals' },
-          { name: '!=', label: 'Not Equals' },
-        ],
-      });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent('Equals');
-      expect(options[1]).toHaveTextContent('Not Equals');
     });
   });
 
@@ -3925,6 +3934,23 @@ describe('string array options', () => {
   });
 
   describe('mixed arrays support', () => {
+    it('handles mixed string and FlexibleOption arrays for fields', () => {
+      setupWithStringArrays({
+        fields: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],
+      });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('=');
+      expect(options[0]).toHaveTextContent('='); // Should use default label
+      expect(options[1]).toHaveValue('!=');
+      expect(options[1]).toHaveTextContent('Custom Not Equal'); // Should use custom label
+      expect(options[2]).toHaveValue('contains');
+      expect(options[2]).toHaveTextContent('contains'); // Should use default label
+    });
+
     it('handles mixed string and FlexibleOption arrays for operators', () => {
       setupWithStringArrays({
         operators: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],

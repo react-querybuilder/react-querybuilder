@@ -84,8 +84,8 @@ export type FlexibleOption<N extends string = string> = Simplify<
  *
  * @group Option Lists
  */
-export type ToFlexibleOption<Opt extends BaseOption> = WithUnknownIndex<
-  RequireAtLeastOne<Opt, 'name' | 'value'>
+export type ToFlexibleOption<Opt extends BaseOption | string> = WithUnknownIndex<
+  RequireAtLeastOne<Opt extends string ? FlexibleOption<Opt> : Opt, 'name' | 'value'>
 >;
 
 /**
@@ -149,7 +149,7 @@ export interface OptionGroup<Opt extends BaseOption = FlexibleOption> {
  *
  * @group Option Lists
  */
-export type FlexibleOptionGroup<Opt extends BaseOption = BaseOption> = {
+export type FlexibleOptionGroup<Opt extends BaseOption | string = BaseOption> = {
   label: string;
   options: (Opt extends BaseFullOption ? Opt : ToFlexibleOption<Opt>)[];
 };
@@ -162,7 +162,7 @@ export type FlexibleOptionGroup<Opt extends BaseOption = BaseOption> = {
 export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[];
 
 /**
- * An array of options or option groups, like {@link OptionList}, but the option type
+ * An array of options or option groups, like {@link OptionList} but the option type
  * may use either `name` or `value` as the primary identifier.
  *
  * @group Option Lists
@@ -170,6 +170,16 @@ export type OptionList<Opt extends Option = Option> = Opt[] | OptionGroup<Opt>[]
 export type FlexibleOptionList<Opt extends BaseOption> =
   | ToFlexibleOption<Opt>[]
   | FlexibleOptionGroup<ToFlexibleOption<Opt>>[];
+
+/**
+ * An array of options or option groups, like {@link OptionList} but the option type
+ * may use either `name` or `value` as the primary identifier.
+ *
+ * @group Option Lists
+ */
+export type FlexibleOptionListProp<Opt extends BaseOption> =
+  | (ToFlexibleOption<Opt> | GetOptionIdentifierType<Opt>)[]
+  | FlexibleOptionGroup<ToFlexibleOption<Opt> | GetOptionIdentifierType<Opt>>[];
 
 /**
  * An array of options or option groups, like {@link OptionList}, but using

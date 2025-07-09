@@ -30,7 +30,7 @@ import type { DropEffect } from './dnd';
 import type {
   BaseOptionMap,
   FlexibleOption,
-  FlexibleOptionList,
+  FlexibleOptionListProp,
   FullOption,
   FullOptionList,
   GetOptionIdentifierType,
@@ -38,12 +38,7 @@ import type {
   ToFullOption,
 } from './options';
 import type { Classnames, CommonRuleSubComponentProps, QueryActions } from './props';
-import type {
-  DefaultCombinatorNameExtended,
-  DefaultOperatorName,
-  RuleGroupType,
-  RuleType,
-} from './ruleGroups';
+import type { RuleGroupType, RuleType } from './ruleGroups';
 import type {
   GenericizeRuleGroupType,
   RuleGroupTypeAny,
@@ -52,24 +47,6 @@ import type {
 } from './ruleGroupsIC';
 import type { SetNonNullable } from './type-fest';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
-
-/**
- * Flexible type for combinator options that accepts mixed arrays of strings and FlexibleOption objects
- */
-export type CombinatorOptions<C extends FullCombinator> =
-  | FlexibleOptionList<C>
-  | DefaultCombinatorNameExtended[]
-  | FlexibleOption<DefaultCombinatorNameExtended>[]
-  | (DefaultCombinatorNameExtended | FlexibleOption<DefaultCombinatorNameExtended>)[];
-
-/**
- * Flexible type for operator options that accepts mixed arrays of strings and FlexibleOption objects
- */
-export type OperatorOptions<O extends FullOperator> =
-  | FlexibleOptionList<O>
-  | DefaultOperatorName[]
-  | FlexibleOption<DefaultOperatorName>[]
-  | (DefaultOperatorName | FlexibleOption<DefaultOperatorName>)[];
 
 /**
  * Base interface for all subcomponents.
@@ -866,7 +843,7 @@ export type QueryBuilderProps<
        *
        * @default []
        */
-      fields?: FlexibleOptionList<F> | BaseOptionMap<F, GetOptionIdentifierType<F>>;
+      fields?: FlexibleOptionListProp<F> | BaseOptionMap<F>;
       /**
        * List of valid {@link FullOperator}s.
        *
@@ -894,7 +871,7 @@ export type QueryBuilderProps<
        *   { name: 'notBetween', label: 'not between' },
        * ]
        */
-      operators?: OperatorOptions<O>;
+      operators?: FlexibleOptionListProp<O>;
       /**
        * List of valid {@link FullCombinator}s.
        *
@@ -906,7 +883,7 @@ export type QueryBuilderProps<
        *   {name: 'or', label: 'OR'},
        * ]
        */
-      combinators?: CombinatorOptions<C>;
+      combinators?: FlexibleOptionListProp<C>;
       /**
        * Default properties applied to all objects in the `fields` prop. Properties on
        * individual field definitions will override these.
@@ -949,7 +926,7 @@ export type QueryBuilderProps<
       getOperators?(
         field: GetOptionIdentifierType<F>,
         misc: { fieldData: F }
-      ): OperatorOptions<FullOperator> | null;
+      ): FlexibleOptionListProp<FullOperator> | null;
       /**
        * This function should return the type of {@link ValueEditor} (see
        * {@link ValueEditorType}) for the given field `name` and operator `name`.
@@ -1004,7 +981,7 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
         misc: { fieldData: F }
-      ): FlexibleOptionList<Option>;
+      ): FlexibleOptionListProp<Option>;
       /**
        * This function should return the list of valid {@link MatchMode}s or
        * {@link MatchConfig}s for a given field `name`. The return value must
