@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.8.1] - 2025-07-09
+
+#### Fixed
+
+- [#916] Corrected "sources" paths in CSS source maps.
+
 ## [v8.8.0] - 2025-07-09
 
 #### Added
@@ -1957,12 +1963,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#903]: https://github.com/react-querybuilder/react-querybuilder/pull/903
 [#911]: https://github.com/react-querybuilder/react-querybuilder/pull/911
 [#914]: https://github.com/react-querybuilder/react-querybuilder/pull/914
+[#916]: https://github.com/react-querybuilder/react-querybuilder/pull/916
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.1...HEAD
+[v8.8.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.0...v8.8.1
 [v8.8.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.1...v8.8.0
 [v8.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.0...v8.7.1
 [v8.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.2...v8.7.0
