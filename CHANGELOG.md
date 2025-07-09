@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.8.0] - 2025-07-09
+
 #### Added
 
-- New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
-- [#911] Support for `inputType: "bigint"` in all value editors, which will render a "text"-type input but will store the value as a `bigint` if a valid integer is entered.
 - [#900] Support for matching elements of a nested array.
   - New optional `RuleType` property `match?: { mode: MatchMode, threshold?: number }`
     - `type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly'`
@@ -23,11 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Supported formats include "sql", "parameterized", "drizzle", "natural_language", "mongodb_query", "jsonlogic", "jsonata", "spel", and "cel".
     - To avoid invalid syntax, the SQL-based formats only work with `preset: "postgresql"`, and only with nested arrays of primitives like strings or numbers.
 - [#903] New parser option `bigIntOnOverflow`. When true, a `bigint` will be generated for parsed tokens that represent valid integers outside the safe boundaries of the `number` type. (This currently only applies to `parseSQL`.)
+- [#911] Support for `inputType: "bigint"` in all value editors, which will render an input with `type="text"` but will store the value as a `bigint` if a valid integer is entered.
 - [#900] Extracted `fields` prop processing logic to new `useFields` hook.
-- [#900] "Justified layout" styles from the demo (push the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge) are now included in the default stylesheet. To apply the styles, add the `queryBuilder-justified` class to the query builder using the `controlClassnames` prop, or to any ancestor element.
+- [#900] "Justified layout" styles from the demo (to push the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge) are now included in the default stylesheet. To apply the styles, add the `queryBuilder-justified` class to the query builder using the `controlClassnames` prop, or to any ancestor element.
 - [#900] All components that render `<label>` elements now have `htmlFor` attributes linking their corresponding `<input>` elements using an `id` generated with `useId()`.
 - [#900] The `getValueSources` prop and the `Field#valueSources` property can now evaluate to a full option list instead of a simple array of value source strings. This enables translations of the value sources through the `label` property.
-- Option list props (including `fields`, `operators`, `combinators`, `getOperators`, and `getValues`) can now include strings in addition to&mdash;or instead of&mdash;`Option` objects (e.g. `["=", "between"]`). The string itself will be used as the label, except in the case of operators and combinators where the default labels will be used if the string matches a value from the default set of options.
+- [#914] Option list props (including `fields`, `operators`, `combinators`, `getOperators`, and `getValues`) can now include strings in addition to&mdash;or instead of&mdash;`Option` objects (e.g. `["=", "between"]`). The string itself will be used as both the identifier and label, except in the case of operators and combinators where the default labels will be used if the string matches a value from the default set.
 
 #### Fixed
 
@@ -1953,12 +1956,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#900]: https://github.com/react-querybuilder/react-querybuilder/pull/900
 [#903]: https://github.com/react-querybuilder/react-querybuilder/pull/903
 [#911]: https://github.com/react-querybuilder/react-querybuilder/pull/911
+[#914]: https://github.com/react-querybuilder/react-querybuilder/pull/914
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.0...HEAD
+[v8.8.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.1...v8.8.0
 [v8.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.0...v8.7.1
 [v8.7.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.2...v8.7.0
 [v8.6.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.6.1...v8.6.2
