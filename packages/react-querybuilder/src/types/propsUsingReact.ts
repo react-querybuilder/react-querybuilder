@@ -38,7 +38,12 @@ import type {
   ToFullOption,
 } from './options';
 import type { Classnames, CommonRuleSubComponentProps, QueryActions } from './props';
-import type { DefaultCombinatorNameExtended, DefaultOperatorName, RuleGroupType, RuleType } from './ruleGroups';
+import type {
+  DefaultCombinatorNameExtended,
+  DefaultOperatorName,
+  RuleGroupType,
+  RuleType,
+} from './ruleGroups';
 import type {
   GenericizeRuleGroupType,
   RuleGroupTypeAny,
@@ -51,7 +56,7 @@ import type { QueryValidator, ValidationMap, ValidationResult } from './validati
 /**
  * Flexible type for combinator options that accepts mixed arrays of strings and FlexibleOption objects
  */
-export type CombinatorOptions<C extends FullCombinator> = 
+export type CombinatorOptions<C extends FullCombinator> =
   | FlexibleOptionList<C>
   | DefaultCombinatorNameExtended[]
   | FlexibleOption<DefaultCombinatorNameExtended>[]
@@ -60,7 +65,7 @@ export type CombinatorOptions<C extends FullCombinator> =
 /**
  * Flexible type for operator options that accepts mixed arrays of strings and FlexibleOption objects
  */
-export type OperatorOptions<O extends FullOperator> = 
+export type OperatorOptions<O extends FullOperator> =
   | FlexibleOptionList<O>
   | DefaultOperatorName[]
   | FlexibleOption<DefaultOperatorName>[]

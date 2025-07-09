@@ -125,7 +125,11 @@ interface BaseFullField<
   ValueObj extends FullOption = FullOption<ValueName>,
 > extends WithOptionalClassName<BaseFullOption<FieldName>> {
   id?: string;
-  operators?: FlexibleOptionList<OperatorObj> | OperatorName[] | FlexibleOption<OperatorName>[] | (OperatorName | FlexibleOption<OperatorName>)[];
+  operators?:
+    | FlexibleOptionList<OperatorObj>
+    | OperatorName[]
+    | FlexibleOption<OperatorName>[]
+    | (OperatorName | FlexibleOption<OperatorName>)[];
   valueEditorType?: ValueEditorType | ((operator: OperatorName) => ValueEditorType);
   valueSources?:
     | ValueSources
