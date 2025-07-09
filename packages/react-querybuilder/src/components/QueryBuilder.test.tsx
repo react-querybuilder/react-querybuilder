@@ -18,6 +18,7 @@ import type {
   ActionProps,
   ActionWithRulesAndAddersProps,
   ControlElementsProp,
+  DefaultOperatorName,
   Field,
   FieldByValue,
   FieldSelectorProps,
@@ -3667,5 +3668,317 @@ describe('deprecated props', () => {
     render(<QueryBuilder independentCombinators query={{ combinator: 'and', rules: [] }} />);
     await waitABeat();
     expect(consoleError).toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
+  });
+});
+
+describe('string array options', () => {
+  const user = userEvent.setup();
+
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1' },
+    { name: 'field2', label: 'Field 2' },
+  ];
+
+  const setupWithStringArrays = (
+    props?: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>
+  ) => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const defaultQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'field1', operator: '=', value: 'test' }],
+    };
+
+    return {
+      onQueryChange,
+      ...render(
+        <QueryBuilder
+          fields={fields}
+          defaultQuery={defaultQuery}
+          onQueryChange={onQueryChange}
+          {...props}
+        />
+      ),
+    };
+  };
+
+  describe('combinators prop with string arrays', () => {
+    it('accepts array of combinator strings', () => {
+      setupWithStringArrays({ combinators: ['and', 'or'] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('AND');
+      expect(options[0]).toHaveValue('and');
+      expect(options[1]).toHaveTextContent('OR');
+      expect(options[1]).toHaveValue('or');
+    });
+
+    it('accepts extended combinator strings including xor', () => {
+      setupWithStringArrays({ combinators: ['and', 'or', 'xor'] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveTextContent('AND');
+      expect(options[1]).toHaveTextContent('OR');
+      expect(options[2]).toHaveTextContent('XOR');
+      expect(options[2]).toHaveValue('xor');
+    });
+
+    it('uses default labels from defaultCombinatorsExtended for string arrays', () => {
+      setupWithStringArrays({ combinators: ['and', 'xor'] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('and');
+      expect(options[0]).toHaveTextContent('AND');
+      expect(options[1]).toHaveValue('xor');
+      expect(options[1]).toHaveTextContent('XOR');
+    });
+
+    it('maintains backward compatibility with FlexibleOption arrays', () => {
+      setupWithStringArrays({
+        combinators: [
+          { name: 'and', label: 'Custom AND' },
+          { name: 'or', label: 'Custom OR' },
+        ],
+      });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('Custom AND');
+      expect(options[1]).toHaveTextContent('Custom OR');
+    });
+  });
+
+  describe('operators prop with string arrays', () => {
+    it('accepts array of operator strings', () => {
+      setupWithStringArrays({ operators: ['=', '!=', 'contains'] });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('=');
+      expect(options[0]).toHaveTextContent('=');
+      expect(options[1]).toHaveValue('!=');
+      expect(options[1]).toHaveTextContent('!=');
+      expect(options[2]).toHaveValue('contains');
+      expect(options[2]).toHaveTextContent('contains');
+    });
+
+    it('uses default and custom labels from defaultOperators for string arrays', () => {
+      setupWithStringArrays({
+        // oxlint-disable-next-line no-explicit-any
+        operators: ['beginsWith', 'doesNotContain', 'null', 'custom' as any],
+      });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(4);
+      expect(options[0]).toHaveValue('beginsWith');
+      expect(options[0]).toHaveTextContent('begins with');
+      expect(options[1]).toHaveValue('doesNotContain');
+      expect(options[1]).toHaveTextContent('does not contain');
+      expect(options[2]).toHaveValue('null');
+      expect(options[2]).toHaveTextContent('is null');
+      expect(options[3]).toHaveValue('custom');
+      expect(options[3]).toHaveTextContent('custom');
+    });
+
+    it('uses default labels from defaultOperators for mixed string arrays', () => {
+      setupWithStringArrays({ operators: ['between', 'notBetween'] });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('between');
+      expect(options[0]).toHaveTextContent('between');
+      expect(options[1]).toHaveValue('notBetween');
+      expect(options[1]).toHaveTextContent('not between');
+    });
+
+    it('maintains backward compatibility with FullOperator arrays', () => {
+      setupWithStringArrays({
+        operators: [
+          { name: '=', label: 'Equals' },
+          { name: '!=', label: 'Not Equals' },
+        ],
+      });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('Equals');
+      expect(options[1]).toHaveTextContent('Not Equals');
+    });
+  });
+
+  describe('getOperators function with string arrays', () => {
+    it('accepts getOperators returning array of operator strings', () => {
+      const getOperators = jest.fn((): DefaultOperatorName[] => ['=', 'contains']);
+      setupWithStringArrays({ getOperators });
+
+      expect(getOperators).toHaveBeenCalledWith('field1', { fieldData: expect.any(Object) });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('=');
+      expect(options[1]).toHaveValue('contains');
+    });
+
+    it('accepts getOperators returning FlexibleOption arrays', () => {
+      const getOperators = jest.fn(() => [
+        { name: '=', label: 'Custom Equals' },
+        { name: 'contains', label: 'Custom Contains' },
+      ]);
+      setupWithStringArrays({ getOperators });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('Custom Equals');
+      expect(options[1]).toHaveTextContent('Custom Contains');
+    });
+
+    it('handles getOperators returning null', () => {
+      const getOperators = jest.fn(() => null);
+      setupWithStringArrays({ getOperators });
+
+      // Should fall back to default operators
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options.length).toBeGreaterThan(2);
+    });
+  });
+
+  describe('field-level operators with string arrays', () => {
+    it('accepts field operators as string arrays', async () => {
+      const fieldsWithOperators: Field[] = [
+        {
+          name: 'field1',
+          label: 'Field 1',
+          operators: ['=', '!='],
+        },
+        {
+          name: 'field2',
+          label: 'Field 2',
+          operators: ['contains', 'beginsWith'],
+        },
+      ];
+
+      setupWithStringArrays({ fields: fieldsWithOperators });
+
+      // Check field1 operators
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      let options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('=');
+      expect(options[1]).toHaveValue('!=');
+
+      // Switch to field2 and check its operators
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      await user.selectOptions(fieldSelector, 'field2');
+
+      options = operatorSelector.querySelectorAll('option');
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('contains');
+      expect(options[1]).toHaveValue('beginsWith');
+    });
+
+    it('maintains backward compatibility with field-level FlexibleOption operators', async () => {
+      const fieldsWithOperators: Field[] = [
+        {
+          name: 'field1',
+          label: 'Field 1',
+          operators: [
+            { name: '=', label: 'Custom Equals' },
+            { name: '!=', label: 'Custom Not Equals' },
+          ],
+        },
+      ];
+
+      setupWithStringArrays({ fields: fieldsWithOperators });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('Custom Equals');
+      expect(options[1]).toHaveTextContent('Custom Not Equals');
+    });
+  });
+
+  describe('mixed arrays support', () => {
+    it('handles mixed string and FlexibleOption arrays for operators', () => {
+      setupWithStringArrays({
+        operators: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],
+      });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('=');
+      expect(options[0]).toHaveTextContent('='); // Should use default label
+      expect(options[1]).toHaveValue('!=');
+      expect(options[1]).toHaveTextContent('Custom Not Equal'); // Should use custom label
+      expect(options[2]).toHaveValue('contains');
+      expect(options[2]).toHaveTextContent('contains'); // Should use default label
+    });
+
+    it('handles mixed string and FlexibleOption arrays for combinators', () => {
+      setupWithStringArrays({
+        combinators: ['and', { name: 'or', label: 'Custom OR' }, 'xor'],
+      });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('and');
+      expect(options[0]).toHaveTextContent('AND'); // Should use default label
+      expect(options[1]).toHaveValue('or');
+      expect(options[1]).toHaveTextContent('Custom OR'); // Should use custom label
+      expect(options[2]).toHaveValue('xor');
+      expect(options[2]).toHaveTextContent('XOR'); // Should use default label
+    });
+  });
+
+  describe('empty arrays handling', () => {
+    it('handles empty combinator arrays gracefully', () => {
+      setupWithStringArrays({ combinators: [] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      // Should have no options
+      expect(options).toHaveLength(0);
+    });
+
+    it('handles empty operator arrays gracefully', () => {
+      setupWithStringArrays({ operators: [] });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      // Should have no options
+      expect(options).toHaveLength(0);
+    });
   });
 });

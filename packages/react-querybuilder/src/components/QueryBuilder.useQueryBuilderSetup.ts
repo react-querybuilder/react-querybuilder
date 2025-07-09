@@ -1,10 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
-import { defaultCombinators, defaultOperators } from '../defaults';
+import {
+  defaultCombinatorLabelMap,
+  defaultCombinators,
+  defaultOperatorLabelMap,
+  defaultOperators,
+} from '../defaults';
 import { useFields } from '../hooks';
 import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
+  CombinatorOptions,
+  DefaultCombinatorNameExtended,
+  DefaultOperatorName,
+  FlexibleOption,
   FlexibleOptionList,
   FullCombinator,
   FullField,
@@ -15,6 +24,7 @@ import type {
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
   MatchModeOptions,
+  OperatorOptions,
   Option,
   OptionGroup,
   QueryBuilderProps,
@@ -36,6 +46,66 @@ import {
   toFullOptionList,
   uniqOptList,
 } from '../utils';
+
+/**
+ * Converts mixed arrays to FlexibleOptionList format
+ */
+const normalizeMixedArray = <T extends string>(
+  arr: (T | FlexibleOption<T>)[],
+  labelMap: Record<T, string>
+): FlexibleOptionList<FullOption<T>> => {
+  return arr.map(item => {
+    if (typeof item === 'string') {
+      return {
+        name: item as T,
+        value: item as T,
+        label: labelMap[item as T] ?? item,
+      };
+    }
+    // It's already a FlexibleOption
+    return item;
+  }) as FlexibleOptionList<FullOption<T>>;
+};
+
+/**
+ * Converts OperatorOptions to FlexibleOptionList format
+ */
+const normalizeOperatorOptions = <O extends FullOperator>(
+  options: OperatorOptions<O>
+): FlexibleOptionList<O> => {
+  // Check if array contains any strings
+  const hasStrings = options.some(item => typeof item === 'string');
+
+  if (hasStrings) {
+    return normalizeMixedArray(
+      options as (DefaultOperatorName | FlexibleOption<DefaultOperatorName>)[],
+      defaultOperatorLabelMap
+    ) as FlexibleOptionList<O>;
+  }
+
+  // All items are already FlexibleOptions
+  return options as FlexibleOptionList<O>;
+};
+
+/**
+ * Converts CombinatorOptions to FlexibleOptionList format
+ */
+const normalizeCombinatorOptions = <C extends FullCombinator>(
+  options: CombinatorOptions<C>
+): FlexibleOptionList<C> => {
+  // Check if array contains any strings
+  const hasStrings = options.some(item => typeof item === 'string');
+
+  if (hasStrings) {
+    return normalizeMixedArray(
+      options as (DefaultCombinatorNameExtended | FlexibleOption<DefaultCombinatorNameExtended>)[],
+      defaultCombinatorLabelMap
+    ) as FlexibleOptionList<C>;
+  }
+
+  // All items are already FlexibleOptions
+  return options as FlexibleOptionList<C>;
+};
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
@@ -152,7 +222,9 @@ export const useQueryBuilderSetup = <
     idGenerator = generateID,
   } = props;
 
-  const operators = (operatorsProp ?? defaultOperators) as FlexibleOptionList<O>;
+  const operators = normalizeOperatorOptions(
+    (operatorsProp ?? defaultOperators) as OperatorOptions<O>
+  );
 
   const [initialQueryProp] = useState(props.query ?? props.defaultQuery);
 
@@ -180,7 +252,7 @@ export const useQueryBuilderSetup = <
   // #endregion
 
   const combinators = useMemo(
-    () => toFullOptionList(combinatorsProp, baseCombinator),
+    () => toFullOptionList(normalizeCombinatorOptions(combinatorsProp), baseCombinator),
     [baseCombinator, combinatorsProp]
   );
 
@@ -200,11 +272,17 @@ export const useQueryBuilderSetup = <
       let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>, baseOperator);
 
       if (fieldData?.operators) {
-        opsFinal = toFullOptionList(fieldData.operators, baseOperator);
+        opsFinal = toFullOptionList(
+          normalizeOperatorOptions(fieldData.operators as OperatorOptions<O>),
+          baseOperator
+        );
       } else if (getOperators) {
-        const ops = getOperators(field, { fieldData }) as null | FlexibleOptionList<O>;
+        const ops = getOperators(field, { fieldData });
         if (ops) {
-          opsFinal = toFullOptionList(ops, baseOperator);
+          opsFinal = toFullOptionList(
+            normalizeOperatorOptions(ops as OperatorOptions<O>),
+            baseOperator
+          );
         }
       }
 

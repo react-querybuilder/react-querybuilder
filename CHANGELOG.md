@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#900] "Justified layout" styles from the demo (push the "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge) are now included in the default stylesheet. To apply the styles, add the `queryBuilder-justified` class to the query builder using the `controlClassnames` prop, or to any ancestor element.
 - [#900] All components that render `<label>` elements now have `htmlFor` attributes linking their corresponding `<input>` elements using an `id` generated with `useId()`.
 - [#900] The `getValueSources` prop and the `Field#valueSources` property can now evaluate to a full option list instead of a simple array of value source strings. This enables translations of the value sources through the `label` property.
+- Operator and combinator array props can now include strings in addition to&mdash;or instead of&mdash;`Option` objects (e.g. `["=", "between"]`). The default labels will be used, or the string itself if it does not match one of the default values.
 
 #### Fixed
 
