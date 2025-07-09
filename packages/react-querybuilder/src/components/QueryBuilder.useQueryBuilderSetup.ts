@@ -10,9 +10,6 @@ import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
-  CombinatorOptions,
-  FlexibleOption,
-  FlexibleOptionList,
   FullCombinator,
   FullField,
   FullOperator,
@@ -44,38 +41,6 @@ import {
   toFullOptionList,
   uniqOptList,
 } from '../utils';
-
-const isString = <T>(item: unknown): item is T => typeof item === 'string';
-
-/**
- * Converts mixed arrays to FlexibleOptionList format
- */
-const normalizeMixedArray = <T extends string>(arr: unknown[], labelMap: Record<string, string>) =>
-  (arr.some(isString)
-    ? arr.map(item =>
-        isString<T>(item) ? { name: item, value: item, label: labelMap[item] ?? item } : item
-      )
-    : arr) as FlexibleOptionList<FlexibleOption<T>>;
-
-/**
- * Converts OperatorOptions or CombinatorOptions to FlexibleOptionList format
- */
-function normalizeOptions<T extends FullOperator>(
-  options: OperatorOptions<T>,
-  labelMap: Record<string, string>
-): FlexibleOptionList<T>;
-function normalizeOptions<T extends FullCombinator>(
-  options: CombinatorOptions<T>,
-  labelMap: Record<string, string>
-): FlexibleOptionList<T>;
-function normalizeOptions<T extends FullOperator | FullCombinator>(
-  options: OperatorOptions<T> | CombinatorOptions<T>,
-  labelMap: Record<string, string>
-): FlexibleOptionList<T> {
-  return options.some(isString<string>)
-    ? (normalizeMixedArray(options, labelMap) as FlexibleOptionList<T>)
-    : (options as FlexibleOptionList<T>);
-}
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
@@ -208,7 +173,7 @@ export const useQueryBuilderSetup = <
 
   const { translations } = rqbContext;
 
-  // #region Set up `fields`
+  // #region `fields`
   const { fields, fieldMap } = useFields({
     fields: fieldsProp,
     baseField,
@@ -217,26 +182,23 @@ export const useQueryBuilderSetup = <
   });
   // #endregion
 
-  // #region Set up `combinators`
+  // #region `combinators`
   const combinators = useMemo(
     () =>
-      combinatorsProp
-        ? toFullOptionList(
-            normalizeOptions(combinatorsProp, defaultCombinatorLabelMap),
-            baseCombinator
-          )
-        : defaultCombinators,
+      toFullOptionList(
+        combinatorsProp ?? defaultCombinators,
+        baseCombinator,
+        defaultCombinatorLabelMap
+      ),
     [baseCombinator, combinatorsProp]
   );
   // #endregion
 
-  // #region Set up `operators`
+  // #region `operators`
   const operators = useMemo(
     () =>
-      operatorsProp
-        ? toFullOptionList(normalizeOptions(operatorsProp, defaultOperatorLabelMap))
-        : defaultOperators,
-    [operatorsProp]
+      toFullOptionList(operatorsProp ?? defaultOperators, baseOperator, defaultOperatorLabelMap),
+    [baseOperator, operatorsProp]
   );
 
   const defaultOperator = useMemo(
@@ -255,15 +217,17 @@ export const useQueryBuilderSetup = <
 
       if (fieldData?.operators) {
         opsFinal = toFullOptionList(
-          normalizeOptions(fieldData.operators as OperatorOptions<O>, defaultOperatorLabelMap),
-          baseOperator
+          fieldData.operators as OperatorOptions<O>,
+          baseOperator,
+          defaultOperatorLabelMap
         );
       } else if (getOperators) {
         const ops = getOperators(field, { fieldData });
         if (ops) {
           opsFinal = toFullOptionList(
-            normalizeOptions(ops as OperatorOptions<O>, defaultOperatorLabelMap),
-            baseOperator
+            ops as OperatorOptions<O>,
+            baseOperator,
+            defaultOperatorLabelMap
           );
         }
       }
