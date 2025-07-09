@@ -1,6 +1,6 @@
 import * as React from 'react';
-import type { OptionList } from '../types/index.noReact';
-import { isOptionGroupArray } from './optGroupUtils';
+import type { OptionList } from '../types';
+import { isOptionGroupArray } from '@react-querybuilder/core';
 
 /**
  * Generates an array of `<option>` or `<optgroup>` elements

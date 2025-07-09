@@ -17,8 +17,9 @@ if (process.env.NODE_ENV === 'production') {
   );
 };
 
-export const tsupCommonConfig = (sourceDir: string) =>
-  (async options => {
+export const tsupCommonConfig =
+  (sourceDir: string): ((options: Options) => Promise<Options[]>) =>
+  async options => {
     const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').pop()}`}`;
     const x = (await Bun.file(path.join(sourceDir + '/src/index.tsx')).exists()) ? 'x' : '';
     const entryPoint = `src/index.ts${x}`;
@@ -26,9 +27,10 @@ export const tsupCommonConfig = (sourceDir: string) =>
     const commonOptions = {
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
-      esbuildPlugins: process.env.RQB_SKIP_REACT_COMPILER
-        ? []
-        : [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
+      esbuildPlugins:
+        process.env.RQB_SKIP_REACT_COMPILER || sourceDir.endsWith('/core')
+          ? []
+          : [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
       ...options,
     } satisfies Options;
 
@@ -81,4 +83,4 @@ export const tsupCommonConfig = (sourceDir: string) =>
     ];
 
     return opts;
-  }) as (options: Options) => Promise<Options[]>;
+  };

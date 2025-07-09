@@ -1,3 +1,12 @@
+import {
+  isFlexibleOptionGroupArray,
+  objectKeys,
+  toFullOption,
+  toFullOptionList,
+  toFullOptionMap,
+  uniqByIdentifier,
+  uniqOptGroups,
+} from '@react-querybuilder/core';
 import { useMemo } from 'react';
 import type {
   FlexibleOptionList,
@@ -13,15 +22,6 @@ import type {
   RuleGroupTypeAny,
   TranslationsFull,
 } from '../types';
-import {
-  isFlexibleOptionGroupArray,
-  objectKeys,
-  toFullOption,
-  toFullOptionList,
-  toFullOptionMap,
-  uniqByIdentifier,
-  uniqOptGroups,
-} from '../utils';
 
 export interface UseFields<F extends FullField> {
   defaultField: FullField;

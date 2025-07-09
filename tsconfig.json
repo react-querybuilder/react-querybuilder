@@ -15,18 +15,17 @@
     "types": ["@testing-library/jest-dom", "node", "web", "bun"],
     "paths": {
       "react-querybuilder": ["./packages/react-querybuilder/src"],
-      "@rqb-parsecel": ["./packages/react-querybuilder/src/utils/parseCEL"],
-      "@rqb-parsejsonata": ["./packages/react-querybuilder/src/utils/parseJSONata"],
-      "@rqb-parsejsonlogic": ["./packages/react-querybuilder/src/utils/parseJsonLogic"],
-      "@rqb-parsemongodb": ["./packages/react-querybuilder/src/utils/parseMongoDB"],
-      "@rqb-parsespel": ["./packages/react-querybuilder/src/utils/parseSpEL"],
-      "@rqb-parsesql": ["./packages/react-querybuilder/src/utils/parseSQL"],
+      "@react-querybuilder/core": ["./packages/core/src"],
+      "@rqb-parsecel": ["./packages/core/src/utils/parseCEL"],
+      "@rqb-parsejsonata": ["./packages/core/src/utils/parseJSONata"],
+      "@rqb-parsejsonlogic": ["./packages/core/src/utils/parseJsonLogic"],
+      "@rqb-parsemongodb": ["./packages/core/src/utils/parseMongoDB"],
+      "@rqb-parsespel": ["./packages/core/src/utils/parseSpEL"],
+      "@rqb-parsesql": ["./packages/core/src/utils/parseSQL"],
       "@rqb-devapp": ["./utils/devapp"],
       "@rqb-testing": ["./utils/testing"],
-      "@rqb-dbquerytestutils": [
-        "./packages/react-querybuilder/src/utils/formatQuery/dbqueryTestUtils"
-      ],
-      "@rqb-utils": ["./packages/react-querybuilder/src/utils"],
+      "@rqb-dbquerytestutils": ["./packages/core/src/utils/formatQuery/dbqueryTestUtils"],
+      "@rqb-utils": ["./packages/core/src/utils"],
       "react-compiler-runtime": ["./utils/react-compiler/react-compiler-runtime.ts"]
     }
   },

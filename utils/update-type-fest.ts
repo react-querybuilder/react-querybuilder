@@ -7,7 +7,7 @@ const checkMode = process.argv.includes('--check');
 const forceMode = process.argv.includes('--force');
 
 const srcTypeFestDir = `${import.meta.dir}/../node_modules/type-fest/source`;
-const rqbTypeFestDir = `${import.meta.dir}/../packages/react-querybuilder/src/types/type-fest`;
+const rqbTypeFestDir = `${import.meta.dir}/../packages/core/src/types/type-fest`;
 
 // Capture contents of type-fest/README.md
 const rqbTypeFestReadMe = await file(`${rqbTypeFestDir}/README.md`).text();

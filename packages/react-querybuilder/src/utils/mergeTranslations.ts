@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import type { ReactNode } from 'react';
 import { defaultTranslations } from '../defaultControlElements';
 import type { Translations } from '../types';
-import { objectEntries, objectKeys } from './objectUtils';
+import { objectEntries, objectKeys } from '@react-querybuilder/core';
 
 /**
  * Merges any number of partial {@link Translations} into a single definition.

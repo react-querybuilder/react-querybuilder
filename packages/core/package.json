@@ -1,0 +1,142 @@
+{
+  "name": "@react-querybuilder/core",
+  "version": "8.8.0-alpha.1",
+  "description": "Core (non-React) utilities for React Query Builder - types, query processing, validation, and formatters",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder-core.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/types-esm/index.d.mts",
+        "default": "./dist/react-querybuilder-core.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./dist/*": "./dist/*",
+    "./formatQuery": {
+      "types": "./dist/types/utils/formatQuery/index.d.ts",
+      "default": "./dist/formatQuery.js"
+    },
+    "./parseCEL": {
+      "types": "./dist/types/utils/parseCEL/index.d.ts",
+      "default": "./dist/parseCEL.js"
+    },
+    "./parseJSONata": {
+      "types": "./dist/types/utils/parseJSONata/index.d.ts",
+      "default": "./dist/parseJSONata.js"
+    },
+    "./parseJsonLogic": {
+      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
+      "default": "./dist/parseJsonLogic.js"
+    },
+    "./parseMongoDB": {
+      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
+      "default": "./dist/parseMongoDB.js"
+    },
+    "./parseSpEL": {
+      "types": "./dist/types/utils/parseSpEL/index.d.ts",
+      "default": "./dist/parseSpEL.js"
+    },
+    "./parseSQL": {
+      "types": "./dist/types/utils/parseSQL/index.d.ts",
+      "default": "./dist/parseSQL.js"
+    },
+    "./transformQuery": {
+      "types": "./dist/types/utils/transformQuery.d.ts",
+      "default": "./dist/transformQuery.js"
+    }
+  },
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "formatQuery",
+    "parseCEL",
+    "parseJSONata",
+    "parseJsonLogic",
+    "parseMongoDB",
+    "parseSpEL",
+    "parseSQL",
+    "transformQuery"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "querybuilder",
+    "query",
+    "builder",
+    "operators",
+    "clause",
+    "expression",
+    "sql",
+    "server-side",
+    "core",
+    "utilities"
+  ],
+  "contributors": [
+    "Pavan Podila <pavan@pixelingene.com> (https://blog.pixelingene.com)",
+    "Jake Boone"
+  ],
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.1",
+    "@electric-sql/pglite": "^0.3.4",
+    "@types/json-logic-js": "^2.0.8",
+    "@types/node": "^24.0.10",
+    "drizzle-orm": "^0.44.2",
+    "jscodeshift": "^17.3.0",
+    "json-logic-js": "^2.0.5",
+    "jsonata": "^2.0.6",
+    "mongodb-memory-server-core": "^10.1.4",
+    "mongoose": "^8.16.1",
+    "pglite-prisma-adapter": "^0.6.1",
+    "prisma": "^6.11.1",
+    "query-string": "^9.2.2",
+    "regenerator-runtime": "^0.14.1",
+    "sequelize": "^6.37.7",
+    "spel2js": "^0.2.8",
+    "sqlite3": "^5.1.7",
+    "type-fest": "^4.41.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "immer": "^10.1.1",
+    "numeric-quantity": "^2.1.0"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.38.0",
+    "json-logic-js": ">=2",
+    "sequelize": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    },
+    "json-logic-js": {
+      "optional": true
+    },
+    "sequelize": {
+      "optional": true
+    }
+  },
+  "browserslist": "> 0.25%, not dead",
+  "scripts": {
+    "build": "bun --bun tsup",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
+    "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",
+    "generate:sqlparser": "bunx --bun jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
+    "generate:celparser": "bunx --bun jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
+    "generate:parsers-codemod": "bunx --bun jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL/cel,SQL/sql}Parser.js"
+  }
+}

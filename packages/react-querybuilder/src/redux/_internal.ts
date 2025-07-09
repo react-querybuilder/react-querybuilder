@@ -10,7 +10,7 @@ import type {
 import type { UseStore } from 'react-redux';
 import { createDispatchHook, createStoreHook } from 'react-redux';
 import type { RqbState } from '.';
-import type { RuleGroupType, RuleGroupTypeIC } from '../types/index.noReact';
+import type { RuleGroupType, RuleGroupTypeIC } from '../types';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
 import { QueryBuilderStateContext } from './QueryBuilderStateContext';

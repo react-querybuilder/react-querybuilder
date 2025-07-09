@@ -1,3 +1,15 @@
+import {
+  filterFieldsByComparator,
+  generateID,
+  getFirstOption,
+  getMatchModesUtil,
+  getOption,
+  getValueSourcesUtil,
+  isFlexibleOptionGroupArray,
+  joinWith,
+  toFullOptionList,
+  uniqOptList,
+} from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
 import { defaultCombinators, defaultOperators } from '../defaults';
 import { useFields } from '../hooks';
@@ -24,18 +36,6 @@ import type {
   ValueSourceFullOptions,
   WithUnknownIndex,
 } from '../types';
-import {
-  filterFieldsByComparator,
-  generateID,
-  getFirstOption,
-  getMatchModesUtil,
-  getOption,
-  getValueSourcesUtil,
-  isFlexibleOptionGroupArray,
-  joinWith,
-  toFullOptionList,
-  uniqOptList,
-} from '../utils';
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {

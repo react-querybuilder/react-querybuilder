@@ -28,35 +28,35 @@
       }
     },
     "./formatQuery": {
-      "types": "./dist/types/utils/formatQuery/index.d.ts",
+      "types": "./dist/types/fwd/formatQuery.d.ts",
       "default": "./dist/formatQuery.js"
     },
     "./parseCEL": {
-      "types": "./dist/types/utils/parseCEL/index.d.ts",
+      "types": "./dist/types/fwd/parseCEL.d.ts",
       "default": "./dist/parseCEL.js"
     },
     "./parseJSONata": {
-      "types": "./dist/types/utils/parseJSONata/index.d.ts",
+      "types": "./dist/types/fwd/parseJSONata.d.ts",
       "default": "./dist/parseJSONata.js"
     },
     "./parseJsonLogic": {
-      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
+      "types": "./dist/types/fwd/parseJsonLogic.d.ts",
       "default": "./dist/parseJsonLogic.js"
     },
     "./parseMongoDB": {
-      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
+      "types": "./dist/types/fwd/parseMongoDB.d.ts",
       "default": "./dist/parseMongoDB.js"
     },
     "./parseSpEL": {
-      "types": "./dist/types/utils/parseSpEL/index.d.ts",
+      "types": "./dist/types/fwd/parseSpEL.d.ts",
       "default": "./dist/parseSpEL.js"
     },
     "./parseSQL": {
-      "types": "./dist/types/utils/parseSQL/index.d.ts",
+      "types": "./dist/types/fwd/parseSQL.d.ts",
       "default": "./dist/parseSQL.js"
     },
     "./transformQuery": {
-      "types": "./dist/types/utils/transformQuery.d.ts",
+      "types": "./dist/types/fwd/transformQuery.d.ts",
       "default": "./dist/transformQuery.js"
     }
   },
@@ -117,7 +117,6 @@
     "@vitejs/plugin-react": "^4.6.0",
     "babel-plugin-istanbul": "^7.0.0",
     "drizzle-orm": "^0.44.2",
-    "jscodeshift": "^17.3.0",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.6",
     "mongodb-memory-server-core": "^10.1.4",
@@ -138,6 +137,7 @@
     "vite": "^7.0.2"
   },
   "dependencies": {
+    "@react-querybuilder/core": "8.8.0-alpha.1",
     "@reduxjs/toolkit": "^2.8.2",
     "immer": "^10.1.1",
     "numeric-quantity": "^2.1.0",
@@ -167,10 +167,6 @@
     "build:main": "bun --bun tsup",
     "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed src:dist",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "tsc --noEmit --watch",
-    "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",
-    "generate:sqlparser": "bunx --bun jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate:celparser": "bunx --bun jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:parsers-codemod": "bunx --bun jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL/cel,SQL/sql}Parser.js"
+    "typecheck:watch": "tsc --noEmit --watch"
   }
 }

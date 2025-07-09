@@ -1,3 +1,4 @@
+import { add, toFullOption } from '@react-querybuilder/core';
 import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '@rqb-testing';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -17,7 +18,6 @@ import type {
   ValidationResult,
   ValueSelectorProps,
 } from '../types';
-import { add, toFullOption } from '../utils';
 import { RuleGroup } from './RuleGroup';
 import { render, waitABeat } from './testUtils';
 

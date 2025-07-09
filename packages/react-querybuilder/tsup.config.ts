@@ -26,14 +26,14 @@ export default defineConfig(async options => {
   }
 
   const utilEntryPoints = {
-    formatQuery: 'src/utils/formatQuery/index.ts',
-    parseCEL: 'src/utils/parseCEL/index.ts',
-    parseJSONata: 'src/utils/parseJSONata/index.ts',
-    parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
-    parseMongoDB: 'src/utils/parseMongoDB/index.ts',
-    parseSpEL: 'src/utils/parseSpEL/index.ts',
-    parseSQL: 'src/utils/parseSQL/index.ts',
-    transformQuery: 'src/utils/transformQuery.ts',
+    formatQuery: 'src/fwd/formatQuery.ts',
+    parseCEL: 'src/fwd/parseCEL.ts',
+    parseJSONata: 'src/fwd/parseJSONata.ts',
+    parseJsonLogic: 'src/fwd/parseJsonLogic.ts',
+    parseMongoDB: 'src/fwd/parseMongoDB.ts',
+    parseSpEL: 'src/fwd/parseSpEL.ts',
+    parseSQL: 'src/fwd/parseSQL.ts',
+    transformQuery: 'src/fwd/transformQuery.ts',
   } as const;
 
   return [
@@ -63,7 +63,7 @@ export default defineConfig(async options => {
               JSON.stringify(
                 {
                   main: `../dist/${util}.js`,
-                  types: `../dist/types/utils/${util}${util === 'transformQuery' ? '' : '/index'}.d.ts`,
+                  types: `../dist/types/fwd/${util}.d.ts`,
                 },
                 null,
                 2

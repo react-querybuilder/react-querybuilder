@@ -1,4 +1,4 @@
-import type { RuleGroupTypeAny } from '../types/index.noReact';
+import type { RuleGroupTypeAny } from '../types';
 import { queriesSlice } from './queriesSlice';
 import type { RqbState } from './types';
 

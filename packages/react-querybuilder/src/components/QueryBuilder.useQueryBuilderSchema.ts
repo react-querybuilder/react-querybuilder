@@ -41,8 +41,8 @@ import {
   prepareRuleGroup,
   remove,
   update,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+} from '@react-querybuilder/core';
+import { clsx } from '@react-querybuilder/core';
 import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};

@@ -1,3 +1,13 @@
+import {
+  defaultValidator,
+  findPath,
+  generateID,
+  getOption,
+  group,
+  move,
+  numericRegex,
+  toFullOption,
+} from '@react-querybuilder/core';
 import { consoleMocks } from '@rqb-testing';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -38,16 +48,6 @@ import type {
   ValueEditorProps,
   ValueSelectorProps,
 } from '../types';
-import {
-  defaultValidator,
-  findPath,
-  generateID,
-  getOption,
-  group,
-  move,
-  numericRegex,
-  toFullOption,
-} from '../utils';
 import { ActionElement } from './ActionElement';
 import { QueryBuilder } from './QueryBuilder';
 import type { UseRuleGroup } from './RuleGroup';
