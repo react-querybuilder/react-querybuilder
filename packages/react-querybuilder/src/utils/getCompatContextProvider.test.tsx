@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { QueryBuilder } from '../components/QueryBuilder';
-import { TestID } from '../defaults';
+import { TestID } from '@react-querybuilder/core';
 import type { GetCompatContextProviderProps } from './getCompatContextProvider';
 import { getCompatContextProvider } from './getCompatContextProvider';
 

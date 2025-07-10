@@ -11,7 +11,7 @@ import {
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
-import { standardClassnames, TestID } from '../defaults';
+import { standardClassnames, TestID } from '@react-querybuilder/core';
 import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
 import { useReactDndWarning } from '../hooks/useReactDndWarning';
 import { useStopEventPropagation } from '../hooks/useStopEventPropagation';

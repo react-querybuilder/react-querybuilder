@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LogType, standardClassnames } from '../defaults';
+import { LogType, standardClassnames } from '@react-querybuilder/core';
 import { useControlledOrUncontrolled } from '../hooks/useControlledOrUncontrolled';
 import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';

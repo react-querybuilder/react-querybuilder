@@ -1,3 +1,4 @@
+import type { Draft } from 'immer';
 import { produce } from 'immer';
 import type {
   BaseOption,
@@ -30,12 +31,22 @@ const isOptionWithValue = (opt: BaseOption): opt is ValueOption =>
  * @group Option Lists
  */
 export function toFullOption<Opt extends BaseOption>(
-  opt: Opt,
-  baseProperties?: Record<string, unknown>
+  opt: Opt | string,
+  baseProperties?: Record<string, unknown>,
+  labelMap?: Record<string, unknown>
 ): ToFullOption<Opt> {
-  const recipe: (o: Opt) => ToFullOption<Opt> = produce(draft => {
+  const recipe: (o: Opt | string) => ToFullOption<Opt> = produce(draft => {
     const idObj: { name?: string; value?: string } = {};
     let needsUpdating = !!baseProperties;
+
+    if (typeof draft === 'string') {
+      return {
+        ...baseProperties,
+        name: draft,
+        value: draft,
+        label: labelMap?.[draft] ?? draft,
+      } as Draft<Opt>;
+    }
 
     if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
       idObj.value = draft.name;
@@ -58,9 +69,10 @@ export function toFullOption<Opt extends BaseOption>(
  *
  * @group Option Lists
  */
-export function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOptionList<Opt>>(
-  optList: OptList,
-  baseProperties?: Record<string, unknown>
+export function toFullOptionList<Opt extends BaseOption>(
+  optList: unknown[],
+  baseProperties?: Record<string, unknown>,
+  labelMap?: Record<string, unknown>
 ): FullOptionList<Opt> {
   if (!Array.isArray(optList)) {
     return [] as unknown as FullOptionList<Opt>;
@@ -70,15 +82,15 @@ export function toFullOptionList<Opt extends BaseOption, OptList extends Flexibl
     if (isFlexibleOptionGroupArray(draft)) {
       for (const optGroup of draft) {
         for (const [idx, opt] of optGroup.options.entries())
-          optGroup.options[idx] = toFullOption(opt, baseProperties);
+          optGroup.options[idx] = toFullOption(opt, baseProperties, labelMap);
       }
     } else {
       for (const [idx, opt] of (draft as Opt[]).entries())
-        draft[idx] = toFullOption(opt, baseProperties);
+        draft[idx] = toFullOption(opt, baseProperties, labelMap);
     }
   });
 
-  return recipe(optList);
+  return recipe(optList as FlexibleOptionList<Opt>);
 }
 
 /**

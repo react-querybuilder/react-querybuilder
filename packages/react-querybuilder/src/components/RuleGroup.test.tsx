@@ -9,7 +9,7 @@ import {
   defaultCombinators,
   defaultControlClassnames,
   standardClassnames as sc,
-} from '../defaults';
+} from '@react-querybuilder/core';
 import { messages } from '../messages';
 import type {
   ActionProps,

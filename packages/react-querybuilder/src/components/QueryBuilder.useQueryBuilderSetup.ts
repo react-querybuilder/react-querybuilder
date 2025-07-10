@@ -1,4 +1,8 @@
 import {
+  defaultCombinatorLabelMap,
+  defaultCombinators,
+  defaultOperatorLabelMap,
+  defaultOperators,
   filterFieldsByComparator,
   generateID,
   getFirstOption,
@@ -11,13 +15,12 @@ import {
   uniqOptList,
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
-import { defaultCombinators, defaultOperators } from '../defaults';
 import { useFields } from '../hooks';
 import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
-  FlexibleOptionList,
+  FlexibleOptionListProp,
   FullCombinator,
   FullField,
   FullOperator,
@@ -126,7 +129,7 @@ export const useQueryBuilderSetup = <
     baseField,
     operators: operatorsProp,
     baseOperator,
-    combinators: combinatorsProp = defaultCombinators,
+    combinators: combinatorsProp,
     baseCombinator,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
@@ -152,8 +155,6 @@ export const useQueryBuilderSetup = <
     idGenerator = generateID,
   } = props;
 
-  const operators = (operatorsProp ?? defaultOperators) as FlexibleOptionList<O>;
-
   const [initialQueryProp] = useState(props.query ?? props.defaultQuery);
 
   const rqbContext = useMergedContext({
@@ -170,7 +171,7 @@ export const useQueryBuilderSetup = <
 
   const { translations } = rqbContext;
 
-  // #region Set up `fields`
+  // #region `fields`
   const { fields, fieldMap } = useFields({
     fields: fieldsProp,
     baseField,
@@ -179,12 +180,25 @@ export const useQueryBuilderSetup = <
   });
   // #endregion
 
+  // #region `combinators`
   const combinators = useMemo(
-    () => toFullOptionList(combinatorsProp, baseCombinator),
+    () =>
+      toFullOptionList(
+        combinatorsProp ?? defaultCombinators,
+        baseCombinator,
+        defaultCombinatorLabelMap
+      ),
     [baseCombinator, combinatorsProp]
   );
+  // #endregion
 
-  // #region Set up `operators`
+  // #region `operators`
+  const operators = useMemo(
+    () =>
+      toFullOptionList(operatorsProp ?? defaultOperators, baseOperator, defaultOperatorLabelMap),
+    [baseOperator, operatorsProp]
+  );
+
   const defaultOperator = useMemo(
     (): FullOption<OperatorName> => ({
       id: translations.operators.placeholderName,
@@ -197,14 +211,18 @@ export const useQueryBuilderSetup = <
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
-      let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>, baseOperator);
+      let opsFinal = operators;
 
       if (fieldData?.operators) {
-        opsFinal = toFullOptionList(fieldData.operators, baseOperator);
+        opsFinal = toFullOptionList(
+          fieldData.operators as FlexibleOptionListProp<O>,
+          baseOperator,
+          defaultOperatorLabelMap
+        );
       } else if (getOperators) {
-        const ops = getOperators(field, { fieldData }) as null | FlexibleOptionList<O>;
+        const ops = getOperators(field, { fieldData });
         if (ops) {
-          opsFinal = toFullOptionList(ops, baseOperator);
+          opsFinal = toFullOptionList(ops, baseOperator, defaultOperatorLabelMap);
         }
       }
 

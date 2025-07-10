@@ -9,7 +9,7 @@ import type {
   QueryBuilderProps,
   RuleGroupTypeAny,
 } from '../types';
-import { rootPath } from '../defaults';
+import { rootPath } from '@react-querybuilder/core';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
 
 export const QueryBuilderInternal = <

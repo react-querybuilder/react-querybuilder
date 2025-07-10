@@ -22,7 +22,7 @@ import {
   defaultPlaceholderValueGroupLabel,
   defaultPlaceholderValueLabel,
   defaultPlaceholderValueName,
-} from './defaults';
+} from '@react-querybuilder/core';
 import type { Controls, FullField, TranslationsFull } from './types';
 
 /**

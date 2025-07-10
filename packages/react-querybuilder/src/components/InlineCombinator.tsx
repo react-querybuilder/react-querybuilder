@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { standardClassnames, TestID } from '../defaults';
+import { standardClassnames, TestID } from '@react-querybuilder/core';
 import type { InlineCombinatorProps } from '../types';
 import { clsx } from '@react-querybuilder/core';
 

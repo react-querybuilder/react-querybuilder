@@ -5,7 +5,7 @@ import type {
   Classnames,
   DropEffect,
   FlexibleOption,
-  FlexibleOptionList,
+  FlexibleOptionListProp,
   FullCombinator,
   FullField,
   FullOperator,
@@ -874,7 +874,7 @@ export type QueryBuilderProps<
        *
        * @default []
        */
-      fields?: FlexibleOptionList<F> | BaseOptionMap<F, GetOptionIdentifierType<F>>;
+      fields?: FlexibleOptionListProp<F> | BaseOptionMap<F>;
       /**
        * List of valid {@link FullOperator}s.
        *
@@ -902,7 +902,7 @@ export type QueryBuilderProps<
        *   { name: 'notBetween', label: 'not between' },
        * ]
        */
-      operators?: FlexibleOptionList<O>;
+      operators?: FlexibleOptionListProp<O>;
       /**
        * List of valid {@link FullCombinator}s.
        *
@@ -914,7 +914,7 @@ export type QueryBuilderProps<
        *   {name: 'or', label: 'OR'},
        * ]
        */
-      combinators?: FlexibleOptionList<C>;
+      combinators?: FlexibleOptionListProp<C>;
       /**
        * Default properties applied to all objects in the `fields` prop. Properties on
        * individual field definitions will override these.
@@ -957,7 +957,7 @@ export type QueryBuilderProps<
       getOperators?(
         field: GetOptionIdentifierType<F>,
         misc: { fieldData: F }
-      ): FlexibleOptionList<FullOperator> | null;
+      ): FlexibleOptionListProp<FullOperator> | null;
       /**
        * This function should return the type of {@link ValueEditor} (see
        * {@link ValueEditorType}) for the given field `name` and operator `name`.
@@ -1012,7 +1012,7 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
         misc: { fieldData: F }
-      ): FlexibleOptionList<Option>;
+      ): FlexibleOptionListProp<Option>;
       /**
        * This function should return the list of valid {@link MatchMode}s or
        * {@link MatchConfig}s for a given field `name`. The return value must

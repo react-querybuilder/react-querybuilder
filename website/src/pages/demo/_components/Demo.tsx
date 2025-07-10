@@ -156,7 +156,9 @@ export default function Demo({
   const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
-  const [format, setFormat] = useState<ExportFormat>('json_without_ids');
+  const [format, setFormat] = useState<ExportFormat>(
+    (queryString.parse(siteLocation.search).exportFormat as ExportFormat) || 'json_without_ids'
+  );
   const [sqlDialect, setSQLDialect] = useState<SQLPreset>('ansi');
   const [options, setOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
@@ -183,30 +185,6 @@ export default function Demo({
   const [musicalInstrumentsTsStringState, setMusicalInstrumentsTsStringState] = useState('');
 
   const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
-
-  const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
-    const stateFromHash = getStateFromHash(
-      queryString.parse(
-        queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
-      )
-    );
-    const payload = { ...defaultOptions, ...stateFromHash.options };
-    setOptions({ type: 'replace', payload });
-    if (stateFromHash.query) {
-      setQuery(stateFromHash.query);
-    }
-    if (stateFromHash.queryIC) {
-      setQueryIC(stateFromHash.queryIC);
-    }
-    // TODO: handle `style`
-  }, []);
-
-  useEffect(() => {
-    history.pushState(null, '', permalinkHash);
-    window.addEventListener('hashchange', updateOptionsFromHash);
-
-    return () => window.removeEventListener('hashchange', updateOptionsFromHash);
-  }, [permalinkHash, updateOptionsFromHash]);
 
   useEffect(() => {
     Promise.all([extraStyles(), fieldsTsString, musicalInstrumentsTsString]).then(
@@ -285,7 +263,6 @@ export default function Demo({
       setQuery(newQuery);
     }, 300);
   }, []);
-
   const onQueryChangeRGIC = useCallback((newQuery: RuleGroupTypeIC) => {
     clearTimeout(timerRGIC.current);
     timerRGIC.current = setTimeout(() => {

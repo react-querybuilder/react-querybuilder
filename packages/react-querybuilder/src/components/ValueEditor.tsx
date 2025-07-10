@@ -9,7 +9,7 @@ import {
 import { produce } from 'immer';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { standardClassnames } from '../defaults';
+import { standardClassnames } from '@react-querybuilder/core';
 import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps } from '../types';
 
 interface RadioButtonProps {

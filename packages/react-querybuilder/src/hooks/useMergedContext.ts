@@ -3,7 +3,7 @@ import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 're
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../context';
 import { defaultControlElements, defaultTranslations } from '../defaultControlElements';
-import { defaultControlClassnames } from '../defaults';
+import { defaultControlClassnames } from '@react-querybuilder/core';
 import type {
   Classnames,
   ControlElementsProp,

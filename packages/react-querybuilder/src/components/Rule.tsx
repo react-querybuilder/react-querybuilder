@@ -14,7 +14,7 @@ import {
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { rootPath, standardClassnames, TestID } from '../defaults';
+import { rootPath, standardClassnames, TestID } from '@react-querybuilder/core';
 import type { UseFields } from '../hooks';
 import { useFields } from '../hooks';
 import { useDeprecatedProps } from '../hooks/useDeprecatedProps';

@@ -87,6 +87,33 @@ export const defaultJoinChar = ',';
 
 export type DefaultOperators = StringUnionToFullOptionArray<DefaultOperatorName>;
 
+export const defaultOperatorLabelMap: Record<DefaultOperatorName, string> = {
+  '=': '=',
+  '!=': '!=',
+  '<': '<',
+  '>': '>',
+  '<=': '<=',
+  '>=': '>=',
+  contains: 'contains',
+  beginsWith: 'begins with',
+  endsWith: 'ends with',
+  doesNotContain: 'does not contain',
+  doesNotBeginWith: 'does not begin with',
+  doesNotEndWith: 'does not end with',
+  null: 'is null',
+  notNull: 'is not null',
+  in: 'in',
+  notIn: 'not in',
+  between: 'between',
+  notBetween: 'not between',
+};
+
+export const defaultCombinatorLabelMap: Record<DefaultCombinatorNameExtended, string> = {
+  and: 'AND',
+  or: 'OR',
+  xor: 'XOR',
+};
+
 /**
  * Default operator list.
  *
