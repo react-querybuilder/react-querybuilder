@@ -14,46 +14,39 @@ React Query Builder can be used directly in the browser without a build step usi
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>React Query Builder ESM</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/react-querybuilder@latest/dist/query-builder.css" />
+    <link rel="stylesheet" href="https://esm.sh/react-querybuilder@latest/dist/query-builder.css" />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module">
-      import React from 'https://cdn.jsdelivr.net/npm/react@18/+esm';
-      import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18/+esm';
-      import { QueryBuilder } from 'https://cdn.jsdelivr.net/npm/react-querybuilder@latest/+esm';
-      // Make the imports available to the Babel script below
-      window.React = React;
-      window.ReactDOM = ReactDOM;
-      window.QueryBuilder = QueryBuilder;
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@latest",
+          "react-dom/": "https://esm.sh/react-dom@latest/",
+          "react-querybuilder": "https://esm.sh/react-querybuilder@latest"
+        }
+      }
     </script>
-    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script type="text/babel">
+    <script type="module">
+      import * as React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import { QueryBuilder } from 'react-querybuilder';
+
       const fields = [
-        {
-          name: 'firstName',
-          label: 'First Name',
-          placeholder: 'Enter first name',
-        },
-        {
-          name: 'lastName',
-          label: 'Last Name',
-          placeholder: 'Enter last name',
-        },
+        { name: 'firstName', label: 'First Name' },
+        { name: 'lastName', label: 'Last Name' },
       ];
 
       const defaultQuery = {
         combinator: 'and',
         rules: [
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+          { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
         ],
       };
 
-      ReactDOM.createRoot(document.getElementById('root')).render(
-        <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
+      createRoot(document.getElementById('root')).render(
+        React.createElement(QueryBuilder, { fields, defaultQuery })
       );
     </script>
   </body>
@@ -77,64 +70,47 @@ To add drag-and-drop capability, import `react-dnd`, `react-dnd-html5-backend`, 
   </head>
   <body>
     <div id="root"></div>
-    <!-- (This importmap fixes an issue with react-dnd trying to use React 18.2.0 instead of 18.3.1.) -->
     <script type="importmap">
       {
         "imports": {
-          "https://cdn.jsdelivr.net/npm/react@18.2.0/+esm": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
-          "https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/+esm"
+          "react": "https://esm.sh/react@latest",
+          "react-dom/": "https://esm.sh/react-dom@latest/",
+          "react-querybuilder": "https://esm.sh/react-querybuilder@latest",
+          "@react-querybuilder/dnd": "https://esm.sh/@react-querybuilder/dnd@latest",
+          "react-dnd": "https://esm.sh/react-dnd@latest",
+          "react-dnd-html5-backend": "https://esm.sh/react-dnd-html5-backend@latest"
         }
       }
     </script>
     <script type="module">
-      import React from 'https://cdn.jsdelivr.net/npm/react@18/+esm';
-      import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18/+esm';
-      import { QueryBuilder } from 'https://cdn.jsdelivr.net/npm/react-querybuilder@latest/+esm';
+      import * as React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import { QueryBuilder } from 'react-querybuilder';
       // highlight-start
-      import * as ReactDnD from 'https://cdn.jsdelivr.net/npm/react-dnd@16/+esm';
-      import * as ReactDndHtml5Backend from 'https://cdn.jsdelivr.net/npm/react-dnd-html5-backend@16/+esm';
-      import { QueryBuilderDnD } from 'https://cdn.jsdelivr.net/npm/@react-querybuilder/dnd@latest/+esm';
+      import * as ReactDnD from 'react-dnd';
+      import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+      import { QueryBuilderDnD } from '@react-querybuilder/dnd';
       // highlight-end
-      // Make the imports available to the Babel script below
-      window.React = React;
-      window.ReactDOM = ReactDOM;
-      window.QueryBuilder = QueryBuilder;
-      // highlight-start
-      window.ReactDnD = ReactDnD;
-      window.ReactDndHtml5Backend = ReactDndHtml5Backend;
-      window.QueryBuilderDnD = QueryBuilderDnD;
-      // highlight-end
-    </script>
-    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script type="text/babel">
+
       const fields = [
-        {
-          name: 'firstName',
-          label: 'First Name',
-          placeholder: 'Enter first name',
-        },
-        {
-          name: 'lastName',
-          label: 'Last Name',
-          placeholder: 'Enter last name',
-        },
+        { name: 'firstName', label: 'First Name' },
+        { name: 'lastName', label: 'Last Name' },
       ];
 
       const defaultQuery = {
         combinator: 'and',
         rules: [
-          { field: 'firstName', operator: '=', value: 'Steve' },
-          { field: 'lastName', operator: '=', value: 'Vai' },
+          { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+          { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
         ],
       };
 
-      ReactDOM.createRoot(document.getElementById('root')).render(
+      createRoot(document.getElementById('root')).render(
         // highlight-start
-        <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
-          // highlight-end
-          <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
-          // highlight-start
-        </QueryBuilderDnD>
+        React.createElement(QueryBuilderDnD, {
+          dnd: { ...ReactDnD, ...ReactDndHtml5Backend },
+          children: [React.createElement(QueryBuilder, { fields, defaultQuery })],
+        })
         // highlight-end
       );
     </script>
