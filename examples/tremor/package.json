@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@react-querybuilder/tremor": "8.8.0-alpha.1",
+    "@react-querybuilder/tremor": "8.8.1",
     "@tremor/react": "^3",
     "dayjs": ">=1",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.8.0-alpha.1"
+    "react-querybuilder": "8.8.1"
   },
   "description": "React Query Builder Tremor Example",
   "devDependencies": {
@@ -14,14 +14,14 @@
     "@tailwindcss/vite": "^4.1.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.6.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "prettier": "^3",
-    "sass": "^1.83.0",
+    "sass": "^1.89.2",
     "tailwindcss": "^4.1.6",
     "typescript": "^5.7.2",
-    "vite": "^6"
+    "vite": "^7"
   },
   "name": "react-querybuilder-tremor-example",
   "private": true,

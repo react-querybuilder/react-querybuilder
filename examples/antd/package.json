@@ -1,20 +1,20 @@
 {
   "dependencies": {
     "@ant-design/icons": ">=5",
-    "@react-querybuilder/antd": "8.8.0-alpha.1",
+    "@react-querybuilder/antd": "8.8.1",
     "antd": ">=5.11.0",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.8.0-alpha.1"
+    "react-querybuilder": "8.8.1"
   },
   "description": "React Query Builder Ant Design Example",
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.6.0",
     "prettier": "^3",
     "typescript": "^5.7.2",
-    "vite": "^6"
+    "vite": "^7"
   },
   "name": "react-querybuilder-antd-example",
   "private": true,

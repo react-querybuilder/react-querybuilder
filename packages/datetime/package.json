@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/datetime",
   "description": "Date/time features for react-querybuilder",
-  "version": "8.8.0-alpha.1",
+  "version": "8.8.1",
   "publishConfig": {
     "access": "public"
   },
@@ -98,22 +98,22 @@
     "dayjs": "^1.11.13",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.6",
-    "luxon": "^3.6.1",
+    "luxon": "^3.7.0",
     "mongodb-memory-server-core": "^10.1.4",
-    "mongoose": "^8.16.1",
+    "mongoose": "^8.16.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-querybuilder": "8.8.0-alpha.1",
+    "react-querybuilder": "8.8.1",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
-    "vite": "^7.0.2"
+    "vite": "^7.0.3"
   },
   "peerDependencies": {
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "luxon": "^3.5.0",
     "react": ">=18",
-    "react-querybuilder": "8.8.0-alpha.1"
+    "react-querybuilder": "8.8.1"
   },
   "peerDependenciesMeta": {
     "date-fns": {

@@ -6,15 +6,15 @@
   "dependencies": {
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.8.0-alpha.1"
+    "react-querybuilder": "8.8.1"
   },
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.6.0",
     "prettier": "^3",
     "typescript": "^5.7.2",
-    "vite": "^6"
+    "vite": "^7"
   },
   "scripts": {
     "dev": "vite",

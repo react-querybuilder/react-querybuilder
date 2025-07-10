@@ -81,11 +81,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       ...examplePrettierConfig,
       ...(printWidth ? { printWidth } : {}),
       filepath,
-      plugins: [
-        prettierPluginOrganizeImports,
-        // https://github.com/prettier/prettier/issues/16501
-        prettierPluginEstree as unknown as prettier.Plugin,
-      ],
+      plugins: [prettierPluginOrganizeImports, prettierPluginEstree],
     };
 
     return Bun.write(
@@ -262,11 +258,7 @@ const updateOtherExample = async (otherExampleName: string) => {
     {
       ...otherExamplePrettierOptions,
       filepath: otherExamplePkgJsonPath,
-      plugins: [
-        prettierPluginOrganizeImports,
-        // https://github.com/prettier/prettier/issues/16501
-        prettierPluginEstree as unknown as prettier.Plugin,
-      ],
+      plugins: [prettierPluginOrganizeImports, prettierPluginEstree],
     }
   );
   console.log(`Updated package.json for "${otherExampleName}" example`);

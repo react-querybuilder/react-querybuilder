@@ -1,19 +1,19 @@
 {
   "dependencies": {
-    "@react-querybuilder/bulma": "8.8.0-alpha.1",
+    "@react-querybuilder/bulma": "8.8.1",
     "bulma": "^0.9.4 || ^1",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.8.0-alpha.1"
+    "react-querybuilder": "8.8.1"
   },
   "description": "React Query Builder Bulma Example",
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.6.0",
     "prettier": "^3",
     "typescript": "^5.7.2",
-    "vite": "^6"
+    "vite": "^7"
   },
   "name": "react-querybuilder-bulma-example",
   "private": true,
