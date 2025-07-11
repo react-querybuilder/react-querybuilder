@@ -64,9 +64,7 @@ To add drag-and-drop capability, import `react-dnd`, `react-dnd-html5-backend`, 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>React Query Builder ESM (DnD)</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/react-querybuilder@latest/dist/query-builder.css" />
+    <link rel="stylesheet" href="https://esm.sh/react-querybuilder@latest/dist/query-builder.css" />
   </head>
   <body>
     <div id="root"></div>
