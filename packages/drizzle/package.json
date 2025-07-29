@@ -46,16 +46,16 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.4",
-    "@types/react": "^19.1.8",
-    "@vitejs/plugin-react": "^4.6.0",
-    "drizzle-orm": "^0.44.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "@electric-sql/pglite": "^0.3.6",
+    "@types/react": "^19.1.9",
+    "@vitejs/plugin-react": "^4.7.0",
+    "drizzle-orm": "^0.44.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-querybuilder": "8.8.1",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3",
-    "vite": "^7.0.3"
+    "vite": "^7.0.6"
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",

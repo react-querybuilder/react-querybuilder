@@ -13,6 +13,9 @@ const CRGI = ChakraRadioGroup.Item as unknown as React.ForwardRefExoticComponent
   RadioProps & React.RefAttributes<HTMLLabelElement>
 >;
 
+// oxlint-disable-next-line no-explicit-any
+const ItemText = ChakraRadioGroup.ItemText as any;
+
 export const Radio: React.ForwardRefExoticComponent<
   RadioProps & React.RefAttributes<HTMLInputElement>
 > = React.forwardRef<HTMLInputElement, RadioProps>(function Radio(props, ref) {
@@ -21,7 +24,7 @@ export const Radio: React.ForwardRefExoticComponent<
     <CRGI ref={rootRef} {...rest}>
       <ChakraRadioGroup.ItemHiddenInput ref={ref} {...inputProps} />
       <ChakraRadioGroup.ItemIndicator />
-      {children && <ChakraRadioGroup.ItemText>{children}</ChakraRadioGroup.ItemText>}
+      {children && <ItemText>{children}</ItemText>}
     </CRGI>
   );
 });
