@@ -121,7 +121,7 @@
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.0.6",
     "mongodb-memory-server-core": "^10.1.4",
-    "mongoose": "^8.16.5",
+    "mongoose": "^8.17.0",
     "pglite-prisma-adapter": "^0.6.1",
     "prisma": "^6.13.0",
     "query-string": "^9.2.2",

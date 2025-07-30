@@ -4,6 +4,9 @@ import common from '../../jest.common.mjs';
 export default {
   ...common,
   displayName: 'drizzle',
+  setupFilesAfterEnv: [
+    ...(process.env.RQB_DRIZZLE_COVERAGE ? [] : (common.setupFilesAfterEnv ?? [])),
+  ],
   testPathIgnorePatterns: [
     ...(common.testPathIgnorePatterns ?? []),
     // Ignore everything if we're not specifically testing for coverage because for

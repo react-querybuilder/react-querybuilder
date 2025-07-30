@@ -112,6 +112,7 @@ const config: Config = {
             pretty: true,
             expandObjects: true,
             expandParameters: true,
+            strikeDeprecatedPageTitles: true,
             plugin: ['typedoc-plugin-frontmatter', './api-gitkeep.mjs'],
           } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
         ],

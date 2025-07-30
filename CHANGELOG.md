@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+#### Fixed
+
+- Deprecated unnecessary interfaces `ActionWithRulesProps` and `ActionWithRulesAndAddersProps`.
 
 ## [v8.8.1] - 2025-07-09
 

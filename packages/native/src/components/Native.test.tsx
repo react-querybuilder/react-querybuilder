@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
 import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type {
-  ActionWithRulesProps,
+  ActionProps,
   Field,
   FullField,
   Option,
@@ -111,7 +111,7 @@ describe('NativeActionElement', () => {
   const testEnabledAndOnClick = ({
     testTitle,
     ...additionalProps
-  }: Partial<ActionWithRulesProps> & { testTitle?: string } = {}) => {
+  }: Partial<ActionProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
       const handleOnPress = jest.fn();
       render(<NativeActionElement {...props} handleOnClick={handleOnPress} {...additionalProps} />);

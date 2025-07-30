@@ -295,8 +295,12 @@ export type TranslationsFull = {
 export interface ActionProps extends CommonSubComponentProps {
   /** Visible text. */
   label?: ReactNode;
-  /** Call this function to trigger the action. */
-  handleOnClick(e?: ReactMouseEvent): void;
+  /**
+   * Triggers the action, e.g. the addition of a new rule or group. The second parameter
+   * will be forwarded to the `onAddRule` or `onAddGroup` callback if appropriate.
+   */
+  // oxlint-disable-next-line no-explicit-any
+  handleOnClick(e: ReactMouseEvent, context?: any): void;
   /**
    * Translation which overrides the regular `label`/`title` props when
    * the element is disabled.
@@ -307,33 +311,27 @@ export interface ActionProps extends CommonSubComponentProps {
    * associated with this element.
    */
   ruleOrGroup: RuleGroupTypeAny | RuleType;
-}
-
-/**
- * Props passed to every group action component.
- *
- * @group Props
- */
-export interface ActionWithRulesProps extends ActionProps {
   /**
-   * Rules already present for this group.
+   * Rules in this group (if the action element is for a group).
    */
   rules?: RuleOrGroupArray;
 }
 
 /**
- * Props passed to every action component that adds a rule or group.
+ * Props passed to every group action component.
  *
+ * @deprecated Use {@link ActionProps} instead.
  * @group Props
  */
-export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
-  /**
-   * Triggers the addition of a new rule or group. The second parameter will
-   * be forwarded to the `onAddRule` or `onAddGroup` callback, appropriately.
-   */
-  // oxlint-disable-next-line typescript/no-explicit-any
-  handleOnClick(e: ReactMouseEvent, context?: any): void;
-}
+export interface ActionWithRulesProps extends ActionProps {}
+
+/**
+ * Props passed to every action component that adds a rule or group.
+ *
+ * @deprecated Use {@link ActionProps} instead.
+ * @group Props
+ */
+export interface ActionWithRulesAndAddersProps extends ActionProps {}
 
 /**
  * Props for `notToggle` components.
@@ -460,19 +458,19 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    *
    * @default ActionElement
    */
-  addGroupAction: ComponentType<ActionWithRulesAndAddersProps> | null;
+  addGroupAction: ComponentType<ActionProps> | null;
   /**
    * Adds a rule to the current group.
    *
    * @default ActionElement
    */
-  addRuleAction: ComponentType<ActionWithRulesAndAddersProps> | null;
+  addRuleAction: ComponentType<ActionProps> | null;
   /**
    * Clones the current group.
    *
    * @default ActionElement
    */
-  cloneGroupAction: ComponentType<ActionWithRulesProps> | null;
+  cloneGroupAction: ComponentType<ActionProps> | null;
   /**
    * Clones the current rule.
    *
@@ -508,13 +506,13 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    *
    * @default ActionElement
    */
-  lockGroupAction: ComponentType<ActionWithRulesProps> | null;
+  lockGroupAction: ComponentType<ActionProps> | null;
   /**
    * Locks the current rule (sets the `disabled` property to `true`).
    *
    * @default ActionElement
    */
-  lockRuleAction: ComponentType<ActionWithRulesProps> | null;
+  lockRuleAction: ComponentType<ActionProps> | null;
   /**
    * Selects the `match` property for the current rule.
    *
@@ -538,7 +536,7 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    *
    * @default ActionElement
    */
-  removeGroupAction: ComponentType<ActionWithRulesProps> | null;
+  removeGroupAction: ComponentType<ActionProps> | null;
   /**
    * Removes the current rule from its parent group's `rules` array.
    *

@@ -16,7 +16,6 @@ import { messages } from '../messages';
 import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 import type {
   ActionProps,
-  ActionWithRulesAndAddersProps,
   ControlElementsProp,
   DefaultOperatorName,
   Field,
@@ -1209,7 +1208,7 @@ describe('onAddRule prop', () => {
   it('passes handleOnClick context to onAddRule', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
-    const AddRuleAction = (props: ActionWithRulesAndAddersProps) => (
+    const AddRuleAction = (props: ActionProps) => (
       <React.Fragment>
         <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
         <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
@@ -1295,7 +1294,7 @@ describe('onAddGroup prop', () => {
   it('passes handleOnClick context to onAddGroup', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const ruleGroup: RuleGroupType = { combinator: 'fake', rules: [] };
-    const AddGroupAction = (props: ActionWithRulesAndAddersProps) => (
+    const AddGroupAction = (props: ActionProps) => (
       <React.Fragment>
         <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
         <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>

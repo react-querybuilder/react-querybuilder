@@ -1,12 +1,12 @@
 import type { ButtonProps } from '@mantine/core';
 import { Button } from '@mantine/core';
 import * as React from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 
 /**
  * @group Props
  */
-export interface MantineActionProps extends ActionWithRulesProps, Partial<ButtonProps> {}
+export interface MantineActionProps extends ActionProps, Partial<ButtonProps> {}
 
 /**
  * @group Components

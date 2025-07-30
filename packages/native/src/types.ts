@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type {
-  ActionWithRulesProps,
+  ActionProps,
   FullCombinator,
   FullField,
   FullOperator,
@@ -105,7 +105,7 @@ export type InlineCombinatorNativeProps = InlineCombinatorProps & WithSchemaNati
 /**
  * @group Props
  */
-export type ActionNativeProps = ActionWithRulesProps & WithSchemaNative;
+export type ActionNativeProps = ActionProps & WithSchemaNative;
 
 /**
  * @group Props
