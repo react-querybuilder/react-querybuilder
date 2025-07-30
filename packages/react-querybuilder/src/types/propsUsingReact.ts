@@ -300,7 +300,7 @@ export interface ActionProps extends CommonSubComponentProps {
    * will be forwarded to the `onAddRule` or `onAddGroup` callback if appropriate.
    */
   // oxlint-disable-next-line no-explicit-any
-  handleOnClick(e: ReactMouseEvent, context?: any): void;
+  handleOnClick(e?: ReactMouseEvent, context?: any): void;
   /**
    * Translation which overrides the regular `label`/`title` props when
    * the element is disabled.
