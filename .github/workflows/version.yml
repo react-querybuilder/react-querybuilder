@@ -49,3 +49,36 @@ jobs:
           git config --global user.email "actions@github.com"
       - name: Bump version
         run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'Live' && '--yes' || '--yes --dry-run' }}
+      - name: Create GitHub Release
+        run: |
+          VERSION=$(node -p "require('./lerna.json').version")
+          CHANGELOG_SECTION=$(awk "/^## \[v${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
+          if [ -z "$CHANGELOG_SECTION" ]; then
+            echo "No changelog section found for version $VERSION. Skipping release creation."
+            exit 0
+          fi
+          PREV_VERSION=$(awk "/^## \[v${VERSION}\]/{getline; while(getline && !/^## \[v/) continue; if(/^## \[v/) {gsub(/^## \[v|\].*/, ""); print; exit}}' CHANGELOG.md)
+          CHANGELOG_ANCHOR=$(echo "v${VERSION}" | sed 's/\./-/g' | tr '[:upper:]' '[:lower:]')
+          FULL_HEADER=$(awk "/^## \[v${VERSION}\]/" CHANGELOG.md)
+          if [[ "$FULL_HEADER" =~ - ]]; then
+            DATE_PART=$(echo "$FULL_HEADER" | sed 's/.*- //')
+            CHANGELOG_ANCHOR="${CHANGELOG_ANCHOR}---${DATE_PART}"
+          fi
+          RELEASE_BODY="${CHANGELOG_SECTION}
+
+          - [CHANGELOG entry for v${VERSION}](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#${CHANGELOG_ANCHOR})"
+          if [ -n "$PREV_VERSION" ]; then
+            RELEASE_BODY="${RELEASE_BODY}\n- [Diff from v${PREV_VERSION}](https://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION})"
+          fi
+          echo "Release body content for v$VERSION:"
+          echo "----------------------------------------"
+          echo "$RELEASE_BODY"
+          echo "----------------------------------------"
+          
+          if [ "${{ inputs.runType }}" = "Live" ]; then
+            echo "$RELEASE_BODY" | gh release create "v$VERSION" --title "v$VERSION" --notes-file -
+          else
+            echo "Dry run - release would be created with the above content"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
