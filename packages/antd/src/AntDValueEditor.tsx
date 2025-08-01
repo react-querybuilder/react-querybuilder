@@ -201,7 +201,6 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             showTime={inputTypeCoerced === 'datetime-local'}
             className={className}
             disabled={disabled}
-            // oxlint-disable-next-line jsx-no-new-array-as-prop
             placeholder={[placeHolderText, placeHolderText]}
             // TODO: the function below is currently untested (see the
             // "renders a date range picker" test in ./AntD.test.tsx)

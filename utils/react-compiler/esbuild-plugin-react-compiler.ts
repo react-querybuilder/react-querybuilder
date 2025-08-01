@@ -5,7 +5,6 @@ import * as babel from '@babel/core';
 import type { Plugin } from 'esbuild';
 import QuickLRU from 'quick-lru';
 
-// oxlint-disable-next-line typescript/no-require-imports
 const BabelPluginReactCompiler = require('babel-plugin-react-compiler');
 
 export const ReactCompilerEsbuildPlugin = ({

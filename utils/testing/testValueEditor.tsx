@@ -1,5 +1,3 @@
-/* oxlint-disable no-await-in-loop */
-
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type {

@@ -544,7 +544,6 @@ it('handles independent combinators', () => {
   });
 });
 
-// oxlint-disable-next-line expect-expect
 it('generates IDs', () => {
   testParseJSONata(
     `firstName = "Steve"`,

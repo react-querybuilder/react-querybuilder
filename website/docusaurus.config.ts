@@ -61,7 +61,6 @@ const config: Config = {
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
           require.resolve('@tailwindcss/postcss'),
-          // oxlint-disable-next-line typescript/no-require-imports
           require('postcss-prefix-selector')({
             prefix: '.rqb-tremor',
             includeFiles: [/rqb-tremor.css/],

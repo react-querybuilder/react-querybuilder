@@ -138,7 +138,6 @@ it('negates "matches" comparisons appropriately', () => {
   );
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('handles "between" operators', () => {
   testParseSpEL(
     'f1 between {12,14}',
@@ -498,7 +497,6 @@ it('handles independent combinators', () => {
   });
 });
 
-// oxlint-disable-next-line jest/expect-expect
 it('generates IDs', () => {
   testParseSpEL(
     `firstName == "Steve"`,

@@ -27,7 +27,6 @@ function toVal(mix: any) {
       const len = mix.length;
       for (k = 0; k < len; k++) {
         if (mix[k] && (y = toVal(mix[k]))) {
-          // oxlint-disable-next-line typescript/no-unused-expressions
           str && (str += ' ');
           str += y;
         }
@@ -35,7 +34,6 @@ function toVal(mix: any) {
     } else {
       for (y in mix) {
         if (mix[y]) {
-          // oxlint-disable-next-line typescript/no-unused-expressions
           str && (str += ' ');
           str += y;
         }
@@ -55,7 +53,6 @@ export function clsx(...args: ClassValue[]): string {
   const len = args.length;
   for (; i < len; i++) {
     if ((tmp = args[i]) && (x = toVal(tmp))) {
-      // oxlint-disable-next-line typescript/no-unused-expressions
       str && (str += ' ');
       str += x;
     }
