@@ -43,14 +43,11 @@ jobs:
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
           # model: "claude-opus-4-20250514"
           
-          # Optional: Customize the trigger phrase (default: @claude)
-          # trigger_phrase: "/claude"
-          
           # Optional: Trigger when specific user is assigned to an issue
           # assignee_trigger: "claude-bot"
           
-          # Optional: Allow Claude to run specific commands
-          # allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test:*),Bash(npm run lint:*)"
+          # Allow Claude to run specific commands
+          allowed_tools: "Bash(bun install),Bash(bun run build),Bash(bun run test),Bash(bun run lint),Bash(bun run typecheck)"
           
           # Optional: Add custom instructions for Claude to customize its behavior for your project
           # custom_instructions: |
