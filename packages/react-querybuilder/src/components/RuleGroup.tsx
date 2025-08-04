@@ -129,10 +129,8 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
       context: rg.context,
       validation: rg.validationResult,
       schema: rg.schema,
-      ruleOrGroup: rg.ruleGroup,
-      ruleGroup: rg.ruleGroup,
     }),
-    [rg.path, rg.disabled, rg.context, rg.validationResult, rg.schema, rg.ruleGroup]
+    [rg.path, rg.disabled, rg.context, rg.validationResult, rg.schema]
   );
 
   const shiftTitles = useMemo(
@@ -170,6 +168,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           shiftDown={rg.shiftGroupDown}
           shiftUpDisabled={rg.shiftUpDisabled}
           shiftDownDisabled={rg.shiftDownDisabled}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
@@ -181,6 +180,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           title={rg.translations.dragHandle.title}
           label={rg.translations.dragHandle.label}
           className={rg.classNames.dragHandle}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
@@ -194,6 +194,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.combinators}
           handleOnChange={rg.onCombinatorChange}
           rules={rg.ruleGroup.rules}
+          ruleGroup={rg.ruleGroup}
         />
       )}
       {rg.schema.showNotToggle && (
@@ -206,6 +207,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           label={rg.translations.notToggle.label}
           checked={rg.ruleGroup.not}
           handleOnChange={rg.onNotToggleChange}
+          ruleGroup={rg.ruleGroup}
         />
       )}
       <AddRuleActionControlElement
@@ -217,6 +219,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
         className={rg.classNames.addRule}
         handleOnClick={rg.addRule}
         rules={rg.ruleGroup.rules}
+        ruleOrGroup={rg.ruleGroup}
       />
       {rg.schema.maxLevels > rg.path.length && (
         <AddGroupActionControlElement
@@ -228,6 +231,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.addGroup}
           handleOnClick={rg.addGroup}
           rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.schema.showCloneButtons && rg.path.length > 0 && (
@@ -240,6 +244,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.cloneGroup}
           handleOnClick={rg.cloneGroup}
           rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.schema.showLockButtons && (
@@ -253,6 +258,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           handleOnClick={rg.toggleLockGroup}
           rules={rg.ruleGroup.rules}
           disabledTranslation={rg.parentDisabled ? undefined : rg.translations.lockGroupDisabled}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.path.length > 0 && (
@@ -265,6 +271,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.removeGroup}
           handleOnClick={rg.removeGroup}
           rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
     </Fragment>
@@ -320,6 +327,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
                   path={thisPath}
                   disabled={rg.disabled}
                   schema={rg.schema}
+                  ruleGroup={rg.ruleGroup}
                 />
               )}
             {typeof r === 'string' ? (
@@ -339,6 +347,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
                 path={thisPath}
                 disabled={thisPathDisabled}
                 schema={rg.schema}
+                ruleGroup={rg.ruleGroup}
               />
             ) : isRuleGroup(r) ? (
               <RuleGroupControlElement
