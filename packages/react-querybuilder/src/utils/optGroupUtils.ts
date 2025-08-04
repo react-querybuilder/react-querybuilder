@@ -11,7 +11,6 @@ import type {
   GetOptionIdentifierType,
   Option,
   OptionGroup,
-  OptionList,
   RequireAtLeastOne,
   ToFullOption,
   ValueOption,
@@ -264,23 +263,45 @@ export const isFullOptionGroupArray = (
  *
  * @group Option Lists
  */
-export const getOption = <OptType extends Option = Option>(
-  arr: OptionList<OptType>,
+export function getOption<OptType extends FullOption>(
+  arr: FullOptionList<OptType>,
   name: string
-): OptType | undefined =>
-  (isFlexibleOptionGroupArray(arr, { allowEmpty: true })
+): OptType | undefined;
+export function getOption<OptType extends ValueOption>(
+  arr: FlexibleOptionList<OptType>,
+  name: string
+): OptType | undefined;
+export function getOption<OptType extends Option>(
+  arr: FlexibleOptionList<OptType>,
+  name: string
+): OptType | undefined;
+export function getOption<OptType extends BaseOption>(
+  arr: FlexibleOptionList<OptType>,
+  name: string
+): OptType | undefined {
+  const options = isFlexibleOptionGroupArray(arr, { allowEmpty: true })
     ? arr.flatMap(og => og.options)
-    : arr
-  ).find(op => op.value === name || op.name === name);
+    : arr;
+  return options.find(op => op.value === name || op.name === name) as OptType | undefined;
+}
 
 /**
  * Gets the first option from an {@link OptionList}.
  *
  * @group Option Lists
  */
-export const getFirstOption = <Opt extends BaseOption>(
+export function getFirstOption<Opt extends FullOption>(
+  arr?: OptionGroup<Opt>[] | Opt[]
+): GetOptionIdentifierType<Opt> | null;
+export function getFirstOption<Opt extends ValueOption>(
+  arr?: OptionGroup<Opt>[] | Opt[]
+): GetOptionIdentifierType<Opt> | null;
+export function getFirstOption<Opt extends Option>(
+  arr?: OptionGroup<Opt>[] | Opt[]
+): GetOptionIdentifierType<Opt> | null;
+export function getFirstOption<Opt extends BaseOption>(
   arr?: FlexibleOptionGroup<Opt>[] | Opt[]
-): GetOptionIdentifierType<Opt> | null => {
+): GetOptionIdentifierType<Opt> | null {
   if (!Array.isArray(arr) || arr.length === 0) {
     return null;
   } else if (isFlexibleOptionGroupArray(arr, { allowEmpty: true })) {
@@ -294,7 +315,7 @@ export const getFirstOption = <Opt extends BaseOption>(
   }
 
   return (arr[0].value ?? arr[0].name) as GetOptionIdentifierType<Opt>;
-};
+}
 
 /**
  * Flattens {@link FlexibleOptionGroup} arrays into {@link BaseOption} arrays.

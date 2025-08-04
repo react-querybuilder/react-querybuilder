@@ -4,6 +4,7 @@ import type {
   FullCombinator,
   FullField,
   FullOperator,
+  FullOption,
   FullOptionList,
   FullOptionMap,
   FullOptionRecord,
@@ -59,7 +60,7 @@ export const useFields = <F extends FullField>(
       Array.isArray(fieldsProp)
         ? toFullOptionList(fieldsProp, baseField)
         : (objectKeys(toFullOptionMap(fieldsProp, baseField)) as unknown as FieldName[])
-            .map(fld => ({ ...fieldsProp[fld], name: fld, value: fld }))
+            .map<FullOption<FieldName>>(fld => ({ ...fieldsProp[fld]!, name: fld, value: fld }))
             .sort((a, b) => a.label.localeCompare(b.label))
     ) as FullOptionList<F>;
     if (isFlexibleOptionGroupArray(flds)) {
