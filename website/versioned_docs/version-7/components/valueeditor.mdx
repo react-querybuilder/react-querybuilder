@@ -19,7 +19,7 @@ While React Query Builder does not restrict the rule `value` property to JavaScr
 
 ## Showcase
 
-`ValueEditor` may be the default component most commonly [overridden](./querybuilder#valueeditor) with a custom component ([more information here](../tips/custom-with-fallback)), but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
+`ValueEditor` may be the default component most commonly [overridden](./querybuilder-controlelements#valueeditor) with a custom component ([more information here](../tips/custom-with-fallback)), but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
 
 Rules 10 and 11 demonstrate the behavior when the `operator` is "between". Rule 12 demonstrates the behavior when a field's `valueSources` property is set to `["field", "value"]`.
 
@@ -212,7 +212,7 @@ And the `defaultQuery` prop looks like this:
 }
 ```
 
-Since the field's `valueSources` property is an array with length > 1, a ["value source selector" component](./querybuilder#valuesourceselector) is displayed to the left of the `<ValueEditor />`.
+Since the field's `valueSources` property is an array with length > 1, a ["value source selector" component](./querybuilder-controlelements#valuesourceselector) is displayed to the left of the `<ValueEditor />`.
 
 :::tip
 

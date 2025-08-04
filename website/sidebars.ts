@@ -12,7 +12,18 @@ export default {
         description: 'React components available from React Query Builder.',
       },
       items: [
-        'components/querybuilder',
+        {
+          type: 'category',
+          label: 'Query Builder',
+          link: { type: 'doc', id: 'components/querybuilder' },
+          items: [
+            {
+              type: 'doc',
+              label: 'controlElements',
+              id: 'components/querybuilder-controlelements',
+            },
+          ],
+        },
         'components/valueeditor',
         'components/valueselector',
         'components/actionelement',
