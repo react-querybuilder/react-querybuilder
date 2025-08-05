@@ -34,30 +34,29 @@ jobs:
 
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
           # model: "claude-opus-4-20250514"
-          
+
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
-            Please review this pull request and provide feedback on:
+            Please review this pull request and provide concise feedback on:
             - Code quality and best practices
             - Potential bugs or issues
             - Performance considerations
             - Security concerns
-            - Test coverage
-            
-            Be constructive and helpful in your feedback.
+
+            Be constructive and helpful, but not verbose. Focus on the code changes and how they align with our coding standards. If you find any issues, suggest improvements or alternatives.
 
           # Use sticky comments to make Claude reuse the same comment on subsequent pushes to the same PR
           use_sticky_comment: true
-          
+
           # Optional: Different prompts for different authors
           # direct_prompt: |
           #   ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' && 
           #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
           #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
-          
+
           # Allow Claude to run specific commands
           allowed_tools: "Bash(bun install),Bash(bun run build),Bash(bun run test),Bash(bun run lint),Bash(bun run typecheck)"
-          
+
           # Optional: Skip review for certain conditions
           # if: |
           #   !contains(github.event.pull_request.title, '[skip-review]') &&

@@ -40,21 +40,22 @@ jobs:
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
-          
+
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
           # model: "claude-opus-4-20250514"
-          
+
           # Optional: Trigger when specific user is assigned to an issue
           # assignee_trigger: "claude-bot"
-          
+
           # Allow Claude to run specific commands
           allowed_tools: "Bash(bun install),Bash(bun run build),Bash(bun run test),Bash(bun run lint),Bash(bun run typecheck)"
-          
+
           custom_instructions: |
             Follow the development guidelines in CLAUDE.md
             Use Bun as the package manager
             Run 'bun checkall' before committing changes
-          
+            Be concise and focused in your responses
+
           # Optional: Custom environment variables for Claude
           # claude_env: |
           #   NODE_ENV: test
