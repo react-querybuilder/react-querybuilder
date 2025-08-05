@@ -127,17 +127,15 @@ export function App() {
 
 All of the compatibility components except the `*ValueEditor`s accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving the query builder integration up to the compatibility layer.
 
-For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders a `Button` component from `antd`, so it can accept properties of the `ActionWithRulesProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
+For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders a `Button` component from `antd`, so it can accept properties of the `ActionProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
 
-In the example below, the `size` prop is accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface), even though it's not included in the `ActionWithRulesProps` interface.
+In the example below, the `size` prop is accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface), even though it's not included in the `ActionProps` interface.
 
 ```tsx
 import { AntDActionElement, antdControlElements } from '@react-querybuilder/antd';
-import { QueryBuilder, type ActionWithRulesProps } from 'react-querybuilder';
+import { QueryBuilder, type ActionProps } from 'react-querybuilder';
 
-const MyAntDActionElement = (props: ActionWithRulesProps) => (
-  <AntDActionElement {...props} size="large" />
-);
+const MyAntDActionElement = (props: ActionProps) => <AntDActionElement {...props} size="large" />;
 
 export function App() {
   return (
@@ -163,31 +161,31 @@ This list shows which library components' props will be accepted by the compatib
 | Component                          | Base props (from RQB)    | Rendered library component                                      |
 | ---------------------------------- | ------------------------ | --------------------------------------------------------------- |
 | **`@react-querybuilder/antd`**     |                          |                                                                 |
-| `AntDActionElement`                | `ActionWithRulesProps`   | `import { Button } from 'antd'`                                 |
+| `AntDActionElement`                | `ActionProps`            | `import { Button } from 'antd'`                                 |
 | `AntDDragHandle`                   | `DragHandleProps`        | `import { HolderOutlined } from '@ant-design/icons'`            |
 | `AntDNotToggle`                    | `NotToggleProps`         | `import { Switch } from 'antd'`                                 |
 | `AntDValueSelector`                | `VersatileSelectorProps` | `import { Select } from 'antd'`                                 |
 | **`@react-querybuilder/chakra`**   |                          |                                                                 |
-| `ChakraActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                     |
+| `ChakraActionElement`              | `ActionProps`            | `import { Button } from '@chakra-ui/react'`                     |
 | `ChakraDragHandle` (removed in v8) | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
 | `ChakraNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
 | `ChakraValueSelector`              | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
 | **`@react-querybuilder/fluent`**   |                          |                                                                 |
-| `FluentActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@fluentui/react-components'`           |
+| `FluentActionElement`              | `ActionProps`            | `import { Button } from '@fluentui/react-components'`           |
 | `FluentDragHandle`                 | `DragHandleProps`        | `import { Text } from '@fluentui/react-components'`             |
 | `FluentNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@fluentui/react-components'`           |
 | `FluentValueSelector`              | `VersatileSelectorProps` | `import { Dropdown, Select } from '@fluentui/react-components'` |
 | **`@react-querybuilder/mantine`**  |                          |                                                                 |
-| `MantineActionElement`             | `ActionWithRulesProps`   | `import { Button } from '@mantine/core'`                        |
+| `MantineActionElement`             | `ActionProps`            | `import { Button } from '@mantine/core'`                        |
 | `MantineNotToggle`                 | `NotToggleProps`         | `import { Switch } from '@mantine/core'`                        |
 | `MantineValueSelector`             | `VersatileSelectorProps` | `import { Select } from '@mantine/core'`                        |
 | **`@react-querybuilder/material`** |                          |                                                                 |
-| `MaterialActionElement`            | `ActionWithRulesProps`   | `import { Button } from '@mui/material'`                        |
+| `MaterialActionElement`            | `ActionProps`            | `import { Button } from '@mui/material'`                        |
 | `MaterialDragHandle`               | `DragHandleProps`        | `import { DragIndicator } from '@mui/icons-material'`           |
 | `MaterialNotToggle`                | `NotToggleProps`         | `import { Switch } from '@mui/material'`                        |
 | `MaterialValueSelector`            | `VersatileSelectorProps` | `import { Select } from '@mui/material'`                        |
 | **`@react-querybuilder/tremor`**   |                          |                                                                 |
-| `TremorActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@tremor/react'`                        |
+| `TremorActionElement`              | `ActionProps`            | `import { Button } from '@tremor/react'`                        |
 | `TremorNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@tremor/react'`                        |
 | `TremorValueSelector`              | `VersatileSelectorProps` | `import { MultiSelect, Select } from '@tremor/react'`           |
 

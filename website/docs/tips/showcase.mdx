@@ -269,7 +269,7 @@ import { useState } from 'react';
 import type {
   Field,
   RuleGroupType,
-  ActionWithRulesAndAddersProps,
+  ActionProps,
   CombinatorSelectorProps,
 } from 'react-querybuilder';
 import {
@@ -310,7 +310,7 @@ const initialQuery: RuleGroupType = {
   ],
 };
 
-const RemoveRule = (props: ActionWithRulesAndAddersProps) => {
+const RemoveRule = (props: ActionProps) => {
   const query = useQueryBuilderQuery();
   if (!query) return null;
   const parentPath = getParentPath(props.path);

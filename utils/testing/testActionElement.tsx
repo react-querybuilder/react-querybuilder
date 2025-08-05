@@ -1,9 +1,9 @@
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 import { basicSchema, userEventSetup } from './utils';
 
-export const defaultActionElementProps: ActionWithRulesProps = {
+export const defaultActionElementProps: ActionProps = {
   handleOnClick: () => {},
   className: '',
   level: 0,
@@ -12,18 +12,16 @@ export const defaultActionElementProps: ActionWithRulesProps = {
   schema: basicSchema,
 };
 
-export const testActionElement = (
-  ActionElement: React.ComponentType<ActionWithRulesProps>
-): void => {
+export const testActionElement = (ActionElement: React.ComponentType<ActionProps>): void => {
   const user = userEventSetup();
   const title = ActionElement.displayName ?? ActionElement.name ?? 'ActionElement';
   const props = { ...defaultActionElementProps, title };
-  const dt: ActionWithRulesProps['disabledTranslation'] = { label: '🔒', title: 'Unlock' };
+  const dt: ActionProps['disabledTranslation'] = { label: '🔒', title: 'Unlock' };
 
   const testEnabledAndOnClick = ({
     testTitle,
     ...additionalProps
-  }: Partial<ActionWithRulesProps> & { testTitle?: string } = {}) => {
+  }: Partial<ActionProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
       const testTitle =
         (additionalProps?.disabled && additionalProps?.disabledTranslation?.title) || title;

@@ -24,20 +24,20 @@ The following control overrides are supported per the `Controls` interface. Sett
 | Property                                              | Type                                                                                                                     |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | [`actionElement`](#actionelement)                     | <code>React.ComponentType&lt;ActionProps&gt;</code>                                                                      |
-| [`addGroupAction`](#addgroupaction)                   | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
-| [`addRuleAction`](#addruleaction)                     | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
-| [`cloneGroupAction`](#clonegroupaction)               | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
+| [`addGroupAction`](#addgroupaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`addRuleAction`](#addruleaction)                     | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`cloneGroupAction`](#clonegroupaction)               | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`cloneRuleAction`](#cloneruleaction)                 | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`combinatorSelector`](#combinatorselector)           | <code>React.ComponentType&lt;CombinatorSelectorProps&gt; \| null</code>                                                  |
 | [`dragHandle`](#draghandle)                           | <code>React.ForwardRefExoticComponent&lt;DragHandleProps & React.RefAttributes&lt;HTMLSpanElement&gt;&gt; \| null</code> |
 | [`fieldSelector`](#fieldselector)                     | <code>React.ComponentType&lt;FieldSelectorProps&gt; \| null</code>                                                       |
 | [`inlineCombinator`](#inlinecombinator)               | <code>React.ComponentType&lt;InlineCombinatorProps&gt; \| null</code>                                                    |
-| [`lockGroupAction`](#lockgroupaction)                 | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
+| [`lockGroupAction`](#lockgroupaction)                 | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`lockRuleAction`](#lockruleaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`matchModeEditor`](#matchmodeeditor)                 | <code>React.ComponentType&lt;MatchModeEditorProps&gt; \| null</code>                                                     |
 | [`notToggle`](#nottoggle)                             | <code>React.ComponentType&lt;NotToggleProps&gt; \| null</code>                                                           |
 | [`operatorSelector`](#operatorselector)               | <code>React.ComponentType&lt;OperatorSelectorProps&gt; \| null</code>                                                    |
-| [`removeGroupAction`](#removegroupaction)             | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
+| [`removeGroupAction`](#removegroupaction)             | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`removeRuleAction`](#removeruleaction)               | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`rule`](#rule)                                       | <code>React.ComponentType&lt;RuleProps&gt;</code>                                                                        |
 | [`ruleGroup`](#rulegroup)                             | <code>React.ComponentType&lt;RuleGroupProps&gt;</code>                                                                   |
@@ -50,7 +50,7 @@ The following control overrides are supported per the `Controls` interface. Sett
 
 ### `actionElement`
 
-The component for all button-type controls. Default is [`ActionElement`](./actionelement). Receives props per the `ActionProps`, `ActionWithRulesProps`, or `ActionWithRulesAndAddersProps` interface depending on the control, which can be any of the following:
+The component for all button-type controls. Default is [`ActionElement`](./actionelement). Receives props per the `ActionProps`, `ActionProps`, or `ActionProps` interface depending on the control, which can be any of the following:
 
 - [Usage example](#usage-example)
 - [Properties](#properties)
@@ -109,7 +109,7 @@ Adds a sub-group to the current group. Default is [`ActionElement`](./actionelem
 <details>
 <summary>Props for `addGroupAction`</summary>
 
-Per the `ActionWithRulesAndAddersProps` interface:
+Per the `ActionProps` interface:
 
 | Prop            | Type                                           | Description                                                  |
 | --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -135,7 +135,7 @@ Adds a rule to the current group. Default is [`ActionElement`](./actionelement).
 <details>
 <summary>Props for `addRuleAction`</summary>
 
-Per the `ActionWithRulesAndAddersProps` interface:
+Per the `ActionProps` interface:
 
 | Prop            | Type                                           | Description                                                  |
 | --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
@@ -161,7 +161,7 @@ Clones the current group. Default is [`ActionElement`](./actionelement).
 <details>
 <summary>Props for `cloneGroupAction`</summary>
 
-Per the `ActionWithRulesProps` interface:
+Per the `ActionProps` interface:
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -304,7 +304,7 @@ Locks the current group (sets the `disabled` property to `true`). Default is [`A
 <details>
 <summary>Props for `lockGroupAction`</summary>
 
-Per the `ActionWithRulesProps` interface:
+Per the `ActionProps` interface:
 
 | Prop                  | Type                                     | Description                                                                                                            |
 | --------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -331,7 +331,7 @@ Locks the current rule (sets the `disabled` property to `true`). Default is [`Ac
 <details>
 <summary>Props for `lockRuleAction`</summary>
 
-Per the `ActionWithRulesProps` interface:
+Per the `ActionProps` interface:
 
 | Prop                  | Type                                     | Description                                                                                                          |
 | --------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -442,7 +442,7 @@ Removes the current group from its parent group's `rules` array. Default is [`Ac
 <details>
 <summary>Props for `removeGroupAction`</summary>
 
-Per the `ActionWithRulesProps` interface:
+Per the `ActionProps` interface:
 
 | Prop            | Type                                     | Description                                                  |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |

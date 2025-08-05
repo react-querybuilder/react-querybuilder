@@ -20,7 +20,7 @@ The example below uses a custom component that renders two buttons in the `addRu
 import { useState } from 'react';
 import {
   ActionElement,
-  ActionWithRulesAndAddersProps,
+  ActionProps,
   add,
   Field,
   QueryBuilder,
@@ -28,7 +28,7 @@ import {
 } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
 
-const AddRulesAction = (props: ActionWithRulesAndAddersProps) => {
+const AddRulesAction = (props: ActionProps) => {
   const onClick = (field: string) => {
     props.schema.dispatchQuery(
       add(props.schema.getQuery(), { field, operator: '=', value: '' }, props.path)
