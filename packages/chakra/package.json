@@ -52,7 +52,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@chakra-ui/react": "^3.23.0",
+    "@chakra-ui/react": "^3.24.1",
     "@emotion/react": "^11.14.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
@@ -64,7 +64,7 @@
     "react-icons": "^5.5.0",
     "react-querybuilder": "8.8.1",
     "rollup-plugin-visualizer": "^6.0.3",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "vite": "^7.0.6"
   },
   "peerDependencies": {
