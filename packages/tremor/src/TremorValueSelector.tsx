@@ -36,6 +36,7 @@ export const TremorValueSelector = ({
   validation: _validation,
   schema: _schema,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   ...otherProps
 }: TremorValueSelectorProps): React.JSX.Element => {

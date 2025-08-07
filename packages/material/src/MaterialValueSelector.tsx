@@ -30,6 +30,7 @@ export const MaterialValueSelector = ({
   listsAsArrays,
   testID,
   rule,
+  ruleGroup,
   rules,
   level,
   path,
@@ -70,6 +71,7 @@ export const MaterialValueSelector = ({
         listsAsArrays={listsAsArrays}
         testID={testID}
         rule={rule}
+        ruleGroup={ruleGroup}
         rules={rules}
         level={level}
         path={path}

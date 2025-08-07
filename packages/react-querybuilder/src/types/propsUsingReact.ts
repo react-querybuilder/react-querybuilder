@@ -138,7 +138,8 @@ export interface ValueSelectorProps<OptType extends Option = FullOption>
  */
 export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
   options: FullOptionList<FullCombinator>;
-  rules?: RuleOrGroupArray;
+  rules: RuleOrGroupArray;
+  ruleGroup: RuleGroupTypeAny;
 }
 
 /**
