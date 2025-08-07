@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.8.2] - 2025-08-07
+
 #### Fixed
 
 - [#926] The `ruleGroup` prop is now destructured and ignored on all `*ValueSelector` components, preventing it from being passed to DOM elements.
@@ -1973,7 +1977,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.2...HEAD
+[v8.8.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.1...v8.8.2
 [v8.8.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.0...v8.8.1
 [v8.8.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.1...v8.8.0
 [v8.7.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.7.0...v8.7.1
