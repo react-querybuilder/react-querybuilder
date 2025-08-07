@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleType } from './ruleGroups';
+import type { CommonRuleAndGroupProperties, RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
 
 export type RulesEngineCondition<RG extends RuleGroupTypeAny> = RG & {
@@ -10,13 +10,19 @@ export type RulesEngineConditions<RG extends RuleGroupTypeAny> =
   | RulesEngineCondition<RG>[] // if/if-else clauses only
   | [...RulesEngineCondition<RG>[], RulesEngineAction]; // if/if-else clauses and a final, unconditional "else" action
 
-export interface RulesEngine<R extends RuleType = RuleType, C extends string = string> {
+export interface RulesEngine<R extends RuleType = RuleType, C extends string = string>
+  extends CommonRuleAndGroupProperties {
   conditions: RulesEngineConditions<RuleGroupType<R, C>>;
 }
 
-export interface RulesEngineIC<R extends RuleType = RuleType, C extends string = string> {
+export interface RulesEngineIC<R extends RuleType = RuleType, C extends string = string>
+  extends CommonRuleAndGroupProperties {
   conditions: RulesEngineConditions<RuleGroupTypeIC<R, C>>;
 }
+
+export type RulesEngineAny<R extends RuleType = RuleType, C extends string = string> =
+  | RulesEngine<R, C>
+  | RulesEngineIC<R, C>;
 
 export type RulesEngineActionBase<T extends string = string> = {
   actionType: T;

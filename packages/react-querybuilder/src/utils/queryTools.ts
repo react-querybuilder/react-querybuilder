@@ -86,7 +86,7 @@ export const add = <RG extends RuleGroupTypeAny>(
           (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
       );
     }
-    // `as RuleType` in only here to avoid the ambiguity with `RuleGroupTypeAny`
+    // `as RuleType` is only here to avoid the ambiguity with `RuleGroupTypeAny`
     parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
   });
 

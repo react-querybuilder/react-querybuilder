@@ -1,11 +1,27 @@
-import type { Path, RuleGroupTypeAny, RuleType } from '../types/index.noReact';
+import type {
+  Path,
+  RuleGroupTypeAny,
+  RulesEngineAction,
+  RulesEngineAny,
+  RuleType,
+} from '../types/index.noReact';
 import { isRuleGroup } from './isRuleGroup';
+import { isRulesEngine } from './isRulesEngine';
 import { isPojo } from './misc';
 
 /**
  * Return type for {@link findPath}.
  */
 export type FindPathReturnType = RuleGroupTypeAny | RuleType | null;
+
+/**
+ * Return type for {@link findConditionPath}.
+ */
+export type FindConditionPathReturnType =
+  | RulesEngineAny
+  | RuleGroupTypeAny
+  | RulesEngineAction
+  | null;
 
 /**
  * Returns the {@link RuleType} or {@link RuleGroupType}/{@link RuleGroupTypeIC}
@@ -20,7 +36,25 @@ export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnTyp
     level++;
   }
 
-  return target;
+  return level < path.length ? null : target;
+};
+
+/**
+ * Returns the {@link RuleGroupType}/{@link RuleGroupTypeIC}
+ * at the given path within a rules engine.
+ */
+export const findConditionPath = (
+  path: Path,
+  rulesEngine: RulesEngineAny
+): FindConditionPathReturnType => {
+  let target: FindConditionPathReturnType = rulesEngine;
+  let level = 0;
+  while (level < path.length && target && isRulesEngine(target)) {
+    target = target.conditions[path[level]];
+    level++;
+  }
+
+  return level < path.length ? null : (target ?? null);
 };
 
 /**
@@ -48,6 +82,29 @@ export const findID = (id: string, query: RuleGroupTypeAny): FindPathReturnType 
 };
 
 /**
+ * Returns the {@link RuleGroupType}/{@link RuleGroupTypeIC}
+ * with the given `id` within a rules engine.
+ */
+export const findConditionID = (
+  id: string,
+  rulesEngine: RulesEngineAny
+): RuleGroupTypeAny | RulesEngineAny | RulesEngineAction | null => {
+  if (rulesEngine.id === id) {
+    return rulesEngine;
+  }
+
+  for (const condition of rulesEngine.conditions) {
+    if (condition.id === id) {
+      return condition;
+    } else if (isRulesEngine(condition)) {
+      return findConditionID(id, condition);
+    }
+  }
+
+  return null;
+};
+
+/**
  * Returns the {@link Path} of the {@link RuleType} or {@link RuleGroupType}/{@link RuleGroupTypeIC}
  * with the given `id` within a query.
  */
@@ -63,6 +120,31 @@ export const getPathOfID = (id: string, query: RuleGroupTypeAny): Path | null =>
   for (const [i, r] of Object.entries(query.rules)) {
     if (isRuleGroup(r)) {
       const subPath = getPathOfID(id, r);
+      if (Array.isArray(subPath)) {
+        return [Number.parseInt(i), ...subPath];
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Returns the {@link Path} of the {@link RuleGroupType}/{@link RuleGroupTypeIC}
+ * with the given `id` within a rules engine.
+ */
+export const getConditionPathOfID = (id: string, re: RulesEngineAny): Path | null => {
+  if (re.id === id) return [];
+
+  const idx = re.conditions.findIndex(c => !(typeof c === 'string') && c.id === id);
+
+  if (idx >= 0) {
+    return [idx];
+  }
+
+  for (const [i, c] of Object.entries(re.conditions)) {
+    if (isRulesEngine(c)) {
+      const subPath = getConditionPathOfID(id, c);
       if (Array.isArray(subPath)) {
         return [Number.parseInt(i), ...subPath];
       }
