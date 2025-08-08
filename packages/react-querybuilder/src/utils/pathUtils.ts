@@ -6,7 +6,7 @@ import type {
   RuleType,
 } from '../types/index.noReact';
 import { isRuleGroup } from './isRuleGroup';
-import { isRulesEngine } from './isRulesEngine';
+import { isRulesEngineAny } from './isRulesEngine';
 import { isPojo } from './misc';
 
 /**
@@ -49,7 +49,7 @@ export const findConditionPath = (
 ): FindConditionPathReturnType => {
   let target: FindConditionPathReturnType = rulesEngine;
   let level = 0;
-  while (level < path.length && target && isRulesEngine(target)) {
+  while (level < path.length && isRulesEngineAny(target)) {
     target = target.conditions[path[level]];
     level++;
   }
@@ -96,7 +96,7 @@ export const findConditionID = (
   for (const condition of rulesEngine.conditions) {
     if (condition.id === id) {
       return condition;
-    } else if (isRulesEngine(condition)) {
+    } else if (isRulesEngineAny(condition)) {
       return findConditionID(id, condition);
     }
   }
@@ -143,7 +143,7 @@ export const getConditionPathOfID = (id: string, re: RulesEngineAny): Path | nul
   }
 
   for (const [i, c] of Object.entries(re.conditions)) {
-    if (isRulesEngine(c)) {
+    if (isRulesEngineAny(c)) {
       const subPath = getConditionPathOfID(id, c);
       if (Array.isArray(subPath)) {
         return [Number.parseInt(i), ...subPath];

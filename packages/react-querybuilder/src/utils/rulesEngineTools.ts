@@ -9,8 +9,8 @@ import type {
 import { isRuleGroup, isRuleType } from './isRuleGroup';
 import { isRulesEngineAction, isRulesEngineAny } from './isRulesEngine';
 import { findConditionPath, getConditionPathOfID, getParentPath } from './pathUtils';
-import type { AddOptions } from './queryTools';
-import { add } from './queryTools';
+import type { AddOptions, UpdateOptions } from './queryTools';
+import { add, update } from './queryTools';
 
 const push = (a: unknown[], ...items: unknown[]) => a.push(...items);
 const splice = (a: unknown[], start: number, deleteCount: number, ...items: unknown[]) =>
@@ -82,5 +82,55 @@ export const addRE = <RE extends RulesEngineAny>(
       } else {
         push(parentRE.conditions, subject);
       }
+    }
+  });
+
+/**
+ * Options for {@link updateRE}.
+ *
+ * @group Query Tools
+ */
+export interface UpdateOptionsRE extends UpdateOptions {}
+/**
+ * Updates a property of a rule or group within a query.
+ * @returns The new query with the rule or group property updated.
+ *
+ * @group Query Tools
+ */
+export const updateRE = <RE extends RulesEngineAny>(
+  /** The query to update. */
+  rulesEngine: RE,
+  /** The name of the property to update. */
+  prop: string,
+  /** The new value of the property. */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  value: any,
+  /** Path or ID of the rules engine condition to update. */
+  conditionPathOrID: Path | string,
+  /** Path or ID of the group to update (within the rules engine at `conditionPathOrID`), if updating a rule or group. */
+  parentGroupPathOrID?: Path | string | null | undefined,
+  /** Options. */
+  updateOptions: UpdateOptionsRE = {}
+): RE =>
+  produce(rulesEngine, draft => {
+    const rePath = Array.isArray(conditionPathOrID)
+      ? conditionPathOrID
+      : getConditionPathOfID(conditionPathOrID, draft);
+
+    if (!rePath) return;
+
+    const parentRE = findConditionPath(rePath, draft);
+
+    if (!isRulesEngineAny(parentRE) && !isRuleGroup(parentRE)) return;
+
+    if (parentGroupPathOrID && isRuleGroup(parentRE)) {
+      const newGroup = update(parentRE, prop, value, parentGroupPathOrID, updateOptions);
+      const parentREofGroup = findConditionPath(getParentPath(rePath), draft);
+      // istanbul ignore next
+      if (!coerceToRulesEngine(parentREofGroup)) return;
+      splice(parentREofGroup.conditions, rePath.at(-1)!, 1, newGroup);
+    } else {
+      // @ts-expect-error `prop` can be any string
+      parentRE[prop] = value;
     }
   });

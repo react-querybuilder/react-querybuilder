@@ -1,4 +1,4 @@
-import { addRE } from './rulesEngineTools';
+import { addRE, updateRE } from './rulesEngineTools';
 
 const id = expect.any(String);
 
@@ -136,5 +136,45 @@ describe('addRE', () => {
     // oxlint-disable-next-line no-explicit-any
     expect(addRE(r1, { actionType: 'a' }, 26 as any)).toBe(r1);
     expect(addRE(r1, { actionType: 'a' }, [1, 2])).toBe(r1);
+  });
+});
+
+describe('updateRE', () => {
+  it('updates a rules engine in a rules engine', () => {
+    expect(
+      updateRE(
+        { conditions: [{ rules: [{ field: 'f', operator: '=', value: 'v' }] }], id: 'root' },
+        'someProp',
+        'initial value',
+        [0]
+      )
+    ).toEqual({
+      conditions: [{ rules: [{ field: 'f', operator: '=', value: 'v' }] }],
+      id: 'root',
+      someProp: 'initial value',
+    });
+  });
+
+  it('updates a rule in a rules engine', () => {
+    expect(
+      updateRE(
+        { conditions: [{ rules: [{ field: 'f', operator: '=', value: 'v' }] }], id: 'root' },
+        'value',
+        'new value',
+        [0],
+        [0]
+      )
+    ).toEqual({
+      conditions: [{ rules: [{ field: 'f', operator: '=', value: 'new value' }] }],
+      id: 'root',
+    });
+  });
+
+  it('ignores invalid paths', () => {
+    const r1 = { conditions: [], id: 'root' };
+
+    // oxlint-disable-next-line no-explicit-any
+    expect(updateRE(r1, 'value', 'new value', 26 as any)).toBe(r1);
+    expect(updateRE(r1, 'value', 'new value', [1, 2])).toBe(r1);
   });
 });
