@@ -8,15 +8,22 @@ import type {
 } from '../types/index.noReact';
 import { isRuleGroup, isRuleType } from './isRuleGroup';
 import { isRulesEngineAction, isRulesEngineAny } from './isRulesEngine';
-import { findConditionPath, getConditionPathOfID, getParentPath } from './pathUtils';
-import type { AddOptions, UpdateOptions } from './queryTools';
-import { add, update } from './queryTools';
+import { findConditionPath, getConditionPathOfID, getParentPath, pathsAreEqual } from './pathUtils';
+import type {
+  AddOptions,
+  UpdateOptions,
+  MoveOptions,
+  InsertOptions,
+  GroupOptions,
+} from './queryTools';
+import { add, update, remove, move, insert, group } from './queryTools';
 
 const push = (a: unknown[], ...items: unknown[]) => a.push(...items);
 const splice = (a: unknown[], start: number, deleteCount: number, ...items: unknown[]) =>
   a.splice(start, deleteCount, ...items);
 
 const coerceToRulesEngine = (re: unknown): re is RulesEngineAny => {
+  if (!re || typeof re !== 'object') return false;
   if (!isRulesEngineAny(re)) (re as RulesEngineAny).conditions = [];
   return isRulesEngineAny(re);
 };
@@ -88,7 +95,7 @@ export const addRE = <RE extends RulesEngineAny>(
 /**
  * Options for {@link updateRE}.
  *
- * @group Query Tools
+ * @group Rules Engine Tools
  */
 export interface UpdateOptionsRE extends UpdateOptions {}
 /**
@@ -134,3 +141,303 @@ export const updateRE = <RE extends RulesEngineAny>(
       parentRE[prop] = value;
     }
   });
+
+/**
+ * Removes a rule engine condition from a rules engine.
+ * @returns The new rules engine with the condition removed.
+ *
+ * @group Rules Engine Tools
+ */
+export const removeRE = <RE extends RulesEngineAny>(
+  /** The rules engine to update. */
+  rulesEngine: RE,
+  /** Path or ID of the rules engine condition to remove. */
+  conditionPathOrID: Path | string,
+  /** Path or ID of the rule or group to remove (within the rules engine at `conditionPathOrID`), if removing a rule or group. */
+  parentGroupPathOrID?: Path | string | null | undefined
+): RE =>
+  produce(rulesEngine, draft => {
+    // Delegate to underlying queryTools remove for rule/group removal within a condition
+    const rePath = Array.isArray(conditionPathOrID)
+      ? conditionPathOrID
+      : getConditionPathOfID(conditionPathOrID, draft);
+
+    // Ignore invalid paths/ids or root removal
+    if (!rePath || rePath.length === 0) return;
+
+    const parentRE = findConditionPath(rePath, draft);
+
+    if (parentGroupPathOrID && isRuleGroup(parentRE)) {
+      const newGroup = remove(parentRE, parentGroupPathOrID);
+      const parentREofGroup = findConditionPath(getParentPath(rePath), draft);
+      if (!isRulesEngineAny(parentREofGroup)) return;
+      splice(parentREofGroup.conditions, rePath.at(-1)!, 1, newGroup);
+    } else {
+      const parentREofRemovalTarget = findConditionPath(getParentPath(rePath), draft);
+      if (isRulesEngineAny(parentREofRemovalTarget)) {
+        parentREofRemovalTarget.conditions.splice(rePath.at(-1)!, 1);
+      }
+    }
+  });
+
+/**
+ * Options for {@link moveRE}.
+ *
+ * @group Rules Engine Tools
+ */
+export interface MoveOptionsRE extends MoveOptions {}
+/**
+ * Moves a rule engine condition from one path to another. In the options parameter, pass
+ * `{ clone: true }` to copy instead of move.
+ * @returns The new rules engine with the condition moved or cloned.
+ *
+ * @group Rules Engine Tools
+ */
+export const moveRE = <RE extends RulesEngineAny>(
+  /** The rules engine to update. */
+  rulesEngine: RE,
+  /** Path or ID of the condition to move, or the condition itself if moving within a nested group. */
+  oldConditionPathOrID: Path | string,
+  /** Path to move the condition to, or shift direction, or the condition path if moving within a nested group. */
+  newConditionPathOrShiftDirection: Path | 'up' | 'down',
+  /** Path or ID of the rule or group within the old condition, if moving a rule or group. */
+  oldParentGroupPathOrID?: Path | string | null | undefined,
+  /** Path or ID of the rule or group within the new condition, if moving a rule or group. */
+  newParentGroupPathOrID?: Path | 'up' | 'down' | null | undefined,
+  /** Options. */
+  moveOptions: MoveOptionsRE = {}
+): RE => {
+  if (oldParentGroupPathOrID && newParentGroupPathOrID) {
+    // Delegate to underlying queryTools move for rule/group movement within conditions
+    return produce(rulesEngine, draft => {
+      const oldRePath = Array.isArray(oldConditionPathOrID)
+        ? oldConditionPathOrID
+        : getConditionPathOfID(oldConditionPathOrID, draft);
+      const newRePath = Array.isArray(newConditionPathOrShiftDirection)
+        ? newConditionPathOrShiftDirection
+        : typeof newConditionPathOrShiftDirection === 'string' &&
+            newConditionPathOrShiftDirection !== 'up' &&
+            newConditionPathOrShiftDirection !== 'down'
+          ? getConditionPathOfID(newConditionPathOrShiftDirection, draft)
+          : oldRePath;
+
+      if (!oldRePath || !newRePath) return;
+
+      const oldParentRE = findConditionPath(oldRePath, draft);
+      const newParentRE = findConditionPath(newRePath, draft);
+
+      if (!isRuleGroup(oldParentRE) || !isRuleGroup(newParentRE)) return;
+
+      const updatedOldGroup = move(
+        oldParentRE,
+        oldParentGroupPathOrID,
+        newParentGroupPathOrID,
+        moveOptions
+      );
+
+      if (pathsAreEqual(oldRePath, newRePath)) {
+        // Moving within the same condition
+        const parentREofGroup = findConditionPath(getParentPath(oldRePath), draft);
+        // istanbul ignore next
+        if (!coerceToRulesEngine(parentREofGroup)) return;
+        splice(parentREofGroup.conditions, oldRePath.at(-1)!, 1, updatedOldGroup);
+      } else {
+        // Moving between different conditions - not implemented for now
+        return;
+      }
+    });
+  }
+
+  // Handle condition-level movement
+  return produce(rulesEngine, draft => {
+    const oldConditionPath = Array.isArray(oldConditionPathOrID)
+      ? oldConditionPathOrID
+      : getConditionPathOfID(oldConditionPathOrID, draft);
+
+    if (!oldConditionPath || oldConditionPath.length === 0) return;
+
+    let newConditionPath: Path;
+    if (Array.isArray(newConditionPathOrShiftDirection)) {
+      newConditionPath = newConditionPathOrShiftDirection;
+    } else if (
+      typeof newConditionPathOrShiftDirection === 'string' &&
+      newConditionPathOrShiftDirection !== 'up' &&
+      newConditionPathOrShiftDirection !== 'down'
+    ) {
+      const foundPath = getConditionPathOfID(newConditionPathOrShiftDirection, draft);
+      if (!foundPath) return;
+      newConditionPath = foundPath;
+    } else {
+      // Handle 'up'/'down' shift direction for conditions
+      const direction = newConditionPathOrShiftDirection as 'up' | 'down';
+      const currentIndex = oldConditionPath.at(-1)!;
+      const parent = findConditionPath(getParentPath(oldConditionPath), draft);
+      // istanbul ignore next
+      if (!coerceToRulesEngine(parent)) return;
+
+      if (direction === 'up' && currentIndex > 0) {
+        newConditionPath = [...getParentPath(oldConditionPath), currentIndex - 1];
+      } else if (direction === 'down' && currentIndex < parent.conditions.length - 1) {
+        newConditionPath = [...getParentPath(oldConditionPath), currentIndex + 1];
+      } else {
+        return; // Can't move in requested direction
+      }
+    }
+
+    // Don't move to the same location
+    if (pathsAreEqual(oldConditionPath, newConditionPath)) return;
+
+    const conditionToMove = findConditionPath(oldConditionPath, draft);
+    if (!conditionToMove) return;
+
+    const oldIndex = oldConditionPath.at(-1)!;
+    const newIndex = newConditionPath.at(-1)!;
+
+    // Remove from old location
+    const oldParent = findConditionPath(getParentPath(oldConditionPath), draft);
+    // istanbul ignore next
+    if (!coerceToRulesEngine(oldParent)) return;
+    oldParent.conditions.splice(oldIndex, 1);
+
+    // Insert at new location, adjusting for removal if necessary
+    const newParent = findConditionPath(getParentPath(newConditionPath), draft);
+    // istanbul ignore next
+    if (!coerceToRulesEngine(newParent)) return;
+
+    // Adjust insertion index if we're moving within the same parent
+    let insertIndex = newIndex;
+    if (pathsAreEqual(getParentPath(oldConditionPath), getParentPath(newConditionPath))) {
+      // If the old index was before the new index, the array shifted left by 1
+      if (oldIndex < newIndex) {
+        insertIndex = newIndex - 1;
+      }
+    }
+
+    // oxlint-disable-next-line no-explicit-any
+    newParent.conditions.splice(insertIndex, 0, conditionToMove as any);
+  });
+};
+
+/**
+ * Options for {@link insertRE}.
+ *
+ * @group Rules Engine Tools
+ */
+export interface InsertOptionsRE extends InsertOptions {}
+/**
+ * Inserts a rule engine condition into a rules engine.
+ * @returns The new rules engine with the condition inserted.
+ *
+ * @group Rules Engine Tools
+ */
+export const insertRE = <RE extends RulesEngineAny>(
+  /** The rules engine to update. */
+  rulesEngine: RE,
+  /** The rules engine, action, rule, or rule group to insert. */
+  subject: RE | RulesEngineAction | RuleGroupTypeAny | RuleType,
+  /** Path at which to insert the condition. */
+  conditionPath: Path,
+  /** Path at which to insert the rule or group (within the condition at `conditionPath`), if inserting a rule or group. */
+  parentGroupPath?: Path | null | undefined,
+  /** Options. */
+  insertOptions: InsertOptionsRE = {}
+): RE => {
+  if (parentGroupPath && (isRuleGroup(subject) || isRuleType(subject))) {
+    // Delegate to underlying queryTools insert for rule/group insertion within a condition
+    return produce(rulesEngine, draft => {
+      const rePath = conditionPath;
+      const parentRE = findConditionPath(rePath, draft);
+
+      if (!isRuleGroup(parentRE)) return;
+
+      const newGroup = insert(parentRE, subject, parentGroupPath, insertOptions);
+      const parentREofGroup = findConditionPath(getParentPath(rePath), draft);
+      // istanbul ignore next
+      if (!coerceToRulesEngine(parentREofGroup)) return;
+      splice(parentREofGroup.conditions, rePath.at(-1)!, 1, newGroup);
+    });
+  }
+
+  return produce(rulesEngine, draft => {
+    const parent = findConditionPath(getParentPath(conditionPath), draft);
+    if (!parent) return;
+    if (!coerceToRulesEngine(parent)) return;
+
+    const newIndex = conditionPath.at(-1)!;
+
+    if (isRulesEngineAny(subject) || isRulesEngineAction(subject) || isRuleGroup(subject)) {
+      // Check if trying to insert an action when there's already a trailing action
+      if (isRulesEngineAction(subject) && isRulesEngineAction(parent.conditions.at(-1))) {
+        return; // Can't have two "else" blocks
+      }
+
+      // If inserting a rules engine, and there's a trailing action, insert before the action
+      if (isRulesEngineAction(parent.conditions.at(-1)) && !isRulesEngineAction(subject)) {
+        splice(parent.conditions, Math.min(newIndex, parent.conditions.length - 1), 0, subject);
+      } else {
+        splice(parent.conditions, newIndex, 0, subject);
+      }
+    }
+  });
+};
+
+/**
+ * Options for {@link groupRE}.
+ *
+ * @group Rules Engine Tools
+ */
+export interface GroupOptionsRE extends GroupOptions {}
+/**
+ * Creates a new group at a target condition with its `rules` array containing the current
+ * objects at the target path and the source path. In the options parameter, pass
+ * `{ clone: true }` to copy the source rule/group instead of move.
+ *
+ * @returns The new rules engine with the rules or groups grouped.
+ *
+ * @group Rules Engine Tools
+ */
+export const groupRE = <RE extends RulesEngineAny>(
+  /** The rules engine to update. */
+  rulesEngine: RE,
+  /** Path of the condition containing the rule/group to move or clone. */
+  sourceConditionPathOrID: Path | string,
+  /** Path of the rule/group within the source condition. */
+  sourceParentGroupPathOrID: Path | string,
+  /** Path of the condition containing the target rule/group. */
+  targetConditionPathOrID: Path | string,
+  /** Path of the target rule/group within the target condition. */
+  targetParentGroupPathOrID: Path | string,
+  /** Options. */
+  groupOptions: GroupOptionsRE = {}
+): RE => {
+  return produce(rulesEngine, draft => {
+    const sourceConditionPath = Array.isArray(sourceConditionPathOrID)
+      ? sourceConditionPathOrID
+      : getConditionPathOfID(sourceConditionPathOrID, draft);
+    const targetConditionPath = Array.isArray(targetConditionPathOrID)
+      ? targetConditionPathOrID
+      : getConditionPathOfID(targetConditionPathOrID, draft);
+
+    if (!sourceConditionPath || !targetConditionPath) return;
+
+    // TODO: allow cross-condition grouping
+    // Must be in the same condition for grouping
+    if (!pathsAreEqual(sourceConditionPath, targetConditionPath)) return;
+
+    const conditionRE = findConditionPath(sourceConditionPath, draft);
+
+    if (!isRuleGroup(conditionRE)) return;
+
+    const newGroup = group(
+      conditionRE,
+      sourceParentGroupPathOrID,
+      targetParentGroupPathOrID,
+      groupOptions
+    );
+
+    const parentREofCondition = findConditionPath(getParentPath(sourceConditionPath), draft);
+    // istanbul ignore next
+    if (!coerceToRulesEngine(parentREofCondition)) return;
+    splice(parentREofCondition.conditions, sourceConditionPath.at(-1)!, 1, newGroup);
+  });
+};
