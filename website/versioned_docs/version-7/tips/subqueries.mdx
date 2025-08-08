@@ -67,7 +67,7 @@ export const defaultQuery = {
 
 ## Configuring subqueries
 
-To enable subqueries for a field, add a `matchModes` property to the field definition. This property controls which match modes are available and how they're labeled.
+To enable subqueries for a field, add a `matchModes` property to the field definition. This property controls which match modes are available and how they're labeled. You can also control subquery behavior at the query builder level using the `getMatchModes` and `getSubQueryBuilderProps` props.
 
 ### Match modes configuration
 
@@ -108,6 +108,72 @@ const fields: Field[] = [
   },
 ];
 ```
+
+### Dynamic match mode configuration
+
+You can also configure match modes dynamically using the `getMatchModes` prop at the query builder level. This function is called for each field and allows you to conditionally enable match modes based on field properties:
+
+```ts
+const getMatchModes = (field: string, misc: { fieldData: Field }) => {
+  // Return true to enable all match modes for any field
+  if (field === 'flexibleArray') return true;
+
+  // Return specific match modes based on field type
+  if (misc.fieldData.datatype === 'array') {
+    return ['all', 'some', 'none'];
+  }
+
+  // Return false or undefined to disable subqueries for this field
+  return false;
+};
+
+<QueryBuilder
+  fields={fields}
+  getMatchModes={getMatchModes}
+  // ... other props
+/>
+```
+
+### Customizing subquery builder props
+
+The `getSubQueryBuilderProps` prop allows you to customize the configuration of each subquery builder. This is useful for providing different field sets, operators, or other configurations for nested queries:
+
+```ts
+const getSubQueryBuilderProps = (field: string, misc: { fieldData: Field }) => {
+  // Return props that should override the parent query builder's configuration
+  if (field === 'nestedObjectArray') {
+    return {
+      fields: misc.fieldData.subproperties || [],
+      operators: [
+        { name: '=', label: 'equals' },
+        { name: 'contains', label: 'contains' },
+        { name: 'beginsWith', label: 'begins with' },
+      ],
+      // Disable certain features for subqueries
+      showCloneButtons: false,
+      showLockButtons: false,
+    };
+  }
+
+  // For primitive arrays, don't show field selector
+  if (field === 'nestedStringArray') {
+    return {
+      fields: [{ name: '', label: '' }],
+      autoSelectField: true,
+    };
+  }
+
+  return {};
+};
+
+<QueryBuilder
+  fields={fields}
+  getSubQueryBuilderProps={getSubQueryBuilderProps}
+  // ... other props
+/>
+```
+
+Note that certain props like `query`, `onQueryChange`, and `enableDragAndDrop` are automatically managed and cannot be overridden for subquery builders.
 
 ### Available match modes
 
