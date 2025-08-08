@@ -26,6 +26,7 @@
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
+    "jest/no-disabled-tests": "warn",
     "jest/require-to-throw-message": "off",
     "jest/valid-title": "off",
     "react/display-name": "off",
