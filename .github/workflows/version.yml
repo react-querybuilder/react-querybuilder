@@ -68,15 +68,18 @@ jobs:
           CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/\[(#[0-9]+)\]/\1/g')
           # Increase header level for sections
           CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/^#(### (Added|Changed|Fixed))$/\1/g')
-          RELEASE_BODY="${CHANGELOG_SECTION}\n\n[CHANGELOG entry for v${VERSION}](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#${CHANGELOG_ANCHOR})"
+          RELEASE_BODY="${CHANGELOG_SECTION}
+          
+          [CHANGELOG entry for v${VERSION}](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#${CHANGELOG_ANCHOR})"
           if [ -n "$PREV_VERSION" ]; then
-            RELEASE_BODY="${RELEASE_BODY}\n\nhttps://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION}"
+            RELEASE_BODY="${RELEASE_BODY}
+          
+          https://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION}"
           fi
           echo "Release body content for v$VERSION:"
           echo "----------------------------------------"
           echo "$RELEASE_BODY"
           echo "----------------------------------------"
-          
           if [ "${{ inputs.runType }}" = "Live" ]; then
             echo "$RELEASE_BODY" | gh release create "v$VERSION" --title "v$VERSION" --notes-file -
           else
