@@ -7,8 +7,8 @@ import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
-import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder/debug';
+import { convertToIC, generateID, objectKeys } from 'react-querybuilder/debug';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
 export const defaultOptions = {
@@ -161,9 +161,10 @@ export const optionsMetadata = {
       'Disable application of any standard classes, including validation- and event-based classes',
   },
   justifiedLayout: {
-    link: '',
+    link: '/docs/styling/overview#justified-layout',
     label: 'Justified layout',
-    title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
+    title:
+      'Add `.queryBuilder-justified` class to push the "+ Rule", "+ Group", "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
     link: '/docs/styling/overview#branch-lines',
@@ -250,7 +251,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['parameterized_named', 'SQL (named parameters)', 'https://en.wikipedia.org/wiki/SQL', 'named-parameters'],
   ['json_without_ids', 'JSON (no identifiers)', 'https://en.wikipedia.org/wiki/JSON', 'json-without-identifiers'],
   ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON', 'json'],
-  ['mongodb', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
+  ['mongodb_query', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
   ['cel', 'CEL', 'https://github.com/google/cel-spec', 'common-expression-language'],
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref', 'spring-expression-language'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
@@ -280,7 +281,6 @@ export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyle
 const noReactOrRQB = (pd: string, _i: number, _a: Array<unknown>) =>
   pd !== 'react' && pd !== 'react-querybuilder';
 
-/* eslint-disable unicorn/no-array-callback-reference */
 export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   default: [],
   dnd: objectKeys(packageJSON_rqb_dnd.peerDependencies).filter(noReactOrRQB),
@@ -293,4 +293,3 @@ export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   material: objectKeys(packageJSON_rqb_material.peerDependencies).filter(noReactOrRQB),
   tremor: objectKeys(packageJSON_rqb_tremor.peerDependencies).filter(noReactOrRQB),
 };
-/* eslint-enable unicorn/no-array-callback-reference */

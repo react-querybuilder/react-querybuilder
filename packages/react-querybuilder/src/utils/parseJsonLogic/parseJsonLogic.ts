@@ -7,6 +7,7 @@ import type {
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
   Except,
+  MatchConfig,
   RQBJsonLogic,
   RQBJsonLogicVar,
   RuleGroupTypeAny,
@@ -21,6 +22,7 @@ import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
 import {
+  isJsonLogicAll,
   isJsonLogicAnd,
   isJsonLogicBetweenExclusive,
   isJsonLogicBetweenInclusive,
@@ -33,8 +35,10 @@ import {
   isJsonLogicLessThan,
   isJsonLogicLessThanOrEqual,
   isJsonLogicNegation,
+  isJsonLogicNone,
   isJsonLogicNotEqual,
   isJsonLogicOr,
+  isJsonLogicSome,
   isJsonLogicStrictEqual,
   isJsonLogicStrictNotEqual,
   isRQBJsonLogicEndsWith,
@@ -46,7 +50,7 @@ import {
  * Options object for {@link parseJsonLogic}.
  */
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny | false>;
 }
 
@@ -176,7 +180,7 @@ function parseJsonLogic(
     let rule: DefaultRuleType | false = false;
     let field = '';
     let operator: DefaultOperatorName = '=';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let value: any = '';
     let valueSource: ValueSource | undefined = undefined;
 
@@ -227,6 +231,30 @@ function parseJsonLogic(
       if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         rule = { field, operator, value, valueSource };
       }
+    } else if (
+      (isJsonLogicAll(logic) && isRQBJsonLogicVar(logic['all'][0])) ||
+      (isJsonLogicNone(logic) && isRQBJsonLogicVar(logic['none'][0])) ||
+      (isJsonLogicSome(logic) && isRQBJsonLogicVar(logic['some'][0]))
+    ) {
+      // The array coverage functions must have a field as their first element.
+      // Otherwise we'd be comparing values to values, which is not supported.
+      const match: MatchConfig = {
+        mode: isJsonLogicNone(logic) ? 'none' : isJsonLogicSome(logic) ? 'some' : 'all',
+      };
+
+      // oxlint-disable-next-line typescript/no-explicit-any
+      const [{ var: field }, operation] = (logic as any)[match.mode];
+      const matcher = processLogic(operation);
+
+      // TODO: Support operations that evaluate array member properties
+      if (!matcher) return false;
+
+      rule = {
+        field,
+        operator: '=',
+        match,
+        value: isRuleGroup(matcher) ? matcher : { combinator: 'and', rules: [matcher] },
+      };
     } else if (isJsonLogicBetweenExclusive(logic) && isRQBJsonLogicVar(logic['<'][1])) {
       field = logic['<'][1].var;
       const values = [logic['<'][0], logic['<'][2]];

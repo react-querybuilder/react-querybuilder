@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
 module.exports = {
   plugins: [
     'babel-plugin-syntax-hermes-parser',

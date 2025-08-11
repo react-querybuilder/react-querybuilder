@@ -1,3 +1,6 @@
+// import type { UUID } from 'node:crypto';
+type UUID = `${string}-${string}-${string}-${string}-${string}`;
+
 const cryptoModule = globalThis.crypto;
 
 /**
@@ -11,12 +14,12 @@ const cryptoModule = globalThis.crypto;
  */
 // Default implementation adapted from https://stackoverflow.com/a/68141099/217579
 // istanbul ignore next
-export let generateID = (): string =>
+export let generateID = (): UUID =>
   '00-0-4-2-000'.replaceAll(/[^-]/g, s =>
-    (((Math.random() + Math.trunc(s as unknown as number)) * 0x1_00_00) >> parseInt(s))
+    (((Math.random() + Math.trunc(s as unknown as number)) * 0x1_00_00) >> Number.parseInt(s))
       .toString(16)
       .padStart(4, '0')
-  );
+  ) as UUID;
 
 // Improve on the default implementation by using the crypto package if it's available
 // istanbul ignore else
@@ -50,7 +53,7 @@ if (cryptoModule) {
           id = `${id}${'-'}`;
         }
       }
-      return id;
+      return id as UUID;
     };
   }
 }

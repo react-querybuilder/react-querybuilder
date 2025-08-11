@@ -1,4 +1,8 @@
-import type { FormatQueryOptions, RuleProcessor } from '../../../types/index.noReact';
+import type {
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../../types/index.noReact';
 import { defaultRuleProcessorElasticSearch } from '../defaultRuleProcessorElasticSearch';
 import { formatQuery } from '../formatQuery';
 import {
@@ -226,6 +230,13 @@ it('formats ElasticSearch correctly', () => {
           { field: 'f1', operator: 'contains', value: '', valueSource: 'field' },
           // Empty group
           { combinator: 'or', rules: [] },
+          // Match mode
+          {
+            field: 'f1',
+            operator: 'contains',
+            value: { combinator: 'and', rules: [] },
+            match: { mode: 'all' },
+          },
         ],
       },
       'elasticsearch'
@@ -310,7 +321,14 @@ it('ruleProcessor', () => {
   });
 });
 
-it('parseNumbers', () => {
+it.each([
+  ['true', { parseNumbers: true }],
+  ['strict', { parseNumbers: 'strict' }],
+  [
+    'strict-limited',
+    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
+  ],
+] satisfies [string, FormatQueryOptions][])('parses numbers (%s)', (_, opts) => {
   const allNumbersParsed = {
     bool: {
       must: [
@@ -329,15 +347,9 @@ it('parseNumbers', () => {
       ],
     },
   };
-  for (const opts of [
-    { parseNumbers: true },
-    { parseNumbers: 'strict' },
-    { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
-  ] as FormatQueryOptions[]) {
-    expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
-      allNumbersParsed
-    );
-  }
+  expect(formatQuery(queryForNumberParsing, { ...opts, format: 'elasticsearch' })).toEqual(
+    allNumbersParsed
+  );
 });
 it('preserveValueOrder', () => {
   expect(
@@ -356,6 +368,46 @@ it('preserveValueOrder', () => {
   ).toEqual({
     bool: {
       must: [{ range: { f1: { gte: 12, lte: 14 } } }, { range: { f2: { gte: 14, lte: 12 } } }],
+    },
+  });
+});
+
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'elasticsearch' })).toEqual({
+    bool: {
+      must: [
+        { range: { age: { gte: 22, lte: 34 } } },
+        { bool: { must_not: { range: { score: { gte: 10, lte: 20 } } } } },
+      ],
+    },
+  });
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'elasticsearch', parseNumbers: true })).toEqual({
+    bool: {
+      must: [
+        { range: { age: { gte: 22, lte: 34 } } },
+        { bool: { must_not: { range: { score: { gte: 10, lte: 20 } } } } },
+      ],
+    },
+  });
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'elasticsearch', parseNumbers: false })).toEqual({
+    bool: {
+      must: [
+        { range: { age: { gte: '22', lte: '34' } } },
+        { bool: { must_not: { range: { score: { gte: '10', lte: '20' } } } } },
+      ],
     },
   });
 });

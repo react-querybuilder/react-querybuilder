@@ -1,8 +1,14 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray, trimIfString } from '../arrayUtils';
-import { nullOrUndefinedOrEmpty } from '../misc';
+import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { getQuotedFieldName, shouldRenderAsNumber } from './utils';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
+import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -20,16 +26,19 @@ const escapeStringRegex = (s: string) =>
  * @group Export
  */
 export const defaultRuleProcessorJSONata: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  {
+  options = {}
+) => {
+  const { field, operator, value, valueSource } = rule;
+  const {
     escapeQuotes,
-    parseNumbers = true,
+    parseNumbers,
     preserveValueOrder,
     quoteFieldNamesWith = ['', ''] as [string, string],
     fieldIdentifierSeparator = '',
-  } = {}
-) => {
+  } = options;
+
   const valueIsField = valueSource === 'field';
   const useBareValue =
     typeof value === 'number' ||
@@ -40,7 +49,45 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
   const qfn = (f: string) =>
     getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
-  const operatorLC = operator.toLowerCase();
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
+    const { mode, threshold } = matchEval;
+
+    const totalCount = `$count(${qfn(field)})`;
+    const filteredCount = `$count($filter(${qfn(field)}, function($v) {${defaultRuleGroupProcessorJSONata(
+      transformQuery(value as RuleGroupType, {
+        ruleProcessor: r => ({ ...r, field: r.field ? `$v.${r.field}` : '$v' }),
+      }),
+      options as FormatQueryFinalOptions
+    )}}))`;
+
+    switch (mode) {
+      case 'all':
+        return `${filteredCount} = ${totalCount}`;
+
+      case 'none':
+        return `${filteredCount} = 0`;
+
+      case 'some':
+        return `${filteredCount} > 0`;
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
+
+        if (threshold > 0 && threshold < 1) {
+          return `${filteredCount} ${op} (${totalCount} * ${threshold})`;
+        }
+        return `${filteredCount} ${op} ${threshold}`;
+      }
+    }
+  }
+
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '<':
     case '<=':
@@ -116,14 +163,17 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
       }
 
       const [first, second] = valueAsArray;
-      const firstNum = shouldRenderAsNumber(first, true)
-        ? parseNumber(first, { parseNumbers: true })
-        : NaN;
-      const secondNum = shouldRenderAsNumber(second, true)
-        ? parseNumber(second, { parseNumbers: true })
-        : NaN;
-      let firstValue = isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
-      let secondValue = isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
+      // For backwards compatibility, default to parsing numbers for between operators
+      // unless parseNumbers is explicitly set to false
+      const shouldParseNumbers = !(parseNumbers === false);
+      const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
+        ? parseNumber(first, { parseNumbers: shouldParseNumbers })
+        : Number.NaN;
+      const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
+        ? parseNumber(second, { parseNumbers: shouldParseNumbers })
+        : Number.NaN;
+      let firstValue = Number.isNaN(firstNum) ? (valueIsField ? `${first}` : first) : firstNum;
+      let secondValue = Number.isNaN(secondNum) ? (valueIsField ? `${second}` : second) : secondNum;
 
       if (
         !preserveValueOrder &&
@@ -138,8 +188,10 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
 
       const renderAsNumbers =
         shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers);
+      const getValueString = (raw: string, val: string | number) =>
+        valueIsField ? qfn(raw) : renderAsNumbers ? val : quote(val, escapeQuotes);
 
-      const expression = `${qfn(field)} >= ${valueIsField ? qfn(first) : renderAsNumbers ? firstValue : quote(firstValue, escapeQuotes)} and ${qfn(field)} <= ${valueIsField ? qfn(second) : renderAsNumbers ? secondValue : quote(secondValue, escapeQuotes)}`;
+      const expression = `${qfn(field)} >= ${getValueString(first, firstValue)} and ${qfn(field)} <= ${getValueString(second, secondValue)}`;
 
       return operatorLC === 'between' ? `(${expression})` : negate(expression, true);
     }

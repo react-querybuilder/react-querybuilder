@@ -46,6 +46,7 @@ const testParseSpELic = (
 };
 const getValueSources = (): ValueSources => ['field'];
 
+// oxlint-disable-next-line jest/expect-expect
 it('works for basic relations', () => {
   testParseSpEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   testParseSpEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
@@ -78,12 +79,14 @@ it('works for basic relations', () => {
   testParseSpEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
     testParseSpEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
   }
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('handles "like" comparisons', () => {
   testParseSpEL(
     'f1 matches "Test"',
@@ -119,6 +122,7 @@ it('handles "like" comparisons', () => {
   );
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('negates "matches" comparisons appropriately', () => {
   testParseSpEL(
     '!(f1 matches "Test")',
@@ -163,6 +167,7 @@ it('handles "between" operators', () => {
 });
 
 // This is sort of a useless test. See 'handles parentheses' test below.
+// oxlint-disable-next-line jest/expect-expect
 it('groups only when necessary', () => {
   testParseSpEL('(f1 == "Test" || f2 == "Test2")', {
     combinator: 'or',
@@ -181,6 +186,7 @@ it('groups only when necessary', () => {
 });
 
 // FIX: Seems like spel2js doesn't handle parentheses
+// oxlint-disable-next-line expect-expect, no-disabled-tests
 it.skip('handles parentheses', () => {
   testParseSpEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
     combinator: 'and',
@@ -201,6 +207,7 @@ it.skip('handles parentheses', () => {
   );
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('works for conditional and/or', () => {
   testParseSpEL(
     'f1 == "Test" && f2 == "Test2"',
@@ -234,6 +241,7 @@ it('works for conditional and/or', () => {
   });
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('mixed and/or', () => {
   testParseSpEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
     combinator: 'or',
@@ -337,6 +345,7 @@ describe('fields and getValueSources', () => {
     fieldsObject[f.name] = f;
   }
 
+  // oxlint-disable-next-line jest/expect-expect
   it('sets the valueSource when fields are valid', () => {
     testParseSpEL(
       parseSpEL(`f1 == 'Steve'`, { fields }),
@@ -366,6 +375,7 @@ describe('fields and getValueSources', () => {
     }
   });
 
+  // oxlint-disable-next-line jest/expect-expect
   it('uses the getValueSources option', () => {
     testParseSpEL(
       parseSpEL(`f5 == f6`, { fields, getValueSources }),
@@ -389,6 +399,7 @@ describe('fields and getValueSources', () => {
     );
   });
 
+  // oxlint-disable-next-line jest/expect-expect
   it('ignores invalid fields', () => {
     // `firstName` is not in the field list
     testParseSpEL(parseSpEL(`firstName == 'Steve'`, { fields }), wrapRule());
@@ -431,6 +442,7 @@ describe('fields and getValueSources', () => {
   });
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('handles multiple negations', () => {
   testParseSpEL('!!!(f1 matches "Test")', {
     combinator: 'and',
@@ -462,6 +474,7 @@ it('handles multiple negations', () => {
   });
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('handles independent combinators', () => {
   testParseSpELic('(f1 == "Test")', {
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],
@@ -495,6 +508,7 @@ it('generates IDs', () => {
   );
 });
 
+// oxlint-disable-next-line jest/expect-expect
 it('ignores things', () => {
   const expressionsToIgnore = [
     'f1 == f2 ? f3 : f4',

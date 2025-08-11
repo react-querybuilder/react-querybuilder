@@ -8,10 +8,7 @@ import { toDropdownOptions } from './utils';
 /**
  * @group Props
  */
-export interface FluentValueSelectorProps
-  extends VersatileSelectorProps,
-    SelectProps,
-    DropdownProps {}
+export type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
 
 /**
  * @group Components
@@ -34,6 +31,7 @@ export const FluentValueSelector = ({
   validation: _validation,
   schema: _schema,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   ...otherProps
 }: FluentValueSelectorProps): React.JSX.Element => {

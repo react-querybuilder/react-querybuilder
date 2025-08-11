@@ -1,7 +1,5 @@
 /* @jest-environment node */
 
-/* eslint-disable unicorn/no-await-expression-member */
-
 // To run this file with Jest instead of Bun:
 // > NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules" npx jest
 
@@ -54,12 +52,14 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
         const { rows: result } = await db.query<Result>(`${sqlBase} ${sql}`);
+        // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
           expect(result).toHaveLength(1);
           expect(result[0].last_name).toBe(expectation);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
   });

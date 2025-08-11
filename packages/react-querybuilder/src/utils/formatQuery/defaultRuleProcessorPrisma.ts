@@ -1,11 +1,16 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type { ParseNumbersPropConfig, RuleProcessor } from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { isValidValue, prismaOperators, shouldRenderAsNumber } from './utils';
+import { isValidValue, prismaOperators, processMatchMode, shouldRenderAsNumber } from './utils';
 
-const processNumber = <T>(value: unknown, fallback: T, parseNumbers: boolean) =>
-  shouldRenderAsNumber(value, parseNumbers || typeof value === 'bigint')
-    ? Number(parseNumber(value, { parseNumbers: 'strict' }))
+const processNumber = <T>(
+  value: unknown,
+  fallback: T,
+  parseNumbers?: ParseNumbersPropConfig | undefined
+) =>
+  shouldRenderAsNumber(value, !!parseNumbers || typeof value === 'bigint')
+    ? Number(parseNumber(value, { parseNumbers: !!parseNumbers }))
     : fallback;
 
 /**
@@ -14,13 +19,18 @@ const processNumber = <T>(value: unknown, fallback: T, parseNumbers: boolean) =>
  * @group Export
  */
 export const defaultRuleProcessorPrisma: RuleProcessor = (
-  { field, operator, value, valueSource },
+  rule,
   // istanbul ignore next
-  { parseNumbers = true, preserveValueOrder } = {}
+  options = {}
 ) => {
-  if (valueSource === 'field') return;
+  const { field, operator, value, valueSource } = rule;
+  // istanbul ignore next
+  const { parseNumbers, preserveValueOrder } = options;
 
-  const operatorLC = operator.toLowerCase();
+  // Neither field-to-field comparisons nor match modes are supported in this format
+  if (valueSource === 'field' || processMatchMode(rule)) return;
+
+  const operatorLC = lc(operator);
   switch (operatorLC) {
     case '=':
       return { [field]: processNumber(value, value, parseNumbers) };
@@ -83,10 +93,17 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
         isValidValue(valueAsArray[1])
       ) {
         const [first, second] = valueAsArray;
-        const firstNum = processNumber(first, NaN, true);
-        const secondNum = processNumber(second, NaN, true);
-        let firstValue = isNaN(firstNum) ? first : firstNum;
-        let secondValue = isNaN(secondNum) ? second : secondNum;
+        // For backwards compatibility, default to parsing numbers for between operators
+        // unless parseNumbers is explicitly set to false
+        const shouldParseNumbers = !(parseNumbers === false);
+        const firstNum = shouldRenderAsNumber(first, shouldParseNumbers)
+          ? parseNumber(first, { parseNumbers })
+          : Number.NaN;
+        const secondNum = shouldRenderAsNumber(second, shouldParseNumbers)
+          ? parseNumber(second, { parseNumbers })
+          : Number.NaN;
+        let firstValue = Number.isNaN(firstNum) ? first : firstNum;
+        let secondValue = Number.isNaN(secondNum) ? second : secondNum;
         if (
           !preserveValueOrder &&
           firstValue === firstNum &&

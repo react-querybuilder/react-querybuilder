@@ -1,4 +1,4 @@
-import type { FullCombinator, FullOperator, Path, ValueSource } from './basic';
+import type { FullCombinator, FullOperator, MatchConfig, Path, ValueSource } from './basic';
 
 /**
  * Properties common to both rules and groups.
@@ -16,7 +16,7 @@ export interface CommonRuleAndGroupProperties {
 export interface RuleType<
   F extends string = string,
   O extends string = string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   V = any,
   C extends string = string,
 > extends CommonRuleAndGroupProperties {
@@ -24,6 +24,7 @@ export interface RuleType<
   operator: O;
   value: V;
   valueSource?: ValueSource;
+  match?: MatchConfig;
   /**
    * Only used when adding a rule to a query that uses independent combinators.
    */

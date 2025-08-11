@@ -12,6 +12,7 @@ import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
  * `validator` prop. It assumes that you want to validate groups, and has a no-op
  * for validating rules which you can replace with your own implementation.
  */
+// oxlint-disable-next-line consistent-function-scoping
 export const defaultValidator: QueryValidator = query => {
   const result: ValidationMap = {};
 
@@ -23,7 +24,7 @@ export const defaultValidator: QueryValidator = query => {
   };
 
   const validateGroup = (rg: RuleGroupTypeAny) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const reasons: any[] = [];
     if (rg.rules.length === 0) {
       reasons.push(groupInvalidReasons.empty);

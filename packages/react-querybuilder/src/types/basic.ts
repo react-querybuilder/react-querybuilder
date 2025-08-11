@@ -1,11 +1,12 @@
-import type { SetOptional, Simplify } from './type-fest';
 import type {
   BaseFullOption,
+  FlexibleOption,
   FlexibleOptionList,
   FullOption,
-  Option,
+  StringUnionToFullOptionArray,
   WithUnknownIndex,
 } from './options';
+import type { SetOptional, Simplify } from './type-fest';
 import type { RuleValidator } from './validation';
 
 /**
@@ -18,7 +19,7 @@ export type Path = number[];
  * keys are classnames and those with truthy values will be included.
  * Suitable for passing to the `clsx` package.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type Classname = string | string[] | Record<string, any>;
 
 /**
@@ -46,12 +47,17 @@ export type ValueEditorType =
  */
 export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
-export type ValueSourceOptions = ToOptionArrays<ValueSources>;
+// export type ValueSourceOptions_CAN_BE_EMPTY = StringUnionToFullOptionArray<ValueSource>;
+// export type ValueSourceFlexibleOptions_CAN_BE_EMPTY = StringUnionToFlexibleOptionArray<ValueSource>;
 
+export type ValueSourceFlexibleOptions = ToFlexibleOptionArrays<ValueSources>;
+
+export type ValueSourceFullOptions = ToOptionArrays<ValueSources>;
 type ToOptionArrays<Sources extends readonly string[]> = Sources extends unknown
-  ? {
-      [K in keyof Sources]: { name: Sources[K]; value: Sources[K]; label: Sources[K] };
-    }
+  ? { [K in keyof Sources]: { name: Sources[K]; value: Sources[K]; label: string } }
+  : never;
+type ToFlexibleOptionArrays<Sources extends readonly string[]> = Sources extends unknown
+  ? { [K in keyof Sources]: FlexibleOption<Sources[K]> }
   : never;
 
 type WithOptionalClassName<T> = T & { className?: Classname };
@@ -82,11 +88,30 @@ export type InputType =
   | 'time'
   | 'url'
   | 'week'
+  // "bigint" is not supported by browsers directly, but it can
+  // be used to trigger alternate value editor functionality
+  | 'bigint'
   | (string & {});
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Quantification mode describing how many elements of the value array must pass
+ * the filter for the rule itself to pass.
+ *
+ * For "atLeast", "atMost", and "exactly", the threshold value will be converted to
+ * a percentage if the number is less than 1. Non-numeric values and numbers less
+ * than 0 will be ignored.
+ */
+export interface MatchConfig {
+  mode: MatchMode;
+  threshold?: number | null | undefined;
+}
+
+export type MatchMode = 'all' | 'some' | 'none' | 'atLeast' | 'atMost' | 'exactly';
+export type MatchModeOptions = StringUnionToFullOptionArray<MatchMode>;
+
+// oxlint-disable-next-line typescript/no-explicit-any
 export type ActionElementEventHandler = (event?: any, context?: any) => void;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type ValueChangeEventHandler = (value?: any, context?: any) => void;
 
 /**
@@ -96,17 +121,27 @@ interface BaseFullField<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
-  OperatorObj extends Option = Option<OperatorName>,
-  ValueObj extends Option = Option<ValueName>,
+  OperatorObj extends FullOption = FullOption<OperatorName>,
+  ValueObj extends FullOption = FullOption<ValueName>,
 > extends WithOptionalClassName<BaseFullOption<FieldName>> {
   id?: string;
-  operators?: FlexibleOptionList<OperatorObj>;
+  operators?:
+    | FlexibleOptionList<OperatorObj>
+    | OperatorName[]
+    | FlexibleOption<OperatorName>[]
+    | (OperatorName | FlexibleOption<OperatorName>)[];
   valueEditorType?: ValueEditorType | ((operator: OperatorName) => ValueEditorType);
-  valueSources?: ValueSources | ((operator: OperatorName) => ValueSources);
+  valueSources?:
+    | ValueSources
+    | ValueSourceFlexibleOptions
+    | ((operator: OperatorName) => ValueSources | ValueSourceFlexibleOptions);
   inputType?: InputType | null;
   values?: FlexibleOptionList<ValueObj>;
+  matchModes?: boolean | MatchMode[] | FlexibleOption<MatchMode>[];
+  /** Properties of items in the value. */
+  subproperties?: FlexibleOptionList<FullField>;
   defaultOperator?: OperatorName;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   defaultValue?: any;
   placeholder?: string;
   validator?: RuleValidator;
@@ -129,8 +164,8 @@ export type FullField<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
-  OperatorObj extends Option = Option<OperatorName>,
-  ValueObj extends Option = Option<ValueName>,
+  OperatorObj extends FullOption = FullOption<OperatorName>,
+  ValueObj extends FullOption = FullOption<ValueName>,
 > = Simplify<
   FullOption<FieldName> & BaseFullField<FieldName, OperatorName, ValueName, OperatorObj, ValueObj>
 >;
@@ -149,7 +184,7 @@ export type Field<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
-  OperatorObj extends Option = Option<OperatorName>,
+  OperatorObj extends FullOption = FullOption<OperatorName>,
 > = WithUnknownIndex<
   { value?: FieldName } & Pick<
     BaseFullField<FieldName, OperatorName, ValueName, OperatorObj>,
@@ -171,7 +206,7 @@ export type FieldByValue<
   FieldName extends string = string,
   OperatorName extends string = string,
   ValueName extends string = string,
-  OperatorObj extends Option = Option<OperatorName>,
+  OperatorObj extends FullOption = FullOption<OperatorName>,
 > = WithUnknownIndex<
   { name?: FieldName } & Pick<
     BaseFullField<FieldName, OperatorName, ValueName, OperatorObj>,

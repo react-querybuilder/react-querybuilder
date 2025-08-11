@@ -57,6 +57,7 @@ const rg1wID: DefaultRuleGroupType = { id: '[]', ...rg1 };
 const rgic1wID: DefaultRuleGroupTypeIC = { id: '[]', ...rgic1 };
 const rg3wIDs = pathsAsIDs(rg3);
 
+// oxlint-disable no-standalone-expect
 const testQT = (
   title: string,
   ruleGroup: DefaultRuleGroupTypeAny,
@@ -72,6 +73,7 @@ const testQT = (
     }
   });
 };
+// oxlint-enable no-standalone-expect
 
 const testLoop = [
   ['path', (x: Path) => x],
@@ -133,6 +135,7 @@ describe('add', () => {
     testQT('bails out', add(rg1, rg2, p(badPath)), rg1, true);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = add({ ...rg1 }, { ...rg2 }, []);
     const _newDefaultQuery = add(rg1, rg2, []);
@@ -198,6 +201,7 @@ describe('remove', () => {
     testQT('bails out', remove(rg1, p(badPath)), rg1, true);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = remove({ ...rg1 }, [0]);
     const _newDefaultQuery = remove(rg1, [0]);
@@ -279,6 +283,63 @@ describe('update', () => {
       rg3wIDs,
       true
     );
+    testQT('updates a rule match', update(rg3wIDs, 'match', { mode: 'all' }, p([0])), {
+      combinator: and,
+      rules: [{ ...r1, match: { mode: 'all' } }, r2, r3],
+    });
+    testQT(
+      'updates a rule match when field has match modes',
+      update(rg3wIDs, 'field', 'fmm', p([0]), {
+        getMatchModes: () => [{ name: 'some', value: 'some', label: 'some' }],
+        getRuleDefaultValue: () => ({ combinator: and, rules: [] }),
+      }),
+      {
+        combinator: and,
+        rules: [
+          {
+            ...r1,
+            field: 'fmm',
+            value: { combinator: and, rules: [] },
+            match: { mode: 'some', threshold: 1 },
+          },
+          r2,
+          r3,
+        ],
+      }
+    );
+    testQT(
+      'does not update a match mode when it is valid for new field',
+      update(
+        pathsAsIDs({
+          combinator: and,
+          rules: [{ field: 'fmm1', operator: '=', value: '', match: { mode: 'none' } }],
+        }),
+        'field',
+        'fmm2',
+        p([0]),
+        {
+          getMatchModes: f =>
+            f === 'fmm2'
+              ? [
+                  { name: 'some', value: 'some', label: 'some' },
+                  { name: 'none', value: 'none', label: 'none' },
+                ]
+              : [],
+          getRuleDefaultValue: () => ({ combinator: and, rules: [] }),
+        }
+      ),
+      {
+        combinator: and,
+        rules: [
+          {
+            field: 'fmm2',
+            operator: '=',
+            value: { combinator: and, rules: [] },
+            match: { mode: 'none' },
+          },
+        ],
+      }
+    );
   });
 
   describe('independent combinators', () => {
@@ -346,6 +407,7 @@ describe('update', () => {
     testQT('bails out', update(rg1wID, 'value', 'test', p(badPath)), rg1wID, true);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = update({ ...rg1 }, 'combinator', 'and', []);
     const _newDefaultQuery = update(rg1, 'combinator', 'and', []);
@@ -515,6 +577,7 @@ describe('move', () => {
     testQT('bails out', move(rg1wID, p([1]), badPath), rg1wID, true);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], [0]);
     const _newDefaultQuery = move(rg1, [1], [0]);
@@ -619,6 +682,7 @@ describe('shift', () => {
     testQT('does not alter query for invalid direction', move(rg3, p([0]), 'x'), rg3, true);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], 'up');
     const _newDefaultQuery = move(rg1, [1], 'up');
@@ -757,6 +821,7 @@ describe('insert', () => {
 
   testQT('bails out on bad path', insert(rg1, rg2, badPath), rg1);
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = insert({ ...rg1 }, { ...rg2 }, []);
     const _newDefaultQuery = insert(rg1, rg2, []);
@@ -940,6 +1005,7 @@ describe('group', () => {
     testQT('bails out', group(rg1wID, p([1]), badPath), rg1wID, true);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = group({ ...rg1 }, [1], [0]);
     const _newDefaultQuery = group(rg1, [1], [0]);

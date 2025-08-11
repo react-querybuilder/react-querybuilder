@@ -28,6 +28,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     title,
     className,
     type,
+    inputType,
     values = [],
     listsAsArrays,
     separator,
@@ -36,13 +37,17 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     testID,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     extraProps,
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    bigIntValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -188,7 +193,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     case 'date':
     case 'datetime-local': {
       if (operator === 'between' || operator === 'notBetween') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const dayjsArray = valueAsArray.slice(0, 2).map((v: any) => dayjs(v)) as [Dayjs, Dayjs];
         return (
           <DatePicker.RangePicker
@@ -200,7 +205,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             // TODO: the function below is currently untested (see the
             // "renders a date range picker" test in ./AntD.test.tsx)
             onChange={
-              /* istanbul ignore next */
+              // istanbul ignore next
               dates => {
                 const timeFormat = inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : '';
                 const format = `YYYY-MM-DD${timeFormat}`;
@@ -257,6 +262,22 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
         />
       );
     }
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <Input
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
   }
 
   return (

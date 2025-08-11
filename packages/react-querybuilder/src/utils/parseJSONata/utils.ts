@@ -26,7 +26,7 @@ import type {
   JSONataToMillis,
 } from './types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 type Any = any;
 
 export const isJSONataExprNode = (expr: Any): expr is JSONataExprNode => {

@@ -242,6 +242,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     expect(onChange).toHaveBeenCalledWith('02:02:02');
   });
 
+  // oxlint-disable-next-line expect-expect
   it('renders a time picker with a preset value', async () => {
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" value={'02:02:02'} />

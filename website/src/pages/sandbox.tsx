@@ -1,3 +1,5 @@
+/* oxlint-disable prefer-global-this */
+
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import queryString from 'query-string';
@@ -15,6 +17,8 @@ const getFinalLink = (platform: 'StackBlitz' | 'CodeSandbox', template: string) 
     ? `https://stackblitz.com/github/${ghPath}?file=src/${fileName}`
     : `https://codesandbox.io/s/github/${ghPath}?file=/src/${fileName}`;
 };
+
+const loading = <Loading />;
 
 function SandboxRedirectTimer() {
   const query = queryString.parse(window.location.search);
@@ -52,5 +56,5 @@ function SandboxRedirectTimer() {
 }
 
 export default function SandboxRedirect() {
-  return <BrowserOnly fallback={<Loading />}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
+  return <BrowserOnly fallback={loading}>{() => <SandboxRedirectTimer />}</BrowserOnly>;
 }

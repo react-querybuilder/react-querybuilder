@@ -30,6 +30,7 @@ export const MaterialValueSelector = ({
   listsAsArrays,
   testID,
   rule,
+  ruleGroup,
   rules,
   level,
   path,
@@ -47,8 +48,12 @@ export const MaterialValueSelector = ({
 
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  const muiSelectChangeHandler = ({ target: { value } }: SelectChangeEvent<string | string[]>) =>
-    onChange(value);
+  const muiSelectChangeHandler = React.useCallback(
+    ({ target: { value } }: SelectChangeEvent<string | string[]>) => {
+      onChange(value);
+    },
+    [onChange]
+  );
 
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
@@ -66,6 +71,7 @@ export const MaterialValueSelector = ({
         listsAsArrays={listsAsArrays}
         testID={testID}
         rule={rule}
+        ruleGroup={ruleGroup}
         rules={rules}
         level={level}
         path={path}

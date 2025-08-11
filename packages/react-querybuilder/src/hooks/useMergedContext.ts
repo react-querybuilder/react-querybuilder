@@ -138,7 +138,10 @@ export const useMergedContext = <
       dndGroup: cc.dndGroup,
       disabled: cc.disabled,
       valueListItem: cc.valueListItem,
+      matchMode: cc.matchMode,
+      matchThreshold: cc.matchThreshold,
       branches: cc.branches,
+      hasSubQuery: cc.hasSubQuery,
     }),
     [
       cc.actionElement,
@@ -157,10 +160,13 @@ export const useMergedContext = <
       cc.dndOver,
       cc.dragHandle,
       cc.fields,
+      cc.hasSubQuery,
       cc.header,
       cc.invalid,
       cc.lockGroup,
       cc.lockRule,
+      cc.matchMode,
+      cc.matchThreshold,
       cc.notToggle,
       cc.operators,
       cc.queryBuilder,
@@ -182,9 +188,9 @@ export const useMergedContext = <
   const mergeControlElement = useCallback(
     (
       name: keyof Controls<F, O>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       propComp: ComponentType<any> | null | undefined,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       contextComp: ComponentType<any> | null | undefined
     ) => {
       const nc = name === 'dragHandle' ? nullFwdComp : nullComp;
@@ -280,6 +286,7 @@ export const useMergedContext = <
           propsCE.valueSourceSelector,
           contextCE.valueSourceSelector
         ),
+        mergeControlElement('matchModeEditor', propsCE.matchModeEditor, contextCE.matchModeEditor),
         mergeControlElement('rule', propsCE.rule, contextCE.rule),
         mergeControlElement('ruleGroup', propsCE.ruleGroup, contextCE.ruleGroup),
         mergeControlElement(
@@ -317,6 +324,7 @@ export const useMergedContext = <
       contextCE.inlineCombinator,
       contextCE.lockGroupAction,
       contextCE.lockRuleAction,
+      contextCE.matchModeEditor,
       contextCE.notToggle,
       contextCE.operatorSelector,
       contextCE.removeGroupAction,
@@ -342,6 +350,7 @@ export const useMergedContext = <
       propsCE.inlineCombinator,
       propsCE.lockGroupAction,
       propsCE.lockRuleAction,
+      propsCE.matchModeEditor,
       propsCE.notToggle,
       propsCE.operatorSelector,
       propsCE.removeGroupAction,

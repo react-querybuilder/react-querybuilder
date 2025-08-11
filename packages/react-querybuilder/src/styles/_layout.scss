@@ -38,6 +38,16 @@
       gap: var(--#{$rqb-var-prefix}spacing);
       align-items: baseline;
     }
+
+    &.rule-hasSubQuery {
+      flex-wrap: wrap;
+      padding: var(--#{$rqb-var-prefix}spacing);
+      border-width: var(--#{$rqb-var-prefix}border-width);
+
+      .ruleGroup-body {
+        flex-basis: 100%;
+      }
+    }
   }
 
   .betweenRules {
@@ -111,6 +121,7 @@
     }
   }
 
+  .rule-hasSubQuery,
   .ruleGroup .ruleGroup {
     &::before,
     &::after {
@@ -147,6 +158,43 @@
       top: calc(-1 * var(--#{$rqb-var-prefix}spacing));
       height: calc(100% + var(--#{$rqb-var-prefix}spacing));
       border-width: 0 0 0 var(--#{$rqb-var-prefix}branch-width);
+    }
+  }
+}
+/* #endregion */
+
+/* #region Justified */
+.queryBuilder-justified {
+  .ruleGroup-combinators,
+  .ruleGroup-notToggle,
+  .shiftActions,
+  .queryBuilder-dragHandle,
+  .ruleGroup-notToggle,
+  .ruleGroup-header,
+  .rule-operators,
+  .rule-value,
+  // Some Bulma controls are wrapped in an element with "control" class
+  .control,
+  // Chakra UI v2 adds classNames to a nested element
+  .chakra-select__wrapper,
+  // Mantine renders a hidden input beside value selectors
+  input[type='hidden'] {
+    & + .ruleGroup-addRule,
+    & + .ruleGroup-addGroup,
+    & + .ruleGroup-cloneGroup,
+    & + .ruleGroup-lock,
+    & + .ruleGroup-remove,
+    & + .rule-cloneRule,
+    & + .rule-lock,
+    & + .rule-remove {
+      margin-left: auto !important;
+    }
+  }
+
+  .ruleGroup-addRule,
+  .ruleGroup-addGroup {
+    &:first-child {
+      margin-left: auto !important;
     }
   }
 }

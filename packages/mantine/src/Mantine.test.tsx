@@ -33,7 +33,7 @@ const theme = createTheme({
   respectReducedMotion: true,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
   const Wrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <MantineProvider theme={theme}>
@@ -136,7 +136,7 @@ describe('MantineValueSelector', () => {
       <MantineValueSelector
         {...props}
         testID={TestID.fields}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         options={optGroup as any}
         handleOnChange={handleOnChange}
       />
@@ -186,10 +186,12 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
 
   it('renders value editor as select', () => {
     render(<MantineValueEditor {...props} type="select" />);
+    expect(screen.getByTestId(TestID.valueEditor)).toBeInTheDocument();
   });
 
   it('renders value editor as multiselect', () => {
     render(<MantineValueEditor {...props} type="multiselect" />);
+    expect(screen.getByTestId(TestID.valueEditor)).toBeInTheDocument();
   });
 
   it('handles "between" select', async () => {
@@ -292,7 +294,8 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
       await user.click(screen.getByText('14'));
     });
     // TODO: Figure out why this doesn't work in React < 19
-    if (parseInt(React.version, 10) >= 19) {
+    if (Number.parseInt(React.version, 10) >= 19) {
+      // oxlint-disable-next-line no-conditional-expect
       expect(handleOnChange).toHaveBeenCalledWith([`${dateStub}12`, `${dateStub}14`]);
     }
   });

@@ -1,12 +1,13 @@
 import type { ComponentType } from 'react';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type {
-  ActionWithRulesProps,
+  ActionProps,
   FullCombinator,
   FullField,
   FullOperator,
   FullOption,
   InlineCombinatorProps,
+  MatchModeEditorProps,
   NotToggleProps,
   QueryBuilderProps,
   RuleGroupProps,
@@ -104,7 +105,7 @@ export type InlineCombinatorNativeProps = InlineCombinatorProps & WithSchemaNati
 /**
  * @group Props
  */
-export type ActionNativeProps = ActionWithRulesProps & WithSchemaNative;
+export type ActionNativeProps = ActionProps & WithSchemaNative;
 
 /**
  * @group Props
@@ -121,6 +122,14 @@ export type ValueSelectorNativeProps<OptType extends FullOption = FullOption> =
  * @group Props
  */
 export type ValueEditorNativeProps = ValueEditorProps &
+  WithSchemaNative & {
+    selectorComponent?: ComponentType<ValueSelectorNativeProps>;
+  };
+
+/**
+ * @group Props
+ */
+export type MatchModeEditorNativeProps = MatchModeEditorProps &
   WithSchemaNative & {
     selectorComponent?: ComponentType<ValueSelectorNativeProps>;
   };

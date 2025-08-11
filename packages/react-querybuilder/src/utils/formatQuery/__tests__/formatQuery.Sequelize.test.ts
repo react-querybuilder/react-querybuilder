@@ -61,6 +61,13 @@ it('covers Sequelize', () => {
       }
     )
   ).toBeTruthy();
+
+  expect(
+    formatQuery(
+      { rules: [{ field: 'f', operator: '=', value: { rules: [] }, match: { mode: 'all' } }] },
+      { format: 'sequelize', context: contextWithAllReqs }
+    )
+  ).toBeUndefined();
 });
 
 it('handles operator case variations', () => {
@@ -155,11 +162,13 @@ describe('validation', () => {
         format: 'sequelize',
         context: contextWithAllReqs,
       });
+      // oxlint-disable no-conditional-expect
       if (validationResults[vtd.title]) {
         expect(where).toBeTruthy();
       } else {
         expect(where).toBeUndefined();
       }
+      // oxlint-enable no-conditional-expect
     });
   }
 });

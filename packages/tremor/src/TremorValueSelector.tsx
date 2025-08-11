@@ -11,7 +11,7 @@ import { toSelectItems } from './utils';
 export interface TremorValueSelectorProps
   extends VersatileSelectorProps,
     Omit<SelectProps & MultiSelectProps, 'children' | 'value'> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value?: any;
 }
 
@@ -36,6 +36,7 @@ export const TremorValueSelector = ({
   validation: _validation,
   schema: _schema,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   ...otherProps
 }: TremorValueSelectorProps): React.JSX.Element => {

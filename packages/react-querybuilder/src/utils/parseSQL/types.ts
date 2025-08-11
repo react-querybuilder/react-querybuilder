@@ -83,7 +83,7 @@ export interface SQLIdentifier extends SQLWhereObject {
   value: string;
 }
 export interface SQLWhereObjectAny extends SQLWhereObject {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [k: string]: any;
 }
 export interface SQLStringValue extends SQLWhereObject {

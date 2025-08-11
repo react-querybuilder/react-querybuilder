@@ -1,12 +1,12 @@
 import type { ButtonProps } from '@fluentui/react-components';
 import { Button } from '@fluentui/react-components';
 import * as React from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 
 /**
  * @group Props
  */
-export interface FluentActionProps extends ActionWithRulesProps, ButtonProps {}
+export type FluentActionProps = ActionProps & ButtonProps;
 
 /**
  * @group Components

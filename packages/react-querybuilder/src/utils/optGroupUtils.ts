@@ -1,3 +1,4 @@
+import type { Draft } from 'immer';
 import { produce } from 'immer';
 import type {
   BaseOption,
@@ -10,7 +11,6 @@ import type {
   GetOptionIdentifierType,
   Option,
   OptionGroup,
-  OptionList,
   RequireAtLeastOne,
   ToFullOption,
   ValueOption,
@@ -30,12 +30,22 @@ const isOptionWithValue = (opt: BaseOption): opt is ValueOption =>
  * @group Option Lists
  */
 export function toFullOption<Opt extends BaseOption>(
-  opt: Opt,
-  baseProperties?: Record<string, unknown>
+  opt: Opt | string,
+  baseProperties?: Record<string, unknown>,
+  labelMap?: Record<string, unknown>
 ): ToFullOption<Opt> {
-  const recipe: (o: Opt) => ToFullOption<Opt> = produce(draft => {
+  const recipe: (o: Opt | string) => ToFullOption<Opt> = produce(draft => {
     const idObj: { name?: string; value?: string } = {};
     let needsUpdating = !!baseProperties;
+
+    if (typeof draft === 'string') {
+      return {
+        ...baseProperties,
+        name: draft,
+        value: draft,
+        label: labelMap?.[draft] ?? draft,
+      } as Draft<Opt>;
+    }
 
     if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
       idObj.value = draft.name;
@@ -58,9 +68,10 @@ export function toFullOption<Opt extends BaseOption>(
  *
  * @group Option Lists
  */
-export function toFullOptionList<Opt extends BaseOption, OptList extends FlexibleOptionList<Opt>>(
-  optList: OptList,
-  baseProperties?: Record<string, unknown>
+export function toFullOptionList<Opt extends BaseOption>(
+  optList: unknown[],
+  baseProperties?: Record<string, unknown>,
+  labelMap?: Record<string, unknown>
 ): FullOptionList<Opt> {
   if (!Array.isArray(optList)) {
     return [] as unknown as FullOptionList<Opt>;
@@ -70,15 +81,15 @@ export function toFullOptionList<Opt extends BaseOption, OptList extends Flexibl
     if (isFlexibleOptionGroupArray(draft)) {
       for (const optGroup of draft) {
         for (const [idx, opt] of optGroup.options.entries())
-          optGroup.options[idx] = toFullOption(opt, baseProperties);
+          optGroup.options[idx] = toFullOption(opt, baseProperties, labelMap);
       }
     } else {
       for (const [idx, opt] of (draft as Opt[]).entries())
-        draft[idx] = toFullOption(opt, baseProperties);
+        draft[idx] = toFullOption(opt, baseProperties, labelMap);
     }
   });
 
-  return recipe(optList);
+  return recipe(optList as FlexibleOptionList<Opt>);
 }
 
 /**
@@ -142,7 +153,7 @@ export const uniqByIdentifier = <
  *
  * @group Option Lists
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =>
   Array.isArray(arr) &&
   arr.length > 0 &&
@@ -155,7 +166,7 @@ export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =
  *
  * @group Option Lists
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
   let isFOA = false;
   if (Array.isArray(arr)) {
@@ -175,7 +186,7 @@ export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
  *
  * @group Option Lists
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const isFullOptionArray = (arr: any): arr is FullOption[] => {
   let isFOA = false;
   if (Array.isArray(arr)) {
@@ -196,7 +207,7 @@ export const isFullOptionArray = (arr: any): arr is FullOption[] => {
  * @group Option Lists
  */
 export const isFlexibleOptionGroupArray = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   arr: any,
   { allowEmpty = false }: { allowEmpty?: boolean } = {}
 ): arr is FlexibleOptionGroup[] => {
@@ -224,7 +235,7 @@ export const isFlexibleOptionGroupArray = (
  * @group Option Lists
  */
 export const isFullOptionGroupArray = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   arr: any,
   { allowEmpty = false }: { allowEmpty?: boolean } = {}
 ): arr is OptionGroup<FullOption>[] => {
@@ -252,23 +263,45 @@ export const isFullOptionGroupArray = (
  *
  * @group Option Lists
  */
-export const getOption = <OptType extends Option = Option>(
-  arr: OptionList<OptType>,
+export function getOption<OptType extends FullOption>(
+  arr: FullOptionList<OptType>,
   name: string
-): OptType | undefined =>
-  (isFlexibleOptionGroupArray(arr, { allowEmpty: true })
+): OptType | undefined;
+export function getOption<OptType extends ValueOption>(
+  arr: FlexibleOptionList<OptType>,
+  name: string
+): OptType | undefined;
+export function getOption<OptType extends Option>(
+  arr: FlexibleOptionList<OptType>,
+  name: string
+): OptType | undefined;
+export function getOption<OptType extends BaseOption>(
+  arr: FlexibleOptionList<OptType>,
+  name: string
+): OptType | undefined {
+  const options = isFlexibleOptionGroupArray(arr, { allowEmpty: true })
     ? arr.flatMap(og => og.options)
-    : arr
-  ).find(op => op.value === name || op.name === name);
+    : arr;
+  return options.find(op => op.value === name || op.name === name) as OptType | undefined;
+}
 
 /**
  * Gets the first option from an {@link OptionList}.
  *
  * @group Option Lists
  */
-export const getFirstOption = <Opt extends BaseOption>(
+export function getFirstOption<Opt extends FullOption>(
+  arr?: OptionGroup<Opt>[] | Opt[]
+): GetOptionIdentifierType<Opt> | null;
+export function getFirstOption<Opt extends ValueOption>(
+  arr?: OptionGroup<Opt>[] | Opt[]
+): GetOptionIdentifierType<Opt> | null;
+export function getFirstOption<Opt extends Option>(
+  arr?: OptionGroup<Opt>[] | Opt[]
+): GetOptionIdentifierType<Opt> | null;
+export function getFirstOption<Opt extends BaseOption>(
   arr?: FlexibleOptionGroup<Opt>[] | Opt[]
-): GetOptionIdentifierType<Opt> | null => {
+): GetOptionIdentifierType<Opt> | null {
   if (!Array.isArray(arr) || arr.length === 0) {
     return null;
   } else if (isFlexibleOptionGroupArray(arr, { allowEmpty: true })) {
@@ -282,7 +315,7 @@ export const getFirstOption = <Opt extends BaseOption>(
   }
 
   return (arr[0].value ?? arr[0].name) as GetOptionIdentifierType<Opt>;
-};
+}
 
 /**
  * Flattens {@link FlexibleOptionGroup} arrays into {@link BaseOption} arrays.

@@ -1,9 +1,11 @@
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
-import { useReducer, useState } from 'react';
+import { useMemo, useReducer, useState } from 'react';
+import type { Classnames } from 'react-querybuilder';
 import {
   QueryBuilder,
   defaultValidator,
   formatQuery,
+  standardClassnames,
 } from 'react-querybuilder';
 import { fields } from './fields';
 import { initialQuery, initialQueryIC } from './initialQuery';
@@ -24,17 +26,25 @@ export const App = () => {
     independentCombinators,
     parseNumbers,
     showBranches,
+    justifiedLayout,
     ...commonOptions
   } = options;
 
   const queryForFormatting = independentCombinators ? queryIC : query;
 
+  const controlClassnames = useMemo(
+    (): Partial<Classnames> => ({
+      queryBuilder: {
+        [standardClassnames.branches]: showBranches,
+        [standardClassnames.justified]: justifiedLayout,
+      },
+    }),
+    [showBranches, justifiedLayout]
+  );
+
   return (
     <div>
-      <QueryBuilderDnD
-        controlClassnames={{
-          queryBuilder: showBranches ? 'queryBuilder-branches' : '',
-        }}>
+      <QueryBuilderDnD controlClassnames={controlClassnames}>
         {independentCombinators ? (
           <QueryBuilder
             key="rqb-ic"
@@ -63,6 +73,7 @@ export const App = () => {
             <input
               type="checkbox"
               checked={options[optionName]}
+              // oxlint-disable-next-line jsx-no-new-function-as-prop
               onChange={e =>
                 dispatch({
                   type: 'update',

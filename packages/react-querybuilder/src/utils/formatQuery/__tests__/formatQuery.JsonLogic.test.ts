@@ -20,6 +20,7 @@ import {
   queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
+  queryWithMatchModes,
 } from '../formatQueryTestUtils';
 import { jsonLogicAdditionalOperators } from '../utils';
 
@@ -281,6 +282,7 @@ it('ruleProcessor', () => {
   });
 });
 
+// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     and: [
@@ -322,7 +324,35 @@ it('preserveValueOrder', () => {
   ).toEqual({ and: [{ '<=': [12, { var: 'f1' }, 14] }, { '<=': [14, { var: 'f2' }, 12] }] });
 });
 
-it('runs the jsonLogic additional operators', () => {
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'jsonlogic' })).toEqual({
+    and: [{ '<=': [22, { var: 'age' }, 34] }, { '!': { '<=': [10, { var: 'score' }, 20] } }],
+  });
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'jsonlogic', parseNumbers: true })).toEqual({
+    and: [{ '<=': [22, { var: 'age' }, 34] }, { '!': { '<=': [10, { var: 'score' }, 20] } }],
+  });
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'jsonlogic', parseNumbers: false })).toEqual({
+    and: [
+      { '<=': ['22', { var: 'age' }, '34'] },
+      { '!': { '<=': ['10', { var: 'score' }, '20'] } },
+    ],
+  });
+});
+
+it('runs the JsonLogic additional operators', () => {
   const { startsWith, endsWith } = jsonLogicAdditionalOperators;
   expect(startsWith('TestString', 'Test')).toBe(true);
   // @ts-expect-error null is not valid
@@ -338,4 +368,125 @@ it('runs the jsonLogic additional operators', () => {
   expect(endsWith([], 'String')).toBe(false);
   // @ts-expect-error {} is not valid
   expect(endsWith({}, 'String')).toBe(false);
+});
+
+it('handles match modes', () => {
+  expect(formatQuery(queryWithMatchModes, 'jsonlogic')).toEqual({
+    and: [
+      { all: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { all: [{ var: 'fs' }, { in: ['S', { var: 'fv' }] }] },
+      { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { some: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      { none: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: 'fv' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '>=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      {
+        '<=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '<=': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      {
+        '==': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+      {
+        '==': [
+          {
+            reduce: [
+              { filter: [{ var: 'fs' }, { in: ['S', { var: '' }] }] },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          {
+            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
+          },
+        ],
+      },
+      { all: [{ var: 'fs' }, { and: [{ in: ['S', { var: '' }] }, { in: ['S', { var: '' }] }] }] },
+      {
+        '>=': [
+          {
+            reduce: [
+              {
+                filter: [
+                  { var: 'fs' },
+                  { and: [{ in: ['S', { var: '' }] }, { in: ['S', { var: '' }] }] },
+                ],
+              },
+              { '+': [1, { var: 'accumulator' }] },
+              0,
+            ],
+          },
+          2,
+        ],
+      },
+    ],
+  });
 });

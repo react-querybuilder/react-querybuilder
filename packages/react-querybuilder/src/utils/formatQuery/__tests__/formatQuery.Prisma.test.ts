@@ -77,7 +77,7 @@ const prismaQueryExpectation = {
     { firstName: { gte: 'Test', lte: 'This' } },
     { firstName: { gte: 'Test', lte: 'This' } },
     { OR: [{ lastName: { lt: 'Test' } }, { lastName: { gt: 'This' } }] },
-    { age: { gte: 12, lte: 14 } },
+    { age: { gte: '12', lte: '14' } },
     { age: '26' },
     { isMusician: true },
     { isLucky: false },
@@ -87,15 +87,18 @@ const prismaQueryExpectation = {
     { NOT: { hello: { contains: 'com' } } },
     { NOT: { job: { startsWith: 'Man' } } },
     { NOT: { job: { endsWith: 'ger' } } },
-    {
-      OR: [{ job: 'Sales Executive' }, { job: { in: [] } }],
-    },
+    { OR: [{ job: 'Sales Executive' }, { job: { in: [] } }] },
   ],
 };
 
+// oxlint-disable-next-line expect-expect
 it('formats to prisma query correctly', () => {
   testPrisma(prismaQuery, prismaQueryExpectation);
   testPrisma({ rules: [{ field: 'f', operator: '=', value: 'v', valueSource: 'field' }] }, {});
+  testPrisma(
+    { rules: [{ field: 'f', operator: '=', value: { rules: [] }, match: { mode: 'all' } }] },
+    {}
+  );
   // Test for newline in value and `not` at top level
   testPrisma(
     {
@@ -116,17 +119,19 @@ it('handles operator case variations', () => {
 it.todo(
   'handles custom fallbackExpression correctly'
   // , () => {
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   // oxlint-disable-next-line typescript/no-explicit-any
   //   const fallbackExpression: any = { fallback: true };
   //   const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
   //   testBoth(queryToTest, fallbackExpression, { fallbackExpression });
   // }
 );
 
+// oxlint-disable-next-line expect-expect
 it('escapes quotes when appropriate', () => {
   testPrisma(testQueryDQ, { f1: `Te"st` });
 });
 
+// oxlint-disable-next-line expect-expect
 it('independent combinators', () => {
   testPrisma(queryIC, {
     OR: [{ AND: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
@@ -149,6 +154,7 @@ describe('validation', () => {
 
     for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
+        // oxlint-disable-next-line expect-expect
         it(vtd.title, () => {
           testPrisma(vtd.query, validationResults[vtd.title], vtd.options);
         });
@@ -157,6 +163,7 @@ describe('validation', () => {
   }
 });
 
+// oxlint-disable-next-line expect-expect
 it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? { [r.operator]: true } : defaultRuleProcessorMongoDBQuery(r);
@@ -172,19 +179,31 @@ it('ruleProcessor', () => {
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
   testPrisma(
     queryForPreserveValueOrder,
-    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 12, lte: 14 } }] },
+    { AND: [{ f1: { gte: '12', lte: '14' } }, { f2: { gte: '12', lte: '14' } }] },
     {}
   );
   testPrisma(
     queryForPreserveValueOrder,
-    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 14, lte: 12 } }] },
+    { AND: [{ f1: { gte: '12', lte: '14' } }, { f2: { gte: '14', lte: '12' } }] },
     { preserveValueOrder: true }
+  );
+  testPrisma(
+    queryForPreserveValueOrder,
+    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 12, lte: 14 } }] },
+    { parseNumbers: true }
+  );
+  testPrisma(
+    queryForPreserveValueOrder,
+    { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 14, lte: 12 } }] },
+    { parseNumbers: true, preserveValueOrder: true }
   );
 });
 
+// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     AND: [
@@ -209,4 +228,21 @@ it('parseNumbers', () => {
   ] as FormatQueryOptions[]) {
     testPrisma(queryForNumberParsing, allNumbersParsed, opts);
   }
+  const noNumbersParsed = {
+    AND: [
+      { f: { gt: 'NaN' } },
+      { f: '0' },
+      { f: '    0    ' },
+      { f: 0 },
+      { OR: [{ f: { lt: '1.5' } }, { f: { gt: 1.5 } }] },
+      { f: { in: ['0', '1', '2'] } },
+      { f: { in: [0, 1, 2] } },
+      { f: { in: ['0', 'abc', '2'] } },
+      { f: { gte: '0', lte: '1' } },
+      { f: { gte: 0, lte: 1 } },
+      { f: { gte: '0', lte: 'abc' } },
+      { f: { gte: {}, lte: {} } },
+    ],
+  };
+  testPrisma(queryForNumberParsing, noNumbersParsed, { parseNumbers: false });
 });

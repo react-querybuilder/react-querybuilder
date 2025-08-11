@@ -1,3 +1,5 @@
+/* oxlint-disable prefer-global-this */
+
 import { parseCEL } from '@rqb-parsecel';
 // import { parseJSONata } from '@rqb-parsejsonata';
 import { parseJsonLogic } from '@rqb-parsejsonlogic';
@@ -7,14 +9,15 @@ import { parseSQL } from '@rqb-parsesql';
 import { regenerateIDs } from '@rqb-utils';
 import * as React from 'react';
 import { Fragment } from 'react';
-import type { RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import '../../packages/react-querybuilder/dist/query-builder.css';
-import './styles.css';
 import { optionOrder } from './constants';
+import './styles.css';
+import type { DemoOption, DemoOptions } from './types';
 import type { useDevApp } from './useDevApp';
 import { generatePermalinkHash, optionsReducer } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const parserMap: Record<string, any> = {
   sql: parseSQL,
   cel: parseCEL,
@@ -53,6 +56,59 @@ export const NavBar = (): React.JSX.Element => (
   </nav>
 );
 
+const OptionCheckbox = ({
+  opt,
+  optVals,
+  updateOptions,
+}: {
+  opt: DemoOption;
+  optVals: DemoOptions;
+  updateOptions: ReturnType<typeof useDevApp>['updateOptions'];
+}) => {
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
+    e => {
+      history.pushState(
+        null,
+        '',
+        generatePermalinkHash(
+          optionsReducer(optVals, {
+            type: 'update',
+            payload: { optionName: opt, value: e.target.checked },
+          })
+        )
+      );
+      updateOptions({
+        type: 'update',
+        payload: { optionName: opt, value: e.target.checked },
+      });
+    },
+    [opt, optVals, updateOptions]
+  );
+
+  return (
+    <label>
+      <input type="checkbox" checked={optVals[opt]} onChange={onChange} />
+      <code>{opt}</code>
+    </label>
+  );
+};
+
+const FormatRow = ({ fmt, result }: { fmt: ExportFormat; result: string }) => {
+  const onClick = React.useCallback(() => navigator.clipboard.writeText(result), [result]);
+
+  return (
+    <Fragment>
+      <code>{fmt}</code>
+      <div className="codeBlock">
+        <pre>{result}</pre>
+        <button type="button" className="copyButton" onClick={onClick}>
+          ⧉
+        </button>
+      </div>
+    </Fragment>
+  );
+};
+
 export const DevLayout = ({
   actions,
   children,
@@ -65,7 +121,7 @@ export const DevLayout = ({
   const [importText, setImportText] = React.useState('');
   const [importFmt, setImportFmt] = React.useState('sql');
 
-  const onImportClick = () => {
+  const onImportClick = React.useCallback(() => {
     const parser = parserMap[importFmt] ?? ((text: string) => JSON.parse(text));
     if (optVals.independentCombinators) {
       onQueryChangeIC(
@@ -74,7 +130,16 @@ export const DevLayout = ({
     } else {
       onQueryChange(regenerateIDs(parser(importText)) as RuleGroupType);
     }
-  };
+  }, [importFmt, importText, onQueryChange, onQueryChangeIC, optVals.independentCombinators]);
+
+  const updateImportText: React.ChangeEventHandler<HTMLTextAreaElement> = React.useCallback(
+    e => setImportText(e.target.value),
+    []
+  );
+  const updateImportFmt: React.ChangeEventHandler<HTMLSelectElement> = React.useCallback(
+    e => setImportFmt(e.target.value),
+    []
+  );
 
   return (
     <>
@@ -82,29 +147,7 @@ export const DevLayout = ({
       <div id="dev-layout">
         <div>
           {optionOrder.map(opt => (
-            <label key={opt}>
-              <input
-                type="checkbox"
-                checked={optVals[opt]}
-                onChange={e => {
-                  history.pushState(
-                    null,
-                    '',
-                    generatePermalinkHash(
-                      optionsReducer(optVals, {
-                        type: 'update',
-                        payload: { optionName: opt, value: e.target.checked },
-                      })
-                    )
-                  );
-                  updateOptions({
-                    type: 'update',
-                    payload: { optionName: opt, value: e.target.checked },
-                  });
-                }}
-              />
-              <code>{opt}</code>
-            </label>
+            <OptionCheckbox key={opt} opt={opt} optVals={optVals} updateOptions={updateOptions} />
           ))}
           {actions.map(([label, action]) => (
             <span key={label}>
@@ -118,9 +161,9 @@ export const DevLayout = ({
             id="import"
             rows={5}
             value={importText}
-            onChange={e => setImportText(e.target.value)}
+            onChange={updateImportText}
           />
-          <select value={importFmt} onChange={e => setImportFmt(e.target.value)}>
+          <select value={importFmt} onChange={updateImportFmt}>
             <option value="sql">SQL</option>
             <option value="cel">CEL</option>
             <option value="spel">SpEL</option>
@@ -137,18 +180,7 @@ export const DevLayout = ({
           {children}
           <div id="exports">
             {formatQueryResults.map(([fmt, result]) => (
-              <Fragment key={fmt}>
-                <code>{fmt}</code>
-                <div className="codeBlock">
-                  <pre>{result}</pre>
-                  <button
-                    type="button"
-                    className="copyButton"
-                    onClick={() => navigator.clipboard.writeText(result)}>
-                    ⧉
-                  </button>
-                </div>
-              </Fragment>
+              <FormatRow key={fmt} fmt={fmt} result={result} />
             ))}
           </div>
         </div>

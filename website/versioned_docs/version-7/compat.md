@@ -10,17 +10,17 @@ Official component packages compatible with several popular style libraries are 
 
 You can see each alternate component package in action by choosing the corresponding "Style library" option on the right-hand side of the [demo page](/demo). The "Demo" links in the table below will load the demo with that style library preselected, and the [CodeSandbox](https://codesandbox.io)/[StackBlitz](https://stackblitz.com) links will open a sandbox on the respective platform with an editable example of the library preloaded.
 
-| Official site                                       | Compatibility package                                                                        | Demo                    | CodeSandbox                                                                                                               | StackBlitz                                                                                                                      |
-| --------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| [Ant Design](https://ant.design/)                   | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [Demo](/demo/antd)      | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/antd?file=/src/App.tsx)      | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/antd?file=src/App.tsx)      |
-| [Bootstrap](https://getbootstrap.com/)              | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](/demo/bootstrap) | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap?file=/src/App.tsx) | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/bootstrap?file=src/App.tsx) |
-| [Bulma](https://bulma.io/)                          | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](/demo/bulma)     | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/bulma?file=/src/App.tsx)     | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/bulma?file=src/App.tsx)     |
-| [Chakra UI](https://chakra-ui.com/)                 | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](/demo/chakra)    | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/chakra?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/chakra?file=src/App.tsx)    |
-| [Fluent UI](https://github.com/microsoft/fluentui/) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [Demo](/demo/fluent)    | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/fluent?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/fluent?file=src/App.tsx)    |
-| [Mantine](https://mantine.dev/)                     | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [Demo](/demo/mantine)   | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/mantine?file=/src/App.tsx)   | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/mantine?file=src/App.tsx)   |
-| [MUI](https://mui.com/)                             | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](/demo/material)  | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/material?file=/src/App.tsx)  | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/material?file=src/App.tsx)  |
-| [React Native](https://reactnative.dev/)            | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       | _Coming soon!_          | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/native?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/native?file=src/App.tsx)    |
-| [Tremor](https://www.tremor.so/)                    | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [Demo](/demo/tremor)    | [CodeSandbox](https://githubbox.com/react-querybuilder/react-querybuilder/tree/main/examples/tremor?file=/src/App.tsx)    | [StackBlitz](https://stackblitz.com/github/react-querybuilder/react-querybuilder/tree/main/examples/tremor?file=src/App.tsx)    |
+| Official site                                       | Compatibility package                                                                        | Demo                    | CodeSandbox                         | StackBlitz                              |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------- | --------------------------------------- |
+| [Ant Design](https://ant.design/)                   | [@react-querybuilder/antd](https://www.npmjs.com/package/@react-querybuilder/antd)           | [Demo](/demo/antd)      | [CodeSandbox](/sandbox?t=antd)      | [StackBlitz](/sandbox?p=sb&t=antd)      |
+| [Bootstrap](https://getbootstrap.com/)              | [@react-querybuilder/bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap) | [Demo](/demo/bootstrap) | [CodeSandbox](/sandbox?t=bootstrap) | [StackBlitz](/sandbox?p=sb&t=bootstrap) |
+| [Bulma](https://bulma.io/)                          | [@react-querybuilder/bulma](https://www.npmjs.com/package/@react-querybuilder/bulma)         | [Demo](/demo/bulma)     | [CodeSandbox](/sandbox?t=bulma)     | [StackBlitz](/sandbox?p=sb&t=bulma)     |
+| [Chakra UI](https://chakra-ui.com/)                 | [@react-querybuilder/chakra](https://www.npmjs.com/package/@react-querybuilder/chakra)       | [Demo](/demo/chakra)    | [CodeSandbox](/sandbox?t=chakra)    | [StackBlitz](/sandbox?p=sb&t=chakra)    |
+| [Fluent UI](https://github.com/microsoft/fluentui/) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [Demo](/demo/fluent)    | [CodeSandbox](/sandbox?t=fluent)    | [StackBlitz](/sandbox?p=sb&t=fluent)    |
+| [Mantine](https://mantine.dev/)                     | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [Demo](/demo/mantine)   | [CodeSandbox](/sandbox?t=mantine)   | [StackBlitz](/sandbox?p=sb&t=mantine)   |
+| [MUI](https://mui.com/)                             | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](/demo/material)  | [CodeSandbox](/sandbox?t=material)  | [StackBlitz](/sandbox?p=sb&t=material)  |
+| [React Native](https://reactnative.dev/)            | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       | _Coming soon!_          | [CodeSandbox](/sandbox?t=native)    | [StackBlitz](/sandbox?p=sb&t=native)    |
+| [Tremor](https://www.tremor.so/)                    | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [Demo](/demo/tremor)    | [CodeSandbox](/sandbox?t=tremor)    | [StackBlitz](/sandbox?p=sb&t=tremor)    |
 
 ## Usage
 
@@ -127,17 +127,15 @@ export function App() {
 
 All of the compatibility components except the `*ValueEditor`s accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving the query builder integration up to the compatibility layer.
 
-For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders a `Button` component from `antd`, so it can accept properties of the `ActionWithRulesProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
+For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders a `Button` component from `antd`, so it can accept properties of the `ActionProps` interface from `react-querybuilder` _and_ the `ButtonProps` interface from `antd`.
 
-In the example below, the `size` prop is accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface), even though it's not included in the `ActionWithRulesProps` interface.
+In the example below, the `size` prop is accepted because it's one of `antd`'s `Button` props (from the `ButtonProps` interface), even though it's not included in the `ActionProps` interface.
 
 ```tsx
 import { AntDActionElement, antdControlElements } from '@react-querybuilder/antd';
-import { QueryBuilder, type ActionWithRulesProps } from 'react-querybuilder';
+import { QueryBuilder, type ActionProps } from 'react-querybuilder';
 
-const MyAntDActionElement = (props: ActionWithRulesProps) => (
-  <AntDActionElement {...props} size="large" />
-);
+const MyAntDActionElement = (props: ActionProps) => <AntDActionElement {...props} size="large" />;
 
 export function App() {
   return (
@@ -163,31 +161,31 @@ This list shows which library components' props will be accepted by the compatib
 | Component                          | Base props (from RQB)    | Rendered library component                                      |
 | ---------------------------------- | ------------------------ | --------------------------------------------------------------- |
 | **`@react-querybuilder/antd`**     |                          |                                                                 |
-| `AntDActionElement`                | `ActionWithRulesProps`   | `import { Button } from 'antd'`                                 |
+| `AntDActionElement`                | `ActionProps`            | `import { Button } from 'antd'`                                 |
 | `AntDDragHandle`                   | `DragHandleProps`        | `import { HolderOutlined } from '@ant-design/icons'`            |
 | `AntDNotToggle`                    | `NotToggleProps`         | `import { Switch } from 'antd'`                                 |
 | `AntDValueSelector`                | `VersatileSelectorProps` | `import { Select } from 'antd'`                                 |
 | **`@react-querybuilder/chakra`**   |                          |                                                                 |
-| `ChakraActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@chakra-ui/react'`                     |
+| `ChakraActionElement`              | `ActionProps`            | `import { Button } from '@chakra-ui/react'`                     |
 | `ChakraDragHandle` (removed in v8) | `DragHandleProps`        | `import { IconButton } from '@chakra-ui/react'`                 |
 | `ChakraNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@chakra-ui/react'`                     |
 | `ChakraValueSelector`              | `VersatileSelectorProps` | `import { Select } from '@chakra-ui/react'`                     |
 | **`@react-querybuilder/fluent`**   |                          |                                                                 |
-| `FluentActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@fluentui/react-components'`           |
+| `FluentActionElement`              | `ActionProps`            | `import { Button } from '@fluentui/react-components'`           |
 | `FluentDragHandle`                 | `DragHandleProps`        | `import { Text } from '@fluentui/react-components'`             |
 | `FluentNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@fluentui/react-components'`           |
 | `FluentValueSelector`              | `VersatileSelectorProps` | `import { Dropdown, Select } from '@fluentui/react-components'` |
 | **`@react-querybuilder/mantine`**  |                          |                                                                 |
-| `MantineActionElement`             | `ActionWithRulesProps`   | `import { Button } from '@mantine/core'`                        |
+| `MantineActionElement`             | `ActionProps`            | `import { Button } from '@mantine/core'`                        |
 | `MantineNotToggle`                 | `NotToggleProps`         | `import { Switch } from '@mantine/core'`                        |
 | `MantineValueSelector`             | `VersatileSelectorProps` | `import { Select } from '@mantine/core'`                        |
 | **`@react-querybuilder/material`** |                          |                                                                 |
-| `MaterialActionElement`            | `ActionWithRulesProps`   | `import { Button } from '@mui/material'`                        |
+| `MaterialActionElement`            | `ActionProps`            | `import { Button } from '@mui/material'`                        |
 | `MaterialDragHandle`               | `DragHandleProps`        | `import { DragIndicator } from '@mui/icons-material'`           |
 | `MaterialNotToggle`                | `NotToggleProps`         | `import { Switch } from '@mui/material'`                        |
 | `MaterialValueSelector`            | `VersatileSelectorProps` | `import { Select } from '@mui/material'`                        |
 | **`@react-querybuilder/tremor`**   |                          |                                                                 |
-| `TremorActionElement`              | `ActionWithRulesProps`   | `import { Button } from '@tremor/react'`                        |
+| `TremorActionElement`              | `ActionProps`            | `import { Button } from '@tremor/react'`                        |
 | `TremorNotToggle`                  | `NotToggleProps`         | `import { Switch } from '@tremor/react'`                        |
 | `TremorValueSelector`              | `VersatileSelectorProps` | `import { MultiSelect, Select } from '@tremor/react'`           |
 

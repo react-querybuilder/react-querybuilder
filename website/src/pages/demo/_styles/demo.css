@@ -10,6 +10,10 @@
   min-width: 420px;
 }
 
+li.tabs__item {
+  white-space: nowrap;
+}
+
 /* Styles for when "Use validation" option is selected */
 .validateQuery .queryBuilder {
   & .ruleGroup.queryBuilder-invalid {

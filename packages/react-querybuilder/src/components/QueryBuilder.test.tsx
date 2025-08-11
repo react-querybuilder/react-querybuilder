@@ -16,8 +16,8 @@ import { messages } from '../messages';
 import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 import type {
   ActionProps,
-  ActionWithRulesAndAddersProps,
   ControlElementsProp,
+  DefaultOperatorName,
   Field,
   FieldByValue,
   FieldSelectorProps,
@@ -71,6 +71,7 @@ describe('when rendered', () => {
     expect(screen.getByRole('form')).toHaveClass(sc.queryBuilder);
   });
 
+  // oxlint-disable-next-line expect-expect
   it('respects suppressStandardClassnames', () => {
     const { container } = render(
       <QueryBuilder
@@ -976,10 +977,10 @@ describe('parseNumbers prop', () => {
   const typedValues = typedValuesArray.map(typedValue => ({ typedValue }));
   const inputTypeNumberAllowedAsStr = typedValuesArray.map(s => (/^\d+$/.test(s) ? s : ''));
   const inputTypeNumberAllowedAsNum = typedValuesArray.map(s =>
-    /^\d+$/.test(s) ? parseInt(s) : ''
+    /^\d+$/.test(s) ? Number.parseInt(s) : ''
   );
-  const six1214s = Array.from<number>({ length: 6 }).fill(1214);
-  const six1214strings = Array.from<string>({ length: 6 }).fill('1214');
+  const six1214s = new Array<number>(6).fill(1214);
+  const six1214strings = new Array<string>(6).fill('1214');
   const all1214sNoSpace = ['', ...six1214s];
   const all1214sWithSpace = [' ', ...six1214s];
   const all1214stringsNoSpace = ['', ...six1214strings];
@@ -1023,12 +1024,12 @@ describe('parseNumbers prop', () => {
     },
     {
       parseNumberMode: 'native',
-      textAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
-      textTyped: [NaN, ...six1214s],
+      textAtOnce: [Number.NaN, 1214, 1, 1, 12, 1, 1214],
+      textTyped: [Number.NaN, ...six1214s],
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
-      numTextEditorTyped: [NaN, ...six1214s],
+      numTextEditorAtOnce: [Number.NaN, 1214, 1, 1, 12, 1, 1214],
+      numTextEditorTyped: [Number.NaN, ...six1214s],
     },
     {
       parseNumberMode: 'native-limited',
@@ -1036,8 +1037,8 @@ describe('parseNumbers prop', () => {
       textTyped: typedValuesArray,
       numAtOnce: inputTypeNumberAllowedAsNum,
       numTyped: all1214sNoSpace,
-      numTextEditorAtOnce: [NaN, 1214, 1, 1, 12, 1, 1214],
-      numTextEditorTyped: [NaN, ...six1214s],
+      numTextEditorAtOnce: [Number.NaN, 1214, 1, 1, 12, 1, 1214],
+      numTextEditorTyped: [Number.NaN, ...six1214s],
     },
     {
       parseNumberMode: 'strict',
@@ -1207,11 +1208,11 @@ describe('onAddRule prop', () => {
   it('passes handleOnClick context to onAddRule', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
-    const AddRuleAction = (props: ActionWithRulesAndAddersProps) => (
-      <>
+    const AddRuleAction = (props: ActionProps) => (
+      <React.Fragment>
         <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
         <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
-      </>
+      </React.Fragment>
     );
     render(
       <QueryBuilder
@@ -1293,11 +1294,11 @@ describe('onAddGroup prop', () => {
   it('passes handleOnClick context to onAddGroup', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
     const ruleGroup: RuleGroupType = { combinator: 'fake', rules: [] };
-    const AddGroupAction = (props: ActionWithRulesAndAddersProps) => (
-      <>
+    const AddGroupAction = (props: ActionProps) => (
+      <React.Fragment>
         <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
         <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
-      </>
+      </React.Fragment>
     );
     render(
       <QueryBuilder
@@ -1898,15 +1899,6 @@ describe('autoSelectValue', () => {
     { name: 'field2', label: 'Field 2', values, valueEditorType: 'select' },
   ];
 
-  // it('initially hides the value editor', async () => {
-  //   const { container } = render(<QueryBuilder fields={fields} autoSelectValue={false} />);
-  //   await user.click(screen.getByTestId(TestID.addRule));
-  //   expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
-  //   expect(container.querySelectorAll(`select.${sc.values}`)).toHaveLength(1);
-  //   expect(screen.getByTestId(TestID.values)).toHaveValue(defaultPlaceholderValueName);
-  //   expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
-  // });
-
   it('uses the placeholderLabel and placeholderName', async () => {
     const placeholderName = 'Test placeholder name';
     const placeholderLabel = 'Test placeholder label';
@@ -2062,6 +2054,8 @@ describe('showShiftActions', () => {
     const shiftRuleButtons = screen
       .getAllByTestId(TestID.ruleGroup)[1]
       .querySelectorAll(`.${sc.shiftActions}>button`);
+
+    expect(shiftRuleButtons.length).toBeGreaterThanOrEqual(1);
     for (const b of shiftRuleButtons) {
       expect(b).toBeDisabled();
     }
@@ -2751,15 +2745,15 @@ describe('disabled', () => {
         disabled
         controlElements={{
           ruleGroupHeaderElements: ({ actions }) => (
-            <>
+            <React.Fragment>
               <button onClick={() => actions.onRuleAdd(ruleToAdd, [])}>onRuleAdd</button>
               <button onClick={() => actions.onGroupAdd(groupToAdd, [])}>onGroupAdd</button>
               <button onClick={() => actions.onPropChange('not', true, [])}>onPropChange</button>
               <button onClick={() => actions.onGroupRemove([6])}>onGroupRemove</button>
-            </>
+            </React.Fragment>
           ),
           ruleGroupBodyElements: ({ actions }) => (
-            <>
+            <React.Fragment>
               <button onClick={() => actions.onPropChange('field', 'f2', [0])}>onPropChange</button>
               <button onClick={() => actions.onPropChange('combinator', 'or', [1])}>
                 onPropChange
@@ -2767,7 +2761,7 @@ describe('disabled', () => {
               <button onClick={() => actions.onRuleRemove([0])}>onRuleRemove</button>
               <button onClick={() => actions.moveRule([6], [0])}>moveRule</button>
               <button onClick={() => actions.moveRule([6], [0], true)}>moveRule</button>
-            </>
+            </React.Fragment>
           ),
         }}
         query={{
@@ -2960,6 +2954,119 @@ describe('value source field', () => {
   });
 });
 
+describe('match modes', () => {
+  const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
+
+  it('renders the match mode editor with invalid value', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        fields={fields}
+        onQueryChange={onQueryChange}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [
+            {
+              field: 'tourDates',
+              operator: '=',
+              value: '',
+              valueSource: 'value',
+              match: { mode: 'all' },
+            },
+          ],
+        }}
+      />
+    );
+
+    expect(screen.getAllByTestId(TestID.matchModeEditor)).toHaveLength(1);
+    expect(screen.getAllByDisplayValue('all')).toHaveLength(1);
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
+    expect(screen.getAllByTestId(TestID.addRule)).toHaveLength(2);
+
+    await user.selectOptions(screen.getByDisplayValue('all')!, 'atLeast');
+    expect(screen.getAllByDisplayValue('at least')).toHaveLength(1);
+
+    await user.type(screen.getByDisplayValue('1')!, '2', {
+      initialSelectionStart: 0,
+      initialSelectionEnd: 2,
+    });
+    expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.threshold).toBe(2);
+  });
+
+  it('renders the match mode editor for new rule', async () => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    render(
+      <QueryBuilder
+        fields={fields}
+        onQueryChange={onQueryChange}
+        defaultQuery={{ combinator: 'and', rules: [] }}
+      />
+    );
+    await user.click(screen.getAllByTestId(TestID.addRule).at(-1)!);
+
+    expect(screen.getAllByTestId(TestID.matchModeEditor)).toHaveLength(1);
+    expect(screen.getAllByDisplayValue('all')).toHaveLength(1);
+    expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
+    expect(screen.getAllByTestId(TestID.addRule)).toHaveLength(2);
+
+    await user.selectOptions(screen.getByDisplayValue('all')!, 'atLeast');
+    await user.click(screen.getAllByTestId(TestID.addRule).at(-1)!);
+
+    expect(onQueryChange.mock.calls.at(-1)![0]).toEqual({
+      id: expect.any(String),
+      combinator: 'and',
+      rules: [
+        {
+          id: expect.any(String),
+          field: 'tourDates',
+          operator: '=',
+          value: {
+            id: expect.any(String),
+            combinator: 'and',
+            not: false,
+            rules: [
+              { id: expect.any(String), field: '', operator: '=', value: '', valueSource: 'value' },
+            ],
+          },
+          valueSource: 'value',
+          match: { mode: 'atLeast', threshold: 1 },
+        },
+      ],
+    });
+
+    await user.type(screen.getByDisplayValue('1')!, '2', {
+      initialSelectionStart: 0,
+      initialSelectionEnd: 2,
+    });
+    expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.threshold).toBe(2);
+
+    await user.selectOptions(screen.getByDisplayValue('at least')!, 'some');
+    expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.mode).toBe('some');
+
+    await user.click(screen.getAllByTestId(TestID.removeRule).at(-1)!);
+
+    expect(onQueryChange.mock.calls.at(-1)![0]).toEqual({
+      id: expect.any(String),
+      combinator: 'and',
+      rules: [
+        {
+          id: expect.any(String),
+          field: 'tourDates',
+          operator: '=',
+          value: {
+            id: expect.any(String),
+            combinator: 'and',
+            not: false,
+            rules: [],
+          },
+          valueSource: 'value',
+          match: { mode: 'some', threshold: 2 },
+        },
+      ],
+    });
+  });
+});
+
 describe('max levels', () => {
   it('respects maxLevels prop', () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
@@ -3061,13 +3168,13 @@ describe('redux functions', () => {
     const getQueryBtnText = 'Get Query';
     const dispatchQueryBtnText = 'Dispatch Query';
     const rule = ({ schema: { getQuery, dispatchQuery } }: RuleProps) => (
-      <>
+      <React.Fragment>
         <button onClick={() => testFunc(getQuery())}>{getQueryBtnText}</button>
         <button onClick={() => dispatchQuery({ combinator: 'or', rules: [] })}>
           {' '}
           {dispatchQueryBtnText}{' '}
         </button>
-      </>
+      </React.Fragment>
     );
     render(<QueryBuilder onQueryChange={onQueryChange} controlElements={{ rule }} />);
 
@@ -3089,12 +3196,12 @@ describe('redux functions', () => {
       const [q, sq] = React.useState(query);
 
       return (
-        <>
+        <React.Fragment>
           <button type="button" onClick={() => sq(emptyQuery)}>
             Reset
           </button>
           <QueryBuilder query={q} onQueryChange={sq} enableMountQueryChange={false} />
-        </>
+        </React.Fragment>
       );
     };
 
@@ -3472,7 +3579,7 @@ describe('debug mode', () => {
       path,
       actions: { groupRule, moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
     }: RuleGroupProps) => (
-      <>
+      <React.Fragment>
         <button onClick={() => onPropChange('combinator', 'or', [])}>Change Combinator</button>
         <button onClick={() => onRuleAdd({ field: 'f', operator: '=', value: 'v' }, [])}>
           Add Rule
@@ -3481,7 +3588,7 @@ describe('debug mode', () => {
         <button onClick={() => moveRule(path, [0], true)}>Clone Group</button>
         <button onClick={() => onGroupRemove(path)}>Remove Group</button>
         <button onClick={() => groupRule(path, [0])}>Group Group</button>
-      </>
+      </React.Fragment>
     );
     render(
       <QueryBuilder
@@ -3560,5 +3667,343 @@ describe('deprecated props', () => {
     render(<QueryBuilder independentCombinators query={{ combinator: 'and', rules: [] }} />);
     await waitABeat();
     expect(consoleError).toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
+  });
+});
+
+describe('string array options', () => {
+  const user = userEvent.setup();
+
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1' },
+    { name: 'field2', label: 'Field 2' },
+  ];
+
+  const setupWithStringArrays = (
+    props?: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>
+  ) => {
+    const onQueryChange = jest.fn<never, [RuleGroupType]>();
+    const defaultQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'field1', operator: '=', value: 'test' }],
+    };
+
+    return {
+      onQueryChange,
+      ...render(
+        <QueryBuilder
+          fields={fields}
+          defaultQuery={defaultQuery}
+          onQueryChange={onQueryChange}
+          {...props}
+        />
+      ),
+    };
+  };
+
+  describe('fields prop with string arrays', () => {
+    it('accepts array of field strings', () => {
+      setupWithStringArrays({ fields: ['and', 'or'] });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('and');
+      expect(options[0]).toHaveValue('and');
+      expect(options[1]).toHaveTextContent('or');
+      expect(options[1]).toHaveValue('or');
+    });
+
+    it('accepts extended field strings including xor', () => {
+      setupWithStringArrays({ fields: ['and', 'or', 'xor'] });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveTextContent('and');
+      expect(options[1]).toHaveTextContent('or');
+      expect(options[2]).toHaveTextContent('xor');
+      expect(options[2]).toHaveValue('xor');
+    });
+
+    it('uses default labels from defaultfieldsExtended for string arrays', () => {
+      setupWithStringArrays({ fields: ['and', 'xor'] });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('and');
+      expect(options[0]).toHaveTextContent('and');
+      expect(options[1]).toHaveValue('xor');
+      expect(options[1]).toHaveTextContent('xor');
+    });
+  });
+
+  describe('combinators prop with string arrays', () => {
+    it('accepts array of combinator strings', () => {
+      setupWithStringArrays({ combinators: ['and', 'or'] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('AND');
+      expect(options[0]).toHaveValue('and');
+      expect(options[1]).toHaveTextContent('OR');
+      expect(options[1]).toHaveValue('or');
+    });
+
+    it('accepts extended combinator strings including xor', () => {
+      setupWithStringArrays({ combinators: ['and', 'or', 'xor'] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveTextContent('AND');
+      expect(options[1]).toHaveTextContent('OR');
+      expect(options[2]).toHaveTextContent('XOR');
+      expect(options[2]).toHaveValue('xor');
+    });
+
+    it('uses default labels from defaultCombinatorsExtended for string arrays', () => {
+      setupWithStringArrays({ combinators: ['and', 'xor'] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('and');
+      expect(options[0]).toHaveTextContent('AND');
+      expect(options[1]).toHaveValue('xor');
+      expect(options[1]).toHaveTextContent('XOR');
+    });
+  });
+
+  describe('operators prop with string arrays', () => {
+    it('accepts array of operator strings', () => {
+      setupWithStringArrays({ operators: ['=', '!=', 'contains'] });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('=');
+      expect(options[0]).toHaveTextContent('=');
+      expect(options[1]).toHaveValue('!=');
+      expect(options[1]).toHaveTextContent('!=');
+      expect(options[2]).toHaveValue('contains');
+      expect(options[2]).toHaveTextContent('contains');
+    });
+
+    it('uses default and custom labels from defaultOperators for string arrays', () => {
+      setupWithStringArrays({
+        // oxlint-disable-next-line no-explicit-any
+        operators: ['beginsWith', 'doesNotContain', 'null', 'custom' as any],
+      });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(4);
+      expect(options[0]).toHaveValue('beginsWith');
+      expect(options[0]).toHaveTextContent('begins with');
+      expect(options[1]).toHaveValue('doesNotContain');
+      expect(options[1]).toHaveTextContent('does not contain');
+      expect(options[2]).toHaveValue('null');
+      expect(options[2]).toHaveTextContent('is null');
+      expect(options[3]).toHaveValue('custom');
+      expect(options[3]).toHaveTextContent('custom');
+    });
+
+    it('uses default labels from defaultOperators for mixed string arrays', () => {
+      setupWithStringArrays({ operators: ['between', 'notBetween'] });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('between');
+      expect(options[0]).toHaveTextContent('between');
+      expect(options[1]).toHaveValue('notBetween');
+      expect(options[1]).toHaveTextContent('not between');
+    });
+  });
+
+  describe('getOperators function with string arrays', () => {
+    it('accepts getOperators returning array of operator strings', () => {
+      const getOperators = jest.fn((): DefaultOperatorName[] => ['=', 'contains']);
+      setupWithStringArrays({ getOperators });
+
+      expect(getOperators).toHaveBeenCalledWith('field1', { fieldData: expect.any(Object) });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('=');
+      expect(options[1]).toHaveValue('contains');
+    });
+
+    it('accepts getOperators returning FlexibleOption arrays', () => {
+      const getOperators = jest.fn(() => [
+        { name: '=', label: 'Custom Equals' },
+        { name: 'contains', label: 'Custom Contains' },
+      ]);
+      setupWithStringArrays({ getOperators });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('Custom Equals');
+      expect(options[1]).toHaveTextContent('Custom Contains');
+    });
+
+    it('handles getOperators returning null', () => {
+      const getOperators = jest.fn(() => null);
+      setupWithStringArrays({ getOperators });
+
+      // Should fall back to default operators
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options.length).toBeGreaterThan(2);
+    });
+  });
+
+  describe('field-level operators with string arrays', () => {
+    it('accepts field operators as string arrays', async () => {
+      const fieldsWithOperators: Field[] = [
+        {
+          name: 'field1',
+          label: 'Field 1',
+          operators: ['=', '!='],
+        },
+        {
+          name: 'field2',
+          label: 'Field 2',
+          operators: ['contains', 'beginsWith'],
+        },
+      ];
+
+      setupWithStringArrays({ fields: fieldsWithOperators });
+
+      // Check field1 operators
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      let options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('=');
+      expect(options[1]).toHaveValue('!=');
+
+      // Switch to field2 and check its operators
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      await user.selectOptions(fieldSelector, 'field2');
+
+      options = operatorSelector.querySelectorAll('option');
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveValue('contains');
+      expect(options[1]).toHaveValue('beginsWith');
+    });
+
+    it('maintains backward compatibility with field-level FlexibleOption operators', async () => {
+      const fieldsWithOperators: Field[] = [
+        {
+          name: 'field1',
+          label: 'Field 1',
+          operators: [
+            { name: '=', label: 'Custom Equals' },
+            { name: '!=', label: 'Custom Not Equals' },
+          ],
+        },
+      ];
+
+      setupWithStringArrays({ fields: fieldsWithOperators });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent('Custom Equals');
+      expect(options[1]).toHaveTextContent('Custom Not Equals');
+    });
+  });
+
+  describe('mixed arrays support', () => {
+    it('handles mixed string and FlexibleOption arrays for fields', () => {
+      setupWithStringArrays({
+        fields: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],
+      });
+
+      const fieldSelector = screen.getByTestId(TestID.fields);
+      const options = fieldSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('=');
+      expect(options[0]).toHaveTextContent('='); // Should use default label
+      expect(options[1]).toHaveValue('!=');
+      expect(options[1]).toHaveTextContent('Custom Not Equal'); // Should use custom label
+      expect(options[2]).toHaveValue('contains');
+      expect(options[2]).toHaveTextContent('contains'); // Should use default label
+    });
+
+    it('handles mixed string and FlexibleOption arrays for operators', () => {
+      setupWithStringArrays({
+        operators: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],
+      });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('=');
+      expect(options[0]).toHaveTextContent('='); // Should use default label
+      expect(options[1]).toHaveValue('!=');
+      expect(options[1]).toHaveTextContent('Custom Not Equal'); // Should use custom label
+      expect(options[2]).toHaveValue('contains');
+      expect(options[2]).toHaveTextContent('contains'); // Should use default label
+    });
+
+    it('handles mixed string and FlexibleOption arrays for combinators', () => {
+      setupWithStringArrays({
+        combinators: ['and', { name: 'or', label: 'Custom OR' }, 'xor'],
+      });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveValue('and');
+      expect(options[0]).toHaveTextContent('AND'); // Should use default label
+      expect(options[1]).toHaveValue('or');
+      expect(options[1]).toHaveTextContent('Custom OR'); // Should use custom label
+      expect(options[2]).toHaveValue('xor');
+      expect(options[2]).toHaveTextContent('XOR'); // Should use default label
+    });
+  });
+
+  describe('empty arrays handling', () => {
+    it('handles empty combinator arrays gracefully', () => {
+      setupWithStringArrays({ combinators: [] });
+
+      const combinatorSelector = screen.getByTestId(TestID.combinators);
+      const options = combinatorSelector.querySelectorAll('option');
+
+      // Should have no options
+      expect(options).toHaveLength(0);
+    });
+
+    it('handles empty operator arrays gracefully', () => {
+      setupWithStringArrays({ operators: [] });
+
+      const operatorSelector = screen.getByTestId(TestID.operators);
+      const options = operatorSelector.querySelectorAll('option');
+
+      // Should have no options
+      expect(options).toHaveLength(0);
+    });
   });
 });

@@ -1,4 +1,5 @@
 import type { DefaultCombinatorNameExtended, DefaultOperatorName } from '../../types/index.noReact';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import type { ParseSQLOptions } from './parseSQL';
 import type {
@@ -33,7 +34,7 @@ export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
 export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^["']?%+["']?$/.test(sqlExpr.value);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const getParamString = (param: any): string => {
   switch (typeof param) {
     case 'number':
@@ -60,7 +61,7 @@ export const getFieldName = (f: string | SQLIdentifier): string => {
 };
 
 const normalizeCombinator = (c: AndOperator | OrOperator | XorOperator) =>
-  c.replace('&&', 'and').replace('||', 'or').toLowerCase() as DefaultCombinatorNameExtended;
+  lc(c.replace('&&', 'and').replace('||', 'or')) as DefaultCombinatorNameExtended;
 
 export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): DefaultOperatorName => {
   if (flip) {
@@ -76,7 +77,7 @@ export const normalizeOperator = (op: ComparisonOperator, flip?: boolean): Defau
 export const evalSQLLiteralValue = (
   valueObj: SQLLiteralValue | SQLSignedNumberValue,
   { bigIntOnOverflow }: ParseSQLOptions = {}
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any => {
   if (valueObj.type === 'String') {
     const valueString: string = valueObj.value;
@@ -91,7 +92,7 @@ export const evalSQLLiteralValue = (
     // single or double quotes, but if we do get here we return the string as is.
     return valueString;
   } else if (valueObj.type === 'Boolean') {
-    return valueObj.value.toLowerCase() === 'true';
+    return lc(valueObj.value) === 'true';
   } else if (isSQLSignedNumber(valueObj)) {
     return parseNumber(`${valueObj.prefix}${valueObj.value.value}`, {
       parseNumbers: true,

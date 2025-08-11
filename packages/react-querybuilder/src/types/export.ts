@@ -277,7 +277,7 @@ export interface FormatQueryOptions {
    * Translatable strings used by the "natural_language" format.
    */
   translations?: Partial<Record<NLTranslationKey, string>>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   context?: Record<string, any>;
 }
 
@@ -329,11 +329,17 @@ export interface FormatQueryFinalOptions
   extends Required<
     Except<
       FormatQueryOptions,
-      'context' | 'valueProcessor' | 'validator' | 'placeholderValueName' | 'ruleGroupProcessor'
+      | 'context'
+      | 'valueProcessor'
+      | 'validator'
+      | 'placeholderValueName'
+      | 'ruleGroupProcessor'
+      | 'parseNumbers'
     >
   > {
   fields: FullOptionList<FullField>;
-  getParseNumberBoolean: (inputType?: InputType | null) => boolean;
+  getParseNumberBoolean: (inputType?: InputType | null) => boolean | undefined;
+  parseNumbers?: ParseNumbersPropConfig | undefined;
   placeholderValueName?: string | undefined;
   valueProcessor: ValueProcessorByRule;
   validator?: QueryValidator;
@@ -358,7 +364,7 @@ export type ValueProcessorByRule = (rule: RuleType, options?: ValueProcessorOpti
 export type ValueProcessorLegacy = (
   field: string,
   operator: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
   valueSource?: ValueSource
 ) => string;
@@ -392,12 +398,12 @@ export type RuleProcessor = (
   rule: RuleType,
   options?: ValueProcessorOptions,
   meta?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     processedParams?: Record<string, any> | any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     context?: Record<string, any>;
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ) => any;
 
 /**
@@ -424,9 +430,9 @@ export type RuleGroupProcessor<TResult = unknown> = (
   ruleGroup: RuleGroupTypeAny,
   options: FormatQueryFinalOptions,
   meta?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     processedParams?: Record<string, any> | any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     context?: Record<string, any>;
   }
 ) => TResult;
@@ -452,7 +458,7 @@ export interface ParameterizedSQL {
    * Parameter values in the same order their respective placeholders
    * appear in the `sql` string.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   params: any[];
 }
 
@@ -467,7 +473,7 @@ export interface ParameterizedNamedSQL {
   /**
    * Map of bind variable names from the `sql` string to the associated values.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   params: Record<string, any>;
 }
 

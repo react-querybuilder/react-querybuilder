@@ -15,16 +15,22 @@ import type {
   FullField,
   FullOperator,
   InputType,
+  MatchConfig,
+  MatchMode,
+  MatchModeOptions,
   ParseNumbersPropConfig,
   Path,
   ValueEditorType,
   ValueSource,
+  ValueSourceFlexibleOptions,
+  ValueSourceFullOptions,
   ValueSources,
 } from './basic';
 import type { DropEffect } from './dnd';
 import type {
   BaseOptionMap,
-  FlexibleOptionList,
+  FlexibleOption,
+  FlexibleOptionListProp,
   FullOption,
   FullOptionList,
   GetOptionIdentifierType,
@@ -33,7 +39,12 @@ import type {
 } from './options';
 import type { Classnames, CommonRuleSubComponentProps, QueryActions } from './props';
 import type { RuleGroupType, RuleType } from './ruleGroups';
-import type { RuleGroupTypeAny, RuleGroupTypeIC, RuleOrGroupArray } from './ruleGroupsIC';
+import type {
+  GenericizeRuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleOrGroupArray,
+} from './ruleGroupsIC';
 import type { SetNonNullable } from './type-fest';
 import type { QueryValidator, ValidationMap, ValidationResult } from './validation';
 
@@ -73,7 +84,7 @@ export interface CommonSubComponentProps<
   /**
    * Container for custom props that are passed to all components.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   context?: any;
   /**
    * Validation result of the parent rule/group.
@@ -97,7 +108,7 @@ export interface CommonSubComponentProps<
 export interface SelectorOrEditorProps<F extends FullOption = FullField, O extends string = string>
   extends CommonSubComponentProps<F, O> {
   value?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   handleOnChange(value: any): void;
 }
 
@@ -127,7 +138,8 @@ export interface ValueSelectorProps<OptType extends Option = FullOption>
  */
 export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
   options: FullOptionList<FullCombinator>;
-  rules?: RuleOrGroupArray;
+  rules: RuleOrGroupArray;
+  ruleGroup: RuleGroupTypeAny;
 }
 
 /**
@@ -139,6 +151,23 @@ export interface FieldSelectorProps<F extends FullField = FullField>
   extends BaseSelectorProps<F>,
     CommonRuleSubComponentProps {
   operator?: F extends FullField<string, infer OperatorName> ? OperatorName : string;
+}
+
+/**
+ * Props for `matchModeEditor` components.
+ *
+ * @group Props
+ */
+export interface MatchModeEditorProps
+  extends BaseSelectorProps<FullOption>,
+    CommonRuleSubComponentProps {
+  match: MatchConfig;
+  selectorComponent?: ComponentType<ValueSelectorProps>;
+  numericEditorComponent?: ComponentType<ValueEditorProps>;
+  classNames: { matchMode: string; matchThreshold: string };
+  options: FullOptionList<FullOption<MatchMode>>;
+  field: string;
+  fieldData: FullField;
 }
 
 /**
@@ -230,6 +259,8 @@ export interface Translations {
   fields: TranslationWithPlaceholders;
   operators: TranslationWithPlaceholders;
   values: TranslationWithPlaceholders;
+  matchMode: Translation;
+  matchThreshold: Translation;
   value: Translation;
   removeRule: TranslationWithLabel;
   removeGroup: TranslationWithLabel;
@@ -265,8 +296,12 @@ export type TranslationsFull = {
 export interface ActionProps extends CommonSubComponentProps {
   /** Visible text. */
   label?: ReactNode;
-  /** Call this function to trigger the action. */
-  handleOnClick(e?: ReactMouseEvent): void;
+  /**
+   * Triggers the action, e.g. the addition of a new rule or group. The second parameter
+   * will be forwarded to the `onAddRule` or `onAddGroup` callback if appropriate.
+   */
+  // oxlint-disable-next-line no-explicit-any
+  handleOnClick(e?: ReactMouseEvent, context?: any): void;
   /**
    * Translation which overrides the regular `label`/`title` props when
    * the element is disabled.
@@ -277,33 +312,27 @@ export interface ActionProps extends CommonSubComponentProps {
    * associated with this element.
    */
   ruleOrGroup: RuleGroupTypeAny | RuleType;
-}
-
-/**
- * Props passed to every group action component.
- *
- * @group Props
- */
-export interface ActionWithRulesProps extends ActionProps {
   /**
-   * Rules already present for this group.
+   * Rules in this group (if the action element is for a group).
    */
   rules?: RuleOrGroupArray;
 }
 
 /**
- * Props passed to every action component that adds a rule or group.
+ * Props passed to every group action component.
  *
+ * @deprecated Use {@link ActionProps} instead.
  * @group Props
  */
-export interface ActionWithRulesAndAddersProps extends ActionWithRulesProps {
-  /**
-   * Triggers the addition of a new rule or group. The second parameter will
-   * be forwarded to the `onAddRule` or `onAddGroup` callback, appropriately.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleOnClick(e: ReactMouseEvent, context?: any): void;
-}
+export interface ActionWithRulesProps extends ActionProps {}
+
+/**
+ * Props passed to every action component that adds a rule or group.
+ *
+ * @deprecated Use {@link ActionProps} instead.
+ * @group Props
+ */
+export interface ActionWithRulesAndAddersProps extends ActionProps {}
 
 /**
  * Props for `notToggle` components.
@@ -383,14 +412,14 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
     CommonRuleSubComponentProps {
   field: GetOptionIdentifierType<F>;
   operator: O;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value?: any;
   valueSource: ValueSource;
   /** The entire {@link FullField} object. */
   fieldData: F;
   type?: ValueEditorType;
   inputType?: InputType | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   values?: any[];
   listsAsArrays?: boolean;
   parseNumbers?: ParseNumbersPropConfig;
@@ -430,19 +459,19 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    *
    * @default ActionElement
    */
-  addGroupAction: ComponentType<ActionWithRulesAndAddersProps> | null;
+  addGroupAction: ComponentType<ActionProps> | null;
   /**
    * Adds a rule to the current group.
    *
    * @default ActionElement
    */
-  addRuleAction: ComponentType<ActionWithRulesAndAddersProps> | null;
+  addRuleAction: ComponentType<ActionProps> | null;
   /**
    * Clones the current group.
    *
    * @default ActionElement
    */
-  cloneGroupAction: ComponentType<ActionWithRulesProps> | null;
+  cloneGroupAction: ComponentType<ActionProps> | null;
   /**
    * Clones the current rule.
    *
@@ -478,13 +507,19 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    *
    * @default ActionElement
    */
-  lockGroupAction: ComponentType<ActionWithRulesProps> | null;
+  lockGroupAction: ComponentType<ActionProps> | null;
   /**
    * Locks the current rule (sets the `disabled` property to `true`).
    *
    * @default ActionElement
    */
-  lockRuleAction: ComponentType<ActionWithRulesProps> | null;
+  lockRuleAction: ComponentType<ActionProps> | null;
+  /**
+   * Selects the `match` property for the current rule.
+   *
+   * @default MatchModeEditor
+   */
+  matchModeEditor: ComponentType<MatchModeEditorProps> | null;
   /**
    * Toggles the `not` property of the current group between `true` and `false`.
    *
@@ -502,7 +537,7 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    *
    * @default ActionElement
    */
-  removeGroupAction: ComponentType<ActionWithRulesProps> | null;
+  removeGroupAction: ComponentType<ActionProps> | null;
   /**
    * Removes the current rule from its parent group's `rules` array.
    *
@@ -583,9 +618,14 @@ export interface Schema<F extends FullField, O extends string> {
   getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
   getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
-  getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSources;
+  getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSourceFullOptions;
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
+  getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
+  getSubQueryBuilderProps(
+    field: GetOptionIdentifierType<F>,
+    misc: { fieldData: F }
+  ): QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>;
   getRuleClassname(rule: RuleType, misc: { fieldData: F }): Classname;
   getRuleGroupClassname(ruleGroup: RuleGroupTypeAny): Classname;
   accessibleDescriptionGenerator: AccessibleDescriptionGenerator;
@@ -621,7 +661,7 @@ interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends str
   disabled?: boolean;
   shiftUpDisabled?: boolean;
   shiftDownDisabled?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   context?: any;
 }
 
@@ -701,7 +741,7 @@ export interface RuleProps<F extends string = string, O extends string = string>
   /**
    * @deprecated Use the `value` property of the `rule` prop instead
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value?: any;
   /**
    * @deprecated Use the `valueSource` property of the `rule` prop instead
@@ -761,7 +801,7 @@ export interface QueryBuilderContextProviderProps
 /**
  * @group Components
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type QueryBuilderContextProvider<ExtraProps extends object = Record<string, any>> =
   ComponentType<QueryBuilderContextProviderProps & ExtraProps>;
 
@@ -802,7 +842,7 @@ export type QueryBuilderProps<
        *
        * @default []
        */
-      fields?: FlexibleOptionList<F> | BaseOptionMap<F, GetOptionIdentifierType<F>>;
+      fields?: FlexibleOptionListProp<F> | BaseOptionMap<F>;
       /**
        * List of valid {@link FullOperator}s.
        *
@@ -830,7 +870,7 @@ export type QueryBuilderProps<
        *   { name: 'notBetween', label: 'not between' },
        * ]
        */
-      operators?: FlexibleOptionList<O>;
+      operators?: FlexibleOptionListProp<O>;
       /**
        * List of valid {@link FullCombinator}s.
        *
@@ -842,7 +882,7 @@ export type QueryBuilderProps<
        *   {name: 'or', label: 'OR'},
        * ]
        */
-      combinators?: FlexibleOptionList<C>;
+      combinators?: FlexibleOptionListProp<C>;
       /**
        * Default properties applied to all objects in the `fields` prop. Properties on
        * individual field definitions will override these.
@@ -875,7 +915,7 @@ export type QueryBuilderProps<
       /**
        * Returns the default `value` for new rules.
        */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       getDefaultValue?(rule: R, misc: { fieldData: F }): any;
       /**
        * This function should return the list of allowed {@link FullOperator}s
@@ -885,7 +925,7 @@ export type QueryBuilderProps<
       getOperators?(
         field: GetOptionIdentifierType<F>,
         misc: { fieldData: F }
-      ): FlexibleOptionList<FullOperator> | null;
+      ): FlexibleOptionListProp<FullOperator> | null;
       /**
        * This function should return the type of {@link ValueEditor} (see
        * {@link ValueEditorType}) for the given field `name` and operator `name`.
@@ -918,7 +958,7 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
         misc: { fieldData: F }
-      ): ValueSources;
+      ): ValueSources | ValueSourceFlexibleOptions;
       /**
        * This function should return the `type` of `<input />`
        * for the given field `name` and operator `name` (only applicable when
@@ -940,7 +980,27 @@ export type QueryBuilderProps<
         field: GetOptionIdentifierType<F>,
         operator: GetOptionIdentifierType<O>,
         misc: { fieldData: F }
-      ): FlexibleOptionList<Option>;
+      ): FlexibleOptionListProp<Option>;
+      /**
+       * This function should return the list of valid {@link MatchMode}s or
+       * {@link MatchConfig}s for a given field `name`. The return value must
+       * be an array that includes at least one valid {@link MatchMode}, or `true`
+       * to indicate that all match modes are allowed. Any other return value
+       * will be ignored (no match modes will be allowed).
+       */
+      getMatchModes?(
+        field: GetOptionIdentifierType<F>,
+        misc: { fieldData: F }
+      ): boolean | MatchMode[] | FlexibleOption<MatchMode>[];
+      /**
+       * This function should return any props that a subquery (see {@link MatchMode})
+       * should override from the props provided to this query builder. Note that certain
+       * props like `query`, `onQueryChange`, and `enableDragAndDrop` will be ignored.
+       */
+      getSubQueryBuilderProps?(
+        field: GetOptionIdentifierType<F>,
+        misc: { fieldData: F }
+      ): QueryBuilderProps<GenericizeRuleGroupType<RG>, FullOption, FullOption, FullOption>;
       /**
        * The return value of this function will be used to apply classnames to the
        * outer `<div>` of the given {@link Rule}.
@@ -956,14 +1016,14 @@ export type QueryBuilderProps<
        * the rule and return the new object, return `true` to allow the addition to proceed as normal,
        * or return `false` to cancel the addition of the rule.
        */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       onAddRule?(rule: R, parentPath: Path, query: RG, context?: any): RuleType | boolean;
       /**
        * This callback is invoked before a new group is added. The function should either manipulate
        * the group and return the new object, return `true` to allow the addition to proceed as normal,
        * or return `false` to cancel the addition of the group.
        */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       onAddGroup?(ruleGroup: RG, parentPath: Path, query: RG, context?: any): RG | boolean;
       /**
        * This callback is invoked before a rule is moved or shifted. The function should return
@@ -988,7 +1048,7 @@ export type QueryBuilderProps<
         nextQuery: RG,
         /** The options passed to {@link move} to generate `nextQuery`. */
         options: MoveOptions,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         context?: any
       ): RG | boolean;
       /**
@@ -1014,7 +1074,7 @@ export type QueryBuilderProps<
         nextQuery: RG,
         /** The options passed to {@link move} to generate `nextQuery`. */
         options: MoveOptions,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         context?: any
       ): RG | boolean;
       /**
@@ -1040,7 +1100,7 @@ export type QueryBuilderProps<
         nextQuery: RG,
         /** The options passed to {@link group} to generate `nextQuery`. */
         options: GroupOptions,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         context?: any
       ): RG | boolean;
       /**
@@ -1066,14 +1126,14 @@ export type QueryBuilderProps<
         nextQuery: RG,
         /** The options passed to {@link group} to generate `nextQuery`. */
         options: GroupOptions,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         context?: any
       ): RG | boolean;
       /**
        * This callback is invoked before a rule or group is removed. The function should return
        * `true` if the rule or group should be removed or `false` if it should not be removed.
        */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       onRemove?(ruleOrGroup: R | RG, path: Path, query: RG, context?: any): boolean;
       /**
        * This callback is invoked anytime the query state is updated.
@@ -1084,7 +1144,7 @@ export type QueryBuilderProps<
        *
        * @default console.log
        */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       onLog?(obj: any): void;
       /**
        * Show group combinator selectors in the body of the group, between each child rule/group,
@@ -1227,7 +1287,7 @@ export type QueryBuilderProps<
       /**
        * Container for custom props that are passed to all components.
        */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       context?: any;
     }
   : never;

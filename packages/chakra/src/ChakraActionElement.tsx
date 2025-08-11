@@ -1,14 +1,12 @@
 import { Button } from '@chakra-ui/react';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 
 /**
  * @group Props
  */
-export interface ChakraActionProps
-  extends ActionWithRulesProps,
-    ComponentPropsWithoutRef<typeof Button> {}
+export interface ChakraActionProps extends ActionProps, ComponentPropsWithoutRef<typeof Button> {}
 
 /**
  * @group Components

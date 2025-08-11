@@ -112,6 +112,158 @@ export const queryWithValueSourceField: DefaultRuleGroupType = {
   ],
 };
 
+export const queryWithMatchModes: DefaultRuleGroupType = {
+  combinator: 'and',
+  rules: [
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'all' },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: 'fv', operator: 'contains', value: 'S' }] },
+      match: { mode: 'all' },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'none' },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'some' },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atLeast', threshold: 1 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atMost', threshold: 0 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atLeast', threshold: 2 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: 'fv', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atLeast', threshold: 2 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atLeast', threshold: 0.5 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atMost', threshold: 2 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atMost', threshold: 0.5 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'exactly', threshold: 2 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'exactly', threshold: 0.5 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'exactly', threshold: -1 },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'exactly', threshold: -1 },
+    },
+    /* oxlint-disable typescript/no-explicit-any */
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'exactly', threshold: '-1' as any },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atMost' as any },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'atLeast' as any },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
+      match: { mode: 'exactly' as any },
+    },
+    /* oxlint-enable typescript/no-explicit-any */
+    {
+      field: 'fs',
+      operator: '=',
+      value: {
+        combinator: 'and',
+        rules: [
+          { field: '', operator: 'contains', value: 'S' },
+          { field: '', operator: 'contains', value: 'S' },
+        ],
+      },
+      match: { mode: 'all' },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: { field: '', operator: 'contains', value: 'S' },
+      match: { mode: 'all' },
+    },
+    {
+      field: 'fs',
+      operator: '=',
+      value: {
+        combinator: 'and',
+        rules: [
+          { field: '', operator: 'contains', value: 'S' },
+          { field: '', operator: 'contains', value: 'S' },
+        ],
+      },
+      match: { mode: 'atLeast', threshold: 2 },
+    },
+  ],
+};
+
 export const testQueryDQ: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'f1', operator: '=', value: `Te"st` }],
@@ -298,7 +450,7 @@ export const queryAllOperatorsRandomCase: RuleGroupType = transformQuery(queryAl
     defaultOperators.map(o => [
       o.name,
       // Randomize case
-      [...o.name].map(c => (Math.random() < 0.5 ? c.toUpperCase() : c.toLowerCase())).join(''),
+      [...o.name].map(c => (Math.random() < 0.5 ? c.toUpperCase() : c)).join(''),
     ])
   ),
 });

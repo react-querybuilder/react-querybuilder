@@ -3,8 +3,9 @@ import type {
   DefaultCombinatorName,
   DefaultCombinatorNameExtended,
   DefaultOperatorName,
-  FullOption,
+  MatchMode,
   Path,
+  StringUnionToFullOptionArray,
 } from './types/index.noReact';
 
 // DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
@@ -84,8 +85,34 @@ export const defaultPlaceholderValueGroupLabel: typeof defaultPlaceholderLabel =
  */
 export const defaultJoinChar = ',';
 
-type StringUnionToFullOptionArray<Op extends string> = Op extends unknown ? FullOption<Op> : never;
-export type DefaultOperators = StringUnionToFullOptionArray<DefaultOperatorName>[];
+export type DefaultOperators = StringUnionToFullOptionArray<DefaultOperatorName>;
+
+export const defaultOperatorLabelMap: Record<DefaultOperatorName, string> = {
+  '=': '=',
+  '!=': '!=',
+  '<': '<',
+  '>': '>',
+  '<=': '<=',
+  '>=': '>=',
+  contains: 'contains',
+  beginsWith: 'begins with',
+  endsWith: 'ends with',
+  doesNotContain: 'does not contain',
+  doesNotBeginWith: 'does not begin with',
+  doesNotEndWith: 'does not end with',
+  null: 'is null',
+  notNull: 'is not null',
+  in: 'in',
+  notIn: 'not in',
+  between: 'between',
+  notBetween: 'not between',
+};
+
+export const defaultCombinatorLabelMap: Record<DefaultCombinatorNameExtended, string> = {
+  and: 'AND',
+  or: 'OR',
+  xor: 'XOR',
+};
 
 /**
  * Default operator list.
@@ -141,7 +168,7 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   null: 'notNull',
 } satisfies Record<DefaultOperatorName, DefaultOperatorName>;
 
-export type DefaultCombinators = StringUnionToFullOptionArray<DefaultCombinatorName>[];
+export type DefaultCombinators = StringUnionToFullOptionArray<DefaultCombinatorName>;
 
 /**
  * Default combinator list.
@@ -156,7 +183,7 @@ export const defaultCombinators: DefaultCombinators = [
 // #endregion
 
 export type DefaultCombinatorsExtended =
-  StringUnionToFullOptionArray<DefaultCombinatorNameExtended>[];
+  StringUnionToFullOptionArray<DefaultCombinatorNameExtended>;
 
 /**
  * Default combinator list, with `XOR` added.
@@ -167,6 +194,24 @@ export const defaultCombinatorsExtended: DefaultCombinatorsExtended = [
   ...defaultCombinators,
   { name: 'xor', value: 'xor', label: 'XOR' } as const,
 ];
+
+export type DefaultMatchModes = StringUnionToFullOptionArray<MatchMode>;
+
+/**
+ * Default match modes.
+ *
+ * @group Defaults
+ */
+// #region docs-matchmodes
+export const defaultMatchModes: DefaultMatchModes = [
+  { name: 'all', value: 'all', label: 'all' },
+  { name: 'some', value: 'some', label: 'some' },
+  { name: 'none', value: 'none', label: 'none' },
+  { name: 'atLeast', value: 'atLeast', label: 'at least' },
+  { name: 'atMost', value: 'atMost', label: 'at most' },
+  { name: 'exactly', value: 'exactly', label: 'exactly' },
+];
+// #endregion
 
 /**
  * Standard classnames applied to each component.
@@ -188,6 +233,8 @@ export const standardClassnames = {
   notToggle: 'ruleGroup-notToggle',
   rule: 'rule',
   fields: 'rule-fields',
+  matchMode: 'rule-matchMode',
+  matchThreshold: 'rule-matchThreshold',
   operators: 'rule-operators',
   value: 'rule-value',
   removeRule: 'rule-remove',
@@ -206,6 +253,8 @@ export const standardClassnames = {
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
+  justified: 'queryBuilder-justified',
+  hasSubQuery: 'rule-hasSubQuery',
 } as const;
 // #endregion
 
@@ -228,6 +277,8 @@ export const defaultControlClassnames: Classnames = {
   notToggle: '',
   rule: '',
   fields: '',
+  matchMode: '',
+  matchThreshold: '',
   operators: '',
   value: '',
   removeRule: '',
@@ -248,6 +299,7 @@ export const defaultControlClassnames: Classnames = {
   disabled: '',
   valueListItem: '',
   branches: '',
+  hasSubQuery: '',
 } satisfies Classnames;
 
 /**
@@ -286,6 +338,7 @@ export const TestID = {
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',
   valueSourceSelector: 'value-source-selector',
+  matchModeEditor: 'match-mode-editor',
 } as const;
 
 export const LogType = {

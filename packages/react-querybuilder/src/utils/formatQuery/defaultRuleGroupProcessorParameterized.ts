@@ -33,9 +33,9 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
   } = options;
 
   const parameterized = format === 'parameterized';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const params: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const paramsNamed: Record<string, any> = {};
   const fieldParams: Map<string, Set<string>> = new Map();
 

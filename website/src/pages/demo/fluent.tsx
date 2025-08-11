@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-fluent.css';
+
+const loading = <Loading />;
 
 function ReactQueryBuilderDemo_FluentBrowser() {
   const { colorMode } = useColorMode();
@@ -45,9 +47,7 @@ function ReactQueryBuilderDemo_FluentBrowser() {
 export default function ReactQueryBuilderDemo_Fluent() {
   return (
     <Layout description="React Query Builder Fluent Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_FluentBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_FluentBrowser />}</BrowserOnly>
     </Layout>
   );
 }

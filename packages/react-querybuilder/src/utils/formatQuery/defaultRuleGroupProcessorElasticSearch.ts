@@ -26,7 +26,7 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
 
   const query = convertFromIC(ruleGroup);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return false;

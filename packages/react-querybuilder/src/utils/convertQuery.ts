@@ -7,10 +7,11 @@ import type {
   RuleType,
 } from '../types/index.noReact';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
+import { lc } from './misc';
 
 const combinatorLevels = ['or', 'xor', 'and'] as const;
 
-const isSameString = (a: unknown, b: string) => typeof a === 'string' && a.toLowerCase() === b;
+const isSameString = (a: unknown, b: string) => lc(a) === b;
 
 const generateRuleGroupICWithConsistentCombinators = (
   rg: RuleGroupTypeIC,
@@ -18,7 +19,7 @@ const generateRuleGroupICWithConsistentCombinators = (
 ): RuleGroupTypeIC => {
   const baseCombinator = combinatorLevels[baseCombinatorLevel];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   if (!rg.rules.includes(baseCombinator as any)) {
     // No instances of this combinator, so group based on the next
     // combinator level if at least two levels remain
@@ -38,7 +39,7 @@ const generateRuleGroupICWithConsistentCombinators = (
       }
 
       const nextBaseCombinatorIndex = draft.rules.findIndex(
-        (r, i) => i > cursor && typeof r === 'string' && r.toLowerCase() === baseCombinator
+        (r, i) => i > cursor && typeof r === 'string' && lc(r) === baseCombinator
       );
 
       if (nextBaseCombinatorIndex === -1) {
@@ -47,7 +48,7 @@ const generateRuleGroupICWithConsistentCombinators = (
           cursor,
           draft.rules.length,
           generateRuleGroupICWithConsistentCombinators(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // oxlint-disable-next-line typescript/no-explicit-any
             { rules: draft.rules.slice(cursor) as any },
             baseCombinatorLevel + 1
           )
@@ -59,7 +60,7 @@ const generateRuleGroupICWithConsistentCombinators = (
           cursor,
           nextBaseCombinatorIndex - cursor,
           generateRuleGroupICWithConsistentCombinators(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // oxlint-disable-next-line typescript/no-explicit-any
             { rules: draft.rules.slice(cursor, nextBaseCombinatorIndex) as any },
             baseCombinatorLevel + 1
           )

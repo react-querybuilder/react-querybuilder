@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 
 // TODO: This may be unnecessary. Find out if there's a way to allow
 // `data-${string}` index keys without breaking other type contraints.
@@ -13,7 +13,7 @@ type RemoveDataIndexKeys<T> = {
  * @group Props
  */
 export interface AntDActionProps
-  extends ActionWithRulesProps,
+  extends ActionProps,
     RemoveDataIndexKeys<ComponentPropsWithoutRef<typeof Button>> {}
 
 /**
@@ -28,7 +28,6 @@ export const AntDActionElement = ({
   disabledTranslation,
   // Props that should not be in extraProps
   testID: _testID,
-  rules: _rules,
   level: _level,
   path: _path,
   context: _context,

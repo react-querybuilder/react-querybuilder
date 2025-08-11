@@ -14,6 +14,7 @@ import {
   queryForNumberParsing,
   queryForPreserveValueOrder,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
   testQueryDQ,
 } from '../formatQueryTestUtils';
@@ -169,4 +170,36 @@ it('preserveValueOrder', () => {
       preserveValueOrder: true,
     })
   ).toBe(`(f1 >= 12 and f1 <= 14) and (f2 >= 14 and f2 <= 12)`);
+});
+
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should NOT parse numbers
+  // TODO: JSONata always did this correctly?
+  expect(formatQuery(betweenQuery, { format: 'jsonata' })).toBe(
+    '(age >= "22" and age <= "34") and $not(score >= "10" and score <= "20")'
+  );
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'jsonata', parseNumbers: true })).toBe(
+    '(age >= 22 and age <= 34) and $not(score >= 10 and score <= 20)'
+  );
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'jsonata', parseNumbers: false })).toBe(
+    '(age >= "22" and age <= "34") and $not(score >= "10" and score <= "20")'
+  );
+});
+
+it('handles match modes', () => {
+  expect(formatQuery(queryWithMatchModes, 'jsonata')).toBe(
+    `$count($filter(fs, function($v) {$contains($v, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v.fv, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v, "S")})) = 0 and $count($filter(fs, function($v) {$contains($v, "S")})) > 0 and $count($filter(fs, function($v) {$contains($v, "S")})) > 0 and $count($filter(fs, function($v) {$contains($v, "S")})) = 0 and $count($filter(fs, function($v) {$contains($v, "S")})) >= 2 and $count($filter(fs, function($v) {$contains($v.fv, "S")})) >= 2 and $count($filter(fs, function($v) {$contains($v, "S")})) >= ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S")})) <= 2 and $count($filter(fs, function($v) {$contains($v, "S")})) <= ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S")})) = 2 and $count($filter(fs, function($v) {$contains($v, "S")})) = ($count(fs) * 0.5) and $count($filter(fs, function($v) {$contains($v, "S") and $contains($v, "S")})) = $count(fs) and $count($filter(fs, function($v) {$contains($v, "S") and $contains($v, "S")})) >= 2`
+  );
 });

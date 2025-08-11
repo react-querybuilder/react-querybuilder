@@ -33,7 +33,7 @@ When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](
 
 `OptionList<Field> | Record<string, Field>`
 
-The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](#fieldselector) will be sorted alphabetically by the `label` property.)
+The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](./querybuilder-controlelements#fieldselector) will be sorted alphabetically by the `label` property.)
 
 :::tip
 
@@ -131,652 +131,50 @@ function App() {
 }
 ```
 
-| Property        | Classes are applied to...                                                              |
-| --------------- | -------------------------------------------------------------------------------------- |
-| `queryBuilder`  | ...the outermost <code>&lt;div&gt;</code> element                                      |
-| `ruleGroup`     | ...each <code>&lt;div&gt;</code> wrapping a group                                      |
-| `header`        | ...each <code>&lt;div&gt;</code> wrapping a group's header controls                    |
-| `body`          | ...each <code>&lt;div&gt;</code> wrapping a group's body elements (child rules/groups) |
-| `combinators`   | ...each <code>&lt;select&gt;</code> control for combinators                            |
-| `addRule`       | ...each <code>&lt;button&gt;</code> that adds a rule                                   |
-| `addGroup`      | ...each <code>&lt;button&gt;</code> that adds a group                                  |
-| `cloneRule`     | ...each <code>&lt;button&gt;</code> that clones a rule                                 |
-| `cloneGroup`    | ...each <code>&lt;button&gt;</code> that clones a group                                |
-| `removeGroup`   | ...each <code>&lt;button&gt;</code> that removes a group                               |
-| `lockRule`      | ...each <code>&lt;button&gt;</code> that locks/disables a rule                         |
-| `lockGroup`     | ...each <code>&lt;button&gt;</code> that locks/disables a group                        |
-| `notToggle`     | ...each <code>&lt;label&gt;</code> on a "not" (aka "inversion") toggle                 |
-| `rule`          | ...each <code>&lt;div&gt;</code> containing a rule                                     |
-| `fields`        | ...each <code>&lt;select&gt;</code> control for selecting a field                      |
-| `operators`     | ...each <code>&lt;select&gt;</code> control for selecting an operator                  |
-| `value`         | ...each <code>&lt;input&gt;</code> for entering a value                                |
-| `removeRule`    | ...each <code>&lt;button&gt;</code> that removes a rule                                |
-| `dragHandle`    | ...each <code>&lt;span&gt;</code> acting as a drag handle                              |
-| `valueSource`   | ...each <code>&lt;select&gt;</code> control for selecting a value source               |
-| `actionElement` | ...each <code>&lt;button&gt;</code> control                                            |
-| `valueSelector` | ...each <code>&lt;select&gt;</code> control                                            |
+| Property         | Class(es) applied to...                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| `queryBuilder`   | the outermost <code>&lt;div&gt;</code> element                                             |
+| `ruleGroup`      | each <code>&lt;div&gt;</code> wrapping a group                                             |
+| `header`         | each <code>&lt;div&gt;</code> wrapping a group's header controls                           |
+| `body`           | each <code>&lt;div&gt;</code> wrapping a group's body elements (child rules/groups)        |
+| `combinators`    | each <code>&lt;select&gt;</code> control for combinators                                   |
+| `addRule`        | each <code>&lt;button&gt;</code> that adds a rule                                          |
+| `addGroup`       | each <code>&lt;button&gt;</code> that adds a group                                         |
+| `cloneRule`      | each <code>&lt;button&gt;</code> that clones a rule                                        |
+| `cloneGroup`     | each <code>&lt;button&gt;</code> that clones a group                                       |
+| `removeGroup`    | each <code>&lt;button&gt;</code> that removes a group                                      |
+| `lockRule`       | each <code>&lt;button&gt;</code> that locks/disables a rule                                |
+| `lockGroup`      | each <code>&lt;button&gt;</code> that locks/disables a group                               |
+| `notToggle`      | each <code>&lt;label&gt;</code> on a "not" (aka "inversion") toggle                        |
+| `rule`           | each <code>&lt;div&gt;</code> containing a rule                                            |
+| `fields`         | each <code>&lt;select&gt;</code> control for selecting a field                             |
+| `matchMode`      | each <code>&lt;select&gt;</code> control for match modes                                   |
+| `matchThreshold` | each <code>&lt;input&gt;</code> for match thresholds                                       |
+| `operators`      | each <code>&lt;select&gt;</code> control for selecting an operator                         |
+| `value`          | each <code>&lt;input&gt;</code> for entering a value                                       |
+| `removeRule`     | each <code>&lt;button&gt;</code> that removes a rule                                       |
+| `shiftActions`   | each <code>&lt;span&gt;</code> wrapping the up/down controls for shifting rules/groups     |
+| `dragHandle`     | each <code>&lt;span&gt;</code> acting as a drag handle                                     |
+| `valueSource`    | each <code>&lt;select&gt;</code> control for selecting a value source                      |
+| `actionElement`  | each <code>&lt;button&gt;</code> control                                                   |
+| `valueSelector`  | each <code>&lt;select&gt;</code> control                                                   |
+| `betweenRules`   | inline combinator elements                                                                 |
+| `valid`          | valid rules and groups                                                                     |
+| `invalid`        | invalid rules and groups                                                                   |
+| `dndDragging`    | rules and groups while being dragged                                                       |
+| `dndOver`        | rules and groups hovered over by a dragged element                                         |
+| `dndCopy`        | rules and groups hovered over by a dragged element when the drop effect is "copy"          |
+| `dndGroup`       | rules and groups hovered over by a dragged element when the <kbd>Ctrl</kbd> key is pressed |
+| `disabled`       | disabled elements                                                                          |
+| `valueListItem`  | each element in a series of value editors                                                  |
+| `branches`       | (not applied, but see [Styling overview](../styling/overview))                             |
+| `hasSubQuery`    | rules that render a subquery                                                               |
 
 ### `controlElements`
 
 `Partial<Controls>`
 
-This object allows you to override the default components.
-
-#### Usage example
-
-```tsx
-function App() {
-  return (
-    <QueryBuilder controlElements={{ valueEditor: CustomValueEditor }}>
-  )
-}
-```
-
-The following control overrides are supported per the `Controls` interface. Setting a control override to `null` will hide the element by rendering it as `() => null`.
-
-| Property                                              | Type                                                                                                                     |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| [`actionElement`](#actionelement)                     | <code>React.ComponentType&lt;ActionProps&gt;</code>                                                                      |
-| [`addGroupAction`](#addgroupaction)                   | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
-| [`addRuleAction`](#addruleaction)                     | <code>React.ComponentType&lt;ActionWithRulesAndAddersProps&gt; \| null</code>                                            |
-| [`cloneGroupAction`](#clonegroupaction)               | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
-| [`cloneRuleAction`](#cloneruleaction)                 | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
-| [`combinatorSelector`](#combinatorselector)           | <code>React.ComponentType&lt;CombinatorSelectorProps&gt; \| null</code>                                                  |
-| [`dragHandle`](#draghandle)                           | <code>React.ForwardRefExoticComponent&lt;DragHandleProps & React.RefAttributes&lt;HTMLSpanElement&gt;&gt; \| null</code> |
-| [`fieldSelector`](#fieldselector)                     | <code>React.ComponentType&lt;FieldSelectorProps&gt; \| null</code>                                                       |
-| [`inlineCombinator`](#inlinecombinator)               | <code>React.ComponentType&lt;InlineCombinatorProps&gt; \| null</code>                                                    |
-| [`lockGroupAction`](#lockgroupaction)                 | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
-| [`lockRuleAction`](#lockruleaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
-| [`notToggle`](#nottoggle)                             | <code>React.ComponentType&lt;NotToggleProps&gt; \| null</code>                                                           |
-| [`operatorSelector`](#operatorselector)               | <code>React.ComponentType&lt;OperatorSelectorProps&gt; \| null</code>                                                    |
-| [`removeGroupAction`](#removegroupaction)             | <code>React.ComponentType&lt;ActionWithRulesProps&gt; \| null</code>                                                     |
-| [`removeRuleAction`](#removeruleaction)               | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
-| [`rule`](#rule)                                       | <code>React.ComponentType&lt;RuleProps&gt;</code>                                                                        |
-| [`ruleGroup`](#rulegroup)                             | <code>React.ComponentType&lt;RuleGroupProps&gt;</code>                                                                   |
-| [`ruleGroupBodyElements`](#rulegroupbodyelements)     | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
-| [`ruleGroupHeaderElements`](#rulegroupheaderelements) | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
-| [`shiftActions`](#shiftactions)                       | <code>React.ComponentType&lt;ShiftActionsProps&gt; \| null</code>                                                        |
-| [`valueEditor`](#valueeditor)                         | <code>React.ComponentType&lt;ValueEditorProps&gt; \| null</code>                                                         |
-| [`valueSelector`](#valueselector)                     | <code>React.ComponentType&lt;ValueSelectorProps&gt;</code>                                                               |
-| [`valueSourceSelector`](#valuesourceselector)         | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt; \| null</code>                                                 |
-
-#### `actionElement`
-
-The component for all button-type controls. Default is [`ActionElement`](./actionelement). Receives props per the `ActionProps`, `ActionWithRulesProps`, or `ActionWithRulesAndAddersProps` interface depending on the control, which can be any of the following:
-
-- [`addGroupAction`](#addgroupaction)
-- [`addRuleAction`](#addruleaction)
-- [`cloneGroupAction`](#clonegroupaction)
-- [`cloneRuleAction`](#cloneruleaction)
-- [`lockGroupAction`](#lockgroupaction)
-- [`lockRuleAction`](#lockruleaction)
-- [`removeGroupAction`](#removegroupaction)
-- [`removeRuleAction`](#removeruleaction)
-
-For example, this:
-
-```tsx
-<QueryBuilder controlElements={{ actionElement: MyAwesomeButton }} />
-```
-
-...is equivalent to this:
-
-```tsx
-<QueryBuilder
-  controlElements={{
-    addGroupAction: MyAwesomeButton
-    addRuleAction: MyAwesomeButton
-    cloneGroupAction: MyAwesomeButton
-    cloneRuleAction: MyAwesomeButton
-    lockGroupAction: MyAwesomeButton
-    lockRuleAction: MyAwesomeButton
-    removeGroupAction: MyAwesomeButton
-    removeRuleAction: MyAwesomeButton
-  }}
-/>
-```
-
-#### `addGroupAction`
-
-Adds a sub-group to the current group. Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `addGroupAction`</summary>
-
-Per the `ActionWithRulesAndAddersProps` interface:
-
-| Prop            | Type                                           | Description                                                  |
-| --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `ReactNode`                                    | `translations.addGroup.label`, e.g. "+ Group"                |
-| `title`         | `string`                                       | `translations.addGroup.title`, e.g. "Add group"              |
-| `className`     | `string`                                       | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent, context?: any) => void` | Adds a new sub-group to this group                           |
-| `rules`         | `RuleOrGroupArray`                             | The `rules` array for this group                             |
-| `ruleOrGroup`   | `RuleGroupTypeAny`                             | This group                                                   |
-| `level`         | `number`                                       | The `level` of this group                                    |
-| `context`       | `any`                                          | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this group                              |
-| `disabled`      | `boolean`                                      | Whether this group is disabled/locked                        |
-| `path`          | `Path`                                         | [Path](../tips/path) of this group                           |
-| `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
-
-</details>
-
-#### `addRuleAction`
-
-Adds a rule to the current group. Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `addRuleAction`</summary>
-
-Per the `ActionWithRulesAndAddersProps` interface:
-
-| Prop            | Type                                           | Description                                                  |
-| --------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `ReactNode`                                    | `translations.addRule.label`, e.g. "+ Rule"                  |
-| `title`         | `string`                                       | `translations.addRule.title`, e.g. "Add rule"                |
-| `className`     | `string`                                       | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent, context?: any) => void` | Adds a new rule to this rule                                 |
-| `rules`         | `RuleOrGroupArray`                             | The `rules` array for this rule                              |
-| `ruleOrGroup`   | `RuleGroupTypeAny`                             | This rule                                                    |
-| `level`         | `number`                                       | The `level` of this rule                                     |
-| `context`       | `any`                                          | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code>       | Validation result of this rule                               |
-| `disabled`      | `boolean`                                      | Whether this rule is disabled/locked                         |
-| `path`          | `Path`                                         | [Path](../tips/path) of this rule                            |
-| `schema`        | `Schema`                                       | Query [schema](../typescript#miscellaneous)                  |
-
-</details>
-
-#### `cloneGroupAction`
-
-Clones the current group. Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `cloneGroupAction`</summary>
-
-Per the `ActionWithRulesProps` interface:
-
-| Prop            | Type                                     | Description                                                  |
-| --------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `ReactNode`                              | `translations.cloneRuleGroup.label`, e.g. "⧉"                |
-| `title`         | `string`                                 | `translations.cloneRuleGroup.title`, e.g. "Clone group"      |
-| `className`     | `string`                                 | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent) => void`          | Clones this group                                            |
-| `rules`         | `RuleOrGroupArray`                       | The `rules` array for this group                             |
-| `ruleOrGroup`   | `RuleGroupTypeAny`                       | This group                                                   |
-| `level`         | `number`                                 | The `level` of this group                                    |
-| `context`       | `any`                                    | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
-| `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`          | `Path`                                   | [Path](../tips/path) of this group                           |
-| `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
-
-</details>
-
-#### `cloneRuleAction`
-
-Clones the current rule. Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `cloneRuleAction`</summary>
-
-Per the `ActionProps` interface:
-
-| Prop            | Type                                     | Description                                                  |
-| --------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `string`                                 | `translations.cloneRule.label`, e.g. "⧉"                     |
-| `title`         | `string`                                 | `translations.cloneRule.title`, e.g. "Clone rule"            |
-| `className`     | `string`                                 | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent) => void`          | Clones the rule                                              |
-| `ruleOrGroup`   | `RuleType`                               | This rule                                                    |
-| `level`         | `number`                                 | The `level` of this rule                                     |
-| `context`       | `any`                                    | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                               |
-| `disabled`      | `boolean`                                | Whether this rule is disabled/locked                         |
-| `path`          | `Path`                                   | [Path](../tips/path) of this rule                            |
-| `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
-
-</details>
-
-#### `combinatorSelector`
-
-Selects the `combinator` property for the current group, or the current independent combinator value. Default is [`ValueSelector`](./valueselector).
-
-<details>
-<summary>Props for `combinatorSelector`</summary>
-
-Per the `CombinatorSelectorProps` interface:
-
-| Prop             | Type                                     | Description                                                          |
-| ---------------- | ---------------------------------------- | -------------------------------------------------------------------- |
-| `options`        | `OptionList`                             | Same as `combinators` prop passed into `QueryBuilder`                |
-| `value`          | `string`                                 | Selected `combinator` from the existing query representation, if any |
-| `className`      | `string`                                 | CSS `classNames` to be applied                                       |
-| `handleOnChange` | `(value: any) => void`                   | Updates the group's `combinator`                                     |
-| `rules`          | `RuleOrGroupArray`                       | The `rules` array for this group                                     |
-| `title`          | `string`                                 | `translations.combinators.title`, e.g. "Combinators"                 |
-| `level`          | `number`                                 | The `level` of this group                                            |
-| `context`        | `any`                                    | Container for custom props that are passed to all components         |
-| `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this group                                      |
-| `disabled`       | `boolean`                                | Whether this group is disabled/locked                                |
-| `path`           | `Path`                                   | [Path](../tips/path) of this group                                   |
-| `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                          |
-
-</details>
-
-#### `dragHandle`
-
-Provides a draggable handle for reordering rules and groups. Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enabled](#enabledraganddrop). Note that this component must be based on `React.forwardRef`.
-
-<details>
-<summary>Props for `dragHandle`</summary>
-
-Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
-
-| Prop          | Type                                      | Description                                                  |
-| ------------- | ----------------------------------------- | ------------------------------------------------------------ |
-| `label`       | `ReactNode`                               | `translations.dragHandle.label`, e.g. "⁞⁞"                   |
-| `title`       | `string`                                  | `translations.dragHandle.title`, e.g. "Drag handle"          |
-| `className`   | `string`                                  | CSS `classNames` to be applied                               |
-| `level`       | `number`                                  | The `level` of this rule/group                               |
-| `context`     | `any`                                     | Container for custom props that are passed to all components |
-| `validation`  | <code>boolean \| ValidationResult</code>  | Validation result of this rule/group                         |
-| `disabled`    | `boolean`                                 | Whether this rule/group is disabled/locked                   |
-| `path`        | `Path`                                    | [Path](../tips/path) of this rule/group                      |
-| `schema`      | `Schema`                                  | Query [schema](../typescript#miscellaneous)                  |
-| `ruleOrGroup` | <code>RuleGroupTypeAny \| RuleType</code> | This group or rule, depending on the parent component        |
-
-</details>
-
-#### `fieldSelector`
-
-Selects the `field` property for the current rule. Default is [`ValueSelector`](./valueselector).
-
-<details>
-<summary>Props for `fieldSelector`</summary>
-
-Per the `FieldSelectorProps` interface:
-
-| Prop             | Type                                     | Description                                                        |
-| ---------------- | ---------------------------------------- | ------------------------------------------------------------------ |
-| `options`        | <code>OptionList&lt;Field&gt;</code>     | Same as `fields` prop passed into `QueryBuilder`                   |
-| `value`          | `string`                                 | Selected `field` from the existing query representation, if any    |
-| `title`          | `string`                                 | `translations.fields.title`, e.g. "Fields"                         |
-| `operator`       | `string`                                 | Selected `operator` from the existing query representation, if any |
-| `className`      | `string`                                 | CSS `classNames` to be applied                                     |
-| `handleOnChange` | `(value: any) => void`                   | Updates the rule's field                                           |
-| `level`          | `number`                                 | The `level` of this rule                                           |
-| `context`        | `any`                                    | Container for custom props that are passed to all components       |
-| `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                     |
-| `disabled`       | `boolean`                                | Whether this rule is disabled/locked                               |
-| `path`           | `Path`                                   | [Path](../tips/path) of this rule                                  |
-| `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                        |
-| `rule`           | `RuleType`                               | This rule                                                          |
-
-</details>
-
-#### `inlineCombinator`
-
-A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Default is [`InlineCombinator`](./inlinecombinator).
-
-<details>
-<summary>Props for `inlineCombinator`</summary>
-
-Per the `InlineCombinatorProps` interface, which extends `CombinatorSelectorProps`:
-
-| Prop        | Type                                       | Description                                |
-| ----------- | ------------------------------------------ | ------------------------------------------ |
-| `component` | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component |
-
-</details>
-
-#### `lockGroupAction`
-
-Locks the current group (sets the `disabled` property to `true`). Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `lockGroupAction`</summary>
-
-Per the `ActionWithRulesProps` interface:
-
-| Prop                  | Type                                     | Description                                                                                                            |
-| --------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `label`               | `ReactNode`                              | `translations.lockGroup.label` or `translations.lockGroupDisabled.label`, e.g. "🔓" when unlocked and "🔒" when locked |
-| `title`               | `string`                                 | `translations.lockGroup.title` or `translations.lockGroupDisabled.title`, e.g. "Lock group" or "Unlock group"          |
-| `className`           | `string`                                 | CSS `classNames` to be applied                                                                                         |
-| `handleOnClick`       | `(e: React.MouseEvent) => void`          | Locks the group                                                                                                        |
-| `rules`               | `RuleOrGroupArray`                       | The rules present for this group                                                                                       |
-| `ruleOrGroup`         | `RuleGroupTypeAny`                       | This group                                                                                                             |
-| `level`               | `number`                                 | The `level` of this group                                                                                              |
-| `context`             | `any`                                    | Container for custom props that are passed to all components                                                           |
-| `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this group                                                                                        |
-| `disabled`            | `boolean`                                | Whether this group is disabled/locked                                                                                  |
-| `disabledTranslation` | `string`                                 | `translations.lockGroupDisabled` if parent group is not disabled, otherwise `undefined`                                |
-| `path`                | `Path`                                   | [Path](../tips/path) of this group                                                                                     |
-| `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                            |
-
-</details>
-
-#### `lockRuleAction`
-
-Locks the current rule (sets the `disabled` property to `true`). Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `lockRuleAction`</summary>
-
-Per the `ActionWithRulesProps` interface:
-
-| Prop                  | Type                                     | Description                                                                                                          |
-| --------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `label`               | `ReactNode`                              | `translations.lockRule.label` or `translations.lockRuleDisabled.label`, e.g. "🔓" when unlocked and "🔒" when locked |
-| `title`               | `string`                                 | `translations.lockRule.title` or `translations.lockRuleDisabled.title`, e.g. "Lock rule" or "Unlock rule"            |
-| `className`           | `string`                                 | CSS `classNames` to be applied                                                                                       |
-| `handleOnClick`       | `(e: React.MouseEvent) => void`          | Locks the rule                                                                                                       |
-| `ruleOrGroup`         | `RuleType`                               | This rule                                                                                                            |
-| `level`               | `number`                                 | The `level` of this rule                                                                                             |
-| `context`             | `any`                                    | Container for custom props that are passed to all components                                                         |
-| `validation`          | <code>boolean \| ValidationResult</code> | Validation result of this rule                                                                                       |
-| `disabled`            | `boolean`                                | Whether this rule is disabled/locked                                                                                 |
-| `disabledTranslation` | `string`                                 | `translations.lockRuleDisabled` if parent group is not disabled, otherwise `undefined`                               |
-| `path`                | `Path`                                   | [Path](../tips/path) of this rule                                                                                    |
-| `schema`              | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                          |
-
-</details>
-
-#### `notToggle`
-
-Toggles the `not` property of the current group between `true` and `false`. Default is [`NotToggle`](./nottoggle).
-
-<details>
-<summary>Props for `notToggle`</summary>
-
-Per the `NotToggleProps` interface:
-
-| Prop             | Type                                     | Description                                                  |
-| ---------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`          | `ReactNode`                              | `translations.notToggle.label`, e.g. "Not"                   |
-| `title`          | `string`                                 | `translations.notToggle.title`, e.g. "Invert this group"     |
-| `className`      | `string`                                 | CSS `classNames` to be applied                               |
-| `handleOnChange` | `(checked: boolean) => void`             | Updates the group's `not` property                           |
-| `checked`        | `boolean`                                | Whether the input should be checked or not                   |
-| `level`          | `number`                                 | The `level` of this group                                    |
-| `context`        | `any`                                    | Container for custom props that are passed to all components |
-| `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
-| `disabled`       | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`           | `Path`                                   | [Path](../tips/path) of this group                           |
-| `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
-| `ruleGroup`      | `RuleGroupTypeAny`                       | This group                                                   |
-
-</details>
-
-#### `operatorSelector`
-
-Selects the `operator` property for the current rule. Default is [`ValueSelector`](./valueselector).
-
-<details>
-<summary>Props for `operatorSelector`</summary>
-
-Per the `OperatorSelectorProps` interface:
-
-| Prop             | Type                                     | Description                                                      |
-| ---------------- | ---------------------------------------- | ---------------------------------------------------------------- |
-| `field`          | `string`                                 | Field name corresponding to this rule                            |
-| `fieldData`      | `Field`                                  | The entire object from the fields array for this field           |
-| `options`        | <code>OptionList&lt;Operator&gt;</code>  | Return value of `getOperators(field, { fieldData })`             |
-| `value`          | `string`                                 | Selected operator from the existing query representation, if any |
-| `title`          | `string`                                 | `translations.operators.title`, e.g. "Operators"                 |
-| `className`      | `string`                                 | CSS `classNames` to be applied                                   |
-| `handleOnChange` | `(value: any) => void`                   | Updates the rule's operator                                      |
-| `level`          | `number`                                 | The `level` of this rule                                         |
-| `context`        | `any`                                    | Container for custom props that are passed to all components     |
-| `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                   |
-| `disabled`       | `boolean`                                | Whether this rule is disabled/locked                             |
-| `path`           | `Path`                                   | [Path](../tips/path) of this rule                                |
-| `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                      |
-| `rule`           | `RuleType`                               | This rule                                                        |
-
-</details>
-
-#### `removeGroupAction`
-
-Removes the current group from its parent group's `rules` array. Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `removeGroupAction`</summary>
-
-Per the `ActionWithRulesProps` interface:
-
-| Prop            | Type                                     | Description                                                  |
-| --------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `ReactNode`                              | `translations.removeGroup.label`, e.g. "⨯"                   |
-| `title`         | `string`                                 | `translations.removeGroup.title`, e.g. "Remove group"        |
-| `className`     | `string`                                 | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent) => void`          | Removes the group                                            |
-| `rules`         | `RuleOrGroupArray`                       | The `rules` array for this group                             |
-| `ruleOrGroup`   | `RuleGroupTypeAny`                       | This group                                                   |
-| `level`         | `number`                                 | The `level` of this group                                    |
-| `context`       | `any`                                    | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                              |
-| `disabled`      | `boolean`                                | Whether this group is disabled/locked                        |
-| `path`          | `Path`                                   | [Path](../tips/path) of this group                           |
-| `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
-
-</details>
-
-#### `removeRuleAction`
-
-Removes the current rule from its parent group's `rules` array. Default is [`ActionElement`](./actionelement).
-
-<details>
-<summary>Props for `removeRuleAction`</summary>
-
-Per the `ActionProps` interface:
-
-| Prop            | Type                                     | Description                                                  |
-| --------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `label`         | `ReactNode`                              | `translations.removeRule.label`, e.g. "⨯"                    |
-| `title`         | `string`                                 | `translations.removeRule.title`, e.g. "Remove rule"          |
-| `className`     | `string`                                 | CSS `classNames` to be applied                               |
-| `handleOnClick` | `(e: React.MouseEvent) => void`          | Removes the rule                                             |
-| `ruleOrGroup`   | `RuleType`                               | This rule                                                    |
-| `level`         | `number`                                 | The `level` of this rule                                     |
-| `context`       | `any`                                    | Container for custom props that are passed to all components |
-| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                               |
-| `disabled`      | `boolean`                                | Whether this rule is disabled/locked                         |
-| `path`          | `Path`                                   | [Path](../tips/path) of this rule                            |
-| `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                  |
-
-</details>
-
-#### `rule`
-
-Rule layout component. Default is [`Rule`](./rule).
-
-<details>
-<summary>Props for `rule`</summary>
-
-Per the `RuleProps` interface:
-
-| Prop                | Type           | Description                                                  |
-| ------------------- | -------------- | ------------------------------------------------------------ |
-| `id`                | `string`       | Unique identifier for this rule                              |
-| `path`              | `Path`         | [Path](../tips/path) of this rule                            |
-| `rule`              | `RuleType`     | The rule object                                              |
-| `translations`      | `Translations` | The default translations merged with the `translations` prop |
-| `schema`            | `Schema`       | Query [schema](../typescript#miscellaneous)                  |
-| `actions`           | `QueryActions` | Query [update functions](../typescript#miscellaneous)        |
-| `context`           | `any`          | Container for custom props that are passed to all components |
-| `disabled`          | `boolean`      | Whether the rule itself is disabled                          |
-| `shiftUpDisabled`   | `boolean`      | Whether shifting the rule up is disallowed                   |
-| `shiftDownDisabled` | `boolean`      | Whether shifting the rule down is disallowed                 |
-| `parentDisabled`    | `boolean`      | Whether the parent group of this rule is disabled            |
-
-</details>
-
-:::tip
-
-If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `Rule` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
-
-:::
-
-#### `ruleGroup`
-
-Rule group layout component. Default is [`RuleGroup`](./rulegroup).
-
-<details>
-<summary>Props for `ruleGroup`</summary>
-
-Per the `RuleGroupProps` interface:
-
-| Prop                | Type               | Description                                                  |
-| ------------------- | ------------------ | ------------------------------------------------------------ |
-| `id`                | `string`           | Unique identifier for this group                             |
-| `path`              | `Path`             | [Path](../tips/path) of this group                           |
-| `ruleGroup`         | `RuleGroupTypeAny` | The group object                                             |
-| `translations`      | `Translations`     | The default translations merged with the `translations` prop |
-| `schema`            | `Schema`           | Query [schema](../typescript#miscellaneous)                  |
-| `actions`           | `QueryActions`     | Query [update functions](../typescript#miscellaneous)        |
-| `context`           | `any`              | Container for custom props that are passed to all components |
-| `disabled`          | `boolean`          | Whether the group itself is disabled                         |
-| `shiftUpDisabled`   | `boolean`          | Whether shifting the group up is disallowed                  |
-| `shiftDownDisabled` | `boolean`          | Whether shifting the group down is disallowed                |
-| `parentDisabled`    | `boolean`          | Whether the parent group of this group is disabled           |
-
-</details>
-
-:::tip
-
-If you [enable drag-and-drop](#enabledraganddrop) and want to use a custom `RuleGroup` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
-
-:::
-
-#### `ruleGroupBodyElements`
-
-Rule group body elements. Default is [`RuleGroupBodyComponents`](./rulegroup#rulegroupbodycomponents), which returns an array containing only the elements themselves (no HTML or React Native wrapper element). Receives the same props as [`ruleGroup`](#rulegroup), in addition to the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
-
-#### `ruleGroupHeaderElements`
-
-Rule group header elements. Default is [`RuleGroupHeaderComponents`](./rulegroup#rulegroupheadercomponents), which returns a React `Fragment` containing only the elements themselves (no HTML or React Native wrapper element). Receives the same props as [`ruleGroup`](#rulegroup), in addition to the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
-
-#### `shiftActions`
-
-Shifts the current rule/group up or down in the query hierarchy. Default is [`ShiftActions`](./shiftactions).
-
-<details>
-<summary>Props for `shiftActions`</summary>
-
-Per the `ShiftActionsProps` interface:
-
-| Prop                | Type                                            | Description                                                                                                   |
-| ------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `labels`            | `{ shiftUp: ReactNode; shiftDown: ReactNode; }` | `translations.shiftActionUp.label` and `translations.shiftActionDown.label`, e.g. "˄" and "˅"                 |
-| `titles`            | `{ shiftUp: string; shiftDown: string; }`       | `translations.shiftActionUp.title` and `translations.shiftActionDown.title`, e.g. "Shift up" and "Shift down" |
-| `className`         | `string`                                        | CSS `classNames` to be applied                                                                                |
-| `ruleOrGroup`       | `RuleGroupTypeAny`                              | This rule/group                                                                                               |
-| `level`             | `number`                                        | The `level` of this rule/group                                                                                |
-| `context`           | `any`                                           | Container for custom props that are passed to all components                                                  |
-| `validation`        | <code>boolean \| ValidationResult</code>        | Validation result of this rule/group                                                                          |
-| `disabled`          | `boolean`                                       | Whether this rule/group is disabled/locked                                                                    |
-| `path`              | `Path`                                          | [Path](../tips/path) of this rule/group                                                                       |
-| `schema`            | `Schema`                                        | Query [schema](../typescript#miscellaneous)                                                                   |
-| `shiftUp`           | `() => void`                                    | Method to shift the rule/group up one place                                                                   |
-| `shiftDown`         | `() => void`                                    | Method to shift the rule/group down one place                                                                 |
-| `shiftUpDisabled`   | `boolean`                                       | Whether shifting the rule/group up is disallowed                                                              |
-| `shiftDownDisabled` | `boolean`                                       | Whether shifting the rule/group down is disallowed                                                            |
-
-</details>
-
-#### `valueEditor`
-
-Updates the `value` property for the current rule. Default is [`ValueEditor`](./valueeditor).
-
-<details>
-<summary>Props for `valueEditor`</summary>
-
-Per the `ValueEditorProps` interface:
-
-| Prop             | Type                                     | Description                                                             |
-| ---------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
-| `field`          | `string`                                 | Field `name` corresponding to this rule                                 |
-| `fieldData`      | `Field`                                  | The entire object from the fields array for this field                  |
-| `operator`       | `string`                                 | Operator `name` corresponding to this rule                              |
-| `value`          | `string`                                 | `value` from the existing query representation, if any                  |
-| `title`          | `string`                                 | `translations.value.title`, e.g. "Value"                                |
-| `handleOnChange` | `(value: any) => void`                   | Updates the rule's `value`                                              |
-| `type`           | `ValueEditorType`                        | Type of editor to be displayed                                          |
-| `inputType`      | `string`                                 | Intended `@type` attribute of the `<input>`, if `type` prop is "text"   |
-| `values`         | `any[]`                                  | List of available values for this rule                                  |
-| `className`      | `string`                                 | CSS `classNames` to be applied                                          |
-| `valueSource`    | `ValueSource`                            | Value source for this rule                                              |
-| `listsAsArrays`  | `boolean`                                | Whether to manage value lists (i.e. "between"/"in" operators) as arrays |
-| `parseNumbers`   | `ParseNumberMethod`                      | Whether to parse real numbers from strings                              |
-| `separator`      | `ReactNode`                              | Separator element for series of editors (i.e. "between" operator)       |
-| `level`          | `number`                                 | The `level` of this rule                                                |
-| `context`        | `any`                                    | Container for custom props that are passed to all components            |
-| `validation`     | <code>boolean \| ValidationResult</code> | Validation result of this rule                                          |
-| `disabled`       | `boolean`                                | Whether this rule is disabled/locked                                    |
-| `path`           | `Path`                                   | [Path](../tips/path) of this rule                                       |
-| `schema`         | `Schema`                                 | Query [schema](../typescript#miscellaneous)                             |
-| `rule`           | `RuleType`                               | This rule                                                               |
-
-</details>
-
-#### `valueSelector`
-
-The component for all value selector controls. Default is [`ValueSelector`](./valueselector). Receives props per the `CombinatorSelectorProps`, `FieldSelectorProps`, `OperatorSelectorProps`, or `ValueSourceSelectorProps` interface depending on the control, which can be any of the following:
-
-- [`combinatorSelector`](#combinatorselector)
-- [`fieldSelector`](#fieldselector)
-- [`operatorSelector`](#operatorselector)
-- [`valueSourceSelector`](#valuesourceselector)
-
-For example, this:
-
-```tsx
-<QueryBuilder controlElements={{ valueSelector: MyAwesomeSelector }} />
-```
-
-...is equivalent to this:
-
-```tsx
-<QueryBuilder
-  controlElements={{
-    combinatorSelector: MyAwesomeSelector
-    fieldSelector: MyAwesomeSelector
-    operatorSelector: MyAwesomeSelector
-    valueSourceSelector: MyAwesomeSelector
-  }}
-/>
-```
-
-#### `valueSourceSelector`
-
-Selects the `valueSource` property for the current rule. Default is [`ValueSelector`](./valueselector).
-
-<details>
-<summary>Props for `valueSourceSelector`</summary>
-
-Per the `ValueSourceSelectorProps` interface:
-
-| Prop             | Type                                             | Description                                                       |
-| ---------------- | ------------------------------------------------ | ----------------------------------------------------------------- |
-| `field`          | `string`                                         | Field `name` corresponding to this rule                           |
-| `fieldData`      | `Field`                                          | The entire object from the `fields` array for the selected field  |
-| `options`        | <code>OptionList&lt;ValueSourceOption&gt;</code> | Return value of `getValueSources(field, operator, { fieldData })` |
-| `value`          | `ValueSource`                                    | Selected value source for this rule, if any                       |
-| `title`          | `string`                                         | `translations.valueSourceSelector.title`, e.g. "Value source"     |
-| `className`      | `string`                                         | CSS `classNames` to be applied                                    |
-| `handleOnChange` | `(value: any) => void`                           | Updates the rule's `valueSource`                                  |
-| `level`          | `number`                                         | The `level` of this rule                                          |
-| `context`        | `any`                                            | Container for custom props that are passed to all components      |
-| `validation`     | <code>boolean \| ValidationResult</code>         | Validation result of this rule                                    |
-| `disabled`       | `boolean`                                        | Whether this rule is disabled/locked                              |
-| `path`           | `Path`                                           | [Path](../tips/path) of this rule                                 |
-| `schema`         | `Schema`                                         | Query [schema](../typescript#miscellaneous)                       |
-| `rule`           | `RuleType`                                       | This rule                                                         |
-
-</details>
+See [`controlElements`](./querybuilder-controlelements) for a list of all control elements and their props.
 
 ### `getOperators`
 
@@ -796,9 +194,11 @@ This function is invoked to get the type of [`ValueEditor`](./valueeditor) for t
 
 ### `getValueSources`
 
-`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources`;
+`(field: string, operator: string, misc: { fieldData: Field }) => ValueSources | ValueSourceFullOptions`;
 
-This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
+This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). The array members can also be a `FlexibleOption` as long as the `name` and/or `value` are `"value"` or `"field"`, in the same pattern as the string-based configuration.
+
+If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
 
 `fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 
@@ -823,6 +223,22 @@ This function is invoked to get the `type` attribute which will be applied to th
 `(field: string, operator: string, misc: { fieldData: Field }) => OptionList`
 
 This function is invoked to get the list of allowed values for the given `field` and `operator`. This prop is only applicable when [`getValueEditorType`](#getvalueeditortype) returns `"select"`, `"multiselect"`, or `"radio"`. If no function is provided, an empty array is used.
+
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
+### `getMatchModes`
+
+`(field: string, misc: { fieldData: Field }) => boolean | MatchMode[] | FlexibleOption<MatchMode>[]`
+
+This function indicate the valid `MatchMode`s for a given field identifier. The return value must be `MatchMode[]`, `Option<MatchMode>[]`, or `boolean`. A value of `true` indicates that all match modes are allowed. Any other return value will be ignored (no match modes will be allowed).
+
+`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+
+### `getSubQueryBuilderProps`
+
+`(field: string, misc: { fieldData: Field }) => QueryBuilderProps`
+
+This function should return any props that a subquery (see [Subqueries](../tips/subqueries)) should override from the props provided to the parent query builder. Note that certain props like `query`, `onQueryChange`, and `enableDragAndDrop` will be ignored for subquery builders.
 
 `fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
 
@@ -866,7 +282,7 @@ Generate custom classes which will be added to the outer `div` of a group based 
 
 `(rule: RuleType, parentPath: Path, query: RuleGroupTypeAny, context?: any) => RuleType | false`
 
-This callback is invoked immediately before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType` or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
+This callback is invoked immediately before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType` or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](./querybuilder-controlelements#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
 
 If the query is using [independent combinators](#independent-combinators), you can specify the combinator inserted immediately before the new rule (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the rule before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
 
@@ -880,7 +296,7 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 `<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: Path, query: RG, context?: any) => RG | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
+This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](./querybuilder-controlelements#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
 
 If the query is using [independent combinators](#independent-combinators), you can specify the combinator inserted immediately before the new group (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the group before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
 
@@ -1056,7 +472,7 @@ Sets the `value` with type `number` instead of `string` when possible. See [Numb
 
 :::info
 
-This behavior is implemented within the standard [`ValueEditor`](./valueeditor) component, not `QueryBuilder`. If a [custom value editor](#valueeditor) is implemented, the `parseNumbers` prop will be passed to it but the prop will have no effect unless the custom value editor detects it and reacts to it.
+This behavior is implemented within the standard [`ValueEditor`](./valueeditor) component, not `QueryBuilder`. If a [custom value editor](./querybuilder-controlelements#valueeditor) is implemented, the `parseNumbers` prop will be passed to it but the prop will have no effect unless the custom value editor detects it and reacts to it.
 
 :::
 

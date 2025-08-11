@@ -1,44 +1,48 @@
 import { useCallback, useMemo, useState } from 'react';
-import { defaultCombinators, defaultOperators } from '../defaults';
+import {
+  defaultCombinatorLabelMap,
+  defaultCombinators,
+  defaultOperatorLabelMap,
+  defaultOperators,
+} from '../defaults';
+import { useFields } from '../hooks';
 import type { UseMergedContextReturn } from '../hooks/useMergedContext';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
   BaseOption,
-  FlexibleOptionList,
+  FlexibleOptionListProp,
   FullCombinator,
   FullField,
   FullOperator,
   FullOption,
   FullOptionList,
   FullOptionMap,
-  FullOptionRecord,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
+  MatchModeOptions,
   Option,
   OptionGroup,
   QueryBuilderProps,
   RemoveNullability,
   RuleGroupTypeAny,
   RuleType,
+  ValueSourceFullOptions,
   WithUnknownIndex,
 } from '../types';
 import {
   filterFieldsByComparator,
   generateID,
   getFirstOption,
+  getMatchModesUtil,
+  getOption,
   getValueSourcesUtil,
   isFlexibleOptionGroupArray,
   joinWith,
-  objectKeys,
-  toFullOption,
   toFullOptionList,
-  toFullOptionMap,
-  uniqByIdentifier,
-  uniqOptGroups,
   uniqOptList,
 } from '../utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
   const firstOption = getFirstOption(opts);
 
@@ -65,23 +69,35 @@ export type UseQueryBuilderSetup<
   rqbContext: UseMergedContextReturn<F, GetOptionIdentifierType<O>, true>;
   fields: FullOptionList<F>;
   fieldMap: FullOptionMap<
-    FullField<string, string, string, Option<string>, Option<string>>,
+    FullField<string, string, string, FullOption, FullOption>,
     GetOptionIdentifierType<F>
   >;
   combinators:
-    | WithUnknownIndex<BaseOption<string> & FullOption<string>>[]
-    | OptionGroup<WithUnknownIndex<BaseOption<string> & FullOption<string>>>[];
+    | WithUnknownIndex<BaseOption<string> & FullOption>[]
+    | OptionGroup<WithUnknownIndex<BaseOption<string> & FullOption>>[];
   getRuleDefaultValue: <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
     r: RT
-  ) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   createRuleGroup: (independentCombinators?: boolean) => RG;
 } & RemoveNullability<{
   getInputTypeMain: QueryBuilderProps<RG, F, O, C>['getInputType'];
   getRuleDefaultOperator: QueryBuilderProps<RG, F, O, C>['getDefaultOperator'];
   getValueEditorTypeMain: QueryBuilderProps<RG, F, O, C>['getValueEditorType'];
-  getValueSourcesMain: QueryBuilderProps<RG, F, O, C>['getValueSources'];
 }> & {
+    getValueSourcesMain: (
+      field: GetOptionIdentifierType<F>,
+      operator: GetOptionIdentifierType<O>,
+      misc: { fieldData: F }
+    ) => ValueSourceFullOptions;
+    getSubQueryBuilderPropsMain: (
+      field: GetOptionIdentifierType<F>,
+      misc: { fieldData: F }
+    ) => Record<string, unknown>;
+    getMatchModesMain: (
+      field: GetOptionIdentifierType<F>,
+      misc?: { fieldData: F }
+    ) => MatchModeOptions;
     getOperatorsMain: (
       ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getOperators']>>
     ) => FullOptionList<O>;
@@ -111,11 +127,11 @@ export const useQueryBuilderSetup = <
   const [qbId] = useState(generateID);
 
   const {
-    fields: fieldsPropOriginal,
+    fields: fieldsProp,
     baseField,
     operators: operatorsProp,
     baseOperator,
-    combinators: combinatorsProp = defaultCombinators,
+    combinators: combinatorsProp,
     baseCombinator,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
@@ -124,7 +140,9 @@ export const useQueryBuilderSetup = <
     getDefaultField,
     getDefaultOperator,
     getDefaultValue,
+    getMatchModes,
     getOperators,
+    getSubQueryBuilderProps,
     getValueEditorType,
     getValueSources,
     getInputType,
@@ -138,8 +156,6 @@ export const useQueryBuilderSetup = <
     debugMode: debugModeProp = false,
     idGenerator = generateID,
   } = props;
-
-  const operators = (operatorsProp ?? defaultOperators) as FlexibleOptionList<O>;
 
   const [initialQueryProp] = useState(props.query ?? props.defaultQuery);
 
@@ -157,93 +173,34 @@ export const useQueryBuilderSetup = <
 
   const { translations } = rqbContext;
 
-  // #region Set up `fields`
-  const defaultField = useMemo(
-    () =>
-      ({
-        id: translations.fields.placeholderName,
-        name: translations.fields.placeholderName,
-        value: translations.fields.placeholderName,
-        label: translations.fields.placeholderLabel,
-      }) as FullField,
-    [translations.fields.placeholderLabel, translations.fields.placeholderName]
-  );
-  const fieldsProp = useMemo(
-    () => fieldsPropOriginal ?? ([defaultField] as FlexibleOptionList<F>),
-    [defaultField, fieldsPropOriginal]
-  );
-
-  const fields = useMemo((): F[] | OptionGroup<F>[] => {
-    const flds = (
-      Array.isArray(fieldsProp)
-        ? toFullOptionList(fieldsProp, baseField)
-        : (objectKeys(toFullOptionMap(fieldsProp, baseField)) as unknown as FieldName[])
-            .map(fld => ({ ...fieldsProp[fld], name: fld, value: fld }))
-            .sort((a, b) => a.label.localeCompare(b.label))
-    ) as FullOptionList<F>;
-    if (isFlexibleOptionGroupArray(flds)) {
-      return autoSelectField
-        ? (uniqOptGroups(flds) as FullOptionList<F>)
-        : (uniqOptGroups([
-            {
-              label: translations.fields.placeholderGroupLabel,
-              options: [defaultField],
-            },
-            ...flds,
-          ]) as FullOptionList<F>);
-    } else {
-      return autoSelectField
-        ? (uniqByIdentifier(flds as F[]) as FullOptionList<F>)
-        : (uniqByIdentifier([defaultField, ...(flds as F[])]) as FullOptionList<F>);
-    }
-  }, [
-    autoSelectField,
+  // #region `fields`
+  const { fields, fieldMap } = useFields({
+    fields: fieldsProp,
     baseField,
-    defaultField,
-    fieldsProp,
-    translations.fields.placeholderGroupLabel,
-  ]);
-
-  const fieldMap = useMemo(() => {
-    if (!Array.isArray(fieldsProp)) {
-      const fp = toFullOptionMap(fieldsProp, baseField) as FullOptionMap<FullField, FieldName>;
-      return autoSelectField ? fp : { ...fp, [translations.fields.placeholderName]: defaultField };
-    }
-    const fm: Partial<FullOptionRecord<FullField>> = {};
-    if (isFlexibleOptionGroupArray(fields)) {
-      for (const f of fields) {
-        for (const opt of f.options) {
-          fm[(opt.value ?? /* istanbul ignore next */ opt.name) as FieldName] = toFullOption(
-            opt,
-            baseField
-          ) as FullField;
-        }
-      }
-    } else {
-      for (const f of fields) {
-        fm[(f.value ?? /* istanbul ignore next */ f.name) as FieldName] = toFullOption(
-          f,
-          baseField
-        ) as FullField;
-      }
-    }
-    return fm;
-  }, [
     autoSelectField,
-    baseField,
-    defaultField,
-    fields,
-    fieldsProp,
-    translations.fields.placeholderName,
-  ]);
+    translations,
+  });
   // #endregion
 
+  // #region `combinators`
   const combinators = useMemo(
-    () => toFullOptionList(combinatorsProp, baseCombinator),
+    () =>
+      toFullOptionList(
+        combinatorsProp ?? defaultCombinators,
+        baseCombinator,
+        defaultCombinatorLabelMap
+      ),
     [baseCombinator, combinatorsProp]
   );
+  // #endregion
 
-  // #region Set up `operators`
+  // #region `operators`
+  const operators = useMemo(
+    () =>
+      toFullOptionList(operatorsProp ?? defaultOperators, baseOperator, defaultOperatorLabelMap),
+    [baseOperator, operatorsProp]
+  );
+
   const defaultOperator = useMemo(
     (): FullOption<OperatorName> => ({
       id: translations.operators.placeholderName,
@@ -256,14 +213,22 @@ export const useQueryBuilderSetup = <
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
-      let opsFinal = toFullOptionList(operators as FlexibleOptionList<O>, baseOperator);
+      let opsFinal = operators;
 
       if (fieldData?.operators) {
-        opsFinal = toFullOptionList(fieldData.operators, baseOperator);
+        opsFinal = toFullOptionList(
+          fieldData.operators as FlexibleOptionListProp<O>,
+          baseOperator,
+          defaultOperatorLabelMap
+        );
       } else if (getOperators) {
-        const ops = getOperators(field, { fieldData }) as null | FlexibleOptionList<O>;
+        const ops = getOperators(field, { fieldData });
         if (ops) {
-          opsFinal = toFullOptionList(ops, baseOperator);
+          opsFinal = toFullOptionList(
+            ops as FlexibleOptionListProp<O>,
+            baseOperator,
+            defaultOperatorLabelMap
+          );
         }
       }
 
@@ -328,9 +293,22 @@ export const useQueryBuilderSetup = <
   );
 
   const getValueSourcesMain = useCallback(
-    (field: FieldName, operator: OperatorName) =>
+    (field: FieldName, operator: OperatorName, _misc?: { fieldData: F }) =>
       getValueSourcesUtil<F, OperatorName>(fieldMap[field] as F, operator, getValueSources),
     [fieldMap, getValueSources]
+  );
+
+  const getMatchModesMain = useCallback(
+    (field: FieldName, _misc?: { fieldData: F }) =>
+      getMatchModesUtil<F>(fieldMap[field] as F, getMatchModes),
+    [fieldMap, getMatchModes]
+  );
+
+  const getSubQueryBuilderPropsMain = useCallback(
+    (field: FieldName, misc: { fieldData: F }): Record<string, unknown> =>
+      // oxlint-disable-next-line typescript/no-explicit-any
+      getSubQueryBuilderProps?.(field, misc) ?? ({} as any),
+    [getSubQueryBuilderProps]
   );
 
   const defaultValueOption = useMemo(
@@ -450,7 +428,14 @@ export const useQueryBuilderSetup = <
 
     const operator = getRuleDefaultOperator(field);
 
-    const valueSource = getValueSourcesMain(field, operator)[0] ?? 'value';
+    const valueSource =
+      getFirstOption(
+        getValueSourcesMain(field, operator, { fieldData: getOption(flds, field) as F })
+      ) ?? 'value';
+
+    const matchMode = getFirstOption(
+      getMatchModesMain(field, { fieldData: getOption(flds, field) as F })
+    );
 
     const newRule = {
       id: idGenerator(),
@@ -458,6 +443,7 @@ export const useQueryBuilderSetup = <
       operator,
       valueSource,
       value: '',
+      ...(matchMode ? { match: { mode: matchMode, threshold: 1 } } : null),
     } as unknown as R;
 
     const value = getRuleDefaultValue(newRule);
@@ -466,6 +452,7 @@ export const useQueryBuilderSetup = <
   }, [
     fields,
     getDefaultField,
+    getMatchModesMain,
     getRuleDefaultOperator,
     getRuleDefaultValue,
     getValueSourcesMain,
@@ -501,8 +488,10 @@ export const useQueryBuilderSetup = <
     fields: fields as FullOptionList<F>,
     fieldMap,
     combinators,
+    getMatchModesMain,
     getOperatorsMain,
     getRuleDefaultOperator,
+    getSubQueryBuilderPropsMain,
     getValueEditorTypeMain,
     getValueSourcesMain,
     getValuesMain,

@@ -1,16 +1,19 @@
 import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
+  MatchModeOptions,
   OptionList,
   Path,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
+  ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types/index.noReact';
 import { generateID } from './generateID';
+import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
-import { getFirstOption } from './optGroupUtils';
+import { getFirstOption, getOption } from './optGroupUtils';
 import {
   findID,
   findPath,
@@ -110,12 +113,16 @@ export interface UpdateOptions {
   /**
    * Determines the valid value sources for a given field and operator.
    */
-  getValueSources?: (field: string, operator: string) => ValueSources;
+  getValueSources?: (field: string, operator: string) => ValueSources | ValueSourceFlexibleOptions;
   /**
    * Gets the default value for a given rule, in case the value needs to be reset.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   getRuleDefaultValue?: (rule: RuleType) => any;
+  /**
+   * Determines the valid match modes for a given field.
+   */
+  getMatchModes?: (field: string) => MatchModeOptions;
 }
 /**
  * Updates a property of a rule or group within a query.
@@ -129,7 +136,7 @@ export const update = <RG extends RuleGroupTypeAny>(
   /** The name of the property to update. */
   prop: UpdateableProperties,
   /** The new value of the property. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
   /** The path or ID of the rule or group to update. */
   pathOrID: Path | string,
@@ -140,6 +147,7 @@ export const update = <RG extends RuleGroupTypeAny>(
     getRuleDefaultOperator = () => '=',
     getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
+    getMatchModes = () => [],
   }: UpdateOptions = {}
 ): RG =>
   produce(query, draft => {
@@ -181,6 +189,25 @@ export const update = <RG extends RuleGroupTypeAny>(
     let resetValueSource = false;
     let resetValue = false;
 
+    if (prop === 'field' && !isGroup) {
+      const fromFieldMatchModes = getMatchModes(ruleOrGroup.field);
+      const toFieldMatchModes = getMatchModes(value);
+
+      const nextMatchMode =
+        ruleOrGroup.match?.mode &&
+        toFieldMatchModes.length > 0 &&
+        getOption(toFieldMatchModes, ruleOrGroup.match.mode)
+          ? null
+          : getFirstOption(toFieldMatchModes);
+      if (nextMatchMode) {
+        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
+      }
+      if (fromFieldMatchModes.length > 0 || toFieldMatchModes.length > 0) {
+        // Force `resetOnFieldChange` when field is updated FROM or TO one that has match modes
+        resetOnFieldChange = true;
+      }
+    }
+
     // Set default operator, valueSource, and value for field change
     if (resetOnFieldChange && prop === 'field') {
       ruleOrGroup.operator = getRuleDefaultOperator(value);
@@ -194,7 +221,12 @@ export const update = <RG extends RuleGroupTypeAny>(
       resetValue = true;
     }
 
-    const defaultValueSource = getValueSources(ruleOrGroup.field, ruleOrGroup.operator)[0];
+    const valueSources = getValueSourcesUtil(
+      { name: ruleOrGroup.field, value: ruleOrGroup.field, label: '' },
+      ruleOrGroup.operator,
+      getValueSources
+    );
+    const defaultValueSource = getFirstOption(valueSources);
     if (
       (resetValueSource &&
         ruleOrGroup.valueSource &&
@@ -416,7 +448,7 @@ export const move = <RG extends RuleGroupTypeAny>(
      * This function 1) glosses over the need for type assertions to splice directly
      * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const insertRuleOrGroup = (...args: any[]) =>
       parentToInsertInto.rules.splice(newIndex, 0, ...args);
 
@@ -519,7 +551,7 @@ export const insert = <RG extends RuleGroupTypeAny>(
      * This function 1) glosses over the need for type assertions to splice directly
      * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const insertRuleOrGroup = (idx: number, ...args: any[]) =>
       parentToInsertInto.rules.splice(idx, replace ? args.length : 0, ...args);
 
@@ -662,10 +694,10 @@ export const group = <RG extends RuleGroupTypeAny>(
           : {
               combinator: getFirstOption(combinators),
               rules: [targetRuleOrGroup, sourceRuleOrGroup],
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              // oxlint-disable-next-line typescript/no-explicit-any
             }) as any,
         { idGenerator }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
       ) as any
     );
   });

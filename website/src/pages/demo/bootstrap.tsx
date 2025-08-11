@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderBootstrap } from '@react-querybuilder/bootstrap';
@@ -9,6 +9,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-bootstrap.scss';
+
+const loading = <Loading />;
 
 const getQueryWrapper =
   ({ colorMode }: { colorMode: 'dark' | 'light' }) =>
@@ -49,7 +51,7 @@ function ReactQueryBuilderDemo_BootstrapBrowser() {
 export default function ReactQueryBuilderDemo_Bootstrap() {
   return (
     <Layout description="React Query Builder Bootstrap Demo">
-      <BrowserOnly fallback={<Loading />}>
+      <BrowserOnly fallback={loading}>
         {() => <ReactQueryBuilderDemo_BootstrapBrowser />}
       </BrowserOnly>
     </Layout>

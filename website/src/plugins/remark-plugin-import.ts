@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import rehypeRaw from 'rehype-raw';
@@ -35,7 +34,7 @@ const getSourceLink = (filePath: string, start?: number, end?: number) => {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const remarkPluginImport = () => async (ast: any, vfile: any) => {
   visit(ast, 'paragraph', node => {
     if (node.children?.length > 0 && node.children[0].type === 'text') {
@@ -77,9 +76,9 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
           const lang = path.extname(codeFileAbsolutePath).replace(/^\./, '');
 
           if (lineNumbers) {
-            const start = parseInt(lineNumbers[1]);
+            const start = Number.parseInt(lineNumbers[1]);
             const end =
-              (lineNumbers[4] ? parseInt(lineNumbers[4]) : null) ??
+              (lineNumbers[4] ? Number.parseInt(lineNumbers[4]) : null) ??
               (lineNumbers[2] ? codeLines.length : start);
             node.children = [
               {

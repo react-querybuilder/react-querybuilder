@@ -13,6 +13,7 @@ import {
   queryAllOperatorsRandomCase,
   queryForNumberParsing,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
   testQueryDQ,
 } from '../formatQueryTestUtils';
@@ -22,6 +23,8 @@ const celString =
   'firstName == null && lastName != null && firstName in ["Test", "This"] && !(lastName in ["Test", "This"]) && firstName in [] && (firstName >= "Test" && firstName <= "This") && (firstName >= "Test" && firstName <= "This") && (lastName < "Test" || lastName > "This") && (age >= 12 && age <= 14) && age == "26" && isMusician == true && isLucky == false && !(gender == "M" || job != "Programmer" || email.contains("@")) && (!lastName.contains("ab") || job.startsWith("Prog") || email.endsWith("com") || !job.startsWith("Man") || !email.endsWith("fr"))';
 const celStringForValueSourceField =
   'firstName == null && lastName != null && firstName in [middleName, lastName] && !(lastName in [middleName, lastName]) && firstName in [] && (firstName >= middleName && firstName <= lastName) && (firstName >= middleName && firstName <= lastName) && (lastName < middleName || lastName > lastName) && age == iq && isMusician == isCreative && !(gender == someLetter || job != isBetweenJobs || email.contains(atSign)) && (!lastName.contains(firstName) || job.startsWith(jobPrefix) || email.endsWith(dotCom) || !job.startsWith(hasNoJob) || !email.endsWith(isInvalid))';
+const celStringForMatchModes =
+  'fs.all(elem_alias, elem_alias.contains("S")) && fs.all(elem_alias, elem_alias.fv.contains("S")) && !fs.exists(elem_alias, elem_alias.contains("S")) && fs.exists(elem_alias, elem_alias.contains("S")) && fs.exists(elem_alias, elem_alias.contains("S")) && !fs.exists(elem_alias, elem_alias.contains("S")) && fs.filter(elem_alias, elem_alias.contains("S")).size() >= 2 && fs.filter(elem_alias, elem_alias.fv.contains("S")).size() >= 2 && fs.filter(elem_alias, elem_alias.contains("S")).size() >= (double(fs.size()) * 0.5) && fs.filter(elem_alias, elem_alias.contains("S")).size() <= 2 && fs.filter(elem_alias, elem_alias.contains("S")).size() <= (double(fs.size()) * 0.5) && fs.filter(elem_alias, elem_alias.contains("S")).size() == 2 && fs.filter(elem_alias, elem_alias.contains("S")).size() == (double(fs.size()) * 0.5) && fs.all(elem_alias, elem_alias.contains("S") && elem_alias.contains("S")) && fs.filter(elem_alias, elem_alias.contains("S") && elem_alias.contains("S")).size() >= 2';
 
 it('formats CEL correctly', () => {
   const celQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
@@ -39,6 +42,7 @@ it('formats CEL correctly', () => {
       'cel'
     )
   ).toBe('(f >= 12 && f <= 14)');
+  expect(formatQuery(queryWithMatchModes, 'cel')).toBe(celStringForMatchModes);
 });
 
 it('handles operator case variations', () => {
@@ -135,5 +139,30 @@ it('preserveValueOrder', () => {
   );
   expect(formatQuery(queryForPreserveValueOrder, { format: 'cel', preserveValueOrder: true })).toBe(
     `(f1 >= 12 && f1 <= 14) && (f2 >= 14 && f2 <= 12)`
+  );
+});
+
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'cel' })).toBe(
+    '(age >= 22 && age <= 34) && (score < 10 || score > 20)'
+  );
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'cel', parseNumbers: true })).toBe(
+    '(age >= 22 && age <= 34) && (score < 10 || score > 20)'
+  );
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'cel', parseNumbers: false })).toBe(
+    '(age >= "22" && age <= "34") && (score < "10" || score > "20")'
   );
 });

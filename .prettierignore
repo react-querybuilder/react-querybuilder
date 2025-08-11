@@ -1,5 +1,6 @@
 # Hidden(ish) files
 **/.*
+!.*.json
 
 # Generated
 *Parser.js

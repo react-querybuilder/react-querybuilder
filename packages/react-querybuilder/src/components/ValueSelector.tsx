@@ -53,7 +53,7 @@ export const useValueSelector = (
   /**
    * The value as provided or, if appropriate, as an array
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   val: string | any[] | undefined;
 } => {
   const { handleOnChange, listsAsArrays = false, multiple = false, value } = props;

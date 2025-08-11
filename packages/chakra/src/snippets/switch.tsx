@@ -8,6 +8,12 @@ export interface SwitchProps extends ChakraSwitch.RootProps {
   thumbLabel?: { on: React.ReactNode; off: React.ReactNode };
 }
 
+// oxlint-disable no-explicit-any
+const Ctrl = ChakraSwitch.Control as any;
+const Thumb = ChakraSwitch.Thumb as any;
+const Lbl = ChakraSwitch.Label as any;
+// oxlint-enable no-explicit-any
+
 export const Switch: React.ForwardRefExoticComponent<
   Omit<SwitchProps, 'ref'> & React.RefAttributes<HTMLInputElement>
 > = React.forwardRef<HTMLInputElement, SwitchProps>(function Switch(props, ref) {
@@ -16,19 +22,19 @@ export const Switch: React.ForwardRefExoticComponent<
   return (
     <ChakraSwitch.Root ref={rootRef} {...rest}>
       <ChakraSwitch.HiddenInput ref={ref} {...inputProps} />
-      <ChakraSwitch.Control>
-        <ChakraSwitch.Thumb>
+      <Ctrl>
+        <Thumb>
           {thumbLabel && (
             <ChakraSwitch.ThumbIndicator fallback={thumbLabel?.off}>
               {thumbLabel?.on}
             </ChakraSwitch.ThumbIndicator>
           )}
-        </ChakraSwitch.Thumb>
+        </Thumb>
         {trackLabel && (
           <ChakraSwitch.Indicator fallback={trackLabel.off}>{trackLabel.on}</ChakraSwitch.Indicator>
         )}
-      </ChakraSwitch.Control>
-      {children != null && <ChakraSwitch.Label>{children}</ChakraSwitch.Label>}
+      </Ctrl>
+      {children != null && <Lbl>{children}</Lbl>}
     </ChakraSwitch.Root>
   );
 });

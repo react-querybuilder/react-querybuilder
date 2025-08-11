@@ -1,9 +1,17 @@
-import type { RuleProcessor } from '../../types/index.noReact';
+import type {
+  FormatQueryFinalOptions,
+  FullField,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types/index.noReact';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "parameterized" and
@@ -23,6 +31,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     paramsKeepPrefix,
     numberedParams,
     quoteFieldNamesWith = ['', ''] as [string, string],
+    fieldIdentifierSeparator,
     concatOperator,
     operatorProcessor = defaultOperatorProcessorSQL,
     valueProcessor = defaultValueProcessorByRule,
@@ -31,13 +40,73 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   const { processedParams = [] } = meta ?? {};
 
   const parameterized = format === 'parameterized';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const params: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const paramsNamed: Record<string, any> = {};
 
   const finalize = (sql: string) =>
     parameterized ? { sql, params } : { sql, params: paramsNamed };
+
+  const wrapFieldName = (v: string) =>
+    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+
+  const ruleField = wrapFieldName(rule.field);
+
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return;
+  } else if (matchEval) {
+    // We only support PostgreSQL nested arrays
+    if (opts?.preset !== 'postgresql') return finalize('');
+
+    const { mode, threshold } = matchEval;
+
+    // TODO?: Randomize this alias
+    const arrayElementAlias = 'elem_alias';
+
+    const { sql: nestedSQL, params: nestedParams } = defaultRuleGroupProcessorParameterized(
+      transformQuery(rule.value as RuleGroupType, {
+        ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
+      }),
+      { ...(opts as FormatQueryFinalOptions), fields: [] as FullField[] }
+    );
+    // Ignore the "parameterized_named" case because PostgreSQL doesn't support named parameters
+    // istanbul ignore else
+    if (Array.isArray(nestedParams)) {
+      params.push(...nestedParams);
+    } else {
+      Object.assign(paramsNamed, nestedParams);
+    }
+
+    switch (mode) {
+      case 'all':
+        return finalize(
+          `(select count(*) from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) = array_length(${ruleField}, 1)`
+        );
+
+      case 'none':
+        return finalize(
+          `not exists (select 1 from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL})`
+        );
+
+      case 'some':
+        return finalize(
+          `exists (select 1 from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL})`
+        );
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
+
+        return finalize(
+          `(select count(*)${threshold > 0 && threshold < 1 ? ` / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) ${op} ${threshold}`
+        );
+      }
+    }
+  }
 
   const value = valueProcessor(rule, {
     parseNumbers,
@@ -48,7 +117,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   });
 
   const sqlOperator = operatorProcessor(rule, opts);
-  const sqlOperatorLowerCase = sqlOperator.toLowerCase();
+  const sqlOperatorLowerCase = lc(sqlOperator);
   const [qPre, qPost] = quoteFieldNamesWith;
 
   if (

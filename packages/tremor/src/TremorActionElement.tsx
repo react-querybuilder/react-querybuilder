@@ -1,12 +1,12 @@
 import type { ButtonProps } from '@tremor/react';
 import { Button } from '@tremor/react';
 import * as React from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 
 /**
  * @group Props
  */
-export interface TremorActionProps extends ActionWithRulesProps, ButtonProps {}
+export interface TremorActionProps extends ActionProps, ButtonProps {}
 
 /**
  * @group Components

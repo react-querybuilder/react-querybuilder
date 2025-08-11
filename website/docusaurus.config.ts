@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
@@ -62,7 +61,6 @@ const config: Config = {
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
           require.resolve('@tailwindcss/postcss'),
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
           require('postcss-prefix-selector')({
             prefix: '.rqb-tremor',
             includeFiles: [/rqb-tremor.css/],
@@ -113,6 +111,7 @@ const config: Config = {
             pretty: true,
             expandObjects: true,
             expandParameters: true,
+            strikeDeprecatedPageTitles: true,
             plugin: ['typedoc-plugin-frontmatter', './api-gitkeep.mjs'],
           } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
         ],

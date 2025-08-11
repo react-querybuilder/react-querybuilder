@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import demoStyles from '!!raw-loader!./_styles/demo.css';
 import rqbChakraStyles from '!!raw-loader!./_styles/rqb-chakra.css';
 import rqbStyles from '!!raw-loader!react-querybuilder/dist/query-builder.css';
@@ -24,6 +24,8 @@ import root from 'react-shadow/emotion';
 import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-chakra.css';
+
+const loading = <Loading />;
 
 const varRoot = ':host';
 const config = defineConfig({
@@ -111,9 +113,7 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
 export default function ReactQueryBuilderDemo_Chakra() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_ChakraBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_ChakraBrowser />}</BrowserOnly>
     </Layout>
   );
 }

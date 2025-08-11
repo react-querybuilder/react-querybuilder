@@ -2,10 +2,7 @@ import type {
   FormatQueryOptions,
   RuleGroupType,
   RuleProcessor,
-  ValueProcessorByRule,
-  ValueProcessorLegacy,
 } from '../../../types/index.noReact';
-import { prepareRuleGroup } from '../../prepareQueryObjects';
 import { add } from '../../queryTools';
 import { defaultRuleProcessorSpEL } from '../defaultRuleProcessorSpEL';
 import { formatQuery } from '../formatQuery';
@@ -18,15 +15,18 @@ import {
   queryForPreserveValueOrder,
   queryForRuleProcessor,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
   testQuerySQ,
 } from '../formatQueryTestUtils';
-import { defaultSpELValueProcessor, defaultValueProcessorByRule } from '../index';
+import { defaultSpELValueProcessor } from '../index';
 
 const spelString =
   "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and isLucky == false and !(gender == 'M' or job != 'Programmer' or email matches '@') and (!(lastName matches 'ab') or job matches '^Prog' or email matches 'com$' or !(job matches '^Man') or !(email matches 'fr$'))";
 const spelStringForValueSourceField =
   "firstName == null and lastName != null and (firstName == middleName or firstName == lastName) and !(lastName == middleName or lastName == lastName) and (firstName >= middleName and firstName <= lastName) and (firstName >= middleName and firstName <= lastName) and (lastName < middleName or lastName > lastName) and age == iq and isMusician == isCreative and !(gender == someLetter or job != isBetweenJobs or email matches atSign) and (!(lastName matches firstName) or job matches '^'.concat(jobPrefix) or email matches dotCom.concat('$') or !(job matches '^'.concat(hasNoJob)) or !(email matches isInvalid.concat('$')))";
+const spelStringForMatchModes =
+  "fs.?[#this matches 'S'].size() == fs.size() and fs.?[fv matches 'S'].size() == fs.size() and fs.?[#this matches 'S'].size() == 0 and fs.?[#this matches 'S'].size() >= 1 and fs.?[#this matches 'S'].size() >= 1 and fs.?[#this matches 'S'].size() == 0 and fs.?[#this matches 'S'].size() >= 2 and fs.?[fv matches 'S'].size() >= 2 and fs.?[#this matches 'S'].size() >= (fs.size() * 0.5) and fs.?[#this matches 'S'].size() <= 2 and fs.?[#this matches 'S'].size() <= (fs.size() * 0.5) and fs.?[#this matches 'S'].size() == 2 and fs.?[#this matches 'S'].size() == (fs.size() * 0.5) and fs.?[#this matches 'S' and #this matches 'S'].size() == fs.size() and fs.?[#this matches 'S' and #this matches 'S'].size() >= 2";
 
 it('formats SpEL correctly', () => {
   const spelQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
@@ -44,165 +44,13 @@ it('formats SpEL correctly', () => {
       'spel'
     )
   ).toBe('(f >= 12 and f <= 14)');
+  expect(formatQuery(queryWithMatchModes, 'spel')).toBe(spelStringForMatchModes);
 });
 
 it('handles operator case variations', () => {
   expect(formatQuery(queryAllOperators, 'spel')).toBe(
     formatQuery(queryAllOperatorsRandomCase, 'spel')
   );
-});
-
-it('handles invalid type correctly', () => {
-  // @ts-expect-error 'null' is not a valid format
-  expect(formatQuery(query, 'null')).toBe('');
-});
-
-it('handles custom valueProcessors correctly', () => {
-  const queryWithArrayValue: RuleGroupType = {
-    id: 'g-root',
-    combinator: 'and',
-    rules: [
-      { field: 'instrument', value: ['Guitar', 'Vocals'], operator: 'in' },
-      { field: 'lastName', value: 'Vai', operator: '=' },
-    ],
-    not: false,
-  };
-
-  const valueProcessorLegacy: ValueProcessorLegacy = (_field, operator, value) => {
-    return operator === 'in'
-      ? `(${value.map((v: string) => `'${v.trim()}'`).join(', /* and */ ')})`
-      : `'${value}'`;
-  };
-
-  expect(
-    formatQuery(queryWithArrayValue, {
-      format: 'sql',
-      valueProcessor: valueProcessorLegacy,
-    })
-  ).toBe(`(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`);
-
-  const queryForNewValueProcessor: RuleGroupType = {
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: '=', value: `v'1`, valueSource: 'value' }],
-  };
-
-  const valueProcessor: ValueProcessorByRule = (
-    { field, operator, value, valueSource },
-    opts = {}
-  ) => `${field}-${operator}-${value}-${valueSource}-${!!opts.parseNumbers}-${!!opts.escapeQuotes}`;
-
-  expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      parseNumbers: true,
-      valueProcessor,
-    })
-  ).toBe(`(f1 = f1-=-v'1-value-true-true)`);
-
-  const valueProcessorAsPassThrough: ValueProcessorByRule = (r, opts) =>
-    defaultValueProcessorByRule(r, opts);
-
-  // handles escapeQuotes correctly
-  expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      valueProcessor: valueProcessorAsPassThrough,
-    })
-  ).toBe(`(f1 = 'v''1')`);
-  // handles escapeQuotes exactly the same as defaultValueProcessorByRule
-  expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      valueProcessor: valueProcessorAsPassThrough,
-    })
-  ).toBe(formatQuery(queryForNewValueProcessor, 'sql'));
-});
-
-it('handles quoteFieldNamesWith correctly', () => {
-  const queryToTest: RuleGroupType = {
-    id: 'g-root',
-    combinator: 'and',
-    rules: [
-      { field: 'instrument', value: 'Guitar, Vocals', operator: 'in' },
-      { field: 'lastName', value: 'Vai', operator: '=' },
-      { field: 'lastName', value: 'firstName', operator: '!=', valueSource: 'field' },
-    ],
-    not: false,
-  };
-
-  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: '`' })).toBe(
-    "(`instrument` in ('Guitar', 'Vocals') and `lastName` = 'Vai' and `lastName` != `firstName`)"
-  );
-
-  expect(formatQuery(queryToTest, { format: 'sql', quoteFieldNamesWith: ['[', ']'] })).toBe(
-    "([instrument] in ('Guitar', 'Vocals') and [lastName] = 'Vai' and [lastName] != [firstName])"
-  );
-});
-
-it('handles custom fallbackExpression correctly', () => {
-  const fallbackExpression = 'fallbackExpression';
-  const queryToTest: RuleGroupType = { id: 'g-root', combinator: 'and', rules: [] };
-
-  expect(formatQuery(queryToTest, { format: 'sql', fallbackExpression })).toBe(fallbackExpression);
-});
-
-it('handles json_without_ids correctly', () => {
-  const queryToTest: RuleGroupType & { extraProperty: string } = {
-    id: 'root',
-    combinator: 'and',
-    rules: [{ field: 'firstName', value: '', operator: 'null', valueSource: 'value' }],
-    not: false,
-    extraProperty: 'extraProperty',
-  };
-  const expectedResult = JSON.parse(
-    '{"rules":[{"field":"firstName","value":"","operator":"null","valueSource":"value"}],"combinator":"and","not":false,"extraProperty":"extraProperty"}'
-  );
-  expect(JSON.parse(formatQuery(prepareRuleGroup(queryToTest), 'json_without_ids'))).toEqual(
-    expectedResult
-  );
-});
-
-it('uses paramPrefix correctly', () => {
-  const queryToTest: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'firstName', operator: '=', value: 'Test' },
-      { field: 'lastName', operator: 'in', value: 'Test1,Test2' },
-      { field: 'age', operator: 'between', value: [26, 52] },
-    ],
-  };
-  const sql = `(firstName = $firstName_1 and lastName in ($lastName_1, $lastName_2) and age between $age_1 and $age_2)`;
-  const paramPrefix = '$';
-
-  // Control (default) - param prefixes removed
-  expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix })).toEqual({
-    sql,
-    params: {
-      firstName_1: 'Test',
-      lastName_1: 'Test1',
-      lastName_2: 'Test2',
-      age_1: 26,
-      age_2: 52,
-    },
-  });
-
-  // Experimental - param prefixes retained
-  expect(
-    formatQuery(queryToTest, {
-      format: 'parameterized_named',
-      paramPrefix,
-      paramsKeepPrefix: true,
-    })
-  ).toEqual({
-    sql,
-    params: {
-      [`${paramPrefix}firstName_1`]: 'Test',
-      [`${paramPrefix}lastName_1`]: 'Test1',
-      [`${paramPrefix}lastName_2`]: 'Test2',
-      [`${paramPrefix}age_1`]: 26,
-      [`${paramPrefix}age_2`]: 52,
-    },
-  });
 });
 
 it('escapes quotes when appropriate', () => {
@@ -286,4 +134,29 @@ it('preserveValueOrder', () => {
       preserveValueOrder: true,
     })
   ).toBe(`(f1 >= 12 and f1 <= 14) and (f2 >= 14 and f2 <= 12)`);
+});
+
+it('parseNumbers with between operators', () => {
+  const betweenQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: 'between', value: '22,34' },
+      { field: 'score', operator: 'notBetween', value: ['10', '20'] },
+    ],
+  };
+
+  // Default behavior (backwards compatibility) - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'spel' })).toBe(
+    '(age >= 22 and age <= 34) and (score < 10 or score > 20)'
+  );
+
+  // Explicit parseNumbers: true - should parse numbers
+  expect(formatQuery(betweenQuery, { format: 'spel', parseNumbers: true })).toBe(
+    '(age >= 22 and age <= 34) and (score < 10 or score > 20)'
+  );
+
+  // parseNumbers: false - should NOT parse numbers (keep as strings)
+  expect(formatQuery(betweenQuery, { format: 'spel', parseNumbers: false })).toBe(
+    "(age >= '22' and age <= '34') and (score < '10' or score > '20')"
+  );
 });

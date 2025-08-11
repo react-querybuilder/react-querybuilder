@@ -4,7 +4,8 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
 import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
 import type {
-  ActionWithRulesProps,
+  ActionProps,
+  Field,
   FullField,
   Option,
   RuleGroupType,
@@ -20,6 +21,7 @@ import type {
   ValueSelectorNativeProps,
 } from '../types';
 import { NativeActionElement } from './NativeActionElement';
+import { NativeMatchModeEditorWeb } from './NativeMatchModeEditorWeb';
 import { NativeNotToggle } from './NativeNotToggle';
 import { NativeShiftActions } from './NativeShiftActions';
 import { NativeValueEditor } from './NativeValueEditor';
@@ -66,6 +68,29 @@ describe('QueryBuilderNative', () => {
   });
 });
 
+describe('NativeMatchModeEditor', () => {
+  const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
+
+  it('renders match mode editor', () => {
+    render(<QueryBuilderNative fields={fields} addRuleToNewGroups />);
+    expect(screen.getByDisplayValue('all')).toBeOnTheScreen();
+    fireEvent.changeText(screen.getByDisplayValue('all'), 'atLeast');
+    expect(screen.getByDisplayValue('1')).toBeOnTheScreen();
+  });
+
+  it('renders on web platform', () => {
+    Platform.OS = 'web';
+    render(
+      <QueryBuilderNative
+        fields={fields}
+        addRuleToNewGroups
+        controlElements={{ matchModeEditor: NativeMatchModeEditorWeb }}
+      />
+    );
+    expect(screen.getByDisplayValue('all')).toBeOnTheScreen();
+  });
+});
+
 describe('NativeActionElement', () => {
   const dt: ActionNativeProps['disabledTranslation'] = { label: 'Unlock', title: 'Unlock' };
   const defaultActionElementProps: ActionNativeProps = {
@@ -86,7 +111,7 @@ describe('NativeActionElement', () => {
   const testEnabledAndOnClick = ({
     testTitle,
     ...additionalProps
-  }: Partial<ActionWithRulesProps> & { testTitle?: string } = {}) => {
+  }: Partial<ActionProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
       const handleOnPress = jest.fn();
       render(<NativeActionElement {...props} handleOnClick={handleOnPress} {...additionalProps} />);
@@ -149,7 +174,8 @@ describe('NativeNotToggle', () => {
   it('works', () => {
     const handleOnChange = jest.fn();
     render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
-    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch);
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch as any);
     fireEvent(switchEl, 'valueChange', true);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
     fireEvent(switchEl, 'valueChange', false);
@@ -232,15 +258,16 @@ describe('NativeShiftActions', () => {
     // Enabled
     const enabledProps = { ...defaultProps, shiftUp, shiftDown };
     render(<NativeShiftActions {...enabledProps} />);
-    const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button);
-    await act(() => {
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button as any);
+    act(() => {
       fireEvent.press(btnsEnabled[0]);
-      expect(shiftUp).toHaveBeenCalled();
     });
-    await act(() => {
+    expect(shiftUp).toHaveBeenCalled();
+    act(() => {
       fireEvent.press(btnsEnabled[1]);
-      expect(shiftDown).toHaveBeenCalled();
     });
+    expect(shiftDown).toHaveBeenCalled();
   });
 });
 
@@ -384,9 +411,8 @@ describe('NativeValueEditor', () => {
       />
     );
     const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(NativeValueSelector);
-    for (const i of [0, 1]) {
-      expect(selectors[i].props).toHaveProperty('value', 'opt1');
-    }
+    expect(selectors[0].props).toHaveProperty('value', 'opt1');
+    expect(selectors[1].props).toHaveProperty('value', 'opt1');
   });
 
   it('changes the value of each select', () => {
@@ -399,7 +425,8 @@ describe('NativeValueEditor', () => {
         value={'opt1,opt1'}
       />
     );
-    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput);
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput as any);
     for (const i of [0, 1]) {
       fireEvent.changeText(selectors[i], 'opt2');
     }

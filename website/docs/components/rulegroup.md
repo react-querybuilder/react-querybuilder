@@ -57,4 +57,4 @@ The `showCombinatorsBetweenRules` prop is ignored if the query is using independ
 
 [^7]: Only rendered if the group is not the query root.
 
-[^8]: The [`inlineCombinator`](./querybuilder#inlinecombinator) component in turn renders the configured [`combinatorSelector`](./querybuilder#combinatorselector).
+[^8]: The [`inlineCombinator`](./querybuilder-controlelements#inlinecombinator) component in turn renders the configured [`combinatorSelector`](./querybuilder-controlelements#combinatorselector).

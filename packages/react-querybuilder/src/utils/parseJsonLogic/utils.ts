@@ -1,4 +1,5 @@
 import type {
+  JsonLogicAll,
   JsonLogicAnd,
   JsonLogicDoubleNegation,
   JsonLogicEqual,
@@ -9,12 +10,13 @@ import type {
   JsonLogicLessThan,
   JsonLogicLessThanOrEqual,
   JsonLogicNegation,
+  JsonLogicNone,
   JsonLogicNotEqual,
   JsonLogicOr,
+  JsonLogicSome,
   JsonLogicStrictEqual,
   JsonLogicStrictNotEqual,
   JsonLogicVar,
-  RQBJsonLogic,
   RQBJsonLogicEndsWith,
   RQBJsonLogicStartsWith,
   RQBJsonLogicVar,
@@ -24,76 +26,83 @@ import type { JsonLogicBetweenExclusive, JsonLogicBetweenInclusive } from './typ
 
 // Standard JsonLogic operations
 export const isJsonLogicVar = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicVar<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && 'var' in logic;
-export const isRQBJsonLogicVar = (logic: RQBJsonLogic): logic is RQBJsonLogicVar =>
+export const isRQBJsonLogicVar = (logic: unknown): logic is RQBJsonLogicVar =>
   isJsonLogicVar(logic) && typeof logic.var === 'string';
-export const isJsonLogicEqual = (logic: RQBJsonLogic): logic is JsonLogicEqual =>
+export const isJsonLogicEqual = (logic: unknown): logic is JsonLogicEqual =>
   isPojo(logic) && '==' in logic;
-export const isJsonLogicStrictEqual = (logic: RQBJsonLogic): logic is JsonLogicStrictEqual =>
+export const isJsonLogicStrictEqual = (logic: unknown): logic is JsonLogicStrictEqual =>
   isPojo(logic) && '===' in logic;
-export const isJsonLogicNotEqual = (logic: RQBJsonLogic): logic is JsonLogicNotEqual =>
+export const isJsonLogicNotEqual = (logic: unknown): logic is JsonLogicNotEqual =>
   isPojo(logic) && '!=' in logic;
-export const isJsonLogicStrictNotEqual = (logic: RQBJsonLogic): logic is JsonLogicStrictNotEqual =>
+export const isJsonLogicStrictNotEqual = (logic: unknown): logic is JsonLogicStrictNotEqual =>
   isPojo(logic) && '!==' in logic;
-export const isJsonLogicNegation = (logic: RQBJsonLogic): logic is JsonLogicNegation =>
+export const isJsonLogicNegation = (logic: unknown): logic is JsonLogicNegation =>
   isPojo(logic) && '!' in logic;
-export const isJsonLogicDoubleNegation = (logic: RQBJsonLogic): logic is JsonLogicDoubleNegation =>
+export const isJsonLogicDoubleNegation = (logic: unknown): logic is JsonLogicDoubleNegation =>
   isPojo(logic) && '!!' in logic;
 export const isJsonLogicOr = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicOr<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && 'or' in logic;
 export const isJsonLogicAnd = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicAnd<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && 'and' in logic;
 export const isJsonLogicGreaterThan = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicGreaterThan<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && '>' in logic;
 export const isJsonLogicGreaterThanOrEqual = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicGreaterThanOrEqual<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && '>=' in logic;
 export const isJsonLogicLessThan = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicLessThan<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && '<' in logic && logic['<'].length === 2;
 export const isJsonLogicLessThanOrEqual = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicLessThanOrEqual<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && '<=' in logic && logic['<='].length === 2;
 export const isJsonLogicInArray = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicInArray<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && 'in' in logic && Array.isArray(logic.in[1]);
 export const isJsonLogicInString = (
-  logic: RQBJsonLogic
+  logic: unknown
 ): logic is JsonLogicInString<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
   isPojo(logic) && 'in' in logic && !Array.isArray(logic.in[1]);
+export const isJsonLogicAll = (
+  logic: unknown
+): logic is JsonLogicAll<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
+  isPojo(logic) && 'all' in logic;
+export const isJsonLogicNone = (
+  logic: unknown
+): logic is JsonLogicNone<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
+  isPojo(logic) && 'none' in logic;
+export const isJsonLogicSome = (
+  logic: unknown
+): logic is JsonLogicSome<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
+  isPojo(logic) && 'some' in logic;
 
 // "Between" operations are special cases of '<' and '<='
-export const isJsonLogicBetweenExclusive = (
-  logic: RQBJsonLogic
-): logic is JsonLogicBetweenExclusive =>
+export const isJsonLogicBetweenExclusive = (logic: unknown): logic is JsonLogicBetweenExclusive =>
   isPojo(logic) && '<' in logic && Array.isArray(logic['<']) && logic['<'].length === 3;
-export const isJsonLogicBetweenInclusive = (
-  logic: RQBJsonLogic
-): logic is JsonLogicBetweenInclusive =>
+export const isJsonLogicBetweenInclusive = (logic: unknown): logic is JsonLogicBetweenInclusive =>
   isPojo(logic) && '<=' in logic && Array.isArray(logic['<=']) && logic['<='].length === 3;
 
 // RQB extensions
-export const isRQBJsonLogicStartsWith = (logic: RQBJsonLogic): logic is RQBJsonLogicStartsWith =>
+export const isRQBJsonLogicStartsWith = (logic: unknown): logic is RQBJsonLogicStartsWith =>
   isPojo(logic) && 'startsWith' in logic;
-export const isRQBJsonLogicEndsWith = (logic: RQBJsonLogic): logic is RQBJsonLogicEndsWith =>
+export const isRQBJsonLogicEndsWith = (logic: unknown): logic is RQBJsonLogicEndsWith =>
   isPojo(logic) && 'endsWith' in logic;
 
 // Type guards for unused JsonLogic operations
 
 // import type {
-//   JsonLogicAll,
 //   JsonLogicCat,
 //   JsonLogicDifference,
 //   JsonLogicFilter,
@@ -105,12 +114,10 @@ export const isRQBJsonLogicEndsWith = (logic: RQBJsonLogic): logic is RQBJsonLog
 //   JsonLogicMin,
 //   JsonLogicMissing,
 //   JsonLogicMissingSome,
-//   JsonLogicNone,
 //   JsonLogicProduct,
 //   JsonLogicQuotient,
 //   JsonLogicReduce,
 //   JsonLogicRemainder,
-//   JsonLogicSome,
 //   JsonLogicSubstr,
 //   JsonLogicSum,
 // } from '../../types/index.noReact';
@@ -165,18 +172,6 @@ export const isRQBJsonLogicEndsWith = (logic: RQBJsonLogic): logic is RQBJsonLog
 //   logic: RQBJsonLogic
 // ): logic is JsonLogicReduce<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
 //   isPojo(logic) && 'reduce' in logic;
-// export const isJsonLogicAll = (
-//   logic: RQBJsonLogic
-// ): logic is JsonLogicAll<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
-//   isPojo(logic) && 'all' in logic;
-// export const isJsonLogicNone = (
-//   logic: RQBJsonLogic
-// ): logic is JsonLogicNone<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
-//   isPojo(logic) && 'none' in logic;
-// export const isJsonLogicSome = (
-//   logic: RQBJsonLogic
-// ): logic is JsonLogicSome<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>
-//   isPojo(logic) && 'some' in logic;
 // export const isJsonLogicMerge = (
 //   logic: RQBJsonLogic
 // ): logic is JsonLogicMerge<RQBJsonLogicStartsWith | RQBJsonLogicEndsWith> =>

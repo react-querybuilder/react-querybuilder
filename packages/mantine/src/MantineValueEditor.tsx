@@ -16,6 +16,7 @@ export interface MantineValueEditorProps extends ValueEditorProps {
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
+const withinPortalFalse = { withinPortal: false } as const;
 
 /**
  * @group Components
@@ -38,13 +39,18 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     validation: _validation,
     extraProps,
-    inputType: _inputType,
+    inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+    bigIntValueHandler,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -88,7 +94,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
                 i
               )
             }
-            popoverProps={{ withinPortal: false }}
+            popoverProps={withinPortalFalse}
             {...extraProps}
           />
         );
@@ -209,7 +215,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
             const dateArray = dates.map(d => (d ? dayjs(d).format(dateFormat) : ''));
             handleOnChange(listsAsArrays ? dateArray : dateArray.join(','));
           }}
-          popoverProps={{ withinPortal: false }}
+          popoverProps={withinPortalFalse}
           {...extraProps}
         />
       );
@@ -226,7 +232,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
           onChange={d =>
             handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
           }
-          popoverProps={{ withinPortal: false }}
+          popoverProps={withinPortalFalse}
           {...extraProps}
         />
       );
@@ -242,7 +248,23 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
         onChange={d =>
           handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
         }
-        popoverProps={{ withinPortal: false }}
+        popoverProps={withinPortalFalse}
+        {...extraProps}
+      />
+    );
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <TextInput
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
         {...extraProps}
       />
     );

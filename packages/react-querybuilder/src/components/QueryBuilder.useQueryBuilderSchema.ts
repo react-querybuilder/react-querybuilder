@@ -15,6 +15,7 @@ import type {
   FullOptionMap,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
+  MatchModeOptions,
   Path,
   QueryActions,
   QueryBuilderProps,
@@ -26,7 +27,7 @@ import type {
   TranslationsFull,
   UpdateableProperties,
   ValidationMap,
-  ValueSources,
+  ValueSourceFullOptions,
 } from '../types';
 import {
   add,
@@ -133,7 +134,9 @@ export function useQueryBuilderSchema<
     fieldMap,
     combinators,
     getOperatorsMain,
+    getMatchModesMain,
     getRuleDefaultOperator,
+    getSubQueryBuilderPropsMain,
     getValueEditorTypeMain,
     getValueSourcesMain,
     getValuesMain,
@@ -273,7 +276,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleAdd = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (rule: R, parentPath: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -310,7 +313,7 @@ export function useQueryBuilderSchema<
   );
 
   const onGroupAdd = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (ruleGroup: RG, parentPath: Path, context?: any) => {
       if (parentPath.length >= maxLevels) return;
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
@@ -355,7 +358,7 @@ export function useQueryBuilderSchema<
   );
 
   const onPropChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (prop: UpdateableProperties, value: any, path: Path) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
       // istanbul ignore if
@@ -364,18 +367,24 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
         return;
       }
+
       const newQuery = update(queryLocal, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
-        getValueSources: getValueSourcesMain as (field: string) => ValueSources,
+        getValueSources: getValueSourcesMain as (
+          field: string,
+          operator: string
+        ) => ValueSourceFullOptions,
         getRuleDefaultValue,
+        getMatchModes: getMatchModesMain as (field: string) => MatchModeOptions,
       });
       log({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
       dispatchQuery(newQuery);
     },
     [
       dispatchQuery,
+      getMatchModesMain,
       getRuleDefaultOperator,
       getRuleDefaultValue,
       getValueSourcesMain,
@@ -389,7 +398,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleOrGroupRemove = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (path: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -416,7 +425,7 @@ export function useQueryBuilderSchema<
   );
 
   const moveRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -462,7 +471,7 @@ export function useQueryBuilderSchema<
   );
 
   const groupRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -582,6 +591,19 @@ export function useQueryBuilderSchema<
   );
   // #endregion
 
+  // #region Setup overrides
+  /**
+   * This function overrides `createRuleGroup` from `useQueryBuilderSetup`, removing the
+   * requirement to pass a `boolean` parameter. If `independentCombinators` is `true`, it will
+   * always create a `RuleGroupTypeIC` even if called with no parameters. (We have to override
+   * it here because `independentCombinators` is not evaluated in `useQueryBuilderSetup`.)
+   */
+  const createRuleGroupOverride = useCallback(
+    (ic?: boolean) => createRuleGroup(ic ?? independentCombinators),
+    [createRuleGroup, independentCombinators]
+  );
+  // #endregion
+
   // #region Schema/actions
   const schema = useMemo(
     (): Schema<F, GetOptionIdentifierType<O>> => ({
@@ -594,7 +616,7 @@ export function useQueryBuilderSchema<
       combinators,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroup: createRuleGroupOverride,
       disabledPaths,
       enableDragAndDrop,
       fieldMap: fieldMap as FullOptionMap<F>,
@@ -603,8 +625,10 @@ export function useQueryBuilderSchema<
       getQuery,
       getInputType: getInputTypeMain,
       getOperators: getOperatorsMain,
+      getMatchModes: getMatchModesMain,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderProps: getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorType: getValueEditorTypeMain,
       getValues: getValuesMain,
@@ -632,7 +656,7 @@ export function useQueryBuilderSchema<
       controlClassnames,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroupOverride,
       disabledPaths,
       dispatchQuery,
       enableDragAndDrop,
@@ -640,9 +664,11 @@ export function useQueryBuilderSchema<
       fields,
       getInputTypeMain,
       getOperatorsMain,
+      getMatchModesMain,
       getQuery,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorTypeMain,
       getValuesMain,

@@ -16,7 +16,7 @@ import type {
 import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 const remapProperties = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   obj: Record<string, any>,
   propertyMap: Record<string, string | false>,
   deleteRemappedProperties: boolean
@@ -44,7 +44,7 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
    *
    * @defaultValue `r => r`
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   ruleProcessor?: (rule: RuleType) => any;
   /**
    * When a group is encountered in the hierarchy (including the root group, the
@@ -52,7 +52,7 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
    *
    * @defaultValue `rg => rg`
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   ruleGroupProcessor?: (ruleGroup: RG) => Record<string, any>;
   /**
    * For each rule and group in the query, any properties matching a key
@@ -143,7 +143,7 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
 export function transformQuery(
   query: RuleGroupType,
   options?: TransformQueryOptions<RuleGroupType>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any;
 /**
  * Recursively process a query heirarchy with independent combinators using this
@@ -154,7 +154,7 @@ export function transformQuery(
 export function transformQuery(
   query: RuleGroupTypeIC,
   options?: TransformQueryOptions<RuleGroupTypeIC>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any;
 export function transformQuery<RG extends RuleGroupTypeAny>(
   query: RG,
@@ -170,7 +170,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
     deleteRemappedProperties = true,
   } = options;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const processGroup = (rg: RuleGroupTypeAny): any => ({
     ...ruleGroupProcessor(
       remapProperties(
@@ -187,7 +187,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
     ...(propertyMap['rules'] === false
       ? null
       : {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           [propertyMap['rules'] ?? 'rules']: rg.rules.map((r: any, idx) => {
             const pathObject = omitPath ? null : { path: [...rg.path!, idx] };
             if (typeof r === 'string') {

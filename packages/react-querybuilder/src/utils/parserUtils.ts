@@ -3,11 +3,13 @@ import type {
   FullField,
   FullOption,
   OptionList,
+  ValueSource,
+  ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types/index.noReact';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
-import { toFlatOptionArray, toFullOption } from './optGroupUtils';
+import { isFlexibleOptionArray, toFlatOptionArray, toFullOption } from './optGroupUtils';
 
 export const getFieldsArray = (
   fields?: OptionList<FullField> | Record<string, FullField>
@@ -24,12 +26,17 @@ export const getFieldsArray = (
 
 export function fieldIsValidUtil(params: {
   fieldsFlat: FullField[];
-  getValueSources?: (field: string, operator: string) => ValueSources;
+  getValueSources?: (field: string, operator: string) => ValueSources | ValueSourceFlexibleOptions;
   fieldName: string;
   operator: DefaultOperatorName;
   subordinateFieldName?: string;
 }): boolean {
   const { fieldsFlat, fieldName, operator, subordinateFieldName, getValueSources } = params;
+
+  const vsIncludes = (vs: ValueSource) => {
+    const vss = getValueSourcesUtil(primaryField, operator, getValueSources);
+    return isFlexibleOptionArray(vss) && vss.some(vso => vso.value === vs || vso.name === vs);
+  };
 
   // If fields option was an empty array or undefined, then all identifiers
   // are considered valid.
@@ -39,19 +46,15 @@ export function fieldIsValidUtil(params: {
 
   const primaryField = toFullOption(fieldsFlat.find(ff => ff.name === fieldName)!);
   if (primaryField) {
-    valid =
+    valid = !(
       !subordinateFieldName &&
       operator !== 'notNull' &&
       operator !== 'null' &&
-      !getValueSourcesUtil(primaryField, operator, getValueSources).includes('value' as never)
-        ? false
-        : true;
+      !vsIncludes('value')
+    );
 
     if (valid && !!subordinateFieldName) {
-      if (
-        getValueSourcesUtil(primaryField, operator, getValueSources).includes('field' as never) &&
-        fieldName !== subordinateFieldName
-      ) {
+      if (vsIncludes('field') && fieldName !== subordinateFieldName) {
         const validSubordinateFields = filterFieldsByComparator(
           primaryField,
           fieldsFlat,

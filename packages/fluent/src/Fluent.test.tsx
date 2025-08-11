@@ -61,7 +61,7 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
 const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any
 ) => {
   const testValues: Option[] = props.values ?? props.options;
@@ -79,6 +79,7 @@ const testSelect = (
       expect(screen.getByText(optGroups[0].label)).toBeInTheDocument();
     });
 
+    // oxlint-disable-next-line expect-expect
     it('has the values passed into the <select multiple />', async () => {
       const onChange = jest.fn();
       const value = testValues.map(v => v.name).join(',');

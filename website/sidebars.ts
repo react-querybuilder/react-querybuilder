@@ -12,7 +12,18 @@ export default {
         description: 'React components available from React Query Builder.',
       },
       items: [
-        'components/querybuilder',
+        {
+          type: 'category',
+          label: 'Query Builder',
+          link: { type: 'doc', id: 'components/querybuilder' },
+          items: [
+            {
+              type: 'doc',
+              label: 'controlElements',
+              id: 'components/querybuilder-controlelements',
+            },
+          ],
+        },
         'components/valueeditor',
         'components/valueselector',
         'components/actionelement',
@@ -20,6 +31,7 @@ export default {
         'components/draghandle',
         'components/shiftactions',
         'components/inlinecombinator',
+        'components/matchmodeeditor',
         'components/rulegroup',
         'components/rule',
       ],
@@ -60,6 +72,7 @@ export default {
         'tips/managing-fields',
         'tips/managing-operators',
         'tips/custom-with-fallback',
+        'tips/subqueries',
         'tips/arbitrary-updates',
         'tips/external-controls',
         'tips/limit-groups',

@@ -48,12 +48,14 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
         const result = db.prepare<Result, SQLQueryBindings[]>(`${sqlBase} ${sql}`).all();
+        // oxlint-disable no-conditional-expect
         if (testCase[1] === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
           expect(result).toHaveLength(1);
           expect(result[0].last_name).toBe(testCase[1]);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
   });

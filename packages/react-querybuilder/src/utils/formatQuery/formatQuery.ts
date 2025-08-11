@@ -24,6 +24,7 @@ import type {
   ValueProcessorByRule,
 } from '../../types/index.noReact';
 import { getParseNumberMethod } from '../getParseNumberMethod';
+import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
@@ -58,9 +59,16 @@ import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
-import { getQuoteFieldNamesWithArray, isValueProcessorLegacy, numerifyValues } from './utils';
+import {
+  bigIntJsonStringifyReplacer,
+  getQuoteFieldNamesWithArray,
+  isValueProcessorLegacy,
+  numerifyValues,
+} from './utils';
 
 /**
+ * A collection of option presets for {@link formatQuery}, specifically for SQL-based formats.
+ *
  * @group Export
  */
 export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
@@ -83,6 +91,15 @@ export const sqlDialectPresets: Record<SQLPreset, FormatQueryOptions> = {
     numberedParams: true,
     paramPrefix: '$',
   },
+};
+
+/**
+ * A collection of option presets for {@link formatQuery}.
+ *
+ * @group Export
+ */
+export const formatQueryOptionPresets: Record<string, FormatQueryOptions> = {
+  ...sqlDialectPresets,
 };
 
 const defaultRuleProcessors = {
@@ -146,6 +163,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'validator'
   | 'valueProcessor'
   | 'placeholderValueName'
+  | 'parseNumbers'
 >;
 
 const defaultFormatQueryOptions = {
@@ -157,7 +175,6 @@ const defaultFormatQueryOptions = {
   paramPrefix: ':',
   paramsKeepPrefix: false,
   numberedParams: false,
-  parseNumbers: false,
   preserveValueOrder: false,
   placeholderFieldName: defaultPlaceholderFieldName,
   placeholderOperatorName: defaultPlaceholderOperatorName,
@@ -169,18 +186,28 @@ const defaultFormatQueryOptions = {
   operatorMap: {},
 } satisfies MostFormatQueryOptions;
 
-const valueProcessorCanActAsRuleProcessor = (format: ExportFormat) =>
-  format === 'mongodb' ||
-  format === 'mongodb_query' ||
-  format === 'cel' ||
-  format === 'spel' ||
-  format === 'jsonlogic' ||
-  format === 'elasticsearch' ||
-  format === 'jsonata' ||
-  format === 'ldap' ||
-  format === 'prisma' ||
-  format === 'drizzle' ||
-  format === 'sequelize';
+const valueProcessorCanActAsRuleProcessor = new Set<ExportFormat>([
+  'cel',
+  'drizzle',
+  'elasticsearch',
+  'jsonata',
+  'jsonlogic',
+  'ldap',
+  'mongodb_query',
+  'mongodb',
+  'prisma',
+  'sequelize',
+  'spel',
+]);
+
+const sqlFormats = new Set<ExportFormat>([
+  'sql',
+  'parameterized',
+  'parameterized_named',
+  'drizzle',
+  'prisma',
+  'sequelize',
+]);
 
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
@@ -236,7 +263,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'elasticsearch' | (FormatQueryOptions & { format: 'elasticsearch' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a MongoDB query object from an RQB query object.
@@ -249,7 +276,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'mongodb_query' | (FormatQueryOptions & { format: 'mongodb_query' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a JSON.stringify'd MongoDB query object from an RQB query object.
@@ -273,7 +300,7 @@ function formatQuery(
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: 'prisma' | (FormatQueryOptions & { format: 'prisma' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any>;
 /**
  * Generates a Drizzle ORM query function from an RQB query object. The function can
@@ -298,7 +325,8 @@ function formatQuery(
 /**
  * Generates a JSONata query string from an RQB query object.
  *
- * NOTE: The `parseNumbers` option is recommended for this format.
+ * NOTE: Either `parseNumbers: "strict-limited"` or `parseNumbers: true`
+ * are recommended for this format.
  *
  * @group Export
  */
@@ -339,15 +367,23 @@ function formatQuery(
   ruleGroup: RuleGroupTypeAny,
   options: FormatQueryOptions & { format: Exclude<ExportFormat, ExportObjectFormats> }
 ): string;
-function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | ExportFormat = {}) {
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  optionParam: FormatQueryOptions | ExportFormat = {}
+) {
+  const options = typeof optionParam === 'string' ? { format: lc(optionParam) } : optionParam;
+
   const optObj: MostFormatQueryOptions = {
     ...defaultFormatQueryOptions,
-    ...(sqlDialectPresets[(options as FormatQueryOptions).preset ?? 'ansi'] ?? null),
-    ...(typeof options === 'string' ? { format: options } : options),
-    ...(typeof options !== 'string' &&
-      !options.format &&
+    ...(!options.format || sqlFormats.has(options.format)
+      ? (sqlDialectPresets[options.preset ?? 'ansi'] ?? null)
+      : null),
+    ...options,
+    ...(!options.format &&
       (Object.keys(sqlDialectPresets).includes(options.preset ?? '') ? { format: 'sql' } : null)),
   };
+
+  const format = lc(optObj.format);
 
   const {
     fallbackExpression: fallbackExpression_option,
@@ -362,10 +398,14 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
     context,
   } = optObj;
 
-  const getParseNumberBoolean = (inputType?: InputType | null) =>
-    !!getParseNumberMethod({ parseNumbers, inputType });
-
-  const format = optObj.format.toLowerCase() as ExportFormat;
+  const getParseNumberBoolean = (inputType?: InputType | null): boolean | undefined => {
+    const parseNumberMethod = getParseNumberMethod({ parseNumbers, inputType });
+    return typeof parseNumberMethod === 'string'
+      ? true
+      : typeof parseNumbers === 'boolean'
+        ? parseNumbers
+        : undefined;
+  };
 
   const operatorProcessor =
     typeof operatorProcessor_option === 'function'
@@ -379,13 +419,13 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
         : valueProcessor_option
       : format === 'natural_language'
         ? defaultValueProcessorNL
-        : valueProcessorCanActAsRuleProcessor(format)
+        : valueProcessorCanActAsRuleProcessor.has(format)
           ? (ruleProcessor_option ?? defaultRuleProcessors[format])
           : defaultValueProcessorByRule;
 
   const ruleProcessor =
     (typeof ruleProcessor_option === 'function' ? ruleProcessor_option : null) ??
-    (valueProcessorCanActAsRuleProcessor(format) &&
+    (valueProcessorCanActAsRuleProcessor.has(format) &&
     typeof ruleProcessor_option !== 'function' &&
     valueProcessor_option
       ? valueProcessor
@@ -493,10 +533,10 @@ function formatQuery(ruleGroup: RuleGroupTypeAny, options: FormatQueryOptions | 
       if (format === 'json_without_ids') {
         return JSON.stringify(rg, (key, value) =>
           // Remove `id` and `path` keys; leave everything else unchanged.
-          key === 'id' || key === 'path' ? undefined : value
+          key === 'id' || key === 'path' ? undefined : bigIntJsonStringifyReplacer(key, value)
         );
       }
-      return JSON.stringify(rg, null, 2);
+      return JSON.stringify(rg, bigIntJsonStringifyReplacer, 2);
     }
 
     case 'sql':

@@ -26,6 +26,7 @@ export const MantineValueSelector = ({
   field: _field,
   fieldData: _fieldData,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   path: _path,
   level: _level,

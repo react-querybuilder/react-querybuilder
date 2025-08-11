@@ -27,21 +27,23 @@ import {
   queryForRuleProcessor,
   queryForXor,
   queryIC,
+  queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 import { defaultValueProcessor, defaultValueProcessorByRule } from '../index';
 
-export const sqlString =
+const sqlString =
   "(firstName is null and lastName is not null and firstName in ('Test', 'This') and lastName not in ('Test', 'This') and firstName between 'Test' and 'This' and firstName between 'Test' and 'This' and lastName not between 'Test' and 'This' and age between '12' and '14' and age = '26' and isMusician = TRUE and isLucky = FALSE and NOT (gender = 'M' or job != 'Programmer' or email like '%@%') and (lastName not like '%ab%' or job like 'Prog%' or email like '%com' or job not like 'Man%' or email not like '%fr'))";
-export const sqlStringForValueSourceField =
+const sqlStringForValueSourceField =
   "(firstName is null and lastName is not null and firstName in (middleName, lastName) and lastName not in (middleName, lastName) and firstName between middleName and lastName and firstName between middleName and lastName and lastName not between middleName and lastName and age = iq and isMusician = isCreative and NOT (gender = someLetter or job != isBetweenJobs or email like '%' || atSign || '%') and (lastName not like '%' || firstName || '%' or job like jobPrefix || '%' or email like '%' || dotCom or job not like hasNoJob || '%' or email not like '%' || isInvalid))";
-export const parameterizedSQLString =
+const parameterizedSQLString =
   '(firstName is null and lastName is not null and firstName in (?, ?) and lastName not in (?, ?) and firstName between ? and ? and firstName between ? and ? and lastName not between ? and ? and age between ? and ? and age = ? and isMusician = ? and isLucky = ? and NOT (gender = ? or job != ? or email like ?) and (lastName not like ? or job like ? or email like ? or job not like ? or email not like ?))';
-export const parameterizedNamedSQLString =
+const parameterizedNamedSQLString =
   '(firstName is null and lastName is not null and firstName in (:firstName_1, :firstName_2) and lastName not in (:lastName_1, :lastName_2) and firstName between :firstName_3 and :firstName_4 and firstName between :firstName_5 and :firstName_6 and lastName not between :lastName_3 and :lastName_4 and age between :age_1 and :age_2 and age = :age_3 and isMusician = :isMusician_1 and isLucky = :isLucky_1 and NOT (gender = :gender_1 or job != :job_1 or email like :email_1) and (lastName not like :lastName_5 or job like :job_2 or email like :email_2 or job not like :job_3 or email not like :email_3))';
-export const sqlStringQuotedWithDoubleQuotes =
+const sqlStringQuotedWithDoubleQuotes =
   '(firstName is null and lastName is not null and firstName in ("Test", "This") and lastName not in ("Test", "This") and firstName between "Test" and "This" and firstName between "Test" and "This" and lastName not between "Test" and "This" and age between "12" and "14" and age = "26" and isMusician = TRUE and isLucky = FALSE and NOT (gender = "M" or job != "Programmer" or email like "%@%") and (lastName not like "%ab%" or job like "Prog%" or email like "%com" or job not like "Man%" or email not like "%fr"))';
-export const params: unknown[] = [
+const sqlStringForMatchModes = `((select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = array_length("fs", 1) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) >= 2 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) >= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) >= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) <= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) <= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%')) = 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%' and "elem_alias" like '%S%')) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like '%S%' and "elem_alias" like '%S%')) >= 2)`;
+const params: unknown[] = [
   'Test',
   'This',
   'Test',
@@ -66,7 +68,7 @@ export const params: unknown[] = [
   'Man%',
   '%fr',
 ];
-export const params_named = {
+const params_named = {
   firstName_1: 'Test',
   firstName_2: 'This',
   lastName_1: 'Test',
@@ -91,6 +93,9 @@ export const params_named = {
   job_3: 'Man%',
   email_3: '%fr',
 };
+const parameterizedSqlStringForMatchModes = `((select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = array_length("fs", 1) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and not exists (select 1 from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) >= 2 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) >= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) >= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) <= 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) <= 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = 2 and (select count(*) / array_length("fs", 1) from unnest("fs") as "elem_alias" where ("elem_alias" like $1)) = 0.5 and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1 and "elem_alias" like $2)) = array_length("fs", 1) and (select count(*) from unnest("fs") as "elem_alias" where ("elem_alias" like $1 and "elem_alias" like $2)) >= 2)`;
+// prettier-ignore
+const parametersForMatchModes: unknown[] = ['%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%', '%S%'];
 
 it('formats SQL correctly', () => {
   expect(formatQuery(query, 'sql')).toBe(sqlString);
@@ -98,6 +103,8 @@ it('formats SQL correctly', () => {
   expect(formatQuery(query, { format: 'sql', valueProcessor: defaultValueProcessor })).toBe(
     sqlString
   );
+  expect(formatQuery(queryWithMatchModes, { preset: 'postgresql' })).toBe(sqlStringForMatchModes);
+  expect(formatQuery(queryWithMatchModes, 'sql')).toBe(`(1 = 1)`);
 });
 
 it('assumes "sql" format when preset matches a SQL preset', () => {
@@ -114,6 +121,13 @@ it('formats parameterized SQL correctly', () => {
     sql: sqlStringForValueSourceField,
     params: [],
   });
+  expect(
+    formatQuery(queryWithMatchModes, { format: 'parameterized', preset: 'postgresql' })
+  ).toEqual({
+    sql: parameterizedSqlStringForMatchModes,
+    params: parametersForMatchModes,
+  });
+  expect(formatQuery(queryWithMatchModes, 'parameterized')).toEqual({ sql: `(1 = 1)`, params: [] });
 });
 
 it('formats parameterized named SQL correctly', () => {
@@ -558,6 +572,7 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
+  // oxlint-disable-next-line expect-expect
   it('parses numbers for sql', () => {
     const allNumbersParsed =
       "(f > 'NaN' and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')";
@@ -592,6 +607,7 @@ describe('parseNumbers', () => {
     ).toBe("(f1 = 123 and f2 = '123')");
   });
 
+  // oxlint-disable-next-line expect-expect
   it('parses numbers for parameterized', () => {
     // prettier-ignore
     const allNumbersParsed = ['NaN', 0, 0, 0, 1.5, 1.5, 0, 1, 2, 0, 1, 2, 0, 'abc', 2, 0, 1, 0, 1, 0, 'abc', {}, {}];
@@ -606,6 +622,7 @@ describe('parseNumbers', () => {
     }
   });
 
+  // oxlint-disable-next-line expect-expect
   it('parses numbers for parameterized_named', () => {
     // prettier-ignore
     const allNumbersParsed = { f_1: 'NaN', f_2: 0, f_3: 0, f_4: 0, f_5: 1.5, f_6: 1.5, f_7: 0, f_8: 1, f_9: 2, f_10: 0, f_11: 1, f_12: 2, f_13: 0, f_14: 'abc', f_15: 2, f_16: 0, f_17: 1, f_18: 0, f_19: 1, f_20: 0, f_21: 'abc', f_22: {}, f_23: {} };
