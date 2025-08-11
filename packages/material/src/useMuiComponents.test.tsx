@@ -36,7 +36,6 @@ for (const [cn, mockImpl] of Object.entries(componentMocks)) {
   if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
 }
 
-// oxlint-disable-next-line expect-expect
 it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {
@@ -51,7 +50,6 @@ it('returns the MUI components', async () => {
   }
 });
 
-// oxlint-disable-next-line expect-expect
 it('renders with preloaded components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;
   await act(async () => {

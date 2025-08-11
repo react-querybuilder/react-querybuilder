@@ -55,7 +55,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.9",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^5.0.0",
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
     "react": "^19.1.1",
@@ -63,7 +63,7 @@
     "react-querybuilder": "8.8.2",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
-    "vite": "^7.0.6"
+    "vite": "^7.1.1"
   },
   "peerDependencies": {
     "bootstrap": ">=5",

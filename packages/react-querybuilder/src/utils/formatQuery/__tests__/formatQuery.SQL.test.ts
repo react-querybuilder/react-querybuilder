@@ -572,7 +572,6 @@ describe('ruleProcessor', () => {
 });
 
 describe('parseNumbers', () => {
-  // oxlint-disable-next-line expect-expect
   it('parses numbers for sql', () => {
     const allNumbersParsed =
       "(f > 'NaN' and f = 0 and f = 0 and f = 0 and (f < 1.5 or f > 1.5) and f in (0, 1, 2) and f in (0, 1, 2) and f in (0, 'abc', 2) and f between 0 and 1 and f between 0 and 1 and f between '0' and 'abc' and f between '[object Object]' and '[object Object]')";
@@ -607,7 +606,6 @@ describe('parseNumbers', () => {
     ).toBe("(f1 = 123 and f2 = '123')");
   });
 
-  // oxlint-disable-next-line expect-expect
   it('parses numbers for parameterized', () => {
     // prettier-ignore
     const allNumbersParsed = ['NaN', 0, 0, 0, 1.5, 1.5, 0, 1, 2, 0, 1, 2, 0, 'abc', 2, 0, 1, 0, 1, 0, 'abc', {}, {}];
@@ -622,7 +620,6 @@ describe('parseNumbers', () => {
     }
   });
 
-  // oxlint-disable-next-line expect-expect
   it('parses numbers for parameterized_named', () => {
     // prettier-ignore
     const allNumbersParsed = { f_1: 'NaN', f_2: 0, f_3: 0, f_4: 0, f_5: 1.5, f_6: 1.5, f_7: 0, f_8: 1, f_9: 2, f_10: 0, f_11: 1, f_12: 2, f_13: 0, f_14: 'abc', f_15: 2, f_16: 0, f_17: 1, f_18: 0, f_19: 1, f_20: 0, f_21: 'abc', f_22: {}, f_23: {} };
