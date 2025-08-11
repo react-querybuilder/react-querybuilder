@@ -9,27 +9,27 @@ import { ValueEditor } from 'react-querybuilder';
 
 %importmd ../\_ts_admonition.md
 
-`ValueEditor` renders an `<input>` by default, or a `<select>` (by way of [`ValueSelector`](./valueselector)) if the value should be selected from a list. The [`useValueEditor`](../utils/hooks#usevalueeditor) Hook is called to massage the `value` if necessary and retrieve utilities for managing list values.
+`ValueEditor` renders an `<input>` by default, or a `<select>` (via [`ValueSelector`](./valueselector)) for list-based values. It uses the [`useValueEditor`](../utils/hooks#usevalueeditor) hook to process values and manage list utilities.
 
 :::note
 
-While React Query Builder does not restrict the rule `value` property to JavaScript primitives, every effort is made to keep the query object serializable. This means that editors that generate non-serializable values (like some date pickers) will store the value as a string, parsing it back into the required non-primitive type during the render process. Editors that allow or require multiple values (when `operator` is "between" or "in", for example) will typically store values as comma-separated strings.
+React Query Builder doesn't restrict rule `value` properties to JavaScript primitives, but maintains query object serializability. Editors generating non-serializable values (like date pickers) store values as strings, then parse them back to required types during rendering. Multiple-value editors (for "between" or "in" operators) typically use comma-separated strings.
 
 :::
 
 ## Showcase
 
-`ValueEditor` may be the default component most commonly [overridden](./querybuilder-controlelements#valueeditor) with a custom component ([more information here](../tips/custom-with-fallback)), but it is capable of handling many common scenarios without customization. The query builder below demonstrates each of the supported options for the [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
+`ValueEditor` is the most commonly [customized component](./querybuilder-controlelements#valueeditor) ([more information here](../tips/custom-with-fallback)), yet handles many scenarios out of the box. The query builder below demonstrates all supported [`Field#valueEditorType` and `Field#inputType` properties](../typescript#fields).
 
 Rules 10 and 11 demonstrate the behavior when the `operator` is "between". Rule 12 demonstrates the behavior when a field's `valueSources` property is set to `["field", "value"]`.
 
 :::note
 
-This query builder has been specially configured in the following ways:
+This query builder has been specially configured:
 
-1. The index (plus one) of the rule in the `rules` array is displayed to the left of the field selector.
-2. The value actually stored in the rule object within the query is displayed to the right of each value editor.
-3. To focus attention on the value editor components, all other components have been disabled or hidden.
+1. The rule index (plus one) in the `rules` array is displayed to the left of the field selector.
+2. The value stored in the rule object is displayed to the right of each value editor.
+3. To focus attention on value editor components, all other components have been disabled or hidden.
 
 :::
 
@@ -176,7 +176,7 @@ The [compatibility packages](../compat) also implement these options using appro
 
 ## Value sources
 
-By default, React Query Builder facilitates the comparison of fields (typically corresponding to database column names) to _values_ (strings, numbers, etc.). But some situations call for comparisons between two fields. Consider this SQL statement:
+By default, React Query Builder facilitates comparing fields (typically database column names) to _values_ (strings, numbers, etc.). But some situations require comparisons between two fields. Consider this SQL statement:
 
 ```sql
 SELECT *
@@ -184,9 +184,9 @@ SELECT *
  WHERE lastName LIKE firstName || '%';
 ```
 
-That would return records where the user's last name began with the same letters as their first name and ended with any number of other characters (including zero). "Kris Kristofferson" would meet this criteria.
+This would return records where the user's last name begins with the same letters as their first name and ends with any number of other characters (including zero). "Kris Kristofferson" would meet this criteria.
 
-To represent that `WHERE` clause in React Query Builder, we can use the [`getValueSources` prop](./querybuilder#getvaluesources) or the `valueSources` property of the `lastName` field in the `fields` prop. When either of those evaluates to an array containing "field", and the `valueSource` property of the rule is set to "field", the `<ValueEditor />` component will display a drop-down list of fields instead of values.
+To represent that `WHERE` clause in React Query Builder, use the [`getValueSources` prop](./querybuilder#getvaluesources) or the `valueSources` property of the `lastName` field in the `fields` prop. When either evaluates to an array containing "field", and the rule's `valueSource` property is "field", the `<ValueEditor />` component displays a drop-down list of fields instead of values.
 
 ### Example
 
@@ -200,7 +200,7 @@ In the query builder above, the definition for the field used in the last rule i
 }
 ```
 
-And the `defaultQuery` prop looks like this:
+The `defaultQuery` prop looks like this:
 
 ```json
 {
@@ -212,25 +212,25 @@ And the `defaultQuery` prop looks like this:
 }
 ```
 
-Since the field's `valueSources` property is an array with length > 1, a ["value source selector" component](./querybuilder-controlelements#valuesourceselector) is displayed to the left of the `<ValueEditor />`.
+Since the field's `valueSources` property is an array with length > 1, a ["value source selector" component](./querybuilder-controlelements#valuesourceselector) appears to the left of the `<ValueEditor />`.
 
 :::tip
 
-To reorder the rule components, for example to move the value source selector to the right of the value editor, you can use the CSS Flexbox `order` property).
+To reorder rule components (e.g., move the value source selector to the right of the value editor), use the CSS Flexbox `order` property.
 
 :::
 
 :::note
 
-The `Field#valueSources` property can also be a function that takes an operator name as its only parameter and returns the required array.
+The `Field#valueSources` property can also be a function that takes an operator name as its parameter and returns the required array.
 
 :::
 
 ### Filtering the field list
 
-Not all fields will be compatible with each other, so each field may provide a `comparator` property specifying which fields show up in the value editor list. If `comparator` is a string, then only fields which have the same value as the current field in the property matching the `comparator` string will be listed.
+Not all fields are compatible with each other, so each field may provide a `comparator` property specifying which fields appear in the value editor list. If `comparator` is a string, only fields with the same value as the current field in the property matching the `comparator` string are listed.
 
-That's a mouthful, so let's look at an example. In the following field list, fields `f1`, `f2`, and `f3` share a common property `datatype: "number"`. `f1` identifies the `datatype` property as its `comparator`. Therefore, when a rule specifies the field `f1`, only `f2` and `f3` will be in the drop-down list because their `datatype` property matches `f1`'s. `f4` and `f5` will be excluded because their `datatype` property does not match `f1`'s, and `f1` will be excluded because a rule's selected field cannot be compared with itself.
+Here's an example. In the following field list, fields `f1`, `f2`, and `f3` share a common property `datatype: "number"`. `f1` identifies the `datatype` property as its `comparator`. When a rule specifies field `f1`, only `f2` and `f3` appear in the drop-down list because their `datatype` property matches `f1`'s. `f4` and `f5` are excluded because their `datatype` property doesn't match `f1`'s, and `f1` is excluded because a rule's selected field cannot be compared with itself.
 
 ```tsx
 const fields: Field[] = {
@@ -250,7 +250,7 @@ const fields: Field[] = {
 }
 ```
 
-The `comparator` property can also be a function that takes a `Field` object as its only parameter. Each field in the `fields` prop will be evaluated by this function. It should return `true` if the field should be included in the list, and `false` otherwise. The equivalent configuration of the field list above, using a function for `comparator`, would be this:
+The `comparator` property can also be a function that takes a `Field` object as its parameter. Each field in the `fields` prop is evaluated by this function. It should return `true` if the field should be included in the list, and `false` otherwise. The equivalent configuration using a function for `comparator`:
 
 ```tsx
 const fields: Field[] = {

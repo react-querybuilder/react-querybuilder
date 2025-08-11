@@ -32,7 +32,7 @@ const App = () => {
 };
 ```
 
-This will almost certainly lead to undesirable behavior such as the value editor losing focus after each keystroke. This happens because the `CustomValueEditor` component is being redefined each time the `App` component renders. To fix the problem, move the custom component declaration outside of the other function component (it can still be in the same file, just not within the function body):
+This causes problems like the value editor losing focus after each keystroke, because `CustomValueEditor` gets redefined on every `App` render. Fix this by declaring the custom component outside the parent function (same file, but not inside the function body):
 
 ```jsx title="App.jsx"
 // highlight-start

@@ -5,13 +5,13 @@ description: Convert SQL and other formats to query builder objects
 
 %importmd ../\_ts_admonition.md
 
-Import/parser functions take a string or object representing a query in a specific language and translate it to a query suitable for the `query` or `defaultQuery` props in a `<QueryBuilder />` component.
+Import/parser functions convert query strings or objects from specific languages into query objects for `<QueryBuilder />` components.
 
-The optional second parameter is an options object to configure the parsing behavior or query generation (see [Configuration](#configuration)).
+The optional second parameter configures parsing behavior or query generation (see [Configuration](#configuration)).
 
 :::info Importing `parse*` functions
 
-Since the `parse*` functions are used less frequently than other utility functions&mdash;and not generally alongside each other&mdash;they were removed from the main export in version 7.
+Since `parse*` functions are used less frequently and rarely together, they were removed from the main export in version 7.
 
 ```diff
  // Version 6 only
@@ -30,7 +30,7 @@ Since the `parse*` functions are used less frequently than other utility functio
 +import { parseJSONata } from "react-querybuilder/parseJSONata"
 ```
 
-These functions were available as separate exports in version 6 (along with [`formatQuery`](./export) and [`transformQuery`](./misc#transformquery)), but they could also be imported from `"react-querybuilder"`. In version 7, they are _only_ available as separate exports. (This change reduced the main bundle size by almost 50%.)
+These functions were available as separate exports in version 6 (along with [`formatQuery`](./export) and [`transformQuery`](./misc#transformquery)), but could also be imported from `"react-querybuilder"`. In version 7, they're _only_ available as separate exports. (This reduced the main bundle size by almost 50%.)
 
 :::
 
@@ -42,20 +42,20 @@ import { parseSQL } from 'react-querybuilder/parseSQL';
 function parseSQL(sql: string, options?: ParseSQLOptions): RuleGroupTypeAny;
 ```
 
-`parseSQL` accepts a SQL `SELECT` statement (either the full statement or the `WHERE` clause by itself).
+`parseSQL` accepts a SQL `SELECT` statement or `WHERE` clause.
 
 Click the "Import SQL" button in [the demo](/demo) to try it out.
 
 ### Options
 
-In addition to the standard [configuration](#configuration) options, `parseSQL` accepts two options that configure the handling of named or anonymous bind variables within the SQL string.
+Beyond standard [configuration](#configuration) options, `parseSQL` accepts two options for handling named or anonymous bind variables in SQL strings.
 
 - `params` (`any[] | Record<string, any>`): An array of parameter values or a parameter-to-value mapping object.
 - `paramPrefix` (`string`): Ignores this string at the beginning of parameter identifiers when matching to parameter names in the `params` object.
 
 ### Usage
 
-Running any of the following statements will produce the same result (see output below).
+All these statements produce the same result:
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`);
@@ -96,7 +96,7 @@ Output (`RuleGroupType`):
 
 :::tip
 
-Since v5.0, `parseSQL` can detect `XOR` operators and convert the expressions into rule groups with combinator "xor". However, since "xor" is not one of the members of `defaultCombinators`, you will need to specify `defaultCombinatorsExtended` (or some derivation of that) in your `<QueryBuilder />` props if you believe the original SQL might contain `XOR` clauses.
+Since v5.0, `parseSQL` detects `XOR` operators and converts them to rule groups with combinator "xor". Since "xor" isn't in `defaultCombinators`, specify `defaultCombinatorsExtended` in your `<QueryBuilder />` props if the original SQL might contain `XOR` clauses.
 
 ```ts
 import { defaultCombinatorsExtended, parseSQL, QueryBuilder } from 'react-querybuilder';
@@ -128,7 +128,7 @@ function parseMongoDB(
 ): RuleGroupTypeAny;
 ```
 
-`parseMongoDB` takes a MongoDB query as a JSON object or `JSON.parse`-able string.
+`parseMongoDB` accepts a MongoDB query as JSON object or `JSON.parse`-able string.
 
 Click the "Import MongoDB" button in [the demo](/demo) to try it out.
 
@@ -162,7 +162,7 @@ Output (`RuleGroupType`):
 
 ### Custom operators
 
-`parseMongoDB` can identify and process custom operators with the `additionalOperators` option. The option is a map of operators to their respective processing functions. Functions are passed the operator, the associated value, and any other options that were set. They should return a `RuleType` or `RuleGroupType`. (They should _not_ return `RuleGroupTypeIC`, even if using [independent combinators](../components/querybuilder#independent-combinators). If the `independentCombinators` option is `true`, `parseMongoDB` will convert the final query to `RuleGroupTypeIC` before returning it.)
+`parseMongoDB` identifies and processes custom operators with the `additionalOperators` option. This option maps operators to their processing functions. Functions receive the operator, associated value, and other options, and should return `RuleType` or `RuleGroupType`. (Don't return `RuleGroupTypeIC`, even with [independent combinators](../components/querybuilder#independent-combinators). If `independentCombinators` is `true`, `parseMongoDB` converts the final query to `RuleGroupTypeIC` before returning.)
 
 Example:
 
@@ -200,7 +200,7 @@ Output (`RuleGroupType`):
 
 :::tip
 
-Valid MongoDB query strings may not strictly conform to the JSON specification. To cover the extended format, you may want to pre-parse query strings with a library like [mongodb-query-parser](https://www.npmjs.com/package/mongodb-query-parser) before passing them to `parseMongoDB`.
+Valid MongoDB query strings may not strictly conform to JSON. To handle extended formats, pre-parse query strings with a library like [mongodb-query-parser](https://www.npmjs.com/package/mongodb-query-parser) before passing them to `parseMongoDB`.
 
 :::
 
@@ -215,7 +215,7 @@ function parseJsonLogic(
 ): RuleGroupTypeAny;
 ```
 
-`parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object or `JSON.parse`-able string.
+`parseJsonLogic` accepts a [JsonLogic](https://jsonlogic.com/) object or `JSON.parse`-able string.
 
 Click the "Import JsonLogic" button in [the demo](/demo) to try it out.
 
@@ -253,17 +253,17 @@ Output (`RuleGroupType`):
 
 ### Custom operations
 
-By default, `parseJsonLogic` handles the standard JsonLogic operations that correspond to one of the default operators in React Query Builder. To handle custom operations, use the `jsonLogicOperations` option.
+By default, `parseJsonLogic` handles standard JsonLogic operations that correspond to default React Query Builder operators. To handle custom operations, use the `jsonLogicOperations` option.
 
-`jsonLogicOperations` is `Record<string, (val: any) => RuleType | RuleGroupTypeAny`. The keys of the object should be the custom operations, and the corresponding values should be functions that return a rule or group.
+`jsonLogicOperations` is `Record<string, (val: any) => RuleType | RuleGroupTypeAny`. Keys are custom operations, values are functions returning a rule or group.
 
 :::note
 
-Including any of the standard JsonLogic operations as keys in the `jsonLogicOperations` object will override the default `parseJsonLogic` behavior for those operations.
+Including standard JsonLogic operations as keys in `jsonLogicOperations` overrides default `parseJsonLogic` behavior for those operations.
 
 :::
 
-The example below uses a custom "regex" operation to produce a rule with the "contains" operator, the `value` being the `source` of the regular expression in the JsonLogic rule.
+This example uses a custom "regex" operation to produce a rule with the "contains" operator, using the regular expression's `source` as the `value`.
 
 ```ts
 parseJsonLogic(
@@ -299,7 +299,7 @@ import { parseSpEL } from 'react-querybuilder/parseSpEL';
 function parseSpEL(spelQuery: string, options?: ParseSpELOptions): RuleGroupTypeAny;
 ```
 
-`parseSpEL` takes a [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) string.
+`parseSpEL` accepts a [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) string.
 
 Click the "Import SpEL" button in [the demo](/demo) to try it out.
 
@@ -337,7 +337,7 @@ import { parseCEL } from 'react-querybuilder/parseCEL';
 function parseCEL(celQuery: string, options?: ParseCELOptions): RuleGroupTypeAny;
 ```
 
-`parseCEL` takes a [CEL](https://github.com/google/cel-spec) string.
+`parseCEL` accepts a [CEL](https://github.com/google/cel-spec) string.
 
 Click the "Import CEL" button in [the demo](/demo) to try it out.
 
@@ -375,7 +375,7 @@ import { parseJSONata } from 'react-querybuilder/parseJSONata';
 function parseJSONata(jsonataQuery: string, options?: ParseJSONataOptions): RuleGroupTypeAny;
 ```
 
-`parseJSONata` takes a [JSONata](https://jsonata.org/) string.
+`parseJSONata` accepts a [JSONata](https://jsonata.org/) string.
 
 Click the "Import JSONata" button in [the demo](/demo) to try it out.
 
@@ -405,13 +405,13 @@ Output (`RuleGroupType`):
 }
 ```
 
-JSONata lists are always translated to arrays. The [`listsAsArrays` option](#lists-as-arrays) is ignored and effectively always `true`.
+JSONata lists are always translated to arrays. The [`listsAsArrays` option](#lists-as-arrays) is ignored (effectively always `true`).
 
 ## Configuration
 
 ### Lists as arrays
 
-To generate arrays instead of comma-separated strings for lists of values following "in"- and "between"-type operators, use the `listsAsArrays` option.
+To generate arrays instead of comma-separated strings for "in"- and "between"-type operator values, use the `listsAsArrays` option.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE lastName IN ('Vai', 'Vaughan') AND age BETWEEN 20 AND 100`, {
@@ -445,7 +445,7 @@ Output:
 
 ### Independent combinators
 
-When the `independentCombinators` option is `true`, `parse*` functions will output a query with combinator identifiers _between_ sibling rules/groups instead of the group level.
+When `independentCombinators` is `true`, `parse*` functions output queries with combinator identifiers _between_ sibling rules/groups instead of at the group level.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = 'Steve' AND lastName = 'Vai'`, {
@@ -477,9 +477,9 @@ Output (`RuleGroupTypeIC`):
 
 ### Fields as value source
 
-When the `fields` option (which accepts the same types as the [`fields` prop](../components/querybuilder#fields)) is provided, and _only_ if it is provided, then `parse*` functions will validate clauses that have a field identifier to the right of the operator instead of a primitive value. A `getValueSources` function (with the same signature as the [prop of the same name](../components/querybuilder#getvaluesources)) can also be provided to help validate rules.
+When the `fields` option (accepting the same types as the [`fields` prop](../components/querybuilder#fields)) is provided, `parse*` functions validate clauses with field identifiers to the right of the operator instead of primitive values. A `getValueSources` function (same signature as the [prop](../components/querybuilder#getvaluesources)) can also help validate rules.
 
-In order for such a rule to be considered valid, one of the following must be an array that includes the string "field": 1) the `getValueSources` return value, 2) the field's `valueSources` function return value, or 3) the field's `valueSources` property itself. The code below demonstrates all three methods.
+For such rules to be valid, one of these must be an array including "field": 1) the `getValueSources` return value, 2) the field's `valueSources` function return value, or 3) the field's `valueSources` property. The code below demonstrates all three methods.
 
 ```ts
 parseSQL(`SELECT * FROM t WHERE firstName = lastName`, {
@@ -511,13 +511,13 @@ Output:
 
 ### Generating `id`s
 
-When the `generateIDs` option is `true`, `parse*` functions will generate a unique `id` property for the output query object and each nested rule and group using `prepareRuleGroup`.
+When `generateIDs` is `true`, `parse*` functions generate a unique `id` property for the output query object and each nested rule and group using `prepareRuleGroup`.
 
 :::note
 
-`parse*` functions will only validate clauses where "field" is the _only_ detected value source. Operators like "between" and "in" that take multiple values must only have field names or only scalar values to the right of the operator, not a mix of field names and scalar values. See examples below.
+`parse*` functions only validate clauses where "field" is the _only_ detected value source. Operators like "between" and "in" must have only field names or only scalar values to the right of the operator, not mixed. See examples below.
 
-#### Clauses that will be deemed invalid
+#### Invalid clauses
 
 ```ts
 // 1 is a scalar value and `iq` is a field name
@@ -526,7 +526,7 @@ parseSQL(`SELECT * FROM tbl WHERE age between 1 and iq`);
 parseSQL(`SELECT * FROM tbl WHERE firstName IN (lastName, 'Steve', 'Stevie')`);
 ```
 
-#### Clauses that will (probably) be deemed valid
+#### Valid clauses
 
 ```ts
 // Both are field names

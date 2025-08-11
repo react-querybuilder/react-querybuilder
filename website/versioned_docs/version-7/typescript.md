@@ -2,13 +2,13 @@
 title: TypeScript reference
 ---
 
-These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript, you can use the information below to understand the required shape of the props and function parameters.
+Here are the key [TypeScript](https://www.typescriptlang.org/) types and interfaces used throughout React Query Builder. Even if you're using JavaScript, this reference helps you understand the expected shape of props and function parameters.
 
 :::note
 
 Some of the definitions below have been simplified from their actual implementations for legibility and ease of comprehension.
 
-The **[API documentation](/api)**, however, is generated directly from the source code and provides direct links to the actual definitions of each type within the repository should you need more detailed information.
+The **[API documentation](/api)** is generated from source code and provides complete type definitions with repository links for detailed reference.
 
 :::
 
@@ -128,6 +128,7 @@ type ExportFormat =
   | 'cel'
   | 'jsonlogic'
   | 'jsonata'
+  | 'ldap'
   | 'elasticsearch'
   | 'spel'
   | 'natural_language';

@@ -3,7 +3,7 @@ title: Buildless
 hide_table_of_contents: true
 ---
 
-React Query Builder can be used directly in the browser without a build step using ESM. Babel can be used to parse JSX in a `script` tag.
+Use React Query Builder directly in the browser without a build step via ESM imports. For JSX parsing in `script` tags, include Babel.
 
 ## Basic example
 
@@ -55,7 +55,7 @@ React Query Builder can be used directly in the browser without a build step usi
 
 ## Drag-and-drop example
 
-To add drag-and-drop capability, import `react-dnd`, `react-dnd-html5-backend`, and `@react-querybuilder/dnd`. Nest `<QueryBuilder />` inside `<QueryBuilderDnD />` and spread the `react-dnd*` exports to the `dnd` prop.
+For drag-and-drop functionality, import `react-dnd`, `react-dnd-html5-backend`, and `@react-querybuilder/dnd`. Wrap `<QueryBuilder />` with `<QueryBuilderDnD />` and pass the combined exports to the `dnd` prop.
 
 ```html
 <!doctype html>

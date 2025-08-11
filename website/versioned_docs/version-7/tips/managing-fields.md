@@ -30,9 +30,9 @@ interface Field {
 
 ## Generating `fields` dynamically
 
-In many cases, elements of the `fields` array correspond directly to columns in a database table or view. You may be able to generate the `fields` array by interrogating the database information schema with a relatively simple query.
+Field arrays often map directly to database table columns. You can generate the `fields` array by querying the database information schema.
 
-The following examples should provide a good starting point for developing such a query to run against your own database or alternative storage system. Each platform has its own syntax variations, data type quirks, and other nuances, so the examples are not absolutely equivalent to each other. However, there are some general commonalities:
+The following examples provide starting points for database-specific queries. Each platform has syntax variations and data type quirks, so examples aren't identical. Common patterns:
 
 - None of the properties assigned below are required in the `fields` prop except for `label` and at least one of `name` or `value`.
 - `label` is selected from the same configuration as `name` and `value`, but you'll probably want to grab a more user-friendly caption from somewhere else.
