@@ -104,7 +104,6 @@ const testSelect = (
 
     // Test as multiselect for <TremorValueEditor type="multiselect" /> and <ValueSelector />
     if (('values' in props && props.type === 'multiselect') || 'options' in props) {
-      // oxlint-disable-next-line expect-expect
       it('has the values passed into the <select multiple />', async () => {
         const onChange = jest.fn();
         const value = testValues.map(v => v.name).join(',');

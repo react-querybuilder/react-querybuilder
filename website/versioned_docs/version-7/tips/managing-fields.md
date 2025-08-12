@@ -3,7 +3,7 @@ title: Managing fields
 description: Generate a field array from database table/view specification
 ---
 
-The [`fields`](../components/querybuilder#fields) array is probably the most foundational configuration in React Query Builder.
+The [`fields`](../components/querybuilder#fields) array forms the foundation of React Query Builder configuration, defining which data fields users can query against.
 
 <!--
 TODO: Review each property in detail.
@@ -30,17 +30,17 @@ interface Field {
 
 ## Generating `fields` dynamically
 
-In many cases, elements of the `fields` array correspond directly to columns in a database table or view. You may be able to generate the `fields` array by interrogating the database information schema with a relatively simple query.
+Field arrays typically correspond to database table columns. You can dynamically generate the `fields` array by querying your database's information schema.
 
-The following examples should provide a good starting point for developing such a query to run against your own database or alternative storage system. Each platform has its own syntax variations, data type quirks, and other nuances, so the examples are not absolutely equivalent to each other. However, there are some general commonalities:
+The following examples demonstrate database-specific queries to extract field information. Each platform has unique syntax and data type handling, resulting in different query structures. Key patterns include:
 
-- None of the properties assigned below are required in the `fields` prop except for `label` and at least one of `name` or `value`.
-- `label` is selected from the same configuration as `name` and `value`, but you'll probably want to grab a more user-friendly caption from somewhere else.
-- `datatype` (used in the [date/time package](../datetime), but not, strictly speaking, an "official" `Field` property) will be copied verbatim from the declared type for the column per the platform.
-- `inputType` will be normalized to an HTML5 input type, or `null` if one cannot be reliably inferred.
-- The examples below cast `defaultValue` as text unconditionally. You may want a more sophisticated conversion to the appropriate type for your application. `defaultValue` will be `null` if a default is not set in the table configuration.
+- Only `label` and at least one of `name` or `value` are required in the `fields` prop; other properties are optional.
+- `label` typically uses the same value as `name` and `value`, but consider using more user-friendly captions from other sources.
+- `datatype` (used by the [date/time package](../datetime), though not an official `Field` property) copies the column's declared type directly.
+- `inputType` gets normalized to HTML5 input types, or `null` when no reliable mapping exists.
+- These examples cast `defaultValue` as text; consider more sophisticated type conversions for your specific needs. `defaultValue` will be `null` when no default is configured.
 
-> _Note that `inputType: null` and `defaultValue: null` can lead to different behaviors than having them not defined or having a value of `undefined`. You may want to remove instances of the strings `, "inputType": null` and `, "defaultValue": null` from the result, or perhaps fall back to the empty string (`""`)._
+> **Note:** `inputType: null` and `defaultValue: null` behave differently than `undefined` or missing properties. Consider removing `null` values from the query results or substituting empty strings (`""`) as needed.
 
 ### Relational databases
 

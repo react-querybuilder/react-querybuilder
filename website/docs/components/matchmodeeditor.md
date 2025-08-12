@@ -3,6 +3,6 @@ title: MatchModeEditor
 description: Match mode selector and threshold numeric value editor
 ---
 
-Renders the configured `valueSelector` for selecting a match mode. If a threshold is appropriate, also renders the configured `valueEditor`.
+Renders the configured `valueSelector` for match mode selection. When applicable, also renders the configured `valueEditor` for threshold input.
 
-The mode selector can be overridden with the `selectorComponent` prop. The threshold editor can be overridden with the `numericEditorComponent` prop.
+Override the mode selector using the `selectorComponent` prop or the threshold editor using the `numericEditorComponent` prop.

@@ -497,7 +497,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
   }
 );
 
-// oxlint-disable-next-line expect-expect
 it('does not pass dnd classes down to nested rules and groups', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
     (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (

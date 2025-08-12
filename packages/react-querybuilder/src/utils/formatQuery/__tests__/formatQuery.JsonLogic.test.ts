@@ -282,7 +282,6 @@ it('ruleProcessor', () => {
   });
 });
 
-// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     and: [

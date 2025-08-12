@@ -10,11 +10,11 @@ The specific method described below is not necessary in version 7 or later. The 
 
 :::
 
-Different SQL flavors have different requirements for bind variable placeholders. Some use a simple `?` character (which is what `formatQuery(query, 'parameterized')` produces by default) and others require a bind variable placeholder to start with `$` followed by a unique string or number.
+Different SQL database systems have varying requirements for bind variable placeholders. Some use a simple `?` character (the default format from `formatQuery(query, 'parameterized')`), while others require placeholders starting with `$` followed by a unique identifier or number.
 
-The ["parameterized_named" export format](../utils/export#named-parameters), along with the [`paramPrefix` option](../utils/export#parameter-prefix), will usually be sufficient to cover the latter case. However, if the default parameter names (e.g. `:fieldName_1`) are not acceptable, you can use the "parameterized" format and replace the "?" with your choice of name.
+The ["parameterized_named" export format](../utils/export#named-parameters) with the [`paramPrefix` option](../utils/export#parameter-prefix) typically handles named placeholders. However, if the default parameter names (e.g., `:fieldName_1`) don't meet your requirements, you can use the "parameterized" format and replace the `?` placeholders with custom names.
 
-The following code will produce a SQL string with each bind variable placeholder being numbered from "$1" to "$_n_", where _n_ is the number of bind variables (also, appropriately, the number of elements in the `params` array).
+This code generates a SQL string with numbered bind variable placeholders from "$1" to "$n", where n equals the number of bind variables (matching the number of elements in the `params` array):
 
 ```ts
 let i = 0;
@@ -25,7 +25,7 @@ const fqWithNumberedParams = {
 };
 ```
 
-For example, if `formatQuery(query, "parameterized")` produced the following object:
+If `formatQuery(query, "parameterized")` returns this object:
 
 ```json
 {
@@ -34,7 +34,7 @@ For example, if `formatQuery(query, "parameterized")` produced the following obj
 }
 ```
 
-...then the code above would assign the following object to the `fqWithNumberedParams` variable:
+The code above transforms it into:
 
 ```json
 {

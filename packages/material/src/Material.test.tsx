@@ -192,7 +192,6 @@ describe('not toggle', () => {
 describe('shift actions', () => {
   testShiftActions(generateWrapper(MaterialShiftActions));
 
-  // oxlint-disable-next-line expect-expect
   it('renders without preloaded components', async () => {
     render(
       <div data-testid="test">
