@@ -66,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: bunx $(bun -e 'console.log((await import("./bun.lock")).packages.oxlint[0])')
+      - run: bunx $(bun -e 'console.log((await import("./bun.lock")).packages.oxlint[0])') --format=github
 
   Test_React_18:
     runs-on: ubuntu-latest
