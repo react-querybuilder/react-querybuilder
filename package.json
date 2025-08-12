@@ -128,11 +128,11 @@
     "@types/glob": "^9.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.2.1",
-    "@types/react": "^19.1.9",
+    "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.260",
-    "@typescript/native-preview": "^7.0.0-dev.20250811.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250812.1",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "bun-plugin-tailwind": "^0.0.15",
     "concurrently": "^9.2.0",
@@ -143,8 +143,8 @@
     "jest-environment-jsdom": "^30.0.5",
     "jest-watch-typeahead": "^3.0.1",
     "jsdom-testing-mocks": "^1.15.2",
-    "oxc-transform": "^0.81.0",
-    "oxlint": "^1.11.1",
+    "oxc-transform": "^0.82.0",
+    "oxlint": "^1.11.2",
     "postcss": "^8.5.6",
     "prettier": "3.6.2",
     "prettier-plugin-organize-imports": "^4.2.0",
@@ -157,7 +157,7 @@
     "swc-loader": "^0.2.6",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
-    "vite": "^7.1.1"
+    "vite": "^7.1.2"
   },
   "overrides": {
     "@testing-library/user-event": "14.5.2"

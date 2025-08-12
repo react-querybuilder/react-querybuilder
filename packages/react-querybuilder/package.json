@@ -112,7 +112,7 @@
     "@types/jscodeshift": "^17.3.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.2.1",
-    "@types/react": "^19.1.9",
+    "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
     "babel-plugin-istanbul": "^7.0.0",
@@ -135,7 +135,7 @@
     "sqlite3": "^5.1.7",
     "type-fest": "^4.41.0",
     "typescript": "^5.9.2",
-    "vite": "^7.1.1"
+    "vite": "^7.1.2"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",

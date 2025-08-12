@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.7",
-    "@types/react": "^19.1.9",
+    "@types/react": "^19.1.10",
     "@vitejs/plugin-react": "^5.0.0",
     "drizzle-orm": "^0.44.4",
     "react": "^19.1.1",
@@ -55,7 +55,7 @@
     "react-querybuilder": "8.8.2",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
-    "vite": "^7.1.1"
+    "vite": "^7.1.2"
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
