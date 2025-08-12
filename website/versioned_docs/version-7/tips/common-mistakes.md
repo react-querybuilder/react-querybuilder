@@ -6,7 +6,7 @@ hide_table_of_contents: true
 
 ## Custom component as closure
 
-When defining custom components for React Query Builder, [do not define them within the body of another function component](https://react.dev/learn/your-first-component#nesting-and-organizing-components) like this:
+Avoid defining custom components for React Query Builder [inside the body of another function component](https://react.dev/learn/your-first-component#nesting-and-organizing-components). Here's what not to do:
 
 ```jsx title="App.jsx"
 const App = () => {
@@ -32,7 +32,7 @@ const App = () => {
 };
 ```
 
-This causes problems like the value editor losing focus after each keystroke, because `CustomValueEditor` gets redefined on every `App` render. Fix this by declaring the custom component outside the parent function (same file, but not inside the function body):
+This pattern causes issues like input fields losing focus after each keystroke because `CustomValueEditor` is recreated on every `App` render. Instead, declare custom components outside the parent function:
 
 ```jsx title="App.jsx"
 // highlight-start
@@ -58,7 +58,7 @@ const App = () => {
 };
 ```
 
-A similar mistake that leads to the same problems is declaring arrow functions that render components inside the JSX syntax. In the code below, `CustomValueEditor` is correctly defined outside the body of `App`, but an arrow function that _renders_ `CustomValueEditor` is assigned to `valueEditor` instead of the `CustomValueEditor` component itself. This causes a new function component to be created on every render.
+Another common mistake involves creating wrapper arrow functions in JSX. In this example, `CustomValueEditor` is correctly defined outside `App`, but assigning an arrow function that renders it (instead of the component itself) creates a new function component on every render:
 
 ```jsx title="App.jsx"
 const CustomValueEditor = props => {

@@ -9,7 +9,7 @@ import Details from '@theme/Details';
 
 %importmd ../\_ts_admonition.md
 
-A non-comprehensive list of exports from `react-querybuilder`.
+A partial list of exports from `react-querybuilder`.
 
 ## Utilities
 
@@ -19,14 +19,14 @@ A non-comprehensive list of exports from `react-querybuilder`.
 function transformQuery(query: RuleGroupTypeAny, options: QueryTransformerOptions): any;
 ```
 
-This function recursively steps through a query object (`RuleGroupType` or `RuleGroupTypeIC`), passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
+This function recursively processes a query object (`RuleGroupType` or `RuleGroupTypeIC`), passing each `RuleType` object to a provided `ruleProcessor` function. Available options include:
 
-- `ruleProcessor`: Custom processing for each rule.
-- `ruleGroupProcessor`: Custom processing for each rule group. Each group's `rules` property will be retained and recursively processed regardless of any other mutations.
-- `propertyMap`: Keys in the rule or group objects that match keys in this object will be renamed to the corresponding value.
-- `combinatorMap`: Best explained with an example: `{and: "&&", or: "||"}` would translate "and"/"or" combinators to "&&"/"||", respectively.
-- `operatorMap`: Convert operators that match the keys in this object to the corresponding values, e.g. `{"=": "=="}`.
-- `deleteRemappedProperties`: Defaults to `true`; pass `false` to leave the remapped properties _and_ the original properties in the resulting object.
+- `ruleProcessor`: Custom processing function for each rule.
+- `ruleGroupProcessor`: Custom processing function for each rule group. Each group's `rules` property is retained and recursively processed regardless of other mutations.
+- `propertyMap`: Keys in rule or group objects that match keys in this object are renamed to the corresponding value.
+- `combinatorMap`: Translates combinators; for example, `{and: "&&", or: "||"}` would convert "and"/"or" combinators to "&&"/"||", respectively.
+- `operatorMap`: Converts operators that match keys in this object to corresponding values, e.g., `{"=": "=="}`.
+- `deleteRemappedProperties`: Defaults to `true`; pass `false` to retain both remapped properties _and_ original properties in the resulting object.
 
 See the [test suite](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/transformQuery.test.ts) for example usage.
 
@@ -38,12 +38,12 @@ function defaultValidator(query: RuleGroupTypeAny): {
 };
 ```
 
-Pass `validator={defaultValidator}` to automatically validate groups (rules will be ignored). A group will be marked invalid if either of the following are true:
+Pass `validator={defaultValidator}` to automatically validate groups (rules are ignored). A group is marked invalid when either of these conditions are true:
 
 1. The group has no child rules or groups (`query.rules.length === 0`)
-2. The group has a missing/invalid `combinator` property and more than one child rule or group (`rules.length >= 2`).
+2. The group has a missing/invalid `combinator` property and more than one child rule or group (`rules.length >= 2`)
 
-You can see an example of the default validator in action in the [demo](/demo) if you check the <DemoLink option="validateQuery" text="'Use validation' option" />. Empty groups will have bold text on their "+ Rule" button and a description of the situation where the rules normally appear.
+You can see the default validator in action in the [demo](/demo) by checking the <DemoLink option="validateQuery" text="'Use validation' option" />. Empty groups display bold text on their "+ Rule" button and a description where rules normally appear.
 
 ### `findPath`
 
@@ -51,7 +51,7 @@ You can see an example of the default validator in action in the [demo](/demo) i
 function findPath(path: Path, query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny | null;
 ```
 
-`findPath` is a utility function for finding the rule or group within the query hierarchy that has a given `path`. Useful in custom [`onAddRule`](../components/querybuilder#onaddrule) and [`onAddGroup`](../components/querybuilder#onaddgroup) functions.
+`findPath` finds the rule or group within the query hierarchy that has a given `path`. This is useful in custom [`onAddRule`](../components/querybuilder#onaddrule) and [`onAddGroup`](../components/querybuilder#onaddgroup) functions.
 
 More extensive documentation on the `path` property is [here](../tips/path).
 
@@ -61,7 +61,7 @@ More extensive documentation on the `path` property is [here](../tips/path).
 function findID(id: string, query: RuleGroupTypeAny): RuleType | RuleGroupTypeAny | null;
 ```
 
-`findID` is a utility function for finding the rule or group within the query hierarchy that has a given `id`.
+`findID` finds the rule or group within the query hierarchy that has a given `id`.
 
 ### `convertQuery`
 
@@ -71,21 +71,21 @@ function convertQuery(query: RuleGroupType): RuleGroupTypeIC;
 function convertQuery(query: RuleGroupTypeIC): RuleGroupType;
 ```
 
-`convertQuery` toggles a query between the conventional `RuleGroupType` structure–with combinators at the group level–and the "independent combinators" structure `RuleGroupTypeIC`–with combinators between every other rule/group.
+`convertQuery` toggles a query between the conventional `RuleGroupType` structure (with combinators at the group level) and the "independent combinators" structure `RuleGroupTypeIC` (with combinators between every other rule/group).
 
-`convertToIC` and `convertFromIC` do the same thing as `convertQuery`, but only in the directions indicated by their respective names.
+`convertToIC` and `convertFromIC` perform the same function as `convertQuery` but only in the directions indicated by their names.
 
 ## Query tools
 
-Several methods are available to assist with programmatic manipulation of query objects. These methods are used by the `<QueryBuilder />` component itself, so they are guaranteed to achieve the same result as a corresponding UI-based update. Each of these methods returns the modified query.
+Several methods are available to assist with programmatic manipulation of query objects. These methods are used by the `<QueryBuilder />` component itself, so they're guaranteed to achieve the same result as a corresponding UI-based update. Each method returns the modified query.
 
-Check out the ["External controls" Tips & Tricks page](../tips/external-controls) to see these methods used outside the context of the `<QueryBuilder />` component.
+Check out the ["External controls" Tips & Tricks page](../tips/external-controls) to see these methods used outside the `<QueryBuilder />` component context.
 
 ### `add`
 
 `(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, parentPathOrID: Path | string, options: AddOptions) => RuleGroupTypeAny`
 
-Adds a rule or group (and an independent combinator if necessary, to keep the query valid) to the group at the specified `path` or with the given `id`.
+Adds a rule or group (and an independent combinator if necessary to keep the query valid) to the group at the specified `path` or with the given `id`.
 
 <Details summary="AddOptions">
 
@@ -97,13 +97,13 @@ Adds a rule or group (and an independent combinator if necessary, to keep the qu
 
 `(query: RuleGroupTypeAny, pathOrID: Path | string) => RuleGroupTypeAny`
 
-Removes a rule or group (and the preceding independent combinator, if one exists) at the specified `path` or with the given `id`.
+Removes a rule or group (and the preceding independent combinator if one exists) at the specified `path` or with the given `id`.
 
 ### `update`
 
 `(query: RuleGroupTypeAny, prop: string, value: any, pathOrID: Path | string, options: UpdateOptions) => RuleGroupTypeAny`
 
-Updates a property of a rule or group, or updates an independent combinator, at the specified `path` or with the given `id`.
+Updates a property of a rule or group, or an independent combinator, at the specified `path` or with the given `id`.
 
 <Details summary="UpdateOptions">
 
@@ -115,7 +115,7 @@ Updates a property of a rule or group, or updates an independent combinator, at 
 
 `(query: RuleGroupTypeAny, oldPathOrID: Path | string, newPath: Path | 'up' | 'down', options: MoveOptions) => RuleGroupTypeAny`
 
-Moves (or clones, with a new `id`) a rule or group at the specified `path` or with the given `id` to a new location in the query tree. Using `"up"` or `"down"` as the `newPath` will "shift" the rule or group higher or lower, respectively.
+Moves (or clones with a new `id`) a rule or group at the specified `path` or with the given `id` to a new location in the query tree. Using `"up"` or `"down"` as the `newPath` will "shift" the rule or group higher or lower, respectively.
 
 <Details summary="MoveOptions">
 
@@ -127,7 +127,7 @@ Moves (or clones, with a new `id`) a rule or group at the specified `path` or wi
 
 `(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, path: Path, options: InsertOptions) => RuleGroupTypeAny`
 
-Inserts a rule or group (and an independent combinator if necessary, to keep the query valid) at the specified `path`.
+Inserts a rule or group (and an independent combinator if necessary to keep the query valid) at the specified `path`.
 
 <Details summary="InsertOptions">
 
@@ -139,7 +139,7 @@ Inserts a rule or group (and an independent combinator if necessary, to keep the
 
 `(query: RuleGroupTypeAny, sourcePathOrID: Path | string, targetPathOrID: Path | string, options: GroupOptions) => RuleGroupTypeAny`
 
-Creates a new group at the target `path` (based on the specified `path` or the given `id`), containing the existing rule/group at that path and the rule/group at the source path (or with the source `id`), in that order, in its `rules` array.
+Creates a new group at the target `path` (based on the specified `path` or given `id`) containing the existing rule/group at that path and the rule/group at the source path (or with the source `id`), in that order, in its `rules` array.
 
 <Details summary="GroupOptions">
 

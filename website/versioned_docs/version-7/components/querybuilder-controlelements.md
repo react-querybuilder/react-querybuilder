@@ -5,7 +5,7 @@ description: Prop to override default components
 
 %importmd ../\_ts_admonition.md
 
-The `controlElements` prop object allows you to override the default components.
+The `controlElements` prop allows you to override default components with custom implementations.
 
 ## Usage example
 
@@ -19,7 +19,7 @@ function App() {
 
 ## Properties
 
-The following control overrides are supported per the `Controls` interface. Setting a control override to `null` will hide the element by rendering it as `() => null`.
+The following control overrides are supported via the `Controls` interface. Setting any control to `null` hides the element by rendering it as `() => null`.
 
 | Property                                              | Type                                                                                                                     |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -50,7 +50,7 @@ The following control overrides are supported per the `Controls` interface. Sett
 
 ### `actionElement`
 
-The component for all button-type controls. Default is [`ActionElement`](./actionelement). Receives props per the `ActionProps`, `ActionProps`, or `ActionProps` interface depending on the control, which can be any of the following:
+The base component for all button-type controls. Defaults to [`ActionElement`](./actionelement). Receives props per the `ActionProps` interface and can be any of the following controls:
 
 - [Usage example](#usage-example)
 - [Properties](#properties)
@@ -104,7 +104,7 @@ For example, this:
 
 ### `addGroupAction`
 
-Adds a sub-group to the current group. Default is [`ActionElement`](./actionelement).
+Adds a sub-group to the current group. Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `addGroupAction`</summary>
@@ -130,7 +130,7 @@ Per the `ActionProps` interface:
 
 ### `addRuleAction`
 
-Adds a rule to the current group. Default is [`ActionElement`](./actionelement).
+Adds a rule to the current group. Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `addRuleAction`</summary>
@@ -156,7 +156,7 @@ Per the `ActionProps` interface:
 
 ### `cloneGroupAction`
 
-Clones the current group. Default is [`ActionElement`](./actionelement).
+Clones the current group. Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `cloneGroupAction`</summary>
@@ -182,7 +182,7 @@ Per the `ActionProps` interface:
 
 ### `cloneRuleAction`
 
-Clones the current rule. Default is [`ActionElement`](./actionelement).
+Clones the current rule. Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `cloneRuleAction`</summary>
@@ -207,7 +207,7 @@ Per the `ActionProps` interface:
 
 ### `combinatorSelector`
 
-Selects the `combinator` property for the current group, or the current independent combinator value. Default is [`ValueSelector`](./valueselector).
+Selects the `combinator` property for the current group or the current independent combinator value. Defaults to [`ValueSelector`](./valueselector).
 
 <details>
 <summary>Props for `combinatorSelector`</summary>
@@ -233,7 +233,7 @@ Per the `CombinatorSelectorProps` interface:
 
 ### `dragHandle`
 
-Provides a draggable handle for reordering rules and groups. Default is [`DragHandle`](./draghandle). Only rendered if [drag-and-drop is enabled](./querybuilder#enabledraganddrop). Note that this component must be based on `React.forwardRef`.
+Provides a draggable handle for reordering rules and groups. Defaults to [`DragHandle`](./draghandle). Only rendered when [drag-and-drop is enabled](./querybuilder#enabledraganddrop). This component must use `React.forwardRef`.
 
 <details>
 <summary>Props for `dragHandle`</summary>
@@ -257,7 +257,7 @@ Receives the forwarded `ref` and the following props per the `DragHandleProps` i
 
 ### `fieldSelector`
 
-Selects the `field` property for the current rule. Default is [`ValueSelector`](./valueselector).
+Selects the `field` property for the current rule. Defaults to [`ValueSelector`](./valueselector).
 
 <details>
 <summary>Props for `fieldSelector`</summary>
@@ -284,7 +284,7 @@ Per the `FieldSelectorProps` interface:
 
 ### `inlineCombinator`
 
-A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Default is [`InlineCombinator`](./inlinecombinator).
+Wraps the [`combinatorSelector`](#combinatorselector) component for inline display. Defaults to [`InlineCombinator`](./inlinecombinator).
 
 <details>
 <summary>Props for `inlineCombinator`</summary>
@@ -299,7 +299,7 @@ Per the `InlineCombinatorProps` interface, which extends `CombinatorSelectorProp
 
 ### `lockGroupAction`
 
-Locks the current group (sets the `disabled` property to `true`). Default is [`ActionElement`](./actionelement).
+Locks the current group (sets the `disabled` property to `true`). Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `lockGroupAction`</summary>
@@ -326,7 +326,7 @@ Per the `ActionProps` interface:
 
 ### `lockRuleAction`
 
-Locks the current rule (sets the `disabled` property to `true`). Default is [`ActionElement`](./actionelement).
+Locks the current rule (sets the `disabled` property to `true`). Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `lockRuleAction`</summary>
@@ -352,7 +352,7 @@ Per the `ActionProps` interface:
 
 ### `matchModeEditor`
 
-Manages the `match` property for the current rule, including the `mode` and `threshold` (see [Subqueries](../tips/subqueries)). Default is [`MatchModeEditor`](./matchmodeeditor).
+Manages the `match` property for the current rule, including the `mode` and `threshold` (see [Subqueries](../tips/subqueries)). Defaults to [`MatchModeEditor`](./matchmodeeditor).
 
 <details>
 <summary>Props for `matchModeEditor`</summary>
@@ -383,7 +383,7 @@ Per the `MatchModeEditorProps` interface:
 
 ### `notToggle`
 
-Toggles the `not` property of the current group between `true` and `false`. Default is [`NotToggle`](./nottoggle).
+Toggles the `not` property of the current group between `true` and `false`. Defaults to [`NotToggle`](./nottoggle).
 
 <details>
 <summary>Props for `notToggle`</summary>
@@ -409,7 +409,7 @@ Per the `NotToggleProps` interface:
 
 ### `operatorSelector`
 
-Selects the `operator` property for the current rule. Default is [`ValueSelector`](./valueselector).
+Selects the `operator` property for the current rule. Defaults to [`ValueSelector`](./valueselector).
 
 <details>
 <summary>Props for `operatorSelector`</summary>
@@ -437,7 +437,7 @@ Per the `OperatorSelectorProps` interface:
 
 ### `removeGroupAction`
 
-Removes the current group from its parent group's `rules` array. Default is [`ActionElement`](./actionelement).
+Removes the current group from its parent group's `rules` array. Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `removeGroupAction`</summary>
@@ -463,7 +463,7 @@ Per the `ActionProps` interface:
 
 ### `removeRuleAction`
 
-Removes the current rule from its parent group's `rules` array. Default is [`ActionElement`](./actionelement).
+Removes the current rule from its parent group's `rules` array. Defaults to [`ActionElement`](./actionelement).
 
 <details>
 <summary>Props for `removeRuleAction`</summary>
@@ -488,7 +488,7 @@ Per the `ActionProps` interface:
 
 ### `rule`
 
-Rule layout component. Default is [`Rule`](./rule).
+Rule layout component. Defaults to [`Rule`](./rule).
 
 <details>
 <summary>Props for `rule`</summary>
@@ -513,13 +513,13 @@ Per the `RuleProps` interface:
 
 :::tip
 
-If you [enable drag-and-drop](./querybuilder#enabledraganddrop) and want to use a custom `Rule` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
+When using a custom `Rule` component with [drag-and-drop enabled](./querybuilder#enabledraganddrop), set the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
 
 :::
 
 ### `ruleGroup`
 
-Rule group layout component. Default is [`RuleGroup`](./rulegroup).
+Rule group layout component. Defaults to [`RuleGroup`](./rulegroup).
 
 <details>
 <summary>Props for `ruleGroup`</summary>
@@ -544,21 +544,21 @@ Per the `RuleGroupProps` interface:
 
 :::tip
 
-If you [enable drag-and-drop](./querybuilder#enabledraganddrop) and want to use a custom `RuleGroup` component, use the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
+When using a custom `RuleGroup` component with [drag-and-drop enabled](./querybuilder#enabledraganddrop), set the `controlElements` prop on the `QueryBuilderDnD` context provider instead of `QueryBuilder`.
 
 :::
 
 ### `ruleGroupBodyElements`
 
-Rule group body elements. Default is [`RuleGroupBodyComponents`](./rulegroup#rulegroupbodycomponents), which returns an array containing only the elements themselves (no HTML or React Native wrapper element). Receives the same props as [`ruleGroup`](#rulegroup), in addition to the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
+Rule group body elements. Defaults to [`RuleGroupBodyComponents`](./rulegroup#rulegroupbodycomponents), which returns an array containing only the elements (no HTML or React Native wrapper). Receives the same props as [`ruleGroup`](#rulegroup) plus the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
 
 ### `ruleGroupHeaderElements`
 
-Rule group header elements. Default is [`RuleGroupHeaderComponents`](./rulegroup#rulegroupheadercomponents), which returns a React `Fragment` containing only the elements themselves (no HTML or React Native wrapper element). Receives the same props as [`ruleGroup`](#rulegroup), in addition to the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
+Rule group header elements. Defaults to [`RuleGroupHeaderComponents`](./rulegroup#rulegroupheadercomponents), which returns a React `Fragment` containing only the elements (no HTML or React Native wrapper). Receives the same props as [`ruleGroup`](#rulegroup) plus the return value of the [`useRuleGroup`](../utils/hooks#userulegroup) hook.
 
 ### `shiftActions`
 
-Shifts the current rule/group up or down in the query hierarchy. Default is [`ShiftActions`](./shiftactions).
+Shifts the current rule/group up or down in the query hierarchy. Defaults to [`ShiftActions`](./shiftactions).
 
 <details>
 <summary>Props for `shiftActions`</summary>
@@ -586,7 +586,7 @@ Per the `ShiftActionsProps` interface:
 
 ### `valueEditor`
 
-Updates the `value` property for the current rule. Default is [`ValueEditor`](./valueeditor).
+Updates the `value` property for the current rule. Defaults to [`ValueEditor`](./valueeditor).
 
 <details>
 <summary>Props for `valueEditor`</summary>
@@ -621,7 +621,7 @@ Per the `ValueEditorProps` interface:
 
 ### `valueSelector`
 
-The component for all value selector controls. Default is [`ValueSelector`](./valueselector). Receives props per the `CombinatorSelectorProps`, `FieldSelectorProps`, `OperatorSelectorProps`, or `ValueSourceSelectorProps` interface depending on the control, which can be any of the following:
+The base component for all value selector controls. Defaults to [`ValueSelector`](./valueselector). Receives props per various interfaces depending on the specific control type:
 
 - [`combinatorSelector`](#combinatorselector)
 - [`fieldSelector`](#fieldselector)
@@ -649,7 +649,7 @@ For example, this:
 
 ### `valueSourceSelector`
 
-Selects the `valueSource` property for the current rule. Default is [`ValueSelector`](./valueselector).
+Selects the `valueSource` property for the current rule. Defaults to [`ValueSelector`](./valueselector).
 
 <details>
 <summary>Props for `valueSourceSelector`</summary>

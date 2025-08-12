@@ -7,17 +7,17 @@ import { DemoLink } from '@site/src/components/DemoLink';
 
 %importmd ../\_ts_admonition.md
 
-These Hooks are used internally by React Query Builder and are exported for use by custom components.
+These hooks are used internally by React Query Builder and exported for use in custom components.
 
 ## State access
 
-React Query Builder uses Redux to manage state within a custom React context to avoid interfering with existing Redux stores.
+React Query Builder uses Redux within a custom React context to manage state without interfering with existing Redux stores.
 
 ### `useQueryBuilderQuery`
 
-Retrieves the full, latest query object for the nearest ancestor `QueryBuilder` component.
+Retrieves the complete, current query object for the nearest ancestor `QueryBuilder` component.
 
-The optional parameter should only be used when retrieving a query object from a different `QueryBuilder` than the nearest ancestor. It can be a full props object as passed to a custom component or any object matching the interface `{ schema: { qbId: string } }`.
+The optional parameter should only be used when retrieving a query object from a different `QueryBuilder` than the nearest ancestor. It can be either a complete props object as passed to a custom component or any object matching the interface `{ schema: { qbId: string } }`.
 
 ```ts
 function useQueryBuilderQuery(props?: { schema: { qbId: string } }): RuleGroupTypeAny;
@@ -25,7 +25,7 @@ function useQueryBuilderQuery(props?: { schema: { qbId: string } }): RuleGroupTy
 
 :::tip
 
-As a React Hook, this function must follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning). It is intended to provide access to the current query during the render phase, _not in an event handler_.
+As a React hook, this function must follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning). It provides access to the current query during the render phase, _not in event handlers_.
 
 **To access the current query from an event handler, use `props.schema.getQuery()` instead.**
 
@@ -35,11 +35,11 @@ As a React Hook, this function must follow the [appropriate rules](https://react
 
 :::tip
 
-Prefer [`useQueryBuilderQuery`](#usequerybuilderquery) if you only need to access the query object for the nearest ancestor `QueryBuilder` component.
+Prefer [`useQueryBuilderQuery`](#usequerybuilderquery) if you only need the query object for the nearest ancestor `QueryBuilder` component.
 
 :::
 
-Returns the current query from the Redux store when used in conjunction with `getQuerySelectorById` (see example below).
+Returns the current query from the Redux store when used with `getQuerySelectorById` (see example below).
 
 ```ts
 function useQueryBuilderSelector(selector: (state: RqbState) => RuleGroupTypeAny): RuleGroupTypeAny;
@@ -60,11 +60,11 @@ const CustomValueEditor = (props: ValueEditorProps) => {
 
 ## Component logic
 
-The core logic of each component is encapsulated in a reusable Hook. Each main component is itself little more than a call to its respective Hook and the JSX that utilizes the properties in the object returned from that Hook. This enables the creation of a custom presentation layer without having to copy the logic code from the default components.
+The core logic of each component is encapsulated in a reusable hook. Each main component is little more than a call to its respective hook plus the JSX that uses the properties returned from that hook. This enables creating a custom presentation layer without copying logic code from the default components.
 
 :::tip
 
-The `@react-querybuilder/native` package is a good example of this concept. It calls the Hooks from its own query builder, rule group, and rule components, but nests the sub-components within React Native `View` elements instead of HTML `div` elements like the `react-querybuilder` components.
+The `@react-querybuilder/native` package demonstrates this concept well. It calls the hooks from its own query builder, rule group, and rule components, but nests the sub-components within React Native `View` elements instead of HTML `div` elements used by `react-querybuilder` components.
 
 :::
 
@@ -90,7 +90,7 @@ function useRuleGroup(props: RuleGroupProps): {
 
 ### `useValueEditor`
 
-Called by the [`ValueEditor`](../components/valueeditor) component. Accepts the same `ValueEditorProps` as the component and returns an object with the following properties: the value as an array, a multi-value handler, a processed version of the `parseNumbers` prop, and the classname(s) to be applied to each editor in editor series.
+Called by the [`ValueEditor`](../components/valueeditor) component. Accepts the same `ValueEditorProps` as the component and returns an object with these properties: the value as an array, a multi-value handler, a processed version of the `parseNumbers` prop, and the classname(s) to be applied to each editor in editor series.
 
 ```ts
 function useValueEditor(props: ValueEditorProps): {
@@ -101,7 +101,7 @@ function useValueEditor(props: ValueEditorProps): {
 };
 ```
 
-This Hook updates the `value` as a side effect if the following conditions are true:
+This hook updates the `value` as a side effect when these conditions are true:
 
 - `skipHook` is `false` (the value editors in the [compatibility packages](../compat) set this to `true` to avoid infinite loops)
 - `inputType` is `"number"`
@@ -113,7 +113,7 @@ If all of these conditions are met, `handleOnChange` will be called with the fir
 
 ### `useValueSelector`
 
-Called by the [`ValueSelector`](../components/valueselector) component. Returns the given value as an array (untouched if already an array) and a memoized change handler.
+Called by the [`ValueSelector`](../components/valueselector) component. Returns the given value as an array (unchanged if already an array) and a memoized change handler.
 
 ```ts
 function useValueSelector(
@@ -126,7 +126,7 @@ function useValueSelector(
 
 ### `useSelectElementChangeHandler`
 
-Used by the [`ValueSelector`](../components/valueselector) component. Returns a memoized change handler specifically for HTML `<select />` elements.
+Used by the [`ValueSelector`](../components/valueselector) component. Returns a memoized change handler designed specifically for HTML `<select />` elements.
 
 ```ts
 function useSelectElementChangeHandler(props: {
@@ -137,7 +137,7 @@ function useSelectElementChangeHandler(props: {
 
 ### `useShiftActions`
 
-Used by the [`ShiftActions`](../components/shiftactions) component. Generates `shiftUp` and `shiftDown` methods to move a rule/group up or down, respectively, in the query hierarchy, as well as `shiftUpDisabled`/`shiftDownDisabled` to indicate whether either button should be disabled (`shiftUpDisabled` is `true` for the first rule/group in the root group; `shiftDownDisabled` is `true` for the last rule/group in the root group).
+Used by the [`ShiftActions`](../components/shiftactions) component. Generates `shiftUp` and `shiftDown` methods to move a rule/group up or down in the query hierarchy, plus `shiftUpDisabled`/`shiftDownDisabled` to indicate whether either button should be disabled (`shiftUpDisabled` is `true` for the first rule/group in the root group; `shiftDownDisabled` is `true` for the last rule/group in the root group).
 
 ```ts
 function useShiftActions(
@@ -152,7 +152,7 @@ function useShiftActions(
 
 ### `useStopEventPropagation`
 
-Used by the default [`Rule`](../components/rule) and [`RuleGroup`](../components/rulegroup) components to prevent default behavior and stop propagation of events (e.g., a `MouseEvent` after clicking a `<button>`). Takes a function that accepts a `MouseEvent` and context parameters; returns a new function that calls `event.preventDefault()` and `event.stopPropagation()` before calling the original function with the same arguments.
+Used by the default [`Rule`](../components/rule) and [`RuleGroup`](../components/rulegroup) components to prevent default behavior and stop event propagation (e.g., a `MouseEvent` after clicking a `<button>`). Takes a function that accepts a `MouseEvent` and context parameters, then returns a new function that calls `event.preventDefault()` and `event.stopPropagation()` before calling the original function with the same arguments.
 
 ```ts
 function useStopEventPropagation(
@@ -160,17 +160,17 @@ function useStopEventPropagation(
 ): (event: React.MouseEvent, context: any) => void;
 ```
 
-This hook is _not_ used in `RuleNative` and `RuleGroupNative`, the `Rule` and `RuleGroup` components for `@react-querybuilder/native`.
+This hook is _not_ used in `RuleNative` and `RuleGroupNative`—the `Rule` and `RuleGroup` components for `@react-querybuilder/native`.
 
 ### `useQueryBuilder`
 
-Returns everything needed to render a [`QueryBuilder`](../components/querybuilder) component. Internally, this Hook simply passes the result of [`useQueryBuilderSetup`](#usequerybuildersetup) to [`useQueryBuilderSchema`](#usequerybuilderschema) and returns the result of `useQueryBuilderSchema`. The shape of the returned object is a union of the results of `useQueryBuilderSchema` and `useQueryBuilderSetup` (see below).
+Returns everything needed to render a [`QueryBuilder`](../components/querybuilder) component. Internally, this hook passes the result of [`useQueryBuilderSetup`](#usequerybuildersetup) to [`useQueryBuilderSchema`](#usequerybuilderschema) and returns the result of `useQueryBuilderSchema`. The returned object combines the results of `useQueryBuilderSchema` and `useQueryBuilderSetup` (see below).
 
 As with `useQueryBuilderSchema`, this Hook must be called from a descendant component of `QueryBuilderStateProvider`. See [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx) for an example.
 
 :::info
 
-This Hook is unlikely to be necessary unless you are reimplementing the _entire_ `QueryBuilder` component structure.
+This hook is unlikely to be necessary unless you're reimplementing the _entire_ `QueryBuilder` component structure.
 
 :::
 
@@ -180,7 +180,7 @@ Called by the internal component rendered by [`QueryBuilder`](../components/quer
 
 :::info
 
-This Hook is unlikely to be necessary unless you are reimplementing the _entire_ `QueryBuilder` component structure.
+This hook is unlikely to be necessary unless you're reimplementing the _entire_ `QueryBuilder` component structure.
 
 :::
 
@@ -211,7 +211,7 @@ This Hook must be called from a descendant component of `QueryBuilderStateProvid
 
 :::info
 
-This Hook is unlikely to be necessary unless you are reimplementing the _entire_ `QueryBuilder` component structure.
+This hook is unlikely to be necessary unless you're reimplementing the _entire_ `QueryBuilder` component structure.
 
 :::
 
@@ -262,7 +262,7 @@ function usePrevious<T>(prop: T): T | null;
 
 ## Internal
 
-These Hooks log error messages to the console in certain situations (and only in "development" mode). They encourage correct usage of React Query Builder and are not intended to be used in custom components.
+These hooks log error messages to the console in certain situations (only in "development" mode). They encourage correct usage of React Query Builder and aren't intended for use in custom components.
 
 ### `useControlledOrUncontrolled`
 

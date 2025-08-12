@@ -6,9 +6,9 @@ React Query Builder's default components use basic HTML5 form controls that are 
 
 ## Packages
 
-Official component packages compatible with several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
+Official component packages for several popular style libraries are available under the [`@react-querybuilder` org on npm](https://www.npmjs.com/org/react-querybuilder).
 
-See each component package in action by selecting the "Style library" option on the [demo page](/demo). "Demo" links below load the demo with that library preselected, while [CodeSandbox](https://codesandbox.io)/[StackBlitz](https://stackblitz.com) links open editable examples on their respective platforms.
+See each component package in action by selecting the "Style library" option on the [demo page](/demo). The "Demo" links below load the demo with that library preselected, while [CodeSandbox](https://codesandbox.io)/[StackBlitz](https://stackblitz.com) links open editable examples on their respective platforms.
 
 | Official site                                       | Compatibility package                                                                        | Demo                    | CodeSandbox                         | StackBlitz                              |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------- | --------------------------------------- |
@@ -44,7 +44,7 @@ export function App() {
 }
 ```
 
-Each compatibility package exports its own context provider except `@react-querybuilder/native`, which provides `<QueryBuilderNative />` as a direct replacement for `<QueryBuilder />` with identical props.
+Each compatibility package exports its own context provider, except `@react-querybuilder/native`, which provides `<QueryBuilderNative />` as a direct replacement for `<QueryBuilder />` with identical props.
 
 | Compatibility package           | Context provider        |
 | ------------------------------- | ----------------------- |
@@ -86,7 +86,7 @@ export function App() {
 
 ## Other exports
 
-Each compatibility package exports a `*ControlElements` object for the [`controlElements` prop](./components/querybuilder#controlelements). Some packages also include `*ControlClassnames` and `*Translations` objects for the respective props. Use these exports when you need granular control over component replacement. See [Customization](#customization) below for advanced usage.
+Each compatibility package exports a `*ControlElements` object for the [`controlElements` prop](./components/querybuilder#controlelements). Some packages also include `*ControlClassnames` and `*Translations` objects for their respective props. Use these exports when you need granular control over component replacement. See [Customization](#customization) below for advanced usage.
 
 This example uses the Bootstrap library:
 
@@ -125,9 +125,9 @@ export function App() {
 
 ## Customization
 
-All compatibility components except the `*ValueEditor`s accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving the query builder integration to the compatibility layer.
+All compatibility components except the `*ValueEditor`s accept props defined by the style library for the actual rendered component in addition to the standard props defined by `react-querybuilder`. This allows you to idiomatically customize the style library's component while leaving query builder integration to the compatibility layer.
 
-For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders a `Button` component from `antd`, so it accepts properties from both the `ActionProps` interface (`react-querybuilder`) and the `ButtonProps` interface (`antd`).
+For example, the `AntDActionElement` component from `@react-querybuilder/antd` renders an `antd` `Button` component, so it accepts properties from both the `ActionProps` interface (`react-querybuilder`) and the `ButtonProps` interface (`antd`).
 
 In the example below, the `size` prop is accepted because it's an `antd` `Button` prop (from the `ButtonProps` interface), even though it's not in the `ActionProps` interface.
 

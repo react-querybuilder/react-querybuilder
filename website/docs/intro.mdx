@@ -14,7 +14,7 @@ import Details from '@theme/Details';
 
 ## Installation
 
-Install `react-querybuilder` using [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), [Bun](https://bun.sh/), or follow [buildless setup instructions](./buildless).
+Install `react-querybuilder` using [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), or [Bun](https://bun.sh/), or follow [buildless setup instructions](./buildless).
 
 ```bash npm2yarn
 npm i react-querybuilder
@@ -35,7 +35,7 @@ export default () => <QueryBuilder />;
 
 </SandpackRQB>
 
-This query builder works, but it's not very useful yet. To get real value from it, you need to define fields for users to select from. Pass an array of field objects to the `fields` prop.
+This query builder works but isn't very useful yet. To get real value from it, you need to define fields for users to select from. Pass an array of field objects to the `fields` prop.
 
 In the query builder below, click the "+ Rule" button and then the field selector to see the field choices.
 
@@ -115,7 +115,7 @@ export default () => {
 
 ## Exporting queries
 
-Use the `formatQuery` function to convert query objects into formats like [SQL](https://en.wikipedia.org/wiki/SQL), [MongoDB](https://www.mongodb.com/), and [CEL](https://github.com/google/cel-spec) ([full documentation](./utils/export)). The example below shows real-time SQL generation—modify the query and watch the SQL update automatically.
+Use the `formatQuery` function to convert query objects to formats like [SQL](https://en.wikipedia.org/wiki/SQL), [MongoDB](https://www.mongodb.com/), and [CEL](https://github.com/google/cel-spec) ([full documentation](./utils/export)). The example below shows real-time SQL generation—modify the query and watch the SQL update automatically.
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
 
@@ -158,4 +158,4 @@ Explore all React Query Builder options in the [main component documentation](./
 
 ## Training
 
-For an extended tutorial on configuration and customization of `react-querybuilder`, including information about integrating it with a backend API and advanced reporting components (grids, maps, charts, etc.), check out the course [Building Advanced Admin Reporting in React](https://www.newline.co/courses/building-advanced-admin-reporting-in-react), taught by this library's maintainer, over at [newline](https://www.newline.co/).
+For an extended tutorial on configuration and customization of `react-querybuilder`, including information about integrating it with a backend API and advanced reporting components (grids, maps, charts, etc.), check out the course [Building Advanced Admin Reporting in React](https://www.newline.co/courses/building-advanced-admin-reporting-in-react), taught by this library's maintainer at [newline](https://www.newline.co/).

@@ -5,7 +5,7 @@ description: Convert query builder objects to SQL, etc.
 
 %importmd ../\_ts_admonition.md
 
-Use the `formatQuery` function to export queries in various formats. The function signature is:
+Use the `formatQuery` function to export queries in various formats. The function has this signature:
 
 ```ts
 function formatQuery(
@@ -14,14 +14,14 @@ function formatQuery(
 ): string | ParameterizedSQL | ParameterizedNamedSQL | RQBJsonLogic | Record<string, any>;
 ```
 
-`formatQuery` converts query objects into these formats:
+`formatQuery` converts query objects to these formats:
 
 - Formatted `JSON.stringify` result
 - Unformatted `JSON.stringify` result with all `id` and `path` properties removed
 - SQL `WHERE` clause
   - Parameterized with anonymous parameters
   - Parameterized with named parameters
-- ORM query objects (Drizzle, Prisma, Sequelize)
+- ORM query objects for Drizzle, Prisma, and Sequelize
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -58,16 +58,16 @@ const query: RuleGroupType = {
 
 :::tip
 
-Use [default combinators and operators](./misc#defaults) or map custom ones to defaults with [`transformQuery`](./misc#transformquery) for best results.
+For best results, use [default combinators and operators](./misc#defaults) or map custom ones to defaults with [`transformQuery`](./misc#transformquery).
 
 <details>
 <summary>More information...</summary>
 
-`formatQuery` accepts `RuleGroupTypeAny` queries but only guarantees correct processing for `DefaultRuleGroupTypeAny` queries.
+`formatQuery` accepts `RuleGroupTypeAny` queries but only guarantees correct processing of `DefaultRuleGroupTypeAny` queries.
 
 All query `combinator` and `operator` properties must match [`defaultCombinators` or `defaultOperators`](./misc#defaults) names (case-insensitive). Use [`transformQuery`](./misc#transformquery) to map custom names to defaults before calling `formatQuery`.
 
-Example: replacing the default "between" operator with `{ name: "b/w", label: "b/w" }` creates rules with `operator: "b/w"`. For this query:
+For example, replacing the default "between" operator with `{ name: "b/w", label: "b/w" }` creates rules with `operator: "b/w"`. For this query:
 
 ```json
 {
@@ -130,9 +130,9 @@ Output is multi-line JSON with 2-space indentation:
 }`;
 ```
 
-### JSON without identifiers
+### JSON without IDs
 
-Export unformatted (single-line) JSON without `id` or `path` attributes using "json_without_ids". Useful for persistent storage:
+Export unformatted (single-line) JSON without `id` or `path` attributes using "json_without_ids". This format is useful for persistent storage:
 
 ```ts
 formatQuery(query, 'json_without_ids');
@@ -146,7 +146,7 @@ Output (string):
 
 ### SQL
 
-Export SQL `WHERE` clauses using "sql" format. Compatible with major RDBMS engines, though some cases need [configuration](#configuration). See [presets](#presets) for compatibility details.
+Export SQL `WHERE` clauses using the "sql" format. This format is compatible with major RDBMS engines, though some cases require [configuration](#configuration). See [presets](#presets) for compatibility details.
 
 ```ts
 formatQuery(query, 'sql');
@@ -160,7 +160,7 @@ Output (string):
 
 #### Parameterized SQL
 
-Export SQL with bind variables instead of inline values using "parameterized" format. Returns object with `sql` and `params` properties:
+Export SQL with bind variables instead of inline values using the "parameterized" format. This returns an object with `sql` and `params` properties:
 
 ```ts
 formatQuery(query, 'parameterized');
@@ -177,7 +177,7 @@ Output (JSON object):
 
 #### Named parameters
 
-When anonymous parameters aren't suitable, use "parameterized_named" to name parameters based on field names. Similar to "parameterized" but `params` is an object instead of array:
+When anonymous parameters aren't suitable, use "parameterized_named" to name parameters based on field names. This is similar to "parameterized" but `params` is an object instead of an array:
 
 ```ts
 formatQuery(query, 'parameterized_named');
@@ -201,7 +201,7 @@ See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#g
 
 #### Prisma ORM
 
-Generate objects for Prisma ORM `where` properties using "prisma" format:
+Generate objects for Prisma ORM `where` properties using the "prisma" format:
 
 > _Note: Prisma does not support field-to-field comparisons, so rules with `valueSource: "field"` will always be invalid._
 
@@ -298,7 +298,7 @@ console.log(query.all());
 
 #### Sequelize
 
-Generate objects for Sequelize `findAll` `where` properties using "sequelize" format. Requirements:
+Generate objects for Sequelize `findAll` `where` properties using the "sequelize" format. Requirements:
 
 - Sequelize uses `Symbol`s for operator keys, so they must be provided through the `context` option as `sequelizeOperators` (see example below).
 - If any rules have `valueSource: "field"`, then the Sequelize `col` function must be provided as `sequelizeCol`.
@@ -316,11 +316,11 @@ const users = await Users.findAll({ where });
 
 ### MongoDB
 
-Generate MongoDB queries as JSON objects or strings. Use "mongodb_query" format (recommended) for JSON objects. The "mongodb" format is just the stringified version.
+Generate MongoDB queries as JSON objects or strings. Use the "mongodb_query" format (recommended) for JSON objects. The "mongodb" format is the stringified version.
 
 :::info
 
-The "mongodb" format was deprecated when the "mongodb_query" export format was introduced, in version 8.1.0.
+The "mongodb" format was deprecated when the "mongodb_query" export format was introduced in version 8.1.0.
 
 :::
 
@@ -336,7 +336,7 @@ Output (JSON object):
 
 :::info
 
-MongoDB formats don't support group inversion (`not: true`), but individual rules can use the `"!="` operator.
+MongoDB formats don't support group inversion (`not: true`), but individual rules can use the "!=" operator.
 
 :::
 
