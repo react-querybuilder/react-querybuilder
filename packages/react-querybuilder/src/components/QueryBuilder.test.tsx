@@ -71,7 +71,6 @@ describe('when rendered', () => {
     expect(screen.getByRole('form')).toHaveClass(sc.queryBuilder);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('respects suppressStandardClassnames', () => {
     const { container } = render(
       <QueryBuilder

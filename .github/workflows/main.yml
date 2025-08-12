@@ -65,14 +65,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
       - uses: oven-sh/setup-bun@v2
-        # with:
-        #   bun-version: 1.1.29
-      - run: bun install --frozen-lockfile
-      - run: bun --bun run lint
+      - run: bunx $(bun -e 'console.log((await import("./bun.lock")).packages.oxlint[0])') --format=github
 
   Test_React_18:
     runs-on: ubuntu-latest
