@@ -2,13 +2,13 @@
 title: TypeScript reference
 ---
 
-These are some of the [TypeScript](https://www.typescriptlang.org/) types and interfaces you'll see throughout the documentation. Even if you are not using TypeScript, you can use the information below to understand the required shape of the props and function parameters.
+Here are the key [TypeScript](https://www.typescriptlang.org/) types and interfaces used throughout React Query Builder. Even if you're using JavaScript, this reference helps you understand the expected shape of props and function parameters.
 
 :::note
 
-Some of the definitions below have been simplified from their actual implementations for legibility and ease of comprehension.
+Some definitions below have been simplified from their actual implementations for legibility and ease of comprehension.
 
-The **[API documentation](/api)**, however, is generated directly from the source code and provides direct links to the actual definitions of each type within the repository should you need more detailed information.
+The **[API documentation](/api)** is generated from source code and provides complete type definitions with repository links for detailed reference.
 
 :::
 
@@ -36,7 +36,7 @@ interface Field {
 
 Notes:
 
-- `Field` extends the `Option` interface, which is described [below](#option-lists).
+- `Field` extends the `Option` interface, described [below](#option-lists).
 - More information on `valueEditorType` is available [below](#value-editor) and in the [`ValueEditor` component documentation](./components/valueeditor).
 
 ## Rules and groups
@@ -80,11 +80,11 @@ type RuleOrGroupArray = RuleGroupType['rules'] | RuleGroupTypeIC['rules'];
 
 :::info
 
-`RuleGroupTypeIC` (see [independent combinators](./components/querybuilder#independent-combinators)) is _greatly_ simplified here for brevity. In reality, the following conditions will be enforced by TypeScript:
+`RuleGroupTypeIC` (see [independent combinators](./components/querybuilder#independent-combinators)) is _greatly_ simplified here for brevity. In reality, TypeScript enforces the following conditions:
 
-- All even indexes in the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
-- All odd indexes in the `rules` array must be of type `string`.
-- The array length must be zero or an odd number, therefore the first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`.
+- All even indexes in the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`
+- All odd indexes in the `rules` array must be of type `string`
+- The array length must be zero or an odd number; therefore, the first and last elements of the `rules` array must be of type `RuleType` or `RuleGroupTypeIC`
 
 For example, the following would be invalid because the first element in the `rules` array (the `0`th index, which should be `RuleType | RuleGroupTypeIC`) is a `string`, and the second element (the `1`st index, which should be a `string`) is a `RuleType`. Also, the length is an even number (2).
 
@@ -94,7 +94,7 @@ const ruleGroupInvalid: RuleGroupTypeIC = {
 };
 ```
 
-We can resolve this issue by either removing the first element or inserting another rule before it:
+We can resolve this by either removing the first element or inserting another rule before it:
 
 ```ts
 const ruleGroupValid1: RuleGroupTypeIC = {
@@ -128,6 +128,7 @@ type ExportFormat =
   | 'cel'
   | 'jsonlogic'
   | 'jsonata'
+  | 'ldap'
   | 'elasticsearch'
   | 'spel'
   | 'natural_language';
@@ -231,7 +232,7 @@ type RuleValidator = (rule: RuleType) => boolean | ValidationResult;
 
 ## Option lists
 
-_As of version 7, options and lists can use `name` **or** `value` as the item identifier. Both `name` and `value` will be passed down to subcomponents, so `name` will be available even if `value` is used in props and vice versa. `name` is used in the documentation for brevity and backwards compatibility. [Click here for more information](./tips/option-lists)._
+_As of version 7, options and lists can use `name` **or** `value` as the item identifier. Both `name` and `value` are passed down to subcomponents, so `name` is available even if `value` is used in props and vice versa. `name` is used in the documentation for brevity and backwards compatibility. [Click here for more information](./tips/option-lists)._
 
 ```ts
 interface Option {

@@ -15,11 +15,11 @@ Each prop passed to `QueryBuilder` should have a stable reference or be memoized
 
 :::
 
-As of version 7, all `QueryBuilder` props, components, and derived values are aggressively memoized with `React.memo`, `useMemo`, `useCallback`, and immutability tools like [`immer`](https://immerjs.github.io/immer/). This can noticeably improve rendering performance for large queries, especially when using certain style libraries. To take advantage of these optimizations, _every_ prop passed to `QueryBuilder` (except `query`, if used) must have a stable reference or at least be memoized. For related reasons, we encourage the use of `QueryBuilder` as an uncontrolled component (assign `defaultQuery` instead of `query`).
+Starting with version 7, all `QueryBuilder` props, components, and derived values use aggressive memoization through `React.memo`, `useMemo`, `useCallback`, and immutability tools like [`immer`](https://immerjs.github.io/immer/). These optimizations significantly improve rendering performance for complex queries, particularly when using certain style libraries. To benefit from these optimizations, every prop passed to `QueryBuilder` (except `query`, when used) must maintain a stable reference or be properly memoized. We recommend using `QueryBuilder` as an uncontrolled component (`defaultQuery` instead of `query`) for optimal performance.
 
 ## Avoiding common pitfalls
 
-You can avoid unstable references by defining unchanging props, including object, array, and function definitions, outside the component rendering function. This commonly includes the `fields` array and `onQueryChange` callback. For props that _must_ be defined inside the component, memoize them with `useMemo` or `useCallback`. In particular, avoid defining non-primitive props inline in the JSX.
+Prevent unstable references by defining static props (objects, arrays, functions) outside the component render function. This typically applies to the `fields` array and `onQueryChange` callback. For props that must be created within the component, use `useMemo` or `useCallback` for memoization. Most importantly, avoid defining non-primitive props inline within JSX.
 
 <!-- prettier-ignore -->
 - <span style={{ color: 'green', fontWeight: 'bold' }}>✓ DO</span> define variables that will remain unchanged outside the component if possible.
@@ -31,7 +31,7 @@ You can avoid unstable references by defining unchanging props, including object
 
 ## Exceptions
 
-Some props implement more granular memoization. Internally, `QueryBuilder` individually memoizes each property of the objects passed to these props:
+Certain props use more granular memoization. `QueryBuilder` internally memoizes individual properties of objects passed to these props:
 
 - `controlClassnames`
 - `controlElements`
@@ -41,7 +41,7 @@ Some props implement more granular memoization. Internally, `QueryBuilder` indiv
 
 ### "Bad" example
 
-These patterns can be detrimental to the overall performance of `QueryBuilder`.
+These patterns negatively impact `QueryBuilder` performance:
 
 <Admonition type="danger" title="" icon={<AdmonitionIconCaution />}>
 
@@ -90,7 +90,7 @@ function App() {
 
 ### "Good" example
 
-Follow the patterns in this example to get the best performance from `QueryBuilder`.
+Use these patterns to optimize `QueryBuilder` performance:
 
 <Admonition type="tip" title="" icon={'✓'}>
 

@@ -79,7 +79,6 @@ const testSelect = (
       expect(screen.getByText(optGroups[0].label)).toBeInTheDocument();
     });
 
-    // oxlint-disable-next-line expect-expect
     it('has the values passed into the <select multiple />', async () => {
       const onChange = jest.fn();
       const value = testValues.map(v => v.name).join(',');

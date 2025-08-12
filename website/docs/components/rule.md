@@ -3,15 +3,15 @@ title: Rule
 description: Layout and config component for rules
 ---
 
-The `Rule` component represents query conditions. `Rule` calls the [`useRule`](../utils/hooks#userule) hook to prepare the subcomponent props.
+The `Rule` component represents individual query conditions. It calls the [`useRule`](../utils/hooks#userule) hook to prepare props for its subcomponents.
 
 ## Subcomponents
 
-Subcomponents are rendered by `RuleComponents` by default. If the `matchModes` property of a rule's `field` evaluates to an array with one or more elements, then `RuleComponentsWithSubQuery` is used instead.
+By default, subcomponents are rendered by `RuleComponents`. When a rule's field has a `matchModes` property that evaluates to an array with one or more elements, `RuleComponentsWithSubQuery` is used instead.
 
 ### `RuleComponents`
 
-Renders a `React.Fragment` containing components in this order:
+Renders these components in order within a `React.Fragment`:
 
 - Shift actions[^1]
 - Drag handle[^2]
@@ -25,7 +25,7 @@ Renders a `React.Fragment` containing components in this order:
 
 ### `RuleComponentsWithSubQuery`
 
-Renders a `React.Fragment` containing components in this order:
+Renders these components in order within a `React.Fragment`:
 
 - Shift actions[^1]
 - Drag handle[^2]

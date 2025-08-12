@@ -4,68 +4,75 @@ title: Migrating to v7 or v8
 
 :::info Regarding version 8
 
-React Query Builder version 8 has no breaking changes from version 7 except for `@react-querybuilder/chakra` (see [Compatibility packages](./compat)). If you are not using `@react-querybuilder/chakra`, you can migrate from v7 to v8 with no code changes.
+Version 8 has no breaking changes from version 7, **except** for `@react-querybuilder/chakra`. If you're not using the Chakra UI package, you can upgrade from v7 to v8 without any code changes.
 
 <details>
 <summary>More information</summary>
 
-- `@react-querybuilder/chakra@7` supports Chakra UI version 2.
-- `@react-querybuilder/chakra@8` supports Chakra UI version 3.
-- [`@react-querybuilder/chakra2`](https://npmjs.com/package/@react-querybuilder/chakra2) is a fork of `@react-querybuilder/chakra@7.7.1` that will continue to support Chakra UI version 2 going forward.
-- React Query Builder version 8 would have been a small patch release to version 7 if not for the Chakra UI breaking changes.
-- Chakra UI version 3 required breaking changes in `@react-querybuilder/chakra`, which led to the major version bump of all packages since we maintain consistent version numbers across all packages.
+- `@react-querybuilder/chakra@7` supports Chakra UI v2
+- `@react-querybuilder/chakra@8` supports Chakra UI v3
+- [`@react-querybuilder/chakra2`](https://npmjs.com/package/@react-querybuilder/chakra2) continues supporting Chakra UI v2
+- Version 8 would have been a patch release if not for Chakra UI's breaking changes
+- We maintain consistent version numbers across all packages, requiring the major version bump
 
 </details>
 
 :::
 
-Version 7 shouldn't require many—if any—code changes when migrating from v6, although [some of the defaults have changed](#updated-default-labels). Also, taking advantage of the [performance improvements](#performance-improvements), [new features](#shift-actions), and [other](#option-list-value-identifiers) [conveniences](#query-selector-getter-and-dispatcher) may require some minor refactoring. A summary of the important changes is below.
+Version 7 requires minimal code changes when upgrading from v6. While [some defaults have changed](#updated-default-labels), most applications will work without modifications. To take advantage of [performance improvements](#performance-improvements) and [new features](#built-in-shift-actions), you may need minor refactoring.
 
 > _Previous migration instructions: [v5 to v6](/docs/6/migrate) / [v4 to v5](/docs/5/migrate) / [v3 to v4](/docs/4/migrate)._
 
 ## Breaking changes
 
-### React 18
+### React 18 required
 
-- The minimum React version is now 18. (This is due to the new `react-redux` v9 dependency, but we're investigating ways to support React 16.8 and 17.)
+React 18 is now the minimum supported version due to the `react-redux` v9 dependency.
 
-### TypeScript updates
+### TypeScript 5.1+ required
 
-- The minimum TypeScript version is now 5.1.
-- The component props themselves haven't changed much from version 6, but their TypeScript interfaces have been overhauled.
-- If you haven't specified generics on the prop interfaces for your custom subcomponents, you may not need to make any TypeScript-related changes.
+The minimum TypeScript version is now 5.1. Component props remain largely unchanged, but their TypeScript interfaces have been overhauled. If you don't use generics in custom subcomponents, you likely won't need any TypeScript changes.
 
 #### `QueryBuilder` props
 
-- The query type (extending `RuleGroupType` or `RuleGroupTypeIC`) will be automatically inferred from the `query` or `defaultQuery` prop instead of relying on the now-deprecated (and ignored) `independentCombinators` prop. See [independent combinators](./components/querybuilder#independent-combinators).
-- `QueryBuilderProps` now requires four generic arguments.
-  - This shouldn't affect JSX which renders a `<QueryBuilder />` component since the generic types can almost always be inferred from the props.
-  - While all props are technically still optional, TypeScript may have problems inferring the generics if `fields` and `query`/`defaultQuery` are not provided.
-  - The four generic arguments of `QueryBuilderProps` represent, respectively, the query type (extending `RuleGroupType` or `RuleGroupTypeIC`), the field type, the operator type, and the combinator type. The latter three must extend `FullOption` or the more specific and expressive `FullField`/`FullOperator`/`FullCombinator`.
+The query type is now automatically inferred from your `query` or `defaultQuery` prop instead of the deprecated `independentCombinators` prop.
 
-  ```tsx
-  // Valid in version 6:
-  const qbp6: QueryBuilderProps = {};
+`QueryBuilderProps` now requires four generic arguments:
 
-  // Version 7 with the defaults (equivalent to the "version 6" line above):
-  const qbp7: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator> = {};
+1. Query type (extending `RuleGroupType` or `RuleGroupTypeIC`)
+2. Field type
+3. Operator type
+4. Combinator type
 
-  // Also valid in version 7 (since FullField, FullOperator, and FullCombinator all extend FullOption):
-  const qbp7a: QueryBuilderProps<RuleGroupType, FullOption, FullOption, FullOption> = {};
-  ```
+The latter three must extend `FullOption` or the more specific `FullField`/`FullOperator`/`FullCombinator`.
 
-#### `Option`-type props
+**Good news:** JSX components can usually infer these types automatically from your props, so most users won't need changes.
 
-- Custom subcomponents must now accept any option-type props (fields, operators, values, etc.) as an extension of `FullOption` instead of `Option`.
-  - `Full*` types are identical to their version 6 counterparts except for the `value` property, which is required and must be the same type as the `name` property.
-  - `*ByValue` types are identical to their `Full*` counterparts except that the `name` property is optional.
-  - Relevant interfaces include the following:
+```tsx
+// Valid in version 6:
+const qbp6: QueryBuilderProps = {};
+
+// Version 7 with the defaults (equivalent to the "version 6" line above):
+const qbp7: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator> = {};
+
+// Also valid in version 7 (since FullField, FullOperator, and FullCombinator all extend FullOption):
+const qbp7a: QueryBuilderProps<RuleGroupType, FullOption, FullOption, FullOption> = {};
+```
+
+#### Option-type props
+
+Custom subcomponents must now use `FullOption` extensions instead of `Option` for props like fields, operators, and values.
+
+**Key differences:**
+
+- `Full*` types require a `value` property (same type as `name`)
+- `*ByValue` types make the `name` property optional
     <!-- prettier-ignore -->
-    | Interface    | "Full*" counterpart | "*ByValue" counterpart |
-    | ------------ | ------------------- | ---------------------- |
-    | `Field`      | `FullField`         | `FieldByValue`         |
-    | `Operator`   | `FullOperator`      | `OperatorByValue`      |
-    | `Combinator` | `FullCombinator`    | `CombinatorByValue`    |
+  | Interface    | "Full\*" counterpart | "\*ByValue" counterpart |
+  | ------------ | -------------------- | ----------------------- |
+  | `Field`      | `FullField`          | `FieldByValue`          |
+  | `Operator`   | `FullOperator`       | `OperatorByValue`       |
+  | `Combinator` | `FullCombinator`     | `CombinatorByValue`     |
 - The first generic argument of `ValueEditorProps`, `ValueSelectorProps`, and `FieldSelectorProps` must extend `FullOption` instead of `Option` as in version 6.
   - In the case of `ValueEditorProps` and `FieldSelectorProps`, prefer `FullField` over `FullOption`.
   - Where editor/selector prop type generics have been used, upgrading to version 7 should only require a minor update similar to this:
@@ -80,7 +87,7 @@ Version 7 shouldn't require many—if any—code changes when migrating from v6,
 
 ### Parser functions removed from main bundle
 
-Since the [parser functions](./utils/import) are used less frequently than other utility functions—and not generally alongside each other—they have been removed from the main export. Although these functions have been available as separate exports since version 6 (along with [`formatQuery`](./utils/export) and [`transformQuery`](./utils/misc#transformquery)), they could still be imported from `"react-querybuilder"`. They are now available _only_ as separate exports. (This change reduced the main bundle size by almost 50%.)
+Parser functions are now only available as separate imports to reduce bundle size by ~50%. This affects infrequently-used utilities that were previously importable from the main package.
 
 ```diff
  // Version 6 only
@@ -101,18 +108,14 @@ Since the [parser functions](./utils/import) are used less frequently than other
 
 ### Miscellaneous
 
-- `@react-querybuilder/material` uses the MUI `TextField` component instead of `Input` in versions greater than 7.7.0. See [Preload MUI components](./compat#preload-mui-components).
-- `@react-querybuilder/mantine` now requires Mantine 7 or greater.
-- The `"json_without_ids"` export format now explicitly removes the `id` and `path` properties from the output without removing other properties. Previously this format would only _include_ specific properties, removing any custom properties. The following command will replicate the previous behavior:
-  <!-- prettier-ignore -->
-  ```ts
-  JSON.stringify(query, ['rules', 'field', 'value', 'operator', 'combinator', 'not', 'valueSource']);
-  ```
-- `parseMongoDB` now generates more concise queries when it encounters `$not` operators that specify a single, boolean condition. Whereas previously that would yield a rule group with `not: true`, it now generates a rule with a negated operator (`"="` becomes `"!="`, `"contains"` becomes `"doesNotContain"`, etc.). To prevent this behavior, set the `preventOperatorNegation` option to `true`. (This change does not apply to operators defined in the `additionalOperators` option.)
-- Paths are now declared with a new type alias `Path` instead of `number[]`. The actual type is the same: `type Path = number[]`.
-- The `RuleGroupTypeIC` interface now includes `combinator?: undefined` to ensure that query objects implementing [independent combinators](./components/querybuilder#independent-combinators) do not contain `combinator` properties.
-- The `useQueryBuilder` hook must now be called from a descendant component of `QueryBuilderStateProvider`. For example usage, see the [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx).
-- The `useStopEventPropagation` hook, called from the default `Rule` and `RuleGroup` components, now takes a single function as its parameter instead of an object map of functions. It must be run for each wrapped function individually.
+- **MUI:** `@react-querybuilder/material` uses `TextField` instead of `Input` (v7.7.0+)
+- **Mantine:** Now requires Mantine 7+
+- **JSON export:** `"json_without_ids"` format now preserves custom properties
+- **MongoDB parser:** Generates more concise queries for `$not` operators
+- **Types:** New `Path` type alias (same as `number[]`)
+- **Independent combinators:** `RuleGroupTypeIC` ensures no `combinator` property
+- **Hooks:** `useQueryBuilder` requires `QueryBuilderStateProvider` ancestor
+- **Event handling:** `useStopEventPropagation` now takes single function parameter
 
 ## New features
 
@@ -120,122 +123,121 @@ Since the [parser functions](./utils/import) are used less frequently than other
 
 :::tip TL;DR
 
-Each prop passed to `QueryBuilder` should have a stable reference or be memoized.
+Ensure all `QueryBuilder` props have stable references or are memoized.
 
 :::
 
-Props, components, and derived values are aggressively memoized in version 7 with `React.memo`, `useMemo`, and `useCallback`. This can noticeably improve rendering performance for large queries, especially when using certain style libraries. To take advantage of this change, _every_ prop (except `query`, if used) must have a stable reference or at least be memoized. For related reasons, we encourage using `QueryBuilder` as an uncontrolled component by specifying `defaultQuery` instead of `query`.
+Version 7 aggressively memoizes props and components for better performance, especially with large queries. To benefit from this optimization:
 
-You can avoid unstable references by moving unchanging props, including object, array, and function definitions, outside the component rendering function. This commonly includes the `fields` array and `onQueryChange` callback. For props that _must_ be defined inside the component, memoize them with `useMemo` or `useCallback`. Particularly avoid defining props inline in the JSX.
+- **Move static props outside your component** (like `fields` arrays)
+- **Use `useMemo` and `useCallback`** for dynamic props
+- **Avoid inline definitions** in JSX
+- **Consider using `defaultQuery`** instead of `query` for uncontrolled behavior
 
 ```tsx
-/**
- * BAD:
- */
+// ❌ BAD: Unstable references cause unnecessary re-renders
 function App() {
-  const { t } = useTranslation(); // (<-- third-party i18n library)
+  const { t } = useTranslation();
   const [query, setQuery] = useState();
 
-  // This function gets recreated on each render
+  // Recreated on every render
   const getOperators = (field: Field) => t(defaultOperators);
 
   return (
     <QueryBuilder
-      // Avoid inline function definitions
-      onQueryChange={q => setQuery(q)}
-      // Avoid inline array definitions
+      onQueryChange={q => setQuery(q)} // Inline function
       fields={[
+        // Inline array
         { name: 'firstName', label: 'First Name' },
         { name: 'lastName', label: 'Last Name' },
       ]}
-      // See above
       getOperators={getOperators}
     />
   );
 }
 
-/**
- * GOOD:
- */
-// Fields array never changes, so it can be defined outside the component
+// ✅ GOOD: Stable references enable performance optimizations
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
 ];
+
 function App() {
-  const { t } = useTranslation(); // (<-- third-party i18n library)
+  const { t } = useTranslation();
   const [query, setQuery] = useState();
 
-  // Memoize functions with useCallback. Since `t` (probably) has a
-  // stable reference, this function will rarely be recreated, if ever
+  // Memoized with stable dependencies
   const getOperators = useCallback((field: Field) => t(defaultOperators), [t]);
 
   return (
     <QueryBuilder
-      // React useState/useReducer setters always have stable references,
-      // even when defined within the render method
-      onQueryChange={setQuery}
-      // See above
-      fields={fields}
-      // See above
-      getOperators={getOperators}
+      onQueryChange={setQuery} // State setter has stable reference
+      fields={fields} // Defined outside component
+      getOperators={getOperators} // Memoized
     />
   );
 }
 ```
 
-:::note
+:::note State setters don't need memoization
 
-If you're using a state setter function generated by `useState` or `useReducer`, you don't need to memoize it. Relatedly, TypeScript no longer throws an error in version 7 if you pass the setter function directly (`onQueryChange={setQuery}`), as long as you're not specifying generics on the query type. Version 6 and earlier required the `onQueryChange` prop to be explicitly typed as `(q: RuleGroupType) => void`.
-
-:::
-
-### Option list `value` identifiers
-
-In all prior versions of React Query Builder, props and properties that accepted an `OptionList` array or extension thereof (such as `fields`, `combinators`, etc.) required a `name` property as the unique identifier for each member within the list. In version 7, list members may use a `value` property as their unique identifier instead of `name`. If both `name` and `value` are present for a given item, `value` will take precedence. This should make it easier to integrate libraries like [`react-select`](https://react-select.com/) that expect options to extend `{ value: string; label: string; }`.
-
-`QueryBuilder` will ensure that all option list members have both `name` _and_ `value` properties, and will make them equivalent if only one is provided. Therefore, all subcomponents can assume both properties will be present in their option list props.
-
-:::info
-
-The `Field`, `Combinator`, and `Operator` interfaces, which extend `Option`, still require a `name` property when used directly. You can use the `FlexibleOption` type instead to avoid the `name` property requirement, but you will lose intellisense for the additional properties of the more specific types.
+`useState` and `useReducer` setters have stable references and don't need memoization. You can now pass them directly: `onQueryChange={setQuery}`.
 
 :::
 
-Field identifier types (`name`/`value` properties) will now be inferred from the `fields` prop if they have been narrowed from `string`. These narrowed types will be applied to subcomponents and other props that take fields or field identifiers as arguments/props. For example, if the `fields` prop is type `Field<MyFields>[]`, then the `fieldSelector` property of the `controlElements` prop will be inferred as `ComponentType<FieldSelectorProps<FullField<MyFields>>>` instead of the default `ComponentType<FieldSelectorProps<FullField<string>>>`. This allows subcomponents themselves to be defined with narrowed identifier types without TypeScript complaining about `string` not being assignable to the narrowed type.
+### Option lists now support `value` identifiers
 
-Below is an example of a custom value editor with a narrowed field identifier type:
+Previously, option lists (fields, combinators, etc.) required a `name` property as the unique identifier. Version 7 also accepts `value` as the identifier, making it easier to integrate with libraries like [`react-select`](https://react-select.com/).
+
+- If both `name` and `value` exist, `value` takes precedence
+- `QueryBuilder` ensures both properties are present, making them equivalent if only one is provided
+- Subcomponents can assume both properties will always be available
+
+:::info Direct interface usage
+
+When using `Field`, `Combinator`, and `Operator` interfaces directly, `name` is still required. Use `FlexibleOption` to avoid this requirement, though you'll lose IntelliSense for specific type properties.
+
+:::
+
+Field identifier types are now inferred from your `fields` prop when using narrowed string types. This provides better TypeScript support for custom components.
+
+For example, `Field<MyFields>[]` will automatically type your subcomponents with `MyFields` instead of generic `string`, preventing type errors:
 
 ```tsx
 type MyFields = 'firstName' | 'lastName' | 'birthDate';
+
 const fields: Field<MyFields>[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
   { name: 'birthDate', label: 'Birth Date' },
 ];
+
 function MyValueEditor(props: ValueEditorProps<FullField<MyFields>>) {
   if (props.field === 'invalid') {
-    // ^ TypeScript error: `MyFields` and `invalid` have no overlap
+    // TypeScript error: 'invalid' is not assignable to MyFields
     return null;
   }
   return <ValueEditor {...props} />;
 }
+
 function App() {
   return (
     <QueryBuilder
-      // Narrowed field identifier type inferred here:
-      fields={fields}
-      // No TypeScript error here, even though MyValueEditor
-      // has a narrowed field identifier type.
+      fields={fields} // Types are automatically inferred
       controlElements={{ valueEditor: MyValueEditor }}
     />
   );
 }
 ```
 
-### Bulk override action elements, value selectors
+### Bulk component overrides
 
-Two "bulk override" properties have been added to the [`controlElements`](./components/querybuilder#controlelements) prop: [`actionElement`](./components/querybuilder-controlelements#actionelement) and [`valueSelector`](./components/querybuilder-controlelements#valueselector). When `actionElement` is defined, it will be used for every component that defaults to [`ActionElement`](./components/actionelement). The same is true for `valueSelector` and components that default to [`ValueSelector`](./components/valueselector), including [`ValueEditor`](./components/valueeditor) in cases where it renders a value selector. This makes it possible to define custom components for all buttons and all selectors at once instead of one-by-one. Assignments to the more specific `controlElements` properties will take precedence over the bulk overrides.
+Two new "bulk override" properties simplify customization:
+
+- **`actionElement`** - Sets the default for all button components
+- **`valueSelector`** - Sets the default for all selector components
+
+This lets you customize all buttons or all selectors at once instead of individually. Specific `controlElements` assignments override these bulk settings.
 
 | `controlElements` property | Sets default for                                                                                                                                       |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -244,15 +246,15 @@ Two "bulk override" properties have been added to the [`controlElements`](./comp
 
 These same two properties have also been added to the `controlClassnames` prop, but they add to, not replace, classnames declared for specific components.
 
-### Query selector, getter, and dispatcher
+### New query management methods
 
-:::tip TL;DR
+:::tip Quick summary
 
-Passing the query object to subcomponents using the `context` prop is no longer necessary or recommended.
+You no longer need to pass the query object via the `context` prop.
 
 :::
 
-Three new methods are available that should make it easier to manage arbitrary query updates from custom components. The first two methods are available on the `schema` prop which is passed to every component, and should only be used in event handlers. The latter two methods are React Hooks and should follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning).
+Three new methods simplify query management from custom components:
 
 | Method                              | Description                                                                                          |
 | ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -261,60 +263,60 @@ Three new methods are available that should make it easier to manage arbitrary q
 | `useQueryBuilderQuery()`            | React Hook that returns the current root query object.                                               |
 | `useQueryBuilderSelector(selector)` | Redux selector Hook for the internal store.                                                          |
 
-Notes:
+**Notes:**
 
-- Prefer `useQueryBuilderQuery` over `useQueryBuilderSelector`. If necessary, a selector for `useQueryBuilderSelector` that retrieves the current root query object can be generated with `getQuerySelectorById(props.schema.qbId)`.
-- These functions all use a custom [Redux](https://redux.js.org/) context behind the scenes, hence the "selector" nomenclature.
-  - To register the React Query Builder Redux store with Redux DevTools, change all `"react-querybuilder"` imports to `"react-querybuilder/debug"`.
-- Previously, updates that couldn't be performed with `handleOnChange` or `handleOnClick` event handlers had to use external state management in conjunction with the [`add`](./utils/misc#add)/[`update`](./utils/misc#update)/[`remove`](./utils/misc#remove) utilities. To support this, we recommended including the query object as a property of the `context` prop. That workaround is no longer necessary or recommended.
+- Prefer `useQueryBuilderQuery` over `useQueryBuilderSelector`
+- These use a custom Redux context internally
+- Enable Redux DevTools by importing from `"react-querybuilder/debug"`
+- The old `context` prop workaround is no longer needed
 
-### `insert` utility method
+### New `insert` utility
 
-The new [`insert`](./utils/misc#insert) utility method can be used to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to [`add`](./utils/misc#add) except that the new rule or group can be inserted at any path (`add` can only append a rule or group to the end of a group's `rules` array). The option `replace: true` will replace the rule or group at the specified path.
+The new [`insert`](./utils/misc#insert) utility inserts rules or groups at any position in the query hierarchy, unlike [`add`](./utils/misc#add) which only appends. Use `replace: true` to replace existing items.
 
-### Standalone layout stylesheet
+### Separate layout stylesheet
 
-Default layout styles (flex direction, alignment, spacing, etc.) are now available as a standalone stylesheet `query-builder-layout.css`/`.scss`. The default stylesheet, `query-builder.css`/`.scss`, contains the layout styles along with the more decorative styles like colors and border styles. The effective styles—both layout and decorative—of the default stylesheet have not changed from version 6.
+Layout styles are now available separately as `query-builder-layout.css`/`.scss`. The main stylesheet includes both layout and decorative styles. Overall styling remains unchanged from version 6.
 
-### Field data passed to `get*` callbacks
+### Enhanced callback metadata
 
-Most of the `get*` callback props now receive an additional "meta" parameter with a `fieldData` property (more properties may be added to the "meta" object in the future). `fieldData` is the full `Field` object from the `fields` array for the given `field` name, including any custom properties like `datatype`. This eliminates the need to search for the field object based solely on the field's `name`. Instead of something like `fields.find(f => f.name === field)`, you can retrieve `fieldData` from the last parameter.
+Most `get*` callbacks now receive a "meta" parameter containing `fieldData` - the complete `Field` object with custom properties. This eliminates the need to search for fields manually.
 
-The following callback props provide the new "meta" parameter: `getDefaultOperator`, `getDefaultValue`, `getInputType`, `getOperators`, `getRuleClassname`, `getValueEditorSeparator`, `getValueEditorType`, `getValues`, and `getValueSources`.
+**Affected callbacks:** `getDefaultOperator`, `getDefaultValue`, `getInputType`, `getOperators`, `getRuleClassname`, `getValueEditorSeparator`, `getValueEditorType`, `getValues`, `getValueSources`
 
-### Field data passed to `formatQuery` rule processors
+### Enhanced `formatQuery` rule processors
 
-Custom rule processors for `formatQuery` now receive the full `Field` object in the options parameter, as long as a `fields` array is provided alongside `ruleProcessor`. In TypeScript, the member type of the `fields` array now requires a `label: string` property (just like `QueryBuilder`'s `fields` prop). Previously, only `name` was required.
+Custom rule processors for `formatQuery` now receive the full `Field` object when a `fields` array is provided. TypeScript now requires `label: string` on field objects (previously only `name` was required).
 
-### Simpler PostgreSQL compatibility for `formatQuery`
+### Native PostgreSQL support
 
-`formatQuery` can natively generate [PostgreSQL](https://www.postgresql.org/)-compatible parameterized SQL using the new `numberedParams` option in conjunction with `paramPrefix: "$"`. Previously, PostgreSQL compatibility required manually post-processing the generated SQL to replace the "?" placeholders with a sequential series of numbers preceded by "$".
+`formatQuery` now natively supports PostgreSQL with `numberedParams` and `paramPrefix: "$"`. No more manual post-processing of "?" placeholders.
 
-### Shift actions
+### Built-in shift actions
 
-A new [`showShiftActions`](./components/querybuilder#showshiftactions) prop provides first class support for rearranging rules within a query without enabling drag-and-drop. When `showShiftActions` is `true`, two buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. Pressing the modifier key (<kbd>Alt</kbd> on Windows/Linux, <kbd>⌥ Option</kbd> on Mac) while clicking will clone the rule/group instead of just moving it.
+The new [`showShiftActions`](./components/querybuilder#showshiftactions) prop adds up/down buttons for reordering rules without drag-and-drop. Hold <kbd>Alt</kbd>/<kbd>⌥ Option</kbd> while clicking to clone instead of move.
 
-Related additions:
+**Related additions:**
 
-- [`ShiftActions`](./components/shiftactions) component (with a corresponding component in each compatibility package) that renders "shift up" and "shift down" action buttons. The default styles remove the border and background from these buttons, leaving only the `shiftActionUp.label`/`shiftActionDown.label` translation properties visible.
-- [`useShiftActions`](./utils/hooks#useshiftactions) hook, called by the `ShiftActions` component, returns `shiftUp`/`shiftDown` methods and determines whether either button should be disabled. (Within the root group, "shift up" is disabled for the very first rule or group and "shift down" is disabled for the very last rule or group).
-- New properties on the [`translations`](./components/querybuilder#translations) prop: `shiftActionUp` and `shiftActionDown`.
+- [`ShiftActions`](./components/shiftactions) component for rendering shift buttons
+- [`useShiftActions`](./utils/hooks#useshiftactions) hook with `shiftUp`/`shiftDown` methods
+- New translation properties: `shiftActionUp` and `shiftActionDown`
 
-### Accessibility
+### Accessibility improvements
 
-Accessibility is improved with the addition of a `title` attribute to the outermost `<div>` of each rule group. The text of this attribute can be customized with the `accessibleDescriptionGenerator` function prop. The default implementation is exported as [generateAccessibleDescription](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/utils/generateAccessibleDescription.ts).
+Accessibility is improved with `title` attributes on rule group containers. Customize the text using the `accessibleDescriptionGenerator` prop.
 
-### Drag-and-drop `canDrop` callback
+### Enhanced drag-and-drop control
 
-`<QueryBuilderDnD />` and `<QueryBuilderDndWithoutProvider />` from `@react-querybuilder/dnd` now accept a `canDrop` callback prop. If provided, the function will be called when dragging a rule or group. The only parameter will be an object containing `dragging` and `hovering` properties, representing the rule/group being dragged and the rule/group over which it is hovered, respectively. The objects will also contain the `path` of each item. If `canDrop` returns `false`, dropping the item at its current position will have no effect on the query. Otherwise the normal drag-and-drop rules will apply.
+Drag-and-drop components now accept a `canDrop` callback to control where items can be dropped. The callback receives `dragging` and `hovering` objects with `path` information.
 
-### Enhanced `parseNumber` behavior
+### Improved number parsing
 
-The `parseNumber` function now delegates parsing to [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity), which is essentially an enhanced version of `parseFloat`. The default behavior has not changed, but a new "enhanced" option will ignore trailing invalid characters (e.g., the "abc" in "123abc"). This matches the behavior of the "native" option, which uses `parseFloat` directly, except it returns the original string when parsing fails instead of `NaN`.
+The `parseNumber` function now uses [`numeric-quantity`](https://www.npmjs.com/package/numeric-quantity) for enhanced parsing. The new "enhanced" option ignores trailing invalid characters like "abc" in "123abc".
 
-### SpEL parser
+### New SpEL parser
 
-The new `parseSpEL` function converts [SpEL](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) expressions to React Query Builder query objects.
+New `parseSpEL` function converts [SpEL expressions](https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html) to query objects.
 
 ## Updated default labels
 
@@ -329,7 +331,7 @@ The new `parseSpEL` function converts [SpEL](https://docs.spring.io/spring-frame
 
 ### Compatibility packages
 
-Several compatibility packages take advantage of the new ability to use a `ReactNode` as a `label` (previously only `string`s were allowed). These packages override the default `label` for non-text components (`lock*`, `clone*`, `remove*`, and `dragHandle`) with SVG icons from their official icon packages. This brings them more in line with their respective design systems by default. Set `translations={defaultTranslations}` to avoid the SVG icons.
+Compatibility packages now use `ReactNode` labels instead of just strings, displaying SVG icons from their design systems by default. Use `translations={defaultTranslations}` to revert to text labels.
 
 #### Ant Design (`@react-querybuilder/antd`)
 

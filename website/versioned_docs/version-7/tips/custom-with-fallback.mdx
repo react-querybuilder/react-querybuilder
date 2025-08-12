@@ -6,13 +6,13 @@ hide_table_of_contents: true
 
 import { SandpackRQB } from '@site/src/components/SandpackRQB';
 
-You may run into a situation where one of the default components _almost_ meets your requirements, but you don't want to recreate the entire component just to slightly modify the behavior. Falling back to the default component after implementing your custom behavior is a good way to keep your implementation up to date with the current version's standard features while retaining the flexibility of a fully custom solution.
+Sometimes a default component nearly meets your needs, but requires minor behavioral modifications. Rather than recreating the entire component, you can implement custom behavior and fall back to the default component when appropriate. This approach keeps your implementation current with standard features while maintaining customization flexibility.
 
-For example, let's say you need a value editor that presents the user with a date picker (not the browser's default date picker), but only for certain fields. The default `ValueEditor` does not implement a date picker, so you'll need to use a custom component.
+Consider a scenario where you need a custom date picker for specific fields, while using the standard value editor for others. The default `ValueEditor` lacks date picker functionality, requiring a custom solution.
 
-However, you don't need to copy/paste the default `ValueEditor` code to take advantage of its functionality. Simply spread the same props that were passed in to your custom component (`<ValueEditor {...props} />`) and return that if your custom behavior is not applicable.
+Instead of duplicating the default `ValueEditor` code, you can leverage its existing functionality by spreading the same props (`<ValueEditor {...props} />`) and returning it when your custom behavior doesn't apply.
 
-Let's create a custom value editor that uses the [`react-datepicker`](https://reactdatepicker.com/) library. First we'll set up the `fields` array. Each element is a standard `Field` object, but the two date-type fields have a special attribute called `datatype` that will let our custom value editor know when and how to display the date picker.
+This example creates a custom value editor using the [`react-datepicker`](https://reactdatepicker.com/) library. We'll start by configuring the `fields` array with standard `Field` objects, adding a custom `datatype` attribute to date fields that signals when to display the date picker.
 
 ```ts
 // fields.ts
@@ -42,9 +42,13 @@ export const fields: Field[] = [
 ];
 ```
 
-Next, we'll define the custom value editor. The component will display a standard date picker if the `datatype` for the field is `"date"`, and a date _range_ picker if the `datatype` is `"dateRange"`. If the `datatype` is something else or `undefined`, then the component will simply forward its props to the default `ValueEditor`.
+The custom value editor displays different interfaces based on the field's `datatype`:
 
-We're also using the [`date-fns`](https://date-fns.org/) library to help parse and format dates. Storing the date values as strings instead of `Date` objects helps ensure that the `query` object remains serializable in case we want to safely use `JSON.stringify`. (Date ranges are stored as a comma-separated pair of strings.)
+- `"date"`: Standard date picker
+- `"dateRange"`: Date range picker
+- Other values or `undefined`: Falls back to the default `ValueEditor`
+
+We use the [`date-fns`](https://date-fns.org/) library for date parsing and formatting. Storing dates as strings (rather than `Date` objects) keeps the query object serializable for `JSON.stringify`. Date ranges are stored as comma-separated string pairs.
 
 ```tsx
 // CustomValueEditor.tsx
@@ -106,7 +110,7 @@ If you're using one of the [compatibility packages](../compat), you probably wan
 
 :::
 
-Finally, we can configure the main `QueryBuilder` component to use our custom value editor with the `controlElements` prop.
+Configure the `QueryBuilder` component to use the custom value editor through the `controlElements` prop:
 
 ```tsx
 // App.tsx
@@ -129,7 +133,7 @@ export default function App() {
 }
 ```
 
-An interactive demo is below. Note how the "Name" field uses a text input, the "Date of Birth" field uses a standard date picker, and the "Date Range" field uses the date range picker.
+The interactive demo below shows how each field type behaves: the "Name" field displays a text input, "Date of Birth" shows a standard date picker, and "Date Range" presents a date range picker.
 
 <SandpackRQB rqbVersion={7} customSetup={{ dependencies: { 'date-fns': 'latest', 'react-datepicker': 'latest' } }} options={{ editorHeight: 690 }}>
 

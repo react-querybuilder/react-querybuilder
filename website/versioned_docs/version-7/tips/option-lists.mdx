@@ -8,16 +8,16 @@ import Details from '@theme/Details';
 
 %importmd ../\_ts_admonition.md
 
-Option list props in React Query Builder like [`fields`](../components/querybuilder#fields), [`combinators`](../components/querybuilder#combinators), and [`operators`](../components/querybuilder#operators), are based on the type [`OptionList`](../typescript#option-lists). `OptionList` is a union type allowing two different types of arrays: `Option[]` and `OptionGroup[]`. This is a flexible design, but it adds some complexity to the consumption of option list-type props in custom subcomponents.
+Option list props in React Query Builder—such as [`fields`](../components/querybuilder#fields), [`combinators`](../components/querybuilder#combinators), and [`operators`](../components/querybuilder#operators)—use the [`OptionList`](../typescript#option-lists) type. `OptionList` is a union type supporting two array formats: `Option[]` and `OptionGroup[]`. While this design provides flexibility, it introduces complexity when consuming option list props in custom subcomponents.
 
-This page provides tips to help manage the inherent ambiguity of option list TypeScript types.
+This guide offers strategies for managing the inherent ambiguity in option list TypeScript types.
 
 :::info
 
 - `Option` objects have `label`, `name`, and `value` properties, all of which extend `string`.
 - `OptionGroup` objects have a `label` property along with an `options` property which is an array of `Option` objects.
 
-This structure is similar to the `children` prop on a `<select>` element, which can be an array of `<option>` elements or an array of `<optgroup>` elements that each contain its own nested `<option>` list.
+This mirrors the `children` prop structure of `<select>` elements, which can contain either `<option>` elements directly or `<optgroup>` elements with nested `<option>` lists.
 
 :::
 
@@ -30,7 +30,7 @@ Property 'name' does not exist on type 'FullOption<string> | OptionGroup<FullOpt
   Property 'name' does not exist on type 'OptionGroup<FullOption<string>>'. ts(2339)
 ```
 
-This generally happens when you treat elements in the option list as if they were definitely `Option` types. For example, mapping through the list to get the `name` property, like this:
+This typically occurs when treating option list elements as guaranteed `Option` types. For example, mapping through the list to access the `name` property:
 
 ```tsx
 const ListAllOptionNames = (props: ValueSelectorProps) => {
@@ -39,11 +39,11 @@ const ListAllOptionNames = (props: ValueSelectorProps) => {
 };
 ```
 
-It's natural to assume that an option list passed in to `QueryBuilder` as an `Option[]` would _still_ be an `Option[]` when it gets to the subcomponent. However, React Query Builder's type generics only infer the type of the options within the list, not the type of the list itself.
+While it seems logical that an option list passed to `QueryBuilder` as `Option[]` would remain `Option[]` in subcomponents, React Query Builder's type generics only infer the option types within the list, not the list structure itself.
 
 :::tip
 
-All options in list-type props passed to subcomponents are guaranteed to include both `name` and `value` properties, even if they don't include one or the other in their original form on the corresponding `QueryBuilder` prop.
+All options in subcomponent props are guaranteed to include both `name` and `value` properties, even if the original `QueryBuilder` prop omitted one of them.
 
 As an example, consider this `fields` array:
 
@@ -77,7 +77,7 @@ const App = () => (
 
 ## Workarounds
 
-There are several ways to handle this ambiguity. One way is to cast option list props to `Option[]` with the `as` keyword. If your option list is _definitely_ `Option[]`, this will probably work without causing issues. However, while the `as` keyword may help avoid TypeScript errors, it has no effect on execution. Therefore it can be akin to lying to the TypeScript compiler (preventing it from doing its job), so this method is not recommended.
+Several approaches can handle this ambiguity. One option is casting option list props to `Option[]` using the `as` keyword. While this may work if your option list is definitely `Option[]`, the `as` keyword only suppresses TypeScript errors without affecting runtime behavior. This essentially misleads the TypeScript compiler and prevents proper type checking, making it an unrecommended approach.
 
 ```tsx
 const MyComponent(props: ValueSelectorProps) => {
@@ -92,7 +92,7 @@ All [default option lists](../utils/misc#defaults) (`defaultCombinators`, `defau
 
 :::
 
-Another solution is to use the [`isOptionGroupArray`](#isoptiongrouparray) type guard to determine if the option list is `OptionGroup[]`. This not only avoids the "lying" issue of the `as` keyword, but also allows you to perform separate actions depending on whether the option list type is `Option[]` or `OptionGroup[]`.
+A better solution uses the [`isOptionGroupArray`](#isoptiongrouparray) type guard to determine the option list type. This approach avoids the deception of type casting while enabling different behaviors for `Option[]` versus `OptionGroup[]` arrays.
 
 ```tsx
 const MyComponent(props: ValueSelectorProps) => {
@@ -105,7 +105,7 @@ const MyComponent(props: ValueSelectorProps) => {
 
 ## Utilities
 
-Several utility functions are available to help manage the dual-potential nature of option list props without the need for type guards or casting with `as`.
+Several utility functions simplify working with option list props without requiring type guards or `as` casting.
 
 ### `getOption`
 
@@ -113,7 +113,7 @@ Several utility functions are available to help manage the dual-potential nature
 function getOption(arr: OptionList, identifier: string): Option;
 ```
 
-Retrieves the full option object from an option list based on the given identifier (corresponding to `name` or `value`), regardless of whether the list is `Option[]` or `OptionGroup[]`.
+Retrieves the complete option object from an option list using the given identifier (`name` or `value`), working with both `Option[]` and `OptionGroup[]` formats.
 
 #### Examples
 
@@ -143,9 +143,9 @@ getOption(
 function getFirstOption(arr: OptionList): Option;
 ```
 
-Retrieves the value of the identifier property (`name` or `value`) of the first `Option` in the list, regardless of whether the list is `Option[]` or `OptionGroup[]`.
+Returns the identifier value (`name` or `value`) of the first `Option` in the list, supporting both `Option[]` and `OptionGroup[]` formats.
 
-`QueryBuilder` uses this function to set default values for option lists in new rules and groups when no other method for determining the default value is provided.
+`QueryBuilder` uses this function to establish default values for option lists in new rules and groups when no other default determination method is available.
 
 #### Examples
 
@@ -169,7 +169,7 @@ getFirstOption([
 function toOptions(arr: OptionList): ReactElement;
 ```
 
-Generates an array of `<option>` elements if the provided option list is an `Option` array, or an array of `<optgroup>` elements if the list is an `OptionGroup` array. Intended for use as the `children` prop on a `<select>` element, as [`ValueSelector`](../components/valueselector) does.
+Creates `<option>` elements for `Option` arrays or `<optgroup>` elements for `OptionGroup` arrays. Designed for use as the `children` prop of `<select>` elements, as implemented in [`ValueSelector`](../components/valueselector).
 
 :::info
 
@@ -239,7 +239,7 @@ toOptions([
 function toFlatOptionArray(arr: any): boolean;
 ```
 
-Flattens `OptionGroup` arrays into `Option` arrays using [`Array.prototype.flatMap`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap), in case `OptionGroup[]` is inappropriate or inapplicable, and leaves `Option` arrays unmodified. The flattened list is de-duplicated using [`uniqByIdentifier`](#uniqbyidentifier).
+Converts `OptionGroup` arrays to flattened `Option` arrays using [`Array.prototype.flatMap`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap) when grouped structures are unsuitable, while leaving `Option` arrays unchanged. The result is deduplicated using [`uniqByIdentifier`](#uniqbyidentifier).
 
 ### `isOptionGroupArray`
 
@@ -247,7 +247,7 @@ Flattens `OptionGroup` arrays into `Option` arrays using [`Array.prototype.flatM
 function isOptionGroupArray(arr: any): boolean;
 ```
 
-A type guard to distiguish between the two different array types represented by `OptionList`. If the result is `true`, the array in question is an `OptionGroup[]`, so the options themselves will be within an `options` array property on each option group.
+A type guard that distinguishes between the two array types in `OptionList`. When this returns `true`, the array is `OptionGroup[]`, meaning actual options are nested within each group's `options` property.
 
 <Details summary= "Examples">
 
@@ -273,7 +273,7 @@ isOptionGroupArray([
 function uniqOptList(arr: any): boolean;
 ```
 
-Removes duplicate options from an `OptionList` based on a matching identifier properties (`name` or `value`), regardless of whether the list is `Option[]` or `OptionGroup[]`.
+Removes duplicate options from an `OptionList` by comparing identifier properties (`name` or `value`), working with both `Option[]` and `OptionGroup[]` formats.
 
 ### `uniqByIdentifier`
 
@@ -281,4 +281,4 @@ Removes duplicate options from an `OptionList` based on a matching identifier pr
 function uniqByIdentifier(arr: any): boolean;
 ```
 
-Removes duplicate options from an `Option` array based on a matching identifier properties (`name` or `value`).
+Removes duplicate options from an `Option` array by comparing identifier properties (`name` or `value`).

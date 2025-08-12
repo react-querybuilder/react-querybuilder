@@ -5,7 +5,7 @@ description: Convert query builder objects to SQL, etc.
 
 %importmd ../\_ts_admonition.md
 
-Use the `formatQuery` function to export queries in various formats. The function signature is:
+Use the `formatQuery` function to export queries in various formats. The function has this signature:
 
 ```ts
 function formatQuery(
@@ -14,14 +14,14 @@ function formatQuery(
 ): string | ParameterizedSQL | ParameterizedNamedSQL | RQBJsonLogic | Record<string, any>;
 ```
 
-`formatQuery` converts a given query object into one of the following formats:
+`formatQuery` converts query objects to these formats:
 
 - Formatted `JSON.stringify` result
 - Unformatted `JSON.stringify` result with all `id` and `path` properties removed
 - SQL `WHERE` clause
   - Parameterized with anonymous parameters
   - Parameterized with named parameters
-- ORM query objects (Drizzle, Prisma, Sequelize)
+- ORM query objects for Drizzle, Prisma, and Sequelize
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -32,7 +32,7 @@ function formatQuery(
 - LDAP
 - Natural language
 
-For the next few sections (unless otherwise noted), assume the `query` variable has been defined as:
+The following sections use this example `query`:
 
 ```ts
 const query: RuleGroupType = {
@@ -58,16 +58,16 @@ const query: RuleGroupType = {
 
 :::tip
 
-For best results, use the [default combinators and operators](./misc#defaults) or map your custom combinators/operators to the defaults with [`transformQuery`](./misc#transformquery).
+For best results, use [default combinators and operators](./misc#defaults) or map custom ones to defaults with [`transformQuery`](./misc#transformquery).
 
 <details>
 <summary>More information...</summary>
 
-While `formatQuery` technically accepts query objects of type `RuleGroupTypeAny` (i.e., `RuleGroupType` or `RuleGroupTypeIC`), it is not guaranteed to process a query correctly unless the query also conforms to the type `DefaultRuleGroupTypeAny` (i.e., `DefaultRuleGroupType` or `DefaultRuleGroupTypeIC`).
+`formatQuery` accepts `RuleGroupTypeAny` queries but only guarantees correct processing of `DefaultRuleGroupTypeAny` queries.
 
-In practice, this means that all `combinator` and `operator` properties in the query must match (case-insensitively) the `name` of an element in [`defaultCombinators` or `defaultOperators`](./misc#defaults), respectively. If you implement custom combinator and/or operator names, you can use the [`transformQuery` function](./misc#transformquery) to map your query properties to the defaults before passing the query to `formatQuery`.
+All query `combinator` and `operator` properties must match [`defaultCombinators` or `defaultOperators`](./misc#defaults) names (case-insensitive). Use [`transformQuery`](./misc#transformquery) to map custom names to defaults before calling `formatQuery`.
 
-For example, assume your implementation replaces the default "between" operator (`{ name: "between", label: "between" }`) with `{ name: "b/w", label: "b/w" }`. Any rules using this operator would have `operator: "b/w"` instead of `operator: "between"`. So if a query looked like this...
+For example, replacing the default "between" operator with `{ name: "b/w", label: "b/w" }` creates rules with `operator: "b/w"`. For this query:
 
 ```json
 {
@@ -76,7 +76,7 @@ For example, assume your implementation replaces the default "between" operator 
 }
 ```
 
-...you could run it through `transformQuery` with the `operatorMap` option:
+Transform it using `transformQuery` with `operatorMap`:
 
 ```ts
 const newQuery = transformQuery(query, { operatorMap: { 'b/w': 'between' } });
@@ -88,7 +88,7 @@ const newQuery = transformQuery(query, { operatorMap: { 'b/w': 'between' } });
 */
 ```
 
-The `newQuery` object would be ready for processing by `formatQuery`, including special handling of the "between" operator.
+The `newQuery` is ready for `formatQuery`, including special "between" operator handling.
 
 </details>
 
@@ -98,7 +98,7 @@ The `newQuery` object would be ready for processing by `formatQuery`, including 
 
 ### JSON
 
-To export the internal query representation (like what `react-querybuilder` passes to the `onQueryChange` callback) formatted by `JSON.stringify`, simply pass the query to `formatQuery`:
+Export the internal query representation (from `onQueryChange` callback) as formatted JSON:
 
 ```ts
 formatQuery(query);
@@ -106,7 +106,7 @@ formatQuery(query);
 formatQuery(query, 'json');
 ```
 
-The output will be a multi-line string representation of the query using 2 spaces for indentation.
+Output is multi-line JSON with 2-space indentation:
 
 ```ts
 `{
@@ -130,9 +130,9 @@ The output will be a multi-line string representation of the query using 2 space
 }`;
 ```
 
-### JSON without identifiers
+### JSON without IDs
 
-To export the internal query representation without formatting (single-line, no indentation) and without any `id` or `path` attributes, use the "json_without_ids" format. This can be useful for serializing the query for persistent storage.
+Export unformatted (single-line) JSON without `id` or `path` attributes using "json_without_ids". This format is useful for persistent storage:
 
 ```ts
 formatQuery(query, 'json_without_ids');
@@ -146,7 +146,7 @@ Output (string):
 
 ### SQL
 
-To export a SQL `WHERE` clause, use the "sql" format. The output should be largely compatible with major RDBMS engines, but may require [configuration](#configuration) in some cases. See [presets](#presets) for more details about known compatibility issues.
+Export SQL `WHERE` clauses using the "sql" format. This format is compatible with major RDBMS engines, though some cases require [configuration](#configuration). See [presets](#presets) for compatibility details.
 
 ```ts
 formatQuery(query, 'sql');
@@ -160,7 +160,7 @@ Output (string):
 
 #### Parameterized SQL
 
-To export a SQL `WHERE` clause with bind variables instead of inline values, use the "parameterized" format. The output is an object with `sql` and `params` attributes.
+Export SQL with bind variables instead of inline values using the "parameterized" format. This returns an object with `sql` and `params` properties:
 
 ```ts
 formatQuery(query, 'parameterized');
@@ -177,7 +177,7 @@ Output (JSON object):
 
 #### Named parameters
 
-If anonymous parameters (aka bind variables) are not acceptable, `formatQuery` can name each parameter based on the field name when the "parameterized_named" format is used. The output object is similar to the "parameterized" format, but the `params` attribute is an object instead of an array.
+When anonymous parameters aren't suitable, use "parameterized_named" to name parameters based on field names. This is similar to "parameterized" but `params` is an object instead of an array:
 
 ```ts
 formatQuery(query, 'parameterized_named');
@@ -201,7 +201,7 @@ See also: [`paramPrefix`](#parameter-prefix) and [generating parameter names](#g
 
 #### Prisma ORM
 
-To produce an object suitable for the `where` property of a Prisma ORM query, use the "prisma" format.
+Generate objects for Prisma ORM `where` properties using the "prisma" format:
 
 > _Note: Prisma does not support field-to-field comparisons, so rules with `valueSource: "field"` will always be invalid._
 
@@ -218,7 +218,7 @@ const users = await prisma.users.findMany({ where });
 
 ##### Relational Queries API
 
-To produce a function suitable for the `where` property of Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb), use the "drizzle" format:
+Generate functions for Drizzle's [relational queries API](https://orm.drizzle.team/docs/rqb) `where` property:
 
 ```ts
 const where = formatQuery(query, 'drizzle');
@@ -229,7 +229,7 @@ const results = db.query.users.findMany({ where });
 
 ##### Query Builder API
 
-To produce an object suitable for the `.where()` function of Drizzle's [query builder API](https://orm.drizzle.team/docs/select), pass a table definition and the Drizzle operators into the function produced by `formatQuery`:
+For Drizzle's [query builder API](https://orm.drizzle.team/docs/select), pass table definition and operators to the `formatQuery`-generated function:
 
 ```ts
 import { getOperators } from 'drizzle-orm';
@@ -242,7 +242,7 @@ const query = db.select().from(table).where(whereObj);
 
 :::tip
 
-Objects produced for the query builder API can be passed directly to other Drizzle operators, allowing one to augment the query with conditions not present in the original query object.
+Query builder API objects work with other Drizzle operators, letting you add conditions not in the original query:
 
 ```ts
 import { and, ne, getOperators } from 'drizzle-orm';
@@ -298,7 +298,7 @@ console.log(query.all());
 
 #### Sequelize
 
-To produce an object suitable for the `where` property of a Sequelize `findAll` query, use the "sequelize" format. This format has a few special requirements:
+Generate objects for Sequelize `findAll` `where` properties using the "sequelize" format. Requirements:
 
 - Sequelize uses `Symbol`s for operator keys, so they must be provided through the `context` option as `sequelizeOperators` (see example below).
 - If any rules have `valueSource: "field"`, then the Sequelize `col` function must be provided as `sequelizeCol`.
@@ -316,11 +316,11 @@ const users = await Users.findAll({ where });
 
 ### MongoDB
 
-MongoDB-compatible query objects can be produced as a JSON object or as a `string`. The "mongodb_query" format will produce a JSON object and is the recommended format. The "mongodb" format is merely a `JSON.stringify`'d version of the "mongodb_query" format.
+Generate MongoDB queries as JSON objects or strings. Use the "mongodb_query" format (recommended) for JSON objects. The "mongodb" format is the stringified version.
 
 :::info
 
-The "mongodb" format was deprecated when the "mongodb_query" export format was introduced, in version 8.1.0.
+The "mongodb" format was deprecated when the "mongodb_query" export format was introduced in version 8.1.0.
 
 :::
 
@@ -336,7 +336,7 @@ Output (JSON object):
 
 :::info
 
-The MongoDB export formats do not support the inversion operator (setting `not: true` for a rule group). However, rules _can_ be created using the `"!="` operator.
+MongoDB formats don't support group inversion (`not: true`), but individual rules can use the "!=" operator.
 
 :::
 
@@ -370,7 +370,7 @@ firstName == 'Steve' and lastName == 'Vai'
 
 ### JsonLogic
 
-The "jsonlogic" format produces an object that can be processed by the JsonLogic `apply` function (see https://jsonlogic.com/).
+Generate objects for JsonLogic `apply` function (see https://jsonlogic.com/):
 
 ```ts
 formatQuery(query, 'jsonlogic');
@@ -384,9 +384,9 @@ Output (JSON object):
 
 :::tip
 
-Before using JsonLogic's `apply()` method to apply the result of `formatQuery(query, 'jsonlogic')`, register the additional operators `startsWith` and `endsWith` exported from `react-querybuilder`. These are not [standard JsonLogic operations](https://jsonlogic.com/operations.html), but they correspond to the "beginsWith" and "endsWith" operators, respectively, from `react-querybuilder`.
+Register additional `startsWith` and `endsWith` operators from `react-querybuilder` before using JsonLogic's `apply()`. These aren't [standard JsonLogic operations](https://jsonlogic.com/operations.html) but correspond to "beginsWith" and "endsWith" operators.
 
-The most future-proof way to do this is to loop through the `jsonLogicAdditionalOperators` entries like below. This way, if any more custom operators are added in the future they will be automatically available.
+Loop through `jsonLogicAdditionalOperators` entries for future-proof registration of any new custom operators:
 
 ```ts
 import { add_operation, apply } from 'json-logic-js';
@@ -403,7 +403,7 @@ apply({ startsWith: [{ var: 'firstName' }, 'Stev'] }, data);
 
 ### ElasticSearch
 
-The "elasticsearch" format produces an object that can be processed by [ElasticSearch](https://www.elastic.co/).
+Generate objects for [ElasticSearch](https://www.elastic.co/) processing:
 
 ```ts
 formatQuery(query, 'elasticsearch');
@@ -417,7 +417,7 @@ Output (JSON object):
 
 ### JSONata
 
-For [JSONata](https://jsonata.org/) filters, use the "jsonata" format. Use the [`parseNumbers` option](#parse-numbers) to ensure that numeric values are rendered as numbers in the output since JSONata does not automatically cast strings to numbers.
+Generate [JSONata](https://jsonata.org/) filters using "jsonata" format. Use [`parseNumbers` option](#parse-numbers) for numeric values since JSONata doesn't auto-cast strings to numbers:
 
 ```ts
 formatQuery(query, { format: 'jsonata', parseNumbers: true });
@@ -431,9 +431,9 @@ firstName = "Steve" and lastName = "Vai"
 
 :::tip Handling date values in JSONata
 
-The `react-querybuilder` package itself does not have a standard way to determine when values should be treated as dates or date-like strings, so we recommend using `datetimeRuleProcessorJSONata` from the [`@react-querybuilder/datetime`](../datetime#jsonata) package.
+React Query Builder lacks standard date detection, so use `datetimeRuleProcessorJSONata` from [`@react-querybuilder/datetime`](../datetime#jsonata).
 
-If you need more control over the output, you can implement a custom rule processor like the example below. (It has no error checking or validation&mdash;among other issues&mdash;but it can be a good starting point.)
+For more control, implement a custom rule processor (example below lacks error checking but provides a starting point):
 
 ```ts
 const customRuleProcessor: RuleProcessor = (rule, options) => {
@@ -450,7 +450,7 @@ const customRuleProcessor: RuleProcessor = (rule, options) => {
 
 ### LDAP
 
-For [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) filters, use the "ldap" format.
+Generate [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) filters:
 
 > _Note: LDAP filters do not support direct comparison between the values of two attributes within the same entry, so rules with `valueSource: "field"` will always be invalid._
 
@@ -466,7 +466,7 @@ Output (string):
 
 ### Natural language
 
-To produce a natural language query, use the "natural_language" format. Use the `getOperators` and `fields` options to render field and operator labels instead of values. Also see the [i18n options](#internationalization) below.
+Generate natural language queries using "natural_language" format. Use `getOperators` and `fields` options to render labels instead of values. See [i18n options](#internationalization):
 
 ```ts
 formatQuery(query, {
@@ -489,15 +489,15 @@ First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52
 
 ## Configuration
 
-An object can be passed as the second argument instead of a string to have more fine-grained control over the output.
+Pass an object as the second argument for fine-grained output control:
 
 ### Parse numbers
 
-To render values as numbers instead of quoted strings when possible, set the `parseNumbers` option to `true`. See [Number parsing](./misc#number-parsing) for more details and advanced options.
+Render values as numbers instead of quoted strings using `parseNumbers: true`. See [Number parsing](./misc#number-parsing) for details.
 
 #### Preserve value order
 
-By default, `formatQuery` will sort values in ascending order in the output for rules with "between" or "notBetween" operators when the `parseNumbers` configuration causes values to be rendered as numbers. This re-ordering can be disabled with the `preserveValueOrder` option.
+`formatQuery` sorts "between"/"notBetween" values in ascending order when `parseNumbers` renders them as numbers. Disable with `preserveValueOrder`:
 
 ```ts
 const query = {
@@ -517,21 +517,21 @@ formatQuery(query, { format: 'sql', parseNumbers: true, preserveValueOrder: true
 
 :::caution
 
-Enabling this option can produce conditions that will _always_ evaluate to false. For example, the SQL expression `X BETWEEN Y AND Z` is equivalent to `X >= Y AND X <= Z` no matter what the values of Y and Z are. Therefore, if Y is greater than Z, no value of X can ever satisfy both conditions.
+This can create conditions that always evaluate to false. SQL's `X BETWEEN Y AND Z` equals `X >= Y AND X <= Z`—if Y > Z, no X value satisfies both conditions.
 
-`formatQuery` makes the assumption that the user probably means "X represents a point on the line between points Y and Z"&mdash;irrespective of direction&mdash;and is not concerned with the more esoteric SQL semantics.
+`formatQuery` assumes users mean "X is between points Y and Z" regardless of direction.
 
 :::
 
 ### Rule processor
 
-To customize the output for individual rules, use the `ruleProcessor` configuration option. Rules will only be passed to the provided processor function if they first pass [validation](#validation). The function will be called like this:
+Customize individual rule output using `ruleProcessor`. Only validated rules reach this function:
 
 ```ts
 ruleProcessor(rule, { escapeQuotes, fieldData, ...otherOptions });
 ```
 
-The first argument is the `RuleType` object from the query. The second argument is a `ValueProcessorOptions` object. `escapeQuotes` is `true` or `false` when appropriate as determined by the internal `formatQuery` logic (generally speaking, quotes are escaped for string values and not escaped otherwise—as when values represent field names). `fieldData` is the corresponding `Field` object from the `fields` array if it was passed to `formatQuery`. Other options are copied directly from the `formatQuery` options, or the default value if not specified.
+Arguments: `RuleType` object and `ValueProcessorOptions` object with `escapeQuotes` (true for string values, false for field names), `fieldData` (corresponding `Field` object), and other `formatQuery` options.
 
 The default rule processors for each format are available as exports from `react-querybuilder`:
 
@@ -546,9 +546,9 @@ The default rule processors for each format are available as exports from `react
 - `defaultRuleProcessorSQL`
 - `defaultRuleProcessorParameterized`
 
-Refer to the source code for each to determine the appropriate return type for a custom rule processor.
+Refer to the source code to determine the appropriate return type for custom rule processors.
 
-You can use the appropriate default rule processor as a fallback so your custom rule processor doesn't have to cover all cases, as shown below.
+Use the appropriate default rule processor as a fallback so your custom processor doesn't cover all cases:
 
 ```ts
 const query: RuleGroupType = {
@@ -604,7 +604,7 @@ formatQuery(query, { format: 'sql', ruleProcessor: customRuleProcessor });
 
 #### Generating parameter names
 
-The "parameterized" and "parameterized_named" formats require rule processors to return an object that closely resembles the return type of `formatQuery` itself for these formats. A utility function `getNextNamedParam` is provided to help generate unique parameter names. The example below is effectively the same as the Oracle SQL example above, but using the "parameterized_named" format.
+The "parameterized" and "parameterized_named" formats require rule processors to return an object resembling `formatQuery`'s return type for these formats. The `getNextNamedParam` utility helps generate unique parameter names. The example below matches the Oracle SQL example above, but uses "parameterized_named" format.
 
 ```ts
 const customRuleProcessor: RuleProcessor = (rule, options) => {
@@ -636,11 +636,11 @@ formatQuery(query, { format: 'parameterized_named', ruleProcessor: customRulePro
 
 ### Value processor
 
-`valueProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "value" portion of the output (to the right of the operator) for the "sql" format. If both options are provided, `ruleProcessor` takes precedence.
+`valueProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "value" portion (to the right of the operator) for "sql" format. If both are provided, `ruleProcessor` takes precedence.
 
 :::tip
 
-For all formats except "sql", `valueProcessor` is merely a synonym for `ruleProcessor`. We recommend using `ruleProcessor` unless you are exporting SQL and only need to customize the value portion of the output.
+For all formats except "sql", `valueProcessor` is a synonym for `ruleProcessor`. Use `ruleProcessor` unless exporting SQL and only customizing the value portion.
 
 :::
 
@@ -666,19 +666,19 @@ formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
 
 :::caution
 
-The legacy `valueProcessor` signature exists for backwards compatibility, but we recommend avoiding it. For one reason, the options are not passed in so it becomes more difficult to correctly fall back to a default processor.
+The legacy `valueProcessor` signature exists for backwards compatibility, but avoid it. Options aren't passed in, making it difficult to correctly fall back to default processors.
 
 :::
 
-If the function assigned to `valueProcessor` accepts three or more arguments (not including those with default values), it will be called like this:
+If the `valueProcessor` function accepts three or more arguments (excluding those with default values), it's called like this:
 
 ```ts
 valueProcessor(field, operator, value, valueSource);
 ```
 
-Notice that no options or additional properties of the rule are passed as arguments. Among other problems, this prevents `formatQuery` from setting the `escapeQuotes` option.
+No options or additional rule properties are passed as arguments. This prevents `formatQuery` from setting the `escapeQuotes` option, among other problems.
 
-This legacy behavior is documented here for completeness but, as stated above, is not recommended.
+This legacy behavior is documented for completeness but not recommended.
 
 ```ts
 const query: RuleGroupType = {
@@ -705,7 +705,7 @@ formatQuery(query, { format: 'sql', valueProcessor: customValueProcessor });
 */
 ```
 
-Versions of the default value processors using the legacy signature are still available for some query language formats.
+Default value processors using the legacy signature are available for some query language formats.
 
 | Format                | Current signature (recommended)      | Legacy signature (not recommended) |
 | --------------------- | ------------------------------------ | ---------------------------------- |
@@ -718,7 +718,7 @@ Versions of the default value processors using the legacy signature are still av
 
 ### Operator processor
 
-`operatorProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "operator" portion of the output for the "sql", "parameterized", "parameterized_named", and "natural_language" formats.
+`operatorProcessor` accepts the same arguments as `ruleProcessor`, but only affects the "operator" portion for "sql", "parameterized", "parameterized_named", and "natural_language" formats.
 
 ```ts
 formatQuery(query, {
@@ -733,7 +733,7 @@ formatQuery(query, {
 
 ### Quote field names
 
-Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). This can be configured with the `quoteFieldNamesWith` option which can be assigned a string or an array of two strings.
+Some database engines wrap field names in backticks (`` ` ``) or square brackets (`[]`). Configure this with the `quoteFieldNamesWith` option (string or array of two strings).
 
 ```ts
 formatQuery(query, { format: 'sql', quoteFieldNamesWith: '`' });
@@ -792,11 +792,11 @@ p.sql === "(firstName = $firstName_1 and lastName = $lastName_1)"
 
 ### Retain parameter prefixes
 
-`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). When used in conjunction with the "parameterized_named" format, the keys of the `params` object will maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ ":param_1": "val" }` instead of `{ "param_1": "val" }`).
+`paramsKeepPrefix` simplifies compatibility with [SQLite](https://sqlite.org/). With "parameterized_named" format, `params` object keys maintain the `paramPrefix` string as it appears in the `sql` string (e.g. `{ ":param_1": "val" }` instead of `{ "param_1": "val" }`).
 
 ### Numbered parameters
 
-For the "parameterized" format, all parameter placeholders in the generated SQL are "?" by default. When the `numberedParams` option is `true`, placeholders will instead be a numbered index beginning with `1`, incrementing by 1 from left to right. Each placeholder number will be prefixed with the configured `paramPrefix` string (default `":"`).
+For "parameterized" format, parameter placeholders in generated SQL are "?" by default. When `numberedParams` is `true`, placeholders become numbered indices starting with `1`, incrementing left to right. Each placeholder number is prefixed with the configured `paramPrefix` string (default `":"`).
 
 ```ts
 const p = formatQuery(query, {
@@ -809,15 +809,15 @@ p.sql === "(firstName = $1 and lastName = $2)"
 */
 ```
 
-Previously, some [manual post-processing](../tips/custom-bind-variables) was necessary to achieve the same effect.
+Previously, [manual post-processing](../tips/custom-bind-variables) was necessary for this effect.
 
 ### Concatenation operator
 
-Most SQL database dialects use the `||` operator to concatenate strings. SQL Server uses `+`, and MySQL does not have a concatenation operator—the `CONCAT` function is used instead.
+Most SQL database dialects use the `||` operator to concatenate strings. SQL Server uses `+`, and MySQL uses the `CONCAT` function instead.
 
-To configure the concatenation operator (used for the "contains", "beginswith", and "endswith" operators when `valueSource` is "field"), use the `concatOperator` option. `formatQuery` uses the ANSI standard `||` by default so this is not usually necessary.
+Configure the concatenation operator (used for "contains", "beginswith", and "endswith" operators when `valueSource` is "field") with the `concatOperator` option. `formatQuery` uses the ANSI standard `||` by default.
 
-If the value is `"CONCAT"` (case-insensitive), the `CONCAT` function will be used. (Note that Oracle SQL does not support more than two values in the `CONCAT` function, so this option should not be used in that context. The default operator `||` is already compatible with Oracle SQL.)
+If the value is `"CONCAT"` (case-insensitive), the `CONCAT` function is used. (Note: Oracle SQL doesn't support more than two values in `CONCAT`, so avoid this option with Oracle. The default `||` operator is Oracle-compatible.)
 
 ```ts
 const query = {
@@ -841,11 +841,11 @@ formatQuery(query, { format: 'sql', concatOperator: 'CONCAT' });
 
 ### Presets
 
-The `preset` option configures options known to enable (or at least improve) compatibility with particular query language dialects. Individual options will override their respective preset values. The following presets are available:
+The `preset` option configures options known to enable or improve compatibility with particular query language dialects. Individual options override their respective preset values. Available presets:
 
 :::info
 
-If the `preset` option is one from `sqlDialectPresets`, it will only apply if the `format` is undefined or one of the SQL-based formats.
+If `preset` is from `sqlDialectPresets`, it only applies if `format` is undefined or one of the SQL-based formats.
 
 :::
 
@@ -947,7 +947,7 @@ formatQuery(query, { format: 'sql', preset: 'mssql' });
 
 ### Fallback expression
 
-The `fallbackExpression` is a string that will be part of the output when `formatQuery` can't quite figure out what to do for a particular rule or group. The intent is to maintain valid syntax while (hopefully) not detrimentally affecting the query criteria. If not provided, the default fallback expression for the given format will be used:
+`fallbackExpression` is a string included in output when `formatQuery` can't determine what to do for a particular rule or group. The intent is to maintain valid syntax while not affecting query criteria. If not provided, the default fallback expression for the format is used:
 
 | Format                  | Default `fallbackExpression`  |
 | ----------------------- | ----------------------------- |
@@ -966,7 +966,7 @@ The `fallbackExpression` is a string that will be part of the output when `forma
 
 ### Value sources
 
-When the `valueSource` property for a rule is set to "field", no parameters will be generated.
+When a rule's `valueSource` property is "field", no parameters are generated.
 
 ```ts
 const pf = formatQuery(
@@ -992,15 +992,15 @@ Output (JSON object):
 
 ### Placeholder values
 
-Any rule where the `field`, `operator`, or `value` matches the placeholder value (default `"~"`) will be excluded from the output for most export formats (see [Automatic validation](#automatic-validation)). To use a different string as the placeholder value, set the `placeholderFieldName`, `placeholderOperatorName`, or `placeholderValueName` options. These correspond to the `fields.placeholderName`, `operators.placeholderName`, and `values.placeholderName` properties on the main component's [`translations` prop](../components/querybuilder#translations) object. Note that this behavior with regard to the `value` property will only be applied if `placeholderValueName` is explicitly set in the options. The others will act on their defaults if not defined.
+Rules where `field`, `operator`, or `value` matches the placeholder value (default `"~"`) are excluded from output for most export formats (see [Automatic validation](#automatic-validation)). To use a different placeholder string, set the `placeholderFieldName`, `placeholderOperatorName`, or `placeholderValueName` options. These correspond to `fields.placeholderName`, `operators.placeholderName`, and `values.placeholderName` properties on the main component's [`translations` prop](../components/querybuilder#translations) object. This behavior for the `value` property only applies if `placeholderValueName` is explicitly set. The others use their defaults if undefined.
 
 ### Internationalization
 
-These i18n options are specific to the ["natural_language"](#natural-language) format.
+These i18n options are specific to ["natural_language"](#natural-language) format.
 
 #### Word order
 
-Based on the linguistic concept of [constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders), the `wordOrder` option accepts all permutations of "SVO" ("SOV", "VSO", etc.) and outputs the field, operator, and value in the corresponding order (S = field, V = operator, O = value).
+Based on [constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders), the `wordOrder` option accepts all permutations of "SVO" ("SOV", "VSO", etc.) and outputs field, operator, and value in corresponding order (S = field, V = operator, O = value).
 
 ```ts
 formatQuery(query, {
@@ -1012,7 +1012,7 @@ formatQuery(query, {
 
 #### Translations
 
-Map of the words "and", "or", "true", and "false" to their translated equivalents, plus prefix and suffix options for rule groups.
+Map "and", "or", "true", and "false" to their translated equivalents, plus prefix and suffix options for rule groups.
 
 The base prefix/suffix options are "groupPrefix" and "groupSuffix". The applicability of a group-related translation is determined by two conditions: (1) whether the group's `not` property is true, and (2) whether the combinator for the group is `"xor"`. The base `"group*"` translations are the fallbacks for when neither condition is true. When one or more conditions are true, `formatQuery` will look for a property on the `translations` object that matches the base property with a suffix of underscore (`"_"`) plus the condition ID (`"not"` or `"xor"`).
 
@@ -1057,9 +1057,9 @@ formatQuery(query, {
 
 ### Rule group processor
 
-`formatQuery` massages, coerces, validates, and augments the configuration options before passing the query and the "final" options object to the appropriate rule group processor for the requested format.
+`formatQuery` processes, validates, and augments configuration options before passing the query and "final" options object to the appropriate rule group processor for the requested format.
 
-To take advantage of this pre-processing but generate custom output, use the `ruleGroupProcessor` option. The function will be called with the rule group and a "final" prepared options object, like this:
+To leverage this pre-processing but generate custom output, use the `ruleGroupProcessor` option. The function is called with the rule group and "final" prepared options object:
 
 ```ts
 ruleGroupProcessor(ruleGroup, finalOptions);
@@ -1080,7 +1080,7 @@ The default rule group processors for each format are available as exports from 
 - `defaultRuleGroupProcessorSQL`
 - `defaultRuleGroupProcessorParameterized`
 
-You can use the appropriate default rule group processor as a fallback so your custom rule group processor doesn't have to cover all cases, as shown below.
+Use the appropriate default rule group processor as a fallback so your custom processor doesn't need to cover all cases:
 
 ```ts
 const query: RuleGroupType = {
@@ -1111,7 +1111,7 @@ formatQuery(query, { ruleGroupProcessor: customRuleGroupProcessor });
 
 ## Validation
 
-The validation options (`validator` and `fields` – see [Validation](./validation) for more information) only affect the output when `format` is not "json" or "json_without_ids". If the `validator` function returns `false`, the `fallbackExpression` will be returned. Otherwise, groups and rules marked as invalid (either by the validation map produced by the `validator` function or the result of the field-based `validator` function) will be ignored.
+Validation options (`validator` and `fields` – see [Validation](./validation)) only affect output when `format` is not "json" or "json_without_ids". If the `validator` function returns `false`, the `fallbackExpression` is returned. Otherwise, groups and rules marked as invalid (by the validation map from the `validator` function or field-based `validator` function) are ignored.
 
 Example:
 
@@ -1159,11 +1159,11 @@ formatQuery(query, {
 
 ### Automatic validation
 
-To minimize the chance of invalid syntax, some basic validation will be performed by `formatQuery` for the "in", "notIn", "between", and "notBetween" operators for all formats except "json" and "json_without_ids", even if no validator function or field validators are specified.
+To minimize invalid syntax, `formatQuery` performs basic validation for "in", "notIn", "between", and "notBetween" operators for all formats except "json" and "json_without_ids", even without specified validator functions or field validators.
 
-- Rules with an `operator` of "in" or "notIn" will be deemed invalid if the rule's `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
-- Rules with an `operator` of "between" or "notBetween" will be deemed invalid if the rule's `value` is neither an array with length of at least two (`value.length >= 2`) nor a string with at least one comma that isn't the first or last character (`value.split(',').length >= 2`, and neither element is an empty string).
-- Rules where either the `field`, `operator`, or `value` match their respective placeholder will be deemed invalid:
+- Rules with "in" or "notIn" operators are invalid if the `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
+- Rules with "between" or "notBetween" operators are invalid if the `value` is neither an array with at least two elements (`value.length >= 2`) nor a string with at least one comma not at the first or last position (`value.split(',').length >= 2`, and neither element is empty).
+- Rules where `field`, `operator`, or `value` match their respective placeholder are invalid:
   <!-- prettier-ignore -->
   ```ts
   field === placeholderFieldName ||
