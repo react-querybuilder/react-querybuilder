@@ -6,9 +6,9 @@ hide_table_of_contents: true
 
 ## Adding properties
 
-To produce a query object with additional properties, you can loop through the `rules` array recursively. The [`transformQuery`](../utils/misc#transformquery) function is provided for use cases such as this.
+To enhance a query object with additional properties, iterate through the `rules` array recursively. The [`transformQuery`](../utils/misc#transformquery) utility function simplifies this process.
 
-In the example below (inspired by [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)), the `inputType` from the `fields` array is added to each rule.
+The example below (inspired by [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)) demonstrates adding the `inputType` property from the `fields` array to each rule in the query object.
 
 ```ts
 import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
@@ -30,7 +30,7 @@ const result = transformQuery(query, { ruleProcessor });
 <details>
 <summary>Manual recursion</summary>
 
-This example (_directly_ from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)) demonstrates manual recursion to achieve exactly the same result as the `transformQuery` example above.
+This example (taken directly from [issue #226](https://github.com/react-querybuilder/react-querybuilder/issues/226)) shows how to use manual recursion to achieve the same result as the `transformQuery` example above.
 
 ```ts
 import type { Field, RuleGroupType, RuleType } from 'react-querybuilder';
@@ -62,7 +62,7 @@ const result = processGroup(query);
 
 ## Removing properties
 
-To convert a standard query object to a JSON string containing only certain properties, you can take advantage of the second parameter of the [`JSON.stringify` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).
+To create a JSON string from a query object containing only specific properties, use the `replacer` parameter (second argument) of the [`JSON.stringify` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).
 
 ```ts
 const query: RuleGroupType = {
@@ -77,12 +77,12 @@ const query: RuleGroupType = {
   ],
 };
 
-// This will leave off the `id` and `combinator` properties:
+// This omits all properties except those specified in the replacer array:
 console.log(JSON.stringify(query, ['rules', 'field', 'operator', 'value']));
 // '{"rules":[{"field":"firstName","operator":"=","value":"Steve"}]}'
 ```
 
-The `formatQuery` function also provides a shortcut for producing a JSON string representing everything in the query except the `id` and `path` properties:
+Alternatively, the `formatQuery` function provides a convenient method to generate a JSON string containing all query properties except `id` and `path`:
 
 ```ts
 console.log(formatQuery(query, 'json_without_ids'));

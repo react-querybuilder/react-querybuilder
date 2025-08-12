@@ -6,11 +6,11 @@ hide_table_of_contents: true
 
 import { SandpackRQB } from '@site/src/components/SandpackRQB';
 
-A common requirement of React Query Builder implementations is to limit or alter the operators based on the selected field. For example, when a field represents a date value, a label of "before" might be more appropriate for the `<` operator than the default `"<"`. A number-type field might use a label of "less than" for the `<` operator, while a text field probably wouldn't use the `<` operator at all.
+Many React Query Builder implementations need to customize operators based on the selected field type. For example, date fields might use "before" as a more intuitive label than the default `"<"` operator. Number fields could display "less than" for the `<` operator, while text fields might exclude comparison operators entirely.
 
 ## Field `operators` property
 
-The first way to address this requirement is with the field `operators` property. The `operators` property of a field determines which operators are displayed once the user selects that field in the field selector. The downside of this method is that the operators list must be fully defined for each field, potentially duplicating lists across fields with equivalent data types.
+One approach uses the field's `operators` property to specify which operators appear when users select a particular field. However, this method requires defining complete operator lists for each field, potentially creating duplication across fields with similar data types.
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 444 }}>
 
@@ -71,11 +71,11 @@ export default () => <QueryBuilder fields={fields} defaultQuery={defaultQuery} /
 
 ## `getOperators` prop
 
-The field `operators` property is useful when individual fields deviate from the default operator list, but the `getOperators` function prop allows you to put all operator lists and logic in one place.
+While the field `operators` property works well for individual field customizations, the `getOperators` function prop centralizes all operator logic in one location.
 
-`getOperators` is passed two arguments: the `field` identifier and a "meta" object with a `fieldData` property containing the full field definition. Based on that, you can gather information from the same array provided to the `fields` prop (or any other data source) and return a list of operator names and labels.
+`getOperators` receives two arguments: the field identifier and a meta object containing the complete field definition. Using this information, you can reference the `fields` array (or other data sources) to return appropriate operator lists with custom names and labels.
 
-The example below takes advantage of the ability to add arbitrary properties to field definitions. A non-standard `datatype` property on each field is used to determine which operators are displayed and how they are labeled. The `defaultOperators` export is utilized where appropriate. It also shows how, if present, a field's `operators` property will take precedence over the result of the `getOperators` function (see the fourth rule, where the field selection of "Favorite Movie" limits the operator list to "is" even though its `datatype` is "text").
+This example demonstrates custom field properties for operator management. Each field includes a custom `datatype` property that determines operator selection and labeling. The `defaultOperators` export provides base functionality where needed. Note that when present, a field's `operators` property overrides `getOperators` results—observe how "Favorite Movie" shows only the "is" operator despite having `datatype: "text"`.
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 444 }}>
 

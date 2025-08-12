@@ -2,15 +2,15 @@
 title: Date/time features
 ---
 
-By default, the components and utilities provided by React Query Builder handle dates and times in a very generic, unopinionated way. We recommend storing dates as strings in an ISO 8601-compatible format and taking advantage of built-in date/time functionality like "date" and "datetime-local" inputs (see [`inputType`](./components/querybuilder#getinputtype)).
+By default, React Query Builder components and utilities handle dates and times in a generic, unopinionated way. We recommend storing dates as strings in ISO 8601-compatible format and taking advantage of built-in date/time functionality like "date" and "datetime-local" inputs (see [`inputType`](./components/querybuilder#getinputtype)).
 
 The `@react-querybuilder/datetime` package augments React Query Builder with enhanced date/time functionality.
 
 ## Initialization
 
-A date/time processor library with parsing and formatting capability must be used in conjunction with `@react-querybuilder/datetime`. Ready-to-use plugins are provided for [Day.js](https://day.js.org/), [date-fns](https://date-fns.org/), and [Luxon](https://moment.github.io/luxon/). Other third-party or custom date/time libraries can be used (see [below](#custom-plugins)).
+A date/time processor library with parsing and formatting capabilities must be used with `@react-querybuilder/datetime`. Ready-to-use plugins are provided for [Day.js](https://day.js.org/), [date-fns](https://date-fns.org/), and [Luxon](https://moment.github.io/luxon/). Other third-party or custom date/time libraries can be used (see [below](#custom-plugins)).
 
-> _A plugin using only native JavaScript `Date` and `String` functionality is available, but we don't recommended it except as a last resort since it has limited formatting capability (full ISO strings in UTC only) and has not passed rigorous testing like the popular libraries._
+> _A plugin using only native JavaScript `Date` and `String` functionality is available, but we don't recommend it except as a last resort since it has limited formatting capability (full ISO strings in UTC only) and hasn't passed rigorous testing like the popular libraries._
 
 The documentation below assumes the use of the Day.js plugin. To use one of the others, replace `@react-querybuilder/datetime/dayjs` with `@react-querybuilder/datetime/date-fns` or `@react-querybuilder/datetime/luxon`.
 
@@ -23,20 +23,20 @@ import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 // import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/luxon';
 ```
 
-The date/time package provides `formatQuery` rule processors that handle date/time fields in a manner appropriate for the target platform.
+The date/time package provides `formatQuery` rule processors that handle date/time fields appropriately for the target platform.
 
 ### Conditional use
 
-By default, the date/time rule processors will only treat a rule value as a date (or series of dates) if the `field` configuration has a `datatype` property starting with "date", "datetime", "datetimeoffset", or "timestamp" (using the `defaultIsDateField` function). Otherwise rule processing will be passed off to the default rule processor for that export format.
+By default, the date/time rule processors only treat a rule value as a date (or series of dates) if the `field` configuration has a `datatype` property starting with "date", "datetime", "datetimeoffset", or "timestamp" (using the `defaultIsDateField` function). Otherwise, rule processing is passed to the default rule processor for that export format.
 
-You can customize the algorithm by passing a `context.isDateField` configuration in the `formatQuery` options. `isDateField` can be a `boolean`, a function that returns a `boolean`, an object matching `field` properties, or an array of objects matching `field` properties.
+You can customize this algorithm by passing a `context.isDateField` configuration in the `formatQuery` options. `isDateField` can be a `boolean`, a function that returns a `boolean`, an object matching `field` properties, or an array of objects matching `field` properties.
 
-- As a `boolean`, `true` will cause the rule value to be treated as a date, and `false` will fall back to the default rule processor.
-- As a `function`, the function will be passed the rule object and the options object (the same two arguments as the rule processor). The function should return a `boolean` that indicates whether the rule value should be treated as a date.
-- As an object, fields that match _all_ the properties of the object will be treated as dates.
-- As an array of objects, fields that match all properties of _at least one_ of the objects in the array will be treated as dates.
+- As a `boolean`, `true` treats the rule value as a date, and `false` falls back to the default rule processor.
+- As a `function`, the function receives the rule object and options object (the same two arguments as the rule processor). The function should return a `boolean` indicating whether the rule value should be treated as a date.
+- As an object, fields that match _all_ properties of the object are treated as dates.
+- As an array of objects, fields that match all properties of _at least one_ object in the array are treated as dates.
 
-In the example below, the value in the "birthDate" rule matches the regular expression in the `isDateField` function, so the corresponding SQL output has the `date` keyword prepended to the value string (per the "postgresql" preset). The "mathNotDate" rule value does _not_ match the pattern and is therefore processed by the default SQL rule processor.
+In the example below, the value in the "birthDate" rule matches the regular expression in the `isDateField` function, so the corresponding SQL output has the `date` keyword prepended to the value string (per the "postgresql" preset). The "mathNotDate" rule value does _not_ match the pattern and is processed by the default SQL rule processor.
 
 ```ts
 // Returns true if the value appears to be an ISO date-only string (YYYY-MM-DD)
@@ -58,7 +58,7 @@ formatQuery(query, {
 // `(birthDate < date'1950-01-01' and mathNotDate = '1950-1-1')`
 ```
 
-In the next example, `isDateField` is an array of objects. If the field object (`options.fieldData`) matches all properties of any element in the array, the field will be treated as a date. Note that this method depends on the `fields` array being passed in the `formatQuery` options.
+In the next example, `isDateField` is an array of objects. If the field object (`options.fieldData`) matches all properties of any element in the array, the field is treated as a date. Note that this method depends on the `fields` array being passed in the `formatQuery` options.
 
 ```ts
 // Triggers date processing if the field has `datatype: "date"` _or_ `inputType: "datetime-local"`
@@ -88,11 +88,11 @@ formatQuery(query, {
 
 ### SQL
 
-The `datetimeRuleProcessorSQL` rule processor will produce different output based on the `preset` option, which defaults to "ansi". For example, if `preset` is "postgresql", date values will be prefixed with `date` (e.g. `date'2000-01-01'`), but for "mssql" they will be wrapped in `cast([...] as date)` (e.g. `cast('2000-01-01' as date)`).
+The `datetimeRuleProcessorSQL` rule processor produces different output based on the `preset` option, which defaults to "ansi". For example, if `preset` is "postgresql", date values are prefixed with `date` (e.g., `date'2000-01-01'`), but for "mssql" they're wrapped in `cast([...] as date)` (e.g., `cast('2000-01-01' as date)`).
 
 ### MongoDB
 
-Since the `datetimeRuleProcessorMongoDBQuery` rule processor handles real date/time values (as `Date` objects), it should be used in conjunction with the "mongodb_query" format and not "mongodb".
+Since the `datetimeRuleProcessorMongoDBQuery` rule processor handles real date/time values (as `Date` objects), it should be used with the "mongodb_query" format, not "mongodb".
 
 ```ts
 import { datetimeRuleProcessorMongoDBQuery } from '@react-querybuilder/datetime/dayjs';
@@ -105,7 +105,7 @@ const mongodbQuery = formatQuery(query, {
 
 ### JsonLogic
 
-The `datetimeRuleProcessorJsonLogic` rule processor produces custom JsonLogic operations to indicate that rules should be handled as date/time values. As with [`jsonLogicAdditionalOperators`](./utils/export#jsonlogic) from the `react-querybuilder` package, the date/time package provides an easy way to add support for its custom operations with the `jsonLogicDateTimeOperations` object.
+The `datetimeRuleProcessorJsonLogic` rule processor produces custom JsonLogic operations to indicate that rules should be handled as date/time values. Like [`jsonLogicAdditionalOperators`](./utils/export#jsonlogic) from the `react-querybuilder` package, the date/time package provides an easy way to add support for its custom operations with the `jsonLogicDateTimeOperations` object.
 
 ```ts
 import { add_operation, apply } from 'json-logic-js';
@@ -144,7 +144,7 @@ const jsonata = formatQuery(query, {
 
 ### Natural language
 
-The `datetimeRuleProcessorNL` will format date/time values using `Intl.DateTimeFormat`. By default, the formatter will be instantiated as follows:
+The `datetimeRuleProcessorNL` formats date/time values using `Intl.DateTimeFormat`. By default, the formatter is instantiated as follows:
 
 ```ts
 // For date-only values, e.g. "1969-01-01":
@@ -154,7 +154,7 @@ new Intl.DateTimeFormat(undefined, { dateStyle: 'full' });
 new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'long' });
 ```
 
-To customize the output, use the `context` option. The `locales` property will be passed as the first argument to the `Intl.DateTimeFormat` constructor, and either `dateFormat` or `dateTimeFormat`&mdash;depending on the rule&mdash;will be passed as the second argument.
+To customize the output, use the `context` option. The `locales` property is passed as the first argument to the `Intl.DateTimeFormat` constructor, and either `dateFormat` or `dateTimeFormat`—depending on the rule—is passed as the second argument.
 
 ```ts
 import { datetimeRuleProcessorNL } from '@react-querybuilder/datetime/dayjs';

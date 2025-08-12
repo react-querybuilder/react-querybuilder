@@ -3,15 +3,15 @@ title: RuleGroup
 description: Recursive layout and config component for groups
 ---
 
-The `RuleGroup` component allows React Query Builder to visually represent its recursive, hierarchical query structure. `RuleGroup` calls the [`useRuleGroup`](../utils/hooks#userulegroup) hook to prepare the subcomponent props.
+The `RuleGroup` component renders the recursive, hierarchical query structure of React Query Builder. It calls the [`useRuleGroup`](../utils/hooks#userulegroup) hook to prepare props for its subcomponents.
 
 ## Subcomponents
 
-`RuleGroup` renders an outer `<div>` and two inner `<div>`s, the first containing [header elements](#rulegroupheadercomponents) (derived from the group properties) and the second containing [body elements](#rulegroupbodycomponents) (derived primarily from a map of the group's `rules` array).
+`RuleGroup` renders an outer `<div>` containing two inner `<div>`s: the first with [header elements](#rulegroupheadercomponents) (based on group properties) and the second with [body elements](#rulegroupbodycomponents) (derived primarily from the group's `rules` array).
 
 :::tip
 
-The header and body layout components themselves don't rely on HTML elements like `<div>`. This allows `@react-querybuilder/native`, for example, to render the same layout components within React Native `<View>` elements. Feel free to use them in the same way.
+The header and body layout components are HTML-agnostic. This allows `@react-querybuilder/native` to render the same layout components within React Native `<View>` elements, and you can adapt them similarly for other frameworks.
 
 :::
 
@@ -31,11 +31,11 @@ This component renders the following elements in this order:
 
 ### `RuleGroupBodyComponents`
 
-This component loops through a group's `rules` array and renders a child `RuleGroup` element for each group and a [`Rule`](./rule) element for each rule.
+This component iterates through a group's `rules` array, rendering a child `RuleGroup` element for each subgroup and a [`Rule`](./rule) element for each rule.
 
-If [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is `true`, an inline combinator[^8] (whose `value` is the group's `combinator`) is rendered ahead of each rule or group except the first.
+When [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is `true`, an inline combinator[^8] (using the group's `combinator` value) appears before each rule or group except the first.
 
-When the query is using [independent combinators](./querybuilder#independent-combinators), each odd-numbered index in the `rules` array is a `string` representing a combinator value. For those elements, an independent, inline combinator is rendered.
+With [independent combinators](./querybuilder#independent-combinators), each odd-numbered index in the `rules` array contains a string representing a combinator value. These elements render as independent inline combinators.
 
 :::note
 

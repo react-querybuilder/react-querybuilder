@@ -9,23 +9,23 @@ import { DemoLink } from '@site/src/components/DemoLink';
 
 The primary export of `react-querybuilder` is the `<QueryBuilder />` React component.
 
-`QueryBuilder` calls the [`useQueryBuilder`](../utils/hooks#usequerybuilder) Hook to merge props and context values with defaults, generate update methods, consume the context, prepare the query, and finalize the schema.
+`QueryBuilder` uses the [`useQueryBuilder`](../utils/hooks#usequerybuilder) hook to merge props with context values and default values, generate update methods, and prepare the query schema.
 
 ## Subcomponents
 
 `QueryBuilder` renders a [`RuleGroup`](./rulegroup) representing the root of the query.
 
-That root `RuleGroup` is nested within a `<div>` that has the [standard `queryBuilder` class](../styling/classnames), any classes added by [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` properties with "enabled"/"disabled" values indicating whether [drag-and-drop](#enabledraganddrop) or inline combinators (either [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) is `true` or the query is using [independent combinators](#independent-combinators)) are enabled.
+The root `RuleGroup` is wrapped in a `<div>` with the [standard `queryBuilder` class](../styling/classnames), custom classes from [`controlClassnames.queryBuilder`](#controlclassnames), and `data-` attributes indicating enabled features like [drag-and-drop](#enabledraganddrop) and inline combinators.
 
-Finally, everything is wrapped in `<QueryBuilderStateProvider>` and `<QueryBuilderContext.Provider>`. The latter inherits any values from ancestor context providers and propogates them down to subcomponents. Props supersede context values.
+Everything is wrapped in `<QueryBuilderStateProvider>` and `<QueryBuilderContext.Provider>`, which inherit ancestor context values and propagate them to subcomponents. Props take precedence over context values.
 
 ## Props
 
-All `QueryBuilder` props are optional, but as stated in the [getting started guide](../intro), the query builder is really only useful when at least the `fields` and `onQueryChange` props are implemented.
+All `QueryBuilder` props are optional, but `fields` and `onQueryChange` are typically required for useful functionality (see [getting started guide](../intro)).
 
 :::note
 
-When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](#defaultquery), and [onQueryChange](#onquerychange)), that means the type must either be `RuleGroupType` or `RuleGroupTypeIC`. For more information about `RuleGroupTypeIC`, see the [independent combinators](#independent-combinators) section below.
+`RuleGroupTypeAny` refers to either `RuleGroupType` or `RuleGroupTypeIC` types. See [independent combinators](#independent-combinators) for `RuleGroupTypeIC` details.
 
 :::
 
@@ -33,11 +33,11 @@ When you see `RuleGroupTypeAny` below (e.g. for [query](#query), [defaultQuery](
 
 `OptionList<Field> | Record<string, Field>`
 
-The array of [fields](../typescript#fields) that should be used or an array of [option groups](../typescript#miscellaneous) containing arrays of fields. (Alternatively, `fields` can be an object where the keys correspond to each field `name` and the values are the field definitions. If `fields` is an object, then the `options` array passed to the [`fieldSelector` component](./querybuilder-controlelements#fieldselector) will be sorted alphabetically by the `label` property.)
+Array of [fields](../typescript#fields) or [option groups](../typescript#miscellaneous) containing field arrays. Alternatively, pass an object where keys are field `name`s and values are field definitions. Object format sorts field options alphabetically by `label` in the [`fieldSelector` component](./querybuilder-controlelements#fieldselector).
 
 :::tip
 
-Field objects can also contain custom properties. Each field object will be passed in its entirety to the appropriate `OperatorSelector` and `ValueEditor` components as the `fieldData` prop (see the section on [`controlElements`](#controlelements)).
+Field objects can include custom properties. The complete field object is passed as `fieldData` to `OperatorSelector` and `ValueEditor` components (see [`controlElements`](#controlelements)).
 
 :::
 
@@ -45,15 +45,15 @@ Field objects can also contain custom properties. Each field object will be pass
 
 `(query: RuleGroupTypeAny) => void`
 
-This function is invoked with the updated query whenever a change is made from within the component.
+Called with the updated query whenever changes are made within the component.
 
 ### `query`
 
 `RuleGroupTypeAny`
 
-The query is an object of type `RuleGroupType` or `RuleGroupTypeIC`. If this prop is provided, `<QueryBuilder />` will be a [controlled component](https://reactjs.org/docs/forms.html#controlled-components).
+Query object of type `RuleGroupType` or `RuleGroupTypeIC`. When provided, makes `<QueryBuilder />` a [controlled component](https://reactjs.org/docs/forms.html#controlled-components).
 
-The `query` prop follows the same format as the parameter passed to the [`onQueryChange`](#onquerychange) callback since they are meant to be used in concert to control the component. See [examples here](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
+Use with [`onQueryChange`](#onquerychange) for controlled component behavior. See [examples here](https://github.com/react-querybuilder/react-querybuilder/blob/main/examples).
 
 ### `defaultQuery`
 
@@ -63,9 +63,9 @@ The initial query when `<QueryBuilder />` is uncontrolled.
 
 :::caution
 
-Do not provide both `query` and `defaultQuery` props. To use `<QueryBuilder />` as a controlled component, provide and manage the `query` prop in combination with the `onQueryChange` callback. Use `defaultQuery` (or neither query prop) to render an uncontrolled component. The `onQueryChange` callback will be invoked for every update regardless of which prop is used.
+Don't provide both `query` and `defaultQuery` props. Use `query` + `onQueryChange` for controlled components, or `defaultQuery` (or neither) for uncontrolled components. `onQueryChange` fires on every update regardless.
 
-If both props are defined, an error will be logged to the console during runtime (in "development" mode only). Errors will also be logged to the console if the `query` prop is defined during one render and undefined in the next, or vice versa.
+Providing both props logs errors in development mode. Switching between defined/undefined `query` across renders also logs errors.
 
 :::
 
@@ -73,15 +73,15 @@ If both props are defined, an error will be logged to the console during runtime
 
 `any`
 
-A "bucket" for passing arbitrary props down to custom components. The default components ignore this prop, but it is passed to each and every component so it's accessible anywhere in the `QueryBuilder` component tree.
+Container for passing arbitrary props to custom components. Default components ignore this prop, but it's passed to all components throughout the `QueryBuilder` tree.
 
 ### `operators`
 
 `OptionList<Operator>`
 
-The array of operators that should be used. Custom operators must define a `label` property and either a `name` or `value` (`value` takes precedence). An `arity` property, which can be "unary", "binary", or a number, may also be defined for each operator. If `arity` is either "unary" or a number less than 2, the [value editor component](./valueeditor) will not be rendered when that operator is selected.
+Array of available operators. Custom operators require `label` and either `name` or `value` (`value` takes precedence). Optional `arity` property ("unary", "binary", or number) determines value editor rendering—no value editor shows when `arity` is "unary" or < 2.
 
-To build the operator list dynamically depending on a rule's `field` property, use [`getOperators`](#getoperators). The result of `getOperators`, if not `null`, will supersede the `operators` prop.
+Use [`getOperators`](#getoperators) to build operator lists dynamically per field. Non-null `getOperators` results override this prop.
 
 The default operator list is below.
 
@@ -91,7 +91,7 @@ The default operator list is below.
 
 `OptionList`
 
-The array of combinators that should be used for RuleGroups. The default combinator list is below.
+Array of combinators for RuleGroups. Default combinator list:
 
 %importcode /packages/react-querybuilder/src/defaults.ts#region=docs-combinators
 
@@ -99,29 +99,29 @@ The array of combinators that should be used for RuleGroups. The default combina
 
 `Record<string, unknown>`
 
-Properties defined in this prop will be applied to each object in the `fields` prop. Corresponding properties defined for individual fields will override the "base" properties.
+Properties applied to all field objects. Individual field properties override base properties.
 
 ### `baseOperator`
 
 `Record<string, unknown>`
 
-Properties defined in this prop will be applied to each object in the `operators` prop or the list returned from [`getOperators`](#getoperators). Corresponding properties defined for individual operators will override the "base" properties.
+Properties applied to all operator objects from `operators` prop or [`getOperators`](#getoperators). Individual operator properties override base properties.
 
 ### `baseCombinator`
 
 `Record<string, unknown>`
 
-Properties defined in this prop will be applied to each object in the `combinators` prop. Corresponding properties defined for individual combinators will override the "base" properties.
+Properties applied to all combinator objects. Individual combinator properties override base properties.
 
 ### `controlClassnames`
 
 `Partial<Classnames>`
 
-This prop can be used to assign custom CSS classes to the various controls rendered by the `<QueryBuilder />` component. Each attribute is a `Classname` which can be a `string`, `string[]`, or `Record<string, any>` (see documentation for [`clsx`](https://www.npmjs.com/package/clsx)):
+Assign custom CSS classes to QueryBuilder controls. Each property accepts `Classname` types: `string`, `string[]`, or `Record<string, any>` (see [`clsx` docs](https://www.npmjs.com/package/clsx)):
 
 #### Usage example
 
-In the example below, any "+ Rule" buttons in the query builder will have the "bold" class which might have the associated CSS rule `.bold { font-weight: bold; }`.
+Example: Adding "bold" class to "+ Rule" buttons (with CSS rule `.bold { font-weight: bold; }`):
 
 ```tsx
 function App() {
@@ -180,115 +180,115 @@ See [`controlElements`](./querybuilder-controlelements) for a list of all contro
 
 `(field: string, misc: { fieldData: Field }) => OptionList<Operator> | null`
 
-This function is invoked to get the list of allowed operators for the given `field`. If `null` is returned, the [operators](#operators) prop is used (or the default operators if the `operators` prop is not defined).
+Returns allowed operators for the given `field`. Returning `null` uses the [operators](#operators) prop (or defaults).
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getValueEditorType`
 
 `(field: string, operator: string, misc: { fieldData: Field }) => ValueEditorType`
 
-This function is invoked to get the type of [`ValueEditor`](./valueeditor) for the given `field` and `operator`. Allowed values are `"text"` (the default if the function is not provided or if `null` is returned), `"select"`, `"multiselect"`, `"checkbox"`, `"radio"`, `"textarea"`, and `"switch"`.
+Returns the [`ValueEditor`](./valueeditor) type for the given `field` and `operator`. Options: `"text"` (default), `"select"`, `"multiselect"`, `"checkbox"`, `"radio"`, `"textarea"`, `"switch"`.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getValueSources`
 
 `(field: string, operator: string, misc: { fieldData: Field }) => ValueSources | ValueSourceFullOptions`;
 
-This function is invoked to get the list of allowed value sources for a given `field` and `operator`. The return value must be an array with one or two elements: `"value"`, `"field"`, or both (in either order). The array members can also be a `FlexibleOption` as long as the `name` and/or `value` are `"value"` or `"field"`, in the same pattern as the string-based configuration.
+Returns allowed value sources for a given `field` and `operator`. Must return array with `"value"`, `"field"`, or both. Array elements can be `FlexibleOption` objects with `name`/`value` of `"value"` or `"field"`.
 
-If the prop is not defined, `() => ["value"]` is used. The first element in the array will be the initial selection.
+Defaults to `() => ["value"]`. First array element becomes the initial selection.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getValueEditorSeparator`
 
 `(field: string, operator: string, misc: { fieldData: Field }) => ReactNode`;
 
-This function should return the separator element for a given `field` and `operator`. It will be placed in between value editors when multiple are rendered, e.g. when the operator is "between". The element can be any valid React element, including a plain string (e.g. "and" or "to") or an HTML element like `<span />`.
+Returns separator element between multiple value editors (e.g., for "between" operator). Can return any React element, including strings ("and", "to") or HTML elements.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getInputType`
 
 `(field: string, operator: string, misc: { fieldData: Field }) => string`
 
-This function is invoked to get the `type` attribute which will be applied to the rendered `<input />` for the given `field` and `operator`. This prop is only applicable when [`getValueEditorType`](#getvalueeditortype) returns `"text"` or a falsy value. If no function is provided, `"text"` is used.
+Returns the `type` attribute for `<input />` elements. Only applies when [`getValueEditorType`](#getvalueeditortype) returns `"text"` or falsy. Defaults to `"text"`.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getValues`
 
 `(field: string, operator: string, misc: { fieldData: Field }) => OptionList`
 
-This function is invoked to get the list of allowed values for the given `field` and `operator`. This prop is only applicable when [`getValueEditorType`](#getvalueeditortype) returns `"select"`, `"multiselect"`, or `"radio"`. If no function is provided, an empty array is used.
+Returns allowed values for the given `field` and `operator`. Only applies when [`getValueEditorType`](#getvalueeditortype) returns `"select"`, `"multiselect"`, or `"radio"`. Defaults to empty array.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getMatchModes`
 
 `(field: string, misc: { fieldData: Field }) => boolean | MatchMode[] | FlexibleOption<MatchMode>[]`
 
-This function indicate the valid `MatchMode`s for a given field identifier. The return value must be `MatchMode[]`, `Option<MatchMode>[]`, or `boolean`. A value of `true` indicates that all match modes are allowed. Any other return value will be ignored (no match modes will be allowed).
+Returns valid `MatchMode`s for a field. Must return `MatchMode[]`, `Option<MatchMode>[]`, or `boolean`. `true` allows all match modes; other values disable match modes.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getSubQueryBuilderProps`
 
 `(field: string, misc: { fieldData: Field }) => QueryBuilderProps`
 
-This function should return any props that a subquery (see [Subqueries](../tips/subqueries)) should override from the props provided to the parent query builder. Note that certain props like `query`, `onQueryChange`, and `enableDragAndDrop` will be ignored for subquery builders.
+Returns props for subqueries (see [Subqueries](../tips/subqueries)) to override parent query builder props. Props like `query`, `onQueryChange`, and `enableDragAndDrop` are ignored for subqueries.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getDefaultField`
 
 `string | ((fieldsData: OptionList<Field>) => string)`
 
-The default `field` for new rules. This can be a field `name` or a function that returns a field `name` based on the `fields` prop.
+Default `field` for new rules. Accepts field `name` string or function returning field `name` based on `fields` prop.
 
 ### `getDefaultOperator`
 
 `string | ((field: string, misc: { fieldData: Field }) => string)`
 
-The default `operator` for new rules. This can be an operator `name` or a function that returns an operator `name`.
+Default `operator` for new rules. Accepts operator `name` string or function returning operator `name`.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getDefaultValue`
 
 `(rule: RuleType, misc: { fieldData: Field }) => any`
 
-This function returns the default `value` for new rules based on the existing rule properties.
+Returns default `value` for new rules based on existing rule properties.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getRuleClassname`
 
 `(rule: RuleType, misc: { fieldData: Field }) => Classname`
 
-Generate custom classes which will be added to the outer `div` of a rule based on the rule properties.
+Generates custom classes for rule outer `div` based on rule properties.
 
-`fieldData` is the full `Field` object from the `fields` array prop. This can be used to access additional and/or custom properties of the field.
+`fieldData` provides the complete `Field` object for accessing custom properties.
 
 ### `getRuleGroupClassname`
 
 `(ruleGroup: RuleGroupTypeAny) => Classname`
 
-Generate custom classes which will be added to the outer `div` of a group based on the group properties.
+Generates custom classes for group outer `div` based on group properties.
 
 ### `onAddRule`
 
 `(rule: RuleType, parentPath: Path, query: RuleGroupTypeAny, context?: any) => RuleType | false`
 
-This callback is invoked immediately before a new rule is added. The function should either manipulate the rule and return it as an object of type `RuleType` or return `false` to cancel the addition of the rule. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new rule will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addRuleAction`](./querybuilder-controlelements#addruleaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddRule`. This allows one to change the rule that gets added (or avoid the action completely) based on arbitrary data.
+Called before adding a new rule. Return modified `RuleType` object to proceed, or `false` to cancel. Use [`findPath`](../utils/misc#findpath) to locate the parent group. The `context` parameter passes data from custom [`addRuleAction`](./querybuilder-controlelements#addruleaction) components.
 
-If the query is using [independent combinators](#independent-combinators), you can specify the combinator inserted immediately before the new rule (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the rule before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
+For [independent combinators](#independent-combinators), add `combinatorPreceding` property to specify the combinator before the new rule. Otherwise uses the last rule's combinator or first default combinator.
 
 :::tip
 
-To completely [prevent the addition of new rules](../tips/limit-groups), pass `controlElements={{ addRuleAction: () => null }}` which will prevent the "+ Rule" button from rendering.
+To [prevent adding new rules](../tips/limit-groups), use `controlElements={{ addRuleAction: () => null }}` to hide the "+ Rule" button.
 
 :::
 
@@ -296,13 +296,13 @@ To completely [prevent the addition of new rules](../tips/limit-groups), pass `c
 
 `<RG extends RuleGroupTypeAny>(ruleGroup: RG, parentPath: Path, query: RG, context?: any) => RG | false`
 
-This callback is invoked before a new group is added. The function should either manipulate the group and return it as an object of the same type (either `RuleGroupType` or `RuleGroupTypeIC`), or return `false` to cancel the addition of the group. You can use [`findPath`](../utils/misc#findpath) to locate the parent group to which the new group will be added within the query hierarchy. The `context` parameter (fourth argument) can be passed from a custom [`addGroupAction`](./querybuilder-controlelements#addgroupaction) component to its `onHandleClick` prop, which will in turn pass it to `onAddGroup`. This allows one to change the group that gets added (or avoid the action completely) based on arbitrary data.
+Called before adding a new group. Return modified group object (same type: `RuleGroupType` or `RuleGroupTypeIC`) to proceed, or `false` to cancel. Use [`findPath`](../utils/misc#findpath) to locate the parent group. The `context` parameter passes data from custom [`addGroupAction`](./querybuilder-controlelements#addgroupaction) components.
 
-If the query is using [independent combinators](#independent-combinators), you can specify the combinator inserted immediately before the new group (if the parent group is not empty) by adding a `combinatorPreceding` property (with a combinator `name` as the value) to the group before returning it. Otherwise the combinator preceding the last rule, or the first combinator in the default list if the parent group has only one rule, will be used.
+For [independent combinators](#independent-combinators), add `combinatorPreceding` property to specify the combinator before the new group. Otherwise uses the last rule's combinator or first default combinator.
 
 :::tip
 
-To completely [prevent the addition of new groups](../tips/limit-groups), pass `controlElements={{ addGroupAction: () => null }}` which will prevent the "+ Group" button from rendering.
+To [prevent adding new groups](../tips/limit-groups), use `controlElements={{ addGroupAction: () => null }}` to hide the "+ Group" button.
 
 :::
 
@@ -320,11 +320,11 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 ) => RG | boolean;
 ```
 
-This callback is invoked immediately before a rule is moved or shifted. The function should return one of three things:
+Called before a rule is moved or shifted. Return:
 
-1. `true` to allow the move/shift to proceed as normal.
-2. `false` to cancel the move/shift.
-3. A new query object (presumably based on the `query` or `nextQuery` parameters passed to it).
+1. `true` - Allow the move/shift
+2. `false` - Cancel the move/shift
+3. New query object (based on `query` or `nextQuery` parameters)
 
 ### `onMoveGroup`
 
@@ -340,25 +340,25 @@ This callback is invoked immediately before a rule is moved or shifted. The func
 ) => RG | boolean;
 ```
 
-This callback is invoked immediately before a group is moved or shifted. The function should return one of three things:
+Called before a group is moved or shifted. Return:
 
-1. `true` to allow the move/shift to proceed as normal.
-2. `false` to cancel the move/shift.
-3. A new query object (presumably based on the `query` or `nextQuery` parameters passed to it).
+1. `true` - Allow the move/shift
+2. `false` - Cancel the move/shift
+3. New query object (based on `query` or `nextQuery` parameters)
 
 ### `onRemove`
 
 `<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: Path, query: RG, context?: any) => boolean`
 
-This callback is invoked before a rule or group is removed. The function should return `true` if the removal should proceed as normal, or `false` if the removal should be aborted.
+Called before removing a rule or group. Return `true` to proceed or `false` to abort removal.
 
 ### `translations`
 
 `Partial<Translations>`
 
-This prop provides basic internationalization (i18n) support. It can be used to override translatable texts applied to the various controls created by the `<QueryBuilder />` component for a specific locale.
+Provides internationalization (i18n) support by overriding translatable texts for specific locales.
 
-All keys in the object and all properties within each key are optional. The `translations` prop object will be deep-merged with the default object below. (The default placeholder names referenced below are all `"~"`, and the default placeholder labels are `"------"`.)
+All object keys and properties are optional. The `translations` object deep-merges with defaults below. Default placeholder names are `"~"` and labels are `"------"`.
 
 %importcode /packages/react-querybuilder/src/defaultControlElements.ts#region=docs-translations
 
@@ -366,81 +366,81 @@ All keys in the object and all properties within each key are optional. The `tra
 
 `boolean` (default `false`) _<DemoLink option="showCombinatorsBetweenRules" />_
 
-Pass `true` to render the combinator selector between each child rule/group in the group body instead of in the group header. This can make some queries easier to understand as it encourages a more natural style of reading.
+Renders combinator selectors between child rules/groups instead of in the group header, encouraging more natural query reading.
 
-Note that when this option is enabled, the `combinator` property is still managed at the group level even though selectors are displayed among the rules. Selecting a new combinator with one of the inline selectors will update _all_ combinator selectors within the same group since they all use the same value. To display inline combinator selectors that are managed independently, use [independent combinators](#independent-combinators).
+The `combinator` property remains group-level—inline selectors update all combinators within the same group. For independently managed inline combinators, use [independent combinators](#independent-combinators).
 
 ### `showNotToggle`
 
 `boolean` (default `false`) _<DemoLink option="showNotToggle" />_
 
-Pass `true` to display the "Not" (aka inversion) toggle switch for each rule group.
+Displays "Not" (inversion) toggle switch for each rule group.
 
 ### `showCloneButtons`
 
 `boolean` (default `false`) _<DemoLink option="showCloneButtons" />_
 
-Pass `true` to display a "clone" button on each group header and rule. Clicking a "clone" button will create an exact duplicate (with new `id`/`id`s) of the rule or group, positioned immediately after the original, within the same `rules` array.
+Displays "clone" button on each group header and rule. Clicking creates an exact duplicate (with new `id`) positioned immediately after the original.
 
 ### `showLockButtons`
 
 `boolean` (default `false`) _<DemoLink option="showLockButtons" />_
 
-Pass `true` to display the "Lock rule" and "Lock group" buttons. When a rule is locked, all elements within the rule will be disabled except for the lock button itself (so the user can unlock the rule). When a group is locked, all elements within the group header (except the lock button itself), as well as all child rule/group elements (including their lock buttons), will be disabled.
+Displays "Lock rule" and "Lock group" buttons. Locked rules disable all elements except the lock button. Locked groups disable header elements (except lock button) and all child elements (including child lock buttons).
 
 ### `showShiftActions`
 
 `boolean` (default `false`) _<DemoLink option="showShiftActions" />_
 
-Pass `true` to display the "shift up"/"shift down" buttons. The buttons will appear at the front of each rule and group (except the root group), stacked vertically by default. The first/upper button will shift the rule or group one spot higher, while the second/lower button will shift it one spot lower. The `translations` properties `shiftActionUp` and `shiftActionDown` allow configuration of the label and title of each button.
+Displays "shift up"/"shift down" buttons at the front of each rule and group (except root), stacked vertically by default. Upper button shifts up one position, lower button shifts down. Configure button labels via `translations.shiftActionUp` and `translations.shiftActionDown`.
 
 ### `resetOnFieldChange`
 
 `boolean` (default `true`) _<DemoLink option="resetOnFieldChange" disabled />_
 
-Pass `false` to avoid resetting the `operator` and `value` when the `field` is updated.
+Pass `false` to preserve `operator` and `value` when `field` changes.
 
 ### `resetOnOperatorChange`
 
 `boolean` (default `false`) _<DemoLink option="resetOnOperatorChange" />_
 
-Pass `true` to reset the `value` when the `operator` is updated.
+Resets `value` when `operator` changes.
 
 ### `enableMountQueryChange`
 
 `boolean` (default `true`)
 
-Pass `false` to disable the `onQueryChange` call on initial mount of the component. This is enabled by default because the `query`/`defaultQuery` prop is processed during the first render and may be slightly different than the object passed in (`id`s would have been generated if they were missing, for example).
+Pass `false` to disable `onQueryChange` on initial mount. Enabled by default because `query`/`defaultQuery` props are processed during first render and may differ from input (e.g., generated `id`s).
 
 ### `autoSelectField`
 
 `boolean` (default `true`) _<DemoLink option="autoSelectField" disabled />_
 
-Pass `false` to automatically add an "empty" option (value `"~"` and label `"------"`; see [`translations.fields.placeholder*` to customize](#translations)) to the `fields` array as the first element. The "empty" option will be the initial field selection for all new rules. When the empty `field` option is selected, the operator selector and value components will not be rendered for that rule.
+Pass `false` to add an "empty" option (value `"~"`, label `"------"`) as first element in `fields` array. This becomes the initial selection for new rules. Empty field selection hides operator selector and value components. Customize via [`translations.fields.placeholder*`](#translations).
 
 ### `autoSelectOperator`
 
 `boolean` (default `true`) _<DemoLink option="autoSelectOperator" disabled />_
 
-Pass `false` to automatically add an "empty" option (value `"~"` and label `"------"`; see [`translations.operators.placeholder*` to customize](#translations)) to the `operators` array as the first element. The "empty" option will be the initial operator selection for all new rules. When the empty `operator` option is selected, the value components will not be rendered for that rule.
+Pass `false` to add an "empty" option (value `"~"`, label `"------"`) as first element in `operators` array. This becomes the initial selection for new rules. Empty operator selection hides value components. Customize via [`translations.operators.placeholder*`](#translations).
 
 ### `autoSelectValue`
 
 `boolean` (default `true`) _<DemoLink option="autoSelectValue" disabled />_
 
-Pass `false` to automatically add an "empty" option (value `"~"` and label `"------"`; see [`translations.values.placeholder*` to customize](#translations)) to the `values` array as the first element. The "empty" option will be the initial value selection for rules where the value editor renders a select list.
+Pass `false` to add an "empty" option (value `"~"`, label `"------"`) as first element in `values` array. This becomes the initial selection for rules with select list value editors. Customize via [`translations.values.placeholder*`](#translations).
 
 ### `addRuleToNewGroups`
 
 `boolean` (default `false`) _<DemoLink option="addRuleToNewGroups" />_
 
-Pass `true` to automatically add a rule to new groups. If neither a `query` nor `defaultQuery` prop is not passed in, a rule will be added to the root group when the component is mounted. If a `query`/`defaultQuery` prop is passed in with an empty `rules` array, no rule will be added automatically.
+Automatically adds a rule to new groups. When no `query`/`defaultQuery` prop is provided, adds a rule to the root group on mount. Groups with empty `rules` arrays don't receive automatic rules.
 
 ### `listsAsArrays`
 
 `boolean` (default `false`) _<DemoLink option="listsAsArrays" />_
 
-Pass `true` to update rule values that represent lists with proper arrays instead of comma-separated strings. This prop applies when `valueEditorType` is `"multiselect"` and when a rule's `operator` is `"between"`, `"notBetween"`, `"in"`, or `"notIn"`.
+Updates rule values representing lists with proper arrays instead of comma-separated strings. Applies when `valueEditorType` is `"multiselect"` or `operator` is `"between"`, `"notBetween"`, `"in"`, or `"notIn"`.
 
 For example, the default behavior for the "between" operator might produce this rule:
 
@@ -468,11 +468,11 @@ When `listsAsArrays` is true, the rule's `value` will be an array:
 
 `boolean | "enhanced" | "enhanced-limited" | "native" | "native-limited" | "strict" | "strict-limited"` (default `false`) _<DemoLink option="parseNumbers" />_
 
-Sets the `value` with type `number` instead of `string` when possible. See [Number parsing](../utils/misc#number-parsing) for more details. See also [the `formatQuery` option of the same name](../utils/export#parse-numbers).
+Sets `value` type as `number` instead of `string` when possible. See [Number parsing](../utils/misc#number-parsing) and [formatQuery option](../utils/export#parse-numbers).
 
 :::info
 
-This behavior is implemented within the standard [`ValueEditor`](./valueeditor) component, not `QueryBuilder`. If a [custom value editor](./querybuilder-controlelements#valueeditor) is implemented, the `parseNumbers` prop will be passed to it but the prop will have no effect unless the custom value editor detects it and reacts to it.
+Implemented in [`ValueEditor`](./valueeditor), not `QueryBuilder`. Custom value editors receive this prop but must implement the behavior themselves.
 
 :::
 
@@ -482,16 +482,16 @@ This behavior is implemented within the standard [`ValueEditor`](./valueeditor) 
 
 :::caution
 
-This prop does not need to be set directly on the `<QueryBuilder />` component. It has no effect unless the following conditions are met:
+No need to set this prop directly—it only works when:
 
-1. A `QueryBuilderDnD` context provider from the companion package [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd) is rendered higher up in the component tree.
-2. [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) are installed/imported.
+1. `QueryBuilderDnD` context provider from [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd) exists higher in the component tree
+2. [`react-dnd`](https://www.npmjs.com/package/react-dnd) and [`react-dnd-html5-backend`](https://www.npmjs.com/package/react-dnd-html5-backend) are installed
 
-If those conditions are met, and `enableDragAndDrop` is not explicitly set to `false` on the `<QueryBuilder />` component, then `enableDragAndDrop` is implicitly `true`.
+When conditions are met and `enableDragAndDrop` isn't explicitly `false`, it becomes implicitly `true`.
 
 :::
 
-When `true` (under the conditions detailed above), a [drag handle](./draghandle) is displayed on the left-hand side of each group header and each rule. Clicking and dragging the handle element allows users to visually reorder the rules and groups.
+When `true`, displays a [drag handle](./draghandle) on the left side of each group header and rule for visual reordering.
 
 #### Recommended usage
 
@@ -515,7 +515,7 @@ const App = () => (
 
 :::tip
 
-If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former assumes a `<DndProvider />` already exists higher up in the component tree. The latter renders its own `DndProvider` which will conflict with any pre-existing ones. (If you use the wrong component, you will probably see the error message "Cannot have two HTML5 backends at the same time" in the console.)
+If your app already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD`. Both are functionally equivalent, but the former assumes an existing `<DndProvider />` higher in the tree. The latter renders its own `DndProvider`, causing conflicts with pre-existing ones (error: "Cannot have two HTML5 backends at the same time").
 
 :::
 
@@ -523,55 +523,55 @@ If your application already uses [`react-dnd`](https://react-dnd.github.io/react
 
 `boolean | Path[]` (default `false`) _<DemoLink option="disabled" />_
 
-Pass `true` to disable all subcomponents and prevent changes to the query. Pass an array of paths to disable specific rules and/or groups. For example, `disabled={[[0]]}` will disable the top-most rule/group and its subcomponents, but nothing else.
+Pass `true` to disable all subcomponents and prevent query changes. Pass path array to disable specific rules/groups. Example: `disabled={[[0]]}` disables the top-most rule/group and its subcomponents only.
 
 ### `suppressStandardClassnames`
 
 `boolean` (default `false`) _<DemoLink option="suppressStandardClassnames" />_
 
-Pass `true` to disable the application of standard classnames, including conditional and event-based classes for validation, drag-and-drop, etc..
+Disables standard classnames, including conditional and event-based classes for validation, drag-and-drop, etc.
 
 ### `debugMode`
 
 `boolean` (default `false`) _<DemoLink option="debugMode" />_
 
-Pass `true` to enabled logging debug information with the [`onLog` function](#onlog).
+Enables debug logging with the [`onLog` function](#onlog).
 
 ### `onLog`
 
 `(message: any) => void` (default `console.log`)
 
-Receives logging messages when [`debugMode`](#debugmode) is `true`.
+Receives logging messages when [`debugMode`](#debugmode) is enabled.
 
 ### `idGenerator`
 
 `() => string` (default `generateID`)
 
-Used to generate `id`s for rules and groups without them (or clones that need a new `id`). By default, `QueryBuilder` generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122), using the `crypto` package if available or a `Math.random()`-based method otherwise.
+Generates `id`s for rules and groups without them, or clones needing new `id`s. Default generates valid v4 UUIDs per [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122) using `crypto` package or `Math.random()` fallback.
 
 ### `accessibleDescriptionGenerator`
 
 `(props: { path: Path; qbId: string; }) => string` (default `generateAccessibleDescription`)
 
-Used to generate the `title` attribute applied to the outermost `<div>` of each rule group. As this is intended to help with accessibility, the text output from this function should be meaningful, descriptive, and unique within the page.
+Generates `title` attribute for each rule group's outermost `<div>`. For accessibility, output should be meaningful, descriptive, and unique within the page.
 
 ### `maxLevels`
 
 `number` (default `Infinity`)
 
-This prop limits the number of levels of nesting allowed in the query. If a user attempts to add a group that would exceed this limit, the action will be ignored. This is useful for preventing overly complex queries that may be difficult to understand or manage.
+Limits query nesting levels. Adding groups beyond this limit gets ignored. Useful for preventing overly complex queries.
 
 ### `validator`
 
 `QueryValidator` _<DemoLink option="validateQuery" />_
 
-This function is executed each time `QueryBuilder` renders. The return value should be a boolean (`true` for valid queries, `false` for invalid) or an object whose keys are the `id`s of each validated rule and group in the query tree. If an object is returned, the values associated to each key should be a boolean (`true` for valid rules/groups, `false` for invalid) or an object with a `valid` boolean property and an optional `reasons` array. The full object will be passed to each rule and group component, and all sub-components of each rule/group will receive the value associated with the `id` of its rule or group. See the [validation documentation](../utils/validation) for more information.
+Executed on each render. Return boolean (`true` = valid, `false` = invalid) or object with rule/group `id`s as keys. Object values can be boolean or `{ valid: boolean, reasons?: array }`. The validation object gets passed to rule/group components. See [validation documentation](../utils/validation).
 
 ## Independent combinators
 
-The props listed above that specify `RuleGroupTypeAny` will actually be inferred as one of the more specific types, [`RuleGroupType` or `RuleGroupTypeIC`](../typescript#rules-and-groups). When a query is of type `RuleGroupTypeIC`, we say that it is using "independent combinators."
+Props specifying `RuleGroupTypeAny` are inferred as [`RuleGroupType` or `RuleGroupTypeIC`](../typescript#rules-and-groups). `RuleGroupTypeIC` queries use "independent combinators."
 
-What this means is that a combinator value is defined between each neighboring pair of rules/groups in a group's `rules` array (every odd-numbered index). Visually, this has a similar effect to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator is _independently_ controlled by its own selector. You may find that users take to this configuration more easily as it can allow them to express queries more like they would in natural language.
+This places combinator values between each neighboring rule/group pair (every odd-numbered index). Similar to [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules), but each combinator is independently controlled. Users often find this more natural as it mirrors natural language query expression.
 
 A standard query (`RuleGroupType`) might look like this:
 

@@ -6,13 +6,13 @@ hide_table_of_contents: true
 
 import { SandpackRQB } from '@site/src/components/SandpackRQB';
 
-While the `id` property can uniquely identify a rule or group, an `id` won't naturally indicate anything about the _position_ of the object within the query hierarchy. For that reason, React Query Builder uses the concept of a "path" to locate and update query objects.
+While the `id` property uniquely identifies rules and groups, it doesn't indicate their position within the query hierarchy. React Query Builder uses a "path" concept to locate and update query objects based on their structural position.
 
-The `path` property is an array of integers unique to each rule and group within a query. The query object itself (the root group) has a `path` of `[]`. All other rules and groups within the query have a `path` that corresponds to their position within the `rules` array(s) of their ancestor group(s).
+The `path` property is an integer array that uniquely identifies each rule and group's location within a query. The root query group has a `path` of `[]`, while all nested rules and groups have paths reflecting their position within their ancestor groups' `rules` arrays.
 
-The `path` of any object (rule or group) is equivalent to the `path` of its parent group, with the index of the object within its parent's `rules` array pushed onto the end. You can think of it like this: `path = [...parentPath, index]`.
+Each object's `path` equals its parent group's `path` plus its index within the parent's `rules` array: `path = [...parentPath, index]`.
 
-Consider the following query. The respective `path` for each rule and group is commented above it, along with a short explanation.
+This example query shows the `path` for each rule and group with explanatory comments:
 
 ```ts
 // [] (the root group)
@@ -39,17 +39,17 @@ const query: RuleGroupType = {
 };
 ```
 
-The `path` of the top-most rule in the query is `[0]`, `0` being the index of that rule within the root group's `rules` array. The `path` of the first sub-group in the query is `[1]`, again according to its index within the outermost `rules` array. Each child rule of _that_ group has a path that begins with `1` (the `path` of its parent), followed by its own index.
+The first rule has `path` `[0]` (index 0 in the root `rules` array). The sub-group has `path` `[1]` (index 1 in the root array). Child rules within that group have paths starting with `1` (their parent's path) followed by their own indices.
 
 ## Finding a `path`
 
-Use the [`findPath`](../utils/misc#findpath) function to locate a specific rule or group for examination or update. Given the query above:
+The [`findPath`](../utils/misc#findpath) function locates specific rules or groups for examination or updates. Using the query above:
 
 ```ts
 findPath([1, 0], query);
 ```
 
-would return this object:
+Returns:
 
 ```json
 { "field": "f2", "operator": "=", "value": "v2" }
@@ -57,15 +57,15 @@ would return this object:
 
 ## Example
 
-In most scenarios you won't need to interact with the `path` attribute, but it can come in handy in certain situations. One such situation is if you need to access other parts of the query from within a custom component.
+While most scenarios don't require direct `path` interaction, it's useful when custom components need to access other query parts.
 
-Say you have a custom value editor that needs to know the `value` of each of its sibling rules. You can get the full query object using the [`useQueryBuilderQuery`](../utils/hooks#usequerybuilderquery) hook (which connects to React Query Builder's custom Redux implementation). You can then retrieve the sibling rules with a combination of `getParentPath` and `findPath`.
+For example, if a custom value editor needs sibling rule values, you can retrieve the full query object using the [`useQueryBuilderQuery`](../utils/hooks#usequerybuilderquery) hook (which connects to React Query Builder's Redux store), then find sibling rules using `getParentPath` and `findPath`.
 
 :::info
 
-Prior to version 7, custom components only received props relevant to the rule or group they acted on. You could augment these default props with other data or information--the root query object, for example--by using the [`context` prop](../components/querybuilder#context).
+Before version 7, custom components only received props for their specific rule or group. Additional data (like the root query) required the [`context` prop](../components/querybuilder#context).
 
-The `context` prop is still available, but is not necessary for retrieving the query.
+The `context` prop remains available, but query retrieval no longer requires it.
 
 :::
 

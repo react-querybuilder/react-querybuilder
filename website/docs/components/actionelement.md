@@ -3,7 +3,7 @@ title: ActionElement
 description: Button component
 ---
 
-Renders a `<button>`. Used for all controls that perform an action when clicked, including the following:
+Renders a `<button>` element for clickable action controls, including:
 
 - [`addGroupAction`](./querybuilder-controlelements#addgroupaction)
 - [`addRuleAction`](./querybuilder-controlelements#addruleaction)
