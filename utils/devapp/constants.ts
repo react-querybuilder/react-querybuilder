@@ -196,7 +196,7 @@ export const fields: Field[] = [
     label: 'Primary instrument',
     valueEditorType: 'select',
     values: musicalInstruments,
-    defaultValue: 'Cowbell',
+    defaultValue: 'cowbell',
     operators: defaultOperators.filter(op => op.name === '=' || op.name === 'in'),
   },
   {
@@ -204,7 +204,7 @@ export const fields: Field[] = [
     label: 'Also plays',
     valueEditorType: 'multiselect',
     values: musicalInstruments,
-    defaultValue: 'More cowbell',
+    defaultValue: 'more_cowbell',
     operators: defaultOperators.filter(op => op.name === 'in'),
   },
   {
@@ -308,7 +308,7 @@ export const initialQuery: RuleGroupType = {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar',
+          value: 'guitar',
         },
       ],
     },

@@ -41,7 +41,7 @@ export const fields = (
       label: 'Also plays',
       valueEditorType: 'multiselect',
       values: musicalInstruments,
-      defaultValue: 'More cowbell',
+      defaultValue: 'more_cowbell',
       operators: defaultOperators.filter(op => op.name === 'in'),
     },
     {
