@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#931] In multi-select mode, `FluentValueSelector` now displays a comma-separated list of option labels instead of values.
 
 ## [v8.8.2] - 2025-08-07
 
@@ -1972,6 +1974,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#914]: https://github.com/react-querybuilder/react-querybuilder/pull/914
 [#916]: https://github.com/react-querybuilder/react-querybuilder/pull/916
 [#926]: https://github.com/react-querybuilder/react-querybuilder/pull/926
+[#931]: https://github.com/react-querybuilder/react-querybuilder/pull/931
 
 <!-- #endregion -->
 
