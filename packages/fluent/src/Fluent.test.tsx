@@ -106,8 +106,10 @@ const testSelect = (
         />
       );
       await user.click(screen.getByRole('combobox'));
-      for (const v of allValuesExceptFirst.map(n => testValues.find(tv => tv.name === n))) {
-        await user.click(screen.getByText(v!.label));
+      for (const lbl of allValuesExceptFirst.map(
+        n => testValues.find(tv => tv.name === n)!.label
+      )) {
+        await user.click(screen.getAllByText(lbl)[0]);
       }
       expect(onChange).toHaveBeenCalledWith(allValuesExceptFirst.join(','));
     });

@@ -222,7 +222,7 @@ export const initialQuery: RuleGroupType = {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar',
+          value: 'guitar',
         },
       ],
     },

@@ -5,12 +5,11 @@ import {
   defaultOperatorLabelMap,
   defaultOperators,
 } from '../defaults';
-import { useFields } from '../hooks';
-import type { UseMergedContextReturn } from '../hooks/useMergedContext';
-import { useMergedContext } from '../hooks/useMergedContext';
+import type { UseMergedContextReturn } from '../hooks';
+import { useFields, useMergedContext, useOptionListProp } from '../hooks';
 import type {
   BaseOption,
-  FlexibleOptionListProp,
+  FlexibleOptionList,
   FullCombinator,
   FullField,
   FullOperator,
@@ -183,65 +182,45 @@ export const useQueryBuilderSetup = <
   // #endregion
 
   // #region `combinators`
-  const combinators = useMemo(
-    () =>
-      toFullOptionList(
-        combinatorsProp ?? defaultCombinators,
-        baseCombinator,
-        defaultCombinatorLabelMap
-      ),
-    [baseCombinator, combinatorsProp]
-  );
+  const { optionList: combinators } = useOptionListProp({
+    optionList: combinatorsProp ?? (defaultCombinators as FlexibleOptionList<C>),
+    labelMap: defaultCombinatorLabelMap,
+    baseOption: baseCombinator,
+    autoSelectOption: true,
+  });
   // #endregion
 
   // #region `operators`
-  const operators = useMemo(
-    () =>
-      toFullOptionList(operatorsProp ?? defaultOperators, baseOperator, defaultOperatorLabelMap),
-    [baseOperator, operatorsProp]
-  );
-
-  const defaultOperator = useMemo(
-    (): FullOption<OperatorName> => ({
-      id: translations.operators.placeholderName,
-      name: translations.operators.placeholderName as OperatorName,
-      value: translations.operators.placeholderName as OperatorName,
-      label: translations.operators.placeholderLabel,
-    }),
-    [translations.operators.placeholderLabel, translations.operators.placeholderName]
-  );
+  const { optionList: operators, defaultOption: defaultOperator } = useOptionListProp({
+    optionList: operatorsProp ?? (defaultOperators as FlexibleOptionList<O>),
+    placeholder: translations.operators,
+    labelMap: defaultOperatorLabelMap,
+    baseOption: baseOperator,
+    autoSelectOption: autoSelectOperator,
+  });
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
-      let opsFinal = operators;
+      let opsFinal = operators as FullOptionList<O>;
 
       if (fieldData?.operators) {
-        opsFinal = toFullOptionList(
-          fieldData.operators as FlexibleOptionListProp<O>,
-          baseOperator,
-          defaultOperatorLabelMap
-        );
+        opsFinal = toFullOptionList(fieldData.operators, baseOperator, defaultOperatorLabelMap);
       } else if (getOperators) {
         const ops = getOperators(field, { fieldData });
         if (ops) {
-          opsFinal = toFullOptionList(
-            ops as FlexibleOptionListProp<O>,
-            baseOperator,
-            defaultOperatorLabelMap
-          );
+          opsFinal = toFullOptionList(ops, baseOperator, defaultOperatorLabelMap);
         }
       }
 
       if (!autoSelectOperator) {
-        opsFinal = isFlexibleOptionGroupArray(opsFinal)
-          ? [
-              {
-                label: translations.operators.placeholderGroupLabel,
-                options: [defaultOperator],
-              },
-              ...opsFinal,
-            ]
-          : [defaultOperator, ...opsFinal];
+        opsFinal = (
+          isFlexibleOptionGroupArray(opsFinal)
+            ? [
+                { label: translations.operators.placeholderGroupLabel, options: [defaultOperator] },
+                ...opsFinal,
+              ]
+            : [defaultOperator, ...opsFinal]
+        ) as FullOptionList<O>;
       }
 
       return uniqOptList(opsFinal) as FullOptionList<O>;
