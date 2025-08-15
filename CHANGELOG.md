@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#932] New `useOptionListProp` hook to standardize option list prop normalization.
+
 ## [v8.8.3] - 2025-08-13
 
 ### Fixed
@@ -1977,6 +1981,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#916]: https://github.com/react-querybuilder/react-querybuilder/pull/916
 [#926]: https://github.com/react-querybuilder/react-querybuilder/pull/926
 [#931]: https://github.com/react-querybuilder/react-querybuilder/pull/931
+[#932]: https://github.com/react-querybuilder/react-querybuilder/pull/932
 
 <!-- #endregion -->
 
