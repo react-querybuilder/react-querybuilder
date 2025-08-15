@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New `useOptionListProp` hook to standardize option list prop normalization.
+
 ## [v8.8.3] - 2025-08-13
 
 ### Fixed

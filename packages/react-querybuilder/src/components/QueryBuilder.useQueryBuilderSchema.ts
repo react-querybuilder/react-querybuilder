@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LogType, standardClassnames } from '../defaults';
-import { useControlledOrUncontrolled } from '../hooks/useControlledOrUncontrolled';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
+import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,

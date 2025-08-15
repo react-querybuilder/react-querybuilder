@@ -229,11 +229,11 @@ export interface Translation {
   title?: string;
 }
 /**
- * A translation for a component with `title` and a placeholder.
+ * Placeholder strings for option lists.
  *
  * @group Props
  */
-export interface TranslationWithPlaceholders extends Translation {
+export interface Placeholder {
   /**
    * Value for the placeholder field option if autoSelectField is false,
    * or the placeholder operator option if autoSelectOperator is false.
@@ -250,6 +250,12 @@ export interface TranslationWithPlaceholders extends Translation {
    */
   placeholderGroupLabel?: string;
 }
+/**
+ * A translation for a component with `title` and a placeholder.
+ *
+ * @group Props
+ */
+export interface TranslationWithPlaceholders extends Translation, Placeholder {}
 /**
  * The shape of the `translations` prop.
  *
