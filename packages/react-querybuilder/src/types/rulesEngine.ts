@@ -78,22 +78,3 @@ const _rngn: RulesEngine = {
     { actionType: 'hope' },
   ],
 };
-
-// conditions:
-// oxlint-disable-next-line no-dupe-else-if
-if (process.env.TZ) {
-  // action:
-  // doSomething();
-
-  // conditions:
-  if (process.env.TZ) {
-    // action:
-    // doSomething();
-  }
-} else if (process.env.TZ) {
-  // action:
-  // doSomething();
-} else {
-  // action:
-  // doSomething();
-}

@@ -345,13 +345,46 @@ describe('insertRE', () => {
       insertRE(
         { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
         { combinator: 'or', rules: [] },
-        [2]
+        [1]
       )
     ).toEqual({
       conditions: [
         { combinator: 'and', rules: [] },
         { combinator: 'or', rules: [] },
         { actionType: 'a' },
+      ],
+      id: 'root',
+    });
+  });
+
+  it('replaces an existing condition', () => {
+    expect(
+      insertRE(
+        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        { combinator: 'or', rules: [] },
+        [0],
+        undefined,
+        { replace: true }
+      )
+    ).toEqual({
+      conditions: [{ combinator: 'or', rules: [] }, { actionType: 'a' }],
+      id: 'root',
+    });
+  });
+
+  it('replaces an existing action', () => {
+    expect(
+      insertRE(
+        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        { combinator: 'or', rules: [] },
+        [1],
+        undefined,
+        { replace: true }
+      )
+    ).toEqual({
+      conditions: [
+        { combinator: 'and', rules: [] },
+        { combinator: 'or', rules: [] },
       ],
       id: 'root',
     });

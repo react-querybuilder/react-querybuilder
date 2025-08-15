@@ -8,6 +8,7 @@ import fluentIndexHTML from './pages/fluent.html';
 import mantineIndexHTML from './pages/mantine.html';
 import materialIndexHTML from './pages/material.html';
 import nativeIndexHTML from './pages/native.html';
+import rebIndexHTML from './pages/rulesengine.html';
 import rqbIndexHTML from './pages/rqb.html';
 import tremorIndexHTML from './pages/tremor.html';
 
@@ -22,6 +23,7 @@ const indexHTMLs = {
   '/mantine': mantineIndexHTML,
   '/material': materialIndexHTML,
   '/native': nativeIndexHTML, // Flow transpilation not working
+  '/rulesengine': rebIndexHTML,
   '/': rqbIndexHTML,
   '/rqb': rqbIndexHTML,
   '/react-querybuilder': rqbIndexHTML,

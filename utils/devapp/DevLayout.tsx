@@ -29,6 +29,7 @@ const parserMap: Record<string, any> = {
 
 const links = [
   'react-querybuilder',
+  'rulesengine',
   'antd',
   'bootstrap',
   'bulma',

@@ -371,11 +371,23 @@ export const insertRE = <RE extends RulesEngineAny>(
         return; // Can't have two "else" blocks
       }
 
-      // If inserting a rules engine, and there's a trailing action, insert before the action
-      if (isRulesEngineAction(parent.conditions.at(-1)) && !isRulesEngineAction(subject)) {
+      if (
+        !insertOptions.replace &&
+        isRulesEngineAction(parent.conditions.at(-1)) &&
+        !isRulesEngineAction(subject)
+      ) {
+        // Inserting a rules engine and there's a trailing action that isn't being replaced. Insert before the action.
         splice(parent.conditions, Math.min(newIndex, parent.conditions.length - 1), 0, subject);
+      } else if (
+        insertOptions.replace &&
+        isRulesEngineAction(subject) &&
+        newIndex >= parent.conditions.length - 1
+      ) {
+        // Replacing an action at the last index (doesn't matter what we replace it with)
+        splice(parent.conditions, parent.conditions.length - 1, 1, subject);
       } else {
-        splice(parent.conditions, newIndex, 0, subject);
+        // Normal insertion/replacement
+        splice(parent.conditions, newIndex, insertOptions.replace ? 1 : 0, subject);
       }
     }
   });
