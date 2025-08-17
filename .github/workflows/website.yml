@@ -21,8 +21,6 @@ env:
 jobs:
   Build_website:
     runs-on: ubuntu-latest
-    env:
-      RQB_SKIP_REACT_COMPILER: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

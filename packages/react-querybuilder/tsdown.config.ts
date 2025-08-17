@@ -1,15 +1,15 @@
-import AnalyzerPlugin from 'esbuild-analyzer';
 import { mkdir } from 'node:fs/promises';
-import { defineConfig } from 'tsup';
-import { tsupCommonConfig, getCjsIndexWriter } from '../../utils/tsup.common';
+import { defineConfig } from 'tsdown';
+import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
 
 export default defineConfig(async options => {
-  const buildConfig = await tsupCommonConfig(import.meta.dir)(options);
+  const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
 
-  buildConfig[0].esbuildPlugins!.push(AnalyzerPlugin({ outfile: './build-analysis.html' }));
-  buildConfig[2].esbuildPlugins!.push(
-    AnalyzerPlugin({ outfile: './build-analysis.production.html' })
-  );
+  // TODO: Replace with `rollup-plugin-bundle-stats`
+  // buildConfig[0].esbuildPlugins!.push(AnalyzerPlugin({ outfile: './build-analysis.html' }));
+  // buildConfig[2].esbuildPlugins!.push(
+  //   AnalyzerPlugin({ outfile: './build-analysis.production.html' })
+  // );
 
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];
@@ -42,6 +42,8 @@ export default defineConfig(async options => {
       ...options,
       entry: utilEntryPoints,
       sourcemap: true,
+      platform: 'neutral',
+      dts: false,
       format: 'cjs',
       onSuccess: async () => {
         // Write /debug/package.json for node10 resolution
