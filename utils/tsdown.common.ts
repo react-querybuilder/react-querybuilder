@@ -1,5 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import type { Options } from 'tsdown';
 import { generateDTS } from './generateDTS';
 
@@ -18,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 
 export const tsdownCommonConfig = (sourceDir: string) =>
   (async options => {
-    const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').pop()}`}`;
+    const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').at(-1)}`}`;
     const x = (await Bun.file(path.join(sourceDir + '/src/index.tsx')).exists()) ? 'x' : '';
     const entryPoint = `src/index.ts${x}`;
 
@@ -41,6 +42,15 @@ export const tsdownCommonConfig = (sourceDir: string) =>
         ...commonOptions,
         format: 'esm',
         clean: true,
+        plugins: (['sunburst', 'treemap', 'flamegraph'] as const).map(template =>
+          visualizer({
+            template,
+            filename: `./build-analysis.${template}.html`,
+            brotliSize: true,
+            gzipSize: true,
+            title: `${sourceDir.split('/').at(-1)} Bundle Size (${template})`,
+          })
+        ),
         onSuccess: () => generateDTS(sourceDir),
       },
       // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads

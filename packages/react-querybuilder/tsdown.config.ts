@@ -5,12 +5,6 @@ import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
 
-  // TODO: Replace with `rollup-plugin-bundle-stats`
-  // buildConfig[0].esbuildPlugins!.push(AnalyzerPlugin({ outfile: './build-analysis.html' }));
-  // buildConfig[2].esbuildPlugins!.push(
-  //   AnalyzerPlugin({ outfile: './build-analysis.production.html' })
-  // );
-
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];
     bc.entry![`${entryKey}.debug`] = bc.entry![entryKey].replace('.ts', '.debug.ts');
