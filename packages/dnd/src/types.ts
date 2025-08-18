@@ -9,6 +9,7 @@ import type {
   QueryBuilderContextProviderProps,
   SetOptional,
 } from 'react-querybuilder';
+import type { DndAdapter } from './dnd-core';
 
 type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
 
@@ -83,4 +84,5 @@ export interface QueryBuilderDndContextProps
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
+  adapter?: DndAdapter;
 }

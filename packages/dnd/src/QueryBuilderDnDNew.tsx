@@ -15,7 +15,7 @@ import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
-import { dndManager, type DndConfig } from './dnd-core';
+import type { DndConfig } from './dnd-core';
 import type { CustomCanDropParams, QueryBuilderDndContextProps } from './types';
 
 export interface QueryBuilderDndNewProps extends QueryBuilderContextProviderProps {
@@ -42,7 +42,6 @@ export interface QueryBuilderDndNewProps extends QueryBuilderContextProviderProp
 
 /**
  * Context provider to enable drag-and-drop with library-agnostic support.
- * Supports react-dnd, @hello-pangea/dnd, @dnd-kit/core, and @atlaskit/pragmatic-drag-and-drop.
  */
 export const QueryBuilderDnD = (props: QueryBuilderDndNewProps): React.JSX.Element => {
   const {
@@ -71,24 +70,27 @@ export const QueryBuilderDnD = (props: QueryBuilderDndNewProps): React.JSX.Eleme
   const [isInitialized, setIsInitialized] = useState(false);
   const [initError, setInitError] = useState<string | null>(null);
 
-  // Initialize DnD manager
+  // Initialize DnD adapter
   useEffect(() => {
-    if (!enableDragAndDrop || !dndConfig) {
+    if (!enableDragAndDrop || !dndConfig?.adapter) {
       setIsInitialized(false);
       return;
     }
 
     const initializeDnd = async () => {
       try {
-        await dndManager.initialize(dndConfig);
+        // Initialize the adapter if it has an initialize method
+        if (dndConfig.adapter.initialize) {
+          await dndConfig.adapter.initialize();
+        }
         setIsInitialized(true);
         setInitError(null);
       } catch (error) {
-        setInitError(error instanceof Error ? error.message : 'Failed to initialize DnD');
+        setInitError(error instanceof Error ? error.message : 'Failed to initialize DnD adapter');
         setIsInitialized(false);
 
         if (process.env.NODE_ENV !== 'production') {
-          console.error('Failed to initialize DnD manager:', error);
+          console.error('Failed to initialize DnD adapter:', error);
         }
       }
     };
@@ -98,29 +100,34 @@ export const QueryBuilderDnD = (props: QueryBuilderDndNewProps): React.JSX.Eleme
 
   const key = enableDragAndDrop && isInitialized ? 'dnd' : 'no-dnd';
 
+  const dndDisabledContextValue = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
+    [rqbContext, debugMode]
+  );
+  const dndEnabledContextValue = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: enableDragAndDrop, debugMode }),
+    [rqbContext, debugMode, enableDragAndDrop]
+  );
+
   // If DnD is disabled or not initialized, render without DnD
-  if (!enableDragAndDrop || !isInitialized || initError) {
+  if (!enableDragAndDrop || !isInitialized || initError || !dndConfig) {
     return (
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={dndDisabledContextValue}>
         {props.children}
       </QueryBuilderContext.Provider>
     );
   }
 
-  const adapter = dndManager.getAdapter();
-  const { DndProvider } = adapter;
+  const { DndProvider } = dndConfig.adapter;
 
   return (
     <DndProvider key={key} backend={dndConfig?.backend} debugMode={debugMode}>
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={dndEnabledContextValue}>
         <QueryBuilderDndWithoutProvider
           canDrop={canDrop}
           copyModeModifierKey={copyModeModifierKey}
-          groupModeModifierKey={groupModeModifierKey}>
+          groupModeModifierKey={groupModeModifierKey}
+          adapter={dndConfig.adapter}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -133,7 +140,8 @@ export const QueryBuilderDnD = (props: QueryBuilderDndNewProps): React.JSX.Eleme
  * already implements a DnD provider, otherwise use {@link QueryBuilderDnD}.
  */
 export const QueryBuilderDndWithoutProvider = (
-  props: Omit<QueryBuilderDndNewProps, 'dnd'>
+  // oxlint-disable-next-line consistent-type-imports
+  props: Omit<QueryBuilderDndNewProps, 'dnd'> & { adapter?: import('./dnd-core/types').DndAdapter }
 ): React.JSX.Element => {
   const rqbContext = useContext(QueryBuilderContext);
   const rqbDndContext = useContext(QueryBuilderDndContext);
@@ -156,7 +164,7 @@ export const QueryBuilderDndWithoutProvider = (
     rqbContext.enableDragAndDrop
   );
 
-  const key = enableDragAndDrop && dndManager.isInitialized() ? 'dnd' : 'no-dnd';
+  const key = enableDragAndDrop ? 'dnd' : 'no-dnd';
 
   const baseControls = useMemo(
     () => ({
@@ -210,15 +218,19 @@ export const QueryBuilderDndWithoutProvider = (
       // These will be replaced with adapter methods in the components
       useDrag: undefined,
       useDrop: undefined,
+      adapter: props.adapter,
     }),
-    [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey]
+    [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, props.adapter]
   );
 
-  if (!enableDragAndDrop || !dndManager.isInitialized()) {
+  const dndDisabledContextValue = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
+    [rqbContext, debugMode]
+  );
+
+  if (!enableDragAndDrop) {
     return (
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={dndDisabledContextValue}>
         {props.children}
       </QueryBuilderContext.Provider>
     );

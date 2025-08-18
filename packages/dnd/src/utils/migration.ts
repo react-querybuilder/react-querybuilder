@@ -52,7 +52,7 @@ export function getRecommendedLibrary(requirements: {
   bundleSize?: 'small' | 'medium' | 'large';
   ecosystem?: 'react' | 'any';
 }): DndLibrary {
-  const { touchSupport, performance, bundleSize, ecosystem } = requirements;
+  const { performance, bundleSize, ecosystem } = requirements;
 
   // @atlaskit/pragmatic-drag-and-drop for high performance and small bundle
   if (performance === 'high' && bundleSize === 'small') {
@@ -83,7 +83,7 @@ export function getMigrationGuide(fromLibrary: string, toLibrary: DndLibrary): s
     guides.push(
       '1. Update imports: import { QueryBuilderDnD } from "@react-querybuilder/dnd"',
       '2. Replace dnd prop with new config format',
-      '3. Test drag and drop functionality',
+      '3. Test drag and drop functionality'
     );
 
     switch (toLibrary) {
@@ -91,21 +91,21 @@ export function getMigrationGuide(fromLibrary: string, toLibrary: DndLibrary): s
         guides.push(
           '4. Install @dnd-kit/core: npm install @dnd-kit/core',
           '5. Remove react-dnd dependencies if not used elsewhere',
-          '6. Update dnd config: { library: "@dnd-kit/core" }',
+          '6. Update dnd config: { library: "@dnd-kit/core" }'
         );
         break;
       case '@hello-pangea/dnd':
         guides.push(
           '4. Install @hello-pangea/dnd: npm install @hello-pangea/dnd',
           '5. Remove react-dnd dependencies if not used elsewhere',
-          '6. Update dnd config: { library: "@hello-pangea/dnd" }',
+          '6. Update dnd config: { library: "@hello-pangea/dnd" }'
         );
         break;
       case '@atlaskit/pragmatic-drag-and-drop':
         guides.push(
           '4. Install @atlaskit/pragmatic-drag-and-drop: npm install @atlaskit/pragmatic-drag-and-drop',
           '5. Remove react-dnd dependencies if not used elsewhere',
-          '6. Update dnd config: { library: "@atlaskit/pragmatic-drag-and-drop" }',
+          '6. Update dnd config: { library: "@atlaskit/pragmatic-drag-and-drop" }'
         );
         break;
     }
@@ -120,6 +120,7 @@ export function getMigrationGuide(fromLibrary: string, toLibrary: DndLibrary): s
 export function checkCompatibility(
   fromLibrary: string,
   toLibrary: DndLibrary,
+  // oxlint-disable-next-line no-explicit-any
   currentConfig?: any
 ): { warnings: string[]; blockers: string[] } {
   const warnings: string[] = [];
@@ -127,24 +128,18 @@ export function checkCompatibility(
 
   if (fromLibrary === 'react-dnd') {
     if (toLibrary === '@hello-pangea/dnd') {
-      warnings.push(
-        'Touch device support may differ',
-        'Custom backends are not supported',
-      );
+      warnings.push('Touch device support may differ', 'Custom backends are not supported');
     }
 
     if (toLibrary === '@dnd-kit/core') {
       warnings.push(
         'Drag preview customization works differently',
-        'Drop target highlighting may need adjustment',
+        'Drop target highlighting may need adjustment'
       );
     }
 
     if (toLibrary === '@atlaskit/pragmatic-drag-and-drop') {
-      warnings.push(
-        'No provider component needed',
-        'Different event handling system',
-      );
+      warnings.push('No provider component needed', 'Different event handling system');
     }
 
     if (currentConfig?.debugMode) {

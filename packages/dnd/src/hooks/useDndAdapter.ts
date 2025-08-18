@@ -3,7 +3,6 @@
  */
 
 import { useContext } from 'react';
-import { dndManager } from '../dnd-core';
 import { QueryBuilderDndContext } from '../QueryBuilderDndContext';
 import type {
   DragHookOptions,
@@ -11,20 +10,21 @@ import type {
   DragHookResult,
   DropHookResult,
   DndAdapter,
-  DndLibrary,
 } from '../dnd-core/types';
 
 /**
  * Hook to access the current DnD adapter
  */
 export function useDndAdapter(): DndAdapter {
-  if (!dndManager.isInitialized()) {
+  const dndContext = useContext(QueryBuilderDndContext);
+  
+  if (!dndContext.adapter) {
     throw new Error(
-      'DnD manager not initialized. Make sure QueryBuilderDnD is properly configured.'
+      'DnD adapter not found in context. Make sure QueryBuilderDnD is properly configured.'
     );
   }
 
-  return dndManager.getAdapter();
+  return dndContext.adapter;
 }
 
 /**
@@ -70,15 +70,9 @@ export function useDndDrop(options: DropHookOptions): DropHookResult {
 }
 
 /**
- * Get the current DnD library being used
- */
-export function useDndLibrary(): DndLibrary | null {
-  return dndManager.getLibrary();
-}
-
-/**
- * Check if DnD is currently enabled and initialized
+ * Check if DnD is currently enabled
  */
 export function useDndEnabled(): boolean {
-  return dndManager.isInitialized();
+  const dndContext = useContext(QueryBuilderDndContext);
+  return !!dndContext.adapter;
 }

@@ -1,11 +1,12 @@
 /**
  * DnD Library Abstraction Types
- * 
+ *
  * These types provide a common interface for different drag-and-drop libraries
  * while maintaining compatibility with the existing react-querybuilder API.
  */
 
-export type DndLibrary = 'react-dnd' | '@hello-pangea/dnd' | '@dnd-kit/core' | '@atlaskit/pragmatic-drag-and-drop';
+import * as React from 'react';
+import type { Path, RuleGroupTypeAny } from 'react-querybuilder';
 
 export interface DragCollection {
   isDragging: boolean;
@@ -14,27 +15,27 @@ export interface DragCollection {
 
 export interface DropCollection {
   isOver: boolean;
-  dropMonitorId: string | symbol;  
+  dropMonitorId: string | symbol;
   dropEffect?: 'copy' | 'move';
   groupItems?: boolean;
 }
 
 export interface DraggedItem {
   type: 'rule' | 'ruleGroup';
-  path: number[];
+  path: Path;
   qbId: string;
-  field?: string;
-  operator?: string;
-  value?: any;
-  [key: string]: any;
+  // field?: string;
+  // operator?: string;
+  // value?: any;
+  // [key: string]: any;
 }
 
 export interface DropResult {
   type: 'rule' | 'ruleGroup' | 'inlineCombinator';
-  path: number[];
+  path: Path;
   qbId: string;
-  getQuery: () => any;
-  dispatchQuery: (query: any) => void;
+  getQuery: () => RuleGroupTypeAny;
+  dispatchQuery: (query: RuleGroupTypeAny) => void;
   groupItems?: boolean;
   dropEffect?: 'copy' | 'move';
 }
@@ -42,8 +43,8 @@ export interface DropResult {
 export interface DragHookResult {
   isDragging: boolean;
   dragMonitorId: string | symbol;
-  dragRef: (element: any) => void;
-  previewRef: (element: any) => void;
+  dragRef: React.Ref<HTMLElement>; // (element: React.Ref<HTMLElement>) => void;
+  previewRef: React.Ref<HTMLElement>; // (element: React.Ref<HTMLElement>) => void;
 }
 
 export interface DropHookResult {
@@ -51,7 +52,7 @@ export interface DropHookResult {
   dropMonitorId: string | symbol;
   dropEffect?: 'copy' | 'move';
   groupItems?: boolean;
-  dropRef: (element: any) => void;
+  dropRef: React.Ref<HTMLElement>; // (element: React.Ref<HTMLElement>) => void;
 }
 
 export interface DragHookOptions {
@@ -76,7 +77,7 @@ export interface DropHookOptions {
 }
 
 export interface DndProviderProps {
-  backend?: any;
+  backend?: unknown;
   debugMode?: boolean;
   children: React.ReactNode;
 }
@@ -86,13 +87,13 @@ export interface DndAdapter {
   useDrop: (options: DropHookOptions) => DropHookResult;
   DndProvider: React.ComponentType<DndProviderProps>;
   isTouchDevice?: () => boolean;
-  getDefaultBackend?: () => any;
+  getDefaultBackend?: () => unknown;
+  initialize?: () => Promise<void>;
 }
 
 export interface DndConfig {
-  library: DndLibrary;
-  adapter?: DndAdapter;
-  backend?: any;
+  adapter: DndAdapter;
+  backend?: unknown;
   debugMode?: boolean;
   modifierKeys?: {
     copyModeKey?: string;
