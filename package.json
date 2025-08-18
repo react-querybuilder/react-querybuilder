@@ -133,7 +133,6 @@
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.260",
     "@typescript/native-preview": "^7.0.0-dev.20250812.1",
-    "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "bun-plugin-tailwind": "^0.0.15",
     "concurrently": "^9.2.0",
     "esbuild-analyzer": "^0.2.0",
@@ -155,7 +154,7 @@
     "react-dom": "^19.1.1",
     "regenerator-runtime": "^0.14.1",
     "swc-loader": "^0.2.6",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.14.1",
     "typescript": "^5.9.2",
     "vite": "^7.1.2"
   },

@@ -1,8 +1,5 @@
 module.exports = {
-  plugins: [
-    'babel-plugin-syntax-hermes-parser',
-    ...(process.env.NODE_ENV === 'test' ? [] : [['react-compiler', { target: '18' }]]),
-  ],
+  plugins: ['babel-plugin-syntax-hermes-parser'],
   presets: [
     '@babel/env',
     '@babel/flow',

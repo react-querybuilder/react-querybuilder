@@ -1,8 +1,7 @@
 import { writeFile } from 'node:fs/promises';
-import type { Options } from 'tsup';
-import { generateDTS } from './generateDTS';
-import { ReactCompilerEsbuildPlugin } from './react-compiler/esbuild-plugin-react-compiler';
 import path from 'node:path';
+import type { Options } from 'tsdown';
+import { generateDTS } from './generateDTS';
 
 export const getCjsIndexWriter = (pkgName: string, altPath?: string) => async (): Promise<void> => {
   await writeFile(
@@ -17,7 +16,7 @@ if (process.env.NODE_ENV === 'production') {
   );
 };
 
-export const tsupCommonConfig = (sourceDir: string) =>
+export const tsdownCommonConfig = (sourceDir: string) =>
   (async options => {
     const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').pop()}`}`;
     const x = (await Bun.file(path.join(sourceDir + '/src/index.tsx')).exists()) ? 'x' : '';
@@ -26,15 +25,14 @@ export const tsupCommonConfig = (sourceDir: string) =>
     const commonOptions = {
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
-      esbuildPlugins: process.env.RQB_SKIP_REACT_COMPILER
-        ? []
-        : [ReactCompilerEsbuildPlugin({ filter: /\.tsx?$/, sourceMaps: true })],
+      platform: 'neutral',
+      dts: false,
       ...options,
     } satisfies Options;
 
     const productionOptions = {
       minify: true,
-      replaceNodeEnv: true,
+      define: { NODE_ENV: 'production' },
     } satisfies Options;
 
     const opts: Options[] = [
@@ -50,7 +48,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
         ...commonOptions,
         entry: { [`${pkgName}.legacy-esm`]: entryPoint },
         // ESBuild outputs `'.mjs'` by default for the 'esm' format. Force '.js'
-        outExtension: () => ({ js: '.js' }),
+        outExtensions: () => ({ js: '.js' }),
         target: 'es2017',
         format: 'esm',
       },
@@ -60,7 +58,7 @@ export const tsupCommonConfig = (sourceDir: string) =>
         ...productionOptions,
         entry: { [`${pkgName}.production`]: entryPoint },
         format: 'esm',
-        outExtension: () => ({ js: '.mjs' }),
+        outExtensions: () => ({ js: '.mjs' }),
       },
       // CJS development
       {

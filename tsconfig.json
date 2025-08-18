@@ -26,8 +26,7 @@
       "@rqb-dbquerytestutils": [
         "./packages/react-querybuilder/src/utils/formatQuery/dbqueryTestUtils"
       ],
-      "@rqb-utils": ["./packages/react-querybuilder/src/utils"],
-      "react-compiler-runtime": ["./utils/react-compiler/react-compiler-runtime.ts"]
+      "@rqb-utils": ["./packages/react-querybuilder/src/utils"]
     }
   },
   "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]
