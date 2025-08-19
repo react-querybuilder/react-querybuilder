@@ -1,10 +1,10 @@
-import { defineConfig } from 'tsup';
-import { getCjsIndexWriter, tsupCommonConfig } from '../../utils/tsup.common';
+import { defineConfig } from 'tsdown';
+import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
 
 const apiLibs = ['dayjs', 'date-fns', 'jsdate', 'luxon'];
 
 export default defineConfig(async options => {
-  const buildConfig = await tsupCommonConfig(import.meta.dir)(options);
+  const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
 
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];

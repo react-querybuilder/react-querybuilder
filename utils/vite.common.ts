@@ -11,7 +11,7 @@ export const getCommonViteConfig = ({
   scopedDonut = true,
 }: { port?: number; scopedDonut?: boolean } = {}) =>
   defineConfig({
-    plugins: [vitePluginReact({ babel: { plugins: [['react-compiler', { target: '18' }]] } })],
+    plugins: [vitePluginReact()],
     resolve: {
       alias: {
         'react-querybuilder': path.resolve(`${rqbSrc}`),
@@ -23,9 +23,6 @@ export const getCommonViteConfig = ({
         '@rqb-parsespel': path.resolve(`${rqbSrc}/utils/parseSpEL`),
         '@rqb-parsesql': path.resolve(`${rqbSrc}/utils/parseSQL`),
         '@rqb-utils': path.resolve(`${rqbSrc}/utils`),
-        'react-compiler-runtime': path.resolve(
-          '../../utils/react-compiler/react-compiler-runtime.ts'
-        ),
       },
     },
     css: {

@@ -47,18 +47,18 @@
   ],
   "scripts": {
     "start": "vite",
-    "build": "bun --bun tsup",
+    "build": "bun --bun tsdown",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@babel/preset-flow": "^7.27.1",
     "@testing-library/jest-native": "^5.4.3",
-    "@testing-library/react-native": "^13.2.2",
+    "@testing-library/react-native": "^13.3.0",
     "@types/react": "^19.1.10",
     "@types/react-test-renderer": "^19.1.0",
     "@vitejs/plugin-react": "^5.0.0",
-    "babel-plugin-syntax-hermes-parser": "^0.31.0",
+    "babel-plugin-syntax-hermes-parser": "^0.31.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-native": "~0.81.0",
