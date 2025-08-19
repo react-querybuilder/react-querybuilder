@@ -1,7 +1,5 @@
 import { produce } from 'immer';
 import * as React from 'react';
-import { standardClassnames as sc } from '../defaults';
-import { useOptionListProp } from '../hooks';
 import type {
   BaseOption,
   Field,
@@ -9,20 +7,20 @@ import type {
   Path,
   RuleGroupType,
   RuleGroupTypeAny,
-  RulesEngine,
-  RulesEngineAction,
-  RulesEngineCondition,
-} from '../types';
+} from 'react-querybuilder';
 import {
+  clsx,
   isRuleGroup,
-  isRulesEngineAction,
   pathsAreEqual,
+  QueryBuilder,
   regenerateIDs,
+  standardClassnames as sc,
   toFlatOptionArray,
   toFullOptionList,
-} from '../utils';
-import clsx from '../utils/clsx';
-import { QueryBuilder } from './QueryBuilder.debug';
+  useOptionListProp,
+} from 'react-querybuilder';
+import type { RulesEngine, RulesEngineAction, RulesEngineCondition } from '../types';
+import { isRulesEngineAction } from '../utils';
 
 const fields: Field[] = [{ name: 'age', label: 'Age' }];
 

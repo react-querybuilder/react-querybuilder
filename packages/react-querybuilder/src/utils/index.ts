@@ -1,4 +1,5 @@
 export * from './arrayUtils';
+export * from './clsx';
 export * from './convertQuery';
 export * from './defaultValidator';
 export * from './filterFieldsByComparator';
@@ -12,7 +13,6 @@ export * from './getValidationClassNames';
 export * from './getValueSourcesUtil';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
-export * from './isRulesEngine';
 export * from './mergeClassnames';
 export * from './mergeTranslations';
 export * from './misc';
@@ -22,14 +22,9 @@ export * from './parseNumber';
 export * from './pathUtils';
 export * from './prepareQueryObjects';
 export * from './queryTools';
-export * from './rulesEngineTools';
 export * from './regenerateIDs';
 export * from './toOptions';
 export * from './transformQuery';
-
-// Don't export clsx. It should be imported from the official clsx
-// package if used outside the context of this package.
-// export * from './clsx';
 
 // To reduce bundle size, these are only available as
 // separate exports as of v7.

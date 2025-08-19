@@ -1,11 +1,5 @@
-import type {
-  RulesEngine,
-  RulesEngineAction,
-  RulesEngineAny,
-  RulesEngineIC,
-} from '../types/index.noReact';
-import { isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
-import { isPojo } from './misc';
+import { isPojo, isRuleGroupType, isRuleGroupTypeIC } from 'react-querybuilder';
+import type { RulesEngine, RulesEngineAction, RulesEngineAny, RulesEngineIC } from '../types';
 
 /**
  * Determines if an object is a {@link RulesEngine} or {@link RulesEngineIC}.

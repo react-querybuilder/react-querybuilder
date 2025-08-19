@@ -1,5 +1,5 @@
+import { dummyRE, RulesEngineBuilder } from '@react-querybuilder/rules-engine';
 import * as React from 'react';
-import { dummyRE, RulesEngineBuilder } from 'react-querybuilder';
 import { DevLayout } from './DevLayout';
 import { useDevApp } from './useDevApp';
 

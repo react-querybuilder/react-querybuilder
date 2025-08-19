@@ -420,6 +420,28 @@
         "sequelize",
       ],
     },
+    "packages/rules-engine": {
+      "name": "@react-querybuilder/rules-engine",
+      "version": "8.8.3",
+      "devDependencies": {
+        "@testing-library/dom": "^10.4.1",
+        "@testing-library/react": "^16.3.0",
+        "@types/react": "^19.1.10",
+        "@vitejs/plugin-react": "^5.0.0",
+        "immer": "^10.1.1",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "react-querybuilder": "8.8.3",
+        "rollup-plugin-visualizer": "^6.0.3",
+        "typescript": "^5.9.2",
+        "vite": "^7.1.2",
+      },
+      "peerDependencies": {
+        "immer": ">=10",
+        "react": ">=18",
+        "react-querybuilder": "8.8.3",
+      },
+    },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
       "version": "8.8.3",
@@ -1759,6 +1781,8 @@
     "@react-querybuilder/material": ["@react-querybuilder/material@workspace:packages/material"],
 
     "@react-querybuilder/native": ["@react-querybuilder/native@workspace:packages/native"],
+
+    "@react-querybuilder/rules-engine": ["@react-querybuilder/rules-engine@workspace:packages/rules-engine"],
 
     "@react-querybuilder/tremor": ["@react-querybuilder/tremor@workspace:packages/tremor"],
 

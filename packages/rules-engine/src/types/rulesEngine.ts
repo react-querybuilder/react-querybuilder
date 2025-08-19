@@ -1,5 +1,10 @@
-import type { CommonRuleAndGroupProperties, RuleGroupType, RuleType } from './ruleGroups';
-import type { RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
+import type {
+  CommonRuleAndGroupProperties,
+  RuleGroupType,
+  RuleType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+} from 'react-querybuilder';
 
 export type RulesEngineCondition<RG extends RuleGroupTypeAny> = RG & {
   action?: RulesEngineAction;

@@ -25,21 +25,22 @@ Your IDE should check for TypeScript and lint problems as you code, but to check
 
 Each package has its own `start:*`, `build:*`, and `typecheck:*` scripts.
 
-| Package                         | Start script          | Build script          | Typecheck script          |
-| ------------------------------- | --------------------- | --------------------- | ------------------------- |
-| All packages                    | `bun start`           | `bun run build`       | `bun typecheck`           |
-| `react-querybuilder`            | `bun start:rqb`       | `bun build:rqb`       | `bun typecheck:rqb`       |
-| `@react-querybuilder/antd`      | `bun start:antd`      | `bun build:antd`      | `bun typecheck:antd`      |
-| `@react-querybuilder/bootstrap` | `bun start:bootstrap` | `bun build:bootstrap` | `bun typecheck:bootstrap` |
-| `@react-querybuilder/bulma`     | `bun start:bulma`     | `bun build:bulma`     | `bun typecheck:bulma`     |
-| `@react-querybuilder/chakra`    | `bun start:chakra`    | `bun build:chakra`    | `bun typecheck:chakra`    |
-| `@react-querybuilder/datetime`  | `bun start:datetime`  | `bun build:datetime`  | `bun typecheck:datetime`  |
-| `@react-querybuilder/dnd`       | `bun start:dnd`       | `bun build:dnd`       | `bun typecheck:dnd`       |
-| `@react-querybuilder/fluent`    | `bun start:fluent`    | `bun build:fluent`    | `bun typecheck:fluent`    |
-| `@react-querybuilder/mantine`   | `bun start:mantine`   | `bun build:mantine`   | `bun typecheck:mantine`   |
-| `@react-querybuilder/material`  | `bun start:material`  | `bun build:material`  | `bun typecheck:material`  |
-| `@react-querybuilder/native`    | `bun start:native`    | `bun build:native`    | `bun typecheck:native`    |
-| `@react-querybuilder/tremor`    | `bun start:tremor`    | `bun build:tremor`    | `bun typecheck:tremor`    |
+| Package                            | Start script          | Build script          | Typecheck script          |
+| ---------------------------------- | --------------------- | --------------------- | ------------------------- |
+| All packages                       | `bun start`           | `bun run build`       | `bun typecheck`           |
+| `react-querybuilder`               | `bun start:rqb`       | `bun build:rqb`       | `bun typecheck:rqb`       |
+| `@react-querybuilder/antd`         | `bun start:antd`      | `bun build:antd`      | `bun typecheck:antd`      |
+| `@react-querybuilder/bootstrap`    | `bun start:bootstrap` | `bun build:bootstrap` | `bun typecheck:bootstrap` |
+| `@react-querybuilder/bulma`        | `bun start:bulma`     | `bun build:bulma`     | `bun typecheck:bulma`     |
+| `@react-querybuilder/chakra`       | `bun start:chakra`    | `bun build:chakra`    | `bun typecheck:chakra`    |
+| `@react-querybuilder/datetime`     | `bun start:datetime`  | `bun build:datetime`  | `bun typecheck:datetime`  |
+| `@react-querybuilder/dnd`          | `bun start:dnd`       | `bun build:dnd`       | `bun typecheck:dnd`       |
+| `@react-querybuilder/fluent`       | `bun start:fluent`    | `bun build:fluent`    | `bun typecheck:fluent`    |
+| `@react-querybuilder/mantine`      | `bun start:mantine`   | `bun build:mantine`   | `bun typecheck:mantine`   |
+| `@react-querybuilder/material`     | `bun start:material`  | `bun build:material`  | `bun typecheck:material`  |
+| `@react-querybuilder/native`       | `bun start:native`    | `bun build:native`    | `bun typecheck:native`    |
+| `@react-querybuilder/rules-engine` | `bun start:re`        | `bun build:re`        | `bun typecheck:re`        |
+| `@react-querybuilder/tremor`       | `bun start:tremor`    | `bun build:tremor`    | `bun typecheck:tremor`    |
 
 </details>
 
@@ -107,7 +108,7 @@ Generated folders:
 [new-discussion]: https://github.com/react-querybuilder/react-querybuilder/discussions/new
 [discord]: https://react-querybuilder.js.org/discord
 [egghead]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
-[bun]: https://bun.sh/
+[bun]: https://bun.com/
 [prettier]: https://prettier.io/
 [codesandbox]: https://codesandbox.io
 [stackblitz]: https://stackblitz.com

@@ -1,22 +1,27 @@
 import { produce } from 'immer';
 import type {
+  AddOptions,
+  GroupOptions,
+  InsertOptions,
+  MoveOptions,
   Path,
   RuleGroupTypeAny,
-  RulesEngineAction,
-  RulesEngineAny,
   RuleType,
-} from '../types/index.noReact';
-import { isRuleGroup, isRuleType } from './isRuleGroup';
+  UpdateOptions,
+} from 'react-querybuilder';
+import {
+  add,
+  group,
+  insert,
+  isRuleGroup,
+  isRuleType,
+  move,
+  remove,
+  update,
+} from 'react-querybuilder';
+import type { RulesEngineAction, RulesEngineAny } from '../types';
 import { isRulesEngineAction, isRulesEngineAny } from './isRulesEngine';
 import { findConditionPath, getConditionPathOfID, getParentPath, pathsAreEqual } from './pathUtils';
-import type {
-  AddOptions,
-  UpdateOptions,
-  MoveOptions,
-  InsertOptions,
-  GroupOptions,
-} from './queryTools';
-import { add, update, remove, move, insert, group } from './queryTools';
 
 const push = (a: unknown[], ...items: unknown[]) => a.push(...items);
 const splice = (a: unknown[], start: number, deleteCount: number, ...items: unknown[]) =>

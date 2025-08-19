@@ -44,6 +44,11 @@ function toVal(mix: any) {
   return str;
 }
 
+/**
+ * Vendored/adapted version of the `clsx` package.
+ *
+ * **NOTE:** Prefer the official package from npm outside the context of React Query Builder.
+ */
 // istanbul ignore next
 export function clsx(...args: ClassValue[]): string {
   let i = 0;

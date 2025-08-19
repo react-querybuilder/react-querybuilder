@@ -8,7 +8,6 @@ export * from './QueryBuilder.useQueryBuilderSchema';
 export * from './QueryBuilder.useQueryBuilderSetup';
 export * from './Rule';
 export * from './RuleGroup';
-export * from './RulesEngineBuilder';
 export * from './ShiftActions';
 export * from './ValueEditor';
 export * from './ValueSelector';

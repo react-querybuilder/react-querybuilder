@@ -1,8 +1,19 @@
-import type { RuleGroupTypeAny, RulesEngine, RuleType, SetRequired } from '../types/index.noReact';
+import type { RuleGroupTypeAny, RuleType, SetRequired } from '../types/index.noReact';
 import { generateID } from './generateID';
 import { isRuleGroup } from './isRuleGroup';
-import { isRulesEngineAny } from './isRulesEngine';
 import { isPojo } from './misc';
+
+// TODO: extract rules-engine code to new package
+
+// Local types for rules engine functionality
+type RulesEngine = {
+  conditions: unknown[];
+  [key: string]: unknown;
+};
+
+// Local utility function for rules engine type checking
+const isRulesEngineAny = (re: unknown): re is RulesEngine =>
+  isPojo(re) && 'conditions' in re && Array.isArray(re.conditions);
 
 /**
  * Options object for {@link regenerateID}/{@link regenerateIDs}.

@@ -1,11 +1,10 @@
+// TODO: extract rules-engine code to new package
 import type {
-  RuleGroupType,
-  RuleGroupTypeIC,
   RulesEngine,
   RulesEngineCondition,
   RulesEngineIC,
-  RuleType,
-} from '../types/index.noReact';
+} from '@react-querybuilder/rules-engine';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types/index.noReact';
 import { uuidV4regex } from './generateIDTestUtils';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
