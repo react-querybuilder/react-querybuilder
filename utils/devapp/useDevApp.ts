@@ -68,15 +68,19 @@ export const useDevApp = (): {
     };
   }, [optVals]);
 
-  const formatQueryResults = formatMap.map(([format]) => {
-    const formatQueryOptions: FormatQueryOptions = {
-      format,
-      fields: optVals.validateQuery ? fields : undefined,
-      parseNumbers: optVals.parseNumbers,
-    };
-    const q = optVals.independentCombinators ? queryIC : query;
-    return [format, getFormatQueryString(q, formatQueryOptions)] as const;
-  });
+  const formatQueryResults = useMemo(
+    () =>
+      formatMap.map(([format]) => {
+        const formatQueryOptions: FormatQueryOptions = {
+          format,
+          fields: optVals.validateQuery ? fields : undefined,
+          parseNumbers: optVals.parseNumbers,
+        };
+        const q = optVals.independentCombinators ? queryIC : query;
+        return [format, getFormatQueryString(q, formatQueryOptions)] as const;
+      }),
+    [optVals.validateQuery, optVals.parseNumbers, optVals.independentCombinators, queryIC, query]
+  );
 
   const actions = useMemo(
     () =>

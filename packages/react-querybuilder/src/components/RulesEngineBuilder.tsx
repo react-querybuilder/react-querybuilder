@@ -1,6 +1,7 @@
 import { produce } from 'immer';
 import * as React from 'react';
 import { standardClassnames as sc } from '../defaults';
+import { useOptionListProp } from '../hooks';
 import type {
   BaseOption,
   Field,
@@ -16,6 +17,7 @@ import {
   isRuleGroup,
   isRulesEngineAction,
   pathsAreEqual,
+  regenerateIDs,
   toFlatOptionArray,
   toFullOptionList,
 } from '../utils';
@@ -24,26 +26,24 @@ import { QueryBuilder } from './QueryBuilder.debug';
 
 const fields: Field[] = [{ name: 'age', label: 'Age' }];
 
-const actionTypes: FullOptionList<BaseOption> = toFullOptionList([
+const dummyActionTypes: FullOptionList<BaseOption> = toFullOptionList([
   { value: 'send_email', label: 'Send Email' },
   { value: 'log_event', label: 'Log Event' },
 ]);
 
-export const dummyRE: RulesEngine = {
+export const dummyRE: RulesEngine = regenerateIDs({
   conditions: [
     {
-      id: '1',
       combinator: 'and',
-      rules: [{ id: '1-0', field: 'age', operator: '>=', value: 18 }],
+      rules: [{ field: 'age', operator: '>=', value: 18 }],
       action: {
         actionType: 'send_email',
         params: { to: 'user@example.com', subject: 'Welcome!', body: 'Thanks for signing up!' },
       },
       conditions: [
         {
-          id: '2-1',
           combinator: 'and',
-          rules: [{ id: '2-1-0', field: 'age', operator: '=', value: 18 }],
+          rules: [{ field: 'age', operator: '=', value: 18 }],
           action: {
             actionType: 'send_email',
             params: {
@@ -56,9 +56,8 @@ export const dummyRE: RulesEngine = {
       ],
     },
     {
-      id: '2',
       combinator: 'and',
-      rules: [{ id: '2-0', field: 'age', operator: '<', value: 18 }],
+      rules: [{ field: 'age', operator: '<', value: 18 }],
       action: {
         actionType: 'send_email',
         params: {
@@ -70,10 +69,13 @@ export const dummyRE: RulesEngine = {
     },
     { id: '3', actionType: 'log_event' },
   ],
-};
+});
+
+const rootPath: Path = [];
 
 interface RulesEngineProps {
   conditionPath?: Path;
+  onRulesEngineChange?: (re: RulesEngine) => void;
   rulesEngine?: RulesEngine;
   actionTypes?: FullOptionList<BaseOption>;
   autoSelectActionType?: boolean;
@@ -82,38 +84,56 @@ interface RulesEngineProps {
 export const RulesEngineBuilder = <RG extends RuleGroupTypeAny>(
   props: RulesEngineProps = {}
 ): React.JSX.Element => {
-  const { rulesEngine = dummyRE, autoSelectActionType = false, conditionPath } = props;
+  const {
+    rulesEngine = dummyRE,
+    autoSelectActionType = false,
+    conditionPath = rootPath,
+    onRulesEngineChange,
+  } = props;
   const [re, setRE] = React.useState<RulesEngine>(rulesEngine);
+  const onChange = React.useCallback(
+    (re: RulesEngine) => {
+      setRE(re);
+      onRulesEngineChange?.(re);
+    },
+    [onRulesEngineChange]
+  );
+  const { optionList: actionTypes } = useOptionListProp({ optionList: dummyActionTypes });
 
+  const updater = React.useCallback(
+    (c: RulesEngineCondition<RG> | RulesEngineAction, index: number) =>
+      onChange(
+        produce(re, draft => {
+          // oxlint-disable-next-line no-explicit-any
+          draft.conditions.splice(index, 1, c as any);
+        })
+      ),
+    [onChange, re]
+  );
   return (
     <div className={'rulesEngine'}>
       {re.conditions.map((c, i) => {
-        const updater = (c: RulesEngineCondition<RG> | RulesEngineAction) =>
-          setRE(
-            produce(re, draft => {
-              // oxlint-disable-next-line no-explicit-any
-              draft.conditions.splice(i, 1, c as any);
-            })
-          );
         return isRulesEngineAction(c) ? (
           <RulesEngineActionBuilder
             key={c.id as string}
             // oxlint-disable-next-line jsx-no-new-array-as-prop
-            conditionPath={[...(conditionPath ?? []), i]}
+            conditionPath={[...conditionPath, i]}
             actionTypes={actionTypes}
             action={c}
             standalone={i === rulesEngine.conditions.length - 1}
             onActionChange={updater}
+            autoSelectActionType={autoSelectActionType}
           />
         ) : (
-          <RulesEngineConditionBuilder<RG>
+          <RulesEngineConditionBuilder
             key={c.id as string}
             // oxlint-disable-next-line jsx-no-new-array-as-prop
-            conditionPath={[...(conditionPath ?? []), i]}
+            conditionPath={[...conditionPath, i]}
             actionTypes={actionTypes}
             condition={c as RulesEngineCondition<RG>}
             isOnlyCondition={i === 0 && !isRuleGroup(rulesEngine.conditions[i + 1])}
             onConditionChange={updater}
+            autoSelectActionType={autoSelectActionType}
           />
         );
       })}
@@ -126,7 +146,8 @@ interface RulesEngineConditionProps<RG extends RuleGroupTypeAny> {
   condition: RulesEngineCondition<RG>;
   actionTypes?: FullOptionList<BaseOption>;
   isOnlyCondition: boolean;
-  onConditionChange: (condition: RulesEngineCondition<RG>) => void;
+  onConditionChange: (condition: RulesEngineCondition<RG>, index: number) => void;
+  autoSelectActionType?: boolean;
 }
 
 /**
@@ -135,14 +156,17 @@ interface RulesEngineConditionProps<RG extends RuleGroupTypeAny> {
 export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
   props: RulesEngineConditionProps<RG>
 ): React.JSX.Element => {
-  // const onQueryChange = React.useCallback(
-  //   (query: unknown) => {
-  //     console.log({ conditionPath: props.conditionPath, query });
-  //   },
-  //   [props.conditionPath]
-  // );
-  const actionUpdater = (action: RulesEngineAction) =>
-    props.onConditionChange({ ...props.condition, action });
+  const { condition, onConditionChange } = props;
+  const actionUpdater = React.useCallback(
+    (action: RulesEngineAction) =>
+      onConditionChange({ ...condition, action }, props.conditionPath.at(-1)!),
+    [condition, onConditionChange, props.conditionPath]
+  );
+  const conditionUpdater = React.useCallback(
+    (re: RulesEngineCondition<RG>) =>
+      onConditionChange(re as RulesEngineCondition<RG>, props.conditionPath.at(-1)!),
+    [onConditionChange, props.conditionPath]
+  );
 
   return (
     <div className={sc.ruleGroup}>
@@ -151,6 +175,7 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
         {!pathsAreEqual([0], props.conditionPath) && <button type="button">⨯</button>}
       </div>
       <QueryBuilder
+        enableMountQueryChange={false}
         fields={fields}
         defaultQuery={props.condition as RuleGroupType}
         // oxlint-disable-next-line no-explicit-any
@@ -164,14 +189,18 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
               actionTypes={props.actionTypes}
               action={props.condition.action as RulesEngineAction}
               onActionChange={actionUpdater}
+              autoSelectActionType={props.autoSelectActionType}
             />
           )}
-          {props.condition.conditions && props.condition.conditions.length > 0 && (
+          {Array.isArray(props.condition.conditions) && props.condition.conditions.length > 0 && (
             <RulesEngineBuilder
               conditionPath={props.conditionPath}
               actionTypes={props.actionTypes}
               key={props.condition.id}
               rulesEngine={props.condition as RulesEngine}
+              autoSelectActionType={props.autoSelectActionType}
+              // oxlint-disable-next-line no-explicit-any
+              onRulesEngineChange={conditionUpdater as any}
             />
           )}
         </React.Fragment>
@@ -185,9 +214,10 @@ interface RulesEngineActionProps {
   actionTypes?: FullOptionList<BaseOption>;
   action: RulesEngineAction;
   standalone?: boolean;
-  onActionChange: (action: RulesEngineAction) => void;
+  onActionChange: (action: RulesEngineAction, index: number) => void;
   conditionsMet?: RuleGroupTypeAny;
   conditionsFailed?: RuleGroupTypeAny;
+  autoSelectActionType?: boolean;
 }
 
 /**
@@ -208,7 +238,12 @@ export const RulesEngineActionBuilder = (props: RulesEngineActionProps): React.J
           <select
             value={props.action.actionType}
             // oxlint-disable-next-line jsx-no-new-function-as-prop
-            onChange={e => props.onActionChange({ ...props.action, actionType: e.target.value })}>
+            onChange={e =>
+              props.onActionChange(
+                { ...props.action, actionType: e.target.value },
+                props.conditionPath.at(-1)!
+              )
+            }>
             {toFlatOptionArray(props.actionTypes).map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}

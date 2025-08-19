@@ -1,12 +1,7 @@
-import type {
-  RuleGroupArray,
-  RuleGroupICArray,
-  RuleGroupType,
-  RuleGroupTypeIC,
-  RuleType,
-} from '../types/index.noReact';
+import type { RuleGroupTypeAny, RulesEngine, RuleType, SetRequired } from '../types/index.noReact';
 import { generateID } from './generateID';
-import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
+import { isRuleGroup } from './isRuleGroup';
+import { isRulesEngineAny } from './isRulesEngine';
 import { isPojo } from './misc';
 
 /**
@@ -19,41 +14,43 @@ export interface RegenerateIdOptions {
 /**
  * Generates a new `id` property for a rule.
  */
-export const regenerateID = (
-  rule: RuleType,
+export const regenerateID = <R extends RuleType>(
+  rule: R,
   { idGenerator = generateID }: RegenerateIdOptions = {}
-): RuleType => structuredClone({ ...rule, id: idGenerator() });
+): SetRequired<R, 'id'> => structuredClone({ ...rule, id: idGenerator() } as SetRequired<R, 'id'>);
 
 /**
- * Recursively generates new `id` properties for a group and all its rules and subgroups.
+ * Recursively generates new `id` properties for a rule group or rules engine and all
+ * its rules/conditions and subgroups/subconditions.
  */
-export const regenerateIDs = (
-  ruleOrGroup: RuleGroupType | RuleGroupTypeIC,
+export const regenerateIDs = <RG>(
+  subject: RG,
   { idGenerator = generateID }: RegenerateIdOptions = {}
-): RuleGroupType | RuleGroupTypeIC => {
-  if (!isPojo(ruleOrGroup)) return ruleOrGroup;
+): RG & { id: string } => {
+  if (!isPojo(subject)) return subject as RG & { id: string };
 
-  if (!isRuleGroup(ruleOrGroup)) {
+  if (!isRuleGroup(subject) && !isRulesEngineAny(subject)) {
     return structuredClone({
-      ...(ruleOrGroup as RuleType),
+      ...subject,
       id: idGenerator(),
-    }) as unknown as RuleGroupType;
-    // ^ this is a lie, but it shouldn't matter
+    }) as RG & { id: string };
   }
 
-  if (isRuleGroupType(ruleOrGroup)) {
-    const rules = ruleOrGroup.rules.map(r =>
-      isRuleGroup(r) ? regenerateIDs(r, { idGenerator }) : regenerateID(r, { idGenerator })
-    ) as RuleGroupArray;
-    return { ...ruleOrGroup, id: idGenerator(), rules };
+  const newGroup = { ...subject, id: idGenerator() } as RulesEngine & RuleGroupTypeAny;
+
+  if (Array.isArray(newGroup.rules)) {
+    newGroup.rules = subject.rules.map((r: unknown) =>
+      typeof r === 'string'
+        ? r
+        : isRuleGroup(r)
+          ? regenerateIDs(r, { idGenerator })
+          : regenerateID(r as RuleType, { idGenerator })
+    );
   }
 
-  const rules = ruleOrGroup.rules.map(r =>
-    typeof r === 'string'
-      ? r
-      : isRuleGroup(r)
-        ? regenerateIDs(r, { idGenerator })
-        : regenerateID(r, { idGenerator })
-  ) as RuleGroupICArray;
-  return { ...ruleOrGroup, id: idGenerator(), rules };
+  if (Array.isArray(newGroup.conditions)) {
+    newGroup.conditions = subject.conditions.map((r: unknown) => regenerateIDs(r, { idGenerator }));
+  }
+
+  return newGroup as unknown as RG & { id: string };
 };
