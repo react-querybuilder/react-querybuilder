@@ -19,7 +19,6 @@ export const useSelectElementChangeHandler = (
     () =>
       multiple
         ? (e: ChangeEvent<HTMLSelectElement>) =>
-            // TODO: spread instead?
             onChange(Array.from(e.target.selectedOptions).map(o => o.value))
         : (e: ChangeEvent<HTMLSelectElement>) => onChange(e.target.value),
     [multiple, onChange]

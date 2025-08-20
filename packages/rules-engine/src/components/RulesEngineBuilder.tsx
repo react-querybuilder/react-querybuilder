@@ -19,7 +19,14 @@ import {
   toFullOptionList,
   useOptionListProp,
 } from 'react-querybuilder';
-import type { RulesEngine, RulesEngineAction, RulesEngineCondition } from '../types';
+import type {
+  RulesEngine,
+  RulesEngineAction,
+  RulesEngineActionProps,
+  RulesEngineCondition,
+  RulesEngineConditionProps,
+  RulesEngineProps,
+} from '../types';
 import { isRulesEngineAction } from '../utils';
 
 const fields: Field[] = [{ name: 'age', label: 'Age' }];
@@ -70,14 +77,6 @@ export const dummyRE: RulesEngine = regenerateIDs({
 });
 
 const rootPath: Path = [];
-
-interface RulesEngineProps {
-  conditionPath?: Path;
-  onRulesEngineChange?: (re: RulesEngine) => void;
-  rulesEngine?: RulesEngine;
-  actionTypes?: FullOptionList<BaseOption>;
-  autoSelectActionType?: boolean;
-}
 
 export const RulesEngineBuilder = <RG extends RuleGroupTypeAny>(
   props: RulesEngineProps = {}
@@ -139,15 +138,6 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny>(
   );
 };
 
-interface RulesEngineConditionProps<RG extends RuleGroupTypeAny> {
-  conditionPath: Path;
-  condition: RulesEngineCondition<RG>;
-  actionTypes?: FullOptionList<BaseOption>;
-  isOnlyCondition: boolean;
-  onConditionChange: (condition: RulesEngineCondition<RG>, index: number) => void;
-  autoSelectActionType?: boolean;
-}
-
 /**
  * Analogous to an "if" or "else-if" block.
  */
@@ -206,17 +196,6 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
     </div>
   );
 };
-
-interface RulesEngineActionProps {
-  conditionPath: Path;
-  actionTypes?: FullOptionList<BaseOption>;
-  action: RulesEngineAction;
-  standalone?: boolean;
-  onActionChange: (action: RulesEngineAction, index: number) => void;
-  conditionsMet?: RuleGroupTypeAny;
-  conditionsFailed?: RuleGroupTypeAny;
-  autoSelectActionType?: boolean;
-}
 
 /**
  * Analogous to the body of an "if" or "else-if" block.
