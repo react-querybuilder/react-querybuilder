@@ -75,6 +75,7 @@ interface UseInlineCombinatorDnD {
   dropRef: Ref<HTMLDivElement>;
   dropEffect?: DropEffect;
   groupItems?: boolean;
+  dropNotAllowed?: boolean;
 }
 
 /**
@@ -100,7 +101,7 @@ export const useInlineCombinatorDnD = (
     | RuleType
     | RuleGroupTypeAny;
 
-  const [{ isOver, dropMonitorId, dropEffect }, drop] = useDrop<
+  const [{ isOver, dropMonitorId, dropEffect, dropNotAllowed }, drop] = useDrop<
     DraggedItem,
     DropResult,
     DropCollection
@@ -138,6 +139,7 @@ export const useInlineCombinatorDnD = (
         );
       },
       collect: monitor => ({
+        dropNotAllowed: monitor.isOver() && !monitor.canDrop(),
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
@@ -164,5 +166,5 @@ export const useInlineCombinatorDnD = (
 
   drop(dropRef);
 
-  return { dropRef, dropMonitorId, isOver, dropEffect };
+  return { dropRef, dropMonitorId, isOver, dropEffect, dropNotAllowed };
 };

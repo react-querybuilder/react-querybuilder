@@ -24,6 +24,7 @@ export interface DragCollection {
   dragMonitorId: string | symbol;
 }
 export interface DropCollection {
+  dropNotAllowed: boolean;
   isOver: boolean;
   dropMonitorId: string | symbol;
   dropEffect?: DropEffect;
