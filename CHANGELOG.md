@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#932] New `useOptionListProp` hook to standardize option list prop normalization.
 
+### Fixed
+
+- The `match` property is now removed when a rule's `field` is updated to a field that does not support match modes.
+
 ## [v8.8.3] - 2025-08-13
 
 ### Fixed
