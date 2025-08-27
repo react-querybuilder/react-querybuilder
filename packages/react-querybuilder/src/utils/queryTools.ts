@@ -189,19 +189,22 @@ export const update = <RG extends RuleGroupTypeAny>(
     let resetValueSource = false;
     let resetValue = false;
 
-    if (prop === 'field' && !isGroup) {
+    if (prop === 'field') {
       const fromFieldMatchModes = getMatchModes(ruleOrGroup.field);
       const toFieldMatchModes = getMatchModes(value);
 
-      const nextMatchMode =
-        ruleOrGroup.match?.mode &&
-        toFieldMatchModes.length > 0 &&
-        getOption(toFieldMatchModes, ruleOrGroup.match.mode)
-          ? null
-          : getFirstOption(toFieldMatchModes);
-      if (nextMatchMode) {
-        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
+      if (toFieldMatchModes.length === 0) {
+        delete ruleOrGroup.match;
+      } else {
+        const nextMatchMode =
+          ruleOrGroup.match?.mode && getOption(toFieldMatchModes, ruleOrGroup.match.mode)
+            ? null
+            : getFirstOption(toFieldMatchModes);
+        if (nextMatchMode) {
+          ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
+        }
       }
+
       if (fromFieldMatchModes.length > 0 || toFieldMatchModes.length > 0) {
         // Force `resetOnFieldChange` when field is updated FROM or TO one that has match modes
         resetOnFieldChange = true;

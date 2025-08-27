@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#932] New `useOptionListProp` hook to standardize option list prop normalization.
 
+### Fixed
+
+- [#937] The `match` property is now removed when a rule's `field` is updated to a field that does not support match modes.
+
 ## [v8.8.3] - 2025-08-13
 
 ### Fixed
@@ -1982,6 +1986,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#926]: https://github.com/react-querybuilder/react-querybuilder/pull/926
 [#931]: https://github.com/react-querybuilder/react-querybuilder/pull/931
 [#932]: https://github.com/react-querybuilder/react-querybuilder/pull/932
+[#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 
 <!-- #endregion -->
 
