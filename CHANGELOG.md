@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#935] New class `dndDropNotAllowed` added to elements that cannot accept a drop from the hovering element. Default style is `cursor: not-allowed`.
 
 ## [v8.8.4] - 2025-08-27
 
@@ -1990,6 +1992,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#926]: https://github.com/react-querybuilder/react-querybuilder/pull/926
 [#931]: https://github.com/react-querybuilder/react-querybuilder/pull/931
 [#932]: https://github.com/react-querybuilder/react-querybuilder/pull/932
+[#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 
 <!-- #endregion -->

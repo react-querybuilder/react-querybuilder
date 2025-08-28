@@ -686,6 +686,7 @@ export interface UseRuleGroupDnD {
   dropEffect?: DropEffect;
   /** True if the dragged and hovered items should form a new group. */
   groupItems?: boolean;
+  dropNotAllowed?: boolean;
 }
 
 /**
@@ -725,6 +726,7 @@ export interface UseRuleDnD {
   dropEffect?: DropEffect;
   /** True if the dragged and hovered items should form a new group. */
   groupItems?: boolean;
+  dropNotAllowed?: boolean;
 }
 
 /**
