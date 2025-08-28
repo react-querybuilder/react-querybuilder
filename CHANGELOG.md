@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.8.4] - 2025-08-27
+
 ### Added
 
 - [#932] New `useOptionListProp` hook to standardize option list prop normalization.
 - [#935] New class `dndDropNotAllowed` added to elements that cannot accept a drop from the hovering element. Default style is `cursor: not-allowed`.
+
+### Fixed
+
+- [#937] The `match` property is now removed when a rule's `field` is updated to a field that does not support match modes.
 
 ## [v8.8.3] - 2025-08-13
 
@@ -1984,12 +1992,14 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#931]: https://github.com/react-querybuilder/react-querybuilder/pull/931
 [#932]: https://github.com/react-querybuilder/react-querybuilder/pull/932
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
+[#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.4...HEAD
+[v8.8.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.3...v8.8.4
 [v8.8.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.2...v8.8.3
 [v8.8.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.1...v8.8.2
 [v8.8.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.0...v8.8.1
