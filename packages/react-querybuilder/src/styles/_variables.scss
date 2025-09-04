@@ -32,6 +32,7 @@ $rqb-border-radius: 0.25rem !default;
 $rqb-dnd-drop-indicator-color: map.get($rqb-dnd-drop-indicator-defaults, 'color') !default;
 $rqb-dnd-drop-indicator-style: map.get($rqb-dnd-drop-indicator-defaults, 'style') !default;
 $rqb-dnd-drop-indicator-width: map.get($rqb-dnd-drop-indicator-defaults, 'width') !default;
+$rqb-dnd-drop-not-allowed-cursor: not-allowed !default;
 
 $rqb-dnd-drop-indicator-copy-color: map.get(
   $rqb-dnd-drop-indicator-defaults,

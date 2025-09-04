@@ -148,6 +148,11 @@ export interface Classnames {
    */
   dndGroup: Classname;
   /**
+   * Classname(s) applied to rules and groups that cannot accept a drop from
+   * the dragged element hovering over it.
+   */
+  dndDropNotAllowed: Classname;
+  /**
    * Classname(s) applied to disabled elements.
    */
   disabled: Classname;

@@ -25,7 +25,7 @@
 }
 
 /* #region Drag-and-drop styles */
-/* Hover styles */
+/* Hover styles (drop allowed) */
 .dndOver {
   &.rule,
   &.ruleGroup-header:not(.dndGroup .ruleGroup-header) {
@@ -51,6 +51,11 @@
       border-top-color: var(--#{$rqb-var-prefix}dnd-drop-indicator-copy-color);
     }
   }
+}
+
+/* Hover styles (drop not allowed) */
+.dndDropNotAllowed {
+  cursor: var(--#{$rqb-var-prefix}dnd-drop-not-allowed-cursor);
 }
 
 .dndGroup {

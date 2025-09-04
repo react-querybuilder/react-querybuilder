@@ -472,6 +472,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     dropRef = null,
     isDragging = false,
     isOver = false,
+    dropNotAllowed = false,
   } = props;
 
   useDeprecatedProps('ruleGroup', !ruleGroupProp);
@@ -512,9 +513,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         suppressStandardClassnames || standardClassnames.header,
         classNamesProp.header,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        dropNotAllowed && classNamesProp.dndDropNotAllowed,
         suppressStandardClassnames || {
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
         }
       ),
       shiftActions: clsx(
@@ -569,6 +572,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.cloneGroup,
       classNamesProp.combinators,
       classNamesProp.dndCopy,
+      classNamesProp.dndDropNotAllowed,
       classNamesProp.dragHandle,
       classNamesProp.header,
       classNamesProp.lockGroup,
@@ -577,6 +581,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.shiftActions,
       classNamesProp.valueSelector,
       dropEffect,
+      dropNotAllowed,
       isOver,
       suppressStandardClassnames,
     ]

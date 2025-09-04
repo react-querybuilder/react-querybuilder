@@ -88,7 +88,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     groupModeModifierKey,
   });
 
-  const [{ isOver, dropMonitorId, dropEffect, groupItems }, drop] = useDrop<
+  const [{ isOver, dropMonitorId, dropEffect, groupItems, dropNotAllowed }, drop] = useDrop<
     DraggedItem,
     DropResult,
     DropCollection
@@ -121,6 +121,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
         );
       },
       collect: monitor => ({
+        dropNotAllowed: monitor.isOver() && !monitor.canDrop(),
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
         dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
@@ -153,5 +154,6 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     dropRef,
     dropEffect,
     groupItems,
+    dropNotAllowed,
   };
 };
