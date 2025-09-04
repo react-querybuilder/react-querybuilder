@@ -15,7 +15,7 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
@@ -35,7 +35,7 @@ jobs:
   Typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
@@ -46,7 +46,7 @@ jobs:
   Test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -62,7 +62,7 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
       - run: bunx $(bun -e 'console.log((await import("./bun.lock")).packages.oxlint[0])') --format=github
 
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Test]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -92,7 +92,7 @@ jobs:
     needs: [Build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
       - uses: actions/download-artifact@v4
         with:
