@@ -90,7 +90,7 @@ describe('MongoDB', () => {
       dbTests(superUsersMongoDB)
     )) {
       for (const avoidFieldsAsKeys of [false, true]) {
-        describe(`${avoidFieldsAsKeys ? 'aggrn' : 'query'}`, () => {
+        describe(avoidFieldsAsKeys ? 'aggrn' : 'query', () => {
           for (const [format, processorFn] of [
             ['mongodb', (v: string, afak) => JSON.parse(afak ? `{"$expr":${v}}` : v)],
             ['mongodb_query', (v, afak) => (afak ? { $expr: v } : v)],

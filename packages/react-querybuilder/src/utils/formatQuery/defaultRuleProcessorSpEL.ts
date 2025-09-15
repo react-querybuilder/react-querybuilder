@@ -12,12 +12,11 @@ import { processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
-const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : `${clause}`);
+const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : clause);
 
-const escapeSingleQuotes = (
-  v: string | number | boolean | object | null,
-  escapeQuotes?: boolean
-) => (typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`'`, `\\'`));
+// oxlint-disable-next-line no-explicit-any
+const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`'`, `\\'`);
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.
@@ -48,7 +47,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
 
     const nestedArrayFilter = defaultRuleGroupProcessorSpEL(
       transformQuery(rule.value as RuleGroupType, {
-        ruleProcessor: r => ({ ...r, field: `${r.field || '#this'}` }),
+        ruleProcessor: r => ({ ...r, field: r.field || '#this' }),
       }),
       opts as FormatQueryFinalOptions
     );

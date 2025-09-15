@@ -310,9 +310,9 @@ it('validates fields', () => {
     rules: [{ field: 'f1', operator: '=', value: 'f2', valueSource: 'field' }],
   };
 
-  expect(
-    parseMongoDB(mongoDbRulesForFields, { getValueSources, fields: fields as FullField[] })
-  ).toEqual(ruleGroupForFields);
+  expect(parseMongoDB(mongoDbRulesForFields, { getValueSources, fields })).toEqual(
+    ruleGroupForFields
+  );
   expect(
     parseMongoDB(mongoDbRulesForFields, {
       getValueSources,

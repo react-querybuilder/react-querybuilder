@@ -81,16 +81,10 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         data-level={rg.path.length}
         data-path={JSON.stringify(rg.path)}>
         <div ref={rg.dropRef} className={rg.classNames.header}>
-          <RuleGroupHeaderElements
-            {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])}
-            {...actions}
-          />
+          <RuleGroupHeaderElements {...rg} {...actions} />
         </div>
         <div className={rg.classNames.body}>
-          <RuleGroupBodyElements
-            {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])}
-            {...actions}
-          />
+          <RuleGroupBodyElements {...rg} {...actions} />
         </div>
       </div>
     );
@@ -370,7 +364,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
             ) : (
               <RuleControlElement
                 key={TestID.rule}
-                id={r.id!}
+                id={r.id}
                 rule={r}
                 field={r.field}
                 operator={r.operator}

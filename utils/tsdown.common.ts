@@ -27,7 +27,7 @@ export const tsdownCommonConfig = (sourceDir: string) =>
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
       platform: 'neutral',
-      dts: false,
+      dts: { oxc: true },
       ...options,
     } satisfies Options;
 

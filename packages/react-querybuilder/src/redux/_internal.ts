@@ -37,13 +37,12 @@ export const _RQB_INTERNAL_dispatchThunk =
  */
 export const useRQB_INTERNAL_QueryBuilderDispatch: UseQueryBuilderDispatch =
   createDispatchHook(QueryBuilderStateContext);
-type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownAction> &
-  Dispatch<UnknownAction>;
+type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownAction> & Dispatch;
 
 /**
  * Gets the full RQB Redux store.
  */
-export const useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState, UnknownAction>> =
+export const useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState>> =
   createStoreHook(QueryBuilderStateContext);
 
 const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;

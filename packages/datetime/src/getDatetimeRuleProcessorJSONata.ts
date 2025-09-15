@@ -58,7 +58,7 @@ export const getDatetimeRuleProcessorJSONata =
         if (valueIsField) {
           if (valueAsArray.length === 0) return '';
           return negate(
-            `${fldToMs(field)} in [${valueAsArray.map(val => fldToMs(val as string)).join(', ')}]`,
+            `${fldToMs(field)} in [${valueAsArray.map(val => fldToMs(val)).join(', ')}]`,
             shouldNegate(operator)
           );
         }

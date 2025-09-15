@@ -7,7 +7,11 @@ export default defineConfig(async options => {
 
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];
-    bc.entry![`${entryKey}.debug`] = bc.entry![entryKey].replace('.ts', '.debug.ts');
+    // oxlint-disable-next-line no-explicit-any
+    (bc.entry as any)[`${entryKey}.debug`] = (bc.entry as any)[entryKey].replace(
+      '.ts',
+      '.debug.ts'
+    );
 
     if (bc === buildConfig.at(-1)) {
       const onSuccess = bc.onSuccess as () => Promise<void>;
@@ -37,7 +41,6 @@ export default defineConfig(async options => {
       entry: utilEntryPoints,
       sourcemap: true,
       platform: 'neutral',
-      dts: false,
       format: 'cjs',
       onSuccess: async () => {
         // Write /debug/package.json for node10 resolution

@@ -17,7 +17,7 @@ export const mergeTranslations = (
       if (translations) {
         for (const t of objectKeys(translations)) {
           if (draft[t]) {
-            Object.assign(draft[t]!, translations[t]);
+            Object.assign(draft[t], translations[t]);
           } else {
             Object.assign(draft, { [t]: translations[t] });
           }

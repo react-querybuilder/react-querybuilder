@@ -1,5 +1,3 @@
-/* oxlint-disable typescript/no-explicit-any */
-
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import type { Classnames, FullField, Schema } from 'react-querybuilder';
@@ -125,11 +123,11 @@ export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
 export const consoleMocks = (): {
   consoleError: jest.Mock;
   consoleErrorActual: typeof console.error;
-  consoleInfo: jest.Mock<any, any, any>;
+  consoleInfo: jest.Mock;
   consoleInfoActual: typeof console.info;
-  consoleLog: jest.Mock<any, any, any>;
+  consoleLog: jest.Mock;
   consoleLogActual: typeof console.log;
-  consoleWarn: jest.Mock<any, any, any>;
+  consoleWarn: jest.Mock;
   consoleWarnActual: typeof console.warn;
 } => {
   // TODO: This version works for Vitest. Not sure about bun:test yet.

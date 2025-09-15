@@ -185,7 +185,7 @@ export const isValidValue = (value: any): boolean =>
  * @group Export
  */
 // oxlint-disable-next-line typescript/no-explicit-any
-export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean | undefined): boolean =>
+export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean): boolean =>
   !!parseNumbers &&
   (typeof value === 'number' ||
     typeof value === 'bigint' ||

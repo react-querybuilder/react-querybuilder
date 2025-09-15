@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown';
 import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
 
-const apiLibs = ['dayjs', 'date-fns', 'jsdate', 'luxon'];
+const apiLibs = ['dayjs', 'date-fns', 'jsdate', 'luxon'] as const;
 
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
@@ -10,7 +10,9 @@ export default defineConfig(async options => {
     const entryKey = Object.keys(bc.entry!)[0];
 
     for (const apiLib of apiLibs) {
-      bc.entry![`${entryKey}.${apiLib}`] = bc.entry![entryKey].replace('.ts', `.${apiLib}.ts`);
+      (bc.entry as Record<string, string>)[`${entryKey}.${apiLib}`] = (
+        bc.entry as Record<string, string>
+      )[entryKey].replace('.ts', `.${apiLib}.ts`);
     }
 
     if (bc === buildConfig.at(-1)) {
@@ -18,9 +20,9 @@ export default defineConfig(async options => {
       bc.onSuccess = async () => {
         // Call original `onSuccess` first to write the non-debug index
         await onSuccess();
-        for await (const apiLib of apiLibs) {
-          getCjsIndexWriter('react-querybuilder_datetime', apiLib)();
-        }
+        await Promise.all(
+          apiLibs.map(apiLib => getCjsIndexWriter('react-querybuilder_datetime', apiLib)())
+        );
       };
     }
   }

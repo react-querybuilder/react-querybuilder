@@ -156,16 +156,14 @@ function parseJSONata(
                 (rules[0].operator === '<' && rules[2].operator === '>'))))
         ) {
           return {
-            field: (rules[0] as DefaultRuleType).field,
+            field: rules[0].field,
             operator: rules[1] === 'and' ? 'between' : 'notBetween',
             value:
               (rules[1] === 'and' && rules[0].operator === '<=') ||
               (rules[1] === 'or' && rules[0].operator === '>')
                 ? [rules[2].value, rules[0].value]
                 : [rules[0].value, rules[2].value],
-            ...((rules[0] as DefaultRuleType).valueSource
-              ? { valueSource: (rules[0] as DefaultRuleType).valueSource }
-              : null),
+            ...(rules[0].valueSource ? { valueSource: rules[0].valueSource } : null),
           };
         }
 
@@ -206,16 +204,14 @@ function parseJSONata(
               (rules[0].operator === '<' && rules[1].operator === '>'))))
       ) {
         return {
-          field: (rules[0] as DefaultRuleType).field,
+          field: rules[0].field,
           operator: combinator === 'and' ? 'between' : 'notBetween',
           value:
             (combinator === 'and' && rules[0].operator === '<=') ||
             (combinator === 'or' && rules[0].operator === '>')
               ? [rules[1].value, rules[0].value]
               : [rules[0].value, rules[1].value],
-          ...((rules[0] as DefaultRuleType).valueSource
-            ? { valueSource: (rules[0] as DefaultRuleType).valueSource }
-            : null),
+          ...(rules[0].valueSource ? { valueSource: rules[0].valueSource } : null),
         };
       }
 

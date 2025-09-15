@@ -72,8 +72,8 @@ export type UseQueryBuilderSetup<
     GetOptionIdentifierType<F>
   >;
   combinators:
-    | WithUnknownIndex<BaseOption<string> & FullOption>[]
-    | OptionGroup<WithUnknownIndex<BaseOption<string> & FullOption>>[];
+    | WithUnknownIndex<BaseOption & FullOption>[]
+    | OptionGroup<WithUnknownIndex<BaseOption & FullOption>>[];
   getRuleDefaultValue: <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
     r: RT
   ) => any; // oxlint-disable-line typescript/no-explicit-any

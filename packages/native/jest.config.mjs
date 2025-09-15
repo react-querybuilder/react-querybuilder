@@ -11,7 +11,7 @@ export default {
   globals,
   setupFilesAfterEnv: ['./jestSetup.ts'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|react-redux|@react-native(-community|-picker)?)/)',
+    'node_modules/(?!((jest-)?react-native|immer|react-redux|@react-native(-community|-picker)?)/)',
   ],
   moduleNameMapper,
 };

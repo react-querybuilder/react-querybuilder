@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.2.5).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.1).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -658,7 +658,7 @@ fieldset:disabled .mantine-active:active {
 }
 
 .m_d57069b5:where([data-autosize]) .m_b1336c6 {
-  width: min-content;
+  min-width: min-content;
 }
 
 .m_c0783ff9 {
@@ -1485,6 +1485,10 @@ fieldset:disabled .mantine-active:active {
   --input-padding-inline-end: var(--input-right-section-size);
 }
 
+.m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
+  --input-padding-inline-end: calc(var(--input-right-section-size) * 1.55);
+}
+
 [data-mantine-color-scheme='light'] .m_6c018570[data-variant='default'] {
   --input-bd: var(--mantine-color-gray-4);
   --input-bg: var(--mantine-color-white);
@@ -1553,7 +1557,7 @@ fieldset:disabled .mantine-active:active {
   height: var(--input-size);
   min-height: var(--input-height);
   line-height: var(--input-line-height);
-  font-size: var(--input-fz, var(--input-fz, var(--mantine-font-size-sm)));
+  font-size: var(--_input-fz, var(--input-fz, var(--mantine-font-size-md)));
   border-radius: var(--input-radius);
   padding-inline-start: var(--input-padding-inline-start);
   padding-inline-end: var(--input-padding-inline-end);
@@ -1573,9 +1577,7 @@ fieldset:disabled .mantine-active:active {
 
 .m_8fb7ebe7[data-monospace] {
   --input-font-family: var(--mantine-font-family-monospace);
-  --input-fz: calc(
-    var(--input-fz, var(--mantine-font-size-sm)) - calc(0.125rem * var(--mantine-scale))
-  );
+  --_input-fz: calc(var(--input-fz) - calc(0.125rem * var(--mantine-scale)));
 }
 
 .m_8fb7ebe7:focus,
@@ -1651,6 +1653,10 @@ fieldset:disabled .mantine-active:active {
   --section-border-radius: var(--right-section-border-radius);
 }
 
+.m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
+  --section-size: calc(var(--input-right-section-size) * 1.55);
+}
+
 .m_82577fc2[data-position='left'] {
   --section-pointer-events: var(--input-left-section-pointer-events);
   --section-start: var(--left-section-start);
@@ -1674,7 +1680,7 @@ fieldset:disabled .mantine-active:active {
 .m_8fdc1311 {
   display: inline-block;
   font-weight: 500;
-  word-break: break-word;
+  overflow-wrap: break-word;
   cursor: default;
   -webkit-tap-highlight-color: transparent;
   font-size: var(--input-label-size, var(--mantine-font-size-sm));
@@ -1739,7 +1745,7 @@ fieldset:disabled .mantine-active:active {
 }
 
 .m_df78851f {
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .m_4ba554d4 {
@@ -2412,7 +2418,7 @@ fieldset:disabled .mantine-active:active {
   background-color: transparent;
   color: inherit;
   cursor: pointer;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .m_92253aa5:where([data-combobox-selected]) {
@@ -3952,6 +3958,10 @@ fieldset:disabled .m_8ee546b8,
   flex-wrap: wrap;
 }
 
+.m_5711e686:only-child {
+  margin-top: 0;
+}
+
 .m_202a296e {
   --cp-thumb-size-xs: calc(0.5rem * var(--mantine-scale));
   --cp-thumb-size-sm: calc(0.75rem * var(--mantine-scale));
@@ -5298,6 +5308,16 @@ fieldset:disabled .m_8ee546b8,
   }
 }
 
+@keyframes m_e0fb7a86 {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 calc(2.5rem * var(--mantine-scale));
+  }
+}
+
 .m_db6d6462 {
   --progress-radius: var(--mantine-radius-default);
   --progress-size: var(--progress-size-md);
@@ -5323,10 +5343,16 @@ fieldset:disabled .m_8ee546b8,
   background-color: var(--mantine-color-dark-4);
 }
 
+.m_db6d6462:where([data-orientation='vertical']) {
+  height: auto;
+  width: var(--progress-size);
+  flex-direction: column-reverse;
+}
+
 .m_2242eb65 {
   background-color: var(--progress-section-color);
   height: 100%;
-  width: var(--progress-section-width);
+  width: var(--progress-section-size);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5364,6 +5390,41 @@ fieldset:disabled .m_8ee546b8,
   border-end-start-radius: var(--progress-radius);
 }
 
+.m_db6d6462:where([data-orientation='vertical']) .m_2242eb65 {
+  width: 100%;
+  height: var(--progress-section-size);
+  transition: height var(--progress-transition-duration, 100ms) ease;
+}
+
+.m_db6d6462:where([data-orientation='vertical']) .m_2242eb65:where([data-striped]) {
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+.m_db6d6462:where([data-orientation='vertical']) .m_2242eb65:where([data-animated]) {
+  animation: m_e0fb7a86 1s linear infinite;
+}
+
+.m_db6d6462:where([data-orientation='vertical']) .m_2242eb65:where(:last-of-type) {
+  border-radius: 0;
+  border-start-start-radius: var(--progress-radius);
+  border-start-end-radius: var(--progress-radius);
+}
+
+.m_db6d6462:where([data-orientation='vertical']) .m_2242eb65:where(:first-of-type) {
+  border-radius: 0;
+  border-end-start-radius: var(--progress-radius);
+  border-end-end-radius: var(--progress-radius);
+}
+
 .m_91e40b74 {
   color: var(--progress-label-color, var(--mantine-color-white));
   font-weight: bold;
@@ -5374,6 +5435,10 @@ fieldset:disabled .m_8ee546b8,
   font-size: min(calc(var(--progress-size) * 0.65), calc(1.125rem * var(--mantine-scale)));
   line-height: 1;
   padding-inline: calc(0.25rem * var(--mantine-scale));
+}
+
+.m_db6d6462:where([data-orientation='vertical']) .m_91e40b74 {
+  writing-mode: vertical-rl;
 }
 
 .m_9dc8ae12 {

@@ -30,7 +30,7 @@ export const FluentNotToggle = ({
   <Switch
     {...otherProps}
     data-testid={testID}
-    label={`${label}`}
+    label={`${label as string}`}
     className={className}
     title={title}
     disabled={disabled}

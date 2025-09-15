@@ -8,7 +8,10 @@ import { getOption } from '../optGroupUtils';
  *
  * @group Export
  */
-export const defaultRuleGroupProcessorJSONata: RuleGroupProcessor = (ruleGroup, options) => {
+export const defaultRuleGroupProcessorJSONata: RuleGroupProcessor<string> = (
+  ruleGroup,
+  options
+) => {
   const {
     fields,
     fallbackExpression,
