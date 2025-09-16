@@ -73,8 +73,7 @@
 */
 var sqlParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,8],$V1=[1,4],$V2=[2,4],$V3=[1,11],$V4=[1,10],$V5=[2,16],$V6=[1,14],$V7=[1,15],$V8=[1,16],$V9=[6,8],$Va=[2,148],$Vb=[1,19],$Vc=[1,20],$Vd=[16,33,35,36,37,38,39,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Ve=[16,18,32,33,35,36,37,38,39,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Vf=[2,162],$Vg=[1,29],$Vh=[6,8,14,17,146,150,152,154],$Vi=[1,42],$Vj=[1,61],$Vk=[1,53],$Vl=[1,60],$Vm=[1,62],$Vn=[1,63],$Vo=[1,64],$Vp=[1,65],$Vq=[1,66],$Vr=[1,59],$Vs=[1,54],$Vt=[1,55],$Vu=[1,56],$Vv=[1,57],$Vw=[1,58],$Vx=[1,43],$Vy=[1,44],$Vz=[1,45],$VA=[1,47],$VB=[1,34],$VC=[1,67],$VD=[16,35,36,37,38,39,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$VE=[6,8,14,17,150,152,154],$VF=[2,145],$VG=[1,76],$VH=[1,77],$VI=[6,8,14,17,43,133,138,144,146,150,152,154],$VJ=[1,80],$VK=[1,79],$VL=[1,81],$VM=[6,8,14,17,36,43,51,52,53,71,72,74,77,89,109,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$VN=[6,8,14,17,34,36,43,51,52,53,71,72,74,77,89,109,114,115,116,117,118,119,123,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$VO=[1,102],$VP=[1,100],$VQ=[1,101],$VR=[1,96],$VS=[1,97],$VT=[1,98],$VU=[1,99],$VV=[1,103],$VW=[1,104],$VX=[1,105],$VY=[1,106],$VZ=[1,107],$V_=[1,108],$V$=[2,107],$V01=[6,8,14,17,34,36,43,45,51,52,53,71,72,74,77,79,81,89,93,94,95,96,97,98,99,100,101,103,107,108,109,110,111,112,114,115,116,117,118,119,123,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$V11=[6,8,14,17,34,36,43,45,51,52,53,71,72,74,77,79,81,89,93,94,95,96,97,98,99,100,101,103,105,107,108,109,110,111,112,114,115,116,117,118,119,123,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$V21=[2,82],$V31=[1,110],$V41=[1,109],$V51=[1,117],$V61=[2,65],$V71=[1,119],$V81=[16,35,37,38,39,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$V91=[16,29,35,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,121,195],$Va1=[1,162],$Vb1=[1,164],$Vc1=[17,43],$Vd1=[6,8,14,16,17,34,35,36,43,45,50,51,52,53,56,57,59,60,62,71,72,74,76,77,79,81,82,83,84,86,87,88,89,90,91,93,94,95,96,97,98,99,100,101,103,105,107,108,109,110,111,112,114,115,116,117,118,119,123,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182,192,193,194,195],$Ve1=[2,60],$Vf1=[1,174],$Vg1=[1,172],$Vh1=[6,8,138,146],$Vi1=[16,35,38,39,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Vj1=[6,8,14,17,138,144,146,150,152,154],$Vk1=[6,8,14,17,36,43,51,52,53,71,72,74,77,89,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$Vl1=[6,8,14,17,34,36,43,51,52,53,71,72,74,77,89,93,94,95,96,101,103,107,108,109,110,111,112,114,115,116,117,118,119,123,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$Vm1=[6,8,14,17,34,36,43,51,52,53,71,72,74,77,79,81,89,93,94,95,96,101,103,107,108,109,110,111,112,114,115,116,117,118,119,123,126,127,129,133,135,138,141,142,144,146,150,152,154,157,164,165,167,168,173,177,179,180,182],$Vn1=[16,35,39,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Vo1=[16,35,40,41,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Vp1=[6,8,14,17,43,157],$Vq1=[16,35,42,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Vr1=[71,74,77],$Vs1=[16,35,45,52,53,56,57,59,60,62,76,79,81,82,83,84,86,87,88,91,103,195],$Vt1=[1,239],$Vu1=[6,8,14,17],$Vv1=[1,257],$Vw1=[1,253],$Vx1=[2,199],$Vy1=[1,261],$Vz1=[1,262],$VA1=[6,8,14,17,43,129,135,138,144,146,150,152,154,182],$VB1=[1,264],$VC1=[1,267],$VD1=[1,268],$VE1=[1,269],$VF1=[1,270],$VG1=[2,176],$VH1=[1,266],$VI1=[6,8,14,17,36,43,89,129,135,138,144,146,150,152,154,164,165,167,168,173,177,179,180,182],$VJ1=[6,8,14,17,135,138,144,146,150,152,154],$VK1=[1,282],$VL1=[2,181],$VM1=[170,173],$VN1=[6,8,14,17,36,43,89,129,135,138,144,146,150,152,154,164,165,167,168,173,177,179,180,182,192,193,194],$VO1=[2,201],$VP1=[1,287],$VQ1=[1,299],$VR1=[1,307],$VS1=[1,308],$VT1=[1,309],$VU1=[6,8,14,17,138,146,150,152,154],$VV1=[1,319],$VW1=[1,325],$VX1=[1,326],$VY1=[2,206],$VZ1=[1,337],$V_1=[16,152],$V$1=[6,8,14,17,152,154],$V02=[1,353];
-var parser = {trace: function trace() {
-    },
+var parser = {trace: function trace() {},
 yy: {},
 symbols_: {"error":2,"main":3,"selectClause":4,"semicolonOpt":5,"EOF":6,"unionClause":7,";":8,"unionClauseNotParenthesized":9,"unionClauseParenthesized":10,"order_by_opt":11,"limit_opt":12,"selectClauseParenthesized":13,"UNION":14,"distinctOpt":15,"(":16,")":17,"SELECT":18,"highPriorityOpt":19,"maxStateMentTimeOpt":20,"straightJoinOpt":21,"sqlSmallResultOpt":22,"sqlBigResultOpt":23,"sqlBufferResultOpt":24,"sqlCacheOpt":25,"sqlCalcFoundRowsOpt":26,"selectExprList":27,"selectDataSetOpt":28,"ALL":29,"DISTINCT":30,"DISTINCTROW":31,"HIGH_PRIORITY":32,"MAX_STATEMENT_TIME":33,"=":34,"NUMERIC":35,"STRAIGHT_JOIN":36,"SQL_SMALL_RESULT":37,"SQL_BIG_RESULT":38,"SQL_BUFFER_RESULT":39,"SQL_CACHE":40,"SQL_NO_CACHE":41,"SQL_CALC_FOUND_ROWS":42,",":43,"selectExpr":44,"*":45,"selectExprStar":46,"expr":47,"selectExprAliasOpt":48,"identifier":49,"DOT":50,"AS":51,"IDENTIFIER":52,"STRING":53,"string":54,"number":55,"EXPONENT_NUMERIC":56,"HEX_NUMERIC":57,"boolean":58,"TRUE":59,"FALSE":60,"null":61,"NULL":62,"literal":63,"place_holder":64,"function_call":65,"function_call_param_list":66,"function_call_param":67,"identifier_list":68,"case_expr_opt":69,"when_then_list":70,"WHEN":71,"THEN":72,"case_when_else":73,"ELSE":74,"case_when":75,"CASE":76,"END":77,"simple_expr_prefix":78,"+":79,"simple_expr":80,"-":81,"~":82,"!":83,"BINARY":84,"expr_list":85,"ROW":86,"EXISTS":87,"{":88,"}":89,"||":90,"WILDCARD":91,"bit_expr":92,"|":93,"&":94,"<<":95,">>":96,"/":97,"DIV":98,"MOD":99,"%":100,"^":101,"not_opt":102,"NOT":103,"escape_opt":104,"ESCAPE":105,"predicate":106,"IN":107,"BETWEEN":108,"AND":109,"SOUNDS":110,"LIKE":111,"REGEXP":112,"comparison_operator":113,">=":114,">":115,"<=":116,"<":117,"<>":118,"!=":119,"sub_query_data_set_opt":120,"ANY":121,"boolean_primary":122,"IS":123,"boolean_extra":124,"UNKNOWN":125,"OR":126,"XOR":127,"where_opt":128,"WHERE":129,"group_by_opt":130,"group_by":131,"roll_up_opt":132,"WITH":133,"ROLLUP":134,"GROUP_BY":135,"group_by_order_by_item_list":136,"order_by":137,"ORDER_BY":138,"group_by_order_by_item":139,"sort_opt":140,"ASC":141,"DESC":142,"having_opt":143,"HAVING":144,"limit":145,"LIMIT":146,"OFFSET":147,"procedure_opt":148,"procedure":149,"PROCEDURE":150,"for_update_lock_in_share_mode_opt":151,"FOR":152,"UPDATE":153,"LOCK":154,"SHARE":155,"MODE":156,"FROM":157,"table_references":158,"partitionOpt":159,"escaped_table_reference":160,"table_reference":161,"OJ":162,"join_inner_cross":163,"INNER":164,"CROSS":165,"left_right":166,"LEFT":167,"RIGHT":168,"out_opt":169,"OUTER":170,"left_right_out_opt":171,"join_table":172,"JOIN":173,"table_factor":174,"join_condition":175,"on_join_condition":176,"NATURAL":177,"join_condition_opt":178,"ON":179,"USING":180,"partition_names":181,"PARTITION":182,"aliasOpt":183,"index_or_key":184,"INDEX":185,"KEY":186,"for_opt":187,"identifier_list_opt":188,"index_hint_list_opt":189,"index_hint_list":190,"index_hint":191,"USE":192,"IGNORE":193,"FORCE":194,"PLACE_HOLDER":195,"$accept":0,"$end":1},
 terminals_: {2:"error",6:"EOF",8:";",14:"UNION",16:"(",17:")",18:"SELECT",29:"ALL",30:"DISTINCT",31:"DISTINCTROW",32:"HIGH_PRIORITY",33:"MAX_STATEMENT_TIME",34:"=",35:"NUMERIC",36:"STRAIGHT_JOIN",37:"SQL_SMALL_RESULT",38:"SQL_BIG_RESULT",39:"SQL_BUFFER_RESULT",40:"SQL_CACHE",41:"SQL_NO_CACHE",42:"SQL_CALC_FOUND_ROWS",43:",",45:"*",50:"DOT",51:"AS",52:"IDENTIFIER",53:"STRING",56:"EXPONENT_NUMERIC",57:"HEX_NUMERIC",59:"TRUE",60:"FALSE",62:"NULL",71:"WHEN",72:"THEN",74:"ELSE",76:"CASE",77:"END",79:"+",81:"-",82:"~",83:"!",84:"BINARY",86:"ROW",87:"EXISTS",88:"{",89:"}",90:"||",91:"WILDCARD",93:"|",94:"&",95:"<<",96:">>",97:"/",98:"DIV",99:"MOD",100:"%",101:"^",103:"NOT",105:"ESCAPE",107:"IN",108:"BETWEEN",109:"AND",110:"SOUNDS",111:"LIKE",112:"REGEXP",114:">=",115:">",116:"<=",117:"<",118:"<>",119:"!=",121:"ANY",123:"IS",125:"UNKNOWN",126:"OR",127:"XOR",129:"WHERE",133:"WITH",134:"ROLLUP",135:"GROUP_BY",138:"ORDER_BY",141:"ASC",142:"DESC",144:"HAVING",146:"LIMIT",147:"OFFSET",150:"PROCEDURE",152:"FOR",153:"UPDATE",154:"LOCK",155:"SHARE",156:"MODE",157:"FROM",162:"OJ",164:"INNER",165:"CROSS",167:"LEFT",168:"RIGHT",170:"OUTER",173:"JOIN",177:"NATURAL",179:"ON",180:"USING",182:"PARTITION",185:"INDEX",186:"KEY",192:"USE",193:"IGNORE",194:"FORCE",195:"PLACE_HOLDER"},
@@ -439,7 +438,7 @@ parseError: function parseError(str, hash) {
       if (hash.recoverable)
         this.trace(str);
       else {
-        var error = new Error(str);
+        var error = Error(str);
         error.hash = hash;
         throw error;
       }
@@ -452,7 +451,7 @@ parse: function parse(input) {
   lexer.setInput(input, sharedState.yy);
   sharedState.yy.lexer = lexer;
   sharedState.yy.parser = this;
-  if (typeof lexer.yylloc == "undefined")
+  if (typeof lexer.yylloc > "u")
     lexer.yylloc = {};
   var yyloc = lexer.yylloc;
   lstack.push(yyloc);
@@ -478,11 +477,11 @@ parse: function parse(input) {
     if (this.defaultActions[state])
       action = this.defaultActions[state];
     else {
-      if (symbol === null || typeof symbol == "undefined")
+      if (symbol === null || typeof symbol > "u")
         symbol = lex();
       action = table[state] && table[state][symbol];
     }
-    if (typeof action === "undefined" || !action.length || !action[0]) {
+    if (typeof action > "u" || !action.length || !action[0]) {
       let locateNearestErrorRecoveryRule = function(state) {
         var stack_probe = stack.length - 1, depth = 0;
         for (;; ) {
@@ -520,7 +519,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
         error_rule_depth = locateNearestErrorRecoveryRule(state);
       if (recovering == 3) {
         if (symbol === EOF || preErrorSymbol === EOF)
-          throw new Error(errStr || "Parsing halted while starting to recover from another error.");
+          throw Error(errStr || "Parsing halted while starting to recover from another error.");
         yyleng = lexer.yyleng;
         yytext = lexer.yytext;
         yylineno = lexer.yylineno;
@@ -528,7 +527,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
         symbol = lex();
       }
       if (error_rule_depth === !1)
-        throw new Error(errStr || "Parsing halted. No suitable error recovery rule available.");
+        throw Error(errStr || "Parsing halted. No suitable error recovery rule available.");
       popStack(error_rule_depth);
       preErrorSymbol = symbol == TERROR ? null : symbol;
       symbol = TERROR;
@@ -537,7 +536,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
       recovering = 3;
     }
     if (action[0] instanceof Array && action.length > 1)
-      throw new Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
+      throw Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
     switch (action[0]) {
       case 1:
         stack.push(symbol);
@@ -569,7 +568,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
         if (ranges)
           yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
         r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
-        if (typeof r !== "undefined")
+        if (typeof r < "u")
           return r;
         if (len) {
           stack = stack.slice(0, -1 * len * 2);
@@ -598,7 +597,7 @@ parseError:function parseError(str, hash) {
       if (this.yy.parser)
         this.yy.parser.parseError(str, hash);
       else
-        throw new Error(str);
+        throw Error(str);
     },
 
 // resets the lexer, sets new input
@@ -706,7 +705,7 @@ upcomingInput:function() {
 
 // displays the character position where the lexing error occurred, i.e. for error messages
 showPosition:function() {
-      var pre = this.pastInput(), c = new Array(pre.length + 1).join("-");
+      var pre = this.pastInput(), c = Array(pre.length + 1).join("-");
       return pre + this.upcomingInput() + `
 ` + c + "^";
     },

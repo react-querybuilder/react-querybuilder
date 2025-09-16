@@ -109,7 +109,6 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.5.2",
     "@types/hoist-non-react-statics": "^3.3.7",
-    "@types/jscodeshift": "^17.3.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.4.0",
     "@types/react": "^19.1.13",
@@ -117,7 +116,6 @@
     "@vitejs/plugin-react": "^5.0.2",
     "babel-plugin-istanbul": "^7.0.1",
     "drizzle-orm": "^0.44.5",
-    "jscodeshift": "^17.3.0",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "mongodb-memory-server-core": "^10.2.0",
@@ -166,10 +164,6 @@
     "build:main": "bun --bun tsdown",
     "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "tsc --noEmit --watch",
-    "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",
-    "generate:sqlparser": "bunx --bun jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate:celparser": "bunx --bun jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:parsers-codemod": "bunx --bun jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL/cel,SQL/sql}Parser.js"
+    "typecheck:watch": "tsc --noEmit --watch"
   }
 }

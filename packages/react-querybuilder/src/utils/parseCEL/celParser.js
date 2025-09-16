@@ -73,8 +73,7 @@
 */
 var celParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,27],$V1=[1,31],$V2=[1,32],$V3=[1,28],$V4=[1,29],$V5=[1,30],$V6=[1,33],$V7=[1,34],$V8=[1,18],$V9=[1,26],$Va=[1,12],$Vb=[1,13],$Vc=[1,19],$Vd=[1,20],$Ve=[1,40],$Vf=[1,39],$Vg=[1,41],$Vh=[1,42],$Vi=[1,43],$Vj=[1,36],$Vk=[1,37],$Vl=[1,38],$Vm=[5,37,43,45,49,50,53,54,55,56,60,61,62,63],$Vn=[1,44],$Vo=[1,45],$Vp=[1,46],$Vq=[5,23,24,25,26,27,28,31,37,40,43,44,45,46,49,50,53,54,55,56,60,61,62,63],$Vr=[7,9,10,12,13,14,16,18,21,35,40,41,44,46],$Vs=[2,36],$Vt=[1,85],$Vu=[43,45,50],$Vv=[5,37,43,45,49,50,53,61,62,63],$Vw=[5,37,43,45,49,50,53,54,55,56,61,62,63],$Vx=[2,37],$Vy=[49,50];
-var parser = {trace: function trace() {
-    },
+var parser = {trace: function trace() {},
 yy: {},
 symbols_: {"error":2,"main":3,"expr":4,"EOF":5,"string_literal":6,"STRING_LIT":7,"bytes_literal":8,"b":9,"B":10,"number_literal":11,"INT_LIT":12,"UINT_LIT":13,"FLOAT_LIT":14,"boolean_literal":15,"BOOL_LIT":16,"null_literal":17,"NULL_LIT":18,"literal":19,"ident":20,"IDENT":21,"relop":22,"==":23,">=":24,">":25,"<=":26,"<":27,"!=":28,"relation":29,"member":30,"in":31,"list":32,"map":33,"negation":34,"!":35,"negative":36,"-":37,"unary":38,"primary":39,"DOT":40,"(":41,"expr_list":42,")":43,"[":44,"]":45,"{":46,"field_inits":47,"trailing_comma":48,"}":49,",":50,"map_inits":51,"math_operation":52,"+":53,"*":54,"/":55,"%":56,"conditional_expr":57,"conditional_and":58,"conditional_or":59,"?":60,":":61,"&&":62,"||":63,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",7:"STRING_LIT",9:"b",10:"B",12:"INT_LIT",13:"UINT_LIT",14:"FLOAT_LIT",16:"BOOL_LIT",18:"NULL_LIT",21:"IDENT",23:"==",24:">=",25:">",26:"<=",27:"<",28:"!=",31:"in",35:"!",37:"-",40:"DOT",41:"(",43:")",44:"[",45:"]",46:"{",49:"}",50:",",53:"+",54:"*",55:"/",56:"%",60:"?",61:":",62:"&&",63:"||"},
@@ -215,7 +214,7 @@ parseError: function parseError(str, hash) {
       if (hash.recoverable)
         this.trace(str);
       else {
-        var error = new Error(str);
+        var error = Error(str);
         error.hash = hash;
         throw error;
       }
@@ -228,7 +227,7 @@ parse: function parse(input) {
   lexer.setInput(input, sharedState.yy);
   sharedState.yy.lexer = lexer;
   sharedState.yy.parser = this;
-  if (typeof lexer.yylloc == "undefined")
+  if (typeof lexer.yylloc > "u")
     lexer.yylloc = {};
   var yyloc = lexer.yylloc;
   lstack.push(yyloc);
@@ -254,11 +253,11 @@ parse: function parse(input) {
     if (this.defaultActions[state])
       action = this.defaultActions[state];
     else {
-      if (symbol === null || typeof symbol == "undefined")
+      if (symbol === null || typeof symbol > "u")
         symbol = lex();
       action = table[state] && table[state][symbol];
     }
-    if (typeof action === "undefined" || !action.length || !action[0]) {
+    if (typeof action > "u" || !action.length || !action[0]) {
       let locateNearestErrorRecoveryRule = function(state) {
         var stack_probe = stack.length - 1, depth = 0;
         for (;; ) {
@@ -296,7 +295,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
         error_rule_depth = locateNearestErrorRecoveryRule(state);
       if (recovering == 3) {
         if (symbol === EOF || preErrorSymbol === EOF)
-          throw new Error(errStr || "Parsing halted while starting to recover from another error.");
+          throw Error(errStr || "Parsing halted while starting to recover from another error.");
         yyleng = lexer.yyleng;
         yytext = lexer.yytext;
         yylineno = lexer.yylineno;
@@ -304,7 +303,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
         symbol = lex();
       }
       if (error_rule_depth === !1)
-        throw new Error(errStr || "Parsing halted. No suitable error recovery rule available.");
+        throw Error(errStr || "Parsing halted. No suitable error recovery rule available.");
       popStack(error_rule_depth);
       preErrorSymbol = symbol == TERROR ? null : symbol;
       symbol = TERROR;
@@ -313,7 +312,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
       recovering = 3;
     }
     if (action[0] instanceof Array && action.length > 1)
-      throw new Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
+      throw Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
     switch (action[0]) {
       case 1:
         stack.push(symbol);
@@ -345,7 +344,7 @@ Expecting ` + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symb
         if (ranges)
           yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
         r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
-        if (typeof r !== "undefined")
+        if (typeof r < "u")
           return r;
         if (len) {
           stack = stack.slice(0, -1 * len * 2);
@@ -374,7 +373,7 @@ parseError:function parseError(str, hash) {
       if (this.yy.parser)
         this.yy.parser.parseError(str, hash);
       else
-        throw new Error(str);
+        throw Error(str);
     },
 
 // resets the lexer, sets new input
@@ -482,7 +481,7 @@ upcomingInput:function() {
 
 // displays the character position where the lexing error occurred, i.e. for error messages
 showPosition:function() {
-      var pre = this.pastInput(), c = new Array(pre.length + 1).join("-");
+      var pre = this.pastInput(), c = Array(pre.length + 1).join("-");
       return pre + this.upcomingInput() + `
 ` + c + "^";
     },
