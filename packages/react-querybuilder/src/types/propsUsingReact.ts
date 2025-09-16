@@ -208,7 +208,7 @@ export interface ValueSourceSelectorProps
 //   Partial<OperatorSelectorProps>,
 //   Partial<CombinatorSelectorProps> {}
 export type VersatileSelectorProps = ValueSelectorProps &
-  Partial<FieldSelectorProps<FullField>> &
+  Partial<FieldSelectorProps> &
   Partial<OperatorSelectorProps> &
   Partial<CombinatorSelectorProps>;
 

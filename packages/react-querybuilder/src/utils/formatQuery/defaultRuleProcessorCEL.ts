@@ -12,10 +12,9 @@ import { processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
-const escapeDoubleQuotes = (
-  v: string | number | boolean | object | null,
-  escapeQuotes?: boolean
-) => (typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`"`, `\\"`));
+// oxlint-disable-next-line no-explicit-any
+const escapeDoubleQuotes = (v: any, escapeQuotes?: boolean) =>
+  typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`);
 
 /**
  * Default rule processor used by {@link formatQuery} for "cel" format.

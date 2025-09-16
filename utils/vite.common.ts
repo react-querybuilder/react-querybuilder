@@ -9,7 +9,7 @@ const rqbSrc = '../react-querybuilder/src';
 export const getCommonViteConfig = ({
   port = 3100,
   scopedDonut = true,
-}: { port?: number; scopedDonut?: boolean } = {}) =>
+}: { port?: number; scopedDonut?: boolean } = {}): UserConfig =>
   defineConfig({
     plugins: [vitePluginReact()],
     resolve: {
@@ -30,4 +30,4 @@ export const getCommonViteConfig = ({
       postcss: { plugins: scopedDonut ? [postcssScopedDonut] : [] },
     },
     server: { port },
-  }) satisfies UserConfig as UserConfig;
+  });

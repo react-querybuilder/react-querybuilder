@@ -11,56 +11,56 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/types-esm/index.d.mts",
+        "types": "./dist/react-querybuilder_datetime.d.mts",
         "default": "./dist/react-querybuilder_datetime.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     },
     "./date-fns": {
       "import": {
-        "types": "./dist/types-esm/index.date-fns.d.mts",
+        "types": "./dist/react-querybuilder_datetime.date-fns.d.mts",
         "default": "./dist/react-querybuilder_datetime.date-fns.mjs"
       },
       "require": {
-        "types": "./dist/types/index.date-fns.d.ts",
+        "types": "./dist/cjs/date-fns.d.ts",
         "default": "./dist/cjs/date-fns.js"
       }
     },
     "./dayjs": {
       "import": {
-        "types": "./dist/types-esm/index.dayjs.d.mts",
+        "types": "./dist/react-querybuilder_datetime.dayjs.d.mts",
         "default": "./dist/react-querybuilder_datetime.dayjs.mjs"
       },
       "require": {
-        "types": "./dist/types/index.dayjs.d.ts",
+        "types": "./dist/cjs/dayjs.d.ts",
         "default": "./dist/cjs/dayjs.js"
       }
     },
     "./jsdate": {
       "import": {
-        "types": "./dist/types-esm/index.jsdate.d.mts",
+        "types": "./dist/react-querybuilder_datetime.jsdate.d.mts",
         "default": "./dist/react-querybuilder_datetime.jsdate.mjs"
       },
       "require": {
-        "types": "./dist/types/index.jsdate.d.ts",
+        "types": "./dist/cjs/jsdate.d.ts",
         "default": "./dist/cjs/jsdate.js"
       }
     },
     "./luxon": {
       "import": {
-        "types": "./dist/types-esm/index.luxon.d.mts",
+        "types": "./dist/react-querybuilder_datetime.luxon.d.mts",
         "default": "./dist/react-querybuilder_datetime.luxon.mjs"
       },
       "require": {
-        "types": "./dist/types/index.luxon.d.ts",
+        "types": "./dist/cjs/luxon.d.ts",
         "default": "./dist/cjs/luxon.js"
       }
     }
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder_datetime.legacy-esm.d.ts",
   "files": [
     "dist"
   ],
@@ -87,26 +87,26 @@
   },
   "devDependencies": {
     "@date-fns/tz": "^1.4.1",
-    "@electric-sql/pglite": "^0.3.7",
+    "@electric-sql/pglite": "^0.3.8",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.5.2",
     "@types/luxon": "^3.7.1",
-    "@types/react": "^19.1.12",
-    "@vitejs/plugin-react": "^5.0.1",
+    "@types/react": "^19.1.13",
+    "@vitejs/plugin-react": "^5.0.2",
     "date-fns": "^4.1.0",
-    "dayjs": "^1.11.14",
+    "dayjs": "^1.11.18",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
-    "luxon": "^3.7.1",
+    "luxon": "^3.7.2",
     "mongodb-memory-server-core": "^10.2.0",
-    "mongoose": "^8.18.0",
+    "mongoose": "^8.18.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-querybuilder": "8.8.4",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
-    "vite": "^7.1.3"
+    "vite": "^7.1.5"
   },
   "peerDependencies": {
     "date-fns": "^4.1.0",

@@ -23,8 +23,7 @@ export interface PreparerOptions {
 export const prepareRule = (
   rule: RuleType,
   { idGenerator = generateID }: PreparerOptions = {}
-  // oxlint-disable-next-line typescript/no-explicit-any
-): RuleType<string, string, any, string> =>
+): RuleType =>
   produce(rule, draft => {
     if (!draft.id) {
       draft.id = idGenerator();

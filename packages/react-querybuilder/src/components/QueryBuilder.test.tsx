@@ -2982,10 +2982,10 @@ describe('match modes', () => {
     expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
     expect(screen.getAllByTestId(TestID.addRule)).toHaveLength(2);
 
-    await user.selectOptions(screen.getByDisplayValue('all')!, 'atLeast');
+    await user.selectOptions(screen.getByDisplayValue('all'), 'atLeast');
     expect(screen.getAllByDisplayValue('at least')).toHaveLength(1);
 
-    await user.type(screen.getByDisplayValue('1')!, '2', {
+    await user.type(screen.getByDisplayValue('1'), '2', {
       initialSelectionStart: 0,
       initialSelectionEnd: 2,
     });
@@ -3008,7 +3008,7 @@ describe('match modes', () => {
     expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
     expect(screen.getAllByTestId(TestID.addRule)).toHaveLength(2);
 
-    await user.selectOptions(screen.getByDisplayValue('all')!, 'atLeast');
+    await user.selectOptions(screen.getByDisplayValue('all'), 'atLeast');
     await user.click(screen.getAllByTestId(TestID.addRule).at(-1)!);
 
     expect(onQueryChange.mock.calls.at(-1)![0]).toEqual({
@@ -3033,13 +3033,13 @@ describe('match modes', () => {
       ],
     });
 
-    await user.type(screen.getByDisplayValue('1')!, '2', {
+    await user.type(screen.getByDisplayValue('1'), '2', {
       initialSelectionStart: 0,
       initialSelectionEnd: 2,
     });
     expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.threshold).toBe(2);
 
-    await user.selectOptions(screen.getByDisplayValue('at least')!, 'some');
+    await user.selectOptions(screen.getByDisplayValue('at least'), 'some');
     expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.mode).toBe('some');
 
     await user.click(screen.getAllByTestId(TestID.removeRule).at(-1)!);

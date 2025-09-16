@@ -259,7 +259,7 @@ INSERT INTO ${tableName ?? defaultTableName} (
   ${typeof user.powerUpAge === 'number' ? user.powerUpAge : 'NULL'}${
     includeNestedArrays
       ? `,
-  ARRAY[${user.nicknames.map(nn => `'${nn}'`)}]`
+  ARRAY[${user.nicknames.map(nn => `'${nn}'`).join(',')}]`
       : ``
   }
 )`;

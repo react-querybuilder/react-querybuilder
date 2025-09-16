@@ -305,7 +305,7 @@ function parseJsonLogic(
       if (logic.in[1].every(v => isRQBJsonLogicVar(v))) {
         valueSource = 'field';
         const fieldList = logic.in[1]
-          .map(el => el.var as string)
+          .map(el => el.var)
           .filter(sf => fieldIsValid(field, operator, sf));
         value = listsAsArrays ? fieldList : joinWith(fieldList, ',');
       } else {

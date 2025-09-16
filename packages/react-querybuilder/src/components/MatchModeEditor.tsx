@@ -4,7 +4,7 @@ import type { FullField, MatchMode, MatchModeEditorProps, Path, RuleType, Schema
 import { lc, parseNumber } from '../utils';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
-const requiresThreshold = (mm?: string | null | undefined) =>
+const requiresThreshold = (mm?: string | null) =>
   ['atleast', 'atmost', 'exactly'].includes(lc(mm) ?? /* istanbul ignore next */ '');
 const dummyPath: Path = [];
 

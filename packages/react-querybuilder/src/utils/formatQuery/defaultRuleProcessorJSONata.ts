@@ -12,10 +12,11 @@ import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './ut
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
-const quote = (v: string | number | boolean | object | null, escapeQuotes?: boolean) =>
-  `"${typeof v !== 'string' || !escapeQuotes ? v : v.replaceAll(`"`, `\\"`)}"`;
+// oxlint-disable-next-line no-explicit-any
+const quote = (v: any, escapeQuotes?: boolean) =>
+  `"${typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`)}"`;
 
-const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` : `${clause}`);
+const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` : clause);
 
 const escapeStringRegex = (s: string) =>
   `${s}`.replaceAll(/[/$()*+.?[\\\]^{|}]/g, String.raw`\$&`).replaceAll('-', String.raw`\x2d`);

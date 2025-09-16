@@ -459,8 +459,7 @@ function parseMongoDB(
     return prepare(emptyRuleGroup);
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  const result = processMongoDbQueryObject(mongoDbPOJO as Record<string, any>);
+  const result = processMongoDbQueryObject(mongoDbPOJO);
   const finalQuery: DefaultRuleGroupType = result
     ? isRuleGroupType(result)
       ? result

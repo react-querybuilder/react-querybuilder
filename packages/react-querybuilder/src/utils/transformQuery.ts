@@ -142,7 +142,7 @@ export interface TransformQueryOptions<RG extends RuleGroupTypeAny = RuleGroupTy
  */
 export function transformQuery(
   query: RuleGroupType,
-  options?: TransformQueryOptions<RuleGroupType>
+  options?: TransformQueryOptions
   // oxlint-disable-next-line typescript/no-explicit-any
 ): any;
 /**

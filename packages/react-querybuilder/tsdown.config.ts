@@ -7,7 +7,11 @@ export default defineConfig(async options => {
 
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];
-    bc.entry![`${entryKey}.debug`] = bc.entry![entryKey].replace('.ts', '.debug.ts');
+    // oxlint-disable-next-line no-explicit-any
+    (bc.entry as any)[`${entryKey}.debug`] = (bc.entry as any)[entryKey].replace(
+      '.ts',
+      '.debug.ts'
+    );
 
     if (bc === buildConfig.at(-1)) {
       const onSuccess = bc.onSuccess as () => Promise<void>;
@@ -37,18 +41,13 @@ export default defineConfig(async options => {
       entry: utilEntryPoints,
       sourcemap: true,
       platform: 'neutral',
-      dts: false,
       format: 'cjs',
       onSuccess: async () => {
         // Write /debug/package.json for node10 resolution
         await mkdir('debug', { recursive: true });
         await Bun.write(
           'debug/package.json',
-          JSON.stringify(
-            { main: '../dist/cjs/debug.js', types: '../dist/types/index.debug.d.ts' },
-            null,
-            2
-          )
+          JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
         );
         // Write the other {util}/package.json's for node10 resolution
         await Promise.all(
@@ -56,14 +55,7 @@ export default defineConfig(async options => {
             await mkdir(util, { recursive: true });
             await Bun.write(
               `${util}/package.json`,
-              JSON.stringify(
-                {
-                  main: `../dist/${util}.js`,
-                  types: `../dist/types/utils/${util}${util === 'transformQuery' ? '' : '/index'}.d.ts`,
-                },
-                null,
-                2
-              )
+              JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
             );
           })
         );

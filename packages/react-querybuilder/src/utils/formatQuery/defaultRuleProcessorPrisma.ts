@@ -4,11 +4,7 @@ import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { isValidValue, prismaOperators, processMatchMode, shouldRenderAsNumber } from './utils';
 
-const processNumber = <T>(
-  value: unknown,
-  fallback: T,
-  parseNumbers?: ParseNumbersPropConfig | undefined
-) =>
+const processNumber = <T>(value: unknown, fallback: T, parseNumbers?: ParseNumbersPropConfig) =>
   shouldRenderAsNumber(value, !!parseNumbers || typeof value === 'bigint')
     ? Number(parseNumber(value, { parseNumbers: !!parseNumbers }))
     : fallback;

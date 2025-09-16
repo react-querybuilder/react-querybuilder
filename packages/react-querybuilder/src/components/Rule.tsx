@@ -341,7 +341,7 @@ export const RuleComponents: React.MemoExoticComponent<
 });
 
 export const RuleWithSubQueryGroupComponentsWrapper = (
-  props: React.PropsWithChildren<unknown>
+  props: React.PropsWithChildren
 ): React.JSX.Element => <div {...props} />;
 
 export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
@@ -446,7 +446,7 @@ export interface UseRule extends RuleProps {
   validationResult: boolean | ValidationResult;
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
-  values: FlexibleOptionList<Option<string>>;
+  values: FlexibleOptionList<Option>;
   valueSourceOptions: ValueSourceFullOptions;
   valueSources: ValueSources;
 }

@@ -1,26 +1,37 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 
 if (ExecutionEnvironment.canUseDOM) {
-  // oxlint-disable-next-line consistent-function-scoping
-  const loadRqbUtils = async () => {
-    const { formatQuery } = await import('react-querybuilder/formatQuery');
-    globalThis.formatQuery = formatQuery;
-    const { parseCEL } = await import('react-querybuilder/parseCEL');
-    globalThis.parseCEL = parseCEL;
-    const { parseJSONata } = await import('react-querybuilder/parseJSONata');
-    globalThis.parseJSONata = parseJSONata;
-    const { parseJsonLogic } = await import('react-querybuilder/parseJsonLogic');
-    globalThis.parseJsonLogic = parseJsonLogic;
-    const { parseMongoDB } = await import('react-querybuilder/parseMongoDB');
-    globalThis.parseMongoDB = parseMongoDB;
-    const { parseSpEL } = await import('react-querybuilder/parseSpEL');
-    globalThis.parseSpEL = parseSpEL;
-    const { parseSQL } = await import('react-querybuilder/parseSQL');
-    globalThis.parseSQL = parseSQL;
-    const { transformQuery } = await import('react-querybuilder/transformQuery');
-    globalThis.transformQuery = transformQuery;
-    console.log(
-      `RQB utilities available in the console:
+  const [
+    formatQuery,
+    parseCEL,
+    parseJSONata,
+    parseJsonLogic,
+    parseMongoDB,
+    parseSpEL,
+    parseSQL,
+    transformQuery,
+  ] = await Promise.all([
+    import('react-querybuilder/formatQuery'),
+    import('react-querybuilder/parseCEL'),
+    import('react-querybuilder/parseJSONata'),
+    import('react-querybuilder/parseJsonLogic'),
+    import('react-querybuilder/parseMongoDB'),
+    import('react-querybuilder/parseSpEL'),
+    import('react-querybuilder/parseSQL'),
+    import('react-querybuilder/transformQuery'),
+  ]);
+  Object.assign(globalThis, {
+    formatQuery,
+    parseCEL,
+    parseJSONata,
+    parseJsonLogic,
+    parseMongoDB,
+    parseSpEL,
+    parseSQL,
+    transformQuery,
+  });
+  console.log(
+    `RQB utilities available in the console:
  • formatQuery
  • parseCEL
  • parseJSONata
@@ -29,8 +40,5 @@ if (ExecutionEnvironment.canUseDOM) {
  • parseSpEL
  • parseSQL
  • transformQuery`
-    );
-  };
-
-  loadRqbUtils();
+  );
 }

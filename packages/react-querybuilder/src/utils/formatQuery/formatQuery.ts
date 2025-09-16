@@ -451,7 +451,7 @@ function formatQuery(
     const validationResult = validator(ruleGroup);
     if (typeof validationResult === 'boolean') {
       // istanbul ignore else
-      if (validationResult === false) {
+      if (!validationResult) {
         return format === 'parameterized'
           ? { sql: fallbackExpression, params: [] }
           : format === 'parameterized_named'
@@ -480,7 +480,7 @@ function formatQuery(
   for (const f of uniqueFields) {
     // istanbul ignore else
     if (typeof f.validator === 'function') {
-      validatorMap[(f.value ?? /* istanbul ignore next */ f.name)!] = f.validator;
+      validatorMap[f.value ?? /* istanbul ignore next */ f.name] = f.validator;
     }
   }
 
