@@ -1,10 +1,11 @@
 generator client {
     provider        = "prisma-client-js"
+    runtime         = "bun"
     previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-    provider = "postgres"
+    provider = "postgresql"
     // Dummy value for url. Prisma will throw if a valid url is not provided.
     url      = "postgresql://localhost:5432/mydb"
 }
