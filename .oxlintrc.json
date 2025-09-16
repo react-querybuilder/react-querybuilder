@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
-  "ignorePatterns": ["**/*Parser.js", "**/type-fest/**"],
+  "ignorePatterns": ["**/*Parser.js", "**/type-fest/**", "examples/preact"],
   "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
   "categories": {
     "correctness": "error",

@@ -5,9 +5,6 @@
     "packages/*",
     "website"
   ],
-  "catalog": {
-    "typedoc": "0.28.13"
-  },
   "scripts": {
     "start": "bun --hot ./utils/devapp/server.ts",
     "start:antd": "bun run --filter @react-querybuilder/antd start",
