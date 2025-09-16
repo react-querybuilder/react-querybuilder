@@ -8,60 +8,60 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/types-esm/index.d.mts",
+        "types": "./dist/react-querybuilder.d.mts",
         "default": "./dist/react-querybuilder.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     },
     "./dist/*": "./dist/*",
     "./debug": {
       "import": {
-        "types": "./dist/types-esm/index.debug.d.mts",
+        "types": "./dist/react-querybuilder.debug.d.mts",
         "default": "./dist/react-querybuilder.debug.mjs"
       },
       "require": {
-        "types": "./dist/types/index.debug.d.ts",
+        "types": "./dist/cjs/debug.d.ts",
         "default": "./dist/cjs/debug.js"
       }
     },
     "./formatQuery": {
-      "types": "./dist/types/utils/formatQuery/index.d.ts",
+      "types": "./dist/formatQuery.d.ts",
       "default": "./dist/formatQuery.js"
     },
     "./parseCEL": {
-      "types": "./dist/types/utils/parseCEL/index.d.ts",
+      "types": "./dist/parseCEL.d.ts",
       "default": "./dist/parseCEL.js"
     },
     "./parseJSONata": {
-      "types": "./dist/types/utils/parseJSONata/index.d.ts",
+      "types": "./dist/parseJSONata.d.ts",
       "default": "./dist/parseJSONata.js"
     },
     "./parseJsonLogic": {
-      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
+      "types": "./dist/parseJsonLogic.d.ts",
       "default": "./dist/parseJsonLogic.js"
     },
     "./parseMongoDB": {
-      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
+      "types": "./dist/parseMongoDB.d.ts",
       "default": "./dist/parseMongoDB.js"
     },
     "./parseSpEL": {
-      "types": "./dist/types/utils/parseSpEL/index.d.ts",
+      "types": "./dist/parseSpEL.d.ts",
       "default": "./dist/parseSpEL.js"
     },
     "./parseSQL": {
-      "types": "./dist/types/utils/parseSQL/index.d.ts",
+      "types": "./dist/parseSQL.d.ts",
       "default": "./dist/parseSQL.js"
     },
     "./transformQuery": {
-      "types": "./dist/types/utils/transformQuery.d.ts",
+      "types": "./dist/transformQuery.d.ts",
       "default": "./dist/transformQuery.js"
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder.legacy-esm.d.ts",
   "files": [
     "dist",
     "formatQuery",

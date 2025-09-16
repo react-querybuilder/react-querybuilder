@@ -9,7 +9,6 @@
         "@babel/preset-env": "^7.28.3",
         "@babel/preset-react": "^7.27.1",
         "@babel/preset-typescript": "^7.27.1",
-        "@jakeboone02/generate-dts": "0.1.2",
         "@lerna-lite/cli": "^4.7.3",
         "@lerna-lite/publish": "^4.7.3",
         "@testing-library/dom": "^10.4.1",
@@ -1353,8 +1352,6 @@
     "@istanbuljs/load-nyc-config": ["@istanbuljs/load-nyc-config@1.1.0", "", { "dependencies": { "camelcase": "^5.3.1", "find-up": "^4.1.0", "get-package-type": "^0.1.0", "js-yaml": "^3.13.1", "resolve-from": "^5.0.0" } }, "sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ=="],
 
     "@istanbuljs/schema": ["@istanbuljs/schema@0.1.3", "", {}, "sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA=="],
-
-    "@jakeboone02/generate-dts": ["@jakeboone02/generate-dts@0.1.2", "", { "peerDependencies": { "oxc-transform": "^0.63.0" } }, "sha512-G5Jlzz5HiP5WpGkT5luZ2tU/dux/EzUL+0PoR1XmBlmUaAGin/tU0u0MmJUfJOf4VViIR+kQY1Vdd7PB1UplMA=="],
 
     "@jest/console": ["@jest/console@30.1.2", "", { "dependencies": { "@jest/types": "30.0.5", "@types/node": "*", "chalk": "^4.1.2", "jest-message-util": "30.1.0", "jest-util": "30.0.5", "slash": "^3.0.0" } }, "sha512-BGMAxj8VRmoD0MoA/jo9alMXSRoqW8KPeqOfEo1ncxnRLatTBCpRoOwlwlEMdudp68Q6WSGwYrrLtTGOh8fLzw=="],
 
