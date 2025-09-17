@@ -14,7 +14,7 @@ const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` 
 
 /**
  * Generates a rule processor with date/time features for use by
- * {@link react-querybuilder!index.formatQuery formatQuery} with the "jsonata" format.
+ * {@link @react-querybuilder/core!formatQuery formatQuery} with the "jsonata" format.
  */
 export const getDatetimeRuleProcessorJSONata =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
