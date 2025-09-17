@@ -1,11 +1,11 @@
 import type { Column, SQL, Table } from 'drizzle-orm';
 import { getOperators } from 'drizzle-orm';
-import type { RuleGroupProcessor } from 'react-querybuilder';
-import { defaultRuleGroupProcessorDrizzle } from 'react-querybuilder';
+import type { RuleGroupProcessor } from '@react-querybuilder/core';
+import { defaultRuleGroupProcessorDrizzle } from '@react-querybuilder/core';
 
 /**
- * Given a Drizzle table config, returns a {@link react-querybuilder!index.RuleGroupProcessor RuleGroupProcessor}
- * for use by {@link react-querybuilder!index.formatQuery formatQuery}.
+ * Given a Drizzle table config, returns a {@link @react-querybuilder/core!.RuleGroupProcessor RuleGroupProcessor}
+ * for use by {@link @react-querybuilder/core!.formatQuery formatQuery}.
  */
 export const generateDrizzleRuleGroupProcessor =
   (columns: Record<string, Column> | Table): RuleGroupProcessor<SQL | undefined> =>

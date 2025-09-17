@@ -14,6 +14,6 @@ export default {
     '^@react-querybuilder/core$': '<rootDir>/../../packages/core/src',
     '^@rqb-testing$': '<rootDir>/../../utils/testing',
     '^@rqb-dbquerytestutils$':
-      '<rootDir>/../../packages/react-querybuilder/src/utils/formatQuery/dbqueryTestUtils',
+      '<rootDir>/../../packages/core/src/utils/formatQuery/dbqueryTestUtils',
   },
 };

@@ -1,6 +1,6 @@
 import type { SuperUser, TestSQLParams } from '@rqb-dbquerytestutils';
 import { dbTests, fields } from '@rqb-dbquerytestutils';
-import type { DefaultOperatorName } from 'react-querybuilder';
+import type { DefaultOperatorName } from '@react-querybuilder/core';
 
 export * from '@rqb-dbquerytestutils';
 
