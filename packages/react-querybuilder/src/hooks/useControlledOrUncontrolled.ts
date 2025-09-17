@@ -1,6 +1,6 @@
+import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import { messages } from '../messages';
-import { useRQB_INTERNAL_QueryBuilderDispatch, rqbWarn } from '../redux/_internal';
-import type { RuleGroupTypeAny } from '../types';
+import { rqbWarn, useRQB_INTERNAL_QueryBuilderDispatch } from '../redux/_internal';
 import { usePrevious } from './usePrevious';
 
 export interface UseControlledOrUncontrolledParams {

@@ -161,6 +161,48 @@
         "react-icons",
       ],
     },
+    "packages/core": {
+      "name": "@react-querybuilder/core",
+      "version": "8.8.4",
+      "dependencies": {
+        "immer": "^10.1.3",
+        "numeric-quantity": "^2.1.0",
+      },
+      "devDependencies": {
+        "@babel/core": "^7.28.4",
+        "@babel/preset-env": "^7.28.3",
+        "@babel/preset-typescript": "^7.27.1",
+        "@electric-sql/pglite": "^0.3.8",
+        "@types/json-logic-js": "^2.0.8",
+        "@types/node": "^24.4.0",
+        "babel-plugin-istanbul": "^7.0.1",
+        "drizzle-orm": "^0.44.5",
+        "json-logic-js": "^2.0.5",
+        "jsonata": "^2.1.0",
+        "mongodb-memory-server-core": "^10.2.0",
+        "mongoose": "^8.18.1",
+        "pglite-prisma-adapter": "^0.6.1",
+        "prisma": "~6.14.0",
+        "query-string": "^9.3.0",
+        "regenerator-runtime": "^0.14.1",
+        "rollup-plugin-visualizer": "^6.0.3",
+        "sass": "^1.92.1",
+        "sequelize": "^6.37.7",
+        "spel2js": "^0.2.8",
+        "sqlite3": "^5.1.7",
+        "typescript": "^5.9.2",
+      },
+      "peerDependencies": {
+        "drizzle-orm": ">=0.38.0",
+        "json-logic-js": ">=2",
+        "sequelize": ">=6",
+      },
+      "optionalPeers": [
+        "drizzle-orm",
+        "json-logic-js",
+        "sequelize",
+      ],
+    },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
       "version": "8.8.4",
@@ -368,6 +410,7 @@
       "name": "react-querybuilder",
       "version": "8.8.4",
       "dependencies": {
+        "@react-querybuilder/core": "8.8.4",
         "@reduxjs/toolkit": "^2.9.0",
         "immer": "^10.1.3",
         "numeric-quantity": "^2.1.0",
@@ -475,6 +518,7 @@
         "@react-querybuilder/bootstrap": "workspace:*",
         "@react-querybuilder/bulma": "workspace:*",
         "@react-querybuilder/chakra": "workspace:*",
+        "@react-querybuilder/core": "workspace:*",
         "@react-querybuilder/datetime": "workspace:*",
         "@react-querybuilder/dnd": "workspace:*",
         "@react-querybuilder/fluent": "workspace:*",
@@ -1729,6 +1773,8 @@
     "@react-querybuilder/bulma": ["@react-querybuilder/bulma@workspace:packages/bulma"],
 
     "@react-querybuilder/chakra": ["@react-querybuilder/chakra@workspace:packages/chakra"],
+
+    "@react-querybuilder/core": ["@react-querybuilder/core@workspace:packages/core"],
 
     "@react-querybuilder/datetime": ["@react-querybuilder/datetime@workspace:packages/datetime"],
 
@@ -4842,7 +4888,7 @@
 
     "split-on-first": ["split-on-first@3.0.0", "", {}, "sha512-qxQJTx2ryR0Dw0ITYyekNQWpz6f8dGd7vffGNflQQ3Iqj9NJ6qiZ7ELpZsJ/QBhIVAiDfXdag3+Gp8RvWa62AA=="],
 
-    "sprintf-js": ["sprintf-js@1.1.3", "", {}, "sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA=="],
+    "sprintf-js": ["sprintf-js@1.0.3", "", {}, "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="],
 
     "sqlite3": ["sqlite3@5.1.7", "", { "dependencies": { "bindings": "^1.5.0", "node-addon-api": "^7.0.0", "prebuild-install": "^7.1.1", "tar": "^6.1.11" }, "optionalDependencies": { "node-gyp": "8.x" } }, "sha512-GGIyOiFaG+TUra3JIfkI/zGP8yZYLPQ0pl1bH+ODjiX57sPhrLU5sQJn1y9bDKZUFYkX1crlrPfSYt0BKKdkog=="],
 
@@ -6031,6 +6077,8 @@
     "ignore-walk/minimatch": ["minimatch@10.0.3", "", { "dependencies": { "@isaacs/brace-expansion": "^5.0.0" } }, "sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw=="],
 
     "import-fresh/resolve-from": ["resolve-from@4.0.0", "", {}, "sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g=="],
+
+    "ip-address/sprintf-js": ["sprintf-js@1.1.3", "", {}, "sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA=="],
 
     "is-ci/ci-info": ["ci-info@3.9.0", "", {}, "sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ=="],
 
@@ -7567,8 +7615,6 @@
     "jest-worker/jest-util/@types/node": ["@types/node@24.1.0", "", { "dependencies": { "undici-types": "~7.8.0" } }, "sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w=="],
 
     "jest-worker/jest-util/picomatch": ["picomatch@4.0.3", "", {}, "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="],
-
-    "js-yaml/argparse/sprintf-js": ["sprintf-js@1.0.3", "", {}, "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="],
 
     "jscodeshift/@babel/core/@babel/generator": ["@babel/generator@7.27.1", "", { "dependencies": { "@babel/parser": "^7.27.1", "@babel/types": "^7.27.1", "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.25", "jsesc": "^3.0.2" } }, "sha512-UnJfnIpc/+JO0/+KRVQNGU+y5taA5vCbwN8+azkX6beii/ZF+enZJSOKo11ZSzGJjlNfJHfQtmQT8H+9TXPG2w=="],
 

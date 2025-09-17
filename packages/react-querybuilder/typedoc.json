@@ -1,14 +1,4 @@
 {
-  "entryPoints": [
-    "src/index.ts",
-    "src/utils/formatQuery/index.ts",
-    "src/utils/parseCEL/index.ts",
-    "src/utils/parseJSONata/index.ts",
-    "src/utils/parseJsonLogic/index.ts",
-    "src/utils/parseMongoDB/index.ts",
-    "src/utils/parseSpEL/index.ts",
-    "src/utils/parseSQL/index.ts",
-    "src/utils/transformQuery.ts"
-  ],
+  "entryPoints": ["src/index.ts"],
   "extends": ["../../typedoc.json"]
 }

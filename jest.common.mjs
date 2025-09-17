@@ -10,10 +10,10 @@ export default {
   testEnvironmentOptions: { globalsCleanup: 'on' },
   // Keep these in sync with /tsconfig.json#compilerOptions#paths.
   moduleNameMapper: {
-    'react-querybuilder': ['<rootDir>/../../packages/react-querybuilder/src'],
-    '@rqb-testing': ['<rootDir>/../../utils/testing'],
-    '@rqb-dbquerytestutils': [
+    '^react-querybuilder$': '<rootDir>/../../packages/react-querybuilder/src',
+    '^@react-querybuilder/core$': '<rootDir>/../../packages/core/src',
+    '^@rqb-testing$': '<rootDir>/../../utils/testing',
+    '^@rqb-dbquerytestutils$':
       '<rootDir>/../../packages/react-querybuilder/src/utils/formatQuery/dbqueryTestUtils',
-    ],
   },
 };

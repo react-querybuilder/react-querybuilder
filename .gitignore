@@ -10,15 +10,15 @@ dbquery.*.cache_db
 utils/cel-evaluator/cel-evaluator
 utils/cel-evaluator/cel-evaluator.exe
 
-packages/react-querybuilder/debug/package.json
-packages/react-querybuilder/formatQuery/package.json
-packages/react-querybuilder/parseCEL/package.json
-packages/react-querybuilder/parseJSONata/package.json
-packages/react-querybuilder/parseJsonLogic/package.json
-packages/react-querybuilder/parseMongoDB/package.json
-packages/react-querybuilder/parseSpEL/package.json
-packages/react-querybuilder/parseSQL/package.json
-packages/react-querybuilder/transformQuery/package.json
+packages/*/debug/package.json
+packages/*/formatQuery/package.json
+packages/*/parseCEL/package.json
+packages/*/parseJSONata/package.json
+packages/*/parseJsonLogic/package.json
+packages/*/parseMongoDB/package.json
+packages/*/parseSpEL/package.json
+packages/*/parseSQL/package.json
+packages/*/transformQuery/package.json
 
 # website/api is (re)generated when running `bun web` or `bun website:build`,
 # but it needs to exist for docusaurus to begin

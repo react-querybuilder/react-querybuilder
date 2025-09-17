@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Core features moved to new package `@react-querybuilder/core`. All exports are re-exported by `react-querybuilder`, so no breaking changes.
 - [#935] New class `dndDropNotAllowed` added to elements that cannot accept a drop from the hovering element. Default style is `cursor: not-allowed`.
 
 ## [v8.8.4] - 2025-08-27
