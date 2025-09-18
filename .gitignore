@@ -20,9 +20,9 @@ packages/*/parseSpEL/package.json
 packages/*/parseSQL/package.json
 packages/*/transformQuery/package.json
 
-# website/api is (re)generated when running `bun web` or `bun website:build`,
-# but it needs to exist for docusaurus to begin
+# website/api is (re)generated when running `bun web` or `bun website:build`...
 website/api/*
+# ...but it needs to exist for docusaurus to begin
 !website/api/.gitkeep
 
 # Docusaurus generated files
