@@ -1,5 +1,4 @@
 import { defaultOperatorNegationMap } from '../../defaults';
-import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupType,
@@ -14,6 +13,7 @@ import type {
   RuleType,
   ValueSource,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
 import { joinWith } from '../arrayUtils';
 import { convertToIC } from '../convertQuery';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';

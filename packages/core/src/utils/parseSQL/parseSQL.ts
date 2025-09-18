@@ -1,4 +1,3 @@
-import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -9,6 +8,7 @@ import type {
   DefaultRuleType,
   Except,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';

@@ -1,6 +1,7 @@
 import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
+import * as ReactDnD from 'react-dnd';
 import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
 import {
   simulateDrag,
@@ -8,7 +9,6 @@ import {
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import * as ReactDnD from 'react-dnd';
 import type {
   FullCombinator,
   FullField,

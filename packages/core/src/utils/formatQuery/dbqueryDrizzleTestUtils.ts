@@ -1,6 +1,6 @@
+import type { DefaultOperatorName } from 'react-querybuilder';
 import type { SuperUser, TestSQLParams } from './dbqueryTestUtils';
 import { dbTests, fields } from './dbqueryTestUtils';
-import type { DefaultOperatorName } from 'react-querybuilder';
 
 export const dbTestsDrizzle = (superUsers: SuperUser[]): Record<string, TestSQLParams> => ({
   ...dbTests(superUsers),

@@ -1,9 +1,9 @@
 /* @jest-environment node */
 
+import { convertToIC, formatQuery } from '@react-querybuilder/core';
 import { Database } from 'bun:sqlite';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
-import { convertToIC, formatQuery } from '@react-querybuilder/core';
 import type { TestSQLParams } from './drizzleTestUtils';
 import { dbSetup, dbTestsDrizzle, superUsers } from './drizzleTestUtils';
 import { generateDrizzleRuleGroupProcessor } from './generateDrizzleRuleGroupProcessor';

@@ -1,5 +1,4 @@
 import jsonata from 'jsonata';
-import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -12,6 +11,7 @@ import type {
   Except,
   ValueSource,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';

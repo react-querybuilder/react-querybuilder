@@ -1,7 +1,7 @@
 import { Database } from 'bun:sqlite';
-import { formatQuery } from '../formatQuery';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { dbSetup, dbTests, getSqlOrderBy, sqlBase, superUsers } from '../dbqueryTestUtils';
+import { formatQuery } from '../formatQuery';
 
 const db = new Database();
 

@@ -7,8 +7,8 @@ import path from 'node:path';
 import { themes } from 'prism-react-renderer';
 import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
-import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 import { discordLink } from './src/constants';
+import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
 const config: Config = {
   title: 'React Query Builder',

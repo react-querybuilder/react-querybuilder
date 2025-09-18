@@ -7,6 +7,7 @@
  */
 
 import type { Column } from 'drizzle-orm';
+import type { RuleGroupType } from '../../../types';
 import { defaultRuleProcessorDrizzle } from '../defaultRuleProcessorDrizzle';
 import { formatQuery } from '../formatQuery';
 import {
@@ -18,7 +19,6 @@ import {
   queryWithMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
-import type { RuleGroupType } from '../../../types';
 
 const operatorStub = (...x: unknown[]) => x;
 function sqlStub(...x: unknown[]) {

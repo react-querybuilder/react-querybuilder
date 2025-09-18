@@ -1,5 +1,4 @@
 import { SpelExpressionEvaluator } from 'spel2js';
-import type { ParserCommonOptions } from '../../types/import';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -12,6 +11,7 @@ import type {
   Except,
   ValueSource,
 } from '../../types';
+import type { ParserCommonOptions } from '../../types/import';
 import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';

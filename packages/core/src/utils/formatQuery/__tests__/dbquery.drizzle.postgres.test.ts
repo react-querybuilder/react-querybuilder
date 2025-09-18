@@ -4,15 +4,15 @@ import { PGlite } from '@electric-sql/pglite';
 import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/pglite';
 import { convertToIC, formatQuery } from 'react-querybuilder';
+import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import {
-  dbSetup,
-  superUsers,
   augmentedSuperUsers,
-  matchModeTests,
+  dbSetup,
   genStringsMatchQuery,
+  matchModeTests,
+  superUsers,
 } from '../dbqueryTestUtils';
-import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
 
 const columnsPostgres = {
   firstName: text().notNull(),

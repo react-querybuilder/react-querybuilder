@@ -1,11 +1,11 @@
 import type { Column, Operators, SQL, SQLWrapper } from 'drizzle-orm';
 import type { FormatQueryFinalOptions, RuleGroupType, RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
-import { lc } from '../misc';
 
 /**
  * Default rule processor used by {@link formatQuery} for the "drizzle" format.

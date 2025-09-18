@@ -1,5 +1,5 @@
-import { clsx } from './clsx';
 import type { Classnames } from '../types';
+import { clsx } from './clsx';
 
 type MergeClassnamesParams = (Partial<Classnames> | undefined)[];
 
