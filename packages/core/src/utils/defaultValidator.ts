@@ -7,15 +7,17 @@ import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
  * `validator` prop. It assumes that you want to validate groups, and has a no-op
  * for validating rules which you can replace with your own implementation.
  */
-// oxlint-disable-next-line consistent-function-scoping
 export const defaultValidator: QueryValidator = query => {
   const result: ValidationMap = {};
 
-  const validateRule = (_rule: RuleType) => {
-    // Replace this with your custom implementation.
-    // Inside this function, set `result[_rule.id] = true` for a valid
-    // rule, or `{ valid: false, reasons: ['your', 'reasons', 'here'] }`
-    // for an invalid rule.
+  /**
+   * Replace this with your custom rule validator.
+   */
+  const validateRule = (rule: RuleType) => {
+    // Set `result[rule.id] = true` for a valid rule, or either
+    // `{ valid: false, reasons: ['whatever', 'reasons', 'here'] }`
+    // or simply `false` for an invalid rule.
+    if (rule.id) result[rule.id] = { valid: true, reasons: [] };
   };
 
   const validateGroup = (rg: RuleGroupTypeAny) => {
