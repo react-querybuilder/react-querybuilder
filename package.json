@@ -42,7 +42,7 @@
     "checkall": "bun install --frozen-lockfile && bun check-type-fest && bun run build && bun run pretty-check && bun run lint && bun run typecheck && bun run test && bun run are-the-types-wrong && bun run website:build",
     "lint": "oxlint --type-aware --report-unused-disable-directives",
     "test": "bun test:bun && bun test:drizzlecoverage && bunx jest",
-    "test:bun": "bun generate-prisma-client && bun test packages/{core,datetime,drizzle}",
+    "test:bun": "bun generate-prisma-client && bun test ./packages/core ./packages/drizzle ./packages/datetime/src/**/*.test.ts # <- Avoids *.test.tsx",
     "test:drizzlecoverage": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" RQB_DRIZZLE_COVERAGE=true bunx jest packages/drizzle --coverage-reporter=none",
     "test:watch": "jest --watch",
     "typecheck": "concurrently --timings --prefix-colors \"#0958d9,#712cf9,#00d1b2,#81e6d9,rebeccapurple,cyan,#4078c0,#c9dbf5,#7fba00,#339af0,#007fff,#61dafb,#82a7dd,#60a5fa,darkgray,gray,blue\" --names antd,bootstrap,bulma,chakra,core,datetime,dnd,drizzle,fluent,mantine,material,native,rqb,tremor,utils,examples,website bun:typecheck:antd bun:typecheck:bootstrap bun:typecheck:bulma bun:typecheck:chakra bun:typecheck:core bun:typecheck:datetime bun:typecheck:dnd bun:typecheck:drizzle bun:typecheck:fluent bun:typecheck:mantine bun:typecheck:material bun:typecheck:native bun:typecheck:rqb bun:typecheck:tremor bun:typecheck:utils bun:typecheck:examples bun:typecheck:website",
