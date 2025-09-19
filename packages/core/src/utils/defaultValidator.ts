@@ -17,7 +17,7 @@ export const defaultValidator: QueryValidator = query => {
     // Set `result[rule.id] = true` for a valid rule, or either
     // `{ valid: false, reasons: ['whatever', 'reasons', 'here'] }`
     // or simply `false` for an invalid rule.
-    if (rule.id) result[rule.id] = { valid: true, reasons: [] };
+    if (rule.id) result[rule.id]; // = true;
   };
 
   const validateGroup = (rg: RuleGroupTypeAny) => {
