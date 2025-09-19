@@ -110,7 +110,6 @@
     "sass": "^1.92.1",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.8",
-    "sqlite3": "^5.1.7",
     "typescript": "^5.9.2"
   },
   "dependencies": {
