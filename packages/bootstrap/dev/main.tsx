@@ -1,8 +1,8 @@
+import { DevLayout, useDevApp } from '@rqb-devapp';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderBootstrap } from '../src';
 import './styles.scss';
 

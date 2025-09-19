@@ -1,9 +1,9 @@
 /* @jest-environment node */
 
 import { PGlite } from '@electric-sql/pglite';
+import { convertToIC, formatQuery } from '@react-querybuilder/core';
 import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/pglite';
-import { convertToIC, formatQuery } from 'react-querybuilder';
 import type { TestSQLParams } from './drizzleTestUtils';
 import { dbSetup, dbTestsDrizzle, superUsers } from './drizzleTestUtils';
 import { generateDrizzleRuleGroupProcessor } from './generateDrizzleRuleGroupProcessor';

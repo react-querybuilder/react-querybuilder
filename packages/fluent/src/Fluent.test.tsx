@@ -1,7 +1,3 @@
-import { render, screen } from '@testing-library/react';
-import * as React from 'react';
-import type { Option, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import {
   basicSchema,
   testActionElement,
@@ -12,6 +8,10 @@ import {
   testValueSelector,
   userEventSetup,
 } from '@rqb-testing';
+import { render, screen } from '@testing-library/react';
+import * as React from 'react';
+import type { Option, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';

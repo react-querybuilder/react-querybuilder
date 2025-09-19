@@ -21,14 +21,14 @@ if (ExecutionEnvironment.canUseDOM) {
     import('react-querybuilder/transformQuery'),
   ]);
   Object.assign(globalThis, {
-    formatQuery,
-    parseCEL,
-    parseJSONata,
-    parseJsonLogic,
-    parseMongoDB,
-    parseSpEL,
-    parseSQL,
-    transformQuery,
+    formatQuery: formatQuery.formatQuery,
+    parseCEL: parseCEL.parseCEL,
+    parseJSONata: parseJSONata.parseJSONata,
+    parseJsonLogic: parseJsonLogic.parseJsonLogic,
+    parseMongoDB: parseMongoDB.parseMongoDB,
+    parseSpEL: parseSpEL.parseSpEL,
+    parseSQL: parseSQL.parseSQL,
+    transformQuery: transformQuery.transformQuery,
   });
   console.log(
     `RQB utilities available in the console:

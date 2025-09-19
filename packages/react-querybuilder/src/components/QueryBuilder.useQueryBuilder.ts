@@ -2,9 +2,9 @@ import type {
   FullCombinator,
   FullField,
   FullOperator,
-  QueryBuilderProps,
   RuleGroupTypeAny,
-} from '../types';
+} from '@react-querybuilder/core';
+import type { QueryBuilderProps } from '../types';
 import type { UseQueryBuilderSchema } from './QueryBuilder.useQueryBuilderSchema';
 import { useQueryBuilderSchema } from './QueryBuilder.useQueryBuilderSchema';
 import { useQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';

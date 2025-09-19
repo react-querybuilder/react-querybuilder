@@ -57,7 +57,7 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "^19.1.13",
     "@types/react-test-renderer": "^19.1.0",
-    "@vitejs/plugin-react": "^5.0.2",
+    "@vitejs/plugin-react": "^5.0.3",
     "babel-plugin-syntax-hermes-parser": "^0.32.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -68,7 +68,7 @@
     "react-test-renderer": "^19.1.1",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
-    "vite": "^7.1.5"
+    "vite": "^7.1.6"
   },
   "peerDependencies": {
     "react": ">=18",

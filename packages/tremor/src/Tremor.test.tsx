@@ -1,14 +1,3 @@
-import { render, screen } from '@testing-library/react';
-import dayjs from 'dayjs';
-import * as React from 'react';
-import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import {
-  QueryBuilder,
-  TestID,
-  standardClassnames,
-  toFullOption,
-  toFullOptionList,
-} from 'react-querybuilder';
 import {
   basicSchema,
   defaultNotToggleProps,
@@ -20,6 +9,17 @@ import {
   testValueEditor,
   userEventSetup,
 } from '@rqb-testing';
+import { render, screen } from '@testing-library/react';
+import dayjs from 'dayjs';
+import * as React from 'react';
+import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import {
+  QueryBuilder,
+  TestID,
+  standardClassnames,
+  toFullOption,
+  toFullOptionList,
+} from 'react-querybuilder';
 import { TremorActionElement } from './TremorActionElement';
 import { TremorNotToggle } from './TremorNotToggle';
 import { TremorShiftActions } from './TremorShiftActions';

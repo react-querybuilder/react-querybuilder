@@ -5,7 +5,6 @@
 
 import { PGlite } from '@electric-sql/pglite';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorSQL } from '../getDatetimeRuleProcessorSQL';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -16,6 +15,7 @@ import {
   sqlBase,
   testCases,
 } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorSQL } from '../getDatetimeRuleProcessorSQL';
 
 type Result = {
   first_name: string;

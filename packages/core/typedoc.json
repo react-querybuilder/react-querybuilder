@@ -1,0 +1,14 @@
+{
+  "entryPoints": [
+    "src/index.ts",
+    "src/fwd/formatQuery/index.ts",
+    "src/fwd/parseCEL/index.ts",
+    "src/fwd/parseJSONata/index.ts",
+    "src/fwd/parseJsonLogic/index.ts",
+    "src/fwd/parseMongoDB/index.ts",
+    "src/fwd/arseSpEL/index.ts",
+    "src/fwd/parseSQL/index.ts",
+    "src/fwd/transformQuery.ts"
+  ],
+  "extends": ["../../typedoc.json"]
+}

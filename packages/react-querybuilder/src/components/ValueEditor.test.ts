@@ -1,12 +1,11 @@
-import { testValueEditor } from '@rqb-testing';
-import { renderHook } from '@testing-library/react';
 import type {
   FullField,
   ParseNumberMethod,
   ParseNumbersPropConfig,
-  Schema,
-  ValueEditorProps,
-} from '../types';
+} from '@react-querybuilder/core';
+import { testValueEditor } from '@rqb-testing';
+import { renderHook } from '@testing-library/react';
+import type { Schema, ValueEditorProps } from '../types';
 import { useValueEditor, ValueEditor } from './ValueEditor';
 
 testValueEditor(ValueEditor);

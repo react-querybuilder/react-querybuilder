@@ -1,6 +1,6 @@
 export * from './App';
-export * from './DevLayout';
 export * from './constants';
+export * from './DevLayout';
 export * from './musicalInstruments';
 export * from './types';
 export * from './useDevApp';

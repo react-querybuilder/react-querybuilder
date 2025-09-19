@@ -5,7 +5,7 @@ import { processIsDateField } from './utils';
 
 /**
  * Generates a rule processor with date/time features for use by
- * {@link react-querybuilder!index.formatQuery formatQuery} with the "mongodb_query" format.
+ * {@link @react-querybuilder/core!formatQuery formatQuery} with the "mongodb_query" format.
  */
 export const getDatetimeRuleProcessorMongoDBQuery =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>

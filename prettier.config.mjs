@@ -9,6 +9,7 @@ export default {
   bracketSpacing: true,
   bracketSameLine: true,
   arrowParens: 'avoid',
+  plugins: ['prettier-plugin-organize-imports'],
   overrides: [
     {
       files: 'examples/*/**/*.!(css|scss)*',

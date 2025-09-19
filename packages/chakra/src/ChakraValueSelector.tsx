@@ -1,8 +1,8 @@
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
+import { NativeSelectField, NativeSelectRoot } from './snippets/native-select';
 import { toOptions } from './utils';
-import { NativeSelectRoot, NativeSelectField } from './snippets/native-select';
 
 /**
  * @group Props

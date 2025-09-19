@@ -25,7 +25,7 @@ export const defaultDateTimeNLOperatorMap: ExportOperatorMap = {
 
 /**
  * Generates a value processor with date/time features for use by
- * {@link react-querybuilder!index.formatQuery formatQuery} with the "natural_language" format.
+ * {@link @react-querybuilder/core!formatQuery formatQuery} with the "natural_language" format.
  */
 export const datetimeValueProcessorNL: ValueProcessorByRule = (rule, opts) => {
   if (isISOStringDateOnly(opts?.context?.originalValue)) {
@@ -42,7 +42,7 @@ export const datetimeValueProcessorNL: ValueProcessorByRule = (rule, opts) => {
 };
 
 /**
- * Generates a rule processor with date/time features for use by {@link react-querybuilder!index.formatQuery formatQuery} with
+ * Generates a rule processor with date/time features for use by {@link @react-querybuilder/core!formatQuery formatQuery} with
  * the "natural_language" format.
  */
 export const getDatetimeRuleProcessorNL =

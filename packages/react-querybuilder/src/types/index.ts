@@ -1,2 +1,1 @@
-export * from './index.noReact';
-export * from './propsUsingReact';
+export * from './props';

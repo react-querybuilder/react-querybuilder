@@ -1,3 +1,19 @@
+import type {
+  FullField,
+  FullOperator,
+  FullOption,
+  Operator,
+  RuleType,
+  ValidationResult,
+  ValueSourceFullOptions,
+} from '@react-querybuilder/core';
+import {
+  TestID,
+  clsx,
+  isFullOptionArray,
+  standardClassnames as sc,
+  toFullOption,
+} from '@react-querybuilder/core';
 import {
   consoleMocks,
   getFieldMapFromArray,
@@ -7,21 +23,9 @@ import {
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { defaultTranslations as t } from '../defaultControlElements';
-import { TestID, standardClassnames as sc } from '../defaults';
+import { defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
-import type {
-  FullField,
-  FullOperator,
-  FullOption,
-  Operator,
-  RuleType,
-  ValidationResult,
-  ValueSelectorProps,
-  ValueSourceFullOptions,
-} from '../types';
-import { isFullOptionArray, toFullOption } from '../utils';
-import { clsx } from '../utils/clsx';
+import type { ValueSelectorProps } from '../types';
 import { Rule } from './Rule';
 import { render, waitABeat } from './testUtils';
 

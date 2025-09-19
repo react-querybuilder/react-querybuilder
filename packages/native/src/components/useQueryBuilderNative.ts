@@ -8,8 +8,7 @@ import type {
   QueryBuilderProps,
   RuleGroupTypeAny,
 } from 'react-querybuilder';
-import { useQueryBuilderSetup } from 'react-querybuilder';
-import { useQueryBuilderSchema } from 'react-querybuilder';
+import { useQueryBuilderSchema, useQueryBuilderSetup } from 'react-querybuilder';
 import type { QueryBuilderNativeProps, SchemaNative } from '../types';
 
 /**

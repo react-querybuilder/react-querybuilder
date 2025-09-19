@@ -1,7 +1,7 @@
 import type { RuleGroupType, SQLPreset } from 'react-querybuilder';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorSQL } from '../getDatetimeRuleProcessorSQL';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorSQL } from '../getDatetimeRuleProcessorSQL';
 import type { IsDateField } from '../types';
 
 const now = new Date().toISOString();

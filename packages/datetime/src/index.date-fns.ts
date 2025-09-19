@@ -27,50 +27,50 @@ export const jsonLogicDateTimeOperations: RQBJsonLogicDateTimeOperations =
   getDatetimeJsonLogicOperations(rqbDateTimeLibraryAPI);
 
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} rule processor for "sql" format using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "sql" format using date-fns
  */
 export const datetimeRuleProcessorSQL: RuleProcessor =
   getDatetimeRuleProcessorSQL(rqbDateTimeLibraryAPI);
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} value processor for "sql" format ("ansi" preset) using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} value processor for "sql" format ("ansi" preset) using date-fns
  */
 export const datetimeValueProcessorANSI: ValueProcessorByRule =
   getDatetimeValueProcessorANSI(rqbDateTimeLibraryAPI);
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} value processor for "sql" format ("mssql" preset) using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} value processor for "sql" format ("mssql" preset) using date-fns
  */
 export const datetimeValueProcessorMSSQL: ValueProcessorByRule =
   getDatetimeValueProcessorMSSQL(rqbDateTimeLibraryAPI);
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} value processor for "sql" format ("mysql" preset) using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} value processor for "sql" format ("mysql" preset) using date-fns
  */
 export const datetimeValueProcessorMySQL: ValueProcessorByRule =
   getDatetimeValueProcessorMySQL(rqbDateTimeLibraryAPI);
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} value processor for "sql" format ("oracle" preset) using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} value processor for "sql" format ("oracle" preset) using date-fns
  */
 export const datetimeValueProcessorOracle: ValueProcessorByRule =
   getDatetimeValueProcessorOracle(rqbDateTimeLibraryAPI);
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} value processor for "sql" format ("postgresql" preset) using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} value processor for "sql" format ("postgresql" preset) using date-fns
  */
 export const datetimeValueProcessorPostgreSQL: ValueProcessorByRule =
   getDatetimeValueProcessorPostgreSQL(rqbDateTimeLibraryAPI);
 
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} rule processor for "cel" format using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "cel" format using date-fns
  */
 export const datetimeRuleProcessorCEL: ValueProcessorByRule =
   getDatetimeRuleProcessorCEL(rqbDateTimeLibraryAPI);
 
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} rule processor for "mongodb_query" format using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "mongodb_query" format using date-fns
  */
 export const datetimeRuleProcessorMongoDBQuery: ValueProcessorByRule =
   getDatetimeRuleProcessorMongoDBQuery(rqbDateTimeLibraryAPI);
 
 /**
- * {@link react-querybuilder!index.formatQuery formatQuery} rule processor for "natural_language" format using date-fns
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "natural_language" format using date-fns
  */
 export const datetimeRuleProcessorNL: ValueProcessorByRule =
   getDatetimeRuleProcessorNL(rqbDateTimeLibraryAPI);

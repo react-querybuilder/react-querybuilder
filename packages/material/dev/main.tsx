@@ -1,9 +1,9 @@
 import { green, purple } from '@mui/material/colors';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderMaterial } from '../src';
 import './styles.scss';
 

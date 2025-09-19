@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-import { defaultPlaceholderLabel, defaultPlaceholderName } from '../defaults';
 import type {
   BaseOptionMap,
   FlexibleOptionList,
@@ -10,9 +8,10 @@ import type {
   FullOptionRecord,
   GetOptionIdentifierType,
   OptionGroup,
-  Placeholder,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  defaultPlaceholderLabel,
+  defaultPlaceholderName,
   isFlexibleOptionGroupArray,
   objectKeys,
   toFullOption,
@@ -20,7 +19,9 @@ import {
   toFullOptionMap,
   uniqByIdentifier,
   uniqOptGroups,
-} from '../utils';
+} from '@react-querybuilder/core';
+import { useMemo } from 'react';
+import type { Placeholder } from '../types';
 
 export interface UseOptionListProp<O extends FullOption> {
   defaultOption: FullOption;

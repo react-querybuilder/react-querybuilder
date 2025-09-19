@@ -1,3 +1,4 @@
+import * as RQButils from '@rqb-utils';
 import queryString from 'query-string';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import type {
@@ -7,7 +8,6 @@ import type {
   RuleGroupTypeIC,
 } from 'react-querybuilder';
 import { defaultValidator, standardClassnames } from 'react-querybuilder';
-import * as RQButils from '@rqb-utils';
 import {
   defaultOptions,
   emptyQuery,

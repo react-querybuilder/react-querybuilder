@@ -7,8 +7,8 @@ import path from 'node:path';
 import { themes } from 'prism-react-renderer';
 import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
-import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 import { discordLink } from './src/constants';
+import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
 const config: Config = {
   title: 'React Query Builder',
@@ -92,7 +92,6 @@ const config: Config = {
             textContentMappings: {
               'title.indexPage': 'React Query Builder API',
               'title.memberPage': '{name}',
-              // @ts-expect-error TODO: find out why this is not in the types because it works
               'footer.text':
                 ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
             },

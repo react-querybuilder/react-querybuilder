@@ -2,7 +2,6 @@
 
 import jsonata from 'jsonata';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorJSONata } from '../getDatetimeRuleProcessorJSONata';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -10,6 +9,7 @@ import {
   musicians,
   testCases,
 } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorJSONata } from '../getDatetimeRuleProcessorJSONata';
 
 const musiciansJSONata = CREATE_MUSICIANS_TABLE('jsonata');
 

@@ -4,10 +4,9 @@ import type {
   FullOperator,
   FullOptionRecord,
   OptionGroup,
-  QueryBuilderProps,
   RuleGroupTypeAny,
-  TranslationsFull,
-} from '../types';
+} from '@react-querybuilder/core';
+import type { QueryBuilderProps, TranslationsFull } from '../types';
 import { useOptionListProp } from './useOptionListProp';
 
 export interface UseFields<F extends FullField> {

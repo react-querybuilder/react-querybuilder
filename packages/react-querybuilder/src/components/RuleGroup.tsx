@@ -1,23 +1,15 @@
-import type { MouseEvent } from 'react';
-import * as React from 'react';
-import { Fragment, useCallback, useMemo } from 'react';
-import { standardClassnames, TestID } from '../defaults';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,
   Path,
-  RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-  ShiftActionsProps,
   ValidationResult,
   ValueChangeEventHandler,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  clsx,
   getFirstOption,
   getOption,
   getParentPath,
@@ -25,8 +17,16 @@ import {
   isRuleGroup,
   isRuleGroupType,
   pathsAreEqual,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+  standardClassnames,
+  TestID,
+} from '@react-querybuilder/core';
+import type { MouseEvent } from 'react';
+import * as React from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
+import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
+import { useReactDndWarning } from '../hooks/useReactDndWarning';
+import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
+import type { RuleGroupProps, ShiftActionsProps } from '../types';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}

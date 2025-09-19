@@ -1,23 +1,19 @@
+import type { RuleGroupICArray, RuleGroupTypeIC, ValidationResult } from '@react-querybuilder/core';
+import {
+  TestID,
+  add,
+  defaultCombinators,
+  defaultControlClassnames,
+  standardClassnames as sc,
+  toFullOption,
+} from '@react-querybuilder/core';
 import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '@rqb-testing';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { defaultTranslations as t } from '../defaultControlElements';
-import {
-  TestID,
-  defaultCombinators,
-  defaultControlClassnames,
-  standardClassnames as sc,
-} from '../defaults';
+import { defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
-import type {
-  ActionProps,
-  RuleGroupICArray,
-  RuleGroupTypeIC,
-  ValidationResult,
-  ValueSelectorProps,
-} from '../types';
-import { add, toFullOption } from '../utils';
+import type { ActionProps, ValueSelectorProps } from '../types';
 import { RuleGroup } from './RuleGroup';
 import { render, waitABeat } from './testUtils';
 
