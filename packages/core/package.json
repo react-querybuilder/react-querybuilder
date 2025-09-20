@@ -2,6 +2,9 @@
   "name": "@react-querybuilder/core",
   "version": "8.9.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder_core.legacy-esm.js",
   "exports": {
