@@ -32,6 +32,7 @@
     ],
     "typescript/require-array-sort-compare": "off",
     "typescript/unbound-method": "off",
+    "jest/no-disabled-tests": "warn",
     "jest/require-to-throw-message": "off",
     "jest/valid-title": "off",
     "react/display-name": "off",
