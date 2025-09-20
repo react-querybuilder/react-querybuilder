@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
-import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
+import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC, isRuleType } from './isRuleGroup';
 
 const rule: RuleType = {
   field: 'test',
@@ -13,6 +13,32 @@ const ruleGroup: RuleGroupType = {
 const ruleGroupIC: RuleGroupTypeIC = {
   rules: [],
 };
+
+describe('isRuleType', () => {
+  it('tests for null/undefined/primitives/etc', () => {
+    expect(isRuleType(null)).toBe(false);
+    expect((isRuleType as unknown as () => void)()).toBe(false);
+    expect(isRuleType({})).toBe(false);
+    expect(isRuleType('')).toBe(false);
+    expect(isRuleType('string')).toBe(false);
+    expect(isRuleType(0)).toBe(false);
+    expect(isRuleType(1)).toBe(false);
+    expect(isRuleType(true)).toBe(false);
+    expect(isRuleType(false)).toBe(false);
+  });
+
+  it('identifies a rule', () => {
+    expect(isRuleType(rule)).toBe(true);
+  });
+
+  it('identifies a rule group', () => {
+    expect(isRuleType(ruleGroup)).toBe(false);
+  });
+
+  it('identifies a rule group with independent combinators', () => {
+    expect(isRuleType(ruleGroupIC)).toBe(false);
+  });
+});
 
 describe('isRuleGroup', () => {
   it('tests for null/undefined/primitives/etc', () => {

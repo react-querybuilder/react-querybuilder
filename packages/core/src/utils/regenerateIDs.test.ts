@@ -9,14 +9,7 @@ const ruleGroup: RuleGroupType = {
     {
       id: 'innerGroup',
       combinator: 'and',
-      rules: [
-        {
-          id: 'innerRule',
-          field: 'TEST',
-          operator: '=',
-          value: '',
-        },
-      ],
+      rules: [{ id: 'innerRule', field: 'TEST', operator: '=', value: '' }],
     },
   ],
 };
@@ -27,19 +20,9 @@ const ruleGroupIC: RuleGroupTypeIC = {
     {
       id: 'innerGroup',
       rules: [
-        {
-          id: 'innerRule',
-          field: 'TEST',
-          operator: '=',
-          value: '',
-        },
+        { id: 'innerRule', field: 'TEST', operator: '=', value: '' },
         'and',
-        {
-          id: 'innerRule',
-          field: 'TEST',
-          operator: '=',
-          value: '',
-        },
+        { id: 'innerRule', field: 'TEST', operator: '=', value: '' },
       ],
     },
   ],
@@ -74,14 +57,12 @@ it('should generate different IDs for independent combinators', () => {
 });
 
 it('should generate different IDs for any POJO', () => {
-  // @ts-expect-error testing invalid input
   const newObject = regenerateIDs({ test: 'this' });
   expect(newObject.id).toMatch(uuidV4regex);
   expect(newObject).toHaveProperty('test', 'this');
 });
 
 it('should return the first param if not POJO', () => {
-  // @ts-expect-error testing invalid input
   const newObject = regenerateIDs('test');
   expect(newObject).toBe('test');
 });

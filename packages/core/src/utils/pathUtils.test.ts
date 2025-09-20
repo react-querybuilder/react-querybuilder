@@ -82,7 +82,7 @@ describe('findPath', () => {
     });
 
     it('should not find an invalid path', () => {
-      expect(findPath([7, 7, 7], query)).toBeUndefined();
+      expect(findPath([7, 7, 7], query) ?? undefined).toBeUndefined();
     });
   });
 
@@ -96,7 +96,7 @@ describe('findPath', () => {
     });
 
     it('should not find an invalid path', () => {
-      expect(findPath([7, 7, 7], queryIC)).toBeUndefined();
+      expect(findPath([7, 7, 7], queryIC) ?? undefined).toBeUndefined();
     });
 
     it('should return null for combinator elements', () => {

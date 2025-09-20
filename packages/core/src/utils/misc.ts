@@ -24,6 +24,5 @@ export const isPojo = (obj: any): obj is Record<string, any> =>
 /**
  * Simple helper to determine whether a value is null, undefined, or an empty string.
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const nullOrUndefinedOrEmpty = (value: any): value is null | undefined | '' =>
+export const nullOrUndefinedOrEmpty = (value: unknown): value is null | undefined | '' =>
   value === null || value === undefined || value === '';

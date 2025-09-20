@@ -20,7 +20,7 @@ export const findPath = (path: Path, query: RuleGroupTypeAny): FindPathReturnTyp
     level++;
   }
 
-  return target;
+  return level < path.length ? null : target;
 };
 
 /**
