@@ -1,6 +1,6 @@
 @use 'sass:meta';
 @use '@rqb-devapp/styles.css';
-@use '../../react-querybuilder/src/query-builder';
+@use '../../core/src/query-builder';
 
 .donut-hole {
   @include meta.load-css('bootstrap');

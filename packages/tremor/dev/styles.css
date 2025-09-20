@@ -1,5 +1,5 @@
 @import '@rqb-devapp/styles.css' layer(base);
-@import '../../react-querybuilder/dist/query-builder.css' layer(base);
+@import '../../core/dist/query-builder.css' layer(base);
 
 @import 'tailwindcss';
 

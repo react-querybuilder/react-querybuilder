@@ -151,7 +151,7 @@
     "start": "vite",
     "build": "bun run build:main && bun run build:css",
     "build:main": "bun --bun tsdown",
-    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
+    "build:css": "mkdir -p dist/styles && cp ../core/src/*.scss dist && cp ../core/src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   }

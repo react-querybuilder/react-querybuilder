@@ -10,7 +10,7 @@ import { regenerateIDs } from '@rqb-utils';
 import * as React from 'react';
 import { Fragment } from 'react';
 import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import '../../packages/react-querybuilder/dist/query-builder.css';
+import '../../packages/core/dist/query-builder.css';
 import { optionOrder } from './constants';
 import './styles.css';
 import type { DemoOption, DemoOptions } from './types';
