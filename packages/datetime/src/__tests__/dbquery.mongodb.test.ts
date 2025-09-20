@@ -3,8 +3,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
 import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 
 if (process.env.JEST_WORKER_ID) {
   // Give MongoDB time to download

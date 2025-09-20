@@ -190,6 +190,7 @@ export default function Demo({
         setExtraStylesState(es);
         setFieldsTsStringState(fs);
         setMusicalInstrumentsTsStringState(ms);
+        return;
       }
     );
   }, []);

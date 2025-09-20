@@ -1,5 +1,4 @@
 import { formatQuery, transformQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorCEL } from '../getDatetimeRuleProcessorCEL';
 import type { MusicianRecord } from '../dbqueryTestUtils';
 import {
   CREATE_MUSICIANS_TABLE,
@@ -7,6 +6,7 @@ import {
   fields,
   testCases,
 } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorCEL } from '../getDatetimeRuleProcessorCEL';
 import type { IsDateFieldFunction } from '../types';
 import { defaultIsDateField } from '../utils';
 

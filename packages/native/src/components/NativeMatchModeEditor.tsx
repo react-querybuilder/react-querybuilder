@@ -3,7 +3,7 @@ import { lc, useMatchModeEditor, type FullField, type Path } from 'react-querybu
 import type { MatchModeEditorNativeProps } from '../types';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
-const requiresThreshold = (mm?: string | null | undefined) =>
+const requiresThreshold = (mm?: string | null) =>
   ['atleast', 'atmost', 'exactly'].includes(lc(mm) ?? /* istanbul ignore next */ '');
 const dummyPath: Path = [];
 

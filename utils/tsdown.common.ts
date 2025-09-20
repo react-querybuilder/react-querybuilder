@@ -2,19 +2,26 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { Options } from 'tsdown';
-import { generateDTS } from './generateDTS';
 
 export const getCjsIndexWriter = (pkgName: string, altPath?: string) => async (): Promise<void> => {
-  await writeFile(
-    `dist/cjs/${altPath ?? 'index'}.js`,
-    `'use strict';
+  const ap = altPath ? `.${altPath}` : '';
+  const prodfilename = `${pkgName}.cjs.production${ap}.js`;
+  const devfilename = `${pkgName}.cjs.development${ap}.js`;
+  const indexFilename = altPath ?? 'index';
+
+  await Promise.all([
+    writeFile(
+      `dist/cjs/${indexFilename}.js`,
+      `'use strict';
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./${pkgName}.cjs.production${altPath ? `.${altPath}` : ''}.js');
+  module.exports = require('./${prodfilename}');
 } else {
-  module.exports = require('./${pkgName}.cjs.development${altPath ? `.${altPath}` : ''}.js');
+  module.exports = require('./${devfilename}');
 }
 `
-  );
+    ),
+    writeFile(`dist/cjs/${indexFilename}.d.ts`, `export * from './${devfilename}';`),
+  ]);
 };
 
 export const tsdownCommonConfig = (sourceDir: string) =>
@@ -27,7 +34,7 @@ export const tsdownCommonConfig = (sourceDir: string) =>
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
       platform: 'neutral',
-      dts: false,
+      dts: { oxc: true },
       ...options,
     } satisfies Options;
 
@@ -51,7 +58,6 @@ export const tsdownCommonConfig = (sourceDir: string) =>
             title: `${sourceDir.split('/').at(-1)} Bundle Size (${template})`,
           })
         ),
-        onSuccess: () => generateDTS(sourceDir),
       },
       // ESM, Webpack 4 support. Target ES2017 syntax to compile away optional chaining and spreads
       {

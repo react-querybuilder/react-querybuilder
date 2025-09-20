@@ -1,12 +1,3 @@
-import type { MouseEvent } from 'react';
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
-import { rootPath, standardClassnames, TestID } from '../defaults';
-import type { UseFields } from '../hooks';
-import { useFields } from '../hooks';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   FlexibleOptionList,
@@ -18,17 +9,15 @@ import type {
   Option,
   OptionList,
   RuleGroupType,
-  RuleProps,
   RuleType,
-  ShiftActionsProps,
-  TranslationsFull,
   ValidationResult,
   ValueChangeEventHandler,
   ValueEditorType,
   ValueSourceFullOptions,
   ValueSources,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  clsx,
   filterFieldsByComparator,
   getOption,
   getParentPath,
@@ -38,9 +27,20 @@ import {
   isPojo,
   isRuleGroup,
   lc,
+  rootPath,
+  standardClassnames,
+  TestID,
   toFullOptionList,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+} from '@react-querybuilder/core';
+import type { MouseEvent } from 'react';
+import * as React from 'react';
+import { useCallback, useMemo } from 'react';
+import type { UseFields } from '../hooks';
+import { useFields } from '../hooks';
+import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
+import { useReactDndWarning } from '../hooks/useReactDndWarning';
+import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
+import type { RuleProps, ShiftActionsProps, TranslationsFull } from '../types';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
 import type { UseRuleGroup } from './RuleGroup';
 import { useRuleGroup } from './RuleGroup';
@@ -341,7 +341,7 @@ export const RuleComponents: React.MemoExoticComponent<
 });
 
 export const RuleWithSubQueryGroupComponentsWrapper = (
-  props: React.PropsWithChildren<unknown>
+  props: React.PropsWithChildren
 ): React.JSX.Element => <div {...props} />;
 
 export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
@@ -446,7 +446,7 @@ export interface UseRule extends RuleProps {
   validationResult: boolean | ValidationResult;
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
-  values: FlexibleOptionList<Option<string>>;
+  values: FlexibleOptionList<Option>;
   valueSourceOptions: ValueSourceFullOptions;
   valueSources: ValueSources;
 }
@@ -497,6 +497,7 @@ export const useRule = (props: RuleProps): UseRule => {
     dragRef = null,
     isDragging = false,
     isOver = false,
+    dropNotAllowed = false,
   } = props;
 
   useDeprecatedProps('rule', !ruleProp);
@@ -746,6 +747,7 @@ export const useRule = (props: RuleProps): UseRule => {
         isOver && classNamesProp.dndOver,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
         isOver && groupItems && classNamesProp.dndGroup,
+        dropNotAllowed && classNamesProp.dndDropNotAllowed,
         hasSubQuery && classNamesProp.hasSubQuery,
         // standard conditional classes
         suppressStandardClassnames || {
@@ -754,6 +756,7 @@ export const useRule = (props: RuleProps): UseRule => {
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
           [standardClassnames.dndGroup]: isOver && groupItems,
+          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
           [standardClassnames.hasSubQuery]: hasSubQuery,
         },
         validationClassName
@@ -764,10 +767,12 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.dndDragging,
       classNamesProp.dndGroup,
       classNamesProp.dndOver,
+      classNamesProp.dndDropNotAllowed,
       classNamesProp.hasSubQuery,
       classNamesProp.rule,
       disabled,
       dropEffect,
+      dropNotAllowed,
       fieldBasedClassName,
       fieldData,
       getRuleClassname,

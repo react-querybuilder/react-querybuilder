@@ -1,23 +1,15 @@
-import type { MouseEvent } from 'react';
-import * as React from 'react';
-import { Fragment, useCallback, useMemo } from 'react';
-import { standardClassnames, TestID } from '../defaults';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,
   Path,
-  RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-  ShiftActionsProps,
   ValidationResult,
   ValueChangeEventHandler,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  clsx,
   getFirstOption,
   getOption,
   getParentPath,
@@ -25,8 +17,16 @@ import {
   isRuleGroup,
   isRuleGroupType,
   pathsAreEqual,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+  standardClassnames,
+  TestID,
+} from '@react-querybuilder/core';
+import type { MouseEvent } from 'react';
+import * as React from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
+import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
+import { useReactDndWarning } from '../hooks/useReactDndWarning';
+import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
+import type { RuleGroupProps, ShiftActionsProps } from '../types';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
@@ -81,16 +81,10 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         data-level={rg.path.length}
         data-path={JSON.stringify(rg.path)}>
         <div ref={rg.dropRef} className={rg.classNames.header}>
-          <RuleGroupHeaderElements
-            {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])}
-            {...actions}
-          />
+          <RuleGroupHeaderElements {...rg} {...actions} />
         </div>
         <div className={rg.classNames.body}>
-          <RuleGroupBodyElements
-            {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])}
-            {...actions}
-          />
+          <RuleGroupBodyElements {...rg} {...actions} />
         </div>
       </div>
     );
@@ -370,7 +364,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
             ) : (
               <RuleControlElement
                 key={TestID.rule}
-                id={r.id!}
+                id={r.id}
                 rule={r}
                 field={r.field}
                 operator={r.operator}
@@ -472,6 +466,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     dropRef = null,
     isDragging = false,
     isOver = false,
+    dropNotAllowed = false,
   } = props;
 
   useDeprecatedProps('ruleGroup', !ruleGroupProp);
@@ -512,9 +507,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         suppressStandardClassnames || standardClassnames.header,
         classNamesProp.header,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        dropNotAllowed && classNamesProp.dndDropNotAllowed,
         suppressStandardClassnames || {
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
         }
       ),
       shiftActions: clsx(
@@ -569,6 +566,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.cloneGroup,
       classNamesProp.combinators,
       classNamesProp.dndCopy,
+      classNamesProp.dndDropNotAllowed,
       classNamesProp.dragHandle,
       classNamesProp.header,
       classNamesProp.lockGroup,
@@ -577,6 +575,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.shiftActions,
       classNamesProp.valueSelector,
       dropEffect,
+      dropNotAllowed,
       isOver,
       suppressStandardClassnames,
     ]

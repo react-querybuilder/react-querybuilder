@@ -7,9 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- N/A
+
+## [v8.9.1] - 2025-09-20
+
+### Fixed
+
+- Publish configuration for core package
+
+## [v8.9.0] - 2025-09-20
+
+### Added
+
+- [#942] Core features moved to new package `@react-querybuilder/core`. All exports are re-exported by `react-querybuilder`, so no breaking changes.
+- [#935] New class `dndDropNotAllowed` added to elements that cannot accept a drop from the hovering element. Default style is `cursor: not-allowed`.
+
+## [v8.8.4] - 2025-08-27
+
 ### Added
 
 - [#932] New `useOptionListProp` hook to standardize option list prop normalization.
+
+### Fixed
+
+- [#937] The `match` property is now removed when a rule's `field` is updated to a field that does not support match modes.
 
 ## [v8.8.3] - 2025-08-13
 
@@ -1982,12 +2003,18 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#926]: https://github.com/react-querybuilder/react-querybuilder/pull/926
 [#931]: https://github.com/react-querybuilder/react-querybuilder/pull/931
 [#932]: https://github.com/react-querybuilder/react-querybuilder/pull/932
+[#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
+[#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
+[#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.3...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...HEAD
+[v8.9.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.0...v8.9.1
+[v8.9.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.4...v8.9.0
+[v8.8.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.3...v8.8.4
 [v8.8.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.2...v8.8.3
 [v8.8.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.1...v8.8.2
 [v8.8.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.0...v8.8.1

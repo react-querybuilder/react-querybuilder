@@ -1,26 +1,7 @@
-import { consoleMocks } from '@rqb-testing';
-import { fireEvent, render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import * as React from 'react';
-import { QueryBuilderContext } from '../context';
-import { defaultControlElements, defaultTranslations as t } from '../defaultControlElements';
-import {
-  LogType,
-  TestID,
-  defaultPlaceholderFieldLabel,
-  defaultPlaceholderFieldName,
-  defaultPlaceholderOperatorName,
-  standardClassnames as sc,
-} from '../defaults';
-import { messages } from '../messages';
-import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 import type {
-  ActionProps,
-  ControlElementsProp,
   DefaultOperatorName,
   Field,
   FieldByValue,
-  FieldSelectorProps,
   FullCombinator,
   FullField,
   FullOperator,
@@ -28,17 +9,17 @@ import type {
   Option,
   OptionGroup,
   ParseNumbersPropConfig,
-  QueryBuilderProps,
-  RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeIC,
-  RuleProps,
   RuleType,
   ValidationMap,
-  ValueEditorProps,
-  ValueSelectorProps,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  LogType,
+  TestID,
+  defaultPlaceholderFieldLabel,
+  defaultPlaceholderFieldName,
+  defaultPlaceholderOperatorName,
   defaultValidator,
   findPath,
   generateID,
@@ -46,8 +27,27 @@ import {
   group,
   move,
   numericRegex,
+  standardClassnames as sc,
   toFullOption,
-} from '../utils';
+} from '@react-querybuilder/core';
+import { consoleMocks } from '@rqb-testing';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import * as React from 'react';
+import { QueryBuilderContext } from '../context';
+import { defaultControlElements, defaultTranslations as t } from '../defaults';
+import { messages } from '../messages';
+import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
+import type {
+  ActionProps,
+  ControlElementsProp,
+  FieldSelectorProps,
+  QueryBuilderProps,
+  RuleGroupProps,
+  RuleProps,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from '../types';
 import { ActionElement } from './ActionElement';
 import { QueryBuilder } from './QueryBuilder';
 import type { UseRuleGroup } from './RuleGroup';
@@ -2982,10 +2982,10 @@ describe('match modes', () => {
     expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
     expect(screen.getAllByTestId(TestID.addRule)).toHaveLength(2);
 
-    await user.selectOptions(screen.getByDisplayValue('all')!, 'atLeast');
+    await user.selectOptions(screen.getByDisplayValue('all'), 'atLeast');
     expect(screen.getAllByDisplayValue('at least')).toHaveLength(1);
 
-    await user.type(screen.getByDisplayValue('1')!, '2', {
+    await user.type(screen.getByDisplayValue('1'), '2', {
       initialSelectionStart: 0,
       initialSelectionEnd: 2,
     });
@@ -3008,7 +3008,7 @@ describe('match modes', () => {
     expect(screen.getAllByTestId(TestID.ruleGroup)).toHaveLength(1);
     expect(screen.getAllByTestId(TestID.addRule)).toHaveLength(2);
 
-    await user.selectOptions(screen.getByDisplayValue('all')!, 'atLeast');
+    await user.selectOptions(screen.getByDisplayValue('all'), 'atLeast');
     await user.click(screen.getAllByTestId(TestID.addRule).at(-1)!);
 
     expect(onQueryChange.mock.calls.at(-1)![0]).toEqual({
@@ -3033,13 +3033,13 @@ describe('match modes', () => {
       ],
     });
 
-    await user.type(screen.getByDisplayValue('1')!, '2', {
+    await user.type(screen.getByDisplayValue('1'), '2', {
       initialSelectionStart: 0,
       initialSelectionEnd: 2,
     });
     expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.threshold).toBe(2);
 
-    await user.selectOptions(screen.getByDisplayValue('at least')!, 'some');
+    await user.selectOptions(screen.getByDisplayValue('at least'), 'some');
     expect((onQueryChange.mock.calls.at(-1)![0].rules[0] as RuleType).match?.mode).toBe('some');
 
     await user.click(screen.getAllByTestId(TestID.removeRule).at(-1)!);

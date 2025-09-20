@@ -4,25 +4,27 @@ import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import postcssScopedDonut from './devapp/postcss-scoped-donut';
 
+const coreSrc = '../core/src';
 const rqbSrc = '../react-querybuilder/src';
 
 export const getCommonViteConfig = ({
   port = 3100,
   scopedDonut = true,
-}: { port?: number; scopedDonut?: boolean } = {}) =>
+}: { port?: number; scopedDonut?: boolean } = {}): UserConfig =>
   defineConfig({
     plugins: [vitePluginReact()],
     resolve: {
       alias: {
         'react-querybuilder': path.resolve(`${rqbSrc}`),
+        '@react-querybuilder/core': path.resolve(`${coreSrc}`),
         '@rqb-devapp': path.resolve(`../../utils/devapp`),
-        '@rqb-parsecel': path.resolve(`${rqbSrc}/utils/parseCEL`),
-        '@rqb-parsejsonata': path.resolve(`${rqbSrc}/utils/parseJSONata`),
-        '@rqb-parsejsonlogic': path.resolve(`${rqbSrc}/utils/parseJsonLogic`),
-        '@rqb-parsemongodb': path.resolve(`${rqbSrc}/utils/parseMongoDB`),
-        '@rqb-parsespel': path.resolve(`${rqbSrc}/utils/parseSpEL`),
-        '@rqb-parsesql': path.resolve(`${rqbSrc}/utils/parseSQL`),
-        '@rqb-utils': path.resolve(`${rqbSrc}/utils`),
+        '@rqb-parsecel': path.resolve(`${coreSrc}/utils/parseCEL`),
+        '@rqb-parsejsonata': path.resolve(`${coreSrc}/utils/parseJSONata`),
+        '@rqb-parsejsonlogic': path.resolve(`${coreSrc}/utils/parseJsonLogic`),
+        '@rqb-parsemongodb': path.resolve(`${coreSrc}/utils/parseMongoDB`),
+        '@rqb-parsespel': path.resolve(`${coreSrc}/utils/parseSpEL`),
+        '@rqb-parsesql': path.resolve(`${coreSrc}/utils/parseSQL`),
+        '@rqb-utils': path.resolve(`${coreSrc}/utils`),
       },
     },
     css: {
@@ -30,4 +32,4 @@ export const getCommonViteConfig = ({
       postcss: { plugins: scopedDonut ? [postcssScopedDonut] : [] },
     },
     server: { port },
-  }) satisfies UserConfig as UserConfig;
+  });

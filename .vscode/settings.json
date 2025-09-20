@@ -35,5 +35,6 @@
   },
   "scss.lint.unknownAtRules": "ignore",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "oxc_language_server.configPath": "oxlintrc.json"
+  "oxc.typeAware": true,
+  "oxc.unusedDisableDirectives": "deny"
 }

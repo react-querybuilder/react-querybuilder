@@ -6,7 +6,7 @@ import { RuleComponents, RuleComponentsWithSubQuery, TestID, useRule } from 'rea
 import { defaultNativeStyles } from '../styles';
 import type { RuleNativeProps, SchemaNative } from '../types';
 
-const GroupComponentsWrapper = (props: React.PropsWithChildren<unknown>) => <View {...props} />;
+const GroupComponentsWrapper = (props: React.PropsWithChildren) => <View {...props} />;
 
 /**
  * @group Components

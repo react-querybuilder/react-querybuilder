@@ -1,12 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LogType, standardClassnames } from '../defaults';
-import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
-import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
-import {
-  _RQB_INTERNAL_dispatchThunk,
-  useRQB_INTERNAL_QueryBuilderDispatch,
-  useRQB_INTERNAL_QueryBuilderStore,
-} from '../redux/_internal';
 import type {
   FullCombinator,
   FullField,
@@ -17,31 +8,38 @@ import type {
   MatchModeOptions,
   Path,
   QueryActions,
-  QueryBuilderProps,
   QueryValidator,
-  RuleGroupProps,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-  Schema,
-  TranslationsFull,
   UpdateableProperties,
   ValidationMap,
   ValueSourceFullOptions,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
   add,
+  clsx,
   findPath,
   generateAccessibleDescription,
   group,
   isRuleGroup,
   isRuleGroupTypeIC,
+  LogType,
   move,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
+  standardClassnames,
   update,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+} from '@react-querybuilder/core';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
+import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
+import {
+  _RQB_INTERNAL_dispatchThunk,
+  useRQB_INTERNAL_QueryBuilderDispatch,
+  useRQB_INTERNAL_QueryBuilderStore,
+} from '../redux/_internal';
+import type { QueryBuilderProps, RuleGroupProps, Schema, TranslationsFull } from '../types';
 import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};

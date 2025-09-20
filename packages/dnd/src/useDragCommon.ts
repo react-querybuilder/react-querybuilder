@@ -38,10 +38,10 @@ export const useDragCommon = ({
   copyModeModifierKey,
   groupModeModifierKey,
 }: UseDragCommonProps): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
-  useDrag!<DraggedItem, DropResult, DragCollection>(
+  useDrag<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
-      item: () => ({ ...findPath(path, schema.getQuery()!)!, path, qbId: schema.qbId }),
+      item: () => ({ ...findPath(path, schema.getQuery())!, path, qbId: schema.qbId }),
       canDrag: !disabled,
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),

@@ -1,8 +1,8 @@
+import { consoleMocks } from '@rqb-testing';
 import type { RenderHookResult } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react';
-import { consoleMocks } from '@rqb-testing';
-import type { DndProp, UseReactDnD } from './types';
 import { useReactDnD } from './QueryBuilderDnD';
+import type { DndProp, UseReactDnD } from './types';
 
 const timeoutWait = 500;
 

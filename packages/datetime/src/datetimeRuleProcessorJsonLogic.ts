@@ -17,7 +17,7 @@ const dateOperationMap = {
 } as const satisfies Partial<Record<DefaultOperatorName, string>>;
 
 /**
- * Date/time rule processor for use by {@link react-querybuilder!index.formatQuery formatQuery}
+ * Date/time rule processor for use by {@link @react-querybuilder/core!formatQuery formatQuery}
  * with the "jsonlogic" format.
  *
  * Note: Unlike other date/time rule processors from this library, this function does
