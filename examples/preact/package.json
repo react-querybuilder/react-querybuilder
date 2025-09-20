@@ -3,7 +3,7 @@
     "preact": "^10",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.8.4"
+    "react-querybuilder": "8.9.0"
   },
   "description": "React Query Builder Basic TypeScript Example",
   "devDependencies": {
