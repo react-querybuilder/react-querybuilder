@@ -107,7 +107,7 @@ Generated folders:
 [new-discussion]: https://github.com/react-querybuilder/react-querybuilder/discussions/new
 [discord]: https://react-querybuilder.js.org/discord
 [egghead]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
-[bun]: https://bun.sh/
+[bun]: https://bun.com/
 [prettier]: https://prettier.io/
 [codesandbox]: https://codesandbox.io
 [stackblitz]: https://stackblitz.com
