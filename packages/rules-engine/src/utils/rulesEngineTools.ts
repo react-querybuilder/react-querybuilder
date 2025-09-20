@@ -13,12 +13,12 @@ import {
   add,
   getCommonAncestorPath,
   getParentPath,
-  pathsAreEqual,
   group,
   insert,
   isRuleGroup,
   isRuleType,
   move,
+  pathsAreEqual,
   remove,
   update,
 } from 'react-querybuilder';
@@ -56,7 +56,7 @@ export const addRE = <RE extends RulesEngineAny>(
   /** Path or ID of the rules engine condition to add to. */
   conditionPathOrID: Path | string,
   /** Path or ID of the group to add to (within the rules engine at `conditionPathOrID`), if adding a rule or group. */
-  parentGroupPathOrID?: Path | string | null | undefined,
+  parentGroupPathOrID?: Path | string | null,
   /** Options. */
   addOptions: AddOptionsRE = {}
 ): RE =>
@@ -123,7 +123,7 @@ export const updateRE = <RE extends RulesEngineAny>(
   /** Path or ID of the rules engine condition to update. */
   conditionPathOrID: Path | string,
   /** Path or ID of the group to update (within the rules engine at `conditionPathOrID`), if updating a rule or group. */
-  parentGroupPathOrID?: Path | string | null | undefined,
+  parentGroupPathOrID?: Path | string | null,
   /** Options. */
   updateOptions: UpdateOptionsRE = {}
 ): RE =>
@@ -162,7 +162,7 @@ export const removeRE = <RE extends RulesEngineAny>(
   /** Path or ID of the rules engine condition to remove. */
   conditionPathOrID: Path | string,
   /** Path or ID of the rule or group to remove (within the rules engine at `conditionPathOrID`), if removing a rule or group. */
-  parentGroupPathOrID?: Path | string | null | undefined
+  parentGroupPathOrID?: Path | string | null
 ): RE =>
   produce(rulesEngine, draft => {
     // Delegate to underlying queryTools remove for rule/group removal within a condition
@@ -209,9 +209,9 @@ export const moveRE = <RE extends RulesEngineAny>(
   /** Path to move the condition to, or shift direction, or the condition path if moving within a nested group. */
   newConditionPathOrShiftDirection: Path | 'up' | 'down',
   /** Path or ID of the rule or group within the old condition, if moving a rule or group. */
-  oldParentGroupPathOrID?: Path | string | null | undefined,
+  oldParentGroupPathOrID?: Path | string | null,
   /** Path or ID of the rule or group within the new condition, if moving a rule or group. */
-  newParentGroupPathOrID?: Path | 'up' | 'down' | null | undefined,
+  newParentGroupPathOrID?: Path | 'up' | 'down' | null,
   /** Options. */
   moveOptions: MoveOptionsRE = {}
 ): RE => {
@@ -277,7 +277,7 @@ export const moveRE = <RE extends RulesEngineAny>(
       newConditionPath = foundPath;
     } else {
       // Handle 'up'/'down' shift direction for conditions
-      const direction = newConditionPathOrShiftDirection as 'up' | 'down';
+      const direction = newConditionPathOrShiftDirection;
       const currentIndex = oldConditionPath.at(-1)!;
       const parent = findConditionPath(getParentPath(oldConditionPath), draft);
       // istanbul ignore next
@@ -338,7 +338,7 @@ export const moveRE = <RE extends RulesEngineAny>(
     }
 
     const newNewConditionPath = [...newConditionPath];
-    
+
     // Only apply complex path adjustment for explicit path moves, not directional moves
     if (
       !moveOptions.clone &&
@@ -388,7 +388,7 @@ export const insertRE = <RE extends RulesEngineAny>(
   /** Path at which to insert the condition. */
   conditionPath: Path,
   /** Path at which to insert the rule or group (within the condition at `conditionPath`), if inserting a rule or group. */
-  parentGroupPath?: Path | null | undefined,
+  parentGroupPath?: Path | null,
   /** Options. */
   insertOptions: InsertOptionsRE = {}
 ): RE => {

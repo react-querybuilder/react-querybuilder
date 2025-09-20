@@ -1,9 +1,9 @@
 import type {
   CommonRuleAndGroupProperties,
   RuleGroupType,
-  RuleType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
+  RuleType,
 } from 'react-querybuilder';
 
 export type RulesEngineCondition<RG extends RuleGroupTypeAny> = RG & {

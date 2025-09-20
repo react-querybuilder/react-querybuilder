@@ -151,8 +151,7 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
     [condition, onConditionChange, props.conditionPath]
   );
   const conditionUpdater = React.useCallback(
-    (re: RulesEngineCondition<RG>) =>
-      onConditionChange(re as RulesEngineCondition<RG>, props.conditionPath.at(-1)!),
+    (re: RulesEngineCondition<RG>) => onConditionChange(re, props.conditionPath.at(-1)!),
     [onConditionChange, props.conditionPath]
   );
 
@@ -175,7 +174,7 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
             <RulesEngineActionBuilder
               conditionPath={props.conditionPath}
               actionTypes={props.actionTypes}
-              action={props.condition.action as RulesEngineAction}
+              action={props.condition.action}
               onActionChange={actionUpdater}
               autoSelectActionType={props.autoSelectActionType}
             />

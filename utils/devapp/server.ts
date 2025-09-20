@@ -8,8 +8,8 @@ import fluentIndexHTML from './pages/fluent.html';
 import mantineIndexHTML from './pages/mantine.html';
 import materialIndexHTML from './pages/material.html';
 import nativeIndexHTML from './pages/native.html';
-import rebIndexHTML from './pages/rulesengine.html';
 import rqbIndexHTML from './pages/rqb.html';
+import rebIndexHTML from './pages/rulesengine.html';
 import tremorIndexHTML from './pages/tremor.html';
 
 const indexHTMLs = {

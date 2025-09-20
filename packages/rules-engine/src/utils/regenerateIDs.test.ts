@@ -4,8 +4,8 @@ import type {
   RulesEngineIC,
 } from '@react-querybuilder/rules-engine';
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from 'react-querybuilder';
-import { regenerateID, regenerateIDs } from './regenerateIDs';
 import { uuidV4regex } from './generateIDTestUtils';
+import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {
   id: 'root',
