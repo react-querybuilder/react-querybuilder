@@ -1,12 +1,3 @@
-import { useCallback, useMemo, useState } from 'react';
-import {
-  defaultCombinatorLabelMap,
-  defaultCombinators,
-  defaultOperatorLabelMap,
-  defaultOperators,
-} from '../defaults';
-import type { UseMergedContextReturn } from '../hooks';
-import { useFields, useMergedContext, useOptionListProp } from '../hooks';
 import type {
   BaseOption,
   FlexibleOptionList,
@@ -21,14 +12,17 @@ import type {
   MatchModeOptions,
   Option,
   OptionGroup,
-  QueryBuilderProps,
   RemoveNullability,
   RuleGroupTypeAny,
   RuleType,
   ValueSourceFullOptions,
   WithUnknownIndex,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  defaultCombinatorLabelMap,
+  defaultCombinators,
+  defaultOperatorLabelMap,
+  defaultOperators,
   filterFieldsByComparator,
   generateID,
   getFirstOption,
@@ -39,7 +33,11 @@ import {
   joinWith,
   toFullOptionList,
   uniqOptList,
-} from '../utils';
+} from '@react-querybuilder/core';
+import { useCallback, useMemo, useState } from 'react';
+import type { UseMergedContextReturn } from '../hooks';
+import { useFields, useMergedContext, useOptionListProp } from '../hooks';
+import type { QueryBuilderProps } from '../types';
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {

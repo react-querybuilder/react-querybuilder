@@ -1,6 +1,7 @@
+import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import type { Context } from 'react';
 import { createContext } from 'react';
-import type { QueryBuilderContextProps, RuleGroupTypeAny } from '../types';
+import type { QueryBuilderContextProps } from '../types';
 
 interface QueryBuilderContextInternals {
   initialQuery?: RuleGroupTypeAny;

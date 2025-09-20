@@ -1,6 +1,6 @@
+import { TestID, standardClassnames as sc } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import { TestID, standardClassnames as sc } from '../defaults';
 import { QueryBuilder } from './QueryBuilder.debug';
 
 describe('debug mode', () => {

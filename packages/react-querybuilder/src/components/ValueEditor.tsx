@@ -1,10 +1,17 @@
+import type { FullField, InputType, ParseNumberMethod } from '@react-querybuilder/core';
+import {
+  clsx,
+  getFirstOption,
+  getParseNumberMethod,
+  joinWith,
+  parseNumber,
+  standardClassnames,
+  toArray,
+} from '@react-querybuilder/core';
 import { produce } from 'immer';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { standardClassnames } from '../defaults';
-import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps } from '../types';
-import { getFirstOption, getParseNumberMethod, joinWith, parseNumber, toArray } from '../utils';
-import clsx from '../utils/clsx';
+import type { Schema, ValueEditorProps } from '../types';
 
 interface RadioButtonProps {
   name: string;

@@ -85,7 +85,7 @@ Use [`getOperators`](#getoperators) to build operator lists dynamically per fiel
 
 The default operator list is below.
 
-%importcode /packages/react-querybuilder/src/defaults.ts#region=docs-operators
+%importcode /packages/core/src/defaults.ts#region=docs-operators
 
 ### `combinators`
 
@@ -93,7 +93,7 @@ The default operator list is below.
 
 Array of combinators for RuleGroups. Default combinator list:
 
-%importcode /packages/react-querybuilder/src/defaults.ts#region=docs-combinators
+%importcode /packages/core/src/defaults.ts#region=docs-combinators
 
 ### `baseField`
 
@@ -288,7 +288,7 @@ For [independent combinators](#independent-combinators), add `combinatorPrecedin
 
 :::tip
 
-To [prevent adding new rules](../tips/limit-groups), use `controlElements={{ addRuleAction: () => null }}` to hide the "+ Rule" button.
+To [prevent adding new rules](../tips/limit-groups), use `controlElements={{ addRuleAction: null }}` to hide the "+ Rule" button.
 
 :::
 
@@ -302,7 +302,7 @@ For [independent combinators](#independent-combinators), add `combinatorPrecedin
 
 :::tip
 
-To [prevent adding new groups](../tips/limit-groups), use `controlElements={{ addGroupAction: () => null }}` to hide the "+ Group" button.
+To [prevent adding new groups](../tips/limit-groups), use `controlElements={{ addGroupAction: null }}` to hide the "+ Group" button.
 
 :::
 
@@ -360,7 +360,7 @@ Provides internationalization (i18n) support by overriding translatable texts fo
 
 All object keys and properties are optional. The `translations` object deep-merges with defaults below. Default placeholder names are `"~"` and labels are `"------"`.
 
-%importcode /packages/react-querybuilder/src/defaultControlElements.ts#region=docs-translations
+%importcode /packages/react-querybuilder/src/defaults.ts#region=docs-translations
 
 ### `showCombinatorsBetweenRules`
 

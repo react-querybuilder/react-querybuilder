@@ -1,7 +1,8 @@
+import type { FullField, MatchMode, Path, RuleType } from '@react-querybuilder/core';
+import { lc, parseNumber } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback } from 'react';
-import type { FullField, MatchMode, MatchModeEditorProps, Path, RuleType, Schema } from '../types';
-import { lc, parseNumber } from '../utils';
+import type { MatchModeEditorProps, Schema } from '../types';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
 const requiresThreshold = (mm?: string | null) =>

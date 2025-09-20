@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { defaultTranslations } from '../defaultControlElements';
+import { defaultTranslations } from '../defaults';
 import type { Translations } from '../types';
 import { useMergedContext } from './useMergedContext';
 

@@ -1,9 +1,9 @@
+import type { FullField } from '@react-querybuilder/core';
 import type { ReactNode } from 'react';
 import * as React from 'react';
 import { QueryBuilderContext } from '../context';
 import { useMergedContext } from '../hooks/useMergedContext';
 import type {
-  FullField,
   QueryBuilderContextProps,
   QueryBuilderContextProvider,
   QueryBuilderContextProviderProps,

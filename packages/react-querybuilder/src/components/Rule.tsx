@@ -1,12 +1,3 @@
-import type { MouseEvent } from 'react';
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
-import { rootPath, standardClassnames, TestID } from '../defaults';
-import type { UseFields } from '../hooks';
-import { useFields } from '../hooks';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   FlexibleOptionList,
@@ -18,17 +9,15 @@ import type {
   Option,
   OptionList,
   RuleGroupType,
-  RuleProps,
   RuleType,
-  ShiftActionsProps,
-  TranslationsFull,
   ValidationResult,
   ValueChangeEventHandler,
   ValueEditorType,
   ValueSourceFullOptions,
   ValueSources,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  clsx,
   filterFieldsByComparator,
   getOption,
   getParentPath,
@@ -38,9 +27,20 @@ import {
   isPojo,
   isRuleGroup,
   lc,
+  rootPath,
+  standardClassnames,
+  TestID,
   toFullOptionList,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+} from '@react-querybuilder/core';
+import type { MouseEvent } from 'react';
+import * as React from 'react';
+import { useCallback, useMemo } from 'react';
+import type { UseFields } from '../hooks';
+import { useFields } from '../hooks';
+import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
+import { useReactDndWarning } from '../hooks/useReactDndWarning';
+import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
+import type { RuleProps, ShiftActionsProps, TranslationsFull } from '../types';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
 import type { UseRuleGroup } from './RuleGroup';
 import { useRuleGroup } from './RuleGroup';

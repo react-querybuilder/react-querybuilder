@@ -23,6 +23,7 @@
       "@react-querybuilder/bootstrap": ["../packages/bootstrap/src"],
       "@react-querybuilder/bulma": ["../packages/bulma/src"],
       "@react-querybuilder/chakra": ["../packages/chakra/src"],
+      "@react-querybuilder/core": ["../packages/core/src"],
       "@react-querybuilder/datetime": ["../packages/datetime/src"],
       "@react-querybuilder/dnd": ["../packages/dnd/src"],
       "@react-querybuilder/fluent": ["../packages/fluent/src"],
@@ -30,19 +31,15 @@
       "@react-querybuilder/material": ["../packages/material/src"],
       "@react-querybuilder/tremor": ["../packages/tremor/src"],
       "react-querybuilder": ["../packages/react-querybuilder/src"],
-      "react-querybuilder/formatQuery": ["../packages/react-querybuilder/src/utils/formatQuery"],
-      "react-querybuilder/parseCEL": ["../packages/react-querybuilder/src/utils/parseCEL"],
-      "react-querybuilder/parseJSONata": ["../packages/react-querybuilder/src/utils/parseJSONata"],
-      "react-querybuilder/parseJsonLogic": [
-        "../packages/react-querybuilder/src/utils/parseJsonLogic"
-      ],
-      "react-querybuilder/parseMongoDB": ["../packages/react-querybuilder/src/utils/parseMongoDB"],
-      "react-querybuilder/parseSpEL": ["../packages/react-querybuilder/src/utils/parseSpEL"],
-      "react-querybuilder/parseSQL": ["../packages/react-querybuilder/src/utils/parseSQL"],
-      "react-querybuilder/transformQuery": [
-        "../packages/react-querybuilder/src/utils/transformQuery"
-      ],
-      "spel2js": ["../packages/react-querybuilder/src/utils/parseSpEL/spel2js.d.ts"]
+      "react-querybuilder/formatQuery": ["../packages/core/src/utils/formatQuery"],
+      "react-querybuilder/parseCEL": ["../packages/core/src/utils/parseCEL"],
+      "react-querybuilder/parseJSONata": ["../packages/core/src/utils/parseJSONata"],
+      "react-querybuilder/parseJsonLogic": ["../packages/core/src/utils/parseJsonLogic"],
+      "react-querybuilder/parseMongoDB": ["../packages/core/src/utils/parseMongoDB"],
+      "react-querybuilder/parseSpEL": ["../packages/core/src/utils/parseSpEL"],
+      "react-querybuilder/parseSQL": ["../packages/core/src/utils/parseSQL"],
+      "react-querybuilder/transformQuery": ["../packages/core/src/utils/transformQuery"],
+      "spel2js": ["../packages/core/src/utils/parseSpEL/spel2js.d.ts"]
     }
   },
   "include": ["src/"],

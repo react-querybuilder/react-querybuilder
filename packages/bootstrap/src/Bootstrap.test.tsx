@@ -1,7 +1,7 @@
+import { testNotToggle, testValueEditor } from '@rqb-testing';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { QueryBuilder, TestID } from 'react-querybuilder';
-import { testNotToggle, testValueEditor } from '@rqb-testing';
 import { BootstrapNotToggle } from './BootstrapNotToggle';
 import { BootstrapValueEditor } from './BootstrapValueEditor';
 import { QueryBuilderBootstrap } from './index';

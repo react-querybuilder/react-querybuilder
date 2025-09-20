@@ -1,11 +1,11 @@
-import * as React from 'react';
 import type {
   FullCombinator,
   FullField,
   FullOperator,
-  QueryBuilderProps,
   RuleGroupTypeAny,
-} from '../types';
+} from '@react-querybuilder/core';
+import * as React from 'react';
+import type { QueryBuilderProps } from '../types';
 import { QueryBuilderInternal } from './QueryBuilderInternal';
 import { QueryBuilderStateProvider } from './QueryBuilderStateProvider';
 
