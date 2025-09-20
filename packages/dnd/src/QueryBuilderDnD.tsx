@@ -207,7 +207,7 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
     const getDnD = async () => {
       const [reactDnD, reactDndHTML5Be, reactDndTouchBe] = await Promise.all(
         ['', '-html5-backend', '-touch-backend'].map(pn =>
-          import(`react-dnd${pn}`).catch(() => null)
+          import(/* @vite-ignore */ `react-dnd${pn}`).catch(() => null)
         )
       );
 
