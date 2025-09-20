@@ -77,16 +77,3 @@ export const getConditionPathOfID = (id: string, re: RulesEngineAny): Path | nul
 
   return null;
 };
-
-/**
- * Returns the parent path of a given path.
- */
-export const getParentPath = (path: Path): Path => path.slice(0, -1);
-
-/**
- * Determines if two paths are equal.
- */
-export const pathsAreEqual = (path1: Path, path2: Path): boolean => {
-  if (path1.length !== path2.length) return false;
-  return path1.every((segment, i) => segment === path2[i]);
-};

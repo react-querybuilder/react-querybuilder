@@ -11,6 +11,9 @@ import type {
 } from 'react-querybuilder';
 import {
   add,
+  getCommonAncestorPath,
+  getParentPath,
+  pathsAreEqual,
   group,
   insert,
   isRuleGroup,
@@ -21,7 +24,7 @@ import {
 } from 'react-querybuilder';
 import type { RulesEngineAction, RulesEngineAny } from '../types';
 import { isRulesEngineAction, isRulesEngineAny } from './isRulesEngine';
-import { findConditionPath, getConditionPathOfID, getParentPath, pathsAreEqual } from './pathUtils';
+import { findConditionPath, getConditionPathOfID } from './pathUtils';
 
 const push = (a: unknown[], ...items: unknown[]) => a.push(...items);
 const splice = (a: unknown[], start: number, deleteCount: number, ...items: unknown[]) =>
@@ -289,37 +292,79 @@ export const moveRE = <RE extends RulesEngineAny>(
       }
     }
 
-    // Don't move to the same location
-    if (pathsAreEqual(oldConditionPath, newConditionPath)) return;
+    // Don't move to the same location or a path that doesn't exist yet
+    if (
+      pathsAreEqual(oldConditionPath, newConditionPath) ||
+      !findConditionPath(getParentPath(newConditionPath), draft)
+    ) {
+      return;
+    }
 
-    const conditionToMove = findConditionPath(oldConditionPath, draft);
-    if (!conditionToMove) return;
+    const conditionToMoveOriginal = findConditionPath(oldConditionPath, draft);
+    if (!conditionToMoveOriginal) return;
+
+    // Validate action movement constraints
+    const sourceParent = findConditionPath(getParentPath(oldConditionPath), draft);
+    const targetParent = findConditionPath(getParentPath(newConditionPath), draft);
+    if (
+      coerceToRulesEngine(sourceParent) &&
+      coerceToRulesEngine(targetParent) &&
+      isRulesEngineAction(conditionToMoveOriginal)
+    ) {
+      const newIndex = newConditionPath.at(-1)!;
+      // Actions can only be at the last position
+      if (newIndex < targetParent.conditions.length - 1) return;
+    }
+
+    // Can't move rules engine below an action
+    if (coerceToRulesEngine(targetParent) && !isRulesEngineAction(conditionToMoveOriginal)) {
+      const newIndex = newConditionPath.at(-1)!;
+      const hasTrailingAction = isRulesEngineAction(targetParent.conditions.at(-1));
+      if (hasTrailingAction && newIndex >= targetParent.conditions.length - 1) return;
+    }
+
+    const conditionToMove = moveOptions.clone
+      ? conditionToMoveOriginal // TODO: implement ID regeneration for cloning
+      : conditionToMoveOriginal;
 
     const oldIndex = oldConditionPath.at(-1)!;
-    const newIndex = newConditionPath.at(-1)!;
-
-    // Remove from old location
     const oldParent = findConditionPath(getParentPath(oldConditionPath), draft);
     // istanbul ignore next
     if (!coerceToRulesEngine(oldParent)) return;
-    oldParent.conditions.splice(oldIndex, 1);
 
-    // Insert at new location, adjusting for removal if necessary
-    const newParent = findConditionPath(getParentPath(newConditionPath), draft);
-    // istanbul ignore next
-    if (!coerceToRulesEngine(newParent)) return;
-
-    // Adjust insertion index if we're moving within the same parent
-    let insertIndex = newIndex;
-    if (pathsAreEqual(getParentPath(oldConditionPath), getParentPath(newConditionPath))) {
-      // If the old index was before the new index, the array shifted left by 1
-      if (oldIndex < newIndex) {
-        insertIndex = newIndex - 1;
-      }
+    // Remove the source item if not cloning
+    if (!moveOptions.clone) {
+      oldParent.conditions.splice(oldIndex, 1);
     }
 
+    const newNewConditionPath = [...newConditionPath];
+    
+    // Only apply complex path adjustment for explicit path moves, not directional moves
+    if (
+      !moveOptions.clone &&
+      Array.isArray(newConditionPathOrShiftDirection) // Only for explicit paths like [2], not 'up'/'down'
+    ) {
+      const commonAncestorPath = getCommonAncestorPath(oldConditionPath, newConditionPath);
+      if (
+        oldConditionPath.length === commonAncestorPath.length + 1 &&
+        newConditionPath[commonAncestorPath.length] > oldConditionPath[commonAncestorPath.length]
+      ) {
+        // Getting here means there will be a shift of paths upward at the common
+        // ancestor level because the object at `oldConditionPath` will be spliced out. The
+        // real new path should therefore be one higher than `newConditionPath`.
+        newNewConditionPath[commonAncestorPath.length] -= 1;
+      }
+    }
+    // For directional moves ('up'/'down'), the path is already correctly calculated
+    const newNewParentPath = getParentPath(newNewConditionPath);
+    const parentToInsertInto = findConditionPath(newNewParentPath, draft);
+    // istanbul ignore next
+    if (!coerceToRulesEngine(parentToInsertInto)) return;
+    const newIndex = newNewConditionPath.at(-1)!;
+
+    // Insert the source item at the target path
     // oxlint-disable-next-line no-explicit-any
-    newParent.conditions.splice(insertIndex, 0, conditionToMove as any);
+    parentToInsertInto.conditions.splice(newIndex, 0, conditionToMove as any);
   });
 };
 

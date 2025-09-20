@@ -242,9 +242,41 @@ describe('moveRE', () => {
       ],
       id: 'root',
     });
+    expect(
+      moveRE(
+        {
+          conditions: [
+            {
+              combinator: 'and',
+              rules: [],
+              conditions: [
+                { combinator: 'and', rules: [] },
+                { combinator: 'or', rules: [] },
+                { actionType: 'a' },
+              ],
+              id: '1',
+            },
+          ],
+          id: 'root',
+        },
+        [0, 1],
+        'down'
+      )
+    ).toEqual({
+      conditions: [
+        { combinator: 'and', rules: [] },
+        {
+          combinator: 'and',
+          rules: [],
+          conditions: [{ combinator: 'or', rules: [] }, { actionType: 'a' }],
+          id: '1',
+        },
+      ],
+      id: 'root',
+    });
   });
 
-  it.skip('moves a condition down', () => {
+  it('moves a condition down', () => {
     expect(
       moveRE(
         {
@@ -266,9 +298,61 @@ describe('moveRE', () => {
       ],
       id: 'root',
     });
+    expect(
+      moveRE(
+        {
+          conditions: [
+            {
+              combinator: 'and',
+              rules: [],
+              conditions: [
+                { combinator: 'and', rules: [] },
+                { combinator: 'or', rules: [] },
+                { actionType: 'a' },
+              ],
+              id: '1',
+            },
+            {
+              combinator: 'or',
+              rules: [],
+              conditions: [
+                { combinator: 'and', rules: [] },
+                { combinator: 'or', rules: [] },
+                { actionType: 'a' },
+              ],
+              id: '2',
+            },
+          ],
+          id: 'root',
+        },
+        [0, 1],
+        'down'
+      )
+    ).toEqual({
+      conditions: [
+        {
+          combinator: 'and',
+          rules: [],
+          conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }],
+          id: '1',
+        },
+        { combinator: 'or', rules: [] },
+        {
+          combinator: 'or',
+          rules: [],
+          conditions: [
+            { combinator: 'and', rules: [] },
+            { combinator: 'or', rules: [] },
+            { actionType: 'a' },
+          ],
+          id: '2',
+        },
+      ],
+      id: 'root',
+    });
   });
 
-  it.skip('moves a condition to specific path', () => {
+  it('moves a condition to specific path', () => {
     expect(
       moveRE(
         {
@@ -285,8 +369,8 @@ describe('moveRE', () => {
     ).toEqual({
       conditions: [
         { combinator: 'or', rules: [] },
-        { combinator: 'xor', rules: [] },
         { combinator: 'and', rules: [] },
+        { combinator: 'xor', rules: [] },
       ],
       id: 'root',
     });
