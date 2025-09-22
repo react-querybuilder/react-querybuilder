@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [v8.9.2] - 2025-09-22
+
+### Fixed
+
+- Build configuration for core and main packages
+
 ## [v8.9.1] - 2025-09-20
 
 ### Fixed
@@ -2011,7 +2017,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...HEAD
+[v8.9.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...v8.9.2
 [v8.9.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.0...v8.9.1
 [v8.9.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.4...v8.9.0
 [v8.8.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.3...v8.8.4

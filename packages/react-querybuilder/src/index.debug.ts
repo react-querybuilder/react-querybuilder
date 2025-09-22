@@ -1,3 +1,4 @@
+export * from '@react-querybuilder/core';
 export * from './barrel';
 export * from './components/index.debug';
 export { QueryBuilder as default } from './components/index.debug';

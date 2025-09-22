@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/dnd",
   "description": "Drag-and-drop-enabled version of react-querybuilder",
-  "version": "8.9.1",
+  "version": "8.9.2",
   "publishConfig": {
     "access": "public"
   },
@@ -64,7 +64,7 @@
     "react-dnd-test-utils": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^19.1.1",
-    "react-querybuilder": "8.9.1",
+    "react-querybuilder": "8.9.2",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
     "vite": "^7.1.6"
@@ -74,7 +74,7 @@
     "react-dnd": ">=14.0.0",
     "react-dnd-html5-backend": ">=14.0.0",
     "react-dnd-touch-backend": ">=14.0.0",
-    "react-querybuilder": "8.9.1"
+    "react-querybuilder": "8.9.2"
   },
   "peerDependenciesMeta": {
     "react-dnd-html5-backend": {

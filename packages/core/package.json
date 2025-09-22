@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.9.1",
+  "version": "8.9.2",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -21,36 +21,84 @@
     },
     "./dist/*": "./dist/*",
     "./formatQuery": {
-      "types": "./dist/formatQuery.d.ts",
-      "default": "./dist/formatQuery.js"
+      "import": {
+        "types": "./dist/formatQuery.d.mts",
+        "import": "./dist/formatQuery.mjs"
+      },
+      "require": {
+        "types": "./dist/formatQuery.d.ts",
+        "default": "./dist/formatQuery.js"
+      }
     },
     "./parseCEL": {
-      "types": "./dist/parseCEL.d.ts",
-      "default": "./dist/parseCEL.js"
+      "import": {
+        "types": "./dist/parseCEL.d.mts",
+        "import": "./dist/parseCEL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseCEL.d.ts",
+        "default": "./dist/parseCEL.js"
+      }
     },
     "./parseJSONata": {
-      "types": "./dist/parseJSONata.d.ts",
-      "default": "./dist/parseJSONata.js"
+      "import": {
+        "types": "./dist/parseJSONata.d.mts",
+        "import": "./dist/parseJSONata.mjs"
+      },
+      "require": {
+        "types": "./dist/parseJSONata.d.ts",
+        "default": "./dist/parseJSONata.js"
+      }
     },
     "./parseJsonLogic": {
-      "types": "./dist/parseJsonLogic.d.ts",
-      "default": "./dist/parseJsonLogic.js"
+      "import": {
+        "types": "./dist/parseJsonLogic.d.mts",
+        "import": "./dist/parseJsonLogic.mjs"
+      },
+      "require": {
+        "types": "./dist/parseJsonLogic.d.ts",
+        "default": "./dist/parseJsonLogic.js"
+      }
     },
     "./parseMongoDB": {
-      "types": "./dist/parseMongoDB.d.ts",
-      "default": "./dist/parseMongoDB.js"
+      "import": {
+        "types": "./dist/parseMongoDB.d.mts",
+        "import": "./dist/parseMongoDB.mjs"
+      },
+      "require": {
+        "types": "./dist/parseMongoDB.d.ts",
+        "default": "./dist/parseMongoDB.js"
+      }
     },
     "./parseSpEL": {
-      "types": "./dist/parseSpEL.d.ts",
-      "default": "./dist/parseSpEL.js"
+      "import": {
+        "types": "./dist/parseSpEL.d.mts",
+        "import": "./dist/parseSpEL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseSpEL.d.ts",
+        "default": "./dist/parseSpEL.js"
+      }
     },
     "./parseSQL": {
-      "types": "./dist/parseSQL.d.ts",
-      "default": "./dist/parseSQL.js"
+      "import": {
+        "types": "./dist/parseSQL.d.mts",
+        "import": "./dist/parseSQL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseSQL.d.ts",
+        "default": "./dist/parseSQL.js"
+      }
     },
     "./transformQuery": {
-      "types": "./dist/transformQuery.d.ts",
-      "default": "./dist/transformQuery.js"
+      "import": {
+        "types": "./dist/transformQuery.d.mts",
+        "import": "./dist/transformQuery.mjs"
+      },
+      "require": {
+        "types": "./dist/transformQuery.d.ts",
+        "default": "./dist/transformQuery.js"
+      }
     }
   },
   "react-native": "dist/react-querybuilder_core.mjs",

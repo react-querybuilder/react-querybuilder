@@ -1,1 +1,1 @@
-declare module 'prettier-plugin-organize-imports' {}
+declare module 'prettier-plugin-organize-imports';

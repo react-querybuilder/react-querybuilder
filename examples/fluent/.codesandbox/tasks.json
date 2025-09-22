@@ -6,7 +6,7 @@
     },
     {
       "name": "Install Dependencies",
-      "command": "bun install"
+      "command": "[ -f yarn.lock ] && rm yarn.lock; bun install"
     }
   ],
   "tasks": {

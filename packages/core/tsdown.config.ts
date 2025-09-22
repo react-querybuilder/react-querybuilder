@@ -23,6 +23,12 @@ export default defineConfig(async options => {
       entry: utilEntryPoints,
       sourcemap: true,
       platform: 'neutral',
+    },
+    {
+      ...options,
+      entry: utilEntryPoints,
+      sourcemap: true,
+      platform: 'neutral',
       format: 'cjs',
       onSuccess: async () => {
         // Write /debug/package.json for node10 resolution
