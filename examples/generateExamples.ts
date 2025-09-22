@@ -34,6 +34,7 @@ const compileToJS = async (code: string, fileName: string) => {
 const packagesPath = path.join(import.meta.dir, '../packages');
 const templatePath = path.join(import.meta.dir, '_template');
 const templateDotCS = path.join(templatePath, '.codesandbox');
+const templateDotDC = path.join(templatePath, '.devcontainer');
 const templateSrc = path.join(templatePath, 'src');
 const templateDotCSTemplateJSON = await Bun.file(path.join(templateDotCS, 'template.json')).json();
 const templateIndexHTML = await Bun.file(path.join(templatePath, 'index.html')).text();
@@ -54,6 +55,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
   const examplePath = path.join(import.meta.dir, exampleID);
   const exampleDotCS = path.join(examplePath, '.codesandbox');
+  const exampleDotDC = path.join(examplePath, '.devcontainer');
   const exampleSrc = path.join(examplePath, 'src');
   const exampleBaseTitle = `React Query Builder ${exampleConfig.name}`;
   const exampleTitle = `${exampleBaseTitle} Example`;
@@ -108,6 +110,10 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     Bun.write(
       path.join(exampleDotCS, 'workspace.json'),
       Bun.file(path.join(templateDotCS, 'workspace.json'))
+    ),
+    Bun.write(
+      path.join(exampleDotDC, 'devcontainer.json'),
+      Bun.file(path.join(templateDotDC, 'devcontainer.json'))
     ),
     Bun.write(
       path.join(examplePath, '.gitignore'),
