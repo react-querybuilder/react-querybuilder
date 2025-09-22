@@ -1,4 +1,3 @@
-export * from '@react-querybuilder/core';
 export * from './context';
 export * from './defaults';
 export * from './hooks';
