@@ -1,5 +1,6 @@
 import type { Draft } from 'immer';
 import { produce } from 'immer';
+import type { RequireAtLeastOne } from 'type-fest';
 import type {
   BaseOption,
   BaseOptionMap,
@@ -11,7 +12,6 @@ import type {
   GetOptionIdentifierType,
   Option,
   OptionGroup,
-  RequireAtLeastOne,
   ToFullOption,
   ValueOption,
   WithUnknownIndex,

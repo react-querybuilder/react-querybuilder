@@ -30,7 +30,6 @@ import type {
   RuleGroupTypeIC,
   RuleOrGroupArray,
   RuleType,
-  SetNonNullable,
   ToFullOption,
   ValidationMap,
   ValidationResult,
@@ -48,6 +47,7 @@ import type {
   Ref,
   RefAttributes,
 } from 'react';
+import type { SetNonNullable } from 'type-fest';
 import type { UseRuleGroup } from '../components/RuleGroup';
 
 /**

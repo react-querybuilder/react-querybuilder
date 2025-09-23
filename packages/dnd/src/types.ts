@@ -7,8 +7,8 @@ import type {
   DraggedItem,
   FullField,
   QueryBuilderContextProviderProps,
-  SetOptional,
 } from 'react-querybuilder';
+import type { SetOptional } from 'type-fest';
 
 type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
 
