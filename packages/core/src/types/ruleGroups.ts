@@ -54,10 +54,9 @@ export type RuleGroupArray<
  * All updateable properties of rules and groups (everything except
  * `id`, `path`, and `rules`).
  */
-export type UpdateableProperties = Exclude<
-  keyof (RuleType & RuleGroupType),
-  'id' | 'path' | 'rules'
->;
+export type UpdateableProperties =
+  | Exclude<keyof (RuleType & RuleGroupType), 'id' | 'path' | 'rules'>
+  | (string & {});
 
 /**
  * The type of the `rules` array in a {@link DefaultRuleGroupType}.
