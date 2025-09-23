@@ -1,4 +1,4 @@
-import type { RequireAtLeastOne, SetRequired, Simplify } from './type-fest';
+import type { RequireAtLeastOne, SetRequired, Simplify } from 'type-fest';
 
 export type StringUnionToFlexibleOptionArray<Op extends string> = Array<
   Op extends unknown ? FlexibleOption<Op> : never

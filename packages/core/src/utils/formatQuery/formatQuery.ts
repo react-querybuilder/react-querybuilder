@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
   ExportFormat,
@@ -17,7 +18,6 @@ import type {
   RuleProcessor,
   RuleType,
   RuleValidator,
-  SetOptional,
   SQLPreset,
   ValidationMap,
   ValidationResult,

@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultOperatorName,
@@ -5,7 +6,6 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Except,
   MatchConfig,
   RQBJsonLogic,
   RQBJsonLogicVar,

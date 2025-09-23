@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import { defaultOperatorNegationMap } from '../../defaults';
 import type {
   DefaultCombinatorName,
@@ -8,7 +9,6 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Except,
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';

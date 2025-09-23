@@ -167,6 +167,7 @@
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^6.0.3",
     "sass": "^1.92.1",
+    "type-fest": "^4.41.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.6"
   },

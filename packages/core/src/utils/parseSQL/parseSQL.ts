@@ -1,3 +1,4 @@
+import type { Except } from 'type-fest';
 import type {
   DefaultOperatorName,
   DefaultRuleGroupArray,
@@ -6,7 +7,6 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Except,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
 import { joinWith } from '../arrayUtils';

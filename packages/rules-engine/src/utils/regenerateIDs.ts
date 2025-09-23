@@ -1,5 +1,6 @@
-import type { RuleGroupTypeAny, RuleType, SetRequired } from 'react-querybuilder';
+import type { RuleGroupTypeAny, RuleType } from 'react-querybuilder';
 import { generateID, isPojo, isRuleGroup } from 'react-querybuilder';
+import type { SetRequired } from 'type-fest';
 import type { RulesEngine } from '../types';
 import { isRulesEngineAny } from './isRulesEngine';
 
