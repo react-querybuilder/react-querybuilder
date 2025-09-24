@@ -6,8 +6,9 @@ import type {
   OptionGroup,
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
+import { prepareOptionList } from '@react-querybuilder/core';
+import { useMemo } from 'react';
 import type { QueryBuilderProps, TranslationsFull } from '../types';
-import { useOptionListProp } from './useOptionListProp';
 
 export interface UseFields<F extends FullField> {
   defaultField: FullField;
@@ -21,15 +22,19 @@ export const useFields = <F extends FullField>(
     'fields' | 'baseField' | 'autoSelectField'
   >
 ): UseFields<F> => {
-  const { optionList, optionsMap, defaultOption } = useOptionListProp({
-    placeholder: props.translations.fields,
-    optionList: props.fields,
-    autoSelectOption: props.autoSelectField,
-    baseOption: props.baseField,
-  });
-  return {
-    fields: optionList,
-    fieldMap: optionsMap,
-    defaultField: defaultOption,
-  };
+  const {
+    optionList: fields,
+    optionsMap: fieldMap,
+    defaultOption: defaultField,
+  } = useMemo(
+    () =>
+      prepareOptionList({
+        placeholder: props.translations.fields,
+        optionList: props.fields,
+        autoSelectOption: props.autoSelectField,
+        baseOption: props.baseField,
+      }),
+    [props.autoSelectField, props.baseField, props.fields, props.translations.fields]
+  );
+  return { fields, fieldMap, defaultField };
 };

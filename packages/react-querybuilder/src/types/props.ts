@@ -23,6 +23,7 @@ import type {
   Option,
   ParseNumbersPropConfig,
   Path,
+  Placeholder,
   QueryActions,
   QueryValidator,
   RuleGroupType,
@@ -229,28 +230,6 @@ export interface TranslationWithLabel extends Translation {
  */
 export interface Translation {
   title?: string;
-}
-/**
- * Placeholder strings for option lists.
- *
- * @group Props
- */
-export interface Placeholder {
-  /**
-   * Value for the placeholder field option if autoSelectField is false,
-   * or the placeholder operator option if autoSelectOperator is false.
-   */
-  placeholderName?: string;
-  /**
-   * Label for the placeholder field option if autoSelectField is false,
-   * or the placeholder operator option if autoSelectOperator is false.
-   */
-  placeholderLabel?: string;
-  /**
-   * Label for the placeholder field optgroup if autoSelectField is false,
-   * or the placeholder operator optgroup if autoSelectOperator is false.
-   */
-  placeholderGroupLabel?: string;
 }
 /**
  * A translation for a component with `title` and a placeholder.

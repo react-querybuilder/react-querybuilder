@@ -1,22 +1,28 @@
 import type { Draft } from 'immer';
 import { produce } from 'immer';
 import type { RequireAtLeastOne } from 'type-fest';
+import { defaultPlaceholderLabel, defaultPlaceholderName } from '../defaults';
 import type {
   BaseOption,
   BaseOptionMap,
   FlexibleOption,
   FlexibleOptionGroup,
   FlexibleOptionList,
+  FlexibleOptionListProp,
   FullOption,
   FullOptionList,
+  FullOptionMap,
+  FullOptionRecord,
   GetOptionIdentifierType,
   Option,
   OptionGroup,
+  Placeholder,
   ToFullOption,
   ValueOption,
   WithUnknownIndex,
 } from '../types';
 import { isPojo } from './misc';
+import { objectKeys } from './objectUtils';
 
 const isOptionWithName = (opt: BaseOption): opt is Option =>
   isPojo(opt) && 'name' in opt && typeof opt.name === 'string';
@@ -368,4 +374,97 @@ export const uniqOptList = <T extends BaseOption>(
     return uniqOptGroups(originalArray) as OptionGroup<ToFullOption<T>>[];
   }
   return uniqByIdentifier((originalArray as BaseOption[]).map(o => toFullOption(o)));
+};
+
+export interface PreparedOptionList<O extends FullOption> {
+  defaultOption: FullOption;
+  optionList: O[] | OptionGroup<O>[];
+  optionsMap: Partial<FullOptionRecord<FullOption>>;
+}
+
+export interface PrepareOptionListParams<O extends FullOption> {
+  placeholder?: Placeholder;
+  optionList?: FlexibleOptionListProp<O> | BaseOptionMap<O>;
+  baseOption?: Record<string, unknown>;
+  labelMap?: Record<string, string>;
+  autoSelectOption?: boolean;
+}
+
+export const prepareOptionList = <O extends FullOption>(
+  props: PrepareOptionListParams<O>
+): PreparedOptionList<O> => {
+  type OptionIdentifier = GetOptionIdentifierType<O>;
+
+  // istanbul ignore next
+  const {
+    optionList: optionListPropOriginal,
+    baseOption = {},
+    labelMap = {},
+    placeholder: {
+      placeholderName = defaultPlaceholderName,
+      placeholderLabel = defaultPlaceholderLabel,
+      placeholderGroupLabel = defaultPlaceholderLabel,
+    } = {},
+    autoSelectOption = true,
+  } = props;
+
+  const defaultOption = {
+    id: placeholderName,
+    name: placeholderName,
+    value: placeholderName,
+    label: placeholderLabel,
+  } as FullOption;
+
+  const optionsProp = optionListPropOriginal ?? ([defaultOption] as FlexibleOptionList<O>);
+
+  let optionList: O[] | OptionGroup<O>[] = [];
+  const opts = (
+    Array.isArray(optionsProp)
+      ? toFullOptionList(optionsProp, baseOption, labelMap)
+      : (objectKeys(toFullOptionMap(optionsProp, baseOption)) as unknown as OptionIdentifier[])
+          .map<
+            FullOption<OptionIdentifier>
+          >(opt => ({ ...optionsProp[opt]!, name: opt, value: opt }))
+          .sort((a, b) => a.label.localeCompare(b.label))
+  ) as FullOptionList<O>;
+  if (isFlexibleOptionGroupArray(opts)) {
+    optionList = autoSelectOption
+      ? (uniqOptGroups(opts) as FullOptionList<O>)
+      : (uniqOptGroups([
+          {
+            label: placeholderGroupLabel,
+            options: [defaultOption],
+          },
+          ...opts,
+        ]) as FullOptionList<O>);
+  } else {
+    optionList = autoSelectOption
+      ? (uniqByIdentifier(opts as O[]) as FullOptionList<O>)
+      : (uniqByIdentifier([defaultOption, ...(opts as O[])]) as FullOptionList<O>);
+  }
+
+  let optionsMap: Partial<FullOptionRecord<FullOption>> = {};
+  if (!Array.isArray(optionsProp)) {
+    const op = toFullOptionMap(optionsProp, baseOption) as FullOptionMap<
+      FullOption,
+      OptionIdentifier
+    >;
+    optionsMap = autoSelectOption ? op : { ...op, [placeholderName]: defaultOption };
+  } else {
+    if (isFlexibleOptionGroupArray(optionList)) {
+      for (const og of optionList) {
+        for (const opt of og.options) {
+          optionsMap[(opt.value ?? /* istanbul ignore next */ opt.name) as OptionIdentifier] =
+            toFullOption(opt, baseOption) as FullOption;
+        }
+      }
+    } else {
+      for (const opt of optionList) {
+        optionsMap[(opt.value ?? /* istanbul ignore next */ opt.name) as OptionIdentifier] =
+          toFullOption(opt, baseOption) as FullOption;
+      }
+    }
+  }
+
+  return { defaultOption, optionList, optionsMap };
 };
