@@ -31,12 +31,13 @@ import {
   getValueSourcesUtil,
   isFlexibleOptionGroupArray,
   joinWith,
+  prepareOptionList,
   toFullOptionList,
   uniqOptList,
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
 import type { UseMergedContextReturn } from '../hooks';
-import { useFields, useMergedContext, useOptionListProp } from '../hooks';
+import { useFields, useMergedContext } from '../hooks';
 import type { QueryBuilderProps } from '../types';
 
 // oxlint-disable-next-line typescript/no-explicit-any
@@ -180,22 +181,30 @@ export const useQueryBuilderSetup = <
   // #endregion
 
   // #region `combinators`
-  const { optionList: combinators } = useOptionListProp({
-    optionList: combinatorsProp ?? (defaultCombinators as FlexibleOptionList<C>),
-    labelMap: defaultCombinatorLabelMap,
-    baseOption: baseCombinator,
-    autoSelectOption: true,
-  });
+  const { optionList: combinators } = useMemo(
+    () =>
+      prepareOptionList({
+        optionList: combinatorsProp ?? (defaultCombinators as FlexibleOptionList<C>),
+        labelMap: defaultCombinatorLabelMap,
+        baseOption: baseCombinator,
+        autoSelectOption: true,
+      }),
+    [baseCombinator, combinatorsProp]
+  );
   // #endregion
 
   // #region `operators`
-  const { optionList: operators, defaultOption: defaultOperator } = useOptionListProp({
-    optionList: operatorsProp ?? (defaultOperators as FlexibleOptionList<O>),
-    placeholder: translations.operators,
-    labelMap: defaultOperatorLabelMap,
-    baseOption: baseOperator,
-    autoSelectOption: autoSelectOperator,
-  });
+  const { optionList: operators, defaultOption: defaultOperator } = useMemo(
+    () =>
+      prepareOptionList({
+        optionList: operatorsProp ?? (defaultOperators as FlexibleOptionList<O>),
+        placeholder: translations.operators,
+        labelMap: defaultOperatorLabelMap,
+        baseOption: baseOperator,
+        autoSelectOption: autoSelectOperator,
+      }),
+    [autoSelectOperator, baseOperator, operatorsProp, translations.operators]
+  );
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {

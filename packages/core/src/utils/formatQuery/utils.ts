@@ -1,3 +1,4 @@
+import type { SetRequired } from 'type-fest';
 import type {
   ConstituentWordOrder,
   DefaultCombinatorName,
@@ -10,7 +11,6 @@ import type {
   OptionList,
   RuleGroupTypeAny,
   RuleType,
-  SetRequired,
   ValueProcessorByRule,
   ValueProcessorLegacy,
   ValueProcessorOptions,

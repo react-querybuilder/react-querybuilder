@@ -1,4 +1,4 @@
-import type { OverrideProperties } from '../../types';
+import type { OverrideProperties } from 'type-fest';
 
 // Functionally equivalent to jsonata.ExprNode except `lhs` property is not an array
 export interface JSONataExprNode {

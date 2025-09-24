@@ -28,5 +28,4 @@ export * from './options';
 export * from './props';
 export * from './ruleGroups';
 export * from './ruleGroupsIC';
-export * from './type-fest';
 export * from './validation';

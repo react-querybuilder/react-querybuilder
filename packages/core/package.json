@@ -161,7 +161,9 @@
     "sass": "^1.92.1",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.8",
-    "typescript": "^5.9.2"
+    "type-fest": "^4.41.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.6"
   },
   "dependencies": {
     "immer": "^10.1.3",

@@ -1,4 +1,5 @@
-import type { RuleGroupTypeAny, RuleType, SetRequired } from '../types';
+import type { SetRequired } from 'type-fest';
+import type { RuleGroupTypeAny, RuleType } from '../types';
 import { generateID } from './generateID';
 import { isRuleGroup } from './isRuleGroup';
 import { isPojo } from './misc';

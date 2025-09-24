@@ -1,5 +1,6 @@
 import type { Op as _OpTypes, col as _colType, fn as _fnType } from 'sequelize';
-import type { RuleProcessor, Simplify } from '../../types';
+import type { Simplify } from 'type-fest';
+import type { RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';

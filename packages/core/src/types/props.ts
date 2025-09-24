@@ -171,6 +171,29 @@ export interface Classnames {
 }
 
 /**
+ * Placeholder strings for option lists.
+ *
+ * @group Props
+ */
+export interface Placeholder {
+  /**
+   * Value for the placeholder field option if autoSelectField is false,
+   * or the placeholder operator option if autoSelectOperator is false.
+   */
+  placeholderName?: string;
+  /**
+   * Label for the placeholder field option if autoSelectField is false,
+   * or the placeholder operator option if autoSelectOperator is false.
+   */
+  placeholderLabel?: string;
+  /**
+   * Label for the placeholder field optgroup if autoSelectField is false,
+   * or the placeholder operator optgroup if autoSelectOperator is false.
+   */
+  placeholderGroupLabel?: string;
+}
+
+/**
  * Functions included in the `actions` prop passed to every subcomponent.
  *
  * @group Props

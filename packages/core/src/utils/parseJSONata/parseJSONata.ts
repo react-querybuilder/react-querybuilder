@@ -1,4 +1,5 @@
 import jsonata from 'jsonata';
+import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
   DefaultOperatorName,
@@ -8,7 +9,6 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
-  Except,
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
