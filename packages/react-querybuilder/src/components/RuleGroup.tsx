@@ -23,6 +23,7 @@ import {
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
+import { usePathsMemo } from '../hooks';
 import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
 import { useReactDndWarning } from '../hooks/useReactDndWarning';
 import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
@@ -718,18 +719,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     ]
   );
 
-  // Memoize the path info so every render doesn't generate a new array
-  const pathsMemo = useMemo(() => {
-    const paths: { path: Path; disabled: boolean }[] = [];
-    for (let i = 0; i < ruleGroup.rules.length; i++) {
-      const thisPath = [...path, i];
-      paths[i] = {
-        path: thisPath,
-        disabled: disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p)),
-      };
-    }
-    return paths;
-  }, [disabled, path, ruleGroup.rules.length, disabledPaths]);
+  const pathsMemo = usePathsMemo({ disabled, disabledPaths, path, nestedArray: ruleGroup.rules });
 
   const accessibleDescription = useMemo(
     () => accessibleDescriptionGenerator({ path, qbId }),
