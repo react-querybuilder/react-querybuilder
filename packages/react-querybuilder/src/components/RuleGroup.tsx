@@ -23,10 +23,12 @@ import {
 import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { Fragment, useCallback, useMemo } from 'react';
-import { usePathsMemo } from '../hooks';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
+import {
+  useDeprecatedProps,
+  usePathsMemo,
+  useReactDndWarning,
+  useStopEventPropagation,
+} from '../hooks';
 import type { RuleGroupProps, ShiftActionsProps } from '../types';
 
 /**
