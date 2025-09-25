@@ -36,10 +36,12 @@ import type { MouseEvent } from 'react';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import type { UseFields } from '../hooks';
-import { useFields } from '../hooks';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
+import {
+  useDeprecatedProps,
+  useFields,
+  useReactDndWarning,
+  useStopEventPropagation,
+} from '../hooks';
 import type { RuleProps, ShiftActionsProps, TranslationsFull } from '../types';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
 import type { UseRuleGroup } from './RuleGroup';
