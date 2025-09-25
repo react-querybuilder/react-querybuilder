@@ -3,6 +3,7 @@ export * from './useDeprecatedProps';
 export * from './useFields';
 export * from './useMergedContext';
 export * from './useOptionListProp';
+export * from './usePathsMemo';
 export * from './usePreferProp';
 export * from './usePrevious';
 export * from './useReactDndWarning';
