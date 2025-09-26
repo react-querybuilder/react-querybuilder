@@ -68,7 +68,7 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "type-fest": "^4.41.0",
     "typescript": "^5.9.2",
-    "vite": "^7.1.6"
+    "vite": "^7.1.7"
   },
   "peerDependencies": {
     "react": ">=18",

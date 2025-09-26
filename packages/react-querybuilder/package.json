@@ -166,10 +166,10 @@
     "react-dom": "^19.1.1",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^6.0.3",
-    "sass": "^1.92.1",
+    "sass": "^1.93.2",
     "type-fest": "^4.41.0",
     "typescript": "^5.9.2",
-    "vite": "^7.1.6"
+    "vite": "^7.1.7"
   },
   "dependencies": {
     "@react-querybuilder/core": "^8.9.2",

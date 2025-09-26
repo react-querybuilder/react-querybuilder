@@ -64,7 +64,7 @@
     "react-querybuilder": "8.9.2",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
-    "vite": "^7.1.6"
+    "vite": "^7.1.7"
   },
   "peerDependencies": {
     "@mantine/core": ">=7",
