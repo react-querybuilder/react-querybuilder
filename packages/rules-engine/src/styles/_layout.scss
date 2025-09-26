@@ -1,0 +1,41 @@
+@use '../../../core/src/styles/variables' as core;
+
+.rulesEngineBuilder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--#{core.$rqb-var-prefix}spacing);
+}
+
+.actionBuilder,
+.actionBuilder-standalone {
+  padding: var(--#{core.$rqb-var-prefix}spacing);
+  border-width: var(--#{core.$rqb-var-prefix}border-width);
+}
+
+.conditionBuilder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--#{core.$rqb-var-prefix}spacing);
+  padding: var(--#{core.$rqb-var-prefix}spacing);
+  border-width: var(--#{core.$rqb-var-prefix}border-width);
+
+  .conditionBuilder-header {
+    display: flex;
+    flex-direction: row;
+    gap: var(--#{core.$rqb-var-prefix}spacing);
+  }
+}
+
+.actionBuilder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--#{core.$rqb-var-prefix}spacing);
+  padding: var(--#{core.$rqb-var-prefix}spacing);
+  border-width: var(--#{core.$rqb-var-prefix}border-width);
+
+  .actionBuilder-header {
+    display: flex;
+    flex-direction: row;
+    gap: var(--#{core.$rqb-var-prefix}spacing);
+  }
+}

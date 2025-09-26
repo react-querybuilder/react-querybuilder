@@ -11,6 +11,7 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import '../../packages/core/dist/query-builder.css';
+import '../../packages/rules-engine/dist/rules-engine.css';
 import { optionOrder } from './constants';
 import './styles.css';
 import type { DemoOption, DemoOptions } from './types';
@@ -29,7 +30,7 @@ const parserMap: Record<string, any> = {
 
 const links = [
   'react-querybuilder',
-  'rulesengine',
+  'rules-engine',
   'antd',
   'bootstrap',
   'bulma',

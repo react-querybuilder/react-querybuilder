@@ -39,6 +39,8 @@
     "build:rqb:main": "bun --bun run --filter react-querybuilder build:main",
     "build:rqb:css": "bun run --filter react-querybuilder build:css",
     "build:re": "bun --bun run --filter @react-querybuilder/rules-engine build",
+    "build:re:main": "bun --bun run --filter @react-querybuilder/rules-engine build:main",
+    "build:re:css": "bun run --filter @react-querybuilder/rules-engine build:css",
     "build:tremor": "bun --bun run --filter @react-querybuilder/tremor build",
     "codesandbox-ci": "bash .codesandbox/ci.sh",
     "checkall": "bun install --frozen-lockfile && bun run build && bun run pretty-check && bun run lint && bun run typecheck && bun run test && bun run are-the-types-wrong && bun run website:build",

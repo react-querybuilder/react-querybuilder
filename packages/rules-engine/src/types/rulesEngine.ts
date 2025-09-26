@@ -30,6 +30,7 @@ export type RulesEngineAny<R extends RuleType = RuleType, C extends string = str
   | RulesEngineIC<R, C>;
 
 export type RulesEngineActionBase<T extends string = string> = {
+  id?: string;
   actionType: T;
 };
 

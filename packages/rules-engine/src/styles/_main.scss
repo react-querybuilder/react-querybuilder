@@ -1,0 +1,16 @@
+@use '../../../core/src/styles/variables' as core;
+
+.actionBuilder,
+.actionBuilder-standalone {
+  background-color: #0963;
+  border-color: var(--#{core.$rqb-var-prefix}border-color);
+  border-style: var(--#{core.$rqb-var-prefix}border-style);
+  border-radius: var(--#{core.$rqb-var-prefix}border-radius);
+}
+
+.conditionBuilder {
+  border-color: var(--#{core.$rqb-var-prefix}border-color);
+  border-style: var(--#{core.$rqb-var-prefix}border-style);
+  border-radius: var(--#{core.$rqb-var-prefix}border-radius);
+  background: var(--#{core.$rqb-var-prefix}background-color);
+}
