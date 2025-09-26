@@ -16,7 +16,7 @@ const config: Config = {
   url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
   favicon: 'img/react-querybuilder.png',
   organizationName: 'react-querybuilder',
   projectName: 'react-querybuilder.github.io',
