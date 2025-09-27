@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+### Added
+
+- New `showInputLabels` prop for `QueryBuilderMaterial` displays the `title` as a label above/within each input component rendered by `MaterialValueEditor` and `MaterialValueSelector`.
 
 ## [v8.9.2] - 2025-09-22
 
