@@ -10,6 +10,9 @@ import type {
 } from '../types';
 import { isRulesEngineAction } from '../utils';
 
+/**
+ * Renders a sequential list of if/else-if/else blocks in a rules engine.
+ */
 export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
   props: RulesEngineConditionCascadeProps<RG>
 ): React.JSX.Element => {

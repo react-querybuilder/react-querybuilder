@@ -1,7 +1,6 @@
 import { pathsAreEqual } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { RuleGroupTypeAny } from 'react-querybuilder';
-import { QueryBuilder as QB_original } from 'react-querybuilder';
 import { standardClassnamesRE } from '../defaults';
 import type {
   RulesEngineAction,
@@ -9,14 +8,9 @@ import type {
   RulesEngineConditionProps,
   RulesEngineConditions,
 } from '../types';
-import { RulesEngineActionBuilder } from './RulesEngineActionBuilder';
-import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
-
-// oxlint-disable-next-line no-explicit-any
-const QueryBuilder = QB_original as React.ComponentType<any>;
 
 /**
- * Analogous to an "if" or "else-if" block.
+ * Default header component for {@link RulesEngineConditionBuilder}.
  */
 export const RulesEngineConditionBuilderHeader = <RG extends RuleGroupTypeAny>(
   props: RulesEngineConditionProps<RG>
@@ -28,16 +22,20 @@ export const RulesEngineConditionBuilderHeader = <RG extends RuleGroupTypeAny>(
 );
 
 /**
- * Analogous to an "if" or "else-if" block.
+ * Default body component for {@link RulesEngineConditionBuilder}.
  */
-export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
+export const RulesEngineConditionBuilderBody = <RG extends RuleGroupTypeAny>(
   props: RulesEngineConditionProps<RG>
 ): React.JSX.Element => {
   const {
     condition,
     onConditionChange,
     schema: {
-      components: { conditionBuilderHeader: ConditionBuilderHeader },
+      components: {
+        actionBuilder: ActionBuilder,
+        conditionBuilderCascade: ConditionCascade,
+        queryBuilder: QueryBuilder,
+      },
     },
   } = props;
   const actionUpdater = React.useCallback(
@@ -54,18 +52,18 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
   );
 
   return (
-    <div className={standardClassnamesRE.conditionBuilder}>
-      <ConditionBuilderHeader {...props} />
+    <React.Fragment>
       <QueryBuilder
         enableMountQueryChange={false}
         fields={props.schema.fields}
         query={props.condition}
+        // @ts-expect-error TODO
         onQueryChange={conditionUpdater}
       />
       {(props.condition.action || props.condition.conditions) && (
         <React.Fragment>
           {props.condition.action && (
-            <RulesEngineActionBuilder
+            <ActionBuilder
               conditionPath={props.conditionPath}
               actionTypes={props.actionTypes}
               action={props.condition.action}
@@ -75,7 +73,7 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
             />
           )}
           {Array.isArray(props.condition.conditions) && props.condition.conditions.length > 0 && (
-            <RulesEngineConditionCascade
+            <ConditionCascade
               conditionPath={props.conditionPath}
               onChange={conditionsUpdater}
               conditions={props.condition.conditions}
@@ -84,6 +82,29 @@ export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
           )}
         </React.Fragment>
       )}
+    </React.Fragment>
+  );
+};
+
+/**
+ * Analogous to an "if" or "else-if" block.
+ */
+export const RulesEngineConditionBuilder = <RG extends RuleGroupTypeAny>(
+  props: RulesEngineConditionProps<RG>
+): React.JSX.Element => {
+  const {
+    schema: {
+      components: {
+        conditionBuilderHeader: ConditionBuilderHeader,
+        conditionBuilderBody: ConditionBuilderBody,
+      },
+    },
+  } = props;
+
+  return (
+    <div className={standardClassnamesRE.conditionBuilder}>
+      <ConditionBuilderHeader {...props} />
+      <ConditionBuilderBody {...props} />
     </div>
   );
 };

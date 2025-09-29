@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { defaultClassnamesRE, defaultRulesEngine, standardClassnamesRE } from '../defaults';
 import type { RulesEngine, RulesEngineConditions, RulesEngineProps, SchemaRE } from '../types';
 import { prepareRulesEngine } from '../utils';
-import { defaultComponentsRE } from './defaults';
+import { defaultComponentsRE } from './defaultComponents';
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootPath: Path = [];

@@ -3,12 +3,14 @@ import type {
   Classname,
   FlexibleOptionList,
   FullField,
+  FullOption,
   FullOptionList,
   OptionList,
   Path,
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
 import * as React from 'react';
+import type { QueryBuilderProps } from 'react-querybuilder';
 import type {
   RulesEngine,
   RulesEngineAction,
@@ -27,10 +29,16 @@ export interface SchemaRE {
 export interface ComponentsRE {
   actionBuilder: React.ComponentType<RulesEngineActionProps>;
   actionBuilderHeader: React.ComponentType<RulesEngineActionProps>;
-  // oxlint-disable-next-line no-explicit-any
+  actionBuilderBody: React.ComponentType<RulesEngineActionProps>;
+  // oxlint-disable no-explicit-any
   conditionBuilder: React.ComponentType<RulesEngineConditionProps<any>>;
-  // oxlint-disable-next-line no-explicit-any
   conditionBuilderHeader: React.ComponentType<RulesEngineConditionProps<any>>;
+  conditionBuilderBody: React.ComponentType<RulesEngineConditionProps<any>>;
+  conditionBuilderCascade: React.ComponentType<RulesEngineConditionCascadeProps<any>>;
+  // oxlint-enable no-explicit-any
+  queryBuilder: React.ComponentType<
+    QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>
+  >;
 }
 
 export interface ClassnamesRE {

@@ -4,6 +4,9 @@ import { toOptions } from 'react-querybuilder';
 import { standardClassnamesRE } from '../defaults';
 import type { RulesEngineActionProps } from '../types';
 
+/**
+ * Default header component for {@link RulesEngineActionBuilder}.
+ */
 export const RulesEngineActionBuilderHeader = (
   props: RulesEngineActionProps
 ): React.JSX.Element => {
@@ -19,6 +22,32 @@ export const RulesEngineActionBuilderHeader = (
     <div className={className}>
       <div>{props.standalone ? 'Else' : 'Then'}</div>
       <button type="button">⨯</button>
+    </div>
+  );
+};
+
+/**
+ * Default body component for {@link RulesEngineActionBuilder}.
+ */
+export const RulesEngineActionBuilderBody = (props: RulesEngineActionProps): React.JSX.Element => {
+  const className = React.useMemo(
+    () =>
+      clsx(
+        { [standardClassnamesRE.actionBuilderBody]: true },
+        props.schema.classnames.actionBuilderBody
+      ),
+    [props.schema.classnames.actionBuilderBody]
+  );
+  return (
+    <div className={className}>
+      {props.actionTypes && (
+        <select
+          value={props.action.actionType}
+          // oxlint-disable-next-line jsx-no-new-function-as-prop
+          onChange={e => props.onActionChange({ ...props.action, actionType: e.target.value })}>
+          {toOptions(props.actionTypes)}
+        </select>
+      )}
     </div>
   );
 };
@@ -42,16 +71,7 @@ export const RulesEngineActionBuilder = (props: RulesEngineActionProps): React.J
   return (
     <div className={className}>
       <RulesEngineActionBuilderHeader {...props} />
-      <div className={standardClassnamesRE.actionBuilderBody}>
-        {props.actionTypes && (
-          <select
-            value={props.action.actionType}
-            // oxlint-disable-next-line jsx-no-new-function-as-prop
-            onChange={e => props.onActionChange({ ...props.action, actionType: e.target.value })}>
-            {toOptions(props.actionTypes)}
-          </select>
-        )}
-      </div>
+      <RulesEngineActionBuilderBody {...props} />
     </div>
   );
 };
