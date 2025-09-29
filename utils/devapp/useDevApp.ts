@@ -17,7 +17,8 @@ import {
   initialQuery,
   initialQueryIC,
 } from './constants';
-import type { CommonRQBProps, DemoOption, DemoOptions } from './types';
+import type { CommonRQBProps, DemoOptions } from './types';
+import type { OptionsAction } from './utils';
 import { generatePermalinkHash, getFormatQueryString, optionsReducer } from './utils';
 
 Object.defineProperty(globalThis, 'RQButils', { value: RQButils });
@@ -30,26 +31,26 @@ const getOptionsFromHash = () =>
 // Initialize options from URL hash
 const initialOptionsFromHash = getOptionsFromHash();
 
-export const useDevApp = (): {
+export const useDevApp = <ExtraOptions extends Record<string, boolean | undefined>>(
+  extraOptions: Partial<ExtraOptions> = {}
+): {
   actions: [string, () => void][];
   commonRQBProps: CommonRQBProps;
   formatQueryResults: (readonly [ExportFormat, string])[];
   onQueryChange: (q: RuleGroupType) => void;
   onQueryChangeIC: (q: RuleGroupTypeIC) => void;
-  optVals: DemoOptions;
+  optVals: DemoOptions & Partial<ExtraOptions>;
   query: RuleGroupType;
   queryIC: RuleGroupTypeIC;
-  updateOptions: React.Dispatch<
-    | { type: 'all' }
-    | { type: 'reset' }
-    | { type: 'update'; payload: { optionName: DemoOption; value: boolean } }
-    | { type: 'replace'; payload: DemoOptions }
+  updateOptions: React.ActionDispatch<
+    [action: OptionsAction<Partial<ExtraOptions> & { [k: string]: boolean }>]
   >;
 } => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
+    ...extraOptions,
     ...initialOptionsFromHash,
   });
 

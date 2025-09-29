@@ -18,13 +18,15 @@ const muiTheme = createTheme({
   },
 });
 
+const defaultDevAppOptions = { showInputLabels: false };
+
 const App = () => {
-  const devApp = useDevApp();
+  const devApp = useDevApp(defaultDevAppOptions);
 
   return (
     <DevLayout {...devApp}>
       <ThemeProvider theme={muiTheme}>
-        <QueryBuilderMaterial>
+        <QueryBuilderMaterial showInputLabels={devApp.optVals.showInputLabels}>
           {devApp.optVals.independentCombinators ? (
             <QueryBuilder
               key="queryIC"

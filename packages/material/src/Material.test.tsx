@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import Radio from '@mui/material/Radio';
@@ -93,6 +94,7 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
+  InputLabel,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -105,13 +107,14 @@ const muiComponents = {
   Switch,
   TextareaAutosize,
   TextField,
+  showInputLabels: false,
 };
 const theme = createTheme();
 // oxlint-disable-next-line typescript/no-explicit-any
-const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
+const generateWrapper = (RQBComponent: React.ComponentType<any>, extraProps = {}) => {
   const MuiWrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
-      <RQBComponent muiComponents={muiComponents} {...props} />
+      <RQBComponent muiComponents={muiComponents} {...props} {...extraProps} />
     </ThemeProvider>
   );
   return MuiWrapper;
@@ -207,6 +210,7 @@ describe('shift actions', () => {
 
 describe('value editor', () => {
   testValueEditor(generateWrapper(MaterialValueEditor));
+  testValueEditor(generateWrapper(MaterialValueEditor, { showInputLabels: true }));
 
   it('renders without preloaded components', async () => {
     render(
@@ -230,6 +234,9 @@ describe('value editor', () => {
 
 describe('value selector', () => {
   testValueSelector(generateWrapper(MaterialValueSelector), { disabledOptions: true });
+  testValueSelector(generateWrapper(MaterialValueSelector, { showInputLabels: true }), {
+    disabledOptions: true,
+  });
 
   it('renders without preloaded components', async () => {
     render(

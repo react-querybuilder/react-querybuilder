@@ -5,14 +5,15 @@ import { useContext } from 'react';
 import type { ActionProps } from 'react-querybuilder';
 import { ActionElement } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 
 /**
  * @group Props
  */
-export interface MaterialActionProps extends ActionProps, ComponentPropsWithoutRef<typeof Button> {
-  muiComponents?: RQBMaterialComponents;
-}
+export interface MaterialActionProps
+  extends ActionProps,
+    ComponentPropsWithoutRef<typeof Button>,
+    MuiAugmentation {}
 
 /**
  * @group Components

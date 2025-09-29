@@ -61,8 +61,8 @@ const OptionCheckbox = ({
   optVals,
   updateOptions,
 }: {
-  opt: DemoOption;
-  optVals: DemoOptions;
+  opt: string;
+  optVals: Record<string, boolean>;
   updateOptions: ReturnType<typeof useDevApp>['updateOptions'];
 }) => {
   const onChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
@@ -71,15 +71,15 @@ const OptionCheckbox = ({
         null,
         '',
         generatePermalinkHash(
-          optionsReducer(optVals, {
+          optionsReducer(optVals as DemoOptions, {
             type: 'update',
-            payload: { optionName: opt, value: e.target.checked },
+            payload: { optionName: opt as DemoOption, value: e.target.checked },
           })
         )
       );
       updateOptions({
         type: 'update',
-        payload: { optionName: opt, value: e.target.checked },
+        payload: { optionName: opt as DemoOption, value: e.target.checked },
       });
     },
     [opt, optVals, updateOptions]
@@ -140,14 +140,26 @@ export const DevLayout = ({
     e => setImportFmt(e.target.value),
     []
   );
+  const optOrder = React.useMemo(() => {
+    const optSet = new Set<string>(optionOrder);
+    for (const opt in optVals) {
+      optSet.add(opt);
+    }
+    return Array.from(optSet);
+  }, [optVals]);
 
   return (
     <>
       <NavBar />
       <div id="dev-layout">
         <div>
-          {optionOrder.map(opt => (
-            <OptionCheckbox key={opt} opt={opt} optVals={optVals} updateOptions={updateOptions} />
+          {optOrder.map(opt => (
+            <OptionCheckbox
+              key={opt}
+              opt={opt}
+              optVals={optVals as DemoOptions}
+              updateOptions={updateOptions}
+            />
           ))}
           {actions.map(([label, action]) => (
             <span key={label}>

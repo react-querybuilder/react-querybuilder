@@ -5,16 +5,15 @@ import { forwardRef, useContext } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 
 /**
  * @group Props
  */
 export interface MaterialDragHandleProps
   extends DragHandleProps,
-    Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> {
-  muiComponents?: RQBMaterialComponents;
-}
+    Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'>,
+    MuiAugmentation {}
 
 /**
  * @group Components

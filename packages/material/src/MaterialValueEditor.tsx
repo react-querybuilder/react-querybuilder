@@ -3,14 +3,14 @@ import { useContext, useMemo } from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { getFirstOption, parseNumber, useValueEditor, ValueEditor } from 'react-querybuilder';
 import type { MaterialValueSelector } from './MaterialValueSelector';
+import type { RQBMaterialContextValue } from './RQBMaterialContext';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 
 /**
  * @group Props
  */
-export interface MaterialValueEditorProps extends ValueEditorProps {
-  muiComponents?: RQBMaterialComponents;
+export interface MaterialValueEditorProps extends ValueEditorProps, MuiAugmentation {
   extraProps?: Record<string, unknown>;
 }
 
@@ -39,11 +39,14 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     testID,
     selectorComponent: SelectorComponent = props.schema.controls
       .valueSelector as typeof MaterialValueSelector,
+    showInputLabels: silProp,
     extraProps,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = propsForValueEditor;
-  const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
+  const muiComponents =
+    useContext(RQBMaterialContext) ?? (muiComponentsProp as RQBMaterialContextValue);
+
   const {
     valueAsArray,
     multiValueHandler,
@@ -63,7 +66,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     Switch,
     TextareaAutosize,
     TextField,
-  } = useMemo(() => (muiComponents ?? {}) as RQBMaterialComponents, [muiComponents]);
+    showInputLabels: silCtx,
+  } = useMemo(() => (muiComponents ?? {}) as RQBMaterialContextValue, [muiComponents]);
 
   if (!muiComponents) {
     return <ValueEditor skipHook key={masterKey} {...propsForValueEditor} />;
@@ -74,12 +78,13 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
   }
 
   const placeHolderText = fieldData?.placeholder ?? '';
+  const showInputLabels = silProp || silCtx;
 
   if (
     (operator === 'between' || operator === 'notBetween') &&
     (type === 'select' || type === 'text')
   ) {
-    const editors = ['from', 'to'].map((key, i) => {
+    const editors = ['From', 'To'].map((key, i) => {
       if (type === 'text') {
         return (
           <TextField
@@ -90,6 +95,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
             placeholder={placeHolderText}
             value={valueAsArray[i] ?? ''}
             disabled={disabled}
+            label={showInputLabels ? key : undefined}
             onChange={e => multiValueHandler(e.target.value, i)}
             {...extraProps}
           />
@@ -99,6 +105,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
         <SelectorComponent
           key={key}
           {...propsForValueSelector}
+          title={showInputLabels ? key : undefined}
           path={path}
           level={level}
           className={valueListItemClassName}
@@ -221,6 +228,8 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
   if (inputType === 'bigint') {
     return (
       <TextField
+        key={masterKey}
+        variant="standard"
         data-testid={testID}
         type={inputTypeCoerced}
         placeholder={placeHolderText}
@@ -228,6 +237,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
         title={title}
         className={className}
         disabled={disabled}
+        label={showInputLabels ? title : undefined}
         onChange={e => bigIntValueHandler(e.target.value)}
         {...extraProps}
       />
@@ -236,14 +246,15 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
 
   return (
     <TextField
-      variant="standard"
       key={masterKey}
+      variant="standard"
       type={inputTypeCoerced}
       value={value}
       title={title}
       disabled={disabled}
       className={className}
       placeholder={placeHolderText}
+      label={showInputLabels ? title : undefined}
       onChange={e =>
         handleOnChange(parseNumber(e.target.value, { parseNumbers: parseNumberMethod }))
       }

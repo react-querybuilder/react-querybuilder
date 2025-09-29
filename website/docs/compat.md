@@ -218,6 +218,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel'; // (after 8.9.2)
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import Radio from '@mui/material/Radio';
@@ -236,6 +237,7 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
+  InputLabel, // (after 8.9.2)
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
