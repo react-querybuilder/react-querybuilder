@@ -4,25 +4,28 @@ import { bigIntJsonStringifyReplacer, formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './constants';
 import type { DemoOption, DemoOptions } from './types';
 
-type OptionsAction =
+export type OptionsAction<ExtraOptions extends Record<string, boolean>> =
   | { type: 'all' }
   | { type: 'reset' }
   | {
       type: 'update';
       payload: {
-        optionName: DemoOption;
+        optionName: DemoOption & keyof ExtraOptions;
         value: boolean;
       };
     }
   | {
       type: 'replace';
-      payload: DemoOptions;
+      payload: DemoOptions & ExtraOptions;
     };
 
-export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoOptions => {
+export const optionsReducer = <ExtraOptions extends Record<string, boolean>>(
+  state: DemoOptions & ExtraOptions,
+  action: OptionsAction<ExtraOptions>
+): DemoOptions & ExtraOptions => {
   switch (action.type) {
     case 'reset':
-      return defaultOptions;
+      return defaultOptions as DemoOptions & ExtraOptions;
     case 'all': {
       const allSelected: DemoOptions = { ...defaultOptions };
       for (const opt of optionOrder) {
@@ -31,7 +34,7 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
           opt !== 'independentCombinators' &&
           opt !== 'suppressStandardClassnames';
       }
-      return allSelected;
+      return allSelected as DemoOptions & ExtraOptions;
     }
     case 'replace':
       return action.payload;

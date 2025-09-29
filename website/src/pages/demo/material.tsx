@@ -17,6 +17,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import Radio from '@mui/material/Radio';
@@ -40,6 +41,7 @@ const muiComponents = {
   ContentCopyIcon,
   FormControl,
   FormControlLabel,
+  InputLabel,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
