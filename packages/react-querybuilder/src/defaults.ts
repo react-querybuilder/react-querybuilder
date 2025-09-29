@@ -34,13 +34,13 @@ import type { Controls, TranslationsFull } from './types';
 // #region docs-translations
 export const defaultTranslations: TranslationsFull = {
   fields: {
-    title: 'Fields',
+    title: 'Field',
     placeholderName: defaultPlaceholderFieldName,
     placeholderLabel: defaultPlaceholderFieldLabel,
     placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
   } as const,
   operators: {
-    title: 'Operators',
+    title: 'Operator',
     placeholderName: defaultPlaceholderOperatorName,
     placeholderLabel: defaultPlaceholderOperatorLabel,
     placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
@@ -77,7 +77,7 @@ export const defaultTranslations: TranslationsFull = {
     title: 'Add group',
   } as const,
   combinators: {
-    title: 'Combinators',
+    title: 'Combinator',
   } as const,
   notToggle: {
     label: 'Not',
