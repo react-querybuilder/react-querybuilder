@@ -10,7 +10,6 @@ const db = new PGlite();
 const superUsersPostgres = superUsers('postgres');
 
 const adapter = new PrismaPGlite(db);
-// @ts-expect-error TODO: fix types
 const prisma = new PrismaClient({ adapter });
 
 beforeAll(async () => {
