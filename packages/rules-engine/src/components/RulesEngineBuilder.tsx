@@ -67,6 +67,10 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
 
   return (
     <div className={standardClassnamesRE.rulesEngineBuilder}>
+      <div className={standardClassnamesRE.conditionBuilderHeader}>
+        <button>+ Condition</button>
+        <button>+ Action</button>
+      </div>
       <RulesEngineConditionCascade
         conditionPath={rootPath}
         onChange={onChange}
