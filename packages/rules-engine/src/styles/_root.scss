@@ -1,0 +1,43 @@
+@use './variables' as *;
+
+:root {
+  // #region Basic layout
+  --#{$rqbre-var-prefix}spacing: #{$rqbre-spacing};
+  --#{$rqbre-var-prefix}border-width: #{$rqbre-border-width};
+  // #endregion
+
+  // #region Basic aesthetic
+  --#{$rqbre-var-prefix}base-color: #{$rqbre-base-color};
+  --#{$rqbre-var-prefix}background-color: #{$rqbre-background-color};
+  --#{$rqbre-var-prefix}action-base-color: #{$rqbre-action-base-color};
+  --#{$rqbre-var-prefix}border-color: #{$rqbre-border-color};
+  --#{$rqbre-var-prefix}border-style: #{$rqbre-border-style};
+  --#{$rqbre-var-prefix}border-radius: #{$rqbre-border-radius};
+  // #endregion
+
+  // #region Rules engine-specific aesthetic
+  --#{$rqbre-var-prefix}ifblock-base-color: #{$rqbre-base-color};
+  --#{$rqbre-var-prefix}ifblock-background-color: #{$rqbre-ifblock-background-color};
+  --#{$rqbre-var-prefix}ifblock-border-color: #{$rqbre-ifblock-border-color};
+  --#{$rqbre-var-prefix}ifblock-border-style: #{$rqbre-ifblock-border-style};
+  --#{$rqbre-var-prefix}ifblock-border-radius: #{$rqbre-ifblock-border-radius};
+
+  --#{$rqbre-var-prefix}thenblock-base-color: var(--#{$rqbre-var-prefix}action-base-color);
+  --#{$rqbre-var-prefix}thenblock-background-color: #{$rqbre-thenblock-background-color};
+  --#{$rqbre-var-prefix}thenblock-border-color: #{$rqbre-thenblock-border-color};
+  --#{$rqbre-var-prefix}thenblock-border-style: #{$rqbre-thenblock-border-style};
+  --#{$rqbre-var-prefix}thenblock-border-radius: #{$rqbre-thenblock-border-radius};
+
+  --#{$rqbre-var-prefix}ifelseblock-base-color: #{$rqbre-base-color};
+  --#{$rqbre-var-prefix}ifelseblock-background-color: #{$rqbre-ifelseblock-background-color};
+  --#{$rqbre-var-prefix}ifelseblock-border-color: #{$rqbre-ifelseblock-border-color};
+  --#{$rqbre-var-prefix}ifelseblock-border-style: #{$rqbre-ifelseblock-border-style};
+  --#{$rqbre-var-prefix}ifelseblock-border-radius: #{$rqbre-ifelseblock-border-radius};
+
+  --#{$rqbre-var-prefix}elseblock-base-color: var(--#{$rqbre-var-prefix}action-base-color);
+  --#{$rqbre-var-prefix}elseblock-background-color: #{$rqbre-elseblock-background-color};
+  --#{$rqbre-var-prefix}elseblock-border-color: #{$rqbre-elseblock-border-color};
+  --#{$rqbre-var-prefix}elseblock-border-style: #{$rqbre-elseblock-border-style};
+  --#{$rqbre-var-prefix}elseblock-border-radius: #{$rqbre-elseblock-border-radius};
+  // #endregion
+}

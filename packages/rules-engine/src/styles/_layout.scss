@@ -1,41 +1,43 @@
-@use '../../../core/src/styles/variables' as core;
+@use './variables' as *;
 
 .rulesEngineBuilder {
   display: flex;
   flex-direction: column;
-  gap: var(--#{core.$rqb-var-prefix}spacing);
+  gap: var(--#{$rqbre-var-prefix}spacing);
+  padding: var(--#{$rqbre-var-prefix}spacing);
+  border-width: var(--#{$rqbre-var-prefix}border-width);
 }
 
 .actionBuilder,
 .actionBuilder-standalone {
-  padding: var(--#{core.$rqb-var-prefix}spacing);
-  border-width: var(--#{core.$rqb-var-prefix}border-width);
+  padding: var(--#{$rqbre-var-prefix}spacing);
+  border-width: var(--#{$rqbre-var-prefix}border-width);
 }
 
 .conditionBuilder {
   display: flex;
   flex-direction: column;
-  gap: var(--#{core.$rqb-var-prefix}spacing);
-  padding: var(--#{core.$rqb-var-prefix}spacing);
-  border-width: var(--#{core.$rqb-var-prefix}border-width);
+  gap: var(--#{$rqbre-var-prefix}spacing);
+  padding: var(--#{$rqbre-var-prefix}spacing);
+  border-width: var(--#{$rqbre-var-prefix}border-width);
+}
 
-  .conditionBuilder-header {
-    display: flex;
-    flex-direction: row;
-    gap: var(--#{core.$rqb-var-prefix}spacing);
-  }
+.conditionBuilder-header {
+  display: flex;
+  flex-direction: row;
+  gap: var(--#{$rqbre-var-prefix}spacing);
 }
 
 .actionBuilder {
   display: flex;
   flex-direction: column;
-  gap: var(--#{core.$rqb-var-prefix}spacing);
-  padding: var(--#{core.$rqb-var-prefix}spacing);
-  border-width: var(--#{core.$rqb-var-prefix}border-width);
+  gap: var(--#{$rqbre-var-prefix}spacing);
+  padding: var(--#{$rqbre-var-prefix}spacing);
+  border-width: var(--#{$rqbre-var-prefix}border-width);
+}
 
-  .actionBuilder-header {
-    display: flex;
-    flex-direction: row;
-    gap: var(--#{core.$rqb-var-prefix}spacing);
-  }
+.actionBuilder-header {
+  display: flex;
+  flex-direction: row;
+  gap: var(--#{$rqbre-var-prefix}spacing);
 }

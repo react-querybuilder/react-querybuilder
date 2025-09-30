@@ -1,16 +1,35 @@
-@use '../../../core/src/styles/variables' as core;
+@use './variables' as *;
 
-.actionBuilder,
+.rulesEngineBuilder {
+  border-color: var(--#{$rqbre-var-prefix}border-color);
+  border-style: var(--#{$rqbre-var-prefix}border-style);
+  border-radius: var(--#{$rqbre-var-prefix}border-radius);
+}
+
+.actionBuilder {
+  background-color: var(--#{$rqbre-var-prefix}thenblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}thenblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}thenblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}thenblock-border-radius);
+}
+
 .actionBuilder-standalone {
-  background-color: #0963;
-  border-color: var(--#{core.$rqb-var-prefix}border-color);
-  border-style: var(--#{core.$rqb-var-prefix}border-style);
-  border-radius: var(--#{core.$rqb-var-prefix}border-radius);
+  background-color: var(--#{$rqbre-var-prefix}elseblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}elseblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}elseblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}elseblock-border-radius);
 }
 
 .conditionBuilder {
-  border-color: var(--#{core.$rqb-var-prefix}border-color);
-  border-style: var(--#{core.$rqb-var-prefix}border-style);
-  border-radius: var(--#{core.$rqb-var-prefix}border-radius);
-  background: var(--#{core.$rqb-var-prefix}background-color);
+  background: var(--#{$rqbre-var-prefix}ifelseblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}ifelseblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}ifelseblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}ifelseblock-border-radius);
+}
+
+.conditionBuilder:first-child {
+  background: var(--#{$rqbre-var-prefix}ifblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}ifblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}ifblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}ifblock-border-radius);
 }
