@@ -6,29 +6,49 @@ import type {
   RuleType,
 } from 'react-querybuilder';
 
-export type RulesEngineCondition<RG extends RuleGroupTypeAny> = RG & {
+// #region Conditions
+export interface RulesEngineCondition<R extends RuleType = RuleType, C extends string = string>
+  extends CommonRuleAndGroupProperties,
+    Partial<RulesEngine<R, C>> {
+  condition: RuleGroupType;
   action?: RulesEngineAction;
-  conditions?: RulesEngineConditions<RG>;
-};
+}
 
-export type RulesEngineConditions<RG extends RuleGroupTypeAny> =
-  | RulesEngineCondition<RG>[] // if/if-else clauses only
-  | [...RulesEngineCondition<RG>[], RulesEngineAction]; // if/if-else clauses and a final, unconditional "else" action
+export interface RulesEngineConditionIC<R extends RuleType = RuleType, C extends string = string>
+  extends CommonRuleAndGroupProperties,
+    Partial<RulesEngineIC<R, C>> {
+  condition: RuleGroupTypeIC;
+  action?: RulesEngineAction;
+}
 
+export type RulesEngineConditionAny<R extends RuleType = RuleType, C extends string = string> =
+  | RulesEngineCondition<R, C>
+  | RulesEngineConditionIC<R, C>;
+
+export type RulesEngineConditions<RG extends RuleGroupTypeAny> = RG extends RuleGroupTypeIC
+  ? RulesEngineConditionIC[]
+  : RulesEngineCondition[];
+// #endregion
+
+// #region Rules engines
 export interface RulesEngine<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties {
   conditions: RulesEngineConditions<RuleGroupType<R, C>>;
+  defaultAction?: RulesEngineAction;
 }
 
 export interface RulesEngineIC<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties {
   conditions: RulesEngineConditions<RuleGroupTypeIC<R, C>>;
+  defaultAction?: RulesEngineAction;
 }
 
 export type RulesEngineAny<R extends RuleType = RuleType, C extends string = string> =
   | RulesEngine<R, C>
   | RulesEngineIC<R, C>;
+// #endregion
 
+// #region Actions
 export type RulesEngineActionBase<T extends string = string> = {
   id?: string;
   actionType: T;
@@ -37,6 +57,7 @@ export type RulesEngineActionBase<T extends string = string> = {
 export interface RulesEngineAction extends RulesEngineActionBase {
   [etc: string]: unknown;
 }
+// #endregion
 
 // -------------------------------------------
 // Playground:
@@ -63,24 +84,24 @@ const _rngn: RulesEngine = {
   conditions: [
     // IF
     {
-      combinator: 'and',
-      rules: [],
+      condition: {
+        combinator: 'and',
+        rules: [],
+      },
       // action: { actionType: 'cmd', payload: { command: '', args: [] }},
     },
     // ELSE IF
     {
-      combinator: 'and',
-      rules: [{ field: '', operator: '', value: '' }],
+      condition: { combinator: 'and', rules: [{ field: '', operator: '', value: '' }] },
       action: { actionType: 'cmd', payload: { command: '', args: [] } },
       conditions: [
         {
-          combinator: 'and',
-          rules: [],
+          condition: { combinator: 'and', rules: [] },
           action: { actionType: 'cmd', payload: { command: '', args: [] } },
         },
       ],
     },
-    // ELSE
-    { actionType: 'hope' },
   ],
+  // ELSE
+  defaultAction: { actionType: 'hope' },
 };

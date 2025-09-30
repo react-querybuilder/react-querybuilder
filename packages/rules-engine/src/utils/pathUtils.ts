@@ -1,26 +1,35 @@
-import type { Path, RuleGroupTypeAny } from 'react-querybuilder';
-import { isPojo } from 'react-querybuilder';
-import type { RulesEngineAction, RulesEngineAny } from '../types';
+import type { Path, RuleGroupTypeAny, RuleGroupTypeIC } from '@react-querybuilder/core';
+import { isPojo } from '@react-querybuilder/core';
+import type {
+  RulesEngineAny,
+  RulesEngineCondition,
+  RulesEngineConditionAny,
+  RulesEngineConditionIC,
+} from '../types';
 import { isRulesEngineAny } from './isRulesEngine';
 
 /**
  * Return type for {@link findConditionPath}.
  */
-export type FindConditionPathReturnType =
+export type FindConditionPath<RG extends RuleGroupTypeAny = RuleGroupTypeAny> =
   | RulesEngineAny
-  | RuleGroupTypeAny
-  | RulesEngineAction
+  | (RG extends RuleGroupTypeIC ? RulesEngineConditionIC : RulesEngineCondition)
   | null;
 
 /**
  * Returns the {@link RuleGroupType}/{@link RuleGroupTypeIC}
  * at the given path within a rules engine.
  */
-export const findConditionPath = (
-  path: Path,
-  rulesEngine: RulesEngineAny
-): FindConditionPathReturnType => {
-  let target: FindConditionPathReturnType = rulesEngine;
+// export function findConditionPath(
+//   path: Path,
+//   rulesEngine: RulesEngine
+// ): FindConditionPath<RuleGroupType>;
+// export function findConditionPath(
+//   path: Path,
+//   rulesEngine: RulesEngineIC
+// ): FindConditionPath<RuleGroupTypeIC>;
+export function findConditionPath(path: Path, rulesEngine: RulesEngineAny): FindConditionPath {
+  let target = rulesEngine as unknown as FindConditionPath;
   let level = 0;
   while (level < path.length && isRulesEngineAny(target)) {
     target = target.conditions[path[level]];
@@ -28,7 +37,7 @@ export const findConditionPath = (
   }
 
   return level < path.length ? null : (target ?? null);
-};
+}
 
 /**
  * Returns the {@link RuleGroupType}/{@link RuleGroupTypeIC}
@@ -37,7 +46,7 @@ export const findConditionPath = (
 export const findConditionID = (
   id: string,
   rulesEngine: RulesEngineAny
-): RuleGroupTypeAny | RulesEngineAny | RulesEngineAction | null => {
+): RulesEngineConditionAny | RulesEngineAny | null => {
   if (rulesEngine.id === id) {
     return rulesEngine;
   }

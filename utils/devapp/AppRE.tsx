@@ -14,18 +14,17 @@ const actionTypes: FullOptionList<BaseOption> = toFullOptionList([
 ]);
 
 const initialRE: RulesEngine = regenerateIDs({
+  defaultAction: { id: '3', actionType: 'log_event' },
   conditions: [
     {
-      combinator: 'and',
-      rules: [{ field: 'age', operator: '>=', value: 18 }],
+      condition: { combinator: 'and', rules: [{ field: 'age', operator: '>=', value: 18 }] },
       action: {
         actionType: 'send_email',
         params: { to: 'user@example.com', subject: 'Welcome!', body: 'Thanks for signing up!' },
       },
       conditions: [
         {
-          combinator: 'and',
-          rules: [{ field: 'age', operator: '=', value: 18 }],
+          condition: { combinator: 'and', rules: [{ field: 'age', operator: '=', value: 18 }] },
           action: {
             actionType: 'send_email',
             params: {
@@ -38,8 +37,7 @@ const initialRE: RulesEngine = regenerateIDs({
       ],
     },
     {
-      combinator: 'and',
-      rules: [{ field: 'age', operator: '<', value: 18 }],
+      condition: { combinator: 'and', rules: [{ field: 'age', operator: '<', value: 18 }] },
       action: {
         actionType: 'send_email',
         params: {
@@ -49,7 +47,6 @@ const initialRE: RulesEngine = regenerateIDs({
         },
       },
     },
-    { id: '3', actionType: 'log_event' },
   ],
 });
 

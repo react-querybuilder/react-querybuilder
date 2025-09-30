@@ -1,7 +1,6 @@
-import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import { generateID, isRuleGroup, prepareRuleGroup } from '@react-querybuilder/core';
 import { produce } from 'immer';
-import type { RulesEngine, RulesEngineCondition, RulesEngineConditions } from '../types';
+import type { RulesEngineAny, RulesEngineConditions } from '../types';
 import { isRulesEngine } from './isRulesEngine';
 
 /**
@@ -15,24 +14,23 @@ export interface PreparerOptionsRE {
  * Ensures that a rule group is valid by recursively adding an `id` property to the group itself
  * and all its rules and subgroups where one does not already exist.
  */
-export const prepareRulesEngine = (
-  rulesEngine: RulesEngine,
+export const prepareRulesEngine = <RE extends RulesEngineAny>(
+  rulesEngine: RE,
   { idGenerator = generateID }: PreparerOptionsRE = {}
-): RulesEngine =>
+): RE =>
   produce(rulesEngine, draft => {
     if (!draft.id) {
       draft.id = idGenerator();
     }
     draft.conditions = draft.conditions.map(r => {
-      let newR = r.id ? r : { ...r, id: idGenerator() };
-      if (isRuleGroup(newR)) {
-        newR = prepareRuleGroup(newR);
+      r.id = idGenerator();
+      if (isRuleGroup(r.condition)) {
+        r.condition = prepareRuleGroup(r.condition);
       }
-      if (isRulesEngine(newR)) {
-        // oxlint-disable-next-line no-explicit-any
-        newR = prepareRuleGroup(newR as RuleGroupTypeAny) as RulesEngineCondition<any>;
+      if (isRulesEngine(r)) {
+        r = prepareRulesEngine(r);
       }
-      return newR;
+      return r;
       // oxlint-disable-next-line no-explicit-any
     }) as RulesEngineConditions<any>;
   });

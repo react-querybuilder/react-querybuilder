@@ -13,7 +13,11 @@ describe('addRE', () => {
 
   it('does not add a rule action to a rules engine with a trailing rule action', () => {
     expect(
-      addRE({ conditions: [{ actionType: 'a' }], id: 'root' }, { actionType: 'b' }, [])
+      addRE(
+        { conditions: [], defaultAction: { actionType: 'a' }, id: 'root' },
+        { actionType: 'b' },
+        []
+      )
     ).toEqual({
       conditions: [{ actionType: 'a' }],
       id: 'root',
@@ -30,7 +34,11 @@ describe('addRE', () => {
   it('adds a rule group as second-to-last element when action is present', () => {
     expect(
       addRE(
-        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        {
+          conditions: [{ condition: { combinator: 'and', rules: [] } }],
+          defaultAction: { actionType: 'a' },
+          id: 'root',
+        },
         { id: 'new', combinator: 'and', rules: [] },
         []
       )
@@ -53,7 +61,10 @@ describe('addRE', () => {
   it('adds a rule group to a nested rules engine', () => {
     expect(
       addRE(
-        { conditions: [{ combinator: 'and', rules: [], conditions: [] }], id: 'root' },
+        {
+          conditions: [{ condition: { combinator: 'and', rules: [] }, conditions: [] }],
+          id: 'root',
+        },
         { combinator: 'and', rules: [] },
         [0]
       )
@@ -68,7 +79,7 @@ describe('addRE', () => {
   it('makes a rule group a rule engine when appropriate', () => {
     expect(
       addRE(
-        { conditions: [{ combinator: 'and', rules: [] }], id: 'root' },
+        { conditions: [{ condition: { combinator: 'and', rules: [] } }], id: 'root' },
         { id: 'new', combinator: 'and', rules: [] },
         [0]
       )
@@ -90,12 +101,11 @@ describe('addRE', () => {
         {
           conditions: [
             {
-              combinator: 'and',
-              rules: [],
+              condition: { combinator: 'and', rules: [] },
               conditions: [
-                { combinator: 'and', rules: [] },
-                { combinator: 'and', rules: [] },
-                { combinator: 'and', rules: [] },
+                { condition: { combinator: 'and', rules: [] } },
+                { condition: { combinator: 'and', rules: [] } },
+                { condition: { combinator: 'and', rules: [] } },
               ],
             },
           ],
@@ -111,9 +121,14 @@ describe('addRE', () => {
           combinator: 'and',
           rules: [],
           conditions: [
-            { combinator: 'and', rules: [] },
-            { combinator: 'and', rules: [{ id, field: 'f', operator: '=', value: 'v' }] },
-            { combinator: 'and', rules: [] },
+            { condition: { combinator: 'and', rules: [] } },
+            {
+              condition: {
+                combinator: 'and',
+                rules: [{ id, field: 'f', operator: '=', value: 'v' }],
+              },
+            },
+            { condition: { combinator: 'and', rules: [] } },
           ],
         },
       ],
@@ -144,7 +159,10 @@ describe('updateRE', () => {
   it('updates a rules engine in a rules engine', () => {
     expect(
       updateRE(
-        { conditions: [{ rules: [{ field: 'f', operator: '=', value: 'v' }] }], id: 'root' },
+        {
+          id: 'root',
+          conditions: [{ condition: { rules: [{ field: 'f', operator: '=', value: 'v' }] } }],
+        },
         'someProp',
         'initial value',
         [0]
@@ -160,7 +178,10 @@ describe('updateRE', () => {
   it('updates a rule in a rules engine', () => {
     expect(
       updateRE(
-        { conditions: [{ rules: [{ field: 'f', operator: '=', value: 'v' }] }], id: 'root' },
+        {
+          conditions: [{ condition: { rules: [{ field: 'f', operator: '=', value: 'v' }] } }],
+          id: 'root',
+        },
         'value',
         'new value',
         [0],
@@ -185,7 +206,11 @@ describe('removeRE', () => {
   it('removes a condition from a rules engine', () => {
     expect(
       removeRE(
-        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        {
+          conditions: [{ condition: { combinator: 'and', rules: [] } }],
+          defaultAction: { actionType: 'a' },
+          id: 'root',
+        },
         [0]
       )
     ).toEqual({ conditions: [{ actionType: 'a' }], id: 'root' });
@@ -195,7 +220,11 @@ describe('removeRE', () => {
     expect(
       removeRE(
         {
-          conditions: [{ combinator: 'and', rules: [{ field: 'f', operator: '=', value: 'v' }] }],
+          conditions: [
+            {
+              condition: { combinator: 'and', rules: [{ field: 'f', operator: '=', value: 'v' }] },
+            },
+          ],
           id: 'root',
         },
         [0],
@@ -225,10 +254,10 @@ describe('moveRE', () => {
       moveRE(
         {
           conditions: [
-            { combinator: 'and', rules: [] },
-            { combinator: 'or', rules: [] },
-            { actionType: 'a' },
+            { condition: { combinator: 'and', rules: [] } },
+            { condition: { combinator: 'or', rules: [] } },
           ],
+          defaultAction: { actionType: 'a' },
           id: 'root',
         },
         [1],
@@ -247,13 +276,12 @@ describe('moveRE', () => {
         {
           conditions: [
             {
-              combinator: 'and',
-              rules: [],
+              condition: { combinator: 'and', rules: [] },
               conditions: [
-                { combinator: 'and', rules: [] },
-                { combinator: 'or', rules: [] },
-                { actionType: 'a' },
+                { condition: { combinator: 'and', rules: [] } },
+                { condition: { combinator: 'or', rules: [] } },
               ],
+              defaultAction: { actionType: 'a' },
               id: '1',
             },
           ],
@@ -281,10 +309,10 @@ describe('moveRE', () => {
       moveRE(
         {
           conditions: [
-            { combinator: 'and', rules: [] },
-            { combinator: 'or', rules: [] },
-            { actionType: 'a' },
+            { condition: { combinator: 'and', rules: [] } },
+            { condition: { combinator: 'or', rules: [] } },
           ],
+          defaultAction: { actionType: 'a' },
           id: 'root',
         },
         [0],
@@ -303,23 +331,21 @@ describe('moveRE', () => {
         {
           conditions: [
             {
-              combinator: 'and',
-              rules: [],
+              condition: { combinator: 'and', rules: [] },
               conditions: [
-                { combinator: 'and', rules: [] },
-                { combinator: 'or', rules: [] },
-                { actionType: 'a' },
+                { condition: { combinator: 'and', rules: [] } },
+                { condition: { combinator: 'or', rules: [] } },
               ],
+              defaultAction: { actionType: 'a' },
               id: '1',
             },
             {
-              combinator: 'or',
-              rules: [],
+              condition: { combinator: 'or', rules: [] },
               conditions: [
-                { combinator: 'and', rules: [] },
-                { combinator: 'or', rules: [] },
-                { actionType: 'a' },
+                { condition: { combinator: 'and', rules: [] } },
+                { condition: { combinator: 'or', rules: [] } },
               ],
+              defaultAction: { actionType: 'a' },
               id: '2',
             },
           ],
@@ -357,9 +383,9 @@ describe('moveRE', () => {
       moveRE(
         {
           conditions: [
-            { combinator: 'and', rules: [] },
-            { combinator: 'or', rules: [] },
-            { combinator: 'xor', rules: [] },
+            { condition: { combinator: 'and', rules: [] } },
+            { condition: { combinator: 'or', rules: [] } },
+            { condition: { combinator: 'xor', rules: [] } },
           ],
           id: 'root',
         },
@@ -368,9 +394,9 @@ describe('moveRE', () => {
       )
     ).toEqual({
       conditions: [
-        { combinator: 'or', rules: [] },
-        { combinator: 'and', rules: [] },
-        { combinator: 'xor', rules: [] },
+        { condition: { combinator: 'or', rules: [] } },
+        { condition: { combinator: 'and', rules: [] } },
+        { condition: { combinator: 'xor', rules: [] } },
       ],
       id: 'root',
     });
@@ -378,22 +404,24 @@ describe('moveRE', () => {
 
   it('ignores moving to same location', () => {
     const r1: RulesEngine = {
-      conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }],
+      conditions: [{ condition: { combinator: 'and', rules: [] } }],
+      defaultAction: { actionType: 'a' },
       id: 'root',
     };
     expect(moveRE(r1, [0], [0])).toBe(r1);
   });
 
   it('ignores invalid moves', () => {
-    const r1 = {
-      conditions: [{ combinator: 'and', rules: [] }],
+    const r1: RulesEngine = {
+      conditions: [{ condition: { combinator: 'and', rules: [] } }],
       id: 'root',
     };
     expect(moveRE(r1, [0], 'up')).toBe(r1); // Can't move up from first position
     expect(moveRE(r1, [0], 'down')).toBe(r1); // Can't move down from last position
 
     const r2: RulesEngine = {
-      conditions: [{ combinator: 'and', rules: [] }, { actionType: 'b' }],
+      conditions: [{ condition: { combinator: 'and', rules: [] } }],
+      defaultAction: { actionType: 'b' },
       id: 'root',
     };
     expect(moveRE(r2, [1], 'up')).toBe(r2); // Can't move action up
@@ -411,7 +439,7 @@ describe('insertRE', () => {
   it('inserts a condition at specified path', () => {
     expect(
       insertRE(
-        { conditions: [{ combinator: 'and', rules: [] }], id: 'root' },
+        { conditions: [{ condition: { combinator: 'and', rules: [] } }], id: 'root' },
         { combinator: 'or', rules: [] },
         [1]
       )
@@ -427,7 +455,11 @@ describe('insertRE', () => {
   it('inserts an action before existing action', () => {
     expect(
       insertRE(
-        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        {
+          conditions: [{ condition: { combinator: 'and', rules: [] } }],
+          defaultAction: { actionType: 'a' },
+          id: 'root',
+        },
         { combinator: 'or', rules: [] },
         [1]
       )
@@ -444,7 +476,11 @@ describe('insertRE', () => {
   it('replaces an existing condition', () => {
     expect(
       insertRE(
-        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        {
+          conditions: [{ condition: { combinator: 'and', rules: [] } }],
+          defaultAction: { actionType: 'a' },
+          id: 'root',
+        },
         { combinator: 'or', rules: [] },
         [0],
         undefined,
@@ -459,7 +495,11 @@ describe('insertRE', () => {
   it('replaces an existing action', () => {
     expect(
       insertRE(
-        { conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }], id: 'root' },
+        {
+          conditions: [{ condition: { combinator: 'and', rules: [] } }],
+          defaultAction: { actionType: 'a' },
+          id: 'root',
+        },
         { combinator: 'or', rules: [] },
         [1],
         undefined,
@@ -476,7 +516,8 @@ describe('insertRE', () => {
 
   it('does not insert second action', () => {
     const r1: RulesEngine = {
-      conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }],
+      conditions: [{ condition: { combinator: 'and', rules: [] } }],
+      defaultAction: { actionType: 'a' },
       id: 'root',
     };
     expect(insertRE(r1, { actionType: 'b' }, [1])).toBe(r1);
@@ -485,7 +526,7 @@ describe('insertRE', () => {
   it('inserts rule into nested condition', () => {
     expect(
       insertRE(
-        { conditions: [{ combinator: 'and', rules: [] }], id: 'root' },
+        { conditions: [{ condition: { combinator: 'and', rules: [] } }], id: 'root' },
         { field: 'f', operator: '=', value: 'v' },
         [0],
         [0]
@@ -509,11 +550,13 @@ describe('groupRE', () => {
         {
           conditions: [
             {
-              combinator: 'and',
-              rules: [
-                { field: 'f1', operator: '=', value: 'v1' },
-                { field: 'f2', operator: '=', value: 'v2' },
-              ],
+              condition: {
+                combinator: 'and',
+                rules: [
+                  { field: 'f1', operator: '=', value: 'v1' },
+                  { field: 'f2', operator: '=', value: 'v2' },
+                ],
+              },
             },
           ],
           id: 'root',
@@ -545,10 +588,10 @@ describe('groupRE', () => {
 
   // TODO: Cross-condition grouping should work. This test as written should fail.
   it('ignores grouping across different conditions', () => {
-    const r1 = {
+    const r1: RulesEngine = {
       conditions: [
-        { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
-        { combinator: 'and', rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
+        { condition: { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] } },
+        { condition: { combinator: 'and', rules: [{ field: 'f2', operator: '=', value: 'v2' }] } },
       ],
       id: 'root',
     };
@@ -561,7 +604,7 @@ describe('groupRE', () => {
   });
 
   it('ignores non-rule-group conditions', () => {
-    const r1: RulesEngine = { conditions: [{ actionType: 'a' }], id: 'root' };
+    const r1: RulesEngine = { conditions: [], defaultAction: { actionType: 'a' }, id: 'root' };
     expect(groupRE(r1, [0], [0], [0], [1])).toBe(r1);
   });
 });

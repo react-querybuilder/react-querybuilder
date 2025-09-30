@@ -3,7 +3,13 @@ import { prepareOptionList } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { defaultClassnamesRE, defaultRulesEngine, standardClassnamesRE } from '../defaults';
-import type { RulesEngine, RulesEngineConditions, RulesEngineProps, SchemaRE } from '../types';
+import type {
+  RulesEngine,
+  RulesEngineAction,
+  RulesEngineConditions,
+  RulesEngineProps,
+  SchemaRE,
+} from '../types';
 import { prepareRulesEngine } from '../utils';
 import { defaultComponentsRE } from './defaultComponents';
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
@@ -43,6 +49,14 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
     },
     [onRulesEngineChange, re]
   );
+  const onDefaultActionChange = useCallback(
+    (defaultAction: RulesEngineAction) => {
+      const newRE = { ...re, defaultAction };
+      setRE(newRE);
+      onRulesEngineChange?.(newRE);
+    },
+    [onRulesEngineChange, re]
+  );
   const { optionList: actionTypes } = useMemo(
     () => prepareOptionList({ optionList: actionTypesProp }),
     [actionTypesProp]
@@ -69,13 +83,15 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
     <div className={standardClassnamesRE.rulesEngineBuilder}>
       <div className={standardClassnamesRE.conditionBuilderHeader}>
         <button>+ Condition</button>
-        <button>+ Action</button>
+        <button disabled={!!rePrepped.defaultAction}>+ Action</button>
       </div>
       <RulesEngineConditionCascade
         conditionPath={rootPath}
-        onChange={onChange}
+        onConditionsChange={onChange}
+        onDefaultActionChange={onDefaultActionChange}
         // @ts-expect-error TODO
         conditions={rePrepped.conditions}
+        defaultAction={rePrepped.defaultAction}
         schema={schema}
       />
     </div>

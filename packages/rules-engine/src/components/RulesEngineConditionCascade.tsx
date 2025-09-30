@@ -1,14 +1,8 @@
 import type { RuleGroupTypeAny } from '@react-querybuilder/core';
-import { isRuleGroup } from '@react-querybuilder/core';
 import { produce } from 'immer';
 import * as React from 'react';
 import { usePathsMemo } from 'react-querybuilder';
-import type {
-  RulesEngineAction,
-  RulesEngineCondition,
-  RulesEngineConditionCascadeProps,
-} from '../types';
-import { isRulesEngineAction } from '../utils';
+import type { RulesEngineConditionAny, RulesEngineConditionCascadeProps } from '../types';
 
 /**
  * Renders a sequential list of if/else-if/else blocks in a rules engine.
@@ -16,22 +10,29 @@ import { isRulesEngineAction } from '../utils';
 export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
   props: RulesEngineConditionCascadeProps<RG>
 ): React.JSX.Element => {
-  const { conditionPath, conditions, onChange, schema } = props;
+  const {
+    conditionPath,
+    conditions,
+    defaultAction,
+    onConditionsChange,
+    onDefaultActionChange,
+    schema,
+  } = props;
   const {
     actionTypes,
     autoSelectActionType,
     components: { conditionBuilder: ConditionBuilder, actionBuilder: ActionBuilder },
   } = schema;
 
-  const updater = React.useCallback(
-    (c: RulesEngineCondition<RG> | RulesEngineAction, index: number) =>
-      onChange(
+  const conditionUpdater = React.useCallback(
+    (c: RulesEngineConditionAny, index: number) =>
+      onConditionsChange(
         produce(conditions, draft => {
           // oxlint-disable-next-line no-explicit-any
           draft.splice(index, 1, c as any);
         })
       ),
-    [onChange, conditions]
+    [onConditionsChange, conditions]
   );
 
   const pathsMemo = usePathsMemo({
@@ -49,32 +50,32 @@ export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
         // TODO: implement `disabled`/`disabledPaths`/etc.
         // const thisPathDisabled = thisPathMemo.disabled || (typeof c !== 'string' && c.disabled);
 
-        return isRulesEngineAction(c) ? (
-          <ActionBuilder
-            key={c.id}
-            conditionPath={thisPath}
-            schema={schema}
-            actionTypes={actionTypes}
-            action={c}
-            standalone={i === conditions.length - 1}
-            // oxlint-disable-next-line jsx-no-new-function-as-prop
-            onActionChange={a => updater(a, i)}
-            autoSelectActionType={autoSelectActionType}
-          />
-        ) : (
+        return (
           <ConditionBuilder
             key={c.id}
             conditionPath={thisPath}
             schema={schema}
             actionTypes={actionTypes}
             condition={c}
-            isOnlyCondition={i === 0 && !isRuleGroup(conditions[i + 1])}
+            isOnlyCondition={conditions.length === 1}
             // oxlint-disable-next-line jsx-no-new-function-as-prop
-            onConditionChange={c => updater(c, i)}
+            onConditionChange={c => conditionUpdater(c, i)}
             autoSelectActionType={autoSelectActionType}
           />
         );
       })}
+      {defaultAction && (
+        <ActionBuilder
+          key={'defaultAction'}
+          conditionPath={conditionPath}
+          schema={schema}
+          actionTypes={actionTypes}
+          action={defaultAction}
+          standalone
+          onActionChange={onDefaultActionChange}
+          autoSelectActionType={autoSelectActionType}
+        />
+      )}
     </React.Fragment>
   );
 };

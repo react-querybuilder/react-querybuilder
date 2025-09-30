@@ -20,6 +20,10 @@ export const standardClassnamesRE: { [k in keyof ClassnamesRE]: string } = {
   conditionBuilderHeader: 'conditionBuilder-header',
 };
 
-export const defaultRulesEngine: RulesEngine = { conditions: [{ combinator: 'and', rules: [] }] };
+export const defaultRulesEngine: RulesEngine = {
+  conditions: [{ condition: { combinator: 'and', rules: [] } }],
+};
 
-export const defaultRulesEngineIC: RulesEngineIC = { conditions: [{ rules: [] }] };
+export const defaultRulesEngineIC: RulesEngineIC = {
+  conditions: [{ condition: { rules: [] } }],
+};

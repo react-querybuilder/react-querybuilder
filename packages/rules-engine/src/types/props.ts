@@ -14,7 +14,7 @@ import type { QueryBuilderProps } from 'react-querybuilder';
 import type {
   RulesEngine,
   RulesEngineAction,
-  RulesEngineCondition,
+  RulesEngineConditionAny,
   RulesEngineConditions,
 } from './rulesEngine';
 
@@ -31,9 +31,9 @@ export interface ComponentsRE {
   actionBuilderHeader: React.ComponentType<RulesEngineActionProps>;
   actionBuilderBody: React.ComponentType<RulesEngineActionProps>;
   // oxlint-disable no-explicit-any
-  conditionBuilder: React.ComponentType<RulesEngineConditionProps<any>>;
-  conditionBuilderHeader: React.ComponentType<RulesEngineConditionProps<any>>;
-  conditionBuilderBody: React.ComponentType<RulesEngineConditionProps<any>>;
+  conditionBuilder: React.ComponentType<RulesEngineConditionProps>;
+  conditionBuilderHeader: React.ComponentType<RulesEngineConditionProps>;
+  conditionBuilderBody: React.ComponentType<RulesEngineConditionProps>;
   conditionBuilderCascade: React.ComponentType<RulesEngineConditionCascadeProps<any>>;
   // oxlint-enable no-explicit-any
   queryBuilder: React.ComponentType<
@@ -70,18 +70,20 @@ export interface RulesEngineProps {
 
 export interface RulesEngineConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
-  onChange: (rec: RulesEngineConditions<RG>) => void;
+  onConditionsChange: (rec: RulesEngineConditions<RG>) => void;
+  onDefaultActionChange: (rec: RulesEngineAction) => void;
   conditions: RulesEngineConditions<RG>;
+  defaultAction?: RulesEngineAction;
   schema: SchemaRE;
 }
 
-export interface RulesEngineConditionProps<RG extends RuleGroupTypeAny> {
+export interface RulesEngineConditionProps {
   schema: SchemaRE;
   conditionPath: Path;
-  condition: RulesEngineCondition<RG>;
+  condition: RulesEngineConditionAny;
   actionTypes?: FullOptionList<BaseOption>;
   isOnlyCondition: boolean;
-  onConditionChange: (condition: RulesEngineCondition<RG>) => void;
+  onConditionChange: (condition: RulesEngineConditionAny) => void;
   autoSelectActionType?: boolean;
 }
 
