@@ -1,3 +1,4 @@
+import type { RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
 import type {
@@ -44,8 +45,9 @@ export const RulesEngineConditionBuilderBody = (
     [condition, onConditionChange]
   );
   const conditionUpdater = React.useCallback(
-    (re: RulesEngineConditionAny) => onConditionChange(re),
-    [onConditionChange]
+    (rec: RuleGroupTypeAny) =>
+      onConditionChange({ ...condition, condition: rec } as RulesEngineConditionAny),
+    [condition, onConditionChange]
   );
   const conditionsUpdater = React.useCallback(
     (conditions: RulesEngineConditionAny[]) =>
@@ -58,8 +60,7 @@ export const RulesEngineConditionBuilderBody = (
       <QueryBuilder
         enableMountQueryChange={false}
         fields={props.schema.fields}
-        query={props.condition.condition}
-        // @ts-expect-error TODO
+        query={props.condition.condition as RuleGroupType}
         onQueryChange={conditionUpdater}
       />
       {(props.condition.action || props.condition.conditions) && (
