@@ -12,6 +12,7 @@ import {
   clsx,
   isFullOptionArray,
   standardClassnames as sc,
+  defaultTranslations as t,
   toFullOption,
 } from '@react-querybuilder/core';
 import {
@@ -23,7 +24,6 @@ import {
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
 import type { ValueSelectorProps } from '../types';
 import { Rule } from './Rule';

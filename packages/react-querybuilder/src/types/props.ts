@@ -1,6 +1,11 @@
 import type {
   AccessibleDescriptionGenerator,
   BaseOptionMap,
+  BaseTranslation,
+  BaseTranslations,
+  BaseTranslationsFull,
+  BaseTranslationWithLabel,
+  BaseTranslationWithPlaceholders,
   Classname,
   Classnames,
   CommonRuleSubComponentProps,
@@ -23,7 +28,6 @@ import type {
   Option,
   ParseNumbersPropConfig,
   Path,
-  Placeholder,
   QueryActions,
   QueryValidator,
   RuleGroupType,
@@ -220,60 +224,31 @@ export type VersatileSelectorProps = ValueSelectorProps &
  *
  * @group Props
  */
-export interface TranslationWithLabel extends Translation {
-  label?: ReactNode;
-}
+export interface TranslationWithLabel extends BaseTranslationWithLabel<ReactNode> {}
 /**
  * A translation for a component with `title` only.
  *
  * @group Props
  */
-export interface Translation {
-  title?: string;
-}
+export interface Translation extends BaseTranslation {}
 /**
  * A translation for a component with `title` and a placeholder.
  *
  * @group Props
  */
-export interface TranslationWithPlaceholders extends Translation, Placeholder {}
+export interface TranslationWithPlaceholders extends BaseTranslationWithPlaceholders {}
 /**
  * The shape of the `translations` prop.
  *
  * @group Props
  */
-export interface Translations {
-  fields: TranslationWithPlaceholders;
-  operators: TranslationWithPlaceholders;
-  values: TranslationWithPlaceholders;
-  matchMode: Translation;
-  matchThreshold: Translation;
-  value: Translation;
-  removeRule: TranslationWithLabel;
-  removeGroup: TranslationWithLabel;
-  addRule: TranslationWithLabel;
-  addGroup: TranslationWithLabel;
-  combinators: Translation;
-  notToggle: TranslationWithLabel;
-  cloneRule: TranslationWithLabel;
-  cloneRuleGroup: TranslationWithLabel;
-  shiftActionUp: TranslationWithLabel;
-  shiftActionDown: TranslationWithLabel;
-  dragHandle: TranslationWithLabel;
-  lockRule: TranslationWithLabel;
-  lockGroup: TranslationWithLabel;
-  lockRuleDisabled: TranslationWithLabel;
-  lockGroupDisabled: TranslationWithLabel;
-  valueSourceSelector: Translation;
-}
+export interface Translations extends BaseTranslations<ReactNode> {}
 /**
  * The full `translations` interface with all properties required.
  *
  * @group Props
  */
-export type TranslationsFull = {
-  [K in keyof Translations]: { [T in keyof Translations[K]]-?: string };
-};
+export interface TranslationsFull extends BaseTranslationsFull {}
 
 /**
  * Props passed to every action component (rendered as `<button>` by default).

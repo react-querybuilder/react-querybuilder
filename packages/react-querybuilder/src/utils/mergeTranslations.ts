@@ -1,7 +1,6 @@
-import { objectEntries, objectKeys } from '@react-querybuilder/core';
+import { defaultTranslations, objectEntries, objectKeys } from '@react-querybuilder/core';
 import { produce } from 'immer';
 import type { ReactNode } from 'react';
-import { defaultTranslations } from '../defaults';
 import type { Translations } from '../types';
 
 /**

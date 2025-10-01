@@ -28,6 +28,7 @@ import {
   move,
   numericRegex,
   standardClassnames as sc,
+  defaultTranslations as t,
   toFullOption,
 } from '@react-querybuilder/core';
 import { consoleMocks } from '@rqb-testing';
@@ -35,7 +36,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { QueryBuilderContext } from '../context';
-import { defaultControlElements, defaultTranslations as t } from '../defaults';
+import { defaultControlElements } from '../defaults';
 import { messages } from '../messages';
 import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
 import type {

@@ -5,13 +5,13 @@ import {
   defaultCombinators,
   defaultControlClassnames,
   standardClassnames as sc,
+  defaultTranslations as t,
   toFullOption,
 } from '@react-querybuilder/core';
 import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '@rqb-testing';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
 import type { ActionProps, ValueSelectorProps } from '../types';
 import { RuleGroup } from './RuleGroup';
