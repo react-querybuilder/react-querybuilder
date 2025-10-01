@@ -1,9 +1,13 @@
 import type { Classnames, FullField, RuleGroupTypeAny } from '@react-querybuilder/core';
-import { defaultControlClassnames, mergeClassnames } from '@react-querybuilder/core';
+import {
+  defaultControlClassnames,
+  defaultTranslations,
+  mergeClassnames,
+} from '@react-querybuilder/core';
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../context';
-import { defaultControlElements, defaultTranslations } from '../defaults';
+import { defaultControlElements } from '../defaults';
 import type {
   ControlElementsProp,
   Controls,
