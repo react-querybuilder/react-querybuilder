@@ -11,6 +11,7 @@ const joinClassnamesByName = (name: keyof ClassnamesRE, args: MergeClassnamesREP
  */
 export const mergeClassnamesRE = (...args: MergeClassnamesREParams): ClassnamesRE => ({
   rulesEngineBuilder: joinClassnamesByName('rulesEngineBuilder', args),
+  rulesEngineHeader: joinClassnamesByName('rulesEngineHeader', args),
   blockLabel: joinClassnamesByName('blockLabel', args),
   actionBuilder: joinClassnamesByName('actionBuilder', args),
   actionBuilderHeader: joinClassnamesByName('actionBuilderHeader', args),
