@@ -2,6 +2,7 @@ import type { Classnames, FullField, RuleGroupTypeAny } from '@react-querybuilde
 import {
   defaultControlClassnames,
   defaultTranslations,
+  mergeAnyTranslation,
   mergeClassnames,
 } from '@react-querybuilder/core';
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
@@ -17,7 +18,6 @@ import type {
   TranslationsFull,
   ValueEditorProps,
 } from '../types';
-import { mergeTranslation } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextParams<
@@ -376,52 +376,52 @@ export const useMergedContext = <
     () =>
       Object.assign(
         finalize ? Object.assign({}, defaultTranslations) : {},
-        mergeTranslation(
+        mergeAnyTranslation(
           'addGroup',
           {
             label: [propsT.addGroup?.label, contextT.addGroup?.label],
             title: [propsT.addGroup?.title, contextT.addGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'addRule',
           {
             label: [propsT.addRule?.label, contextT.addRule?.label],
             title: [propsT.addRule?.title, contextT.addRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'cloneRule',
           {
             label: [propsT.cloneRule?.label, contextT.cloneRule?.label],
             title: [propsT.cloneRule?.title, contextT.cloneRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'cloneRuleGroup',
           {
             label: [propsT.cloneRuleGroup?.label, contextT.cloneRuleGroup?.label],
             title: [propsT.cloneRuleGroup?.title, contextT.cloneRuleGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'combinators',
           { title: [propsT.combinators?.title, contextT.combinators?.title] },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'dragHandle',
           {
             label: [propsT.dragHandle?.label, contextT.dragHandle?.label],
             title: [propsT.dragHandle?.title, contextT.dragHandle?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'fields',
           {
             placeholderGroupLabel: [
@@ -432,49 +432,49 @@ export const useMergedContext = <
             placeholderName: [propsT.fields?.placeholderName, contextT.fields?.placeholderName],
             title: [propsT.fields?.title, contextT.fields?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockGroup',
           {
             label: [propsT.lockGroup?.label, contextT.lockGroup?.label],
             title: [propsT.lockGroup?.title, contextT.lockGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockGroupDisabled',
           {
             label: [propsT.lockGroupDisabled?.label, contextT.lockGroupDisabled?.label],
             title: [propsT.lockGroupDisabled?.title, contextT.lockGroupDisabled?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockRule',
           {
             label: [propsT.lockRule?.label, contextT.lockRule?.label],
             title: [propsT.lockRule?.title, contextT.lockRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockRuleDisabled',
           {
             label: [propsT.lockRuleDisabled?.label, contextT.lockRuleDisabled?.label],
             title: [propsT.lockRuleDisabled?.title, contextT.lockRuleDisabled?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'notToggle',
           {
             label: [propsT.notToggle?.label, contextT.notToggle?.label],
             title: [propsT.notToggle?.title, contextT.notToggle?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'operators',
           {
             placeholderGroupLabel: [
@@ -491,9 +491,9 @@ export const useMergedContext = <
             ],
             title: [propsT.operators?.title, contextT.operators?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'values',
           {
             placeholderGroupLabel: [
@@ -504,49 +504,49 @@ export const useMergedContext = <
             placeholderName: [propsT.values?.placeholderName, contextT.values?.placeholderName],
             title: [propsT.values?.title, contextT.values?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'removeGroup',
           {
             label: [propsT.removeGroup?.label, contextT.removeGroup?.label],
             title: [propsT.removeGroup?.title, contextT.removeGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'removeRule',
           {
             label: [propsT.removeRule?.label, contextT.removeRule?.label],
             title: [propsT.removeRule?.title, contextT.removeRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'shiftActionDown',
           {
             label: [propsT.shiftActionDown?.label, contextT.shiftActionDown?.label],
             title: [propsT.shiftActionDown?.title, contextT.shiftActionDown?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'shiftActionUp',
           {
             label: [propsT.shiftActionUp?.label, contextT.shiftActionUp?.label],
             title: [propsT.shiftActionUp?.title, contextT.shiftActionUp?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'value',
           { title: [propsT.value?.title, contextT.value?.title] },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'valueSourceSelector',
           { title: [propsT.valueSourceSelector?.title, contextT.valueSourceSelector?.title] },
-          finalize
+          finalize ? defaultTranslations : undefined
         )
       ),
     [
