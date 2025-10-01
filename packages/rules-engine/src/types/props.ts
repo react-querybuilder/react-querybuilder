@@ -44,6 +44,8 @@ export interface ComponentsRE {
 export interface ClassnamesRE {
   /** Classes applied to the wrapper element. */
   rulesEngineBuilder: Classname;
+  /** Classes applied to all block labels ("If", "Else", etc.). */
+  blockLabel: Classname;
   /** Classes applied to action builders ("then" sections). */
   actionBuilder: Classname;
   /** Classes applied to action builder headers. */

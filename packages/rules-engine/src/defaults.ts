@@ -6,16 +6,18 @@ export const defaultClassnamesRE: ClassnamesRE = {
   actionBuilderHeader: '',
   actionBuilderBody: '',
   actionBuilderStandalone: '',
+  blockLabel: '',
   conditionBuilder: '',
   conditionBuilderHeader: '',
 };
 
-export const standardClassnamesRE: { [k in keyof ClassnamesRE]: string } = {
+export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   rulesEngineBuilder: 'rulesEngineBuilder',
   actionBuilder: 'actionBuilder',
   actionBuilderHeader: 'actionBuilder-header',
   actionBuilderBody: 'actionBuilder-body',
   actionBuilderStandalone: 'actionBuilder-standalone',
+  blockLabel: 'blockLabel',
   conditionBuilder: 'conditionBuilder',
   conditionBuilderHeader: 'conditionBuilder-header',
 };

@@ -41,3 +41,7 @@
   flex-direction: row;
   gap: var(--#{$rqbre-var-prefix}spacing);
 }
+
+.rulesEngineBuilder-justified .blockLabel {
+  margin-right: auto;
+}

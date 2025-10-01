@@ -1,5 +1,5 @@
 import type { Path, RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/core';
-import { prepareOptionList } from '@react-querybuilder/core';
+import { clsx, prepareOptionList } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { defaultClassnamesRE, defaultRulesEngine, standardClassnamesRE } from '../defaults';
@@ -10,11 +10,13 @@ import type {
   RulesEngineProps,
   SchemaRE,
 } from '../types';
-import { prepareRulesEngine } from '../utils';
+import { mergeClassnamesRE, prepareRulesEngine } from '../utils';
 import { defaultComponentsRE } from './defaultComponents';
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootPath: Path = [];
+
+export const RulesEngineBuilderHeader = (): React.JSX.Element => <></>;
 
 export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
@@ -28,11 +30,52 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
     components: componentsProp = defaultComponentsRE,
   } = props;
 
-  // TODO: do a proper merge here
-  const classnames = useMemo(
-    () => ({ ...defaultClassnamesRE, ...classnamesProp }),
+  const classnamesMerged = useMemo(
+    () => mergeClassnamesRE(defaultClassnamesRE, classnamesProp),
     [classnamesProp]
   );
+  const classnames = useMemo(
+    () => ({
+      rulesEngineBuilder: classnamesMerged.rulesEngineBuilder,
+      blockLabel: classnamesMerged.blockLabel,
+      actionBuilder: classnamesMerged.actionBuilder,
+      actionBuilderHeader: classnamesMerged.actionBuilderHeader,
+      actionBuilderBody: classnamesMerged.actionBuilderBody,
+      actionBuilderStandalone: classnamesMerged.actionBuilderStandalone,
+      conditionBuilder: classnamesMerged.conditionBuilder,
+      conditionBuilderHeader: classnamesMerged.conditionBuilderHeader,
+    }),
+    [
+      classnamesMerged.rulesEngineBuilder,
+      classnamesMerged.blockLabel,
+      classnamesMerged.actionBuilder,
+      classnamesMerged.actionBuilderHeader,
+      classnamesMerged.actionBuilderBody,
+      classnamesMerged.actionBuilderStandalone,
+      classnamesMerged.conditionBuilder,
+      classnamesMerged.conditionBuilderHeader,
+    ]
+  );
+  const wrapperClassName = useMemo(
+    () =>
+      clsx(
+        // suppressStandardClassnames || standardClassnamesRE.rulesEngineBuilder,
+        standardClassnamesRE.rulesEngineBuilder,
+        clsx(classnames.rulesEngineBuilder)
+        // // custom conditional classes
+        // rulesEngineDisabled && classnames.disabled,
+        // typeof validationResult === 'boolean' && validationResult && classnames.valid,
+        // typeof validationResult === 'boolean' && !validationResult && classnames.invalid,
+        // // standard conditional classes
+        // suppressStandardClassnames || {
+        //   [standardClassnames.disabled]: rulesEngineDisabled,
+        //   [standardClassnames.valid]: typeof validationResult === 'boolean' && validationResult,
+        //   [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
+        // }
+      ),
+    [classnames.rulesEngineBuilder]
+  );
+
   // TODO: do a proper merge here
   const components = useMemo(
     () => ({ ...defaultComponentsRE, ...componentsProp }),
@@ -80,7 +123,7 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   const rePrepped = useMemo(() => (re.id ? re : prepareRulesEngine(re)), [re]);
 
   return (
-    <div className={standardClassnamesRE.rulesEngineBuilder}>
+    <div className={wrapperClassName}>
       <div className={standardClassnamesRE.conditionBuilderHeader}>
         <button>+ Condition</button>
         <button disabled={!!rePrepped.defaultAction}>+ Action</button>

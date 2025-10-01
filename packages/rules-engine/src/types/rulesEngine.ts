@@ -4,7 +4,7 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 
 // #region Conditions
 export interface RulesEngineCondition<R extends RuleType = RuleType, C extends string = string>

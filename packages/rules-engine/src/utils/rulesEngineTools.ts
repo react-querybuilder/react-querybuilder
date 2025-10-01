@@ -1,4 +1,3 @@
-import { produce } from 'immer';
 import type {
   AddOptions,
   GroupOptions,
@@ -8,7 +7,7 @@ import type {
   RuleGroupTypeAny,
   RuleType,
   UpdateOptions,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 import {
   add,
   getCommonAncestorPath,
@@ -21,7 +20,8 @@ import {
   pathsAreEqual,
   remove,
   update,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
+import { produce } from 'immer';
 import type { RulesEngineAction, RulesEngineAny } from '../types';
 import { isRulesEngineAction, isRulesEngineAny } from './isRulesEngine';
 import { findConditionPath, getConditionPathOfID } from './pathUtils';

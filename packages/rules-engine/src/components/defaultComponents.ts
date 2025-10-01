@@ -1,4 +1,4 @@
-import QueryBuilder from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 import type { ComponentsRE } from '../types';
 import {
   RulesEngineActionBuilder,

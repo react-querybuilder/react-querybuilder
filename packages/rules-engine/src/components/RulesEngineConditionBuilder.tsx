@@ -14,7 +14,11 @@ export const RulesEngineConditionBuilderHeader = (
   props: RulesEngineConditionProps
 ): React.JSX.Element => (
   <div className={standardClassnamesRE.conditionBuilderHeader}>
-    <div>{props.conditionPath.at(-1) === 0 ? 'If' : 'Else If'}</div>
+    <div className={standardClassnamesRE.blockLabel}>
+      {props.conditionPath.at(-1) === 0 ? 'If' : 'Else If'}
+    </div>
+    <button>+ Subcondition</button>
+    <button disabled={!!props.condition.action}>+ Action</button>
     <button type="button">⨯</button>
   </div>
 );

@@ -50,20 +50,32 @@ const initialRE: RulesEngine = regenerateIDs({
   ],
 });
 
+const preStyle: React.CSSProperties = { marginTop: 'var(--rqbre-spacing)' };
+
 export const AppRE = (): React.JSX.Element => {
   const devApp = useDevApp();
   const [re, setRE] = React.useState(initialRE);
+
+  const {
+    optVals: { justifiedLayout },
+  } = devApp;
+
+  const rebClassnames = React.useMemo(
+    () => ({ rulesEngineBuilder: justifiedLayout ? 'rulesEngineBuilder-justified' : '' }),
+    [justifiedLayout]
+  );
 
   return (
     <DevLayout {...devApp}>
       <RulesEngineBuilder
         // {...devApp.commonRQBProps}
+        classnames={rebClassnames}
         rulesEngine={re}
         fields={fields}
         onRulesEngineChange={setRE}
         actionTypes={actionTypes}
       />
-      <pre>
+      <pre style={preStyle}>
         <code>{JSON.stringify(re, null, 2)}</code>
       </pre>
     </DevLayout>
