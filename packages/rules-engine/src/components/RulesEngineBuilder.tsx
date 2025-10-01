@@ -1,11 +1,21 @@
-import type { Path, RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/core';
+import type {
+  BaseOption,
+  FullField,
+  FullOptionList,
+  Path,
+  RuleGroupType,
+  RuleGroupTypeAny,
+} from '@react-querybuilder/core';
 import { clsx, prepareOptionList } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { defaultClassnamesRE, defaultRulesEngine, standardClassnamesRE } from '../defaults';
 import type {
+  ClassnamesRE,
+  ComponentsRE,
   RulesEngine,
   RulesEngineAction,
+  RulesEngineAny,
   RulesEngineBuilderHeaderProps,
   RulesEngineConditions,
   RulesEngineProps,
@@ -29,8 +39,43 @@ export const RulesEngineBuilderHeader = (
 export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
 ): React.JSX.Element => {
+  const re = useRulesEngineBuilder<RG>(props);
+
+  return (
+    <div className={re.wrapperClassName}>
+      <RulesEngineBuilderHeader
+        conditionPath={rootPath}
+        schema={re.schema}
+        defaultAction={re.rulesEngine.defaultAction}
+      />
+      <RulesEngineConditionCascade
+        conditionPath={rootPath}
+        onConditionsChange={re.onChange}
+        onDefaultActionChange={re.onDefaultActionChange}
+        // @ts-expect-error TODO
+        conditions={re.rulesEngine.conditions}
+        defaultAction={re.rulesEngine.defaultAction}
+        schema={re.schema}
+      />
+    </div>
+  );
+};
+
+export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
+  props: RulesEngineProps = {}
+): {
+  actionTypes: FullOptionList<BaseOption>;
+  classnames: ClassnamesRE;
+  components: ComponentsRE;
+  fields: FullOptionList<FullField>;
+  onChange: (conditions: RulesEngineConditions<RG>) => void;
+  onDefaultActionChange: (defaultAction?: RulesEngineAction) => void;
+  rulesEngine: RulesEngineAny;
+  schema: SchemaRE;
+  wrapperClassName: string;
+} => {
   const {
-    rulesEngine = defaultRulesEngine,
+    rulesEngine: rulesEngineProp = defaultRulesEngine,
     actionTypes: actionTypesProp,
     autoSelectActionType = false,
     onRulesEngineChange,
@@ -89,7 +134,7 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
     () => ({ ...defaultComponentsRE, ...componentsProp }),
     [componentsProp]
   );
-  const [re, setRE] = useState<RulesEngine>(rulesEngine);
+  const [re, setRE] = useState<RulesEngine>(rulesEngineProp);
   const onChange = useCallback(
     (conditions: RulesEngineConditions<RG>) => {
       const newRE = { ...re, conditions };
@@ -128,24 +173,17 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
     [actionTypes, autoSelectActionType, classnames, components, fields]
   );
 
-  const rePrepped = useMemo(() => (re.id ? re : prepareRulesEngine(re)), [re]);
+  const rulesEngine = useMemo(() => (re.id ? re : prepareRulesEngine(re)), [re]);
 
-  return (
-    <div className={wrapperClassName}>
-      <RulesEngineBuilderHeader
-        conditionPath={rootPath}
-        schema={schema}
-        defaultAction={rePrepped.defaultAction}
-      />
-      <RulesEngineConditionCascade
-        conditionPath={rootPath}
-        onConditionsChange={onChange}
-        onDefaultActionChange={onDefaultActionChange}
-        // @ts-expect-error TODO
-        conditions={rePrepped.conditions}
-        defaultAction={rePrepped.defaultAction}
-        schema={schema}
-      />
-    </div>
-  );
+  return {
+    classnames,
+    wrapperClassName,
+    components,
+    onChange,
+    onDefaultActionChange,
+    actionTypes,
+    fields,
+    schema,
+    rulesEngine,
+  };
 };
