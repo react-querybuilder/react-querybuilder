@@ -1,10 +1,8 @@
 import { QueryBuilder } from 'react-querybuilder';
 import type { ComponentsRE } from '../types';
-import {
-  RulesEngineActionBuilder,
-  RulesEngineActionBuilderBody,
-  RulesEngineActionBuilderHeader,
-} from './RulesEngineActionBuilder';
+import { RulesEngineActionBuilder } from './RulesEngineActionBuilder';
+import { RulesEngineActionBuilderBody } from './RulesEngineActionBuilderBody';
+import { RulesEngineActionBuilderHeader } from './RulesEngineActionBuilderHeader';
 import { RulesEngineBuilderHeader } from './RulesEngineBuilderHeader';
 import {
   RulesEngineConditionBuilder,
