@@ -57,7 +57,7 @@ export const AppRE = (): React.JSX.Element => {
   const [re, setRE] = React.useState(initialRE);
 
   const {
-    optVals: { justifiedLayout },
+    optVals: { justifiedLayout, suppressStandardClassnames },
   } = devApp;
 
   const rebClassnames = React.useMemo(
@@ -69,6 +69,7 @@ export const AppRE = (): React.JSX.Element => {
     <DevLayout {...devApp}>
       <RulesEngineBuilder
         // {...devApp.commonRQBProps}
+        suppressStandardClassnames={suppressStandardClassnames}
         classnames={rebClassnames}
         rulesEngine={re}
         fields={fields}

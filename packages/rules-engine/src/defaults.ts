@@ -2,6 +2,7 @@ import type { ClassnamesRE, RulesEngine, RulesEngineIC } from './types';
 
 export const defaultClassnamesRE: ClassnamesRE = {
   rulesEngineBuilder: '',
+  rulesEngineHeader: '',
   actionBuilder: '',
   actionBuilderHeader: '',
   actionBuilderBody: '',
@@ -13,6 +14,7 @@ export const defaultClassnamesRE: ClassnamesRE = {
 
 export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   rulesEngineBuilder: 'rulesEngineBuilder',
+  rulesEngineHeader: 'rulesEngineBuilder-header',
   actionBuilder: 'actionBuilder',
   actionBuilderHeader: 'actionBuilder-header',
   actionBuilderBody: 'actionBuilder-body',

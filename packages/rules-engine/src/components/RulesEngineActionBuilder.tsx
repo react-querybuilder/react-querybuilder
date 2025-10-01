@@ -13,20 +13,29 @@ export const RulesEngineActionBuilderHeader = (
   const {
     onActionChange,
     schema: {
-      classnames: { actionBuilderHeader },
+      classnames: { actionBuilderHeader, blockLabel },
+      suppressStandardClassnames,
     },
   } = props;
 
-  const className = React.useMemo(
-    () => clsx({ [standardClassnamesRE.actionBuilderHeader]: true }, actionBuilderHeader),
-    [actionBuilderHeader]
+  const wrapperClassName = React.useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.actionBuilderHeader,
+        actionBuilderHeader
+      ),
+    [actionBuilderHeader, suppressStandardClassnames]
+  );
+  const labelClassName = React.useMemo(
+    () => clsx(suppressStandardClassnames || standardClassnamesRE.blockLabel, blockLabel),
+    [blockLabel, suppressStandardClassnames]
   );
 
   const removeAction = React.useCallback(() => onActionChange(), [onActionChange]);
 
   return (
-    <div className={className}>
-      <div>{props.standalone ? 'Else' : 'Then'}</div>
+    <div className={wrapperClassName}>
+      <div className={labelClassName}>{props.standalone ? 'Else' : 'Then'}</div>
       <button type="button" onClick={removeAction}>
         ⨯
       </button>
@@ -38,13 +47,16 @@ export const RulesEngineActionBuilderHeader = (
  * Default body component for {@link RulesEngineActionBuilder}.
  */
 export const RulesEngineActionBuilderBody = (props: RulesEngineActionProps): React.JSX.Element => {
+  const {
+    schema: {
+      classnames: { actionBuilderBody },
+      suppressStandardClassnames,
+    },
+  } = props;
   const className = React.useMemo(
     () =>
-      clsx(
-        { [standardClassnamesRE.actionBuilderBody]: true },
-        props.schema.classnames.actionBuilderBody
-      ),
-    [props.schema.classnames.actionBuilderBody]
+      clsx(suppressStandardClassnames || standardClassnamesRE.actionBuilderBody, actionBuilderBody),
+    [actionBuilderBody, suppressStandardClassnames]
   );
   return (
     <div className={className}>
@@ -64,16 +76,21 @@ export const RulesEngineActionBuilderBody = (props: RulesEngineActionProps): Rea
  * Analogous to the body of an "if" or "else-if" block.
  */
 export const RulesEngineActionBuilder = (props: RulesEngineActionProps): React.JSX.Element => {
+  const {
+    standalone,
+    schema: {
+      classnames: { actionBuilder },
+      suppressStandardClassnames,
+    },
+  } = props;
   const className = React.useMemo(
     () =>
       clsx(
-        {
-          [standardClassnamesRE.actionBuilder]: true,
-          [standardClassnamesRE.actionBuilderStandalone]: props.standalone,
-        },
-        props.schema.classnames.actionBuilder
+        suppressStandardClassnames || standardClassnamesRE.actionBuilder,
+        suppressStandardClassnames || (standalone && standardClassnamesRE.actionBuilderStandalone),
+        actionBuilder
       ),
-    [props.schema.classnames.actionBuilder, props.standalone]
+    [actionBuilder, standalone, suppressStandardClassnames]
   );
 
   return (

@@ -16,7 +16,6 @@ import type {
   RulesEngine,
   RulesEngineAction,
   RulesEngineAny,
-  RulesEngineBuilderHeaderProps,
   RulesEngineConditions,
   RulesEngineProps,
   SchemaRE,
@@ -27,24 +26,18 @@ import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootPath: Path = [];
 
-export const RulesEngineBuilderHeader = (
-  props: RulesEngineBuilderHeaderProps
-): React.JSX.Element => (
-  <div className={standardClassnamesRE.conditionBuilderHeader}>
-    <button>+ Condition</button>
-    <button disabled={!!props.defaultAction}>+ Action</button>
-  </div>
-);
-
 export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
 ): React.JSX.Element => {
   const re = useRulesEngineBuilder<RG>(props);
 
+  const { rulesEngineBuilderHeader: REBuilderHeader } = re.components;
+
   return (
     <div className={re.wrapperClassName}>
-      <RulesEngineBuilderHeader
+      <REBuilderHeader
         conditionPath={rootPath}
+        classnames={re.headerClassName}
         schema={re.schema}
         defaultAction={re.rulesEngine.defaultAction}
       />
@@ -73,11 +66,13 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   rulesEngine: RulesEngineAny;
   schema: SchemaRE;
   wrapperClassName: string;
+  headerClassName: string;
 } => {
   const {
     rulesEngine: rulesEngineProp = defaultRulesEngine,
     actionTypes: actionTypesProp,
     autoSelectActionType = false,
+    suppressStandardClassnames = false,
     onRulesEngineChange,
     classnames: classnamesProp = defaultClassnamesRE,
     components: componentsProp = defaultComponentsRE,
@@ -88,8 +83,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     [classnamesProp]
   );
   const classnames = useMemo(
-    () => ({
+    (): ClassnamesRE => ({
       rulesEngineBuilder: classnamesMerged.rulesEngineBuilder,
+      rulesEngineHeader: classnamesMerged.rulesEngineHeader,
       blockLabel: classnamesMerged.blockLabel,
       actionBuilder: classnamesMerged.actionBuilder,
       actionBuilderHeader: classnamesMerged.actionBuilderHeader,
@@ -100,6 +96,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     }),
     [
       classnamesMerged.rulesEngineBuilder,
+      classnamesMerged.rulesEngineHeader,
       classnamesMerged.blockLabel,
       classnamesMerged.actionBuilder,
       classnamesMerged.actionBuilderHeader,
@@ -109,12 +106,19 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.conditionBuilderHeader,
     ]
   );
+  const headerClassName = useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.rulesEngineHeader,
+        classnames.rulesEngineHeader
+      ),
+    [classnames.rulesEngineHeader, suppressStandardClassnames]
+  );
   const wrapperClassName = useMemo(
     () =>
       clsx(
-        // suppressStandardClassnames || standardClassnamesRE.rulesEngineBuilder,
-        standardClassnamesRE.rulesEngineBuilder,
-        clsx(classnames.rulesEngineBuilder)
+        suppressStandardClassnames || standardClassnamesRE.rulesEngineBuilder,
+        classnames.rulesEngineBuilder
         // // custom conditional classes
         // rulesEngineDisabled && classnames.disabled,
         // typeof validationResult === 'boolean' && validationResult && classnames.valid,
@@ -126,7 +130,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         //   [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
         // }
       ),
-    [classnames.rulesEngineBuilder]
+    [classnames.rulesEngineBuilder, suppressStandardClassnames]
   );
 
   // TODO: do a proper merge here
@@ -169,8 +173,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnames,
       actionTypes,
       autoSelectActionType,
+      suppressStandardClassnames,
     }),
-    [actionTypes, autoSelectActionType, classnames, components, fields]
+    [actionTypes, autoSelectActionType, suppressStandardClassnames, classnames, components, fields]
   );
 
   const rulesEngine = useMemo(() => (re.id ? re : prepareRulesEngine(re)), [re]);
@@ -178,6 +183,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   return {
     classnames,
     wrapperClassName,
+    headerClassName,
     components,
     onChange,
     onDefaultActionChange,

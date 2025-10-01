@@ -1,33 +1,7 @@
 @use './variables' as *;
 
-.rulesEngineBuilder {
-  display: flex;
-  flex-direction: column;
-  gap: var(--#{$rqbre-var-prefix}spacing);
-  padding: var(--#{$rqbre-var-prefix}spacing);
-  border-width: var(--#{$rqbre-var-prefix}border-width);
-}
-
-.actionBuilder,
-.actionBuilder-standalone {
-  padding: var(--#{$rqbre-var-prefix}spacing);
-  border-width: var(--#{$rqbre-var-prefix}border-width);
-}
-
-.conditionBuilder {
-  display: flex;
-  flex-direction: column;
-  gap: var(--#{$rqbre-var-prefix}spacing);
-  padding: var(--#{$rqbre-var-prefix}spacing);
-  border-width: var(--#{$rqbre-var-prefix}border-width);
-}
-
-.conditionBuilder-header {
-  display: flex;
-  flex-direction: row;
-  gap: var(--#{$rqbre-var-prefix}spacing);
-}
-
+.rulesEngineBuilder,
+.conditionBuilder,
 .actionBuilder {
   display: flex;
   flex-direction: column;
@@ -36,6 +10,8 @@
   border-width: var(--#{$rqbre-var-prefix}border-width);
 }
 
+.rulesEngineBuilder-header,
+.conditionBuilder-header,
 .actionBuilder-header {
   display: flex;
   flex-direction: row;

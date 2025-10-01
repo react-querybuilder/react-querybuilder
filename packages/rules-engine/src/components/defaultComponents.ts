@@ -5,6 +5,7 @@ import {
   RulesEngineActionBuilderBody,
   RulesEngineActionBuilderHeader,
 } from './RulesEngineActionBuilder';
+import { RulesEngineBuilderHeader } from './RulesEngineBuilderHeader';
 import {
   RulesEngineConditionBuilder,
   RulesEngineConditionBuilderBody,
@@ -13,6 +14,7 @@ import {
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 export const defaultComponentsRE: ComponentsRE = {
+  rulesEngineBuilderHeader: RulesEngineBuilderHeader,
   actionBuilder: RulesEngineActionBuilder,
   actionBuilderHeader: RulesEngineActionBuilderHeader,
   actionBuilderBody: RulesEngineActionBuilderBody,

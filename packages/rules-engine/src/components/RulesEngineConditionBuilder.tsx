@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/core';
+import { clsx, type RuleGroupType, type RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
 import type {
@@ -12,16 +12,35 @@ import type {
  */
 export const RulesEngineConditionBuilderHeader = (
   props: RulesEngineConditionProps
-): React.JSX.Element => (
-  <div className={standardClassnamesRE.conditionBuilderHeader}>
-    <div className={standardClassnamesRE.blockLabel}>
-      {props.conditionPath.at(-1) === 0 ? 'If' : 'Else If'}
+): React.JSX.Element => {
+  const {
+    schema: {
+      classnames: { conditionBuilderHeader, blockLabel },
+      suppressStandardClassnames,
+    },
+  } = props;
+  const wrapperClassName = React.useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.conditionBuilderHeader,
+        conditionBuilderHeader
+      ),
+    [conditionBuilderHeader, suppressStandardClassnames]
+  );
+  const labelClassName = React.useMemo(
+    () => clsx(suppressStandardClassnames || standardClassnamesRE.blockLabel, blockLabel),
+    [blockLabel, suppressStandardClassnames]
+  );
+
+  return (
+    <div className={wrapperClassName}>
+      <div className={labelClassName}>{props.conditionPath.at(-1) === 0 ? 'If' : 'Else If'}</div>
+      <button>+ Subcondition</button>
+      <button disabled={!!props.condition.action}>+ Action</button>
+      <button type="button">⨯</button>
     </div>
-    <button>+ Subcondition</button>
-    <button disabled={!!props.condition.action}>+ Action</button>
-    <button type="button">⨯</button>
-  </div>
-);
+  );
+};
 
 /**
  * Default body component for {@link RulesEngineConditionBuilder}.
@@ -67,29 +86,25 @@ export const RulesEngineConditionBuilderBody = (
         query={props.condition.condition as RuleGroupType}
         onQueryChange={conditionUpdater}
       />
-      {(props.condition.action || props.condition.conditions) && (
-        <React.Fragment>
-          {props.condition.action && (
-            <ActionBuilder
-              conditionPath={props.conditionPath}
-              actionTypes={props.actionTypes}
-              action={props.condition.action}
-              onActionChange={actionUpdater}
-              autoSelectActionType={props.autoSelectActionType}
-              schema={props.schema}
-            />
-          )}
-          {Array.isArray(props.condition.conditions) && props.condition.conditions.length > 0 && (
-            <ConditionCascade
-              conditionPath={props.conditionPath}
-              onConditionsChange={conditionsUpdater}
-              onDefaultActionChange={defaultActionUpdater}
-              conditions={props.condition.conditions}
-              defaultAction={props.condition.defaultAction}
-              schema={props.schema}
-            />
-          )}
-        </React.Fragment>
+      {props.condition.action && (
+        <ActionBuilder
+          conditionPath={props.conditionPath}
+          actionTypes={props.actionTypes}
+          action={props.condition.action}
+          onActionChange={actionUpdater}
+          autoSelectActionType={props.autoSelectActionType}
+          schema={props.schema}
+        />
+      )}
+      {Array.isArray(props.condition.conditions) && props.condition.conditions.length > 0 && (
+        <ConditionCascade
+          conditionPath={props.conditionPath}
+          onConditionsChange={conditionsUpdater}
+          onDefaultActionChange={defaultActionUpdater}
+          conditions={props.condition.conditions}
+          defaultAction={props.condition.defaultAction}
+          schema={props.schema}
+        />
       )}
     </React.Fragment>
   );
@@ -103,15 +118,22 @@ export const RulesEngineConditionBuilder = (
 ): React.JSX.Element => {
   const {
     schema: {
+      classnames: { conditionBuilder },
+      suppressStandardClassnames,
       components: {
         conditionBuilderHeader: ConditionBuilderHeader,
         conditionBuilderBody: ConditionBuilderBody,
       },
     },
   } = props;
+  const className = React.useMemo(
+    () =>
+      clsx(suppressStandardClassnames || standardClassnamesRE.conditionBuilder, conditionBuilder),
+    [conditionBuilder, suppressStandardClassnames]
+  );
 
   return (
-    <div className={standardClassnamesRE.conditionBuilder}>
+    <div className={className}>
       <ConditionBuilderHeader {...props} />
       <ConditionBuilderBody {...props} />
     </div>

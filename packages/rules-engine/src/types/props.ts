@@ -24,9 +24,11 @@ export interface SchemaRE {
   classnames: ClassnamesRE;
   actionTypes: FullOptionList<BaseOption>;
   autoSelectActionType: boolean;
+  suppressStandardClassnames: boolean;
 }
 
 export interface ComponentsRE {
+  rulesEngineBuilderHeader: React.ComponentType<RulesEngineBuilderHeaderProps>;
   actionBuilder: React.ComponentType<RulesEngineActionProps>;
   actionBuilderHeader: React.ComponentType<RulesEngineActionProps>;
   actionBuilderBody: React.ComponentType<RulesEngineActionProps>;
@@ -44,6 +46,8 @@ export interface ComponentsRE {
 export interface ClassnamesRE {
   /** Classes applied to the wrapper element. */
   rulesEngineBuilder: Classname;
+  /** Classes applied to the rules engine header. */
+  rulesEngineHeader: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
   /** Classes applied to action builders ("then" sections). */
@@ -66,12 +70,14 @@ export interface RulesEngineProps {
   rulesEngine?: RulesEngine;
   actionTypes?: FullOptionList<BaseOption>;
   autoSelectActionType?: boolean;
+  suppressStandardClassnames?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
 }
 
 export interface RulesEngineBuilderHeaderProps {
   conditionPath: Path;
+  classnames: string;
   defaultAction?: RulesEngineAction;
   schema: SchemaRE;
 }
