@@ -6,6 +6,7 @@ import { defaultClassnamesRE, defaultRulesEngine, standardClassnamesRE } from '.
 import type {
   RulesEngine,
   RulesEngineAction,
+  RulesEngineBuilderHeaderProps,
   RulesEngineConditions,
   RulesEngineProps,
   SchemaRE,
@@ -16,7 +17,14 @@ import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootPath: Path = [];
 
-export const RulesEngineBuilderHeader = (): React.JSX.Element => <></>;
+export const RulesEngineBuilderHeader = (
+  props: RulesEngineBuilderHeaderProps
+): React.JSX.Element => (
+  <div className={standardClassnamesRE.conditionBuilderHeader}>
+    <button>+ Condition</button>
+    <button disabled={!!props.defaultAction}>+ Action</button>
+  </div>
+);
 
 export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
@@ -124,10 +132,11 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
 
   return (
     <div className={wrapperClassName}>
-      <div className={standardClassnamesRE.conditionBuilderHeader}>
-        <button>+ Condition</button>
-        <button disabled={!!rePrepped.defaultAction}>+ Action</button>
-      </div>
+      <RulesEngineBuilderHeader
+        conditionPath={rootPath}
+        schema={schema}
+        defaultAction={rePrepped.defaultAction}
+      />
       <RulesEngineConditionCascade
         conditionPath={rootPath}
         onConditionsChange={onChange}

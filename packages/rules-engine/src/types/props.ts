@@ -70,6 +70,12 @@ export interface RulesEngineProps {
   classnames?: Partial<ClassnamesRE>;
 }
 
+export interface RulesEngineBuilderHeaderProps {
+  conditionPath: Path;
+  defaultAction?: RulesEngineAction;
+  schema: SchemaRE;
+}
+
 export interface RulesEngineConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
   onConditionsChange: (rec: RulesEngineConditions<RG>) => void;
