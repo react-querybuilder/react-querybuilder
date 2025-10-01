@@ -50,7 +50,7 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
     [onRulesEngineChange, re]
   );
   const onDefaultActionChange = useCallback(
-    (defaultAction: RulesEngineAction) => {
+    (defaultAction?: RulesEngineAction) => {
       const newRE = { ...re, defaultAction };
       setRE(newRE);
       onRulesEngineChange?.(newRE);

@@ -71,7 +71,7 @@ export interface RulesEngineProps {
 export interface RulesEngineConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
   onConditionsChange: (rec: RulesEngineConditions<RG>) => void;
-  onDefaultActionChange: (rec: RulesEngineAction) => void;
+  onDefaultActionChange: (rec?: RulesEngineAction) => void;
   conditions: RulesEngineConditions<RG>;
   defaultAction?: RulesEngineAction;
   schema: SchemaRE;
@@ -93,7 +93,7 @@ export interface RulesEngineActionProps {
   actionTypes?: FullOptionList<BaseOption>;
   action: RulesEngineAction;
   standalone?: boolean;
-  onActionChange: (action: RulesEngineAction) => void;
+  onActionChange: (action?: RulesEngineAction) => void;
   conditionsMet?: RuleGroupTypeAny;
   conditionsFailed?: RuleGroupTypeAny;
   autoSelectActionType?: boolean;

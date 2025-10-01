@@ -10,18 +10,26 @@ import type { RulesEngineActionProps } from '../types';
 export const RulesEngineActionBuilderHeader = (
   props: RulesEngineActionProps
 ): React.JSX.Element => {
+  const {
+    onActionChange,
+    schema: {
+      classnames: { actionBuilderHeader },
+    },
+  } = props;
+
   const className = React.useMemo(
-    () =>
-      clsx(
-        { [standardClassnamesRE.actionBuilderHeader]: true },
-        props.schema.classnames.actionBuilderHeader
-      ),
-    [props.schema.classnames.actionBuilderHeader]
+    () => clsx({ [standardClassnamesRE.actionBuilderHeader]: true }, actionBuilderHeader),
+    [actionBuilderHeader]
   );
+
+  const removeAction = React.useCallback(() => onActionChange(), [onActionChange]);
+
   return (
     <div className={className}>
       <div>{props.standalone ? 'Else' : 'Then'}</div>
-      <button type="button">⨯</button>
+      <button type="button" onClick={removeAction}>
+        ⨯
+      </button>
     </div>
   );
 };

@@ -37,11 +37,11 @@ export const RulesEngineConditionBuilderBody = (
     },
   } = props;
   const actionUpdater = React.useCallback(
-    (action: RulesEngineAction) => onConditionChange({ ...condition, action }),
+    (action?: RulesEngineAction) => onConditionChange({ ...condition, action }),
     [condition, onConditionChange]
   );
   const defaultActionUpdater = React.useCallback(
-    (defaultAction: RulesEngineAction) => onConditionChange({ ...condition, defaultAction }),
+    (defaultAction?: RulesEngineAction) => onConditionChange({ ...condition, defaultAction }),
     [condition, onConditionChange]
   );
   const conditionUpdater = React.useCallback(
