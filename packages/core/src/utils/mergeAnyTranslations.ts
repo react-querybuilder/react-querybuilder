@@ -33,7 +33,7 @@ export const mergeAnyTranslation = (
     .filter(k => !!k[1]);
   if (finalKeys.length > 0 || defaults) {
     const defaultProperties = defaults?.[el] ?? {};
-    const finalObject = Object.assign(defaultProperties, Object.fromEntries(finalKeys));
+    const finalObject = Object.assign({}, defaultProperties, Object.fromEntries(finalKeys));
     return { [el]: finalObject };
   }
   return undefined;
