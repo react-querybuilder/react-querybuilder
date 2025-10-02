@@ -136,11 +136,7 @@ describe('when rendered with onQueryChange callback', () => {
     const idGenerator = () => 'id';
     render(<QueryBuilder onQueryChange={onQueryChange} idGenerator={idGenerator} />);
     expect(onQueryChange).toHaveBeenCalledTimes(1);
-    const query: RuleGroupType = {
-      combinator: 'and',
-      rules: [],
-      not: false,
-    };
+    const query: RuleGroupType = { combinator: 'and', rules: [], not: false };
     expect(onQueryChange).toHaveBeenCalledTimes(1);
     expect(onQueryChange).toHaveBeenLastCalledWith({ ...query, id: 'id' });
   });
@@ -459,11 +455,7 @@ describe('get* callbacks', () => {
     value: 'Another Test',
     operator: '=',
   };
-  const query: RuleGroupType = {
-    combinator: 'or',
-    not: false,
-    rules: [rule],
-  };
+  const query: RuleGroupType = { combinator: 'or', not: false, rules: [rule] };
 
   describe('when getOperators fn prop is provided', () => {
     it('invokes custom getOperators function', () => {
@@ -2015,11 +2007,7 @@ describe('addRuleToNewGroups', () => {
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(onQueryChange).toHaveBeenCalledTimes(2);
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [
-        {
-          rules: [{ field: defaultPlaceholderFieldName }],
-        },
-      ],
+      rules: [{ rules: [{ field: defaultPlaceholderFieldName }] }],
     });
   });
 
@@ -2303,14 +2291,8 @@ describe('showCloneButtons', () => {
       expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
         combinator: 'and',
         rules: [
-          {
-            combinator: 'or',
-            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-          },
-          {
-            combinator: 'or',
-            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-          },
+          { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
+          { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
           { field: 'lastName', operator: '=', value: 'Vai' },
         ],
       });
@@ -3053,12 +3035,7 @@ describe('match modes', () => {
           id: expect.any(String),
           field: 'tourDates',
           operator: '=',
-          value: {
-            id: expect.any(String),
-            combinator: 'and',
-            not: false,
-            rules: [],
-          },
+          value: { id: expect.any(String), combinator: 'and', not: false, rules: [] },
           valueSource: 'value',
           match: { mode: 'some', threshold: 2 },
         },
@@ -3877,16 +3854,8 @@ describe('string array options', () => {
   describe('field-level operators with string arrays', () => {
     it('accepts field operators as string arrays', async () => {
       const fieldsWithOperators: Field[] = [
-        {
-          name: 'field1',
-          label: 'Field 1',
-          operators: ['=', '!='],
-        },
-        {
-          name: 'field2',
-          label: 'Field 2',
-          operators: ['contains', 'beginsWith'],
-        },
+        { name: 'field1', label: 'Field 1', operators: ['=', '!='] },
+        { name: 'field2', label: 'Field 2', operators: ['contains', 'beginsWith'] },
       ];
 
       setupWithStringArrays({ fields: fieldsWithOperators });
