@@ -1,3 +1,4 @@
+import { defaultTranslations } from '../defaults';
 import { mergeAnyTranslation, mergeAnyTranslations } from './mergeAnyTranslations';
 
 it('merges translations', () => {
@@ -27,9 +28,19 @@ it('merges translation', () => {
   expect(mergeAnyTranslation('addRule', { label: ['Add Rule', undefined] })).toEqual({
     addRule: { label: 'Add Rule' },
   });
+  expect(mergeAnyTranslation('addRule', { label: [undefined, 'Add Rule'] })).toEqual({
+    addRule: { label: 'Add Rule' },
+  });
   expect(
     mergeAnyTranslation('addRule', { label: ['Label', undefined], title: ['Title', undefined] })
   ).toEqual({
     addRule: { label: 'Label', title: 'Title' },
   });
+  expect(
+    mergeAnyTranslation('addRule', { label: [undefined, undefined] }, defaultTranslations)
+  ).toHaveProperty('addRule', defaultTranslations.addRule);
+  expect(mergeAnyTranslation('addRule', {}, defaultTranslations)).toHaveProperty(
+    'addRule',
+    defaultTranslations.addRule
+  );
 });
