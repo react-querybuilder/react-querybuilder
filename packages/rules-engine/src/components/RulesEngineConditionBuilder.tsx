@@ -16,6 +16,7 @@ export const RulesEngineConditionBuilderHeader = (
   const {
     schema: {
       classnames: { conditionBuilderHeader, blockLabel },
+      translations,
       suppressStandardClassnames,
     },
   } = props;
@@ -32,12 +33,29 @@ export const RulesEngineConditionBuilderHeader = (
     [blockLabel, suppressStandardClassnames]
   );
 
+  const { label: blockLabelLabel, title: blockLabelTitle } = React.useMemo(
+    () =>
+      props.conditionPath.at(-1) === 0 ? translations.blockLabelIf : translations.blockLabelElseIf,
+    [props.conditionPath, translations]
+  );
+
   return (
     <div className={wrapperClassName}>
-      <div className={labelClassName}>{props.conditionPath.at(-1) === 0 ? 'If' : 'Else If'}</div>
-      <button>+ Subcondition</button>
-      <button disabled={!!props.condition.action}>+ Action</button>
-      <button type="button">⨯</button>
+      <div className={labelClassName} title={blockLabelTitle}>
+        {blockLabelLabel}
+      </div>
+      <button type="button" title={translations.addSubcondition.title}>
+        {translations.addSubcondition.label}
+      </button>
+      <button
+        type="button"
+        title={translations.addAction.title}
+        disabled={!!props.condition.action}>
+        {translations.addAction.label}
+      </button>
+      <button type="button" title={translations.removeCondition.title}>
+        {translations.removeCondition.label}
+      </button>
     </div>
   );
 };

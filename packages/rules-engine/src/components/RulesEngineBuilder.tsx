@@ -6,10 +6,15 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
-import { clsx, prepareOptionList } from '@react-querybuilder/core';
+import { clsx, mergeAnyTranslations, prepareOptionList } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { defaultClassnamesRE, defaultRulesEngine, standardClassnamesRE } from '../defaults';
+import {
+  defaultClassnamesRE,
+  defaultRulesEngine,
+  defaultTranslationsRE,
+  standardClassnamesRE,
+} from '../defaults';
 import type {
   ClassnamesRE,
   ComponentsRE,
@@ -19,6 +24,7 @@ import type {
   RulesEngineConditions,
   RulesEngineProps,
   SchemaRE,
+  TranslationsFullRE,
 } from '../types';
 import { mergeClassnamesRE, prepareRulesEngine } from '../utils';
 import { defaultComponentsRE } from './defaultComponents';
@@ -76,6 +82,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     onRulesEngineChange,
     classnames: classnamesProp = defaultClassnamesRE,
     components: componentsProp = defaultComponentsRE,
+    translations: translationsProp = {},
   } = props;
 
   const classnamesMerged = useMemo(
@@ -166,6 +173,15 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     [props.fields]
   );
 
+  const translations = useMemo(
+    () =>
+      mergeAnyTranslations(
+        defaultTranslationsRE,
+        translationsProp as Partial<TranslationsFullRE>
+      ) as TranslationsFullRE,
+    [translationsProp]
+  );
+
   const schema = useMemo(
     (): SchemaRE => ({
       fields,
@@ -174,8 +190,17 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       actionTypes,
       autoSelectActionType,
       suppressStandardClassnames,
+      translations,
     }),
-    [actionTypes, autoSelectActionType, suppressStandardClassnames, classnames, components, fields]
+    [
+      actionTypes,
+      autoSelectActionType,
+      suppressStandardClassnames,
+      classnames,
+      components,
+      fields,
+      translations,
+    ]
   );
 
   const rulesEngine = useMemo(() => (re.id ? re : prepareRulesEngine(re)), [re]);

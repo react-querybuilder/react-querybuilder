@@ -1,5 +1,6 @@
 import type {
   BaseOption,
+  BaseTranslationWithLabel,
   Classname,
   FlexibleOptionList,
   FullField,
@@ -25,6 +26,7 @@ export interface SchemaRE {
   actionTypes: FullOptionList<BaseOption>;
   autoSelectActionType: boolean;
   suppressStandardClassnames: boolean;
+  translations: TranslationsFullRE;
 }
 
 export interface ComponentsRE {
@@ -64,6 +66,32 @@ export interface ClassnamesRE {
   conditionBuilderHeader: Classname;
 }
 
+/**
+ * The shape of the `translations` prop for {@link RulesEngineBuilder}.
+ *
+ * @group Props
+ */
+export interface TranslationsRE {
+  blockLabelIf: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelElseIf: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelElse: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelThen: BaseTranslationWithLabel<React.ReactNode>;
+  addCondition: BaseTranslationWithLabel<React.ReactNode>;
+  addSubcondition: BaseTranslationWithLabel<React.ReactNode>;
+  addAction: BaseTranslationWithLabel<React.ReactNode>;
+  removeCondition: BaseTranslationWithLabel<React.ReactNode>;
+  removeAction: BaseTranslationWithLabel<React.ReactNode>;
+}
+/**
+ * The full `translations` interface for {@link RulesEngineBuilder}, with all properties required.
+ *
+ * @group Props
+ */
+// export type TranslationsFullRE = RequiredDeep<TranslationsRE>;
+export type TranslationsFullRE = {
+  [K in keyof TranslationsRE]: { [T in keyof TranslationsRE[K]]-?: TranslationsRE[K][T] };
+};
+
 export interface RulesEngineProps {
   fields?: FlexibleOptionList<FullField>;
   onRulesEngineChange?: (re: RulesEngine) => void;
@@ -73,6 +101,7 @@ export interface RulesEngineProps {
   suppressStandardClassnames?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
+  translations?: Partial<TranslationsRE>;
 }
 
 export interface RulesEngineBuilderHeaderProps {

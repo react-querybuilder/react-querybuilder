@@ -1,4 +1,4 @@
-import type { ClassnamesRE, RulesEngine, RulesEngineIC } from './types';
+import type { ClassnamesRE, RulesEngine, RulesEngineIC, TranslationsFullRE } from './types';
 
 export const defaultClassnamesRE: ClassnamesRE = {
   rulesEngineBuilder: '',
@@ -30,4 +30,16 @@ export const defaultRulesEngine: RulesEngine = {
 
 export const defaultRulesEngineIC: RulesEngineIC = {
   conditions: [{ condition: { rules: [] } }],
+};
+
+export const defaultTranslationsRE: TranslationsFullRE = {
+  blockLabelIf: { title: 'First condition', label: 'If' },
+  blockLabelElseIf: { title: 'Subsequent condition', label: 'Else If' },
+  blockLabelElse: { title: 'Fallback/default action', label: 'Else' },
+  blockLabelThen: { title: 'Resulting action', label: 'Then' },
+  addCondition: { title: 'Add condition', label: '+ Condition' },
+  addSubcondition: { title: 'Add subcondition', label: '+ Subcondition' },
+  addAction: { title: 'Add action', label: '+ Action' },
+  removeCondition: { title: 'Remove condition', label: '⨯' },
+  removeAction: { title: 'Remove action', label: '⨯' },
 };

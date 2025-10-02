@@ -13,6 +13,7 @@ export const RulesEngineActionBuilderHeader = (
     onActionChange,
     schema: {
       classnames: { actionBuilderHeader, blockLabel },
+      translations,
       suppressStandardClassnames,
     },
   } = props;
@@ -32,11 +33,18 @@ export const RulesEngineActionBuilderHeader = (
 
   const removeAction = React.useCallback(() => onActionChange(), [onActionChange]);
 
+  const { label, title } = React.useMemo(
+    () => (props.standalone ? translations.blockLabelElse : translations.blockLabelThen),
+    [props.standalone, translations]
+  );
+
   return (
     <div className={wrapperClassName}>
-      <div className={labelClassName}>{props.standalone ? 'Else' : 'Then'}</div>
-      <button type="button" onClick={removeAction}>
-        ⨯
+      <div className={labelClassName} title={title}>
+        {label}
+      </div>
+      <button type="button" onClick={removeAction} title={translations.removeAction.title}>
+        {translations.removeAction.label}
       </button>
     </div>
   );
