@@ -375,7 +375,7 @@ export const useMergedContext = <
   const translations = useMemo(
     () =>
       Object.assign(
-        finalize ? Object.assign({}, defaultTranslations) : {},
+        {},
         mergeAnyTranslation(
           'addGroup',
           {
@@ -539,6 +539,16 @@ export const useMergedContext = <
           finalize ? defaultTranslations : undefined
         ),
         mergeAnyTranslation(
+          'matchMode',
+          { title: [propsT.matchMode?.title, contextT.matchMode?.title] },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'matchThreshold',
+          { title: [propsT.matchThreshold?.title, contextT.matchThreshold?.title] },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
           'value',
           { title: [propsT.value?.title, contextT.value?.title] },
           finalize ? defaultTranslations : undefined
@@ -573,6 +583,8 @@ export const useMergedContext = <
       contextT.lockRule?.title,
       contextT.lockRuleDisabled?.label,
       contextT.lockRuleDisabled?.title,
+      contextT.matchMode?.title,
+      contextT.matchThreshold?.title,
       contextT.notToggle?.label,
       contextT.notToggle?.title,
       contextT.operators?.placeholderGroupLabel,
@@ -617,6 +629,8 @@ export const useMergedContext = <
       propsT.lockRule?.title,
       propsT.lockRuleDisabled?.label,
       propsT.lockRuleDisabled?.title,
+      propsT.matchMode?.title,
+      propsT.matchThreshold?.title,
       propsT.notToggle?.label,
       propsT.notToggle?.title,
       propsT.operators?.placeholderGroupLabel,

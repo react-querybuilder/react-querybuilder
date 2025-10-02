@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- N/A
+### Fixed
+
+- `useMergedContext` now handles `matchMode` and `matchThreshold` translations.
 
 ## [v8.9.2] - 2025-09-22
 
