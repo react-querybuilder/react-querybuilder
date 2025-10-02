@@ -3,7 +3,6 @@ import type {
   BaseOptionMap,
   BaseTranslation,
   BaseTranslations,
-  BaseTranslationsFull,
   BaseTranslationWithLabel,
   BaseTranslationWithPlaceholders,
   Classname,
@@ -248,7 +247,9 @@ export interface Translations extends BaseTranslations<ReactNode> {}
  *
  * @group Props
  */
-export interface TranslationsFull extends BaseTranslationsFull {}
+export type TranslationsFull = {
+  [K in keyof Translations]: { [T in keyof Translations[K]]-?: Translations[K][T] };
+};
 
 /**
  * Props passed to every action component (rendered as `<button>` by default).
