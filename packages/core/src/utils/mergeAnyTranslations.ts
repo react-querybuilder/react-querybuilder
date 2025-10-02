@@ -26,10 +26,10 @@ export const mergeAnyTranslations = (
 export const mergeAnyTranslation = (
   el: string,
   keyPropContextMap: Record<string, [unknown, unknown]>,
-  defaults?: Record<string, Record<string, unknown>>
+  defaults: Record<string, Record<string, unknown>> = {}
 ): Record<string, Record<string, unknown>> | undefined => {
   const finalKeys = objectEntries(keyPropContextMap)
-    .map(([key, [pT, cT]]) => [key, pT ?? cT ?? (defaults ?? {})[el]?.[key]])
+    .map(([key, [pT, cT]]) => [key, pT ?? cT ?? defaults[el]?.[key]])
     .filter(k => !!k[1]);
   return finalKeys.length > 0 ? { [el]: Object.fromEntries(finalKeys) } : undefined;
 };
