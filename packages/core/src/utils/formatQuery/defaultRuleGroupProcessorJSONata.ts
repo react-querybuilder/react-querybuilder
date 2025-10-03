@@ -2,6 +2,7 @@ import type { RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
+import { filterRulesAndCleanupCombinators } from './utils';
 
 /**
  * Rule group processor used by {@link formatQuery} for "jsonata" format.
@@ -34,8 +35,9 @@ export const defaultRuleGroupProcessorJSONata: RuleGroupProcessor<string> = (
       return outermost ? fallbackExpression : '';
     }
 
-    const expression: string = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+    const cleanedRules = filterRulesAndCleanupCombinators(rg);
+
+    const expression: string = cleanedRules
       .map(rule => {
         if (typeof rule === 'string') {
           return rule;

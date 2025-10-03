@@ -2,7 +2,7 @@ import type { DefaultCombinatorName, RuleGroupProcessor, RuleGroupTypeAny } from
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
-import { celCombinatorMap } from './utils';
+import { celCombinatorMap, filterRulesAndCleanupCombinators } from './utils';
 
 /**
  * Rule group processor used by {@link formatQuery} for "cel" format.
@@ -32,8 +32,9 @@ export const defaultRuleGroupProcessorCEL: RuleGroupProcessor<string> = (ruleGro
       return outermost ? fallbackExpression : '';
     }
 
-    const expression: string = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+    const cleanedRules = filterRulesAndCleanupCombinators(rg);
+
+    const expression: string = cleanedRules
       .map(rule => {
         if (typeof rule === 'string') {
           return celCombinatorMap[rule as DefaultCombinatorName];

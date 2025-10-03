@@ -45,7 +45,7 @@ export const defaultRuleGroupProcessorMongoDB: RuleGroupProcessor<string> = (
     let hasChildRules = false;
 
     const expressions: string[] = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           const processedRuleGroup = processRuleGroup(rule);

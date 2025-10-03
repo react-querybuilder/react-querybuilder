@@ -45,7 +45,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
     let hasChildRules = false;
 
     const expressions: Record<string, unknown>[] = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           const processedRuleGroup = processRuleGroup(rule);

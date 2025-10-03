@@ -2,6 +2,7 @@ import type { RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
+import { filterRulesAndCleanupCombinators } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "spel" format.
@@ -31,8 +32,9 @@ export const defaultRuleGroupProcessorSpEL: RuleGroupProcessor<string> = (ruleGr
       return outermost ? fallbackExpression : '';
     }
 
-    const expression: string = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+    const cleanedRules = filterRulesAndCleanupCombinators(rg);
+
+    const expression: string = cleanedRules
       .map(rule => {
         if (typeof rule === 'string') {
           return rule;

@@ -35,7 +35,7 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
     }
 
     const rules: string[] = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);

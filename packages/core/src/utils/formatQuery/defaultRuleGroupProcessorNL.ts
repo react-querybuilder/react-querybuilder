@@ -4,7 +4,7 @@ import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from '../isRuleGroup'
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { lc } from '../misc';
 import { getOption } from '../optGroupUtils';
-import { getNLTranslataion } from './utils';
+import { filterRulesAndCleanupCombinators, getNLTranslataion } from './utils';
 
 /**
  * Rule group processor used by {@link formatQuery} for "natural_language" format.
@@ -41,46 +41,46 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         ? convertFromIC(rg)
         : rg;
 
-    const processedRules = rg2.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
-      .map(rule => {
-        // Independent combinators
-        if (typeof rule === 'string') {
-          return `, ${translations[rule as NLTranslationKey] ?? rule} `;
-        }
+    const cleanedRules = filterRulesAndCleanupCombinators(rg2);
 
-        // Groups
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(
-            rule,
-            rg2.rules.length === 1 &&
-              !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
-          );
-        }
+    const processedRules = cleanedRules.map(rule => {
+      // Independent combinators
+      if (typeof rule === 'string') {
+        return `, ${translations[rule as NLTranslationKey] ?? rule} `;
+      }
 
-        // Basic rule validation
-        const [validationResult, fieldValidator] = validateRule(rule);
-        if (
-          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-          rule.field === placeholderFieldName ||
-          rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
-          (placeholderValueName !== undefined && rule.value === placeholderValueName)
-        ) {
-          return '';
-        }
+      // Groups
+      if (isRuleGroup(rule)) {
+        return processRuleGroup(
+          rule,
+          rg2.rules.length === 1 &&
+            !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
+        );
+      }
 
-        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
+      // Basic rule validation
+      const [validationResult, fieldValidator] = validateRule(rule);
+      if (
+        !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+        rule.field === placeholderFieldName ||
+        rule.operator === placeholderOperatorName ||
+        /* istanbul ignore next */
+        (placeholderValueName !== undefined && rule.value === placeholderValueName)
+      ) {
+        return '';
+      }
 
-        const fieldData = getOption(fields, rule.field);
+      const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
 
-        return ruleProcessor(rule, {
-          ...options,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          escapeQuotes,
-          fieldData,
-        });
+      const fieldData = getOption(fields, rule.field);
+
+      return ruleProcessor(rule, {
+        ...options,
+        parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+        escapeQuotes,
+        fieldData,
       });
+    });
 
     if (processedRules.length === 0) {
       return fallbackExpression;

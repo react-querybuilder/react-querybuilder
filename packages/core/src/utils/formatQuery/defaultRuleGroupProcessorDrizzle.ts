@@ -51,7 +51,7 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
       }
 
       const processedRules = rg.rules
-        .filter(rule => typeof rule === 'string' || !rule.muted)
+        .filter(rule => !rule.muted)
         .map(rule => {
           if (isRuleGroup(rule)) {
             return processRuleGroup(rule);

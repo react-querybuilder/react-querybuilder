@@ -9,6 +9,7 @@ import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { isPojo } from '../misc';
 import { getOption } from '../optGroupUtils';
+import { filterRulesAndCleanupCombinators } from './utils';
 
 /**
  * Rule group processor used by {@link formatQuery} for "parameterized" and
@@ -113,8 +114,9 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    const processedRules = rg.rules
-      .filter(rule => typeof rule === 'string' || !rule.muted)
+    const cleanedRules = filterRulesAndCleanupCombinators(rg);
+
+    const processedRules = cleanedRules
       .map(rule => {
         if (typeof rule === 'string') {
           return rule;
