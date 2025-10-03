@@ -32,6 +32,7 @@ export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => (
   lockGroup: joinClassnamesByName('lockGroup', args),
   muteRule: joinClassnamesByName('muteRule', args),
   muteGroup: joinClassnamesByName('muteGroup', args),
+  muted: joinClassnamesByName('muted', args),
   valueSource: joinClassnamesByName('valueSource', args),
   actionElement: joinClassnamesByName('actionElement', args),
   valueSelector: joinClassnamesByName('valueSelector', args),

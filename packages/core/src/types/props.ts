@@ -166,6 +166,10 @@ export interface Classnames {
    */
   disabled: Classname;
   /**
+   * Classname(s) applied to muted elements.
+   */
+  muted: Classname;
+  /**
    * Classname(s) applied to each element in a series of value editors.
    */
   valueListItem: Classname;

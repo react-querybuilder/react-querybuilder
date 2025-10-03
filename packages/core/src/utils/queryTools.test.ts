@@ -405,7 +405,7 @@ describe('update', () => {
 
   describe('mute with IC', () => {
     it('mutes IC group with string combinators', () => {
-      const icQuery = {
+      const icQuery: DefaultRuleGroupTypeIC = {
         rules: [
           { field: 'f1', operator: '=', value: 'v1' },
           'and',
@@ -421,7 +421,7 @@ describe('update', () => {
     });
 
     it('unmutes IC group', () => {
-      const icQuery = {
+      const icQuery: DefaultRuleGroupTypeIC = {
         muted: true,
         rules: [
           { field: 'f1', operator: '=', value: 'v1' },
@@ -439,11 +439,6 @@ describe('update', () => {
 
     it('handles unmuting with broken parent path', () => {
       // Tests the scenario where parent path traversal encounters an invalid path
-      const query = {
-        combinator: 'and',
-        rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
-      };
-
       // Mock a scenario where the parent lookup might fail
       // by using a deeply nested structure where we unmute at a depth
       // that could have missing parents
@@ -469,7 +464,7 @@ describe('update', () => {
 
     it('mutes only the specified group', () => {
       // Tests that muting a parent group doesn't recursively set muted on children
-      const deepQuery = {
+      const deepQuery: DefaultRuleGroupType = {
         combinator: 'and',
         rules: [
           {
@@ -494,15 +489,25 @@ describe('update', () => {
       expect(result.muted).toBe(true);
       // Children should not have muted property set
       expect(result.rules[0]).not.toHaveProperty('muted');
-      expect(result.rules[0].rules[0]).not.toHaveProperty('muted');
-      expect(result.rules[0].rules[0].rules[0]).not.toHaveProperty('muted');
-      expect(result.rules[0].rules[0].rules[1]).not.toHaveProperty('muted');
-      expect(result.rules[0].rules[0].rules[1].rules[0]).not.toHaveProperty('muted');
+      expect((result.rules[0] as DefaultRuleGroupType).rules[0]).not.toHaveProperty('muted');
+      expect((result.rules[0] as DefaultRuleGroupType).rules[0]).not.toHaveProperty('muted');
+      expect(
+        ((result.rules[0] as DefaultRuleGroupType).rules[0] as DefaultRuleGroupType).rules[0]
+      ).not.toHaveProperty('muted');
+      expect(
+        ((result.rules[0] as DefaultRuleGroupType).rules[0] as DefaultRuleGroupType).rules[1]
+      ).not.toHaveProperty('muted');
+      expect(
+        (
+          ((result.rules[0] as DefaultRuleGroupType).rules[0] as DefaultRuleGroupType)
+            .rules[1] as DefaultRuleGroupType
+        ).rules[0]
+      ).not.toHaveProperty('muted');
     });
 
     it('unmutes only the specified group', () => {
       // Tests that unmuting a parent group doesn't recursively unset muted on children
-      const deepQuery = {
+      const deepQuery: DefaultRuleGroupType = {
         combinator: 'and',
         muted: true,
         rules: [
@@ -531,15 +536,24 @@ describe('update', () => {
       expect(result.muted).toBe(false);
       // Children should retain their muted state
       expect(result.rules[0]).toHaveProperty('muted', true);
-      expect(result.rules[0].rules[0]).toHaveProperty('muted', true);
-      expect(result.rules[0].rules[0].rules[0]).toHaveProperty('muted', true);
-      expect(result.rules[0].rules[0].rules[1]).toHaveProperty('muted', true);
-      expect(result.rules[0].rules[0].rules[1].rules[0]).toHaveProperty('muted', true);
+      expect((result.rules[0] as DefaultRuleGroupType).rules[0]).toHaveProperty('muted', true);
+      expect(
+        ((result.rules[0] as DefaultRuleGroupType).rules[0] as DefaultRuleGroupType).rules[0]
+      ).toHaveProperty('muted', true);
+      expect(
+        ((result.rules[0] as DefaultRuleGroupType).rules[0] as DefaultRuleGroupType).rules[1]
+      ).toHaveProperty('muted', true);
+      expect(
+        (
+          ((result.rules[0] as DefaultRuleGroupType).rules[0] as DefaultRuleGroupType)
+            .rules[1] as DefaultRuleGroupType
+        ).rules[0]
+      ).toHaveProperty('muted', true);
     });
 
     it('unmutes only the specific nested item', () => {
       // Tests that unmuting a nested rule doesn't affect parent groups
-      const deepQuery = {
+      const deepQuery: DefaultRuleGroupType = {
         combinator: 'and',
         rules: [
           {
@@ -550,15 +564,15 @@ describe('update', () => {
       };
 
       const result = update(deepQuery, 'muted', false, [0, 0]);
-      expect(result.rules[0].rules[0].muted).toBe(false);
+      expect((result.rules[0] as DefaultRuleGroupType).rules[0].muted).toBe(false);
       // Parents should not be affected
-      expect(result.rules[0].muted).toBeUndefined();
+      expect((result.rules[0] as DefaultRuleGroupType).muted).toBeUndefined();
       expect(result.muted).toBeUndefined();
     });
 
     it('handles unmuting a single rule', () => {
       // Tests unmuting a rule without affecting the parent group
-      const query = {
+      const query: DefaultRuleGroupType = {
         combinator: 'and',
         rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
       };
@@ -571,13 +585,13 @@ describe('update', () => {
 
     it('handles muted property with non-boolean values', () => {
       // Tests handling of non-boolean values for the muted property
-      const query = {
+      const query: DefaultRuleGroupType = {
         combinator: 'and',
         rules: [{ field: 'f1', operator: '=', value: 'v1' }],
       };
 
       // Try to set muted to a non-boolean value
-      const result = update(query, 'muted', 'invalid' as any, [0]);
+      const result = update(query, 'muted', 'invalid' as unknown, [0]);
       // The rule gets the value as-is (typescript would prevent this in practice)
       expect(result.rules[0].muted).toBe('invalid');
     });

@@ -631,6 +631,7 @@ interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends str
   id?: string;
   path: Path;
   parentDisabled?: boolean;
+  parentMuted?: boolean;
   translations: Translations;
   schema: Schema<F, O>;
   actions: QueryActions;

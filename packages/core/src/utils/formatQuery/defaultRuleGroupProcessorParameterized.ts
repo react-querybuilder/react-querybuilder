@@ -9,7 +9,6 @@ import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { isPojo } from '../misc';
 import { getOption } from '../optGroupUtils';
-import { filterRulesAndCleanupCombinators } from './utils';
 
 /**
  * Rule group processor used by {@link formatQuery} for "parameterized" and
@@ -114,19 +113,66 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    const cleanedRules = filterRulesAndCleanupCombinators(rg);
+    const processedRules: string[] = [];
+    let lastValidRuleIndex = -1;
 
-    const processedRules = cleanedRules
-      .map(rule => {
-        if (typeof rule === 'string') {
-          return rule;
+    for (let i = 0; i < rg.rules.length; i++) {
+      const rule = rg.rules[i];
+
+      // Skip combinators for now, we'll handle them when we hit the next valid rule
+      if (typeof rule === 'string') {
+        continue;
+      }
+
+      // Skip muted rules/groups
+      if (rule.muted) {
+        continue;
+      }
+
+      let processedRule: string | undefined;
+
+      if (isRuleGroup(rule)) {
+        const result = processRuleGroup(
+          rule,
+          rg.rules.filter(r => typeof r !== 'string' && !r.muted).length === 1
+        );
+        if (result) {
+          processedRule = result;
         }
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(rule, rg.rules.length === 1);
+      } else {
+        const result = processRule(rule);
+        if (result) {
+          processedRule = result;
         }
-        return processRule(rule);
-      })
-      .filter(Boolean);
+      }
+
+      if (processedRule) {
+        // If this is not the first valid rule and we're in IC format, find the combinator
+        if (lastValidRuleIndex >= 0 && !isRuleGroupType(rg)) {
+          // Find the combinator that immediately precedes this valid rule
+          let combinator: string | undefined;
+          for (let j = i - 1; j >= 0; j--) {
+            const item = rg.rules[j];
+            if (typeof item === 'string') {
+              combinator = item;
+              break;
+            }
+            // Skip muted rules
+            if (item.muted) {
+              continue;
+            }
+            // If we hit a non-muted rule, stop looking
+            break;
+          }
+          if (combinator) {
+            processedRules.push(combinator);
+          }
+        }
+
+        processedRules.push(processedRule);
+        lastValidRuleIndex = i;
+      }
+    }
 
     if (processedRules.length === 0) {
       return fallbackExpression;

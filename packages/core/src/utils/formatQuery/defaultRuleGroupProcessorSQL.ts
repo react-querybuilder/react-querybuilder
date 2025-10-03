@@ -2,7 +2,6 @@ import type { RuleGroupProcessor, RuleGroupTypeAny } from '../../types';
 import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
-import { filterRulesAndCleanupCombinators } from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "sql" format.
@@ -33,21 +32,34 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    // Filter out muted items and clean up orphaned combinators
-    const cleanedRules = filterRulesAndCleanupCombinators(rg);
+    const processedRules: string[] = [];
+    let lastValidRuleIndex = -1;
 
-    const processedRules = cleanedRules
-      .map(rule => {
-        // Independent combinators
-        if (typeof rule === 'string') {
-          return rule;
+    for (let i = 0; i < rg.rules.length; i++) {
+      const rule = rg.rules[i];
+
+      // Skip combinators for now, we'll handle them when we hit the next valid rule
+      if (typeof rule === 'string') {
+        continue;
+      }
+
+      // Skip muted rules/groups
+      if (rule.muted) {
+        continue;
+      }
+
+      let processedRule: string | undefined;
+
+      // Groups
+      if (isRuleGroup(rule)) {
+        const result = processRuleGroup(
+          rule,
+          rg.rules.filter(r => typeof r !== 'string' && !r.muted).length === 1
+        );
+        if (result) {
+          processedRule = result;
         }
-
-        // Groups
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(rule, rg.rules.length === 1);
-        }
-
+      } else {
         // Basic rule validation
         const [validationResult, fieldValidator] = validateRule(rule);
         if (
@@ -56,21 +68,52 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
           rule.operator === placeholderOperatorName ||
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
-          return '';
+          continue;
         }
 
         const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
-
         const fieldData = getOption(fields, rule.field);
 
-        return ruleProcessor(rule, {
+        const result = ruleProcessor(rule, {
           ...options,
           parseNumbers: getParseNumberBoolean(fieldData?.inputType),
           escapeQuotes,
           fieldData,
         });
-      })
-      .filter(Boolean);
+
+        if (result) {
+          processedRule = result;
+        }
+      }
+
+      if (processedRule) {
+        // If this is not the first valid rule and we're in IC format, find the combinator
+        if (lastValidRuleIndex >= 0 && !isRuleGroupType(rg)) {
+          // Find the combinator that immediately precedes this valid rule
+          // (i.e., the last combinator before this rule)
+          let combinator: string | undefined;
+          for (let j = i - 1; j >= 0; j--) {
+            const item = rg.rules[j];
+            if (typeof item === 'string') {
+              combinator = item;
+              break;
+            }
+            // Skip muted rules
+            if (item.muted) {
+              continue;
+            }
+            // If we hit a non-muted rule, stop looking
+            break;
+          }
+          if (combinator) {
+            processedRules.push(combinator);
+          }
+        }
+
+        processedRules.push(processedRule);
+        lastValidRuleIndex = i;
+      }
+    }
 
     if (processedRules.length === 0) {
       return fallbackExpression;

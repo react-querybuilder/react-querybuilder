@@ -9,9 +9,7 @@ import type {
   NLTranslationKey,
   NLTranslations,
   OptionList,
-  RuleGroupType,
   RuleGroupTypeAny,
-  RuleGroupTypeIC,
   RuleType,
   ValueProcessorByRule,
   ValueProcessorLegacy,
@@ -19,7 +17,7 @@ import type {
 } from '../../types';
 import { joinWith, splitBy, toArray } from '../arrayUtils';
 import { getParseNumberMethod } from '../getParseNumberMethod';
-import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
+import { isRuleGroup } from '../isRuleGroup';
 import { isPojo, lc, numericRegex } from '../misc';
 import { getOption } from '../optGroupUtils';
 import { parseNumber } from '../parseNumber';
@@ -192,49 +190,6 @@ export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean): boolea
   (typeof value === 'number' ||
     typeof value === 'bigint' ||
     (typeof value === 'string' && numericRegex.test(value)));
-
-/**
- * Filters out muted items from a rule group's rules array and cleans up orphaned combinators
- * in Independent Combinator (IC) format.
- *
- * @param rg - The rule group to filter
- * @returns The filtered rules array with cleaned up combinators
- * @group Export
- */
-export const filterRulesAndCleanupCombinators = (rg: RuleGroupTypeAny): (RuleType | RuleGroupType | RuleGroupTypeIC | string)[] => {
-  // First filter out muted items
-  const filteredRules = rg.rules.filter(rule => {
-    // Keep combinators and non-muted rules/groups
-    return typeof rule === 'string' || !rule.muted;
-  });
-
-  // Clean up orphaned combinators in IC format
-  if (!isRuleGroupType(rg)) {
-    const result: typeof filteredRules = [];
-    let lastWasRule = false;
-
-    for (let i = 0; i < filteredRules.length; i++) {
-      const current = filteredRules[i];
-
-      if (typeof current === 'string') {
-        // Only add combinator if the last item was a rule and there's a rule after this
-        const nextIsRule = i + 1 < filteredRules.length && typeof filteredRules[i + 1] !== 'string';
-        if (lastWasRule && nextIsRule) {
-          result.push(current);
-          lastWasRule = false;
-        }
-      } else {
-        // It's a rule or group
-        result.push(current);
-        lastWasRule = true;
-      }
-    }
-
-    return result;
-  }
-
-  return filteredRules;
-};
 
 /**
  * Used by {@link formatQuery} to determine whether the given value processor is a
