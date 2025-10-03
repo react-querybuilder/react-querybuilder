@@ -34,6 +34,11 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
   } = options;
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
+    // Skip muted groups
+    if (rg.muted) {
+      return false;
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return outermost ? mongoDbFallback : false;
     }
@@ -42,6 +47,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
     let hasChildRules = false;
 
     const expressions: Record<string, unknown>[] = rg.rules
+      .filter(rule => typeof rule === 'string' || !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           const processedRuleGroup = processRuleGroup(rule);

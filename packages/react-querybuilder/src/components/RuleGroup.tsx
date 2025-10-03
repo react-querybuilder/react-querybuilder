@@ -399,6 +399,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
                 not={!!r.not}
                 disabled={thisPathDisabled}
                 parentDisabled={rg.parentDisabled || rg.disabled}
+                parentMuted={rg.parentMuted || rg.muted}
                 shiftUpDisabled={shiftUpDisabled}
                 shiftDownDisabled={shiftDownDisabled}
                 context={rg.context}
@@ -417,6 +418,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
                 path={thisPath}
                 disabled={thisPathDisabled}
                 parentDisabled={rg.parentDisabled || rg.disabled}
+                parentMuted={rg.parentMuted || rg.muted}
                 translations={rg.translations}
                 shiftUpDisabled={shiftUpDisabled}
                 shiftDownDisabled={shiftDownDisabled}
@@ -435,6 +437,7 @@ export interface UseRuleGroup extends RuleGroupProps {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
   accessibleDescription: string;
+  muted?: boolean;
   classNames: Pick<
     { [k in keyof Classnames]: string },
     | 'header'
@@ -495,6 +498,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
     disabled: disabledProp,
     parentDisabled,
+    parentMuted,
     shiftUpDisabled,
     shiftDownDisabled,
     combinator: combinatorProp,
@@ -521,6 +525,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const disabled = !!parentDisabled || !!disabledProp;
+  const muted = !!parentMuted || !!ruleGroupProp?.muted;
 
   const combinator = useMemo(
     () =>
@@ -747,10 +752,12 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         suppressStandardClassnames || standardClassnames.ruleGroup,
         classNamesProp.ruleGroup,
         disabled && classNamesProp.disabled,
+        muted && classNamesProp.muted,
         isDragging && classNamesProp.dndDragging,
         isOver && groupItems && classNamesProp.dndGroup,
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
+          [standardClassnames.muted]: muted,
           [standardClassnames.dndDragging]: isDragging,
           [standardClassnames.dndGroup]: isOver && groupItems,
         },
@@ -758,11 +765,13 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       ),
     [
       classNamesProp.disabled,
+      classNamesProp.muted,
       classNamesProp.dndDragging,
       classNamesProp.dndGroup,
       classNamesProp.ruleGroup,
       combinatorBasedClassName,
       disabled,
+      muted,
       groupItems,
       isDragging,
       isOver,
@@ -794,6 +803,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     dropRef,
     isDragging,
     isOver,
+    muted,
     onCombinatorChange,
     onGroupAdd,
     onIndependentCombinatorChange,

@@ -336,8 +336,12 @@ export const RuleComponents: React.MemoExoticComponent<
           validation={r.validationResult}
           schema={r.schema}
           testID={TestID.muteRule}
-          label={r.muted ? r.translations.muteRuleDisabled.label : r.translations.muteRule.label}
-          title={r.muted ? r.translations.muteRuleDisabled.title : r.translations.muteRule.title}
+          label={
+            r.rule.muted ? r.translations.muteRuleDisabled.label : r.translations.muteRule.label
+          }
+          title={
+            r.rule.muted ? r.translations.muteRuleDisabled.title : r.translations.muteRule.title
+          }
           className={r.classNames.muteRule}
           ruleOrGroup={r.rule}
           handleOnClick={r.toggleMuteRule}
@@ -447,6 +451,7 @@ export interface UseRule extends RuleProps {
     removeRule: string;
   };
   muted?: boolean;
+  parentMuted?: boolean;
   cloneRule: ActionElementEventHandler;
   fieldData: FullField<string, string, string, FullOption, FullOption>;
   generateOnChangeHandler: (
@@ -508,6 +513,7 @@ export const useRule = (props: RuleProps): UseRule => {
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
     parentDisabled,
+    parentMuted,
     shiftUpDisabled,
     shiftDownDisabled,
     field: fieldProp,
@@ -531,6 +537,7 @@ export const useRule = (props: RuleProps): UseRule => {
   useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 
   const disabled = !!parentDisabled || !!disabledProp;
+  const muted = !!parentMuted || !!ruleProp?.muted;
 
   const rule = useMemo(
     () =>
@@ -780,6 +787,7 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.rule,
         // custom conditional classes
         disabled && classNamesProp.disabled,
+        muted && classNamesProp.muted,
         isDragging && classNamesProp.dndDragging,
         isOver && classNamesProp.dndOver,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
@@ -789,6 +797,7 @@ export const useRule = (props: RuleProps): UseRule => {
         // standard conditional classes
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
+          [standardClassnames.muted]: muted,
           [standardClassnames.dndDragging]: isDragging,
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
@@ -800,6 +809,7 @@ export const useRule = (props: RuleProps): UseRule => {
       ),
     [
       classNamesProp.disabled,
+      classNamesProp.muted,
       classNamesProp.dndCopy,
       classNamesProp.dndDragging,
       classNamesProp.dndGroup,
@@ -810,6 +820,7 @@ export const useRule = (props: RuleProps): UseRule => {
       disabled,
       dropEffect,
       dropNotAllowed,
+      muted,
       fieldBasedClassName,
       fieldData,
       getRuleClassname,
@@ -843,7 +854,7 @@ export const useRule = (props: RuleProps): UseRule => {
     hideValueControls,
     inputType,
     matchModes,
-    muted: rule.muted,
+    muted,
     operators,
     outerClassName,
     removeRule,

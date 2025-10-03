@@ -23,11 +23,17 @@ export const defaultRuleGroupProcessorCEL: RuleGroupProcessor<string> = (ruleGro
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
+    // Skip muted groups
+    if (rg.muted) {
+      return '';
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return outermost ? fallbackExpression : '';
     }
 
     const expression: string = rg.rules
+      .filter(rule => typeof rule === 'string' || !rule.muted)
       .map(rule => {
         if (typeof rule === 'string') {
           return celCombinatorMap[rule as DefaultCombinatorName];

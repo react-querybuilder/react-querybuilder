@@ -64,8 +64,8 @@ describe('mute functionality', () => {
     });
   });
 
-  describe('recursive muting behavior', () => {
-    it('mutes all children when a group is muted', async () => {
+  describe('muting inheritance behavior', () => {
+    it('sets muted property only on the clicked group', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       render(
         <QueryBuilder
@@ -89,22 +89,22 @@ describe('mute functionality', () => {
 
       const lastCall = onQueryChange.mock.calls[onQueryChange.mock.calls.length - 1][0];
       expect(lastCall.muted).toBe(true);
-      expect(lastCall.rules[0]).toHaveProperty('muted', true);
-      expect(lastCall.rules[1]).toHaveProperty('muted', true);
-      expect((lastCall.rules[1] as RuleGroupType).rules[0]).toHaveProperty('muted', true);
+      // Children should NOT have muted property set (inheritance is visual only)
+      expect(lastCall.rules[0]).not.toHaveProperty('muted');
+      expect(lastCall.rules[1]).not.toHaveProperty('muted');
+      expect((lastCall.rules[1] as RuleGroupType).rules[0]).not.toHaveProperty('muted');
     });
 
-    it('unmutes all children when a group is unmuted directly', async () => {
+    it('unmutes only the clicked group when unmuted directly', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       const initialQuery: RuleGroupType = {
         combinator: 'and',
         muted: true,
         rules: [
-          { field: 'f1', operator: '=', value: 'v1', muted: true },
+          { field: 'f1', operator: '=', value: 'v1' },
           {
             combinator: 'or',
-            muted: true,
-            rules: [{ field: 'f2', operator: '=', value: 'v2', muted: true }],
+            rules: [{ field: 'f2', operator: '=', value: 'v2' }],
           },
         ],
       };
@@ -117,21 +117,20 @@ describe('mute functionality', () => {
 
       const lastCall = onQueryChange.mock.calls[onQueryChange.mock.calls.length - 1][0];
       expect(lastCall.muted).toBe(false); // Root group should be unmuted
-      expect(lastCall.rules[0]).toHaveProperty('muted', false); // First rule should be unmuted
-      expect((lastCall.rules[1] as RuleGroupType).muted).toBe(false); // Subgroup should be unmuted
-      expect((lastCall.rules[1] as RuleGroupType).rules[0]).toHaveProperty('muted', false); // Nested rule should be unmuted
+      // Children should not have muted properties changed (inheritance is visual only)
+      expect(lastCall.rules[0]).not.toHaveProperty('muted');
+      expect(lastCall.rules[1] as RuleGroupType).not.toHaveProperty('muted');
+      expect((lastCall.rules[1] as RuleGroupType).rules[0]).not.toHaveProperty('muted');
     });
 
-    it('unmutes only parent groups when a descendant is unmuted directly', async () => {
+    it('only unmutes the specific item when clicked', async () => {
       const onQueryChange = jest.fn<never, [RuleGroupType]>();
       const initialQuery: RuleGroupType = {
         combinator: 'and',
-        muted: true,
         rules: [
-          { field: 'f1', operator: '=', value: 'v1', muted: true },
+          { field: 'f1', operator: '=', value: 'v1' },
           {
             combinator: 'or',
-            muted: true,
             rules: [
               { field: 'f2', operator: '=', value: 'v2', muted: true },
               { field: 'f3', operator: '=', value: 'v3', muted: true },
@@ -142,16 +141,18 @@ describe('mute functionality', () => {
 
       render(<QueryBuilder showMuteButtons onQueryChange={onQueryChange} query={initialQuery} />);
 
-      // Click the mute button on the first nested rule
+      // Click the mute button on the first nested rule to unmute it
       const muteRuleButtons = screen.getAllByTestId(TestID.muteRule);
       await user.click(muteRuleButtons[1]); // Click the first nested rule's mute button
 
       const lastCall = onQueryChange.mock.calls[onQueryChange.mock.calls.length - 1][0];
-      expect(lastCall.muted).toBe(false); // Root group should be unmuted
-      expect(lastCall.rules[0]).toHaveProperty('muted', true); // First rule should still be muted
-      expect((lastCall.rules[1] as RuleGroupType).muted).toBe(false); // Parent subgroup should be unmuted
-      expect((lastCall.rules[1] as RuleGroupType).rules[0]).toHaveProperty('muted', false); // The clicked rule should be unmuted
-      expect((lastCall.rules[1] as RuleGroupType).rules[1]).toHaveProperty('muted', true); // The sibling rule should still be muted
+      // Only the clicked rule should be unmuted
+      expect((lastCall.rules[1] as RuleGroupType).rules[0]).toHaveProperty('muted', false);
+      // Other muted rule should remain muted
+      expect((lastCall.rules[1] as RuleGroupType).rules[1]).toHaveProperty('muted', true);
+      // Parent groups should not be affected
+      expect(lastCall.muted).toBeUndefined();
+      expect((lastCall.rules[1] as RuleGroupType).muted).toBeUndefined();
     });
   });
 
@@ -172,7 +173,7 @@ describe('mute functionality', () => {
       expect(sql).toContain('f3');
     });
 
-    it('excludes muted groups from SQL output', () => {
+    it('excludes muted groups and their children from SQL output', () => {
       const query: RuleGroupType = {
         combinator: 'and',
         rules: [
@@ -188,12 +189,31 @@ describe('mute functionality', () => {
 
       const sql = formatQuery(query, 'sql');
       expect(sql).toContain('f1');
-      expect(sql).not.toContain('f2');
+      expect(sql).not.toContain('f2'); // Child is excluded even without muted property
       expect(sql).not.toContain('or');
       expect(sql).toContain('f3');
     });
 
-    it('excludes muted items from JSON output', () => {
+    it('excludes children of muted groups even without muted properties', () => {
+      const query: RuleGroupType = {
+        combinator: 'and',
+        muted: true,
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' }, // No muted property
+          {
+            combinator: 'or',
+            // No muted property
+            rules: [{ field: 'f2', operator: '=', value: 'v2' }], // No muted property
+          },
+        ],
+      };
+
+      const sql = formatQuery(query, 'sql');
+      // Should return fallback since root group is muted
+      expect(sql).toBe('(1 = 1)');
+    });
+
+    it('preserves muted items in JSON output', () => {
       const query: RuleGroupType = {
         combinator: 'and',
         rules: [
@@ -204,8 +224,10 @@ describe('mute functionality', () => {
 
       const json = formatQuery(query, 'json');
       const parsed = JSON.parse(json);
-      expect(parsed.rules).toHaveLength(1);
+      expect(parsed.rules).toHaveLength(2);
       expect(parsed.rules[0].field).toBe('f1');
+      expect(parsed.rules[1].field).toBe('f2');
+      expect(parsed.rules[1].muted).toBe(true);
     });
   });
 

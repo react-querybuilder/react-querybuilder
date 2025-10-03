@@ -26,6 +26,11 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
+    // Skip muted groups
+    if (rg.muted) {
+      return '';
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       // TODO: test for the last case and remove "ignore" comment
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
@@ -36,44 +41,46 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         ? convertFromIC(rg)
         : rg;
 
-    const processedRules = rg2.rules.map(rule => {
-      // Independent combinators
-      if (typeof rule === 'string') {
-        return `, ${translations[rule as NLTranslationKey] ?? rule} `;
-      }
+    const processedRules = rg2.rules
+      .filter(rule => typeof rule === 'string' || !rule.muted)
+      .map(rule => {
+        // Independent combinators
+        if (typeof rule === 'string') {
+          return `, ${translations[rule as NLTranslationKey] ?? rule} `;
+        }
 
-      // Groups
-      if (isRuleGroup(rule)) {
-        return processRuleGroup(
-          rule,
-          rg2.rules.length === 1 &&
-            !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
-        );
-      }
+        // Groups
+        if (isRuleGroup(rule)) {
+          return processRuleGroup(
+            rule,
+            rg2.rules.length === 1 &&
+              !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
+          );
+        }
 
-      // Basic rule validation
-      const [validationResult, fieldValidator] = validateRule(rule);
-      if (
-        !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-        rule.field === placeholderFieldName ||
-        rule.operator === placeholderOperatorName ||
-        /* istanbul ignore next */
-        (placeholderValueName !== undefined && rule.value === placeholderValueName)
-      ) {
-        return '';
-      }
+        // Basic rule validation
+        const [validationResult, fieldValidator] = validateRule(rule);
+        if (
+          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+          rule.field === placeholderFieldName ||
+          rule.operator === placeholderOperatorName ||
+          /* istanbul ignore next */
+          (placeholderValueName !== undefined && rule.value === placeholderValueName)
+        ) {
+          return '';
+        }
 
-      const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
+        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
 
-      const fieldData = getOption(fields, rule.field);
+        const fieldData = getOption(fields, rule.field);
 
-      return ruleProcessor(rule, {
-        ...options,
-        parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-        escapeQuotes,
-        fieldData,
+        return ruleProcessor(rule, {
+          ...options,
+          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+          escapeQuotes,
+          fieldData,
+        });
       });
-    });
 
     if (processedRules.length === 0) {
       return fallbackExpression;

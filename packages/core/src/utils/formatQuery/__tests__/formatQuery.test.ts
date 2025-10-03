@@ -306,7 +306,7 @@ describe('muted independent combinator handling', () => {
     };
 
     const sql = formatQuery(queryIC, 'sql');
-    expect(sql).toBe(''); // Muted top-level group results in empty query
+    expect(sql).toBe('(1 = 1)'); // Muted top-level group returns fallback expression
   });
 
   it('handles nested muted IC groups', () => {
@@ -345,8 +345,8 @@ describe('muted independent combinator handling', () => {
     expect(sql).toBe("(f1 = 'v1')");
   });
 
-  it('clears rules array for muted groups', () => {
-    // Tests that muted groups have their rules array cleared
+  it('handles muted top-level groups', () => {
+    // Tests that muted groups are handled correctly in different formats
     const queryWithMutedGroup = {
       combinator: 'and',
       muted: true,
@@ -360,11 +360,12 @@ describe('muted independent combinator handling', () => {
     };
 
     const sql = formatQuery(queryWithMutedGroup, 'sql');
-    expect(sql).toBe(''); // Muted top-level group returns empty string
+    expect(sql).toBe('(1 = 1)'); // Muted top-level group returns fallback expression
 
-    // Also test with JSON format to ensure the rules array is actually cleared
+    // JSON format preserves the structure including muted property
     const json = JSON.parse(formatQuery(queryWithMutedGroup, 'json'));
-    expect(json.rules).toEqual([]);
+    expect(json.muted).toBe(true);
+    expect(json.rules).toHaveLength(2);
   });
 
   it('handles IC query ending with combinator after all rules are muted', () => {

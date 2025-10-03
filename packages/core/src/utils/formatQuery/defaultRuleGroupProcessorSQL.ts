@@ -24,7 +24,7 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
     // Skip muted groups
     if (rg.muted) {
-      return '';
+      return outermostOrLonelyInGroup ? fallbackExpression : '';
     }
 
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -32,14 +32,43 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    const processedRules = rg.rules
-      .filter(rule => {
-        // Filter out muted rules and groups
-        if (typeof rule !== 'string' && rule.muted) {
-          return false;
-        }
-        return true;
-      })
+    // First filter out muted items
+    const filteredRules = rg.rules.filter(rule => {
+      // Filter out muted rules and groups
+      if (typeof rule !== 'string' && rule.muted) {
+        return false;
+      }
+      return true;
+    });
+
+    // Clean up orphaned combinators in IC format
+    const cleanedRules = !isRuleGroupType(rg)
+      ? (() => {
+          const result: typeof filteredRules = [];
+          let lastWasRule = false;
+
+          for (let i = 0; i < filteredRules.length; i++) {
+            const current = filteredRules[i];
+
+            if (typeof current === 'string') {
+              // Only add combinator if the last item was a rule and there's a rule after this
+              const nextIsRule = i + 1 < filteredRules.length && typeof filteredRules[i + 1] !== 'string';
+              if (lastWasRule && nextIsRule) {
+                result.push(current);
+                lastWasRule = false;
+              }
+            } else {
+              // It's a rule or group
+              result.push(current);
+              lastWasRule = true;
+            }
+          }
+
+          return result;
+        })()
+      : filteredRules;
+
+    const processedRules = cleanedRules
       .map(rule => {
         // Independent combinators
         if (typeof rule === 'string') {

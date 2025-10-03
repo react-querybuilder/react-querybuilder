@@ -103,12 +103,18 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
   };
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
+    // Skip muted groups
+    if (rg.muted) {
+      return '';
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       // TODO: test for the last case and remove "ignore" comment
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
     const processedRules = rg.rules
+      .filter(rule => typeof rule === 'string' || !rule.muted)
       .map(rule => {
         if (typeof rule === 'string') {
           return rule;
