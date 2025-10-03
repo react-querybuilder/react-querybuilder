@@ -1,6 +1,5 @@
 import { clsx } from '@react-querybuilder/core';
 import * as React from 'react';
-import { toOptions } from 'react-querybuilder';
 import { standardClassnamesRE } from '../defaults';
 import type { RulesEngineActionProps } from '../types';
 
@@ -9,25 +8,39 @@ import type { RulesEngineActionProps } from '../types';
  */
 export const RulesEngineActionBuilderBody = (props: RulesEngineActionProps): React.JSX.Element => {
   const {
+    action,
+    actionTypes = [],
+    conditionPath,
+    onActionChange,
     schema: {
       classnames: { actionBuilderBody },
+      components: { valueSelector: ValueSelector },
       suppressStandardClassnames,
     },
   } = props;
+
   const className = React.useMemo(
     () =>
       clsx(suppressStandardClassnames || standardClassnamesRE.actionBuilderBody, actionBuilderBody),
     [actionBuilderBody, suppressStandardClassnames]
   );
+
+  const handleOnChange = React.useCallback(
+    (v: string) => onActionChange({ ...action, actionType: v }),
+    [onActionChange, action]
+  );
+
   return (
     <div className={className}>
       {props.actionTypes && (
-        <select
-          value={props.action.actionType}
-          // oxlint-disable-next-line jsx-no-new-function-as-prop
-          onChange={e => props.onActionChange({ ...props.action, actionType: e.target.value })}>
-          {toOptions(props.actionTypes)}
-        </select>
+        <ValueSelector
+          schema={props.schema}
+          path={conditionPath}
+          level={conditionPath.length}
+          value={action.actionType}
+          handleOnChange={handleOnChange}
+          options={actionTypes}
+        />
       )}
     </div>
   );
