@@ -3,7 +3,8 @@
 import { PGlite } from '@electric-sql/pglite';
 import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/pglite';
-import { convertToIC, formatQuery } from 'react-querybuilder';
+import { convertToIC } from '../../convertQuery';
+import { formatQuery } from '../../formatQuery';
 import { dbTestsDrizzle } from '../dbqueryDrizzleTestUtils';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import {

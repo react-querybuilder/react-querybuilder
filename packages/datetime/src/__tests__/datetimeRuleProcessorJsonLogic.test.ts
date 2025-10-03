@@ -1,5 +1,5 @@
-import type { RuleGroupType } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
+import type { RuleGroupType } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 import { datetimeRuleProcessorJsonLogic } from '../datetimeRuleProcessorJsonLogic';
 import { fields } from '../dbqueryTestUtils';
 import type { IsDateField, RQBDateTimeJsonLogic } from '../types';

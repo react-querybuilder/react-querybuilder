@@ -1,4 +1,4 @@
-import { formatQuery, transformQuery } from 'react-querybuilder';
+import { formatQuery, transformQuery } from '@react-querybuilder/core';
 import type { MusicianRecord } from '../dbqueryTestUtils';
 import {
   CREATE_MUSICIANS_TABLE,
