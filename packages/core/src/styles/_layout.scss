@@ -244,7 +244,9 @@
 /* #endregion */
 
 /* #region Justified */
-@mixin justified-margin($margin-side) {
+@mixin justified-auto-margin($direction) {
+  $margin-side: if($direction == rtl, right, left);
+
   .ruleGroup-combinators,
   .ruleGroup-notToggle,
   .shiftActions,
@@ -281,11 +283,11 @@
 
 /* LTR */
 .queryBuilder-justified:dir(ltr) {
-  @include justified-margin(left);
+  @include justified-auto-margin(ltr);
 }
 
 /* RTL */
 .queryBuilder-justified:dir(rtl) {
-  @include justified-margin(right);
+  @include justified-auto-margin(rtl);
 }
 /* #endregion */
