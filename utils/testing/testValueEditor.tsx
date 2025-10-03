@@ -1,13 +1,8 @@
+import type { FullField, OptionList } from '@react-querybuilder/core';
+import { standardClassnames } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type {
-  FullField,
-  OptionList,
-  Schema,
-  ValueEditorProps,
-  ValueSelectorProps,
-} from 'react-querybuilder';
-import { standardClassnames } from 'react-querybuilder';
+import type { Schema, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import {
   basicSchema,

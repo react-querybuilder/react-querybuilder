@@ -4,8 +4,8 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from 'react-querybuilder';
-import { convertToIC, defaultOperators, generateID } from 'react-querybuilder';
+} from '@react-querybuilder/core';
+import { convertToIC, defaultOperators, generateID } from '@react-querybuilder/core';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
 

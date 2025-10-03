@@ -1,24 +1,26 @@
-import * as React from 'react';
-import { forwardRef } from 'react';
 import type {
-  ActionProps,
   Classnames,
-  ControlElementsProp,
-  DragHandleProps,
   FullField,
   FullOption,
   QueryActions,
   RemoveNullability,
-  RuleProps,
-  Schema,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 import {
   TestID,
   defaultControlClassnames,
-  defaultControlElements,
   toFullOption,
   defaultTranslations as translations,
+} from '@react-querybuilder/core';
+import * as React from 'react';
+import { forwardRef } from 'react';
+import type {
+  ActionProps,
+  ControlElementsProp,
+  DragHandleProps,
+  RuleProps,
+  Schema,
 } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 import { UNUSED } from './utils';
 
 export const getFieldMapFromArray = (fieldArray: FullField[]): Record<string, FullField> =>

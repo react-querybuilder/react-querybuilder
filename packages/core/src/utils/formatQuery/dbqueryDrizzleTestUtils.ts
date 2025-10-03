@@ -1,4 +1,4 @@
-import type { DefaultOperatorName } from 'react-querybuilder';
+import type { DefaultOperatorName } from '../../types';
 import type { SuperUser, TestSQLParams } from './dbqueryTestUtils';
 import { dbTests, fields } from './dbqueryTestUtils';
 

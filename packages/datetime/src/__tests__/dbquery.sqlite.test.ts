@@ -1,6 +1,6 @@
+import { formatQuery } from '@react-querybuilder/core';
 import type { SQLQueryBindings } from 'bun:sqlite';
 import { Database } from 'bun:sqlite';
-import { formatQuery } from 'react-querybuilder';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,

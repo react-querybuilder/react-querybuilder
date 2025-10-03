@@ -4,7 +4,7 @@
 // > NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules" npx jest
 
 import { PGlite } from '@electric-sql/pglite';
-import { formatQuery } from 'react-querybuilder';
+import { formatQuery } from '@react-querybuilder/core';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,

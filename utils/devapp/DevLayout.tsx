@@ -1,5 +1,6 @@
 /* oxlint-disable prefer-global-this */
 
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/core';
 import { parseCEL } from '@rqb-parsecel';
 // import { parseJSONata } from '@rqb-parsejsonata';
 import { parseJsonLogic } from '@rqb-parsejsonlogic';
@@ -9,7 +10,6 @@ import { parseSQL } from '@rqb-parsesql';
 import { regenerateIDs } from '@rqb-utils';
 import * as React from 'react';
 import { Fragment } from 'react';
-import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import '../../packages/core/dist/query-builder.css';
 import '../../packages/rules-engine/dist/rules-engine.css';
 import { optionOrder } from './constants';

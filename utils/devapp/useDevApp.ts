@@ -1,13 +1,13 @@
-import * as RQButils from '@rqb-utils';
-import queryString from 'query-string';
-import { useCallback, useMemo, useReducer, useState } from 'react';
 import type {
   ExportFormat,
   FormatQueryOptions,
   RuleGroupType,
   RuleGroupTypeIC,
-} from 'react-querybuilder';
-import { defaultValidator, standardClassnames } from 'react-querybuilder';
+} from '@react-querybuilder/core';
+import { defaultValidator, standardClassnames } from '@react-querybuilder/core';
+import * as RQButils from '@rqb-utils';
+import queryString from 'query-string';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 import {
   defaultOptions,
   emptyQuery,

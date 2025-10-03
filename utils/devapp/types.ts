@@ -2,9 +2,9 @@ import type {
   FullCombinator,
   FullField,
   FullOperator,
-  QueryBuilderProps,
   RuleGroupTypeAny,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
+import type { QueryBuilderProps } from 'react-querybuilder';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'

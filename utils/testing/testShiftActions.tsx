@@ -1,7 +1,7 @@
+import { TestID } from '@react-querybuilder/core';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { RuleType, ShiftActionsProps } from 'react-querybuilder';
-import { TestID } from 'react-querybuilder';
 import { basicSchema, userEventSetup } from './utils';
 
 const labels = { shiftUp: 'shiftUp', shiftDown: 'shiftDown' } as const;
