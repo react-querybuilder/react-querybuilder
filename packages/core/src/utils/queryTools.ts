@@ -4,7 +4,9 @@ import type {
   MatchModeOptions,
   OptionList,
   Path,
+  RuleGroupType,
   RuleGroupTypeAny,
+  RuleGroupTypeIC,
   RuleType,
   UpdateableProperties,
   ValueSourceFlexibleOptions,
@@ -176,6 +178,52 @@ export const update = <RG extends RuleGroupTypeAny>(
     // Only update if there is actually a change
     // @ts-expect-error prop can refer to rule or group properties
     if (ruleOrGroup[prop] === value) return;
+
+    // Handle mute updates with recursive behavior
+    if (prop === 'muted') {
+      ruleOrGroup[prop] = value;
+
+      if (value === true && isGroup) {
+        // Recursively mute all children when a group is muted
+        const muteRecursively = (group: RuleGroupType | RuleGroupTypeIC) => {
+          for (const rule of group.rules) {
+            if (typeof rule !== 'string') {
+              rule.muted = true;
+              if (isRuleGroup(rule)) {
+                muteRecursively(rule);
+              }
+            }
+          }
+        };
+        muteRecursively(ruleOrGroup);
+      } else if (value === false) {
+        if (isGroup) {
+          // When unmuting a group directly, recursively unmute all its children
+          const unmuteRecursively = (group: RuleGroupType | RuleGroupTypeIC) => {
+            for (const rule of group.rules) {
+              if (typeof rule !== 'string') {
+                rule.muted = false;
+                if (isRuleGroup(rule)) {
+                  unmuteRecursively(rule);
+                }
+              }
+            }
+          };
+          unmuteRecursively(ruleOrGroup);
+        }
+        // Always unmute all parent groups when anything is unmuted
+        let parentPath = getParentPath(path);
+        while (parentPath.length >= 0) {
+          const parent = findPath(parentPath, draft);
+          if (isRuleGroup(parent) && parent.muted) {
+            parent.muted = false;
+          }
+          if (parentPath.length === 0) break;
+          parentPath = getParentPath(parentPath);
+        }
+      }
+      return;
+    }
 
     // Handle valueSource updates later
     if (prop !== 'valueSource') {

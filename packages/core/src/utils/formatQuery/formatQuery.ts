@@ -14,7 +14,9 @@ import type {
   ParameterizedSQL,
   RQBJsonLogic,
   RuleGroupProcessor,
+  RuleGroupType,
   RuleGroupTypeAny,
+  RuleGroupTypeIC,
   RuleProcessor,
   RuleType,
   RuleValidator,
@@ -24,6 +26,7 @@ import type {
   ValueProcessorByRule,
 } from '../../types';
 import { getParseNumberMethod } from '../getParseNumberMethod';
+import { isRuleGroup } from '../isRuleGroup';
 import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
@@ -524,12 +527,85 @@ function formatQuery(
     return ruleGroupProcessor_option(ruleGroup, finalOptions);
   }
 
+  // Helper function to filter out muted items
+  const filterMuted = <T extends RuleGroupTypeAny>(query: T): T => {
+    return produce(query, draft => {
+      const processGroup = (group: RuleGroupTypeAny) => {
+        if (group.muted) {
+          // If the group itself is muted, remove its rules but keep the group with empty rules
+          group.rules = [];
+        } else {
+          // Filter out muted rules and recursively process nested groups
+          const filteredRules: (typeof group.rules)[number][] = [];
+          let lastAddedWasCombinator = false;
+          let skipNextCombinator = false;
+
+          for (let i = 0; i < group.rules.length; i++) {
+            const rule = group.rules[i];
+
+            if (typeof rule === 'string') {
+              // This is a combinator
+              if (skipNextCombinator) {
+                skipNextCombinator = false;
+                continue;
+              }
+              filteredRules.push(rule);
+              lastAddedWasCombinator = true;
+            } else if (!rule.muted) {
+              // This is an unmuted rule/group
+              if (isRuleGroup(rule)) {
+                processGroup(rule);
+              }
+              filteredRules.push(rule);
+              lastAddedWasCombinator = false;
+            } else {
+              // This is a muted rule/group
+              // If we're in IC format and the last item was a combinator, remove it
+              if (!('combinator' in group) && lastAddedWasCombinator && filteredRules.length > 0) {
+                filteredRules.pop();
+              }
+              // If this is the first item and in IC format, skip the next combinator
+              if (
+                !('combinator' in group) &&
+                filteredRules.length === 0 &&
+                i + 1 < group.rules.length &&
+                typeof group.rules[i + 1] === 'string'
+              ) {
+                skipNextCombinator = true;
+              }
+              lastAddedWasCombinator = false;
+            }
+          }
+
+          // Clean up trailing combinator if present
+          if (
+            !('combinator' in group) &&
+            filteredRules.length > 0 &&
+            typeof filteredRules[filteredRules.length - 1] === 'string'
+          ) {
+            filteredRules.pop();
+          }
+
+          if ('combinator' in group) {
+            group.rules = filteredRules as RuleGroupType['rules'];
+          } else {
+            group.rules = filteredRules as RuleGroupTypeIC['rules'];
+          }
+        }
+      };
+      processGroup(draft);
+    });
+  };
+
+  // Apply filterMuted to all formats
+  const filteredRuleGroup = filterMuted(ruleGroup);
+
   switch (format) {
     case 'json':
     case 'json_without_ids': {
       const rg = parseNumbers
-        ? produce(ruleGroup, g => numerifyValues(g, finalOptions))
-        : ruleGroup;
+        ? produce(filteredRuleGroup, g => numerifyValues(g, finalOptions))
+        : filteredRuleGroup;
       if (format === 'json_without_ids') {
         return JSON.stringify(rg, (key, value) =>
           // Remove `id` and `path` keys; leave everything else unchanged.
@@ -540,47 +616,47 @@ function formatQuery(
     }
 
     case 'sql':
-      return defaultRuleGroupProcessorSQL(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorSQL(filteredRuleGroup, finalOptions);
 
     case 'parameterized':
     case 'parameterized_named':
-      return defaultRuleGroupProcessorParameterized(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorParameterized(filteredRuleGroup, finalOptions);
 
     case 'mongodb':
-      return defaultRuleGroupProcessorMongoDB(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorMongoDB(filteredRuleGroup, finalOptions);
 
     case 'mongodb_query':
-      return defaultRuleGroupProcessorMongoDBQuery(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorMongoDBQuery(filteredRuleGroup, finalOptions);
 
     case 'cel':
-      return defaultRuleGroupProcessorCEL(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorCEL(filteredRuleGroup, finalOptions);
 
     case 'spel':
-      return defaultRuleGroupProcessorSpEL(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorSpEL(filteredRuleGroup, finalOptions);
 
     case 'jsonata':
-      return defaultRuleGroupProcessorJSONata(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorJSONata(filteredRuleGroup, finalOptions);
 
     case 'jsonlogic':
-      return defaultRuleGroupProcessorJsonLogic(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorJsonLogic(filteredRuleGroup, finalOptions);
 
     case 'elasticsearch':
-      return defaultRuleGroupProcessorElasticSearch(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorElasticSearch(filteredRuleGroup, finalOptions);
 
     case 'natural_language':
-      return defaultRuleGroupProcessorNL(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorNL(filteredRuleGroup, finalOptions);
 
     case 'ldap':
-      return defaultRuleGroupProcessorLDAP(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorLDAP(filteredRuleGroup, finalOptions);
 
     case 'prisma':
-      return defaultRuleGroupProcessorPrisma(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorPrisma(filteredRuleGroup, finalOptions);
 
     case 'drizzle':
-      return defaultRuleGroupProcessorDrizzle(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorDrizzle(filteredRuleGroup, finalOptions);
 
     case 'sequelize':
-      return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
+      return defaultRuleGroupProcessorSequelize(filteredRuleGroup, finalOptions);
 
     default:
       return '';

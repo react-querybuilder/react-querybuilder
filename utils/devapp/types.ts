@@ -11,6 +11,7 @@ export type DemoOption =
   | 'showNotToggle'
   | 'showCloneButtons'
   | 'showLockButtons'
+  | 'showMuteButtons'
   | 'showShiftActions'
   | 'resetOnFieldChange'
   | 'resetOnOperatorChange'

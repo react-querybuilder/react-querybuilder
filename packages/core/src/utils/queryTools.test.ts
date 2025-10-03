@@ -403,6 +403,183 @@ describe('update', () => {
     );
   });
 
+  describe('mute with IC', () => {
+    it('mutes IC group with string combinators', () => {
+      const icQuery = {
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          'and',
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      };
+      const mutedQuery = update(icQuery, 'muted', true, []);
+      expect(mutedQuery.muted).toBe(true);
+      expect(mutedQuery.rules[0]).toHaveProperty('muted', true);
+      expect(mutedQuery.rules[1]).toBe('and');
+      expect(mutedQuery.rules[2]).toHaveProperty('muted', true);
+    });
+
+    it('unmutes IC group with string combinators', () => {
+      const icQuery = {
+        muted: true,
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1', muted: true },
+          'and',
+          { field: 'f2', operator: '=', value: 'v2', muted: true },
+        ],
+      };
+      const unmutedQuery = update(icQuery, 'muted', false, []);
+      expect(unmutedQuery.muted).toBe(false);
+      expect(unmutedQuery.rules[0]).toHaveProperty('muted', false);
+      expect(unmutedQuery.rules[1]).toBe('and');
+      expect(unmutedQuery.rules[2]).toHaveProperty('muted', false);
+    });
+
+    it('handles unmuting with broken parent path', () => {
+      // Tests the scenario where parent path traversal encounters an invalid path
+      const query = {
+        combinator: 'and',
+        rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
+      };
+
+      // Mock a scenario where the parent lookup might fail
+      // by using a deeply nested structure where we unmute at a depth
+      // that could have missing parents
+      const deepQuery = {
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [
+              {
+                combinator: 'and',
+                rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
+              },
+            ],
+          },
+        ],
+      };
+
+      // Unmute with a path that will cause parent traversal
+      const result = update(deepQuery, 'muted', false, [0, 0, 0]);
+      expect(result.rules[0].rules[0].rules[0].muted).toBe(false);
+    });
+
+    it('recursively mutes deeply nested groups', () => {
+      // Tests recursive muting of nested groups when a parent group is muted
+      const deepQuery = {
+        combinator: 'and',
+        rules: [
+          {
+            combinator: 'or',
+            rules: [
+              {
+                combinator: 'and',
+                rules: [
+                  { field: 'f1', operator: '=', value: 'v1' },
+                  {
+                    combinator: 'or',
+                    rules: [{ field: 'f2', operator: '=', value: 'v2' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = update(deepQuery, 'muted', true, []);
+      expect(result.muted).toBe(true);
+      expect(result.rules[0]).toHaveProperty('muted', true);
+      expect(result.rules[0].rules[0]).toHaveProperty('muted', true);
+      expect(result.rules[0].rules[0].rules[0]).toHaveProperty('muted', true);
+      expect(result.rules[0].rules[0].rules[1]).toHaveProperty('muted', true);
+      expect(result.rules[0].rules[0].rules[1].rules[0]).toHaveProperty('muted', true);
+    });
+
+    it('recursively unmutes deeply nested groups', () => {
+      // Tests recursive unmuting of nested groups when a parent group is unmuted
+      const deepQuery = {
+        combinator: 'and',
+        muted: true,
+        rules: [
+          {
+            combinator: 'or',
+            muted: true,
+            rules: [
+              {
+                combinator: 'and',
+                muted: true,
+                rules: [
+                  { field: 'f1', operator: '=', value: 'v1', muted: true },
+                  {
+                    combinator: 'or',
+                    muted: true,
+                    rules: [{ field: 'f2', operator: '=', value: 'v2', muted: true }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = update(deepQuery, 'muted', false, []);
+      expect(result.muted).toBe(false);
+      expect(result.rules[0]).toHaveProperty('muted', false);
+      expect(result.rules[0].rules[0]).toHaveProperty('muted', false);
+      expect(result.rules[0].rules[0].rules[0]).toHaveProperty('muted', false);
+      expect(result.rules[0].rules[0].rules[1]).toHaveProperty('muted', false);
+      expect(result.rules[0].rules[0].rules[1].rules[0]).toHaveProperty('muted', false);
+    });
+
+    it('unmutes parent groups when unmuting nested item', () => {
+      // Tests that unmuting a nested rule also unmutes all its parent groups
+      const deepQuery = {
+        combinator: 'and',
+        muted: true,
+        rules: [
+          {
+            combinator: 'or',
+            muted: true,
+            rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
+          },
+        ],
+      };
+
+      const result = update(deepQuery, 'muted', false, [0, 0]);
+      expect(result.rules[0].rules[0].muted).toBe(false);
+      expect(result.rules[0].muted).toBe(false); // Parent should be unmuted
+      expect(result.muted).toBe(false); // Root should be unmuted
+    });
+
+    it('handles unmuting a single rule (not a group)', () => {
+      // Tests unmuting a rule (not a group) and ensuring parent groups are also unmuted
+      const query = {
+        combinator: 'and',
+        muted: true,
+        rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
+      };
+
+      const result = update(query, 'muted', false, [0]);
+      expect(result.rules[0].muted).toBe(false);
+      expect(result.muted).toBe(false); // Parent should also be unmuted
+    });
+
+    it('handles muted property with non-boolean values', () => {
+      // Tests handling of non-boolean values for the muted property
+      const query = {
+        combinator: 'and',
+        rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+      };
+
+      // Try to set muted to a non-boolean value (should be handled as no-op or false)
+      const result = update(query, 'muted', 'invalid' as any, [0]);
+      // The rule should remain unmuted when given invalid value
+      expect(result.rules[0].muted).toBeUndefined();
+    });
+  });
+
   describe.each(testLoop)('on bad %s', (_, p) => {
     testQT('bails out', update(rg1wID, 'value', 'test', p(badPath)), rg1wID, true);
   });

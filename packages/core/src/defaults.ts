@@ -122,6 +122,10 @@ export const defaultTranslations: BaseTranslationsFull = {
   lockGroup: { label: '🔓', title: 'Lock group' } as const,
   lockRuleDisabled: { label: '🔒', title: 'Unlock rule' } as const,
   lockGroupDisabled: { label: '🔒', title: 'Unlock group' } as const,
+  muteRule: { label: '🔊', title: 'Mute rule' } as const,
+  muteGroup: { label: '🔊', title: 'Mute group' } as const,
+  muteRuleDisabled: { label: '🔇', title: 'Unmute rule' } as const,
+  muteGroupDisabled: { label: '🔇', title: 'Unmute group' } as const,
   valueSourceSelector: { title: 'Value source' } as const,
 } satisfies BaseTranslationsFull;
 // #endregion
@@ -299,6 +303,8 @@ export const standardClassnames = {
   disabled: 'queryBuilder-disabled',
   lockRule: 'rule-lock',
   lockGroup: 'ruleGroup-lock',
+  muteRule: 'rule-mute',
+  muteGroup: 'ruleGroup-mute',
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
@@ -335,6 +341,8 @@ export const defaultControlClassnames: Classnames = {
   dragHandle: '',
   lockRule: '',
   lockGroup: '',
+  muteRule: '',
+  muteGroup: '',
   valueSource: '',
   actionElement: '',
   valueSelector: '',
@@ -387,6 +395,8 @@ export const TestID = {
   dragHandle: 'drag-handle',
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',
+  muteRule: 'mute-rule',
+  muteGroup: 'mute-group',
   valueSourceSelector: 'value-source-selector',
   matchModeEditor: 'match-mode-editor',
 } as const;

@@ -55,6 +55,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
     const addGroup = useStopEventPropagation(rg.addGroup);
     const cloneGroup = useStopEventPropagation(rg.cloneGroup);
     const toggleLockGroup = useStopEventPropagation(rg.toggleLockGroup);
+    const toggleMuteGroup = useStopEventPropagation(rg.toggleMuteGroup);
     const removeGroup = useStopEventPropagation(rg.removeGroup);
     const shiftGroupUp = useStopEventPropagation(rg.shiftGroupUp);
     const shiftGroupDown = useStopEventPropagation(rg.shiftGroupDown);
@@ -65,11 +66,21 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         addGroup,
         cloneGroup,
         toggleLockGroup,
+        toggleMuteGroup,
         removeGroup,
         shiftGroupUp,
         shiftGroupDown,
       }),
-      [addRule, addGroup, cloneGroup, toggleLockGroup, removeGroup, shiftGroupUp, shiftGroupDown]
+      [
+        addRule,
+        addGroup,
+        cloneGroup,
+        toggleLockGroup,
+        toggleMuteGroup,
+        removeGroup,
+        shiftGroupUp,
+        shiftGroupDown,
+      ]
     );
 
     return (
@@ -113,6 +124,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
         addGroupAction: AddGroupActionControlElement,
         cloneGroupAction: CloneGroupActionControlElement,
         lockGroupAction: LockGroupActionControlElement,
+        muteGroupAction: MuteGroupActionControlElement,
         removeGroupAction: RemoveGroupActionControlElement,
       },
     },
@@ -255,6 +267,33 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           handleOnClick={rg.toggleLockGroup}
           rules={rg.ruleGroup.rules}
           disabledTranslation={rg.parentDisabled ? undefined : rg.translations.lockGroupDisabled}
+          ruleOrGroup={rg.ruleGroup}
+        />
+      )}
+      {rg.schema.showMuteButtons && (
+        <MuteGroupActionControlElement
+          key={TestID.muteGroup}
+          level={rg.path.length}
+          path={rg.path}
+          disabled={rg.disabled}
+          context={rg.context}
+          validation={rg.validationResult}
+          schema={rg.schema}
+          testID={TestID.muteGroup}
+          label={
+            rg.ruleGroup.muted
+              ? rg.translations.muteGroupDisabled.label
+              : rg.translations.muteGroup.label
+          }
+          title={
+            rg.ruleGroup.muted
+              ? rg.translations.muteGroupDisabled.title
+              : rg.translations.muteGroup.title
+          }
+          className={rg.classNames.muteGroup}
+          handleOnClick={rg.toggleMuteGroup}
+          rules={rg.ruleGroup.rules}
+          disabledTranslation={undefined}
           ruleOrGroup={rg.ruleGroup}
         />
       )}
@@ -407,6 +446,7 @@ export interface UseRuleGroup extends RuleGroupProps {
     | 'addGroup'
     | 'cloneGroup'
     | 'lockGroup'
+    | 'muteGroup'
     | 'removeGroup'
     | 'body'
   >;
@@ -422,6 +462,7 @@ export interface UseRuleGroup extends RuleGroupProps {
   shiftGroupDown: (event?: MouseEvent, context?: any) => void;
   shiftGroupUp: (event?: MouseEvent, context?: any) => void;
   toggleLockGroup: ActionElementEventHandler;
+  toggleMuteGroup: ActionElementEventHandler;
   validationClassName: string;
   validationResult: boolean | ValidationResult;
 }
@@ -554,6 +595,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.actionElement,
         classNamesProp.lockGroup
       ),
+      muteGroup: clsx(
+        suppressStandardClassnames || standardClassnames.muteGroup,
+        classNamesProp.actionElement,
+        classNamesProp.muteGroup
+      ),
       removeGroup: clsx(
         suppressStandardClassnames || standardClassnames.removeGroup,
         classNamesProp.actionElement,
@@ -573,6 +619,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.dragHandle,
       classNamesProp.header,
       classNamesProp.lockGroup,
+      classNamesProp.muteGroup,
       classNamesProp.notToggle,
       classNamesProp.removeGroup,
       classNamesProp.shiftActions,
@@ -663,6 +710,10 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const toggleLockGroup: ActionElementEventHandler = useCallback(() => {
     onPropChange('disabled', !disabled, path);
   }, [disabled, onPropChange, path]);
+
+  const toggleMuteGroup: ActionElementEventHandler = useCallback(() => {
+    onPropChange('muted', !ruleGroup.muted, path);
+  }, [ruleGroup.muted, onPropChange, path]);
 
   const removeGroup: ActionElementEventHandler = useCallback(() => {
     if (!disabled) {
@@ -756,6 +807,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     shiftGroupUp,
     shiftGroupDown,
     toggleLockGroup,
+    toggleMuteGroup,
     validationClassName,
     validationResult,
   };

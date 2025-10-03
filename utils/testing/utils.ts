@@ -36,6 +36,7 @@ export const basicSchema: Schema<FullField, string> = {
   showShiftActions: false,
   showCloneButtons: false,
   showLockButtons: false,
+  showMuteButtons: false,
   autoSelectField: true,
   autoSelectOperator: true,
   autoSelectValue: true,

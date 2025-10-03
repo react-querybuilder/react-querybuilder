@@ -120,6 +120,8 @@ export const useMergedContext = <
       header: cc.header,
       lockGroup: cc.lockGroup,
       lockRule: cc.lockRule,
+      muteGroup: cc.muteGroup,
+      muteRule: cc.muteRule,
       notToggle: cc.notToggle,
       operators: cc.operators,
       queryBuilder: cc.queryBuilder,
@@ -169,6 +171,8 @@ export const useMergedContext = <
       cc.invalid,
       cc.lockGroup,
       cc.lockRule,
+      cc.muteGroup,
+      cc.muteRule,
       cc.matchMode,
       cc.matchThreshold,
       cc.notToggle,
@@ -258,6 +262,8 @@ export const useMergedContext = <
         ),
         mergeControlElement('lockGroupAction', propsCE.lockGroupAction, contextCE.lockGroupAction),
         mergeControlElement('lockRuleAction', propsCE.lockRuleAction, contextCE.lockRuleAction),
+        mergeControlElement('muteGroupAction', propsCE.muteGroupAction, contextCE.muteGroupAction),
+        mergeControlElement('muteRuleAction', propsCE.muteRuleAction, contextCE.muteRuleAction),
         mergeControlElement('notToggle', propsCE.notToggle, contextCE.notToggle),
         mergeControlElement(
           'operatorSelector',
@@ -328,6 +334,8 @@ export const useMergedContext = <
       contextCE.inlineCombinator,
       contextCE.lockGroupAction,
       contextCE.lockRuleAction,
+      contextCE.muteGroupAction,
+      contextCE.muteRuleAction,
       contextCE.matchModeEditor,
       contextCE.notToggle,
       contextCE.operatorSelector,
@@ -354,6 +362,8 @@ export const useMergedContext = <
       propsCE.inlineCombinator,
       propsCE.lockGroupAction,
       propsCE.lockRuleAction,
+      propsCE.muteGroupAction,
+      propsCE.muteRuleAction,
       propsCE.matchModeEditor,
       propsCE.notToggle,
       propsCE.operatorSelector,
@@ -463,6 +473,38 @@ export const useMergedContext = <
           {
             label: [propsT.lockRuleDisabled?.label, contextT.lockRuleDisabled?.label],
             title: [propsT.lockRuleDisabled?.title, contextT.lockRuleDisabled?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'muteGroup',
+          {
+            label: [propsT.muteGroup?.label, contextT.muteGroup?.label],
+            title: [propsT.muteGroup?.title, contextT.muteGroup?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'muteGroupDisabled',
+          {
+            label: [propsT.muteGroupDisabled?.label, contextT.muteGroupDisabled?.label],
+            title: [propsT.muteGroupDisabled?.title, contextT.muteGroupDisabled?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'muteRule',
+          {
+            label: [propsT.muteRule?.label, contextT.muteRule?.label],
+            title: [propsT.muteRule?.title, contextT.muteRule?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'muteRuleDisabled',
+          {
+            label: [propsT.muteRuleDisabled?.label, contextT.muteRuleDisabled?.label],
+            title: [propsT.muteRuleDisabled?.title, contextT.muteRuleDisabled?.title],
           },
           finalize ? defaultTranslations : undefined
         ),
@@ -583,6 +625,14 @@ export const useMergedContext = <
       contextT.lockRule?.title,
       contextT.lockRuleDisabled?.label,
       contextT.lockRuleDisabled?.title,
+      contextT.muteGroup?.label,
+      contextT.muteGroup?.title,
+      contextT.muteGroupDisabled?.label,
+      contextT.muteGroupDisabled?.title,
+      contextT.muteRule?.label,
+      contextT.muteRule?.title,
+      contextT.muteRuleDisabled?.label,
+      contextT.muteRuleDisabled?.title,
       contextT.matchMode?.title,
       contextT.matchThreshold?.title,
       contextT.notToggle?.label,
@@ -629,6 +679,14 @@ export const useMergedContext = <
       propsT.lockRule?.title,
       propsT.lockRuleDisabled?.label,
       propsT.lockRuleDisabled?.title,
+      propsT.muteGroup?.label,
+      propsT.muteGroup?.title,
+      propsT.muteGroupDisabled?.label,
+      propsT.muteGroupDisabled?.title,
+      propsT.muteRule?.label,
+      propsT.muteRule?.title,
+      propsT.muteRuleDisabled?.label,
+      propsT.muteRuleDisabled?.title,
       propsT.matchMode?.title,
       propsT.matchThreshold?.title,
       propsT.notToggle?.label,

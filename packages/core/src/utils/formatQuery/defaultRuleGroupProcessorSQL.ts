@@ -22,12 +22,24 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
+    // Skip muted groups
+    if (rg.muted) {
+      return '';
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       // TODO: test for the last case and remove "ignore" comment
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
     const processedRules = rg.rules
+      .filter(rule => {
+        // Filter out muted rules and groups
+        if (typeof rule !== 'string' && rule.muted) {
+          return false;
+        }
+        return true;
+      })
       .map(rule => {
         // Independent combinators
         if (typeof rule === 'string') {

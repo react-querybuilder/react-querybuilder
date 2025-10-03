@@ -478,6 +478,18 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   lockRuleAction: ComponentType<ActionProps> | null;
   /**
+   * Mutes the current group (sets the `muted` property to `true`).
+   *
+   * @default ActionElement
+   */
+  muteGroupAction: ComponentType<ActionProps> | null;
+  /**
+   * Mutes the current rule (sets the `muted` property to `true`).
+   *
+   * @default ActionElement
+   */
+  muteRuleAction: ComponentType<ActionProps> | null;
+  /**
    * Selects the `match` property for the current rule.
    *
    * @default MatchModeEditor
@@ -597,6 +609,7 @@ export interface Schema<F extends FullField, O extends string> {
   showShiftActions: boolean;
   showCloneButtons: boolean;
   showLockButtons: boolean;
+  showMuteButtons: boolean;
   autoSelectField: boolean;
   autoSelectOperator: boolean;
   autoSelectValue: boolean;
@@ -1148,6 +1161,12 @@ export type QueryBuilderProps<
        * @default false
        */
       showLockButtons?: boolean;
+      /**
+       * Show the "Mute rule" and "Mute group" buttons.
+       *
+       * @default false
+       */
+      showMuteButtons?: boolean;
       /**
        * Reset the `operator` and `value` when the `field` changes.
        *
