@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `useMergedContext` now handles `matchMode` and `matchThreshold` translations.
+- Default styles for `queryBuilder-justified` and `queryBuilder-branches` now work property under `dir="rtl"`.
 
 ## [v8.9.2] - 2025-09-22
 
