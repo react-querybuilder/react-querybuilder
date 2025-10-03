@@ -14,7 +14,7 @@ export const RulesEngineActionBuilderBody = (props: RulesEngineActionProps): Rea
     onActionChange,
     schema: {
       classnames: { actionBuilderBody },
-      components: { valueSelector: ValueSelector },
+      components: { actionSelector: ActionSelector },
       suppressStandardClassnames,
     },
   } = props;
@@ -33,7 +33,7 @@ export const RulesEngineActionBuilderBody = (props: RulesEngineActionProps): Rea
   return (
     <div className={className}>
       {props.actionTypes && (
-        <ValueSelector
+        <ActionSelector
           schema={props.schema}
           path={conditionPath}
           level={conditionPath.length}

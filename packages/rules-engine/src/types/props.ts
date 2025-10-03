@@ -50,6 +50,7 @@ export interface ComponentsRE {
   addAction: React.ComponentType<ActionElementREProps>;
   removeCondition: React.ComponentType<ActionElementREProps>;
   removeAction: React.ComponentType<ActionElementREProps>;
+  actionSelector: React.ComponentType<ValueSelectorREProps>;
   valueSelector: React.ComponentType<ValueSelectorREProps>;
 }
 

@@ -18,6 +18,7 @@ export const defaultComponentsRE: {
   actionBuilderBody: typeof RulesEngineActionBuilderBody;
   actionBuilderHeader: typeof RulesEngineActionBuilderHeader;
   actionElement: typeof ActionElementRE;
+  actionSelector: typeof ValueSelectorRE;
   addAction: typeof ActionElementRE;
   addCondition: typeof ActionElementRE;
   addSubcondition: typeof ActionElementRE;
@@ -35,6 +36,7 @@ export const defaultComponentsRE: {
   actionBuilderBody: RulesEngineActionBuilderBody,
   actionBuilderHeader: RulesEngineActionBuilderHeader,
   actionElement: ActionElementRE,
+  actionSelector: ValueSelectorRE,
   addAction: ActionElementRE,
   addCondition: ActionElementRE,
   addSubcondition: ActionElementRE,
