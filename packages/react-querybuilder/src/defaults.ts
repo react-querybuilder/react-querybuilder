@@ -33,6 +33,8 @@ export const defaultControlElements: {
   lockGroupAction: typeof ActionElement;
   lockRuleAction: typeof ActionElement;
   matchModeEditor: typeof MatchModeEditor;
+  muteGroupAction: typeof ActionElement;
+  muteRuleAction: typeof ActionElement;
   notToggle: typeof NotToggle;
   operatorSelector: typeof ValueSelector;
   removeGroupAction: typeof ActionElement;
@@ -58,6 +60,8 @@ export const defaultControlElements: {
   lockGroupAction: ActionElement,
   lockRuleAction: ActionElement,
   matchModeEditor: MatchModeEditor,
+  muteGroupAction: ActionElement,
+  muteRuleAction: ActionElement,
   notToggle: NotToggle,
   operatorSelector: ValueSelector,
   removeGroupAction: ActionElement,

@@ -7,6 +7,12 @@ export interface CommonRuleAndGroupProperties {
   path?: Path;
   id?: string;
   disabled?: boolean;
+  /**
+   * Whether this rule or group is muted. When muted, the rule or group
+   * is excluded from query export formats (SQL, JSON, MongoDB, etc.).
+   * For groups, muting recursively mutes all children.
+   */
+  muted?: boolean;
 }
 
 /**

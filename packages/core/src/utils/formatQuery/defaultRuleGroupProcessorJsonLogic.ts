@@ -32,11 +32,17 @@ export const defaultRuleGroupProcessorJsonLogic: RuleGroupProcessor<RQBJsonLogic
   const query = convertFromIC(ruleGroup);
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): RQBJsonLogic => {
+    // Skip muted groups
+    if (rg.muted) {
+      return false;
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return false;
     }
 
     const processedRules = rg.rules
+      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);

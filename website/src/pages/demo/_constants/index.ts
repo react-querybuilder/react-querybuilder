@@ -16,6 +16,7 @@ export const defaultOptions = {
   showNotToggle: false,
   showCloneButtons: false,
   showLockButtons: false,
+  showMuteButtons: false,
   resetOnFieldChange: true,
   resetOnOperatorChange: false,
   autoSelectField: true,
@@ -41,6 +42,7 @@ export const optionOrder: DemoOption[] = [
   'showNotToggle',
   'showCloneButtons',
   'showLockButtons',
+  'showMuteButtons',
   'showShiftActions',
   'resetOnFieldChange',
   'resetOnOperatorChange',
@@ -143,6 +145,11 @@ export const optionsMetadata = {
     link: '/docs/components/querybuilder#showlockbuttons',
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
+  },
+  showMuteButtons: {
+    link: '/docs/components/querybuilder#showmutebuttons',
+    label: 'Show mute buttons',
+    title: 'Display buttons to mute rules and groups (excludes them from query output)',
   },
   debugMode: {
     link: '/docs/components/querybuilder#debugmode',

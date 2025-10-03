@@ -26,6 +26,7 @@ export const defaultOptions: DemoOptions = {
   showCloneButtons: false,
   showCombinatorsBetweenRules: false,
   showLockButtons: false,
+  showMuteButtons: false,
   showNotToggle: false,
   validateQuery: false,
   showBranches: false,
@@ -50,6 +51,7 @@ export const optionOrder: DemoOption[] = [
   'showCloneButtons',
   'showCombinatorsBetweenRules',
   'showLockButtons',
+  'showMuteButtons',
   'showNotToggle',
   'showBranches',
   'justifiedLayout',
@@ -140,6 +142,11 @@ export const optionsMetadata: Record<
     link: '/docs/components/querybuilder#showlockbuttons',
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
+  },
+  showMuteButtons: {
+    link: '/docs/components/querybuilder#showmutebuttons',
+    label: 'Show mute buttons',
+    title: 'Display buttons to mute rules and groups (excludes them from query output)',
   },
   suppressStandardClassnames: {
     link: '/docs/components/querybuilder#suppressstandardclassnames',

@@ -41,11 +41,17 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
     const ruleProcessor = defaultRuleProcessorDrizzle;
 
     const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | undefined => {
+      // Skip muted groups
+      if (rg.muted) {
+        return;
+      }
+
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
         return;
       }
 
       const processedRules = rg.rules
+        .filter(rule => !rule.muted)
         .map(rule => {
           if (isRuleGroup(rule)) {
             return processRuleGroup(rule);
