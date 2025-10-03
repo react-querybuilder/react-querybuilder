@@ -12,6 +12,7 @@ import type {
 } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
+import type { ActionElementREProps, ValueSelectorREProps } from '../components';
 import type {
   RulesEngine,
   RulesEngineAction,
@@ -43,6 +44,13 @@ export interface ComponentsRE {
   queryBuilder: React.ComponentType<
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>
   >;
+  actionElement: React.ComponentType<ActionElementREProps>;
+  addCondition: React.ComponentType<ActionElementREProps>;
+  addSubcondition: React.ComponentType<ActionElementREProps>;
+  addAction: React.ComponentType<ActionElementREProps>;
+  removeCondition: React.ComponentType<ActionElementREProps>;
+  removeAction: React.ComponentType<ActionElementREProps>;
+  valueSelector: React.ComponentType<ValueSelectorREProps>;
 }
 
 export interface ClassnamesRE {

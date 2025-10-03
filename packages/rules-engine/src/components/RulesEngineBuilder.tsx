@@ -15,6 +15,7 @@ import {
   defaultTranslationsRE,
   standardClassnamesRE,
 } from '../defaults';
+import { useMergeComponents } from '../hooks';
 import type {
   ClassnamesRE,
   ComponentsRE,
@@ -27,7 +28,6 @@ import type {
   TranslationsFullRE,
 } from '../types';
 import { mergeClassnamesRE, prepareRulesEngine } from '../utils';
-import { defaultComponentsRE } from './defaultComponents';
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootPath: Path = [];
@@ -81,7 +81,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     suppressStandardClassnames = false,
     onRulesEngineChange,
     classnames: classnamesProp = defaultClassnamesRE,
-    components: componentsProp = defaultComponentsRE,
+    components: componentsProp,
     translations: translationsProp = {},
   } = props;
 
@@ -140,11 +140,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     [classnames.rulesEngineBuilder, suppressStandardClassnames]
   );
 
-  // TODO: do a proper merge here
-  const components = useMemo(
-    () => ({ ...defaultComponentsRE, ...componentsProp }),
-    [componentsProp]
-  );
+  const components = useMergeComponents(componentsProp ?? {});
+
   const [re, setRE] = useState<RulesEngine>(rulesEngineProp);
   const onChange = useCallback(
     (conditions: RulesEngineConditions<RG>) => {

@@ -16,6 +16,11 @@ export const RulesEngineConditionBuilderHeader = (
   const {
     schema: {
       classnames: { conditionBuilderHeader, blockLabel },
+      components: {
+        addCondition: AddCondition,
+        addAction: AddAction,
+        removeCondition: RemoveCondition,
+      },
       translations,
       suppressStandardClassnames,
     },
@@ -33,29 +38,42 @@ export const RulesEngineConditionBuilderHeader = (
     [blockLabel, suppressStandardClassnames]
   );
 
-  const { label: blockLabelLabel, title: blockLabelTitle } = React.useMemo(
-    () =>
-      props.conditionPath.at(-1) === 0 ? translations.blockLabelIf : translations.blockLabelElseIf,
-    [props.conditionPath, translations]
-  );
+  const { label: blockLabelLabel, title: blockLabelTitle } =
+    props.conditionPath.at(-1) === 0 ? translations.blockLabelIf : translations.blockLabelElseIf;
 
   return (
     <div className={wrapperClassName}>
       <div className={labelClassName} title={blockLabelTitle}>
         {blockLabelLabel}
       </div>
-      <button type="button" title={translations.addSubcondition.title}>
-        {translations.addSubcondition.label}
-      </button>
-      <button
-        type="button"
+      <AddCondition
+        schema={props.schema}
+        path={props.conditionPath}
+        level={props.conditionPath.length}
+        // oxlint-disable-next-line jsx-no-new-function-as-prop
+        handleOnClick={() => {}}
+        title={translations.addSubcondition.title}
+        label={translations.addSubcondition.label}
+      />
+      <AddAction
+        schema={props.schema}
+        path={props.conditionPath}
+        level={props.conditionPath.length}
+        disabled={!!props.condition.action}
+        // oxlint-disable-next-line jsx-no-new-function-as-prop
+        handleOnClick={() => {}}
         title={translations.addAction.title}
-        disabled={!!props.condition.action}>
-        {translations.addAction.label}
-      </button>
-      <button type="button" title={translations.removeCondition.title}>
-        {translations.removeCondition.label}
-      </button>
+        label={translations.addAction.label}
+      />
+      <RemoveCondition
+        schema={props.schema}
+        path={props.conditionPath}
+        level={props.conditionPath.length}
+        // oxlint-disable-next-line jsx-no-new-function-as-prop
+        handleOnClick={() => {}}
+        title={translations.removeCondition.title}
+        label={translations.removeCondition.label}
+      />
     </div>
   );
 };

@@ -12,6 +12,7 @@ export const RulesEngineActionBuilderHeader = (
   const {
     onActionChange,
     schema: {
+      components: { removeAction: RemoveAction },
       classnames: { actionBuilderHeader, blockLabel },
       translations,
       suppressStandardClassnames,
@@ -43,9 +44,14 @@ export const RulesEngineActionBuilderHeader = (
       <div className={labelClassName} title={title}>
         {label}
       </div>
-      <button type="button" onClick={removeAction} title={translations.removeAction.title}>
-        {translations.removeAction.label}
-      </button>
+      <RemoveAction
+        schema={props.schema}
+        path={props.conditionPath}
+        level={props.conditionPath.length}
+        handleOnClick={removeAction}
+        title={translations.removeAction.title}
+        label={translations.removeAction.label}
+      />
     </div>
   );
 };
