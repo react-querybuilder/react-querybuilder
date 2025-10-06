@@ -369,7 +369,7 @@ Output (`RuleGroupType`):
 
 ### Custom expressions
 
-Provide a `customExpressionHandler` function to process AST fragments that are not recognized by the default parser.
+Provide a `customExpressionHandler` function to process any AST fragments not recognized by the default parser.
 
 Example:
 
@@ -397,6 +397,8 @@ Output (`RuleGroupType`):
   ]
 }
 ```
+
+To assist with processing the AST fragments, all types, type guard functions, and other utilities used internally by `parseCEL` are exported.
 
 ## JSONata
 
