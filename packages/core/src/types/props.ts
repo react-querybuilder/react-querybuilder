@@ -107,6 +107,14 @@ export interface Classnames {
    */
   lockGroup: Classname;
   /**
+   * Classnames applied to the `<button>` to mute a Rule.
+   */
+  muteRule: Classname;
+  /**
+   * Classnames applied to the `<button>` to mute a RuleGroup.
+   */
+  muteGroup: Classname;
+  /**
    * Classnames applied to the `<select>` control for value sources.
    */
   valueSource: Classname;
@@ -157,6 +165,10 @@ export interface Classnames {
    * Classname(s) applied to disabled elements.
    */
   disabled: Classname;
+  /**
+   * Classname(s) applied to muted elements.
+   */
+  muted: Classname;
   /**
    * Classname(s) applied to each element in a series of value editors.
    */
@@ -243,6 +255,10 @@ export interface BaseTranslations<LabelType = string> {
   lockGroup: BaseTranslationWithLabel<LabelType>;
   lockRuleDisabled: BaseTranslationWithLabel<LabelType>;
   lockGroupDisabled: BaseTranslationWithLabel<LabelType>;
+  muteRule: BaseTranslationWithLabel<LabelType>;
+  muteGroup: BaseTranslationWithLabel<LabelType>;
+  muteRuleDisabled: BaseTranslationWithLabel<LabelType>;
+  muteGroupDisabled: BaseTranslationWithLabel<LabelType>;
   valueSourceSelector: BaseTranslation;
 }
 /**

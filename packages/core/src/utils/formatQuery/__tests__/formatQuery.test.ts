@@ -1,4 +1,4 @@
-import type { FormatQueryOptions, RuleGroupType, RuleType } from '../../../types';
+import type { FormatQueryOptions, RuleGroupType, RuleGroupTypeIC, RuleType } from '../../../types';
 import { convertToIC } from '../../convertQuery';
 import { prepareRuleGroup } from '../../prepareQueryObjects';
 import { formatQuery } from '../formatQuery';
@@ -276,5 +276,184 @@ describe('JSON.stringify/parse utils', () => {
   });
   it('parses bigints correctly', () => {
     expect(JSON.parse(queryAsString, bigIntJsonParseReviver)).toEqual(query);
+  });
+});
+
+describe('muted independent combinator handling', () => {
+  it('filters muted items in IC format', () => {
+    const queryIC: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2', muted: true },
+        'or',
+        { field: 'f3', operator: '=', value: 'v3' },
+      ],
+    };
+
+    const sql = formatQuery(queryIC, 'sql');
+    expect(sql).toEqual("(f1 = 'v1' or f3 = 'v3')");
+  });
+
+  it('handles muted IC groups', () => {
+    const queryIC: RuleGroupTypeIC = {
+      muted: true,
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2' },
+      ],
+    };
+
+    const sql = formatQuery(queryIC, 'sql');
+    expect(sql).toBe('(1 = 1)'); // Muted top-level group returns fallback expression
+  });
+
+  it('handles nested muted IC groups', () => {
+    const queryIC: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        {
+          muted: true,
+          rules: [
+            { field: 'f2', operator: '=', value: 'v2' },
+            'or',
+            { field: 'f3', operator: '=', value: 'v3' },
+          ],
+        },
+      ],
+    };
+
+    const sql = formatQuery(queryIC, 'sql');
+    expect(sql).toEqual("(f1 = 'v1')");
+  });
+
+  it('handles trailing combinator after muted items', () => {
+    // Tests cleaning up trailing combinators when all remaining rules are muted
+    const queryIC: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2', muted: true },
+        'or',
+        { field: 'f3', operator: '=', value: 'v3', muted: true },
+      ],
+    };
+
+    const sql = formatQuery(queryIC, 'sql');
+    expect(sql).toBe("(f1 = 'v1')");
+  });
+
+  it('handles muted top-level groups', () => {
+    // Tests that muted groups are handled correctly in different formats
+    const queryWithMutedGroup = {
+      combinator: 'and',
+      muted: true,
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        {
+          combinator: 'or',
+          rules: [{ field: 'f2', operator: '=', value: 'v2' }],
+        },
+      ],
+    };
+
+    const sql = formatQuery(queryWithMutedGroup, 'sql');
+    expect(sql).toBe('(1 = 1)'); // Muted top-level group returns fallback expression
+
+    // JSON format preserves the structure including muted property
+    const json = JSON.parse(formatQuery(queryWithMutedGroup, 'json'));
+    expect(json.muted).toBe(true);
+    expect(json.rules).toHaveLength(2);
+  });
+
+  it('handles IC query ending with combinator after all rules are muted', () => {
+    // Tests when all rules after a combinator are muted, leaving a trailing combinator
+    const queryIC: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2', muted: true },
+      ],
+    };
+
+    const sql = formatQuery(queryIC, 'sql');
+    expect(sql).toBe("(f1 = 'v1')");
+  });
+
+  it('removes trailing combinator in IC format', () => {
+    // Tests removal of trailing combinators in independent combinator format
+    // when unmuted items are followed by a combinator with no subsequent unmuted items
+    const queryIC: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2' },
+        'or',
+        // Everything after this combinator is muted, so 'or' becomes trailing
+      ] as unknown as RuleGroupTypeIC['rules'],
+    };
+
+    // The 'or' combinator at the end should be removed
+    const sql = formatQuery(queryIC, 'sql');
+    expect(sql).toBe("(f1 = 'v1' and f2 = 'v2')");
+
+    // Another case: combinator at the very end with no rules after it
+    const queryIC2: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+      ] as unknown as RuleGroupTypeIC['rules'],
+    };
+
+    const sql2 = formatQuery(queryIC2, 'sql');
+    expect(sql2).toBe("(f1 = 'v1')");
+  });
+
+  it('tests all branches of IC combinator removal logic', () => {
+    // Tests all combinations of combinator removal conditions in IC format
+
+    // Case 1: Standard format (has combinator) - should not remove preceding combinator
+    const standardQuery = {
+      combinator: 'and',
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        { field: 'f2', operator: '=', value: 'v2', muted: true },
+      ],
+    };
+    const sql1 = formatQuery(standardQuery, 'sql');
+    expect(sql1).toBe("(f1 = 'v1')");
+
+    // Case 2: IC format but no preceding combinator (first rule is muted)
+    const icQueryNoPrecedingCombinator: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1', muted: true },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2' },
+      ],
+    };
+    const sql2 = formatQuery(icQueryNoPrecedingCombinator, 'sql');
+    // When the first rule is muted, the following combinator should also be removed
+    expect(sql2).toBe("(f2 = 'v2')");
+
+    // Case 3: IC format with empty filteredRules (shouldn't happen but tests the condition)
+    const icQueryEmpty: RuleGroupTypeIC = {
+      rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
+    };
+    const sql3 = formatQuery(icQueryEmpty, 'sql');
+    expect(sql3).toBe('(1 = 1)'); // Empty query returns fallback expression
+
+    // Case 4: IC format with combinator not immediately preceding muted item
+    const icQueryCombinatorNotPreceding: RuleGroupTypeIC = {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2' },
+        { field: 'f3', operator: '=', value: 'v3', muted: true }, // No combinator before this
+      ] as unknown as RuleGroupTypeIC['rules'],
+    };
+    const sql4 = formatQuery(icQueryCombinatorNotPreceding, 'sql');
+    expect(sql4).toBe("(f1 = 'v1' and f2 = 'v2')");
   });
 });

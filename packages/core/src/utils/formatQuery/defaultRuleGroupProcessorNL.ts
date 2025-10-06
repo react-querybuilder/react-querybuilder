@@ -26,6 +26,11 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
+    // Skip muted groups
+    if (rg.muted) {
+      return '';
+    }
+
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       // TODO: test for the last case and remove "ignore" comment
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
@@ -36,44 +41,90 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         ? convertFromIC(rg)
         : rg;
 
-    const processedRules = rg2.rules.map(rule => {
-      // Independent combinators
+    const processedRules: string[] = [];
+    let lastValidRuleIndex = -1;
+
+    for (let i = 0; i < rg2.rules.length; i++) {
+      const rule = rg2.rules[i];
+
+      // Skip combinators for now, we'll handle them when we hit the next valid rule
       if (typeof rule === 'string') {
-        return `, ${translations[rule as NLTranslationKey] ?? rule} `;
+        continue;
       }
+
+      // Skip muted rules/groups
+      if (rule.muted) {
+        continue;
+      }
+
+      let processedRule: string | undefined;
 
       // Groups
       if (isRuleGroup(rule)) {
-        return processRuleGroup(
+        const unmutedRuleCount = rg2.rules.filter(r => typeof r !== 'string' && !r.muted).length;
+        const result = processRuleGroup(
           rule,
-          rg2.rules.length === 1 &&
+          unmutedRuleCount === 1 &&
             !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
         );
+        if (result) {
+          processedRule = result;
+        }
+      } else {
+        // Basic rule validation
+        const [validationResult, fieldValidator] = validateRule(rule);
+        if (
+          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+          rule.field === placeholderFieldName ||
+          rule.operator === placeholderOperatorName ||
+          /* istanbul ignore next */
+          (placeholderValueName !== undefined && rule.value === placeholderValueName)
+        ) {
+          continue;
+        }
+
+        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
+        const fieldData = getOption(fields, rule.field);
+
+        const result = ruleProcessor(rule, {
+          ...options,
+          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+          escapeQuotes,
+          fieldData,
+        });
+
+        if (result) {
+          processedRule = result;
+        }
       }
 
-      // Basic rule validation
-      const [validationResult, fieldValidator] = validateRule(rule);
-      if (
-        !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-        rule.field === placeholderFieldName ||
-        rule.operator === placeholderOperatorName ||
-        /* istanbul ignore next */
-        (placeholderValueName !== undefined && rule.value === placeholderValueName)
-      ) {
-        return '';
+      if (processedRule) {
+        // If this is not the first valid rule and we're in IC format, find the combinator
+        if (lastValidRuleIndex >= 0 && !isRuleGroupType(rg2)) {
+          // Find the combinator that immediately precedes this valid rule
+          let combinator: string | undefined;
+          for (let j = i - 1; j >= 0; j--) {
+            const item = rg2.rules[j];
+            if (typeof item === 'string') {
+              combinator = `, ${translations[item as NLTranslationKey] ?? item} `;
+              break;
+            }
+            // Skip muted rules
+            if (item.muted) {
+              continue;
+            }
+            // If we hit a non-muted rule, stop looking
+            break;
+          }
+          if (combinator) {
+            processedRules.push(combinator);
+          }
+        }
+
+        processedRules.push(processedRule);
+        lastValidRuleIndex = i;
       }
-
-      const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
-
-      const fieldData = getOption(fields, rule.field);
-
-      return ruleProcessor(rule, {
-        ...options,
-        parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-        escapeQuotes,
-        fieldData,
-      });
-    });
+    }
 
     if (processedRules.length === 0) {
       return fallbackExpression;
