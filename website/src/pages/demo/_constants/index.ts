@@ -178,7 +178,7 @@ export const optionsMetadata = {
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 
-export const optionOrderByLabel = optionOrder.sort((a, b) =>
+export const optionOrderByLabel = optionOrder.toSorted((a, b) =>
   optionsMetadata[a].label.localeCompare(optionsMetadata[b].label)
 );
 
@@ -276,6 +276,7 @@ export const styleNameMap: Record<StyleName, string> = {
 
 const { default: _d, ...compatStyles } = styleNameMap;
 
+// oxlint-disable-next-line no-array-sort
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
 
 const noReactOrRQB = (pd: string, _i: number, _a: Array<unknown>) =>

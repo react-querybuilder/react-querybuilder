@@ -422,9 +422,12 @@ export const prepareOptionList = <O extends FullOption>(
     Array.isArray(optionsProp)
       ? toFullOptionList(optionsProp, baseOption, labelMap)
       : (objectKeys(toFullOptionMap(optionsProp, baseOption)) as unknown as OptionIdentifier[])
-          .map<
-            FullOption<OptionIdentifier>
-          >(opt => ({ ...optionsProp[opt]!, name: opt, value: opt }))
+          .map<FullOption<OptionIdentifier>>(opt => ({
+            ...optionsProp[opt]!,
+            name: opt,
+            value: opt,
+          }))
+          // oxlint-disable-next-line no-array-sort
           .sort((a, b) => a.label.localeCompare(b.label))
   ) as FullOptionList<O>;
   if (isFlexibleOptionGroupArray(opts)) {
