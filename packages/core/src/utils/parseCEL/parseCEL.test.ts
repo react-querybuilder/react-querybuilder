@@ -12,9 +12,9 @@ import type {
   ValueSources,
 } from '../../types';
 import { toFullOption } from '../optGroupUtils';
-import type { ParseCELOptions } from './parseCEL';
+import type { ParseCELOptionsIC, ParseCELOptionsStandard } from './parseCEL';
 import { parseCEL } from './parseCEL';
-import type { CELExpression, CELExpressionList, CELIdentifier, CELIntegerLiteral } from './types';
+import { isCELIdentifier, isCELMember, isCELNumericLiteral } from './utils';
 
 const wrapRule = (
   rule?: DefaultRuleType | DefaultRuleType[],
@@ -30,7 +30,7 @@ const wrapRuleIC = (rule?: DefaultRuleType): DefaultRuleGroupTypeIC => ({
 const testParseCEL = (
   parseResult: DefaultRuleGroupType | string,
   expectedResult: DefaultRuleGroupType,
-  options?: Except<ParseCELOptions, 'independentCombinators'>
+  options?: Except<ParseCELOptionsStandard, 'independentCombinators'>
 ) => {
   expect(
     typeof parseResult === 'string'
@@ -43,7 +43,7 @@ const testParseCEL = (
 const testParseCELic = (
   parseResult: DefaultRuleGroupTypeIC | string,
   expectedResult: DefaultRuleGroupTypeIC,
-  options?: Except<ParseCELOptions, 'independentCombinators'>
+  options?: Except<ParseCELOptionsIC, 'independentCombinators'>
 ) => {
   expect(
     typeof parseResult === 'string'
@@ -557,17 +557,20 @@ it('handles custom expressions', () => {
       value: -1,
     } as unknown as DefaultRuleType),
     {
-      customExpressionHandler: expression => {
-        const expr = expression as CELExpression & {
-          left: CELIdentifier;
-          right: CELIdentifier;
-          list: CELExpressionList;
-        };
-        return {
-          field: expr.left.value,
-          operator: expr.right.value,
-          value: (expr.list.value[0] as CELIntegerLiteral).value,
-        };
+      customExpressionHandler: expr => {
+        if (
+          isCELMember(expr) &&
+          isCELIdentifier(expr.left!) &&
+          !!expr.right &&
+          expr.list?.value.length === 1 &&
+          isCELNumericLiteral(expr.list.value[0])
+        )
+          return {
+            field: expr.left.value,
+            operator: expr.right.value,
+            value: expr.list.value[0].value,
+          };
+        return null;
       },
     }
   );

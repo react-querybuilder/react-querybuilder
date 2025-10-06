@@ -97,7 +97,7 @@ export interface CELNegative extends CELExpression {
 export interface CELMember extends CELExpression {
   type: 'Member';
   value?: CELPrimary;
-  left?: CELMember;
+  left?: CELPrimary | CELMember;
   right?: CELIdentifier;
   list?: CELExpressionList;
 }

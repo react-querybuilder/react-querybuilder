@@ -9,7 +9,9 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  RuleGroupType,
   RuleGroupTypeAny,
+  RuleGroupTypeIC,
   RuleType,
   ValueSource,
 } from '../../types';
@@ -41,15 +43,26 @@ import {
   isCELStringLiteral,
 } from './utils';
 
-/**
- * Options object for {@link parseCEL}.
- */
-export interface ParseCELOptions extends ParserCommonOptions {
+export interface ParseCELOptionsStandard
+  extends Except<ParserCommonOptions, 'independentCombinators'> {
+  independentCombinators?: false;
   /**
    * Handler for custom CEL expressions.
    */
-  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupTypeAny | null;
+  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupType | null;
 }
+export interface ParseCELOptionsIC extends Except<ParserCommonOptions, 'independentCombinators'> {
+  independentCombinators: true;
+  /**
+   * Handler for custom CEL expressions.
+   */
+  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupTypeIC | null;
+}
+
+/**
+ * Options object for {@link parseCEL}.
+ */
+export type ParseCELOptions = ParseCELOptionsStandard | ParseCELOptionsIC;
 
 /**
  * Converts a CEL string expression into a query suitable for the
@@ -60,26 +73,38 @@ function parseCEL(cel: string): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
  * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
+ * ({@link index!RuleGroupType RuleGroupType}).
  */
 function parseCEL(
   cel: string,
-  options: Except<ParseCELOptions, 'independentCombinators'> & {
-    independentCombinators?: false;
+  options: ParseCELOptionsStandard & {
+    customExpressionHandler: (expr: CELExpression) => RuleType | RuleGroupType | null;
   }
-): DefaultRuleGroupType;
+): RuleGroupType;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!RuleGroupTypeIC RuleGroupTypeIC}).
+ */
+function parseCEL(
+  cel: string,
+  options: ParseCELOptionsIC & {
+    customExpressionHandler: (expr: CELExpression) => RuleType | RuleGroupTypeIC | null;
+  }
+): RuleGroupTypeIC;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
+ */
+function parseCEL(cel: string, options?: ParseCELOptionsStandard): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
  * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
-function parseCEL(
-  cel: string,
-  options: Except<ParseCELOptions, 'independentCombinators'> & {
-    independentCombinators: true;
-  }
-): DefaultRuleGroupTypeIC;
-function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
+function parseCEL(cel: string, options: ParseCELOptionsIC): DefaultRuleGroupTypeIC;
+function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny {
   const { fields, independentCombinators, listsAsArrays, customExpressionHandler } = options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
