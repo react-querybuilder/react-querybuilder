@@ -9,6 +9,8 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  RuleGroupTypeAny,
+  RuleType,
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
@@ -42,7 +44,12 @@ import {
 /**
  * Options object for {@link parseCEL}.
  */
-export interface ParseCELOptions extends ParserCommonOptions {}
+export interface ParseCELOptions extends ParserCommonOptions {
+  /**
+   * Handler for custom CEL expressions.
+   */
+  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupTypeAny | null;
+}
 
 /**
  * Converts a CEL string expression into a query suitable for the
@@ -73,7 +80,7 @@ function parseCEL(
   }
 ): DefaultRuleGroupTypeIC;
 function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
-  const { fields, independentCombinators, listsAsArrays } = options;
+  const { fields, independentCombinators, listsAsArrays, customExpressionHandler } = options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
 
@@ -290,6 +297,8 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
+    } else if (customExpressionHandler) {
+      return customExpressionHandler(expr) as DefaultRuleType | DefaultRuleGroupTypeAny | null;
     }
     return null;
   };

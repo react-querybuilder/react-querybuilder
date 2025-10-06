@@ -1,3 +1,5 @@
+/* oxlint-disable expect-expect */
+
 import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
@@ -12,6 +14,7 @@ import type {
 import { toFullOption } from '../optGroupUtils';
 import type { ParseCELOptions } from './parseCEL';
 import { parseCEL } from './parseCEL';
+import type { CELExpression, CELExpressionList, CELIdentifier, CELIntegerLiteral } from './types';
 
 const wrapRule = (
   rule?: DefaultRuleType | DefaultRuleType[],
@@ -49,7 +52,6 @@ const testParseCELic = (
   ).toEqual(expectedResult);
 };
 
-// oxlint-disable-next-line expect-expect
 it('works for basic relations', () => {
   testParseCEL('f1 == "Test"', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
   testParseCEL('f1.f2 == "Test"', wrapRule({ field: 'f1.f2', operator: '=', value: 'Test' }));
@@ -79,7 +81,6 @@ it('works for basic relations', () => {
   testParseCEL('1214 <= f1', wrapRule({ field: 'f1', operator: '>=', value: 1214 }));
 });
 
-// oxlint-disable-next-line expect-expect
 it('negates basic relations', () => {
   testParseCEL('!(f1 == "Test")', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
   testParseCEL('!(f1 != "Test")', wrapRule({ field: 'f1', operator: '=', value: 'Test' }));
@@ -90,14 +91,12 @@ it('negates basic relations', () => {
   testParseCEL('!("Test" == f1)', wrapRule({ field: 'f1', operator: '!=', value: 'Test' }));
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles every letter within strings', () => {
   for (const value of 'abcdefghijklmnopqrstuvwxyz') {
     testParseCEL(`f1 == "${value}"`, wrapRule({ field: 'f1', operator: '=', value }));
   }
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles multi-line strings', () => {
   for (const q of `'"`) {
     testParseCEL(
@@ -107,7 +106,6 @@ it('handles multi-line strings', () => {
   }
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles "like" comparisons', () => {
   testParseCEL(
     'f1.contains("Test")',
@@ -139,7 +137,6 @@ it('handles "like" comparisons', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('negates "like" comparisons', () => {
   testParseCEL(
     '!f1.contains("Test")',
@@ -171,7 +168,6 @@ it('negates "like" comparisons', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('groups only when necessary', () => {
   testParseCEL('(f1 == "Test" || f2 == "Test2")', {
     combinator: 'or',
@@ -189,7 +185,6 @@ it('groups only when necessary', () => {
   });
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles parentheses', () => {
   testParseCEL('(f1 == "Test" || f2 == "Test2") && f3 == "Test3"', {
     combinator: 'and',
@@ -210,7 +205,6 @@ it('handles parentheses', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('works for conditional and/or', () => {
   testParseCEL(
     'f1 == "Test" && f2 == "Test2"',
@@ -244,7 +238,6 @@ it('works for conditional and/or', () => {
   });
 });
 
-// oxlint-disable-next-line expect-expect
 it('mixed and/or', () => {
   testParseCEL(`firstName == 'Steve' && lastName == 'Vai' || middleName == null`, {
     combinator: 'or',
@@ -345,7 +338,6 @@ describe('fields and getValueSources', () => {
   }
   const getValueSources = (): ValueSources => ['field'];
 
-  // oxlint-disable-next-line expect-expect
   it('sets the valueSource when fields are valid', () => {
     testParseCEL(
       parseCEL(`f1 == 'Steve'`, { fields }),
@@ -375,7 +367,6 @@ describe('fields and getValueSources', () => {
     }
   });
 
-  // oxlint-disable-next-line expect-expect
   it('uses the getValueSources option', () => {
     testParseCEL(
       parseCEL(`f5 == f6`, { fields, getValueSources }),
@@ -399,7 +390,6 @@ describe('fields and getValueSources', () => {
     );
   });
 
-  // oxlint-disable-next-line expect-expect
   it('ignores invalid fields', () => {
     // `firstName` is not in the field list
     testParseCEL(parseCEL(`firstName == 'Steve'`, { fields }), wrapRule());
@@ -442,7 +432,6 @@ describe('fields and getValueSources', () => {
   });
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles "in" operator', () => {
   testParseCEL(
     'f1 in ["Test","Test2"]',
@@ -471,7 +460,6 @@ it('handles "in" operator', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('outputs lists as arrays', () => {
   testParseCEL(
     parseCEL('f1 in ["Test","Test2"]', { listsAsArrays: true }),
@@ -487,7 +475,6 @@ it('outputs lists as arrays', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles multiple negations', () => {
   testParseCEL(
     '!!!f1.contains("Test")',
@@ -507,7 +494,6 @@ it('handles multiple negations', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('handles independent combinators', () => {
   testParseCELic('(f1 == "Test")', {
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],
@@ -546,7 +532,6 @@ it('generates IDs', () => {
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('ignores things', () => {
   const expressionsToIgnore = [
     '',
@@ -561,4 +546,29 @@ it('ignores things', () => {
   for (const pr of expressionsToIgnore) {
     testParseCEL(pr, wrapRule());
   }
+});
+
+it('handles custom expressions', () => {
+  testParseCEL(
+    'opted_in_at.isBirthday(-1)',
+    wrapRule({
+      field: 'opted_in_at',
+      operator: 'isBirthday',
+      value: -1,
+    } as unknown as DefaultRuleType),
+    {
+      customExpressionHandler: expression => {
+        const expr = expression as CELExpression & {
+          left: CELIdentifier;
+          right: CELIdentifier;
+          list: CELExpressionList;
+        };
+        return {
+          field: expr.left.value,
+          operator: expr.right.value,
+          value: (expr.list.value[0] as CELIntegerLiteral).value,
+        };
+      },
+    }
+  );
 });

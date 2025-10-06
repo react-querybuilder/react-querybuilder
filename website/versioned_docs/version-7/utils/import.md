@@ -367,6 +367,37 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Custom expressions
+
+Provide a `customExpressionHandler` function to process AST fragments that are not recognized by the default parser.
+
+Example:
+
+```ts
+parseCEL('opted_in_at.isBirthday(-1)', {
+  customExpressionHandler: expr => ({
+    field: expr.left.value,
+    operator: expr.right.value,
+    value: expr.list.value[0].value,
+  }),
+});
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [
+    {
+      "field": "opted_in_at",
+      "operator": "isBirthday",
+      "value": -1
+    }
+  ]
+}
+```
+
 ## JSONata
 
 ```ts

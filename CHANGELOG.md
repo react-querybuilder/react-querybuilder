@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `customExpressionHandler` option for `parseCEL`.
+
 ### Fixed
 
 - `useMergedContext` now handles `matchMode` and `matchThreshold` translations.
