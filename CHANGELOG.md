@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `customExpressionHandler` option for `parseCEL`.
+- [#950] `customExpressionHandler` option for `parseCEL`.
+- [#950] `parseCEL` types, type guard functions, and other utilities are exported.
 
 ### Fixed
 
@@ -2019,6 +2020,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 [#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
+[#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950
 
 <!-- #endregion -->
 
