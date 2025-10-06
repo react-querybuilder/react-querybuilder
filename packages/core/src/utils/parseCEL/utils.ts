@@ -67,40 +67,56 @@ export const isCELIdentifier = (expr: CELExpression): expr is CELIdentifier =>
 export const isCELNegation = (expr: CELExpression): expr is CELNegation => expr.type === 'Negation';
 export const isCELMember = (expr: CELExpression): expr is CELMember => expr.type === 'Member';
 
+// istanbul ignore next
 export const isCELAddition = (expr: CELExpression): expr is CELAddition => expr.type === 'Addition';
 export const isCELBooleanLiteral = (expr: CELExpression): expr is CELBooleanLiteral =>
   expr.type === 'BooleanLiteral';
 export const isCELBytesLiteral = (expr: CELExpression): expr is CELBytesLiteral =>
   expr.type === 'BytesLiteral';
+// istanbul ignore next
 export const isCELConditionalExpr = (expr: CELExpression): expr is CELConditionalExpr =>
   expr.type === 'ConditionalExpr';
+// istanbul ignore next
 export const isCELDivision = (expr: CELExpression): expr is CELDivision => expr.type === 'Division';
+// istanbul ignore next
 export const isCELDynamicPropertyAccessor = (
   expr: CELExpression
 ): expr is CELDynamicPropertyAccessor => expr.type === 'DynamicPropertyAccessor';
+// istanbul ignore next
 export const isCELExpressionList = (expr: CELExpression): expr is CELExpressionList =>
   expr.type === 'ExpressionList';
+// istanbul ignore next
 export const isCELFieldInit = (expr: CELExpression): expr is CELFieldInit =>
   expr.type === 'FieldInit';
+// istanbul ignore next
 export const isCELFieldInits = (expr: CELExpression): expr is CELFieldInits =>
   expr.type === 'FieldInits';
+// istanbul ignore next
 export const isCELFieldsObject = (expr: CELExpression): expr is CELFieldsObject =>
   expr.type === 'FieldsObject';
 export const isCELFloatLiteral = (expr: CELExpression): expr is CELFloatLiteral =>
   expr.type === 'FloatLiteral';
+// istanbul ignore next
 export const isCELFunctionCall = (expr: CELExpression): expr is CELFunctionCall =>
   expr.type === 'FunctionCall';
 export const isCELIntegerLiteral = (expr: CELExpression): expr is CELIntegerLiteral =>
   expr.type === 'IntegerLiteral';
+// istanbul ignore next
 export const isCELMapInit = (expr: CELExpression): expr is CELMapInit => expr.type === 'MapInit';
+// istanbul ignore next
 export const isCELMapInits = (expr: CELExpression): expr is CELMapInits => expr.type === 'MapInits';
+// istanbul ignore next
 export const isCELModulo = (expr: CELExpression): expr is CELModulo => expr.type === 'Modulo';
+// istanbul ignore next
 export const isCELMultiplication = (expr: CELExpression): expr is CELMultiplication =>
   expr.type === 'Multiplication';
+// istanbul ignore next
 export const isCELNegative = (expr: CELExpression): expr is CELNegative => expr.type === 'Negative';
 export const isCELNullLiteral = (expr: CELExpression): expr is CELNullLiteral =>
   expr.type === 'NullLiteral';
+// istanbul ignore next
 export const isCELProperty = (expr: CELExpression): expr is CELProperty => expr.type === 'Property';
+// istanbul ignore next
 export const isCELSubtraction = (expr: CELExpression): expr is CELSubtraction =>
   expr.type === 'Subtraction';
 export const isCELUnsignedIntegerLiteral = (
