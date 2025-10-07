@@ -44,6 +44,13 @@ it('independent combinators', () => {
   expect(formatQuery(queryIC, 'jsonata')).toBe(
     `firstName = "Test" and middleName = "Test" or lastName = "Test"`
   );
+
+  expect(
+    formatQuery(
+      { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+      'jsonata'
+    )
+  ).toBe(`field = "" and (1 = 1)`);
 });
 
 describe('validation', () => {
@@ -56,6 +63,8 @@ describe('validation', () => {
     'should invalidate jsonata inner group': '(1 = 1)',
     'should convert jsonata inner group with no rules to fallbackExpression':
       'field = "" and (1 = 1)',
+    'should invalidate jsonata following combinator of first rule': 'field2 = "" or field3 = ""',
+    'should invalidate jsonata preceding combinator of non-first rule': 'field = "" or field3 = ""',
   };
 
   for (const vtd of getValidationTestData('jsonata')) {

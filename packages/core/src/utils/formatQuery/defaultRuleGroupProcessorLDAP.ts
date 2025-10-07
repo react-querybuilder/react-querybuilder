@@ -22,20 +22,12 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
     validationMap,
   } = options;
 
-  const query = convertFromIC(ruleGroup);
-
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-    // Skip muted groups
-    if (rg.muted) {
-      return '';
-    }
-
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return outermost ? fallbackExpression : '';
     }
 
     const rules: string[] = rg.rules
-      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);
@@ -71,5 +63,5 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
     return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
   };
 
-  return processRuleGroup(query, true);
+  return processRuleGroup(convertFromIC(ruleGroup), true);
 };

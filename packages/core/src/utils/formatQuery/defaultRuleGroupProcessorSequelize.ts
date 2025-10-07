@@ -37,11 +37,6 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
   if (!Op) return;
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
-    // Skip muted groups
-    if (rg.muted) {
-      return;
-    }
-
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return;
     }
@@ -50,7 +45,6 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
     let hasChildRules = false;
 
     const expressions: Record<string, unknown>[] = rg.rules
-      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           const processedRuleGroup = processRuleGroup(rule);

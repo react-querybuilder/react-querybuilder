@@ -24,21 +24,13 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
     validationMap,
   } = options;
 
-  const query = convertFromIC(ruleGroup);
-
   // oxlint-disable-next-line typescript/no-explicit-any
   const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
-    // Skip muted groups
-    if (rg.muted) {
-      return false;
-    }
-
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return false;
     }
 
     const processedRules = rg.rules
-      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           return processRuleGroup(rule);
@@ -77,6 +69,6 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
     };
   };
 
-  const processedRuleGroup = processRuleGroup(query);
+  const processedRuleGroup = processRuleGroup(convertFromIC(ruleGroup));
   return processedRuleGroup === false ? {} : processedRuleGroup;
 };

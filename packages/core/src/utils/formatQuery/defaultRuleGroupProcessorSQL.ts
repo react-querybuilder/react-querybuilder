@@ -22,96 +22,66 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
-    // Skip muted groups
-    if (rg.muted) {
-      return outermostOrLonelyInGroup ? fallbackExpression : '';
-    }
-
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       // TODO: test for the last case and remove "ignore" comment
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    const processedRules: string[] = [];
-    let lastValidRuleIndex = -1;
+    const processedRules = [];
+    let precedingCombinator = '';
+    let firstRule = true;
 
-    for (let i = 0; i < rg.rules.length; i++) {
-      const rule = rg.rules[i];
-
-      // Skip combinators for now, we'll handle them when we hit the next valid rule
+    for (const rule of rg.rules) {
+      // Independent combinators
       if (typeof rule === 'string') {
+        precedingCombinator = rule;
         continue;
       }
-
-      // Skip muted rules/groups
-      if (rule.muted) {
-        continue;
-      }
-
-      let processedRule: string | undefined;
 
       // Groups
       if (isRuleGroup(rule)) {
-        const result = processRuleGroup(
-          rule,
-          rg.rules.filter(r => typeof r !== 'string' && !r.muted).length === 1
-        );
-        if (result) {
-          processedRule = result;
+        const processedGroup = processRuleGroup(rule, rg.rules.length === 1);
+        // istanbul ignore else
+        if (processedGroup) {
+          if (!firstRule && precedingCombinator) {
+            processedRules.push(precedingCombinator);
+            precedingCombinator = '';
+          }
+          firstRule = false;
+          processedRules.push(processedGroup);
         }
-      } else {
-        // Basic rule validation
-        const [validationResult, fieldValidator] = validateRule(rule);
-        if (
-          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-          rule.field === placeholderFieldName ||
-          rule.operator === placeholderOperatorName ||
-          (placeholderValueName !== undefined && rule.value === placeholderValueName)
-        ) {
-          continue;
-        }
-
-        const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
-        const fieldData = getOption(fields, rule.field);
-
-        const result = ruleProcessor(rule, {
-          ...options,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          escapeQuotes,
-          fieldData,
-        });
-
-        if (result) {
-          processedRule = result;
-        }
+        continue;
       }
 
-      if (processedRule) {
-        // If this is not the first valid rule and we're in IC format, find the combinator
-        if (lastValidRuleIndex >= 0 && !isRuleGroupType(rg)) {
-          // Find the combinator that immediately precedes this valid rule
-          // (i.e., the last combinator before this rule)
-          let combinator: string | undefined;
-          for (let j = i - 1; j >= 0; j--) {
-            const item = rg.rules[j];
-            if (typeof item === 'string') {
-              combinator = item;
-              break;
-            }
-            // Skip muted rules
-            if (item.muted) {
-              continue;
-            }
-            // If we hit a non-muted rule, stop looking
-            break;
-          }
-          if (combinator) {
-            processedRules.push(combinator);
-          }
-        }
+      // Basic rule validation
+      const [validationResult, fieldValidator] = validateRule(rule);
+      if (
+        !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+        rule.field === placeholderFieldName ||
+        rule.operator === placeholderOperatorName ||
+        (placeholderValueName !== undefined && rule.value === placeholderValueName)
+      ) {
+        continue;
+      }
 
+      const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
+
+      const fieldData = getOption(fields, rule.field);
+
+      const processedRule = ruleProcessor(rule, {
+        ...options,
+        parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+        escapeQuotes,
+        fieldData,
+      });
+
+      if (processedRule) {
+        if (!firstRule && precedingCombinator) {
+          processedRules.push(precedingCombinator);
+          precedingCombinator = '';
+        }
+        firstRule = false;
         processedRules.push(processedRule);
-        lastValidRuleIndex = i;
       }
     }
 

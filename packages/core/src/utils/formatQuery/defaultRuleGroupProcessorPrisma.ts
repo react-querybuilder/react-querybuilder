@@ -32,11 +32,6 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
   } = options;
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-    // Skip muted groups
-    if (rg.muted) {
-      return undefined;
-    }
-
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return outermost ? prismaFallback : undefined;
     }
@@ -45,7 +40,6 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
     let hasChildRules = false;
 
     const expressions: Record<string, unknown>[] = rg.rules
-      .filter(rule => !rule.muted)
       .map(rule => {
         if (isRuleGroup(rule)) {
           const processedRuleGroup = processRuleGroup(rule);

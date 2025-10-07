@@ -403,7 +403,7 @@ describe('update', () => {
     );
   });
 
-  describe('mute with IC', () => {
+  describe('mutes with IC', () => {
     it('mutes IC group with string combinators', () => {
       const icQuery: DefaultRuleGroupTypeIC = {
         rules: [
@@ -436,7 +436,9 @@ describe('update', () => {
       expect(unmutedQuery.rules[1]).toBe('and');
       expect(unmutedQuery.rules[2]).not.toHaveProperty('muted');
     });
+  });
 
+  describe('mutes', () => {
     it('handles unmuting with broken parent path', () => {
       // Tests the scenario where parent path traversal encounters an invalid path
       // Mock a scenario where the parent lookup might fail
@@ -474,10 +476,7 @@ describe('update', () => {
                 combinator: 'and',
                 rules: [
                   { field: 'f1', operator: '=', value: 'v1' },
-                  {
-                    combinator: 'or',
-                    rules: [{ field: 'f2', operator: '=', value: 'v2' }],
-                  },
+                  { combinator: 'or', rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
                 ],
               },
             ],
