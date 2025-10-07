@@ -9,6 +9,10 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  RuleGroupType,
+  RuleGroupTypeAny,
+  RuleGroupTypeIC,
+  RuleType,
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
@@ -19,11 +23,12 @@ import { prepareRuleGroup } from '../prepareQueryObjects';
 import { celParser } from './celParser';
 import type { CELExpression, CELIdentifier, CELLikeExpression, CELLiteral } from './types';
 import {
+  celGenerateFlatAndOrList,
+  celGenerateMixedAndOrList,
+  celNormalizeOperator,
   evalCELLiteralValue,
-  generateFlatAndOrList,
-  generateMixedAndOrList,
-  getIdentifierFromChain,
-  getIdentifierFromNegatedChain,
+  getCELIdentifierFromChain,
+  getCELIdentifierFromNegatedChain,
   isCELConditionalAnd,
   isCELConditionalOr,
   isCELExpressionGroup,
@@ -36,13 +41,28 @@ import {
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
-  normalizeOperator,
 } from './utils';
+
+export interface ParseCELOptionsStandard
+  extends Except<ParserCommonOptions, 'independentCombinators'> {
+  independentCombinators?: false;
+  /**
+   * Handler for custom CEL expressions.
+   */
+  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupType | null;
+}
+export interface ParseCELOptionsIC extends Except<ParserCommonOptions, 'independentCombinators'> {
+  independentCombinators: true;
+  /**
+   * Handler for custom CEL expressions.
+   */
+  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupTypeIC | null;
+}
 
 /**
  * Options object for {@link parseCEL}.
  */
-export interface ParseCELOptions extends ParserCommonOptions {}
+export type ParseCELOptions = ParseCELOptionsStandard | ParseCELOptionsIC;
 
 /**
  * Converts a CEL string expression into a query suitable for the
@@ -53,27 +73,39 @@ function parseCEL(cel: string): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
  * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
- * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
+ * ({@link index!RuleGroupType RuleGroupType}).
  */
 function parseCEL(
   cel: string,
-  options: Except<ParseCELOptions, 'independentCombinators'> & {
-    independentCombinators?: false;
+  options: ParseCELOptionsStandard & {
+    customExpressionHandler: (expr: CELExpression) => RuleType | RuleGroupType | null;
   }
-): DefaultRuleGroupType;
+): RuleGroupType;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!RuleGroupTypeIC RuleGroupTypeIC}).
+ */
+function parseCEL(
+  cel: string,
+  options: ParseCELOptionsIC & {
+    customExpressionHandler: (expr: CELExpression) => RuleType | RuleGroupTypeIC | null;
+  }
+): RuleGroupTypeIC;
+/**
+ * Converts a CEL string expression into a query suitable for the
+ * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
+ * ({@link index!DefaultRuleGroupType DefaultRuleGroupType}).
+ */
+function parseCEL(cel: string, options?: ParseCELOptionsStandard): DefaultRuleGroupType;
 /**
  * Converts a CEL string expression into a query suitable for the
  * {@link index!QueryBuilder QueryBuilder} component's `query` or `defaultQuery` props
  * ({@link index!DefaultRuleGroupTypeIC DefaultRuleGroupTypeIC}).
  */
-function parseCEL(
-  cel: string,
-  options: Except<ParseCELOptions, 'independentCombinators'> & {
-    independentCombinators: true;
-  }
-): DefaultRuleGroupTypeIC;
-function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupTypeAny {
-  const { fields, independentCombinators, listsAsArrays } = options;
+function parseCEL(cel: string, options: ParseCELOptionsIC): DefaultRuleGroupTypeIC;
+function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny {
+  const { fields, independentCombinators, listsAsArrays, customExpressionHandler } = options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
 
@@ -107,7 +139,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
     if (isCELNegation(expr) || isCELNegatedLikeExpression(expr)) {
       const negate = isCELNegation(expr)
         ? expr.negations % 2 === 1
-        : (getIdentifierFromNegatedChain(expr.left).match(/^!+/)?.[0].length ?? 0) % 2 === 1;
+        : (getCELIdentifierFromNegatedChain(expr.left).match(/^!+/)?.[0].length ?? 0) % 2 === 1;
       const negatedExpr =
         isCELNegation(expr) &&
         isCELExpressionGroup(expr.value) &&
@@ -119,7 +151,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
                   ...expr,
                   left: {
                     type: 'Identifier',
-                    value: getIdentifierFromNegatedChain(expr.left).replace(/^!+/, ''),
+                    value: getCELIdentifierFromNegatedChain(expr.left).replace(/^!+/, ''),
                   },
                 } as CELLikeExpression,
                 { forwardNegation: negate }
@@ -171,7 +203,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       }
     } else if (isCELConditionalAnd(expr) || isCELConditionalOr(expr)) {
       if (ic) {
-        const andOrList = generateFlatAndOrList(expr);
+        const andOrList = celGenerateFlatAndOrList(expr);
         const rules = andOrList.map(v => {
           if (typeof v === 'string') {
             return v;
@@ -187,7 +219,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
           rules: rules as DefaultRuleGroupICArray,
         };
       }
-      const andOrList = generateMixedAndOrList(expr);
+      const andOrList = celGenerateMixedAndOrList(expr);
       const combinator = andOrList[1] as DefaultCombinatorName;
       const filteredList = andOrList
         .filter(v => Array.isArray(v) || (!!v && typeof v !== 'string' && 'type' in v))
@@ -210,7 +242,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         return { combinator, rules };
       }
     } else if (isCELLikeExpression(expr)) {
-      const field = getIdentifierFromChain(expr.left);
+      const field = getCELIdentifierFromChain(expr.left);
       const func = expr.right.value;
       const operatorPre: DefaultOperatorName = func === 'startsWith' ? 'beginsWith' : func;
       const operator = forwardedNegation
@@ -233,9 +265,9 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       let flip = false;
       const { left, right } = expr;
       if (isCELIdentifierOrChain(left)) {
-        field = getIdentifierFromChain(left);
+        field = getCELIdentifierFromChain(left);
         if (isCELIdentifierOrChain(right)) {
-          value = getIdentifierFromChain(right);
+          value = getCELIdentifierFromChain(right);
           valueSource = 'field';
         } else if (isCELLiteral(right)) {
           value = evalCELLiteralValue(right);
@@ -244,11 +276,11 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         /* istanbul ignore else */
         if (isCELIdentifierOrChain(right) && isCELLiteral(left) && expr.operator !== 'in') {
           flip = true;
-          field = getIdentifierFromChain(right);
+          field = getCELIdentifierFromChain(right);
           value = evalCELLiteralValue(left);
         }
       }
-      let operator = normalizeOperator(expr.operator, flip);
+      let operator = celNormalizeOperator(expr.operator, flip);
       if (forwardedNegation) {
         operator = defaultOperatorNegationMap[operator];
       }
@@ -260,7 +292,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         } else {
           if (right.value.value.every(v => isCELIdentifierOrChain(v))) {
             valueSource = 'field';
-            value = right.value.value.map(id => getIdentifierFromChain(id));
+            value = right.value.value.map(id => getCELIdentifierFromChain(id));
           }
         }
         if (value && !listsAsArrays) {
@@ -273,7 +305,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
         const keys = right.value.value.map(v => v.left);
         if (keys.every(k => isCELLiteral(k) || isCELIdentifierOrChain(k))) {
           value = (keys as (CELLiteral | CELIdentifier)[]).map(k =>
-            isCELLiteral(k) ? evalCELLiteralValue(k) : getIdentifierFromChain(k)
+            isCELLiteral(k) ? evalCELLiteralValue(k) : getCELIdentifierFromChain(k)
           );
         }
         if (value && !listsAsArrays) {
@@ -290,6 +322,8 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): DefaultRuleGroupT
       ) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
+    } else if (customExpressionHandler) {
+      return customExpressionHandler(expr) as DefaultRuleType | DefaultRuleGroupTypeAny | null;
     }
     return null;
   };

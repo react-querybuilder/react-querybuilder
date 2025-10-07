@@ -6,3 +6,5 @@
  */
 
 export * from './parseCEL';
+export * from './types';
+export * from './utils';
