@@ -22,8 +22,6 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
     validationMap,
   } = options;
 
-  const query = convertFromIC(ruleGroup);
-
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return outermost ? fallbackExpression : '';
@@ -65,5 +63,5 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
     return expression ? `${prefix}${expression}${suffix}` : fallbackExpression;
   };
 
-  return processRuleGroup(query, true);
+  return processRuleGroup(convertFromIC(ruleGroup), true);
 };

@@ -554,6 +554,12 @@ describe('validation', () => {
       [`should convert ${fmt} inner group with no rules to fallbackExpression`]: {
         $and: [{ field: '' }, { $and: [{ $expr: true }] }],
       },
+      [`should invalidate ${fmt} following combinator of first rule`]: {
+        $or: [{ field2: '' }, { field3: '' }],
+      },
+      [`should invalidate ${fmt} preceding combinator of non-first rule`]: {
+        $or: [{ field: '' }, { field3: '' }],
+      },
     };
 
     for (const vtd of getValidationTestData(fmt)) {

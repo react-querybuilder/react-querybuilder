@@ -36,19 +36,34 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         ? convertFromIC(rg)
         : rg;
 
-    const processedRules = rg2.rules.map(rule => {
+    const processedRules = [];
+    let precedingCombinator = '';
+    let firstRule = true;
+
+    for (const rule of rg2.rules) {
       // Independent combinators
       if (typeof rule === 'string') {
-        return `, ${translations[rule as NLTranslationKey] ?? rule} `;
+        precedingCombinator = `, ${translations[rule as NLTranslationKey] ?? rule} `;
+        continue;
       }
 
       // Groups
       if (isRuleGroup(rule)) {
-        return processRuleGroup(
+        const processedGroup = processRuleGroup(
           rule,
           rg2.rules.length === 1 &&
             !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
         );
+        // istanbul ignore else
+        if (processedGroup) {
+          if (!firstRule && precedingCombinator) {
+            processedRules.push(precedingCombinator);
+            precedingCombinator = '';
+          }
+          firstRule = false;
+          processedRules.push(processedGroup);
+        }
+        continue;
       }
 
       // Basic rule validation
@@ -60,20 +75,29 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         /* istanbul ignore next */
         (placeholderValueName !== undefined && rule.value === placeholderValueName)
       ) {
-        return '';
+        continue;
       }
 
       const escapeQuotes = (rule.valueSource ?? 'value') === 'value';
 
       const fieldData = getOption(fields, rule.field);
 
-      return ruleProcessor(rule, {
+      const processedRule = ruleProcessor(rule, {
         ...options,
         parseNumbers: getParseNumberBoolean(fieldData?.inputType),
         escapeQuotes,
         fieldData,
       });
-    });
+
+      if (processedRule) {
+        if (!firstRule && precedingCombinator) {
+          processedRules.push(precedingCombinator);
+          precedingCombinator = '';
+        }
+        firstRule = false;
+        processedRules.push(processedRule);
+      }
+    }
 
     if (processedRules.length === 0) {
       return fallbackExpression;
@@ -96,13 +120,9 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
     const prefix = mustWrap ? `${prefixTL} (`.trim() : '';
     const suffix = mustWrap ? `) ${suffixTL}`.trim() : '';
 
-    return `${prefix}${processedRules
-      .filter(Boolean)
-      .join(
-        isRuleGroupType(rg2)
-          ? `, ${translations[combinator as NLTranslationKey] ?? combinator} `
-          : ''
-      )}${suffix}`;
+    return `${prefix}${processedRules.join(
+      isRuleGroupType(rg2) ? `, ${translations[combinator as NLTranslationKey] ?? combinator} ` : ''
+    )}${suffix}`;
   };
 
   return processRuleGroup(ruleGroup, true);

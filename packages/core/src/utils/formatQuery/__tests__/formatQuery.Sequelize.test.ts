@@ -153,6 +153,8 @@ describe('validation', () => {
     'should invalidate sequelize outermost group': undefined,
     'should invalidate sequelize inner group': undefined,
     'should convert sequelize inner group with no rules to fallbackExpression': {},
+    'should invalidate sequelize following combinator of first rule': {},
+    'should invalidate sequelize preceding combinator of non-first rule': {},
   };
 
   for (const vtd of getValidationTestData('sequelize')) {

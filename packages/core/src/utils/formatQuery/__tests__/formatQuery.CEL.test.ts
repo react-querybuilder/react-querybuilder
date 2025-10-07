@@ -55,6 +55,13 @@ it('independent combinators', () => {
   expect(formatQuery(queryIC, 'cel')).toBe(
     `firstName == "Test" && middleName == "Test" || lastName == "Test"`
   );
+
+  expect(
+    formatQuery(
+      { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+      'cel'
+    )
+  ).toBe(`field == "" && 1 == 1`);
 });
 
 describe('validation', () => {
@@ -66,6 +73,8 @@ describe('validation', () => {
     'should invalidate cel outermost group': '1 == 1',
     'should invalidate cel inner group': '1 == 1',
     'should convert cel inner group with no rules to fallbackExpression': 'field == "" && 1 == 1',
+    'should invalidate cel following combinator of first rule': 'field2 == "" || field3 == ""',
+    'should invalidate cel preceding combinator of non-first rule': 'field == "" || field3 == ""',
   };
 
   for (const vtd of getValidationTestData('cel')) {

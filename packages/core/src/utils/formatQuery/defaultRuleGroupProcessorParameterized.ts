@@ -108,17 +108,43 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
       return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
     }
 
-    const processedRules = rg.rules
-      .map(rule => {
-        if (typeof rule === 'string') {
-          return rule;
+    const processedRules = [];
+    let precedingCombinator = '';
+    let firstRule = true;
+
+    for (const rule of rg.rules) {
+      // Independent combinators
+      if (typeof rule === 'string') {
+        precedingCombinator = rule;
+        continue;
+      }
+
+      // Groups
+      if (isRuleGroup(rule)) {
+        const processedGroup = processRuleGroup(rule, rg.rules.length === 1);
+        // istanbul ignore else
+        if (processedGroup) {
+          if (!firstRule && precedingCombinator) {
+            processedRules.push(precedingCombinator);
+            precedingCombinator = '';
+          }
+          firstRule = false;
+          processedRules.push(processedGroup);
         }
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(rule, rg.rules.length === 1);
+        continue;
+      }
+
+      // Rules
+      const processedRule = processRule(rule);
+      if (processedRule) {
+        if (!firstRule && precedingCombinator) {
+          processedRules.push(precedingCombinator);
+          precedingCombinator = '';
         }
-        return processRule(rule);
-      })
-      .filter(Boolean);
+        firstRule = false;
+        processedRules.push(processedRule);
+      }
+    }
 
     if (processedRules.length === 0) {
       return fallbackExpression;
