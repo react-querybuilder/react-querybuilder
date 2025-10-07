@@ -487,10 +487,10 @@ export const useMergedContext = <
           finalize ? defaultTranslations : undefined
         ),
         mergeAnyTranslation(
-          'muteGroupDisabled',
+          'unmuteGroup',
           {
-            label: [propsT.muteGroupDisabled?.label, contextT.muteGroupDisabled?.label],
-            title: [propsT.muteGroupDisabled?.title, contextT.muteGroupDisabled?.title],
+            label: [propsT.unmuteGroup?.label, contextT.unmuteGroup?.label],
+            title: [propsT.unmuteGroup?.title, contextT.unmuteGroup?.title],
           },
           finalize ? defaultTranslations : undefined
         ),
@@ -503,10 +503,10 @@ export const useMergedContext = <
           finalize ? defaultTranslations : undefined
         ),
         mergeAnyTranslation(
-          'muteRuleDisabled',
+          'unmuteRule',
           {
-            label: [propsT.muteRuleDisabled?.label, contextT.muteRuleDisabled?.label],
-            title: [propsT.muteRuleDisabled?.title, contextT.muteRuleDisabled?.title],
+            label: [propsT.unmuteRule?.label, contextT.unmuteRule?.label],
+            title: [propsT.unmuteRule?.title, contextT.unmuteRule?.title],
           },
           finalize ? defaultTranslations : undefined
         ),
@@ -629,12 +629,12 @@ export const useMergedContext = <
       contextT.lockRuleDisabled?.title,
       contextT.muteGroup?.label,
       contextT.muteGroup?.title,
-      contextT.muteGroupDisabled?.label,
-      contextT.muteGroupDisabled?.title,
+      contextT.unmuteGroup?.label,
+      contextT.unmuteGroup?.title,
       contextT.muteRule?.label,
       contextT.muteRule?.title,
-      contextT.muteRuleDisabled?.label,
-      contextT.muteRuleDisabled?.title,
+      contextT.unmuteRule?.label,
+      contextT.unmuteRule?.title,
       contextT.matchMode?.title,
       contextT.matchThreshold?.title,
       contextT.notToggle?.label,
@@ -683,12 +683,12 @@ export const useMergedContext = <
       propsT.lockRuleDisabled?.title,
       propsT.muteGroup?.label,
       propsT.muteGroup?.title,
-      propsT.muteGroupDisabled?.label,
-      propsT.muteGroupDisabled?.title,
+      propsT.unmuteGroup?.label,
+      propsT.unmuteGroup?.title,
       propsT.muteRule?.label,
       propsT.muteRule?.title,
-      propsT.muteRuleDisabled?.label,
-      propsT.muteRuleDisabled?.title,
+      propsT.unmuteRule?.label,
+      propsT.unmuteRule?.title,
       propsT.matchMode?.title,
       propsT.matchThreshold?.title,
       propsT.notToggle?.label,

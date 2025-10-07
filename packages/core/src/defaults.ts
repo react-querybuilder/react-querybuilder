@@ -124,8 +124,8 @@ export const defaultTranslations: BaseTranslationsFull = {
   lockGroupDisabled: { label: '🔒', title: 'Unlock group' } as const,
   muteRule: { label: '🔊', title: 'Mute rule' } as const,
   muteGroup: { label: '🔊', title: 'Mute group' } as const,
-  muteRuleDisabled: { label: '🔇', title: 'Unmute rule' } as const,
-  muteGroupDisabled: { label: '🔇', title: 'Unmute group' } as const,
+  unmuteRule: { label: '🔇', title: 'Unmute rule' } as const,
+  unmuteGroup: { label: '🔇', title: 'Unmute group' } as const,
   valueSourceSelector: { title: 'Value source' } as const,
 } satisfies BaseTranslationsFull;
 // #endregion

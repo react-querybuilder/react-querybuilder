@@ -329,23 +329,13 @@ export const RuleComponents: React.MemoExoticComponent<
       {r.schema.showMuteButtons && (
         <MuteRuleActionControlElement
           key={TestID.muteRule}
-          level={r.path.length}
-          path={r.path}
-          disabled={r.disabled}
-          context={r.context}
-          validation={r.validationResult}
-          schema={r.schema}
+          {...commonSubcomponentProps}
           testID={TestID.muteRule}
-          label={
-            r.rule.muted ? r.translations.muteRuleDisabled.label : r.translations.muteRule.label
-          }
-          title={
-            r.rule.muted ? r.translations.muteRuleDisabled.title : r.translations.muteRule.title
-          }
+          label={r.rule.muted ? r.translations.unmuteRule.label : r.translations.muteRule.label}
+          title={r.rule.muted ? r.translations.unmuteRule.title : r.translations.muteRule.title}
           className={r.classNames.muteRule}
           ruleOrGroup={r.rule}
           handleOnClick={r.toggleMuteRule}
-          disabledTranslation={undefined}
         />
       )}
       <RemoveRuleActionControlElement

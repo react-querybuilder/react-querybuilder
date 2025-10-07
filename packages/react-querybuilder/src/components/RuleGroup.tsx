@@ -273,27 +273,17 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
       {rg.schema.showMuteButtons && (
         <MuteGroupActionControlElement
           key={TestID.muteGroup}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
+          {...commonSubcomponentProps}
           testID={TestID.muteGroup}
           label={
-            rg.ruleGroup.muted
-              ? rg.translations.muteGroupDisabled.label
-              : rg.translations.muteGroup.label
+            rg.ruleGroup.muted ? rg.translations.unmuteGroup.label : rg.translations.muteGroup.label
           }
           title={
-            rg.ruleGroup.muted
-              ? rg.translations.muteGroupDisabled.title
-              : rg.translations.muteGroup.title
+            rg.ruleGroup.muted ? rg.translations.unmuteGroup.title : rg.translations.muteGroup.title
           }
           className={rg.classNames.muteGroup}
           handleOnClick={rg.toggleMuteGroup}
           rules={rg.ruleGroup.rules}
-          disabledTranslation={undefined}
           ruleOrGroup={rg.ruleGroup}
         />
       )}

@@ -257,8 +257,8 @@ export interface BaseTranslations<LabelType = string> {
   lockGroupDisabled: BaseTranslationWithLabel<LabelType>;
   muteRule: BaseTranslationWithLabel<LabelType>;
   muteGroup: BaseTranslationWithLabel<LabelType>;
-  muteRuleDisabled: BaseTranslationWithLabel<LabelType>;
-  muteGroupDisabled: BaseTranslationWithLabel<LabelType>;
+  unmuteRule: BaseTranslationWithLabel<LabelType>;
+  unmuteGroup: BaseTranslationWithLabel<LabelType>;
   valueSourceSelector: BaseTranslation;
 }
 /**
