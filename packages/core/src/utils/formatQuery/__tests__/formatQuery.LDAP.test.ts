@@ -60,6 +60,8 @@ describe('validation', () => {
     'should invalidate ldap outermost group': '',
     'should invalidate ldap inner group': '',
     'should convert ldap inner group with no rules to fallbackExpression': '',
+    'should invalidate ldap following combinator of first rule': '',
+    'should invalidate ldap preceding combinator of non-first rule': '',
   };
 
   for (const vtd of getValidationTestData('ldap')) {

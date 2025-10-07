@@ -57,6 +57,13 @@ it('independent combinators', () => {
   expect(formatQuery(queryIC, 'spel')).toBe(
     `firstName == 'Test' and middleName == 'Test' or lastName == 'Test'`
   );
+
+  expect(
+    formatQuery(
+      { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+      'spel'
+    )
+  ).toBe(`field == '' and 1 == 1`);
 });
 
 describe('validation', () => {
@@ -68,6 +75,8 @@ describe('validation', () => {
     'should invalidate spel outermost group': '1 == 1',
     'should invalidate spel inner group': '1 == 1',
     'should convert spel inner group with no rules to fallbackExpression': `field == '' and 1 == 1`,
+    'should invalidate spel following combinator of first rule': `field2 == '' or field3 == ''`,
+    'should invalidate spel preceding combinator of non-first rule': `field == '' or field3 == ''`,
   };
 
   for (const vtd of getValidationTestData('spel')) {
@@ -109,12 +118,7 @@ it('parseNumbers', () => {
       { field: 'f', operator: 'endsWith', value: 'hasDollarSign$' },
     ],
   };
-  expect(
-    formatQuery(queryForNumberParsingSpEL, {
-      format: 'spel',
-      parseNumbers: true,
-    })
-  ).toBe(
+  expect(formatQuery(queryForNumberParsingSpEL, { format: 'spel', parseNumbers: true })).toBe(
     `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
   );
 });

@@ -10,6 +10,8 @@ const db = new PGlite();
 const superUsersPostgres = superUsers('postgres');
 
 const adapter = new PrismaPGlite(db);
+// oxlint-disable-next-line ban-ts-comment
+// @ts-ignore This only fails after generating the adapter
 const prisma = new PrismaClient({ adapter });
 
 beforeAll(async () => {

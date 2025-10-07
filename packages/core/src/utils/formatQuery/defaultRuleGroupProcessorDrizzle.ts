@@ -1,7 +1,7 @@
 import type { Column, Operators, SQL, Table } from 'drizzle-orm';
 import type { RuleGroupProcessor, RuleGroupType } from '../../types';
 import { convertFromIC } from '../convertQuery';
-import { isRuleGroup, isRuleGroupType } from '../isRuleGroup';
+import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
 import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
@@ -37,7 +37,6 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
 
     const { and, not, or } = drizzleOperators;
 
-    const query = isRuleGroupType(ruleGroup) ? ruleGroup : convertFromIC(ruleGroup);
     const ruleProcessor = defaultRuleProcessorDrizzle;
 
     const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | undefined => {
@@ -80,5 +79,5 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
       return rg.not ? not(ruleGroupSQL) : ruleGroupSQL;
     };
 
-    return processRuleGroup(query, true);
+    return processRuleGroup(convertFromIC(ruleGroup), true);
   };

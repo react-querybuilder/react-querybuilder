@@ -390,11 +390,7 @@ export const getValidationTestData = (
     },
     {
       title: `should invalidate ${format} outermost group`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [],
-      },
+      query: { id: 'root', combinator: 'and', rules: [] },
       options: { format, validator: () => ({ root: false }) },
     },
     {
@@ -417,6 +413,34 @@ export const getValidationTestData = (
         ],
       },
       options: { format },
+    },
+    {
+      title: `should invalidate ${format} following combinator of first rule`,
+      query: {
+        id: 'root',
+        rules: [
+          { id: 'f1', field: 'field', operator: '=', value: '' },
+          'and',
+          { id: 'f2', field: 'field2', operator: '=', value: '' },
+          'or',
+          { id: 'f3', field: 'field3', operator: '=', value: '' },
+        ],
+      },
+      options: { format, validator: () => ({ f1: false }) },
+    },
+    {
+      title: `should invalidate ${format} preceding combinator of non-first rule`,
+      query: {
+        id: 'root',
+        rules: [
+          { id: 'f1', field: 'field', operator: '=', value: '' },
+          'and',
+          { id: 'f2', field: 'field2', operator: '=', value: '' },
+          'or',
+          { id: 'f3', field: 'field3', operator: '=', value: '' },
+        ],
+      },
+      options: { format, validator: () => ({ f2: false }) },
     },
   ];
 };
