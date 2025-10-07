@@ -1,4 +1,4 @@
-export {};
+export const __dummy = null;
 
 const { version } = await Bun.file('./lerna.json').json();
 

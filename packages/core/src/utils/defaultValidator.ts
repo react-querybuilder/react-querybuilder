@@ -18,6 +18,7 @@ export const defaultValidator: QueryValidator = query => {
     // `{ valid: false, reasons: ['whatever', 'reasons', 'here'] }`
     // or simply `false` for an invalid rule.
     // istanbul ignore else
+    // oxlint-disable-next-line no-unused-expressions
     if (rule.id) result[rule.id]; // = true;
   };
 

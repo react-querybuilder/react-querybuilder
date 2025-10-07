@@ -257,6 +257,8 @@ describe('validation', () => {
     'should invalidate natural_language outermost group': '1 is 1',
     'should invalidate natural_language inner group': '1 is 1',
     'should convert natural_language inner group with no rules to fallbackExpression': `field is '', and 1 is 1`,
+    'should invalidate natural_language following combinator of first rule': `field2 is '', or field3 is ''`,
+    'should invalidate natural_language preceding combinator of non-first rule': `field is '', or field3 is ''`,
   };
 
   for (const vtd of getValidationTestData('natural_language')) {

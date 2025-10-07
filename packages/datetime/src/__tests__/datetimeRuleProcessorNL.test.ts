@@ -105,35 +105,22 @@ const testCases2: Record<string, [RuleGroupType, string]> = {
         { field: 'birthdate', operator: 'in', value: null },
         { field: 'birthdate', operator: 'notIn', value: undefined },
         { field: 'birthdate', operator: 'in', value: 'Stev' },
-        {
-          field: 'birthdate',
-          operator: 'between',
-          value: ['created_at'],
-          valueSource: 'field',
-        },
-        {
-          field: 'birthdate',
-          operator: 'in',
-          value: '',
-          valueSource: 'field',
-        },
+        { field: 'birthdate', operator: 'between', value: ['created_at'], valueSource: 'field' },
+        { field: 'birthdate', operator: 'in', value: '', valueSource: 'field' },
       ],
     },
-    '',
+    '1 is 1',
   ],
 };
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
+    const ruleProcessor = getDatetimeRuleProcessorNL(apiFns);
     for (const [testCase, [query, expectation]] of Object.entries(testCases2)) {
       test(`case: ${testCase}`, () => {
-        expect(
-          formatQuery(query, {
-            format: 'natural_language',
-            fields,
-            ruleProcessor: getDatetimeRuleProcessorNL(apiFns),
-          })
-        ).toBe(expectation);
+        expect(formatQuery(query, { format: 'natural_language', fields, ruleProcessor })).toBe(
+          expectation
+        );
       });
     }
   });

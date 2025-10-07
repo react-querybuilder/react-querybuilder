@@ -428,6 +428,13 @@ describe('independent combinators', () => {
       sql: `(firstName = ? and middleName = ? or lastName = ?)`,
       params: ['Test', 'Test', 'Test'],
     });
+
+    expect(
+      formatQuery(
+        { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+        'parameterized'
+      )
+    ).toEqual({ sql: `(field = ? and (1 = 1))`, params: [''] });
   });
 
   it('handles independent combinators for parameterized_named', () => {
@@ -435,6 +442,13 @@ describe('independent combinators', () => {
       sql: `(firstName = :firstName_1 and middleName = :middleName_1 or lastName = :lastName_1)`,
       params: { firstName_1: 'Test', middleName_1: 'Test', lastName_1: 'Test' },
     });
+
+    expect(
+      formatQuery(
+        { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+        'parameterized_named'
+      )
+    ).toEqual({ sql: `(field = :field_1 and (1 = 1))`, params: { field_1: '' } });
   });
 });
 
@@ -448,6 +462,8 @@ describe('validation', () => {
       'should invalidate sql outermost group': '(1 = 1)',
       'should invalidate sql inner group': '((1 = 1))',
       'should convert sql inner group with no rules to fallbackExpression': `(field = '' and (1 = 1))`,
+      'should invalidate sql following combinator of first rule': `(field2 = '' or field3 = '')`,
+      'should invalidate sql preceding combinator of non-first rule': `(field = '' or field3 = '')`,
     };
 
     for (const vtd of getValidationTestData('sql')) {
@@ -474,6 +490,14 @@ describe('validation', () => {
       'should convert parameterized inner group with no rules to fallbackExpression': {
         sql: '(field = ? and (1 = 1))',
         params: [''],
+      },
+      'should invalidate parameterized following combinator of first rule': {
+        sql: '(field2 = ? or field3 = ?)',
+        params: ['', ''],
+      },
+      'should invalidate parameterized preceding combinator of non-first rule': {
+        sql: '(field = ? or field3 = ?)',
+        params: ['', ''],
       },
     };
 
@@ -504,6 +528,14 @@ describe('validation', () => {
       'should convert parameterized_named inner group with no rules to fallbackExpression': {
         sql: '(field = :field_1 and (1 = 1))',
         params: { field_1: '' },
+      },
+      'should invalidate parameterized_named following combinator of first rule': {
+        sql: '(field2 = :field2_1 or field3 = :field3_1)',
+        params: { field2_1: '', field3_1: '' },
+      },
+      'should invalidate parameterized_named preceding combinator of non-first rule': {
+        sql: '(field = :field_1 or field3 = :field3_1)',
+        params: { field_1: '', field3_1: '' },
       },
     };
 

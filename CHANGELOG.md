@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#950] `customExpressionHandler` option for `parseCEL`.
+- [#950] `parseCEL` types, type guard functions, and other utilities are exported.
+
 ### Fixed
 
 - `useMergedContext` now handles `matchMode` and `matchThreshold` translations.
 - Default styles for `queryBuilder-justified` and `queryBuilder-branches` now work property under `dir="rtl"`.
+- [#951] `formatQuery` properly handles invalid rules and groups in queries with independent combinators.
 
 ## [v8.9.2] - 2025-09-22
 
@@ -2015,6 +2021,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 [#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
+[#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950
+[#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
 
 <!-- #endregion -->
 

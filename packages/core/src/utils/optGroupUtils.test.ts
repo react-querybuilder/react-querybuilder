@@ -7,6 +7,7 @@ import {
   isFullOptionArray,
   isFullOptionGroupArray,
   isOptionGroupArray,
+  prepareOptionList,
   toFlatOptionArray,
   toFullOption,
   toFullOptionList,
@@ -541,5 +542,305 @@ describe('toFlatOptionArray', () => {
 
   it('flattens option group arrays', () => {
     expect(toFlatOptionArray([{ label: 'test', options: arr }])).toEqual(arr.slice(0, 2));
+  });
+});
+
+describe('prepareOptionList', () => {
+  describe('basic functionality', () => {
+    it('works with minimal props', () => {
+      const result = prepareOptionList({});
+      expect(result.defaultOption).toEqual({ id: '~', name: '~', value: '~', label: '------' });
+      expect(result.optionList).toEqual([result.defaultOption]);
+      expect(result.optionsMap).toEqual({ '~': result.defaultOption });
+    });
+
+    it('works with custom placeholder values', () => {
+      const result = prepareOptionList({
+        placeholder: {
+          placeholderName: 'custom',
+          placeholderLabel: 'Custom Label',
+          placeholderGroupLabel: 'Custom Group',
+        },
+      });
+      expect(result.defaultOption).toEqual({
+        id: 'custom',
+        name: 'custom',
+        value: 'custom',
+        label: 'Custom Label',
+      });
+    });
+
+    it('works with baseOption and labelMap', () => {
+      const result = prepareOptionList({
+        optionList: [{ name: 'opt1', label: 'Original' }],
+        baseOption: { customProp: 'test' },
+        labelMap: { opt1: 'Mapped Label 1' },
+      });
+      expect(result.optionList[0]).toEqual({
+        name: 'opt1',
+        value: 'opt1',
+        label: 'Original',
+        customProp: 'test',
+      });
+    });
+  });
+
+  describe('array-based option lists', () => {
+    it('handles flat option arrays with autoSelectOption true', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { name: 'opt1', label: 'Option 1' },
+          { name: 'opt2', label: 'Option 2' },
+        ],
+        autoSelectOption: true,
+      });
+      expect(result.optionList).toEqual([
+        { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      ]);
+      expect(result.optionsMap).toEqual({
+        opt1: { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        opt2: { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      });
+    });
+
+    it('handles flat option arrays with autoSelectOption false', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { name: 'opt1', label: 'Option 1' },
+          { name: 'opt2', label: 'Option 2' },
+        ],
+        autoSelectOption: false,
+      });
+      expect(result.optionList).toEqual([
+        { id: '~', name: '~', value: '~', label: '------' },
+        { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      ]);
+      expect(result.optionsMap['~']).toEqual(result.defaultOption);
+      expect(result.optionsMap.opt1).toEqual({ name: 'opt1', value: 'opt1', label: 'Option 1' });
+    });
+
+    it('handles option group arrays with autoSelectOption true', () => {
+      const result = prepareOptionList({
+        optionList: [
+          {
+            label: 'Group 1',
+            options: [
+              { name: 'opt1', label: 'Option 1' },
+              { name: 'opt2', label: 'Option 2' },
+            ],
+          },
+        ],
+        autoSelectOption: true,
+      });
+      expect(result.optionList).toEqual([
+        {
+          label: 'Group 1',
+          options: [
+            { name: 'opt1', value: 'opt1', label: 'Option 1' },
+            { name: 'opt2', value: 'opt2', label: 'Option 2' },
+          ],
+        },
+      ]);
+      expect(result.optionsMap).toEqual({
+        opt1: { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        opt2: { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      });
+    });
+
+    it('handles option group arrays with autoSelectOption false', () => {
+      const result = prepareOptionList({
+        optionList: [{ label: 'Group 1', options: [{ name: 'opt1', label: 'Option 1' }] }],
+        autoSelectOption: false,
+        placeholder: { placeholderGroupLabel: 'Custom Group' },
+      });
+      expect(result.optionList[0]).toEqual({
+        label: 'Custom Group',
+        options: [{ id: '~', name: '~', value: '~', label: '------' }],
+      });
+      expect(result.optionList[1]).toEqual({
+        label: 'Group 1',
+        options: [{ name: 'opt1', value: 'opt1', label: 'Option 1' }],
+      });
+    });
+
+    it('handles empty arrays', () => {
+      const result = prepareOptionList({ optionList: [] });
+      expect(result.optionList).toEqual([]);
+      expect(result.optionsMap).toEqual({});
+    });
+
+    it('removes duplicates from flat arrays', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { name: 'opt1', label: 'Option 1' },
+          { name: 'opt1', label: 'Duplicate' },
+          { name: 'opt2', label: 'Option 2' },
+        ],
+        autoSelectOption: true,
+      });
+      expect(result.optionList).toEqual([
+        { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      ]);
+    });
+  });
+
+  describe('BaseOptionMap-based option lists', () => {
+    it('handles object-based option lists with autoSelectOption true', () => {
+      const result = prepareOptionList({
+        optionList: {
+          opt1: { name: 'opt1', label: 'Option 1' },
+          opt2: { name: 'opt2', label: 'Option 2' },
+        },
+        autoSelectOption: true,
+      });
+
+      expect(result.optionList).toHaveLength(2);
+      expect(getOption(result.optionList, 'opt1')).toEqual({
+        name: 'opt1',
+        value: 'opt1',
+        label: 'Option 1',
+      });
+      expect(result.optionsMap).toEqual({
+        opt1: { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        opt2: { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      });
+    });
+
+    it('handles object-based option lists with autoSelectOption false', () => {
+      const result = prepareOptionList({
+        optionList: { opt1: { name: 'opt1', label: 'Option 1' } },
+        autoSelectOption: false,
+      });
+
+      expect(result.optionsMap['~']).toEqual(result.defaultOption);
+      expect(result.optionsMap.opt1).toEqual({
+        name: 'opt1',
+        value: 'opt1',
+        label: 'Option 1',
+      });
+    });
+
+    it('sorts object-based options by label', () => {
+      const result = prepareOptionList({
+        optionList: {
+          opt2: { name: 'opt2', label: 'Z Option' },
+          opt1: { name: 'opt1', label: 'A Option' },
+          opt3: { name: 'opt3', label: 'M Option' },
+        },
+        autoSelectOption: true,
+      });
+
+      expect(result.optionList[0].label).toBe('A Option');
+      expect(result.optionList[1].label).toBe('M Option');
+      expect(result.optionList[2].label).toBe('Z Option');
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles undefined optionList', () => {
+      const result = prepareOptionList({ optionList: undefined });
+      expect(result.optionList).toEqual([result.defaultOption]);
+    });
+
+    it('handles null optionList', () => {
+      const result = prepareOptionList({ optionList: null as unknown as undefined });
+      expect(result.optionList).toEqual([result.defaultOption]);
+    });
+
+    it('works with mixed option types', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { name: 'opt1', label: 'Option 1' },
+          { value: 'opt2', label: 'Option 2' },
+          { name: 'opt3', value: 'val3', label: 'Option 3' },
+        ],
+        autoSelectOption: true,
+      });
+      expect(result.optionList).toEqual([
+        { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        { name: 'opt2', value: 'opt2', label: 'Option 2' },
+        { name: 'opt3', value: 'val3', label: 'Option 3' },
+      ]);
+    });
+
+    it('handles option groups with mixed option types', () => {
+      const result = prepareOptionList({
+        optionList: [
+          {
+            label: 'Mixed Group',
+            options: [
+              { name: 'opt1', label: 'Option 1' },
+              { value: 'opt2', label: 'Option 2' },
+            ],
+          },
+        ],
+        autoSelectOption: true,
+      });
+      expect(result.optionsMap).toEqual({
+        opt1: { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        opt2: { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      });
+    });
+
+    it('works with baseOption parameter for object-based lists', () => {
+      const result = prepareOptionList({
+        optionList: { opt1: { name: 'opt1', label: 'Option 1' } },
+        baseOption: { customProp: 'base' },
+        autoSelectOption: true,
+      });
+      expect(result.optionsMap.opt1).toEqual({
+        name: 'opt1',
+        value: 'opt1',
+        label: 'Option 1',
+        customProp: 'base',
+      });
+    });
+  });
+
+  describe('optionsMap building', () => {
+    it('builds optionsMap for nested option groups', () => {
+      const result = prepareOptionList({
+        optionList: [
+          { label: 'Group 1', options: [{ name: 'opt1', label: 'Option 1' }] },
+          { label: 'Group 2', options: [{ name: 'opt2', label: 'Option 2' }] },
+        ],
+        autoSelectOption: true,
+      });
+      expect(result.optionsMap).toEqual({
+        opt1: { name: 'opt1', value: 'opt1', label: 'Option 1' },
+        opt2: { name: 'opt2', value: 'opt2', label: 'Option 2' },
+      });
+    });
+
+    it('applies baseOption when building optionsMap for arrays', () => {
+      const result = prepareOptionList({
+        optionList: [{ name: 'opt1', label: 'Option 1' }],
+        baseOption: { category: 'test' },
+        autoSelectOption: true,
+      });
+      expect(result.optionsMap.opt1).toEqual({
+        name: 'opt1',
+        value: 'opt1',
+        label: 'Option 1',
+        category: 'test',
+      });
+    });
+
+    it('applies baseOption when building optionsMap for option groups', () => {
+      const result = prepareOptionList({
+        optionList: [{ label: 'Group', options: [{ name: 'opt1', label: 'Option 1' }] }],
+        baseOption: { category: 'test' },
+        autoSelectOption: true,
+      });
+      expect(result.optionsMap.opt1).toEqual({
+        name: 'opt1',
+        value: 'opt1',
+        label: 'Option 1',
+        category: 'test',
+      });
+    });
   });
 });
