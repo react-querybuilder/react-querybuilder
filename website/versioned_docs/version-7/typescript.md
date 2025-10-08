@@ -198,7 +198,9 @@ interface ParseSQLOptions extends ParserCommonOptions {
   params?: any[] | Record<string, any>;
 }
 
-type ParseCELOptions = ParserCommonOptions;
+interface ParseCELOptions extends ParserCommonOptions {
+  customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupType | null;
+}
 
 type ParseSpELOptions = ParserCommonOptions;
 
