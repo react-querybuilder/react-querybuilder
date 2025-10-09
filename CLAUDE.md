@@ -1,90 +1,91 @@
-# React Query Builder Development Guide for Claude
+# React Query Builder Development Guide
 
-This guide provides comprehensive information for maintaining and developing the React Query Builder project, focusing on consistent code style, development workflow, and project-specific patterns.
+**COMMUNICATION STYLE**: Be aggressively concise. Prioritize brevity over grammar. Examples:
+
+- "Build failed" not "The build has failed"
+- "Fixed type error" not "I have fixed the type error"
+- "Run tests" not "I will run the tests for you"
+
+This guide covers React Query Builder development: code style, workflow, and other patterns.
 
 ## Project Overview
 
-React Query Builder is a monorepo containing:
+React Query Builder monorepo contains:
 
-- **Main package**: `react-querybuilder` - The core query builder component
-- **UI integrations**: Packages for Ant Design, Bootstrap, Bulma, Chakra UI, Fluent UI, Mantine, MUI, and Tremor
-- **Extensions**: Drag-and-drop (`@react-querybuilder/dnd`), DateTime (`@react-querybuilder/datetime`), React Native (`@react-querybuilder/native`)
-- **Documentation**: Docusaurus-based website with examples and API docs
+- **Core package**: `@react-querybuilder/core` - Non-React utilities, parsers, formatters
+- **Main package**: `react-querybuilder` - React components and hooks
+- **UI integrations**: Ant Design, Bootstrap, Bulma, Chakra UI, Fluent UI, Mantine, MUI, Tremor
+- **Extensions**: Drag-and-drop (`@react-querybuilder/dnd`), date/time processing (`@react-querybuilder/datetime`), React Native (`@react-querybuilder/native`)
+- **Documentation**: Docusaurus website
 
 ## Development Workflow
 
-### Setup & Installation
+### Setup
 
 ```bash
-# Uses Bun as package manager
 bun install
 bun run build
 ```
 
-### Development Commands
+### Commands
 
-**Primary Development:**
+**Development:**
 
-- `bun start` - Hot-reloading dev server for all packages
-- `bun start:rqb` - Core package development
-- `bun start:antd`, `bun start:material`, etc. - Specific UI integration packages
+- `bun start` - Hot-reload dev server (all packages)
+- `bun start:rqb` - Core package dev
+- `bun start:antd`, `bun start:material`, etc. - UI packages
 
-**Testing & Quality:**
+**Quality:**
 
-- `bun checkall` - Complete CI check (build, lint, typecheck, test, coverage)
-- `bun run test` - Run all tests (Bun tests + Jest)
-  - Always include the "run" part of this command to run Jest tests&mdash;`bun test` doesn't run the "test" script in `package.json`
-- `bun typecheck` - TypeScript checking across all packages
-- `bun lint` - Oxlint checking
-- `bun pretty-print` - Prettier formatting
-  - Run this command from the root of the repository after any changes to ensure correct formatting
+- `bun checkall` - Full CI check
+- `bun run test` - All tests (MUST include "run" for Jest)
+- `bun typecheck` - TypeScript check
+- `bun lint` - Oxlint
+- `bun pretty-print` - Format (run after changes)
 
 **Documentation:**
 
 - `bun web` - Serve documentation website locally
 - `bun web:skiptypedoc` - Skip TypeDoc generation for faster startup
 
-### Build Process
+### Build
 
-- `bun run build` - Concurrent build of all packages
-- `bun run build:sequential` - Sequential build for debugging
-- Individual package builds: `bun build:rqb`, `bun build:antd`, etc.
+- `bun run build` - All packages (concurrent)
+- `bun run build:sequential` - Sequential (debug)
+- Individual: `bun build:rqb`, `bun build:antd`, etc.
 
-## Code Style & Patterns
+## Code Style
 
-### File Organization
+### Structure
 
 ```
+packages/core/src/           # Non-React utilities
 packages/react-querybuilder/src/
 ├── components/        # React components (PascalCase.tsx)
-├── context/           # React contexts
-├── hooks/             # Custom hooks (useHookName.ts)
-├── types/             # TypeScript definitions
-├── utils/             # Utility functions (camelCase.ts)
-├── styles/            # SCSS stylesheets
-├── redux/             # Redux integration
-└── barrel.ts          # Main export aggregator
+├── context/           # Contexts
+├── hooks/             # Hooks (useHookName.ts)
+├── types/             # TypeScript defs
+├── utils/             # Utils (camelCase.ts)
+├── styles/            # SCSS
+├── redux/             # Redux
+└── barrel.ts          # Export aggregator
 ```
 
-### Naming Conventions
+### Naming
 
-- **Components**: PascalCase (`QueryBuilder.tsx`, `ValueEditor.tsx`)
-- **Hooks**: camelCase with `use` prefix (`useFields.ts`, `useRule.ts`)
-- **Utilities**: camelCase (`generateID.ts`, `isRuleGroup.ts`)
-- **Types**: Descriptive camelCase (`basic.ts`, `validation.ts`)
+- **Components**: PascalCase (`QueryBuilder.tsx`)
+- **Hooks**: camelCase with `use` (`useHookName.ts`)
+- **Utilities**: camelCase (`generateID.ts`)
+- **Types**: camelCase (`basic.ts`)
 - **Debug versions**: `*.debug.ts`
-- **Tests**: `*.test.ts` or `*.test.tsx`
-- **Platform-specific**: `*.web.tsx`, `*.native.tsx`
+- **Tests**: `*.test.ts[x]`
 
-### TypeScript Patterns
-
-**Advanced Type Usage:**
+### TypeScript
 
 - Heavy use of generics with constraints
 - Conditional types for API flexibility
-- Branded types for type safety
-- Separation of React-dependent and independent types
-  - Easier to use `react-querybuilder` without installing `react`, e.g. on the server.
+- Branded types
+- React/non-React type separation (core package enables server usage)
 
 ```typescript
 // Generic component with constraints
@@ -101,14 +102,12 @@ export interface QueryBuilderProps<
 import type { RuleGroupType } from '../types';
 ```
 
-### Component Architecture
+### Components
 
-**Key Patterns:**
-
-- **Composition over inheritance**: Render props and component injection
-- **Memoization**: Extensive use of `React.memo()` for performance
-- **Custom hooks**: Logic extraction into reusable hooks
-- **Provider pattern**: Context for state management
+- Composition over inheritance
+- Heavy memoization (`React.memo()`)
+- Custom hooks for logic
+- Context for state
 
 ```typescript
 export const ComponentName = React.memo(function ComponentName(props: PropsType) {
@@ -119,162 +118,138 @@ export const ComponentName = React.memo(function ComponentName(props: PropsType)
 });
 ```
 
-### Import/Export Conventions
+### Imports/Exports
 
-**Barrel Exports:**
-
-- Use `index.ts` files for aggregating exports
-- Main `barrel.ts` for non-React exports
-- Clean separation between React and non-React code
+- Use `index.ts` for aggregation
+- `barrel.ts` for exports that don't have a "debug" version
+- React/non-React separation
 
 ```typescript
-// React imports
 import * as React from 'react';
-
-// Type-only imports
 import type { ComponentProps } from '../types';
-
-// Named imports for utilities
 import { generateID, isRuleGroup } from '../utils';
 ```
 
-### Styling Approach
+### Styling
 
-**SCSS + CSS Custom Properties:**
-
-- SCSS preprocessing with modern CSS features
-- BEM-like methodology (`.queryBuilder-rule`)
-- Customizable design tokens via SCSS variables
+- SCSS + CSS custom properties
+- BEM-like (`.queryBuilder-rule`)
+- SCSS variables for tokens
 - Custom `clsx` utility for conditional classes
 
-### State Management Patterns
+### State Management
 
-- **Immer integration**: Immutable state updates
-- **Controlled/uncontrolled**: Flexible prop handling with `useControlledOrUncontrolled`
-- **Path-based updates**: Tree navigation using array paths `[0, 1, 2]`
-- **Context providers**: Avoid prop drilling for deeply nested components
+- Immer for immutable updates
+- Path-based updates `[0, 1, 2]`
+- Custom Redux context to avoid prop drilling
 
-## Testing Guidelines
+## Testing
 
-### Test Setup
-
-- **Jest + Testing Library**: Standard React testing
-- **Custom utilities**: Shared helpers in `utils/testing/`
-- **Comprehensive coverage**: 100% coverage requirement
-- **Mock patterns**: Extensive Jest mocking
-
-### Test Naming
+- Jest + Testing Library
+- Helpers in `utils/testing/`
+- 100% coverage required
 
 - Test files: `ComponentName.test.tsx`
-- Describe blocks: Component or function name
+- Describe blocks: component/function name
 - Test cases: Descriptive behavior
 
 ## Generated Files
 
-**Never edit these files directly:**
+**Never edit:**
 
-- `packages/react-querybuilder/src/utils/parseCEL/celParser.js`
-- `packages/react-querybuilder/src/utils/parseSQL/sqlParser.js`
-- All example projects except `_template`
+- `packages/core/src/utils/parseCEL/celParser.js`
+- `packages/core/src/utils/parseSQL/sqlParser.js`
+- Examples (except `_template`)
 
 **Regeneration commands:**
 
 - `bun generate-parsers` - Regenerate CEL and SQL parsers
 - `bun generate-examples` - Regenerate example projects
 
-## Performance Considerations
+## Performance
 
-**Optimization Patterns:**
+- Aggressive memoization
+- Lazy loading parsers
+- Path-based updates
+- Context prevents prop drilling
 
-- Aggressive memoization (`useMemo`, `useCallback`, `React.memo`)
-- Lazy loading for parser utilities
-- Path-based state updates to avoid unnecessary re-renders
-- Context usage to prevent prop drilling
+## Accessibility
 
-## Accessibility Requirements
+- ARIA attributes
+- `data-testid` attributes
+- Keyboard navigation
+- Screen reader support
 
-- **ARIA attributes**: Proper labeling and descriptions
-- **Test IDs**: Consistent `data-testid` attributes
-- **Keyboard navigation**: Full keyboard support
-- **Screen reader support**: Accessible descriptions
+## Internationalization (i18n)
 
-## Internationalization
+- `Translations` type
+- JSX/string translations
+- UI framework integration
 
-- **Translation system**: `Translations` type with comprehensive i18n
-- **Flexible formatting**: Support for both JSX and string translations
-- **UI framework integration**: Works with different component libraries
+## Packages
 
-## Package-Specific Considerations
+### Core (`@react-querybuilder/core`)
 
-### Core Package (`react-querybuilder`)
+- Non-React utilities, parsers, formatters
+- No React dependencies
 
-- Must maintain backward compatibility
+### Main (`react-querybuilder`)
+
+- React components/hooks
+- Backward compatibility required
 - No breaking changes without major version bump
-- Export both React and non-React functionality
 
-### UI Integration Packages
+### UI Packages
 
-- Follow the base package's component structure
+- Follow base package's component structure
 - Implement all required control elements
 - Maintain consistent theming with UI framework
 - Include examples and documentation
 
-### Extension Packages (`dnd`, `datetime`, `native`)
+### Extensions (`dnd`, `datetime`, `native`)
 
 - Extend core functionality without breaking changes
 - Provide clear integration instructions
 - Maintain feature parity where applicable
 
-## Release Process
+## Release process
 
-1. Update version with `bun version`
-2. Run `bun checkall` to ensure quality
-3. Build and test all packages
-4. Update documentation if needed
-5. Create and push release commit
-6. Lerna handles package publishing
+1. `bun version`
+2. `bun checkall`
+3. Update documentation
+4. Push release commit
+5. Lerna handles package publishing
 
-## Common Pitfalls to Avoid
+## Pitfalls
 
-1. **Breaking changes**: Always maintain backward compatibility in minor versions
-2. **Missing memoization**: Components should be memoized for performance
-3. **Type imports**: Use `import type` for type-only imports
-4. **Direct DOM manipulation**: Use React patterns exclusively
-5. **Prop drilling**: Use context for deeply nested props
-6. **Generated file edits**: Never edit generated files directly
-7. **Missing tests**: Maintain 100% test coverage
-8. **Accessibility**: Always include ARIA attributes and keyboard support
+1. Breaking changes in minor versions
+2. Missing memoization
+3. Missing `import type`
+4. Direct DOM manipulation
+5. Prop drilling
+6. Manually editing generated files
+7. Missing tests
+8. Missing accessibility
 
-## IDE Configuration
+## IDE
 
-**Recommended extensions:**
-
-- Oxc
-- Prettier
-- TypeScript
-- SCSS IntelliSense
-
-**Settings:**
-
-- Format on save with Prettier
-- TypeScript strict mode
-- Show inline type hints
+**Extensions:** Oxc, Prettier, TypeScript, SCSS IntelliSense
+**Settings:** Format on save, TypeScript strict mode, inline type hints
 
 ## Quick Reference
 
-**Key Commands:**
+**Commands:**
 
-- `bun checkall` - Full CI pipeline
-- `bun start` - Development server
-- `bun run test` - Run tests
-- `bun pretty-print` - Format code
+- `bun checkall` - Full CI
+- `bun start` - Dev server
+- `bun run test` - Tests
+- `bun pretty-print` - Format
 - `bun generate-examples` - Update examples
 
-**Key Directories:**
+**Directories:**
 
-- `packages/react-querybuilder/src/` - Core source
-- `examples/` - Demo applications
+- `packages/core/src/` - Non-React utilities
+- `packages/react-querybuilder/src/` - React components
+- `examples/` - Demos and starter templates
 - `website/` - Documentation site
 - `utils/` - Build and dev utilities
-
-This guide should be your primary reference for maintaining consistency and quality in the React Query Builder project.
