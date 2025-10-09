@@ -87,13 +87,13 @@ export const defaultPlaceholderValueGroupLabel: typeof defaultPlaceholderLabel =
 // #region docs-translations
 export const defaultTranslations: BaseTranslationsFull = {
   fields: {
-    title: 'Fields',
+    title: 'Field',
     placeholderName: defaultPlaceholderFieldName,
     placeholderLabel: defaultPlaceholderFieldLabel,
     placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
   } as const,
   operators: {
-    title: 'Operators',
+    title: 'Operator',
     placeholderName: defaultPlaceholderOperatorName,
     placeholderLabel: defaultPlaceholderOperatorLabel,
     placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
@@ -111,7 +111,7 @@ export const defaultTranslations: BaseTranslationsFull = {
   removeGroup: { label: '⨯', title: 'Remove group' } as const,
   addRule: { label: '+ Rule', title: 'Add rule' } as const,
   addGroup: { label: '+ Group', title: 'Add group' } as const,
-  combinators: { title: 'Combinators' } as const,
+  combinators: { title: 'Combinator' } as const,
   notToggle: { label: 'Not', title: 'Invert this group' } as const,
   cloneRule: { label: '⧉', title: 'Clone rule' } as const,
   cloneRuleGroup: { label: '⧉', title: 'Clone group' } as const,
