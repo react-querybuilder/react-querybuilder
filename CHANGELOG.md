@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#950] `customExpressionHandler` option for `parseCEL`.
 - [#950] `parseCEL` types, type guard functions, and other utilities are exported.
+- [#948] Support for "muting" rules and groups. `showMuteButtons` prop will display a button with 🔊 or 🔇 depending on the boolean `muted` property of the rule/group. As with rules/groups deemed invalid, `formatQuery` will skip over rules/groups with `muted: true`.
 
 ### Fixed
 
@@ -2021,6 +2022,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 [#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
+[#948]: https://github.com/react-querybuilder/react-querybuilder/pull/948
 [#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950
 [#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
 

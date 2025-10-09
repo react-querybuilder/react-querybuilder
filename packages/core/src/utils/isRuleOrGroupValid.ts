@@ -10,13 +10,17 @@ export const isValidationResult = (vr?: ValidationResult): vr is ValidationResul
 
 /**
  * Determines if a rule or group is valid based on a validation result (if defined)
- * or a validator function. Returns `true` if neither are defined.
+ * or a validator function. Returns `true` if neither are defined and the `muted`
+ * property is not `true`.
  */
 export const isRuleOrGroupValid = (
   rg: RuleType | RuleGroupTypeAny,
   validationResult?: boolean | ValidationResult,
   validator?: RuleValidator
 ): boolean => {
+  if (rg.muted) {
+    return false;
+  }
   if (typeof validationResult === 'boolean') {
     return validationResult;
   }

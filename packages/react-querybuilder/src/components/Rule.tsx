@@ -63,6 +63,7 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
 
     const cloneRule = useStopEventPropagation(r.cloneRule);
     const toggleLockRule = useStopEventPropagation(r.toggleLockRule);
+    const toggleMuteRule = useStopEventPropagation(r.toggleMuteRule);
     const removeRule = useStopEventPropagation(r.removeRule);
     const shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
     const shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
@@ -71,11 +72,12 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
       () => ({
         cloneRule,
         toggleLockRule,
+        toggleMuteRule,
         removeRule,
         shiftRuleUp,
         shiftRuleDown,
       }),
-      [cloneRule, removeRule, shiftRuleDown, shiftRuleUp, toggleLockRule]
+      [cloneRule, removeRule, shiftRuleDown, shiftRuleUp, toggleLockRule, toggleMuteRule]
     );
 
     return (
@@ -126,6 +128,7 @@ export const RuleComponents: React.MemoExoticComponent<
         valueEditor: ValueEditorControlElement,
         cloneRuleAction: CloneRuleActionControlElement,
         lockRuleAction: LockRuleActionControlElement,
+        muteRuleAction: MuteRuleActionControlElement,
         removeRuleAction: RemoveRuleActionControlElement,
         ruleGroupBodyElements: RuleGroupBodyControlElements,
         ruleGroupHeaderElements: RuleGroupHeaderControlElements,
@@ -323,6 +326,18 @@ export const RuleComponents: React.MemoExoticComponent<
           disabledTranslation={r.parentDisabled ? undefined : r.translations.lockRuleDisabled}
         />
       )}
+      {r.schema.showMuteButtons && (
+        <MuteRuleActionControlElement
+          key={TestID.muteRule}
+          {...commonSubcomponentProps}
+          testID={TestID.muteRule}
+          label={r.rule.muted ? r.translations.unmuteRule.label : r.translations.muteRule.label}
+          title={r.rule.muted ? r.translations.unmuteRule.title : r.translations.muteRule.title}
+          className={r.classNames.muteRule}
+          ruleOrGroup={r.rule}
+          handleOnClick={r.toggleMuteRule}
+        />
+      )}
       <RemoveRuleActionControlElement
         key={TestID.removeRule}
         {...commonSubcomponentProps}
@@ -342,6 +357,9 @@ export const RuleComponents: React.MemoExoticComponent<
   );
 });
 
+/**
+ * @group Components
+ */
 export const RuleWithSubQueryGroupComponentsWrapper = (
   props: React.PropsWithChildren
 ): React.JSX.Element => <div {...props} />;
@@ -422,8 +440,11 @@ export interface UseRule extends RuleProps {
     value: string;
     cloneRule: string;
     lockRule: string;
+    muteRule: string;
     removeRule: string;
   };
+  muted?: boolean;
+  parentMuted?: boolean;
   cloneRule: ActionElementEventHandler;
   fieldData: FullField<string, string, string, FullOption, FullOption>;
   generateOnChangeHandler: (
@@ -445,6 +466,7 @@ export interface UseRule extends RuleProps {
   subproperties: UseFields<FullField>;
   subQueryBuilderProps: Record<string, unknown>;
   toggleLockRule: ActionElementEventHandler;
+  toggleMuteRule: ActionElementEventHandler;
   validationResult: boolean | ValidationResult;
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
@@ -484,6 +506,7 @@ export const useRule = (props: RuleProps): UseRule => {
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
     parentDisabled,
+    parentMuted,
     shiftUpDisabled,
     shiftDownDisabled,
     field: fieldProp,
@@ -507,6 +530,7 @@ export const useRule = (props: RuleProps): UseRule => {
   useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 
   const disabled = !!parentDisabled || !!disabledProp;
+  const muted = !!parentMuted || !!ruleProp?.muted;
 
   const rule = useMemo(
     () =>
@@ -566,6 +590,11 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.actionElement,
         classNamesProp.lockRule
       ),
+      muteRule: clsx(
+        suppressStandardClassnames || standardClassnames.muteRule,
+        classNamesProp.actionElement,
+        classNamesProp.muteRule
+      ),
       removeRule: clsx(
         suppressStandardClassnames || standardClassnames.removeRule,
         classNamesProp.actionElement,
@@ -589,6 +618,7 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.actionElement,
       classNamesProp.cloneRule,
       classNamesProp.lockRule,
+      classNamesProp.muteRule,
       classNamesProp.removeRule,
       classNamesProp.valueListItem,
       suppressStandardClassnames,
@@ -624,6 +654,11 @@ export const useRule = (props: RuleProps): UseRule => {
   const toggleLockRule: ActionElementEventHandler = useCallback(
     (_event, context) => onPropChange('disabled', !disabled, path, context),
     [disabled, onPropChange, path]
+  );
+
+  const toggleMuteRule: ActionElementEventHandler = useCallback(
+    (_event, context) => onPropChange('muted', !rule.muted, path, context),
+    [rule.muted, onPropChange, path]
   );
 
   const removeRule: ActionElementEventHandler = useCallback(
@@ -745,6 +780,7 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.rule,
         // custom conditional classes
         disabled && classNamesProp.disabled,
+        muted && classNamesProp.muted,
         isDragging && classNamesProp.dndDragging,
         isOver && classNamesProp.dndOver,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
@@ -754,6 +790,7 @@ export const useRule = (props: RuleProps): UseRule => {
         // standard conditional classes
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
+          [standardClassnames.muted]: muted,
           [standardClassnames.dndDragging]: isDragging,
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
@@ -765,6 +802,7 @@ export const useRule = (props: RuleProps): UseRule => {
       ),
     [
       classNamesProp.disabled,
+      classNamesProp.muted,
       classNamesProp.dndCopy,
       classNamesProp.dndDragging,
       classNamesProp.dndGroup,
@@ -775,6 +813,7 @@ export const useRule = (props: RuleProps): UseRule => {
       disabled,
       dropEffect,
       dropNotAllowed,
+      muted,
       fieldBasedClassName,
       fieldData,
       getRuleClassname,
@@ -808,6 +847,7 @@ export const useRule = (props: RuleProps): UseRule => {
     hideValueControls,
     inputType,
     matchModes,
+    muted,
     operators,
     outerClassName,
     removeRule,
@@ -817,6 +857,7 @@ export const useRule = (props: RuleProps): UseRule => {
     subproperties,
     subQueryBuilderProps,
     toggleLockRule,
+    toggleMuteRule,
     validationResult,
     valueEditorSeparator,
     valueEditorType,
