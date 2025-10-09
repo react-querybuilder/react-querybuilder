@@ -4,17 +4,17 @@ import * as React from 'react';
 import { useContext } from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
 import { ValueSelector, useValueSelector } from 'react-querybuilder';
+import type { RQBMaterialContextValue } from './RQBMaterialContext';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 import { toOptions } from './utils';
 
 /**
  * @group Props
  */
 export type MaterialValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<typeof Select> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+  ComponentPropsWithoutRef<typeof Select> &
+  MuiAugmentation;
 
 /**
  * @group Components
@@ -41,10 +41,12 @@ export const MaterialValueSelector = ({
   fieldData,
   schema,
   muiComponents: muiComponentsProp,
+  showInputLabels: silProp,
   defaultValue: _defaultValue,
   ...otherProps
 }: MaterialValueSelectorProps): React.JSX.Element => {
-  const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
+  const muiComponents =
+    useContext(RQBMaterialContext) ?? (muiComponentsProp as RQBMaterialContextValue);
 
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
@@ -85,7 +87,16 @@ export const MaterialValueSelector = ({
     );
   }
 
-  const { FormControl, Select, ListSubheader, MenuItem } = muiComponents;
+  const {
+    FormControl,
+    InputLabel,
+    ListSubheader,
+    MenuItem,
+    Select,
+    showInputLabels: silCtx,
+  } = muiComponents;
+
+  const showInputLabels = silProp || silCtx;
 
   return (
     <FormControl
@@ -94,16 +105,15 @@ export const MaterialValueSelector = ({
       className={className}
       title={title}
       disabled={disabled}>
+      {showInputLabels && <InputLabel>{title}</InputLabel>}
       <Select
         value={val}
         onChange={muiSelectChangeHandler}
         multiple={multiple}
         disabled={disabled}
+        label={showInputLabels ? title : undefined}
         {...otherProps}>
-        {toOptions(options ?? /* istanbul ignore next */ [], {
-          ListSubheader,
-          MenuItem,
-        })}
+        {toOptions(options, { ListSubheader, MenuItem })}
       </Select>
     </FormControl>
   );
