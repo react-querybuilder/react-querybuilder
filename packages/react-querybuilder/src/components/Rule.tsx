@@ -357,6 +357,9 @@ export const RuleComponents: React.MemoExoticComponent<
   );
 });
 
+/**
+ * @group Components
+ */
 export const RuleWithSubQueryGroupComponentsWrapper = (
   props: React.PropsWithChildren
 ): React.JSX.Element => <div {...props} />;
