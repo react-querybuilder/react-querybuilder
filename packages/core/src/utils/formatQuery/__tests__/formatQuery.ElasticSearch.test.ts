@@ -292,6 +292,14 @@ describe('validation', () => {
     'should convert elasticsearch inner group with no rules to fallbackExpression': {
       bool: { must: [{ term: { field: '' } }] },
     },
+    'should invalidate elasticsearch following combinator of first rule': {
+      bool: {
+        should: [{ bool: { must: [{ term: { field2: '' } }] } }, { term: { field3: '' } }],
+      },
+    },
+    'should invalidate elasticsearch preceding combinator of non-first rule': {
+      bool: { should: [{ bool: { must: [{ term: { field: '' } }] } }, { term: { field3: '' } }] },
+    },
   };
 
   for (const vtd of getValidationTestData('elasticsearch')) {

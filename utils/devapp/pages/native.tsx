@@ -1,10 +1,10 @@
+import type { Field, RuleGroupType } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 import { QueryBuilderNative, defaultNativeWebControlElements } from '@react-querybuilder/native';
 import * as React from 'react';
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { StyleSheet, Text, View } from 'react-native';
-import type { Field, RuleGroupType } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
 
 const styles = StyleSheet.create({
   outer: {

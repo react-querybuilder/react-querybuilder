@@ -1,6 +1,10 @@
 import type {
   AccessibleDescriptionGenerator,
   BaseOptionMap,
+  BaseTranslation,
+  BaseTranslations,
+  BaseTranslationWithLabel,
+  BaseTranslationWithPlaceholders,
   Classname,
   Classnames,
   CommonRuleSubComponentProps,
@@ -23,7 +27,6 @@ import type {
   Option,
   ParseNumbersPropConfig,
   Path,
-  Placeholder,
   QueryActions,
   QueryValidator,
   RuleGroupType,
@@ -220,59 +223,32 @@ export type VersatileSelectorProps = ValueSelectorProps &
  *
  * @group Props
  */
-export interface TranslationWithLabel extends Translation {
-  label?: ReactNode;
-}
+export interface TranslationWithLabel extends BaseTranslationWithLabel<ReactNode> {}
 /**
  * A translation for a component with `title` only.
  *
  * @group Props
  */
-export interface Translation {
-  title?: string;
-}
+export interface Translation extends BaseTranslation {}
 /**
  * A translation for a component with `title` and a placeholder.
  *
  * @group Props
  */
-export interface TranslationWithPlaceholders extends Translation, Placeholder {}
+export interface TranslationWithPlaceholders extends BaseTranslationWithPlaceholders {}
 /**
  * The shape of the `translations` prop.
  *
  * @group Props
  */
-export interface Translations {
-  fields: TranslationWithPlaceholders;
-  operators: TranslationWithPlaceholders;
-  values: TranslationWithPlaceholders;
-  matchMode: Translation;
-  matchThreshold: Translation;
-  value: Translation;
-  removeRule: TranslationWithLabel;
-  removeGroup: TranslationWithLabel;
-  addRule: TranslationWithLabel;
-  addGroup: TranslationWithLabel;
-  combinators: Translation;
-  notToggle: TranslationWithLabel;
-  cloneRule: TranslationWithLabel;
-  cloneRuleGroup: TranslationWithLabel;
-  shiftActionUp: TranslationWithLabel;
-  shiftActionDown: TranslationWithLabel;
-  dragHandle: TranslationWithLabel;
-  lockRule: TranslationWithLabel;
-  lockGroup: TranslationWithLabel;
-  lockRuleDisabled: TranslationWithLabel;
-  lockGroupDisabled: TranslationWithLabel;
-  valueSourceSelector: Translation;
-}
+export interface Translations extends BaseTranslations<ReactNode> {}
 /**
  * The full `translations` interface with all properties required.
  *
  * @group Props
  */
 export type TranslationsFull = {
-  [K in keyof Translations]: { [T in keyof Translations[K]]-?: string };
+  [K in keyof Translations]: { [T in keyof Translations[K]]-?: Translations[K][T] };
 };
 
 /**
@@ -502,6 +478,18 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   lockRuleAction: ComponentType<ActionProps> | null;
   /**
+   * Mutes the current group (sets the `muted` property to `true`).
+   *
+   * @default ActionElement
+   */
+  muteGroupAction: ComponentType<ActionProps> | null;
+  /**
+   * Mutes the current rule (sets the `muted` property to `true`).
+   *
+   * @default ActionElement
+   */
+  muteRuleAction: ComponentType<ActionProps> | null;
+  /**
    * Selects the `match` property for the current rule.
    *
    * @default MatchModeEditor
@@ -621,6 +609,7 @@ export interface Schema<F extends FullField, O extends string> {
   showShiftActions: boolean;
   showCloneButtons: boolean;
   showLockButtons: boolean;
+  showMuteButtons: boolean;
   autoSelectField: boolean;
   autoSelectOperator: boolean;
   autoSelectValue: boolean;
@@ -642,6 +631,7 @@ interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends str
   id?: string;
   path: Path;
   parentDisabled?: boolean;
+  parentMuted?: boolean;
   translations: Translations;
   schema: Schema<F, O>;
   actions: QueryActions;
@@ -1172,6 +1162,12 @@ export type QueryBuilderProps<
        * @default false
        */
       showLockButtons?: boolean;
+      /**
+       * Show the "Mute rule" and "Mute group" buttons.
+       *
+       * @default false
+       */
+      showMuteButtons?: boolean;
       /**
        * Reset the `operator` and `value` when the `field` changes.
        *

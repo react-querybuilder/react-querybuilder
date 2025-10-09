@@ -1,7 +1,7 @@
 /* @jest-environment node */
 
+import { formatQuery } from '@react-querybuilder/core';
 import jsonata from 'jsonata';
-import { formatQuery } from 'react-querybuilder';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,

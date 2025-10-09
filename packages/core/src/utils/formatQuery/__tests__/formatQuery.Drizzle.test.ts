@@ -137,6 +137,8 @@ describe('validation', () => {
   //   'should invalidate drizzle outermost group': undefined,
   //   'should invalidate drizzle inner group': undefined,
   //   'should convert drizzle inner group with no rules to fallbackExpression': undefined,
+  //   'should invalidate drizzle following combinator of first rule': undefined,
+  //   'should invalidate drizzle preceding combinator of non-first rule': undefined,
   // };
 
   for (const vtd of getValidationTestData('drizzle')) {

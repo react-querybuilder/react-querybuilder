@@ -24,8 +24,6 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
     validationMap,
   } = options;
 
-  const query = convertFromIC(ruleGroup);
-
   // oxlint-disable-next-line typescript/no-explicit-any
   const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -71,6 +69,6 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
     };
   };
 
-  const processedRuleGroup = processRuleGroup(query);
+  const processedRuleGroup = processRuleGroup(convertFromIC(ruleGroup));
   return processedRuleGroup === false ? {} : processedRuleGroup;
 };

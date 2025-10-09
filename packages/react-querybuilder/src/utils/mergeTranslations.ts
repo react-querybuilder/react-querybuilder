@@ -1,7 +1,9 @@
-import { objectEntries, objectKeys } from '@react-querybuilder/core';
-import { produce } from 'immer';
+import {
+  defaultTranslations,
+  mergeAnyTranslation,
+  mergeAnyTranslations,
+} from '@react-querybuilder/core';
 import type { ReactNode } from 'react';
-import { defaultTranslations } from '../defaults';
 import type { Translations } from '../types';
 
 /**
@@ -11,32 +13,18 @@ export const mergeTranslations = (
   base: Partial<Translations>,
   ...otherTranslations: (Partial<Translations> | undefined)[]
 ): Partial<Translations> =>
-  produce(base, draft => {
-    for (const translations of otherTranslations) {
-      // istanbul ignore else
-      if (translations) {
-        for (const t of objectKeys(translations)) {
-          if (draft[t]) {
-            Object.assign(draft[t], translations[t]);
-          } else {
-            Object.assign(draft, { [t]: translations[t] });
-          }
-        }
-      }
-    }
-  });
+  mergeAnyTranslations(
+    base as Record<string, Record<string, unknown>>,
+    ...(otherTranslations as (Record<string, Record<string, unknown>> | undefined)[])
+  ) as Partial<Translations>;
 
 export const mergeTranslation = (
   el: keyof Translations,
   keyPropContextMap: Record<string, [ReactNode, ReactNode]>,
   finalize?: boolean
-): Record<string, Record<string, string>> | undefined => {
-  type RSRSS = Record<string, Record<string, string>>;
-  const finalKeys = objectEntries(keyPropContextMap)
-    .map(([key, [pT, cT]]) => [
-      key,
-      pT ?? cT ?? ((finalize ? defaultTranslations : {}) as RSRSS)[el]?.[key],
-    ])
-    .filter(k => !!k[1]);
-  return finalKeys.length > 0 ? { [el]: Object.fromEntries(finalKeys) } : undefined;
-};
+): Record<string, Record<string, string>> | undefined =>
+  mergeAnyTranslation(
+    el,
+    keyPropContextMap,
+    finalize ? (defaultTranslations as Record<string, Record<string, string>>) : undefined
+  ) as Record<string, Record<string, string>> | undefined;

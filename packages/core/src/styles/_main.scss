@@ -88,7 +88,10 @@
 /* #endregion */
 
 /* #region Branch styles */
-.queryBuilder-branches {
+@mixin branch-styles($direction) {
+  $before-after: if($direction == rtl, after, before);
+  $border-side: if($direction == rtl, right, left);
+
   .rule,
   .ruleGroup .ruleGroup {
     &::before,
@@ -97,18 +100,28 @@
       border-style: var(--#{$rqb-var-prefix}branch-style);
     }
 
-    &:last-child::before {
-      border-bottom-left-radius: var(--#{$rqb-var-prefix}branch-radius);
+    &:last-child::#{$before-after} {
+      border-bottom-#{$border-side}-radius: var(--#{$rqb-var-prefix}branch-radius);
     }
   }
 
   .betweenRules {
     position: relative;
 
-    &::before {
+    &::#{$before-after} {
       border-color: var(--#{$rqb-var-prefix}branch-color);
       border-style: var(--#{$rqb-var-prefix}branch-style);
     }
   }
+}
+
+/* LTR */
+.queryBuilder-branches:dir(ltr) {
+  @include branch-styles(ltr);
+}
+
+/* RTL */
+.queryBuilder-branches:dir(rtl) {
+  @include branch-styles(rtl);
 }
 /* #endregion */

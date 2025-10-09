@@ -1,9 +1,14 @@
 import type { Classnames, FullField, RuleGroupTypeAny } from '@react-querybuilder/core';
-import { defaultControlClassnames, mergeClassnames } from '@react-querybuilder/core';
+import {
+  defaultControlClassnames,
+  defaultTranslations,
+  mergeAnyTranslation,
+  mergeClassnames,
+} from '@react-querybuilder/core';
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import { QueryBuilderContext } from '../context';
-import { defaultControlElements, defaultTranslations } from '../defaults';
+import { defaultControlElements } from '../defaults';
 import type {
   ControlElementsProp,
   Controls,
@@ -13,7 +18,6 @@ import type {
   TranslationsFull,
   ValueEditorProps,
 } from '../types';
-import { mergeTranslation } from '../utils';
 import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextParams<
@@ -116,6 +120,9 @@ export const useMergedContext = <
       header: cc.header,
       lockGroup: cc.lockGroup,
       lockRule: cc.lockRule,
+      muteGroup: cc.muteGroup,
+      muteRule: cc.muteRule,
+      muted: cc.muted,
       notToggle: cc.notToggle,
       operators: cc.operators,
       queryBuilder: cc.queryBuilder,
@@ -165,6 +172,9 @@ export const useMergedContext = <
       cc.invalid,
       cc.lockGroup,
       cc.lockRule,
+      cc.muteGroup,
+      cc.muteRule,
+      cc.muted,
       cc.matchMode,
       cc.matchThreshold,
       cc.notToggle,
@@ -254,6 +264,8 @@ export const useMergedContext = <
         ),
         mergeControlElement('lockGroupAction', propsCE.lockGroupAction, contextCE.lockGroupAction),
         mergeControlElement('lockRuleAction', propsCE.lockRuleAction, contextCE.lockRuleAction),
+        mergeControlElement('muteGroupAction', propsCE.muteGroupAction, contextCE.muteGroupAction),
+        mergeControlElement('muteRuleAction', propsCE.muteRuleAction, contextCE.muteRuleAction),
         mergeControlElement('notToggle', propsCE.notToggle, contextCE.notToggle),
         mergeControlElement(
           'operatorSelector',
@@ -324,6 +336,8 @@ export const useMergedContext = <
       contextCE.inlineCombinator,
       contextCE.lockGroupAction,
       contextCE.lockRuleAction,
+      contextCE.muteGroupAction,
+      contextCE.muteRuleAction,
       contextCE.matchModeEditor,
       contextCE.notToggle,
       contextCE.operatorSelector,
@@ -350,6 +364,8 @@ export const useMergedContext = <
       propsCE.inlineCombinator,
       propsCE.lockGroupAction,
       propsCE.lockRuleAction,
+      propsCE.muteGroupAction,
+      propsCE.muteRuleAction,
       propsCE.matchModeEditor,
       propsCE.notToggle,
       propsCE.operatorSelector,
@@ -371,53 +387,53 @@ export const useMergedContext = <
   const translations = useMemo(
     () =>
       Object.assign(
-        finalize ? Object.assign({}, defaultTranslations) : {},
-        mergeTranslation(
+        {},
+        mergeAnyTranslation(
           'addGroup',
           {
             label: [propsT.addGroup?.label, contextT.addGroup?.label],
             title: [propsT.addGroup?.title, contextT.addGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'addRule',
           {
             label: [propsT.addRule?.label, contextT.addRule?.label],
             title: [propsT.addRule?.title, contextT.addRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'cloneRule',
           {
             label: [propsT.cloneRule?.label, contextT.cloneRule?.label],
             title: [propsT.cloneRule?.title, contextT.cloneRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'cloneRuleGroup',
           {
             label: [propsT.cloneRuleGroup?.label, contextT.cloneRuleGroup?.label],
             title: [propsT.cloneRuleGroup?.title, contextT.cloneRuleGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'combinators',
           { title: [propsT.combinators?.title, contextT.combinators?.title] },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'dragHandle',
           {
             label: [propsT.dragHandle?.label, contextT.dragHandle?.label],
             title: [propsT.dragHandle?.title, contextT.dragHandle?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'fields',
           {
             placeholderGroupLabel: [
@@ -428,49 +444,81 @@ export const useMergedContext = <
             placeholderName: [propsT.fields?.placeholderName, contextT.fields?.placeholderName],
             title: [propsT.fields?.title, contextT.fields?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockGroup',
           {
             label: [propsT.lockGroup?.label, contextT.lockGroup?.label],
             title: [propsT.lockGroup?.title, contextT.lockGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockGroupDisabled',
           {
             label: [propsT.lockGroupDisabled?.label, contextT.lockGroupDisabled?.label],
             title: [propsT.lockGroupDisabled?.title, contextT.lockGroupDisabled?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockRule',
           {
             label: [propsT.lockRule?.label, contextT.lockRule?.label],
             title: [propsT.lockRule?.title, contextT.lockRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'lockRuleDisabled',
           {
             label: [propsT.lockRuleDisabled?.label, contextT.lockRuleDisabled?.label],
             title: [propsT.lockRuleDisabled?.title, contextT.lockRuleDisabled?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
+          'muteGroup',
+          {
+            label: [propsT.muteGroup?.label, contextT.muteGroup?.label],
+            title: [propsT.muteGroup?.title, contextT.muteGroup?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'unmuteGroup',
+          {
+            label: [propsT.unmuteGroup?.label, contextT.unmuteGroup?.label],
+            title: [propsT.unmuteGroup?.title, contextT.unmuteGroup?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'muteRule',
+          {
+            label: [propsT.muteRule?.label, contextT.muteRule?.label],
+            title: [propsT.muteRule?.title, contextT.muteRule?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'unmuteRule',
+          {
+            label: [propsT.unmuteRule?.label, contextT.unmuteRule?.label],
+            title: [propsT.unmuteRule?.title, contextT.unmuteRule?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
           'notToggle',
           {
             label: [propsT.notToggle?.label, contextT.notToggle?.label],
             title: [propsT.notToggle?.title, contextT.notToggle?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'operators',
           {
             placeholderGroupLabel: [
@@ -487,9 +535,9 @@ export const useMergedContext = <
             ],
             title: [propsT.operators?.title, contextT.operators?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'values',
           {
             placeholderGroupLabel: [
@@ -500,49 +548,59 @@ export const useMergedContext = <
             placeholderName: [propsT.values?.placeholderName, contextT.values?.placeholderName],
             title: [propsT.values?.title, contextT.values?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'removeGroup',
           {
             label: [propsT.removeGroup?.label, contextT.removeGroup?.label],
             title: [propsT.removeGroup?.title, contextT.removeGroup?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'removeRule',
           {
             label: [propsT.removeRule?.label, contextT.removeRule?.label],
             title: [propsT.removeRule?.title, contextT.removeRule?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'shiftActionDown',
           {
             label: [propsT.shiftActionDown?.label, contextT.shiftActionDown?.label],
             title: [propsT.shiftActionDown?.title, contextT.shiftActionDown?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'shiftActionUp',
           {
             label: [propsT.shiftActionUp?.label, contextT.shiftActionUp?.label],
             title: [propsT.shiftActionUp?.title, contextT.shiftActionUp?.title],
           },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
+          'matchMode',
+          { title: [propsT.matchMode?.title, contextT.matchMode?.title] },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'matchThreshold',
+          { title: [propsT.matchThreshold?.title, contextT.matchThreshold?.title] },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
           'value',
           { title: [propsT.value?.title, contextT.value?.title] },
-          finalize
+          finalize ? defaultTranslations : undefined
         ),
-        mergeTranslation(
+        mergeAnyTranslation(
           'valueSourceSelector',
           { title: [propsT.valueSourceSelector?.title, contextT.valueSourceSelector?.title] },
-          finalize
+          finalize ? defaultTranslations : undefined
         )
       ),
     [
@@ -569,6 +627,16 @@ export const useMergedContext = <
       contextT.lockRule?.title,
       contextT.lockRuleDisabled?.label,
       contextT.lockRuleDisabled?.title,
+      contextT.muteGroup?.label,
+      contextT.muteGroup?.title,
+      contextT.unmuteGroup?.label,
+      contextT.unmuteGroup?.title,
+      contextT.muteRule?.label,
+      contextT.muteRule?.title,
+      contextT.unmuteRule?.label,
+      contextT.unmuteRule?.title,
+      contextT.matchMode?.title,
+      contextT.matchThreshold?.title,
       contextT.notToggle?.label,
       contextT.notToggle?.title,
       contextT.operators?.placeholderGroupLabel,
@@ -613,6 +681,16 @@ export const useMergedContext = <
       propsT.lockRule?.title,
       propsT.lockRuleDisabled?.label,
       propsT.lockRuleDisabled?.title,
+      propsT.muteGroup?.label,
+      propsT.muteGroup?.title,
+      propsT.unmuteGroup?.label,
+      propsT.unmuteGroup?.title,
+      propsT.muteRule?.label,
+      propsT.muteRule?.title,
+      propsT.unmuteRule?.label,
+      propsT.unmuteRule?.title,
+      propsT.matchMode?.title,
+      propsT.matchThreshold?.title,
       propsT.notToggle?.label,
       propsT.notToggle?.title,
       propsT.operators?.placeholderGroupLabel,

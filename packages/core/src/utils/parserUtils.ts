@@ -19,6 +19,7 @@ export const getFieldsArray = (
       ? fields
       : Object.keys(fields)
           .map(fld => ({ ...fields[fld], name: fld }))
+          // oxlint-disable-next-line no-array-sort
           .sort((a, b) => a.label.localeCompare(b.label))
     : [];
   return toFlatOptionArray(fieldsArray);

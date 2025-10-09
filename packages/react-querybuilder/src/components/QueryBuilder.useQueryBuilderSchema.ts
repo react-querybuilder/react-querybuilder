@@ -108,6 +108,7 @@ export function useQueryBuilderSchema<
     showShiftActions: showShiftActionsProp = false,
     showCloneButtons: showCloneButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
+    showMuteButtons: showMuteButtonsProp = false,
     suppressStandardClassnames: suppressStandardClassnamesProp = false,
     resetOnFieldChange: resetOnFieldChangeProp = true,
     resetOnOperatorChange: resetOnOperatorChangeProp = false,
@@ -158,6 +159,7 @@ export function useQueryBuilderSchema<
   const showShiftActions = !!showShiftActionsProp;
   const showCloneButtons = !!showCloneButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
+  const showMuteButtons = !!showMuteButtonsProp;
   const resetOnFieldChange = !!resetOnFieldChangeProp;
   const resetOnOperatorChange = !!resetOnOperatorChangeProp;
   const autoSelectField = !!autoSelectFieldProp;
@@ -638,6 +640,7 @@ export function useQueryBuilderSchema<
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
+      showMuteButtons,
       showNotToggle,
       showShiftActions,
       suppressStandardClassnames,
@@ -678,6 +681,7 @@ export function useQueryBuilderSchema<
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
+      showMuteButtons,
       showNotToggle,
       showShiftActions,
       suppressStandardClassnames,

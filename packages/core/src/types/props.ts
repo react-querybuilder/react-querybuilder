@@ -1,3 +1,4 @@
+import type { RequiredDeep } from 'type-fest';
 import type { Classname, Path } from './basic';
 import type { RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupTypeAny } from './ruleGroupsIC';
@@ -106,6 +107,14 @@ export interface Classnames {
    */
   lockGroup: Classname;
   /**
+   * Classnames applied to the `<button>` to mute a Rule.
+   */
+  muteRule: Classname;
+  /**
+   * Classnames applied to the `<button>` to mute a RuleGroup.
+   */
+  muteGroup: Classname;
+  /**
    * Classnames applied to the `<select>` control for value sources.
    */
   valueSource: Classname;
@@ -157,6 +166,10 @@ export interface Classnames {
    */
   disabled: Classname;
   /**
+   * Classname(s) applied to muted elements.
+   */
+  muted: Classname;
+  /**
    * Classname(s) applied to each element in a series of value editors.
    */
   valueListItem: Classname;
@@ -192,6 +205,68 @@ export interface Placeholder {
    */
   placeholderGroupLabel?: string;
 }
+
+/**
+ * A translation for a component with `title` only.
+ *
+ * @group Props
+ */
+export interface BaseTranslation {
+  title?: string;
+}
+/**
+ * A translation for a component with `title` and `label`.
+ *
+ * @group Props
+ */
+export interface BaseTranslationWithLabel<LabelType = string> extends BaseTranslation {
+  label?: LabelType;
+}
+/**
+ * A translation for a component with `title` and a placeholder.
+ *
+ * @group Props
+ */
+export interface BaseTranslationWithPlaceholders extends BaseTranslation, Placeholder {}
+/**
+ * The shape of the `translations` prop.
+ *
+ * @group Props
+ */
+export interface BaseTranslations<LabelType = string> {
+  fields: BaseTranslationWithPlaceholders;
+  operators: BaseTranslationWithPlaceholders;
+  values: BaseTranslationWithPlaceholders;
+  matchMode: BaseTranslation;
+  matchThreshold: BaseTranslation;
+  value: BaseTranslation;
+  removeRule: BaseTranslationWithLabel<LabelType>;
+  removeGroup: BaseTranslationWithLabel<LabelType>;
+  addRule: BaseTranslationWithLabel<LabelType>;
+  addGroup: BaseTranslationWithLabel<LabelType>;
+  combinators: BaseTranslation;
+  notToggle: BaseTranslationWithLabel<LabelType>;
+  cloneRule: BaseTranslationWithLabel<LabelType>;
+  cloneRuleGroup: BaseTranslationWithLabel<LabelType>;
+  shiftActionUp: BaseTranslationWithLabel<LabelType>;
+  shiftActionDown: BaseTranslationWithLabel<LabelType>;
+  dragHandle: BaseTranslationWithLabel<LabelType>;
+  lockRule: BaseTranslationWithLabel<LabelType>;
+  lockGroup: BaseTranslationWithLabel<LabelType>;
+  lockRuleDisabled: BaseTranslationWithLabel<LabelType>;
+  lockGroupDisabled: BaseTranslationWithLabel<LabelType>;
+  muteRule: BaseTranslationWithLabel<LabelType>;
+  muteGroup: BaseTranslationWithLabel<LabelType>;
+  unmuteRule: BaseTranslationWithLabel<LabelType>;
+  unmuteGroup: BaseTranslationWithLabel<LabelType>;
+  valueSourceSelector: BaseTranslation;
+}
+/**
+ * The full `translations` interface with all properties required.
+ *
+ * @group Props
+ */
+export type BaseTranslationsFull<LabelType = string> = RequiredDeep<BaseTranslations<LabelType>>;
 
 /**
  * Functions included in the `actions` prop passed to every subcomponent.

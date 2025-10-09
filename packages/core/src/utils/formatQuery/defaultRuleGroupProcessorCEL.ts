@@ -22,41 +22,69 @@ export const defaultRuleGroupProcessorCEL: RuleGroupProcessor<string> = (ruleGro
     validationMap,
   } = options;
 
-  const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean) => {
+  const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
       return outermost ? fallbackExpression : '';
     }
 
-    const expression: string = rg.rules
-      .map(rule => {
-        if (typeof rule === 'string') {
-          return celCombinatorMap[rule as DefaultCombinatorName];
+    const processedRules = [];
+    let precedingCombinator = '';
+    let firstRule = true;
+
+    for (const rule of rg.rules) {
+      // Independent combinators
+      if (typeof rule === 'string') {
+        precedingCombinator = celCombinatorMap[rule as DefaultCombinatorName];
+        continue;
+      }
+
+      // Groups
+      if (isRuleGroup(rule)) {
+        const processedGroup = processRuleGroup(rule);
+        if (processedGroup) {
+          if (!firstRule && precedingCombinator) {
+            processedRules.push(precedingCombinator);
+            precedingCombinator = '';
+          }
+          firstRule = false;
+          processedRules.push(processedGroup);
         }
-        if (isRuleGroup(rule)) {
-          return processRuleGroup(rule);
+        continue;
+      }
+
+      // Rules
+      const [validationResult, fieldValidator] = validateRule(rule);
+      if (
+        !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
+        rule.field === placeholderFieldName ||
+        rule.operator === placeholderOperatorName ||
+        /* istanbul ignore next */
+        (placeholderValueName !== undefined && rule.value === placeholderValueName)
+      ) {
+        continue;
+      }
+
+      const fieldData = getOption(fields, rule.field);
+      const processedRule = ruleProcessor(rule, {
+        ...options,
+        parseNumbers: getParseNumberBoolean(fieldData?.inputType),
+        escapeQuotes: (rule.valueSource ?? 'value') === 'value',
+        fieldData,
+      });
+
+      if (processedRule) {
+        if (!firstRule && precedingCombinator) {
+          processedRules.push(precedingCombinator);
+          precedingCombinator = '';
         }
-        const [validationResult, fieldValidator] = validateRule(rule);
-        if (
-          !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
-          rule.field === placeholderFieldName ||
-          rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
-          (placeholderValueName !== undefined && rule.value === placeholderValueName)
-        ) {
-          return '';
-        }
-        const fieldData = getOption(fields, rule.field);
-        return ruleProcessor(rule, {
-          ...options,
-          parseNumbers: getParseNumberBoolean(fieldData?.inputType),
-          escapeQuotes: (rule.valueSource ?? 'value') === 'value',
-          fieldData,
-        });
-      })
-      .filter(Boolean)
-      .join(
-        isRuleGroupType(rg) ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} ` : ' '
-      );
+        firstRule = false;
+        processedRules.push(processedRule);
+      }
+    }
+
+    const expression = processedRules.join(
+      isRuleGroupType(rg) ? ` ${celCombinatorMap[rg.combinator as DefaultCombinatorName]} ` : ' '
+    );
 
     const [prefix, suffix] = rg.not || !outermost ? [`${rg.not ? '!' : ''}(`, ')'] : ['', ''];
 

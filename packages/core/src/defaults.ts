@@ -1,4 +1,5 @@
 import type {
+  BaseTranslationsFull,
   Classnames,
   DefaultCombinatorName,
   DefaultCombinatorNameExtended,
@@ -77,6 +78,57 @@ export const defaultPlaceholderValueLabel: typeof defaultPlaceholderLabel = defa
  */
 export const defaultPlaceholderValueGroupLabel: typeof defaultPlaceholderLabel =
   defaultPlaceholderLabel;
+
+/**
+ * Default configuration of translatable strings.
+ *
+ * @group Defaults
+ */
+// #region docs-translations
+export const defaultTranslations: BaseTranslationsFull = {
+  fields: {
+    title: 'Fields',
+    placeholderName: defaultPlaceholderFieldName,
+    placeholderLabel: defaultPlaceholderFieldLabel,
+    placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
+  } as const,
+  operators: {
+    title: 'Operators',
+    placeholderName: defaultPlaceholderOperatorName,
+    placeholderLabel: defaultPlaceholderOperatorLabel,
+    placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
+  } as const,
+  values: {
+    title: 'Values',
+    placeholderName: defaultPlaceholderValueName,
+    placeholderLabel: defaultPlaceholderValueLabel,
+    placeholderGroupLabel: defaultPlaceholderValueGroupLabel,
+  } as const,
+  matchMode: { title: 'Match mode' } as const,
+  matchThreshold: { title: 'Match threshold' } as const,
+  value: { title: 'Value' } as const,
+  removeRule: { label: '⨯', title: 'Remove rule' } as const,
+  removeGroup: { label: '⨯', title: 'Remove group' } as const,
+  addRule: { label: '+ Rule', title: 'Add rule' } as const,
+  addGroup: { label: '+ Group', title: 'Add group' } as const,
+  combinators: { title: 'Combinators' } as const,
+  notToggle: { label: 'Not', title: 'Invert this group' } as const,
+  cloneRule: { label: '⧉', title: 'Clone rule' } as const,
+  cloneRuleGroup: { label: '⧉', title: 'Clone group' } as const,
+  shiftActionUp: { label: '˄', title: 'Shift up' } as const,
+  shiftActionDown: { label: '˅', title: 'Shift down' } as const,
+  dragHandle: { label: '⁞⁞', title: 'Drag handle' } as const,
+  lockRule: { label: '🔓', title: 'Lock rule' } as const,
+  lockGroup: { label: '🔓', title: 'Lock group' } as const,
+  lockRuleDisabled: { label: '🔒', title: 'Unlock rule' } as const,
+  lockGroupDisabled: { label: '🔒', title: 'Unlock group' } as const,
+  muteRule: { label: '🔊', title: 'Mute rule' } as const,
+  muteGroup: { label: '🔊', title: 'Mute group' } as const,
+  unmuteRule: { label: '🔇', title: 'Unmute rule' } as const,
+  unmuteGroup: { label: '🔇', title: 'Unmute group' } as const,
+  valueSourceSelector: { title: 'Value source' } as const,
+} satisfies BaseTranslationsFull;
+// #endregion
 
 /**
  * Default character used to `.join` and `.split` arrays.
@@ -249,8 +301,11 @@ export const standardClassnames = {
   dndDropNotAllowed: 'dndDropNotAllowed',
   dragHandle: 'queryBuilder-dragHandle',
   disabled: 'queryBuilder-disabled',
+  muted: 'queryBuilder-muted',
   lockRule: 'rule-lock',
   lockGroup: 'ruleGroup-lock',
+  muteRule: 'rule-mute',
+  muteGroup: 'ruleGroup-mute',
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
@@ -287,6 +342,9 @@ export const defaultControlClassnames: Classnames = {
   dragHandle: '',
   lockRule: '',
   lockGroup: '',
+  muteRule: '',
+  muteGroup: '',
+  muted: '',
   valueSource: '',
   actionElement: '',
   valueSelector: '',
@@ -339,6 +397,8 @@ export const TestID = {
   dragHandle: 'drag-handle',
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',
+  muteRule: 'mute-rule',
+  muteGroup: 'mute-group',
   valueSourceSelector: 'value-source-selector',
   matchModeEditor: 'match-mode-editor',
 } as const;

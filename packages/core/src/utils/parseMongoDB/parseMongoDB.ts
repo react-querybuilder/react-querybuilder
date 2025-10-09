@@ -367,6 +367,7 @@ function parseMongoDB(
 
         const operators = objectKeys<Record<MongoDbSupportedOperators, unknown>>(keyValue)
           .filter(o => acceptedOpsRegExp.test(o))
+          // oxlint-disable-next-line no-array-sort
           .sort();
 
         if (operators.length === 0) {

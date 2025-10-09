@@ -1,44 +1,44 @@
-type TokenType =
-  | 'StringLiteral'
-  | 'BytesLiteral'
-  | 'IntegerLiteral'
-  | 'UnsignedIntegerLiteral'
-  | 'FloatLiteral'
-  | 'BooleanLiteral'
-  | 'NullLiteral'
-  | 'Identifier'
-  | 'Relation'
-  | 'Negation'
-  | 'Negative'
-  | 'Unary'
-  | 'Member'
-  | 'Property'
-  | 'DynamicPropertyAccessor'
-  | 'FunctionCall'
-  | 'ExpressionGroup'
-  | 'List'
-  | 'Map'
+export type CELExpressionType =
   | 'Addition'
-  | 'Subtraction'
-  | 'Multiplication'
-  | 'Division'
-  | 'Modulo'
+  | 'BooleanLiteral'
+  | 'BytesLiteral'
+  | 'ConditionalAnd'
   | 'ConditionalExpr'
   | 'ConditionalOr'
-  | 'ConditionalAnd'
+  | 'Division'
+  | 'DynamicPropertyAccessor'
+  | 'ExpressionGroup'
   | 'ExpressionList'
-  | 'FieldsObject'
-  | 'FieldInits'
   | 'FieldInit'
-  | 'MapInits'
+  | 'FieldInits'
+  | 'FieldsObject'
+  | 'FloatLiteral'
+  | 'FunctionCall'
+  | 'Identifier'
+  | 'IntegerLiteral'
+  | 'List'
+  | 'Map'
   | 'MapInit'
+  | 'MapInits'
+  | 'Member'
+  | 'Modulo'
+  | 'Multiplication'
+  | 'Negation'
+  | 'Negative'
+  | 'NullLiteral'
+  | 'Property'
+  | 'Relation'
+  | 'StringLiteral'
+  | 'Subtraction'
+  | 'Unary'
+  | 'UnsignedIntegerLiteral'
   // RQB-specific:
   | 'LikeExpression';
 
 export type CELRelop = '==' | '>=' | '>' | '<=' | '<' | '!=' | 'in';
 
 export interface CELExpression {
-  type: TokenType;
+  type: CELExpressionType;
 }
 export interface CELIdentifier<LimitTo extends string = string> extends CELExpression {
   type: 'Identifier';
@@ -97,7 +97,7 @@ export interface CELNegative extends CELExpression {
 export interface CELMember extends CELExpression {
   type: 'Member';
   value?: CELPrimary;
-  left?: CELMember;
+  left?: CELPrimary | CELMember;
   right?: CELIdentifier;
   list?: CELExpressionList;
 }

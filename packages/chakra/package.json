@@ -56,16 +56,16 @@
     "@emotion/react": "^11.14.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.1.13",
-    "@vitejs/plugin-react": "^5.0.3",
+    "@types/react": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
     "next-themes": "^0.4.6",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
     "react-querybuilder": "8.9.2",
-    "rollup-plugin-visualizer": "^6.0.3",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.7"
+    "rollup-plugin-visualizer": "^6.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   },
   "peerDependencies": {
     "@chakra-ui/react": "^3",

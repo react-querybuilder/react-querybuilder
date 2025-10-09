@@ -12,6 +12,7 @@ export * from './getValidationClassNames';
 export * from './getValueSourcesUtil';
 export * from './isRuleGroup';
 export * from './isRuleOrGroupValid';
+export * from './mergeAnyTranslations';
 export * from './mergeClassnames';
 export * from './misc';
 export * from './objectUtils';

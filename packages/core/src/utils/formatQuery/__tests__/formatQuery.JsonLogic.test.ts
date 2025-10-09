@@ -256,6 +256,12 @@ describe('validation', () => {
     'should convert jsonlogic inner group with no rules to fallbackExpression': {
       and: [{ '==': [{ var: 'field' }, ''] }],
     },
+    'should invalidate jsonlogic following combinator of first rule': {
+      or: [{ and: [{ '==': [{ var: 'field2' }, ''] }] }, { '==': [{ var: 'field3' }, ''] }],
+    },
+    'should invalidate jsonlogic preceding combinator of non-first rule': {
+      or: [{ and: [{ '==': [{ var: 'field' }, ''] }] }, { '==': [{ var: 'field3' }, ''] }],
+    },
   };
 
   for (const vtd of getValidationTestData('jsonlogic')) {

@@ -1,7 +1,9 @@
+import type { Classnames, FullField } from '@react-querybuilder/core';
+import { defaultCombinators } from '@react-querybuilder/core';
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
-import type { Classnames, FullField, Schema } from 'react-querybuilder';
-import { defaultCombinators, defaultControlElements } from 'react-querybuilder';
+import type { Schema } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 
 export const UNUSED = 'UNUSED';
 
@@ -36,6 +38,7 @@ export const basicSchema: Schema<FullField, string> = {
   showShiftActions: false,
   showCloneButtons: false,
   showLockButtons: false,
+  showMuteButtons: false,
   autoSelectField: true,
   autoSelectOperator: true,
   autoSelectValue: true,

@@ -1,7 +1,8 @@
+import type { FullOption } from '@react-querybuilder/core';
+import { toFullOptionList } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { toFullOptionList } from 'react-querybuilder';
+import type { ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { basicSchema, findSelect, hasOrInheritsClass, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{

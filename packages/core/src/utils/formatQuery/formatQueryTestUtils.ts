@@ -10,7 +10,9 @@ import type {
   FormatQueryOptions,
   RuleGroupType,
   RuleGroupTypeAny,
+  RuleType,
 } from '../../types';
+import { isPojo } from '../misc';
 import { transformQuery } from '../transformQuery';
 
 export const query: DefaultRuleGroupType = {
@@ -338,88 +340,138 @@ export const queryForPreserveValueOrder: DefaultRuleGroupType = {
 
 export const getValidationTestData = (
   format: ExportFormat
-): { title: string; query: RuleGroupTypeAny; options: FormatQueryOptions }[] => {
-  return [
-    {
-      title: `should invalidate ${format}`,
-      query: { id: 'root', combinator: 'and', rules: [] },
-      options: { format, validator: () => false },
+): { title: string; query: RuleGroupTypeAny; options: FormatQueryOptions }[] => [
+  {
+    title: `should invalidate ${format}`,
+    query: { id: 'root', combinator: 'and', rules: [] },
+    options: { format, validator: () => false },
+  },
+  {
+    title: `should invalidate ${format} even if fields are valid`,
+    query: {
+      id: 'root',
+      combinator: 'and',
+      rules: [{ field: 'field', operator: '=', value: '' }],
     },
-    {
-      title: `should invalidate ${format} even if fields are valid`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [{ field: 'field', operator: '=', value: '' }],
-      },
-      options: {
-        format,
-        validator: () => false,
-        fields: [{ name: 'field', label: 'field', validator: () => true }],
-      },
+    options: {
+      format,
+      validator: () => false,
+      fields: [{ name: 'field', label: 'field', validator: () => true }],
     },
-    {
-      title: `should invalidate ${format} rule by validator function`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [
-          { field: 'field', operator: '=', value: '' },
-          { field: 'field2', operator: '=', value: '' },
-        ],
-      },
-      options: {
-        format,
-        fields: [
-          { name: 'field', label: 'field', validator: () => false },
-          { name: 'field3', label: 'field3', validator: () => false },
-        ],
-      },
+  },
+  {
+    title: `should invalidate ${format} rule by validator function`,
+    query: {
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        { field: 'field', operator: '=', value: '' },
+        { field: 'field2', operator: '=', value: '' },
+      ],
     },
-    {
-      title: `should invalidate ${format} rule specified by validationMap`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [
-          { id: 'f1', field: 'field', operator: '=', value: '' },
-          { id: 'f2', field: 'field2', operator: '=', value: '' },
-        ],
-      },
-      options: { format, validator: () => ({ f1: false }) },
+    options: {
+      format,
+      fields: [
+        { name: 'field', label: 'field', validator: () => false },
+        { name: 'field3', label: 'field3', validator: () => false },
+      ],
     },
-    {
-      title: `should invalidate ${format} outermost group`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [],
-      },
-      options: { format, validator: () => ({ root: false }) },
+  },
+  {
+    title: `should invalidate ${format} rule specified by validationMap`,
+    query: {
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        { id: 'f1', field: 'field', operator: '=', value: '' },
+        { id: 'f2', field: 'field2', operator: '=', value: '' },
+      ],
     },
-    {
-      title: `should invalidate ${format} inner group`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [{ id: 'inner', combinator: 'and', rules: [] }],
-      },
-      options: { format, validator: () => ({ inner: false }) },
+    options: { format, validator: () => ({ f1: false }) },
+  },
+  {
+    title: `should invalidate ${format} outermost group`,
+    query: { id: 'root', combinator: 'and', rules: [] },
+    options: { format, validator: () => ({ root: false }) },
+  },
+  {
+    title: `should invalidate ${format} inner group`,
+    query: {
+      id: 'root',
+      combinator: 'and',
+      rules: [{ id: 'inner', combinator: 'and', rules: [] }],
     },
-    {
-      title: `should convert ${format} inner group with no rules to fallbackExpression`,
-      query: {
-        id: 'root',
-        combinator: 'and',
-        rules: [
-          { field: 'field', operator: '=', value: '' },
-          { id: 'inner', combinator: 'and', rules: [] },
-        ],
-      },
-      options: { format },
+    options: { format, validator: () => ({ inner: false }) },
+  },
+  {
+    title: `should convert ${format} inner group with no rules to fallbackExpression`,
+    query: {
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        { field: 'field', operator: '=', value: '' },
+        { id: 'inner', combinator: 'and', rules: [] },
+      ],
     },
-  ];
-};
+    options: { format },
+  },
+  {
+    title: `should invalidate ${format} following combinator of first rule`,
+    query: {
+      id: 'root',
+      rules: [
+        { id: 'f1', field: 'field', operator: '=', value: '' },
+        'and',
+        { id: 'f2', field: 'field2', operator: '=', value: '' },
+        'or',
+        { id: 'f3', field: 'field3', operator: '=', value: '' },
+      ],
+    },
+    options: { format, validator: () => ({ f1: false }) },
+  },
+  {
+    title: `should invalidate ${format} preceding combinator of non-first rule`,
+    query: {
+      id: 'root',
+      rules: [
+        { id: 'f1', field: 'field', operator: '=', value: '' },
+        'and',
+        { id: 'f2', field: 'field2', operator: '=', value: '' },
+        'or',
+        { id: 'f3', field: 'field3', operator: '=', value: '' },
+      ],
+    },
+    options: { format, validator: () => ({ f2: false }) },
+  },
+];
+
+export const getMuteTestData = (format: ExportFormat): ReturnType<typeof getValidationTestData> =>
+  getValidationTestData(format)
+    .filter(vtd => vtd.options.validator)
+    .map(vtd => {
+      const title = vtd.title.replace('invalidate', 'mute');
+      const {
+        options: { validator: vdtr, ...otherOptions },
+      } = vtd;
+      const validator = vdtr as () => boolean | Record<string, boolean>;
+      const rProcessor = (r: RuleGroupTypeAny | RuleType) =>
+        r.id === Object.keys(validator() as Record<string, boolean>)[0] ? { ...r, muted: true } : r;
+      if (validator() === false) {
+        return { ...vtd, options: otherOptions, title, query: { ...vtd.query, muted: true } };
+      }
+      if (isPojo(validator())) {
+        return {
+          ...vtd,
+          options: otherOptions,
+          title,
+          query: transformQuery(vtd.query as RuleGroupType, {
+            ruleProcessor: rProcessor,
+            ruleGroupProcessor: rProcessor,
+          }),
+        };
+      }
+      return vtd;
+    });
 
 export const queryAllOperators: DefaultRuleGroupType = {
   combinator: 'and',

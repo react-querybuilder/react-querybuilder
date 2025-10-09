@@ -1,6 +1,6 @@
+import type { FormatQueryOptions, RuleGroupTypeAny } from '@react-querybuilder/core';
+import { bigIntJsonStringifyReplacer, formatQuery } from '@react-querybuilder/core';
 import queryString from 'query-string';
-import type { FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
-import { bigIntJsonStringifyReplacer, formatQuery } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './constants';
 import type { DemoOption, DemoOptions } from './types';
 

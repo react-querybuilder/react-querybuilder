@@ -1,3 +1,4 @@
+import { defaultTranslations } from '@react-querybuilder/core';
 import { mergeTranslation, mergeTranslations } from './mergeTranslations';
 
 it('merges translations', () => {
@@ -27,9 +28,20 @@ it('merges translation', () => {
   expect(mergeTranslation('addRule', { label: ['Add Rule', undefined] })).toEqual({
     addRule: { label: 'Add Rule' },
   });
+  expect(mergeTranslation('addRule', { label: [undefined, 'Add Rule'] })).toEqual({
+    addRule: { label: 'Add Rule' },
+  });
   expect(
     mergeTranslation('addRule', { label: ['Label', undefined], title: ['Title', undefined] })
   ).toEqual({
     addRule: { label: 'Label', title: 'Title' },
   });
+  expect(mergeTranslation('addRule', { label: [undefined, undefined] }, true)).toHaveProperty(
+    'addRule',
+    defaultTranslations.addRule
+  );
+  expect(mergeTranslation('addRule', {}, true)).toHaveProperty(
+    'addRule',
+    defaultTranslations.addRule
+  );
 });

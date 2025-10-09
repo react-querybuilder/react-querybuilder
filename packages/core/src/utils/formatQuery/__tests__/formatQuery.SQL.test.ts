@@ -18,6 +18,7 @@ import { defaultRuleProcessorParameterized } from '../defaultRuleProcessorParame
 import { defaultRuleProcessorSQL } from '../defaultRuleProcessorSQL';
 import { formatQuery } from '../formatQuery';
 import {
+  getMuteTestData,
   getValidationTestData,
   query,
   queryAllOperators,
@@ -428,6 +429,13 @@ describe('independent combinators', () => {
       sql: `(firstName = ? and middleName = ? or lastName = ?)`,
       params: ['Test', 'Test', 'Test'],
     });
+
+    expect(
+      formatQuery(
+        { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+        'parameterized'
+      )
+    ).toEqual({ sql: `(field = ? and (1 = 1))`, params: [''] });
   });
 
   it('handles independent combinators for parameterized_named', () => {
@@ -435,6 +443,90 @@ describe('independent combinators', () => {
       sql: `(firstName = :firstName_1 and middleName = :middleName_1 or lastName = :lastName_1)`,
       params: { firstName_1: 'Test', middleName_1: 'Test', lastName_1: 'Test' },
     });
+
+    expect(
+      formatQuery(
+        { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
+        'parameterized_named'
+      )
+    ).toEqual({ sql: `(field = :field_1 and (1 = 1))`, params: { field_1: '' } });
+  });
+});
+
+describe('muted', () => {
+  describe('sql', () => {
+    const muteTestResults: Record<string, string> = {
+      'should mute sql': '(1 = 1)',
+      'should mute sql even if fields are valid': '(1 = 1)',
+      'should mute sql rule specified by validationMap': `(field2 = '')`,
+      'should mute sql outermost group': '(1 = 1)',
+      'should mute sql inner group': '((1 = 1))',
+      'should mute sql following combinator of first rule': `(field2 = '' or field3 = '')`,
+      'should mute sql preceding combinator of non-first rule': `(field = '' or field3 = '')`,
+    };
+
+    for (const vtd of getMuteTestData('sql')) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toBe(muteTestResults[vtd.title]);
+      });
+    }
+  });
+
+  describe('parameterized', () => {
+    const muteTestResults: Record<string, ParameterizedSQL> = {
+      'should mute parameterized': { sql: '(1 = 1)', params: [] },
+      'should mute parameterized even if fields are valid': { sql: '(1 = 1)', params: [] },
+      'should mute parameterized rule specified by validationMap': {
+        sql: '(field2 = ?)',
+        params: [''],
+      },
+      'should mute parameterized outermost group': { sql: '(1 = 1)', params: [] },
+      'should mute parameterized inner group': { sql: '((1 = 1))', params: [] },
+      'should mute parameterized following combinator of first rule': {
+        sql: '(field2 = ? or field3 = ?)',
+        params: ['', ''],
+      },
+      'should mute parameterized preceding combinator of non-first rule': {
+        sql: '(field = ? or field3 = ?)',
+        params: ['', ''],
+      },
+    };
+
+    for (const vtd of getMuteTestData('parameterized')) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toEqual(muteTestResults[vtd.title]);
+      });
+    }
+  });
+
+  describe('parameterized_named', () => {
+    const muteTestResults: Record<string, ParameterizedNamedSQL> = {
+      'should mute parameterized_named': { sql: '(1 = 1)', params: {} },
+      'should mute parameterized_named even if fields are valid': {
+        sql: '(1 = 1)',
+        params: {},
+      },
+      'should mute parameterized_named rule specified by validationMap': {
+        sql: '(field2 = :field2_1)',
+        params: { field2_1: '' },
+      },
+      'should mute parameterized_named outermost group': { sql: '(1 = 1)', params: {} },
+      'should mute parameterized_named inner group': { sql: '((1 = 1))', params: {} },
+      'should mute parameterized_named following combinator of first rule': {
+        sql: '(field2 = :field2_1 or field3 = :field3_1)',
+        params: { field2_1: '', field3_1: '' },
+      },
+      'should mute parameterized_named preceding combinator of non-first rule': {
+        sql: '(field = :field_1 or field3 = :field3_1)',
+        params: { field_1: '', field3_1: '' },
+      },
+    };
+
+    for (const vtd of getMuteTestData('parameterized_named')) {
+      it(vtd.title, () => {
+        expect(formatQuery(vtd.query, vtd.options)).toEqual(muteTestResults[vtd.title]);
+      });
+    }
   });
 });
 
@@ -448,6 +540,8 @@ describe('validation', () => {
       'should invalidate sql outermost group': '(1 = 1)',
       'should invalidate sql inner group': '((1 = 1))',
       'should convert sql inner group with no rules to fallbackExpression': `(field = '' and (1 = 1))`,
+      'should invalidate sql following combinator of first rule': `(field2 = '' or field3 = '')`,
+      'should invalidate sql preceding combinator of non-first rule': `(field = '' or field3 = '')`,
     };
 
     for (const vtd of getValidationTestData('sql')) {
@@ -474,6 +568,14 @@ describe('validation', () => {
       'should convert parameterized inner group with no rules to fallbackExpression': {
         sql: '(field = ? and (1 = 1))',
         params: [''],
+      },
+      'should invalidate parameterized following combinator of first rule': {
+        sql: '(field2 = ? or field3 = ?)',
+        params: ['', ''],
+      },
+      'should invalidate parameterized preceding combinator of non-first rule': {
+        sql: '(field = ? or field3 = ?)',
+        params: ['', ''],
       },
     };
 
@@ -504,6 +606,14 @@ describe('validation', () => {
       'should convert parameterized_named inner group with no rules to fallbackExpression': {
         sql: '(field = :field_1 and (1 = 1))',
         params: { field_1: '' },
+      },
+      'should invalidate parameterized_named following combinator of first rule': {
+        sql: '(field2 = :field2_1 or field3 = :field3_1)',
+        params: { field2_1: '', field3_1: '' },
+      },
+      'should invalidate parameterized_named preceding combinator of non-first rule': {
+        sql: '(field = :field_1 or field3 = :field3_1)',
+        params: { field_1: '', field3_1: '' },
       },
     };
 
