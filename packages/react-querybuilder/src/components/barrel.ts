@@ -6,6 +6,7 @@ export * from './NotToggle';
 export * from './QueryBuilder.useQueryBuilder';
 export * from './QueryBuilder.useQueryBuilderSchema';
 export * from './QueryBuilder.useQueryBuilderSetup';
+export * from './QueryBuilderContext';
 export * from './Rule';
 export * from './RuleGroup';
 export * from './ShiftActions';

@@ -14,7 +14,7 @@ import {
 } from '@react-querybuilder/core';
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
-import { QueryBuilderContext } from '../context';
+import { QueryBuilderContext } from '../components';
 import { defaultControlElements } from '../defaults';
 import type {
   ControlElementsProp,

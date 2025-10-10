@@ -364,6 +364,9 @@ export const RuleWithSubQueryGroupComponentsWrapper = (
   props: React.PropsWithChildren
 ): React.JSX.Element => <div {...props} />;
 
+/**
+ * @group Components
+ */
 export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
   (r: RuleComponentsProps) => React.JSX.Element
 > = React.memo(function RuleComponentsWithSubQuery(r: RuleComponentsProps) {
