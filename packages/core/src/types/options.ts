@@ -68,7 +68,7 @@ export type ValueOption<N extends string = string> = Simplify<
 
 /**
  * A generic {@link Option} with either a `name` or `value` as its primary identifier.
- * {@link OptionList}-type props on the {@link react-querybuilder!index.QueryBuilder QueryBuilder} component accept this type,
+ * {@link OptionList}-type props on the {@link react-querybuilder!QueryBuilder QueryBuilder} component accept this type,
  * but corresponding props passed down to subcomponents will always be augmented
  * to {@link FullOption} first.
  *
