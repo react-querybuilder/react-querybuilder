@@ -47,6 +47,7 @@ export interface UseMergedContext<
   Finalize extends boolean | undefined = undefined,
 > extends QueryBuilderContextProps<F, O>,
     QueryBuilderFlags {
+  enableDragAndDrop: Finalize extends true ? boolean : boolean | undefined;
   initialQuery?: RuleGroupTypeAny;
   qbId?: string;
   controlElements: Finalize extends true ? Controls<F, O> : Partial<Controls<F, O>>;

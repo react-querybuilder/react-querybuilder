@@ -451,6 +451,7 @@ export const queryBuilderFlagDefaults: Required<QueryBuilderFlags> = {
   showCloneButtons: false,
   showCombinatorsBetweenRules: false,
   showLockButtons: false,
+  showMuteButtons: false,
   showNotToggle: false,
   showShiftActions: false,
   suppressStandardClassnames: false,
