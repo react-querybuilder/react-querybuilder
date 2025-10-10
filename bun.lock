@@ -452,15 +452,15 @@
     },
     "packages/rules-engine": {
       "name": "@react-querybuilder/rules-engine",
-      "version": "8.9.2",
+      "version": "8.10.0",
       "dependencies": {
         "immer": "^10.1.3",
-        "react-querybuilder": "8.9.2",
+        "react-querybuilder": "8.10.0",
       },
       "devDependencies": {
         "@testing-library/dom": "^10.4.1",
         "@testing-library/react": "^16.3.0",
-        "@types/react": "^19.2.0",
+        "@types/react": "^19.2.2",
         "@vitejs/plugin-react": "^5.0.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
@@ -5543,8 +5543,6 @@
     "@react-native/codegen/yargs": ["yargs@17.7.2", "", { "dependencies": { "cliui": "^8.0.1", "escalade": "^3.1.1", "get-caller-file": "^2.0.5", "require-directory": "^2.1.1", "string-width": "^4.2.3", "y18n": "^5.0.5", "yargs-parser": "^21.1.1" } }, "sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w=="],
 
     "@react-native/dev-middleware/open": ["open@7.4.2", "", { "dependencies": { "is-docker": "^2.0.0", "is-wsl": "^2.1.1" } }, "sha512-MVHddDVweXZF3awtlAS+6pgKLlm/JgxZ90+/NBurBoQctVOOB/zDdVjcyPzQ+0laDGbsWgrRkflI65sQeOgT9Q=="],
-
-    "@react-querybuilder/rules-engine/react-querybuilder": ["react-querybuilder@8.9.2", "", { "dependencies": { "@react-querybuilder/core": "^8.9.2", "@reduxjs/toolkit": "^2.9.0", "immer": "^10.1.3", "numeric-quantity": "^2.1.0", "react-redux": "^9.2.0" }, "peerDependencies": { "drizzle-orm": ">=0.38.0", "json-logic-js": ">=2", "react": ">=18", "sequelize": ">=6" }, "optionalPeers": ["drizzle-orm", "json-logic-js", "sequelize"] }, "sha512-qvJi5E1Al7qTa+6OMAqPGClMT1FckC+aztZSle7bdwXLZzpJvx5eFtlPhlTjqp1rfnNPiMSxeW5nh6rOkdVuYA=="],
 
     "@simple-libs/child-process-utils/@types/node": ["@types/node@22.18.9", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-5yBtK0k/q8PjkMXbTfeIEP/XVYnz1R9qZJ3yUicdEW7ppdDJfe+MqXEhpqDL3mtn4Wvs1u0KLEG0RXzCgNpsSg=="],
 
