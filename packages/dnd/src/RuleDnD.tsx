@@ -17,7 +17,7 @@ import { useDragCommon } from './useDragCommon';
 
 /**
  * Rule component for drag-and-drop. Renders the provided rule component
- * ({@link react-querybuilder!index.Rule Rule} by default), but forwards the
+ * ({@link react-querybuilder!Rule Rule} by default), but forwards the
  * drag-and-drop context.
  *
  * @group Components

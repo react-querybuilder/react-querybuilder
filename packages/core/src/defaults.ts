@@ -431,7 +431,7 @@ export const rootPath: Path = [] satisfies Path;
 
 /**
  * Default values for all `boolean`
- * {@link react-querybuilder!index.QueryBuilder QueryBuilder} options.
+ * {@link react-querybuilder!QueryBuilder QueryBuilder} options.
  *
  * @group Defaults
  */

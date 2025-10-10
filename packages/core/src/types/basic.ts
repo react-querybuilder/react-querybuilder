@@ -28,7 +28,7 @@ export type Classname = string | string[] | Record<string, any>;
 export type ValueSource = 'value' | 'field';
 
 /**
- * Type of {@link react-querybuilder!index.ValueEditor ValueEditor} that will be displayed.
+ * Type of {@link react-querybuilder!ValueEditor ValueEditor} that will be displayed.
  */
 export type ValueEditorType =
   | 'text'
@@ -149,7 +149,7 @@ interface BaseFullField<
 }
 
 /**
- * Full field definition used in the `fields` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Full field definition used in the `fields` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  * This type requires both `name` and `value`, but the `fields` prop itself
  * can use a {@link FlexibleOption} where only one of `name` or `value` is
  * required (along with `label`), or {@link Field} where only `name` and
@@ -171,7 +171,7 @@ export type FullField<
 >;
 
 /**
- * Field definition used in the `fields` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Field definition used in the `fields` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  * This type is an extension of {@link FullField} where only `name` and
  * `label` are required.
  *
@@ -193,7 +193,7 @@ export type Field<
 >;
 
 /**
- * Field definition used in the `fields` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Field definition used in the `fields` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  * This type is an extension of {@link FullField} where only `value` and
  * `label` are required.
  *
@@ -228,13 +228,13 @@ export type RemoveNullability<T extends Record<string, unknown>> = {
 
 /**
  * Allowed values of the {@link FullOperator} property `arity`. A value of `"unary"` or
- * a number less than two will cause the default {@link react-querybuilder!index.ValueEditor ValueEditor} to render `null`.
+ * a number less than two will cause the default {@link react-querybuilder!ValueEditor ValueEditor} to render `null`.
  */
 export type Arity = number | 'unary' | 'binary' | 'ternary';
 
 /**
  * Full operator definition used in the `operators`/`getOperators` props of
- * {@link react-querybuilder!index.QueryBuilder QueryBuilder}. This type requires both `name` and `value`, but the
+ * {@link react-querybuilder!QueryBuilder QueryBuilder}. This type requires both `name` and `value`, but the
  * `operators`/`getOperators` props themselves can use a {@link FlexibleOption}
  * where only one of `name` or `value` is required, or {@link FullOperator} where
  * only `name` is required.
@@ -250,7 +250,7 @@ export interface FullOperator<N extends string = string>
 
 /**
  * Operator definition used in the `operators`/`getOperators` props of
- * {@link react-querybuilder!index.QueryBuilder QueryBuilder}. This type is an extension of {@link FullOperator}
+ * {@link react-querybuilder!QueryBuilder QueryBuilder}. This type is an extension of {@link FullOperator}
  * where only `name` and `label` are required.
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
@@ -266,7 +266,7 @@ export type Operator<N extends string = string> = WithUnknownIndex<
 
 /**
  * Operator definition used in the `operators`/`getOperators` props of
- * {@link react-querybuilder!index.QueryBuilder QueryBuilder}. This type is an extension of {@link FullOperator}
+ * {@link react-querybuilder!QueryBuilder QueryBuilder}. This type is an extension of {@link FullOperator}
  * where only `value` and `label` are required.
  *
  * The `name`/`value` properties of this interface can be narrowed with generics.
@@ -281,7 +281,7 @@ export type OperatorByValue<N extends string = string> = WithUnknownIndex<
 >;
 
 /**
- * Full combinator definition used in the `combinators` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Full combinator definition used in the `combinators` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  * This type requires both `name` and `value`, but the `combinators` prop itself
  * can use a {@link FlexibleOption} where only one of `name` or `value` is required,
  * or {@link Combinator} where only `name` is required.
@@ -293,7 +293,7 @@ export type OperatorByValue<N extends string = string> = WithUnknownIndex<
 export type FullCombinator<N extends string = string> = WithOptionalClassName<FullOption<N>>;
 
 /**
- * Combinator definition used in the `combinators` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Combinator definition used in the `combinators` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  * This type is an extension of {@link FullCombinator} where only `name` and
  * `label` are required.
  *
@@ -306,7 +306,7 @@ export type Combinator<N extends string = string> = WithUnknownIndex<
 >;
 
 /**
- * Combinator definition used in the `combinators` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Combinator definition used in the `combinators` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  * This type is an extension of {@link FullCombinator} where only `value` and
  * `label` are required.
  *
@@ -328,14 +328,14 @@ export type ParseNumberMethod = boolean | ParseNumberMethodName;
 type ParseNumbersModerationLevel = '-limited' | '';
 
 /**
- * Options for the `parseNumbers` prop of {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
+ * Options for the `parseNumbers` prop of {@link react-querybuilder!QueryBuilder QueryBuilder}.
  */
 export type ParseNumbersPropConfig =
   | boolean
   | `${ParseNumberMethodName}${ParseNumbersModerationLevel}`;
 
 /**
- * Signature of `accessibleDescriptionGenerator` prop, used by {@link react-querybuilder!index.QueryBuilder QueryBuilder} to generate
- * accessible descriptions for each {@link react-querybuilder!index.RuleGroup RuleGroup}.
+ * Signature of `accessibleDescriptionGenerator` prop, used by {@link react-querybuilder!QueryBuilder QueryBuilder} to generate
+ * accessible descriptions for each {@link react-querybuilder!RuleGroup RuleGroup}.
  */
 export type AccessibleDescriptionGenerator = (props: { path: Path; qbId: string }) => string;
