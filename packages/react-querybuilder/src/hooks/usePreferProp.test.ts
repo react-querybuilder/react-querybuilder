@@ -24,6 +24,18 @@ describe('usePreferProp', () => {
     expect(usePreferProp(false, false, true)).toBe(false);
     expect(usePreferProp(false, true, false)).toBe(true);
   });
+
+  it('does not finalize the prop with default true', async () => {
+    expect(usePreferProp(true, undefined, undefined, true)).toBeUndefined();
+    expect(usePreferProp(true, true, undefined, true)).toBe(true);
+    expect(usePreferProp(true, undefined, true, true)).toBe(true);
+  });
+
+  it('does not finalize the prop with default false', async () => {
+    expect(usePreferProp(false, undefined, undefined, true)).toBeUndefined();
+    expect(usePreferProp(false, true, undefined, true)).toBe(true);
+    expect(usePreferProp(false, undefined, true, true)).toBe(true);
+  });
 });
 
 describe('usePreferAnyProp', () => {

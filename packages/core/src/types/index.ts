@@ -25,7 +25,7 @@ export * from './dnd';
 export * from './export';
 // export * from './import';
 export * from './options';
-export * from './props';
+export * from './queryBuilder';
 export * from './ruleGroups';
 export * from './ruleGroupsIC';
 export * from './validation';

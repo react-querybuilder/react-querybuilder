@@ -289,3 +289,111 @@ export interface QueryActions {
   groupRule(sourcePath: Path, targetPath: Path, clone?: boolean, context?: any): void;
 }
 /* oxlint-enable typescript/no-explicit-any */
+
+export interface QueryBuilderFlags {
+  /**
+   * Set to `false` to avoid calling the `onQueryChange` callback
+   * when the component mounts.
+   *
+   * @default true
+   */
+  enableMountQueryChange?: boolean;
+  /**
+   * Enables drag-and-drop features.
+   *
+   * @default false
+   */
+  enableDragAndDrop?: boolean;
+  /**
+   * Enables debug logging for query builders (and React DnD when applicable).
+   *
+   * @default false
+   */
+  debugMode?: boolean;
+  /**
+   * Show group combinator selectors in the body of the group, between each child rule/group,
+   * instead of in the group header.
+   *
+   * @default false
+   */
+  showCombinatorsBetweenRules?: boolean;
+  /**
+   * Show the "not" (aka inversion) toggle for rule groups.
+   *
+   * @default false
+   */
+  showNotToggle?: boolean;
+  /**
+   * Show the "Shift up"/"Shift down" actions.
+   *
+   * @default false
+   */
+  showShiftActions?: boolean;
+  /**
+   * Show the "Clone rule" and "Clone group" buttons.
+   *
+   * @default false
+   */
+  showCloneButtons?: boolean;
+  /**
+   * Show the "Lock rule" and "Lock group" buttons.
+   *
+   * @default false
+   */
+  showLockButtons?: boolean;
+  /**
+   * Show the "Mute rule" and "Mute group" buttons.
+   *
+   * @default false
+   */
+  showMuteButtons?: boolean;
+  /**
+   * Reset the `operator` and `value` when the `field` changes.
+   *
+   * @default true
+   */
+  resetOnFieldChange?: boolean;
+  /**
+   * Reset the `value` when the `operator` changes.
+   *
+   * @default false
+   */
+  resetOnOperatorChange?: boolean;
+  /**
+   * Select the first field in the array automatically.
+   *
+   * @default true
+   */
+  autoSelectField?: boolean;
+  /**
+   * Select the first operator in the array automatically.
+   *
+   * @default true
+   */
+  autoSelectOperator?: boolean;
+  /**
+   * Select the first value in the array automatically. Only applicable when the value editor renders a select list.
+   *
+   * @default false
+   */
+  autoSelectValue?: boolean;
+  /**
+   * Adds a new default rule automatically to each new group.
+   *
+   * @default false
+   */
+  addRuleToNewGroups?: boolean;
+  /**
+   * Store list-type values as native arrays instead of comma-separated strings.
+   *
+   * @default false
+   */
+  listsAsArrays?: boolean;
+  /**
+   * Prevent _any_ assignment of standard classes to elements. This includes conditional
+   * and event-based classes for validation, drag-and-drop, etc.
+   *
+   * @default false
+   */
+  suppressStandardClassnames?: boolean;
+}

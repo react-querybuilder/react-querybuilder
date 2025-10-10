@@ -36,7 +36,7 @@ import {
   uniqOptList,
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
-import type { UseMergedContextReturn } from '../hooks';
+import type { UseMergedContext } from '../hooks';
 import { useFields, useMergedContext } from '../hooks';
 import type { QueryBuilderProps } from '../types';
 
@@ -64,7 +64,7 @@ export type UseQueryBuilderSetup<
   C extends FullCombinator,
 > = {
   qbId: string;
-  rqbContext: UseMergedContextReturn<F, GetOptionIdentifierType<O>, true>;
+  rqbContext: UseMergedContext<F, GetOptionIdentifierType<O>, true>;
   fields: FullOptionList<F>;
   fieldMap: FullOptionMap<
     FullField<string, string, string, FullOption, FullOption>,
