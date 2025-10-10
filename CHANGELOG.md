@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.10.0] - 2025-10-09
+
 ### Added
 
 - [#947] `showInputLabels` prop for `QueryBuilderMaterial` displays the `title` as a label above/within each input component rendered by `MaterialValueEditor` and `MaterialValueSelector`.
@@ -2033,7 +2037,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...HEAD
+[v8.10.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...v8.10.0
 [v8.9.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...v8.9.2
 [v8.9.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.0...v8.9.1
 [v8.9.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.4...v8.9.0
