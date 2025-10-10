@@ -150,11 +150,11 @@ export interface FormatQueryOptions {
   quoteValuesWith?: string;
   /**
    * Validator function for the entire query. Can be the same function passed
-   * as `validator` prop to {@link QueryBuilder}.
+   * as `validator` prop to {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
    */
   validator?: QueryValidator;
   /**
-   * This can be the same {@link FullField} array passed to {@link QueryBuilder}, but
+   * This can be the same {@link FullField} array passed to {@link react-querybuilder!index.QueryBuilder QueryBuilder}, but
    * really all you need to provide is the `name` and `validator` for each field.
    *
    * The full field object from this array, where the field's identifying property
@@ -162,7 +162,7 @@ export interface FormatQueryOptions {
    */
   fields?: FlexibleOptionList<FullField>;
   /**
-   * This can be the same `getOperators` function passed to {@link QueryBuilder}.
+   * This can be the same `getOperators` function passed to {@link react-querybuilder!index.QueryBuilder QueryBuilder}.
    *
    * The full operator object from this array, where the operator's identifying property
    * matches the rule's `operator`, will be passed to the rule processor.

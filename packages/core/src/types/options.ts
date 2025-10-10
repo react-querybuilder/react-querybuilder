@@ -68,8 +68,8 @@ export type ValueOption<N extends string = string> = Simplify<
 
 /**
  * A generic {@link Option} with either a `name` or `value` as its primary identifier.
- * {@link OptionList}-type props on the {@link QueryBuilder} component accept this type,
- * but corresponding props passed down to subcomponents will always be translated
+ * {@link OptionList}-type props on the {@link react-querybuilder!index.QueryBuilder QueryBuilder} component accept this type,
+ * but corresponding props passed down to subcomponents will always be augmented
  * to {@link FullOption} first.
  *
  * @group Option Lists
@@ -91,7 +91,7 @@ export type ToFlexibleOption<Opt extends BaseOption | string> = WithUnknownIndex
 /**
  * A generic {@link Option} requiring both `name` _and_ `value` properties.
  * Props that extend {@link OptionList} accept {@link BaseOption}, but
- * corresponding props sent to subcomponents will always be translated to this
+ * corresponding props sent to subcomponents will always be augmented to this
  * type first to ensure both `name` and `value` are available.
  *
  * NOTE: Do not extend from this type directly. Use {@link BaseFullOption}

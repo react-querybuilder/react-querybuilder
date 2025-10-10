@@ -429,14 +429,12 @@ export const LogType = {
  */
 export const rootPath: Path = [] satisfies Path;
 
-// type BooleanKeys<T> = {
-//   [K in keyof T]: Extract<T[K], boolean | undefined> extends never ? never : K
-// }[keyof T];
-
-// type BooleanPropDefaults = Partial<
-//   Pick<QueryBuilderBooleanProps, BooleanKeys<QueryBuilderBooleanProps>>
-// >;
-
+/**
+ * Default values for all `boolean`
+ * {@link react-querybuilder!index.QueryBuilder QueryBuilder} options.
+ *
+ * @group Defaults
+ */
 export const queryBuilderFlagDefaults: Required<QueryBuilderFlags> = {
   addRuleToNewGroups: false,
   autoSelectField: true,
