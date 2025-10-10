@@ -5,15 +5,14 @@ import { useContext, useMemo } from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 import { NotToggle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation, RQBMaterialComponents } from './types';
 
 /**
  * @group Props
  */
 export type MaterialNotToggleProps = NotToggleProps &
-  ComponentPropsWithoutRef<typeof Switch> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+  ComponentPropsWithoutRef<typeof Switch> &
+  MuiAugmentation;
 
 type MaterialNotToggleComponents = Pick<RQBMaterialComponents, 'FormControlLabel' | 'Switch'>;
 

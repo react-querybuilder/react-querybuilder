@@ -45,7 +45,7 @@ Renders these components in order within a `React.Fragment`:
 
 [^4]: Only rendered if the rule's `operator` is neither `"null"` nor `"notNull"` and the derived `valueSources` array has more than one element.
 
-[^5]: Only rendered when all of these conditions are met:<ul><li>The `arity` property of the rule's `operator` is not `"unary"` and is not a number less than `2`</li><li>[`autoSelectOperator`](./querybuilder#autoselectoperator) is `true` _or_ the rule's `operator` doesn't match `translations.operators.placeholderName`</li></ul>
+[^5]: Only rendered when the following conditions are met: (1) The `arity` property of the rule's `operator` is not `"unary"` and is not a number less than `2`, and (2) [`autoSelectOperator`](./querybuilder#autoselectoperator) is `true` _or_ the rule's `operator` doesn't match `translations.operators.placeholderName`.
 
 [^6]: Only rendered if [`showCloneButtons`](./querybuilder#showclonebuttons) is `true`.
 

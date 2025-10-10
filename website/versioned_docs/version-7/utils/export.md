@@ -1157,6 +1157,51 @@ formatQuery(query, {
 */
 ```
 
+### Muted rules and groups
+
+Rules and groups with the `muted` property set to `true` are excluded from output for all formats except "json" and "json_without_ids", similar to invalid rules and groups. This allows temporary exclusion of conditions without removing them from the query structure.
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'firstName', operator: '=', value: 'Steve' },
+    { field: 'lastName', operator: '=', value: 'Vai', muted: true },
+  ],
+};
+
+formatQuery(query, 'sql');
+// "(firstName = 'Steve')" - lastName rule is excluded
+```
+
+When a group is muted, it's replaced with the [fallback expression](#fallback-expression):
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { field: 'firstName', operator: '=', value: 'Steve' },
+    {
+      combinator: 'or',
+      rules: [
+        { field: 'lastName', operator: '=', value: 'Vai' },
+        { field: 'instrument', operator: '=', value: 'Guitar' },
+      ],
+      muted: true,
+    },
+  ],
+};
+
+formatQuery(query, 'sql');
+// "(firstName = 'Steve' and (1 = 1))" - muted group becomes fallback
+```
+
+:::tip
+
+Enable mute functionality in the UI by setting [`showMuteButtons`](../components/querybuilder#showmutebuttons) to `true` on the main `QueryBuilder` component.
+
+:::
+
 ### Automatic validation
 
 To minimize invalid syntax, `formatQuery` performs basic validation for "in", "notIn", "between", and "notBetween" operators for all formats except "json" and "json_without_ids", even without specified validator functions or field validators.

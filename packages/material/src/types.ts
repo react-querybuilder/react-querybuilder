@@ -9,6 +9,7 @@ import type Button from '@mui/material/Button';
 import type Checkbox from '@mui/material/Checkbox';
 import type FormControl from '@mui/material/FormControl';
 import type FormControlLabel from '@mui/material/FormControlLabel';
+import type InputLabel from '@mui/material/InputLabel';
 import type ListSubheader from '@mui/material/ListSubheader';
 import type MenuItem from '@mui/material/MenuItem';
 import type Radio from '@mui/material/Radio';
@@ -29,12 +30,13 @@ export interface RQBMaterialComponents {
   DragIndicator: typeof DragIndicator;
   FormControl: typeof FormControl;
   FormControlLabel: typeof FormControlLabel;
+  InputLabel: typeof InputLabel;
+  KeyboardArrowDownIcon: typeof KeyboardArrowDownIcon;
+  KeyboardArrowUpIcon: typeof KeyboardArrowUpIcon;
   ListSubheader: typeof ListSubheader;
   LockIcon: typeof LockIcon;
   LockOpenIcon: typeof LockOpenIcon;
   MenuItem: typeof MenuItem;
-  KeyboardArrowDownIcon: typeof KeyboardArrowDownIcon;
-  KeyboardArrowUpIcon: typeof KeyboardArrowUpIcon;
   Radio: typeof Radio;
   RadioGroup: typeof RadioGroup;
   Select: typeof Select;
@@ -47,3 +49,8 @@ export interface RQBMaterialComponents {
  * @group Props
  */
 export type MuiComponentName = keyof RQBMaterialComponents;
+
+export interface MuiAugmentation {
+  muiComponents?: RQBMaterialComponents;
+  showInputLabels?: boolean;
+}

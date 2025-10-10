@@ -16,6 +16,9 @@ const componentMocks = {
   DragIndicator: () => <>DragIndicator</>,
   FormControl: () => <>FormControl</>,
   FormControlLabel: () => <>FormControlLabel</>,
+  InputLabel: () => <>InputLabel</>,
+  KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
+  KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
   ListSubheader: () => <>ListSubheader</>,
   LockIcon: () => <>LockIcon</>,
   LockOpenIcon: () => <>LockOpenIcon</>,
@@ -25,8 +28,6 @@ const componentMocks = {
   Select: () => <>Select</>,
   Switch: () => <>Switch</>,
   TextareaAutosize: () => <>TextareaAutosize</>,
-  KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
-  KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
   TextField: () => <>TextField</>,
 } as unknown as RQBMaterialComponents;
 

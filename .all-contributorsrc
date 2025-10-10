@@ -433,6 +433,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sosso",
+      "name": "Anthony Sosso",
+      "avatar_url": "https://avatars.githubusercontent.com/u/619968?v=4",
+      "profile": "https://github.com/sosso",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

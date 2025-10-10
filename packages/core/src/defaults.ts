@@ -87,13 +87,13 @@ export const defaultPlaceholderValueGroupLabel: typeof defaultPlaceholderLabel =
 // #region docs-translations
 export const defaultTranslations: BaseTranslationsFull = {
   fields: {
-    title: 'Fields',
+    title: 'Field',
     placeholderName: defaultPlaceholderFieldName,
     placeholderLabel: defaultPlaceholderFieldLabel,
     placeholderGroupLabel: defaultPlaceholderFieldGroupLabel,
   } as const,
   operators: {
-    title: 'Operators',
+    title: 'Operator',
     placeholderName: defaultPlaceholderOperatorName,
     placeholderLabel: defaultPlaceholderOperatorLabel,
     placeholderGroupLabel: defaultPlaceholderOperatorGroupLabel,
@@ -111,7 +111,7 @@ export const defaultTranslations: BaseTranslationsFull = {
   removeGroup: { label: '⨯', title: 'Remove group' } as const,
   addRule: { label: '+ Rule', title: 'Add rule' } as const,
   addGroup: { label: '+ Group', title: 'Add group' } as const,
-  combinators: { title: 'Combinators' } as const,
+  combinators: { title: 'Combinator' } as const,
   notToggle: { label: 'Not', title: 'Invert this group' } as const,
   cloneRule: { label: '⧉', title: 'Clone rule' } as const,
   cloneRuleGroup: { label: '⧉', title: 'Clone group' } as const,
@@ -122,6 +122,10 @@ export const defaultTranslations: BaseTranslationsFull = {
   lockGroup: { label: '🔓', title: 'Lock group' } as const,
   lockRuleDisabled: { label: '🔒', title: 'Unlock rule' } as const,
   lockGroupDisabled: { label: '🔒', title: 'Unlock group' } as const,
+  muteRule: { label: '🔊', title: 'Mute rule' } as const,
+  muteGroup: { label: '🔊', title: 'Mute group' } as const,
+  unmuteRule: { label: '🔇', title: 'Unmute rule' } as const,
+  unmuteGroup: { label: '🔇', title: 'Unmute group' } as const,
   valueSourceSelector: { title: 'Value source' } as const,
 } satisfies BaseTranslationsFull;
 // #endregion
@@ -297,8 +301,11 @@ export const standardClassnames = {
   dndDropNotAllowed: 'dndDropNotAllowed',
   dragHandle: 'queryBuilder-dragHandle',
   disabled: 'queryBuilder-disabled',
+  muted: 'queryBuilder-muted',
   lockRule: 'rule-lock',
   lockGroup: 'ruleGroup-lock',
+  muteRule: 'rule-mute',
+  muteGroup: 'ruleGroup-mute',
   valueSource: 'rule-valueSource',
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
@@ -335,6 +342,9 @@ export const defaultControlClassnames: Classnames = {
   dragHandle: '',
   lockRule: '',
   lockGroup: '',
+  muteRule: '',
+  muteGroup: '',
+  muted: '',
   valueSource: '',
   actionElement: '',
   valueSelector: '',
@@ -387,6 +397,8 @@ export const TestID = {
   dragHandle: 'drag-handle',
   lockRule: 'lock-rule',
   lockGroup: 'lock-group',
+  muteRule: 'mute-rule',
+  muteGroup: 'mute-group',
   valueSourceSelector: 'value-source-selector',
   matchModeEditor: 'match-mode-editor',
 } as const;

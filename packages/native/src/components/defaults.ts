@@ -27,6 +27,8 @@ export const defaultNativeControlElements: Controls<FullField, string> = {
   inlineCombinator: NativeInlineCombinator,
   lockGroupAction: NativeActionElement,
   lockRuleAction: NativeActionElement,
+  muteGroupAction: NativeActionElement,
+  muteRuleAction: NativeActionElement,
   notToggle: NativeNotToggle,
   operatorSelector: NativeValueSelector,
   removeGroupAction: NativeActionElement,

@@ -7,15 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.10.0] - 2025-10-09
+
 ### Added
 
+- [#947] `showInputLabels` prop for `QueryBuilderMaterial` displays the `title` as a label above/within each input component rendered by `MaterialValueEditor` and `MaterialValueSelector`.
 - [#950] `customExpressionHandler` option for `parseCEL`.
 - [#950] `parseCEL` types, type guard functions, and other utilities are exported.
+- [#948] Support for "muting" rules and groups. `showMuteButtons` prop will display a button with 🔊 or 🔇 depending on the boolean `muted` property of the rule/group. As with rules/groups deemed invalid, `formatQuery` will skip over rules/groups with `muted: true`.
 
 ### Fixed
 
-- `useMergedContext` now handles `matchMode` and `matchThreshold` translations.
-- Default styles for `queryBuilder-justified` and `queryBuilder-branches` now work property under `dir="rtl"`.
+- [#947] Default titles for field, operator, and combinator selectors are now singular ("Fields"→"Field", "Operators"→"Operator", "Combinators"→"Combinator").
+- `useMergedContext` handles `matchMode` and `matchThreshold` translations.
+- Default styles for `queryBuilder-justified` and `queryBuilder-branches` work properly for RTL languages (`dir="rtl"`).
 - [#951] `formatQuery` properly handles invalid rules and groups in queries with independent combinators.
 
 ## [v8.9.2] - 2025-09-22
@@ -2021,6 +2028,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 [#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
+[#947]: https://github.com/react-querybuilder/react-querybuilder/pull/947
+[#948]: https://github.com/react-querybuilder/react-querybuilder/pull/948
 [#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950
 [#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
 
@@ -2028,7 +2037,8 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...HEAD
+[v8.10.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...v8.10.0
 [v8.9.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...v8.9.2
 [v8.9.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.0...v8.9.1
 [v8.9.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.8.4...v8.9.0
