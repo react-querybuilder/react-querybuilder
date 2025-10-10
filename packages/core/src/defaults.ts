@@ -6,6 +6,7 @@ import type {
   DefaultOperatorName,
   MatchMode,
   Path,
+  QueryBuilderFlags,
   StringUnionToFullOptionArray,
 } from './types';
 
@@ -427,3 +428,30 @@ export const LogType = {
  * @group Defaults
  */
 export const rootPath: Path = [] satisfies Path;
+
+// type BooleanKeys<T> = {
+//   [K in keyof T]: Extract<T[K], boolean | undefined> extends never ? never : K
+// }[keyof T];
+
+// type BooleanPropDefaults = Partial<
+//   Pick<QueryBuilderBooleanProps, BooleanKeys<QueryBuilderBooleanProps>>
+// >;
+
+export const queryBuilderFlagDefaults: Required<QueryBuilderFlags> = {
+  addRuleToNewGroups: false,
+  autoSelectField: true,
+  autoSelectOperator: true,
+  autoSelectValue: false,
+  debugMode: false,
+  enableDragAndDrop: false,
+  enableMountQueryChange: true,
+  listsAsArrays: false,
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false,
+  showCloneButtons: false,
+  showCombinatorsBetweenRules: false,
+  showLockButtons: false,
+  showNotToggle: false,
+  showShiftActions: false,
+  suppressStandardClassnames: false,
+};

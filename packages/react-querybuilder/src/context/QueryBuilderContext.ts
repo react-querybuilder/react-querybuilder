@@ -3,15 +3,12 @@ import type { Context } from 'react';
 import { createContext } from 'react';
 import type { QueryBuilderContextProps } from '../types';
 
-interface QueryBuilderContextInternals {
+interface QueryBuilderContextType
+  // oxlint-disable-next-line typescript/no-explicit-any
+  extends QueryBuilderContextProps<any, any> {
   initialQuery?: RuleGroupTypeAny;
   qbId?: string;
 }
-
-interface QueryBuilderContextType
-  // oxlint-disable-next-line typescript/no-explicit-any
-  extends QueryBuilderContextProps<any, any>,
-    QueryBuilderContextInternals {}
 
 /**
  * Context provider for {@link QueryBuilder}. Any descendant query builders

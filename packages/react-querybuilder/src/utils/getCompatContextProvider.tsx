@@ -9,7 +9,7 @@ import type {
   QueryBuilderContextProviderProps,
 } from '../types';
 
-export type GetCompatContextProviderProps = QueryBuilderContextProps<FullField, string>;
+export type GetCompatContextProviderProps = QueryBuilderContextProps;
 
 /**
  * Generates a context provider for a compatibility package.

@@ -28,6 +28,7 @@ import type {
   ParseNumbersPropConfig,
   Path,
   QueryActions,
+  QueryBuilderFlags,
   QueryValidator,
   RuleGroupType,
   RuleGroupTypeAny,
@@ -733,18 +734,14 @@ export interface RuleProps<F extends string = string, O extends string = string>
  *
  * @group Props
  */
-export interface QueryBuilderContextProps<F extends FullField, O extends string> {
+export interface QueryBuilderContextProps<
+  F extends FullField = FullField,
+  O extends string = string,
+> extends QueryBuilderFlags {
   /**
    * Defines replacement components.
    */
   controlElements?: ControlElementsProp<F, O>;
-  /**
-   * Set to `false` to avoid calling the `onQueryChange` callback
-   * when the component mounts.
-   *
-   * @default true
-   */
-  enableMountQueryChange?: boolean;
   /**
    * This can be used to assign specific CSS classes to various controls
    * that are rendered by {@link QueryBuilder}.
@@ -755,25 +752,12 @@ export interface QueryBuilderContextProps<F extends FullField, O extends string>
    * controls that are rendered by {@link QueryBuilder}.
    */
   translations?: Partial<Translations>;
-  /**
-   * Enables drag-and-drop features.
-   *
-   * @default false
-   */
-  enableDragAndDrop?: boolean;
-  /**
-   * Enables debug logging for {@link QueryBuilder} (and React DnD when applicable).
-   *
-   * @default false
-   */
-  debugMode?: boolean;
 }
 
 /**
  * @group Props
  */
-export interface QueryBuilderContextProviderProps
-  extends QueryBuilderContextProps<FullField, string> {
+export interface QueryBuilderContextProviderProps extends QueryBuilderContextProps {
   children?: ReactNode;
 }
 
@@ -1126,90 +1110,20 @@ export type QueryBuilderProps<
       // oxlint-disable-next-line typescript/no-explicit-any
       onLog?(obj: any): void;
       /**
-       * Show group combinator selectors in the body of the group, between each child rule/group,
-       * instead of in the group header.
-       *
-       * @default false
-       */
-      showCombinatorsBetweenRules?: boolean;
-      /**
        * @deprecated As of v7, this prop is ignored. To enable independent combinators, use
        * {@link RuleGroupTypeIC} for the `query` or `defaultQuery` prop. The query builder
        * will detect the query type and behave accordingly.
        */
       independentCombinators?: boolean;
       /**
-       * Show the "not" (aka inversion) toggle for rule groups.
+       * Disables the entire query builder if true, or the rules and groups at
+       * the specified paths (as well as all child rules/groups and subcomponents)
+       * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
+       * no changes to the query are allowed.
        *
        * @default false
        */
-      showNotToggle?: boolean;
-      /**
-       * Show the "Shift up"/"Shift down" actions.
-       *
-       * @default false
-       */
-      showShiftActions?: boolean;
-      /**
-       * Show the "Clone rule" and "Clone group" buttons.
-       *
-       * @default false
-       */
-      showCloneButtons?: boolean;
-      /**
-       * Show the "Lock rule" and "Lock group" buttons.
-       *
-       * @default false
-       */
-      showLockButtons?: boolean;
-      /**
-       * Show the "Mute rule" and "Mute group" buttons.
-       *
-       * @default false
-       */
-      showMuteButtons?: boolean;
-      /**
-       * Reset the `operator` and `value` when the `field` changes.
-       *
-       * @default true
-       */
-      resetOnFieldChange?: boolean;
-      /**
-       * Reset the `value` when the `operator` changes.
-       *
-       * @default false
-       */
-      resetOnOperatorChange?: boolean;
-      /**
-       * Select the first field in the array automatically.
-       *
-       * @default true
-       */
-      autoSelectField?: boolean;
-      /**
-       * Select the first operator in the array automatically.
-       *
-       * @default true
-       */
-      autoSelectOperator?: boolean;
-      /**
-       * Select the first value in the array automatically. Only applicable when the value editor renders a select list.
-       *
-       * @default false
-       */
-      autoSelectValue?: boolean;
-      /**
-       * Adds a new default rule automatically to each new group.
-       *
-       * @default false
-       */
-      addRuleToNewGroups?: boolean;
-      /**
-       * Store list-type values as native arrays instead of comma-separated strings.
-       *
-       * @default false
-       */
-      listsAsArrays?: boolean;
+      disabled?: boolean | Path[];
       /**
        * Store values as numbers whenever possible.
        *
@@ -1235,15 +1149,6 @@ export type QueryBuilderProps<
        */
       parseNumbers?: ParseNumbersPropConfig;
       /**
-       * Disables the entire query builder if true, or the rules and groups at
-       * the specified paths (as well as all child rules/groups and subcomponents)
-       * if an array of paths is provided. If the root path is specified (`disabled={[[]]}`),
-       * no changes to the query are allowed.
-       *
-       * @default false
-       */
-      disabled?: boolean | Path[];
-      /**
        * Query validation function.
        */
       validator?: QueryValidator;
@@ -1260,11 +1165,6 @@ export type QueryBuilderProps<
        */
       accessibleDescriptionGenerator?: AccessibleDescriptionGenerator;
       /**
-       * Prevent _any_ assignment of standard classes to elements. This includes conditional
-       * and event-based classes for validation, drag-and-drop, etc.
-       */
-      suppressStandardClassnames?: boolean;
-      /**
        * Maximum number of levels deep the query is allowed to go. The minimum is 1; values
        * less than 1 will be ignored.
        */
@@ -1276,36 +1176,3 @@ export type QueryBuilderProps<
       context?: any;
     }
   : never;
-
-// import { getFirstOption } from '../utils';
-// type ThisThat = 'this' | 'that';
-// const fields: FullField<ThisThat>[] = [];
-// const fieldSelector = (_props: FieldSelectorProps<FullField<ThisThat>>) => _props.value;
-// const valueEditor = (_props: ValueEditorProps<FullField<ThisThat>, string>) =>
-//   getFirstOption(_props.values);
-// const _QB = <RG extends RuleGroupTypeAny, F extends FullField>(
-//   _p: QueryBuilderProps<RG, F, FullOperator, FullCombinator>
-// ) => 1;
-// const _QBC = () =>
-//   _QB({
-//     fields,
-//     onAddRule: (_rule, _parentPath, _query, _context) => false,
-//     controlElements: {
-//       fieldSelector,
-//       valueEditor,
-//     },
-//     defaultQuery: { rules: [] },
-//   });
-// const _QBP: QueryBuilderProps<
-//   RuleGroupTypeIC<RuleType<ThisThat>>,
-//   FullField<ThisThat>,
-//   FullOperator,
-//   FullCombinator
-// > = {
-//   fields,
-//   onAddRule: (_rule, _parentPath, _query, _context) => false,
-//   controlElements: {
-//     fieldSelector: _props => 1,
-//     valueEditor: _props => 1,
-//   },
-// };

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useContext, useEffect, useMemo, useState } from 'react';
-import type { FullField, QueryBuilderContextProps } from 'react-querybuilder';
+import type { QueryBuilderContextProps } from 'react-querybuilder';
 import {
   messages,
+  preferAnyProp,
+  preferProp,
   QueryBuilderContext,
   useMergedContext,
-  usePreferAnyProp,
-  usePreferProp,
 } from 'react-querybuilder';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { isTouchDevice } from './isTouchDevice';
@@ -98,23 +98,19 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   const rqbContext = useContext(QueryBuilderContext);
   const rqbDndContext = useContext(QueryBuilderDndContext);
   const dnd = useReactDnD(props.dnd);
-  const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
-  const canDrop = usePreferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
-  const copyModeModifierKey = usePreferAnyProp(
+  const copyModeModifierKey = preferAnyProp(
     undefined,
     props.copyModeModifierKey,
     rqbDndContext.copyModeModifierKey
   );
-  const groupModeModifierKey = usePreferAnyProp(
+  const groupModeModifierKey = preferAnyProp(
     undefined,
     props.groupModeModifierKey,
     rqbDndContext.groupModeModifierKey
   );
-  const enableDragAndDrop = usePreferProp(
-    true,
-    props.enableDragAndDrop,
-    rqbContext.enableDragAndDrop
-  );
+  const enableDragAndDrop = preferProp(true, props.enableDragAndDrop, rqbContext.enableDragAndDrop);
+  const debugMode = preferProp(false, props.debugMode, rqbContext.debugMode);
+  const canDrop = preferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
   const baseControls = useMemo(
@@ -145,7 +141,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     ]
   );
 
-  const newContext: QueryBuilderContextProps<FullField, string> = useMemo(
+  const newContext: QueryBuilderContextProps = useMemo(
     () => ({
       ...rqbContext,
       enableDragAndDrop,

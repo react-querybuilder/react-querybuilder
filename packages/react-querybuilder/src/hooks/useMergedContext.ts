@@ -1,9 +1,16 @@
-import type { Classnames, FullField, RuleGroupTypeAny } from '@react-querybuilder/core';
+import type {
+  Classnames,
+  FullField,
+  QueryBuilderFlags,
+  RuleGroupTypeAny,
+} from '@react-querybuilder/core';
 import {
   defaultControlClassnames,
   defaultTranslations,
   mergeAnyTranslation,
   mergeClassnames,
+  preferFlagProps,
+  preferProp,
 } from '@react-querybuilder/core';
 import type { ComponentType, ForwardRefExoticComponent, RefAttributes } from 'react';
 import { forwardRef, useCallback, useContext, useMemo } from 'react';
@@ -18,7 +25,6 @@ import type {
   TranslationsFull,
   ValueEditorProps,
 } from '../types';
-import { usePreferProp } from './usePreferProp';
 
 export type UseMergedContextParams<
   F extends FullField = FullField,
@@ -35,23 +41,18 @@ export type UseMergedContextParams<
   finalize?: Finalize;
 };
 
-export type UseMergedContextReturn<
+export interface UseMergedContext<
   F extends FullField = FullField,
   O extends string = string,
   Finalize extends boolean | undefined = undefined,
-> = QueryBuilderContextProps<F, O> & {
+> extends QueryBuilderContextProps<F, O>,
+    QueryBuilderFlags {
   initialQuery?: RuleGroupTypeAny;
   qbId?: string;
-} & {
   controlElements: Finalize extends true ? Controls<F, O> : Partial<Controls<F, O>>;
   controlClassnames: Classnames;
   translations: Finalize extends true ? TranslationsFull : Partial<Translations>;
-} & Required<
-    Pick<
-      QueryBuilderContextProps<F, O>,
-      'debugMode' | 'enableDragAndDrop' | 'enableMountQueryChange'
-    >
-  >;
+}
 
 const nullComp = () => null;
 const nullFwdComp: ForwardRefExoticComponent<DragHandleProps & RefAttributes<HTMLElement>> =
@@ -70,30 +71,20 @@ export const useMergedContext = <
 >({
   finalize,
   ...props
-}: UseMergedContextParams<F, O, Finalize>): UseMergedContextReturn<F, O, Finalize> => {
+}: UseMergedContextParams<F, O, Finalize>): UseMergedContext<F, O, Finalize> => {
   const rqbContext: QueryBuilderContextProps<F, O> = useContext(QueryBuilderContext);
 
-  const debugModePreferred = usePreferProp(false, props.debugMode, rqbContext.debugMode);
-  const debugMode = finalize
-    ? debugModePreferred
-    : (props.debugMode ?? (rqbContext.debugMode as boolean));
-  const enableMountQueryChangePreferred = usePreferProp(
-    true,
-    props.enableMountQueryChange,
-    rqbContext.enableMountQueryChange
+  const queryBuilderFlags = useMemo(
+    () => preferFlagProps(props, rqbContext, finalize),
+    [props, rqbContext, finalize]
   );
-  const enableMountQueryChange = finalize
-    ? enableMountQueryChangePreferred
-    : (props.enableMountQueryChange ?? (rqbContext.enableMountQueryChange as boolean));
 
   // Drag-and-drop should be disabled if context sets it to false because
   // QueryBuilderDnD might not have loaded react-dnd yet. Therefore we prefer
   // the prop here only if context is true or undefined.
-  const enableDragAndDropPreferred =
-    usePreferProp(false, props.enableDragAndDrop, rqbContext.enableDragAndDrop) &&
-    rqbContext.enableDragAndDrop !== false;
   const enableDragAndDrop = finalize
-    ? enableDragAndDropPreferred
+    ? rqbContext.enableDragAndDrop !== false &&
+      preferProp(false, props.enableDragAndDrop, rqbContext.enableDragAndDrop)
     : (props.enableDragAndDrop ?? (rqbContext.enableDragAndDrop as boolean));
 
   const cc = useMemo(
@@ -715,11 +706,10 @@ export const useMergedContext = <
   ) as Finalize extends true ? TranslationsFull : Partial<Translations>;
 
   return {
+    ...queryBuilderFlags,
     controlClassnames,
     controlElements,
-    debugMode,
     enableDragAndDrop,
-    enableMountQueryChange,
     translations,
     initialQuery: props.initialQuery,
     qbId: props.qbId,

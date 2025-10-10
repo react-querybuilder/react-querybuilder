@@ -1,11 +1,4 @@
-const preferPropDefaultTrue = (prop?: boolean, context?: boolean) =>
-  prop === false ? false : prop ? true : !(context === false);
-
-const preferPropDefaultFalse = (prop?: boolean, context?: boolean) =>
-  prop ? true : prop === false ? false : !!context;
-
-export const preferProp = (def: boolean, prop?: boolean, context?: boolean): boolean =>
-  def ? preferPropDefaultTrue(prop, context) : preferPropDefaultFalse(prop, context);
+import { preferAnyProp, preferProp } from '@react-querybuilder/core';
 
 /**
  * For given default, prop, and context values, return the first provided of prop,
@@ -13,8 +6,12 @@ export const preferProp = (def: boolean, prop?: boolean, context?: boolean): boo
  *
  * @group Hooks
  */
-export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): boolean =>
-  preferProp(def, prop, context);
+export const usePreferProp = (
+  def: boolean,
+  prop?: boolean,
+  context?: boolean,
+  doNotFinalize?: boolean
+): boolean => preferProp(def, prop, context, doNotFinalize);
 
 /**
  * For given default, prop, and context values, return the first provided of prop,
@@ -24,8 +21,4 @@ export const usePreferProp = (def: boolean, prop?: boolean, context?: boolean): 
  */
 // oxlint-disable-next-line typescript/no-explicit-any
 export const usePreferAnyProp = (def?: any, prop?: any, context?: any): any =>
-  prop !== undefined && prop != null
-    ? prop
-    : context !== undefined && context != null
-      ? context
-      : def;
+  preferAnyProp(def, prop, context);
