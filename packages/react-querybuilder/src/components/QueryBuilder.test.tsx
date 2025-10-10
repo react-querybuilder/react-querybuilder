@@ -35,7 +35,6 @@ import { consoleMocks } from '@rqb-testing';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { QueryBuilderContext } from '../context';
 import { defaultControlElements } from '../defaults';
 import { messages } from '../messages';
 import { getQuerySelectorById, useQueryBuilderQuery, useQueryBuilderSelector } from '../redux';
@@ -51,6 +50,7 @@ import type {
 } from '../types';
 import { ActionElement } from './ActionElement';
 import { QueryBuilder } from './QueryBuilder';
+import { QueryBuilderContext } from './QueryBuilderContext';
 import type { UseRuleGroup } from './RuleGroup';
 import { RuleGroupHeaderComponents } from './RuleGroup';
 import { waitABeat } from './testUtils';

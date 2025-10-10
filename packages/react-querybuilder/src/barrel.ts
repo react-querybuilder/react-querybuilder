@@ -1,4 +1,3 @@
-export * from './context';
 export * from './defaults';
 export * from './hooks';
 export * from './messages';

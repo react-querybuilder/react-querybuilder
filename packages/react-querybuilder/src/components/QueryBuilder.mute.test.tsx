@@ -27,10 +27,7 @@ describe('mute functionality', () => {
         <QueryBuilder
           showMuteButtons
           onQueryChange={onQueryChange}
-          query={{
-            combinator: 'and',
-            rules: [{ field: 'f1', operator: '=', value: 'v1' }],
-          }}
+          query={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
         />
       );
 
@@ -38,9 +35,7 @@ describe('mute functionality', () => {
       await user.click(muteButton);
 
       expect(onQueryChange).toHaveBeenCalledWith(
-        expect.objectContaining({
-          rules: [expect.objectContaining({ muted: true })],
-        })
+        expect.objectContaining({ rules: [expect.objectContaining({ muted: true })] })
       );
     });
 
@@ -50,10 +45,7 @@ describe('mute functionality', () => {
         <QueryBuilder
           showMuteButtons
           onQueryChange={onQueryChange}
-          query={{
-            combinator: 'and',
-            rules: [],
-          }}
+          query={{ combinator: 'and', rules: [] }}
         />
       );
 
@@ -75,10 +67,7 @@ describe('mute functionality', () => {
             combinator: 'and',
             rules: [
               { field: 'f1', operator: '=', value: 'v1' },
-              {
-                combinator: 'or',
-                rules: [{ field: 'f2', operator: '=', value: 'v2' }],
-              },
+              { combinator: 'or', rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
             ],
           }}
         />
@@ -102,10 +91,7 @@ describe('mute functionality', () => {
         muted: true,
         rules: [
           { field: 'f1', operator: '=', value: 'v1' },
-          {
-            combinator: 'or',
-            rules: [{ field: 'f2', operator: '=', value: 'v2' }],
-          },
+          { combinator: 'or', rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
         ],
       };
 
@@ -178,11 +164,7 @@ describe('mute functionality', () => {
         combinator: 'and',
         rules: [
           { field: 'f1', operator: '=', value: 'v1' },
-          {
-            combinator: 'or',
-            muted: true,
-            rules: [{ field: 'f2', operator: '=', value: 'v2' }],
-          },
+          { combinator: 'or', muted: true, rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
           { field: 'f3', operator: '=', value: 'v3' },
         ],
       };
@@ -262,10 +244,7 @@ describe('mute functionality', () => {
                 combinator: 'and',
                 rules: [
                   { field: 'f1', operator: '=', value: 'v1' },
-                  {
-                    combinator: 'or',
-                    rules: [{ field: 'f2', operator: '=', value: 'v2' }],
-                  },
+                  { combinator: 'or', rules: [{ field: 'f2', operator: '=', value: 'v2' }] },
                 ],
               },
             ],

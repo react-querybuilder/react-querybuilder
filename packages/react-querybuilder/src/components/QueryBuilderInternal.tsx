@@ -7,9 +7,9 @@ import type {
 } from '@react-querybuilder/core';
 import { rootPath } from '@react-querybuilder/core';
 import * as React from 'react';
-import { QueryBuilderContext as _QBC } from '../context';
 import type { QueryBuilderContextProps, QueryBuilderProps } from '../types';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
+import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
 
 export const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,
