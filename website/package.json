@@ -74,6 +74,7 @@
     "@docusaurus/remark-plugin-npm2yarn": "^3.9.1",
     "@docusaurus/tsconfig": "^3.9.1",
     "@mdx-js/react": "^3.1.1",
+    "@signalwire/docusaurus-plugin-llms-txt": "^1.2.2",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/pako": "^2.0.4",

@@ -2,6 +2,7 @@ import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-con
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
+import type { PluginOptions as LlmsTxtPluginOptions } from '@signalwire/docusaurus-plugin-llms-txt';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
 import path from 'node:path';
 import { themes } from 'prism-react-renderer';
@@ -128,6 +129,51 @@ const config: Config = {
         sidebarPath: require.resolve('./sidebar-api.js'),
       } satisfies PluginContentDocsOptions,
     ],
+    process.env.CI
+      ? [
+          '@signalwire/docusaurus-plugin-llms-txt',
+          {
+            siteTitle: 'React Query Builder documentation and demos',
+            siteDescription:
+              'Comprehensive guide to the React Query Builder component library and associated packages',
+            optionalLinks: [
+              {
+                title: 'GitHub repository',
+                url: 'https://github.com/react-querybuilder/react-querybuilder',
+              },
+              { title: 'Discord server', url: 'https://discord.gg/MnAQWyUtEg' },
+            ],
+            depth: 2,
+            content: {
+              includeVersionedDocs: false,
+              enableLlmsFullTxt: true,
+              excludeRoutes: [
+                '/api/**',
+                '/docs/api/**',
+                '/docs/category/**',
+                '/docs/changelog',
+                '/docs/migrate',
+                '/docs/tips/styling',
+                '/docs/umd',
+                '/search',
+              ],
+              routeRules: [
+                { route: '/docs/**', categoryName: 'Documentation' },
+                { route: '/docs/components/**', categoryName: 'Components' },
+                { route: '/docs/styling/**', categoryName: 'Styling' },
+                { route: '/docs/utils/**', categoryName: 'Utilities' },
+                { route: '/docs/tips/**', categoryName: 'Tips and Tricks' },
+                {
+                  route: '/docs/{intro,buildless,compat,typescript,migrate,dnd,datetime}',
+                  categoryName: 'Miscellaneous',
+                  depth: 1,
+                },
+              ],
+            },
+            includeOrder: ['Components', 'Styling', 'Utilities', 'Tips and Tricks'],
+          } satisfies LlmsTxtPluginOptions,
+        ]
+      : null,
   ],
   presets: [
     [
