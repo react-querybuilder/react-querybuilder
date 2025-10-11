@@ -35,6 +35,8 @@ The following control overrides are supported via the `Controls` interface. Sett
 | [`lockGroupAction`](#lockgroupaction)                 | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`lockRuleAction`](#lockruleaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`matchModeEditor`](#matchmodeeditor)                 | <code>React.ComponentType&lt;MatchModeEditorProps&gt; \| null</code>                                                     |
+| [`muteGroupAction`](#mutegroupaction)                 | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
+| [`muteRuleAction`](#muteruleaction)                   | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
 | [`notToggle`](#nottoggle)                             | <code>React.ComponentType&lt;NotToggleProps&gt; \| null</code>                                                           |
 | [`operatorSelector`](#operatorselector)               | <code>React.ComponentType&lt;OperatorSelectorProps&gt; \| null</code>                                                    |
 | [`removeGroupAction`](#removegroupaction)             | <code>React.ComponentType&lt;ActionProps&gt; \| null</code>                                                              |
@@ -58,6 +60,8 @@ The base component for all button-type controls. Defaults to [`ActionElement`](.
 - [`cloneRuleAction`](#cloneruleaction)
 - [`lockGroupAction`](#lockgroupaction)
 - [`lockRuleAction`](#lockruleaction)
+- [`muteGroupAction`](#mutegroupaction)
+- [`muteRuleAction`](#muteruleaction)
 - [`removeGroupAction`](#removegroupaction)
 - [`removeRuleAction`](#removeruleaction)
 
@@ -78,6 +82,8 @@ For example, this:
     cloneRuleAction: MyAwesomeButton
     lockGroupAction: MyAwesomeButton
     lockRuleAction: MyAwesomeButton
+    muteGroupAction: MyAwesomeButton
+    muteRuleAction: MyAwesomeButton
     removeGroupAction: MyAwesomeButton
     removeRuleAction: MyAwesomeButton
   }}
@@ -360,6 +366,57 @@ Per the `MatchModeEditorProps` interface:
 | `disabled`               | `boolean`                                       | Whether this rule is disabled/locked                         |
 | `path`                   | `Path`                                          | [Path](../tips/path) of this rule                            |
 | `schema`                 | `Schema`                                        | Query [schema](../typescript#miscellaneous)                  |
+
+</details>
+
+### `muteGroupAction`
+
+Mutes the current group (sets the `muted` property to `true`). Defaults to [`ActionElement`](./actionelement).
+
+<details>
+<summary>Props for `muteGroupAction`</summary>
+
+Per the `ActionProps` interface:
+
+| Prop            | Type                                     | Description                                                                                                    |
+| --------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `label`         | `ReactNode`                              | `translations.muteGroup.label` or `translations.unmuteGroup.label`, e.g. "🔊" when unmuted and "🔇" when muted |
+| `title`         | `string`                                 | `translations.muteGroup.title` or `translations.unmuteGroup.title`, e.g. "Mute group" or "Unmute group"        |
+| `className`     | `string`                                 | CSS `classNames` to be applied                                                                                 |
+| `handleOnClick` | `(e: React.MouseEvent) => void`          | Toggles `muted` property for the group                                                                         |
+| `rules`         | `RuleOrGroupArray`                       | The rules present for this group                                                                               |
+| `ruleOrGroup`   | `RuleGroupTypeAny`                       | This group                                                                                                     |
+| `level`         | `number`                                 | The `level` of this group                                                                                      |
+| `context`       | `any`                                    | Container for custom props that are passed to all components                                                   |
+| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this group                                                                                |
+| `disabled`      | `boolean`                                | Whether this group is disabled/locked                                                                          |
+| `path`          | `Path`                                   | [Path](../tips/path) of this group                                                                             |
+| `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                    |
+
+</details>
+
+### `muteRuleAction`
+
+Mutes the current rule (sets the `muted` property to `true`). Defaults to [`ActionElement`](./actionelement).
+
+<details>
+<summary>Props for `muteRuleAction`</summary>
+
+Per the `ActionProps` interface:
+
+| Prop            | Type                                     | Description                                                                                                  |
+| --------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `label`         | `ReactNode`                              | `translations.muteRule.label` or `translations.unmuteRule.label`, e.g. "🔊" when unmuted and "🔇" when muted |
+| `title`         | `string`                                 | `translations.muteRule.title` or `translations.unmuteRule.title`, e.g. "Mute rule" or "Unmute rule"          |
+| `className`     | `string`                                 | CSS `classNames` to be applied                                                                               |
+| `handleOnClick` | `(e: React.MouseEvent) => void`          | Toggles `muted` property for the rule                                                                        |
+| `ruleOrGroup`   | `RuleType`                               | This rule                                                                                                    |
+| `level`         | `number`                                 | The `level` of this rule                                                                                     |
+| `context`       | `any`                                    | Container for custom props that are passed to all components                                                 |
+| `validation`    | <code>boolean \| ValidationResult</code> | Validation result of this rule                                                                               |
+| `disabled`      | `boolean`                                | Whether this rule is disabled/locked                                                                         |
+| `path`          | `Path`                                   | [Path](../tips/path) of this rule                                                                            |
+| `schema`        | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                                                  |
 
 </details>
 
