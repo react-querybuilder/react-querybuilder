@@ -67,7 +67,7 @@ export const MaterialValueEditor = (props: MaterialValueEditorProps): React.JSX.
     TextareaAutosize,
     TextField,
     showInputLabels: silCtx,
-  } = useMemo(() => (muiComponents ?? {}) as RQBMaterialContextValue, [muiComponents]);
+  } = useMemo(() => muiComponents ?? {}, [muiComponents]);
 
   if (!muiComponents) {
     return <ValueEditor skipHook key={masterKey} {...propsForValueEditor} />;

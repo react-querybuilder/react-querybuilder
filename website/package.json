@@ -89,6 +89,7 @@
     "postcss": "^8.5.6",
     "postcss-prefix-selector": "^2.1.1",
     "raw-loader": "^4.0.2",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "stream-browserify": "^3.0.0",
     "stylis-plugin-extra-scope": "^0.3.0",
