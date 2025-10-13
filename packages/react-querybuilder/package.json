@@ -159,7 +159,7 @@
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.7.1",
     "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.1",
+    "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.0.4",
     "babel-plugin-istanbul": "^7.0.1",
     "react": "^19.2.0",
@@ -168,7 +168,7 @@
     "rollup-plugin-visualizer": "^6.0.4",
     "sass": "^1.93.2",
     "sqlite3": "^5.1.7",
-    "type-fest": "^4.41.0",
+    "type-fest": "^5.1.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.9"
   },

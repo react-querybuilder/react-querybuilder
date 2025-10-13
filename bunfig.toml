@@ -1,5 +1,8 @@
 [install]
 linker = "hoisted"
 
+[test]
+concurrentTestGlob = ["packages/core/src/utils/*.test.ts", "packages/core/src/utils/parse*/*.test.ts", "packages/core/src/utils/formatQuery/__tests__/formatQuery.*.test.ts"]
+
 [serve.static]
 plugins = [ "./utils/devapp/bun-plugin-sass.ts", "bun-plugin-tailwind" ]
