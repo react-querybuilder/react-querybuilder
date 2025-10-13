@@ -103,7 +103,7 @@
     "generate-sqlparser": "bunx --bun jison packages/core/src/utils/parseSQL/sql.jison --outfile packages/core/src/utils/parseSQL/sqlParser.js --module-type commonjs",
     "generate-celparser": "bunx --bun jison packages/core/src/utils/parseCEL/cel.jison --outfile packages/core/src/utils/parseCEL/celParser.js --module-type commonjs",
     "generate-parsers-codemod": "bunx --bun jscodeshift -t utils/lang-parser-codemod/langParser.codemod.mjs packages/core/src/utils/parse{CEL/cel,SQL/sql}Parser.js",
-    "generate-prisma-client": "bunx prisma generate --schema ./packages/core/src/utils/formatQuery/prisma/schema.prisma",
+    "generate-prisma-client": "prisma generate --schema ./packages/core/src/utils/formatQuery/prisma/schema.prisma",
     "outdated": "bunx npm-check-updates --interactive --format=group --workspaces --root",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile && touch bun.lockb",
     "version": "bun version.ts && bun install && bun --bun run build && bun run generate-examples && git add examples packages website/package.json bun.lock",
