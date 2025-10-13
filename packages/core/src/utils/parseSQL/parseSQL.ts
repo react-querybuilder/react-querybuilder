@@ -13,8 +13,8 @@ import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
-import { sqlParser } from './sqlParser';
-import type { MixedAndXorOrList, SQLExpression, SQLIdentifier } from './types';
+import { SQLParser } from './sqlParser';
+import type { MixedAndXorOrList, ParsedSQL, SQLExpression, SQLIdentifier } from './types';
 import {
   evalSQLLiteralValue,
   generateFlatAndOrList,
@@ -389,7 +389,8 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
 
   const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
 
-  const { where } = sqlParser.parse(sqlString).value;
+  const sqlParser = new SQLParser();
+  const { where } = (sqlParser.parse(sqlString) as ParsedSQL).value;
   if (where) {
     const result = processSQLExpression(where);
     if (result) {
