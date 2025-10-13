@@ -3,7 +3,8 @@
 !.*.json
 
 # Generated
-*Parser.js
+**/celParser.ts
+**/sqlParser.ts
 
 # Binaries
 *.jpeg
