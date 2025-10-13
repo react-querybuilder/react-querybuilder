@@ -11,7 +11,7 @@ export class SQLParser extends JisonParser implements JisonParserApi {
     table: Array<StateType>;
     defaultActions: {[key:number]: any} = {11:[2,3],22:[2,1],24:[2,2],142:[2,125],143:[2,126],267:[2,177],268:[2,178],282:[2,182],302:[2,184],344:[2,207],345:[2,208],346:[2,209]};
 
-    constructor (yy = {}, lexer = new SQLLexer(yy)) {
+    constructor (yy = {}, lexer: SQLLexer = new SQLLexer(yy)) {
       super(yy, lexer);
 
       // shorten static method to just `o` for terse STATE_TABLE

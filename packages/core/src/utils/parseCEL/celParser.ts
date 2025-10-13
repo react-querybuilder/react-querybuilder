@@ -11,7 +11,7 @@ export class CELParser extends JisonParser implements JisonParserApi {
     table: Array<StateType>;
     defaultActions: {[key:number]: any} = {35:[2,1]};
 
-    constructor (yy = {}, lexer = new CELLexer(yy)) {
+    constructor (yy = {}, lexer: CELLexer = new CELLexer(yy)) {
       super(yy, lexer);
 
       // shorten static method to just `o` for terse STATE_TABLE
