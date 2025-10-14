@@ -83,6 +83,11 @@
 
   .queryBuilder-dragHandle {
     cursor: move;
+  } 
+
+  &.queryBuilder-disabled .queryBuilder-dragHandle {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 /* #endregion */
