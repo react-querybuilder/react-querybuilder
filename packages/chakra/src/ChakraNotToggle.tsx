@@ -3,8 +3,14 @@ import type { NotToggleProps } from 'react-querybuilder';
 import type { SwitchProps } from './snippets/switch';
 import { Switch } from './snippets/switch';
 
-export type ChakraNotToggleProps = NotToggleProps & Omit<SwitchProps, 'label'>;
+/**
+ * @group Props
+ */
+export interface ChakraNotToggleProps extends NotToggleProps, Omit<SwitchProps, 'label'> {}
 
+/**
+ * @group Components
+ */
 export const ChakraNotToggle = ({
   className,
   handleOnChange,

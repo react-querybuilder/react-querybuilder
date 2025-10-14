@@ -5,7 +5,7 @@ import type {
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
-} from 'react-querybuilder';
+} from 'react-querybuilder/debug';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'
@@ -13,10 +13,12 @@ export type DemoOption =
   | 'showShiftActions'
   | 'showCloneButtons'
   | 'showLockButtons'
+  | 'showMuteButtons'
   | 'resetOnFieldChange'
   | 'resetOnOperatorChange'
   | 'autoSelectField'
   | 'autoSelectOperator'
+  | 'autoSelectValue'
   | 'addRuleToNewGroups'
   | 'validateQuery'
   | 'independentCombinators'

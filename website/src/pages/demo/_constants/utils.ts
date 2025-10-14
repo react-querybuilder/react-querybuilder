@@ -1,12 +1,10 @@
-// @ts-expect-error !!raw-loader!
-import demoStylesSCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.scss';
-// @ts-expect-error !!raw-loader!
-import justifiedStylesSCSS from '!!raw-loader!@site/src/css/justified.scss';
+// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
+import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 // @ts-expect-error !!raw-loader!
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
-// eslint-disable-next-line unicorn/prefer-node-protocol
+// oxlint-disable-next-line unicorn/prefer-node-protocol
 import { Buffer } from 'buffer';
 import clsx from 'clsx';
 import pako from 'pako';
@@ -15,11 +13,18 @@ import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
 import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
-import { defaultOperators, formatQuery } from 'react-querybuilder';
+import {
+  bigIntJsonParseReviver,
+  bigIntJsonStringifyReplacer,
+  defaultOperators,
+  formatQuery,
+  standardClassnames,
+} from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
 
-const extraStylesSCSS = `${demoStylesSCSS}\n\n${justifiedStylesSCSS}`;
+// const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
+const extraStylesCSS = demoStylesCSS;
 
 type OptionsAction =
   | { type: 'all' }
@@ -37,12 +42,12 @@ type OptionsAction =
     };
 
 export const getHashFromState = (s: DemoState) =>
-  Buffer.from(pako.deflate(JSON.stringify(s))).toString('base64');
+  Buffer.from(pako.deflate(JSON.stringify(s, bigIntJsonStringifyReplacer))).toString('base64');
 
 export const unzip = (b64string: string) => {
   const buff = Buffer.from(b64string, 'base64');
   const result = pako.inflate(buff, { to: 'string' });
-  return JSON.parse(result);
+  return JSON.parse(result, bigIntJsonParseReviver);
 };
 
 export const getStateFromHash = ({ s, ...hash }: DemoOptionsHash): DemoState => {
@@ -79,7 +84,36 @@ export const optionsReducer = (state: DemoOptions, action: OptionsAction): DemoO
   return { ...state, [optionName]: value };
 };
 
+// Cache for expensive formatting operations
+const formatQueryCache = new Map();
+
+const stringify = (o: unknown) =>
+  JSON.stringify(o, bigIntJsonStringifyReplacer, 2).replaceAll(
+    /\{\s*"\$bigint":\s*"(\d+)"\s*\}/gm,
+    '$1n'
+  );
+
 export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
+  const cacheKey = JSON.stringify([query, options]);
+
+  if (formatQueryCache.has(cacheKey)) {
+    return formatQueryCache.get(cacheKey);
+  }
+
+  const result = formatQueryUncached(query, options);
+
+  // Limit cache size to prevent memory leaks
+  if (formatQueryCache.size > 50) {
+    const firstKey = formatQueryCache.keys().next().value;
+    formatQueryCache.delete(firstKey);
+  }
+
+  formatQueryCache.set(cacheKey, result);
+  return result;
+};
+
+// Rename existing function
+const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOptions) => {
   const formatQueryResult = formatQuery(
     query,
     options.format === 'jsonata'
@@ -90,23 +124,31 @@ export const getFormatQueryString = (query: RuleGroupTypeAny, options: FormatQue
   );
 
   switch (options.format) {
+    case 'json':
     case 'json_without_ids':
+    case 'ldap':
     case 'mongodb':
-      return JSON.stringify(JSON.parse(formatQueryResult), null, 2);
+    case 'natural_language': {
+      return `\`${JSON.stringify(formatQueryResult)
+        .replaceAll(String.raw`\n`, '\n')
+        .replaceAll(String.raw`\"`, '"')
+        .replaceAll('`', '\\`')
+        .slice(1, -1)}\``;
+    }
     case 'mongodb_query':
-      return JSON.stringify(formatQueryResult, null, 2);
     case 'parameterized':
     case 'parameterized_named':
     case 'jsonlogic':
     case 'elasticsearch':
-      return JSON.stringify(formatQueryResult, null, 2);
+    case 'prisma':
+      return stringify(formatQueryResult);
   }
 
   return formatQueryResult;
 };
 
 export const getExportCall = async (
-  { format, parseNumbers, preset }: FormatQueryOptions,
+  { format, parseNumbers, preset, placeholderValueName }: FormatQueryOptions,
   { validateQuery }: Pick<DemoOptions, 'validateQuery'>
 ) => {
   const rqbImports = ['formatQuery'];
@@ -124,6 +166,10 @@ export const getExportCall = async (
 
   if (parseNumbers || format === 'jsonata') {
     fqOpts.parseNumbers = true;
+  }
+
+  if (placeholderValueName !== undefined) {
+    fqOpts.placeholderValueName = placeholderValueName;
   }
 
   let optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
@@ -148,17 +194,27 @@ formatQuery(query, ${optionsString})`,
   );
 };
 
-export const getExportDisplayLanguage = (format: ExportFormat) =>
-  format === 'sql' ||
-  format === 'cel' ||
-  format === 'spel' ||
-  format === 'mongodb' ||
-  format === 'jsonata' ||
-  format === 'natural_language'
-    ? format
-    : format === 'mongodb_query'
-      ? 'mongodb'
-      : 'json';
+export const getExportDisplayLanguage = (format: ExportFormat) => {
+  switch (format) {
+    case 'sql':
+    case 'cel':
+    case 'spel':
+    case 'jsonata':
+      return format;
+
+    case 'mongodb_query':
+      return 'mongodb';
+
+    case 'json':
+    case 'json_without_ids':
+    case 'ldap':
+    case 'mongodb':
+    case 'natural_language':
+      return 'js';
+  }
+
+  return 'json';
+};
 
 const getCompatWrapper = (style?: StyleName): [string, string, string] => {
   switch (style) {
@@ -239,7 +295,10 @@ export const getCodeString = (
   const [styleImport, styleWrapperPrefix, styleWrapperSuffix] = getCompatWrapper(style);
 
   const getPropText = (prop: keyof DemoOptions) =>
-    prop === 'autoSelectField' || prop === 'autoSelectOperator' || prop === 'resetOnFieldChange'
+    prop === 'autoSelectField' ||
+    prop === 'autoSelectOperator' ||
+    prop === 'autoSelectValue' ||
+    prop === 'resetOnFieldChange'
       ? options[prop]
         ? ''
         : `${prop}={false}`
@@ -258,6 +317,7 @@ export const getCodeString = (
     getPropText('addRuleToNewGroups'),
     getPropText('autoSelectField'),
     getPropText('autoSelectOperator'),
+    getPropText('autoSelectValue'),
     getPropText('debugMode'),
     getPropText('disabled'),
     getPropText('listsAsArrays'),
@@ -268,11 +328,14 @@ export const getCodeString = (
     getPropText('showCombinatorsBetweenRules'),
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
+    getPropText('showShiftActions'),
+    getPropText('suppressStandardClassnames'),
+    getPropText('useDateTimePackage'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
-          'queryBuilder-branches': options.showBranches,
-          justifiedLayout: options.justifiedLayout,
+          [standardClassnames.branches]: options.showBranches,
+          [standardClassnames.justified]: options.justifiedLayout,
         })}' }}`
       : '',
   ]
@@ -286,6 +349,7 @@ ${
     ? `import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 `
     : ''
 }import type { ${queryType} } from 'react-querybuilder';
@@ -305,7 +369,7 @@ export const App = () => {
 
   return (${
     options.enableDragAndDrop
-      ? '<QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>'
+      ? '<QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>'
       : ''
   }${styleWrapperPrefix}<QueryBuilder ${props} />${styleWrapperSuffix}${
     options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''
@@ -320,21 +384,12 @@ export const App = () => {
   });
 };
 
-export const extraStyles = async () => {
-  const { compileString } = await import('sass');
-  return Promise.all([
-    prettier.format(compileString(extraStylesSCSS).css, {
-      filepath: 'styles.css',
-      plugins: [parserPostCSS],
-      printWidth: 100,
-    }),
-    prettier.format(extraStylesSCSS, {
-      filepath: 'styles.scss',
-      plugins: [parserPostCSS],
-      printWidth: 100,
-    }),
-  ]).then(([css, scss]) => ({ css, scss }));
-};
+export const extraStyles = () =>
+  prettier.format(extraStylesCSS, {
+    filepath: 'styles.css',
+    plugins: [parserPostCSS],
+    printWidth: 100,
+  });
 
 export const fieldsTsString = prettier.format(fieldsCode, {
   filepath: 'fields.ts',

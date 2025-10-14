@@ -26,15 +26,15 @@ jobs:
       NPM_CONFIG_PROVENANCE: true
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           fetch-tags: true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile

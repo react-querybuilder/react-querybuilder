@@ -4,6 +4,9 @@ import { StyleSheet, Switch, Text, View } from 'react-native';
 import { defaultNativeStyles } from '../styles';
 import type { NotToggleNativeProps } from '../types';
 
+/**
+ * @group Components
+ */
 export const NativeNotToggle = ({
   handleOnChange,
   label,

@@ -5,6 +5,9 @@ import { TestID } from 'react-querybuilder';
 import { defaultNativeStyles } from '../styles';
 import type { InlineCombinatorNativeProps } from '../types';
 
+/**
+ * @group Components
+ */
 export const NativeInlineCombinator = ({
   component: CombinatorSelectorComponent,
   path,

@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "8.0.0",
+  "version": "8.10.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -8,60 +8,108 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/types-esm/index.d.mts",
+        "types": "./dist/react-querybuilder.d.mts",
         "default": "./dist/react-querybuilder.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     },
     "./dist/*": "./dist/*",
     "./debug": {
       "import": {
-        "types": "./dist/types-esm/index.debug.d.mts",
+        "types": "./dist/react-querybuilder.debug.d.mts",
         "default": "./dist/react-querybuilder.debug.mjs"
       },
       "require": {
-        "types": "./dist/types/index.debug.d.ts",
+        "types": "./dist/cjs/debug.d.ts",
         "default": "./dist/cjs/debug.js"
       }
     },
     "./formatQuery": {
-      "types": "./dist/types/utils/formatQuery/index.d.ts",
-      "default": "./dist/formatQuery.js"
+      "import": {
+        "types": "./dist/formatQuery.d.mts",
+        "import": "./dist/formatQuery.mjs"
+      },
+      "require": {
+        "types": "./dist/formatQuery.d.ts",
+        "default": "./dist/formatQuery.js"
+      }
     },
     "./parseCEL": {
-      "types": "./dist/types/utils/parseCEL/index.d.ts",
-      "default": "./dist/parseCEL.js"
+      "import": {
+        "types": "./dist/parseCEL.d.mts",
+        "import": "./dist/parseCEL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseCEL.d.ts",
+        "default": "./dist/parseCEL.js"
+      }
     },
     "./parseJSONata": {
-      "types": "./dist/types/utils/parseJSONata/index.d.ts",
-      "default": "./dist/parseJSONata.js"
+      "import": {
+        "types": "./dist/parseJSONata.d.mts",
+        "import": "./dist/parseJSONata.mjs"
+      },
+      "require": {
+        "types": "./dist/parseJSONata.d.ts",
+        "default": "./dist/parseJSONata.js"
+      }
     },
     "./parseJsonLogic": {
-      "types": "./dist/types/utils/parseJsonLogic/index.d.ts",
-      "default": "./dist/parseJsonLogic.js"
+      "import": {
+        "types": "./dist/parseJsonLogic.d.mts",
+        "import": "./dist/parseJsonLogic.mjs"
+      },
+      "require": {
+        "types": "./dist/parseJsonLogic.d.ts",
+        "default": "./dist/parseJsonLogic.js"
+      }
     },
     "./parseMongoDB": {
-      "types": "./dist/types/utils/parseMongoDB/index.d.ts",
-      "default": "./dist/parseMongoDB.js"
+      "import": {
+        "types": "./dist/parseMongoDB.d.mts",
+        "import": "./dist/parseMongoDB.mjs"
+      },
+      "require": {
+        "types": "./dist/parseMongoDB.d.ts",
+        "default": "./dist/parseMongoDB.js"
+      }
     },
     "./parseSpEL": {
-      "types": "./dist/types/utils/parseSpEL/index.d.ts",
-      "default": "./dist/parseSpEL.js"
+      "import": {
+        "types": "./dist/parseSpEL.d.mts",
+        "import": "./dist/parseSpEL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseSpEL.d.ts",
+        "default": "./dist/parseSpEL.js"
+      }
     },
     "./parseSQL": {
-      "types": "./dist/types/utils/parseSQL/index.d.ts",
-      "default": "./dist/parseSQL.js"
+      "import": {
+        "types": "./dist/parseSQL.d.mts",
+        "import": "./dist/parseSQL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseSQL.d.ts",
+        "default": "./dist/parseSQL.js"
+      }
     },
     "./transformQuery": {
-      "types": "./dist/types/utils/transformQuery.d.ts",
-      "default": "./dist/transformQuery.js"
+      "import": {
+        "types": "./dist/transformQuery.d.mts",
+        "import": "./dist/transformQuery.mjs"
+      },
+      "require": {
+        "types": "./dist/transformQuery.d.ts",
+        "default": "./dist/transformQuery.js"
+      }
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder.legacy-esm.d.ts",
   "files": [
     "dist",
     "formatQuery",
@@ -94,64 +142,67 @@
     "sql"
   ],
   "contributors": [
-    "Pavan Podila <pavan@pixelingene.com> (http://blog.pixelingene.com)",
+    "Pavan Podila <pavan@pixelingene.com> (https://blog.pixelingene.com)",
     "Jake Boone"
   ],
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.26.3",
-    "@babel/preset-typescript": "^7.26.0",
-    "@electric-sql/pglite": "^0.2.15",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/hoist-non-react-statics": "^3.3.6",
-    "@types/jscodeshift": "^0.12.0",
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "14.5.2",
+    "@types/hoist-non-react-statics": "^3.3.7",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^22.10.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "babel-plugin-istanbul": "^7.0.0",
-    "jscodeshift": "^17.1.1",
-    "json-logic-js": "^2.0.5",
-    "jsonata": "^2.0.6",
-    "mongodb-memory-server-core": "^10.1.2",
-    "mongoose": "^8.9.2",
-    "query-string": "^9.1.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@types/node": "^24.7.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "babel-plugin-istanbul": "^7.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "regenerator-runtime": "^0.14.1",
-    "rollup-plugin-visualizer": "^5.12.0",
-    "sass": "^1.83.0",
-    "spel2js": "^0.2.8",
-    "type-fest": "^4.30.2",
-    "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "rollup-plugin-visualizer": "^6.0.4",
+    "sass": "^1.93.2",
+    "sqlite3": "^5.1.7",
+    "type-fest": "^5.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.5.0",
-    "immer": "^10.1.1",
-    "numeric-quantity": "^2.0.1",
+    "@react-querybuilder/core": "^8.10.0",
+    "@reduxjs/toolkit": "^2.9.0",
+    "immer": "^10.1.3",
+    "numeric-quantity": "^2.1.0",
     "react-redux": "^9.2.0"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "drizzle-orm": ">=0.38.0",
+    "json-logic-js": ">=2",
+    "react": ">=18",
+    "sequelize": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    },
+    "json-logic-js": {
+      "optional": true
+    },
+    "sequelize": {
+      "optional": true
+    }
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "start": "bun --bun vite",
+    "start": "vite",
     "build": "bun run build:main && bun run build:css",
-    "build:main": "bun --bun tsup",
-    "build:css": "mkdir -p dist && cp ./src/*.scss dist && bunx sass --style=compressed ./dist/query-builder-layout.scss:./dist/query-builder-layout.css ./dist/query-builder.scss:./dist/query-builder.css",
+    "build:main": "bun --bun tsdown",
+    "build:css": "mkdir -p dist/styles && cp ../core/src/*.scss dist && cp ../core/src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "tsc --noEmit --watch",
-    "generate:parsers": "bun --bun run generate:sqlparser && bun --bun run generate:celparser && bun --bun run generate:parsers-codemod",
-    "generate:sqlparser": "bunx --bun jison src/utils/parseSQL/sql.jison --outfile src/utils/parseSQL/sqlParser.js --module-type commonjs",
-    "generate:celparser": "bunx --bun jison src/utils/parseCEL/cel.jison --outfile src/utils/parseCEL/celParser.js --module-type commonjs",
-    "generate:parsers-codemod": "bunx --bun jscodeshift -t src/internal/langParser.codemod.mjs src/utils/parse{CEL/cel,SQL/sql}Parser.js"
+    "typecheck:watch": "tsc --noEmit --watch"
   }
 }

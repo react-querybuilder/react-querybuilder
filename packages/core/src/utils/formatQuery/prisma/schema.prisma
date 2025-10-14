@@ -1,0 +1,21 @@
+generator client {
+    provider = "prisma-client-js"
+    runtime  = "bun"
+}
+
+datasource db {
+    provider = "postgresql"
+    // Dummy value for url. Prisma will throw if a valid url is not provided.
+    url      = "postgresql://localhost:5432/mydb"
+}
+
+model superusers {
+    firstName  String
+    lastName   String
+    enhanced   Boolean
+    madeUpName String?
+    nickname   String?
+    powerUpAge Int?
+
+    @@unique([firstName, lastName])
+}

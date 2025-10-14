@@ -7,8 +7,8 @@ import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
 import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
-import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
-import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
+import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder/debug';
+import { convertToIC, generateID, objectKeys } from 'react-querybuilder/debug';
 import type { DemoOption, DemoOptions, HttpsURL, StyleName } from './types';
 
 export const defaultOptions = {
@@ -16,10 +16,12 @@ export const defaultOptions = {
   showNotToggle: false,
   showCloneButtons: false,
   showLockButtons: false,
+  showMuteButtons: false,
   resetOnFieldChange: true,
   resetOnOperatorChange: false,
   autoSelectField: true,
   autoSelectOperator: true,
+  autoSelectValue: true,
   addRuleToNewGroups: false,
   validateQuery: false,
   independentCombinators: false,
@@ -40,11 +42,13 @@ export const optionOrder: DemoOption[] = [
   'showNotToggle',
   'showCloneButtons',
   'showLockButtons',
+  'showMuteButtons',
   'showShiftActions',
   'resetOnFieldChange',
   'resetOnOperatorChange',
   'autoSelectField',
   'autoSelectOperator',
+  'autoSelectValue',
   'addRuleToNewGroups',
   'validateQuery',
   'independentCombinators',
@@ -100,6 +104,12 @@ export const optionsMetadata = {
     label: 'Auto-select operator',
     title: 'The default operator will be automatically selected for new rules',
   },
+  autoSelectValue: {
+    link: '/docs/components/querybuilder#autoselectvalue',
+    label: 'Auto-select value',
+    title:
+      'The default value will be automatically selected for rules where the value editor is a select list',
+  },
   addRuleToNewGroups: {
     link: '/docs/components/querybuilder#addruletonewgroups',
     label: 'Add rule to new groups',
@@ -136,6 +146,11 @@ export const optionsMetadata = {
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
   },
+  showMuteButtons: {
+    link: '/docs/components/querybuilder#showmutebuttons',
+    label: 'Show mute buttons',
+    title: 'Display buttons to mute rules and groups (excludes them from query output)',
+  },
   debugMode: {
     link: '/docs/components/querybuilder#debugmode',
     label: 'Debug mode',
@@ -153,9 +168,10 @@ export const optionsMetadata = {
       'Disable application of any standard classes, including validation- and event-based classes',
   },
   justifiedLayout: {
-    link: '',
+    link: '/docs/styling/overview#justified-layout',
     label: 'Justified layout',
-    title: 'Add custom CSS to push the "clone", "lock", and "remove" buttons to the right edge',
+    title:
+      'Add `.queryBuilder-justified` class to push the "+ Rule", "+ Group", "clone", "lock", and "remove" buttons to the right edge',
   },
   showBranches: {
     link: '/docs/styling/overview#branch-lines',
@@ -169,7 +185,7 @@ export const optionsMetadata = {
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 
-export const optionOrderByLabel = optionOrder.sort((a, b) =>
+export const optionOrderByLabel = optionOrder.toSorted((a, b) =>
   optionsMetadata[a].label.localeCompare(optionsMetadata[b].label)
 );
 
@@ -213,7 +229,7 @@ export const initialQuery: RuleGroupType = {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar',
+          value: 'guitar',
         },
       ],
     },
@@ -242,11 +258,13 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['parameterized_named', 'SQL (named parameters)', 'https://en.wikipedia.org/wiki/SQL', 'named-parameters'],
   ['json_without_ids', 'JSON (no identifiers)', 'https://en.wikipedia.org/wiki/JSON', 'json-without-identifiers'],
   ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON', 'json'],
-  ['mongodb', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
+  ['mongodb_query', 'MongoDB', 'https://www.mongodb.com/', 'mongodb'],
   ['cel', 'CEL', 'https://github.com/google/cel-spec', 'common-expression-language'],
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref', 'spring-expression-language'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/', 'jsonlogic'],
   ['jsonata', 'JSONata', 'https://jsonata.org/', 'jsonata'],
+  ['ldap', 'LDAP', 'https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol', 'ldap'],
+  ['prisma', 'Prisma ORM', 'https://www.prisma.io/', 'prisma-orm'],
   ['elasticsearch', 'ElasticSearch', 'https://www.elastic.co/', 'elasticsearch'],
   ['natural_language', 'Natural language', 'https://en.wikipedia.org/wiki/English_language', 'natural-language'],
 ];
@@ -265,12 +283,12 @@ export const styleNameMap: Record<StyleName, string> = {
 
 const { default: _d, ...compatStyles } = styleNameMap;
 
+// oxlint-disable-next-line no-array-sort
 export const styleNameArray: StyleName[] = ['default', ...objectKeys(compatStyles).sort()];
 
 const noReactOrRQB = (pd: string, _i: number, _a: Array<unknown>) =>
   pd !== 'react' && pd !== 'react-querybuilder';
 
-/* eslint-disable unicorn/no-array-callback-reference */
 export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   default: [],
   dnd: objectKeys(packageJSON_rqb_dnd.peerDependencies).filter(noReactOrRQB),
@@ -283,4 +301,3 @@ export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   material: objectKeys(packageJSON_rqb_material.peerDependencies).filter(noReactOrRQB),
   tremor: objectKeys(packageJSON_rqb_tremor.peerDependencies).filter(noReactOrRQB),
 };
-/* eslint-enable unicorn/no-array-callback-reference */

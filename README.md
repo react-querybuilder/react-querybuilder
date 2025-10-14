@@ -36,7 +36,9 @@ export function App() {
 
 For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/intro), or browse the [example projects](./examples/).
 
-To enable drag-and-drop functionality, use the [`@react-querybuilder/dnd` package](packages/dnd).
+To enable drag-and-drop functionality, use [`@react-querybuilder/dnd`](packages/dnd).
+
+For enhanced date/time support, use [`@react-querybuilder/datetime`](packages/datetime).
 
 _For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
 
@@ -62,7 +64,7 @@ See [the contribution guidelines](./CONTRIBUTING.md).
 
 This component was inspired by prior work from:
 
-- [jQuery QueryBuilder](http://querybuilder.js.org/)
+- [jQuery QueryBuilder](https://querybuilder.js.org/)
 - [Angular QueryBuilder](https://github.com/mfauveau/angular-query-builder)
 - [React Awesome Query Builder](https://github.com/ukrbublik/react-awesome-query-builder)
 
@@ -127,6 +129,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/rbideau"><img src="https://avatars.githubusercontent.com/u/7304827?v=4?s=100" width="100px;" alt="Raphaël Bideau"/><br /><sub><b>Raphaël Bideau</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=rbideau" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/abrenoch"><img src="https://avatars.githubusercontent.com/u/2146139?v=4?s=100" width="100px;" alt="Dave Anderson"/><br /><sub><b>Dave Anderson</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=abrenoch" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Romander"><img src="https://avatars.githubusercontent.com/u/13166357?v=4?s=100" width="100px;" alt="Roman Ogoreltsev"/><br /><sub><b>Roman Ogoreltsev</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=Romander" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=Romander" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/A-EbrahimRSA"><img src="https://avatars.githubusercontent.com/u/61310161?v=4?s=100" width="100px;" alt="Abdullah Ebrahim"/><br /><sub><b>Abdullah Ebrahim</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=A-EbrahimRSA" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sajov"><img src="https://avatars.githubusercontent.com/u/2475348?v=4?s=100" width="100px;" alt="sajov"/><br /><sub><b>sajov</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/yywing"><img src="https://avatars.githubusercontent.com/u/22928185?v=4?s=100" width="100px;" alt="yywing"/><br /><sub><b>yywing</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=yywing" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sosso"><img src="https://avatars.githubusercontent.com/u/619968?v=4?s=100" width="100px;" alt="Anthony Sosso"/><br /><sub><b>Anthony Sosso</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sosso" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sosso" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
@@ -140,7 +148,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-41-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-45-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 

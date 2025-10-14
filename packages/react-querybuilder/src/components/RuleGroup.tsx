@@ -1,25 +1,15 @@
-import type { MouseEvent } from 'react';
-import * as React from 'react';
-import { Fragment, useCallback, useMemo } from 'react';
-import type { Except } from 'type-fest';
-import { standardClassnames, TestID } from '../defaults';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   Classnames,
   Path,
-  RuleGroupArray,
-  RuleGroupICArray,
-  RuleGroupProps,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   ValidationResult,
   ValueChangeEventHandler,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  clsx,
   getFirstOption,
   getOption,
   getParentPath,
@@ -27,13 +17,26 @@ import {
   isRuleGroup,
   isRuleGroupType,
   pathsAreEqual,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+  standardClassnames,
+  TestID,
+} from '@react-querybuilder/core';
+import type { MouseEvent } from 'react';
+import * as React from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
+import {
+  useDeprecatedProps,
+  usePathsMemo,
+  useReactDndWarning,
+  useStopEventPropagation,
+} from '../hooks';
+import type { RuleGroupProps, ShiftActionsProps } from '../types';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
  * objects. This is actually a small wrapper around {@link RuleGroupHeaderComponents}
  * and {@link RuleGroupBodyComponents}.
+ *
+ * @group Components
  */
 export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => React.JSX.Element> =
   React.memo(function RuleGroup(props: RuleGroupProps) {
@@ -52,9 +55,33 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
     const addGroup = useStopEventPropagation(rg.addGroup);
     const cloneGroup = useStopEventPropagation(rg.cloneGroup);
     const toggleLockGroup = useStopEventPropagation(rg.toggleLockGroup);
+    const toggleMuteGroup = useStopEventPropagation(rg.toggleMuteGroup);
     const removeGroup = useStopEventPropagation(rg.removeGroup);
     const shiftGroupUp = useStopEventPropagation(rg.shiftGroupUp);
     const shiftGroupDown = useStopEventPropagation(rg.shiftGroupDown);
+
+    const actions = useMemo(
+      () => ({
+        addRule,
+        addGroup,
+        cloneGroup,
+        toggleLockGroup,
+        toggleMuteGroup,
+        removeGroup,
+        shiftGroupUp,
+        shiftGroupDown,
+      }),
+      [
+        addRule,
+        addGroup,
+        cloneGroup,
+        toggleLockGroup,
+        toggleMuteGroup,
+        removeGroup,
+        shiftGroupUp,
+        shiftGroupDown,
+      ]
+    );
 
     return (
       <div
@@ -68,28 +95,10 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         data-level={rg.path.length}
         data-path={JSON.stringify(rg.path)}>
         <div ref={rg.dropRef} className={rg.classNames.header}>
-          <RuleGroupHeaderElements
-            {...(rg as Parameters<typeof RuleGroupHeaderComponents>[0])}
-            addRule={addRule}
-            addGroup={addGroup}
-            cloneGroup={cloneGroup}
-            toggleLockGroup={toggleLockGroup}
-            removeGroup={removeGroup}
-            shiftGroupUp={shiftGroupUp}
-            shiftGroupDown={shiftGroupDown}
-          />
+          <RuleGroupHeaderElements {...rg} {...actions} />
         </div>
         <div className={rg.classNames.body}>
-          <RuleGroupBodyElements
-            {...(rg as Parameters<typeof RuleGroupBodyComponents>[0])}
-            addRule={addRule}
-            addGroup={addGroup}
-            cloneGroup={cloneGroup}
-            toggleLockGroup={toggleLockGroup}
-            removeGroup={removeGroup}
-            shiftGroupUp={shiftGroupUp}
-            shiftGroupDown={shiftGroupDown}
-          />
+          <RuleGroupBodyElements {...rg} {...actions} />
         </div>
       </div>
     );
@@ -98,10 +107,12 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
 /**
  * Renders a `React.Fragment` containing an array of form controls for managing
  * a {@link RuleGroupType} or {@link RuleGroupTypeIC}.
+ *
+ * @group Components
  */
 export const RuleGroupHeaderComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupHeaderComponents(rg: RuleGroupProps & UseRuleGroup) {
+  (rg: UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupHeaderComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -113,59 +124,78 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
         addGroupAction: AddGroupActionControlElement,
         cloneGroupAction: CloneGroupActionControlElement,
         lockGroupAction: LockGroupActionControlElement,
+        muteGroupAction: MuteGroupActionControlElement,
         removeGroupAction: RemoveGroupActionControlElement,
       },
     },
   } = rg;
 
+  const commonSubcomponentProps = useMemo(
+    () => ({
+      level: rg.path.length,
+      path: rg.path,
+      disabled: rg.disabled,
+      context: rg.context,
+      validation: rg.validationResult,
+      schema: rg.schema,
+    }),
+    [rg.path, rg.disabled, rg.context, rg.validationResult, rg.schema]
+  );
+
+  const shiftTitles = useMemo(
+    (): ShiftActionsProps['titles'] =>
+      rg.schema.showShiftActions
+        ? {
+            shiftUp: rg.translations.shiftActionUp.title,
+            shiftDown: rg.translations.shiftActionDown.title,
+          }
+        : undefined,
+    [rg.schema.showShiftActions, rg.translations]
+  );
+  const shiftLabels = useMemo(
+    (): ShiftActionsProps['labels'] =>
+      rg.schema.showShiftActions
+        ? {
+            shiftUp: rg.translations.shiftActionUp.label,
+            shiftDown: rg.translations.shiftActionDown.label,
+          }
+        : undefined,
+    [rg.schema.showShiftActions, rg.translations]
+  );
+
   return (
-    <>
+    <Fragment>
       {rg.schema.showShiftActions && rg.path.length > 0 && (
         <ShiftActionsControlElement
           key={TestID.shiftActions}
+          {...commonSubcomponentProps}
           testID={TestID.shiftActions}
-          level={rg.path.length}
-          path={rg.path}
-          titles={{
-            shiftUp: rg.translations.shiftActionUp.title,
-            shiftDown: rg.translations.shiftActionDown.title,
-          }}
-          labels={{
-            shiftUp: rg.translations.shiftActionUp.label,
-            shiftDown: rg.translations.shiftActionDown.label,
-          }}
+          titles={shiftTitles}
+          labels={shiftLabels}
           className={rg.classNames.shiftActions}
-          disabled={rg.disabled}
           shiftUp={rg.shiftGroupUp}
           shiftDown={rg.shiftGroupDown}
           shiftUpDisabled={rg.shiftUpDisabled}
           shiftDownDisabled={rg.shiftDownDisabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
           ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.path.length > 0 && rg.schema.enableDragAndDrop && (
         <DragHandleControlElement
           key={TestID.dragHandle}
+          {...commonSubcomponentProps}
           testID={TestID.dragHandle}
           ref={rg.dragRef}
-          level={rg.path.length}
-          path={rg.path}
           title={rg.translations.dragHandle.title}
           label={rg.translations.dragHandle.label}
           className={rg.classNames.dragHandle}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
           ruleOrGroup={rg.ruleGroup}
         />
       )}
       {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
         <CombinatorSelectorControlElement
           key={TestID.combinators}
+          {...commonSubcomponentProps}
           testID={TestID.combinators}
           options={rg.schema.combinators}
           value={rg.combinator}
@@ -173,130 +203,116 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.combinators}
           handleOnChange={rg.onCombinatorChange}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
+          ruleGroup={rg.ruleGroup}
         />
       )}
       {rg.schema.showNotToggle && (
         <NotToggleControlElement
           key={TestID.notToggle}
+          {...commonSubcomponentProps}
           testID={TestID.notToggle}
           className={rg.classNames.notToggle}
           title={rg.translations.notToggle.title}
           label={rg.translations.notToggle.label}
           checked={rg.ruleGroup.not}
           handleOnChange={rg.onNotToggleChange}
-          level={rg.path.length}
-          disabled={rg.disabled}
-          path={rg.path}
-          context={rg.context}
-          validation={rg.validationResult}
-          schema={rg.schema}
           ruleGroup={rg.ruleGroup}
         />
       )}
       <AddRuleActionControlElement
         key={TestID.addRule}
+        {...commonSubcomponentProps}
         testID={TestID.addRule}
         label={rg.translations.addRule.label}
         title={rg.translations.addRule.title}
         className={rg.classNames.addRule}
         handleOnClick={rg.addRule}
         rules={rg.ruleGroup.rules}
-        level={rg.path.length}
-        path={rg.path}
-        disabled={rg.disabled}
-        context={rg.context}
-        validation={rg.validationResult}
         ruleOrGroup={rg.ruleGroup}
-        schema={rg.schema}
       />
-      <AddGroupActionControlElement
-        key={TestID.addGroup}
-        testID={TestID.addGroup}
-        label={rg.translations.addGroup.label}
-        title={rg.translations.addGroup.title}
-        className={rg.classNames.addGroup}
-        handleOnClick={rg.addGroup}
-        rules={rg.ruleGroup.rules}
-        level={rg.path.length}
-        path={rg.path}
-        disabled={rg.disabled}
-        context={rg.context}
-        validation={rg.validationResult}
-        ruleOrGroup={rg.ruleGroup}
-        schema={rg.schema}
-      />
+      {rg.schema.maxLevels > rg.path.length && (
+        <AddGroupActionControlElement
+          key={TestID.addGroup}
+          {...commonSubcomponentProps}
+          testID={TestID.addGroup}
+          label={rg.translations.addGroup.label}
+          title={rg.translations.addGroup.title}
+          className={rg.classNames.addGroup}
+          handleOnClick={rg.addGroup}
+          rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
+        />
+      )}
       {rg.schema.showCloneButtons && rg.path.length > 0 && (
         <CloneGroupActionControlElement
           key={TestID.cloneGroup}
+          {...commonSubcomponentProps}
           testID={TestID.cloneGroup}
           label={rg.translations.cloneRuleGroup.label}
           title={rg.translations.cloneRuleGroup.title}
           className={rg.classNames.cloneGroup}
           handleOnClick={rg.cloneGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
           ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
         />
       )}
       {rg.schema.showLockButtons && (
         <LockGroupActionControlElement
           key={TestID.lockGroup}
+          {...commonSubcomponentProps}
           testID={TestID.lockGroup}
           label={rg.translations.lockGroup.label}
           title={rg.translations.lockGroup.title}
           className={rg.classNames.lockGroup}
           handleOnClick={rg.toggleLockGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
           disabledTranslation={rg.parentDisabled ? undefined : rg.translations.lockGroupDisabled}
-          context={rg.context}
-          validation={rg.validationResult}
           ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
+        />
+      )}
+      {rg.schema.showMuteButtons && (
+        <MuteGroupActionControlElement
+          key={TestID.muteGroup}
+          {...commonSubcomponentProps}
+          testID={TestID.muteGroup}
+          label={
+            rg.ruleGroup.muted ? rg.translations.unmuteGroup.label : rg.translations.muteGroup.label
+          }
+          title={
+            rg.ruleGroup.muted ? rg.translations.unmuteGroup.title : rg.translations.muteGroup.title
+          }
+          className={rg.classNames.muteGroup}
+          handleOnClick={rg.toggleMuteGroup}
+          rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
         />
       )}
       {rg.path.length > 0 && (
         <RemoveGroupActionControlElement
           key={TestID.removeGroup}
+          {...commonSubcomponentProps}
           testID={TestID.removeGroup}
           label={rg.translations.removeGroup.label}
           title={rg.translations.removeGroup.title}
           className={rg.classNames.removeGroup}
           handleOnClick={rg.removeGroup}
           rules={rg.ruleGroup.rules}
-          level={rg.path.length}
-          path={rg.path}
-          disabled={rg.disabled}
-          context={rg.context}
-          validation={rg.validationResult}
           ruleOrGroup={rg.ruleGroup}
-          schema={rg.schema}
         />
       )}
-    </>
+    </Fragment>
   );
 });
 
 /**
  * Renders a `React.Fragment` containing an array of either (1) {@link Rule} and
  * {@link RuleGroup}, or (2) {@link Rule}, {@link RuleGroup}, and {@link InlineCombinator}.
+ *
+ * @group Components
  */
 export const RuleGroupBodyComponents: React.MemoExoticComponent<
-  (rg: RuleGroupProps & UseRuleGroup) => React.JSX.Element
-> = React.memo(function RuleGroupBodyComponents(rg: RuleGroupProps & UseRuleGroup) {
+  (rg: UseRuleGroup) => React.JSX.Element
+> = React.memo(function RuleGroupBodyComponents(rg: UseRuleGroup) {
   const {
     schema: {
       controls: {
@@ -309,105 +325,109 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
   } = rg;
 
   return (
-    <>
-      {(rg.ruleGroup.rules as RuleGroupICArray | RuleGroupArray).map(
-        (r, idx, { length: ruleArrayLength }) => {
-          const thisPathMemo = rg.pathsMemo[idx];
-          const thisPath = thisPathMemo.path;
-          const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
-          const shiftUpDisabled = pathsAreEqual([0], thisPath);
-          const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
-          const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
-          return (
-            <Fragment key={key}>
-              {idx > 0 &&
-                !rg.schema.independentCombinators &&
-                rg.schema.showCombinatorsBetweenRules && (
-                  <InlineCombinatorControlElement
-                    key={TestID.inlineCombinator}
-                    options={rg.schema.combinators}
-                    value={rg.combinator}
-                    title={rg.translations.combinators.title}
-                    className={rg.classNames.combinators}
-                    handleOnChange={rg.onCombinatorChange}
-                    rules={rg.ruleGroup.rules}
-                    level={rg.path.length}
-                    context={rg.context}
-                    validation={rg.validationResult}
-                    component={CombinatorSelectorControlElement}
-                    path={thisPath}
-                    disabled={rg.disabled}
-                    schema={rg.schema}
-                  />
-                )}
-              {typeof r === 'string' ? (
+    <Fragment>
+      {rg.ruleGroup.rules.map((r, idx, { length: ruleArrayLength }) => {
+        const thisPathMemo = rg.pathsMemo[idx];
+        const thisPath = thisPathMemo.path;
+        const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
+        const shiftUpDisabled = pathsAreEqual([0], thisPath);
+        const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
+        const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
+        return (
+          <Fragment key={key}>
+            {idx > 0 &&
+              !rg.schema.independentCombinators &&
+              rg.schema.showCombinatorsBetweenRules && (
                 <InlineCombinatorControlElement
-                  key={`${TestID.inlineCombinator}-independent`}
+                  key={TestID.inlineCombinator}
                   options={rg.schema.combinators}
-                  value={r}
+                  value={rg.combinator}
                   title={rg.translations.combinators.title}
                   className={rg.classNames.combinators}
-                  handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
+                  handleOnChange={rg.onCombinatorChange}
                   rules={rg.ruleGroup.rules}
                   level={rg.path.length}
                   context={rg.context}
                   validation={rg.validationResult}
                   component={CombinatorSelectorControlElement}
                   path={thisPath}
-                  disabled={thisPathDisabled}
+                  disabled={rg.disabled}
                   schema={rg.schema}
-                />
-              ) : isRuleGroup(r) ? (
-                <RuleGroupControlElement
-                  key={TestID.ruleGroup}
-                  id={r.id}
-                  schema={rg.schema}
-                  actions={rg.actions}
-                  path={thisPath}
-                  translations={rg.translations}
-                  ruleGroup={r}
-                  rules={r.rules}
-                  combinator={isRuleGroupType(r) ? r.combinator : undefined}
-                  not={!!r.not}
-                  disabled={thisPathDisabled}
-                  parentDisabled={rg.parentDisabled || rg.disabled}
-                  shiftUpDisabled={shiftUpDisabled}
-                  shiftDownDisabled={shiftDownDisabled}
-                  context={rg.context}
-                />
-              ) : (
-                <RuleControlElement
-                  key={TestID.rule}
-                  id={r.id!}
-                  rule={r}
-                  field={r.field}
-                  operator={r.operator}
-                  value={r.value}
-                  valueSource={r.valueSource}
-                  schema={rg.schema}
-                  actions={rg.actions}
-                  path={thisPath}
-                  disabled={thisPathDisabled}
-                  parentDisabled={rg.parentDisabled || rg.disabled}
-                  translations={rg.translations}
-                  shiftUpDisabled={shiftUpDisabled}
-                  shiftDownDisabled={shiftDownDisabled}
-                  context={rg.context}
+                  ruleGroup={rg.ruleGroup}
                 />
               )}
-            </Fragment>
-          );
-        }
-      )}
-    </>
+            {typeof r === 'string' ? (
+              <InlineCombinatorControlElement
+                key={`${TestID.inlineCombinator}-independent`}
+                options={rg.schema.combinators}
+                value={r}
+                title={rg.translations.combinators.title}
+                className={rg.classNames.combinators}
+                // oxlint-disable-next-line jsx-no-new-function-as-prop
+                handleOnChange={val => rg.onIndependentCombinatorChange(val, idx)}
+                rules={rg.ruleGroup.rules}
+                level={rg.path.length}
+                context={rg.context}
+                validation={rg.validationResult}
+                component={CombinatorSelectorControlElement}
+                path={thisPath}
+                disabled={thisPathDisabled}
+                schema={rg.schema}
+                ruleGroup={rg.ruleGroup}
+              />
+            ) : isRuleGroup(r) ? (
+              <RuleGroupControlElement
+                key={TestID.ruleGroup}
+                id={r.id}
+                schema={rg.schema}
+                actions={rg.actions}
+                path={thisPath}
+                translations={rg.translations}
+                ruleGroup={r}
+                rules={r.rules}
+                combinator={isRuleGroupType(r) ? r.combinator : undefined}
+                not={!!r.not}
+                disabled={thisPathDisabled}
+                parentDisabled={rg.parentDisabled || rg.disabled}
+                parentMuted={rg.parentMuted || rg.muted}
+                shiftUpDisabled={shiftUpDisabled}
+                shiftDownDisabled={shiftDownDisabled}
+                context={rg.context}
+              />
+            ) : (
+              <RuleControlElement
+                key={TestID.rule}
+                id={r.id}
+                rule={r}
+                field={r.field}
+                operator={r.operator}
+                value={r.value}
+                valueSource={r.valueSource}
+                schema={rg.schema}
+                actions={rg.actions}
+                path={thisPath}
+                disabled={thisPathDisabled}
+                parentDisabled={rg.parentDisabled || rg.disabled}
+                parentMuted={rg.parentMuted || rg.muted}
+                translations={rg.translations}
+                shiftUpDisabled={shiftUpDisabled}
+                shiftDownDisabled={shiftDownDisabled}
+                context={rg.context}
+              />
+            )}
+          </Fragment>
+        );
+      })}
+    </Fragment>
   );
 });
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
+/* oxlint-disable typescript/no-explicit-any */
+export interface UseRuleGroup extends RuleGroupProps {
   addGroup: ActionElementEventHandler;
   addRule: ActionElementEventHandler;
   accessibleDescription: string;
+  muted?: boolean;
   classNames: Pick<
     { [k in keyof Classnames]: string },
     | 'header'
@@ -419,6 +439,7 @@ export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
     | 'addGroup'
     | 'cloneGroup'
     | 'lockGroup'
+    | 'muteGroup'
     | 'removeGroup'
     | 'body'
   >;
@@ -434,13 +455,16 @@ export type UseRuleGroup = Except<RuleGroupProps, 'ruleGroup'> & {
   shiftGroupDown: (event?: MouseEvent, context?: any) => void;
   shiftGroupUp: (event?: MouseEvent, context?: any) => void;
   toggleLockGroup: ActionElementEventHandler;
+  toggleMuteGroup: ActionElementEventHandler;
   validationClassName: string;
   validationResult: boolean | ValidationResult;
-};
-/* eslint-enable @typescript-eslint/no-explicit-any */
+}
+/* oxlint-enable typescript/no-explicit-any */
 
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.
+ *
+ * @group Hooks
  */
 export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const {
@@ -464,6 +488,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     actions: { onGroupAdd, onGroupRemove, onPropChange, onRuleAdd, moveRule },
     disabled: disabledProp,
     parentDisabled,
+    parentMuted,
     shiftUpDisabled,
     shiftDownDisabled,
     combinator: combinatorProp,
@@ -471,6 +496,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     not: notProp,
     // Drag-and-drop
     dropEffect = 'move',
+    groupItems = false,
     dragMonitorId = '',
     dropMonitorId = '',
     previewRef = null,
@@ -478,6 +504,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     dropRef = null,
     isDragging = false,
     isOver = false,
+    dropNotAllowed = false,
   } = props;
 
   useDeprecatedProps('ruleGroup', !ruleGroupProp);
@@ -488,6 +515,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const disabled = !!parentDisabled || !!disabledProp;
+  const muted = !!parentMuted || !!ruleGroupProp?.muted;
 
   const combinator = useMemo(
     () =>
@@ -499,7 +527,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     [combinatorProp, combinators, ruleGroupProp]
   );
 
-  // TODO: Type this properly with generics
+  // TODO?: Type this properly with generics
   const ruleGroup = useMemo((): RuleGroupTypeAny => {
     if (ruleGroupProp) {
       if (ruleGroupProp.combinator === combinator || independentCombinators) {
@@ -509,7 +537,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       newRG.combinator = combinator;
       return newRG;
     }
-    return { rules: rulesProp, not: notProp } as RuleGroupTypeAny;
+    return { rules: rulesProp, not: notProp } as RuleGroupTypeIC;
   }, [combinator, independentCombinators, notProp, ruleGroupProp, rulesProp]);
 
   const classNames = useMemo(
@@ -518,9 +546,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         suppressStandardClassnames || standardClassnames.header,
         classNamesProp.header,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        dropNotAllowed && classNamesProp.dndDropNotAllowed,
         suppressStandardClassnames || {
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
         }
       ),
       shiftActions: clsx(
@@ -536,10 +566,6 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.valueSelector,
         classNamesProp.combinators
       ),
-      // betweenRules: clsx(
-      //   suppressStandardClassnames || standardClassnames.betweenRules,
-      //   classNamesProp.betweenRules
-      // ),
       notToggle: clsx(
         suppressStandardClassnames || standardClassnames.notToggle,
         classNamesProp.notToggle
@@ -564,6 +590,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         classNamesProp.actionElement,
         classNamesProp.lockGroup
       ),
+      muteGroup: clsx(
+        suppressStandardClassnames || standardClassnames.muteGroup,
+        classNamesProp.actionElement,
+        classNamesProp.muteGroup
+      ),
       removeGroup: clsx(
         suppressStandardClassnames || standardClassnames.removeGroup,
         classNamesProp.actionElement,
@@ -579,14 +610,17 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.cloneGroup,
       classNamesProp.combinators,
       classNamesProp.dndCopy,
+      classNamesProp.dndDropNotAllowed,
       classNamesProp.dragHandle,
       classNamesProp.header,
       classNamesProp.lockGroup,
+      classNamesProp.muteGroup,
       classNamesProp.notToggle,
       classNamesProp.removeGroup,
       classNamesProp.shiftActions,
       classNamesProp.valueSelector,
       dropEffect,
+      dropNotAllowed,
       isOver,
       suppressStandardClassnames,
     ]
@@ -602,7 +636,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const onIndependentCombinatorChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (value: any, index: number, _context?: any) => {
       if (!disabled) {
         onPropChange('combinator', value, [...path, index]);
@@ -612,7 +646,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const onNotToggleChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (checked: boolean, _context?: any) => {
       if (!disabled) {
         onPropChange('not', checked, path);
@@ -634,11 +668,11 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const addGroup: ActionElementEventHandler = useCallback(
     (_e, context) => {
       if (!disabled) {
-        const newGroup = createRuleGroup(independentCombinators);
+        const newGroup = createRuleGroup();
         onGroupAdd(newGroup, path, context);
       }
     },
-    [createRuleGroup, disabled, independentCombinators, onGroupAdd, path]
+    [createRuleGroup, disabled, onGroupAdd, path]
   );
 
   const cloneGroup: ActionElementEventHandler = useCallback(() => {
@@ -649,7 +683,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   }, [disabled, moveRule, path]);
 
   const shiftGroupUp = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftUpDisabled) {
         moveRule(path, 'up', event?.altKey);
@@ -659,7 +693,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const shiftGroupDown = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (event?: MouseEvent, _context?: any) => {
       if (!disabled && !shiftDownDisabled) {
         moveRule(path, 'down', event?.altKey);
@@ -671,6 +705,10 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   const toggleLockGroup: ActionElementEventHandler = useCallback(() => {
     onPropChange('disabled', !disabled, path);
   }, [disabled, onPropChange, path]);
+
+  const toggleMuteGroup: ActionElementEventHandler = useCallback(() => {
+    onPropChange('muted', !ruleGroup.muted, path);
+  }, [ruleGroup.muted, onPropChange, path]);
 
   const removeGroup: ActionElementEventHandler = useCallback(() => {
     if (!disabled) {
@@ -692,7 +730,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   );
 
   const ruleGroupClassname = useMemo(
-    () => getRuleGroupClassname(ruleGroup as RuleGroupTypeAny),
+    () => getRuleGroupClassname(ruleGroup),
     [getRuleGroupClassname, ruleGroup]
   );
 
@@ -704,38 +742,36 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         suppressStandardClassnames || standardClassnames.ruleGroup,
         classNamesProp.ruleGroup,
         disabled && classNamesProp.disabled,
+        muted && classNamesProp.muted,
         isDragging && classNamesProp.dndDragging,
+        isOver && groupItems && classNamesProp.dndGroup,
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
+          [standardClassnames.muted]: muted,
           [standardClassnames.dndDragging]: isDragging,
+          [standardClassnames.dndGroup]: isOver && groupItems,
         },
         validationClassName
       ),
     [
       classNamesProp.disabled,
+      classNamesProp.muted,
       classNamesProp.dndDragging,
+      classNamesProp.dndGroup,
       classNamesProp.ruleGroup,
       combinatorBasedClassName,
       disabled,
+      muted,
+      groupItems,
       isDragging,
+      isOver,
       ruleGroupClassname,
       suppressStandardClassnames,
       validationClassName,
     ]
   );
 
-  // Memoize the path info so every render doesn't generate a new array
-  const pathsMemo = useMemo(() => {
-    const paths: { path: Path; disabled: boolean }[] = [];
-    for (let i = 0; i < ruleGroup.rules.length; i++) {
-      const thisPath = [...path, i];
-      paths[i] = {
-        path: thisPath,
-        disabled: disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p)),
-      };
-    }
-    return paths;
-  }, [disabled, path, ruleGroup.rules.length, disabledPaths]);
+  const pathsMemo = usePathsMemo({ disabled, disabledPaths, path, nestedArray: ruleGroup.rules });
 
   const accessibleDescription = useMemo(
     () => accessibleDescriptionGenerator({ path, qbId }),
@@ -757,6 +793,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     dropRef,
     isDragging,
     isOver,
+    muted,
     onCombinatorChange,
     onGroupAdd,
     onIndependentCombinatorChange,
@@ -770,6 +807,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     shiftGroupUp,
     shiftGroupDown,
     toggleLockGroup,
+    toggleMuteGroup,
     validationClassName,
     validationResult,
   };

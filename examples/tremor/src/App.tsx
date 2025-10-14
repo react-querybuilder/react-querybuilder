@@ -2,7 +2,8 @@ import { QueryBuilderTremor } from '@react-querybuilder/tremor';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
-import './styles.scss';
+import 'react-querybuilder/dist/query-builder.css';
+import './styles.css';
 
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },

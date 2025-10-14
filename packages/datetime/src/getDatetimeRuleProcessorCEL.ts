@@ -1,5 +1,5 @@
 import type { RuleProcessor } from 'react-querybuilder';
-import { defaultRuleProcessorCEL, toArray } from 'react-querybuilder';
+import { defaultRuleProcessorCEL, lc, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { processIsDateField } from './utils';
 
@@ -7,7 +7,7 @@ const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
 /**
  * Generates a rule processor with date/time features for use by
- * {@link react-querybuilder!index.formatQuery formatQuery} with the "cel" format.
+ * {@link @react-querybuilder/core!formatQuery formatQuery} with the "cel" format.
  */
 export const getDatetimeRuleProcessorCEL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
@@ -21,7 +21,7 @@ export const getDatetimeRuleProcessorCEL =
 
     const ts = (d: string | Date) => `timestamp("${apiFns.toISOString(d)}")`;
 
-    const operatorTL = rule.operator.replace(/^=$/, '==').toLowerCase();
+    const operatorTL = lc(rule.operator.replace(/^=$/, '=='));
 
     switch (operatorTL) {
       case '<':

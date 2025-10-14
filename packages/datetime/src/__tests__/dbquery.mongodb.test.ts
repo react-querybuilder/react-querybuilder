@@ -1,10 +1,10 @@
 /* @jest-environment node */
 
+import { formatQuery } from '@react-querybuilder/core';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
-import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 
 if (process.env.JEST_WORKER_ID) {
   // Give MongoDB time to download
@@ -58,11 +58,14 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           ruleProcessor: getDatetimeRuleProcessorMongoDBQuery(apiFns),
         });
         const result = await Musician.find(mdbQuery);
+        // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
+          expect(result).toHaveLength(1);
           expect(result[0].last_name).toBe(expectation);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
   });

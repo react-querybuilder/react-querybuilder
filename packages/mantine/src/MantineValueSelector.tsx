@@ -5,8 +5,14 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { useValueSelector } from 'react-querybuilder';
 import { optionListToComboboxData } from './utils';
 
+/**
+ * @group Props
+ */
 export type MantineValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
 
+/**
+ * @group Components
+ */
 export const MantineValueSelector = ({
   className,
   handleOnChange,
@@ -20,6 +26,7 @@ export const MantineValueSelector = ({
   field: _field,
   fieldData: _fieldData,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   path: _path,
   level: _level,
@@ -32,6 +39,7 @@ export const MantineValueSelector = ({
 
   const data = React.useMemo(() => optionListToComboboxData(options), [options]);
 
+  // istanbul ignore next
   const changeHandler = (v: string | string[] | null) =>
     onChange(v ?? val ?? /* istanbul ignore next */ '');
 

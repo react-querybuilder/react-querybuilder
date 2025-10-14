@@ -1,6 +1,6 @@
+import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import { messages } from '../messages';
-import { useRQB_INTERNAL_QueryBuilderDispatch, rqbWarn } from '../redux/_internal';
-import type { RuleGroupTypeAny } from '../types';
+import { rqbWarn, useRQB_INTERNAL_QueryBuilderDispatch } from '../redux/_internal';
 import { usePrevious } from './usePrevious';
 
 export interface UseControlledOrUncontrolledParams {
@@ -11,6 +11,8 @@ export interface UseControlledOrUncontrolledParams {
 /**
  * Logs a warning when the component changes from controlled to uncontrolled,
  * vice versa, or both `query` and `defaultQuery` are provided.
+ *
+ * @group Hooks
  */
 export const useControlledOrUncontrolled = (params: UseControlledOrUncontrolledParams): void => {
   const dispatch = useRQB_INTERNAL_QueryBuilderDispatch();

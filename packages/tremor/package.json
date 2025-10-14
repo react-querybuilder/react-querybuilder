@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/tremor",
   "description": "Custom Tremor components for react-querybuilder",
-  "version": "8.0.0",
+  "version": "8.10.0",
   "publishConfig": {
     "access": "public"
   },
@@ -11,16 +11,16 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/types-esm/index.d.mts",
+        "types": "./dist/react-querybuilder_tremor.d.mts",
         "default": "./dist/react-querybuilder_tremor.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     }
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder_tremor.legacy-esm.d.ts",
   "files": [
     "dist"
   ],
@@ -45,34 +45,35 @@
     "sql"
   ],
   "scripts": {
-    "start": "bunx --bun vite",
-    "build": "bunx --bun tsup",
+    "start": "vite",
+    "build": "bun --bun tsdown",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@headlessui/tailwindcss": "^0.2.1",
-    "@tailwindcss/forms": "^0.5.9",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.1.0",
-    "@tremor/react": "^3.18.6",
-    "@types/react": "^18.3.12",
-    "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.20",
-    "dayjs": "^1.11.13",
-    "postcss": "^8.4.49",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-querybuilder": "8.0.0",
-    "rollup-plugin-visualizer": "^5.12.0",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "@headlessui/tailwindcss": "^0.2.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/postcss": "^4.1.14",
+    "@tailwindcss/vite": "^4.1.14",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@tremor/react": "^3.18.7",
+    "@types/react": "^19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "dayjs": "^1.11.18",
+    "postcss": "^8.5.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-querybuilder": "8.10.0",
+    "rollup-plugin-visualizer": "^6.0.4",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   },
   "peerDependencies": {
     "@tremor/react": "^3",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "8.0.0"
+    "react-querybuilder": "8.10.0"
   }
 }

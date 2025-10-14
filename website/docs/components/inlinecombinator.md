@@ -3,4 +3,4 @@ title: InlineCombinator
 description: Wrapper element for inline combinator selectors
 ---
 
-Renders the [`combinatorSelector`](./querybuilder#combinatorselector) (passed in as the `component` prop; [`ValueSelector`](./valueselector) by default) nested beneath `<div class="betweenRules inline-combinator">`. Used when [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is enabled or the query is using [independent combinators](./querybuilder#independent-combinators).
+Wraps a [`combinatorSelector`](./querybuilder-controlelements#combinatorselector) component (provided via the `component` prop, defaults to [`ValueSelector`](./valueselector)) within a `<div class="betweenRules inline-combinator">` container. Used when [`showCombinatorsBetweenRules`](./querybuilder#showcombinatorsbetweenrules) is enabled or when queries use [independent combinators](./querybuilder#independent-combinators).

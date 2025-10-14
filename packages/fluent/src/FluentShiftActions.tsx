@@ -2,6 +2,9 @@ import { Button } from '@fluentui/react-components';
 import * as React from 'react';
 import type { ShiftActionsProps } from 'react-querybuilder';
 
+/**
+ * @group Components
+ */
 export const FluentShiftActions = ({
   shiftUp,
   shiftDown,

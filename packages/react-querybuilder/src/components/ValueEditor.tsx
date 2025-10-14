@@ -1,13 +1,47 @@
+import type { FullField, InputType, ParseNumberMethod } from '@react-querybuilder/core';
+import {
+  clsx,
+  getFirstOption,
+  getParseNumberMethod,
+  joinWith,
+  parseNumber,
+  standardClassnames,
+  toArray,
+} from '@react-querybuilder/core';
 import { produce } from 'immer';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { standardClassnames } from '../defaults';
-import type { FullField, InputType, ParseNumberMethod, Schema, ValueEditorProps } from '../types';
-import { getFirstOption, joinWith, parseNumber, toArray } from '../utils';
-import clsx from '../utils/clsx';
+import type { Schema, ValueEditorProps } from '../types';
+
+interface RadioButtonProps {
+  name: string;
+  disabled?: boolean;
+  checked: boolean;
+  handleOnChange: (v: unknown) => void;
+  label: string;
+}
+// Extracted from callback so we can use `useId`
+const RadioButton = ({ name, disabled, checked, label, handleOnChange }: RadioButtonProps) => {
+  const id = React.useId();
+  return (
+    <label htmlFor={id}>
+      <input
+        id={id}
+        type="radio"
+        value={name}
+        disabled={disabled}
+        checked={checked}
+        onChange={e => handleOnChange(e.target.value)}
+      />
+      {label}
+    </label>
+  );
+};
 
 /**
  * Default `valueEditor` component used by {@link QueryBuilder}.
+ *
+ * @group Components
  */
 export const ValueEditor = <F extends FullField>(
   allProps: ValueEditorProps<F>
@@ -19,6 +53,7 @@ export const ValueEditor = <F extends FullField>(
     title,
     className,
     type = 'text',
+    inputType,
     values = [],
     listsAsArrays,
     fieldData,
@@ -30,7 +65,6 @@ export const ValueEditor = <F extends FullField>(
     // we cherry pick these out of `propsForValueSelector` to keep them from being
     // assigned to DOM elements. (The props with mixed case are the only ones that
     // really matter. Props in all lowercase don't emit warnings.)
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
     skipHook: _skipHook,
     valueSource: _valueSource,
@@ -40,6 +74,7 @@ export const ValueEditor = <F extends FullField>(
   const {
     valueAsArray,
     multiValueHandler,
+    bigIntValueHandler,
     parseNumberMethod,
     valueListItemClassName,
     inputTypeCoerced,
@@ -143,19 +178,34 @@ export const ValueEditor = <F extends FullField>(
       return (
         <span data-testid={testID} className={className} title={title}>
           {values.map(v => (
-            <label key={v.name}>
-              <input
-                type="radio"
-                value={v.name}
-                disabled={disabled}
-                checked={value === v.name}
-                onChange={e => handleOnChange(e.target.value)}
-              />
-              {v.label}
-            </label>
+            <RadioButton
+              key={v.name}
+              name={v.name}
+              disabled={disabled}
+              checked={value === v.name}
+              handleOnChange={handleOnChange}
+              label={v.label}
+            />
           ))}
         </span>
       );
+  }
+
+  // Note that we don't use `inputTypeCoerced` for this condition.
+  // We need to know that its uncoerced value is "bigint".
+  if (inputType === 'bigint') {
+    return (
+      <input
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+      />
+    );
   }
 
   return (
@@ -173,6 +223,44 @@ export const ValueEditor = <F extends FullField>(
     />
   );
 };
+
+export interface UseValueEditor {
+  /**
+   * Array of values for when the main value represents a list, e.g. when operator
+   * is "between" or "in".
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  valueAsArray: any[];
+  /**
+   * An update handler for a series of value editors, e.g. when operator is "between".
+   * Calling this function will update a single element of the value array and leave
+   * the rest of the array as is.
+   *
+   * @param {string} val The new value for the editor
+   * @param {number} idx The index of the editor (and the array element to update)
+   */
+  multiValueHandler: (val: unknown, idx: number) => void;
+  /**
+   * An update handler for bigint editors, e.g. when `inputType` is "bigint" and
+   * `parseNumbersMethod` is truthy.
+   */
+  bigIntValueHandler: (val: unknown) => void;
+  /**
+   * Evaluated `parseNumber` method based on `parseNumbers` prop. This property ends up
+   * being the same as the `parseNumbers` prop minus the "-limited" suffix, unless
+   * the "-limited" suffix is present and the `inputType` is not "number", in which case
+   * it's set to `false`.
+   */
+  parseNumberMethod: ParseNumberMethod;
+  /**
+   * Class for items in a value editor series (e.g. "between" value editors).
+   */
+  valueListItemClassName: string;
+  /**
+   * Coerced `inputType` based on `inputType` and `operator`.
+   */
+  inputTypeCoerced: InputType;
+}
 
 /**
  * This hook is primarily concerned with multi-value editors like date range
@@ -203,42 +291,12 @@ export const ValueEditor = <F extends FullField>(
  * // Consider the following rule:
  * `{ field: "f1", operator: "between", value: "12,14" }`
  * // If `operator` changes to "=", the value will be reset to "12".
+ *
+ * @group Hooks
  */
 export const useValueEditor = <F extends FullField = FullField, O extends string = string>(
   props: ValueEditorProps<F, O>
-): {
-  /**
-   * Array of values for when the main value represents a list, e.g. when operator
-   * is "between" or "in".
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueAsArray: any[];
-  /**
-   * An update handler for a series of value editors, e.g. when operator is "between".
-   * Calling this function will update a single element of the value array and leave
-   * the rest of the array as is.
-   *
-   * @param {string} val The new value for the editor
-   * @param {number} idx The index of the editor (and the array element to update)
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  multiValueHandler: (val: any, idx: number) => void;
-  /**
-   * Evaluated `parseNumber` method based on `parseNumbers` prop. This property ends up
-   * being the same as the `parseNumbers` prop minus the "-limited" suffix, unless
-   * the "-limited" suffix is present and the `inputType` is not "number", in which case
-   * it's set to `false`.
-   */
-  parseNumberMethod: ParseNumberMethod;
-  /**
-   * Class for items in a value editor series (e.g. "between" value editors).
-   */
-  valueListItemClassName: string;
-  /**
-   * Coerced `inputType` based on `inputType` and `operator`.
-   */
-  inputTypeCoerced: InputType;
-} => {
+): UseValueEditor => {
   const {
     handleOnChange,
     inputType,
@@ -266,23 +324,13 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
 
   const valueAsArray = useMemo(() => toArray(value, { retainEmptyStrings: true }), [value]);
 
-  const parseNumberMethod = useMemo((): ParseNumberMethod => {
-    if (typeof parseNumbers === 'string') {
-      const [method, level] = parseNumbers.split('-') as
-        | [ParseNumberMethod, 'limited']
-        | [ParseNumberMethod];
-      if (level === 'limited') {
-        return inputType === 'number' ? method : false;
-      }
-
-      return method;
-    }
-
-    return parseNumbers ? 'strict' : false;
-  }, [inputType, parseNumbers]);
+  const parseNumberMethod = useMemo(
+    () => getParseNumberMethod({ parseNumbers, inputType }),
+    [inputType, parseNumbers]
+  );
 
   const multiValueHandler = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (val: any, idx: number) => {
       const v = produce(valueAsArray, va => {
         va[idx] = parseNumber(val, { parseNumbers: parseNumberMethod });
@@ -300,17 +348,39 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
     [handleOnChange, listsAsArrays, operator, parseNumberMethod, valueAsArray, values]
   );
 
+  const bigIntValueHandler = useCallback(
+    (v: unknown) => {
+      const valAsMaybeNumber = parseNumber(v, {
+        parseNumbers: parseNumberMethod,
+        bigIntOnOverflow: true,
+      });
+      let bi: bigint;
+      try {
+        bi = BigInt(valAsMaybeNumber);
+      } catch {
+        handleOnChange(valAsMaybeNumber);
+        return;
+      }
+      handleOnChange(bi);
+    },
+    [handleOnChange, parseNumberMethod]
+  );
+
   const valueListItemClassName = clsx(
     suppressStandardClassnames || standardClassnames.valueListItem,
     // Optional chaining is necessary for QueryBuilderNative
     classNamesProp?.valueListItem
   );
 
-  const inputTypeCoerced = operator === 'in' || operator === 'notIn' ? 'text' : inputType || 'text';
+  const inputTypeCoerced =
+    inputType === 'bigint' || operator === 'in' || operator === 'notIn'
+      ? 'text'
+      : inputType || 'text';
 
   return {
     valueAsArray,
     multiValueHandler,
+    bigIntValueHandler,
     parseNumberMethod,
     valueListItemClassName,
     inputTypeCoerced,

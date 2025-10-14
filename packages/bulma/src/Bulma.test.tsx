@@ -1,7 +1,7 @@
+import { testNotToggle, testValueEditor, testValueSelector } from '@rqb-testing';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { QueryBuilder, TestID } from 'react-querybuilder';
-import { testNotToggle, testValueEditor, testValueSelector } from '@rqb-testing';
 import { BulmaNotToggle } from './BulmaNotToggle';
 import { BulmaValueEditor } from './BulmaValueEditor';
 import { BulmaValueSelector } from './BulmaValueSelector';

@@ -1,11 +1,11 @@
-import * as React from 'react';
 import type {
   FullCombinator,
   FullField,
   FullOperator,
-  QueryBuilderProps,
   RuleGroupTypeAny,
-} from '../types';
+} from '@react-querybuilder/core';
+import * as React from 'react';
+import type { QueryBuilderProps } from '../types';
 import { QueryBuilderInternal } from './QueryBuilderInternal';
 import { QueryBuilderStateProvider } from './QueryBuilderStateProvider';
 
@@ -13,6 +13,8 @@ import { QueryBuilderStateProvider } from './QueryBuilderStateProvider';
  * The query builder component for React.
  *
  * See https://react-querybuilder.js.org/ for demos and documentation.
+ *
+ * @group Components
  */
 export const QueryBuilder = <
   RG extends RuleGroupTypeAny,

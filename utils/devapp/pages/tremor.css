@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+@config "../../../packages/tremor/tailwind.config.mjs";
+
+@source "../../../node_modules/@tremor";
+
+@source "./tremor-whitelist.tsx";

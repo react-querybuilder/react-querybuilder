@@ -2,6 +2,9 @@ import { Button } from 'antd';
 import * as React from 'react';
 import type { ShiftActionsProps } from 'react-querybuilder';
 
+/**
+ * @group Components
+ */
 export const AntDShiftActions = ({
   shiftUp,
   shiftDown,

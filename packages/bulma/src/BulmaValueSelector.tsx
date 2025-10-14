@@ -3,6 +3,9 @@ import type { ValueSelectorProps } from 'react-querybuilder';
 import { useSelectElementChangeHandler, useValueSelector } from 'react-querybuilder';
 import { toOptions } from './utils';
 
+/**
+ * @group Components
+ */
 export const BulmaValueSelector = ({
   className,
   handleOnChange,

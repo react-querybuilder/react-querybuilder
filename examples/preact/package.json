@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "preact": "^10",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-querybuilder": "8.10.0"
+  },
+  "description": "React Query Builder Basic TypeScript Example",
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.6.0",
+    "prettier": "^3",
+    "typescript": "^5.7.2",
+    "vite": "^7"
+  },
+  "name": "react-querybuilder-basic-ts-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "type": "module"
+}

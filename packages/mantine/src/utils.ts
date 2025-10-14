@@ -9,10 +9,10 @@ export const optionListToComboboxData = (list: FullOptionList<FullOption>): Comb
     : uniqList.map(opt => ({ name: opt.name, value: opt.name, label: opt.label }));
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const toNumberInputValue = (val: number | string): any => {
   if (typeof val === 'number') return val;
   const valParsed = parseNumber(val, { parseNumbers: 'native' });
-  if (!isNaN(valParsed)) return valParsed;
+  if (!Number.isNaN(valParsed)) return valParsed;
   return '';
 };

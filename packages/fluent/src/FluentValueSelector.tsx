@@ -1,12 +1,18 @@
-import type { DropdownProps, SelectProps } from '@fluentui/react-components';
+import type { DropdownProps, OptionOnSelectData, SelectProps } from '@fluentui/react-components';
 import { Dropdown, Select } from '@fluentui/react-components';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
-import { toArray, toOptions, useValueSelector } from 'react-querybuilder';
+import { getOption, toArray, toOptions, useValueSelector } from 'react-querybuilder';
 import { toDropdownOptions } from './utils';
 
+/**
+ * @group Props
+ */
 export type FluentValueSelectorProps = VersatileSelectorProps & SelectProps & DropdownProps;
 
+/**
+ * @group Components
+ */
 export const FluentValueSelector = ({
   className,
   handleOnChange,
@@ -25,10 +31,12 @@ export const FluentValueSelector = ({
   validation: _validation,
   schema: _schema,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   ...otherProps
 }: FluentValueSelectorProps): React.JSX.Element => {
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
+  const valAsArray = React.useMemo(() => toArray(val), [val]);
 
   return multiple ? (
     <Dropdown
@@ -37,10 +45,10 @@ export const FluentValueSelector = ({
       className={className}
       disabled={disabled}
       multiselect
-      value={toArray(val).join(', ')}
+      value={valAsArray.map(v => getOption(options, v)?.label).join(', ')}
       placeholder={placeholder}
-      selectedOptions={toArray(val)}
-      onOptionSelect={(_e, data) => onChange(data.selectedOptions)}>
+      selectedOptions={valAsArray}
+      onOptionSelect={(_e: unknown, data: OptionOnSelectData) => onChange(data.selectedOptions)}>
       {toDropdownOptions(options)}
     </Dropdown>
   ) : (

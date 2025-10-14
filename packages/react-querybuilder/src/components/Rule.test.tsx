@@ -1,3 +1,20 @@
+import type {
+  FullField,
+  FullOperator,
+  FullOption,
+  Operator,
+  RuleType,
+  ValidationResult,
+  ValueSourceFullOptions,
+} from '@react-querybuilder/core';
+import {
+  TestID,
+  clsx,
+  isFullOptionArray,
+  standardClassnames as sc,
+  defaultTranslations as t,
+  toFullOption,
+} from '@react-querybuilder/core';
 import {
   consoleMocks,
   getFieldMapFromArray,
@@ -7,19 +24,8 @@ import {
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { TestID, standardClassnames as sc, defaultTranslations as t } from '../defaults';
 import { messages } from '../messages';
-import type {
-  FullField,
-  FullOperator,
-  Operator,
-  RuleType,
-  ValidationResult,
-  ValueSelectorProps,
-  ValueSources,
-} from '../types';
-import { toFullOption } from '../utils';
-import { clsx } from '../utils/clsx';
+import type { ValueSelectorProps } from '../types';
 import { Rule } from './Rule';
 import { render, waitABeat } from './testUtils';
 
@@ -112,23 +118,19 @@ describe('shiftRuleUp/Down', () => {
     rerender(<Rule {...getProps({ showShiftActions: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.shiftActionUp.label));
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'up', false, undefined);
 
     await user.click(screen.getByText(t.shiftActionDown.label));
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'down', false, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionUp.label));
     await user.keyboard('{/Alt}');
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'up', true, undefined);
 
     await user.keyboard('{Alt>}');
     await user.click(screen.getByText(t.shiftActionDown.label));
     await user.keyboard('{/Alt}');
-    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(moveRule).toHaveBeenLastCalledWith([0], 'down', true, undefined);
   });
 });
@@ -257,7 +259,10 @@ describe('locked rule', () => {
 });
 
 describe('valueSource', () => {
-  const valueSources: ValueSources = ['value', 'field'];
+  const valueSources: ValueSourceFullOptions = [
+    { name: 'value', value: 'value', label: 'value' },
+    { name: 'field', value: 'field', label: 'field' },
+  ];
   const fields = [
     {
       name: 'fvsa',
@@ -274,7 +279,7 @@ describe('valueSource', () => {
     { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
   ].map(o => toFullOption(o)) satisfies FullField[];
   const fieldMap = getFieldMapFromArray(fields);
-  const getValueSources = (): ValueSources => valueSources;
+  const getValueSources = (): ValueSourceFullOptions => valueSources;
 
   it('does not display value source selector by default', () => {
     render(<Rule {...getProps()} />);
@@ -302,7 +307,7 @@ describe('valueSource', () => {
 
   it('valueSources as array', () => {
     const props = getProps({
-      getValueSources: () => ['value'],
+      getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
       fields,
       fieldMap,
     });
@@ -315,7 +320,7 @@ describe('valueSource', () => {
 
   it('valueSources as function', () => {
     const props = getProps({
-      getValueSources: () => ['value'],
+      getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
       fields,
       fieldMap,
     });
@@ -356,6 +361,36 @@ describe('valueSource', () => {
     );
     expect(screen.getByDisplayValue(fieldMap['fc2'].label)).toBeInTheDocument();
   });
+});
+
+// oxlint-disable-next-line no-disabled-tests
+it.skip('makes the values array a FullOption array when appropriate', () => {
+  const controls = getProps().schema.controls;
+  const fields = [
+    { name: 'f1', value: 'f1', label: 'f1', values: [{ name: 'f1v1', label: 'f1v1' }] },
+    { name: 'f2', value: 'f2', label: 'f2', values: ['f2v1', 'f2v2'] as unknown as FullOption[] },
+  ];
+  const fieldMap = getFieldMapFromArray(fields);
+  const props = getProps({
+    fields,
+    fieldMap,
+    controls: {
+      ...controls,
+      valueEditor: ({ field, values }) => (
+        <div>
+          {field === 'f1'
+            ? `${isFullOptionArray(values)}`
+            : `${values?.every(v => typeof v === 'string')}`}
+        </div>
+      ),
+    },
+  });
+  const { rerender } = render(
+    <Rule {...props} rule={{ ...props.rule, field: 'f1', value: 'v1' }} />
+  );
+  // expect(screen.getByText('true')).toBeInTheDocument();
+  rerender(<Rule {...props} rule={{ ...props.rule, field: 'f2', value: 'v2' }} />);
+  expect(screen.getByText('true')).toBeInTheDocument();
 });
 
 describe('dynamic classNames', () => {

@@ -10,9 +10,24 @@ import Tabs from '@theme/Tabs';
 import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import type { ExportFormat, FormatQueryOptions, SQLPreset } from 'react-querybuilder';
-import { convertToIC, defaultValidator, formatQuery, QueryBuilder } from 'react-querybuilder';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import * as ReactDnD from 'react-dnd';
+import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import type {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  SQLPreset,
+} from 'react-querybuilder/debug';
+import {
+  convertToIC,
+  defaultPlaceholderValueName,
+  defaultValidator,
+  formatQuery,
+  QueryBuilder,
+  standardClassnames,
+} from 'react-querybuilder/debug';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
@@ -44,16 +59,17 @@ import {
   optionsReducer,
 } from '../_constants/utils';
 import styles from './Demo.module.css';
+import ImportTab from './ImportTab';
 import Nav from './Nav';
+import { ThemeBuilder } from './ThemeBuilder';
 
 // TODO: Find out why this is necessary
 import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
-import ImportTab from './ImportTab';
 declare module '@theme/TabItem' {
-  export default function TabItem(props: TabItemProps): JSX.Element;
+  export default function TabItem(props: TabItemProps): React.JSX.Element;
 }
 declare module '@theme/Tabs' {
-  export default function Tabs(props: TabsProps): JSX.Element;
+  export default function Tabs(props: TabsProps): React.JSX.Element;
 }
 
 const { version: rqbVersion } = rqbPkgJson;
@@ -126,6 +142,10 @@ const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   );
 };
 
+const dependenciesSummary = <summary>Dependencies</summary>;
+const stylesSummary = <summary>Styles</summary>;
+const otherFilesSummary = <summary>Other files</summary>;
+
 export default function Demo({
   variant = 'default',
   queryWrapper: QueryWrapper = defaultQueryWrapper,
@@ -134,7 +154,9 @@ export default function Demo({
   const siteLocation = useLocation();
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
-  const [format, setFormat] = useState<ExportFormat>('json_without_ids');
+  const [format, setFormat] = useState<ExportFormat>(
+    (queryString.parse(siteLocation.search).exportFormat as ExportFormat) || 'json_without_ids'
+  );
   const [sqlDialect, setSQLDialect] = useState<SQLPreset>('ansi');
   const [options, setOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
@@ -153,39 +175,14 @@ export default function Demo({
   const [celParseError, setCELParseError] = useState('');
   const [jsonata, setJSONata] = useState(initialJSONata);
   const [jsonataParseError, setJSONataParseError] = useState('');
-  const [styleLanguage, setStyleLanguage] = useState<'css' | 'scss'>('scss');
 
   const [exportCall, setExportCall] = useState('');
   const [codeStringState, setCodeStringState] = useState('');
-  const [extraStylesState, setExtraStylesState] = useState({ css: '', scss: '' });
+  const [extraStylesState, setExtraStylesState] = useState('');
   const [fieldsTsStringState, setFieldsTsStringState] = useState('');
   const [musicalInstrumentsTsStringState, setMusicalInstrumentsTsStringState] = useState('');
 
   const permalinkHash = useMemo(() => `#${queryString.stringify(options)}`, [options]);
-
-  const updateOptionsFromHash = useCallback((e: HashChangeEvent) => {
-    const stateFromHash = getStateFromHash(
-      queryString.parse(
-        queryString.parseUrl(e.newURL, { parseFragmentIdentifier: true }).fragmentIdentifier ?? ''
-      )
-    );
-    const payload = { ...defaultOptions, ...stateFromHash.options };
-    setOptions({ type: 'replace', payload });
-    if (stateFromHash.query) {
-      setQuery(stateFromHash.query);
-    }
-    if (stateFromHash.queryIC) {
-      setQueryIC(stateFromHash.queryIC);
-    }
-    // TODO: handle `style`
-  }, []);
-
-  useEffect(() => {
-    history.pushState(null, '', permalinkHash);
-    window.addEventListener('hashchange', updateOptionsFromHash);
-
-    return () => window.removeEventListener('hashchange', updateOptionsFromHash);
-  }, [permalinkHash, updateOptionsFromHash]);
 
   useEffect(() => {
     Promise.all([extraStyles(), fieldsTsString, musicalInstrumentsTsString]).then(
@@ -193,13 +190,14 @@ export default function Demo({
         setExtraStylesState(es);
         setFieldsTsStringState(fs);
         setMusicalInstrumentsTsStringState(ms);
+        return;
       }
     );
   }, []);
 
   useEffect(() => {
-    getCodeString(options, variant, styleLanguage).then(cs => setCodeStringState(cs));
-  }, [options, styleLanguage, variant]);
+    getCodeString(options, variant, 'css').then(cs => setCodeStringState(cs));
+  }, [options, variant]);
 
   useEffect(() => {
     getExportCall(
@@ -207,10 +205,11 @@ export default function Demo({
         format,
         parseNumbers: parseNumbersInExport,
         preset: sqlDialect,
+        ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
       },
       { validateQuery: options.validateQuery }
     ).then(ec => setExportCall(ec));
-  }, [format, options.validateQuery, parseNumbersInExport, sqlDialect]);
+  }, [format, options.autoSelectValue, options.validateQuery, parseNumbersInExport, sqlDialect]);
 
   const optionsInfo = useMemo(
     () =>
@@ -228,15 +227,23 @@ export default function Demo({
     [options]
   );
 
+  const baseFormatOptions = useMemo(
+    () => ({
+      format,
+      parseNumbers: parseNumbersInExport,
+      preset: sqlDialect,
+      ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
+    }),
+    [format, parseNumbersInExport, sqlDialect, options.autoSelectValue]
+  );
+
   const formatOptions = useMemo(
     (): FormatQueryOptions => ({
-      format,
+      ...baseFormatOptions,
       fields:
         options.validateQuery || format === 'natural_language' || options.useDateTimePackage
           ? fields
           : undefined,
-      parseNumbers: parseNumbersInExport,
-      preset: sqlDialect,
       ...(options.useDateTimePackage
         ? {
             ruleProcessor:
@@ -244,10 +251,36 @@ export default function Demo({
           }
         : null),
     }),
-    [format, options.useDateTimePackage, options.validateQuery, parseNumbersInExport, sqlDialect]
+    [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format]
   );
-  const q = options.independentCombinators ? queryIC : query;
-  const formatString = useMemo(() => getFormatQueryString(q, formatOptions), [formatOptions, q]);
+
+  const timerRG = useRef<ReturnType<typeof setTimeout>>(setTimeout(() => {}));
+  const timerRGIC = useRef<ReturnType<typeof setTimeout>>(setTimeout(() => {}));
+  const onQueryChangeRG = useCallback((newQuery: RuleGroupType) => {
+    clearTimeout(timerRG.current);
+    timerRG.current = setTimeout(() => {
+      setQuery(newQuery);
+    }, 300);
+  }, []);
+  const onQueryChangeRGIC = useCallback((newQuery: RuleGroupTypeIC) => {
+    clearTimeout(timerRGIC.current);
+    timerRGIC.current = setTimeout(() => {
+      setQueryIC(newQuery);
+    }, 300);
+  }, []);
+
+  const q = useMemo(
+    () => (options.independentCombinators ? queryIC : query),
+    [options.independentCombinators, queryIC, query]
+  );
+
+  const formatString = useMemo(
+    () =>
+      queryString.parse(siteLocation.search).outputMode === 'export'
+        ? getFormatQueryString(q, formatOptions)
+        : '',
+    [q, formatOptions, siteLocation.search]
+  );
 
   const getExportTabAttributes = useCallback(
     (fmt: ExportFormat, others: ExportFormat[] = []) => {
@@ -320,7 +353,7 @@ export default function Demo({
     [options.enableDragAndDrop, variant]
   );
 
-  const loadFromSQL = () => {
+  const loadFromSQL = useCallback(() => {
     try {
       const q = parseSQL(sql);
       const qIC = parseSQL(sql, { independentCombinators: true });
@@ -330,8 +363,8 @@ export default function Demo({
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
-  };
-  const loadFromMongoDB = () => {
+  }, [sql]);
+  const loadFromMongoDB = useCallback(() => {
     try {
       const q = parseMongoDB(mongoDB);
       const qIC = convertToIC(q);
@@ -341,8 +374,8 @@ export default function Demo({
     } catch (err) {
       setMongoDbParseError((err as Error).message);
     }
-  };
-  const loadFromJsonLogic = () => {
+  }, [mongoDB]);
+  const loadFromJsonLogic = useCallback(() => {
     try {
       const q = parseJsonLogic(jsonLogic);
       const qIC = convertToIC(q);
@@ -352,8 +385,8 @@ export default function Demo({
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
     }
-  };
-  const loadFromSpEL = () => {
+  }, [jsonLogic]);
+  const loadFromSpEL = useCallback(() => {
     try {
       const q = parseSpEL(spel);
       const qIC = parseSpEL(spel, { independentCombinators: true });
@@ -363,8 +396,8 @@ export default function Demo({
     } catch (err) {
       setSpELParseError((err as Error).message);
     }
-  };
-  const loadFromCEL = () => {
+  }, [spel]);
+  const loadFromCEL = useCallback(() => {
     try {
       const q = parseCEL(cel);
       const qIC = parseCEL(cel, { independentCombinators: true });
@@ -374,8 +407,8 @@ export default function Demo({
     } catch (err) {
       setCELParseError((err as Error).message);
     }
-  };
-  const loadFromJSONata = () => {
+  }, [cel]);
+  const loadFromJSONata = useCallback(() => {
     try {
       const q = parseJSONata(jsonata);
       const qIC = parseJSONata(jsonata, { independentCombinators: true });
@@ -385,7 +418,7 @@ export default function Demo({
     } catch (err) {
       setJSONataParseError((err as Error).message);
     }
-  };
+  }, [jsonata]);
 
   const _getPermalinkUncompressed = () =>
     `${location.origin}${siteLocation.pathname}${permalinkHash}`;
@@ -416,14 +449,16 @@ export default function Demo({
       clsx(
         {
           validateQuery: options.validateQuery,
-          justifiedLayout: options.justifiedLayout,
-          'queryBuilder-branches': options.showBranches,
+          [standardClassnames.justified]: options.justifiedLayout,
+          [standardClassnames.branches]: options.showBranches,
         },
         variant === 'default' ? '' : qbWrapperId,
         'donut-hole'
       ),
     [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
   );
+
+  const queryWrapperKey = useMemo(() => `${query.id}-${queryIC.id}`, [query.id, queryIC.id]);
 
   return (
     <div className={styles.demoLayout}>
@@ -482,35 +517,37 @@ export default function Demo({
         <div
           style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
-            <QueryWrapper useDateTimePackage={options.useDateTimePackage}>
-              <QueryBuilderDnD>
+            <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
+              <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
                 {options.independentCombinators ? (
                   <QueryBuilder
                     key="queryIC"
                     {...commonRQBProps}
-                    query={queryIC}
-                    onQueryChange={setQueryIC}
+                    defaultQuery={queryIC}
+                    onQueryChange={onQueryChangeRGIC}
                   />
                 ) : (
                   <QueryBuilder
                     key="query"
                     {...commonRQBProps}
-                    query={query}
-                    onQueryChange={setQuery}
+                    defaultQuery={query}
+                    onQueryChange={onQueryChangeRG}
                   />
                 )}
               </QueryBuilderDnD>
             </QueryWrapper>
           </div>
           <Tabs
+            queryString="outputMode"
             defaultValue="code"
             values={[
               { value: 'code', label: 'Code' },
               { value: 'export', label: 'Export' },
               { value: 'import', label: 'Import' },
+              { value: 'theme', label: 'Theme builder' },
             ]}>
             <TabItem value="code" label="Code">
-              <Details summary={<summary>Dependencies</summary>}>
+              <Details summary={dependenciesSummary}>
                 <Tabs>
                   <TabItem value="npm" label="npm">
                     <CodeBlock language="shell">npm install {packageNames.join(' ')}</CodeBlock>
@@ -529,30 +566,12 @@ export default function Demo({
               <CodeBlock language="tsx" title="App.tsx">
                 {codeStringState}
               </CodeBlock>
-              <Details summary={<summary>Styles</summary>}>
-                <div className={styles.exportOptions}>
-                  <label key="scss">
-                    <input
-                      type="radio"
-                      checked={styleLanguage === 'scss'}
-                      onChange={() => setStyleLanguage('scss')}
-                    />{' '}
-                    SCSS
-                  </label>
-                  <label key="css">
-                    <input
-                      type="radio"
-                      checked={styleLanguage === 'css'}
-                      onChange={() => setStyleLanguage('css')}
-                    />{' '}
-                    CSS
-                  </label>
-                </div>
-                <CodeBlock language={styleLanguage} title={`styles.${styleLanguage}`}>
-                  {extraStylesState[styleLanguage]}
+              <Details summary={stylesSummary}>
+                <CodeBlock language="css" title="styles.css">
+                  {extraStylesState}
                 </CodeBlock>
               </Details>
-              <Details summary={<summary>Other files</summary>}>
+              <Details summary={otherFilesSummary}>
                 <CodeBlock language="ts" title="fields.ts">
                   {fieldsTsStringState}
                 </CodeBlock>
@@ -563,6 +582,7 @@ export default function Demo({
             </TabItem>
             <TabItem value="export" label="Export">
               <Tabs
+                queryString="exportFormat"
                 defaultValue="json"
                 values={[
                   {
@@ -579,9 +599,9 @@ export default function Demo({
                     ]),
                   },
                   {
-                    value: 'mongodb',
+                    value: 'mongodb_query',
                     label: 'MongoDB',
-                    attributes: getExportTabAttributes('mongodb'),
+                    attributes: getExportTabAttributes('mongodb_query'),
                   },
                   { value: 'cel', label: 'CEL', attributes: getExportTabAttributes('cel') },
                   { value: 'spel', label: 'SpEL', attributes: getExportTabAttributes('spel') },
@@ -596,9 +616,19 @@ export default function Demo({
                     attributes: getExportTabAttributes('elasticsearch'),
                   },
                   {
+                    value: 'prisma',
+                    label: 'Prisma ORM',
+                    attributes: getExportTabAttributes('prisma'),
+                  },
+                  {
                     value: 'jsonata',
                     label: 'JSONata',
                     attributes: getExportTabAttributes('jsonata'),
+                  },
+                  {
+                    value: 'ldap',
+                    label: 'LDAP',
+                    attributes: getExportTabAttributes('ldap'),
                   },
                   {
                     value: 'natural_language',
@@ -683,9 +713,9 @@ export default function Demo({
                   </div>
                   {exportPresentation}
                 </TabItem>
-                <TabItem value="mongodb">
+                <TabItem value="mongodb_query">
                   <div className={styles.exportOptions}>
-                    <ExportInfoLinks format="mongodb" />
+                    <ExportInfoLinks format="mongodb_query" />
                     {parseNumbersOption}
                   </div>
                   {exportPresentation}
@@ -718,9 +748,21 @@ export default function Demo({
                   </div>
                   {exportPresentation}
                 </TabItem>
+                <TabItem value="prisma">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="prisma" />
+                  </div>
+                  {exportPresentation}
+                </TabItem>
                 <TabItem value="jsonata">
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="jsonata" />
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="ldap">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="ldap" />
                   </div>
                   {exportPresentation}
                 </TabItem>
@@ -734,6 +776,7 @@ export default function Demo({
             </TabItem>
             <TabItem value="import">
               <Tabs
+                queryString="importFormat"
                 defaultValue="sql"
                 values={[
                   { value: 'sql', label: 'SQL' },
@@ -804,6 +847,9 @@ export default function Demo({
                   />
                 </TabItem>
               </Tabs>
+            </TabItem>
+            <TabItem value="theme">
+              <ThemeBuilder />
             </TabItem>
           </Tabs>
         </div>

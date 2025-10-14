@@ -71,6 +71,11 @@ const QueryBuilderNativeInternal = <
   );
 };
 
+/**
+ * An implementation of react-querybuilder for React Native.
+ *
+ * @group Components
+ */
 export const QueryBuilderNative = <
   RG extends RuleGroupTypeAny,
   F extends FullField,

@@ -1,7 +1,3 @@
-import { render, screen } from '@testing-library/react';
-import * as React from 'react';
-import type { Option, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import {
   basicSchema,
   testActionElement,
@@ -12,6 +8,10 @@ import {
   testValueSelector,
   userEventSetup,
 } from '@rqb-testing';
+import { render, screen } from '@testing-library/react';
+import * as React from 'react';
+import type { Option, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
 import { FluentActionElement } from './FluentActionElement';
 import { FluentDragHandle } from './FluentDragHandle';
 import { FluentNotToggle } from './FluentNotToggle';
@@ -61,7 +61,7 @@ const valueEditorAsMultiselectProps: ValueEditorProps = {
 const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any
 ) => {
   const testValues: Option[] = props.values ?? props.options;
@@ -106,8 +106,10 @@ const testSelect = (
         />
       );
       await user.click(screen.getByRole('combobox'));
-      for (const v of allValuesExceptFirst.map(n => testValues.find(tv => tv.name === n))) {
-        await user.click(screen.getByText(v!.label));
+      for (const lbl of allValuesExceptFirst.map(
+        n => testValues.find(tv => tv.name === n)!.label
+      )) {
+        await user.click(screen.getAllByText(lbl)[0]);
       }
       expect(onChange).toHaveBeenCalledWith(allValuesExceptFirst.join(','));
     });

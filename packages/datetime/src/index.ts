@@ -3,6 +3,7 @@ export * from './getDatetimeJsonLogicOperations';
 export * from './getDatetimeRuleProcessorCEL';
 export * from './getDatetimeRuleProcessorJSONata';
 export * from './getDatetimeRuleProcessorMongoDBQuery';
+export * from './getDatetimeRuleProcessorNL';
 export * from './getDatetimeRuleProcessorSQL';
 export * from './types';
 

@@ -1,12 +1,14 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderTremor } from '@react-querybuilder/tremor';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
-import './_styles/rqb-tremor.scss';
+import './_styles/demo.css';
+import './_styles/rqb-tremor.css';
+
+const loading = <Loading />;
 
 function ReactQueryBuilderDemo_TremorBrowser() {
   const { colorMode: _cm } = useColorMode();
@@ -34,7 +36,12 @@ function ReactQueryBuilderDemo_TremorBrowser() {
 
   return (
     <QueryBuilderTremor
-      controlClassnames={{ fields: 'w-max', operators: 'w-max', combinators: 'w-max' }}>
+      controlClassnames={{
+        fields: 'w-max',
+        operators: 'w-max',
+        combinators: 'w-max',
+        matchMode: 'w-max',
+      }}>
       <Demo variant="tremor" />
     </QueryBuilderTremor>
   );
@@ -43,9 +50,7 @@ function ReactQueryBuilderDemo_TremorBrowser() {
 export default function ReactQueryBuilderDemo_Tremor() {
   return (
     <Layout description="React Query Builder Tremor Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_TremorBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_TremorBrowser />}</BrowserOnly>
     </Layout>
   );
 }

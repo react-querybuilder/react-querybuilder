@@ -2,6 +2,36 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { standardClassnames, useValueEditor, ValueEditor } from 'react-querybuilder';
 
+// Extracted from callback so we can use `useId`
+const RadioButton = (props: {
+  name: string;
+  disabled?: boolean;
+  checked: boolean;
+  handleOnChange: (v: string) => void;
+  label: string;
+}) => {
+  const id = React.useId();
+  return (
+    <div className="form-check form-check-inline">
+      <input
+        className="form-check-input"
+        type="radio"
+        id={id}
+        value={props.name}
+        checked={props.checked}
+        disabled={props.disabled}
+        onChange={e => props.handleOnChange(e.target.value)}
+      />
+      <label className="form-check-label" htmlFor={id}>
+        {props.label}
+      </label>
+    </div>
+  );
+};
+
+/**
+ * @group Components
+ */
 export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element | null => {
   const { valueListItemClassName } = useValueEditor(props);
 
@@ -62,20 +92,14 @@ export const BootstrapValueEditor = (props: ValueEditorProps): React.JSX.Element
       return (
         <span title={props.title} className={standardClassnames.value}>
           {props.values?.map(v => (
-            <div key={v.name} className="form-check form-check-inline">
-              <input
-                className="form-check-input"
-                type="radio"
-                id={v.name}
-                value={v.name}
-                checked={props.value === v.name}
-                disabled={props.disabled}
-                onChange={e => props.handleOnChange(e.target.value)}
-              />
-              <label className="form-check-label" htmlFor={v.name}>
-                {v.label}
-              </label>
-            </div>
+            <RadioButton
+              key={v.name}
+              name={v.name}
+              disabled={props.disabled}
+              checked={props.value === v.name}
+              handleOnChange={props.handleOnChange}
+              label={v.label}
+            />
           ))}
         </span>
       );

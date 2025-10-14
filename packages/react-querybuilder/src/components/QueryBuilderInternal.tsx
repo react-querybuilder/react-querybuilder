@@ -1,16 +1,15 @@
-import * as React from 'react';
-import { QueryBuilderContext as _QBC } from '../context';
 import type {
   FullCombinator,
   FullField,
   FullOperator,
   GetOptionIdentifierType,
-  QueryBuilderContextProps,
-  QueryBuilderProps,
   RuleGroupTypeAny,
-} from '../types';
-import { rootPath } from '../defaults';
+} from '@react-querybuilder/core';
+import { rootPath } from '@react-querybuilder/core';
+import * as React from 'react';
+import type { QueryBuilderContextProps, QueryBuilderProps } from '../types';
 import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
+import { QueryBuilderContext as _QBC } from './QueryBuilderContext';
 
 export const QueryBuilderInternal = <
   RG extends RuleGroupTypeAny,

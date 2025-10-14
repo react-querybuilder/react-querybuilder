@@ -3,13 +3,19 @@ import * as React from 'react';
 import type { ShiftActionsProps } from 'react-querybuilder';
 import { ShiftActions } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 
-export type MaterialShiftActionsProps = ShiftActionsProps &
-  React.ComponentPropsWithoutRef<typeof Button> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+/**
+ * @group Props
+ */
+export interface MaterialShiftActionsProps
+  extends ShiftActionsProps,
+    React.ComponentPropsWithoutRef<typeof Button>,
+    MuiAugmentation {}
 
+/**
+ * @group Components
+ */
 export const MaterialShiftActions = ({
   path,
   shiftUp,

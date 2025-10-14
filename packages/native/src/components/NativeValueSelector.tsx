@@ -6,6 +6,9 @@ import { TestID, joinWith, useValueSelector } from 'react-querybuilder';
 import { defaultNativeSelectStyles, defaultNativeStyles } from '../styles';
 import type { ValueSelectorNativeProps } from '../types';
 
+/**
+ * @group Components
+ */
 export const NativeValueSelector = <Opt extends FullOption = FullOption>({
   handleOnChange,
   options: _options,

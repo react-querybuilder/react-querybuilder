@@ -4,11 +4,17 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * @group Props
+ */
+// oxlint-disable-next-line typescript/no-explicit-any
 export type AntDDragHandleProps = DragHandleProps & { label?: any } & ComponentPropsWithRef<
     typeof HolderOutlined
   >;
 
+/**
+ * @group Components
+ */
 export const AntDDragHandle: React.ForwardRefExoticComponent<
   Omit<AntDDragHandleProps, 'ref'> & React.RefAttributes<HTMLSpanElement>
 > = forwardRef<HTMLSpanElement, AntDDragHandleProps>(
@@ -29,5 +35,5 @@ export const AntDDragHandle: React.ForwardRefExoticComponent<
       ...extraProps
     },
     dragRef
-  ) => <HolderOutlined ref={dragRef} className={className} title={title} {...extraProps} />
+  ) => <HolderOutlined className={className} title={title} {...extraProps} ref={dragRef} />
 );

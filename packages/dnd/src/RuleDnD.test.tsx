@@ -1,14 +1,14 @@
 import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
+import * as ReactDnD from 'react-dnd';
+import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
 import {
   simulateDrag,
   simulateDragDrop,
   simulateDragHover,
   wrapWithTestBackend,
 } from 'react-dnd-test-utils';
-import * as reactDnD from 'react-dnd/dist/index.js';
 import type {
   FullCombinator,
   FullField,
@@ -28,7 +28,7 @@ const [QBforDnD, getDndBackendOriginal] = wrapWithTestBackend(
     ...props
   }: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator> &
     Pick<QueryBuilderDndProps, 'canDrop'>) => (
-    <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} canDrop={canDrop}>
+    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend }} canDrop={canDrop}>
       <QueryBuilder enableMountQueryChange={false} {...props} />
     </QueryBuilderDnD>
   )
@@ -39,6 +39,11 @@ const getDndBackend = () => getDndBackendOriginal()!;
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
+
+afterEach(() => {
+  // Clear pressed keys
+  globalThis.dispatchEvent(new Event('blur'));
+});
 
 it('does not have the drag class if not dragging', () => {
   render(<QBforDnD addRuleToNewGroups />);
@@ -83,7 +88,7 @@ it('has the over class if hovered', () => {
   });
 });
 
-it('has the copy class if hovered over while modifier key is pressed', async () => {
+it('has the copy class if hovered over while Alt key is pressed', async () => {
   const dndCopy = 'my-dnd-copy-class';
   render(
     <QBforDnD
@@ -105,13 +110,41 @@ it('has the copy class if hovered over while modifier key is pressed', async () 
     getDndBackend()
   );
   expect(rules[1]).toHaveClass(sc.dndCopy, dndCopy);
+  act(() => {
+    getDndBackend().simulateEndDrag();
+  });
+  await user.keyboard('{/Alt}');
+});
+
+it('has the group class if hovered over while Ctrl key is pressed', async () => {
+  const dndGroup = 'my-dnd-group-class';
+  render(
+    <QBforDnD
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      }}
+      controlClassnames={{ dndGroup }}
+    />
+  );
+  const rules = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
+  simulateDragHover(
+    getHandlerId(rules[0], 'drag'),
+    getHandlerId(rules[1], 'drop'),
+    getDndBackend()
+  );
+  expect(rules[1]).toHaveClass(sc.dndGroup, dndGroup);
   await act(async () => {
     getDndBackend().simulateEndDrag();
-    await user.keyboard('{/Alt}');
+    await user.keyboard('{/Control}');
   });
 });
 
-it('handles a dropped rule', () => {
+it('moves a dropped rule', () => {
   const onQueryChange = jest.fn();
   render(
     <QBforDnD
@@ -129,14 +162,46 @@ it('handles a dropped rule', () => {
   simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), getDndBackend());
   expect(rules[0]).not.toHaveClass(sc.dndDragging);
   expect(rules[1]).not.toHaveClass(sc.dndOver);
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      rules: expect.arrayContaining([
-        expect.objectContaining({ field: 'f2', operator: '=', value: 'v2' }),
-        expect.objectContaining({ field: 'f1', operator: '=', value: 'v1' }),
-      ]),
-    })
+  expect(onQueryChange.mock.calls[0][0]).toMatchObject({
+    rules: [
+      { field: 'f2', operator: '=', value: 'v2' },
+      { field: 'f1', operator: '=', value: 'v1' },
+    ],
+  });
+});
+
+it('groups a dropped rule', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      }}
+    />
   );
+  const rules = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
+  simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), getDndBackend());
+  await user.keyboard('{/Control}');
+  expect(rules[0]).not.toHaveClass(sc.dndDragging);
+  expect(rules[1]).not.toHaveClass(sc.dndOver);
+  expect(onQueryChange.mock.calls[0][0]).toMatchObject<RuleGroupType>({
+    combinator: 'and',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f2', operator: '=', value: 'v2' },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      },
+    ],
+  });
 });
 
 it('copies a dropped rule', async () => {
@@ -159,15 +224,49 @@ it('copies a dropped rule', async () => {
   await user.keyboard('{/Alt}');
   expect(rules[0]).not.toHaveClass(sc.dndDragging);
   expect(rules[1]).not.toHaveClass(sc.dndOver);
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      rules: expect.arrayContaining([
-        expect.objectContaining({ field: 'f2', operator: '=', value: 'v2' }),
-        expect.objectContaining({ field: 'f1', operator: '=', value: 'v1' }),
-        expect.objectContaining({ field: 'f2', operator: '=', value: 'v2' }),
-      ]),
-    })
+  expect(onQueryChange.mock.calls[0][0]).toMatchObject<RuleGroupType>({
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+      { field: 'f1', operator: '=', value: 'v1' },
+    ],
+  });
+});
+
+it('copies a dropped rule for grouping', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      }}
+    />
   );
+  const rules = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}{Alt>}');
+  simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), getDndBackend());
+  await user.keyboard('{/Alt}{/Control}');
+  expect(rules[0]).not.toHaveClass(sc.dndDragging);
+  expect(rules[1]).not.toHaveClass(sc.dndOver);
+  expect(onQueryChange.mock.calls[0][0]).toMatchObject<RuleGroupType>({
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'f2', operator: '=', value: 'v2' },
+          { field: 'f1', operator: '=', value: 'v1' },
+        ],
+      },
+    ],
+  });
 });
 
 it('aborts move if dropped on itself', () => {
@@ -183,6 +282,26 @@ it('aborts move if dropped on itself', () => {
   );
   const rule = screen.getByTestId(TestID.rule);
   simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
+  expect(rule).not.toHaveClass(sc.dndDragging);
+  expect(rule).not.toHaveClass(sc.dndOver);
+  expect(onQueryChange).not.toHaveBeenCalled();
+});
+
+it('aborts group if dropped on itself', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+      }}
+    />
+  );
+  const rule = screen.getByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
+  simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(rule, 'drop'), getDndBackend());
+  await user.keyboard('{/Control}');
   expect(rule).not.toHaveClass(sc.dndDragging);
   expect(rule).not.toHaveClass(sc.dndOver);
   expect(onQueryChange).not.toHaveBeenCalled();
@@ -206,19 +325,41 @@ it('handles drops even when locked', () => {
   simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), getDndBackend());
   expect(rules[0]).not.toHaveClass(sc.dndDragging);
   expect(rules[1]).not.toHaveClass(sc.dndOver);
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      rules: expect.arrayContaining([
-        expect.objectContaining({ field: 'f2', operator: '=', value: 'v2' }),
-        expect.objectContaining({ field: 'f1', operator: '=', value: 'v1' }),
-      ]),
-    })
+  expect(onQueryChange.mock.calls[0][0]).toMatchObject({
+    rules: [
+      { field: 'f2', operator: '=', value: 'v2' },
+      { field: 'f1', operator: '=', value: 'v1' },
+    ],
+  });
+});
+
+it('prevents "group" drops when locked', async () => {
+  const onQueryChange = jest.fn();
+  render(
+    <QBforDnD
+      onQueryChange={onQueryChange}
+      disabled={[[0]]}
+      query={{
+        combinator: 'and',
+        rules: [
+          { field: 'f1', operator: '=', value: 'v1' },
+          { field: 'f2', operator: '=', value: 'v2' },
+        ],
+      }}
+    />
   );
+  const rules = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Ctrl>}');
+  simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
+  await user.keyboard('{/Ctrl}');
+  expect(rules[0]).not.toHaveClass(sc.dndDragging);
+  expect(rules[1]).not.toHaveClass(sc.dndOver);
+  expect(onQueryChange).not.toHaveBeenCalled();
 });
 
 it('respects custom canDrop', () => {
   const onQueryChange = jest.fn();
-  const canDrop = jest.fn(() => false);
+  const canDrop = jest.fn((..._args: unknown[]) => false);
   render(
     <QBforDnD
       canDrop={canDrop}
@@ -235,15 +376,22 @@ it('respects custom canDrop', () => {
   const rules = screen.getAllByTestId(TestID.rule);
   simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
   expect(canDrop).toHaveBeenCalledWith({
-    dragging: expect.objectContaining({ path: [1], field: 'f2', operator: '=', value: 'v2' }),
-    hovering: expect.objectContaining({ path: [0], field: 'f1', operator: '=', value: 'v1' }),
+    dragging: { path: [1], field: 'f2', operator: '=', value: 'v2', qbId: expect.any(String) },
+    hovering: {
+      path: [0],
+      field: 'f1',
+      operator: '=',
+      value: 'v1',
+      qbId: expect.any(String),
+      id: expect.any(String),
+    },
   });
   expect(onQueryChange).not.toHaveBeenCalled();
 });
 
-it('respects updates canDrop function between renders', () => {
-  const firstCanDrop = jest.fn(() => false);
-  const secondCanDrop = jest.fn(() => false);
+it('respects updated canDrop function between renders', () => {
+  const firstCanDrop = jest.fn((..._args: unknown[]) => false);
+  const secondCanDrop = jest.fn((..._args: unknown[]) => false);
   const onQueryChange = jest.fn();
 
   const query = {
@@ -263,8 +411,15 @@ it('respects updates canDrop function between renders', () => {
   simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
 
   expect(firstCanDrop).toHaveBeenCalledWith({
-    dragging: expect.objectContaining({ path: [1], field: 'f2', operator: '=', value: 'v2' }),
-    hovering: expect.objectContaining({ path: [0], field: 'f1', operator: '=', value: 'v1' }),
+    dragging: { path: [1], field: 'f2', operator: '=', value: 'v2', qbId: expect.any(String) },
+    hovering: {
+      path: [0],
+      field: 'f1',
+      operator: '=',
+      value: 'v1',
+      qbId: expect.any(String),
+      id: expect.any(String),
+    },
   });
 
   const firstCanDropCallCount = firstCanDrop.mock.calls.length;
@@ -276,8 +431,15 @@ it('respects updates canDrop function between renders', () => {
   simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
 
   expect(secondCanDrop).toHaveBeenCalledWith({
-    dragging: expect.objectContaining({ path: [1], field: 'f2', operator: '=', value: 'v2' }),
-    hovering: expect.objectContaining({ path: [0], field: 'f1', operator: '=', value: 'v1' }),
+    dragging: { path: [1], field: 'f2', operator: '=', value: 'v2', qbId: expect.any(String) },
+    hovering: {
+      path: [0],
+      field: 'f1',
+      operator: '=',
+      value: 'v1',
+      qbId: expect.any(String),
+      id: expect.any(String),
+    },
   });
 
   // Verify that only secondCanDrop was called in the second attempt

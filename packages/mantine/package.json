@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/mantine",
   "description": "Custom Mantine components for react-querybuilder",
-  "version": "8.0.0",
+  "version": "8.10.0",
   "publishConfig": {
     "access": "public"
   },
@@ -11,16 +11,16 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/types-esm/index.d.mts",
+        "types": "./dist/react-querybuilder_mantine.d.mts",
         "default": "./dist/react-querybuilder_mantine.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     }
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder_mantine.legacy-esm.d.ts",
   "files": [
     "dist"
   ],
@@ -45,26 +45,26 @@
     "sql"
   ],
   "scripts": {
-    "start": "bunx --bun vite",
-    "build": "bunx --bun tsup",
+    "start": "vite",
+    "build": "bun --bun tsdown",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "7.15.0",
-    "@mantine/dates": "7.15.0",
-    "@mantine/hooks": "7.15.0",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.1.0",
-    "@types/react": "^18.3.12",
-    "@vitejs/plugin-react": "^4.3.4",
-    "dayjs": "^1.11.13",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-querybuilder": "8.0.0",
-    "rollup-plugin-visualizer": "^5.12.0",
-    "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "@mantine/core": "8.3.4",
+    "@mantine/dates": "8.3.4",
+    "@mantine/hooks": "8.3.4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "dayjs": "^1.11.18",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-querybuilder": "8.10.0",
+    "rollup-plugin-visualizer": "^6.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   },
   "peerDependencies": {
     "@mantine/core": ">=7",
@@ -72,6 +72,6 @@
     "@mantine/hooks": ">=7",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "8.0.0"
+    "react-querybuilder": "8.10.0"
   }
 }

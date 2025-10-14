@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  background-color: #f8f8f8;
+  border: 1px solid #dddddd;
+  border-radius: calc(var(--rqb-spacing) / 2);
+  padding: var(--rqb-spacing);
+}
+
+nav {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small;
+  list-style: none;
+  display: flex;
+  gap: calc(var(--rqb-spacing) * 2);
+  justify-content: flex-end;
+  margin: calc(var(--rqb-spacing) * 2);
+}
+
+#dev-layout {
+  margin: calc(var(--rqb-spacing) * 2);
+  display: flex;
+  justify-content: space-between;
+  column-gap: calc(var(--rqb-spacing) * 3);
+
+  & > *:nth-of-type(1) {
+    flex-basis: content;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--rqb-spacing);
+  }
+
+  & > *:nth-of-type(2) {
+    flex-grow: 1;
+    min-width: 0;
+  }
+}
+
+#exports {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  row-gap: calc(var(--rqb-spacing) * 2);
+  margin-top: calc(var(--rqb-spacing) * 2);
+
+  & > *:nth-child(odd) {
+    font-weight: bold;
+  }
+
+  & .codeBlock {
+    position: relative;
+  }
+
+  & .copyButton {
+    border-color: #00000000;
+    background-color: #00000000;
+    position: absolute;
+    top: var(--rqb-spacing);
+    right: var(--rqb-spacing);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

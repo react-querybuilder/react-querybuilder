@@ -1,15 +1,15 @@
+import type { FullField } from '@react-querybuilder/core';
 import type { ReactNode } from 'react';
 import * as React from 'react';
-import { QueryBuilderContext } from '../context';
-import { useMergedContext } from '../hooks/useMergedContext';
+import { QueryBuilderContext } from '../components';
+import { useMergedContext } from '../hooks';
 import type {
-  FullField,
   QueryBuilderContextProps,
   QueryBuilderContextProvider,
   QueryBuilderContextProviderProps,
 } from '../types';
 
-export type GetCompatContextProviderProps = QueryBuilderContextProps<FullField, string>;
+export type GetCompatContextProviderProps = QueryBuilderContextProps;
 
 /**
  * Generates a context provider for a compatibility package.

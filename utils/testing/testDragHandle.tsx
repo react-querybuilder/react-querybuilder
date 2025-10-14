@@ -1,7 +1,7 @@
+import { TestID } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
-import { TestID } from 'react-querybuilder';
 import { basicSchema } from './utils';
 
 export const defaultDragHandleProps: DragHandleProps = {
@@ -13,7 +13,7 @@ export const defaultDragHandleProps: DragHandleProps = {
 
 export const testDragHandle = (
   DragHandle: React.ForwardRefExoticComponent<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     DragHandleProps & React.RefAttributes<any>
   >
 ): void => {

@@ -7,6 +7,11 @@ export interface CheckboxProps extends ChakraCheckbox.RootProps {
   rootRef?: React.Ref<HTMLLabelElement>;
 }
 
+// oxlint-disable no-explicit-any
+const Ctrl = ChakraCheckbox.Control as any;
+const Lbl = ChakraCheckbox.Label as any;
+// oxlint-enable no-explicit-any
+
 export const Checkbox: React.ForwardRefExoticComponent<
   Omit<CheckboxProps, 'ref'> & React.RefAttributes<HTMLInputElement>
 > = React.forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(props, ref) {
@@ -14,8 +19,8 @@ export const Checkbox: React.ForwardRefExoticComponent<
   return (
     <ChakraCheckbox.Root ref={rootRef} {...rest}>
       <ChakraCheckbox.HiddenInput ref={ref} {...inputProps} />
-      <ChakraCheckbox.Control>{icon || <ChakraCheckbox.Indicator />}</ChakraCheckbox.Control>
-      {children != null && <ChakraCheckbox.Label>{children}</ChakraCheckbox.Label>}
+      <Ctrl>{icon || <ChakraCheckbox.Indicator />}</Ctrl>
+      {children != null && <Lbl>{children}</Lbl>}
     </ChakraCheckbox.Root>
   );
 });

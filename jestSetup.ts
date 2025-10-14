@@ -1,11 +1,13 @@
 import '@testing-library/jest-dom';
+import { mockAnimationsApi, mockResizeObserver } from 'jsdom-testing-mocks';
 import 'regenerator-runtime/runtime';
 
-if (typeof Element !== 'undefined') Element.prototype.scrollIntoView = jest.fn();
+if (typeof Element !== 'undefined') {
+  Element.prototype.scrollIntoView = jest.fn();
+}
 
-// TODO: This is for Tremor. Maybe use `jsdom-testing-mocks` instead.
-globalThis.ResizeObserver = class {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
+// oxlint-disable-next-line prefer-global-this
+if (typeof window !== 'undefined') {
+  mockAnimationsApi();
+  mockResizeObserver();
+}

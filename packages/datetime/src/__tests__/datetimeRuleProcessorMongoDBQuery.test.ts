@@ -1,9 +1,8 @@
-/* eslint-disable unicorn/prefer-structured-clone */
+import type { RuleGroupType } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 import dayjs from 'dayjs';
-import type { RuleGroupType } from 'react-querybuilder';
-import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 import type { IsDateField } from '../types';
 
 const now = new Date().toISOString();
@@ -41,7 +40,7 @@ const testCases: Record<string, [RuleGroupType, Record<string, unknown>]> = {
       ],
     },
     {
-      $and: [{ $expr: { $ne: ['$firstName', '$lastName'] } }, { firstName: { $regex: `^Stev` } }],
+      $and: [{ $ne: ['$firstName', '$lastName'] }, { firstName: { $regex: `^Stev` } }],
     },
   ],
   invalid: [

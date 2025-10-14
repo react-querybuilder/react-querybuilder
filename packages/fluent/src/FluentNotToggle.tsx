@@ -3,8 +3,14 @@ import { Switch } from '@fluentui/react-components';
 import * as React from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
-export type FluentNotToggleProps = NotToggleProps & Omit<Partial<SwitchProps>, 'label'>;
+/**
+ * @group Props
+ */
+export interface FluentNotToggleProps extends NotToggleProps, Omit<Partial<SwitchProps>, 'label'> {}
 
+/**
+ * @group Components
+ */
 export const FluentNotToggle = ({
   className,
   handleOnChange,
@@ -24,7 +30,7 @@ export const FluentNotToggle = ({
   <Switch
     {...otherProps}
     data-testid={testID}
-    label={`${label}`}
+    label={`${label as string}`}
     className={className}
     title={title}
     disabled={disabled}

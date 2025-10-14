@@ -1,8 +1,10 @@
+import { userEventSetup } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
+import * as reactDnD from 'react-dnd';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
 import { simulateDragDrop, simulateDragHover, wrapWithTestBackend } from 'react-dnd-test-utils';
-import * as reactDnD from 'react-dnd';
+import * as reactDnDTouchBackend from 'react-dnd-touch-backend';
 import type {
   Field,
   FullCombinator,
@@ -18,13 +20,17 @@ import {
   getCompatContextProvider,
   standardClassnames,
 } from 'react-querybuilder';
-import { consoleMocks } from '@rqb-testing';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
+
+const user = userEventSetup();
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
   el.getAttribute(`data-${dragDrop}monitorid`);
 
-consoleMocks();
+afterEach(() => {
+  // Clear pressed keys
+  globalThis.dispatchEvent(new Event('blur'));
+});
 
 it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
   await act(async () => {
@@ -67,10 +73,7 @@ it('renders base QueryBuilder without dnd provider without enableDragAndDrop pro
       </QBWoDndProvider>
     );
   });
-  expect(screen.getByTestId(TestID.ruleGroup).parentElement).toHaveAttribute(
-    'data-dnd',
-    'disabled'
-  );
+  expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
 });
 
 it('renders with dnd provider without dnd prop', async () => {
@@ -93,10 +96,10 @@ it('renders without dnd provider without dnd prop', async () => {
       </QBWoDndProvider>
     );
   });
-  expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
+  expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
 });
 
-// The drag-and-drop tests run once for QueryBuilderOriginal and once again
+// The drag-and-drop tests run once for QueryBuilderDnD and once again
 // for QueryBuilderDndWithoutProvider.
 describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvider }])(
   'enableDragAndDrop ($QBctx.displayName)',
@@ -110,18 +113,19 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
     );
     const [QBforDnDIC, getBackendIC] = wrapWithTestBackend(
       (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
-        <QBctx dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QBctx dnd={{ ...reactDnD, ...reactDnDTouchBackend }}>
           <QueryBuilder {...props} />
         </QBctx>
       )
     );
     const gDnDBe = () => getBackend()!;
     const gDnDBeIC = () => getBackendIC()!;
+
     describe('standard rule groups', () => {
       it('sets data-dnd attribute appropriately', () => {
         const { container, rerender } = render(<QBforDnD enableDragAndDrop={false} />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('disabled');
-        rerender(<QBforDnD enableDragAndDrop />);
+        rerender(<QBforDnD />);
         expect(container.querySelectorAll('div')[0].dataset.dnd).toBe('enabled');
       });
 
@@ -142,11 +146,13 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const rules = screen.getAllByTestId(TestID.rule);
         simulateDragDrop(getHandlerId(rules[0], 'drag'), getHandlerId(rules[1], 'drop'), gDnDBe());
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [expect.objectContaining({ id: '1' }), expect.objectContaining({ id: '0' })],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          combinator: 'and',
+          rules: [
+            { id: '1', field: 'field1', operator: '=', value: '1' },
+            { id: '0', field: 'field0', operator: '=', value: '0' },
+          ],
+        });
       });
 
       it('moves a rule to a different group with a common ancestor', () => {
@@ -174,20 +180,23 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[2]; // id 3
         simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(ruleGroup, 'drop'), gDnDBe());
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({
-                rules: expect.arrayContaining([
-                  expect.anything(),
-                  expect.objectContaining({
-                    rules: [expect.objectContaining({ id: '2' })],
-                  }),
-                ]),
-              }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          combinator: 'and',
+          rules: [
+            {
+              id: '0',
+              combinator: 'and',
+              rules: [
+                { id: '1', field: 'field0', operator: '=', value: '1' },
+                {
+                  id: '3',
+                  combinator: 'and',
+                  rules: [{ id: '2', field: 'field0', operator: '=', value: '2' }],
+                },
+              ],
+            },
+          ],
+        });
       });
     });
 
@@ -213,15 +222,13 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBeIC()
         );
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-              'and',
-              expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' },
+          ],
+        });
       });
 
       it('swaps the last rule with the first within the same group', () => {
@@ -246,15 +253,13 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBeIC()
         );
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-              'and',
-              expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' },
+          ],
+        });
       });
 
       it('moves a rule from first to last within the same group', () => {
@@ -280,17 +285,15 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBeIC()
         );
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-              'and',
-              expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
-              'and',
-              expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' },
+          ],
+        });
       });
 
       it('moves a rule from last to first within the same group', () => {
@@ -317,17 +320,15 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBeIC()
         );
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
-              'and',
-              expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-              'and',
-              expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' },
+          ],
+        });
       });
 
       it('moves a rule from last to middle by dropping on inline combinator', () => {
@@ -354,17 +355,54 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBeIC()
         );
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-              'and',
-              expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
-              'and',
-              expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-            ],
-          })
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' },
+          ],
+        });
+      });
+
+      it('copies a rule by dropping on inline combinator with alt key pressed', async () => {
+        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        render(
+          <QBforDnDIC
+            onQueryChange={onQueryChange}
+            query={{
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' },
+              ],
+            }}
+          />
         );
+        const rules = screen.getAllByTestId(TestID.rule);
+        const combinators = screen.getAllByTestId(TestID.inlineCombinator);
+        await user.keyboard('{Alt>}');
+        simulateDragDrop(
+          getHandlerId(rules[2], 'drag'),
+          getHandlerId(combinators[0], 'drop'),
+          gDnDBeIC()
+        );
+        await user.keyboard('{/Alt}');
+        expect(onQueryChange).toHaveBeenCalledTimes(2);
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { id: expect.any(String), field: 'field2', operator: '=', value: '2' },
+            'and',
+            { field: 'field1', operator: '=', value: '1' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+          ],
+        });
       });
 
       it('moves a first-child rule to a different group as the first child', () => {
@@ -391,21 +429,19 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         const ruleGroup = screen.getAllByTestId(TestID.ruleGroup)[1];
         simulateDragDrop(getHandlerId(rule, 'drag'), getHandlerId(ruleGroup, 'drop'), gDnDBeIC());
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({
-                rules: [
-                  expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-                  'and',
-                  expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-                  'and',
-                  expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
-                ],
-              }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            {
+              rules: [
+                { field: 'field0', operator: '=', value: '0' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field2', operator: '=', value: '2' },
+              ],
+            },
+          ],
+        });
       });
 
       it('moves a middle-child rule to a different group as a middle child', () => {
@@ -439,25 +475,23 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
           gDnDBeIC()
         );
         expect(onQueryChange).toHaveBeenCalledTimes(2);
-        expect(onQueryChange).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            rules: [
-              expect.objectContaining({ field: 'field0', operator: '=', value: '0' }),
-              'and',
-              expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
-              'and',
-              expect.objectContaining({
-                rules: [
-                  expect.objectContaining({ field: 'field3', operator: '=', value: '3' }),
-                  'and',
-                  expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-                  'and',
-                  expect.objectContaining({ field: 'field4', operator: '=', value: '4' }),
-                ],
-              }),
-            ],
-          })
-        );
+        expect(onQueryChange).toHaveBeenLastCalledWith({
+          rules: [
+            { field: 'field0', operator: '=', value: '0' },
+            'and',
+            { field: 'field2', operator: '=', value: '2' },
+            'and',
+            {
+              rules: [
+                { field: 'field3', operator: '=', value: '3' },
+                'and',
+                { field: 'field1', operator: '=', value: '1' },
+                'and',
+                { field: 'field4', operator: '=', value: '4' },
+              ],
+            },
+          ],
+        });
       });
     });
   }
@@ -564,53 +598,109 @@ it('prevents changes when disabled', async () => {
   expect(onQueryChange).not.toHaveBeenCalled();
 });
 
-it('respects onMoveRule', async () => {
+it('respects custom copyModeModifierKey', async () => {
   const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
-    (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
-      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+    (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD
+        dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}
+        // "ctrl" instead of default "alt"
+        copyModeModifierKey="ctrl"
+        // "shift" instead of default "ctrl"
+        groupModeModifierKey="shift">
         <QueryBuilder {...props} />
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+  const onQueryChange = jest.fn<never, [RuleGroupType]>();
   render(
     <QueryBuilderWrapped
       fields={[
-        { name: 'field0', label: 'Field 0' },
         { name: 'field1', label: 'Field 1' },
         { name: 'field2', label: 'Field 2' },
         { name: 'field3', label: 'Field 3' },
-        { name: 'field4', label: 'Field 4' },
       ]}
       enableMountQueryChange={false}
       onQueryChange={onQueryChange}
-      onMoveRule={() => false}
       query={{
+        combinator: 'and',
         rules: [
-          { field: 'field0', operator: '=', value: '0' },
-          'and',
           { field: 'field1', operator: '=', value: '1' },
-          'and',
           { field: 'field2', operator: '=', value: '2' },
-          'and',
-          {
-            rules: [
-              { field: 'field3', operator: '=', value: '3' },
-              'and',
-              { field: 'field4', operator: '=', value: '4' },
-            ],
-          },
+          { field: 'field3', operator: '=', value: '3' },
         ],
       }}
     />
   );
-  const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
+  const [dropRule, , dragRule] = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
   simulateDragDrop(
     getHandlerId(dragRule, 'drag'),
     getHandlerId(dropRule, 'drop'),
     getDndBackend()!
   );
-  expect(onQueryChange).not.toHaveBeenCalled();
+  await user.keyboard('{/Control}');
+  expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+    combinator: 'and',
+    rules: [
+      { field: 'field1', operator: '=', value: '1' },
+      { id: expect.any(String), field: 'field3', operator: '=', value: '3' },
+      { field: 'field2', operator: '=', value: '2' },
+      { field: 'field3', operator: '=', value: '3' },
+    ],
+  });
+});
+
+it('respects custom groupModeModifierKey', async () => {
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD
+        dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}
+        // "ctrl" instead of default "alt"
+        copyModeModifierKey="ctrl"
+        // "shift" instead of default "ctrl"
+        groupModeModifierKey="shift">
+        <QueryBuilder {...props} />
+      </QueryBuilderDnD>
+    )
+  );
+  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  render(
+    <QueryBuilderWrapped
+      fields={[
+        { name: 'field1', label: 'Field 1' },
+        { name: 'field2', label: 'Field 2' },
+      ]}
+      enableMountQueryChange={false}
+      onQueryChange={onQueryChange}
+      query={{
+        combinator: 'and',
+        rules: [
+          { field: 'field1', operator: '=', value: '1' },
+          { field: 'field2', operator: '=', value: '2' },
+        ],
+      }}
+    />
+  );
+  const [dropRule, dragRule] = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Shift>}');
+  simulateDragDrop(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropRule, 'drop'),
+    getDndBackend()!
+  );
+  await user.keyboard('{/Shift}');
+  expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
+    combinator: 'and',
+    rules: [
+      {
+        combinator: 'and',
+        rules: [
+          { field: 'field1', operator: '=', value: '1' },
+          { field: 'field2', operator: '=', value: '2' },
+        ],
+      },
+    ],
+  });
 });
 
 it('can move rules/groups to different query builders', async () => {
@@ -650,22 +740,94 @@ it('can move rules/groups to different query builders', async () => {
     getHandlerId(dropRule, 'drop'),
     getDndBackend()!
   );
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      combinator: 'and',
-      rules: expect.arrayContaining([
-        expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-        expect.objectContaining({ field: 'field4', operator: '=', value: '4' }),
-        expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
-      ]),
-    })
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [
+      { field: 'field1', operator: '=', value: '1' },
+      {
+        field: 'field4',
+        operator: '=',
+        value: '4',
+        id: expect.any(String),
+        path: expect.arrayContaining([expect.any(Number)]),
+        qbId: expect.any(String),
+      },
+      { field: 'field2', operator: '=', value: '2' },
+    ],
+  });
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [{ field: 'field3', operator: '=', value: '3' }],
+  });
+});
+
+it('can group rules/groups to different query builders', async () => {
+  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1' },
+    { name: 'field2', label: 'Field 2' },
+    { name: 'field3', label: 'Field 3' },
+    { name: 'field4', label: 'Field 4' },
+  ];
+  const query1: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'field1', operator: '=', value: '1' },
+      { field: 'field2', operator: '=', value: '2' },
+    ],
+  };
+  const query2: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'field3', operator: '=', value: '3' },
+      { field: 'field4', operator: '=', value: '4' },
+    ],
+  };
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QueryBuilder {...props} query={query1} />
+        <QueryBuilder {...props} query={query2} />
+      </QueryBuilderDnD>
+    )
   );
-  expect(onQueryChange).toHaveBeenCalledWith(
-    expect.objectContaining({
-      combinator: 'and',
-      rules: expect.arrayContaining([
-        expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
-      ]),
-    })
+  render(<QueryBuilderWrapped fields={fields} enableDragAndDrop onQueryChange={onQueryChange} />);
+  const [dropRule, _1, _2, dragRule] = screen.getAllByTestId(TestID.rule);
+  await user.keyboard('{Control>}');
+  simulateDragDrop(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropRule, 'drop'),
+    getDndBackend()!
   );
+  await user.keyboard('{/Control}');
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [
+      {
+        id: expect.any(String),
+        combinator: 'and',
+        rules: [
+          {
+            id: expect.any(String),
+            field: 'field1',
+            operator: '=',
+            value: '1',
+          },
+          {
+            field: 'field4',
+            operator: '=',
+            value: '4',
+            id: expect.any(String),
+            path: expect.arrayContaining([expect.any(Number)]),
+            qbId: expect.any(String),
+          },
+        ],
+      },
+      { field: 'field2', operator: '=', value: '2' },
+    ],
+  });
+  expect(onQueryChange).toHaveBeenCalledWith({
+    combinator: 'and',
+    rules: [{ field: 'field3', operator: '=', value: '3' }],
+  });
 });

@@ -1,0 +1,13 @@
+.chakra-native-select__root {
+  width: fit-content !important;
+  display: inline-block;
+}
+
+.queryBuilder .chakra-input {
+  width: auto !important;
+  display: inline-block;
+}
+
+.queryBuilder .chakra-radio-group {
+  display: inline-block;
+}

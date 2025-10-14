@@ -4,9 +4,16 @@ import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { useValueEditor, ValueEditor } from 'react-querybuilder';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FluentValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+/**
+ * @group Props
+ */
+export interface FluentValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
+/**
+ * @group Components
+ */
 export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
@@ -16,6 +23,7 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     title,
     className,
     type,
+    inputType,
     values = [],
     listsAsArrays: _listsAsArrays,
     separator,
@@ -25,13 +33,17 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
     selectorComponent: _SelectorComponent,
     validation: _validation,
     extraProps,
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ..._propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    bigIntValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -124,6 +136,22 @@ export const FluentValueEditor = (allProps: FluentValueEditorProps): React.JSX.E
           ))}
         </RadioGroup>
       );
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <Input
+        data-testid={testID}
+        type={inputTypeCoerced as InputProps['type']}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
   }
 
   return (

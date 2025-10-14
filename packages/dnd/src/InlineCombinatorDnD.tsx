@@ -19,23 +19,29 @@ import {
   standardClassnames,
   TestID,
 } from 'react-querybuilder';
+import { isHotkeyPressed } from './isHotkeyPressed';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
 
 /**
  * The drag-and-drop-enabled inline combinator component.
+ *
+ * @group Components
  */
 export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,
   ...props
 }: InlineCombinatorProps): React.JSX.Element => {
-  const { canDrop, useDrop } = useContext(QueryBuilderDndContext);
+  const { canDrop, useDrop, copyModeModifierKey, groupModeModifierKey } =
+    useContext(QueryBuilderDndContext);
 
   const { dropRef, dropMonitorId, isOver } = useInlineCombinatorDnD({
     ...props,
     component: CombinatorSelectorComponent,
     useDrop: useDrop!,
     canDrop,
+    copyModeModifierKey,
+    groupModeModifierKey,
   });
 
   const wrapperClassName = [
@@ -59,39 +65,56 @@ export const InlineCombinatorDnD = ({
 };
 
 type UseInlineCombinatorDndParams = InlineCombinatorProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop'> & { useDrop: typeof useDropOriginal };
+  Pick<QueryBuilderDndContextProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> & {
+    useDrop: typeof useDropOriginal;
+  };
 
 interface UseInlineCombinatorDnD {
   isOver: boolean;
   dropMonitorId: string | symbol | null;
   dropRef: Ref<HTMLDivElement>;
   dropEffect?: DropEffect;
+  groupItems?: boolean;
+  dropNotAllowed?: boolean;
 }
 
-export const useInlineCombinatorDnD = ({
-  path,
-  canDrop,
-  schema,
-  useDrop,
-  rules,
-}: UseInlineCombinatorDndParams): UseInlineCombinatorDnD => {
+/**
+ * @group Hooks
+ */
+export const useInlineCombinatorDnD = (
+  params: UseInlineCombinatorDndParams
+): UseInlineCombinatorDnD => {
   const dropRef = useRef<HTMLDivElement>(null);
+
+  const {
+    path,
+    canDrop,
+    schema,
+    useDrop,
+    rules,
+    copyModeModifierKey = 'alt',
+    groupModeModifierKey = 'ctrl',
+  } = params;
 
   // The "hovering" item is the rule or group which precedes this inline combinator.
   const hoveringItem = (rules ?? /* istanbul ignore next */ [])[path.at(-1)! - 1] as
     | RuleType
     | RuleGroupTypeAny;
 
-  // eslint-disable-next-line react-compiler/react-compiler
-  const [{ isOver, dropMonitorId }, drop] = useDrop<DraggedItem, DropResult, DropCollection>(
+  const [{ isOver, dropMonitorId, dropEffect, dropNotAllowed }, drop] = useDrop<
+    DraggedItem,
+    DropResult,
+    DropCollection
+  >(
     () => ({
       accept: ['rule', 'ruleGroup'] as DndDropTargetType[],
       canDrop: dragging => {
         const { path: itemPath } = dragging;
         if (
-          dragging &&
-          typeof canDrop === 'function' &&
-          !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } })
+          isHotkeyPressed(groupModeModifierKey) ||
+          (dragging &&
+            typeof canDrop === 'function' &&
+            !canDrop({ dragging, hovering: { ...hoveringItem, path, qbId: schema.qbId } }))
         ) {
           return false;
         }
@@ -116,14 +139,26 @@ export const useInlineCombinatorDnD = ({
         );
       },
       collect: monitor => ({
+        dropNotAllowed: monitor.isOver() && !monitor.canDrop(),
         isOver: monitor.canDrop() && monitor.isOver(),
         dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: (monitor.getDropResult() ?? {}).dropEffect,
+        dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
+        groupItems: isHotkeyPressed(groupModeModifierKey),
       }),
       drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
-        // `dropEffect` gets added automatically to the object returned from `drop`:
-        return { type: 'inlineCombinator', path, qbId, getQuery, dispatchQuery };
+        const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+        const groupItems = isHotkeyPressed(groupModeModifierKey);
+
+        return {
+          type: 'inlineCombinator',
+          path,
+          qbId,
+          getQuery,
+          dispatchQuery,
+          groupItems,
+          dropEffect,
+        };
       },
     }),
     [canDrop, hoveringItem, path, schema]
@@ -131,5 +166,5 @@ export const useInlineCombinatorDnD = ({
 
   drop(dropRef);
 
-  return { dropRef, dropMonitorId, isOver };
+  return { dropRef, dropMonitorId, isOver, dropEffect, dropNotAllowed };
 };

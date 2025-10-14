@@ -1,5 +1,5 @@
 // Adapted from https://en.wikipedia.org/wiki/List_of_musical_instruments
-import type { OptionGroup } from 'react-querybuilder';
+import type { OptionGroup } from 'react-querybuilder/debug';
 
 export const musicalInstruments: OptionGroup[] = [
   {
@@ -157,5 +157,5 @@ export const musicalInstruments: OptionGroup[] = [
   },
 ].map(({ label, instruments }) => ({
   label,
-  options: instruments.map(s => ({ name: s, label: s })),
+  options: instruments.map(s => ({ name: s.toLowerCase().replace(/\s+/g, '_'), label: s })),
 }));

@@ -15,20 +15,20 @@ This project requires [Bun][bun].
 
 ## Testing changes
 
-To serve a hot-module-reloading (HMR) demo page locally, run `bun start`.
+To serve a demo page locally, run `bun start`. This demo is <abbr title="Hot Module Reloading">HMR</abbr>-enabled and can load the compatibility packages.
 
-Your IDE should check for TypeScript and lint problems as you code, but to check manually run `bun typecheck` and/or `bun lint`.
+Your IDE should check for TypeScript and lint problems as you code, but to check manually run `bun typecheck`/`bun lint`.
 
 <details>
 
-<summary>Testing compatibility packages</summary>
+<summary>Testing individual packages</summary>
 
-Each compatibility package has its own `start:*`, `build:*`, and `typecheck:*` scripts.
+Each package has its own `start:*`, `build:*`, and `typecheck:*` scripts.
 
 | Package                         | Start script          | Build script          | Typecheck script          |
 | ------------------------------- | --------------------- | --------------------- | ------------------------- |
-| All packages                    | N/A                   | `bun run build`       | `bun typecheck`           |
-| `react-querybuilder`            | `bun start`           | `bun build:rqb`       | `bun typecheck:rqb`       |
+| All packages                    | `bun start`           | `bun run build`       | `bun typecheck`           |
+| `react-querybuilder`            | `bun start:rqb`       | `bun build:rqb`       | `bun typecheck:rqb`       |
 | `@react-querybuilder/antd`      | `bun start:antd`      | `bun build:antd`      | `bun typecheck:antd`      |
 | `@react-querybuilder/bootstrap` | `bun start:bootstrap` | `bun build:bootstrap` | `bun typecheck:bootstrap` |
 | `@react-querybuilder/bulma`     | `bun start:bulma`     | `bun build:bulma`     | `bun typecheck:bulma`     |
@@ -107,7 +107,7 @@ Generated folders:
 [new-discussion]: https://github.com/react-querybuilder/react-querybuilder/discussions/new
 [discord]: https://react-querybuilder.js.org/discord
 [egghead]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
-[bun]: https://bun.sh/
+[bun]: https://bun.com/
 [prettier]: https://prettier.io/
 [codesandbox]: https://codesandbox.io
 [stackblitz]: https://stackblitz.com

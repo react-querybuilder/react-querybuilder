@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
 import { useEffect, useMemo, useState } from 'react';
-import './_styles/demo.scss';
-import './_styles/rqb-material.scss';
+import './_styles/demo.css';
+import './_styles/rqb-material.css';
 
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -17,6 +17,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import Radio from '@mui/material/Radio';
@@ -30,6 +31,8 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { Loading } from '../_utils';
 
+const loading = <Loading />;
+
 const muiComponents = {
   DragIndicator,
   Button,
@@ -38,6 +41,7 @@ const muiComponents = {
   ContentCopyIcon,
   FormControl,
   FormControlLabel,
+  InputLabel,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -91,7 +95,7 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
 export default function ReactQueryBuilderDemo_Material() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<Loading />}>
+      <BrowserOnly fallback={loading}>
         {() => <ReactQueryBuilderDemo_MaterialBrowser />}
       </BrowserOnly>
     </Layout>

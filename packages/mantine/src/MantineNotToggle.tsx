@@ -3,8 +3,14 @@ import { Switch } from '@mantine/core';
 import * as React from 'react';
 import type { NotToggleProps } from 'react-querybuilder';
 
-export type MantineNotToggleProps = NotToggleProps & Partial<SwitchProps>;
+/**
+ * @group Props
+ */
+export interface MantineNotToggleProps extends NotToggleProps, Partial<SwitchProps> {}
 
+/**
+ * @group Components
+ */
 export const MantineNotToggle = ({
   className,
   handleOnChange,

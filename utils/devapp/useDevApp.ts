@@ -1,13 +1,13 @@
-import queryString from 'query-string';
-import { useCallback, useMemo, useReducer, useState } from 'react';
 import type {
   ExportFormat,
   FormatQueryOptions,
   RuleGroupType,
   RuleGroupTypeIC,
-} from 'react-querybuilder';
-import { defaultValidator, standardClassnames } from 'react-querybuilder';
+} from '@react-querybuilder/core';
+import { defaultValidator, standardClassnames } from '@react-querybuilder/core';
 import * as RQButils from '@rqb-utils';
+import queryString from 'query-string';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 import {
   defaultOptions,
   emptyQuery,
@@ -17,7 +17,8 @@ import {
   initialQuery,
   initialQueryIC,
 } from './constants';
-import type { CommonRQBProps, DemoOption, DemoOptions } from './types';
+import type { CommonRQBProps, DemoOptions } from './types';
+import type { OptionsAction } from './utils';
 import { generatePermalinkHash, getFormatQueryString, optionsReducer } from './utils';
 
 Object.defineProperty(globalThis, 'RQButils', { value: RQButils });
@@ -30,26 +31,26 @@ const getOptionsFromHash = () =>
 // Initialize options from URL hash
 const initialOptionsFromHash = getOptionsFromHash();
 
-export const useDevApp = (): {
+export const useDevApp = <ExtraOptions extends Record<string, boolean | undefined>>(
+  extraOptions: Partial<ExtraOptions> = {}
+): {
   actions: [string, () => void][];
   commonRQBProps: CommonRQBProps;
   formatQueryResults: (readonly [ExportFormat, string])[];
   onQueryChange: (q: RuleGroupType) => void;
   onQueryChangeIC: (q: RuleGroupTypeIC) => void;
-  optVals: DemoOptions;
+  optVals: DemoOptions & Partial<ExtraOptions>;
   query: RuleGroupType;
   queryIC: RuleGroupTypeIC;
-  updateOptions: React.Dispatch<
-    | { type: 'all' }
-    | { type: 'reset' }
-    | { type: 'update'; payload: { optionName: DemoOption; value: boolean } }
-    | { type: 'replace'; payload: DemoOptions }
+  updateOptions: React.ActionDispatch<
+    [action: OptionsAction<Partial<ExtraOptions> & { [k: string]: boolean }>]
   >;
 } => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
   const [optVals, updateOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
+    ...extraOptions,
     ...initialOptionsFromHash,
   });
 
@@ -59,19 +60,28 @@ export const useDevApp = (): {
       ...opts,
       fields,
       validator: opts.validateQuery ? defaultValidator : undefined,
-      controlClassnames: { queryBuilder: opts.showBranches ? standardClassnames.branches : '' },
+      controlClassnames: {
+        queryBuilder: {
+          [standardClassnames.branches]: opts.showBranches,
+          [standardClassnames.justified]: opts.justifiedLayout,
+        },
+      },
     };
   }, [optVals]);
 
-  const formatQueryResults = formatMap.map(([format]) => {
-    const formatQueryOptions: FormatQueryOptions = {
-      format,
-      fields: optVals.validateQuery ? fields : undefined,
-      parseNumbers: optVals.parseNumbers,
-    };
-    const q = optVals.independentCombinators ? queryIC : query;
-    return [format, getFormatQueryString(q, formatQueryOptions)] as const;
-  });
+  const formatQueryResults = useMemo(
+    () =>
+      formatMap.map(([format]) => {
+        const formatQueryOptions: FormatQueryOptions = {
+          format,
+          fields: optVals.validateQuery ? fields : undefined,
+          parseNumbers: optVals.parseNumbers,
+        };
+        const q = optVals.independentCombinators ? queryIC : query;
+        return [format, getFormatQueryString(q, formatQueryOptions)] as const;
+      }),
+    [optVals.validateQuery, optVals.parseNumbers, optVals.independentCombinators, queryIC, query]
+  );
 
   const actions = useMemo(
     () =>

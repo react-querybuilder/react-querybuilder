@@ -1,6 +1,7 @@
-/* eslint-disable unicorn/prefer-module */
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import rehypeRaw from 'rehype-raw';
+import remarkGFM from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
@@ -33,7 +34,7 @@ const getSourceLink = (filePath: string, start?: number, end?: number) => {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const remarkPluginImport = () => async (ast: any, vfile: any) => {
   visit(ast, 'paragraph', node => {
     if (node.children?.length > 0 && node.children[0].type === 'text') {
@@ -41,11 +42,18 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
       const mdImportMatches = importMdRegExp.exec(node.children[0].value || '');
 
       if (mdImportMatches?.[1]) {
-        const mdFilePath = path.resolve(vfile.path, '..', mdImportMatches[1]);
+        const mdFilePath = mdImportMatches[1].startsWith('/')
+          ? path.resolve(mdImportMatches[1].replace(/^\//, '../')) // relative to `/website`
+          : path.resolve(vfile.path, '..', mdImportMatches[1]);
         if (existsSync(mdFilePath)) {
           const rawMd = readFileSync(mdFilePath, 'utf8');
           node.data = { ...node.data, hName: 'div' };
-          node.children = unified().use(remarkParse).use(remarkRehype).parse(rawMd).children;
+          node.children = unified()
+            .use(remarkParse)
+            .use(remarkGFM)
+            .use(remarkRehype, { allowDangerousHtml: true })
+            .use(rehypeRaw)
+            .parse(rawMd).children;
         } else {
           throw new Error(`Unable to locate file at path: ${mdFilePath}`);
         }
@@ -68,9 +76,9 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
           const lang = path.extname(codeFileAbsolutePath).replace(/^\./, '');
 
           if (lineNumbers) {
-            const start = parseInt(lineNumbers[1]);
+            const start = Number.parseInt(lineNumbers[1]);
             const end =
-              (lineNumbers[4] ? parseInt(lineNumbers[4]) : null) ??
+              (lineNumbers[4] ? Number.parseInt(lineNumbers[4]) : null) ??
               (lineNumbers[2] ? codeLines.length : start);
             node.children = [
               {

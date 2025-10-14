@@ -1,0 +1,7 @@
+#exports {
+  overflow-y: unset !important;
+}
+
+pre {
+  white-space: pre-wrap;
+}

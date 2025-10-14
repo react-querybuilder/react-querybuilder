@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
 import { MantineProvider } from '@mantine/core';
@@ -6,8 +6,10 @@ import { QueryBuilderMantine } from '@react-querybuilder/mantine';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
-import './_styles/rqb-mantine.scss';
+import './_styles/demo.css';
+import './_styles/rqb-mantine.css';
+
+const loading = <Loading />;
 
 function ReactQueryBuilderDemo_MantineBrowser() {
   const { colorMode } = useColorMode();
@@ -47,9 +49,7 @@ function ReactQueryBuilderDemo_MantineBrowser() {
 export default function ReactQueryBuilderDemo_Mantine() {
   return (
     <Layout description="React Query Builder Mantine Demo">
-      <BrowserOnly fallback={<Loading />}>
-        {() => <ReactQueryBuilderDemo_MantineBrowser />}
-      </BrowserOnly>
+      <BrowserOnly fallback={loading}>{() => <ReactQueryBuilderDemo_MantineBrowser />}</BrowserOnly>
     </Layout>
   );
 }

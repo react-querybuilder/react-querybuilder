@@ -93,7 +93,7 @@ import {
   bootstrapControlClassnames,
   bootstrapControlElements,
 } from '@react-querybuilder/bootstrap';
-import 'bootstrap/scss/bootstrap.scss';
+import 'bootstrap/dist/css/bootstrap.css';
 import { QueryBuilder } from 'react-querybuilder';
 import { defaultQuery, fields } from './constants';
 
@@ -196,22 +196,20 @@ import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { QueryBuilder } from 'react-querybuilder';
 import { defaultQuery, fields } from './constants';
 // highlight-start
-import { DragIndicator } from '@mui/icons-material';
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  // Replace `Input` with `TextField` in versions greater than 7.7.0
-  Input,
-  ListSubheader,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Switch,
-  TextareaAutosize,
-} from '@mui/material';
+import DragIndicator from '@mui/icons-material/DragIndicator';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+// (Use `TextField` instead of `Input` in version 7.7.1 or later)
+import Input from '@mui/material/Input';
+import ListSubheader from '@mui/material/ListSubheader';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 
 const muiComponents = {
   Button,
@@ -219,8 +217,7 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
-  // Replace `Input` with `TextField` in versions greater than 7.7.0
-  Input,
+  Input, // (Use `TextField` instead of `Input` in version 7.7.1 or later)
   ListSubheader,
   MenuItem,
   Radio,

@@ -1,10 +1,11 @@
 import { green, purple } from '@mui/material/colors';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderMaterial } from '../src';
+import './styles.scss';
 
 const muiTheme = createTheme({
   palette: {
@@ -17,13 +18,15 @@ const muiTheme = createTheme({
   },
 });
 
+const defaultDevAppOptions = { showInputLabels: false };
+
 const App = () => {
-  const devApp = useDevApp();
+  const devApp = useDevApp(defaultDevAppOptions);
 
   return (
     <DevLayout {...devApp}>
       <ThemeProvider theme={muiTheme}>
-        <QueryBuilderMaterial>
+        <QueryBuilderMaterial showInputLabels={devApp.optVals.showInputLabels}>
           {devApp.optVals.independentCombinators ? (
             <QueryBuilder
               key="queryIC"

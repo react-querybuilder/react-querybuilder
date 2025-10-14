@@ -1,28 +1,30 @@
-import * as React from 'react';
-import { forwardRef } from 'react';
 import type {
-  ActionProps,
   Classnames,
-  ControlElementsProp,
-  DragHandleProps,
   FullField,
   FullOperator,
   FullOption,
   QueryActions,
   RemoveNullability,
-  RuleGroupProps,
   RuleType,
-  Schema,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 import {
   TestID,
   defaultCombinators,
   defaultControlClassnames,
-  defaultControlElements,
   generateAccessibleDescription,
   toFullOption,
   defaultTranslations as translations,
+} from '@react-querybuilder/core';
+import * as React from 'react';
+import { forwardRef } from 'react';
+import type {
+  ActionProps,
+  ControlElementsProp,
+  DragHandleProps,
+  RuleGroupProps,
+  Schema,
 } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 import { UNUSED } from './utils';
 
 export const createRule = (index: number): RuleType => ({
@@ -139,7 +141,9 @@ const ruleGroupSchema = {
   getOperators: () => [{ name: 'operator1', label: 'Operator 1' }].map(o => toFullOption(o)),
   getValueEditorType: () => 'text',
   getValueEditorSeparator: () => null,
-  getValueSources: () => ['value'],
+  getMatchModes: () => [],
+  getSubQueryBuilderProps: () => ({}),
+  getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
   getValues: () => [],
   getRuleClassname: () => '',
   getRuleGroupClassname: () => '',
@@ -157,6 +161,7 @@ const ruleGroupSchema = {
   independentCombinators: false,
   validationMap: {},
   disabledPaths: [],
+  maxLevels: Infinity,
 } satisfies Partial<Schema<FullOption, string>>;
 
 const ruleGroupActions = {

@@ -13,8 +13,12 @@ import type { ValueEditorProps, VersatileSelectorProps } from 'react-querybuilde
 import { ValueEditor, useValueEditor } from 'react-querybuilder';
 import { TremorValueSelector } from './TremorValueSelector';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TremorValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+/**
+ * @group Props
+ */
+export interface TremorValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 const dateFormat = 'YYYY-MM-DD';
 // const dateTimeLocalFormat = `${dateFormat}THH:mm:ss`;
@@ -23,6 +27,9 @@ const ClearableValueSelector = (props: VersatileSelectorProps) => (
   <TremorValueSelector {...props} enableClear />
 );
 
+/**
+ * @group Components
+ */
 export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
@@ -32,6 +39,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     title,
     className,
     type,
+    inputType,
     values: _v,
     listsAsArrays,
     parseNumbers: _parseNumbers,
@@ -40,13 +48,17 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     disabled,
     testID,
     selectorComponent = ClearableValueSelector,
-    inputType: _inputType,
     validation: _validation,
     extraProps,
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    bigIntValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -180,6 +192,22 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
         disabled={disabled}
         value={value}
         onValueChange={handleOnChange}
+        {...extraProps}
+      />
+    );
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <TextInput
+        data-testid={testID}
+        type={inputTypeCoerced as TextInputProps['type']}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
         {...extraProps}
       />
     );

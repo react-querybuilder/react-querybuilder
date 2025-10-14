@@ -34,12 +34,13 @@ const compileToJS = async (code: string, fileName: string) => {
 const packagesPath = path.join(import.meta.dir, '../packages');
 const templatePath = path.join(import.meta.dir, '_template');
 const templateDotCS = path.join(templatePath, '.codesandbox');
+const templateDotDC = path.join(templatePath, '.devcontainer');
 const templateSrc = path.join(templatePath, 'src');
 const templateDotCSTemplateJSON = await Bun.file(path.join(templateDotCS, 'template.json')).json();
 const templateIndexHTML = await Bun.file(path.join(templatePath, 'index.html')).text();
 const templateIndexTSX = await Bun.file(path.join(templateSrc, 'index.tsx')).text();
 const templateAppTSX = await Bun.file(path.join(templateSrc, 'App.tsx')).text();
-const templateStylesSCSS = await Bun.file(path.join(templateSrc, 'styles.scss')).text();
+const templateStylesCSS = await Bun.file(path.join(templateSrc, 'styles.css')).text();
 const templateREADMEmd = await Bun.file(path.join(templatePath, 'README.md')).text();
 
 const templatePkgJsonNewTextRaw = await Bun.file(path.join(templatePath, 'package.json')).text();
@@ -54,6 +55,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
   const examplePath = path.join(import.meta.dir, exampleID);
   const exampleDotCS = path.join(examplePath, '.codesandbox');
+  const exampleDotDC = path.join(examplePath, '.devcontainer');
   const exampleSrc = path.join(examplePath, 'src');
   const exampleBaseTitle = `React Query Builder ${exampleConfig.name}`;
   const exampleTitle = `${exampleBaseTitle} Example`;
@@ -81,7 +83,11 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       ...examplePrettierConfig,
       ...(printWidth ? { printWidth } : {}),
       filepath,
-      plugins: [prettierPluginOrganizeImports, prettierPluginEstree],
+      plugins: [
+        prettierPluginOrganizeImports,
+        // https://github.com/prettier/prettier/issues/16501
+        prettierPluginEstree as unknown as prettier.Plugin,
+      ],
     };
 
     return Bun.write(
@@ -104,6 +110,10 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     Bun.write(
       path.join(exampleDotCS, 'workspace.json'),
       Bun.file(path.join(templateDotCS, 'workspace.json'))
+    ),
+    Bun.write(
+      path.join(exampleDotDC, 'devcontainer.json'),
+      Bun.file(path.join(templateDotDC, 'devcontainer.json'))
     ),
     Bun.write(
       path.join(examplePath, '.gitignore'),
@@ -135,27 +145,17 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   toWrite.push(formatAndWrite(path.join(examplePath, 'index.html'), exampleIndexHTML));
   // #endregion
 
-  // #region src/index.scss
-  const processedTemplateSCSS = templateStylesSCSS
-    .replace('// __SCSS_PRE__', exampleConfig.scssPre.join('\n'))
-    .replace('// __SCSS_POST__', exampleConfig.scssPost.join('\n'))
-    .replaceAll(/((query-builder\.)s(css))/g, exampleConfig.compileToJS ? '$2$3' : '$1');
-  toWrite.push(
-    formatAndWrite(
-      path.join(exampleSrc, `styles.${exampleConfig.compileToJS ? '' : 's'}css`),
-      processedTemplateSCSS
-    )
-  );
+  // #region src/styles.css
+  const processedTemplateCSS = templateStylesCSS
+    .replace('/* __CSS_PRE__ */', exampleConfig.cssPre.join('\n'))
+    .replace('/* __CSS_POST__ */', exampleConfig.cssPost.join('\n'));
+  toWrite.push(formatAndWrite(path.join(exampleSrc, `styles.css`), processedTemplateCSS));
   // #endregion
 
   // #region src/index.tsx
-  const processedTemplateIndexTSX = templateIndexTSX.replaceAll(
-    'styles.scss',
-    exampleConfig.compileToJS ? 'styles.css' : '$&'
-  );
   const exampleIndexSourceCode = exampleConfig.compileToJS
-    ? await compileToJS(processedTemplateIndexTSX, 'index.tsx')
-    : processedTemplateIndexTSX;
+    ? await compileToJS(templateIndexTSX, 'index.tsx')
+    : templateIndexTSX;
   toWrite.push(
     formatAndWrite(
       path.join(exampleSrc, `index.${exampleConfig.compileToJS ? 'j' : 't'}sx`),
@@ -170,8 +170,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
     .replace('// __ADDITIONAL_DECLARATIONS__', exampleConfig.additionalDeclarations.join('\n'))
     .replace('{/* __WRAPPER_OPEN__ */}', exampleConfig.wrapper?.[0] ?? '')
     .replace('{/* __WRAPPER_CLOSE__ */}', exampleConfig.wrapper?.[1] ?? '')
-    .replace('// __RQB_PROPS__', exampleConfig.props.join('\n'))
-    .replaceAll('styles.scss', exampleConfig.compileToJS ? 'styles.css' : '$&');
+    .replace('// __RQB_PROPS__', exampleConfig.props.join('\n'));
   const exampleAppSourceCode = exampleConfig.compileToJS
     ? await compileToJS(processedTemplateAppTSX, 'App.tsx')
     : processedTemplateAppTSX;
@@ -200,14 +199,16 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       }
     }
   }
-  for (const depKey of exampleConfig.dependencyKeys) {
+  if (exampleConfig.dependencyKeys.length > 0) {
     const compatPkgJson: PackageJSON = await Bun.file(
       path.join(packagesPath, `${exampleID}/package.json`)
     ).json();
-    if (Array.isArray(depKey)) {
-      examplePkgJSON.dependencies[depKey[0]] = depKey[1];
-    } else {
-      examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
+    for (const depKey of exampleConfig.dependencyKeys) {
+      if (Array.isArray(depKey)) {
+        examplePkgJSON.dependencies[depKey[0]] = depKey[1];
+      } else {
+        examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
+      }
     }
   }
   toWrite.push(
@@ -249,7 +250,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
 };
 
 // #region Other examples' package.json
-const otherExamples = ['ci', 'native', 'next', 'tremor'] as const;
+const otherExamples = ['ci', 'native', 'next', 'preact', 'tremor'] as const;
 
 const updateOtherExample = async (otherExampleName: string) => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(
@@ -267,7 +268,11 @@ const updateOtherExample = async (otherExampleName: string) => {
     {
       ...otherExamplePrettierOptions,
       filepath: otherExamplePkgJsonPath,
-      plugins: [prettierPluginOrganizeImports, prettierPluginEstree],
+      plugins: [
+        prettierPluginOrganizeImports,
+        // https://github.com/prettier/prettier/issues/16501
+        prettierPluginEstree as unknown as prettier.Plugin,
+      ],
     }
   );
   console.log(`Updated package.json for "${otherExampleName}" example`);

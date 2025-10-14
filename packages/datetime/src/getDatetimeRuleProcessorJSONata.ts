@@ -14,7 +14,7 @@ const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` 
 
 /**
  * Generates a rule processor with date/time features for use by
- * {@link react-querybuilder!index.formatQuery formatQuery} with the "jsonata" format.
+ * {@link @react-querybuilder/core!formatQuery formatQuery} with the "jsonata" format.
  */
 export const getDatetimeRuleProcessorJSONata =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
@@ -58,7 +58,7 @@ export const getDatetimeRuleProcessorJSONata =
         if (valueIsField) {
           if (valueAsArray.length === 0) return '';
           return negate(
-            `${fldToMs(field)} in [${valueAsArray.map(val => fldToMs(val as string)).join(', ')}]`,
+            `${fldToMs(field)} in [${valueAsArray.map(val => fldToMs(val)).join(', ')}]`,
             shouldNegate(operator)
           );
         }

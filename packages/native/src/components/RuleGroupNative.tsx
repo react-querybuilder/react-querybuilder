@@ -11,6 +11,9 @@ import {
 import { defaultNativeStyles } from '../styles';
 import type { RuleGroupNativeProps, SchemaNative } from '../types';
 
+/**
+ * @group Components
+ */
 export const RuleGroupNative = (props: RuleGroupNativeProps): React.JSX.Element => {
   const rg = useRuleGroup(props);
   const schema = rg.schema as SchemaNative<FullField, string>;

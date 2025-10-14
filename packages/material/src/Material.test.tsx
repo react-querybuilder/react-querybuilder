@@ -1,33 +1,30 @@
-import {
-  Close as CloseIcon,
-  ContentCopy as ContentCopyIcon,
-  DragIndicator,
-  KeyboardArrowDown as KeyboardArrowDownIcon,
-  KeyboardArrowUp as KeyboardArrowUpIcon,
-  Lock as LockIcon,
-  LockOpen as LockOpenIcon,
-} from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DragIndicator from '@mui/icons-material/DragIndicator';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import type {
   ListSubheaderProps,
   MenuItemProps,
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  ListSubheader,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Switch,
-  TextField,
-  TextareaAutosize,
-} from '@mui/material';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel';
+import ListSubheader from '@mui/material/ListSubheader';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+import TextField from '@mui/material/TextField';
 import {
   basicSchema,
   defaultShiftActionsProps,
@@ -97,6 +94,7 @@ const muiComponents = {
   DragIndicator,
   FormControl,
   FormControlLabel,
+  InputLabel,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -109,13 +107,14 @@ const muiComponents = {
   Switch,
   TextareaAutosize,
   TextField,
+  showInputLabels: false,
 };
 const theme = createTheme();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const generateWrapper = (RQBComponent: React.ComponentType<any>) => {
+// oxlint-disable-next-line typescript/no-explicit-any
+const generateWrapper = (RQBComponent: React.ComponentType<any>, extraProps = {}) => {
   const MuiWrapper = (props: ComponentPropsWithoutRef<typeof RQBComponent>) => (
     <ThemeProvider theme={theme}>
-      <RQBComponent muiComponents={muiComponents} {...props} />
+      <RQBComponent muiComponents={muiComponents} {...props} {...extraProps} />
     </ThemeProvider>
   );
   return MuiWrapper;
@@ -211,6 +210,7 @@ describe('shift actions', () => {
 
 describe('value editor', () => {
   testValueEditor(generateWrapper(MaterialValueEditor));
+  testValueEditor(generateWrapper(MaterialValueEditor, { showInputLabels: true }));
 
   it('renders without preloaded components', async () => {
     render(
@@ -234,6 +234,9 @@ describe('value editor', () => {
 
 describe('value selector', () => {
   testValueSelector(generateWrapper(MaterialValueSelector), { disabledOptions: true });
+  testValueSelector(generateWrapper(MaterialValueSelector, { showInputLabels: true }), {
+    disabledOptions: true,
+  });
 
   it('renders without preloaded components', async () => {
     render(

@@ -1,11 +1,3 @@
-import { act, render, screen } from '@testing-library/react';
-import type { SelectProps } from 'antd';
-import type { OptionProps } from 'antd/es/select';
-import dayjs from 'dayjs';
-import type { OptionGroupFC } from 'rc-select/lib/OptGroup.js';
-import * as React from 'react';
-import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { QueryBuilder, TestID } from 'react-querybuilder';
 import {
   defaultNotToggleProps,
   defaultValueEditorProps,
@@ -19,6 +11,17 @@ import {
   testValueSelector,
   userEventSetup,
 } from '@rqb-testing';
+import { act, render, screen } from '@testing-library/react';
+import type { SelectProps } from 'antd';
+import dayjs from 'dayjs';
+import * as React from 'react';
+import type {
+  NotToggleProps,
+  Option,
+  ValueEditorProps,
+  ValueSelectorProps,
+} from 'react-querybuilder';
+import { QueryBuilder, TestID } from 'react-querybuilder';
 import { AntDActionElement } from './AntDActionElement';
 import { AntDDragHandle } from './AntDDragHandle';
 import { AntDNotToggle } from './AntDNotToggle';
@@ -30,9 +33,12 @@ import { QueryBuilderAntD } from './index';
 jest.mock('antd', () => {
   // We only mock Select. Everything else can use the real antd components.
   const AntD = jest.requireActual('antd');
+  const toOptions = jest.requireActual('react-querybuilder').toOptions;
 
   const Select = (props: SelectProps) => (
     <select
+      title={props.title}
+      className={props.className}
       multiple={props.mode === 'multiple'}
       disabled={props.disabled}
       value={props.value}
@@ -46,13 +52,9 @@ jest.mock('antd', () => {
           }
         )
       }>
-      {props.children}
+      {toOptions(props.options as Option[])}
     </select>
   );
-  Select.Option = ({ value, children }: OptionProps) => <option value={value}>{children}</option>;
-  Select.OptGroup = (({ label, children }) => (
-    <optgroup label={label}>{children}</optgroup>
-  )) as OptionGroupFC;
 
   return { ...AntD, Select };
 });
@@ -157,7 +159,6 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       );
       await new Promise(r => setTimeout(r, 500));
     });
-    // TODO: figure out why this test is NOT flaky like the range test below
     expect(onChange).toHaveBeenCalledWith(today);
   });
 
@@ -174,6 +175,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     const { container } = render(
       <AntDValueEditor
         {...props}
+        rule={{ field: '', operator: 'between', value: 'invalid' }}
         inputType="date"
         operator="between"
         handleOnChange={onChange}
@@ -192,8 +194,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
       await user.click(screen.getAllByTitle(tomorrow)[0]);
       await new Promise(r => setTimeout(r, 500));
     });
-    // TODO: figure out why this test is flaky, then uncomment it
-    // expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
+    expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });
 
   it('renders a date range picker with a preset value', async () => {

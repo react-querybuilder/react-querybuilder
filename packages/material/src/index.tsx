@@ -14,7 +14,7 @@ import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import { materialTranslations } from './translations';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 export * from './MaterialActionElement';
@@ -28,6 +28,9 @@ export * from './types';
 export * from './useMuiComponents';
 export { materialTranslations };
 
+/**
+ * @group Props
+ */
 export const materialControlElements: ControlElementsProp<FullField, string> = {
   actionElement: MaterialActionElement,
   dragHandle: MaterialDragHandle,
@@ -42,14 +45,19 @@ const MaterialContextProvider = getCompatContextProvider({
   translations: materialTranslations,
 });
 
-export const QueryBuilderMaterial: QueryBuilderContextProvider<{
-  muiComponents?: RQBMaterialComponents;
-}> = ({ muiComponents: muiComponentsProp, ...props }) => {
+/**
+ * @group Components
+ */
+export const QueryBuilderMaterial: QueryBuilderContextProvider<MuiAugmentation> = ({
+  muiComponents: muiComponentsProp,
+  showInputLabels,
+  ...props
+}) => {
   const muiComponents = useMuiComponents(muiComponentsProp);
 
   const ctxValue = useMemo(
-    () => ({ ...muiComponents, ...muiComponentsProp }),
-    [muiComponents, muiComponentsProp]
+    () => ({ ...muiComponents, ...muiComponentsProp, showInputLabels }),
+    [muiComponents, muiComponentsProp, showInputLabels]
   );
 
   return (

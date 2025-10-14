@@ -1,5 +1,5 @@
 import type { RenderHookResult } from '@testing-library/react';
-import { act, render, renderHook } from '@testing-library/react';
+import { act, render, renderHook, screen } from '@testing-library/react';
 import * as React from 'react';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import { QueryBuilderMaterial } from './index';
@@ -16,6 +16,9 @@ const componentMocks = {
   DragIndicator: () => <>DragIndicator</>,
   FormControl: () => <>FormControl</>,
   FormControlLabel: () => <>FormControlLabel</>,
+  InputLabel: () => <>InputLabel</>,
+  KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
+  KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
   ListSubheader: () => <>ListSubheader</>,
   LockIcon: () => <>LockIcon</>,
   LockOpenIcon: () => <>LockOpenIcon</>,
@@ -25,8 +28,6 @@ const componentMocks = {
   Select: () => <>Select</>,
   Switch: () => <>Switch</>,
   TextareaAutosize: () => <>TextareaAutosize</>,
-  KeyboardArrowDownIcon: () => <>KeyboardArrowDownIcon</>,
-  KeyboardArrowUpIcon: () => <>KeyboardArrowUpIcon</>,
   TextField: () => <>TextField</>,
 } as unknown as RQBMaterialComponents;
 
@@ -70,6 +71,7 @@ it('renders with context components', async () => {
       </RQBMaterialContext.Provider>
     );
   });
+  expect(screen.getByText('material')).toBeInTheDocument();
 });
 
 it('renders with context AND preloaded components', async () => {
@@ -82,4 +84,5 @@ it('renders with context AND preloaded components', async () => {
       </RQBMaterialContext.Provider>
     );
   });
+  expect(screen.getByText('material')).toBeInTheDocument();
 });

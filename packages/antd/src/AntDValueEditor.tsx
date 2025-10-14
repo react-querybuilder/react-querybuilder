@@ -7,11 +7,18 @@ import type { ValueEditorProps } from 'react-querybuilder';
 import { joinWith, useValueEditor, ValueEditor } from 'react-querybuilder';
 import dayjsGenerateConfig from './dayjs';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AntDValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+/**
+ * @group Props
+ */
+export interface AntDValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
 const DatePicker = generatePicker(dayjsGenerateConfig);
 
+/**
+ * @group Components
+ */
 export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
@@ -21,21 +28,26 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     title,
     className,
     type,
+    inputType,
     values = [],
     listsAsArrays,
     separator,
     valueSource: _vs,
     disabled,
     testID,
-    selectorComponent: _SelectorComponent,
+    selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     extraProps,
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
-    ..._propsForValueSelector
+    ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    bigIntValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -106,7 +118,20 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
   switch (type) {
     case 'select':
     case 'multiselect':
-      return <ValueEditor {...allProps} skipHook />;
+      return (
+        <SelectorComponent
+          {...propsForValueSelector}
+          className={className}
+          title={title}
+          value={value}
+          disabled={disabled}
+          listsAsArrays={listsAsArrays}
+          multiple={type === 'multiselect'}
+          handleOnChange={handleOnChange}
+          options={values}
+          {...extraProps}
+        />
+      );
 
     case 'textarea':
       return (
@@ -168,7 +193,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
     case 'date':
     case 'datetime-local': {
       if (operator === 'between' || operator === 'notBetween') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const dayjsArray = valueAsArray.slice(0, 2).map((v: any) => dayjs(v)) as [Dayjs, Dayjs];
         return (
           <DatePicker.RangePicker
@@ -178,9 +203,9 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             disabled={disabled}
             placeholder={[placeHolderText, placeHolderText]}
             // TODO: the function below is currently untested (see the
-            // "should render a date range picker" test in ./AntD.test.tsx)
+            // "renders a date range picker" test in ./AntD.test.tsx)
             onChange={
-              /* istanbul ignore next */
+              // istanbul ignore next
               dates => {
                 const timeFormat = inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : '';
                 const format = `YYYY-MM-DD${timeFormat}`;
@@ -237,6 +262,22 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
         />
       );
     }
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <Input
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
   }
 
   return (

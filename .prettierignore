@@ -1,8 +1,10 @@
 # Hidden(ish) files
 **/.*
+!.*.json
 
 # Generated
-*Parser.js
+**/celParser.ts
+**/sqlParser.ts
 
 # Binaries
 *.jpeg
@@ -18,6 +20,7 @@ CNAME
 *.go
 go.mod
 go.sum
+*.prisma
 
 # Misc
 lerna.json

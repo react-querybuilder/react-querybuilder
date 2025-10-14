@@ -16,50 +16,26 @@ export const fields = [
   { name: 'lastName', label: 'Last name' },
 ];
 
-The following examples demonstrate the extensive customization capability of React Query Builder. If you have an interesting or unusual implementation, feel free to submit a pull request to add it here!
+These examples showcase React Query Builder's extensive customization capabilities. Submit a pull request to share your interesting or unusual implementations!
 
 ### Justified layout
 
-These CSS rules will push any "clone", "lock", or "remove" buttons to the right edge, giving the query builder a more "justified" appearance. <DemoLink option="justifiedLayout" text="The demo has an option to enable this technique" />.
+These CSS rules push "clone", "lock", or "remove" buttons to the right edge, creating a justified appearance. <DemoLink option="justifiedLayout" text="The demo has an option to enable this technique" />.
 
 <details>
-  <summary>SCSS</summary>
+  <summary>CSS</summary>
 
-```scss
-.queryBuilder {
-  .ruleGroup-addGroup {
-    & + button.ruleGroup-cloneGroup,
-    & + button.ruleGroup-lock,
-    & + button.ruleGroup-remove {
-      margin-left: auto !important;
-    }
-  }
-  .rule-operators,
-  .rule-value {
-    & + button.rule-cloneRule,
-    & + button.rule-lock,
-    & + button.rule-remove {
-      margin-left: auto !important;
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-  <summary>CSS (compiled from SCSS)</summary>
-
+{/* prettier-ignore */}
 ```css
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-cloneGroup,
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-lock,
 .queryBuilder .ruleGroup-addGroup + button.ruleGroup-remove,
-.queryBuilder .rule-operators + button.rule-cloneRule,
-.queryBuilder .rule-operators + button.rule-lock,
-.queryBuilder .rule-operators + button.rule-remove,
-.queryBuilder .rule-value + button.rule-cloneRule,
-.queryBuilder .rule-value + button.rule-lock,
-.queryBuilder .rule-value + button.rule-remove {
+.queryBuilder .rule-operators     + button.rule-cloneRule,
+.queryBuilder .rule-operators     + button.rule-lock,
+.queryBuilder .rule-operators     + button.rule-remove,
+.queryBuilder .rule-value         + button.rule-cloneRule,
+.queryBuilder .rule-value         + button.rule-lock,
+.queryBuilder .rule-value         + button.rule-remove {
   margin-left: auto !important;
 }
 ```
@@ -93,11 +69,11 @@ These CSS rules will push any "clone", "lock", or "remove" buttons to the right 
 
 ### Inline combinator selectors
 
-Position each combinator selector to the right of the preceding rule or group.
+Positions combinator selectors to the right of their preceding rules or groups.
 
 :::note
 
-The examples in this section implement [independent combinators](../components/querybuilder#independent-combinators), but the same styles are applicable when using [`showCombinatorsBetweenRules`](../components/querybuilder#showcombinatorsbetweenrules).
+These examples use [independent combinators](../components/querybuilder#independent-combinators), but the same styles work with [`showCombinatorsBetweenRules`](../components/querybuilder#showcombinatorsbetweenrules).
 
 :::
 
@@ -142,7 +118,7 @@ The examples in this section implement [independent combinators](../components/q
   />
 </BrowserWindow>
 
-Alternatively, position each combinator to the left of the following rule or group:
+Alternatively, position combinators to the left of their following rules or groups:
 
 <details>
   <summary>CSS</summary>
@@ -193,23 +169,26 @@ Alternatively, position each combinator to the left of the following rule or gro
 
 ## Disjunctive normal form
 
-This example implements [disjunctive normal form (DNF)](https://en.wikipedia.org/wiki/Disjunctive_normal_form) by restricting the root group combinator to "or", the subgroup combinators to "and", and only allowing subgroups one level deep. Other customizations include:
+This example implements [disjunctive normal form (DNF)](https://en.wikipedia.org/wiki/Disjunctive_normal_form) by restricting root groups to "or", subgroups to "and", and limiting nesting to one level. Additional customizations include:
 
-- CSS rules:
-  - Swap the order of the header and body within each group.
-  - Hide the top-level "add rule" button to prevent the addition of rules to the root group.
-  - Hide the "add group" button in subgroups to prevent the addition of second-level nested groups.
-  - Display the subgroups horizontally.
-  - Stack the field/operator/value rule elements vertically (to account for the horizontal group layout).
-  - Hide all "remove group" buttons, which would otherwise be rendered—somewhat oddly—at the bottom of the group.
-- Custom components/props:
-  - Display combinators as static text instead of a selection control, since DNF is always an "OR of ANDs."
-  - Groups are removed when the last rule in the group is removed.
-  - New groups get a default rule automatically (otherwise a new group could not be removed until a rule was added).
+**CSS customizations:**
+
+- Swap header and body order within groups
+- Hide top-level "add rule" button (prevents rules in root group)
+- Hide subgroup "add group" buttons (prevents deep nesting)
+- Display subgroups horizontally
+- Stack rule elements vertically (accommodates horizontal layout)
+- Hide "remove group" buttons (would appear oddly positioned)
+
+**Component/prop customizations:**
+
+- Display combinators as static text (DNF is always "OR of ANDs")
+- Remove groups when their last rule is deleted
+- Auto-add default rules to new groups (enables immediate removal)
 
 :::tip
 
-This example also uses some techniques which are described in more detail in the [arbitrary updates tips](./arbitrary-updates) and [hooks documentation](../utils/hooks#usequerybuilderquery).
+This example demonstrates techniques detailed in the [arbitrary updates guide](./arbitrary-updates) and [hooks documentation](../utils/hooks#usequerybuilderquery).
 
 :::
 
@@ -293,7 +272,7 @@ import { useState } from 'react';
 import type {
   Field,
   RuleGroupType,
-  ActionWithRulesAndAddersProps,
+  ActionProps,
   CombinatorSelectorProps,
 } from 'react-querybuilder';
 import {
@@ -334,7 +313,7 @@ const initialQuery: RuleGroupType = {
   ],
 };
 
-const RemoveRule = (props: ActionWithRulesAndAddersProps) => {
+const RemoveRule = (props: ActionProps) => {
   const query = useQueryBuilderQuery();
   if (!query) return null;
   const parentPath = getParentPath(props.path);

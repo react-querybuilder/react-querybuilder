@@ -1,7 +1,8 @@
+import type { FullOption } from '@react-querybuilder/core';
+import { toFullOptionList } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import { toFullOptionList } from 'react-querybuilder';
+import type { ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { basicSchema, findSelect, hasOrInheritsClass, userEventSetup } from './utils';
 
 type ValueSelectorTestsToSkip = Partial<{
@@ -25,7 +26,7 @@ export const defaultValueSelectorProps: ValueSelectorProps = {
 export const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any,
   skip: ValueSelectorTestsToSkip = {}
 ): void => {

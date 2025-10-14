@@ -405,6 +405,44 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "A-EbrahimRSA",
+      "name": "Abdullah Ebrahim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61310161?v=4",
+      "profile": "https://github.com/A-EbrahimRSA",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "sajov",
+      "name": "sajov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2475348?v=4",
+      "profile": "https://github.com/sajov",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "yywing",
+      "name": "yywing",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22928185?v=4",
+      "profile": "https://github.com/yywing",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "sosso",
+      "name": "Anthony Sosso",
+      "avatar_url": "https://avatars.githubusercontent.com/u/619968?v=4",
+      "profile": "https://github.com/sosso",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

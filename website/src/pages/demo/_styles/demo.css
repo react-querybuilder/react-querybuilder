@@ -1,0 +1,56 @@
+.svg-font-color svg > path {
+  fill: var(--ifm-font-color-base);
+}
+
+.donut-hole {
+  overflow-y: unset !important;
+}
+
+.queryBuilder {
+  min-width: 420px;
+}
+
+li.tabs__item {
+  white-space: nowrap;
+}
+
+/* Styles for when "Use validation" option is selected */
+.validateQuery .queryBuilder {
+  & .ruleGroup.queryBuilder-invalid {
+    /* Color invalid groups */
+    background-color: color-mix(in srgb, rebeccapurple, transparent 60%);
+
+    & .ruleGroup-addRule {
+      /* Bold the "+ Rule" button if the group has no child rules or groups */
+      font-weight: bold !important;
+    }
+
+    & > .ruleGroup-body {
+      display: block;
+    }
+
+    & > .ruleGroup-body::after {
+      /* Message to user about empty groups */
+      content: 'Empty groups are considered invalid. Avoid them by using addRuleToNewGroups.';
+      color: white;
+    }
+  }
+
+  & .rule.queryBuilder-invalid .rule-value {
+    /* Purple background for empty text fields */
+    background-color: color-mix(in srgb, rebeccapurple, transparent 60%);
+
+    &::placeholder {
+      color: color-mix(in srgb, rebeccapurple, black 30%);
+    }
+  }
+}
+
+/* Styles for when "Use validation" option is selected (dark theme variations) */
+html[data-theme='dark']
+  .validateQuery
+  .queryBuilder
+  .rule.queryBuilder-invalid
+  .rule-value::placeholder {
+  color: color-mix(in srgb, rebeccapurple, white 30%);
+}

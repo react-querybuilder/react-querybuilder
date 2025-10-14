@@ -1,6 +1,5 @@
 import { $ } from 'bun';
 import { test } from 'bun:test';
-import { stat } from 'node:fs/promises';
 
 const skipGoCompiledTestsEnvVar = 'RQB_SKIP_GO_COMPILED_TESTS';
 
@@ -28,10 +27,14 @@ export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
     const srcModified = !!srcModifiedCheck.trim();
     const srcLatestCommit = await $`git log -1 --format=%cd --date=unix ./cel-evaluator.go`.text();
     const srcLatestCommitMs = Number(srcLatestCommit) * 1000;
-    const { mtimeMs: srcLastModifiedMs } = await stat(`${import.meta.dir}/cel-evaluator.go`);
-    const { mtimeMs: binLastModifiedMs } = await stat(
+    const { mtimeMs: srcLastModifiedMs } = await Bun.file(
+      `${import.meta.dir}/cel-evaluator.go`
+    ).stat();
+    const { mtimeMs: binLastModifiedMs } = await Bun.file(
       `${import.meta.dir}/cel-evaluator${process.platform === 'win32' ? '.exe' : ''}`
-    ).catch(() => ({ mtimeMs: 0 }));
+    )
+      .stat()
+      .catch(() => ({ mtimeMs: 0 }));
 
     buildInvalid = binLastModifiedMs === 0;
     buildOutdated =
@@ -69,9 +72,10 @@ export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
   return (
     !buildInvalid &&
     !buildOutdated &&
-    (async ({ data, cel, typemap }) =>
-      JSON.parse(
-        await $`./cel-evaluator --json=${JSON.stringify(data)} --query=${cel} --types=${JSON.stringify(typemap)}`.text()
-      ))
+    (async ({ data, cel, typemap }) => {
+      const result =
+        await $`./cel-evaluator --json=${JSON.stringify(data)} --query=${cel} --types=${JSON.stringify(typemap)}`.text();
+      return JSON.parse(result || 'null');
+    })
   );
 };

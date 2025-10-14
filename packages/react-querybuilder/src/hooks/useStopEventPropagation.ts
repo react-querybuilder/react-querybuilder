@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 import { useCallback } from 'react';
 
 interface RQBMouseEventHandler {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   (event?: MouseEvent, context?: any): void;
 }
 
@@ -10,6 +10,8 @@ interface RQBMouseEventHandler {
  * Wraps an event handler function in another function that calls
  * `event.preventDefault()` and `event.stopPropagation()` first. The
  * returned function accepts and forwards a second `context` argument.
+ *
+ * @group Hooks
  */
 export const useStopEventPropagation = (method: RQBMouseEventHandler): RQBMouseEventHandler =>
   useCallback(

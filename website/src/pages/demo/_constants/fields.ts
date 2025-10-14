@@ -1,5 +1,5 @@
-import type { Field, RuleType } from 'react-querybuilder';
-import { defaultOperators, toFullOption } from 'react-querybuilder';
+import type { Field, RuleType } from 'react-querybuilder/debug';
+import { defaultOperators, toFullOption } from 'react-querybuilder/debug';
 import { musicalInstruments } from './musicalInstruments';
 
 export const validator = (r: RuleType) => !!r.value;
@@ -32,7 +32,8 @@ export const fields = (
       label: 'Primary instrument',
       valueEditorType: 'select',
       values: musicalInstruments,
-      defaultValue: 'Cowbell',
+      // This must be commented out to properly demonstrate `autoSelectValue={false}`
+      // defaultValue: 'Cowbell',
       operators: defaultOperators.filter(op => op.name === '='),
     },
     {
@@ -40,8 +41,20 @@ export const fields = (
       label: 'Also plays',
       valueEditorType: 'multiselect',
       values: musicalInstruments,
-      defaultValue: 'More cowbell',
+      defaultValue: 'more_cowbell',
       operators: defaultOperators.filter(op => op.name === 'in'),
+    },
+    {
+      name: 'tourStops',
+      label: 'Tour stops',
+      matchModes: true,
+      subproperties: [
+        { name: 'city', label: 'City' },
+        { name: 'state', label: 'State/Province' },
+        { name: 'venue', label: 'Venue' },
+        { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
+        { name: 'country', label: 'Country' },
+      ],
     },
     {
       name: 'gender',
@@ -65,6 +78,7 @@ export const fields = (
       datatype: 'timestamp with time zone',
     },
     { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
+    { name: 'bign', label: 'Big Int', inputType: 'bigint' },
     {
       name: 'groupedField1',
       label: 'Grouped Field 1',

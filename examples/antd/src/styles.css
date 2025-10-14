@@ -1,0 +1,13 @@
+@import 'react-querybuilder/dist/query-builder.css';
+
+body {
+  margin: 0.5rem !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.queryBuilder .ant-input {
+  width: auto;
+}

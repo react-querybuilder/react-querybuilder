@@ -1,0 +1,245 @@
+/**
+ * Layout/structural styles
+ */
+
+// DO NOT ALTER OR REMOVE REGION NAMES. Some of them are used
+// to generate code snippets in the documentation.
+
+@use './variables' as *;
+
+/* Basic */
+.ruleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--#{$rqb-var-prefix}spacing);
+  padding: var(--#{$rqb-var-prefix}spacing);
+  border-width: var(--#{$rqb-var-prefix}border-width);
+
+  .ruleGroup-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--#{$rqb-var-prefix}spacing);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .ruleGroup-header,
+  .rule {
+    display: flex;
+    gap: var(--#{$rqb-var-prefix}spacing);
+    align-items: center;
+  }
+
+  .rule {
+    .rule-value:has(.rule-value-list-item) {
+      display: flex;
+      gap: var(--#{$rqb-var-prefix}spacing);
+      align-items: baseline;
+    }
+
+    &.rule-hasSubQuery {
+      flex-wrap: wrap;
+      padding: var(--#{$rqb-var-prefix}spacing);
+      border-width: var(--#{$rqb-var-prefix}border-width);
+
+      .ruleGroup-body {
+        flex-basis: 100%;
+      }
+    }
+  }
+
+  .betweenRules {
+    display: flex;
+  }
+
+  .shiftActions {
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+      padding: 0;
+    }
+  }
+}
+
+/* #region Drag-and-drop */
+/* Hover styles */
+.dndOver {
+  &.rule,
+  &.ruleGroup-header {
+    padding-bottom: var(--#{$rqb-var-prefix}spacing);
+  }
+  &.betweenRules {
+    padding-top: var(--#{$rqb-var-prefix}spacing);
+  }
+}
+.dndGroup {
+  &.rule.dndOver,
+  &.ruleGroup:has(.ruleGroup-header.dndOver) {
+    padding: var(--#{$rqb-var-prefix}spacing);
+  }
+}
+/* #endregion */
+
+/* #region Branches */
+@mixin branch-layout-styles($direction) {
+  $ltr-after: if($direction == rtl, before, after);
+  $ltr-before: if($direction == rtl, after, before);
+  $margin-side: if($direction == rtl, right, left);
+
+  .ruleGroup-body {
+    margin-#{$margin-side}: calc(2 * var(--#{$rqb-var-prefix}branch-indent));
+  }
+
+  .rule,
+  .ruleGroup .ruleGroup {
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      width: var(--#{$rqb-var-prefix}branch-indent);
+      #{$margin-side}: calc(
+        -1 * (var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width))
+      );
+      border-radius: 0;
+      position: absolute;
+    }
+
+    &::#{$ltr-before} {
+      top: calc(-1 * var(--#{$rqb-var-prefix}spacing));
+      height: calc(50% + var(--#{$rqb-var-prefix}spacing));
+      @if $direction == rtl {
+        border-width: 0
+          var(--#{$rqb-var-prefix}branch-width)
+          var(--#{$rqb-var-prefix}branch-width)
+          0;
+      } @else {
+        border-width: 0
+          0
+          var(--#{$rqb-var-prefix}branch-width)
+          var(--#{$rqb-var-prefix}branch-width);
+      }
+    }
+
+    &::#{$ltr-after} {
+      top: 50%;
+      height: 50%;
+      @if $direction == rtl {
+        border-width: 0 var(--#{$rqb-var-prefix}branch-width) 0 0;
+      } @else {
+        border-width: 0 0 0 var(--#{$rqb-var-prefix}branch-width);
+      }
+    }
+
+    &:last-child::#{$ltr-after} {
+      display: none;
+    }
+  }
+
+  .rule-hasSubQuery,
+  .ruleGroup .ruleGroup {
+    &::before,
+    &::after {
+      #{$margin-side}: calc(
+        -1 *
+          (
+            var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width) +
+              var(--#{$rqb-var-prefix}border-width)
+          )
+      );
+    }
+
+    &::#{$ltr-before} {
+      top: calc(-1 * (var(--#{$rqb-var-prefix}spacing) + var(--#{$rqb-var-prefix}border-width)));
+      height: calc(50% + var(--#{$rqb-var-prefix}spacing) + var(--#{$rqb-var-prefix}border-width));
+    }
+
+    &::#{$ltr-after} {
+      height: calc(50% + var(--#{$rqb-var-prefix}border-width));
+    }
+  }
+
+  .betweenRules {
+    position: relative;
+
+    &::#{$ltr-before} {
+      content: '';
+      width: var(--#{$rqb-var-prefix}branch-indent);
+      #{$margin-side}: calc(
+        -1 * (var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width))
+      );
+      border-radius: 0;
+      position: absolute;
+      top: calc(-1 * var(--#{$rqb-var-prefix}spacing));
+      height: calc(100% + var(--#{$rqb-var-prefix}spacing));
+      @if $direction == rtl {
+        border-width: 0 var(--#{$rqb-var-prefix}branch-width) 0 0;
+      } @else {
+        border-width: 0 0 0 var(--#{$rqb-var-prefix}branch-width);
+      }
+    }
+  }
+}
+
+/* LTR */
+.queryBuilder-branches:dir(ltr) {
+  @include branch-layout-styles(ltr);
+}
+
+/* RTL */
+.queryBuilder-branches:dir(rtl) {
+  @include branch-layout-styles(rtl);
+}
+/* #endregion */
+
+/* #region Justified */
+@mixin justified-auto-margin($direction) {
+  $margin-side: if($direction == rtl, right, left);
+
+  .ruleGroup-combinators,
+  .ruleGroup-notToggle,
+  .shiftActions,
+  .queryBuilder-dragHandle,
+  .ruleGroup-notToggle,
+  .ruleGroup-header,
+  .rule-operators,
+  .rule-value,
+  // Some Bulma controls are wrapped in an element with "control" class
+  .control,
+  // Chakra UI v2 adds classNames to a nested element
+  .chakra-select__wrapper,
+  // Mantine renders a hidden input beside value selectors
+  input[type='hidden'] {
+    & + .ruleGroup-addRule,
+    & + .ruleGroup-addGroup,
+    & + .ruleGroup-cloneGroup,
+    & + .ruleGroup-lock,
+    & + .ruleGroup-remove,
+    & + .rule-cloneRule,
+    & + .rule-lock,
+    & + .rule-remove {
+      margin-#{$margin-side}: auto !important;
+    }
+  }
+
+  .ruleGroup-addRule,
+  .ruleGroup-addGroup {
+    &:first-child {
+      margin-#{$margin-side}: auto !important;
+    }
+  }
+}
+
+/* LTR */
+.queryBuilder-justified:dir(ltr) {
+  @include justified-auto-margin(ltr);
+}
+
+/* RTL */
+.queryBuilder-justified:dir(rtl) {
+  @include justified-auto-margin(rtl);
+}
+/* #endregion */

@@ -1,22 +1,23 @@
-/* eslint-disable unicorn/prefer-module */
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
+import type { PluginOptions as LlmsTxtPluginOptions } from '@signalwire/docusaurus-plugin-llms-txt';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
 import path from 'node:path';
-import { themes } from 'prism-react-renderer/dist/index.mjs';
+import { themes } from 'prism-react-renderer';
+import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';
-import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 import { discordLink } from './src/constants';
+import { remarkPluginImport } from './src/plugins/remark-plugin-import';
 
 const config: Config = {
   title: 'React Query Builder',
-  tagline: 'The Query Builder Component for React',
+  tagline: 'A minimally opinionated, fully customizable query builder solution',
   url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
   favicon: 'img/react-querybuilder.png',
   organizationName: 'react-querybuilder',
   projectName: 'react-querybuilder.github.io',
@@ -28,6 +29,7 @@ const config: Config = {
   ],
   future: {
     experimental_faster: true,
+    v4: true,
   },
   plugins: [
     'docusaurus-plugin-sass',
@@ -59,54 +61,60 @@ const config: Config = {
       name: 'docusaurus-tailwindcss',
       configurePostCss: postcssOptions => {
         postcssOptions.plugins.push(
-          require.resolve('tailwindcss'),
-          require.resolve('autoprefixer'),
+          require.resolve('@tailwindcss/postcss'),
+          require('postcss-prefix-selector')({
+            prefix: '.rqb-tremor',
+            includeFiles: [/rqb-tremor.css/],
+          }),
           require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;
       },
     }),
-    () => ({
-      // This is not actually used, only here just in case
-      name: 'rqb-wp5-raw-loader',
-      configureWebpack: () => ({
-        module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
-      }),
-    }),
-    ...(process.env.RQB_TYPEDOC_DONE
-      ? []
+    // () => ({
+    //   // This is not actually used, only here just in case
+    //   name: 'rqb-wp5-raw-loader',
+    //   configureWebpack: () => ({
+    //     module: { rules: [{ resourceQuery: /raw/, type: 'asset/source' }] },
+    //   }),
+    // }),
+    process.env.RQB_TYPEDOC_DONE
+      ? null
       : [
-          [
-            'docusaurus-plugin-typedoc',
-            {
-              entryPointStrategy: 'packages',
-              entryPoints: ['../packages/*'],
-              out: './api',
-              cleanOutputDir: true,
-              includeVersion: true,
-              name: 'React Query Builder API',
-              readme: 'none',
-              textContentMappings: {
-                'title.indexPage': 'React Query Builder API',
-                'title.memberPage': '{name}',
-                'breadcrumbs.home': '{name}',
-                // @ts-expect-error TODO: find out why this is not in the types because it works
-                'footer.text':
-                  ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
-              },
-              enumMembersFormat: 'table',
-              parametersFormat: 'table',
-              propertiesFormat: 'list',
-              indexFormat: 'table',
-              sidebar: { autoConfiguration: false, pretty: false },
-              sortEntryPoints: true,
+          'docusaurus-plugin-typedoc',
+          {
+            entryPointStrategy: 'packages',
+            entryPoints: ['../packages/*'],
+            out: './api',
+            cleanOutputDir: false,
+            includeVersion: true,
+            name: 'React Query Builder API',
+            readme: 'none',
+            textContentMappings: {
+              'title.indexPage': 'React Query Builder API',
+              'title.memberPage': '{name}',
+              'footer.text':
+                ':::caution\n\nAPI documentation is generated from the latest commit on the [`main` branch](https://github.com/react-querybuilder/react-querybuilder/tree/main). It may be somewhat inconsistent with official releases of React Query Builder.\n\n:::',
+            },
+            enumMembersFormat: 'table',
+            parametersFormat: 'table',
+            propertiesFormat: 'list',
+            indexFormat: 'table',
+            sidebar: {
+              autoConfiguration: true,
+              deprecatedItemClassName: 'deprecated',
               pretty: true,
-              expandObjects: true,
-              expandParameters: true,
-              plugin: ['typedoc-plugin-frontmatter', './frontmatter-plugin.mjs'],
-            } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
-          ],
-        ]),
+              typescript: false,
+            },
+            sortEntryPoints: true,
+            hideGroupHeadings: true,
+            pretty: true,
+            expandObjects: true,
+            expandParameters: true,
+            strikeDeprecatedPageTitles: true,
+            plugin: ['typedoc-plugin-frontmatter', './api-gitkeep.mjs'],
+          } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
+        ],
     [
       'content-docs',
       {
@@ -118,8 +126,54 @@ const config: Config = {
         showLastUpdateTime: true,
         versions: { current: { label: 'Latest' } },
         breadcrumbs: false,
+        sidebarPath: require.resolve('./sidebar-api.js'),
       } satisfies PluginContentDocsOptions,
     ],
+    process.env.CI
+      ? [
+          '@signalwire/docusaurus-plugin-llms-txt',
+          {
+            siteTitle: 'React Query Builder documentation and demos',
+            siteDescription:
+              'Comprehensive guide to the React Query Builder component library and associated packages',
+            optionalLinks: [
+              {
+                title: 'GitHub repository',
+                url: 'https://github.com/react-querybuilder/react-querybuilder',
+              },
+              { title: 'Discord server', url: 'https://discord.gg/MnAQWyUtEg' },
+            ],
+            depth: 2,
+            content: {
+              includeVersionedDocs: false,
+              enableLlmsFullTxt: true,
+              excludeRoutes: [
+                '/api/**',
+                '/docs/api/**',
+                '/docs/category/**',
+                '/docs/changelog',
+                '/docs/migrate',
+                '/docs/tips/styling',
+                '/docs/umd',
+                '/search',
+              ],
+              routeRules: [
+                { route: '/docs/**', categoryName: 'Documentation' },
+                { route: '/docs/components/**', categoryName: 'Components' },
+                { route: '/docs/styling/**', categoryName: 'Styling' },
+                { route: '/docs/utils/**', categoryName: 'Utilities' },
+                { route: '/docs/tips/**', categoryName: 'Tips and Tricks' },
+                {
+                  route: '/docs/{intro,buildless,compat,typescript,migrate,dnd,datetime}',
+                  categoryName: 'Miscellaneous',
+                  depth: 1,
+                },
+              ],
+            },
+            includeOrder: ['Components', 'Styling', 'Utilities', 'Tips and Tricks'],
+          } satisfies LlmsTxtPluginOptions,
+        ]
+      : null,
   ],
   presets: [
     [
@@ -128,14 +182,18 @@ const config: Config = {
         docs: {
           beforeDefaultRemarkPlugins: [remarkPluginImport],
           remarkPlugins: [
+            [remarkPluginNpm2Yarn, { sync: true, converters: ['bun', 'yarn', 'pnpm'] }],
+          ],
+          rehypePlugins: [
             [
-              remarkPluginNpm2Yarn,
+              rehypeRaw,
               {
-                sync: true,
-                converters: [
-                  ['Bun', (npmCode: string) => npmCode.replace(/npm i(nstall)? /, 'bun add ')],
-                  'yarn',
-                  'pnpm',
+                passThrough: [
+                  'mdxFlowExpression',
+                  'mdxjsEsm',
+                  'mdxJsxFlowElement',
+                  'mdxJsxTextElement',
+                  'mdxTextExpression',
                 ],
               },
             ],
@@ -158,7 +216,7 @@ const config: Config = {
         // },
         blog: false,
         theme: {
-          customCss: require.resolve('./src/css/custom.scss'),
+          customCss: require.resolve('./src/css/custom.css'),
         },
         gtag: {
           trackingID: 'G-7VHBQ0YBTJ',
@@ -172,6 +230,7 @@ const config: Config = {
       appId: '1ECMJ15RQA',
       apiKey: '359cf32327b9778459b13f4631f71027',
       indexName: 'react-querybuilder',
+      // askAi: '8xc5m0aWo7qq',
       // contextualSearch: true,
       // searchParameters: {},
     },
@@ -179,6 +238,9 @@ const config: Config = {
       sidebar: {
         hideable: true,
       },
+    },
+    colorMode: {
+      respectPrefersColorScheme: true,
     },
     navbar: {
       title: 'React Query Builder',
@@ -243,6 +305,10 @@ const config: Config = {
             {
               label: 'Showcase',
               to: '/demo',
+            },
+            {
+              label: 'Changelog',
+              to: '/docs/changelog',
             },
           ],
         },

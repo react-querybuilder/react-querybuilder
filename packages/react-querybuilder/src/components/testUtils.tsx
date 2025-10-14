@@ -1,12 +1,12 @@
+import { configureStore } from '@reduxjs/toolkit';
 import type { RenderOptions, RenderResult } from '@testing-library/react';
 import { act, render as og_render } from '@testing-library/react';
 import * as React from 'react';
-import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import type { RqbState } from '../redux';
 import { QueryBuilderStateContext } from '../redux';
-import { warningsSlice } from '../redux/warningsSlice';
 import { queriesSlice } from '../redux/queriesSlice';
+import { warningsSlice } from '../redux/warningsSlice';
 
 export const waitABeat = async (): Promise<void> => {
   await act(async () => {
@@ -43,7 +43,7 @@ const Wrapper = ({ children }: React.PropsWithChildren) => {
 export const render = (
   ui: React.ReactElement,
   renderOptions: RenderOptions = {}
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  // oxlint-disable-next-line typescript/consistent-type-imports
 ): RenderResult<typeof import('@testing-library/dom/types/queries'), HTMLElement, HTMLElement> =>
   og_render(ui, { wrapper: Wrapper, ...renderOptions });
 

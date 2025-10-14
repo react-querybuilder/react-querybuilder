@@ -1,7 +1,7 @@
+import { TestID } from '@react-querybuilder/core';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { RuleType, ShiftActionsProps } from 'react-querybuilder';
-import { TestID } from 'react-querybuilder';
 import { basicSchema, userEventSetup } from './utils';
 
 const labels = { shiftUp: 'shiftUp', shiftDown: 'shiftDown' } as const;
@@ -66,8 +66,8 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
         const btnsUpDisabledProps = screen.getAllByRole('button');
         await act(async () => {
           await user.click(btnsUpDisabledProps[0]);
-          expect(shiftUp).not.toHaveBeenCalled();
         });
+        expect(shiftUp).not.toHaveBeenCalled();
       });
 
       it('down disabled', async () => {
@@ -81,8 +81,8 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
         const btnsDownDisabledProps = screen.getAllByRole('button');
         await act(async () => {
           await user.click(btnsDownDisabledProps[1]);
-          expect(shiftDown).not.toHaveBeenCalled();
         });
+        expect(shiftDown).not.toHaveBeenCalled();
       });
 
       it('enabled', async () => {
@@ -91,12 +91,12 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
         const btnsEnabled = screen.getAllByRole('button');
         await act(async () => {
           await user.click(btnsEnabled[0]);
-          expect(shiftUp).toHaveBeenCalled();
         });
+        expect(shiftUp).toHaveBeenCalled();
         await act(async () => {
           await user.click(btnsEnabled[1]);
-          expect(shiftDown).toHaveBeenCalled();
         });
+        expect(shiftDown).toHaveBeenCalled();
       });
     });
   };

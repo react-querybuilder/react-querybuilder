@@ -1,22 +1,32 @@
 import * as React from 'react';
 import { useContext, useEffect, useMemo, useState } from 'react';
-import type { FullField, QueryBuilderContextProps } from 'react-querybuilder';
+import type { QueryBuilderContextProps } from 'react-querybuilder';
 import {
   messages,
+  preferAnyProp,
+  preferProp,
   QueryBuilderContext,
   useMergedContext,
-  usePreferAnyProp,
-  usePreferProp,
 } from 'react-querybuilder';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
+import { isTouchDevice } from './isTouchDevice';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import { RuleDnD } from './RuleDnD';
 import { RuleGroupDnD } from './RuleGroupDnD';
-import type { QueryBuilderDndProps, UseReactDnD } from './types';
+import type {
+  DndProp,
+  QueryBuilderDndContextProps,
+  QueryBuilderDndProps,
+  UseReactDnD,
+} from './types';
+
+const emptyObject = {} as UseReactDnD;
 
 /**
  * Context provider to enable drag-and-drop. If the application already implements
  * `react-dnd`, use {@link QueryBuilderDndWithoutProvider} instead.
+ *
+ * @group Components
  */
 export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element => {
   const {
@@ -27,6 +37,8 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
     enableMountQueryChange,
     translations,
     canDrop,
+    copyModeModifierKey,
+    groupModeModifierKey,
   } = props;
 
   const rqbContext = useMergedContext({
@@ -42,24 +54,33 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
   const dnd = useReactDnD(props.dnd);
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
-  if (!enableDragAndDrop || !dnd) {
+  const { DndProvider, ReactDndBackend } = dnd ?? emptyObject;
+
+  const contextWithoutDnD = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
+    [rqbContext, debugMode]
+  );
+  const contextWithDnD = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop, debugMode }),
+    [rqbContext, debugMode, enableDragAndDrop]
+  );
+
+  if (!enableDragAndDrop || !dnd || !DndProvider || !ReactDndBackend) {
     return (
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={contextWithoutDnD}>
         {props.children}
       </QueryBuilderContext.Provider>
     );
   }
 
-  const { DndProvider, HTML5Backend } = dnd;
-
   return (
-    <DndProvider key={key} backend={HTML5Backend} debugMode={debugMode}>
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop, debugMode }}>
-        <QueryBuilderDndWithoutProvider dnd={dnd} canDrop={canDrop}>
+    <DndProvider key={key} backend={ReactDndBackend} debugMode={debugMode}>
+      <QueryBuilderContext.Provider key={key} value={contextWithDnD}>
+        <QueryBuilderDndWithoutProvider
+          dnd={dnd}
+          canDrop={canDrop}
+          copyModeModifierKey={copyModeModifierKey}
+          groupModeModifierKey={groupModeModifierKey}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -70,18 +91,26 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
 /**
  * Context provider to enable drag-and-drop. Only use this provider if the application
  * already implements `react-dnd`, otherwise use {@link QueryBuilderDnD}.
+ *
+ * @group Components
  */
 export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): React.JSX.Element => {
   const rqbContext = useContext(QueryBuilderContext);
   const rqbDndContext = useContext(QueryBuilderDndContext);
   const dnd = useReactDnD(props.dnd);
-  const debugMode = usePreferProp(false, props.debugMode, rqbContext.debugMode);
-  const canDrop = usePreferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
-  const enableDragAndDrop = usePreferProp(
-    true,
-    props.enableDragAndDrop,
-    rqbContext.enableDragAndDrop
+  const copyModeModifierKey = preferAnyProp(
+    undefined,
+    props.copyModeModifierKey,
+    rqbDndContext.copyModeModifierKey
   );
+  const groupModeModifierKey = preferAnyProp(
+    undefined,
+    props.groupModeModifierKey,
+    rqbDndContext.groupModeModifierKey
+  );
+  const enableDragAndDrop = preferProp(true, props.enableDragAndDrop, rqbContext.enableDragAndDrop);
+  const debugMode = preferProp(false, props.debugMode, rqbContext.debugMode);
+  const canDrop = preferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
   const baseControls = useMemo(
@@ -112,9 +141,11 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     ]
   );
 
-  const newContext: QueryBuilderContextProps<FullField, string> = useMemo(
+  const newContext: QueryBuilderContextProps = useMemo(
     () => ({
       ...rqbContext,
+      enableDragAndDrop,
+      debugMode,
       controlElements: {
         ...rqbContext.controlElements,
         ruleGroup: RuleGroupDnD,
@@ -122,26 +153,34 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
         inlineCombinator: InlineCombinatorDnD,
       },
     }),
-    [rqbContext]
+    [debugMode, enableDragAndDrop, rqbContext]
   );
 
-  if (!enableDragAndDrop || !dnd) {
+  const { DndContext, useDrag, useDrop } = dnd ?? {};
+
+  const dndContextValue: QueryBuilderDndContextProps = useMemo(
+    () => ({ baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop }),
+    [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop]
+  );
+
+  const contextWithoutDnD = useMemo(
+    () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
+    [rqbContext, debugMode]
+  );
+
+  if (!enableDragAndDrop || !DndContext) {
     return (
-      <QueryBuilderContext.Provider
-        key={key}
-        value={{ ...rqbContext, enableDragAndDrop: false, debugMode }}>
+      <QueryBuilderContext.Provider key={key} value={contextWithoutDnD}>
         {props.children}
       </QueryBuilderContext.Provider>
     );
   }
 
-  const { DndContext, useDrag, useDrop } = dnd;
-
   return (
     <DndContext.Consumer key={key}>
       {() => (
         <QueryBuilderContext.Provider key={key} value={newContext}>
-          <QueryBuilderDndContext.Provider value={{ useDrag, useDrop, baseControls, canDrop }}>
+          <QueryBuilderDndContext.Provider value={dndContextValue}>
             {props.children}
           </QueryBuilderDndContext.Provider>
         </QueryBuilderContext.Provider>
@@ -152,22 +191,43 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
-export const useReactDnD = (dndParam?: UseReactDnD): UseReactDnD | null => {
-  const [dnd, setDnd] = useState<UseReactDnD | null>(dndParam ?? null);
+/**
+ * @group Hooks
+ */
+export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
+  const [dnd, setDnd] = useState<DndProp | null>(dndParam ?? null);
 
   useEffect(() => {
     let didCancel = false;
 
     const getDnD = async () => {
-      const [reactDnD, reactDnDHTML5Be] = await Promise.all([
-        import('react-dnd').catch(() => null),
-        import('react-dnd-html5-backend').catch(() => null),
-      ]);
+      const [reactDnD, reactDndHTML5Be, reactDndTouchBe] = await Promise.all(
+        ['', '-html5-backend', '-touch-backend'].map(pn =>
+          import(/* @vite-ignore */ `react-dnd${pn}`).catch(() => null)
+        )
+      );
 
       // istanbul ignore else
       if (!didCancel) {
-        if (reactDnD && reactDnDHTML5Be) {
-          setDnd(() => ({ ...reactDnD, ...reactDnDHTML5Be }));
+        if (reactDnD) {
+          // istanbul ignore next
+          // Only prefer HTML5 backend if not touch device or we don't have the touch backend
+          // (Can't test this since jsdom unconditionally defines `window.ontouchstart`.)
+          if (reactDndHTML5Be && (!reactDndTouchBe || (reactDndTouchBe && !isTouchDevice()))) {
+            setDnd(() => ({
+              ...reactDnD,
+              ...reactDndHTML5Be,
+              ...reactDndTouchBe,
+              ReactDndBackend: reactDndHTML5Be.HTML5Backend,
+            }));
+          } else if (reactDndTouchBe) {
+            setDnd(() => ({
+              ...reactDnD,
+              ...reactDndTouchBe,
+              ...reactDndHTML5Be,
+              ReactDndBackend: reactDndTouchBe.TouchBackend,
+            }));
+          }
         } else {
           // istanbul ignore else
           if (process.env.NODE_ENV !== 'production' && !didWarnEnabledDndWithoutReactDnD) {
@@ -187,5 +247,13 @@ export const useReactDnD = (dndParam?: UseReactDnD): UseReactDnD | null => {
     };
   }, [dnd]);
 
-  return dnd;
+  // istanbul ignore next
+  if (dnd && !dnd.ReactDndBackend) {
+    // Prefer touch backend if this is a touch device
+    dnd.ReactDndBackend = isTouchDevice()
+      ? (dnd.TouchBackend ?? dnd.HTML5Backend)
+      : (dnd.HTML5Backend ?? dnd.TouchBackend);
+  }
+
+  return dnd as UseReactDnD;
 };

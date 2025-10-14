@@ -1,13 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LogType, standardClassnames } from '../defaults';
-import { useControlledOrUncontrolled } from '../hooks/useControlledOrUncontrolled';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
-import {
-  _RQB_INTERNAL_dispatchThunk,
-  useRQB_INTERNAL_QueryBuilderDispatch,
-  useRQB_INTERNAL_QueryBuilderStore,
-} from '../redux/_internal';
 import type {
   FullCombinator,
   FullField,
@@ -15,32 +5,41 @@ import type {
   FullOptionMap,
   GetOptionIdentifierType,
   GetRuleTypeFromGroupWithFieldAndOperator,
+  MatchModeOptions,
   Path,
   QueryActions,
-  QueryBuilderProps,
   QueryValidator,
-  RuleGroupProps,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
-  Schema,
-  TranslationsFull,
   UpdateableProperties,
   ValidationMap,
-  ValueSources,
-} from '../types';
+  ValueSourceFullOptions,
+} from '@react-querybuilder/core';
 import {
   add,
+  clsx,
   findPath,
   generateAccessibleDescription,
+  group,
   isRuleGroup,
   isRuleGroupTypeIC,
+  LogType,
   move,
   pathIsDisabled,
   prepareRuleGroup,
   remove,
+  standardClassnames,
   update,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+} from '@react-querybuilder/core';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
+import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
+import {
+  _RQB_INTERNAL_dispatchThunk,
+  useRQB_INTERNAL_QueryBuilderDispatch,
+  useRQB_INTERNAL_QueryBuilderStore,
+} from '../redux/_internal';
+import type { QueryBuilderProps, RuleGroupProps, Schema, TranslationsFull } from '../types';
 import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
 const defaultValidationResult: ReturnType<QueryValidator> = {};
@@ -76,6 +75,8 @@ export type UseQueryBuilderSchema<
 /**
  * For given {@link QueryBuilderProps} and setup values from {@link useQueryBuilderSetup},
  * prepares and returns all values required to render a query builder.
+ *
+ * @group Hooks
  */
 export function useQueryBuilderSchema<
   RG extends RuleGroupTypeAny,
@@ -98,6 +99,8 @@ export function useQueryBuilderSchema<
     onAddGroup = defaultOnAddMoveRemove,
     onMoveRule = defaultOnAddMoveRemove,
     onMoveGroup = defaultOnAddMoveRemove,
+    onGroupRule = defaultOnAddMoveRemove,
+    onGroupGroup = defaultOnAddMoveRemove,
     onRemove = defaultOnAddMoveRemove,
     onQueryChange,
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
@@ -105,11 +108,13 @@ export function useQueryBuilderSchema<
     showShiftActions: showShiftActionsProp = false,
     showCloneButtons: showCloneButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
+    showMuteButtons: showMuteButtonsProp = false,
     suppressStandardClassnames: suppressStandardClassnamesProp = false,
     resetOnFieldChange: resetOnFieldChangeProp = true,
     resetOnOperatorChange: resetOnOperatorChangeProp = false,
     autoSelectField: autoSelectFieldProp = true,
     autoSelectOperator: autoSelectOperatorProp = true,
+    autoSelectValue: autoSelectValueProp = true,
     addRuleToNewGroups: addRuleToNewGroupsProp = false,
     listsAsArrays: listsAsArraysProp = false,
     parseNumbers = false,
@@ -127,7 +132,9 @@ export function useQueryBuilderSchema<
     fieldMap,
     combinators,
     getOperatorsMain,
+    getMatchModesMain,
     getRuleDefaultOperator,
+    getSubQueryBuilderPropsMain,
     getValueEditorTypeMain,
     getValueSourcesMain,
     getValuesMain,
@@ -146,19 +153,22 @@ export function useQueryBuilderSchema<
     translations,
   } = incomingRqbContext;
 
-  // #region Boolean coercion
+  // #region Type coercions
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
   const showCloneButtons = !!showCloneButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
+  const showMuteButtons = !!showMuteButtonsProp;
   const resetOnFieldChange = !!resetOnFieldChangeProp;
   const resetOnOperatorChange = !!resetOnOperatorChangeProp;
   const autoSelectField = !!autoSelectFieldProp;
   const autoSelectOperator = !!autoSelectOperatorProp;
+  const autoSelectValue = !!autoSelectValueProp;
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
+  const maxLevels = (props.maxLevels ?? 0) > 0 ? Number(props.maxLevels) : Infinity;
   // #endregion
 
   const log = useCallback(
@@ -170,7 +180,7 @@ export function useQueryBuilderSchema<
     [debugMode, onLog]
   );
 
-  // #region Handle controlled mode vs uncontrolled mode
+  // #region Controlled vs uncontrolled mode
   useControlledOrUncontrolled({
     defaultQuery: defaultQueryProp,
     queryProp,
@@ -265,7 +275,7 @@ export function useQueryBuilderSchema<
   );
 
   const onRuleAdd = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (rule: R, parentPath: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -284,16 +294,27 @@ export function useQueryBuilderSchema<
       const newQuery = add(queryLocal, newRule, parentPath, {
         combinators,
         combinatorPreceding: newRule.combinatorPreceding ?? undefined,
+        idGenerator,
       });
       log({ qbId, type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
       dispatchQuery(newQuery);
     },
-    [qbId, queryBuilderStore, queryDisabled, onAddRule, combinators, dispatchQuery, log]
+    [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      onAddRule,
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+    ]
   );
 
   const onGroupAdd = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (ruleGroup: RG, parentPath: Path, context?: any) => {
+      if (parentPath.length >= maxLevels) return;
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
       if (!queryLocal) return;
@@ -317,15 +338,26 @@ export function useQueryBuilderSchema<
       const newQuery = add(queryLocal, newGroup, parentPath, {
         combinators,
         combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
+        idGenerator,
       });
       log({ qbId, type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
       dispatchQuery(newQuery);
     },
-    [qbId, queryBuilderStore, queryDisabled, onAddGroup, combinators, log, dispatchQuery]
+    [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      maxLevels,
+      onAddGroup,
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
+    ]
   );
 
   const onPropChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (prop: UpdateableProperties, value: any, path: Path) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
       // istanbul ignore if
@@ -334,32 +366,38 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
         return;
       }
+
       const newQuery = update(queryLocal, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
-        getValueSources: getValueSourcesMain as (field: string) => ValueSources,
+        getValueSources: getValueSourcesMain as (
+          field: string,
+          operator: string
+        ) => ValueSourceFullOptions,
         getRuleDefaultValue,
+        getMatchModes: getMatchModesMain as (field: string) => MatchModeOptions,
       });
       log({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
       dispatchQuery(newQuery);
     },
     [
+      dispatchQuery,
+      getMatchModesMain,
+      getRuleDefaultOperator,
+      getRuleDefaultValue,
+      getValueSourcesMain,
+      log,
       qbId,
       queryBuilderStore,
       queryDisabled,
       resetOnFieldChange,
       resetOnOperatorChange,
-      getRuleDefaultOperator,
-      getValueSourcesMain,
-      getRuleDefaultValue,
-      log,
-      dispatchQuery,
     ]
   );
 
   const onRuleOrGroupRemove = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (path: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -382,11 +420,11 @@ export function useQueryBuilderSchema<
         }
       }
     },
-    [qbId, queryBuilderStore, queryDisabled, log, onRemove, dispatchQuery]
+    [dispatchQuery, log, onRemove, qbId, queryBuilderStore, queryDisabled]
   );
 
   const moveRule = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // istanbul ignore if
@@ -395,7 +433,7 @@ export function useQueryBuilderSchema<
         log({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
         return;
       }
-      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators });
+      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators, idGenerator });
       const ruleOrGroup = findPath(oldPath, queryLocal)!;
       const isGroup = isRuleGroup(ruleOrGroup);
       const callbackResult = (
@@ -419,14 +457,81 @@ export function useQueryBuilderSchema<
       dispatchQuery(newQuery);
     },
     [
+      combinators,
+      dispatchQuery,
+      idGenerator,
+      log,
+      onMoveGroup,
+      onMoveRule,
       qbId,
       queryBuilderStore,
       queryDisabled,
+    ]
+  );
+
+  const groupRule = useCallback(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
+      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
+      // istanbul ignore if
+      if (!queryLocal) return;
+      if (pathIsDisabled(sourcePath, queryLocal) || queryDisabled) {
+        log({ qbId, type: LogType.pathDisabled, sourcePath, targetPath, query: queryLocal });
+        return;
+      }
+      const nextQuery = group(queryLocal, sourcePath, targetPath, {
+        clone,
+        combinators,
+        idGenerator,
+      });
+      const ruleOrGroup = findPath(sourcePath, queryLocal)!;
+      const isGroup = isRuleGroup(ruleOrGroup);
+      const callbackResult = (
+        (isGroup ? onGroupGroup : onGroupRule) as (...args: unknown[]) => RG | boolean
+      )(
+        ruleOrGroup,
+        sourcePath,
+        targetPath,
+        queryLocal,
+        nextQuery,
+        { clone, combinators },
+        context
+      );
+      if (!callbackResult) {
+        log({
+          qbId,
+          type: isGroup ? LogType.onGroupGroupFalse : LogType.onGroupRuleFalse,
+          ruleOrGroup,
+          sourcePath,
+          targetPath,
+          clone,
+          query: queryLocal,
+          nextQuery,
+        });
+        return;
+      }
+      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
+      log({
+        qbId,
+        type: LogType.group,
+        query: queryLocal,
+        newQuery,
+        sourcePath,
+        targetPath,
+        clone,
+      });
+      dispatchQuery(newQuery);
+    },
+    [
       combinators,
-      onMoveGroup,
-      onMoveRule,
-      log,
       dispatchQuery,
+      idGenerator,
+      log,
+      onGroupGroup,
+      onGroupRule,
+      qbId,
+      queryBuilderStore,
+      queryDisabled,
     ]
   );
   // #endregion
@@ -485,6 +590,19 @@ export function useQueryBuilderSchema<
   );
   // #endregion
 
+  // #region Setup overrides
+  /**
+   * This function overrides `createRuleGroup` from `useQueryBuilderSetup`, removing the
+   * requirement to pass a `boolean` parameter. If `independentCombinators` is `true`, it will
+   * always create a `RuleGroupTypeIC` even if called with no parameters. (We have to override
+   * it here because `independentCombinators` is not evaluated in `useQueryBuilderSetup`.)
+   */
+  const createRuleGroupOverride = useCallback(
+    (ic?: boolean) => createRuleGroup(ic ?? independentCombinators),
+    [createRuleGroup, independentCombinators]
+  );
+  // #endregion
+
   // #region Schema/actions
   const schema = useMemo(
     (): Schema<F, GetOptionIdentifierType<O>> => ({
@@ -492,11 +610,12 @@ export function useQueryBuilderSchema<
       accessibleDescriptionGenerator,
       autoSelectField,
       autoSelectOperator,
+      autoSelectValue,
       classNames: controlClassnames,
       combinators,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroup: createRuleGroupOverride,
       disabledPaths,
       enableDragAndDrop,
       fieldMap: fieldMap as FullOptionMap<F>,
@@ -505,19 +624,23 @@ export function useQueryBuilderSchema<
       getQuery,
       getInputType: getInputTypeMain,
       getOperators: getOperatorsMain,
+      getMatchModes: getMatchModesMain,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderProps: getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorType: getValueEditorTypeMain,
       getValues: getValuesMain,
       getValueSources: getValueSourcesMain,
       independentCombinators,
       listsAsArrays,
+      maxLevels,
       parseNumbers,
       qbId,
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
+      showMuteButtons,
       showNotToggle,
       showShiftActions,
       suppressStandardClassnames,
@@ -528,11 +651,12 @@ export function useQueryBuilderSchema<
       addRuleToNewGroups,
       autoSelectField,
       autoSelectOperator,
+      autoSelectValue,
       combinators,
       controlClassnames,
       controls,
       createRule,
-      createRuleGroup,
+      createRuleGroupOverride,
       disabledPaths,
       dispatchQuery,
       enableDragAndDrop,
@@ -540,20 +664,24 @@ export function useQueryBuilderSchema<
       fields,
       getInputTypeMain,
       getOperatorsMain,
+      getMatchModesMain,
       getQuery,
       getRuleClassname,
       getRuleGroupClassname,
+      getSubQueryBuilderPropsMain,
       getValueEditorSeparator,
       getValueEditorTypeMain,
       getValuesMain,
       getValueSourcesMain,
       independentCombinators,
       listsAsArrays,
+      maxLevels,
       parseNumbers,
       qbId,
       showCloneButtons,
       showCombinatorsBetweenRules,
       showLockButtons,
+      showMuteButtons,
       showNotToggle,
       showShiftActions,
       suppressStandardClassnames,
@@ -569,8 +697,9 @@ export function useQueryBuilderSchema<
       onPropChange,
       onRuleAdd,
       onRuleRemove: onRuleOrGroupRemove,
+      groupRule,
     }),
-    [moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
+    [groupRule, moveRule, onGroupAdd, onPropChange, onRuleAdd, onRuleOrGroupRemove]
   );
   // #endregion
 

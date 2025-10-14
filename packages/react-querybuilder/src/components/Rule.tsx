@@ -1,37 +1,61 @@
-import type { MouseEvent } from 'react';
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
-import { standardClassnames, TestID } from '../defaults';
-import { useDeprecatedProps } from '../hooks/useDeprecatedProps';
-import { useReactDndWarning } from '../hooks/useReactDndWarning';
-import { useStopEventPropagation } from '../hooks/useStopEventPropagation';
 import type {
   ActionElementEventHandler,
   FlexibleOptionList,
   FullField,
   FullOperator,
+  FullOption,
   InputType,
+  MatchModeOptions,
   Option,
   OptionList,
-  RuleProps,
+  RuleGroupType,
   RuleType,
   ValidationResult,
   ValueChangeEventHandler,
   ValueEditorType,
-  ValueSourceOptions,
+  ValueSourceFullOptions,
   ValueSources,
-} from '../types';
+} from '@react-querybuilder/core';
 import {
+  clsx,
   filterFieldsByComparator,
   getOption,
   getParentPath,
   getValidationClassNames,
-} from '../utils';
-import { clsx } from '../utils/clsx';
+  isFlexibleOptionArray,
+  isFlexibleOptionGroupArray,
+  isPojo,
+  isRuleGroup,
+  lc,
+  rootPath,
+  standardClassnames,
+  TestID,
+  toFullOptionList,
+} from '@react-querybuilder/core';
+import type { MouseEvent } from 'react';
+import * as React from 'react';
+import { useCallback, useMemo } from 'react';
+import type { UseFields } from '../hooks';
+import {
+  useDeprecatedProps,
+  useFields,
+  useReactDndWarning,
+  useStopEventPropagation,
+} from '../hooks';
+import type { RuleProps, ShiftActionsProps, TranslationsFull } from '../types';
+import { useQueryBuilder } from './QueryBuilder.useQueryBuilder';
+import type { UseRuleGroup } from './RuleGroup';
+import { useRuleGroup } from './RuleGroup';
+
+const defaultMatch = { mode: 'all' } as const;
+
+const defaultSubproperties: FullOption[] = [{ name: '', value: '', label: '' }];
 
 /**
  * Default component to display {@link RuleType} objects. This is
  * actually a small wrapper around {@link RuleComponents}.
+ *
+ * @group Components
  */
 export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element> = React.memo(
   function Rule(props: RuleProps): React.JSX.Element {
@@ -39,9 +63,22 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
 
     const cloneRule = useStopEventPropagation(r.cloneRule);
     const toggleLockRule = useStopEventPropagation(r.toggleLockRule);
+    const toggleMuteRule = useStopEventPropagation(r.toggleMuteRule);
     const removeRule = useStopEventPropagation(r.removeRule);
     const shiftRuleUp = useStopEventPropagation(r.shiftRuleUp);
     const shiftRuleDown = useStopEventPropagation(r.shiftRuleDown);
+
+    const actions = useMemo(
+      () => ({
+        cloneRule,
+        toggleLockRule,
+        toggleMuteRule,
+        removeRule,
+        shiftRuleUp,
+        shiftRuleDown,
+      }),
+      [cloneRule, removeRule, shiftRuleDown, shiftRuleUp, toggleLockRule, toggleMuteRule]
+    );
 
     return (
       <div
@@ -53,272 +90,399 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
         data-rule-id={r.id}
         data-level={r.path.length}
         data-path={JSON.stringify(r.path)}>
-        <RuleComponents
-          {...r}
-          cloneRule={cloneRule}
-          toggleLockRule={toggleLockRule}
-          removeRule={removeRule}
-          shiftRuleUp={shiftRuleUp}
-          shiftRuleDown={shiftRuleDown}
-        />
+        {r.matchModes.length > 0 ? (
+          <RuleComponentsWithSubQuery {...r} {...actions} />
+        ) : (
+          <RuleComponents {...r} {...actions} />
+        )}
       </div>
     );
   }
 );
 
+interface RuleComponentsProps extends UseRule {
+  subQuery?: UseRuleGroup;
+  groupComponentsWrapper?: React.ComponentType<{
+    children: React.ReactNode;
+    className: string;
+  }>;
+}
+
 /**
- * Renders a `React.Fragment` containing an array of form controls for managing
- * a {@link RuleType}.
+ * Renders a `React.Fragment` containing an array of form controls for managing a {@link RuleType}.
+ *
+ * @group Components
  */
 export const RuleComponents: React.MemoExoticComponent<
-  (r: RuleProps & UseRule) => React.JSX.Element
-> = React.memo(function RuleComponents(r: RuleProps & UseRule) {
+  (r: RuleComponentsProps) => React.JSX.Element
+> = React.memo(function RuleComponents(r: RuleComponentsProps) {
   const {
     schema: {
       controls: {
         shiftActions: ShiftActionsControlElement,
         dragHandle: DragHandleControlElement,
         fieldSelector: FieldSelectorControlElement,
+        matchModeEditor: MatchModeEditorControlElement,
         operatorSelector: OperatorSelectorControlElement,
         valueSourceSelector: ValueSourceSelectorControlElement,
         valueEditor: ValueEditorControlElement,
         cloneRuleAction: CloneRuleActionControlElement,
         lockRuleAction: LockRuleActionControlElement,
+        muteRuleAction: MuteRuleActionControlElement,
         removeRuleAction: RemoveRuleActionControlElement,
+        ruleGroupBodyElements: RuleGroupBodyControlElements,
+        ruleGroupHeaderElements: RuleGroupHeaderControlElements,
       },
     },
+    groupComponentsWrapper: GroupComponentsWrapper = React.Fragment,
   } = r;
 
+  const commonSubcomponentProps = useMemo(
+    () => ({
+      level: r.path.length,
+      path: r.path,
+      disabled: r.disabled,
+      context: r.context,
+      validation: r.validationResult,
+      schema: r.schema,
+      rule: r.rule,
+    }),
+    [r.path, r.disabled, r.context, r.validationResult, r.schema, r.rule]
+  );
+
+  const showFieldSelector = useMemo(
+    () =>
+      !(
+        r.schema.fields.length === 1 &&
+        isPojo(r.schema.fields[0]) &&
+        'value' in r.schema.fields[0] &&
+        r.schema.fields[0].value === ''
+      ),
+    [r.schema.fields]
+  );
+
+  const shiftTitles = useMemo(
+    (): ShiftActionsProps['titles'] =>
+      r.schema.showShiftActions
+        ? {
+            shiftUp: r.translations.shiftActionUp.title,
+            shiftDown: r.translations.shiftActionDown.title,
+          }
+        : undefined,
+    [r.schema.showShiftActions, r.translations]
+  );
+  const shiftLabels = useMemo(
+    (): ShiftActionsProps['labels'] =>
+      r.schema.showShiftActions
+        ? {
+            shiftUp: r.translations.shiftActionUp.label,
+            shiftDown: r.translations.shiftActionDown.label,
+          }
+        : undefined,
+    [r.schema.showShiftActions, r.translations]
+  );
+
   return (
-    <>
+    <React.Fragment>
       {r.schema.showShiftActions && (
         <ShiftActionsControlElement
           key={TestID.shiftActions}
+          {...commonSubcomponentProps}
           testID={TestID.shiftActions}
-          level={r.path.length}
-          path={r.path}
-          titles={{
-            shiftUp: r.translations.shiftActionUp.title,
-            shiftDown: r.translations.shiftActionDown.title,
-          }}
-          labels={{
-            shiftUp: r.translations.shiftActionUp.label,
-            shiftDown: r.translations.shiftActionDown.label,
-          }}
+          titles={shiftTitles}
+          labels={shiftLabels}
           className={r.classNames.shiftActions}
-          disabled={r.disabled}
+          ruleOrGroup={r.rule}
           shiftUp={r.shiftRuleUp}
           shiftDown={r.shiftRuleDown}
           shiftUpDisabled={r.shiftUpDisabled}
           shiftDownDisabled={r.shiftDownDisabled}
-          context={r.context}
-          validation={r.validationResult}
-          schema={r.schema}
-          ruleOrGroup={r.rule}
         />
       )}
       {r.schema.enableDragAndDrop && (
         <DragHandleControlElement
           key={TestID.dragHandle}
+          {...commonSubcomponentProps}
           testID={TestID.dragHandle}
           ref={r.dragRef}
-          level={r.path.length}
-          path={r.path}
           title={r.translations.dragHandle.title}
           label={r.translations.dragHandle.label}
           className={r.classNames.dragHandle}
-          disabled={r.disabled}
-          context={r.context}
-          validation={r.validationResult}
-          schema={r.schema}
           ruleOrGroup={r.rule}
         />
       )}
-      <FieldSelectorControlElement
-        key={TestID.fields}
-        testID={TestID.fields}
-        options={r.schema.fields}
-        title={r.translations.fields.title}
-        value={r.rule.field}
-        operator={r.rule.operator}
-        className={r.classNames.fields}
-        handleOnChange={r.onChangeField}
-        level={r.path.length}
-        path={r.path}
-        disabled={r.disabled}
-        context={r.context}
-        validation={r.validationResult}
-        schema={r.schema}
-        rule={r.rule}
-      />
-      {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) && (
-        <>
-          <OperatorSelectorControlElement
-            key={TestID.operators}
-            testID={TestID.operators}
+      {showFieldSelector && (
+        <FieldSelectorControlElement
+          key={TestID.fields}
+          {...commonSubcomponentProps}
+          testID={TestID.fields}
+          options={r.schema.fields}
+          title={r.translations.fields.title}
+          value={r.rule.field}
+          operator={r.rule.operator}
+          className={r.classNames.fields}
+          handleOnChange={r.onChangeField}
+        />
+      )}
+      {(r.schema.autoSelectField || r.rule.field !== r.translations.fields.placeholderName) &&
+        (r.subQuery ? (
+          <MatchModeEditorControlElement
+            key={TestID.matchModeEditor}
+            {...commonSubcomponentProps}
+            testID={TestID.matchModeEditor}
             field={r.rule.field}
             fieldData={r.fieldData}
-            title={r.translations.operators.title}
-            options={r.operators}
-            value={r.rule.operator}
-            className={r.classNames.operators}
-            handleOnChange={r.onChangeOperator}
-            level={r.path.length}
-            path={r.path}
-            disabled={r.disabled}
-            context={r.context}
-            validation={r.validationResult}
-            schema={r.schema}
-            rule={r.rule}
+            title={r.translations.matchMode.title}
+            options={r.matchModes}
+            // TODO: Support `defaultMatchMode` at query or field level?
+            match={r.rule.match ?? /* istanbul ignore next */ defaultMatch}
+            className={r.classNames.matchMode}
+            classNames={r.classNames}
+            handleOnChange={r.onChangeMatchMode}
           />
-          {(r.schema.autoSelectOperator ||
-            r.rule.operator !== r.translations.operators.placeholderName) &&
-            !r.hideValueControls && (
-              <>
-                {!['null', 'notNull'].includes(r.rule.operator) && r.valueSources.length > 1 && (
-                  <ValueSourceSelectorControlElement
-                    key={TestID.valueSourceSelector}
-                    testID={TestID.valueSourceSelector}
+        ) : (
+          <React.Fragment>
+            <OperatorSelectorControlElement
+              key={TestID.operators}
+              {...commonSubcomponentProps}
+              testID={TestID.operators}
+              field={r.rule.field}
+              fieldData={r.fieldData}
+              title={r.translations.operators.title}
+              options={r.operators}
+              value={r.rule.operator}
+              className={r.classNames.operators}
+              handleOnChange={r.onChangeOperator}
+            />
+            {(r.schema.autoSelectOperator ||
+              r.rule.operator !== r.translations.operators.placeholderName) &&
+              !r.hideValueControls && (
+                <React.Fragment>
+                  {!['null', 'notnull'].includes(lc(`${r.rule.operator}`)) &&
+                    r.valueSources.length > 1 && (
+                      <ValueSourceSelectorControlElement
+                        key={TestID.valueSourceSelector}
+                        {...commonSubcomponentProps}
+                        testID={TestID.valueSourceSelector}
+                        field={r.rule.field}
+                        fieldData={r.fieldData}
+                        title={r.translations.valueSourceSelector.title}
+                        options={r.valueSourceOptions}
+                        value={r.rule.valueSource ?? 'value'}
+                        className={r.classNames.valueSource}
+                        handleOnChange={r.onChangeValueSource}
+                      />
+                    )}
+                  <ValueEditorControlElement
+                    key={TestID.valueEditor}
+                    {...commonSubcomponentProps}
+                    testID={TestID.valueEditor}
                     field={r.rule.field}
                     fieldData={r.fieldData}
-                    title={r.translations.valueSourceSelector.title}
-                    options={r.valueSourceOptions}
-                    value={r.rule.valueSource ?? 'value'}
-                    className={r.classNames.valueSource}
-                    handleOnChange={r.onChangeValueSource}
-                    level={r.path.length}
-                    path={r.path}
-                    disabled={r.disabled}
-                    context={r.context}
-                    validation={r.validationResult}
-                    schema={r.schema}
-                    rule={r.rule}
+                    title={r.translations.value.title}
+                    operator={r.rule.operator}
+                    value={r.rule.value}
+                    valueSource={r.rule.valueSource ?? 'value'}
+                    type={r.valueEditorType}
+                    inputType={r.inputType}
+                    values={r.values}
+                    listsAsArrays={r.schema.listsAsArrays}
+                    parseNumbers={r.schema.parseNumbers}
+                    separator={r.valueEditorSeparator}
+                    className={r.classNames.value}
+                    handleOnChange={r.onChangeValue}
                   />
-                )}
-                <ValueEditorControlElement
-                  key={TestID.valueEditor}
-                  testID={TestID.valueEditor}
-                  field={r.rule.field}
-                  fieldData={r.fieldData}
-                  title={r.translations.value.title}
-                  operator={r.rule.operator}
-                  value={r.rule.value}
-                  valueSource={r.rule.valueSource ?? 'value'}
-                  type={r.valueEditorType}
-                  inputType={r.inputType}
-                  values={r.values}
-                  listsAsArrays={r.schema.listsAsArrays}
-                  parseNumbers={r.schema.parseNumbers}
-                  separator={r.valueEditorSeparator}
-                  className={r.classNames.value}
-                  handleOnChange={r.onChangeValue}
-                  level={r.path.length}
-                  path={r.path}
-                  disabled={r.disabled}
-                  context={r.context}
-                  validation={r.validationResult}
-                  schema={r.schema}
-                  rule={r.rule}
-                />
-              </>
-            )}
-        </>
+                </React.Fragment>
+              )}
+          </React.Fragment>
+        ))}
+      {r.subQuery && (
+        <GroupComponentsWrapper className={r.subQuery.classNames.header}>
+          <RuleGroupHeaderControlElements {...r.subQuery} />
+        </GroupComponentsWrapper>
       )}
       {r.schema.showCloneButtons && (
         <CloneRuleActionControlElement
           key={TestID.cloneRule}
+          {...commonSubcomponentProps}
           testID={TestID.cloneRule}
           label={r.translations.cloneRule.label}
           title={r.translations.cloneRule.title}
           className={r.classNames.cloneRule}
-          handleOnClick={r.cloneRule}
-          level={r.path.length}
-          path={r.path}
-          disabled={r.disabled}
-          context={r.context}
-          validation={r.validationResult}
           ruleOrGroup={r.rule}
-          schema={r.schema}
+          handleOnClick={r.cloneRule}
         />
       )}
       {r.schema.showLockButtons && (
         <LockRuleActionControlElement
           key={TestID.lockRule}
+          {...commonSubcomponentProps}
           testID={TestID.lockRule}
           label={r.translations.lockRule.label}
           title={r.translations.lockRule.title}
           className={r.classNames.lockRule}
-          handleOnClick={r.toggleLockRule}
-          level={r.path.length}
-          path={r.path}
-          disabled={r.disabled}
-          disabledTranslation={r.parentDisabled ? undefined : r.translations.lockRuleDisabled}
-          context={r.context}
-          validation={r.validationResult}
           ruleOrGroup={r.rule}
-          schema={r.schema}
+          handleOnClick={r.toggleLockRule}
+          disabledTranslation={r.parentDisabled ? undefined : r.translations.lockRuleDisabled}
+        />
+      )}
+      {r.schema.showMuteButtons && (
+        <MuteRuleActionControlElement
+          key={TestID.muteRule}
+          {...commonSubcomponentProps}
+          testID={TestID.muteRule}
+          label={r.rule.muted ? r.translations.unmuteRule.label : r.translations.muteRule.label}
+          title={r.rule.muted ? r.translations.unmuteRule.title : r.translations.muteRule.title}
+          className={r.classNames.muteRule}
+          ruleOrGroup={r.rule}
+          handleOnClick={r.toggleMuteRule}
         />
       )}
       <RemoveRuleActionControlElement
         key={TestID.removeRule}
+        {...commonSubcomponentProps}
         testID={TestID.removeRule}
         label={r.translations.removeRule.label}
         title={r.translations.removeRule.title}
         className={r.classNames.removeRule}
-        handleOnClick={r.removeRule}
-        level={r.path.length}
-        path={r.path}
-        disabled={r.disabled}
-        context={r.context}
-        validation={r.validationResult}
         ruleOrGroup={r.rule}
-        schema={r.schema}
+        handleOnClick={r.removeRule}
       />
-    </>
+      {r.subQuery && (
+        <GroupComponentsWrapper className={r.subQuery.classNames.body}>
+          <RuleGroupBodyControlElements {...r.subQuery} />
+        </GroupComponentsWrapper>
+      )}
+    </React.Fragment>
   );
 });
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type UseRule = RuleProps & {
+/**
+ * @group Components
+ */
+export const RuleWithSubQueryGroupComponentsWrapper = (
+  props: React.PropsWithChildren
+): React.JSX.Element => <div {...props} />;
+
+/**
+ * @group Components
+ */
+export const RuleComponentsWithSubQuery: React.MemoExoticComponent<
+  (r: RuleComponentsProps) => React.JSX.Element
+> = React.memo(function RuleComponentsWithSubQuery(r: RuleComponentsProps) {
+  const initialQuery = useMemo(() => r.schema.createRuleGroup() as RuleGroupType, [r.schema]);
+  const subQB = useQueryBuilder({
+    ...r.subQueryBuilderProps,
+    enableDragAndDrop: false,
+    disabled: r.disabled,
+    fields: r.subproperties.fields,
+    // Update the value on first render if the value is not a valid rule group
+    enableMountQueryChange: !isRuleGroup(r.rule.value) || !r.rule.value.id,
+    query: isRuleGroup(r.rule.value) ? (r.rule.value as RuleGroupType) : initialQuery,
+    onQueryChange: r.onChangeValue,
+  });
+  const subQuery = useRuleGroup({
+    ...subQB,
+    ruleGroup: subQB.rootGroup,
+    path: rootPath,
+    disabled: r.disabled,
+    parentDisabled: subQB.queryDisabled,
+    id: subQB.rootGroup.id,
+    shiftUpDisabled: true,
+    shiftDownDisabled: true,
+  });
+  const addRule = useStopEventPropagation(subQuery.addRule);
+  const addGroup = useStopEventPropagation(subQuery.addGroup);
+  const cloneGroup = useStopEventPropagation(subQuery.cloneGroup);
+  const toggleLockGroup = useStopEventPropagation(subQuery.toggleLockGroup);
+  const removeGroup = useStopEventPropagation(subQuery.removeGroup);
+  const shiftGroupUp = useStopEventPropagation(subQuery.shiftGroupUp);
+  const shiftGroupDown = useStopEventPropagation(subQuery.shiftGroupDown);
+  const memoizedSubQuery = useMemo(
+    () => ({
+      ...subQuery,
+      addGroup,
+      addRule,
+      cloneGroup,
+      removeGroup,
+      shiftGroupDown,
+      shiftGroupUp,
+      toggleLockGroup,
+    }),
+    [
+      addGroup,
+      addRule,
+      cloneGroup,
+      removeGroup,
+      shiftGroupDown,
+      shiftGroupUp,
+      subQuery,
+      toggleLockGroup,
+    ]
+  );
+
+  return (
+    <RuleComponents
+      {...r}
+      groupComponentsWrapper={r.groupComponentsWrapper ?? RuleWithSubQueryGroupComponentsWrapper}
+      subQuery={memoizedSubQuery}
+    />
+  );
+});
+
+/* oxlint-disable typescript/no-explicit-any */
+export interface UseRule extends RuleProps {
   classNames: {
     shiftActions: string;
     dragHandle: string;
     fields: string;
+    matchMode: string;
+    matchThreshold: string;
     operators: string;
     valueSource: string;
     value: string;
     cloneRule: string;
     lockRule: string;
+    muteRule: string;
     removeRule: string;
   };
+  muted?: boolean;
+  parentMuted?: boolean;
   cloneRule: ActionElementEventHandler;
-  fieldData: FullField<string, string, string, Option<string>, Option<string>>;
+  fieldData: FullField<string, string, string, FullOption, FullOption>;
   generateOnChangeHandler: (
     prop: Exclude<keyof RuleType, 'id' | 'path'>
   ) => ValueChangeEventHandler;
   onChangeValueSource: ValueChangeEventHandler;
   onChangeField: ValueChangeEventHandler;
+  onChangeMatchMode: ValueChangeEventHandler;
   onChangeOperator: ValueChangeEventHandler;
   onChangeValue: ValueChangeEventHandler;
   hideValueControls: boolean;
   inputType: InputType | null;
+  matchModes: MatchModeOptions;
   operators: OptionList<FullOperator>;
   outerClassName: string;
   removeRule: ActionElementEventHandler;
   shiftRuleUp: (event?: MouseEvent, _context?: any) => void;
   shiftRuleDown: (event?: MouseEvent, _context?: any) => void;
+  subproperties: UseFields<FullField>;
+  subQueryBuilderProps: Record<string, unknown>;
   toggleLockRule: ActionElementEventHandler;
+  toggleMuteRule: ActionElementEventHandler;
   validationResult: boolean | ValidationResult;
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
-  values: FlexibleOptionList<Option<string>>;
-  valueSourceOptions: ValueSourceOptions;
+  values: FlexibleOptionList<Option>;
+  valueSourceOptions: ValueSourceFullOptions;
   valueSources: ValueSources;
-};
-/* eslint-enable @typescript-eslint/no-explicit-any */
+}
+/* oxlint-enable typescript/no-explicit-any */
 
 /**
  * Prepares all values and methods used by the {@link Rule} component.
+ *
+ * @group Hooks
  */
 export const useRule = (props: RuleProps): UseRule => {
   const {
@@ -330,7 +494,9 @@ export const useRule = (props: RuleProps): UseRule => {
       fields,
       fieldMap,
       getInputType,
+      getMatchModes,
       getOperators,
+      getSubQueryBuilderProps,
       getValueEditorType,
       getValueEditorSeparator,
       getValueSources,
@@ -343,6 +509,7 @@ export const useRule = (props: RuleProps): UseRule => {
     actions: { moveRule, onPropChange, onRuleRemove },
     disabled: disabledProp,
     parentDisabled,
+    parentMuted,
     shiftUpDisabled,
     shiftDownDisabled,
     field: fieldProp,
@@ -351,12 +518,14 @@ export const useRule = (props: RuleProps): UseRule => {
     valueSource: valueSourceProp,
     // Drag-and-drop
     dropEffect = 'move',
+    groupItems = false,
     dragMonitorId = '',
     dropMonitorId = '',
     dndRef = null,
     dragRef = null,
     isDragging = false,
     isOver = false,
+    dropNotAllowed = false,
   } = props;
 
   useDeprecatedProps('rule', !ruleProp);
@@ -364,6 +533,7 @@ export const useRule = (props: RuleProps): UseRule => {
   useReactDndWarning(enableDragAndDrop, !!(dragMonitorId || dropMonitorId || dndRef || dragRef));
 
   const disabled = !!parentDisabled || !!disabledProp;
+  const muted = !!parentMuted || !!ruleProp?.muted;
 
   const rule = useMemo(
     () =>
@@ -392,6 +562,16 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.valueSelector,
         classNamesProp.fields
       ),
+      matchMode: clsx(
+        suppressStandardClassnames || standardClassnames.matchMode,
+        classNamesProp.valueSelector,
+        classNamesProp.matchMode
+      ),
+      matchThreshold: clsx(
+        suppressStandardClassnames || standardClassnames.matchThreshold,
+        classNamesProp.valueSelector,
+        classNamesProp.matchThreshold
+      ),
       operators: clsx(
         suppressStandardClassnames || standardClassnames.operators,
         classNamesProp.valueSelector,
@@ -413,6 +593,11 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.actionElement,
         classNamesProp.lockRule
       ),
+      muteRule: clsx(
+        suppressStandardClassnames || standardClassnames.muteRule,
+        classNamesProp.actionElement,
+        classNamesProp.muteRule
+      ),
       removeRule: clsx(
         suppressStandardClassnames || standardClassnames.removeRule,
         classNamesProp.actionElement,
@@ -428,12 +613,15 @@ export const useRule = (props: RuleProps): UseRule => {
       classNamesProp.dragHandle,
       classNamesProp.valueSelector,
       classNamesProp.fields,
+      classNamesProp.matchMode,
+      classNamesProp.matchThreshold,
       classNamesProp.operators,
       classNamesProp.valueSource,
       classNamesProp.value,
       classNamesProp.actionElement,
       classNamesProp.cloneRule,
       classNamesProp.lockRule,
+      classNamesProp.muteRule,
       classNamesProp.removeRule,
       classNamesProp.valueListItem,
       suppressStandardClassnames,
@@ -441,7 +629,7 @@ export const useRule = (props: RuleProps): UseRule => {
   );
 
   const getChangeHandler = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     (prop: Exclude<keyof RuleType, 'id' | 'path'>) => (value: any, context?: any) => {
       if (!disabled) {
         onPropChange(prop, value, path, context);
@@ -452,6 +640,7 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const onChangeField = useMemo(() => getChangeHandler('field'), [getChangeHandler]);
   const onChangeOperator = useMemo(() => getChangeHandler('operator'), [getChangeHandler]);
+  const onChangeMatchMode = useMemo(() => getChangeHandler('match'), [getChangeHandler]);
   const onChangeValueSource = useMemo(() => getChangeHandler('valueSource'), [getChangeHandler]);
   const onChangeValue = useMemo(() => getChangeHandler('value'), [getChangeHandler]);
 
@@ -468,6 +657,11 @@ export const useRule = (props: RuleProps): UseRule => {
   const toggleLockRule: ActionElementEventHandler = useCallback(
     (_event, context) => onPropChange('disabled', !disabled, path, context),
     [disabled, onPropChange, path]
+  );
+
+  const toggleMuteRule: ActionElementEventHandler = useCallback(
+    (_event, context) => onPropChange('muted', !rule.muted, path, context),
+    [rule.muted, onPropChange, path]
   );
 
   const removeRule: ActionElementEventHandler = useCallback(
@@ -505,6 +699,10 @@ export const useRule = (props: RuleProps): UseRule => {
     () => fieldData.inputType ?? getInputType(rule.field, rule.operator, { fieldData }),
     [fieldData, getInputType, rule.field, rule.operator]
   );
+  const matchModes = useMemo(
+    () => getMatchModes(rule.field, { fieldData }),
+    [fieldData, getMatchModes, rule.field]
+  );
   const operators = useMemo(
     () => getOperators(rule.field, { fieldData }),
     [fieldData, getOperators, rule.field]
@@ -516,12 +714,19 @@ export const useRule = (props: RuleProps): UseRule => {
   const arity = operatorObject?.arity;
   const hideValueControls =
     (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
+  const valueSourceOptions = useMemo(() => {
+    const configuredVSs = getValueSources(rule.field, rule.operator, { fieldData });
+    if (rule.valueSource && !getOption(configuredVSs, rule.valueSource)) {
+      return [
+        ...configuredVSs,
+        { name: rule.valueSource, value: rule.valueSource, label: rule.valueSource },
+      ] as ValueSourceFullOptions;
+    }
+    return configuredVSs;
+  }, [fieldData, getValueSources, rule.field, rule.operator, rule.valueSource]);
   const valueSources = useMemo(
-    () =>
-      typeof fieldData.valueSources === 'function'
-        ? fieldData.valueSources(rule.operator)
-        : (fieldData.valueSources ?? getValueSources(rule.field, rule.operator, { fieldData })),
-    [fieldData, getValueSources, rule.field, rule.operator]
+    () => valueSourceOptions.map(({ value }) => value) as ValueSources,
+    [valueSourceOptions]
   );
   const valueEditorType = useMemo(
     () =>
@@ -534,17 +739,22 @@ export const useRule = (props: RuleProps): UseRule => {
     () => getValueEditorSeparator(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorSeparator, rule.field, rule.operator]
   );
-  const values = useMemo(
-    () =>
+  const values = useMemo(() => {
+    const v =
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : (fieldData.values ?? getValues(rule.field, rule.operator, { fieldData })),
-    [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
+        : getValues(rule.field, rule.operator, { fieldData });
+    return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
+  }, [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]);
+  const subQueryBuilderProps = useMemo(
+    () => getSubQueryBuilderProps(rule.field, { fieldData }) as Record<string, unknown>,
+    [fieldData, getSubQueryBuilderProps, rule.field]
   );
-  const valueSourceOptions = useMemo(
-    () => valueSources.map(vs => ({ name: vs, value: vs, label: vs })) as ValueSourceOptions,
-    [valueSources]
-  );
+  const subproperties = useFields({
+    translations: props.translations as TranslationsFull,
+    fields: fieldData.subproperties ?? subQueryBuilderProps.fields ?? defaultSubproperties,
+    autoSelectField: props.schema.autoSelectField || !!fieldData.subproperties,
+  });
 
   const validationResult = useMemo(
     () =>
@@ -561,6 +771,7 @@ export const useRule = (props: RuleProps): UseRule => {
     () => operatorObject?.className ?? '',
     [operatorObject?.className]
   );
+  const hasSubQuery = useMemo(() => matchModes.length > 0, [matchModes.length]);
 
   const outerClassName = useMemo(
     () =>
@@ -572,29 +783,45 @@ export const useRule = (props: RuleProps): UseRule => {
         classNamesProp.rule,
         // custom conditional classes
         disabled && classNamesProp.disabled,
+        muted && classNamesProp.muted,
         isDragging && classNamesProp.dndDragging,
         isOver && classNamesProp.dndOver,
         isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
+        isOver && groupItems && classNamesProp.dndGroup,
+        dropNotAllowed && classNamesProp.dndDropNotAllowed,
+        hasSubQuery && classNamesProp.hasSubQuery,
         // standard conditional classes
         suppressStandardClassnames || {
           [standardClassnames.disabled]: disabled,
+          [standardClassnames.muted]: muted,
           [standardClassnames.dndDragging]: isDragging,
           [standardClassnames.dndOver]: isOver,
           [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
+          [standardClassnames.dndGroup]: isOver && groupItems,
+          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
+          [standardClassnames.hasSubQuery]: hasSubQuery,
         },
         validationClassName
       ),
     [
       classNamesProp.disabled,
+      classNamesProp.muted,
       classNamesProp.dndCopy,
       classNamesProp.dndDragging,
+      classNamesProp.dndGroup,
       classNamesProp.dndOver,
+      classNamesProp.dndDropNotAllowed,
+      classNamesProp.hasSubQuery,
       classNamesProp.rule,
       disabled,
       dropEffect,
+      dropNotAllowed,
+      muted,
       fieldBasedClassName,
       fieldData,
       getRuleClassname,
+      groupItems,
+      hasSubQuery,
       isDragging,
       isOver,
       operatorBasedClassName,
@@ -616,18 +843,24 @@ export const useRule = (props: RuleProps): UseRule => {
     fieldData,
     generateOnChangeHandler: getChangeHandler,
     onChangeField,
+    onChangeMatchMode,
     onChangeOperator,
     onChangeValueSource,
     onChangeValue,
     hideValueControls,
     inputType,
+    matchModes,
+    muted,
     operators,
     outerClassName,
     removeRule,
     rule,
     shiftRuleUp,
     shiftRuleDown,
+    subproperties,
+    subQueryBuilderProps,
     toggleLockRule,
+    toggleMuteRule,
     validationResult,
     valueEditorSeparator,
     valueEditorType,

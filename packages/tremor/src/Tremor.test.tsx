@@ -1,14 +1,3 @@
-import { render, screen } from '@testing-library/react';
-import dayjs from 'dayjs';
-import * as React from 'react';
-import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
-import {
-  QueryBuilder,
-  TestID,
-  standardClassnames,
-  toFullOption,
-  toFullOptionList,
-} from 'react-querybuilder';
 import {
   basicSchema,
   defaultNotToggleProps,
@@ -20,6 +9,17 @@ import {
   testValueEditor,
   userEventSetup,
 } from '@rqb-testing';
+import { render, screen } from '@testing-library/react';
+import dayjs from 'dayjs';
+import * as React from 'react';
+import type { FullOption, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import {
+  QueryBuilder,
+  TestID,
+  standardClassnames,
+  toFullOption,
+  toFullOptionList,
+} from 'react-querybuilder';
 import { TremorActionElement } from './TremorActionElement';
 import { TremorNotToggle } from './TremorNotToggle';
 import { TremorShiftActions } from './TremorShiftActions';
@@ -74,7 +74,7 @@ const valueEditorAsSelectProps: ValueEditorProps = {
 const testSelect = (
   title: string,
   Component: React.ComponentType<ValueEditorProps> | React.ComponentType<ValueSelectorProps>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   props: any
 ) => {
   const testValues = toFullOptionList(props.values ?? props.options) as FullOption[];
@@ -276,6 +276,7 @@ describe('TremorValueEditor as "between" select', () => {
   });
 
   // TODO: Fix this. It hasn't worked since @tremor/react@3.18.6
+  // oxlint-disable-next-line no-disabled-tests
   it.skip('calls the onChange handler', async () => {
     const handleOnChange = jest.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
@@ -309,7 +310,8 @@ describe('TremorValueEditor as "between" select', () => {
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'test2,test1');
   });
 
-  // TODO: Fix this. It hasn't worked since @tremor/react@3.18.6
+  // FIX: It hasn't worked since @tremor/react@3.18.6
+  // oxlint-disable-next-line no-disabled-tests
   it.skip('calls the onChange handler with lists as arrays', async () => {
     const handleOnChange = jest.fn();
     render(

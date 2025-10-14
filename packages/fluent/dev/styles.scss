@@ -1,4 +1,5 @@
-@use 'react-querybuilder/query-builder.scss' as *;
+@use '@rqb-devapp/styles.css';
+@use '../../core/src/query-builder' as *;
 
 .donut-hole {
   .shiftActions > button {

@@ -1,8 +1,8 @@
+import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { createSelectorHook } from 'react-redux';
-import { QueryBuilderContext } from '../context';
-import type { RuleGroupTypeAny } from '../types';
+import { QueryBuilderContext } from '../components';
 import { QueryBuilderStateContext } from './QueryBuilderStateContext';
 import { getQuerySelectorById } from './selectors';
 import type { RqbState } from './types';
@@ -16,10 +16,12 @@ const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
  *
  * **TIP:** Prefer {@link useQueryBuilderQuery} if you only need to access the query object
  * for the nearest ancestor {@link QueryBuilder} component.
+ *
+ * @group Hooks
  */
 export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> = (selector, other) => {
   const rqbContext = React.useContext(QueryBuilderContext);
-  // TODO: `as` shouldn't be necessary here, right?
+  // TODO: Why is `as` necessary here?
   const result = useRQB_INTERNAL_QueryBuilderSelector(selector, other as undefined);
   return result ?? rqbContext?.initialQuery;
 };
@@ -33,6 +35,8 @@ export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> = (selector
  * to a custom component or any object matching the interface `{ schema: { qbId: string } }`.
  *
  * Must follow React's [Rules of Hooks](https://react.dev/warnings/invalid-hook-call-warning).
+ *
+ * @group Hooks
  */
 export const useQueryBuilderQuery = (props?: { schema: { qbId: string } }): RuleGroupTypeAny => {
   const rqbContext = React.useContext(QueryBuilderContext);

@@ -5,12 +5,19 @@ import type { VersatileSelectorProps } from 'react-querybuilder';
 import { toArray, useValueSelector } from 'react-querybuilder';
 import { toSelectItems } from './utils';
 
-export type TremorValueSelectorProps = VersatileSelectorProps &
-  Omit<SelectProps & MultiSelectProps, 'children' | 'value'> & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value?: any;
-  };
+/**
+ * @group Props
+ */
+export interface TremorValueSelectorProps
+  extends VersatileSelectorProps,
+    Omit<SelectProps & MultiSelectProps, 'children' | 'value'> {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  value?: any;
+}
 
+/**
+ * @group Components
+ */
 export const TremorValueSelector = ({
   className,
   handleOnChange,
@@ -29,6 +36,7 @@ export const TremorValueSelector = ({
   validation: _validation,
   schema: _schema,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   ...otherProps
 }: TremorValueSelectorProps): React.JSX.Element => {

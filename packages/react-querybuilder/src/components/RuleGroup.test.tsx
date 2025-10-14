@@ -1,23 +1,19 @@
-import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '@rqb-testing';
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import * as React from 'react';
+import type { RuleGroupICArray, RuleGroupTypeIC, ValidationResult } from '@react-querybuilder/core';
 import {
   TestID,
+  add,
   defaultCombinators,
   defaultControlClassnames,
   standardClassnames as sc,
   defaultTranslations as t,
-} from '../defaults';
+  toFullOption,
+} from '@react-querybuilder/core';
+import { consoleMocks, createRule, getRuleGroupProps, ruleGroupClassnames } from '@rqb-testing';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import * as React from 'react';
 import { messages } from '../messages';
-import type {
-  ActionProps,
-  RuleGroupICArray,
-  RuleGroupTypeIC,
-  ValidationResult,
-  ValueSelectorProps,
-} from '../types';
-import { add, toFullOption } from '../utils';
+import type { ActionProps, ValueSelectorProps } from '../types';
 import { RuleGroup } from './RuleGroup';
 import { render, waitABeat } from './testUtils';
 
@@ -119,7 +115,6 @@ describe('addRule', () => {
         value: 'value_0',
       }),
       [0],
-      // eslint-disable-next-line unicorn/no-useless-undefined
       undefined
     );
   });
@@ -135,7 +130,6 @@ describe('addGroup', () => {
     expect(onGroupAdd).toHaveBeenLastCalledWith(
       expect.objectContaining({ id: expect.any(String), rules: [] }),
       [0],
-      // eslint-disable-next-line unicorn/no-useless-undefined
       undefined
     );
   });

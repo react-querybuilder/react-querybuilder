@@ -1,5 +1,6 @@
 ---
 title: Getting started
+description: Basic setup instructions and principles
 hide_table_of_contents: true
 ---
 
@@ -14,7 +15,7 @@ import Details from '@theme/Details';
 
 ## Installation
 
-To install `react-querybuilder`, use a package manager like [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), or [Bun](https://bun.sh/), or follow [these instructions for a buildless environment](./buildless).
+Install `react-querybuilder` using [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), or [Bun](https://bun.sh/), or follow [buildless setup instructions](./buildless).
 
 ```bash npm2yarn
 npm i react-querybuilder
@@ -22,7 +23,7 @@ npm i react-querybuilder
 
 ## Basics
 
-The simplest way to create a query builder is to render the `QueryBuilder` component with no props. (Be sure to import the official stylesheet, which is available in `.css` and `.scss` flavors.)
+Create a basic query builder by rendering `QueryBuilder` with no props. Import the official stylesheet (available in `.css` and `.scss` formats).
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 160 }}>
 
@@ -35,7 +36,7 @@ export default () => <QueryBuilder />;
 
 </SandpackRQB>
 
-Functional, but not very useful. To really get value out of the query builder, we'll first need to define a set of fields for the user to choose from. We can pass the `fields` array into the query builder through the `fields` prop.
+This query builder works but isn't very useful yet. To get real value from it, you need to define fields for users to select from. Pass an array of field objects to the `fields` prop.
 
 In the query builder below, click the "+ Rule" button and then the field selector to see the field choices.
 
@@ -55,9 +56,9 @@ export default () => <QueryBuilder fields={fields} />;
 
 </SandpackRQB>
 
-Much more useful, but you probably want to monitor and control what users do with the query builder. Let's set up a state variable using the React Hook `useState`. This will store our query object and allow us to pass it on to other components, event handlers, etc.
+Much better! However, you'll likely want to monitor and control user interactions with the query builder. Let's add state management using React's `useState` hook to store the query object and make it accessible to other components.
 
-The state variable `query` will be passed to the `query` prop, and the setter method `setQuery` will be used in the `onQueryChange` callback. Let's also seed the query object with a couple of rules, making sure that the `field` property of each rule matches the `name` property of one of our fields.
+The `query` state variable gets passed to the `query` prop, and the `setQuery` setter function handles the `onQueryChange` callback. We'll also initialize the query with some example rules, ensuring each rule's `field` property matches a field `name` from our fields array.
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
 
@@ -115,7 +116,7 @@ export default () => {
 
 ## Exporting queries
 
-To convert a query object into other formats like [SQL](https://en.wikipedia.org/wiki/SQL), [MongoDB](https://www.mongodb.com/), and [CEL](https://github.com/google/cel-spec), you can use the `formatQuery` function ([full documentation](./utils/export)). The example below demonstrates the conversion of a query to its equivalent SQL form. Modify the query by manipulating the form elements and the SQL will update accordingly.
+Use the `formatQuery` function to convert query objects to formats like [SQL](https://en.wikipedia.org/wiki/SQL), [MongoDB](https://www.mongodb.com/), and [CEL](https://github.com/google/cel-spec) ([full documentation](./utils/export)). The example below shows real-time SQL generation—modify the query and watch the SQL update automatically.
 
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
 
@@ -154,8 +155,8 @@ export default () => {
 
 ## Onward and upward!
 
-To discover all the options of React Query Builder, start with the [main component documentation](./components/querybuilder). To play around with various configurations, including other [export](./utils/export)/[import](./utils/import) formats, check out the [demo](/demo).
+Explore all React Query Builder options in the [main component documentation](./components/querybuilder). Try different configurations, export/import formats, and features in the interactive [demo](/demo).
 
 ## Training
 
-For an extended tutorial on configuration and customization of `react-querybuilder`, including information about integrating it with a backend API and advanced reporting components (grids, maps, charts, etc.), check out the course [Building Advanced Admin Reporting in React](https://www.newline.co/courses/building-advanced-admin-reporting-in-react), taught by this library's maintainer, over at [newline](https://www.newline.co/).
+For an extended tutorial on configuration and customization of `react-querybuilder`, including information about integrating it with a backend API and advanced reporting components (grids, maps, charts, etc.), check out the course [Building Advanced Admin Reporting in React](https://www.newline.co/courses/building-advanced-admin-reporting-in-react), taught by this library's maintainer at [newline](https://www.newline.co/).

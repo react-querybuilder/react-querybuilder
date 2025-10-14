@@ -4,7 +4,7 @@ import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import { useState } from 'react';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
-import './styles.scss';
+import './styles.css';
 
 const muiTheme = createTheme({
   palette: {

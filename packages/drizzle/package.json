@@ -1,0 +1,60 @@
+{
+  "name": "@react-querybuilder/drizzle",
+  "description": "Drizzle ORM integration for React Query Builder",
+  "version": "8.10.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_drizzle.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_drizzle.d.mts",
+        "default": "./dist/react-querybuilder_drizzle.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/react-querybuilder_drizzle.legacy-esm.d.ts",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/drizzle"
+  },
+  "keywords": [
+    "react",
+    "querybuilder",
+    "drizzle",
+    "orm",
+    "drizzle-orm",
+    "sql"
+  ],
+  "scripts": {
+    "start": "vite",
+    "build": "bun --bun tsdown",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.10",
+    "@react-querybuilder/core": "8.10.0",
+    "drizzle-orm": "^0.44.6",
+    "rollup-plugin-visualizer": "^6.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "peerDependencies": {
+    "@react-querybuilder/core": "8.10.0",
+    "drizzle-orm": ">=0.38.0"
+  }
+}

@@ -4,8 +4,8 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   RuleType,
-} from 'react-querybuilder';
-import { convertToIC, defaultOperators, generateID } from 'react-querybuilder';
+} from '@react-querybuilder/core';
+import { convertToIC, defaultOperators, generateID } from '@react-querybuilder/core';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
 
@@ -26,9 +26,11 @@ export const defaultOptions: DemoOptions = {
   showCloneButtons: false,
   showCombinatorsBetweenRules: false,
   showLockButtons: false,
+  showMuteButtons: false,
   showNotToggle: false,
   validateQuery: false,
   showBranches: false,
+  justifiedLayout: false,
   showShiftActions: false,
   suppressStandardClassnames: false,
 };
@@ -49,8 +51,10 @@ export const optionOrder: DemoOption[] = [
   'showCloneButtons',
   'showCombinatorsBetweenRules',
   'showLockButtons',
+  'showMuteButtons',
   'showNotToggle',
   'showBranches',
+  'justifiedLayout',
   'suppressStandardClassnames',
   'validateQuery',
 ];
@@ -139,6 +143,11 @@ export const optionsMetadata: Record<
     label: 'Show lock buttons',
     title: 'Display buttons to lock/disable rules and groups',
   },
+  showMuteButtons: {
+    link: '/docs/components/querybuilder#showmutebuttons',
+    label: 'Show mute buttons',
+    title: 'Display buttons to mute rules and groups (excludes them from query output)',
+  },
   suppressStandardClassnames: {
     link: '/docs/components/querybuilder#suppressstandardclassnames',
     label: 'Suppress standard classnames',
@@ -159,6 +168,11 @@ export const optionsMetadata: Record<
     link: '/docs/styling/overview#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
+  },
+  justifiedLayout: {
+    link: '/docs/styling/overview#justified-layout',
+    label: 'Justified layout',
+    title: 'Add the `.queryBuilder-justified` class to justify the layout',
   },
 };
 
@@ -189,7 +203,7 @@ export const fields: Field[] = [
     label: 'Primary instrument',
     valueEditorType: 'select',
     values: musicalInstruments,
-    defaultValue: 'Cowbell',
+    defaultValue: 'cowbell',
     operators: defaultOperators.filter(op => op.name === '=' || op.name === 'in'),
   },
   {
@@ -197,8 +211,20 @@ export const fields: Field[] = [
     label: 'Also plays',
     valueEditorType: 'multiselect',
     values: musicalInstruments,
-    defaultValue: 'More cowbell',
+    defaultValue: 'more_cowbell',
     operators: defaultOperators.filter(op => op.name === 'in'),
+  },
+  {
+    name: 'tourStops',
+    label: 'Tour stops',
+    matchModes: true,
+    subproperties: [
+      { name: 'city', label: 'City' },
+      { name: 'state', label: 'State/Province' },
+      { name: 'venue', label: 'Venue' },
+      { name: 'date', label: 'Date', inputType: 'date', datatype: 'date' },
+      { name: 'country', label: 'Country' },
+    ],
   },
   {
     name: 'gender',
@@ -218,6 +244,7 @@ export const fields: Field[] = [
   { name: 'birthdate', label: 'Birth Date', inputType: 'date' },
   { name: 'datetime', label: 'Show Time', inputType: 'datetime-local' },
   { name: 'alarm', label: 'Daily Alarm', inputType: 'time' },
+  { name: 'bign', label: 'BigInt', inputType: 'bigint' },
   {
     name: 'groupedField1',
     label: 'Grouped Field 1',
@@ -288,7 +315,7 @@ export const initialQuery: RuleGroupType = {
           id: generateID(),
           field: 'instrument',
           operator: '=',
-          value: 'Guitar',
+          value: 'guitar',
         },
       ],
     },

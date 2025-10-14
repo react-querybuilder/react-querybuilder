@@ -1,3 +1,5 @@
+/* oxlint-disable prefer-global-this */
+
 import Layout from '@theme/Layout';
 import { useEffect } from 'react';
 import { discordLink } from '../constants';

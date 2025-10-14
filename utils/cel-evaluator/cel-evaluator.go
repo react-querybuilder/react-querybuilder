@@ -13,10 +13,37 @@ import (
 	"github.com/google/cel-go/common/types/ref"
 )
 
+// Converts a CEL value to a regular Go interface{} for JSON serialization
+func convertCELToInterface(celVal ref.Val) interface{} {
+	switch celVal.Type() {
+	case types.BoolType:
+		return celVal.Value().(bool)
+	case types.StringType:
+		return celVal.Value().(string)
+	case types.DoubleType:
+		return celVal.Value().(float64)
+	case types.IntType:
+		return celVal.Value().(int64)
+	case types.TimestampType:
+		return celVal.Value().(time.Time).Format(time.RFC3339)
+	case types.ListType:
+		// Convert CEL list back to []interface{}
+		listVal := celVal.Value().([]ref.Val)
+		result := make([]interface{}, len(listVal))
+		for i, elem := range listVal {
+			result[i] = convertCELToInterface(elem)
+		}
+		return result
+	default:
+		// Fallback to the underlying value
+		return celVal.Value()
+	}
+}
+
 func main() {
 	// Command-line arguments
 	jsonString := flag.String("json", "{}", "JSON input data")
-	typeMap := flag.String("types", "{}", "Property-to-datatype map (e.g., {\"key\":\"string\", \"timestamp\":\"timestamp\"})")
+	typeMap := flag.String("types", "{}", "Property-to-datatype map (e.g., {\"key\":\"string\", \"timestamp\":\"timestamp\", \"items\":\"list\"})")
 	query := flag.String("query", "", "CEL query string")
 
 	flag.Parse()
@@ -94,8 +121,18 @@ func main() {
 		}
 	}
 
+	// Convert CEL values back to regular Go types for JSON output
+	var jsonResults []map[string]interface{}
+	for _, result := range results {
+		jsonResult := make(map[string]interface{})
+		for key, celVal := range result {
+			jsonResult[key] = convertCELToInterface(celVal)
+		}
+		jsonResults = append(jsonResults, jsonResult)
+	}
+
 	// Output the results as JSON
-	jsonOutput, err := json.MarshalIndent(results, "", "  ")
+	jsonOutput, err := json.MarshalIndent(jsonResults, "", "  ")
 	if err != nil {
 		log.Fatalf("Failed to marshal results: %v", err)
 	}
@@ -103,7 +140,7 @@ func main() {
 	fmt.Println(string(jsonOutput))
 }
 
-// convertToCELType converts a value to the appropriate CEL type based on the expected type.
+// Converts a value to the appropriate CEL type based on the expected type.
 func convertToCELType(value interface{}, expectedType string) ref.Val {
 	switch expectedType {
 	case "boolean":
@@ -144,6 +181,24 @@ func convertToCELType(value interface{}, expectedType string) ref.Val {
 			log.Fatalf("Invalid timestamp format: %v", err)
 		}
 		return types.Timestamp{Time: t}
+	case "list":
+		// TODO: Handle lists of objects
+		listValue, ok := value.([]interface{})
+		if !ok {
+			log.Fatalf("Expected list/array but got: %v", value)
+		}
+
+		// Convert each element to a string CEL value
+		celValues := make([]ref.Val, len(listValue))
+		for i, elem := range listValue {
+			strElem, ok := elem.(string)
+			if !ok {
+				log.Fatalf("Expected string element in list but got: %v", elem)
+			}
+			celValues[i] = types.String(strElem)
+		}
+
+		return types.NewDynamicList(types.DefaultTypeAdapter, celValues)
 	default:
 		log.Fatalf("Unsupported type: %v", expectedType)
 	}

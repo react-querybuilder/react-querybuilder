@@ -1,8 +1,7 @@
 /* @jest-environment node */
 
+import { formatQuery } from '@react-querybuilder/core';
 import jsonata from 'jsonata';
-import { formatQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorJSONata } from '../getDatetimeRuleProcessorJSONata';
 import {
   CREATE_MUSICIANS_TABLE,
   dateLibraryFunctions,
@@ -10,6 +9,7 @@ import {
   musicians,
   testCases,
 } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorJSONata } from '../getDatetimeRuleProcessorJSONata';
 
 const musiciansJSONata = CREATE_MUSICIANS_TABLE('jsonata');
 
@@ -30,11 +30,13 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         const queryAsJSONata = `*[${formatQuery(query, { format: 'jsonata', parseNumbers: true, fields, ruleProcessor: getDatetimeRuleProcessorJSONata(apiFns) })}]`;
         const expression = jsonata(queryAsJSONata);
         const result = await expression.evaluate(musiciansJSONata);
+        // oxlint-disable no-conditional-expect
         if (expectation === 'all') {
           expect(result).toHaveLength(musicians.length);
         } else {
           expect(result.last_name).toBe(expectation);
         }
+        // oxlint-enable no-conditional-expect
       });
     }
   });

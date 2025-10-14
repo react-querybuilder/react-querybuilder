@@ -3,11 +3,11 @@ title: ValueSelector
 description: Versatile selector component
 ---
 
-Renders a `<select>`. Used for all controls that allow the user to choose a value from a list, including the following:
+Renders a `<select>` element. This versatile component is used for all controls that allow users to choose a value from a list, including:
 
-- [`combinatorSelector`](./querybuilder#combinatorselector)
-- [`fieldSelector`](./querybuilder#fieldselector)
-- [`operatorSelector`](./querybuilder#operatorselector)
-- [`valueSourceSelector`](./querybuilder#valuesourceselector)
+- [`combinatorSelector`](./querybuilder-controlelements#combinatorselector)
+- [`fieldSelector`](./querybuilder-controlelements#fieldselector)
+- [`operatorSelector`](./querybuilder-controlelements#operatorselector)
+- [`valueSourceSelector`](./querybuilder-controlelements#valuesourceselector)
 
-`ValueSelector` is also the default `selectorComponent` for [`ValueEditor`](./valueeditor), used when a rule's `value` must be selected from a list.
+`ValueSelector` also serves as the default `selectorComponent` for [`ValueEditor`](./valueeditor) when a rule's `value` must be selected from a list.

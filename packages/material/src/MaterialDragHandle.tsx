@@ -1,17 +1,23 @@
-import type { DragIndicator } from '@mui/icons-material';
+import type DragIndicator from '@mui/icons-material/DragIndicator';
 import type { ComponentPropsWithRef } from 'react';
 import * as React from 'react';
 import { forwardRef, useContext } from 'react';
 import type { DragHandleProps } from 'react-querybuilder';
 import { DragHandle } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 
-export type MaterialDragHandleProps = DragHandleProps &
-  Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+/**
+ * @group Props
+ */
+export interface MaterialDragHandleProps
+  extends DragHandleProps,
+    Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'>,
+    MuiAugmentation {}
 
+/**
+ * @group Components
+ */
 export const MaterialDragHandle: React.ForwardRefExoticComponent<
   Omit<MaterialDragHandleProps, 'ref'> & React.RefAttributes<HTMLSpanElement>
 > = forwardRef<HTMLSpanElement, MaterialDragHandleProps>(

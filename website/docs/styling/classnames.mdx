@@ -6,7 +6,7 @@ description: Visual guide to CSS classes for each component element
 
 The `<QueryBuilder />` component assigns [standard classes](../utils/misc#defaults) to each element. In the (fully operational) query builder below, the `title` and `label` for each element have been set to the element's standard class.
 
-The following standard classnames are not labeled below, but for most of them the elements they apply to can be identified by outline color:
+The following standard classnames are not labeled below. For most of them, the elements they apply to can be identified by outline color.
 
 - `.queryBuilder` (<code style={{ fontWeight: 'bold', color:'black', backgroundColor: 'white', fontFamily: 'unset', borderColor: 'white' }}>black</code> outline; the outer-most `<div>`)
 - `.ruleGroup` (<span style={{ fontWeight: 'bold', color:'maroon' }}>maroon</span> outline)
@@ -16,8 +16,11 @@ The following standard classnames are not labeled below, but for most of them th
 - `.rule.queryBuilder-valid` (<span style={{ fontWeight: 'bold', color:'green' }}>green</span> outline for valid rules)
 - `.rule.queryBuilder-invalid` (<span style={{ fontWeight: 'bold', color:'red' }}>red</span> outline for invalid rules)
 - `.shiftActions` (<span style={{ fontWeight: 'bold', color:'#ff7e16' }}>orange</span> outline for the wrapper `<div>` around the "Shift up"/"Shift down" buttons)
+- `.rule-hasSubQuery` (applied to rules that render a subquery)
 - `.dndDragging` (applied to "preview" element while dragging)
 - `.dndOver` (applied to "hovered over" element while dragging)
+- `.dndCopy` (applied to "hovered over" element while dragging and the ["copy" modifier key is pressed](../dnd#cloning-and-grouping))
+- `.dndGroup` (applied to "hovered over" element while dragging and the ["group" modifier key is pressed](../dnd#cloning-and-grouping))
 
 A full list of standard classnames is [below](#standard-classnames).
 
@@ -165,22 +168,24 @@ export const defaultQuery = {
   ],
 };
 
-<QueryBuilderDnD>
-  <QueryBuilderEmbed
-    showNotToggle
-    showCloneButtons
-    showLockButtons
-    showShiftActions
-    enableDragAndDrop
-    fields={fields}
-    combinators={combinators}
-    getOperators={getOperators}
-    controlClassnames={controlClassnames}
-    translations={translations}
-    defaultQuery={defaultQuery}
-  />
-</QueryBuilderDnD>
+<div className="rqb-structure-wrapper">
+  <QueryBuilderDnD>
+    <QueryBuilderEmbed
+      showNotToggle
+      showCloneButtons
+      showLockButtons
+      showShiftActions
+      enableDragAndDrop
+      fields={fields}
+      combinators={combinators}
+      getOperators={getOperators}
+      controlClassnames={controlClassnames}
+      translations={translations}
+      defaultQuery={defaultQuery}
+    />
+  </QueryBuilderDnD>
+</div>
 
 ## Standard classnames
 
-%importcode /packages/react-querybuilder/src/defaults.ts#region=docs-standardclassnames
+%importcode /packages/core/src/defaults.ts#region=docs-standardclassnames

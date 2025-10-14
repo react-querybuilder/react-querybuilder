@@ -3,6 +3,8 @@ import type { ActionProps } from '../types';
 
 /**
  * Default `<button>` component used by {@link QueryBuilder}.
+ *
+ * @group Components
  */
 export const ActionElement = (props: ActionProps): React.JSX.Element => (
   <button

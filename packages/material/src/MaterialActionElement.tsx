@@ -2,16 +2,22 @@ import type { Button } from '@mui/material';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import * as React from 'react';
 import { useContext } from 'react';
-import type { ActionWithRulesProps } from 'react-querybuilder';
+import type { ActionProps } from 'react-querybuilder';
 import { ActionElement } from 'react-querybuilder';
 import { RQBMaterialContext } from './RQBMaterialContext';
-import type { RQBMaterialComponents } from './types';
+import type { MuiAugmentation } from './types';
 
-export type MaterialActionProps = ActionWithRulesProps &
-  ComponentPropsWithoutRef<typeof Button> & {
-    muiComponents?: RQBMaterialComponents;
-  };
+/**
+ * @group Props
+ */
+export interface MaterialActionProps
+  extends ActionProps,
+    ComponentPropsWithoutRef<typeof Button>,
+    MuiAugmentation {}
 
+/**
+ * @group Components
+ */
 export const MaterialActionElement = ({
   className,
   handleOnClick,
@@ -33,7 +39,7 @@ export const MaterialActionElement = ({
   const muiComponents = useContext(RQBMaterialContext) ?? muiComponentsProp;
   const key = muiComponents ? 'mui' : 'no-mui';
   if (!muiComponents) {
-    const AE = ActionElement as ComponentType<ActionWithRulesProps>;
+    const AE = ActionElement as ComponentType<ActionProps>;
     return (
       <AE
         key={key}

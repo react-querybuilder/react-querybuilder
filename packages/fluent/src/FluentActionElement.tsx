@@ -3,8 +3,14 @@ import { Button } from '@fluentui/react-components';
 import * as React from 'react';
 import type { ActionProps } from 'react-querybuilder';
 
+/**
+ * @group Props
+ */
 export type FluentActionProps = ActionProps & ButtonProps;
 
+/**
+ * @group Components
+ */
 export const FluentActionElement = ({
   className,
   handleOnClick,
@@ -13,6 +19,7 @@ export const FluentActionElement = ({
   disabled,
   disabledTranslation,
   testID,
+  rules: _rules,
   ruleOrGroup: _rg,
   path: _path,
   level: _level,
@@ -22,14 +29,12 @@ export const FluentActionElement = ({
   ...otherProps
 }: FluentActionProps): React.JSX.Element => (
   <Button
-    // TODO: Find a way to do better than "as any" here
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    {...(otherProps as any)}
+    {...otherProps}
     data-testid={testID}
     type="button"
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
-    onClick={e => handleOnClick(e)}
+    onClick={(e: React.MouseEvent) => handleOnClick(e)}
     disabled={disabled && !disabledTranslation}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>

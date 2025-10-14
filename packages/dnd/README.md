@@ -17,13 +17,15 @@ npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backe
 
 ## Usage
 
-To enable the drag-and-drop functionality of a query builder, nest the `QueryBuilder` element under `QueryBuilderDnD`. Pass in all exports from `react-dnd` and `react-dnd-html5-backend` to the `dnd` prop of `QueryBuilderDnD`.
+To enable the drag-and-drop functionality of a query builder, nest the `QueryBuilder` element under `QueryBuilderDnD`. Pass in all exports from `react-dnd` and either `react-dnd-html5-backend` or `react-dnd-touch-backend` to the `dnd` prop of `QueryBuilderDnD`. (If you pass in all exports from _both_ backends, the touch backend will be preferred when a touch device is detected.)
 
 ```tsx
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { useState } from 'react';
 import * as ReactDnD from 'react-dnd';
-import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+import * as ReactDndBackend from 'react-dnd-html5-backend';
+// OR
+// import * as ReactDndBackend from 'react-dnd-touch-backend';
 import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
@@ -35,7 +37,7 @@ const App = () => {
   const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
   return (
-    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndBackend }}>
       <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
     </QueryBuilderDnD>
   );
@@ -44,7 +46,7 @@ const App = () => {
 
 ## Notes
 
-- While not strictly necessary, we strongly recommend passing the `react-dnd` and `react-dnd-html5-backend` exports into `QueryBuilderDnD`. If they are not passed in as the `dnd` prop, the query builder will initially have drag-and-drop disabled until the dependencies are asynchronously loaded via `import()`.
+- While not strictly necessary, we strongly recommend passing the `react-dnd` and `react-dnd-html5-backend`/`react-dnd-touch-backend` exports into `QueryBuilderDnD`. If they are not passed in as the `dnd` prop, the query builder will initially have drag-and-drop disabled until the dependencies are asynchronously loaded via `import()`.
 - `QueryBuilderDnD` will automatically set the `enableDragAndDrop` prop to `true` on any descendant `QueryBuilder` elements unless `enableDragAndDrop` is explicitly set to `false` on `QueryBuilder`.
 - `QueryBuilderDnD` does not need to be an _immediate_ ancestor to `QueryBuilder`, it only needs to be somewhere above `QueryBuilder` in the component hierarchy.
 - Multiple `QueryBuilder`s may be nested beneath a single `QueryBuilderDnD`. The same drag-and-drop settings will be applied to each query builder, and drag-and-drop will work across query builders (rules/groups can be dragged from one query builder and dropped into another).
@@ -54,7 +56,7 @@ const App = () => {
   import { QueryBuilderDndWithoutProvider } from '@react-querybuilder/dnd';
   import { useState } from 'react';
   import * as ReactDnD from 'react-dnd';
-  import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
+  import * as ReactDndBackend from 'react-dnd-html5-backend';
   import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
   import { SomeOtherDndContextConsumer } from './SomeOtherDndContextConsumer';
 
@@ -67,7 +69,7 @@ const App = () => {
     const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
 
     return (
-      <QueryBuilderDndWithoutProvider dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+      <QueryBuilderDndWithoutProvider dnd={{ ...ReactDnD, ...ReactDndBackend }}>
         <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
       </QueryBuilderDndWithoutProvider>
     );
@@ -75,7 +77,7 @@ const App = () => {
 
   export function App() {
     return (
-      <ReactDnD.DndProvider backend={ReactDndHtml5Backend.HTML5Backend}>
+      <ReactDnD.DndProvider backend={ReactDndBackend.HTML5Backend}>
         <SomeOtherDndContextConsumer />
         <ChildComponentOfDndProvider />
       </ReactDnD.DndProvider>

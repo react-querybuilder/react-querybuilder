@@ -2,11 +2,10 @@ import type { SandpackFile, SandpackProps } from '@codesandbox/sandpack-react';
 import { Sandpack } from '@codesandbox/sandpack-react';
 import { useColorMode } from '@docusaurus/theme-common';
 import * as React from 'react';
-import './SandpackRQB.scss';
 
 interface SandpackRQBProps extends SandpackProps {
   children: React.ReactNode;
-  rqbVersion?: 4 | 5 | 6 | 7;
+  rqbVersion?: 4 | 5 | 6 | 7 | 8;
 }
 
 export const SandpackRQB = ({
@@ -16,7 +15,8 @@ export const SandpackRQB = ({
   rqbVersion = 7,
 }: SandpackRQBProps) => {
   const isDarkTheme = useColorMode().colorMode === 'dark';
-  const codeSnippets = React.Children.toArray(children) as React.ReactElement[];
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const codeSnippets = React.Children.toArray(children) as React.ReactElement<any>[];
   const bkgdColor = isDarkTheme ? '#343a46' : '#ffffff';
   let hideStylesCSS = true;
 
@@ -102,10 +102,11 @@ h1, h2, h3, h4, h5, h6 {
     rqbVersion === 4
       ? { 'react-querybuilder': '^4' }
       : {
-          '@react-querybuilder/dnd': `^${rqbVersion || '7'}`,
-          'react-querybuilder': `^${rqbVersion || '7'}`,
+          '@react-querybuilder/dnd': `^${rqbVersion || '8'}`,
+          'react-querybuilder': `^${rqbVersion || '8'}`,
           'react-dnd': '>=14',
           'react-dnd-html5-backend': '>=14',
+          'react-dnd-touch-backend': '>=14',
         };
 
   const setup = {

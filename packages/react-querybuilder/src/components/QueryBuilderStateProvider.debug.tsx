@@ -5,6 +5,8 @@ import { queryBuilderStore } from '../redux/index.debug';
 
 /**
  * Context provider for the `{@link QueryBuilder}` state store.
+ *
+ * @group Components
  */
 export const QueryBuilderStateProvider = (props: {
   children: React.ReactNode;

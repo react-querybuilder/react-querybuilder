@@ -1,12 +1,19 @@
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
+import { NativeSelectField, NativeSelectRoot } from './snippets/native-select';
 import { toOptions } from './utils';
-import { NativeSelectRoot, NativeSelectField } from './snippets/native-select';
 
-export type ChakraValueSelectorProps = VersatileSelectorProps &
-  ComponentPropsWithoutRef<typeof NativeSelectRoot>;
+/**
+ * @group Props
+ */
+export interface ChakraValueSelectorProps
+  extends VersatileSelectorProps,
+    ComponentPropsWithoutRef<typeof NativeSelectRoot> {}
 
+/**
+ * @group Components
+ */
 export const ChakraValueSelector = ({
   className,
   handleOnChange,
@@ -17,6 +24,7 @@ export const ChakraValueSelector = ({
   // Props that should not be in extraProps
   testID: _testID,
   rule: _rule,
+  ruleGroup: _ruleGroup,
   rules: _rules,
   level: _level,
   path: _path,

@@ -12,6 +12,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  InputLabel,
   ListSubheader,
   MenuItem,
   Radio,
@@ -33,6 +34,7 @@ export const defaultMuiComponents: RQBMaterialComponents = {
   ContentCopyIcon,
   FormControl,
   FormControlLabel,
+  InputLabel,
   KeyboardArrowDownIcon,
   KeyboardArrowUpIcon,
   ListSubheader,
@@ -47,6 +49,9 @@ export const defaultMuiComponents: RQBMaterialComponents = {
   TextField,
 };
 
+/**
+ * @group Hooks
+ */
 export const useMuiComponents = (
   preloadedComponents?: RQBMaterialComponents
 ): RQBMaterialComponents => {

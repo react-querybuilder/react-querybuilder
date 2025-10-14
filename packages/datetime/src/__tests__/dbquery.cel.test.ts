@@ -1,5 +1,4 @@
-import { formatQuery, transformQuery } from 'react-querybuilder';
-import { getDatetimeRuleProcessorCEL } from '../getDatetimeRuleProcessorCEL';
+import { formatQuery, transformQuery } from '@react-querybuilder/core';
 import type { MusicianRecord } from '../dbqueryTestUtils';
 import {
   CREATE_MUSICIANS_TABLE,
@@ -7,6 +6,7 @@ import {
   fields,
   testCases,
 } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorCEL } from '../getDatetimeRuleProcessorCEL';
 import type { IsDateFieldFunction } from '../types';
 import { defaultIsDateField } from '../utils';
 
@@ -53,11 +53,14 @@ if (celEvaluator) {
             context: { isDateField },
           });
           const result = (await celEvaluator({ data, cel, typemap })) as MusicianRecord[];
+          // oxlint-disable no-conditional-expect
           if (expectation === 'all') {
             expect(result).toHaveLength(data.length);
           } else {
+            expect(result).toHaveLength(1);
             expect(result[0].last_name).toBe(expectation);
           }
+          // oxlint-enable no-conditional-expect
         });
       }
     });

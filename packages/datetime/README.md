@@ -1,9 +1,5 @@
 ## @react-querybuilder/datetime
 
-> [!NOTE]
->
-> This package is experimental and its API is not guaranteed to be stable.
-
 Augments [react-querybuilder](https://npmjs.com/package/react-querybuilder) with enhanced date/time functionality.
 
 To see this in action, check out the [`react-querybuilder` demo](https://react-querybuilder.js.org/demo#datetime=true) with the "date/time" option enabled.

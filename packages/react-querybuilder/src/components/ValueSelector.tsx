@@ -1,11 +1,15 @@
+import type { FullOption } from '@react-querybuilder/core';
+import { joinWith, toArray } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { useSelectElementChangeHandler } from '../hooks/useSelectElementChangeHandler';
-import type { FullOption, ValueSelectorProps } from '../types';
-import { joinWith, toArray, toOptions } from '../utils';
+import type { ValueSelectorProps } from '../types';
+import { toOptions } from '../utils';
 
 /**
  * Default `<select>` component used by {@link QueryBuilder}.
+ *
+ * @group Components
  */
 export const ValueSelector = <Opt extends FullOption = FullOption>(
   props: ValueSelectorProps<Opt>
@@ -37,8 +41,9 @@ export type UseValueSelectorParams = Pick<
 >;
 
 /**
- * Transforms a value into an array when appropriate and provides
- * a memoized change handler.
+ * Transforms a value into an array when appropriate and provides a memoized change handler.
+ *
+ * @group Hooks
  */
 export const useValueSelector = (
   props: UseValueSelectorParams
@@ -50,7 +55,7 @@ export const useValueSelector = (
   /**
    * The value as provided or, if appropriate, as an array
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   val: string | any[] | undefined;
 } => {
   const { handleOnChange, listsAsArrays = false, multiple = false, value } = props;

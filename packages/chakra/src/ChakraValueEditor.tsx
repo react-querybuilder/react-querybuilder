@@ -6,9 +6,16 @@ import { Checkbox } from './snippets/checkbox';
 import { Radio, RadioGroup } from './snippets/radio';
 import { Switch } from './snippets/switch';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ChakraValueEditorProps = ValueEditorProps & { extraProps?: Record<string, any> };
+/**
+ * @group Props
+ */
+export interface ChakraValueEditorProps extends ValueEditorProps {
+  extraProps?: Record<string, unknown>;
+}
 
+/**
+ * @group Components
+ */
 export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.Element | null => {
   const {
     fieldData,
@@ -18,6 +25,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
     title,
     className,
     type,
+    inputType,
     values = [],
     listsAsArrays: _listsAsArrays,
     separator,
@@ -26,13 +34,17 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
     disabled,
     selectorComponent: SelectorComponent = allProps.schema.controls.valueSelector,
     extraProps,
-    inputType: _inputType,
     parseNumbers: _parseNumbers,
     ...propsForValueSelector
   } = allProps;
 
-  const { valueAsArray, multiValueHandler, valueListItemClassName, inputTypeCoerced } =
-    useValueEditor(allProps);
+  const {
+    valueAsArray,
+    multiValueHandler,
+    bigIntValueHandler,
+    valueListItemClassName,
+    inputTypeCoerced,
+  } = useValueEditor(allProps);
 
   if (operator === 'null' || operator === 'notNull') {
     return null;
@@ -107,7 +119,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           checked={!!value}
           title={title}
           disabled={disabled}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           onChange={(e: any) => handleOnChange(e.target.checked)}
           {...extraProps}
         />
@@ -119,7 +131,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           disabled={disabled}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           onChange={(e: any) => handleOnChange(e.target.checked)}
           checked={!!value}
           {...extraProps}
@@ -132,7 +144,7 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           className={className}
           title={title}
           value={value}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           onChange={(e: any) => handleOnChange(e.target.value)}
           disabled={disabled}
           {...extraProps}>
@@ -145,6 +157,22 @@ export const ChakraValueEditor = (allProps: ChakraValueEditorProps): React.JSX.E
           </Stack>
         </RadioGroup>
       );
+  }
+
+  if (inputType === 'bigint') {
+    return (
+      <Input
+        data-testid={testID}
+        type={inputTypeCoerced}
+        placeholder={placeHolderText}
+        value={`${value}`}
+        title={title}
+        className={className}
+        disabled={disabled}
+        onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
   }
 
   return (

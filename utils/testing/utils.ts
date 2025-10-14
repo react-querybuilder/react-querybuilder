@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
+import type { Classnames, FullField } from '@react-querybuilder/core';
+import { defaultCombinators } from '@react-querybuilder/core';
 import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
-import type { Classnames, FullField, Schema } from 'react-querybuilder';
-import { defaultCombinators, defaultControlElements } from 'react-querybuilder';
+import type { Schema } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 
 export const UNUSED = 'UNUSED';
 
@@ -23,6 +23,7 @@ export const basicSchema: Schema<FullField, string> = {
   dispatchQuery: admonish('dispatchQuery'),
   getQuery: admonish('getQuery'),
   getOperators: admonish('getOperators'),
+  getMatchModes: admonish('getMatchModes'),
   getValueEditorType: admonish('getValueEditorType'),
   getValueEditorSeparator: admonish('getValueEditorSeparator'),
   getValueSources: admonish('getValueSources'),
@@ -30,14 +31,17 @@ export const basicSchema: Schema<FullField, string> = {
   getValues: admonish('getValues'),
   getRuleClassname: admonish('getRuleClassname'),
   getRuleGroupClassname: admonish('getRuleGroupClassname'),
+  getSubQueryBuilderProps: admonish('getSubQueryBuilderProps'),
   accessibleDescriptionGenerator: admonish('accessibleDescriptionGenerator'),
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showShiftActions: false,
   showCloneButtons: false,
   showLockButtons: false,
+  showMuteButtons: false,
   autoSelectField: true,
   autoSelectOperator: true,
+  autoSelectValue: true,
   addRuleToNewGroups: false,
   enableDragAndDrop: false,
   validationMap: {},
@@ -46,6 +50,7 @@ export const basicSchema: Schema<FullField, string> = {
   parseNumbers: false,
   disabledPaths: [],
   suppressStandardClassnames: false,
+  maxLevels: Infinity,
 };
 
 export const findInput = (el: HTMLElement) =>
@@ -102,7 +107,7 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
 export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
   const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
   // TODO: figure out a way to avoid these wrapper functions.
-  // See http://kcd.im/react-act
+  // See https://kcd.im/react-act
   const click: (typeof userEvent)['click'] = async el =>
     act(async () => {
       await user.click(el);
@@ -121,11 +126,11 @@ export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
 export const consoleMocks = (): {
   consoleError: jest.Mock;
   consoleErrorActual: typeof console.error;
-  consoleInfo: jest.Mock<any, any, any>;
+  consoleInfo: jest.Mock;
   consoleInfoActual: typeof console.info;
-  consoleLog: jest.Mock<any, any, any>;
+  consoleLog: jest.Mock;
   consoleLogActual: typeof console.log;
-  consoleWarn: jest.Mock<any, any, any>;
+  consoleWarn: jest.Mock;
   consoleWarnActual: typeof console.warn;
 } => {
   // TODO: This version works for Vitest. Not sure about bun:test yet.

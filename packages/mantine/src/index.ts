@@ -16,6 +16,9 @@ export * from './MantineShiftActions';
 export * from './MantineValueEditor';
 export * from './MantineValueSelector';
 
+/**
+ * @group Props
+ */
 export const mantineControlElements: ControlElementsProp<FullField, string> = {
   actionElement: MantineActionElement,
   notToggle: MantineNotToggle,
@@ -24,6 +27,9 @@ export const mantineControlElements: ControlElementsProp<FullField, string> = {
   valueSelector: MantineValueSelector,
 };
 
+/**
+ * @group Components
+ */
 export const QueryBuilderMantine: QueryBuilderContextProvider = getCompatContextProvider({
   controlElements: mantineControlElements,
 });

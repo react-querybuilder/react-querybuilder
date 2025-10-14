@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
-  "version": "8.0.0",
+  "version": "8.10.0",
   "publishConfig": {
     "access": "public"
   },
@@ -11,16 +11,16 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/types-esm/index.d.mts",
+        "types": "./dist/react-querybuilder_antd.d.mts",
         "default": "./dist/react-querybuilder_antd.mjs"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     }
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/react-querybuilder_antd.legacy-esm.d.ts",
   "files": [
     "dist"
   ],
@@ -46,31 +46,32 @@
     "sql"
   ],
   "scripts": {
-    "start": "bunx --bun vite",
-    "build": "bunx --bun tsup",
+    "start": "vite",
+    "build": "bun --bun tsdown",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@ant-design/icons": "^5.5.2",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.1.0",
-    "@types/react": "^18.3.12",
-    "@vitejs/plugin-react": "^4.3.4",
-    "antd": "^5.22.6",
-    "dayjs": "^1.11.13",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-querybuilder": "8.0.0",
-    "rollup-plugin-visualizer": "^5.12.0",
-    "typescript": "^5.7.2",
-    "vite": "^5.4.11"
+    "@ant-design/icons": "^6.1.0",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "antd": "^5.27.4",
+    "dayjs": "^1.11.18",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-querybuilder": "8.10.0",
+    "rollup-plugin-visualizer": "^6.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5",
-    "antd": ">=5",
+    "antd": ">=5.11.0",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "8.0.0"
+    "react-querybuilder": "8.10.0"
   }
 }

@@ -6,46 +6,132 @@ description: How to tweak or overhaul the default styles
 import { BrowserWindow } from '@site/src/components/BrowserWindow';
 import { DemoLink } from '@site/src/components/DemoLink';
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
+import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs';
 
-React Query Builder has a [flexible structure with specific classes assigned](./classnames) to each element in the component hierarchy, enabling a wide range of styling possibilities.
+React Query Builder has a [flexible structure with specific classes](./classnames) assigned to each element in the component hierarchy, enabling wide-ranging styling possibilities.
 
 :::tip
 
-Check out the [customization showcase](../tips/showcase) for a wide variety of styling tips.
+Check out the [customization showcase](../tips/showcase) for styling tips.
 
 :::
 
-The default stylesheet comes in CSS and SCSS flavors. Using SCSS allows you to override variables and tweak styles without having to replicate the entire rule set.
+The default stylesheet is available in both CSS and SCSS formats, allowing you to override default values without replicating the entire rule set.
 
-```ts
-import 'react-querybuilder/dist/query-builder.scss'; // recommended
-// OR
-import 'react-querybuilder/dist/query-builder.css';
+For layout-only styles (structural properties like `flex-direction`, `gap`, alignment—excluding decorative styles), import `query-builder-layout.css` (or `.scss`).
+
+<Tabs groupId="css-vs-scss">
+  <TabItem value="css" label="CSS">
+
+    ```css
+    @import 'react-querybuilder/dist/query-builder.css';
+    /* OR, for layout only: */
+    @import 'react-querybuilder/dist/query-builder-layout.css';
+    ```
+
+  </TabItem>
+  <TabItem value="scss" label="SCSS">
+
+    ```scss
+    @use 'react-querybuilder/dist/query-builder.scss';
+    // OR, for layout only:
+    @use 'react-querybuilder/dist/query-builder-layout.scss';
+    ```
+
+  </TabItem>
+</Tabs>
+
+## CSS variables
+
+Customize the default stylesheet by overriding CSS or SCSS variables.
+
+:::info
+
+CSS variables were introduced in **v8.3.0** and [SCSS variables](#scss-variables) have been available since **v4.0.0**. Both methods will continue to be supported.
+
+:::
+
+Default variables:
+
+<Tabs groupId="css-vs-scss">
+  <TabItem value="css" label="CSS">
+
+    ```css
+    :root {
+      --rqb-spacing: 0.5rem;
+      --rqb-border-width: 1px;
+      --rqb-base-color: #004bb8;
+      --rqb-background-color: #004bb833;
+      --rqb-border-color: #8081a2;
+      --rqb-border-style: solid;
+      --rqb-border-radius: 0.25rem;
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="scss" label="SCSS">
+
+    ```scss
+    $rqb-spacing: 0.5rem;
+    $rqb-border-width: 1px;
+    $rqb-base-color: #004bb8;
+    $rqb-background-color: #004bb833;
+    $rqb-border-color: #8081a2;
+    $rqb-border-style: solid;
+    $rqb-border-radius: 0.25rem;
+    ```
+
+  </TabItem>
+</Tabs>
+
+Example:
+
+<Tabs groupId="css-vs-scss">
+  <TabItem value="css" label="CSS">
+
+    ```css
+    @import 'react-querybuilder/dist/query-builder.css';
+
+    :root {
+      --rqb-spacing: 0.8rem; /* a little roomier than the default 0.5rem */
+      --rqb-background-color: #ccc3; /* gray, semi-transparent background */
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="scss" label="SCSS">
+
+    ```scss
+    @use 'react-querybuilder/dist/query-builder' with (
+      $rqb-spacing: 0.8rem, /* a little roomier than the default 0.5rem */
+      $rqb-background-color: #ccc3 /* gray, semi-transparent background */
+    );
+    ```
+
+  </TabItem>
+</Tabs>
+
+### SCSS variables
+
+SCSS variables begin with `$` instead of `--`, but otherwise have the same name as their CSS counterpart (e.g., `$rqb-spacing` corresponds to `--rqb-spacing`).
+
+SCSS allows you to customize the CSS variable prefix (`rqb-` by default) by setting `$rqb-var-prefix`.
+
+```scss
+@use 'react-querybuilder/dist/query-builder' with (
+  $rqb-var-prefix: myprefix-,
+  $rqb-spacing: 0.8rem
+);
+
+:root {
+  --myprefix-background-color: #ccc3;
+}
 ```
-
-## Layout only
-
-To load the default layout values only, without `background-color`, `border-style`, or other decorative styles, import `"react-querybuilder/dist/query-builder-layout.scss"` (or `css`) instead. This will define `flex-direction`, `gap`, alignment, etc.
-
-```ts
-import 'react-querybuilder/dist/query-builder-layout.scss'; // recommended
-// OR
-import 'react-querybuilder/dist/query-builder-layout.css';
-```
-
-## SCSS variables
-
-The default SCSS variables for layout include:
-
-%importcode /packages/react-querybuilder/src/query-builder-layout.scss#region=Basic
-
-And the variables for decorative styles are:
-
-%importcode /packages/react-querybuilder/src/query-builder.scss#region=Basic
 
 ## Branch lines
 
-To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class to the query builder using the [`controlClassnames` prop](../components/querybuilder#controlclassnames), or to any ancestor element.
+To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class using the [`controlClassnames` prop](../components/querybuilder#controlclassnames) or to any ancestor element.
 
 ```tsx
 <QueryBuilder
@@ -80,20 +166,107 @@ export const fields = [
   />
 </BrowserWindow>
 
-The branch lines are colored <span style={{ color: 'red' }}>red</span> in the example above to stand out, but by default the branch lines use the same color, width, and style as the group borders. The following SCSS variables can be overridden to customize the branch lines.
+The branch lines are colored <span style={{ color: 'red' }}>red</span> in the example above to stand out, but by default use the same color, width, and style as group borders. These variables can be overridden to customize branch lines:
 
-%importcode /packages/react-querybuilder/src/query-builder-layout.scss#region=Branches
+<Tabs groupId="css-vs-scss">
+  <TabItem value="css" label="CSS">
 
-%importcode /packages/react-querybuilder/src/query-builder.scss#region=Branches
+    ```css
+    :root {
+      --rqb-branch-indent: var(--rqb-spacing);
+      --rqb-branch-width: var(--rqb-border-width);
+      --rqb-branch-color: var(--rqb-border-color);
+      --rqb-branch-radius: var(--rqb-border-radius);
+      --rqb-branch-style: var(--rqb-border-style);
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="scss" label="SCSS">
+
+    ```scss
+    $rqb-branch-indent: $rqb-spacing;
+    $rqb-branch-width: $rqb-border-width;
+    $rqb-branch-color: $rqb-border-color;
+    $rqb-branch-radius: $rqb-border-radius;
+    $rqb-branch-style: $rqb-border-style;
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Justified layout
+
+For a "justified" layout, add the `queryBuilder-justified` class using the [`controlClassnames` prop](../components/querybuilder#controlclassnames) or to any ancestor element.
+
+Justified layout styles augment the default styles by pushing "+ Rule", "+ Group", clone, lock, and remove buttons to the right edge of their containers.
+
+```tsx
+<QueryBuilder
+  // highlight-start
+  controlClassnames={{ queryBuilder: 'queryBuilder-justified' }}
+  // highlight-end
+/>
+```
+
+<BrowserWindow>
+  <QueryBuilderEmbed
+    fields={fields}
+    controlClassnames={{ queryBuilder: 'queryBuilder-justified' }}
+    defaultQuery={{
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            { field: 'lastName', operator: '=', value: 'Vaughan' },
+          ],
+        },
+      ],
+    }}
+  />
+</BrowserWindow>
 
 ## Drag-and-drop
 
-When [drag-and-drop is enabled](../components/querybuilder#enabledraganddrop), the following variables control styles for the dragged and hovered elements.
+When [drag-and-drop is enabled](../dnd), these variables control styles for dragged and hovered elements:
 
-%importcode /packages/react-querybuilder/src/query-builder.scss#region=Drag-and-drop
+<Tabs groupId="css-vs-scss">
+  <TabItem value="css" label="CSS">
 
-You can also assign styles to the following classes.
+    ```css
+    :root {
+      --rqb-dnd-drop-indicator-color: rebeccapurple;
+      --rqb-dnd-drop-indicator-copy-color: #669933;
+      --rqb-dnd-drop-indicator-style: dashed;
+      --rqb-dnd-drop-indicator-width: 2px;
+    }
+    ```
+
+  </TabItem>
+  <TabItem value="scss" label="SCSS">
+
+    ```scss
+    $rqb-dnd-drop-indicator-color: rebeccapurple;
+    $rqb-dnd-drop-indicator-copy-color: #669933;
+    $rqb-dnd-drop-indicator-style: dashed;
+    $rqb-dnd-drop-indicator-width: 2px;
+
+    // Deprecated variable names (still work)
+    // $rqb-dnd-hover-border-bottom-color: rebeccapurple;
+    // $rqb-dnd-hover-copy-border-bottom-color: #669933;
+    // $rqb-dnd-hover-border-bottom-style: dashed;
+    // $rqb-dnd-hover-border-bottom-width: 2px;
+    ```
+
+  </TabItem>
+</Tabs>
+
+You can also assign styles to these classes:
 
 - `dndDragging`: Assigned to the clone of the dragged element (the "ghost" that follows the mouse cursor)
 - `dndOver`: Assigned to a drop target when the cursor hovers over it
-- `dndCopy`: Assigned to a drop target when the cursor hovers over it while the modifier key is pressed (`Alt` on Windows/Linux, `Option`/`⌥` on Mac)
+- `dndCopy`: Assigned to a drop target when the cursor hovers over it while the "copy" modifier key is pressed (<kbd>Alt</kbd> on Windows/Linux, <kbd>⌥ Option</kbd> on macOS; see [Drag-and-drop § Cloning and grouping](../dnd#cloning-and-grouping))
+- `dndGroup`: Assigned to a drop target when the cursor hovers over it while the "group" modifier key is pressed (<kbd>Ctrl</kbd>; see [Drag-and-drop § Cloning and grouping](../dnd#cloning-and-grouping))

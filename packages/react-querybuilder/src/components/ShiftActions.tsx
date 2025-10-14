@@ -3,6 +3,8 @@ import type { ShiftActionsProps } from '../types';
 
 /**
  * Default "shift up"/"shift down" buttons used by {@link QueryBuilder}.
+ *
+ * @group Components
  */
 export const ShiftActions = (props: ShiftActionsProps): React.JSX.Element => (
   <div data-testid={props.testID} className={props.className}>

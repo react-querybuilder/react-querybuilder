@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable unicorn/prefer-module */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import { Loading } from '../_utils';
-import './_styles/demo.scss';
+import './_styles/demo.css';
+
+const loading = <Loading />;
 
 export default function ReactQueryBuilderDemo() {
   return (
     <Layout description="React Query Builder Demo">
-      <BrowserOnly fallback={<Loading />}>
+      <BrowserOnly fallback={loading}>
         {() => {
           const Demo = require('./_components/Demo').default;
           return <Demo />;

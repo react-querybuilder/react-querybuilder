@@ -1,8 +1,9 @@
+import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryBuilder } from 'react-querybuilder';
-import { DevLayout, useDevApp } from '@rqb-devapp';
 import { QueryBuilderDateTime } from '../src/QueryBuilderDateTime';
+import './styles.scss';
 
 const App = () => {
   const devApp = useDevApp();
