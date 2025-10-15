@@ -1,4 +1,15 @@
-import type { RequireAtLeastOne, SetRequired, Simplify } from 'type-fest';
+import type { Except, SetRequired, Simplify } from 'type-fest';
+
+// This is the implementation from type-fest@4.
+// TODO: Update to use the type-fest@latest implementation.
+type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType> = {
+  // For each `Key` in `KeysType` make a mapped type:
+  [Key in KeysType]-?: Required<Pick<ObjectType, Key>> & // 1. Make `Key`'s type required
+    // 2. Make all other keys in `KeysType` optional
+    Partial<Pick<ObjectType, Exclude<KeysType, Key>>>;
+}[KeysType] &
+  // 3. Add the remaining keys not in `KeysType`
+  Except<ObjectType, KeysType>;
 
 export type StringUnionToFlexibleOptionArray<Op extends string> = Array<
   Op extends unknown ? FlexibleOption<Op> : never

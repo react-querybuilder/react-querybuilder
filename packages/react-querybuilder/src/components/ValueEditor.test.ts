@@ -23,7 +23,7 @@ const baseValueEditorProps: ValueEditorProps = {
   value: '',
 };
 
-it('calls handleOnChange when operator is not "between"/"in" and value is an array', async () => {
+it('calls handleOnChange when operator is not "between"/"in" and value is an array', () => {
   const handleOnChange = jest.fn();
   renderHook(() =>
     useValueEditor({
@@ -36,7 +36,7 @@ it('calls handleOnChange when operator is not "between"/"in" and value is an arr
   expect(handleOnChange).toHaveBeenCalledWith('twelve');
 });
 
-it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is an array', async () => {
+it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is an array', () => {
   const handleOnChange = jest.fn();
   renderHook(() =>
     useValueEditor({
@@ -50,7 +50,7 @@ it('calls handleOnChange when inputType is number, operator is not "between"/"in
   expect(handleOnChange).toHaveBeenCalledWith(12);
 });
 
-it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is a string with a comma', async () => {
+it('calls handleOnChange when inputType is number, operator is not "between"/"in", and value is a string with a comma', () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
     useValueEditor({
@@ -65,7 +65,7 @@ it('calls handleOnChange when inputType is number, operator is not "between"/"in
   expect(hr.result.current.valueAsArray).toEqual(['12', '14']);
 });
 
-it('sets valueAsArray when operator is "between"', async () => {
+it('sets valueAsArray when operator is "between"', () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
     useValueEditor({
@@ -94,7 +94,7 @@ describe('parseNumbers', () => {
     pn: ParseNumbersPropConfig;
     text: ParseNumberMethod;
     number: ParseNumberMethod;
-  }[])('processes $pn correctly', async ({ pn, number, text }) => {
+  }[])('processes $pn correctly', ({ pn, number, text }) => {
     const handleOnChangeText = jest.fn();
     const hrText = renderHook(() =>
       useValueEditor({
@@ -121,7 +121,7 @@ describe('parseNumbers', () => {
   });
 });
 
-it('does not call handleOnChange when type is "multiselect"', async () => {
+it('does not call handleOnChange when type is "multiselect"', () => {
   const handleOnChange = jest.fn();
   renderHook(() =>
     useValueEditor({
@@ -135,7 +135,7 @@ it('does not call handleOnChange when type is "multiselect"', async () => {
   expect(handleOnChange).not.toHaveBeenCalled();
 });
 
-it('does not call handleOnChange when skipHook is true', async () => {
+it('does not call handleOnChange when skipHook is true', () => {
   const handleOnChange = jest.fn();
   const hr = renderHook(() =>
     useValueEditor({

@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.1).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.4).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -1485,8 +1485,29 @@ fieldset:disabled .mantine-active:active {
   --input-padding-inline-end: var(--input-right-section-size);
 }
 
-.m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
-  --input-padding-inline-end: calc(var(--input-right-section-size) * 1.55);
+.m_6c018570[data-size='xs']
+  .m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
+  --input-padding-inline-end: calc(2.5625rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='sm']
+  .m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
+  --input-padding-inline-end: calc(3.125rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='md']
+  .m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
+  --input-padding-inline-end: calc(3.75rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='lg']
+  .m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
+  --input-padding-inline-end: calc(4.5rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='xl']
+  .m_6c018570[data-with-right-section]:has([data-combined-clear-section]) {
+  --input-padding-inline-end: calc(5.5625rem * var(--mantine-scale));
 }
 
 [data-mantine-color-scheme='light'] .m_6c018570[data-variant='default'] {
@@ -1653,8 +1674,24 @@ fieldset:disabled .mantine-active:active {
   --section-border-radius: var(--right-section-border-radius);
 }
 
-.m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
-  --section-size: calc(var(--input-right-section-size) * 1.55);
+.m_6c018570[data-size='xs'] .m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
+  --section-size: calc(2.5625rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='sm'] .m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
+  --section-size: calc(3.125rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='md'] .m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
+  --section-size: calc(3.75rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='lg'] .m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
+  --section-size: calc(4.5rem * var(--mantine-scale));
+}
+
+.m_6c018570[data-size='xl'] .m_82577fc2[data-position='right']:has([data-combined-clear-section]) {
+  --section-size: calc(5.5625rem * var(--mantine-scale));
 }
 
 .m_82577fc2[data-position='left'] {
@@ -2702,8 +2739,17 @@ fieldset:disabled .m_8ee546b8,
 
   --checkbox-size: var(--checkbox-size-sm);
   --checkbox-color: var(--mantine-primary-color-filled);
-  --checkbox-icon-color: var(--mantine-color-white);
+}
 
+.m_5e5256ee:where([data-variant='filled']) {
+  --checkbox-icon-color: var(--mantine-color-white);
+}
+
+.m_5e5256ee:where([data-variant='outline']) {
+  --checkbox-icon-color: var(--checkbox-color);
+}
+
+.m_5e5256ee {
   position: relative;
   border: calc(0.0625rem * var(--mantine-scale)) solid transparent;
   width: var(--checkbox-size);
@@ -2766,7 +2812,7 @@ fieldset:disabled .m_8ee546b8,
 
 .m_76e20374[data-indeterminate]:not([data-disabled]) > .m_1b1c543a,
 .m_76e20374[data-checked]:not([data-disabled]) > .m_1b1c543a {
-  color: var(--checkbox-color);
+  color: var(--checkbox-icon-color);
   opacity: 1;
   transform: none;
 }
@@ -2792,7 +2838,14 @@ fieldset:disabled .m_8ee546b8,
 
   --checkbox-size: var(--checkbox-size-sm);
   --checkbox-color: var(--mantine-primary-color-filled);
+}
+
+.m_bf2d988c:where([data-variant='filled']) {
   --checkbox-icon-color: var(--mantine-color-white);
+}
+
+.m_bf2d988c:where([data-variant='outline']) {
+  --checkbox-icon-color: var(--checkbox-color);
 }
 
 .m_26062bec {
@@ -2870,7 +2923,7 @@ fieldset:disabled .m_8ee546b8,
 
 .m_215c4542[data-indeterminate]:not(:disabled) + .m_bf295423,
 .m_215c4542:checked:not(:disabled) + .m_bf295423 {
-  color: var(--checkbox-color);
+  color: var(--checkbox-icon-color);
   opacity: 1;
   transform: none;
 }
@@ -4413,20 +4466,22 @@ fieldset:disabled .m_8ee546b8,
 .m_abbac491 {
   --list-fz: var(--mantine-font-size-md);
   --list-lh: var(--mantine-line-height-md);
+  --list-marker-gap: var(--mantine-spacing-lg);
 
-  list-style-position: inside;
+  list-style-position: outside;
   font-size: var(--list-fz);
   line-height: var(--list-lh);
   margin: 0;
   padding: 0;
+  padding-inline-start: var(--list-marker-gap);
 }
 
 .m_abbac491:where([data-with-padding]) {
-  padding-inline-start: var(--mantine-spacing-md);
+  padding-inline-start: calc(var(--list-marker-gap) + var(--mantine-spacing-md));
 }
 
 .m_abb6bec2 {
-  white-space: nowrap;
+  white-space: normal;
   line-height: var(--list-lh);
 }
 

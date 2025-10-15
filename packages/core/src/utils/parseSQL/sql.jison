@@ -284,7 +284,7 @@ selectExprAliasOpt
   | AS IDENTIFIER -> {alias: $2, hasAs: true}
   | IDENTIFIER -> {alias: $1, hasAs: false}
   | AS STRING -> {alias: $2, hasAs: true}
-  | STRING -> {alias: $2, hasAs: false}
+  | STRING -> {alias: $1, hasAs: false}
   ;
 string
   : STRING -> { type: 'String', value: $1 }

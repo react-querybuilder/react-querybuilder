@@ -6,8 +6,8 @@ export default {
   displayName: 'core',
   coveragePathIgnorePatterns: [
     ...common.coveragePathIgnorePatterns,
-    'celParser.js',
-    'sqlParser.js',
+    'celParser.ts',
+    'sqlParser.ts',
   ],
   testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
 };

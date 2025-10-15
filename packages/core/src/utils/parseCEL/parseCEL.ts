@@ -20,8 +20,14 @@ import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
-import { celParser } from './celParser';
-import type { CELExpression, CELIdentifier, CELLikeExpression, CELLiteral } from './types';
+import { CELParser } from './celParser';
+import type {
+  CELExpression,
+  CELIdentifier,
+  CELLikeExpression,
+  CELLiteral,
+  ParsedCEL,
+} from './types';
 import {
   celGenerateFlatAndOrList,
   celGenerateMixedAndOrList,
@@ -330,9 +336,10 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
 
   const prepare = options.generateIDs ? prepareRuleGroup : <T>(g: T) => g;
 
+  const celParser = new CELParser();
   let processedCEL: CELExpression;
   try {
-    processedCEL = celParser.parse(cel).value;
+    processedCEL = (celParser.parse(cel) as ParsedCEL).value;
   } catch {
     return prepare(emptyQuery);
   }

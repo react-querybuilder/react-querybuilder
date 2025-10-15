@@ -3,7 +3,7 @@ import { objectKeys } from './objectUtils';
 import { preferAnyProp, preferFlagProps, preferProp } from './preferProp';
 
 describe('preferProp', () => {
-  it('prefers the prop with default true', async () => {
+  it('prefers the prop with default true', () => {
     expect(preferProp(true)).toBe(true);
     expect(preferProp(true, true)).toBe(true);
     expect(preferProp(true, false)).toBe(false);
@@ -15,7 +15,7 @@ describe('preferProp', () => {
     expect(preferProp(true, true, false)).toBe(true);
   });
 
-  it('prefers the prop with default false', async () => {
+  it('prefers the prop with default false', () => {
     expect(preferProp(false)).toBe(false);
     expect(preferProp(false, true)).toBe(true);
     expect(preferProp(false, false)).toBe(false);
@@ -27,13 +27,13 @@ describe('preferProp', () => {
     expect(preferProp(false, true, false)).toBe(true);
   });
 
-  it('does not finalize the prop with default true', async () => {
+  it('does not finalize the prop with default true', () => {
     expect(preferProp(true, undefined, undefined, true)).toBeUndefined();
     expect(preferProp(true, true, undefined, true)).toBe(true);
     expect(preferProp(true, undefined, true, true)).toBe(true);
   });
 
-  it('does not finalize the prop with default false', async () => {
+  it('does not finalize the prop with default false', () => {
     expect(preferProp(false, undefined, undefined, true)).toBeUndefined();
     expect(preferProp(false, true, undefined, true)).toBe(true);
     expect(preferProp(false, undefined, true, true)).toBe(true);
@@ -41,7 +41,7 @@ describe('preferProp', () => {
 });
 
 describe('preferAnyProp', () => {
-  it('prefers the prop with default undefined', async () => {
+  it('prefers the prop with default undefined', () => {
     expect(preferAnyProp()).toBeUndefined();
     expect(preferAnyProp(undefined, true)).toBe(true);
     expect(preferAnyProp(undefined, false)).toBe(false);
@@ -53,7 +53,7 @@ describe('preferAnyProp', () => {
     expect(preferAnyProp(undefined, true, false)).toBe(true);
   });
 
-  it('prefers the prop with default true', async () => {
+  it('prefers the prop with default true', () => {
     expect(preferAnyProp(true)).toBe(true);
     expect(preferAnyProp(true, true)).toBe(true);
     expect(preferAnyProp(true, false)).toBe(false);
@@ -65,7 +65,7 @@ describe('preferAnyProp', () => {
     expect(preferAnyProp(true, true, false)).toBe(true);
   });
 
-  it('prefers the prop with default false', async () => {
+  it('prefers the prop with default false', () => {
     expect(preferAnyProp(false)).toBe(false);
     expect(preferAnyProp(false, true)).toBe(true);
     expect(preferAnyProp(false, false)).toBe(false);
@@ -79,12 +79,12 @@ describe('preferAnyProp', () => {
 });
 
 describe('preferFlagProps', () => {
-  it('prefers the default values', async () => {
+  it('prefers the default values', () => {
     expect(preferFlagProps()).toEqual(
       Object.fromEntries(objectKeys(queryBuilderFlagDefaults).map(k => [k, undefined]))
     );
   });
-  it('finalizes with default values', async () => {
+  it('finalizes with default values', () => {
     expect(preferFlagProps(undefined, undefined, true)).toEqual(queryBuilderFlagDefaults);
   });
 });
