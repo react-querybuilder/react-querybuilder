@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import type { Translations } from '../types';
 import { useMergedContext } from './useMergedContext';
 
-it('merges context', async () => {
+it('merges context', () => {
   const customTranslations: Partial<Translations> = { addRule: { label: 'Add Rule' } };
   const hookResult = renderHook(useMergedContext, {
     initialProps: { finalize: false, translations: customTranslations },
