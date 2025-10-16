@@ -71,6 +71,10 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
    * @default "ctrl"
    */
   groupModeModifierKey?: string;
+  /**
+   * Do not render the "ghost" preview image when dragging.
+   */
+  noDragPreview?: boolean;
 }
 
 /**
@@ -79,7 +83,10 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
  * @group Props
  */
 export interface QueryBuilderDndContextProps
-  extends Pick<QueryBuilderDndProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> {
+  extends Pick<
+    QueryBuilderDndProps,
+    'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'noDragPreview'
+  > {
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;

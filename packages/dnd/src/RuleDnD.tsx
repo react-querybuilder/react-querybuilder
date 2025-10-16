@@ -10,6 +10,7 @@ import type {
   UseRuleDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import { getEmptyImage } from './getEmptyImage';
 import { isHotkeyPressed } from './isHotkeyPressed';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
@@ -48,11 +49,12 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   );
 };
 
-type UseRuleDndParams = RuleProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> & {
-    useDrag: typeof useDragOriginal;
-    useDrop: typeof useDropOriginal;
-  };
+interface UseRuleDndParams
+  extends RuleProps,
+    Omit<QueryBuilderDndContextProps, 'baseControls' | 'useDrag' | 'useDrop'> {
+  useDrag: typeof useDragOriginal;
+  useDrop: typeof useDropOriginal;
+}
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
@@ -74,6 +76,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     canDrop,
     copyModeModifierKey = 'alt',
     groupModeModifierKey = 'ctrl',
+    noDragPreview,
   } = params;
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
@@ -86,6 +89,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     useDrag,
     copyModeModifierKey,
     groupModeModifierKey,
+    noDragPreview,
   });
 
   const [{ isOver, dropMonitorId, dropEffect, groupItems, dropNotAllowed }, drop] = useDrop<
@@ -143,8 +147,11 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
     [disabled, actions.moveRule, path, canDrop, rule, schema]
   );
 
-  drag(dragRef);
-  preview(drop(dndRef));
+  React.useEffect(() => {
+    drag(dragRef);
+    drop(dndRef);
+    preview(noDragPreview ? getEmptyImage() : dndRef, { captureDraggingState: !!noDragPreview });
+  }, [drag, drop, noDragPreview, preview]);
 
   return {
     isDragging,
