@@ -1222,83 +1222,83 @@ _(This list may look long, but the breaking changes should only affect a small m
 - `parseSQL` method to import queries from SQL ([documentation](https://react-querybuilder.js.org/docs/api/import) / [demo](https://react-querybuilder.js.org/react-querybuilder/) -- click the "Load from SQL" button).
 - `formatQuery` accepts a new `format` type: "parameterized_named" ([documentation](https://react-querybuilder.js.org/docs/api/export#named-parameters)). This new format is similar to "parameterized", but instead of anonymous `?`-style bind variables, each parameter is given a unique name based on the field name and the order in the query. A corresponding `paramPrefix` option is available in order to use a different character than the default ":" within the `sql` string.
 
-## [v4.0.0-beta.8] - 2021-12-24
+### Miscellaneous
 
-### Fixed
+<details>
+
+<summary>v4.0.0-beta.* releases</summary>
+
+#### [v4.0.0-beta.8] - 2021-12-24
+
+##### Fixed
 
 - [#255] Fix a couple of issues with the "mongodb" `formatQuery` export type ([@mylawacad](https://github.com/mylawacad))
 
-### Added
+##### Added
 
 - [#261] `valueProcessor` for "mongodb" export format
 - [#252] Export `RuleGroup` component ([@ZigZagT](https://github.com/ZigZagT))
 - [#250] Bulma compatibility package and demo
 - [#248] `disabled` prop
 
-## [v4.0.0-beta.7] - 2021-12-13
+#### [v4.0.0-beta.7] - 2021-12-13
 
-### Fixed
+##### Fixed
 
 - [#247] Fix drag-and-drop for `independentCombinators`
 
-## [v4.0.0-beta.6] - 2021-11-27
+#### [v4.0.0-beta.6] - 2021-11-27
 
-Maintenance release focused on converting to a monorepo with Vite driving the build process.
+- Maintenance release focused on converting to a monorepo with Vite driving the build process.
 
-### Added
+##### Added
 
 - If using `react-querybuilder` with NodeJS, and you only want to use the `formatQuery` function, you no longer have to install React on the server as well. Just `import formatQuery from 'react-querybuilder/dist/formatQuery'`. Note: TypeScript types are not available for this export.
 
-## [v4.0.0-beta.5] - 2021-11-12
+#### [v4.0.0-beta.5] - 2021-11-12
 
-### Changed
+##### Changed
 
 - Earlier 4.0 beta releases had an `inlineCombinators` prop. This has been renamed to `independentCombinators`.
 - Dropped `lodash` dependency. Added `immer` and `react-dnd`.
+- **_Styles_**
+  - The default styles now use flexbox. This should allow greater flexibility and more consistent styling.
+  - The `query-builder.scss` file now uses variables instead of hard-coded colors and spacing. Feel free to import it and override the default values with your own theme's colors/styles/etc.
+- **_Structure_**
+  - A new drag handle element sits at the front of every rule and rule group header element. If you are not using the drag-and-drop feature (see Features section below), you should hide the drag handle by using the default stylesheet which hides it automatically when `enableDragAndDrop` is `false`, or hide it with a rule like `.queryBuilder-dragHandle { display: none; }`.
+- **_Behavior_**
+  - `<QueryBuilder />` is now a properly controlled or uncontrolled component depending on which props are passed in. If you pass a `query` prop, the query will not change until a new `query` is passed in. You should use the parameter of the `onQueryChange` callback to update the `query` prop. Typically this involves using React's `useState` hook. To render an _uncontrolled_ component, don't pass a `query` prop. You can set the initial query by using the new `defaultQuery` prop, and you can still listen for changes with `onQueryChange`.
 
-#### Styles
-
-- The default styles now use flexbox. This should allow greater flexibility and more consistent styling.
-- The `query-builder.scss` file now uses variables instead of hard-coded colors and spacing. Feel free to import it and override the default values with your own theme's colors/styles/etc.
-
-#### Structure
-
-- A new drag handle element sits at the front of every rule and rule group header element. If you are not using the drag-and-drop feature (see Features section below), you should hide the drag handle by using the default stylesheet which hides it automatically when `enableDragAndDrop` is `false`, or hide it with a rule like `.queryBuilder-dragHandle { display: none; }`.
-
-#### Behavior
-
-- `<QueryBuilder />` is now a properly controlled or uncontrolled component depending on which props are passed in. If you pass a `query` prop, the query will not change until a new `query` is passed in. You should use the parameter of the `onQueryChange` callback to update the `query` prop. Typically this involves using React's `useState` hook. To render an _uncontrolled_ component, don't pass a `query` prop. You can set the initial query by using the new `defaultQuery` prop, and you can still listen for changes with `onQueryChange`.
-
-### Added
+##### Added
 
 - [#235] Drag-and-drop! Pass the `enableDragAndDrop` prop to display a drag handle on each rule and group header. Users will be able to reorder rules and groups with the click (and drag) of a mouse.
 - New IE11-compatible demo page.
 
-## [v4.0.0-beta.4] - 2021-11-03
+#### [v4.0.0-beta.4] - 2021-11-03
 
-### Fixed
+##### Fixed
 
 - [v4.0.0-beta.3] had an outdated build
 
-### Added
+##### Added
 
 - All props on the `<QueryBuilder />` component are now optional
 
-## [v4.0.0-beta.3] - 2021-11-03
+#### [v4.0.0-beta.3] - 2021-11-03
 
-### Added
+##### Added
 
 - [#231] `inlineCombinators` prop. When `true`, `<QueryBuilder />` will insert an independent combinator (and/or) selector between each pair of sibling rules/groups. This new feature shouldn't introduce any breaking changes, i.e. if `inlineCombinators` is undefined or `false`, then the `<QueryBuilder />` should behave the same as it did in v4.0.0-beta.2. However, the TypeScript types are _significantly_ more complex in this release so we're going to leave this beta out for a while before releasing v4.0.0 properly.
 
-## [v4.0.0-beta.2] - 2021-10-29
+#### [v4.0.0-beta.2] - 2021-10-29
 
-### Added
+##### Added
 
 - [#230] `parseSQL` method to import queries from SQL (try the [demo](https://react-querybuilder.js.org/react-querybuilder/)).
 
-## [v4.0.0-beta.1] - 2021-10-23
+#### [v4.0.0-beta.1] - 2021-10-23
 
-### Changed
+##### Changed
 
 - [#229] Path-based query management
   - `Rule` and `RuleGroup` props now include `path: number[]`, and `id` may be undefined.
@@ -1309,10 +1309,12 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
   - The `onQueryChange` callback's argument, the current query object, will include a `path` for each rule and group. The `formatQuery` default output format, "json", will also include `path`s.
   - Rule and group `div`s now include a `data-path` attribute.
 
-### Added
+##### Added
 
 - `formatQuery` accepts a new `format` type: `"parameterized_named"`. This new format is similar to `"parameterized"`, but instead of anonymous `?`-style bind variables, each parameter is given a unique name based on the field name and the order in the query. A corresponding option `paramPrefix` is available in order to use a different character than the default ":" within the `sql` string.
 - [#228] CodeSandbox CI
+
+</details>
 
 ## [v3.12.1] - 2021-10-06
 
