@@ -25,7 +25,7 @@ const testJsonLogic = (
   { query, expectedResult, expectedResultCoercedNull, fqOptions }: TestSQLParams,
   data = superUsersJsonLogic
 ) => {
-  test(name, async () => {
+  test(name, () => {
     const jsonlogic = formatQuery(query, { ...fqOptions, format: 'jsonlogic' });
     expect(data.filter(u => apply(jsonlogic, u))).toEqual(
       expectedResultCoercedNull ?? expectedResult
