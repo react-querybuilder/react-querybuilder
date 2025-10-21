@@ -453,10 +453,10 @@
     },
     "packages/rules-engine": {
       "name": "@react-querybuilder/rules-engine",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "dependencies": {
         "immer": "^10.1.3",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
       "devDependencies": {
         "@testing-library/dom": "^10.4.1",
@@ -465,11 +465,11 @@
         "@vitejs/plugin-react": "^5.0.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "rollup-plugin-visualizer": "^6.0.4",
+        "rollup-plugin-visualizer": "^6.0.5",
         "sass": "^1.93.2",
         "type-fest": "^5.1.0",
         "typescript": "^5.9.3",
-        "vite": "^7.1.9",
+        "vite": "^7.1.11",
       },
       "peerDependencies": {
         "react": ">=18",
