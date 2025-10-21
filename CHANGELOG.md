@@ -7,14 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.11.0] - 2025-10-21
+
 ### Added
 
 - [#957] New `hideDefaultDragPreview` prop for `QueryBuilderDnD` hides the browser's default drag preview, enabling custom drag layers and components.
-- All pure `boolean` props are now assignable on `QueryBuilderContext`.
-
-### Fixed
-
 - [#954] Default styles now apply `{ cursor: not-allowed; opacity: 0.5; }` to drag handles of locked/disabled rules and groups, visually clarifying the inability to drag the elements.
+- All pure `boolean` props are now assignable on `QueryBuilderContext`.
 
 ## [v8.10.0] - 2025-10-09
 
@@ -2048,7 +2049,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...HEAD
+[v8.11.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...v8.11.0
 [v8.10.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...v8.10.0
 [v8.9.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...v8.9.2
 [v8.9.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.0...v8.9.1
