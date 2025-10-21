@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#957] New `noDragPreview` prop for `QueryBuilderDnD` hides the browser's default drag preview, enabling custom drag layers and components.
 - All pure `boolean` props are now assignable on `QueryBuilderContext`.
 
 ### Fixed
@@ -2041,6 +2042,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950
 [#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
 [#954]: https://github.com/react-querybuilder/react-querybuilder/pull/954
+[#957]: https://github.com/react-querybuilder/react-querybuilder/pull/957
 
 <!-- #endregion -->
 

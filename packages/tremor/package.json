@@ -53,8 +53,8 @@
   "devDependencies": {
     "@headlessui/tailwindcss": "^0.2.2",
     "@tailwindcss/forms": "^0.5.10",
-    "@tailwindcss/postcss": "^4.1.14",
-    "@tailwindcss/vite": "^4.1.14",
+    "@tailwindcss/postcss": "^4.1.15",
+    "@tailwindcss/vite": "^4.1.15",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
     "@tremor/react": "^3.18.7",
@@ -65,10 +65,10 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-querybuilder": "8.10.0",
-    "rollup-plugin-visualizer": "^6.0.4",
-    "tailwindcss": "^4.1.14",
+    "rollup-plugin-visualizer": "^6.0.5",
+    "tailwindcss": "^4.1.15",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.11"
   },
   "peerDependencies": {
     "@tremor/react": "^3",
