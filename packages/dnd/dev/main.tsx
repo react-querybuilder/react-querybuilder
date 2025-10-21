@@ -61,7 +61,7 @@ const App = () => {
 
   return (
     <DevLayout {...devApp}>
-      <QueryBuilderDnD dnd={dnd} noDragPreview>
+      <QueryBuilderDnD dnd={dnd} hideDefaultDragPreview>
         <CustomDragLayer fields={devApp.commonRQBProps.fields as FlexibleOptionList<FullField>} />
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder

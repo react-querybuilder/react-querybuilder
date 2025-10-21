@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#957] New `noDragPreview` prop for `QueryBuilderDnD` hides the browser's default drag preview, enabling custom drag layers and components.
+- [#957] New `hideDefaultDragPreview` prop for `QueryBuilderDnD` hides the browser's default drag preview, enabling custom drag layers and components.
 - All pure `boolean` props are now assignable on `QueryBuilderContext`.
 
 ### Fixed

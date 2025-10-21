@@ -113,7 +113,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
     );
     const [QBforDnDIC, getBackendIC] = wrapWithTestBackend(
       (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
-        <QBctx dnd={{ ...reactDnD, ...reactDnDTouchBackend }} noDragPreview>
+        <QBctx dnd={{ ...reactDnD, ...reactDnDTouchBackend }} hideDefaultDragPreview>
           <QueryBuilder {...props} />
         </QBctx>
       )

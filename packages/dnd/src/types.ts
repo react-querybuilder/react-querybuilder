@@ -74,7 +74,7 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
   /**
    * Do not render the "ghost" preview image when dragging.
    */
-  noDragPreview?: boolean;
+  hideDefaultDragPreview?: boolean;
 }
 
 /**
@@ -85,7 +85,7 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
 export interface QueryBuilderDndContextProps
   extends Pick<
     QueryBuilderDndProps,
-    'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'noDragPreview'
+    'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'hideDefaultDragPreview'
   > {
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;

@@ -33,7 +33,7 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     useDrop,
     copyModeModifierKey,
     groupModeModifierKey,
-    noDragPreview,
+    hideDefaultDragPreview,
   } = rqbDndContext;
 
   const dndRefs = useRuleGroupDnD({
@@ -44,7 +44,7 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     canDrop,
     copyModeModifierKey,
     groupModeModifierKey,
-    noDragPreview,
+    hideDefaultDragPreview,
   });
 
   return <BaseRuleGroupComponent {...props} {...dndRefs} />;
@@ -78,7 +78,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     canDrop,
     copyModeModifierKey = 'alt',
     groupModeModifierKey = 'ctrl',
-    noDragPreview,
+    hideDefaultDragPreview,
   } = params;
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
@@ -91,7 +91,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     useDrag,
     copyModeModifierKey,
     groupModeModifierKey,
-    noDragPreview,
+    hideDefaultDragPreview,
   });
 
   const [{ isOver, dropMonitorId, dropEffect, groupItems, dropNotAllowed }, drop] = useDrop<
@@ -147,10 +147,10 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
   React.useEffect(() => {
     if (path.length > 0) {
       drag(dragRef);
-      preview(noDragPreview ? getEmptyImage() : previewRef);
+      preview(hideDefaultDragPreview ? getEmptyImage() : previewRef);
     }
     drop(dropRef);
-  }, [drag, drop, noDragPreview, path.length, preview]);
+  }, [drag, drop, hideDefaultDragPreview, path.length, preview]);
 
   return {
     isDragging,
