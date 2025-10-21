@@ -26,7 +26,8 @@ import { useDragCommon } from './useDragCommon';
 export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
-  const { canDrop, useDrag, useDrop, copyModeModifierKey, groupModeModifierKey } = rqbDndContext;
+  const { canDrop, useDrag, useDrop, copyModeModifierKey, groupModeModifierKey, noDragPreview } =
+    rqbDndContext;
 
   const disabled = !!props.parentDisabled || !!props.disabled;
 
@@ -38,6 +39,7 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
     canDrop,
     copyModeModifierKey,
     groupModeModifierKey,
+    noDragPreview,
   });
 
   const { rule: BaseRuleComponent } = rqbDndContext.baseControls;
@@ -150,7 +152,7 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
   React.useEffect(() => {
     drag(dragRef);
     drop(dndRef);
-    preview(noDragPreview ? getEmptyImage() : dndRef, { captureDraggingState: !!noDragPreview });
+    preview(noDragPreview ? getEmptyImage() : dndRef);
   }, [drag, drop, noDragPreview, preview]);
 
   return {
