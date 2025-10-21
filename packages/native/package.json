@@ -61,14 +61,14 @@
     "babel-plugin-syntax-hermes-parser": "^0.32.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-native": "~0.82.0",
-    "react-native-web": "~0.21.1",
+    "react-native": "~0.82.1",
+    "react-native-web": "~0.21.2",
     "react-querybuilder": "8.10.0",
     "react-redux": "^9.2.0",
     "react-test-renderer": "^19.2.0",
-    "rollup-plugin-visualizer": "^6.0.4",
+    "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.11"
   },
   "peerDependencies": {
     "react": ">=18",
