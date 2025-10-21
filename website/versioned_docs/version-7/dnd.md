@@ -79,3 +79,9 @@ Key code for the modifier key that puts a drag-and-drop action in ["copy" mode](
 `string`
 
 Key code for the modifier key that puts a drag-and-drop action in ["group" mode](#cloning-and-grouping). Default is `"ctrl"` (<kbd>Ctrl</kbd>).
+
+### `noDragPreview`
+
+`boolean`
+
+When `true`, disables the default browser drag preview during drag operations. This is useful when implementing custom drag layers or custom drag preview components ([see relevant React DnD documentation](https://react-dnd.github.io/react-dnd/examples/drag-around/custom-drag-layer)). Default is `false`.
