@@ -21,6 +21,7 @@
     "start:rqb": "bun run --filter react-querybuilder start",
     "start:tremor": "bun run --filter @react-querybuilder/tremor start",
     "build": "bun run --filter '{,@}react-querybuilder{,/}*' build",
+    "build:concurrent": "concurrently --timings bun:build:core bun:build:rqb bun:build:antd bun:build:bootstrap bun:build:bulma bun:build:chakra bun:build:datetime bun:build:dnd bun:build:drizzle bun:build:fluent bun:build:mantine bun:build:material bun:build:native bun:build:tremor",
     "build:sequential": "bun --bun run build:core && bun --bun run build:rqb && bun --bun run build:antd && bun --bun run build:bootstrap && bun --bun run build:bulma && bun --bun run build:chakra && bun --bun run build:datetime && bun --bun run build:dnd && bun --bun run build:drizzle && bun --bun run build:fluent && bun --bun run build:mantine && bun --bun run build:material && bun --bun run build:native && bun --bun run build:tremor",
     "build:antd": "bun --bun run --filter @react-querybuilder/antd build",
     "build:bootstrap": "bun --bun run --filter @react-querybuilder/bootstrap build",
