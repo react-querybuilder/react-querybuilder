@@ -57,7 +57,7 @@
     },
     "packages/antd": {
       "name": "@react-querybuilder/antd",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@ant-design/icons": "^6.1.0",
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
@@ -69,7 +69,7 @@
         "dayjs": "^1.11.18",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -79,12 +79,12 @@
         "antd": ">=5.11.0",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "packages/bootstrap": {
       "name": "@react-querybuilder/bootstrap",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@popperjs/core": "^2.11.8",
         "@testing-library/dom": "^10.4.1",
@@ -95,7 +95,7 @@
         "bootstrap-icons": "^1.13.1",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -104,12 +104,12 @@
         "bootstrap": ">=5",
         "bootstrap-icons": ">=1.7.0",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "packages/bulma": {
       "name": "@react-querybuilder/bulma",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@testing-library/dom": "^10.4.1",
         "@testing-library/react": "^16.3.0",
@@ -118,7 +118,7 @@
         "bulma": "^1.0.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -126,12 +126,12 @@
       "peerDependencies": {
         "bulma": "^0.9.4 || ^1",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "packages/chakra": {
       "name": "@react-querybuilder/chakra",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@chakra-ui/react": "^3.28.0",
         "@emotion/react": "^11.14.0",
@@ -143,7 +143,7 @@
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "react-icons": "^5.5.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -154,7 +154,7 @@
         "next-themes": "^0.4.6",
         "react": ">=18",
         "react-icons": "^5",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
       "optionalPeers": [
         "next-themes",
@@ -163,7 +163,7 @@
     },
     "packages/core": {
       "name": "@react-querybuilder/core",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "dependencies": {
         "immer": "^10.1.3",
         "numeric-quantity": "^2.1.0",
@@ -206,7 +206,7 @@
     },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@date-fns/tz": "^1.4.1",
         "@electric-sql/pglite": "^0.3.11",
@@ -225,7 +225,7 @@
         "mongoose": "^8.19.2",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -235,7 +235,7 @@
         "dayjs": "^1.11.13",
         "luxon": "^3.5.0",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
       "optionalPeers": [
         "date-fns",
@@ -245,7 +245,7 @@
     },
     "packages/dnd": {
       "name": "@react-querybuilder/dnd",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@testing-library/dom": "^10.4.1",
         "@testing-library/react": "^16.3.0",
@@ -259,7 +259,7 @@
         "react-dnd-test-utils": "^16.0.1",
         "react-dnd-touch-backend": "^16.0.1",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "type-fest": "^5.1.0",
         "typescript": "^5.9.3",
@@ -270,7 +270,7 @@
         "react-dnd": ">=14.0.0",
         "react-dnd-html5-backend": ">=14.0.0",
         "react-dnd-touch-backend": ">=14.0.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
       "optionalPeers": [
         "react-dnd-html5-backend",
@@ -279,23 +279,23 @@
     },
     "packages/drizzle": {
       "name": "@react-querybuilder/drizzle",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@electric-sql/pglite": "^0.3.11",
-        "@react-querybuilder/core": "8.10.0",
+        "@react-querybuilder/core": "8.11.0",
         "drizzle-orm": "^0.44.6",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
       },
       "peerDependencies": {
-        "@react-querybuilder/core": "8.10.0",
+        "@react-querybuilder/core": "8.11.0",
         "drizzle-orm": ">=0.38.0",
       },
     },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@fluentui/react-components": "^9.72.3",
         "@fluentui/react-icons-mdl2": "^1.3.92",
@@ -306,7 +306,7 @@
         "dayjs": "^1.11.18",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -316,12 +316,12 @@
         "@fluentui/react-icons-mdl2": "^1",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@mantine/core": "8.3.4",
         "@mantine/dates": "8.3.4",
@@ -333,7 +333,7 @@
         "dayjs": "^1.11.18",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
@@ -344,12 +344,12 @@
         "@mantine/hooks": ">=7",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "packages/material": {
       "name": "@react-querybuilder/material",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -361,7 +361,7 @@
         "@vitejs/plugin-react": "^5.0.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "regenerator-runtime": "^0.14.1",
         "rollup-plugin-visualizer": "^6.0.5",
         "typescript": "^5.9.3",
@@ -373,12 +373,12 @@
         "@mui/icons-material": ">=5",
         "@mui/material": ">=5",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "packages/native": {
       "name": "@react-querybuilder/native",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@babel/preset-flow": "^7.27.1",
         "@testing-library/jest-native": "^5.4.3",
@@ -391,7 +391,7 @@
         "react-dom": "^19.2.0",
         "react-native": "~0.82.1",
         "react-native-web": "~0.21.2",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "react-redux": "^9.2.0",
         "react-test-renderer": "^19.2.0",
         "rollup-plugin-visualizer": "^6.0.5",
@@ -400,15 +400,15 @@
       },
       "peerDependencies": {
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "react-redux": "^9.1.0",
       },
     },
     "packages/react-querybuilder": {
       "name": "react-querybuilder",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "dependencies": {
-        "@react-querybuilder/core": "^8.10.0",
+        "@react-querybuilder/core": "^8.11.0",
         "@reduxjs/toolkit": "^2.9.1",
         "immer": "^10.1.3",
         "numeric-quantity": "^2.1.0",
@@ -453,7 +453,7 @@
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
-      "version": "8.10.0",
+      "version": "8.11.0",
       "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.2",
         "@tailwindcss/forms": "^0.5.10",
@@ -468,7 +468,7 @@
         "postcss": "^8.5.6",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
         "rollup-plugin-visualizer": "^6.0.5",
         "tailwindcss": "^4.1.15",
         "typescript": "^5.9.3",
@@ -478,7 +478,7 @@
         "@tremor/react": "^3",
         "dayjs": ">=1",
         "react": ">=18",
-        "react-querybuilder": "8.10.0",
+        "react-querybuilder": "8.11.0",
       },
     },
     "website": {
@@ -3097,7 +3097,7 @@
 
     "detect-indent": ["detect-indent@7.0.2", "", {}, "sha512-y+8xyqdGLL+6sh0tVeHcfP/QDd8gUgbasolJJpY7NgeQGSZ739bDtSiaiDgtoicy+mtYB81dKLxO9xRhCyIB3A=="],
 
-    "detect-libc": ["detect-libc@1.0.3", "", { "bin": { "detect-libc": "./bin/detect-libc.js" } }, "sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg=="],
+    "detect-libc": ["detect-libc@2.1.2", "", {}, "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="],
 
     "detect-newline": ["detect-newline@3.1.0", "", {}, "sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA=="],
 
@@ -5581,6 +5581,8 @@
 
     "@npmcli/run-script/which": ["which@5.0.0", "", { "dependencies": { "isexe": "^3.1.1" }, "bin": { "node-which": "bin/which.js" } }, "sha512-JEdGzHwwkrbWoGOlIHqQ5gtprKGOenpDHpxE9zVR1bWbOtYRyPPHMe9FaP6x61CmNaTThSkb0DAJte5jD+DmzQ=="],
 
+    "@parcel/watcher/detect-libc": ["detect-libc@1.0.3", "", { "bin": { "detect-libc": "./bin/detect-libc.js" } }, "sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg=="],
+
     "@pnpm/network.ca-file/graceful-fs": ["graceful-fs@4.2.10", "", {}, "sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA=="],
 
     "@prisma/engines/@prisma/debug": ["@prisma/debug@6.17.1", "", {}, "sha512-Vf7Tt5Wh9XcndpbmeotuqOMLWPTjEKCsgojxXP2oxE1/xYe7PtnP76hsouG9vis6fctX+TxgmwxTuYi/+xc7dQ=="],
@@ -5887,8 +5889,6 @@
 
     "lighthouse-logger/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
 
-    "lightningcss/detect-libc": ["detect-libc@2.1.2", "", {}, "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="],
-
     "make-dir/pify": ["pify@4.0.1", "", {}, "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g=="],
 
     "make-dir/semver": ["semver@5.7.2", "", { "bin": { "semver": "bin/semver" } }, "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="],
@@ -5980,8 +5980,6 @@
     "postcss-minify-selectors/postcss-selector-parser": ["postcss-selector-parser@6.1.2", "", { "dependencies": { "cssesc": "^3.0.0", "util-deprecate": "^1.0.2" } }, "sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg=="],
 
     "postcss-unique-selectors/postcss-selector-parser": ["postcss-selector-parser@6.1.2", "", { "dependencies": { "cssesc": "^3.0.0", "util-deprecate": "^1.0.2" } }, "sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg=="],
-
-    "prebuild-install/detect-libc": ["detect-libc@2.1.2", "", {}, "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="],
 
     "pretty-format/ansi-styles": ["ansi-styles@5.2.0", "", {}, "sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA=="],
 
