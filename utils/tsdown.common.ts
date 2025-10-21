@@ -33,7 +33,7 @@ export const tsdownCommonConfig = (sourceDir: string) =>
     const commonOptions = {
       entry: { [pkgName]: entryPoint },
       sourcemap: true,
-      platform: 'neutral',
+      platform: 'node',
       dts: { oxc: true, resolve: ['type-fest'] },
       ...options,
     } satisfies Options;

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - All pure `boolean` props are now assignable on `QueryBuilderContext`.
 
+### Fixed
+
+- [#954] Default styles now apply `{ cursor: not-allowed; opacity: 0.5; }` to drag handles of locked/disabled rules and groups, visually clarifying the inability to drag the elements.
+
 ## [v8.10.0] - 2025-10-09
 
 ### Added
@@ -2036,6 +2040,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#948]: https://github.com/react-querybuilder/react-querybuilder/pull/948
 [#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950
 [#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
+[#954]: https://github.com/react-querybuilder/react-querybuilder/pull/954
 
 <!-- #endregion -->
 
