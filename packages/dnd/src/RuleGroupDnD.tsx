@@ -10,6 +10,7 @@ import type {
   UseRuleGroupDnD,
 } from 'react-querybuilder';
 import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
+import { getEmptyImage } from './getEmptyImage';
 import { isHotkeyPressed } from './isHotkeyPressed';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 import type { QueryBuilderDndContextProps } from './types';
@@ -32,6 +33,7 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     useDrop,
     copyModeModifierKey,
     groupModeModifierKey,
+    hideDefaultDragPreview,
   } = rqbDndContext;
 
   const dndRefs = useRuleGroupDnD({
@@ -42,16 +44,18 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     canDrop,
     copyModeModifierKey,
     groupModeModifierKey,
+    hideDefaultDragPreview,
   });
 
   return <BaseRuleGroupComponent {...props} {...dndRefs} />;
 };
 
-type UseRuleGroupDndParams = RuleGroupProps &
-  Pick<QueryBuilderDndContextProps, 'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey'> & {
-    useDrag: typeof useDragOriginal;
-    useDrop: typeof useDropOriginal;
-  };
+interface UseRuleGroupDndParams
+  extends RuleGroupProps,
+    Omit<QueryBuilderDndContextProps, 'baseControls' | 'useDrag' | 'useDrop'> {
+  useDrag: typeof useDragOriginal;
+  useDrop: typeof useDropOriginal;
+}
 
 const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
 
@@ -74,6 +78,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     canDrop,
     copyModeModifierKey = 'alt',
     groupModeModifierKey = 'ctrl',
+    hideDefaultDragPreview,
   } = params;
 
   const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
@@ -86,6 +91,7 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     useDrag,
     copyModeModifierKey,
     groupModeModifierKey,
+    hideDefaultDragPreview,
   });
 
   const [{ isOver, dropMonitorId, dropEffect, groupItems, dropNotAllowed }, drop] = useDrop<
@@ -138,11 +144,13 @@ export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD 
     [disabled, actions.groupRule, actions.moveRule, path, canDrop, ruleGroup, schema]
   );
 
-  if (path.length > 0) {
-    drag(dragRef);
-    preview(previewRef);
-  }
-  drop(dropRef);
+  React.useEffect(() => {
+    if (path.length > 0) {
+      drag(dragRef);
+      preview(hideDefaultDragPreview ? getEmptyImage() : previewRef);
+    }
+    drop(dropRef);
+  }, [drag, drop, hideDefaultDragPreview, path.length, preview]);
 
   return {
     isDragging,

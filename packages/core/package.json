@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.10.0",
+  "version": "8.11.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -144,26 +144,26 @@
     "@babel/core": "^7.28.4",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-typescript": "^7.27.1",
-    "@electric-sql/pglite": "^0.3.10",
+    "@electric-sql/pglite": "^0.3.11",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^24.7.1",
+    "@types/node": "^24.9.1",
     "babel-plugin-istanbul": "^7.0.1",
     "drizzle-orm": "^0.44.6",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "mongodb-memory-server-core": "^10.2.3",
-    "mongoose": "^8.19.1",
+    "mongoose": "^8.19.2",
     "pglite-prisma-adapter": "^0.6.1",
     "prisma": "^6.17.1",
     "query-string": "^9.3.1",
     "regenerator-runtime": "^0.14.1",
-    "rollup-plugin-visualizer": "^6.0.4",
+    "rollup-plugin-visualizer": "^6.0.5",
     "sass": "^1.93.2",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.9",
     "type-fest": "^5.1.0",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.11"
   },
   "dependencies": {
     "immer": "^10.1.3",

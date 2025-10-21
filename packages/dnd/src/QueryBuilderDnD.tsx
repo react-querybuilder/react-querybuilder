@@ -36,9 +36,6 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
     enableDragAndDrop: enableDragAndDropProp,
     enableMountQueryChange,
     translations,
-    canDrop,
-    copyModeModifierKey,
-    groupModeModifierKey,
   } = props;
 
   const rqbContext = useMergedContext({
@@ -78,9 +75,10 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
       <QueryBuilderContext.Provider key={key} value={contextWithDnD}>
         <QueryBuilderDndWithoutProvider
           dnd={dnd}
-          canDrop={canDrop}
-          copyModeModifierKey={copyModeModifierKey}
-          groupModeModifierKey={groupModeModifierKey}>
+          canDrop={props.canDrop}
+          copyModeModifierKey={props.copyModeModifierKey}
+          groupModeModifierKey={props.groupModeModifierKey}
+          hideDefaultDragPreview={props.hideDefaultDragPreview}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -110,6 +108,11 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   );
   const enableDragAndDrop = preferProp(true, props.enableDragAndDrop, rqbContext.enableDragAndDrop);
   const debugMode = preferProp(false, props.debugMode, rqbContext.debugMode);
+  const hideDefaultDragPreview = preferProp(
+    false,
+    props.hideDefaultDragPreview,
+    rqbDndContext.hideDefaultDragPreview
+  );
   const canDrop = preferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
   const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
 
@@ -159,8 +162,24 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   const { DndContext, useDrag, useDrop } = dnd ?? {};
 
   const dndContextValue: QueryBuilderDndContextProps = useMemo(
-    () => ({ baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop }),
-    [baseControls, canDrop, copyModeModifierKey, groupModeModifierKey, useDrag, useDrop]
+    () => ({
+      baseControls,
+      canDrop,
+      copyModeModifierKey,
+      groupModeModifierKey,
+      hideDefaultDragPreview,
+      useDrag,
+      useDrop,
+    }),
+    [
+      baseControls,
+      canDrop,
+      copyModeModifierKey,
+      groupModeModifierKey,
+      hideDefaultDragPreview,
+      useDrag,
+      useDrop,
+    ]
   );
 
   const contextWithoutDnD = useMemo(

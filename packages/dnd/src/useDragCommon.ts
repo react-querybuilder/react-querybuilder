@@ -21,6 +21,7 @@ type UseDragCommonProps = {
   // oxlint-disable-next-line typescript/no-explicit-any
   schema: Schema<any, any>;
   useDrag: typeof originalUseDrag;
+  hideDefaultDragPreview?: boolean;
 } & Required<Pick<QueryBuilderDndProps, 'copyModeModifierKey' | 'groupModeModifierKey'>>;
 
 /**
@@ -37,12 +38,14 @@ export const useDragCommon = ({
   useDrag,
   copyModeModifierKey,
   groupModeModifierKey,
+  hideDefaultDragPreview,
 }: UseDragCommonProps): [DragCollection, ConnectDragSource, ConnectDragPreview] =>
   useDrag<DraggedItem, DropResult, DragCollection>(
     () => ({
       type,
       item: () => ({ ...findPath(path, schema.getQuery())!, path, qbId: schema.qbId }),
       canDrag: !disabled,
+      previewOptions: { captureDraggingState: !!hideDefaultDragPreview },
       collect: monitor => ({
         isDragging: !disabled && monitor.isDragging(),
         dragMonitorId: monitor.getHandlerId() ?? '',
