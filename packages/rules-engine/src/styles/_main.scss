@@ -6,14 +6,14 @@
   border-radius: var(--#{$rqbre-var-prefix}border-radius);
 }
 
-.actionBuilder {
+.consequentBuilder {
   background-color: var(--#{$rqbre-var-prefix}thenblock-background-color);
   border-color: var(--#{$rqbre-var-prefix}thenblock-border-color);
   border-style: var(--#{$rqbre-var-prefix}thenblock-border-style);
   border-radius: var(--#{$rqbre-var-prefix}thenblock-border-radius);
 }
 
-.actionBuilder-standalone {
+.consequentBuilder-standalone {
   background-color: var(--#{$rqbre-var-prefix}elseblock-background-color);
   border-color: var(--#{$rqbre-var-prefix}elseblock-border-color);
   border-style: var(--#{$rqbre-var-prefix}elseblock-border-style);

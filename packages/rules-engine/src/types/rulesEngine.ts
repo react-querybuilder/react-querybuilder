@@ -7,40 +7,40 @@ import type {
 } from '@react-querybuilder/core';
 
 // #region Conditions
-export interface RulesEngineCondition<R extends RuleType = RuleType, C extends string = string>
+export interface Antecedent<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties,
     Partial<RulesEngine<R, C>> {
-  condition: RuleGroupType;
-  action?: RulesEngineAction;
+  antecedent: RuleGroupType;
+  consequent?: Consequent;
 }
 
-export interface RulesEngineConditionIC<R extends RuleType = RuleType, C extends string = string>
+export interface AntecedentIC<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties,
     Partial<RulesEngineIC<R, C>> {
-  condition: RuleGroupTypeIC;
-  action?: RulesEngineAction;
+  antecedent: RuleGroupTypeIC;
+  consequent?: Consequent;
 }
 
-export type RulesEngineConditionAny<R extends RuleType = RuleType, C extends string = string> =
-  | RulesEngineCondition<R, C>
-  | RulesEngineConditionIC<R, C>;
+export type AntecedentAny<R extends RuleType = RuleType, C extends string = string> =
+  | Antecedent<R, C>
+  | AntecedentIC<R, C>;
 
-export type RulesEngineConditions<RG extends RuleGroupTypeAny> = RG extends RuleGroupTypeIC
-  ? RulesEngineConditionIC[]
-  : RulesEngineCondition[];
+export type AntecedentCascade<RG extends RuleGroupTypeAny> = RG extends RuleGroupTypeIC
+  ? AntecedentIC[]
+  : Antecedent[];
 // #endregion
 
-// #region Rules engines
+// #region Rules engine
 export interface RulesEngine<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties {
-  conditions: RulesEngineConditions<RuleGroupType<R, C>>;
-  defaultAction?: RulesEngineAction;
+  conditions: AntecedentCascade<RuleGroupType<R, C>>;
+  defaultConsequent?: Consequent;
 }
 
 export interface RulesEngineIC<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties {
-  conditions: RulesEngineConditions<RuleGroupTypeIC<R, C>>;
-  defaultAction?: RulesEngineAction;
+  conditions: AntecedentCascade<RuleGroupTypeIC<R, C>>;
+  defaultConsequent?: Consequent;
 }
 
 export type RulesEngineAny<R extends RuleType = RuleType, C extends string = string> =
@@ -48,13 +48,13 @@ export type RulesEngineAny<R extends RuleType = RuleType, C extends string = str
   | RulesEngineIC<R, C>;
 // #endregion
 
-// #region Actions
-export type RulesEngineActionBase<T extends string = string> = {
+// #region Consequent
+export type ConsequentBase<T extends string = string> = {
   id?: string;
-  actionType: T;
+  consequentType: T;
 };
 
-export interface RulesEngineAction extends RulesEngineActionBase {
+export interface Consequent extends ConsequentBase {
   [etc: string]: unknown;
 }
 // #endregion
@@ -63,7 +63,7 @@ export interface RulesEngineAction extends RulesEngineActionBase {
 // Playground:
 // -------------------------------------------
 
-interface _ExampleRulesEngineAction extends RulesEngineActionBase<'rea' | 'hope'> {
+interface _ExampleConsequent extends ConsequentBase<'rea' | 'hope'> {
   command: string;
   args: unknown[] | Record<string, unknown>;
   options?: {
@@ -78,30 +78,30 @@ interface _ExampleRulesEngineAction extends RulesEngineActionBase<'rea' | 'hope'
   };
 }
 
-const _myREA: _ExampleRulesEngineAction = { actionType: 'rea', command: 'cmd', args: [] };
+const _myREA: _ExampleConsequent = { consequentType: 'rea', command: 'cmd', args: [] };
 
 const _rngn: RulesEngine = {
   conditions: [
     // IF
     {
-      condition: {
+      antecedent: {
         combinator: 'and',
         rules: [],
       },
-      // action: { actionType: 'cmd', payload: { command: '', args: [] }},
+      // consequent: { consequentType: 'cmd', payload: { command: '', args: [] }},
     },
     // ELSE IF
     {
-      condition: { combinator: 'and', rules: [{ field: '', operator: '', value: '' }] },
-      action: { actionType: 'cmd', payload: { command: '', args: [] } },
+      antecedent: { combinator: 'and', rules: [{ field: '', operator: '', value: '' }] },
+      consequent: { consequentType: 'cmd', payload: { command: '', args: [] } },
       conditions: [
         {
-          condition: { combinator: 'and', rules: [] },
-          action: { actionType: 'cmd', payload: { command: '', args: [] } },
+          antecedent: { combinator: 'and', rules: [] },
+          consequent: { consequentType: 'cmd', payload: { command: '', args: [] } },
         },
       ],
     },
   ],
   // ELSE
-  defaultAction: { actionType: 'hope' },
+  defaultConsequent: { consequentType: 'hope' },
 };

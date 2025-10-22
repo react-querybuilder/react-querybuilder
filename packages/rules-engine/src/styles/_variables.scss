@@ -11,7 +11,7 @@ $rqbre-border-width: $rqb-border-width !default;
 // #region Basic aesthetic
 $rqbre-base-color: $rqb-base-color !default;
 $rqbre-background-color: $rqb-background-color !default;
-$rqbre-action-base-color: #096 !default;
+$rqbre-consequent-base-color: #096 !default;
 $rqbre-border-color: $rqb-border-color !default;
 $rqbre-border-style: $rqb-border-style !default;
 $rqbre-border-radius: $rqb-border-radius !default;
@@ -28,7 +28,7 @@ $rqbre-ifblock-border-color: $rqbre-border-color !default;
 $rqbre-ifblock-border-style: $rqbre-border-style !default;
 $rqbre-ifblock-border-radius: $rqbre-border-radius !default;
 
-$rqbre-thenblock-base-color: $rqbre-action-base-color !default;
+$rqbre-thenblock-base-color: $rqbre-consequent-base-color !default;
 $rqbre-thenblock-background-color: color-mix(
   in srgb,
   transparent,
@@ -48,7 +48,7 @@ $rqbre-ifelseblock-border-color: $rqbre-border-color !default;
 $rqbre-ifelseblock-border-style: $rqbre-border-style !default;
 $rqbre-ifelseblock-border-radius: $rqbre-border-radius !default;
 
-$rqbre-elseblock-base-color: $rqbre-action-base-color !default;
+$rqbre-elseblock-base-color: $rqbre-consequent-base-color !default;
 $rqbre-elseblock-background-color: color-mix(
   in srgb,
   transparent,

@@ -2,30 +2,30 @@ import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import { produce } from 'immer';
 import * as React from 'react';
 import { usePathsMemo } from 'react-querybuilder';
-import type { RulesEngineConditionAny, RulesEngineConditionCascadeProps } from '../types';
+import type { AntecedentAny, ConditionCascadeProps } from '../types';
 
 /**
  * Renders a sequential list of if/else-if/else blocks in a rules engine.
  */
 export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
-  props: RulesEngineConditionCascadeProps<RG>
+  props: ConditionCascadeProps<RG>
 ): React.JSX.Element => {
   const {
     conditionPath,
     conditions,
-    defaultAction,
+    defaultConsequent,
     onConditionsChange,
-    onDefaultActionChange,
+    onDefaultConsequentChange,
     schema,
   } = props;
   const {
-    actionTypes,
-    autoSelectActionType,
-    components: { conditionBuilder: ConditionBuilder, actionBuilder: ActionBuilder },
+    consequentTypes,
+    autoSelectConsequentType,
+    components: { conditionBuilder: ConditionBuilder, consequentBuilder: ConsequentBuilder },
   } = schema;
 
   const conditionUpdater = React.useCallback(
-    (c: RulesEngineConditionAny, index: number) =>
+    (c: AntecedentAny, index: number) =>
       onConditionsChange(
         produce(conditions, draft => {
           // oxlint-disable-next-line no-explicit-any
@@ -55,25 +55,25 @@ export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
             key={c.id}
             conditionPath={thisPath}
             schema={schema}
-            actionTypes={actionTypes}
+            consequentTypes={consequentTypes}
             condition={c}
             isOnlyCondition={conditions.length === 1}
             // oxlint-disable-next-line jsx-no-new-function-as-prop
             onConditionChange={c => conditionUpdater(c, i)}
-            autoSelectActionType={autoSelectActionType}
+            autoSelectConsequentType={autoSelectConsequentType}
           />
         );
       })}
-      {defaultAction && (
-        <ActionBuilder
-          key={'defaultAction'}
+      {defaultConsequent && (
+        <ConsequentBuilder
+          key={'defaultConsequent'}
           conditionPath={conditionPath}
           schema={schema}
-          actionTypes={actionTypes}
-          action={defaultAction}
+          consequentTypes={consequentTypes}
+          consequent={defaultConsequent}
           standalone
-          onActionChange={onDefaultActionChange}
-          autoSelectActionType={autoSelectActionType}
+          onConsequentChange={onDefaultConsequentChange}
+          autoSelectConsequentType={autoSelectConsequentType}
         />
       )}
     </React.Fragment>

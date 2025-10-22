@@ -1,19 +1,17 @@
 import clsx from 'clsx';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
-import type { RulesEngineActionProps } from '../types';
+import type { ConsequentProps } from '../types';
 
 /**
- * Default header component for {@link RulesEngineActionBuilder}.
+ * Default header component for {@link ConsequentBuilder}.
  */
-export const RulesEngineActionBuilderHeader = (
-  props: RulesEngineActionProps
-): React.JSX.Element => {
+export const ConsequentBuilderHeader = (props: ConsequentProps): React.JSX.Element => {
   const {
-    onActionChange,
+    onConsequentChange,
     schema: {
-      components: { removeAction: RemoveAction },
-      classnames: { actionBuilderHeader, blockLabel },
+      components: { removeConsequent: RemoveConsequent },
+      classnames: { consequentBuilderHeader, blockLabel },
       translations,
       suppressStandardClassnames,
     },
@@ -22,17 +20,17 @@ export const RulesEngineActionBuilderHeader = (
   const wrapperClassName = React.useMemo(
     () =>
       clsx(
-        suppressStandardClassnames || standardClassnamesRE.actionBuilderHeader,
-        actionBuilderHeader
+        suppressStandardClassnames || standardClassnamesRE.consequentBuilderHeader,
+        consequentBuilderHeader
       ),
-    [actionBuilderHeader, suppressStandardClassnames]
+    [consequentBuilderHeader, suppressStandardClassnames]
   );
   const labelClassName = React.useMemo(
     () => clsx(suppressStandardClassnames || standardClassnamesRE.blockLabel, blockLabel),
     [blockLabel, suppressStandardClassnames]
   );
 
-  const removeAction = React.useCallback(() => onActionChange(), [onActionChange]);
+  const removeConsequent = React.useCallback(() => onConsequentChange(), [onConsequentChange]);
 
   const { label, title } = React.useMemo(
     () => (props.standalone ? translations.blockLabelElse : translations.blockLabelThen),
@@ -44,13 +42,13 @@ export const RulesEngineActionBuilderHeader = (
       <div className={labelClassName} title={title}>
         {label}
       </div>
-      <RemoveAction
+      <RemoveConsequent
         schema={props.schema}
         path={props.conditionPath}
         level={props.conditionPath.length}
-        handleOnClick={removeAction}
-        title={translations.removeAction.title}
-        label={translations.removeAction.label}
+        handleOnClick={removeConsequent}
+        title={translations.removeConsequent.title}
+        label={translations.removeConsequent.label}
       />
     </div>
   );

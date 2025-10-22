@@ -2,7 +2,7 @@
 
 .rulesEngineBuilder,
 .conditionBuilder,
-.actionBuilder {
+.consequentBuilder {
   display: flex;
   flex-direction: column;
   gap: var(--#{$rqbre-var-prefix}spacing);
@@ -12,7 +12,7 @@
 
 .rulesEngineBuilder-header,
 .conditionBuilder-header,
-.actionBuilder-header {
+.consequentBuilder-header {
   display: flex;
   flex-direction: row;
   gap: var(--#{$rqbre-var-prefix}spacing);

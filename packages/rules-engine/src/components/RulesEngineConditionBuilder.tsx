@@ -1,24 +1,18 @@
 import { clsx, type RuleGroupType, type RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
-import type {
-  RulesEngineAction,
-  RulesEngineConditionAny,
-  RulesEngineConditionProps,
-} from '../types';
+import type { AntecedentAny, ConditionProps, Consequent } from '../types';
 
 /**
  * Default header component for {@link RulesEngineConditionBuilder}.
  */
-export const RulesEngineConditionBuilderHeader = (
-  props: RulesEngineConditionProps
-): React.JSX.Element => {
+export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element => {
   const {
     schema: {
       classnames: { conditionBuilderHeader, blockLabel },
       components: {
         addCondition: AddCondition,
-        addAction: AddAction,
+        addConsequent: AddConsequent,
         removeCondition: RemoveCondition,
       },
       translations,
@@ -55,15 +49,15 @@ export const RulesEngineConditionBuilderHeader = (
         title={translations.addSubcondition.title}
         label={translations.addSubcondition.label}
       />
-      <AddAction
+      <AddConsequent
         schema={props.schema}
         path={props.conditionPath}
         level={props.conditionPath.length}
-        disabled={!!props.condition.action}
+        disabled={!!props.condition.consequent}
         // oxlint-disable-next-line jsx-no-new-function-as-prop
         handleOnClick={() => {}}
-        title={translations.addAction.title}
-        label={translations.addAction.label}
+        title={translations.addConsequent.title}
+        label={translations.addConsequent.label}
       />
       <RemoveCondition
         schema={props.schema}
@@ -81,36 +75,34 @@ export const RulesEngineConditionBuilderHeader = (
 /**
  * Default body component for {@link RulesEngineConditionBuilder}.
  */
-export const RulesEngineConditionBuilderBody = (
-  props: RulesEngineConditionProps
-): React.JSX.Element => {
+export const RulesEngineConditionBuilderBody = (props: ConditionProps): React.JSX.Element => {
   const {
     condition,
     onConditionChange,
     schema: {
       components: {
-        actionBuilder: ActionBuilder,
+        consequentBuilder: ConsequentBuilder,
         conditionBuilderCascade: ConditionCascade,
         queryBuilder: QueryBuilder,
       },
     },
   } = props;
-  const actionUpdater = React.useCallback(
-    (action?: RulesEngineAction) => onConditionChange({ ...condition, action }),
+  const consequentUpdater = React.useCallback(
+    (consequent?: Consequent) => onConditionChange({ ...condition, consequent }),
     [condition, onConditionChange]
   );
-  const defaultActionUpdater = React.useCallback(
-    (defaultAction?: RulesEngineAction) => onConditionChange({ ...condition, defaultAction }),
+  const defaultConsequentUpdater = React.useCallback(
+    (defaultConsequent?: Consequent) => onConditionChange({ ...condition, defaultConsequent }),
     [condition, onConditionChange]
   );
   const conditionUpdater = React.useCallback(
-    (rec: RuleGroupTypeAny) =>
-      onConditionChange({ ...condition, condition: rec } as RulesEngineConditionAny),
+    (antecedent: RuleGroupTypeAny) =>
+      onConditionChange({ ...condition, antecedent } as AntecedentAny),
     [condition, onConditionChange]
   );
   const conditionsUpdater = React.useCallback(
-    (conditions: RulesEngineConditionAny[]) =>
-      onConditionChange({ ...condition, conditions } as RulesEngineConditionAny),
+    (conditions: AntecedentAny[]) =>
+      onConditionChange({ ...condition, conditions } as AntecedentAny),
     [condition, onConditionChange]
   );
 
@@ -119,16 +111,16 @@ export const RulesEngineConditionBuilderBody = (
       <QueryBuilder
         enableMountQueryChange={false}
         fields={props.schema.fields}
-        query={props.condition.condition as RuleGroupType}
+        query={props.condition.antecedent as RuleGroupType}
         onQueryChange={conditionUpdater}
       />
-      {props.condition.action && (
-        <ActionBuilder
+      {props.condition.consequent && (
+        <ConsequentBuilder
           conditionPath={props.conditionPath}
-          actionTypes={props.actionTypes}
-          action={props.condition.action}
-          onActionChange={actionUpdater}
-          autoSelectActionType={props.autoSelectActionType}
+          consequentTypes={props.consequentTypes}
+          consequent={props.condition.consequent}
+          onConsequentChange={consequentUpdater}
+          autoSelectConsequentType={props.autoSelectConsequentType}
           schema={props.schema}
         />
       )}
@@ -136,9 +128,9 @@ export const RulesEngineConditionBuilderBody = (
         <ConditionCascade
           conditionPath={props.conditionPath}
           onConditionsChange={conditionsUpdater}
-          onDefaultActionChange={defaultActionUpdater}
+          onDefaultConsequentChange={defaultConsequentUpdater}
           conditions={props.condition.conditions}
-          defaultAction={props.condition.defaultAction}
+          defaultConsequent={props.condition.defaultConsequent}
           schema={props.schema}
         />
       )}
@@ -149,9 +141,7 @@ export const RulesEngineConditionBuilderBody = (
 /**
  * Analogous to an "if" or "else-if" block.
  */
-export const RulesEngineConditionBuilder = (
-  props: RulesEngineConditionProps
-): React.JSX.Element => {
+export const RulesEngineConditionBuilder = (props: ConditionProps): React.JSX.Element => {
   const {
     schema: {
       classnames: { conditionBuilder },

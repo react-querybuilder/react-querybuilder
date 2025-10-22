@@ -13,33 +13,28 @@ import type {
 import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { ActionElementREProps, ValueSelectorREProps } from '../components';
-import type {
-  RulesEngine,
-  RulesEngineAction,
-  RulesEngineConditionAny,
-  RulesEngineConditions,
-} from './rulesEngine';
+import type { AntecedentAny, AntecedentCascade, Consequent, RulesEngine } from './rulesEngine';
 
 export interface SchemaRE {
   fields: OptionList<FullField>;
   components: ComponentsRE;
   classnames: ClassnamesRE;
-  actionTypes: FullOptionList<BaseOption>;
-  autoSelectActionType: boolean;
+  consequentTypes: FullOptionList<BaseOption>;
+  autoSelectConsequentType: boolean;
   suppressStandardClassnames: boolean;
   translations: TranslationsFullRE;
 }
 
 export interface ComponentsRE {
   rulesEngineBuilderHeader: React.ComponentType<RulesEngineBuilderHeaderProps>;
-  actionBuilder: React.ComponentType<RulesEngineActionProps>;
-  actionBuilderHeader: React.ComponentType<RulesEngineActionProps>;
-  actionBuilderBody: React.ComponentType<RulesEngineActionProps>;
+  consequentBuilder: React.ComponentType<ConsequentProps>;
+  consequentBuilderHeader: React.ComponentType<ConsequentProps>;
+  consequentBuilderBody: React.ComponentType<ConsequentProps>;
   // oxlint-disable no-explicit-any
-  conditionBuilder: React.ComponentType<RulesEngineConditionProps>;
-  conditionBuilderHeader: React.ComponentType<RulesEngineConditionProps>;
-  conditionBuilderBody: React.ComponentType<RulesEngineConditionProps>;
-  conditionBuilderCascade: React.ComponentType<RulesEngineConditionCascadeProps<any>>;
+  conditionBuilder: React.ComponentType<ConditionProps>;
+  conditionBuilderHeader: React.ComponentType<ConditionProps>;
+  conditionBuilderBody: React.ComponentType<ConditionProps>;
+  conditionBuilderCascade: React.ComponentType<ConditionCascadeProps<any>>;
   // oxlint-enable no-explicit-any
   queryBuilder: React.ComponentType<
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>
@@ -47,10 +42,10 @@ export interface ComponentsRE {
   actionElement: React.ComponentType<ActionElementREProps>;
   addCondition: React.ComponentType<ActionElementREProps>;
   addSubcondition: React.ComponentType<ActionElementREProps>;
-  addAction: React.ComponentType<ActionElementREProps>;
+  addConsequent: React.ComponentType<ActionElementREProps>;
   removeCondition: React.ComponentType<ActionElementREProps>;
-  removeAction: React.ComponentType<ActionElementREProps>;
-  actionSelector: React.ComponentType<ValueSelectorREProps>;
+  removeConsequent: React.ComponentType<ActionElementREProps>;
+  consequentSelector: React.ComponentType<ValueSelectorREProps>;
   valueSelector: React.ComponentType<ValueSelectorREProps>;
 }
 
@@ -61,14 +56,14 @@ export interface ClassnamesRE {
   rulesEngineHeader: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
-  /** Classes applied to action builders ("then" sections). */
-  actionBuilder: Classname;
-  /** Classes applied to action builder headers. */
-  actionBuilderHeader: Classname;
-  /** Classes applied to action builder bodies. */
-  actionBuilderBody: Classname;
-  /** Classes applied to standalone action builders ("else" sections). */
-  actionBuilderStandalone: Classname;
+  /** Classes applied to consequent builders ("then" sections). */
+  consequentBuilder: Classname;
+  /** Classes applied to consequent builder headers. */
+  consequentBuilderHeader: Classname;
+  /** Classes applied to consequent builder bodies. */
+  consequentBuilderBody: Classname;
+  /** Classes applied to standalone consequent builders ("else" sections). */
+  consequentBuilderStandalone: Classname;
   /** Classes applied to condition builders ("if"/"else if" sections). */
   conditionBuilder: Classname;
   /** Classes applied to condition builder headers ("if"/"else if" labels and controls). */
@@ -87,9 +82,9 @@ export interface TranslationsRE {
   blockLabelThen: BaseTranslationWithLabel<React.ReactNode>;
   addCondition: BaseTranslationWithLabel<React.ReactNode>;
   addSubcondition: BaseTranslationWithLabel<React.ReactNode>;
-  addAction: BaseTranslationWithLabel<React.ReactNode>;
+  addConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
-  removeAction: BaseTranslationWithLabel<React.ReactNode>;
+  removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
 }
 /**
  * The full `translations` interface for {@link RulesEngineBuilder}, with all properties required.
@@ -105,8 +100,8 @@ export interface RulesEngineProps {
   fields?: FlexibleOptionList<FullField>;
   onRulesEngineChange?: (re: RulesEngine) => void;
   rulesEngine?: RulesEngine;
-  actionTypes?: FullOptionList<BaseOption>;
-  autoSelectActionType?: boolean;
+  consequentTypes?: FullOptionList<BaseOption>;
+  autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
@@ -116,37 +111,37 @@ export interface RulesEngineProps {
 export interface RulesEngineBuilderHeaderProps {
   conditionPath: Path;
   classnames: string;
-  defaultAction?: RulesEngineAction;
+  defaultConsequent?: Consequent;
   schema: SchemaRE;
 }
 
-export interface RulesEngineConditionCascadeProps<RG extends RuleGroupTypeAny> {
+export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
-  onConditionsChange: (rec: RulesEngineConditions<RG>) => void;
-  onDefaultActionChange: (rec?: RulesEngineAction) => void;
-  conditions: RulesEngineConditions<RG>;
-  defaultAction?: RulesEngineAction;
+  onConditionsChange: (rec: AntecedentCascade<RG>) => void;
+  onDefaultConsequentChange: (rec?: Consequent) => void;
+  conditions: AntecedentCascade<RG>;
+  defaultConsequent?: Consequent;
   schema: SchemaRE;
 }
 
-export interface RulesEngineConditionProps {
+export interface ConditionProps {
   schema: SchemaRE;
   conditionPath: Path;
-  condition: RulesEngineConditionAny;
-  actionTypes?: FullOptionList<BaseOption>;
+  condition: AntecedentAny;
+  consequentTypes?: FullOptionList<BaseOption>;
   isOnlyCondition: boolean;
-  onConditionChange: (condition: RulesEngineConditionAny) => void;
-  autoSelectActionType?: boolean;
+  onConditionChange: (condition: AntecedentAny) => void;
+  autoSelectConsequentType?: boolean;
 }
 
-export interface RulesEngineActionProps {
+export interface ConsequentProps {
   schema: SchemaRE;
   conditionPath: Path;
-  actionTypes?: FullOptionList<BaseOption>;
-  action: RulesEngineAction;
+  consequentTypes?: FullOptionList<BaseOption>;
+  consequent: Consequent;
   standalone?: boolean;
-  onActionChange: (action?: RulesEngineAction) => void;
+  onConsequentChange: (consequent?: Consequent) => void;
   conditionsMet?: RuleGroupTypeAny;
   conditionsFailed?: RuleGroupTypeAny;
-  autoSelectActionType?: boolean;
+  autoSelectConsequentType?: boolean;
 }

@@ -34,8 +34,8 @@ describe('rules engines', () => {
     conditions: [
       {
         id: 'firstGroup',
-        condition: { combinator: 'and', rules: [ruleGroup] },
-        conditions: [{ condition: ruleGroup }],
+        antecedent: { combinator: 'and', rules: [ruleGroup] },
+        conditions: [{ antecedent: ruleGroup }],
       },
     ],
   };
@@ -45,8 +45,8 @@ describe('rules engines', () => {
     conditions: [
       {
         id: 'firstGroup',
-        condition: { rules: [ruleGroupIC, 'or', ruleGroupIC] },
-        conditions: [{ condition: ruleGroupIC }],
+        antecedent: { rules: [ruleGroupIC, 'or', ruleGroupIC] },
+        conditions: [{ antecedent: ruleGroupIC }],
       },
     ],
   };
@@ -55,7 +55,7 @@ describe('rules engines', () => {
     const newRulesEngine = regenerateREIDs(re);
 
     expect(newRulesEngine.id).not.toBe(re.id);
-    expect(newRulesEngine.conditions[0].condition.rules[0].id).not.toBe(re.conditions[0].id);
+    expect(newRulesEngine.conditions[0].antecedent.rules[0].id).not.toBe(re.conditions[0].id);
     expect(newRulesEngine.conditions[0].id).not.toBe(re.conditions[0].id);
     expect(newRulesEngine.conditions[0]?.conditions?.[0].id).not.toBe(
       re.conditions[0]?.conditions?.[0].id
@@ -69,8 +69,8 @@ describe('rules engines', () => {
     expect(newRulesEngineIC.conditions[0].conditions![0].id).not.toBe(
       reIC.conditions[0].conditions![0].id
     );
-    expect(newRulesEngineIC.conditions[0]?.condition.rules[2]?.id).not.toBe(
-      reIC.conditions[0]?.condition.rules[2]?.id
+    expect(newRulesEngineIC.conditions[0]?.antecedent.rules[2]?.id).not.toBe(
+      reIC.conditions[0]?.antecedent.rules[2]?.id
     );
   });
 });

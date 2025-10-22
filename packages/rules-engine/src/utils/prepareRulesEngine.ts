@@ -1,6 +1,6 @@
 import { generateID, isRuleGroup, prepareRuleGroup } from '@react-querybuilder/core';
 import { produce } from 'immer';
-import type { RulesEngineAny, RulesEngineConditions } from '../types';
+import type { AntecedentCascade, RulesEngineAny } from '../types';
 import { isRulesEngine } from './isRulesEngine';
 
 /**
@@ -24,13 +24,13 @@ export const prepareRulesEngine = <RE extends RulesEngineAny>(
     }
     draft.conditions = draft.conditions.map(r => {
       r.id = idGenerator();
-      if (isRuleGroup(r.condition)) {
-        r.condition = prepareRuleGroup(r.condition);
+      if (isRuleGroup(r.antecedent)) {
+        r.antecedent = prepareRuleGroup(r.antecedent);
       }
       if (isRulesEngine(r)) {
         r = prepareRulesEngine(r);
       }
       return r;
       // oxlint-disable-next-line no-explicit-any
-    }) as RulesEngineConditions<any>;
+    }) as AntecedentCascade<any>;
   });

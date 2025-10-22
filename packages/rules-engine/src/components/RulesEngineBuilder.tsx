@@ -17,12 +17,12 @@ import {
 } from '../defaults';
 import { useMergeComponents } from '../hooks';
 import type {
+  AntecedentCascade,
   ClassnamesRE,
   ComponentsRE,
+  Consequent,
   RulesEngine,
-  RulesEngineAction,
   RulesEngineAny,
-  RulesEngineConditions,
   RulesEngineProps,
   SchemaRE,
   TranslationsFullRE,
@@ -45,15 +45,15 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
         conditionPath={rootPath}
         classnames={re.headerClassName}
         schema={re.schema}
-        defaultAction={re.rulesEngine.defaultAction}
+        defaultConsequent={re.rulesEngine.defaultConsequent}
       />
       <RulesEngineConditionCascade
         conditionPath={rootPath}
         onConditionsChange={re.onChange}
-        onDefaultActionChange={re.onDefaultActionChange}
+        onDefaultConsequentChange={re.onDefaultConsequentChange}
         // @ts-expect-error TODO
         conditions={re.rulesEngine.conditions}
-        defaultAction={re.rulesEngine.defaultAction}
+        defaultConsequent={re.rulesEngine.defaultConsequent}
         schema={re.schema}
       />
     </div>
@@ -63,12 +63,12 @@ export const RulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
 export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
 ): {
-  actionTypes: FullOptionList<BaseOption>;
+  consequentTypes: FullOptionList<BaseOption>;
   classnames: ClassnamesRE;
   components: ComponentsRE;
   fields: FullOptionList<FullField>;
-  onChange: (conditions: RulesEngineConditions<RG>) => void;
-  onDefaultActionChange: (defaultAction?: RulesEngineAction) => void;
+  onChange: (conditions: AntecedentCascade<RG>) => void;
+  onDefaultConsequentChange: (defaultConsequent?: Consequent) => void;
   rulesEngine: RulesEngineAny;
   schema: SchemaRE;
   wrapperClassName: string;
@@ -76,8 +76,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
 } => {
   const {
     rulesEngine: rulesEngineProp = defaultRulesEngine,
-    actionTypes: actionTypesProp,
-    autoSelectActionType = false,
+    consequentTypes: consequentTypesProp,
+    autoSelectConsequentType = false,
     suppressStandardClassnames = false,
     onRulesEngineChange,
     classnames: classnamesProp = defaultClassnamesRE,
@@ -94,10 +94,10 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       rulesEngineBuilder: classnamesMerged.rulesEngineBuilder,
       rulesEngineHeader: classnamesMerged.rulesEngineHeader,
       blockLabel: classnamesMerged.blockLabel,
-      actionBuilder: classnamesMerged.actionBuilder,
-      actionBuilderHeader: classnamesMerged.actionBuilderHeader,
-      actionBuilderBody: classnamesMerged.actionBuilderBody,
-      actionBuilderStandalone: classnamesMerged.actionBuilderStandalone,
+      consequentBuilder: classnamesMerged.consequentBuilder,
+      consequentBuilderHeader: classnamesMerged.consequentBuilderHeader,
+      consequentBuilderBody: classnamesMerged.consequentBuilderBody,
+      consequentBuilderStandalone: classnamesMerged.consequentBuilderStandalone,
       conditionBuilder: classnamesMerged.conditionBuilder,
       conditionBuilderHeader: classnamesMerged.conditionBuilderHeader,
     }),
@@ -105,10 +105,10 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.rulesEngineBuilder,
       classnamesMerged.rulesEngineHeader,
       classnamesMerged.blockLabel,
-      classnamesMerged.actionBuilder,
-      classnamesMerged.actionBuilderHeader,
-      classnamesMerged.actionBuilderBody,
-      classnamesMerged.actionBuilderStandalone,
+      classnamesMerged.consequentBuilder,
+      classnamesMerged.consequentBuilderHeader,
+      classnamesMerged.consequentBuilderBody,
+      classnamesMerged.consequentBuilderStandalone,
       classnamesMerged.conditionBuilder,
       classnamesMerged.conditionBuilderHeader,
     ]
@@ -144,7 +144,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
 
   const [re, setRE] = useState<RulesEngine>(rulesEngineProp);
   const onChange = useCallback(
-    (conditions: RulesEngineConditions<RG>) => {
+    (conditions: AntecedentCascade<RG>) => {
       const newRE = { ...re, conditions };
       // @ts-expect-error TODO
       setRE(newRE);
@@ -153,17 +153,17 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     },
     [onRulesEngineChange, re]
   );
-  const onDefaultActionChange = useCallback(
-    (defaultAction?: RulesEngineAction) => {
-      const newRE = { ...re, defaultAction };
+  const onDefaultConsequentChange = useCallback(
+    (defaultConsequent?: Consequent) => {
+      const newRE = { ...re, defaultConsequent };
       setRE(newRE);
       onRulesEngineChange?.(newRE);
     },
     [onRulesEngineChange, re]
   );
-  const { optionList: actionTypes } = useMemo(
-    () => prepareOptionList({ optionList: actionTypesProp }),
-    [actionTypesProp]
+  const { optionList: consequentTypes } = useMemo(
+    () => prepareOptionList({ optionList: consequentTypesProp }),
+    [consequentTypesProp]
   );
   const { optionList: fields } = useMemo(
     () => prepareOptionList({ optionList: props.fields }),
@@ -184,14 +184,14 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       fields,
       components,
       classnames,
-      actionTypes,
-      autoSelectActionType,
+      consequentTypes,
+      autoSelectConsequentType,
       suppressStandardClassnames,
       translations,
     }),
     [
-      actionTypes,
-      autoSelectActionType,
+      consequentTypes,
+      autoSelectConsequentType,
       suppressStandardClassnames,
       classnames,
       components,
@@ -208,8 +208,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     headerClassName,
     components,
     onChange,
-    onDefaultActionChange,
-    actionTypes,
+    onDefaultConsequentChange,
+    consequentTypes,
     fields,
     schema,
     rulesEngine,

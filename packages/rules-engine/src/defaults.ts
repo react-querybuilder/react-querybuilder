@@ -3,10 +3,10 @@ import type { ClassnamesRE, RulesEngine, RulesEngineIC, TranslationsFullRE } fro
 export const defaultClassnamesRE: ClassnamesRE = {
   rulesEngineBuilder: '',
   rulesEngineHeader: '',
-  actionBuilder: '',
-  actionBuilderHeader: '',
-  actionBuilderBody: '',
-  actionBuilderStandalone: '',
+  consequentBuilder: '',
+  consequentBuilderHeader: '',
+  consequentBuilderBody: '',
+  consequentBuilderStandalone: '',
   blockLabel: '',
   conditionBuilder: '',
   conditionBuilderHeader: '',
@@ -15,31 +15,31 @@ export const defaultClassnamesRE: ClassnamesRE = {
 export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   rulesEngineBuilder: 'rulesEngineBuilder',
   rulesEngineHeader: 'rulesEngineBuilder-header',
-  actionBuilder: 'actionBuilder',
-  actionBuilderHeader: 'actionBuilder-header',
-  actionBuilderBody: 'actionBuilder-body',
-  actionBuilderStandalone: 'actionBuilder-standalone',
+  consequentBuilder: 'consequentBuilder',
+  consequentBuilderHeader: 'consequentBuilder-header',
+  consequentBuilderBody: 'consequentBuilder-body',
+  consequentBuilderStandalone: 'consequentBuilder-standalone',
   blockLabel: 'blockLabel',
   conditionBuilder: 'conditionBuilder',
   conditionBuilderHeader: 'conditionBuilder-header',
 };
 
 export const defaultRulesEngine: RulesEngine = {
-  conditions: [{ condition: { combinator: 'and', rules: [] } }],
+  conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
 };
 
 export const defaultRulesEngineIC: RulesEngineIC = {
-  conditions: [{ condition: { rules: [] } }],
+  conditions: [{ antecedent: { rules: [] } }],
 };
 
 export const defaultTranslationsRE: TranslationsFullRE = {
   blockLabelIf: { title: 'First condition', label: 'If' },
   blockLabelElseIf: { title: 'Subsequent condition', label: 'Else If' },
   blockLabelElse: { title: 'Fallback/default action', label: 'Else' },
-  blockLabelThen: { title: 'Resulting action', label: 'Then' },
+  blockLabelThen: { title: 'Consequent action', label: 'Then' },
   addCondition: { title: 'Add condition', label: '+ Condition' },
   addSubcondition: { title: 'Add subcondition', label: '+ Subcondition' },
-  addAction: { title: 'Add action', label: '+ Action' },
+  addConsequent: { title: 'Add action', label: '+ Action' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
-  removeAction: { title: 'Remove action', label: '⨯' },
+  removeConsequent: { title: 'Remove action', label: '⨯' },
 };

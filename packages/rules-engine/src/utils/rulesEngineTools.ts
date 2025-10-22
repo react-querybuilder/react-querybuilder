@@ -22,8 +22,8 @@ import {
   update,
 } from '@react-querybuilder/core';
 import { produce } from 'immer';
-import type { RulesEngineAction, RulesEngineAny } from '../types';
-import { isRulesEngineAction, isRulesEngineAny } from './isRulesEngine';
+import type { Consequent, RulesEngineAny } from '../types';
+import { isRulesEngineAny, isRulesEngineConsequent } from './isRulesEngine';
 import { findConditionPath, getConditionPathOfID } from './pathUtils';
 
 const push = (a: unknown[], ...items: unknown[]) => a.push(...items);
@@ -51,8 +51,8 @@ export interface AddOptionsRE extends AddOptions {}
 export const addRE = <RE extends RulesEngineAny>(
   /** The rules engine to update. */
   rulesEngine: RE,
-  /** The rules engine, action, rule, or rule group to add. */
-  subject: RE | RulesEngineAction | RuleGroupTypeAny | RuleType,
+  /** The rules engine, consequent, rule, or rule group to add. */
+  subject: RE | Consequent | RuleGroupTypeAny | RuleType,
   /** Path or ID of the rules engine condition to add to. */
   conditionPathOrID: Path | string,
   /** Path or ID of the group to add to (within the rules engine at `conditionPathOrID`), if adding a rule or group. */
@@ -82,16 +82,20 @@ export const addRE = <RE extends RulesEngineAny>(
       // istanbul ignore next
       if (!coerceToRulesEngine(parentREofGroup)) return;
       splice(parentREofGroup.conditions, rePath.at(-1)!, 1, newGroup);
-    } else if (isRulesEngineAny(subject) || isRulesEngineAction(subject) || isRuleGroup(subject)) {
+    } else if (
+      isRulesEngineAny(subject) ||
+      isRulesEngineConsequent(subject) ||
+      isRuleGroup(subject)
+    ) {
       // Force the parent rules engine to have a `conditions` array.
       // The return will never fire; it's only for type safety and hence ignored for coverage.
       // istanbul ignore next
       if (!coerceToRulesEngine(parentRE)) return;
 
-      // Check if the last condition is an action, i.e. an "else" block
-      if (isRulesEngineAction(parentRE.conditions.at(-1))) {
+      // Check if the last condition is an consequent, i.e. an "else" block
+      if (isRulesEngineConsequent(parentRE.conditions.at(-1))) {
         // Can't have two "else" blocks
-        if (isRulesEngineAction(subject)) return;
+        if (isRulesEngineConsequent(subject)) return;
 
         splice(parentRE.conditions, parentRE.conditions.length - 1, 0, subject);
       } else {
@@ -303,24 +307,24 @@ export const moveRE = <RE extends RulesEngineAny>(
     const conditionToMoveOriginal = findConditionPath(oldConditionPath, draft);
     if (!conditionToMoveOriginal) return;
 
-    // Validate action movement constraints
+    // Validate consequent movement constraints
     const sourceParent = findConditionPath(getParentPath(oldConditionPath), draft);
     const targetParent = findConditionPath(getParentPath(newConditionPath), draft);
     if (
       coerceToRulesEngine(sourceParent) &&
       coerceToRulesEngine(targetParent) &&
-      isRulesEngineAction(conditionToMoveOriginal)
+      isRulesEngineConsequent(conditionToMoveOriginal)
     ) {
       const newIndex = newConditionPath.at(-1)!;
-      // Actions can only be at the last position
+      // Consequents can only be at the last position
       if (newIndex < targetParent.conditions.length - 1) return;
     }
 
-    // Can't move rules engine below an action
-    if (coerceToRulesEngine(targetParent) && !isRulesEngineAction(conditionToMoveOriginal)) {
+    // Can't move rules engine below a consequent
+    if (coerceToRulesEngine(targetParent) && !isRulesEngineConsequent(conditionToMoveOriginal)) {
       const newIndex = newConditionPath.at(-1)!;
-      const hasTrailingAction = isRulesEngineAction(targetParent.conditions.at(-1));
-      if (hasTrailingAction && newIndex >= targetParent.conditions.length - 1) return;
+      const hasTrailingConsequent = isRulesEngineConsequent(targetParent.conditions.at(-1));
+      if (hasTrailingConsequent && newIndex >= targetParent.conditions.length - 1) return;
     }
 
     const conditionToMove = moveOptions.clone
@@ -383,8 +387,8 @@ export interface InsertOptionsRE extends InsertOptions {}
 export const insertRE = <RE extends RulesEngineAny>(
   /** The rules engine to update. */
   rulesEngine: RE,
-  /** The rules engine, action, rule, or rule group to insert. */
-  subject: RE | RulesEngineAction | RuleGroupTypeAny | RuleType,
+  /** The rules engine, consequent, rule, or rule group to insert. */
+  subject: RE | Consequent | RuleGroupTypeAny | RuleType,
   /** Path at which to insert the condition. */
   conditionPath: Path,
   /** Path at which to insert the rule or group (within the condition at `conditionPath`), if inserting a rule or group. */
@@ -415,25 +419,25 @@ export const insertRE = <RE extends RulesEngineAny>(
 
     const newIndex = conditionPath.at(-1)!;
 
-    if (isRulesEngineAny(subject) || isRulesEngineAction(subject) || isRuleGroup(subject)) {
-      // Check if trying to insert an action when there's already a trailing action
-      if (isRulesEngineAction(subject) && isRulesEngineAction(parent.conditions.at(-1))) {
+    if (isRulesEngineAny(subject) || isRulesEngineConsequent(subject) || isRuleGroup(subject)) {
+      // Check if trying to insert a consequent when there's already a trailing consequent
+      if (isRulesEngineConsequent(subject) && isRulesEngineConsequent(parent.conditions.at(-1))) {
         return; // Can't have two "else" blocks
       }
 
       if (
         !insertOptions.replace &&
-        isRulesEngineAction(parent.conditions.at(-1)) &&
-        !isRulesEngineAction(subject)
+        isRulesEngineConsequent(parent.conditions.at(-1)) &&
+        !isRulesEngineConsequent(subject)
       ) {
-        // Inserting a rules engine and there's a trailing action that isn't being replaced. Insert before the action.
+        // Inserting a rules engine and there's a trailing consequent that isn't being replaced. Insert before the consequent.
         splice(parent.conditions, Math.min(newIndex, parent.conditions.length - 1), 0, subject);
       } else if (
         insertOptions.replace &&
-        isRulesEngineAction(subject) &&
+        isRulesEngineConsequent(subject) &&
         newIndex >= parent.conditions.length - 1
       ) {
-        // Replacing an action at the last index (doesn't matter what we replace it with)
+        // Replacing a consequent at the last index (doesn't matter what we replace it with)
         splice(parent.conditions, parent.conditions.length - 1, 1, subject);
       } else {
         // Normal insertion/replacement

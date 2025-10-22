@@ -6,9 +6,9 @@ export const RulesEngineBuilderHeader = (
 ): React.JSX.Element => {
   const {
     classnames,
-    defaultAction,
+    defaultConsequent,
     schema: {
-      components: { addAction: AddAction, addCondition: AddCondition },
+      components: { addConsequent: AddConsequent, addCondition: AddCondition },
       translations,
     },
   } = props;
@@ -24,15 +24,15 @@ export const RulesEngineBuilderHeader = (
         title={translations.addCondition.title}
         label={translations.addCondition.label}
       />
-      <AddAction
+      <AddConsequent
         schema={props.schema}
         path={props.conditionPath}
         level={props.conditionPath.length}
         // oxlint-disable-next-line jsx-no-new-function-as-prop
         handleOnClick={() => {}}
-        disabled={!!defaultAction}
-        title={translations.addAction.title}
-        label={translations.addAction.label}
+        disabled={!!defaultConsequent}
+        title={translations.addConsequent.title}
+        label={translations.addConsequent.label}
       />
     </div>
   );
