@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.11.1] - 2025-10-23
+
+### Fixed
+
+- [#960] Issues with type and dependencies
+
 ## [v8.11.0] - 2025-10-21
 
 ### Added
@@ -2044,12 +2050,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
 [#954]: https://github.com/react-querybuilder/react-querybuilder/pull/954
 [#957]: https://github.com/react-querybuilder/react-querybuilder/pull/957
+[#960]: https://github.com/react-querybuilder/react-querybuilder/pull/960
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.1...HEAD
+[v8.11.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...v8.11.1
 [v8.11.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...v8.11.0
 [v8.10.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...v8.10.0
 [v8.9.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...v8.9.2
