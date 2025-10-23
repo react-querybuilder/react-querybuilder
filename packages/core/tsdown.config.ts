@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { defineConfig } from 'tsdown';
-import { tsdownCommonConfig } from '../../utils/tsdown.common';
+import { commonBuildOptions, tsdownCommonConfig } from '../../utils/tsdown.common';
 
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
@@ -19,21 +19,17 @@ export default defineConfig(async options => {
   return [
     ...buildConfig,
     {
+      ...commonBuildOptions,
       ...options,
       entry: utilEntryPoints,
     },
     {
+      ...commonBuildOptions,
       ...options,
       entry: utilEntryPoints,
       format: 'cjs',
       onSuccess: async () => {
-        // Write /debug/package.json for node10 resolution
-        await mkdir('debug', { recursive: true });
-        await Bun.write(
-          'debug/package.json',
-          JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
-        );
-        // Write the other {util}/package.json's for node10 resolution
+        // Write {util}/package.json for node10 resolution
         await Promise.all(
           Object.keys(utilEntryPoints).map(async util => {
             await mkdir(util, { recursive: true });

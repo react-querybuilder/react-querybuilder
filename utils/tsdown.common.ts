@@ -24,6 +24,12 @@ if (process.env.NODE_ENV === 'production') {
   ]);
 };
 
+export const commonBuildOptions = {
+  sourcemap: true,
+  platform: 'neutral',
+  dts: { oxc: true, resolve: ['type-fest'] },
+} satisfies Options as Options;
+
 export const tsdownCommonConfig = (sourceDir: string) =>
   (async options => {
     const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').at(-1)}`}`;
@@ -32,9 +38,7 @@ export const tsdownCommonConfig = (sourceDir: string) =>
 
     const commonOptions = {
       entry: { [pkgName]: entryPoint },
-      sourcemap: true,
-      platform: 'neutral',
-      dts: { oxc: true, resolve: ['type-fest'] },
+      ...commonBuildOptions,
       ...options,
     } satisfies Options;
 

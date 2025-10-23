@@ -1,6 +1,10 @@
 import { mkdir } from 'node:fs/promises';
 import { defineConfig } from 'tsdown';
-import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
+import {
+  commonBuildOptions,
+  getCjsIndexWriter,
+  tsdownCommonConfig,
+} from '../../utils/tsdown.common';
 
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
@@ -37,10 +41,12 @@ export default defineConfig(async options => {
   return [
     ...buildConfig,
     {
+      ...commonBuildOptions,
       ...options,
       entry: utilEntryPoints,
     },
     {
+      ...commonBuildOptions,
       ...options,
       entry: utilEntryPoints,
       format: 'cjs',

@@ -179,21 +179,7 @@
     "react-redux": "^9.2.0"
   },
   "peerDependencies": {
-    "drizzle-orm": ">=0.38.0",
-    "json-logic-js": ">=2",
-    "react": ">=18",
-    "sequelize": ">=6"
-  },
-  "peerDependenciesMeta": {
-    "drizzle-orm": {
-      "optional": true
-    },
-    "json-logic-js": {
-      "optional": true
-    },
-    "sequelize": {
-      "optional": true
-    }
+    "react": ">=18"
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
