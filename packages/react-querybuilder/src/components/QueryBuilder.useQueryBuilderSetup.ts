@@ -29,11 +29,8 @@ import {
   getMatchModesUtil,
   getOption,
   getValueSourcesUtil,
-  isFlexibleOptionGroupArray,
   joinWith,
   prepareOptionList,
-  toFullOptionList,
-  uniqOptList,
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
 import type { UseMergedContext } from '../hooks';
@@ -194,7 +191,7 @@ export const useQueryBuilderSetup = <
   // #endregion
 
   // #region `operators`
-  const { optionList: operators, defaultOption: defaultOperator } = useMemo(
+  const { optionList: operators } = useMemo(
     () =>
       prepareOptionList({
         optionList: operatorsProp ?? (defaultOperators as FlexibleOptionList<O>),
@@ -207,39 +204,15 @@ export const useQueryBuilderSetup = <
   );
 
   const getOperatorsMain = useCallback(
-    (field: FieldName, { fieldData }: { fieldData: F }): FullOptionList<O> => {
-      let opsFinal = operators as FullOptionList<O>;
-
-      if (fieldData?.operators) {
-        opsFinal = toFullOptionList(fieldData.operators, baseOperator, defaultOperatorLabelMap);
-      } else if (getOperators) {
-        const ops = getOperators(field, { fieldData });
-        if (ops) {
-          opsFinal = toFullOptionList(ops, baseOperator, defaultOperatorLabelMap);
-        }
-      }
-
-      if (!autoSelectOperator) {
-        opsFinal = (
-          isFlexibleOptionGroupArray(opsFinal)
-            ? [
-                { label: translations.operators.placeholderGroupLabel, options: [defaultOperator] },
-                ...opsFinal,
-              ]
-            : [defaultOperator, ...opsFinal]
-        ) as FullOptionList<O>;
-      }
-
-      return uniqOptList(opsFinal) as FullOptionList<O>;
-    },
-    [
-      autoSelectOperator,
-      baseOperator,
-      defaultOperator,
-      getOperators,
-      operators,
-      translations.operators.placeholderGroupLabel,
-    ]
+    (field: FieldName, { fieldData }: { fieldData: F }) =>
+      prepareOptionList({
+        optionList: fieldData?.operators ?? getOperators?.(field, { fieldData }) ?? operators,
+        placeholder: translations.operators,
+        baseOption: baseOperator,
+        labelMap: defaultOperatorLabelMap,
+        autoSelectOption: autoSelectOperator,
+      }).optionList as FullOptionList<O>,
+    [autoSelectOperator, baseOperator, getOperators, operators, translations.operators]
   );
 
   const getRuleDefaultOperator = useCallback(
@@ -297,40 +270,14 @@ export const useQueryBuilderSetup = <
     [getSubQueryBuilderProps]
   );
 
-  const defaultValueOption = useMemo(
-    (): FullOption<OperatorName> => ({
-      id: translations.values.placeholderName,
-      name: translations.values.placeholderName as OperatorName,
-      value: translations.values.placeholderName as OperatorName,
-      label: translations.values.placeholderLabel,
-    }),
-    [translations.values.placeholderLabel, translations.values.placeholderName]
-  );
-
   const getValuesMain = useCallback(
-    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) => {
-      let valsFinal: FullOptionList<BaseOption> = [];
-      if (fieldData?.values) {
-        valsFinal = toFullOptionList(fieldData.values);
-      }
-      if (getValues) {
-        valsFinal = toFullOptionList(getValues(field, operator, { fieldData }));
-      }
-
-      if (!autoSelectValue) {
-        valsFinal = isFlexibleOptionGroupArray(valsFinal)
-          ? [
-              {
-                label: translations.values.placeholderGroupLabel,
-                options: [defaultValueOption],
-              },
-              ...valsFinal,
-            ]
-          : [defaultValueOption, ...valsFinal];
-      }
-      return valsFinal;
-    },
-    [autoSelectValue, defaultValueOption, getValues, translations.values.placeholderGroupLabel]
+    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) =>
+      prepareOptionList({
+        optionList: fieldData?.values ?? getValues?.(field, operator, { fieldData }) ?? [],
+        placeholder: translations.values,
+        autoSelectOption: autoSelectValue,
+      }).optionList,
+    [autoSelectValue, getValues, translations.values]
   );
 
   const getRuleDefaultValue = useCallback(
