@@ -166,6 +166,7 @@
     "vite": "^7.1.11"
   },
   "dependencies": {
+    "@ts-jison/parser": "^0.4.1-alpha.1",
     "immer": "^10.1.3",
     "numeric-quantity": "^2.1.0"
   },
