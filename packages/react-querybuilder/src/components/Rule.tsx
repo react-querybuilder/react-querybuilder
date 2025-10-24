@@ -37,7 +37,6 @@ import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import type { UseFields } from '../hooks';
 import {
-  useAsyncValues,
   useDeprecatedProps,
   useFields,
   useReactDndWarning,
@@ -287,8 +286,6 @@ export const RuleComponents: React.MemoExoticComponent<
                     type={r.valueEditorType}
                     inputType={r.inputType}
                     values={r.values}
-                    loading={r.valuesLoading}
-                    loadingError={r.loadingError}
                     listsAsArrays={r.schema.listsAsArrays}
                     parseNumbers={r.schema.parseNumbers}
                     separator={r.valueEditorSeparator}
@@ -477,8 +474,6 @@ export interface UseRule extends RuleProps {
   valueEditorSeparator: React.ReactNode;
   valueEditorType: ValueEditorType;
   values: FlexibleOptionList<Option>;
-  valuesLoading: boolean;
-  loadingError: Error | null;
   valueSourceOptions: ValueSourceFullOptions;
   valueSources: ValueSources;
 }
@@ -506,8 +501,6 @@ export const useRule = (props: RuleProps): UseRule => {
       getValueEditorSeparator,
       getValueSources,
       getValues,
-      getValuesAsync,
-      getValuesTrigger,
       validationMap,
       enableDragAndDrop,
       getRuleClassname,
@@ -746,30 +739,13 @@ export const useRule = (props: RuleProps): UseRule => {
     () => getValueEditorSeparator(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorSeparator, rule.field, rule.operator]
   );
-  // Compute fallback values for async hook
-  const fallbackValues = useMemo(() => {
+  const values = useMemo(() => {
     const v =
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
         : getValues(rule.field, rule.operator, { fieldData });
     return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
   }, [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]);
-
-  // Use async values hook if getValuesAsync is available, otherwise use fallback
-  const asyncValuesResult = useAsyncValues({
-    field: rule.field,
-    operator: rule.operator,
-    fieldData,
-    getValuesAsync: rule.valueSource === 'field' ? undefined : getValuesAsync,
-    getValuesTrigger,
-    fallbackValues,
-    autoSelectValue: props.schema.autoSelectValue,
-    translations: props.translations,
-  });
-
-  const values = rule.valueSource === 'field' ? fallbackValues : asyncValuesResult.values;
-  const valuesLoading = rule.valueSource === 'field' ? false : asyncValuesResult.loading;
-  const loadingError = rule.valueSource === 'field' ? null : asyncValuesResult.error;
   const subQueryBuilderProps = useMemo(
     () => getSubQueryBuilderProps(rule.field, { fieldData }) as Record<string, unknown>,
     [fieldData, getSubQueryBuilderProps, rule.field]
@@ -889,8 +865,6 @@ export const useRule = (props: RuleProps): UseRule => {
     valueEditorSeparator,
     valueEditorType,
     values,
-    valuesLoading,
-    loadingError,
     valueSourceOptions,
     valueSources,
   };

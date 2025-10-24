@@ -1,6 +1,5 @@
 import type {
   AccessibleDescriptionGenerator,
-  BaseOption,
   BaseOptionMap,
   BaseTranslation,
   BaseTranslations,
@@ -395,14 +394,6 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
    * in a parent/ancestor component. See usage in the compatibility packages.
    */
   skipHook?: boolean;
-  /**
-   * Indicates whether values are being loaded asynchronously.
-   */
-  loading?: boolean;
-  /**
-   * Error that occurred during async value loading.
-   */
-  loadingError?: Error | null;
   schema: Schema<F, O>;
 }
 
@@ -605,17 +596,7 @@ export interface Schema<F extends FullField, O extends string> {
   getValueEditorSeparator(field: string, operator: string, meta: { fieldData: F }): ReactNode;
   getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSourceFullOptions;
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
-  getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<BaseOption>;
-  getValuesAsync?(
-    field: string,
-    operator: string,
-    meta: { fieldData: F }
-  ): Promise<FlexibleOptionListProp<Option>> | FlexibleOptionListProp<Option>;
-  getValuesTrigger?(
-    field: string,
-    operator: string,
-    meta: { fieldData: F }
-  ): 'field' | 'operator' | 'both' | 'never';
+  getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
   getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
   getSubQueryBuilderProps(
     field: GetOptionIdentifierType<F>,
@@ -963,29 +944,6 @@ export type QueryBuilderProps<
         operator: GetOptionIdentifierType<O>,
         misc: { fieldData: F }
       ): FlexibleOptionListProp<Option>;
-      /**
-       * This function should return the list of allowed values for the
-       * given field `name` and operator `name` asynchronously. This function
-       * takes precedence over `getValues` when provided. The function can return
-       * either a Promise or a synchronous value for flexibility.
-       */
-      getValuesAsync?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): Promise<FlexibleOptionListProp<Option>> | FlexibleOptionListProp<Option>;
-      /**
-       * This function determines when to trigger async value loading.
-       * - 'field': Trigger when field changes
-       * - 'operator': Trigger when operator changes
-       * - 'both': Trigger when either field or operator changes (default)
-       * - 'never': Never auto-trigger (manual control via getValuesAsync)
-       */
-      getValuesTrigger?(
-        field: GetOptionIdentifierType<F>,
-        operator: GetOptionIdentifierType<O>,
-        misc: { fieldData: F }
-      ): 'field' | 'operator' | 'both' | 'never';
       /**
        * This function should return the list of valid {@link MatchMode}s or
        * {@link MatchConfig}s for a given field `name`. The return value must
