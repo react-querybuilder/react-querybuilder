@@ -99,6 +99,14 @@ export type UseQueryBuilderSetup<
     getValuesMain: (
       ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getValues']>>
     ) => FullOptionList<Option>;
+    // getValuesAsync?: (
+    //   ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getValuesAsync']>>
+    // ) => FullOptionList<BaseOption>;
+    // getValuesTrigger?: (
+    //   ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getValuesTrigger']>>
+    // ) => FullOptionList<BaseOption>;
+    getValuesAsync?: QueryBuilderProps<RG, F, O, C>['getValuesAsync'];
+    getValuesTrigger?: QueryBuilderProps<RG, F, O, C>['getValuesTrigger'];
   };
 
 /**
@@ -142,6 +150,8 @@ export const useQueryBuilderSetup = <
     getValueSources,
     getInputType,
     getValues,
+    getValuesAsync,
+    getValuesTrigger,
     autoSelectField = true,
     autoSelectOperator = true,
     autoSelectValue = true,
@@ -417,8 +427,7 @@ export const useQueryBuilderSetup = <
   return {
     qbId,
     rqbContext,
-    // TODO: Why is a cast necessary here?
-    fields: fields as FullOptionList<F>,
+    fields,
     fieldMap,
     combinators,
     getMatchModesMain,
@@ -428,6 +437,8 @@ export const useQueryBuilderSetup = <
     getValueEditorTypeMain,
     getValueSourcesMain,
     getValuesMain,
+    getValuesAsync,
+    getValuesTrigger,
     getRuleDefaultValue,
     getInputTypeMain,
     createRule,
