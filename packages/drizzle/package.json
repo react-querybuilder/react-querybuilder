@@ -48,10 +48,10 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.11",
     "@react-querybuilder/core": "8.11.1",
-    "drizzle-orm": "^0.44.6",
+    "drizzle-orm": "^0.44.7",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.1.11"
+    "vite": "^7.1.12"
   },
   "peerDependencies": {
     "@react-querybuilder/core": "8.11.1",
