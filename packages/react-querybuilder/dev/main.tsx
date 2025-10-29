@@ -1,8 +1,8 @@
 import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import type { OperatorSelectorProps } from '../src';
-import { QueryBuilder, generateValueSelectorAsync } from '../src';
+import type { ValueEditorProps, VersatileSelectorProps } from '../src';
+import { QueryBuilder, ValueEditor, generateValueSelectorAsync } from '../src';
 import './styles.scss';
 
 const VSA = generateValueSelectorAsync({
@@ -16,9 +16,12 @@ const VSA = generateValueSelectorAsync({
       { name: 'option3', value: 'option3', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
     ];
   },
-}) as React.ComponentType<OperatorSelectorProps>;
+}) as React.ComponentType<VersatileSelectorProps>;
 
-const controlElements = { operatorSelector: VSA };
+const VE = (props: ValueEditorProps) => <ValueEditor {...props} selectorComponent={VSA} />;
+
+// const controlElements = { operatorSelector: VSA };
+const controlElements = { valueEditor: VE };
 
 const App = (): React.JSX.Element => {
   const devApp = useDevApp();
