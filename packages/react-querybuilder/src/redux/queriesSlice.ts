@@ -9,7 +9,7 @@ export interface SetQueryStateParams {
   query: RuleGroupTypeAny;
 }
 
-export const initialState: QueriesSliceState = {};
+const initialState: QueriesSliceState = {};
 
 export const queriesSlice: Slice<
   QueriesSliceState,

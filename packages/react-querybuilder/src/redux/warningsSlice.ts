@@ -12,7 +12,7 @@ type ValuesType<T> =
   T extends Record<infer _K, infer V> ? ([V] extends [string] ? V : never) : never;
 export type WarningsSliceState = ValuesAsKeys<typeof messages>;
 export type Messages = ValuesType<typeof messages>;
-export const initialState: WarningsSliceState = {
+const initialState: WarningsSliceState = {
   [messages.errorInvalidIndependentCombinatorsProp]: false,
   [messages.errorUnnecessaryIndependentCombinatorsProp]: false,
   [messages.errorDeprecatedRuleGroupProps]: false,

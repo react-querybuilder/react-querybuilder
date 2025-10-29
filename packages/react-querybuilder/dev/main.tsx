@@ -7,9 +7,8 @@ import './styles.scss';
 
 const VSA = generateValueSelectorAsync({
   cacheTTL: 5000,
-  getCacheKey: ['field'],
+  getCacheKey: 'field',
   loadOptionList: async () => {
-    // Simulate async call
     await new Promise(resolve => setTimeout(resolve, 500));
     return [
       { name: 'option1', value: 'option1', label: `Option ${crypto.randomUUID().slice(0, 4)}` },

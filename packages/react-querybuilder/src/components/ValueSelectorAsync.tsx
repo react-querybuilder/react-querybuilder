@@ -1,9 +1,8 @@
-import {
-  prepareOptionList,
-  type FullOption,
-  type FullOptionList,
-  type RuleGroupTypeAny,
-  type RuleType,
+import type {
+  FullOption,
+  FullOptionList,
+  RuleGroupTypeAny,
+  RuleType,
 } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -38,7 +37,7 @@ export interface GenerateValueSelectorAsyncParams {
    * if the value selector will be assigned as `fieldSelector`, do not include 'field' in this
    * array. Same for 'operator' and `operatorSelector`, etc.
    */
-  getCacheKey?: string[] | ((ruleOrGroup?: RuleType | RuleGroupTypeAny) => string);
+  getCacheKey?: string | string[] | ((props: VersatileSelectorProps) => string);
   /**
    * Must return a promise for the set of options to be used.
    */
@@ -46,7 +45,6 @@ export interface GenerateValueSelectorAsyncParams {
     /** Current value of the selector. */
     value: string | undefined,
     meta: { ruleOrGroup?: RuleType | RuleGroupTypeAny }
-    // callback: (options: FullOptionList<FullOption>) => void
   ) => Promise<FullOptionList<FullOption>>;
   /**
    * Forces "loading" state, even if the selector is not currently waiting for `loadOptionList` to resolve.
@@ -98,22 +96,29 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
 
   const { options: optionsProp, getCacheKey, cacheTTL, loadOptionList, value } = props;
 
-  const preparedOptionsProp = useMemo(
-    () => prepareOptionList({ optionList: optionsProp }).optionList,
-    [optionsProp]
-  );
-
   const ruleOrGroup = useMemo(() => props.rule ?? props.ruleGroup, [props.rule, props.ruleGroup]);
 
+  // oxlint-disable exhaustive-deps
   const cacheKey = useMemo(() => {
+    if (typeof getCacheKey === 'string') {
+      return String(ruleOrGroup?.[getCacheKey as 'id'] ?? '');
+    }
     if (typeof getCacheKey === 'function') {
-      return getCacheKey(ruleOrGroup);
+      return getCacheKey(props);
     }
     if (Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup) {
       return getCacheKey.map(ck => `${ruleOrGroup[ck as 'id']}`).join('|');
     }
     return '';
-  }, [getCacheKey, ruleOrGroup]);
+  }, [
+    getCacheKey,
+    // Spread *all* properties of `props`, in alphabetical order, to allow passing `props`
+    // to `getCacheKey` function without having `props` in the dependency array.
+    ...Object.keys(props)
+      .toSorted()
+      .map(k => props[k as keyof ValueSelectorAsyncProps]),
+  ]);
+  // oxlint-enable exhaustive-deps
 
   const cached = useRQB_INTERNAL_QueryBuilderSelector(s =>
     asyncOptionListsSlice.selectors.selectCacheByKey(s, cacheKey)
@@ -121,7 +126,7 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
 
   const cacheIsValid = cached && Date.now() <= cached.validUntil;
 
-  const options = cached?.data ?? preparedOptionsProp;
+  const options = cached?.data ?? optionsProp;
   const isLoading = useRQB_INTERNAL_QueryBuilderSelector(s =>
     asyncOptionListsSlice.selectors.selectIsLoadingByKey(s, cacheKey)
   );

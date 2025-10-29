@@ -68,7 +68,7 @@ export interface AsyncOptionListsSliceState {
 
 type State = AsyncOptionListsSliceState;
 
-export const initialState: State = { cache: {}, loading: {}, errors: {} };
+const initialState: State = { cache: {}, loading: {}, errors: {} };
 
 const sliceName = 'asyncOptionLists';
 
