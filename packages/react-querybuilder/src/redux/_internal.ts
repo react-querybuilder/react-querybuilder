@@ -8,14 +8,17 @@ import type {
   ThunkDispatch,
   UnknownAction,
 } from '@reduxjs/toolkit';
-import type { UseStore } from 'react-redux';
-import { createDispatchHook, createStoreHook } from 'react-redux';
+import type { TypedUseSelectorHook, UseStore } from 'react-redux';
+import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
 import type { RqbState } from '.';
+import { asyncOptionListsSlice } from './asyncOptionListsSlice';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
 import { QueryBuilderStateContext } from './QueryBuilderStateContext';
 import type { Messages } from './warningsSlice';
 import { warningsSlice } from './warningsSlice';
+
+export { getOptionListsAsync } from './asyncOptionListsSlice';
 
 export const _RQB_INTERNAL_dispatchThunk =
   ({
@@ -45,6 +48,9 @@ type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownA
 export const useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState>> =
   createStoreHook(QueryBuilderStateContext);
 
+export const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
+  createSelectorHook(QueryBuilderStateContext);
+
 const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;
 
 export const rqbWarn =
@@ -56,12 +62,14 @@ export const rqbWarn =
 const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
+  asyncOptionLists: asyncOptionListsSlice.getInitialState(),
 } satisfies RqbState;
 
 export const storeCommon: ConfigureStoreOptions = {
   reducer: {
     queries: queriesSlice.reducer,
     warnings: warningsSlice.reducer,
+    asyncOptionLists: asyncOptionListsSlice.reducer,
   },
   preloadedState,
   middleware: getDefaultMiddleware =>

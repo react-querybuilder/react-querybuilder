@@ -12,3 +12,4 @@ export * from './RuleGroup';
 export * from './ShiftActions';
 export * from './ValueEditor';
 export * from './ValueSelector';
+export * from './ValueSelectorAsync';
