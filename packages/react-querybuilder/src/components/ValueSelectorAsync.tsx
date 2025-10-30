@@ -76,24 +76,10 @@ export interface ValueSelectorAsyncProps
  */
 export const ValueSelectorAsync = (props: ValueSelectorAsyncProps): React.JSX.Element => {
   const uvsa = useValueSelectorAsync(props);
-  const className = useMemo(
-    () =>
-      clsx(
-        props.className,
-        props.schema.suppressStandardClassnames &&
-          uvsa.isLoading && [standardClassnames.loading, props.schema.classNames.loading]
-      ),
-    [
-      props.schema.suppressStandardClassnames,
-      uvsa.isLoading,
-      props.className,
-      props.schema.classNames.loading,
-    ]
-  );
 
   const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
 
-  return <SelectorComponent {...props} options={uvsa.options} className={className} />;
+  return <SelectorComponent {...props} {...uvsa} />;
 };
 
 export interface UseValueSelectorAsync {
@@ -109,6 +95,10 @@ export interface UseValueSelectorAsync {
    * Error messages of rejected `loadOptionList` promises.
    */
   errors: string | null;
+  /**
+   * Existing classes with "loading" class(es) added as appropriate.
+   */
+  className?: string;
 }
 
 /**
@@ -150,13 +140,30 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
   const cacheIsValid = cached && Date.now() <= cached.validUntil;
 
   const options = cached?.data ?? optionsProp;
+
   const isLoading =
     props.isLoading ||
     useRQB_INTERNAL_QueryBuilderSelector(s =>
       asyncOptionListsSlice.selectors.selectIsLoadingByKey(s, cacheKey)
     );
+
   const errors = useRQB_INTERNAL_QueryBuilderSelector(s =>
     asyncOptionListsSlice.selectors.selectErrorByKey(s, cacheKey)
+  );
+
+  const className = useMemo(
+    () =>
+      clsx(
+        props.className,
+        props.schema.suppressStandardClassnames &&
+          isLoading && [standardClassnames.loading, props.schema.classNames.loading]
+      ),
+    [
+      props.schema.suppressStandardClassnames,
+      isLoading,
+      props.className,
+      props.schema.classNames.loading,
+    ]
   );
 
   useEffect(() => {
@@ -181,5 +188,6 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
     errors,
     isLoading,
     options,
+    className,
   };
 };
