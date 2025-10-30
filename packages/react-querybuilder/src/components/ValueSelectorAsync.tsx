@@ -4,6 +4,7 @@ import type {
   RuleGroupTypeAny,
   RuleType,
 } from '@react-querybuilder/core';
+import { clsx, standardClassnames } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import {
@@ -67,13 +68,25 @@ export interface ValueSelectorAsyncProps
 
 export const ValueSelectorAsync = (props: ValueSelectorAsyncProps): React.JSX.Element => {
   const uvsa = useValueSelectorAsync(props);
+  const className = useMemo(
+    () =>
+      clsx(
+        props.className,
+        props.schema.suppressStandardClassnames &&
+          uvsa.isLoading && [standardClassnames.loading, props.schema.classNames.loading]
+      ),
+    [
+      props.schema.suppressStandardClassnames,
+      uvsa.isLoading,
+      props.className,
+      props.schema.classNames.loading,
+    ]
+  );
 
   const { selectorComponent: SelectorComponent = props.schema.controls.valueSelector } = props;
 
-  return <SelectorComponent {...props} options={uvsa.options} />;
+  return <SelectorComponent {...props} options={uvsa.options} className={className} />;
 };
-
-// export interface UseValueSelectorAsyncParams extends GenerateValueSelectorAsyncParams {}
 
 export interface UseValueSelectorAsync {
   /**
@@ -127,9 +140,11 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
   const cacheIsValid = cached && Date.now() <= cached.validUntil;
 
   const options = cached?.data ?? optionsProp;
-  const isLoading = useRQB_INTERNAL_QueryBuilderSelector(s =>
-    asyncOptionListsSlice.selectors.selectIsLoadingByKey(s, cacheKey)
-  );
+  const isLoading =
+    props.isLoading ||
+    useRQB_INTERNAL_QueryBuilderSelector(s =>
+      asyncOptionListsSlice.selectors.selectIsLoadingByKey(s, cacheKey)
+    );
   const errors = useRQB_INTERNAL_QueryBuilderSelector(s =>
     asyncOptionListsSlice.selectors.selectErrorByKey(s, cacheKey)
   );
@@ -152,6 +167,7 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
     value,
   ]);
 
+  // TODO: is this kind of event handler necessary?
   const onInputChange = useCallback(() => {}, []);
 
   return {
