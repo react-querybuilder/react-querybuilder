@@ -6,7 +6,7 @@ import type {
 } from '@react-querybuilder/core';
 import { clsx, standardClassnames } from '@react-querybuilder/core';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderSelector,
@@ -15,12 +15,6 @@ import { asyncOptionListsSlice, getOptionListsAsync } from '../redux/asyncOption
 import type { ValueSelectorProps, VersatileSelectorProps } from '../types';
 
 export interface GenerateValueSelectorAsyncParams {
-  /**
-   * The default set of options to show before the user starts searching. When
-   * set to `true`, the results for `loadOptionList('', { ruleOrGroup }, <callback>)`
-   * will be autoloaded.
-   */
-  // defaultOptions?: FullOptionList<FullOption> | boolean;
   /**
    * Milliseconds after initial retrieval for which the cache is valid.
    *
@@ -37,10 +31,12 @@ export interface GenerateValueSelectorAsyncParams {
    * that `value` represents unless you are generating an auto-complete component. For example,
    * if the value selector will be assigned as `fieldSelector`, do not include 'field' in this
    * array. Same for 'operator' and `operatorSelector`, etc.
+   *
+   * @default ''
    */
   getCacheKey?: string | string[] | ((props: VersatileSelectorProps) => string);
   /**
-   * Must return a promise for the set of options to be used.
+   * Returns a promise for the set of options to be used.
    */
   loadOptionList?: (
     /** Current value of the selector. */
@@ -58,6 +54,12 @@ export interface GenerateValueSelectorAsyncParams {
   selectorComponent?: React.ComponentType<ValueSelectorProps>;
 }
 
+/**
+ * Simple utility to create an async value selector component assignable to {@link QueryBuilder}'s
+ * `*Selector` controls on the `controlElements` prop.
+ *
+ * Augments {@link ValueSelector} by default.
+ */
 export const generateValueSelectorAsync =
   (params: GenerateValueSelectorAsyncParams): React.ComponentType<ValueSelectorProps> =>
   (p: ValueSelectorProps) => <ValueSelectorAsync {...p} {...params} />;
@@ -66,6 +68,12 @@ export interface ValueSelectorAsyncProps
   extends VersatileSelectorProps,
     GenerateValueSelectorAsyncParams {}
 
+/**
+ * Augments a selector component with async option loading.
+ *
+ * Use {@link generateValueSelectorAsync} to create a selector component directly assignable
+ * to `*Selector` controls on the `controlElements` prop.
+ */
 export const ValueSelectorAsync = (props: ValueSelectorAsyncProps): React.JSX.Element => {
   const uvsa = useValueSelectorAsync(props);
   const className = useMemo(
@@ -98,12 +106,14 @@ export interface UseValueSelectorAsync {
    */
   isLoading: boolean;
   /**
-   * Handler for input changes.
+   * Error messages of rejected `loadOptionList` promises.
    */
-  onInputChange: (newValue: string, meta: { ruleOrGroup: RuleType | RuleGroupTypeAny }) => void;
   errors: string | null;
 }
 
+/**
+ * Logic for {@link ValueSelectorAsync}.
+ */
 export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueSelectorAsync => {
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
@@ -167,13 +177,9 @@ export const useValueSelectorAsync = (props: ValueSelectorAsyncProps): UseValueS
     value,
   ]);
 
-  // TODO: is this kind of event handler necessary?
-  const onInputChange = useCallback(() => {}, []);
-
   return {
     errors,
     isLoading,
-    onInputChange,
     options,
   };
 };
