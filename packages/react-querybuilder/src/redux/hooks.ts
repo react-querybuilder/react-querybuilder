@@ -1,15 +1,10 @@
 import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { TypedUseSelectorHook } from 'react-redux';
-import { createSelectorHook } from 'react-redux';
 import { QueryBuilderContext } from '../components';
-import { QueryBuilderStateContext } from './QueryBuilderStateContext';
+import { useRQB_INTERNAL_QueryBuilderSelector } from './_internal';
 import { getQuerySelectorById } from './selectors';
 import type { RqbState } from './types';
-
-// #region Hooks
-const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
-  createSelectorHook(QueryBuilderStateContext);
 
 /**
  * A Redux `useSelector` hook for RQB's internal store. See also {@link getQuerySelectorById}.
@@ -46,4 +41,3 @@ export const useQueryBuilderQuery = (props?: { schema: { qbId: string } }): Rule
     ) ?? rqbContext?.initialQuery
   );
 };
-// #endregion

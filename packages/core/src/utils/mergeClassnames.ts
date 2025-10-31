@@ -50,4 +50,5 @@ export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => (
   matchThreshold: joinClassnamesByName('matchThreshold', args),
   branches: joinClassnamesByName('branches', args),
   hasSubQuery: joinClassnamesByName('hasSubQuery', args),
+  loading: joinClassnamesByName('loading', args),
 });

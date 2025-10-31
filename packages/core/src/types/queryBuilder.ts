@@ -178,9 +178,13 @@ export interface Classnames {
    */
   branches: Classname;
   /**
-   * Classname(s) rules that render a subquery.
+   * Classname(s) applied to rules that render a subquery.
    */
   hasSubQuery: Classname;
+  /**
+   * Classname(s) applied to async components in their "loading" state.
+   */
+  loading: Classname;
 }
 
 /**

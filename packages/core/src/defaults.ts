@@ -312,6 +312,7 @@ export const standardClassnames = {
   branches: 'queryBuilder-branches',
   justified: 'queryBuilder-justified',
   hasSubQuery: 'rule-hasSubQuery',
+  loading: 'queryBuilder-loading',
 } as const;
 // #endregion
 
@@ -361,6 +362,7 @@ export const defaultControlClassnames: Classnames = {
   valueListItem: '',
   branches: '',
   hasSubQuery: '',
+  loading: '',
 } satisfies Classnames;
 
 /**
