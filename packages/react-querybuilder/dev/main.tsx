@@ -2,21 +2,25 @@ import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import type { ValueEditorProps, VersatileSelectorProps } from '../src';
-import { QueryBuilder, ValueEditor, generateValueSelectorAsync } from '../src';
+import { QueryBuilder, ValueEditor, useValueSelectorAsync } from '../src';
 import './styles.scss';
 
-const VSA = generateValueSelectorAsync({
-  cacheTTL: 5000,
-  getCacheKey: 'field',
-  loadOptionList: async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return [
-      { name: 'option1', value: 'option1', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
-      { name: 'option2', value: 'option2', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
-      { name: 'option3', value: 'option3', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
-    ];
-  },
-}) as React.ComponentType<VersatileSelectorProps>;
+const VSA = (props: VersatileSelectorProps) => {
+  const asyncProps = useValueSelectorAsync(props, {
+    cacheTTL: 5000,
+    getCacheKey: 'field',
+    loadOptionList: async () => {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return [
+        { name: 'option1', value: 'option1', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
+        { name: 'option2', value: 'option2', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
+        { name: 'option3', value: 'option3', label: `Option ${crypto.randomUUID().slice(0, 4)}` },
+      ];
+    },
+  });
+
+  return <props.schema.controls.valueSelector {...asyncProps} />;
+};
 
 const VE = (props: ValueEditorProps) => <ValueEditor {...props} selectorComponent={VSA} />;
 
