@@ -9,3 +9,4 @@ export * from './usePrevious';
 export * from './useReactDndWarning';
 export * from './useSelectElementChangeHandler';
 export * from './useStopEventPropagation';
+export * from './useValueSelectorAsync';
