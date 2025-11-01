@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - uses: oven-sh/setup-bun@v2
@@ -73,7 +73,7 @@ jobs:
     # needs: [Test] # Run only if React 19+ tests pass
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - uses: oven-sh/setup-bun@v2
