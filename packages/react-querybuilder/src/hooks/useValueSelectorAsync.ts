@@ -66,7 +66,7 @@ export interface UseValueSelectorAsync extends ValueSelectorProps {
  */
 export const useValueSelectorAsync = (
   props: VersatileSelectorProps,
-  params: UseValueSelectorAsyncParams
+  params: UseValueSelectorAsyncParams = {}
 ): UseValueSelectorAsync => {
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
@@ -122,8 +122,10 @@ export const useValueSelectorAsync = (
     () =>
       clsx(
         props.className,
-        props.schema.suppressStandardClassnames &&
-          isLoading && [standardClassnames.loading, props.schema.classNames.loading]
+        isLoading && [
+          props.schema.suppressStandardClassnames || standardClassnames.loading,
+          props.schema.classNames.loading,
+        ]
       ),
     [
       props.schema.suppressStandardClassnames,
