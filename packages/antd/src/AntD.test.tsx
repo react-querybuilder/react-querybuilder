@@ -10,6 +10,7 @@ import {
   testValueEditor,
   testValueSelector,
   userEventSetup,
+  waitABeat,
 } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import type { SelectProps } from 'antd';
@@ -148,7 +149,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
     await act(async () => {
       await user.click(findInput(container));
-      await new Promise(r => setTimeout(r, 500));
+      await waitABeat(500);
     });
     await act(async () => {
       await user.click(
@@ -157,7 +158,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
           .find(el => el.tagName !== 'INPUT')!
           .querySelector('div')!
       );
-      await new Promise(r => setTimeout(r, 500));
+      await waitABeat(500);
     });
     expect(onChange).toHaveBeenCalledWith(today);
   });
@@ -184,15 +185,15 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
     );
     await act(async () => {
       await user.click(findInput(container));
-      await new Promise(r => setTimeout(r, 500));
+      await waitABeat(500);
     });
     await act(async () => {
       await user.click(screen.getAllByTitle(today)[0]);
-      await new Promise(r => setTimeout(r, 500));
+      await waitABeat(500);
     });
     await act(async () => {
       await user.click(screen.getAllByTitle(tomorrow)[0]);
-      await new Promise(r => setTimeout(r, 500));
+      await waitABeat(500);
     });
     expect(onChange).toHaveBeenCalledWith(`${today},${tomorrow}`);
   });

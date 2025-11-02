@@ -34,6 +34,7 @@ import {
   testShiftActions,
   testValueEditor,
   testValueSelector,
+  waitABeat,
 } from '@rqb-testing';
 import { act, render, screen } from '@testing-library/react';
 import type { ComponentPropsWithoutRef } from 'react';
@@ -299,7 +300,7 @@ it('renders with composition', async () => {
         </QueryBuilderMaterial>
       </ThemeProvider>
     );
-    await new Promise(r => setTimeout(r, 500));
+    await waitABeat(500);
   });
   expect(screen.getByTestId(TestID.ruleGroup)).toBeInTheDocument();
   expect(

@@ -1,4 +1,4 @@
-import { consoleMocks } from '@rqb-testing';
+import { consoleMocks, waitABeat } from '@rqb-testing';
 import type { RenderHookResult } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react';
 import { useReactDnD } from './QueryBuilderDnD';
@@ -16,9 +16,9 @@ it('returns the react-dnd exports', async () => {
   let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD());
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitABeat(timeoutWait);
     hookResult.rerender();
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitABeat(timeoutWait);
   });
   expect(hookResult!.result.current).toHaveProperty('useDrag');
   expect(hookResult!.result.current).toHaveProperty('useDrop');
@@ -37,9 +37,9 @@ describe('returns the provided backend', () => {
     let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
     await act(async () => {
       hookResult = renderHook(() => useReactDnD(existingDnD));
-      await new Promise(r => setTimeout(r, timeoutWait));
+      await waitABeat(timeoutWait);
       hookResult.rerender();
-      await new Promise(r => setTimeout(r, timeoutWait));
+      await waitABeat(timeoutWait);
     });
     expect(hookResult!.result.current).toBe(existingDnD);
     expect(existingDnD).toHaveProperty('ReactDndBackend', existingDnD.HTML5Backend);
@@ -54,9 +54,9 @@ describe('returns the provided backend', () => {
     let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
     await act(async () => {
       hookResult = renderHook(() => useReactDnD(existingDnD));
-      await new Promise(r => setTimeout(r, timeoutWait));
+      await waitABeat(timeoutWait);
       hookResult.rerender();
-      await new Promise(r => setTimeout(r, timeoutWait));
+      await waitABeat(timeoutWait);
     });
     expect(hookResult!.result.current).toBe(existingDnD);
     expect(existingDnD).toHaveProperty('ReactDndBackend', existingDnD.TouchBackend);
@@ -73,9 +73,9 @@ it('falls back to touch backend', async () => {
   let hookResult: RenderHookResult<UseReactDnD | null, DndProp | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD());
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitABeat(timeoutWait);
     hookResult.rerender();
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitABeat(timeoutWait);
   });
   expect(hookResult!.result.current).toHaveProperty('ReactDndBackend', tBe.TouchBackend);
 });
@@ -94,9 +94,9 @@ it('fails gracefully', async () => {
   let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
   await act(async () => {
     hookResult = renderHook(() => useReactDnD());
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitABeat(timeoutWait);
     hookResult.rerender();
-    await new Promise(r => setTimeout(r, timeoutWait));
+    await waitABeat(timeoutWait);
   });
   expect(hookResult!.result.current).toBeNull();
 });
