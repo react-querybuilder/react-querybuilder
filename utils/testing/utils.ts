@@ -5,6 +5,12 @@ import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 import type { Schema } from 'react-querybuilder';
 import { defaultControlElements } from 'react-querybuilder';
 
+export const waitABeat = async (ms = 10): Promise<void> => {
+  await act(async () => {
+    await new Promise(r => setTimeout(r, ms));
+  });
+};
+
 export const UNUSED = 'UNUSED';
 
 const admonish = (fn: string) => () => {

@@ -20,6 +20,7 @@ import {
   getFieldMapFromArray,
   getRuleProps as getProps,
   ruleClassnames,
+  waitABeat,
 } from '@rqb-testing';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,7 +28,7 @@ import * as React from 'react';
 import { messages } from '../messages';
 import type { ValueSelectorProps } from '../types';
 import { Rule } from './Rule';
-import { render, waitABeat } from './testUtils';
+import { render } from './testUtils';
 
 const user = userEvent.setup();
 
