@@ -104,7 +104,7 @@ export const useValueSelectorAsync = (
     asyncOptionListsSlice.selectors.selectCacheByKey(s, cacheKey)
   );
 
-  const cacheIsValid = cached && Date.now() <= cached.validUntil;
+  const cacheIsValid = !!cached && Date.now() <= cached.validUntil;
 
   const options = cached?.data ?? optionsProp;
 
@@ -136,7 +136,12 @@ export const useValueSelectorAsync = (
   );
 
   useEffect(() => {
-    if (!isLoading && (!cacheIsValid || !cached) && typeof loadOptionList === 'function') {
+    if (
+      !isLoading &&
+      (!cacheIsValid || !cached) &&
+      !errors &&
+      typeof loadOptionList === 'function'
+    ) {
       queryBuilderDispatch(
         getOptionListsAsync({ cacheKey, cacheTTL, value, ruleOrGroup, loadOptionList })
       );
@@ -151,6 +156,7 @@ export const useValueSelectorAsync = (
     queryBuilderDispatch,
     ruleOrGroup,
     value,
+    errors,
   ]);
 
   return {

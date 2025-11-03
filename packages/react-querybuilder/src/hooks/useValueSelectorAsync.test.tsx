@@ -330,9 +330,9 @@ describe('cache behavior', () => {
     const field = generateID();
     const rule = createRule({ field });
     const props = createDefaultProps({ rule });
-    const loadOptionList = jest
-      .fn()
-      .mockResolvedValue([{ name: 'cached', value: 'cached', label: 'Cached Option' }]);
+    const loadOptionList = jest.fn(async () => [
+      { name: 'cached', value: 'cached', label: generateID() },
+    ]);
     const params: UseValueSelectorAsyncParams = {
       getCacheKey: 'field',
       loadOptionList,
@@ -340,18 +340,27 @@ describe('cache behavior', () => {
     const { store, wrapper } = getWrapper();
 
     // First call - should load and cache
-    const { rerender } = renderHook(() => useValueSelectorAsync(props, params), { wrapper });
+    const { rerender, result } = renderHook(p => useValueSelectorAsync(p, params), {
+      initialProps: props,
+      wrapper,
+    });
     await waitABeat();
 
     expect(loadOptionList).toHaveBeenCalledTimes(1);
 
-    // Second call with same cache key - should use cache
-    rerender();
+    let cached = selectCacheByKey(store.getState(), field);
+    let resultData = result.current.options;
+    expect(cached.data).toBe(resultData);
+
+    // Second call with same cache key but different props - should use cache
+    rerender({ ...props, className: generateID() });
     await waitABeat();
 
+    resultData = result.current.options;
+
     expect(loadOptionList).toHaveBeenCalledTimes(1); // Should not call again
-    const cached = selectCacheByKey(store.getState(), field);
-    expect(cached?.data).toEqual([{ name: 'cached', value: 'cached', label: 'Cached Option' }]);
+    cached = selectCacheByKey(store.getState(), field);
+    expect(cached.data).toBe(resultData);
   });
 });
 
@@ -444,14 +453,15 @@ describe('edge cases', () => {
     const field = generateID();
     const props = createDefaultProps({ rule: createRule({ field }) });
     const params: UseValueSelectorAsyncParams = {
-      loadOptionList: async () =>
-        new Promise((_resolve, reject) => setTimeout(() => reject('fake error'))),
+      loadOptionList: async () => {
+        throw new Error('fake error');
+      },
       getCacheKey: 'field',
     };
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat(500);
+    await waitABeat(100);
 
     const err = selectErrorByKey(store.getState(), field);
     expect(err).toBe('fake error');

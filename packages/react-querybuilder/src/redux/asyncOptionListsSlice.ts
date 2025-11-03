@@ -32,6 +32,8 @@ export const getOptionListsAsync: AsyncThunk<
     const cached = state.asyncOptionLists.cache[cacheKey];
 
     // Check if cache is still valid
+    // (Ignored for coverage because useValueSelectorAsync does its own cache validity check)
+    // istanbul ignore next
     if (
       cached &&
       Date.now() - cached.timestamp < (cacheTTL ?? /* istanbul ignore next */ DEFAULT_CACHE_TTL)
@@ -45,7 +47,7 @@ export const getOptionListsAsync: AsyncThunk<
       const data = prepareOptionList({ optionList: rawList }).optionList;
       return { cacheKey, data, fromCache: false };
     } catch (error) {
-      return rejectWithValue((error as Error).message || error);
+      return rejectWithValue((error as Error).message);
     }
   },
   {
@@ -112,7 +114,10 @@ export const asyncOptionListsSlice: Slice<
     selectErrors: /* istanbul ignore next */ state => state.errors,
     selectCacheByKey: /* istanbul ignore next */ (state, cacheKey) => state.cache[cacheKey] || null,
     selectIsLoadingByKey: /* istanbul ignore next */ (state, cacheKey) => state.loading[cacheKey] || false,
-    selectErrorByKey: /* istanbul ignore next */ (state, cacheKey) => state.errors[cacheKey] || null,
+    selectErrorByKey: /* istanbul ignore next */ (state, cacheKey) => {
+      const error = state.errors[cacheKey];
+      return error && error !== '' ? error : null;
+    },
   },
   extraReducers: builder => {
     builder.addAsyncThunk(getOptionListsAsync, {
