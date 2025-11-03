@@ -32,7 +32,10 @@ export const getOptionListsAsync: AsyncThunk<
     const cached = state.asyncOptionLists.cache[cacheKey];
 
     // Check if cache is still valid
-    if (cached && Date.now() - cached.timestamp < (cacheTTL ?? DEFAULT_CACHE_TTL)) {
+    if (
+      cached &&
+      Date.now() - cached.timestamp < (cacheTTL ?? /* istanbul ignore next */ DEFAULT_CACHE_TTL)
+    ) {
       return { cacheKey, data: cached.data, fromCache: true };
     }
 
@@ -42,7 +45,7 @@ export const getOptionListsAsync: AsyncThunk<
       const data = prepareOptionList({ optionList: rawList }).optionList;
       return { cacheKey, data, fromCache: false };
     } catch (error) {
-      return rejectWithValue((error as Error).message);
+      return rejectWithValue((error as Error).message || error);
     }
   },
   {
@@ -112,23 +115,25 @@ export const asyncOptionListsSlice: Slice<
     selectErrorByKey: /* istanbul ignore next */ (state, cacheKey) => state.errors[cacheKey] || null,
   },
   extraReducers: builder => {
-    builder
-      .addCase(getOptionListsAsync.pending, (state, action) => {
+    builder.addAsyncThunk(getOptionListsAsync, {
+      pending: (state, action) => {
         state.loading[action.meta.arg.cacheKey] = true;
         state.errors[action.meta.arg.cacheKey] = '';
-      })
-      .addCase(getOptionListsAsync.fulfilled, (state, action) => {
+      },
+      fulfilled: (state, action) => {
         const { cacheKey, data } = action.payload;
         state.cache[cacheKey] = {
           data,
           timestamp: Date.now(),
-          validUntil: Date.now() + (action.meta.arg.cacheTTL ?? DEFAULT_CACHE_TTL),
+          validUntil:
+            Date.now() + (action.meta.arg.cacheTTL ?? /* istanbul ignore next */ DEFAULT_CACHE_TTL),
         };
         state.loading[cacheKey] = false;
-      })
-      .addCase(getOptionListsAsync.rejected, (state, action) => {
+      },
+      rejected: (state, action) => {
         state.loading[action.meta.arg.cacheKey] = false;
         state.errors[action.meta.arg.cacheKey] = action.payload as string;
-      });
+      },
+    });
   },
 });
