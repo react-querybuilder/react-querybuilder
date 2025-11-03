@@ -96,7 +96,7 @@ export const useValueSelectorAsync = (
     // to `getCacheKey` function without having `props` in the dependency array.
     ...Object.keys(props)
       .toSorted()
-      .map(k => params[k as keyof UseValueSelectorAsyncParams]),
+      .map(k => props[k as keyof VersatileSelectorProps]),
   ]);
   // oxlint-enable exhaustive-deps
 
