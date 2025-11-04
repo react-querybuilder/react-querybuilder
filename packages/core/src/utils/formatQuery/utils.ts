@@ -345,32 +345,44 @@ type ProcessedMatchMode =
   | { mode: 'atmost'; threshold: number }
   | { mode: 'exactly'; threshold: number };
 
-export const processMatchMode = (rule: RuleType): void | false | ProcessedMatchMode => {
+/**
+ * Transforms
+ * - `match: { mode: "atLeast", threshold: 1 }` to `match: { mode: "some" }`
+ * - `match: { mode: "atMost", threshold: 0 }` to `match: { mode: "none" }`.
+ *
+ * Returns:
+ * - Processed `{ mode, threshold }` object for valid subqueries
+ * - `null` if match mode is not applicable for the rule
+ * - `false` if match mode is valid, but either
+ *   1. `threshold` is required and invalid, or
+ *   2. `value` is not a valid rule group.
+ */
+export const processMatchMode = (rule: RuleType): null | false | ProcessedMatchMode => {
   const { mode, threshold } = rule.match ?? {};
 
-  if (mode) {
-    if (!isRuleGroup(rule.value)) return false;
+  if (!mode) return null;
 
-    const matchModeLC = lc(mode) as Lowercase<MatchMode>;
+  if (!isRuleGroup(rule.value)) return false;
 
-    const matchModeCoerced =
-      matchModeLC === 'atleast' && threshold === 1
-        ? 'some'
-        : matchModeLC === 'atmost' && threshold === 0
-          ? 'none'
-          : matchModeLC;
+  const matchModeLC = lc(mode) as Lowercase<MatchMode>;
 
-    if (
-      (matchModeCoerced === 'atleast' ||
-        matchModeCoerced === 'atmost' ||
-        matchModeCoerced === 'exactly') &&
-      (typeof threshold !== 'number' || threshold < 0)
-    ) {
-      return false;
-    }
+  const matchModeCoerced =
+    matchModeLC === 'atleast' && threshold === 1
+      ? 'some'
+      : matchModeLC === 'atmost' && threshold === 0
+        ? 'none'
+        : matchModeLC;
 
-    return { mode: matchModeCoerced, threshold: threshold! };
+  if (
+    (matchModeCoerced === 'atleast' ||
+      matchModeCoerced === 'atmost' ||
+      matchModeCoerced === 'exactly') &&
+    (typeof threshold !== 'number' || threshold < 0)
+  ) {
+    return false;
   }
+
+  return { mode: matchModeCoerced, threshold: threshold! };
 };
 
 /**
