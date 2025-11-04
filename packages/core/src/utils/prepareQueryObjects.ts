@@ -7,6 +7,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '../types';
+import { processMatchMode } from './formatQuery/utils';
 import { generateID } from './generateID';
 import { isRuleGroup } from './isRuleGroup';
 
@@ -28,7 +29,7 @@ export const prepareRule = (
     if (!draft.id) {
       draft.id = idGenerator();
     }
-    if (draft.match && isRuleGroup(draft.value)) {
+    if (processMatchMode(draft)) {
       draft.value = prepareRuleGroup(draft.value, { idGenerator });
     }
   });
