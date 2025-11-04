@@ -67,7 +67,8 @@ export interface UseValueSelectorAsync extends ValueSelectorProps {
  */
 export const useAsyncCacheKey = (
   props: VersatileSelectorProps,
-  { getCacheKey }: UseValueSelectorAsyncParams = /* istanbul ignore next */ {}
+  // istanbul ignore next
+  { getCacheKey }: UseValueSelectorAsyncParams = {}
 ): string => {
   const ruleOrGroup = props.rule ?? props.ruleGroup;
 
