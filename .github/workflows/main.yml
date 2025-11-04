@@ -27,7 +27,7 @@ jobs:
           for dir in $(ls packages); do
             (cd packages/$dir && bun pm pack --destination ${{ github.workspace }}/packs)
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: packs
           path: packs/*.tgz
