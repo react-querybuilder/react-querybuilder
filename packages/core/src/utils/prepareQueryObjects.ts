@@ -28,6 +28,9 @@ export const prepareRule = (
     if (!draft.id) {
       draft.id = idGenerator();
     }
+    if (draft.match && isRuleGroup(draft.value)) {
+      draft.value = prepareRuleGroup(draft.value, { idGenerator });
+    }
   });
 
 /**
