@@ -61,6 +61,39 @@ export interface UseValueSelectorAsync extends ValueSelectorProps {
 }
 
 /**
+ * Generates a cache key given the same props and params as {@link useValueSelectorAsync}.
+ *
+ * @group Hooks
+ */
+export const useAsyncCacheKey = (
+  props: VersatileSelectorProps,
+  { getCacheKey }: UseValueSelectorAsyncParams = /* istanbul ignore next */ {}
+): string => {
+  const ruleOrGroup = props.rule ?? props.ruleGroup;
+
+  return useMemo(
+    () =>
+      typeof getCacheKey === 'string'
+        ? String(ruleOrGroup?.[getCacheKey as 'id'] ?? '')
+        : typeof getCacheKey === 'function'
+          ? getCacheKey(props)
+          : Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup
+            ? getCacheKey.map(ck => `${ruleOrGroup[ck as 'id']}`).join('|')
+            : '',
+    [
+      getCacheKey,
+      // Spread all properties of `props`—in alphabetical order—to allow passing `props`
+      // to `getCacheKey` function without having `props` in the dependency array.
+      // oxlint-disable exhaustive-deps
+      ...Object.keys(props)
+        .toSorted()
+        .map(k => props[k as keyof VersatileSelectorProps]),
+      // oxlint-enable exhaustive-deps
+    ]
+  );
+};
+
+/**
  * Augments a {@link ValueSelectorProps} object with async option loading.
  *
  * @group Hooks
@@ -71,35 +104,12 @@ export const useValueSelectorAsync = (
 ): UseValueSelectorAsync => {
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
-  const { getCacheKey, cacheTTL, loadOptionList } = params;
+  const { cacheTTL, loadOptionList } = params;
   const { options: optionsProp, value } = props;
 
   const ruleOrGroup = props.rule ?? props.ruleGroup;
 
-  // oxlint-disable exhaustive-deps
-  const cacheKey = useMemo(() => {
-    if (typeof getCacheKey === 'string') {
-      return String(ruleOrGroup?.[getCacheKey as 'id'] ?? '');
-    }
-
-    if (typeof getCacheKey === 'function') {
-      return getCacheKey(props);
-    }
-
-    if (Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup) {
-      return getCacheKey.map(ck => `${ruleOrGroup[ck as 'id']}`).join('|');
-    }
-
-    return '';
-  }, [
-    getCacheKey,
-    // Spread all properties of `props`—in alphabetical order—to allow passing `props`
-    // to `getCacheKey` function without having `props` in the dependency array.
-    ...Object.keys(props)
-      .toSorted()
-      .map(k => props[k as keyof VersatileSelectorProps]),
-  ]);
-  // oxlint-enable exhaustive-deps
+  const cacheKey = useAsyncCacheKey(props, params);
 
   const cached = useRQB_INTERNAL_QueryBuilderSelector(s =>
     asyncOptionListsSlice.selectors.selectCacheByKey(s, cacheKey)
