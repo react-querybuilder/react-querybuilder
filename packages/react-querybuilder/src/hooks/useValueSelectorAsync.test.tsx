@@ -7,7 +7,11 @@ import { renderHook } from '@testing-library/react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { QueryBuilderStateContext } from '../redux';
-import { asyncOptionListsSlice, DEFAULT_CACHE_TTL } from '../redux/asyncOptionListsSlice';
+import {
+  asyncOptionListsSlice,
+  DEFAULT_CACHE_TTL,
+  getOptionListsAsync,
+} from '../redux/asyncOptionListsSlice';
 import { queriesSlice } from '../redux/queriesSlice';
 import { warningsSlice } from '../redux/warningsSlice';
 import type { Schema, VersatileSelectorProps } from '../types';
@@ -97,7 +101,8 @@ describe('basic functionality', () => {
 
 describe('cache key generation', () => {
   it('generates cache key from string property', async () => {
-    const rule = createRule({ field: 'testField' });
+    const field = generateID();
+    const rule = createRule({ field });
     const props = createDefaultProps({ rule });
     const params: UseValueSelectorAsyncParams = {
       getCacheKey: 'field',
@@ -108,12 +113,14 @@ describe('cache key generation', () => {
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
     await waitABeat();
 
-    const cached = selectCacheByKey(store.getState(), 'testField');
+    const cached = selectCacheByKey(store.getState(), field);
     expect(cached?.data).toEqual(props.options);
   });
 
   it('generates cache key from array of properties', async () => {
-    const rule = createRule({ field: 'testField', operator: 'testOperator' });
+    const field = generateID();
+    const operator = generateID();
+    const rule = createRule({ field, operator });
     const props = createDefaultProps({ rule });
     const params: UseValueSelectorAsyncParams = {
       getCacheKey: ['field', 'operator'],
@@ -124,12 +131,13 @@ describe('cache key generation', () => {
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
     await waitABeat();
 
-    const cached = selectCacheByKey(store.getState(), 'testField|testOperator');
+    const cached = selectCacheByKey(store.getState(), `${field}|${operator}`);
     expect(cached?.data).toEqual(props.options);
   });
 
   it('generates cache key from function', async () => {
-    const rule = createRule({ field: 'testField' });
+    const field = generateID();
+    const rule = createRule({ field });
     const props = createDefaultProps({ rule });
     const params: UseValueSelectorAsyncParams = {
       getCacheKey: props => `custom-${props.rule?.field}`,
@@ -140,7 +148,7 @@ describe('cache key generation', () => {
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
     await waitABeat();
 
-    const cached = selectCacheByKey(store.getState(), 'custom-testField');
+    const cached = selectCacheByKey(store.getState(), `custom-${field}`);
     expect(cached?.data).toEqual(props.options);
   });
 
@@ -227,7 +235,8 @@ describe('className handling', () => {
 
 describe('rule and group context', () => {
   it('uses rule when available', async () => {
-    const rule = createRule({ field: 'testRuleField', operator: 'equals' });
+    const field = generateID();
+    const rule = createRule({ field, operator: 'equals' });
     const props = createDefaultProps({ rule });
     const params: UseValueSelectorAsyncParams = {
       getCacheKey: 'field',
@@ -238,7 +247,7 @@ describe('rule and group context', () => {
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
     await waitABeat();
 
-    const cached = selectCacheByKey(store.getState(), 'testRuleField');
+    const cached = selectCacheByKey(store.getState(), field);
     expect(cached?.data).toEqual(props.options);
   });
 
@@ -352,7 +361,19 @@ describe('cache behavior', () => {
     let resultData = result.current.options;
     expect(cached.data).toBe(resultData);
 
-    // Second call with same cache key but different props - should use cache
+    // Second call (via thunk) with same cache key - should use cache
+    store.dispatch(
+      getOptionListsAsync({
+        cacheKey: field,
+        cacheTTL: DEFAULT_CACHE_TTL,
+        value: props.value,
+        ruleOrGroup: rule,
+        loadOptionList,
+      })
+    );
+    await waitABeat();
+
+    // Third call (via hook) with same cache key but different props - should use cache
     rerender({ ...props, className: generateID() });
     await waitABeat();
 
@@ -426,7 +447,8 @@ describe('edge cases', () => {
   });
 
   it('handles zero cacheTTL (no caching)', async () => {
-    const props = createDefaultProps({ rule: createRule({ field: 'noCacheField' }) });
+    const field = generateID();
+    const props = createDefaultProps({ rule: createRule({ field }) });
     const loadOptionList = jest.fn().mockResolvedValue([]);
     const params: UseValueSelectorAsyncParams = {
       loadOptionList,
@@ -468,7 +490,8 @@ describe('edge cases', () => {
   });
 
   it('retrieves cached values', async () => {
-    const rule = createRule();
+    const field = generateID();
+    const rule = createRule({ field });
     const props = createDefaultProps({ rule });
     const props2 = createDefaultProps({ rule: { ...rule, valueSource: 'field' } });
     const params: UseValueSelectorAsyncParams = {
@@ -486,7 +509,7 @@ describe('edge cases', () => {
     rerender(props2);
     await waitABeat();
 
-    const cached = selectCacheByKey(store.getState(), 'testField');
+    const cached = selectCacheByKey(store.getState(), field);
     expect(cached?.data).toEqual(props.options);
   });
 });

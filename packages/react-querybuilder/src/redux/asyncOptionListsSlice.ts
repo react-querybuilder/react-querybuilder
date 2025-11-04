@@ -32,8 +32,6 @@ export const getOptionListsAsync: AsyncThunk<
     const cached = state.asyncOptionLists.cache[cacheKey];
 
     // Check if cache is still valid
-    // (Ignored for coverage because useValueSelectorAsync does its own cache validity check)
-    // istanbul ignore next
     if (
       cached &&
       Date.now() - cached.timestamp < (cacheTTL ?? /* istanbul ignore next */ DEFAULT_CACHE_TTL)
