@@ -245,6 +245,14 @@ const AutoCompleteValueSelector = (props: ValueSelectorProps) => {
 
   return <MyAutocompleteSelector {...asyncProps} />;
 };
+
+// Use the autocomplete selector as the selector for the value editor
+const ValueEditorWithAutocomplete = (props: ValueEditorProps) => (
+  <ValueEditor {...props} selectorComponent={AutoCompleteValueSelector} />
+);
+
+// Assign the new value editor
+const App = () => <QueryBuilder controlElements={{ valueEditor: ValueEditorWithAutocomplete }} />;
 ```
 
 ## Error handling

@@ -15,9 +15,10 @@ import type { ValueSelectorProps, VersatileSelectorProps } from '../types';
 
 export interface UseValueSelectorAsyncParams {
   /**
-   * Milliseconds after initial retrieval for which the cache is valid.
+   * Cache "time to live"—milliseconds after initial retrieval for which the cache is valid.
    *
-   * To avoid caching, set this to zero.
+   * To avoid caching, set this to zero. (Loaded option lists will always be cached, but
+   * a cache with zero TTL will be immediately invalidated, effectively disabling caching.)
    *
    * @default 1_800_000 // 30 minutes
    */
