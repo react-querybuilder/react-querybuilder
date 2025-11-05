@@ -575,3 +575,380 @@ it('handles custom expressions', () => {
     }
   );
 });
+
+describe('subqueries', () => {
+  const subqueryFields: FullField[] = [
+    { name: 'tourStops', value: 'tourStops', label: 'Tour Stops' },
+    { name: 'city', value: 'city', label: 'City' },
+    { name: 'stringArray', value: 'stringArray', label: 'String Array' },
+    { name: 'users', value: 'users', label: 'Users' },
+    { name: 'age', value: 'age', label: 'Age' },
+    { name: 'active', value: 'active', label: 'Active' },
+    { name: 'products', value: 'products', label: 'Products' },
+    { name: 'category.name', value: 'category.name', label: 'Category Name' },
+    { name: 'events', value: 'events', label: 'Events' },
+    { name: 'type', value: 'type', label: 'Type' },
+    { name: 'items', value: 'items', label: 'Items' },
+    { name: 'price', value: 'price', label: 'Price' },
+    { name: 'tags', value: 'tags', label: 'Tags' },
+    { name: 'names', value: 'names', label: 'Names' },
+    { name: 'scores', value: 'scores', label: 'Scores' },
+    { name: 'email', value: 'email', label: 'Email' },
+    { name: 'status', value: 'status', label: 'Status' },
+    { name: 'orders', value: 'orders', label: 'Orders' },
+    { name: 'total', value: 'total', label: 'Total' },
+    { name: 'customer.premium', value: 'customer.premium', label: 'Customer Premium' },
+    { name: 'verified', value: 'verified', label: 'Verified' },
+    { name: 'admins', value: 'admins', label: 'Admins' },
+    { name: '', value: '', label: 'Empty Field' }, // For primitive array operations,
+  ];
+
+  describe('.all()', () => {
+    it('basic', () => {
+      testParseCEL(
+        'tourStops.all(elem_alias, elem_alias.city == "Milan")',
+        wrapRule({
+          field: 'tourStops',
+          operator: '=',
+          match: { mode: 'all' },
+          value: { combinator: 'and', rules: [{ field: 'city', operator: '=', value: 'Milan' }] },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('primitive array', () => {
+      testParseCEL(
+        'stringArray.all(elem_alias, elem_alias.contains("test"))',
+        wrapRule({
+          field: 'stringArray',
+          operator: '=',
+          match: { mode: 'all' },
+          value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'test' }] },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('complex condition', () => {
+      testParseCEL(
+        'users.all(user, user.age >= 18 && user.active == true)',
+        wrapRule({
+          field: 'users',
+          operator: '=',
+          match: { mode: 'all' },
+          value: {
+            combinator: 'and',
+            rules: [
+              { field: 'age', operator: '>=', value: 18 },
+              { field: 'active', operator: '=', value: true },
+            ],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+  });
+
+  describe('.exists()', () => {
+    it('basic', () => {
+      testParseCEL(
+        'tourStops.exists(elem_alias, elem_alias.city == "Milan")',
+        wrapRule({
+          field: 'tourStops',
+          operator: '=',
+          match: { mode: 'some' },
+          value: { combinator: 'and', rules: [{ field: 'city', operator: '=', value: 'Milan' }] },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('nested property', () => {
+      testParseCEL(
+        'products.exists(item, item.category.name == "Electronics")',
+        wrapRule({
+          field: 'products',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: 'category.name', operator: '=', value: 'Electronics' }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('multiple conditions using OR', () => {
+      testParseCEL(
+        'events.exists(event, event.type == "click" || event.type == "view")',
+        wrapRule({
+          field: 'events',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'or',
+            rules: [
+              { field: 'type', operator: '=', value: 'click' },
+              { field: 'type', operator: '=', value: 'view' },
+            ],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+  });
+
+  describe('negated .exists() ("none" mode)', () => {
+    it('basic', () => {
+      testParseCEL(
+        '!tourStops.exists(elem_alias, elem_alias.city == "Milan")',
+        {
+          combinator: 'and',
+          not: true,
+          rules: [
+            {
+              field: 'tourStops',
+              operator: '=',
+              match: { mode: 'some' },
+              value: {
+                combinator: 'and',
+                rules: [{ field: 'city', operator: '=', value: 'Milan' }],
+              },
+            },
+          ],
+        },
+
+        // Alternative:
+
+        // wrapRule({
+        //   field: 'tourStops',
+        //   operator: '=',
+        //   match: { mode: 'none' },
+        //   value: { combinator: 'and', rules: [{ field: 'city', operator: '=', value: 'Milan' }] },
+        // }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('with parentheses', () => {
+      testParseCEL(
+        '!(items.exists(item, item.price > 100))',
+        wrapRule({
+          field: 'items',
+          operator: '=',
+          match: { mode: 'none' },
+          value: { combinator: 'and', rules: [{ field: 'price', operator: '>', value: 100 }] },
+        }),
+
+        // Alternative:
+
+        // {
+        //   combinator: 'and',
+        //   not: true,
+        //   rules: [
+        //     {
+        //       field: 'items',
+        //       operator: '=',
+        //       match: { mode: 'some' },
+        //       value: {
+        //         combinator: 'and',
+        //         rules: [{ field: 'price', operator: '>', value: 100 }],
+        //       },
+        //     },
+        //   ],
+        // },
+        { fields: subqueryFields }
+      );
+    });
+  });
+
+  describe('various operators', () => {
+    it('contains operator', () => {
+      testParseCEL(
+        'tags.exists(tag, tag.contains("important"))',
+        wrapRule({
+          field: 'tags',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: '', operator: 'contains', value: 'important' }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('startsWith operator', () => {
+      testParseCEL(
+        'names.all(name, name.startsWith("Mr"))',
+        wrapRule({
+          field: 'names',
+          operator: '=',
+          match: { mode: 'all' },
+          value: { combinator: 'and', rules: [{ field: '', operator: 'beginsWith', value: 'Mr' }] },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('numeric comparison', () => {
+      testParseCEL(
+        'scores.exists(score, score >= 90)',
+        wrapRule({
+          field: 'scores',
+          operator: '=',
+          match: { mode: 'some' },
+          value: { combinator: 'and', rules: [{ field: '', operator: '>=', value: 90 }] },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('null checks', () => {
+      testParseCEL(
+        'users.all(user, user.email != null)',
+        wrapRule({
+          field: 'users',
+          operator: '=',
+          match: { mode: 'all' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: 'email', operator: 'notNull', value: null }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+  });
+
+  describe('ic', () => {
+    it('.exists()', () => {
+      testParseCELic(
+        'items.exists(item, item.price > 50)',
+        {
+          rules: [
+            {
+              field: 'items',
+              operator: '=',
+              match: { mode: 'some' },
+              value: { rules: [{ field: 'price', operator: '>', value: 50 }] },
+            },
+          ],
+        },
+        { fields: subqueryFields }
+      );
+    });
+
+    it('.all()', () => {
+      testParseCELic(
+        'users.all(user, user.active == true)',
+        {
+          rules: [
+            {
+              field: 'users',
+              operator: '=',
+              match: { mode: 'all' },
+              value: { rules: [{ field: 'active', operator: '=', value: true }] },
+            },
+          ],
+        },
+        { fields: subqueryFields }
+      );
+    });
+  });
+
+  it('complex nested properties', () => {
+    testParseCEL(
+      'orders.exists(order, order.total > 100 && order.status == "shipped" && order.customer.premium == true)',
+      wrapRule({
+        field: 'orders',
+        operator: '=',
+        match: { mode: 'some' },
+        value: {
+          combinator: 'and',
+          rules: [
+            { field: 'total', operator: '>', value: 100 },
+            { field: 'status', operator: '=', value: 'shipped' },
+            { field: 'customer.premium', operator: '=', value: true },
+          ],
+        },
+      }),
+      { fields: subqueryFields }
+    );
+  });
+
+  it('subqueries in larger expressions', () => {
+    testParseCEL(
+      'status == "active" && items.exists(item, item.price > 100)',
+      wrapRule([
+        { field: 'status', operator: '=', value: 'active' },
+        {
+          field: 'items',
+          operator: '=',
+          match: { mode: 'some' },
+          value: { combinator: 'and', rules: [{ field: 'price', operator: '>', value: 100 }] },
+        },
+      ]),
+      { fields: subqueryFields }
+    );
+
+    testParseCEL(
+      'users.all(user, user.verified == true) || admins.exists(admin, admin.active == true)',
+      wrapRule(
+        [
+          {
+            field: 'users',
+            operator: '=',
+            match: { mode: 'all' },
+            value: {
+              combinator: 'and',
+              rules: [{ field: 'verified', operator: '=', value: true }],
+            },
+          },
+          {
+            field: 'admins',
+            operator: '=',
+            match: { mode: 'some' },
+            value: { combinator: 'and', rules: [{ field: 'active', operator: '=', value: true }] },
+          },
+        ],
+        'or'
+      ),
+      { fields: subqueryFields }
+    );
+  });
+
+  it('returns empty query for invalid subquery syntax', () => {
+    // Missing second argument
+    testParseCEL(
+      'tourStops.all(elem_alias)',
+      { combinator: 'and', rules: [] },
+      { fields: subqueryFields }
+    );
+
+    // Commented out: Ignore extra arguments
+    // // Too many arguments
+    // testParseCEL(
+    //   'tourStops.exists(elem_alias, elem_alias.city == "Milan", extra)',
+    //   { combinator: 'and', rules: [] },
+    //   { fields: subqueryFields }
+    // );
+
+    // Invalid method name
+    testParseCEL(
+      'tourStops.some(elem_alias, elem_alias.city == "Milan")',
+      { combinator: 'and', rules: [] },
+      { fields: subqueryFields }
+    );
+
+    // Non-identifier as field
+    testParseCEL(
+      '"literal".all(elem_alias, elem_alias == "test")',
+      { combinator: 'and', rules: [] },
+      { fields: subqueryFields }
+    );
+  });
+});

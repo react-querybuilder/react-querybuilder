@@ -33,6 +33,7 @@ import {
   celGenerateMixedAndOrList,
   celNormalizeOperator,
   evalCELLiteralValue,
+  extractSubqueryComponents,
   getCELIdentifierFromChain,
   getCELIdentifierFromNegatedChain,
   isCELConditionalAnd,
@@ -47,6 +48,8 @@ import {
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
+  isCELSubqueryExpression,
+  transformAliasInExpression,
 } from './utils';
 
 export interface ParseCELOptionsStandard
@@ -263,6 +266,41 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
+    } else if (isCELSubqueryExpression(expr)) {
+      const components = extractSubqueryComponents(expr);
+      if (components) {
+        const { field, method, alias, condition } = components;
+
+        // Determine match mode based on method and potential negation
+        let matchMode: 'all' | 'some' | 'none';
+        if (method === 'all') {
+          matchMode = forwardedNegation ? 'none' : 'all';
+        } else {
+          // method === 'exists'
+          matchMode = forwardedNegation ? 'none' : 'some';
+        }
+
+        // Parse the condition expression recursively
+        // Replace alias references in the condition with appropriate field paths
+        const transformedCondition = transformAliasInExpression(condition, alias);
+        const subqueryValue = processCELExpression(transformedCondition);
+
+        if (subqueryValue && fieldIsValid(field, '=')) {
+          // Wrap single rules in a rule group
+          const ruleGroupValue = isRuleGroup(subqueryValue)
+            ? subqueryValue
+            : ic
+              ? { rules: [subqueryValue] }
+              : { combinator: 'and' as DefaultCombinatorName, rules: [subqueryValue] };
+
+          return {
+            field,
+            operator: '=',
+            match: { mode: matchMode },
+            value: ruleGroupValue,
+          };
+        }
+      }
     } else if (isCELRelation(expr)) {
       let field: string | null = null;
       // oxlint-disable-next-line typescript/no-explicit-any
@@ -322,7 +360,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
         }
       }
       if (
-        field &&
+        field !== null &&
         fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
         value !== undefined
       ) {

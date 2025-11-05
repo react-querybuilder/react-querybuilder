@@ -35,6 +35,7 @@ import type {
   CELNegative,
   CELNullLiteral,
   CELNumericLiteral,
+  CELPrimary,
   CELProperty,
   CELRelation,
   CELRelop,
@@ -176,6 +177,59 @@ export const isCELNegatedLikeExpression = (expr: CELExpression): expr is CELNega
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 
+export const isCELSubqueryExpression = (expr: CELExpression): expr is CELMember =>
+  isCELMember(expr) &&
+  !!expr.left &&
+  !!expr.right &&
+  !!expr.list &&
+  isCELIdentifierOrChain(expr.left) &&
+  isCELIdentifier(expr.right) &&
+  (expr.right.value === 'all' || expr.right.value === 'exists') &&
+  expr.list.value.length >= 2;
+
+// export const isCELNegatedSubqueryExpression = (expr: CELExpression): expr is CELMember =>
+//   isCELMember(expr) &&
+//   !!expr.left &&
+//   !!expr.right &&
+//   !!expr.list &&
+//   isCELNegatedIdentifierOrChain(expr.left) &&
+//   isCELIdentifier(expr.right) &&
+//   (expr.right.value === 'all' || expr.right.value === 'exists') &&
+//   expr.list.value.length >= 2;
+
+// export const isCELSubqueryAll = (expr: CELExpression): expr is CELMember =>
+//   isCELSubqueryExpression(expr) && expr.right?.value === 'all';
+
+// export const isCELSubqueryExists = (expr: CELExpression): expr is CELMember =>
+//   isCELSubqueryExpression(expr) && expr.right?.value === 'exists';
+
+export const extractSubqueryComponents = (
+  expr: CELMember
+): {
+  field: string;
+  method: 'all' | 'exists';
+  alias: string | null;
+  condition: CELExpression;
+} | null => {
+  // istanbul ignore next
+  if (!isCELSubqueryExpression(expr)) {
+    return null;
+  }
+
+  const field = getCELIdentifierFromChain(expr.left! as CELIdentifier | CELMemberIdentifierChain);
+  const method = expr.right!.value as 'all' | 'exists';
+  const [aliasExpr, conditionExpr] = expr.list!.value;
+
+  const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
+
+  return {
+    field,
+    method,
+    alias,
+    condition: conditionExpr,
+  };
+};
+
 export const getCELIdentifierFromChain = (
   expr: CELIdentifier | CELMemberIdentifierChain
 ): string => {
@@ -284,4 +338,172 @@ export const celGenerateMixedAndOrList = (
     return returnArray[0];
   }
   return returnArray;
+};
+
+const isPrimitiveArrayUsage = (expr: CELExpression, alias: string | null): boolean => {
+  // istanbul ignore next
+  if (!alias) return false;
+
+  // Check if alias is used alone (e.g., "score > 90" where "score" is the alias)
+  if (isCELIdentifier(expr) && expr.value === alias) {
+    return true;
+  }
+
+  // Check if alias is used with primitive operators (contains, startsWith, endsWith)
+  if (isCELLikeExpression(expr) && isCELIdentifier(expr.left) && expr.left.value === alias) {
+    return true;
+  }
+
+  // Recursively check relations for primitive usage and conditional expressions
+  if (isCELRelation(expr) || isCELConditionalAnd(expr) || isCELConditionalOr(expr)) {
+    return isPrimitiveArrayUsage(expr.left, alias) || isPrimitiveArrayUsage(expr.right, alias);
+  }
+
+  // istanbul ignore next
+  if (isCELExpressionGroup(expr) || isCELNegation(expr)) {
+    return isPrimitiveArrayUsage(expr.value, alias);
+  }
+
+  return false;
+};
+
+const transformAliasInExpressionInternal = (
+  expr: CELExpression,
+  alias: string | null,
+  isPrimitive: boolean
+): CELExpression => {
+  // istanbul ignore next
+  if (!alias) return expr;
+
+  // If it's an identifier that matches the alias
+  if (isCELIdentifier(expr) && expr.value === alias) {
+    return { type: 'Identifier', value: '' } as CELIdentifier;
+  }
+
+  // If it's a member expression starting with the alias, remove the alias part
+  if (isCELMember(expr) && expr.left && isCELIdentifier(expr.left) && expr.left.value === alias) {
+    // For object arrays: "alias.property" becomes "property"
+    // For primitive arrays: this shouldn't happen as we should have caught it above
+    if (expr.right && isCELIdentifier(expr.right) && !isPrimitive) {
+      return expr.right;
+    }
+  }
+
+  // Handle CEL like expressions (e.g., "alias.contains('test')")
+  if (isCELLikeExpression(expr) && isCELIdentifier(expr.left) && expr.left.value === alias) {
+    // Transform "alias.contains('test')" to just "contains('test')" with empty field
+    // Keep it as a Member type but replace the left side with empty identifier
+    return {
+      type: 'Member',
+      left: { type: 'Identifier', value: '' } as CELIdentifier,
+      right: expr.right,
+      list: expr.list,
+    } as CELMember;
+  }
+
+  // Handle negated like expressions
+  if (
+    isCELNegatedLikeExpression(expr) &&
+    expr.left &&
+    isCELNegatedIdentifier(expr.left) &&
+    expr.left.value.value === alias
+  ) {
+    return {
+      type: 'Member',
+      left: { type: 'Identifier', value: '' } as CELIdentifier,
+      right: expr.right,
+      list: expr.list,
+    } as CELMember;
+  }
+
+  // If it's a member chain like "alias.prop1.prop2", transform to "prop1.prop2"
+  if (isCELMember(expr) && expr.left && expr.right) {
+    const transformedLeft = transformAliasInExpressionInternal(expr.left, alias, isPrimitive);
+    // istanbul ignore else
+    if (transformedLeft !== expr.left) {
+      return {
+        type: 'Member',
+        left: transformedLeft as CELPrimary | CELMember,
+        right: expr.right,
+        list: expr.list,
+        value: expr.value,
+      } as CELMember;
+    }
+  }
+
+  // For other expression types, recursively transform child expressions
+  if (isCELRelation(expr)) {
+    return {
+      type: 'Relation',
+      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive),
+      right: transformAliasInExpressionInternal(expr.right, alias, isPrimitive),
+      operator: expr.operator,
+    } as CELRelation;
+  }
+
+  if (isCELConditionalAnd(expr)) {
+    return {
+      type: 'ConditionalAnd',
+      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive),
+      right: transformAliasInExpressionInternal(expr.right, alias, isPrimitive),
+    } as CELConditionalAnd;
+  }
+
+  if (isCELConditionalOr(expr)) {
+    return {
+      type: 'ConditionalOr',
+      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive),
+      right: transformAliasInExpressionInternal(expr.right, alias, isPrimitive),
+    } as CELConditionalOr;
+  }
+
+  // if (isCELExpressionGroup(expr)) {
+  //   return {
+  //     type: 'ExpressionGroup',
+  //     value: transformAliasInExpressionInternal(expr.value, alias, isPrimitive),
+  //   } as CELExpressionGroup;
+  // }
+
+  // if (isCELNegation(expr)) {
+  //   return {
+  //     type: 'Negation',
+  //     negations: expr.negations,
+  //     value: transformAliasInExpressionInternal(expr.value, alias, isPrimitive) as CELPrimary,
+  //   } as CELNegation;
+  // }
+
+  // if (isCELLikeExpression(expr)) {
+  //   return {
+  //     type: 'LikeExpression',
+  //     left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
+  //       | CELIdentifier
+  //       | CELMemberIdentifierChain,
+  //     right: expr.right,
+  //     list: expr.list,
+  //   } as CELLikeExpression;
+  // }
+
+  // if (isCELNegatedLikeExpression(expr)) {
+  //   return {
+  //     type: 'LikeExpression',
+  //     left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
+  //       | CELMemberNegatedIdentifier
+  //       | CELMemberNegatedIdentifierChain,
+  //     right: expr.right,
+  //     list: expr.list,
+  //   } as CELNegatedLikeExpression;
+  // }
+
+  return expr;
+};
+
+export const transformAliasInExpression = (
+  expr: CELExpression,
+  alias: string | null
+): CELExpression => {
+  // istanbul ignore next
+  if (!alias) return expr;
+
+  const isPrimitive = isPrimitiveArrayUsage(expr, alias);
+  return transformAliasInExpressionInternal(expr, alias, isPrimitive);
 };
