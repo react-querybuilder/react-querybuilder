@@ -474,28 +474,6 @@ const transformAliasInExpressionInternal = (
     } as CELNegation;
   }
 
-  if (isCELLikeExpression(expr)) {
-    return {
-      type: 'LikeExpression',
-      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
-        | CELIdentifier
-        | CELMemberIdentifierChain,
-      right: expr.right,
-      list: expr.list,
-    } as CELLikeExpression;
-  }
-
-  if (isCELNegatedLikeExpression(expr)) {
-    return {
-      type: 'LikeExpression',
-      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
-        | CELMemberNegatedIdentifier
-        | CELMemberNegatedIdentifierChain,
-      right: expr.right,
-      list: expr.list,
-    } as CELNegatedLikeExpression;
-  }
-
   return expr;
 };
 

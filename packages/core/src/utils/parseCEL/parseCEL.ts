@@ -9,6 +9,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  MatchMode,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
@@ -270,17 +271,11 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       }
     } else if (isCELSubqueryExpression(expr)) {
       const components = extractSubqueryComponents(expr);
+      // istanbul ignore else
       if (components) {
         const { field, method, alias, condition } = components;
 
-        // Determine match mode based on method and potential negation
-        let matchMode: 'all' | 'some' | 'none';
-        if (method === 'all') {
-          matchMode = forwardedNegation ? 'none' : 'all';
-        } else {
-          // method === 'exists'
-          matchMode = forwardedNegation ? 'none' : 'some';
-        }
+        const matchMode: MatchMode = method === 'all' ? 'all' : 'some';
 
         // Parse the condition expression recursively
         // Replace alias references in the condition with appropriate field paths
@@ -307,12 +302,13 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       const field = getCELIdentifierFromNegatedChain(expr.left).replace(/^!+/, '');
       const method = expr.right!.value as 'all' | 'exists';
       const [aliasExpr, conditionExpr] = expr.list!.value;
-      const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : null;
+      const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
 
       // For negated subqueries, we want to create a NOT rule group with the subquery inside
       const transformedCondition = transformAliasInExpression(conditionExpr, alias);
       const subqueryValue = processCELExpression(transformedCondition);
 
+      // istanbul ignore else
       if (subqueryValue && fieldIsValid(field, '=')) {
         const ruleGroupValue = isRuleGroup(subqueryValue)
           ? subqueryValue

@@ -732,6 +732,73 @@ describe('subqueries', () => {
       );
     });
 
+    it('basic negation (ic)', () => {
+      testParseCELic(
+        '!!!tourStops.exists(elem_alias, elem_alias.city == "Milan")',
+        {
+          not: true,
+          rules: [
+            {
+              field: 'tourStops',
+              operator: '=',
+              match: { mode: 'some' },
+              value: { rules: [{ field: 'city', operator: '=', value: 'Milan' }] },
+            },
+          ],
+        },
+        { fields: subqueryFields }
+      );
+    });
+
+    it('group negation', () => {
+      testParseCEL(
+        '!tourStops.all(elem_alias, elem_alias.city == "Milan" || elem_alias.city == "Siena")',
+        {
+          combinator: 'and',
+          not: true,
+          rules: [
+            {
+              field: 'tourStops',
+              operator: '=',
+              match: { mode: 'all' },
+              value: {
+                combinator: 'or',
+                rules: [
+                  { field: 'city', operator: '=', value: 'Milan' },
+                  { field: 'city', operator: '=', value: 'Siena' },
+                ],
+              },
+            },
+          ],
+        },
+        { fields: subqueryFields }
+      );
+    });
+
+    it('group negation (ic)', () => {
+      testParseCELic(
+        '!tourStops.all(elem_alias, elem_alias.city == "Milan" || elem_alias.city == "Siena")',
+        {
+          not: true,
+          rules: [
+            {
+              field: 'tourStops',
+              operator: '=',
+              match: { mode: 'all' },
+              value: {
+                rules: [
+                  { field: 'city', operator: '=', value: 'Milan' },
+                  'or',
+                  { field: 'city', operator: '=', value: 'Siena' },
+                ],
+              },
+            },
+          ],
+        },
+        { fields: subqueryFields }
+      );
+    });
+
     it('with parentheses', () => {
       testParseCEL(
         '!(items.exists(item, item.price > 100))',
@@ -951,14 +1018,14 @@ describe('subqueries', () => {
   describe('alias transformation edge cases', () => {
     it('transforms like expressions with alias', () => {
       testParseCEL(
-        'items.exists(item, item.name.contains("test"))',
+        'tourStops.exists(tourStop, tourStop.city.contains("Las "))',
         wrapRule({
-          field: 'items',
+          field: 'tourStops',
           operator: '=',
           match: { mode: 'some' },
           value: {
             combinator: 'and',
-            rules: [{ field: 'name', operator: 'contains', value: 'test' }],
+            rules: [{ field: 'city', operator: 'contains', value: 'Las ' }],
           },
         }),
         { fields: subqueryFields }
