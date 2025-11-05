@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.4).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.6).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -3632,7 +3632,7 @@ fieldset:disabled .m_8ee546b8,
   --chip-size-lg: calc(2.25rem * var(--mantine-scale));
   --chip-size-xl: calc(2.5rem * var(--mantine-scale));
 
-  --chip-icon-size-xs: calc(0.625rem * var(--mantine-scale));
+  --chip-icon-size-xs: calc(0.5625rem * var(--mantine-scale));
   --chip-icon-size-sm: calc(0.75rem * var(--mantine-scale));
   --chip-icon-size-md: calc(0.875rem * var(--mantine-scale));
   --chip-icon-size-lg: calc(1rem * var(--mantine-scale));
@@ -3644,7 +3644,7 @@ fieldset:disabled .m_8ee546b8,
   --chip-padding-lg: calc(1.75rem * var(--mantine-scale));
   --chip-padding-xl: calc(2rem * var(--mantine-scale));
 
-  --chip-checked-padding-xs: calc(0.46875rem * var(--mantine-scale));
+  --chip-checked-padding-xs: calc(0.5125rem * var(--mantine-scale));
   --chip-checked-padding-sm: calc(0.625rem * var(--mantine-scale));
   --chip-checked-padding-md: calc(0.73125rem * var(--mantine-scale));
   --chip-checked-padding-lg: calc(0.84375rem * var(--mantine-scale));
@@ -4474,6 +4474,10 @@ fieldset:disabled .m_8ee546b8,
   margin: 0;
   padding: 0;
   padding-inline-start: var(--list-marker-gap);
+}
+
+.m_abbac491[data-type='none'] {
+  --list-marker-gap: 0;
 }
 
 .m_abbac491:where([data-with-padding]) {
