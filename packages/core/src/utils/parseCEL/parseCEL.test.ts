@@ -701,9 +701,9 @@ describe('subqueries', () => {
   });
 
   describe('negated .exists() ("none" mode)', () => {
-    it('basic', () => {
+    it('basic negation', () => {
       testParseCEL(
-        '!tourStops.exists(elem_alias, elem_alias.city == "Milan")',
+        '!!!tourStops.exists(elem_alias, elem_alias.city == "Milan")',
         {
           combinator: 'and',
           not: true,
@@ -735,30 +735,26 @@ describe('subqueries', () => {
     it('with parentheses', () => {
       testParseCEL(
         '!(items.exists(item, item.price > 100))',
-        wrapRule({
-          field: 'items',
-          operator: '=',
-          match: { mode: 'none' },
-          value: { combinator: 'and', rules: [{ field: 'price', operator: '>', value: 100 }] },
-        }),
-
-        // Alternative:
-
-        // {
-        //   combinator: 'and',
-        //   not: true,
-        //   rules: [
-        //     {
-        //       field: 'items',
-        //       operator: '=',
-        //       match: { mode: 'some' },
-        //       value: {
-        //         combinator: 'and',
-        //         rules: [{ field: 'price', operator: '>', value: 100 }],
-        //       },
-        //     },
-        //   ],
-        // },
+        {
+          combinator: 'and',
+          not: true,
+          rules: [
+            {
+              combinator: 'and',
+              rules: [
+                {
+                  field: 'items',
+                  operator: '=',
+                  match: { mode: 'some' },
+                  value: {
+                    combinator: 'and',
+                    rules: [{ field: 'price', operator: '>', value: 100 }],
+                  },
+                },
+              ],
+            },
+          ],
+        },
         { fields: subqueryFields }
       );
     });
@@ -950,5 +946,95 @@ describe('subqueries', () => {
       { combinator: 'and', rules: [] },
       { fields: subqueryFields }
     );
+  });
+
+  describe('alias transformation edge cases', () => {
+    it('transforms like expressions with alias', () => {
+      testParseCEL(
+        'items.exists(item, item.name.contains("test"))',
+        wrapRule({
+          field: 'items',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: 'name', operator: 'contains', value: 'test' }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('transforms negated like expressions with alias', () => {
+      testParseCEL(
+        'items.exists(item, !item.contains("test"))',
+        wrapRule({
+          field: 'items',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: '', operator: 'doesNotContain', value: 'test' }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('transforms expressions with expression groups', () => {
+      testParseCEL(
+        'items.exists(item, (item.price > 100))',
+        wrapRule({
+          field: 'items',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: 'price', operator: '>', value: 100 }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('transforms expressions with multiple negations', () => {
+      testParseCEL(
+        'items.all(item, !!(item.active == true))',
+        wrapRule({
+          field: 'items',
+          operator: '=',
+          match: { mode: 'all' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: 'active', operator: '=', value: true }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('transforms like expressions with alias', () => {
+      testParseCEL(
+        'items.exists(item, item.contains("test"))',
+        wrapRule({
+          field: 'items',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [{ field: '', operator: 'contains', value: 'test' }],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+
+    it('transforms complex nested expressions with negated like expressions', () => {
+      testParseCEL(
+        'items.exists(item, item.name.contains("test") && !item.description.contains("old"))',
+        { combinator: 'and', rules: [] },
+        { fields: subqueryFields }
+      );
+    });
   });
 });

@@ -39,12 +39,14 @@ import {
   isCELConditionalAnd,
   isCELConditionalOr,
   isCELExpressionGroup,
+  isCELIdentifier,
   isCELIdentifierOrChain,
   isCELLikeExpression,
   isCELList,
   isCELLiteral,
   isCELMap,
   isCELNegatedLikeExpression,
+  isCELNegatedSubqueryExpression,
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
@@ -300,6 +302,38 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
             value: ruleGroupValue,
           };
         }
+      }
+    } else if (isCELNegatedSubqueryExpression(expr)) {
+      const field = getCELIdentifierFromNegatedChain(expr.left).replace(/^!+/, '');
+      const method = expr.right!.value as 'all' | 'exists';
+      const [aliasExpr, conditionExpr] = expr.list!.value;
+      const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : null;
+
+      // For negated subqueries, we want to create a NOT rule group with the subquery inside
+      const transformedCondition = transformAliasInExpression(conditionExpr, alias);
+      const subqueryValue = processCELExpression(transformedCondition);
+
+      if (subqueryValue && fieldIsValid(field, '=')) {
+        const ruleGroupValue = isRuleGroup(subqueryValue)
+          ? subqueryValue
+          : ic
+            ? { rules: [subqueryValue] }
+            : { combinator: 'and' as DefaultCombinatorName, rules: [subqueryValue] };
+
+        // Determine match mode based on method (no forwarded negation since we handle it differently)
+        const matchMode = method === 'all' ? 'all' : 'some';
+
+        const subqueryRule: DefaultRuleType = {
+          field,
+          operator: '=',
+          match: { mode: matchMode },
+          value: ruleGroupValue,
+        };
+
+        // Return a negated rule group containing the subquery
+        return ic
+          ? { not: true, rules: [subqueryRule] }
+          : { combinator: 'and' as DefaultCombinatorName, not: true, rules: [subqueryRule] };
       }
     } else if (isCELRelation(expr)) {
       let field: string | null = null;

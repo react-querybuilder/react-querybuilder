@@ -31,6 +31,7 @@ import type {
   CELModulo,
   CELMultiplication,
   CELNegatedLikeExpression,
+  CELNegatedSubqueryExpression,
   CELNegation,
   CELNegative,
   CELNullLiteral,
@@ -40,6 +41,7 @@ import type {
   CELRelation,
   CELRelop,
   CELStringLiteral,
+  CELSubqueryExpression,
   CELSubtraction,
   CELUnsignedIntegerLiteral,
 } from './types';
@@ -177,7 +179,7 @@ export const isCELNegatedLikeExpression = (expr: CELExpression): expr is CELNega
   expr.list.value.length === 1 &&
   (isCELStringLiteral(expr.list.value[0]) || isCELIdentifier(expr.list.value[0]));
 
-export const isCELSubqueryExpression = (expr: CELExpression): expr is CELMember =>
+export const isCELSubqueryExpression = (expr: CELExpression): expr is CELSubqueryExpression =>
   isCELMember(expr) &&
   !!expr.left &&
   !!expr.right &&
@@ -187,21 +189,17 @@ export const isCELSubqueryExpression = (expr: CELExpression): expr is CELMember 
   (expr.right.value === 'all' || expr.right.value === 'exists') &&
   expr.list.value.length >= 2;
 
-// export const isCELNegatedSubqueryExpression = (expr: CELExpression): expr is CELMember =>
-//   isCELMember(expr) &&
-//   !!expr.left &&
-//   !!expr.right &&
-//   !!expr.list &&
-//   isCELNegatedIdentifierOrChain(expr.left) &&
-//   isCELIdentifier(expr.right) &&
-//   (expr.right.value === 'all' || expr.right.value === 'exists') &&
-//   expr.list.value.length >= 2;
-
-// export const isCELSubqueryAll = (expr: CELExpression): expr is CELMember =>
-//   isCELSubqueryExpression(expr) && expr.right?.value === 'all';
-
-// export const isCELSubqueryExists = (expr: CELExpression): expr is CELMember =>
-//   isCELSubqueryExpression(expr) && expr.right?.value === 'exists';
+export const isCELNegatedSubqueryExpression = (
+  expr: CELExpression
+): expr is CELNegatedSubqueryExpression =>
+  isCELMember(expr) &&
+  !!expr.left &&
+  !!expr.right &&
+  !!expr.list &&
+  isCELNegatedIdentifierOrChain(expr.left) &&
+  isCELIdentifier(expr.right) &&
+  (expr.right.value === 'all' || expr.right.value === 'exists') &&
+  expr.list.value.length >= 2;
 
 export const extractSubqueryComponents = (
   expr: CELMember
@@ -395,7 +393,7 @@ const transformAliasInExpressionInternal = (
     // Keep it as a Member type but replace the left side with empty identifier
     return {
       type: 'Member',
-      left: { type: 'Identifier', value: '' } as CELIdentifier,
+      left: { type: 'Identifier', value: '' },
       right: expr.right,
       list: expr.list,
     } as CELMember;
@@ -410,7 +408,11 @@ const transformAliasInExpressionInternal = (
   ) {
     return {
       type: 'Member',
-      left: { type: 'Identifier', value: '' } as CELIdentifier,
+      left: {
+        type: 'Negation',
+        negations: expr.left.negations,
+        value: { type: 'Identifier', value: '' },
+      },
       right: expr.right,
       list: expr.list,
     } as CELMember;
@@ -457,42 +459,42 @@ const transformAliasInExpressionInternal = (
     } as CELConditionalOr;
   }
 
-  // if (isCELExpressionGroup(expr)) {
-  //   return {
-  //     type: 'ExpressionGroup',
-  //     value: transformAliasInExpressionInternal(expr.value, alias, isPrimitive),
-  //   } as CELExpressionGroup;
-  // }
+  if (isCELExpressionGroup(expr)) {
+    return {
+      type: 'ExpressionGroup',
+      value: transformAliasInExpressionInternal(expr.value, alias, isPrimitive),
+    } as CELExpressionGroup;
+  }
 
-  // if (isCELNegation(expr)) {
-  //   return {
-  //     type: 'Negation',
-  //     negations: expr.negations,
-  //     value: transformAliasInExpressionInternal(expr.value, alias, isPrimitive) as CELPrimary,
-  //   } as CELNegation;
-  // }
+  if (isCELNegation(expr)) {
+    return {
+      type: 'Negation',
+      negations: expr.negations,
+      value: transformAliasInExpressionInternal(expr.value, alias, isPrimitive) as CELPrimary,
+    } as CELNegation;
+  }
 
-  // if (isCELLikeExpression(expr)) {
-  //   return {
-  //     type: 'LikeExpression',
-  //     left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
-  //       | CELIdentifier
-  //       | CELMemberIdentifierChain,
-  //     right: expr.right,
-  //     list: expr.list,
-  //   } as CELLikeExpression;
-  // }
+  if (isCELLikeExpression(expr)) {
+    return {
+      type: 'LikeExpression',
+      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
+        | CELIdentifier
+        | CELMemberIdentifierChain,
+      right: expr.right,
+      list: expr.list,
+    } as CELLikeExpression;
+  }
 
-  // if (isCELNegatedLikeExpression(expr)) {
-  //   return {
-  //     type: 'LikeExpression',
-  //     left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
-  //       | CELMemberNegatedIdentifier
-  //       | CELMemberNegatedIdentifierChain,
-  //     right: expr.right,
-  //     list: expr.list,
-  //   } as CELNegatedLikeExpression;
-  // }
+  if (isCELNegatedLikeExpression(expr)) {
+    return {
+      type: 'LikeExpression',
+      left: transformAliasInExpressionInternal(expr.left, alias, isPrimitive) as
+        | CELMemberNegatedIdentifier
+        | CELMemberNegatedIdentifierChain,
+      right: expr.right,
+      list: expr.list,
+    } as CELNegatedLikeExpression;
+  }
 
   return expr;
 };
