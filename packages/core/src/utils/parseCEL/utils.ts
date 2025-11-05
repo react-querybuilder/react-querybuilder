@@ -128,8 +128,9 @@ export const isCELUnsignedIntegerLiteral = (
 
 export const isCELIdentifierOrChain = (
   expr: CELExpression
-): expr is CELMemberIdentifierChain | CELIdentifier =>
+): expr is CELMemberIdentifierChain | CELIdentifier | CELDynamicPropertyAccessor =>
   isCELIdentifier(expr) ||
+  isCELDynamicPropertyAccessor(expr) ||
   (isCELMember(expr) &&
     !!expr.left &&
     !!expr.right &&
@@ -229,13 +230,40 @@ export const extractSubqueryComponents = (
 };
 
 export const getCELIdentifierFromChain = (
-  expr: CELIdentifier | CELMemberIdentifierChain
+  expr: CELIdentifier | CELMemberIdentifierChain | CELDynamicPropertyAccessor | CELMember
 ): string => {
   if (isCELIdentifier(expr)) {
     return expr.value;
   }
 
-  return `${getCELIdentifierFromChain(expr.left)}.${expr.right.value}`;
+  if (isCELDynamicPropertyAccessor(expr)) {
+    const leftField = getCELIdentifierFromChain(expr.left);
+    // Handle string literals in bracket notation
+    // istanbul ignore else
+    if (isCELStringLiteral(expr.right)) {
+      const propertyName = evalCELLiteralValue(expr.right);
+      return `${leftField}["${propertyName}"]`;
+    }
+    // For non-string literals, use a fallback approach
+    // istanbul ignore next
+    return `${leftField}[${expr.right.type}]`;
+  }
+
+  // istanbul ignore else
+  if (
+    expr.left &&
+    expr.right &&
+    isCELIdentifier(expr.right) &&
+    (isCELIdentifier(expr.left) ||
+      isCELMember(expr.left) ||
+      isCELDynamicPropertyAccessor(expr.left))
+  ) {
+    return `${getCELIdentifierFromChain(expr.left)}.${expr.right.value}`;
+  }
+
+  // Fallback for other CELMember types
+  // istanbul ignore next
+  return expr.type;
 };
 
 export const getCELIdentifierFromNegatedChain = (

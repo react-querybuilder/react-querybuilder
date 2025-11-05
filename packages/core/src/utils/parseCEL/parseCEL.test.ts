@@ -168,6 +168,48 @@ it('negates "like" comparisons', () => {
   );
 });
 
+it('handles dynamic property accessors', () => {
+  // Basic bracket notation
+  testParseCEL(
+    'obj["property"] == "value"',
+    wrapRule({ field: 'obj["property"]', operator: '=', value: 'value' })
+  );
+
+  // Bracket notation with special characters
+  testParseCEL(
+    'obj["my$property"] == "value"',
+    wrapRule({ field: 'obj["my$property"]', operator: '=', value: 'value' })
+  );
+
+  // Bracket notation with various special characters
+  testParseCEL(
+    'obj["property@with@symbols"] == "test"',
+    wrapRule({ field: 'obj["property@with@symbols"]', operator: '=', value: 'test' })
+  );
+
+  testParseCEL(
+    'obj["property-with-dashes"] == "test"',
+    wrapRule({ field: 'obj["property-with-dashes"]', operator: '=', value: 'test' })
+  );
+
+  testParseCEL(
+    'obj["property_with_underscores"] == "test"',
+    wrapRule({ field: 'obj["property_with_underscores"]', operator: '=', value: 'test' })
+  );
+
+  // Nested bracket and dot notation
+  testParseCEL(
+    'obj["bracket_property"].dot_property == "value"',
+    wrapRule({ field: 'obj["bracket_property"].dot_property', operator: '=', value: 'value' })
+  );
+
+  // Multiple bracket notations
+  testParseCEL(
+    'obj["first"]["second"] == "value"',
+    wrapRule({ field: 'obj["first"]["second"]', operator: '=', value: 'value' })
+  );
+});
+
 it('groups only when necessary', () => {
   testParseCEL('(f1 == "Test" || f2 == "Test2")', {
     combinator: 'or',
