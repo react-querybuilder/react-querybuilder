@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#961] New hook `useValueSelectorAsync` which augments a `ValueSelectorProps` object with async option loading and (optionally) caching.
 
 ## [v8.11.1] - 2025-10-23
 
@@ -2051,6 +2053,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#954]: https://github.com/react-querybuilder/react-querybuilder/pull/954
 [#957]: https://github.com/react-querybuilder/react-querybuilder/pull/957
 [#960]: https://github.com/react-querybuilder/react-querybuilder/pull/960
+[#961]: https://github.com/react-querybuilder/react-querybuilder/pull/961
 
 <!-- #endregion -->
 
