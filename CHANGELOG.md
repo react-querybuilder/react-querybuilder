@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#961] New hook `useValueSelectorAsync` which augments a `ValueSelectorProps` object with async option loading and (optionally) caching.
 
+### Fixed
+
+- [#967] `prepareRuleGroup` and `prepareRule` now generate `id`s for subqueries.
+
 ## [v8.11.1] - 2025-10-23
 
 ### Fixed
@@ -2054,6 +2058,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#957]: https://github.com/react-querybuilder/react-querybuilder/pull/957
 [#960]: https://github.com/react-querybuilder/react-querybuilder/pull/960
 [#961]: https://github.com/react-querybuilder/react-querybuilder/pull/961
+[#967]: https://github.com/react-querybuilder/react-querybuilder/pull/967
 
 <!-- #endregion -->
 

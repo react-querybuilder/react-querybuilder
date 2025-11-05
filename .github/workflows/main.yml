@@ -27,7 +27,7 @@ jobs:
           for dir in $(ls packages); do
             (cd packages/$dir && bun pm pack --destination ${{ github.workspace }}/packs)
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: packs
           path: packs/*.tgz
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - uses: oven-sh/setup-bun@v2
@@ -73,7 +73,7 @@ jobs:
     # needs: [Test] # Run only if React 19+ tests pass
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - uses: oven-sh/setup-bun@v2
@@ -96,7 +96,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: packs
           path: packs
