@@ -111,7 +111,7 @@ describe('cache key generation', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), field);
     expect(cached?.data).toEqual(props.options);
@@ -129,7 +129,7 @@ describe('cache key generation', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), `${field}|${operator}`);
     expect(cached?.data).toEqual(props.options);
@@ -146,7 +146,7 @@ describe('cache key generation', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), `custom-${field}`);
     expect(cached?.data).toEqual(props.options);
@@ -161,7 +161,7 @@ describe('cache key generation', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), '');
     expect(cached?.data).toEqual(props.options);
@@ -245,7 +245,7 @@ describe('rule and group context', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), field);
     expect(cached?.data).toEqual(props.options);
@@ -261,7 +261,7 @@ describe('rule and group context', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), 'and');
     expect(cached?.data).toEqual(props.options);
@@ -281,10 +281,10 @@ describe('rule and group context', () => {
       wrapper,
       initialProps: props,
     });
-    await waitABeat();
+    await waitABeat(200);
 
     rerender(props2);
-    await waitABeat();
+    await waitABeat(200);
 
     const state = store.getState();
     const cached = selectCacheByKey(state, 'currentValue');
@@ -353,7 +353,7 @@ describe('cache behavior', () => {
       initialProps: props,
       wrapper,
     });
-    await waitABeat();
+    await waitABeat(200);
 
     expect(loadOptionList).toHaveBeenCalledTimes(1);
 
@@ -371,11 +371,11 @@ describe('cache behavior', () => {
         loadOptionList,
       })
     );
-    await waitABeat();
+    await waitABeat(200);
 
     // Third call (via hook) with same cache key but different props - should use cache
     rerender({ ...props, className: generateID() });
-    await waitABeat();
+    await waitABeat(200);
 
     resultData = result.current.options;
 
@@ -422,7 +422,7 @@ describe('edge cases', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), field);
     expect(cached && cached.validUntil - cached.timestamp).toBe(DEFAULT_CACHE_TTL);
@@ -440,7 +440,7 @@ describe('edge cases', () => {
     const { store, wrapper } = getWrapper();
 
     renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), field);
     expect(cached && cached.validUntil - cached.timestamp).toBe(customTTL);
@@ -458,7 +458,7 @@ describe('edge cases', () => {
     const { wrapper } = getWrapper();
 
     const { rerender } = renderHook(() => useValueSelectorAsync(props, params), { wrapper });
-    await waitABeat();
+    await waitABeat(200);
 
     const calls = loadOptionList.mock.calls.length;
 
@@ -466,7 +466,7 @@ describe('edge cases', () => {
 
     // With zero TTL, cache should be invalid immediately, so second call should trigger new load
     rerender();
-    await waitABeat();
+    await waitABeat(200);
 
     expect(loadOptionList.mock.calls.length > calls).toBe(true);
   });
@@ -504,10 +504,10 @@ describe('edge cases', () => {
       wrapper,
       initialProps: props,
     });
-    await waitABeat();
+    await waitABeat(200);
 
     rerender(props2);
-    await waitABeat();
+    await waitABeat(200);
 
     const cached = selectCacheByKey(store.getState(), field);
     expect(cached?.data).toEqual(props.options);
