@@ -716,10 +716,7 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     }
   }, [disabled, onGroupRemove, path]);
 
-  const validationResult = useMemo(
-    () => validationMap[id ?? /* istanbul ignore next */ ''],
-    [id, validationMap]
-  );
+  const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
   const validationClassName = useMemo(
     () => getValidationClassNames(validationResult),
     [validationResult]
