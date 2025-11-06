@@ -138,8 +138,8 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/react-native-web": "^0.19.2",
-    "@types/web": "^0.0.291",
-    "@typescript/native-preview": "^7.0.0-dev.20251105.1",
+    "@types/web": "^0.0.292",
+    "@typescript/native-preview": "^7.0.0-dev.20251106.1",
     "bun-plugin-tailwind": "^0.1.2",
     "concurrently": "^9.2.1",
     "esbuild-analyzer": "^0.2.0",
@@ -164,9 +164,9 @@
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^6.0.5",
     "swc-loader": "^0.2.6",
-    "tsdown": "^0.15.12",
+    "tsdown": "^0.16.0",
     "typescript": "^5.9.3",
-    "vite": "^7.2.0"
+    "vite": "^7.2.1"
   },
   "overrides": {
     "@testing-library/user-event": "14.5.2"

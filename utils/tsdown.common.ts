@@ -1,7 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import type { Options } from 'tsdown';
+import type { UserConfig } from 'tsdown';
 
 export const getCjsIndexWriter = (pkgName: string, altPath?: string) => async (): Promise<void> => {
   const ap = altPath ? `.${altPath}` : '';
@@ -24,11 +24,11 @@ if (process.env.NODE_ENV === 'production') {
   ]);
 };
 
-export const commonBuildOptions = {
+export const commonBuildOptions: UserConfig = {
   sourcemap: true,
   platform: 'neutral',
   dts: { oxc: true, resolve: ['type-fest'] },
-} satisfies Options as Options;
+};
 
 export const tsdownCommonConfig = (sourceDir: string) =>
   (async options => {
@@ -40,14 +40,14 @@ export const tsdownCommonConfig = (sourceDir: string) =>
       entry: { [pkgName]: entryPoint },
       ...commonBuildOptions,
       ...options,
-    } satisfies Options;
+    } satisfies UserConfig;
 
     const productionOptions = {
       minify: true,
       define: { NODE_ENV: 'production' },
-    } satisfies Options;
+    } satisfies UserConfig;
 
-    const opts: Options[] = [
+    const opts: UserConfig[] = [
       // ESM, standard bundler dev, embedded `process` references
       {
         ...commonOptions,
@@ -99,4 +99,4 @@ export const tsdownCommonConfig = (sourceDir: string) =>
     ];
 
     return opts;
-  }) as (options: Options) => Promise<Options[]>;
+  }) as (options: UserConfig) => Promise<UserConfig[]>;
