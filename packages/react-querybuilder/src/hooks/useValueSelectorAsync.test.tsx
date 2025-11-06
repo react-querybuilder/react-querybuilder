@@ -21,7 +21,7 @@ import { useValueSelectorAsync } from './useValueSelectorAsync';
 const defaultSchema = {
   suppressStandardClassnames: false,
   classNames: { loading: 'custom-loading' },
-} as unknown as Schema<FullField, string>;
+} as Schema<FullField, string>;
 
 const createDefaultProps = (overrides: Partial<VersatileSelectorProps> = {}) =>
   ({

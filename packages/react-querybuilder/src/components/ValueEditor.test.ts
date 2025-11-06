@@ -15,7 +15,7 @@ const baseValueEditorProps: ValueEditorProps = {
   operator: '=',
   valueSource: 'value',
   fieldData: { name: 'f', value: 'f', label: 'F' },
-  schema: { classNames: {} } as unknown as Schema<FullField, string>,
+  schema: { classNames: {} } as Schema<FullField, string>,
   handleOnChange: () => {},
   path: [],
   level: 0,

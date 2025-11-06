@@ -86,7 +86,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       plugins: [
         prettierPluginOrganizeImports,
         // https://github.com/prettier/prettier/issues/16501
-        prettierPluginEstree as unknown as prettier.Plugin,
+        prettierPluginEstree as prettier.Plugin,
       ],
     };
 
@@ -271,7 +271,7 @@ const updateOtherExample = async (otherExampleName: string) => {
       plugins: [
         prettierPluginOrganizeImports,
         // https://github.com/prettier/prettier/issues/16501
-        prettierPluginEstree as unknown as prettier.Plugin,
+        prettierPluginEstree as prettier.Plugin,
       ],
     }
   );

@@ -3,6 +3,7 @@
 import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
+  DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
@@ -595,9 +596,9 @@ it('handles custom expressions', () => {
     'opted_in_at.isBirthday(-1)',
     wrapRule({
       field: 'opted_in_at',
-      operator: 'isBirthday',
+      operator: 'isBirthday' as DefaultOperatorName,
       value: -1,
-    } as unknown as DefaultRuleType),
+    }),
     {
       customExpressionHandler: expr => {
         if (

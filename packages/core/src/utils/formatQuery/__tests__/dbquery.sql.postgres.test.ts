@@ -89,7 +89,7 @@ describe('PostgreSQL', () => {
           .filter(u => u.madeUpName.startsWith('S'))
           .map(u =>
             Object.fromEntries(Object.entries(u).map(([k, v]) => [k.toLocaleLowerCase(), v]))
-          ) as unknown as SuperUser[]
+          ) as SuperUser[]
       );
     });
   });

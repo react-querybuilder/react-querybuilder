@@ -588,7 +588,7 @@ describe('update', () => {
       };
 
       // Try to set muted to a non-boolean value
-      const result = update(query, 'muted', 'invalid' as unknown, [0]);
+      const result = update(query, 'muted', 'invalid', [0]);
       // The rule gets the value as-is (typescript would prevent this in practice)
       expect(result.rules[0].muted).toBe('invalid');
     });
