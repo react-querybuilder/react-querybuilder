@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.11.2] - 2025-11-06
+
 ### Fixed
 
 - [#967] `prepareRuleGroup` and `prepareRule` now generate `id`s for subqueries.
@@ -2061,7 +2065,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.2...HEAD
+[v8.11.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.1...v8.11.2
 [v8.11.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...v8.11.1
 [v8.11.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...v8.11.0
 [v8.10.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...v8.10.0
