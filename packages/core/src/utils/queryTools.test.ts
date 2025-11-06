@@ -57,7 +57,6 @@ const rg1wID: DefaultRuleGroupType = { id: '[]', ...rg1 };
 const rgic1wID: DefaultRuleGroupTypeIC = { id: '[]', ...rgic1 };
 const rg3wIDs = pathsAsIDs(rg3);
 
-// oxlint-disable no-standalone-expect
 const testQT = (
   title: string,
   ruleGroup: DefaultRuleGroupTypeAny,
@@ -73,7 +72,6 @@ const testQT = (
     }
   });
 };
-// oxlint-enable no-standalone-expect
 
 const testLoop = [
   ['path', (x: Path) => x],
