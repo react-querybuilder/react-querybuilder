@@ -33,7 +33,8 @@ export type CELExpressionType =
   | 'Unary'
   | 'UnsignedIntegerLiteral'
   // RQB-specific:
-  | 'LikeExpression';
+  | 'LikeExpression'
+  | 'SubqueryExpression';
 
 export type CELRelop = '==' | '>=' | '>' | '<=' | '<' | '!=' | 'in';
 
@@ -97,7 +98,7 @@ export interface CELNegative extends CELExpression {
 export interface CELMember extends CELExpression {
   type: 'Member';
   value?: CELPrimary;
-  left?: CELPrimary | CELMember;
+  left?: CELPrimary | CELMember | CELNegation;
   right?: CELIdentifier;
   list?: CELExpressionList;
 }
@@ -224,6 +225,18 @@ export interface CELNegatedLikeExpression extends CELExpression {
   left: CELMemberNegatedIdentifier | CELMemberNegatedIdentifierChain;
   right: CELIdentifier<'contains' | 'startsWith' | 'endsWith'>;
   list: CELExpressionList & { value: [CELStringLiteral | CELIdentifier] };
+}
+export interface CELSubqueryExpression extends CELExpression {
+  type: 'Member';
+  left: CELIdentifier | CELMemberIdentifierChain;
+  right: CELIdentifier<'all' | 'exists'>;
+  list: CELExpressionList & { value: [CELIdentifier, CELExpression] };
+}
+export interface CELNegatedSubqueryExpression extends CELExpression {
+  type: 'Member';
+  left: CELMemberNegatedIdentifier | CELMemberNegatedIdentifierChain;
+  right: CELIdentifier<'all' | 'exists'>;
+  list: CELExpressionList & { value: [CELIdentifier, CELExpression] };
 }
 
 export type CELNumericLiteral = CELIntegerLiteral | CELUnsignedIntegerLiteral | CELFloatLiteral;
