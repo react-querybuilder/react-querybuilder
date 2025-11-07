@@ -1,23 +1,23 @@
 ---
 title: Async option list loading
-description: Augment value selectors with async option list loading
+description: Augment value selectors or value editors with async option list loading
 ---
 
-To load option lists asynchronously for a value selector, use the `useValueSelectorAsync` hook.
+To load option lists asynchronously for a value selector, use the `useAsyncOptionList` hook.
 
 This opt-in feature enables dynamic loading of options based on rule/group context, with intelligent caching for performance optimization.
 
 ## Basic usage
 
-1. Create a component that accepts `ValueSelectorProps`.
-2. Pass the props directly to `useValueSelectorAsync` along with the async configuration options.
-3. After any custom logic, pass the object returned from `useValueSelectorAsync` as the props to a standard selector component.
+1. Create a component that accepts `ValueSelectorProps` or `ValueEditorProps`.
+2. Pass the props directly to `useAsyncOptionList` along with the async configuration options.
+3. After any custom logic, pass the object returned from `useAsyncOptionList` as the props to a standard selector component.
 4. Assign the component in the [`controlElements` prop](../components/querybuilder-controlelements).
 
 ```tsx
-import { type UseValueSelectorAsyncParams, useValueSelectorAsync } from 'react-querybuilder';
+import { type UseAsyncOptionListParams, useAsyncOptionList } from 'react-querybuilder';
 
-const useValueSelectorAsyncParams: UseValueSelectorAsyncParams = {
+const useAsyncOptionListParams: UseAsyncOptionListParams = {
   getCacheKey: 'field',
   loadOptionList: async (value, { ruleOrGroup }) => {
     const response = await fetch(`/api/operators?field=${ruleOrGroup.field}`);
@@ -28,7 +28,7 @@ const useValueSelectorAsyncParams: UseValueSelectorAsyncParams = {
 // Step 1
 const AsyncOperatorSelector = (props: ValueSelectorProps) => {
   // Step 2
-  const asyncProps = useValueSelectorAsync(props, useValueSelectorAsyncParams);
+  const asyncProps = useAsyncOptionList(props, useAsyncOptionListParams);
 
   // Step 3
   return <props.schema.controls.valueSelector {...asyncProps} />;
@@ -64,7 +64,7 @@ const loadFieldOptions = async (value, { ruleOrGroup }) => {
 };
 
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, { loadOptionList: loadFieldOptions });
+  const asyncProps = useAsyncOptionList(props, { loadOptionList: loadFieldOptions });
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
 ```
@@ -83,7 +83,7 @@ const getCacheKey = 'field';
 const getCacheKey = 'operator';
 
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, { getCacheKey, loadOptionList });
+  const asyncProps = useAsyncOptionList(props, { getCacheKey, loadOptionList });
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
 ```
@@ -95,7 +95,7 @@ const ValueSelectorAsync = (props: ValueSelectorProps) => {
 const getCacheKey = ['field', 'operator'];
 
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, { getCacheKey, loadOptionList });
+  const asyncProps = useAsyncOptionList(props, { getCacheKey, loadOptionList });
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
 ```
@@ -115,7 +115,7 @@ const getCacheKey = (props: ValueSelectorProps) => {
 };
 
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, { getCacheKey, loadOptionList });
+  const asyncProps = useAsyncOptionList(props, { getCacheKey, loadOptionList });
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
 ```
@@ -135,14 +135,14 @@ const cacheTTL = 300_000;
 const cacheTTL = 0;
 
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, { cacheTTL, loadOptionList });
+  const asyncProps = useAsyncOptionList(props, { cacheTTL, loadOptionList });
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
 ```
 
 ## Loading states
 
-`useValueSelectorAsync` adds the "queryBuilder-loading" class while the promise from `loadOptionList` is pending. No styles are applied by the default stylesheet for this class.
+`useAsyncOptionList` adds the "queryBuilder-loading" class while the promise from `loadOptionList` is pending. No styles are applied by the default stylesheet for this class.
 
 To add custom classes during pending `loadOptionList` promises, use `controlClassnames#loading` or override the `className` prop on the rendered value selector.
 
@@ -150,7 +150,7 @@ In this example, `my-async-loading-class` will be added to the specific componen
 
 ```tsx
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, { ...otherParams, isLoading });
+  const asyncProps = useAsyncOptionList(props, { ...otherParams, isLoading });
 
   return (
     <props.schema.controls.valueSelector
@@ -175,7 +175,7 @@ const ValueSelectorAsync = (props: ValueSelectorProps) => {
   // Assume this hook determines whether to force a "loading" state and returns a `boolean`:
   const isLoading = useIsLoading(props);
 
-  const asyncProps = useValueSelectorAsync(props, { ...otherParams, isLoading });
+  const asyncProps = useAsyncOptionList(props, { ...otherParams, isLoading });
 
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
@@ -189,7 +189,7 @@ Load options in the value editor that depend on the selected field and operator.
 
 ```tsx
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, {
+  const asyncProps = useAsyncOptionList(props, {
     loadOptionList: async (value, { ruleOrGroup }) => {
       const { field, operator } = ruleOrGroup as RuleType;
       return myValuesAPI({ field, operator });
@@ -216,7 +216,7 @@ Load operators that depend on the selected field type:
 
 ```tsx
 const ValueSelectorAsync = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, {
+  const asyncProps = useAsyncOptionList(props, {
     loadOptionList: async (value, { ruleOrGroup }) => {
       const fieldType = props.fieldData.datatype; // custom field property
       return getOperatorsForType(fieldType);
@@ -234,7 +234,7 @@ Create an auto-complete component by including the current value in the cache ke
 
 ```tsx
 const AutoCompleteValueSelector = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, {
+  const asyncProps = useAsyncOptionList(props, {
     loadOptionList: async (value, { ruleOrGroup }) => {
       if (!value || value.length < 2) return [];
 
@@ -257,7 +257,7 @@ const App = () => <QueryBuilder controlElements={{ valueEditor: ValueEditorWithA
 
 ## Error handling
 
-Async loading errors can be managed within your `loadOptionList` function or by checking the `errors` property on the object returned from `useValueSelectorAsync`, which will contain an error message when the promise is rejected.
+Async loading errors can be managed within your `loadOptionList` function or by checking the `errors` property on the object returned from `useAsyncOptionList`, which will contain an error message when the promise is rejected.
 
 Internal error handling:
 
@@ -279,7 +279,7 @@ Promise rejection detection:
 
 ```tsx
 const AsyncOperatorSelector = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, useValueSelectorAsyncParams);
+  const asyncProps = useAsyncOptionList(props, useAsyncOptionListParams);
 
   // If `errors` is truthy, the promise was rejected
   if (asyncProps.errors) {

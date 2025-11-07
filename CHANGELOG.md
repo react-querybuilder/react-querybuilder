@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#961] New hook `useValueSelectorAsync` which augments a `ValueSelectorProps` object with async option loading and (optionally) caching.
+- [#961] New hook `useAsyncOptionList` which augments a `ValueSelectorProps` or `ValueEditorProps` object with async option loading and (optionally) caching.
 
 ## [v8.11.2] - 2025-11-06
 

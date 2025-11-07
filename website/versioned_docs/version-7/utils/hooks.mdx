@@ -236,14 +236,14 @@ function useQueryBuilderSchema(
 
 ## Other utilities
 
-### `useValueSelectorAsync`
+### `useAsyncOptionList`
 
-Augments a `ValueSelectorProps` object with [async option loading](../tips/async-option-lists).
+Augments a `ValueSelectorProps` or `ValueEditorProps` object with [async option loading](../tips/async-option-lists).
 
 ```tsx
-import { type UseValueSelectorAsyncParams, useValueSelectorAsync } from 'react-querybuilder';
+import { type UseAsyncOptionListParams, useAsyncOptionList } from 'react-querybuilder';
 
-const useValueSelectorAsyncParams: UseValueSelectorAsyncParams = {
+const useAsyncOptionListParams: UseAsyncOptionListParams = {
   getCacheKey: 'field',
   loadOptionList: async (value, { ruleOrGroup }) => {
     const response = await fetch(`/api/operators?field=${ruleOrGroup.field}`);
@@ -252,7 +252,7 @@ const useValueSelectorAsyncParams: UseValueSelectorAsyncParams = {
 };
 
 const AsyncOperatorSelector = (props: ValueSelectorProps) => {
-  const asyncProps = useValueSelectorAsync(props, useValueSelectorAsyncParams);
+  const asyncProps = useAsyncOptionList(props, useAsyncOptionListParams);
 
   return <props.schema.controls.valueSelector {...asyncProps} />;
 };
