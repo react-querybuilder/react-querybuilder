@@ -66,18 +66,18 @@ export type UseAsyncOptionList<PropsType> = PropsType & {
  * @group Hooks
  */
 export const useAsyncCacheKey = (
-  props: VersatileSelectorProps,
+  props: VersatileSelectorProps | ValueEditorProps,
   // istanbul ignore next
   { getCacheKey }: UseAsyncOptionListParams = {}
 ): string => {
-  const ruleOrGroup = props.rule ?? props.ruleGroup;
+  const ruleOrGroup = props.rule ?? (props as VersatileSelectorProps).ruleGroup;
 
   return useMemo(
     () =>
       typeof getCacheKey === 'string'
         ? String(ruleOrGroup?.[getCacheKey as 'id'] ?? '')
         : typeof getCacheKey === 'function'
-          ? getCacheKey(props)
+          ? getCacheKey(props as VersatileSelectorProps)
           : Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup
             ? getCacheKey.map(ck => `${ruleOrGroup[ck as 'id']}`).join('|')
             : '',
@@ -88,7 +88,8 @@ export const useAsyncCacheKey = (
       // oxlint-disable exhaustive-deps
       ...Object.keys(props)
         .toSorted()
-        .map(k => props[k as keyof VersatileSelectorProps]),
+        // oxlint-disable-next-line no-explicit-any
+        .map(k => (props as any)[k]),
       // oxlint-enable exhaustive-deps
     ]
   );
@@ -112,10 +113,10 @@ export function useAsyncOptionList(
   props: ValueEditorProps,
   params?: UseAsyncOptionListParams
 ): UseAsyncOptionList<ValueEditorProps>;
-export function useAsyncOptionList<PropsType extends VersatileSelectorProps | ValueEditorProps>(
-  propsOriginal: PropsType,
+export function useAsyncOptionList(
+  propsOriginal: VersatileSelectorProps | ValueEditorProps,
   params: UseAsyncOptionListParams = {}
-): UseAsyncOptionList<PropsType> {
+) {
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
   const props = propsOriginal as VersatileSelectorProps & ValueEditorProps;
@@ -194,5 +195,5 @@ export function useAsyncOptionList<PropsType extends VersatileSelectorProps | Va
     className,
     isLoading,
     errors,
-  } as unknown as UseAsyncOptionList<PropsType>;
+  };
 }
