@@ -1,6 +1,6 @@
 import type {
-  FullOption,
-  FullOptionList,
+  BaseOption,
+  FlexibleOptionListProp,
   RuleGroupTypeAny,
   RuleType,
 } from '@react-querybuilder/core';
@@ -13,7 +13,9 @@ import {
 import { asyncOptionListsSlice, getOptionListsAsync } from '../redux/asyncOptionListsSlice';
 import type { ValueEditorProps, VersatileSelectorProps } from '../types';
 
-export interface UseAsyncOptionListParams {
+export interface UseAsyncOptionListParams<
+  PropsType extends VersatileSelectorProps | ValueEditorProps,
+> {
   /**
    * Cache "time to live"—milliseconds after initial retrieval for which the cache is valid.
    *
@@ -34,7 +36,7 @@ export interface UseAsyncOptionListParams {
    *
    * @default ''
    */
-  getCacheKey?: string | string[] | ((props: VersatileSelectorProps) => string);
+  getCacheKey?: string | string[] | ((props: PropsType) => string);
   /**
    * Returns a promise for the set of options to be used.
    */
@@ -42,7 +44,7 @@ export interface UseAsyncOptionListParams {
     /** Current value of the selector. */
     value: string | undefined,
     meta: { ruleOrGroup?: RuleType | RuleGroupTypeAny }
-  ) => Promise<FullOptionList<FullOption>>;
+  ) => Promise<FlexibleOptionListProp<BaseOption>>;
   /**
    * Forces "loading" state, even if the selector is not currently waiting for `loadOptionList` to resolve.
    */
@@ -65,10 +67,10 @@ export type UseAsyncOptionList<PropsType> = PropsType & {
  *
  * @group Hooks
  */
-export const useAsyncCacheKey = (
-  props: VersatileSelectorProps | ValueEditorProps,
+export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | ValueEditorProps>(
+  props: PropsType,
   // istanbul ignore next
-  { getCacheKey }: UseAsyncOptionListParams = {}
+  { getCacheKey }: UseAsyncOptionListParams<PropsType> = {}
 ): string => {
   const ruleOrGroup = props.rule ?? (props as VersatileSelectorProps).ruleGroup;
 
@@ -77,7 +79,7 @@ export const useAsyncCacheKey = (
       typeof getCacheKey === 'string'
         ? String(ruleOrGroup?.[getCacheKey as 'id'] ?? '')
         : typeof getCacheKey === 'function'
-          ? getCacheKey(props as VersatileSelectorProps)
+          ? getCacheKey(props)
           : Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup
             ? getCacheKey.map(ck => `${ruleOrGroup[ck as 'id']}`).join('|')
             : '',
@@ -102,7 +104,7 @@ export const useAsyncCacheKey = (
  */
 export function useAsyncOptionList(
   props: VersatileSelectorProps,
-  params?: UseAsyncOptionListParams
+  params?: UseAsyncOptionListParams<VersatileSelectorProps>
 ): UseAsyncOptionList<VersatileSelectorProps>;
 /**
  * Augments a {@link ValueEditorProps} object with async option (`values`) loading.
@@ -111,19 +113,22 @@ export function useAsyncOptionList(
  */
 export function useAsyncOptionList(
   props: ValueEditorProps,
-  params?: UseAsyncOptionListParams
+  params?: UseAsyncOptionListParams<ValueEditorProps>
 ): UseAsyncOptionList<ValueEditorProps>;
-export function useAsyncOptionList(
-  propsOriginal: VersatileSelectorProps | ValueEditorProps,
-  params: UseAsyncOptionListParams = {}
+export function useAsyncOptionList<PropsType extends VersatileSelectorProps | ValueEditorProps>(
+  props: PropsType,
+  params: UseAsyncOptionListParams<PropsType> = {}
 ) {
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
-  const props = propsOriginal as VersatileSelectorProps & ValueEditorProps;
   const { cacheTTL, loadOptionList } = params;
-  const { options: optionsProp, values: valuesProp, value } = props;
+  const {
+    options: optionsProp,
+    values: valuesProp,
+    value,
+  } = props as VersatileSelectorProps & ValueEditorProps;
 
-  const ruleOrGroup = props.rule ?? props.ruleGroup;
+  const ruleOrGroup = props.rule ?? (props as VersatileSelectorProps).ruleGroup;
 
   const cacheKey = useAsyncCacheKey(props, params);
 

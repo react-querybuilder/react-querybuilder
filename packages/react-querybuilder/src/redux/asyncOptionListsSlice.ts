@@ -1,4 +1,6 @@
 import type {
+  BaseOption,
+  FlexibleOptionListProp,
   FullOption,
   FullOptionList,
   RuleGroupTypeAny,
@@ -21,7 +23,7 @@ export const getOptionListsAsync: AsyncThunk<
     loadOptionList: (
       value: string | undefined,
       meta: { ruleOrGroup?: RuleType | RuleGroupTypeAny }
-    ) => Promise<FullOptionList<FullOption>>;
+    ) => Promise<FlexibleOptionListProp<BaseOption>>;
   },
   AsyncThunkConfig
 > = createAsyncThunk(

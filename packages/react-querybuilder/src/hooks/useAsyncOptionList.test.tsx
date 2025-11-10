@@ -126,7 +126,7 @@ describe('cache key generation', () => {
     const field = generateID();
     const rule = createRule({ field });
     const props = createValueSelectorProps({ rule });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: 'field',
       loadOptionList: async () => props.options,
     };
@@ -144,7 +144,7 @@ describe('cache key generation', () => {
     const operator = generateID();
     const rule = createRule({ field, operator });
     const props = createValueSelectorProps({ rule });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: ['field', 'operator'],
       loadOptionList: async () => props.options,
     };
@@ -161,7 +161,7 @@ describe('cache key generation', () => {
     const field = generateID();
     const rule = createRule({ field });
     const props = createValueSelectorProps({ rule });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: props => `custom-${props.rule?.field}`,
       loadOptionList: async () => props.options,
     };
@@ -176,7 +176,7 @@ describe('cache key generation', () => {
 
   it('returns empty string for invalid cache key', async () => {
     const props = createValueSelectorProps();
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: 'nonexistentField',
       loadOptionList: async () => props.options,
     };
@@ -193,7 +193,7 @@ describe('cache key generation', () => {
 describe('loading states', () => {
   it('forces loading state when isLoading param is true', () => {
     const props = createValueSelectorProps();
-    const params: UseAsyncOptionListParams = { isLoading: true };
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = { isLoading: true };
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -204,7 +204,7 @@ describe('loading states', () => {
 
   it('adds both standard and custom loading classes when loading', () => {
     const props = createValueSelectorProps();
-    const params: UseAsyncOptionListParams = { isLoading: true };
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = { isLoading: true };
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -218,7 +218,7 @@ describe('loading states', () => {
 describe('className handling', () => {
   it('preserves original className when not loading', () => {
     const props = createValueSelectorProps({ className: 'original-class' });
-    const params: UseAsyncOptionListParams = {};
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {};
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -229,7 +229,7 @@ describe('className handling', () => {
 
   it('combines classNames when loading', () => {
     const props = createValueSelectorProps({ className: 'original-class' });
-    const params: UseAsyncOptionListParams = { isLoading: true };
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = { isLoading: true };
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -243,7 +243,7 @@ describe('className handling', () => {
   it('suppresses standard loading class when suppressStandardClassnames is true', () => {
     const schema = { ...defaultSchema, suppressStandardClassnames: true };
     const props = createValueSelectorProps({ className: 'original-class', schema });
-    const params: UseAsyncOptionListParams = { isLoading: true };
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = { isLoading: true };
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -260,7 +260,7 @@ describe('rule and group context', () => {
     const field = generateID();
     const rule = createRule({ field, operator: 'equals' });
     const props = createValueSelectorProps({ rule });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: 'field',
       loadOptionList: async () => props.options,
     };
@@ -276,7 +276,7 @@ describe('rule and group context', () => {
   it('uses ruleGroup when rule is not available', async () => {
     const ruleGroup = { id: 'group1', combinator: 'and', rules: [] };
     const props = createValueSelectorProps({ ruleGroup });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: 'combinator',
       loadOptionList: async () => props.options,
     };
@@ -293,7 +293,7 @@ describe('rule and group context', () => {
     const rule = createRule();
     const props = createValueSelectorProps({ value: 'currentValue', rule });
     const props2 = createValueSelectorProps({ value: 'nextValue', rule });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: p => p.value!,
       loadOptionList: async () => props.options,
     };
@@ -324,7 +324,7 @@ describe('prop passing', () => {
       value: 'test-value',
       className: 'test-class',
     });
-    const params: UseAsyncOptionListParams = {};
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {};
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -338,7 +338,7 @@ describe('prop passing', () => {
 
   it('maintains prop structure with additional async properties', () => {
     const props = createValueSelectorProps();
-    const params: UseAsyncOptionListParams = {};
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {};
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -364,7 +364,7 @@ describe('cache behavior', () => {
     const loadOptionList = jest.fn(async () => [
       { name: 'cached', value: 'cached', label: generateID() },
     ]);
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: 'field',
       loadOptionList,
     };
@@ -410,7 +410,7 @@ describe('cache behavior', () => {
 describe('edge cases', () => {
   it('handles empty cache key array', () => {
     const props = createValueSelectorProps({ rule: createRule() });
-    const params: UseAsyncOptionListParams = { getCacheKey: [] };
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = { getCacheKey: [] };
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -423,7 +423,9 @@ describe('edge cases', () => {
 
   it('handles cache key array with undefined rule', () => {
     const props = createValueSelectorProps(); // No rule or ruleGroup
-    const params: UseAsyncOptionListParams = { getCacheKey: ['field', 'operator'] };
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
+      getCacheKey: ['field', 'operator'],
+    };
 
     const { result } = renderHook(() => useAsyncOptionList(props, params), {
       wrapper: ReduxWrapper,
@@ -437,7 +439,7 @@ describe('edge cases', () => {
   it('handles default cacheTTL when not specified', async () => {
     const field = generateID();
     const props = createValueSelectorProps({ rule: createRule({ field }) });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       loadOptionList: jest.fn().mockResolvedValue([]),
       getCacheKey: 'field',
     };
@@ -454,7 +456,7 @@ describe('edge cases', () => {
     const customTTL = 5000; // 5 seconds
     const field = generateID();
     const props = createValueSelectorProps({ rule: createRule({ field }) });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       loadOptionList: jest.fn().mockResolvedValue([]),
       getCacheKey: 'field',
       cacheTTL: customTTL,
@@ -472,7 +474,7 @@ describe('edge cases', () => {
     const field = generateID();
     const props = createValueSelectorProps({ rule: createRule({ field }) });
     const loadOptionList = jest.fn().mockResolvedValue([]);
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       loadOptionList,
       getCacheKey: 'field',
       cacheTTL: 0,
@@ -496,7 +498,7 @@ describe('edge cases', () => {
   it('handles rejected promises', async () => {
     const field = generateID();
     const props = createValueSelectorProps({ rule: createRule({ field }) });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       loadOptionList: async () => {
         throw new Error('fake error');
       },
@@ -516,7 +518,7 @@ describe('edge cases', () => {
     const rule = createRule({ field });
     const props = createValueSelectorProps({ rule });
     const props2 = createValueSelectorProps({ rule: { ...rule, valueSource: 'field' } });
-    const params: UseAsyncOptionListParams = {
+    const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
       getCacheKey: 'field',
       loadOptionList: async () => props.options,
     };
