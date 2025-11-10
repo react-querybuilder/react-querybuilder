@@ -411,6 +411,15 @@ const transformAliasInExpressionInternal = (
     // For object arrays: "alias.property" becomes "property"
     // For primitive arrays: this shouldn't happen as we should have caught it above
     if (expr.right && isCELIdentifier(expr.right) && !isPrimitive) {
+      // If this is a method call (has a list), preserve the Member structure
+      if (expr.list) {
+        return {
+          type: 'Member',
+          left: { type: 'Identifier', value: '' },
+          right: expr.right,
+          list: expr.list,
+        } as CELMember;
+      }
       return expr.right;
     }
   }

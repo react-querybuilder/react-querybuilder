@@ -3,6 +3,7 @@
 import type { Except } from 'type-fest';
 import type {
   DefaultCombinatorName,
+  DefaultOperatorName,
   DefaultRuleGroupType,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
@@ -14,7 +15,7 @@ import type {
 import { toFullOption } from '../optGroupUtils';
 import type { ParseCELOptionsIC, ParseCELOptionsStandard } from './parseCEL';
 import { parseCEL } from './parseCEL';
-import { isCELIdentifier, isCELMember, isCELNumericLiteral } from './utils';
+import { isCELIdentifier, isCELMember, isCELNumericLiteral, isCELStringLiteral } from './utils';
 
 const wrapRule = (
   rule?: DefaultRuleType | DefaultRuleType[],
@@ -611,6 +612,46 @@ it('handles custom expressions', () => {
             field: expr.left.value,
             operator: expr.right.value,
             value: expr.list.value[0].value,
+          };
+        return null;
+      },
+    }
+  );
+});
+
+it('handles custom expressions in subqueries', () => {
+  const subqueryFields: FullField[] = [
+    { name: 'user', value: 'user', label: 'User' },
+    { name: 'user.features', value: 'user.features', label: 'User Features' },
+    { name: 'features', value: 'features', label: 'Features' },
+    { name: '', value: '', label: 'Empty Field' },
+  ];
+
+  testParseCEL(
+    'user.features.exists(elem_alias, elem_alias.matches("tall"))',
+    wrapRule({
+      field: 'user.features',
+      operator: '=',
+      match: { mode: 'some' },
+      value: {
+        combinator: 'and',
+        rules: [{ field: '', operator: 'matches' as DefaultOperatorName, value: 'tall' }],
+      },
+    }),
+    {
+      fields: subqueryFields,
+      customExpressionHandler: expr => {
+        if (
+          isCELMember(expr) &&
+          isCELIdentifier(expr.left!) &&
+          !!expr.right &&
+          expr.list?.value.length === 1 &&
+          isCELStringLiteral(expr.list.value[0])
+        )
+          return {
+            field: expr.left.value,
+            operator: expr.right.value as DefaultOperatorName,
+            value: expr.list.value[0].value.slice(1, -1), // Remove quotes
           };
         return null;
       },
