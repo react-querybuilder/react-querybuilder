@@ -26,8 +26,10 @@ export interface UseAsyncOptionListParams<
    */
   cacheTTL?: number;
   /**
-   * List of rule/group attributes to use as the cache key, or a function that generates
-   * the cache key based on the rule/group.
+   * Can be one of the following:
+   * 1. The rule/group attribute to use as the cache key (`string`),
+   * 2. A list of rule/group attributes to use as the cache key (`string[]`), or
+   * 3. A function that generates the cache key based on the props (`(props: PropsType) => string`).
    *
    * **IMPORTANT**: If providing an array of property names, do NOT include the property
    * that `value` represents unless you are generating an auto-complete component. For example,
