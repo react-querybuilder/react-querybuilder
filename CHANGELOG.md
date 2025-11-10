@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#974] `parseCEL` correctly handles custom expressions in subqueries.
 
 ## [v8.11.2] - 2025-11-06
 
@@ -2060,6 +2062,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#960]: https://github.com/react-querybuilder/react-querybuilder/pull/960
 [#967]: https://github.com/react-querybuilder/react-querybuilder/pull/967
 [#969]: https://github.com/react-querybuilder/react-querybuilder/pull/969
+[#974]: https://github.com/react-querybuilder/react-querybuilder/pull/974
 
 <!-- #endregion -->
 
