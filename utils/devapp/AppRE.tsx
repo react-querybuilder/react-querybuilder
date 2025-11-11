@@ -1,32 +1,33 @@
 import type { BaseOption, Field, FullOptionList } from '@react-querybuilder/core';
-import { regenerateIDs, toFullOptionList } from '@react-querybuilder/core';
+import { toFullOptionList } from '@react-querybuilder/core';
 import type { RulesEngine } from '@react-querybuilder/rules-engine';
-import { RulesEngineBuilder } from '@react-querybuilder/rules-engine';
+import { regenerateREIDs, RulesEngineBuilder } from '@react-querybuilder/rules-engine';
 import * as React from 'react';
 import { DevLayout } from './DevLayout';
 import { useDevApp } from './useDevApp';
 
 const fields: Field[] = [{ name: 'age', label: 'Age' }];
+const queryBuilderProps = { fields };
 
-const actionTypes: FullOptionList<BaseOption> = toFullOptionList([
+const consequentTypes: FullOptionList<BaseOption> = toFullOptionList([
   { value: 'send_email', label: 'Send Email' },
   { value: 'log_event', label: 'Log Event' },
 ]);
 
-const initialRE: RulesEngine = regenerateIDs({
-  defaultAction: { id: '3', actionType: 'log_event' },
+const initialRE: RulesEngine = regenerateREIDs({
+  defaultConsequent: { id: '3', consequentType: 'log_event' },
   conditions: [
     {
-      condition: { combinator: 'and', rules: [{ field: 'age', operator: '>=', value: 18 }] },
-      action: {
-        actionType: 'send_email',
+      antecedent: { combinator: 'and', rules: [{ field: 'age', operator: '>=', value: 18 }] },
+      consequent: {
+        consequentType: 'send_email',
         params: { to: 'user@example.com', subject: 'Welcome!', body: 'Thanks for signing up!' },
       },
       conditions: [
         {
-          condition: { combinator: 'and', rules: [{ field: 'age', operator: '=', value: 18 }] },
-          action: {
-            actionType: 'send_email',
+          antecedent: { combinator: 'and', rules: [{ field: 'age', operator: '=', value: 18 }] },
+          consequent: {
+            consequentType: 'send_email',
             params: {
               to: 'user@example.com',
               subject: 'Happy Birthday!',
@@ -37,9 +38,9 @@ const initialRE: RulesEngine = regenerateIDs({
       ],
     },
     {
-      condition: { combinator: 'and', rules: [{ field: 'age', operator: '<', value: 18 }] },
-      action: {
-        actionType: 'send_email',
+      antecedent: { combinator: 'and', rules: [{ field: 'age', operator: '<', value: 18 }] },
+      consequent: {
+        consequentType: 'send_email',
         params: {
           to: 'user@example.com',
           subject: 'Sorry!',
@@ -72,9 +73,9 @@ export const AppRE = (): React.JSX.Element => {
         suppressStandardClassnames={suppressStandardClassnames}
         classnames={rebClassnames}
         rulesEngine={re}
-        fields={fields}
+        queryBuilderProps={queryBuilderProps}
         onRulesEngineChange={setRE}
-        actionTypes={actionTypes}
+        consequentTypes={consequentTypes}
       />
       <pre style={preStyle}>
         <code>{JSON.stringify(re, null, 2)}</code>

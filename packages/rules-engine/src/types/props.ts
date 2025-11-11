@@ -2,27 +2,28 @@ import type {
   BaseOption,
   BaseTranslationWithLabel,
   Classname,
-  FlexibleOptionList,
-  FullField,
   FullOption,
   FullOptionList,
-  OptionList,
   Path,
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
+import type { Except } from 'type-fest';
 import type { ActionElementREProps, ValueSelectorREProps } from '../components';
 import type { AntecedentAny, AntecedentCascade, Consequent, RulesEngine } from './rulesEngine';
 
 export interface SchemaRE {
-  fields: OptionList<FullField>;
   components: ComponentsRE;
   classnames: ClassnamesRE;
   consequentTypes: FullOptionList<BaseOption>;
   autoSelectConsequentType: boolean;
   suppressStandardClassnames: boolean;
   translations: TranslationsFullRE;
+  queryBuilderProps?: Except<
+    QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
+    'query' | 'onQueryChange'
+  >;
 }
 
 export interface ComponentsRE {
@@ -30,12 +31,10 @@ export interface ComponentsRE {
   consequentBuilder: React.ComponentType<ConsequentProps>;
   consequentBuilderHeader: React.ComponentType<ConsequentProps>;
   consequentBuilderBody: React.ComponentType<ConsequentProps>;
-  // oxlint-disable no-explicit-any
   conditionBuilder: React.ComponentType<ConditionProps>;
   conditionBuilderHeader: React.ComponentType<ConditionProps>;
   conditionBuilderBody: React.ComponentType<ConditionProps>;
-  conditionBuilderCascade: React.ComponentType<ConditionCascadeProps<any>>;
-  // oxlint-enable no-explicit-any
+  conditionBuilderCascade: React.ComponentType<ConditionCascadeProps<RuleGroupTypeAny>>;
   queryBuilder: React.ComponentType<
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>
   >;
@@ -97,7 +96,7 @@ export type TranslationsFullRE = {
 };
 
 export interface RulesEngineProps {
-  fields?: FlexibleOptionList<FullField>;
+  // fields?: FlexibleOptionList<FullField>;
   onRulesEngineChange?: (re: RulesEngine) => void;
   rulesEngine?: RulesEngine;
   consequentTypes?: FullOptionList<BaseOption>;
@@ -106,6 +105,10 @@ export interface RulesEngineProps {
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
   translations?: Partial<TranslationsRE>;
+  queryBuilderProps?: Except<
+    QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
+    'query' | 'onQueryChange'
+  >;
 }
 
 export interface RulesEngineBuilderHeaderProps {

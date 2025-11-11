@@ -35,11 +35,11 @@ export const defaultRulesEngineIC: RulesEngineIC = {
 export const defaultTranslationsRE: TranslationsFullRE = {
   blockLabelIf: { title: 'First condition', label: 'If' },
   blockLabelElseIf: { title: 'Subsequent condition', label: 'Else If' },
-  blockLabelElse: { title: 'Fallback/default action', label: 'Else' },
-  blockLabelThen: { title: 'Consequent action', label: 'Then' },
+  blockLabelElse: { title: 'Fallback/default consequent', label: 'Else' },
+  blockLabelThen: { title: 'Consequent action/result', label: 'Then' },
   addCondition: { title: 'Add condition', label: '+ Condition' },
   addSubcondition: { title: 'Add subcondition', label: '+ Subcondition' },
-  addConsequent: { title: 'Add action', label: '+ Action' },
+  addConsequent: { title: 'Add consequent action/result', label: '+ Consequent' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
-  removeConsequent: { title: 'Remove action', label: '⨯' },
+  removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
 };

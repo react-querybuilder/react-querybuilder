@@ -1,7 +1,15 @@
 import { clsx, type RuleGroupType, type RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
+import type { FullOption, QueryBuilderProps } from 'react-querybuilder';
 import { standardClassnamesRE } from '../defaults';
 import type { AntecedentAny, ConditionProps, Consequent } from '../types';
+
+type QueryBuilderPropsStandard = QueryBuilderProps<
+  RuleGroupType,
+  FullOption,
+  FullOption,
+  FullOption
+>;
 
 /**
  * Default header component for {@link RulesEngineConditionBuilder}.
@@ -109,8 +117,8 @@ export const RulesEngineConditionBuilderBody = (props: ConditionProps): React.JS
   return (
     <React.Fragment>
       <QueryBuilder
+        {...(props.schema.queryBuilderProps as QueryBuilderPropsStandard)}
         enableMountQueryChange={false}
-        fields={props.schema.fields}
         query={props.condition.antecedent as RuleGroupType}
         onQueryChange={conditionUpdater}
       />
