@@ -52,7 +52,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.72.4",
+    "@fluentui/react-components": "^9.72.6",
     "@fluentui/react-icons-mdl2": "^1.4.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
@@ -64,7 +64,7 @@
     "react-querybuilder": "8.12.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.2.1"
+    "vite": "^7.2.2"
   },
   "peerDependencies": {
     "@fluentui/react-components": "^9",
