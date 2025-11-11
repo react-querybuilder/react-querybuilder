@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/antd",
   "description": "Custom Ant Design components for react-querybuilder",
-  "version": "8.11.0",
+  "version": "8.12.0",
   "publishConfig": {
     "access": "public"
   },
@@ -57,21 +57,21 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
-    "antd": "^5.27.6",
-    "dayjs": "^1.11.18",
+    "@vitejs/plugin-react": "^5.1.0",
+    "antd": "^5.28.0",
+    "dayjs": "^1.11.19",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-querybuilder": "8.11.0",
+    "react-querybuilder": "8.12.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.1.11"
+    "vite": "^7.2.2"
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5",
     "antd": ">=5.11.0",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "8.11.0"
+    "react-querybuilder": "8.12.0"
   }
 }

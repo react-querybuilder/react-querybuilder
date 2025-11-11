@@ -296,9 +296,7 @@ it('handles quoteValuesWith correctly', () => {
 });
 
 it('handles invalid preset correctly', () => {
-  expect(formatQuery(query, { format: 'sql', preset: 'invalid' as unknown as SQLPreset })).toBe(
-    sqlString
-  );
+  expect(formatQuery(query, { format: 'sql', preset: 'invalid' as SQLPreset })).toBe(sqlString);
 });
 
 it('handles custom fallbackExpression correctly', () => {

@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.12.0] - 2025-11-06
+
+### Added
+
+- [#961] New hook `useAsyncOptionList` which augments a `ValueSelectorProps` or `ValueEditorProps` object with async option list loading and caching.
+
+### Fixed
+
+- [#974] `parseCEL` correctly handles custom expressions in subqueries.
+
+## [v8.11.2] - 2025-11-06
+
+### Fixed
+
+- [#967] `prepareRuleGroup` and `prepareRule` now generate `id`s for subqueries.
+- [#969] `parseCEL` correctly handles subqueries (`.all()`/`.exists()`) and dynamic property accessors (bracket notation).
+
+## [v8.11.1] - 2025-10-23
+
+### Fixed
+
+- [#960] Issues with type and dependencies
+
 ## [v8.11.0] - 2025-10-21
 
 ### Added
@@ -2044,12 +2067,20 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#951]: https://github.com/react-querybuilder/react-querybuilder/pull/951
 [#954]: https://github.com/react-querybuilder/react-querybuilder/pull/954
 [#957]: https://github.com/react-querybuilder/react-querybuilder/pull/957
+[#960]: https://github.com/react-querybuilder/react-querybuilder/pull/960
+[#961]: https://github.com/react-querybuilder/react-querybuilder/pull/961
+[#967]: https://github.com/react-querybuilder/react-querybuilder/pull/967
+[#969]: https://github.com/react-querybuilder/react-querybuilder/pull/969
+[#974]: https://github.com/react-querybuilder/react-querybuilder/pull/974
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...HEAD
+[v8.12.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.2...v8.12.0
+[v8.11.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.1...v8.11.2
+[v8.11.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...v8.11.1
 [v8.11.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.10.0...v8.11.0
 [v8.10.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.2...v8.10.0
 [v8.9.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.9.1...v8.9.2

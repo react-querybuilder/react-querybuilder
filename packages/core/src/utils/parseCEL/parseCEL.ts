@@ -9,6 +9,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  MatchMode,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
@@ -33,20 +34,25 @@ import {
   celGenerateMixedAndOrList,
   celNormalizeOperator,
   evalCELLiteralValue,
+  extractSubqueryComponents,
   getCELIdentifierFromChain,
   getCELIdentifierFromNegatedChain,
   isCELConditionalAnd,
   isCELConditionalOr,
   isCELExpressionGroup,
+  isCELIdentifier,
   isCELIdentifierOrChain,
   isCELLikeExpression,
   isCELList,
   isCELLiteral,
   isCELMap,
   isCELNegatedLikeExpression,
+  isCELNegatedSubqueryExpression,
   isCELNegation,
   isCELRelation,
   isCELStringLiteral,
+  isCELSubqueryExpression,
+  transformAliasInExpression,
 } from './utils';
 
 export interface ParseCELOptionsStandard
@@ -263,6 +269,68 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         return valueSource ? { field, operator, value, valueSource } : { field, operator, value };
       }
+    } else if (isCELSubqueryExpression(expr)) {
+      const components = extractSubqueryComponents(expr);
+      // istanbul ignore else
+      if (components) {
+        const { field, method, alias, condition } = components;
+
+        const matchMode: MatchMode = method === 'all' ? 'all' : 'some';
+
+        // Parse the condition expression recursively
+        // Replace alias references in the condition with appropriate field paths
+        const transformedCondition = transformAliasInExpression(condition, alias);
+        const subqueryValue = processCELExpression(transformedCondition);
+
+        if (subqueryValue && fieldIsValid(field, '=')) {
+          // Wrap single rules in a rule group
+          const ruleGroupValue = isRuleGroup(subqueryValue)
+            ? subqueryValue
+            : ic
+              ? { rules: [subqueryValue] }
+              : { combinator: 'and' as DefaultCombinatorName, rules: [subqueryValue] };
+
+          return {
+            field,
+            operator: '=',
+            match: { mode: matchMode },
+            value: ruleGroupValue,
+          };
+        }
+      }
+    } else if (isCELNegatedSubqueryExpression(expr)) {
+      const field = getCELIdentifierFromNegatedChain(expr.left).replace(/^!+/, '');
+      const method = expr.right.value;
+      const [aliasExpr, conditionExpr] = expr.list.value;
+      const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
+
+      // For negated subqueries, we want to create a NOT rule group with the subquery inside
+      const transformedCondition = transformAliasInExpression(conditionExpr, alias);
+      const subqueryValue = processCELExpression(transformedCondition);
+
+      // istanbul ignore else
+      if (subqueryValue && fieldIsValid(field, '=')) {
+        const ruleGroupValue = isRuleGroup(subqueryValue)
+          ? subqueryValue
+          : ic
+            ? { rules: [subqueryValue] }
+            : { combinator: 'and' as DefaultCombinatorName, rules: [subqueryValue] };
+
+        // Determine match mode based on method (no forwarded negation since we handle it differently)
+        const matchMode = method === 'all' ? 'all' : 'some';
+
+        const subqueryRule: DefaultRuleType = {
+          field,
+          operator: '=',
+          match: { mode: matchMode },
+          value: ruleGroupValue,
+        };
+
+        // Return a negated rule group containing the subquery
+        return ic
+          ? { not: true, rules: [subqueryRule] }
+          : { combinator: 'and' as DefaultCombinatorName, not: true, rules: [subqueryRule] };
+      }
     } else if (isCELRelation(expr)) {
       let field: string | null = null;
       // oxlint-disable-next-line typescript/no-explicit-any
@@ -322,7 +390,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
         }
       }
       if (
-        field &&
+        field !== null &&
         fieldIsValid(field, operator, valueSource === 'field' ? value : undefined) &&
         value !== undefined
       ) {

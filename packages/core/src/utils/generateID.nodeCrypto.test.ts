@@ -5,7 +5,7 @@ import { testGenerateID } from './generateIDTestUtils';
 
 const ogCrypto = globalThis.crypto;
 
-globalThis.crypto = nodeCrypto as unknown as Crypto;
+globalThis.crypto = nodeCrypto as Crypto;
 
 // Delay the loading of generateID until after crypto has been defined
 const { generateID } = require('./generateID');

@@ -9,7 +9,7 @@ export interface SetQueryStateParams {
   query: RuleGroupTypeAny;
 }
 
-export const initialState: QueriesSliceState = {};
+const initialState: QueriesSliceState = {};
 
 export const queriesSlice: Slice<
   QueriesSliceState,
@@ -28,11 +28,11 @@ export const queriesSlice: Slice<
   name: 'queries',
   initialState,
   reducers: {
-    setQueryState: (state, { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>) => {
+    setQueryState: (state, { payload: { qbId, query } }) => {
       state[qbId] = query;
     },
   },
   selectors: {
-    getQuerySelectorById: (state: QueriesSliceState, qbId: string) => state[qbId],
+    getQuerySelectorById: (state, qbId) => state[qbId],
   },
 });

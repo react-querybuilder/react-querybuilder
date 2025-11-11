@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       runType:
-        description: 'Run type'
+        description: "Run type"
         required: true
         default: Dry run
         type: choice
@@ -12,7 +12,7 @@ on:
           - Dry run
           - Live
       versionBump:
-        description: 'Version bump strategy'
+        description: "Version bump strategy"
         required: true
         default: prerelease
         type: choice
@@ -26,7 +26,7 @@ on:
           - prerelease
           - custom
       customVersion:
-        description: 'Custom version'
+        description: "Custom version"
         type: string
 
 jobs:
@@ -36,9 +36,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "20"
       - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
@@ -69,11 +69,11 @@ jobs:
           # Increase header level for sections
           CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/^#(### (Added|Changed|Fixed))$/\1/g')
           RELEASE_BODY="${CHANGELOG_SECTION}
-          
+
           [CHANGELOG entry for v${VERSION}](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#${CHANGELOG_ANCHOR})"
           if [ -n "$PREV_VERSION" ]; then
             RELEASE_BODY="${RELEASE_BODY}
-          
+
           https://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION}"
           fi
           echo "Release body content for v$VERSION:"

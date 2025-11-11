@@ -1,29 +1,29 @@
 import { configureStore } from '@reduxjs/toolkit';
 import type { RenderOptions, RenderResult } from '@testing-library/react';
-import { act, render as og_render } from '@testing-library/react';
+import { render as og_render } from '@testing-library/react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import type { RqbState } from '../redux';
 import { QueryBuilderStateContext } from '../redux';
+import { asyncOptionListsSlice } from '../redux/asyncOptionListsSlice';
 import { queriesSlice } from '../redux/queriesSlice';
 import { warningsSlice } from '../redux/warningsSlice';
-
-export const waitABeat = async (): Promise<void> => {
-  await act(async () => {
-    await new Promise(r => setTimeout(r, 10));
-  });
-};
 
 // #region Redux stuff
 
 const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
+  asyncOptionLists: asyncOptionListsSlice.getInitialState(),
 } satisfies RqbState;
 
 const getNewStore = () =>
   configureStore({
-    reducer: { queries: queriesSlice.reducer, warnings: warningsSlice.reducer },
+    reducer: {
+      queries: queriesSlice.reducer,
+      warnings: warningsSlice.reducer,
+      asyncOptionLists: asyncOptionListsSlice.reducer,
+    },
     preloadedState,
   });
 

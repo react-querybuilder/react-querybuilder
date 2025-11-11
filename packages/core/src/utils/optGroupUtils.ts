@@ -378,7 +378,7 @@ export const uniqOptList = <T extends BaseOption>(
 
 export interface PreparedOptionList<O extends FullOption> {
   defaultOption: FullOption;
-  optionList: O[] | OptionGroup<O>[];
+  optionList: FullOptionList<O>;
   optionsMap: Partial<FullOptionRecord<FullOption>>;
 }
 
@@ -417,7 +417,7 @@ export const prepareOptionList = <O extends FullOption>(
 
   const optionsProp = optionListPropOriginal ?? ([defaultOption] as FlexibleOptionList<O>);
 
-  let optionList: O[] | OptionGroup<O>[] = [];
+  let optionList: FullOptionList<O>;
   const opts = (
     Array.isArray(optionsProp)
       ? toFullOptionList(optionsProp, baseOption, labelMap)
@@ -455,14 +455,14 @@ export const prepareOptionList = <O extends FullOption>(
     optionsMap = autoSelectOption ? op : { ...op, [placeholderName]: defaultOption };
   } else {
     if (isFlexibleOptionGroupArray(optionList)) {
-      for (const og of optionList) {
+      for (const og of optionList as OptionGroup<ToFullOption<O>>[]) {
         for (const opt of og.options) {
           optionsMap[(opt.value ?? /* istanbul ignore next */ opt.name) as OptionIdentifier] =
             toFullOption(opt, baseOption) as FullOption;
         }
       }
     } else {
-      for (const opt of optionList) {
+      for (const opt of optionList as ToFullOption<O>[]) {
         optionsMap[(opt.value ?? /* istanbul ignore next */ opt.name) as OptionIdentifier] =
           toFullOption(opt, baseOption) as FullOption;
       }

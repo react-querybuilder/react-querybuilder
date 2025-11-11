@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       versionTag:
-        description: 'Version tag'
+        description: "Version tag"
         required: true
         default: next
         type: choice
@@ -13,7 +13,7 @@ on:
           - latest
           - custom
       customVersionTag:
-        description: 'Custom version tag'
+        description: "Custom version tag"
         type: string
 
 jobs:
@@ -30,10 +30,10 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
       - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29

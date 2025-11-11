@@ -31,7 +31,7 @@ import {
   defaultTranslations as t,
   toFullOption,
 } from '@react-querybuilder/core';
-import { consoleMocks } from '@rqb-testing';
+import { consoleMocks, waitABeat } from '@rqb-testing';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
@@ -53,7 +53,6 @@ import { QueryBuilder } from './QueryBuilder';
 import { QueryBuilderContext } from './QueryBuilderContext';
 import type { UseRuleGroup } from './RuleGroup';
 import { RuleGroupHeaderComponents } from './RuleGroup';
-import { waitABeat } from './testUtils';
 import { ValueEditor, useValueEditor } from './ValueEditor';
 import { ValueSelector } from './ValueSelector';
 

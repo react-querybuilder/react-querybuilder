@@ -766,12 +766,9 @@ export const useRule = (props: RuleProps): UseRule => {
     () => getValidationClassNames(validationResult),
     [validationResult]
   );
-  const fieldBasedClassName = useMemo(() => fieldData?.className ?? '', [fieldData?.className]);
-  const operatorBasedClassName = useMemo(
-    () => operatorObject?.className ?? '',
-    [operatorObject?.className]
-  );
-  const hasSubQuery = useMemo(() => matchModes.length > 0, [matchModes.length]);
+  const fieldBasedClassName = fieldData?.className ?? '';
+  const operatorBasedClassName = operatorObject?.className ?? '';
+  const hasSubQuery = matchModes.length > 0;
 
   const outerClassName = useMemo(
     () =>

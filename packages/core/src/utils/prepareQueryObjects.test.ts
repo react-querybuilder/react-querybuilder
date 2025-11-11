@@ -5,22 +5,28 @@ import { prepareRule, prepareRuleGroup, prepareRuleOrGroup } from './prepareQuer
 describe('prepareRule', () => {
   it('should not generate new ID if rule provides it', () => {
     expect(
-      prepareRule({
-        id: 'r-12345',
-        field: 'firstName',
-        value: 'Test with ID',
-        operator: '=',
-      }).id
+      prepareRule({ id: 'r-12345', field: 'firstName', operator: '=', value: 'Test with ID' }).id
     ).toBe('r-12345');
   });
+
   it('should generate new ID if missing in rule', () => {
-    expect(
-      prepareRule({
-        field: 'firstName',
-        value: 'Test without ID',
-        operator: '=',
-      }).id
-    ).toMatch(uuidV4regex);
+    expect(prepareRule({ field: 'firstName', operator: '=', value: 'Test without ID' }).id).toMatch(
+      uuidV4regex
+    );
+  });
+
+  it('should generate new IDs for subqueries', () => {
+    const preparedRule = prepareRule({
+      field: 'firstName',
+      operator: '=',
+      match: { mode: 'all' },
+      value: {
+        combinator: 'and',
+        rules: [{ field: 'firstName', operator: '=', value: 'Test without ID' }],
+      },
+    });
+    expect(preparedRule.value.id).toMatch(uuidV4regex);
+    expect(preparedRule.value.rules[0].id).toMatch(uuidV4regex);
   });
 });
 
@@ -28,14 +34,7 @@ describe('when initial query, with ID, is provided', () => {
   const queryWithID: RuleGroupType = {
     id: 'g-12345',
     combinator: 'and',
-    rules: [
-      {
-        id: 'r-12345',
-        field: 'firstName',
-        value: 'Test',
-        operator: '=',
-      },
-    ],
+    rules: [{ id: 'r-12345', field: 'firstName', operator: '=', value: 'Test' }],
   };
 
   it('should not generate new ID if query provides ID', () => {
@@ -48,27 +47,13 @@ describe('when initial query, with ID, is provided', () => {
 describe('when initial query, without ID, is provided', () => {
   const queryWithoutID: RuleGroupType = {
     combinator: 'and',
-    rules: [
-      {
-        field: 'firstName',
-        value: 'Test without ID',
-        operator: '=',
-      },
-    ],
+    rules: [{ field: 'firstName', operator: '=', value: 'Test without ID' }],
   };
   const queryICWithoutID: RuleGroupTypeIC = {
     rules: [
-      {
-        field: 'firstName',
-        value: 'Test without ID',
-        operator: '=',
-      },
+      { field: 'firstName', operator: '=', value: 'Test without ID' },
       'and',
-      {
-        field: 'firstName',
-        value: 'Test without ID',
-        operator: '=',
-      },
+      { field: 'firstName', operator: '=', value: 'Test without ID' },
     ],
   };
 
@@ -95,18 +80,15 @@ describe('prepareRuleOrGroup', () => {
       prepareRuleOrGroup({
         id: 'r-12345',
         field: 'firstName',
-        value: 'Test with ID',
         operator: '=',
+        value: 'Test with ID',
       }).id
     ).toBe('r-12345');
   });
+
   it('should generate new ID if missing in rule', () => {
     expect(
-      prepareRuleOrGroup({
-        field: 'firstName',
-        value: 'Test without ID',
-        operator: '=',
-      }).id
+      prepareRuleOrGroup({ field: 'firstName', operator: '=', value: 'Test without ID' }).id
     ).toMatch(uuidV4regex);
   });
 });

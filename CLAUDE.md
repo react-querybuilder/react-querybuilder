@@ -31,17 +31,19 @@ bun run build
 
 **Development:**
 
-- `bun start` - Hot-reload dev server (all packages)
-- `bun start:rqb` - Core package dev
-- `bun start:antd`, `bun start:material`, etc. - UI packages
+- `bun start` - Hot-reload dev server (all packages, Bun server)
+- `bun start:rqb` - Main package dev (Vite server)
+- `bun start:antd`, `bun start:material`, etc. - UI packages (Vite server)
 
 **Quality:**
 
-- `bun checkall` - Full CI check
-- `bun run test` - All tests (MUST include "run" for Jest)
+- `bun test ...` when React and DOM not involved (much faster than `bunx jest ...`)
+- `bunx jest ...` to check 100% test coverage
+- Do not run `bun run test`—it automatically runs unnecessary steps
 - `bun typecheck` - TypeScript check
-- `bun lint` - Oxlint
+- `bun lint` - Type-aware linting with Oxlint and `tsgo`
 - `bun pretty-print` - Format (run after changes)
+- `bun checkall` - Full CI check (run before submitting a PR)
 
 **Documentation:**
 
@@ -50,9 +52,10 @@ bun run build
 
 ### Build
 
-- `bun run build` - All packages (concurrent)
-- `bun run build:sequential` - Sequential (debug)
-- Individual: `bun build:rqb`, `bun build:antd`, etc.
+- `bun run build` - All packages (concurrent via Bun CLI filter)
+- `bun run build:concurrent` - All packages (concurrent via `concurrently`)
+- `bun run build:sequential` - Sequential (better for debugging)
+- Individual packages: `bun build:rqb`, `bun build:antd`, etc.
 
 ## Code Style
 
@@ -62,10 +65,9 @@ bun run build
 packages/core/src/           # Non-React utilities
 packages/react-querybuilder/src/
 ├── components/        # React components (PascalCase.tsx)
-├── context/           # Contexts
 ├── hooks/             # Hooks (useHookName.ts)
 ├── types/             # TypeScript defs
-├── utils/             # Utils (camelCase.ts)
+├── utils/             # Utilities (camelCase.ts)
 ├── styles/            # SCSS
 ├── redux/             # Redux
 └── barrel.ts          # Export aggregator
@@ -147,7 +149,7 @@ import { generateID, isRuleGroup } from '../utils';
 
 - Jest + Testing Library
 - Helpers in `utils/testing/`
-- 100% coverage required
+- 100% coverage required - use `bunx jest` to test for coverage (not `bun test` or `bun run test`)
 
 - Test files: `ComponentName.test.tsx`
 - Describe blocks: component/function name

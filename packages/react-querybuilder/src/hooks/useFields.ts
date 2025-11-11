@@ -2,8 +2,8 @@ import type {
   FullCombinator,
   FullField,
   FullOperator,
+  FullOptionList,
   FullOptionRecord,
-  OptionGroup,
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
 import { prepareOptionList } from '@react-querybuilder/core';
@@ -12,7 +12,7 @@ import type { QueryBuilderProps, TranslationsFull } from '../types';
 
 export interface UseFields<F extends FullField> {
   defaultField: FullField;
-  fields: F[] | OptionGroup<F>[];
+  fields: FullOptionList<F>;
   fieldMap: Partial<FullOptionRecord<FullField>>;
 }
 

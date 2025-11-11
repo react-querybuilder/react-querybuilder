@@ -264,15 +264,9 @@ export function useQueryBuilderSchema<
   // #endregion
 
   // #region Query update methods
-  const disabledPaths = useMemo(
-    () => (Array.isArray(disabled) && disabled) || defaultDisabledPaths,
-    [disabled]
-  );
+  const disabledPaths = (Array.isArray(disabled) && disabled) || defaultDisabledPaths;
   const queryDisabled = disabled === true;
-  const rootGroupDisabled = useMemo(
-    () => rootGroup.disabled || disabledPaths.some(p => p.length === 0),
-    [disabledPaths, rootGroup.disabled]
-  );
+  const rootGroupDisabled = rootGroup.disabled || disabledPaths.some(p => p.length === 0);
 
   const onRuleAdd = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -370,7 +364,7 @@ export function useQueryBuilderSchema<
       const newQuery = update(queryLocal, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
-        getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
+        getRuleDefaultOperator: getRuleDefaultOperator as (field: string) => string,
         getValueSources: getValueSourcesMain as (
           field: string,
           operator: string
@@ -547,14 +541,9 @@ export function useQueryBuilderSchema<
   // #endregion
 
   // #region Miscellaneous
-  const dndEnabledAttr = useMemo(
-    () => (enableDragAndDrop ? 'enabled' : 'disabled'),
-    [enableDragAndDrop]
-  );
-  const inlineCombinatorsAttr = useMemo(
-    () => (independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled'),
-    [independentCombinators, showCombinatorsBetweenRules]
-  );
+  const dndEnabledAttr = enableDragAndDrop ? 'enabled' : 'disabled';
+  const inlineCombinatorsAttr =
+    independentCombinators || showCombinatorsBetweenRules ? 'enabled' : 'disabled';
   const combinatorPropObject: Pick<RuleGroupProps, 'combinator'> = useMemo(
     () =>
       typeof rootGroup.combinator === 'string'
