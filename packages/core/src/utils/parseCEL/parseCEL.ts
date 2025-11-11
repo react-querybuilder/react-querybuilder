@@ -300,8 +300,8 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       }
     } else if (isCELNegatedSubqueryExpression(expr)) {
       const field = getCELIdentifierFromNegatedChain(expr.left).replace(/^!+/, '');
-      const method = expr.right!.value as 'all' | 'exists';
-      const [aliasExpr, conditionExpr] = expr.list!.value;
+      const method = expr.right.value;
+      const [aliasExpr, conditionExpr] = expr.list.value;
       const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
 
       // For negated subqueries, we want to create a NOT rule group with the subquery inside

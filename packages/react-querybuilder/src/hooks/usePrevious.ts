@@ -13,7 +13,9 @@ export const usePrevious = <T>(value: T): T | null => {
   const current = ref.current.value;
 
   if (value !== current) {
-    ref.current = { value, prev: current };
+    // ref.current = { value, prev: current };
+    ref.current.prev = current;
+    ref.current.value = value;
   }
 
   return ref.current.prev;

@@ -9,7 +9,7 @@ export interface RadioProps extends ChakraRadioGroup.ItemProps {
 }
 
 // TODO: fix types
-const CRGI = ChakraRadioGroup.Item as unknown as React.ForwardRefExoticComponent<
+const CRGI = ChakraRadioGroup.Item as React.ForwardRefExoticComponent<
   RadioProps & React.RefAttributes<HTMLLabelElement>
 >;
 

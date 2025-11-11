@@ -1,3 +1,4 @@
+export * from './useAsyncOptionList';
 export * from './useControlledOrUncontrolled';
 export * from './useDeprecatedProps';
 export * from './useFields';

@@ -140,6 +140,7 @@ export const useMergedContext = <
       matchThreshold: cc.matchThreshold,
       branches: cc.branches,
       hasSubQuery: cc.hasSubQuery,
+      loading: cc.loading,
     }),
     [
       cc.actionElement,
@@ -162,6 +163,7 @@ export const useMergedContext = <
       cc.hasSubQuery,
       cc.header,
       cc.invalid,
+      cc.loading,
       cc.lockGroup,
       cc.lockRule,
       cc.muteGroup,

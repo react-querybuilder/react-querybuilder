@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#961] New hook `useAsyncOptionList` which augments a `ValueSelectorProps` or `ValueEditorProps` object with async option loading and (optionally) caching.
+
 ### Fixed
 
 - [#974] `parseCEL` correctly handles custom expressions in subqueries.
@@ -2060,6 +2064,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#954]: https://github.com/react-querybuilder/react-querybuilder/pull/954
 [#957]: https://github.com/react-querybuilder/react-querybuilder/pull/957
 [#960]: https://github.com/react-querybuilder/react-querybuilder/pull/960
+[#961]: https://github.com/react-querybuilder/react-querybuilder/pull/961
 [#967]: https://github.com/react-querybuilder/react-querybuilder/pull/967
 [#969]: https://github.com/react-querybuilder/react-querybuilder/pull/969
 [#974]: https://github.com/react-querybuilder/react-querybuilder/pull/974

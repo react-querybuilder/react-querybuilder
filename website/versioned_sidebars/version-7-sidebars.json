@@ -72,6 +72,7 @@
         "tips/managing-fields",
         "tips/managing-operators",
         "tips/custom-with-fallback",
+        "tips/async-option-lists",
         "tips/subqueries",
         "tips/arbitrary-updates",
         "tips/external-controls",

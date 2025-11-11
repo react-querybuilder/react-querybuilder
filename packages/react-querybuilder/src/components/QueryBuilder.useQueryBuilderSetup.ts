@@ -377,7 +377,7 @@ export const useQueryBuilderSetup = <
       valueSource,
       value: '',
       ...(matchMode ? { match: { mode: matchMode, threshold: 1 } } : null),
-    } as unknown as R;
+    } as R;
 
     const value = getRuleDefaultValue(newRule);
 

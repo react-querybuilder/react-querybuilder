@@ -364,7 +364,7 @@ export function useQueryBuilderSchema<
       const newQuery = update(queryLocal, prop, value, path, {
         resetOnFieldChange,
         resetOnOperatorChange,
-        getRuleDefaultOperator: getRuleDefaultOperator as unknown as (field: string) => string,
+        getRuleDefaultOperator: getRuleDefaultOperator as (field: string) => string,
         getValueSources: getValueSourcesMain as (
           field: string,
           operator: string

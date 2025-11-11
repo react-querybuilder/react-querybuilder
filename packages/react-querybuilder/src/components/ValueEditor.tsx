@@ -108,7 +108,7 @@ export const ValueEditor = <F extends FullField>(
         <SelectorComponent
           key={key}
           {...propsForValueSelector}
-          schema={allProps.schema as unknown as Schema<FullField, string>}
+          schema={allProps.schema as Schema<FullField, string>}
           className={valueListItemClassName}
           handleOnChange={v => multiValueHandler(v, i)}
           disabled={disabled}
@@ -134,7 +134,7 @@ export const ValueEditor = <F extends FullField>(
       return (
         <SelectorComponent
           {...propsForValueSelector}
-          schema={allProps.schema as unknown as Schema<FullField, string>}
+          schema={allProps.schema as Schema<FullField, string>}
           testID={testID}
           className={className}
           title={title}

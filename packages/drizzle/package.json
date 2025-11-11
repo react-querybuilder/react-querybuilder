@@ -46,12 +46,12 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.11",
+    "@electric-sql/pglite": "^0.3.14",
     "@react-querybuilder/core": "8.11.2",
     "drizzle-orm": "^0.44.7",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^7.2.1"
   },
   "peerDependencies": {
     "@react-querybuilder/core": "8.11.2",

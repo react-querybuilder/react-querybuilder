@@ -12,7 +12,7 @@ type ValuesType<T> =
   T extends Record<infer _K, infer V> ? ([V] extends [string] ? V : never) : never;
 export type WarningsSliceState = ValuesAsKeys<typeof messages>;
 export type Messages = ValuesType<typeof messages>;
-export const initialState: WarningsSliceState = {
+const initialState: WarningsSliceState = {
   [messages.errorInvalidIndependentCombinatorsProp]: false,
   [messages.errorUnnecessaryIndependentCombinatorsProp]: false,
   [messages.errorDeprecatedRuleGroupProps]: false,
@@ -24,16 +24,7 @@ export const initialState: WarningsSliceState = {
 };
 
 export const warningsSlice: Slice<
-  {
-    [messages.errorInvalidIndependentCombinatorsProp]: boolean;
-    [messages.errorUnnecessaryIndependentCombinatorsProp]: boolean;
-    [messages.errorDeprecatedRuleGroupProps]: boolean;
-    [messages.errorDeprecatedRuleProps]: boolean;
-    [messages.errorBothQueryDefaultQuery]: boolean;
-    [messages.errorUncontrolledToControlled]: boolean;
-    [messages.errorControlledToUncontrolled]: boolean;
-    [messages.errorEnabledDndWithoutReactDnD]: boolean;
-  },
+  WarningsSliceState,
   {
     // oxlint-disable-next-line typescript/no-explicit-any
     rqbWarn: (state: any, { payload }: PayloadAction<Messages>) => void;
@@ -43,7 +34,7 @@ export const warningsSlice: Slice<
   name: 'warnings',
   initialState,
   reducers: {
-    rqbWarn: (state, { payload }: PayloadAction<Messages>) => {
+    rqbWarn: (state, { payload }) => {
       if (!state[payload]) {
         console.error(payload);
         state[payload] = true;

@@ -5,30 +5,22 @@ import type {
   Tuple,
   UnknownAction,
 } from '@reduxjs/toolkit';
+import type { AsyncOptionListsSliceState } from './asyncOptionListsSlice';
 import type { QueriesSliceState } from './queriesSlice';
 import type { WarningsSliceState } from './warningsSlice';
 
 export type RqbState = {
   queries: QueriesSliceState;
   warnings: WarningsSliceState;
+  asyncOptionLists: AsyncOptionListsSliceState;
 };
 
 export type RqbStore = EnhancedStore<
-  {
-    queries: QueriesSliceState;
-    warnings: WarningsSliceState;
-  },
+  RqbState,
   UnknownAction,
   Tuple<
-    [
-      StoreEnhancer<{
-        dispatch: ThunkDispatch<
-          { queries: QueriesSliceState; warnings: WarningsSliceState },
-          undefined,
-          UnknownAction
-        >;
-      }>,
-      StoreEnhancer,
-    ]
+    [StoreEnhancer<{ dispatch: ThunkDispatch<RqbState, undefined, UnknownAction> }>, StoreEnhancer]
   >
 >;
+
+export type CacheKeys = [string, ...string[]];

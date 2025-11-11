@@ -215,9 +215,9 @@ export const extractSubqueryComponents = (
     return null;
   }
 
-  const field = getCELIdentifierFromChain(expr.left! as CELIdentifier | CELMemberIdentifierChain);
-  const method = expr.right!.value as 'all' | 'exists';
-  const [aliasExpr, conditionExpr] = expr.list!.value;
+  const field = getCELIdentifierFromChain(expr.left);
+  const method = expr.right.value;
+  const [aliasExpr, conditionExpr] = expr.list.value;
 
   const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
 
