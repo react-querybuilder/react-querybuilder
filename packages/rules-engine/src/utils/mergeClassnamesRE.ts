@@ -12,11 +12,15 @@ const joinClassnamesByName = (name: keyof ClassnamesRE, args: MergeClassnamesREP
 export const mergeClassnamesRE = (...args: MergeClassnamesREParams): ClassnamesRE => ({
   rulesEngineBuilder: joinClassnamesByName('rulesEngineBuilder', args),
   rulesEngineHeader: joinClassnamesByName('rulesEngineHeader', args),
-  blockLabel: joinClassnamesByName('blockLabel', args),
   consequentBuilder: joinClassnamesByName('consequentBuilder', args),
   consequentBuilderHeader: joinClassnamesByName('consequentBuilderHeader', args),
   consequentBuilderBody: joinClassnamesByName('consequentBuilderBody', args),
   consequentBuilderStandalone: joinClassnamesByName('consequentBuilderStandalone', args),
   conditionBuilder: joinClassnamesByName('conditionBuilder', args),
   conditionBuilderHeader: joinClassnamesByName('conditionBuilderHeader', args),
+  blockLabel: joinClassnamesByName('blockLabel', args),
+  blockLabelIf: joinClassnamesByName('blockLabelIf', args),
+  blockLabelIfElse: joinClassnamesByName('blockLabelIfElse', args),
+  blockLabelElse: joinClassnamesByName('blockLabelElse', args),
+  blockLabelThen: joinClassnamesByName('blockLabelThen', args),
 });

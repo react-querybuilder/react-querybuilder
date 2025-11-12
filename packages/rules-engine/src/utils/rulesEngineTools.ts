@@ -1,5 +1,4 @@
 import type {
-  AddOptions,
   GroupOptions,
   InsertOptions,
   MoveOptions,
@@ -9,7 +8,7 @@ import type {
   UpdateOptions,
 } from '@react-querybuilder/core';
 import {
-  add,
+  generateID,
   getCommonAncestorPath,
   getParentPath,
   group,
@@ -18,13 +17,17 @@ import {
   isRuleType,
   move,
   pathsAreEqual,
-  remove,
   update,
 } from '@react-querybuilder/core';
 import { produce } from 'immer';
-import type { Consequent, RulesEngineAny } from '../types';
-import { isRulesEngineAny, isRulesEngineConsequent } from './isRulesEngine';
+import type { Consequent, REConditionAny, RulesEngineAny } from '../types';
+import {
+  isRulesEngineAny,
+  isRulesEngineConditionAny,
+  isRulesEngineConsequent,
+} from './isRulesEngine';
 import { findConditionPath, getConditionPathOfID } from './pathUtils';
+import { prepareRulesEngineCondition } from './prepareRulesEngine';
 
 const push = (a: unknown[], ...items: unknown[]) => a.push(...items);
 const splice = (a: unknown[], start: number, deleteCount: number, ...items: unknown[]) =>
@@ -37,11 +40,16 @@ const coerceToRulesEngine = (re: unknown): re is RulesEngineAny => {
 };
 
 /**
- * Options for {@link add}.
+ * Options for {@link addRE}.
  *
  * @group Rules Engine Tools
  */
-export interface AddOptionsRE extends AddOptions {}
+export interface AddOptionsRE {
+  /**
+   * ID generator.
+   */
+  idGenerator?: () => string;
+}
 /**
  * Adds a rule or group to a query.
  * @returns The new query with the rule or group added.
@@ -51,55 +59,31 @@ export interface AddOptionsRE extends AddOptions {}
 export const addRE = <RE extends RulesEngineAny>(
   /** The rules engine to update. */
   rulesEngine: RE,
-  /** The rules engine, consequent, rule, or rule group to add. */
-  subject: RE | Consequent | RuleGroupTypeAny | RuleType,
+  /** The rules engine condition to add. */
+  subject: REConditionAny,
   /** Path or ID of the rules engine condition to add to. */
-  conditionPathOrID: Path | string,
-  /** Path or ID of the group to add to (within the rules engine at `conditionPathOrID`), if adding a rule or group. */
-  parentGroupPathOrID?: Path | string | null,
+  parentConditionPathOrID: Path | string,
   /** Options. */
-  addOptions: AddOptionsRE = {}
+  { idGenerator = generateID }: AddOptionsRE = {}
 ): RE =>
   produce(rulesEngine, draft => {
-    const rePath = Array.isArray(conditionPathOrID)
-      ? conditionPathOrID
-      : getConditionPathOfID(conditionPathOrID, draft);
+    const parentConditionPath = Array.isArray(parentConditionPathOrID)
+      ? parentConditionPathOrID
+      : getConditionPathOfID(parentConditionPathOrID, draft);
 
-    if (!rePath) return;
+    if (!parentConditionPath) return;
 
-    const parentRE = findConditionPath(rePath, draft);
+    const parentRECondition = findConditionPath(parentConditionPath, draft);
 
-    if (!isRulesEngineAny(parentRE) && !isRuleGroup(parentRE)) return;
+    if (!parentRECondition) return;
 
-    if (
-      parentGroupPathOrID &&
-      isRuleGroup(parentRE) &&
-      // Only add rules or groups to a `rules` array.
-      (isRuleGroup(subject) || isRuleType(subject))
-    ) {
-      const newGroup = add(parentRE, subject, parentGroupPathOrID, addOptions);
-      const parentREofGroup = findConditionPath(getParentPath(rePath), draft);
-      // istanbul ignore next
-      if (!coerceToRulesEngine(parentREofGroup)) return;
-      splice(parentREofGroup.conditions, rePath.at(-1)!, 1, newGroup);
-    } else if (
-      isRulesEngineAny(subject) ||
-      isRulesEngineConsequent(subject) ||
-      isRuleGroup(subject)
-    ) {
-      // Force the parent rules engine to have a `conditions` array.
-      // The return will never fire; it's only for type safety and hence ignored for coverage.
-      // istanbul ignore next
-      if (!coerceToRulesEngine(parentRE)) return;
-
-      // Check if the last condition is an consequent, i.e. an "else" block
-      if (isRulesEngineConsequent(parentRE.conditions.at(-1))) {
-        // Can't have two "else" blocks
-        if (isRulesEngineConsequent(subject)) return;
-
-        splice(parentRE.conditions, parentRE.conditions.length - 1, 0, subject);
+    if (isRulesEngineConditionAny(subject)) {
+      if (Array.isArray(parentRECondition.conditions)) {
+        push(parentRECondition.conditions, prepareRulesEngineCondition(subject, { idGenerator }));
       } else {
-        push(parentRE.conditions, subject);
+        parentRECondition.conditions = [
+          prepareRulesEngineCondition(subject, { idGenerator }),
+        ] as any; // oxlint-disable-line no-explicit-any
       }
     }
   });
@@ -164,12 +148,9 @@ export const removeRE = <RE extends RulesEngineAny>(
   /** The rules engine to update. */
   rulesEngine: RE,
   /** Path or ID of the rules engine condition to remove. */
-  conditionPathOrID: Path | string,
-  /** Path or ID of the rule or group to remove (within the rules engine at `conditionPathOrID`), if removing a rule or group. */
-  parentGroupPathOrID?: Path | string | null
+  conditionPathOrID: Path | string
 ): RE =>
   produce(rulesEngine, draft => {
-    // Delegate to underlying queryTools remove for rule/group removal within a condition
     const rePath = Array.isArray(conditionPathOrID)
       ? conditionPathOrID
       : getConditionPathOfID(conditionPathOrID, draft);
@@ -177,18 +158,9 @@ export const removeRE = <RE extends RulesEngineAny>(
     // Ignore invalid paths/ids or root removal
     if (!rePath || rePath.length === 0) return;
 
-    const parentRE = findConditionPath(rePath, draft);
-
-    if (parentGroupPathOrID && isRuleGroup(parentRE)) {
-      const newGroup = remove(parentRE, parentGroupPathOrID);
-      const parentREofGroup = findConditionPath(getParentPath(rePath), draft);
-      if (!isRulesEngineAny(parentREofGroup)) return;
-      splice(parentREofGroup.conditions, rePath.at(-1)!, 1, newGroup);
-    } else {
-      const parentREofRemovalTarget = findConditionPath(getParentPath(rePath), draft);
-      if (isRulesEngineAny(parentREofRemovalTarget)) {
-        parentREofRemovalTarget.conditions.splice(rePath.at(-1)!, 1);
-      }
+    const parentRE = findConditionPath(getParentPath(rePath), draft);
+    if (isRulesEngineAny(parentRE)) {
+      parentRE.conditions.splice(rePath.at(-1)!, 1);
     }
   });
 

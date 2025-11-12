@@ -8,22 +8,29 @@ export const RulesEngineBuilderHeader = (
     classnames,
     defaultConsequent,
     schema: {
+      addCondition,
+      allowNestedConditions,
       components: { addConsequent: AddConsequent, addCondition: AddCondition },
       translations,
     },
   } = props;
 
+  const addConditionThisPath = React.useCallback(() => {
+    addCondition([]);
+  }, [addCondition]);
+
   return (
     <div className={classnames}>
-      <AddCondition
-        schema={props.schema}
-        path={props.conditionPath}
-        level={props.conditionPath.length}
-        // oxlint-disable-next-line jsx-no-new-function-as-prop
-        handleOnClick={() => {}}
-        title={translations.addCondition.title}
-        label={translations.addCondition.label}
-      />
+      {allowNestedConditions && (
+        <AddCondition
+          schema={props.schema}
+          path={props.conditionPath}
+          level={props.conditionPath.length}
+          handleOnClick={addConditionThisPath}
+          title={translations.addCondition.title}
+          label={translations.addCondition.label}
+        />
+      )}
       <AddConsequent
         schema={props.schema}
         path={props.conditionPath}

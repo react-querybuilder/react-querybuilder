@@ -70,6 +70,7 @@ export const AppRE = (): React.JSX.Element => {
     <DevLayout {...devApp}>
       <RulesEngineBuilder
         // {...devApp.commonRQBProps}
+        // allowNestedConditions={false}
         suppressStandardClassnames={suppressStandardClassnames}
         classnames={rebClassnames}
         rulesEngine={re}

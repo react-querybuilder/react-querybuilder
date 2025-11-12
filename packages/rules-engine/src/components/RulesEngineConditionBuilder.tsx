@@ -2,7 +2,7 @@ import { clsx, type RuleGroupType, type RuleGroupTypeAny } from '@react-querybui
 import * as React from 'react';
 import type { FullOption, QueryBuilderProps } from 'react-querybuilder';
 import { standardClassnamesRE } from '../defaults';
-import type { AntecedentAny, ConditionProps, Consequent } from '../types';
+import type { ConditionProps, Consequent, REConditionAny } from '../types';
 
 type QueryBuilderPropsStandard = QueryBuilderProps<
   RuleGroupType,
@@ -16,8 +16,12 @@ type QueryBuilderPropsStandard = QueryBuilderProps<
  */
 export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element => {
   const {
+    conditionPath,
     schema: {
-      classnames: { conditionBuilderHeader, blockLabel },
+      addCondition,
+      allowNestedConditions,
+      removeCondition,
+      classnames: { conditionBuilderHeader, blockLabel, blockLabelIf, blockLabelIfElse },
       components: {
         addCondition: AddCondition,
         addConsequent: AddConsequent,
@@ -27,6 +31,9 @@ export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element
       suppressStandardClassnames,
     },
   } = props;
+
+  const isIf = conditionPath.at(-1) === 0;
+
   const wrapperClassName = React.useMemo(
     () =>
       clsx(
@@ -36,43 +43,64 @@ export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element
     [conditionBuilderHeader, suppressStandardClassnames]
   );
   const labelClassName = React.useMemo(
-    () => clsx(suppressStandardClassnames || standardClassnamesRE.blockLabel, blockLabel),
-    [blockLabel, suppressStandardClassnames]
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.blockLabel,
+        blockLabel,
+        isIf
+          ? [suppressStandardClassnames || standardClassnamesRE.blockLabelIf, blockLabelIf]
+          : [suppressStandardClassnames || standardClassnamesRE.blockLabelIfElse, blockLabelIfElse]
+      ),
+    [blockLabel, blockLabelIf, blockLabelIfElse, isIf, suppressStandardClassnames]
   );
 
-  const { label: blockLabelLabel, title: blockLabelTitle } =
-    props.conditionPath.at(-1) === 0 ? translations.blockLabelIf : translations.blockLabelElseIf;
+  const { label: blockLabelLabel, title: blockLabelTitle } = isIf
+    ? translations.blockLabelIf
+    : translations.blockLabelElseIf;
+
+  const addSubCondition = React.useCallback(() => {
+    addCondition(conditionPath);
+  }, [conditionPath, addCondition]);
+
+  // const addConsequentThisPath = React.useCallback(() => {
+  //   addConsequent(conditionPath);
+  // }, [conditionPath, addConsequent]);
+
+  const removeThisCondition = React.useCallback(() => {
+    removeCondition(conditionPath);
+  }, [conditionPath, removeCondition]);
 
   return (
     <div className={wrapperClassName}>
       <div className={labelClassName} title={blockLabelTitle}>
         {blockLabelLabel}
       </div>
-      <AddCondition
-        schema={props.schema}
-        path={props.conditionPath}
-        level={props.conditionPath.length}
-        // oxlint-disable-next-line jsx-no-new-function-as-prop
-        handleOnClick={() => {}}
-        title={translations.addSubcondition.title}
-        label={translations.addSubcondition.label}
-      />
+      {allowNestedConditions && (
+        <AddCondition
+          schema={props.schema}
+          path={conditionPath}
+          level={conditionPath.length}
+          handleOnClick={addSubCondition}
+          title={translations.addSubcondition.title}
+          label={translations.addSubcondition.label}
+        />
+      )}
       <AddConsequent
         schema={props.schema}
-        path={props.conditionPath}
-        level={props.conditionPath.length}
+        path={conditionPath}
+        level={conditionPath.length}
         disabled={!!props.condition.consequent}
         // oxlint-disable-next-line jsx-no-new-function-as-prop
         handleOnClick={() => {}}
+        // handleOnClick={addConsequentThisPath}
         title={translations.addConsequent.title}
         label={translations.addConsequent.label}
       />
       <RemoveCondition
         schema={props.schema}
-        path={props.conditionPath}
-        level={props.conditionPath.length}
-        // oxlint-disable-next-line jsx-no-new-function-as-prop
-        handleOnClick={() => {}}
+        path={conditionPath}
+        level={conditionPath.length}
+        handleOnClick={removeThisCondition}
         title={translations.removeCondition.title}
         label={translations.removeCondition.label}
       />
@@ -105,12 +133,12 @@ export const RulesEngineConditionBuilderBody = (props: ConditionProps): React.JS
   );
   const conditionUpdater = React.useCallback(
     (antecedent: RuleGroupTypeAny) =>
-      onConditionChange({ ...condition, antecedent } as AntecedentAny),
+      onConditionChange({ ...condition, antecedent } as REConditionAny),
     [condition, onConditionChange]
   );
   const conditionsUpdater = React.useCallback(
-    (conditions: AntecedentAny[]) =>
-      onConditionChange({ ...condition, conditions } as AntecedentAny),
+    (conditions: REConditionAny[]) =>
+      onConditionChange({ ...condition, conditions } as REConditionAny),
     [condition, onConditionChange]
   );
 

@@ -1,7 +1,7 @@
 import { generateID, isRuleGroup, prepareRuleGroup } from '@react-querybuilder/core';
 import { produce } from 'immer';
-import type { AntecedentCascade, RulesEngineAny } from '../types';
-import { isRulesEngine } from './isRulesEngine';
+import type { REConditionAny, REConditionCascade, RulesEngineAny } from '../types';
+import { isRulesEngineAny } from './isRulesEngine';
 
 /**
  * Options for {@link prepareRulesEngine}.
@@ -9,6 +9,26 @@ import { isRulesEngine } from './isRulesEngine';
 export interface PreparerOptionsRE {
   idGenerator?: () => string;
 }
+
+export const prepareRulesEngineCondition = (
+  c: REConditionAny,
+  { idGenerator = generateID }: PreparerOptionsRE = {}
+): REConditionAny =>
+  produce(c, draft => {
+    if (!draft.id) {
+      draft.id = idGenerator();
+    }
+
+    if (isRuleGroup(draft.antecedent)) {
+      draft.antecedent = prepareRuleGroup(draft.antecedent, { idGenerator });
+    }
+
+    if (isRulesEngineAny(draft)) {
+      draft = prepareRulesEngine(draft);
+    }
+
+    return draft;
+  });
 
 /**
  * Ensures that a rule group is valid by recursively adding an `id` property to the group itself
@@ -22,15 +42,8 @@ export const prepareRulesEngine = <RE extends RulesEngineAny>(
     if (!draft.id) {
       draft.id = idGenerator();
     }
-    draft.conditions = draft.conditions.map(r => {
-      r.id = idGenerator();
-      if (isRuleGroup(r.antecedent)) {
-        r.antecedent = prepareRuleGroup(r.antecedent);
-      }
-      if (isRulesEngine(r)) {
-        r = prepareRulesEngine(r);
-      }
-      return r;
-      // oxlint-disable-next-line no-explicit-any
-    }) as AntecedentCascade<any>;
+
+    draft.conditions = draft.conditions.map(r =>
+      prepareRulesEngineCondition(r, { idGenerator })
+    ) as REConditionCascade<any>; // oxlint-disable-line no-explicit-any
   });

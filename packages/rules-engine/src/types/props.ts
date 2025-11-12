@@ -11,7 +11,7 @@ import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { Except } from 'type-fest';
 import type { ActionElementREProps, ValueSelectorREProps } from '../components';
-import type { AntecedentAny, AntecedentCascade, Consequent, RulesEngine } from './rulesEngine';
+import type { Consequent, REConditionAny, REConditionCascade, RulesEngine } from './rulesEngine';
 
 export interface SchemaRE {
   components: ComponentsRE;
@@ -19,11 +19,14 @@ export interface SchemaRE {
   consequentTypes: FullOptionList<BaseOption>;
   autoSelectConsequentType: boolean;
   suppressStandardClassnames: boolean;
+  allowNestedConditions: boolean;
   translations: TranslationsFullRE;
   queryBuilderProps?: Except<
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
     'query' | 'onQueryChange'
   >;
+  addCondition: (cp: Path) => void;
+  removeCondition: (cp: Path) => void;
 }
 
 export interface ComponentsRE {
@@ -55,6 +58,14 @@ export interface ClassnamesRE {
   rulesEngineHeader: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
+  /** Classes applied to all "If" block labels. */
+  blockLabelIf: Classname;
+  /** Classes applied to all "If Else" block labels. */
+  blockLabelIfElse: Classname;
+  /** Classes applied to all "Else" block labels. */
+  blockLabelElse: Classname;
+  /** Classes applied to all "Then" block labels. */
+  blockLabelThen: Classname;
   /** Classes applied to consequent builders ("then" sections). */
   consequentBuilder: Classname;
   /** Classes applied to consequent builder headers. */
@@ -96,12 +107,12 @@ export type TranslationsFullRE = {
 };
 
 export interface RulesEngineProps {
-  // fields?: FlexibleOptionList<FullField>;
-  onRulesEngineChange?: (re: RulesEngine) => void;
   rulesEngine?: RulesEngine;
+  onRulesEngineChange?: (re: RulesEngine) => void;
   consequentTypes?: FullOptionList<BaseOption>;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
+  allowNestedConditions?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
   translations?: Partial<TranslationsRE>;
@@ -109,6 +120,12 @@ export interface RulesEngineProps {
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
     'query' | 'onQueryChange'
   >;
+  /**
+   * `id` generator function. Should always produce a unique/random string.
+   *
+   * @default crypto.randomUUID
+   */
+  idGenerator?: () => string;
 }
 
 export interface RulesEngineBuilderHeaderProps {
@@ -120,9 +137,9 @@ export interface RulesEngineBuilderHeaderProps {
 
 export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
-  onConditionsChange: (rec: AntecedentCascade<RG>) => void;
+  onConditionsChange: (rec: REConditionCascade<RG>) => void;
   onDefaultConsequentChange: (rec?: Consequent) => void;
-  conditions: AntecedentCascade<RG>;
+  conditions: REConditionCascade<RG>;
   defaultConsequent?: Consequent;
   schema: SchemaRE;
 }
@@ -130,10 +147,10 @@ export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
 export interface ConditionProps {
   schema: SchemaRE;
   conditionPath: Path;
-  condition: AntecedentAny;
+  condition: REConditionAny;
   consequentTypes?: FullOptionList<BaseOption>;
   isOnlyCondition: boolean;
-  onConditionChange: (condition: AntecedentAny) => void;
+  onConditionChange: (condition: REConditionAny) => void;
   autoSelectConsequentType?: boolean;
 }
 

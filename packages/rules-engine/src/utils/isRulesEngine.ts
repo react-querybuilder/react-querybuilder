@@ -1,9 +1,9 @@
 import { isPojo, isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from '@react-querybuilder/core';
 import type {
-  Antecedent,
-  AntecedentAny,
-  AntecedentIC,
   Consequent,
+  RECondition,
+  REConditionAny,
+  REConditionIC,
   RulesEngine,
   RulesEngineAny,
   RulesEngineIC,
@@ -13,7 +13,7 @@ import type {
  * Determines if an object is a {@link RulesEngine} or {@link RulesEngineIC}.
  */
 export const isRulesEngineAny = (re: unknown): re is RulesEngineAny =>
-  isPojo(re) && 'conditions' in re && Array.isArray(re.conditions);
+  isPojo(re) && Array.isArray(re.conditions);
 
 /**
  * Determines if an object is a {@link RulesEngine}.
@@ -34,19 +34,19 @@ export const isRulesEngineConsequent = (obj: unknown): obj is Consequent =>
   isPojo(obj) && typeof obj.consequentType === 'string';
 
 /**
- * Determines if an object is a {@link RulesEngineAntecedent} or {@link AntecedentIC}.
+ * Determines if an object is a {@link RulesEngineAntecedent} or {@link REConditionIC}.
  */
-export const isRulesEngineConditionAny = (re: unknown): re is AntecedentAny =>
+export const isRulesEngineConditionAny = (re: unknown): re is REConditionAny =>
   isPojo(re) && 'antecedent' in re && isRuleGroup(re.antecedent);
 
 /**
  * Determines if an object is a {@link RulesEngineAntecedent}.
  */
-export const isRulesEngineCondition = (re: unknown): re is Antecedent =>
+export const isRulesEngineCondition = (re: unknown): re is RECondition =>
   isRulesEngineConditionAny(re) && isRuleGroupType(re.antecedent);
 
 /**
- * Determines if an object is a {@link AntecedentIC}.
+ * Determines if an object is a {@link REConditionIC}.
  */
-export const isRulesEngineConditionIC = (re: unknown): re is AntecedentIC =>
+export const isRulesEngineConditionIC = (re: unknown): re is REConditionIC =>
   isRulesEngineConditionAny(re) && isRuleGroupTypeIC(re.antecedent);

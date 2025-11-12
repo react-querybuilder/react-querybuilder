@@ -9,9 +9,10 @@ import type { ConsequentProps } from '../types';
 export const ConsequentBuilderHeader = (props: ConsequentProps): React.JSX.Element => {
   const {
     onConsequentChange,
+    standalone,
     schema: {
       components: { removeConsequent: RemoveConsequent },
-      classnames: { consequentBuilderHeader, blockLabel },
+      classnames: { consequentBuilderHeader, blockLabel, blockLabelElse, blockLabelThen },
       translations,
       suppressStandardClassnames,
     },
@@ -26,15 +27,22 @@ export const ConsequentBuilderHeader = (props: ConsequentProps): React.JSX.Eleme
     [consequentBuilderHeader, suppressStandardClassnames]
   );
   const labelClassName = React.useMemo(
-    () => clsx(suppressStandardClassnames || standardClassnamesRE.blockLabel, blockLabel),
-    [blockLabel, suppressStandardClassnames]
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.blockLabel,
+        blockLabel,
+        standalone
+          ? [suppressStandardClassnames || standardClassnamesRE.blockLabelElse, blockLabelElse]
+          : [suppressStandardClassnames || standardClassnamesRE.blockLabelThen, blockLabelThen]
+      ),
+    [blockLabel, blockLabelElse, blockLabelThen, standalone, suppressStandardClassnames]
   );
 
   const removeConsequent = React.useCallback(() => onConsequentChange(), [onConsequentChange]);
 
   const { label, title } = React.useMemo(
-    () => (props.standalone ? translations.blockLabelElse : translations.blockLabelThen),
-    [props.standalone, translations]
+    () => (standalone ? translations.blockLabelElse : translations.blockLabelThen),
+    [standalone, translations]
   );
 
   return (

@@ -7,9 +7,13 @@ export const defaultClassnamesRE: ClassnamesRE = {
   consequentBuilderHeader: '',
   consequentBuilderBody: '',
   consequentBuilderStandalone: '',
-  blockLabel: '',
   conditionBuilder: '',
   conditionBuilderHeader: '',
+  blockLabel: '',
+  blockLabelIf: '',
+  blockLabelIfElse: '',
+  blockLabelElse: '',
+  blockLabelThen: '',
 };
 
 export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
@@ -19,9 +23,13 @@ export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   consequentBuilderHeader: 'consequentBuilder-header',
   consequentBuilderBody: 'consequentBuilder-body',
   consequentBuilderStandalone: 'consequentBuilder-standalone',
-  blockLabel: 'blockLabel',
   conditionBuilder: 'conditionBuilder',
   conditionBuilderHeader: 'conditionBuilder-header',
+  blockLabel: 'blockLabel',
+  blockLabelIf: 'blockLabel-if',
+  blockLabelIfElse: 'blockLabel-ifelse',
+  blockLabelElse: 'blockLabel-else',
+  blockLabelThen: 'blockLabel-then',
 };
 
 export const defaultRulesEngine: RulesEngine = {

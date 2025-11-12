@@ -7,39 +7,39 @@ import type {
 } from '@react-querybuilder/core';
 
 // #region Conditions
-export interface Antecedent<R extends RuleType = RuleType, C extends string = string>
+export interface RECondition<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties,
     Partial<RulesEngine<R, C>> {
   antecedent: RuleGroupType;
   consequent?: Consequent;
 }
 
-export interface AntecedentIC<R extends RuleType = RuleType, C extends string = string>
+export interface REConditionIC<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties,
     Partial<RulesEngineIC<R, C>> {
   antecedent: RuleGroupTypeIC;
   consequent?: Consequent;
 }
 
-export type AntecedentAny<R extends RuleType = RuleType, C extends string = string> =
-  | Antecedent<R, C>
-  | AntecedentIC<R, C>;
+export type REConditionAny<R extends RuleType = RuleType, C extends string = string> =
+  | RECondition<R, C>
+  | REConditionIC<R, C>;
 
-export type AntecedentCascade<RG extends RuleGroupTypeAny> = RG extends RuleGroupTypeIC
-  ? AntecedentIC[]
-  : Antecedent[];
+export type REConditionCascade<RG extends RuleGroupTypeAny> = RG extends RuleGroupTypeIC
+  ? REConditionIC[]
+  : RECondition[];
 // #endregion
 
 // #region Rules engine
 export interface RulesEngine<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties {
-  conditions: AntecedentCascade<RuleGroupType<R, C>>;
+  conditions: REConditionCascade<RuleGroupType<R, C>>;
   defaultConsequent?: Consequent;
 }
 
 export interface RulesEngineIC<R extends RuleType = RuleType, C extends string = string>
   extends CommonRuleAndGroupProperties {
-  conditions: AntecedentCascade<RuleGroupTypeIC<R, C>>;
+  conditions: REConditionCascade<RuleGroupTypeIC<R, C>>;
   defaultConsequent?: Consequent;
 }
 

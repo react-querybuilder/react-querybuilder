@@ -1,6 +1,6 @@
 import type { Path, RuleGroupTypeAny, RuleGroupTypeIC } from '@react-querybuilder/core';
 import { isPojo } from '@react-querybuilder/core';
-import type { Antecedent, AntecedentAny, AntecedentIC, RulesEngineAny } from '../types';
+import type { RECondition, REConditionAny, REConditionIC, RulesEngineAny } from '../types';
 import { isRulesEngineAny } from './isRulesEngine';
 
 /**
@@ -8,7 +8,7 @@ import { isRulesEngineAny } from './isRulesEngine';
  */
 export type FindConditionPath<RG extends RuleGroupTypeAny = RuleGroupTypeAny> =
   | RulesEngineAny
-  | (RG extends RuleGroupTypeIC ? AntecedentIC : Antecedent)
+  | (RG extends RuleGroupTypeIC ? REConditionIC : RECondition)
   | null;
 
 /**
@@ -41,7 +41,7 @@ export function findConditionPath(path: Path, rulesEngine: RulesEngineAny): Find
 export const findConditionID = (
   id: string,
   rulesEngine: RulesEngineAny
-): AntecedentAny | RulesEngineAny | null => {
+): REConditionAny | RulesEngineAny | null => {
   if (rulesEngine.id === id) {
     return rulesEngine;
   }

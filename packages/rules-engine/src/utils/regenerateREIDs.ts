@@ -1,13 +1,13 @@
 import type { RegenerateIdOptions } from '@react-querybuilder/core';
 import { generateID, isPojo, isRuleGroup, regenerateIDs } from '@react-querybuilder/core';
-import type { AntecedentAny, RulesEngine, RulesEngineAny } from '../types';
+import type { REConditionAny, RulesEngine, RulesEngineAny } from '../types';
 import { isRulesEngineAny, isRulesEngineConditionAny } from './isRulesEngine';
 
 /**
  * Recursively generates new `id` properties for a rule group or rules engine and all
  * its rules/conditions and subgroups/subconditions.
  */
-export const regenerateREIDs = <REC extends RulesEngineAny | AntecedentAny>(
+export const regenerateREIDs = <REC extends RulesEngineAny | REConditionAny>(
   subject: REC,
   { idGenerator = generateID }: RegenerateIdOptions = {}
 ): REC & { id: string } => {
@@ -20,7 +20,7 @@ export const regenerateREIDs = <REC extends RulesEngineAny | AntecedentAny>(
     }) as REC & { id: string };
   }
 
-  const newRE: AntecedentAny | RulesEngineAny = { ...subject, id: idGenerator() };
+  const newRE: REConditionAny | RulesEngineAny = { ...subject, id: idGenerator() };
 
   if (isRulesEngineConditionAny(newRE)) {
     newRE.antecedent = regenerateIDs(newRE.antecedent);

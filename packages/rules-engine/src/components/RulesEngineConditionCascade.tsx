@@ -2,7 +2,7 @@ import type { RuleGroupTypeAny } from '@react-querybuilder/core';
 import { produce } from 'immer';
 import * as React from 'react';
 import { usePathsMemo } from 'react-querybuilder';
-import type { AntecedentAny, ConditionCascadeProps } from '../types';
+import type { ConditionCascadeProps, REConditionAny } from '../types';
 
 /**
  * Renders a sequential list of if/else-if/else blocks in a rules engine.
@@ -25,7 +25,7 @@ export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
   } = schema;
 
   const conditionUpdater = React.useCallback(
-    (c: AntecedentAny, index: number) =>
+    (c: REConditionAny, index: number) =>
       onConditionsChange(
         produce(conditions, draft => {
           // oxlint-disable-next-line no-explicit-any
