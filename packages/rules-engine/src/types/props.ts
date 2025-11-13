@@ -27,6 +27,7 @@ export interface SchemaRE {
   >;
   addCondition: (cp: Path) => void;
   removeCondition: (cp: Path) => void;
+  updateCondition: (cp: Path, p: string, v: unknown) => void;
 }
 
 export interface ComponentsRE {
@@ -93,6 +94,7 @@ export interface TranslationsRE {
   addCondition: BaseTranslationWithLabel<React.ReactNode>;
   addSubcondition: BaseTranslationWithLabel<React.ReactNode>;
   addConsequent: BaseTranslationWithLabel<React.ReactNode>;
+  addDefaultConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
   removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
 }

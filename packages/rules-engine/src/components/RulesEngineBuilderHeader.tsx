@@ -9,6 +9,7 @@ export const RulesEngineBuilderHeader = (
     defaultConsequent,
     schema: {
       addCondition,
+      updateCondition,
       allowNestedConditions,
       components: { addConsequent: AddConsequent, addCondition: AddCondition },
       translations,
@@ -18,6 +19,10 @@ export const RulesEngineBuilderHeader = (
   const addConditionThisPath = React.useCallback(() => {
     addCondition([]);
   }, [addCondition]);
+
+  const ensureDefaultConsequent = React.useCallback(() => {
+    if (!defaultConsequent) updateCondition([], 'defaultConsequent', { consequentType: 'TODO' });
+  }, [defaultConsequent, updateCondition]);
 
   return (
     <div className={classnames}>
@@ -35,11 +40,10 @@ export const RulesEngineBuilderHeader = (
         schema={props.schema}
         path={props.conditionPath}
         level={props.conditionPath.length}
-        // oxlint-disable-next-line jsx-no-new-function-as-prop
-        handleOnClick={() => {}}
+        handleOnClick={ensureDefaultConsequent}
         disabled={!!defaultConsequent}
-        title={translations.addConsequent.title}
-        label={translations.addConsequent.label}
+        title={translations.addDefaultConsequent.title}
+        label={translations.addDefaultConsequent.label}
       />
     </div>
   );

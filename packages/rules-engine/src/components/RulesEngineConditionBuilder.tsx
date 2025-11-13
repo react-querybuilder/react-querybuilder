@@ -16,9 +16,11 @@ type QueryBuilderPropsStandard = QueryBuilderProps<
  */
 export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element => {
   const {
+    condition: { consequent },
     conditionPath,
     schema: {
       addCondition,
+      updateCondition,
       allowNestedConditions,
       removeCondition,
       classnames: { conditionBuilderHeader, blockLabel, blockLabelIf, blockLabelIfElse },
@@ -62,9 +64,9 @@ export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element
     addCondition(conditionPath);
   }, [conditionPath, addCondition]);
 
-  // const addConsequentThisPath = React.useCallback(() => {
-  //   addConsequent(conditionPath);
-  // }, [conditionPath, addConsequent]);
+  const ensureConsequent = React.useCallback(() => {
+    if (!consequent) updateCondition(conditionPath, 'consequent', { consequentType: 'TODO' });
+  }, [conditionPath, consequent, updateCondition]);
 
   const removeThisCondition = React.useCallback(() => {
     removeCondition(conditionPath);
@@ -90,9 +92,7 @@ export const ConditionBuilderHeader = (props: ConditionProps): React.JSX.Element
         path={conditionPath}
         level={conditionPath.length}
         disabled={!!props.condition.consequent}
-        // oxlint-disable-next-line jsx-no-new-function-as-prop
-        handleOnClick={() => {}}
-        // handleOnClick={addConsequentThisPath}
+        handleOnClick={ensureConsequent}
         title={translations.addConsequent.title}
         label={translations.addConsequent.label}
       />

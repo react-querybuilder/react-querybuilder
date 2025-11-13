@@ -31,7 +31,7 @@ import type {
   SchemaRE,
   TranslationsFullRE,
 } from '../types';
-import { addRE, mergeClassnamesRE, prepareRulesEngine, removeRE } from '../utils';
+import { addRE, mergeClassnamesRE, prepareRulesEngine, removeRE, updateRE } from '../utils';
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootPath: Path = [];
@@ -176,6 +176,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     },
     [onRulesEngineChange, re]
   );
+
   const { optionList: consequentTypes } = useMemo(
     () => prepareOptionList({ optionList: consequentTypesProp }),
     [consequentTypesProp]
@@ -215,6 +216,15 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     },
     [onRulesEngineChange, rulesEngine]
   );
+
+  const updateCondition = useCallback(
+    (parentConditionPath: Path, property: string, value: unknown) => {
+      const newRE = updateRE(rulesEngine, property, value, parentConditionPath);
+      setRE(newRE);
+      onRulesEngineChange?.(newRE);
+    },
+    [onRulesEngineChange, rulesEngine]
+  );
   // #endregion
 
   const schema = useMemo(
@@ -229,6 +239,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       removeCondition,
       suppressStandardClassnames,
       translations,
+      updateCondition,
     }),
     [
       addCondition,
@@ -241,6 +252,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       removeCondition,
       suppressStandardClassnames,
       translations,
+      updateCondition,
     ]
   );
 

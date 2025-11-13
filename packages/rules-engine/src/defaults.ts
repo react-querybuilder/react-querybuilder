@@ -47,7 +47,8 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   blockLabelThen: { title: 'Consequent action/result', label: 'Then' },
   addCondition: { title: 'Add condition', label: '+ Condition' },
   addSubcondition: { title: 'Add subcondition', label: '+ Subcondition' },
-  addConsequent: { title: 'Add consequent action/result', label: '+ Consequent' },
+  addConsequent: { title: 'Add consequent action/result', label: '+ Then' },
+  addDefaultConsequent: { title: 'Add consequent action/result', label: '+ Else' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
   removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
 };
