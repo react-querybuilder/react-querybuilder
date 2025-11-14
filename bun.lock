@@ -448,6 +448,7 @@
       "name": "@react-querybuilder/rules-engine",
       "version": "8.12.0",
       "dependencies": {
+        "@reduxjs/toolkit": "^2.10.1",
         "immer": "^10.2.0",
         "react-querybuilder": "8.12.0",
       },
