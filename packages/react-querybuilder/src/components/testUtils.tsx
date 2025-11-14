@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import type { RqbState } from '../redux';
 import { QueryBuilderStateContext } from '../redux';
-import { asyncOptionListsSlice } from '../redux/asyncOptionListsSlice';
+import type { asyncOptionListsSlice } from '../redux/asyncOptionListsSlice';
 import { queriesSlice } from '../redux/queriesSlice';
 import { warningsSlice } from '../redux/warningsSlice';
 
@@ -14,7 +14,8 @@ import { warningsSlice } from '../redux/warningsSlice';
 const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
-  asyncOptionLists: asyncOptionListsSlice.getInitialState(),
+  // Avoid importing the async slice itself (except as a type) to test lazy loading
+  asyncOptionLists: { cache: {}, loading: {}, errors: {} },
 } satisfies RqbState;
 
 const getNewStore = () =>
@@ -22,7 +23,8 @@ const getNewStore = () =>
     reducer: {
       queries: queriesSlice.reducer,
       warnings: warningsSlice.reducer,
-      asyncOptionLists: asyncOptionListsSlice.reducer,
+      asyncOptionLists: (() =>
+        preloadedState.asyncOptionLists) as (typeof asyncOptionListsSlice)['reducer'],
     },
     preloadedState,
   });
