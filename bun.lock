@@ -451,6 +451,7 @@
         "@reduxjs/toolkit": "^2.10.1",
         "immer": "^10.2.0",
         "react-querybuilder": "8.12.0",
+        "react-redux": "^9.2.0",
       },
       "devDependencies": {
         "@testing-library/dom": "^10.4.1",
