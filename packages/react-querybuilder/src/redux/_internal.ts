@@ -11,14 +11,12 @@ import type {
 import type { TypedUseSelectorHook, UseStore } from 'react-redux';
 import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
 import type { RqbState } from '.';
-import { asyncOptionListsSlice } from './asyncOptionListsSlice';
 import type { SetQueryStateParams } from './queriesSlice';
 import { queriesSlice } from './queriesSlice';
 import { QueryBuilderStateContext } from './QueryBuilderStateContext';
+import { rootReducer } from './rootReducer';
 import type { Messages } from './warningsSlice';
 import { warningsSlice } from './warningsSlice';
-
-export { getOptionListsAsync } from './asyncOptionListsSlice';
 
 export const _RQB_INTERNAL_dispatchThunk =
   ({
@@ -62,15 +60,12 @@ export const rqbWarn =
 const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
-  asyncOptionLists: asyncOptionListsSlice.getInitialState(),
+  // Avoid importing the async slice itself to ensure lazy loading
+  asyncOptionLists: { cache: {}, loading: {}, errors: {} },
 } satisfies RqbState;
 
 export const storeCommon: ConfigureStoreOptions = {
-  reducer: {
-    queries: queriesSlice.reducer,
-    warnings: warningsSlice.reducer,
-    asyncOptionLists: asyncOptionListsSlice.reducer,
-  },
+  reducer: rootReducer,
   preloadedState,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
