@@ -5,13 +5,25 @@ import type {
   RuleType,
 } from '@react-querybuilder/core';
 import { clsx, standardClassnames } from '@react-querybuilder/core';
+import type { WithSlice } from '@reduxjs/toolkit';
 import { useEffect, useMemo } from 'react';
 import {
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderSelector,
 } from '../redux/_internal';
 import { asyncOptionListsSlice, getOptionListsAsync } from '../redux/asyncOptionListsSlice';
+import { rootReducer } from '../redux/rootReducer';
 import type { ValueEditorProps, VersatileSelectorProps } from '../types';
+
+declare module '../redux/rootReducer' {
+  export interface LazyLoadedSlices extends WithSlice<typeof asyncOptionListsSlice> {}
+}
+
+declare module '../redux/types' {
+  export interface RqbState {
+    asyncOptionLists: AsyncOptionListsSliceState;
+  }
+}
 
 export interface UseAsyncOptionListParams<
   PropsType extends VersatileSelectorProps | ValueEditorProps,
@@ -99,6 +111,10 @@ export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | Valu
   );
 };
 
+const injectAsyncOptionListSlice = () => {
+  rootReducer.inject(asyncOptionListsSlice);
+};
+
 /**
  * Augments a {@link ValueSelectorProps} object with async option loading.
  *
@@ -121,6 +137,8 @@ export function useAsyncOptionList<PropsType extends VersatileSelectorProps | Va
   props: PropsType,
   params: UseAsyncOptionListParams<PropsType> = {}
 ) {
+  useEffect(injectAsyncOptionListSlice, []);
+
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
   const { cacheTTL, loadOptionList } = params;

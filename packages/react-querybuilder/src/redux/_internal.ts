@@ -61,8 +61,8 @@ const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
   // Avoid importing the async slice itself to ensure lazy loading
-  asyncOptionLists: { cache: {}, loading: {}, errors: {} },
-} satisfies RqbState;
+  // asyncOptionLists: { cache: {}, loading: {}, errors: {} },
+} as RqbState;
 
 export const storeCommon: ConfigureStoreOptions = {
   reducer: rootReducer,

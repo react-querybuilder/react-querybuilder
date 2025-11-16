@@ -3,7 +3,7 @@ import { generateID, standardClassnames } from '@react-querybuilder/core';
 import type { EnhancedStore } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import { waitABeat } from '@rqb-testing';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { QueryBuilderStateContext } from '../redux';
@@ -61,7 +61,7 @@ const createTestStore = () =>
     preloadedState: {
       queries: queriesSlice.getInitialState(),
       warnings: warningsSlice.getInitialState(),
-      asyncOptionLists: asyncOptionListsSlice.getInitialState(),
+      // asyncOptionLists: asyncOptionListsSlice.getInitialState(),
     },
   });
 
@@ -384,16 +384,18 @@ describe('cache behavior', () => {
     expect(cached.data).toBe(resultData);
 
     // Second call (via thunk) with same cache key - should use cache
-    store.dispatch(
-      getOptionListsAsync({
-        cacheKey: field,
-        cacheTTL: DEFAULT_CACHE_TTL,
-        value: props.value,
-        ruleOrGroup: rule,
-        loadOptionList,
-      })
-    );
-    await waitABeat(200);
+    await act(async () => {
+      store.dispatch(
+        getOptionListsAsync({
+          cacheKey: field,
+          cacheTTL: DEFAULT_CACHE_TTL,
+          value: props.value,
+          ruleOrGroup: rule,
+          loadOptionList,
+        })
+      );
+      await waitABeat(200);
+    });
 
     // Third call (via hook) with same cache key but different props - should use cache
     rerender({ ...props, className: generateID() });

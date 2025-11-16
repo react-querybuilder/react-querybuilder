@@ -13,7 +13,6 @@ import type { WarningsSliceState } from './warningsSlice';
 export interface RqbState {
   queries: QueriesSliceState;
   warnings: WarningsSliceState;
-  asyncOptionLists: AsyncOptionListsSliceState;
 }
 
 export type RqbStore = EnhancedStore<
