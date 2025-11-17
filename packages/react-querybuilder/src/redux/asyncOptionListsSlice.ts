@@ -1,7 +1,6 @@
-import type { PayloadAction, Slice, WithSlice } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_CACHE_TTL, getOptionListsAsync } from './getOptionListsAsync';
-import { rootReducer } from './rootReducer';
 import type { AsyncOptionListsSliceState, CachedOptionList } from './types';
 
 export { DEFAULT_CACHE_TTL, getOptionListsAsync };
@@ -77,9 +76,3 @@ export const asyncOptionListsSlice: Slice<
     });
   },
 });
-
-declare module './rootReducer' {
-  export interface LazyLoadedSlices extends WithSlice<typeof asyncOptionListsSlice> {}
-}
-
-rootReducer.inject(asyncOptionListsSlice);

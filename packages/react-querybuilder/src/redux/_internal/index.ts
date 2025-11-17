@@ -1,22 +1,15 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/core';
-import type {
-  ConfigureStoreOptions,
-  Dispatch,
-  PayloadAction,
-  Store,
-  ThunkAction,
-  ThunkDispatch,
-  UnknownAction,
-} from '@reduxjs/toolkit';
+import type { ConfigureStoreOptions, PayloadAction, Store, ThunkAction } from '@reduxjs/toolkit';
 import type { TypedUseSelectorHook, UseStore } from 'react-redux';
-import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
-import type { RqbState } from '.';
-import type { SetQueryStateParams } from './queriesSlice';
-import { queriesSlice } from './queriesSlice';
-import { QueryBuilderStateContext } from './QueryBuilderStateContext';
-import { rootReducer } from './rootReducer';
-import type { Messages } from './warningsSlice';
-import { warningsSlice } from './warningsSlice';
+import type { SetQueryStateParams } from '../queriesSlice';
+import { queriesSlice } from '../queriesSlice';
+import { QueryBuilderStateContext } from '../QueryBuilderStateContext';
+import { rootReducer } from '../rootReducer';
+import type { RqbState } from '../types';
+import type { Messages } from '../warningsSlice';
+import { warningsSlice } from '../warningsSlice';
+import type { UseQueryBuilderDispatch } from './hooks';
+import { getInternalHooks } from './hooks';
 
 export const _RQB_INTERNAL_dispatchThunk =
   ({
@@ -33,21 +26,14 @@ export const _RQB_INTERNAL_dispatchThunk =
     }
   };
 
-/**
- * Gets the `dispatch` function for the RQB Redux store.
- */
-export const useRQB_INTERNAL_QueryBuilderDispatch: UseQueryBuilderDispatch =
-  createDispatchHook(QueryBuilderStateContext);
-type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownAction> & Dispatch;
+const internalHooks = getInternalHooks(QueryBuilderStateContext);
 
-/**
- * Gets the full RQB Redux store.
- */
-export const useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState>> =
-  createStoreHook(QueryBuilderStateContext);
-
-export const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
-  createSelectorHook(QueryBuilderStateContext);
+export const useRQB_INTERNAL_QueryBuilderDispatch =
+  internalHooks.useRQB_INTERNAL_QueryBuilderDispatch as UseQueryBuilderDispatch;
+export const useRQB_INTERNAL_QueryBuilderStore =
+  internalHooks.useRQB_INTERNAL_QueryBuilderStore as UseStore<Store<RqbState>>;
+export const useRQB_INTERNAL_QueryBuilderSelector =
+  internalHooks.useRQB_INTERNAL_QueryBuilderSelector as TypedUseSelectorHook<RqbState>;
 
 const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;
 
@@ -61,8 +47,8 @@ const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
   // Avoid importing the async slice itself to ensure lazy loading
-  asyncOptionLists: { cache: {}, loading: {}, errors: {} },
-} satisfies RqbState;
+  // asyncOptionLists: { cache: {}, loading: {}, errors: {} },
+} as RqbState;
 
 export const storeCommon: ConfigureStoreOptions = {
   reducer: rootReducer,
