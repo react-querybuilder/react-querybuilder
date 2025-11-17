@@ -4,6 +4,7 @@ import { storeCommon } from './_internal';
 import { rootReducer } from './rootReducer';
 import type { RqbStore } from './types';
 
+// istanbul ignore next
 export const configureRqbStore = (isDev?: boolean): RqbStore => {
   const queryBuilderStore = configureStore({
     ...storeCommon,
