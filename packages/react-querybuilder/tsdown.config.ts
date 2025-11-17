@@ -71,6 +71,20 @@ export default defineConfig(async options => {
       format: 'cjs',
       entry: 'src/async.ts',
       external: ['react-querybuilder'],
+      onSuccess: () => writeNode10pkg(['async-debug']),
+    },
+    {
+      ...commonBuildOptions,
+      ...options,
+      entry: 'src/async-debug.ts',
+      external: ['react-querybuilder/debug'],
+    },
+    {
+      ...commonBuildOptions,
+      ...options,
+      format: 'cjs',
+      entry: 'src/async-debug.ts',
+      external: ['react-querybuilder/debug'],
       onSuccess: () => writeNode10pkg(['async']),
     },
     {

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#975] `useAsyncOptionList` and its corresponding Redux slice have been decoupled from the main bundle. They will now be loaded only when explicitly imported from `"react-querybuilder/async"`.
 
+### Fixed
+
+- `react-querybuilder/debug` entry point works for "node10" resolution.
+
 ## [v8.12.0] - 2025-11-06
 
 ### Added
