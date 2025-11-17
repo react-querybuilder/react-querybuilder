@@ -28,12 +28,21 @@ export const _RQB_INTERNAL_dispatchThunk =
 
 const internalHooks = getInternalHooks(QueryBuilderStateContext);
 
-export const useRQB_INTERNAL_QueryBuilderDispatch =
-  internalHooks.useRQB_INTERNAL_QueryBuilderDispatch as UseQueryBuilderDispatch;
-export const useRQB_INTERNAL_QueryBuilderStore =
-  internalHooks.useRQB_INTERNAL_QueryBuilderStore as UseStore<Store<RqbState>>;
-export const useRQB_INTERNAL_QueryBuilderSelector =
-  internalHooks.useRQB_INTERNAL_QueryBuilderSelector as TypedUseSelectorHook<RqbState>;
+/**
+ * Gets the `dispatch` function for the RQB Redux store.
+ */
+export const useRQB_INTERNAL_QueryBuilderDispatch: UseQueryBuilderDispatch =
+  internalHooks.useRQB_INTERNAL_QueryBuilderDispatch;
+/**
+ * Gets the full RQB Redux store.
+ */
+export const useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState>> =
+  internalHooks.useRQB_INTERNAL_QueryBuilderStore;
+/**
+ * General purpose selector hook for the RQB Redux store.
+ */
+export const useRQB_INTERNAL_QueryBuilderSelector: TypedUseSelectorHook<RqbState> =
+  internalHooks.useRQB_INTERNAL_QueryBuilderSelector;
 
 const { rqbWarn: _SYNC_rqbWarn } = warningsSlice.actions;
 

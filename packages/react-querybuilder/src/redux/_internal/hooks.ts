@@ -4,28 +4,22 @@ import type { ReactReduxContextValue, TypedUseSelectorHook, UseStore } from 'rea
 import { createDispatchHook, createSelectorHook, createStoreHook } from 'react-redux';
 import type { RqbState } from '../types';
 
-/**
- * Gets the `dispatch` function for the RQB Redux store.
- */
 const genUseQueryBuilderDispatch = (
-  ctx: React.Context<ReactReduxContextValue<RqbState, UnknownAction> | null>
+  ctx: React.Context<ReactReduxContextValue<RqbState> | null>
 ): UseQueryBuilderDispatch => createDispatchHook(ctx);
 export type UseQueryBuilderDispatch = () => ThunkDispatch<RqbState, undefined, UnknownAction> &
   Dispatch;
 
-/**
- * Gets the full RQB Redux store.
- */
 const genUseQueryBuilderStore = (
-  ctx: React.Context<ReactReduxContextValue<RqbState, UnknownAction> | null>
+  ctx: React.Context<ReactReduxContextValue<RqbState> | null>
 ): UseStore<Store<RqbState>> => createStoreHook(ctx);
 
 const genUseQueryBuilderSelector = (
-  ctx: React.Context<ReactReduxContextValue<RqbState, UnknownAction> | null>
+  ctx: React.Context<ReactReduxContextValue<RqbState> | null>
 ): TypedUseSelectorHook<RqbState> => createSelectorHook(ctx);
 
 export const getInternalHooks = (
-  ctx: React.Context<ReactReduxContextValue<RqbState, UnknownAction> | null>
+  ctx: React.Context<ReactReduxContextValue<RqbState> | null>
 ): {
   useRQB_INTERNAL_QueryBuilderDispatch: UseQueryBuilderDispatch;
   useRQB_INTERNAL_QueryBuilderStore: UseStore<Store<RqbState>>;
