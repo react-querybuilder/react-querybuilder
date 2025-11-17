@@ -14,17 +14,18 @@ import { warningsSlice } from '../redux/warningsSlice';
 const preloadedState = {
   queries: queriesSlice.getInitialState(),
   warnings: warningsSlice.getInitialState(),
-  // Avoid importing the async slice itself (except as a type) to test lazy loading
-  asyncOptionLists: { cache: {}, loading: {}, errors: {} },
-} satisfies RqbState;
+} as RqbState;
+
+const initialAsyncOptionListState = { cache: {}, loading: {}, errors: {} };
+const asyncOptionListsReducer: (typeof asyncOptionListsSlice)['reducer'] = () =>
+  initialAsyncOptionListState;
 
 const getNewStore = () =>
   configureStore({
     reducer: {
       queries: queriesSlice.reducer,
       warnings: warningsSlice.reducer,
-      asyncOptionLists: (() =>
-        preloadedState.asyncOptionLists) as (typeof asyncOptionListsSlice)['reducer'],
+      asyncOptionLists: asyncOptionListsReducer,
     },
     preloadedState,
   });

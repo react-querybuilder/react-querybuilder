@@ -106,6 +106,16 @@
         "types": "./dist/transformQuery.d.ts",
         "default": "./dist/transformQuery.js"
       }
+    },
+    "./async": {
+      "import": {
+        "types": "./dist/async.d.mts",
+        "default": "./dist/async.mjs"
+      },
+      "require": {
+        "types": "./dist/async.d.ts",
+        "default": "./dist/async.js"
+      }
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
