@@ -4,10 +4,13 @@ import { storeCommon } from './_internal';
 import { rootReducer } from './rootReducer';
 import type { RqbStore } from './types';
 
-export const configureRqbStore = (devTools?: boolean): RqbStore => {
+export const configureRqbStore = (isDev?: boolean): RqbStore => {
   const queryBuilderStore = configureStore({
     ...storeCommon,
-    devTools: devTools ? { name: 'React Query Builder' } : false,
+    devTools: {
+      name: 'React Query Builder',
+      autoPause: !(process.env.NODE_ENV !== 'production' || isDev),
+    },
   }) as RqbStore;
 
   queryBuilderStore.addSlice = (slice: Slice) => {
