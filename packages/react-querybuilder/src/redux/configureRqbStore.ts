@@ -16,6 +16,8 @@ export const configureRqbStore = (isDev?: boolean): RqbStore => {
 
   queryBuilderStore.addSlice = (slice: Slice) => {
     rootReducer.inject(slice);
+    // Initialize the new slice with no-op action
+    queryBuilderStore.dispatch({ type: crypto.randomUUID() });
   };
 
   return queryBuilderStore;
