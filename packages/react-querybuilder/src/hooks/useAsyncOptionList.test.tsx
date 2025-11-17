@@ -61,7 +61,6 @@ const createTestStore = () =>
     preloadedState: {
       queries: queriesSlice.getInitialState(),
       warnings: warningsSlice.getInitialState(),
-      // asyncOptionLists: asyncOptionListsSlice.getInitialState(),
     },
   });
 

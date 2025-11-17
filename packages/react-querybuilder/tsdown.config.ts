@@ -6,6 +6,25 @@ import {
   tsdownCommonConfig,
 } from '../../utils/tsdown.common';
 
+const writeNode10pkg = async (entryPointNames: string[]) => {
+  // Write /debug/package.json for node10 resolution
+  await mkdir('debug', { recursive: true });
+  await Bun.write(
+    'debug/package.json',
+    JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
+  );
+  // Write the other {util}/package.json's for node10 resolution
+  await Promise.all(
+    entryPointNames.map(async util => {
+      await mkdir(util, { recursive: true });
+      await Bun.write(
+        `${util}/package.json`,
+        JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+      );
+    })
+  );
+};
+
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
 
@@ -43,6 +62,20 @@ export default defineConfig(async options => {
     {
       ...commonBuildOptions,
       ...options,
+      entry: 'src/async.ts',
+      external: ['react-querybuilder'],
+    },
+    {
+      ...commonBuildOptions,
+      ...options,
+      format: 'cjs',
+      entry: 'src/async.ts',
+      external: ['react-querybuilder'],
+      onSuccess: () => writeNode10pkg(['async']),
+    },
+    {
+      ...commonBuildOptions,
+      ...options,
       entry: utilEntryPoints,
     },
     {
@@ -50,24 +83,7 @@ export default defineConfig(async options => {
       ...options,
       entry: utilEntryPoints,
       format: 'cjs',
-      onSuccess: async () => {
-        // Write /debug/package.json for node10 resolution
-        await mkdir('debug', { recursive: true });
-        await Bun.write(
-          'debug/package.json',
-          JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
-        );
-        // Write the other {util}/package.json's for node10 resolution
-        await Promise.all(
-          Object.keys(utilEntryPoints).map(async util => {
-            await mkdir(util, { recursive: true });
-            await Bun.write(
-              `${util}/package.json`,
-              JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
-            );
-          })
-        );
-      },
+      onSuccess: () => writeNode10pkg(Object.keys(utilEntryPoints)),
     },
   ];
 });

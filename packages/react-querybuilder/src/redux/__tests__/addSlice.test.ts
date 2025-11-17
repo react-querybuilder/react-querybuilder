@@ -6,8 +6,7 @@ interface CounterState {
   value: number;
 }
 
-// oxlint-disable-next-line no-explicit-any
-const getAnyState = (store: Store) => store.getState() as any;
+const getAnyState = (store: Store) => store.getState();
 
 it('adds a reducer', () => {
   const counterSlice = createSlice({
