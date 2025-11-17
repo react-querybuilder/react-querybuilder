@@ -112,6 +112,7 @@ const { useRQB_INTERNAL_QueryBuilderDispatch, useRQB_INTERNAL_QueryBuilderSelect
   getInternalHooks(QueryBuilderStateContext);
 
 queryBuilderStore.addSlice(asyncOptionListsSlice);
+queryBuilderStore.dispatch(asyncOptionListsSlice.actions.clearAllCache());
 
 /**
  * Augments a {@link ValueSelectorProps} object with async option loading.
