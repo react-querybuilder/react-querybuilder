@@ -6,7 +6,7 @@ description: Augment value selectors or value editors with async option list loa
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-To load option lists asynchronously for a value selector or editor, use the `useAsyncOptionList` hook.
+To load option lists asynchronously for a value selector or editor, use the `useAsyncOptionList` hook imported from `"react-querybuilder/async"`.
 
 This opt-in feature enables dynamic loading of options based on rule/group context, with intelligent caching for performance optimization.
 
@@ -18,9 +18,9 @@ This opt-in feature enables dynamic loading of options based on rule/group conte
 4. Assign the component in the [`controlElements` prop](../components/querybuilder-controlelements).
 
 ```tsx
-import { type UseAsyncOptionListParams, useAsyncOptionList } from 'react-querybuilder';
+import { type UseAsyncOptionListParams, useAsyncOptionList } from 'react-querybuilder/async';
 
-const useAsyncOptionListParams: UseAsyncOptionListParams = {
+const useAsyncOptionListParams: UseAsyncOptionListParams<ValueSelectorProps> = {
   getCacheKey: 'field',
   loadOptionList: async (value, { ruleOrGroup }) => {
     const response = await fetch(`/api/operators?field=${ruleOrGroup.field}`);
