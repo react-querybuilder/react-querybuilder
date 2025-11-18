@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { QueryBuilderStateContext, getRqbStore } from '../redux';
-import '../redux/index.debug';
+import { QueryBuilderStateContext, getRqbStore } from '../redux/index.debug';
 
 /**
  * Context provider for the `{@link QueryBuilder}` state store.
