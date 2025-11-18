@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `react-querybuilder/debug` entry point works for "node10" resolution.
+- `react-querybuilder/debug` entry point and all `@react-querybuilder/datetime/*` entry points now work for "node10" module resolution.
 
 ## [v8.12.0] - 2025-11-06
 

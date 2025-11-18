@@ -71,7 +71,6 @@ export default defineConfig(async options => {
       format: 'cjs',
       entry: 'src/async.ts',
       external: ['react-querybuilder'],
-      onSuccess: () => writeNode10pkg(['async-debug']),
     },
     {
       ...commonBuildOptions,
@@ -85,7 +84,6 @@ export default defineConfig(async options => {
       format: 'cjs',
       entry: 'src/async-debug.ts',
       external: ['react-querybuilder/debug'],
-      onSuccess: () => writeNode10pkg(['async']),
     },
     {
       ...commonBuildOptions,
@@ -97,7 +95,7 @@ export default defineConfig(async options => {
       ...options,
       entry: utilEntryPoints,
       format: 'cjs',
-      onSuccess: () => writeNode10pkg(Object.keys(utilEntryPoints)),
+      onSuccess: () => writeNode10pkg(['async', 'async-debug', ...Object.keys(utilEntryPoints)]),
     },
   ];
 });

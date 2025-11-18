@@ -88,7 +88,7 @@
     "attw:bulma": "attw --format table-flipped --pack ./packages/bulma",
     "attw:chakra": "attw --format table-flipped --pack ./packages/chakra",
     "attw:core": "attw --format table-flipped --pack ./packages/core",
-    "attw:datetime": "attw --format table-flipped --profile node16 --pack ./packages/datetime",
+    "attw:datetime": "attw --format table-flipped --pack ./packages/datetime",
     "attw:dnd": "attw --format table-flipped --pack ./packages/dnd",
     "attw:drizzle": "attw --format table-flipped --pack ./packages/drizzle",
     "attw:fluent": "attw --format table-flipped --pack ./packages/fluent",

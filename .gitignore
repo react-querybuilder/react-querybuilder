@@ -10,6 +10,10 @@ dbquery.*.cache_db
 utils/cel-evaluator/cel-evaluator
 utils/cel-evaluator/cel-evaluator.exe
 
+packages/datetime/dayjs/package.json
+packages/datetime/date-fns/package.json
+packages/datetime/jsdate/package.json
+packages/datetime/luxon/package.json
 packages/*/async/package.json
 packages/*/async-debug/package.json
 packages/*/debug/package.json
