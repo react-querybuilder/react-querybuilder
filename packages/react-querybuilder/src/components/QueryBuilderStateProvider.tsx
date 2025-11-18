@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
+import { QueryBuilderStateContext, getRqbStore } from '../redux';
 
 /**
  * Context provider for the `{@link QueryBuilder}` state store.
@@ -10,7 +10,7 @@ import { QueryBuilderStateContext, queryBuilderStore } from '../redux';
 export const QueryBuilderStateProvider = (props: {
   children: React.ReactNode;
 }): React.JSX.Element => (
-  <Provider context={QueryBuilderStateContext} store={queryBuilderStore}>
+  <Provider context={QueryBuilderStateContext} store={getRqbStore()}>
     {props.children}
   </Provider>
 );

@@ -1,4 +1,4 @@
-import { configureRqbStore } from './configureRqbStore';
+import { getRqbStore } from './getRqbStore';
 import type { RqbStore } from './types';
 
-export const queryBuilderStore: RqbStore = configureRqbStore(false);
+export const queryBuilderStore: RqbStore = getRqbStore();

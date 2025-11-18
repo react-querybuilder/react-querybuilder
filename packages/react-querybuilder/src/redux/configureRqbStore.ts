@@ -7,7 +7,7 @@ import type { RqbStore } from './types';
 export const configureRqbStore = (devTools?: boolean): RqbStore => {
   const queryBuilderStore = configureStore({
     ...storeCommon,
-    devTools: devTools ? { name: 'React Query Builder' } : false,
+    devTools: devTools ? /* istanbul ignore next */ { name: 'React Query Builder' } : false,
   }) as RqbStore;
 
   queryBuilderStore.addSlice = (slice: Slice) => {
