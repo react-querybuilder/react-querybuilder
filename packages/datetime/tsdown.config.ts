@@ -1,3 +1,4 @@
+import { mkdir } from 'node:fs/promises';
 import { defineConfig } from 'tsdown';
 import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
 
@@ -21,7 +22,18 @@ export default defineConfig(async options => {
         // Call original `onSuccess` first to write the non-debug index
         await onSuccess();
         await Promise.all(
-          apiLibs.map(apiLib => getCjsIndexWriter('react-querybuilder_datetime', apiLib)())
+          apiLibs.map(async apiLib => {
+            await getCjsIndexWriter('react-querybuilder_datetime', apiLib)();
+            await mkdir(apiLib, { recursive: true });
+            await Bun.write(
+              `${apiLib}/package.json`,
+              JSON.stringify(
+                { main: `../dist/cjs/${apiLib}.js`, types: `../dist/cjs/${apiLib}.d.ts` },
+                null,
+                2
+              )
+            );
+          })
         );
       };
     }

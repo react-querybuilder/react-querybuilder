@@ -62,7 +62,11 @@
   },
   "types": "./dist/react-querybuilder_datetime.legacy-esm.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "dayjs",
+    "date-fns",
+    "jsdate",
+    "luxon"
   ],
   "license": "MIT",
   "sideEffects": false,
