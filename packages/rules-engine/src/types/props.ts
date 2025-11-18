@@ -11,9 +11,16 @@ import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { Except } from 'type-fest';
 import type { ActionElementREProps, ValueSelectorREProps } from '../components';
-import type { Consequent, REConditionAny, REConditionCascade, RulesEngine } from './rulesEngine';
+import type {
+  Consequent,
+  REConditionAny,
+  REConditionCascade,
+  RulesEngine,
+  RulesEngineAny,
+} from './rulesEngine';
 
 export interface SchemaRE {
+  reId: string;
   components: ComponentsRE;
   classnames: ClassnamesRE;
   consequentTypes: FullOptionList<BaseOption>;
@@ -25,6 +32,8 @@ export interface SchemaRE {
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
     'query' | 'onQueryChange'
   >;
+  getRulesEngine: () => RulesEngineAny;
+  dispatchRulesEngine: (re: RulesEngineAny) => void;
   addCondition: (cp: Path) => void;
   removeCondition: (cp: Path) => void;
   updateCondition: (cp: Path, p: string, v: unknown) => void;
@@ -110,11 +119,13 @@ export type TranslationsFullRE = {
 
 export interface RulesEngineProps {
   rulesEngine?: RulesEngine;
+  defaultRulesEngine?: RulesEngine;
   onRulesEngineChange?: (re: RulesEngine) => void;
   consequentTypes?: FullOptionList<BaseOption>;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
   allowNestedConditions?: boolean;
+  enableMountRulesEngineChange?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
   translations?: Partial<TranslationsRE>;
