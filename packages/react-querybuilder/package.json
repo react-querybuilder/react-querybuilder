@@ -116,23 +116,12 @@
         "types": "./dist/async.d.ts",
         "default": "./dist/async.js"
       }
-    },
-    "./async-debug": {
-      "import": {
-        "types": "./dist/async-debug.d.mts",
-        "default": "./dist/async-debug.mjs"
-      },
-      "require": {
-        "types": "./dist/async-debug.d.ts",
-        "default": "./dist/async-debug.js"
-      }
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
   "types": "./dist/react-querybuilder.legacy-esm.d.ts",
   "files": [
     "async",
-    "async-debug",
     "debug",
     "dist",
     "formatQuery",
