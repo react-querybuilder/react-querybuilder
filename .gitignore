@@ -11,6 +11,7 @@ utils/cel-evaluator/cel-evaluator
 utils/cel-evaluator/cel-evaluator.exe
 
 packages/*/async/package.json
+packages/*/async-debug/package.json
 packages/*/debug/package.json
 packages/*/formatQuery/package.json
 packages/*/parseCEL/package.json
