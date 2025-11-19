@@ -1,12 +1,14 @@
 import type {
   BaseOption,
   FlexibleOptionListProp,
+  FullOption,
+  FullOptionList,
   RuleGroupTypeAny,
   RuleType,
 } from '@react-querybuilder/core';
 import type { WithSlice } from '@reduxjs/toolkit';
-import type { asyncOptionListsSlice } from '../../redux/asyncOptionListsSlice';
 import type { ValueEditorProps, VersatileSelectorProps } from '../../types';
+import type { asyncOptionListsSlice } from './asyncOptionListsSlice';
 
 declare module '../../redux/rootReducer' {
   export interface LazyLoadedSlices extends WithSlice<typeof asyncOptionListsSlice> {}
@@ -88,4 +90,18 @@ export interface GeneratedUseAsyncOptionList {
     props: ValueEditorProps,
     params?: UseAsyncOptionListParams<ValueEditorProps>
   ): UseAsyncOptionList<ValueEditorProps>;
+}
+
+export type CacheKeys = [string, ...string[]];
+
+export interface CachedOptionList {
+  data: FullOptionList<FullOption>;
+  timestamp: number;
+  validUntil: number;
+}
+
+export interface AsyncOptionListsSliceState {
+  cache: Record<string, CachedOptionList>;
+  loading: Record<string, boolean>;
+  errors: Record<string, string>;
 }

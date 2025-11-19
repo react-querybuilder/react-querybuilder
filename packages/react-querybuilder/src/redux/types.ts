@@ -1,4 +1,3 @@
-import type { FullOption, FullOptionList } from '@react-querybuilder/core';
 import type {
   EnhancedStore,
   Slice,
@@ -22,17 +21,3 @@ export type RqbStore = EnhancedStore<
     [StoreEnhancer<{ dispatch: ThunkDispatch<RqbState, undefined, UnknownAction> }>, StoreEnhancer]
   >
 > & { addSlice: (slice: Slice) => void };
-
-export type CacheKeys = [string, ...string[]];
-
-export interface CachedOptionList {
-  data: FullOptionList<FullOption>;
-  timestamp: number;
-  validUntil: number;
-}
-
-export interface AsyncOptionListsSliceState {
-  cache: Record<string, CachedOptionList>;
-  loading: Record<string, boolean>;
-  errors: Record<string, string>;
-}

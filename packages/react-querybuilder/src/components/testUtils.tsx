@@ -3,9 +3,9 @@ import type { RenderOptions, RenderResult } from '@testing-library/react';
 import { render as og_render } from '@testing-library/react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
+import type { asyncOptionListsSlice } from '../hooks/useAsyncOptionList/asyncOptionListsSlice';
 import type { RqbState } from '../redux';
 import { QueryBuilderStateContext } from '../redux';
-import type { asyncOptionListsSlice } from '../redux/asyncOptionListsSlice';
 import { queriesSlice } from '../redux/queriesSlice';
 import { warningsSlice } from '../redux/warningsSlice';
 
