@@ -12,8 +12,12 @@ export const configureRqbStore = (devTools?: boolean): RqbStore => {
 
   queryBuilderStore.addSlice = (slice: Slice) => {
     rootReducer.inject(slice);
-    // Initialize the new slice with no-op action
-    queryBuilderStore.dispatch({ type: crypto.randomUUID() });
+    // Initialize state for the new slice. This action is a no-op because
+    // the `type` is random and will never match any reducers.
+    queryBuilderStore.dispatch({
+      type: crypto.randomUUID().slice(0, 8),
+      meta: `Initializing state for slice "${slice.name}"`,
+    });
   };
 
   return queryBuilderStore;
