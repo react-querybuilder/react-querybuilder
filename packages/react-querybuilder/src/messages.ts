@@ -22,4 +22,6 @@ export const messages = {
 
   errorEnabledDndWithoutReactDnD:
     'QueryBuilder was rendered with the enableDragAndDrop prop set to true, but either react-dnd was not detected or one of react-dnd-html5-backend or react-dnd-touch-backend was not detected. To enable drag-and-drop functionality, install react-dnd and one of the backend packages and wrap QueryBuilder in QueryBuilderDnD from @react-querybuilder/dnd.',
+
+  errorDeprecatedDebugImport: `Importing from react-querybuilder/debug is deprecated. To enable Redux DevTools for React Query Builder's internal store, set globalThis.__RQB_DEVTOOLS__ = true.`,
 } as const;

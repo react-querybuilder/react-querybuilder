@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#975] `useAsyncOptionList` and its corresponding Redux slice have been decoupled from the main bundle. They will now be loaded only when explicitly imported from `"react-querybuilder/async"`.
+- [#976] Redux DevTools can be enabled for the internal store by setting `globalThis.__RQB_DEVTOOLS__ = true` before imports. Previously this required changing all `react-querybuilder` imports to `react-querybuilder/debug`. The `/debug` entry point is now deprecated (still works, but may be removed in a future major version).
 
 ### Fixed
 
@@ -2079,6 +2080,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#969]: https://github.com/react-querybuilder/react-querybuilder/pull/969
 [#974]: https://github.com/react-querybuilder/react-querybuilder/pull/974
 [#975]: https://github.com/react-querybuilder/react-querybuilder/pull/975
+[#976]: https://github.com/react-querybuilder/react-querybuilder/pull/976
 
 <!-- #endregion -->
 

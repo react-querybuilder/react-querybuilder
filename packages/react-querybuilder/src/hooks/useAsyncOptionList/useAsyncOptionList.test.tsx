@@ -7,14 +7,14 @@ import { act, renderHook } from '@testing-library/react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { QueryBuilderStateContext } from '../../redux';
+import { queriesSlice } from '../../redux/queriesSlice';
+import { warningsSlice } from '../../redux/warningsSlice';
+import type { Schema, ValueEditorProps, VersatileSelectorProps } from '../../types';
 import {
   asyncOptionListsSlice,
   DEFAULT_CACHE_TTL,
   getOptionListsAsync,
-} from '../../redux/asyncOptionListsSlice';
-import { queriesSlice } from '../../redux/queriesSlice';
-import { warningsSlice } from '../../redux/warningsSlice';
-import type { Schema, ValueEditorProps, VersatileSelectorProps } from '../../types';
+} from './asyncOptionListsSlice';
 import { useAsyncOptionList } from './index';
 import type { UseAsyncOptionListParams } from './types';
 

@@ -267,8 +267,90 @@ Three new methods simplify query management from custom components:
 
 - Prefer `useQueryBuilderQuery` over `useQueryBuilderSelector`
 - These use a custom Redux context internally
-- Enable Redux DevTools by importing from `"react-querybuilder/debug"`
 - The old `context` prop workaround is no longer needed
+
+#### Redux DevTools
+
+Enable Redux DevTools for the custom context by setting `globalThis.__RQB_DEVTOOLS__ = true` before imports. Examples:
+
+<details>
+
+<summary>Vite</summary>
+
+```ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  define: { __RQB_DEVTOOLS__: true },
+});
+```
+
+</details>
+
+<details>
+
+<summary>Next.js</summary>
+
+For App Router:
+
+```tsx
+// app/layout.js
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `globalThis.__RQB_DEVTOOLS__ = true;`,
+          }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+For Pages Router:
+
+```tsx
+// pages/_document.js
+import { Html, Head, Main, NextScript } from 'next/document';
+
+export default function Document() {
+  return (
+    <Html>
+      <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `globalThis.__RQB_DEVTOOLS__ = true;`,
+          }}
+        />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}
+```
+
+</details>
+
+<details>
+
+<summary><code>/debug</code> import <em>(deprecated)</em></summary>
+
+The `/debug` entry point may be removed in a future major version.
+
+```ts
+import from `"react-querybuilder/debug"`;
+```
+
+</details>
 
 ### New `insert` utility
 

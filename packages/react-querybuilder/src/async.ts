@@ -1,3 +1,1 @@
 export * from './hooks/useAsyncOptionList';
-export * from './redux/asyncOptionListsSlice';
-export type { AsyncOptionListsSliceState, CachedOptionList } from './redux/types';
