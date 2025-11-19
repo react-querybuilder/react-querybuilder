@@ -15,7 +15,6 @@ packages/datetime/date-fns/package.json
 packages/datetime/jsdate/package.json
 packages/datetime/luxon/package.json
 packages/*/async/package.json
-packages/*/async-debug/package.json
 packages/*/debug/package.json
 packages/*/formatQuery/package.json
 packages/*/parseCEL/package.json
