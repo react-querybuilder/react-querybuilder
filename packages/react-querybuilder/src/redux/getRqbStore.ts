@@ -11,13 +11,12 @@ declare global {
 /**
  * Gets the singleton React Query Builder store instance.
  * DevTools are enabled if either:
- * - process.env.RQB_DEVTOOLS is 'true' (build-time)
- * - window.__RQB_DEVTOOLS__ is truthy (runtime)
+ * - globalThis.__RQB_DEVTOOLS__ is truthy
+ * - window.__RQB_DEVTOOLS__ is truthy
  */
 export function getRqbStore(devTools?: boolean): RqbStore {
   if (!_store) {
-    const devToolsEnabled =
-      devTools || process?.env?.RQB_DEVTOOLS === 'true' || globalThis?.__RQB_DEVTOOLS__;
+    const devToolsEnabled = devTools || globalThis?.__RQB_DEVTOOLS__;
 
     _store = configureRqbStore(devToolsEnabled);
   }
