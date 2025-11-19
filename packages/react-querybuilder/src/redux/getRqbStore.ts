@@ -17,9 +17,7 @@ declare global {
 export function getRqbStore(devTools?: boolean): RqbStore {
   if (!_store) {
     const devToolsEnabled =
-      devTools ||
-      process.env.RQB_DEVTOOLS === 'true' ||
-      (typeof globalThis !== 'undefined' && globalThis.__RQB_DEVTOOLS__);
+      devTools || process?.env?.RQB_DEVTOOLS === 'true' || globalThis?.__RQB_DEVTOOLS__;
 
     _store = configureRqbStore(devToolsEnabled);
   }
