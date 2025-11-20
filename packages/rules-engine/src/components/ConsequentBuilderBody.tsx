@@ -6,7 +6,9 @@ import type { ConsequentProps } from '../types';
 /**
  * Default body component for {@link ConsequentBuilder}.
  */
-export const ConsequentBuilderBody = (props: ConsequentProps): React.JSX.Element => {
+export const ConsequentBuilderBody: React.MemoExoticComponent<
+  (props: ConsequentProps) => React.JSX.Element
+> = React.memo(function ConsequentBuilderBody(props: ConsequentProps): React.JSX.Element {
   const {
     consequent,
     consequentTypes = [],
@@ -47,4 +49,4 @@ export const ConsequentBuilderBody = (props: ConsequentProps): React.JSX.Element
       )}
     </div>
   );
-};
+});

@@ -150,8 +150,6 @@ export interface RulesEngineBuilderHeaderProps {
 
 export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
-  onConditionsChange: (rec: REConditionCascade<RG>) => void;
-  onDefaultConsequentChange: (rec?: Consequent) => void;
   conditions: REConditionCascade<RG>;
   defaultConsequent?: Consequent;
   schema: SchemaRE;
@@ -163,7 +161,7 @@ export interface ConditionProps {
   condition: REConditionAny;
   consequentTypes?: FullOptionList<BaseOption>;
   isOnlyCondition: boolean;
-  onConditionChange: (condition: REConditionAny) => void;
+  // onConditionChange: (condition: REConditionAny) => void;
   autoSelectConsequentType?: boolean;
 }
 

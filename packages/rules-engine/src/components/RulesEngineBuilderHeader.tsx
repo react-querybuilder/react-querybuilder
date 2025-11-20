@@ -1,9 +1,11 @@
 import * as React from 'react';
 import type { RulesEngineBuilderHeaderProps } from '../types';
 
-export const RulesEngineBuilderHeader = (
+export const RulesEngineBuilderHeader: React.MemoExoticComponent<
+  (props: RulesEngineBuilderHeaderProps) => React.JSX.Element
+> = React.memo(function RulesEngineBuilderHeader(
   props: RulesEngineBuilderHeaderProps
-): React.JSX.Element => {
+): React.JSX.Element {
   const {
     classnames,
     defaultConsequent,
@@ -47,4 +49,4 @@ export const RulesEngineBuilderHeader = (
       />
     </div>
   );
-};
+});

@@ -1,43 +1,36 @@
-import type { RuleGroupTypeAny } from '@react-querybuilder/core';
-import { produce } from 'immer';
+import type { Path, RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import { usePathsMemo } from 'react-querybuilder';
-import type { ConditionCascadeProps, REConditionAny } from '../types';
+import type { ConditionCascadeProps, Consequent } from '../types';
+
+// TODO: Temporary until disabled/etc. are implemented
+const disabledPaths: Path[] = [];
 
 /**
  * Renders a sequential list of if/else-if/else blocks in a rules engine.
  */
-export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
+export const RulesEngineConditionCascade: React.MemoExoticComponent<
+  <RG extends RuleGroupTypeAny>(props: ConditionCascadeProps<RG>) => React.JSX.Element
+> = React.memo(function RulesEngineConditionCascade<RG extends RuleGroupTypeAny>(
   props: ConditionCascadeProps<RG>
-): React.JSX.Element => {
-  const {
-    conditionPath,
-    conditions,
-    defaultConsequent,
-    onConditionsChange,
-    onDefaultConsequentChange,
-    schema,
-  } = props;
+): React.JSX.Element {
+  const { conditionPath, conditions, defaultConsequent, schema } = props;
+  const { updateCondition } = schema;
   const {
     consequentTypes,
     autoSelectConsequentType,
     components: { conditionBuilder: ConditionBuilder, consequentBuilder: ConsequentBuilder },
   } = schema;
 
-  const conditionUpdater = React.useCallback(
-    (c: REConditionAny, index: number) =>
-      onConditionsChange(
-        produce(conditions, draft => {
-          // oxlint-disable-next-line no-explicit-any
-          draft.splice(index, 1, c as any);
-        })
-      ),
-    [onConditionsChange, conditions]
+  const onDefaultConsequentChange = React.useCallback(
+    (defaultConsequent?: Consequent) =>
+      updateCondition(conditionPath, 'defaultConsequent', defaultConsequent),
+    [conditionPath, updateCondition]
   );
 
   const pathsMemo = usePathsMemo({
     disabled: false,
-    disabledPaths: [],
+    disabledPaths,
     nestedArray: conditions,
     path: conditionPath,
   });
@@ -58,8 +51,6 @@ export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
             consequentTypes={consequentTypes}
             condition={c}
             isOnlyCondition={conditions.length === 1}
-            // oxlint-disable-next-line jsx-no-new-function-as-prop
-            onConditionChange={c => conditionUpdater(c, i)}
             autoSelectConsequentType={autoSelectConsequentType}
           />
         );
@@ -78,4 +69,4 @@ export const RulesEngineConditionCascade = <RG extends RuleGroupTypeAny>(
       )}
     </React.Fragment>
   );
-};
+});

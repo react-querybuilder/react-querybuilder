@@ -6,11 +6,13 @@ import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootConditionPath: Path = [];
 
-export const RulesEngineBuilderInternal = <RG extends RuleGroupTypeAny = RuleGroupType>({
+export const RulesEngineBuilderInternal: React.MemoExoticComponent<
+  (props: { props: RulesEngineProps }) => React.JSX.Element
+> = React.memo(function RulesEngineBuilderInternal<RG extends RuleGroupTypeAny = RuleGroupType>({
   props,
 }: {
   props: RulesEngineProps;
-}): React.JSX.Element => {
+}): React.JSX.Element {
   const re = useRulesEngineBuilder<RG>(props);
 
   const { rulesEngineBuilderHeader: RulesEngineBuilderHeader } = re.components;
@@ -25,13 +27,10 @@ export const RulesEngineBuilderInternal = <RG extends RuleGroupTypeAny = RuleGro
       />
       <RulesEngineConditionCascade
         conditionPath={rootConditionPath}
-        onConditionsChange={re.onChange}
-        onDefaultConsequentChange={re.onDefaultConsequentChange}
-        // @ts-expect-error TODO
         conditions={re.rulesEngine.conditions}
         defaultConsequent={re.rulesEngine.defaultConsequent}
         schema={re.schema}
       />
     </div>
   );
-};
+});

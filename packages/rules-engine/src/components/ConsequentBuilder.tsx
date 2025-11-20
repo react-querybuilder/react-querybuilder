@@ -6,7 +6,9 @@ import type { ConsequentProps } from '../types';
 /**
  * Analogous to the body of an "if" or "else-if" block.
  */
-export const ConsequentBuilder = (props: ConsequentProps): React.JSX.Element => {
+export const ConsequentBuilder: React.MemoExoticComponent<
+  (props: ConsequentProps) => React.JSX.Element
+> = React.memo(function ConsequentBuilder(props: ConsequentProps): React.JSX.Element {
   const {
     standalone,
     schema: {
@@ -35,4 +37,4 @@ export const ConsequentBuilder = (props: ConsequentProps): React.JSX.Element => 
       <ConsequentBuilderBody {...props} />
     </div>
   );
-};
+});

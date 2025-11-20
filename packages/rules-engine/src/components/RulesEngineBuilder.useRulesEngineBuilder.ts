@@ -293,8 +293,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   );
 
   const updateCondition = useCallback(
-    (parentConditionPath: Path, property: string, value: unknown) => {
-      const newRE = updateRE(rulesEngine, property, value, parentConditionPath);
+    (conditionPath: Path, property: string, value: unknown) => {
+      const newRE = updateRE(rulesEngine, property, value, conditionPath);
       dispatchRulesEngine(newRE);
     },
     [dispatchRulesEngine, rulesEngine]

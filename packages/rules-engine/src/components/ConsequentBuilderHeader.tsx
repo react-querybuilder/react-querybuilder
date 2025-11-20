@@ -6,7 +6,9 @@ import type { ConsequentProps } from '../types';
 /**
  * Default header component for {@link ConsequentBuilder}.
  */
-export const ConsequentBuilderHeader = (props: ConsequentProps): React.JSX.Element => {
+export const ConsequentBuilderHeader: React.MemoExoticComponent<
+  (props: ConsequentProps) => React.JSX.Element
+> = React.memo(function ConsequentBuilderHeader(props: ConsequentProps): React.JSX.Element {
   const {
     onConsequentChange,
     standalone,
@@ -60,4 +62,4 @@ export const ConsequentBuilderHeader = (props: ConsequentProps): React.JSX.Eleme
       />
     </div>
   );
-};
+});
