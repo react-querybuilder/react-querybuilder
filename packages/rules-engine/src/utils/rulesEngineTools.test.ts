@@ -1,628 +1,441 @@
-import type { RulesEngine } from '../types';
-import { addRE, groupRE, insertRE, moveRE, removeRE, updateRE } from './rulesEngineTools';
+import type { DefaultRuleType, Path } from '@react-querybuilder/core';
+import { numericRegex } from '@react-querybuilder/core';
+import type {
+  Consequent,
+  RECondition,
+  REConditionIC,
+  RulesEngine,
+  RulesEngineAny,
+  RulesEngineIC,
+} from '../types';
+import { addRE, insertRE, moveRE, removeRE, updateRE } from './rulesEngineTools';
 
-const id = expect.any(String);
+const stripIDs = (re: unknown) =>
+  JSON.parse(
+    JSON.stringify(re, (key, value) => (key === 'id' || key === 'path' ? undefined : value))
+  );
+
+const idGenerator = () => `${Math.random()}`;
+
+const pathsAsIDs = (re: RulesEngineAny): RulesEngineAny => {
+  // oxlint-disable-next-line no-explicit-any
+  const addPathIDs = (obj: any, path: Path): any => {
+    if (obj && typeof obj === 'object' && 'conditions' in obj) {
+      return {
+        ...obj,
+        id: JSON.stringify(path),
+        // oxlint-disable-next-line no-explicit-any
+        conditions: obj.conditions.map((c: any, i: number) => addPathIDs(c, [...path, i])),
+      };
+    } else if (obj && typeof obj === 'object' && 'antecedent' in obj) {
+      return {
+        ...obj,
+        id: JSON.stringify(path),
+        antecedent: {
+          ...obj.antecedent,
+          id: JSON.stringify([...path, 'antecedent']),
+        },
+        ...(obj.conditions && {
+          // oxlint-disable-next-line no-explicit-any
+          conditions: obj.conditions.map((c: any, i: number) => addPathIDs(c, [...path, i])),
+        }),
+      };
+    }
+    return obj;
+  };
+  return addPathIDs(re, []);
+};
+
+const badPath: Path = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
+// Sample rules
+const [r1, r2, r3]: DefaultRuleType[] = (['=', '<', '>'] as const).map((operator, i) => ({
+  field: `f${i + 1}`,
+  operator,
+  value: `v${i + 1}`,
+}));
+
+// Sample consequents
+const c1: Consequent = { consequentType: 'action', command: 'cmd1' };
+const c2: Consequent = { consequentType: 'action', command: 'cmd2' };
+
+// Sample conditions
+const cond1: RECondition = { antecedent: { combinator: 'and', rules: [r1] }, consequent: c1 };
+const cond2: RECondition = { antecedent: { combinator: 'or', rules: [r2, r3] }, consequent: c2 };
+const condIC1: REConditionIC = { antecedent: { rules: [r1] }, consequent: c1 };
+const condIC2: REConditionIC = { antecedent: { rules: [r2, 'and', r3] }, consequent: c2 };
+
+// Sample rules engines
+const re1: RulesEngine = { conditions: [] };
+const reIC1: RulesEngineIC = { conditions: [] };
+
+// const re2: RulesEngine = { conditions: [cond1] };
+// const reIC2: RulesEngineIC = { conditions: [condIC1] };
+
+const re3: RulesEngine = { conditions: [cond1, cond2] };
+// const reIC3: RulesEngineIC = { conditions: [condIC1, condIC2] };
+
+const re1wID: RulesEngine = { id: '[]', ...re1 };
+const reIC1wID: RulesEngineIC = { id: '[]', ...reIC1 };
+const re3wIDs = pathsAsIDs(re3) as RulesEngine;
+// const reIC3wIDs = pathsAsIDs(reIC3) as RulesEngineIC;
+
+const testRET = (
+  title: string,
+  rulesEngine: RulesEngineAny,
+  expectation: RulesEngineAny,
+  exact?: boolean,
+  only?: boolean
+) => {
+  (only ? it.only : it)(title, () => {
+    if (exact) {
+      expect(rulesEngine).toBe(expectation);
+    } else {
+      expect(stripIDs(rulesEngine)).toEqual(expectation);
+    }
+  });
+};
+
+const testLoop = [
+  ['path', (x: Path) => x],
+  ['id', (x: Path) => JSON.stringify(x)],
+] as const;
 
 describe('addRE', () => {
-  it('adds a rule action to an empty rules engine', () => {
-    expect(addRE({ conditions: [], id: 'root' }, { consequentType: 'a' }, [])).toEqual({
-      conditions: [{ actionType: 'a' }],
-      id: 'root',
+  describe.each(testLoop)('standard rules engine by %s', (_, p) => {
+    testRET('adds a condition', addRE(re1wID, cond1, p([])), { conditions: [cond1] });
+    testRET('adds another condition', addRE({ id: '[]', conditions: [cond1] }, cond2, p([])), {
+      conditions: [cond1, cond2],
+    });
+
+    it('adds a condition with custom idGenerator', () => {
+      const result = addRE(re1wID, cond1, p([]), { idGenerator });
+      expect(result.conditions[0].id).toMatch(numericRegex);
     });
   });
 
-  it('does not add a rule action to a rules engine with a trailing rule action', () => {
-    expect(
-      addRE(
-        { conditions: [], defaultConsequent: { consequentType: 'a' }, id: 'root' },
-        { consequentType: 'b' },
-        []
-      )
-    ).toEqual({
-      conditions: [{ actionType: 'a' }],
-      id: 'root',
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testRET('adds a condition', addRE(reIC1wID, condIC1, p([])), { conditions: [condIC1] });
+    testRET('adds another condition', addRE({ id: '[]', conditions: [condIC1] }, condIC2, p([])), {
+      conditions: [condIC1, condIC2],
     });
   });
 
-  it('adds a rule group to an empty rules engine', () => {
-    expect(addRE({ conditions: [], id: 'root' }, { combinator: 'and', rules: [] }, [])).toEqual({
-      conditions: [{ combinator: 'and', rules: [] }],
-      id: 'root',
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testRET('bails out', addRE(re1, cond1, p(badPath)), re1, true);
+  });
+
+  // oxlint-disable-next-line no-explicit-any
+  testRET('bails out on invalid condition', addRE(re1, {} as any, []), re1, true);
+
+  describe('edge cases', () => {
+    it('handles non-array conditions', () => {
+      const reWithoutArray = { id: 'test' };
+      // oxlint-disable-next-line no-explicit-any
+      const result = addRE(reWithoutArray as any, cond1, []);
+      expect(stripIDs(result.conditions[0])).toEqual(stripIDs(cond1));
     });
-  });
 
-  it('adds a rule group as second-to-last element when action is present', () => {
-    expect(
-      addRE(
-        {
-          conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-          defaultConsequent: { consequentType: 'a' },
-          id: 'root',
-        },
-        { id: 'new', combinator: 'and', rules: [] },
-        []
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'and', rules: [] },
-        { id: 'new', combinator: 'and', rules: [] },
-        { actionType: 'a' },
-      ],
-      id: 'root',
+    it('handles missing parent condition', () => {
+      const result = addRE(re1wID, cond1, [99]);
+      expect(result).toBe(re1wID);
     });
-  });
-
-  it('does not add a rule to the conditions of a rules engine', () => {
-    expect(
-      addRE({ conditions: [], id: 'root' }, { field: 'f', operator: '=', value: 'v' }, [])
-    ).toEqual({ conditions: [], id: 'root' });
-  });
-
-  it('adds a rule group to a nested rules engine', () => {
-    expect(
-      addRE(
-        {
-          conditions: [{ antecedent: { combinator: 'and', rules: [] }, conditions: [] }],
-          id: 'root',
-        },
-        { combinator: 'and', rules: [] },
-        [0]
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'and', rules: [], conditions: [{ combinator: 'and', rules: [] }] },
-      ],
-      id: 'root',
-    });
-  });
-
-  it('makes a rule group a rule engine when appropriate', () => {
-    expect(
-      addRE(
-        { conditions: [{ antecedent: { combinator: 'and', rules: [] } }], id: 'root' },
-        { id: 'new', combinator: 'and', rules: [] },
-        [0]
-      )
-    ).toEqual({
-      conditions: [
-        {
-          combinator: 'and',
-          rules: [],
-          conditions: [{ id: 'new', combinator: 'and', rules: [] }],
-        },
-      ],
-      id: 'root',
-    });
-  });
-
-  it('adds a rule to a nested rules engine', () => {
-    expect(
-      addRE(
-        {
-          conditions: [
-            {
-              antecedent: { combinator: 'and', rules: [] },
-              conditions: [
-                { antecedent: { combinator: 'and', rules: [] } },
-                { antecedent: { combinator: 'and', rules: [] } },
-                { antecedent: { combinator: 'and', rules: [] } },
-              ],
-            },
-          ],
-          id: 'root',
-        },
-        { field: 'f', operator: '=', value: 'v' },
-        [0, 1],
-        []
-      )
-    ).toEqual({
-      conditions: [
-        {
-          combinator: 'and',
-          rules: [],
-          conditions: [
-            { condition: { combinator: 'and', rules: [] } },
-            {
-              condition: {
-                combinator: 'and',
-                rules: [{ id, field: 'f', operator: '=', value: 'v' }],
-              },
-            },
-            { condition: { combinator: 'and', rules: [] } },
-          ],
-        },
-      ],
-      id: 'root',
-    });
-  });
-
-  it('ignores invalid rules engines', () => {
-    // oxlint-disable-next-line no-explicit-any
-    const r1 = {} as any;
-    expect(addRE(r1, { actionType: 'a' }, [])).toBe(r1);
-
-    // oxlint-disable-next-line no-explicit-any
-    const r2 = { conditions: [{ dummy: 'd' }] } as any;
-    expect(addRE(r2, { actionType: 'a' }, [0])).toBe(r2);
-  });
-
-  it('ignores invalid paths', () => {
-    const r1 = { conditions: [], id: 'root' };
-
-    // oxlint-disable-next-line no-explicit-any
-    expect(addRE(r1, { consequentType: 'a' }, 26 as any)).toBe(r1);
-    expect(addRE(r1, { consequentType: 'a' }, [1, 2])).toBe(r1);
-  });
-});
-
-describe('updateRE', () => {
-  it('updates a rules engine in a rules engine', () => {
-    expect(
-      updateRE(
-        {
-          id: 'root',
-          conditions: [{ antecedent: { rules: [{ field: 'f', operator: '=', value: 'v' }] } }],
-        },
-        'someProp',
-        'initial value',
-        [0]
-      )
-    ).toEqual({
-      conditions: [
-        { rules: [{ field: 'f', operator: '=', value: 'v' }], someProp: 'initial value' },
-      ],
-      id: 'root',
-    });
-  });
-
-  it('updates a rule in a rules engine', () => {
-    expect(
-      updateRE(
-        {
-          conditions: [{ antecedent: { rules: [{ field: 'f', operator: '=', value: 'v' }] } }],
-          id: 'root',
-        },
-        'value',
-        'new value',
-        [0],
-        [0]
-      )
-    ).toEqual({
-      conditions: [{ rules: [{ field: 'f', operator: '=', value: 'new value' }] }],
-      id: 'root',
-    });
-  });
-
-  it('ignores invalid paths', () => {
-    const r1 = { conditions: [], id: 'root' };
-
-    // oxlint-disable-next-line no-explicit-any
-    expect(updateRE(r1, 'value', 'new value', 26 as any)).toBe(r1);
-    expect(updateRE(r1, 'value', 'new value', [1, 2])).toBe(r1);
   });
 });
 
 describe('removeRE', () => {
-  it('removes a condition from a rules engine', () => {
-    expect(
-      removeRE(
-        {
-          conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-          defaultAction: { actionType: 'a' },
-          id: 'root',
-        },
-        [0]
-      )
-    ).toEqual({ conditions: [{ actionType: 'a' }], id: 'root' });
+  describe.each(testLoop)('standard rules engine by %s', (_, p) => {
+    testRET(
+      'removes the first of two conditions',
+      removeRE({ conditions: [{ ...cond1, id: '[0]' }, cond2] }, p([0])),
+      { conditions: [cond2] }
+    );
+    testRET(
+      'removes the second of three conditions',
+      removeRE({ conditions: [cond1, { ...cond2, id: '[1]' }, cond1] }, p([1])),
+      { conditions: [cond1, cond1] }
+    );
+    testRET('does not remove the root', removeRE(re1wID, p([])), re1wID, true);
   });
 
-  it('removes a rule from a nested condition', () => {
-    expect(
-      removeRE(
-        {
-          conditions: [
-            {
-              antecedent: { combinator: 'and', rules: [{ field: 'f', operator: '=', value: 'v' }] },
-            },
-          ],
-          id: 'root',
-        },
-        [0],
-        [0]
-      )
-    ).toEqual({
-      conditions: [{ combinator: 'and', rules: [] }],
-      id: 'root',
+  describe.each(testLoop)('independent combinators by %s', (_, p) => {
+    testRET('removes a condition', removeRE({ conditions: [{ ...condIC1, id: '[0]' }] }, p([0])), {
+      conditions: [],
+    });
+    const tempREIC: RulesEngineIC = { conditions: [condIC1, { ...condIC2, id: '[1]' }] };
+    testRET('removes the second of two conditions', removeRE(tempREIC, p([1])), {
+      conditions: [condIC1],
     });
   });
 
-  it('ignores root removal', () => {
-    const r1 = { conditions: [], id: 'root' };
-    expect(removeRE(r1, [])).toBe(r1);
+  describe.each(testLoop)('on bad %s', (_, p) => {
+    testRET('bails out', removeRE(re1, p(badPath)), re1, true);
   });
 
-  it('ignores invalid paths', () => {
-    const r1 = { conditions: [], id: 'root' };
-    expect(removeRE(r1, [1, 2])).toBe(r1);
-    expect(removeRE(r1, 'invalid-id')).toBe(r1);
+  describe('edge cases', () => {
+    it('handles empty path', () => {
+      const result = removeRE(re3wIDs, []);
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('handles invalid parent', () => {
+      const result = removeRE(re3wIDs, [99]);
+      expect(result).toBe(re3wIDs);
+    });
+  });
+});
+
+describe('updateRE', () => {
+  describe.each(testLoop)('standard rules engine by %s', (_, p) => {
+    it('updates root property', () => {
+      const result = updateRE(re1wID, 'defaultConsequent', c1, p([]));
+      expect(result.defaultConsequent).toEqual(c1);
+    });
+
+    it('bails out on bad path', () => {
+      const result = updateRE(re1wID, 'value', 'test', p(badPath));
+      expect(result).toBe(re1wID);
+    });
+
+    it('handles invalid condition path', () => {
+      const result = updateRE(re3wIDs, 'test', 'value', p([99]));
+      expect(result).toBe(re3wIDs);
+    });
   });
 });
 
 describe('moveRE', () => {
-  it('moves a condition up', () => {
-    expect(
-      moveRE(
-        {
-          conditions: [
-            { antecedent: { combinator: 'and', rules: [] } },
-            { antecedent: { combinator: 'or', rules: [] } },
-          ],
-          defaultAction: { actionType: 'a' },
-          id: 'root',
-        },
-        [1],
-        'up'
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'or', rules: [] },
-        { combinator: 'and', rules: [] },
-        { actionType: 'a' },
-      ],
-      id: 'root',
-    });
-    expect(
-      moveRE(
-        {
-          conditions: [
-            {
-              antecedent: { combinator: 'and', rules: [] },
-              conditions: [
-                { antecedent: { combinator: 'and', rules: [] } },
-                { antecedent: { combinator: 'or', rules: [] } },
-              ],
-              defaultAction: { actionType: 'a' },
-              id: '1',
-            },
-          ],
-          id: 'root',
-        },
-        [0, 1],
-        'down'
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'and', rules: [] },
-        {
-          combinator: 'and',
-          rules: [],
-          conditions: [{ combinator: 'or', rules: [] }, { actionType: 'a' }],
-          id: '1',
-        },
-      ],
-      id: 'root',
+  it('shifts the first condition down', () => {
+    const result = moveRE(re3wIDs, [0], 'down');
+    expect(stripIDs(result)).toEqual({
+      conditions: [cond2, cond1],
     });
   });
 
-  it('moves a condition down', () => {
-    expect(
-      moveRE(
-        {
-          conditions: [
-            { antecedent: { combinator: 'and', rules: [] } },
-            { antecedent: { combinator: 'or', rules: [] } },
-          ],
-          defaultAction: { actionType: 'a' },
-          id: 'root',
-        },
-        [0],
-        'down'
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'or', rules: [] },
-        { combinator: 'and', rules: [] },
-        { actionType: 'a' },
-      ],
-      id: 'root',
-    });
-    expect(
-      moveRE(
-        {
-          conditions: [
-            {
-              antecedent: { combinator: 'and', rules: [] },
-              conditions: [
-                { antecedent: { combinator: 'and', rules: [] } },
-                { antecedent: { combinator: 'or', rules: [] } },
-              ],
-              defaultAction: { actionType: 'a' },
-              id: '1',
-            },
-            {
-              antecedent: { combinator: 'or', rules: [] },
-              conditions: [
-                { antecedent: { combinator: 'and', rules: [] } },
-                { antecedent: { combinator: 'or', rules: [] } },
-              ],
-              defaultAction: { actionType: 'a' },
-              id: '2',
-            },
-          ],
-          id: 'root',
-        },
-        [0, 1],
-        'down'
-      )
-    ).toEqual({
-      conditions: [
-        {
-          combinator: 'and',
-          rules: [],
-          conditions: [{ combinator: 'and', rules: [] }, { actionType: 'a' }],
-          id: '1',
-        },
-        { combinator: 'or', rules: [] },
-        {
-          combinator: 'or',
-          rules: [],
-          conditions: [
-            { combinator: 'and', rules: [] },
-            { combinator: 'or', rules: [] },
-            { actionType: 'a' },
-          ],
-          id: '2',
-        },
-      ],
-      id: 'root',
+  it('shifts the last condition up', () => {
+    const result = moveRE(re3wIDs, [1], 'up');
+    expect(stripIDs(result)).toEqual({
+      conditions: [cond2, cond1],
     });
   });
 
-  it('moves a condition to specific path', () => {
-    expect(
-      moveRE(
-        {
-          conditions: [
-            { antecedent: { combinator: 'and', rules: [] } },
-            { antecedent: { combinator: 'or', rules: [] } },
-            { antecedent: { combinator: 'xor', rules: [] } },
-          ],
-          id: 'root',
-        },
-        [0],
-        [2]
-      )
-    ).toEqual({
-      conditions: [
-        { condition: { combinator: 'or', rules: [] } },
-        { condition: { combinator: 'and', rules: [] } },
-        { condition: { combinator: 'xor', rules: [] } },
-      ],
-      id: 'root',
+  describe('clone', () => {
+    it('clones when moving with clone option', () => {
+      const result = moveRE(re3wIDs, [0], [1], { clone: true });
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond1, cond1, cond2],
+      });
+    });
+
+    it('clones when moving down with clone option', () => {
+      const result = moveRE(re3wIDs, [0], 'down', { clone: true });
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond1, cond1, cond2],
+      });
+    });
+
+    it('uses custom idGenerator when cloning', () => {
+      const idGenerator = () => 'custom-id';
+      const result = moveRE(re3wIDs, [0], 'down', { clone: true, idGenerator });
+      expect(result.conditions[1].id).toBe('custom-id');
     });
   });
 
-  it('ignores moving to same location', () => {
-    const r1: RulesEngine = {
-      conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-      defaultConsequent: { consequentType: 'a' },
-      id: 'root',
-    };
-    expect(moveRE(r1, [0], [0])).toBe(r1);
+  describe('explicit path moves', () => {
+    it('moves from one explicit path to another', () => {
+      const result = moveRE(re3wIDs, [0], [1]);
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond2, cond1],
+      });
+    });
+
+    it('moves from explicit path beyond current position', () => {
+      const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
+      const re4wIDs = pathsAsIDs(re4) as RulesEngine;
+      const result = moveRE(re4wIDs, [0], [2]);
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond2, cond1, cond1],
+      });
+    });
+
+    it('applies path adjustment for explicit moves', () => {
+      const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
+      const re4wIDs = pathsAsIDs(re4) as RulesEngine;
+      // Move first condition to position 2 should account for removal
+      const result = moveRE(re4wIDs, [0], [2]);
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond2, cond1, cond1],
+      });
+    });
   });
 
-  it('ignores invalid moves', () => {
-    const r1: RulesEngine = {
-      conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-      id: 'root',
-    };
-    expect(moveRE(r1, [0], 'up')).toBe(r1); // Can't move up from first position
-    expect(moveRE(r1, [0], 'down')).toBe(r1); // Can't move down from last position
+  describe('nested structure moves', () => {
+    it('moves condition within nested rules engine', () => {
+      // Create a nested rules engine condition
+      // const nestedRE: RulesEngine = { conditions: [cond1, cond2] };
+      const nestedCondition: RECondition = {
+        antecedent: { combinator: 'and', rules: [] },
+        consequent: c1,
+        conditions: [cond1, cond2],
+      };
+      // oxlint-disable-next-line no-explicit-any
+      const reNested: RulesEngine = { conditions: [nestedCondition as any] };
+      const reNestedwIDs = pathsAsIDs(reNested) as RulesEngine;
 
-    const r2: RulesEngine = {
-      conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-      defaultConsequent: { consequentType: 'b' },
-      id: 'root',
-    };
-    expect(moveRE(r2, [1], 'up')).toBe(r2); // Can't move action up
-    expect(moveRE(r2, [0], 'down')).toBe(r2); // Can't move rules engine below action
-    expect(moveRE(r2, [1], [0])).toBe(r2); // Can't move action to non-last position
+      const result = moveRE(reNestedwIDs, [0, 0], [0, 1]);
+      expect(stripIDs(result.conditions[0].conditions)).toEqual([cond2, cond1]);
+    });
   });
 
-  it('ignores root moves', () => {
-    const r1 = { conditions: [], id: 'root' };
-    expect(moveRE(r1, [], [1])).toBe(r1);
+  describe('edge cases and validation', () => {
+    it('handles moving with string ID instead of path', () => {
+      const result = moveRE(re3wIDs, '[0]', '[1]');
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond2, cond1],
+      });
+    });
+
+    it('handles moving from string ID to direction', () => {
+      const result = moveRE(re3wIDs, '[0]', 'down');
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond2, cond1],
+      });
+    });
+
+    it('bails when source ID not found', () => {
+      const result = moveRE(re3wIDs, 'nonexistent', 'down');
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('bails when target ID not found', () => {
+      const result = moveRE(re3wIDs, '[0]', 'nonexistent');
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('handles empty conditions array', () => {
+      const emptyRE: RulesEngine = { conditions: [] };
+      const result = moveRE(emptyRE, [0], 'down');
+      expect(result).toBe(emptyRE);
+    });
+
+    it('handles single condition', () => {
+      const singleRE: RulesEngine = { conditions: [cond1] };
+      const singleREwID = pathsAsIDs(singleRE) as RulesEngine;
+      const result = moveRE(singleREwID, [0], 'down');
+      expect(result).toBe(singleREwID); // Can't move single item
+    });
+
+    it('bails when old path == new path', () => {
+      const result = moveRE(re3wIDs, [1], [1]);
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('does not shift first condition up', () => {
+      const result = moveRE(re3wIDs, [0], 'up');
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('does not shift last condition down', () => {
+      const result = moveRE(re3wIDs, [1], 'down');
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('bails on bad path', () => {
+      const result = moveRE(re1wID, [1], badPath);
+      expect(result).toBe(re1wID);
+    });
+
+    it('bails on invalid old path', () => {
+      const result = moveRE(re3wIDs, badPath, [0]);
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('bails on invalid old path down', () => {
+      const result = moveRE(re3wIDs, badPath, 'down');
+      expect(result).toBe(re3wIDs);
+    });
+
+    it('bails on empty old path', () => {
+      const result = moveRE(re3wIDs, [], [0]);
+      expect(result).toBe(re3wIDs);
+    });
+  });
+
+  describe('complex scenarios', () => {
+    it('moves condition to beginning of array', () => {
+      const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
+      const re4wIDs = pathsAsIDs(re4) as RulesEngine;
+      const result = moveRE(re4wIDs, [2], [0]);
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond1, cond1, cond2],
+      });
+    });
+
+    it('moves condition to end of array', () => {
+      const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
+      const re4wIDs = pathsAsIDs(re4) as RulesEngine;
+      const result = moveRE(re4wIDs, [0], [2]);
+      expect(stripIDs(result)).toEqual({
+        conditions: [cond2, cond1, cond1],
+      });
+    });
+
+    it('handles multiple up/down moves correctly', () => {
+      const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
+      const re4wIDs = pathsAsIDs(re4) as RulesEngine;
+
+      // Move last item up twice
+      const result1 = moveRE(re4wIDs, [2], 'up'); // Should move to position 1
+      const result1wIDs = pathsAsIDs(result1) as RulesEngine;
+      const result2 = moveRE(result1wIDs, [1], 'up'); // Should move to position 0
+
+      expect(stripIDs(result2)).toEqual({
+        conditions: [cond1, cond1, cond2], // Last moved to first
+      });
+    });
   });
 });
 
 describe('insertRE', () => {
-  it('inserts a condition at specified path', () => {
-    expect(
-      insertRE(
-        { conditions: [{ antecedent: { combinator: 'and', rules: [] } }], id: 'root' },
-        { combinator: 'or', rules: [] },
-        [1]
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'and', rules: [] },
-        { combinator: 'or', rules: [] },
-      ],
-      id: 'root',
-    });
+  it('inserts at first position on root path', () => {
+    const result = insertRE(re1, cond1, []);
+    expect(stripIDs(result)).toEqual({ ...re1, conditions: [cond1] });
   });
 
-  it('inserts an action before existing action', () => {
-    expect(
-      insertRE(
-        {
-          conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-          defaultConsequent: { consequentType: 'a' },
-          id: 'root',
-        },
-        { combinator: 'or', rules: [] },
-        [1]
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'and', rules: [] },
-        { combinator: 'or', rules: [] },
-        { actionType: 'a' },
-      ],
-      id: 'root',
-    });
+  it('inserts at given position', () => {
+    const re: RulesEngine = { conditions: [cond1, cond2] };
+    const condNew: RECondition = { antecedent: { combinator: 'and', rules: [r1] }, consequent: c1 };
+    const result = insertRE(re, condNew, [1]);
+    expect(stripIDs(result)).toEqual({ ...re, conditions: [cond1, condNew, cond2] });
   });
 
-  it('replaces an existing condition', () => {
-    expect(
-      insertRE(
-        {
-          conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-          defaultConsequent: { consequentType: 'a' },
-          id: 'root',
-        },
-        { combinator: 'or', rules: [] },
-        [0],
-        undefined,
-        { replace: true }
-      )
-    ).toEqual({
-      conditions: [{ combinator: 'or', rules: [] }, { actionType: 'a' }],
-      id: 'root',
-    });
+  it('replaces at given position', () => {
+    const re: RulesEngine = { conditions: [cond1, cond2] };
+    const condNew: RECondition = { antecedent: { combinator: 'and', rules: [r1] }, consequent: c1 };
+    const result = insertRE(re, condNew, [1], { replace: true });
+    expect(stripIDs(result)).toEqual({ ...re, conditions: [cond1, condNew] });
   });
 
-  it('replaces an existing action', () => {
-    expect(
-      insertRE(
-        {
-          conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-          defaultConsequent: { consequentType: 'a' },
-          id: 'root',
-        },
-        { combinator: 'or', rules: [] },
-        [1],
-        undefined,
-        { replace: true }
-      )
-    ).toEqual({
-      conditions: [
-        { combinator: 'and', rules: [] },
-        { combinator: 'or', rules: [] },
-      ],
-      id: 'root',
-    });
+  it('bails out on bad path', () => {
+    const result = insertRE(re1, cond1, badPath);
+    expect(result).toBe(re1);
   });
 
-  it('does not insert second action', () => {
-    const r1: RulesEngine = {
-      conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
-      defaultConsequent: { consequentType: 'a' },
-      id: 'root',
-    };
-    expect(insertRE(r1, { consequentType: 'b' }, [1])).toBe(r1);
+  it('handles missing parent', () => {
+    const result = insertRE(re1, cond1, [99, 0]);
+    expect(result).toBe(re1);
   });
 
-  it('inserts rule into nested condition', () => {
-    expect(
-      insertRE(
-        { conditions: [{ antecedent: { combinator: 'and', rules: [] } }], id: 'root' },
-        { field: 'f', operator: '=', value: 'v' },
-        [0],
-        [0]
-      )
-    ).toEqual({
-      conditions: [{ combinator: 'and', rules: [{ id, field: 'f', operator: '=', value: 'v' }] }],
-      id: 'root',
-    });
+  it('adds id if missing', () => {
+    const condAsRE: REConditionIC = { antecedent: { rules: [] } };
+    const result = insertRE(re1, condAsRE, [0]);
+    expect(result.conditions[0].id).toBeDefined();
   });
 
-  it('ignores invalid insertions', () => {
-    const r1 = { conditions: [], id: 'root' };
-    expect(insertRE(r1, { field: 'f', operator: '=', value: 'v' }, [0])).toBe(r1);
-  });
-});
-
-describe('groupRE', () => {
-  it('groups rules within the same condition', () => {
-    expect(
-      groupRE(
-        {
-          conditions: [
-            {
-              antecedent: {
-                combinator: 'and',
-                rules: [
-                  { field: 'f1', operator: '=', value: 'v1' },
-                  { field: 'f2', operator: '=', value: 'v2' },
-                ],
-              },
-            },
-          ],
-          id: 'root',
-        },
-        [0],
-        [0],
-        [0],
-        [1]
-      )
-    ).toEqual({
-      conditions: [
-        {
-          combinator: 'and',
-          rules: [
-            {
-              id,
-              combinator: 'and',
-              rules: [
-                { id, field: 'f2', operator: '=', value: 'v2' },
-                { id, field: 'f1', operator: '=', value: 'v1' },
-              ],
-            },
-          ],
-        },
-      ],
-      id: 'root',
-    });
-  });
-
-  // TODO: Cross-condition grouping should work. This test as written should fail.
-  it('ignores grouping across different conditions', () => {
-    const r1: RulesEngine = {
-      conditions: [
-        { antecedent: { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] } },
-        { antecedent: { combinator: 'and', rules: [{ field: 'f2', operator: '=', value: 'v2' }] } },
-      ],
-      id: 'root',
-    };
-    expect(groupRE(r1, [0], [0], [1], [0])).toBe(r1);
-  });
-
-  it('ignores invalid paths', () => {
-    const r1 = { conditions: [], id: 'root' };
-    expect(groupRE(r1, 'invalid1', [0], 'invalid2', [0])).toBe(r1);
-  });
-
-  it('ignores non-rule-group conditions', () => {
-    const r1: RulesEngine = {
-      conditions: [],
-      defaultConsequent: { consequentType: 'a' },
-      id: 'root',
-    };
-    expect(groupRE(r1, [0], [0], [0], [1])).toBe(r1);
-  });
-});
-
-describe('error handling', () => {
-  it('handles malformed rules engines gracefully', () => {
+  it('handles non-rules-engine subject', () => {
+    const invalidSubject = { notARulesEngine: true };
     // oxlint-disable-next-line no-explicit-any
-    const malformed = { conditions: [{ invalid: 'data' }] } as any;
-
-    expect(removeRE(malformed, [0])).toEqual({ conditions: [] });
-    expect(moveRE(malformed, [0], 'up')).toBe(malformed);
-    expect(insertRE(malformed, { actionType: 'a' }, [0])).toEqual({
-      conditions: [{ actionType: 'a' }, { invalid: 'data' }],
-    });
-    expect(groupRE(malformed, [0], [0], [0], [1])).toBe(malformed);
+    const result = insertRE(re1, invalidSubject as any, [0]);
+    expect(result.conditions).toEqual([]);
   });
 });
