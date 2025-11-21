@@ -27,12 +27,13 @@ const indexHTMLs = {
   '/': rqbIndexHTML,
   '/rqb': rqbIndexHTML,
   '/react-querybuilder': rqbIndexHTML,
-  '/tremor': tremorIndexHTML, // Tailwind v3 not working
+  '/tremor': tremorIndexHTML,
 };
 
 const port = process.env.PORT || 3100;
 
 const server = Bun.serve({
+  development: true,
   port,
   routes: indexHTMLs,
   async fetch() {

@@ -13,6 +13,7 @@ export const getCommonViteConfig = ({
   scopedDonut = true,
 }: { port?: number; scopedDonut?: boolean } = {}): UserConfig =>
   defineConfig({
+    define: { __RQB_DEVTOOLS__: true },
     plugins: [vitePluginReact()],
     resolve: {
       alias: {
@@ -30,7 +31,6 @@ export const getCommonViteConfig = ({
       },
     },
     css: {
-      // preprocessorOptions: { scss: { api: 'legacy' } },
       postcss: { plugins: scopedDonut ? [postcssScopedDonut] : [] },
     },
     server: { port },
