@@ -1,18 +1,14 @@
-import { defaults } from 'jest-config';
-
 // These options are imported into the Jest config of each package, so
 // `<rootDir>` refers to the respective /packages/* folder, e.g.
 // /packages/antd, /packages/material, etc., not the root of the repo.
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  // TODO: remove rules-engine exclusion
-  testMatch: [...defaults.testMatch, '!**/packages/rules-engine/**'],
   coveragePathIgnorePatterns: [
     '/utils/testing/',
     '/dist/',
     'TestUtils.ts',
-    // TODO: remove rules-engine exclusion
+    // TODO: remove rules-engine coverage exclusion
     '/packages/rules-engine',
   ],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
