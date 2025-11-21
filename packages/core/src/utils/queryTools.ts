@@ -440,7 +440,7 @@ export const move = <RG extends RuleGroupTypeAny>(
     ) {
       // Getting here means there will be a shift of paths upward at the common
       // ancestor level because the object at `oldPath` will be spliced out. The
-      // real new path should therefore be one or two higher than `newPathCalc`.
+      // real new path should therefore be one or two higher than `nextPath`.
       newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
     }
     const newNewParentPath = getParentPath(newNewPath);
