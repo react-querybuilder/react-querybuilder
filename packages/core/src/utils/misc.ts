@@ -3,7 +3,7 @@ import { numericRegex as numericQuantityRegex } from 'numeric-quantity';
 /**
  * Converts a value to lowercase if it's a string, otherwise returns the value as is.
  */
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const lc = <T>(v: T): T => (typeof v === 'string' ? (v.toLowerCase() as T) : v);
 
 /**

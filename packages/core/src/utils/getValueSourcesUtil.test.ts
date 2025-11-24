@@ -1,3 +1,4 @@
+import { expect, it, vi } from 'vitest';
 import type { FullField, ValueSourceFullOptions, ValueSources } from '../types';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { toFullOption } from './optGroupUtils';
@@ -75,7 +76,7 @@ it('gets the correct value sources array', () => {
 });
 
 it('calls the custom getValueSources function correctly', () => {
-  const getValueSources = jest.fn(() => fvsF);
+  const getValueSources = vi.fn(() => fvsF);
   getValueSourcesUtil(f, '=', getValueSources);
   expect(getValueSources).toHaveBeenCalledWith(f.name, '=', { fieldData: toFullOption(f) });
 });

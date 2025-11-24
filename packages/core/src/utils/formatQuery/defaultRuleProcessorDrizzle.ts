@@ -13,8 +13,9 @@ import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
  * @group Export
  */
 export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL | undefined => {
-  const opts = _options ?? /* istanbul ignore next */ {};
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
+  const opts = _options ?? {};
+  // istanbul ignore next -- @preserve
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const { columns, drizzleOperators, useRawFields } = context as {
     columns: Record<string, Column>;
@@ -169,7 +170,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
             second = secondNum;
           }
         } else {
-          // istanbul ignore else
+          // istanbul ignore else -- @preserve
           if (valueIsField) {
             first = asFieldOrValue(first);
             second = asFieldOrValue(second);

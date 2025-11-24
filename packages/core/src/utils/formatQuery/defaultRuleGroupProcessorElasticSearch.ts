@@ -26,7 +26,9 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
 
   // oxlint-disable-next-line typescript/no-explicit-any
   const processRuleGroup = (rg: RuleGroupType): Record<string, any> | false => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       return false;
     }
 
@@ -40,7 +42,7 @@ export const defaultRuleGroupProcessorElasticSearch: RuleGroupProcessor<Record<s
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* istanbul ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return false;

@@ -42,7 +42,7 @@
     "codesandbox-ci": "bash .codesandbox/ci.sh",
     "checkall": "bun install --frozen-lockfile && bun run build && bun run pretty-check && bun run lint && bun run typecheck && bun run test && bun run are-the-types-wrong && bun run website:build",
     "lint": "oxlint --type-aware --report-unused-disable-directives",
-    "test": "bun test:bun && bun test:drizzlecoverage && bunx jest",
+    "test": "bun test:bun && bun test:drizzlecoverage && bun run --filter @react-querybuilder/core test && bunx jest",
     "test:bun": "bun generate-prisma-client; bun test --randomize ./packages/core ./packages/drizzle ./packages/datetime/src/**/*.test.ts # <- Avoids *.test.tsx",
     "test:drizzlecoverage": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" RQB_DRIZZLE_COVERAGE=true bunx jest packages/drizzle --coverage-reporter=none",
     "test:watch": "jest --watch",

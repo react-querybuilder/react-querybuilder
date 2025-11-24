@@ -17,7 +17,7 @@ type FnType = typeof _fnType;
  */
 export const defaultRuleProcessorSequelize: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   { parseNumbers, preserveValueOrder, context = {} } = {}
 ): Record<string, unknown> | undefined => {
   const {

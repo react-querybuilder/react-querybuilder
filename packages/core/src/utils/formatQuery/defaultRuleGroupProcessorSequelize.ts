@@ -17,7 +17,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
   ruleGroup,
   options
 ) => {
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   const {
     fields,
     getParseNumberBoolean,
@@ -37,7 +37,9 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
   if (!Op) return;
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       return;
     }
 
@@ -59,7 +61,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* istanbul ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return;

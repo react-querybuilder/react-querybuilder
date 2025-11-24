@@ -32,7 +32,9 @@ export const defaultRuleGroupProcessorJsonLogic: RuleGroupProcessor<RQBJsonLogic
   const query = convertFromIC(ruleGroup);
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): RQBJsonLogic => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       return false;
     }
 
@@ -46,7 +48,7 @@ export const defaultRuleGroupProcessorJsonLogic: RuleGroupProcessor<RQBJsonLogic
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* istanbul ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return false;

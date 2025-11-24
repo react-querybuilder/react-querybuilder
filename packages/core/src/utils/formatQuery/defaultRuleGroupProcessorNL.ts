@@ -26,9 +26,13 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       // TODO: test for the last case and remove "ignore" comment
-      return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next */ '';
+      return outermostOrLonelyInGroup
+        ? fallbackExpression
+        : /* istanbul ignore next -- @preserve */ '';
     }
 
     const rg2 =
@@ -52,9 +56,15 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         const processedGroup = processRuleGroup(
           rule,
           rg2.rules.length === 1 &&
-            !(rg2.not || /^xor$/i.test(rg2.combinator ?? /* istanbul ignore next */ ''))
+            !(
+              rg2.not ||
+              /^xor$/i.test(
+                // istanbul ignore next -- @preserve
+                rg2.combinator ?? ''
+              )
+            )
         );
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (processedGroup) {
           if (!firstRule && precedingCombinator) {
             processedRules.push(precedingCombinator);
@@ -72,7 +82,7 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
         rule.field === placeholderFieldName ||
         rule.operator === placeholderOperatorName ||
-        /* istanbul ignore next */
+        /* istanbul ignore next -- @preserve */
         (placeholderValueName !== undefined && rule.value === placeholderValueName)
       ) {
         continue;

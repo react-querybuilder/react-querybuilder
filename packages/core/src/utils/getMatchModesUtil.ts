@@ -33,7 +33,7 @@ export const getMatchModesUtil = <F extends FullField>(
   // `fieldData` can end up being undefined or null. The nullish
   // coalescing assignment below avoids errors like
   // "TypeError: Cannot read properties of undefined (reading 'name')"
-  const fd = fieldData ? toFullOption(fieldData) : /* istanbul ignore next */ dummyFD;
+  const fd = fieldData ? toFullOption(fieldData) : /* istanbul ignore next -- @preserve */ dummyFD;
 
   let matchModes: boolean | MatchMode[] | FlexibleOption<MatchMode>[] = fd.matchModes ?? false;
 

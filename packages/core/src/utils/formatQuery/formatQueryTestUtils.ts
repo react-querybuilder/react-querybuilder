@@ -1,3 +1,5 @@
+/* istanbul ignore file -- @preserve */
+
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,

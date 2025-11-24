@@ -1,3 +1,4 @@
+import { expect, it, vi } from 'vitest';
 import { defaultMatchModes } from '../defaults';
 import type { FullField, MatchModeOptions } from '../types';
 import { getMatchModesUtil } from './getMatchModesUtil';
@@ -45,7 +46,7 @@ it('gets the correct value sources array', () => {
 });
 
 it('calls the custom getMatchModes function correctly', () => {
-  const getMatchModes = jest.fn();
+  const getMatchModes = vi.fn();
   getMatchModesUtil(f, getMatchModes);
   expect(getMatchModes).toHaveBeenCalledWith(f.name, { fieldData: toFullOption(f) });
 });

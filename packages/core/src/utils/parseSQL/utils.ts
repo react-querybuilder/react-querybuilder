@@ -128,7 +128,7 @@ export const generateMixedAndXorOrList = (
   for (let i = 0; i < arr.length - 2; i += 2) {
     let levelDelta = 0;
 
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (arr[i + 1] === 'and') {
       levelDelta = 2 - currentLevel;
     } else if (arr[i + 1] === 'xor') {
@@ -140,7 +140,7 @@ export const generateMixedAndXorOrList = (
     if (levelDelta > 0) {
       for (let d = 0; d < levelDelta; d++) {
         currentLevel += 1;
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (currentLevel === 1) {
           xorArray = { combinator: 'xor', expressions: [] };
           if (levelDelta === 1) {
@@ -157,7 +157,7 @@ export const generateMixedAndXorOrList = (
     } else if (levelDelta < 0) {
       for (let d = 0; d > levelDelta; d--) {
         currentLevel -= 1;
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (currentLevel === 1) {
           xorArray.expressions.push(andArray);
           if (levelDelta === -1) {

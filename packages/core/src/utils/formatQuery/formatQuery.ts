@@ -122,7 +122,7 @@ const defaultRuleProcessors = {
   sql: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
-/* istanbul ignore next */
+/* istanbul ignore next -- @preserve */
 const defaultOperatorProcessor: RuleProcessor = r => r.operator;
 const defaultOperatorProcessors = {
   cel: defaultOperatorProcessor,
@@ -436,7 +436,8 @@ function formatQuery(
   const quoteFieldNamesWith = getQuoteFieldNamesWithArray(quoteFieldNamesWith_option);
   const fields = toFullOptionList(optObj.fields) as FullOptionList<FullField>;
   const getOperators: FormatQueryOptions['getOperators'] = (f, m) =>
-    toFullOptionList(getOperators_option(f, m) ?? /* istanbul ignore next */ []);
+    /* istanbul ignore next -- @preserve */
+    toFullOptionList(getOperators_option(f, m) ?? []);
 
   const fallbackExpression =
     fallbackExpression_option ??
@@ -446,11 +447,11 @@ function formatQuery(
   // #region Validation
   let validationMap: ValidationMap = {};
 
-  // istanbul ignore else
+  // istanbul ignore else -- @preserve
   if (typeof validator === 'function') {
     const validationResult = validator(ruleGroup);
     if (typeof validationResult === 'boolean') {
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (!validationResult) {
         return format === 'parameterized'
           ? { sql: fallbackExpression, params: [] }
@@ -478,9 +479,10 @@ function formatQuery(
   const validatorMap: Record<string, RuleValidator> = {};
   const uniqueFields = toFlatOptionArray(fields) satisfies FullField[];
   for (const f of uniqueFields) {
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (typeof f.validator === 'function') {
-      validatorMap[f.value ?? /* istanbul ignore next */ f.name] = f.validator;
+      /* istanbul ignore next -- @preserve */
+      validatorMap[f.value ?? f.name] = f.validator;
     }
   }
 
@@ -494,7 +496,7 @@ function formatQuery(
       const fieldArr = uniqueFields.filter(f => f.name === rule.field);
       if (fieldArr.length > 0) {
         const field = fieldArr[0];
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (typeof field.validator === 'function') {
           fieldValidator = field.validator;
         }

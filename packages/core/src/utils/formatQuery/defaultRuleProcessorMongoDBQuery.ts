@@ -18,7 +18,7 @@ const processNumber = <T>(value: unknown, fallback: T, parseNumbers = false) =>
  */
 export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   options = {}
 ) => {
   const { field, operator, value, valueSource } = rule;

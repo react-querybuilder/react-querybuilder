@@ -8,7 +8,7 @@ import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils'
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
     ? v.replaceAll(`${quoteChar}`, `${quoteChar}${quoteChar}`)
-    : /* istanbul ignore next */ v;
+    : /* istanbul ignore next -- @preserve */ v;
 
 /**
  * Default value processor used by {@link formatQuery} for "natural_language" format.
@@ -17,7 +17,7 @@ const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: b
  */
 export const defaultValueProcessorNL: ValueProcessorByRule = (
   rule,
-  // istanbul ignore next - defaultRuleProcessorNL always provides options
+  // istanbul ignore next -- @preserve - defaultRuleProcessorNL always provides options
   opts = {}
 ) => {
   const {
@@ -31,7 +31,8 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   } = opts;
   const valueIsField = rule.valueSource === 'field';
   const operatorLowerCase = lc(rule.operator);
-  const quoteChar = quoteValuesWith || /* istanbul ignore next */ "'";
+  /* istanbul ignore next -- @preserve */
+  const quoteChar = quoteValuesWith || "'";
 
   // oxlint-disable no-explicit-any
   const quoteValue = (v: any) => `${quoteChar}${v}${quoteChar}`;
@@ -41,7 +42,8 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const wrapFieldName = (v: string) =>
     getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
-  const t = translations ?? /* istanbul ignore next */ {};
+  /* istanbul ignore next -- @preserve */
+  const t = translations ?? {};
   const orTL = t.or ?? 'or';
   const trueTL = t.true ?? 'true';
   const falseTL = t.false ?? 'false';
@@ -62,7 +64,8 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
         .slice(0, 2)
         .map(v =>
           wrapFieldName(
-            getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], v)?.label ?? v
+            /* istanbul ignore next -- @preserve */
+            getOption((fields as FullField[]) ?? [], v)?.label ?? v
           )
         );
       if (
@@ -82,7 +85,8 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
       const valStringArray = valueAsArray.map(v =>
         valueIsField
           ? wrapFieldName(
-              getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], v)?.label ?? v
+              /* istanbul ignore next -- @preserve */
+              getOption((fields as FullField[]) ?? [], v)?.label ?? v
             )
           : shouldRenderAsNumber(v, parseNumbers)
             ? `${trimIfString(v)}`
@@ -98,8 +102,8 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
 
   return valueIsField
     ? wrapFieldName(
-        getOption((fields as FullField[]) ?? /* istanbul ignore next */ [], rule.value)?.label ??
-          rule.value
+        /* istanbul ignore next -- @preserve */
+        getOption((fields as FullField[]) ?? [], rule.value)?.label ?? rule.value
       )
     : shouldRenderAsNumber(rule.value, parseNumbers)
       ? `${trimIfString(rule.value)}`
