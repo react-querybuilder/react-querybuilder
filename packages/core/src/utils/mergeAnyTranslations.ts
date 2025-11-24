@@ -1,5 +1,5 @@
-import { objectEntries, objectKeys } from '@react-querybuilder/core';
 import { produce } from 'immer';
+import { objectEntries, objectKeys } from './objectUtils';
 
 /**
  * Merges any number of partial translations into a single definition.
