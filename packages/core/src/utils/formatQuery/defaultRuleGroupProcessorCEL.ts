@@ -23,7 +23,9 @@ export const defaultRuleGroupProcessorCEL: RuleGroupProcessor<string> = (ruleGro
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermost?: boolean): string => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       return outermost ? fallbackExpression : '';
     }
 

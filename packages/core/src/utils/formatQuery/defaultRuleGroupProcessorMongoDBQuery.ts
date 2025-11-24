@@ -34,7 +34,9 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
   } = options;
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       return outermost ? mongoDbFallback : false;
     }
 

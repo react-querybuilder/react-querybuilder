@@ -37,7 +37,9 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
   if (!Op) return;
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       return;
     }
 

@@ -40,7 +40,9 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
     const ruleProcessor = defaultRuleProcessorDrizzle;
 
     const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | undefined => {
-      if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])) {
+      if (
+        !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+      ) {
         return;
       }
 

@@ -22,9 +22,13 @@ export const defaultRuleGroupProcessorSQL: RuleGroupProcessor<string> = (ruleGro
   } = options;
 
   const processRuleGroup = (rg: RuleGroupTypeAny, outermostOrLonelyInGroup?: boolean): string => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])) {
+    if (
+      !isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])
+    ) {
       // TODO: test for the last case and remove "ignore" comment
-      return outermostOrLonelyInGroup ? fallbackExpression : /* istanbul ignore next -- @preserve */ '';
+      return outermostOrLonelyInGroup
+        ? fallbackExpression
+        : /* istanbul ignore next -- @preserve */ '';
     }
 
     const processedRules = [];
