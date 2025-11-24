@@ -115,7 +115,7 @@ function parseJSONata(
         return parseJSONataAST(expr.expressions[0]);
       }
       const blockOfExpr = parseJSONataAST(expr.expressions[0]);
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (blockOfExpr) {
         return ic
           ? ({ rules: [blockOfExpr] } as DefaultRuleGroupTypeIC)
@@ -215,13 +215,13 @@ function parseJSONata(
         };
       }
 
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (rules.length > 0) {
         return { combinator, rules };
       }
     } else if (isJSONataNot(expr)) {
       const negatedExpr = parseJSONataAST(expr.arguments[0]);
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (negatedExpr) {
         if (
           !isRuleGroup(negatedExpr) &&
@@ -247,21 +247,21 @@ function parseJSONata(
       let field: string = '';
       let regex: string | RegExp = '';
       let valueSource: ValueSource | undefined = undefined;
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (isJSONataIdentifier(arg1)) {
         field = getFieldFromPath(arg1);
         if (isJSONataIdentifier(arg2)) {
           regex = getFieldFromPath(arg2);
           valueSource = 'field';
         } else {
-          // istanbul ignore else
+          // istanbul ignore else -- @preserve
           if (isJSONataString(arg2) || isJSONataRegex(arg2)) {
             regex = getValidValue(arg2);
           }
         }
       }
 
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (
         valueSource === 'field'
           ? fieldIsValid(field, 'contains', regex as string)
@@ -283,7 +283,7 @@ function parseJSONata(
       if (isJSONataValidValue(expr.rhs)) {
         // oxlint-disable-next-line typescript/no-explicit-any
         const value: any[] = getValidValue(expr.rhs);
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (
           field &&
           value.every(v => fieldIsValid(field, 'in', valueSource === 'field' ? v : undefined))
@@ -306,7 +306,7 @@ function parseJSONata(
           valueSource = 'field';
         }
       } else {
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (isJSONataIdentifier(rhs) && isJSONataValidValue(lhs)) {
           flip = true;
           field = getFieldFromPath(rhs);

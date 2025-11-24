@@ -98,7 +98,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
     const { forwardNegation: _forwardedNegation, groupOnlyIfNecessary: _g } = processOpts;
     if (expr.type === 'op-not') {
       const negatedExpr = parseProcessedSpEL(expr.children[0]);
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (negatedExpr) {
         if (
           !isRuleGroup(negatedExpr) &&
@@ -157,7 +157,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           return parseProcessedSpEL(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
         .filter(Boolean) as DefaultRuleGroupArray;
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (rules.length > 0) {
         return { combinator, rules };
       }
@@ -172,13 +172,13 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           regex = right.identifier;
           valueSource = 'field';
         } else {
-          // istanbul ignore else
+          // istanbul ignore else -- @preserve
           if (isSpELPrimitive(right)) {
             regex = right.value;
           }
         }
       } else {
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (isSpELIdentifier(right) && isSpELPrimitive(left)) {
           field = right.identifier;
           regex = left.value;
@@ -186,7 +186,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       }
 
       if (/^(?!\^).*?(?<!\$)$/.test(regex)) {
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (fieldIsValid(field, 'contains')) {
           return {
             field,
@@ -197,7 +197,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         }
       } else {
         if (/^\^.*?(?<!\$)$/.test(regex)) {
-          // istanbul ignore else
+          // istanbul ignore else -- @preserve
           if (fieldIsValid(field, 'beginsWith')) {
             return {
               field,
@@ -206,9 +206,9 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
             };
           }
         } else {
-          // istanbul ignore else
+          // istanbul ignore else -- @preserve
           if (/^(?!\^).*?\$$/.test(regex)) {
-            // istanbul ignore else
+            // istanbul ignore else -- @preserve
             if (fieldIsValid(field, 'endsWith')) {
               return {
                 field,
@@ -236,7 +236,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         values = [left.identifier, right.identifier];
         valueSource = 'field';
       }
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (
         field &&
         values.every(v => fieldIsValid(field, 'between', valueSource === 'field' ? v : undefined))
@@ -265,7 +265,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           value = right.value;
         }
       } else {
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (isSpELIdentifier(right) && isSpELPrimitive(left)) {
           flip = true;
           field = right.identifier;

@@ -32,7 +32,7 @@ export const isRuleOrGroupValid = (
     if (typeof vr === 'boolean') {
       return vr;
     }
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (isValidationResult(vr)) {
       return vr.valid;
     }

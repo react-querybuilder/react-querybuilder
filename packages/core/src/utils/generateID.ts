@@ -13,7 +13,7 @@ const cryptoModule = globalThis.crypto;
  * @returns Valid v4 UUID
  */
 // Default implementation adapted from https://stackoverflow.com/a/68141099/217579
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export let generateID = (): UUID =>
   '00-0-4-2-000'.replaceAll(/[^-]/g, s =>
     (((Math.random() + Math.trunc(s as unknown as number)) * 0x1_00_00) >> Number.parseInt(s))
@@ -22,9 +22,9 @@ export let generateID = (): UUID =>
   ) as UUID;
 
 // Improve on the default implementation by using the crypto package if it's available
-// istanbul ignore else
+// istanbul ignore else -- @preserve
 if (cryptoModule) {
-  // istanbul ignore else
+  // istanbul ignore else -- @preserve
   if (typeof cryptoModule.randomUUID === 'function') {
     generateID = () => cryptoModule.randomUUID();
   } else if (typeof cryptoModule.getRandomValues === 'function') {

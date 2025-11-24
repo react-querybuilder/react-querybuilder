@@ -83,7 +83,7 @@ export const processCompiledExpression = (
   const identifier = isSpELCompoundNode(ce)
     ? ce
         .getChildren()
-        .map(p => (isSpELPropertyNode(p) ? p.getRaw() : /* istanbul ignore next */ ''))
+        .map(p => (isSpELPropertyNode(p) ? p.getRaw() : /* istanbul ignore next -- @preserve */ ''))
         .join('.')
     : isSpELPropertyNode(ce)
       ? ce.getRaw()

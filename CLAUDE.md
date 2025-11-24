@@ -38,7 +38,8 @@ bun run build
 **Quality:**
 
 - `bun test ...` when React and DOM not involved (much faster than `bunx jest ...`)
-- `bunx jest ...` to check 100% test coverage
+- `bunx jest ...` for packages using Jest (excludes core package)
+- `bun run --filter @react-querybuilder/core test` for core package (uses Vitest)
 - Do not run `bun run test`—it automatically runs unnecessary steps
 - `bun typecheck` - TypeScript check
 - `bun lint` - Type-aware linting with Oxlint and `tsgo`
@@ -147,9 +148,11 @@ import { generateID, isRuleGroup } from '../utils';
 
 ## Testing
 
-- Jest + Testing Library
+- Jest + Testing Library (most packages)
+- Vitest for @react-querybuilder/core package
 - Helpers in `utils/testing/`
-- 100% coverage required - use `bunx jest` to test for coverage (not `bun test` or `bun run test`)
+- 100% coverage required for Jest packages - use `bunx jest` to test for coverage (not `bun test` or `bun run test`)
+- Vitest coverage for core package - use `bun run --filter @react-querybuilder/core test:coverage`
 
 - Test files: `ComponentName.test.tsx`
 - Describe blocks: component/function name

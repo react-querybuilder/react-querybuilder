@@ -316,7 +316,7 @@ export function getFirstOption<Opt extends BaseOption>(
         return (og.options[0].value ?? og.options[0].name) as GetOptionIdentifierType<Opt>;
       }
     }
-    // istanbul ignore next
+    // istanbul ignore next -- @preserve
     return null;
   }
 
@@ -395,7 +395,7 @@ export const prepareOptionList = <O extends FullOption>(
 ): PreparedOptionList<O> => {
   type OptionIdentifier = GetOptionIdentifierType<O>;
 
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   const {
     optionList: optionListPropOriginal,
     baseOption = {},
@@ -457,14 +457,20 @@ export const prepareOptionList = <O extends FullOption>(
     if (isFlexibleOptionGroupArray(optionList)) {
       for (const og of optionList as OptionGroup<ToFullOption<O>>[]) {
         for (const opt of og.options) {
-          optionsMap[(opt.value ?? /* istanbul ignore next */ opt.name) as OptionIdentifier] =
-            toFullOption(opt, baseOption) as FullOption;
+          /* istanbul ignore next -- @preserve */
+          optionsMap[(opt.value ?? opt.name) as OptionIdentifier] = toFullOption(
+            opt,
+            baseOption
+          ) as FullOption;
         }
       }
     } else {
       for (const opt of optionList as ToFullOption<O>[]) {
-        optionsMap[(opt.value ?? /* istanbul ignore next */ opt.name) as OptionIdentifier] =
-          toFullOption(opt, baseOption) as FullOption;
+        /* istanbul ignore next -- @preserve */
+        optionsMap[(opt.value ?? opt.name) as OptionIdentifier] = toFullOption(
+          opt,
+          baseOption
+        ) as FullOption;
       }
     }
   }

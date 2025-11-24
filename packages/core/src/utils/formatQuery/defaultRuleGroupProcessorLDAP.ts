@@ -23,7 +23,7 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
   } = options;
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next -- @preserve */ ''])) {
       return outermost ? fallbackExpression : '';
     }
 
@@ -37,7 +37,7 @@ export const defaultRuleGroupProcessorLDAP: RuleGroupProcessor<string> = (ruleGr
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* istanbul ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return '';

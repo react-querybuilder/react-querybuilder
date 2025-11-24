@@ -37,7 +37,7 @@ export const defaultExportOperatorMap: ExportOperatorMap = {
   notbetween: ['is not between', 'is not between the values in'],
 };
 
-/* istanbul ignore next */
+/* istanbul ignore next -- @preserve */
 const defaultGetOperators = () => [];
 
 /**
@@ -47,11 +47,11 @@ const defaultGetOperators = () => [];
  */
 export const defaultOperatorProcessorNL: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   opts = {}
 ) => {
   const { field, operator, valueSource = 'value' } = rule;
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   const {
     getOperators = defaultGetOperators,
     operatorMap: operatorMapParam = defaultExportOperatorMap,
@@ -67,13 +67,14 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
 
   const { value: operatorNL, label } = getOption(
     toFullOptionList(
+      /* istanbul ignore next -- @preserve */
       getOperators(field, {
         fieldData: opts.fieldData ?? {
           name: field,
           value: field,
           label: field,
         },
-      }) ?? /* istanbul ignore next */ []
+      }) ?? []
     ) as FullOption[],
     operator
   ) ?? {
@@ -95,7 +96,7 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
  */
 export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
   const { field, operator } = rule;
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   const {
     fieldData,
     quoteFieldNamesWith = ['', ''] as [string, string],
@@ -105,7 +106,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     valueProcessor = defaultValueProcessorNL,
     concatOperator = '||',
     wordOrder = 'SVO',
-  } = opts ?? /* istanbul ignore next */ {};
+  } = opts ?? /* istanbul ignore next -- @preserve */ {};
 
   const processedField = getQuotedFieldName(fieldData?.label ?? field, {
     quoteFieldNamesWith,

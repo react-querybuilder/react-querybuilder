@@ -1,5 +1,3 @@
-/* @jest-environment node */
-
 /**
  * The sole purpose of this file is to maintain 100% test coverage. It does
  * _not_ test the correctness of the format. For "correctness" tests, see

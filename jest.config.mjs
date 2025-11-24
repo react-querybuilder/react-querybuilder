@@ -14,7 +14,22 @@ export default {
         coverageReporters: [],
         coverageThreshold: { 'packages/drizzle': fullCoverage, global: zeroCoverage },
       }
-    : { coverageThreshold: { global: fullCoverage } }),
-  projects: ['packages/*'],
+    : { coverageThreshold: { 'packages/core': zeroCoverage, global: fullCoverage } }),
+  projects: [
+    'packages/antd',
+    'packages/bootstrap',
+    'packages/bulma',
+    'packages/chakra',
+    // 'packages/core', // Migrated to Vitest
+    'packages/datetime',
+    'packages/dnd',
+    'packages/drizzle',
+    'packages/fluent',
+    'packages/mantine',
+    'packages/material',
+    'packages/native',
+    'packages/react-querybuilder',
+    'packages/tremor',
+  ],
   watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
 };

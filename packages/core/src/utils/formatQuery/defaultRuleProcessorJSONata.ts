@@ -24,7 +24,7 @@ const escapeStringRegex = (s: string) =>
  */
 export const defaultRuleProcessorJSONata: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   options = {}
 ) => {
   const { field, operator, value, valueSource } = rule;

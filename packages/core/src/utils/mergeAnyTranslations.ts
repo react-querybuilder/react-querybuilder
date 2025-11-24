@@ -10,7 +10,7 @@ export const mergeAnyTranslations = (
 ): Record<string, Record<string, unknown>> =>
   produce(base, draft => {
     for (const translations of otherTranslations) {
-      // istanbul ignore else
+      // istanbul ignore else -- @preserve
       if (translations) {
         for (const t of objectKeys(translations)) {
           if (draft[t]) {

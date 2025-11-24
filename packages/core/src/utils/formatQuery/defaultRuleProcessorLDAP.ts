@@ -19,7 +19,7 @@ const ldapEscape = (s: unknown) =>
  */
 export const defaultRuleProcessorLDAP: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   options = {}
 ) => {
   const { field, operator, value, valueSource } = rule;
@@ -115,6 +115,6 @@ export const defaultRuleProcessorLDAP: RuleProcessor = (
     }
   }
 
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   return '';
 };

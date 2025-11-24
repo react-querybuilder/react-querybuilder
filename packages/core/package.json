@@ -147,6 +147,7 @@
     "@electric-sql/pglite": "^0.3.14",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.10.0",
+    "@vitest/coverage-v8": "^4.0.13",
     "babel-plugin-istanbul": "^7.0.1",
     "drizzle-orm": "^0.44.7",
     "json-logic-js": "^2.0.5",
@@ -163,7 +164,8 @@
     "spel2js": "^0.2.9",
     "type-fest": "^5.2.0",
     "typescript": "^5.9.3",
-    "vite": "^7.2.2"
+    "vite": "^7.2.2",
+    "vitest": "^4.0.13"
   },
   "dependencies": {
     "@ts-jison/lexer": "0.4.1-alpha.1",
@@ -192,6 +194,8 @@
     "build": "bun run build:main && bun run build:css",
     "build:main": "bun --bun tsdown",
     "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
+    "test": "vitest run",
+    "test:coverage": "vitest --coverage",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   }

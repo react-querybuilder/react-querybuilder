@@ -1,4 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
 import {
   defaultPlaceholderFieldName as defaultFieldPlaceholder,
   defaultPlaceholderOperatorName as defaultOperatorPlaceholder,

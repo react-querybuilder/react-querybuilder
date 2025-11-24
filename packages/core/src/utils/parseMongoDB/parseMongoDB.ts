@@ -147,7 +147,7 @@ function parseMongoDB(
     // oxlint-disable-next-line typescript/no-explicit-any
     let value: any = '';
 
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (
       mdbOperator === '$eq' ||
       mdbOperator === '$ne' ||
@@ -220,7 +220,7 @@ function parseMongoDB(
   ): DefaultRuleType | DefaultRuleGroupType | false {
     let field = '';
 
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (key === '$and') {
       if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
         return false;

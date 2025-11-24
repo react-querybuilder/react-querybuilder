@@ -75,7 +75,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
   const fieldsFlat = getFieldsArray(fields);
 
   ic = !!independentCombinators;
-  /* istanbul ignore else */
+  /* istanbul ignore else -- @preserve */
   if (params) {
     if (Array.isArray(params)) {
       let i = 0;
@@ -186,15 +186,15 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
             return processSQLExpression(obj) as DefaultRuleType | DefaultRuleGroupType | null;
           })
           .filter(Boolean) as DefaultRuleGroupArray;
-        // istanbul ignore else
+        // istanbul ignore else -- @preserve
         if (rules.length > 0) {
           return { combinator, rules };
         }
-        // istanbul ignore next
+        // istanbul ignore next -- @preserve
         break;
       }
       case 'IsNullBooleanPrimary': {
-        /* istanbul ignore else */
+        /* istanbul ignore else -- @preserve */
         if (isSQLIdentifier(expr.value)) {
           const f = getFieldName(expr.value);
           const operator = expr.hasNot ? 'notNull' : 'null';
@@ -209,7 +209,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         break;
       }
       case 'ComparisonBooleanPrimary': {
-        /* istanbul ignore else */
+        /* istanbul ignore else -- @preserve */
         if (
           (isSQLIdentifier(expr.left) && !isSQLIdentifier(expr.right)) ||
           (!isSQLIdentifier(expr.left) && isSQLIdentifier(expr.right))
@@ -247,7 +247,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         break;
       }
       case 'InExpressionListPredicate': {
-        /* istanbul ignore else */
+        /* istanbul ignore else -- @preserve */
         if (isSQLIdentifier(expr.left)) {
           const f = getFieldName(expr.left);
           const valueArray = expr.right.value
@@ -275,7 +275,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         break;
       }
       case 'BetweenPredicate': {
-        /* istanbul ignore else */
+        /* istanbul ignore else -- @preserve */
         if (
           isSQLIdentifier(expr.left) &&
           isSQLLiteralOrSignedNumberValue(expr.right.left) &&
@@ -304,12 +304,12 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
         break;
       }
       case 'LikePredicate': {
-        /* istanbul ignore else */
+        /* istanbul ignore else -- @preserve */
         if (isSQLIdentifier(expr.left) && expr.right.type === 'String') {
           const valueWithWildcards = evalSQLLiteralValue(expr.right) as string;
           const valueWithoutWildcards = valueWithWildcards.replaceAll(/(^%)|(%$)/g, '');
           let operator: DefaultOperatorName = '=';
-          /* istanbul ignore else */
+          /* istanbul ignore else -- @preserve */
           if (
             (valueWithWildcards.endsWith('%') && valueWithWildcards.startsWith('%')) ||
             valueWithWildcards === '%'
@@ -323,7 +323,7 @@ function parseSQL(sql: string, options: ParseSQLOptions = {}): DefaultRuleGroupT
             operator = '!=';
           }
           const f = getFieldName(expr.left);
-          /* istanbul ignore else */
+          /* istanbul ignore else -- @preserve */
           if (fieldIsValid(f, operator)) {
             return { field: f, operator, value: valueWithoutWildcards };
           }

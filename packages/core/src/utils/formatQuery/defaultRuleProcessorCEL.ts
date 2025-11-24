@@ -19,7 +19,7 @@ const escapeDoubleQuotes = (v: any, escapeQuotes?: boolean) =>
  */
 export const defaultRuleProcessorCEL: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   opts = {}
 ) => {
   const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;

@@ -70,56 +70,56 @@ export const isCELIdentifier = (expr: CELExpression): expr is CELIdentifier =>
 export const isCELNegation = (expr: CELExpression): expr is CELNegation => expr.type === 'Negation';
 export const isCELMember = (expr: CELExpression): expr is CELMember => expr.type === 'Member';
 
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELAddition = (expr: CELExpression): expr is CELAddition => expr.type === 'Addition';
 export const isCELBooleanLiteral = (expr: CELExpression): expr is CELBooleanLiteral =>
   expr.type === 'BooleanLiteral';
 export const isCELBytesLiteral = (expr: CELExpression): expr is CELBytesLiteral =>
   expr.type === 'BytesLiteral';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELConditionalExpr = (expr: CELExpression): expr is CELConditionalExpr =>
   expr.type === 'ConditionalExpr';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELDivision = (expr: CELExpression): expr is CELDivision => expr.type === 'Division';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELDynamicPropertyAccessor = (
   expr: CELExpression
 ): expr is CELDynamicPropertyAccessor => expr.type === 'DynamicPropertyAccessor';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELExpressionList = (expr: CELExpression): expr is CELExpressionList =>
   expr.type === 'ExpressionList';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELFieldInit = (expr: CELExpression): expr is CELFieldInit =>
   expr.type === 'FieldInit';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELFieldInits = (expr: CELExpression): expr is CELFieldInits =>
   expr.type === 'FieldInits';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELFieldsObject = (expr: CELExpression): expr is CELFieldsObject =>
   expr.type === 'FieldsObject';
 export const isCELFloatLiteral = (expr: CELExpression): expr is CELFloatLiteral =>
   expr.type === 'FloatLiteral';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELFunctionCall = (expr: CELExpression): expr is CELFunctionCall =>
   expr.type === 'FunctionCall';
 export const isCELIntegerLiteral = (expr: CELExpression): expr is CELIntegerLiteral =>
   expr.type === 'IntegerLiteral';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELMapInit = (expr: CELExpression): expr is CELMapInit => expr.type === 'MapInit';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELMapInits = (expr: CELExpression): expr is CELMapInits => expr.type === 'MapInits';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELModulo = (expr: CELExpression): expr is CELModulo => expr.type === 'Modulo';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELMultiplication = (expr: CELExpression): expr is CELMultiplication =>
   expr.type === 'Multiplication';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELNegative = (expr: CELExpression): expr is CELNegative => expr.type === 'Negative';
 export const isCELNullLiteral = (expr: CELExpression): expr is CELNullLiteral =>
   expr.type === 'NullLiteral';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELProperty = (expr: CELExpression): expr is CELProperty => expr.type === 'Property';
-// istanbul ignore next
+// istanbul ignore next -- @preserve
 export const isCELSubtraction = (expr: CELExpression): expr is CELSubtraction =>
   expr.type === 'Subtraction';
 export const isCELUnsignedIntegerLiteral = (
@@ -210,7 +210,7 @@ export const extractSubqueryComponents = (
   alias: string | null;
   condition: CELExpression;
 } | null => {
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   if (!isCELSubqueryExpression(expr)) {
     return null;
   }
@@ -219,7 +219,9 @@ export const extractSubqueryComponents = (
   const method = expr.right.value;
   const [aliasExpr, conditionExpr] = expr.list.value;
 
-  const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
+  const alias = isCELIdentifier(aliasExpr)
+    ? aliasExpr.value
+    : /* istanbul ignore next -- @preserve */ null;
 
   return {
     field,
@@ -239,17 +241,17 @@ export const getCELIdentifierFromChain = (
   if (isCELDynamicPropertyAccessor(expr)) {
     const leftField = getCELIdentifierFromChain(expr.left);
     // Handle string literals in bracket notation
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (isCELStringLiteral(expr.right)) {
       const propertyName = evalCELLiteralValue(expr.right);
       return `${leftField}["${propertyName}"]`;
     }
     // For non-string literals, use a fallback approach
-    // istanbul ignore next
+    // istanbul ignore next -- @preserve
     return `${leftField}[${expr.right.type}]`;
   }
 
-  // istanbul ignore else
+  // istanbul ignore else -- @preserve
   if (
     expr.left &&
     expr.right &&
@@ -262,7 +264,7 @@ export const getCELIdentifierFromChain = (
   }
 
   // Fallback for other CELMember types
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   return expr.type;
 };
 
@@ -367,7 +369,7 @@ export const celGenerateMixedAndOrList = (
 };
 
 const isPrimitiveArrayUsage = (expr: CELExpression, alias: string | null): boolean => {
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   if (!alias) return false;
 
   // Check if alias is used alone (e.g., "score > 90" where "score" is the alias)
@@ -385,7 +387,7 @@ const isPrimitiveArrayUsage = (expr: CELExpression, alias: string | null): boole
     return isPrimitiveArrayUsage(expr.left, alias) || isPrimitiveArrayUsage(expr.right, alias);
   }
 
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   if (isCELExpressionGroup(expr) || isCELNegation(expr)) {
     return isPrimitiveArrayUsage(expr.value, alias);
   }
@@ -398,7 +400,7 @@ const transformAliasInExpressionInternal = (
   alias: string | null,
   isPrimitive: boolean
 ): CELExpression => {
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   if (!alias) return expr;
 
   // If it's an identifier that matches the alias
@@ -458,7 +460,7 @@ const transformAliasInExpressionInternal = (
   // If it's a member chain like "alias.prop1.prop2", transform to "prop1.prop2"
   if (isCELMember(expr) && expr.left && expr.right) {
     const transformedLeft = transformAliasInExpressionInternal(expr.left, alias, isPrimitive);
-    // istanbul ignore else
+    // istanbul ignore else -- @preserve
     if (transformedLeft !== expr.left) {
       return {
         type: 'Member',
@@ -518,7 +520,7 @@ export const transformAliasInExpression = (
   expr: CELExpression,
   alias: string | null
 ): CELExpression => {
-  // istanbul ignore next
+  // istanbul ignore next -- @preserve
   if (!alias) return expr;
 
   const isPrimitive = isPrimitiveArrayUsage(expr, alias);
