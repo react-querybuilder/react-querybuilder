@@ -56,8 +56,8 @@ const [r1, r2, r3]: DefaultRuleType[] = (['=', '<', '>'] as const).map((operator
 }));
 
 // Sample consequents
-const c1: Consequent = { consequentType: 'action', command: 'cmd1' };
-const c2: Consequent = { consequentType: 'action', command: 'cmd2' };
+const c1: Consequent = { type: 'action', command: 'cmd1' };
+const c2: Consequent = { type: 'action', command: 'cmd2' };
 
 // Sample conditions
 const cond1: RECondition = { antecedent: { combinator: 'and', rules: [r1] }, consequent: c1 };

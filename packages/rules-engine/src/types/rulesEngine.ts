@@ -51,7 +51,7 @@ export type RulesEngineAny<R extends RuleType = RuleType, C extends string = str
 // #region Consequent
 export type ConsequentBase<T extends string = string> = {
   id?: string;
-  consequentType: T;
+  type: T;
 };
 
 export interface Consequent extends ConsequentBase {
@@ -78,7 +78,7 @@ interface _ExampleConsequent extends ConsequentBase<'rea' | 'hope'> {
   };
 }
 
-const _myREA: _ExampleConsequent = { consequentType: 'rea', command: 'cmd', args: [] };
+const _myREA: _ExampleConsequent = { type: 'rea', command: 'cmd', args: [] };
 
 const _rngn: RulesEngine = {
   conditions: [
@@ -88,20 +88,20 @@ const _rngn: RulesEngine = {
         combinator: 'and',
         rules: [],
       },
-      // consequent: { consequentType: 'cmd', payload: { command: '', args: [] }},
+      // consequent: { type: 'cmd', payload: { command: '', args: [] }},
     },
     // ELSE IF
     {
       antecedent: { combinator: 'and', rules: [{ field: '', operator: '', value: '' }] },
-      consequent: { consequentType: 'cmd', payload: { command: '', args: [] } },
+      consequent: { type: 'cmd', payload: { command: '', args: [] } },
       conditions: [
         {
           antecedent: { combinator: 'and', rules: [] },
-          consequent: { consequentType: 'cmd', payload: { command: '', args: [] } },
+          consequent: { type: 'cmd', payload: { command: '', args: [] } },
         },
       ],
     },
   ],
   // ELSE
-  defaultConsequent: { consequentType: 'hope' },
+  defaultConsequent: { type: 'hope' },
 };

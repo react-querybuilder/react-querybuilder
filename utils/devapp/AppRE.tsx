@@ -15,19 +15,19 @@ const consequentTypes: FullOptionList<BaseOption> = toFullOptionList([
 ]);
 
 const initialRE: RulesEngine = regenerateREIDs({
-  defaultConsequent: { id: '3', consequentType: 'log_event' },
+  defaultConsequent: { id: '3', type: 'log_event' },
   conditions: [
     {
       antecedent: { combinator: 'and', rules: [{ field: 'age', operator: '>=', value: 18 }] },
       consequent: {
-        consequentType: 'send_email',
+        type: 'send_email',
         params: { to: 'user@example.com', subject: 'Welcome!', body: 'Thanks for signing up!' },
       },
       conditions: [
         {
           antecedent: { combinator: 'and', rules: [{ field: 'age', operator: '=', value: 18 }] },
           consequent: {
-            consequentType: 'send_email',
+            type: 'send_email',
             params: {
               to: 'user@example.com',
               subject: 'Happy Birthday!',
@@ -40,7 +40,7 @@ const initialRE: RulesEngine = regenerateREIDs({
     {
       antecedent: { combinator: 'and', rules: [{ field: 'age', operator: '<', value: 18 }] },
       consequent: {
-        consequentType: 'send_email',
+        type: 'send_email',
         params: {
           to: 'user@example.com',
           subject: 'Sorry!',

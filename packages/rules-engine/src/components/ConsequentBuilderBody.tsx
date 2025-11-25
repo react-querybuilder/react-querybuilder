@@ -31,7 +31,7 @@ export const ConsequentBuilderBody: React.MemoExoticComponent<
   );
 
   const handleOnChange = React.useCallback(
-    (v: string) => onConsequentChange({ ...consequent, consequentType: v }),
+    (v: string) => onConsequentChange({ ...consequent, type: v }),
     [onConsequentChange, consequent]
   );
 
@@ -42,7 +42,7 @@ export const ConsequentBuilderBody: React.MemoExoticComponent<
           schema={props.schema}
           path={conditionPath}
           level={conditionPath.length}
-          value={consequent.consequentType}
+          value={consequent.type}
           handleOnChange={handleOnChange}
           options={consequentTypes}
         />

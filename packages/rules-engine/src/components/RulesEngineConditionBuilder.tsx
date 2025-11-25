@@ -67,7 +67,7 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
   }, [conditionPath, addCondition]);
 
   const ensureConsequent = React.useCallback(() => {
-    if (!consequent) updateCondition(conditionPath, 'consequent', { consequentType: 'TODO' });
+    if (!consequent) updateCondition(conditionPath, 'consequent', { type: 'TODO' });
   }, [conditionPath, consequent, updateCondition]);
 
   const removeThisCondition = React.useCallback(() => {

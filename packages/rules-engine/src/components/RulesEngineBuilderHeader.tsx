@@ -23,7 +23,7 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
   }, [addCondition]);
 
   const ensureDefaultConsequent = React.useCallback(() => {
-    if (!defaultConsequent) updateCondition([], 'defaultConsequent', { consequentType: 'TODO' });
+    if (!defaultConsequent) updateCondition([], 'defaultConsequent', { type: 'TODO' });
   }, [defaultConsequent, updateCondition]);
 
   return (

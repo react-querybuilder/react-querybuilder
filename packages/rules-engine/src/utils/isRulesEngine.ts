@@ -31,7 +31,7 @@ export const isRulesEngineIC = (re: unknown): re is RulesEngineIC =>
  * Determines if an object is a {@link RulesEngine} or {@link RulesEngineIC}.
  */
 export const isRulesEngineConsequent = (obj: unknown): obj is Consequent =>
-  isPojo(obj) && typeof obj.consequentType === 'string';
+  isPojo(obj) && typeof obj.type === 'string';
 
 /**
  * Determines if an object is a {@link RulesEngineAntecedent} or {@link REConditionIC}.
