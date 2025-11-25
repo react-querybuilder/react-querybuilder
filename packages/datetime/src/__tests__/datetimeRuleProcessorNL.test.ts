@@ -82,7 +82,7 @@ const testCases2: Record<string, [RuleGroupType, string]> = {
       `Created At is after Birthdate`,
       `Birthdate is between the dates in Created At and Updated At`,
       `Birthdate is not between the dates in Created At and Updated At`,
-      `Birthdate is the same as a date in Created At or Updated At`,
+      `Birthdate is the same as a date in (Created At or Updated At)`,
     ].join(', and '),
   ],
   fallback: [
