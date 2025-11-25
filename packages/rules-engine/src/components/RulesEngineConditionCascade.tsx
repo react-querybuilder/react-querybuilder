@@ -19,6 +19,7 @@ export const RulesEngineConditionCascade: React.MemoExoticComponent<
   const {
     consequentTypes,
     autoSelectConsequentType,
+    allowDefaultConsequents,
     components: { conditionBuilder: ConditionBuilder, consequentBuilder: ConsequentBuilder },
   } = schema;
 
@@ -55,9 +56,9 @@ export const RulesEngineConditionCascade: React.MemoExoticComponent<
           />
         );
       })}
-      {defaultConsequent && (
+      {allowDefaultConsequents && defaultConsequent && (
         <ConsequentBuilder
-          key={'defaultConsequent'}
+          key="defaultConsequent"
           conditionPath={conditionPath}
           schema={schema}
           consequentTypes={consequentTypes}

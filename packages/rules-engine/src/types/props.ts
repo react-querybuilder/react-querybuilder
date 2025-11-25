@@ -26,6 +26,7 @@ export interface SchemaRE {
   consequentTypes: FullOptionList<BaseOption>;
   autoSelectConsequentType: boolean;
   suppressStandardClassnames: boolean;
+  allowDefaultConsequents: boolean;
   allowNestedConditions: boolean;
   translations: TranslationsFullRE;
   queryBuilderProps?: Except<
@@ -124,6 +125,7 @@ export interface RulesEngineProps {
   consequentTypes?: FullOptionList<BaseOption>;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
+  allowDefaultConsequents?: boolean;
   allowNestedConditions?: boolean;
   enableMountRulesEngineChange?: boolean;
   components?: Partial<ComponentsRE>;

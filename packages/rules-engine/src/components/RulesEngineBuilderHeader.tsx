@@ -12,6 +12,7 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
     schema: {
       addCondition,
       updateCondition,
+      allowDefaultConsequents,
       allowNestedConditions,
       components: { addConsequent: AddConsequent, addCondition: AddCondition },
       translations,
@@ -38,15 +39,17 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
           label={translations.addCondition.label}
         />
       )}
-      <AddConsequent
-        schema={props.schema}
-        path={props.conditionPath}
-        level={props.conditionPath.length}
-        handleOnClick={ensureDefaultConsequent}
-        disabled={!!defaultConsequent}
-        title={translations.addDefaultConsequent.title}
-        label={translations.addDefaultConsequent.label}
-      />
+      {allowDefaultConsequents && (
+        <AddConsequent
+          schema={props.schema}
+          path={props.conditionPath}
+          level={props.conditionPath.length}
+          handleOnClick={ensureDefaultConsequent}
+          disabled={!!defaultConsequent}
+          title={translations.addDefaultConsequent.title}
+          label={translations.addDefaultConsequent.label}
+        />
+      )}
     </div>
   );
 });

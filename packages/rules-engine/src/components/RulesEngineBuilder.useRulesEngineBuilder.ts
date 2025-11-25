@@ -62,6 +62,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     defaultRulesEngine: defaultRulesEngineProp,
     consequentTypes: consequentTypesProp,
     enableMountRulesEngineChange = true,
+    allowDefaultConsequents = true,
     allowNestedConditions = true,
     autoSelectConsequentType = false,
     suppressStandardClassnames = false,
@@ -304,6 +305,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   const schema = useMemo(
     (): SchemaRE => ({
       addCondition,
+      allowDefaultConsequents,
       allowNestedConditions,
       autoSelectConsequentType,
       classnames,
@@ -320,6 +322,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     }),
     [
       addCondition,
+      allowDefaultConsequents,
       allowNestedConditions,
       autoSelectConsequentType,
       classnames,
