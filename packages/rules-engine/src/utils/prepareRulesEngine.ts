@@ -24,7 +24,10 @@ export const prepareRulesEngineCondition = (
     }
 
     if (isRulesEngineAny(draft)) {
-      draft = prepareRulesEngine(draft);
+      draft.conditions = prepareRulesEngine(
+        { conditions: draft.conditions as any }, // oxlint-disable-line no-explicit-any
+        { idGenerator }
+      ).conditions;
     }
 
     return draft;

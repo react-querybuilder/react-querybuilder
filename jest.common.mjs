@@ -9,7 +9,7 @@ export default {
     '/dist/',
     'TestUtils.ts',
     // TODO: remove rules-engine coverage exclusion
-    '/packages/rules-engine',
+    '/packages/rules-engine/src/components',
   ],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
   testEnvironment: '<rootDir>/../../utils/fixJSDOMEnvironment.ts',

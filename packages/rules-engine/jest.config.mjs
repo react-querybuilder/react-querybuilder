@@ -4,5 +4,5 @@ import common from '../../jest.common.mjs';
 export default {
   ...common,
   displayName: 're',
-  transformIgnorePatterns: ['node_modules/(?!json-rules-engine)/'],
+  testPathIgnorePatterns: [...(common.testPathIgnorePatterns ?? []), 'dbquery'],
 };

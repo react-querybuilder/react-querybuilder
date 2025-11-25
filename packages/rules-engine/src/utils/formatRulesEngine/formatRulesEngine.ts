@@ -39,13 +39,20 @@ function formatRulesEngine(
   }
 
   if (opts.format === 'json-rules-engine' || opts.format === 'jsonrulesengine') {
-    // istanbul ignore next
     return rulesEngine.conditions.map<RuleProperties>(c => ({
       conditions: formatQuery(c.antecedent, {
-        ruleProcessor: defaultRuleProcessorJsonRulesEngine,
-        ruleGroupProcessor: defaultRuleGroupProcessorJsonRulesEngine,
+        ...opts.formatQueryOptions,
+        ruleProcessor:
+          (opts.formatQueryOptions?.ruleProcessor as typeof defaultRuleProcessorJsonRulesEngine) ??
+          defaultRuleProcessorJsonRulesEngine,
+        ruleGroupProcessor:
+          (opts.formatQueryOptions
+            ?.ruleGroupProcessor as typeof defaultRuleGroupProcessorJsonRulesEngine) ??
+          defaultRuleGroupProcessorJsonRulesEngine,
       }),
-      event: c.consequent ?? { type: '' },
+      event:
+        // istanbul ignore next
+        c.consequent ?? { type: '' },
     }));
   }
 

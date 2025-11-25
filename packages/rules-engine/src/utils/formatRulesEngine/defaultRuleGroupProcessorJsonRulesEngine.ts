@@ -6,7 +6,6 @@ import {
   isRuleOrGroupValid,
 } from '@react-querybuilder/core';
 import type { ConditionProperties, TopLevelCondition } from 'json-rules-engine';
-import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonRulesEngine';
 
 export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLevelCondition> = (
   rg,
@@ -18,7 +17,7 @@ export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLev
     placeholderFieldName,
     placeholderOperatorName,
     placeholderValueName,
-    ruleProcessor = defaultRuleProcessorJsonRulesEngine,
+    ruleProcessor,
     validateRule,
     validationMap,
   } = options;
