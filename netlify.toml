@@ -3,19 +3,3 @@ command = "bun upgrade && git reset --hard HEAD && bun install --frozen-lockfile
 # Use this to pin Bun version
 # command = "curl -fsSL https://bun.sh/install | bash -s 'bun-v1.1.29' && git reset --hard HEAD && bun install --frozen-lockfile && bun --bun run build && bun run website:build"
 publish = "website/build"
-
-[context.production.environment]
-NODE_VERSION = "20.10.0"
-NODE_OPTIONS = "--max-old-space-size=4096"
-
-[context.deploy-preview.environment]
-NODE_VERSION = "20.10.0"
-NODE_OPTIONS = "--max-old-space-size=4096"
-
-[context.branch-deploy.environment]
-NODE_VERSION = "20.10.0"
-NODE_OPTIONS = "--max-old-space-size=4096"
-
-[context.dev.environment]
-NODE_VERSION = "20.10.0"
-NODE_OPTIONS = "--max-old-space-size=4096"
