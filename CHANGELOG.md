@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `react-querybuilder/debug` entry point and all `@react-querybuilder/datetime/*` entry points now work for "node10" module resolution.
+- [#979] Natural language export makes more sense when rules with "in"/"notIn" operator have a value that evaluates to a single element.
 
 ## [v8.12.0] - 2025-11-06
 
@@ -2081,6 +2082,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#974]: https://github.com/react-querybuilder/react-querybuilder/pull/974
 [#975]: https://github.com/react-querybuilder/react-querybuilder/pull/975
 [#976]: https://github.com/react-querybuilder/react-querybuilder/pull/976
+[#979]: https://github.com/react-querybuilder/react-querybuilder/pull/979
 
 <!-- #endregion -->
 
