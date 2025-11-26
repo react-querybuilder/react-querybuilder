@@ -39,7 +39,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - run: echo "module.exports = [];" > ./website/api/typedoc-sidebar.cjs
+      - run: |
+          echo '// @ts-check
+          /** @type {import("@docusaurus/plugin-content-docs").SidebarsConfig} */
+          const typedocSidebar = { items: [] };
+          module.exports = typedocSidebar.items;' > ./website/api/typedoc-sidebar.cjs
       - run: bun run lint --format=github
 
   Test:
