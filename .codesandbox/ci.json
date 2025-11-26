@@ -19,5 +19,5 @@
     "/examples/preact",
     "/examples/tremor"
   ],
-  "node": "20"
+  "node": "20.19.6"
 }
