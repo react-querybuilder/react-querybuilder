@@ -238,7 +238,7 @@ it('handles single value in/notin operators without "or"', () => {
   };
 
   expect(formatQuery(queryWithSingleValueIn, 'natural_language')).toBe(
-    `instrument is one of the values 'Guitar', and job is not one of the values 'Programmer'`
+    `instrument is 'Guitar', and job is not 'Programmer'`
   );
 });
 

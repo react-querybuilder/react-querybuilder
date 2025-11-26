@@ -5,6 +5,7 @@ import type {
   FullOption,
   RuleProcessor,
 } from '../../types';
+import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { getOption, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
@@ -57,13 +58,27 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
     operatorMap: operatorMapParam = defaultExportOperatorMap,
   } = opts;
 
-  const mapOperatorMap = new Map<string, string | [string, string]>(
+  // Build the merged operator map (default + custom overrides)
+  const mergedOperatorMap = new Map<string, string | [string, string]>(
     Object.entries(defaultExportOperatorMap)
   );
   for (const [key, value] of Object.entries(operatorMapParam)) {
-    mapOperatorMap.set(lc(key), value);
+    mergedOperatorMap.set(lc(key), value);
   }
-  const operatorMap = Object.fromEntries(mapOperatorMap);
+  const operatorMap = Object.fromEntries(mergedOperatorMap);
+
+  // For single-valued in/notin, use the = or != operator labels for clarity
+  const operatorLC = lc(operator);
+
+  var normalizedOperator = operator;
+
+  const hasSingleValue = toArray(rule.value).length === 1;
+
+  if (operatorLC === 'in' && hasSingleValue) {
+    normalizedOperator = '=';
+  } else if (operatorLC === 'notin' && hasSingleValue) {
+    normalizedOperator = '!=';
+  }
 
   const { value: operatorNL, label } = getOption(
     toFullOptionList(
@@ -75,16 +90,18 @@ export const defaultOperatorProcessorNL: RuleProcessor = (
         },
       }) ?? /* istanbul ignore next */ []
     ) as FullOption[],
-    operator
+    normalizedOperator
   ) ?? {
-    name: operator,
-    value: operator,
-    label: operator,
+    name: normalizedOperator,
+    value: normalizedOperator,
+    label: normalizedOperator,
   };
 
+  // Retrieve the natural language translation for the operator
   const operatorTL = operatorMap[operatorNL as DefaultOperatorName] ??
     operatorMap[lc(operatorNL) as Lowercase<DefaultOperatorName>] ?? [label, label];
 
+  // Return field-aware translation (e.g., "is" vs "is the same as the value in")
   return typeof operatorTL === 'string' ? operatorTL : operatorTL[valueSource === 'field' ? 1 : 0];
 };
 
