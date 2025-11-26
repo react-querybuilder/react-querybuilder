@@ -1,17 +1,17 @@
 import { PGlite } from '@electric-sql/pglite';
-import { PrismaClient } from '@prisma/client';
 import { PrismaPGlite } from 'pglite-prisma-adapter';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { CREATE_INDEX, CREATE_TABLE, dbTests, fields, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+// oxlint-disable-next-line ban-ts-comment
+// @ts-ignore This fails when the client is not yet generated
+import { PrismaClient } from '../prisma/generated/client';
 
-const db = new PGlite();
+const db = new PGlite(`dbquery.prisma.cache_db`);
 
 const superUsersPostgres = superUsers('postgres');
 
 const adapter = new PrismaPGlite(db);
-// oxlint-disable-next-line ban-ts-comment
-// @ts-ignore This only fails after generating the adapter
 const prisma = new PrismaClient({ adapter });
 
 beforeAll(async () => {

@@ -7,6 +7,7 @@ dist/
 coverage/
 build-analysis.*
 dbquery.*.cache_db
+**/prisma/generated/
 utils/cel-evaluator/cel-evaluator
 utils/cel-evaluator/cel-evaluator.exe
 
