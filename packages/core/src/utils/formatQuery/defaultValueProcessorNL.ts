@@ -88,7 +88,11 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
             ? `${trimIfString(v)}`
             : `${wrapAndEscape(v)}`
       );
-      return `${valStringArray.slice(0, -1).join(', ')}${valStringArray.length > 2 ? ',' : ''} ${orTL} ${valStringArray.at(-1)}`;
+      if (valStringArray.length === 1) {
+        return valStringArray[0];
+      }
+      const list = `${valStringArray.slice(0, -1).join(', ')}${valStringArray.length > 2 ? ',' : ''} ${orTL} ${valStringArray.at(-1)}`;
+      return `(${list})`;
     }
   }
 
