@@ -96,7 +96,7 @@ describe('MongoDB', () => {
             ['mongodb_query', (v, afak) => (afak ? { $expr: v } : v)],
           ] as [
             ExportFormat,
-            (v: unknown, afak?: boolean) => mongoose.RootFilterQuery<SuperUserMongoDB>,
+            (v: unknown, afak?: boolean) => mongoose.QueryFilter<SuperUserMongoDB>,
           ][]) {
             describe(format, () => {
               test(name, async () => {
