@@ -145,6 +145,7 @@
     "@babel/preset-env": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
     "@electric-sql/pglite": "^0.3.14",
+    "@prisma/client": "^6.19.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.10.1",
     "babel-plugin-istanbul": "^7.0.1",
