@@ -13,7 +13,8 @@ import type { SetOptional } from 'type-fest';
 type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
 
 interface OptionalKnownDndBackends
-  extends Partial<Pick<typeof ReactDndHtml5Backend, 'HTML5Backend'>>,
+  extends
+    Partial<Pick<typeof ReactDndHtml5Backend, 'HTML5Backend'>>,
     Partial<Pick<typeof ReactDndTouchBackend, 'TouchBackend'>> {}
 
 /**
@@ -82,11 +83,10 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
  *
  * @group Props
  */
-export interface QueryBuilderDndContextProps
-  extends Pick<
-    QueryBuilderDndProps,
-    'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'hideDefaultDragPreview'
-  > {
+export interface QueryBuilderDndContextProps extends Pick<
+  QueryBuilderDndProps,
+  'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'hideDefaultDragPreview'
+> {
   useDrag?: typeof useDragOriginal;
   useDrop?: typeof useDropOriginal;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;

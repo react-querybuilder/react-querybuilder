@@ -20,8 +20,9 @@ export interface SuperUser<EnhancedType = 0 | 1 | boolean> {
   powerUpAge: number | null | undefined;
 }
 
-export interface AugmentedSuperUser<EnhancedType = 0 | 1 | boolean>
-  extends SuperUser<EnhancedType> {
+export interface AugmentedSuperUser<
+  EnhancedType = 0 | 1 | boolean,
+> extends SuperUser<EnhancedType> {
   nicknames: string[];
   earlyPencilers: { firstName: string; lastName: string; generationalSuffix?: string }[];
 }

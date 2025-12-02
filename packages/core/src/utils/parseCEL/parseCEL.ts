@@ -55,8 +55,10 @@ import {
   transformAliasInExpression,
 } from './utils';
 
-export interface ParseCELOptionsStandard
-  extends Except<ParserCommonOptions, 'independentCombinators'> {
+export interface ParseCELOptionsStandard extends Except<
+  ParserCommonOptions,
+  'independentCombinators'
+> {
   independentCombinators?: false;
   /**
    * Handler for custom CEL expressions.
