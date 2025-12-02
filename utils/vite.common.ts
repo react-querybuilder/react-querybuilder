@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 import postcssScopedDonut from './devapp/postcss-scoped-donut';
 
 const coreSrc = '../core/src';
+const reSrc = '../rules-engine/src';
 const rqbSrc = '../react-querybuilder/src';
 
 export const getCommonViteConfig = ({
@@ -12,11 +13,13 @@ export const getCommonViteConfig = ({
   scopedDonut = true,
 }: { port?: number; scopedDonut?: boolean } = {}): UserConfig =>
   defineConfig({
+    define: { __RQB_DEVTOOLS__: true },
     plugins: [vitePluginReact()],
     resolve: {
       alias: {
         'react-querybuilder': path.resolve(`${rqbSrc}`),
         '@react-querybuilder/core': path.resolve(`${coreSrc}`),
+        '@react-querybuilder/rules-engine': path.resolve(`${reSrc}`),
         '@rqb-devapp': path.resolve(`../../utils/devapp`),
         '@rqb-parsecel': path.resolve(`${coreSrc}/utils/parseCEL`),
         '@rqb-parsejsonata': path.resolve(`${coreSrc}/utils/parseJSONata`),
@@ -28,7 +31,6 @@ export const getCommonViteConfig = ({
       },
     },
     css: {
-      // preprocessorOptions: { scss: { api: 'legacy' } },
       postcss: { plugins: scopedDonut ? [postcssScopedDonut] : [] },
     },
     server: { port },

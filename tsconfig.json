@@ -16,6 +16,7 @@
     "paths": {
       "react-querybuilder": ["./packages/react-querybuilder/src"],
       "@react-querybuilder/core": ["./packages/core/src"],
+      "@react-querybuilder/rules-engine": ["./packages/rules-engine/src"],
       "@rqb-parsecel": ["./packages/core/src/utils/parseCEL"],
       "@rqb-parsejsonata": ["./packages/core/src/utils/parseJSONata"],
       "@rqb-parsejsonlogic": ["./packages/core/src/utils/parseJsonLogic"],
