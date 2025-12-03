@@ -45,8 +45,8 @@ export interface UseMergedContext<
   F extends FullField = FullField,
   O extends string = string,
   Finalize extends boolean | undefined = undefined,
-> extends QueryBuilderContextProps<F, O>,
-    QueryBuilderFlags {
+>
+  extends QueryBuilderContextProps<F, O>, QueryBuilderFlags {
   enableDragAndDrop: Finalize extends true ? boolean : boolean | undefined;
   initialQuery?: RuleGroupTypeAny;
   qbId?: string;

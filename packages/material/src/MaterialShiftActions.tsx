@@ -9,9 +9,7 @@ import type { MuiAugmentation } from './types';
  * @group Props
  */
 export interface MaterialShiftActionsProps
-  extends ShiftActionsProps,
-    React.ComponentPropsWithoutRef<typeof Button>,
-    MuiAugmentation {}
+  extends ShiftActionsProps, React.ComponentPropsWithoutRef<typeof Button>, MuiAugmentation {}
 
 /**
  * @group Components

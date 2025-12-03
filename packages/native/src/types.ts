@@ -36,8 +36,7 @@ interface WithOptionalStyleSheets {
  * @group Props
  */
 export interface SchemaNative<F extends FullField, O extends string>
-  extends Schema<F, O>,
-    WithOptionalStyleSheets {}
+  extends Schema<F, O>, WithOptionalStyleSheets {}
 
 /**
  * @group Props

@@ -41,8 +41,10 @@ export interface RuleType<
  * The main rule group type. This type is used for query definitions as well as
  * all sub-groups of queries.
  */
-export interface RuleGroupType<R extends RuleType = RuleType, C extends string = string>
-  extends CommonRuleAndGroupProperties {
+export interface RuleGroupType<
+  R extends RuleType = RuleType,
+  C extends string = string,
+> extends CommonRuleAndGroupProperties {
   combinator: C;
   rules: RuleGroupArray<RuleGroupType<R, C>, R>;
   not?: boolean;

@@ -58,8 +58,7 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
 };
 
 interface UseRuleDndParams
-  extends RuleProps,
-    Omit<QueryBuilderDndContextProps, 'baseControls' | 'useDrag' | 'useDrop'> {
+  extends RuleProps, Omit<QueryBuilderDndContextProps, 'baseControls' | 'useDrag' | 'useDrop'> {
   useDrag: typeof useDragOriginal;
   useDrop: typeof useDropOriginal;
 }

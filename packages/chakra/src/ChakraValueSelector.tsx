@@ -8,8 +8,7 @@ import { toOptions } from './utils';
  * @group Props
  */
 export interface ChakraValueSelectorProps
-  extends VersatileSelectorProps,
-    ComponentPropsWithoutRef<typeof NativeSelectRoot> {}
+  extends VersatileSelectorProps, ComponentPropsWithoutRef<typeof NativeSelectRoot> {}
 
 /**
  * @group Components

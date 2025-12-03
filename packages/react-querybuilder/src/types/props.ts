@@ -112,8 +112,10 @@ export interface CommonSubComponentProps<
  *
  * @group Props
  */
-export interface SelectorOrEditorProps<F extends FullOption = FullField, O extends string = string>
-  extends CommonSubComponentProps<F, O> {
+export interface SelectorOrEditorProps<
+  F extends FullOption = FullField,
+  O extends string = string,
+> extends CommonSubComponentProps<F, O> {
   value?: string;
   // oxlint-disable-next-line typescript/no-explicit-any
   handleOnChange(value: any): void;
@@ -122,8 +124,9 @@ export interface SelectorOrEditorProps<F extends FullOption = FullField, O exten
 /**
  * Base interface for selector components.
  */
-interface BaseSelectorProps<OptType extends Option>
-  extends SelectorOrEditorProps<ToFullOption<OptType>> {
+interface BaseSelectorProps<OptType extends Option> extends SelectorOrEditorProps<
+  ToFullOption<OptType>
+> {
   options: FullOptionList<OptType>;
 }
 
@@ -132,8 +135,9 @@ interface BaseSelectorProps<OptType extends Option>
  *
  * @group Props
  */
-export interface ValueSelectorProps<OptType extends Option = FullOption>
-  extends BaseSelectorProps<OptType> {
+export interface ValueSelectorProps<
+  OptType extends Option = FullOption,
+> extends BaseSelectorProps<OptType> {
   multiple?: boolean;
   listsAsArrays?: boolean;
 }
@@ -155,8 +159,7 @@ export interface CombinatorSelectorProps extends BaseSelectorProps<FullOption> {
  * @group Props
  */
 export interface FieldSelectorProps<F extends FullField = FullField>
-  extends BaseSelectorProps<F>,
-    CommonRuleSubComponentProps {
+  extends BaseSelectorProps<F>, CommonRuleSubComponentProps {
   operator?: F extends FullField<string, infer OperatorName> ? OperatorName : string;
 }
 
@@ -166,8 +169,7 @@ export interface FieldSelectorProps<F extends FullField = FullField>
  * @group Props
  */
 export interface MatchModeEditorProps
-  extends BaseSelectorProps<FullOption>,
-    CommonRuleSubComponentProps {
+  extends BaseSelectorProps<FullOption>, CommonRuleSubComponentProps {
   match: MatchConfig;
   selectorComponent?: ComponentType<ValueSelectorProps>;
   numericEditorComponent?: ComponentType<ValueEditorProps>;
@@ -183,8 +185,7 @@ export interface MatchModeEditorProps
  * @group Props
  */
 export interface OperatorSelectorProps
-  extends BaseSelectorProps<FullOption>,
-    CommonRuleSubComponentProps {
+  extends BaseSelectorProps<FullOption>, CommonRuleSubComponentProps {
   options: FullOptionList<FullOperator>;
   field: string;
   fieldData: FullField;
@@ -196,8 +197,7 @@ export interface OperatorSelectorProps
  * @group Props
  */
 export interface ValueSourceSelectorProps
-  extends BaseSelectorProps<FullOption>,
-    CommonRuleSubComponentProps {
+  extends BaseSelectorProps<FullOption>, CommonRuleSubComponentProps {
   options: FullOptionList<FullOption<ValueSource>>;
   field: string;
   fieldData: FullField;
@@ -372,8 +372,7 @@ export interface InlineCombinatorProps extends CombinatorSelectorProps {
  * @group Props
  */
 export interface ValueEditorProps<F extends FullField = FullField, O extends string = string>
-  extends SelectorOrEditorProps<F, O>,
-    CommonRuleSubComponentProps {
+  extends SelectorOrEditorProps<F, O>, CommonRuleSubComponentProps {
   field: GetOptionIdentifierType<F>;
   operator: O;
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -667,8 +666,7 @@ export interface UseRuleGroupDnD {
  * @group Props
  */
 export interface RuleGroupProps<F extends FullOption = FullOption, O extends string = string>
-  extends CommonRuleAndGroupProps<F, O>,
-    Partial<UseRuleGroupDnD> {
+  extends CommonRuleAndGroupProps<F, O>, Partial<UseRuleGroupDnD> {
   ruleGroup: RuleGroupTypeAny<RuleType<GetOptionIdentifierType<F>, O>>;
   /**
    * @deprecated Use the `combinator` property of the `ruleGroup` prop instead
@@ -707,8 +705,7 @@ export interface UseRuleDnD {
  * @group Props
  */
 export interface RuleProps<F extends string = string, O extends string = string>
-  extends CommonRuleAndGroupProps<FullOption<F>, O>,
-    Partial<UseRuleDnD> {
+  extends CommonRuleAndGroupProps<FullOption<F>, O>, Partial<UseRuleDnD> {
   rule: RuleType<F, O>;
   /**
    * @deprecated Use the `field` property of the `rule` prop instead

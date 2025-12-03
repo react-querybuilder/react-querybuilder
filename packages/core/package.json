@@ -145,6 +145,7 @@
     "@babel/preset-env": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
     "@electric-sql/pglite": "^0.3.14",
+    "@prisma/client": "^6.19.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.10.1",
     "babel-plugin-istanbul": "^7.0.1",
@@ -161,14 +162,14 @@
     "sass": "^1.94.2",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.9",
-    "type-fest": "^5.2.0",
+    "type-fest": "^5.3.0",
     "typescript": "^5.9.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.6"
   },
   "dependencies": {
     "@ts-jison/lexer": "0.4.1-alpha.1",
     "@ts-jison/parser": "0.4.1-alpha.1",
-    "immer": "^11.0.0",
+    "immer": "^11.0.1",
     "numeric-quantity": "^2.1.0"
   },
   "peerDependencies": {
