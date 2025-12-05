@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bootstrap",
   "description": "Custom Bootstrap components for react-querybuilder",
-  "version": "8.12.0",
+  "version": "8.13.0",
   "publishConfig": {
     "access": "public"
   },
@@ -60,7 +60,7 @@
     "bootstrap-icons": "^1.13.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-querybuilder": "8.12.0",
+    "react-querybuilder": "8.13.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
     "vite": "^7.2.6"
@@ -69,6 +69,6 @@
     "bootstrap": ">=5",
     "bootstrap-icons": ">=1.7.0",
     "react": ">=18",
-    "react-querybuilder": "8.12.0"
+    "react-querybuilder": "8.13.0"
   }
 }
