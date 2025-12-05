@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.13.0] - 2025-12-05
+
 ### Added
 
 - [#975] `useAsyncOptionList` and its corresponding Redux slice have been decoupled from the main bundle. They will now be loaded only when explicitly imported from `"react-querybuilder/async"`.
@@ -2088,7 +2092,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.13.0...HEAD
+[v8.13.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...v8.13.0
 [v8.12.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.2...v8.12.0
 [v8.11.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.1...v8.11.2
 [v8.11.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...v8.11.1
