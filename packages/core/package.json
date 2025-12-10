@@ -149,7 +149,7 @@
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "^24.10.2",
     "babel-plugin-istanbul": "^7.0.1",
-    "drizzle-orm": "^0.45.0",
+    "drizzle-orm": "^0.45.1",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "mongodb-memory-server-core": "^10.4.1",

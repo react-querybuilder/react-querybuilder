@@ -48,7 +48,7 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.14",
     "@react-querybuilder/core": "8.13.0",
-    "drizzle-orm": "^0.45.0",
+    "drizzle-orm": "^0.45.1",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
     "vite": "^7.2.7"
