@@ -25,11 +25,7 @@ export const App = () => {
     <div>
       <FluentProvider theme={webLightTheme}>
         <QueryBuilderFluent>
-          <QueryBuilder
-            fields={fields}
-            query={query}
-            onQueryChange={setQuery}
-          />
+          <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
         </QueryBuilderFluent>
       </FluentProvider>
       <h4>Query</h4>

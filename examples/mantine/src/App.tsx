@@ -25,11 +25,7 @@ export const App = () => {
     <div>
       <MantineProvider>
         <QueryBuilderMantine>
-          <QueryBuilder
-            fields={fields}
-            query={query}
-            onQueryChange={setQuery}
-          />
+          <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
         </QueryBuilderMantine>
       </MantineProvider>
       <h4>Query</h4>

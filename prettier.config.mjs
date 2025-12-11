@@ -10,12 +10,4 @@ export default {
   bracketSameLine: true,
   arrowParens: 'avoid',
   plugins: ['prettier-plugin-organize-imports'],
-  overrides: [
-    {
-      files: 'examples/*/**/*.!(css|scss)*',
-      options: {
-        printWidth: 80,
-      },
-    },
-  ],
 };
