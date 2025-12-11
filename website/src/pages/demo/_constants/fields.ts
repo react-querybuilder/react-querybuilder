@@ -1,5 +1,5 @@
-import type { Field, RuleType } from 'react-querybuilder/debug';
-import { defaultOperators, toFullOption } from 'react-querybuilder/debug';
+import type { Field, RuleType } from 'react-querybuilder';
+import { defaultOperators, toFullOption } from 'react-querybuilder';
 import { musicalInstruments } from './musicalInstruments';
 
 export const validator = (r: RuleType) => !!r.value;

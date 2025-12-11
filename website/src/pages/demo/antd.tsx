@@ -5,7 +5,7 @@ import { AntDValueSelector, QueryBuilderAntD } from '@react-querybuilder/antd';
 import Layout from '@theme/Layout';
 import { theme } from 'antd';
 import { useEffect, useState } from 'react';
-import type { ValueSelectorProps } from 'react-querybuilder/debug';
+import type { ValueSelectorProps } from 'react-querybuilder';
 import { Loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-antd.css';

@@ -5,7 +5,7 @@ import type {
   Translations,
   ValueSource,
   ValueSourceFullOptions,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import { fields as demoFields } from './demo/_constants/fields';
 
 export const combinators: Combinator[] = [

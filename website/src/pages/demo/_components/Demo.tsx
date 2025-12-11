@@ -19,7 +19,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   SQLPreset,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import {
   convertToIC,
   defaultPlaceholderValueName,
@@ -27,7 +27,7 @@ import {
   formatQuery,
   QueryBuilder,
   standardClassnames,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';

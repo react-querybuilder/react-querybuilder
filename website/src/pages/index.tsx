@@ -17,7 +17,7 @@ import type {
   RuleType,
   ValueEditorProps,
   ValueProcessorByRule,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import {
   defaultOperators,
   defaultValueProcessorByRule,
@@ -25,7 +25,7 @@ import {
   QueryBuilder,
   QueryBuilderContext,
   ValueEditor,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import Select from 'react-select';
 import '../css/index.css';
 import { CustomStylesQB } from './_CustomStylesQB';

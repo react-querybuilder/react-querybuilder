@@ -24,8 +24,9 @@ const config: Config = {
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
   clientModules: [
-    path.resolve('./static/js/console.js'),
+    path.resolve('./static/js/debug.js'),
     path.resolve('./static/js/loadRqbUtils.js'),
+    path.resolve('./static/js/console.js'),
   ],
   future: {
     experimental_faster: true,
