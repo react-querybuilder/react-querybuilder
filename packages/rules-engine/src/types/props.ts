@@ -2,6 +2,8 @@ import type {
   BaseOption,
   BaseTranslationWithLabel,
   Classname,
+  FlexibleOptionList,
+  FlexibleOptionListProp,
   FullOption,
   FullOptionList,
   Path,
@@ -38,6 +40,12 @@ export interface SchemaRE {
   addCondition: (cp: Path) => void;
   removeCondition: (cp: Path) => void;
   updateCondition: (cp: Path, p: string, v: unknown) => void;
+  defaultConsequentType: FullOption;
+  getConsequentTypes: (
+    conditionPath: Path,
+    antecedent: RuleGroupTypeAny,
+    context?: unknown
+  ) => FullOptionList<BaseOption>;
 }
 
 export interface ComponentsRE {
@@ -122,7 +130,12 @@ export interface RulesEngineProps {
   rulesEngine?: RulesEngine;
   defaultRulesEngine?: RulesEngine;
   onRulesEngineChange?: (re: RulesEngine) => void;
-  consequentTypes?: FullOptionList<BaseOption>;
+  consequentTypes?: FlexibleOptionList<BaseOption>;
+  getConsequentTypes?: (
+    conditionPath: Path,
+    antecedent: RuleGroupTypeAny,
+    context?: unknown
+  ) => FlexibleOptionListProp<BaseOption> | null;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
   allowDefaultConsequents?: boolean;

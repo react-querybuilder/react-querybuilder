@@ -12,7 +12,11 @@ import {
   prepareOptionList,
 } from '@react-querybuilder/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { queryBuilderStore } from 'react-querybuilder';
+import {
+  defaultPlaceholderLabel,
+  defaultPlaceholderName,
+  queryBuilderStore,
+} from 'react-querybuilder';
 import {
   defaultClassnamesRE,
   defaultRulesEngine,
@@ -61,10 +65,11 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     rulesEngine: rulesEngineProp = defaultRulesEngine,
     defaultRulesEngine: defaultRulesEngineProp,
     consequentTypes: consequentTypesProp,
+    getConsequentTypes,
     enableMountRulesEngineChange = true,
     allowDefaultConsequents = true,
     allowNestedConditions = true,
-    autoSelectConsequentType = false,
+    autoSelectConsequentType = true,
     suppressStandardClassnames = false,
     onRulesEngineChange,
     classnames: classnamesProp = defaultClassnamesRE,
@@ -151,10 +156,41 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       ) as TranslationsFullRE,
     [translationsProp]
   );
+  // #endregion
 
-  const { optionList: consequentTypes } = useMemo(
-    () => prepareOptionList({ optionList: consequentTypesProp }),
-    [consequentTypesProp]
+  // #region `consequentTypes`
+  const { optionList: consequentTypes, defaultOption: defaultConsequentType } = useMemo(
+    () =>
+      prepareOptionList({
+        optionList: consequentTypesProp ?? [],
+        placeholder: {
+          placeholderName: defaultPlaceholderName,
+          placeholderLabel: defaultPlaceholderLabel,
+          placeholderGroupLabel: defaultPlaceholderLabel,
+        },
+        labelMap: {},
+        baseOption: {},
+        autoSelectOption: autoSelectConsequentType,
+      }),
+    [autoSelectConsequentType, consequentTypesProp]
+  );
+
+  const getConsequentTypesMain = useCallback(
+    (conditionPath: Path, antecedent: RuleGroupTypeAny, context?: unknown) =>
+      prepareOptionList({
+        optionList:
+          consequentTypes ??
+          getConsequentTypes?.(conditionPath, antecedent, context) ??
+          consequentTypesProp ??
+          [],
+        placeholder: {
+          placeholderName: defaultPlaceholderName,
+          placeholderLabel: defaultPlaceholderLabel,
+          placeholderGroupLabel: defaultPlaceholderLabel,
+        },
+        autoSelectOption: autoSelectConsequentType,
+      }).optionList,
+    [consequentTypesProp, getConsequentTypes, consequentTypes, autoSelectConsequentType]
   );
   // #endregion
 
@@ -302,6 +338,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   );
   // #endregion
 
+  // #region Schema
   const schema = useMemo(
     (): SchemaRE => ({
       addCondition,
@@ -313,6 +350,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       consequentTypes,
       dispatchRulesEngine,
       getRulesEngine,
+      defaultConsequentType,
+      getConsequentTypes: getConsequentTypesMain,
       queryBuilderProps,
       reId,
       removeCondition,
@@ -328,7 +367,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnames,
       components,
       consequentTypes,
+      defaultConsequentType,
       dispatchRulesEngine,
+      getConsequentTypesMain,
       getRulesEngine,
       queryBuilderProps,
       reId,
@@ -338,6 +379,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       updateCondition,
     ]
   );
+  // #endregion
 
   return {
     classnames,

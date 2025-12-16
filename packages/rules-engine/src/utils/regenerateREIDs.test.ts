@@ -1,4 +1,3 @@
-import type { RuleGroupType } from '@react-querybuilder/core';
 import type { REConditionAny, RulesEngineAny } from '../types';
 import { regenerateREIDs } from './regenerateREIDs';
 
@@ -120,7 +119,7 @@ it('handles RulesEngineIC', () => {
   expect(result.id).not.toBe('old-ic-id');
   expect(result.conditions[0].id).not.toBe('old-ic-condition-id');
   expect(result.conditions[0].antecedent.id).toBeDefined();
-  expect((result.conditions[0].antecedent as RuleGroupType).not).toBe(false);
+  expect(result.conditions[0].antecedent.not).toBe(false);
 });
 
 it('preserves original object immutably', () => {

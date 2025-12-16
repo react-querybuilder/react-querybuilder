@@ -65,5 +65,5 @@ export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLev
     return rg.not ? { not: cond } : cond;
   };
 
-  return processRuleGroup(convertFromIC(rg), true)!;
+  return processRuleGroup(convertFromIC(rg), true);
 };

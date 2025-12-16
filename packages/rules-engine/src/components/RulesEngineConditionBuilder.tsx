@@ -136,6 +136,11 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
     [conditionPath, updateCondition]
   );
 
+  const consequentTypes = React.useMemo(
+    () => props.schema.getConsequentTypes(props.conditionPath, props.condition.antecedent),
+    [props.condition.antecedent, props.conditionPath, props.schema]
+  );
+
   return (
     <React.Fragment>
       <QueryBuilder
@@ -146,7 +151,7 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
       {props.condition.consequent && (
         <ConsequentBuilder
           conditionPath={props.conditionPath}
-          consequentTypes={props.consequentTypes}
+          consequentTypes={consequentTypes}
           consequent={props.condition.consequent}
           onConsequentChange={onConsequentChange}
           autoSelectConsequentType={props.autoSelectConsequentType}
