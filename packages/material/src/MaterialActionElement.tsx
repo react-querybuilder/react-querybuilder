@@ -11,9 +11,7 @@ import type { MuiAugmentation } from './types';
  * @group Props
  */
 export interface MaterialActionProps
-  extends ActionProps,
-    ComponentPropsWithoutRef<typeof Button>,
-    MuiAugmentation {}
+  extends ActionProps, ComponentPropsWithoutRef<typeof Button>, MuiAugmentation {}
 
 /**
  * @group Components

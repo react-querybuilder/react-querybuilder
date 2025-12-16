@@ -9,12 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#985] Wrapper elements for rule groups with `not: true` will include the HTML attribute `data-not="true"`. This enables styling and other functionality based on the "not" toggle.
+- [#985] [Base UI](https://base-ui.com/) example.
+
+## [v8.13.0] - 2025-12-05
+
+### Added
+
 - [#975] `useAsyncOptionList` and its corresponding Redux slice have been decoupled from the main bundle. They will now be loaded only when explicitly imported from `"react-querybuilder/async"`.
 - [#976] Redux DevTools can be enabled for the internal store by setting `globalThis.__RQB_DEVTOOLS__ = true` before imports. Previously this required changing all `react-querybuilder` imports to `react-querybuilder/debug`. The `/debug` entry point is now deprecated (still works, but may be removed in a future major version).
 
 ### Fixed
 
 - `react-querybuilder/debug` entry point and all `@react-querybuilder/datetime/*` entry points now work for "node10" module resolution.
+- [#979] Natural language export makes more sense when rules with "in"/"notIn" operator have a value that evaluates to a single element.
 
 ## [v8.12.0] - 2025-11-06
 
@@ -2081,12 +2089,15 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#974]: https://github.com/react-querybuilder/react-querybuilder/pull/974
 [#975]: https://github.com/react-querybuilder/react-querybuilder/pull/975
 [#976]: https://github.com/react-querybuilder/react-querybuilder/pull/976
+[#979]: https://github.com/react-querybuilder/react-querybuilder/pull/979
+[#985]: https://github.com/react-querybuilder/react-querybuilder/pull/985
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.13.0...HEAD
+[v8.13.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...v8.13.0
 [v8.12.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.2...v8.12.0
 [v8.11.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.1...v8.11.2
 [v8.11.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.0...v8.11.1

@@ -20,8 +20,9 @@ export interface SuperUser<EnhancedType = 0 | 1 | boolean> {
   powerUpAge: number | null | undefined;
 }
 
-export interface AugmentedSuperUser<EnhancedType = 0 | 1 | boolean>
-  extends SuperUser<EnhancedType> {
+export interface AugmentedSuperUser<
+  EnhancedType = 0 | 1 | boolean,
+> extends SuperUser<EnhancedType> {
   nicknames: string[];
   earlyPencilers: { firstName: string; lastName: string; generationalSuffix?: string }[];
 }
@@ -157,13 +158,12 @@ export const earlyPencilersMap: Record<
 };
 
 export const augmentedSuperUsers = <DBP extends DbPlatform>(dbPlatform: DBP) =>
-  superUsers(dbPlatform).map(u => ({
-    ...u,
-    nicknames: [u.nickname, ...nicknameMap[u.madeUpName]],
-    earlyPencilers: earlyPencilersMap[u.madeUpName],
-  })) as DBP extends 'mssql' | 'sqlite'
-    ? AugmentedSuperUser<0 | 1>[]
-    : AugmentedSuperUser<boolean>[];
+  superUsers(dbPlatform).map(u =>
+    Object.assign(u, {
+      nicknames: [u.nickname, ...nicknameMap[u.madeUpName]],
+      earlyPencilers: earlyPencilersMap[u.madeUpName],
+    })
+  ) as DBP extends 'mssql' | 'sqlite' ? AugmentedSuperUser<0 | 1>[] : AugmentedSuperUser<boolean>[];
 
 const enhancedColumnType: Record<DbPlatform, string> = {
   cel: 'N/A',

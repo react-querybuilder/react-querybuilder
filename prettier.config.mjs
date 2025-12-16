@@ -1,4 +1,6 @@
-/** @type {import("prettier").Options} */
+import * as prettierPluginOxc from '@prettier/plugin-oxc';
+
+/** @type {import("prettier").Config} */
 export default {
   printWidth: 100,
   tabWidth: 2,
@@ -9,13 +11,5 @@ export default {
   bracketSpacing: true,
   bracketSameLine: true,
   arrowParens: 'avoid',
-  plugins: ['prettier-plugin-organize-imports'],
-  overrides: [
-    {
-      files: 'examples/*/**/*.!(css|scss)*',
-      options: {
-        printWidth: 80,
-      },
-    },
-  ],
+  plugins: [prettierPluginOxc, 'prettier-plugin-organize-imports'],
 };

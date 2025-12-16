@@ -250,7 +250,7 @@ const generateExampleFromTemplate = async (exampleID: string) => {
 };
 
 // #region Other examples' package.json
-const otherExamples = ['ci', 'native', 'next', 'preact', 'tremor'] as const;
+const otherExamples = ['base-ui', 'ci', 'native', 'next', 'preact', 'tremor'] as const;
 
 const updateOtherExample = async (otherExampleName: string) => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(

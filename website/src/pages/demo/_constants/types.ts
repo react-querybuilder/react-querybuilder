@@ -5,7 +5,7 @@ import type {
   QueryBuilderProps,
   RuleGroupType,
   RuleGroupTypeIC,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 
 export type DemoOption =
   | 'showCombinatorsBetweenRules'

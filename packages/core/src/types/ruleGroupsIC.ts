@@ -15,8 +15,10 @@ import type { MappedTuple } from './ruleGroupsIC.utils';
  * The main rule group interface when using independent combinators. This type is used
  * for query definitions as well as all sub-groups of queries.
  */
-export interface RuleGroupTypeIC<R extends RuleType = RuleType, C extends string = string>
-  extends Except<RuleGroupType<R, C>, 'combinator' | 'rules'> {
+export interface RuleGroupTypeIC<
+  R extends RuleType = RuleType,
+  C extends string = string,
+> extends Except<RuleGroupType<R, C>, 'combinator' | 'rules'> {
   combinator?: undefined;
   rules: RuleGroupICArray<RuleGroupTypeIC<R, C>, R, C>;
   /**
@@ -66,8 +68,9 @@ export type DefaultRuleOrGroupArray<F extends string = string> =
  * {@link RuleGroupTypeIC} with combinators limited to
  * {@link DefaultCombinatorName} and rules limited to {@link DefaultRuleType}.
  */
-export interface DefaultRuleGroupTypeIC<F extends string = string>
-  extends RuleGroupTypeIC<DefaultRuleType<F>> {
+export interface DefaultRuleGroupTypeIC<F extends string = string> extends RuleGroupTypeIC<
+  DefaultRuleType<F>
+> {
   rules: DefaultRuleGroupICArray<F>;
 }
 

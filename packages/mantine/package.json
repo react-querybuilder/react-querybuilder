@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/mantine",
   "description": "Custom Mantine components for react-querybuilder",
-  "version": "8.12.0",
+  "version": "8.13.0",
   "publishConfig": {
     "access": "public"
   },
@@ -51,20 +51,20 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "8.3.6",
-    "@mantine/dates": "8.3.6",
-    "@mantine/hooks": "8.3.6",
+    "@mantine/core": "8.3.10",
+    "@mantine/dates": "8.3.10",
+    "@mantine/hooks": "8.3.10",
     "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.2.2",
-    "@vitejs/plugin-react": "^5.1.0",
+    "@testing-library/react": "^16.3.1",
+    "@types/react": "^19.2.7",
+    "@vitejs/plugin-react": "^5.1.2",
     "dayjs": "^1.11.19",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-querybuilder": "8.12.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-querybuilder": "8.13.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.2.2"
+    "vite": "^7.3.0"
   },
   "peerDependencies": {
     "@mantine/core": ">=7",
@@ -72,6 +72,6 @@
     "@mantine/hooks": ">=7",
     "dayjs": ">=1",
     "react": ">=18",
-    "react-querybuilder": "8.12.0"
+    "react-querybuilder": "8.13.0"
   }
 }

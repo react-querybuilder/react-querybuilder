@@ -56,24 +56,24 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.10.1",
-    "immer": "^10.2.0",
-    "react-querybuilder": "8.12.0",
+    "@reduxjs/toolkit": "^2.11.2",
+    "immer": "^11.0.1",
+    "react-querybuilder": "8.13.0",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.2.2",
-    "@vitejs/plugin-react": "^5.1.0",
+    "@testing-library/react": "^16.3.1",
+    "@types/react": "^19.2.7",
+    "@vitejs/plugin-react": "^5.1.2",
     "json-rules-engine": "^7.3.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "rollup-plugin-visualizer": "^6.0.5",
-    "sass": "^1.94.0",
-    "type-fest": "^5.2.0",
+    "sass": "^1.97.0",
+    "type-fest": "^5.3.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.2"
+    "vite": "^7.3.0"
   },
   "peerDependencies": {
     "json-rules-engine": "^7",

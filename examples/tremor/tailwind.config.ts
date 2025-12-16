@@ -4,8 +4,6 @@ import type { Config } from 'tailwindcss';
 export default {
   darkMode: 'class',
   theme: {
-    transparent: 'transparent',
-    current: 'currentColor',
     extend: {
       colors: {
         // light mode

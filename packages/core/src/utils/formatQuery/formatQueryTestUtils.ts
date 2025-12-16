@@ -457,18 +457,21 @@ export const getMuteTestData = (format: ExportFormat): ReturnType<typeof getVali
       const rProcessor = (r: RuleGroupTypeAny | RuleType) =>
         r.id === Object.keys(validator() as Record<string, boolean>)[0] ? { ...r, muted: true } : r;
       if (validator() === false) {
-        return { ...vtd, options: otherOptions, title, query: { ...vtd.query, muted: true } };
+        return Object.assign(vtd, {
+          options: otherOptions,
+          title,
+          query: { ...vtd.query, muted: true },
+        });
       }
       if (isPojo(validator())) {
-        return {
-          ...vtd,
+        return Object.assign(vtd, {
           options: otherOptions,
           title,
           query: transformQuery(vtd.query as RuleGroupType, {
             ruleProcessor: rProcessor,
             ruleGroupProcessor: rProcessor,
           }),
-        };
+        });
       }
       return vtd;
     });

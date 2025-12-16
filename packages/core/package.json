@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.12.0",
+  "version": "8.13.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -145,30 +145,31 @@
     "@babel/preset-env": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
     "@electric-sql/pglite": "^0.3.14",
+    "@prisma/client": "^6.19.0",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^24.10.0",
+    "@types/node": "^25.0.2",
     "babel-plugin-istanbul": "^7.0.1",
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "^0.45.1",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
-    "mongodb-memory-server-core": "^10.3.0",
-    "mongoose": "^8.19.3",
+    "mongodb-memory-server-core": "^11.0.0",
+    "mongoose": "^9.0.1",
     "pglite-prisma-adapter": "^0.6.1",
     "prisma": "^6.19.0",
     "query-string": "^9.3.1",
     "regenerator-runtime": "^0.14.1",
     "rollup-plugin-visualizer": "^6.0.5",
-    "sass": "^1.94.0",
+    "sass": "^1.97.0",
     "sequelize": "^6.37.7",
     "spel2js": "^0.2.9",
-    "type-fest": "^5.2.0",
+    "type-fest": "^5.3.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.2"
+    "vite": "^7.3.0"
   },
   "dependencies": {
     "@ts-jison/lexer": "0.4.1-alpha.1",
     "@ts-jison/parser": "0.4.1-alpha.1",
-    "immer": "^10.2.0",
+    "immer": "^11.0.1",
     "numeric-quantity": "^2.1.0"
   },
   "peerDependencies": {
@@ -191,7 +192,7 @@
   "scripts": {
     "build": "bun run build:main && bun run build:css",
     "build:main": "bun --bun tsdown",
-    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
+    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed --silence-deprecation=if-function dist",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   }

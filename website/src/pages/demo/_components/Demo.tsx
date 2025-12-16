@@ -19,7 +19,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   SQLPreset,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import {
   convertToIC,
   defaultPlaceholderValueName,
@@ -27,7 +27,7 @@ import {
   formatQuery,
   QueryBuilder,
   standardClassnames,
-} from 'react-querybuilder/debug';
+} from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
@@ -213,17 +213,18 @@ export default function Demo({
 
   const optionsInfo = useMemo(
     () =>
-      optionOrderByLabel.map(opt => ({
-        ...optionsMetadata[opt],
-        name: opt,
-        default: defaultOptions[opt],
-        checked: options[opt],
-        setter: (v: boolean) =>
-          setOptions({
-            type: 'update',
-            payload: { optionName: opt, value: v },
-          }),
-      })),
+      optionOrderByLabel.map(opt =>
+        Object.assign({}, optionsMetadata[opt], {
+          name: opt,
+          default: defaultOptions[opt],
+          checked: options[opt],
+          setter: (v: boolean) =>
+            setOptions({
+              type: 'update',
+              payload: { optionName: opt, value: v },
+            }),
+        })
+      ),
     [options]
   );
 

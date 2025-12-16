@@ -11,7 +11,8 @@ import type { MuiAugmentation } from './types';
  * @group Props
  */
 export interface MaterialDragHandleProps
-  extends DragHandleProps,
+  extends
+    DragHandleProps,
     Omit<ComponentPropsWithRef<typeof DragIndicator>, 'path'>,
     MuiAugmentation {}
 

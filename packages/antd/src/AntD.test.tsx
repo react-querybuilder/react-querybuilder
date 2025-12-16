@@ -343,7 +343,7 @@ it('renders with composition', () => {
   expect(
     screen
       .getAllByRole('button')
-      .map(b => [...b.classList])
+      .map(b => [...b.classList]) // oxlint-disable-line no-map-spread
       .some(el => el.some(c => c.startsWith('ant-')))
   ).toBe(true);
 });

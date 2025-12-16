@@ -9,8 +9,7 @@ import { toSelectItems } from './utils';
  * @group Props
  */
 export interface TremorValueSelectorProps
-  extends VersatileSelectorProps,
-    Omit<SelectProps & MultiSelectProps, 'children' | 'value'> {
+  extends VersatileSelectorProps, Omit<SelectProps & MultiSelectProps, 'children' | 'value'> {
   // oxlint-disable-next-line typescript/no-explicit-any
   value?: any;
 }

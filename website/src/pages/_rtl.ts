@@ -5,7 +5,8 @@ import type {
   Translations,
   ValueSource,
   ValueSourceFullOptions,
-} from 'react-querybuilder/debug';
+  ValueSources,
+} from 'react-querybuilder';
 import { fields as demoFields } from './demo/_constants/fields';
 
 export const combinators: Combinator[] = [
@@ -62,17 +63,20 @@ const rtlLabels: Record<string, string> = {
   groupedField4: 'שדה מקובץ 4',
 };
 
-export const fields: Field[] = demoFields.map(f => ({
-  ...f,
-  label: rtlLabels[f.name] ?? f.label,
-  ...(f.valueSources && {
-    valueSources: f.valueSources.map(vs => ({
-      name: vs,
-      value: vs,
-      label: valueSourceLabelMap[vs],
-    })) as ValueSourceFullOptions,
-  }),
-}));
+const isValueSources = (a: unknown): a is ValueSources => Array.isArray(a);
+
+export const fields: Field[] = demoFields.map(f =>
+  Object.assign({}, f, {
+    label: rtlLabels[f.name] ?? f.label,
+    ...(isValueSources(f.valueSources) && {
+      valueSources: f.valueSources.map((vs: ValueSource) => ({
+        name: vs,
+        value: vs,
+        label: valueSourceLabelMap[vs],
+      })) as ValueSourceFullOptions,
+    }),
+  })
+);
 
 export const translations: Partial<Translations> = {
   fields: {

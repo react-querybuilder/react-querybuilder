@@ -34,11 +34,7 @@ export const App = () => {
     <div>
       <ThemeProvider theme={muiTheme}>
         <QueryBuilderMaterial>
-          <QueryBuilder
-            fields={fields}
-            query={query}
-            onQueryChange={setQuery}
-          />
+          <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
         </QueryBuilderMaterial>
       </ThemeProvider>
       <h4>Query</h4>

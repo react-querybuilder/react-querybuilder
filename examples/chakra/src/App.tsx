@@ -1,9 +1,4 @@
-import {
-  ChakraProvider,
-  Theme,
-  createSystem,
-  defaultConfig,
-} from '@chakra-ui/react';
+import { ChakraProvider, Theme, createSystem, defaultConfig } from '@chakra-ui/react';
 import { QueryBuilderChakra } from '@react-querybuilder/chakra';
 import { ThemeProvider } from 'next-themes';
 import { useState } from 'react';
@@ -42,11 +37,7 @@ export const App = () => {
       <Provider>
         <Theme colorPalette="teal">
           <QueryBuilderChakra>
-            <QueryBuilder
-              fields={fields}
-              query={query}
-              onQueryChange={setQuery}
-            />
+            <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
           </QueryBuilderChakra>
         </Theme>
       </Provider>

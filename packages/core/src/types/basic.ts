@@ -243,8 +243,9 @@ export type Arity = number | 'unary' | 'binary' | 'ternary';
  *
  * @group Option Lists
  */
-export interface FullOperator<N extends string = string>
-  extends WithOptionalClassName<FullOption<N>> {
+export interface FullOperator<N extends string = string> extends WithOptionalClassName<
+  FullOption<N>
+> {
   arity?: Arity;
 }
 

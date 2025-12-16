@@ -422,6 +422,7 @@ export const prepareOptionList = <O extends FullOption>(
     Array.isArray(optionsProp)
       ? toFullOptionList(optionsProp, baseOption, labelMap)
       : (objectKeys(toFullOptionMap(optionsProp, baseOption)) as unknown as OptionIdentifier[])
+          // oxlint-disable-next-line no-map-spread
           .map<FullOption<OptionIdentifier>>(opt => ({
             ...optionsProp[opt]!,
             name: opt,

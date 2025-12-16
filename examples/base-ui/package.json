@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@base-ui/react": "^1.0.0",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-querybuilder": "8.13.0"
+  },
+  "description": "React Query Builder Base UI Example",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.6.0",
+    "prettier": "^3",
+    "typescript": "^5.7.2",
+    "vite": "^7"
+  },
+  "name": "react-querybuilder-base-ui-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "type": "module"
+}

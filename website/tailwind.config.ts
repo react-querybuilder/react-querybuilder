@@ -2,9 +2,6 @@ import HeadlessUiTailwindPlugin from '@headlessui/tailwindcss';
 import type { Config } from 'tailwindcss';
 
 export default {
-  corePlugins: {
-    preflight: false, // disable Tailwind's reset
-  },
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
     '../node_modules/@tremor/**/*.{js,ts,jsx,tsx}',
@@ -12,8 +9,6 @@ export default {
   ],
   darkMode: ['class', '[data-theme="dark"]'], // hooks into docusaurus' dark mode settings
   theme: {
-    transparent: 'transparent',
-    current: 'currentColor',
     extend: {
       colors: {
         // light mode

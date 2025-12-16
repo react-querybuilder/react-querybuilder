@@ -22,10 +22,10 @@ jobs:
   Build_website:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
       - uses: oven-sh/setup-bun@v2
         # with:
         #   bun-version: 1.1.29
