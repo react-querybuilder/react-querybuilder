@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [Base UI](https://base-ui.com/) example.
 
 ## [v8.13.0] - 2025-12-05
 
