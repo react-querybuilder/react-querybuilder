@@ -977,7 +977,9 @@ describe('insert', () => {
     testQT(
       'inserts a rule with specified preceding combinator, ignoring defaults (rule index)',
       insert({ rules: [r1, and, r2] }, r3, [2], {
-        combinators: defaultCombinators.map(c => ({ ...c, name: `custom-${c.name}` })),
+        combinators: defaultCombinators.map(c =>
+          Object.assign({}, c, { name: `custom-${c.name}` })
+        ),
         combinatorPreceding: or,
       }),
       { rules: [r1, or, r3, and, r2] }

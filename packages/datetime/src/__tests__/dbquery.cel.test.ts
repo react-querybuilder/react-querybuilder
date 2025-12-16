@@ -41,7 +41,7 @@ if (celEvaluator) {
     describe(libName, () => {
       for (const [testCaseName, [testQuery, expectation]] of Object.entries(testCases)) {
         test(testCaseName, async () => {
-          const itemFields = fields.map(f => ({ ...f, name: `item.${f.name}` }));
+          const itemFields = fields.map(f => Object.assign({}, f, { name: `item.${f.name}` }));
           const query = transformQuery(testQuery, {
             ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
           });

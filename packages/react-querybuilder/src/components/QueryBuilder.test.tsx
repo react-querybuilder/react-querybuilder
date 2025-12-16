@@ -1866,10 +1866,9 @@ describe('autoSelectOperator', () => {
     const placeholderGroupLabel = 'Test group placeholder';
     const { container } = render(
       <QueryBuilder
-        fields={fields.map(f => ({
-          ...f,
-          operators: [{ label: 'Operators', options: operators }],
-        }))}
+        fields={fields.map(f =>
+          Object.assign({}, f, { operators: [{ label: 'Operators', options: operators }] })
+        )}
         autoSelectOperator={false}
         translations={{ operators: { placeholderGroupLabel } }}
       />
@@ -1911,10 +1910,9 @@ describe('autoSelectValue', () => {
     const placeholderGroupLabel = 'Test group placeholder';
     const { container } = render(
       <QueryBuilder
-        fields={fields.map(f => ({
-          ...f,
-          values: [{ label: 'Values', options: values }],
-        }))}
+        fields={fields.map(f =>
+          Object.assign({}, f, { values: [{ label: 'Values', options: values }] })
+        )}
         autoSelectValue={false}
         translations={{ values: { placeholderGroupLabel } }}
       />

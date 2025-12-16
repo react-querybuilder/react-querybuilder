@@ -18,7 +18,7 @@ export const getFieldsArray = (
     ? Array.isArray(fields)
       ? fields
       : Object.keys(fields)
-          .map(fld => ({ ...fields[fld], name: fld }))
+          .map(fld => Object.assign({}, fields[fld], { name: fld }))
           // oxlint-disable-next-line no-array-sort
           .sort((a, b) => a.label.localeCompare(b.label))
     : [];
