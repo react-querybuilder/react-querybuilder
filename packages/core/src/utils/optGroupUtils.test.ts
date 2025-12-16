@@ -242,7 +242,7 @@ describe('uniqOptList', () => {
         { id: 1, name: 'test1', label: 'test1' },
         { id: 2, name: 'test2', label: 'test2' },
       ];
-      expect(uniqOptList(opts)).toEqual(opts.map(o => ({ ...o, value: o.name })));
+      expect(uniqOptList(opts)).toEqual(opts.map(o => Object.assign(o, { value: o.name })));
     });
 
     it('removes second duplicate', () => {

@@ -24,6 +24,7 @@ import {
   getOption,
   QueryBuilder,
   QueryBuilderContext,
+  toFullOptionList,
   ValueEditor,
 } from 'react-querybuilder';
 import Select from 'react-select';
@@ -61,10 +62,7 @@ const ExtendedValueEditor_DatePicker = (props: ValueEditorProps) =>
   );
 
 const selectFields = fields.filter(f => f.name === 'alsoPlays');
-const selectOptions = musicalInstruments.map(og => ({
-  ...og,
-  options: og.options.map(op => ({ ...op, value: op.name })),
-}));
+const selectOptions = toFullOptionList(musicalInstruments);
 const initialSelectQuery: RuleGroupType = {
   combinator: 'and',
   rules: [

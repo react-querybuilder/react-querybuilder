@@ -213,17 +213,18 @@ export default function Demo({
 
   const optionsInfo = useMemo(
     () =>
-      optionOrderByLabel.map(opt => ({
-        ...optionsMetadata[opt],
-        name: opt,
-        default: defaultOptions[opt],
-        checked: options[opt],
-        setter: (v: boolean) =>
-          setOptions({
-            type: 'update',
-            payload: { optionName: opt, value: v },
-          }),
-      })),
+      optionOrderByLabel.map(opt =>
+        Object.assign({}, optionsMetadata[opt], {
+          name: opt,
+          default: defaultOptions[opt],
+          checked: options[opt],
+          setter: (v: boolean) =>
+            setOptions({
+              type: 'update',
+              payload: { optionName: opt, value: v },
+            }),
+        })
+      ),
     [options]
   );
 

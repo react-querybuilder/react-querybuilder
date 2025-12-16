@@ -498,6 +498,28 @@ describe('lock buttons', () => {
   });
 });
 
+describe('"data-*" attributes', () => {
+  it('leaves the "data-not" attribute undefined by default', () => {
+    render(
+      <RuleGroup
+        {...getRuleGroupProps({})}
+        ruleGroup={{ combinator: 'or', not: false, rules: [] }}
+      />
+    );
+    expect(screen.getByTestId(TestID.ruleGroup).dataset.not).toBeUndefined();
+  });
+
+  it('sets the "data-not" attribute correctly', () => {
+    render(
+      <RuleGroup
+        {...getRuleGroupProps({})}
+        ruleGroup={{ combinator: 'or', not: true, rules: [] }}
+      />
+    );
+    expect(screen.getByTestId(TestID.ruleGroup).dataset.not).toBe('true');
+  });
+});
+
 describe('dynamic classNames', () => {
   it('has correct group-based classNames', () => {
     render(

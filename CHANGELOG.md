@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#985] Wrapper elements for rule groups with `not: true` will include the HTML attribute `data-not="true"`. This enables styling and other functionality based on the "not" toggle.
+- [#985] [Base UI](https://base-ui.com/) example.
 
 ## [v8.13.0] - 2025-12-05
 
@@ -2087,6 +2090,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#975]: https://github.com/react-querybuilder/react-querybuilder/pull/975
 [#976]: https://github.com/react-querybuilder/react-querybuilder/pull/976
 [#979]: https://github.com/react-querybuilder/react-querybuilder/pull/979
+[#985]: https://github.com/react-querybuilder/react-querybuilder/pull/985
 
 <!-- #endregion -->
 
