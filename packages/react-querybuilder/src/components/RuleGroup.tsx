@@ -89,6 +89,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         title={rg.accessibleDescription}
         className={rg.outerClassName}
         data-testid={TestID.ruleGroup}
+        data-not={rg.ruleGroup.not ? 'true' : undefined}
         data-dragmonitorid={rg.dragMonitorId}
         data-dropmonitorid={rg.dropMonitorId}
         data-rule-group-id={rg.id}
