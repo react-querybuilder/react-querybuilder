@@ -92,12 +92,12 @@
   "devDependencies": {
     "@date-fns/tz": "^1.4.1",
     "@electric-sql/pglite": "^0.3.14",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.1",
-    "@testing-library/user-event": "14.5.2",
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@testing-library/user-event": "catalog:test",
     "@types/luxon": "^3.7.1",
-    "@types/react": "^19.2.7",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
     "json-logic-js": "^2.0.5",
@@ -105,18 +105,18 @@
     "luxon": "^3.7.2",
     "mongodb-memory-server-core": "^11.0.0",
     "mongoose": "^9.0.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-querybuilder": "8.13.0",
-    "rollup-plugin-visualizer": "^6.0.5",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0"
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   },
   "peerDependencies": {
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "luxon": "^3.5.0",
-    "react": ">=18",
+    "react": "catalog:peer",
     "react-querybuilder": "8.13.0"
   },
   "peerDependenciesMeta": {

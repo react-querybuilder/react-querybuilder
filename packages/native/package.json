@@ -55,23 +55,23 @@
     "@babel/preset-flow": "^7.27.1",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",
-    "@types/react": "^19.2.7",
+    "@types/react": "catalog:",
     "@types/react-test-renderer": "^19.1.0",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "catalog:",
     "babel-plugin-syntax-hermes-parser": "^0.33.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-native": "~0.83.0",
     "react-native-web": "~0.21.2",
     "react-querybuilder": "8.13.0",
     "react-redux": "^9.2.0",
-    "react-test-renderer": "^19.2.3",
-    "rollup-plugin-visualizer": "^6.0.5",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0"
+    "react-test-renderer": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   },
   "peerDependencies": {
-    "react": ">=18",
+    "react": "catalog:peer",
     "react-querybuilder": "8.13.0",
     "react-redux": "^9.1.0"
   }

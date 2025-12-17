@@ -64,7 +64,6 @@ jobs:
 
   Test_React_18:
     runs-on: ubuntu-latest
-    # needs: [Test] # Run only if React 19+ tests pass
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -75,11 +74,8 @@ jobs:
         #   bun-version: 1.1.29
       - name: Install React 18 and Run Tests
         run: |
-          for pkgjson in $(find packages/*/package.json; echo "website/package.json"; echo "package.json"); do
-            # Set all React dependencies to v18
-            sed -i -E 's/("(@types\/)?react(-dom|-test-renderer)?": ")\^?19.*"/\1^18"/g' $pkgjson
-          done
-          # rm bun.lock
+          # Set all catalog React dependencies to v18
+          sed -i -E 's/("(@types\/)?react(-dom|-test-renderer)?": ")\^?19.*"/\1^18"/g' ./package.json
           bun install
           bunx jest --coverage=false
 
