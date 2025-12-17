@@ -8,15 +8,13 @@ import type {
 
 // #region Conditions
 export interface RECondition<R extends RuleType = RuleType, C extends string = string>
-  extends CommonRuleAndGroupProperties,
-    Partial<RulesEngine<R, C>> {
+  extends CommonRuleAndGroupProperties, Partial<RulesEngine<R, C>> {
   antecedent: RuleGroupType;
   consequent?: Consequent;
 }
 
 export interface REConditionIC<R extends RuleType = RuleType, C extends string = string>
-  extends CommonRuleAndGroupProperties,
-    Partial<RulesEngineIC<R, C>> {
+  extends CommonRuleAndGroupProperties, Partial<RulesEngineIC<R, C>> {
   antecedent: RuleGroupTypeIC;
   consequent?: Consequent;
 }
@@ -31,14 +29,18 @@ export type REConditionCascade<RG extends RuleGroupTypeAny> = RG extends RuleGro
 // #endregion
 
 // #region Rules engine
-export interface RulesEngine<R extends RuleType = RuleType, C extends string = string>
-  extends CommonRuleAndGroupProperties {
+export interface RulesEngine<
+  R extends RuleType = RuleType,
+  C extends string = string,
+> extends CommonRuleAndGroupProperties {
   conditions: REConditionCascade<RuleGroupType<R, C>>;
   defaultConsequent?: Consequent;
 }
 
-export interface RulesEngineIC<R extends RuleType = RuleType, C extends string = string>
-  extends CommonRuleAndGroupProperties {
+export interface RulesEngineIC<
+  R extends RuleType = RuleType,
+  C extends string = string,
+> extends CommonRuleAndGroupProperties {
   conditions: REConditionCascade<RuleGroupTypeIC<R, C>>;
   defaultConsequent?: Consequent;
 }
