@@ -54,23 +54,23 @@
   "devDependencies": {
     "@fluentui/react-components": "^9.72.8",
     "@fluentui/react-icons-mdl2": "^1.4.3",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.1",
-    "@types/react": "^19.2.7",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "dayjs": "^1.11.19",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-querybuilder": "8.13.0",
-    "rollup-plugin-visualizer": "^6.0.5",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0"
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   },
   "peerDependencies": {
     "@fluentui/react-components": "^9",
     "@fluentui/react-icons-mdl2": "^1",
     "dayjs": ">=1",
-    "react": ">=18",
+    "react": "catalog:peer",
     "react-querybuilder": "8.13.0"
   }
 }

@@ -160,29 +160,29 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "^7.28.5",
-    "@babel/preset-env": "^7.28.5",
-    "@babel/preset-react": "^7.28.5",
-    "@babel/preset-typescript": "^7.28.5",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.1",
-    "@testing-library/user-event": "14.5.2",
+    "@babel/core": "catalog:",
+    "@babel/preset-env": "catalog:",
+    "@babel/preset-react": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@testing-library/user-event": "catalog:test",
     "@types/hoist-non-react-statics": "^3.3.7",
     "@types/json-logic-js": "^2.0.8",
-    "@types/node": "^25.0.2",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
-    "babel-plugin-istanbul": "^7.0.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "regenerator-runtime": "^0.14.1",
-    "rollup-plugin-visualizer": "^6.0.5",
-    "sass": "^1.97.0",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "babel-plugin-istanbul": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "regenerator-runtime": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "sass": "catalog:",
     "sqlite3": "^5.1.7",
-    "type-fest": "^5.3.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0"
+    "type-fest": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   },
   "dependencies": {
     "@react-querybuilder/core": "^8.13.0",
@@ -191,7 +191,7 @@
     "react-redux": "^9.2.0"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "react": "catalog:peer"
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
