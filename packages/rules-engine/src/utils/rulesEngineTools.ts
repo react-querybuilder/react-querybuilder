@@ -3,7 +3,6 @@ import {
   generateID,
   getCommonAncestorPath,
   getParentPath,
-  isRuleGroup,
   pathsAreEqual,
 } from '@react-querybuilder/core';
 import { produce } from 'immer';
@@ -102,7 +101,7 @@ export const updateRE = <RE extends RulesEngineAny>(
 
     const condition = findConditionPath(conditionPath, draft);
 
-    if (!isRulesEngineAny(condition) && !isRuleGroup(condition)) return;
+    if (!isRulesEngineAny(condition) && !isRulesEngineConditionAny(condition)) return;
 
     // oxlint-disable-next-line no-explicit-any
     (condition as any)[property] = value;

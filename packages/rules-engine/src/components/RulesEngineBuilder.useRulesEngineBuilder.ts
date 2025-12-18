@@ -60,6 +60,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   headerClassName: string;
 } => {
   const [reId] = useState(generateID);
+  const isFirstRender = useRef(true);
 
   const {
     rulesEngine: rulesEngineProp = defaultRulesEngine,
@@ -223,9 +224,10 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   // passing back the parameter from the `onRulesEngineChange` callback.
   const candidateRulesEngine =
     rulesEngineProp ?? storeRulesEngine ?? defaultRulesEngineProp ?? fallbackRulesEngine;
-  const rootRE: RulesEngineAny = candidateRulesEngine.id
-    ? candidateRulesEngine
-    : prepareRulesEngine(candidateRulesEngine, { idGenerator });
+  const rootRE: RulesEngineAny =
+    !candidateRulesEngine.id || isFirstRender.current
+      ? prepareRulesEngine(candidateRulesEngine, { idGenerator })
+      : candidateRulesEngine;
 
   // const [initialRulesEngine] = useState(rootRE);
   // const rqbContext = useMemo(
@@ -380,6 +382,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     ]
   );
   // #endregion
+
+  isFirstRender.current = false;
 
   return {
     classnames,
