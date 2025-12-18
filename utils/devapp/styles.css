@@ -69,3 +69,19 @@ nav {
     }
   }
 }
+
+.rulesEngine {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rqb-spacing);
+}
+
+.ruleGroup.rulesEngine-action {
+  background-color: #0963;
+}
+
+/*
+.ruleGroup.rulesEngine-action.rulesEngine-action-standalone {
+  background-color: #3393;
+}
+*/

@@ -11,6 +11,7 @@ import { regenerateIDs } from '@rqb-utils';
 import * as React from 'react';
 import { Fragment } from 'react';
 import '../../packages/core/dist/query-builder.css';
+import '../../packages/rules-engine/dist/rules-engine.css';
 import { optionOrder } from './constants';
 import './styles.css';
 import type { DemoOption, DemoOptions } from './types';
@@ -29,6 +30,7 @@ const parserMap: Record<string, any> = {
 
 const links = [
   'react-querybuilder',
+  'rules-engine',
   'antd',
   'bootstrap',
   'bulma',

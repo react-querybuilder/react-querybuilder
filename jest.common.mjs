@@ -4,7 +4,13 @@
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  coveragePathIgnorePatterns: ['/utils/testing/', '/dist/', 'TestUtils.ts'],
+  coveragePathIgnorePatterns: [
+    '/utils/testing/',
+    '/dist/',
+    'TestUtils.ts',
+    // TODO: remove rules-engine coverage exclusion
+    '/packages/rules-engine/src/components',
+  ],
   setupFilesAfterEnv: ['<rootDir>/../../jestSetup.ts'],
   testEnvironment: '<rootDir>/../../utils/fixJSDOMEnvironment.ts',
   testEnvironmentOptions: { globalsCleanup: 'on' },

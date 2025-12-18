@@ -1,0 +1,35 @@
+@use './variables' as *;
+
+.rulesEngineBuilder {
+  border-color: var(--#{$rqbre-var-prefix}border-color);
+  border-style: var(--#{$rqbre-var-prefix}border-style);
+  border-radius: var(--#{$rqbre-var-prefix}border-radius);
+}
+
+.consequentBuilder {
+  background-color: var(--#{$rqbre-var-prefix}thenblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}thenblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}thenblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}thenblock-border-radius);
+}
+
+.consequentBuilder-standalone {
+  background-color: var(--#{$rqbre-var-prefix}elseblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}elseblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}elseblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}elseblock-border-radius);
+}
+
+.conditionBuilder {
+  background: var(--#{$rqbre-var-prefix}ifelseblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}ifelseblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}ifelseblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}ifelseblock-border-radius);
+}
+
+.conditionBuilder:first-child {
+  background: var(--#{$rqbre-var-prefix}ifblock-background-color);
+  border-color: var(--#{$rqbre-var-prefix}ifblock-border-color);
+  border-style: var(--#{$rqbre-var-prefix}ifblock-border-style);
+  border-radius: var(--#{$rqbre-var-prefix}ifblock-border-radius);
+}

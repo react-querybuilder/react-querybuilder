@@ -1,0 +1,87 @@
+{
+  "name": "@react-querybuilder/rules-engine",
+  "description": "Rules engine extension for react-querybuilder",
+  "version": "8.13.0",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_rules-engine.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_rules-engine.d.mts",
+        "default": "./dist/react-querybuilder_rules-engine.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/react-querybuilder_rules-engine.legacy-esm.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/rules-engine"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "keywords": [
+    "react",
+    "querybuilder",
+    "rules-engine",
+    "rules",
+    "engine",
+    "query",
+    "builder",
+    "operators",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
+  "scripts": {
+    "start": "vite",
+    "build": "bun run build:main && bun run build:css",
+    "build:main": "bun --bun tsdown",
+    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "immer": "^11.0.1",
+    "react-querybuilder": "8.13.0",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "json-rules-engine": "^7.3.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "sass": "catalog:",
+    "type-fest": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "peerDependencies": {
+    "json-rules-engine": "^7",
+    "react": "catalog:peer"
+  },
+  "peerDependenciesMeta": {
+    "json-rules-engine": {
+      "optional": true
+    }
+  }
+}

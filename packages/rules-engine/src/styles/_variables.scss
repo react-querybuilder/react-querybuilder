@@ -1,0 +1,60 @@
+@forward '../../../core/src/styles/variables';
+@use '../../../core/src/styles/variables' as *;
+
+$rqbre-var-prefix: rqbre- !default;
+
+// #region Basic layout
+$rqbre-spacing: $rqb-spacing !default;
+$rqbre-border-width: $rqb-border-width !default;
+// #endregion
+
+// #region Basic aesthetic
+$rqbre-base-color: $rqb-base-color !default;
+$rqbre-background-color: $rqb-background-color !default;
+$rqbre-consequent-base-color: #096 !default;
+$rqbre-border-color: $rqb-border-color !default;
+$rqbre-border-style: $rqb-border-style !default;
+$rqbre-border-radius: $rqb-border-radius !default;
+// #endregion
+
+// #region Rules engine-specific aesthetic
+$rqbre-ifblock-base-color: $rqbre-base-color !default;
+$rqbre-ifblock-background-color: color-mix(
+  in srgb,
+  transparent,
+  $rqbre-ifblock-base-color 20%
+) !default;
+$rqbre-ifblock-border-color: $rqbre-border-color !default;
+$rqbre-ifblock-border-style: $rqbre-border-style !default;
+$rqbre-ifblock-border-radius: $rqbre-border-radius !default;
+
+$rqbre-thenblock-base-color: $rqbre-consequent-base-color !default;
+$rqbre-thenblock-background-color: color-mix(
+  in srgb,
+  transparent,
+  $rqbre-thenblock-base-color 20%
+) !default;
+$rqbre-thenblock-border-color: $rqbre-border-color !default;
+$rqbre-thenblock-border-style: $rqbre-border-style !default;
+$rqbre-thenblock-border-radius: $rqbre-border-radius !default;
+
+$rqbre-ifelseblock-base-color: $rqbre-base-color !default;
+$rqbre-ifelseblock-background-color: color-mix(
+  in srgb,
+  transparent,
+  $rqbre-ifelseblock-base-color 20%
+) !default;
+$rqbre-ifelseblock-border-color: $rqbre-border-color !default;
+$rqbre-ifelseblock-border-style: $rqbre-border-style !default;
+$rqbre-ifelseblock-border-radius: $rqbre-border-radius !default;
+
+$rqbre-elseblock-base-color: $rqbre-consequent-base-color !default;
+$rqbre-elseblock-background-color: color-mix(
+  in srgb,
+  transparent,
+  $rqbre-elseblock-base-color 20%
+) !default;
+$rqbre-elseblock-border-color: $rqbre-border-color !default;
+$rqbre-elseblock-border-style: $rqbre-border-style !default;
+$rqbre-elseblock-border-radius: $rqbre-border-radius !default;
+// #endregion
