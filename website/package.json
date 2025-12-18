@@ -25,7 +25,7 @@
     "@docusaurus/theme-search-algolia": "^3.9.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@fluentui/react-components": "^9.72.8",
+    "@fluentui/react-components": "^9.72.9",
     "@fluentui/react-icons-mdl2": "^1.4.3",
     "@mantine/core": "8.3.10",
     "@mantine/dates": "8.3.10",

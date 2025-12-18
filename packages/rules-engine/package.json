@@ -56,10 +56,10 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.11.2",
-    "immer": "^11.0.1",
+    "@reduxjs/toolkit": "catalog:",
+    "immer": "catalog:",
     "react-querybuilder": "8.13.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "catalog:"
   },
   "devDependencies": {
     "@testing-library/dom": "catalog:test",

@@ -104,7 +104,7 @@
     "jsonata": "^2.1.0",
     "luxon": "^3.7.2",
     "mongodb-memory-server-core": "^11.0.0",
-    "mongoose": "^9.0.1",
+    "mongoose": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.13.0",

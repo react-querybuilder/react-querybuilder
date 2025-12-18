@@ -186,9 +186,9 @@
   },
   "dependencies": {
     "@react-querybuilder/core": "^8.13.0",
-    "@reduxjs/toolkit": "^2.11.2",
-    "immer": "^11.0.1",
-    "react-redux": "^9.2.0"
+    "@reduxjs/toolkit": "catalog:",
+    "immer": "catalog:",
+    "react-redux": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:peer"
