@@ -53,7 +53,7 @@ const ExtendedValueEditor_DatePicker = (props: ValueEditorProps) =>
   props.field === 'birthdate' ? (
     <DatePicker
       selected={props.value}
-      onChange={d => props.handleOnChange(d)}
+      onChange={(d: Date | null) => props.handleOnChange(d)}
       customInput={dateButton}
       dateFormat="yyyy-MM-dd"
     />

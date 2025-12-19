@@ -56,7 +56,7 @@
     "prism-react-renderer": "^2.4.1",
     "query-string": "^9.3.1",
     "react": "catalog:",
-    "react-datepicker": "^9.0.0",
+    "react-datepicker": "^9.1.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
