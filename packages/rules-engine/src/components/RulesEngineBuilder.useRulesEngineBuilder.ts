@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   defaultPlaceholderLabel,
   defaultPlaceholderName,
+  isRuleGroupTypeIC,
   queryBuilderStore,
 } from 'react-querybuilder';
 import {
@@ -35,14 +36,28 @@ import type {
   ClassnamesRE,
   ComponentsRE,
   Consequent,
+  RECondition,
+  REConditionAny,
   REConditionCascade,
+  REConditionIC,
   RulesEngine,
   RulesEngineAny,
   RulesEngineProps,
   SchemaRE,
   TranslationsFullRE,
 } from '../types';
-import { addRE, mergeClassnamesRE, prepareRulesEngine, removeRE, updateRE } from '../utils';
+import {
+  addRE,
+  findConditionPath,
+  mergeClassnamesRE,
+  prepareRulesEngine,
+  removeRE,
+  updateRE,
+} from '../utils';
+
+const defaultConditionIC: REConditionIC = { antecedent: { rules: [] } };
+const defaultCondition: RECondition = { antecedent: { combinator: 'and', rules: [] } };
+const returnTrue = () => true;
 
 queryBuilderStore.addSlice(rulesEngineSlice);
 
@@ -73,6 +88,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     autoSelectConsequentType = true,
     suppressStandardClassnames = false,
     onRulesEngineChange,
+    onAddCondition = returnTrue,
+    onRemoveCondition = returnTrue,
     classnames: classnamesProp = defaultClassnamesRE,
     components: componentsProp,
     translations: translationsProp = {},
@@ -248,13 +265,11 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     }
   }, [rulesEngineProp, reId, storeRulesEngine, queryBuilderDispatch]);
 
-  // const independentCombinators = useMemo(() => isRuleGroupTypeIC(rootRE), [rootRE]);
-  // const invalidIC = !!props.independentCombinators && !independentCombinators;
-  // useDeprecatedProps(
-  //   'independentCombinators',
-  //   invalidIC || (!invalidIC && (props.independentCombinators ?? 'not present') !== 'not present'),
-  //   invalidIC ? 'invalid' : 'unnecessary'
-  // );
+  const independentCombinators = useMemo(
+    () => isRuleGroupTypeIC(rootRE.conditions[0]?.antecedent),
+    // oxlint-disable-next-line exhaustive-deps
+    [rootRE.conditions[0]?.antecedent]
+  );
 
   const hasRunMountRulesEngineChange = useRef(false);
   useEffect(() => {
@@ -311,24 +326,61 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   );
 
   const addCondition = useCallback(
-    (parentConditionPath: Path) => {
-      const newRE = addRE(
-        rulesEngine,
-        { antecedent: { combinator: 'and', rules: [] } },
-        parentConditionPath,
-        { idGenerator }
-      );
-      dispatchRulesEngine(newRE);
+    (
+      parentConditionPath: Path,
+      condition: REConditionAny = independentCombinators ? defaultConditionIC : defaultCondition
+    ) => {
+      const reLocal = getRulesEngineSelectorById(reId)(queryBuilderStore.getState());
+      // istanbul ignore if
+      if (!reLocal) return;
+      // if (pathIsDisabled(parentConditionPath, reLocal) || rulesEngineDisabled) {
+      //   log({ reId, type: LogType.parentPathDisabled, condition, parentConditionPath, rulesEngine: reLocal });
+      //   return;
+      // }
+      const nextCondition = onAddCondition(condition, parentConditionPath, reLocal);
+      if (!nextCondition) {
+        // log({ reId, type: LogType.onAddConditionFalse, condition, parentConditionPath, rulesEngine: reLocal });
+        return;
+      }
+      const newCondition = nextCondition === true ? condition : nextCondition;
+      const newRulesEngine = addRE(reLocal, newCondition, parentConditionPath, {
+        idGenerator,
+      });
+      // log({ reId, type: LogType.add, rulesEngine: reLocal, newRulesEngine, newCondition, parentConditionPath });
+      dispatchRulesEngine(newRulesEngine);
     },
-    [idGenerator, dispatchRulesEngine, rulesEngine]
+    [
+      dispatchRulesEngine,
+      idGenerator,
+      independentCombinators,
+      onAddCondition,
+      queryBuilderStore,
+      reId,
+    ]
   );
 
   const removeCondition = useCallback(
     (conditionPath: Path) => {
-      const newRE = removeRE(rulesEngine, conditionPath);
-      dispatchRulesEngine(newRE);
+      const reLocal = getRulesEngineSelectorById(reId)(queryBuilderStore.getState());
+      // istanbul ignore if
+      if (!reLocal) return;
+      // if (pathIsDisabled(path, reLocal) || rulesEngineDisabled) {
+      //   log({ reId, type: LogType.pathDisabled, path, rulesEngine: reLocal });
+      //   return;
+      // }
+      const condition = findConditionPath(conditionPath, reLocal);
+      // istanbul ignore else
+      if (condition) {
+        if (onRemoveCondition(condition as REConditionAny, conditionPath, reLocal)) {
+          const newRE = removeRE(reLocal, conditionPath);
+          // log({ reId, type: LogType.remove, rulesEngine: reLocal, newRE, path: conditionPath, condition });
+          dispatchRulesEngine(newRE);
+        } //else {
+        //   log({ reId, type: LogType.onRemoveFalse, condition, path: conditionPath, rulesEngine: reLocal });
+        // }
+      }
     },
-    [dispatchRulesEngine, rulesEngine]
+    [dispatchRulesEngine, onRemoveCondition, reId, queryBuilderStore]
   );
 
   const updateCondition = useCallback(

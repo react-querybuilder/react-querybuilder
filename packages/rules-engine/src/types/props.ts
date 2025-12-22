@@ -37,9 +37,9 @@ export interface SchemaRE {
   >;
   getRulesEngine: () => RulesEngineAny;
   dispatchRulesEngine: (re: RulesEngineAny) => void;
-  addCondition: (cp: Path) => void;
-  removeCondition: (cp: Path) => void;
-  updateCondition: (cp: Path, p: string, v: unknown) => void;
+  addCondition: (parentConditionPath: Path, condition?: REConditionAny) => void;
+  removeCondition: (conditionPath: Path) => void;
+  updateCondition: (conditionPath: Path, property: string, value: unknown) => void;
   defaultConsequentType: FullOption;
   getConsequentTypes: (
     conditionPath: Path,
@@ -136,6 +136,16 @@ export interface RulesEngineProps {
     antecedent: RuleGroupTypeAny,
     context?: unknown
   ) => FlexibleOptionListProp<BaseOption> | null;
+  onAddCondition?: (
+    condition: REConditionAny,
+    parentConditionPath: Path,
+    rulesEngine: RulesEngineAny
+  ) => REConditionAny | boolean;
+  onRemoveCondition?: (
+    condition: REConditionAny,
+    conditionPath: Path,
+    rulesEngine: RulesEngineAny
+  ) => REConditionAny | boolean;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
   allowDefaultConsequents?: boolean;
