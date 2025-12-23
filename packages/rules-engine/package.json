@@ -2,7 +2,6 @@
   "name": "@react-querybuilder/rules-engine",
   "description": "Rules engine extension for react-querybuilder",
   "version": "8.13.0",
-  "private": true,
   "publishConfig": {
     "access": "public"
   },

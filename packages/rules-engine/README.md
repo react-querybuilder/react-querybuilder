@@ -23,6 +23,16 @@ function App() {
 }
 ```
 
+### Export
+
+Current support includes [`json-rules-engine`](https://github.com/CacheControl/json-rules-engine).
+
+```ts
+import { formatRulesEngine } from '@react-querybuilder/rules-engine';
+
+formatRulesEngine(rulesEngine, { format: 'json-rules-engine' });
+```
+
 ## Documentation
 
 Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org/).

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#946] Rules Engine Builder
+  - Builds on `react-querybuilder` with rules engine functionality (if-then-else constructs).
+  - Export function `formatRulesEngine` with initial support for [`json-rules-engine`](https://github.com/CacheControl/json-rules-engine).
 - [#985] Wrapper elements for rule groups with `not: true` will include the HTML attribute `data-not="true"`. This enables styling and other functionality based on the "not" toggle.
 - [#985] [Base UI](https://base-ui.com/) example.
 
@@ -2076,6 +2079,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#935]: https://github.com/react-querybuilder/react-querybuilder/pull/935
 [#937]: https://github.com/react-querybuilder/react-querybuilder/pull/937
 [#942]: https://github.com/react-querybuilder/react-querybuilder/pull/942
+[#946]: https://github.com/react-querybuilder/react-querybuilder/pull/946
 [#947]: https://github.com/react-querybuilder/react-querybuilder/pull/947
 [#948]: https://github.com/react-querybuilder/react-querybuilder/pull/948
 [#950]: https://github.com/react-querybuilder/react-querybuilder/pull/950

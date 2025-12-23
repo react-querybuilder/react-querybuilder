@@ -64,6 +64,8 @@ Customizations are not limited to the following libraries, but these have first-
 > To enable drag-and-drop, use [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilder/dnd).
 >
 > For enhanced date/time support, use [`@react-querybuilder/datetime`](https://www.npmjs.com/package/@react-querybuilder/datetime).
+>
+> For rules engine functionality (if-then-else) use [`@react-querybuilder/rules-engine`](https://www.npmjs.com/package/@react-querybuilder/rules-engine).
 
 ## Export
 
