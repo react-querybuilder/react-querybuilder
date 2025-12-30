@@ -27,17 +27,17 @@ type ElasticSearchRule =
   | { nested: { path: string; query: ElasticSearchQuery | ElasticSearchRule } };
 type ElasticSearchQuery = {
   bool:
-    | { filter: { script: { script: string } } }
-    | { must: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[] }
-    | {
-        must_not:
-          | ElasticSearchRule
-          | ElasticSearchQuery
-          | (ElasticSearchRule | ElasticSearchQuery)[];
-      }
-    | {
-        should: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[];
-      };
+  | { filter: { script: { script: string } } }
+  | { must: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[] }
+  | {
+    must_not:
+    | ElasticSearchRule
+    | ElasticSearchQuery
+    | (ElasticSearchRule | ElasticSearchQuery)[];
+  }
+  | {
+    should: ElasticSearchRule | ElasticSearchQuery | (ElasticSearchRule | ElasticSearchQuery)[];
+  };
 };
 
 const rangeOperatorMap = { '<': 'lt', '<=': 'lte', '>': 'gt', '>=': 'gte' } satisfies Record<
@@ -164,14 +164,14 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         const valueForScript = escapeSQ(value);
         return valueForScript
           ? {
-              bool: {
-                filter: {
-                  script: {
-                    script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
-                  },
+            bool: {
+              filter: {
+                script: {
+                  script: `doc['${fieldForScript}'].value ${operatorForScript} doc['${valueForScript}'].value`,
                 },
               },
-            }
+            },
+          }
           : false;
       }
 
