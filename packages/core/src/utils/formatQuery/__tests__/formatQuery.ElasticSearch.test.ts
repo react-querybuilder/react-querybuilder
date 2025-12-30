@@ -415,3 +415,198 @@ it('parseNumbers with between operators', () => {
     },
   });
 });
+it('handles subqueries with match modes', () => {
+  const queryWithSubqueries: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'test' }] },
+        match: { mode: 'all' },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: {
+          combinator: 'and',
+          rules: [{ field: 'price', operator: '>', value: 100 }],
+        },
+        match: { mode: 'some' },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'status', operator: '=', value: 'deleted' }] },
+        match: { mode: 'none' },
+      },
+    ],
+  };
+
+  const result = formatQuery(queryWithSubqueries, 'elasticsearch');
+
+  expect(result).toEqual({
+    bool: {
+      must: [
+        // "all" mode - nested query with field prefix
+        {
+          nested: {
+            path: 'items',
+            query: {
+              bool: {
+                must: [{ term: { 'items.name': 'test' } }],
+              },
+            },
+          },
+        },
+        // "some" mode - nested query (functionally same as "all" in ES)
+        {
+          nested: {
+            path: 'items',
+            query: {
+              bool: {
+                must: [{ range: { 'items.price': { gt: 100 } } }],
+              },
+            },
+          },
+        },
+        // "none" mode - must_not wrapper around nested
+        {
+          bool: {
+            must_not: {
+              nested: {
+                path: 'items',
+                query: {
+                  bool: {
+                    must: [{ term: { 'items.status': 'deleted' } }],
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+});
+
+it('handles subqueries with empty field', () => {
+  const queryWithEmptyField: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        field: 'tags',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: '', operator: '=', value: 'important' }] },
+        match: { mode: 'some' },
+      },
+    ],
+  };
+
+  const result = formatQuery(queryWithEmptyField, 'elasticsearch');
+
+  expect(result).toEqual({
+    bool: {
+      must: [
+        {
+          nested: {
+            path: 'tags',
+            query: {
+              bool: {
+                must: [{ term: { tags: 'important' } }],
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+});
+
+it('handles subqueries with complex bool combinations', () => {
+  const queryComplex: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        field: 'items',
+        operator: '=',
+        value: {
+          combinator: 'or',
+          rules: [
+            { field: 'name', operator: '=', value: 'A' },
+            { field: 'name', operator: '=', value: 'B' },
+          ],
+        },
+        match: { mode: 'all' },
+      },
+    ],
+  };
+
+  const result = formatQuery(queryComplex, 'elasticsearch');
+
+  expect(result).toEqual({
+    bool: {
+      must: [
+        {
+          nested: {
+            path: 'items',
+            query: {
+              bool: {
+                should: [{ term: { 'items.name': 'A' } }, { term: { 'items.name': 'B' } }],
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+});
+
+it('handles subqueries with threshold modes (not supported)', () => {
+  const queryThreshold: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'active', operator: '=', value: true }] },
+        match: { mode: 'atLeast', threshold: 2 },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'active', operator: '=', value: true }] },
+        match: { mode: 'atMost', threshold: 5 },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'active', operator: '=', value: true }] },
+        match: { mode: 'exactly', threshold: 3 },
+      },
+    ],
+  };
+
+  const result = formatQuery(queryThreshold, 'elasticsearch');
+
+  // Threshold modes are not supported, should return empty
+  expect(result).toEqual({});
+});
+
+it('handles subqueries with invalid subquery (empty rules)', () => {
+  const queryInvalid: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [] },
+        match: { mode: 'all' },
+      },
+    ],
+  };
+
+  const result = formatQuery(queryInvalid, 'elasticsearch');
+
+  expect(result).toEqual({});
+});
