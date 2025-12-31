@@ -610,3 +610,31 @@ it('handles subqueries with invalid subquery (empty rules)', () => {
 
   expect(result).toEqual({});
 });
+
+it('returns false for invalid match mode - value is not a rule group', () => {
+  expect(
+    defaultRuleProcessorElasticSearch(
+      {
+        field: 'items',
+        operator: '=',
+        value: 'not a rule group',
+        match: { mode: 'all' },
+      },
+      {}
+    )
+  ).toBe(false);
+});
+
+it('returns false for invalid match mode - negative threshold', () => {
+  expect(
+    defaultRuleProcessorElasticSearch(
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [] },
+        match: { mode: 'atLeast', threshold: -1 },
+      },
+      {}
+    )
+  ).toBe(false);
+});
