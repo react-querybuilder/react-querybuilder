@@ -1,7 +1,14 @@
-import type { DefaultOperatorName, RuleProcessor } from '../../types';
+import type {
+  DefaultOperatorName,
+  FormatQueryFinalOptions,
+  RuleGroupType,
+  RuleProcessor,
+} from '../../types';
 import { toArray } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
+import { transformQuery } from '../transformQuery';
+import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
 
 type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte';
@@ -16,7 +23,8 @@ type ElasticSearchRule =
   // oxlint-disable-next-line typescript/no-explicit-any
   | { term: Record<string, any> }
   | { exists: { field: string } }
-  | { regexp: { [k: string]: { value: string } } };
+  | { regexp: { [k: string]: { value: string } } }
+  | { nested: { path: string; query: ElasticSearchQuery | ElasticSearchRule } };
 type ElasticSearchQuery = {
   bool:
     | { filter: { script: { script: string } } }
@@ -80,8 +88,64 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
   const { parseNumbers, preserveValueOrder } = options;
   const operatorLC = lc(operator) as Lowercase<DefaultOperatorName>;
 
-  // Match modes are not supported in this format
-  if (processMatchMode(rule)) return false;
+  const matchEval = processMatchMode(rule);
+
+  if (matchEval === false) {
+    return false;
+  } else if (matchEval) {
+    const { mode } = matchEval;
+
+    const subQuery = defaultRuleGroupProcessorElasticSearch(
+      transformQuery(rule.value as RuleGroupType, {
+        ruleProcessor: r => ({ ...r, field: r.field ? `${field}.${r.field}` : field }),
+      }),
+      options as FormatQueryFinalOptions
+    ) as ElasticSearchQuery | ElasticSearchRule;
+
+    // If the subquery didn't produce valid output, return false
+    if (Object.keys(subQuery).length === 0) {
+      return false;
+    }
+
+    switch (mode) {
+      case 'all':
+      case 'some': {
+        // For "all" and "some" modes, use nested query
+        // ElasticSearch nested queries match if any nested document matches
+        // The subQuery already contains the correct bool structure
+        return {
+          nested: {
+            path: field,
+            query: subQuery,
+          },
+        };
+      }
+
+      case 'none': {
+        // For "none" mode, no elements should match
+        return {
+          bool: {
+            must_not: {
+              nested: {
+                path: field,
+                query: subQuery,
+              },
+            },
+          },
+        };
+      }
+
+      case 'atleast':
+      case 'atmost':
+      case 'exactly': {
+        // Threshold modes require script-based filtering in ElasticSearch
+        // We cannot easily express "at least N matches" with nested queries alone
+        // For now, return false to indicate these modes are not fully supported
+        // A full implementation would require aggregation or script queries
+        return false;
+      }
+    }
+  }
 
   if (valueSource === 'field') {
     // Bail out if not all values are strings
