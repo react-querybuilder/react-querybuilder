@@ -1,5 +1,7 @@
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
+// TODO: Find out why this is necessary
+import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
 import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
 import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
@@ -58,13 +60,10 @@ import {
   musicalInstrumentsTsString,
   optionsReducer,
 } from '../_constants/utils';
-import styles from './Demo.module.css';
 import ImportTab from './ImportTab';
 import Nav from './Nav';
 import { ThemeBuilder } from './ThemeBuilder';
-
-// TODO: Find out why this is necessary
-import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
+import styles from './Demo.module.css';
 declare module '@theme/TabItem' {
   export default function TabItem(props: TabItemProps): React.JSX.Element;
 }

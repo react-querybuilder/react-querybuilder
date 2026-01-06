@@ -9,9 +9,9 @@ import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import localeData from 'dayjs/plugin/localeData.js';
+import weekday from 'dayjs/plugin/weekday.js';
 import weekOfYear from 'dayjs/plugin/weekOfYear.js';
 import weekYear from 'dayjs/plugin/weekYear.js';
-import weekday from 'dayjs/plugin/weekday.js';
 import { noteOnce } from 'rc-util/lib/warning';
 
 type GenerateConfig<DateType> = {

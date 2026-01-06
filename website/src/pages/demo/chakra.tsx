@@ -1,7 +1,3 @@
-/* oxlint-disable typescript/consistent-type-imports */
-import demoStyles from '!!raw-loader!./_styles/demo.css';
-import rqbChakraStyles from '!!raw-loader!./_styles/rqb-chakra.css';
-import rqbStyles from '!!raw-loader!@react-querybuilder/core/dist/query-builder.css';
 import {
   ChakraProvider,
   createSystem,
@@ -22,6 +18,10 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import root from 'react-shadow/emotion';
 import { Loading } from '../_utils';
+/* oxlint-disable typescript/consistent-type-imports */
+import demoStyles from '!!raw-loader!./_styles/demo.css';
+import rqbChakraStyles from '!!raw-loader!./_styles/rqb-chakra.css';
+import rqbStyles from '!!raw-loader!@react-querybuilder/core/dist/query-builder.css';
 import './_styles/demo.css';
 import './_styles/rqb-chakra.css';
 

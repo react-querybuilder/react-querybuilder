@@ -1,0 +1,29 @@
+{
+  // "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "bracketSameLine": true,
+  "arrowParens": "avoid",
+  "embeddedLanguageFormatting": "auto",
+  "experimentalSortImports": {
+    "newlinesBetween": false,
+    "sortSideEffects": false,
+    "groups": [["builtin", "external-type", "external"], ["unknown"], ["style"]]
+  },
+  "experimentalSortPackageJson": false,
+  "ignorePatterns": ["examples/**/*.*"]
+  // "plugins": ["prettier-plugin-organize-imports"],
+  // "overrides": [
+  //   {
+  //     "files": "examples/*/**/*.!(css|scss)*",
+  //     "options": {
+  //       "printWidth": 80
+  //     }
+  //   }
+  // ]
+}

@@ -1,18 +1,16 @@
 /* oxlint-disable typescript/consistent-type-imports */
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useColorMode } from '@docusaurus/theme-common';
-import Layout from '@theme/Layout';
-import { useEffect, useMemo, useState } from 'react';
-import './_styles/demo.css';
-import './_styles/rqb-material.css';
-
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import './_styles/demo.css';
+import './_styles/rqb-material.css';
 import DragIndicator from '@mui/icons-material/DragIndicator';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { createTheme, ThemeProvider } from '@mui/material';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -26,9 +24,9 @@ import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import TextField from '@mui/material/TextField';
-
-import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
+import Layout from '@theme/Layout';
+import { useEffect, useMemo, useState } from 'react';
 import { Loading } from '../_utils';
 
 const loading = <Loading />;

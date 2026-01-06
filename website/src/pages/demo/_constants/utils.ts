@@ -1,5 +1,3 @@
-// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
-import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 // @ts-expect-error !!raw-loader!
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
@@ -22,6 +20,8 @@ import {
 } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
+// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
+import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 
 // const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
 const extraStylesCSS = demoStylesCSS;

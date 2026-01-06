@@ -1,8 +1,8 @@
 import type { RenderHookResult } from '@testing-library/react';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import * as React from 'react';
-import { RQBMaterialContext } from './RQBMaterialContext';
 import { QueryBuilderMaterial } from './index';
+import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 

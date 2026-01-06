@@ -20,12 +20,12 @@ import {
   toFullOption,
   toFullOptionList,
 } from 'react-querybuilder';
+import { QueryBuilderTremor } from './index';
 import { TremorActionElement } from './TremorActionElement';
 import { TremorNotToggle } from './TremorNotToggle';
 import { TremorShiftActions } from './TremorShiftActions';
 import { TremorValueEditor } from './TremorValueEditor';
 import { TremorValueSelector } from './TremorValueSelector';
-import { QueryBuilderTremor } from './index';
 
 const user = userEventSetup();
 
