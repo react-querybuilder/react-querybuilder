@@ -1,12 +1,11 @@
 generator client {
-    provider = "prisma-client-js"
+    provider = "prisma-client"
     runtime  = "bun"
+    output   = "./generated/prisma-client"
 }
 
 datasource db {
     provider = "postgresql"
-    // Dummy value for url. Prisma will throw if a valid url is not provided.
-    url      = "postgresql://localhost:5432/mydb"
 }
 
 model superusers {
