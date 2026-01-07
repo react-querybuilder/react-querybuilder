@@ -21,7 +21,6 @@ jobs:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - run: bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
       - run: |
           mkdir -p ${{ github.workspace }}/packs
           for dir in $(ls packages); do
@@ -31,6 +30,12 @@ jobs:
         with:
           name: packs
           path: packs/*.tgz
+      - run:
+          # Remove once https://github.com/stackblitz-labs/pkg.pr.new/issues/443 is resolved
+          bun ./utils/decatalog.ts
+      - run:
+          # Add `--bun` once https://github.com/stackblitz-labs/pkg.pr.new/issues/443 is resolved
+          bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun
 
   Typecheck_and_lint:
     runs-on: ubuntu-latest
