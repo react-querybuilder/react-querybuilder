@@ -17,7 +17,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
 } from 'react-querybuilder';
-import QueryBuilder, { TestID, standardClassnames as sc } from 'react-querybuilder';
+import { QueryBuilder, TestID, standardClassnames as sc } from 'react-querybuilder';
 import { QueryBuilderDnD } from './QueryBuilderDnD';
 import type { QueryBuilderDndProps } from './types';
 

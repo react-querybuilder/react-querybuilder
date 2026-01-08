@@ -6,7 +6,7 @@ title: v3 Documentation
 
 ```tsx
 import { useState } from 'react';
-import QueryBuilder, { RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
