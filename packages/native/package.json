@@ -58,7 +58,7 @@
     "@types/react": "catalog:",
     "@types/react-test-renderer": "^19.1.0",
     "@vitejs/plugin-react": "catalog:",
-    "babel-plugin-syntax-hermes-parser": "^0.33.2",
+    "babel-plugin-syntax-hermes-parser": "^0.33.3",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "~0.83.1",
