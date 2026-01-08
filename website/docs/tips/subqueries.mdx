@@ -240,8 +240,8 @@ Export format support for subqueries varies by implementation:
 | Support level | Formats                                                                                       |
 | ------------- | --------------------------------------------------------------------------------------------- |
 | Full          | "jsonlogic"[^1], "jsonata", "cel", "spel", "natural_language", ~~"mongodb"~~, "mongodb_query" |
-| Partial[^2]   | "sql", "parameterized", "drizzle"                                                             |
-| None          | "parameterized_named"[^3], "prisma", "sequelize", "elasticsearch", "ldap"                     |
+| Partial       | "sql"[^2], "parameterized"[^2], "drizzle"[^2], "elasticsearch"[^3]                            |
+| None          | "parameterized_named"[^4], "prisma", "sequelize", "ldap"                                      |
 
 :::caution
 
@@ -253,4 +253,6 @@ In unsupported formats, rules with valid `match` properties are treated as inval
 
 [^2]: SQL-based formats only support primitive value arrays when `preset` is "postgresql". Other RDBMS platforms lack support for nested tables or have overly complex implementations.
 
-[^3]: PostgreSQL does not support named parameters
+[^3]: ElasticSearch nested queries only support `"some"` and `"none"` match modes.
+
+[^4]: PostgreSQL does not support named parameters
