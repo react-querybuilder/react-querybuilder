@@ -355,6 +355,7 @@ it.each([
     allNumbersParsed
   );
 });
+
 it('preserveValueOrder', () => {
   expect(
     formatQuery(queryForPreserveValueOrder, { format: 'elasticsearch', parseNumbers: true })
@@ -415,16 +416,12 @@ it('parseNumbers with between operators', () => {
     },
   });
 });
+
 it('handles subqueries with match modes', () => {
   const queryWithSubqueries: RuleGroupType = {
     combinator: 'and',
     rules: [
-      {
-        field: 'items',
-        operator: '=',
-        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'test' }] },
-        match: { mode: 'all' },
-      },
+      // Supported...
       {
         field: 'items',
         operator: '=',
@@ -440,6 +437,31 @@ it('handles subqueries with match modes', () => {
         value: { combinator: 'and', rules: [{ field: 'status', operator: '=', value: 'deleted' }] },
         match: { mode: 'none' },
       },
+      // Not supported (ignored)...
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'test' }] },
+        match: { mode: 'all' },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'test' }] },
+        match: { mode: 'atLeast', threshold: 2 },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'test' }] },
+        match: { mode: 'atMost', threshold: 2 },
+      },
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'test' }] },
+        match: { mode: 'exactly', threshold: 2 },
+      },
     ],
   };
 
@@ -448,18 +470,6 @@ it('handles subqueries with match modes', () => {
   expect(result).toEqual({
     bool: {
       must: [
-        // "all" mode - nested query with field prefix
-        {
-          nested: {
-            path: 'items',
-            query: {
-              bool: {
-                must: [{ term: { 'items.name': 'test' } }],
-              },
-            },
-          },
-        },
-        // "some" mode - nested query (functionally same as "all" in ES)
         {
           nested: {
             path: 'items',
@@ -470,7 +480,6 @@ it('handles subqueries with match modes', () => {
             },
           },
         },
-        // "none" mode - must_not wrapper around nested
         {
           bool: {
             must_not: {
@@ -537,7 +546,7 @@ it('handles subqueries with complex bool combinations', () => {
             { field: 'name', operator: '=', value: 'B' },
           ],
         },
-        match: { mode: 'all' },
+        match: { mode: 'some' },
       },
     ],
   };
@@ -601,7 +610,7 @@ it('handles subqueries with invalid subquery (empty rules)', () => {
         field: 'items',
         operator: '=',
         value: { combinator: 'and', rules: [] },
-        match: { mode: 'all' },
+        match: { mode: 'some' },
       },
     ],
   };
@@ -618,7 +627,7 @@ it('returns false for invalid match mode - value is not a rule group', () => {
         field: 'items',
         operator: '=',
         value: 'not a rule group',
-        match: { mode: 'all' },
+        match: { mode: 'some' },
       },
       {}
     )

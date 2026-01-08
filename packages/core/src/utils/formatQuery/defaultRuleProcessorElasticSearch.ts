@@ -108,11 +108,7 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
     }
 
     switch (mode) {
-      case 'all':
       case 'some': {
-        // For "all" and "some" modes, use nested query
-        // ElasticSearch nested queries match if any nested document matches
-        // The subQuery already contains the correct bool structure
         return {
           nested: {
             path: field,
@@ -122,7 +118,6 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
       }
 
       case 'none': {
-        // For "none" mode, no elements should match
         return {
           bool: {
             must_not: {
@@ -135,13 +130,15 @@ export const defaultRuleProcessorElasticSearch: RuleProcessor = (
         };
       }
 
+      // ElasticSearch nested queries match if _any_ nested document matches, so "all" is not supported
+      case 'all':
+      // Threshold modes require script-based filtering in ElasticSearch.
+      // We cannot easily express "at least N matches" with nested queries alone.
+      // For now, return false to indicate these modes are not fully supported.
+      // A full implementation would require aggregation or script queries.
       case 'atleast':
       case 'atmost':
       case 'exactly': {
-        // Threshold modes require script-based filtering in ElasticSearch
-        // We cannot easily express "at least N matches" with nested queries alone
-        // For now, return false to indicate these modes are not fully supported
-        // A full implementation would require aggregation or script queries
         return false;
       }
     }
