@@ -112,7 +112,7 @@
     "generate-celparser": "bunx --bun ts-jison -n CEL -t typescript packages/core/src/utils/parseCEL/cel.jison --outfile packages/core/src/utils/parseCEL/celParser.ts",
     "generate-parsers-codemod": "sed -i 's/lexer = new \\(CEL\\|SQL\\)Lexer(/lexer: \\1Lexer = new \\1Lexer(/g' packages/core/src/utils/parse{CEL/cel,SQL/sql}Parser.ts",
     "generate-prisma-client": "prisma generate --schema ./packages/core/src/utils/formatQuery/prisma/schema.prisma",
-    "outdated": "npm-check-updates --interactive --format=group --workspaces --root",
+    "outdated": "bun update --interactive --recursive",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile && touch bun.lockb",
     "version": "bun version.ts && bun install && bun --bun run build && bun run generate-examples && git add examples packages website/package.json bun.lock",
     "web": "bun run --filter website start",
