@@ -5,25 +5,30 @@ import path from 'node:path';
 import { catalog, catalogs } from '../package.json' assert { type: 'json' };
 
 const glob = new Glob('packages/*/package.json');
+const pkgPaths = await Array.fromAsync(glob.scan({ cwd: path.join(import.meta.dir, '..') }));
 
-for await (const pkgPkgJsonPath of glob.scan({ cwd: path.join(import.meta.dir, '..') })) {
-  let ppj = await Bun.file(pkgPkgJsonPath).text();
+const catalogReplacements = Object.entries(catalog).map(([dep, ver]) => ({
+  regex: new RegExp(`"${dep}":(\\s*)"catalog:"`, 'g'),
+  replacement: `"${dep}":$1"${ver}"`,
+}));
 
-  for (const [dep, ver] of Object.entries(catalog)) {
-    const re = new RegExp(`"${dep}":(\\s*)"catalog:"`, 'g');
-    ppj = ppj.replaceAll(re, `"${dep}":$1"${ver}"`);
-  }
+const namedCatalogReplacements = Object.entries(catalogs).flatMap(([name, cat]) =>
+  Object.entries(cat).map(([dep, ver]) => ({
+    regex: new RegExp(`"${dep}":(\\s*)"catalog:${name}"`, 'g'),
+    replacement: `"${dep}":$1"${ver}"`,
+  }))
+);
 
-  for (const [name, cat] of Object.entries(catalogs)) {
-    for (const [dep, ver] of Object.entries(cat)) {
-      const re = new RegExp(`"${dep}":(\\s*)"catalog:${name}"`, 'g');
-      ppj = ppj.replaceAll(re, `"${dep}":$1"${ver}"`);
+const allReplacements = [...catalogReplacements, ...namedCatalogReplacements];
+
+await Promise.all(
+  pkgPaths.map(async pkgPkgJsonPath => {
+    let ppj = await Bun.file(pkgPkgJsonPath).text();
+
+    for (const { regex, replacement } of allReplacements) {
+      ppj = ppj.replaceAll(regex, replacement);
     }
-  }
 
-  // console.log(`--- ${pkgPkgJsonPath} ---`);
-  // const { dependencies, devDependencies, peerDependencies } = JSON.parse(ppj);
-  // console.log(JSON.stringify({ dependencies, devDependencies, peerDependencies }, null, 2));
-
-  await Bun.write(pkgPkgJsonPath, ppj);
-}
+    await Bun.write(pkgPkgJsonPath, ppj);
+  })
+);
