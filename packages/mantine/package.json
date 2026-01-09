@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/mantine",
   "description": "Custom Mantine components for react-querybuilder",
-  "version": "8.13.0",
+  "version": "8.14.0",
   "publishConfig": {
     "access": "public"
   },
@@ -61,7 +61,7 @@
     "dayjs": "^1.11.19",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.13.0",
+    "react-querybuilder": "8.14.0",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
@@ -72,6 +72,6 @@
     "@mantine/hooks": ">=7",
     "dayjs": ">=1",
     "react": "catalog:peer",
-    "react-querybuilder": "8.13.0"
+    "react-querybuilder": "8.14.0"
   }
 }

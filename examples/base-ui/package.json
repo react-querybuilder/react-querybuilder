@@ -3,7 +3,7 @@
     "@base-ui/react": "^1.0.0",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.13.0"
+    "react-querybuilder": "8.14.0"
   },
   "description": "React Query Builder Base UI Example",
   "devDependencies": {

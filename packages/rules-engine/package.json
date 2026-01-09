@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/rules-engine",
   "description": "Rules engine extension for react-querybuilder",
-  "version": "8.13.0",
+  "version": "8.14.0",
   "publishConfig": {
     "access": "public"
   },
@@ -61,7 +61,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
     "immer": "catalog:",
-    "react-querybuilder": "8.13.0",
+    "react-querybuilder": "8.14.0",
     "react-redux": "catalog:"
   },
   "devDependencies": {

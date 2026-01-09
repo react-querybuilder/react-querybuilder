@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/bulma",
   "description": "Custom Bulma components for react-querybuilder",
-  "version": "8.13.0",
+  "version": "8.14.0",
   "publishConfig": {
     "access": "public"
   },
@@ -58,7 +58,7 @@
     "bulma": "^1.0.4",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.13.0",
+    "react-querybuilder": "8.14.0",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
@@ -66,6 +66,6 @@
   "peerDependencies": {
     "bulma": "^0.9.4 || ^1",
     "react": "catalog:peer",
-    "react-querybuilder": "8.13.0"
+    "react-querybuilder": "8.14.0"
   }
 }
