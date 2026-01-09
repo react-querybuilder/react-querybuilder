@@ -21,6 +21,7 @@ CNAME
 go.mod
 go.sum
 *.prisma
+*.sh
 
 # Misc
 lerna.json
