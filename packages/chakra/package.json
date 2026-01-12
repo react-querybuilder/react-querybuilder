@@ -52,7 +52,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@chakra-ui/react": "^3.30.0",
+    "@chakra-ui/react": "^3.31.0",
     "@emotion/react": "^11.14.0",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
