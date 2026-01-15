@@ -13,6 +13,11 @@ import {
 import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 import { ValueSelectorRE } from './ValueSelectorRE';
 
+/**
+ * Default components used by {@link RulesEngineBuilder}.
+ *
+ * @group Defaults
+ */
 export const defaultComponentsRE: {
   consequentBuilder: typeof ConsequentBuilder;
   consequentBuilderBody: typeof ConsequentBuilderBody;

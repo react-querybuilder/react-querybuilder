@@ -1,5 +1,10 @@
 import type { ClassnamesRE, RulesEngine, RulesEngineIC, TranslationsFullRE } from './types';
 
+/**
+ * Default classnames used by {@link RulesEngineBuilder}.
+ *
+ * @group Defaults
+ */
 export const defaultClassnamesRE: ClassnamesRE = {
   rulesEngineBuilder: '',
   rulesEngineHeader: '',
@@ -16,6 +21,11 @@ export const defaultClassnamesRE: ClassnamesRE = {
   blockLabelThen: '',
 };
 
+/**
+ * Standard classnames applied by {@link RulesEngineBuilder}.
+ *
+ * @group Defaults
+ */
 export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   rulesEngineBuilder: 'rulesEngineBuilder',
   rulesEngineHeader: 'rulesEngineBuilder-header',
@@ -40,6 +50,12 @@ export const defaultRulesEngineIC: RulesEngineIC = {
   conditions: [{ antecedent: { rules: [] } }],
 };
 
+/**
+ * Default configuration of translatable strings
+ * for {@link RulesEngineBuilder}.
+ *
+ * @group Defaults
+ */
 export const defaultTranslationsRE: TranslationsFullRE = {
   blockLabelIf: { title: 'First condition', label: 'If' },
   blockLabelElseIf: { title: 'Subsequent condition', label: 'Else If' },

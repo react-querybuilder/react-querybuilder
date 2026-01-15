@@ -61,6 +61,11 @@ const returnTrue = () => true;
 
 queryBuilderStore.addSlice(rulesEngineSlice);
 
+/**
+ * Prepares and manages state for {@link RulesEngineBuilder}.
+ *
+ * @group Hooks
+ */
 export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
 ): {

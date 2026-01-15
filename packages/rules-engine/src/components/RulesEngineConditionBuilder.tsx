@@ -13,6 +13,7 @@ type QueryBuilderPropsStandard = QueryBuilderProps<
 
 /**
  * Default header component for {@link RulesEngineConditionBuilder}.
+ *
  */
 export const ConditionBuilderHeader: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element
@@ -115,6 +116,7 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
 
 /**
  * Default body component for {@link RulesEngineConditionBuilder}.
+ * @group Components
  */
 export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element
@@ -174,7 +176,9 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
 });
 
 /**
- * Analogous to an "if" or "else-if" block.
+ * Default condition editor for {@link RulesEngineBuilder}. Analogous to an "if" or "else-if" block.
+ *
+ * @group Components
  */
 export const RulesEngineConditionBuilder: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element

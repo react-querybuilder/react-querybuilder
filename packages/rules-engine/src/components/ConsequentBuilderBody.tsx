@@ -5,6 +5,8 @@ import type { ConsequentProps } from '../types';
 
 /**
  * Default body component for {@link ConsequentBuilder}.
+ *
+ * @group Components
  */
 export const ConsequentBuilderBody: React.MemoExoticComponent<
   (props: ConsequentProps) => React.JSX.Element

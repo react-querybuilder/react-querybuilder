@@ -4,7 +4,10 @@ import { standardClassnamesRE } from '../defaults';
 import type { ConsequentProps } from '../types';
 
 /**
+ * Default consequent editor for {@link RulesEngineBuilder}.
  * Analogous to the body of an "if" or "else-if" block.
+ *
+ * @group Components
  */
 export const ConsequentBuilder: React.MemoExoticComponent<
   (props: ConsequentProps) => React.JSX.Element

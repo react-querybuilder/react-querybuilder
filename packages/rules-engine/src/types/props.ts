@@ -21,6 +21,12 @@ import type {
   RulesEngineAny,
 } from './rulesEngine';
 
+/**
+ * Configuration options passed in the `schema` prop from
+ * {@link RulesEngineBuilder} to each subcomponent.
+ *
+ * @group Props
+ */
 export interface SchemaRE {
   reId: string;
   components: ComponentsRE;
@@ -48,6 +54,11 @@ export interface SchemaRE {
   ) => FullOptionList<BaseOption>;
 }
 
+/**
+ * All subcomponents.
+ *
+ * @group Props
+ */
 export interface ComponentsRE {
   rulesEngineBuilderHeader: React.ComponentType<RulesEngineBuilderHeaderProps>;
   consequentBuilder: React.ComponentType<ConsequentProps>;
@@ -70,6 +81,11 @@ export interface ComponentsRE {
   valueSelector: React.ComponentType<ValueSelectorREProps>;
 }
 
+/**
+ * Classnames applied to each component.
+ *
+ * @group Props
+ */
 export interface ClassnamesRE {
   /** Classes applied to the wrapper element. */
   rulesEngineBuilder: Classname;
@@ -121,11 +137,15 @@ export interface TranslationsRE {
  *
  * @group Props
  */
-// export type TranslationsFullRE = RequiredDeep<TranslationsRE>;
 export type TranslationsFullRE = {
   [K in keyof TranslationsRE]: { [T in keyof TranslationsRE[K]]-?: TranslationsRE[K][T] };
 };
 
+/**
+ * Props for {@link RulesEngineBuilder}.
+ *
+ * @group Props
+ */
 export interface RulesEngineProps {
   rulesEngine?: RulesEngine;
   defaultRulesEngine?: RulesEngine;
@@ -166,6 +186,11 @@ export interface RulesEngineProps {
   idGenerator?: () => string;
 }
 
+/**
+ * Props for {@link RulesEngineBuilderHeader}.
+ *
+ * @group Props
+ */
 export interface RulesEngineBuilderHeaderProps {
   conditionPath: Path;
   classnames: string;
@@ -173,6 +198,11 @@ export interface RulesEngineBuilderHeaderProps {
   schema: SchemaRE;
 }
 
+/**
+ * Props for {@link RulesEngineConditionCascade}.
+ *
+ * @group Props
+ */
 export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
   conditionPath: Path;
   conditions: REConditionCascade<RG>;
@@ -180,6 +210,11 @@ export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
   schema: SchemaRE;
 }
 
+/**
+ * Props for {@link RulesEngineConditionBuilder}.
+ *
+ * @group Props
+ */
 export interface ConditionProps {
   schema: SchemaRE;
   conditionPath: Path;
@@ -190,6 +225,11 @@ export interface ConditionProps {
   autoSelectConsequentType?: boolean;
 }
 
+/**
+ * Props for {@link ConsequentBuilder}, {@link ConsequentBuilderHeader}, and {@link ConsequentBuilderBody}.
+ *
+ * @group Props
+ */
 export interface ConsequentProps {
   schema: SchemaRE;
   conditionPath: Path;

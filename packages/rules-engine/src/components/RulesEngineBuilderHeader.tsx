@@ -1,6 +1,11 @@
 import * as React from 'react';
 import type { RulesEngineBuilderHeaderProps } from '../types';
 
+/**
+ * Default header component for {@link RulesEngineBuilder}.
+ *
+ * @group Components
+ */
 export const RulesEngineBuilderHeader: React.MemoExoticComponent<
   (props: RulesEngineBuilderHeaderProps) => React.JSX.Element
 > = React.memo(function RulesEngineBuilderHeader(

@@ -8,6 +8,8 @@ const disabledPaths: Path[] = [];
 
 /**
  * Renders a sequential list of if/else-if/else blocks in a rules engine.
+ *
+ * @group Components
  */
 export const RulesEngineConditionCascade: React.MemoExoticComponent<
   <RG extends RuleGroupTypeAny>(props: ConditionCascadeProps<RG>) => React.JSX.Element
