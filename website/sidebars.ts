@@ -86,6 +86,7 @@ export default {
     'compat',
     'dnd',
     'datetime',
+    'rules-engine',
     'typescript',
     'buildless',
     'migrate',
