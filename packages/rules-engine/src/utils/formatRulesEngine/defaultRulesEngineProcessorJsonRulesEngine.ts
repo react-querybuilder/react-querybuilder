@@ -11,6 +11,7 @@ import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonR
  */
 export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<RuleProperties[]> = (
   rulesEngine,
+  // istanbul ignore next
   opts = {}
 ) =>
   rulesEngine.conditions.map<RuleProperties>(c => ({

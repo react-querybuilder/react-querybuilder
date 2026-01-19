@@ -46,7 +46,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.14",
+    "@electric-sql/pglite": "catalog:test",
     "@react-querybuilder/core": "8.14.0",
     "drizzle-orm": "^0.45.1",
     "rollup-plugin-visualizer": "catalog:",

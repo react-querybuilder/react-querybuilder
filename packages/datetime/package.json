@@ -91,7 +91,7 @@
   },
   "devDependencies": {
     "@date-fns/tz": "^1.4.1",
-    "@electric-sql/pglite": "^0.3.14",
+    "@electric-sql/pglite": "catalog:test",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@testing-library/user-event": "catalog:test",
@@ -104,7 +104,7 @@
     "jsonata": "^2.1.0",
     "luxon": "^3.7.2",
     "mongodb-memory-server-core": "^11.0.1",
-    "mongoose": "catalog:",
+    "mongoose": "catalog:test",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.14.0",
