@@ -282,3 +282,21 @@ function uniqByIdentifier(arr: any): boolean;
 ```
 
 Removes duplicate options from an `Option` array by comparing identifier properties (`name` or `value`).
+
+## String option lists
+
+Option list props also accept `string[]`. Each string becomes an option with `name`, `value`, and `label` all set to that string.
+
+```tsx
+// These are equivalent:
+<QueryBuilder combinators={['and', 'or']} />
+<QueryBuilder combinators={[{ name: 'and', label: 'and' }, { name: 'or', label: 'or' }]} />
+```
+
+Strings can be mixed with option objects:
+
+```tsx
+<QueryBuilder operators={['=', '!=', { name: 'contains', label: 'Contains' }]} />
+```
+
+This shorthand is convenient for simple option lists but lacks the flexibility of full option objects, such as custom labels.

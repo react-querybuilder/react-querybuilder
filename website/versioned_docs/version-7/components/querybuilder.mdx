@@ -41,6 +41,8 @@ Field objects can include custom properties. The complete field object is passed
 
 :::
 
+For more information about option list props like `fields`, see [Working with option lists](./option-lists).
+
 ### `onQueryChange`
 
 `(query: RuleGroupTypeAny) => void`
@@ -87,6 +89,8 @@ The default operator list is below.
 
 %importcode /packages/core/src/defaults.ts#region=docs-operators
 
+For more information about option list props like `operators`, see [Working with option lists](./option-lists).
+
 ### `combinators`
 
 `OptionList`
@@ -94,6 +98,8 @@ The default operator list is below.
 Array of combinators for RuleGroups. Default combinator list:
 
 %importcode /packages/core/src/defaults.ts#region=docs-combinators
+
+For more information about option list props like `combinators`, see [Working with option lists](./option-lists).
 
 ### `baseField`
 
@@ -185,6 +191,8 @@ Returns allowed operators for the given `field`. Returning `null` uses the [oper
 
 `fieldData` provides the complete `Field` object for accessing custom properties.
 
+For more information about option list props like `operators`, see [Working with option lists](./option-lists).
+
 ### `getValueEditorType`
 
 `(field: string, operator: string, misc: { fieldData: Field }) => ValueEditorType`
@@ -226,6 +234,8 @@ Returns the `type` attribute for `<input />` elements. Only applies when [`getVa
 Returns allowed values for the given `field` and `operator`. Only applies when [`getValueEditorType`](#getvalueeditortype) returns `"select"`, `"multiselect"`, or `"radio"`. Defaults to empty array.
 
 `fieldData` provides the complete `Field` object for accessing custom properties.
+
+For more information about option list props, see [Working with option lists](./option-lists).
 
 ### `getMatchModes`
 

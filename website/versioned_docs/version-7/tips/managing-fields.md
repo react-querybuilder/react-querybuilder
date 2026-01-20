@@ -3,7 +3,7 @@ title: Managing fields
 description: Generate a field array from database table/view specification
 ---
 
-The [`fields`](../components/querybuilder#fields) array forms the foundation of React Query Builder configuration, defining which data fields users can query against.
+The [`fields`](../components/querybuilder#fields) array forms the foundation of React Query Builder configuration, defining which data fields users can include in a query.
 
 <!--
 TODO: Review each property in detail.
@@ -27,6 +27,12 @@ interface Field {
 }
 ```
 -->
+
+:::tip
+
+For more information about option list props like `fields`, see [Working with option lists](./option-lists).
+
+:::
 
 ## Generating `fields` dynamically
 
