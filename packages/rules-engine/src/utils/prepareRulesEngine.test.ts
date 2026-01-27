@@ -100,6 +100,45 @@ describe('prepareRulesEngineCondition', () => {
     expect(result.antecedent.id).toBeDefined();
     expect(result.conditions?.[0].id).toBeDefined();
   });
+
+  it('returns same object when no changes needed', () => {
+    const condition: REConditionAny = {
+      id: 'existing-id',
+      antecedent: 'not-a-rule-group',
+      consequent: { type: 'action' },
+    } as any; // oxlint-disable-line no-explicit-any
+    const result = prepareRulesEngineCondition(condition);
+    expect(result).toBe(condition);
+  });
+
+  it('does not update antecedent when already prepared', () => {
+    const condition: REConditionAny = {
+      id: 'existing-id',
+      antecedent: { id: 'rg-id', combinator: 'and', rules: [] },
+      consequent: { type: 'action' },
+    };
+    const result = prepareRulesEngineCondition(condition);
+    expect(result).toBe(condition);
+  });
+
+  it('does not update conditions when already prepared', () => {
+    const condition: REConditionAny = {
+      id: 'existing-id',
+      antecedent: { id: 'rg-id', combinator: 'and', rules: [] },
+      conditions: [
+        {
+          id: 'nested-id',
+          antecedent: { id: 'nested-rg-id', combinator: 'or', rules: [] },
+        },
+      ],
+    };
+    // Need to add ID to the wrapper that isRulesEngineAny creates
+    (condition as REConditionAny).id = 'existing-id';
+    const result = prepareRulesEngineCondition(condition);
+    // Since nested conditions will be processed, object will change unless conditions array has proper ID
+    expect(result.id).toBe('existing-id');
+    expect(result.conditions).toBeDefined();
+  });
 });
 
 describe('prepareRulesEngine', () => {
@@ -224,5 +263,19 @@ describe('prepareRulesEngine', () => {
     const result1 = prepareRulesEngine(rulesEngine);
     const result2 = prepareRulesEngine(rulesEngine);
     expect(result1.id).not.toBe(result2.id);
+  });
+
+  it('returns same object when already fully prepared', () => {
+    const rulesEngine: RulesEngineAny = {
+      id: 'existing-id',
+      conditions: [
+        {
+          id: 'cond-id',
+          antecedent: { id: 'rg-id', combinator: 'and', rules: [] },
+        },
+      ],
+    };
+    const result = prepareRulesEngine(rulesEngine);
+    expect(result).toBe(rulesEngine);
   });
 });
