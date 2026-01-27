@@ -26,7 +26,7 @@ export const prepareRule = (
 ): RuleType => {
   const needsId = !rule.id;
   const hasMatchMode = processMatchMode(rule);
-  
+
   if (!needsId && !hasMatchMode) {
     return rule;
   }
