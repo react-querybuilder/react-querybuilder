@@ -1,4 +1,3 @@
-import { produce } from 'immer';
 import type {
   RuleGroupArray,
   RuleGroupICArray,
@@ -24,15 +23,20 @@ export interface PreparerOptions {
 export const prepareRule = (
   rule: RuleType,
   { idGenerator = generateID }: PreparerOptions = {}
-): RuleType =>
-  produce(rule, draft => {
-    if (!draft.id) {
-      draft.id = idGenerator();
-    }
-    if (processMatchMode(draft)) {
-      draft.value = prepareRuleGroup(draft.value, { idGenerator });
-    }
-  });
+): RuleType => {
+  const needsId = !rule.id;
+  const hasMatchMode = processMatchMode(rule);
+  
+  if (!needsId && !hasMatchMode) {
+    return rule;
+  }
+
+  return {
+    ...rule,
+    ...(needsId && { id: idGenerator() }),
+    ...(hasMatchMode && { value: prepareRuleGroup(rule.value, { idGenerator }) }),
+  };
+};
 
 /**
  * Ensures that a rule group is valid by recursively adding an `id` property to the group itself
@@ -41,19 +45,36 @@ export const prepareRule = (
 export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
   queryObject: RG,
   { idGenerator = generateID }: PreparerOptions = {}
-): RG =>
-  produce(queryObject, draft => {
-    if (!draft.id) {
-      draft.id = idGenerator();
+): RG => {
+  const needsId = !queryObject.id;
+  let rulesChanged = false;
+  const newRules: (RuleGroupTypeAny | RuleType | string)[] = [];
+
+  for (let i = 0; i < queryObject.rules.length; i++) {
+    const r = queryObject.rules[i];
+    if (typeof r === 'string') {
+      newRules.push(r);
+    } else {
+      const prepared = isRuleGroup(r)
+        ? prepareRuleGroup(r, { idGenerator })
+        : prepareRule(r, { idGenerator });
+      newRules.push(prepared);
+      if (prepared !== r) {
+        rulesChanged = true;
+      }
     }
-    draft.rules = draft.rules.map(r =>
-      typeof r === 'string'
-        ? r
-        : isRuleGroup(r)
-          ? prepareRuleGroup(r, { idGenerator })
-          : prepareRule(r, { idGenerator })
-    ) as RuleGroupArray | RuleGroupICArray;
-  });
+  }
+
+  if (!needsId && !rulesChanged) {
+    return queryObject;
+  }
+
+  return {
+    ...queryObject,
+    ...(needsId && { id: idGenerator() }),
+    rules: newRules as RuleGroupArray | RuleGroupICArray,
+  };
+};
 
 /**
  * Ensures that a rule or group is valid. See {@link prepareRule} and {@link prepareRuleGroup}.
