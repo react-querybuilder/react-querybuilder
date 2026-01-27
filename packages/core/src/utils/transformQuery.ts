@@ -26,7 +26,7 @@ const remapProperties = (
       if (!deleteRemappedProperties) {
         result[key] = obj[key];
       }
-    } else if (!(mappedKey && deleteRemappedProperties)) {
+    } else {
       result[key] = obj[key];
     }
   }
