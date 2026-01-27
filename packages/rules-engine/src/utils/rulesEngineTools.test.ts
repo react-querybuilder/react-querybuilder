@@ -1,5 +1,6 @@
 import type { DefaultRuleType, Path } from '@react-querybuilder/core';
 import { numericRegex } from '@react-querybuilder/core';
+import { produce } from 'immer';
 import type {
   Consequent,
   RECondition,
@@ -8,7 +9,18 @@ import type {
   RulesEngineAny,
   RulesEngineIC,
 } from '../types';
-import { addRE, insertRE, moveRE, removeRE, updateRE } from './rulesEngineTools';
+import {
+  addRE,
+  addREMutable,
+  insertRE,
+  insertREMutable,
+  moveRE,
+  moveREMutable,
+  removeRE,
+  removeREMutable,
+  updateRE,
+  updateREMutable,
+} from './rulesEngineTools';
 
 const stripIDs = (re: unknown) =>
   JSON.parse(
@@ -437,5 +449,61 @@ describe('insertRE', () => {
     // oxlint-disable-next-line no-explicit-any
     const result = insertRE(re1, invalidSubject as any, [0]);
     expect(result.conditions).toEqual([]);
+  });
+});
+
+describe('addREMutable', () => {
+  it('mutates the original rules engine', () => {
+    const original: RulesEngine = { conditions: [] };
+    const result = addREMutable(original, cond1, []);
+    expect(original).toBe(result);
+  });
+});
+
+describe('updateREMutable', () => {
+  it('mutates the original rules engine', () => {
+    const original: RulesEngine = { conditions: [{ ...cond1 }] };
+    const result = updateREMutable(original, 'id', 'newId', []);
+    expect(original).toBe(result);
+  });
+});
+
+describe('removeREMutable', () => {
+  it('mutates the original rules engine', () => {
+    const original: RulesEngine = { conditions: [cond1, cond2] };
+    const result = removeREMutable(original, [0]);
+    expect(original).toBe(result);
+  });
+});
+
+describe('moveREMutable', () => {
+  it('mutates the original rules engine', () => {
+    const original: RulesEngine = { conditions: [cond1, cond2] };
+    const result = moveREMutable(original, [0], [2]);
+    expect(original).toBe(result);
+  });
+
+  it('handles cloning from a regular object', () => {
+    const original: RulesEngine = { conditions: [cond1, cond2] };
+    const result = moveREMutable(original, [0], [2], { clone: true, idGenerator });
+    expect(result.conditions.length).toBe(3);
+    expect(result.conditions[2].id).toMatch(numericRegex);
+  });
+
+  it('handles cloning from within a draft', () => {
+    const original: RulesEngine = { conditions: [cond1, cond2] };
+    const result = produce(original, draft => {
+      moveREMutable(draft, [0], [2], { clone: true, idGenerator });
+    });
+    expect(result.conditions.length).toBe(3);
+    expect(result.conditions[2].id).toMatch(numericRegex);
+  });
+});
+
+describe('insertREMutable', () => {
+  it('mutates the original rules engine', () => {
+    const original: RulesEngine = { conditions: [cond1] };
+    const result = insertREMutable(original, cond2, [0]);
+    expect(original).toBe(result);
   });
 });

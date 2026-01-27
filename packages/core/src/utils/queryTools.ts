@@ -1,4 +1,4 @@
-import { produce } from 'immer';
+import { current, isDraft, produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
   MatchModeOptions,
@@ -49,46 +49,69 @@ export interface AddOptions {
    */
   idGenerator?: () => string;
 }
+
+export interface AddMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** The rule or group to add. */
+    ruleOrGroup: RG | RuleType,
+    /** Path or ID of the group to add to. */
+    parentPathOrID: Path | string,
+    /** Options. */
+    options?: AddOptions
+  ): RG;
+}
+
 /**
- * Adds a rule or group to a query.
- * @returns The new query with the rule or group added.
+ * Adds a rule or group to a query without mutating the original query.
+ *
+ * @returns A new query with the rule or group added.
  *
  * @group Query Tools
  */
-export const add = <RG extends RuleGroupTypeAny>(
-  /** The query to update. */
-  query: RG,
-  /** The rule or group to add. */
-  ruleOrGroup: RG | RuleType,
-  /** Path or ID of the group to add to. */
-  parentPathOrID: Path | string,
-  /** Options. */
-  {
+export const add: AddMethod = (query, ruleOrGroup, parentPathOrID, options = {}): typeof query =>
+  produce(query, q => addMutable(q, ruleOrGroup as RuleType, parentPathOrID, options) as typeof q);
+
+/**
+ * Adds a rule or group to a query by mutating the query.
+ *
+ * @returns The query (mutated) with the rule or group added.
+ *
+ * @group Query Tools
+ */
+export const addMutable: AddMethod = (
+  query,
+  ruleOrGroup,
+  parentPathOrID,
+  options = {}
+): typeof query => {
+  const {
     combinators = defaultCombinators,
     combinatorPreceding,
     idGenerator = generateID,
-  }: AddOptions = {}
-): RG =>
-  produce(query, draft => {
-    const parent = Array.isArray(parentPathOrID)
-      ? findPath(parentPathOrID, draft)
-      : findID(parentPathOrID, draft);
+  } = options;
+  const parent = Array.isArray(parentPathOrID)
+    ? findPath(parentPathOrID, query)
+    : findID(parentPathOrID, query);
 
-    if (!parent || !isRuleGroup(parent)) return;
+  if (!parent || !isRuleGroup(parent)) return query;
 
-    if (isRuleGroupTypeIC(parent) && parent.rules.length > 0) {
-      const prevCombinator = parent.rules.at(-2);
-      parent.rules.push(
-        // @ts-expect-error This is technically a type violation until the next push
-        // to the rules array, but that happens immediately and unconditionally so
-        // there's no significant risk.
-        combinatorPreceding ??
-          (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
-      );
-    }
-    // `as RuleType` is only here to avoid the ambiguity with `RuleGroupTypeAny`
-    parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
-  });
+  if (isRuleGroupTypeIC(parent) && parent.rules.length > 0) {
+    const prevCombinator = parent.rules.at(-2);
+    parent.rules.push(
+      // @ts-expect-error This is technically a type violation until the next push
+      // to the rules array, but that happens immediately and unconditionally so
+      // there's no significant risk.
+      combinatorPreceding ??
+        (typeof prevCombinator === 'string' ? prevCombinator : getFirstOption(combinators))
+    );
+  }
+  // `as RuleType` is only here to avoid the ambiguity with `RuleGroupTypeAny`
+  parent.rules.push(prepareRuleOrGroup(ruleOrGroup, { idGenerator }) as RuleType);
+
+  return query;
+};
 
 /**
  * Options for {@link update}.
@@ -124,150 +147,191 @@ export interface UpdateOptions {
    */
   getMatchModes?: (field: string) => MatchModeOptions;
 }
+
+export interface UpdateMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** The name of the property to update. */
+    prop: UpdateableProperties,
+    /** The new value of the property. */
+    // oxlint-disable-next-line typescript/no-explicit-any
+    value: any,
+    /** The path or ID of the rule or group to update. */
+    pathOrID: Path | string,
+    /** Options. */
+    options?: UpdateOptions
+  ): RG;
+}
+
 /**
- * Updates a property of a rule or group within a query.
- * @returns The new query with the rule or group property updated.
+ * Updates a property of a rule or group within a query without mutating the original query.
+ *
+ * @returns A new query with the rule or group property updated.
  *
  * @group Query Tools
  */
-export const update = <RG extends RuleGroupTypeAny>(
-  /** The query to update. */
-  query: RG,
-  /** The name of the property to update. */
-  prop: UpdateableProperties,
-  /** The new value of the property. */
-  // oxlint-disable-next-line typescript/no-explicit-any
-  value: any,
-  /** The path or ID of the rule or group to update. */
-  pathOrID: Path | string,
-  /** Options. */
-  {
-    resetOnFieldChange = true,
+export const update: UpdateMethod = (query, prop, value, pathOrID, options = {}): typeof query =>
+  produce(query, q => updateMutable(q, prop, value, pathOrID, options) as typeof q);
+
+/**
+ * Updates a property of a rule or group within a query by mutating the query.
+ *
+ * @returns The query (mutated) with the rule or group property updated.
+ *
+ * @group Query Tools
+ */
+export const updateMutable: UpdateMethod = (
+  query,
+  prop,
+  value,
+  pathOrID,
+  options = {}
+): typeof query => {
+  const {
+    resetOnFieldChange: _resetOnFieldChange = true,
     resetOnOperatorChange = false,
     getRuleDefaultOperator = () => '=',
     getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
     getMatchModes = () => [],
-  }: UpdateOptions = {}
-): RG =>
-  produce(query, draft => {
-    const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, draft);
+  } = options;
 
-    // Ignore invalid paths/ids
-    if (!path) return;
+  let resetOnFieldChange = _resetOnFieldChange;
 
-    // Independent combinators
-    if (prop === 'combinator' && !isRuleGroupType(draft)) {
-      const parentRules = (findPath(getParentPath(path), draft) as RG).rules;
-      // Only update an independent combinator if it occupies an odd index
-      if (path.at(-1)! % 2 === 1) {
-        parentRules[path.at(-1)!] = value;
-      }
-      return;
-    }
-
-    const ruleOrGroup = findPath(path, draft);
-
-    // Ignore invalid paths
-    if (!ruleOrGroup) return;
-
-    const isGroup = isRuleGroup(ruleOrGroup);
-
-    // Only update if there is actually a change
-    // @ts-expect-error prop can refer to rule or group properties
-    if (ruleOrGroup[prop] === value) return;
-
-    // Handle valueSource updates later
-    if (prop !== 'valueSource') {
-      // @ts-expect-error prop can refer to rule or group properties
-      ruleOrGroup[prop] = value;
-    }
-
-    // If this is a group, there's no more to do
-    if (isGroup) return;
-
-    let resetValueSource = false;
-    let resetValue = false;
-
-    if (prop === 'field') {
-      const fromFieldMatchModes = getMatchModes(ruleOrGroup.field);
-      const toFieldMatchModes = getMatchModes(value);
-
-      if (toFieldMatchModes.length === 0) {
-        delete ruleOrGroup.match;
-      } else {
-        const nextMatchMode =
-          ruleOrGroup.match?.mode && getOption(toFieldMatchModes, ruleOrGroup.match.mode)
-            ? null
-            : getFirstOption(toFieldMatchModes);
-        if (nextMatchMode) {
-          ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
-        }
-      }
-
-      if (fromFieldMatchModes.length > 0 || toFieldMatchModes.length > 0) {
-        // Force `resetOnFieldChange` when field is updated FROM or TO one that has match modes
-        resetOnFieldChange = true;
-      }
-    }
-
-    // Set default operator, valueSource, and value for field change
-    if (resetOnFieldChange && prop === 'field') {
-      ruleOrGroup.operator = getRuleDefaultOperator(value);
-      resetValueSource = true;
-      resetValue = true;
-    }
-
-    // Set default valueSource and value for operator change
-    if (resetOnOperatorChange && prop === 'operator') {
-      resetValueSource = true;
-      resetValue = true;
-    }
-
-    const valueSources = getValueSourcesUtil(
-      { name: ruleOrGroup.field, value: ruleOrGroup.field, label: '' },
-      ruleOrGroup.operator,
-      getValueSources
-    );
-    const defaultValueSource = getFirstOption(valueSources);
-    if (
-      (resetValueSource &&
-        ruleOrGroup.valueSource &&
-        defaultValueSource !== ruleOrGroup.valueSource) ||
-      (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
-    ) {
-      // Only reset the value if we're changing the valueSource either
-      // 1) from `undefined` to something that is _not_ the default, or
-      // 2) from the current (defined) value to something else
-      resetValue =
-        !!ruleOrGroup.valueSource || (!ruleOrGroup.valueSource && value !== defaultValueSource);
-      ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
-    }
-
-    if (resetValue) {
-      // The default value should be a valid field name if defaultValueSource is 'field'
-      ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
-    }
-  });
-
-/**
- * Removes a rule or group from a query.
- * @returns The new query with the rule or group removed.
- *
- * @group Query Tools
- */
-export const remove = <RG extends RuleGroupTypeAny>(
-  /** The query to update. */
-  query: RG,
-  /** The path or ID of the rule or group to remove. */
-  pathOrID: Path | string
-): RG => {
   const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
 
   // Ignore invalid paths/ids
   if (!path) return query;
 
+  // Independent combinators
+  if (prop === 'combinator' && !isRuleGroupType(query)) {
+    const parentRules = (findPath(getParentPath(path), query) as typeof query).rules;
+    // Only update an independent combinator if it occupies an odd index
+    if (path.at(-1)! % 2 === 1) {
+      parentRules[path.at(-1)!] = value;
+    }
+    return query;
+  }
+
+  const ruleOrGroup = findPath(path, query);
+
+  // Ignore invalid paths
+  if (!ruleOrGroup) return query;
+
+  const isGroup = isRuleGroup(ruleOrGroup);
+
+  // Only update if there is actually a change
+  // @ts-expect-error prop can refer to rule or group properties
+  if (ruleOrGroup[prop] === value) return query;
+
+  // Handle valueSource updates later
+  if (prop !== 'valueSource') {
+    // @ts-expect-error prop can refer to rule or group properties
+    ruleOrGroup[prop] = value;
+  }
+
+  // If this is a group, there's no more to do
+  if (isGroup) return query;
+
+  let resetValueSource = false;
+  let resetValue = false;
+
+  if (prop === 'field') {
+    const fromFieldMatchModes = getMatchModes(ruleOrGroup.field);
+    const toFieldMatchModes = getMatchModes(value);
+
+    if (toFieldMatchModes.length === 0) {
+      delete ruleOrGroup.match;
+    } else {
+      const nextMatchMode =
+        ruleOrGroup.match?.mode && getOption(toFieldMatchModes, ruleOrGroup.match.mode)
+          ? null
+          : getFirstOption(toFieldMatchModes);
+      if (nextMatchMode) {
+        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
+      }
+    }
+
+    if (fromFieldMatchModes.length > 0 || toFieldMatchModes.length > 0) {
+      // Force `resetOnFieldChange` when field is updated FROM or TO one that has match modes
+      resetOnFieldChange = true;
+    }
+  }
+
+  // Set default operator, valueSource, and value for field change
+  if (resetOnFieldChange && prop === 'field') {
+    ruleOrGroup.operator = getRuleDefaultOperator(value);
+    resetValueSource = true;
+    resetValue = true;
+  }
+
+  // Set default valueSource and value for operator change
+  if (resetOnOperatorChange && prop === 'operator') {
+    resetValueSource = true;
+    resetValue = true;
+  }
+
+  const valueSources = getValueSourcesUtil(
+    { name: ruleOrGroup.field, value: ruleOrGroup.field, label: '' },
+    ruleOrGroup.operator,
+    getValueSources
+  );
+  const defaultValueSource = getFirstOption(valueSources);
   if (
+    (resetValueSource &&
+      ruleOrGroup.valueSource &&
+      defaultValueSource !== ruleOrGroup.valueSource) ||
+    (prop === 'valueSource' && value !== ruleOrGroup.valueSource)
+  ) {
+    // Only reset the value if we're changing the valueSource either
+    // 1) from `undefined` to something that is _not_ the default, or
+    // 2) from the current (defined) value to something else
+    resetValue =
+      !!ruleOrGroup.valueSource || (!ruleOrGroup.valueSource && value !== defaultValueSource);
+    ruleOrGroup.valueSource = resetValueSource ? defaultValueSource : value;
+  }
+
+  if (resetValue) {
+    // The default value should be a valid field name if defaultValueSource is 'field'
+    ruleOrGroup.value = getRuleDefaultValue(ruleOrGroup);
+  }
+
+  return query;
+};
+
+export interface RemoveMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** The path or ID of the rule or group to remove. */
+    pathOrID: Path | string
+  ): RG;
+}
+
+/**
+ * Removes a rule or group from a query without mutating the original query.
+ *
+ * @returns A new query with the rule or group removed.
+ *
+ * @group Query Tools
+ */
+export const remove: RemoveMethod = (query, pathOrID): typeof query =>
+  produce(query, q => removeMutable(q, pathOrID) as typeof q);
+
+/**
+ * Removes a rule or group from a query by mutating the query.
+ *
+ * @returns The query (mutated) with the rule or group removed.
+ *
+ * @group Query Tools
+ */
+export const removeMutable: RemoveMethod = (query, pathOrID): typeof query => {
+  const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
+
+  if (
+    // Ignore invalid paths/ids
+    !path ||
     // Can't remove the root group
     path.length === 0 ||
     // Can't independently remove independent combinators
@@ -276,18 +340,18 @@ export const remove = <RG extends RuleGroupTypeAny>(
     return query;
   }
 
-  return produce(query, draft => {
-    const index = path.at(-1)!;
-    const parent = findPath(getParentPath(path), draft);
-    if (parent && isRuleGroup(parent)) {
-      if (!isRuleGroupType(parent) && parent.rules.length > 1) {
-        const idxStartDelete = index === 0 ? 0 : index - 1;
-        parent.rules.splice(idxStartDelete, 2);
-      } else {
-        parent.rules.splice(index, 1);
-      }
+  const index = path.at(-1)!;
+  const parent = findPath(getParentPath(path), query);
+  if (parent && isRuleGroup(parent)) {
+    if (!isRuleGroupType(parent) && parent.rules.length > 1) {
+      const idxStartDelete = index === 0 ? 0 : index - 1;
+      parent.rules.splice(idxStartDelete, 2);
+    } else {
+      parent.rules.splice(index, 1);
     }
-  });
+  }
+
+  return query;
 };
 
 const getNextPath = (
@@ -368,23 +432,46 @@ export interface MoveOptions {
    */
   idGenerator?: () => string;
 }
+
+export interface MoveMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** ID or original path of the rule or group to move. */
+    oldPathOrID: Path | string,
+    /** Path to move the rule or group to, or a shift direction. */
+    newPath: Path | 'up' | 'down',
+    /** Options. */
+    options?: MoveOptions
+  ): RG;
+}
+
 /**
- * Moves a rule or group from one path to another. In the options parameter, pass
- * `{ clone: true }` to copy instead of move.
- * @returns The new query with the rule or group moved or cloned.
+ * Moves a rule or group from one path to another without mutating the original query.
+ * In the options parameter, pass `{ clone: true }` to copy instead of move.
+ *
+ * @returns A new query with the rule or group moved or cloned.
  *
  * @group Query Tools
  */
-export const move = <RG extends RuleGroupTypeAny>(
-  /** The query to update. */
-  query: RG,
-  /** ID or original path of the rule or group to move. */
-  oldPathOrID: Path | string,
-  /** Path to move the rule or group to, or a shift direction. */
-  newPath: Path | 'up' | 'down',
-  /** Options. */
-  { clone = false, combinators = defaultCombinators, idGenerator = generateID }: MoveOptions = {}
-): RG => {
+export const move: MoveMethod = (query, oldPathOrID, newPath, options = {}): typeof query =>
+  produce(query, q => moveMutable(q, oldPathOrID, newPath, options) as typeof q);
+
+/**
+ * Moves a rule or group from one path to another by mutating the query.
+ * In the options parameter, pass `{ clone: true }` to copy instead of move.
+ *
+ * @returns The query (mutated) with the rule or group moved or cloned.
+ *
+ * @group Query Tools
+ */
+export const moveMutable: MoveMethod = (
+  query,
+  oldPathOrID,
+  newPath,
+  options = {}
+): typeof query => {
+  const { clone = false, combinators = defaultCombinators, idGenerator = generateID } = options;
   const oldPath = Array.isArray(oldPathOrID) ? oldPathOrID : getPathOfID(oldPathOrID, query);
 
   // Ignore invalid paths/ids
@@ -406,80 +493,83 @@ export const move = <RG extends RuleGroupTypeAny>(
     return query;
   }
   const ruleOrGroup = clone
-    ? regenerateIDs(ruleOrGroupOriginal as RuleGroupTypeAny, { idGenerator })
+    ? regenerateIDs(
+        isDraft(ruleOrGroupOriginal) ? current(ruleOrGroupOriginal) : ruleOrGroupOriginal,
+        { idGenerator }
+      )
     : ruleOrGroupOriginal;
 
-  return produce(query, draft => {
-    const independentCombinators = isRuleGroupTypeIC(draft);
-    const parentOfRuleToRemove = findPath(getParentPath(oldPath), draft) as RG;
-    const ruleToRemoveIndex = oldPath.at(-1)!;
-    const oldPrevCombinator =
-      independentCombinators && ruleToRemoveIndex > 0
-        ? (parentOfRuleToRemove.rules[ruleToRemoveIndex - 1] as string)
-        : null;
-    const oldNextCombinator =
-      independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
-        ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
-        : null;
+  const independentCombinators = isRuleGroupTypeIC(query);
+  const parentOfRuleToRemove = findPath(getParentPath(oldPath), query) as typeof query;
+  const ruleToRemoveIndex = oldPath.at(-1)!;
+  const oldPrevCombinator =
+    independentCombinators && ruleToRemoveIndex > 0
+      ? (parentOfRuleToRemove.rules[ruleToRemoveIndex - 1] as string)
+      : null;
+  const oldNextCombinator =
+    independentCombinators && ruleToRemoveIndex < parentOfRuleToRemove.rules.length - 1
+      ? (parentOfRuleToRemove.rules[ruleToRemoveIndex + 1] as string)
+      : null;
 
-    // Remove the source item if not cloning
-    if (!clone) {
-      const idxStartDelete = independentCombinators
-        ? Math.max(0, ruleToRemoveIndex - 1)
-        : ruleToRemoveIndex;
-      const deleteLength = independentCombinators ? 2 : 1;
-      parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
-    }
+  // Remove the source item if not cloning
+  if (!clone) {
+    const idxStartDelete = independentCombinators
+      ? Math.max(0, ruleToRemoveIndex - 1)
+      : ruleToRemoveIndex;
+    const deleteLength = independentCombinators ? 2 : 1;
+    parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+  }
 
-    const newNewPath = [...nextPath];
-    const commonAncestorPath = getCommonAncestorPath(oldPath, nextPath);
-    if (
-      !clone &&
-      oldPath.length === commonAncestorPath.length + 1 &&
-      nextPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
-    ) {
-      // Getting here means there will be a shift of paths upward at the common
-      // ancestor level because the object at `oldPath` will be spliced out. The
-      // real new path should therefore be one or two higher than `nextPath`.
-      newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
-    }
-    const newNewParentPath = getParentPath(newNewPath);
-    const parentToInsertInto = findPath(newNewParentPath, draft) as RG;
-    const newIndex = newNewPath.at(-1)!;
+  const newNewPath = [...nextPath];
+  const commonAncestorPath = getCommonAncestorPath(oldPath, nextPath);
+  if (
+    !clone &&
+    oldPath.length === commonAncestorPath.length + 1 &&
+    nextPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
+  ) {
+    // Getting here means there will be a shift of paths upward at the common
+    // ancestor level because the object at `oldPath` will be spliced out. The
+    // real new path should therefore be one or two higher than `nextPath`.
+    newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
+  }
+  const newNewParentPath = getParentPath(newNewPath);
+  const parentToInsertInto = findPath(newNewParentPath, query) as typeof query;
+  const newIndex = newNewPath.at(-1)!;
 
-    /**
-     * This function 1) glosses over the need for type assertions to splice directly
-     * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
-     */
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const insertRuleOrGroup = (...args: any[]) =>
-      parentToInsertInto.rules.splice(newIndex, 0, ...args);
+  /**
+   * This function 1) glosses over the need for type assertions to splice directly
+   * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const insertRuleOrGroup = (...args: any[]) =>
+    parentToInsertInto.rules.splice(newIndex, 0, ...args);
 
-    // Insert the source item at the target path
-    if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
-      insertRuleOrGroup(ruleOrGroup);
-    } else {
-      if (newIndex === 0) {
-        if (ruleToRemoveIndex === 0 && oldNextCombinator) {
-          insertRuleOrGroup(ruleOrGroup, oldNextCombinator);
-        } else {
-          const newNextCombinator =
-            parentToInsertInto.rules[1] ?? oldPrevCombinator ?? getFirstOption(combinators);
-          insertRuleOrGroup(ruleOrGroup, newNextCombinator);
-        }
+  // Insert the source item at the target path
+  if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
+    insertRuleOrGroup(ruleOrGroup);
+  } else {
+    if (newIndex === 0) {
+      if (ruleToRemoveIndex === 0 && oldNextCombinator) {
+        insertRuleOrGroup(ruleOrGroup, oldNextCombinator);
       } else {
-        if (oldPrevCombinator) {
-          insertRuleOrGroup(oldPrevCombinator, ruleOrGroup);
-        } else {
-          const newPrevCombinator =
-            parentToInsertInto.rules[newIndex - 2] ??
-            oldNextCombinator ??
-            getFirstOption(combinators);
-          insertRuleOrGroup(newPrevCombinator, ruleOrGroup);
-        }
+        const newNextCombinator =
+          parentToInsertInto.rules[1] ?? oldPrevCombinator ?? getFirstOption(combinators);
+        insertRuleOrGroup(ruleOrGroup, newNextCombinator);
+      }
+    } else {
+      if (oldPrevCombinator) {
+        insertRuleOrGroup(oldPrevCombinator, ruleOrGroup);
+      } else {
+        const newPrevCombinator =
+          parentToInsertInto.rules[newIndex - 2] ??
+          oldNextCombinator ??
+          getFirstOption(combinators);
+        insertRuleOrGroup(newPrevCombinator, ruleOrGroup);
       }
     }
-  });
+  }
+
+  return query;
 };
 
 /**
@@ -520,72 +610,96 @@ export interface InsertOptions {
    */
   replace?: boolean;
 }
+
+export interface InsertMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** The rule or group to insert. */
+    ruleOrGroup: RG | RuleType,
+    /** Path at which to insert the rule or group. */
+    path: number[],
+    /** Options. */
+    options?: InsertOptions
+  ): RG;
+}
+
 /**
- * Inserts a rule or group into a query.
- * @returns The new query with the rule or group inserted.
+ * Inserts a rule or group into a query without mutating the original query.
+ *
+ * @returns A new query with the rule or group inserted.
  *
  * @group Query Tools
  */
-export const insert = <RG extends RuleGroupTypeAny>(
-  /** The query to update. */
-  query: RG,
-  /** The rule or group to insert. */
-  ruleOrGroup: RG | RuleType,
-  /** Path at which to insert the rule or group. */
-  path: number[],
-  /** Options. */
-  {
+export const insert: InsertMethod = (query, ruleOrGroup, path, options = {}): typeof query =>
+  produce(query, q => insertMutable(q, ruleOrGroup as RuleType, path, options) as typeof q);
+
+/**
+ * Inserts a rule or group into a query by mutating the query.
+ *
+ * @returns The query (mutated) with the rule or group inserted.
+ *
+ * @group Query Tools
+ */
+export const insertMutable: InsertMethod = (
+  query,
+  ruleOrGroup,
+  path,
+  options = {}
+): typeof query => {
+  const {
     combinators = defaultCombinators,
     combinatorPreceding,
     combinatorSucceeding,
     idGenerator = generateID,
     replace = false,
-  }: InsertOptions = {}
-): RG =>
-  produce(query, draft => {
-    const parentToInsertInto = findPath(getParentPath(path), draft) as RG;
-    if (!parentToInsertInto || !isRuleGroup(parentToInsertInto)) return;
+  } = options;
 
-    const rorg = regenerateIDs(ruleOrGroup as RuleGroupTypeAny, { idGenerator });
-    const independentCombinators = isRuleGroupTypeIC(draft);
-    const newIndex = path.at(-1)!;
+  const parentToInsertInto = findPath(getParentPath(path), query) as typeof query;
+  if (!parentToInsertInto || !isRuleGroup(parentToInsertInto)) return query;
 
-    /**
-     * This function 1) glosses over the need for type assertions to splice directly
-     * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
-     */
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const insertRuleOrGroup = (idx: number, ...args: any[]) =>
-      parentToInsertInto.rules.splice(idx, replace ? args.length : 0, ...args);
+  const rorg = regenerateIDs(ruleOrGroup, { idGenerator });
+  const independentCombinators = isRuleGroupTypeIC(query);
+  const newIndex = path.at(-1)!;
 
-    // Insert the source item at the target path
-    if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
-      insertRuleOrGroup(newIndex, rorg);
-    } else if (replace && independentCombinators) {
-      insertRuleOrGroup(newIndex + (newIndex % 2), rorg);
-    } else {
-      if (newIndex === 0) {
-        if (rorg.path?.at(-1) === 0 && combinatorSucceeding) {
-          insertRuleOrGroup(newIndex, rorg, combinatorSucceeding);
-        } else {
-          const newNextCombinator =
-            parentToInsertInto.rules[1] ?? combinatorPreceding ?? getFirstOption(combinators);
-          insertRuleOrGroup(newIndex, rorg, newNextCombinator);
-        }
+  /**
+   * This function 1) glosses over the need for type assertions to splice directly
+   * into `parentToInsertInto.rules`, and 2) shortens the actual insertion code.
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const insertRuleOrGroup = (idx: number, ...args: any[]) =>
+    parentToInsertInto.rules.splice(idx, replace ? args.length : 0, ...args);
+
+  // Insert the source item at the target path
+  if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
+    insertRuleOrGroup(newIndex, rorg);
+  } else if (replace && independentCombinators) {
+    insertRuleOrGroup(newIndex + (newIndex % 2), rorg);
+  } else {
+    if (newIndex === 0) {
+      if (rorg.path?.at(-1) === 0 && combinatorSucceeding) {
+        insertRuleOrGroup(newIndex, rorg, combinatorSucceeding);
       } else {
-        const normalizedNewIndex = newIndex % 2 === 0 ? newIndex - 1 : newIndex;
-        if (combinatorPreceding) {
-          insertRuleOrGroup(normalizedNewIndex, combinatorPreceding, rorg);
-        } else {
-          const newPrevCombinator =
-            parentToInsertInto.rules[normalizedNewIndex - 2] ??
-            combinatorSucceeding ??
-            getFirstOption(combinators);
-          insertRuleOrGroup(normalizedNewIndex, newPrevCombinator, rorg);
-        }
+        const newNextCombinator =
+          parentToInsertInto.rules[1] ?? combinatorPreceding ?? getFirstOption(combinators);
+        insertRuleOrGroup(newIndex, rorg, newNextCombinator);
+      }
+    } else {
+      const normalizedNewIndex = newIndex % 2 === 0 ? newIndex - 1 : newIndex;
+      if (combinatorPreceding) {
+        insertRuleOrGroup(normalizedNewIndex, combinatorPreceding, rorg);
+      } else {
+        const newPrevCombinator =
+          parentToInsertInto.rules[normalizedNewIndex - 2] ??
+          combinatorSucceeding ??
+          getFirstOption(combinators);
+        insertRuleOrGroup(normalizedNewIndex, newPrevCombinator, rorg);
       }
     }
-  });
+  }
+
+  return query;
+};
 
 /**
  * Options for {@link group}.
@@ -608,25 +722,53 @@ export interface GroupOptions {
    */
   idGenerator?: () => string;
 }
+
+export interface GroupMethod {
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** Path of the rule/group to move or clone. */
+    sourcePathOrID: Path | string,
+    /** Path of the target rule/group, which will become the path of the new group. */
+    targetPathOrID: Path | string,
+    /** Options. */
+    options?: GroupOptions
+  ): RG;
+}
+
 /**
  * Creates a new group at a target path with its `rules` array containing the current
- * objects at the target path and the source path. In the options parameter, pass
- * `{ clone: true }` to copy the source rule/group instead of move.
+ * objects at the target path and the source path without mutating the original query.
+ * In the options parameter, pass `{ clone: true }` to copy the source rule/group instead of move.
  *
- * @returns The new query with the rules or groups grouped.
+ * @returns A new query with the rules or groups grouped.
  *
  * @group Query Tools
  */
-export const group = <RG extends RuleGroupTypeAny>(
-  /** The query to update. */
-  query: RG,
-  /** Path of the rule/group to move or clone. */
-  sourcePathOrID: Path | string,
-  /** Path of the target rule/group, which will become the path of the new group. */
-  targetPathOrID: Path | string,
-  /** Options. */
-  { clone = false, combinators = defaultCombinators, idGenerator = generateID }: GroupOptions = {}
-): RG => {
+export const group: GroupMethod = (
+  query,
+  sourcePathOrID,
+  targetPathOrID,
+  options = {}
+): typeof query =>
+  produce(query, q => groupMutable(q, sourcePathOrID, targetPathOrID, options) as typeof q);
+
+/**
+ * Creates a new group at a target path with its `rules` array containing the current
+ * objects at the target path and the source path by mutating the query.
+ * In the options parameter, pass `{ clone: true }` to copy the source rule/group instead of move.
+ *
+ * @returns The query (mutated) with the rules or groups grouped.
+ *
+ * @group Query Tools
+ */
+export const groupMutable: GroupMethod = (
+  query,
+  sourcePathOrID,
+  targetPathOrID,
+  options = {}
+): typeof query => {
+  const { clone = false, combinators = defaultCombinators, idGenerator = generateID } = options;
   const sourcePath = Array.isArray(sourcePathOrID)
     ? sourcePathOrID
     : getPathOfID(sourcePathOrID, query);
@@ -654,54 +796,59 @@ export const group = <RG extends RuleGroupTypeAny>(
     return query;
   }
   const sourceRuleOrGroup = clone
-    ? regenerateIDs(sourceRuleOrGroupOriginal as RuleGroupTypeAny, { idGenerator })
+    ? regenerateIDs(
+        isDraft(sourceRuleOrGroupOriginal)
+          ? current(sourceRuleOrGroupOriginal)
+          : sourceRuleOrGroupOriginal,
+        { idGenerator }
+      )
     : sourceRuleOrGroupOriginal;
 
-  return produce(query, draft => {
-    const independentCombinators = isRuleGroupTypeIC(draft);
-    const parentOfRuleToRemove = findPath(getParentPath(sourcePath), draft) as RG;
-    const ruleToRemoveIndex = sourcePath.at(-1)!;
+  const independentCombinators = isRuleGroupTypeIC(query);
+  const parentOfRuleToRemove = findPath(getParentPath(sourcePath), query) as typeof query;
+  const ruleToRemoveIndex = sourcePath.at(-1)!;
 
-    // Remove the source item if not cloning
-    if (!clone) {
-      const idxStartDelete = independentCombinators
-        ? Math.max(0, ruleToRemoveIndex - 1)
-        : ruleToRemoveIndex;
-      const deleteLength = independentCombinators ? 2 : 1;
-      parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
-    }
+  // Remove the source item if not cloning
+  if (!clone) {
+    const idxStartDelete = independentCombinators
+      ? Math.max(0, ruleToRemoveIndex - 1)
+      : ruleToRemoveIndex;
+    const deleteLength = independentCombinators ? 2 : 1;
+    parentOfRuleToRemove.rules.splice(idxStartDelete, deleteLength);
+  }
 
-    const newNewPath = [...nextPath];
-    const commonAncestorPath = getCommonAncestorPath(sourcePath, nextPath);
-    if (
-      !clone &&
-      sourcePath.length === commonAncestorPath.length + 1 &&
-      nextPath[commonAncestorPath.length] > sourcePath[commonAncestorPath.length]
-    ) {
-      // Getting here means there will be a shift of paths upward at the common
-      // ancestor level because the object at `oldPath` will be spliced out. The
-      // real new path should therefore be one or two higher than `newPathCalc`.
-      newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
-    }
-    const newNewParentPath = getParentPath(newNewPath);
-    const parentOfTargetPath = findPath(newNewParentPath, draft) as RG;
-    const targetPathIndex = newNewPath.at(-1)!;
+  const newNewPath = [...nextPath];
+  const commonAncestorPath = getCommonAncestorPath(sourcePath, nextPath);
+  if (
+    !clone &&
+    sourcePath.length === commonAncestorPath.length + 1 &&
+    nextPath[commonAncestorPath.length] > sourcePath[commonAncestorPath.length]
+  ) {
+    // Getting here means there will be a shift of paths upward at the common
+    // ancestor level because the object at `oldPath` will be spliced out. The
+    // real new path should therefore be one or two higher than `newPathCalc`.
+    newNewPath[commonAncestorPath.length] -= independentCombinators ? 2 : 1;
+  }
+  const newNewParentPath = getParentPath(newNewPath);
+  const parentOfTargetPath = findPath(newNewParentPath, query) as typeof query;
+  const targetPathIndex = newNewPath.at(-1)!;
 
-    // Convert the target path to a group and insert the source and target items as children
-    parentOfTargetPath.rules.splice(
-      targetPathIndex,
-      1,
-      prepareRuleOrGroup(
-        (independentCombinators
-          ? { rules: [targetRuleOrGroup, getFirstOption(combinators), sourceRuleOrGroup] }
-          : {
-              combinator: getFirstOption(combinators),
-              rules: [targetRuleOrGroup, sourceRuleOrGroup],
-              // oxlint-disable-next-line typescript/no-explicit-any
-            }) as any,
-        { idGenerator }
-        // oxlint-disable-next-line typescript/no-explicit-any
-      ) as any
-    );
-  });
+  // Convert the target path to a group and insert the source and target items as children
+  parentOfTargetPath.rules.splice(
+    targetPathIndex,
+    1,
+    prepareRuleOrGroup(
+      (independentCombinators
+        ? { rules: [targetRuleOrGroup, getFirstOption(combinators), sourceRuleOrGroup] }
+        : {
+            combinator: getFirstOption(combinators),
+            rules: [targetRuleOrGroup, sourceRuleOrGroup],
+            // oxlint-disable-next-line typescript/no-explicit-any
+          }) as any,
+      { idGenerator }
+      // oxlint-disable-next-line typescript/no-explicit-any
+    ) as any
+  );
+
+  return query;
 };

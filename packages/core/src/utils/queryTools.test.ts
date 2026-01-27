@@ -1,4 +1,5 @@
 import type { Equal, Expect, ExpectExtends } from '@rqb-testing';
+import { produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
   DefaultRuleGroupType,
@@ -12,7 +13,20 @@ import type {
 import { formatQuery } from './formatQuery';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { numericRegex } from './misc';
-import { add, group, insert, move, remove, update } from './queryTools';
+import {
+  add,
+  addMutable,
+  group,
+  groupMutable,
+  insert,
+  insertMutable,
+  move,
+  moveMutable,
+  remove,
+  removeMutable,
+  update,
+  updateMutable,
+} from './queryTools';
 import { transformQuery } from './transformQuery';
 
 const [and, or] = defaultCombinators.map(c => c.name);
@@ -53,8 +67,8 @@ const rgvsf: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [{ ...r1, valueSource: 'field' }],
 };
-const rg1wID: DefaultRuleGroupType = { id: '[]', ...rg1 };
-const rgic1wID: DefaultRuleGroupTypeIC = { id: '[]', ...rgic1 };
+const rg1wID: DefaultRuleGroupType = id(rg1, '[]');
+const rgic1wID: DefaultRuleGroupTypeIC = id(rgic1, '[]');
 const rg3wIDs = pathsAsIDs(rg3);
 
 const testQT = (
@@ -77,6 +91,75 @@ const testLoop = [
   ['path', (x: Path) => x],
   ['id', (x: Path) => JSON.stringify(x)],
 ] as const;
+
+describe('addMutable', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = { combinator: and, rules: [] };
+    const result = addMutable(original, r1, []);
+    expect(original).toBe(result);
+  });
+});
+
+describe('updateMutable', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+    };
+    const result = updateMutable(original, 'combinator', or, []);
+    expect(original).toBe(result);
+  });
+});
+
+describe('removeMutable', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+    };
+    const result = removeMutable(original, [0]);
+    expect(original).toBe(result);
+  });
+});
+
+describe('moveMutable', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        { field: 'f2', operator: '<', value: 'v2' },
+      ],
+    };
+    const result = moveMutable(original, [0], [2]);
+    expect(original).toBe(result);
+  });
+});
+
+describe('insertMutable', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+    };
+    const result = insertMutable(original, { field: 'f2', operator: '<', value: 'v2' }, [0]);
+    expect(original).toBe(result);
+  });
+});
+
+describe('groupMutable', () => {
+  it('mutates the original query', () => {
+    const original: DefaultRuleGroupType = {
+      combinator: and,
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        { field: 'f2', operator: '<', value: 'v2' },
+      ],
+    };
+    const result = groupMutable(original, [0], [1]);
+    expect(original).toBe(result);
+  });
+});
 
 describe('add', () => {
   describe.each(testLoop)('standard rule groups by %s', (_, p) => {
@@ -1212,5 +1295,55 @@ describe('group', () => {
     const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
     const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
     const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+  });
+});
+
+describe('draft handling', () => {
+  it('handles draft objects when cloning in move', () => {
+    const query: DefaultRuleGroupTypeAny = pathsAsIDs({
+      combinator: and,
+      rules: [r1, { combinator: and, rules: [r2] }],
+    });
+    const result = produce(query, draft => moveMutable(draft, [1, 0], [0], { clone: true }));
+    expect(stripIDs(result)).toEqual({
+      combinator: and,
+      rules: [r2, r1, { combinator: and, rules: [r2] }],
+    });
+  });
+
+  it('handles draft objects when cloning in group', () => {
+    const query: DefaultRuleGroupTypeAny = pathsAsIDs({
+      combinator: and,
+      rules: [r1, { combinator: and, rules: [r2] }],
+    });
+    const result = produce(query, draft => groupMutable(draft, [1, 0], [0], { clone: true }));
+    expect(stripIDs(result)).toEqual({
+      combinator: and,
+      rules: [
+        { combinator: and, rules: [r1, r2] },
+        { combinator: and, rules: [r2] },
+      ],
+    });
+  });
+
+  it('handles non-draft objects when cloning in moveMutable', () => {
+    const query = pathsAsIDs({ combinator: and, rules: [r1, { combinator: and, rules: [r2] }] });
+    const result = moveMutable(query, [1, 0], [0], { clone: true });
+    expect(stripIDs(result)).toEqual({
+      combinator: and,
+      rules: [r2, r1, { combinator: and, rules: [r2] }],
+    });
+  });
+
+  it('handles non-draft objects when cloning in groupMutable', () => {
+    const query = pathsAsIDs({ combinator: and, rules: [r1, { combinator: and, rules: [r2] }] });
+    const result = groupMutable(query, [1, 0], [0], { clone: true });
+    expect(stripIDs(result)).toEqual({
+      combinator: and,
+      rules: [
+        { combinator: and, rules: [r1, r2] },
+        { combinator: and, rules: [r2] },
+      ],
+    });
   });
 });
