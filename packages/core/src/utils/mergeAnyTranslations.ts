@@ -1,4 +1,3 @@
-import { produce } from 'immer';
 import { objectEntries, objectKeys } from './objectUtils';
 
 /**
@@ -7,21 +6,24 @@ import { objectEntries, objectKeys } from './objectUtils';
 export const mergeAnyTranslations = (
   base: Record<string, Record<string, unknown>>,
   ...otherTranslations: (Record<string, Record<string, unknown>> | undefined)[]
-): Record<string, Record<string, unknown>> =>
-  produce(base, draft => {
-    for (const translations of otherTranslations) {
-      // istanbul ignore else
-      if (translations) {
-        for (const t of objectKeys(translations)) {
-          if (draft[t]) {
-            Object.assign(draft[t], translations[t]);
-          } else {
-            Object.assign(draft, { [t]: translations[t] });
-          }
+): Record<string, Record<string, unknown>> => {
+  const result = { ...base };
+
+  for (const translations of otherTranslations) {
+    // istanbul ignore else
+    if (translations) {
+      for (const key of objectKeys(translations)) {
+        if (result[key]) {
+          result[key] = { ...result[key], ...translations[key] };
+        } else {
+          result[key] = { ...translations[key] };
         }
       }
     }
-  });
+  }
+
+  return result;
+};
 
 export const mergeAnyTranslation = (
   el: string,
