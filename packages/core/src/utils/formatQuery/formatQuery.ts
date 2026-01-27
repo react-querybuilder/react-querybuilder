@@ -1,4 +1,3 @@
-import { produce } from 'immer';
 import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
@@ -527,9 +526,7 @@ function formatQuery(
   switch (format) {
     case 'json':
     case 'json_without_ids': {
-      const rg = parseNumbers
-        ? produce(ruleGroup, g => numerifyValues(g, finalOptions))
-        : ruleGroup;
+      const rg = parseNumbers ? numerifyValues(ruleGroup, finalOptions) : ruleGroup;
       if (format === 'json_without_ids') {
         return JSON.stringify(rg, (key, value) =>
           // Remove `id` and `path` keys; leave everything else unchanged.

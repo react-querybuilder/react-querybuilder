@@ -119,7 +119,8 @@ export const jsonLogicAdditionalOperators: Record<
 };
 
 /**
- * Converts all `string`-type `value` properties of a query object into `number` where appropriate.
+ * Returns a new query object with all `string`-type `value` properties converted
+ * to `number` where appropriate.
  *
  * Used by {@link formatQuery} for the `json*` formats when `parseNumbers` is `true`.
  *
