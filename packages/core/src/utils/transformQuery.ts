@@ -6,28 +6,33 @@
  * @module transformQuery
  */
 
-import { produce } from 'immer';
 import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC, RuleType } from '../types';
 import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
 
 const remapProperties = (
-  // oxlint-disable-next-line typescript/no-explicit-any
-  obj: Record<string, any>,
+  obj: Record<string, unknown>,
   propertyMap: Record<string, string | false>,
   deleteRemappedProperties: boolean
-) =>
-  produce(obj, draft => {
-    for (const [k, v] of Object.entries(propertyMap)) {
-      if (v === false) {
-        delete draft[k];
-      } else if (!!v && k !== v && k in draft) {
-        draft[v] = draft[k];
-        if (deleteRemappedProperties) {
-          delete draft[k];
-        }
-      }
+): Record<string, unknown> => {
+  const result: Record<string, unknown> = {};
+
+  for (const key in obj) {
+    const mappedKey = propertyMap[key];
+    if (mappedKey === false) {
+      continue;
     }
-  });
+    if (mappedKey && key !== mappedKey) {
+      result[mappedKey] = obj[key];
+      if (!deleteRemappedProperties) {
+        result[key] = obj[key];
+      }
+    } else {
+      result[key] = obj[key];
+    }
+  }
+
+  return result;
+};
 
 /**
  * Options object for {@link index!transformQuery transformQuery}.
@@ -202,7 +207,7 @@ export function transformQuery<RG extends RuleGroupTypeAny>(
                 },
                 propertyMap,
                 deleteRemappedProperties
-              ) as RuleType
+              ) as unknown as RuleType
             );
           }),
         }),

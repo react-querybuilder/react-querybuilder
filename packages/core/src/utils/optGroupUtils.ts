@@ -1,5 +1,3 @@
-import type { Draft } from 'immer';
-import { produce } from 'immer';
 import type { RequireAtLeastOne } from 'type-fest';
 import { defaultPlaceholderLabel, defaultPlaceholderName } from '../defaults';
 import type {
@@ -40,32 +38,31 @@ export function toFullOption<Opt extends BaseOption>(
   baseProperties?: Record<string, unknown>,
   labelMap?: Record<string, unknown>
 ): ToFullOption<Opt> {
-  const recipe: (o: Opt | string) => ToFullOption<Opt> = produce(draft => {
-    const idObj: { name?: string; value?: string } = {};
-    let needsUpdating = !!baseProperties;
+  if (typeof opt === 'string') {
+    return {
+      ...baseProperties,
+      name: opt,
+      value: opt,
+      label: labelMap?.[opt] ?? opt,
+    } as ToFullOption<Opt>;
+  }
 
-    if (typeof draft === 'string') {
-      return {
-        ...baseProperties,
-        name: draft,
-        value: draft,
-        label: labelMap?.[draft] ?? draft,
-      } as Draft<Opt>;
-    }
+  const idObj: { name?: string; value?: string } = {};
+  let needsUpdating = !!baseProperties;
 
-    if (isOptionWithName(draft) && !isOptionWithValue(draft)) {
-      idObj.value = draft.name;
-      needsUpdating = true;
-    } else if (!isOptionWithName(draft) && isOptionWithValue(draft)) {
-      idObj.name = draft.value;
-      needsUpdating = true;
-    }
+  if (isOptionWithName(opt) && !isOptionWithValue(opt)) {
+    idObj.value = opt.name;
+    needsUpdating = true;
+  } else if (!isOptionWithName(opt) && isOptionWithValue(opt)) {
+    idObj.name = opt.value;
+    needsUpdating = true;
+  }
 
-    if (needsUpdating) {
-      return Object.assign({}, baseProperties, draft, idObj);
-    }
-  });
-  return recipe(opt);
+  if (needsUpdating) {
+    return Object.assign({}, baseProperties, opt, idObj) as ToFullOption<Opt>;
+  }
+
+  return opt as ToFullOption<Opt>;
 }
 
 /**
@@ -83,19 +80,18 @@ export function toFullOptionList<Opt extends BaseOption>(
     return [] as unknown as FullOptionList<Opt>;
   }
 
-  const recipe: (ol: FlexibleOptionList<Opt>) => FullOptionList<Opt> = produce(draft => {
-    if (isFlexibleOptionGroupArray(draft)) {
-      for (const optGroup of draft) {
-        for (const [idx, opt] of optGroup.options.entries())
-          optGroup.options[idx] = toFullOption(opt, baseProperties, labelMap);
-      }
-    } else {
-      for (const [idx, opt] of (draft as Opt[]).entries())
-        draft[idx] = toFullOption(opt, baseProperties, labelMap);
-    }
-  });
+  const list = optList as FlexibleOptionList<Opt>;
 
-  return recipe(optList as FlexibleOptionList<Opt>);
+  if (isFlexibleOptionGroupArray(list)) {
+    return list.map(optGroup => ({
+      ...optGroup,
+      options: optGroup.options.map(opt => toFullOption(opt, baseProperties, labelMap)),
+    })) as unknown as FullOptionList<Opt>;
+  }
+
+  return (list as Opt[]).map(opt =>
+    toFullOption(opt, baseProperties, labelMap)
+  ) as FullOptionList<Opt>;
 }
 
 /**

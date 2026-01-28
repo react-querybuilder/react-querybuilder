@@ -1,6 +1,6 @@
-import { produce } from 'immer';
 import type {
   RuleGroupArray,
+  RuleGroupICArray,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
@@ -28,46 +28,51 @@ const generateRuleGroupICWithConsistentCombinators = (
       : rg;
   }
 
-  return produce(rg, draft => {
-    let cursor = 0;
+  const newRules = [...rg.rules] as RuleGroupICArray;
+  let cursor = 0;
 
-    // Group all chains of combinators in the rule array that are not the base combinator
-    while (cursor < draft.rules.length - 2) {
-      if (isSameString(draft.rules[cursor + 1], baseCombinator)) {
-        cursor += 2;
-        continue;
-      }
+  // Group all chains of combinators in the rule array that are not the base combinator
+  while (cursor < newRules.length - 2) {
+    if (isSameString(newRules[cursor + 1], baseCombinator)) {
+      cursor += 2;
+      continue;
+    }
 
-      const nextBaseCombinatorIndex = draft.rules.findIndex(
-        (r, i) => i > cursor && typeof r === 'string' && lc(r) === baseCombinator
-      );
-
-      if (nextBaseCombinatorIndex === -1) {
-        // No more instances of this combinator, so group all remaining rules and exit the loop
-        draft.rules.splice(
-          cursor,
-          draft.rules.length,
-          generateRuleGroupICWithConsistentCombinators(
-            // oxlint-disable-next-line typescript/no-explicit-any
-            { rules: draft.rules.slice(cursor) as any },
-            baseCombinatorLevel + 1
-          )
-        );
+    let nextBaseCombinatorIndex = -1;
+    for (let i = cursor + 2; i < newRules.length; i++) {
+      if (typeof newRules[i] === 'string' && lc(newRules[i]) === baseCombinator) {
+        nextBaseCombinatorIndex = i;
         break;
-      } else {
-        // Group all rules between the current cursor and the next instance of the base combinator
-        draft.rules.splice(
-          cursor,
-          nextBaseCombinatorIndex - cursor,
-          generateRuleGroupICWithConsistentCombinators(
-            // oxlint-disable-next-line typescript/no-explicit-any
-            { rules: draft.rules.slice(cursor, nextBaseCombinatorIndex) as any },
-            baseCombinatorLevel + 1
-          )
-        );
       }
     }
-  });
+
+    if (nextBaseCombinatorIndex === -1) {
+      // No more instances of this combinator, so group all remaining rules and exit the loop
+      newRules.splice(
+        cursor,
+        newRules.length,
+        generateRuleGroupICWithConsistentCombinators(
+          // oxlint-disable-next-line typescript/no-explicit-any
+          { rules: newRules.slice(cursor) as any },
+          baseCombinatorLevel + 1
+        )
+      );
+      break;
+    } else {
+      // Group all rules between the current cursor and the next instance of the base combinator
+      newRules.splice(
+        cursor,
+        nextBaseCombinatorIndex - cursor,
+        generateRuleGroupICWithConsistentCombinators(
+          // oxlint-disable-next-line typescript/no-explicit-any
+          { rules: newRules.slice(cursor, nextBaseCombinatorIndex) as any },
+          baseCombinatorLevel + 1
+        )
+      );
+    }
+  }
+
+  return { ...rg, rules: newRules };
 };
 
 /**
@@ -85,11 +90,15 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
     return rg as RG;
   }
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
-  const rulesAsMixedList = processedRG.rules.map(r =>
-    typeof r === 'string' || !isRuleGroup(r) ? r : convertFromIC(r)
-  );
-  const combinator = rulesAsMixedList.length < 2 ? 'and' : (rulesAsMixedList[1] as string);
-  const rules = rulesAsMixedList.filter(r => typeof r !== 'string') as RuleGroupArray;
+  const rules: RuleGroupArray = [];
+  let combinator = 'and';
+  for (const [idx, r] of processedRG.rules.entries()) {
+    if (typeof r === 'string') {
+      if (idx === 1) combinator = r;
+    } else {
+      rules.push(isRuleGroup(r) ? convertFromIC(r) : r);
+    }
+  }
   return { ...processedRG, combinator, rules } as RG;
 };
 
@@ -110,7 +119,8 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
   const { length } = rg.rules;
-  for (const [idx, r] of rg.rules.entries()) {
+  for (let idx = 0; idx < length; idx++) {
+    const r = rg.rules[idx];
     if (isRuleGroup(r)) {
       rules.push(convertToIC(r));
     } else {

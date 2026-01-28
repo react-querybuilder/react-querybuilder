@@ -416,7 +416,6 @@
       "dependencies": {
         "@react-querybuilder/core": "^8.14.0",
         "@reduxjs/toolkit": "catalog:",
-        "immer": "catalog:",
         "react-redux": "catalog:",
       },
       "devDependencies": {

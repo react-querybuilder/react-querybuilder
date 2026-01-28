@@ -8,7 +8,6 @@ import {
   standardClassnames,
   toArray,
 } from '@react-querybuilder/core';
-import { produce } from 'immer';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import type { Schema, ValueEditorProps } from '../types';
@@ -332,17 +331,23 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
   const multiValueHandler = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
     (val: any, idx: number) => {
-      const v = produce(valueAsArray, va => {
-        va[idx] = parseNumber(val, { parseNumbers: parseNumberMethod });
-        // Enforce an array length of (at least) two for "between"/"notBetween"
-        if (
-          idx === 0 &&
-          (operator === 'between' || operator === 'notBetween') &&
-          (va.length < 2 || va[1] === undefined)
-        ) {
-          va[1] = getFirstOption(values);
-        }
-      });
+      const parsedVal = parseNumber(val, { parseNumbers: parseNumberMethod });
+      const needsBetweenFix =
+        idx === 0 &&
+        (operator === 'between' || operator === 'notBetween') &&
+        (valueAsArray.length < 2 || valueAsArray[1] === undefined);
+      // Check if value at index is already the same and no between/notBetween fix needed
+      if (valueAsArray[idx] === parsedVal && !needsBetweenFix) {
+        // Return the array as-is
+        handleOnChange(listsAsArrays ? valueAsArray : joinWith(valueAsArray, ','));
+        return;
+      }
+      const v = [...valueAsArray];
+      v[idx] = parsedVal;
+      // Enforce an array length of (at least) two for "between"/"notBetween"
+      if (needsBetweenFix) {
+        v[1] = getFirstOption(values);
+      }
       handleOnChange(listsAsArrays ? v : joinWith(v, ','));
     },
     [handleOnChange, listsAsArrays, operator, parseNumberMethod, valueAsArray, values]

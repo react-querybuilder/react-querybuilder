@@ -152,3 +152,41 @@ it('does not call handleOnChange when skipHook is true', () => {
   hr.result.current.multiValueHandler('2', 0);
   expect(handleOnChange).toHaveBeenCalledWith('2,14');
 });
+
+it('returns array as-is when multiValueHandler receives same value', () => {
+  const handleOnChange = jest.fn();
+  const hr = renderHook(() =>
+    useValueEditor({
+      ...baseValueEditorProps,
+      handleOnChange,
+      operator: 'between',
+      inputType: 'number',
+      value: [12, 14],
+      skipHook: true,
+      listsAsArrays: true,
+    })
+  );
+  expect(handleOnChange).not.toHaveBeenCalled();
+  hr.result.current.multiValueHandler(12, 0);
+  expect(handleOnChange).toHaveBeenCalledWith([12, 14]);
+  expect(handleOnChange).toHaveBeenCalledTimes(1);
+});
+
+it('returns comma-separated string when multiValueHandler receives same value and listsAsArrays is false', () => {
+  const handleOnChange = jest.fn();
+  const hr = renderHook(() =>
+    useValueEditor({
+      ...baseValueEditorProps,
+      handleOnChange,
+      operator: 'between',
+      inputType: 'number',
+      value: [12, 14],
+      skipHook: true,
+      listsAsArrays: false,
+    })
+  );
+  expect(handleOnChange).not.toHaveBeenCalled();
+  hr.result.current.multiValueHandler(12, 0);
+  expect(handleOnChange).toHaveBeenCalledWith('12,14');
+  expect(handleOnChange).toHaveBeenCalledTimes(1);
+});
