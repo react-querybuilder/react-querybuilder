@@ -71,16 +71,16 @@ export interface AddMethod {
  * @group Query Tools
  */
 export const add: AddMethod = (query, ruleOrGroup, parentPathOrID, options = {}): typeof query =>
-  produce(query, q => addMutable(q, ruleOrGroup as RuleType, parentPathOrID, options) as typeof q);
+  produce(query, q => addInPlace(q, ruleOrGroup as RuleType, parentPathOrID, options) as typeof q);
 
 /**
- * Adds a rule or group to a query by mutating the query.
+ * Adds a rule or group to a query in place.
  *
- * @returns The query (mutated) with the rule or group added.
+ * @returns The query (mutated in place) with the rule or group added.
  *
  * @group Query Tools
  */
-export const addMutable: AddMethod = (
+export const addInPlace: AddMethod = (
   query,
   ruleOrGroup,
   parentPathOrID,
@@ -172,16 +172,16 @@ export interface UpdateMethod {
  * @group Query Tools
  */
 export const update: UpdateMethod = (query, prop, value, pathOrID, options = {}): typeof query =>
-  produce(query, q => updateMutable(q, prop, value, pathOrID, options) as typeof q);
+  produce(query, q => updateInPlace(q, prop, value, pathOrID, options) as typeof q);
 
 /**
- * Updates a property of a rule or group within a query by mutating the query.
+ * Updates a property of a rule or group within a query in place.
  *
- * @returns The query (mutated) with the rule or group property updated.
+ * @returns The query (mutated in place) with the rule or group property updated.
  *
  * @group Query Tools
  */
-export const updateMutable: UpdateMethod = (
+export const updateInPlace: UpdateMethod = (
   query,
   prop,
   value,
@@ -317,16 +317,16 @@ export interface RemoveMethod {
  * @group Query Tools
  */
 export const remove: RemoveMethod = (query, pathOrID): typeof query =>
-  produce(query, q => removeMutable(q, pathOrID) as typeof q);
+  produce(query, q => removeInPlace(q, pathOrID) as typeof q);
 
 /**
- * Removes a rule or group from a query by mutating the query.
+ * Removes a rule or group from a query in place.
  *
- * @returns The query (mutated) with the rule or group removed.
+ * @returns The query (mutated in place) with the rule or group removed.
  *
  * @group Query Tools
  */
-export const removeMutable: RemoveMethod = (query, pathOrID): typeof query => {
+export const removeInPlace: RemoveMethod = (query, pathOrID): typeof query => {
   const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
 
   if (
@@ -455,17 +455,17 @@ export interface MoveMethod {
  * @group Query Tools
  */
 export const move: MoveMethod = (query, oldPathOrID, newPath, options = {}): typeof query =>
-  produce(query, q => moveMutable(q, oldPathOrID, newPath, options) as typeof q);
+  produce(query, q => moveInPlace(q, oldPathOrID, newPath, options) as typeof q);
 
 /**
- * Moves a rule or group from one path to another by mutating the query.
+ * Moves a rule or group from one path to another in place.
  * In the options parameter, pass `{ clone: true }` to copy instead of move.
  *
- * @returns The query (mutated) with the rule or group moved or cloned.
+ * @returns The query (mutated in place) with the rule or group moved or cloned.
  *
  * @group Query Tools
  */
-export const moveMutable: MoveMethod = (
+export const moveInPlace: MoveMethod = (
   query,
   oldPathOrID,
   newPath,
@@ -632,16 +632,16 @@ export interface InsertMethod {
  * @group Query Tools
  */
 export const insert: InsertMethod = (query, ruleOrGroup, path, options = {}): typeof query =>
-  produce(query, q => insertMutable(q, ruleOrGroup as RuleType, path, options) as typeof q);
+  produce(query, q => insertInPlace(q, ruleOrGroup as RuleType, path, options) as typeof q);
 
 /**
- * Inserts a rule or group into a query by mutating the query.
+ * Inserts a rule or group into a query in place.
  *
- * @returns The query (mutated) with the rule or group inserted.
+ * @returns The query (mutated in place) with the rule or group inserted.
  *
  * @group Query Tools
  */
-export const insertMutable: InsertMethod = (
+export const insertInPlace: InsertMethod = (
   query,
   ruleOrGroup,
   path,
@@ -751,18 +751,18 @@ export const group: GroupMethod = (
   targetPathOrID,
   options = {}
 ): typeof query =>
-  produce(query, q => groupMutable(q, sourcePathOrID, targetPathOrID, options) as typeof q);
+  produce(query, q => groupInPlace(q, sourcePathOrID, targetPathOrID, options) as typeof q);
 
 /**
  * Creates a new group at a target path with its `rules` array containing the current
- * objects at the target path and the source path by mutating the query.
+ * objects at the target path and the source path in place.
  * In the options parameter, pass `{ clone: true }` to copy the source rule/group instead of move.
  *
- * @returns The query (mutated) with the rules or groups grouped.
+ * @returns The query (mutated in place) with the rules or groups grouped.
  *
  * @group Query Tools
  */
-export const groupMutable: GroupMethod = (
+export const groupInPlace: GroupMethod = (
   query,
   sourcePathOrID,
   targetPathOrID,

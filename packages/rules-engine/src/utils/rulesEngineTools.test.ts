@@ -11,15 +11,15 @@ import type {
 } from '../types';
 import {
   addRE,
-  addREMutable,
+  addREInPlace,
   insertRE,
-  insertREMutable,
+  insertREInPlace,
   moveRE,
-  moveREMutable,
+  moveREInPlace,
   removeRE,
-  removeREMutable,
+  removeREInPlace,
   updateRE,
-  updateREMutable,
+  updateREInPlace,
 } from './rulesEngineTools';
 
 const stripIDs = (re: unknown) =>
@@ -452,40 +452,40 @@ describe('insertRE', () => {
   });
 });
 
-describe('addREMutable', () => {
+describe('addREInPlace', () => {
   it('mutates the original rules engine', () => {
     const original: RulesEngine = { conditions: [] };
-    const result = addREMutable(original, cond1, []);
+    const result = addREInPlace(original, cond1, []);
     expect(original).toBe(result);
   });
 });
 
-describe('updateREMutable', () => {
+describe('updateREInPlace', () => {
   it('mutates the original rules engine', () => {
     const original: RulesEngine = { conditions: [{ ...cond1 }] };
-    const result = updateREMutable(original, 'id', 'newId', []);
+    const result = updateREInPlace(original, 'id', 'newId', []);
     expect(original).toBe(result);
   });
 });
 
-describe('removeREMutable', () => {
+describe('removeREInPlace', () => {
   it('mutates the original rules engine', () => {
     const original: RulesEngine = { conditions: [cond1, cond2] };
-    const result = removeREMutable(original, [0]);
+    const result = removeREInPlace(original, [0]);
     expect(original).toBe(result);
   });
 });
 
-describe('moveREMutable', () => {
+describe('moveREInPlace', () => {
   it('mutates the original rules engine', () => {
     const original: RulesEngine = { conditions: [cond1, cond2] };
-    const result = moveREMutable(original, [0], [2]);
+    const result = moveREInPlace(original, [0], [2]);
     expect(original).toBe(result);
   });
 
   it('handles cloning from a regular object', () => {
     const original: RulesEngine = { conditions: [cond1, cond2] };
-    const result = moveREMutable(original, [0], [2], { clone: true, idGenerator });
+    const result = moveREInPlace(original, [0], [2], { clone: true, idGenerator });
     expect(result.conditions.length).toBe(3);
     expect(result.conditions[2].id).toMatch(numericRegex);
   });
@@ -493,17 +493,17 @@ describe('moveREMutable', () => {
   it('handles cloning from within a draft', () => {
     const original: RulesEngine = { conditions: [cond1, cond2] };
     const result = produce(original, draft => {
-      moveREMutable(draft, [0], [2], { clone: true, idGenerator });
+      moveREInPlace(draft, [0], [2], { clone: true, idGenerator });
     });
     expect(result.conditions.length).toBe(3);
     expect(result.conditions[2].id).toMatch(numericRegex);
   });
 });
 
-describe('insertREMutable', () => {
+describe('insertREInPlace', () => {
   it('mutates the original rules engine', () => {
     const original: RulesEngine = { conditions: [cond1] };
-    const result = insertREMutable(original, cond2, [0]);
+    const result = insertREInPlace(original, cond2, [0]);
     expect(original).toBe(result);
   });
 });

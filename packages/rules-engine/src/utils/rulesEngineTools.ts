@@ -54,7 +54,7 @@ export const addRE: AddMethodRE = (
 ): typeof rulesEngine =>
   produce(
     rulesEngine,
-    re => addREMutable(re, subject, parentConditionPathOrID, options) as typeof re
+    re => addREInPlace(re, subject, parentConditionPathOrID, options) as typeof re
   );
 
 /**
@@ -64,7 +64,7 @@ export const addRE: AddMethodRE = (
  *
  * @group Rules Engine Tools
  */
-export const addREMutable: AddMethodRE = (
+export const addREInPlace: AddMethodRE = (
   rulesEngine,
   subject,
   parentConditionPathOrID,
@@ -133,7 +133,7 @@ export const updateRE: UpdateMethodRE = (
 ): typeof rulesEngine =>
   produce(
     rulesEngine,
-    re => updateREMutable(re, property, value, conditionPathOrID, options) as typeof re
+    re => updateREInPlace(re, property, value, conditionPathOrID, options) as typeof re
   );
 
 /**
@@ -143,7 +143,7 @@ export const updateRE: UpdateMethodRE = (
  *
  * @group Rules Engine Tools
  */
-export const updateREMutable: UpdateMethodRE = (
+export const updateREInPlace: UpdateMethodRE = (
   rulesEngine,
   property,
   value,
@@ -183,7 +183,7 @@ export interface RemoveMethodRE {
  * @group Rules Engine Tools
  */
 export const removeRE: RemoveMethodRE = (rulesEngine, conditionPathOrID): typeof rulesEngine =>
-  produce(rulesEngine, re => removeREMutable(re, conditionPathOrID) as typeof re);
+  produce(rulesEngine, re => removeREInPlace(re, conditionPathOrID) as typeof re);
 
 /**
  * Removes a rule engine condition from a rules engine by mutating the rules engine.
@@ -192,7 +192,7 @@ export const removeRE: RemoveMethodRE = (rulesEngine, conditionPathOrID): typeof
  *
  * @group Rules Engine Tools
  */
-export const removeREMutable: RemoveMethodRE = (
+export const removeREInPlace: RemoveMethodRE = (
   rulesEngine,
   conditionPathOrID
 ): typeof rulesEngine => {
@@ -291,7 +291,7 @@ export const moveRE: MoveMethodRE = (
   produce(
     rulesEngine,
     re =>
-      moveREMutable(re, oldConditionPathOrID, newConditionPathOrIdOrShiftDir, options) as typeof re
+      moveREInPlace(re, oldConditionPathOrID, newConditionPathOrIdOrShiftDir, options) as typeof re
   );
 
 /**
@@ -302,7 +302,7 @@ export const moveRE: MoveMethodRE = (
  *
  * @group Rules Engine Tools
  */
-export const moveREMutable: MoveMethodRE = (
+export const moveREInPlace: MoveMethodRE = (
   rulesEngine,
   oldConditionPathOrID,
   newConditionPathOrIdOrShiftDir,
@@ -428,7 +428,7 @@ export const insertRE: InsertMethodRE = (
   conditionPath,
   options = {}
 ): typeof rulesEngine =>
-  produce(rulesEngine, re => insertREMutable(re, subject, conditionPath, options) as typeof re);
+  produce(rulesEngine, re => insertREInPlace(re, subject, conditionPath, options) as typeof re);
 
 /**
  * Inserts a rule engine condition into a rules engine by mutating the rules engine.
@@ -437,7 +437,7 @@ export const insertRE: InsertMethodRE = (
  *
  * @group Rules Engine Tools
  */
-export const insertREMutable: InsertMethodRE = (
+export const insertREInPlace: InsertMethodRE = (
   rulesEngine,
   subject,
   conditionPath,

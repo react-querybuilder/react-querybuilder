@@ -15,17 +15,17 @@ import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { numericRegex } from './misc';
 import {
   add,
-  addMutable,
+  addInPlace,
   group,
-  groupMutable,
+  groupInPlace,
   insert,
-  insertMutable,
+  insertInPlace,
   move,
-  moveMutable,
+  moveInPlace,
   remove,
-  removeMutable,
+  removeInPlace,
   update,
-  updateMutable,
+  updateInPlace,
 } from './queryTools';
 import { transformQuery } from './transformQuery';
 
@@ -92,37 +92,37 @@ const testLoop = [
   ['id', (x: Path) => JSON.stringify(x)],
 ] as const;
 
-describe('addMutable', () => {
+describe('addInPlace', () => {
   it('mutates the original query', () => {
     const original: DefaultRuleGroupType = { combinator: and, rules: [] };
-    const result = addMutable(original, r1, []);
+    const result = addInPlace(original, r1, []);
     expect(original).toBe(result);
   });
 });
 
-describe('updateMutable', () => {
+describe('updateInPlace', () => {
   it('mutates the original query', () => {
     const original: DefaultRuleGroupType = {
       combinator: and,
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
-    const result = updateMutable(original, 'combinator', or, []);
+    const result = updateInPlace(original, 'combinator', or, []);
     expect(original).toBe(result);
   });
 });
 
-describe('removeMutable', () => {
+describe('removeInPlace', () => {
   it('mutates the original query', () => {
     const original: DefaultRuleGroupType = {
       combinator: and,
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
-    const result = removeMutable(original, [0]);
+    const result = removeInPlace(original, [0]);
     expect(original).toBe(result);
   });
 });
 
-describe('moveMutable', () => {
+describe('moveInPlace', () => {
   it('mutates the original query', () => {
     const original: DefaultRuleGroupType = {
       combinator: and,
@@ -131,23 +131,23 @@ describe('moveMutable', () => {
         { field: 'f2', operator: '<', value: 'v2' },
       ],
     };
-    const result = moveMutable(original, [0], [2]);
+    const result = moveInPlace(original, [0], [2]);
     expect(original).toBe(result);
   });
 });
 
-describe('insertMutable', () => {
+describe('insertInPlace', () => {
   it('mutates the original query', () => {
     const original: DefaultRuleGroupType = {
       combinator: and,
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
-    const result = insertMutable(original, { field: 'f2', operator: '<', value: 'v2' }, [0]);
+    const result = insertInPlace(original, { field: 'f2', operator: '<', value: 'v2' }, [0]);
     expect(original).toBe(result);
   });
 });
 
-describe('groupMutable', () => {
+describe('groupInPlace', () => {
   it('mutates the original query', () => {
     const original: DefaultRuleGroupType = {
       combinator: and,
@@ -156,7 +156,7 @@ describe('groupMutable', () => {
         { field: 'f2', operator: '<', value: 'v2' },
       ],
     };
-    const result = groupMutable(original, [0], [1]);
+    const result = groupInPlace(original, [0], [1]);
     expect(original).toBe(result);
   });
 });
@@ -1304,7 +1304,7 @@ describe('draft handling', () => {
       combinator: and,
       rules: [r1, { combinator: and, rules: [r2] }],
     });
-    const result = produce(query, draft => moveMutable(draft, [1, 0], [0], { clone: true }));
+    const result = produce(query, draft => moveInPlace(draft, [1, 0], [0], { clone: true }));
     expect(stripIDs(result)).toEqual({
       combinator: and,
       rules: [r2, r1, { combinator: and, rules: [r2] }],
@@ -1316,7 +1316,7 @@ describe('draft handling', () => {
       combinator: and,
       rules: [r1, { combinator: and, rules: [r2] }],
     });
-    const result = produce(query, draft => groupMutable(draft, [1, 0], [0], { clone: true }));
+    const result = produce(query, draft => groupInPlace(draft, [1, 0], [0], { clone: true }));
     expect(stripIDs(result)).toEqual({
       combinator: and,
       rules: [
@@ -1326,18 +1326,18 @@ describe('draft handling', () => {
     });
   });
 
-  it('handles non-draft objects when cloning in moveMutable', () => {
+  it('handles non-draft objects when cloning in moveInPlace', () => {
     const query = pathsAsIDs({ combinator: and, rules: [r1, { combinator: and, rules: [r2] }] });
-    const result = moveMutable(query, [1, 0], [0], { clone: true });
+    const result = moveInPlace(query, [1, 0], [0], { clone: true });
     expect(stripIDs(result)).toEqual({
       combinator: and,
       rules: [r2, r1, { combinator: and, rules: [r2] }],
     });
   });
 
-  it('handles non-draft objects when cloning in groupMutable', () => {
+  it('handles non-draft objects when cloning in groupInPlace', () => {
     const query = pathsAsIDs({ combinator: and, rules: [r1, { combinator: and, rules: [r2] }] });
-    const result = groupMutable(query, [1, 0], [0], { clone: true });
+    const result = groupInPlace(query, [1, 0], [0], { clone: true });
     expect(stripIDs(result)).toEqual({
       combinator: and,
       rules: [
