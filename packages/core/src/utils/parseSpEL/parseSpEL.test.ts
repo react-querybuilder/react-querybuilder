@@ -113,12 +113,7 @@ it('handles "like" comparisons', () => {
   testParseSpEL('f1 matches "T$"', wrapRule({ field: 'f1', operator: 'endsWith', value: 'T' }));
   testParseSpEL(
     'f1 matches f2',
-    wrapRule({
-      field: 'f1',
-      operator: 'contains',
-      value: 'f2',
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
   );
 });
 
@@ -476,12 +471,8 @@ it('handles multiple negations', () => {
 
 // oxlint-disable-next-line jest/expect-expect
 it('handles independent combinators', () => {
-  testParseSpELic('(f1 == "Test")', {
-    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-  });
-  testParseSpELic('f1 == "Test"', {
-    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-  });
+  testParseSpELic('(f1 == "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  testParseSpELic('f1 == "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
   testParseSpELic('!(f1 == "Test")', {
     not: true,
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],

@@ -37,11 +37,7 @@ if (celEvaluator) {
           ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
         });
         test(name, async () => {
-          const cel = formatQuery(query, {
-            format: 'cel',
-            parseNumbers: true,
-            ...fqOptions,
-          });
+          const cel = formatQuery(query, { format: 'cel', parseNumbers: true, ...fqOptions });
           const result = await celEvaluator({ data, cel, typemap });
           expect(result).toEqual(expectedResult.length > 0 ? expectedResult : null);
         });
@@ -57,10 +53,7 @@ if (celEvaluator) {
           ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
         });
         test(name, async () => {
-          const cel = formatQuery(query, {
-            format: 'cel',
-            parseNumbers: true,
-          });
+          const cel = formatQuery(query, { format: 'cel', parseNumbers: true });
           const result = await celEvaluator({ data, cel, typemap: augmentedTypemap });
           // oxlint-disable-next-line typescript/no-explicit-any
           const expectedResult = data.filter((d: any) => fn(d));

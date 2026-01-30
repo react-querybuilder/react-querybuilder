@@ -71,18 +71,8 @@ const testCases: Record<string, [RuleGroupType, string]> = {
       rules: [
         { field: 'birthdate', operator: 'between', value: '1957-01-01' },
         { field: 'birthdate', operator: 'in', value: 'Stev' },
-        {
-          field: 'birthdate',
-          operator: 'between',
-          value: ['created_at'],
-          valueSource: 'field',
-        },
-        {
-          field: 'birthdate',
-          operator: 'in',
-          value: '',
-          valueSource: 'field',
-        },
+        { field: 'birthdate', operator: 'between', value: ['created_at'], valueSource: 'field' },
+        { field: 'birthdate', operator: 'in', value: '', valueSource: 'field' },
       ],
     },
     `(1 = 1)`,

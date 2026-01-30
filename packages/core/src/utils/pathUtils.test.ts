@@ -64,10 +64,7 @@ const queryIC: RuleGroupTypeIC = {
     'and',
     { id: '333', field: 'lastName', value: 'Test', operator: '=' },
     'and',
-    {
-      id: '444',
-      rules: [{ id: '555', field: 'firstName', value: 'Test', operator: '=' }],
-    },
+    { id: '444', rules: [{ id: '555', field: 'firstName', value: 'Test', operator: '=' }] },
   ],
 };
 

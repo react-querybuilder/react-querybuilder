@@ -113,12 +113,7 @@ it('chained AND operators', () => {
       left: {
         type: 'AndExpression',
         operator: 'AND',
-        left: {
-          type: 'AndExpression',
-          operator: 'AND',
-          left: isNullExpr,
-          right: isNullExpr,
-        },
+        left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNullExpr },
         right: isNullExpr,
       },
       right: isNullExpr,
@@ -138,12 +133,7 @@ it('chained XOR operators', () => {
       left: {
         type: 'XorExpression',
         operator: 'XOR',
-        left: {
-          type: 'XorExpression',
-          operator: 'XOR',
-          left: isNullExpr,
-          right: isNullExpr,
-        },
+        left: { type: 'XorExpression', operator: 'XOR', left: isNullExpr, right: isNullExpr },
         right: isNullExpr,
       },
       right: isNullExpr,
@@ -163,12 +153,7 @@ it('chained OR operators', () => {
       left: {
         type: 'OrExpression',
         operator: 'OR',
-        left: {
-          type: 'OrExpression',
-          operator: 'OR',
-          left: isNullExpr,
-          right: isNullExpr,
-        },
+        left: { type: 'OrExpression', operator: 'OR', left: isNullExpr, right: isNullExpr },
         right: isNullExpr,
       },
       right: isNullExpr,
@@ -185,12 +170,7 @@ describe('complex AND/XOR/OR chains', () => {
     const testResult = generateMixedAndXorOrList({
       type: 'OrExpression',
       operator: 'OR',
-      left: {
-        type: 'AndExpression',
-        operator: 'AND',
-        left: isNullExpr,
-        right: isNullExpr,
-      },
+      left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNullExpr },
       right: isNotNullExpr,
     });
     expect(testResult).toEqual(expectation);
@@ -204,12 +184,7 @@ describe('complex AND/XOR/OR chains', () => {
     const testResult = generateMixedAndXorOrList({
       type: 'AndExpression',
       operator: 'AND',
-      left: {
-        type: 'OrExpression',
-        operator: 'OR',
-        left: isNotNullExpr,
-        right: isNullExpr,
-      },
+      left: { type: 'OrExpression', operator: 'OR', left: isNotNullExpr, right: isNullExpr },
       right: isNotNullExpr,
     });
     expect(testResult).toEqual(expectation);
@@ -236,12 +211,7 @@ describe('complex AND/XOR/OR chains', () => {
         left: {
           type: 'XorExpression',
           operator: 'XOR',
-          left: {
-            type: 'AndExpression',
-            operator: 'AND',
-            left: isNullExpr,
-            right: isNotNullExpr,
-          },
+          left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNotNullExpr },
           right: isNullExpr,
         },
         right: isNotNullExpr,
@@ -270,12 +240,7 @@ describe('complex AND/XOR/OR chains', () => {
         left: {
           type: 'XorExpression',
           operator: 'XOR',
-          left: {
-            type: 'OrExpression',
-            operator: 'OR',
-            left: isNotNullExpr,
-            right: isNullExpr,
-          },
+          left: { type: 'OrExpression', operator: 'OR', left: isNotNullExpr, right: isNullExpr },
           right: isNotNullExpr,
         },
         right: isNullExpr,
@@ -288,10 +253,7 @@ describe('complex AND/XOR/OR chains', () => {
       combinator: 'or',
       expressions: [
         { combinator: 'and', expressions: [isNullExpr, isNotNullExpr] },
-        {
-          combinator: 'xor',
-          expressions: [isNullExpr2, isNotNullExpr2],
-        },
+        { combinator: 'xor', expressions: [isNullExpr2, isNotNullExpr2] },
       ],
     };
     const testResult = generateMixedAndXorOrList({
@@ -300,12 +262,7 @@ describe('complex AND/XOR/OR chains', () => {
       left: {
         type: 'OrExpression',
         operator: 'OR',
-        left: {
-          type: 'AndExpression',
-          operator: 'AND',
-          left: isNullExpr,
-          right: isNotNullExpr,
-        },
+        left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNotNullExpr },
         right: isNullExpr2,
       },
       right: isNotNullExpr2,
@@ -328,12 +285,7 @@ describe('complex AND/XOR/OR chains', () => {
       left: {
         type: 'OrExpression',
         operator: 'OR',
-        left: {
-          type: 'AndExpression',
-          operator: 'AND',
-          left: isNullExpr,
-          right: isNotNullExpr,
-        },
+        left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNotNullExpr },
         right: isNullExpr2,
       },
       right: isNotNullExpr2,
@@ -356,12 +308,7 @@ describe('complex AND/XOR/OR chains', () => {
       left: {
         type: 'XorExpression',
         operator: 'XOR',
-        left: {
-          type: 'AndExpression',
-          operator: 'AND',
-          left: isNullExpr,
-          right: isNotNullExpr,
-        },
+        left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNotNullExpr },
         right: isNullExpr2,
       },
       right: isNotNullExpr2,
@@ -383,12 +330,7 @@ describe('complex AND/XOR/OR chains', () => {
       left: {
         type: 'OrExpression',
         operator: 'OR',
-        left: {
-          type: 'AndExpression',
-          operator: 'AND',
-          left: isNullExpr,
-          right: isNotNullExpr,
-        },
+        left: { type: 'AndExpression', operator: 'AND', left: isNullExpr, right: isNotNullExpr },
         right: isNullExpr2,
       },
       right: isNotNullExpr2,

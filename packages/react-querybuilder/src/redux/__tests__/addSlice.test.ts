@@ -12,12 +12,8 @@ it('adds a slice with addSlice', () => {
   const counterSliceAS = createSlice({
     name: 'counter-as',
     initialState: { value: 0 } as CounterState,
-    reducers: {
-      increment: state => void state.value++,
-    },
-    selectors: {
-      selectValue: state => state.value,
-    },
+    reducers: { increment: state => void state.value++ },
+    selectors: { selectValue: state => state.value },
   });
 
   const queryBuilderStore = getRqbStore();
@@ -35,12 +31,8 @@ it('adds a slice with injectSlice', () => {
   const counterSliceIS = createSlice({
     name: 'counter-is',
     initialState: { value: 0 } as CounterState,
-    reducers: {
-      increment: state => void state.value++,
-    },
-    selectors: {
-      selectValue: state => state.value,
-    },
+    reducers: { increment: state => void state.value++ },
+    selectors: { selectValue: state => state.value },
   });
 
   injectSlice(counterSliceIS);

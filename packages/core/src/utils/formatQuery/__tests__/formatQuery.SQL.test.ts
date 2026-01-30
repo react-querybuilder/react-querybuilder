@@ -124,10 +124,7 @@ it('formats parameterized SQL correctly', () => {
   });
   expect(
     formatQuery(queryWithMatchModes, { format: 'parameterized', preset: 'postgresql' })
-  ).toEqual({
-    sql: parameterizedSqlStringForMatchModes,
-    params: parametersForMatchModes,
-  });
+  ).toEqual({ sql: parameterizedSqlStringForMatchModes, params: parametersForMatchModes });
   expect(formatQuery(queryWithMatchModes, 'parameterized')).toEqual({ sql: `(1 = 1)`, params: [] });
 });
 
@@ -172,10 +169,7 @@ it('handles custom valueProcessors correctly', () => {
   };
 
   expect(
-    formatQuery(queryWithArrayValue, {
-      format: 'sql',
-      valueProcessor: valueProcessorLegacy,
-    })
+    formatQuery(queryWithArrayValue, { format: 'sql', valueProcessor: valueProcessorLegacy })
   ).toBe(`(instrument in ('Guitar', /* and */ 'Vocals') and lastName = 'Vai')`);
 
   const queryForNewValueProcessor: RuleGroupType = {
@@ -189,11 +183,7 @@ it('handles custom valueProcessors correctly', () => {
   ) => `${field}-${operator}-${value}-${valueSource}-${!!opts.parseNumbers}-${!!opts.escapeQuotes}`;
 
   expect(
-    formatQuery(queryForNewValueProcessor, {
-      format: 'sql',
-      parseNumbers: true,
-      valueProcessor,
-    })
+    formatQuery(queryForNewValueProcessor, { format: 'sql', parseNumbers: true, valueProcessor })
   ).toBe(`(f1 = f1-=-v'1-value-true-true)`);
 
   const valueProcessorAsPassThrough: ValueProcessorByRule = (r, opts) =>
@@ -226,12 +216,9 @@ it('handles custom operatorProcessor correctly', () => {
   const operatorProcessor: ValueProcessorByRule = r =>
     r.operator === 'is one of' ? 'in' : r.operator;
 
-  expect(
-    formatQuery(queryWithCustomOperator, {
-      format: 'sql',
-      operatorProcessor,
-    })
-  ).toBe(`(instrument in 'Guitar,Vocals')`);
+  expect(formatQuery(queryWithCustomOperator, { format: 'sql', operatorProcessor })).toBe(
+    `(instrument in 'Guitar,Vocals')`
+  );
 });
 
 it('handles quoteFieldNamesWith correctly', () => {
@@ -348,10 +335,7 @@ it('handles numberedParams correctly', () => {
       paramPrefix: '$',
       numberedParams: true,
     })
-  ).toEqual({
-    sql: sqlNPaltPrefix,
-    params: ['Test', 'Test1', 'Test2'],
-  });
+  ).toEqual({ sql: sqlNPaltPrefix, params: ['Test', 'Test1', 'Test2'] });
 });
 
 it('uses paramPrefix correctly', () => {
@@ -369,22 +353,12 @@ it('uses paramPrefix correctly', () => {
   // Control (default) - param prefixes removed
   expect(formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix })).toEqual({
     sql,
-    params: {
-      firstName_1: 'Test',
-      lastName_1: 'Test1',
-      lastName_2: 'Test2',
-      age_1: 26,
-      age_2: 52,
-    },
+    params: { firstName_1: 'Test', lastName_1: 'Test1', lastName_2: 'Test2', age_1: 26, age_2: 52 },
   });
 
   // Param prefixes retained
   expect(
-    formatQuery(queryToTest, {
-      format: 'parameterized_named',
-      paramPrefix,
-      paramsKeepPrefix: true,
-    })
+    formatQuery(queryToTest, { format: 'parameterized_named', paramPrefix, paramsKeepPrefix: true })
   ).toEqual({
     sql,
     params: {
@@ -500,10 +474,7 @@ describe('muted', () => {
   describe('parameterized_named', () => {
     const muteTestResults: Record<string, ParameterizedNamedSQL> = {
       'should mute parameterized_named': { sql: '(1 = 1)', params: {} },
-      'should mute parameterized_named even if fields are valid': {
-        sql: '(1 = 1)',
-        params: {},
-      },
+      'should mute parameterized_named even if fields are valid': { sql: '(1 = 1)', params: {} },
       'should mute parameterized_named rule specified by validationMap': {
         sql: '(field2 = :field2_1)',
         params: { field2_1: '' },

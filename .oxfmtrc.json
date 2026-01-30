@@ -53,6 +53,12 @@
   ],
   "overrides": [
     {
+      "files": ["packages/*/src/**/*.test.{ts,tsx}"],
+      "options": {
+        "objectWrap": "collapse"
+      }
+    },
+    {
       "files": ["examples/*/**/*.!(css|scss)*"],
       "options": {
         "printWidth": 80

@@ -17,9 +17,7 @@ it('merges translations', () => {
       { addRule: { label: 'addRule label', title: 'addRule title' } },
       { addRule: { label: 'addRule label2', title: 'addRule title2' } }
     )
-  ).toEqual({
-    addRule: { label: 'addRule label2', title: 'addRule title2' },
-  });
+  ).toEqual({ addRule: { label: 'addRule label2', title: 'addRule title2' } });
 });
 
 it('merges translation', () => {
@@ -33,9 +31,7 @@ it('merges translation', () => {
   });
   expect(
     mergeAnyTranslation('addRule', { label: ['Label', undefined], title: ['Title', undefined] })
-  ).toEqual({
-    addRule: { label: 'Label', title: 'Title' },
-  });
+  ).toEqual({ addRule: { label: 'Label', title: 'Title' } });
   expect(
     mergeAnyTranslation('addRule', { label: [undefined, undefined] }, defaultTranslations)
   ).toHaveProperty('addRule', defaultTranslations.addRule);

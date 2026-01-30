@@ -11,18 +11,8 @@ const queryWithRulesAndInvalidCombinator: RuleGroupType = {
   id: 'root',
   combinator: 'invalid',
   rules: [
-    {
-      id: 'r-1',
-      field: 'field1',
-      operator: '=',
-      value: '',
-    },
-    {
-      id: 'r-2',
-      field: 'field2',
-      operator: '=',
-      value: '',
-    },
+    { id: 'r-1', field: 'field1', operator: '=', value: '' },
+    { id: 'r-2', field: 'field2', operator: '=', value: '' },
   ],
 };
 const queryWithRulesValidationMap: ValidationMap = {
@@ -31,14 +21,7 @@ const queryWithRulesValidationMap: ValidationMap = {
 const queryWithOneRuleAndInvalidCombinator: RuleGroupType = {
   id: 'root',
   combinator: 'invalid',
-  rules: [
-    {
-      id: 'r-1',
-      field: 'field1',
-      operator: '=',
-      value: '',
-    },
-  ],
+  rules: [{ id: 'r-1', field: 'field1', operator: '=', value: '' }],
 };
 const queryWithOneRuleValidationMap: ValidationMap = { root: true };
 const queryWithOneGroupWithOneRule: RuleGroupType = {
@@ -48,21 +31,11 @@ const queryWithOneGroupWithOneRule: RuleGroupType = {
     {
       id: 'innerGroup',
       combinator: 'and',
-      rules: [
-        {
-          id: 'innerRule',
-          field: 'field1',
-          operator: '=',
-          value: '',
-        },
-      ],
+      rules: [{ id: 'innerRule', field: 'field1', operator: '=', value: '' }],
     },
   ],
 };
-const queryWithOneGroupWithOneRuleValidationMap: ValidationMap = {
-  root: true,
-  innerGroup: true,
-};
+const queryWithOneGroupWithOneRuleValidationMap: ValidationMap = { root: true, innerGroup: true };
 
 // independent combinators
 const emptyQueryIC: RuleGroupTypeIC = { id: 'root', rules: [] };
@@ -72,47 +45,21 @@ const emptyQueryValidationMapIC: ValidationMap = {
 const queryWithRulesAndInvalidCombinatorIC: RuleGroupTypeIC = {
   id: 'root',
   rules: [
-    {
-      id: 'r-1',
-      field: 'field1',
-      operator: '=',
-      value: '',
-    },
+    { id: 'r-1', field: 'field1', operator: '=', value: '' },
     'invalid',
-    {
-      id: 'r-2',
-      field: 'field2',
-      operator: '=',
-      value: '',
-    },
+    { id: 'r-2', field: 'field2', operator: '=', value: '' },
   ],
 };
 const queryWithRulesValidationMapIC: ValidationMap = {
-  root: {
-    valid: false,
-    reasons: [groupInvalidReasons.invalidIndependentCombinators],
-  },
+  root: { valid: false, reasons: [groupInvalidReasons.invalidIndependentCombinators] },
 };
 const queryWithOneGroupWithOneRuleIC: RuleGroupTypeIC = {
   id: 'root',
   rules: [
-    {
-      id: 'innerGroup',
-      rules: [
-        {
-          id: 'innerRule',
-          field: 'field1',
-          operator: '=',
-          value: '',
-        },
-      ],
-    },
+    { id: 'innerGroup', rules: [{ id: 'innerRule', field: 'field1', operator: '=', value: '' }] },
   ],
 };
-const queryWithOneGroupWithOneRuleValidationMapIC: ValidationMap = {
-  root: true,
-  innerGroup: true,
-};
+const queryWithOneGroupWithOneRuleValidationMapIC: ValidationMap = { root: true, innerGroup: true };
 
 describe('standard rule groups', () => {
   it('should invalidate an empty query', () => {

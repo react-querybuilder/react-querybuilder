@@ -23,20 +23,14 @@ const columnsPostgres = {
   nickname: text().notNull(),
   powerUpAge: integer(),
 };
-const columnsPostgresAugmented = {
-  ...columnsPostgres,
-  nicknames: text().array(),
-};
+const columnsPostgresAugmented = { ...columnsPostgres, nicknames: text().array() };
 
 describe('Drizzle relational queries (PostgreSQL)', () => {
   const superusers = pgTable('superusers', columnsPostgres);
   const superUsersPostgres = superUsers('postgres');
 
   const pglitePostgresDB = new PGlite();
-  const drizzlePostgresDB = drizzle({
-    client: pglitePostgresDB,
-    schema: { superusers },
-  });
+  const drizzlePostgresDB = drizzle({ client: pglitePostgresDB, schema: { superusers } });
 
   const testPostgres = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
     test.each(['standard', 'independent combinators'])('%s', async testType => {

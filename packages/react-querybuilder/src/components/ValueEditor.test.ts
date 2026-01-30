@@ -90,35 +90,34 @@ describe('parseNumbers', () => {
     { pn: 'native-limited', text: false, number: 'native' },
     { pn: 'strict', text: 'strict', number: 'strict' },
     { pn: 'strict-limited', text: false, number: 'strict' },
-  ] satisfies {
-    pn: ParseNumbersPropConfig;
-    text: ParseNumberMethod;
-    number: ParseNumberMethod;
-  }[])('processes $pn correctly', ({ pn, number, text }) => {
-    const handleOnChangeText = jest.fn();
-    const hrText = renderHook(() =>
-      useValueEditor({
-        ...baseValueEditorProps,
-        handleOnChange: handleOnChangeText,
-        operator: '=',
-        inputType: 'text',
-        parseNumbers: pn,
-      })
-    );
-    expect(hrText.result.current.parseNumberMethod).toBe(text);
+  ] satisfies { pn: ParseNumbersPropConfig; text: ParseNumberMethod; number: ParseNumberMethod }[])(
+    'processes $pn correctly',
+    ({ pn, number, text }) => {
+      const handleOnChangeText = jest.fn();
+      const hrText = renderHook(() =>
+        useValueEditor({
+          ...baseValueEditorProps,
+          handleOnChange: handleOnChangeText,
+          operator: '=',
+          inputType: 'text',
+          parseNumbers: pn,
+        })
+      );
+      expect(hrText.result.current.parseNumberMethod).toBe(text);
 
-    const handleOnChangeNumber = jest.fn();
-    const hrNumber = renderHook(() =>
-      useValueEditor({
-        ...baseValueEditorProps,
-        handleOnChange: handleOnChangeNumber,
-        operator: '=',
-        inputType: 'number',
-        parseNumbers: pn,
-      })
-    );
-    expect(hrNumber.result.current.parseNumberMethod).toBe(number);
-  });
+      const handleOnChangeNumber = jest.fn();
+      const hrNumber = renderHook(() =>
+        useValueEditor({
+          ...baseValueEditorProps,
+          handleOnChange: handleOnChangeNumber,
+          operator: '=',
+          inputType: 'number',
+          parseNumbers: pn,
+        })
+      );
+      expect(hrNumber.result.current.parseNumberMethod).toBe(number);
+    }
+  );
 });
 
 it('does not call handleOnChange when type is "multiselect"', () => {

@@ -312,12 +312,7 @@ it('aborts move if source item is first child of this group', () => {
       onQueryChange={onQueryChange}
       query={{
         combinator: 'and',
-        rules: [
-          {
-            combinator: 'and',
-            rules: [{ id: 'rg1', combinator: 'and', rules: [] }],
-          },
-        ],
+        rules: [{ combinator: 'and', rules: [{ id: 'rg1', combinator: 'and', rules: [] }] }],
       }}
     />
   );

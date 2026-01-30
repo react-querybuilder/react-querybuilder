@@ -211,10 +211,7 @@ describe('showCombinatorsBetweenRules', () => {
     const { container } = render(
       <RuleGroup
         {...getRuleGroupProps({ showCombinatorsBetweenRules: true })}
-        ruleGroup={{
-          combinator: 'and',
-          rules: [{ field: 'test', value: 'Test', operator: '=' }],
-        }}
+        ruleGroup={{ combinator: 'and', rules: [{ field: 'test', value: 'Test', operator: '=' }] }}
       />
     );
     expect(container.querySelectorAll(`.${sc.combinators}`)).toHaveLength(0);
@@ -382,10 +379,7 @@ describe('disabled', () => {
     render(
       <RuleGroup
         {...getRuleGroupProps({ disabledPaths: [[0, 0]] })}
-        ruleGroup={{
-          combinator: 'and',
-          rules: [{ field: 'f1', operator: '=', value: 'v1' }],
-        }}
+        ruleGroup={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
       />
     );
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.disabled);

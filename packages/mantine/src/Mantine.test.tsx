@@ -30,9 +30,7 @@ import { MantineValueSelector } from './MantineValueSelector';
 
 jest.setTimeout(30_000);
 
-const theme = createTheme({
-  respectReducedMotion: true,
-});
+const theme = createTheme({ respectReducedMotion: true });
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {

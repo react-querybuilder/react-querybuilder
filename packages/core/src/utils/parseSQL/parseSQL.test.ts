@@ -190,11 +190,7 @@ is a ''bad'' guy!`,
       wrapRule({ field: 'firstName', operator: 'in', value: String.raw`Te\,st, 12, true` })
     );
     expect(parseSQL(`firstName NOT IN ('Test', 12, true, lastName)`)).toEqual(
-      wrapRule({
-        field: 'firstName',
-        operator: 'notIn',
-        value: 'Test, 12, true',
-      })
+      wrapRule({ field: 'firstName', operator: 'notIn', value: 'Test, 12, true' })
     );
   });
 
@@ -434,10 +430,7 @@ describe('options', () => {
         })
       );
       expect(
-        parseSQL(`${baseField} in (${subField}, ${subField2})`, {
-          fields,
-          listsAsArrays: true,
-        })
+        parseSQL(`${baseField} in (${subField}, ${subField2})`, { fields, listsAsArrays: true })
       ).toEqual(
         wrapRule({
           field: baseField,
@@ -447,21 +440,13 @@ describe('options', () => {
         })
       );
       // BetweenPredicate
+      expect(parseSQL(`${invalidField} between ${subField} and ${subField2}`, { fields })).toEqual(
+        wrapRule()
+      );
       expect(
-        parseSQL(`${invalidField} between ${subField} and ${subField2}`, {
-          fields,
-        })
+        parseSQL(`${baseField} between ${invalidSubField} and ${subField2}`, { fields })
       ).toEqual(wrapRule());
-      expect(
-        parseSQL(`${baseField} between ${invalidSubField} and ${subField2}`, {
-          fields,
-        })
-      ).toEqual(wrapRule());
-      expect(
-        parseSQL(`${baseField} between ${subField} and ${subField2}`, {
-          fields,
-        })
-      ).toEqual(
+      expect(parseSQL(`${baseField} between ${subField} and ${subField2}`, { fields })).toEqual(
         wrapRule({
           field: baseField,
           operator: 'between',
@@ -688,10 +673,7 @@ describe('NOT expressions', () => {
       rules: [
         { field: 'firstName', operator: '=', value: 'Steve' },
         'or',
-        {
-          rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
-          not: true,
-        },
+        { rules: [{ field: 'lastName', operator: '=', value: 'Vai' }], not: true },
       ],
     });
   });
@@ -736,10 +718,7 @@ describe('parenthetical groups', () => {
               combinator: 'and',
               rules: [
                 { field: 'testField', operator: '=', value: 'TestValue' },
-                {
-                  combinator: 'and',
-                  rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
-                },
+                { combinator: 'and', rules: [{ field: 'lastName', operator: '=', value: 'Vai' }] },
               ],
             },
             { field: 'middleName', operator: 'null', value: null },

@@ -2,26 +2,10 @@ import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 import { convertFromIC, convertQuery, convertToIC } from './convertQuery';
 
 const [rule1, rule2, rule3, rule4]: RuleType[] = [
-  {
-    field: 'firstName',
-    operator: '=',
-    value: 'Steve',
-  },
-  {
-    field: 'lastName',
-    operator: '=',
-    value: 'Vai',
-  },
-  {
-    field: 'firstName',
-    operator: 'beginsWith',
-    value: 'Stev',
-  },
-  {
-    field: 'lastName',
-    operator: 'beginsWith',
-    value: 'Va',
-  },
+  { field: 'firstName', operator: '=', value: 'Steve' },
+  { field: 'lastName', operator: '=', value: 'Vai' },
+  { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+  { field: 'lastName', operator: 'beginsWith', value: 'Va' },
 ];
 
 describe('converts RuleGroupType to RuleGroupTypeIC', () => {
@@ -51,36 +35,23 @@ describe('converts RuleGroupType to RuleGroupTypeIC', () => {
   });
   it('extra properties', () => {
     expect(
-      convertQuery({
-        path: [0, 1, 2],
-        id: 'test',
-        combinator: 'and',
-        rules: [rule1, rule2],
-      })
-    ).toEqual({
-      path: [0, 1, 2],
-      id: 'test',
-      rules: [rule1, 'and', rule2],
-    });
+      convertQuery({ path: [0, 1, 2], id: 'test', combinator: 'and', rules: [rule1, rule2] })
+    ).toEqual({ path: [0, 1, 2], id: 'test', rules: [rule1, 'and', rule2] });
   });
 });
 
 describe('converts RuleGroupTypeIC to RuleGroupType', () => {
   it('no rules', () => {
-    expect(convertQuery({ rules: [] })).toEqual({
-      combinator: 'and',
-      rules: [],
-    });
+    expect(convertQuery({ rules: [] })).toEqual({ combinator: 'and', rules: [] });
   });
   it('one rule', () => {
     expect(convertQuery({ rules: [rule1] })).toEqual({ combinator: 'and', rules: [rule1] });
   });
   it('two rules', () => {
-    expect(
-      convertQuery({
-        rules: [rule1, 'and', rule2],
-      })
-    ).toEqual({ combinator: 'and', rules: [rule1, rule2] });
+    expect(convertQuery({ rules: [rule1, 'and', rule2] })).toEqual({
+      combinator: 'and',
+      rules: [rule1, rule2],
+    });
   });
   it('nested groups', () => {
     expect(
@@ -96,11 +67,7 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
     });
   });
   it('different combinators in same group', () => {
-    expect(
-      convertQuery({
-        rules: [rule1, 'and', rule2, 'or', rule3, 'and', rule4],
-      })
-    ).toEqual({
+    expect(convertQuery({ rules: [rule1, 'and', rule2, 'or', rule3, 'and', rule4] })).toEqual({
       combinator: 'or',
       rules: [
         { combinator: 'and', rules: [rule1, rule2] },
@@ -263,13 +230,7 @@ describe('converts RuleGroupTypeIC to RuleGroupType', () => {
     });
   });
   it('extra properties', () => {
-    expect(
-      convertQuery({
-        path: [0, 1, 2],
-        id: 'test',
-        rules: [rule1, 'and', rule2],
-      })
-    ).toEqual({
+    expect(convertQuery({ path: [0, 1, 2], id: 'test', rules: [rule1, 'and', rule2] })).toEqual({
       path: [0, 1, 2],
       id: 'test',
       combinator: 'and',

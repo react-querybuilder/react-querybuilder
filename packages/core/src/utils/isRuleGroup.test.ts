@@ -1,18 +1,9 @@
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC, isRuleType } from './isRuleGroup';
 
-const rule: RuleType = {
-  field: 'test',
-  operator: '=',
-  value: 'test value',
-};
-const ruleGroup: RuleGroupType = {
-  combinator: 'and',
-  rules: [],
-};
-const ruleGroupIC: RuleGroupTypeIC = {
-  rules: [],
-};
+const rule: RuleType = { field: 'test', operator: '=', value: 'test value' };
+const ruleGroup: RuleGroupType = { combinator: 'and', rules: [] };
+const ruleGroupIC: RuleGroupTypeIC = { rules: [] };
 
 describe('isRuleType', () => {
   it('tests for null/undefined/primitives/etc', () => {

@@ -19,23 +19,13 @@ import {
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 
-const contextWithAllReqs = {
-  sequelizeOperators: Op,
-  sequelizeCol: col,
-  sequelizeFn: fn,
-};
+const contextWithAllReqs = { sequelizeOperators: Op, sequelizeCol: col, sequelizeFn: fn };
 
 it('covers Sequelize', () => {
-  const whereVSV = formatQuery(query, {
-    format: 'sequelize',
-    context: contextWithAllReqs,
-  });
+  const whereVSV = formatQuery(query, { format: 'sequelize', context: contextWithAllReqs });
   expect(whereVSV).toBeTruthy();
 
-  const whereIC = formatQuery(queryIC, {
-    format: 'sequelize',
-    context: contextWithAllReqs,
-  });
+  const whereIC = formatQuery(queryIC, { format: 'sequelize', context: contextWithAllReqs });
   expect(whereIC).toBeTruthy();
 
   const whereVSF = formatQuery(queryWithValueSourceField, {
@@ -54,11 +44,7 @@ it('covers Sequelize', () => {
           { id: 'sub', rules: [{ field: 'f', operator: '=', value: 'v' }] },
         ],
       },
-      {
-        format: 'sequelize',
-        context: contextWithAllReqs,
-        validator: () => ({ sub: false }),
-      }
+      { format: 'sequelize', context: contextWithAllReqs, validator: () => ({ sub: false }) }
     )
   ).toBeTruthy();
 
@@ -72,10 +58,7 @@ it('covers Sequelize', () => {
 
 it('handles operator case variations', () => {
   expect(
-    formatQuery(queryAllOperatorsRandomCase, {
-      format: 'sequelize',
-      context: contextWithAllReqs,
-    })
+    formatQuery(queryAllOperatorsRandomCase, { format: 'sequelize', context: contextWithAllReqs })
   ).toBeTruthy();
 });
 
@@ -85,11 +68,7 @@ it('bails on invalid operator', () => {
       { rules: [{ field: 'f', operator: 'invalid', value: 'v' }] },
       {
         format: 'sequelize',
-        context: {
-          sequelizeOperators: Op,
-          sequelizeCol: col,
-          sequelizeFn: fn,
-        },
+        context: { sequelizeOperators: Op, sequelizeCol: col, sequelizeFn: fn },
       }
     )
   ).toBeUndefined();

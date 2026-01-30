@@ -12,12 +12,7 @@ import {
 } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
 
-const cleanProjection = {
-  _id: 0,
-  __v: 0,
-  createdAt: 0,
-  updatedAt: 0,
-} as const;
+const cleanProjection = { _id: 0, __v: 0, createdAt: 0, updatedAt: 0 } as const;
 
 const mongoServer = new MongoMemoryServer();
 
@@ -68,10 +63,7 @@ beforeAll(async () => {
     new mongoose.Schema({
       ...superHeroSchema,
       nicknames: { type: [String], required: true },
-      earlyPencilers: {
-        type: [nestedSchemaMongoose],
-        required: true,
-      },
+      earlyPencilers: { type: [nestedSchemaMongoose], required: true },
       // earlyPencilers: [nestedSchema],
     })
   );

@@ -97,9 +97,7 @@ beforeEach(() => {
 describe('basic functionality', () => {
   it('returns selector props with default values when no async params provided', () => {
     const props = createValueSelectorProps();
-    const { result } = renderHook(() => useAsyncOptionList(props), {
-      wrapper: ReduxWrapper,
-    });
+    const { result } = renderHook(() => useAsyncOptionList(props), { wrapper: ReduxWrapper });
 
     expect(result.current.options).toBe(props.options);
     expect(result.current.isLoading).toBe(false);
@@ -109,9 +107,7 @@ describe('basic functionality', () => {
 
   it('returns editor props with default values when no async params provided', () => {
     const props = createValueEditorProps();
-    const { result } = renderHook(() => useAsyncOptionList(props), {
-      wrapper: ReduxWrapper,
-    });
+    const { result } = renderHook(() => useAsyncOptionList(props), { wrapper: ReduxWrapper });
 
     expect(result.current.values).toBe(props.values);
     expect(result.current.isLoading).toBe(false);

@@ -2,12 +2,7 @@ import type { REConditionAny, RulesEngineAny } from '../types';
 import { regenerateREIDs } from './regenerateREIDs';
 
 it('regenerates ID for simple rule condition', () => {
-  const condition = {
-    id: 'old-id',
-    field: 'name',
-    operator: '=',
-    value: 'test',
-  };
+  const condition = { id: 'old-id', field: 'name', operator: '=', value: 'test' };
   // oxlint-disable-next-line no-explicit-any
   const result = regenerateREIDs(condition as any);
   expect(result.id).toBeDefined();
@@ -40,11 +35,7 @@ it('regenerates ID for RulesEngine', () => {
     conditions: [
       {
         id: 'old-condition-id',
-        antecedent: {
-          id: 'old-antecedent-id',
-          combinator: 'and',
-          rules: [],
-        },
+        antecedent: { id: 'old-antecedent-id', combinator: 'and', rules: [] },
         consequent: { type: 'action1' },
       },
     ],
@@ -105,12 +96,7 @@ it('handles RulesEngineIC', () => {
     conditions: [
       {
         id: 'old-ic-condition-id',
-        antecedent: {
-          id: 'old-ic-antecedent-id',
-          combinator: 'and',
-          rules: [],
-          not: false,
-        },
+        antecedent: { id: 'old-ic-antecedent-id', combinator: 'and', rules: [], not: false },
         consequent: { type: 'ic-action' },
       },
     ],
@@ -164,10 +150,7 @@ it('handles object that is not a rule group or rules engine', () => {
 });
 
 it('handles empty conditions array', () => {
-  const rulesEngine: RulesEngineAny = {
-    id: 'old-id',
-    conditions: [],
-  };
+  const rulesEngine: RulesEngineAny = { id: 'old-id', conditions: [] };
   const result = regenerateREIDs(rulesEngine);
   expect(result.id).not.toBe('old-id');
   expect(result.conditions).toEqual([]);
@@ -203,14 +186,8 @@ it('generates unique IDs for multiple items', () => {
   const rulesEngine: RulesEngineAny = {
     id: 'old-id',
     conditions: [
-      {
-        id: 'condition1',
-        antecedent: { id: 'antecedent1', combinator: 'and', rules: [] },
-      },
-      {
-        id: 'condition2',
-        antecedent: { id: 'antecedent2', combinator: 'or', rules: [] },
-      },
+      { id: 'condition1', antecedent: { id: 'antecedent1', combinator: 'and', rules: [] } },
+      { id: 'condition2', antecedent: { id: 'antecedent2', combinator: 'or', rules: [] } },
     ],
   };
   const result = regenerateREIDs(rulesEngine);

@@ -10,24 +10,12 @@ import {
 
 describe('isRulesEngineAny', () => {
   it('returns true for valid RulesEngine', () => {
-    const re = {
-      conditions: [
-        {
-          antecedent: { combinator: 'and', rules: [] },
-        },
-      ],
-    };
+    const re = { conditions: [{ antecedent: { combinator: 'and', rules: [] } }] };
     expect(isRulesEngineAny(re)).toBe(true);
   });
 
   it('returns true for valid RulesEngineIC', () => {
-    const reIC = {
-      conditions: [
-        {
-          antecedent: { combinator: 'and', rules: [], not: false },
-        },
-      ],
-    };
+    const reIC = { conditions: [{ antecedent: { combinator: 'and', rules: [], not: false } }] };
     expect(isRulesEngineAny(reIC)).toBe(true);
   });
 
@@ -57,24 +45,12 @@ describe('isRulesEngineAny', () => {
 
 describe('isRulesEngine', () => {
   it('returns true for valid RulesEngine', () => {
-    const re = {
-      conditions: [
-        {
-          antecedent: { combinator: 'and', rules: [] },
-        },
-      ],
-    };
+    const re = { conditions: [{ antecedent: { combinator: 'and', rules: [] } }] };
     expect(isRulesEngine(re)).toBe(true);
   });
 
   it('returns false for RulesEngineIC', () => {
-    const reIC = {
-      conditions: [
-        {
-          antecedent: { rules: [], not: false },
-        },
-      ],
-    };
+    const reIC = { conditions: [{ antecedent: { rules: [], not: false } }] };
     expect(isRulesEngine(reIC)).toBe(false);
   });
 
@@ -91,24 +67,12 @@ describe('isRulesEngine', () => {
 
 describe('isRulesEngineIC', () => {
   it('returns true for valid RulesEngineIC', () => {
-    const reIC = {
-      conditions: [
-        {
-          antecedent: { rules: [], not: false },
-        },
-      ],
-    };
+    const reIC = { conditions: [{ antecedent: { rules: [], not: false } }] };
     expect(isRulesEngineIC(reIC)).toBe(true);
   });
 
   it('returns false for RulesEngine', () => {
-    const re = {
-      conditions: [
-        {
-          antecedent: { combinator: 'and', rules: [] },
-        },
-      ],
-    };
+    const re = { conditions: [{ antecedent: { combinator: 'and', rules: [] } }] };
     expect(isRulesEngineIC(re)).toBe(false);
   });
 
@@ -151,16 +115,12 @@ describe('isRulesEngineConsequent', () => {
 
 describe('isRulesEngineConditionAny', () => {
   it('returns true for valid RECondition', () => {
-    const condition = {
-      antecedent: { combinator: 'and', rules: [] },
-    };
+    const condition = { antecedent: { combinator: 'and', rules: [] } };
     expect(isRulesEngineConditionAny(condition)).toBe(true);
   });
 
   it('returns true for valid REConditionIC', () => {
-    const conditionIC = {
-      antecedent: { rules: [], not: false },
-    };
+    const conditionIC = { antecedent: { rules: [], not: false } };
     expect(isRulesEngineConditionAny(conditionIC)).toBe(true);
   });
 
@@ -184,16 +144,12 @@ describe('isRulesEngineConditionAny', () => {
 
 describe('isRulesEngineCondition', () => {
   it('returns true for valid RECondition', () => {
-    const condition = {
-      antecedent: { combinator: 'and', rules: [] },
-    };
+    const condition = { antecedent: { combinator: 'and', rules: [] } };
     expect(isRulesEngineCondition(condition)).toBe(true);
   });
 
   it('returns false for REConditionIC', () => {
-    const conditionIC = {
-      antecedent: { rules: [], not: false },
-    };
+    const conditionIC = { antecedent: { rules: [], not: false } };
     expect(isRulesEngineCondition(conditionIC)).toBe(false);
   });
 
@@ -205,16 +161,12 @@ describe('isRulesEngineCondition', () => {
 
 describe('isRulesEngineConditionIC', () => {
   it('returns true for valid REConditionIC', () => {
-    const conditionIC = {
-      antecedent: { rules: [], not: false },
-    };
+    const conditionIC = { antecedent: { rules: [], not: false } };
     expect(isRulesEngineConditionIC(conditionIC)).toBe(true);
   });
 
   it('returns false for RECondition', () => {
-    const condition = {
-      antecedent: { combinator: 'and', rules: [] },
-    };
+    const condition = { antecedent: { combinator: 'and', rules: [] } };
     expect(isRulesEngineConditionIC(condition)).toBe(false);
   });
 

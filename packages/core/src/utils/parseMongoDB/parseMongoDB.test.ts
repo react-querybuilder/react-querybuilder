@@ -240,11 +240,7 @@ describe('valueSource: "field"', () => {
   });
 
   it('handles "in" operations', () => {
-    expect(
-      parseMongoDB({
-        $or: [{ $expr: { $in: ['$f1', ['$f2', '$f3']] } }],
-      })
-    ).toEqual({
+    expect(parseMongoDB({ $or: [{ $expr: { $in: ['$f1', ['$f2', '$f3']] } }] })).toEqual({
       combinator: 'or',
       rules: [{ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' }],
     });
@@ -309,17 +305,11 @@ it('validates fields', () => {
     ruleGroupForFields
   );
   expect(
-    parseMongoDB(mongoDbRulesForFields, {
-      getValueSources,
-      fields: fieldsAsOptGroup,
-    })
+    parseMongoDB(mongoDbRulesForFields, { getValueSources, fields: fieldsAsOptGroup })
   ).toEqual(ruleGroupForFields);
-  expect(
-    parseMongoDB(mongoDbRulesForFields, {
-      getValueSources,
-      fields: fieldsAsObject,
-    })
-  ).toEqual(ruleGroupForFields);
+  expect(parseMongoDB(mongoDbRulesForFields, { getValueSources, fields: fieldsAsObject })).toEqual(
+    ruleGroupForFields
+  );
 });
 
 it('ignores invalid stuff', () => {

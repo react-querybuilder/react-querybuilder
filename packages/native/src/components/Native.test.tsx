@@ -352,9 +352,7 @@ describe('NativeValueEditor', () => {
     level: 0,
     // We don't use `basicSchema` here because we can't import
     // from "@react-querybuilder/testing".
-    schema: {
-      controls: { valueSelector: NativeValueSelector },
-    } as Schema<FullField, string>,
+    schema: { controls: { valueSelector: NativeValueSelector } } as Schema<FullField, string>,
     testID: TestID.valueEditor,
     rule: { field: '', operator: '', value: '' },
   };

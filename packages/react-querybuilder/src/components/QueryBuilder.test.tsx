@@ -201,10 +201,7 @@ describe('when initial query with fields object is provided', () => {
   it('passes down fields sorted by label using the key as name', async () => {
     render(
       <QueryBuilder
-        fields={{
-          xyz: { name: 'dupe', label: 'One' },
-          abc: { name: 'dupe', label: 'Two' },
-        }}
+        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
       />
     );
 
@@ -227,10 +224,7 @@ describe('when initial query with fields object is provided', () => {
   it('respects autoSelectField={false}', async () => {
     render(
       <QueryBuilder
-        fields={{
-          xyz: { name: 'dupe', label: 'One' },
-          abc: { name: 'dupe', label: 'Two' },
-        }}
+        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
         autoSelectField={false}
       />
     );
@@ -449,11 +443,7 @@ describe('get* callbacks', () => {
     { name: 'lastName', label: 'Last Name' },
     { name: 'age', label: 'Age' },
   ].map(o => toFullOption(o));
-  const rule: RuleType = {
-    field: 'lastName',
-    value: 'Another Test',
-    operator: '=',
-  };
+  const rule: RuleType = { field: 'lastName', value: 'Another Test', operator: '=' };
   const query: RuleGroupType = { combinator: 'or', not: false, rules: [rule] };
 
   describe('when getOperators fn prop is provided', () => {
@@ -708,9 +698,7 @@ describe('actions', () => {
     const { onQueryChange } = setup({ fields: fs });
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ value: 'value1' }],
-    });
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'value1' }] });
   });
 });
 
@@ -1100,11 +1088,7 @@ describe('parseNumbers prop', () => {
             await user.type(valueEditor, typedValue);
           }
           expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-            rules: [
-              {
-                value: vals[typedValues.findIndex(tv => tv.typedValue === typedValue)],
-              },
-            ],
+            rules: [{ value: vals[typedValues.findIndex(tv => tv.typedValue === typedValue)] }],
           });
         });
       });
@@ -1638,10 +1622,7 @@ describe('onRemove prop', () => {
         defaultQuery={{
           combinator: 'and',
           rules: [
-            {
-              combinator: 'and',
-              rules: [{ field: 'field1', operator: '=', value: 'value1' }],
-            },
+            { combinator: 'and', rules: [{ field: 'field1', operator: '=', value: 'value1' }] },
           ],
         }}
         onRemove={() => false}
@@ -2118,10 +2099,7 @@ describe('showShiftActions', () => {
             combinator: 'and',
             rules: [
               { field: 'lastName', operator: '=', value: 'Vai' },
-              {
-                combinator: 'or',
-                rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-              },
+              { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
             ],
           }}
         />
@@ -2132,10 +2110,7 @@ describe('showShiftActions', () => {
       expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
         combinator: 'and',
         rules: [
-          {
-            combinator: 'or',
-            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-          },
+          { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
           { field: 'lastName', operator: '=', value: 'Vai' },
         ],
       });
@@ -2273,10 +2248,7 @@ describe('showCloneButtons', () => {
           defaultQuery={{
             combinator: 'and',
             rules: [
-              {
-                combinator: 'or',
-                rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-              },
+              { combinator: 'or', rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] },
               { field: 'lastName', operator: '=', value: 'Vai' },
             ],
           }}
@@ -2303,9 +2275,7 @@ describe('showCloneButtons', () => {
         <QueryBuilder
           showCloneButtons
           onQueryChange={onQueryChange}
-          defaultQuery={{
-            rules: [{ field: 'firstName', operator: '=', value: 'Steve' }],
-          }}
+          defaultQuery={{ rules: [{ field: 'firstName', operator: '=', value: 'Steve' }] }}
         />
       );
 
@@ -2587,9 +2557,7 @@ describe('validation', () => {
   });
 
   it('passes down validationMap to children', () => {
-    const valMap: ValidationMap = {
-      id: { valid: false, reasons: ['invalid'] },
-    };
+    const valMap: ValidationMap = { id: { valid: false, reasons: ['invalid'] } };
     const RuleGroupValMapDisplay = (props: RuleGroupProps) => (
       <div data-testid={TestID.ruleGroup}>{JSON.stringify(props.schema.validationMap)}</div>
     );
@@ -2679,10 +2647,7 @@ describe('disabled', () => {
           rules: [
             { field: 'firstName', operator: '=', value: 'Steve' },
             { field: 'lastName', operator: '=', value: 'Vai' },
-            {
-              combinator: 'and',
-              rules: [{ field: 'age', operator: '>', value: 28 }],
-            },
+            { combinator: 'and', rules: [{ field: 'age', operator: '>', value: 28 }] },
           ],
         }}
       />
@@ -2797,10 +2762,7 @@ describe('locked rules', () => {
             </div>
           ),
         }}
-        query={{
-          disabled: true,
-          rules: [{ field: 'field0', operator: '=', value: '0' }],
-        }}
+        query={{ disabled: true, rules: [{ field: 'field0', operator: '=', value: '0' }] }}
       />
     );
     const rg = screen.getByTestId(TestID.ruleGroup);
@@ -2835,10 +2797,7 @@ describe('locked rules', () => {
           rules: [
             { field: 'field0', operator: '=', value: '0' },
             'and',
-            {
-              disabled: true,
-              rules: [{ field: 'field1', operator: '=', value: '1' }],
-            },
+            { disabled: true, rules: [{ field: 'field1', operator: '=', value: '1' }] },
           ],
         }}
       />
@@ -2855,23 +2814,13 @@ describe('value source field', () => {
   const fields: Field[] = [
     { name: 'f1', label: 'Field 1', valueSources: ['field'] },
     { name: 'f2', label: 'Field 2', valueSources: ['field'] },
-    {
-      name: 'f3',
-      label: 'Field 3',
-      valueSources: ['field'],
-      comparator: () => false,
-    },
+    { name: 'f3', label: 'Field 3', valueSources: ['field'], comparator: () => false },
     // @ts-expect-error valueSources cannot be an empty array
     { name: 'f4', label: 'Field 4', valueSources: [] },
     { name: 'f5', label: 'Field 5', valueSources: ['field', 'value'] },
   ];
   const fieldsWithBetween: Field[] = [
-    {
-      name: 'fb',
-      label: 'Field B',
-      valueSources: ['field'],
-      defaultOperator: 'between',
-    },
+    { name: 'fb', label: 'Field B', valueSources: ['field'], defaultOperator: 'between' },
     ...fields,
   ];
 
@@ -3055,10 +3004,7 @@ describe('max levels', () => {
             {
               combinator: 'and',
               rules: [
-                {
-                  combinator: 'and',
-                  rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
-                },
+                { combinator: 'and', rules: [{ field: 'lastName', operator: '=', value: 'Vai' }] },
               ],
             },
           ],
@@ -3095,10 +3041,7 @@ describe('max levels', () => {
             {
               combinator: 'and',
               rules: [
-                {
-                  combinator: 'and',
-                  rules: [{ field: 'lastName', operator: '=', value: 'Vai' }],
-                },
+                { combinator: 'and', rules: [{ field: 'lastName', operator: '=', value: 'Vai' }] },
               ],
             },
           ],
@@ -3196,11 +3139,7 @@ describe('redux functions', () => {
 describe('nested object immutability', () => {
   it('does not modify rules it does not have to modify', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const immutableRule: RuleType = {
-      field: 'this',
-      operator: '=',
-      value: 'should stay the same',
-    };
+    const immutableRule: RuleType = { field: 'this', operator: '=', value: 'should stay the same' };
     const defaultQuery: RuleGroupType = {
       combinator: 'and',
       rules: [
@@ -3544,11 +3483,7 @@ describe('debug mode', () => {
 
   it('logs failed query updates due to disabled prop', async () => {
     const onLog = jest.fn();
-    const defaultQuery: RuleGroupType = {
-      disabled: true,
-      combinator: 'and',
-      rules: [],
-    };
+    const defaultQuery: RuleGroupType = { disabled: true, combinator: 'and', rules: [] };
     const ruleGroup = ({
       path,
       actions: { groupRule, moveRule, onGroupAdd, onGroupRemove, onRuleAdd, onPropChange },
@@ -3590,10 +3525,7 @@ describe('debug mode', () => {
 
 describe('controlled/uncontrolled warnings', () => {
   it('tracks changes from controlled to uncontrolled and vice versa', async () => {
-    const getQuery = (): RuleGroupType => ({
-      combinator: generateID(),
-      rules: [],
-    });
+    const getQuery = (): RuleGroupType => ({ combinator: generateID(), rules: [] });
     const { rerender } = render(<QueryBuilder enableMountQueryChange={false} />);
     await waitABeat();
     expect(consoleError).not.toHaveBeenCalled();
@@ -3934,9 +3866,7 @@ describe('string array options', () => {
     });
 
     it('handles mixed string and FlexibleOption arrays for combinators', () => {
-      setupWithStringArrays({
-        combinators: ['and', { name: 'or', label: 'Custom OR' }, 'xor'],
-      });
+      setupWithStringArrays({ combinators: ['and', { name: 'or', label: 'Custom OR' }, 'xor'] });
 
       const combinatorSelector = screen.getByTestId(TestID.combinators);
       const options = combinatorSelector.querySelectorAll('option');

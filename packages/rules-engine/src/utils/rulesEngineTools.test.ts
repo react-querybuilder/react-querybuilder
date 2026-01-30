@@ -43,10 +43,7 @@ const pathsAsIDs = (re: RulesEngineAny): RulesEngineAny => {
       return {
         ...obj,
         id: JSON.stringify(path),
-        antecedent: {
-          ...obj.antecedent,
-          id: JSON.stringify([...path, 'antecedent']),
-        },
+        antecedent: { ...obj.antecedent, id: JSON.stringify([...path, 'antecedent']) },
         ...(obj.conditions && {
           // oxlint-disable-next-line no-explicit-any
           conditions: obj.conditions.map((c: any, i: number) => addPathIDs(c, [...path, i])),
@@ -219,31 +216,23 @@ describe('updateRE', () => {
 describe('moveRE', () => {
   it('shifts the first condition down', () => {
     const result = moveRE(re3wIDs, [0], 'down');
-    expect(stripIDs(result)).toEqual({
-      conditions: [cond2, cond1],
-    });
+    expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1] });
   });
 
   it('shifts the last condition up', () => {
     const result = moveRE(re3wIDs, [1], 'up');
-    expect(stripIDs(result)).toEqual({
-      conditions: [cond2, cond1],
-    });
+    expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1] });
   });
 
   describe('clone', () => {
     it('clones when moving with clone option', () => {
       const result = moveRE(re3wIDs, [0], [1], { clone: true });
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond1, cond1, cond2],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond1, cond1, cond2] });
     });
 
     it('clones when moving down with clone option', () => {
       const result = moveRE(re3wIDs, [0], 'down', { clone: true });
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond1, cond1, cond2],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond1, cond1, cond2] });
     });
 
     it('uses custom idGenerator when cloning', () => {
@@ -256,18 +245,14 @@ describe('moveRE', () => {
   describe('explicit path moves', () => {
     it('moves from one explicit path to another', () => {
       const result = moveRE(re3wIDs, [0], [1]);
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond2, cond1],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1] });
     });
 
     it('moves from explicit path beyond current position', () => {
       const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
       const re4wIDs = pathsAsIDs(re4) as RulesEngine;
       const result = moveRE(re4wIDs, [0], [2]);
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond2, cond1, cond1],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1, cond1] });
     });
 
     it('applies path adjustment for explicit moves', () => {
@@ -275,9 +260,7 @@ describe('moveRE', () => {
       const re4wIDs = pathsAsIDs(re4) as RulesEngine;
       // Move first condition to position 2 should account for removal
       const result = moveRE(re4wIDs, [0], [2]);
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond2, cond1, cond1],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1, cond1] });
     });
   });
 
@@ -302,16 +285,12 @@ describe('moveRE', () => {
   describe('edge cases and validation', () => {
     it('handles moving with string ID instead of path', () => {
       const result = moveRE(re3wIDs, '[0]', '[1]');
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond2, cond1],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1] });
     });
 
     it('handles moving from string ID to direction', () => {
       const result = moveRE(re3wIDs, '[0]', 'down');
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond2, cond1],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1] });
     });
 
     it('bails when source ID not found', () => {
@@ -378,18 +357,14 @@ describe('moveRE', () => {
       const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
       const re4wIDs = pathsAsIDs(re4) as RulesEngine;
       const result = moveRE(re4wIDs, [2], [0]);
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond1, cond1, cond2],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond1, cond1, cond2] });
     });
 
     it('moves condition to end of array', () => {
       const re4: RulesEngine = { conditions: [cond1, cond2, cond1] };
       const re4wIDs = pathsAsIDs(re4) as RulesEngine;
       const result = moveRE(re4wIDs, [0], [2]);
-      expect(stripIDs(result)).toEqual({
-        conditions: [cond2, cond1, cond1],
-      });
+      expect(stripIDs(result)).toEqual({ conditions: [cond2, cond1, cond1] });
     });
 
     it('handles multiple up/down moves correctly', () => {
