@@ -1,4 +1,4 @@
-name: Prettier
+name: Formatting
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  Prettier:
+  Format_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -15,9 +15,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - name: Check prettification
+      - name: Check formatting
         run: |
           bun run pretty-check || \
-          (bun run pretty-print --loglevel=silent \
+          (bun run pretty-print \
           && git --no-pager diff \
           && exit 1)
