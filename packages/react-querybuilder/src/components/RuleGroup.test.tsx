@@ -564,9 +564,7 @@ it('warns about deprecated props', async () => {
 it('sets default combinator when ruleGroup does not have one', () => {
   render(
     <RuleGroup
-      {
-        ...getRuleGroupProps(/* *not* `independentCombinators` */)
-      }
+      {...getRuleGroupProps(/* *not* `independentCombinators` */)}
       ruleGroup={{ rules: [] }}
       combinator="or"
     />

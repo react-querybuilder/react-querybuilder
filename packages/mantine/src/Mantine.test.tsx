@@ -21,12 +21,12 @@ import type {
   VersatileSelectorProps,
 } from 'react-querybuilder';
 import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
+import { QueryBuilderMantine } from './index';
 import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
 import { MantineShiftActions } from './MantineShiftActions';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
-import { QueryBuilderMantine } from './index';
 
 jest.setTimeout(30_000);
 

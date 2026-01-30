@@ -16,9 +16,7 @@ export const queriesSlice: Slice<
   {
     setQueryState: (
       state: QueriesSliceState,
-      {
-        payload: { qbId, query },
-      }: PayloadAction<SetQueryStateParams>
+      { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>
     ) => void;
   },
   'queries',

@@ -1,6 +1,6 @@
-import stableStringify from 'fast-json-stable-stringify';
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import stableStringify from 'fast-json-stable-stringify';
 import type { Options as PrettierOptions } from 'prettier';
 import prettier from 'prettier';
 import * as prettierPluginOrganizeImports from 'prettier-plugin-organize-imports';
