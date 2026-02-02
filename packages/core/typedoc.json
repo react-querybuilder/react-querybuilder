@@ -6,7 +6,7 @@
     "src/utils/parseJSONata/index.ts",
     "src/utils/parseJsonLogic/index.ts",
     "src/utils/parseMongoDB/index.ts",
-    "src/utils/arseSpEL/index.ts",
+    "src/utils/parseSpEL/index.ts",
     "src/utils/parseSQL/index.ts",
     "src/utils/transformQuery.ts"
   ],
