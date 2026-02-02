@@ -174,17 +174,25 @@
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
+    "jsonata": ">=2",
     "json-logic-js": ">=2",
-    "sequelize": ">=6"
+    "sequelize": ">=6",
+    "spel2js": ">=0.2.0"
   },
   "peerDependenciesMeta": {
     "drizzle-orm": {
+      "optional": true
+    },
+    "jsonata": {
       "optional": true
     },
     "json-logic-js": {
       "optional": true
     },
     "sequelize": {
+      "optional": true
+    },
+    "spel2js": {
       "optional": true
     }
   },

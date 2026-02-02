@@ -59,7 +59,6 @@
     "@vitejs/plugin-react": "catalog:",
     "antd": "^6.2.2",
     "dayjs": "^1.11.19",
-    "rc-util": "^5.44.4",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.14.0",

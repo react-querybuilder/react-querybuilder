@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from '@react-querybuilder/core';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
 import type { ConsequentProps } from '../types';
