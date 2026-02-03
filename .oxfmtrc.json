@@ -1,0 +1,68 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "bracketSameLine": true,
+  "arrowParens": "avoid",
+  "embeddedLanguageFormatting": "auto",
+  "experimentalSortImports": {
+    "newlinesBetween": false,
+    "sortSideEffects": false,
+    "customGroups": [
+      { "groupName": "bun", "elementNamePattern": ["bun"] },
+      { "groupName": "bun:", "elementNamePattern": ["bun:*"] },
+      { "groupName": "node:", "elementNamePattern": ["node:*"] }
+    ],
+    "groups": [
+      ["bun", "bun:", "node:"],
+      ["type-builtin", "value-builtin"],
+      ["type-external", "value-external"],
+      ["type-parent", "value-parent", "type-sibling", "value-sibling", "type-index", "value-index"],
+      "type-import",
+      "ts-equals-import",
+      "unknown"
+    ]
+  },
+  "experimentalSortPackageJson": false,
+  "ignorePatterns": [
+    "examples/*/**/*.*",
+    // Generated
+    "**/celParser.ts",
+    "**/sqlParser.ts",
+    // Binaries
+    "*.jpeg",
+    "*.jpg",
+    "*.png",
+    "*.svg",
+    // Unsupported
+    "*.jison",
+    "*.toml",
+    "CNAME",
+    "*.go",
+    "go.mod",
+    "go.sum",
+    "*.prisma",
+    "*.sh",
+    // Misc
+    "lerna.json"
+  ],
+  "overrides": [
+    {
+      "files": ["packages/*/src/**/*.test.{ts,tsx}"],
+      "options": {
+        "objectWrap": "collapse"
+      }
+    },
+    {
+      "files": ["examples/*/**/*.!(css|scss)*"],
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ]
+}

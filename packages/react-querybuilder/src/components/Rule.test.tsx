@@ -155,9 +155,7 @@ describe('validation', () => {
 
   it('validates to false if validationMap[id] = false even if a validator function is provided', () => {
     const validator = jest.fn(() => true);
-    const fieldMap = {
-      field1: toFullOption({ name: 'field1', label: 'Field 1', validator }),
-    };
+    const fieldMap = { field1: toFullOption({ name: 'field1', label: 'Field 1', validator }) };
     const validationMap = { id: false };
     render(<Rule {...getProps({ fieldMap, validationMap })} />);
     expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
@@ -174,9 +172,7 @@ describe('validation', () => {
 
   it('validates if validationMap[id] does not exist and a validator function is provided', () => {
     const validator = jest.fn(() => true);
-    const fieldMap = {
-      field1: toFullOption({ name: 'field1', label: 'Field 1', validator }),
-    };
+    const fieldMap = { field1: toFullOption({ name: 'field1', label: 'Field 1', validator }) };
     const props = getProps({ fieldMap });
     render(<Rule {...props} rule={{ ...props.rule, field: 'field1' }} />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
@@ -271,11 +267,7 @@ describe('valueSource', () => {
       valueSources,
       comparator: (f: FullField) => f.label.includes('comparator'),
     },
-    {
-      name: 'fvsf',
-      label: 'Field w/ valueSources function',
-      valueSources: () => valueSources,
-    },
+    { name: 'fvsf', label: 'Field w/ valueSources function', valueSources: () => valueSources },
     { name: 'fc1', label: 'Field for comparator 1', group: 'g1' },
     { name: 'fc2', label: 'Field for comparator 2', group: 'g1' },
   ].map(o => toFullOption(o)) satisfies FullField[];

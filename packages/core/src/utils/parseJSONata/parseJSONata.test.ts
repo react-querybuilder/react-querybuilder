@@ -132,12 +132,7 @@ it('handles "like" comparisons', () => {
   );
   testParseJSONata(
     '$contains(f1, f2)',
-    wrapRule({
-      field: 'f1',
-      operator: 'contains',
-      value: 'f2',
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'contains', value: 'f2', valueSource: 'field' })
   );
 });
 
@@ -344,22 +339,12 @@ describe('fields and getValueSources', () => {
     // fields as option groups
     testParseJSONata(
       parseJSONata(`f3 = f1`, { fields: optionGroups }),
-      wrapRule({
-        field: 'f3',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // fields as object
     testParseJSONata(
       parseJSONata(`f3 = f1`, { fields: fieldsObject }),
-      wrapRule({
-        field: 'f3',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f3', operator: '=', value: 'f1', valueSource: 'field' })
     );
     // `f3` and `f4` allow the valueSource "field" and have no filter
     const baseFields = ['f3', 'f4'];
@@ -369,12 +354,7 @@ describe('fields and getValueSources', () => {
           parseJSONata(`${baseField} = ${f.name}`, { fields }),
           f.name === baseField
             ? wrapRule()
-            : wrapRule({
-                field: baseField,
-                operator: '=',
-                value: f.name,
-                valueSource: 'field',
-              })
+            : wrapRule({ field: baseField, operator: '=', value: f.name, valueSource: 'field' })
         );
       }
     }
@@ -384,48 +364,23 @@ describe('fields and getValueSources', () => {
   it('uses the getValueSources option', () => {
     testParseJSONata(
       parseJSONata(`f5 = f6`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f5',
-        operator: '=',
-        value: 'f6',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f5', operator: '=', value: 'f6', valueSource: 'field' })
     );
     testParseJSONata(
       parseJSONata(`f8 = f7`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f8',
-        operator: '=',
-        value: 'f7',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f8', operator: '=', value: 'f7', valueSource: 'field' })
     );
     testParseJSONata(
       parseJSONata(`f9 = f1`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f9',
-        operator: '=',
-        value: 'f1',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f9', operator: '=', value: 'f1', valueSource: 'field' })
     );
     testParseJSONata(
       parseJSONata(`f10 = f7`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f10',
-        operator: '=',
-        value: 'f7',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f10', operator: '=', value: 'f7', valueSource: 'field' })
     );
     testParseJSONata(
       parseJSONata(`f10 = f8`, { fields, getValueSources }),
-      wrapRule({
-        field: 'f10',
-        operator: '=',
-        value: 'f8',
-        valueSource: 'field',
-      })
+      wrapRule({ field: 'f10', operator: '=', value: 'f8', valueSource: 'field' })
     );
   });
 
@@ -480,12 +435,7 @@ it('handles "in" operator', () => {
   );
   testParseJSONata(
     'f1 in [f2,f3]',
-    wrapRule({
-      field: 'f1',
-      operator: 'in',
-      value: ['f2', 'f3'],
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' })
   );
 });
 
@@ -523,12 +473,8 @@ it('handles multiple negations', () => {
 
 // oxlint-disable-next-line expect-expect
 it('handles independent combinators', () => {
-  testParseJSONataIC('f1 = "Test"', {
-    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-  });
-  testParseJSONataIC('(f1 = "Test")', {
-    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-  });
+  testParseJSONataIC('f1 = "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  testParseJSONataIC('(f1 = "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
   testParseJSONataIC('$not(f1 = "Test")', {
     not: true,
     rules: [{ field: 'f1', operator: '=', value: 'Test' }],

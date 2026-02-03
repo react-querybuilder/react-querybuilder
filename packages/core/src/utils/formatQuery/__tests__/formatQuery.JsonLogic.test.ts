@@ -200,10 +200,7 @@ it('formats JSONLogic correctly', () => {
   );
   expect(
     formatQuery(
-      {
-        combinator: 'and',
-        rules: [{ field: 'f', operator: 'between', value: [14, 12] }],
-      },
+      { combinator: 'and', rules: [{ field: 'f', operator: 'between', value: [14, 12] }] },
       'jsonlogic'
     )
   ).toEqual({ and: [{ '<=': [12, { var: 'f' }, 14] }] });
@@ -213,10 +210,7 @@ it('formats JSONLogic correctly', () => {
         combinator: 'and',
         rules: [
           { field: 'f', operator: 'between', value: [14, 12] },
-          {
-            combinator: 'or',
-            rules: [{ field: 'f', operator: '=', value: '26' }],
-          },
+          { combinator: 'or', rules: [{ field: 'f', operator: '=', value: '26' }] },
         ],
       },
       'jsonlogic'
@@ -283,9 +277,7 @@ it('ruleProcessor', () => {
   });
   expect(
     formatQuery(queryForRuleProcessor, { format: 'jsonlogic', valueProcessor: ruleProcessor })
-  ).toEqual({
-    and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }],
-  });
+  ).toEqual({ and: [{ custom_operator: [{ var: 'f1' }, 'v1'] }, { '==': [{ var: 'f2' }, 'v2'] }] });
 });
 
 it('parseNumbers', () => {
@@ -417,9 +409,7 @@ it('handles match modes', () => {
               0,
             ],
           },
-          {
-            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
-          },
+          { '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5] },
         ],
       },
       {
@@ -443,9 +433,7 @@ it('handles match modes', () => {
               0,
             ],
           },
-          {
-            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
-          },
+          { '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5] },
         ],
       },
       {
@@ -469,9 +457,7 @@ it('handles match modes', () => {
               0,
             ],
           },
-          {
-            '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5],
-          },
+          { '*': [{ reduce: [{ var: 'fs' }, { '+': [1, { var: 'accumulator' }] }, 0] }, 0.5] },
         ],
       },
       { all: [{ var: 'fs' }, { and: [{ in: ['S', { var: '' }] }, { in: ['S', { var: '' }] }] }] },

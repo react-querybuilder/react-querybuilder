@@ -51,9 +51,9 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "8.3.12",
-    "@mantine/dates": "8.3.12",
-    "@mantine/hooks": "8.3.12",
+    "@mantine/core": "8.3.13",
+    "@mantine/dates": "8.3.13",
+    "@mantine/hooks": "8.3.13",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",

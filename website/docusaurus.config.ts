@@ -1,10 +1,10 @@
+import path from 'node:path';
 import type { Options as PluginContentDocsOptions } from '@docusaurus/plugin-content-docs';
 import type { Options as PresetClassicOptions, ThemeConfig } from '@docusaurus/preset-classic';
 import remarkPluginNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn';
 import type { Config } from '@docusaurus/types';
 import type { PluginOptions as LlmsTxtPluginOptions } from '@signalwire/docusaurus-plugin-llms-txt';
 import type { PluginOptions as DocusaurusPluginTypedocOptions } from 'docusaurus-plugin-typedoc';
-import path from 'node:path';
 import { themes } from 'prism-react-renderer';
 import rehypeRaw from 'rehype-raw';
 import type { TypeDocOptions } from 'typedoc';

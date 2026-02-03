@@ -1,7 +1,7 @@
 /* @jest-environment node */
 
-import { convertToIC, formatQuery } from '@react-querybuilder/core';
 import { Database } from 'bun:sqlite';
+import { convertToIC, formatQuery } from '@react-querybuilder/core';
 import { drizzle } from 'drizzle-orm/bun-sqlite';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import type { TestSQLParams } from './drizzleTestUtils';

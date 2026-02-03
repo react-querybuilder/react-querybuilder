@@ -27,7 +27,9 @@ if (process.env.NODE_ENV === 'production') {
 export const commonBuildOptions: UserConfig = {
   sourcemap: true,
   platform: 'neutral',
-  dts: { oxc: true, resolve: ['type-fest'] },
+  dts: { oxc: true },
+  external: ['jsonata', 'numeric-quantity', 'sequelize', 'spel2js'],
+  inlineOnly: ['type-fest'],
 };
 
 export const tsdownCommonConfig = (sourceDir: string) =>

@@ -807,12 +807,7 @@ it('can group rules/groups to different query builders', async () => {
         id: expect.any(String),
         combinator: 'and',
         rules: [
-          {
-            id: expect.any(String),
-            field: 'field1',
-            operator: '=',
-            value: '1',
-          },
+          { id: expect.any(String), field: 'field1', operator: '=', value: '1' },
           {
             field: 'field4',
             operator: '=',

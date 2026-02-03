@@ -48,9 +48,7 @@ jest.mock('antd', () => {
           props.mode === 'multiple'
             ? [...e.target.selectedOptions].map(opt => opt.value)
             : e.target.value,
-          {
-            label: '',
-          }
+          { label: '' }
         )
       }>
       {toOptions(props.options as Option[])}
@@ -66,11 +64,7 @@ const notToggleTitle = 'AntDNotToggle';
 describe(notToggleTitle, () => {
   const user = userEventSetup();
   const label = 'Not';
-  const props: NotToggleProps = {
-    ...defaultNotToggleProps,
-    label,
-    title: notToggleTitle,
-  };
+  const props: NotToggleProps = { ...defaultNotToggleProps, label, title: notToggleTitle };
 
   it('has the value passed in', () => {
     render(<AntDNotToggle {...props} checked />);
@@ -134,10 +128,7 @@ describe(`${valueEditorTitle} as switch`, () => {
 
 describe(`${valueEditorTitle} date/time pickers`, () => {
   const user = userEventSetup();
-  const props: ValueEditorProps = {
-    ...defaultValueEditorProps,
-    title: valueEditorTitle,
-  };
+  const props: ValueEditorProps = { ...defaultValueEditorProps, title: valueEditorTitle };
   const today = dayjs().format('YYYY-MM-DD');
   const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
   // const rightNow = dayjs().format('HH:mm');
@@ -317,11 +308,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
 
 describe('extra AntDValueSelector tests', () => {
   it('handles an empty string value in multiselect mode', () => {
-    const props: ValueSelectorProps = {
-      ...defaultValueSelectorProps,
-      multiple: true,
-      value: '',
-    };
+    const props: ValueSelectorProps = { ...defaultValueSelectorProps, multiple: true, value: '' };
     const { container } = render(<AntDValueSelector {...props} />);
     expect(container.querySelectorAll('.ant-select-selection-item')).toHaveLength(0);
   });

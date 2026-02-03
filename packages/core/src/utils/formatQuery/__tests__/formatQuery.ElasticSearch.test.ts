@@ -266,11 +266,7 @@ it('independent combinators', () => {
   expect(formatQuery(queryIC, 'elasticsearch')).toEqual({
     bool: {
       should: [
-        {
-          bool: {
-            must: [{ term: { firstName: 'Test' } }, { term: { middleName: 'Test' } }],
-          },
-        },
+        { bool: { must: [{ term: { firstName: 'Test' } }, { term: { middleName: 'Test' } }] } },
         { term: { lastName: 'Test' } },
       ],
     },
@@ -293,9 +289,7 @@ describe('validation', () => {
       bool: { must: [{ term: { field: '' } }] },
     },
     'should invalidate elasticsearch following combinator of first rule': {
-      bool: {
-        should: [{ bool: { must: [{ term: { field2: '' } }] } }, { term: { field3: '' } }],
-      },
+      bool: { should: [{ bool: { must: [{ term: { field2: '' } }] } }, { term: { field3: '' } }] },
     },
     'should invalidate elasticsearch preceding combinator of non-first rule': {
       bool: { should: [{ bool: { must: [{ term: { field: '' } }] } }, { term: { field3: '' } }] },
@@ -320,9 +314,7 @@ it('ruleProcessor', () => {
   });
   expect(
     formatQuery(queryForRuleProcessor, { format: 'elasticsearch', valueProcessor: ruleProcessor })
-  ).toEqual({
-    bool: { must: [customResult, { term: { f2: 'v2' } }] },
-  });
+  ).toEqual({ bool: { must: [customResult, { term: { f2: 'v2' } }] } });
 });
 
 it.each([
@@ -425,10 +417,7 @@ it('handles subqueries with match modes', () => {
       {
         field: 'items',
         operator: '=',
-        value: {
-          combinator: 'and',
-          rules: [{ field: 'price', operator: '>', value: 100 }],
-        },
+        value: { combinator: 'and', rules: [{ field: 'price', operator: '>', value: 100 }] },
         match: { mode: 'some' },
       },
       {
@@ -473,11 +462,7 @@ it('handles subqueries with match modes', () => {
         {
           nested: {
             path: 'items',
-            query: {
-              bool: {
-                must: [{ range: { 'items.price': { gt: 100 } } }],
-              },
-            },
+            query: { bool: { must: [{ range: { 'items.price': { gt: 100 } } }] } },
           },
         },
         {
@@ -485,11 +470,7 @@ it('handles subqueries with match modes', () => {
             must_not: {
               nested: {
                 path: 'items',
-                query: {
-                  bool: {
-                    must: [{ term: { 'items.status': 'deleted' } }],
-                  },
-                },
+                query: { bool: { must: [{ term: { 'items.status': 'deleted' } }] } },
               },
             },
           },
@@ -517,16 +498,7 @@ it('handles subqueries with empty field', () => {
   expect(result).toEqual({
     bool: {
       must: [
-        {
-          nested: {
-            path: 'tags',
-            query: {
-              bool: {
-                must: [{ term: { tags: 'important' } }],
-              },
-            },
-          },
-        },
+        { nested: { path: 'tags', query: { bool: { must: [{ term: { tags: 'important' } }] } } } },
       ],
     },
   });
@@ -560,9 +532,7 @@ it('handles subqueries with complex bool combinations', () => {
           nested: {
             path: 'items',
             query: {
-              bool: {
-                should: [{ term: { 'items.name': 'A' } }, { term: { 'items.name': 'B' } }],
-              },
+              bool: { should: [{ term: { 'items.name': 'A' } }, { term: { 'items.name': 'B' } }] },
             },
           },
         },
@@ -623,12 +593,7 @@ it('handles subqueries with invalid subquery (empty rules)', () => {
 it('returns false for invalid match mode - value is not a rule group', () => {
   expect(
     defaultRuleProcessorElasticSearch(
-      {
-        field: 'items',
-        operator: '=',
-        value: 'not a rule group',
-        match: { mode: 'some' },
-      },
+      { field: 'items', operator: '=', value: 'not a rule group', match: { mode: 'some' } },
       {}
     )
   ).toBe(false);

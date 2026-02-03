@@ -63,14 +63,12 @@ export default defineConfig(async options => {
       ...commonBuildOptions,
       ...options,
       entry: 'src/async.ts',
-      external: ['react-querybuilder'],
     },
     {
       ...commonBuildOptions,
       ...options,
       format: 'cjs',
       entry: 'src/async.ts',
-      external: ['react-querybuilder'],
     },
     {
       ...commonBuildOptions,

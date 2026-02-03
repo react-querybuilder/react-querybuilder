@@ -274,10 +274,7 @@ it('aborts move if dropped on itself', () => {
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
-      query={{
-        combinator: 'and',
-        rules: [{ field: 'f1', operator: '=', value: 'v1' }],
-      }}
+      query={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
     />
   );
   const rule = screen.getByTestId(TestID.rule);
@@ -292,10 +289,7 @@ it('aborts group if dropped on itself', async () => {
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
-      query={{
-        combinator: 'and',
-        rules: [{ field: 'f1', operator: '=', value: 'v1' }],
-      }}
+      query={{ combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
     />
   );
   const rule = screen.getByTestId(TestID.rule);

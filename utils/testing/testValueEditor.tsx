@@ -1,6 +1,6 @@
 import type { FullField, OptionList } from '@react-querybuilder/core';
 import { standardClassnames } from '@react-querybuilder/core';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { Schema, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
@@ -234,8 +234,10 @@ export const testValueEditor = (
           ],
         };
 
-        it('should render the radio buttons with labels', () => {
-          render(<ValueEditor {...radioProps} />);
+        it('should render the radio buttons with labels', async () => {
+          await act(async () => {
+            render(<ValueEditor {...radioProps} />);
+          });
           const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           expect(radioButtons).toHaveLength(2);
           for (const r of radioButtons) {
@@ -245,7 +247,9 @@ export const testValueEditor = (
 
         it('should call the onChange handler', async () => {
           const handleOnChange = jest.fn();
-          render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} />);
+          await act(async () => {
+            render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} />);
+          });
           const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           for (const r of radioButtons) {
             await user.click(r);
@@ -256,7 +260,9 @@ export const testValueEditor = (
 
         it('should be disabled by the disabled prop', async () => {
           const handleOnChange = jest.fn();
-          render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} disabled />);
+          await act(async () => {
+            render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} disabled />);
+          });
           const radioButtons = screen.getByTitle(title).querySelectorAll('input[type="radio"]');
           for (const r of radioButtons) {
             expect(r).toBeDisabled();

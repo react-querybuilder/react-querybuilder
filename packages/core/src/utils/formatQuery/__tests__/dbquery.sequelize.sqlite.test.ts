@@ -37,11 +37,7 @@ const testSQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
     const where = formatQuery(query, {
       ...fqOptions,
       format: 'sequelize',
-      context: {
-        sequelizeOperators: Op,
-        sequelizeCol: col,
-        sequelizeFn: fn,
-      },
+      context: { sequelizeOperators: Op, sequelizeCol: col, sequelizeFn: fn },
     });
     const results = await SequelizeSuperUser.findAll({
       where,

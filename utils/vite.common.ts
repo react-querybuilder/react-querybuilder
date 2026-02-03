@@ -1,5 +1,5 @@
-import vitePluginReact from '@vitejs/plugin-react';
 import path from 'node:path';
+import vitePluginReact from '@vitejs/plugin-react';
 import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import postcssScopedDonut from './devapp/postcss-scoped-donut';

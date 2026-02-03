@@ -135,12 +135,7 @@ describe('findConditionID', () => {
         {
           id: 'target',
           antecedent: { combinator: 'and', rules: [] },
-          conditions: [
-            {
-              id: 'target',
-              antecedent: { combinator: 'and', rules: [] },
-            },
-          ],
+          conditions: [{ id: 'target', antecedent: { combinator: 'and', rules: [] } }],
         },
       ],
     };
@@ -202,12 +197,7 @@ describe('getConditionPathOfID', () => {
             {
               id: 'level2',
               antecedent: { combinator: 'and', rules: [] },
-              conditions: [
-                {
-                  id: 'level3',
-                  antecedent: { combinator: 'and', rules: [] },
-                },
-              ],
+              conditions: [{ id: 'level3', antecedent: { combinator: 'and', rules: [] } }],
             },
           ],
         },
@@ -221,13 +211,8 @@ describe('getConditionPathOfID', () => {
     const reWithoutIds: RulesEngineAny = {
       id: 'root',
       conditions: [
-        {
-          antecedent: { combinator: 'and', rules: [] },
-        },
-        {
-          id: 'hasId',
-          antecedent: { combinator: 'and', rules: [] },
-        },
+        { antecedent: { combinator: 'and', rules: [] } },
+        { id: 'hasId', antecedent: { combinator: 'and', rules: [] } },
       ],
     };
     const result = getConditionPathOfID('hasId', reWithoutIds);

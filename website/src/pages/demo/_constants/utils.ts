@@ -1,11 +1,11 @@
-// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
-import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
+// oxlint-disable-next-line unicorn/prefer-node-protocol
+import { Buffer } from 'buffer';
 // @ts-expect-error !!raw-loader!
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
-// oxlint-disable-next-line unicorn/prefer-node-protocol
-import { Buffer } from 'buffer';
+// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
+import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 import clsx from 'clsx';
 import pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';

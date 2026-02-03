@@ -146,9 +146,7 @@ const mongoQueryExpectation = {
     { hello: { $not: { $regex: 'com' } } },
     { job: { $not: { $regex: '^Man' } } },
     { job: { $not: { $regex: 'ger$' } } },
-    {
-      $or: [{ job: 'Sales Executive' }, { job: { $in: [] } }],
-    },
+    { $or: [{ job: 'Sales Executive' }, { job: { $in: [] } }] },
   ],
 };
 const mongoQueryExpectationForAvoidFieldsAsKeys = {
@@ -171,9 +169,7 @@ const mongoQueryExpectationForAvoidFieldsAsKeys = {
     { $not: { $regexMatch: { input: '$hello', regex: 'com' } } },
     { $not: { $regexMatch: { input: '$job', regex: '^Man' } } },
     { $not: { $regexMatch: { input: '$job', regex: 'ger$' } } },
-    {
-      $or: [{ $eq: ['$job', 'Sales Executive'] }, { $in: ['$job', []] }],
-    },
+    { $or: [{ $eq: ['$job', 'Sales Executive'] }, { $in: ['$job', []] }] },
   ],
 };
 const mongoQueryExpectationForValueSourceField = {
@@ -185,9 +181,7 @@ const mongoQueryExpectationForValueSourceField = {
     { $where: '[].includes(this.firstName)' },
     { $gte: ['$firstName', '$middleName'], $lte: ['$firstName', '$lastName'] },
     { $gte: ['$firstName', '$middleName'], $lte: ['$firstName', '$lastName'] },
-    {
-      $or: [{ $lt: ['$lastName', '$middleName'] }, { $gt: ['$lastName', '$lastName'] }],
-    },
+    { $or: [{ $lt: ['$lastName', '$middleName'] }, { $gt: ['$lastName', '$lastName'] }] },
     { $eq: ['$age', '$iq'] },
     { $eq: ['$isMusician', '$isCreative'] },
     { $where: 'this.email.includes(this.atSign)' },

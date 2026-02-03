@@ -21,18 +21,16 @@ import type {
   VersatileSelectorProps,
 } from 'react-querybuilder';
 import { QueryBuilder, TestID, toFullOption } from 'react-querybuilder';
+import { QueryBuilderMantine } from './index';
 import { MantineActionElement } from './MantineActionElement';
 import { MantineNotToggle } from './MantineNotToggle';
 import { MantineShiftActions } from './MantineShiftActions';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
-import { QueryBuilderMantine } from './index';
 
 jest.setTimeout(30_000);
 
-const theme = createTheme({
-  respectReducedMotion: true,
-});
+const theme = createTheme({ respectReducedMotion: true });
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const generateWrapper = (RQBComponent: React.ComponentType<any>) => {

@@ -486,12 +486,7 @@ it('handles "in" operator', () => {
   );
   testParseCEL(
     'f1 in [f2,f3]',
-    wrapRule({
-      field: 'f1',
-      operator: 'in',
-      value: 'f2,f3',
-      valueSource: 'field',
-    })
+    wrapRule({ field: 'f1', operator: 'in', value: 'f2,f3', valueSource: 'field' })
   );
   testParseCEL(
     'f1 in {f2: "v2", "f3": "v3"}',
@@ -538,12 +533,8 @@ it('handles multiple negations', () => {
 });
 
 it('handles independent combinators', () => {
-  testParseCELic('(f1 == "Test")', {
-    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-  });
-  testParseCELic('f1 == "Test"', {
-    rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-  });
+  testParseCELic('(f1 == "Test")', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
+  testParseCELic('f1 == "Test"', { rules: [{ field: 'f1', operator: '=', value: 'Test' }] });
   testParseCELic('f1 == "Test" && f2 == "Test2" || f3 == "Test3"', {
     rules: [
       { field: 'f1', operator: '=', value: 'Test' },
@@ -594,11 +585,7 @@ it('ignores things', () => {
 it('handles custom expressions', () => {
   testParseCEL(
     'opted_in_at.isBirthday(-1)',
-    wrapRule({
-      field: 'opted_in_at',
-      operator: 'isBirthday' as DefaultOperatorName,
-      value: -1,
-    }),
+    wrapRule({ field: 'opted_in_at', operator: 'isBirthday' as DefaultOperatorName, value: -1 }),
     {
       customExpressionHandler: expr => {
         if (
@@ -1138,10 +1125,7 @@ describe('subqueries', () => {
           field: 'items',
           operator: '=',
           match: { mode: 'some' },
-          value: {
-            combinator: 'and',
-            rules: [{ field: 'price', operator: '>', value: 100 }],
-          },
+          value: { combinator: 'and', rules: [{ field: 'price', operator: '>', value: 100 }] },
         }),
         { fields: subqueryFields }
       );
@@ -1154,10 +1138,7 @@ describe('subqueries', () => {
           field: 'items',
           operator: '=',
           match: { mode: 'all' },
-          value: {
-            combinator: 'and',
-            rules: [{ field: 'active', operator: '=', value: true }],
-          },
+          value: { combinator: 'and', rules: [{ field: 'active', operator: '=', value: true }] },
         }),
         { fields: subqueryFields }
       );
@@ -1170,10 +1151,7 @@ describe('subqueries', () => {
           field: 'items',
           operator: '=',
           match: { mode: 'some' },
-          value: {
-            combinator: 'and',
-            rules: [{ field: '', operator: 'contains', value: 'test' }],
-          },
+          value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'test' }] },
         }),
         { fields: subqueryFields }
       );

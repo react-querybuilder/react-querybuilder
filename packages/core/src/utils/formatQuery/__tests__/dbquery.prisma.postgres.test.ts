@@ -32,10 +32,7 @@ const testPrisma = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
       fields,
       parseNumbers: 'strict-limited',
     });
-    const queryResult = await prisma.superusers.findMany({
-      where,
-      orderBy: { madeUpName: 'asc' },
-    });
+    const queryResult = await prisma.superusers.findMany({ where, orderBy: { madeUpName: 'asc' } });
     expect(queryResult).toEqual(expectedResult);
   });
 };

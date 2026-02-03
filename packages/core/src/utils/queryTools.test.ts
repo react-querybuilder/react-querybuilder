@@ -48,25 +48,15 @@ const pathsAsIDs = (rg: DefaultRuleGroupTypeAny) =>
 const badPath: Path = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
 const [r1, r2, r3, r4, r5] = (['=', '<', '>', '<=', '>='] as const).map<DefaultRuleType>(
-  (operator, i) => ({
-    field: `f${i + 1}`,
-    operator,
-    value: `v${i + 1}`,
-  })
+  (operator, i) => ({ field: `f${i + 1}`, operator, value: `v${i + 1}` })
 );
 const [rg1, rg2] = [and, or].map<DefaultRuleGroupType>(combinator => ({ combinator, rules: [] }));
 const rg3: DefaultRuleGroupType = { combinator: and, rules: [r1, r2, r3] };
 const rgic1: DefaultRuleGroupTypeIC = { rules: [] };
 const rgic2: DefaultRuleGroupTypeIC = { rules: [r1, and, r2] };
 const rgvsu: DefaultRuleGroupType = { combinator: 'and', rules: [r1] };
-const rgvsv: DefaultRuleGroupType = {
-  combinator: 'and',
-  rules: [{ ...r1, valueSource: 'value' }],
-};
-const rgvsf: DefaultRuleGroupType = {
-  combinator: 'and',
-  rules: [{ ...r1, valueSource: 'field' }],
-};
+const rgvsv: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueSource: 'value' }] };
+const rgvsf: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueSource: 'field' }] };
 const rg1wID: DefaultRuleGroupType = id(rg1, '[]');
 const rgic1wID: DefaultRuleGroupTypeIC = id(rgic1, '[]');
 const rg3wIDs = pathsAsIDs(rg3);
@@ -168,10 +158,7 @@ describe('add', () => {
       combinator: and,
       rules: [r1, r2],
     });
-    testQT('adds a group', add(rg1wID, rg2, p([])), {
-      combinator: and,
-      rules: [rg2],
-    });
+    testQT('adds a group', add(rg1wID, rg2, p([])), { combinator: and, rules: [rg2] });
     it('adds a rule with custom idGenerator', () => {
       expect(add(rg1wID, r1, p([]), { idGenerator }).rules[0].id).toMatch(numericRegex);
     });
@@ -328,10 +315,7 @@ describe('update', () => {
     testQT(
       'updates a rule operator and resets the value',
       update(rg3wIDs, 'operator', 'between', p([1]), { resetOnOperatorChange: true }),
-      {
-        combinator: and,
-        rules: [r1, { ...r2, operator: 'between', value: '' }, r3],
-      }
+      { combinator: and, rules: [r1, { ...r2, operator: 'between', value: '' }, r3] }
     );
     testQT('updates a rule value', update(rg3wIDs, 'value', 'vu', p([2])), {
       combinator: and,
@@ -424,9 +408,7 @@ describe('update', () => {
   });
 
   describe('independent combinators', () => {
-    testQT('updates a combinator', update(rgic2, 'combinator', or, [1]), {
-      rules: [r1, or, r2],
-    });
+    testQT('updates a combinator', update(rgic2, 'combinator', or, [1]), { rules: [r1, or, r2] });
     testQT(
       'does not alter the query if the path ends in an even number',
       update(rgic2, 'combinator', or, [2]),
@@ -636,10 +618,7 @@ describe('update', () => {
       const deepQuery: DefaultRuleGroupType = {
         combinator: 'and',
         rules: [
-          {
-            combinator: 'or',
-            rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }],
-          },
+          { combinator: 'or', rules: [{ field: 'f1', operator: '=', value: 'v1', muted: true }] },
         ],
       };
 
@@ -984,10 +963,7 @@ describe('insert', () => {
       combinator: and,
       rules: [r1, r3, r2],
     });
-    testQT('inserts a group', insert(rg1, rg2, [0]), {
-      combinator: and,
-      rules: [rg2],
-    });
+    testQT('inserts a group', insert(rg1, rg2, [0]), { combinator: and, rules: [rg2] });
     it('inserts a rule with custom idGenerator', () => {
       expect(insert(rg1, r1, [0], { idGenerator }).rules[0].id).toMatch(numericRegex);
     });
@@ -1075,9 +1051,7 @@ describe('insert', () => {
       }),
       { rules: [r3, and, r1, and, r2] }
     );
-    testQT('inserts a group', insert(rgic1, rgic2, []), {
-      rules: [rgic2],
-    });
+    testQT('inserts a group', insert(rgic1, rgic2, []), { rules: [rgic2] });
     testQT(
       'replaces a rule in middle position',
       insert({ rules: [r1, and, r2, or, r3] }, r3, [2], { replace: true }),
@@ -1188,10 +1162,7 @@ describe('group', () => {
     testQT(
       'clones a group',
       group(pathsAsIDs({ combinator: and, rules: [r1, rg3, r2] }), p([1]), p([0]), { clone: true }),
-      {
-        combinator: and,
-        rules: [{ combinator: and, rules: [r1, rg3] }, rg3, r2],
-      }
+      { combinator: and, rules: [{ combinator: and, rules: [r1, rg3] }, rg3, r2] }
     );
     testQT(
       'does not alter the query if the old and new paths are the same',
@@ -1231,9 +1202,7 @@ describe('group', () => {
     testQT(
       'groups a rule from last to middle',
       group(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([4]), p([2])),
-      {
-        rules: [r1, and, { rules: [r2, and, r3] }],
-      }
+      { rules: [r1, and, { rules: [r2, and, r3] }] }
     );
     testQT(
       'groups a first-child rule to a different group with one rule',

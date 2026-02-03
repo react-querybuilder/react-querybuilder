@@ -24,9 +24,5 @@ it('handles multiple objects and declaration types', () => {
       { rule: ['r', 'r2'], ruleGroup: { rg: true } },
       { rule: { r3: 1, r4: 'yes' }, ruleGroup: 'rg2' }
     )
-  ).toEqual({
-    ...defaultControlClassnames,
-    rule: 'r r2 r3 r4',
-    ruleGroup: 'rg rg2',
-  });
+  ).toEqual({ ...defaultControlClassnames, rule: 'r r2 r3 r4', ruleGroup: 'rg rg2' });
 });

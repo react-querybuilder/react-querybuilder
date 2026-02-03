@@ -235,7 +235,7 @@ import { generateID, isRuleGroup } from '../utils';
 
 ## IDE
 
-**Extensions:** Oxc, Prettier, TypeScript, SCSS IntelliSense
+**Extensions:** Oxc, TypeScript, SCSS IntelliSense
 **Settings:** Format on save, TypeScript strict mode, inline type hints
 
 ## Quick Reference

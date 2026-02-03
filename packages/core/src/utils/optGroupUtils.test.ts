@@ -227,10 +227,7 @@ describe('uniqOptGroups', () => {
           { id: 2, name: 'test2', value: 'test2', label: 'Test2' },
         ],
       },
-      {
-        label: 'Test 2',
-        options: [{ id: 3, name: 'test3', value: 'test3', label: 'Test3' }],
-      },
+      { label: 'Test 2', options: [{ id: 3, name: 'test3', value: 'test3', label: 'Test3' }] },
     ]);
   });
 });
@@ -333,10 +330,7 @@ describe('uniqOptList', () => {
             { id: 2, name: 'test2', value: 'test2', label: 'Test2' },
           ],
         },
-        {
-          label: 'Test 2',
-          options: [{ id: 3, name: 'test3', value: 'test3', label: 'Test3' }],
-        },
+        { label: 'Test 2', options: [{ id: 3, name: 'test3', value: 'test3', label: 'Test3' }] },
       ]);
     });
   });
@@ -716,11 +710,7 @@ describe('prepareOptionList', () => {
       });
 
       expect(result.optionsMap['~']).toEqual(result.defaultOption);
-      expect(result.optionsMap.opt1).toEqual({
-        name: 'opt1',
-        value: 'opt1',
-        label: 'Option 1',
-      });
+      expect(result.optionsMap.opt1).toEqual({ name: 'opt1', value: 'opt1', label: 'Option 1' });
     });
 
     it('sorts object-based options by label', () => {

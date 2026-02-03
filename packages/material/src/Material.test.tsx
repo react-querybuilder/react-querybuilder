@@ -122,9 +122,7 @@ const generateWrapper = (RQBComponent: React.ComponentType<any>, extraProps = {}
 };
 const MuiWrapperDragHandle = forwardRef<
   HTMLSpanElement,
-  DragHandleProps & {
-    muiComponents?: Partial<RQBMaterialComponents> | null;
-  }
+  DragHandleProps & { muiComponents?: Partial<RQBMaterialComponents> | null }
 >(({ muiComponents: muiComps, schema, ...props }, ref) => (
   <ThemeProvider theme={theme}>
     <MaterialDragHandle

@@ -51,11 +51,7 @@ describe('valueSource: "value"', () => {
     ).toEqual({
       combinator: 'or',
       rules: [
-        {
-          combinator: 'and',
-          rules: [{ field: 'f1', operator: '=', value: 'Test' }],
-          not: true,
-        },
+        { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'Test' }], not: true },
         { field: 'f1', operator: '=', value: 'Test' },
         { field: 'f1', operator: '=', value: 'Test' },
         { field: 'f1', operator: '!=', value: 'Test' },
@@ -368,18 +364,12 @@ it('validates fields', () => {
   expect(parseJsonLogic(jsonLogicForFields, { getValueSources, fields })).toEqual(
     ruleGroupForFields
   );
-  expect(
-    parseJsonLogic(jsonLogicForFields, {
-      getValueSources,
-      fields: fieldsAsOptGroup,
-    })
-  ).toEqual(ruleGroupForFields);
-  expect(
-    parseJsonLogic(jsonLogicForFields, {
-      getValueSources,
-      fields: fieldsAsObject,
-    })
-  ).toEqual(ruleGroupForFields);
+  expect(parseJsonLogic(jsonLogicForFields, { getValueSources, fields: fieldsAsOptGroup })).toEqual(
+    ruleGroupForFields
+  );
+  expect(parseJsonLogic(jsonLogicForFields, { getValueSources, fields: fieldsAsObject })).toEqual(
+    ruleGroupForFields
+  );
 });
 
 it('invalidates primitives as root object', () => {
@@ -402,10 +392,7 @@ it('parses custom operations', () => {
     parseJsonLogic({ regex: [{ var: 'f1' }, /test/] } as unknown as RQBJsonLogic, {
       jsonLogicOperations,
     })
-  ).toEqual({
-    combinator: 'and',
-    rules: [{ field: 'f1', operator: 'contains', value: 'test' }],
-  });
+  ).toEqual({ combinator: 'and', rules: [{ field: 'f1', operator: 'contains', value: 'test' }] });
   expect(
     parseJsonLogic(
       {
@@ -469,12 +456,7 @@ it('translates lists as arrays', () => {
       { field: 'f1', operator: 'between', value: [12, 14] },
       { field: 'f1', operator: 'between', value: ['f2', 'f3'], valueSource: 'field' },
       { field: 'f1', operator: 'in', value: [12, 14] },
-      {
-        field: 'f1',
-        operator: 'in',
-        value: ['f2', 'f3'],
-        valueSource: 'field',
-      },
+      { field: 'f1', operator: 'in', value: ['f2', 'f3'], valueSource: 'field' },
     ],
   });
 });
@@ -561,9 +543,7 @@ it('parses array match modes', () => {
 it('generates query with independent combinators', () => {
   expect(
     parseJsonLogic(
-      {
-        and: [{ '==': [{ var: 'f1' }, 'Test'] }, { '==': ['Test', { var: 'f1' }] }],
-      },
+      { and: [{ '==': [{ var: 'f1' }, 'Test'] }, { '==': ['Test', { var: 'f1' }] }] },
       { independentCombinators: true }
     )
   ).toEqual({

@@ -39,9 +39,7 @@ const testCases: Record<string, [RuleGroupType, Record<string, unknown>]> = {
         { field: 'birthdate', operator: 'custom_op', value: null },
       ],
     },
-    {
-      $and: [{ $ne: ['$firstName', '$lastName'] }, { firstName: { $regex: `^Stev` } }],
-    },
+    { $and: [{ $ne: ['$firstName', '$lastName'] }, { firstName: { $regex: `^Stev` } }] },
   ],
   invalid: [
     {
@@ -69,13 +67,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           // parse it back to an object in order to use `.toEqual` instead of comparing
           // JSON.stringify results that may be differ even when the objects match.
           JSON.parse(
-            JSON.stringify(
-              formatQuery(query, {
-                format: 'mongodb_query',
-                fields,
-                ruleProcessor,
-              })
-            )
+            JSON.stringify(formatQuery(query, { format: 'mongodb_query', fields, ruleProcessor }))
           )
         ).toEqual(expected);
       });
@@ -92,11 +84,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           { field: 'birthdate', operator: 'in', value: ['1954-10-03', '1960-06-06'] },
         ],
       };
-      const mdbQuery = formatQuery(query, {
-        format: 'mongodb_query',
-        fields,
-        ruleProcessor,
-      });
+      const mdbQuery = formatQuery(query, { format: 'mongodb_query', fields, ruleProcessor });
       expect(mdbQuery.$and[0].birthdate).toBeInstanceOf(Date);
       expect(mdbQuery.$and[1].birthdate.$gt).toBeInstanceOf(Date);
       expect(mdbQuery.$and[2].birthdate.$gte).toBeInstanceOf(Date);

@@ -52,8 +52,8 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.72.9",
-    "@fluentui/react-icons-mdl2": "^1.4.3",
+    "@fluentui/react-components": "^9.72.11",
+    "@fluentui/react-icons-mdl2": "^1.4.4",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",

@@ -1,5 +1,5 @@
-import type { QueryBuilderFlags } from 'react-querybuilder';
 import { queryBuilderFlagDefaults } from '../defaults';
+import type { QueryBuilderFlags } from '../types';
 import { objectEntries } from './objectUtils';
 
 const preferPropDefaultTrue = (prop?: boolean, context?: boolean) =>
