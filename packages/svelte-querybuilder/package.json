@@ -1,0 +1,75 @@
+{
+  "name": "svelte-querybuilder",
+  "private": true,
+  "description": "Svelte 5 query builder component built on @react-querybuilder/core",
+  "version": "1.0.0-beta.1",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./styles": "./dist/query-builder.css"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/svelte-querybuilder"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "keywords": [
+    "svelte",
+    "svelte5",
+    "querybuilder",
+    "query",
+    "builder",
+    "operators",
+    "component",
+    "clause",
+    "expression",
+    "sql",
+    "runes"
+  ],
+  "scripts": {
+    "start": "vite dev",
+    "build": "bun run build:package && bun run build:css",
+    "build:package": "svelte-package -i src",
+    "build:css": "mkdir -p dist && cp ../core/src/*.scss dist && mkdir -p dist/styles && cp ../core/src/styles/*.scss dist/styles && bun sass --style=compressed --silence-deprecation=if-function dist",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "^2.50.1",
+    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/vite-plugin-svelte": "^5.0.5",
+    "@types/node": "catalog:",
+    "sass": "catalog:",
+    "svelte": "^5.22.0",
+    "svelte-check": "^4.3.0",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "dependencies": {
+    "@react-querybuilder/core": "^8.14.0"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  }
+}
