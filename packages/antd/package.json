@@ -57,7 +57,7 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "antd": "^6.2.2",
+    "antd": "^6.3.0",
     "dayjs": "^1.11.19",
     "react": "catalog:",
     "react-dom": "catalog:",
