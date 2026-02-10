@@ -16,7 +16,7 @@
     "customGroups": [
       { "groupName": "bun", "elementNamePattern": ["bun"] },
       { "groupName": "bun:", "elementNamePattern": ["bun:*"] },
-      { "groupName": "node:", "elementNamePattern": ["node:*"] }
+      { "groupName": "node:", "elementNamePattern": ["node:*", "node:*/*"] }
     ],
     "groups": [
       ["bun", "bun:", "node:"],
