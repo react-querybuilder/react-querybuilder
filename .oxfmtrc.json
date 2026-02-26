@@ -24,7 +24,6 @@
       ["type-external", "value-external"],
       ["type-parent", "value-parent", "type-sibling", "value-sibling", "type-index", "value-index"],
       "type-import",
-      "ts-equals-import",
       "unknown"
     ]
   },
