@@ -236,8 +236,8 @@ describe('moveRE', () => {
     });
 
     it('uses custom idGenerator when cloning', () => {
-      const idGenerator = () => 'custom-id';
-      const result = moveRE(re3wIDs, [0], 'down', { clone: true, idGenerator });
+      const idGen = () => 'custom-id';
+      const result = moveRE(re3wIDs, [0], 'down', { clone: true, idGenerator: idGen });
       expect(result.conditions[1].id).toBe('custom-id');
     });
   });

@@ -225,14 +225,14 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   //   queryProp,
   // });
 
-  const queryBuilderStore = useRQB_INTERNAL_QueryBuilderStore();
+  const qbStore = useRQB_INTERNAL_QueryBuilderStore();
   const queryBuilderDispatch = useRQB_INTERNAL_QueryBuilderDispatch();
 
   const rulesEngineSelector = useMemo(() => getRulesEngineSelectorById(reId), [reId]);
   const storeRulesEngine = useRulesEngineBuilderSelector(rulesEngineSelector);
   const getRulesEngine = useCallback(
-    () => rulesEngineSelector(queryBuilderStore.getState()),
-    [queryBuilderStore, rulesEngineSelector]
+    () => rulesEngineSelector(qbStore.getState()),
+    [qbStore, rulesEngineSelector]
   );
 
   // const fallbackRulesEngine = useMemo(() => createRulesEngine(), [createRulesEngine]);
@@ -335,7 +335,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       parentConditionPath: Path,
       condition: REConditionAny = independentCombinators ? defaultConditionIC : defaultCondition
     ) => {
-      const reLocal = getRulesEngineSelectorById(reId)(queryBuilderStore.getState());
+      const reLocal = getRulesEngineSelectorById(reId)(qbStore.getState());
       // istanbul ignore if
       if (!reLocal) return;
       // if (pathIsDisabled(parentConditionPath, reLocal) || rulesEngineDisabled) {
@@ -354,19 +354,12 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       // log({ reId, type: LogType.add, rulesEngine: reLocal, newRulesEngine, newCondition, parentConditionPath });
       dispatchRulesEngine(newRulesEngine);
     },
-    [
-      dispatchRulesEngine,
-      idGenerator,
-      independentCombinators,
-      onAddCondition,
-      queryBuilderStore,
-      reId,
-    ]
+    [dispatchRulesEngine, idGenerator, independentCombinators, onAddCondition, qbStore, reId]
   );
 
   const removeCondition = useCallback(
     (conditionPath: Path) => {
-      const reLocal = getRulesEngineSelectorById(reId)(queryBuilderStore.getState());
+      const reLocal = getRulesEngineSelectorById(reId)(qbStore.getState());
       // istanbul ignore if
       if (!reLocal) return;
       // if (pathIsDisabled(path, reLocal) || rulesEngineDisabled) {
@@ -385,7 +378,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         // }
       }
     },
-    [dispatchRulesEngine, onRemoveCondition, reId, queryBuilderStore]
+    [dispatchRulesEngine, onRemoveCondition, reId, qbStore]
   );
 
   const updateCondition = useCallback(

@@ -25,28 +25,31 @@ interface NativeSelectItem {
   disabled?: boolean;
 }
 
-interface NativeSelectField extends Select.FieldProps {
+interface NativeSelectFieldProps extends Select.FieldProps {
   items?: Array<string | NativeSelectItem>;
 }
 
 export const NativeSelectField: React.ForwardRefExoticComponent<
-  NativeSelectField & React.RefAttributes<HTMLSelectElement>
-> = React.forwardRef<HTMLSelectElement, NativeSelectField>(function NativeSelectField(props, ref) {
-  const { items: itemsProp, children, ...rest } = props;
+  NativeSelectFieldProps & React.RefAttributes<HTMLSelectElement>
+> = React.forwardRef<HTMLSelectElement, NativeSelectFieldProps>(
+  function NativeSelectField(props, ref) {
+    const { items: itemsProp, children, ...rest } = props;
 
-  const items = React.useMemo(
-    () => itemsProp?.map(item => (typeof item === 'string' ? { label: item, value: item } : item)),
-    [itemsProp]
-  );
+    const items = React.useMemo(
+      () =>
+        itemsProp?.map(item => (typeof item === 'string' ? { label: item, value: item } : item)),
+      [itemsProp]
+    );
 
-  return (
-    <Select.Field ref={ref} {...rest}>
-      {children}
-      {items?.map(item => (
-        <option key={item.value} value={item.value} disabled={item.disabled}>
-          {item.label}
-        </option>
-      ))}
-    </Select.Field>
-  );
-});
+    return (
+      <Select.Field ref={ref} {...rest}>
+        {children}
+        {items?.map(item => (
+          <option key={item.value} value={item.value} disabled={item.disabled}>
+            {item.label}
+          </option>
+        ))}
+      </Select.Field>
+    );
+  }
+);

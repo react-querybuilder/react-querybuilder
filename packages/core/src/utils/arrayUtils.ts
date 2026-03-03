@@ -54,18 +54,18 @@ export const trimIfString = (val: any): any => (typeof val === 'string' ? val.tr
  */
 export const toArray = (
   // oxlint-disable-next-line typescript/no-explicit-any
-  v: any,
+  a: any,
   { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}
   // oxlint-disable-next-line typescript/no-explicit-any
 ): any[] =>
-  Array.isArray(v)
-    ? v.map(v => trimIfString(v))
-    : typeof v === 'string'
-      ? splitBy(v, defaultJoinChar)
+  Array.isArray(a)
+    ? a.map(v => trimIfString(v))
+    : typeof a === 'string'
+      ? splitBy(a, defaultJoinChar)
           .filter(retainEmptyStrings ? () => true : s => !/^\s*$/.test(s))
           .map(s => s.trim())
-      : typeof v === 'number'
-        ? [v]
+      : typeof a === 'number'
+        ? [a]
         : [];
 
 /**

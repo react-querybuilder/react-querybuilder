@@ -2,6 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
   "ignorePatterns": ["**/{cel,sql}Parser.{js,ts}", "examples/preact"],
   "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  },
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
@@ -75,10 +79,18 @@
       "files": ["utils/testing/**", "*.test.ts", "*.test.tsx"],
       "rules": {
         "no-await-in-loop": "off",
+        "jsx-no-constructed-context-values": "off",
         "jsx-no-new-array-as-prop": "off",
         "jsx-no-new-function-as-prop": "off",
         "jsx-no-new-object-as-prop": "off",
-        "unicorn/consistent-function-scoping": "off"
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/prefer-module": "off"
+      }
+    },
+    {
+      "files": ["babel.config.js", "utils/devapp/**"],
+      "rules": {
+        "unicorn/prefer-module": "off"
       }
     },
     {
@@ -93,7 +105,8 @@
         "jsx-no-new-array-as-prop": "off",
         "jsx-no-new-function-as-prop": "off",
         "jsx-no-new-object-as-prop": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "unicorn/prefer-module": "off"
       }
     }
   ]

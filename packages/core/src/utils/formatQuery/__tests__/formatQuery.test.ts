@@ -263,18 +263,16 @@ it('handles custom ruleGroupProcessor correctly', () => {
 });
 
 describe('JSON.stringify/parse utils', () => {
-  const query: RuleGroupType = {
+  const qry: RuleGroupType = {
     combinator: 'and',
     rules: [{ field: 'f', operator: '=', value: 1214n }],
   };
   const queryAsString = `{"combinator":"and","rules":[{"field":"f","operator":"=","value":{"$bigint":"1214"}}]}`;
 
   it('stringifies bigints correctly', () => {
-    expect(JSON.stringify(query, bigIntJsonStringifyReplacer)).toMatch(
-      `"value":{"$bigint":"1214"}`
-    );
+    expect(JSON.stringify(qry, bigIntJsonStringifyReplacer)).toMatch(`"value":{"$bigint":"1214"}`);
   });
   it('parses bigints correctly', () => {
-    expect(JSON.parse(queryAsString, bigIntJsonParseReviver)).toEqual(query);
+    expect(JSON.parse(queryAsString, bigIntJsonParseReviver)).toEqual(qry);
   });
 });

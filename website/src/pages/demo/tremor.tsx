@@ -20,10 +20,10 @@ function ReactQueryBuilderDemo_TremorBrowser() {
     let active = true;
 
     (async () => {
-      const { default: Demo } = await import('./_components/Demo');
+      const { default: D } = await import('./_components/Demo');
 
       if (active) {
-        setComponents(() => ({ Demo }));
+        setComponents(() => ({ Demo: D }));
       }
     })();
 

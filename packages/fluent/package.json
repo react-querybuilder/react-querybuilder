@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@fluentui/react-components": "^9.72.11",
-    "@fluentui/react-icons-mdl2": "^1.4.4",
+    "@fluentui/react-icons-mdl2": "^1.4.5",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",

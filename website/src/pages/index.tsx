@@ -37,6 +37,8 @@ import { musicalInstruments } from './demo/_constants/musicalInstruments';
 import { getExportDisplayLanguage, getFormatQueryString } from './demo/_constants/utils';
 import styles from './index.module.css';
 
+const qbContextProviderValue = { controlClassnames: { queryBuilder: styles.queryBuilder } };
+
 const datePickerFields = fields.filter(f => f.name === 'birthdate');
 const initialDatePickerQuery: RuleGroupType = {
   combinator: 'and',
@@ -184,8 +186,7 @@ const LandingPage = () => {
         </div>
       </header>
       <main className={`${styles.main} homepage-showcase`}>
-        <QueryBuilderContext.Provider
-          value={{ controlClassnames: { queryBuilder: styles.queryBuilder } }}>
+        <QueryBuilderContext.Provider value={qbContextProviderValue}>
           <div className={styles.featureContainer}>
             <div>
               <h2>Sensible defaults</h2>

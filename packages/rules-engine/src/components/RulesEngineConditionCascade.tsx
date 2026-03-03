@@ -26,8 +26,8 @@ export const RulesEngineConditionCascade: React.MemoExoticComponent<
   } = schema;
 
   const onDefaultConsequentChange = React.useCallback(
-    (defaultConsequent?: Consequent) =>
-      updateCondition(conditionPath, 'defaultConsequent', defaultConsequent),
+    (defConsequent?: Consequent) =>
+      updateCondition(conditionPath, 'defaultConsequent', defConsequent),
     [conditionPath, updateCondition]
   );
 

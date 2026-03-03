@@ -9,8 +9,8 @@ const shiftToTop = (arr: SidebarItem[], item: SidebarItem) => {
   const index = arr.indexOf(item);
 
   if (index !== -1) {
-    const item = arr.splice(index, 1)[0];
-    arr.unshift(item);
+    const itm = arr.splice(index, 1)[0];
+    arr.unshift(itm);
   }
 };
 

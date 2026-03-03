@@ -265,7 +265,7 @@ describe('when initial query with fields object is provided', () => {
     ];
     render(<QueryBuilder fields={optgroups} />);
     expect(optgroups).toHaveLength(3);
-    for (const og of optgroups.map(og => og.options)) {
+    for (const og of optgroups.map(g => g.options)) {
       expect(og).toHaveLength(1);
     }
   });
@@ -1240,8 +1240,8 @@ describe('onAddGroup prop', () => {
 
   it('modifies the group addition', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupType]>();
-    const group: RuleGroupType = { combinator: 'fake', rules: [] };
-    render(<QueryBuilder onAddGroup={() => group} onQueryChange={onQueryChange} />);
+    const grp: RuleGroupType = { combinator: 'fake', rules: [] };
+    render(<QueryBuilder onAddGroup={() => grp} onQueryChange={onQueryChange} />);
 
     await user.click(screen.getByTestId(TestID.addGroup));
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
@@ -1252,10 +1252,10 @@ describe('onAddGroup prop', () => {
 
   it('specifies the preceding combinator', async () => {
     const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
-    const group: RuleGroupTypeIC = { rules: [], combinatorPreceding: 'or' };
+    const grp: RuleGroupTypeIC = { rules: [], combinatorPreceding: 'or' };
     render(
       <QueryBuilder
-        onAddGroup={() => group}
+        onAddGroup={() => grp}
         onQueryChange={onQueryChange}
         defaultQuery={{ rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
       />
@@ -3577,8 +3577,6 @@ describe('deprecated props', () => {
 });
 
 describe('string array options', () => {
-  const user = userEvent.setup();
-
   const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },

@@ -145,10 +145,18 @@ export const useRuleDnD = (params: UseRuleDndParams): UseRuleDnD => {
       }),
       drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
-        const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
-        const groupItems = isHotkeyPressed(groupModeModifierKey);
+        const de = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+        const gi = isHotkeyPressed(groupModeModifierKey);
 
-        return { type: 'rule', path, qbId, getQuery, dispatchQuery, groupItems, dropEffect };
+        return {
+          type: 'rule',
+          path,
+          qbId,
+          getQuery,
+          dispatchQuery,
+          groupItems: gi,
+          dropEffect: de,
+        };
       },
     }),
     [disabled, actions.moveRule, path, canDrop, rule, schema]

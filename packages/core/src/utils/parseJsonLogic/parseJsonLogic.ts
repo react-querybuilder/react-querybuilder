@@ -243,14 +243,14 @@ function parseJsonLogic(
       };
 
       // oxlint-disable-next-line typescript/no-explicit-any
-      const [{ var: field }, operation] = (logic as any)[match.mode];
+      const [{ var: fld }, operation] = (logic as any)[match.mode];
       const matcher = processLogic(operation);
 
       // TODO: Support operations that evaluate array member properties
       if (!matcher) return false;
 
       rule = {
-        field,
+        field: fld,
         operator: '=',
         match,
         value: isRuleGroup(matcher) ? matcher : { combinator: 'and', rules: [matcher] },

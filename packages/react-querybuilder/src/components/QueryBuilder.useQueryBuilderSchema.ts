@@ -532,11 +532,10 @@ export function useQueryBuilderSchema<
 
   // #region Validation
   const { validationResult, validationMap } = useMemo(() => {
-    const validationResult =
+    const vr =
       typeof validator === 'function' && rootGroup ? validator(rootGroup) : defaultValidationResult;
-    const validationMap =
-      typeof validationResult === 'boolean' ? defaultValidationMap : validationResult;
-    return { validationResult, validationMap };
+    const valMap = typeof vr === 'boolean' ? defaultValidationMap : vr;
+    return { validationResult: vr, validationMap: valMap };
   }, [rootGroup, validator]);
   // #endregion
 

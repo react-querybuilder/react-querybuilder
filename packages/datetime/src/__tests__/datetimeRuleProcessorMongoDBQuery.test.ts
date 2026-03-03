@@ -89,8 +89,8 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
       expect(mdbQuery.$and[1].birthdate.$gt).toBeInstanceOf(Date);
       expect(mdbQuery.$and[2].birthdate.$gte).toBeInstanceOf(Date);
       expect(mdbQuery.$and[2].birthdate.$lte).toBeInstanceOf(Date);
-      for (const d of mdbQuery.$and[3].birthdate.$in) {
-        expect(d).toBeInstanceOf(Date);
+      for (const bd of mdbQuery.$and[3].birthdate.$in) {
+        expect(bd).toBeInstanceOf(Date);
       }
     });
   });

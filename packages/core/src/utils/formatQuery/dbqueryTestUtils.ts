@@ -273,7 +273,7 @@ export const dbSetup = (
   ].join(';');
 
 export const dbTests = (
-  superUsers: SuperUser[] | AugmentedSuperUser[]
+  superUserList: SuperUser[] | AugmentedSuperUser[]
 ): Record<string, TestSQLParams> => ({
   'and/or': {
     query: {
@@ -289,7 +289,7 @@ export const dbTests = (
         },
       ],
     },
-    expectedResult: superUsers.filter(
+    expectedResult: superUserList.filter(
       u =>
         u.firstName.startsWith('P') ||
         (!u.madeUpName.includes('Bat') && u.madeUpName.endsWith('man'))
@@ -303,7 +303,7 @@ export const dbTests = (
         { field: 'lastName', operator: '=', value: 'Parker' },
       ],
     },
-    expectedResult: superUsers.filter(u => u.firstName === 'Peter' && u.lastName === 'Parker'),
+    expectedResult: superUserList.filter(u => u.firstName === 'Peter' && u.lastName === 'Parker'),
   },
   '!=': {
     query: {
@@ -313,7 +313,7 @@ export const dbTests = (
         { field: 'lastName', operator: '!=', value: 'Parker' },
       ],
     },
-    expectedResult: superUsers.filter(u => u.firstName !== 'Peter' && u.lastName !== 'Parker'),
+    expectedResult: superUserList.filter(u => u.firstName !== 'Peter' && u.lastName !== 'Parker'),
   },
   beginsWith: {
     query: {
@@ -323,7 +323,7 @@ export const dbTests = (
         { field: 'lastName', operator: 'beginsWith', value: 'P' },
       ],
     },
-    expectedResult: superUsers.filter(
+    expectedResult: superUserList.filter(
       u => u.firstName.startsWith('P') && u.lastName.startsWith('P')
     ),
   },
@@ -332,7 +332,7 @@ export const dbTests = (
       combinator: 'and',
       rules: [{ field: 'madeUpName', operator: 'doesNotBeginWith', value: 'S' }],
     },
-    expectedResult: superUsers.filter(u => !u.madeUpName.startsWith('S')),
+    expectedResult: superUserList.filter(u => !u.madeUpName.startsWith('S')),
   },
   endsWith: {
     query: {
@@ -342,14 +342,16 @@ export const dbTests = (
         { field: 'lastName', operator: 'endsWith', value: 's' },
       ],
     },
-    expectedResult: superUsers.filter(u => u.firstName.endsWith('e') && u.lastName.endsWith('s')),
+    expectedResult: superUserList.filter(
+      u => u.firstName.endsWith('e') && u.lastName.endsWith('s')
+    ),
   },
   doesNotEndWith: {
     query: {
       combinator: 'and',
       rules: [{ field: 'madeUpName', operator: 'doesNotEndWith', value: 'n' }],
     },
-    expectedResult: superUsers.filter(u => !u.madeUpName.endsWith('n')),
+    expectedResult: superUserList.filter(u => !u.madeUpName.endsWith('n')),
   },
   contains: {
     query: {
@@ -359,7 +361,7 @@ export const dbTests = (
         { field: 'lastName', operator: 'contains', value: 'ark' },
       ],
     },
-    expectedResult: superUsers.filter(
+    expectedResult: superUserList.filter(
       u => u.firstName.includes('ete') && u.lastName.includes('ark')
     ),
   },
@@ -368,7 +370,7 @@ export const dbTests = (
       combinator: 'and',
       rules: [{ field: 'madeUpName', operator: 'doesNotContain', value: 'r' }],
     },
-    expectedResult: superUsers.filter(u => !u.madeUpName.includes('r')),
+    expectedResult: superUserList.filter(u => !u.madeUpName.includes('r')),
   },
   'greater than': {
     guardAgainstNull: ['powerUpAge'],
@@ -379,7 +381,7 @@ export const dbTests = (
         { field: 'powerUpAge', operator: '>', value: '15' },
       ],
     },
-    expectedResult: superUsers.filter(u => (u.powerUpAge ?? 0) > 15),
+    expectedResult: superUserList.filter(u => (u.powerUpAge ?? 0) > 15),
   },
   'greater than or equal to': {
     guardAgainstNull: ['powerUpAge'],
@@ -390,7 +392,7 @@ export const dbTests = (
         { field: 'powerUpAge', operator: '>=', value: '15' },
       ],
     },
-    expectedResult: superUsers.filter(u => (u.powerUpAge ?? 0) >= 15),
+    expectedResult: superUserList.filter(u => (u.powerUpAge ?? 0) >= 15),
   },
   'less than': {
     guardAgainstNull: ['powerUpAge'],
@@ -401,8 +403,8 @@ export const dbTests = (
         { field: 'powerUpAge', operator: '<', value: '20' },
       ],
     },
-    expectedResult: superUsers.filter(u => (u.powerUpAge ?? 999) < 20),
-    expectedResultCoercedNull: superUsers.filter(u => u.powerUpAge! < 20),
+    expectedResult: superUserList.filter(u => (u.powerUpAge ?? 999) < 20),
+    expectedResultCoercedNull: superUserList.filter(u => u.powerUpAge! < 20),
   },
   'less than or equal to': {
     guardAgainstNull: ['powerUpAge'],
@@ -413,15 +415,15 @@ export const dbTests = (
         { field: 'powerUpAge', operator: '<=', value: '15' },
       ],
     },
-    expectedResult: superUsers.filter(u => (u.powerUpAge ?? 999) <= 15),
-    expectedResultCoercedNull: superUsers.filter(u => u.powerUpAge! <= 15),
+    expectedResult: superUserList.filter(u => (u.powerUpAge ?? 999) <= 15),
+    expectedResultCoercedNull: superUserList.filter(u => u.powerUpAge! <= 15),
   },
   boolean: {
     query: {
       combinator: 'and',
       rules: [{ field: 'enhanced', operator: '=', value: true }],
     },
-    expectedResult: superUsers.filter(u => !!u.enhanced),
+    expectedResult: superUserList.filter(u => !!u.enhanced),
   },
   'between/notBetween': {
     guardAgainstNull: ['powerUpAge'],
@@ -436,7 +438,7 @@ export const dbTests = (
         { field: 'powerUpAge', operator: 'notBetween', value: ['-10', '10'] },
       ],
     },
-    expectedResult: superUsers.filter(
+    expectedResult: superUserList.filter(
       u => (u.powerUpAge ?? 0) >= 10 && (u.powerUpAge ?? 999) <= 30
     ),
   },
@@ -446,8 +448,8 @@ export const dbTests = (
       combinator: 'and',
       rules: [{ field: 'powerUpAge', operator: '<', value: 20n }],
     },
-    expectedResult: superUsers.filter(u => (u.powerUpAge ?? 999) < 20n),
-    expectedResultCoercedNull: superUsers.filter(u => u.powerUpAge! < 20n),
+    expectedResult: superUserList.filter(u => (u.powerUpAge ?? 999) < 20n),
+    expectedResultCoercedNull: superUserList.filter(u => u.powerUpAge! < 20n),
   },
   manipulateValueOrder: {
     guardAgainstNull: ['powerUpAge'],
@@ -456,10 +458,12 @@ export const dbTests = (
       combinator: 'and',
       rules: [{ field: 'powerUpAge', operator: 'between', value: [100, 0] }],
     },
-    expectedResult: superUsers.filter(
+    expectedResult: superUserList.filter(
       u => (u.powerUpAge ?? 999) >= 0 && (u.powerUpAge ?? 999) <= 100
     ),
-    expectedResultCoercedNull: superUsers.filter(u => u.powerUpAge! >= 0 && u.powerUpAge! <= 100),
+    expectedResultCoercedNull: superUserList.filter(
+      u => u.powerUpAge! >= 0 && u.powerUpAge! <= 100
+    ),
     fqOptions: { preserveValueOrder: false, parseNumbers: true },
   },
   preserveValueOrder: {
@@ -483,7 +487,7 @@ export const dbTests = (
         { field: 'lastName', operator: 'notIn', value: ['Parker', 'Kent'] },
       ],
     },
-    expectedResult: superUsers.filter(
+    expectedResult: superUserList.filter(
       u => ['Rogers', 'Wayne'].includes(u.lastName) && !['Parker', 'Kent'].includes(u.lastName)
     ),
   },
@@ -495,7 +499,7 @@ export const dbTests = (
         { field: 'madeUpName', operator: 'notNull', value: null },
       ],
     },
-    expectedResult: superUsers.filter(u => u.powerUpAge === null && u.madeUpName !== null),
+    expectedResult: superUserList.filter(u => u.powerUpAge === null && u.madeUpName !== null),
   },
 });
 

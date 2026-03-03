@@ -51,8 +51,8 @@ export const MaterialValueSelector = ({
   const { onChange, val } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
   const muiSelectChangeHandler = React.useCallback(
-    ({ target: { value } }: SelectChangeEvent<string | string[]>) => {
-      onChange(value);
+    ({ target: { value: v } }: SelectChangeEvent<string | string[]>) => {
+      onChange(v);
     },
     [onChange]
   );

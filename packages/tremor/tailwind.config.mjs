@@ -91,5 +91,6 @@ export default {
       },
     },
   },
+  // oxlint-disable-next-line unicorn/prefer-module
   plugins: [require('@headlessui/tailwindcss'), require('@tailwindcss/forms')],
 };

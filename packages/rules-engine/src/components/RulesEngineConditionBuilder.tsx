@@ -188,8 +188,8 @@ export const RulesEngineConditionBuilder: React.MemoExoticComponent<
       classnames: { conditionBuilder },
       suppressStandardClassnames,
       components: {
-        conditionBuilderHeader: ConditionBuilderHeader,
-        conditionBuilderBody: ConditionBuilderBody,
+        conditionBuilderHeader: ConditionBuilderHeaderComponent,
+        conditionBuilderBody: ConditionBuilderBodyComponent,
       },
     },
   } = props;
@@ -201,8 +201,8 @@ export const RulesEngineConditionBuilder: React.MemoExoticComponent<
 
   return (
     <div className={className}>
-      <ConditionBuilderHeader {...props} />
-      <ConditionBuilderBody {...props} />
+      <ConditionBuilderHeaderComponent {...props} />
+      <ConditionBuilderBodyComponent {...props} />
     </div>
   );
 });
