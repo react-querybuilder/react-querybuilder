@@ -4,7 +4,7 @@
   "scss.lint.unknownAtRules": "ignore",
   "typescript.tsdk": "node_modules/typescript/lib",
   "oxc.typeAware": true,
-  "oxc.unusedDisableDirectives": "deny",
+  "oxc.unusedDisableDirectives": "warn",
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "[typescript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
