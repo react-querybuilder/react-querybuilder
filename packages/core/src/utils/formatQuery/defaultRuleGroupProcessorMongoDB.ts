@@ -73,11 +73,14 @@ export const defaultRuleGroupProcessorMongoDB: RuleGroupProcessor<string> = (
       })
       .filter(Boolean);
 
-    return expressions.length > 0
-      ? expressions.length === 1 && !hasChildRules
-        ? expressions[0]
-        : `${combinator}:[${expressions.join(',')}]`
-      : fallbackExpression;
+    const result =
+      expressions.length > 0
+        ? expressions.length === 1 && !hasChildRules
+          ? expressions[0]
+          : `${combinator}:[${expressions.join(',')}]`
+        : fallbackExpression;
+
+    return rg.not ? `"$not":${isBracketed(result) ? result : `{${result}}`}` : result;
   };
 
   const processedQuery = processRuleGroup(convertFromIC(ruleGroup), true);

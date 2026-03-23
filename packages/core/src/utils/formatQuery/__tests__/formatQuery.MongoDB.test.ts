@@ -468,6 +468,28 @@ it('formats to mongo query correctly', () => {
     format: 'mongodb',
     valueProcessor: defaultMongoDBValueProcessor,
   });
+  // Test for `not` at top level
+  testBoth(
+    { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
+    { $not: { f1: 'v1' } }
+  );
+  // Test for `not` at nested group level
+  testBoth(
+    {
+      combinator: 'and',
+      rules: [
+        {
+          not: true,
+          combinator: 'or',
+          rules: [
+            { field: 'f1', operator: '=', value: 'v1' },
+            { field: 'f2', operator: '=', value: 'v2' },
+          ],
+        },
+      ],
+    },
+    { $and: [{ $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] }
+  );
   testBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
   // Just a coverage thing here:
   testBoth(
