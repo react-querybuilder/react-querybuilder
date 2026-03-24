@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.14.1] - 2026-03-24
+
 ### Fixed
 
-- [#1005] MongoDB export formats now properly support rule groups with `not: true`.
+- [#1005] MongoDB export formats (`"mongodb_query"`/`"mongodb"`) now properly support rule groups with `not: true`.
 
 ## [v8.14.0] - 2026-01-09
 
@@ -2109,7 +2113,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.1...HEAD
+[v8.14.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.0...v8.14.1
 [v8.14.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.13.0...v8.14.0
 [v8.13.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...v8.13.0
 [v8.12.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.11.2...v8.12.0
