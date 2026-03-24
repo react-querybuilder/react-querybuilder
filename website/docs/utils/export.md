@@ -334,12 +334,6 @@ Output (JSON object):
 { "$and": [{ "firstName": "Steve" }, { "lastName": "Vai" }] }
 ```
 
-:::info
-
-MongoDB formats don't support group inversion (`not: true`), but individual rules can use the "!=" operator.
-
-:::
-
 ### Common Expression Language
 
 For Common Expression Language (CEL) output, use the "cel" format.
