@@ -1,7 +1,4 @@
-import { objectEntries, objectKeys } from './objectUtils';
-
-const isUnsafeKey = (key: string): boolean =>
-  key === '__proto__' || key === 'constructor' || key === 'prototype';
+import { isUnsafeKey, objectEntries, objectKeys } from './objectUtils';
 
 /**
  * Merges any number of partial translations into a single definition.

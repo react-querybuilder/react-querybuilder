@@ -27,3 +27,10 @@ export const objectKeys = Object.keys as <Type extends object>(
 export const objectEntries = Object.entries as <Type extends Record<PropertyKey, unknown>>(
   value: Type
 ) => Array<[ObjectKeys<Type>, Type[ObjectKeys<Type>]]>;
+
+/**
+ * Returns `true` if the key could cause prototype pollution when used
+ * as a property name in bracket-notation assignment.
+ */
+export const isUnsafeKey = (key: unknown): boolean =>
+  key === '__proto__' || key === 'constructor' || key === 'prototype';
