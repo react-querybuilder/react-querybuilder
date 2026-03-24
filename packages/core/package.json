@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.14.0",
+  "version": "8.14.1",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -174,8 +174,8 @@
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
-    "jsonata": ">=2",
     "json-logic-js": ">=2",
+    "jsonata": ">=2",
     "sequelize": ">=6",
     "spel2js": ">=0.2.0"
   },
