@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.14.2] - 2026-03-24
+
+### Fixed
+
+- [#1007] `transformQuery` and `merge[Any]Translation[s]` now guard against prototype pollution.
+
 ## [v8.14.1] - 2026-03-24
 
 ### Fixed
@@ -2108,12 +2114,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#985]: https://github.com/react-querybuilder/react-querybuilder/pull/985
 [#988]: https://github.com/react-querybuilder/react-querybuilder/pull/988
 [#1005]: https://github.com/react-querybuilder/react-querybuilder/pull/1005
+[#1007]: https://github.com/react-querybuilder/react-querybuilder/pull/1007
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.2...HEAD
+[v8.14.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.1...v8.14.2
 [v8.14.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.0...v8.14.1
 [v8.14.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.13.0...v8.14.0
 [v8.13.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.12.0...v8.13.0

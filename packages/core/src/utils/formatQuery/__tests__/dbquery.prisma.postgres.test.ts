@@ -22,6 +22,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await prisma.$disconnect();
+  await db.close();
 });
 
 const testPrisma = ({ query, expectedResult, fqOptions }: TestSQLParams) => {

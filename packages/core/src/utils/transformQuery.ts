@@ -8,6 +8,7 @@
 
 import type { RuleGroupType, RuleGroupTypeAny, RuleGroupTypeIC, RuleType } from '../types';
 import { isRuleGroup, isRuleGroupType } from './isRuleGroup';
+import { isUnsafeKey } from './objectUtils';
 
 const remapProperties = (
   obj: Record<string, unknown>,
@@ -17,12 +18,15 @@ const remapProperties = (
   const result: Record<string, unknown> = {};
 
   for (const key in obj) {
+    if (isUnsafeKey(key)) continue;
     const mappedKey = propertyMap[key];
     if (mappedKey === false) {
       continue;
     }
     if (mappedKey && key !== mappedKey) {
-      result[mappedKey] = obj[key];
+      if (!isUnsafeKey(mappedKey)) {
+        result[mappedKey] = obj[key];
+      }
       if (!deleteRemappedProperties) {
         result[key] = obj[key];
       }

@@ -134,3 +134,30 @@ it('handles independent combinators and nested groups', () => {
     rules: [{ rules: [], path: [0] }, queryIC.rules[1], { rules: [], path: [2] }],
   });
 });
+
+describe('prototype pollution prevention', () => {
+  afterEach(() => {
+    delete (Object.prototype as Record<string, unknown>)['polluted'];
+  });
+
+  it('ignores __proto__ keys in obj', () => {
+    const maliciousQuery = JSON.parse(
+      '{"combinator":"and","rules":[{"field":"f1","operator":"=","value":"v1","__proto__":{"polluted":"yes"}}]}'
+    );
+    transformQuery(maliciousQuery);
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+
+  it('ignores __proto__ as a propertyMap target', () => {
+    transformQuery(query, { propertyMap: { combinator: '__proto__' } });
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+
+  it('ignores constructor and prototype keys in propertyMap', () => {
+    const result = transformQuery(query, {
+      propertyMap: { combinator: 'constructor', field: 'prototype' },
+    });
+    expect(Object.hasOwn(result, 'constructor')).toBe(false);
+    expect(Object.hasOwn(result, 'prototype')).toBe(false);
+  });
+});

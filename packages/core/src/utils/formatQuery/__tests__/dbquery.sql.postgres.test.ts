@@ -51,6 +51,10 @@ describe('PostgreSQL', () => {
       await db.exec(dbSetup('postgres'));
     });
 
+    afterAll(async () => {
+      await db.close();
+    });
+
     for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
       describe(name, () => {
         testSQL(t);
@@ -64,6 +68,10 @@ describe('PostgreSQL', () => {
 
     beforeAll(async () => {
       await unquotedDb.exec(dbSetup('postgres', { unquoted: true }));
+    });
+
+    afterAll(async () => {
+      await unquotedDb.close();
     });
 
     test('unquoted field names', async () => {
@@ -99,6 +107,10 @@ describe('PostgreSQL', () => {
 
     beforeAll(async () => {
       await nestedArrayDb.exec(dbSetup('postgres', { unquoted: true, includeNestedArrays: true }));
+    });
+
+    afterAll(async () => {
+      await nestedArrayDb.close();
     });
 
     const testPostgresAugmented = (
