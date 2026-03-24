@@ -41,3 +41,24 @@ it('merges translation', () => {
     defaultTranslations.addRule
   );
 });
+
+describe('prototype pollution prevention', () => {
+  afterEach(() => {
+    // Safety cleanup in case a test fails
+    delete (Object.prototype as Record<string, unknown>)['polluted'];
+  });
+
+  it('mergeTranslations ignores __proto__ keys', () => {
+    const malicious = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+    mergeTranslations({}, malicious);
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+
+  it('mergeTranslations ignores constructor and prototype keys', () => {
+    const malicious = JSON.parse(
+      '{"constructor":{"polluted":"yes"},"prototype":{"polluted":"yes"}}'
+    );
+    const result = mergeTranslations({}, malicious);
+    expect(result).toEqual({});
+  });
+});
