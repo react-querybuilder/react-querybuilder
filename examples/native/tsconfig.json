@@ -2,7 +2,6 @@
   "include": ["src"],
   "compilerOptions": {
     "strict": true,
-    "esModuleInterop": false,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
     "target": "ESNext",

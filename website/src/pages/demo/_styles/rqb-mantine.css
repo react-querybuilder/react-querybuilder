@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.6).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v8.3.18).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -2338,7 +2338,8 @@ fieldset:disabled .mantine-active:active {
 
 :where([data-mode='static'][data-layout='alt']) .m_45252eee,
 :where([data-mode='static'][data-layout='alt']) .m_9cdde9a {
-  grid-row: var(--app-shell-navbar-grid-row-alt, var(--app-shell-navbar-grid-row, auto));
+  grid-row: 1 / -1;
+  height: 100%;
 }
 
 .m_45252eee {
@@ -2382,6 +2383,10 @@ fieldset:disabled .mantine-active:active {
 
 .m_9cdde9a:where([data-with-border]) {
   border-inline-start: 1px solid var(--app-shell-border-color);
+}
+
+:where([data-mode='static'][data-layout='alt']) .m_9cdde9a {
+  grid-row: 1 / -1;
 }
 
 :where([data-scroll-locked]) .m_9cdde9a {
@@ -2429,6 +2434,7 @@ fieldset:disabled .mantine-active:active {
 
 :where([data-mode='static'][data-layout='alt']) .m_3b16f56b,
 :where([data-mode='static'][data-layout='alt']) .m_3840c879 {
+  grid-column: var(--app-shell-main-column-start, 1) / var(--app-shell-main-column-end, -1);
   margin-inline-start: 0rem;
   margin-inline-end: 0rem;
 }
@@ -2461,6 +2467,10 @@ fieldset:disabled .mantine-active:active {
   position: var(--app-shell-footer-position, fixed);
   grid-column: var(--app-shell-footer-grid-column, auto);
   grid-row: var(--app-shell-footer-grid-row, auto);
+}
+
+:where([data-mode='static'][data-layout='alt']) .m_3840c879 {
+  grid-column: var(--app-shell-main-column-start, 1) / var(--app-shell-main-column-end, -1);
 }
 
 .m_3840c879:where([data-with-border]) {
@@ -3765,7 +3775,7 @@ fieldset:disabled .m_8ee546b8,
 }
 
 .m_be049a53:where([data-checked]) {
-  padding: var(--chip-checked-padding);
+  padding-inline: var(--chip-checked-padding);
 }
 
 .m_be049a53:where([data-disabled]) {
@@ -6819,9 +6829,11 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 }
 
 .m_926b4011 {
-  height: 0;
-  width: 0;
+  /* Hide the input visually without removing it from the accessibility tree or obscuring it in the DOM */
+  height: 100%;
+  width: 100%;
   opacity: 0;
+
   margin: 0;
   padding: 0;
   position: absolute;

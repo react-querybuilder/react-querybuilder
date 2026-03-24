@@ -5,7 +5,7 @@ import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common
 const apiLibs = ['dayjs', 'date-fns', 'jsdate', 'luxon'] as const;
 
 export default defineConfig(async options => {
-  const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
+  const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
 
   for (const bc of buildConfig) {
     const entryKey = Object.keys(bc.entry!)[0];

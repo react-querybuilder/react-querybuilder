@@ -1,6 +1,7 @@
 import { current, isDraft, produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
+  MatchMode,
   MatchModeOptions,
   OptionList,
   Path,
@@ -71,7 +72,7 @@ export interface AddMethod {
  * @group Query Tools
  */
 export const add: AddMethod = (query, ruleOrGroup, parentPathOrID, options = {}): typeof query =>
-  produce(query, q => addInPlace(q, ruleOrGroup as RuleType, parentPathOrID, options) as typeof q);
+  produce(query, q => addInPlace(q, ruleOrGroup as RuleType, parentPathOrID, options));
 
 /**
  * Adds a rule or group to a query in place.
@@ -172,7 +173,7 @@ export interface UpdateMethod {
  * @group Query Tools
  */
 export const update: UpdateMethod = (query, prop, value, pathOrID, options = {}): typeof query =>
-  produce(query, q => updateInPlace(q, prop, value, pathOrID, options) as typeof q);
+  produce(query, q => updateInPlace(q, prop, value, pathOrID, options));
 
 /**
  * Updates a property of a rule or group within a query in place.
@@ -249,7 +250,7 @@ export const updateInPlace: UpdateMethod = (
           ? null
           : getFirstOption(toFieldMatchModes);
       if (nextMatchMode) {
-        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
+        ruleOrGroup.match = { mode: nextMatchMode as MatchMode, threshold: 1 };
       }
     }
 
@@ -317,7 +318,7 @@ export interface RemoveMethod {
  * @group Query Tools
  */
 export const remove: RemoveMethod = (query, pathOrID): typeof query =>
-  produce(query, q => removeInPlace(q, pathOrID) as typeof q);
+  produce(query, q => removeInPlace(q, pathOrID));
 
 /**
  * Removes a rule or group from a query in place.
@@ -455,7 +456,7 @@ export interface MoveMethod {
  * @group Query Tools
  */
 export const move: MoveMethod = (query, oldPathOrID, newPath, options = {}): typeof query =>
-  produce(query, q => moveInPlace(q, oldPathOrID, newPath, options) as typeof q);
+  produce(query, q => moveInPlace(q, oldPathOrID, newPath, options));
 
 /**
  * Moves a rule or group from one path to another in place.
@@ -632,7 +633,7 @@ export interface InsertMethod {
  * @group Query Tools
  */
 export const insert: InsertMethod = (query, ruleOrGroup, path, options = {}): typeof query =>
-  produce(query, q => insertInPlace(q, ruleOrGroup as RuleType, path, options) as typeof q);
+  produce(query, q => insertInPlace(q, ruleOrGroup as RuleType, path, options));
 
 /**
  * Inserts a rule or group into a query in place.
@@ -750,8 +751,7 @@ export const group: GroupMethod = (
   sourcePathOrID,
   targetPathOrID,
   options = {}
-): typeof query =>
-  produce(query, q => groupInPlace(q, sourcePathOrID, targetPathOrID, options) as typeof q);
+): typeof query => produce(query, q => groupInPlace(q, sourcePathOrID, targetPathOrID, options));
 
 /**
  * Creates a new group at a target path with its `rules` array containing the current

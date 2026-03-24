@@ -179,7 +179,6 @@
     "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
-    "sqlite3": "^5.1.7",
     "type-fest": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"

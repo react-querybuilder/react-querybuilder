@@ -2,10 +2,10 @@
 
 import { Glob } from 'bun';
 import path from 'node:path';
-import { catalog, catalogs } from '../package.json' assert { type: 'json' };
+import { catalog, catalogs } from '../package.json' with { type: 'json' };
 
 const glob = new Glob('packages/*/package.json');
-const pkgPaths = await Array.fromAsync(glob.scan({ cwd: path.join(import.meta.dir, '..') }));
+const pkgPaths = await Array.fromAsync(glob.scan({ cwd: path.join(import.meta.dirname, '..') }));
 
 const catalogReplacements = Object.entries(catalog).map(([dep, ver]) => ({
   regex: new RegExp(`"${dep}":(\\s*)"catalog:"`, 'g'),

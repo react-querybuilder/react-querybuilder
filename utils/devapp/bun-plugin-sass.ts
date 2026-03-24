@@ -6,7 +6,7 @@ export const sassPlugin: BunPlugin = {
   setup(build) {
     build.onLoad({ filter: /\.scss$/ }, async ({ path }) => {
       const { css } = await compileAsync(path, {
-        // loadPaths: [`${import.meta.dir}/../../packages/`],
+        // loadPaths: [`${import.meta.dirname}/../../packages/`],
       });
       return {
         contents: css,

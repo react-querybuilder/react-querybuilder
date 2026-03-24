@@ -8,6 +8,7 @@
     "jsx": "react",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "noUncheckedSideEffectImports": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

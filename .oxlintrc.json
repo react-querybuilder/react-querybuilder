@@ -1,10 +1,11 @@
 {
-  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
   "ignorePatterns": ["**/{cel,sql}Parser.{js,ts}", "examples/preact"],
   "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
   "options": {
-    "typeAware": true,
-    "typeCheck": true
+    "typeAware": true
+    // Disabled pending resolution of https://github.com/microsoft/typescript-go/issues/3207
+    // "typeCheck": true
   },
   "categories": {
     "correctness": "error",

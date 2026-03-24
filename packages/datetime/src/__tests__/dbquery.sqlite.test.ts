@@ -22,7 +22,7 @@ type Result = {
   updated_at: string;
 };
 
-const db = new Database(import.meta.dir + '/dbquery.sqlite.cache_db');
+const db = new Database(import.meta.dirname + '/dbquery.sqlite.cache_db');
 
 beforeAll(() => {
   if (db.query(FIND_MUSICIANS_TABLE('sqlite')).all().length === 0) {
