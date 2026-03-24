@@ -2,7 +2,7 @@
   "editor.formatOnSave": true,
   "files.eol": "\n",
   "scss.lint.unknownAtRules": "ignore",
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   "oxc.typeAware": true,
   "oxc.unusedDisableDirectives": "warn",
   "editor.defaultFormatter": "oxc.oxc-vscode",

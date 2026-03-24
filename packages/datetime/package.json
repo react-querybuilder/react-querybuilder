@@ -99,7 +99,7 @@
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "date-fns": "^4.1.0",
-    "dayjs": "^1.11.19",
+    "dayjs": "^1.11.20",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "luxon": "^3.7.2",
