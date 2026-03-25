@@ -32,7 +32,7 @@ if (celEvaluator) {
       for (const [name, { query: originalQuery, expectedResult, fqOptions }] of Object.entries(
         dbTests(data)
         // CEL evaluator doesn't play well with nulls yet
-      ).filter(([name]) => name !== 'null/notNull')) {
+      ).filter(([testName]) => testName !== 'null/notNull')) {
         const query = transformQuery(originalQuery, {
           ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
         });

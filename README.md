@@ -136,6 +136,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sajov"><img src="https://avatars.githubusercontent.com/u/2475348?v=4?s=100" width="100px;" alt="sajov"/><br /><sub><b>sajov</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sajov" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/yywing"><img src="https://avatars.githubusercontent.com/u/22928185?v=4?s=100" width="100px;" alt="yywing"/><br /><sub><b>yywing</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=yywing" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sosso"><img src="https://avatars.githubusercontent.com/u/619968?v=4?s=100" width="100px;" alt="Anthony Sosso"/><br /><sub><b>Anthony Sosso</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sosso" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sosso" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/armonge"><img src="https://avatars.githubusercontent.com/u/770921?v=4?s=100" width="100px;" alt="Andrés Reyes Monge"/><br /><sub><b>Andrés Reyes Monge</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=armonge" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=armonge" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
@@ -149,7 +150,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-45-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-46-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 

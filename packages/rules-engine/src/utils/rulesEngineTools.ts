@@ -52,10 +52,7 @@ export const addRE: AddMethodRE = (
   parentConditionPathOrID,
   options = {}
 ): typeof rulesEngine =>
-  produce(
-    rulesEngine,
-    re => addREInPlace(re, subject, parentConditionPathOrID, options) as typeof re
-  );
+  produce(rulesEngine, re => addREInPlace(re, subject, parentConditionPathOrID, options));
 
 /**
  * Adds a rule or group to a query by mutating the rules engine.
@@ -131,10 +128,7 @@ export const updateRE: UpdateMethodRE = (
   conditionPathOrID,
   options = {}
 ): typeof rulesEngine =>
-  produce(
-    rulesEngine,
-    re => updateREInPlace(re, property, value, conditionPathOrID, options) as typeof re
-  );
+  produce(rulesEngine, re => updateREInPlace(re, property, value, conditionPathOrID, options));
 
 /**
  * Updates a property of a rule or group within a query by mutating the rules engine.
@@ -183,7 +177,7 @@ export interface RemoveMethodRE {
  * @group Rules Engine Tools
  */
 export const removeRE: RemoveMethodRE = (rulesEngine, conditionPathOrID): typeof rulesEngine =>
-  produce(rulesEngine, re => removeREInPlace(re, conditionPathOrID) as typeof re);
+  produce(rulesEngine, re => removeREInPlace(re, conditionPathOrID));
 
 /**
  * Removes a rule engine condition from a rules engine by mutating the rules engine.
@@ -288,10 +282,8 @@ export const moveRE: MoveMethodRE = (
   newConditionPathOrIdOrShiftDir,
   options = {}
 ): typeof rulesEngine =>
-  produce(
-    rulesEngine,
-    re =>
-      moveREInPlace(re, oldConditionPathOrID, newConditionPathOrIdOrShiftDir, options) as typeof re
+  produce(rulesEngine, re =>
+    moveREInPlace(re, oldConditionPathOrID, newConditionPathOrIdOrShiftDir, options)
   );
 
 /**
@@ -428,7 +420,7 @@ export const insertRE: InsertMethodRE = (
   conditionPath,
   options = {}
 ): typeof rulesEngine =>
-  produce(rulesEngine, re => insertREInPlace(re, subject, conditionPath, options) as typeof re);
+  produce(rulesEngine, re => insertREInPlace(re, subject, conditionPath, options));
 
 /**
  * Inserts a rule engine condition into a rules engine by mutating the rules engine.

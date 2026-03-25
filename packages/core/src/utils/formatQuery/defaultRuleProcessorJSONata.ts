@@ -12,7 +12,7 @@ const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('does
 const quote = (v: any, escapeQuotes?: boolean) =>
   `"${typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`)}"`;
 
-const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` : clause);
+const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : clause);
 
 const escapeStringRegex = (s: string) =>
   `${s}`.replaceAll(/[/$()*+.?[\\\]^{|}]/g, String.raw`\$&`).replaceAll('-', String.raw`\x2d`);

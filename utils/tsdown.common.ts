@@ -28,8 +28,10 @@ export const commonBuildOptions: UserConfig = {
   sourcemap: true,
   platform: 'neutral',
   dts: { oxc: true },
-  external: ['jsonata', 'numeric-quantity', 'sequelize', 'spel2js'],
-  inlineOnly: ['type-fest'],
+  deps: {
+    neverBundle: ['jsonata', 'numeric-quantity', 'sequelize', 'spel2js'],
+    onlyBundle: ['type-fest'],
+  },
 };
 
 export const tsdownCommonConfig = (sourceDir: string) =>

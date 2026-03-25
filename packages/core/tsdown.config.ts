@@ -3,7 +3,7 @@ import { defineConfig } from 'tsdown';
 import { commonBuildOptions, tsdownCommonConfig } from '../../utils/tsdown.common';
 
 export default defineConfig(async options => {
-  const buildConfig = await tsdownCommonConfig(import.meta.dir)(options);
+  const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
 
   const utilEntryPoints = {
     formatQuery: 'src/utils/formatQuery/index.ts',

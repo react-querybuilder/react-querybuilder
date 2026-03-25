@@ -11,7 +11,7 @@ type CelEvaluator = (param: {
 
 export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
   $.nothrow();
-  $.cwd(import.meta.dir);
+  $.cwd(import.meta.dirname);
 
   let buildInvalid = true;
   let buildOutdated = true;
@@ -28,10 +28,10 @@ export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
     const srcLatestCommit = await $`git log -1 --format=%cd --date=unix ./cel-evaluator.go`.text();
     const srcLatestCommitMs = Number(srcLatestCommit) * 1000;
     const { mtimeMs: srcLastModifiedMs } = await Bun.file(
-      `${import.meta.dir}/cel-evaluator.go`
+      `${import.meta.dirname}/cel-evaluator.go`
     ).stat();
     const { mtimeMs: binLastModifiedMs } = await Bun.file(
-      `${import.meta.dir}/cel-evaluator${process.platform === 'win32' ? '.exe' : ''}`
+      `${import.meta.dirname}/cel-evaluator${process.platform === 'win32' ? '.exe' : ''}`
     )
       .stat()
       .catch(() => ({ mtimeMs: 0 }));

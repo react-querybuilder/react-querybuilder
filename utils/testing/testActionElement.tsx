@@ -23,11 +23,11 @@ export const testActionElement = (ActionElement: React.ComponentType<ActionProps
     ...additionalProps
   }: Partial<ActionProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
-      const testTitle =
+      const titleOfTest =
         (additionalProps?.disabled && additionalProps?.disabledTranslation?.title) || title;
       const handleOnClick = jest.fn();
       render(<ActionElement {...props} handleOnClick={handleOnClick} {...additionalProps} />);
-      const btn = screen.getByTitle(testTitle);
+      const btn = screen.getByTitle(titleOfTest);
       expect(btn).toBeEnabled();
       await act(async () => {
         await user.click(btn);

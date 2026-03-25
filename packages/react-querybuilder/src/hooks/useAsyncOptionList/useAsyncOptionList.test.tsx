@@ -157,7 +157,7 @@ describe('cache key generation', () => {
     const rule = createRule({ field });
     const props = createValueSelectorProps({ rule });
     const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
-      getCacheKey: props => `custom-${props.rule?.field}`,
+      getCacheKey: p => `custom-${p.rule?.field}`,
       loadOptionList: async () => props.options,
     };
     const { store, wrapper } = getWrapper();
@@ -380,7 +380,7 @@ describe('cache behavior', () => {
 
     // Second call (via thunk) with same cache key - should use cache
     await act(async () => {
-      store.dispatch(
+      await store.dispatch(
         getOptionListsAsync({
           cacheKey: field,
           cacheTTL: DEFAULT_CACHE_TTL,

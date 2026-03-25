@@ -64,10 +64,10 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
     let active = true;
 
     const getComps = async () => {
-      const { default: Demo } = await import('./_components/Demo');
+      const { default: D } = await import('./_components/Demo');
 
       if (active) {
-        setComponents(() => ({ Demo }));
+        setComponents(() => ({ Demo: D }));
       }
     };
     getComps();

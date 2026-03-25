@@ -8,7 +8,7 @@ import {
 import type { ConditionProperties, TopLevelCondition } from 'json-rules-engine';
 
 export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLevelCondition> = (
-  rg,
+  ruleGroup,
   options
 ) => {
   const {
@@ -65,5 +65,5 @@ export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLev
     return rg.not ? { not: cond } : cond;
   };
 
-  return processRuleGroup(convertFromIC(rg), true);
+  return processRuleGroup(convertFromIC(ruleGroup), true);
 };

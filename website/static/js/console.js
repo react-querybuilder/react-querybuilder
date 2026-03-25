@@ -72,6 +72,6 @@ const styleSequence = [
   [colorSecondary, textShadowNone],
   [colorPrimary, textShadow],
   [colorSecondary, textShadowNone], // end of line 5 to the end
-].map(s => [commonStyles, ...s].join('; '));
+].map(styles => [commonStyles, ...styles].join('; '));
 
 console.log.apply(globalThis, [rqb, ...styleSequence]);

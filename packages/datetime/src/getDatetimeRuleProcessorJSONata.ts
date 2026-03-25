@@ -10,7 +10,7 @@ import { processIsDateField } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
-const negate = (clause: string, negate: boolean) => (negate ? `$not(${clause})` : `${clause}`);
+const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : `${clause}`);
 
 /**
  * Generates a rule processor with date/time features for use by

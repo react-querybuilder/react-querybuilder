@@ -1,4 +1,4 @@
-import { objectEntries, objectKeys } from './objectUtils';
+import { isUnsafeKey, objectEntries, objectKeys } from './objectUtils';
 
 /**
  * Merges any number of partial translations into a single definition.
@@ -13,6 +13,7 @@ export const mergeAnyTranslations = (
     // istanbul ignore else
     if (translations) {
       for (const key of objectKeys(translations)) {
+        if (isUnsafeKey(key)) continue;
         if (result[key]) {
           result[key] = { ...result[key], ...translations[key] };
         } else {
@@ -30,9 +31,10 @@ export const mergeAnyTranslation = (
   keyPropContextMap: Record<string, [unknown, unknown]>,
   defaults?: Record<string, Record<string, unknown>>
 ): Record<string, Record<string, unknown>> | undefined => {
+  if (isUnsafeKey(el)) return undefined;
   const finalKeys = objectEntries(keyPropContextMap)
     .map(([key, [pT, cT]]) => [key, pT ?? cT ?? defaults?.[el]?.[key]])
-    .filter(k => !!k[1]);
+    .filter(k => !isUnsafeKey(k[0] as string) && !!k[1]);
   if (finalKeys.length > 0 || defaults) {
     const defaultProperties = defaults?.[el] ?? {};
     const finalObject = Object.assign({}, defaultProperties, Object.fromEntries(finalKeys));

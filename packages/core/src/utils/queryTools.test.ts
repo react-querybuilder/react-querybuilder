@@ -35,7 +35,7 @@ const [value, field] = ['value', 'field'] as ValueSources;
 const stripIDs = (query: DefaultRuleGroupTypeAny) =>
   JSON.parse(formatQuery(query, 'json_without_ids'));
 
-const id = <T extends object>(x: T, id: string): T => ({ id, ...x });
+const id = <T extends object>(x: T, newID: string): T => ({ id: newID, ...x });
 
 const idGenerator = () => `${Math.random()}`;
 

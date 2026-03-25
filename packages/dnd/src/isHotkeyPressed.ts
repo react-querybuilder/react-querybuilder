@@ -104,9 +104,9 @@ const pushToCurrentlyPressedKeys = (key: string | string[]) => {
   Otherwise the set will hold all ever pressed keys while the meta key is down which leads to wrong results.
    */
   if (currentlyPressedKeys.has('meta')) {
-    for (const key of currentlyPressedKeys) {
-      if (!isHotkeyModifier(key)) {
-        currentlyPressedKeys.delete(lc(key));
+    for (const k of currentlyPressedKeys) {
+      if (!isHotkeyModifier(k)) {
+        currentlyPressedKeys.delete(lc(k));
       }
     }
   }

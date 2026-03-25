@@ -5,7 +5,7 @@ import type { Options as PrettierOptions } from 'prettier';
 import prettier from 'prettier';
 import * as prettierPluginOrganizeImports from 'prettier-plugin-organize-imports';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
-import { transformWithEsbuild } from 'vite';
+import { transformWithOxc } from 'vite';
 import { configs } from './exampleConfigs.js';
 
 interface PackageJSON {
@@ -19,20 +19,16 @@ interface PackageJSON {
 console.log('Generating/updating examples');
 
 const rootPrettierConfig = await prettier.resolveConfig(import.meta.file);
-const lernaJson = Bun.file(path.join(import.meta.dir, '../lerna.json'));
+const lernaJson = Bun.file(path.join(import.meta.dirname, '../lerna.json'));
 const { version } = await lernaJson.json();
 
 const compileToJS = async (code: string, fileName: string) => {
-  const compiled = await transformWithEsbuild(code, fileName, {
-    minify: false,
-    minifyWhitespace: false,
-    jsx: 'preserve',
-  });
+  const compiled = await transformWithOxc(code, fileName, { jsx: 'preserve' });
   return compiled.code.replaceAll(/^(const|createRoot|\s+return)/gm, '\n\n$1');
 };
 
-const packagesPath = path.join(import.meta.dir, '../packages');
-const templatePath = path.join(import.meta.dir, '_template');
+const packagesPath = path.join(import.meta.dirname, '../packages');
+const templatePath = path.join(import.meta.dirname, '_template');
 const templateDotCS = path.join(templatePath, '.codesandbox');
 const templateDotDC = path.join(templatePath, '.devcontainer');
 const templateSrc = path.join(templatePath, 'src');
@@ -53,7 +49,7 @@ const templatePkgJSON: PackageJSON = await Bun.file(path.join(templatePath, 'pac
 
 const generateExampleFromTemplate = async (exampleID: string) => {
   const exampleConfig = configs[exampleID];
-  const examplePath = path.join(import.meta.dir, exampleID);
+  const examplePath = path.join(import.meta.dirname, exampleID);
   const exampleDotCS = path.join(examplePath, '.codesandbox');
   const exampleDotDC = path.join(examplePath, '.devcontainer');
   const exampleSrc = path.join(examplePath, 'src');
@@ -254,14 +250,17 @@ const otherExamples = ['base-ui', 'ci', 'native', 'next', 'preact', 'tremor'] as
 
 const updateOtherExample = async (otherExampleName: string) => {
   const otherExamplePkgJSON: PackageJSON = await Bun.file(
-    path.join(import.meta.dir, `${otherExampleName}/package.json`)
+    path.join(import.meta.dirname, `${otherExampleName}/package.json`)
   ).json();
   for (const dep of Object.keys(otherExamplePkgJSON.dependencies)) {
     if (/^@?react-querybuilder(\/[a-z]+)?/.test(dep)) {
       otherExamplePkgJSON.dependencies[dep] = templatePkgJSON.dependencies['react-querybuilder'];
     }
   }
-  const otherExamplePkgJsonPath = path.join(import.meta.dir, `${otherExampleName}/package.json`);
+  const otherExamplePkgJsonPath = path.join(
+    import.meta.dirname,
+    `${otherExampleName}/package.json`
+  );
   const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
   const otherExamplePkgJsonFileContents = await prettier.format(
     stableStringify(otherExamplePkgJSON),

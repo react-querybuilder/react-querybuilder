@@ -2,7 +2,7 @@ export const __dummy = null;
 
 const { version } = await Bun.file('./lerna.json').json();
 
-const packagesDir = `${import.meta.dir}/packages`;
+const packagesDir = `${import.meta.dirname}/packages`;
 
 const pkgNames = await Bun.$`ls packages`.text();
 const pkgJsonPaths = pkgNames
@@ -10,7 +10,7 @@ const pkgJsonPaths = pkgNames
   .filter(p => !!p && p !== 'react-querybuilder')
   .map(p => `${packagesDir}/${p}/package.json`);
 
-pkgJsonPaths.push(`${import.meta.dir}/website/package.json`);
+pkgJsonPaths.push(`${import.meta.dirname}/website/package.json`);
 
 await Promise.all(
   pkgJsonPaths.map(async pkgJsonPath => {

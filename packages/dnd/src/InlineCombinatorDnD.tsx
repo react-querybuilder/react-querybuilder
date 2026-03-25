@@ -147,7 +147,7 @@ export const useInlineCombinatorDnD = (
       }),
       drop: () => {
         const { qbId, getQuery, dispatchQuery } = schema;
-        const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+        const dE = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
         const groupItems = isHotkeyPressed(groupModeModifierKey);
 
         return {
@@ -157,7 +157,7 @@ export const useInlineCombinatorDnD = (
           getQuery,
           dispatchQuery,
           groupItems,
-          dropEffect,
+          dropEffect: dE,
         };
       },
     }),

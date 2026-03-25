@@ -32,10 +32,10 @@ export default function Nav({ variant, compressedState }: NavProps) {
   const [copyPermalinkStatus, setCopyPermalinkStatus] = useState('');
 
   const goToStyle = useCallback(
-    (variant: StyleName) => {
+    (v: StyleName) => {
       goToLink(
         getLink({
-          variant,
+          variant: v,
           compressedState,
           siteLocation,
         })

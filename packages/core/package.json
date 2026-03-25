@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.14.0",
+  "version": "8.14.2",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -145,7 +145,7 @@
     "@babel/preset-env": "catalog:test",
     "@babel/preset-typescript": "catalog:test",
     "@electric-sql/pglite": "catalog:test",
-    "@prisma/client": "^7.4.0",
+    "@prisma/client": "^7.5.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "catalog:",
     "babel-plugin-istanbul": "catalog:test",
@@ -155,12 +155,12 @@
     "mongodb-memory-server-core": "^11.0.1",
     "mongoose": "catalog:test",
     "pglite-prisma-adapter": "^0.7.2",
-    "prisma": "^7.4.0",
+    "prisma": "^7.5.0",
     "query-string": "^9.3.1",
     "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
-    "sequelize": "^6.37.7",
+    "sequelize": "^6.37.8",
     "spel2js": "^0.2.9",
     "type-fest": "catalog:",
     "typescript": "catalog:",
@@ -174,8 +174,8 @@
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.38.0",
-    "jsonata": ">=2",
     "json-logic-js": ">=2",
+    "jsonata": ">=2",
     "sequelize": ">=6",
     "spel2js": ">=0.2.0"
   },

@@ -3,15 +3,29 @@ import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.css';
 
 const fields = [
-  { name: 'firstName', label: 'First Name' },
-  { name: 'lastName', label: 'Last Name' },
+  {
+    name: 'firstName',
+    label: 'First Name',
+  },
+  {
+    name: 'lastName',
+    label: 'Last Name',
+  },
 ];
 
 const initialQuery = {
   combinator: 'and',
   rules: [
-    { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
-    { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
+    {
+      field: 'firstName',
+      operator: 'beginsWith',
+      value: 'Stev',
+    },
+    {
+      field: 'lastName',
+      operator: 'in',
+      value: 'Vai,Vaughan',
+    },
   ],
 };
 export const App = () => {

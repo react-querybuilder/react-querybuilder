@@ -65,9 +65,11 @@ import ImportTab from './ImportTab';
 import Nav from './Nav';
 import { ThemeBuilder } from './ThemeBuilder';
 declare module '@theme/TabItem' {
+  // oxlint-disable-next-line no-shadow
   export default function TabItem(props: TabItemProps): React.JSX.Element;
 }
 declare module '@theme/Tabs' {
+  // oxlint-disable-next-line no-shadow
   export default function Tabs(props: TabsProps): React.JSX.Element;
 }
 
@@ -355,9 +357,9 @@ export default function Demo({
 
   const loadFromSQL = useCallback(() => {
     try {
-      const q = parseSQL(sql);
+      const qLocal = parseSQL(sql);
       const qIC = parseSQL(sql, { independentCombinators: true });
-      setQuery(q);
+      setQuery(qLocal);
       setQueryIC(qIC);
       setSQLParseError('');
     } catch (err) {
@@ -366,9 +368,9 @@ export default function Demo({
   }, [sql]);
   const loadFromMongoDB = useCallback(() => {
     try {
-      const q = parseMongoDB(mongoDB);
-      const qIC = convertToIC(q);
-      setQuery(q);
+      const qLocal = parseMongoDB(mongoDB);
+      const qIC = convertToIC(qLocal);
+      setQuery(qLocal);
       setQueryIC(qIC);
       setMongoDbParseError('');
     } catch (err) {
@@ -377,9 +379,9 @@ export default function Demo({
   }, [mongoDB]);
   const loadFromJsonLogic = useCallback(() => {
     try {
-      const q = parseJsonLogic(jsonLogic);
-      const qIC = convertToIC(q);
-      setQuery(q);
+      const qLocal = parseJsonLogic(jsonLogic);
+      const qIC = convertToIC(qLocal);
+      setQuery(qLocal);
       setQueryIC(qIC);
       setJsonLogicParseError('');
     } catch (err) {
@@ -388,9 +390,9 @@ export default function Demo({
   }, [jsonLogic]);
   const loadFromSpEL = useCallback(() => {
     try {
-      const q = parseSpEL(spel);
+      const qLocal = parseSpEL(spel);
       const qIC = parseSpEL(spel, { independentCombinators: true });
-      setQuery(q);
+      setQuery(qLocal);
       setQueryIC(qIC);
       setSpELParseError('');
     } catch (err) {
@@ -399,9 +401,9 @@ export default function Demo({
   }, [spel]);
   const loadFromCEL = useCallback(() => {
     try {
-      const q = parseCEL(cel);
+      const qLocal = parseCEL(cel);
       const qIC = parseCEL(cel, { independentCombinators: true });
-      setQuery(q);
+      setQuery(qLocal);
       setQueryIC(qIC);
       setCELParseError('');
     } catch (err) {
@@ -410,9 +412,9 @@ export default function Demo({
   }, [cel]);
   const loadFromJSONata = useCallback(() => {
     try {
-      const q = parseJSONata(jsonata);
+      const qLocal = parseJSONata(jsonata);
       const qIC = parseJSONata(jsonata, { independentCombinators: true });
-      setQuery(q);
+      setQuery(qLocal);
       setQueryIC(qIC);
       setJSONataParseError('');
     } catch (err) {
