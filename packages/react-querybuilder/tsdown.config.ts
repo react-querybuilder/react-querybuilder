@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import {
   commonBuildOptions,
@@ -83,4 +84,4 @@ export default defineConfig(async options => {
       onSuccess: () => writeNode10pkg(['async', ...Object.keys(utilEntryPoints)]),
     },
   ];
-});
+}) as UserConfigExport;
