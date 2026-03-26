@@ -81,7 +81,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
           : { [combinator]: expressions }
         : mongoDbFallback;
 
-    return rg.not ? { $not: result } : result;
+    return rg.not ? { $nor: result } : result;
   };
 
   return processRuleGroup(convertFromIC(ruleGroup), true);
