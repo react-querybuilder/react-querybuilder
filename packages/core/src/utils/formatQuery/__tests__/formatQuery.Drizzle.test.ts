@@ -21,9 +21,7 @@ import {
 } from '../formatQueryTestUtils';
 
 const operatorStub = (...x: unknown[]) => x;
-function sqlStub(...x: unknown[]) {
-  return x;
-}
+const sqlStub = <T>(...x: T[]): T[] => x;
 sqlStub.raw = () => 'raw sql';
 
 // oxlint-disable-next-line typescript/no-explicit-any

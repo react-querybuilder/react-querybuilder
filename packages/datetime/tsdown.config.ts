@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
 
@@ -40,4 +41,4 @@ export default defineConfig(async options => {
   }
 
   return buildConfig;
-});
+}) as UserConfigExport;

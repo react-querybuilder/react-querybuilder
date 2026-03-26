@@ -3,9 +3,8 @@
   "ignorePatterns": ["**/{cel,sql}Parser.{js,ts}", "examples/preact"],
   "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
   "options": {
-    "typeAware": true
-    // Disabled pending resolution of https://github.com/microsoft/typescript-go/issues/3207
-    // "typeCheck": true
+    "typeAware": true,
+    "typeCheck": true
   },
   "categories": {
     "correctness": "error",

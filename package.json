@@ -137,7 +137,7 @@
     "sass": "^1.98.0",
     "type-fest": "^5.5.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.2"
+    "vite": "^8.0.3"
   },
   "catalogs": {
     "peer": {
@@ -148,13 +148,13 @@
       "@babel/preset-env": "^7.29.2",
       "@babel/preset-react": "^7.28.5",
       "@babel/preset-typescript": "^7.28.5",
-      "@electric-sql/pglite": "^0.4.1",
+      "@electric-sql/pglite": "^0.4.2",
       "@testing-library/dom": "^10.4.1",
       "@testing-library/jest-dom": "^6.9.1",
       "@testing-library/react": "^16.3.2",
       "@testing-library/user-event": "14.6.1",
       "babel-plugin-istanbul": "^7.0.1",
-      "mongoose": "^9.3.2",
+      "mongoose": "^9.3.3",
       "react-test-renderer": "^19.2.4",
       "regenerator-runtime": "^0.14.1"
     }
@@ -182,7 +182,7 @@
     "@types/react-dom": "catalog:",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.344",
-    "@typescript/native-preview": "^7.0.0-dev.20260324.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260326.1",
     "bun-plugin-tailwind": "^0.1.2",
     "concurrently": "^9.2.1",
     "esbuild-analyzer": "^0.2.0",
@@ -195,7 +195,7 @@
     "jsdom-testing-mocks": "^1.16.0",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
-    "oxlint-tsgolint": "^0.17.3",
+    "oxlint-tsgolint": "^0.17.4",
     "pkg-pr-new": "^0.0.66",
     "postcss": "^8.5.8",
     "prettier": "3.8.1",
@@ -208,7 +208,7 @@
     "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "swc-loader": "^0.2.7",
-    "tsdown": "^0.21.4",
+    "tsdown": "^0.21.5",
     "typescript": "catalog:",
     "vite": "catalog:"
   },
