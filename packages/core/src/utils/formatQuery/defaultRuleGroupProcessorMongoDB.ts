@@ -80,7 +80,7 @@ export const defaultRuleGroupProcessorMongoDB: RuleGroupProcessor<string> = (
           : `${combinator}:[${expressions.join(',')}]`
         : fallbackExpression;
 
-    return rg.not ? `"$not":${isBracketed(result) ? result : `{${result}}`}` : result;
+    return rg.not ? `"$nor":${isBracketed(result) ? result : `{${result}}`}` : result;
   };
 
   const processedQuery = processRuleGroup(convertFromIC(ruleGroup), true);

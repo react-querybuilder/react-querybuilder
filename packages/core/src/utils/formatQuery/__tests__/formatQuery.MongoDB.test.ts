@@ -488,7 +488,7 @@ it('formats to mongo query correctly', () => {
         },
       ],
     },
-    { $and: [{ $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] }
+    { $and: [{ $nor: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] }
   );
   testBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
   // Just a coverage thing here:
