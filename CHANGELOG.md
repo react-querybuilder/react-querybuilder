@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.14.3] - 2026-03-26
+
+### Fixed
+
+- Restored provenance attestation on npm.
+
 ## [v8.14.2] - 2026-03-24
 
 ### Fixed
@@ -2120,7 +2126,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.3...HEAD
+[v8.14.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.2...v8.14.3
 [v8.14.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.1...v8.14.2
 [v8.14.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.0...v8.14.1
 [v8.14.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.13.0...v8.14.0
