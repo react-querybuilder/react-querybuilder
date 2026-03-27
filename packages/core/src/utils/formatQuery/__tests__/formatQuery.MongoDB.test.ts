@@ -623,6 +623,89 @@ it('ruleProcessor', () => {
 });
 
 // oxlint-disable-next-line expect-expect
+it('handles not: true on rule groups', () => {
+  // Single rule in negated group
+  testBoth(
+    { combinator: 'and', not: true, rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
+    { $not: { f1: 'v1' } }
+  );
+  // Multiple rules in negated group
+  testBoth(
+    {
+      combinator: 'and',
+      not: true,
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        { field: 'f2', operator: '=', value: 'v2' },
+      ],
+    },
+    { $not: { $and: [{ f1: 'v1' }, { f2: 'v2' }] } }
+  );
+  // Negated $or group
+  testBoth(
+    {
+      combinator: 'or',
+      not: true,
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        { field: 'f2', operator: '=', value: 'v2' },
+      ],
+    },
+    { $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }
+  );
+  // Nested negated group inside non-negated group
+  testBoth(
+    {
+      combinator: 'and',
+      rules: [
+        {
+          combinator: 'or',
+          not: true,
+          rules: [
+            { field: 'f1', operator: '=', value: 'v1' },
+            { field: 'f2', operator: '=', value: 'v2' },
+          ],
+        },
+      ],
+    },
+    { $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }
+  );
+  // Double negation: not group inside not group
+  testBoth(
+    {
+      combinator: 'and',
+      not: true,
+      rules: [
+        {
+          combinator: 'or',
+          not: true,
+          rules: [
+            { field: 'f1', operator: '=', value: 'v1' },
+            { field: 'f2', operator: '=', value: 'v2' },
+          ],
+        },
+      ],
+    },
+    { $not: { $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } } }
+  );
+});
+
+// oxlint-disable-next-line expect-expect
+it('handles not: true with independent combinators', () => {
+  testBoth(
+    {
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        'and',
+        { field: 'f2', operator: '=', value: 'v2' },
+      ],
+      not: true,
+    },
+    { $not: { $and: [{ f1: 'v1' }, { f2: 'v2' }] } }
+  );
+});
+
+// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
   testMongoDB(
     queryForPreserveValueOrder,
