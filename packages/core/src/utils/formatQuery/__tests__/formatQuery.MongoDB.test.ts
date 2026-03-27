@@ -668,7 +668,7 @@ it('handles not: true on rule groups', () => {
         },
       ],
     },
-    { $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }
+    { $and: [{ $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] }
   );
   // Double negation: not group inside not group
   testBoth(
@@ -686,7 +686,7 @@ it('handles not: true on rule groups', () => {
         },
       ],
     },
-    { $not: { $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } } }
+    { $not: { $and: [{ $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] } }
   );
 });
 
