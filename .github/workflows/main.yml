@@ -81,6 +81,10 @@ jobs:
         run: |
           # Set all catalog React dependencies to v18
           sed -i -E 's/("(@types\/)?react(-dom|-test-renderer)?": ")\^?19.*"/\1^18"/g' ./package.json
+
+          # Mantine 9 does not support React 18, so test with Mantine 8
+          sed -i -E 's/("@mantine\/[a-z-]+"): ".*"/\1: "^8"/g' ./packages/mantine/package.json
+
           bun install
           bunx jest --coverage=false
 
