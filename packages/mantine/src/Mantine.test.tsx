@@ -103,7 +103,7 @@ describe('MantineValueSelector', () => {
         listsAsArrays
       />
     );
-    await user.click(screen.getByRole('textbox').querySelector('button')!);
+    await user.click(screen.getByRole('combobox').querySelector('button')!);
     // TODO: find out why this fails
     // expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt2');
   });
