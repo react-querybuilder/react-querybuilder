@@ -1,4 +1,4 @@
-import type { Op as _OpTypes, WhereOptions } from 'sequelize';
+import type { Op as _OpTypes, WhereOptions } from '@sequelize/core';
 import type { RuleGroupProcessor, RuleGroupType } from '../../types';
 import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';

@@ -160,7 +160,8 @@
     "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
-    "sequelize": "^6.37.8",
+    "@sequelize/core": "7.0.0-alpha.48",
+    "@sequelize/sqlite3": "7.0.0-alpha.48",
     "spel2js": "^0.2.9",
     "type-fest": "catalog:",
     "typescript": "catalog:",
@@ -176,7 +177,7 @@
     "drizzle-orm": ">=0.38.0",
     "json-logic-js": ">=2",
     "jsonata": ">=2",
-    "sequelize": ">=6",
+    "@sequelize/core": ">=7.0.0-alpha",
     "spel2js": ">=0.2.0"
   },
   "peerDependenciesMeta": {
@@ -189,7 +190,7 @@
     "json-logic-js": {
       "optional": true
     },
-    "sequelize": {
+    "@sequelize/core": {
       "optional": true
     },
     "spel2js": {

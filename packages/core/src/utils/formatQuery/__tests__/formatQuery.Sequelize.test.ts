@@ -6,7 +6,7 @@
  * the `dbquery.*` test files.
  */
 
-import { col, fn, Op } from 'sequelize';
+import { col, fn, Op } from '@sequelize/core';
 import { defaultRuleProcessorSequelize } from '../defaultRuleProcessorSequelize';
 import { formatQuery } from '../formatQuery';
 import {

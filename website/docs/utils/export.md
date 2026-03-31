@@ -305,7 +305,7 @@ Generate objects for Sequelize `findAll` `where` properties using the "sequelize
 - If any rules have `valueSource: "field"` and use one of the `doesNot*` operators, then the Sequelize `fn` function must be provided as `sequelizeFn`.
 
 ```ts
-import { col, fn, Op } from 'sequelize';
+import { col, fn, Op } from '@sequelize/core';
 const where = formatQuery(query, {
   format: 'sequelize',
   context: { sequelizeOperators: Op, sequelizeCol: col, sequelizeFn: fn },

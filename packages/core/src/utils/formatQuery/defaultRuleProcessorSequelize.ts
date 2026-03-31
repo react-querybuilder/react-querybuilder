@@ -1,4 +1,4 @@
-import type { Op as _OpTypes, col as _colType, fn as _fnType } from 'sequelize';
+import type { Op as _OpTypes, col as _colType, fn as _fnType } from '@sequelize/core';
 import type { Simplify } from 'type-fest';
 import type { RuleProcessor } from '../../types';
 import { toArray } from '../arrayUtils';

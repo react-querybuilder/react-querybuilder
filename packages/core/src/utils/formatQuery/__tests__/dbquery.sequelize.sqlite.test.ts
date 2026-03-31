@@ -1,20 +1,25 @@
-import { col, DataTypes, fn, Model, Op, Sequelize } from 'sequelize';
+import { col, DataTypes, fn, Model, Op, Sequelize } from '@sequelize/core';
+import { SqliteDialect } from '@sequelize/sqlite3';
 import type { TestSQLParams } from '../dbqueryTestUtils';
 import { dbTests, superUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
 
-const superUsersSQLite = superUsers('sqlite');
+// Use 'postgres' (boolean) rather than 'sqlite' (0|1) because Sequelize reads
+// BOOLEAN columns back as true/false, so expectedResult must match that type.
+const superUsersSequelize = superUsers('postgres');
 
-const sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:' });
+const sequelize = new Sequelize({
+  dialect: SqliteDialect,
+  storage: ':memory:',
+  pool: { idle: Infinity, maxUses: Infinity, max: 1 },
+});
 
 class SequelizeSuperUser extends Model {}
 SequelizeSuperUser.init(
   {
     firstName: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
     lastName: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
-    // We could use `DataTypes.BOOLEAN` for `enhanced`, but then we'd have to run
-    // `superUsers("postgres")` above since Sequelize would convert values to boolean
-    enhanced: { type: DataTypes.TINYINT, allowNull: false },
+    enhanced: { type: DataTypes.BOOLEAN, allowNull: false },
     madeUpName: { type: DataTypes.STRING, allowNull: false },
     nickname: { type: DataTypes.STRING, allowNull: false },
     powerUpAge: { type: DataTypes.TINYINT, allowNull: true },
@@ -25,7 +30,7 @@ SequelizeSuperUser.init(
 beforeAll(async () => {
   await SequelizeSuperUser.sync({ force: true, logging: false });
   // oxlint-disable-next-line typescript/no-explicit-any
-  await SequelizeSuperUser.bulkCreate(superUsersSQLite as any, { logging: false });
+  await SequelizeSuperUser.bulkCreate(superUsersSequelize as any, { logging: false });
 });
 
 afterAll(async () => {
@@ -50,7 +55,7 @@ const testSQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
 
 describe('Sequelize (SQLite)', () => {
   // Common tests
-  for (const [name, t] of Object.entries(dbTests(superUsersSQLite))) {
+  for (const [name, t] of Object.entries(dbTests(superUsersSequelize))) {
     describe(name, () => {
       testSQL(t);
     });
