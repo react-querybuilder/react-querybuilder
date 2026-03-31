@@ -34,10 +34,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
     validationMap,
   } = options;
 
-  const { avoidFieldsAsKeys, inExpressionContext } = (context ?? {}) as {
-    avoidFieldsAsKeys?: boolean;
-    inExpressionContext?: boolean;
-  };
+  const { inExpressionContext } = (context ?? {}) as { inExpressionContext?: boolean };
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
