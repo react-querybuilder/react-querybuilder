@@ -17,7 +17,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Check formatting
         run: |
-          bun run pretty-check || \
-          (bun run pretty-print \
+          bun run fmt:check || \
+          (bun run fmt \
           && git --no-pager diff \
           && exit 1)

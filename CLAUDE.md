@@ -42,7 +42,7 @@ bun run build
 - Do not run `bun run test`—it automatically runs unnecessary steps
 - `bun typecheck` - TypeScript check
 - `bun lint` - Type-aware linting with Oxlint and `tsgo`
-- `bun pretty-print` - Format (run after changes)
+- `bun fmt` - Format (run after changes)
 - `bun checkall` - Full CI check (run before submitting a PR)
 
 **Documentation:**
@@ -245,7 +245,7 @@ import { generateID, isRuleGroup } from '../utils';
 - `bun checkall` - Full CI
 - `bun start` - Dev server
 - `bun run test` - Tests
-- `bun pretty-print` - Format
+- `bun fmt` - Format
 - `bun generate-examples` - Update examples
 
 **Directories:**
