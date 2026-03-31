@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- [#1015] MongoDB export formats (`"mongodb_query"`/`"mongodb"`) now use `$nor` instead of `$not` for rule group negation, fixing the `unknown top level operator: $not` runtime error.
 
 ## [v8.14.3] - 2026-03-26
 
@@ -2121,6 +2123,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#988]: https://github.com/react-querybuilder/react-querybuilder/pull/988
 [#1005]: https://github.com/react-querybuilder/react-querybuilder/pull/1005
 [#1007]: https://github.com/react-querybuilder/react-querybuilder/pull/1007
+[#1015]: https://github.com/react-querybuilder/react-querybuilder/pull/1015
 
 <!-- #endregion -->
 
