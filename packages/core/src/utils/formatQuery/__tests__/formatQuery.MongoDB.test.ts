@@ -471,7 +471,7 @@ it('formats to mongo query correctly', () => {
   // Test for `not` at top level
   testBoth(
     { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
-    { $not: { f1: 'v1' } }
+    { $nor: [{ f1: 'v1' }] }
   );
   // Test for `not` at nested group level
   testBoth(
@@ -488,7 +488,13 @@ it('formats to mongo query correctly', () => {
         },
       ],
     },
-    { $and: [{ $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] }
+    { $and: [{ $nor: [{ $or: [{ f1: 'v1' }, { f2: 'v2' }] }] }] }
+  );
+  // In expression context (avoidFieldsAsKeys: true), `$not` must still be used instead of `$nor`
+  testMongoDBQuery(
+    { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
+    { $not: { $eq: ['$f1', 'v1'] } },
+    { context: { avoidFieldsAsKeys: true } }
   );
   testBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
   // Just a coverage thing here:

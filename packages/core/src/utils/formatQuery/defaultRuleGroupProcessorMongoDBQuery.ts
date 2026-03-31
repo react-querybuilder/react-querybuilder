@@ -23,6 +23,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
   meta
 ) => {
   const {
+    context,
     fields,
     getParseNumberBoolean,
     placeholderFieldName,
@@ -32,6 +33,8 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
     validateRule,
     validationMap,
   } = options;
+
+  const { avoidFieldsAsKeys } = (context ?? {}) as { avoidFieldsAsKeys?: boolean };
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
@@ -81,7 +84,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
           : { [combinator]: expressions }
         : mongoDbFallback;
 
-    return rg.not ? { $not: result } : result;
+    return rg.not ? (avoidFieldsAsKeys ? { $not: result } : { $nor: [result] }) : result;
   };
 
   return processRuleGroup(convertFromIC(ruleGroup), true);
