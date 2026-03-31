@@ -162,6 +162,7 @@
     "sass": "catalog:",
     "sequelize": "^6.37.8",
     "spel2js": "^0.2.9",
+    "sqlite3": "^6.0.1",
     "type-fest": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
