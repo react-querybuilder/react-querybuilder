@@ -84,6 +84,8 @@ jobs:
 
           # Mantine 9 does not support React 18, so test with Mantine 8
           sed -i -E 's/("@mantine\/[a-z-]+"): ".*"/\1: "^8"/g' ./packages/mantine/package.json
+          # Minor tweak for Mantine 8
+          sed -i -E "s/screen.getByRole('combobox')/screen.getByRole('textbox')/g" ./packages/mantine/src/Mantine.test.tsx
 
           bun install
           bunx jest --coverage=false
