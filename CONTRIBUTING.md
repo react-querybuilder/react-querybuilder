@@ -56,7 +56,7 @@ Before submitting a pull request, please do the following:
 - Run `bun checkall` to make sure CI will run successfully.
 - If adding a new feature, add corresponding tests (we maintain 100% coverage).
 - If changing behavior or adding a feature, update the documentation. You may need to update both the [current (aka "next") docs](./website/docs/) and the latest [versioned docs](./website/versioned_docs/).
-- If your editor doesn't automatically format code with [Prettier][prettier] when saving changes, run `bun pretty-print`.
+- If your editor doesn't automatically format code with [oxfmt][oxfmt] when saving changes, run `bun fmt`.
 - When addressing a bug, refer to an existing GitHub issue or provide a reproducible example. Any interactive demo or minimal repository is fine, including [CodeSandbox][codesandbox] or [StackBlitz][stackblitz]. You can use the [CI base][example-ci], the [basic example][example-basic-ts] ([JS version][example-basic]), or any of the other [examples](./examples/) as a starter template.
 
 ## Generated files
@@ -109,7 +109,7 @@ Generated folders:
 [discord]: https://react-querybuilder.js.org/discord
 [egghead]: https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github
 [bun]: https://bun.com/
-[prettier]: https://prettier.io/
+[oxfmt]: https://oxc.rs/docs/guide/usage/formatter.html
 [codesandbox]: https://codesandbox.io
 [stackblitz]: https://stackblitz.com
 [example-ci]: https://github.com/react-querybuilder/react-querybuilder/tree/main/examples/ci

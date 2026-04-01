@@ -54,7 +54,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
         ...(options as FormatQueryFinalOptions),
         // We have to override `ruleProcessor` in case original `format` is "mongodb"
         ruleProcessor: defaultRuleProcessorMongoDBQuery,
-        context: { ...options.context, avoidFieldsAsKeys: true },
+        context: { ...options.context, avoidFieldsAsKeys: true, inExpressionContext: true },
       }
     );
 
