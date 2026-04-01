@@ -471,7 +471,19 @@ it('formats to mongo query correctly', () => {
   // Test for `not` at top level
   testBoth(
     { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
-    { $not: { f1: 'v1' } }
+    { $nor: [{ f1: 'v1' }] }
+  );
+  // Test for `not` at top level with multiple rules — exercises the multi-rule $and branch
+  testBoth(
+    {
+      not: true,
+      combinator: 'and',
+      rules: [
+        { field: 'f1', operator: '=', value: 'v1' },
+        { field: 'f2', operator: '=', value: 'v2' },
+      ],
+    },
+    { $nor: [{ $and: [{ f1: 'v1' }, { f2: 'v2' }] }] }
   );
   // Test for `not` at nested group level
   testBoth(
@@ -488,7 +500,73 @@ it('formats to mongo query correctly', () => {
         },
       ],
     },
-    { $and: [{ $not: { $or: [{ f1: 'v1' }, { f2: 'v2' }] } }] }
+    { $and: [{ $nor: [{ $or: [{ f1: 'v1' }, { f2: 'v2' }] }] }] }
+  );
+  // Test for double negation — `not: true` inside a `not: true` group
+  // The outer $and wrapper appears because hasChildRules=true prevents the single-item shortcut
+  testBoth(
+    {
+      not: true,
+      combinator: 'and',
+      rules: [
+        {
+          not: true,
+          combinator: 'or',
+          rules: [
+            { field: 'f1', operator: '=', value: 'v1' },
+            { field: 'f2', operator: '=', value: 'v2' },
+          ],
+        },
+      ],
+    },
+    { $nor: [{ $and: [{ $nor: [{ $or: [{ f1: 'v1' }, { f2: 'v2' }] }] }] }] }
+  );
+  // In expression context (inExpressionContext: true), `$not` must still be used instead of `$nor`
+  testMongoDBQuery(
+    { not: true, combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
+    { $not: { $eq: ['$f1', 'v1'] } },
+    { context: { avoidFieldsAsKeys: true, inExpressionContext: true } }
+  );
+  // End-to-end: match mode `all` with `not: true` inside the value's rule group.
+  // Validates that `$not` is used inside $filter.cond (expression context) while
+  // `$nor` would be used for the same group in query-predicate context.
+  testMongoDBQuery(
+    {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'fs',
+          operator: '=',
+          value: {
+            combinator: 'and',
+            not: true,
+            rules: [{ field: '', operator: 'contains', value: 'S' }],
+          },
+          match: { mode: 'all' },
+        },
+      ],
+    },
+    {
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $ifNull: [
+                {
+                  $filter: {
+                    input: '$fs',
+                    as: 'item',
+                    cond: { $and: [{ $not: { $regexMatch: { input: '$$item', regex: 'S' } } }] },
+                  },
+                },
+                [],
+              ],
+            },
+          },
+          { $size: { $ifNull: ['$fs', []] } },
+        ],
+      },
+    }
   );
   testBoth(queryWithMatchModes, mongoQueryExpectationForMatchModes);
   // Just a coverage thing here:
