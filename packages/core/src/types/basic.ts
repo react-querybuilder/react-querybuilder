@@ -57,7 +57,7 @@ type ToOptionArrays<Sources extends readonly string[]> = Sources extends unknown
   ? { [K in keyof Sources]: { name: Sources[K]; value: Sources[K]; label: string } }
   : never;
 type ToFlexibleOptionArrays<Sources extends readonly string[]> = Sources extends unknown
-  ? { [K in keyof Sources]: FlexibleOption<Sources[K]> }
+  ? { [K in keyof Sources]: FlexibleOption }
   : never;
 
 type WithOptionalClassName<T> = T & { className?: Classname };

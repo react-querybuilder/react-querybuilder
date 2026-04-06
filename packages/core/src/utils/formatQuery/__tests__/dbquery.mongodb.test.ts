@@ -57,14 +57,12 @@ beforeAll(async () => {
     generationalSuffix: { type: String },
   } as const;
   const nestedSchemaMongoose = new mongoose.Schema(nestedSchema, { _id: false });
-  // @ts-expect-error - I don't know what mongoose needs here
   AugmentedSuperHero = mongoose.model(
     'augmentedsuperhero',
     new mongoose.Schema({
       ...superHeroSchema,
       nicknames: { type: [String], required: true },
       earlyPencilers: { type: [nestedSchemaMongoose], required: true },
-      // earlyPencilers: [nestedSchema],
     })
   );
   await AugmentedSuperHero.insertMany(augmentedSuperUsersMongoDB);

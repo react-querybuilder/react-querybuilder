@@ -14,7 +14,6 @@ import { MaterialValueEditor } from './MaterialValueEditor';
 import { MaterialValueSelector } from './MaterialValueSelector';
 import { RQBMaterialContext } from './RQBMaterialContext';
 import { materialTranslations } from './translations';
-import type { MuiAugmentation } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
 export * from './MaterialActionElement';
@@ -48,7 +47,7 @@ const MaterialContextProvider = getCompatContextProvider({
 /**
  * @group Components
  */
-export const QueryBuilderMaterial: QueryBuilderContextProvider<MuiAugmentation> = ({
+export const QueryBuilderMaterial: QueryBuilderContextProvider = ({
   muiComponents: muiComponentsProp,
   showInputLabels,
   ...props

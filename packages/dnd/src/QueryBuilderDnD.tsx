@@ -214,7 +214,7 @@ let didWarnEnabledDndWithoutReactDnD = false;
  * @group Hooks
  */
 export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
-  const [dnd, setDnd] = useState<DndProp | null>(dndParam ?? null);
+  const [dnd, setDnd] = useState(dndParam ?? null);
 
   useEffect(() => {
     let didCancel = false;
