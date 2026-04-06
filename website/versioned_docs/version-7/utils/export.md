@@ -481,6 +481,56 @@ Output (string):
 First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52
 ```
 
+### Validation
+
+Generate a validation result object using "validation" format. The output is an annotated copy of the query tree with `valid` and optional `reasons` properties on every rule and group. A group's `valid` reflects both its own structural validity and the validity of all its descendants.
+
+```ts
+const result = formatQuery(query, {
+  format: 'validation',
+  fields: [
+    {
+      name: 'firstName',
+      label: 'First Name',
+      validator: r => (r.value ? true : { valid: false, reasons: ['Value is required'] }),
+    },
+    { name: 'age', label: 'Age' },
+  ],
+});
+```
+
+Output (object):
+
+```json
+{
+  "combinator": "and",
+  "valid": false,
+  "rules": [
+    {
+      "field": "firstName",
+      "operator": "=",
+      "value": "",
+      "valid": false,
+      "reasons": ["Value is required"]
+    },
+    {
+      "field": "age",
+      "operator": ">",
+      "value": 26,
+      "valid": true
+    }
+  ]
+}
+```
+
+A rule is considered invalid if any of the following are true:
+
+- The rule is `muted`
+- The rule fails validation via the `validator` option or a field-level `validator`
+- The `field`, `operator`, or `value` matches its respective placeholder name
+
+The root-level `valid` property is `true` only when the group itself is valid _and_ all descendant rules and groups are valid, making it suitable for gating API calls:
+
 ## Configuration
 
 Pass an object as the second argument for fine-grained output control:

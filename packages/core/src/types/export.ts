@@ -8,8 +8,8 @@ import type {
   ValueSource,
 } from './basic';
 import type { FlexibleOptionList, FullOptionList } from './options';
-import type { DefaultOperatorName, RuleType } from './ruleGroups';
-import type { RuleGroupTypeAny } from './ruleGroupsIC';
+import type { DefaultOperatorName, RuleGroupType, RuleType } from './ruleGroups';
+import type { RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
 import type { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from './validation';
 
 /**
@@ -34,7 +34,8 @@ export type ExportFormat =
   | 'ldap'
   | 'drizzle'
   | 'prisma'
-  | 'sequelize';
+  | 'sequelize'
+  | 'validation';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.
@@ -47,7 +48,8 @@ export type ExportObjectFormats =
   | 'jsonlogic'
   | 'elasticsearch'
   | 'jsonata'
-  | 'mongodb_query';
+  | 'mongodb_query'
+  | 'validation';
 
 /**
  * Available presets for the "sql" export format.
@@ -474,6 +476,62 @@ export interface ParameterizedNamedSQL {
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   params: Record<string, any>;
+}
+
+/**
+ * A {@link RuleType} annotated with validation results, as produced
+ * by {@link formatQuery} for the `"validation"` format.
+ *
+ * @group Export
+ */
+export type RuleValidationResult = RuleType & {
+  /** Whether the rule passed all validation checks. */
+  valid: boolean;
+  /**
+   * Reasons why the rule is invalid. Only present when
+   * the rule is invalid and specific reasons were provided
+   * by the validator.
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  reasons?: any[];
+};
+
+/**
+ * A {@link RuleGroupType} annotated with validation results, as produced
+ * by {@link formatQuery} for the `"validation"` format.
+ *
+ * @group Export
+ */
+export interface RuleGroupValidationResult extends Omit<RuleGroupType, 'rules'> {
+  /** Whether the group and all of its descendants are valid. */
+  valid: boolean;
+  /**
+   * Reasons why the group itself is invalid. Only present when
+   * the group is invalid and specific reasons were provided
+   * by the validator.
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  reasons?: any[];
+  rules: (RuleValidationResult | RuleGroupValidationResult)[];
+}
+
+/**
+ * A {@link RuleGroupTypeIC} annotated with validation results, as produced
+ * by {@link formatQuery} for the `"validation"` format (independent combinators).
+ *
+ * @group Export
+ */
+export interface RuleGroupICValidationResult extends Omit<RuleGroupTypeIC, 'rules'> {
+  /** Whether the group and all of its descendants are valid. */
+  valid: boolean;
+  /**
+   * Reasons why the group itself is invalid. Only present when
+   * the group is invalid and specific reasons were provided
+   * by the validator.
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any
+  reasons?: any[];
+  rules: (RuleValidationResult | RuleGroupICValidationResult | string)[];
 }
 
 /**

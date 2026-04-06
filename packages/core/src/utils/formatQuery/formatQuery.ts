@@ -12,8 +12,10 @@ import type {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   RQBJsonLogic,
+  RuleGroupICValidationResult,
   RuleGroupProcessor,
   RuleGroupTypeAny,
+  RuleGroupValidationResult,
   RuleProcessor,
   RuleType,
   RuleValidator,
@@ -42,6 +44,7 @@ import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGr
 import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
+import { defaultRuleGroupProcessorValidation } from './defaultRuleGroupProcessorValidation';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
@@ -119,6 +122,7 @@ const defaultRuleProcessors = {
   sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
+  validation: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 /* istanbul ignore next */
@@ -141,6 +145,7 @@ const defaultOperatorProcessors = {
   sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
+  validation: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
@@ -343,6 +348,16 @@ function formatQuery(
   options: 'ldap' | (FormatQueryOptions & { format: 'ldap' })
 ): string;
 /**
+ * Generates a validation result object from a query object, annotating every
+ * rule and group with `valid` (and optionally `reasons`) properties.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'validation' | (FormatQueryOptions & { format: 'validation' })
+): RuleGroupValidationResult | RuleGroupICValidationResult;
+/**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  *
  * @group Export
@@ -451,23 +466,27 @@ function formatQuery(
     if (typeof validationResult === 'boolean') {
       // istanbul ignore else
       if (!validationResult) {
-        return format === 'parameterized'
-          ? { sql: fallbackExpression, params: [] }
-          : format === 'parameterized_named'
-            ? { sql: fallbackExpression, params: {} }
-            : format === 'mongodb'
-              ? `{${fallbackExpression}}`
-              : format === 'mongodb_query'
-                ? mongoDbFallback
-                : format === 'prisma'
-                  ? prismaFallback
-                  : format === 'jsonlogic'
-                    ? false
-                    : format === 'elasticsearch'
-                      ? {}
-                      : format === 'drizzle' || format === 'sequelize'
-                        ? undefined
-                        : fallbackExpression;
+        // The "validation" format still annotates the full tree
+        // when the validator returns `false`.
+        if (format !== 'validation') {
+          return format === 'parameterized'
+            ? { sql: fallbackExpression, params: [] }
+            : format === 'parameterized_named'
+              ? { sql: fallbackExpression, params: {} }
+              : format === 'mongodb'
+                ? `{${fallbackExpression}}`
+                : format === 'mongodb_query'
+                  ? mongoDbFallback
+                  : format === 'prisma'
+                    ? prismaFallback
+                    : format === 'jsonlogic'
+                      ? false
+                      : format === 'elasticsearch'
+                        ? {}
+                        : format === 'drizzle' || format === 'sequelize'
+                          ? undefined
+                          : fallbackExpression;
+        }
       }
     } else {
       validationMap = validationResult;
@@ -578,6 +597,9 @@ function formatQuery(
 
     case 'sequelize':
       return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
+
+    case 'validation':
+      return defaultRuleGroupProcessorValidation(ruleGroup, finalOptions);
 
     default:
       return '';

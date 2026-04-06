@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- New "validation" export format which produces a copy of the query object annotated with per-rule validation results.
 
 ## [v8.14.4] - 2026-03-31
 
