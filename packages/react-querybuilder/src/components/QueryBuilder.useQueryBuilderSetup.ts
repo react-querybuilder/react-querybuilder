@@ -253,13 +253,13 @@ export const useQueryBuilderSetup = <
 
   const getValueSourcesMain = useCallback(
     (field: FieldName, operator: OperatorName, _misc?: { fieldData: F }) =>
-      getValueSourcesUtil<F, OperatorName>(fieldMap[field] as F, operator, getValueSources),
+      getValueSourcesUtil(fieldMap[field] as F, operator, getValueSources),
     [fieldMap, getValueSources]
   );
 
   const getMatchModesMain = useCallback(
     (field: FieldName, _misc?: { fieldData: F }) =>
-      getMatchModesUtil<F>(fieldMap[field] as F, getMatchModes),
+      getMatchModesUtil(fieldMap[field] as F, getMatchModes),
     [fieldMap, getMatchModes]
   );
 

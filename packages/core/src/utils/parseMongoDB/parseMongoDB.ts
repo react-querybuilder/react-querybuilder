@@ -365,10 +365,10 @@ function parseMongoDB(
         const allOps = ['eq', 'ne', 'gte?', 'lte?', 'n?in', 'regex', 'not', ...additionalOpKeys];
         const acceptedOpsRegExp = new RegExp(`^\\$(${allOps.join('|')})$`);
 
-        const operators = objectKeys<Record<MongoDbSupportedOperators, unknown>>(keyValue)
+        const operators = objectKeys(keyValue)
           .filter(o => acceptedOpsRegExp.test(o))
           // oxlint-disable-next-line no-array-sort
-          .sort();
+          .sort() as MongoDbSupportedOperators[];
 
         if (operators.length === 0) {
           return false;

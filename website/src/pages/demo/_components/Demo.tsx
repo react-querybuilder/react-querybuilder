@@ -256,8 +256,8 @@ export default function Demo({
     [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format]
   );
 
-  const timerRG = useRef<ReturnType<typeof setTimeout>>(setTimeout(() => {}));
-  const timerRGIC = useRef<ReturnType<typeof setTimeout>>(setTimeout(() => {}));
+  const timerRG = useRef(setTimeout(() => {}));
+  const timerRGIC = useRef(setTimeout(() => {}));
   const onQueryChangeRG = useCallback((newQuery: RuleGroupType) => {
     clearTimeout(timerRG.current);
     timerRG.current = setTimeout(() => {
