@@ -65,9 +65,9 @@ Custom subcomponents must now use `FullOption` extensions instead of `Option` fo
 
 **Key differences:**
 
+{/* prettier-ignore */}
 - `Full*` types require a `value` property (same type as `name`)
 - `*ByValue` types make the `name` property optional
-    <!-- prettier-ignore -->
   | Interface    | "Full\*" counterpart | "\*ByValue" counterpart |
   | ------------ | -------------------- | ----------------------- |
   | `Field`      | `FullField`          | `FieldByValue`          |
@@ -342,7 +342,9 @@ export default function Document() {
 
 <details>
 
-<summary><code>/debug</code> import <em>(deprecated)</em></summary>
+<summary>
+  <code>/debug</code> import <em>(deprecated)</em>
+</summary>
 
 The `/debug` entry point may be removed in a future major version.
 
