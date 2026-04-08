@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New "validation" export format which produces a copy of the query object annotated with per-rule validation results.
+- New "diagnostics" export format (`formatQuery(query, 'diagnostics')`) which returns:
+  - `query`: annotated copy of the query tree with `valid`, `reasons`, `path`, and `level` on every rule and group.
+  - `diagnostics`: flat array of all issues (placeholder checks, muted nodes, custom validator failures, value/type mismatches, undefined/unreferenced fields).
+  - `stats`: aggregate counts (`totalRules`, `totalGroups`, `validRules`, `invalidRules`, `validGroups`, `invalidGroups`).
+  - `fieldSummary`: per-field `ruleCount` and `invalidCount`.
 
 ## [v8.14.4] - 2026-03-31
 

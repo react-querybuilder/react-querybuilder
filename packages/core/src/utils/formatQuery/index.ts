@@ -60,7 +60,7 @@ export * from './defaultRuleGroupProcessorPrisma';
 export * from './defaultRuleGroupProcessorSequelize';
 export * from './defaultRuleGroupProcessorSpEL';
 export * from './defaultRuleGroupProcessorSQL';
-export * from './defaultRuleGroupProcessorValidation';
+export * from './defaultRuleGroupProcessorDiagnostics';
 export * from './defaultRuleProcessorDrizzle';
 export * from './defaultRuleProcessorElasticSearch';
 export * from './defaultRuleProcessorJSONata';

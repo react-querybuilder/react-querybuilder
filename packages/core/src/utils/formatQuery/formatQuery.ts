@@ -1,6 +1,7 @@
 import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
+  DiagnosticsResult,
   ExportFormat,
   ExportObjectFormats,
   FormatQueryFinalOptions,
@@ -12,10 +13,8 @@ import type {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   RQBJsonLogic,
-  RuleGroupICValidationResult,
   RuleGroupProcessor,
   RuleGroupTypeAny,
-  RuleGroupValidationResult,
   RuleProcessor,
   RuleType,
   RuleValidator,
@@ -28,6 +27,7 @@ import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
@@ -44,7 +44,6 @@ import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGr
 import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
-import { defaultRuleGroupProcessorValidation } from './defaultRuleGroupProcessorValidation';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
@@ -122,7 +121,7 @@ const defaultRuleProcessors = {
   sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
-  validation: defaultRuleProcessorSQL,
+  diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 /* istanbul ignore next */
@@ -145,7 +144,7 @@ const defaultOperatorProcessors = {
   sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
-  validation: defaultOperatorProcessor,
+  diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
@@ -348,15 +347,15 @@ function formatQuery(
   options: 'ldap' | (FormatQueryOptions & { format: 'ldap' })
 ): string;
 /**
- * Generates a validation result object from a query object, annotating every
- * rule and group with `valid` (and optionally `reasons`) properties.
+ * Generates a {@link DiagnosticsResult} from a query object, containing an annotated
+ * query tree, a flat diagnostics array, aggregate stats, and a per-field summary.
  *
  * @group Export
  */
 function formatQuery(
   ruleGroup: RuleGroupTypeAny,
-  options: 'validation' | (FormatQueryOptions & { format: 'validation' })
-): RuleGroupValidationResult | RuleGroupICValidationResult;
+  options: 'diagnostics' | (FormatQueryOptions & { format: 'diagnostics' })
+): DiagnosticsResult;
 /**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  *
@@ -466,9 +465,9 @@ function formatQuery(
     if (typeof validationResult === 'boolean') {
       // istanbul ignore else
       if (!validationResult) {
-        // The "validation" format still annotates the full tree
+        // The "diagnostics" format still annotates the full tree
         // when the validator returns `false`.
-        if (format !== 'validation') {
+        if (format !== 'diagnostics') {
           return format === 'parameterized'
             ? { sql: fallbackExpression, params: [] }
             : format === 'parameterized_named'
@@ -598,8 +597,8 @@ function formatQuery(
     case 'sequelize':
       return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
 
-    case 'validation':
-      return defaultRuleGroupProcessorValidation(ruleGroup, finalOptions);
+    case 'diagnostics':
+      return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);
 
     default:
       return '';

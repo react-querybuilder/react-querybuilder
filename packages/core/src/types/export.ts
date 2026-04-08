@@ -8,8 +8,8 @@ import type {
   ValueSource,
 } from './basic';
 import type { FlexibleOptionList, FullOptionList } from './options';
-import type { DefaultOperatorName, RuleGroupType, RuleType } from './ruleGroups';
-import type { RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
+import type { DefaultOperatorName, RuleGroupArray, RuleGroupType, RuleType } from './ruleGroups';
+import type { RuleGroupICArray, RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
 import type { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from './validation';
 
 /**
@@ -35,7 +35,7 @@ export type ExportFormat =
   | 'drizzle'
   | 'prisma'
   | 'sequelize'
-  | 'validation';
+  | 'diagnostics';
 
 /**
  * Export formats for {@link formatQuery} that produce objects instead of strings.
@@ -49,7 +49,7 @@ export type ExportObjectFormats =
   | 'elasticsearch'
   | 'jsonata'
   | 'mongodb_query'
-  | 'validation';
+  | 'diagnostics';
 
 /**
  * Available presets for the "sql" export format.
@@ -479,12 +479,20 @@ export interface ParameterizedNamedSQL {
 }
 
 /**
- * A {@link RuleType} annotated with validation results, as produced
- * by {@link formatQuery} for the `"validation"` format.
+ * A {@link RuleType} annotated with diagnostics results, as produced
+ * by {@link formatQuery} for the `"diagnostics"` format.
+ *
+ * The generics mirror those of {@link RuleType}.
  *
  * @group Export
  */
-export type RuleValidationResult = RuleType & {
+export type RuleDiagnosticsResult<
+  F extends string = string,
+  O extends string = string,
+  // oxlint-disable-next-line typescript/no-explicit-any
+  V = any,
+  C extends string = string,
+> = RuleType<F, O, V, C> & {
   /** Whether the rule passed all validation checks. */
   valid: boolean;
   /**
@@ -494,15 +502,34 @@ export type RuleValidationResult = RuleType & {
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   reasons?: any[];
+  /** The path to this rule within the query tree. */
+  path: number[];
+  /** The nesting depth of this rule (`path.length`). */
+  level: number;
 };
 
 /**
- * A {@link RuleGroupType} annotated with validation results, as produced
- * by {@link formatQuery} for the `"validation"` format.
+ * The type of the `rules` array in a {@link RuleGroupDiagnosticsResult}.
  *
  * @group Export
  */
-export interface RuleGroupValidationResult extends Omit<RuleGroupType, 'rules'> {
+export type RuleGroupDiagnosticsArray<
+  RG extends RuleGroupDiagnosticsResult = RuleGroupDiagnosticsResult,
+  R extends RuleDiagnosticsResult = RuleDiagnosticsResult,
+> = RuleGroupArray<RG, R>;
+
+/**
+ * A {@link RuleGroupType} annotated with diagnostics results, as produced
+ * by {@link formatQuery} for the `"diagnostics"` format.
+ *
+ * The generics mirror those of {@link RuleGroupType}.
+ *
+ * @group Export
+ */
+export interface RuleGroupDiagnosticsResult<
+  R extends RuleDiagnosticsResult = RuleDiagnosticsResult,
+  C extends string = string,
+> extends Omit<RuleGroupType<R, C>, 'rules'> {
   /** Whether the group and all of its descendants are valid. */
   valid: boolean;
   /**
@@ -512,16 +539,43 @@ export interface RuleGroupValidationResult extends Omit<RuleGroupType, 'rules'> 
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   reasons?: any[];
-  rules: (RuleValidationResult | RuleGroupValidationResult)[];
+  /** The path to this group within the query tree. */
+  path: number[];
+  /** The nesting depth of this group (`path.length`). */
+  level: number;
+  rules: RuleGroupDiagnosticsArray<RuleGroupDiagnosticsResult<R, C>, R>;
 }
 
 /**
- * A {@link RuleGroupTypeIC} annotated with validation results, as produced
- * by {@link formatQuery} for the `"validation"` format (independent combinators).
+ * The type of the `rules` array in a {@link RuleGroupICDiagnosticsResult}.
+ *
+ * Mirrors {@link RuleGroupICArray} but with diagnostics-annotated node types.
  *
  * @group Export
  */
-export interface RuleGroupICValidationResult extends Omit<RuleGroupTypeIC, 'rules'> {
+// export type RuleGroupICDiagnosticsArray<
+//   RG extends RuleGroupICDiagnosticsResult = RuleGroupICDiagnosticsResult,
+//   R extends RuleDiagnosticsResult = RuleDiagnosticsResult,
+//   C extends string = string,
+// > = [R | RG] | [R | RG, ...MappedTuple<[C, R | RG]>] | ((R | RG)[] & { length: 0 });
+export type RuleGroupICDiagnosticsArray<
+  RG extends RuleGroupICDiagnosticsResult = RuleGroupICDiagnosticsResult,
+  R extends RuleDiagnosticsResult = RuleDiagnosticsResult,
+  C extends string = string,
+> = RuleGroupICArray<RG, R, C>;
+
+/**
+ * A {@link RuleGroupTypeIC} annotated with diagnostics results, as produced
+ * by {@link formatQuery} for the `"diagnostics"` format (independent combinators).
+ *
+ * The generics mirror those of {@link RuleGroupTypeIC}.
+ *
+ * @group Export
+ */
+export interface RuleGroupICDiagnosticsResult<
+  R extends RuleDiagnosticsResult = RuleDiagnosticsResult,
+  C extends string = string,
+> extends Omit<RuleGroupTypeIC<R, C>, 'rules'> {
   /** Whether the group and all of its descendants are valid. */
   valid: boolean;
   /**
@@ -531,7 +585,86 @@ export interface RuleGroupICValidationResult extends Omit<RuleGroupTypeIC, 'rule
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   reasons?: any[];
-  rules: (RuleValidationResult | RuleGroupICValidationResult | string)[];
+  /** The path to this group within the query tree. */
+  path: number[];
+  /** The nesting depth of this group (`path.length`). */
+  level: number;
+  rules: RuleGroupICDiagnosticsArray<RuleGroupICDiagnosticsResult<R, C>, R, C>;
+}
+
+/**
+ * A single diagnostic entry produced by the `"diagnostics"` format.
+ *
+ * @group Export
+ */
+export interface DiagnosticEntry {
+  /** The `id` of the rule or group this diagnostic pertains to. */
+  id: string;
+  /** The path to the rule or group within the query tree. */
+  path: number[];
+  /** A machine-readable code identifying the type of diagnostic. */
+  code: string;
+  /** A human-readable description of the diagnostic. */
+  message: string;
+  /**
+   * Which check produced this diagnostic.
+   *
+   * - `"placeholder"` — a placeholder field, operator, or value
+   * - `"muted"` — a muted rule or group
+   * - `"query-validator"` — the query-level validator
+   * - `"field-validator"` — a field-level validator
+   * - `"type-check"` — value/type mismatch based on field `inputType`
+   * - `"field-check"` — field existence check against the `fields` config
+   */
+  source:
+    | 'placeholder'
+    | 'muted'
+    | 'query-validator'
+    | 'field-validator'
+    | 'type-check'
+    | 'field-check';
+}
+
+/**
+ * Aggregate statistics for the `"diagnostics"` format.
+ *
+ * @group Export
+ */
+export interface DiagnosticsStats {
+  totalRules: number;
+  totalGroups: number;
+  validRules: number;
+  invalidRules: number;
+  validGroups: number;
+  invalidGroups: number;
+}
+
+/**
+ * Per-field summary entry for the `"diagnostics"` format.
+ *
+ * @group Export
+ */
+export interface DiagnosticsFieldSummaryEntry {
+  /** Number of rules referencing this field. */
+  ruleCount: number;
+  /** Number of invalid rules referencing this field. */
+  invalidCount: number;
+}
+
+/**
+ * Top-level result of {@link formatQuery} for the `"diagnostics"` format.
+ *
+ * @group Export
+ */
+export interface DiagnosticsResult {
+  /** The annotated query tree with `valid`, `path`, and `level` on every node. */
+  query: RuleGroupDiagnosticsResult | RuleGroupICDiagnosticsResult;
+  /** A flat array of all diagnostic entries across the tree. */
+  diagnostics: DiagnosticEntry[];
+  /** Aggregate statistics about the query. */
+  stats: DiagnosticsStats;
+  /** Per-field summary of rule counts and invalid counts. */
+  fieldSummary: Record<string, DiagnosticsFieldSummaryEntry>;
 }
 
 /**

@@ -481,20 +481,20 @@ Output (string):
 First Name is 'Steve', and Last Name is "Vai", and Age is between 26 and 52
 ```
 
-### Validation
+### Diagnostics
 
-Generate a validation result object using "validation" format. The output is an annotated copy of the query tree with `valid` and optional `reasons` properties on every rule and group. A group's `valid` reflects both its own structural validity and the validity of all its descendants.
+Generate a diagnostics result object using the "diagnostics" format. The output includes an annotated copy of the query tree, a flat diagnostics array, aggregate statistics, and a per-field summary.
 
 ```ts
 const result = formatQuery(query, {
-  format: 'validation',
+  format: 'diagnostics',
   fields: [
     {
       name: 'firstName',
       label: 'First Name',
       validator: r => (r.value ? true : { valid: false, reasons: ['Value is required'] }),
     },
-    { name: 'age', label: 'Age' },
+    { name: 'age', label: 'Age', inputType: 'number' },
   ],
 });
 ```
@@ -503,25 +503,63 @@ Output (object):
 
 ```json
 {
-  "combinator": "and",
-  "valid": false,
-  "rules": [
+  "query": {
+    "combinator": "and",
+    "valid": false,
+    "path": [],
+    "level": 0,
+    "rules": [
+      {
+        "field": "firstName",
+        "operator": "=",
+        "value": "",
+        "valid": false,
+        "reasons": ["Value is required"],
+        "path": [0],
+        "level": 1
+      },
+      {
+        "field": "age",
+        "operator": ">",
+        "value": 26,
+        "valid": true,
+        "path": [1],
+        "level": 1
+      }
+    ]
+  },
+  "diagnostics": [
     {
-      "field": "firstName",
-      "operator": "=",
-      "value": "",
-      "valid": false,
-      "reasons": ["Value is required"]
-    },
-    {
-      "field": "age",
-      "operator": ">",
-      "value": 26,
-      "valid": true
+      "id": "r-1",
+      "path": [0],
+      "code": "CUSTOM_VALIDATOR",
+      "message": "Invalid: Value is required",
+      "source": "field-validator"
     }
-  ]
+  ],
+  "stats": {
+    "totalRules": 2,
+    "totalGroups": 1,
+    "validRules": 1,
+    "invalidRules": 1,
+    "validGroups": 0,
+    "invalidGroups": 1
+  },
+  "fieldSummary": {
+    "firstName": { "ruleCount": 1, "invalidCount": 1 },
+    "age": { "ruleCount": 1, "invalidCount": 0 }
+  }
 }
 ```
+
+#### Annotated query tree
+
+Every rule and group in `result.query` includes:
+
+- `valid` — whether the node passed all checks
+- `reasons` — optional array of reasons (from validators)
+- `path` — the position of the node in the tree (e.g., `[1, 0]`)
+- `level` — the nesting depth (`path.length`)
 
 A rule is considered invalid if any of the following are true:
 
@@ -529,7 +567,30 @@ A rule is considered invalid if any of the following are true:
 - The rule fails validation via the `validator` option or a field-level `validator`
 - The `field`, `operator`, or `value` matches its respective placeholder name
 
-The root-level `valid` property is `true` only when the group itself is valid _and_ all descendant rules and groups are valid, making it suitable for gating API calls:
+The root-level `valid` property is `true` only when the group itself is valid _and_ all descendant rules and groups are valid, making it suitable for gating API calls.
+
+#### Flat diagnostics array
+
+`result.diagnostics` is a flat array of `DiagnosticEntry` objects, each with an `id`, `path`, `code`, `message`, and `source`. Diagnostic codes include:
+
+| Code                   | Source                                | Description                                        |
+| ---------------------- | ------------------------------------- | -------------------------------------------------- |
+| `PLACEHOLDER_FIELD`    | `placeholder`                         | Rule has a placeholder field name                  |
+| `PLACEHOLDER_OPERATOR` | `placeholder`                         | Rule has a placeholder operator name               |
+| `PLACEHOLDER_VALUE`    | `placeholder`                         | Rule has a placeholder value                       |
+| `MUTED`                | `muted`                               | Rule or group is muted                             |
+| `CUSTOM_VALIDATOR`     | `query-validator` / `field-validator` | Failed a custom validator                          |
+| `UNDEFINED_FIELD`      | `field-check`                         | Rule references a field not in the `fields` config |
+| `UNREFERENCED_FIELD`   | `field-check`                         | A field in the config is not used by any rule      |
+| `VALUE_TYPE_MISMATCH`  | `type-check`                          | Value is incompatible with the field's `inputType` |
+
+The `UNDEFINED_FIELD`, `UNREFERENCED_FIELD`, and `VALUE_TYPE_MISMATCH` diagnostics are only produced when a `fields` config is provided.
+
+#### Stats and field summary
+
+`result.stats` provides aggregate counts: `totalRules`, `totalGroups`, `validRules`, `invalidRules`, `validGroups`, `invalidGroups`.
+
+`result.fieldSummary` is a record keyed by field name, where each value has `ruleCount` (total rules for that field) and `invalidCount` (invalid rules for that field).
 
 ## Configuration
 
