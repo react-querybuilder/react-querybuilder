@@ -5,7 +5,7 @@ const { coveragePathIgnorePatterns, globals, moduleNameMapper } = common;
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 export default {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
   coveragePathIgnorePatterns,
   displayName: 'native',
   globals,

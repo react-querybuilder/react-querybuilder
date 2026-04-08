@@ -423,7 +423,7 @@ Output (string):
 firstName = "Steve" and lastName = "Vai"
 ```
 
-:::tip Handling date values in JSONata
+:::tip[Handling date values in JSONata]
 
 React Query Builder lacks standard date detection, so use `datetimeRuleProcessorJSONata` from [`@react-querybuilder/datetime`](../datetime#jsonata).
 
@@ -1250,10 +1250,10 @@ Enable mute functionality in the UI by setting [`showMuteButtons`](../components
 
 To minimize invalid syntax, `formatQuery` performs basic validation for "in", "notIn", "between", and "notBetween" operators for all formats except "json" and "json_without_ids", even without specified validator functions or field validators.
 
+{/* prettier-ignore */}
 - Rules with "in" or "notIn" operators are invalid if the `value` is neither an array with at least one element (`value.length > 0`) nor a non-empty string.
 - Rules with "between" or "notBetween" operators are invalid if the `value` is neither an array with at least two elements (`value.length >= 2`) nor a string with at least one comma not at the first or last position (`value.split(',').length >= 2`, and neither element is empty).
 - Rules where `field`, `operator`, or `value` match their respective placeholder are invalid:
-  <!-- prettier-ignore -->
   ```ts
   field === placeholderFieldName ||
     operator === placeholderOperatorName ||

@@ -185,7 +185,7 @@ formatQuery(query, { format: 'sql', parseNumbers: true });
 // "(digits = 20 and age between 26 and 52 and lastName = 'Vai')"
 ```
 
-:::info More about the "strict" option
+:::info[More about the "strict" option]
 
 To avoid information loss, the `true` and `"strict*"` options are more strict about what qualifies as "numeric" than [the standard `parseFloat` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseFloat). To oversimplify a bit, `parseFloat` works with any string that _starts_ with a numeric sequence, ignoring the rest of the string beginning with the first non-numeric character. In contrast, when `parseNumbers` is `true`, `formatQuery` will only convert a `value` to a `number` if it appears to be numeric _in its entirety_ (after trimming whitespace).
 

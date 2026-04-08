@@ -29,7 +29,7 @@ const config: Config = {
     path.resolve('./static/js/console.js'),
   ],
   future: {
-    experimental_faster: true,
+    faster: true,
     v4: true,
   },
   plugins: [
