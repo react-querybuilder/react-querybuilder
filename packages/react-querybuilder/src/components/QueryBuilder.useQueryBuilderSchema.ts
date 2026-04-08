@@ -154,6 +154,7 @@ export function useQueryBuilderSchema<
   } = incomingRqbContext;
 
   // #region Type coercions
+  // oxlint-disable typescript/no-unnecessary-type-conversion
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
@@ -169,6 +170,7 @@ export function useQueryBuilderSchema<
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
   const maxLevels = (props.maxLevels ?? 0) > 0 ? Number(props.maxLevels) : Infinity;
+  // oxlint-enable typescript/no-unnecessary-type-conversion
   // #endregion
 
   const log = useCallback(

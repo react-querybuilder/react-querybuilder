@@ -47,7 +47,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
             hasChildRules = true;
             return processedRuleGroup;
           }
-          return;
+          return undefined;
         }
         const [validationResult, fieldValidator] = validateRule(rule);
         if (
@@ -57,7 +57,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
           /* istanbul ignore next */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
-          return;
+          return undefined;
         }
         const fieldData = getOption(fields, rule.field);
         return ruleProcessor(rule, {

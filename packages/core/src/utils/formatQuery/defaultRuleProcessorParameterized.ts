@@ -51,7 +51,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
   const matchEval = processMatchMode(rule);
 
   if (matchEval === false) {
-    return;
+    return undefined;
   } else if (matchEval) {
     // We only support PostgreSQL nested arrays
     if (opts?.preset !== 'postgresql') return finalize('');

@@ -22,7 +22,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
     useRawFields?: boolean;
   };
 
-  if (!columns || !drizzleOperators) return;
+  if (!columns || !drizzleOperators) return undefined;
 
   const {
     between,
@@ -53,15 +53,15 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
   const valueIsField = valueSource === 'field';
   const asFieldOrValue = (v: string) => (valueIsField ? columns[v] : v);
 
-  if (!column) return;
+  if (!column) return undefined;
 
   const matchEval = processMatchMode(rule);
 
   if (matchEval === false) {
-    return;
+    return undefined;
   } else if (matchEval) {
     // We only support PostgreSQL nested arrays
-    if (opts.preset !== 'postgresql') return;
+    if (opts.preset !== 'postgresql') return undefined;
 
     const { mode, threshold } = matchEval;
 
@@ -179,9 +179,9 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
           ? notBetween(column, first, second)
           : between(column, first, second);
       }
-      return;
+      return undefined;
     }
     default:
-      return;
+      return undefined;
   }
 };

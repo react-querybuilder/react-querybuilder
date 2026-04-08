@@ -34,11 +34,11 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
     sequelizeOperators: OpTypes;
   };
 
-  if (!Op) return;
+  if (!Op) return undefined;
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
     if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-      return;
+      return undefined;
     }
 
     const combinator = rg.combinator.toUpperCase();
@@ -52,7 +52,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
             hasChildRules = true;
             return processedRuleGroup;
           }
-          return;
+          return undefined;
         }
         const [validationResult, fieldValidator] = validateRule(rule);
         if (
@@ -62,7 +62,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
           /* istanbul ignore next */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
-          return;
+          return undefined;
         }
         const fieldData = getOption(fields, rule.field);
         return ruleProcessor(rule, {
@@ -73,7 +73,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
       })
       .filter(Boolean);
 
-    if (expressions.length === 0) return;
+    if (expressions.length === 0) return undefined;
 
     const result =
       expressions.length === 1 && !hasChildRules
