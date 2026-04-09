@@ -8,6 +8,9 @@ import {
   QueryBuilderContext,
   useMergedContext,
 } from 'react-querybuilder';
+import type { DndAdapter } from './adapter';
+import { isDndAdapter } from './adapter';
+import { createReactDnDAdapter } from './adapters/react-dnd';
 import { InlineCombinatorDnD } from './InlineCombinatorDnD';
 import { isTouchDevice } from './isTouchDevice';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
@@ -19,8 +22,6 @@ import type {
   QueryBuilderDndProps,
   UseReactDnD,
 } from './types';
-
-const emptyObject = {} as UseReactDnD;
 
 /**
  * Context provider to enable drag-and-drop. If the application already implements
@@ -48,10 +49,9 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
   });
   const { enableDragAndDrop } = rqbContext;
 
-  const dnd = useReactDnD(props.dnd);
-  const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
-
-  const { DndProvider, ReactDndBackend } = dnd ?? emptyObject;
+  // Resolve the adapter: either directly provided, wrapped from legacy DndProp, or async-loaded
+  const adapter = useResolvedAdapter(props.dnd);
+  const key = enableDragAndDrop && adapter ? 'dnd' : 'no-dnd';
 
   const contextWithoutDnD = useMemo(
     () => ({ ...rqbContext, enableDragAndDrop: false, debugMode }),
@@ -62,7 +62,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
     [rqbContext, debugMode, enableDragAndDrop]
   );
 
-  if (!enableDragAndDrop || !dnd || !DndProvider || !ReactDndBackend) {
+  if (!enableDragAndDrop || !adapter) {
     return (
       <QueryBuilderContext.Provider key={key} value={contextWithoutDnD}>
         {props.children}
@@ -70,11 +70,13 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
     );
   }
 
+  const { DndProvider } = adapter;
+
   return (
-    <DndProvider key={key} backend={ReactDndBackend} debugMode={debugMode}>
+    <DndProvider key={key} debugMode={debugMode}>
       <QueryBuilderContext.Provider key={key} value={contextWithDnD}>
         <QueryBuilderDndWithoutProvider
-          dnd={dnd}
+          dnd={adapter}
           canDrop={props.canDrop}
           copyModeModifierKey={props.copyModeModifierKey}
           groupModeModifierKey={props.groupModeModifierKey}
@@ -95,7 +97,7 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
 export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): React.JSX.Element => {
   const rqbContext = useContext(QueryBuilderContext);
   const rqbDndContext = useContext(QueryBuilderDndContext);
-  const dnd = useReactDnD(props.dnd);
+  const adapter = useResolvedAdapter(props.dnd) ?? rqbDndContext.adapter;
   const copyModeModifierKey = preferAnyProp(
     undefined,
     props.copyModeModifierKey,
@@ -114,7 +116,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     rqbDndContext.hideDefaultDragPreview
   );
   const canDrop = preferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
-  const key = enableDragAndDrop && dnd ? 'dnd' : 'no-dnd';
+  const key = enableDragAndDrop && adapter ? 'dnd' : 'no-dnd';
 
   const baseControls = useMemo(
     () => ({
@@ -159,8 +161,6 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     [debugMode, enableDragAndDrop, rqbContext]
   );
 
-  const { DndContext, useDrag, useDrop } = dnd ?? {};
-
   const dndContextValue: QueryBuilderDndContextProps = useMemo(
     () => ({
       baseControls,
@@ -168,8 +168,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       copyModeModifierKey,
       groupModeModifierKey,
       hideDefaultDragPreview,
-      useDrag,
-      useDrop,
+      adapter,
     }),
     [
       baseControls,
@@ -177,8 +176,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       copyModeModifierKey,
       groupModeModifierKey,
       hideDefaultDragPreview,
-      useDrag,
-      useDrop,
+      adapter,
     ]
   );
 
@@ -187,7 +185,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     [rqbContext, debugMode]
   );
 
-  if (!enableDragAndDrop || !DndContext) {
+  if (!enableDragAndDrop || !adapter) {
     return (
       <QueryBuilderContext.Provider key={key} value={contextWithoutDnD}>
         {props.children}
@@ -196,22 +194,101 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
   }
 
   return (
-    <DndContext.Consumer key={key}>
-      {() => (
-        <QueryBuilderContext.Provider key={key} value={newContext}>
-          <QueryBuilderDndContext.Provider value={dndContextValue}>
-            {props.children}
-          </QueryBuilderDndContext.Provider>
-        </QueryBuilderContext.Provider>
-      )}
-    </DndContext.Consumer>
+    <QueryBuilderContext.Provider key={key} value={newContext}>
+      <QueryBuilderDndContext.Provider value={dndContextValue}>
+        {props.children}
+      </QueryBuilderDndContext.Provider>
+    </QueryBuilderContext.Provider>
   );
 };
 
 let didWarnEnabledDndWithoutReactDnD = false;
 
 /**
+ * Resolves a `dnd` prop (which may be a {@link DndAdapter}, a legacy {@link DndProp},
+ * or `undefined`) into a {@link DndAdapter} or `null`.
+ *
+ * Hooks are always called in the same order regardless of the `dndParam` value
+ * to satisfy the Rules of Hooks.
+ */
+const useResolvedAdapter = (dndParam?: DndAdapter | DndProp): DndAdapter | null => {
+  const directAdapter = dndParam && isDndAdapter(dndParam) ? dndParam : null;
+
+  // Always call useMemo (returns null when not applicable)
+  const legacyAdapter = useMemo(
+    () => (dndParam && !isDndAdapter(dndParam) ? createReactDnDAdapter(dndParam) : null),
+    [dndParam]
+  );
+
+  // Always call the async hook, but skip loading when an explicit adapter exists
+  const asyncAdapter = useAsyncReactDnDAdapter(directAdapter !== null || legacyAdapter !== null);
+
+  return directAdapter ?? legacyAdapter ?? asyncAdapter;
+};
+
+const useAsyncReactDnDAdapter = (skip: boolean): DndAdapter | null => {
+  const [adapter, setAdapter] = useState<DndAdapter | null>(null);
+
+  useEffect(() => {
+    if (skip) return undefined;
+
+    let didCancel = false;
+
+    const loadDnD = async () => {
+      const [reactDnD, reactDndHTML5Be, reactDndTouchBe] = await Promise.all(
+        ['', '-html5-backend', '-touch-backend'].map(pn =>
+          import(/* @vite-ignore */ `react-dnd${pn}`).catch(/* istanbul ignore next */ () => null)
+        )
+      );
+
+      // istanbul ignore else
+      if (!didCancel) {
+        // istanbul ignore else -- react-dnd is always importable in the test environment
+        if (reactDnD) {
+          let dndExports: DndProp;
+          // istanbul ignore next
+          if (reactDndHTML5Be && (!reactDndTouchBe || (reactDndTouchBe && !isTouchDevice()))) {
+            dndExports = {
+              ...reactDnD,
+              ...reactDndHTML5Be,
+              ...reactDndTouchBe,
+              ReactDndBackend: reactDndHTML5Be.HTML5Backend,
+            };
+          } else if (reactDndTouchBe) {
+            dndExports = {
+              ...reactDnD,
+              ...reactDndTouchBe,
+              ...reactDndHTML5Be,
+              ReactDndBackend: reactDndTouchBe.TouchBackend,
+            };
+          } else {
+            return;
+          }
+          setAdapter(() => createReactDnDAdapter(dndExports));
+        } else {
+          if (process.env.NODE_ENV !== 'production' && !didWarnEnabledDndWithoutReactDnD) {
+            console.error(messages.errorEnabledDndWithoutReactDnD);
+            didWarnEnabledDndWithoutReactDnD = true;
+          }
+        }
+      }
+    };
+
+    if (!adapter) {
+      loadDnD();
+    }
+
+    return () => {
+      didCancel = true;
+    };
+  }, [adapter, skip]);
+
+  return skip ? null : adapter;
+};
+
+/**
  * @group Hooks
+ * @deprecated Use `createReactDnDAdapter` instead. This hook is kept for backward compatibility.
  */
 export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
   const [dnd, setDnd] = useState(dndParam ?? null);

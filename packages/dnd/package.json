@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/dnd",
-  "description": "Drag-and-drop-enabled version of react-querybuilder",
+  "description": "Drag-and-drop-enabled version of react-querybuilder (DnD-library-agnostic)",
   "version": "8.14.4",
   "publishConfig": {
     "access": "public"
@@ -78,6 +78,9 @@
     "react-querybuilder": "8.14.4"
   },
   "peerDependenciesMeta": {
+    "react-dnd": {
+      "optional": true
+    },
     "react-dnd-html5-backend": {
       "optional": true
     },
