@@ -112,8 +112,8 @@ export interface DndAdapterProviderProps {
  * drag-and-drop functionality for react-querybuilder using a specific
  * DnD library.
  *
- * Built-in adapters: `createReactDnDAdapter` (for `react-dnd`)
- * and `createDndKitAdapter` (for `@dnd-kit`).
+ * Built-in adapters: {@link createReactDnDAdapter} (for `react-dnd`)
+ * and {@link createDndKitAdapter} (for `@dnd-kit/core`).
  *
  * @group DnD
  */

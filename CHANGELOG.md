@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@react-querybuilder/dnd` is now DnD-library-agnostic via an adapter pattern.
   - New `DndAdapter` interface — implement `DndProvider`, `useRuleDnD`, `useRuleGroupDnD`, and `useInlineCombinatorDnD` to integrate any drag-and-drop library.
   - New `createReactDnDAdapter` factory wraps `react-dnd` exports into a `DndAdapter`. This is the recommended way to enable drag-and-drop going forward.
+  - New `createDndKitAdapter` factory wraps [`@dnd-kit/core`](https://www.npmjs.com/package/@dnd-kit/core) exports into a `DndAdapter`, providing a first-class alternative to `react-dnd`.
   - Shared pure-logic helpers (`canDropOnRule`, `canDropOnRuleGroup`, `canDropOnInlineCombinator`, `buildDropResult`, `handleDrop`, `getDragItem`) are exported for use in custom adapters.
 - New "diagnostics" export format (`formatQuery(query, 'diagnostics')`) which returns:
   - `query`: annotated copy of the query tree with `valid`, `reasons`, `path`, and `level` on every rule and group.
