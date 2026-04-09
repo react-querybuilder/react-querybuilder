@@ -795,6 +795,500 @@ describe('formatQuery("diagnostics")', () => {
       });
       expect(result.diagnostics.filter(d => d.source === 'type-check')).toHaveLength(0);
     });
+
+    // -- date --
+    it('flags non-date values for date fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'dob', operator: '=', value: 'not-a-date' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'dob', label: 'DOB', inputType: 'date' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ id: 'r-1', code: 'VALUE_TYPE_MISMATCH', source: 'type-check' })
+      );
+    });
+
+    it('flags impossible dates for date fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'dob', operator: '=', value: '2024-02-30' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'dob', label: 'DOB', inputType: 'date' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid date values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'dob', operator: '=', value: '2024-01-15' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'dob', label: 'DOB', inputType: 'date' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
+
+    it('flags non-string values for date fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'dob', operator: '=', value: 12345 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'dob', label: 'DOB', inputType: 'date' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    // -- datetime-local --
+    it('flags non-datetime values for datetime-local fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: 'not-a-datetime' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for datetime-local fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: 12345 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags malformed date/time parts in datetime-local values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: '2024T10:30' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags out-of-range time in datetime-local values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: '2024-01-15T25:00' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid datetime-local values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: '2024-01-15T10:30' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
+
+    it('does not flag datetime-local values with seconds', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: '2024-01-15T10:30:45' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
+
+    it('accepts ISO 8601 with timezone for datetime-local fields', () => {
+      for (const value of [
+        '2024-01-15T10:30:00Z',
+        '2024-01-15T10:30:00+05:30',
+        '2024-01-15T10:30:00-08:00',
+        '2024-01-15T10:30:00+0530',
+      ]) {
+        const query: DefaultRuleGroupType = {
+          id: 'g-root',
+          combinator: 'and',
+          rules: [{ id: 'r-1', field: 'ts', operator: '=', value }],
+        };
+        const result = formatQuery(query, {
+          format: 'diagnostics',
+          fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+        });
+        expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+      }
+    });
+
+    it('flags impossible dates in datetime-local values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'ts', operator: '=', value: '2024-02-30T10:30' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'ts', label: 'Timestamp', inputType: 'datetime-local' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    // -- time --
+    it('flags non-time values for time fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'start', operator: '=', value: 'noon' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'start', label: 'Start', inputType: 'time' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for time fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'start', operator: '=', value: 1030 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'start', label: 'Start', inputType: 'time' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid time values', () => {
+      for (const value of ['10:30', '23:59', '00:00', '10:30:45', '10:30:45.123']) {
+        const query: DefaultRuleGroupType = {
+          id: 'g-root',
+          combinator: 'and',
+          rules: [{ id: 'r-1', field: 'start', operator: '=', value }],
+        };
+        const result = formatQuery(query, {
+          format: 'diagnostics',
+          fields: [{ name: 'start', label: 'Start', inputType: 'time' }],
+        });
+        expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+      }
+    });
+
+    it('flags out-of-range time values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'start', operator: '=', value: '25:00' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'start', label: 'Start', inputType: 'time' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    // -- month --
+    it('flags non-month values for month fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'period', operator: '=', value: 'January' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'period', label: 'Period', inputType: 'month' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for month fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'period', operator: '=', value: 6 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'period', label: 'Period', inputType: 'month' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid month values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'period', operator: '=', value: '2024-06' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'period', label: 'Period', inputType: 'month' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
+
+    it('flags out-of-range month values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'period', operator: '=', value: '2024-13' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'period', label: 'Period', inputType: 'month' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    // -- week --
+    it('flags non-week values for week fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'wk', operator: '=', value: 'week-1' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'wk', label: 'Week', inputType: 'week' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for week fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'wk', operator: '=', value: 3 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'wk', label: 'Week', inputType: 'week' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid week values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'wk', operator: '=', value: '2024-W03' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'wk', label: 'Week', inputType: 'week' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
+
+    it('flags out-of-range week values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'wk', operator: '=', value: '2024-W54' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'wk', label: 'Week', inputType: 'week' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    // -- color --
+    it('flags non-color values for color fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'bg', operator: '=', value: 'red' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'bg', label: 'Background', inputType: 'color' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for color fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'bg', operator: '=', value: 0xff0000 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'bg', label: 'Background', inputType: 'color' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid color values (6-digit and 3-digit hex)', () => {
+      for (const value of ['#ff0000', '#FFF', '#abc', '#AABBCC']) {
+        const query: DefaultRuleGroupType = {
+          id: 'g-root',
+          combinator: 'and',
+          rules: [{ id: 'r-1', field: 'bg', operator: '=', value }],
+        };
+        const result = formatQuery(query, {
+          format: 'diagnostics',
+          fields: [{ name: 'bg', label: 'Background', inputType: 'color' }],
+        });
+        expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+      }
+    });
+
+    // -- url --
+    it('flags non-url values for url fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'website', operator: '=', value: 'not a url' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'website', label: 'Website', inputType: 'url' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for url fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'website', operator: '=', value: true }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'website', label: 'Website', inputType: 'url' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid url values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'website', operator: '=', value: 'https://example.com' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'website', label: 'Website', inputType: 'url' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
+
+    // -- email --
+    it('flags non-email values for email fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'contact', operator: '=', value: 'not-an-email' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'contact', label: 'Contact', inputType: 'email' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('flags non-string values for email fields', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'contact', operator: '=', value: 42 }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'contact', label: 'Contact', inputType: 'email' }],
+      });
+      expect(result.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'VALUE_TYPE_MISMATCH' })
+      );
+    });
+
+    it('does not flag valid email values', () => {
+      const query: DefaultRuleGroupType = {
+        id: 'g-root',
+        combinator: 'and',
+        rules: [{ id: 'r-1', field: 'contact', operator: '=', value: 'user@example.com' }],
+      };
+      const result = formatQuery(query, {
+        format: 'diagnostics',
+        fields: [{ name: 'contact', label: 'Contact', inputType: 'email' }],
+      });
+      expect(result.diagnostics.filter(d => d.code === 'VALUE_TYPE_MISMATCH')).toHaveLength(0);
+    });
   });
 
   describe('undefined fields', () => {

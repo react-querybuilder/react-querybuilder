@@ -21,6 +21,26 @@ import { toFlatOptionArray } from '../optGroupUtils';
 
 const numericInputTypes = new Set(['number', 'range', 'bigint']);
 
+const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const timeRegex = /^\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/;
+const monthRegex = /^\d{4}-\d{2}$/;
+const weekRegex = /^\d{4}-W\d{2}$/;
+const colorRegex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const isValidDateComponents = (y: number, m: number, d: number): boolean => {
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+};
+
+const isValidTimeComponents = (s: string): boolean => {
+  const parts = s.split(':');
+  const h = Number(parts[0]);
+  const m = Number(parts[1]);
+  const sec = parts[2] ? Number.parseFloat(parts[2]) : 0;
+  return h >= 0 && h <= 23 && m >= 0 && m <= 59 && sec >= 0 && sec < 60;
+};
+
 /**
  * Checks whether a value is compatible with the given {@link FullField.inputType}.
  * Returns a diagnostic code string if there is a mismatch, or `undefined` if OK.
@@ -33,6 +53,71 @@ const checkValueTypeMismatch = (value: unknown, inputType: string): string | und
     if (typeof v === 'number' || typeof v === 'bigint') return undefined;
     if (typeof v === 'string' && numericRegex.test(v)) return undefined;
     return 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'date') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    const v = value.trim();
+    if (!dateRegex.test(v)) return 'VALUE_TYPE_MISMATCH';
+    const [y, m, d] = v.split('-').map(Number);
+    return isValidDateComponents(y, m, d) ? undefined : 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'datetime-local') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    // Strip optional timezone suffix (Z, ±hh:mm, ±hhmm, ±hh)
+    const base = value.trim().replace(/(Z|[+-]\d{2}:?\d{2}|[+-]\d{2})$/, '');
+    const tIndex = base.indexOf('T');
+    if (tIndex === -1) return 'VALUE_TYPE_MISMATCH';
+    const datePart = base.slice(0, tIndex);
+    const timePart = base.slice(tIndex + 1);
+    if (!dateRegex.test(datePart) || !timeRegex.test(timePart)) return 'VALUE_TYPE_MISMATCH';
+    const [y, m, d] = datePart.split('-').map(Number);
+    if (!isValidDateComponents(y, m, d)) return 'VALUE_TYPE_MISMATCH';
+    return isValidTimeComponents(timePart) ? undefined : 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'time') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    const v = value.trim();
+    if (!timeRegex.test(v)) return 'VALUE_TYPE_MISMATCH';
+    return isValidTimeComponents(v) ? undefined : 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'month') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    const v = value.trim();
+    if (!monthRegex.test(v)) return 'VALUE_TYPE_MISMATCH';
+    const m = Number(v.slice(5));
+    return m >= 1 && m <= 12 ? undefined : 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'week') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    const v = value.trim();
+    if (!weekRegex.test(v)) return 'VALUE_TYPE_MISMATCH';
+    const w = Number(v.slice(6));
+    return w >= 1 && w <= 53 ? undefined : 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'color') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    return colorRegex.test(value.trim()) ? undefined : 'VALUE_TYPE_MISMATCH';
+  }
+
+  if (inputType === 'url') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    try {
+      void new URL(value.trim());
+      return undefined;
+    } catch {
+      return 'VALUE_TYPE_MISMATCH';
+    }
+  }
+
+  if (inputType === 'email') {
+    if (typeof value !== 'string') return 'VALUE_TYPE_MISMATCH';
+    return emailRegex.test(value.trim()) ? undefined : 'VALUE_TYPE_MISMATCH';
   }
 
   return undefined;
