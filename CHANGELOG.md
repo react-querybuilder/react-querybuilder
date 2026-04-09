@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `stats`: aggregate counts (`totalRules`, `totalGroups`, `validRules`, `invalidRules`, `validGroups`, `invalidGroups`).
   - `fieldSummary`: per-field `ruleCount` and `invalidCount`.
 
+### Fixed
+
+- `useValueSelector` normalizes multiselect values to strings so they match option names, which are always strings.
+
 ## [v8.14.4] - 2026-03-31
 
 ### Fixed
