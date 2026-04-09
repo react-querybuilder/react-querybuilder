@@ -17,7 +17,7 @@ export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | Valu
   return useMemo(
     () =>
       typeof getCacheKey === 'string'
-        ? String(ruleOrGroup?.[getCacheKey as 'id'] ?? '')
+        ? (ruleOrGroup?.[getCacheKey as 'id'] ?? '')
         : typeof getCacheKey === 'function'
           ? getCacheKey(props)
           : Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup

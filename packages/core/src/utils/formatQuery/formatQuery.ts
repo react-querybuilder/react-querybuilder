@@ -1,6 +1,7 @@
 import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
+  DiagnosticsResult,
   ExportFormat,
   ExportObjectFormats,
   FormatQueryFinalOptions,
@@ -26,6 +27,7 @@ import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
@@ -119,6 +121,7 @@ const defaultRuleProcessors = {
   sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
+  diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 /* istanbul ignore next */
@@ -141,6 +144,7 @@ const defaultOperatorProcessors = {
   sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
+  diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
@@ -343,6 +347,16 @@ function formatQuery(
   options: 'ldap' | (FormatQueryOptions & { format: 'ldap' })
 ): string;
 /**
+ * Generates a {@link DiagnosticsResult} from a query object, containing an annotated
+ * query tree, a flat diagnostics array, aggregate stats, and a per-field summary.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'diagnostics' | (FormatQueryOptions & { format: 'diagnostics' })
+): DiagnosticsResult;
+/**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  *
  * @group Export
@@ -451,23 +465,27 @@ function formatQuery(
     if (typeof validationResult === 'boolean') {
       // istanbul ignore else
       if (!validationResult) {
-        return format === 'parameterized'
-          ? { sql: fallbackExpression, params: [] }
-          : format === 'parameterized_named'
-            ? { sql: fallbackExpression, params: {} }
-            : format === 'mongodb'
-              ? `{${fallbackExpression}}`
-              : format === 'mongodb_query'
-                ? mongoDbFallback
-                : format === 'prisma'
-                  ? prismaFallback
-                  : format === 'jsonlogic'
-                    ? false
-                    : format === 'elasticsearch'
-                      ? {}
-                      : format === 'drizzle' || format === 'sequelize'
-                        ? undefined
-                        : fallbackExpression;
+        // The "diagnostics" format still annotates the full tree
+        // when the validator returns `false`.
+        if (format !== 'diagnostics') {
+          return format === 'parameterized'
+            ? { sql: fallbackExpression, params: [] }
+            : format === 'parameterized_named'
+              ? { sql: fallbackExpression, params: {} }
+              : format === 'mongodb'
+                ? `{${fallbackExpression}}`
+                : format === 'mongodb_query'
+                  ? mongoDbFallback
+                  : format === 'prisma'
+                    ? prismaFallback
+                    : format === 'jsonlogic'
+                      ? false
+                      : format === 'elasticsearch'
+                        ? {}
+                        : format === 'drizzle' || format === 'sequelize'
+                          ? undefined
+                          : fallbackExpression;
+        }
       }
     } else {
       validationMap = validationResult;
@@ -578,6 +596,9 @@ function formatQuery(
 
     case 'sequelize':
       return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
+
+    case 'diagnostics':
+      return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);
 
     default:
       return '';

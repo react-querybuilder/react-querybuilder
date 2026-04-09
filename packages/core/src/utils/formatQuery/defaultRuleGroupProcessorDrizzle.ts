@@ -33,7 +33,7 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
       validationMap,
     } = options;
 
-    if (!columns || !drizzleOperators) return;
+    if (!columns || !drizzleOperators) return undefined;
 
     const { and, not, or } = drizzleOperators;
 
@@ -41,7 +41,7 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
 
     const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | undefined => {
       if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-        return;
+        return undefined;
       }
 
       const processedRules = rg.rules
@@ -57,7 +57,7 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
             /* istanbul ignore next */
             (placeholderValueName !== undefined && rule.value === placeholderValueName)
           ) {
-            return;
+            return undefined;
           }
           const fieldData = getOption(fields, rule.field);
           return ruleProcessor(rule, {
@@ -70,7 +70,7 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
         .filter(Boolean);
 
       if (processedRules.length === 0) {
-        return;
+        return undefined;
       }
 
       const ruleGroupSQL: SQL | undefined =

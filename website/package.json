@@ -85,7 +85,7 @@
     "docusaurus-plugin-sass": "^0.2.6",
     "docusaurus-plugin-typedoc": "^1.4.2",
     "file-loader": "^6.2.0",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.9",
     "postcss-prefix-selector": "^2.1.1",
     "raw-loader": "^4.0.2",
     "rehype-raw": "^7.0.0",

@@ -30,7 +30,7 @@ export const defaultRuleProcessorMongoDBQuery: RuleProcessor = (
   const matchEval = processMatchMode(rule);
 
   if (matchEval === false) {
-    return;
+    return undefined;
   } else if (matchEval) {
     const { mode, threshold } = matchEval;
 

@@ -61,7 +61,7 @@
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dayjs": "^1.11.20",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.9",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.14.4",

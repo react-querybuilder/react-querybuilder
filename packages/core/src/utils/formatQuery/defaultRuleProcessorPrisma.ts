@@ -24,7 +24,7 @@ export const defaultRuleProcessorPrisma: RuleProcessor = (
   const { parseNumbers, preserveValueOrder } = options;
 
   // Neither field-to-field comparisons nor match modes are supported in this format
-  if (valueSource === 'field' || processMatchMode(rule)) return;
+  if (valueSource === 'field' || processMatchMode(rule)) return undefined;
 
   const operatorLC = lc(operator);
   switch (operatorLC) {
