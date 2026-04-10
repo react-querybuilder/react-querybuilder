@@ -80,6 +80,40 @@ const App = () => (
 
 The dnd-kit adapter uses `PointerSensor` and `KeyboardSensor` by default, with a 5px activation distance to prevent accidental drags. ARIA attributes are automatically applied to drag handles for accessibility.
 
+### Using the `@atlaskit/pragmatic-drag-and-drop` adapter
+
+Install [`@atlaskit/pragmatic-drag-and-drop`](https://www.npmjs.com/package/@atlaskit/pragmatic-drag-and-drop), then create an adapter with `createPragmaticDndAdapter`:
+
+```bash npm2yarn
+npm i react-querybuilder @react-querybuilder/dnd @atlaskit/pragmatic-drag-and-drop
+```
+
+```tsx
+import { QueryBuilderDnD, createPragmaticDndAdapter } from '@react-querybuilder/dnd';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { QueryBuilder } from 'react-querybuilder';
+
+const pragmaticDndAdapter = createPragmaticDndAdapter({
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+  combine,
+});
+
+const App = () => (
+  <QueryBuilderDnD dnd={pragmaticDndAdapter}>
+    <QueryBuilder />
+  </QueryBuilderDnD>
+);
+```
+
+Pragmatic drag and drop uses the native HTML5 drag-and-drop API under the hood, so it has zero runtime overhead when not dragging. Unlike `react-dnd`, it does not require a separate backend package.
+
 ### Zero-config (auto-loading)
 
 If you omit the `dnd` prop, `QueryBuilderDnD` will asynchronously attempt to load `react-dnd`, `react-dnd-html5-backend`, and `react-dnd-touch-backend`. Drag-and-drop features are only enabled once those packages have loaded. This approach is convenient but provides less control over loading behavior.
@@ -141,7 +175,7 @@ The following props are accepted on the `QueryBuilderDnD` and `QueryBuilderDndWi
 
 `DndAdapter | DndProp`
 
-A `DndAdapter` (such as from `createReactDnDAdapter()` or `createDndKitAdapter()`) or the raw `react-dnd` namespace exports (legacy API). When raw `react-dnd` exports are provided, they are automatically wrapped in a `react-dnd` adapter.
+A `DndAdapter` (such as from `createReactDnDAdapter()`, `createDndKitAdapter()`, or `createPragmaticDndAdapter()`) or the raw `react-dnd` namespace exports (legacy API). When raw `react-dnd` exports are provided, they are automatically wrapped in a `react-dnd` adapter.
 
 If omitted, the component asynchronously loads `react-dnd`, `react-dnd-html5-backend`, and `react-dnd-touch-backend`. Drag-and-drop features are only enabled once those packages have loaded.
 

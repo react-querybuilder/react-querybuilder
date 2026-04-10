@@ -52,6 +52,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.7.10",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/utilities": "^3.2.2",
     "@testing-library/dom": "catalog:test",
@@ -73,6 +74,7 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": ">=1.0.0",
     "@dnd-kit/core": ">=6.0.0",
     "react": "catalog:peer",
     "react-dnd": ">=14.0.0",
@@ -81,6 +83,9 @@
     "react-querybuilder": "8.14.4"
   },
   "peerDependenciesMeta": {
+    "@atlaskit/pragmatic-drag-and-drop": {
+      "optional": true
+    },
     "@dnd-kit/core": {
       "optional": true
     },
