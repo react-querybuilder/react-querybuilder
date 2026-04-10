@@ -107,7 +107,7 @@ const useNativeListeners = (
 ): void => {
   useEffect(() => {
     const node = nodeRef.current;
-    if (!node || !listeners) return;
+    if (!node || !listeners) return undefined;
 
     const nativeHandlers: [string, EventListener][] = [];
 
