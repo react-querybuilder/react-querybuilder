@@ -11,76 +11,48 @@ To see this in action, check out the [`react-querybuilder` demo](https://react-q
 ## Installation
 
 ```bash
-npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backend
+npm i react-querybuilder @react-querybuilder/dnd
 # OR yarn add / pnpm add / bun add
 ```
 
+Then install the drag-and-drop library of your choice (see [Adapters](#adapters)).
+
 ## Usage
 
-To enable the drag-and-drop functionality of a query builder, nest the `QueryBuilder` element under `QueryBuilderDnD`. Pass in all exports from `react-dnd` and either `react-dnd-html5-backend` or `react-dnd-touch-backend` to the `dnd` prop of `QueryBuilderDnD`. (If you pass in all exports from _both_ backends, the touch backend will be preferred when a touch device is detected.)
+Nest `QueryBuilder` under a `QueryBuilderDnD` provider, passing an adapter to the `dnd` prop:
 
 ```tsx
-import { QueryBuilderDnD } from '@react-querybuilder/dnd';
-import { useState } from 'react';
+import { QueryBuilderDnD, createReactDnDAdapter } from '@react-querybuilder/dnd';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndBackend from 'react-dnd-html5-backend';
-// OR
-// import * as ReactDndBackend from 'react-dnd-touch-backend';
-import { QueryBuilder, RuleGroupType } from 'react-querybuilder';
+import { QueryBuilder } from 'react-querybuilder';
 
-const fields = [
-  { name: 'firstName', label: 'First Name' },
-  { name: 'lastName', label: 'Last Name' },
-];
+const adapter = createReactDnDAdapter({ ...ReactDnD, ...ReactDndBackend });
 
-const App = () => {
-  const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
-
-  return (
-    <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndBackend }}>
-      <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
-    </QueryBuilderDnD>
-  );
-};
+const App = () => (
+  <QueryBuilderDnD dnd={adapter}>
+    <QueryBuilder />
+  </QueryBuilderDnD>
+);
 ```
+
+## Adapters
+
+`@react-querybuilder/dnd` uses an adapter pattern to support multiple drag-and-drop libraries without requiring all of them as dependencies. Each adapter is a factory function that accepts the library's exports and returns a `DndAdapter` object.
+
+Built-in adapters:
+
+| Adapter                                                                                          | Factory                     | Install                                 |
+| ------------------------------------------------------------------------------------------------ | --------------------------- | --------------------------------------- |
+| [react-dnd](https://npmjs.com/package/react-dnd)                                                 | `createReactDnDAdapter`     | `react-dnd` + `react-dnd-html5-backend` |
+| [@dnd-kit/core](https://npmjs.com/package/@dnd-kit/core)                                         | `createDndKitAdapter`       | `@dnd-kit/core`                         |
+| [@atlaskit/pragmatic-drag-and-drop](https://npmjs.com/package/@atlaskit/pragmatic-drag-and-drop) | `createPragmaticDndAdapter` | `@atlaskit/pragmatic-drag-and-drop`     |
+
+You can also create custom adapters by implementing the `DndAdapter` interface (exported from `@react-querybuilder/dnd`). See the [full documentation](https://react-querybuilder.js.org/docs/dnd#custom-adapters) for details.
 
 ## Notes
 
-- While not strictly necessary, we strongly recommend passing the `react-dnd` and `react-dnd-html5-backend`/`react-dnd-touch-backend` exports into `QueryBuilderDnD`. If they are not passed in as the `dnd` prop, the query builder will initially have drag-and-drop disabled until the dependencies are asynchronously loaded via `import()`.
-- `QueryBuilderDnD` will automatically set the `enableDragAndDrop` prop to `true` on any descendant `QueryBuilder` elements unless `enableDragAndDrop` is explicitly set to `false` on `QueryBuilder`.
-- `QueryBuilderDnD` does not need to be an _immediate_ ancestor to `QueryBuilder`, it only needs to be somewhere above `QueryBuilder` in the component hierarchy.
-- Multiple `QueryBuilder`s may be nested beneath a single `QueryBuilderDnD`. The same drag-and-drop settings will be applied to each query builder, and drag-and-drop will work across query builders (rules/groups can be dragged from one query builder and dropped into another).
-- If your application already uses `react-dnd` outside the scope of a query builder, use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD` to inherit context from your existing `DndProvider`. Example:
-
-  ```tsx
-  import { QueryBuilderDndWithoutProvider } from '@react-querybuilder/dnd';
-  import { useState } from 'react';
-  import * as ReactDnD from 'react-dnd';
-  import * as ReactDndBackend from 'react-dnd-html5-backend';
-  import { type Field, QueryBuilder, type RuleGroupType } from 'react-querybuilder';
-  import { SomeOtherDndContextConsumer } from './SomeOtherDndContextConsumer';
-
-  const fields: Field[] = [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
-  ];
-
-  function ChildComponentOfDndProvider() {
-    const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
-
-    return (
-      <QueryBuilderDndWithoutProvider dnd={{ ...ReactDnD, ...ReactDndBackend }}>
-        <QueryBuilder fields={fields} defaultQuery={query} onQueryChange={setQuery} />
-      </QueryBuilderDndWithoutProvider>
-    );
-  }
-
-  export function App() {
-    return (
-      <ReactDnD.DndProvider backend={ReactDndBackend.HTML5Backend}>
-        <SomeOtherDndContextConsumer />
-        <ChildComponentOfDndProvider />
-      </ReactDnD.DndProvider>
-    );
-  }
-  ```
+- `QueryBuilderDnD` automatically sets `enableDragAndDrop` to `true` on descendant `QueryBuilder` elements unless explicitly set to `false`.
+- `QueryBuilderDnD` does not need to be an _immediate_ ancestor to `QueryBuilder`.
+- Multiple `QueryBuilder`s may be nested beneath a single `QueryBuilderDnD`, and drag-and-drop works across them.
+- If your application already uses `react-dnd`, use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD` to avoid conflicting `DndProvider` contexts.
