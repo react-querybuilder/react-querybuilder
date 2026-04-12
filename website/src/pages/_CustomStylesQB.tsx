@@ -1,19 +1,30 @@
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
-import * as ReactDnD from 'react-dnd';
-import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
+import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import { QueryBuilder } from 'react-querybuilder';
 import { Loading } from './_utils';
 import { initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
+
+const dnd = createPragmaticDndAdapter({
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+  combine,
+});
 
 const loading = <Loading />;
 
 export const CustomStylesQB = () => (
   <BrowserOnly fallback={loading}>
     {() => (
-      <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>
+      <QueryBuilderDnD dnd={dnd}>
         <QueryBuilder
           defaultQuery={initialQuery}
           fields={fields}

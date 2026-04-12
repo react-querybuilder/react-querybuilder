@@ -22,16 +22,25 @@ Then install the drag-and-drop library of your choice (see [Adapters](#adapters)
 Nest `QueryBuilder` under a `QueryBuilderDnD` provider, passing an adapter to the `dnd` prop:
 
 ```tsx
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
-import { createReactDnDAdapter } from '@react-querybuilder/dnd/react-dnd';
-import * as ReactDnD from 'react-dnd';
-import * as ReactDndBackend from 'react-dnd-html5-backend';
+import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import { QueryBuilder } from 'react-querybuilder';
 
-const adapter = createReactDnDAdapter({ ...ReactDnD, ...ReactDndBackend });
+const dnd = createPragmaticDndAdapter({
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+  combine,
+});
 
 const App = () => (
-  <QueryBuilderDnD dnd={adapter}>
+  <QueryBuilderDnD dnd={dnd}>
     <QueryBuilder />
   </QueryBuilderDnD>
 );
@@ -41,13 +50,15 @@ const App = () => (
 
 `@react-querybuilder/dnd` uses an adapter pattern to support multiple drag-and-drop libraries without requiring all of them as dependencies. Each adapter is available as a separate subpath import, so only the library you use needs to be installed.
 
+We recommend **[Pragmatic DnD](https://npmjs.com/package/@atlaskit/pragmatic-drag-and-drop)** if you have no other constraints.
+
 Built-in adapters:
 
-| Adapter                                                                                          | Import path                             | Install                                 |
-| ------------------------------------------------------------------------------------------------ | --------------------------------------- | --------------------------------------- |
-| [react-dnd](https://npmjs.com/package/react-dnd)                                                 | `@react-querybuilder/dnd/react-dnd`     | `react-dnd` + `react-dnd-html5-backend` |
-| [@dnd-kit/core](https://npmjs.com/package/@dnd-kit/core)                                         | `@react-querybuilder/dnd/dnd-kit`       | `@dnd-kit/core`                         |
-| [@atlaskit/pragmatic-drag-and-drop](https://npmjs.com/package/@atlaskit/pragmatic-drag-and-drop) | `@react-querybuilder/dnd/pragmatic-dnd` | `@atlaskit/pragmatic-drag-and-drop`     |
+| Adapter                                                                                                        | Import path                             | Install                                 |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------- | --------------------------------------- |
+| [@atlaskit/pragmatic-drag-and-drop](https://npmjs.com/package/@atlaskit/pragmatic-drag-and-drop) (recommended) | `@react-querybuilder/dnd/pragmatic-dnd` | `@atlaskit/pragmatic-drag-and-drop`     |
+| [react-dnd](https://npmjs.com/package/react-dnd)                                                               | `@react-querybuilder/dnd/react-dnd`     | `react-dnd` + `react-dnd-html5-backend` |
+| [@dnd-kit/core](https://npmjs.com/package/@dnd-kit/core)                                                       | `@react-querybuilder/dnd/dnd-kit`       | `@dnd-kit/core`                         |
 
 You can also create custom adapters by implementing the `DndAdapter` interface (exported from `@react-querybuilder/dnd`). See the [full documentation](https://react-querybuilder.js.org/docs/dnd#custom-adapters) for details.
 
