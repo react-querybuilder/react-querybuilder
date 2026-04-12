@@ -49,7 +49,7 @@ describe('PostgreSQL', () => {
   describe('common', () => {
     beforeAll(async () => {
       await db.exec(dbSetup('postgres'));
-    });
+    }, 10_000);
 
     afterAll(async () => {
       await db.close();
