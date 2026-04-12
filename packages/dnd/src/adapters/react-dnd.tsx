@@ -90,7 +90,8 @@ const useRuleDragCommon = (
  *
  * @example
  * ```tsx
- * import { QueryBuilderDnD, createReactDnDAdapter } from '@react-querybuilder/dnd';
+ * import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+ * import { createReactDnDAdapter } from '@react-querybuilder/dnd/react-dnd';
  * import * as ReactDnD from 'react-dnd';
  * import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
  *

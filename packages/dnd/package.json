@@ -18,11 +18,45 @@
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
+    },
+    "./dist/*": "./dist/*",
+    "./react-dnd": {
+      "import": {
+        "types": "./dist/react-querybuilder_dnd.react-dnd.d.mts",
+        "default": "./dist/react-querybuilder_dnd.react-dnd.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-dnd.d.ts",
+        "default": "./dist/cjs/react-dnd.js"
+      }
+    },
+    "./dnd-kit": {
+      "import": {
+        "types": "./dist/react-querybuilder_dnd.dnd-kit.d.mts",
+        "default": "./dist/react-querybuilder_dnd.dnd-kit.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/dnd-kit.d.ts",
+        "default": "./dist/cjs/dnd-kit.js"
+      }
+    },
+    "./pragmatic-dnd": {
+      "import": {
+        "types": "./dist/react-querybuilder_dnd.pragmatic-dnd.d.mts",
+        "default": "./dist/react-querybuilder_dnd.pragmatic-dnd.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/pragmatic-dnd.d.ts",
+        "default": "./dist/cjs/pragmatic-dnd.js"
+      }
     }
   },
   "types": "./dist/react-querybuilder_dnd.legacy-esm.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "dnd-kit",
+    "pragmatic-dnd",
+    "react-dnd"
   ],
   "sideEffects": false,
   "repository": {

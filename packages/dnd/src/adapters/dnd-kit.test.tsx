@@ -11,7 +11,7 @@ import { QueryBuilder, TestID } from 'react-querybuilder';
 import { isDndAdapter } from '../adapter';
 import { QueryBuilderDnD } from '../QueryBuilderDnD';
 import { createDndKitAdapter } from './dnd-kit';
-import type { DndKitProp } from './dnd-kit';
+import type { DndKitExports } from './dnd-kit';
 
 // #region Mock helpers
 
@@ -36,12 +36,8 @@ const createMockUseDroppable = () => {
   return jest.fn().mockReturnValue({ setNodeRef, isOver: false });
 };
 
-const createMockDndKit = (
-  overrides?: Partial<DndKitProp>
-): DndKitProp & {
-  _useDraggable: ReturnType<typeof createMockUseDraggable>;
-  _useDroppable: ReturnType<typeof createMockUseDroppable>;
-} => {
+// oxlint-disable-next-line typescript/no-explicit-any
+const createMockDndKit = (overrides?: any) => {
   const mockUseDraggable = createMockUseDraggable();
   const mockUseDroppable = createMockUseDroppable();
 
@@ -49,10 +45,10 @@ const createMockDndKit = (
     DndContext: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
     useDraggable: mockUseDraggable,
     useDroppable: mockUseDroppable,
-    // oxlint-disable-next-line typescript/no-extraneous-class
+    // oxlint-disable typescript/no-extraneous-class
     PointerSensor: class PointerSensor {},
-    // oxlint-disable-next-line typescript/no-extraneous-class
     KeyboardSensor: class KeyboardSensor {},
+    // oxlint-enable typescript/no-extraneous-class
     useSensor: jest.fn((_sensor: unknown, _opts?: unknown) => ({})),
     useSensors: jest.fn((...sensors: unknown[]) => sensors),
     _useDraggable: mockUseDraggable,
@@ -1033,7 +1029,7 @@ describe('createDndKitAdapter', () => {
       const schema = mockSchema();
 
       const mock = createMockDndKit({
-        DndContext: MockDndContext as DndKitProp['DndContext'],
+        DndContext: MockDndContext as DndKitExports['DndContext'],
         useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
@@ -1077,7 +1073,7 @@ describe('createDndKitAdapter', () => {
       const schema = mockSchema();
 
       const mock = createMockDndKit({
-        DndContext: MockDndContext as DndKitProp['DndContext'],
+        DndContext: MockDndContext as DndKitExports['DndContext'],
         useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
@@ -1116,7 +1112,7 @@ describe('createDndKitAdapter', () => {
       const schema = mockSchema();
 
       const mock = createMockDndKit({
-        DndContext: MockDndContext as DndKitProp['DndContext'],
+        DndContext: MockDndContext as DndKitExports['DndContext'],
         useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
@@ -1155,7 +1151,7 @@ describe('createDndKitAdapter', () => {
       const schema = mockSchema({ independentCombinators: true });
 
       const mock = createMockDndKit({
-        DndContext: MockDndContext as DndKitProp['DndContext'],
+        DndContext: MockDndContext as DndKitExports['DndContext'],
         useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
@@ -1193,7 +1189,7 @@ describe('createDndKitAdapter', () => {
 
     it('handleDragStart ignores events with missing data', () => {
       const { MockDndContext, getOnDragStart } = createHoverTest();
-      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitProp['DndContext'] });
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
       const adapter = createDndKitAdapter(mock);
 
       render(
@@ -1222,7 +1218,7 @@ describe('createDndKitAdapter', () => {
         return <>{children as React.ReactNode}</>;
       };
 
-      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitProp['DndContext'] });
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
       const adapter = createDndKitAdapter(mock);
       const schema = mockSchema();
 
@@ -1276,7 +1272,7 @@ describe('createDndKitAdapter', () => {
         return <>{children as React.ReactNode}</>;
       };
 
-      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitProp['DndContext'] });
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
       const adapter = createDndKitAdapter(mock);
 
       render(
@@ -1309,7 +1305,7 @@ describe('createDndKitAdapter', () => {
 
       const actions = mockActions();
       const schema = mockSchema();
-      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitProp['DndContext'] });
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
       const adapter = createDndKitAdapter(mock);
 
       render(
@@ -1394,7 +1390,7 @@ describe('createDndKitAdapter', () => {
 
       const actions = mockActions();
       const schema = mockSchema();
-      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitProp['DndContext'] });
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
       const adapter = createDndKitAdapter(mock);
 
       render(
@@ -1439,7 +1435,7 @@ describe('createDndKitAdapter', () => {
 
       const actions = mockActions();
       const schema = mockSchema();
-      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitProp['DndContext'] });
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
       const adapter = createDndKitAdapter(mock);
 
       render(

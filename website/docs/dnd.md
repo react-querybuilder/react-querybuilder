@@ -10,7 +10,7 @@ The [`@react-querybuilder/dnd`](https://www.npmjs.com/package/@react-querybuilde
 
 To enable drag-and-drop on a query builder, render the `QueryBuilderDnD` context provider higher in the component tree than `QueryBuilder`.
 
-The `@react-querybuilder/dnd` package supports multiple drag-and-drop libraries through an **adapter** pattern. Currently, a built-in adapter is provided for [`react-dnd`](https://www.npmjs.com/package/react-dnd), and custom adapters can be created for other libraries.
+The `@react-querybuilder/dnd` package supports multiple drag-and-drop libraries through an **adapter** pattern. Each adapter is available as a separate subpath import (e.g., `@react-querybuilder/dnd/react-dnd`), so only the adapter you use—and its corresponding library—needs to be installed.
 
 > _**Note:** The [`enableDragAndDrop`](./components/querybuilder#enabledraganddrop) prop doesn't need to be set directly on the [`QueryBuilder`](./components/querybuilder) component unless it's explicitly `false` to override the implicit `true` value set by `QueryBuilderDnD`._
 
@@ -25,7 +25,8 @@ npm i react-querybuilder @react-querybuilder/dnd react-dnd react-dnd-html5-backe
 ```
 
 ```tsx
-import { QueryBuilderDnD, createReactDnDAdapter } from '@react-querybuilder/dnd';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { createReactDnDAdapter } from '@react-querybuilder/dnd/react-dnd';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
@@ -65,7 +66,8 @@ npm i react-querybuilder @react-querybuilder/dnd @dnd-kit/core
 ```
 
 ```tsx
-import { QueryBuilderDnD, createDndKitAdapter } from '@react-querybuilder/dnd';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { createDndKitAdapter } from '@react-querybuilder/dnd/dnd-kit';
 import * as DndKit from '@dnd-kit/core';
 import { QueryBuilder } from 'react-querybuilder';
 
@@ -89,7 +91,8 @@ npm i react-querybuilder @react-querybuilder/dnd @atlaskit/pragmatic-drag-and-dr
 ```
 
 ```tsx
-import { QueryBuilderDnD, createPragmaticDndAdapter } from '@react-querybuilder/dnd';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import {
   draggable,
   dropTargetForElements,

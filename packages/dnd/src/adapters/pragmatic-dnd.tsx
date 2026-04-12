@@ -1,3 +1,9 @@
+import type { combine as combineImport } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import type {
+  draggable as draggableImport,
+  dropTargetForElements as dropTargetForElementsImport,
+  monitorForElements as monitorForElementsImport,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import * as React from 'react';
 import {
   createContext,
@@ -34,53 +40,17 @@ import {
 } from '../dndLogic';
 import { isHotkeyPressed } from '../isHotkeyPressed';
 
-// #region Types for pragmatic-drag-and-drop exports
-
 /**
- * Structural type representing the `@atlaskit/pragmatic-drag-and-drop` exports
- * needed by the adapter. Defined locally to avoid requiring the package as a
- * transitive type dependency for consumers who use a different adapter.
+ * The `@atlaskit/pragmatic-drag-and-drop` exports needed by the adapter.
  *
  * @group DnD
  */
-export interface PragmaticDndProp {
-  draggable: (args: {
-    element: HTMLElement;
-    dragHandle?: Element;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    getInitialData?: (args: any) => Record<string, unknown>;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    canDrag?: (args: any) => boolean;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onGenerateDragPreview?: (args: any) => void;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDragStart?: (args: any) => void;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDrop?: (args: any) => void;
-  }) => () => void;
-  dropTargetForElements: (args: {
-    element: Element;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    getData?: (args: any) => Record<string | symbol, unknown>;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    canDrop?: (args: any) => boolean;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDragEnter?: (args: any) => void;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDragLeave?: (args: any) => void;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDrop?: (args: any) => void;
-  }) => () => void;
-  monitorForElements: (args: {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDragStart?: (args: any) => void;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    onDrop?: (args: any) => void;
-  }) => () => void;
-  combine: (...fns: (() => void)[]) => () => void;
-}
-
-// #endregion
+export type PragmaticDndExports = {
+  draggable: typeof draggableImport;
+  dropTargetForElements: typeof dropTargetForElementsImport;
+  monitorForElements: typeof monitorForElementsImport;
+  combine: typeof combineImport;
+};
 
 // #region Internal context
 
@@ -111,7 +81,8 @@ const getDropId = (
  *
  * @example
  * ```tsx
- * import { QueryBuilderDnD, createPragmaticDndAdapter } from '@react-querybuilder/dnd';
+ * import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+ * import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
  * import { draggable, dropTargetForElements, monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
  * import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
  *
@@ -124,7 +95,7 @@ const getDropId = (
  *
  * @group DnD
  */
-export const createPragmaticDndAdapter = (pdndExports: PragmaticDndProp): DndAdapter => {
+export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): DndAdapter => {
   const { draggable, dropTargetForElements, monitorForElements, combine } = pdndExports;
 
   // #region DndProvider

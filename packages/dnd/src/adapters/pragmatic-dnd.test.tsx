@@ -11,36 +11,29 @@ import { QueryBuilder, TestID } from 'react-querybuilder';
 import { isDndAdapter } from '../adapter';
 import { QueryBuilderDnD } from '../QueryBuilderDnD';
 import { createPragmaticDndAdapter } from './pragmatic-dnd';
-import type { PragmaticDndProp } from './pragmatic-dnd';
+import type { PragmaticDndExports } from './pragmatic-dnd';
 
 // #region Mock helpers
 
+// oxlint-disable typescript/no-explicit-any
 interface DraggableRegistration {
   element: HTMLElement;
   dragHandle?: Element;
-  // oxlint-disable-next-line typescript/no-explicit-any
   getInitialData?: (...args: any[]) => Record<string, unknown>;
-  // oxlint-disable-next-line typescript/no-explicit-any
   canDrag?: (...args: any[]) => boolean;
-  // oxlint-disable-next-line typescript/no-explicit-any
   onDragStart?: (...args: any[]) => void;
-  // oxlint-disable-next-line typescript/no-explicit-any
   onDrop?: (...args: any[]) => void;
 }
 
 interface DropTargetRegistration {
   element: Element;
-  // oxlint-disable-next-line typescript/no-explicit-any
   getData?: (...args: any[]) => Record<string | symbol, unknown>;
-  // oxlint-disable-next-line typescript/no-explicit-any
   canDrop?: (...args: any[]) => boolean;
-  // oxlint-disable-next-line typescript/no-explicit-any
   onDragEnter?: (...args: any[]) => void;
-  // oxlint-disable-next-line typescript/no-explicit-any
   onDragLeave?: (...args: any[]) => void;
-  // oxlint-disable-next-line typescript/no-explicit-any
   onDrop?: (...args: any[]) => void;
 }
+// oxlint-disable typescript/no-explicit-any
 
 interface MonitorRegistration {
   onDragStart?: (args: { source: { data: Record<string, unknown> } }) => void;
@@ -50,11 +43,7 @@ interface MonitorRegistration {
   }) => void;
 }
 
-const createMockPragmaticDnd = (): PragmaticDndProp & {
-  _draggables: DraggableRegistration[];
-  _dropTargets: DropTargetRegistration[];
-  _monitors: MonitorRegistration[];
-} => {
+const createMockPragmaticDnd = () => {
   const draggables: DraggableRegistration[] = [];
   const dropTargets: DropTargetRegistration[] = [];
   const monitors: MonitorRegistration[] = [];
@@ -130,7 +119,7 @@ const mockRuleGroup = (): RuleGroupType => ({ combinator: 'and', rules: [] });
 describe('createPragmaticDndAdapter', () => {
   it('returns a valid DndAdapter', () => {
     const mock = createMockPragmaticDnd();
-    const adapter = createPragmaticDndAdapter(mock);
+    const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
     expect(isDndAdapter(adapter)).toBe(true);
     expect(adapter).toHaveProperty('DndProvider');
     expect(adapter).toHaveProperty('useRuleDnD');
@@ -141,7 +130,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('DndProvider', () => {
     it('renders children', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       render(
         <adapter.DndProvider>
           <div data-testid="child">Hello</div>
@@ -152,7 +141,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('registers a global monitor', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       render(
         <adapter.DndProvider>
           <div />
@@ -165,7 +154,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('useRuleDnD', () => {
     it('returns initial state for a non-dragging rule', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       const { result } = renderHook(
@@ -197,7 +186,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('registers draggable and drop target when refs are attached', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dndRef, dragRef } = adapter.useRuleDnD({
@@ -234,7 +223,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('provides correct data in getInitialData', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
       const actions = mockActions();
 
@@ -270,7 +259,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('passes disabled to canDrag', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dndRef, dragRef } = adapter.useRuleDnD({
@@ -301,7 +290,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('reports isDragging when drag starts and stops', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       let hookResult: ReturnType<typeof adapter.useRuleDnD> | undefined;
       const TestComponent = () => {
@@ -344,7 +333,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('provides validate and getDropResult in drop target data', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       const TestComponent = () => {
@@ -381,7 +370,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('useRuleGroupDnD', () => {
     it('returns initial state', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const { result } = renderHook(
         () =>
@@ -412,7 +401,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('does not register draggable for root group (path [])', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { previewRef, dragRef, dropRef } = adapter.useRuleGroupDnD({
@@ -447,7 +436,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('registers draggable for non-root groups', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { previewRef, dragRef, dropRef } = adapter.useRuleGroupDnD({
@@ -480,7 +469,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('connects separate refs for preview, drag handle, and drop area', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { previewRef, dragRef, dropRef } = adapter.useRuleGroupDnD({
@@ -519,7 +508,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('provides correct data in getInitialData for non-root group', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
       const actions = mockActions();
 
@@ -558,7 +547,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('reports isDragging when drag starts and stops for non-root group', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       let hookResult: ReturnType<typeof adapter.useRuleGroupDnD> | undefined;
       const TestComponent = () => {
@@ -605,7 +594,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('useInlineCombinatorDnD', () => {
     it('returns initial state', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const { result } = renderHook(
         () =>
@@ -634,7 +623,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('registers a drop target (no draggable)', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dropRef } = adapter.useInlineCombinatorDnD({
@@ -668,7 +657,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('provides validate and getDropResult in data', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dropRef } = adapter.useInlineCombinatorDnD({
@@ -706,7 +695,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('drop validation', () => {
     it('validate function rejects self-drops for rules', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dndRef, dragRef } = adapter.useRuleDnD({
@@ -747,7 +736,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('validate function accepts drops from different paths', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dndRef, dragRef } = adapter.useRuleDnD({
@@ -788,7 +777,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('getDropResult returns correct DropResult for rule', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dndRef, dragRef } = adapter.useRuleDnD({
@@ -823,7 +812,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('ruleGroup validate rejects self-drops', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { previewRef, dragRef, dropRef } = adapter.useRuleGroupDnD({
@@ -860,7 +849,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('ruleGroup getDropResult returns correct DropResult', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { previewRef, dragRef, dropRef } = adapter.useRuleGroupDnD({
@@ -897,7 +886,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('inlineCombinator validate accepts valid drops', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dropRef } = adapter.useInlineCombinatorDnD({
@@ -936,7 +925,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('inlineCombinator validate handles undefined rules', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dropRef } = adapter.useInlineCombinatorDnD({
@@ -972,7 +961,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('inlineCombinator getDropResult returns correct DropResult', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const TestComponent = () => {
         const { dropRef } = adapter.useInlineCombinatorDnD({
@@ -1007,7 +996,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('isOver and dropNotAllowed with active drag', () => {
     it('useRuleDnD reports isOver=true when hovered with valid drag item', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleDnD> | undefined;
@@ -1056,7 +1045,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('useRuleDnD reports dropNotAllowed when hovered with invalid drag item (self)', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleDnD> | undefined;
@@ -1101,7 +1090,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('useRuleGroupDnD reports isOver=true when hovered with valid drag item', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleGroupDnD> | undefined;
@@ -1148,7 +1137,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('useInlineCombinatorDnD reports isOver=true when hovered with valid drag item', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema({ independentCombinators: true });
 
       let hookResult: ReturnType<typeof adapter.useInlineCombinatorDnD> | undefined;
@@ -1191,7 +1180,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('isOver resets on drag leave', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleDnD> | undefined;
@@ -1240,7 +1229,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('rule drop target onDrop resets isOver', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleDnD> | undefined;
@@ -1287,7 +1276,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('ruleGroup drop target onDragLeave and onDrop reset isOver', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleGroupDnD> | undefined;
@@ -1347,7 +1336,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('inlineCombinator drop target onDragLeave and onDrop reset isOver', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema({ independentCombinators: true });
 
       let hookResult: ReturnType<typeof adapter.useInlineCombinatorDnD> | undefined;
@@ -1405,7 +1394,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('DndProvider drag lifecycle', () => {
     it('sets activeDragItem on drag start and clears on drop', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const schema = mockSchema();
 
       let hookResult: ReturnType<typeof adapter.useRuleDnD> | undefined;
@@ -1460,7 +1449,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('handleDragStart ignores events with missing data', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       render(
         <adapter.DndProvider>
@@ -1477,7 +1466,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('calls handleDrop on valid drop', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const actions = mockActions();
       const schema = mockSchema();
 
@@ -1544,7 +1533,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('does not call handleDrop when validate returns false', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const actions = mockActions();
       const schema = mockSchema();
 
@@ -1588,7 +1577,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('does not call handleDrop when no drop targets', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
       const actions = mockActions();
       const schema = mockSchema();
 
@@ -1618,7 +1607,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('integration with QueryBuilderDnD', () => {
     it('renders QueryBuilder with pragmatic-dnd adapter', async () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       await act(async () => {
         render(
@@ -1633,7 +1622,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('renders QueryBuilder with rules using pragmatic-dnd adapter', async () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       await act(async () => {
         render(
@@ -1657,7 +1646,7 @@ describe('createPragmaticDndAdapter', () => {
 
     it('sets data-dnd attribute', async () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       const { container } = await act(async () =>
         render(
@@ -1674,7 +1663,7 @@ describe('createPragmaticDndAdapter', () => {
   describe('branch coverage: hotkey-dependent return values', () => {
     it('returns dropEffect "copy" when copyModeModifierKey is pressed', () => {
       const mock = createMockPragmaticDnd();
-      const adapter = createPragmaticDndAdapter(mock);
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
 
       // Simulate pressing Alt key
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt', code: 'AltLeft' }));

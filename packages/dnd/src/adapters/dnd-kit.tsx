@@ -1,3 +1,12 @@
+import type {
+  DndContext as DndContextImport,
+  KeyboardSensor as KeyboardSensorImport,
+  PointerSensor as PointerSensorImport,
+  useDraggable as useDraggableImport,
+  useDroppable as useDroppableImport,
+  useSensor as useSensorImport,
+  useSensors as useSensorsImport,
+} from '@dnd-kit/core';
 import * as React from 'react';
 import {
   createContext,
@@ -34,44 +43,20 @@ import {
 } from '../dndLogic';
 import { isHotkeyPressed } from '../isHotkeyPressed';
 
-// #region Types for dnd-kit exports
-
 /**
- * Structural type representing the `@dnd-kit/core` exports needed by the adapter.
- * Defined locally to avoid requiring `@dnd-kit/core` as a transitive type dependency
- * for consumers who only use the `react-dnd` adapter.
+ * The `@dnd-kit/core` exports needed by the adapter.
  *
  * @group DnD
  */
-export interface DndKitProp {
-  // oxlint-disable-next-line typescript/no-explicit-any
-  DndContext: React.ComponentType<any>;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  useDraggable: (config: any) => {
-    setNodeRef: (node: HTMLElement | null) => void;
-    setActivatorNodeRef: (node: HTMLElement | null) => void;
-    isDragging: boolean;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    listeners?: Record<string, any>;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    attributes?: Record<string, any>;
-  };
-  // oxlint-disable-next-line typescript/no-explicit-any
-  useDroppable: (config: any) => {
-    setNodeRef: (node: HTMLElement | null) => void;
-    isOver: boolean;
-  };
-  // oxlint-disable-next-line typescript/no-explicit-any
-  PointerSensor: any;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  KeyboardSensor: any;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  useSensor: (...args: any[]) => any;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  useSensors: (...args: any[]) => any;
-}
-
-// #endregion
+export type DndKitExports = {
+  DndContext: typeof DndContextImport;
+  useDraggable: typeof useDraggableImport;
+  useDroppable: typeof useDroppableImport;
+  PointerSensor: typeof PointerSensorImport;
+  KeyboardSensor: typeof KeyboardSensorImport;
+  useSensor: typeof useSensorImport;
+  useSensors: typeof useSensorsImport;
+};
 
 // #region Internal context
 
@@ -102,8 +87,7 @@ const getDropId = (
  */
 const useNativeListeners = (
   nodeRef: React.RefObject<HTMLElement | null>,
-  // oxlint-disable-next-line typescript/no-explicit-any
-  listeners: Record<string, (event: any) => void> | undefined
+  listeners: Record<string, Function> | undefined
 ): void => {
   useEffect(() => {
     const node = nodeRef.current;
@@ -137,7 +121,8 @@ const useNativeListeners = (
  *
  * @example
  * ```tsx
- * import { QueryBuilderDnD, createDndKitAdapter } from '@react-querybuilder/dnd';
+ * import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+ * import { createDndKitAdapter } from '@react-querybuilder/dnd/dnd-kit';
  * import * as DndKit from '@dnd-kit/core';
  *
  * const adapter = createDndKitAdapter(DndKit);
@@ -149,7 +134,7 @@ const useNativeListeners = (
  *
  * @group DnD
  */
-export const createDndKitAdapter = (dndKitExports: DndKitProp): DndAdapter => {
+export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter => {
   const {
     DndContext,
     useDraggable,
