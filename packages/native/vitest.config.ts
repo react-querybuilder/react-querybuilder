@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig(async () => {
-  const { reactNative } = await import('vitest-native');
-  return {
-    plugins: [reactNative()],
+export default defineConfig(
+  import('vitest-native').then(({ reactNative }) => ({
+    // oxlint-disable-next-line typescript/no-explicit-any
+    plugins: [reactNative() as any],
     test: {
       globals: true,
       testTimeout: 30_000,
@@ -14,5 +14,5 @@ export default defineConfig(async () => {
         '@rqb-dbquerytestutils': '../../packages/core/src/utils/formatQuery/dbqueryTestUtils',
       },
     },
-  };
-});
+  }))
+);

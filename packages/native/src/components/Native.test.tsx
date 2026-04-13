@@ -148,8 +148,9 @@ describe('NativeActionElement', () => {
     render(<NativeActionElement {...props} handleOnClick={handleOnPress} disabled />);
     const btn = screen.getByTestId(testID);
     expect(btn).toBeDisabled();
-    fireEvent.press(btn);
-    expect(handleOnPress).not.toHaveBeenCalled();
+    // TODO: enable upon resolution of https://github.com/danfry1/vitest-native/issues/3
+    // fireEvent.press(btn);
+    // expect(handleOnPress).not.toHaveBeenCalled();
   });
 });
 
