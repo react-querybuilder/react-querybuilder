@@ -13,7 +13,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "types": ["@testing-library/jest-dom", "node", "web", "bun"],
+    "types": ["vitest/globals", "@testing-library/jest-dom", "node", "web", "bun"],
     "paths": {
       "react-querybuilder": ["./packages/react-querybuilder/src"],
       "@react-querybuilder/core": ["./packages/core/src"],
@@ -30,5 +30,6 @@
       "@rqb-utils": ["./packages/core/src/utils"]
     }
   },
-  "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"]
+  "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"],
+  "exclude": ["vitest.config.ts", "vitest.shared.ts", "vitest.workspace.ts"]
 }

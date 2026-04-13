@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 import { PGlite } from '@electric-sql/pglite';
 import { convertToIC, formatQuery } from '@react-querybuilder/core';

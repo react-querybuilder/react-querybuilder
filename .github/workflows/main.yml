@@ -88,7 +88,7 @@ jobs:
           sed -i -E "s/screen\.getByRole\('combobox'\)/screen.getByRole('textbox')/g" ./packages/mantine/src/Mantine.test.tsx
 
           bun install
-          bunx jest --coverage=false
+          bunx vitest run --coverage=false
 
   Typecheck_React_18:
     name: Typecheck React 18

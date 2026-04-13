@@ -1,5 +1,3 @@
-/// <reference types="@testing-library/jest-native" />
-
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
 import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
@@ -29,8 +27,6 @@ import { NativeValueEditorWeb } from './NativeValueEditorWeb';
 import { NativeValueSelector } from './NativeValueSelector';
 import { NativeValueSelectorWeb } from './NativeValueSelectorWeb';
 import { QueryBuilderNative } from './QueryBuilderNative';
-
-jest.setTimeout(30_000);
 
 const query: RuleGroupType = {
   combinator: 'and',
@@ -113,7 +109,7 @@ describe('NativeActionElement', () => {
     ...additionalProps
   }: Partial<ActionProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
-      const handleOnPress = jest.fn();
+      const handleOnPress = vi.fn();
       render(<NativeActionElement {...props} handleOnClick={handleOnPress} {...additionalProps} />);
       const btn = screen.getByTestId(testID);
       expect(btn).toBeEnabled();
@@ -148,7 +144,7 @@ describe('NativeActionElement', () => {
   });
 
   it('is disabled by disabled prop', () => {
-    const handleOnPress = jest.fn();
+    const handleOnPress = vi.fn();
     render(<NativeActionElement {...props} handleOnClick={handleOnPress} disabled />);
     const btn = screen.getByTestId(testID);
     expect(btn).toBeDisabled();
@@ -172,7 +168,7 @@ describe('NativeNotToggle', () => {
   };
 
   it('works', () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
     // oxlint-disable-next-line typescript/no-explicit-any
     const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch as any);
@@ -184,8 +180,8 @@ describe('NativeNotToggle', () => {
 });
 
 describe('NativeShiftActions', () => {
-  const shiftUp = jest.fn();
-  const shiftDown = jest.fn();
+  const shiftUp = vi.fn();
+  const shiftDown = vi.fn();
 
   afterEach(() => {
     shiftUp.mockClear();
@@ -272,7 +268,7 @@ describe('NativeShiftActions', () => {
 });
 
 describe('NativeValueSelector', () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const styles = StyleSheet.create({
     combinatorSelector: { height: 100 },
     combinatorOption: { height: 101 },
@@ -337,7 +333,7 @@ describe('NativeValueSelector', () => {
 });
 
 describe('NativeValueEditor', () => {
-  const handleOnChange = jest.fn();
+  const handleOnChange = vi.fn();
   const values: Option[] = [
     { name: 'opt1', label: 'Option 1' },
     { name: 'opt2', label: 'Option 2' },

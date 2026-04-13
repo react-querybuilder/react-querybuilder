@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 import { Database } from 'bun:sqlite';
 import { convertToIC, formatQuery } from '@react-querybuilder/core';

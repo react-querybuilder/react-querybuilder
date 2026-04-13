@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 // To run this file with Jest instead of Bun:
 // > NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules" npx jest

@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 import { PGlite } from '@electric-sql/pglite';
 import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';

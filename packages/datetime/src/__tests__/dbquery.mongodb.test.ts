@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 import { formatQuery } from '@react-querybuilder/core';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
@@ -6,9 +6,8 @@ import mongoose from 'mongoose';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
 
-if (process.env.JEST_WORKER_ID) {
-  // Give MongoDB time to download
-  jest.setTimeout(60_000);
+if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
+  vi.setConfig({ testTimeout: 60_000 });
 }
 
 const mongoServer = new MongoMemoryServer();

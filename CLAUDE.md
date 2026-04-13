@@ -37,9 +37,8 @@ bun run build
 
 **Quality:**
 
-- `bun test ...` when React and DOM not involved (much faster than `bunx jest ...`)
-- `bunx jest ...` to check 100% test coverage
-- Do not run `bun run test`—it automatically runs unnecessary steps
+- `bun test ...` when React and DOM not involved (much faster than Vitest)
+- `bunx vitest run --coverage` - Run Vitest tests with 100% coverage check
 - `bun typecheck` - TypeScript check
 - `bun lint` - Type-aware linting with Oxlint and `tsgo`
 - `bun fmt` - Format (run after changes)
@@ -147,9 +146,9 @@ import { generateID, isRuleGroup } from '../utils';
 
 ## Testing
 
-- Jest + Testing Library
+- Vitest + Testing Library
 - Helpers in `utils/testing/`
-- 100% coverage required - use `bunx jest` to test for coverage (not `bun test` or `bun run test`)
+- 100% coverage required - use `bunx vitest run --coverage` to test for coverage
 
 - Test files: `ComponentName.test.tsx`
 - Describe blocks: component/function name

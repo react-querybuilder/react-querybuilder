@@ -8,6 +8,7 @@ import type {
   RuleType,
   Schema,
 } from 'react-querybuilder';
+import type { Mock } from 'vitest';
 import {
   buildDropResult,
   canDropOnInlineCombinator,
@@ -19,14 +20,16 @@ import {
   handleDrop,
 } from './dndLogic';
 
-jest.mock('./isHotkeyPressed', () => ({ isHotkeyPressed: jest.fn(() => false) }));
+vi.mock('./isHotkeyPressed', () => ({ isHotkeyPressed: vi.fn(() => false) }));
 
-const { isHotkeyPressed } = require('./isHotkeyPressed') as { isHotkeyPressed: jest.Mock };
+const { isHotkeyPressed } = (await import('./isHotkeyPressed')) as unknown as {
+  isHotkeyPressed: Mock;
+};
 
 const createMockSchema = (overrides: Partial<Schema<any, any>> = {}): Schema<any, any> =>
   ({
     qbId: 'qb1',
-    getQuery: jest.fn(
+    getQuery: vi.fn(
       () =>
         ({
           combinator: 'and',
@@ -37,20 +40,20 @@ const createMockSchema = (overrides: Partial<Schema<any, any>> = {}): Schema<any
           ],
         }) as RuleGroupType
     ),
-    dispatchQuery: jest.fn(),
+    dispatchQuery: vi.fn(),
     independentCombinators: false,
     ...overrides,
   }) as unknown as Schema<any, any>;
 
 const createMockActions = (): QueryActions =>
   ({
-    onGroupAdd: jest.fn(),
-    onGroupRemove: jest.fn(),
-    onPropChange: jest.fn(),
-    onRuleAdd: jest.fn(),
-    onRuleRemove: jest.fn(),
-    moveRule: jest.fn(),
-    groupRule: jest.fn(),
+    onGroupAdd: vi.fn(),
+    onGroupRemove: vi.fn(),
+    onPropChange: vi.fn(),
+    onRuleAdd: vi.fn(),
+    onRuleRemove: vi.fn(),
+    moveRule: vi.fn(),
+    groupRule: vi.fn(),
   }) as QueryActions;
 
 const createDraggedItem = (overrides: Partial<DraggedItem> = {}): DraggedItem =>
@@ -454,8 +457,8 @@ describe('getDestinationPath', () => {
     path: [1],
     type: 'rule',
     qbId: 'qb1',
-    getQuery: jest.fn(),
-    dispatchQuery: jest.fn(),
+    getQuery: vi.fn(),
+    dispatchQuery: vi.fn(),
   };
 
   it('returns the path when grouping', () => {
@@ -510,8 +513,8 @@ describe('handleDrop', () => {
         type: 'rule',
         path: [2],
         qbId: 'qb1',
-        getQuery: jest.fn(),
-        dispatchQuery: jest.fn(),
+        getQuery: vi.fn(),
+        dispatchQuery: vi.fn(),
       },
       schema: createMockSchema(),
       actions,
@@ -530,8 +533,8 @@ describe('handleDrop', () => {
         type: 'rule',
         path: [2],
         qbId: 'qb1',
-        getQuery: jest.fn(),
-        dispatchQuery: jest.fn(),
+        getQuery: vi.fn(),
+        dispatchQuery: vi.fn(),
       },
       schema: createMockSchema(),
       actions,
@@ -550,8 +553,8 @@ describe('handleDrop', () => {
         type: 'rule',
         path: [2],
         qbId: 'qb1',
-        getQuery: jest.fn(),
-        dispatchQuery: jest.fn(),
+        getQuery: vi.fn(),
+        dispatchQuery: vi.fn(),
       },
       schema: createMockSchema(),
       actions,
@@ -563,7 +566,7 @@ describe('handleDrop', () => {
 
   it('inserts into other QB and removes from source for cross-QB move', () => {
     const otherQuery: RuleGroupType = { combinator: 'and', rules: [] };
-    const dispatchQuery = jest.fn();
+    const dispatchQuery = vi.fn();
     const actions = createMockActions();
     const item = createDraggedItem({ path: [0], qbId: 'qb1' });
 
@@ -589,7 +592,7 @@ describe('handleDrop', () => {
   it('inserts into other QB without removing for cross-QB copy', () => {
     isHotkeyPressed.mockImplementation((key: string) => key === 'alt');
     const otherQuery: RuleGroupType = { combinator: 'and', rules: [] };
-    const dispatchQuery = jest.fn();
+    const dispatchQuery = vi.fn();
     const actions = createMockActions();
     const item = createDraggedItem({ path: [0], qbId: 'qb1' });
 
@@ -618,7 +621,7 @@ describe('handleDrop', () => {
       combinator: 'and',
       rules: [{ field: 'f1', operator: '=', value: 'v1' }],
     };
-    const dispatchQuery = jest.fn();
+    const dispatchQuery = vi.fn();
     const actions = createMockActions();
     const item = createDraggedItem({ path: [0], qbId: 'qb1' });
 

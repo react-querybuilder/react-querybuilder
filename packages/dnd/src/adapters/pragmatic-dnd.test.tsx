@@ -8,6 +8,7 @@ import type {
   Schema,
 } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
+import type { Mock } from 'vitest';
 import { isDndAdapter } from '../adapter';
 import { QueryBuilderDnD } from '../QueryBuilderDnD';
 import { createPragmaticDndAdapter } from './pragmatic-dnd';
@@ -49,28 +50,28 @@ const createMockPragmaticDnd = () => {
   const monitors: MonitorRegistration[] = [];
 
   return {
-    draggable: jest.fn((args: DraggableRegistration) => {
+    draggable: vi.fn((args: DraggableRegistration) => {
       draggables.push(args);
       return () => {
         const idx = draggables.indexOf(args);
         if (idx >= 0) draggables.splice(idx, 1);
       };
     }),
-    dropTargetForElements: jest.fn((args: DropTargetRegistration) => {
+    dropTargetForElements: vi.fn((args: DropTargetRegistration) => {
       dropTargets.push(args);
       return () => {
         const idx = dropTargets.indexOf(args);
         if (idx >= 0) dropTargets.splice(idx, 1);
       };
     }),
-    monitorForElements: jest.fn((args: MonitorRegistration) => {
+    monitorForElements: vi.fn((args: MonitorRegistration) => {
       monitors.push(args);
       return () => {
         const idx = monitors.indexOf(args);
         if (idx >= 0) monitors.splice(idx, 1);
       };
     }),
-    combine: jest.fn((...fns: (() => void)[]) => () => {
+    combine: vi.fn((...fns: (() => void)[]) => () => {
       for (const fn of fns) fn();
     }),
     _draggables: draggables,
@@ -90,7 +91,7 @@ const mockSchema = (overrides?: Partial<Schema<any, any>>): Schema<any, any> =>
         { field: 'f2', operator: '=', value: 'v2' },
       ],
     }),
-    dispatchQuery: jest.fn(),
+    dispatchQuery: vi.fn(),
     independentCombinators: false,
     classNames: {},
     suppressStandardClassnames: false,
@@ -99,11 +100,7 @@ const mockSchema = (overrides?: Partial<Schema<any, any>>): Schema<any, any> =>
 // oxlint-enable typescript/no-explicit-any
 
 const mockActions = (): QueryActions =>
-  ({
-    moveRule: jest.fn(),
-    groupRule: jest.fn(),
-    onRuleRemove: jest.fn(),
-  }) as unknown as QueryActions;
+  ({ moveRule: vi.fn(), groupRule: vi.fn(), onRuleRemove: vi.fn() }) as unknown as QueryActions;
 
 const mockRule = (overrides?: Partial<RuleType>): RuleType => ({
   field: 'f1',
@@ -216,7 +213,7 @@ describe('createPragmaticDndAdapter', () => {
       expect(mock.draggable).toHaveBeenCalledTimes(1);
       expect(mock.dropTargetForElements).toHaveBeenCalledTimes(1);
 
-      const dragCall = (mock.draggable as jest.Mock).mock.calls[0][0];
+      const dragCall = (mock.draggable as Mock).mock.calls[0][0];
       expect(dragCall.element).toBe(screen.getByTestId('container'));
       expect(dragCall.dragHandle).toBe(screen.getByTestId('handle'));
     });
@@ -498,11 +495,11 @@ describe('createPragmaticDndAdapter', () => {
         </adapter.DndProvider>
       );
 
-      const dragCall = (mock.draggable as jest.Mock).mock.calls[0][0];
+      const dragCall = (mock.draggable as Mock).mock.calls[0][0];
       expect(dragCall.element).toBe(screen.getByTestId('preview'));
       expect(dragCall.dragHandle).toBe(screen.getByTestId('handle'));
 
-      const dropCall = (mock.dropTargetForElements as jest.Mock).mock.calls[0][0];
+      const dropCall = (mock.dropTargetForElements as Mock).mock.calls[0][0];
       expect(dropCall.element).toBe(screen.getByTestId('drop-header'));
     });
 
