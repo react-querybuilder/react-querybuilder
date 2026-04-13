@@ -394,6 +394,7 @@
         "react-native-web": "~0.21.2",
         "react-querybuilder": "8.14.4",
         "react-redux": "catalog:",
+        "react-test-renderer": "catalog:test",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -614,6 +615,7 @@
       "@testing-library/react": "^16.3.2",
       "@testing-library/user-event": "14.6.1",
       "mongoose": "^9.4.1",
+      "react-test-renderer": "^19.2.5",
     },
   },
   "packages": {
