@@ -173,6 +173,7 @@
     "@types/web": "^0.0.345",
     "@typescript/native-preview": "^7.0.0-dev.20260412.1",
     "@vitest/coverage-v8": "^4.1.4",
+    "@vitest/ui": "^4.1.4",
     "bun-plugin-tailwind": "^0.1.2",
     "concurrently": "^9.2.1",
     "esbuild-analyzer": "^0.2.0",
