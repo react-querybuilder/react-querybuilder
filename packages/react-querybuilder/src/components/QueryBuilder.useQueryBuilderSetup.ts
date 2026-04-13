@@ -73,9 +73,7 @@ export type UseQueryBuilderSetup<
     | WithUnknownIndex<BaseOption & FullOption>[]
     | OptionGroup<WithUnknownIndex<BaseOption & FullOption>>[];
   getRuleDefaultValue: // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
-  <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
-    r: RT
-  ) => any; // oxlint-disable-line typescript/no-explicit-any
+  <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(r: RT) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   createRuleGroup: (independentCombinators?: boolean) => RG;
 } & RemoveNullability<{
