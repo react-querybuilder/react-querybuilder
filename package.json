@@ -202,6 +202,7 @@
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",
-    "spel2js@0.2.9": "patches/spel2js@0.2.9.patch"
+    "spel2js@0.2.9": "patches/spel2js@0.2.9.patch",
+    "react-dnd-test-utils@16.0.1": "patches/react-dnd-test-utils@16.0.1.patch"
   }
 }
