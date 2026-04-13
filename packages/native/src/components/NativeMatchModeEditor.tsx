@@ -4,7 +4,9 @@ import type { MatchModeEditorNativeProps } from '../types';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
 const requiresThreshold = (mm?: string | null) =>
-  ['atleast', 'atmost', 'exactly'].includes(lc(mm) ?? /* istanbul ignore next */ '');
+  ['atleast', 'atmost', 'exactly'].includes(
+    lc(mm) ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+  );
 const dummyPath: Path = [];
 
 /**

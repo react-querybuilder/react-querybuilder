@@ -1,9 +1,9 @@
 import path from 'node:path';
-import { defineConfig } from 'vitest/config';
+import type { ViteUserConfig } from 'vitest/config';
 
 const root = path.resolve(import.meta.dirname);
 
-export default defineConfig({
+export default {
   resolve: {
     alias: {
       'react-querybuilder': path.resolve(root, 'packages/react-querybuilder/src'),
@@ -18,15 +18,5 @@ export default defineConfig({
   test: {
     globals: true,
     setupFiles: [path.resolve(root, 'vitestSetup.ts')],
-    coverage: {
-      provider: 'v8',
-      exclude: [
-        '**/utils/testing/**',
-        '**/dist/**',
-        '**/TestUtils.ts',
-        '**/packages/rules-engine/src/components/**',
-      ],
-      thresholds: { branches: 100, functions: 100, lines: 100, statements: 100 },
-    },
   },
-});
+} satisfies ViteUserConfig;

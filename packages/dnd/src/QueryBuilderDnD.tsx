@@ -237,16 +237,18 @@ const useAsyncReactDnDAdapter = (skip: boolean): DndAdapter | null => {
     const loadDnD = async () => {
       const [reactDnD, reactDndHTML5Be, reactDndTouchBe] = await Promise.all(
         ['', '-html5-backend', '-touch-backend'].map(pn =>
-          import(/* @vite-ignore */ `react-dnd${pn}`).catch(/* istanbul ignore next */ () => null)
+          import(/* @vite-ignore */ `react-dnd${pn}`).catch(
+            /* v8 ignore next -- @preserve */ () => null
+          )
         )
       );
 
-      // istanbul ignore else
+      // v8 ignore else
       if (!didCancel) {
-        // istanbul ignore else -- react-dnd is always importable in the test environment
+        // v8 ignore else -- react-dnd is always importable in the test environment
         if (reactDnD) {
           let dndExports: DndProp;
-          // istanbul ignore next
+          // v8 ignore next
           if (reactDndHTML5Be && (!reactDndTouchBe || (reactDndTouchBe && !isTouchDevice()))) {
             dndExports = {
               ...reactDnD,
@@ -303,12 +305,12 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
         )
       );
 
-      // istanbul ignore else
+      // v8 ignore else
       if (!didCancel) {
         if (reactDnD) {
-          // istanbul ignore next
           // Only prefer HTML5 backend if not touch device or we don't have the touch backend
           // (Can't test this since jsdom unconditionally defines `window.ontouchstart`.)
+          // v8 ignore next
           if (reactDndHTML5Be && (!reactDndTouchBe || (reactDndTouchBe && !isTouchDevice()))) {
             setDnd(() => ({
               ...reactDnD,
@@ -325,7 +327,7 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
             }));
           }
         } else {
-          // istanbul ignore else
+          // v8 ignore else
           if (process.env.NODE_ENV !== 'production' && !didWarnEnabledDndWithoutReactDnD) {
             console.error(messages.errorEnabledDndWithoutReactDnD);
             didWarnEnabledDndWithoutReactDnD = true;
@@ -343,7 +345,7 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
     };
   }, [dnd]);
 
-  // istanbul ignore next
+  // v8 ignore next
   if (dnd && !dnd.ReactDndBackend) {
     // Prefer touch backend if this is a touch device
     dnd.ReactDndBackend = isTouchDevice()

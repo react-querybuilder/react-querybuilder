@@ -1,11 +1,8 @@
-import { mergeConfig, defineProject } from 'vitest/config';
+import { mergeConfig } from 'vitest/config';
 import shared from '../../vitest.shared';
 
-export default mergeConfig(
-  shared,
-  defineProject({
-    test: {
-      environment: 'jsdom',
-    },
-  })
-);
+export default mergeConfig(shared, {
+  test: {
+    environment: 'jsdom',
+  },
+});

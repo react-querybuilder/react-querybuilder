@@ -14,7 +14,7 @@ export interface UseOptionListPropParams<O extends FullOption> extends PrepareOp
  * @group Hooks
  * @deprecated Memoize the result of `prepareOptionList` instead.
  */
-// istanbul ignore next
+// v8 ignore next
 export const useOptionListProp = <O extends FullOption>(
   props: UseOptionListPropParams<O>
 ): UseOptionListProp<O> =>

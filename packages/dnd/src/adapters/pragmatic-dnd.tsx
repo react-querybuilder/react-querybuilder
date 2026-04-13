@@ -415,7 +415,8 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
     const dropId = getDropId('inlineCombinator', params.path, params.schema.qbId);
 
-    const hoveringItem = (params.rules ?? /* istanbul ignore next */ [])[
+    const hoveringItem = (params.rules ??
+      /* v8 ignore start -- @preserve */ []) /* v8 ignore stop -- @preserve */[
       params.path.at(-1)! - 1
     ] as RuleType | RuleGroupTypeAny;
 

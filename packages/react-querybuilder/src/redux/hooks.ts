@@ -37,7 +37,11 @@ export const useQueryBuilderQuery = (props?: { schema: { qbId: string } }): Rule
   const rqbContext = React.useContext(QueryBuilderContext);
   return (
     useRQB_INTERNAL_QueryBuilderSelector(
-      getQuerySelectorById(props?.schema.qbId ?? rqbContext.qbId ?? /* istanbul ignore next */ '')
+      getQuerySelectorById(
+        props?.schema.qbId ??
+          rqbContext.qbId ??
+          /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+      )
     ) ?? rqbContext?.initialQuery
   );
 };

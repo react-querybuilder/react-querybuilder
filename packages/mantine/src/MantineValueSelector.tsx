@@ -39,9 +39,9 @@ export const MantineValueSelector = ({
 
   const data = React.useMemo(() => optionListToComboboxData(options), [options]);
 
-  // istanbul ignore next
+  // v8 ignore next
   const changeHandler = (v: string | string[] | null) =>
-    onChange(v ?? val ?? /* istanbul ignore next */ '');
+    onChange(v ?? val ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */);
 
   return multiple ? (
     <MultiSelect

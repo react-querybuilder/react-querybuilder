@@ -336,7 +336,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       condition: REConditionAny = independentCombinators ? defaultConditionIC : defaultCondition
     ) => {
       const reLocal = getRulesEngineSelectorById(reId)(qbStore.getState());
-      // istanbul ignore if
+      // v8 ignore if
       if (!reLocal) return;
       // if (pathIsDisabled(parentConditionPath, reLocal) || rulesEngineDisabled) {
       //   log({ reId, type: LogType.parentPathDisabled, condition, parentConditionPath, rulesEngine: reLocal });
@@ -360,14 +360,14 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   const removeCondition = useCallback(
     (conditionPath: Path) => {
       const reLocal = getRulesEngineSelectorById(reId)(qbStore.getState());
-      // istanbul ignore if
+      // v8 ignore if
       if (!reLocal) return;
       // if (pathIsDisabled(path, reLocal) || rulesEngineDisabled) {
       //   log({ reId, type: LogType.pathDisabled, path, rulesEngine: reLocal });
       //   return;
       // }
       const condition = findConditionPath(conditionPath, reLocal);
-      // istanbul ignore else
+      // v8 ignore else
       if (condition) {
         if (onRemoveCondition(condition as REConditionAny, conditionPath, reLocal)) {
           const newRE = removeRE(reLocal, conditionPath);

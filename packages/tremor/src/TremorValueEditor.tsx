@@ -175,7 +175,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
         enableClear
         value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : undefined}
         onValueChange={d =>
-          handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
+          handleOnChange(d ? dayjs(d).format(dateFormat) : /* v8 ignore next -- @preserve */ '')
         }
         {...extraProps}
       />

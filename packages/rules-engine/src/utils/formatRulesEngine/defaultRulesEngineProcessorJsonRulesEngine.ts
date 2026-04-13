@@ -11,7 +11,7 @@ import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonR
  */
 export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<RuleProperties[]> = (
   rulesEngine,
-  // istanbul ignore next
+  // v8 ignore next
   opts = {}
 ) =>
   rulesEngine.conditions.map<RuleProperties>(c => ({
@@ -26,6 +26,6 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
         defaultRuleGroupProcessorJsonRulesEngine,
     }),
     event:
-      // istanbul ignore next
+      // v8 ignore next
       c.consequent ?? { type: '' },
   }));

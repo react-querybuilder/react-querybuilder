@@ -90,7 +90,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
             withSeconds
             onChange={d =>
               multiValueHandler(
-                d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '',
+                d ? dayjs(d).format(dateTimeLocalFormat) : /* v8 ignore next -- @preserve */ '',
                 i
               )
             }
@@ -230,7 +230,9 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
           disabled={disabled}
           withSeconds
           onChange={d =>
-            handleOnChange(d ? dayjs(d).format(dateTimeLocalFormat) : /* istanbul ignore next */ '')
+            handleOnChange(
+              d ? dayjs(d).format(dateTimeLocalFormat) : /* v8 ignore next -- @preserve */ ''
+            )
           }
           popoverProps={withinPortalFalse}
           {...extraProps}
@@ -246,7 +248,7 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps): React.JSX
         className={className}
         disabled={disabled}
         onChange={d =>
-          handleOnChange(d ? dayjs(d).format(dateFormat) : /* istanbul ignore next */ '')
+          handleOnChange(d ? dayjs(d).format(dateFormat) : /* v8 ignore next -- @preserve */ '')
         }
         popoverProps={withinPortalFalse}
         {...extraProps}

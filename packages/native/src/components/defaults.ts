@@ -22,7 +22,7 @@ export const defaultNativeControlElements: Controls<FullField, string> = {
   cloneRuleAction: NativeActionElement,
   combinatorSelector: NativeValueSelector,
   // TODO?: implement drag-and-drop
-  dragHandle: forwardRef(/* istanbul ignore next */ () => null),
+  dragHandle: forwardRef(/* v8 ignore next -- @preserve */ () => null),
   fieldSelector: NativeValueSelector,
   inlineCombinator: NativeInlineCombinator,
   lockGroupAction: NativeActionElement,

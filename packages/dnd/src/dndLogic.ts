@@ -270,7 +270,7 @@ export const handleDrop = ({
     }
   } else {
     const otherBuilderQuery = dropResult.getQuery();
-    // istanbul ignore else
+    // v8 ignore else
     if (otherBuilderQuery) {
       if (groupItems) {
         dropResult.dispatchQuery(
@@ -284,7 +284,7 @@ export const handleDrop = ({
       } else {
         dropResult.dispatchQuery(insert(otherBuilderQuery, item, destinationPath));
       }
-      // istanbul ignore else
+      // v8 ignore else
       if (dropEffect !== 'copy') {
         actions.onRuleRemove(item.path);
       }

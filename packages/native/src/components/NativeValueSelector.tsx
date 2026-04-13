@@ -97,7 +97,7 @@ export const NativeValueSelector = <Opt extends FullOption = FullOption>({
 
   const { onChange } = useValueSelector({ handleOnChange, listsAsArrays, multiple, value });
 
-  // istanbul ignore next
+  // v8 ignore next
   const val = multiple ? (Array.isArray(value) ? joinWith(value, ',') : value) : value;
 
   return (
