@@ -325,7 +325,7 @@ export function getFirstOption<Opt extends BaseOption>(
  *
  * @group Option Lists
  */
-export const toFlatOptionArray = <T extends FullOption, OL extends FullOptionList<T>>(arr: OL) =>
+export const toFlatOptionArray = <T extends FullOption>(arr: FullOptionList<T>) =>
   uniqByIdentifier(isOptionGroupArray(arr) ? arr.flatMap(og => og.options) : arr) as T[];
 
 /**

@@ -11,8 +11,7 @@ import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonR
  */
 export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<RuleProperties[]> = (
   rulesEngine,
-  // v8 ignore next
-  opts = {}
+  opts
 ) =>
   rulesEngine.conditions.map<RuleProperties>(c => ({
     conditions: formatQuery(c.antecedent, {

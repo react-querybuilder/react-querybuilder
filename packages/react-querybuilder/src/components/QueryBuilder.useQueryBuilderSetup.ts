@@ -72,7 +72,8 @@ export type UseQueryBuilderSetup<
   combinators:
     | WithUnknownIndex<BaseOption & FullOption>[]
     | OptionGroup<WithUnknownIndex<BaseOption & FullOption>>[];
-  getRuleDefaultValue: <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
+  getRuleDefaultValue: // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+  <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
     r: RT
   ) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
@@ -286,6 +287,7 @@ export const useQueryBuilderSetup = <
   );
 
   const getRuleDefaultValue = useCallback(
+    // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
     <RT extends RuleType = R>(r: RT) => {
       const fieldData = (fieldMap[r.field as FieldName] ?? {}) as F;
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {

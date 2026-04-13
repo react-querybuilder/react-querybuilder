@@ -25,6 +25,7 @@ const dummyFD = {
  * `valueSources` property, the `getValueSources` prop is used.
  * Returns `[FullOption<"value">]` by default.
  */
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export const getValueSourcesUtil = <F extends FullField, O extends string>(
   fieldData: F,
   operator: string,
