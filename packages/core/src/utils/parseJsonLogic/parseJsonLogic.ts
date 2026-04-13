@@ -346,9 +346,7 @@ function parseJsonLogic(
 
   const result = processLogic(logicRoot, true);
   const finalQuery: DefaultRuleGroupType = result || emptyRuleGroup;
-  return prepare(
-    options.independentCombinators ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery) : finalQuery
-  );
+  return prepare(options.independentCombinators ? convertToIC(finalQuery) : finalQuery);
 }
 
 export { parseJsonLogic };

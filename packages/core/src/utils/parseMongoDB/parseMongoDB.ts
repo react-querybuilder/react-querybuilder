@@ -466,9 +466,7 @@ function parseMongoDB(
       ? result
       : { combinator: 'and', rules: [result] }
     : emptyRuleGroup;
-  return prepare(
-    options.independentCombinators ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery) : finalQuery
-  );
+  return prepare(options.independentCombinators ? convertToIC(finalQuery) : finalQuery);
 }
 
 export { parseMongoDB };

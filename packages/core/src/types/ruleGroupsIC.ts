@@ -129,3 +129,31 @@ export type GetRuleTypeFromGroupWithFieldAndOperator<
 export type GenericizeRuleGroupType<RG> = RG extends RuleGroupType
   ? RuleGroupType
   : RuleGroupTypeIC;
+
+/**
+ * Converts a {@link RuleGroupType} extension to the corresponding
+ * {@link RuleGroupTypeIC} type, preserving any additional properties.
+ * If the type already extends {@link RuleGroupTypeIC}, it is returned as-is.
+ */
+export type ToRuleGroupTypeIC<T extends RuleGroupTypeAny> =
+  T extends RuleGroupTypeIC
+    ? T
+    : T extends DefaultRuleGroupType<infer F>
+      ? DefaultRuleGroupTypeIC<F>
+      : T extends RuleGroupType<infer R, infer C>
+        ? RuleGroupTypeIC<R, C> & Omit<T, keyof RuleGroupType<R, C>>
+        : T;
+
+/**
+ * Converts a {@link RuleGroupTypeIC} extension to the corresponding
+ * {@link RuleGroupType} type, preserving any additional properties.
+ * If the type already extends {@link RuleGroupType} (non-IC), it is returned as-is.
+ */
+export type ToRuleGroupType<T extends RuleGroupTypeAny> =
+  T extends { combinator: string }
+    ? T
+    : T extends DefaultRuleGroupTypeIC<infer F>
+      ? DefaultRuleGroupType<F>
+      : T extends RuleGroupTypeIC<infer R, infer C>
+        ? RuleGroupType<R, C> & Omit<T, keyof RuleGroupTypeIC<R, C>>
+        : T;
