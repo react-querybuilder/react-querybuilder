@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `stats`: aggregate counts (`totalRules`, `totalGroups`, `validRules`, `invalidRules`, `validGroups`, `invalidGroups`).
   - `fieldSummary`: per-field `ruleCount` and `invalidCount`.
 
+### Fixed
+
+- [#1019] `useValueSelector` normalizes multiselect values to strings so they match option names, which are always strings.
+
 ## [v8.14.4] - 2026-03-31
 
 ### Fixed
@@ -2146,6 +2150,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1007]: https://github.com/react-querybuilder/react-querybuilder/pull/1007
 [#1015]: https://github.com/react-querybuilder/react-querybuilder/pull/1015
 [#1018]: https://github.com/react-querybuilder/react-querybuilder/pull/1018
+[#1019]: https://github.com/react-querybuilder/react-querybuilder/pull/1019
 [#1021]: https://github.com/react-querybuilder/react-querybuilder/pull/1021
 
 <!-- #endregion -->

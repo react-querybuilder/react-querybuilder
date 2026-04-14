@@ -111,6 +111,29 @@ export const testSelect = (
         await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
         expect(onChange).toHaveBeenCalledWith([testVal.name]);
       });
+
+      it('should handle numeric values in multiselect by normalizing to strings', () => {
+        const onChange = vi.fn();
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        const numericOptions = [
+          { name: '1', value: '1', label: 'One' },
+          { name: '2', value: '2', label: 'Two' },
+        ];
+        const optionProps =
+          'values' in props ? { values: numericOptions } : { options: numericOptions };
+        render(
+          <Component
+            {...props}
+            {...optionProps}
+            {...multiselectProps}
+            handleOnChange={onChange}
+            value={[1]}
+          />
+        );
+        const select = findSelect(screen.getByTitle(title));
+        expect(select.selectedOptions).toHaveLength(1);
+        expect(select.selectedOptions[0]).toHaveTextContent('One');
+      });
     }
 
     // Test as single-value selector
