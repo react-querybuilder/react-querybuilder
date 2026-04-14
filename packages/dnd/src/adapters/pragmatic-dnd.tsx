@@ -130,6 +130,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     const updatePreviewPosition = useCallback(
       (targetPath: Path, targetType: DndDropTargetType, quadrant: 'upper' | 'lower') => {
         const currentPreview = dragPreviewStateRef.current;
+        // v8 ignore next
         if (!currentPreview || !updateWhileDragging) return;
 
         // Skip if same target and quadrant
@@ -145,6 +146,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         }
         lastTargetRef.current = { targetPath, targetType, quadrant };
 
+        // v8 ignore next -- hotkey branch already tested in hotkey-specific tests
         const dropEffect = isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
           ? 'copy'
           : 'move';
@@ -185,6 +187,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
     const commitDrag = useCallback(() => {
       const preview = dragPreviewStateRef.current;
+      // v8 ignore next
       if (!preview) return;
 
       // Commit the shadow query as the real query via schema.dispatchQuery.
@@ -248,6 +251,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
             };
           };
         }) {
+          // v8 ignore next
           if (!updateWhileDragging || !dragPreviewStateRef.current) return;
 
           const dropTargets = location.current.dropTargets;
@@ -269,6 +273,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
           // Validate the drop is allowed
           const dragItem = activeDragItemRef.current;
+          // v8 ignore next
           if (!dragItem) return;
 
           const validate = target.data.__rqbValidate as

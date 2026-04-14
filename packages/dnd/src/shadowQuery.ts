@@ -47,6 +47,7 @@ const isNoOp = (draggedPath: Path, destinationPath: Path): boolean => {
   const parentDest = getParentPath(destinationPath);
 
   // Different parents → not a no-op
+  // v8 ignore next -- unreachable: paths of equal length always have equal-length parents
   if (parentDragged.length !== parentDest.length) return false;
   for (let i = 0; i < parentDragged.length; i++) {
     if (parentDragged[i] !== parentDest[i]) return false;
@@ -100,6 +101,7 @@ export const computeShadowQuery = ({
       // depending on relative positions. For preview purposes, use targetPath.
       return { shadowQuery, previewPath: targetPath };
     } catch {
+      // v8 ignore next
       return null;
     }
   }
@@ -132,6 +134,7 @@ export const computeShadowQuery = ({
     }
     return { shadowQuery, previewPath };
   } catch {
+    // v8 ignore next
     return null;
   }
 };

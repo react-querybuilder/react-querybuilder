@@ -6,12 +6,21 @@ import { computeDestinationFromQuadrant, computeShadowQuery } from './shadowQuer
 const rule1: RuleType = { field: 'f1', operator: '=', value: 'v1' };
 const rule2: RuleType = { field: 'f2', operator: '=', value: 'v2' };
 const rule3: RuleType = { field: 'f3', operator: '=', value: 'v3' };
+const rule4: RuleType = { field: 'f4', operator: '=', value: 'v4' };
 
 const baseQuery: RuleGroupType = { combinator: 'and', rules: [rule1, rule2, rule3] };
 
 const nestedQuery: RuleGroupType = {
   combinator: 'and',
   rules: [rule1, { combinator: 'or', rules: [rule2, rule3] }],
+};
+
+const twoGroupsQuery: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    { combinator: 'or', rules: [rule1, rule2] },
+    { combinator: 'or', rules: [rule3, rule4] },
+  ],
 };
 
 const createDragItem = (path: number[], rule: RuleType = rule1): DraggedItem =>
@@ -204,6 +213,56 @@ describe('computeShadowQuery', () => {
     const q = result!.shadowQuery as RuleGroupType;
     // rule2 should now be first in the root group
     expect(q.rules[0]).toMatchObject({ field: 'f2' });
+  });
+
+  it('returns null for a no-op move within a nested group', () => {
+    // draggedPath [0, 1], lower quadrant of [0, 1] → dest [0, 2]
+    // Same parent [0], destIdx(2) === dragIdx(1)+1 → no-op
+    const result = computeShadowQuery({
+      originalQuery: twoGroupsQuery,
+      draggedItem: createDragItem([0, 1], rule2),
+      draggedPath: [0, 1],
+      targetPath: [0, 1],
+      targetType: 'rule',
+      quadrant: 'lower',
+      dropEffect: 'move',
+      groupItems: false,
+    });
+    expect(result).toBeNull();
+  });
+
+  it('detects different parent paths in isNoOp (not a no-op)', () => {
+    // Move from [0, 1] to upper of [1, 1] → dest is [1, 1]
+    // Parents are [0] and [1] — different, so not a no-op
+    const result = computeShadowQuery({
+      originalQuery: twoGroupsQuery,
+      draggedItem: createDragItem([0, 1], rule2),
+      draggedPath: [0, 1],
+      targetPath: [1, 1],
+      targetType: 'rule',
+      quadrant: 'upper',
+      dropEffect: 'move',
+      groupItems: false,
+    });
+    expect(result).not.toBeNull();
+  });
+
+  it('computes correct previewPath for cross-parent move (different parents)', () => {
+    // Move from [0, 0] to upper of [1, 0] → dest [1, 0]
+    // Parents [0] vs [1] differ → sameParent is false → previewPath = destinationPath
+    const result = computeShadowQuery({
+      originalQuery: twoGroupsQuery,
+      draggedItem: createDragItem([0, 0], rule1),
+      draggedPath: [0, 0],
+      targetPath: [1, 0],
+      targetType: 'rule',
+      quadrant: 'upper',
+      dropEffect: 'move',
+      groupItems: false,
+    });
+    expect(result).not.toBeNull();
+    // For cross-parent, previewPath should equal destinationPath
+    expect(result!.previewPath).toEqual([1, 0]);
   });
 
   it('returns the query unchanged for out-of-bounds source path', () => {

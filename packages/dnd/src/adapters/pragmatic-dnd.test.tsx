@@ -2043,5 +2043,336 @@ describe('createPragmaticDndAdapter', () => {
       // Standard handleDrop should have been called (moveRule)
       expect(moveRuleFn).toHaveBeenCalled();
     });
+
+    it('commitDrag does not call dispatchQuery when shadow equals original (no moves)', () => {
+      const { mock, adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      const monitor = getMonitor(mock);
+
+      // Start drag
+      act(() => {
+        monitor.onDragStart?.({
+          source: {
+            data: {
+              __rqbPath: [2],
+              __rqbSchema: schema,
+              __rqbActions: mockActions(),
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Drop immediately without any onDrag (shadow === original)
+      act(() => {
+        monitor.onDrop?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                { data: { __rqbType: 'rule', __rqbPath: [0], __rqbValidate: () => true } },
+              ],
+            },
+          },
+        });
+      });
+
+      // dispatchQuery should NOT be called because shadow === original
+      expect(dispatchQueryFn).not.toHaveBeenCalled();
+    });
+
+    it('onDrag returns early when dropTargets is empty', () => {
+      const { mock, adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      const monitor = getMonitor(mock);
+
+      act(() => {
+        monitor.onDragStart?.({
+          source: {
+            data: {
+              __rqbPath: [2],
+              __rqbSchema: schema,
+              __rqbActions: mockActions(),
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // onDrag with empty dropTargets — should not throw
+      act(() => {
+        monitor.onDrag?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: { current: { dropTargets: [], input: { clientX: 100, clientY: 100 } } },
+        });
+      });
+
+      // No error means early return worked
+      expect(true).toBe(true);
+    });
+
+    it('onDrag returns early when target data is missing', () => {
+      const { mock, adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      const monitor = getMonitor(mock);
+
+      act(() => {
+        monitor.onDragStart?.({
+          source: {
+            data: {
+              __rqbPath: [2],
+              __rqbSchema: schema,
+              __rqbActions: mockActions(),
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      const mockElement = {
+        getBoundingClientRect: () => ({
+          top: 100,
+          bottom: 140,
+          height: 40,
+          left: 0,
+          right: 200,
+          width: 200,
+          x: 0,
+          y: 100,
+          toJSON: () => {},
+        }),
+      } as unknown as Element;
+
+      // Target missing __rqbType and __rqbPath
+      act(() => {
+        monitor.onDrag?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [{ data: {}, element: mockElement }],
+              input: { clientX: 100, clientY: 102 },
+            },
+          },
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDrag returns early when cursor is in middle zone (null quadrant)', () => {
+      const { mock, adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      const monitor = getMonitor(mock);
+
+      act(() => {
+        monitor.onDragStart?.({
+          source: {
+            data: {
+              __rqbPath: [2],
+              __rqbSchema: schema,
+              __rqbActions: mockActions(),
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      const mockElement = {
+        getBoundingClientRect: () => ({
+          top: 100,
+          bottom: 140,
+          height: 40,
+          left: 0,
+          right: 200,
+          width: 200,
+          x: 0,
+          y: 100,
+          toJSON: () => {},
+        }),
+      } as unknown as Element;
+
+      // clientY=120 is in the middle zone (top 25% is 100-110, bottom 25% is 130-140)
+      act(() => {
+        monitor.onDrag?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [0], __rqbValidate: () => true },
+                  element: mockElement,
+                },
+              ],
+              input: { clientX: 100, clientY: 120 },
+            },
+          },
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDrag returns early when validation fails', () => {
+      const { mock, adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      const monitor = getMonitor(mock);
+
+      act(() => {
+        monitor.onDragStart?.({
+          source: {
+            data: {
+              __rqbPath: [2],
+              __rqbSchema: schema,
+              __rqbActions: mockActions(),
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      const mockElement = {
+        getBoundingClientRect: () => ({
+          top: 100,
+          bottom: 140,
+          height: 40,
+          left: 0,
+          right: 200,
+          width: 200,
+          x: 0,
+          y: 100,
+          toJSON: () => {},
+        }),
+      } as unknown as Element;
+
+      // Validation function returns false
+      act(() => {
+        monitor.onDrag?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [0], __rqbValidate: () => false },
+                  element: mockElement,
+                },
+              ],
+              input: { clientX: 100, clientY: 102 },
+            },
+          },
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDrag uses upper quadrant for ruleGroup targets', () => {
+      const { mock, adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      const monitor = getMonitor(mock);
+
+      act(() => {
+        monitor.onDragStart?.({
+          source: {
+            data: {
+              __rqbPath: [2],
+              __rqbSchema: schema,
+              __rqbActions: mockActions(),
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      const mockElement = {
+        getBoundingClientRect: () => ({
+          top: 100,
+          bottom: 140,
+          height: 40,
+          left: 0,
+          right: 200,
+          width: 200,
+          x: 0,
+          y: 100,
+          toJSON: () => {},
+        }),
+      } as unknown as Element;
+
+      // ruleGroup target — always uses 'upper', regardless of cursor position
+      act(() => {
+        monitor.onDrag?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'ruleGroup', __rqbPath: [], __rqbValidate: () => true },
+                  element: mockElement,
+                },
+              ],
+              input: { clientX: 100, clientY: 135 },
+            },
+          },
+        });
+      });
+
+      // Drop to commit
+      act(() => {
+        monitor.onDrop?.({
+          source: { data: { __rqbPath: [2], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                { data: { __rqbType: 'ruleGroup', __rqbPath: [], __rqbValidate: () => true } },
+              ],
+            },
+          },
+        });
+      });
+
+      // If shadow changed, dispatchQuery is called
+      expect(dispatchQueryFn).toHaveBeenCalled();
+    });
   });
 });

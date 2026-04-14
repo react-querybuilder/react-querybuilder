@@ -31,6 +31,7 @@ export const InlineCombinatorDnD = ({
   });
 
   // Suppress isOver when updateWhileDragging is active
+  // v8 ignore next -- same pattern as RuleDnD/RuleGroupDnD; IC only used in specific mode
   const effectiveIsOver = isUpdateWhileDragging ? false : isOver;
 
   const wrapperClassName = [

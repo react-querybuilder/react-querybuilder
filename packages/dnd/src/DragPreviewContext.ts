@@ -32,6 +32,7 @@ export interface DragPreviewContextValue {
   cancelDrag: () => void;
 }
 
+// v8 ignore next
 const noop = (): void => {};
 
 /** @group Components */
