@@ -8,15 +8,6 @@ if (typeof Element !== 'undefined') {
 
 // oxlint-disable-next-line prefer-global-this
 if (typeof window !== 'undefined') {
-  // Suppress "outdated JSX transform" warning (using classic transform intentionally)
-  const originalWarn = console.warn;
-  console.warn = (...args: Parameters<typeof console.warn>) => {
-    if (typeof args[0] === 'string' && args[0].includes('outdated JSX transform')) {
-      return;
-    }
-    originalWarn.apply(console, args);
-  };
-
   // Suppress React act() warning caused by Vitest jsdom/Node context mismatch.
   // react-dom runs in Node's global scope (externalized) while tests run in
   // jsdom's VM, so globalThis.IS_REACT_ACT_ENVIRONMENT can't reach react-dom.

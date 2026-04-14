@@ -4,6 +4,12 @@ import type { ViteUserConfig } from 'vitest/config';
 const root = path.resolve(import.meta.dirname);
 
 export default {
+  oxc: {
+    jsx: {
+      runtime: 'automatic',
+      importSource: 'react',
+    },
+  },
   resolve: {
     alias: {
       'react-querybuilder': path.resolve(root, 'packages/react-querybuilder/src'),
