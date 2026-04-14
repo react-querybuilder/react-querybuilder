@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.0.0).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.0.2).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -86,9 +86,8 @@ body,
 
 @media screen and (max-device-width: 31.25em) {
   body,
-    :host {
-      -webkit-text-size-adjust: 100%;
-    }
+  :host {
+    -webkit-text-size-adjust: 100%;
   }
 }
 
