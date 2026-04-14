@@ -258,44 +258,6 @@ const query = db.select().from(table).where(augmentedWhere);
 
 :::
 
-<details>
-
-<summary>`@react-querybuilder/drizzle` _(deprecated)_</summary>
-
-Use the [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select).
-
-First, generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config (or a plain object mapping field names to Drizzle `Column` definitions) to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query builder chain.
-
-```ts
-import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
-import { formatQuery } from 'react-querybuilder';
-
-const db = drizzle(process.env.DB_FILE_NAME!);
-
-const table = sqliteTable('musicians', {
-  firstName: text(),
-  lastName: text(),
-});
-
-const ruleGroupProcessor = generateDrizzleRuleGroupProcessor(table);
-
-// Tip: `format` is not required when `ruleGroupProcessor` is provided
-const where = formatQuery(query, { ruleGroupProcessor });
-
-const query = db.select().from(table).where(where);
-console.log(query.toSQL());
-// {
-//   sql: 'select "firstName", "lastName" from "musicians" where ("musicians"."firstName" = ? and "musicians"."lastName" = ?)',
-//   params: ['Steve', 'Vai']
-// }
-
-console.log(query.all());
-// [{ firstName: 'Steve', lastName: 'Vai' }]
-```
-
-</details>
-
 #### Sequelize
 
 Generate objects for Sequelize `findAll` `where` properties using the "sequelize" format. Requirements:

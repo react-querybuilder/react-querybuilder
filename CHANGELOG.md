@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - In `@react-querybuilder/dnd`, `react-dnd` is now an _optional_ peer dependency (it was previously required).
 - **Deprecated**: Passing raw `react-dnd` exports as the `dnd` prop (e.g., `dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend }}`) still works—they are auto-detected and wrapped in a `react-dnd` adapter—but `createReactDnDAdapter` is preferred.
 - **Deprecated**: `useReactDnD` hook — use `createReactDnDAdapter` instead.
+- **Deprecated**: `@react-querybuilder/drizzle` package. Use `formatQuery(query, 'drizzle')` from `react-querybuilder` or `@react-querybuilder/core` instead.
 
 ### Added
 
