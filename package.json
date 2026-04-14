@@ -180,6 +180,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "globals": "^17.5.0",
     "jscodeshift": "^17.3.0",
+    "jsdom": "^29.0.2",
     "jsdom-testing-mocks": "^1.16.0",
     "oxfmt": "^0.45.0",
     "oxlint": "^1.60.0",
