@@ -207,3 +207,32 @@ Key code for the modifier key that puts a drag-and-drop action in ["group" mode]
 `boolean`
 
 When `true`, disables the default browser drag preview during drag operations. This is useful when implementing custom drag layers or custom drag preview components ([see relevant React DnD documentation](https://react-dnd.github.io/react-dnd/examples/drag-around/custom-drag-layer)). Default is `false`.
+
+### `updateWhileDragging`
+
+`boolean`
+
+When `true`, the query tree visually rearranges in real-time as the user drags rules and groups, providing immediate spatial feedback instead of showing a drop indicator line. The actual `onQueryChange` callback only fires once when the item is dropped — intermediate positions are purely visual. If the drag is cancelled (e.g., by releasing outside a valid target), the query reverts to its original state.
+
+Currently supported only by the `@atlaskit/pragmatic-drag-and-drop` adapter. Other adapters ignore this prop and fall back to the standard drop-indicator behavior.
+
+When this feature is active:
+
+- Rules and groups slide into their preview positions during drag
+- The standard "drop indicator" line (`dndOver` class) is suppressed
+- Inline combinator drop targets are disabled (quadrant detection on rules is used instead)
+- Hovering in the upper half of a rule inserts the dragged item before it; the lower half inserts after
+
+Default is `false`.
+
+```tsx
+<QueryBuilderDnD dnd={pragmaticDndAdapter} updateWhileDragging>
+  <QueryBuilder />
+</QueryBuilderDnD>
+```
+
+### `onDragMove`
+
+`(params: { draggedItem, shadowQuery, originalQuery, previewPath }) => void`
+
+Callback invoked on each drag position change when [`updateWhileDragging`](#updatewhiledragging) is `true`. Receives the current shadow query (the preview query with the dragged item at its prospective position), the original query, and the preview path.

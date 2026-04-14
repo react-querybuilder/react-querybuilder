@@ -81,6 +81,10 @@
     opacity: 0.5;
   }
 
+  &.dndHidden {
+    display: none;
+  }
+
   .queryBuilder-dragHandle {
     cursor: move;
   }

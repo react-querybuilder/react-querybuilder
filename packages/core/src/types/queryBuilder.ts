@@ -162,6 +162,16 @@ export interface Classnames {
    */
   dndDropNotAllowed: Classname;
   /**
+   * Classname(s) applied to a rule or group at its prospective position
+   * during an active drag when `updateWhileDragging` is enabled.
+   */
+  dndPreviewPosition: Classname;
+  /**
+   * Classname(s) applied to a dragged rule or group at its original position
+   * to hide it when `updateWhileDragging` is enabled.
+   */
+  dndHidden: Classname;
+  /**
    * Classname(s) applied to disabled elements.
    */
   disabled: Classname;

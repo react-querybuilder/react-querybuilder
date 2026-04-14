@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import type { RuleGroupProps } from 'react-querybuilder';
+import { DragPreviewContext } from './DragPreviewContext';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
 /**
@@ -12,6 +13,7 @@ import { QueryBuilderDndContext } from './QueryBuilderDndContext';
  */
 export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
+  const { dragPreviewState } = useContext(DragPreviewContext);
 
   const {
     adapter,
@@ -22,19 +24,40 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     hideDefaultDragPreview,
   } = rqbDndContext;
 
+  // When updateWhileDragging is active and this is the root group,
+  // swap ruleGroup/rules with the shadow query so the tree re-renders
+  // with the dragged item at its preview position.
+  const effectiveProps = useMemo(() => {
+    if (props.path.length === 0 && dragPreviewState) {
+      const sq = dragPreviewState.shadowQuery;
+      return {
+        ...props,
+        ruleGroup: sq,
+        rules: sq.rules,
+      };
+    }
+    return props;
+  }, [props, dragPreviewState]);
+
   const dndRefs = adapter!.useRuleGroupDnD({
-    disabled: !!props.parentDisabled || !!props.disabled,
-    path: props.path,
-    schema: props.schema,
-    actions: props.actions,
-    ruleGroup: props.ruleGroup,
+    disabled: !!effectiveProps.parentDisabled || !!effectiveProps.disabled,
+    path: effectiveProps.path,
+    schema: effectiveProps.schema,
+    actions: effectiveProps.actions,
+    ruleGroup: effectiveProps.ruleGroup,
     canDrop,
     copyModeModifierKey: copyModeModifierKey ?? 'alt',
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
     hideDefaultDragPreview,
   });
 
-  return <BaseRuleGroupComponent {...props} {...dndRefs} />;
+  // When updateWhileDragging is active, suppress isDragging and isOver
+  // indicators — the visual feedback is the item moving in the tree.
+  const overriddenDndRefs = dragPreviewState
+    ? { ...dndRefs, isDragging: false, isOver: false, dropNotAllowed: false }
+    : dndRefs;
+
+  return <BaseRuleGroupComponent {...effectiveProps} {...overriddenDndRefs} />;
 };
 
 /**

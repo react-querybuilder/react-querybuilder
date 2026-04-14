@@ -73,14 +73,16 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
   const { DndProvider } = adapter;
 
   return (
-    <DndProvider key={key} debugMode={debugMode}>
+    <DndProvider key={key} debugMode={debugMode} updateWhileDragging={props.updateWhileDragging}>
       <QueryBuilderContext.Provider key={key} value={contextWithDnD}>
         <QueryBuilderDndWithoutProvider
           dnd={adapter}
           canDrop={props.canDrop}
           copyModeModifierKey={props.copyModeModifierKey}
           groupModeModifierKey={props.groupModeModifierKey}
-          hideDefaultDragPreview={props.hideDefaultDragPreview}>
+          hideDefaultDragPreview={props.hideDefaultDragPreview}
+          updateWhileDragging={props.updateWhileDragging}
+          onDragMove={props.onDragMove}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -116,6 +118,12 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     rqbDndContext.hideDefaultDragPreview
   );
   const canDrop = preferAnyProp(undefined, props.canDrop, rqbDndContext.canDrop);
+  const updateWhileDragging = preferProp(
+    false,
+    props.updateWhileDragging,
+    rqbDndContext.updateWhileDragging
+  );
+  const onDragMove = preferAnyProp(undefined, props.onDragMove, rqbDndContext.onDragMove);
   const key = enableDragAndDrop && adapter ? 'dnd' : 'no-dnd';
 
   const baseControls = useMemo(
@@ -168,6 +176,8 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       copyModeModifierKey,
       groupModeModifierKey,
       hideDefaultDragPreview,
+      updateWhileDragging,
+      onDragMove,
       adapter,
     }),
     [
@@ -176,6 +186,8 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       copyModeModifierKey,
       groupModeModifierKey,
       hideDefaultDragPreview,
+      updateWhileDragging,
+      onDragMove,
       adapter,
     ]
   );

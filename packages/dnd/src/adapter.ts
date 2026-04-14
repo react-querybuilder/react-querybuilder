@@ -104,6 +104,12 @@ export interface AdapterUseInlineCombinatorDnDResult {
  */
 export interface DndAdapterProviderProps {
   debugMode?: boolean;
+  /**
+   * When `true`, the adapter should enable update-while-dragging behavior:
+   * computing a shadow query on hover and committing it on drop instead of
+   * using the standard drop-indicator approach.
+   */
+  updateWhileDragging?: boolean;
   children: React.ReactNode;
 }
 

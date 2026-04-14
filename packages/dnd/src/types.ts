@@ -3,9 +3,13 @@ import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 import type {
   Controls,
+  DndDropTargetType,
   DraggedItem,
+  DropEffect,
   FullField,
+  Path,
   QueryBuilderContextProviderProps,
+  RuleGroupTypeAny,
 } from 'react-querybuilder';
 import type { SetOptional } from 'type-fest';
 import type { DndAdapter } from './adapter';
@@ -78,6 +82,67 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
    * Do not render the "ghost" preview image when dragging.
    */
   hideDefaultDragPreview?: boolean;
+  /**
+   * Enable visual rearrangement of the query tree during drag. When enabled,
+   * rules and groups visually move to their prospective positions as the user
+   * drags, instead of only showing a drop indicator line.
+   *
+   * `onQueryChange` is only fired on drop, not during intermediate movements.
+   *
+   * @default false
+   */
+  updateWhileDragging?: boolean;
+  /**
+   * Callback invoked on each drag position change when {@link updateWhileDragging}
+   * is enabled. Receives the dragged item, the shadow query representing the
+   * prospective layout, and the preview path of the dragged item.
+   */
+  onDragMove?: OnDragMoveCallback;
+}
+
+/**
+ * State provided during an active drag with `updateWhileDragging` enabled.
+ *
+ * @group DnD
+ */
+export interface DragPreviewState {
+  /** The shadow/preview query showing the dragged item at its prospective position. */
+  shadowQuery: RuleGroupTypeAny;
+  /** The original query before the drag started (for cancel/revert). */
+  originalQuery: RuleGroupTypeAny;
+  /** Path of the dragged item in the original query. */
+  draggedPath: Path;
+  /** Path of the dragged item in the shadow query (its preview position). */
+  previewPath: Path;
+  /** Current drop effect based on modifier keys. */
+  dropEffect: DropEffect;
+  /** Whether group mode is active. */
+  groupItems: boolean;
+  /** The qbId of the query builder being dragged within. */
+  qbId: string;
+}
+
+/**
+ * Callback invoked on each drag position change when `updateWhileDragging` is enabled.
+ *
+ * @group DnD
+ */
+export type OnDragMoveCallback = (params: {
+  draggedItem: DraggedItem;
+  shadowQuery: RuleGroupTypeAny;
+  originalQuery: RuleGroupTypeAny;
+  previewPath: Path;
+}) => void;
+
+/**
+ * Parameters describing a drag target position for shadow query computation.
+ *
+ * @group DnD
+ */
+export interface DragTargetPosition {
+  targetPath: Path;
+  targetType: DndDropTargetType;
+  quadrant: 'upper' | 'lower';
 }
 
 /**
@@ -87,7 +152,12 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
  */
 export interface QueryBuilderDndContextProps extends Pick<
   QueryBuilderDndProps,
-  'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'hideDefaultDragPreview'
+  | 'canDrop'
+  | 'copyModeModifierKey'
+  | 'groupModeModifierKey'
+  | 'hideDefaultDragPreview'
+  | 'updateWhileDragging'
+  | 'onDragMove'
 > {
   adapter?: DndAdapter;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;

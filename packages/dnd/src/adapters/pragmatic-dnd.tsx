@@ -17,8 +17,10 @@ import {
 import type {
   DndDropTargetType,
   DraggedItem,
+  Path,
   RuleGroupTypeAny,
   RuleType,
+  Schema,
 } from 'react-querybuilder';
 import type {
   AdapterUseInlineCombinatorDnDResult,
@@ -38,7 +40,12 @@ import {
   getDragItem,
   handleDrop,
 } from '../dndLogic';
+import { DragPreviewContext } from '../DragPreviewContext';
+import type { DragPreviewContextValue } from '../DragPreviewContext';
 import { isHotkeyPressed } from '../isHotkeyPressed';
+import { getQuadrant } from '../quadrantDetection';
+import { computeShadowQuery } from '../shadowQuery';
+import type { DragPreviewState, OnDragMoveCallback } from '../types';
 
 /**
  * The `@atlaskit/pragmatic-drag-and-drop` exports needed by the adapter.
@@ -100,9 +107,105 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
   // #region DndProvider
 
-  const DndProvider = ({ children }: DndAdapterProviderProps): React.JSX.Element => {
+  const DndProvider = ({
+    children,
+    updateWhileDragging,
+  }: DndAdapterProviderProps): React.JSX.Element => {
     const [activeDragItem, setActiveDragItem] = useState<DraggedItem | null>(null);
     const activeDragItemRef = useRef<DraggedItem | null>(null);
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const dragSchemaRef = useRef<Schema<any, any> | null>(null);
+
+    // --- Update-while-dragging state ---
+    const [dragPreviewState, setDragPreviewState] = useState<DragPreviewState | null>(null);
+    const dragPreviewStateRef = useRef<DragPreviewState | null>(null);
+    const onDragMoveRef = useRef<OnDragMoveCallback | undefined>(undefined);
+    // Track last target to avoid redundant recomputations
+    const lastTargetRef = useRef<{
+      targetPath: Path;
+      targetType: DndDropTargetType;
+      quadrant: 'upper' | 'lower';
+    } | null>(null);
+
+    const updatePreviewPosition = useCallback(
+      (targetPath: Path, targetType: DndDropTargetType, quadrant: 'upper' | 'lower') => {
+        const currentPreview = dragPreviewStateRef.current;
+        if (!currentPreview || !updateWhileDragging) return;
+
+        // Skip if same target and quadrant
+        const last = lastTargetRef.current;
+        if (
+          last &&
+          last.quadrant === quadrant &&
+          last.targetType === targetType &&
+          last.targetPath.length === targetPath.length &&
+          last.targetPath.every((v, i) => v === targetPath[i])
+        ) {
+          return;
+        }
+        lastTargetRef.current = { targetPath, targetType, quadrant };
+
+        const dropEffect = isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
+          ? 'copy'
+          : 'move';
+        const groupItems = isHotkeyPressed('ctrl');
+
+        const result = computeShadowQuery({
+          originalQuery: currentPreview.originalQuery,
+          draggedItem: activeDragItemRef.current!,
+          draggedPath: currentPreview.draggedPath,
+          targetPath,
+          targetType,
+          quadrant,
+          dropEffect,
+          groupItems,
+        });
+
+        if (result) {
+          const newState: DragPreviewState = {
+            ...currentPreview,
+            shadowQuery: result.shadowQuery,
+            previewPath: result.previewPath,
+            dropEffect,
+            groupItems,
+          };
+          dragPreviewStateRef.current = newState;
+          setDragPreviewState(newState);
+
+          onDragMoveRef.current?.({
+            draggedItem: activeDragItemRef.current!,
+            shadowQuery: result.shadowQuery,
+            originalQuery: currentPreview.originalQuery,
+            previewPath: result.previewPath,
+          });
+        }
+      },
+      [updateWhileDragging]
+    );
+
+    const commitDrag = useCallback(() => {
+      const preview = dragPreviewStateRef.current;
+      if (!preview) return;
+
+      // Commit the shadow query as the real query via schema.dispatchQuery.
+      // This fires onQueryChange once with the final result.
+      const schema = dragSchemaRef.current;
+      if (schema && preview.shadowQuery !== preview.originalQuery) {
+        schema.dispatchQuery(preview.shadowQuery);
+      }
+
+      dragSchemaRef.current = null;
+      dragPreviewStateRef.current = null;
+      lastTargetRef.current = null;
+      setDragPreviewState(null);
+    }, []);
+
+    const cancelDrag = useCallback(() => {
+      dragSchemaRef.current = null;
+      dragPreviewStateRef.current = null;
+      lastTargetRef.current = null;
+      setDragPreviewState(null);
+    }, []);
 
     useEffect(() => {
       const cleanup = monitorForElements({
@@ -113,7 +216,65 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
             const item = getDragItem(data.__rqbPath as number[], data.__rqbSchema as any);
             activeDragItemRef.current = item;
             setActiveDragItem(item);
+
+            // Initialize shadow query state if updateWhileDragging is enabled
+            if (updateWhileDragging) {
+              // oxlint-disable-next-line typescript/no-explicit-any
+              const schema = data.__rqbSchema as Schema<any, any>;
+              dragSchemaRef.current = schema;
+              const originalQuery = schema.getQuery();
+              const initialState: DragPreviewState = {
+                shadowQuery: originalQuery,
+                originalQuery,
+                draggedPath: data.__rqbPath as Path,
+                previewPath: data.__rqbPath as Path,
+                dropEffect: 'move',
+                groupItems: false,
+                qbId: schema.qbId,
+              };
+              dragPreviewStateRef.current = initialState;
+              setDragPreviewState(initialState);
+            }
           }
+        },
+        onDrag({
+          location,
+        }: {
+          source: { data: Record<string, unknown> };
+          location: {
+            current: {
+              dropTargets: { data: Record<string, unknown>; element: Element }[];
+              input: { clientX: number; clientY: number };
+            };
+          };
+        }) {
+          if (!updateWhileDragging || !dragPreviewStateRef.current) return;
+
+          const dropTargets = location.current.dropTargets;
+          if (dropTargets.length === 0) return;
+
+          const target = dropTargets[0];
+          const targetType = target.data.__rqbType as DndDropTargetType | undefined;
+          const targetPath = target.data.__rqbPath as Path | undefined;
+
+          if (!targetType || !targetPath) return;
+
+          // For rules, use quadrant detection; for ruleGroups, always 'upper' (first child)
+          const quadrant =
+            targetType === 'ruleGroup'
+              ? ('upper' as const)
+              : getQuadrant(target.element as HTMLElement, location.current.input.clientY);
+
+          // Validate the drop is allowed
+          const dragItem = activeDragItemRef.current;
+          if (!dragItem) return;
+
+          const validate = target.data.__rqbValidate as
+            | ((item: DraggedItem) => boolean)
+            | undefined;
+          if (validate && !validate(dragItem)) return;
+
+          updatePreviewPosition(targetPath, targetType, quadrant);
         },
         onDrop({
           source,
@@ -126,7 +287,16 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           const sourceData = source.data;
           const dropTargets = location.current.dropTargets;
 
-          if (dragItem && dropTargets.length > 0) {
+          if (updateWhileDragging && dragPreviewStateRef.current) {
+            if (dropTargets.length > 0) {
+              // Dropped on a valid target — commit the shadow query
+              commitDrag();
+            } else {
+              // Released outside any target — cancel (revert to original)
+              cancelDrag();
+            }
+          } else if (dragItem && dropTargets.length > 0) {
+            // Standard drop behavior
             const targetData = dropTargets[0].data;
             const validate = targetData.__rqbValidate as
               | ((item: DraggedItem) => boolean)
@@ -154,14 +324,30 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       });
 
       return cleanup;
-    }, []);
+    }, [updateWhileDragging, commitDrag, cancelDrag, updatePreviewPosition]);
 
     const dragStateValue = useMemo<PragmaticDragState>(
       () => ({ activeDragItem }),
       [activeDragItem]
     );
 
-    return <DragStateContext.Provider value={dragStateValue}>{children}</DragStateContext.Provider>;
+    const dragPreviewContextValue = useMemo<DragPreviewContextValue>(
+      () => ({
+        dragPreviewState,
+        updatePreviewPosition,
+        commitDrag,
+        cancelDrag,
+      }),
+      [dragPreviewState, updatePreviewPosition, commitDrag, cancelDrag]
+    );
+
+    return (
+      <DragStateContext.Provider value={dragStateValue}>
+        <DragPreviewContext.Provider value={dragPreviewContextValue}>
+          {children}
+        </DragPreviewContext.Provider>
+      </DragStateContext.Provider>
+    );
   };
 
   // #endregion
@@ -205,6 +391,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           element: container,
           getData: () => ({
             __rqbType: 'rule' as DndDropTargetType,
+            __rqbPath: paramsRef.current.path,
             __rqbValidate: (dragging: DraggedItem) => {
               const cp = paramsRef.current;
               return canDropOnRule({
@@ -325,6 +512,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         element: dropEl,
         getData: () => ({
           __rqbType: 'ruleGroup' as DndDropTargetType,
+          __rqbPath: paramsRef.current.path,
           __rqbValidate: (dragging: DraggedItem) => {
             const cp = paramsRef.current;
             return canDropOnRuleGroup({
@@ -410,10 +598,14 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     params: DndAdapterInlineCombinatorDnDParams
   ): AdapterUseInlineCombinatorDnDResult => {
     const { activeDragItem } = useContext(DragStateContext);
+    const { dragPreviewState } = useContext(DragPreviewContext);
     const dropNodeRef = useRef<HTMLDivElement>(null);
     const [isOver, setIsOver] = useState(false);
 
     const dropId = getDropId('inlineCombinator', params.path, params.schema.qbId);
+
+    // When updateWhileDragging is active, disable inline combinator drop targets
+    const isUpdateWhileDragging = dragPreviewState !== null;
 
     const hoveringItem = (params.rules ??
       /* v8 ignore start -- @preserve */ []) /* v8 ignore stop -- @preserve */[
@@ -425,7 +617,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
     useEffect(() => {
       const dropEl = dropNodeRef.current;
-      if (!dropEl) return undefined;
+      if (!dropEl || isUpdateWhileDragging) return undefined;
 
       return dropTargetForElements({
         element: dropEl,
@@ -458,9 +650,10 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         onDragLeave: () => setIsOver(false),
         onDrop: () => setIsOver(false),
       });
-    }, [params.path, params.schema.qbId]);
+    }, [params.path, params.schema.qbId, isUpdateWhileDragging]);
 
     const canDropHere =
+      !isUpdateWhileDragging &&
       isOver &&
       !!activeDragItem &&
       canDropOnInlineCombinator({
@@ -472,7 +665,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         hoveringItem,
       });
     const validatedIsOver = isOver && canDropHere;
-    const dropNotAllowed = isOver && !canDropHere;
+    const dropNotAllowed = !isUpdateWhileDragging && isOver && !canDropHere;
 
     const dropRef: React.RefCallback<HTMLDivElement> = useCallback(
       (node: HTMLDivElement | null) => {
