@@ -4,7 +4,8 @@
   "plugins": ["jest", "jsdoc", "oxc", "promise", "react-perf", "react", "typescript", "unicorn"],
   "options": {
     "typeAware": true,
-    "typeCheck": true
+    "typeCheck": true,
+    "reportUnusedDisableDirectives": "warn"
   },
   "categories": {
     "correctness": "error",
