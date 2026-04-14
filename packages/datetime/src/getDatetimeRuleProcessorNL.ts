@@ -48,11 +48,11 @@ export const datetimeValueProcessorNL: ValueProcessorByRule = (rule, opts) => {
 export const getDatetimeRuleProcessorNL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
-    const opts = options ?? /* istanbul ignore next */ {};
+    const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
     const operatorLowerCase = lc(rule.operator);
     let finalValue = '';
 
-    // istanbul ignore next
+    // v8 ignore next
     const {
       fieldData,
       quoteFieldNamesWith = ['', ''] as [string, string],

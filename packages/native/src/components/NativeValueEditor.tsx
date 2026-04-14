@@ -55,7 +55,7 @@ export const NativeValueEditor = (allProps: ValueEditorNativeProps): React.JSX.E
 
   const placeHolderText = fieldData?.placeholder ?? '';
 
-  // istanbul ignore next
+  // v8 ignore next
   const inputMode = ['in', 'notIn'].includes(operator)
     ? 'text'
     : inputType === 'number'

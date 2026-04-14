@@ -6,7 +6,7 @@ import { RQBMaterialContext } from './RQBMaterialContext';
 import type { RQBMaterialComponents } from './types';
 import { useMuiComponents } from './useMuiComponents';
 
-jest.setTimeout(60_000);
+vi.setConfig({ testTimeout: 60_000 });
 
 const componentMocks = {
   Button: () => <>Button</>,
@@ -33,9 +33,28 @@ const componentMocks = {
 
 // We don't *actually* need to load the components, just test that
 // an attempt to load them can be successful.
-for (const [cn, mockImpl] of Object.entries(componentMocks)) {
-  if (cn) jest.mock(`@mui/${cn === 'DragIndicator' ? 'icons-' : ''}material/${cn}`, () => mockImpl);
-}
+vi.mock('@mui/material/Button', () => ({ default: () => <>Button</> }));
+vi.mock('@mui/material/Checkbox', () => ({ default: () => <>Checkbox</> }));
+vi.mock('@mui/icons-material/Close', () => ({ default: () => <>CloseIcon</> }));
+vi.mock('@mui/icons-material/ContentCopy', () => ({ default: () => <>ContentCopyIcon</> }));
+vi.mock('@mui/icons-material/DragIndicator', () => ({ default: () => <>DragIndicator</> }));
+vi.mock('@mui/material/FormControl', () => ({ default: () => <>FormControl</> }));
+vi.mock('@mui/material/FormControlLabel', () => ({ default: () => <>FormControlLabel</> }));
+vi.mock('@mui/material/InputLabel', () => ({ default: () => <>InputLabel</> }));
+vi.mock('@mui/icons-material/KeyboardArrowDown', () => ({
+  default: () => <>KeyboardArrowDownIcon</>,
+}));
+vi.mock('@mui/icons-material/KeyboardArrowUp', () => ({ default: () => <>KeyboardArrowUpIcon</> }));
+vi.mock('@mui/material/ListSubheader', () => ({ default: () => <>ListSubheader</> }));
+vi.mock('@mui/icons-material/Lock', () => ({ default: () => <>LockIcon</> }));
+vi.mock('@mui/icons-material/LockOpen', () => ({ default: () => <>LockOpenIcon</> }));
+vi.mock('@mui/material/MenuItem', () => ({ default: () => <>MenuItem</> }));
+vi.mock('@mui/material/Radio', () => ({ default: () => <>Radio</> }));
+vi.mock('@mui/material/RadioGroup', () => ({ default: () => <>RadioGroup</> }));
+vi.mock('@mui/material/Select', () => ({ default: () => <>Select</> }));
+vi.mock('@mui/material/Switch', () => ({ default: () => <>Switch</> }));
+vi.mock('@mui/material/TextareaAutosize', () => ({ default: () => <>TextareaAutosize</> }));
+vi.mock('@mui/material/TextField', () => ({ default: () => <>TextField</> }));
 
 it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;

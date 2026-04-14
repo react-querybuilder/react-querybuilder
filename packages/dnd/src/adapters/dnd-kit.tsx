@@ -466,7 +466,8 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     const dropId = getDropId('inlineCombinator', params.path, params.schema.qbId);
 
     // The "hovering" item is the rule/group preceding this inline combinator.
-    const hoveringItem = (params.rules ?? /* istanbul ignore next */ [])[
+    const hoveringItem = (params.rules ??
+      /* v8 ignore start -- @preserve */ []) /* v8 ignore stop -- @preserve */[
       params.path.at(-1)! - 1
     ] as RuleType | RuleGroupTypeAny;
 

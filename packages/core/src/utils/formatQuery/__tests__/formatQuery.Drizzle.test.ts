@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 /**
  * The sole purpose of this file is to maintain 100% test coverage. It does

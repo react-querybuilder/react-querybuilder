@@ -3,8 +3,6 @@
   "files.eol": "\n",
   "scss.lint.unknownAtRules": "ignore",
   "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "oxc.typeAware": true,
-  "oxc.unusedDisableDirectives": "warn",
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "[typescript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"

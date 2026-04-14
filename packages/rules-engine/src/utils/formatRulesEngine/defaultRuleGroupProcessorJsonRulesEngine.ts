@@ -26,7 +26,14 @@ export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLev
     rg: RuleGroupType,
     outermost?: Outermost
   ): Outermost extends true ? TopLevelCondition : TopLevelCondition | null => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(
+        rg,
+        validationMap[
+          rg.id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+        ]
+      )
+    ) {
       return outermost
         ? { all: [] }
         : (null as Outermost extends true ? TopLevelCondition : TopLevelCondition | null);
@@ -42,8 +49,9 @@ export const defaultRuleGroupProcessorJsonRulesEngine: RuleGroupProcessor<TopLev
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* v8 ignore start -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
+          /* v8 ignore stop -- @preserve */
         ) {
           return null;
         }

@@ -79,7 +79,7 @@ export const MaterialNotToggle = ({
       title={title}
       disabled={disabled}
       control={switchControl}
-      label={label ?? /* istanbul ignore next */ ''}
+      label={label ?? /* v8 ignore start -- @preserve */ ''} /* v8 ignore stop -- @preserve */
     />
   );
 };

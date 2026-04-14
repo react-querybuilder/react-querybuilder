@@ -4,6 +4,7 @@ import { act } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import type { Schema } from 'react-querybuilder';
 import { defaultControlElements } from 'react-querybuilder';
+import type { Mock } from 'vitest';
 
 export const waitABeat = async (ms = 10): Promise<void> => {
   await act(async () => {
@@ -130,21 +131,21 @@ export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
 };
 
 export const consoleMocks = (): {
-  consoleError: jest.Mock;
+  consoleError: Mock;
   consoleErrorActual: typeof console.error;
-  consoleInfo: jest.Mock;
+  consoleInfo: Mock;
   consoleInfoActual: typeof console.info;
-  consoleLog: jest.Mock;
+  consoleLog: Mock;
   consoleLogActual: typeof console.log;
-  consoleWarn: jest.Mock;
+  consoleWarn: Mock;
   consoleWarnActual: typeof console.warn;
 } => {
   // TODO: This version works for Vitest. Not sure about bun:test yet.
   /*
-  const consoleLog = jest.spyOn(console, 'log');
-  const consoleError = jest.spyOn(console, 'error');
-  const consoleInfo = jest.spyOn(console, 'info');
-  const consoleWarn = jest.spyOn(console, 'warn');
+  const consoleLog = vi.spyOn(console, 'log');
+  const consoleError = vi.spyOn(console, 'error');
+  const consoleInfo = vi.spyOn(console, 'info');
+  const consoleWarn = vi.spyOn(console, 'warn');
 
   afterEach(() => {
     consoleError.mockReset();
@@ -165,10 +166,10 @@ export const consoleMocks = (): {
   const consoleInfoActual = console.info;
   const consoleLogActual = console.log;
   const consoleWarnActual = console.warn;
-  const consoleLog = jest.fn();
-  const consoleError = jest.fn();
-  const consoleInfo = jest.fn();
-  const consoleWarn = jest.fn();
+  const consoleLog = vi.fn();
+  const consoleError = vi.fn();
+  const consoleInfo = vi.fn();
+  const consoleWarn = vi.fn();
 
   beforeAll(() => {
     console.error = consoleError;

@@ -1,0 +1,26 @@
+diff --git a/node_modules/react-dnd-test-utils/.bun-tag-9b778794aaede6f8 b/.bun-tag-9b778794aaede6f8
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/eventSimulation.js b/dist/eventSimulation.js
+index 384bd33666496efc7807c0d5a23ceb83673832c1..9f8cc708d82d91ca949daf54678001a998161cfd 100644
+--- a/dist/eventSimulation.js
++++ b/dist/eventSimulation.js
+@@ -1,4 +1,4 @@
+-import { act } from 'react-dom/test-utils';
++import { act } from 'react';
+ /**
+  * Simulates a drag/drop sequence using the Test Backend
+  * @param source The source to drag
+diff --git a/src/eventSimulation.ts b/src/eventSimulation.ts
+index b3d5931e076c99833f24664b9eb699db938da683..90daa34b27008bb33c42ca5b93333d78117627d8 100644
+--- a/src/eventSimulation.ts
++++ b/src/eventSimulation.ts
+@@ -1,7 +1,7 @@
+ /* eslint-disable @typescript-eslint/no-unused-vars */
+ import type { Identifier } from 'dnd-core'
+ import type { ITestBackend } from 'react-dnd-test-backend'
+-import { act } from 'react-dom/test-utils'
++import { act } from 'react'
+ 
+ /**
+  * Simulates a drag/drop sequence using the Test Backend

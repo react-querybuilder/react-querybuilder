@@ -115,7 +115,7 @@ export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
   // Select backend: prefer touch on touch devices
   let backend: ReactDndBackendFactory | undefined = dndExports.ReactDndBackend;
   if (!backend) {
-    // istanbul ignore next -- jsdom unconditionally defines `window.ontouchstart`
+    // v8 ignore next -- jsdom unconditionally defines `window.ontouchstart`
     backend = isTouchDevice()
       ? (dndExports.TouchBackend ?? dndExports.HTML5Backend)
       : (dndExports.HTML5Backend ?? dndExports.TouchBackend);
@@ -281,7 +281,8 @@ export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
     const dropRef = useRef<HTMLDivElement>(null);
 
     // The "hovering" item is the rule or group which precedes this inline combinator.
-    const hoveringItem = (params.rules ?? /* istanbul ignore next */ [])[
+    const hoveringItem = (params.rules ??
+      /* v8 ignore start -- @preserve */ []) /* v8 ignore stop -- @preserve */[
       params.path.at(-1)! - 1
     ] as RuleType | RuleGroupTypeAny;
 

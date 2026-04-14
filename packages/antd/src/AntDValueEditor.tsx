@@ -205,7 +205,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
             // TODO: the function below is currently untested (see the
             // "renders a date range picker" test in ./AntD.test.tsx)
             onChange={
-              // istanbul ignore next
+              /* v8 ignore start -- @preserve */
               dates => {
                 const timeFormat = inputTypeCoerced === 'datetime-local' ? 'THH:mm:ss' : '';
                 const format = `YYYY-MM-DD${timeFormat}`;
@@ -214,6 +214,7 @@ export const AntDValueEditor = (allProps: AntDValueEditorProps): React.JSX.Eleme
                   dateArray ? (listsAsArrays ? dateArray : joinWith(dateArray, ',')) : dates
                 );
               }
+              /* v8 ignore stop -- @preserve */
             }
             {...extraProps}
           />

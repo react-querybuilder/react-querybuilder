@@ -32,7 +32,14 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
   } = options;
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(
+        rg,
+        validationMap[
+          rg.id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+        ]
+      )
+    ) {
       return outermost ? prismaFallback : undefined;
     }
 
@@ -54,7 +61,7 @@ export const defaultRuleGroupProcessorPrisma: RuleGroupProcessor<
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* v8 ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return undefined;

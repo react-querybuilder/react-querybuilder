@@ -22,7 +22,7 @@ describe('mute functionality', () => {
 
   describe('mute toggle functionality', () => {
     it('toggles muted state on a rule', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       render(
         <QueryBuilder
           showMuteButtons
@@ -40,7 +40,7 @@ describe('mute functionality', () => {
     });
 
     it('toggles muted state on a group', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       render(
         <QueryBuilder
           showMuteButtons
@@ -58,7 +58,7 @@ describe('mute functionality', () => {
 
   describe('muting inheritance behavior', () => {
     it('sets muted property only on the clicked group', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       render(
         <QueryBuilder
           showMuteButtons
@@ -85,7 +85,7 @@ describe('mute functionality', () => {
     });
 
     it('unmutes only the clicked group when unmuted directly', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       const initialQuery: RuleGroupType = {
         combinator: 'and',
         muted: true,
@@ -110,7 +110,7 @@ describe('mute functionality', () => {
     });
 
     it('only unmutes the specific item when clicked', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       const initialQuery: RuleGroupType = {
         combinator: 'and',
         rules: [
@@ -273,7 +273,7 @@ describe('mute functionality', () => {
     });
 
     it('preserves muted state when adding new rules', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       const initialQuery: RuleGroupType = {
         combinator: 'and',
         muted: true,
@@ -350,7 +350,7 @@ describe('mute functionality', () => {
     });
 
     it('respects disabled state when muted', async () => {
-      const onQueryChange = jest.fn<never, [RuleGroupType]>();
+      const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
       render(
         <QueryBuilder
           showMuteButtons

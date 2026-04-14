@@ -5,6 +5,8 @@ import type {
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
+  ToRuleGroupType,
+  ToRuleGroupTypeIC,
 } from '../types';
 import { isRuleGroup, isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { lc } from './misc';
@@ -83,11 +85,9 @@ const generateRuleGroupICWithConsistentCombinators = (
  *
  * @group Query Tools
  */
-export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
-  rg: RuleGroupTypeAny
-): RG => {
+export const convertFromIC = <RG extends RuleGroupTypeAny>(rg: RG): ToRuleGroupType<RG> => {
   if (isRuleGroupType(rg)) {
-    return rg as RG;
+    return rg as ToRuleGroupType<RG>;
   }
   const processedRG = generateRuleGroupICWithConsistentCombinators(rg);
   const rules: RuleGroupArray = [];
@@ -99,7 +99,7 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
       rules.push(isRuleGroup(r) ? convertFromIC(r) : r);
     }
   }
-  return { ...processedRG, combinator, rules } as RG;
+  return { ...processedRG, combinator, rules } as ToRuleGroupType<RG>;
 };
 
 /**
@@ -110,11 +110,9 @@ export const convertFromIC = <RG extends RuleGroupType = RuleGroupType>(
  *
  * @group Query Tools
  */
-export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
-  rg: RuleGroupTypeAny
-): RGIC => {
+export const convertToIC = <RG extends RuleGroupTypeAny>(rg: RG): ToRuleGroupTypeIC<RG> => {
   if (isRuleGroupTypeIC(rg)) {
-    return rg as RGIC;
+    return rg as ToRuleGroupTypeIC<RG>;
   }
   const { combinator, ...queryWithoutCombinator } = rg;
   const rules: (RuleGroupTypeIC | RuleType | string)[] = [];
@@ -130,7 +128,7 @@ export const convertToIC = <RGIC extends RuleGroupTypeIC = RuleGroupTypeIC>(
       rules.push(combinator);
     }
   }
-  return { ...queryWithoutCombinator, rules } as RGIC;
+  return { ...queryWithoutCombinator, rules } as ToRuleGroupTypeIC<RG>;
 };
 
 /**

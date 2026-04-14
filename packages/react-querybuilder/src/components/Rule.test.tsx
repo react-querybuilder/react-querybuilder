@@ -47,7 +47,7 @@ it('respects suppressStandardClassnames', () => {
 describe('onElementChanged methods', () => {
   describe('onFieldChanged', () => {
     it('calls onPropChange with the rule path', async () => {
-      const onPropChange = jest.fn();
+      const onPropChange = vi.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
 
@@ -61,7 +61,7 @@ describe('onElementChanged methods', () => {
 
   describe('onOperatorChanged', () => {
     it('calls onPropChange with the rule path', async () => {
-      const onPropChange = jest.fn();
+      const onPropChange = vi.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
 
@@ -75,7 +75,7 @@ describe('onElementChanged methods', () => {
 
   describe('onValueChanged', () => {
     it('calls onPropChange with the rule path', async () => {
-      const onPropChange = jest.fn();
+      const onPropChange = vi.fn();
       const props = { ...getProps({}, { onPropChange }) };
       render(<Rule {...props} />);
 
@@ -90,7 +90,7 @@ describe('onElementChanged methods', () => {
 
 describe('cloneRule', () => {
   it('calls moveRule with the right paths', async () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(<Rule {...getProps({ showCloneButtons: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.cloneRule.label));
@@ -100,7 +100,7 @@ describe('cloneRule', () => {
 
 describe('shiftRuleUp/Down', () => {
   it('calls moveRule with the right params', async () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     const { rerender } = render(
       <Rule {...getProps({ showShiftActions: true }, { moveRule })} disabled />
     );
@@ -138,7 +138,7 @@ describe('shiftRuleUp/Down', () => {
 
 describe('removeRule', () => {
   it('calls onRuleRemove with the rule and path', async () => {
-    const onRuleRemove = jest.fn();
+    const onRuleRemove = vi.fn();
     render(<Rule {...getProps({}, { onRuleRemove })} />);
 
     await user.click(screen.getByText(t.removeRule.label));
@@ -154,7 +154,7 @@ describe('validation', () => {
   });
 
   it('validates to false if validationMap[id] = false even if a validator function is provided', () => {
-    const validator = jest.fn(() => true);
+    const validator = vi.fn(() => true);
     const fieldMap = { field1: toFullOption({ name: 'field1', label: 'Field 1', validator }) };
     const validationMap = { id: false };
     render(<Rule {...getProps({ fieldMap, validationMap })} />);
@@ -171,7 +171,7 @@ describe('validation', () => {
   });
 
   it('validates if validationMap[id] does not exist and a validator function is provided', () => {
-    const validator = jest.fn(() => true);
+    const validator = vi.fn(() => true);
     const fieldMap = { field1: toFullOption({ name: 'field1', label: 'Field 1', validator }) };
     const props = getProps({ fieldMap });
     render(<Rule {...props} rule={{ ...props.rule, field: 'field1' }} />);
@@ -202,9 +202,9 @@ describe('disabled', () => {
   });
 
   it('does not try to update the query', async () => {
-    const onRuleRemove = jest.fn();
-    const onPropChange = jest.fn();
-    const moveRule = jest.fn();
+    const onRuleRemove = vi.fn();
+    const onPropChange = vi.fn();
+    const moveRule = vi.fn();
     render(
       <Rule
         {...getProps({ showCloneButtons: true }, { onRuleRemove, onPropChange, moveRule })}
@@ -230,7 +230,7 @@ describe('locked rule', () => {
   });
 
   it('disables the lock button if the parent group is disabled even if the current rule is not', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} parentDisabled />);
     expect(screen.getByTestId(TestID.lockRule)).toBeDisabled();
 
@@ -239,7 +239,7 @@ describe('locked rule', () => {
   });
 
   it('sets the disabled property', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} />);
 
     await user.click(screen.getByTestId(TestID.lockRule));
@@ -247,7 +247,7 @@ describe('locked rule', () => {
   });
 
   it('unsets the disabled property', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<Rule {...getProps({ showLockButtons: true }, { onPropChange })} disabled />);
 
     await user.click(screen.getByTestId(TestID.lockRule));
@@ -395,7 +395,7 @@ describe('dynamic classNames', () => {
     const getOperators = (): FullOperator[] => [
       toFullOption({ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }),
     ];
-    const getRuleClassname = jest.fn(() => 'custom-ruleBased-class');
+    const getRuleClassname = vi.fn(() => 'custom-ruleBased-class');
     render(<Rule {...getProps({ fieldMap, getOperators, getRuleClassname })} rule={rule} />);
     expect(screen.getByTestId(TestID.rule)).toHaveClass(
       'custom-ruleBased-class',

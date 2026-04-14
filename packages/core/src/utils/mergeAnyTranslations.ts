@@ -10,7 +10,7 @@ export const mergeAnyTranslations = (
   const result = { ...base };
 
   for (const translations of otherTranslations) {
-    // istanbul ignore else
+    // v8 ignore else
     if (translations) {
       for (const key of objectKeys(translations)) {
         if (isUnsafeKey(key)) continue;

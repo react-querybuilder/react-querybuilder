@@ -15,12 +15,12 @@ import type { DndKitExports } from './dnd-kit';
 
 // #region Mock helpers
 
-const createMockSetNodeRef = () => jest.fn<void, [HTMLElement | null]>();
+const createMockSetNodeRef = () => vi.fn<(el: HTMLElement | null) => void>();
 
 const createMockUseDraggable = () => {
   const setNodeRef = createMockSetNodeRef();
   const setActivatorNodeRef = createMockSetNodeRef();
-  return jest
+  return vi
     .fn()
     .mockReturnValue({
       setNodeRef,
@@ -33,7 +33,7 @@ const createMockUseDraggable = () => {
 
 const createMockUseDroppable = () => {
   const setNodeRef = createMockSetNodeRef();
-  return jest.fn().mockReturnValue({ setNodeRef, isOver: false });
+  return vi.fn().mockReturnValue({ setNodeRef, isOver: false });
 };
 
 // oxlint-disable-next-line typescript/no-explicit-any
@@ -49,8 +49,8 @@ const createMockDndKit = (overrides?: any) => {
     PointerSensor: class PointerSensor {},
     KeyboardSensor: class KeyboardSensor {},
     // oxlint-enable typescript/no-extraneous-class
-    useSensor: jest.fn((_sensor: unknown, _opts?: unknown) => ({})),
-    useSensors: jest.fn((...sensors: unknown[]) => sensors),
+    useSensor: vi.fn((_sensor: unknown, _opts?: unknown) => ({})),
+    useSensors: vi.fn((...sensors: unknown[]) => sensors),
     _useDraggable: mockUseDraggable,
     _useDroppable: mockUseDroppable,
     ...overrides,
@@ -68,7 +68,7 @@ const mockSchema = (overrides?: Partial<Schema<any, any>>): Schema<any, any> =>
         { field: 'f2', operator: '=', value: 'v2' },
       ],
     }),
-    dispatchQuery: jest.fn(),
+    dispatchQuery: vi.fn(),
     independentCombinators: false,
     classNames: {},
     suppressStandardClassnames: false,
@@ -77,11 +77,7 @@ const mockSchema = (overrides?: Partial<Schema<any, any>>): Schema<any, any> =>
 // oxlint-enable typescript/no-explicit-any
 
 const mockActions = (): QueryActions =>
-  ({
-    moveRule: jest.fn(),
-    groupRule: jest.fn(),
-    onRuleRemove: jest.fn(),
-  }) as unknown as QueryActions;
+  ({ moveRule: vi.fn(), groupRule: vi.fn(), onRuleRemove: vi.fn() }) as unknown as QueryActions;
 
 const mockRule = (overrides?: Partial<RuleType>): RuleType => ({
   field: 'f1',
@@ -262,7 +258,7 @@ describe('createDndKitAdapter', () => {
       const setDropNodeRef = createMockSetNodeRef();
 
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
             setNodeRef: setDragNodeRef,
@@ -271,7 +267,7 @@ describe('createDndKitAdapter', () => {
             listeners: {},
             attributes: {},
           }),
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: setDropNodeRef, isOver: false }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: setDropNodeRef, isOver: false }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -312,11 +308,11 @@ describe('createDndKitAdapter', () => {
 
     it('reports isDragging from useDraggable', () => {
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: true,
             listeners: {},
             attributes: {},
@@ -434,7 +430,7 @@ describe('createDndKitAdapter', () => {
       const setDropNodeRef = createMockSetNodeRef();
 
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
             setNodeRef: setDragNodeRef,
@@ -443,7 +439,7 @@ describe('createDndKitAdapter', () => {
             listeners: {},
             attributes: {},
           }),
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: setDropNodeRef, isOver: false }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: setDropNodeRef, isOver: false }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -776,7 +772,7 @@ describe('createDndKitAdapter', () => {
     it('inlineCombinator dropRef connects to dnd-kit setNodeRef', () => {
       const setDropNodeRef = createMockSetNodeRef();
       const mock = createMockDndKit({
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: setDropNodeRef, isOver: false }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: setDropNodeRef, isOver: false }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -812,11 +808,11 @@ describe('createDndKitAdapter', () => {
   describe('ARIA attributes', () => {
     it('sets attributes on drag handle in useRuleDnD', () => {
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: {},
             attributes: { role: 'button', tabIndex: 0, 'aria-roledescription': 'draggable' },
@@ -851,11 +847,11 @@ describe('createDndKitAdapter', () => {
 
     it('sets attributes on drag handle in useRuleGroupDnD', () => {
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: {},
             attributes: { role: 'button', tabIndex: 0 },
@@ -889,11 +885,11 @@ describe('createDndKitAdapter', () => {
 
     it('does not set attributes when drag is disabled', () => {
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: {},
             attributes: { role: 'button', tabIndex: 0 },
@@ -928,13 +924,13 @@ describe('createDndKitAdapter', () => {
 
   describe('native listener attachment', () => {
     it('attaches sensor listeners to drag handle in useRuleDnD', () => {
-      const onPointerDown = jest.fn();
+      const onPointerDown = vi.fn();
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: { onPointerDown },
             attributes: {},
@@ -970,13 +966,13 @@ describe('createDndKitAdapter', () => {
     });
 
     it('attaches sensor listeners to drag handle in useRuleGroupDnD', () => {
-      const onPointerDown = jest.fn();
+      const onPointerDown = vi.fn();
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: { onPointerDown },
             attributes: {},
@@ -1030,7 +1026,7 @@ describe('createDndKitAdapter', () => {
 
       const mock = createMockDndKit({
         DndContext: MockDndContext as DndKitExports['DndContext'],
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: vi.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -1074,7 +1070,7 @@ describe('createDndKitAdapter', () => {
 
       const mock = createMockDndKit({
         DndContext: MockDndContext as DndKitExports['DndContext'],
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: vi.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -1113,7 +1109,7 @@ describe('createDndKitAdapter', () => {
 
       const mock = createMockDndKit({
         DndContext: MockDndContext as DndKitExports['DndContext'],
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: vi.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -1152,7 +1148,7 @@ describe('createDndKitAdapter', () => {
 
       const mock = createMockDndKit({
         DndContext: MockDndContext as DndKitExports['DndContext'],
-        useDroppable: jest.fn().mockReturnValue({ setNodeRef: jest.fn(), isOver: true }),
+        useDroppable: vi.fn().mockReturnValue({ setNodeRef: vi.fn(), isOver: true }),
       });
       const adapter = createDndKitAdapter(mock);
 
@@ -1515,11 +1511,11 @@ describe('createDndKitAdapter', () => {
   describe('branch coverage: null attribute values', () => {
     it('skips setting attributes with null values in useRuleDnD', () => {
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: {},
             attributes: { role: 'button', tabIndex: 0, 'aria-label': null },
@@ -1553,11 +1549,11 @@ describe('createDndKitAdapter', () => {
 
     it('skips setting attributes with null values in useRuleGroupDnD', () => {
       const mock = createMockDndKit({
-        useDraggable: jest
+        useDraggable: vi
           .fn()
           .mockReturnValue({
-            setNodeRef: jest.fn(),
-            setActivatorNodeRef: jest.fn(),
+            setNodeRef: vi.fn(),
+            setActivatorNodeRef: vi.fn(),
             isDragging: false,
             listeners: {},
             attributes: { role: 'button', tabIndex: null },

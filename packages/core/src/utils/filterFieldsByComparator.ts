@@ -10,7 +10,10 @@ const filterByComparator = (field: FullField, operator: string, fieldToCompare: 
   if (typeof fullField.comparator === 'string') {
     return fullField[fullField.comparator] === fullFieldToCompare[fullField.comparator];
   }
-  return fullField.comparator?.(fullFieldToCompare, operator) ?? /* istanbul ignore next */ false;
+  return (
+    fullField.comparator?.(fullFieldToCompare, operator) ??
+    /* v8 ignore start -- @preserve */ false /* v8 ignore stop -- @preserve */
+  );
 };
 
 /**
@@ -38,8 +41,9 @@ export const filterFieldsByComparator = (
     }[] => {
   if (!field.comparator) {
     const filterOutSameField = (f: FullField) =>
-      (f.value ?? /* istanbul ignore next */ f.name) !==
-      (field.value ?? /* istanbul ignore next */ field.name);
+      (f.value ?? /* v8 ignore start -- @preserve */ f.name) /* v8 ignore stop -- @preserve */ !==
+      (field.value ??
+        /* v8 ignore start -- @preserve */ field.name) /* v8 ignore stop -- @preserve */;
     if (isFlexibleOptionGroupArray(fields)) {
       return fields.map(og => ({
         ...og,

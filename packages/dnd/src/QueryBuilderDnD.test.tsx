@@ -1,5 +1,5 @@
 import { userEventSetup } from '@rqb-testing';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import * as React from 'react';
 import * as reactDnD from 'react-dnd';
 import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
@@ -40,7 +40,9 @@ it('renders base QueryBuilder without enableDragAndDrop prop', async () => {
       </QueryBuilderDnD>
     );
   });
-  expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
+  await waitFor(() => {
+    expect(screen.getByTestId(TestID.ruleGroup).parentElement?.dataset.dnd).toBe('enabled');
+  });
 });
 
 it('acts as a pass-through for context', async () => {
@@ -130,7 +132,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule down within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupType]>();
+        const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
@@ -156,7 +158,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule to a different group with a common ancestor', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupType]>();
+        const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
@@ -202,7 +204,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
 
     describe('independent combinators', () => {
       it('swaps the first rule with the last within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -232,7 +234,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('swaps the last rule with the first within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -263,7 +265,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from first to last within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -297,7 +299,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from last to first within the same group', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -332,7 +334,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a rule from last to middle by dropping on inline combinator', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -367,7 +369,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('copies a rule by dropping on inline combinator with alt key pressed', async () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -406,7 +408,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a first-child rule to a different group as the first child', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -445,7 +447,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
       });
 
       it('moves a middle-child rule to a different group as a middle child', () => {
-        const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+        const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
@@ -555,7 +557,7 @@ it('prevents changes when disabled', async () => {
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+  const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
   render(
     <QueryBuilderWrapped
       fields={[
@@ -611,7 +613,7 @@ it('respects custom copyModeModifierKey', async () => {
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
   render(
     <QueryBuilderWrapped
       fields={[
@@ -663,7 +665,7 @@ it('respects custom groupModeModifierKey', async () => {
       </QueryBuilderDnD>
     )
   );
-  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
   render(
     <QueryBuilderWrapped
       fields={[
@@ -704,7 +706,7 @@ it('respects custom groupModeModifierKey', async () => {
 });
 
 it('can move rules/groups to different query builders', async () => {
-  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
   const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
@@ -762,7 +764,7 @@ it('can move rules/groups to different query builders', async () => {
 });
 
 it('can group rules/groups to different query builders', async () => {
-  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
   const fields: Field[] = [
     { name: 'field1', label: 'Field 1' },
     { name: 'field2', label: 'Field 2' },
