@@ -284,22 +284,6 @@
         "react-dnd-touch-backend",
       ],
     },
-    "packages/drizzle": {
-      "name": "@react-querybuilder/drizzle",
-      "version": "8.14.4",
-      "devDependencies": {
-        "@electric-sql/pglite": "catalog:test",
-        "@react-querybuilder/core": "8.14.4",
-        "drizzle-orm": "^0.45.2",
-        "rollup-plugin-visualizer": "catalog:",
-        "typescript": "catalog:",
-        "vite": "catalog:",
-      },
-      "peerDependencies": {
-        "@react-querybuilder/core": "8.14.4",
-        "drizzle-orm": ">=0.38.0",
-      },
-    },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
       "version": "8.14.4",
@@ -1924,8 +1908,6 @@
     "@react-querybuilder/datetime": ["@react-querybuilder/datetime@workspace:packages/datetime"],
 
     "@react-querybuilder/dnd": ["@react-querybuilder/dnd@workspace:packages/dnd"],
-
-    "@react-querybuilder/drizzle": ["@react-querybuilder/drizzle@workspace:packages/drizzle"],
 
     "@react-querybuilder/fluent": ["@react-querybuilder/fluent@workspace:packages/fluent"],
 
