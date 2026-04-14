@@ -4,6 +4,12 @@ export default defineConfig(
   import('vitest-native').then(({ reactNative }) => ({
     // oxlint-disable-next-line typescript/no-explicit-any
     plugins: [reactNative() as any],
+    oxc: {
+      jsx: {
+        runtime: 'automatic',
+        importSource: 'react',
+      },
+    },
     test: {
       globals: true,
       testTimeout: 30_000,
