@@ -16,22 +16,22 @@ describe('getQuadrant', () => {
       }),
     }) as unknown as HTMLElement;
 
-  it('returns "upper" when cursor is in the top half', () => {
+  it('returns "upper" when cursor is in the top 25%', () => {
     const element = createElement(100, 40);
-    // Midpoint is 120, cursor at 110 → upper
-    expect(getQuadrant(element, 110)).toBe('upper');
+    // Quarter height = 10, upper boundary = 110, cursor at 105 → upper
+    expect(getQuadrant(element, 105)).toBe('upper');
   });
 
-  it('returns "lower" when cursor is in the bottom half', () => {
+  it('returns "lower" when cursor is in the bottom 25%', () => {
     const element = createElement(100, 40);
-    // Midpoint is 120, cursor at 130 → lower
-    expect(getQuadrant(element, 130)).toBe('lower');
+    // Quarter height = 10, lower boundary = 130, cursor at 135 → lower
+    expect(getQuadrant(element, 135)).toBe('lower');
   });
 
-  it('returns "lower" when cursor is exactly at midpoint', () => {
+  it('returns null when cursor is in the middle 50%', () => {
     const element = createElement(100, 40);
-    // Midpoint is 120, cursor at 120 → lower (>= midpoint)
-    expect(getQuadrant(element, 120)).toBe('lower');
+    // Quarter height = 10, middle zone is 110-130, cursor at 120 → null
+    expect(getQuadrant(element, 120)).toBeNull();
   });
 
   it('returns "upper" when cursor is at the top edge', () => {
@@ -44,13 +44,25 @@ describe('getQuadrant', () => {
     expect(getQuadrant(element, 139)).toBe('lower');
   });
 
+  it('returns null at exact quadrant boundaries', () => {
+    const element = createElement(100, 40);
+    // At 110 (top + quarterHeight): not < boundary, so middle zone
+    expect(getQuadrant(element, 110)).toBeNull();
+    // At 130 (bottom - quarterHeight): not > boundary, so middle zone
+    expect(getQuadrant(element, 130)).toBeNull();
+  });
+
   it('handles elements with different sizes', () => {
     const tallElement = createElement(0, 200);
-    expect(getQuadrant(tallElement, 50)).toBe('upper');
-    expect(getQuadrant(tallElement, 150)).toBe('lower');
+    // Quarter = 50, upper zone: 0-50, lower zone: 150-200
+    expect(getQuadrant(tallElement, 25)).toBe('upper');
+    expect(getQuadrant(tallElement, 100)).toBeNull();
+    expect(getQuadrant(tallElement, 175)).toBe('lower');
 
     const shortElement = createElement(50, 10);
-    expect(getQuadrant(shortElement, 52)).toBe('upper');
-    expect(getQuadrant(shortElement, 58)).toBe('lower');
+    // Quarter = 2.5, upper zone: 50-52.5, lower zone: 57.5-60
+    expect(getQuadrant(shortElement, 51)).toBe('upper');
+    expect(getQuadrant(shortElement, 55)).toBeNull();
+    expect(getQuadrant(shortElement, 59)).toBe('lower');
   });
 });

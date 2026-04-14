@@ -259,11 +259,13 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
 
           if (!targetType || !targetPath) return;
 
-          // For rules, use quadrant detection; for ruleGroups, always 'upper' (first child)
           const quadrant =
             targetType === 'ruleGroup'
               ? ('upper' as const)
               : getQuadrant(target.element as HTMLElement, location.current.input.clientY);
+
+          // Cursor is in the middle zone — no update
+          if (!quadrant) return;
 
           // Validate the drop is allowed
           const dragItem = activeDragItemRef.current;

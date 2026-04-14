@@ -1836,7 +1836,7 @@ describe('createPragmaticDndAdapter', () => {
                   element: mockElement,
                 },
               ],
-              input: { clientX: 100, clientY: 110 }, // upper quadrant
+              input: { clientX: 100, clientY: 102 }, // upper quadrant
             },
           },
         });
@@ -1953,7 +1953,7 @@ describe('createPragmaticDndAdapter', () => {
                 element: mockElement,
               },
             ],
-            input: { clientX: 100, clientY: 110 },
+            input: { clientX: 100, clientY: 102 },
           },
         },
       };
