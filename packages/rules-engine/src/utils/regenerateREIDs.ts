@@ -26,7 +26,7 @@ export const regenerateREIDs = <REC extends RulesEngineAny | REConditionAny>(
     newRE.antecedent = regenerateIDs(newRE.antecedent);
   }
 
-  // istanbul ignore else
+  // v8 ignore else
   if (isRulesEngineAny(subject)) {
     newRE.conditions = (subject as RulesEngine).conditions.map(re =>
       regenerateREIDs(re, { idGenerator })

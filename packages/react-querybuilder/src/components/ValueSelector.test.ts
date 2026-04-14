@@ -10,7 +10,7 @@ describe('useValueSelector', () => {
     it('should convert numeric array values to strings when multiple is true', () => {
       const { result } = renderHook(() =>
         useValueSelector({
-          handleOnChange: jest.fn(),
+          handleOnChange: vi.fn(),
           multiple: true,
           value: [42, 43] as unknown as UseValueSelectorParams['value'],
         })
@@ -21,7 +21,7 @@ describe('useValueSelector', () => {
     it('should convert mixed numeric/string array values to strings when multiple is true', () => {
       const { result } = renderHook(() =>
         useValueSelector({
-          handleOnChange: jest.fn(),
+          handleOnChange: vi.fn(),
           multiple: true,
           value: [42, '43'] as unknown as UseValueSelectorParams['value'],
         })
@@ -32,7 +32,7 @@ describe('useValueSelector', () => {
     it('should handle string array values unchanged when multiple is true', () => {
       const { result } = renderHook(() =>
         useValueSelector({
-          handleOnChange: jest.fn(),
+          handleOnChange: vi.fn(),
           multiple: true,
           value: ['42', '43'] as unknown as UseValueSelectorParams['value'],
         })
@@ -43,7 +43,7 @@ describe('useValueSelector', () => {
     it('should not alter value when multiple is false', () => {
       const { result } = renderHook(() =>
         useValueSelector({
-          handleOnChange: jest.fn(),
+          handleOnChange: vi.fn(),
           multiple: false,
           value: 42 as unknown as UseValueSelectorParams['value'],
         })
@@ -53,7 +53,7 @@ describe('useValueSelector', () => {
 
     it('should handle comma-separated string when multiple is true', () => {
       const { result } = renderHook(() =>
-        useValueSelector({ handleOnChange: jest.fn(), multiple: true, value: '42,43' })
+        useValueSelector({ handleOnChange: vi.fn(), multiple: true, value: '42,43' })
       );
       expect(result.current.val).toEqual(['42', '43']);
     });
@@ -61,7 +61,7 @@ describe('useValueSelector', () => {
     it('should handle a single numeric value when multiple is true', () => {
       const { result } = renderHook(() =>
         useValueSelector({
-          handleOnChange: jest.fn(),
+          handleOnChange: vi.fn(),
           multiple: true,
           value: 42 as unknown as UseValueSelectorParams['value'],
         })
@@ -72,7 +72,7 @@ describe('useValueSelector', () => {
     it('should handle empty array when multiple is true', () => {
       const { result } = renderHook(() =>
         useValueSelector({
-          handleOnChange: jest.fn(),
+          handleOnChange: vi.fn(),
           multiple: true,
           value: [] as unknown as UseValueSelectorParams['value'],
         })

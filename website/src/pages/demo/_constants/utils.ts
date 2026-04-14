@@ -346,10 +346,10 @@ export const getCodeString = (
   const rawCode = `import { useState } from 'react';
 ${
   options.enableDragAndDrop
-    ? `import { QueryBuilderDnD } from '@react-querybuilder/dnd';
-import * as ReactDnD from 'react-dnd';
-import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
-import * as ReactDndTouchBackend from 'react-dnd-touch-backend';
+    ? `import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { draggable, dropTargetForElements, monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 `
     : ''
 }import type { ${queryType} } from 'react-querybuilder';
@@ -359,8 +359,13 @@ import {${
 import { fields } from './fields';
 import 'react-querybuilder/dist/query-builder.${styleLanguage}';
 import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}
-
-const initialQuery: ${queryType} = {${
+${
+  options.enableDragAndDrop
+    ? `
+const dnd = createPragmaticDndAdapter({ draggable, dropTargetForElements, monitorForElements, combine });
+`
+    : ''
+}const initialQuery: ${queryType} = {${
     options.independentCombinators ? '' : ` combinator: 'and',`
   } rules: [] };
 
@@ -368,9 +373,7 @@ export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
   return (${
-    options.enableDragAndDrop
-      ? '<QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend, ...ReactDndTouchBackend }}>'
-      : ''
+    options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''
   }${styleWrapperPrefix}<QueryBuilder ${props} />${styleWrapperSuffix}${
     options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''
   }

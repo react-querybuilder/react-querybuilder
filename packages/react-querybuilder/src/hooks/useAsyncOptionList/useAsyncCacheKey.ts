@@ -9,7 +9,7 @@ import type { UseAsyncOptionListParams } from './types';
  */
 export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | ValueEditorProps>(
   props: PropsType,
-  // istanbul ignore next
+  // v8 ignore next
   { getCacheKey }: UseAsyncOptionListParams<PropsType> = {}
 ): string => {
   const ruleOrGroup = props.rule ?? (props as VersatileSelectorProps).ruleGroup;

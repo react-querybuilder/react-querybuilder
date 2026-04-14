@@ -46,7 +46,9 @@ const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) 
     return listsAsArrays
       ? valueAsArray
       : joinWith(
-          valueAsArray.map(v => v ?? /* istanbul ignore next */ ''),
+          valueAsArray.map(
+            v => v ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+          ),
           ','
         );
   }
@@ -70,9 +72,8 @@ export type UseQueryBuilderSetup<
   combinators:
     | WithUnknownIndex<BaseOption & FullOption>[]
     | OptionGroup<WithUnknownIndex<BaseOption & FullOption>>[];
-  getRuleDefaultValue: <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(
-    r: RT
-  ) => any; // oxlint-disable-line typescript/no-explicit-any
+  getRuleDefaultValue: // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+  <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(r: RT) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
   createRuleGroup: (independentCombinators?: boolean) => RG;
 } & RemoveNullability<{
@@ -229,8 +230,11 @@ export const useQueryBuilderSetup = <
           : getDefaultOperator;
       }
 
-      const ops = getOperatorsMain(field, { fieldData }) ?? /* istanbul ignore next */ [];
-      return (getFirstOption(ops) ?? /* istanbul ignore next */ '') as OperatorName;
+      const ops =
+        getOperatorsMain(field, { fieldData }) ??
+        /* v8 ignore start -- @preserve */ [] /* v8 ignore stop -- @preserve */;
+      return (getFirstOption(ops) ??
+        /* v8 ignore start -- @preserve */ '') /* v8 ignore stop -- @preserve */ as OperatorName;
     },
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
@@ -281,6 +285,7 @@ export const useQueryBuilderSetup = <
   );
 
   const getRuleDefaultValue = useCallback(
+    // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
     <RT extends RuleType = R>(r: RT) => {
       const fieldData = (fieldMap[r.field as FieldName] ?? {}) as F;
       if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
@@ -343,16 +348,16 @@ export const useQueryBuilderSetup = <
   const createRule = useCallback((): R => {
     let field = '' as FieldName;
     const flds = fields as FullOptionList<F>;
-    /* istanbul ignore else */
+    /* v8 ignore else -- @preserve */
     if (flds?.length > 0 && flds[0]) {
       const fo = getFirstOption(flds) as FieldName;
-      /* istanbul ignore else */
+      /* v8 ignore else -- @preserve */
       if (fo) field = fo;
     }
     if (getDefaultField) {
       if (typeof getDefaultField === 'function') {
         const df = getDefaultField(flds) as FieldName;
-        /* istanbul ignore else */
+        /* v8 ignore else -- @preserve */
         if (df) field = df;
       } else {
         field = getDefaultField;
@@ -406,7 +411,9 @@ export const useQueryBuilderSetup = <
       return {
         id: idGenerator(),
         rules: addRuleToNewGroups ? [createRule()] : [],
-        combinator: getFirstOption(combinators) ?? /* istanbul ignore next */ '',
+        combinator:
+          getFirstOption(combinators) ??
+          /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */,
         not: false,
       };
     },

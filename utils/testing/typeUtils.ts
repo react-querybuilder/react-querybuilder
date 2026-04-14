@@ -7,6 +7,7 @@ export type IsTrue<T extends true> = T;
 export type IsFalse<T extends false> = T;
 
 export type Equal<X, Y> =
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;
 export type NotEqual<X, Y> = true extends Equal<X, Y> ? false : true;
 

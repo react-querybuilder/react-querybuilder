@@ -17,7 +17,7 @@ const escapeStringValueQuotes = (v: any, quoteChar: string, escapeQuotes?: boole
  */
 export const defaultValueProcessorByRule: ValueProcessorByRule = (
   { operator, value, valueSource },
-  // istanbul ignore next - defaultRuleProcessorSQL always provides options
+  // v8 ignore next - defaultRuleProcessorSQL always provides options
   {
     escapeQuotes,
     parseNumbers,

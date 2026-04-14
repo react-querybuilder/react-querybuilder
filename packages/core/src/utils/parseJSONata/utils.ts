@@ -184,7 +184,7 @@ export const getValidValue = (expr: Any): Any => {
 export const getFieldFromPath = (path: JSONataPath): string =>
   isJSONataIdentifier(path)
     ? path.steps.map(s => s.value).join('.')
-    : /* istanbul ignore next */ '';
+    : /* v8 ignore next -- @preserve */ '';
 
 export const normalizeOperator = (
   opType: DefaultOperatorName,
@@ -214,7 +214,7 @@ export const negatedLikeOperators: Record<
 export const generateFlatAndOrList = (
   expr: JSONataExprNode
 ): (DefaultCombinatorName | JSONataExprNode)[] => {
-  // istanbul ignore else
+  // v8 ignore else
   if (isJSONataAnd(expr) || isJSONataOr(expr)) {
     const { lhs, rhs, value: combinator } = expr;
     if (isJSONataAnd(lhs) || isJSONataOr(lhs)) {
@@ -222,7 +222,7 @@ export const generateFlatAndOrList = (
     }
     return [lhs, combinator, rhs];
   }
-  // istanbul ignore next
+  // v8 ignore next
   return [];
 };
 

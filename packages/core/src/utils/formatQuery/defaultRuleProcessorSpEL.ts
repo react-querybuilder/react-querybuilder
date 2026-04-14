@@ -21,7 +21,7 @@ const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
  */
 export const defaultRuleProcessorSpEL: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // v8 ignore next
   opts = {}
 ) => {
   const { field, operator, value, valueSource } = rule;

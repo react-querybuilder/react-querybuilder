@@ -20,5 +20,5 @@ export const toDropdownOptions = (list: OptionList): React.JSX.Element[] | null 
             {opt.label}
           </Option>
         ))
-      : // istanbul ignore next
-        null;
+      : /* v8 ignore start -- @preserve */
+        null /* v8 ignore stop -- @preserve */;

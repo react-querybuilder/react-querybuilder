@@ -63,7 +63,6 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.14.4",
-    "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"

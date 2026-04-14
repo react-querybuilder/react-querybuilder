@@ -1,4 +1,4 @@
-/* @jest-environment node */
+/* @vitest-environment node */
 
 import { formatQuery } from '@react-querybuilder/core';
 import jsonata from 'jsonata';

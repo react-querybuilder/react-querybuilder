@@ -25,7 +25,7 @@ const defaultSchema = {
 
 const createValueSelectorProps = (overrides: Partial<VersatileSelectorProps> = {}) =>
   ({
-    handleOnChange: jest.fn(),
+    handleOnChange: vi.fn(),
     options: [{ name: 'default', value: 'default', label: 'Default' }],
     value: '',
     className: 'test-class',
@@ -35,7 +35,7 @@ const createValueSelectorProps = (overrides: Partial<VersatileSelectorProps> = {
 
 const createValueEditorProps = (overrides: Partial<ValueEditorProps> = {}) =>
   ({
-    handleOnChange: jest.fn(),
+    handleOnChange: vi.fn(),
     values: [{ name: 'default', value: 'default', label: 'Default' }],
     value: '',
     className: 'test-class',
@@ -91,7 +91,7 @@ const getWrapper = () => {
 const { selectCacheByKey, selectErrorByKey } = asyncOptionListsSlice.selectors;
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe('basic functionality', () => {
@@ -313,7 +313,7 @@ describe('rule and group context', () => {
 
 describe('prop passing', () => {
   it('passes through all original props', () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const props = createValueSelectorProps({
       handleOnChange,
       value: 'test-value',
@@ -356,7 +356,7 @@ describe('cache behavior', () => {
     const field = generateID();
     const rule = createRule({ field });
     const props = createValueSelectorProps({ rule });
-    const loadOptionList = jest.fn(async () => [
+    const loadOptionList = vi.fn(async () => [
       { name: 'cached', value: 'cached', label: generateID() },
     ]);
     const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
@@ -437,7 +437,7 @@ describe('edge cases', () => {
     const field = generateID();
     const props = createValueSelectorProps({ rule: createRule({ field }) });
     const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
-      loadOptionList: jest.fn().mockResolvedValue([]),
+      loadOptionList: vi.fn().mockResolvedValue([]),
       getCacheKey: 'field',
     };
     const { store, wrapper } = getWrapper();
@@ -454,7 +454,7 @@ describe('edge cases', () => {
     const field = generateID();
     const props = createValueSelectorProps({ rule: createRule({ field }) });
     const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
-      loadOptionList: jest.fn().mockResolvedValue([]),
+      loadOptionList: vi.fn().mockResolvedValue([]),
       getCacheKey: 'field',
       cacheTTL: customTTL,
     };
@@ -474,7 +474,7 @@ describe('edge cases', () => {
     async () => {
       const field = generateID();
       const props = createValueSelectorProps({ rule: createRule({ field }) });
-      const loadOptionList = jest.fn().mockResolvedValue([]);
+      const loadOptionList = vi.fn().mockResolvedValue([]);
       const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
         loadOptionList,
         getCacheKey: 'field',

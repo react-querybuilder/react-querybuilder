@@ -1,5 +1,4 @@
 import type * as ReactDnD from 'react-dnd';
-import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
 import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type * as ReactDndTouchBackend from 'react-dnd-touch-backend';
 import type {
@@ -9,6 +8,7 @@ import type {
   QueryBuilderContextProviderProps,
 } from 'react-querybuilder';
 import type { SetOptional } from 'type-fest';
+import type { DndAdapter } from './adapter';
 
 type ReactDndBackendFactory = typeof ReactDndHtml5Backend.HTML5Backend;
 
@@ -28,7 +28,8 @@ export type UseReactDnD = typeof ReactDnD & {
 } & OptionalKnownDndBackends;
 
 /**
- * Type of the `dnd` prop on `QueryBuilderDnD`/`QueryBuilderDndWithoutProvider`.
+ * Type of the `dnd` prop on `QueryBuilderDnD`/`QueryBuilderDndWithoutProvider`
+ * when passing raw `react-dnd` exports (legacy API).
  *
  * @group Props
  */
@@ -50,13 +51,14 @@ export interface CustomCanDropParams {
  */
 export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
   /**
-   * Provide this prop if `enableDragAndDrop` is `true` for the child element and
-   * you want the component to render immediately with drag-and-drop enabled.
-   * Otherwise, the component will asynchronously load `react-dnd`, `react-dnd-html5-backend`,
+   * A {@link DndAdapter} or raw `react-dnd` exports. When raw `react-dnd` exports are
+   * provided (legacy API), they are automatically wrapped in a `react-dnd` adapter.
+   *
+   * If omitted, the component will asynchronously load `react-dnd`, `react-dnd-html5-backend`,
    * and `react-dnd-touch-backend`. Drag-and-drop features will only be enabled
    * once those packages have loaded.
    */
-  dnd?: DndProp;
+  dnd?: DndAdapter | DndProp;
   canDrop?: (params: CustomCanDropParams) => boolean;
   /**
    * Key code for the modifier key that puts a drag-and-drop action in "copy" mode.
@@ -87,7 +89,6 @@ export interface QueryBuilderDndContextProps extends Pick<
   QueryBuilderDndProps,
   'canDrop' | 'copyModeModifierKey' | 'groupModeModifierKey' | 'hideDefaultDragPreview'
 > {
-  useDrag?: typeof useDragOriginal;
-  useDrop?: typeof useDropOriginal;
+  adapter?: DndAdapter;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;
 }

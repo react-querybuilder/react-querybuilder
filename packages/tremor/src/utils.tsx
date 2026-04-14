@@ -6,7 +6,7 @@ import { isOptionGroupArray } from 'react-querybuilder';
 export const toSelectItems = (list: OptionList, multi?: boolean): React.JSX.Element[] | null => {
   const flatList: Option[] = isOptionGroupArray(list) ? list.flatMap(og => og.options) : list;
 
-  // istanbul ignore else
+  // v8 ignore else
   if (Array.isArray(flatList)) {
     return flatList.map(opt =>
       multi ? (
@@ -21,6 +21,6 @@ export const toSelectItems = (list: OptionList, multi?: boolean): React.JSX.Elem
     );
   }
 
-  // istanbul ignore next
+  // v8 ignore next
   return null;
 };

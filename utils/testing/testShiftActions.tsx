@@ -28,8 +28,8 @@ export const testShiftActions = (ShiftActions: React.ComponentType<ShiftActionsP
     testTitle,
     ...additionalProps
   }: Partial<ShiftActionsProps> & { testTitle?: string } = {}) => {
-    const shiftUp = jest.fn();
-    const shiftDown = jest.fn();
+    const shiftUp = vi.fn();
+    const shiftDown = vi.fn();
 
     afterEach(() => {
       shiftUp.mockClear();

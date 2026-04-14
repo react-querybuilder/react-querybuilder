@@ -53,7 +53,7 @@ export const testValueEditor = (
 
   const testCheckbox = (type: 'checkbox' | 'switch') => {
     it('should render the checkbox and react to changes', async () => {
-      const handleOnChange = jest.fn();
+      const handleOnChange = vi.fn();
       render(<ValueEditor {...props} type={type} handleOnChange={handleOnChange} />);
       expect(() => findInput(screen.getByTitle(title))).not.toThrow();
       expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'checkbox');
@@ -62,7 +62,7 @@ export const testValueEditor = (
     });
 
     it('should be disabled by the disabled prop', async () => {
-      const handleOnChange = jest.fn();
+      const handleOnChange = vi.fn();
       render(<ValueEditor {...props} type={type} handleOnChange={handleOnChange} disabled />);
       const input = findInput(screen.getByTitle(title));
       expect(input).toBeDisabled();
@@ -90,7 +90,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange method passed in', async () => {
-          const onChange = jest.fn();
+          const onChange = vi.fn();
           render(<ValueEditor {...props} handleOnChange={onChange} />);
           await user.type(findInput(screen.getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
@@ -109,7 +109,7 @@ export const testValueEditor = (
         });
 
         it('should trim the value if operator is not "between"/"in", inputType is "number", and value contains a comma', () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           let callCount = 0;
           const { rerender } = render(
             <ValueEditor
@@ -246,7 +246,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange handler', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           await act(async () => {
             render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} />);
           });
@@ -259,7 +259,7 @@ export const testValueEditor = (
         });
 
         it('should be disabled by the disabled prop', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           await act(async () => {
             render(<ValueEditor {...radioProps} handleOnChange={handleOnChange} disabled />);
           });
@@ -305,7 +305,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange handler', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(<ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} />);
           const betweenInputs = screen.getAllByRole('textbox');
           expect(betweenInputs).toHaveLength(2);
@@ -316,7 +316,7 @@ export const testValueEditor = (
         });
 
         it('should assume empty string as the second value if not provided', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(
             <ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} value={['test1']} />
           );
@@ -327,7 +327,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange handler with lists as arrays', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(
             <ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} listsAsArrays />
           );
@@ -340,7 +340,7 @@ export const testValueEditor = (
         });
 
         it('should be disabled by the disabled prop', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(<ValueEditor {...betweenTextProps} handleOnChange={handleOnChange} disabled />);
           const betweenInputs = screen.getAllByRole('textbox');
           expect(betweenInputs).toHaveLength(2);
@@ -372,7 +372,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange handler', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} />);
           const betweenInputs = findInputs(screen.getByTitle(title));
           expect(betweenInputs).toHaveLength(2);
@@ -383,7 +383,7 @@ export const testValueEditor = (
         });
 
         it('should assume empty string as the second value if not provided', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(
             <ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} value={['12']} />
           );
@@ -394,7 +394,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange handler with lists as arrays', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(
             <ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} listsAsArrays />
           );
@@ -407,7 +407,7 @@ export const testValueEditor = (
         });
 
         it('should be disabled by the disabled prop', async () => {
-          const handleOnChange = jest.fn();
+          const handleOnChange = vi.fn();
           render(<ValueEditor {...betweenNumberProps} handleOnChange={handleOnChange} disabled />);
           const betweenInputs = findInputs(screen.getByTitle(title));
           expect(betweenInputs).toHaveLength(2);
@@ -449,7 +449,7 @@ export const testValueEditor = (
           });
 
           it('should call the onChange handler', async () => {
-            const handleOnChange = jest.fn();
+            const handleOnChange = vi.fn();
             render(<ValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
             const betweenSelects = screen.getAllByRole('combobox');
             expect(betweenSelects).toHaveLength(2);
@@ -460,7 +460,7 @@ export const testValueEditor = (
           });
 
           it('should assume the second value if not provided', async () => {
-            const handleOnChange = jest.fn();
+            const handleOnChange = vi.fn();
             render(
               <ValueEditor
                 {...betweenSelectProps}
@@ -475,7 +475,7 @@ export const testValueEditor = (
           });
 
           it('should call the onChange handler with lists as arrays', async () => {
-            const handleOnChange = jest.fn();
+            const handleOnChange = vi.fn();
             render(
               <ValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
             );
@@ -488,7 +488,7 @@ export const testValueEditor = (
           });
 
           it('should be disabled by the disabled prop', async () => {
-            const handleOnChange = jest.fn();
+            const handleOnChange = vi.fn();
             render(
               <ValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} disabled />
             );
@@ -512,7 +512,7 @@ export const testValueEditor = (
         });
 
         it('should call the onChange method passed in', async () => {
-          const onChange = jest.fn();
+          const onChange = vi.fn();
           render(<ValueEditor {...props} type="textarea" handleOnChange={onChange} />);
           await user.type(findTextarea(screen.getByTitle(title)), 'foo');
           expect(onChange).toHaveBeenCalledWith('foo');
@@ -535,14 +535,14 @@ export const testValueEditor = (
         });
 
         it('should call the onChange method passed in', async () => {
-          const onChange = jest.fn();
+          const onChange = vi.fn();
           render(<ValueEditor {...bigIntProps} value={bi} handleOnChange={onChange} />);
           await user.type(findInput(screen.getByTitle(title)), '2');
           expect(onChange).toHaveBeenCalledWith(bi * 10n + 2n);
         });
 
         it('should maintain non-bigint values', async () => {
-          const onChange = jest.fn();
+          const onChange = vi.fn();
           render(<ValueEditor {...bigIntProps} value={'bi'} handleOnChange={onChange} />);
           await user.type(findInput(screen.getByTitle(title)), 't', {
             // initialSelectionStart: 0,

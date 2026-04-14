@@ -31,27 +31,31 @@ export const asyncOptionListsSlice: Slice<
   name: sliceName,
   initialState,
   reducers: {
-    invalidateCache: /* istanbul ignore next */ (state, { payload }) => {
+    /* v8 ignore start -- -- @preserve */
+    invalidateCache: (state, { payload }) => {
       delete state.cache[payload];
       delete state.errors[payload];
     },
-    clearAllCache: /* istanbul ignore next */ state => {
+    clearAllCache: state => {
       state.cache = {};
       state.errors = {};
       state.loading = {};
     },
+    /* v8 ignore stop -- -- @preserve */
   },
   // prettier-ignore
   selectors: {
-    selectCache: /* istanbul ignore next */ state => state.cache,
-    selectLoading: /* istanbul ignore next */ state => state.loading,
-    selectErrors: /* istanbul ignore next */ state => state.errors,
-    selectCacheByKey: /* istanbul ignore next */ (state, cacheKey) => state.cache[cacheKey] || null,
-    selectIsLoadingByKey: /* istanbul ignore next */ (state, cacheKey) => state.loading[cacheKey] || false,
-    selectErrorByKey: /* istanbul ignore next */ (state, cacheKey) => {
+    /* v8 ignore start -- -- @preserve */
+    selectCache: state => state.cache,
+    selectLoading: state => state.loading,
+    selectErrors: state => state.errors,
+    selectCacheByKey: (state, cacheKey) => state.cache[cacheKey] || null,
+    selectIsLoadingByKey: (state, cacheKey) => state.loading[cacheKey] || false,
+    selectErrorByKey: (state, cacheKey) => {
       const error = state.errors[cacheKey];
       return error && error !== '' ? error : null;
     },
+    /* v8 ignore stop -- -- @preserve */
   },
   extraReducers: builder => {
     builder.addAsyncThunk(getOptionListsAsync, {
@@ -65,7 +69,9 @@ export const asyncOptionListsSlice: Slice<
           data,
           timestamp: Date.now(),
           validUntil:
-            Date.now() + (action.meta.arg.cacheTTL ?? /* istanbul ignore next */ DEFAULT_CACHE_TTL),
+            Date.now() +
+            (action.meta.arg.cacheTTL ??
+              /* v8 ignore start -- @preserve */ DEFAULT_CACHE_TTL) /* v8 ignore stop -- @preserve */,
         };
         state.loading[cacheKey] = false;
       },

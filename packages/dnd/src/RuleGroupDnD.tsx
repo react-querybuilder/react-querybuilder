@@ -1,20 +1,7 @@
 import * as React from 'react';
-import { useContext, useRef } from 'react';
-import type { useDrag as useDragOriginal, useDrop as useDropOriginal } from 'react-dnd';
-import type {
-  DndDropTargetType,
-  DraggedItem,
-  DropCollection,
-  DropResult,
-  RuleGroupProps,
-  UseRuleGroupDnD,
-} from 'react-querybuilder';
-import { getParentPath, isAncestor, pathsAreEqual } from 'react-querybuilder';
-import { getEmptyImage } from './getEmptyImage';
-import { isHotkeyPressed } from './isHotkeyPressed';
+import { useContext } from 'react';
+import type { RuleGroupProps } from 'react-querybuilder';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
-import type { QueryBuilderDndContextProps } from './types';
-import { useDragCommon } from './useDragCommon';
 
 /**
  * Rule group component for drag-and-drop. Renders the provided rule group component
@@ -27,150 +14,31 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
 
   const {
+    adapter,
     canDrop,
     baseControls: { ruleGroup: BaseRuleGroupComponent },
-    useDrag,
-    useDrop,
     copyModeModifierKey,
     groupModeModifierKey,
     hideDefaultDragPreview,
   } = rqbDndContext;
 
-  const dndRefs = useRuleGroupDnD({
-    ...props,
+  const dndRefs = adapter!.useRuleGroupDnD({
     disabled: !!props.parentDisabled || !!props.disabled,
-    useDrag: useDrag!,
-    useDrop: useDrop!,
+    path: props.path,
+    schema: props.schema,
+    actions: props.actions,
+    ruleGroup: props.ruleGroup,
     canDrop,
-    copyModeModifierKey,
-    groupModeModifierKey,
+    copyModeModifierKey: copyModeModifierKey ?? 'alt',
+    groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
     hideDefaultDragPreview,
   });
 
   return <BaseRuleGroupComponent {...props} {...dndRefs} />;
 };
 
-interface UseRuleGroupDndParams
-  extends
-    RuleGroupProps,
-    Omit<QueryBuilderDndContextProps, 'baseControls' | 'useDrag' | 'useDrop'> {
-  useDrag: typeof useDragOriginal;
-  useDrop: typeof useDropOriginal;
-}
-
-const accept: [DndDropTargetType, DndDropTargetType] = ['rule', 'ruleGroup'];
-
 /**
  * @group Hooks
+ * @deprecated Access via the adapter instead: `adapter.useRuleGroupDnD(params)`.
  */
-export const useRuleGroupDnD = (params: UseRuleGroupDndParams): UseRuleGroupDnD => {
-  const previewRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<HTMLSpanElement>(null);
-  const dropRef = useRef<HTMLDivElement>(null);
-
-  const {
-    disabled,
-    path,
-    ruleGroup,
-    schema,
-    actions,
-    useDrag,
-    useDrop,
-    canDrop,
-    copyModeModifierKey = 'alt',
-    groupModeModifierKey = 'ctrl',
-    hideDefaultDragPreview,
-  } = params;
-
-  const [{ isDragging, dragMonitorId }, drag, preview] = useDragCommon({
-    type: 'ruleGroup',
-    path,
-    disabled,
-    independentCombinators: schema.independentCombinators,
-    schema,
-    actions,
-    useDrag,
-    copyModeModifierKey,
-    groupModeModifierKey,
-    hideDefaultDragPreview,
-  });
-
-  const [{ isOver, dropMonitorId, dropEffect, groupItems, dropNotAllowed }, drop] = useDrop<
-    DraggedItem,
-    DropResult,
-    DropCollection
-  >(
-    () => ({
-      accept,
-      canDrop: dragging => {
-        if (
-          disabled ||
-          (dragging &&
-            typeof canDrop === 'function' &&
-            !canDrop({ dragging, hovering: { ...ruleGroup, path, qbId: schema.qbId } }))
-        ) {
-          return false;
-        }
-
-        if (schema.qbId !== dragging.qbId) return true;
-
-        const parentItemPath = getParentPath(dragging.path);
-        const itemIndex = dragging.path.at(-1);
-        // Disallow drop if...
-        // prettier-ignore
-        return !(
-          // 1) item is ancestor of drop target, OR
-          isAncestor(dragging.path, path) ||
-          // 2) item is first child and is dropped on its own group header, OR
-          (pathsAreEqual(path, parentItemPath) && itemIndex === 0) ||
-          // 3) the group is dropped on itself
-          pathsAreEqual(path, dragging.path)
-        );
-      },
-      collect: monitor => ({
-        dropNotAllowed: monitor.isOver() && !monitor.canDrop(),
-        isOver: monitor.canDrop() && monitor.isOver(),
-        dropMonitorId: monitor.getHandlerId() ?? '',
-        dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
-        groupItems: isHotkeyPressed(groupModeModifierKey),
-      }),
-      drop: () => {
-        const { qbId, getQuery, dispatchQuery } = schema;
-        const dE = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
-        const gI = isHotkeyPressed(groupModeModifierKey);
-
-        return {
-          type: 'ruleGroup',
-          path,
-          qbId,
-          getQuery,
-          dispatchQuery,
-          groupItems: gI,
-          dropEffect: dE,
-        };
-      },
-    }),
-    [disabled, actions.groupRule, actions.moveRule, path, canDrop, ruleGroup, schema]
-  );
-
-  React.useEffect(() => {
-    if (path.length > 0) {
-      drag(dragRef);
-      preview(hideDefaultDragPreview ? getEmptyImage() : previewRef);
-    }
-    drop(dropRef);
-  }, [drag, drop, hideDefaultDragPreview, path.length, preview]);
-
-  return {
-    isDragging,
-    dragMonitorId,
-    isOver,
-    dropMonitorId,
-    previewRef,
-    dragRef,
-    dropRef,
-    dropEffect,
-    groupItems,
-    dropNotAllowed,
-  };
-};
+export { type AdapterUseRuleGroupDnDResult as UseRuleGroupDnDResult } from './adapter';

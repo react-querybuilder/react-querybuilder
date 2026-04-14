@@ -19,7 +19,7 @@ export const useControlledOrUncontrolled = (params: UseControlledOrUncontrolledP
   const { defaultQuery, queryProp } = params;
   const prevQueryPresent = usePrevious(!!queryProp);
 
-  // istanbul ignore else
+  // v8 ignore else
   if (process.env.NODE_ENV !== 'production') {
     if (!!queryProp && !!defaultQuery) {
       dispatch(rqbWarn(messages.errorBothQueryDefaultQuery));

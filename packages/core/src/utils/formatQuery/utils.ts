@@ -155,7 +155,7 @@ export const numerifyValues = (
       parseNumber(v, { parseNumbers })
     );
     if (valAsArray.every(v => typeof v === 'number')) {
-      // istanbul ignore else
+      // v8 ignore else
       if (valAsArray.length > 1) {
         return { ...r, value: valAsArray };
       } else if (valAsArray.length === 1) {
@@ -214,7 +214,7 @@ export const isValueProcessorLegacy = (
  * @group Export
  */
 export const getQuoteFieldNamesWithArray = (
-  // istanbul ignore next
+  // v8 ignore next
   quoteFieldNamesWith: null | string | [string, string] = ['', '']
 ): [string, string] =>
   Array.isArray(quoteFieldNamesWith)
@@ -328,7 +328,9 @@ export const getNLTranslataion = (
   conditions: GroupVariantCondition[] = []
 ): string =>
   conditions.length === 0
-    ? (translations[key] ?? defaultNLTranslations[key] ?? /* istanbul ignore next */ '')
+    ? (translations[key] ??
+      defaultNLTranslations[key] ??
+      /* v8 ignore start -- @preserve */ '') /* v8 ignore stop -- @preserve */
     : (Object.entries(translations).find(([keyToTest]) =>
         translationMatchFilter(key, keyToTest, conditions)
       )?.[1] ??
@@ -336,7 +338,7 @@ export const getNLTranslataion = (
         translationMatchFilter(key, keyToTest, conditions)
       )?.[1] ??
       defaultNLTranslations[key] ??
-      /* istanbul ignore next */ '');
+      /* v8 ignore next -- @preserve */ '');
 
 type ProcessedMatchMode =
   | { mode: 'all'; threshold?: number | null | undefined }

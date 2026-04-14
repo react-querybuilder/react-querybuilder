@@ -10,7 +10,7 @@ import { processIsDateField } from './utils';
 export const getDatetimeRuleProcessorMongoDBQuery =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
-    const opts = options ?? /* istanbul ignore next */ {};
+    const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
     const { field, operator, value, valueSource } = rule;
 
     if (valueSource === 'field' || !processIsDateField(opts.context?.isDateField, rule, opts)) {

@@ -15,6 +15,11 @@ packages/datetime/dayjs/package.json
 packages/datetime/date-fns/package.json
 packages/datetime/jsdate/package.json
 packages/datetime/luxon/package.json
+
+packages/dnd/react-dnd/package.json
+packages/dnd/dnd-kit/package.json
+packages/dnd/pragmatic-dnd/package.json
+
 packages/*/async/package.json
 packages/*/debug/package.json
 packages/*/formatQuery/package.json

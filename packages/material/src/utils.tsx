@@ -8,16 +8,16 @@ export { isOptionGroupArray };
 
 type ToOptionsOptions = Pick<RQBMaterialComponents, 'ListSubheader' | 'MenuItem'>;
 
-// istanbul ignore next
+// v8 ignore next
 const defaultToOptionsOptions: ToOptionsOptions = {
   ListSubheader: () => null,
   MenuItem: () => <></>,
 };
 
 export const toOptions = (
-  // istanbul ignore next
+  // v8 ignore next
   arr: OptionList = [],
-  // istanbul ignore next
+  // v8 ignore next
   { ListSubheader, MenuItem }: ToOptionsOptions = defaultToOptionsOptions
 ): JSX.Element[] | null => {
   if (isOptionGroupArray(arr)) {
@@ -34,7 +34,7 @@ export const toOptions = (
     }
     return optArray;
   }
-  /* istanbul ignore else */
+  /* v8 ignore else -- @preserve */
   if (Array.isArray(arr)) {
     return arr.map(opt => (
       <MenuItem key={opt.name} value={opt.name}>
@@ -42,6 +42,6 @@ export const toOptions = (
       </MenuItem>
     ));
   }
-  /* istanbul ignore next */
+  /* v8 ignore next -- @preserve */
   return null;
 };

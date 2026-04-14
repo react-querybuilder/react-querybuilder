@@ -79,8 +79,8 @@ export const prepareRuleGroup = <RG extends RuleGroupTypeAny>(
 /**
  * Ensures that a rule or group is valid. See {@link prepareRule} and {@link prepareRuleGroup}.
  */
-export const prepareRuleOrGroup = <RG extends RuleGroupTypeAny>(
-  rg: RG | RuleType,
+export const prepareRuleOrGroup = (
+  rg: RuleGroupTypeAny | RuleType,
   { idGenerator = generateID }: PreparerOptions = {}
 ): RuleGroupType | RuleGroupTypeIC | RuleType =>
   isRuleGroup(rg) ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator });

@@ -224,7 +224,7 @@ const getNextPathRE = (
     // Otherwise, just move up one position
     return [...getParentPath(currentPath), currentPath.at(-1)! - 1];
   } else {
-    // istanbul ignore else
+    // v8 ignore else
     if (newPathOrShiftDirection === 'down') {
       const parent = findConditionPath(getParentPath(currentPath), rulesEngine);
       if (!parent || !Array.isArray(parent.conditions)) {
@@ -239,7 +239,7 @@ const getNextPathRE = (
     }
   }
 
-  // istanbul ignore next
+  // v8 ignore next
   return currentPath;
 };
 
