@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `createReactDnDAdapter` factory wraps `react-dnd` exports into a `DndAdapter`. This is the recommended way to enable drag-and-drop going forward.
   - New `createDndKitAdapter` factory wraps [`@dnd-kit/core`](https://www.npmjs.com/package/@dnd-kit/core) exports into a `DndAdapter`, providing a first-class alternative to `react-dnd`.
   - Shared pure-logic helpers (`canDropOnRule`, `canDropOnRuleGroup`, `canDropOnInlineCombinator`, `buildDropResult`, `handleDrop`, `getDragItem`) are exported for use in custom adapters.
-- New `updateWhileDragging` prop for `QueryBuilderDnD`. When enabled, the query tree visually rearranges in real-time as rules and groups are dragged (using a shadow query that commits on drop). Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters.
+- [#1025] New `updateWhileDragging` prop for `QueryBuilderDnD`. When enabled, the query tree visually rearranges in real-time as rules and groups are dragged (using a shadow query that commits on drop). Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters.
 - [#1018] New "diagnostics" export format (`formatQuery(query, 'diagnostics')`) which returns:
   - `query`: annotated copy of the query tree with `valid`, `reasons`, `path`, and `level` on every rule and group.
   - `diagnostics`: flat array of all issues (placeholder checks, muted nodes, custom validator failures, value/type mismatches, undefined/unreferenced fields).
@@ -2153,6 +2153,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1018]: https://github.com/react-querybuilder/react-querybuilder/pull/1018
 [#1019]: https://github.com/react-querybuilder/react-querybuilder/pull/1019
 [#1021]: https://github.com/react-querybuilder/react-querybuilder/pull/1021
+[#1025]: https://github.com/react-querybuilder/react-querybuilder/pull/1025
 
 <!-- #endregion -->
 
