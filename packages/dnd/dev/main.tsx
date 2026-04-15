@@ -86,7 +86,7 @@ const App = () => {
   return (
     <DevLayout {...devApp}>
       <AdapterSelector />
-      <QueryBuilderDnD dnd={dnd} updateWhileDragging>
+      <QueryBuilderDnD dnd={dnd} copyModeAfterHoverMs={1214} groupModeAfterHoverMs={2652}>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"

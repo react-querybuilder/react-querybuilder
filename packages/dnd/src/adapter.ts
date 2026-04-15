@@ -21,7 +21,9 @@ export interface DndAdapterRuleDnDParams {
   rule: RuleType;
   canDrop?: (params: CustomCanDropParams) => boolean;
   copyModeModifierKey: string;
+  copyModeAfterHoverMs?: number;
   groupModeModifierKey: string;
+  groupModeAfterHoverMs?: number;
   hideDefaultDragPreview?: boolean;
 }
 
@@ -37,7 +39,9 @@ export interface DndAdapterRuleGroupDnDParams {
   ruleGroup: RuleGroupTypeAny;
   canDrop?: (params: CustomCanDropParams) => boolean;
   copyModeModifierKey: string;
+  copyModeAfterHoverMs?: number;
   groupModeModifierKey: string;
+  groupModeAfterHoverMs?: number;
   hideDefaultDragPreview?: boolean;
 }
 
@@ -51,7 +55,9 @@ export interface DndAdapterInlineCombinatorDnDParams {
   rules?: (RuleType | RuleGroupTypeAny | string)[];
   canDrop?: (params: CustomCanDropParams) => boolean;
   copyModeModifierKey: string;
+  copyModeAfterHoverMs?: number;
   groupModeModifierKey: string;
+  groupModeAfterHoverMs?: number;
 }
 
 /**
@@ -110,6 +116,16 @@ export interface DndAdapterProviderProps {
    * using the standard drop-indicator approach.
    */
   updateWhileDragging?: boolean;
+  /**
+   * Milliseconds after hovering a drop target before the drop effect
+   * automatically switches to "copy".
+   */
+  copyModeAfterHoverMs?: number;
+  /**
+   * Milliseconds after hovering a drop target before the drop will
+   * automatically create a new group.
+   */
+  groupModeAfterHoverMs?: number;
   children: React.ReactNode;
 }
 

@@ -38,6 +38,15 @@ interface DropTargetRegistration {
 
 interface MonitorRegistration {
   onDragStart?: (args: { source: { data: Record<string, unknown> } }) => void;
+  onDrag?: (args: {
+    source: { data: Record<string, unknown> };
+    location: {
+      current: {
+        dropTargets: { data: Record<string, unknown>; element: Element }[];
+        input: { clientX: number; clientY: number };
+      };
+    };
+  }) => void;
   onDrop?: (args: {
     source: { data: Record<string, unknown> };
     location: { current: { dropTargets: { data: Record<string, unknown> }[] } };
@@ -2373,6 +2382,694 @@ describe('createPragmaticDndAdapter', () => {
 
       // If shadow changed, dispatchQuery is called
       expect(dispatchQueryFn).toHaveBeenCalled();
+    });
+  });
+
+  describe('hover timer mode', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('activates copy mode after copyModeAfterHoverMs', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      // Start drag
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Simulate hovering over a target
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Before timer fires
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      // Advance timer
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('copy');
+    });
+
+    it('activates group mode after groupModeAfterHoverMs', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="groupItems">{String(!!dnd.groupItems)}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider groupModeAfterHoverMs={800}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      act(() => {
+        vi.advanceTimersByTime(800);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('true');
+    });
+
+    it('resets timers when moving to a new target', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Hover over target [1]
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Advance partway
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      // Move to a different target — timers reset
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'ruleGroup', __rqbPath: [2] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Advance another 400ms — still shouldn't fire (timer was reset)
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      // Now advance the remaining 100ms
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('copy');
+    });
+
+    it('clears timers on drop', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Hover
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Drop before timer fires
+      const dropReg = mock._dropTargets[0];
+      const targetData = dropReg.getData!();
+      act(() => {
+        mock._monitors[0].onDrop!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+          location: { current: { dropTargets: [{ data: targetData as Record<string, unknown> }] } },
+        });
+      });
+
+      // Advance past the timer — should NOT activate copy mode since drop cleared it
+      act(() => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+    });
+
+    it('clears group timer on target change before it fires', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="groupItems">{String(!!dnd.groupItems)}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider groupModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Hover over target [1] — starts group timer
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Advance partway (timer is running)
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      // Move to different target — clears the active group timer
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'ruleGroup', __rqbPath: [2] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Original timer would have fired at 500ms total, but it was cleared at 300ms
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      // New timer fires at 500ms from the target change
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('true');
+    });
+
+    it('clears timers when leaving all targets', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Hover over target
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Leave all targets (empty drop targets)
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: { current: { dropTargets: [], input: { clientX: 0, clientY: 0 } } },
+        });
+      });
+
+      // Advance past timer
+      act(() => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+    });
+
+    it('does not activate timers when props are undefined or 0', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+            <span data-testid="groupItems">{String(!!dnd.groupItems)}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={0} groupModeAfterHoverMs={undefined}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Advance a long time
+      act(() => {
+        vi.advanceTimersByTime(10000);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+    });
+
+    it('applies timer copy mode override at drop time', () => {
+      const mock = createMockPragmaticDnd();
+      const adapter = createPragmaticDndAdapter(mock as unknown as PragmaticDndExports);
+      const actions = mockActions();
+      const schema = mockSchema();
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      // Start drag
+      act(() => {
+        mock._monitors[0].onDragStart!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+        });
+      });
+
+      // Hover
+      act(() => {
+        mock._monitors[0].onDrag!({
+          source: { data: { __rqbPath: [0], __rqbSchema: schema } },
+          location: {
+            current: {
+              dropTargets: [
+                {
+                  data: { __rqbType: 'rule', __rqbPath: [1] },
+                  element: document.createElement('div'),
+                },
+              ],
+              input: { clientX: 0, clientY: 0 },
+            },
+          },
+        });
+      });
+
+      // Fire timer
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      // Drop — should use copy mode (no key pressed, but timer activated it)
+      const dropReg = mock._dropTargets[0];
+      const targetData = dropReg.getData!();
+      act(() => {
+        mock._monitors[0].onDrop!({
+          source: {
+            data: {
+              __rqbPath: [0],
+              __rqbSchema: schema,
+              __rqbActions: actions,
+              __rqbCopyModeModifierKey: 'alt',
+              __rqbGroupModeModifierKey: 'ctrl',
+            },
+          },
+          location: { current: { dropTargets: [{ data: targetData as Record<string, unknown> }] } },
+        });
+      });
+
+      // moveRule is called with clone=true for copy mode
+      expect(actions.moveRule).toHaveBeenCalledWith([0], [2], true);
     });
   });
 });

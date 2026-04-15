@@ -73,13 +73,20 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
   const { DndProvider } = adapter;
 
   return (
-    <DndProvider key={key} debugMode={debugMode} updateWhileDragging={props.updateWhileDragging}>
+    <DndProvider
+      key={key}
+      debugMode={debugMode}
+      updateWhileDragging={props.updateWhileDragging}
+      copyModeAfterHoverMs={props.copyModeAfterHoverMs}
+      groupModeAfterHoverMs={props.groupModeAfterHoverMs}>
       <QueryBuilderContext.Provider key={key} value={contextWithDnD}>
         <QueryBuilderDndWithoutProvider
           dnd={adapter}
           canDrop={props.canDrop}
           copyModeModifierKey={props.copyModeModifierKey}
+          copyModeAfterHoverMs={props.copyModeAfterHoverMs}
           groupModeModifierKey={props.groupModeModifierKey}
+          groupModeAfterHoverMs={props.groupModeAfterHoverMs}
           hideDefaultDragPreview={props.hideDefaultDragPreview}
           updateWhileDragging={props.updateWhileDragging}
           onDragMove={props.onDragMove}>
@@ -109,6 +116,16 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     undefined,
     props.groupModeModifierKey,
     rqbDndContext.groupModeModifierKey
+  );
+  const copyModeAfterHoverMs = preferAnyProp(
+    undefined,
+    props.copyModeAfterHoverMs,
+    rqbDndContext.copyModeAfterHoverMs
+  );
+  const groupModeAfterHoverMs = preferAnyProp(
+    undefined,
+    props.groupModeAfterHoverMs,
+    rqbDndContext.groupModeAfterHoverMs
   );
   const enableDragAndDrop = preferProp(true, props.enableDragAndDrop, rqbContext.enableDragAndDrop);
   const debugMode = preferProp(false, props.debugMode, rqbContext.debugMode);
@@ -174,7 +191,9 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       baseControls,
       canDrop,
       copyModeModifierKey,
+      copyModeAfterHoverMs,
       groupModeModifierKey,
+      groupModeAfterHoverMs,
       hideDefaultDragPreview,
       updateWhileDragging,
       onDragMove,
@@ -184,7 +203,9 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       baseControls,
       canDrop,
       copyModeModifierKey,
+      copyModeAfterHoverMs,
       groupModeModifierKey,
+      groupModeAfterHoverMs,
       hideDefaultDragPreview,
       updateWhileDragging,
       onDragMove,

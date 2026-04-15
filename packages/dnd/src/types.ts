@@ -72,12 +72,22 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
    */
   copyModeModifierKey?: string;
   /**
+   * Milliseconds after hovering a drop target before the drop effect
+   * automatically switches to "copy". Set to `undefined` or `0` to disable.
+   */
+  copyModeAfterHoverMs?: number;
+  /**
    * Key code for the modifier key that puts a drag-and-drop action in "group" mode.
    * Can be combined with "copy" modifier key.
    *
    * @default "ctrl"
    */
   groupModeModifierKey?: string;
+  /**
+   * Milliseconds after hovering a drop target before the drop will
+   * automatically create a new group. Set to `undefined` or `0` to disable.
+   */
+  groupModeAfterHoverMs?: number;
   /**
    * Do not render the "ghost" preview image when dragging.
    */
@@ -154,7 +164,9 @@ export interface QueryBuilderDndContextProps extends Pick<
   QueryBuilderDndProps,
   | 'canDrop'
   | 'copyModeModifierKey'
+  | 'copyModeAfterHoverMs'
   | 'groupModeModifierKey'
+  | 'groupModeAfterHoverMs'
   | 'hideDefaultDragPreview'
   | 'updateWhileDragging'
   | 'onDragMove'

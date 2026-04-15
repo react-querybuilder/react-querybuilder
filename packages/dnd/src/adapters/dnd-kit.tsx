@@ -68,9 +68,15 @@ export type DndKitExports = {
 
 interface DndKitDragState {
   activeDragItem: DraggedItem | null;
+  timerCopyMode: boolean;
+  timerGroupMode: boolean;
 }
 
-const defaultDragState: DndKitDragState = { activeDragItem: null };
+const defaultDragState: DndKitDragState = {
+  activeDragItem: null,
+  timerCopyMode: false,
+  timerGroupMode: false,
+};
 const DragStateContext = createContext(defaultDragState);
 
 // #endregion
@@ -156,11 +162,63 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
   const DndProvider = ({
     children,
     updateWhileDragging,
+    copyModeAfterHoverMs,
+    groupModeAfterHoverMs,
   }: DndAdapterProviderProps): React.JSX.Element => {
     const [activeDragItem, setActiveDragItem] = useState<DraggedItem | null>(null);
     const activeDragItemRef = useRef<DraggedItem | null>(null);
     // oxlint-disable-next-line typescript/no-explicit-any
     const dragSchemaRef = useRef<Schema<any, any> | null>(null);
+
+    // --- Hover timer state ---
+    const [timerCopyMode, setTimerCopyMode] = useState(false);
+    const [timerGroupMode, setTimerGroupMode] = useState(false);
+    const timerCopyModeRef = useRef(false);
+    const timerGroupModeRef = useRef(false);
+    const copyTimerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const groupTimerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lastHoverTargetIdRef = useRef<string | null>(null);
+
+    const clearHoverTimers = useCallback(() => {
+      if (copyTimerIdRef.current !== null) {
+        clearTimeout(copyTimerIdRef.current);
+        copyTimerIdRef.current = null;
+      }
+      if (groupTimerIdRef.current !== null) {
+        clearTimeout(groupTimerIdRef.current);
+        groupTimerIdRef.current = null;
+      }
+      timerCopyModeRef.current = false;
+      timerGroupModeRef.current = false;
+      setTimerCopyMode(false);
+      setTimerGroupMode(false);
+      lastHoverTargetIdRef.current = null;
+    }, []);
+
+    const startHoverTimers = useCallback(
+      (targetId: string) => {
+        if (lastHoverTargetIdRef.current === targetId) return;
+
+        clearHoverTimers();
+        lastHoverTargetIdRef.current = targetId;
+
+        if (copyModeAfterHoverMs && copyModeAfterHoverMs > 0) {
+          copyTimerIdRef.current = setTimeout(() => {
+            timerCopyModeRef.current = true;
+            setTimerCopyMode(true);
+            copyTimerIdRef.current = null;
+          }, copyModeAfterHoverMs);
+        }
+        if (groupModeAfterHoverMs && groupModeAfterHoverMs > 0) {
+          groupTimerIdRef.current = setTimeout(() => {
+            timerGroupModeRef.current = true;
+            setTimerGroupMode(true);
+            groupTimerIdRef.current = null;
+          }, groupModeAfterHoverMs);
+        }
+      },
+      [clearHoverTimers, copyModeAfterHoverMs, groupModeAfterHoverMs]
+    );
 
     // --- Update-while-dragging state ---
     const [dragPreviewState, setDragPreviewState] = useState<DragPreviewState | null>(null);
@@ -191,10 +249,12 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
         lastTargetRef.current = { targetPath, targetType, quadrant };
 
         // v8 ignore next -- hotkey branch tested in hotkey-specific tests
-        const dropEffect = isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
-          ? 'copy'
-          : 'move';
-        const groupItems = isHotkeyPressed('ctrl');
+        const dropEffect =
+          timerCopyModeRef.current ||
+          isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
+            ? 'copy'
+            : 'move';
+        const groupItems = timerGroupModeRef.current || isHotkeyPressed('ctrl');
 
         const result = computeShadowQuery({
           originalQuery: currentPreview.originalQuery,
@@ -290,12 +350,27 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     const handleDragOver = useCallback(
       // oxlint-disable-next-line typescript/no-explicit-any
       (event: any) => {
+        const { over } = event;
+
+        // Manage hover timers for copy/group mode
+        if (over) {
+          const targetData = over.data?.current;
+          const targetType = targetData?.type as DndDropTargetType | undefined;
+          const targetPath = targetData?.path as Path | undefined;
+          if (targetType && targetPath) {
+            const targetId = `${targetType}-${targetPath.join('_')}`;
+            startHoverTimers(targetId);
+          }
+        } else {
+          clearHoverTimers();
+        }
+
         // v8 ignore next
         if (!updateWhileDragging || !dragPreviewStateRef.current) return;
 
-        const { over, activatorEvent, delta } = event;
         if (!over) return;
 
+        const { activatorEvent, delta } = event;
         const targetData = over.data?.current;
         const targetType = targetData?.type as DndDropTargetType | undefined;
         const targetPath = targetData?.path as Path | undefined;
@@ -346,7 +421,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
 
         updatePreviewPosition(targetPath, targetType, quadrant);
       },
-      [updateWhileDragging, updatePreviewPosition]
+      [updateWhileDragging, updatePreviewPosition, startHoverTimers, clearHoverTimers]
     );
 
     const handleDragEnd = useCallback(
@@ -354,6 +429,11 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       (event: any) => {
         const dragItem = activeDragItemRef.current;
         const { over, active } = event;
+
+        // Capture timer overrides before clearing
+        const copyOverride = timerCopyModeRef.current;
+        const groupOverride = timerGroupModeRef.current;
+        clearHoverTimers();
 
         if (updateWhileDragging && dragPreviewStateRef.current) {
           if (over) {
@@ -374,6 +454,8 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
               actions: sourceData.actions,
               copyModeModifierKey: sourceData.copyModeModifierKey,
               groupModeModifierKey: sourceData.groupModeModifierKey,
+              copyModeOverride: copyOverride,
+              groupModeOverride: groupOverride,
             });
           }
         }
@@ -381,18 +463,22 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
         activeDragItemRef.current = null;
         setActiveDragItem(null);
       },
-      [updateWhileDragging, commitDrag, cancelDrag]
+      [updateWhileDragging, commitDrag, cancelDrag, clearHoverTimers]
     );
 
     const handleDragCancel = useCallback(() => {
+      clearHoverTimers();
       if (updateWhileDragging && dragPreviewStateRef.current) {
         cancelDrag();
       }
       activeDragItemRef.current = null;
       setActiveDragItem(null);
-    }, [updateWhileDragging, cancelDrag]);
+    }, [updateWhileDragging, cancelDrag, clearHoverTimers]);
 
-    const dragStateValue = useMemo<DndKitDragState>(() => ({ activeDragItem }), [activeDragItem]);
+    const dragStateValue = useMemo<DndKitDragState>(
+      () => ({ activeDragItem, timerCopyMode, timerGroupMode }),
+      [activeDragItem, timerCopyMode, timerGroupMode]
+    );
 
     const dragPreviewContextValue = useMemo<DragPreviewContextValue>(
       () => ({
@@ -425,7 +511,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
   // #region useRuleDnD
 
   const useRuleDnD = (params: DndAdapterRuleDnDParams): AdapterUseRuleDnDResult => {
-    const { activeDragItem } = useContext(DragStateContext);
+    const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
     const activatorNodeRef = useRef<HTMLSpanElement>(null);
     const containerNodeRef = useRef<HTMLDivElement>(null);
 
@@ -533,8 +619,8 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       dropMonitorId: dropId,
       dndRef,
       dragRef,
-      dropEffect: isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
-      groupItems: isHotkeyPressed(params.groupModeModifierKey),
+      dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
+      groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,
     };
   };
@@ -544,7 +630,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
   // #region useRuleGroupDnD
 
   const useRuleGroupDnD = (params: DndAdapterRuleGroupDnDParams): AdapterUseRuleGroupDnDResult => {
-    const { activeDragItem } = useContext(DragStateContext);
+    const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
     const activatorNodeRef = useRef<HTMLSpanElement>(null);
 
     const dragId = getDragId('ruleGroup', params.path, params.schema.qbId);
@@ -658,8 +744,8 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       previewRef,
       dragRef,
       dropRef,
-      dropEffect: isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
-      groupItems: isHotkeyPressed(params.groupModeModifierKey),
+      dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
+      groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,
     };
   };
@@ -671,7 +757,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
   const useInlineCombinatorDnD = (
     params: DndAdapterInlineCombinatorDnDParams
   ): AdapterUseInlineCombinatorDnDResult => {
-    const { activeDragItem } = useContext(DragStateContext);
+    const { activeDragItem, timerCopyMode } = useContext(DragStateContext);
 
     const dropId = getDropId('inlineCombinator', params.path, params.schema.qbId);
 
@@ -733,7 +819,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       dropRef,
       dropMonitorId: dropId,
       isOver,
-      dropEffect: isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
+      dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
       dropNotAllowed,
     };
   };

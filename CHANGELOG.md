@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `createDndKitAdapter` factory wraps [`@dnd-kit/core`](https://www.npmjs.com/package/@dnd-kit/core) exports into a `DndAdapter`, providing a first-class alternative to `react-dnd`.
   - Shared pure-logic helpers (`canDropOnRule`, `canDropOnRuleGroup`, `canDropOnInlineCombinator`, `buildDropResult`, `handleDrop`, `getDragItem`) are exported for use in custom adapters.
 - [#1025] New `updateWhileDragging` prop for `QueryBuilderDnD`. When enabled, the query tree visually rearranges in real-time as rules and groups are dragged (using a shadow query that commits on drop). Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters.
+- New `copyModeAfterHoverMs` and `groupModeAfterHoverMs` props for `QueryBuilderDnD`. When set to a value greater than zero, the drop mode will switch to "copy" or "group" automatically after hovering over a valid rule or group for the specified number of milliseconds. Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters.
 - [#1018] New "diagnostics" export format (`formatQuery(query, 'diagnostics')`) which returns:
   - `query`: annotated copy of the query tree with `valid`, `reasons`, `path`, and `level` on every rule and group.
   - `diagnostics`: flat array of all issues (placeholder checks, muted nodes, custom validator failures, value/type mismatches, undefined/unreferenced fields).
