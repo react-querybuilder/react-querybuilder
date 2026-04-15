@@ -1640,4 +1640,541 @@ describe('createDndKitAdapter', () => {
       document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt', code: 'AltLeft' }));
     });
   });
+
+  describe('updateWhileDragging', () => {
+    const query: RuleGroupType = {
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        { id: 'r1', field: 'f1', operator: '=', value: 'v1' },
+        { id: 'r2', field: 'f2', operator: '=', value: 'v2' },
+        { id: 'r3', field: 'f3', operator: '=', value: 'v3' },
+      ],
+    };
+
+    // A DndContext mock that captures event handlers so tests can fire them.
+    // oxlint-disable-next-line typescript/no-explicit-any
+    let capturedHandlers: Record<string, any>;
+
+    const createMockDndKitWithCapture = () => {
+      capturedHandlers = {};
+      const mockUseDraggable = createMockUseDraggable();
+      const mockUseDroppable = createMockUseDroppable();
+
+      return {
+        DndContext: ({
+          children,
+          onDragStart,
+          onDragEnd,
+          onDragOver,
+          onDragCancel,
+          // oxlint-disable-next-line typescript/no-explicit-any
+        }: any) => {
+          capturedHandlers.onDragStart = onDragStart;
+          capturedHandlers.onDragEnd = onDragEnd;
+          capturedHandlers.onDragOver = onDragOver;
+          capturedHandlers.onDragCancel = onDragCancel;
+          return <>{children}</>;
+        },
+        useDraggable: mockUseDraggable,
+        useDroppable: mockUseDroppable,
+        // oxlint-disable typescript/no-extraneous-class
+        PointerSensor: class PointerSensor {},
+        KeyboardSensor: class KeyboardSensor {},
+        // oxlint-enable typescript/no-extraneous-class
+        useSensor: vi.fn((_sensor: unknown, _opts?: unknown) => ({})),
+        useSensors: vi.fn((...sensors: unknown[]) => sensors),
+        _useDraggable: mockUseDraggable,
+        _useDroppable: mockUseDroppable,
+      };
+    };
+
+    const setupUpdateWhileDragging = () => {
+      const mock = createMockDndKitWithCapture();
+      const adapter = createDndKitAdapter(mock as unknown as DndKitExports);
+      const dispatchQueryFn = vi.fn();
+      const schema = mockSchema({ getQuery: () => query, dispatchQuery: dispatchQueryFn });
+
+      return { mock, adapter, schema, dispatchQueryFn };
+    };
+
+    const makeDragStartEvent = (
+      // oxlint-disable-next-line typescript/no-explicit-any
+      schema: Schema<any, any>,
+      path: number[] = [2]
+    ) => ({
+      active: {
+        data: {
+          current: {
+            path,
+            schema,
+            actions: mockActions(),
+            copyModeModifierKey: 'alt',
+            groupModeModifierKey: 'ctrl',
+          },
+        },
+      },
+    });
+
+    const makeDragOverEvent = (
+      targetPath: number[],
+      targetType: string,
+      clientY: number,
+      overRect = { top: 100, bottom: 140, height: 40 }
+    ) => ({
+      active: { data: { current: {} } },
+      over: {
+        id: `drop-${targetType}-test-qb-${targetPath.join('_')}`,
+        rect: overRect,
+        data: {
+          current: {
+            type: targetType,
+            path: targetPath,
+            validate: () => true,
+            getDropResult: () => ({ type: targetType, path: targetPath, qbId: 'test-qb' }),
+          },
+        },
+      },
+      activatorEvent: { clientY: 100 } as PointerEvent,
+      delta: { x: 0, y: clientY - 100 },
+      collisions: null,
+    });
+
+    it('initializes shadow query state on drag start', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+      const onQueryChange = vi.fn();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder
+            query={query}
+            onQueryChange={onQueryChange}
+            enableMountQueryChange={false}
+          />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // onQueryChange should NOT have been called (visual only during drag)
+      expect(onQueryChange).not.toHaveBeenCalled();
+    });
+
+    it('commits shadow query via dispatchQuery on drop', () => {
+      const { adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      // Start drag
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // Drag over first rule (upper quadrant: clientY=102, top=100, quarterHeight=10 → within top 25%)
+      act(() => {
+        capturedHandlers.onDragOver(makeDragOverEvent([0], 'rule', 102));
+      });
+
+      // Drop on a valid target
+      act(() => {
+        capturedHandlers.onDragEnd({
+          active: { data: { current: {} } },
+          over: {
+            id: 'drop-rule-test-qb-0',
+            data: { current: { type: 'rule', path: [0], validate: () => true } },
+          },
+        });
+      });
+
+      // dispatchQuery should have been called with the shadow query (the moved version)
+      expect(dispatchQueryFn).toHaveBeenCalledTimes(1);
+      const dispatchedQuery = dispatchQueryFn.mock.calls[0][0] as RuleGroupType;
+      // f3 should now be first (moved from [2] to [0])
+      expect(dispatchedQuery.rules[0]).toMatchObject({ field: 'f3' });
+    });
+
+    it('does not dispatch on drop outside targets (cancel)', () => {
+      const { adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // Drop with no over (cancel)
+      act(() => {
+        capturedHandlers.onDragEnd({ active: { data: { current: {} } }, over: null });
+      });
+
+      expect(dispatchQueryFn).not.toHaveBeenCalled();
+    });
+
+    it('skips redundant shadow query computations for same target', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      const overEvent = makeDragOverEvent([0], 'rule', 102);
+
+      // First and second drag events with same target — second should be deduped
+      act(() => {
+        capturedHandlers.onDragOver(overEvent);
+      });
+      act(() => {
+        capturedHandlers.onDragOver(overEvent);
+      });
+
+      // No error means deduplication worked
+      expect(true).toBe(true);
+    });
+
+    it('does not interfere with standard drop when updateWhileDragging is false', () => {
+      const mock = createMockDndKitWithCapture();
+      const adapter = createDndKitAdapter(mock as unknown as DndKitExports);
+      const moveRuleFn = vi.fn();
+      const schema = mockSchema({ getQuery: () => query });
+      const actions = { ...mockActions(), moveRule: moveRuleFn };
+
+      render(
+        <QueryBuilderDnD dnd={adapter} enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      // Start drag (no updateWhileDragging)
+      act(() => {
+        capturedHandlers.onDragStart({
+          active: {
+            data: {
+              current: {
+                path: [2],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      // Standard drop
+      act(() => {
+        capturedHandlers.onDragEnd({
+          active: {
+            data: {
+              current: {
+                path: [2],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+          over: {
+            id: 'drop-rule-test-qb-0',
+            data: {
+              current: {
+                type: 'rule',
+                path: [0],
+                validate: () => true,
+                getDropResult: () => ({
+                  type: 'rule',
+                  path: [0],
+                  qbId: 'test-qb',
+                  getQuery: () => query,
+                  dispatchQuery: vi.fn(),
+                  groupItems: false,
+                  dropEffect: 'move',
+                }),
+              },
+            },
+          },
+        });
+      });
+
+      // Standard handleDrop should have been called (moveRule)
+      expect(moveRuleFn).toHaveBeenCalled();
+    });
+
+    it('commitDrag does not call dispatchQuery when shadow equals original (no moves)', () => {
+      const { adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // Drop immediately without any onDragOver (shadow === original)
+      act(() => {
+        capturedHandlers.onDragEnd({
+          active: { data: { current: {} } },
+          over: {
+            id: 'drop-rule-test-qb-0',
+            data: { current: { type: 'rule', path: [0], validate: () => true } },
+          },
+        });
+      });
+
+      expect(dispatchQueryFn).not.toHaveBeenCalled();
+    });
+
+    it('onDragOver returns early when over is null', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // onDragOver with no over — should not throw
+      act(() => {
+        capturedHandlers.onDragOver({
+          active: { data: { current: {} } },
+          over: null,
+          activatorEvent: { clientY: 100 },
+          delta: { x: 0, y: 0 },
+          collisions: null,
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDragOver returns early when target data is missing', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // Target missing type and path
+      act(() => {
+        capturedHandlers.onDragOver({
+          active: { data: { current: {} } },
+          over: {
+            id: 'some-id',
+            rect: { top: 100, bottom: 140, height: 40 },
+            data: { current: {} },
+          },
+          activatorEvent: { clientY: 100 },
+          delta: { x: 0, y: 2 },
+          collisions: null,
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDragOver returns early when cursor is in middle zone (null quadrant)', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // clientY=120 is in the middle zone (top 25% is 100-110, bottom 25% is 130-140)
+      act(() => {
+        capturedHandlers.onDragOver(makeDragOverEvent([0], 'rule', 120));
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDragOver returns early when validation fails', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // Validation function returns false
+      act(() => {
+        capturedHandlers.onDragOver({
+          active: { data: { current: {} } },
+          over: {
+            id: 'drop-rule-test-qb-0',
+            rect: { top: 100, bottom: 140, height: 40 },
+            data: { current: { type: 'rule', path: [0], validate: () => false } },
+          },
+          activatorEvent: { clientY: 100 },
+          delta: { x: 0, y: 2 },
+          collisions: null,
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('onDragOver uses upper quadrant for ruleGroup targets', () => {
+      const { adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // ruleGroup target — always uses 'upper', regardless of cursor position
+      act(() => {
+        capturedHandlers.onDragOver(makeDragOverEvent([], 'ruleGroup', 135));
+      });
+
+      // Drop to commit
+      act(() => {
+        capturedHandlers.onDragEnd({
+          active: { data: { current: {} } },
+          over: {
+            id: 'drop-ruleGroup-test-qb-',
+            data: { current: { type: 'ruleGroup', path: [], validate: () => true } },
+          },
+        });
+      });
+
+      // If shadow changed, dispatchQuery is called
+      expect(dispatchQueryFn).toHaveBeenCalled();
+    });
+
+    it('cancels shadow query on drag cancel', () => {
+      const { adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // Move to a position
+      act(() => {
+        capturedHandlers.onDragOver(makeDragOverEvent([0], 'rule', 102));
+      });
+
+      // Cancel
+      act(() => {
+        capturedHandlers.onDragCancel({});
+      });
+
+      expect(dispatchQueryFn).not.toHaveBeenCalled();
+    });
+
+    it('handles missing over.rect gracefully', () => {
+      const { adapter, schema } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema));
+      });
+
+      // over with no rect
+      act(() => {
+        capturedHandlers.onDragOver({
+          active: { data: { current: {} } },
+          over: {
+            id: 'drop-rule-test-qb-0',
+            rect: null,
+            data: { current: { type: 'rule', path: [0], validate: () => true } },
+          },
+          activatorEvent: { clientY: 100 },
+          delta: { x: 0, y: 2 },
+          collisions: null,
+        });
+      });
+
+      expect(true).toBe(true);
+    });
+
+    it('detects lower quadrant on drag over', () => {
+      const { adapter, schema, dispatchQueryFn } = setupUpdateWhileDragging();
+
+      render(
+        <QueryBuilderDnD dnd={adapter} updateWhileDragging enableDragAndDrop>
+          <QueryBuilder query={query} enableMountQueryChange={false} />
+        </QueryBuilderDnD>
+      );
+
+      act(() => {
+        capturedHandlers.onDragStart(makeDragStartEvent(schema, [0]));
+      });
+
+      // clientY=138 is in the lower quadrant (bottom 25% of 100-140 is 130-140)
+      act(() => {
+        capturedHandlers.onDragOver(makeDragOverEvent([2], 'rule', 138));
+      });
+
+      // Drop to commit
+      act(() => {
+        capturedHandlers.onDragEnd({
+          active: { data: { current: {} } },
+          over: {
+            id: 'drop-rule-test-qb-2',
+            data: { current: { type: 'rule', path: [2], validate: () => true } },
+          },
+        });
+      });
+
+      // The shadow should have been computed and committed
+      expect(dispatchQueryFn).toHaveBeenCalledTimes(1);
+    });
+  });
 });

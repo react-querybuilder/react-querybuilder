@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import type { RuleProps } from 'react-querybuilder';
+import { DragPreviewContext } from './DragPreviewContext';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
 /**
@@ -12,6 +13,7 @@ import { QueryBuilderDndContext } from './QueryBuilderDndContext';
  */
 export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
+  const { dragPreviewState } = useContext(DragPreviewContext);
 
   const { adapter, canDrop, copyModeModifierKey, groupModeModifierKey, hideDefaultDragPreview } =
     rqbDndContext;
@@ -30,11 +32,17 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
     hideDefaultDragPreview,
   });
 
+  // When updateWhileDragging is active, suppress isDragging and isOver
+  // indicators — the visual feedback is the item moving in the tree.
+  const overriddenDndRefs = dragPreviewState
+    ? { ...dndRefs, isDragging: false, isOver: false, dropNotAllowed: false }
+    : dndRefs;
+
   const { rule: BaseRuleComponent } = rqbDndContext.baseControls;
 
   return (
     <QueryBuilderDndContext.Provider value={rqbDndContext}>
-      <BaseRuleComponent {...props} {...dndRefs} />
+      <BaseRuleComponent {...props} {...overriddenDndRefs} />
     </QueryBuilderDndContext.Provider>
   );
 };

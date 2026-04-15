@@ -2,7 +2,7 @@
 title: Migrating to v7 or v8
 ---
 
-:::info Regarding version 8
+:::info[Regarding version 8]
 
 Version 8 has no breaking changes from version 7, **except** for `@react-querybuilder/chakra`. If you're not using the Chakra UI package, you can upgrade from v7 to v8 without any code changes.
 
@@ -121,7 +121,7 @@ Parser functions are now only available as separate imports to reduce bundle siz
 
 ### Performance improvements
 
-:::tip TL;DR
+:::tip[TL;DR]
 
 Ensure all `QueryBuilder` props have stable references or are memoized.
 
@@ -179,7 +179,7 @@ function App() {
 }
 ```
 
-:::note State setters don't need memoization
+:::note[State setters don't need memoization]
 
 `useState` and `useReducer` setters have stable references and don't need memoization. You can now pass them directly: `onQueryChange={setQuery}`.
 
@@ -193,7 +193,7 @@ Previously, option lists (fields, combinators, etc.) required a `name` property 
 - `QueryBuilder` ensures both properties are present, making them equivalent if only one is provided
 - Subcomponents can assume both properties will always be available
 
-:::info Direct interface usage
+:::info[Direct interface usage]
 
 When using `Field`, `Combinator`, and `Operator` interfaces directly, `name` is still required. Use `FlexibleOption` to avoid this requirement, though you'll lose IntelliSense for specific type properties.
 
@@ -248,7 +248,7 @@ These same two properties have also been added to the `controlClassnames` prop, 
 
 ### New query management methods
 
-:::tip Quick summary
+:::tip[Quick summary]
 
 You no longer need to pass the query object via the `context` prop.
 

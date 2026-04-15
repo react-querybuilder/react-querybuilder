@@ -44,6 +44,8 @@ export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => (
   dndCopy: joinClassnamesByName('dndCopy', args),
   dndGroup: joinClassnamesByName('dndGroup', args),
   dndDropNotAllowed: joinClassnamesByName('dndDropNotAllowed', args),
+  dndPreviewPosition: joinClassnamesByName('dndPreviewPosition', args),
+  dndHidden: joinClassnamesByName('dndHidden', args),
   disabled: joinClassnamesByName('disabled', args),
   valueListItem: joinClassnamesByName('valueListItem', args),
   matchMode: joinClassnamesByName('matchMode', args),

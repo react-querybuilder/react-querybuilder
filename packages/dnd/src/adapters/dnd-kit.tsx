@@ -20,8 +20,10 @@ import {
 import type {
   DndDropTargetType,
   DraggedItem,
+  Path,
   RuleGroupTypeAny,
   RuleType,
+  Schema,
 } from 'react-querybuilder';
 import type {
   AdapterUseInlineCombinatorDnDResult,
@@ -41,7 +43,11 @@ import {
   getDragItem,
   handleDrop,
 } from '../dndLogic';
+import { DragPreviewContext } from '../DragPreviewContext';
+import type { DragPreviewContextValue } from '../DragPreviewContext';
 import { isHotkeyPressed } from '../isHotkeyPressed';
+import { computeShadowQuery } from '../shadowQuery';
+import type { DragPreviewState, OnDragMoveCallback } from '../types';
 
 /**
  * The `@dnd-kit/core` exports needed by the adapter.
@@ -147,65 +153,269 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
 
   // #region DndProvider
 
-  const DndProvider = ({ children }: DndAdapterProviderProps): React.JSX.Element => {
+  const DndProvider = ({
+    children,
+    updateWhileDragging,
+  }: DndAdapterProviderProps): React.JSX.Element => {
     const [activeDragItem, setActiveDragItem] = useState<DraggedItem | null>(null);
     const activeDragItemRef = useRef<DraggedItem | null>(null);
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const dragSchemaRef = useRef<Schema<any, any> | null>(null);
+
+    // --- Update-while-dragging state ---
+    const [dragPreviewState, setDragPreviewState] = useState<DragPreviewState | null>(null);
+    const dragPreviewStateRef = useRef<DragPreviewState | null>(null);
+    const onDragMoveRef = useRef<OnDragMoveCallback | undefined>(undefined);
+    const lastTargetRef = useRef<{
+      targetPath: Path;
+      targetType: DndDropTargetType;
+      quadrant: 'upper' | 'lower';
+    } | null>(null);
+
+    const updatePreviewPosition = useCallback(
+      (targetPath: Path, targetType: DndDropTargetType, quadrant: 'upper' | 'lower') => {
+        const currentPreview = dragPreviewStateRef.current;
+        // v8 ignore next
+        if (!currentPreview || !updateWhileDragging) return;
+
+        const last = lastTargetRef.current;
+        if (
+          last &&
+          last.quadrant === quadrant &&
+          last.targetType === targetType &&
+          last.targetPath.length === targetPath.length &&
+          last.targetPath.every((v, i) => v === targetPath[i])
+        ) {
+          return;
+        }
+        lastTargetRef.current = { targetPath, targetType, quadrant };
+
+        // v8 ignore next -- hotkey branch tested in hotkey-specific tests
+        const dropEffect = isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
+          ? 'copy'
+          : 'move';
+        const groupItems = isHotkeyPressed('ctrl');
+
+        const result = computeShadowQuery({
+          originalQuery: currentPreview.originalQuery,
+          draggedItem: activeDragItemRef.current!,
+          draggedPath: currentPreview.draggedPath,
+          targetPath,
+          targetType,
+          quadrant,
+          dropEffect,
+          groupItems,
+        });
+
+        if (result) {
+          const newState: DragPreviewState = {
+            ...currentPreview,
+            shadowQuery: result.shadowQuery,
+            previewPath: result.previewPath,
+            dropEffect,
+            groupItems,
+          };
+          dragPreviewStateRef.current = newState;
+          setDragPreviewState(newState);
+
+          onDragMoveRef.current?.({
+            draggedItem: activeDragItemRef.current!,
+            shadowQuery: result.shadowQuery,
+            originalQuery: currentPreview.originalQuery,
+            previewPath: result.previewPath,
+          });
+        }
+      },
+      [updateWhileDragging]
+    );
+
+    const commitDrag = useCallback(() => {
+      const preview = dragPreviewStateRef.current;
+      // v8 ignore next
+      if (!preview) return;
+
+      const schema = dragSchemaRef.current;
+      if (schema && preview.shadowQuery !== preview.originalQuery) {
+        schema.dispatchQuery(preview.shadowQuery);
+      }
+
+      dragSchemaRef.current = null;
+      dragPreviewStateRef.current = null;
+      lastTargetRef.current = null;
+      setDragPreviewState(null);
+    }, []);
+
+    const cancelDrag = useCallback(() => {
+      dragSchemaRef.current = null;
+      dragPreviewStateRef.current = null;
+      lastTargetRef.current = null;
+      setDragPreviewState(null);
+    }, []);
 
     const sensors = useSensors(
       useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
       useSensor(KeyboardSensor)
     );
 
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const handleDragStart = useCallback((event: any) => {
-      const data = event.active?.data?.current;
-      if (data?.path && data?.schema) {
-        const item = getDragItem(data.path, data.schema);
-        activeDragItemRef.current = item;
-        setActiveDragItem(item);
-      }
-    }, []);
+    const handleDragStart = useCallback(
+      // oxlint-disable-next-line typescript/no-explicit-any
+      (event: any) => {
+        const data = event.active?.data?.current;
+        if (data?.path && data?.schema) {
+          const item = getDragItem(data.path, data.schema);
+          activeDragItemRef.current = item;
+          setActiveDragItem(item);
 
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const handleDragEnd = useCallback((event: any) => {
-      const dragItem = activeDragItemRef.current;
-      const { over, active } = event;
-
-      if (over && dragItem) {
-        const sourceData = active?.data?.current;
-        const targetData = over?.data?.current;
-
-        if (sourceData && targetData?.validate?.(dragItem)) {
-          const dropResult = targetData.getDropResult();
-          handleDrop({
-            item: dragItem,
-            dropResult,
-            schema: sourceData.schema,
-            actions: sourceData.actions,
-            copyModeModifierKey: sourceData.copyModeModifierKey,
-            groupModeModifierKey: sourceData.groupModeModifierKey,
-          });
+          if (updateWhileDragging) {
+            dragSchemaRef.current = data.schema;
+            const originalQuery = data.schema.getQuery();
+            const initialState: DragPreviewState = {
+              shadowQuery: originalQuery,
+              originalQuery,
+              draggedPath: data.path as Path,
+              previewPath: data.path as Path,
+              dropEffect: 'move',
+              groupItems: false,
+              qbId: data.schema.qbId,
+            };
+            dragPreviewStateRef.current = initialState;
+            setDragPreviewState(initialState);
+          }
         }
-      }
+      },
+      [updateWhileDragging]
+    );
 
-      activeDragItemRef.current = null;
-      setActiveDragItem(null);
-    }, []);
+    // Handle continuous drag movement for updateWhileDragging
+    const handleDragOver = useCallback(
+      // oxlint-disable-next-line typescript/no-explicit-any
+      (event: any) => {
+        // v8 ignore next
+        if (!updateWhileDragging || !dragPreviewStateRef.current) return;
+
+        const { over, activatorEvent, delta } = event;
+        if (!over) return;
+
+        const targetData = over.data?.current;
+        const targetType = targetData?.type as DndDropTargetType | undefined;
+        const targetPath = targetData?.path as Path | undefined;
+
+        if (!targetType || !targetPath) return;
+
+        // Compute current clientY from activator event + delta
+        // v8 ignore next -- activatorEvent and delta always provided by dnd-kit
+        const initialY = (activatorEvent as PointerEvent | undefined)?.clientY ?? 0;
+        // v8 ignore next
+        const clientY = initialY + (delta?.y ?? 0);
+
+        // For rule groups, always use 'upper' (insert as first child).
+        // For rules, use quadrant detection on the droppable's rect.
+        let quadrant: 'upper' | 'lower' | null;
+        if (targetType === 'ruleGroup') {
+          quadrant = 'upper';
+        } else {
+          // over.rect is the droppable container's bounding rect from dnd-kit
+          const rect = over.rect;
+          if (rect) {
+            // v8 ignore next -- rect always has height from dnd-kit
+            const height = rect.height ?? rect.bottom - rect.top;
+            const quarterHeight = height / 4;
+            // v8 ignore next -- rect always has top from dnd-kit
+            const top = rect.top ?? rect.offsetTop ?? 0;
+            const bottom = top + height;
+            if (clientY < top + quarterHeight) {
+              quadrant = 'upper';
+            } else if (clientY > bottom - quarterHeight) {
+              quadrant = 'lower';
+            } else {
+              quadrant = null;
+            }
+          } else {
+            quadrant = null;
+          }
+        }
+
+        if (!quadrant) return;
+
+        const dragItem = activeDragItemRef.current;
+        // v8 ignore next
+        if (!dragItem) return;
+
+        const validate = targetData?.validate as ((item: DraggedItem) => boolean) | undefined;
+        if (validate && !validate(dragItem)) return;
+
+        updatePreviewPosition(targetPath, targetType, quadrant);
+      },
+      [updateWhileDragging, updatePreviewPosition]
+    );
+
+    const handleDragEnd = useCallback(
+      // oxlint-disable-next-line typescript/no-explicit-any
+      (event: any) => {
+        const dragItem = activeDragItemRef.current;
+        const { over, active } = event;
+
+        if (updateWhileDragging && dragPreviewStateRef.current) {
+          if (over) {
+            commitDrag();
+          } else {
+            cancelDrag();
+          }
+        } else if (over && dragItem) {
+          const sourceData = active?.data?.current;
+          const targetData = over?.data?.current;
+
+          if (sourceData && targetData?.validate?.(dragItem)) {
+            const dropResult = targetData.getDropResult();
+            handleDrop({
+              item: dragItem,
+              dropResult,
+              schema: sourceData.schema,
+              actions: sourceData.actions,
+              copyModeModifierKey: sourceData.copyModeModifierKey,
+              groupModeModifierKey: sourceData.groupModeModifierKey,
+            });
+          }
+        }
+
+        activeDragItemRef.current = null;
+        setActiveDragItem(null);
+      },
+      [updateWhileDragging, commitDrag, cancelDrag]
+    );
 
     const handleDragCancel = useCallback(() => {
+      if (updateWhileDragging && dragPreviewStateRef.current) {
+        cancelDrag();
+      }
       activeDragItemRef.current = null;
       setActiveDragItem(null);
-    }, []);
+    }, [updateWhileDragging, cancelDrag]);
 
     const dragStateValue = useMemo<DndKitDragState>(() => ({ activeDragItem }), [activeDragItem]);
+
+    const dragPreviewContextValue = useMemo<DragPreviewContextValue>(
+      () => ({
+        dragPreviewState,
+        updatePreviewPosition,
+        commitDrag,
+        cancelDrag,
+      }),
+      [dragPreviewState, updatePreviewPosition, commitDrag, cancelDrag]
+    );
 
     return (
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}
         onDragCancel={handleDragCancel}>
-        <DragStateContext.Provider value={dragStateValue}>{children}</DragStateContext.Provider>
+        <DragStateContext.Provider value={dragStateValue}>
+          <DragPreviewContext.Provider value={dragPreviewContextValue}>
+            {children}
+          </DragPreviewContext.Provider>
+        </DragStateContext.Provider>
       </DndContext>
     );
   };

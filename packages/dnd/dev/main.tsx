@@ -86,7 +86,7 @@ const App = () => {
   return (
     <DevLayout {...devApp}>
       <AdapterSelector />
-      <QueryBuilderDnD dnd={dnd} hideDefaultDragPreview>
+      <QueryBuilderDnD dnd={dnd} updateWhileDragging>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"

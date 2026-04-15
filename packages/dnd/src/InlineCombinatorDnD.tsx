@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useContext } from 'react';
 import type { InlineCombinatorProps } from 'react-querybuilder';
 import { standardClassnames, TestID } from 'react-querybuilder';
+import { DragPreviewContext } from './DragPreviewContext';
 import { QueryBuilderDndContext } from './QueryBuilderDndContext';
 
 /**
@@ -15,6 +16,10 @@ export const InlineCombinatorDnD = ({
 }: InlineCombinatorProps): React.JSX.Element => {
   const { adapter, canDrop, copyModeModifierKey, groupModeModifierKey } =
     useContext(QueryBuilderDndContext);
+  const { dragPreviewState } = useContext(DragPreviewContext);
+
+  // When updateWhileDragging is active, suppress drop indicator
+  const isUpdateWhileDragging = dragPreviewState !== null;
 
   const { dropRef, dropMonitorId, isOver } = adapter!.useInlineCombinatorDnD({
     path: props.path,
@@ -25,10 +30,15 @@ export const InlineCombinatorDnD = ({
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
   });
 
+  // Suppress isOver when updateWhileDragging is active
+  // v8 ignore next -- same pattern as RuleDnD/RuleGroupDnD; IC only used in specific mode
+  const effectiveIsOver = isUpdateWhileDragging ? false : isOver;
+
   const wrapperClassName = [
     props.schema.suppressStandardClassnames || standardClassnames.betweenRules,
-    (isOver && !props.schema.classNames.dndOver) || false,
-    (isOver && !props.schema.suppressStandardClassnames && standardClassnames.dndOver) || false,
+    (effectiveIsOver && !props.schema.classNames.dndOver) || false,
+    (effectiveIsOver && !props.schema.suppressStandardClassnames && standardClassnames.dndOver) ||
+      false,
   ]
     .filter(c => typeof c === 'string')
     .join(' ');
