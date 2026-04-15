@@ -15,8 +15,15 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
   const rqbDndContext = useContext(QueryBuilderDndContext);
   const { dragPreviewState } = useContext(DragPreviewContext);
 
-  const { adapter, canDrop, copyModeModifierKey, groupModeModifierKey, hideDefaultDragPreview } =
-    rqbDndContext;
+  const {
+    adapter,
+    canDrop,
+    copyModeModifierKey,
+    copyModeAfterHoverMs,
+    groupModeModifierKey,
+    groupModeAfterHoverMs,
+    hideDefaultDragPreview,
+  } = rqbDndContext;
 
   const disabled = !!props.parentDisabled || !!props.disabled;
 
@@ -28,7 +35,9 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
     rule: props.rule,
     canDrop,
     copyModeModifierKey: copyModeModifierKey ?? 'alt',
+    copyModeAfterHoverMs,
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
+    groupModeAfterHoverMs,
     hideDefaultDragPreview,
   });
 

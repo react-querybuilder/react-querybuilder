@@ -14,8 +14,14 @@ export const InlineCombinatorDnD = ({
   component: CombinatorSelectorComponent,
   ...props
 }: InlineCombinatorProps): React.JSX.Element => {
-  const { adapter, canDrop, copyModeModifierKey, groupModeModifierKey } =
-    useContext(QueryBuilderDndContext);
+  const {
+    adapter,
+    canDrop,
+    copyModeModifierKey,
+    copyModeAfterHoverMs,
+    groupModeModifierKey,
+    groupModeAfterHoverMs,
+  } = useContext(QueryBuilderDndContext);
   const { dragPreviewState } = useContext(DragPreviewContext);
 
   // When updateWhileDragging is active, suppress drop indicator
@@ -27,7 +33,9 @@ export const InlineCombinatorDnD = ({
     rules: props.rules,
     canDrop,
     copyModeModifierKey: copyModeModifierKey ?? 'alt',
+    copyModeAfterHoverMs,
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
+    groupModeAfterHoverMs,
   });
 
   // Suppress isOver when updateWhileDragging is active

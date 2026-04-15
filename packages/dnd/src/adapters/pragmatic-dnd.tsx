@@ -63,9 +63,15 @@ export type PragmaticDndExports = {
 
 interface PragmaticDragState {
   activeDragItem: DraggedItem | null;
+  timerCopyMode: boolean;
+  timerGroupMode: boolean;
 }
 
-const defaultDragState: PragmaticDragState = { activeDragItem: null };
+const defaultDragState: PragmaticDragState = {
+  activeDragItem: null,
+  timerCopyMode: false,
+  timerGroupMode: false,
+};
 const DragStateContext = createContext(defaultDragState);
 
 // #endregion
@@ -110,11 +116,64 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
   const DndProvider = ({
     children,
     updateWhileDragging,
+    copyModeAfterHoverMs,
+    groupModeAfterHoverMs,
   }: DndAdapterProviderProps): React.JSX.Element => {
     const [activeDragItem, setActiveDragItem] = useState<DraggedItem | null>(null);
     const activeDragItemRef = useRef<DraggedItem | null>(null);
     // oxlint-disable-next-line typescript/no-explicit-any
     const dragSchemaRef = useRef<Schema<any, any> | null>(null);
+
+    // --- Hover timer state ---
+    const [timerCopyMode, setTimerCopyMode] = useState(false);
+    const [timerGroupMode, setTimerGroupMode] = useState(false);
+    const timerCopyModeRef = useRef(false);
+    const timerGroupModeRef = useRef(false);
+    const copyTimerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const groupTimerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lastHoverTargetIdRef = useRef<string | null>(null);
+
+    const clearHoverTimers = useCallback(() => {
+      if (copyTimerIdRef.current !== null) {
+        clearTimeout(copyTimerIdRef.current);
+        copyTimerIdRef.current = null;
+      }
+      if (groupTimerIdRef.current !== null) {
+        clearTimeout(groupTimerIdRef.current);
+        groupTimerIdRef.current = null;
+      }
+      timerCopyModeRef.current = false;
+      timerGroupModeRef.current = false;
+      setTimerCopyMode(false);
+      setTimerGroupMode(false);
+      lastHoverTargetIdRef.current = null;
+    }, []);
+
+    const startHoverTimers = useCallback(
+      (targetId: string) => {
+        // If the target hasn't changed, don't restart timers
+        if (lastHoverTargetIdRef.current === targetId) return;
+
+        clearHoverTimers();
+        lastHoverTargetIdRef.current = targetId;
+
+        if (copyModeAfterHoverMs && copyModeAfterHoverMs > 0) {
+          copyTimerIdRef.current = setTimeout(() => {
+            timerCopyModeRef.current = true;
+            setTimerCopyMode(true);
+            copyTimerIdRef.current = null;
+          }, copyModeAfterHoverMs);
+        }
+        if (groupModeAfterHoverMs && groupModeAfterHoverMs > 0) {
+          groupTimerIdRef.current = setTimeout(() => {
+            timerGroupModeRef.current = true;
+            setTimerGroupMode(true);
+            groupTimerIdRef.current = null;
+          }, groupModeAfterHoverMs);
+        }
+      },
+      [clearHoverTimers, copyModeAfterHoverMs, groupModeAfterHoverMs]
+    );
 
     // --- Update-while-dragging state ---
     const [dragPreviewState, setDragPreviewState] = useState<DragPreviewState | null>(null);
@@ -147,10 +206,12 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         lastTargetRef.current = { targetPath, targetType, quadrant };
 
         // v8 ignore next -- hotkey branch already tested in hotkey-specific tests
-        const dropEffect = isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
-          ? 'copy'
-          : 'move';
-        const groupItems = isHotkeyPressed('ctrl');
+        const dropEffect =
+          timerCopyModeRef.current ||
+          isHotkeyPressed(currentPreview.dropEffect === 'copy' ? 'alt' : '')
+            ? 'copy'
+            : 'move';
+        const groupItems = timerGroupModeRef.current || isHotkeyPressed('ctrl');
 
         const result = computeShadowQuery({
           originalQuery: currentPreview.originalQuery,
@@ -251,10 +312,24 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
             };
           };
         }) {
+          const dropTargets = location.current.dropTargets;
+
+          // Manage hover timers for copy/group mode
+          if (dropTargets.length > 0) {
+            const target = dropTargets[0];
+            const targetType = target.data.__rqbType as DndDropTargetType | undefined;
+            const targetPath = target.data.__rqbPath as Path | undefined;
+            if (targetType && targetPath) {
+              const targetId = `${targetType}-${targetPath.join('_')}`;
+              startHoverTimers(targetId);
+            }
+          } else {
+            clearHoverTimers();
+          }
+
           // v8 ignore next
           if (!updateWhileDragging || !dragPreviewStateRef.current) return;
 
-          const dropTargets = location.current.dropTargets;
           if (dropTargets.length === 0) return;
 
           const target = dropTargets[0];
@@ -294,6 +369,11 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           const sourceData = source.data;
           const dropTargets = location.current.dropTargets;
 
+          // Capture timer overrides before clearing
+          const copyOverride = timerCopyModeRef.current;
+          const groupOverride = timerGroupModeRef.current;
+          clearHoverTimers();
+
           if (updateWhileDragging && dragPreviewStateRef.current) {
             if (dropTargets.length > 0) {
               // Dropped on a valid target — commit the shadow query
@@ -321,6 +401,8 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
                 actions: sourceData.__rqbActions as any,
                 copyModeModifierKey: sourceData.__rqbCopyModeModifierKey as string,
                 groupModeModifierKey: sourceData.__rqbGroupModeModifierKey as string,
+                copyModeOverride: copyOverride,
+                groupModeOverride: groupOverride,
               });
             }
           }
@@ -330,12 +412,22 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         },
       });
 
-      return cleanup;
-    }, [updateWhileDragging, commitDrag, cancelDrag, updatePreviewPosition]);
+      return () => {
+        cleanup();
+        clearHoverTimers();
+      };
+    }, [
+      updateWhileDragging,
+      commitDrag,
+      cancelDrag,
+      updatePreviewPosition,
+      startHoverTimers,
+      clearHoverTimers,
+    ]);
 
     const dragStateValue = useMemo<PragmaticDragState>(
-      () => ({ activeDragItem }),
-      [activeDragItem]
+      () => ({ activeDragItem, timerCopyMode, timerGroupMode }),
+      [activeDragItem, timerCopyMode, timerGroupMode]
     );
 
     const dragPreviewContextValue = useMemo<DragPreviewContextValue>(
@@ -362,7 +454,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
   // #region useRuleDnD
 
   const useRuleDnD = (params: DndAdapterRuleDnDParams): AdapterUseRuleDnDResult => {
-    const { activeDragItem } = useContext(DragStateContext);
+    const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
     const containerNodeRef = useRef<HTMLDivElement>(null);
     const handleNodeRef = useRef<HTMLSpanElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -462,8 +554,8 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       dropMonitorId: dropId,
       dndRef,
       dragRef,
-      dropEffect: isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
-      groupItems: isHotkeyPressed(params.groupModeModifierKey),
+      dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
+      groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,
     };
   };
@@ -473,7 +565,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
   // #region useRuleGroupDnD
 
   const useRuleGroupDnD = (params: DndAdapterRuleGroupDnDParams): AdapterUseRuleGroupDnDResult => {
-    const { activeDragItem } = useContext(DragStateContext);
+    const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
     const previewNodeRef = useRef<HTMLDivElement>(null);
     const handleNodeRef = useRef<HTMLSpanElement>(null);
     const dropNodeRef = useRef<HTMLDivElement>(null);
@@ -591,8 +683,8 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       previewRef,
       dragRef,
       dropRef,
-      dropEffect: isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
-      groupItems: isHotkeyPressed(params.groupModeModifierKey),
+      dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
+      groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,
     };
   };
@@ -604,7 +696,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
   const useInlineCombinatorDnD = (
     params: DndAdapterInlineCombinatorDnDParams
   ): AdapterUseInlineCombinatorDnDResult => {
-    const { activeDragItem } = useContext(DragStateContext);
+    const { activeDragItem, timerCopyMode } = useContext(DragStateContext);
     const { dragPreviewState } = useContext(DragPreviewContext);
     const dropNodeRef = useRef<HTMLDivElement>(null);
     const [isOver, setIsOver] = useState(false);
@@ -685,7 +777,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       dropRef,
       dropMonitorId: dropId,
       isOver: validatedIsOver,
-      dropEffect: isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
+      dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
       dropNotAllowed,
     };
   };

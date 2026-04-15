@@ -2177,4 +2177,684 @@ describe('createDndKitAdapter', () => {
       expect(dispatchQueryFn).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('hover timer mode', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('activates copy mode after copyModeAfterHoverMs', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('copy');
+    });
+
+    it('activates group mode after groupModeAfterHoverMs', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="groupItems">{String(!!dnd.groupItems)}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider groupModeAfterHoverMs={800}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      act(() => {
+        vi.advanceTimersByTime(800);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('true');
+    });
+
+    it('resets timers when moving to a new target', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      // Hover over target [1]
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      // Move to different target — timers reset
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'ruleGroup', path: [2] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('copy');
+    });
+
+    it('clears timers on drop', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+      let onDragEnd: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        onDragEnd = props.onDragEnd as typeof onDragEnd;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      // Drop before timer fires
+      act(() => {
+        onDragEnd!({ active: { data: { current: {} } }, over: null });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+    });
+
+    it('clears timers when leaving all targets', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      // Hover over target
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      // Leave all targets
+      act(() => {
+        onDragOver!({ over: null, activatorEvent: { clientY: 0 }, delta: { y: 0 } });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+    });
+
+    it('clears timers on drag cancel', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+      let onDragCancel: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        onDragCancel = props.onDragCancel as typeof onDragCancel;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="dropEffect">{dnd.dropEffect}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      // Cancel drag
+      act(() => {
+        onDragCancel!({});
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(screen.getByTestId('dropEffect').textContent).toBe('move');
+    });
+
+    it('clears group timer on target change before it fires', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+            <span data-testid="groupItems">{String(!!dnd.groupItems)}</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider groupModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      // Change target — clears group timer
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [2] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('false');
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(screen.getByTestId('groupItems').textContent).toBe('true');
+    });
+
+    it('applies timer copy mode override at drop time', () => {
+      let onDragStart: ((e: unknown) => void) | undefined;
+      let onDragOver: ((e: unknown) => void) | undefined;
+      let onDragEnd: ((e: unknown) => void) | undefined;
+
+      const MockDndContext = ({ children, ...props }: Record<string, unknown>) => {
+        onDragStart = props.onDragStart as typeof onDragStart;
+        onDragOver = props.onDragOver as typeof onDragOver;
+        onDragEnd = props.onDragEnd as typeof onDragEnd;
+        return <>{children as React.ReactNode}</>;
+      };
+
+      const actions = mockActions();
+      const schema = mockSchema();
+      const mock = createMockDndKit({ DndContext: MockDndContext as DndKitExports['DndContext'] });
+      const adapter = createDndKitAdapter(mock);
+
+      const TestComponent = () => {
+        const dnd = adapter.useRuleDnD({
+          path: [1],
+          disabled: false,
+          schema,
+          actions,
+          rule: mockRule(),
+          copyModeModifierKey: 'alt',
+          groupModeModifierKey: 'ctrl',
+        });
+        return (
+          <div ref={dnd.dndRef}>
+            <span ref={dnd.dragRef}>Drag</span>
+          </div>
+        );
+      };
+
+      render(
+        <adapter.DndProvider copyModeAfterHoverMs={500}>
+          <TestComponent />
+        </adapter.DndProvider>
+      );
+
+      act(() => {
+        onDragStart!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+        });
+      });
+
+      act(() => {
+        onDragOver!({
+          over: { data: { current: { type: 'rule', path: [1] } } },
+          activatorEvent: { clientY: 0 },
+          delta: { y: 0 },
+        });
+      });
+
+      // Fire timer
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      // Drop with timer-activated copy mode
+      act(() => {
+        onDragEnd!({
+          active: {
+            data: {
+              current: {
+                path: [0],
+                schema,
+                actions,
+                copyModeModifierKey: 'alt',
+                groupModeModifierKey: 'ctrl',
+              },
+            },
+          },
+          over: {
+            data: {
+              current: {
+                type: 'rule',
+                path: [1],
+                schema,
+                validate: () => true,
+                getDropResult: () => ({
+                  type: 'rule',
+                  path: [1],
+                  qbId: 'test-qb',
+                  getQuery: schema.getQuery,
+                  dispatchQuery: schema.dispatchQuery,
+                  groupItems: false,
+                  dropEffect: 'move',
+                }),
+              },
+            },
+          },
+        });
+      });
+
+      // moveRule called with clone=true for copy mode
+      expect(actions.moveRule).toHaveBeenCalledWith([0], [2], true);
+    });
+  });
 });

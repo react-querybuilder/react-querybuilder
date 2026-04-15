@@ -180,6 +180,8 @@ export const buildDropResult = ({
   schema,
   copyModeModifierKey,
   groupModeModifierKey,
+  copyModeOverride,
+  groupModeOverride,
 }: {
   type: DndDropTargetType;
   path: Path;
@@ -187,6 +189,8 @@ export const buildDropResult = ({
   schema: Schema<any, any>;
   copyModeModifierKey: string;
   groupModeModifierKey: string;
+  copyModeOverride?: boolean;
+  groupModeOverride?: boolean;
 }): DropResult => {
   const { qbId, getQuery, dispatchQuery } = schema;
   return {
@@ -195,8 +199,8 @@ export const buildDropResult = ({
     qbId,
     getQuery,
     dispatchQuery,
-    groupItems: isHotkeyPressed(groupModeModifierKey),
-    dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
+    groupItems: groupModeOverride || isHotkeyPressed(groupModeModifierKey),
+    dropEffect: copyModeOverride || isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
   };
 };
 
@@ -205,10 +209,12 @@ export const buildDropResult = ({
  */
 export const collectDropState = (
   copyModeModifierKey: string,
-  groupModeModifierKey: string
+  groupModeModifierKey: string,
+  copyModeOverride?: boolean,
+  groupModeOverride?: boolean
 ): { dropEffect: DropEffect; groupItems: boolean } => ({
-  dropEffect: isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
-  groupItems: isHotkeyPressed(groupModeModifierKey),
+  dropEffect: copyModeOverride || isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move',
+  groupItems: groupModeOverride || isHotkeyPressed(groupModeModifierKey),
 });
 
 // #endregion
@@ -247,6 +253,8 @@ export const handleDrop = ({
   actions,
   copyModeModifierKey,
   groupModeModifierKey,
+  copyModeOverride,
+  groupModeOverride,
 }: {
   item: DraggedItem;
   dropResult: DropResult | null;
@@ -255,11 +263,13 @@ export const handleDrop = ({
   actions: QueryActions;
   copyModeModifierKey: string;
   groupModeModifierKey: string;
+  copyModeOverride?: boolean;
+  groupModeOverride?: boolean;
 }): void => {
   if (!dropResult) return;
 
-  const dropEffect = isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
-  const groupItems = isHotkeyPressed(groupModeModifierKey);
+  const dropEffect = copyModeOverride || isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
+  const groupItems = groupModeOverride || isHotkeyPressed(groupModeModifierKey);
   const destinationPath = getDestinationPath(dropResult, groupItems);
 
   if (schema.qbId === dropResult.qbId) {

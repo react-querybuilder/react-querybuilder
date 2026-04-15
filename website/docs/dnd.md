@@ -135,6 +135,8 @@ By default, a successful drag-and-drop action moves a rule or group to a new loc
 
 The keys that determine alternate behaviors are configurable. See [`copyModeModifierKey`](#copymodemodifierkey) and [`groupModeModifierKey`](#groupmodemodifierkey).
 
+As a keyboard-free alternative, you can configure timer-based activation with [`copyModeAfterHoverMs`](#copymodeafterhoverms) and [`groupModeAfterHoverMs`](#groupmodeafterhoverms). When set, hovering over a drop target for the specified duration automatically activates copy or group mode. Both methods are additive — modifier keys still work alongside timers.
+
 ## Existing drag-and-drop contexts
 
 If your application already uses [`react-dnd`](https://react-dnd.github.io/react-dnd/), use `QueryBuilderDndWithoutProvider` instead of `QueryBuilderDnD`. They are functionally equivalent, but the former assumes a `<DndProvider />` already exists higher in the component tree. The latter renders its own `DndProvider` which conflicts with any pre-existing ones. (If you use the wrong component, you'll probably see the error message "Cannot have two HTML5 backends at the same time" in the console.)
@@ -196,11 +198,27 @@ This function determines whether a "drop" at the current hover location is valid
 
 Key code for the modifier key that puts a drag-and-drop action in ["copy" mode](#cloning-and-grouping). Default is `"alt"` (<kbd>Alt</kbd> on Windows and Linux, <kbd>⌥ Option</kbd> on macOS).
 
+### `copyModeAfterHoverMs`
+
+`number | undefined`
+
+Milliseconds after hovering a drop target before the drop effect automatically switches to ["copy" mode](#cloning-and-grouping). This provides a keyboard-free alternative to holding the [`copyModeModifierKey`](#copymodemodifierkey) — both methods are additive, so either one activates copy mode. The timer resets when the drag moves to a different target. Set to `undefined` or `0` to disable (default).
+
+Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters. The `react-dnd` adapter ignores this prop.
+
 ### `groupModeModifierKey`
 
 `string`
 
 Key code for the modifier key that puts a drag-and-drop action in ["group" mode](#cloning-and-grouping). Default is `"ctrl"` (<kbd>Ctrl</kbd>).
+
+### `groupModeAfterHoverMs`
+
+`number | undefined`
+
+Milliseconds after hovering a drop target before the drop will automatically create a new group (["group" mode](#cloning-and-grouping)). This provides a keyboard-free alternative to holding the [`groupModeModifierKey`](#groupmodemodifierkey) — both methods are additive, so either one activates group mode. The timer resets when the drag moves to a different target. Set to `undefined` or `0` to disable (default).
+
+Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters. The `react-dnd` adapter ignores this prop.
 
 ### `hideDefaultDragPreview`
 

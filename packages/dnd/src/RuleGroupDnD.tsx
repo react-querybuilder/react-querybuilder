@@ -20,7 +20,9 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     canDrop,
     baseControls: { ruleGroup: BaseRuleGroupComponent },
     copyModeModifierKey,
+    copyModeAfterHoverMs,
     groupModeModifierKey,
+    groupModeAfterHoverMs,
     hideDefaultDragPreview,
   } = rqbDndContext;
 
@@ -47,7 +49,9 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     ruleGroup: effectiveProps.ruleGroup,
     canDrop,
     copyModeModifierKey: copyModeModifierKey ?? 'alt',
+    copyModeAfterHoverMs,
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
+    groupModeAfterHoverMs,
     hideDefaultDragPreview,
   });
 
