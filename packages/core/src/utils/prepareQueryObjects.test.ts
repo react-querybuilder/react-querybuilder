@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '../types';
-import { uuidV4regex } from './generateIDTestUtils';
+import { uuidV4regex } from './generateID';
 import { prepareRule, prepareRuleGroup, prepareRuleOrGroup } from './prepareQueryObjects';
 
 describe('prepareRule', () => {

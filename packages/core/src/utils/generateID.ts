@@ -1,7 +1,11 @@
-// import type { UUID } from 'node:crypto';
+/* v8 ignore file -- this is fine */
+
 type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 const cryptoModule = globalThis.crypto;
+
+export const uuidV4regex: RegExp =
+  /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/i;
 
 /**
  * Default `id` generator. Generates a valid v4 UUID. Uses `crypto.randomUUID()`
