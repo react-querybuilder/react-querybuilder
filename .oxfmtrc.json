@@ -10,7 +10,7 @@
   "bracketSameLine": true,
   "arrowParens": "avoid",
   "embeddedLanguageFormatting": "auto",
-  "experimentalSortImports": {
+  "sortImports": {
     "newlinesBetween": false,
     "sortSideEffects": false,
     "customGroups": [
@@ -27,7 +27,7 @@
       "unknown"
     ]
   },
-  "experimentalSortPackageJson": false,
+  "sortPackageJson": false,
   "ignorePatterns": [
     "examples/*/**/*.*",
     // Generated
