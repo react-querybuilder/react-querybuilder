@@ -32,6 +32,47 @@ For more information about option list props like `fields`, see [Working with op
 
 :::
 
+## Updating `fields` at runtime
+
+The `fields` prop is fully reactive — when it changes, the query builder re-normalizes the field list and updates all selectors automatically. This means you can let users add, remove, or edit fields at runtime with standard React state:
+
+```tsx
+import { useState } from 'react';
+import { QueryBuilder } from 'react-querybuilder';
+import type { Field, RuleGroupType } from 'react-querybuilder';
+
+const initialFields: Field[] = [
+  { name: 'firstName', label: 'First Name' },
+  { name: 'lastName', label: 'Last Name' },
+];
+
+export function App() {
+  const [fields, setFields] = useState(initialFields);
+  const [query, setQuery] = useState<RuleGroupType>({ combinator: 'and', rules: [] });
+
+  const addField = () =>
+    setFields(prev => [...prev, { name: 'email', label: 'Email', inputType: 'email' }]);
+
+  const removeField = (name: string) => setFields(prev => prev.filter(f => f.name !== name));
+
+  return (
+    <>
+      <button onClick={addField}>Add Email Field</button>
+      <button onClick={() => removeField('email')}>Remove Email Field</button>
+      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+    </>
+  );
+}
+```
+
+Existing rules that reference unchanged field names remain valid when the field list is updated. If you remove a field that is already referenced by a rule, the rule will still render but display the now-missing field name in the selector.
+
+:::tip
+
+If your fields array is computed inline or derived from other state, wrap it in `useMemo` to avoid unnecessary re-normalization on every render.
+
+:::
+
 ## Generating `fields` dynamically
 
 Field arrays typically correspond to database table columns. You can dynamically generate the `fields` array by querying your database's information schema.
