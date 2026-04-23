@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
-import { isRuleGroup } from '@react-querybuilder/core';
+import { bigIntJsonStringifyReplacer, isRuleGroup } from '@react-querybuilder/core';
 import type { CypherFormatOptions } from './types';
 import { isPatternMeta } from './types';
 import { buildCypherMatchPatterns, extractFilterElements, extractPatternRules } from './utils';
@@ -138,8 +138,9 @@ const formatCypherRule = (rule: RuleType): string => {
 
 const formatCypherValue = (value: unknown): string => {
   if (value === null || value === undefined) return 'null';
-  if (typeof value === 'number') return String(value);
   if (typeof value === 'boolean') return String(value);
+  if (typeof value === 'number') return String(value);
+  if (typeof value === 'bigint') return JSON.stringify(value, bigIntJsonStringifyReplacer);
   const s = typeof value === 'string' ? value : (JSON.stringify(value) ?? '');
   return `'${s.replace(/'/g, "\\'")}'`;
 };

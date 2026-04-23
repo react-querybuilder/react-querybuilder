@@ -49,6 +49,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
+    "@jakeboone02/graphlite-node": "0.0.3",
     "@react-querybuilder/core": "8.15.0",
     "@testing-library/react": "catalog:test",
     "@testing-library/user-event": "catalog:test",
