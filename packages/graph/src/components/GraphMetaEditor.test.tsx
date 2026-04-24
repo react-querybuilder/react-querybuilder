@@ -1,10 +1,10 @@
+// @vitest-environment jsdom
 import type { RuleType } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-// @vitest-environment jsdom
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { GraphMetaEditor } from '../GraphMetaEditor';
+import { GraphMetaEditor } from './GraphMetaEditor';
 
 const baseRule: RuleType = { field: 'name', operator: '=', value: 'Alice' };
 

@@ -1,7 +1,7 @@
 import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
 import { bigIntJsonStringifyReplacer, isRuleGroup } from '@react-querybuilder/core';
-import type { CypherFormatOptions, GraphRuleGroupProcessorOptions } from './types';
-import { isPatternMeta } from './types';
+import type { CypherFormatOptions, GraphRuleGroupProcessorOptions } from '../../types';
+import { isPatternMeta } from '../../types';
 import { buildCypherMatchPatterns, extractFilterElements, extractPatternRules } from './utils';
 
 /**

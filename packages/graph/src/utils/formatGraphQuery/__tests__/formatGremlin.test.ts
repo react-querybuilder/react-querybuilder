@@ -1,7 +1,7 @@
 import type { RuleGroupType } from '@react-querybuilder/core';
 import { describe, expect, it } from 'vitest';
+import type { GremlinPatternMeta, GremlinFilterMeta } from '../../../types';
 import { formatGremlin } from '../formatGremlin';
-import type { GremlinPatternMeta, GremlinFilterMeta } from '../types';
 
 const gremlinPattern = (overrides: Partial<GremlinPatternMeta> = {}): GremlinPatternMeta => ({
   graphRole: 'pattern',

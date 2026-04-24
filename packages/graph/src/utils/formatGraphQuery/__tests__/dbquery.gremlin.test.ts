@@ -5,15 +5,19 @@ import { transformQuery, type RuleGroupType } from '@react-querybuilder/core';
 import type {
   SuperUser,
   TestSQLParams,
-} from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
+} from '../../../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import {
   dbTests,
   fields,
   superUsers as getSuperUsers,
-} from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
-import { formatGQL } from '../formatCypher';
+} from '../../../../../core/src/utils/formatQuery/dbqueryTestUtils';
+import type {
+  FormatGraphQueryOptions,
+  GremlinFilterMeta,
+  GremlinPatternMeta,
+} from '../../../types';
 import { formatGraphQuery } from '../formatGraphQuery';
-import type { CypherFilterMeta, CypherPatternMeta, FormatGraphQueryOptions } from '../types';
+import { formatGremlin } from '../formatGremlin';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -24,27 +28,20 @@ const superUsers = getSuperUsers('postgres');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const filterMeta: CypherFilterMeta = { graphRole: 'filter' };
+const filterMeta: GremlinFilterMeta = { graphRole: 'filter', graphLang: 'gremlin' };
 
 const suPatternRule = {
-  field: '_type',
-  operator: 'is',
+  field: '_label',
+  operator: 'hasLabel',
   value: 'SuperUser',
-  meta: {
-    graphRole: 'pattern',
-    nodeAlias: 'su',
-    nodeLabel: 'SuperUser',
-  } satisfies CypherPatternMeta,
+  meta: { graphRole: 'pattern', graphLang: 'gremlin' } satisfies GremlinPatternMeta,
 };
 
 const fieldNames = fields.map(f => f.name);
 
-const returnFields = fieldNames.map(f => `su.${f}`);
+const orderAndProject = `.order().by('madeUpName').valueMap(${fieldNames.map(f => `'${f}'`).join(', ')})`;
 
-const returnClause = `RETURN ${returnFields.join(', ')} ORDER BY su.madeUpName`;
-
-const toGqlRow = (u: SuperUser): Record<string, unknown> =>
-  Object.fromEntries(fieldNames.map(f => [`su.${f}`, u[f]]));
+const toGremlinRow = (u: SuperUser): Record<string, unknown> => ({ ...u });
 
 // ─── DB Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -64,21 +61,23 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runGQL = async (
+const runGremlin = async (
   query: RuleGroupType,
   expectedResult: SuperUser[],
   fqOptions?: Partial<FormatGraphQueryOptions>
 ) => {
   const fullQuery: RuleGroupType = { ...query, rules: [suPatternRule, ...query.rules] };
-  const gql = fqOptions
-    ? `${formatGraphQuery(fullQuery, { format: 'gql', includeReturn: false, ...fqOptions })}\n${returnClause}`
-    : `${formatGQL(fullQuery, { includeReturn: false })}\n${returnClause}`;
-  const result = await db.execute(gql);
-  expect(result.toArray()).toEqual(expectedResult.map(toGqlRow));
+  const traversal = fqOptions
+    ? formatGraphQuery(fullQuery, { format: 'gremlin', ...fqOptions })
+    : formatGremlin(fullQuery);
+  const gremlin = `${traversal}${orderAndProject}`;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const result = await (db as any).executeGremlin(gremlin);
+  expect(result.toArray()).toEqual(expectedResult.map(toGremlinRow));
 };
 
-const testGQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
-  test('gql', async () => {
+const testGremlin = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
+  test('gremlin', async () => {
     const newQuery = transformQuery(query, {
       ruleProcessor: r => ({ ...r, field: `su.${r.field}`, meta: filterMeta }),
     });
@@ -88,53 +87,36 @@ const testGQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
       ruleGroupProcessor: _rgp,
       ...graphFqOptions
     } = fqOptions ?? {};
-    await runGQL(newQuery, expectedResult, { parseNumbers: true, ...graphFqOptions });
+    await runGremlin(newQuery, expectedResult, { parseNumbers: true, ...graphFqOptions });
   });
 };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe('GQL (Grafeo)', () => {
+// Operators NOT tested and why:
+//  - 'doesNotContain' / 'doesNotBeginWith' / 'doesNotEndWith': formatGremlin
+//    emits `notContaining()`, `notStartingWith()`, `notEndingWith()` predicates
+//    which Grafeo's Gremlin engine does not recognize.
+//  - 'and/or' compound groups and 'NOT group': formatGremlin emits compound
+//    steps like `.or(__.has(...), __.has(...))` and `.not(__.has(...))`.
+//    Grafeo's Gremlin engine does not support the `__` (anonymous traversal)
+//    syntax required for these compound predicates.
+describe('Gremlin (Grafeo)', () => {
   // Skipped dbTests entries:
-  //  - 'bigint': GQL/Grafeo does not support BigInt literals.
+  //  - 'doesNotContain' / 'doesNotBeginWith' / 'doesNotEndWith': Grafeo doesn't
+  //    support negated text predicates (notContaining, notStartingWith, notEndingWith).
+  //  - 'and/or': Grafeo doesn't support `__` (anonymous traversal) for compound steps.
+  //  - 'bigint': Grafeo does not support BigInt literals.
   for (const [name, t] of Object.entries(dbTests(superUsers)).filter(
-    ([k]) => !['bigint'].includes(k)
+    ([k]) =>
+      !['doesNotContain', 'doesNotBeginWith', 'doesNotEndWith', 'and/or', 'bigint'].includes(k)
   )) {
     describe(name, () => {
-      testGQL(t);
+      testGremlin(t);
     });
   }
-
-  test('and/or', async () => {
-    await runGQL(
-      {
-        combinator: 'or',
-        rules: [
-          { field: 'su.firstName', operator: 'beginsWith', value: 'P', meta: filterMeta },
-          {
-            combinator: 'and',
-            rules: [
-              {
-                field: 'su.madeUpName',
-                operator: 'doesNotContain',
-                value: 'Bat',
-                meta: filterMeta,
-              },
-              { field: 'su.madeUpName', operator: 'endsWith', value: 'man', meta: filterMeta },
-            ],
-          },
-        ],
-      },
-      superUsers.filter(
-        u =>
-          u.firstName.startsWith('P') ||
-          (!u.madeUpName.includes('Bat') && u.madeUpName.endsWith('man'))
-      )
-    );
-  });
-
   test('=', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -147,7 +129,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('!=', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -160,7 +142,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('beginsWith', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -172,20 +154,8 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('doesNotBeginWith', async () => {
-    await runGQL(
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'su.madeUpName', operator: 'doesNotBeginWith', value: 'S', meta: filterMeta },
-        ],
-      },
-      superUsers.filter(u => !u.madeUpName.startsWith('S'))
-    );
-  });
-
   test('endsWith', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -197,20 +167,8 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('doesNotEndWith', async () => {
-    await runGQL(
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'su.madeUpName', operator: 'doesNotEndWith', value: 'n', meta: filterMeta },
-        ],
-      },
-      superUsers.filter(u => !u.madeUpName.endsWith('n'))
-    );
-  });
-
   test('contains', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -222,20 +180,8 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('doesNotContain', async () => {
-    await runGQL(
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'su.madeUpName', operator: 'doesNotContain', value: 'r', meta: filterMeta },
-        ],
-      },
-      superUsers.filter(u => !u.madeUpName.includes('r'))
-    );
-  });
-
   test('>', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '>', value: 15, meta: filterMeta }],
@@ -245,7 +191,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('>=', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '>=', value: 15, meta: filterMeta }],
@@ -255,7 +201,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('<', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '<', value: 20, meta: filterMeta }],
@@ -265,7 +211,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('<=', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '<=', value: 15, meta: filterMeta }],
@@ -275,7 +221,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('boolean', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.enhanced', operator: '=', value: true, meta: filterMeta }],
@@ -285,7 +231,7 @@ describe('GQL (Grafeo)', () => {
   });
 
   test('between', async () => {
-    await runGQL(
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'between', value: [10, 30], meta: filterMeta }],
@@ -294,21 +240,20 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('notBetween', async () => {
-    // Use a non-nullable string field to avoid null comparison issues
-    await runGQL(
+  test('notBetween (outside)', async () => {
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
-          { field: 'su.firstName', operator: 'notBetween', value: ['C', 'R'], meta: filterMeta },
+          { field: 'su.powerUpAge', operator: 'notBetween', value: [10, 30], meta: filterMeta },
         ],
       },
-      superUsers.filter(u => !(u.firstName >= 'C' && u.firstName <= 'R'))
+      superUsers.filter(u => u.powerUpAge !== null && (u.powerUpAge! < 10 || u.powerUpAge! > 30))
     );
   });
 
-  test('in', async () => {
-    await runGQL(
+  test('in (within)', async () => {
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -319,8 +264,8 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('notIn', async () => {
-    await runGQL(
+  test('notIn (without)', async () => {
+    await runGremlin(
       {
         combinator: 'and',
         rules: [
@@ -331,8 +276,8 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('null', async () => {
-    await runGQL(
+  test('null (hasNot)', async () => {
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'null', value: null, meta: filterMeta }],
@@ -341,31 +286,13 @@ describe('GQL (Grafeo)', () => {
     );
   });
 
-  test('notNull', async () => {
-    await runGQL(
+  test('notNull (has)', async () => {
+    await runGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'notNull', value: null, meta: filterMeta }],
       },
       superUsers.filter(u => u.powerUpAge !== null)
-    );
-  });
-
-  test('NOT group', async () => {
-    await runGQL(
-      {
-        combinator: 'and',
-        rules: [
-          {
-            combinator: 'and',
-            not: true,
-            rules: [
-              { field: 'su.madeUpName', operator: 'beginsWith', value: 'S', meta: filterMeta },
-            ],
-          },
-        ],
-      },
-      superUsers.filter(u => !u.madeUpName.startsWith('S'))
     );
   });
 });

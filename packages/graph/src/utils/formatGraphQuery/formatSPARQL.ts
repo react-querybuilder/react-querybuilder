@@ -4,8 +4,8 @@ import type {
   GraphRuleGroupProcessorOptions,
   SparqlFormatOptions,
   SparqlPatternMeta,
-} from './types';
-import { isPatternMeta } from './types';
+} from '../../types';
+import { isPatternMeta } from '../../types';
 import { extractFilterElements, extractPatternRules, groupBySubject } from './utils';
 
 /**

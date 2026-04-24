@@ -6,8 +6,8 @@ import type {
   GremlinPatternMeta,
   GraphMetaBase,
   SparqlPatternMeta,
-} from './types';
-import { isCypherPatternMeta, isGremlinPatternMeta, isSparqlPatternMeta } from './types';
+} from '../types';
+import { isCypherPatternMeta, isGremlinPatternMeta, isSparqlPatternMeta } from '../types';
 
 /**
  * Props for the `GraphMetaEditor` component.

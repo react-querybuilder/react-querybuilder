@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
-import type { SparqlFilterMeta, SparqlPatternMeta } from './types';
+import type { SparqlFilterMeta, SparqlPatternMeta } from '../../types';
 
 /**
  * Parses a SPARQL query string into a `RuleGroupType` with graph `meta` on rules.

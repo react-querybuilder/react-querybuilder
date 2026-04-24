@@ -1,5 +1,4 @@
 import type {
-  FullField,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleType,
@@ -14,6 +13,14 @@ import {
   toFlatOptionArray,
   toFullOptionList,
 } from '@react-querybuilder/core';
+import type {
+  FormatGraphQueryOptions,
+  GraphQueryFormat,
+  GraphRuleGroupProcessor,
+  GraphRuleProcessor,
+  SparqlPatternMeta,
+} from '../../types';
+import { isPatternMeta } from '../../types';
 import { defaultRuleGroupProcessorCypher, defaultRuleProcessorCypher } from './formatCypher';
 import {
   buildGremlinPatternSteps,
@@ -21,14 +28,6 @@ import {
   defaultRuleProcessorGremlin,
 } from './formatGremlin';
 import { defaultRuleGroupProcessorSPARQL, defaultRuleProcessorSPARQL } from './formatSPARQL';
-import type {
-  FormatGraphQueryOptions,
-  GraphQueryFormat,
-  GraphRuleGroupProcessor,
-  GraphRuleProcessor,
-  SparqlPatternMeta,
-} from './types';
-import { isPatternMeta } from './types';
 import {
   buildCypherMatchPatterns,
   extractFilterElements,
@@ -89,9 +88,7 @@ export const formatGraphQuery = (
   }
 
   // Build a validator lookup from `fields`
-  const uniqueFields = fieldsOption
-    ? (toFlatOptionArray(toFullOptionList(fieldsOption)) as FullField[])
-    : [];
+  const uniqueFields = fieldsOption ? toFlatOptionArray(toFullOptionList(fieldsOption)) : [];
   const fieldValidatorMap = new Map<string, (rule: RuleType) => boolean>();
   for (const f of uniqueFields) {
     if (typeof f.validator === 'function') {

@@ -7,7 +7,7 @@ import {
   isSparqlPatternMeta,
   isGremlinPatternMeta,
   hasGraphMeta,
-} from '../types';
+} from '../../../types';
 import {
   extractPatternRules,
   extractFilterElements,

@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
-import type { GremlinFilterMeta, GremlinPatternMeta } from './types';
+import type { GremlinFilterMeta, GremlinPatternMeta } from '../../types';
 
 /**
  * Parses a Gremlin traversal string into a `RuleGroupType` with graph `meta` on rules.

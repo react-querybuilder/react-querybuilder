@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
-import type { CypherPatternMeta, CypherFilterMeta } from './types';
+import type { CypherPatternMeta, CypherFilterMeta } from '../../types';
 
 /**
  * Parses a Cypher query string into a `RuleGroupType` with graph `meta` on rules.

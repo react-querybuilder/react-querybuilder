@@ -1,7 +1,7 @@
 import type { RuleGroupType } from '@react-querybuilder/core';
 import { describe, expect, it } from 'vitest';
+import type { SparqlPatternMeta, SparqlFilterMeta } from '../../../types';
 import { formatSPARQL } from '../formatSPARQL';
-import type { SparqlPatternMeta, SparqlFilterMeta } from '../types';
 
 const sparqlPattern = (subject: string, optional = false): SparqlPatternMeta => ({
   graphRole: 'pattern',

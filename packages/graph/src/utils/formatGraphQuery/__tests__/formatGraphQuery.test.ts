@@ -1,7 +1,7 @@
 import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
 import { describe, expect, it } from 'vitest';
+import type { CypherFilterMeta, CypherPatternMeta, SparqlPatternMeta } from '../../../types';
 import { formatGraphQuery } from '../formatGraphQuery';
-import type { CypherFilterMeta, CypherPatternMeta, SparqlPatternMeta } from '../types';
 
 const filterMeta: CypherFilterMeta = { graphRole: 'filter' };
 

@@ -1,7 +1,7 @@
 import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
 import { isRuleGroup } from '@react-querybuilder/core';
-import type { CypherPatternMeta } from './types';
-import { isCypherPatternMeta, isFilterMeta, isPatternMeta, isSparqlPatternMeta } from './types';
+import type { CypherPatternMeta } from '../../types';
+import { isCypherPatternMeta, isFilterMeta, isPatternMeta, isSparqlPatternMeta } from '../../types';
 
 /**
  * Recursively collects all rules from a rule group (flattening nested groups).

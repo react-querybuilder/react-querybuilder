@@ -2,13 +2,13 @@
 
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { type RuleGroupType } from '@react-querybuilder/core';
-import type { SuperUser } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
+import type { SuperUser } from '../../../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import {
   fields,
   superUsers as getSuperUsers,
-} from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
+} from '../../../../../core/src/utils/formatQuery/dbqueryTestUtils';
+import type { SparqlFilterMeta, SparqlPatternMeta } from '../../../types';
 import { formatSPARQL } from '../formatSPARQL';
-import type { SparqlFilterMeta, SparqlPatternMeta } from '../types';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };

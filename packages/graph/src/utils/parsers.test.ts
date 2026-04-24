@@ -1,9 +1,9 @@
 import type { RuleType } from '@react-querybuilder/core';
 import { describe, expect, it } from 'vitest';
-import { parseCypher, parseGQL } from '../parseCypher';
-import { parseGremlin } from '../parseGremlin';
-import { parseSPARQL } from '../parseSPARQL';
 import type { CypherPatternMeta, SparqlPatternMeta, GremlinPatternMeta } from '../types';
+import { parseCypher, parseGQL } from './parseCypher';
+import { parseGremlin } from './parseGremlin';
+import { parseSPARQL } from './parseSPARQL';
 
 describe('parseCypher', () => {
   it('should parse a simple MATCH + WHERE query', () => {

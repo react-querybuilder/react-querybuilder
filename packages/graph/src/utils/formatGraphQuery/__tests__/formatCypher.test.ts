@@ -1,7 +1,7 @@
 import type { RuleGroupType } from '@react-querybuilder/core';
 import { describe, expect, it } from 'vitest';
+import type { CypherPatternMeta, CypherFilterMeta } from '../../../types';
 import { formatCypher, formatGQL, formatCypherWhereClause } from '../formatCypher';
-import type { CypherPatternMeta, CypherFilterMeta } from '../types';
 
 const patternMeta = (
   overrides: Partial<CypherPatternMeta> & { nodeAlias: string }

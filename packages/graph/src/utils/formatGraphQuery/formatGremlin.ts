@@ -1,7 +1,7 @@
 import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
 import { isRuleGroup } from '@react-querybuilder/core';
-import type { GremlinFormatOptions, GraphRuleGroupProcessorOptions } from './types';
-import { isGremlinPatternMeta, isPatternMeta } from './types';
+import type { GremlinFormatOptions, GraphRuleGroupProcessorOptions } from '../../types';
+import { isGremlinPatternMeta, isPatternMeta } from '../../types';
 
 /**
  * Default rule processor for Gremlin. Formats a single filter rule
