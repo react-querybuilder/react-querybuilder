@@ -31,12 +31,7 @@ describe('prepareRule', () => {
 
   it('should preserve meta property', () => {
     const meta = { subject: '?person', tripleRole: 'pattern' as const };
-    const preparedRule = prepareRule({
-      field: 'foaf:name',
-      operator: '=',
-      value: 'Test',
-      meta,
-    });
+    const preparedRule = prepareRule({ field: 'foaf:name', operator: '=', value: 'Test', meta });
     expect(preparedRule.meta).toEqual(meta);
   });
 });
