@@ -37,7 +37,7 @@ const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   sqlite: [1, 0],
 };
 
-export const fields: Field[] = [
+export const fields: Field<keyof SuperUser>[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
   { name: 'enhanced', label: 'Enhanced' },
