@@ -1,12 +1,6 @@
 // oxlint-disable jest/expect-expect
 
-import { mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import type {
-  GraphLiteDB as GraphLiteDBType,
-  GraphLiteSession as GraphLiteSessionType,
-} from '@jakeboone02/graphlite-node';
+import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { transformQuery, type RuleGroupType } from '@react-querybuilder/core';
 import type {
   SuperUser,
@@ -14,15 +8,14 @@ import type {
 } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import {
   dbTests,
+  fields,
   superUsers as getSuperUsers,
 } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import { formatGQL } from '../formatCypher';
 import type { CypherFilterMeta, CypherPatternMeta } from '../types';
 
 // Native addon — use require for reliable .node file loading
-const { GraphLiteDB } = require('@jakeboone02/graphlite-node') as {
-  GraphLiteDB: typeof GraphLiteDBType;
-};
+const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
@@ -43,87 +36,63 @@ const suPatternRule = {
   } satisfies CypherPatternMeta,
 };
 
-const returnFields = [
-  'su.firstName',
-  'su.lastName',
-  'su.enhanced',
-  'su.madeUpName',
-  'su.nickname',
-  'su.powerUpAge',
-] as const;
+const fieldNames = fields.map(f => f.name);
+
+const returnFields = fieldNames.map(f => `su.${f}`);
 
 const returnClause = `RETURN ${returnFields.join(', ')} ORDER BY su.madeUpName`;
 
-const toGqlRow = (u: SuperUser): Record<string, unknown> => ({
-  'su.firstName': u.firstName,
-  'su.lastName': u.lastName,
-  'su.enhanced': u.enhanced,
-  'su.madeUpName': u.madeUpName,
-  'su.nickname': u.nickname,
-  'su.powerUpAge': u.powerUpAge,
-});
+const toGqlRow = (u: SuperUser): Record<string, unknown> =>
+  Object.fromEntries(fieldNames.map(f => [`su.${f}`, u[f]]));
 
 // ─── DB Lifecycle ─────────────────────────────────────────────────────────────
 
-let db: GraphLiteDBType;
-let session: GraphLiteSessionType;
-let dbPath: string;
+let db: GrafeoDBType;
 
 beforeAll(() => {
-  dbPath = mkdtempSync(join(tmpdir(), 'graphlite-dbquery-'));
-  db = GraphLiteDB.open(dbPath);
-  session = db.createSession('admin');
-
-  session.execute('CREATE SCHEMA /test');
-  session.execute('SESSION SET SCHEMA /test');
-  session.execute('CREATE GRAPH /test/superusers');
-  session.execute('SESSION SET GRAPH /test/superusers');
+  db = GrafeoDB.create();
 
   for (const u of superUsers) {
-    const props = [
-      `firstName: '${u.firstName}'`,
-      `lastName: '${u.lastName}'`,
-      `enhanced: ${u.enhanced}`,
-      `madeUpName: '${u.madeUpName}'`,
-      `nickname: '${u.nickname}'`,
-      `powerUpAge: ${u.powerUpAge}`,
-    ].join(', ');
-    session.execute(`INSERT (:SuperUser {${props}})`);
+    db.createNode(['SuperUser'], u);
   }
 });
 
 afterAll(() => {
-  session?.close();
   db?.close();
-  try {
-    rmSync(dbPath, { recursive: true, force: true });
-  } catch {
-    // Ignore cleanup errors
-  }
 });
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runGQL = (query: RuleGroupType, expectedResult: SuperUser[]) => {
+const runGQL = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
   const fullQuery: RuleGroupType = { ...query, rules: [suPatternRule, ...query.rules] };
   const gql = `${formatGQL(fullQuery, { includeReturn: false })}\n${returnClause}`;
-  const result = session.query(gql);
-  expect(result.rows).toEqual(expectedResult.map(toGqlRow));
+  const result = await db.execute(gql);
+  expect(result.toArray()).toEqual(expectedResult.map(toGqlRow));
 };
 
 const testGQL = ({ query, expectedResult }: TestSQLParams) => {
-  test('gql', () => {
+  test('gql', async () => {
     const newQuery = transformQuery(query, {
       ruleProcessor: r => ({ ...r, field: `su.${r.field}`, meta: filterMeta }),
     });
 
-    runGQL(newQuery, expectedResult);
+    await runGQL(newQuery, expectedResult);
   });
 };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe('GQL (GraphLite)', () => {
+describe('GQL (Grafeo)', () => {
+  // Skipped dbTests entries:
+  //  - 'greater than' / 'greater than or equal to' / 'less than' / 'less than or equal to':
+  //    These shared tests combine numeric and string-typed values for the same
+  //    operator (e.g. `> 15` AND `> '15'`). GQL is strongly typed, so comparing
+  //    an integer property against a string literal produces no matches.
+  //  - 'between/notBetween': Same mixed-type issue (array of numbers + array of
+  //    strings + comma-separated string).
+  //  - 'bigint': GQL/Grafeo does not support BigInt literals.
+  //  - 'manipulateValueOrder': Relies on `preserveValueOrder` / `parseNumbers`
+  //    format options that are SQL-specific.
   for (const [name, t] of Object.entries(dbTests(superUsers)).filter(
     ([k]) =>
       ![
@@ -141,8 +110,8 @@ describe('GQL (GraphLite)', () => {
     });
   }
 
-  test('and/or', () => {
-    runGQL(
+  test('and/or', async () => {
+    await runGQL(
       {
         combinator: 'or',
         rules: [
@@ -169,8 +138,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('=', () => {
-    runGQL(
+  test('=', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -182,8 +151,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('!=', () => {
-    runGQL(
+  test('!=', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -195,8 +164,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('beginsWith', () => {
-    runGQL(
+  test('beginsWith', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -208,8 +177,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('doesNotBeginWith', () => {
-    runGQL(
+  test('doesNotBeginWith', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -220,8 +189,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('endsWith', () => {
-    runGQL(
+  test('endsWith', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -233,8 +202,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('doesNotEndWith', () => {
-    runGQL(
+  test('doesNotEndWith', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -245,8 +214,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('contains', () => {
-    runGQL(
+  test('contains', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -258,8 +227,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('doesNotContain', () => {
-    runGQL(
+  test('doesNotContain', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -270,8 +239,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('>', () => {
-    runGQL(
+  test('>', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '>', value: 15, meta: filterMeta }],
@@ -280,8 +249,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('>=', () => {
-    runGQL(
+  test('>=', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '>=', value: 15, meta: filterMeta }],
@@ -290,8 +259,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('<', () => {
-    runGQL(
+  test('<', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '<', value: 20, meta: filterMeta }],
@@ -300,8 +269,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('<=', () => {
-    runGQL(
+  test('<=', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: '<=', value: 15, meta: filterMeta }],
@@ -310,8 +279,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('boolean', () => {
-    runGQL(
+  test('boolean', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.enhanced', operator: '=', value: true, meta: filterMeta }],
@@ -320,8 +289,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('between', () => {
-    runGQL(
+  test('between', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'between', value: [10, 30], meta: filterMeta }],
@@ -330,10 +299,9 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('notBetween', () => {
-    // Use a non-nullable string field to avoid GraphLite's
-    // "NOT operator requires boolean operand" error on null values
-    runGQL(
+  test('notBetween', async () => {
+    // Use a non-nullable string field to avoid null comparison issues
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -344,8 +312,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('in', () => {
-    runGQL(
+  test('in', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -356,8 +324,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('notIn', () => {
-    runGQL(
+  test('notIn', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [
@@ -368,8 +336,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('null', () => {
-    runGQL(
+  test('null', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'null', value: null, meta: filterMeta }],
@@ -378,8 +346,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('notNull', () => {
-    runGQL(
+  test('notNull', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'notNull', value: null, meta: filterMeta }],
@@ -388,8 +356,8 @@ describe('GQL (GraphLite)', () => {
     );
   });
 
-  test('NOT group', () => {
-    runGQL(
+  test('NOT group', async () => {
+    await runGQL(
       {
         combinator: 'and',
         rules: [

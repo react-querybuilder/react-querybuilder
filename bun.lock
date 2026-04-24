@@ -331,7 +331,7 @@
       "name": "@react-querybuilder/graph",
       "version": "8.15.0",
       "devDependencies": {
-        "@jakeboone02/graphlite-node": "0.0.3",
+        "@grafeo-db/js": "0.5.40",
         "@react-querybuilder/core": "8.15.0",
         "@testing-library/react": "catalog:test",
         "@testing-library/user-event": "catalog:test",
@@ -1363,6 +1363,20 @@
 
     "@gerrit0/mini-shiki": ["@gerrit0/mini-shiki@3.23.0", "", { "dependencies": { "@shikijs/engine-oniguruma": "^3.23.0", "@shikijs/langs": "^3.23.0", "@shikijs/themes": "^3.23.0", "@shikijs/types": "^3.23.0", "@shikijs/vscode-textmate": "^10.0.2" } }, "sha512-bEMORlG0cqdjVyCEuU0cDQbORWX+kYCeo0kV1lbxF5bt4r7SID2l9bqsxJEM0zndaxpOUT7riCyIVEuqq/Ynxg=="],
 
+    "@grafeo-db/js": ["@grafeo-db/js@0.5.40", "", { "optionalDependencies": { "@grafeo-db/js-darwin-arm64": "0.5.40", "@grafeo-db/js-darwin-x64": "0.5.40", "@grafeo-db/js-linux-arm64-gnu": "0.5.40", "@grafeo-db/js-linux-arm64-musl": "0.5.40", "@grafeo-db/js-linux-x64-gnu": "0.5.40", "@grafeo-db/js-win32-x64-msvc": "0.5.40" } }, "sha512-T0hUKNahAoSSmUGeKHR55c5dKHzOqqXb3hbOA//KUm26VlymvM5wtsPcUG+O5FFnzSUcaptMZy+S2eAipJ9IFg=="],
+
+    "@grafeo-db/js-darwin-arm64": ["@grafeo-db/js-darwin-arm64@0.5.40", "", { "os": "darwin", "cpu": "arm64" }, "sha512-dUu2iG+S8MYrElR3TP8rdjd5CzLXlqpoaz1Qq2Pr+MuuyeTBJTRFdX0Xd943CMSHA75RifwfxH9IcetvWNWjnA=="],
+
+    "@grafeo-db/js-darwin-x64": ["@grafeo-db/js-darwin-x64@0.5.40", "", { "os": "darwin", "cpu": "x64" }, "sha512-spO5pkKCtxRD5mPCCHnHIJq7/VcCOyy/OxvWFtssWL04LklhUhM9sOhX0HILdMkWweCdm0RB9nObRdsDVgOSmg=="],
+
+    "@grafeo-db/js-linux-arm64-gnu": ["@grafeo-db/js-linux-arm64-gnu@0.5.40", "", { "os": "linux", "cpu": "arm64" }, "sha512-KZ0O3S3dM3aNwztHycSQ9PW+ykx8r6zft4Rk59k8OSyRVmKyI8zmJMENsPuWM/XDTz4jRADOX8QPERq2FFIsvA=="],
+
+    "@grafeo-db/js-linux-arm64-musl": ["@grafeo-db/js-linux-arm64-musl@0.5.40", "", { "os": "linux", "cpu": "arm64" }, "sha512-OuiJxKJ8FV4qY+wRZxevx2YmHv5L85z70Ye4U5Aq1BFL8pe+Mev6sLvVfo9SFL4oRCloMviAxsE9TT5u5w8o1A=="],
+
+    "@grafeo-db/js-linux-x64-gnu": ["@grafeo-db/js-linux-x64-gnu@0.5.40", "", { "os": "linux", "cpu": "x64" }, "sha512-5HYDpe1KQFG6lKhlvwiJiRpntmkf6Tl1NTd7nBf0esNzWgki4CLikBQnnRbgGp1tbhl0C33rN1tKHK736RqgHQ=="],
+
+    "@grafeo-db/js-win32-x64-msvc": ["@grafeo-db/js-win32-x64-msvc@0.5.40", "", { "os": "win32", "cpu": "x64" }, "sha512-zFGDZ7leZpatFy6hAePt6tnb5+ngsKd1UvkTuCacDrjFPDiJAbD1K+BYHQ9HBVWksqIDZGd7zIIlMSNgz06Cyw=="],
+
     "@griffel/core": ["@griffel/core@1.20.1", "", { "dependencies": { "@emotion/hash": "^0.9.0", "@griffel/style-types": "^1.4.0", "csstype": "^3.1.3", "rtl-css-js": "^1.16.1", "stylis": "^4.2.0", "tslib": "^2.1.0" } }, "sha512-ld1mX04zpmeHn8agx4slSEh8kJ+8or3Y0x9gsJNKSKn6GdCkZBSiGUh+oBXCBn8RKzz8l60TA9IhVSStnyKekA=="],
 
     "@griffel/react": ["@griffel/react@1.6.1", "", { "dependencies": { "@griffel/core": "^1.20.1", "tslib": "^2.1.0" }, "peerDependencies": { "react": ">=16.8.0 <20.0.0" } }, "sha512-mNM4/+dIXzqeHboWpVZ1/jiwTAYNc5/8y/V/HasnQ2QXnV6gSUYpeUk/0n6IFU3NJmVJly9JrLSfNo0hM/IFeA=="],
@@ -1402,18 +1416,6 @@
     "@isaacs/string-locale-compare": ["@isaacs/string-locale-compare@1.1.0", "", {}, "sha512-SQ7Kzhh9+D+ZW9MA0zkYv3VXhIDNx+LzM6EJ+/65I3QY+enU6Itte7E5XX7EWrqLW2FN4n06GWzBnPoC3th2aQ=="],
 
     "@isaacs/ttlcache": ["@isaacs/ttlcache@1.4.1", "", {}, "sha512-RQgQ4uQ+pLbqXfOmieB91ejmLwvSgv9nLx6sT6sD83s7umBypgg+OIBOBbEUiJXrfpnp9j0mRhYYdzp9uqq3lA=="],
-
-    "@jakeboone02/graphlite-node": ["@jakeboone02/graphlite-node@0.0.3", "", { "optionalDependencies": { "@jakeboone02/graphlite-node-darwin-arm64": "0.0.3", "@jakeboone02/graphlite-node-darwin-x64": "0.0.3", "@jakeboone02/graphlite-node-linux-arm64-gnu": "0.0.3", "@jakeboone02/graphlite-node-linux-x64-gnu": "0.0.3", "@jakeboone02/graphlite-node-win32-x64-msvc": "0.0.3" } }, "sha512-pT/i4hOJLLppuEYOdM4frTxQ33UcO0CDWBzyY2bZe4YRE7rc6YmTRtxjA5Pt1Czzur5bCi15Aehox+IuaQcq8A=="],
-
-    "@jakeboone02/graphlite-node-darwin-arm64": ["@jakeboone02/graphlite-node-darwin-arm64@0.0.3", "", { "os": "darwin", "cpu": "arm64" }, "sha512-3Ek48gciQ7Rbqe/WklkO9N3DM/wA2FuR1wN2Fk3qOuXGGxuSBqgwhjZDD2xPyqAL9J8246dEL4RAqCCcOEVkFg=="],
-
-    "@jakeboone02/graphlite-node-darwin-x64": ["@jakeboone02/graphlite-node-darwin-x64@0.0.3", "", { "os": "darwin", "cpu": "x64" }, "sha512-EevvPEHd2agFzpnh1WLad0Uu8X542UV7sJLeDfJ3TSZkfOCluhgQ8Udisn7jck9L061H5WTix7alie3XEu9iog=="],
-
-    "@jakeboone02/graphlite-node-linux-arm64-gnu": ["@jakeboone02/graphlite-node-linux-arm64-gnu@0.0.3", "", { "os": "linux", "cpu": "arm64" }, "sha512-Ph450rGuEzlGQBIYIjiXuu0VRQmxiV6KZCFhVyDnFJpzVuZKSjYybK2yZDiQpn2bJh+6oienfstMrgBjPPOQww=="],
-
-    "@jakeboone02/graphlite-node-linux-x64-gnu": ["@jakeboone02/graphlite-node-linux-x64-gnu@0.0.3", "", { "os": "linux", "cpu": "x64" }, "sha512-poojTuv98xwUV9+yuQRQDFslVlwEhsoJ7CAaGNNBgyiATS82kNRK//ixziUA5gpSDuwe5xSpuyDDa8DM0ENbYg=="],
-
-    "@jakeboone02/graphlite-node-win32-x64-msvc": ["@jakeboone02/graphlite-node-win32-x64-msvc@0.0.3", "", { "os": "win32", "cpu": "x64" }, "sha512-vdDS6V97LDQAcGT0xswo61b6/Y6TvPJufzlS/CH392t4S64R7lcXnKdzjOiTU/JTIlsL0I6Sl8h+N76QA2b2MQ=="],
 
     "@jest/diff-sequences": ["@jest/diff-sequences@30.3.0", "", {}, "sha512-cG51MVnLq1ecVUaQ3fr6YuuAOitHK1S4WUJHnsPFE/quQr33ADUx1FfrTCpMCRxvy0Yr9BThKpDjSlcTi91tMA=="],
 
