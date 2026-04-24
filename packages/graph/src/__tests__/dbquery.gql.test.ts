@@ -12,7 +12,8 @@ import {
   superUsers as getSuperUsers,
 } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import { formatGQL } from '../formatCypher';
-import type { CypherFilterMeta, CypherPatternMeta } from '../types';
+import { formatGraphQuery } from '../formatGraphQuery';
+import type { CypherFilterMeta, CypherPatternMeta, FormatGraphQueryOptions } from '../types';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -63,20 +64,26 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runGQL = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+const runGQL = async (
+  query: RuleGroupType,
+  expectedResult: SuperUser[],
+  fqOptions?: Partial<FormatGraphQueryOptions>
+) => {
   const fullQuery: RuleGroupType = { ...query, rules: [suPatternRule, ...query.rules] };
-  const gql = `${formatGQL(fullQuery, { includeReturn: false })}\n${returnClause}`;
+  const gql = fqOptions
+    ? `${formatGraphQuery(fullQuery, { format: 'gql', includeReturn: false, ...fqOptions })}\n${returnClause}`
+    : `${formatGQL(fullQuery, { includeReturn: false })}\n${returnClause}`;
   const result = await db.execute(gql);
   expect(result.toArray()).toEqual(expectedResult.map(toGqlRow));
 };
 
-const testGQL = ({ query, expectedResult }: TestSQLParams) => {
+const testGQL = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   test('gql', async () => {
     const newQuery = transformQuery(query, {
       ruleProcessor: r => ({ ...r, field: `su.${r.field}`, meta: filterMeta }),
     });
-
-    await runGQL(newQuery, expectedResult);
+    const { format: _format, ...graphFqOptions } = fqOptions ?? {};
+    await runGQL(newQuery, expectedResult, { parseNumbers: true, ...graphFqOptions });
   });
 };
 
@@ -84,26 +91,9 @@ const testGQL = ({ query, expectedResult }: TestSQLParams) => {
 
 describe('GQL (Grafeo)', () => {
   // Skipped dbTests entries:
-  //  - 'greater than' / 'greater than or equal to' / 'less than' / 'less than or equal to':
-  //    These shared tests combine numeric and string-typed values for the same
-  //    operator (e.g. `> 15` AND `> '15'`). GQL is strongly typed, so comparing
-  //    an integer property against a string literal produces no matches.
-  //  - 'between/notBetween': Same mixed-type issue (array of numbers + array of
-  //    strings + comma-separated string).
   //  - 'bigint': GQL/Grafeo does not support BigInt literals.
-  //  - 'manipulateValueOrder': Relies on `preserveValueOrder` / `parseNumbers`
-  //    format options that are SQL-specific.
   for (const [name, t] of Object.entries(dbTests(superUsers)).filter(
-    ([k]) =>
-      ![
-        'greater than',
-        'greater than or equal to',
-        'less than',
-        'less than or equal to',
-        'between/notBetween',
-        'bigint',
-        'manipulateValueOrder',
-      ].includes(k)
+    ([k]) => !['bigint'].includes(k)
   )) {
     describe(name, () => {
       testGQL(t);

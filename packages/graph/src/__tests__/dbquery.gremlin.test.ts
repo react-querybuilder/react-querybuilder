@@ -1,14 +1,19 @@
 // oxlint-disable jest/expect-expect
 
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
-import { type RuleGroupType } from '@react-querybuilder/core';
-import type { SuperUser } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
+import { transformQuery, type RuleGroupType } from '@react-querybuilder/core';
+import type {
+  SuperUser,
+  TestSQLParams,
+} from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import {
+  dbTests,
   fields,
   superUsers as getSuperUsers,
 } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
+import { formatGraphQuery } from '../formatGraphQuery';
 import { formatGremlin } from '../formatGremlin';
-import type { GremlinFilterMeta, GremlinPatternMeta } from '../types';
+import type { FormatGraphQueryOptions, GremlinFilterMeta, GremlinPatternMeta } from '../types';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -52,13 +57,29 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runGremlin = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+const runGremlin = async (
+  query: RuleGroupType,
+  expectedResult: SuperUser[],
+  fqOptions?: Partial<FormatGraphQueryOptions>
+) => {
   const fullQuery: RuleGroupType = { ...query, rules: [suPatternRule, ...query.rules] };
-  const traversal = formatGremlin(fullQuery);
+  const traversal = fqOptions
+    ? formatGraphQuery(fullQuery, { format: 'gremlin', ...fqOptions })
+    : formatGremlin(fullQuery);
   const gremlin = `${traversal}${orderAndProject}`;
   // oxlint-disable-next-line typescript/no-explicit-any
   const result = await (db as any).executeGremlin(gremlin);
   expect(result.toArray()).toEqual(expectedResult.map(toGremlinRow));
+};
+
+const testGremlin = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
+  test('gremlin', async () => {
+    const newQuery = transformQuery(query, {
+      ruleProcessor: r => ({ ...r, field: `su.${r.field}`, meta: filterMeta }),
+    });
+    const { format: _format, ...graphFqOptions } = fqOptions ?? {};
+    await runGremlin(newQuery, expectedResult, { parseNumbers: true, ...graphFqOptions });
+  });
 };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -71,10 +92,20 @@ const runGremlin = async (query: RuleGroupType, expectedResult: SuperUser[]) => 
 //    steps like `.or(__.has(...), __.has(...))` and `.not(__.has(...))`.
 //    Grafeo's Gremlin engine does not support the `__` (anonymous traversal)
 //    syntax required for these compound predicates.
-//  - Shared `dbTests` entries are not reused here because the shared tests
-//    combine numeric and string-typed values (e.g. `> 15` AND `> '15'`)
-//    and Gremlin is strongly typed.
 describe('Gremlin (Grafeo)', () => {
+  // Skipped dbTests entries:
+  //  - 'doesNotContain' / 'doesNotBeginWith' / 'doesNotEndWith': Grafeo doesn't
+  //    support negated text predicates (notContaining, notStartingWith, notEndingWith).
+  //  - 'and/or': Grafeo doesn't support `__` (anonymous traversal) for compound steps.
+  //  - 'bigint': Grafeo does not support BigInt literals.
+  for (const [name, t] of Object.entries(dbTests(superUsers)).filter(
+    ([k]) =>
+      !['doesNotContain', 'doesNotBeginWith', 'doesNotEndWith', 'and/or', 'bigint'].includes(k)
+  )) {
+    describe(name, () => {
+      testGremlin(t);
+    });
+  }
   test('=', async () => {
     await runGremlin(
       {

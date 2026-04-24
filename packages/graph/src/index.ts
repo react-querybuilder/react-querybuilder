@@ -1,5 +1,6 @@
 export * from './types';
 export * from './utils';
+export { formatGraphQuery } from './formatGraphQuery';
 export { formatCypher, formatGQL, formatCypherWhereClause } from './formatCypher';
 export { formatSPARQL } from './formatSPARQL';
 export { formatGremlin } from './formatGremlin';

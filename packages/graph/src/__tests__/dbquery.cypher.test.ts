@@ -12,7 +12,8 @@ import {
   superUsers as getSuperUsers,
 } from '../../../core/src/utils/formatQuery/dbqueryTestUtils';
 import { formatCypher } from '../formatCypher';
-import type { CypherFilterMeta, CypherPatternMeta } from '../types';
+import { formatGraphQuery } from '../formatGraphQuery';
+import type { CypherFilterMeta, CypherPatternMeta, FormatGraphQueryOptions } from '../types';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -63,21 +64,28 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runCypher = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+const runCypher = async (
+  query: RuleGroupType,
+  expectedResult: SuperUser[],
+  fqOptions?: Partial<FormatGraphQueryOptions>
+) => {
   const fullQuery: RuleGroupType = { ...query, rules: [suPatternRule, ...query.rules] };
-  const cypher = `${formatCypher(fullQuery, { includeReturn: false })}\n${returnClause}`;
+  const cypher = fqOptions
+    ? formatGraphQuery(fullQuery, { format: 'cypher', includeReturn: false, ...fqOptions })
+    : formatCypher(fullQuery, { includeReturn: false });
+  const fullCypher = `${cypher}\n${returnClause}`;
   // oxlint-disable-next-line typescript/no-explicit-any
-  const result = await (db as any).executeCypher(cypher);
+  const result = await (db as any).executeCypher(fullCypher);
   expect(result.toArray()).toEqual(expectedResult.map(toCypherRow));
 };
 
-const testCypher = ({ query, expectedResult }: TestSQLParams) => {
+const testCypher = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
   test('cypher', async () => {
     const newQuery = transformQuery(query, {
       ruleProcessor: r => ({ ...r, field: `su.${r.field}`, meta: filterMeta }),
     });
-
-    await runCypher(newQuery, expectedResult);
+    const { format: _format, ...graphFqOptions } = fqOptions ?? {};
+    await runCypher(newQuery, expectedResult, { parseNumbers: true, ...graphFqOptions });
   });
 };
 
@@ -85,26 +93,9 @@ const testCypher = ({ query, expectedResult }: TestSQLParams) => {
 
 describe('Cypher (Grafeo)', () => {
   // Skipped dbTests entries:
-  //  - 'greater than' / 'greater than or equal to' / 'less than' / 'less than or equal to':
-  //    These shared tests combine numeric and string-typed values for the same
-  //    operator (e.g. `> 15` AND `> '15'`). Cypher is strongly typed, so comparing
-  //    an integer property against a string literal produces no matches.
-  //  - 'between/notBetween': Same mixed-type issue (array of numbers + array of
-  //    strings + comma-separated string).
   //  - 'bigint': Cypher/Grafeo does not support BigInt literals.
-  //  - 'manipulateValueOrder': Relies on `preserveValueOrder` / `parseNumbers`
-  //    format options that are SQL-specific.
   for (const [name, t] of Object.entries(dbTests(superUsers)).filter(
-    ([k]) =>
-      ![
-        'greater than',
-        'greater than or equal to',
-        'less than',
-        'less than or equal to',
-        'between/notBetween',
-        'bigint',
-        'manipulateValueOrder',
-      ].includes(k)
+    ([k]) => !['bigint'].includes(k)
   )) {
     describe(name, () => {
       testCypher(t);

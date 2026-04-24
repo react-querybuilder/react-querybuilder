@@ -1,4 +1,4 @@
-import type { RuleType } from '@react-querybuilder/core';
+import type { FormatQueryOptions, RuleType } from '@react-querybuilder/core';
 
 // ─── Graph Role Discriminator ───────────────────────────────────────────────
 
@@ -155,5 +155,50 @@ export interface GremlinFormatOptions {
   /** The graph traversal source name (default: `"g"`). */
   traversalSource?: string;
   /** Indentation string (default: two spaces). */
+  indent?: string;
+}
+
+/** Supported graph query format identifiers for {@link formatGraphQuery}. */
+export type GraphQueryFormat = GraphLang;
+
+/**
+ * Options for the unified {@link formatGraphQuery} function. Combines
+ * a `format` selector, format-specific settings, and options from the
+ * core `FormatQueryOptions` that are applicable to graph query languages.
+ */
+export interface FormatGraphQueryOptions extends Pick<
+  FormatQueryOptions,
+  | 'paramPrefix'
+  | 'parseNumbers'
+  | 'fields'
+  | 'validator'
+  | 'fallbackExpression'
+  | 'placeholderFieldName'
+  | 'placeholderOperatorName'
+  | 'preserveValueOrder'
+> {
+  /** The graph query language to target. */
+  format: GraphQueryFormat;
+
+  // ── Cypher / GQL options ──
+  /** Whether to include a `RETURN` clause (Cypher/GQL only). */
+  includeReturn?: boolean;
+
+  // ── SPARQL options ──
+  /** PREFIX declarations to include at the top of the query (SPARQL only). */
+  prefixes?: Record<string, string>;
+  /** Variables to SELECT (SPARQL only; defaults to all bound variables). */
+  selectVariables?: string[];
+
+  // ── Gremlin options ──
+  /** The graph traversal source name (Gremlin only; default: `"g"`). */
+  traversalSource?: string;
+
+  // ── Common options ──
+  /**
+   * Indentation string (default: two spaces).
+   *
+   * @default '  '
+   */
   indent?: string;
 }
