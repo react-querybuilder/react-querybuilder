@@ -1,5 +1,6 @@
 import type {
   FullField,
+  RuleGroupType,
   RuleGroupTypeAny,
   RuleType,
   ValidationMap,
@@ -13,23 +14,50 @@ import {
   toFlatOptionArray,
   toFullOptionList,
 } from '@react-querybuilder/core';
-import { formatCypher } from './formatCypher';
-import { formatGremlin } from './formatGremlin';
-import { formatSPARQL } from './formatSPARQL';
+import { defaultRuleGroupProcessorCypher, defaultRuleProcessorCypher } from './formatCypher';
+import {
+  buildGremlinPatternSteps,
+  defaultRuleGroupProcessorGremlin,
+  defaultRuleProcessorGremlin,
+} from './formatGremlin';
+import { defaultRuleGroupProcessorSPARQL, defaultRuleProcessorSPARQL } from './formatSPARQL';
 import type {
-  CypherFormatOptions,
   FormatGraphQueryOptions,
-  GremlinFormatOptions,
-  SparqlFormatOptions,
+  GraphQueryFormat,
+  GraphRuleGroupProcessor,
+  GraphRuleProcessor,
+  SparqlPatternMeta,
 } from './types';
 import { isPatternMeta } from './types';
+import {
+  buildCypherMatchPatterns,
+  extractFilterElements,
+  extractPatternRules,
+  groupBySubject,
+} from './utils';
+
+// ── Default Processor Maps ──────────────────────────────────────────────────
+
+const defaultRuleProcessors: Record<GraphQueryFormat, GraphRuleProcessor> = {
+  cypher: defaultRuleProcessorCypher,
+  gql: defaultRuleProcessorCypher,
+  sparql: defaultRuleProcessorSPARQL,
+  gremlin: defaultRuleProcessorGremlin,
+};
+
+const defaultRuleGroupProcessors: Record<GraphQueryFormat, GraphRuleGroupProcessor> = {
+  cypher: defaultRuleGroupProcessorCypher,
+  gql: defaultRuleGroupProcessorCypher,
+  sparql: defaultRuleGroupProcessorSPARQL,
+  gremlin: defaultRuleGroupProcessorGremlin,
+};
 
 /**
  * Formats a query object as a graph query string in the specified format.
  *
  * This is the unified entry point for all graph query language formatters.
  * It pre-processes the query (validation, `parseNumbers`, placeholder
- * filtering) and then dispatches to the appropriate format-specific function.
+ * filtering), resolves processors, and then assembles the format-specific output.
  */
 export const formatGraphQuery = (
   query: RuleGroupTypeAny,
@@ -152,42 +180,140 @@ export const formatGraphQuery = (
 
   const preprocessedQuery = processGroup(query);
 
-  // ── Dispatch ────────────────────────────────────────────────────────────
+  // ── Resolve processors ──────────────────────────────────────────────────
+  const ruleProcessor = options.ruleProcessor ?? defaultRuleProcessors[format];
+  const ruleGroupProcessor = options.ruleGroupProcessor ?? defaultRuleGroupProcessors[format];
+  const processorOptions = { ruleProcessor, ruleGroupProcessor };
+
+  // ── Assemble output ─────────────────────────────────────────────────────
   switch (format) {
-    case 'cypher': {
-      const cypherOpts: CypherFormatOptions = {
-        dialect: 'cypher',
-        includeReturn: options.includeReturn,
-        paramPrefix: options.paramPrefix,
-        indent: options.indent,
-      };
-      return formatCypher(preprocessedQuery, cypherOpts);
-    }
+    case 'cypher':
     case 'gql': {
-      const gqlOpts: CypherFormatOptions = {
-        dialect: 'gql',
-        includeReturn: options.includeReturn,
-        paramPrefix: options.paramPrefix,
-        indent: options.indent,
+      const patternRules = extractPatternRules(preprocessedQuery);
+      const filterElements = extractFilterElements(preprocessedQuery);
+
+      const lines: string[] = [];
+
+      // MATCH clause
+      if (patternRules.length > 0) {
+        const { required, optional } = buildCypherMatchPatterns(patternRules);
+        for (const pattern of required) lines.push(`MATCH ${pattern}`);
+        for (const pattern of optional) lines.push(`OPTIONAL MATCH ${pattern}`);
+      }
+
+      // WHERE clause via processor
+      const filterGroup: RuleGroupType = {
+        combinator: (preprocessedQuery as RuleGroupType).combinator ?? 'and',
+        not: preprocessedQuery.not,
+        rules: filterElements as RuleGroupType['rules'],
       };
-      return formatCypher(preprocessedQuery, gqlOpts);
+      const whereClause = ruleGroupProcessor(filterGroup, processorOptions);
+      if (whereClause) lines.push(`WHERE ${whereClause}`);
+
+      // RETURN clause
+      if (options.includeReturn !== false) {
+        const aliases = collectBoundAliases(patternRules);
+        if (aliases.length > 0) lines.push(`RETURN ${aliases.join(', ')}`);
+      }
+
+      return lines.join('\n');
     }
+
     case 'sparql': {
-      const sparqlOpts: SparqlFormatOptions = {
-        prefixes: options.prefixes,
-        selectVariables: options.selectVariables,
-        indent: options.indent,
+      const { prefixes = {}, selectVariables, indent = '  ' } = options;
+      const patternRules = extractPatternRules(preprocessedQuery);
+      const filterElements = extractFilterElements(preprocessedQuery);
+
+      const lines: string[] = [];
+
+      // PREFIX declarations
+      for (const [prefix, uri] of Object.entries(prefixes)) {
+        lines.push(`PREFIX ${prefix}: <${uri}>`);
+      }
+
+      // SELECT
+      const boundVars = selectVariables ?? collectSparqlVariables(patternRules);
+      if (lines.length > 0) lines.push('');
+      lines.push(`SELECT ${boundVars.join(' ')}`);
+      lines.push('WHERE {');
+
+      // Triple patterns
+      const grouped = groupBySubject(patternRules);
+      const optionalTriples: string[] = [];
+      const requiredTriples: string[] = [];
+      for (const [subject, rules] of grouped) {
+        for (const rule of rules) {
+          const meta = rule.meta as SparqlPatternMeta;
+          const triple = `${indent}${subject} ${rule.field} ${String(rule.value)} .`;
+          if (meta.optional) {
+            optionalTriples.push(triple);
+          } else {
+            requiredTriples.push(triple);
+          }
+        }
+      }
+      lines.push(...requiredTriples);
+      if (optionalTriples.length > 0) {
+        lines.push(`${indent}OPTIONAL {`);
+        for (const triple of optionalTriples) lines.push(`${indent}${triple}`);
+        lines.push(`${indent}}`);
+      }
+
+      // FILTER clause via processor
+      const filterGroup: RuleGroupType = {
+        combinator: (preprocessedQuery as RuleGroupType).combinator ?? 'and',
+        not: preprocessedQuery.not,
+        rules: filterElements as RuleGroupType['rules'],
       };
-      return formatSPARQL(preprocessedQuery, sparqlOpts);
+      const filterExpr = ruleGroupProcessor(filterGroup, processorOptions);
+      if (filterExpr) lines.push(`${indent}FILTER (${filterExpr})`);
+
+      lines.push('}');
+      return lines.join('\n');
     }
+
     case 'gremlin': {
-      const gremlinOpts: GremlinFormatOptions = {
-        traversalSource: options.traversalSource,
-        indent: options.indent,
-      };
-      return formatGremlin(preprocessedQuery, gremlinOpts);
+      const { traversalSource = 'g' } = options;
+
+      const parts: string[] = [`${traversalSource}.V()`];
+      const patternSteps = buildGremlinPatternSteps(preprocessedQuery);
+      const filterSteps = ruleGroupProcessor(preprocessedQuery, processorOptions);
+
+      parts.push(...patternSteps);
+      if (filterSteps) parts.push(filterSteps);
+
+      return parts.join('');
     }
+
     default:
       return fallbackExpression;
   }
+};
+
+// ── Private helpers (shared by assembly logic) ────────────────────────────
+
+/** Collects all unique node aliases from pattern rules. */
+const collectBoundAliases = (patternRules: RuleType[]): string[] => {
+  const aliases = new Set<string>();
+  for (const rule of patternRules) {
+    const meta = rule.meta as Record<string, unknown> | undefined;
+    if (meta && 'nodeAlias' in meta) aliases.add(meta.nodeAlias as string);
+    if (meta && 'targetAlias' in meta) aliases.add(meta.targetAlias as string);
+  }
+  return [...aliases];
+};
+
+/** Collects all SPARQL variables (starting with `?`) from pattern rules. */
+const collectSparqlVariables = (patternRules: RuleType[]): string[] => {
+  const vars = new Set<string>();
+  for (const rule of patternRules) {
+    const meta = rule.meta as Record<string, unknown> | undefined;
+    if (meta && 'subject' in meta) {
+      const subject = String(meta.subject);
+      if (subject.startsWith('?')) vars.add(subject);
+    }
+    const val = String(rule.value);
+    if (val.startsWith('?')) vars.add(val);
+  }
+  return [...vars];
 };

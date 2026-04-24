@@ -1,110 +1,20 @@
 import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
 import { isRuleGroup } from '@react-querybuilder/core';
-import type { SparqlFormatOptions, SparqlPatternMeta } from './types';
+import type {
+  GraphRuleGroupProcessorOptions,
+  SparqlFormatOptions,
+  SparqlPatternMeta,
+} from './types';
 import { isPatternMeta } from './types';
 import { extractFilterElements, extractPatternRules, groupBySubject } from './utils';
 
 /**
- * Formats a `RuleGroupType` (with graph `meta` on rules) as a SPARQL query string.
+ * Default rule processor for SPARQL. Formats a single filter rule
+ * as a SPARQL FILTER expression.
  *
- * Pattern rules (`meta.graphRole === 'pattern'`) produce triple patterns.
- * Filter rules produce `FILTER` expressions.
+ * @group Export
  */
-export const formatSPARQL = (
-  query: RuleGroupTypeAny,
-  options: SparqlFormatOptions = {}
-): string => {
-  const { prefixes = {}, selectVariables, indent = '  ' } = options;
-
-  const patternRules = extractPatternRules(query);
-  const filterElements = extractFilterElements(query);
-
-  const lines: string[] = [];
-
-  // PREFIX declarations
-  for (const [prefix, uri] of Object.entries(prefixes)) {
-    lines.push(`PREFIX ${prefix}: <${uri}>`);
-  }
-
-  // Collect bound variables for SELECT
-  const boundVars = selectVariables ?? collectSparqlVariables(patternRules);
-  if (lines.length > 0) lines.push('');
-  lines.push(`SELECT ${boundVars.join(' ')}`);
-  lines.push('WHERE {');
-
-  // Triple patterns
-  const grouped = groupBySubject(patternRules);
-  const optionalTriples: string[] = [];
-  const requiredTriples: string[] = [];
-
-  for (const [subject, rules] of grouped) {
-    for (const rule of rules) {
-      const meta = rule.meta as SparqlPatternMeta;
-      const predicate = rule.field;
-      const object = String(rule.value);
-      const triple = `${indent}${subject} ${predicate} ${object} .`;
-
-      if (meta.optional) {
-        optionalTriples.push(triple);
-      } else {
-        requiredTriples.push(triple);
-      }
-    }
-  }
-
-  lines.push(...requiredTriples);
-
-  if (optionalTriples.length > 0) {
-    lines.push(`${indent}OPTIONAL {`);
-    for (const triple of optionalTriples) {
-      lines.push(`${indent}${triple}`);
-    }
-    lines.push(`${indent}}`);
-  }
-
-  // FILTER clause
-  const filterGroup: RuleGroupType = {
-    combinator: (query as RuleGroupType).combinator ?? 'and',
-    not: query.not,
-    rules: filterElements as RuleGroupType['rules'],
-  };
-  const filterExpr = formatSparqlFilter(filterGroup);
-  if (filterExpr) {
-    lines.push(`${indent}FILTER (${filterExpr})`);
-  }
-
-  lines.push('}');
-
-  return lines.join('\n');
-};
-
-/** Formats a rule group as a SPARQL FILTER expression. */
-const formatSparqlFilter = (rg: RuleGroupTypeAny): string => {
-  const parts: string[] = [];
-
-  for (const r of rg.rules) {
-    if (typeof r === 'string') continue;
-    if (isRuleGroup(r)) {
-      const nested = formatSparqlFilter(r);
-      if (nested) parts.push(`(${nested})`);
-    } else {
-      const meta = r.meta as Record<string, unknown> | undefined;
-      if (meta && isPatternMeta(meta)) continue;
-      const formatted = formatSparqlRule(r);
-      if (formatted) parts.push(formatted);
-    }
-  }
-
-  if (parts.length === 0) return '';
-
-  const combinator = (rg as RuleGroupType).combinator ?? 'and';
-  const op = combinator === 'or' ? ' || ' : ' && ';
-  const joined = parts.join(op);
-  return rg.not ? `!(${joined})` : joined;
-};
-
-/** Formats a single rule as a SPARQL FILTER expression. */
-const formatSparqlRule = (rule: RuleType): string => {
+export const defaultRuleProcessorSPARQL = (rule: RuleType): string => {
   const { field, operator, value } = rule;
   const v = formatSparqlValue(value);
 
@@ -173,6 +83,116 @@ const formatSparqlRule = (rule: RuleType): string => {
     default:
       return `${field} ${operator} ${v}`;
   }
+};
+
+/**
+ * Default rule group processor for SPARQL. Recursively formats a
+ * filter-only rule group as a SPARQL FILTER expression.
+ *
+ * @group Export
+ */
+export const defaultRuleGroupProcessorSPARQL = (
+  rg: RuleGroupTypeAny,
+  { ruleProcessor, ruleGroupProcessor }: GraphRuleGroupProcessorOptions
+): string => {
+  const parts: string[] = [];
+
+  for (const r of rg.rules) {
+    if (typeof r === 'string') continue;
+    if (isRuleGroup(r)) {
+      const nested = ruleGroupProcessor(r, { ruleProcessor, ruleGroupProcessor });
+      if (nested) parts.push(`(${nested})`);
+    } else {
+      const meta = r.meta as Record<string, unknown> | undefined;
+      if (meta && isPatternMeta(meta)) continue;
+      const formatted = ruleProcessor(r);
+      if (formatted) parts.push(formatted);
+    }
+  }
+
+  if (parts.length === 0) return '';
+
+  const combinator = (rg as RuleGroupType).combinator ?? 'and';
+  const op = combinator === 'or' ? ' || ' : ' && ';
+  const joined = parts.join(op);
+  return rg.not ? `!(${joined})` : joined;
+};
+
+/**
+ * Formats a `RuleGroupType` (with graph `meta` on rules) as a SPARQL query string.
+ *
+ * Pattern rules (`meta.graphRole === 'pattern'`) produce triple patterns.
+ * Filter rules produce `FILTER` expressions.
+ */
+export const formatSPARQL = (
+  query: RuleGroupTypeAny,
+  options: SparqlFormatOptions = {}
+): string => {
+  const { prefixes = {}, selectVariables, indent = '  ' } = options;
+
+  const patternRules = extractPatternRules(query);
+  const filterElements = extractFilterElements(query);
+
+  const lines: string[] = [];
+
+  // PREFIX declarations
+  for (const [prefix, uri] of Object.entries(prefixes)) {
+    lines.push(`PREFIX ${prefix}: <${uri}>`);
+  }
+
+  // Collect bound variables for SELECT
+  const boundVars = selectVariables ?? collectSparqlVariables(patternRules);
+  if (lines.length > 0) lines.push('');
+  lines.push(`SELECT ${boundVars.join(' ')}`);
+  lines.push('WHERE {');
+
+  // Triple patterns
+  const grouped = groupBySubject(patternRules);
+  const optionalTriples: string[] = [];
+  const requiredTriples: string[] = [];
+
+  for (const [subject, rules] of grouped) {
+    for (const rule of rules) {
+      const meta = rule.meta as SparqlPatternMeta;
+      const predicate = rule.field;
+      const object = String(rule.value);
+      const triple = `${indent}${subject} ${predicate} ${object} .`;
+
+      if (meta.optional) {
+        optionalTriples.push(triple);
+      } else {
+        requiredTriples.push(triple);
+      }
+    }
+  }
+
+  lines.push(...requiredTriples);
+
+  if (optionalTriples.length > 0) {
+    lines.push(`${indent}OPTIONAL {`);
+    for (const triple of optionalTriples) {
+      lines.push(`${indent}${triple}`);
+    }
+    lines.push(`${indent}}`);
+  }
+
+  // FILTER clause
+  const filterGroup: RuleGroupType = {
+    combinator: (query as RuleGroupType).combinator ?? 'and',
+    not: query.not,
+    rules: filterElements as RuleGroupType['rules'],
+  };
+  const filterExpr = defaultRuleGroupProcessorSPARQL(filterGroup, {
+    ruleProcessor: defaultRuleProcessorSPARQL,
+    ruleGroupProcessor: defaultRuleGroupProcessorSPARQL,
+  });
+  if (filterExpr) {
+    lines.push(`${indent}FILTER (${filterExpr})`);
+  }
+
+  lines.push('}');
+
+  return lines.join('\n');
 };
 
 const formatSparqlValue = (value: unknown): string => {

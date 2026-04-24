@@ -1,4 +1,4 @@
-import type { RuleGroupType } from '@react-querybuilder/core';
+import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
 import { describe, expect, it } from 'vitest';
 import { formatGraphQuery } from '../formatGraphQuery';
 import type { CypherFilterMeta, CypherPatternMeta, SparqlPatternMeta } from '../types';
@@ -364,6 +364,118 @@ describe('formatGraphQuery', () => {
       const result = formatGraphQuery(query, { format: 'cypher' });
       expect(result).not.toContain('skip');
       expect(result).toContain("a.name = 'Alice'");
+    });
+  });
+
+  // ── Custom processors ──────────────────────────────────────────────────
+
+  describe('custom ruleProcessor', () => {
+    it('should use custom ruleProcessor for Cypher', () => {
+      const query: RuleGroupType = {
+        combinator: 'and',
+        rules: [
+          {
+            field: '_type',
+            operator: 'is',
+            value: 'Person',
+            meta: patternMeta({ nodeAlias: 'p', nodeLabel: 'Person' }),
+          },
+          { field: 'p.name', operator: '=', value: 'Alice', meta: filterMeta },
+        ],
+      };
+      const result = formatGraphQuery(query, {
+        format: 'cypher',
+        ruleProcessor: rule => `CUSTOM(${rule.field}, '${rule.value}')`,
+      });
+      expect(result).toContain('MATCH (p:Person)');
+      expect(result).toContain("WHERE CUSTOM(p.name, 'Alice')");
+    });
+
+    it('should use custom ruleProcessor for SPARQL', () => {
+      const query: RuleGroupType = {
+        combinator: 'and',
+        rules: [
+          {
+            field: 'foaf:name',
+            operator: 'has',
+            value: '?name',
+            meta: { graphRole: 'pattern', subject: '?person' } satisfies SparqlPatternMeta,
+          },
+          { field: '?name', operator: '=', value: 'Alice', meta: filterMeta },
+        ],
+      };
+      const result = formatGraphQuery(query, {
+        format: 'sparql',
+        ruleProcessor: rule => `CUSTOM(${rule.field}, ${rule.value})`,
+      });
+      expect(result).toContain('?person foaf:name ?name .');
+      expect(result).toContain('FILTER (CUSTOM(?name, Alice))');
+    });
+
+    it('should use custom ruleProcessor for Gremlin', () => {
+      const query: RuleGroupType = {
+        combinator: 'and',
+        rules: [{ field: 'name', operator: '=', value: 'Alice', meta: filterMeta }],
+      };
+      const result = formatGraphQuery(query, {
+        format: 'gremlin',
+        ruleProcessor: rule => `.custom('${rule.field}', '${rule.value}')`,
+      });
+      expect(result).toBe("g.V().custom('name', 'Alice')");
+    });
+  });
+
+  describe('custom ruleGroupProcessor', () => {
+    it('should use custom ruleGroupProcessor for Cypher', () => {
+      const query: RuleGroupType = {
+        combinator: 'and',
+        rules: [
+          { field: 'a.x', operator: '=', value: 1, meta: filterMeta },
+          { field: 'a.y', operator: '=', value: 2, meta: filterMeta },
+        ],
+      };
+      const result = formatGraphQuery(query, {
+        format: 'cypher',
+        ruleGroupProcessor: (rg, { ruleProcessor }) => {
+          const parts = rg.rules
+            .filter(r => typeof r !== 'string' && !('rules' in r))
+            .map(r => ruleProcessor(r as RuleType));
+          return `CUSTOM_GROUP(${parts.join('; ')})`;
+        },
+      });
+      expect(result).toContain('WHERE CUSTOM_GROUP(a.x = 1; a.y = 2)');
+    });
+
+    it('should pass ruleGroupProcessor for recursion', () => {
+      const query: RuleGroupType = {
+        combinator: 'and',
+        rules: [
+          { field: 'a.x', operator: '=', value: 1, meta: filterMeta },
+          {
+            combinator: 'or',
+            rules: [
+              { field: 'a.y', operator: '=', value: 2, meta: filterMeta },
+              { field: 'a.z', operator: '=', value: 3, meta: filterMeta },
+            ],
+          },
+        ],
+      };
+      const result = formatGraphQuery(query, {
+        format: 'cypher',
+        ruleGroupProcessor: (rg, { ruleProcessor, ruleGroupProcessor: self }) => {
+          const parts: string[] = [];
+          for (const r of rg.rules) {
+            if (typeof r === 'string') continue;
+            if ('rules' in r) {
+              parts.push(`[${self(r, { ruleProcessor, ruleGroupProcessor: self })}]`);
+            } else {
+              parts.push(ruleProcessor(r));
+            }
+          }
+          return parts.join(' + ');
+        },
+      });
+      expect(result).toContain('WHERE a.x = 1 + [a.y = 2 + a.z = 3]');
     });
   });
 });

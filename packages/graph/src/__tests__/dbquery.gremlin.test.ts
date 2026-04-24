@@ -77,7 +77,12 @@ const testGremlin = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
     const newQuery = transformQuery(query, {
       ruleProcessor: r => ({ ...r, field: `su.${r.field}`, meta: filterMeta }),
     });
-    const { format: _format, ...graphFqOptions } = fqOptions ?? {};
+    const {
+      format: _format,
+      ruleProcessor: _rp,
+      ruleGroupProcessor: _rgp,
+      ...graphFqOptions
+    } = fqOptions ?? {};
     await runGremlin(newQuery, expectedResult, { parseNumbers: true, ...graphFqOptions });
   });
 };

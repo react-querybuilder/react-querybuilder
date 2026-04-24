@@ -1,16 +1,28 @@
-import type { FormatQueryOptions, RuleType } from '@react-querybuilder/core';
+import type { FormatQueryOptions, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
 
 // ─── Graph Role Discriminator ───────────────────────────────────────────────
 
-/** Discriminates between pattern-defining rules and filter-condition rules. */
+/**
+ * Discriminates between pattern-defining rules and filter-condition rules.
+ *
+ * @group Export
+ */
 export type GraphRole = 'pattern' | 'filter';
 
-/** Supported graph query languages. */
+/**
+ * Supported graph query languages.
+ *
+ * @group Export
+ */
 export type GraphLang = 'cypher' | 'gql' | 'sparql' | 'gremlin';
 
 // ─── Base Meta ──────────────────────────────────────────────────────────────
 
-/** Base metadata shared by all graph language extensions. */
+/**
+ * Base metadata shared by all graph language extensions.
+ *
+ * @group Export
+ */
 export interface GraphMetaBase {
   /** Discriminates between pattern-defining rules and filter-condition rules. */
   graphRole: GraphRole;
@@ -21,7 +33,11 @@ export interface GraphMetaBase {
 
 // ─── Cypher / GQL Meta ─────────────────────────────────────────────────────
 
-/** Metadata for a Cypher/GQL graph pattern rule. */
+/**
+ * Metadata for a Cypher/GQL graph pattern rule.
+ *
+ * @group Export
+ */
 export interface CypherPatternMeta extends GraphMetaBase {
   graphRole: 'pattern';
   /** Node alias in MATCH clause, e.g. `"a"` for `(a:Person)`. */
@@ -40,17 +56,29 @@ export interface CypherPatternMeta extends GraphMetaBase {
   optional?: boolean;
 }
 
-/** Metadata for a Cypher/GQL filter rule. */
+/**
+ * Metadata for a Cypher/GQL filter rule.
+ *
+ * @group Export
+ */
 export interface CypherFilterMeta extends GraphMetaBase {
   graphRole: 'filter';
 }
 
-/** Union of all Cypher/GQL meta types. */
+/**
+ * Union of all Cypher/GQL meta types.
+ *
+ * @group Export
+ */
 export type CypherMeta = CypherPatternMeta | CypherFilterMeta;
 
 // ─── SPARQL Meta ────────────────────────────────────────────────────────────
 
-/** Metadata for a SPARQL triple pattern rule. */
+/**
+ * Metadata for a SPARQL triple pattern rule.
+ *
+ * @group Export
+ */
 export interface SparqlPatternMeta extends GraphMetaBase {
   graphRole: 'pattern';
   /** Subject variable or URI, e.g. `"?person"`. */
@@ -59,17 +87,29 @@ export interface SparqlPatternMeta extends GraphMetaBase {
   optional?: boolean;
 }
 
-/** Metadata for a SPARQL filter rule. */
+/**
+ * Metadata for a SPARQL filter rule.
+ *
+ * @group Export
+ */
 export interface SparqlFilterMeta extends GraphMetaBase {
   graphRole: 'filter';
 }
 
-/** Union of all SPARQL meta types. */
+/**
+ * Union of all SPARQL meta types.
+ *
+ * @group Export
+ */
 export type SparqlMeta = SparqlPatternMeta | SparqlFilterMeta;
 
 // ─── Gremlin Meta ───────────────────────────────────────────────────────────
 
-/** Metadata for a Gremlin traversal step rule. */
+/**
+ * Metadata for a Gremlin traversal step rule.
+ *
+ * @group Export
+ */
 export interface GremlinPatternMeta extends GraphMetaBase {
   graphRole: 'pattern';
   /** Step label, e.g. `"a"` for `.as('a')`. */
@@ -80,17 +120,29 @@ export interface GremlinPatternMeta extends GraphMetaBase {
   direction?: 'out' | 'in' | 'both';
 }
 
-/** Metadata for a Gremlin filter (`.has()`) rule. */
+/**
+ * Metadata for a Gremlin filter (`.has()`) rule.
+ *
+ * @group Export
+ */
 export interface GremlinFilterMeta extends GraphMetaBase {
   graphRole: 'filter';
 }
 
-/** Union of all Gremlin meta types. */
+/**
+ * Union of all Gremlin meta types.
+ *
+ * @group Export
+ */
 export type GremlinMeta = GremlinPatternMeta | GremlinFilterMeta;
 
 // ─── Combined Meta Type ─────────────────────────────────────────────────────
 
-/** Union of all graph meta types. */
+/**
+ * Union of all graph meta types.
+ *
+ * @group Export
+ */
 export type GraphMeta = CypherMeta | SparqlMeta | GremlinMeta;
 
 // ─── Type Guards ────────────────────────────────────────────────────────────
@@ -126,9 +178,51 @@ export const isGremlinPatternMeta = (meta?: Record<string, unknown>): meta is Gr
 export const hasGraphMeta = (rule: RuleType): rule is RuleType & { meta: GraphMeta } =>
   rule.meta != null && typeof (rule.meta as GraphMetaBase).graphRole === 'string';
 
+// ─── Processor Types ────────────────────────────────────────────────────────
+
+/**
+ * Processes a single filter rule into a format-specific string.
+ * Pattern rules are never passed to this function.
+ *
+ * @group Export
+ */
+export type GraphRuleProcessor = (rule: RuleType) => string;
+
+/**
+ * Options passed to a {@link GraphRuleGroupProcessor}.
+ *
+ * @group Export
+ */
+export interface GraphRuleGroupProcessorOptions {
+  /** The rule processor to call for each filter rule. */
+  ruleProcessor: GraphRuleProcessor;
+  /** Self-reference for recursion into nested groups. */
+  ruleGroupProcessor: GraphRuleGroupProcessor;
+}
+
+/**
+ * Recursively processes a rule group into a format-specific filter clause.
+ * Pattern rules are stripped before this function is called.
+ *
+ * The processor handles:
+ * - Iterating and recursing through rules/groups
+ * - Joining with the appropriate combinator (AND/OR, `&&`/`||`, chained steps, etc.)
+ * - NOT group handling
+ *
+ * @group Export
+ */
+export type GraphRuleGroupProcessor = (
+  ruleGroup: RuleGroupTypeAny,
+  options: GraphRuleGroupProcessorOptions
+) => string;
+
 // ─── Formatter Options ──────────────────────────────────────────────────────
 
-/** Options for Cypher/GQL formatters. */
+/**
+ * Options for Cypher/GQL formatters.
+ *
+ * @group Export
+ */
 export interface CypherFormatOptions {
   /** GQL mode uses `INSERT` instead of `CREATE` and other minor syntax differences. */
   dialect?: 'cypher' | 'gql';
@@ -140,7 +234,11 @@ export interface CypherFormatOptions {
   indent?: string;
 }
 
-/** Options for SPARQL formatters. */
+/**
+ * Options for SPARQL formatters.
+ *
+ * @group Export
+ */
 export interface SparqlFormatOptions {
   /** PREFIX declarations to include at the top of the query. */
   prefixes?: Record<string, string>;
@@ -150,7 +248,11 @@ export interface SparqlFormatOptions {
   indent?: string;
 }
 
-/** Options for Gremlin formatters. */
+/**
+ * Options for Gremlin formatters.
+ *
+ * @group Export
+ */
 export interface GremlinFormatOptions {
   /** The graph traversal source name (default: `"g"`). */
   traversalSource?: string;
@@ -158,13 +260,19 @@ export interface GremlinFormatOptions {
   indent?: string;
 }
 
-/** Supported graph query format identifiers for {@link formatGraphQuery}. */
+/**
+ * Supported graph query format identifiers for {@link formatGraphQuery}.
+ *
+ * @group Export
+ */
 export type GraphQueryFormat = GraphLang;
 
 /**
  * Options for the unified {@link formatGraphQuery} function. Combines
  * a `format` selector, format-specific settings, and options from the
  * core `FormatQueryOptions` that are applicable to graph query languages.
+ *
+ * @group Export
  */
 export interface FormatGraphQueryOptions extends Pick<
   FormatQueryOptions,
@@ -201,4 +309,17 @@ export interface FormatGraphQueryOptions extends Pick<
    * @default '  '
    */
   indent?: string;
+
+  // ── Processor overrides ──
+  /**
+   * Custom rule processor. Overrides the default per-rule formatter for
+   * the selected format. Pattern rules are never passed to this function.
+   */
+  ruleProcessor?: GraphRuleProcessor;
+  /**
+   * Custom rule group processor. Overrides the default recursive group
+   * formatter for the selected format. Receives a filter-only group
+   * (pattern rules are already extracted).
+   */
+  ruleGroupProcessor?: GraphRuleGroupProcessor;
 }

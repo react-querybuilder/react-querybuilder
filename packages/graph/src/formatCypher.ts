@@ -1,95 +1,16 @@
 import type { RuleGroupType, RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
 import { bigIntJsonStringifyReplacer, isRuleGroup } from '@react-querybuilder/core';
-import type { CypherFormatOptions } from './types';
+import type { CypherFormatOptions, GraphRuleGroupProcessorOptions } from './types';
 import { isPatternMeta } from './types';
 import { buildCypherMatchPatterns, extractFilterElements, extractPatternRules } from './utils';
 
 /**
- * Formats a `RuleGroupType` (with graph `meta` on rules) as a complete Cypher query string.
+ * Default rule processor for Cypher/GQL. Formats a single filter rule
+ * as a Cypher WHERE condition.
  *
- * Pattern rules (`meta.graphRole === 'pattern'`) produce the `MATCH` clause.
- * Filter rules (`meta.graphRole === 'filter'` or no `meta`) produce the `WHERE` clause.
- * Nested sub-groups produce parenthesized boolean expressions in `WHERE`.
+ * @group Export
  */
-export const formatCypher = (
-  query: RuleGroupTypeAny,
-  { includeReturn = true }: CypherFormatOptions = {}
-): string => {
-  const patternRules = extractPatternRules(query);
-  const filterElements = extractFilterElements(query);
-
-  const lines: string[] = [];
-
-  // MATCH clause
-  if (patternRules.length > 0) {
-    const { required, optional } = buildCypherMatchPatterns(patternRules);
-
-    for (const pattern of required) {
-      lines.push(`MATCH ${pattern}`);
-    }
-    for (const pattern of optional) {
-      lines.push(`OPTIONAL MATCH ${pattern}`);
-    }
-  }
-
-  // WHERE clause
-  const filterGroup: RuleGroupType = {
-    combinator: (query as RuleGroupType).combinator ?? 'and',
-    not: query.not,
-    rules: filterElements as RuleGroupType['rules'],
-  };
-  const whereClause = formatCypherWhereClause(filterGroup);
-  if (whereClause) {
-    lines.push(`WHERE ${whereClause}`);
-  }
-
-  // RETURN clause
-  if (includeReturn) {
-    const aliases = collectBoundAliases(patternRules);
-    if (aliases.length > 0) {
-      lines.push(`RETURN ${aliases.join(', ')}`);
-    }
-  }
-
-  return lines.join('\n');
-};
-
-/**
- * Formats a `RuleGroupType` as a GQL query string.
- * GQL is ~95% compatible with Cypher; this applies the minor syntax differences.
- */
-export const formatGQL = (query: RuleGroupTypeAny, options: CypherFormatOptions = {}): string =>
-  formatCypher(query, { ...options, dialect: 'gql' });
-
-/**
- * Formats just the WHERE clause portion from a rule group.
- * Useful when you only need filter conditions without the MATCH/RETURN structure.
- */
-export const formatCypherWhereClause = (rg: RuleGroupTypeAny): string => {
-  const parts: string[] = [];
-
-  for (const r of rg.rules) {
-    if (typeof r === 'string') continue;
-    if (isRuleGroup(r)) {
-      const nested = formatCypherWhereClause(r);
-      if (nested) parts.push(`(${nested})`);
-    } else {
-      const meta = r.meta as Record<string, unknown> | undefined;
-      if (meta && isPatternMeta(meta)) continue;
-      const formatted = formatCypherRule(r);
-      if (formatted) parts.push(formatted);
-    }
-  }
-
-  if (parts.length === 0) return '';
-
-  const combinator = (rg as RuleGroupType).combinator ?? 'and';
-  const joined = parts.join(` ${combinator.toUpperCase()} `);
-  return rg.not ? `NOT (${joined})` : joined;
-};
-
-/** Formats a single rule as a Cypher WHERE condition. */
-const formatCypherRule = (rule: RuleType): string => {
+export const defaultRuleProcessorCypher = (rule: RuleType): string => {
   const { field, operator, value } = rule;
   const v = formatCypherValue(value);
 
@@ -135,6 +56,108 @@ const formatCypherRule = (rule: RuleType): string => {
       return `${field} ${operator} ${v}`;
   }
 };
+
+/**
+ * Default rule group processor for Cypher/GQL. Recursively formats a
+ * filter-only rule group as a Cypher WHERE clause expression.
+ *
+ * @group Export
+ */
+export const defaultRuleGroupProcessorCypher = (
+  rg: RuleGroupTypeAny,
+  { ruleProcessor, ruleGroupProcessor }: GraphRuleGroupProcessorOptions
+): string => {
+  const parts: string[] = [];
+
+  for (const r of rg.rules) {
+    if (typeof r === 'string') continue;
+    if (isRuleGroup(r)) {
+      const nested = ruleGroupProcessor(r, { ruleProcessor, ruleGroupProcessor });
+      if (nested) parts.push(`(${nested})`);
+    } else {
+      const meta = r.meta as Record<string, unknown> | undefined;
+      if (meta && isPatternMeta(meta)) continue;
+      const formatted = ruleProcessor(r);
+      if (formatted) parts.push(formatted);
+    }
+  }
+
+  if (parts.length === 0) return '';
+
+  const combinator = (rg as RuleGroupType).combinator ?? 'and';
+  const joined = parts.join(` ${combinator.toUpperCase()} `);
+  return rg.not ? `NOT (${joined})` : joined;
+};
+
+/**
+ * Formats a `RuleGroupType` (with graph `meta` on rules) as a complete Cypher query string.
+ *
+ * Pattern rules (`meta.graphRole === 'pattern'`) produce the `MATCH` clause.
+ * Filter rules (`meta.graphRole === 'filter'` or no `meta`) produce the `WHERE` clause.
+ * Nested sub-groups produce parenthesized boolean expressions in `WHERE`.
+ */
+export const formatCypher = (
+  query: RuleGroupTypeAny,
+  { includeReturn = true }: CypherFormatOptions = {}
+): string => {
+  const patternRules = extractPatternRules(query);
+  const filterElements = extractFilterElements(query);
+
+  const lines: string[] = [];
+
+  // MATCH clause
+  if (patternRules.length > 0) {
+    const { required, optional } = buildCypherMatchPatterns(patternRules);
+
+    for (const pattern of required) {
+      lines.push(`MATCH ${pattern}`);
+    }
+    for (const pattern of optional) {
+      lines.push(`OPTIONAL MATCH ${pattern}`);
+    }
+  }
+
+  // WHERE clause
+  const filterGroup: RuleGroupType = {
+    combinator: (query as RuleGroupType).combinator ?? 'and',
+    not: query.not,
+    rules: filterElements as RuleGroupType['rules'],
+  };
+  const whereClause = defaultRuleGroupProcessorCypher(filterGroup, {
+    ruleProcessor: defaultRuleProcessorCypher,
+    ruleGroupProcessor: defaultRuleGroupProcessorCypher,
+  });
+  if (whereClause) {
+    lines.push(`WHERE ${whereClause}`);
+  }
+
+  // RETURN clause
+  if (includeReturn) {
+    const aliases = collectBoundAliases(patternRules);
+    if (aliases.length > 0) {
+      lines.push(`RETURN ${aliases.join(', ')}`);
+    }
+  }
+
+  return lines.join('\n');
+};
+
+/**
+ * Formats a `RuleGroupType` as a GQL query string.
+ * GQL is ~95% compatible with Cypher; this applies the minor syntax differences.
+ */
+export const formatGQL = (query: RuleGroupTypeAny, options: CypherFormatOptions = {}): string =>
+  formatCypher(query, { ...options, dialect: 'gql' });
+
+/**
+ * Formats just the WHERE clause portion from a rule group.
+ * Useful when you only need filter conditions without the MATCH/RETURN structure.
+ */
+export const formatCypherWhereClause = (rg: RuleGroupTypeAny): string =>
+  defaultRuleGroupProcessorCypher(rg, {
+    ruleProcessor: defaultRuleProcessorCypher,
+    ruleGroupProcessor: defaultRuleGroupProcessorCypher,
+  });
 
 const formatCypherValue = (value: unknown): string => {
   if (value === null || value === undefined) return 'null';
