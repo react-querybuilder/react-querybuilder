@@ -1,68 +1,92 @@
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import * as DndKit from '@dnd-kit/core';
 import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import * as ReactDnD from 'react-dnd';
 import * as ReactDnDHTML5Backend from 'react-dnd-html5-backend';
 import * as ReactDnDTouchBackend from 'react-dnd-touch-backend';
 import { createRoot } from 'react-dom/client';
-import type { FlexibleOptionList, FullField } from 'react-querybuilder';
-import { formatQuery, isRuleGroup, QueryBuilder } from 'react-querybuilder';
-import { QueryBuilderDnD } from '../src/QueryBuilderDnD';
+import { QueryBuilder } from 'react-querybuilder';
+import type { DndAdapter } from '../src';
+import { QueryBuilderDnD } from '../src';
+import { createDndKitAdapter } from '../src/dnd-kit';
+import { createPragmaticDndAdapter } from '../src/pragmatic-dnd';
+import { createReactDnDAdapter } from '../src/react-dnd';
 import './styles.scss';
 
-const dnd = { ...ReactDnD, ...ReactDnDHTML5Backend, ...ReactDnDTouchBackend };
-const origin = { x: 0, y: 0 };
+const adapterOptions = [
+  { value: 'pragmatic-dnd', label: 'Pragmatic DnD' },
+  { value: 'react-dnd', label: 'React DnD' },
+  { value: 'dnd-kit', label: 'DnD Kit' },
+] as const;
 
-const CustomDragLayer = React.memo(({ fields }: { fields?: FlexibleOptionList<FullField> }) => {
-  const { isDragging, currentOffset, item } = ReactDnD.useDragLayer(monitor => ({
-    isDragging: monitor.isDragging(),
-    itemType: monitor.getItemType(),
-    currentOffset: monitor.getSourceClientOffset(),
-    item: monitor.getItem(),
-  }));
+type AdapterKey = (typeof adapterOptions)[number]['value'];
 
-  const { x, y } = currentOffset ?? origin;
+const defaultAdapter: AdapterKey = 'pragmatic-dnd';
 
-  const divStyle: React.CSSProperties = React.useMemo(
-    () => ({
-      position: 'fixed',
-      pointerEvents: 'none',
-      border: '1px solid gray',
-      backgroundColor: 'white',
-      padding: '4px 8px',
-      boxShadow: '2px 2px 6px rgba(0, 0, 0, 0.2)',
-      top: y + 14,
-      left: x + 14,
-      zIndex: 10000,
-    }),
-    [x, y]
-  );
+const getSelectedAdapter = (): AdapterKey => {
+  const params = new URLSearchParams(globalThis.location.search);
+  const adapter = params.get('adapter');
+  if (adapterOptions.some(opt => opt.value === adapter)) return adapter as AdapterKey;
+  return defaultAdapter;
+};
 
-  const innerText = React.useMemo(
-    () =>
-      item &&
-      formatQuery(isRuleGroup(item) ? item : { rules: [item] }, {
-        format: 'natural_language',
-        fields,
-      }),
-    [item, fields]
-  );
+const selectedAdapter = getSelectedAdapter();
 
-  if (!isDragging || !currentOffset || !item) return null;
+const createAdapter = (key: AdapterKey): DndAdapter => {
+  switch (key) {
+    case 'react-dnd':
+      return createReactDnDAdapter({
+        ...ReactDnD,
+        ...ReactDnDHTML5Backend,
+        ...ReactDnDTouchBackend,
+      });
+    case 'dnd-kit':
+      return createDndKitAdapter(DndKit);
+  }
+  return createPragmaticDndAdapter({
+    draggable,
+    dropTargetForElements,
+    monitorForElements,
+    combine,
+  });
+};
+
+const dnd = createAdapter(selectedAdapter);
+
+const AdapterSelector = () => {
+  const onChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const params = new URLSearchParams(globalThis.location.search);
+    params.set('adapter', e.target.value);
+    globalThis.location.search = params.toString();
+  }, []);
 
   return (
-    <div className="custom-drag-layer" style={divStyle}>
-      {innerText}
-    </div>
+    <label>
+      DnD Adapter:{' '}
+      <select value={selectedAdapter} onChange={onChange}>
+        {adapterOptions.map(opt => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
-});
+};
 
 const App = () => {
   const devApp = useDevApp();
 
   return (
     <DevLayout {...devApp}>
-      <QueryBuilderDnD dnd={dnd} hideDefaultDragPreview>
-        <CustomDragLayer fields={devApp.commonRQBProps.fields as FlexibleOptionList<FullField>} />
+      <AdapterSelector />
+      <QueryBuilderDnD dnd={dnd} copyModeAfterHoverMs={1214} groupModeAfterHoverMs={2652}>
         {devApp.optVals.independentCombinators ? (
           <QueryBuilder
             key="queryIC"

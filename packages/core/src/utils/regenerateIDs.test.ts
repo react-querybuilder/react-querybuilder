@@ -1,5 +1,5 @@
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
-import { uuidV4regex } from './generateIDTestUtils';
+import { uuidV4regex } from './generateID';
 import { regenerateID, regenerateIDs } from './regenerateIDs';
 
 const ruleGroup: RuleGroupType = {

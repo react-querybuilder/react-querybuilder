@@ -68,7 +68,7 @@ export const testSelect = (
       (('values' in props && props.type === 'multiselect') || 'options' in props)
     ) {
       it('should have the values passed into the <select multiple />', () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
@@ -80,7 +80,7 @@ export const testSelect = (
       });
 
       it('should call the handleOnChange callback properly for <select multiple />', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         const allValuesExceptFirst = testValues.slice(1, 3).map(v => v.name);
         render(
@@ -97,7 +97,7 @@ export const testSelect = (
       });
 
       it('should respect the listsAsArrays option', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
           <Component
@@ -110,6 +110,29 @@ export const testSelect = (
         );
         await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
         expect(onChange).toHaveBeenCalledWith([testVal.name]);
+      });
+
+      it('should handle numeric values in multiselect by normalizing to strings', () => {
+        const onChange = vi.fn();
+        const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
+        const numericOptions = [
+          { name: '1', value: '1', label: 'One' },
+          { name: '2', value: '2', label: 'Two' },
+        ];
+        const optionProps =
+          'values' in props ? { values: numericOptions } : { options: numericOptions };
+        render(
+          <Component
+            {...props}
+            {...optionProps}
+            {...multiselectProps}
+            handleOnChange={onChange}
+            value={[1]}
+          />
+        );
+        const select = findSelect(screen.getByTitle(title));
+        expect(select.selectedOptions).toHaveLength(1);
+        expect(select.selectedOptions[0]).toHaveTextContent('One');
       });
     }
 
@@ -127,14 +150,14 @@ export const testSelect = (
     });
 
     it('should call the onChange method passed in', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<Component {...props} handleOnChange={onChange} />);
       await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
       expect(onChange).toHaveBeenCalledWith(testVal.name);
     });
 
     it('should be disabled by the disabled prop', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<Component {...props} handleOnChange={onChange} disabled />);
       expect(findSelect(screen.getByTitle(title))).toBeDisabled();
       await user.selectOptions(findSelect(screen.getByTitle(title)), testVal.name);
@@ -143,7 +166,7 @@ export const testSelect = (
 
     if (!skip.disabledOptions) {
       it('should disable individual options', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const disabledOption = { name: 'disabled', label: 'Disabled', disabled: true };
         const newValues = [...testValues, disabledOption];
         const propsWithDisabledOption =

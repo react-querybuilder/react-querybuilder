@@ -4,27 +4,38 @@ import { act, renderHook } from '@testing-library/react';
 import { useReactDnD } from './QueryBuilderDnD';
 import type { DndProp, UseReactDnD } from './types';
 
-const timeoutWait = 500;
+const timeoutWait = 1000;
 
 consoleMocks();
 
 beforeEach(() => {
-  jest.resetModules();
+  vi.resetModules();
 });
 
-it('returns the react-dnd exports', async () => {
-  let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
+// Helper that renders useReactDnD and waits for async state updates
+// using separate act() blocks (Vitest processes state updates between
+// act() calls, unlike Jest which batched them within a single act()).
+async function renderUseReactDnD(dndParam?: DndProp) {
+  let hookResult!: RenderHookResult<UseReactDnD | null, DndProp | undefined>;
   await act(async () => {
-    hookResult = renderHook(() => useReactDnD());
-    await waitABeat(timeoutWait);
-    hookResult.rerender();
+    hookResult = renderHook(() => useReactDnD(dndParam));
+  });
+  await act(async () => {
     await waitABeat(timeoutWait);
   });
-  expect(hookResult!.result.current).toHaveProperty('useDrag');
-  expect(hookResult!.result.current).toHaveProperty('useDrop');
-  expect(hookResult!.result.current).toHaveProperty('HTML5Backend');
-  expect(hookResult!.result.current).toHaveProperty('TouchBackend');
-  expect(hookResult!.result.current).toHaveProperty('ReactDndBackend');
+  await act(async () => {
+    hookResult.rerender();
+  });
+  return hookResult;
+}
+
+it('returns the react-dnd exports', async () => {
+  const hookResult = await renderUseReactDnD();
+  expect(hookResult.result.current).toHaveProperty('useDrag');
+  expect(hookResult.result.current).toHaveProperty('useDrop');
+  expect(hookResult.result.current).toHaveProperty('HTML5Backend');
+  expect(hookResult.result.current).toHaveProperty('TouchBackend');
+  expect(hookResult.result.current).toHaveProperty('ReactDndBackend');
 });
 
 describe('returns the provided backend', () => {
@@ -34,14 +45,8 @@ describe('returns the provided backend', () => {
       ...(await import('react-dnd-html5-backend')),
     };
 
-    let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
-    await act(async () => {
-      hookResult = renderHook(() => useReactDnD(existingDnD));
-      await waitABeat(timeoutWait);
-      hookResult.rerender();
-      await waitABeat(timeoutWait);
-    });
-    expect(hookResult!.result.current).toBe(existingDnD);
+    const hookResult = await renderUseReactDnD(existingDnD);
+    expect(hookResult.result.current).toBe(existingDnD);
     expect(existingDnD).toHaveProperty('ReactDndBackend', existingDnD.HTML5Backend);
   });
 
@@ -51,52 +56,34 @@ describe('returns the provided backend', () => {
       ...(await import('react-dnd-touch-backend')),
     };
 
-    let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
-    await act(async () => {
-      hookResult = renderHook(() => useReactDnD(existingDnD));
-      await waitABeat(timeoutWait);
-      hookResult.rerender();
-      await waitABeat(timeoutWait);
-    });
-    expect(hookResult!.result.current).toBe(existingDnD);
+    const hookResult = await renderUseReactDnD(existingDnD);
+    expect(hookResult.result.current).toBe(existingDnD);
     expect(existingDnD).toHaveProperty('ReactDndBackend', existingDnD.TouchBackend);
   });
 });
 
 it('falls back to touch backend', async () => {
-  jest.doMock('react-dnd-html5-backend', () => {
+  vi.doMock('react-dnd-html5-backend', () => {
     throw new Error('react-dnd-html5-backend');
   });
 
   const tBe = await import('react-dnd-touch-backend');
 
-  let hookResult: RenderHookResult<UseReactDnD | null, DndProp | undefined>;
-  await act(async () => {
-    hookResult = renderHook(() => useReactDnD());
-    await waitABeat(timeoutWait);
-    hookResult.rerender();
-    await waitABeat(timeoutWait);
-  });
-  expect(hookResult!.result.current).toHaveProperty('ReactDndBackend', tBe.TouchBackend);
+  const hookResult = await renderUseReactDnD();
+  expect(hookResult.result.current).toHaveProperty('ReactDndBackend', tBe.TouchBackend);
 });
 
 it('fails gracefully', async () => {
-  jest.doMock('react-dnd', () => {
+  vi.doMock('react-dnd', () => {
     throw new Error('react-dnd');
   });
-  jest.doMock('react-dnd-html5-backend', () => {
+  vi.doMock('react-dnd-html5-backend', () => {
     throw new Error('react-dnd-html5-backend');
   });
-  jest.doMock('react-dnd-touch-backend', () => {
+  vi.doMock('react-dnd-touch-backend', () => {
     throw new Error('react-dnd-touch-backend');
   });
 
-  let hookResult: RenderHookResult<UseReactDnD | null, UseReactDnD | undefined>;
-  await act(async () => {
-    hookResult = renderHook(() => useReactDnD());
-    await waitABeat(timeoutWait);
-    hookResult.rerender();
-    await waitABeat(timeoutWait);
-  });
-  expect(hookResult!.result.current).toBeNull();
+  const hookResult = await renderUseReactDnD();
+  expect(hookResult.result.current).toBeNull();
 });

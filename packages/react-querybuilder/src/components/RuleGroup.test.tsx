@@ -85,7 +85,7 @@ describe('when 2 rules exist', () => {
 
 describe('onCombinatorChange', () => {
   it('calls onPropChange from the schema with expected values', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     const { container } = render(<RuleGroup {...getRuleGroupProps({}, { onPropChange })} />);
 
     await user.selectOptions(
@@ -98,7 +98,7 @@ describe('onCombinatorChange', () => {
 
 describe('onNotToggleChange', () => {
   it('calls onPropChange from the schema with expected values', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<RuleGroup {...getRuleGroupProps({ showNotToggle: true }, { onPropChange })} />);
 
     await user.click(screen.getByLabelText('Not'));
@@ -108,7 +108,7 @@ describe('onNotToggleChange', () => {
 
 describe('addRule', () => {
   it('calls onRuleAdd from the schema with expected values', async () => {
-    const onRuleAdd = jest.fn();
+    const onRuleAdd = vi.fn();
     render(<RuleGroup {...getRuleGroupProps({}, { onRuleAdd })} />);
 
     await user.click(screen.getByText(t.addRule.label));
@@ -128,7 +128,7 @@ describe('addRule', () => {
 
 describe('addGroup', () => {
   it('calls onGroupAdd from the schema with expected values', async () => {
-    const onGroupAdd = jest.fn();
+    const onGroupAdd = vi.fn();
     render(<RuleGroup {...getRuleGroupProps({}, { onGroupAdd })} />);
 
     await user.click(screen.getByText(t.addGroup.label));
@@ -143,7 +143,7 @@ describe('addGroup', () => {
 
 describe('cloneGroup', () => {
   it('calls moveRule from the schema with expected values', async () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(<RuleGroup {...getRuleGroupProps({ showCloneButtons: true }, { moveRule })} />);
 
     await user.click(screen.getByText(t.cloneRuleGroup.label));
@@ -153,7 +153,7 @@ describe('cloneGroup', () => {
 
 describe('shiftRuleUp/Down', () => {
   it('calls moveRule with the right params', async () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     const { rerender } = render(
       <RuleGroup {...getRuleGroupProps({ showShiftActions: true }, { moveRule })} disabled />
     );
@@ -198,7 +198,7 @@ describe('shiftRuleUp/Down', () => {
 
 describe('removeGroup', () => {
   it('calls onGroupRemove from the schema with expected values', async () => {
-    const onGroupRemove = jest.fn();
+    const onGroupRemove = vi.fn();
     render(<RuleGroup {...getRuleGroupProps({}, { onGroupRemove })} />);
 
     await user.click(screen.getByText(t.removeGroup.label));
@@ -299,7 +299,7 @@ describe('independent combinators', () => {
   });
 
   it('calls handleOnChange for string elements', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     const rules: RuleGroupICArray = [
       { field: 'firstName', operator: '=', value: 'Test' },
       'and',
@@ -317,7 +317,7 @@ describe('independent combinators', () => {
   });
 
   it('clones independent combinator groups', async () => {
-    const moveRule = jest.fn();
+    const moveRule = vi.fn();
     render(
       <RuleGroup
         {...getRuleGroupProps(
@@ -386,12 +386,12 @@ describe('disabled', () => {
   });
 
   it('does not try to update the query', async () => {
-    const onRuleAdd = jest.fn();
-    const onRuleRemove = jest.fn();
-    const onGroupAdd = jest.fn();
-    const onGroupRemove = jest.fn();
-    const onPropChange = jest.fn();
-    const moveRule = jest.fn();
+    const onRuleAdd = vi.fn();
+    const onRuleRemove = vi.fn();
+    const onGroupAdd = vi.fn();
+    const onGroupRemove = vi.fn();
+    const onPropChange = vi.fn();
+    const moveRule = vi.fn();
     render(
       <RuleGroup
         {...getRuleGroupProps(
@@ -425,12 +425,12 @@ describe('disabled', () => {
   });
 
   it('does not try to update independent combinators', async () => {
-    const onRuleAdd = jest.fn();
-    const onRuleRemove = jest.fn();
-    const onGroupAdd = jest.fn();
-    const onGroupRemove = jest.fn();
-    const onPropChange = jest.fn();
-    const moveRule = jest.fn();
+    const onRuleAdd = vi.fn();
+    const onRuleRemove = vi.fn();
+    const onGroupAdd = vi.fn();
+    const onGroupRemove = vi.fn();
+    const onPropChange = vi.fn();
+    const moveRule = vi.fn();
     render(
       <RuleGroup
         {...getRuleGroupProps(
@@ -460,7 +460,7 @@ describe('lock buttons', () => {
   });
 
   it('disables the lock button if the parent group is disabled even if the current group is not', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(
       <RuleGroup
         {...getRuleGroupProps({ showLockButtons: true }, { onPropChange })}
@@ -474,7 +474,7 @@ describe('lock buttons', () => {
   });
 
   it('sets the disabled property', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(<RuleGroup {...getRuleGroupProps({ showLockButtons: true }, { onPropChange })} />);
 
     await user.click(screen.getByTestId(TestID.lockGroup));
@@ -482,7 +482,7 @@ describe('lock buttons', () => {
   });
 
   it('unsets the disabled property', async () => {
-    const onPropChange = jest.fn();
+    const onPropChange = vi.fn();
     render(
       <RuleGroup {...getRuleGroupProps({ showLockButtons: true }, { onPropChange })} disabled />
     );
@@ -567,7 +567,7 @@ it('sets default combinator when ruleGroup does not have one', () => {
 });
 
 it('warns about deprecated props (independent combinators)', async () => {
-  const addListener = jest.fn();
+  const addListener = vi.fn();
   render(
     <RuleGroup
       {...getRuleGroupProps(

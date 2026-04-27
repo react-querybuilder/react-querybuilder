@@ -47,9 +47,6 @@ export type ValueEditorType =
  */
 export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
 
-// export type ValueSourceOptions_CAN_BE_EMPTY = StringUnionToFullOptionArray<ValueSource>;
-// export type ValueSourceFlexibleOptions_CAN_BE_EMPTY = StringUnionToFlexibleOptionArray<ValueSource>;
-
 export type ValueSourceFlexibleOptions = ToFlexibleOptionArrays<ValueSources>;
 
 export type ValueSourceFullOptions = ToOptionArrays<ValueSources>;

@@ -9,6 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.15.0] - 2026-04-15
+
+### Changed
+
+- [#1021] In `@react-querybuilder/dnd`, `react-dnd` is now an _optional_ peer dependency (it was previously required).
+- [#1021] **Deprecated**: Passing raw `react-dnd` exports as the `dnd` prop (e.g., `dnd={{ ...ReactDnD, ...ReactDnDHTML5Backend }}`) still works—they are auto-detected and wrapped in a `react-dnd` adapter—but `createReactDnDAdapter` is preferred.
+- [#1021] **Deprecated**: `useReactDnD` hook — use `createReactDnDAdapter` instead.
+
+### Added
+
+- [#1021] `@react-querybuilder/dnd` is now DnD-library-agnostic via an adapter pattern.
+  - New `DndAdapter` interface — implement `DndProvider`, `useRuleDnD`, `useRuleGroupDnD`, and `useInlineCombinatorDnD` to integrate any drag-and-drop library.
+  - New `createReactDnDAdapter` factory wraps `react-dnd` exports into a `DndAdapter`. This is the recommended way to enable drag-and-drop going forward.
+  - New `createDndKitAdapter` factory wraps [`@dnd-kit/core`](https://www.npmjs.com/package/@dnd-kit/core) exports into a `DndAdapter`, providing a first-class alternative to `react-dnd`.
+  - Shared pure-logic helpers (`canDropOnRule`, `canDropOnRuleGroup`, `canDropOnInlineCombinator`, `buildDropResult`, `handleDrop`, `getDragItem`) are exported for use in custom adapters.
+- [#1025] New `updateWhileDragging` prop for `QueryBuilderDnD`. When enabled, the query tree visually rearranges in real-time as rules and groups are dragged (using a shadow query that commits on drop). Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters.
+- [#1026] New `copyModeAfterHoverMs` and `groupModeAfterHoverMs` props for `QueryBuilderDnD`. When set to a value greater than zero, the drop mode will switch to "copy" or "group" automatically after hovering over a valid rule or group for the specified number of milliseconds. Supported by the `@atlaskit/pragmatic-drag-and-drop` and `@dnd-kit/core` adapters.
+- [#1018] New "diagnostics" export format (`formatQuery(query, 'diagnostics')`) which returns:
+  - `query`: annotated copy of the query tree with `valid`, `reasons`, `path`, and `level` on every rule and group.
+  - `diagnostics`: flat array of all issues (placeholder checks, muted nodes, custom validator failures, value/type mismatches, undefined/unreferenced fields).
+  - `stats`: aggregate counts (`totalRules`, `totalGroups`, `validRules`, `invalidRules`, `validGroups`, `invalidGroups`).
+  - `fieldSummary`: per-field `ruleCount` and `invalidCount`.
+
+### Fixed
+
+- [#1019] `useValueSelector` normalizes multiselect values to strings so they match option names, which are always strings.
+
 ## [v8.14.4] - 2026-03-31
 
 ### Fixed
@@ -2128,12 +2155,18 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1005]: https://github.com/react-querybuilder/react-querybuilder/pull/1005
 [#1007]: https://github.com/react-querybuilder/react-querybuilder/pull/1007
 [#1015]: https://github.com/react-querybuilder/react-querybuilder/pull/1015
+[#1018]: https://github.com/react-querybuilder/react-querybuilder/pull/1018
+[#1019]: https://github.com/react-querybuilder/react-querybuilder/pull/1019
+[#1021]: https://github.com/react-querybuilder/react-querybuilder/pull/1021
+[#1025]: https://github.com/react-querybuilder/react-querybuilder/pull/1025
+[#1026]: https://github.com/react-querybuilder/react-querybuilder/pull/1026
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.4...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.15.0...HEAD
+[v8.15.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.4...v8.15.0
 [v8.14.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.3...v8.14.4
 [v8.14.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.2...v8.14.3
 [v8.14.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.1...v8.14.2

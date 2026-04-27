@@ -16,15 +16,15 @@ const processNumber = <T>(value: unknown, fallback: T, parseNumbers?: ParseNumbe
  */
 export const defaultRuleProcessorPrisma: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // v8 ignore next
   options = {}
 ) => {
   const { field, operator, value, valueSource } = rule;
-  // istanbul ignore next
+  // v8 ignore next
   const { parseNumbers, preserveValueOrder } = options;
 
   // Neither field-to-field comparisons nor match modes are supported in this format
-  if (valueSource === 'field' || processMatchMode(rule)) return;
+  if (valueSource === 'field' || processMatchMode(rule)) return undefined;
 
   const operatorLC = lc(operator);
   switch (operatorLC) {

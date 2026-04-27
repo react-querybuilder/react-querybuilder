@@ -1,6 +1,7 @@
 import type { SetOptional } from 'type-fest';
 import { defaultPlaceholderFieldName, defaultPlaceholderOperatorName } from '../../defaults';
 import type {
+  DiagnosticsResult,
   ExportFormat,
   ExportObjectFormats,
   FormatQueryFinalOptions,
@@ -26,6 +27,7 @@ import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
@@ -119,9 +121,10 @@ const defaultRuleProcessors = {
   sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
+  diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
-/* istanbul ignore next */
+/* v8 ignore next -- @preserve */
 const defaultOperatorProcessor: RuleProcessor = r => r.operator;
 const defaultOperatorProcessors = {
   cel: defaultOperatorProcessor,
@@ -141,6 +144,7 @@ const defaultOperatorProcessors = {
   sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
+  diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
 const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
@@ -343,6 +347,16 @@ function formatQuery(
   options: 'ldap' | (FormatQueryOptions & { format: 'ldap' })
 ): string;
 /**
+ * Generates a {@link DiagnosticsResult} from a query object, containing an annotated
+ * query tree, a flat diagnostics array, aggregate stats, and a per-field summary.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'diagnostics' | (FormatQueryOptions & { format: 'diagnostics' })
+): DiagnosticsResult;
+/**
  * Generates a formatted (indented two spaces) JSON string from a query object.
  *
  * @group Export
@@ -435,7 +449,10 @@ function formatQuery(
   const quoteFieldNamesWith = getQuoteFieldNamesWithArray(quoteFieldNamesWith_option);
   const fields = toFullOptionList(optObj.fields) as FullOptionList<FullField>;
   const getOperators: FormatQueryOptions['getOperators'] = (f, m) =>
-    toFullOptionList(getOperators_option(f, m) ?? /* istanbul ignore next */ []);
+    toFullOptionList(
+      getOperators_option(f, m) ??
+        /* v8 ignore start -- @preserve */ [] /* v8 ignore stop -- @preserve */
+    );
 
   const fallbackExpression =
     fallbackExpression_option ??
@@ -445,29 +462,33 @@ function formatQuery(
   // #region Validation
   let validationMap: ValidationMap = {};
 
-  // istanbul ignore else
+  // v8 ignore else
   if (typeof validator === 'function') {
     const validationResult = validator(ruleGroup);
     if (typeof validationResult === 'boolean') {
-      // istanbul ignore else
+      // v8 ignore else
       if (!validationResult) {
-        return format === 'parameterized'
-          ? { sql: fallbackExpression, params: [] }
-          : format === 'parameterized_named'
-            ? { sql: fallbackExpression, params: {} }
-            : format === 'mongodb'
-              ? `{${fallbackExpression}}`
-              : format === 'mongodb_query'
-                ? mongoDbFallback
-                : format === 'prisma'
-                  ? prismaFallback
-                  : format === 'jsonlogic'
-                    ? false
-                    : format === 'elasticsearch'
-                      ? {}
-                      : format === 'drizzle' || format === 'sequelize'
-                        ? undefined
-                        : fallbackExpression;
+        // The "diagnostics" format still annotates the full tree
+        // when the validator returns `false`.
+        if (format !== 'diagnostics') {
+          return format === 'parameterized'
+            ? { sql: fallbackExpression, params: [] }
+            : format === 'parameterized_named'
+              ? { sql: fallbackExpression, params: {} }
+              : format === 'mongodb'
+                ? `{${fallbackExpression}}`
+                : format === 'mongodb_query'
+                  ? mongoDbFallback
+                  : format === 'prisma'
+                    ? prismaFallback
+                    : format === 'jsonlogic'
+                      ? false
+                      : format === 'elasticsearch'
+                        ? {}
+                        : format === 'drizzle' || format === 'sequelize'
+                          ? undefined
+                          : fallbackExpression;
+        }
       }
     } else {
       validationMap = validationResult;
@@ -477,9 +498,11 @@ function formatQuery(
   const validatorMap: Record<string, RuleValidator> = {};
   const uniqueFields = toFlatOptionArray(fields) satisfies FullField[];
   for (const f of uniqueFields) {
-    // istanbul ignore else
+    // v8 ignore else
     if (typeof f.validator === 'function') {
-      validatorMap[f.value ?? /* istanbul ignore next */ f.name] = f.validator;
+      validatorMap[
+        f.value ?? /* v8 ignore start -- @preserve */ f.name /* v8 ignore stop -- @preserve */
+      ] = f.validator;
     }
   }
 
@@ -493,7 +516,7 @@ function formatQuery(
       const fieldArr = uniqueFields.filter(f => f.name === rule.field);
       if (fieldArr.length > 0) {
         const field = fieldArr[0];
-        // istanbul ignore else
+        // v8 ignore else
         if (typeof field.validator === 'function') {
           fieldValidator = field.validator;
         }
@@ -578,6 +601,9 @@ function formatQuery(
 
     case 'sequelize':
       return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
+
+    case 'diagnostics':
+      return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);
 
     default:
       return '';

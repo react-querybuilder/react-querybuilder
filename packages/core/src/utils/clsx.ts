@@ -13,7 +13,7 @@ type ClassValue =
   | undefined;
 type ClassArray = ClassValue[];
 
-// istanbul ignore next
+/* v8 ignore start -- @preserve */
 // oxlint-disable-next-line typescript/no-explicit-any
 function toVal(mix: any) {
   let k;
@@ -45,13 +45,14 @@ function toVal(mix: any) {
 
   return str;
 }
+/* v8 ignore stop -- @preserve */
 
 /**
  * Vendored/adapted version of the `clsx` package.
  *
  * **NOTE:** Prefer the official package from npm outside the context of React Query Builder.
  */
-// istanbul ignore next
+// v8 ignore next
 export function clsx(...args: ClassValue[]): string {
   let i = 0;
   let tmp;

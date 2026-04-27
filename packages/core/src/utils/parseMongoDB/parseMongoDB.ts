@@ -147,7 +147,7 @@ function parseMongoDB(
     // oxlint-disable-next-line typescript/no-explicit-any
     let value: any = '';
 
-    // istanbul ignore else
+    // v8 ignore else
     if (
       mdbOperator === '$eq' ||
       mdbOperator === '$ne' ||
@@ -220,7 +220,7 @@ function parseMongoDB(
   ): DefaultRuleType | DefaultRuleGroupType | false {
     let field = '';
 
-    // istanbul ignore else
+    // v8 ignore else
     if (key === '$and') {
       if (!Array.isArray(keyValue) || keyValue.length === 0 || !keyValue.every(v => isPojo(v))) {
         return false;
@@ -466,9 +466,7 @@ function parseMongoDB(
       ? result
       : { combinator: 'and', rules: [result] }
     : emptyRuleGroup;
-  return prepare(
-    options.independentCombinators ? convertToIC<DefaultRuleGroupTypeIC>(finalQuery) : finalQuery
-  );
+  return prepare(options.independentCombinators ? convertToIC(finalQuery) : finalQuery);
 }
 
 export { parseMongoDB };

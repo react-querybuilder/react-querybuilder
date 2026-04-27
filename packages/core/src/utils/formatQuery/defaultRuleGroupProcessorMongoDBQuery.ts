@@ -37,7 +37,14 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
   const { inExpressionContext } = (context ?? {}) as { inExpressionContext?: boolean };
 
   const processRuleGroup = (rg: RuleGroupType, outermost?: boolean) => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
+    if (
+      !isRuleOrGroupValid(
+        rg,
+        validationMap[
+          rg.id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+        ]
+      )
+    ) {
       return outermost ? mongoDbFallback : false;
     }
 
@@ -59,7 +66,7 @@ export const defaultRuleGroupProcessorMongoDBQuery: RuleGroupProcessor = (
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* v8 ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
           return false;

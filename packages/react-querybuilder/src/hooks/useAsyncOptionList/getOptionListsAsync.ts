@@ -37,7 +37,9 @@ export const getOptionListsAsync: AsyncThunk<
     // Check if cache is still valid
     if (
       cached &&
-      Date.now() - cached.timestamp < (cacheTTL ?? /* istanbul ignore next */ DEFAULT_CACHE_TTL)
+      Date.now() - cached.timestamp <
+        (cacheTTL ??
+          /* v8 ignore start -- @preserve */ DEFAULT_CACHE_TTL) /* v8 ignore stop -- @preserve */
     ) {
       return { cacheKey, data: cached.data, fromCache: true };
     }

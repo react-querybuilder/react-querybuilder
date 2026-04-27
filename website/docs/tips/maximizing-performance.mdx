@@ -9,7 +9,7 @@ import AdmonitionIconCaution from '@theme/Admonition/Icon/Warning';
 
 %importmd ../\_ts_admonition.md
 
-:::tip TL;DR
+:::tip[TL;DR]
 
 Each prop passed to `QueryBuilder` should have a stable reference or be memoized.
 
@@ -21,7 +21,7 @@ Starting with version 7, all `QueryBuilder` props, components, and derived value
 
 Prevent unstable references by defining static props (objects, arrays, functions) outside the component render function. This typically applies to the `fields` array and `onQueryChange` callback. For props that must be created within the component, use `useMemo` or `useCallback` for memoization. Most importantly, avoid defining non-primitive props inline within JSX.
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 - <span style={{ color: 'green', fontWeight: 'bold' }}>✓ DO</span> define variables that will remain unchanged outside the component if possible.
 - <span style={{ color: 'green', fontWeight: 'bold' }}>✓ DO</span> memoize objects, arrays, and other values that must be created and/or calculated within the component with `useMemo`.
 - <span style={{ color: 'green', fontWeight: 'bold' }}>✓ DO</span> memoize functions that must be created within the component with `useCallback`.

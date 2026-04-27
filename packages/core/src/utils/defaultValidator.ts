@@ -17,9 +17,10 @@ export const defaultValidator: QueryValidator = query => {
     // Set `result[rule.id] = true` for a valid rule, or either
     // `{ valid: false, reasons: ['whatever', 'reasons', 'here'] }`
     // or simply `false` for an invalid rule.
-    // istanbul ignore else
+    /* v8 ignore start -- @preserve */
     // oxlint-disable-next-line no-unused-expressions
     if (rule.id) result[rule.id]; // = true;
+    /* v8 ignore stop -- @preserve */
   };
 
   const validateGroup = (rg: RuleGroupTypeAny) => {
@@ -54,7 +55,7 @@ export const defaultValidator: QueryValidator = query => {
     ) {
       reasons.push(groupInvalidReasons.invalidCombinator);
     }
-    /* istanbul ignore else */
+    /* v8 ignore else -- @preserve */
     if (rg.id) {
       result[rg.id] = reasons.length > 0 ? { valid: false, reasons } : true;
     }

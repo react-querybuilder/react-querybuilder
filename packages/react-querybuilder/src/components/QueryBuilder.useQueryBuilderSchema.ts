@@ -49,7 +49,7 @@ const icCombinatorPropObject = {} as const;
 const defaultGetValueEditorSeparator = () => null;
 const defaultGetRuleOrGroupClassname = () => '';
 const defaultOnAddMoveRemove = () => true;
-// istanbul ignore next
+// v8 ignore next
 const defaultOnLog = (...params: unknown[]) => {
   console.log(...params);
 };
@@ -154,6 +154,7 @@ export function useQueryBuilderSchema<
   } = incomingRqbContext;
 
   // #region Type coercions
+  // oxlint-disable typescript/no-unnecessary-type-conversion
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
@@ -169,6 +170,7 @@ export function useQueryBuilderSchema<
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
   const maxLevels = (props.maxLevels ?? 0) > 0 ? Number(props.maxLevels) : Infinity;
+  // oxlint-enable typescript/no-unnecessary-type-conversion
   // #endregion
 
   const log = useCallback(
@@ -272,7 +274,7 @@ export function useQueryBuilderSchema<
     // oxlint-disable-next-line typescript/no-explicit-any
     (rule: R, parentPath: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // istanbul ignore if
+      // v8 ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         log({ qbId, type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
@@ -310,7 +312,7 @@ export function useQueryBuilderSchema<
     (ruleGroup: RG, parentPath: Path, context?: any) => {
       if (parentPath.length >= maxLevels) return;
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // istanbul ignore if
+      // v8 ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
         log({
@@ -354,7 +356,7 @@ export function useQueryBuilderSchema<
     // oxlint-disable-next-line typescript/no-explicit-any
     (prop: UpdateableProperties, value: any, path: Path) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
-      // istanbul ignore if
+      // v8 ignore if
       if (!queryLocal) return;
       if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
         log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
@@ -394,14 +396,14 @@ export function useQueryBuilderSchema<
     // oxlint-disable-next-line typescript/no-explicit-any
     (path: Path, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // istanbul ignore if
+      // v8 ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(path, queryLocal) || queryDisabled) {
         log({ qbId, type: LogType.pathDisabled, path, query: queryLocal });
         return;
       }
       const ruleOrGroup = findPath(path, queryLocal) as RG | R;
-      // istanbul ignore else
+      // v8 ignore else
       if (ruleOrGroup) {
         // @ts-expect-error `ruleOrGroup` and `queryLocal` are type `RuleGroupTypeAny`,
         // but it doesn't matter here
@@ -421,7 +423,7 @@ export function useQueryBuilderSchema<
     // oxlint-disable-next-line typescript/no-explicit-any
     (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // istanbul ignore if
+      // v8 ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
         log({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
@@ -467,7 +469,7 @@ export function useQueryBuilderSchema<
     // oxlint-disable-next-line typescript/no-explicit-any
     (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // istanbul ignore if
+      // v8 ignore if
       if (!queryLocal) return;
       if (pathIsDisabled(sourcePath, queryLocal) || queryDisabled) {
         log({ qbId, type: LogType.pathDisabled, sourcePath, targetPath, query: queryLocal });

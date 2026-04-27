@@ -149,7 +149,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
     } = {}
   ): DefaultRuleType | DefaultRuleGroupTypeAny | null => {
     const { forwardNegation: forwardedNegation, groupOnlyIfNecessary } = processOpts;
-    /* istanbul ignore if */
+    /* v8 ignore if -- @preserve */
     if (isCELNegation(expr) || isCELNegatedLikeExpression(expr)) {
       const negate = isCELNegation(expr)
         ? expr.negations % 2 === 1
@@ -251,7 +251,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
           return processCELExpression(exp) as DefaultRuleType | DefaultRuleGroupType | null;
         })
         .filter(Boolean) as DefaultRuleGroupArray;
-      /* istanbul ignore else */
+      /* v8 ignore else -- @preserve */
       if (rules.length > 0) {
         return { combinator, rules };
       }
@@ -273,7 +273,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       }
     } else if (isCELSubqueryExpression(expr)) {
       const components = extractSubqueryComponents(expr);
-      // istanbul ignore else
+      // v8 ignore else
       if (components) {
         const { field, method, alias, condition } = components;
 
@@ -304,13 +304,15 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       const field = getCELIdentifierFromNegatedChain(expr.left).replace(/^!+/, '');
       const method = expr.right.value;
       const [aliasExpr, conditionExpr] = expr.list.value;
-      const alias = isCELIdentifier(aliasExpr) ? aliasExpr.value : /* istanbul ignore next */ null;
+      const alias = isCELIdentifier(aliasExpr)
+        ? aliasExpr.value
+        : /* v8 ignore next -- @preserve */ null;
 
       // For negated subqueries, we want to create a NOT rule group with the subquery inside
       const transformedCondition = transformAliasInExpression(conditionExpr, alias);
       const subqueryValue = processCELExpression(transformedCondition);
 
-      // istanbul ignore else
+      // v8 ignore else
       if (subqueryValue && fieldIsValid(field, '=')) {
         const ruleGroupValue = isRuleGroup(subqueryValue)
           ? subqueryValue
@@ -349,7 +351,7 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
           value = evalCELLiteralValue(right);
         }
       } else {
-        /* istanbul ignore else */
+        /* v8 ignore else -- @preserve */
         if (isCELIdentifierOrChain(right) && isCELLiteral(left) && expr.operator !== 'in') {
           flip = true;
           field = getCELIdentifierFromChain(right);

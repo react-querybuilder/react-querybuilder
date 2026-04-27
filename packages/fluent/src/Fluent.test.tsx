@@ -80,7 +80,7 @@ const testSelect = (
     });
 
     it('has the values passed into the <select multiple />', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const value = testValues.map(v => v.name).join(',');
       const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
       render(
@@ -94,7 +94,7 @@ const testSelect = (
     });
 
     it('calls the handleOnChange callback properly for <select multiple />', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
       const allValuesExceptFirst = testValues.slice(1, 3).map(v => v.name);
       render(
@@ -115,7 +115,7 @@ const testSelect = (
     });
 
     it('respects the listsAsArrays option', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
       render(
         <Component

@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "8.14.4",
+  "version": "8.15.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -160,10 +160,6 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "catalog:test",
-    "@babel/preset-env": "catalog:test",
-    "@babel/preset-react": "catalog:test",
-    "@babel/preset-typescript": "catalog:test",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@testing-library/user-event": "catalog:test",
@@ -173,10 +169,8 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "babel-plugin-istanbul": "catalog:test",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
     "type-fest": "catalog:",
@@ -184,7 +178,7 @@
     "vite": "catalog:"
   },
   "dependencies": {
-    "@react-querybuilder/core": "^8.14.4",
+    "@react-querybuilder/core": "^8.15.0",
     "@reduxjs/toolkit": "catalog:",
     "react-redux": "catalog:"
   },

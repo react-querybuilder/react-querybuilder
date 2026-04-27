@@ -102,11 +102,9 @@ h1, h2, h3, h4, h5, h6 {
     rqbVersion === 4
       ? { 'react-querybuilder': '^4' }
       : {
+          '@atlaskit/pragmatic-drag-and-drop': '>=1.0.0',
           '@react-querybuilder/dnd': `^${rqbVersion || '8'}`,
           'react-querybuilder': `^${rqbVersion || '8'}`,
-          'react-dnd': '>=14',
-          'react-dnd-html5-backend': '>=14',
-          'react-dnd-touch-backend': '>=14',
         };
 
   const setup = {

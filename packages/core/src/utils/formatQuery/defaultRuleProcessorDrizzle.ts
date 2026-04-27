@@ -13,8 +13,8 @@ import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
  * @group Export
  */
 export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL | undefined => {
-  const opts = _options ?? /* istanbul ignore next */ {};
-  // istanbul ignore next
+  const opts = _options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  // v8 ignore next
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const { columns, drizzleOperators, useRawFields } = context as {
     columns: Record<string, Column>;
@@ -22,7 +22,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
     useRawFields?: boolean;
   };
 
-  if (!columns || !drizzleOperators) return;
+  if (!columns || !drizzleOperators) return undefined;
 
   const {
     between,
@@ -53,15 +53,15 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
   const valueIsField = valueSource === 'field';
   const asFieldOrValue = (v: string) => (valueIsField ? columns[v] : v);
 
-  if (!column) return;
+  if (!column) return undefined;
 
   const matchEval = processMatchMode(rule);
 
   if (matchEval === false) {
-    return;
+    return undefined;
   } else if (matchEval) {
     // We only support PostgreSQL nested arrays
-    if (opts.preset !== 'postgresql') return;
+    if (opts.preset !== 'postgresql') return undefined;
 
     const { mode, threshold } = matchEval;
 
@@ -169,7 +169,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
             second = secondNum;
           }
         } else {
-          // istanbul ignore else
+          // v8 ignore else
           if (valueIsField) {
             first = asFieldOrValue(first);
             second = asFieldOrValue(second);
@@ -179,9 +179,9 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
           ? notBetween(column, first, second)
           : between(column, first, second);
       }
-      return;
+      return undefined;
     }
     default:
-      return;
+      return undefined;
   }
 };

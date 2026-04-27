@@ -31,10 +31,13 @@ import { AntDValueEditor } from './AntDValueEditor';
 import { AntDValueSelector } from './AntDValueSelector';
 import { QueryBuilderAntD } from './index';
 
-jest.mock('antd', () => {
+vi.mock('antd', async () => {
   // We only mock Select. Everything else can use the real antd components.
-  const AntD = jest.requireActual('antd');
-  const toOptions = jest.requireActual('react-querybuilder').toOptions;
+  // oxlint-disable-next-line typescript/consistent-type-imports
+  const AntD = await vi.importActual<typeof import('antd')>('antd');
+  const { toOptions } =
+    // oxlint-disable-next-line typescript/consistent-type-imports
+    await vi.importActual<typeof import('react-querybuilder')>('react-querybuilder');
 
   const Select = (props: SelectProps) => (
     <select
@@ -77,14 +80,14 @@ describe(notToggleTitle, () => {
   });
 
   it('calls the onChange method passed in', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<AntDNotToggle {...props} handleOnChange={onChange} />);
     await user.click(screen.getByTitle(notToggleTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('is disabled by disabled prop', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<AntDNotToggle {...props} handleOnChange={onChange} disabled />);
     expect(screen.getByTitle(notToggleTitle)).toBeDisabled();
     await user.click(screen.getByTitle(notToggleTitle));
@@ -111,14 +114,14 @@ describe(`${valueEditorTitle} as switch`, () => {
   });
 
   it('calls the onChange method passed in', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<AntDValueEditor {...props} handleOnChange={onChange} />);
     await user.click(screen.getByTitle(valueEditorTitle));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('is disabled by disabled prop', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<AntDValueEditor {...props} handleOnChange={onChange} disabled />);
     expect(screen.getByTitle(valueEditorTitle)).toBeDisabled();
     await user.click(screen.getByTitle(valueEditorTitle));
@@ -134,7 +137,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   // const rightNow = dayjs().format('HH:mm');
 
   it('renders a date picker', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="date" handleOnChange={onChange} value="invalid" />
     );
@@ -163,7 +166,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   });
 
   it('renders a date range picker', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { container } = render(
       <AntDValueEditor
         {...props}
@@ -208,7 +211,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   });
 
   it('renders a datetime picker', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="datetime-local" handleOnChange={onChange} />
     );
@@ -222,7 +225,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   });
 
   it('renders a time picker', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} />
     );
@@ -245,7 +248,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   });
 
   it('renders a time picker with a preset value and clear the value', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const { container } = render(
       <AntDValueEditor {...props} inputType="time" handleOnChange={onChange} value={'02:02:02'} />
     );
@@ -254,7 +257,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   });
 
   it('renders empty "between" time pickers', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <AntDValueEditor
         {...props}
@@ -282,7 +285,7 @@ describe(`${valueEditorTitle} date/time pickers`, () => {
   });
 
   it('calls the onChange handler for "between" time pickers', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <AntDValueEditor
         {...props}

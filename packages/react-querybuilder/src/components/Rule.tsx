@@ -235,7 +235,9 @@ export const RuleComponents: React.MemoExoticComponent<
             title={r.translations.matchMode.title}
             options={r.matchModes}
             // TODO: Support `defaultMatchMode` at query or field level?
-            match={r.rule.match ?? /* istanbul ignore next */ defaultMatch}
+            match={
+              r.rule.match ?? /* v8 ignore start -- @preserve */ defaultMatch
+            } /* v8 ignore stop -- @preserve */
             className={r.classNames.matchMode}
             classNames={r.classNames}
             handleOnChange={r.onChangeMatchMode}
@@ -539,8 +541,9 @@ export const useRule = (props: RuleProps): UseRule => {
     () =>
       ruleProp ?? {
         id,
-        field: fieldProp ?? /* istanbul ignore next */ '',
-        operator: operatorProp ?? /* istanbul ignore next */ '',
+        field: fieldProp ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */,
+        operator:
+          operatorProp ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */,
         value: valueProp,
         valueSource: valueSourceProp,
       },
@@ -758,8 +761,9 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const validationResult = useMemo(
     () =>
-      validationMap[id ?? /* istanbul ignore next */ ''] ??
-      (typeof fieldData.validator === 'function' ? fieldData.validator(rule) : null),
+      validationMap[
+        id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+      ] ?? (typeof fieldData.validator === 'function' ? fieldData.validator(rule) : null),
     [fieldData, id, rule, validationMap]
   );
   const validationClassName = useMemo(

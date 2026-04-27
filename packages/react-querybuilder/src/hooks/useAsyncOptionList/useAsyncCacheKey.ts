@@ -9,7 +9,7 @@ import type { UseAsyncOptionListParams } from './types';
  */
 export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | ValueEditorProps>(
   props: PropsType,
-  // istanbul ignore next
+  // v8 ignore next
   { getCacheKey }: UseAsyncOptionListParams<PropsType> = {}
 ): string => {
   const ruleOrGroup = props.rule ?? (props as VersatileSelectorProps).ruleGroup;
@@ -17,7 +17,7 @@ export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | Valu
   return useMemo(
     () =>
       typeof getCacheKey === 'string'
-        ? String(ruleOrGroup?.[getCacheKey as 'id'] ?? '')
+        ? (ruleOrGroup?.[getCacheKey as 'id'] ?? '')
         : typeof getCacheKey === 'function'
           ? getCacheKey(props)
           : Array.isArray(getCacheKey) && getCacheKey.length > 0 && ruleOrGroup

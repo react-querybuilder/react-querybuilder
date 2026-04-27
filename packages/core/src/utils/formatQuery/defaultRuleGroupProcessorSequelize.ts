@@ -17,7 +17,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
   ruleGroup,
   options
 ) => {
-  // istanbul ignore next
+  // v8 ignore next
   const {
     fields,
     getParseNumberBoolean,
@@ -34,11 +34,18 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
     sequelizeOperators: OpTypes;
   };
 
-  if (!Op) return;
+  if (!Op) return undefined;
 
   const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): WhereOptions | undefined => {
-    if (!isRuleOrGroupValid(rg, validationMap[rg.id ?? /* istanbul ignore next */ ''])) {
-      return;
+    if (
+      !isRuleOrGroupValid(
+        rg,
+        validationMap[
+          rg.id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
+        ]
+      )
+    ) {
+      return undefined;
     }
 
     const combinator = rg.combinator.toUpperCase();
@@ -52,17 +59,17 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
             hasChildRules = true;
             return processedRuleGroup;
           }
-          return;
+          return undefined;
         }
         const [validationResult, fieldValidator] = validateRule(rule);
         if (
           !isRuleOrGroupValid(rule, validationResult, fieldValidator) ||
           rule.field === placeholderFieldName ||
           rule.operator === placeholderOperatorName ||
-          /* istanbul ignore next */
+          /* v8 ignore next -- @preserve */
           (placeholderValueName !== undefined && rule.value === placeholderValueName)
         ) {
-          return;
+          return undefined;
         }
         const fieldData = getOption(fields, rule.field);
         return ruleProcessor(rule, {
@@ -73,7 +80,7 @@ export const defaultRuleGroupProcessorSequelize: RuleGroupProcessor<WhereOptions
       })
       .filter(Boolean);
 
-    if (expressions.length === 0) return;
+    if (expressions.length === 0) return undefined;
 
     const result =
       expressions.length === 1 && !hasChildRules

@@ -717,7 +717,8 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
     }
   }, [disabled, onGroupRemove, path]);
 
-  const validationResult = validationMap[id ?? /* istanbul ignore next */ ''];
+  const validationResult =
+    validationMap[id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */];
   const validationClassName = useMemo(
     () => getValidationClassNames(validationResult),
     [validationResult]

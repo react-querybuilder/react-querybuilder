@@ -17,7 +17,7 @@ type FnType = typeof _fnType;
  */
 export const defaultRuleProcessorSequelize: RuleProcessor = (
   rule,
-  // istanbul ignore next
+  // v8 ignore next
   { parseNumbers, preserveValueOrder, context = {} } = {}
 ): Record<string, unknown> | undefined => {
   const {
@@ -31,7 +31,7 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
   };
 
   // Match modes are not supported in this format
-  if (processMatchMode(rule)) return;
+  if (processMatchMode(rule)) return undefined;
 
   const { field, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
@@ -48,7 +48,7 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
         // and the operator is one of the "doesNot*" ones
         (!fn && ['doesnotcontain', 'doesnotbeginwith', 'doesnotendwith'].includes(operatorLC))))
   ) {
-    return;
+    return undefined;
   }
 
   switch (operatorLC) {
@@ -136,7 +136,7 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
         !isValidValue(valueAsArray[0]) ||
         !isValidValue(valueAsArray[1])
       ) {
-        return;
+        return undefined;
       }
 
       const [first, second] = valueAsArray;
@@ -171,5 +171,5 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
       };
     }
   }
-  return;
+  return undefined;
 };

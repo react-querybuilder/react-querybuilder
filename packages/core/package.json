@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.14.4",
+  "version": "8.15.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -141,23 +141,18 @@
   "license": "MIT",
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
-    "@babel/core": "catalog:test",
-    "@babel/preset-env": "catalog:test",
-    "@babel/preset-typescript": "catalog:test",
     "@electric-sql/pglite": "catalog:test",
-    "@prisma/client": "^7.6.0",
+    "@prisma/client": "^7.7.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "catalog:",
-    "babel-plugin-istanbul": "catalog:test",
     "drizzle-orm": "^0.45.2",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "mongodb-memory-server-core": "^11.0.1",
     "mongoose": "catalog:test",
     "pglite-prisma-adapter": "^0.7.2",
-    "prisma": "^7.6.0",
+    "prisma": "^7.7.0",
     "query-string": "^9.3.1",
-    "regenerator-runtime": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
     "sequelize": "^6.37.8",

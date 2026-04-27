@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 interface BrowserWindowProps {
   children: ReactNode;
   minHeight: number;
-  url: string;
+  url?: string;
 }
 
 export const BrowserWindow = ({

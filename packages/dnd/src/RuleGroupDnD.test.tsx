@@ -139,7 +139,7 @@ it('has the copy class if hovered over while Ctrl key is pressed', async () => {
 });
 
 it('handles a dropped rule group on a rule group', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -169,7 +169,7 @@ it('handles a dropped rule group on a rule group', () => {
 });
 
 it('copies a dropped rule group on a rule group', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -204,7 +204,7 @@ it('copies a dropped rule group on a rule group', async () => {
 });
 
 it('groups a dropped rule group on a rule group', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -245,7 +245,7 @@ it('groups a dropped rule group on a rule group', async () => {
 });
 
 it('copies a dropped rule group on a rule group for grouping', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -287,7 +287,7 @@ it('copies a dropped rule group on a rule group for grouping', async () => {
 });
 
 it('aborts move if dropped on itself', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -306,7 +306,7 @@ it('aborts move if dropped on itself', () => {
 });
 
 it('aborts move if source item is first child of this group', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -326,7 +326,7 @@ it('aborts move if source item is first child of this group', () => {
 });
 
 it('handles drops on combinator between rules', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -375,7 +375,7 @@ it('handles drops on combinator between rules', () => {
 });
 
 it('handles rule group drops on independent combinators', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnDIC
       onQueryChange={onQueryChange}
@@ -421,7 +421,7 @@ it('handles rule group drops on independent combinators', () => {
 });
 
 it('handles rule drops on independent combinators', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnDIC
       onQueryChange={onQueryChange}
@@ -465,7 +465,7 @@ it('handles rule drops on independent combinators', () => {
 });
 
 it('prevents drops when locked', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -490,8 +490,8 @@ it('prevents drops when locked', () => {
 });
 
 it('respects custom canDrop', () => {
-  const onQueryChange = jest.fn();
-  const canDrop = jest.fn(() => false);
+  const onQueryChange = vi.fn();
+  const canDrop = vi.fn(() => false);
   render(
     <QBforDnD
       canDrop={canDrop}
@@ -525,8 +525,8 @@ it('respects custom canDrop', () => {
 });
 
 it('respects custom canDrop on inline combinators', () => {
-  const onQueryChange = jest.fn();
-  const canDrop = jest.fn(() => false);
+  const onQueryChange = vi.fn();
+  const canDrop = vi.fn(() => false);
   render(
     <QBforDnD
       canDrop={canDrop}
@@ -570,8 +570,8 @@ it('respects custom canDrop on inline combinators', () => {
 });
 
 it('respects custom canDrop on independent combinators', () => {
-  const onQueryChange = jest.fn();
-  const canDrop = jest.fn(() => false);
+  const onQueryChange = vi.fn();
+  const canDrop = vi.fn(() => false);
   render(
     <QBforDnDIC
       canDrop={canDrop}
@@ -596,8 +596,8 @@ it('respects custom canDrop on independent combinators', () => {
 });
 
 it('respects updated canDrop function between renders', () => {
-  const firstCanDrop = jest.fn(() => false);
-  const secondCanDrop = jest.fn(() => false);
+  const firstCanDrop = vi.fn(() => false);
+  const secondCanDrop = vi.fn(() => false);
 
   const query = {
     combinator: 'and',

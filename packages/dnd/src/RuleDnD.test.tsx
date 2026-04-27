@@ -145,7 +145,7 @@ it('has the group class if hovered over while Ctrl key is pressed', async () => 
 });
 
 it('moves a dropped rule', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -171,7 +171,7 @@ it('moves a dropped rule', () => {
 });
 
 it('groups a dropped rule', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -205,7 +205,7 @@ it('groups a dropped rule', async () => {
 });
 
 it('copies a dropped rule', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -235,7 +235,7 @@ it('copies a dropped rule', async () => {
 });
 
 it('copies a dropped rule for grouping', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -270,7 +270,7 @@ it('copies a dropped rule for grouping', async () => {
 });
 
 it('aborts move if dropped on itself', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -285,7 +285,7 @@ it('aborts move if dropped on itself', () => {
 });
 
 it('aborts group if dropped on itself', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -302,7 +302,7 @@ it('aborts group if dropped on itself', async () => {
 });
 
 it('handles drops even when locked', () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -328,7 +328,7 @@ it('handles drops even when locked', () => {
 });
 
 it('prevents "group" drops when locked', async () => {
-  const onQueryChange = jest.fn();
+  const onQueryChange = vi.fn();
   render(
     <QBforDnD
       onQueryChange={onQueryChange}
@@ -352,8 +352,8 @@ it('prevents "group" drops when locked', async () => {
 });
 
 it('respects custom canDrop', () => {
-  const onQueryChange = jest.fn();
-  const canDrop = jest.fn((..._args: unknown[]) => false);
+  const onQueryChange = vi.fn();
+  const canDrop = vi.fn((..._args: unknown[]) => false);
   render(
     <QBforDnD
       canDrop={canDrop}
@@ -384,9 +384,9 @@ it('respects custom canDrop', () => {
 });
 
 it('respects updated canDrop function between renders', () => {
-  const firstCanDrop = jest.fn((..._args: unknown[]) => false);
-  const secondCanDrop = jest.fn((..._args: unknown[]) => false);
-  const onQueryChange = jest.fn();
+  const firstCanDrop = vi.fn((..._args: unknown[]) => false);
+  const secondCanDrop = vi.fn((..._args: unknown[]) => false);
+  const onQueryChange = vi.fn();
 
   const query = {
     combinator: 'and',

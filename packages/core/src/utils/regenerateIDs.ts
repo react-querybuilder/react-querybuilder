@@ -37,7 +37,7 @@ export const regenerateIDs = <RG>(
 
   const newGroup = { ...subject, id: idGenerator() } as RuleGroupTypeAny;
 
-  // istanbul ignore else
+  // v8 ignore else
   if (Array.isArray(newGroup.rules)) {
     // oxlint-disable-next-line no-explicit-any
     (newGroup.rules as any) = subject.rules.map((r: unknown) =>

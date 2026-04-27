@@ -1,4 +1,4 @@
-import type { Path, RuleGroupType, RuleGroupTypeAny } from '@react-querybuilder/core';
+import type { Path } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { RulesEngineProps } from '../types';
 import { useRulesEngineBuilder } from './RulesEngineBuilder.useRulesEngineBuilder';
@@ -8,12 +8,12 @@ const rootConditionPath: Path = [];
 
 export const RulesEngineBuilderInternal: React.MemoExoticComponent<
   (props: { props: RulesEngineProps }) => React.JSX.Element
-> = React.memo(function RulesEngineBuilderInternal<RG extends RuleGroupTypeAny = RuleGroupType>({
+> = React.memo(function RulesEngineBuilderInternal({
   props,
 }: {
   props: RulesEngineProps;
 }): React.JSX.Element {
-  const re = useRulesEngineBuilder<RG>(props);
+  const re = useRulesEngineBuilder(props);
 
   const { rulesEngineBuilderHeader: RulesEngineBuilderHeader } = re.components;
 

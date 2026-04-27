@@ -15,8 +15,6 @@
     "target": "ESNext",
     "allowJs": true,
     "checkJs": true,
-    "alwaysStrict": false,
-    "baseUrl": "..",
     "jsx": "react-jsx"
   }
 }

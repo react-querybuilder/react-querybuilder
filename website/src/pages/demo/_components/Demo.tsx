@@ -1,3 +1,9 @@
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 // TODO: Find out why this is necessary
@@ -5,6 +11,7 @@ import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/inter
 import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
 import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
+import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
 import TabItem from '@theme/TabItem';
@@ -13,8 +20,6 @@ import { clsx } from 'clsx';
 import queryString from 'query-string';
 import type { KeyboardEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import * as ReactDnD from 'react-dnd';
-import * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type {
   ExportFormat,
   FormatQueryOptions,
@@ -74,6 +79,13 @@ declare module '@theme/Tabs' {
 }
 
 const { version: rqbVersion } = rqbPkgJson;
+
+const dnd = createPragmaticDndAdapter({
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+  combine,
+});
 
 const infoChar = 'ⓘ';
 
@@ -347,7 +359,9 @@ export default function Demo({
   const packageNames = useMemo(
     () => [
       'react-querybuilder',
-      ...(options.enableDragAndDrop ? ['@react-querybuilder/dnd', ...peerDependencies.dnd] : []),
+      ...(options.enableDragAndDrop
+        ? ['@react-querybuilder/dnd', '@atlaskit/pragmatic-drag-and-drop']
+        : []),
       ...(variant === 'default'
         ? []
         : [`@react-querybuilder/${variant}`, ...peerDependencies[variant]]),
@@ -520,7 +534,7 @@ export default function Demo({
           style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
             <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
-              <QueryBuilderDnD dnd={{ ...ReactDnD, ...ReactDndHtml5Backend }}>
+              <QueryBuilderDnD dnd={dnd}>
                 {options.independentCombinators ? (
                   <QueryBuilder
                     key="queryIC"

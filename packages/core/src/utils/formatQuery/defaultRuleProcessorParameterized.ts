@@ -16,7 +16,7 @@ import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './ut
  */
 export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, meta) => {
   // TODO?: test for this so we don't have to ignore it
-  // istanbul ignore next
+  // v8 ignore next
   const {
     fieldData,
     format,
@@ -50,8 +50,9 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
 
   const matchEval = processMatchMode(rule);
 
+  /* v8 ignore start -- @preserve */
   if (matchEval === false) {
-    return;
+    return undefined;
   } else if (matchEval) {
     // We only support PostgreSQL nested arrays
     if (opts?.preset !== 'postgresql') return finalize('');
@@ -68,7 +69,6 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       { ...(opts as FormatQueryFinalOptions), fields: [] as FullField[] }
     );
     // Ignore the "parameterized_named" case because PostgreSQL doesn't support named parameters
-    // istanbul ignore else
     if (Array.isArray(nestedParams)) {
       params.push(...nestedParams);
     } else {
@@ -102,6 +102,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       }
     }
   }
+  /* v8 ignore stop -- @preserve */
 
   const value = valueProcessor(rule, {
     parseNumbers,
@@ -186,7 +187,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
       // a `valueProcessor`, as opposed to `rule.value` which has not
       paramValue = /^'.*'$/g.test(value)
         ? value.replaceAll(/(^'|'$)/g, '')
-        : /* istanbul ignore next */ value;
+        : /* v8 ignore next -- @preserve */ value;
     }
   }
 

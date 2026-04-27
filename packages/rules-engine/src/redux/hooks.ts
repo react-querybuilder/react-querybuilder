@@ -40,6 +40,6 @@ export const useRulesEngineBuilderRulesEngine = (props?: {
   // const rqbContext = useContext(QueryBuilderContext);
   return useRQB_INTERNAL_QueryBuilderSelector(
     // @ts-expect-error TODO: define reId
-    getRulesEngineSelectorById(props?.schema.reId) //?? rqbContext.reId ?? /* istanbul ignore next */ '')
+    getRulesEngineSelectorById(props?.schema.reId) //?? rqbContext.reId ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */)
   ); // ?? rqbContext?.initialRulesEngine
 };

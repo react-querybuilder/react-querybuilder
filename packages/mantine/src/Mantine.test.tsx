@@ -28,7 +28,7 @@ import { MantineShiftActions } from './MantineShiftActions';
 import { MantineValueEditor } from './MantineValueEditor';
 import { MantineValueSelector } from './MantineValueSelector';
 
-jest.setTimeout(30_000);
+vi.setConfig({ testTimeout: 30_000 });
 
 const theme = createTheme({ respectReducedMotion: true });
 
@@ -88,7 +88,7 @@ describe('MantineValueSelector', () => {
   };
 
   it('handles single select', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueSelector {...props} handleOnChange={handleOnChange} />
     );
@@ -109,7 +109,7 @@ describe('MantineValueSelector', () => {
   });
 
   it('handles multiselect', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { container, rerender } = render(
       <MantineValueSelector {...props} multiple handleOnChange={handleOnChange} listsAsArrays />
     );
@@ -131,7 +131,7 @@ describe('MantineValueSelector', () => {
 
   it('handles optgroups', async () => {
     const optGroup: OptionGroup[] = [{ label: 'Test Group', options }];
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <MantineValueSelector
         {...props}
@@ -169,7 +169,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   };
 
   it('renders value editor as numeric editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <MantineValueEditor
         {...props}
@@ -195,7 +195,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('handles "between" select', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -221,7 +221,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('renders value editor as date editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<MantineValueEditor {...props} inputType="date" handleOnChange={handleOnChange} />);
     await user.click(screen.getByTestId(TestID.valueEditor));
     await waitABeat(500);
@@ -230,7 +230,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('handles preloaded dates and clearing value as date editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const dateString = '2002-12-14';
     render(
       <MantineValueEditor
@@ -250,7 +250,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('renders value editor as date range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -301,7 +301,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('handles preloaded values as date range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <MantineValueEditor
         {...props}
@@ -318,7 +318,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('renders value editor as time editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<MantineValueEditor {...props} inputType="time" handleOnChange={handleOnChange} />);
     await act(async () => {
       await user.type(findInput(screen.getByTestId(TestID.valueEditor)), '124');
@@ -334,7 +334,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('renders value editor as time range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -366,7 +366,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
   });
 
   it('renders value editor as datetime-local editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const { rerender } = render(
       <MantineValueEditor
         {...props}
@@ -414,7 +414,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     });
 
     it('calls the onChange handler', async () => {
-      const handleOnChange = jest.fn();
+      const handleOnChange = vi.fn();
       render(<MantineValueEditor {...betweenDateTimeLocalProps} handleOnChange={handleOnChange} />);
       const betweenInputs = screen.getAllByRole('button');
       expect(betweenInputs).toHaveLength(2);
@@ -435,7 +435,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     });
 
     it('assumes empty string as the second value if not provided', async () => {
-      const handleOnChange = jest.fn();
+      const handleOnChange = vi.fn();
       render(
         <MantineValueEditor
           {...betweenDateTimeLocalProps}
@@ -452,7 +452,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     });
 
     it('calls the onChange handler with lists as arrays', async () => {
-      const handleOnChange = jest.fn();
+      const handleOnChange = vi.fn();
       render(
         <MantineValueEditor
           {...betweenDateTimeLocalProps}
@@ -483,7 +483,7 @@ describe('MantineValueEditor as numeric editor, select, date picker', () => {
     });
 
     it('is disabled by the disabled prop', async () => {
-      const handleOnChange = jest.fn();
+      const handleOnChange = vi.fn();
       render(
         <MantineValueEditor
           {...betweenDateTimeLocalProps}

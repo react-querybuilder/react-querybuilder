@@ -105,7 +105,7 @@ const testSelect = (
     // Test as multiselect for <TremorValueEditor type="multiselect" /> and <ValueSelector />
     if (('values' in props && props.type === 'multiselect') || 'options' in props) {
       it('has the values passed into the <select multiple />', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const value = testValues.map(v => v.name).join(',');
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
@@ -122,7 +122,7 @@ const testSelect = (
       });
 
       it('calls the handleOnChange callback properly for <select multiple />', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         const allLabelsExceptFirst = testValues.slice(1, 3).map(v => v.label);
         const allValuesExceptFirst = testValues.slice(1, 3).map(v => v.name);
@@ -142,7 +142,7 @@ const testSelect = (
       });
 
       it('respects the listsAsArrays option', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const multiselectProps = 'values' in props ? { type: 'multiselect' } : { multiple: true };
         render(
           <Component
@@ -175,7 +175,7 @@ const testSelect = (
     });
 
     it('calls the onChange method passed in', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<Component {...props} handleOnChange={onChange} />);
       await user.click(screen.getByRole('button'));
       expect(getAllByText(testVal.label)).toHaveLength(1);
@@ -184,7 +184,7 @@ const testSelect = (
     });
 
     it('is disabled by the disabled prop', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       render(<Component {...props} handleOnChange={onChange} disabled />);
       expect(screen.getByRole('button')).toBeDisabled();
       await user.click(screen.getByRole('button'));
@@ -209,14 +209,14 @@ describe('TremorNotToggle', () => {
   });
 
   it('calls the onChange method passed in', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<TremorNotToggle {...props} handleOnChange={onChange} />);
     await user.click(screen.getByLabelText(label));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('is disabled by disabled prop', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<TremorNotToggle {...props} handleOnChange={onChange} disabled />);
     const notToggle = screen.getByLabelText(label);
     expect(notToggle).toBeDisabled();
@@ -239,14 +239,14 @@ describe('TremorValueEditor as switch', () => {
   });
 
   it('calls the handleOnChange method passed in', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<TremorValueEditor {...props} handleOnChange={onChange} />);
     await user.click(screen.getByRole('switch'));
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
   it('is disabled by disabled prop', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<TremorValueEditor {...props} handleOnChange={onChange} disabled />);
     const valueEditor = screen.getByRole('switch');
     expect(valueEditor).toBeDisabled();
@@ -278,7 +278,7 @@ describe('TremorValueEditor as "between" select', () => {
   // TODO: Fix this. It hasn't worked since @tremor/react@3.18.6
   // oxlint-disable-next-line no-disabled-tests
   it.skip('calls the onChange handler', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} />);
     const betweenSelects = (
       [...document.querySelectorAll(`.${standardClassnames.valueListItem}`)] as HTMLElement[]
@@ -293,7 +293,7 @@ describe('TremorValueEditor as "between" select', () => {
   });
 
   it('assumes the second value if not provided', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor
         {...betweenSelectProps}
@@ -313,7 +313,7 @@ describe('TremorValueEditor as "between" select', () => {
   // FIX: It hasn't worked since @tremor/react@3.18.6
   // oxlint-disable-next-line no-disabled-tests
   it.skip('calls the onChange handler with lists as arrays', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} listsAsArrays />
     );
@@ -330,7 +330,7 @@ describe('TremorValueEditor as "between" select', () => {
   });
 
   it('is disabled by the disabled prop', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<TremorValueEditor {...betweenSelectProps} handleOnChange={handleOnChange} disabled />);
     const betweenSelects = screen.getAllByRole('button').filter((_b, i) => !(i % 2));
     expect(betweenSelects).toHaveLength(2);
@@ -350,7 +350,7 @@ describe('TremorValueEditor as date picker', () => {
   const dateStub = `${year}-${month}-`;
 
   it('renders value editor as date editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(<TremorValueEditor {...props} inputType="date" handleOnChange={handleOnChange} />);
     await user.click(screen.getByRole('button'));
     await user.click(screen.getByText('10'));
@@ -358,7 +358,7 @@ describe('TremorValueEditor as date picker', () => {
   });
 
   it('handles preloaded dates and clearing value as date editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     const dateString = '2002-12-14';
     render(
       <TremorValueEditor
@@ -376,7 +376,7 @@ describe('TremorValueEditor as date picker', () => {
   });
 
   it('calls handleOnChange for first date in range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor
         {...props}
@@ -391,7 +391,7 @@ describe('TremorValueEditor as date picker', () => {
   });
 
   it('calls handleOnChange for second date in range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor
         {...props}
@@ -407,7 +407,7 @@ describe('TremorValueEditor as date picker', () => {
   });
 
   it('calls handleOnChange as date range editor with listsAsArrays', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor
         {...props}
@@ -425,7 +425,7 @@ describe('TremorValueEditor as date picker', () => {
   });
 
   it('handles preloaded values as date range editor', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor
         {...props}
@@ -441,7 +441,7 @@ describe('TremorValueEditor as date picker', () => {
   });
 
   it('handles invalid dates', async () => {
-    const handleOnChange = jest.fn();
+    const handleOnChange = vi.fn();
     render(
       <TremorValueEditor
         {...props}

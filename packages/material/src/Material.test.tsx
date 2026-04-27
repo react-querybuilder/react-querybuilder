@@ -60,32 +60,34 @@ import { MaterialValueSelector } from './MaterialValueSelector';
 import { materialTranslations } from './translations';
 import type { RQBMaterialComponents } from './types';
 
-jest.mock('@mui/material/ListSubheader', () => ({ children }: ListSubheaderProps) => (
-  <optgroup label={children as string} />
-));
-jest.mock('@mui/material/MenuItem', () => ({ value, children }: MenuItemProps) => (
-  <option value={value}>{children}</option>
-));
-jest.mock('@mui/material/Select', () => (props: SelectProps<string | string[]>) => (
-  <select
-    disabled={!!props.disabled}
-    multiple={!!props.multiple}
-    value={props.value}
-    onChange={e =>
-      props.onChange!(
-        {
-          target: {
-            value: props.multiple
-              ? [...e.target.selectedOptions].map(opt => opt.value)
-              : e.target.value,
-          },
-        } as SelectChangeEvent<string | string[]>,
-        ''
-      )
-    }>
-    {props.children}
-  </select>
-));
+vi.mock('@mui/material/ListSubheader', () => ({
+  default: ({ children }: ListSubheaderProps) => <optgroup label={children as string} />,
+}));
+vi.mock('@mui/material/MenuItem', () => ({
+  default: ({ value, children }: MenuItemProps) => <option value={value}>{children}</option>,
+}));
+vi.mock('@mui/material/Select', () => ({
+  default: (props: SelectProps<string | string[]>) => (
+    <select
+      disabled={!!props.disabled}
+      multiple={!!props.multiple}
+      value={props.value}
+      onChange={e =>
+        props.onChange!(
+          {
+            target: {
+              value: props.multiple
+                ? [...e.target.selectedOptions].map(opt => opt.value)
+                : e.target.value,
+            },
+          } as SelectChangeEvent<string | string[]>,
+          ''
+        )
+      }>
+      {props.children}
+    </select>
+  ),
+}));
 
 const muiComponents = {
   Button,

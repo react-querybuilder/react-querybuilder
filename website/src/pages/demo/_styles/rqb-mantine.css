@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.0.0).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.0.2).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -85,19 +85,18 @@ body,
 }
 
 @media screen and (max-device-width: 31.25em) {
-
-body,
-:host {
-    -webkit-text-size-adjust: 100%
-}
+  body,
+  :host {
+    -webkit-text-size-adjust: 100%;
   }
+}
 
 @media (prefers-reduced-motion: reduce) {
-    [data-respect-reduced-motion] [data-reduce-motion] {
-      transition: none;
-      animation: none;
-    }
+  [data-respect-reduced-motion] [data-reduce-motion] {
+    transition: none;
+    animation: none;
   }
+}
 */
 
 [data-mantine-color-scheme='light'] .mantine-light-hidden {
@@ -1900,10 +1899,6 @@ fieldset:disabled .mantine-active:active {
   margin-inline-start: var(--mantine-spacing-lg);
 }
 
-.m_9bd7b098 {
-  overflow: hidden;
-}
-
 :where([data-mantine-color-scheme='light']) .m_9bd7b098 {
   --item-border-color: var(--mantine-color-gray-3);
   --item-filled-color: var(--mantine-color-gray-0);
@@ -3228,8 +3223,6 @@ fieldset:disabled .m_8ee546b8,
   text-overflow: ellipsis;
   text-align: center;
   cursor: inherit;
-  text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
 }
 
 .m_91fdda9b {
@@ -6696,7 +6689,7 @@ fieldset:disabled .m_1738fcb2,
   background-color: var(--mantine-color-dark-4);
 }
 
-:where([data-orientation='vertical']) .m_c9357328 {
+:where(.m_dd36362e[data-orientation='vertical']) .m_c9357328 {
   top: auto;
   inset-inline-start: calc(100% + 8px);
 }
@@ -6750,7 +6743,7 @@ fieldset:disabled .m_c9a9a60a,
   background-color: var(--slider-color);
 }
 
-:where([data-orientation='vertical']) .m_c9a9a60a {
+:where(.m_dd36362e[data-orientation='vertical']) .m_c9a9a60a {
   left: 50%;
   top: auto;
   right: auto;
@@ -6758,11 +6751,11 @@ fieldset:disabled .m_c9a9a60a,
   transform: translate(-50%, 50%);
 }
 
-:where([data-orientation='vertical']) .m_c9a9a60a:where([data-dragging]) {
+:where(.m_dd36362e[data-orientation='vertical']) .m_c9a9a60a:where([data-dragging]) {
   transform: translate(-50%, 50%) scale(1.05);
 }
 
-:where([dir='rtl']) :where([data-orientation='vertical']) .m_c9a9a60a {
+:where([dir='rtl']) :where(.m_dd36362e[data-orientation='vertical']) .m_c9a9a60a {
   left: 50%;
   right: auto;
 }
@@ -6780,7 +6773,7 @@ fieldset:disabled .m_a8645c2,
   cursor: not-allowed;
 }
 
-:where([data-orientation='vertical']) .m_a8645c2 {
+:where(.m_dd36362e[data-orientation='vertical']) .m_a8645c2 {
   flex-direction: column;
   width: calc(var(--slider-size) * 2);
   height: 100%;
@@ -6812,12 +6805,12 @@ fieldset:disabled .m_c9ade57f:where([data-inverted]),
   z-index: 0;
 }
 
-:where([data-orientation='vertical']) .m_c9ade57f {
+:where(.m_dd36362e[data-orientation='vertical']) .m_c9ade57f {
   width: var(--slider-size);
   height: 100%;
 }
 
-:where([data-orientation='vertical']) .m_c9ade57f::before {
+:where(.m_dd36362e[data-orientation='vertical']) .m_c9ade57f::before {
   inset-inline: 0;
   top: calc(var(--slider-size) * -1);
   bottom: calc(var(--slider-size) * -1);
@@ -6843,7 +6836,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   background-color: var(--mantine-color-disabled-color);
 }
 
-:where([data-orientation='vertical']) .m_38aeed47 {
+:where(.m_dd36362e[data-orientation='vertical']) .m_38aeed47 {
   top: auto;
   bottom: var(--slider-bar-offset);
   inset-inline-start: 0;
@@ -6860,7 +6853,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   pointer-events: none;
 }
 
-:where([data-orientation='vertical']) .m_b7b0423a {
+:where(.m_dd36362e[data-orientation='vertical']) .m_b7b0423a {
   inset-inline-start: 0;
   top: auto;
   bottom: calc(var(--mark-offset) + var(--slider-size) / 2);
@@ -6909,7 +6902,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   color: var(--mantine-color-dark-2);
 }
 
-:where([data-orientation='vertical']) .m_68c77a5b {
+:where(.m_dd36362e[data-orientation='vertical']) .m_68c77a5b {
   transform: translate(
     calc(var(--slider-size) + var(--mantine-spacing-xs) / 2),
     calc(-50% - var(--slider-size) / 2)

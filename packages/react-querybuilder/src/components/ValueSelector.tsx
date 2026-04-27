@@ -72,7 +72,9 @@ export const useValueSelector = (
     [handleOnChange, listsAsArrays, multiple]
   );
 
-  const val = useMemo(() => (multiple ? toArray(value) : value), [multiple, value]);
+  // Normalize multiselect values to strings so they match option names,
+  // which are always strings (e.g., value [42] becomes ["42"]).
+  const val = useMemo(() => (multiple ? toArray(value).map(String) : value), [multiple, value]);
 
   return {
     onChange,
