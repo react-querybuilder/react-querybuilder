@@ -31,11 +31,7 @@ jobs:
           name: packs
           path: packs/*.tgz
       - run:
-          # Remove once https://github.com/stackblitz-labs/pkg.pr.new/issues/443 is resolved
-          bun ./utils/decatalog.ts
-      - run:
-          # Add `--bun` once https://github.com/stackblitz-labs/pkg.pr.new/issues/443 is resolved
-          bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun
+          bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
 
   Typecheck_and_lint:
     runs-on: ubuntu-latest
