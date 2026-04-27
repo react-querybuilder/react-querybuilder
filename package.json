@@ -185,7 +185,7 @@
     "oxfmt": "^0.45.0",
     "oxlint": "^1.60.0",
     "oxlint-tsgolint": "^0.21.0",
-    "pkg-pr-new": "^0.0.66",
+    "pkg-pr-new": "^0.0.67",
     "postcss": "^8.5.10",
     "prettier": "3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
