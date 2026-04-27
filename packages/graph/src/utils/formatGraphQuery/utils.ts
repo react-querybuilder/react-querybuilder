@@ -129,6 +129,38 @@ export const buildCypherMatchPatterns = (
   return { required, optional };
 };
 
+/**
+ * Collects all unique node aliases from Cypher/GQL pattern rules.
+ * Looks at both `nodeAlias` and `targetAlias` in pattern meta.
+ */
+export const collectBoundAliases = (patternRules: RuleType[]): string[] => {
+  const aliases = new Set<string>();
+  for (const rule of patternRules) {
+    const meta = rule.meta as Record<string, unknown> | undefined;
+    if (meta && 'nodeAlias' in meta) aliases.add(meta.nodeAlias as string);
+    if (meta && 'targetAlias' in meta) aliases.add(meta.targetAlias as string);
+  }
+  return [...aliases];
+};
+
+/**
+ * Collects all SPARQL variables (starting with `?`) from pattern rules.
+ * Looks at both `subject` in meta and variable references in values.
+ */
+export const collectSparqlVariables = (patternRules: RuleType[]): string[] => {
+  const vars = new Set<string>();
+  for (const rule of patternRules) {
+    const meta = rule.meta as Record<string, unknown> | undefined;
+    if (meta && 'subject' in meta) {
+      const subject = String(meta.subject);
+      if (subject.startsWith('?')) vars.add(subject);
+    }
+    const val = String(rule.value);
+    if (val.startsWith('?')) vars.add(val);
+  }
+  return [...vars];
+};
+
 const formatCypherNode = (alias: string, label?: string): string =>
   label ? `(${alias}:${label})` : `(${alias})`;
 

@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 import postcssScopedDonut from './devapp/postcss-scoped-donut';
 
 const coreSrc = '../core/src';
+const graphSrc = '../graph/src';
 const reSrc = '../rules-engine/src';
 const rqbSrc = '../react-querybuilder/src';
 
@@ -19,6 +20,7 @@ export const getCommonViteConfig = ({
       alias: {
         'react-querybuilder': path.resolve(`${rqbSrc}`),
         '@react-querybuilder/core': path.resolve(`${coreSrc}`),
+        '@react-querybuilder/graph': path.resolve(`${graphSrc}`),
         '@react-querybuilder/rules-engine': path.resolve(`${reSrc}`),
         '@rqb-devapp': path.resolve(`../../utils/devapp`),
         '@rqb-parsecel': path.resolve(`${coreSrc}/utils/parseCEL`),

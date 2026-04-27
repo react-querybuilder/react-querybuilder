@@ -62,7 +62,7 @@
   "overrides": [
     {
       "files": [
-        "packages/*/src/**/*{ActionElement,DragHandle,MatchModeEditor,NotToggle,ShiftActions,ValueEditor,ValueSelector}.tsx"
+        "packages/*/src/**/*{ActionElement,DragHandle,Editor,NotToggle,ShiftActions,ValueSelector}.tsx"
       ],
       // These are always leaf elements, so new functions/objects/arrays
       // within their JSX have negligible performance impact.
