@@ -27,11 +27,32 @@ Supported formats: `cypher`, `gql`, `sparql`, `gremlin`.
 
 ### Parsing
 
+Parsers are available as independent sub-path imports so you only bundle what you use:
+
 ```ts
-import { parseCypher, parseSPARQL, parseGremlin } from '@react-querybuilder/graph';
+import { parseCypher, parseGQL } from '@react-querybuilder/graph/parseCypher';
+import { parseSPARQL } from '@react-querybuilder/graph/parseSPARQL';
+import { parseGremlin } from '@react-querybuilder/graph/parseGremlin';
 
 const query = parseCypher('MATCH (a:Person) WHERE a.age > 30 RETURN a');
 ```
+
+| Import path                              | Exports                   | Parser                                                                              |
+| ---------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------- |
+| `@react-querybuilder/graph/parseCypher`  | `parseCypher`, `parseGQL` | [Chevrotain](https://chevrotain.io/) CST grammar                                    |
+| `@react-querybuilder/graph/parseSPARQL`  | `parseSPARQL`             | [`@traqula/parser-sparql-1-2`](https://github.com/traqula/traqula) (SPARQL 1.1/1.2) |
+| `@react-querybuilder/graph/parseGremlin` | `parseGremlin`            | Regex-based tokenizer                                                               |
+
+> **Note:** `parseSPARQL` automatically injects stub `PREFIX` declarations for undeclared prefixed names (e.g. `rdf:type`, `foaf:Person`), so callers don't need to provide explicit PREFIX lines.
+
+> **Optional dependencies:** `parseCypher`/`parseGQL` require `chevrotain`, and `parseSPARQL` requires `@traqula/parser-sparql-1-2`. Both are optional peer dependencies — install only the one(s) you need:
+>
+> ```bash
+> npm install chevrotain                  # for parseCypher / parseGQL
+> npm install @traqula/parser-sparql-1-2  # for parseSPARQL
+> ```
+>
+> `parseGremlin` has no additional dependencies.
 
 ### Pattern & Filter Rules
 
@@ -53,13 +74,26 @@ Projection zone editors work alongside `QueryBuilder` to configure format option
 import { CypherReturnEditor, SparqlSelectEditor, GremlinProjectionEditor } from '@react-querybuilder/graph';
 
 // Cypher/GQL — configure RETURN clause
-<CypherReturnEditor query={query} includeReturn={includeReturn} onIncludeReturnChange={setIncludeReturn} />
+<CypherReturnEditor
+  query={query}
+  includeReturn={includeReturn}
+  onIncludeReturnChange={setIncludeReturn}
+/>
 
 // SPARQL — configure SELECT variables and PREFIX declarations
-<SparqlSelectEditor query={query} selectVariables={vars} onSelectVariablesChange={setVars} prefixes={prefixes} onPrefixesChange={setPrefixes} />
+<SparqlSelectEditor
+  query={query}
+  selectVariables={vars}
+  onSelectVariablesChange={setVars}
+  prefixes={prefixes}
+  onPrefixesChange={setPrefixes}
+/>
 
 // Gremlin — configure traversal source
-<GremlinProjectionEditor traversalSource={source} onTraversalSourceChange={setSource} />
+<GremlinProjectionEditor
+  traversalSource={source}
+  onTraversalSourceChange={setSource}
+/>
 ```
 
 ### Meta Editor

@@ -1,247 +1,386 @@
 import type { RuleGroupType, RuleType } from '@react-querybuilder/core';
+import { Parser as SparqlParser } from '@traqula/parser-sparql-1-2';
 import type { SparqlFilterMeta, SparqlPatternMeta } from '../../types';
+
+// Reuse a single parser instance (Chevrotain-backed; creating parsers is expensive)
+let parserInstance: SparqlParser | undefined;
+const getParser = (): SparqlParser => {
+  if (!parserInstance) {
+    parserInstance = new SparqlParser();
+  }
+  return parserInstance;
+};
 
 /**
  * Parses a SPARQL query string into a `RuleGroupType` with graph `meta` on rules.
+ *
+ * Uses `@traqula/parser-sparql-1-2` for full SPARQL 1.1/1.2 grammar support.
  *
  * Handles:
  * - Triple patterns (`?s predicate ?o .`)
  * - `OPTIONAL { ... }` blocks
  * - `FILTER (...)` expressions with standard comparison operators and functions
- *
- * This is a basic parser covering common SPARQL patterns.
- * It does not handle the full SPARQL 1.1 grammar.
  */
 export const parseSPARQL = (sparql: string): RuleGroupType => {
-  const rules: RuleGroupType['rules'] = [];
   const trimmed = sparql.trim();
+  if (!trimmed) return { combinator: 'and', rules: [] };
 
-  // Extract WHERE block
-  const whereMatch = trimmed.match(/WHERE\s*\{([\s\S]*)\}\s*$/i);
-  if (!whereMatch) {
+  const prepared = ensurePrefixes(trimmed);
+
+  let ast: unknown;
+  try {
+    ast = getParser().parse(prepared);
+  } catch {
     return { combinator: 'and', rules: [] };
   }
 
-  const whereBody = whereMatch[1];
-  const { triples, filters } = parseWhereBody(whereBody, false);
-  rules.push(...triples, ...filters);
+  const typed = ast as TraqulaQuery;
+  if (!typed || typed.type !== 'query' || !typed.where) {
+    return { combinator: 'and', rules: [] };
+  }
 
+  const rules: RuleGroupType['rules'] = [];
+  visitPatterns(typed.where.patterns ?? [], false, rules);
   return { combinator: 'and', rules };
 };
 
-interface WhereBodyResult {
-  triples: RuleType[];
-  filters: (RuleType | RuleGroupType)[];
-}
-
-/** Parses the body of a WHERE clause. */
-const parseWhereBody = (body: string, optional: boolean): WhereBodyResult => {
-  const triples: RuleType[] = [];
-  const filters: (RuleType | RuleGroupType)[] = [];
-
-  let remaining = body.trim();
-
-  // Extract OPTIONAL blocks
-  const optionalRegex = /OPTIONAL\s*\{([^}]+)\}/gi;
-  let optMatch: RegExpExecArray | null;
-  while ((optMatch = optionalRegex.exec(remaining)) !== null) {
-    const optResult = parseWhereBody(optMatch[1], true);
-    triples.push(...optResult.triples);
-    filters.push(...optResult.filters);
+/**
+ * Ensures all prefixed names in a SPARQL query have corresponding PREFIX
+ * declarations. Undeclared prefixes get stub declarations so the parser
+ * accepts them without requiring callers to provide full URIs.
+ */
+const ensurePrefixes = (sparql: string): string => {
+  // Collect already-declared prefixes
+  const declaredPrefixes = new Set<string>();
+  const prefixDeclRegex = /PREFIX\s+(\w*):/gi;
+  let m: RegExpExecArray | null;
+  while ((m = prefixDeclRegex.exec(sparql)) !== null) {
+    declaredPrefixes.add(m[1].toLowerCase());
   }
-  remaining = remaining.replace(optionalRegex, '');
 
-  // Extract FILTER clauses (handles nested parentheses)
-  const filterPositions: { start: number; content: string }[] = [];
-  const filterStartRegex = /FILTER\s*\(/gi;
-  let fMatch: RegExpExecArray | null;
-  while ((fMatch = filterStartRegex.exec(remaining)) !== null) {
-    const parenStart = fMatch.index + fMatch[0].length - 1;
-    const parenEnd = findMatchingParen(remaining, parenStart);
-    if (parenEnd > parenStart) {
-      filterPositions.push({
-        start: fMatch.index,
-        content: remaining.slice(parenStart + 1, parenEnd),
-      });
+  // Find all prefixed names used in the query body (prefix:localName)
+  const usedPrefixes = new Set<string>();
+  const prefixUsageRegex = /\b(\w+):\w+/g;
+  while ((m = prefixUsageRegex.exec(sparql)) !== null) {
+    const prefix = m[1];
+    // Skip things that look like protocols (http, https, urn, etc.)
+    if (/^https?$/i.test(prefix) || /^urn$/i.test(prefix)) continue;
+    // Skip if inside an IRI (<...>)
+    const before = sparql.slice(0, m.index);
+    const lastOpen = before.lastIndexOf('<');
+    const lastClose = before.lastIndexOf('>');
+    if (lastOpen > lastClose) continue;
+    if (!declaredPrefixes.has(prefix.toLowerCase())) {
+      usedPrefixes.add(prefix);
     }
   }
-  for (const fp of filterPositions) {
-    const filterRules = parseSparqlFilter(fp.content.trim());
-    filters.push(...filterRules);
-  }
-  // Remove FILTER clauses from remaining
-  for (const fp of filterPositions.toReversed()) {
-    const parenStart = remaining.indexOf('(', fp.start);
-    const parenEnd = findMatchingParen(remaining, parenStart);
-    remaining = remaining.slice(0, fp.start) + remaining.slice(parenEnd + 1);
-  }
 
-  // Parse triple patterns
-  const tripleRegex = /(\S+)\s+(\S+)\s+(\S+)\s*\./g;
-  let tripleMatch: RegExpExecArray | null;
-  while ((tripleMatch = tripleRegex.exec(remaining)) !== null) {
-    const [, subject, predicate, object] = tripleMatch;
+  if (usedPrefixes.size === 0) return sparql;
+
+  // Prepend stub PREFIX declarations
+  const stubs = [...usedPrefixes].map(p => `PREFIX ${p}: <urn:rqb:prefix:${p}:>`).join('\n');
+  return stubs + '\n' + sparql;
+};
+
+// ─── Traqula AST Type Subset ─────────────────────────────────────────────────
+// Minimal type descriptions for the Traqula nodes we walk.
+// These are local to avoid coupling to Traqula's internal types.
+
+interface TraqulaQuery {
+  type: 'query';
+  subType: string;
+  where?: TraqulaPatternGroup;
+  [key: string]: unknown;
+}
+
+interface TraqulaPatternGroup {
+  type: 'pattern';
+  subType: 'group';
+  patterns: TraqulaPattern[];
+}
+
+type TraqulaPattern =
+  | TraqulaBgp
+  | TraqulaOptional
+  | TraqulaFilter
+  | TraqulaPatternGroup
+  | TraqulaUnion
+  | { type: 'pattern'; subType: string; [key: string]: unknown }
+  | TraqulaQuery; // SubSelect
+
+interface TraqulaBgp {
+  type: 'pattern';
+  subType: 'bgp';
+  triples: TraqulaTriple[];
+}
+
+interface TraqulaOptional {
+  type: 'pattern';
+  subType: 'optional';
+  patterns: TraqulaPattern[];
+}
+
+interface TraqulaFilter {
+  type: 'pattern';
+  subType: 'filter';
+  expression: TraqulaExpression;
+}
+
+interface TraqulaUnion {
+  type: 'pattern';
+  subType: 'union';
+  patterns: TraqulaPatternGroup[];
+}
+
+interface TraqulaTriple {
+  type: 'triple';
+  subject: TraqulaTerm;
+  predicate: TraqulaTerm;
+  object: TraqulaTerm;
+}
+
+interface TraqulaTerm {
+  type: 'term' | 'path' | 'wildcard';
+  subType?: string;
+  value?: string;
+  prefix?: string;
+  langOrIri?: unknown;
+  [key: string]: unknown;
+}
+
+interface TraqulaExpression {
+  type: 'expression' | 'term';
+  subType: string;
+  operator?: string;
+  args?: (TraqulaExpression | TraqulaTerm)[];
+  value?: string;
+  prefix?: string;
+  langOrIri?: unknown;
+  [key: string]: unknown;
+}
+
+// ─── AST Walker ──────────────────────────────────────────────────────────────
+
+const filterMeta: SparqlFilterMeta = { graphRole: 'filter', graphLang: 'sparql' };
+
+/** Serializes a Traqula term into a user-facing string. */
+const termToString = (term: TraqulaTerm): string => {
+  if (term.type === 'term') {
+    switch (term.subType) {
+      case 'variable':
+        return `?${term.value}`;
+      case 'namedNode':
+        if (term.prefix !== undefined && term.prefix !== '') {
+          return `${term.prefix}:${term.value}`;
+        }
+        return term.value ?? '';
+      case 'literal':
+        return term.value ?? '';
+      case 'blankNode':
+        return `_:${(term as { label?: string }).label ?? ''}`;
+      default:
+        return term.value ?? '';
+    }
+  }
+  return '';
+};
+
+/** Extracts a literal JS value from a Traqula term. */
+const termToLiteralValue = (term: TraqulaTerm | TraqulaExpression): unknown => {
+  if (term.type === 'term' && term.subType === 'literal') {
+    const raw = term.value ?? '';
+    // Check for typed literals (numeric, boolean)
+    if (term.langOrIri && typeof term.langOrIri === 'object') {
+      const iri = term.langOrIri as TraqulaTerm;
+      const datatype = iri.value ?? '';
+      if (
+        datatype.endsWith('#integer') ||
+        datatype.endsWith('#decimal') ||
+        datatype.endsWith('#double') ||
+        datatype.endsWith('#float')
+      ) {
+        return Number(raw);
+      }
+      if (datatype.endsWith('#boolean')) {
+        return raw === 'true';
+      }
+    }
+    // Try numeric
+    const num = Number(raw);
+    if (raw !== '' && !Number.isNaN(num)) return num;
+    return raw;
+  }
+  if (term.type === 'term' && term.subType === 'variable') {
+    return `?${term.value}`;
+  }
+  if (term.type === 'term' && term.subType === 'namedNode') {
+    return termToString(term as TraqulaTerm);
+  }
+  return term.value ?? '';
+};
+
+/** Walks a list of Traqula patterns, appending rules to `out`. */
+const visitPatterns = (
+  patterns: TraqulaPattern[],
+  optional: boolean,
+  out: RuleGroupType['rules']
+): void => {
+  for (const p of patterns) {
+    if (p.type === 'pattern') {
+      switch (p.subType) {
+        case 'bgp':
+          visitBgp(p as TraqulaBgp, optional, out);
+          break;
+        case 'optional':
+          visitPatterns((p as TraqulaOptional).patterns, true, out);
+          break;
+        case 'filter':
+          visitFilter((p as TraqulaFilter).expression, out);
+          break;
+        case 'group':
+          visitPatterns((p as TraqulaPatternGroup).patterns, optional, out);
+          break;
+        case 'union': {
+          const union = p as TraqulaUnion;
+          const subRules: (RuleType | RuleGroupType)[] = [];
+          for (const branch of union.patterns) {
+            const branchRules: RuleGroupType['rules'] = [];
+            visitPatterns(branch.patterns, optional, branchRules);
+            if (branchRules.length === 1) {
+              subRules.push(branchRules[0]);
+            } else if (branchRules.length > 1) {
+              subRules.push({ combinator: 'and', rules: branchRules });
+            }
+          }
+          if (subRules.length > 0) {
+            out.push({ combinator: 'or', rules: subRules });
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }
+};
+
+/** Converts BGP triples into pattern rules. */
+const visitBgp = (bgp: TraqulaBgp, optional: boolean, out: RuleGroupType['rules']): void => {
+  for (const triple of bgp.triples) {
+    if (triple.type !== 'triple') continue;
+    const subject = termToString(triple.subject);
+    const predicate = termToString(triple.predicate);
+    const object = termToString(triple.object);
+
     const meta: SparqlPatternMeta = {
       graphRole: 'pattern',
       graphLang: 'sparql',
       subject,
       optional,
     };
-    triples.push({
+    out.push({
       field: predicate,
       operator: 'binds',
       value: object,
       meta,
     });
   }
-
-  return { triples, filters };
 };
 
-/** Parses a FILTER expression into rules. */
-const parseSparqlFilter = (expr: string): (RuleType | RuleGroupType)[] => {
-  const rules: (RuleType | RuleGroupType)[] = [];
-  const meta: SparqlFilterMeta = { graphRole: 'filter', graphLang: 'sparql' };
-
-  // Split on && and || (simple, non-nested)
-  // For nested expressions, detect parenthesized sub-expressions
-  const parts = splitFilterExpression(expr);
-
-  if (parts.operator === 'single') {
-    const rule = parseSingleSparqlFilter(parts.expressions[0], meta);
-    if (rule) rules.push(rule);
-  } else {
-    const subRules: (RuleType | RuleGroupType)[] = [];
-    for (const part of parts.expressions) {
-      const rule = parseSingleSparqlFilter(part.trim(), meta);
-      if (rule) subRules.push(rule);
-    }
-    if (subRules.length === 1) {
-      rules.push(subRules[0]);
-    } else if (subRules.length > 1) {
-      rules.push({
-        combinator: parts.operator === '||' ? 'or' : 'and',
-        rules: subRules,
-      });
-    }
-  }
-
-  return rules;
+/** Maps a SPARQL comparison operator string to an RQB operator. */
+const sparqlOpToRqb: Record<string, string> = {
+  '=': '=',
+  '!=': '!=',
+  '<': '<',
+  '>': '>',
+  '<=': '<=',
+  '>=': '>=',
 };
 
-interface SplitResult {
-  expressions: string[];
-  operator: '&&' | '||' | 'single';
-}
+/** Converts a FILTER expression into rules. */
+const visitFilter = (expr: TraqulaExpression, out: RuleGroupType['rules']): void => {
+  if (expr.type === 'expression' && expr.subType === 'operation') {
+    const op = expr.operator ?? '';
+    const args = expr.args ?? [];
 
-/** Splits a filter expression on top-level && or || operators. */
-const splitFilterExpression = (expr: string): SplitResult => {
-  const trimmed = expr.trim();
-
-  // Handle outer parentheses
-  if (trimmed.startsWith('(') && findMatchingParen(trimmed, 0) === trimmed.length - 1) {
-    return splitFilterExpression(trimmed.slice(1, -1));
-  }
-
-  let depth = 0;
-  const parts: string[] = [];
-  let current = '';
-  let operator: '&&' | '||' | 'single' = 'single';
-
-  for (let i = 0; i < trimmed.length; i++) {
-    const ch = trimmed[i];
-    if (ch === '(') depth++;
-    else if (ch === ')') depth--;
-
-    if (depth === 0 && (trimmed.slice(i, i + 2) === '&&' || trimmed.slice(i, i + 2) === '||')) {
-      const op = trimmed.slice(i, i + 2) as '&&' | '||';
-      if (operator === 'single') operator = op;
-      parts.push(current.trim());
-      current = '';
-      i += 1; // skip second char
-      continue;
+    // Logical operators
+    if (op === '&&') {
+      for (const arg of args) {
+        visitFilter(arg as TraqulaExpression, out);
+      }
+      return;
     }
-    current += ch;
-  }
-
-  if (current.trim()) parts.push(current.trim());
-
-  return { expressions: parts, operator };
-};
-
-/** Finds the matching closing parenthesis. */
-const findMatchingParen = (str: string, openPos: number): number => {
-  let depth = 0;
-  for (let i = openPos; i < str.length; i++) {
-    if (str[i] === '(') depth++;
-    else if (str[i] === ')') depth--;
-    if (depth === 0) return i;
-  }
-  return -1;
-};
-
-/** Parses a single SPARQL filter expression. */
-const parseSingleSparqlFilter = (
-  expr: string,
-  meta: SparqlFilterMeta
-): RuleType | RuleGroupType | null => {
-  const trimmed = expr.trim();
-
-  // Handle negation: !(expr)
-  if (trimmed.startsWith('!')) {
-    const inner = trimmed.slice(1).trim();
-    const innerResult = parseSingleSparqlFilter(
-      inner.startsWith('(') ? inner.slice(1, -1) : inner,
-      meta
-    );
-    if (!innerResult) return null;
-    if ('combinator' in innerResult) {
-      return { ...innerResult, not: true };
+    if (op === '||') {
+      const subRules: (RuleType | RuleGroupType)[] = [];
+      for (const arg of args) {
+        const branchRules: RuleGroupType['rules'] = [];
+        visitFilter(arg as TraqulaExpression, branchRules);
+        subRules.push(...branchRules);
+      }
+      out.push({ combinator: 'or', rules: subRules });
+      return;
     }
-    // Negate the operator
-    return negateRule(innerResult);
-  }
 
-  // Handle parenthesized sub-expression
-  if (trimmed.startsWith('(') && findMatchingParen(trimmed, 0) === trimmed.length - 1) {
-    const subRules = parseSparqlFilter(trimmed.slice(1, -1));
-    if (subRules.length === 1) return subRules[0];
-    return { combinator: 'and', rules: subRules };
-  }
+    // Negation
+    if (op === '!') {
+      if (args.length === 1) {
+        const inner = args[0] as TraqulaExpression;
+        // !BOUND(x) → null check
+        if (
+          inner.type === 'expression' &&
+          inner.subType === 'operation' &&
+          inner.operator === 'bound'
+        ) {
+          const field = termToString((inner.args?.[0] ?? {}) as TraqulaTerm);
+          out.push({ field, operator: 'null', value: null, meta: filterMeta });
+          return;
+        }
+        const innerRules: RuleGroupType['rules'] = [];
+        visitFilter(inner, innerRules);
+        if (innerRules.length === 1 && !('combinator' in innerRules[0])) {
+          out.push(negateRule(innerRules[0]));
+        } else {
+          out.push({ combinator: 'and', not: true, rules: innerRules });
+        }
+        return;
+      }
+    }
 
-  // CONTAINS(?field, "value")
-  const containsMatch = trimmed.match(/^CONTAINS\((\?\w+),\s*"([^"]*)"\)$/i);
-  if (containsMatch) {
-    return { field: containsMatch[1], operator: 'contains', value: containsMatch[2], meta };
-  }
+    // Comparison operators
+    if (op in sparqlOpToRqb && args.length === 2) {
+      const field = termToString(args[0] as TraqulaTerm);
+      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      out.push({ field, operator: sparqlOpToRqb[op], value, meta: filterMeta });
+      return;
+    }
 
-  // STRSTARTS(?field, "value")
-  const startsMatch = trimmed.match(/^STRSTARTS\((\?\w+),\s*"([^"]*)"\)$/i);
-  if (startsMatch) {
-    return { field: startsMatch[1], operator: 'beginsWith', value: startsMatch[2], meta };
-  }
+    // BOUND(?x) → notNull
+    if (op === 'bound' && args.length === 1) {
+      const field = termToString(args[0] as TraqulaTerm);
+      out.push({ field, operator: 'notNull', value: null, meta: filterMeta });
+      return;
+    }
 
-  // STRENDS(?field, "value")
-  const endsMatch = trimmed.match(/^STRENDS\((\?\w+),\s*"([^"]*)"\)$/i);
-  if (endsMatch) {
-    return { field: endsMatch[1], operator: 'endsWith', value: endsMatch[2], meta };
+    // String functions
+    if (op === 'contains' && args.length === 2) {
+      const field = termToString(args[0] as TraqulaTerm);
+      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      out.push({ field, operator: 'contains', value, meta: filterMeta });
+      return;
+    }
+    if (op === 'strstarts' && args.length === 2) {
+      const field = termToString(args[0] as TraqulaTerm);
+      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      out.push({ field, operator: 'beginsWith', value, meta: filterMeta });
+      return;
+    }
+    if (op === 'strends' && args.length === 2) {
+      const field = termToString(args[0] as TraqulaTerm);
+      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      out.push({ field, operator: 'endsWith', value, meta: filterMeta });
+      return;
+    }
   }
-
-  // BOUND(?field) / !BOUND(?field) — negation handled above
-  const boundMatch = trimmed.match(/^BOUND\((\?\w+)\)$/i);
-  if (boundMatch) {
-    return { field: boundMatch[1], operator: 'notNull', value: null, meta };
-  }
-
-  // Comparison: ?field op value
-  const compMatch = trimmed.match(/^(\?\w+)\s*(=|!=|<>|<=|>=|<|>)\s*(.+)$/);
-  if (compMatch) {
-    const [, field, op, rawValue] = compMatch;
-    const operator = op === '<>' ? '!=' : op;
-    return { field, operator, value: parseSparqlLiteral(rawValue.trim()), meta };
-  }
-
-  return null;
 };
 
 /** Negates a rule by converting its operator. */
@@ -260,16 +399,4 @@ const negateRule = (rule: RuleType): RuleType => {
     '>=': '<',
   };
   return { ...rule, operator: negMap[rule.operator] ?? rule.operator };
-};
-
-/** Parses a SPARQL literal value. */
-const parseSparqlLiteral = (raw: string): unknown => {
-  if (raw.startsWith('"') && raw.endsWith('"')) {
-    return raw.slice(1, -1).replace(/\\"/g, '"');
-  }
-  if (raw === 'true') return true;
-  if (raw === 'false') return false;
-  const num = Number(raw);
-  if (!Number.isNaN(num)) return num;
-  return raw;
 };

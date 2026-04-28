@@ -1,0 +1,4 @@
+{
+  "main": "../dist/parseSPARQL.js",
+  "types": "../dist/parseSPARQL.d.ts"
+}
