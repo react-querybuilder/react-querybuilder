@@ -1,15 +1,129 @@
+// oxlint-disable react_perf/jsx-no-new-function-as-prop react_perf/jsx-no-new-object-as-prop
+
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { Field, RuleGroupType } from 'react-querybuilder';
-import { QueryBuilder } from 'react-querybuilder';
+import type {
+  ActionProps,
+  Field,
+  RuleGroupType,
+  RuleType,
+  ValueEditorProps,
+} from 'react-querybuilder';
+import { QueryBuilder, ValueEditor, update } from 'react-querybuilder';
+import type { GraphLang, GraphMetaBase } from '../src';
 import {
   CypherReturnEditor,
+  GraphMetaEditor,
   GremlinProjectionEditor,
   SparqlSelectEditor,
   formatGraphQuery,
 } from '../src';
 import './styles.scss';
+
+// ── Default pattern meta per language ───────────────────────────────────────
+
+const defaultPatternMeta: Record<GraphLang, GraphMetaBase> = {
+  cypher: { graphRole: 'pattern', nodeAlias: '', nodeLabel: '', direction: 'outgoing' },
+  gql: { graphRole: 'pattern', nodeAlias: '', nodeLabel: '', direction: 'outgoing' },
+  sparql: { graphRole: 'pattern', subject: '' },
+  gremlin: { graphRole: 'pattern', stepLabel: '', edgeLabel: '', direction: 'out' },
+};
+
+// ── Custom "Add Rule" action ────────────────────────────────────────────────
+
+/**
+ * Replaces the default "+ Rule" button with two buttons:
+ * - **+ Rule** adds a normal filter rule
+ * - **+ Pattern** adds a rule pre-populated with `graphRole: 'pattern'` meta
+ *
+ * The "+ Pattern" button passes `{ addAsPattern: true }` as the `context`
+ * argument to `handleOnClick`, which is forwarded to `onAddRule`.
+ */
+const GraphAddRuleAction = (props: ActionProps) => {
+  const {
+    handleOnClick,
+    disabled,
+    className,
+    schema: {
+      controls: { actionElement: GenericActionElement },
+    },
+  } = props;
+
+  return (
+    <span className="graph-addRuleActions">
+      <GenericActionElement {...props} />
+      <GenericActionElement
+        {...props}
+        label="+ Pattern"
+        title="Add graph pattern rule"
+        disabled={disabled}
+        handleOnClick={e => handleOnClick(e, { addAsPattern: true })}
+        className={className + ' graph-addPatternAction'}
+      />
+    </span>
+  );
+};
+
+// ── onAddRule callback ──────────────────────────────────────────────────────
+
+/**
+ * Returns an `onAddRule` handler for the given graph language.
+ * When the "+ Pattern" button triggers a rule add, the handler sets the
+ * rule's `field` to `'_pattern'` and populates `meta` with language defaults.
+ */
+const makeOnAddRule =
+  (graphLang: GraphLang) =>
+  (
+    rule: RuleType,
+    _parentPath: number[],
+    _query: RuleGroupType,
+    ctx?: { addAsPattern?: boolean }
+  ) => {
+    if (ctx?.addAsPattern) {
+      return {
+        ...rule,
+        field: '_pattern',
+        operator: '=',
+        value: '',
+        meta: { ...defaultPatternMeta[graphLang] },
+      };
+    }
+    return true;
+  };
+
+// ── Custom Value Editor ─────────────────────────────────────────────────────
+
+/**
+ * A value editor that renders {@link GraphMetaEditor} for pattern rules
+ * (those with `meta.graphRole === 'pattern'`) and falls back to the
+ * default {@link ValueEditor} for everything else.
+ *
+ * Pass `graphLang` via the QueryBuilder `context` prop.
+ */
+const GraphValueEditor = (props: ValueEditorProps) => {
+  const { rule, schema, path, context } = props;
+  const graphLang = (context?.graphLang ?? 'cypher') as GraphLang;
+  const meta = rule.meta as Record<string, unknown> | undefined;
+
+  if (meta?.graphRole === 'pattern') {
+    const handleMetaChange = (newMeta: GraphMetaBase) => {
+      const updated = update(schema.getQuery() as RuleGroupType, 'meta', newMeta, path);
+      schema.dispatchQuery(updated);
+    };
+
+    return (
+      <GraphMetaEditor
+        rule={rule}
+        handleOnChange={handleMetaChange}
+        graphLang={graphLang}
+        disabled={props.disabled}
+      />
+    );
+  }
+
+  return <ValueEditor {...props} />;
+};
 
 // ── Cypher Example ──────────────────────────────────────────────────────────
 
@@ -50,10 +164,19 @@ const CypherDemo = () => {
     [query, includeReturn]
   );
 
+  const onAddRule = useMemo(() => makeOnAddRule('cypher'), []);
+
   return (
     <div className="graph-section">
       <h2>Cypher / GQL</h2>
-      <QueryBuilder fields={cypherFields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder
+        fields={cypherFields}
+        query={query}
+        onQueryChange={setQuery}
+        controlElements={{ valueEditor: GraphValueEditor, addRuleAction: GraphAddRuleAction }}
+        context={{ graphLang: 'cypher' as GraphLang }}
+        onAddRule={onAddRule}
+      />
       <div className="graph-companion">
         <strong>Projection</strong>
         <CypherReturnEditor
@@ -105,10 +228,19 @@ const SparqlDemo = () => {
     [query, selectVariables, prefixes]
   );
 
+  const onAddRule = useMemo(() => makeOnAddRule('sparql'), []);
+
   return (
     <div className="graph-section">
       <h2>SPARQL</h2>
-      <QueryBuilder fields={sparqlFields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder
+        fields={sparqlFields}
+        query={query}
+        onQueryChange={setQuery}
+        controlElements={{ valueEditor: GraphValueEditor, addRuleAction: GraphAddRuleAction }}
+        context={{ graphLang: 'sparql' as GraphLang }}
+        onAddRule={onAddRule}
+      />
       <div className="graph-companion">
         <strong>Projection</strong>
         <SparqlSelectEditor
@@ -154,10 +286,19 @@ const GremlinDemo = () => {
     [query, traversalSource]
   );
 
+  const onAddRule = useMemo(() => makeOnAddRule('gremlin'), []);
+
   return (
     <div className="graph-section">
       <h2>Gremlin</h2>
-      <QueryBuilder fields={gremlinFields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder
+        fields={gremlinFields}
+        query={query}
+        onQueryChange={setQuery}
+        controlElements={{ valueEditor: GraphValueEditor, addRuleAction: GraphAddRuleAction }}
+        context={{ graphLang: 'gremlin' as GraphLang }}
+        onAddRule={onAddRule}
+      />
       <div className="graph-companion">
         <strong>Projection</strong>
         <GremlinProjectionEditor

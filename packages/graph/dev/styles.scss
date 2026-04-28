@@ -48,3 +48,30 @@
   white-space: pre-wrap;
   margin-top: 0.75rem;
 }
+
+.queryBuilder-graphMeta {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  input[type='text'] {
+    width: 6em;
+    padding: 0.15rem 0.3rem;
+  }
+
+  select {
+    padding: 0.15rem 0.3rem;
+  }
+}
+
+.graph-addRuleActions {
+  display: inline-flex;
+  gap: 0.25rem;
+}
