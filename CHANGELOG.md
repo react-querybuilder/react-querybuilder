@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- Graph query language import/export
+  - New `formatQuery` formats: `"cypher"` (alias `"gql"`), `"gremlin"`, `"sparql"`
+  - Parsers: `parseCypher`(alias `parseGQL`), `parseGremlin`, `parseSPARQL`
 
 ## [v8.15.0] - 2026-04-15
 

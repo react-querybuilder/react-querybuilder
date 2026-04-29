@@ -42,7 +42,7 @@ formatQuery(query, 'sql');
 
 ### Import
 
-To [import queries](https://react-querybuilder.js.org/docs/utils/import) use `parseSQL`, `parseMongoDB`, `parseJsonLogic`, `parseJSONata`, `parseCEL`, or `parseSpEL` depending on the source.
+To [import queries](https://react-querybuilder.js.org/docs/utils/import) use `parseSQL`, `parseMongoDB`, `parseJsonLogic`, `parseJSONata`, `parseCypher`, `parseGremlin`, `parseSPARQL`, `parseCEL`, or `parseSpEL` depending on the source.
 
 ```ts
 // Tip: `parseSQL` will accept either a full `SELECT` statement or a `WHERE` clause by itself.
@@ -76,9 +76,12 @@ The `parse*` functions must be imported from a sub-path, like this:
 
 ```js
 import { parseCEL } from '@react-querybuilder/core/parseCEL';
+import { parseCypher } from '@react-querybuilder/core/parseCypher';
+import { parseGremlin } from '@react-querybuilder/core/parseGremlin';
 import { parseJSONata } from '@react-querybuilder/core/parseJSONata';
 import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
 import { parseMongoDB } from '@react-querybuilder/core/parseMongoDB';
+import { parseSPARQL } from '@react-querybuilder/core/parseSPARQL';
 import { parseSpEL } from '@react-querybuilder/core/parseSpEL';
 import { parseSQL } from '@react-querybuilder/core/parseSQL';
 ```
