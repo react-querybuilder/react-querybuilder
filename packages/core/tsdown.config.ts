@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { format } from 'oxfmt';
 import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import { commonBuildOptions, tsdownCommonConfig } from '../../utils/tsdown.common';
@@ -39,7 +40,16 @@ export default defineConfig(async options => {
             await mkdir(util, { recursive: true });
             await Bun.write(
               `${util}/package.json`,
-              JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+              (
+                await format(
+                  'package.json',
+                  JSON.stringify(
+                    { main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` },
+                    null,
+                    2
+                  )
+                )
+              ).code
             );
           })
         );

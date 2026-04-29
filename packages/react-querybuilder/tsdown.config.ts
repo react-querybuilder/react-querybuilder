@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { format } from 'oxfmt';
 import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import {
@@ -12,7 +13,12 @@ const writeNode10pkg = async (entryPointNames: string[]) => {
   await mkdir('debug', { recursive: true });
   await Bun.write(
     'debug/package.json',
-    JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
+    (
+      await format(
+        'package.json',
+        JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
+      )
+    ).code
   );
   // Write the other {util}/package.json's for node10 resolution
   await Promise.all(
@@ -20,7 +26,12 @@ const writeNode10pkg = async (entryPointNames: string[]) => {
       await mkdir(util, { recursive: true });
       await Bun.write(
         `${util}/package.json`,
-        JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+        (
+          await format(
+            'package.json',
+            JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+          )
+        ).code
       );
     })
   );
