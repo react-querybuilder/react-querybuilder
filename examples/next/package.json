@@ -1,15 +1,15 @@
 {
   "dependencies": {
-    "next": "^15.1.3",
+    "next": "^16",
     "react": "^19",
     "react-dom": "^19",
     "react-querybuilder": "8.15.0"
   },
   "devDependencies": {
-    "@types/node": "24.0.12",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "5.7.2"
+    "typescript": "^6"
   },
   "name": "react-querybuilder-next-example",
   "private": true,

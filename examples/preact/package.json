@@ -10,9 +10,9 @@
     "@preact/preset-vite": "^2.10.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.6.0",
-    "typescript": "^5.7.2",
-    "vite": "^7"
+    "@vitejs/plugin-react": "^6",
+    "typescript": "^6",
+    "vite": "^8"
   },
   "name": "react-querybuilder-basic-ts-example",
   "private": true,

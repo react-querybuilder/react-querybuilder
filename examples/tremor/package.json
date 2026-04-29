@@ -14,13 +14,13 @@
     "@tailwindcss/vite": "^4.1.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.6.0",
+    "@vitejs/plugin-react": "^6",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
-    "sass": "^1.89.2",
+    "sass": "^1.99.0",
     "tailwindcss": "^4.1.6",
-    "typescript": "^5.7.2",
-    "vite": "^7"
+    "typescript": "^6",
+    "vite": "^8"
   },
   "name": "react-querybuilder-tremor-example",
   "private": true,
