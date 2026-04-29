@@ -50,9 +50,12 @@ export default defineConfig(async options => {
   const utilEntryPoints = {
     formatQuery: 'src/fwd/formatQuery.ts',
     parseCEL: 'src/fwd/parseCEL.ts',
+    parseCypher: 'src/fwd/parseCypher.ts',
+    parseGremlin: 'src/fwd/parseGremlin.ts',
     parseJSONata: 'src/fwd/parseJSONata.ts',
     parseJsonLogic: 'src/fwd/parseJsonLogic.ts',
     parseMongoDB: 'src/fwd/parseMongoDB.ts',
+    parseSPARQL: 'src/fwd/parseSPARQL.ts',
     parseSpEL: 'src/fwd/parseSpEL.ts',
     parseSQL: 'src/fwd/parseSQL.ts',
     transformQuery: 'src/fwd/transformQuery.ts',

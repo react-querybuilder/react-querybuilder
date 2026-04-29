@@ -15,12 +15,12 @@ const shiftToTop = (arr: SidebarItem[], item: SidebarItem) => {
 };
 
 for (const item of typedocGeneratedSidebarItems) {
-  for (const subItem of item.items) {
+  for (const subItem of item.items ?? []) {
     if (
       subItem.type === 'category' &&
       (subItem.link as SidebarItemCategoryLinkDoc | undefined)?.id.endsWith('/index/index')
     ) {
-      shiftToTop(item.items, subItem);
+      shiftToTop(item.items ?? [], subItem);
     }
   }
   if (item.type === 'category' && item.label === 'react-querybuilder') {

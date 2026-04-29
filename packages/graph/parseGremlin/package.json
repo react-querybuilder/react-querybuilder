@@ -1,4 +1,0 @@
-{
-  "main": "../dist/parseGremlin.js",
-  "types": "../dist/parseGremlin.d.ts"
-}

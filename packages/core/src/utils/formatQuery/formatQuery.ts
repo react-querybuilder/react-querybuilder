@@ -27,9 +27,11 @@ import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
+import { defaultRuleGroupProcessorCypher } from './defaultRuleGroupProcessorCypher';
 import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
 import { defaultRuleGroupProcessorElasticSearch } from './defaultRuleGroupProcessorElasticSearch';
+import { defaultRuleGroupProcessorGremlin } from './defaultRuleGroupProcessorGremlin';
 import { defaultRuleGroupProcessorJSONata } from './defaultRuleGroupProcessorJSONata';
 import { defaultRuleGroupProcessorJsonLogic } from './defaultRuleGroupProcessorJsonLogic';
 import { defaultRuleGroupProcessorLDAP } from './defaultRuleGroupProcessorLDAP';
@@ -42,11 +44,14 @@ import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
 import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
+import { defaultRuleGroupProcessorSPARQL } from './defaultRuleGroupProcessorSPARQL';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
+import { defaultRuleProcessorCypher } from './defaultRuleProcessorCypher';
 import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 import { defaultRuleProcessorElasticSearch } from './defaultRuleProcessorElasticSearch';
+import { defaultRuleProcessorGremlin } from './defaultRuleProcessorGremlin';
 import { defaultRuleProcessorJSONata } from './defaultRuleProcessorJSONata';
 import { defaultRuleProcessorJsonLogic } from './defaultRuleProcessorJsonLogic';
 import { defaultRuleProcessorLDAP } from './defaultRuleProcessorLDAP';
@@ -56,6 +61,7 @@ import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRul
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
 import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
+import { defaultRuleProcessorSPARQL } from './defaultRuleProcessorSPARQL';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
@@ -121,6 +127,10 @@ const defaultRuleProcessors = {
   sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
+  cypher: defaultRuleProcessorCypher,
+  gql: defaultRuleProcessorCypher,
+  sparql: defaultRuleProcessorSPARQL,
+  gremlin: defaultRuleProcessorGremlin,
   diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -144,6 +154,10 @@ const defaultOperatorProcessors = {
   sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
+  cypher: defaultOperatorProcessor,
+  gql: defaultOperatorProcessor,
+  sparql: defaultOperatorProcessor,
+  gremlin: defaultOperatorProcessor,
   diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -152,6 +166,8 @@ const defaultFallbackExpressions: Partial<Record<ExportFormat, string>> = {
   ldap: '',
   mongodb: '"$and":[{"$expr":true}]',
   natural_language: '1 is 1',
+  sparql: '1 = 1',
+  gremlin: '',
   spel: '1 == 1',
   sql: '(1 = 1)',
 };
@@ -601,6 +617,16 @@ function formatQuery(
 
     case 'sequelize':
       return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
+
+    case 'cypher':
+    case 'gql':
+      return defaultRuleGroupProcessorCypher(ruleGroup, finalOptions);
+
+    case 'sparql':
+      return defaultRuleGroupProcessorSPARQL(ruleGroup, finalOptions);
+
+    case 'gremlin':
+      return defaultRuleGroupProcessorGremlin(ruleGroup, finalOptions);
 
     case 'diagnostics':
       return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);

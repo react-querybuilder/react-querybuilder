@@ -9,9 +9,12 @@ export default defineConfig(async options => {
   const utilEntryPoints = {
     formatQuery: 'src/utils/formatQuery/index.ts',
     parseCEL: 'src/utils/parseCEL/index.ts',
+    parseCypher: 'src/utils/parseCypher/index.ts',
+    parseGremlin: 'src/utils/parseGremlin/index.ts',
     parseJSONata: 'src/utils/parseJSONata/index.ts',
     parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
     parseMongoDB: 'src/utils/parseMongoDB/index.ts',
+    parseSPARQL: 'src/utils/parseSPARQL/index.ts',
     parseSpEL: 'src/utils/parseSpEL/index.ts',
     parseSQL: 'src/utils/parseSQL/index.ts',
     transformQuery: 'src/utils/transformQuery.ts',

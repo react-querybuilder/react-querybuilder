@@ -1,4 +1,0 @@
-{
-  "main": "../dist/parseCypher.js",
-  "types": "../dist/parseCypher.d.ts"
-}
