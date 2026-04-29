@@ -24,9 +24,13 @@ packages/*/async/package.json
 packages/*/debug/package.json
 packages/*/formatQuery/package.json
 packages/*/parseCEL/package.json
+packages/*/parseCypher/package.json
+packages/*/parseGQL/package.json
+packages/*/parseGremlin/package.json
 packages/*/parseJSONata/package.json
 packages/*/parseJsonLogic/package.json
 packages/*/parseMongoDB/package.json
+packages/*/parseSPARQL/package.json
 packages/*/parseSpEL/package.json
 packages/*/parseSQL/package.json
 packages/*/transformQuery/package.json
