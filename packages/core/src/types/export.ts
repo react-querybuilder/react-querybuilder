@@ -35,6 +35,10 @@ export type ExportFormat =
   | 'drizzle'
   | 'prisma'
   | 'sequelize'
+  | 'cypher'
+  | 'gql'
+  | 'sparql'
+  | 'gremlin'
   | 'diagnostics';
 
 /**

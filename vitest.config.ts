@@ -15,6 +15,7 @@ export default defineConfig({
         'packages/dnd/src/isHotkeyPressed.ts',
         'packages/rules-engine/src/components/**',
         'packages/core/src/utils/parse{CEL,SQL}/{cel,sql}Parser.ts',
+        'packages/core/src/utils/parse{Cypher,Gremlin,SPARQL}/parse{Cypher,Gremlin,SPARQL}.ts',
       ],
       thresholds: { branches: 100, functions: 100, lines: 100, statements: 100 },
     },

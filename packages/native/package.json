@@ -64,7 +64,8 @@
     "react-test-renderer": "catalog:test",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest-native": "^0.3.0"
   },
   "peerDependencies": {
     "react": "catalog:peer",

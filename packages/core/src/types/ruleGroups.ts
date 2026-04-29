@@ -25,6 +25,8 @@ export interface RuleType<
   // oxlint-disable-next-line typescript/no-explicit-any
   V = any,
   C extends string = string,
+  // oxlint-disable-next-line typescript/no-explicit-any
+  M = Record<string, any>,
 > extends CommonRuleAndGroupProperties {
   field: F;
   operator: O;
@@ -35,6 +37,13 @@ export interface RuleType<
    * Only used when adding a rule to a query that uses independent combinators.
    */
   combinatorPreceding?: C;
+  /**
+   * Opaque metadata for use by extension packages. The core library
+   * preserves this property but does not read or interpret it.
+   * Extensions like `@react-querybuilder/graph` use `meta` to store
+   * domain-specific context (e.g., graph pattern information).
+   */
+  meta?: M;
 }
 
 /**

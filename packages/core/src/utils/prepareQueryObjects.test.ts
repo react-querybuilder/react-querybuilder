@@ -1,4 +1,4 @@
-import type { RuleGroupType, RuleGroupTypeIC } from '../types';
+import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 import { uuidV4regex } from './generateID';
 import { prepareRule, prepareRuleGroup, prepareRuleOrGroup } from './prepareQueryObjects';
 
@@ -27,6 +27,12 @@ describe('prepareRule', () => {
     });
     expect(preparedRule.value.id).toMatch(uuidV4regex);
     expect(preparedRule.value.rules[0].id).toMatch(uuidV4regex);
+  });
+
+  it('should preserve meta property', () => {
+    const meta = { subject: '?person', tripleRole: 'pattern' as const };
+    const preparedRule = prepareRule({ field: 'foaf:name', operator: '=', value: 'Test', meta });
+    expect(preparedRule.meta).toEqual(meta);
   });
 });
 
@@ -62,6 +68,16 @@ describe('when initial query, without ID, is provided', () => {
     const validQuery = prepareRuleGroup(queryWithoutID);
     expect(validQuery.id).toMatch(uuidV4regex);
     expect(validQuery.rules[0].id).toMatch(uuidV4regex);
+  });
+
+  it('should preserve meta on rules within a group', () => {
+    const meta = { nodeAlias: 'a', graphRole: 'pattern' as const };
+    const query: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'a.name', operator: '=', value: 'Test', meta }],
+    };
+    const validQuery = prepareRuleGroup(query);
+    expect((validQuery.rules[0] as RuleType).meta).toEqual(meta);
   });
 
   it('should generate IDs only for valid query objects', () => {

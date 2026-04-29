@@ -1,12 +1,14 @@
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import stableStringify from 'fast-json-stable-stringify';
-import type { Options as PrettierOptions } from 'prettier';
-import prettier from 'prettier';
-import * as prettierPluginOrganizeImports from 'prettier-plugin-organize-imports';
-import * as prettierPluginEstree from 'prettier/plugins/estree';
+import type { FormatConfig } from 'oxfmt';
+import { format } from 'oxfmt';
 import { transformWithOxc } from 'vite';
+import origOxfmtConfig from '../.oxfmtrc.json' with { type: 'json5' };
+import { version } from '../lerna.json' with { type: 'json5' };
 import { configs } from './exampleConfigs.js';
+
+const oxfmtConfig = origOxfmtConfig as FormatConfig;
 
 interface PackageJSON {
   name: string;
@@ -17,10 +19,6 @@ interface PackageJSON {
 }
 
 console.log('Generating/updating examples');
-
-const rootPrettierConfig = await prettier.resolveConfig(import.meta.file);
-const lernaJson = Bun.file(path.join(import.meta.dirname, '../lerna.json'));
-const { version } = await lernaJson.json();
 
 const compileToJS = async (code: string, fileName: string) => {
   const compiled = await transformWithOxc(code, fileName, { jsx: 'preserve' });
@@ -60,38 +58,13 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   await mkdir(examplePath);
   await Promise.all([mkdir(exampleDotCS), mkdir(exampleSrc)]);
 
-  await Bun.write(
-    path.join(examplePath, 'prettier.config.mjs'),
-    Bun.file(path.join(templatePath, 'prettier.config.mjs'))
-  );
-
-  const examplePrettierConfig = await prettier.resolveConfig(
-    path.join(examplePath, 'package.json')
-  );
   const formatAndWrite = async (filepath: string, fileContents: string) => {
-    let printWidth = examplePrettierConfig?.printWidth;
-
-    if (filepath.endsWith('css')) {
-      printWidth = rootPrettierConfig?.printWidth;
+    const formatted = await format(filepath, fileContents, oxfmtConfig);
+    if (formatted.errors?.length > 0) {
+      console.error(`Errors found in "${filepath}":`);
+      formatted.errors.forEach(error => console.error(error));
     }
-
-    const prettierOptions: PrettierOptions = {
-      ...examplePrettierConfig,
-      ...(printWidth ? { printWidth } : {}),
-      filepath,
-      plugins: [
-        prettierPluginOrganizeImports,
-        // https://github.com/prettier/prettier/issues/16501
-        prettierPluginEstree as prettier.Plugin,
-      ],
-    };
-
-    return Bun.write(
-      filepath,
-      (await prettier.check(fileContents, prettierOptions))
-        ? fileContents
-        : await prettier.format(fileContents, prettierOptions)
-    );
+    return Bun.write(filepath, formatted.code);
   };
 
   // Array of Bun.write promises
@@ -261,21 +234,17 @@ const updateOtherExample = async (otherExampleName: string) => {
     import.meta.dirname,
     `${otherExampleName}/package.json`
   );
-  const otherExamplePrettierOptions = await prettier.resolveConfig(otherExamplePkgJsonPath);
-  const otherExamplePkgJsonFileContents = await prettier.format(
+  const otherExamplePkgJsonFormatted = await format(
+    otherExamplePkgJsonPath,
     stableStringify(otherExamplePkgJSON),
-    {
-      ...otherExamplePrettierOptions,
-      filepath: otherExamplePkgJsonPath,
-      plugins: [
-        prettierPluginOrganizeImports,
-        // https://github.com/prettier/prettier/issues/16501
-        prettierPluginEstree as prettier.Plugin,
-      ],
-    }
+    oxfmtConfig
   );
+  if (otherExamplePkgJsonFormatted.errors?.length > 0) {
+    console.error(`Errors found in "${otherExampleName}" example's package.json:`);
+    otherExamplePkgJsonFormatted.errors.forEach(error => console.error(error));
+  }
   console.log(`Updated package.json for "${otherExampleName}" example`);
-  return Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFileContents);
+  return Bun.write(otherExamplePkgJsonPath, otherExamplePkgJsonFormatted.code);
 };
 // #endregion
 

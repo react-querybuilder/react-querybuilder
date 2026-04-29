@@ -39,7 +39,7 @@
 }
 
 /*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.0.2).
+The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.1.1).
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
@@ -5952,6 +5952,7 @@ fieldset:disabled .m_8ee546b8,
 .m_f3ed6b2b {
   color: var(--radio-icon-color);
   opacity: var(--radio-icon-opacity, 0);
+  translate: -50% -50%;
   transform: var(
     --radio-icon-transform,
     scale(0.2) translateY(calc(0.625rem * var(--mantine-scale)))
@@ -5963,8 +5964,8 @@ fieldset:disabled .m_8ee546b8,
   width: var(--radio-icon-size);
   height: var(--radio-icon-size);
   position: absolute;
-  top: calc(50% - var(--radio-icon-size) / 2);
-  left: calc(50% - var(--radio-icon-size) / 2);
+  top: 50%;
+  left: 50%;
 }
 
 .m_8a3dbb89 {
@@ -8119,6 +8120,8 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 
 .m_f698e191 {
   --level-offset: var(--mantine-spacing-lg);
+  --tree-line-width: calc(0.0625rem * var(--mantine-scale));
+  --tree-line-color: var(--mantine-color-default-border);
   margin: 0;
   padding: 0;
   user-select: none;
@@ -8143,6 +8146,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 }
 
 .m_dc283425 {
+  position: relative;
   padding-inline-start: var(--label-offset);
 }
 
@@ -8152,6 +8156,69 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 
 :where([data-mantine-color-scheme='dark']) .m_dc283425:where([data-selected]) {
   background-color: var(--mantine-color-dark-5);
+}
+
+.m_dc283425:where([data-dragging]) {
+  opacity: 0.4;
+}
+
+.m_dc283425:where([data-drag-over='before'])::before {
+  content: '';
+  position: absolute;
+  top: calc(-0.0625rem * var(--mantine-scale));
+  inset-inline-start: var(--label-offset, 0);
+  inset-inline-end: 0;
+  height: calc(0.125rem * var(--mantine-scale));
+  background-color: var(--mantine-primary-color-filled);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.m_dc283425:where([data-drag-over='after'])::after {
+  content: '';
+  position: absolute;
+  bottom: calc(-0.0625rem * var(--mantine-scale));
+  inset-inline-start: var(--label-offset, 0);
+  inset-inline-end: 0;
+  height: calc(0.125rem * var(--mantine-scale));
+  background-color: var(--mantine-primary-color-filled);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.m_dc283425:where([data-drag-over='inside']) {
+  background-color: var(--mantine-primary-color-light);
+}
+
+:where([data-with-lines]) .m_f6970eb1 {
+  position: relative;
+}
+
+:where([data-with-lines]) .m_75f3ecf > .m_f6970eb1::before {
+  content: '';
+  position: absolute;
+  top: calc(0.75rem * var(--mantine-scale));
+  inset-inline-start: calc(var(--label-offset) - var(--level-offset) / 2);
+  width: calc(var(--level-offset) / 2);
+  height: 0;
+  border-top: var(--tree-line-width) solid var(--tree-line-color);
+  pointer-events: none;
+}
+
+:where([data-with-lines]) .m_75f3ecf > .m_f6970eb1::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: calc(var(--label-offset) - var(--level-offset) / 2);
+  width: 0;
+  border-inline-start: var(--tree-line-width) solid var(--tree-line-color);
+  pointer-events: none;
+}
+
+:where([data-with-lines]) .m_75f3ecf > .m_f6970eb1:last-child::after {
+  bottom: auto;
+  height: calc(0.75rem * var(--mantine-scale));
 }
 
 .m_d08caa0 :first-child {

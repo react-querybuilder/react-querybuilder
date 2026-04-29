@@ -54,3 +54,8 @@ html[data-theme='dark']
   .rule-value::placeholder {
   color: color-mix(in srgb, rebeccapurple, white 30%);
 }
+
+.tabs-container .tabs-container li {
+  font-size: smaller;
+  padding: var(--ifm-badge-padding-vertical) var(--ifm-badge-padding-horizontal);
+}

@@ -37,9 +37,12 @@ import {
 } from 'react-querybuilder';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
+import { parseCypher } from 'react-querybuilder/parseCypher';
+import { parseGremlin } from 'react-querybuilder/parseGremlin';
 import { parseJSONata } from 'react-querybuilder/parseJSONata';
 import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
 import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+import { parseSPARQL } from 'react-querybuilder/parseSPARQL';
 import { parseSpEL } from 'react-querybuilder/parseSpEL';
 import { parseSQL } from 'react-querybuilder/parseSQL';
 import {
@@ -107,6 +110,9 @@ const initialSpEL = `firstName matches "^Stev" && age > 28`;
 const initialCEL = `firstName.startsWith("Stev") && age > 28`;
 const initialJSONata = `$contains(firstName, "Stev") and age > 28`;
 const initialJsonLogic = JSON.stringify(formatQuery(initialQuery, 'jsonlogic'), null, 2);
+const initialCypher = `firstName STARTS WITH 'Stev' AND age > 28`;
+const initialSPARQL = `CONTAINS(firstName, "Stev") && age > 28`;
+const initialGremlin = `.has('firstName', TextP.startingWith('Stev')).has('age', P.gt(28))`;
 
 interface DemoProps {
   variant?: StyleName;
@@ -133,6 +139,23 @@ const notesMongoDB = (
 const notesSpEL = '';
 const notesCEL = '';
 const notesJSONata = '';
+const notesCypher = (
+  <em>
+    Cypher can be a full <code>MATCH...WHERE</code> query or the <code>WHERE</code> clause by
+    itself.
+  </em>
+);
+const notesSPARQL = (
+  <em>
+    SPARQL can be a full <code>SELECT...WHERE</code> query or the <code>FILTER</code> expression by
+    itself.
+  </em>
+);
+const notesGremlin = (
+  <em>
+    Gremlin input should be the traversal steps (e.g. <code>.has(...)</code> chains).
+  </em>
+);
 const notesJsonLogic = (
   <em>
     Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
@@ -188,6 +211,12 @@ export default function Demo({
   const [celParseError, setCELParseError] = useState('');
   const [jsonata, setJSONata] = useState(initialJSONata);
   const [jsonataParseError, setJSONataParseError] = useState('');
+  const [cypher, setCypher] = useState(initialCypher);
+  const [cypherParseError, setCypherParseError] = useState('');
+  const [sparql, setSPARQL] = useState(initialSPARQL);
+  const [sparqlParseError, setSPARQLParseError] = useState('');
+  const [gremlin, setGremlin] = useState(initialGremlin);
+  const [gremlinParseError, setGremlinParseError] = useState('');
 
   const [exportCall, setExportCall] = useState('');
   const [codeStringState, setCodeStringState] = useState('');
@@ -435,6 +464,39 @@ export default function Demo({
       setJSONataParseError((err as Error).message);
     }
   }, [jsonata]);
+  const loadFromCypher = useCallback(() => {
+    try {
+      const qLocal = parseCypher(cypher);
+      const qIC = parseCypher(cypher, { independentCombinators: true });
+      setQuery(qLocal);
+      setQueryIC(qIC);
+      setCypherParseError('');
+    } catch (err) {
+      setCypherParseError((err as Error).message);
+    }
+  }, [cypher]);
+  const loadFromSPARQL = useCallback(() => {
+    try {
+      const qLocal = parseSPARQL(sparql);
+      const qIC = parseSPARQL(sparql, { independentCombinators: true });
+      setQuery(qLocal);
+      setQueryIC(qIC);
+      setSPARQLParseError('');
+    } catch (err) {
+      setSPARQLParseError((err as Error).message);
+    }
+  }, [sparql]);
+  const loadFromGremlin = useCallback(() => {
+    try {
+      const qLocal = parseGremlin(gremlin);
+      const qIC = convertToIC(qLocal);
+      setQuery(qLocal);
+      setQueryIC(qIC);
+      setGremlinParseError('');
+    } catch (err) {
+      setGremlinParseError((err as Error).message);
+    }
+  }, [gremlin]);
 
   const _getPermalinkUncompressed = () =>
     `${location.origin}${siteLocation.pathname}${permalinkHash}`;
@@ -647,6 +709,26 @@ export default function Demo({
                     attributes: getExportTabAttributes('ldap'),
                   },
                   {
+                    value: 'cypher',
+                    label: 'Cypher',
+                    attributes: getExportTabAttributes('cypher'),
+                  },
+                  {
+                    value: 'gql',
+                    label: 'GQL',
+                    attributes: getExportTabAttributes('gql'),
+                  },
+                  {
+                    value: 'sparql',
+                    label: 'SPARQL',
+                    attributes: getExportTabAttributes('sparql'),
+                  },
+                  {
+                    value: 'gremlin',
+                    label: 'Gremlin',
+                    attributes: getExportTabAttributes('gremlin'),
+                  },
+                  {
                     value: 'natural_language',
                     label: 'Natural language',
                     attributes: getExportTabAttributes('natural_language'),
@@ -782,6 +864,34 @@ export default function Demo({
                   </div>
                   {exportPresentation}
                 </TabItem>
+                <TabItem value="cypher">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="cypher" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="gql">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="gql" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="sparql">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="sparql" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
+                <TabItem value="gremlin">
+                  <div className={styles.exportOptions}>
+                    <ExportInfoLinks format="gremlin" />
+                    {parseNumbersOption}
+                  </div>
+                  {exportPresentation}
+                </TabItem>
                 <TabItem value="natural_language">
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="natural_language" />
@@ -801,6 +911,9 @@ export default function Demo({
                   { value: 'spel', label: 'SpEL' },
                   { value: 'cel', label: 'CEL' },
                   { value: 'jsonata', label: 'JSONata' },
+                  { value: 'cypher', label: 'Cypher/GQL' },
+                  { value: 'sparql', label: 'SPARQL' },
+                  { value: 'gremlin', label: 'Gremlin' },
                 ]}>
                 <TabItem value="sql">
                   <ImportTab
@@ -860,6 +973,36 @@ export default function Demo({
                     error={jsonataParseError}
                     loadQueryFromCode={loadFromJSONata}
                     notes={notesJSONata}
+                  />
+                </TabItem>
+                <TabItem value="cypher">
+                  <ImportTab
+                    heading="Import Cypher/GQL"
+                    code={cypher}
+                    setCode={setCypher}
+                    error={cypherParseError}
+                    loadQueryFromCode={loadFromCypher}
+                    notes={notesCypher}
+                  />
+                </TabItem>
+                <TabItem value="sparql">
+                  <ImportTab
+                    heading="Import SPARQL"
+                    code={sparql}
+                    setCode={setSPARQL}
+                    error={sparqlParseError}
+                    loadQueryFromCode={loadFromSPARQL}
+                    notes={notesSPARQL}
+                  />
+                </TabItem>
+                <TabItem value="gremlin">
+                  <ImportTab
+                    heading="Import Gremlin"
+                    code={gremlin}
+                    setCode={setGremlin}
+                    error={gremlinParseError}
+                    loadQueryFromCode={loadFromGremlin}
+                    notes={notesGremlin}
                   />
                 </TabItem>
               </Tabs>

@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { format } from 'oxfmt';
 import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
@@ -28,11 +29,16 @@ export default defineConfig(async options => {
             await mkdir(apiLib, { recursive: true });
             await Bun.write(
               `${apiLib}/package.json`,
-              JSON.stringify(
-                { main: `../dist/cjs/${apiLib}.js`, types: `../dist/cjs/${apiLib}.d.ts` },
-                null,
-                2
-              )
+              (
+                await format(
+                  'package.json',
+                  JSON.stringify(
+                    { main: `../dist/cjs/${apiLib}.js`, types: `../dist/cjs/${apiLib}.d.ts` },
+                    null,
+                    2
+                  )
+                )
+              ).code
             );
           })
         );

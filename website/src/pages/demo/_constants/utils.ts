@@ -200,6 +200,10 @@ export const getExportDisplayLanguage = (format: ExportFormat) => {
     case 'cel':
     case 'spel':
     case 'jsonata':
+    case 'cypher':
+    case 'gql':
+    case 'sparql':
+    case 'gremlin':
       return format;
 
     case 'mongodb_query':

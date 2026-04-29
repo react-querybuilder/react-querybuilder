@@ -10,10 +10,9 @@
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.6.0",
-    "prettier": "^3",
-    "typescript": "^5.7.2",
-    "vite": "^7"
+    "@vitejs/plugin-react": "^6",
+    "typescript": "^6",
+    "vite": "^8"
   },
   "name": "react-querybuilder-base-ui-example",
   "private": true,

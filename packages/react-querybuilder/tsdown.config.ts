@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { format } from 'oxfmt';
 import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import {
@@ -12,7 +13,12 @@ const writeNode10pkg = async (entryPointNames: string[]) => {
   await mkdir('debug', { recursive: true });
   await Bun.write(
     'debug/package.json',
-    JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
+    (
+      await format(
+        'package.json',
+        JSON.stringify({ main: '../dist/cjs/debug.js', types: '../dist/cjs/debug.d.ts' }, null, 2)
+      )
+    ).code
   );
   // Write the other {util}/package.json's for node10 resolution
   await Promise.all(
@@ -20,7 +26,12 @@ const writeNode10pkg = async (entryPointNames: string[]) => {
       await mkdir(util, { recursive: true });
       await Bun.write(
         `${util}/package.json`,
-        JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+        (
+          await format(
+            'package.json',
+            JSON.stringify({ main: `../dist/${util}.js`, types: `../dist/${util}.d.ts` }, null, 2)
+          )
+        ).code
       );
     })
   );
@@ -50,9 +61,12 @@ export default defineConfig(async options => {
   const utilEntryPoints = {
     formatQuery: 'src/fwd/formatQuery.ts',
     parseCEL: 'src/fwd/parseCEL.ts',
+    parseCypher: 'src/fwd/parseCypher.ts',
+    parseGremlin: 'src/fwd/parseGremlin.ts',
     parseJSONata: 'src/fwd/parseJSONata.ts',
     parseJsonLogic: 'src/fwd/parseJsonLogic.ts',
     parseMongoDB: 'src/fwd/parseMongoDB.ts',
+    parseSPARQL: 'src/fwd/parseSPARQL.ts',
     parseSpEL: 'src/fwd/parseSpEL.ts',
     parseSQL: 'src/fwd/parseSQL.ts',
     transformQuery: 'src/fwd/transformQuery.ts',

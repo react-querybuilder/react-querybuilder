@@ -1,0 +1,77 @@
+@use '../../core/src/query-builder';
+
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.graph-tabs {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+.graph-tab {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-weight: normal;
+
+  &--active {
+    border-bottom-color: #0366d6;
+    font-weight: bold;
+  }
+}
+
+.graph-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.graph-companion {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: #f0f4ff;
+  border-radius: 4px;
+}
+
+.graph-output {
+  background: #f5f5f5;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  margin-top: 0.75rem;
+}
+
+.queryBuilder-graphMeta {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  input[type='text'] {
+    width: 6em;
+    padding: 0.15rem 0.3rem;
+  }
+
+  select {
+    padding: 0.15rem 0.3rem;
+  }
+}
+
+.graph-addRuleActions {
+  display: inline-flex;
+  gap: 0.25rem;
+}

@@ -1,0 +1,52 @@
+{
+  "name": "@react-querybuilder/graph",
+  "description": "Graph query language support (Cypher, GQL, SPARQL, Gremlin) for React Query Builder — PRIVATE STUB, use @react-querybuilder/core instead",
+  "version": "8.15.0",
+  "private": true,
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_graph.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_graph.d.mts",
+        "default": "./dist/react-querybuilder_graph.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/react-querybuilder_graph.legacy-esm.d.ts",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/graph"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "bun --bun tsdown",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@react-querybuilder/core": "8.15.0",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-querybuilder": "8.15.0",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "peerDependencies": {
+    "@react-querybuilder/core": "8.15.0"
+  }
+}

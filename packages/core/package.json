@@ -40,6 +40,26 @@
         "default": "./dist/parseCEL.js"
       }
     },
+    "./parseCypher": {
+      "import": {
+        "types": "./dist/parseCypher.d.mts",
+        "import": "./dist/parseCypher.mjs"
+      },
+      "require": {
+        "types": "./dist/parseCypher.d.ts",
+        "default": "./dist/parseCypher.js"
+      }
+    },
+    "./parseGremlin": {
+      "import": {
+        "types": "./dist/parseGremlin.d.mts",
+        "import": "./dist/parseGremlin.mjs"
+      },
+      "require": {
+        "types": "./dist/parseGremlin.d.ts",
+        "default": "./dist/parseGremlin.js"
+      }
+    },
     "./parseJSONata": {
       "import": {
         "types": "./dist/parseJSONata.d.mts",
@@ -68,6 +88,16 @@
       "require": {
         "types": "./dist/parseMongoDB.d.ts",
         "default": "./dist/parseMongoDB.js"
+      }
+    },
+    "./parseSPARQL": {
+      "import": {
+        "types": "./dist/parseSPARQL.d.mts",
+        "import": "./dist/parseSPARQL.mjs"
+      },
+      "require": {
+        "types": "./dist/parseSPARQL.d.ts",
+        "default": "./dist/parseSPARQL.js"
       }
     },
     "./parseSpEL": {
@@ -107,9 +137,12 @@
     "dist",
     "formatQuery",
     "parseCEL",
+    "parseCypher",
+    "parseGremlin",
     "parseJSONata",
     "parseJsonLogic",
     "parseMongoDB",
+    "parseSPARQL",
     "parseSpEL",
     "parseSQL",
     "transformQuery"
@@ -142,9 +175,12 @@
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
     "@electric-sql/pglite": "catalog:test",
+    "@grafeo-db/js": "^0.5.41",
     "@prisma/client": "^7.7.0",
+    "@traqula/parser-sparql-1-2": "^1.1.0",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "catalog:",
+    "chevrotain": "^12.0.0",
     "drizzle-orm": "^0.45.2",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
@@ -173,7 +209,9 @@
     "json-logic-js": ">=2",
     "jsonata": ">=2",
     "sequelize": ">=6",
-    "spel2js": ">=0.2.0"
+    "spel2js": ">=0.2.0",
+    "chevrotain": ">=11",
+    "@traqula/parser-sparql-1-2": ">=0.1.0"
   },
   "peerDependenciesMeta": {
     "drizzle-orm": {
@@ -189,6 +227,12 @@
       "optional": true
     },
     "spel2js": {
+      "optional": true
+    },
+    "chevrotain": {
+      "optional": true
+    },
+    "@traqula/parser-sparql-1-2": {
       "optional": true
     }
   },
