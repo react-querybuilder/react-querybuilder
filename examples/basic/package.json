@@ -7,7 +7,6 @@
   "description": "React Query Builder Basic Example",
   "devDependencies": {
     "@vitejs/plugin-react": "^4.6.0",
-    "prettier": "^3",
     "vite": "^7"
   },
   "name": "react-querybuilder-basic-example",

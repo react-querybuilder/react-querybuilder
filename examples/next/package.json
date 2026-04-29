@@ -9,7 +9,6 @@
     "@types/node": "24.0.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "prettier": "^3",
     "typescript": "5.7.2"
   },
   "name": "react-querybuilder-next-example",
