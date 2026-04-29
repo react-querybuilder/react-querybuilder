@@ -195,16 +195,12 @@
     "prettier": "3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
     "react": "catalog:",
-    "react-dnd": "^16.0.1",
-    "react-dnd-test-backend": "^16.0.1",
-    "react-dnd-test-utils": "^16.0.1",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "tsdown": "^0.21.8",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "^4.1.4",
-    "vitest-native": "^0.3.0"
+    "vitest": "^4.1.4"
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",
