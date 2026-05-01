@@ -58,7 +58,7 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "dayjs": "^1.11.20",
+    "dayjs": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.15.0",
@@ -69,7 +69,7 @@
   "peerDependencies": {
     "@fluentui/react-components": "^9",
     "@fluentui/react-icons-mdl2": "^1",
-    "dayjs": ">=1",
+    "dayjs": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.15.0"
   }

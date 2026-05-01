@@ -58,7 +58,7 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "dayjs": "^1.11.20",
+    "dayjs": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.15.0",
@@ -70,7 +70,7 @@
     "@mantine/core": ">=7",
     "@mantine/dates": ">=7",
     "@mantine/hooks": ">=7",
-    "dayjs": ">=1",
+    "dayjs": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.15.0"
   }

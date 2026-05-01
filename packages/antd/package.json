@@ -58,7 +58,7 @@
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "antd": "^6.3.5",
-    "dayjs": "^1.11.20",
+    "dayjs": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.15.0",
@@ -69,7 +69,7 @@
   "peerDependencies": {
     "@ant-design/icons": ">=5",
     "antd": ">=5.11.0",
-    "dayjs": ">=1",
+    "dayjs": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.15.0"
   }
