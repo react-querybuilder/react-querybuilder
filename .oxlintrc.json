@@ -40,6 +40,7 @@
     "jest/no-disabled-tests": "warn",
     "jest/require-to-throw-message": "off",
     "jest/valid-title": "off",
+    "no-underscore-dangle": "off",
     "react/display-name": "off",
     "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
     "react/react-in-jsx-scope": "error",
