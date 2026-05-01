@@ -6,6 +6,10 @@ Rules engine extension for `react-querybuilder`.
 >
 > This package is in a very early stage of development.
 
+## Documentation
+
+Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org/).
+
 ## Installation
 
 ```bash
@@ -32,7 +36,3 @@ import { formatRulesEngine } from '@react-querybuilder/rules-engine';
 
 formatRulesEngine(rulesEngine, { format: 'json-rules-engine' });
 ```
-
-## Documentation
-
-Full documentation is available at [react-querybuilder.js.org](https://react-querybuilder.js.org/).
