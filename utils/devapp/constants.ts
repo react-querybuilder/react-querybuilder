@@ -346,7 +346,7 @@ export const formatMap: [ExportFormat, string, HttpsURL][] = [
   ['json', 'JSON', 'https://en.wikipedia.org/wiki/JSON'],
   ['mongodb', 'MongoDB', 'https://www.mongodb.com/'],
   ['mongodb_query', 'MongoDB Query', 'https://www.mongodb.com/'],
-  ['cel', 'CEL', 'https://github.com/google/cel-spec'],
+  ['cel', 'CEL', 'https://cel.dev'],
   ['spel', 'SpEL', 'https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-language-ref'],
   ['jsonlogic', 'JsonLogic', 'https://jsonlogic.com/'],
   ['jsonata', 'JSONata', 'https://jsonata.org/'],

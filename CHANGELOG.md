@@ -1108,7 +1108,7 @@ _TL;DR: These are probably not breaking changes._
     - `defaultValueProcessorSpELByRule`
 - [#320]/[#323] New parser functions (also available as standalone builds in the `dist` folder). Click the respective "Import from [format]" button in [the demo](https://react-querybuilder.js.org/react-querybuilder) to try them out.
   - `parseJsonLogic` takes a [JsonLogic](https://jsonlogic.com/) object and converts it to `RuleGroupType`.
-  - `parseCEL` takes a [CEL](https://github.com/google/cel-spec) string and converts it to `RuleGroupType`. Click the "Import from CEL" button in [the demo](https://react-querybuilder.js.org/react-querybuilder).
+  - `parseCEL` takes a [CEL](https://cel.dev) string and converts it to `RuleGroupType`. Click the "Import from CEL" button in [the demo](https://react-querybuilder.js.org/react-querybuilder).
 - [#328] New utility function `transformQuery` recursively processes rule groups and rules with the provided `ruleProcessor`, `ruleGroupProcessor`, and other options ([documentation](https://react-querybuilder.js.org/docs/api/misc#transformquery)).
 
 ### Fixed
@@ -1208,7 +1208,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 ### Added
 
-- [Common Expression Language (CEL)](https://github.com/google/cel-spec) export format for `formatQuery`.
+- [Common Expression Language (CEL)](https://cel.dev) export format for `formatQuery`.
 
 ## [v4.2.2] - 2022-03-12
 
