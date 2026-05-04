@@ -14,6 +14,16 @@ import {
   testQueryDQ,
   testQuerySQ,
 } from '../formatQueryTestUtils';
+import {
+  caseInsensitiveBeginsWithQuery,
+  caseInsensitiveContainsQuery,
+  caseInsensitiveEqualsQuery,
+  gremlinGraphProcessor,
+  listContainsQuery,
+  listDoesNotContainQuery,
+  regexNegationQuery,
+  regexQuery,
+} from './graphTestUtils';
 
 const gremlinString = `.hasNot('firstName').has('lastName').has('firstName', within('Test', 'This')).has('lastName', without('Test', 'This')).has('firstName', between('Test', 'This')).has('firstName', between('Test', 'This')).has('lastName', outside('Test', 'This')).has('age', between('12', '14')).has('age', '26').has('isMusician', true).has('isLucky', false).not(__.has('gender', 'M'), __.has('job', neq('Programmer')), __.has('email', containing('@'))).or(__.has('lastName', notContaining('ab')), __.has('job', startingWith('Prog')), __.has('email', endingWith('com')), __.has('job', notStartingWith('Man')), __.has('email', notEndingWith('fr'))).has('invalid', '')`;
 const gremlinStringForValueSourceField = `.hasNot('firstName').has('lastName').has('firstName', within(middleName, lastName)).has('lastName', without(middleName, lastName)).has('firstName', between(middleName, lastName)).has('firstName', between(middleName, lastName)).has('lastName', outside(middleName, lastName)).has('age', iq).has('isMusician', isCreative).not(__.has('gender', someLetter), __.has('job', neq(isBetweenJobs)), __.has('email', containing(atSign))).or(__.has('lastName', notContaining(firstName)), __.has('job', startingWith(jobPrefix)), __.has('email', endingWith(dotCom)), __.has('job', notStartingWith(hasNoJob)), __.has('email', notEndingWith(isInvalid)))`;
@@ -159,4 +169,64 @@ it('skips rules with placeholder field, operator, or value', () => {
       { format: 'gremlin', placeholderValueName: 'PLACEHOLDER' }
     )
   ).toBe(`.has('f4', 'v4').has('f7', 'v7')`);
+});
+
+describe('regex (custom ruleProcessor)', () => {
+  it('matchesRegex', () => {
+    expect(
+      formatQuery(regexQuery(), { format: 'gremlin', ruleProcessor: gremlinGraphProcessor })
+    ).toBe(`.has('madeUpName', regex('.*man$'))`);
+  });
+
+  it('doesNotMatchRegex', () => {
+    expect(
+      formatQuery(regexNegationQuery(), { format: 'gremlin', ruleProcessor: gremlinGraphProcessor })
+    ).toBe(`.has('madeUpName', notRegex('^S.*'))`);
+  });
+});
+
+describe('list containment (custom ruleProcessor)', () => {
+  it('listContains', () => {
+    expect(
+      formatQuery(listContainsQuery(), { format: 'gremlin', ruleProcessor: gremlinGraphProcessor })
+    ).toBe(`.has('nicknames', containing('Cap'))`);
+  });
+
+  it('listDoesNotContain', () => {
+    expect(
+      formatQuery(listDoesNotContainQuery(), {
+        format: 'gremlin',
+        ruleProcessor: gremlinGraphProcessor,
+      })
+    ).toBe(`.has('nicknames', notContaining('Spidey'))`);
+  });
+});
+
+describe('case-insensitive (custom ruleProcessor)', () => {
+  it('equalsIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveEqualsQuery(), {
+        format: 'gremlin',
+        ruleProcessor: gremlinGraphProcessor,
+      })
+    ).toBe(`.has('firstName', eq('steve').ignoreCase())`);
+  });
+
+  it('containsIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveContainsQuery(), {
+        format: 'gremlin',
+        ruleProcessor: gremlinGraphProcessor,
+      })
+    ).toBe(`.has('madeUpName', containing('spider').ignoreCase())`);
+  });
+
+  it('beginsWithIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveBeginsWithQuery(), {
+        format: 'gremlin',
+        ruleProcessor: gremlinGraphProcessor,
+      })
+    ).toBe(`.has('madeUpName', startingWith('super').ignoreCase())`);
+  });
 });

@@ -1,10 +1,18 @@
 // oxlint-disable jest/expect-expect
 
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
+import type { RuleGroupType } from '../../../types';
 import { transformQuery } from '../../transformQuery';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
-import { dbTests, fields, superUsers as getSuperUsers } from '../dbqueryTestUtils';
+import {
+  augmentedSuperUsers,
+  dbTests,
+  fields,
+  superUsers as getSuperUsers,
+  nicknameMap,
+} from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+import { cypherGraphProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -12,6 +20,7 @@ const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
 const superUsers = getSuperUsers('postgres');
+const augmented = augmentedSuperUsers('postgres');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -28,8 +37,9 @@ let db: GrafeoDBType;
 
 beforeAll(() => {
   db = GrafeoDB.create();
-  for (const u of superUsers) {
-    db.createNode(['SuperUser'], u);
+  for (const u of augmented) {
+    // Store nicknames as a list property alongside the standard properties
+    db.createNode(['SuperUser'], { ...u, nicknames: u.nicknames });
   }
 });
 
@@ -167,5 +177,99 @@ describe('Cypher (Grafeo)', () => {
       },
       superUsers.filter(u => !u.madeUpName.startsWith('S'))
     );
+  });
+});
+
+// ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
+
+const runCypherCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+  const where = formatQuery(query, {
+    format: 'cypher',
+    parseNumbers: true,
+    ruleProcessor: cypherGraphProcessor,
+  });
+  const cypher = `MATCH (su:SuperUser)\nWHERE ${where}\n${returnClause}`;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const result = await (db as any).executeCypher(cypher);
+  expect(result.toArray()).toEqual(expectedResult.map(toCypherRow));
+};
+
+describe('Cypher graph patterns (Grafeo)', () => {
+  describe('regex', () => {
+    test('matchesRegex — names ending in "man"', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.madeUpName', operator: 'matchesRegex', value: '.*man$' }],
+        },
+        superUsers.filter(u => /.*man$/.test(u.madeUpName))
+      );
+    });
+
+    test('doesNotMatchRegex — names not starting with "S"', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.madeUpName', operator: 'doesNotMatchRegex', value: '^S.*' }],
+        },
+        superUsers.filter(u => !/^S.*/.test(u.madeUpName))
+      );
+    });
+  });
+
+  describe('list containment', () => {
+    test('listContains — nicknames containing "Cap"', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.nicknames', operator: 'listContains', value: 'Cap' }],
+        },
+        superUsers.filter(u => [u.nickname, ...(nicknameMap[u.madeUpName] ?? [])].includes('Cap'))
+      );
+    });
+
+    test('listDoesNotContain — nicknames not containing "Spidey"', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.nicknames', operator: 'listDoesNotContain', value: 'Spidey' }],
+        },
+        superUsers.filter(
+          u => ![u.nickname, ...(nicknameMap[u.madeUpName] ?? [])].includes('Spidey')
+        )
+      );
+    });
+  });
+
+  describe('case-insensitive', () => {
+    test('equalsIgnoreCase', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.firstName', operator: 'equalsIgnoreCase', value: 'steve' }],
+        },
+        superUsers.filter(u => u.firstName.toLowerCase() === 'steve')
+      );
+    });
+
+    test('containsIgnoreCase', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.madeUpName', operator: 'containsIgnoreCase', value: 'spider' }],
+        },
+        superUsers.filter(u => u.madeUpName.toLowerCase().includes('spider'))
+      );
+    });
+
+    test('beginsWithIgnoreCase', async () => {
+      await runCypherCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'su.madeUpName', operator: 'beginsWithIgnoreCase', value: 'super' }],
+        },
+        superUsers.filter(u => u.madeUpName.toLowerCase().startsWith('super'))
+      );
+    });
   });
 });

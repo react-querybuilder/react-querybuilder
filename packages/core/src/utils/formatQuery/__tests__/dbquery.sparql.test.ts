@@ -1,9 +1,11 @@
 // oxlint-disable jest/expect-expect
 
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
+import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
 import { fields, superUsers as getSuperUsers } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+import { sparqlGraphProcessor, sparqlTypedLiteralProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -234,5 +236,107 @@ describe('SPARQL (Grafeo)', () => {
       },
       superUsersWithAge.filter(u => !u.madeUpName.startsWith('S'))
     );
+  });
+});
+
+// ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
+
+const runSPARQLCustom = async (
+  query: RuleGroupType,
+  expectedResult: SuperUser[],
+  ruleProcessor: typeof sparqlGraphProcessor
+) => {
+  const filter = formatQuery(query, { format: 'sparql', parseNumbers: true, ruleProcessor });
+  const sparql = `${selectClause} WHERE {
+    ?su a <SuperUser> .
+    ${triplePatterns} .
+    FILTER(${filter})
+  } ORDER BY ?madeUpName`;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const result = await (db as any).executeSparql(sparql);
+  expect(result.toArray()).toEqual(expectedResult.map(toSparqlRow));
+};
+
+describe('SPARQL graph patterns (Grafeo)', () => {
+  describe('regex', () => {
+    test('matchesRegex — names ending in "man"', async () => {
+      await runSPARQLCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: '?madeUpName', operator: 'matchesRegex', value: '.*man$' }],
+        },
+        superUsersWithAge.filter(u => /.*man$/.test(u.madeUpName)),
+        sparqlGraphProcessor
+      );
+    });
+
+    test('doesNotMatchRegex — names not starting with "S"', async () => {
+      await runSPARQLCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: '?madeUpName', operator: 'doesNotMatchRegex', value: '^S.*' }],
+        },
+        superUsersWithAge.filter(u => !/^S.*/.test(u.madeUpName)),
+        sparqlGraphProcessor
+      );
+    });
+  });
+
+  describe('typed literals', () => {
+    const typedFields = [
+      { name: '?powerUpAge', label: 'Power Up Age', inputType: 'number' as const },
+    ];
+
+    test('xsd:integer comparison', async () => {
+      const filter = formatQuery(
+        { combinator: 'and', rules: [{ field: '?powerUpAge', operator: '>', value: '15' }] },
+        { format: 'sparql', ruleProcessor: sparqlTypedLiteralProcessor, fields: typedFields }
+      );
+      const sparql = `${selectClause} WHERE {
+        ?su a <SuperUser> .
+        ${triplePatterns} .
+        FILTER(${filter})
+      } ORDER BY ?madeUpName`;
+      // oxlint-disable-next-line typescript/no-explicit-any
+      const result = await (db as any).executeSparql(sparql);
+      expect(result.toArray()).toEqual(
+        superUsersWithAge.filter(u => u.powerUpAge! > 15).map(toSparqlRow)
+      );
+    });
+  });
+
+  describe('case-insensitive', () => {
+    test('equalsIgnoreCase', async () => {
+      await runSPARQLCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: '?firstName', operator: 'equalsIgnoreCase', value: 'steve' }],
+        },
+        superUsersWithAge.filter(u => u.firstName.toLowerCase() === 'steve'),
+        sparqlGraphProcessor
+      );
+    });
+
+    test('containsIgnoreCase', async () => {
+      await runSPARQLCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: '?madeUpName', operator: 'containsIgnoreCase', value: 'spider' }],
+        },
+        superUsersWithAge.filter(u => u.madeUpName.toLowerCase().includes('spider')),
+        sparqlGraphProcessor
+      );
+    });
+
+    test('beginsWithIgnoreCase', async () => {
+      await runSPARQLCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: '?madeUpName', operator: 'beginsWithIgnoreCase', value: 'super' }],
+        },
+        superUsersWithAge.filter(u => u.madeUpName.toLowerCase().startsWith('super')),
+        sparqlGraphProcessor
+      );
+    });
   });
 });

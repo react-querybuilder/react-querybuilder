@@ -1,9 +1,16 @@
 // oxlint-disable jest/expect-expect
 
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
+import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
-import { fields, superUsers as getSuperUsers } from '../dbqueryTestUtils';
+import {
+  augmentedSuperUsers,
+  fields,
+  superUsers as getSuperUsers,
+  nicknameMap,
+} from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
+import { gremlinGraphProcessor } from './graphTestUtils';
 
 // Native addon — use require for reliable .node file loading
 const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType };
@@ -11,6 +18,7 @@ const { GrafeoDB } = require('@grafeo-db/js') as { GrafeoDB: typeof GrafeoDBType
 // ─── Test Data ────────────────────────────────────────────────────────────────
 
 const superUsers = getSuperUsers('postgres');
+const augmented = augmentedSuperUsers('postgres');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -23,8 +31,9 @@ let db: GrafeoDBType;
 
 beforeAll(() => {
   db = GrafeoDB.create();
-  for (const u of superUsers) {
-    db.createNode(['SuperUser'], u);
+  for (const u of augmented) {
+    // Store nicknames as a list property alongside the standard properties
+    db.createNode(['SuperUser'], { ...u, nicknames: u.nicknames });
   }
 });
 
@@ -206,5 +215,115 @@ describe('Gremlin (Grafeo)', () => {
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: 'notNull', value: null }] },
       superUsers.filter(u => u.powerUpAge !== null)
     );
+  });
+});
+
+// ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
+
+const runGremlinCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+  const steps = formatQuery(query, {
+    format: 'gremlin',
+    parseNumbers: true,
+    ruleProcessor: gremlinGraphProcessor,
+  });
+  const gremlin = `g.V().hasLabel('SuperUser')${steps}${orderAndProject}`;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const result = await (db as any).executeGremlin(gremlin);
+  expect(result.toArray()).toEqual(expectedResult);
+};
+
+describe('Gremlin graph patterns (Grafeo)', () => {
+  // Note: Grafeo's Gremlin engine may not support regex(), notRegex(),
+  // containing() for list membership, or .ignoreCase(). These tests
+  // document the expected Gremlin output and verify execution where supported.
+
+  describe('regex', () => {
+    test('matchesRegex — names ending in "man"', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'madeUpName', operator: 'matchesRegex', value: '.*man$' }],
+        },
+        superUsers.filter(u => /.*man$/.test(u.madeUpName))
+      );
+    });
+
+    // Grafeo doesn't support negated predicates with arguments (notRegex)
+    // oxlint-disable-next-line no-disabled-tests
+    test.skip('doesNotMatchRegex — names not starting with "S"', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'madeUpName', operator: 'doesNotMatchRegex', value: '^S.*' }],
+        },
+        superUsers.filter(u => !/^S.*/.test(u.madeUpName))
+      );
+    });
+  });
+
+  describe('list containment', () => {
+    // Grafeo's containing() operates on string contents, not list membership
+    // oxlint-disable-next-line no-disabled-tests
+    test.skip('listContains — nicknames containing "Cap"', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'nicknames', operator: 'listContains', value: 'Cap' }],
+        },
+        superUsers.filter(u => [u.nickname, ...(nicknameMap[u.madeUpName] ?? [])].includes('Cap'))
+      );
+    });
+
+    // Grafeo doesn't support notContaining() predicate
+    // oxlint-disable-next-line no-disabled-tests
+    test.skip('listDoesNotContain — nicknames not containing "Spidey"', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'nicknames', operator: 'listDoesNotContain', value: 'Spidey' }],
+        },
+        superUsers.filter(
+          u => ![u.nickname, ...(nicknameMap[u.madeUpName] ?? [])].includes('Spidey')
+        )
+      );
+    });
+  });
+
+  describe('case-insensitive', () => {
+    // Grafeo doesn't support .ignoreCase() method chaining on predicates
+    // oxlint-disable-next-line no-disabled-tests
+    test.skip('equalsIgnoreCase', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'firstName', operator: 'equalsIgnoreCase', value: 'steve' }],
+        },
+        superUsers.filter(u => u.firstName.toLowerCase() === 'steve')
+      );
+    });
+
+    // Grafeo doesn't support .ignoreCase() method chaining on predicates
+    // oxlint-disable-next-line no-disabled-tests
+    test.skip('containsIgnoreCase', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'madeUpName', operator: 'containsIgnoreCase', value: 'spider' }],
+        },
+        superUsers.filter(u => u.madeUpName.toLowerCase().includes('spider'))
+      );
+    });
+
+    // Grafeo doesn't support .ignoreCase() method chaining on predicates
+    // oxlint-disable-next-line no-disabled-tests
+    test.skip('beginsWithIgnoreCase', async () => {
+      await runGremlinCustom(
+        {
+          combinator: 'and',
+          rules: [{ field: 'madeUpName', operator: 'beginsWithIgnoreCase', value: 'super' }],
+        },
+        superUsers.filter(u => u.madeUpName.toLowerCase().startsWith('super'))
+      );
+    });
   });
 });

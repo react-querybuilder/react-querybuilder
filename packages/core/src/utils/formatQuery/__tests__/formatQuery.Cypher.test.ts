@@ -13,6 +13,16 @@ import {
   testQueryDQ,
   testQuerySQ,
 } from '../formatQueryTestUtils';
+import {
+  caseInsensitiveBeginsWithQuery,
+  caseInsensitiveContainsQuery,
+  caseInsensitiveEqualsQuery,
+  cypherGraphProcessor,
+  listContainsQuery,
+  listDoesNotContainQuery,
+  regexNegationQuery,
+  regexQuery,
+} from './graphTestUtils';
 
 const cypherString = `firstName IS NULL AND lastName IS NOT NULL AND firstName IN ['Test', 'This'] AND NOT lastName IN ['Test', 'This'] AND 'Test' <= firstName AND firstName <= 'This' AND 'Test' <= firstName AND firstName <= 'This' AND NOT ('Test' <= lastName AND lastName <= 'This') AND '12' <= age AND age <= '14' AND age = '26' AND isMusician = true AND isLucky = false AND NOT (gender = 'M' OR job <> 'Programmer' OR email CONTAINS '@') AND (NOT lastName CONTAINS 'ab' OR job STARTS WITH 'Prog' OR email ENDS WITH 'com' OR NOT job STARTS WITH 'Man' OR NOT email ENDS WITH 'fr') AND invalid invalid ''`;
 const cypherStringForValueSourceField = `firstName IS NULL AND lastName IS NOT NULL AND firstName IN [middleName, lastName] AND NOT lastName IN [middleName, lastName] AND middleName <= firstName AND firstName <= lastName AND middleName <= firstName AND firstName <= lastName AND NOT (middleName <= lastName AND lastName <= lastName) AND age = iq AND isMusician = isCreative AND NOT (gender = someLetter OR job <> isBetweenJobs OR email CONTAINS atSign) AND (NOT lastName CONTAINS firstName OR job STARTS WITH jobPrefix OR email ENDS WITH dotCom OR NOT job STARTS WITH hasNoJob OR NOT email ENDS WITH isInvalid)`;
@@ -119,5 +129,65 @@ describe('ruleProcessor', () => {
     expect(formatQuery(queryForRuleProcessor, { format: 'cypher', ruleProcessor })).toBe(
       "f2 = 'v2'"
     );
+  });
+});
+
+describe('regex (custom ruleProcessor)', () => {
+  it('matchesRegex', () => {
+    expect(
+      formatQuery(regexQuery(), { format: 'cypher', ruleProcessor: cypherGraphProcessor })
+    ).toBe(`madeUpName =~ '.*man$'`);
+  });
+
+  it('doesNotMatchRegex', () => {
+    expect(
+      formatQuery(regexNegationQuery(), { format: 'cypher', ruleProcessor: cypherGraphProcessor })
+    ).toBe(`NOT madeUpName =~ '^S.*'`);
+  });
+});
+
+describe('list containment (custom ruleProcessor)', () => {
+  it('listContains', () => {
+    expect(
+      formatQuery(listContainsQuery(), { format: 'cypher', ruleProcessor: cypherGraphProcessor })
+    ).toBe(`'Cap' IN nicknames`);
+  });
+
+  it('listDoesNotContain', () => {
+    expect(
+      formatQuery(listDoesNotContainQuery(), {
+        format: 'cypher',
+        ruleProcessor: cypherGraphProcessor,
+      })
+    ).toBe(`NOT 'Spidey' IN nicknames`);
+  });
+});
+
+describe('case-insensitive (custom ruleProcessor)', () => {
+  it('equalsIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveEqualsQuery(), {
+        format: 'cypher',
+        ruleProcessor: cypherGraphProcessor,
+      })
+    ).toBe(`toLower(firstName) = toLower('steve')`);
+  });
+
+  it('containsIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveContainsQuery(), {
+        format: 'cypher',
+        ruleProcessor: cypherGraphProcessor,
+      })
+    ).toBe(`toLower(madeUpName) CONTAINS toLower('spider')`);
+  });
+
+  it('beginsWithIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveBeginsWithQuery(), {
+        format: 'cypher',
+        ruleProcessor: cypherGraphProcessor,
+      })
+    ).toBe(`toLower(madeUpName) STARTS WITH toLower('super')`);
   });
 });

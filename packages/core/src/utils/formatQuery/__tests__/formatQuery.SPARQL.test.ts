@@ -14,6 +14,15 @@ import {
   testQueryDQ,
   testQuerySQ,
 } from '../formatQueryTestUtils';
+import {
+  caseInsensitiveBeginsWithQuery,
+  caseInsensitiveContainsQuery,
+  caseInsensitiveEqualsQuery,
+  regexNegationQuery,
+  regexQuery,
+  sparqlGraphProcessor,
+  sparqlTypedLiteralProcessor,
+} from './graphTestUtils';
 
 const sparqlString = `!BOUND(firstName) && BOUND(lastName) && firstName = "Test" || firstName = "This" && lastName != "Test" && lastName != "This" && firstName >= "Test" && firstName <= "This" && firstName >= "Test" && firstName <= "This" && (lastName < "Test" || lastName > "This") && age >= "12" && age <= "14" && age = "26" && isMusician = "true"^^xsd:boolean && isLucky = "false"^^xsd:boolean && !(gender = "M" || job != "Programmer" || CONTAINS(email, "@")) && (!CONTAINS(lastName, "ab") || STRSTARTS(job, "Prog") || STRENDS(email, "com") || !STRSTARTS(job, "Man") || !STRENDS(email, "fr")) && invalid invalid ""`;
 const sparqlStringForValueSourceField = `!BOUND(firstName) && BOUND(lastName) && firstName = middleName || firstName = lastName && lastName != middleName && lastName != lastName && firstName >= middleName && firstName <= lastName && firstName >= middleName && firstName <= lastName && (lastName < middleName || lastName > lastName) && age = iq && isMusician = isCreative && !(gender = someLetter || job != isBetweenJobs || CONTAINS(email, atSign)) && (!CONTAINS(lastName, firstName) || STRSTARTS(job, jobPrefix) || STRENDS(email, dotCom) || !STRSTARTS(job, hasNoJob) || !STRENDS(email, isInvalid))`;
@@ -189,4 +198,109 @@ it('returns empty string for invalid inner group', () => {
       { format: 'sparql', validator: () => ({ inner: false }) }
     )
   ).toBe(`f1 = "v1"`);
+});
+
+describe('regex (custom ruleProcessor)', () => {
+  it('matchesRegex', () => {
+    expect(
+      formatQuery(regexQuery('?'), { format: 'sparql', ruleProcessor: sparqlGraphProcessor })
+    ).toBe(`REGEX(?madeUpName, ".*man$")`);
+  });
+
+  it('doesNotMatchRegex', () => {
+    expect(
+      formatQuery(regexNegationQuery('?'), {
+        format: 'sparql',
+        ruleProcessor: sparqlGraphProcessor,
+      })
+    ).toBe(`!REGEX(?madeUpName, "^S.*")`);
+  });
+});
+
+describe('typed literals (custom ruleProcessor)', () => {
+  const fields = [
+    { name: '?age', label: 'Age', inputType: 'number' as const },
+    { name: '?birthDate', label: 'Birth Date', inputType: 'date' as const },
+    { name: '?timestamp', label: 'Timestamp', inputType: 'datetime-local' as const },
+  ];
+
+  it('emits xsd:integer for integer values', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: '?age', operator: '>', value: '42' }] },
+        { format: 'sparql', ruleProcessor: sparqlTypedLiteralProcessor, fields }
+      )
+    ).toBe(`?age > "42"^^xsd:integer`);
+  });
+
+  it('emits xsd:decimal for decimal values', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: '?age', operator: '=', value: '3.14' }] },
+        { format: 'sparql', ruleProcessor: sparqlTypedLiteralProcessor, fields }
+      )
+    ).toBe(`?age = "3.14"^^xsd:decimal`);
+  });
+
+  it('emits xsd:date for date fields', () => {
+    expect(
+      formatQuery(
+        {
+          combinator: 'and',
+          rules: [{ field: '?birthDate', operator: '>=', value: '2000-01-15' }],
+        },
+        { format: 'sparql', ruleProcessor: sparqlTypedLiteralProcessor, fields }
+      )
+    ).toBe(`?birthDate >= "2000-01-15"^^xsd:date`);
+  });
+
+  it('emits xsd:dateTime for datetime-local fields', () => {
+    expect(
+      formatQuery(
+        {
+          combinator: 'and',
+          rules: [{ field: '?timestamp', operator: '<', value: '2024-01-15T10:30:00' }],
+        },
+        { format: 'sparql', ruleProcessor: sparqlTypedLiteralProcessor, fields }
+      )
+    ).toBe(`?timestamp < "2024-01-15T10:30:00"^^xsd:dateTime`);
+  });
+
+  it('falls back to default for string fields', () => {
+    expect(
+      formatQuery(
+        { combinator: 'and', rules: [{ field: '?name', operator: '=', value: 'Steve' }] },
+        { format: 'sparql', ruleProcessor: sparqlTypedLiteralProcessor }
+      )
+    ).toBe(`?name = "Steve"`);
+  });
+});
+
+describe('case-insensitive (custom ruleProcessor)', () => {
+  it('equalsIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveEqualsQuery('?'), {
+        format: 'sparql',
+        ruleProcessor: sparqlGraphProcessor,
+      })
+    ).toBe(`LCASE(?firstName) = LCASE("steve")`);
+  });
+
+  it('containsIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveContainsQuery('?'), {
+        format: 'sparql',
+        ruleProcessor: sparqlGraphProcessor,
+      })
+    ).toBe(`CONTAINS(LCASE(?madeUpName), LCASE("spider"))`);
+  });
+
+  it('beginsWithIgnoreCase', () => {
+    expect(
+      formatQuery(caseInsensitiveBeginsWithQuery('?'), {
+        format: 'sparql',
+        ruleProcessor: sparqlGraphProcessor,
+      })
+    ).toBe(`STRSTARTS(LCASE(?madeUpName), LCASE("super"))`);
+  });
 });
