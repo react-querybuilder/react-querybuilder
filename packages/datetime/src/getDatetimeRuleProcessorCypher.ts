@@ -18,7 +18,7 @@ const cypherTemporal = (iso: string, dateOnly: boolean): string =>
  * {@link @react-querybuilder/core!formatQuery formatQuery} with the "cypher" or "gql" format.
  *
  * Supports:
- * - Standard comparison operators (=, !=, <, >, <=, >=)
+ * - Standard comparison operators (`=`, `!=`, `<`, `>`, `<=`, `>=`)
  * - Range operators (between, notBetween, in, notIn)
  * - Duration math via custom operators: `olderThanDuration` and `withinDuration`
  *   (e.g., value `"P30D"` → `datetime() - field > duration('P30D')`)

@@ -18,7 +18,7 @@ const sparqlTemporal = (iso: string, dateOnly: boolean): string =>
  * {@link @react-querybuilder/core!formatQuery formatQuery} with the "sparql" format.
  *
  * Supports:
- * - Standard comparison operators (=, !=, <, >, <=, >=)
+ * - Standard comparison operators (`=`, `!=`, `<`, `>`, `<=`, `>=`)
  * - Range operators (between, notBetween, in, notIn)
  * - Duration math via custom operators: `olderThanDuration` and `withinDuration`
  *   (e.g., value `"P30D"` → `NOW() - ?field > "P30D"^^xsd:duration`)
