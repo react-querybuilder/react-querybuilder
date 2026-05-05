@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Graph query language import/export
-  - New `formatQuery` formats: `"cypher"` (alias `"gql"`), `"gremlin"`, `"sparql"`
-  - Parsers: `parseCypher`(alias `parseGQL`), `parseGremlin`, `parseSPARQL`
+- [#1030] Graph query language import/export support:
+  - New `formatQuery` formats: `"cypher"` (alias `"gql"`), `"gremlin"`, `"sparql"`.
+    - Graph query temporal-type rule processors for `@react-querybuilder/datetime`.
+  - Parsers: `parseCypher`(alias `parseGQL`), `parseGremlin`, `parseSPARQL`.
+
+### Fixed
+
+- Small bug in Sequelize export for `"contains"`, `"beginsWith"`, and `"endsWith"` operators combined with `valueSource: "field"`.
 
 ## [v8.15.0] - 2026-04-15
 
@@ -2164,6 +2169,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1021]: https://github.com/react-querybuilder/react-querybuilder/pull/1021
 [#1025]: https://github.com/react-querybuilder/react-querybuilder/pull/1025
 [#1026]: https://github.com/react-querybuilder/react-querybuilder/pull/1026
+[#1030]: https://github.com/react-querybuilder/react-querybuilder/pull/1030
 
 <!-- #endregion -->
 
