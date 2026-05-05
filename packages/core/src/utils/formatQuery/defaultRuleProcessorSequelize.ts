@@ -45,8 +45,16 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
     (valueIsField &&
       (!col ||
         // ...or valueSource is 'field' and we don't have the `fn` function
-        // and the operator is one of the "doesNot*" ones
-        (!fn && ['doesnotcontain', 'doesnotbeginwith', 'doesnotendwith'].includes(operatorLC))))
+        // and the operator is a string-matching one
+        (!fn &&
+          [
+            'contains',
+            'doesnotcontain',
+            'beginswith',
+            'doesnotbeginwith',
+            'endswith',
+            'doesnotendwith',
+          ].includes(operatorLC))))
   ) {
     return undefined;
   }
@@ -81,13 +89,31 @@ export const defaultRuleProcessorSequelize: RuleProcessor = (
     }
 
     case 'contains':
-      return { [field]: { [Op.substring]: valueIsField ? col!(value) : `${value}` } };
+      return {
+        [field]: {
+          [valueIsField ? Op.like : Op.substring]: valueIsField
+            ? fn!('CONCAT', '%', col!(value), '%')
+            : `${value}`,
+        },
+      };
 
     case 'beginswith':
-      return { [field]: { [Op.startsWith]: valueIsField ? col!(value) : `${value}` } };
+      return {
+        [field]: {
+          [valueIsField ? Op.like : Op.startsWith]: valueIsField
+            ? fn!('CONCAT', col!(value), '%')
+            : `${value}`,
+        },
+      };
 
     case 'endswith':
-      return { [field]: { [Op.endsWith]: valueIsField ? col!(value) : `${value}` } };
+      return {
+        [field]: {
+          [valueIsField ? Op.like : Op.endsWith]: valueIsField
+            ? fn!('CONCAT', '%', col!(value))
+            : `${value}`,
+        },
+      };
 
     case 'doesnotcontain':
       return {
