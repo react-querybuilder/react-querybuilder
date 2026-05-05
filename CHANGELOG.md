@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.16.0] - 2026-05-04
+
 ### Added
 
 - [#1030] Graph query language import/export support:
@@ -2175,7 +2179,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.15.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.0...HEAD
+[v8.16.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.15.0...v8.16.0
 [v8.15.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.4...v8.15.0
 [v8.14.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.3...v8.14.4
 [v8.14.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.2...v8.14.3
