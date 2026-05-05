@@ -1,5 +1,3 @@
-// oxlint-disable react_perf/jsx-no-new-function-as-prop react_perf/jsx-no-new-object-as-prop
-
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';

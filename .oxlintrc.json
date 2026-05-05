@@ -63,10 +63,11 @@
   "overrides": [
     {
       "files": [
+        "packages/*/dev/**",
+        // These are always leaf elements, so new functions/objects/arrays
+        // within their JSX have negligible performance impact.
         "packages/*/src/**/*{ActionElement,DragHandle,Editor,NotToggle,ShiftActions,ValueSelector}.tsx"
       ],
-      // These are always leaf elements, so new functions/objects/arrays
-      // within their JSX have negligible performance impact.
       "rules": {
         "jsx-no-new-array-as-prop": "off",
         "jsx-no-new-function-as-prop": "off",

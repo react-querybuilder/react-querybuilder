@@ -57,7 +57,7 @@
     "@vitejs/plugin-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-native": "~0.85.1",
+    "react-native": "~0.85.3",
     "react-native-web": "~0.21.2",
     "react-querybuilder": "8.16.0",
     "react-redux": "catalog:",

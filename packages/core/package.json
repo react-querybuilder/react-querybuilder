@@ -175,7 +175,7 @@
   "homepage": "https://react-querybuilder.js.org/",
   "devDependencies": {
     "@electric-sql/pglite": "catalog:test",
-    "@grafeo-db/js": "^0.5.41",
+    "@grafeo-db/js": "^0.5.42",
     "@prisma/client": "^7.7.0",
     "@traqula/parser-sparql-1-2": "^1.1.0",
     "@types/json-logic-js": "^2.0.8",
