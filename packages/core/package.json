@@ -1,6 +1,6 @@
 {
   "name": "@react-querybuilder/core",
-  "version": "8.15.0",
+  "version": "8.16.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "publishConfig": {
     "access": "public"
@@ -205,13 +205,13 @@
     "numeric-quantity": "^3.2.1"
   },
   "peerDependencies": {
+    "@traqula/parser-sparql-1-2": ">=0.1.0",
+    "chevrotain": ">=11",
     "drizzle-orm": ">=0.38.0",
     "json-logic-js": "catalog:peer",
     "jsonata": "catalog:peer",
     "sequelize": ">=6",
-    "spel2js": ">=0.2.0",
-    "chevrotain": ">=11",
-    "@traqula/parser-sparql-1-2": ">=0.1.0"
+    "spel2js": ">=0.2.0"
   },
   "peerDependenciesMeta": {
     "drizzle-orm": {

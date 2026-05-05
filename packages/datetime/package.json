@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/datetime",
   "description": "Date/time features for react-querybuilder",
-  "version": "8.15.0",
+  "version": "8.16.0",
   "publishConfig": {
     "access": "public"
   },
@@ -107,7 +107,7 @@
     "mongoose": "catalog:test",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.15.0",
+    "react-querybuilder": "8.16.0",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
@@ -117,7 +117,7 @@
     "dayjs": "catalog:peer",
     "luxon": "catalog:peer",
     "react": "catalog:peer",
-    "react-querybuilder": "8.15.0"
+    "react-querybuilder": "8.16.0"
   },
   "peerDependenciesMeta": {
     "date-fns": {

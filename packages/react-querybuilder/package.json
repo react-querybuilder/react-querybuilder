@@ -1,6 +1,6 @@
 {
   "name": "react-querybuilder",
-  "version": "8.15.0",
+  "version": "8.16.0",
   "description": "React Query Builder component for constructing queries and filters, with utilities for executing them in various database and evaluation contexts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/react-querybuilder.legacy-esm.js",
@@ -211,7 +211,7 @@
     "vite": "catalog:"
   },
   "dependencies": {
-    "@react-querybuilder/core": "^8.15.0",
+    "@react-querybuilder/core": "^8.16.0",
     "@reduxjs/toolkit": "catalog:",
     "react-redux": "catalog:"
   },
