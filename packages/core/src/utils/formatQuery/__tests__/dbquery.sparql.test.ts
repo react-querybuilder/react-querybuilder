@@ -239,6 +239,71 @@ describe('SPARQL (Grafeo)', () => {
   });
 });
 
+// ─── Field-to-Field Comparison Tests ──────────────────────────────────────────
+
+describe('SPARQL field-to-field (Grafeo)', () => {
+  test('< (alphabetical comparison)', async () => {
+    // Clark < Kent → Superman
+    await runSPARQL(
+      {
+        combinator: 'and',
+        rules: [
+          { field: '?firstName', operator: '<', value: '?lastName', valueSource: 'field' },
+        ],
+      },
+      superUsersWithAge.filter(u => u.firstName < u.lastName)
+    );
+  });
+
+  test('!= (different property values)', async () => {
+    await runSPARQL(
+      {
+        combinator: 'and',
+        rules: [
+          { field: '?firstName', operator: '!=', value: '?lastName', valueSource: 'field' },
+        ],
+      },
+      superUsersWithAge.filter(u => u.firstName !== u.lastName)
+    );
+  });
+
+  test('CONTAINS (madeUpName contains nickname)', async () => {
+    // "Captain America" CONTAINS "Cap" → Captain America
+    await runSPARQL(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            field: '?madeUpName',
+            operator: 'contains',
+            value: '?nickname',
+            valueSource: 'field',
+          },
+        ],
+      },
+      superUsersWithAge.filter(u => u.madeUpName.includes(u.nickname))
+    );
+  });
+
+  test('STRSTARTS (madeUpName starts with nickname)', async () => {
+    // "Captain America" STRSTARTS "Cap" → Captain America
+    await runSPARQL(
+      {
+        combinator: 'and',
+        rules: [
+          {
+            field: '?madeUpName',
+            operator: 'beginsWith',
+            value: '?nickname',
+            valueSource: 'field',
+          },
+        ],
+      },
+      superUsersWithAge.filter(u => u.madeUpName.startsWith(u.nickname))
+    );
+  });
+});
+
 // ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
 
 const runSPARQLCustom = async (
