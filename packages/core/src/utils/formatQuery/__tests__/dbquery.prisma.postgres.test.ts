@@ -39,8 +39,10 @@ const testPrisma = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
 };
 
 describe('Prisma', () => {
-  // Common tests
-  for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
+  // Prisma does not support field-to-field comparisons (returns undefined)
+  for (const [name, t] of Object.entries(dbTests(superUsersPostgres)).filter(
+    ([k]) => !k.startsWith('f2f ')
+  )) {
     describe(name, () => {
       testPrisma(t);
     });

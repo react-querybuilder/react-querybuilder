@@ -34,7 +34,11 @@ if (celEvaluator) {
         // CEL evaluator doesn't play well with nulls yet
       ).filter(([testName]) => testName !== 'null/notNull')) {
         const query = transformQuery(originalQuery, {
-          ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
+          ruleProcessor: r => ({
+            ...r,
+            field: `item.${r.field}`,
+            ...(r.valueSource === 'field' ? { value: `item.${r.value}` } : {}),
+          }),
         });
         test(name, async () => {
           const cel = formatQuery(query, { format: 'cel', parseNumbers: true, ...fqOptions });

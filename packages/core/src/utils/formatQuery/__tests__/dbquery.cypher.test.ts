@@ -60,7 +60,11 @@ const runCypher = async (query: Parameters<typeof formatQuery>[0], expectedResul
 const testCypher = ({ query, expectedResult }: TestSQLParams) => {
   test('cypher', async () => {
     const newQuery = transformQuery(query, {
-      ruleProcessor: r => ({ ...r, field: `su.${r.field}` }),
+      ruleProcessor: r => ({
+        ...r,
+        field: `su.${r.field}`,
+        ...(r.valueSource === 'field' ? { value: `su.${r.value}` } : {}),
+      }),
     });
     await runCypher(newQuery, expectedResult);
   });
@@ -176,72 +180,6 @@ describe('Cypher (Grafeo)', () => {
         ],
       },
       superUsers.filter(u => !u.madeUpName.startsWith('S'))
-    );
-  });
-});
-
-// ─── Field-to-Field Comparison Tests ──────────────────────────────────────────
-
-describe('Cypher field-to-field (Grafeo)', () => {
-  test('< (alphabetical comparison)', async () => {
-    // Bruce < Wayne, Clark < Kent → Batman, Superman
-    await runCypher(
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'su.firstName', operator: '<', value: 'su.lastName', valueSource: 'field' },
-        ],
-      },
-      superUsers.filter(u => u.firstName < u.lastName)
-    );
-  });
-
-  test('!= (different property values)', async () => {
-    await runCypher(
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'su.firstName', operator: '!=', value: 'su.lastName', valueSource: 'field' },
-        ],
-      },
-      superUsers.filter(u => u.firstName !== u.lastName)
-    );
-  });
-
-  test('CONTAINS (madeUpName contains nickname)', async () => {
-    // "Captain America" CONTAINS "Cap" → Captain America
-    await runCypher(
-      {
-        combinator: 'and',
-        rules: [
-          {
-            field: 'su.madeUpName',
-            operator: 'contains',
-            value: 'su.nickname',
-            valueSource: 'field',
-          },
-        ],
-      },
-      superUsers.filter(u => u.madeUpName.includes(u.nickname))
-    );
-  });
-
-  test('STARTS WITH (madeUpName starts with nickname)', async () => {
-    // "Superman" STARTS WITH "Supes"? No. "Spider-Man" STARTS WITH "Spidey"? No.
-    // "Captain America" STARTS WITH "Cap"? Yes!
-    await runCypher(
-      {
-        combinator: 'and',
-        rules: [
-          {
-            field: 'su.madeUpName',
-            operator: 'beginsWith',
-            value: 'su.nickname',
-            valueSource: 'field',
-          },
-        ],
-      },
-      superUsers.filter(u => u.madeUpName.startsWith(u.nickname))
     );
   });
 });

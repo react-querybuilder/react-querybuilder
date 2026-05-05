@@ -501,6 +501,51 @@ export const dbTests = (
     },
     expectedResult: superUserList.filter(u => u.powerUpAge === null && u.madeUpName !== null),
   },
+  'f2f !=': {
+    query: {
+      combinator: 'and',
+      rules: [{ field: 'firstName', operator: '!=', value: 'lastName', valueSource: 'field' }],
+    },
+    expectedResult: superUserList.filter(u => u.firstName !== u.lastName),
+  },
+  'f2f <': {
+    query: {
+      combinator: 'and',
+      rules: [{ field: 'firstName', operator: '<', value: 'lastName', valueSource: 'field' }],
+    },
+    // Bruce < Wayne, Clark < Kent
+    expectedResult: superUserList.filter(u => u.firstName < u.lastName),
+  },
+  'f2f contains': {
+    query: {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'madeUpName',
+          operator: 'contains',
+          value: 'nickname',
+          valueSource: 'field',
+        },
+      ],
+    },
+    // "Captain America" contains "Cap"
+    expectedResult: superUserList.filter(u => u.madeUpName.includes(u.nickname)),
+  },
+  'f2f beginsWith': {
+    query: {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'madeUpName',
+          operator: 'beginsWith',
+          value: 'nickname',
+          valueSource: 'field',
+        },
+      ],
+    },
+    // "Captain America" starts with "Cap"
+    expectedResult: superUserList.filter(u => u.madeUpName.startsWith(u.nickname)),
+  },
 });
 
 export const genStringsMatchQuery = (match: MatchConfig): DefaultRuleGroupType => ({

@@ -80,6 +80,13 @@ describe('MongoDB', () => {
       dbTests(superUsersMongoDB)
     )) {
       for (const avoidFieldsAsKeys of [false, true]) {
+        // f2f comparison ops (!=, <) produce aggregation expressions → aggrn mode only
+        // f2f string ops (contains, beginsWith) produce $where → query mode only
+        if (name === 'f2f !=' || name === 'f2f <') {
+          if (!avoidFieldsAsKeys) continue;
+        } else if (name === 'f2f contains' || name === 'f2f beginsWith') {
+          if (avoidFieldsAsKeys) continue;
+        }
         describe(avoidFieldsAsKeys ? 'aggrn' : 'query', () => {
           for (const [format, processorFn] of [
             ['mongodb', (v: string, afak) => JSON.parse(afak ? `{"$expr":${v}}` : v)],
