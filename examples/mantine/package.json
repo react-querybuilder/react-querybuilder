@@ -4,7 +4,7 @@
     "@mantine/dates": ">=7",
     "@mantine/hooks": ">=7",
     "@react-querybuilder/mantine": "8.16.0",
-    "dayjs": "catalog:peer",
+    "dayjs": "^1",
     "react": "^19",
     "react-dom": "^19",
     "react-querybuilder": "8.16.0"
