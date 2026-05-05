@@ -142,6 +142,52 @@ const jsonata = formatQuery(query, {
 });
 ```
 
+### Cypher / GQL
+
+The `datetimeRuleProcessorCypher` rule processor handles the "cypher" (and equivalent "gql") export format. Date values are wrapped in Cypher temporal constructors: `date('...')` for date-only values and `datetime('...')` for full timestamps.
+
+Two custom operators provide duration math support:
+
+- `olderThanDuration` — checks if the elapsed time since a field value exceeds an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations): `datetime() - field > duration('P30D')`
+- `withinDuration` — checks if the elapsed time is within a duration: `datetime() - field <= duration('P7D')`
+
+```ts
+import { datetimeRuleProcessorCypher } from '@react-querybuilder/datetime/dayjs';
+// Other options:
+// import { datetimeRuleProcessorCypher } from '@react-querybuilder/datetime/date-fns';
+// import { datetimeRuleProcessorCypher } from '@react-querybuilder/datetime/luxon';
+
+const cypher = formatQuery(query, {
+  format: 'cypher',
+  ruleProcessor: datetimeRuleProcessorCypher,
+});
+// e.g. `n.birthDate < date('1950-01-01')`
+// or:  `datetime() - n.lastLogin > duration('P30D')`
+```
+
+### SPARQL
+
+The `datetimeRuleProcessorSPARQL` rule processor handles the "sparql" export format. Date values are emitted as [XSD typed literals](https://www.w3.org/TR/xmlschema-2/): `"..."^^xsd:date` for date-only values and `"..."^^xsd:dateTime` for full timestamps.
+
+Duration math operators work similarly to the Cypher variant, using `NOW()` and `xsd:duration`:
+
+- `olderThanDuration` → `NOW() - ?field > "P30D"^^xsd:duration`
+- `withinDuration` → `NOW() - ?field <= "P7D"^^xsd:duration`
+
+```ts
+import { datetimeRuleProcessorSPARQL } from '@react-querybuilder/datetime/dayjs';
+// Other options:
+// import { datetimeRuleProcessorSPARQL } from '@react-querybuilder/datetime/date-fns';
+// import { datetimeRuleProcessorSPARQL } from '@react-querybuilder/datetime/luxon';
+
+const sparql = formatQuery(query, {
+  format: 'sparql',
+  ruleProcessor: datetimeRuleProcessorSPARQL,
+});
+// e.g. `?birthDate < "1950-01-01"^^xsd:date`
+// or:  `NOW() - ?lastLogin > "P30D"^^xsd:duration`
+```
+
 ### Natural language
 
 The `datetimeRuleProcessorNL` formats date/time values using `Intl.DateTimeFormat`. By default, the formatter is instantiated as follows:

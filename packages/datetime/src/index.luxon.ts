@@ -7,8 +7,10 @@
 import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
+import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
+import { getDatetimeRuleProcessorSPARQL } from './getDatetimeRuleProcessorSPARQL';
 import {
   getDatetimeRuleProcessorSQL,
   getDatetimeValueProcessorANSI,
@@ -74,5 +76,17 @@ export const datetimeRuleProcessorMongoDBQuery: ValueProcessorByRule =
  */
 export const datetimeRuleProcessorNL: ValueProcessorByRule =
   getDatetimeRuleProcessorNL(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "cypher"/"gql" format using Luxon
+ */
+export const datetimeRuleProcessorCypher: ValueProcessorByRule =
+  getDatetimeRuleProcessorCypher(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "sparql" format using Luxon
+ */
+export const datetimeRuleProcessorSPARQL: ValueProcessorByRule =
+  getDatetimeRuleProcessorSPARQL(rqbDateTimeLibraryAPI);
 
 export * from './rqbDateTimeLibraryAPI.luxon';

@@ -247,9 +247,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [
-          { field: '?firstName', operator: '<', value: '?lastName', valueSource: 'field' },
-        ],
+        rules: [{ field: '?firstName', operator: '<', value: '?lastName', valueSource: 'field' }],
       },
       superUsersWithAge.filter(u => u.firstName < u.lastName)
     );
@@ -259,9 +257,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [
-          { field: '?firstName', operator: '!=', value: '?lastName', valueSource: 'field' },
-        ],
+        rules: [{ field: '?firstName', operator: '!=', value: '?lastName', valueSource: 'field' }],
       },
       superUsersWithAge.filter(u => u.firstName !== u.lastName)
     );
@@ -273,12 +269,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
       {
         combinator: 'and',
         rules: [
-          {
-            field: '?madeUpName',
-            operator: 'contains',
-            value: '?nickname',
-            valueSource: 'field',
-          },
+          { field: '?madeUpName', operator: 'contains', value: '?nickname', valueSource: 'field' },
         ],
       },
       superUsersWithAge.filter(u => u.madeUpName.includes(u.nickname))
