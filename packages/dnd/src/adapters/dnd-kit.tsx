@@ -109,7 +109,12 @@ const useNativeListeners = (
 
     for (const [reactEventName, handler] of Object.entries(listeners)) {
       const nativeEventName = reactEventName.slice(2).toLowerCase();
-      const nativeHandler: EventListener = e => handler({ nativeEvent: e });
+      const nativeHandler: EventListener = e => {
+        // Need to make sure the instance type stays the same, so add property
+        // instead of create new event with nativeEvent property
+        (e as Event & { nativeEvent: Event }).nativeEvent = e;
+        return handler(e);
+      };
       node.addEventListener(nativeEventName, nativeHandler);
       nativeHandlers.push([nativeEventName, nativeHandler]);
     }
