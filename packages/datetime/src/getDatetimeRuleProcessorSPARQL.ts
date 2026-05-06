@@ -1,5 +1,5 @@
 import type { RuleProcessor } from 'react-querybuilder';
-import { defaultRuleProcessorSPARQL, lc, toArray } from 'react-querybuilder';
+import { defaultRuleProcessorSPARQL, lc, sparqlVar, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly, processIsDateField } from './utils';
 
@@ -33,7 +33,8 @@ export const getDatetimeRuleProcessorSPARQL =
       return defaultRuleProcessorSPARQL(rule, opts);
     }
 
-    const { field, operator, value } = rule;
+    const { field: rawField, operator, value } = rule;
+    const field = sparqlVar(rawField);
     const operatorTL = lc(operator);
 
     // Duration math operators — compare elapsed time against an xsd:duration literal

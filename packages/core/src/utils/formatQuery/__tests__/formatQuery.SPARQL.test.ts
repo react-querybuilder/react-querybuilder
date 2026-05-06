@@ -24,8 +24,8 @@ import {
   sparqlTypedLiteralProcessor,
 } from './graphTestUtils';
 
-const sparqlString = `!BOUND(firstName) && BOUND(lastName) && firstName IN ("Test", "This") && lastName NOT IN ("Test", "This") && firstName >= "Test" && firstName <= "This" && firstName >= "Test" && firstName <= "This" && (lastName < "Test" || lastName > "This") && age >= "12" && age <= "14" && age = "26" && isMusician = "true"^^xsd:boolean && isLucky = "false"^^xsd:boolean && !(gender = "M" || job != "Programmer" || CONTAINS(email, "@")) && (!CONTAINS(lastName, "ab") || STRSTARTS(job, "Prog") || STRENDS(email, "com") || !STRSTARTS(job, "Man") || !STRENDS(email, "fr")) && invalid invalid ""`;
-const sparqlStringForValueSourceField = `!BOUND(firstName) && BOUND(lastName) && firstName IN (middleName, lastName) && lastName NOT IN (middleName, lastName) && firstName >= middleName && firstName <= lastName && firstName >= middleName && firstName <= lastName && (lastName < middleName || lastName > lastName) && age = iq && isMusician = isCreative && !(gender = someLetter || job != isBetweenJobs || CONTAINS(email, atSign)) && (!CONTAINS(lastName, firstName) || STRSTARTS(job, jobPrefix) || STRENDS(email, dotCom) || !STRSTARTS(job, hasNoJob) || !STRENDS(email, isInvalid))`;
+const sparqlString = `!BOUND(?firstName) && BOUND(?lastName) && ?firstName IN ("Test", "This") && ?lastName NOT IN ("Test", "This") && ?firstName >= "Test" && ?firstName <= "This" && ?firstName >= "Test" && ?firstName <= "This" && (?lastName < "Test" || ?lastName > "This") && ?age >= "12" && ?age <= "14" && ?age = "26" && ?isMusician = "true"^^xsd:boolean && ?isLucky = "false"^^xsd:boolean && !(?gender = "M" || ?job != "Programmer" || CONTAINS(?email, "@")) && (!CONTAINS(?lastName, "ab") || STRSTARTS(?job, "Prog") || STRENDS(?email, "com") || !STRSTARTS(?job, "Man") || !STRENDS(?email, "fr")) && ?invalid invalid ""`;
+const sparqlStringForValueSourceField = `!BOUND(?firstName) && BOUND(?lastName) && ?firstName IN (?middleName, ?lastName) && ?lastName NOT IN (?middleName, ?lastName) && ?firstName >= ?middleName && ?firstName <= ?lastName && ?firstName >= ?middleName && ?firstName <= ?lastName && (?lastName < ?middleName || ?lastName > ?lastName) && ?age = ?iq && ?isMusician = ?isCreative && !(?gender = ?someLetter || ?job != ?isBetweenJobs || CONTAINS(?email, ?atSign)) && (!CONTAINS(?lastName, ?firstName) || STRSTARTS(?job, ?jobPrefix) || STRENDS(?email, ?dotCom) || !STRSTARTS(?job, ?hasNoJob) || !STRENDS(?email, ?isInvalid))`;
 
 it('formats SPARQL correctly', () => {
   const sparqlQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
@@ -40,13 +40,13 @@ it('handles operator case variations', () => {
 });
 
 it('escapes quotes when appropriate', () => {
-  expect(formatQuery(testQuerySQ, 'sparql')).toBe(`f1 = "Te'st"`);
-  expect(formatQuery(testQueryDQ, 'sparql')).toBe(`f1 = "Te\\"st"`);
+  expect(formatQuery(testQuerySQ, 'sparql')).toBe(`?f1 = "Te'st"`);
+  expect(formatQuery(testQueryDQ, 'sparql')).toBe(`?f1 = "Te\\"st"`);
 });
 
 it('independent combinators', () => {
   expect(formatQuery(queryIC, 'sparql')).toBe(
-    `firstName = "Test" && middleName = "Test" || lastName = "Test"`
+    `?firstName = "Test" && ?middleName = "Test" || ?lastName = "Test"`
   );
 
   expect(
@@ -54,12 +54,12 @@ it('independent combinators', () => {
       { rules: [{ field: 'field', operator: '=', value: '' }, 'and', { rules: [] }] },
       'sparql'
     )
-  ).toBe(`field = "" && 1 = 1`);
+  ).toBe(`?field = "" && 1 = 1`);
 });
 
 it('handles parseNumbers', () => {
   expect(formatQuery(queryForNumberParsing, { format: 'sparql', parseNumbers: true })).toBe(
-    `f > "NaN" && f = 0 && f = 0 && f = 0 && (f < 1.5 || f > 1.5) && f IN (0, 1, 2) && f IN (0, 1, 2) && f IN (0, "abc", 2) && f >= 0 && f <= 1 && f >= 0 && f <= 1 && f >= 0 && f <= "abc" && f >= "{}" && f <= "{}"`
+    `?f > "NaN" && ?f = 0 && ?f = 0 && ?f = 0 && (?f < 1.5 || ?f > 1.5) && ?f IN (0, 1, 2) && ?f IN (0, 1, 2) && ?f IN (0, "abc", 2) && ?f >= 0 && ?f <= 1 && ?f >= 0 && ?f <= 1 && ?f >= 0 && ?f <= "abc" && ?f >= "{}" && ?f <= "{}"`
   );
 });
 
@@ -67,13 +67,13 @@ describe('validation', () => {
   const validationResults: Record<string, string> = {
     'should invalidate sparql': '1 = 1',
     'should invalidate sparql even if fields are valid': '1 = 1',
-    'should invalidate sparql rule by validator function': `field2 = ""`,
-    'should invalidate sparql rule specified by validationMap': `field2 = ""`,
+    'should invalidate sparql rule by validator function': `?field2 = ""`,
+    'should invalidate sparql rule specified by validationMap': `?field2 = ""`,
     'should invalidate sparql outermost group': '1 = 1',
     'should invalidate sparql inner group': '1 = 1',
-    'should convert sparql inner group with no rules to fallbackExpression': `field = "" && 1 = 1`,
-    'should invalidate sparql following combinator of first rule': `field2 = "" || field3 = ""`,
-    'should invalidate sparql preceding combinator of non-first rule': `field = "" || field3 = ""`,
+    'should convert sparql inner group with no rules to fallbackExpression': `?field = "" && 1 = 1`,
+    'should invalidate sparql following combinator of first rule': `?field2 = "" || ?field3 = ""`,
+    'should invalidate sparql preceding combinator of non-first rule': `?field = "" || ?field3 = ""`,
   };
 
   for (const vtd of getValidationTestData('sparql')) {
@@ -98,7 +98,7 @@ it('handles null, bigint, and <> operator values', () => {
       },
       'sparql'
     )
-  ).toBe(`f = "" && f != "x" && f = 42`);
+  ).toBe(`?f = "" && ?f != "x" && ?f = 42`);
 });
 
 it('handles SPARQL variable refs, URIs, and prefixed names', () => {
@@ -114,7 +114,7 @@ it('handles SPARQL variable refs, URIs, and prefixed names', () => {
       },
       'sparql'
     )
-  ).toBe(`f = ?x && f = <http://example.org> && f = rdf:type`);
+  ).toBe(`?f = ?x && ?f = <http://example.org> && ?f = rdf:type`);
 });
 
 it('handles empty notin and short notBetween', () => {
@@ -130,7 +130,7 @@ it('handles empty notin and short notBetween', () => {
       },
       'sparql'
     )
-  ).toBe(`g = "ok"`);
+  ).toBe(`?g = "ok"`);
 });
 
 describe('ruleProcessor', () => {
@@ -146,7 +146,7 @@ describe('ruleProcessor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? r.operator : defaultRuleProcessorSPARQL(r);
     expect(formatQuery(queryForRuleProcessor, { format: 'sparql', ruleProcessor })).toBe(
-      `custom_operator && f2 = "v2"`
+      `custom_operator && ?f2 = "v2"`
     );
   });
 
@@ -154,7 +154,7 @@ describe('ruleProcessor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? false : defaultRuleProcessorSPARQL(r);
     expect(formatQuery(queryForRuleProcessor, { format: 'sparql', ruleProcessor })).toBe(
-      `f2 = "v2"`
+      `?f2 = "v2"`
     );
   });
 
@@ -162,7 +162,7 @@ describe('ruleProcessor', () => {
     const ruleProcessor: RuleProcessor = r =>
       r.operator === 'custom_operator' ? '' : defaultRuleProcessorSPARQL(r);
     expect(formatQuery(queryForRuleProcessor, { format: 'sparql', ruleProcessor })).toBe(
-      `f2 = "v2"`
+      `?f2 = "v2"`
     );
   });
 });
@@ -181,7 +181,7 @@ it('skips rules with placeholder field, operator, or value', () => {
       },
       { format: 'sparql', placeholderValueName: 'PLACEHOLDER' }
     )
-  ).toBe(`f4 = "v4"`);
+  ).toBe(`?f4 = "v4"`);
 });
 
 it('returns empty string for invalid inner group', () => {
@@ -197,7 +197,7 @@ it('returns empty string for invalid inner group', () => {
       },
       { format: 'sparql', validator: () => ({ inner: false }) }
     )
-  ).toBe(`f1 = "v1"`);
+  ).toBe(`?f1 = "v1"`);
 });
 
 describe('regex (custom ruleProcessor)', () => {

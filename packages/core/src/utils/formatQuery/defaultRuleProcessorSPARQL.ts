@@ -6,6 +6,13 @@ import { shouldRenderAsNumber } from './utils';
 const escapeDoubleQuotes = (v: any, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`);
 
+/** Auto-prefix a SPARQL variable name with `?` unless it's already prefixed, a URI, or a prefixed name.
+ *
+ * @group Export
+ */
+export const sparqlVar = (name: string): string =>
+  /^[?<]/.test(name) || name.includes(':') ? name : `?${name}`;
+
 /**
  * Default rule processor used by {@link formatQuery} for "sparql" format.
  *
@@ -17,15 +24,16 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
   opts = {}
 ) => {
   const { escapeQuotes, parseNumbers } = opts;
-  const { field, operator, value, valueSource } = rule;
+  const { field: rawField, operator, value, valueSource } = rule;
   const valueIsField = valueSource === 'field';
   const operatorTL = operator.toLowerCase();
+  const field = sparqlVar(rawField);
 
   const fmtVal = (v: unknown): string => {
     if (v === null || v === undefined) return '""';
     if (typeof v === 'boolean') return `"${v}"^^xsd:boolean`;
     if (typeof v === 'bigint') return String(v);
-    if (valueIsField) return trimIfString(v);
+    if (valueIsField) return sparqlVar(trimIfString(v));
     if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers)) return trimIfString(v);
     const s =
       typeof v === 'string' ? v : /* v8 ignore next -- @preserve */ (JSON.stringify(v) ?? '');

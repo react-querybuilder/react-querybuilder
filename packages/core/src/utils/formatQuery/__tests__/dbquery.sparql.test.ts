@@ -96,8 +96,8 @@ describe('SPARQL (Grafeo)', () => {
       {
         combinator: 'and',
         rules: [
-          { field: '?firstName', operator: '=', value: 'Peter' },
-          { field: '?lastName', operator: '=', value: 'Parker' },
+          { field: 'firstName', operator: '=', value: 'Peter' },
+          { field: 'lastName', operator: '=', value: 'Parker' },
         ],
       },
       superUsersWithAge.filter(u => u.firstName === 'Peter' && u.lastName === 'Parker')
@@ -106,14 +106,14 @@ describe('SPARQL (Grafeo)', () => {
 
   test('!=', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?firstName', operator: '!=', value: 'Peter' }] },
+      { combinator: 'and', rules: [{ field: 'firstName', operator: '!=', value: 'Peter' }] },
       superUsersWithAge.filter(u => u.firstName !== 'Peter')
     );
   });
 
   test('contains', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?madeUpName', operator: 'contains', value: 'man' }] },
+      { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'contains', value: 'man' }] },
       superUsersWithAge.filter(u => u.madeUpName.includes('man'))
     );
   });
@@ -122,7 +122,7 @@ describe('SPARQL (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [{ field: '?madeUpName', operator: 'doesNotContain', value: 'r' }],
+        rules: [{ field: 'madeUpName', operator: 'doesNotContain', value: 'r' }],
       },
       superUsersWithAge.filter(u => !u.madeUpName.includes('r'))
     );
@@ -130,59 +130,56 @@ describe('SPARQL (Grafeo)', () => {
 
   test('beginsWith', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?firstName', operator: 'beginsWith', value: 'P' }] },
+      { combinator: 'and', rules: [{ field: 'firstName', operator: 'beginsWith', value: 'P' }] },
       superUsersWithAge.filter(u => u.firstName.startsWith('P'))
     );
   });
 
   test('endsWith', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?madeUpName', operator: 'endsWith', value: 'man' }] },
+      { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'endsWith', value: 'man' }] },
       superUsersWithAge.filter(u => u.madeUpName.endsWith('man'))
     );
   });
 
   test('>', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?powerUpAge', operator: '>', value: 15 }] },
+      { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '>', value: 15 }] },
       superUsersWithAge.filter(u => u.powerUpAge! > 15)
     );
   });
 
   test('>=', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?powerUpAge', operator: '>=', value: 15 }] },
+      { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '>=', value: 15 }] },
       superUsersWithAge.filter(u => u.powerUpAge! >= 15)
     );
   });
 
   test('<', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?powerUpAge', operator: '<', value: 20 }] },
+      { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '<', value: 20 }] },
       superUsersWithAge.filter(u => u.powerUpAge! < 20)
     );
   });
 
   test('<=', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?powerUpAge', operator: '<=', value: 15 }] },
+      { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '<=', value: 15 }] },
       superUsersWithAge.filter(u => u.powerUpAge! <= 15)
     );
   });
 
   test('boolean', async () => {
     await runSPARQL(
-      { combinator: 'and', rules: [{ field: '?enhanced', operator: '=', value: true }] },
+      { combinator: 'and', rules: [{ field: 'enhanced', operator: '=', value: true }] },
       superUsersWithAge.filter(u => u.enhanced)
     );
   });
 
   test('between', async () => {
     await runSPARQL(
-      {
-        combinator: 'and',
-        rules: [{ field: '?powerUpAge', operator: 'between', value: [10, 30] }],
-      },
+      { combinator: 'and', rules: [{ field: 'powerUpAge', operator: 'between', value: [10, 30] }] },
       superUsersWithAge.filter(u => u.powerUpAge! >= 10 && u.powerUpAge! <= 30)
     );
   });
@@ -191,7 +188,7 @@ describe('SPARQL (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [{ field: '?firstName', operator: 'notBetween', value: ['C', 'R'] }],
+        rules: [{ field: 'firstName', operator: 'notBetween', value: ['C', 'R'] }],
       },
       superUsersWithAge.filter(u => !(u.firstName >= 'C' && u.firstName <= 'R'))
     );
@@ -201,7 +198,7 @@ describe('SPARQL (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [{ field: '?lastName', operator: 'in', value: ['Rogers', 'Wayne'] }],
+        rules: [{ field: 'lastName', operator: 'in', value: ['Rogers', 'Wayne'] }],
       },
       superUsersWithAge.filter(u => ['Rogers', 'Wayne'].includes(u.lastName))
     );
@@ -211,7 +208,7 @@ describe('SPARQL (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [{ field: '?lastName', operator: 'notIn', value: ['Parker', 'Kent'] }],
+        rules: [{ field: 'lastName', operator: 'notIn', value: ['Parker', 'Kent'] }],
       },
       superUsersWithAge.filter(u => !['Parker', 'Kent'].includes(u.lastName))
     );
@@ -222,12 +219,12 @@ describe('SPARQL (Grafeo)', () => {
       {
         combinator: 'or',
         rules: [
-          { field: '?firstName', operator: 'beginsWith', value: 'P' },
+          { field: 'firstName', operator: 'beginsWith', value: 'P' },
           {
             combinator: 'and',
             rules: [
-              { field: '?madeUpName', operator: 'doesNotContain', value: 'Bat' },
-              { field: '?madeUpName', operator: 'endsWith', value: 'man' },
+              { field: 'madeUpName', operator: 'doesNotContain', value: 'Bat' },
+              { field: 'madeUpName', operator: 'endsWith', value: 'man' },
             ],
           },
         ],
@@ -248,7 +245,7 @@ describe('SPARQL (Grafeo)', () => {
           {
             combinator: 'and',
             not: true,
-            rules: [{ field: '?madeUpName', operator: 'beginsWith', value: 'S' }],
+            rules: [{ field: 'madeUpName', operator: 'beginsWith', value: 'S' }],
           },
         ],
       },
@@ -265,7 +262,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [{ field: '?firstName', operator: '<', value: '?lastName', valueSource: 'field' }],
+        rules: [{ field: 'firstName', operator: '<', value: 'lastName', valueSource: 'field' }],
       },
       superUsersWithAge.filter(u => u.firstName < u.lastName)
     );
@@ -275,7 +272,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
     await runSPARQL(
       {
         combinator: 'and',
-        rules: [{ field: '?firstName', operator: '!=', value: '?lastName', valueSource: 'field' }],
+        rules: [{ field: 'firstName', operator: '!=', value: 'lastName', valueSource: 'field' }],
       },
       superUsersWithAge.filter(u => u.firstName !== u.lastName)
     );
@@ -287,7 +284,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
       {
         combinator: 'and',
         rules: [
-          { field: '?madeUpName', operator: 'contains', value: '?nickname', valueSource: 'field' },
+          { field: 'madeUpName', operator: 'contains', value: 'nickname', valueSource: 'field' },
         ],
       },
       superUsersWithAge.filter(u => u.madeUpName.includes(u.nickname))
@@ -300,12 +297,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
       {
         combinator: 'and',
         rules: [
-          {
-            field: '?madeUpName',
-            operator: 'beginsWith',
-            value: '?nickname',
-            valueSource: 'field',
-          },
+          { field: 'madeUpName', operator: 'beginsWith', value: 'nickname', valueSource: 'field' },
         ],
       },
       superUsersWithAge.filter(u => u.madeUpName.startsWith(u.nickname))
