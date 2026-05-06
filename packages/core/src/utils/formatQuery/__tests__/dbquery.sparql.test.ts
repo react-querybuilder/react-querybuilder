@@ -88,8 +88,6 @@ const superUsersWithAge = superUsers.filter(u => u.powerUpAge !== null);
 // Operators NOT tested and why:
 //  - 'null' / 'notNull': Grafeo's SPARQL engine hangs when evaluating
 //    `OPTIONAL { ... } FILTER(!BOUND(?var))`.
-//  - 'in' / 'notIn': formatQuery expands IN to a chain of `||` / `&&`
-//    equality checks which Grafeo's SPARQL engine does not support.
 //  - Shared `dbTests` entries are not reused because SPARQL requires
 //    `?variable` field names and manual triple patterns.
 describe('SPARQL (Grafeo)', () => {
@@ -196,6 +194,26 @@ describe('SPARQL (Grafeo)', () => {
         rules: [{ field: '?firstName', operator: 'notBetween', value: ['C', 'R'] }],
       },
       superUsersWithAge.filter(u => !(u.firstName >= 'C' && u.firstName <= 'R'))
+    );
+  });
+
+  test('in', async () => {
+    await runSPARQL(
+      {
+        combinator: 'and',
+        rules: [{ field: '?lastName', operator: 'in', value: ['Rogers', 'Wayne'] }],
+      },
+      superUsersWithAge.filter(u => ['Rogers', 'Wayne'].includes(u.lastName))
+    );
+  });
+
+  test('notIn', async () => {
+    await runSPARQL(
+      {
+        combinator: 'and',
+        rules: [{ field: '?lastName', operator: 'notIn', value: ['Parker', 'Kent'] }],
+      },
+      superUsersWithAge.filter(u => !['Parker', 'Kent'].includes(u.lastName))
     );
   });
 

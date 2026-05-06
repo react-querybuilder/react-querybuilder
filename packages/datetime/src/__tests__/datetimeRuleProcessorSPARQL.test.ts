@@ -22,7 +22,7 @@ const testCases: Record<string, [RuleGroupType, string]> = {
         { field: '?created_at', operator: '<', value: now },
       ],
     },
-    `?birthdate > "1957-01-01"^^xsd:date && ?birthdate >= "1957-01-01"^^xsd:date && ?birthdate <= "1969-01-01"^^xsd:date && (?birthdate < "1957-01-01"^^xsd:date || ?birthdate > "1969-01-01"^^xsd:date) && ?birthdate = "1954-10-03"^^xsd:date || ?birthdate = "1960-06-06"^^xsd:date && ?birthdate != "1957-01-01"^^xsd:date && ?created_at < "${now}"^^xsd:dateTime`,
+    `?birthdate > "1957-01-01"^^xsd:date && ?birthdate >= "1957-01-01"^^xsd:date && ?birthdate <= "1969-01-01"^^xsd:date && (?birthdate < "1957-01-01"^^xsd:date || ?birthdate > "1969-01-01"^^xsd:date) && ?birthdate IN ("1954-10-03"^^xsd:date, "1960-06-06"^^xsd:date) && ?birthdate NOT IN ("1957-01-01"^^xsd:date) && ?created_at < "${now}"^^xsd:dateTime`,
   ],
   duration: [
     {

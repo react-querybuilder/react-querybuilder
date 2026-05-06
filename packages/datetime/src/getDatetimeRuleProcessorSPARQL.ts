@@ -62,9 +62,8 @@ export const getDatetimeRuleProcessorSPARQL =
       case 'notin': {
         if (valueAsDateArray.length === 0) return '';
         const items = valueAsDateArray.map(([orig]) => fmtDate(orig));
-        const joiner = shouldNegate(operatorTL) ? ' && ' : ' || ';
-        const op = shouldNegate(operatorTL) ? '!=' : '=';
-        return items.map(item => `${field} ${op} ${item}`).join(joiner);
+        const prefix = shouldNegate(operatorTL) ? 'NOT ' : '';
+        return `${field} ${prefix}IN (${items.join(', ')})`;
       }
 
       case 'between':

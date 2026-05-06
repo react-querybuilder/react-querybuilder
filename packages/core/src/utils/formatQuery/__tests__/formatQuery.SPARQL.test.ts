@@ -24,8 +24,8 @@ import {
   sparqlTypedLiteralProcessor,
 } from './graphTestUtils';
 
-const sparqlString = `!BOUND(firstName) && BOUND(lastName) && firstName = "Test" || firstName = "This" && lastName != "Test" && lastName != "This" && firstName >= "Test" && firstName <= "This" && firstName >= "Test" && firstName <= "This" && (lastName < "Test" || lastName > "This") && age >= "12" && age <= "14" && age = "26" && isMusician = "true"^^xsd:boolean && isLucky = "false"^^xsd:boolean && !(gender = "M" || job != "Programmer" || CONTAINS(email, "@")) && (!CONTAINS(lastName, "ab") || STRSTARTS(job, "Prog") || STRENDS(email, "com") || !STRSTARTS(job, "Man") || !STRENDS(email, "fr")) && invalid invalid ""`;
-const sparqlStringForValueSourceField = `!BOUND(firstName) && BOUND(lastName) && firstName = middleName || firstName = lastName && lastName != middleName && lastName != lastName && firstName >= middleName && firstName <= lastName && firstName >= middleName && firstName <= lastName && (lastName < middleName || lastName > lastName) && age = iq && isMusician = isCreative && !(gender = someLetter || job != isBetweenJobs || CONTAINS(email, atSign)) && (!CONTAINS(lastName, firstName) || STRSTARTS(job, jobPrefix) || STRENDS(email, dotCom) || !STRSTARTS(job, hasNoJob) || !STRENDS(email, isInvalid))`;
+const sparqlString = `!BOUND(firstName) && BOUND(lastName) && firstName IN ("Test", "This") && lastName NOT IN ("Test", "This") && firstName >= "Test" && firstName <= "This" && firstName >= "Test" && firstName <= "This" && (lastName < "Test" || lastName > "This") && age >= "12" && age <= "14" && age = "26" && isMusician = "true"^^xsd:boolean && isLucky = "false"^^xsd:boolean && !(gender = "M" || job != "Programmer" || CONTAINS(email, "@")) && (!CONTAINS(lastName, "ab") || STRSTARTS(job, "Prog") || STRENDS(email, "com") || !STRSTARTS(job, "Man") || !STRENDS(email, "fr")) && invalid invalid ""`;
+const sparqlStringForValueSourceField = `!BOUND(firstName) && BOUND(lastName) && firstName IN (middleName, lastName) && lastName NOT IN (middleName, lastName) && firstName >= middleName && firstName <= lastName && firstName >= middleName && firstName <= lastName && (lastName < middleName || lastName > lastName) && age = iq && isMusician = isCreative && !(gender = someLetter || job != isBetweenJobs || CONTAINS(email, atSign)) && (!CONTAINS(lastName, firstName) || STRSTARTS(job, jobPrefix) || STRENDS(email, dotCom) || !STRSTARTS(job, hasNoJob) || !STRENDS(email, isInvalid))`;
 
 it('formats SPARQL correctly', () => {
   const sparqlQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
@@ -59,7 +59,7 @@ it('independent combinators', () => {
 
 it('handles parseNumbers', () => {
   expect(formatQuery(queryForNumberParsing, { format: 'sparql', parseNumbers: true })).toBe(
-    `f > "NaN" && f = 0 && f = 0 && f = 0 && (f < 1.5 || f > 1.5) && f = 0 || f = 1 || f = 2 && f = 0 || f = 1 || f = 2 && f = 0 || f = "abc" || f = 2 && f >= 0 && f <= 1 && f >= 0 && f <= 1 && f >= 0 && f <= "abc" && f >= "{}" && f <= "{}"`
+    `f > "NaN" && f = 0 && f = 0 && f = 0 && (f < 1.5 || f > 1.5) && f IN (0, 1, 2) && f IN (0, 1, 2) && f IN (0, "abc", 2) && f >= 0 && f <= 1 && f >= 0 && f <= 1 && f >= 0 && f <= "abc" && f >= "{}" && f <= "{}"`
   );
 });
 

@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- SPARQL output uses native `IN`/`NOT IN` syntax where appropriate.
 
 ## [v8.16.0] - 2026-05-04
 

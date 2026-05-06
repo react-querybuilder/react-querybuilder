@@ -63,12 +63,12 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
     case 'in': {
       const items = toArray(value).map(fmtVal);
       if (!items.length) return '';
-      return items.map(item => `${field} = ${item}`).join(' || ');
+      return `${field} IN (${items.join(', ')})`;
     }
     case 'notin': {
       const items = toArray(value).map(fmtVal);
       if (!items.length) return '';
-      return items.map(item => `${field} != ${item}`).join(' && ');
+      return `${field} NOT IN (${items.join(', ')})`;
     }
     case 'between': {
       const arr = toArray(value);
