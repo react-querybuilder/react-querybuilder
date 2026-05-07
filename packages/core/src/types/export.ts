@@ -751,6 +751,10 @@ export type NLTranslationKey =
   | 'false'
   | 'ruleSeparator'
   | 'betweenAnd'
+  | 'afterSubject'
+  | 'afterVerb'
+  | 'afterObject'
+  | 'listSeparator'
   | `groupPrefix${ZeroOrMoreGroupVariants}`
   | `groupSuffix${ZeroOrMoreGroupVariants}`;
 

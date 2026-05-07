@@ -1214,6 +1214,34 @@ formatQuery(query, {
 // Rules are still joined with 'かつ'
 ```
 
+##### Constituent particles
+
+By default, the word order constituents (Subject, Verb, Object) are separated by a single space. Use `afterSubject`, `afterVerb`, and `afterObject` to insert particles or custom separators after each constituent. Each defaults to `' '` (space) when not set.
+
+This is essential for languages that use grammatical particles between constituents — for example, Japanese requires `が` (subject marker) after the subject:
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'SOV',
+  translations: { afterSubject: 'が' },
+  operatorMap: { '=': 'である' },
+});
+// `First Nameが'Steve' である`
+```
+
+##### List separator
+
+The values in an "in" or "notin" list are separated by `', '` (comma + space) by default, with an Oxford comma before the final item when there are three or more values. Set the `listSeparator` translation key to change the separator. When a custom `listSeparator` is set, the Oxford comma is automatically disabled.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { listSeparator: '、', or: 'または' },
+});
+// `Color is one of the values ('Red'、'Green' または 'Blue')`
+```
+
 #### Operator map
 
 `operatorMap` is a map of operators to their natural language equivalents. If the result can differ based on the `valueSource`, the key should map to an array where the second element represents the string to be used when `valueSource` is "field"; the first element will be used in all other cases.

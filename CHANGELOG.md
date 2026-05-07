@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New translation keys for natural language export: `ruleSeparator`, `listSeparator`, `betweenAnd`, `afterSubject`, `afterVerb`, and `afterObject`
+
 ### Fixed
 
 - SPARQL export automatically prefixes variables with `?` where appropriate.

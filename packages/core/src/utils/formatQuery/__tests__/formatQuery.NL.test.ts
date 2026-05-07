@@ -537,6 +537,97 @@ it('betweenAnd', () => {
   ).toBe(`f1 is between 'v1' と 'v2'`);
 });
 
+it('afterSubject/afterVerb/afterObject', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '>', value: '10' },
+    ],
+  };
+
+  // Japanese SOV with が particle after subject
+  expect(
+    formatQuery(q, {
+      format: 'natural_language',
+      wordOrder: 'SOV',
+      translations: { afterSubject: 'が', and: 'かつ', ruleSeparator: '、' },
+      operatorMap: { '=': 'である', '>': 'より大きい' },
+    })
+  ).toBe(`f1が'v1' である、かつ f2が'10' より大きい`);
+
+  // afterObject for SOV (particle between value and verb)
+  expect(
+    formatQuery(q, {
+      format: 'natural_language',
+      wordOrder: 'SOV',
+      translations: { afterSubject: 'は ', afterObject: ' ' },
+      operatorMap: { '=': 'です', '>': 'より大きいです' },
+    })
+  ).toBe(`f1は 'v1' です, and f2は '10' より大きいです`);
+
+  // Default behavior (space) when no translations set
+  expect(
+    formatQuery(q, {
+      format: 'natural_language',
+      wordOrder: 'SOV',
+      operatorMap: { '=': 'is', '>': 'is greater than' },
+    })
+  ).toBe(`f1 'v1' is, and f2 '10' is greater than`);
+
+  // Empty constituent (boolean with empty true translation) skips value and its suffix
+  const qBool: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: true },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+  // Without afterObject set, empty O is skipped (no double space)
+  expect(
+    formatQuery(qBool, {
+      format: 'natural_language',
+      wordOrder: 'SOV',
+      translations: { true: '', afterSubject: 'が' },
+      operatorMap: { '=': 'である' },
+    })
+  ).toBe(`f1がである, and f2が'v2' である`);
+  // With afterObject: '', empty O is skipped cleanly
+  expect(
+    formatQuery(qBool, {
+      format: 'natural_language',
+      wordOrder: 'SOV',
+      translations: { true: '', afterSubject: 'が', afterObject: '' },
+      operatorMap: { '=': 'である' },
+    })
+  ).toBe(`f1がである, and f2が'v2'である`);
+});
+
+it('listSeparator', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: 'in', value: 'a,b,c' },
+      { field: 'f2', operator: 'in', value: 'x,y' },
+    ],
+  };
+
+  // Default behavior (comma + Oxford comma for 3+ items)
+  expect(formatQuery(q, { format: 'natural_language' })).toBe(
+    `f1 is one of the values ('a', 'b', or 'c'), and f2 is one of the values ('x' or 'y')`
+  );
+
+  // Custom listSeparator disables Oxford comma
+  expect(
+    formatQuery(q, {
+      format: 'natural_language',
+      translations: { listSeparator: '、', or: 'または' },
+    })
+  ).toBe(
+    `f1 is one of the values ('a'、'b' または 'c'), and f2 is one of the values ('x' または 'y')`
+  );
+});
+
 describe('match modes', () => {
   it('strings', () => {
     expect(formatQuery(queryWithMatchModes, { format: 'natural_language' })).toBe(

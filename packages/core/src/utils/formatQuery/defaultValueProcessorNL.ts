@@ -32,7 +32,7 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const valueIsField = rule.valueSource === 'field';
   const operatorLowerCase = lc(rule.operator);
   const quoteChar =
-    quoteValuesWith || /* v8 ignore start -- @preserve */ "'" /* v8 ignore stop -- @preserve */;
+    quoteValuesWith || /* v8 ignore start -- @preserve */ "'"; /* v8 ignore stop -- @preserve */
 
   // oxlint-disable no-explicit-any
   const quoteValue = (v: any) => `${quoteChar}${v}${quoteChar}`;
@@ -42,10 +42,12 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const wrapFieldName = (v: string) =>
     getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
-  const t = translations ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  const t = translations ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
   const orTL = t.or ?? 'or';
   const trueTL = t.true ?? 'true';
   const falseTL = t.false ?? 'false';
+  const listSep = t.listSeparator ?? ', ';
+  const useOxfordComma = !t.listSeparator;
 
   switch (operatorLowerCase) {
     case 'null':
@@ -100,7 +102,8 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
       if (valStringArray.length === 1) {
         return valStringArray[0];
       }
-      const list = `${valStringArray.slice(0, -1).join(', ')}${valStringArray.length > 2 ? ',' : ''} ${orTL} ${valStringArray.at(-1)}`;
+      const oxfordComma = useOxfordComma && valStringArray.length > 2 ? ',' : '';
+      const list = `${valStringArray.slice(0, -1).join(listSep)}${oxfordComma} ${orTL} ${valStringArray.at(-1)}`;
       return `(${list})`;
     }
   }
