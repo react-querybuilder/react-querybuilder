@@ -32,6 +32,7 @@ export const commonBuildOptions: UserConfig = {
     neverBundle: ['jsonata', 'numeric-quantity', 'sequelize', 'spel2js'],
     onlyBundle: ['type-fest'],
   },
+  checks: { pluginTimings: false },
 };
 
 export const tsdownCommonConfig = (sourceDir: string) =>
