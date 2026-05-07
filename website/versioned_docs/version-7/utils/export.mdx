@@ -1165,7 +1165,7 @@ Map "and", "or", "true", and "false" to their translated equivalents, plus prefi
 
 The base prefix/suffix options are "groupPrefix" and "groupSuffix". The applicability of a group-related translation is determined by two conditions: (1) whether the group's `not` property is true, and (2) whether the combinator for the group is `"xor"`. The base `"group*"` translations are the fallbacks for when neither condition is true. When one or more conditions are true, `formatQuery` will look for a property on the `translations` object that matches the base property with a suffix of underscore (`"_"`) plus the condition ID (`"not"` or `"xor"`).
 
-For example, when a group has a `not: true` property, but the `combinator` is something other than `"xor"`, `formatQuery` will look for the `groupSuffix_not` key. For example:
+For example, when a group has a `not: true` property, but the `combinator` is something other than `"xor"`, `formatQuery` will look for the `groupSuffix_not` key.
 
 ```ts
 formatQuery(query, {
@@ -1188,6 +1188,31 @@ formatQuery(query, {
 ```
 
 When `not` is falsy but the `combinator` is `"xor"`, `groupSuffix_xor` will be used if it exists. Otherwise it will fall back to the default. If both conditions are true, the order of the suffixes doesn't matter: both "groupSuffix_not_xor" and "groupSuffix_xor_not" would be valid (although there is no guarantee which one will be used if both are present).
+
+##### Rule separator
+
+By default, rules within a group are separated by a comma followed by a space (`, `). Use the `ruleSeparator` translation key to change this. The value should include any trailing space if desired — for example, `'; '` for a semicolon separator, or `'、'` (ideographic comma, no space) for Japanese.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { ruleSeparator: '、', and: 'かつ' },
+});
+// `First Name is 'Steve'、かつ Last Name is 'Vai'`
+```
+
+##### Between conjunction
+
+The conjunction between the two values in a "between" expression defaults to the `and` translation (or `"and"` if not set). Use the `betweenAnd` translation key to override it independently. This is useful for languages where the logical conjunction (used between rules) and the range conjunction (used in "between X and Y") are different words.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { and: 'かつ', betweenAnd: 'と' },
+});
+// `Age is between '12' と '14'`
+// Rules are still joined with 'かつ'
+```
 
 #### Operator map
 

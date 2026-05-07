@@ -499,6 +499,44 @@ it('operatorMap', () => {
   expect(formatQuery(query, { format: 'natural_language', operatorMap })).toBe(nlStringOperatorMap);
 });
 
+it('ruleSeparator', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+
+  expect(
+    formatQuery(q, { format: 'natural_language', translations: { ruleSeparator: '、' } })
+  ).toBe(`f1 is 'v1'、and f2 is 'v2'`);
+
+  expect(
+    formatQuery(q, {
+      format: 'natural_language',
+      translations: { ruleSeparator: '; ', and: 'AND' },
+    })
+  ).toBe(`f1 is 'v1'; AND f2 is 'v2'`);
+});
+
+it('betweenAnd', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'f1', operator: 'between', value: 'v1,v2' }],
+  };
+
+  // Falls back to translations.and when betweenAnd is not set
+  expect(formatQuery(q, { format: 'natural_language', translations: { and: 'PLUS' } })).toBe(
+    `f1 is between 'v1' PLUS 'v2'`
+  );
+
+  // Uses betweenAnd independently from translations.and
+  expect(
+    formatQuery(q, { format: 'natural_language', translations: { and: 'かつ', betweenAnd: 'と' } })
+  ).toBe(`f1 is between 'v1' と 'v2'`);
+});
+
 describe('match modes', () => {
   it('strings', () => {
     expect(formatQuery(queryWithMatchModes, { format: 'natural_language' })).toBe(

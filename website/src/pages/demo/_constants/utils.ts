@@ -148,7 +148,15 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
 };
 
 export const getExportCall = async (
-  { format, parseNumbers, preset, placeholderValueName }: FormatQueryOptions,
+  {
+    format,
+    parseNumbers,
+    preset,
+    placeholderValueName,
+    wordOrder,
+    operatorMap,
+    translations,
+  }: FormatQueryOptions,
   { validateQuery }: Pick<DemoOptions, 'validateQuery'>
 ) => {
   const rqbImports = ['formatQuery'];
@@ -180,6 +188,20 @@ export const getExportCall = async (
 
   if (format === 'natural_language') {
     optionsString = optionsString.replace('}', ', getOperators: () => defaultOperators }');
+  }
+
+  if (format === 'natural_language' && wordOrder) {
+    optionsString = optionsString.replace('}', `, wordOrder: '${wordOrder}' }`);
+  }
+
+  if (format === 'natural_language' && operatorMap) {
+    const operatorMapStr = JSON.stringify(operatorMap);
+    optionsString = optionsString.replace('}', `, operatorMap: ${operatorMapStr} }`);
+  }
+
+  if (format === 'natural_language' && translations) {
+    const translationsStr = JSON.stringify(translations);
+    optionsString = optionsString.replace('}', `, translations: ${translationsStr} }`);
   }
 
   return prettier.format(

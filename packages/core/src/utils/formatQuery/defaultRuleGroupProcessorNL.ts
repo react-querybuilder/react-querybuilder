@@ -50,7 +50,8 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
     for (const rule of rg2.rules) {
       // Independent combinators
       if (typeof rule === 'string') {
-        precedingCombinator = `, ${translations[rule as NLTranslationKey] ?? rule} `;
+        const sep = translations.ruleSeparator ?? ', ';
+        precedingCombinator = `${sep}${translations[rule as NLTranslationKey] ?? rule} `;
         continue;
       }
 
@@ -133,8 +134,12 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
     const prefix = mustWrap ? `${prefixTL} (`.trim() : '';
     const suffix = mustWrap ? `) ${suffixTL}`.trim() : '';
 
+    const sep = translations.ruleSeparator ?? ', ';
+
     return `${prefix}${processedRules.join(
-      isRuleGroupType(rg2) ? `, ${translations[combinator as NLTranslationKey] ?? combinator} ` : ''
+      isRuleGroupType(rg2)
+        ? `${sep}${translations[combinator as NLTranslationKey] ?? combinator} `
+        : ''
     )}${suffix}`;
   };
 
