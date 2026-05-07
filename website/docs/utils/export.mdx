@@ -1257,6 +1257,104 @@ formatQuery(query, {
 // `First Name is most assuredly 'Steve', and Last Name differs from First Name`
 ```
 
+#### Sample language configurations
+
+These examples show how `wordOrder`, `operatorMap`, and `translations` combine to produce natural-sounding output in different languages. Each example targets a different [constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders) family.
+
+##### Japanese (SOV with particles)
+
+Japanese uses Subject-Object-Verb order and requires the particle `が` after the subject. Ideographic punctuation (`、`) replaces commas, and the `から…の間` pattern is more natural than `と…の間` for ranges.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'SOV',
+  operatorMap: {
+    '=': ['である', 'と同じ値である'],
+    '>': ['より大きい', 'の値より大きい'],
+    beginswith: ['で始まる', 'の値で始まる'],
+    in: ['のいずれかである', 'と同じ値のいずれかである'],
+    between: ['の間である', 'の値の間である'],
+    // ... other operators
+  },
+  translations: {
+    and: 'かつ',
+    or: 'または',
+    true: '真',
+    false: '偽',
+    ruleSeparator: '、',
+    betweenAnd: 'から',
+    afterSubject: 'が',
+    afterObject: '',
+    listSeparator: '、',
+    groupSuffix: '',
+  },
+});
+// First Nameが'Stev'で始まる、かつ Ageが'28'より大きい
+```
+
+##### Spanish (SVO with translations)
+
+Spanish uses the same SVO order as English, so only `operatorMap` and `translations` are needed — no `wordOrder` change.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  operatorMap: {
+    '=': ['es', 'es igual al valor de'],
+    '>': ['es mayor que', 'es mayor que el valor de'],
+    beginswith: ['comienza con', 'comienza con el valor de'],
+    in: ['es uno de los valores', 'es igual a un valor en'],
+    between: ['está entre', 'está entre los valores de'],
+    // ... other operators
+  },
+  translations: {
+    and: 'y',
+    or: 'o',
+    true: 'verdadero',
+    false: 'falso',
+    groupSuffix: 'es verdadero',
+    groupSuffix_not: 'no es verdadero',
+  },
+});
+// First Name comienza con 'Stev', y Age es mayor que '28'
+```
+
+##### Welsh (VSO)
+
+Welsh uses Verb-Subject-Object order, placing the operator first.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'VSO',
+  operatorMap: {
+    '=': ['yw', "yr un fath â'r gwerth yn"],
+    '>': ['yn fwy na', "yn fwy na'r gwerth yn"],
+    beginswith: ['yn dechrau gyda', "yn dechrau gyda'r gwerth yn"],
+    in: ["yn un o'r gwerthoedd", "yr un fath ag un o'r gwerthoedd yn"],
+    between: ['rhwng', 'rhwng y gwerthoedd yn'],
+    // ... other operators
+  },
+  translations: {
+    and: 'a',
+    or: 'neu',
+    true: 'gwir',
+    false: 'gau',
+    betweenAnd: 'a',
+    groupSuffix: 'yn wir',
+    groupSuffix_not: 'ddim yn wir',
+  },
+});
+// yn dechrau gyda First Name 'Stev', a yn fwy na Age '28'
+```
+
+:::tip
+
+Complete configurations for these languages (plus Korean) are available in the [demo](/demo) — use the language selector on the "Natural language" export tab to preview the output interactively.
+
+:::
+
 ### Rule group processor
 
 `formatQuery` processes, validates, and augments configuration options before passing the query and "final" options object to the appropriate rule group processor for the requested format.
