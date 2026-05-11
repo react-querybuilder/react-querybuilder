@@ -131,13 +131,13 @@
   "catalog": {
     "@reduxjs/toolkit": "^2.11.2",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.6.2",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.20",
-    "immer": "^11.1.7",
+    "immer": "^11.1.8",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "luxon": "^3.7.2",
@@ -149,7 +149,7 @@
     "sass": "^1.99.0",
     "type-fest": "^5.5.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.11"
+    "vite": "^8.0.12"
   },
   "catalogs": {
     "peer": {
@@ -166,7 +166,7 @@
       "@testing-library/jest-dom": "^6.9.1",
       "@testing-library/react": "^16.3.2",
       "@testing-library/user-event": "14.6.1",
-      "mongoose": "^9.6.1",
+      "mongoose": "^9.6.2",
       "react-test-renderer": "^19.2.6"
     }
   },
@@ -188,9 +188,9 @@
     "@types/react-dom": "catalog:",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.349",
-    "@typescript/native-preview": "^7.0.0-dev.20260507.1",
-    "@vitest/coverage-v8": "^4.1.4",
-    "@vitest/ui": "^4.1.4",
+    "@typescript/native-preview": "^7.0.0-dev.20260511.1",
+    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/ui": "^4.1.6",
     "bun-plugin-tailwind": "^0.1.2",
     "concurrently": "^9.2.1",
     "esbuild-analyzer": "^0.2.0",
@@ -212,7 +212,7 @@
     "tsdown": "^0.22.0",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.6"
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",

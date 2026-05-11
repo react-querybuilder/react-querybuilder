@@ -38,15 +38,15 @@
   }
 }
 
-/*
-The rest of this file was copied from /node_modules/@mantine/core/styles.css (v9.1.1).
+/* BEGIN_MANTINE_STYLES v9.2.0
+The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
 block above. The `:root { color-scheme: ... }` declaration in the "Default CSS variables"
 section has also been commented.
 */
 
-/* ----- CSS reset ----- */
+/* BEGIN_MANTINE_CSS_RESET */
 /*
 :root,
 :host {
@@ -85,19 +85,21 @@ body,
 }
 
 @media screen and (max-device-width: 31.25em) {
-  body,
-  :host {
-    -webkit-text-size-adjust: 100%;
-  }
+
+body,
+:host {
+    -webkit-text-size-adjust: 100%
 }
+  }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-respect-reduced-motion] [data-reduce-motion] {
-    transition: none;
-    animation: none;
+    [data-respect-reduced-motion] [data-reduce-motion] {
+      transition: none;
+      animation: none;
+    }
   }
-}
 */
+/* END_MANTINE_CSS_RESET */
 
 [data-mantine-color-scheme='light'] .mantine-light-hidden {
   display: none;
@@ -5000,6 +5002,7 @@ fieldset:disabled .m_8ee546b8,
   user-select: none;
   -webkit-user-select: none;
   max-width: 100%;
+  position: relative;
 }
 
 :where([data-mantine-color-scheme='dark']) .m_7cda1cd6 {
@@ -5017,6 +5020,40 @@ fieldset:disabled .m_8ee546b8,
 
 .m_7cda1cd6:where([data-disabled], :has(button:disabled)) {
   cursor: not-allowed;
+}
+
+.m_7cda1cd6:where([draggable='true']) {
+  cursor: grab;
+}
+
+.m_7cda1cd6:where([draggable='true']):focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: calc(0.125rem * var(--mantine-scale));
+}
+
+.m_7cda1cd6:where([data-dragging]) {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.m_7cda1cd6:where([data-drag-over='before'])::before,
+.m_7cda1cd6:where([data-drag-over='after'])::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(0.125rem * var(--mantine-scale));
+  background-color: var(--mantine-primary-color-filled);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.m_7cda1cd6:where([data-drag-over='before'])::before {
+  inset-inline-start: calc(-0.25rem * var(--mantine-scale));
+}
+
+.m_7cda1cd6:where([data-drag-over='after'])::after {
+  inset-inline-end: calc(-0.25rem * var(--mantine-scale));
 }
 
 :where([data-mantine-color-scheme='light']) .m_44da308b {
@@ -6116,6 +6153,67 @@ fieldset:disabled .m_8ee546b8,
 
 .m_fae05d6a {
   clip-path: var(--rating-symbol-clip-path);
+}
+
+.m_47dd3981 {
+  display: inline-flex;
+  align-items: baseline;
+  overflow: hidden;
+}
+
+.m_47dd3981[data-tabular-numbers] {
+  font-variant-numeric: tabular-nums;
+}
+
+.m_b301d46e {
+  display: inline-block;
+  width: 1ch;
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+  transition:
+    width var(--rn-duration) var(--rn-timing-function),
+    opacity var(--rn-duration) var(--rn-timing-function);
+}
+
+.m_b301d46e[data-empty] {
+  width: 0;
+  opacity: 0;
+}
+
+.m_8ae40964 {
+  display: flex;
+  flex-direction: column;
+  animation: m_18d73873 var(--rn-duration) var(--rn-timing-function);
+}
+
+.m_8ae40964 > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1em;
+}
+
+.m_47d64bf5 {
+  display: inline-block;
+  overflow: hidden;
+  white-space: pre;
+  transition: opacity var(--rn-duration) var(--rn-timing-function);
+}
+
+.m_47d64bf5[data-empty] {
+  width: 0;
+  opacity: 0;
+}
+
+@keyframes m_18d73873 {
+  from {
+    transform: var(--rn-roll-from);
+  }
+
+  to {
+    transform: var(--rn-roll-to);
+  }
 }
 
 .m_1b3c8819 {
@@ -8219,6 +8317,120 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 :where([data-with-lines]) .m_75f3ecf > .m_f6970eb1:last-child::after {
   bottom: auto;
   height: calc(0.75rem * var(--mantine-scale));
+}
+
+.m_529d33e8 {
+  --ts-level-offset: calc(1.25rem * var(--mantine-scale));
+  --ts-line-width: calc(0.0625rem * var(--mantine-scale));
+  --ts-line-color: var(--mantine-color-default-border);
+  --ts-option-padding-y: calc(0.25rem * var(--mantine-scale));
+  --ts-option-padding-x: calc(0.5rem * var(--mantine-scale));
+}
+
+.m_28bb748 {
+  display: flex;
+  align-items: center;
+  gap: calc(0.375rem * var(--mantine-scale));
+  position: relative;
+  padding: var(--ts-option-padding-y) var(--ts-option-padding-x);
+  padding-inline-start: var(--ts-option-padding-x);
+}
+
+.m_aa3e3f86 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --_ts-expand-icon-size: calc(1.45 * var(--combobox-option-fz, var(--mantine-font-size-sm)));
+  width: var(--_ts-expand-icon-size);
+  min-width: var(--_ts-expand-icon-size);
+  height: var(--_ts-expand-icon-size);
+  border-radius: var(--mantine-radius-sm);
+  cursor: pointer;
+  color: var(--mantine-color-dimmed);
+  transform: rotate(-90deg);
+}
+
+:where([data-combobox-selected]) .m_aa3e3f86 {
+  color: var(--mantine-color-white);
+}
+
+:where([dir='rtl']) .m_aa3e3f86 {
+  transform: rotate(90deg);
+}
+
+.m_aa3e3f86:where([data-expanded]) {
+  transform: rotate(0deg);
+}
+
+@media (hover: hover) {
+  :where([data-mantine-color-scheme='light']) .m_aa3e3f86:hover {
+    background-color: var(--mantine-color-gray-1);
+  }
+
+  :where([data-mantine-color-scheme='dark']) .m_aa3e3f86:hover {
+    background-color: var(--mantine-color-dark-5);
+  }
+}
+
+@media (hover: none) {
+  :where([data-mantine-color-scheme='light']) .m_aa3e3f86:active {
+    background-color: var(--mantine-color-gray-1);
+  }
+
+  :where([data-mantine-color-scheme='dark']) .m_aa3e3f86:active {
+    background-color: var(--mantine-color-dark-5);
+  }
+}
+
+.m_eaa4cdee {
+  opacity: 0.4;
+  width: 0.8em;
+  min-width: 0.8em;
+  height: 0.8em;
+  margin-inline-start: auto;
+}
+
+:where([data-combobox-selected]) .m_eaa4cdee {
+  opacity: 1;
+}
+
+.m_ffe3a9c1 {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tree lines */
+.m_57207d5d {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-inline-start: var(--ts-line-width) solid var(--ts-line-color);
+  pointer-events: none;
+}
+
+.m_41b9db0b {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-inline-start: var(--ts-line-width) solid var(--ts-line-color);
+  pointer-events: none;
+}
+
+.m_41b9db0b:where([data-last]) {
+  bottom: auto;
+  height: 50%;
+}
+
+.m_1246e79 {
+  position: absolute;
+  top: 50%;
+  height: 0;
+  border-top: var(--ts-line-width) solid var(--ts-line-color);
+  pointer-events: none;
 }
 
 .m_d08caa0 :first-child {
