@@ -195,9 +195,14 @@ export const getExportCall = async (
     if (translations) parts.push(`translations: ${JSON.stringify(translations)}`);
     optionsString = `{ ${parts.join(', ')} }`;
   } else {
-    optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
-    if (validateQuery) {
-      optionsString = optionsString.replace('}', ', fields }');
+    if (Object.keys(fqOpts).length > 1 || validateQuery) {
+      const parts = Object.entries(fqOpts)
+        .filter(([k]) => k !== 'format')
+        .map(([k, v]) => `${k}: ${JSON.stringify(v)}`);
+      if (validateQuery) parts.push('fields');
+      optionsString = `{ format: '${format}'${parts.length ? `, ${parts.join(', ')}` : ''} }`;
+    } else {
+      optionsString = `'${format}'`;
     }
   }
 
