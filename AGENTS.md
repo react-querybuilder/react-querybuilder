@@ -144,6 +144,17 @@ import { generateID, isRuleGroup } from '../utils';
 - Path-based updates `[0, 1, 2]`
 - Custom Redux context to avoid prop drilling
 
+## Bun APIs
+
+This project runs on Bun. Prefer Bun-native APIs over Node.js equivalents in scripts and utilities:
+
+- `Bun.file(path).text()` / `.json()` instead of `fs.readFileSync`
+- `Bun.write(path, content)` instead of `fs.writeFileSync`
+- `Bun.spawnSync(...)` / `Bun.spawn(...)` instead of `child_process.execSync` / `exec`
+- `Bun.serve(...)` instead of `http.createServer`
+
+Only fall back to `node:*` APIs when no Bun equivalent exists.
+
 ## Testing
 
 - Vitest + Testing Library
@@ -166,6 +177,7 @@ import { generateID, isRuleGroup } from '../utils';
 
 - `bun generate-parsers` - Regenerate CEL and SQL parsers
 - `bun generate-examples` - Regenerate example projects
+- `bun update-mantine-css` - Sync `website/src/pages/demo/_styles/rqb-mantine.css` from `node_modules/@mantine/core/styles.css`; run after updating any `@mantine/*` dependencies
 
 ## Performance
 

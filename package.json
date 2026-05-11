@@ -116,6 +116,7 @@
     "generate-celparser": "bunx --bun ts-jison -n CEL -t typescript packages/core/src/utils/parseCEL/cel.jison --outfile packages/core/src/utils/parseCEL/celParser.ts",
     "generate-parsers-codemod": "sed -i 's/lexer = new \\(CEL\\|SQL\\)Lexer(/lexer: \\1Lexer = new \\1Lexer(/g' packages/core/src/utils/parse{CEL/cel,SQL/sql}Parser.ts",
     "generate-prisma-client": "./utils/gen-prisma-client.sh",
+    "update-mantine-css": "bun utils/update-mantine-css.ts",
     "outdated": "bun update --interactive --recursive",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile",
     "version": "bun version.ts && bun install && bun --bun run build && bun run generate-examples && git add examples packages website/package.json bun.lock",
