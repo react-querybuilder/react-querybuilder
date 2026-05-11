@@ -180,28 +180,25 @@ export const getExportCall = async (
     fqOpts.placeholderValueName = placeholderValueName;
   }
 
-  let optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
-
-  if (validateQuery || format === 'natural_language') {
-    optionsString = optionsString.replace('}', ', fields }');
-  }
+  let optionsString: string;
 
   if (format === 'natural_language') {
-    optionsString = optionsString.replace('}', ', getOperators: () => defaultOperators }');
-  }
-
-  if (format === 'natural_language' && wordOrder) {
-    optionsString = optionsString.replace('}', `, wordOrder: '${wordOrder}' }`);
-  }
-
-  if (format === 'natural_language' && operatorMap) {
-    const operatorMapStr = JSON.stringify(operatorMap);
-    optionsString = optionsString.replace('}', `, operatorMap: ${operatorMapStr} }`);
-  }
-
-  if (format === 'natural_language' && translations) {
-    const translationsStr = JSON.stringify(translations);
-    optionsString = optionsString.replace('}', `, translations: ${translationsStr} }`);
+    const parts: string[] = [`format: '${format}'`];
+    if (parseNumbers) parts.push('parseNumbers: true');
+    if (placeholderValueName !== undefined) {
+      parts.push(`placeholderValueName: '${placeholderValueName}'`);
+    }
+    parts.push('fields');
+    parts.push('getOperators: () => defaultOperators');
+    if (wordOrder) parts.push(`wordOrder: '${wordOrder}'`);
+    if (operatorMap) parts.push(`operatorMap: ${JSON.stringify(operatorMap)}`);
+    if (translations) parts.push(`translations: ${JSON.stringify(translations)}`);
+    optionsString = `{ ${parts.join(', ')} }`;
+  } else {
+    optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
+    if (validateQuery) {
+      optionsString = optionsString.replace('}', ', fields }');
+    }
   }
 
   return prettier.format(
