@@ -148,7 +148,15 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
 };
 
 export const getExportCall = async (
-  { format, parseNumbers, preset, placeholderValueName }: FormatQueryOptions,
+  {
+    format,
+    parseNumbers,
+    preset,
+    placeholderValueName,
+    wordOrder,
+    operatorMap,
+    translations,
+  }: FormatQueryOptions,
   { validateQuery }: Pick<DemoOptions, 'validateQuery'>
 ) => {
   const rqbImports = ['formatQuery'];
@@ -172,14 +180,30 @@ export const getExportCall = async (
     fqOpts.placeholderValueName = placeholderValueName;
   }
 
-  let optionsString = Object.keys(fqOpts).length > 1 ? JSON.stringify(fqOpts) : `'${format}'`;
-
-  if (validateQuery || format === 'natural_language') {
-    optionsString = optionsString.replace('}', ', fields }');
-  }
+  let optionsString: string;
 
   if (format === 'natural_language') {
-    optionsString = optionsString.replace('}', ', getOperators: () => defaultOperators }');
+    const parts: string[] = [`format: '${format}'`];
+    if (parseNumbers) parts.push('parseNumbers: true');
+    if (placeholderValueName !== undefined) {
+      parts.push(`placeholderValueName: '${placeholderValueName}'`);
+    }
+    parts.push('fields');
+    parts.push('getOperators: () => defaultOperators');
+    if (wordOrder) parts.push(`wordOrder: '${wordOrder}'`);
+    if (operatorMap) parts.push(`operatorMap: ${JSON.stringify(operatorMap)}`);
+    if (translations) parts.push(`translations: ${JSON.stringify(translations)}`);
+    optionsString = `{ ${parts.join(', ')} }`;
+  } else {
+    if (Object.keys(fqOpts).length > 1 || validateQuery) {
+      const parts = Object.entries(fqOpts)
+        .filter(([k]) => k !== 'format')
+        .map(([k, v]) => `${k}: ${JSON.stringify(v)}`);
+      if (validateQuery) parts.push('fields');
+      optionsString = `{ format: '${format}'${parts.length ? `, ${parts.join(', ')}` : ''} }`;
+    } else {
+      optionsString = `'${format}'`;
+    }
   }
 
   return prettier.format(

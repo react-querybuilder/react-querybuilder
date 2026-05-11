@@ -117,7 +117,7 @@
     "generate-parsers-codemod": "sed -i 's/lexer = new \\(CEL\\|SQL\\)Lexer(/lexer: \\1Lexer = new \\1Lexer(/g' packages/core/src/utils/parse{CEL/cel,SQL/sql}Parser.ts",
     "generate-prisma-client": "./utils/gen-prisma-client.sh",
     "outdated": "bun update --interactive --recursive",
-    "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile && touch bun.lockb",
+    "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile",
     "version": "bun version.ts && bun install && bun --bun run build && bun run generate-examples && git add examples packages website/package.json bun.lock",
     "web": "bun run --filter website start",
     "web:skiptypedoc": "RQB_TYPEDOC_DONE=true bun run --filter website start",
@@ -137,19 +137,19 @@
     "@vitejs/plugin-react": "^6.0.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.20",
-    "immer": "^11.1.6",
+    "immer": "^11.1.7",
     "json-logic-js": "^2.0.5",
     "jsonata": "^2.1.0",
     "luxon": "^3.7.2",
     "postcss": "^8.5.14",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "react-redux": "^9.2.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass": "^1.99.0",
     "type-fest": "^5.5.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.8"
+    "vite": "^8.0.11"
   },
   "catalogs": {
     "peer": {
@@ -167,7 +167,7 @@
       "@testing-library/react": "^16.3.2",
       "@testing-library/user-event": "14.6.1",
       "mongoose": "^9.6.1",
-      "react-test-renderer": "^19.2.5"
+      "react-test-renderer": "^19.2.6"
     }
   },
   "devDependencies": {
@@ -188,7 +188,7 @@
     "@types/react-dom": "catalog:",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.349",
-    "@typescript/native-preview": "^7.0.0-dev.20260505.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260507.1",
     "@vitest/coverage-v8": "^4.1.4",
     "@vitest/ui": "^4.1.4",
     "bun-plugin-tailwind": "^0.1.2",
@@ -202,14 +202,14 @@
     "oxfmt": "^0.48.0",
     "oxlint": "^1.63.0",
     "oxlint-tsgolint": "^0.22.1",
-    "pkg-pr-new": "^0.0.70",
+    "pkg-pr-new": "^0.0.71",
     "postcss": "catalog:",
     "prettier": "3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "tsdown": "^0.21.8",
+    "tsdown": "^0.22.0",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "^4.1.4"

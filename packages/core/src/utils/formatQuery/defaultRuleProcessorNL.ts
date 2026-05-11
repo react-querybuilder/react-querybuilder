@@ -122,7 +122,7 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     valueProcessor = defaultValueProcessorNL,
     concatOperator = '||',
     wordOrder = 'SVO',
-  } = opts ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  } = opts ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
 
   const processedField = getQuotedFieldName(fieldData?.label ?? field, {
     quoteFieldNamesWith,
@@ -193,8 +193,20 @@ export const defaultRuleProcessorNL: RuleProcessor = (rule, opts) => {
     O: value,
   };
 
-  return normalizeConstituentWordOrder(wordOrder)
-    .map(term => `${wordOrderMap[term]}`)
-    .join(' ')
+  const translations = opts?.translations ?? {};
+  const suffixMap: Record<string, string> = {
+    S: translations.afterSubject ?? ' ',
+    V: translations.afterVerb ?? ' ',
+    O: translations.afterObject ?? ' ',
+  };
+
+  const wordOrderTuple = normalizeConstituentWordOrder(wordOrder).filter(
+    term => wordOrderMap[term] !== ''
+  );
+  return wordOrderTuple
+    .map(
+      (term, i) => `${wordOrderMap[term]}${i < wordOrderTuple.length - 1 ? suffixMap[term] : ''}`
+    )
+    .join('')
     .trim();
 };

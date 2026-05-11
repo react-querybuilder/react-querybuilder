@@ -117,7 +117,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
         )
           // Note: `translations` should not be used for SQL.
           // This is only here to support the "natural_language" format.
-          .join(` ${translations?.and ?? 'and'} `)
+          .join(` ${translations?.betweenAnd ?? translations?.and ?? 'and'} `)
       );
     }
 

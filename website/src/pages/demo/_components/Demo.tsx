@@ -55,6 +55,8 @@ import {
   peerDependencies,
 } from '../_constants';
 import { fields } from '../_constants/fields';
+import type { NLLanguageCode } from '../_constants/nlLanguageConfigs';
+import { nlLanguageCodes, nlLanguageConfigs } from '../_constants/nlLanguageConfigs';
 import type { CommonRQBProps, StyleName } from '../_constants/types';
 import {
   extraStyles,
@@ -199,6 +201,7 @@ export default function Demo({
     ...initialOptionsFromHash,
   });
   const [parseNumbersInExport, setParseNumbersInExport] = useState(false);
+  const [nlLanguage, setNLLanguage] = useState<NLLanguageCode>('en');
   const [sql, setSQL] = useState(initialSQL);
   const [sqlParseError, setSQLParseError] = useState('');
   const [mongoDB, setMongoDB] = useState(initialMongoDB);
@@ -241,6 +244,8 @@ export default function Demo({
     getCodeString(options, variant, 'css').then(cs => setCodeStringState(cs));
   }, [options, variant]);
 
+  const nlConfig = nlLanguageConfigs[nlLanguage];
+
   useEffect(() => {
     getExportCall(
       {
@@ -248,10 +253,18 @@ export default function Demo({
         parseNumbers: parseNumbersInExport,
         preset: sqlDialect,
         ...(options.autoSelectValue ? null : { placeholderValueName: defaultPlaceholderValueName }),
+        ...(format === 'natural_language' && nlConfig),
       },
       { validateQuery: options.validateQuery }
     ).then(ec => setExportCall(ec));
-  }, [format, options.autoSelectValue, options.validateQuery, parseNumbersInExport, sqlDialect]);
+  }, [
+    format,
+    nlConfig,
+    options.autoSelectValue,
+    options.validateQuery,
+    parseNumbersInExport,
+    sqlDialect,
+  ]);
 
   const optionsInfo = useMemo(
     () =>
@@ -293,8 +306,9 @@ export default function Demo({
               format === 'sql' ? datetimeRuleProcessorSQL : datetimeRuleProcessorJsonLogic,
           }
         : null),
+      ...(format === 'natural_language' && nlConfig),
     }),
-    [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format]
+    [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format, nlConfig]
   );
 
   const timerRG = useRef(setTimeout(() => {}));
@@ -895,6 +909,25 @@ export default function Demo({
                 <TabItem value="natural_language">
                   <div className={styles.exportOptions}>
                     <ExportInfoLinks format="natural_language" />
+                    <span>&nbsp;</span>
+                    <label>
+                      Language{' '}
+                      <Link
+                        href="/docs/utils/export#word-order"
+                        title="Click for documentation"
+                        style={{ textDecoration: 'none' }}>
+                        {infoChar}
+                      </Link>{' '}
+                      <select
+                        value={nlLanguage}
+                        onChange={e => setNLLanguage(e.target.value as NLLanguageCode)}>
+                        {nlLanguageCodes.map(code => (
+                          <option key={code} value={code}>
+                            {nlLanguageConfigs[code].label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                   </div>
                   {exportPresentation}
                 </TabItem>

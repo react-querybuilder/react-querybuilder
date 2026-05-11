@@ -1165,7 +1165,7 @@ Map "and", "or", "true", and "false" to their translated equivalents, plus prefi
 
 The base prefix/suffix options are "groupPrefix" and "groupSuffix". The applicability of a group-related translation is determined by two conditions: (1) whether the group's `not` property is true, and (2) whether the combinator for the group is `"xor"`. The base `"group*"` translations are the fallbacks for when neither condition is true. When one or more conditions are true, `formatQuery` will look for a property on the `translations` object that matches the base property with a suffix of underscore (`"_"`) plus the condition ID (`"not"` or `"xor"`).
 
-For example, when a group has a `not: true` property, but the `combinator` is something other than `"xor"`, `formatQuery` will look for the `groupSuffix_not` key. For example:
+For example, when a group has a `not: true` property, but the `combinator` is something other than `"xor"`, `formatQuery` will look for the `groupSuffix_not` key.
 
 ```ts
 formatQuery(query, {
@@ -1189,6 +1189,59 @@ formatQuery(query, {
 
 When `not` is falsy but the `combinator` is `"xor"`, `groupSuffix_xor` will be used if it exists. Otherwise it will fall back to the default. If both conditions are true, the order of the suffixes doesn't matter: both "groupSuffix_not_xor" and "groupSuffix_xor_not" would be valid (although there is no guarantee which one will be used if both are present).
 
+##### Rule separator
+
+By default, rules within a group are separated by a comma followed by a space (`, `). Use the `ruleSeparator` translation key to change this. The value should include any trailing space if desired — for example, `'; '` for a semicolon separator, or `'、'` (ideographic comma, no space) for Japanese.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { ruleSeparator: '、', and: 'かつ' },
+});
+// `First Name is 'Steve'、かつ Last Name is 'Vai'`
+```
+
+##### Between conjunction
+
+The conjunction between the two values in a "between" expression defaults to the `and` translation (or `"and"` if not set). Use the `betweenAnd` translation key to override it independently. This is useful for languages where the logical conjunction (used between rules) and the range conjunction (used in "between X and Y") are different words.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { and: 'かつ', betweenAnd: 'と' },
+});
+// `Age is between '12' と '14'`
+// Rules are still joined with 'かつ'
+```
+
+##### Constituent particles
+
+By default, the word order constituents (Subject, Verb, Object) are separated by a single space. Use `afterSubject`, `afterVerb`, and `afterObject` to insert particles or custom separators after each constituent. Each defaults to `' '` (space) when not set.
+
+This is essential for languages that use grammatical particles between constituents — for example, Japanese requires `が` (subject marker) after the subject:
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'SOV',
+  translations: { afterSubject: 'が' },
+  operatorMap: { '=': 'である' },
+});
+// `First Nameが'Steve' である`
+```
+
+##### List separator
+
+The values in an "in" or "notin" list are separated by `', '` (comma + space) by default, with an Oxford comma before the final item when there are three or more values. Set the `listSeparator` translation key to change the separator. When a custom `listSeparator` is set, the Oxford comma is automatically disabled.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  translations: { listSeparator: '、', or: 'または' },
+});
+// `Color is one of the values ('Red'、'Green' または 'Blue')`
+```
+
 #### Operator map
 
 `operatorMap` is a map of operators to their natural language equivalents. If the result can differ based on the `valueSource`, the key should map to an array where the second element represents the string to be used when `valueSource` is "field"; the first element will be used in all other cases.
@@ -1203,6 +1256,104 @@ formatQuery(query, {
 });
 // `First Name is most assuredly 'Steve', and Last Name differs from First Name`
 ```
+
+#### Sample language configurations
+
+These examples show how `wordOrder`, `operatorMap`, and `translations` combine to produce natural-sounding output in different languages. Each example targets a different [constituent word order](https://en.wikipedia.org/wiki/Word_order#Constituent_word_orders) family.
+
+##### Japanese (SOV with particles)
+
+Japanese uses Subject-Object-Verb order and requires the particle `が` after the subject. Ideographic punctuation (`、`) replaces commas, and the `から…の間` pattern is more natural than `と…の間` for ranges.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'SOV',
+  operatorMap: {
+    '=': ['である', 'と同じ値である'],
+    '>': ['より大きい', 'の値より大きい'],
+    beginswith: ['で始まる', 'の値で始まる'],
+    in: ['のいずれかである', 'と同じ値のいずれかである'],
+    between: ['の間である', 'の値の間である'],
+    // ... other operators
+  },
+  translations: {
+    and: 'かつ',
+    or: 'または',
+    true: '真',
+    false: '偽',
+    ruleSeparator: '、',
+    betweenAnd: 'から',
+    afterSubject: 'が',
+    afterObject: '',
+    listSeparator: '、',
+    groupSuffix: '',
+  },
+});
+// First Nameが'Stev'で始まる、かつ Ageが'28'より大きい
+```
+
+##### Spanish (SVO with translations)
+
+Spanish uses the same SVO order as English, so only `operatorMap` and `translations` are needed — no `wordOrder` change.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  operatorMap: {
+    '=': ['es', 'es igual al valor de'],
+    '>': ['es mayor que', 'es mayor que el valor de'],
+    beginswith: ['comienza con', 'comienza con el valor de'],
+    in: ['es uno de los valores', 'es igual a un valor en'],
+    between: ['está entre', 'está entre los valores de'],
+    // ... other operators
+  },
+  translations: {
+    and: 'y',
+    or: 'o',
+    true: 'verdadero',
+    false: 'falso',
+    groupSuffix: 'es verdadero',
+    groupSuffix_not: 'no es verdadero',
+  },
+});
+// First Name comienza con 'Stev', y Age es mayor que '28'
+```
+
+##### Welsh (VSO)
+
+Welsh uses Verb-Subject-Object order, placing the operator first.
+
+```ts
+formatQuery(query, {
+  format: 'natural_language',
+  wordOrder: 'VSO',
+  operatorMap: {
+    '=': ['yw', "yr un fath â'r gwerth yn"],
+    '>': ['yn fwy na', "yn fwy na'r gwerth yn"],
+    beginswith: ['yn dechrau gyda', "yn dechrau gyda'r gwerth yn"],
+    in: ["yn un o'r gwerthoedd", "yr un fath ag un o'r gwerthoedd yn"],
+    between: ['rhwng', 'rhwng y gwerthoedd yn'],
+    // ... other operators
+  },
+  translations: {
+    and: 'a',
+    or: 'neu',
+    true: 'gwir',
+    false: 'gau',
+    betweenAnd: 'a',
+    groupSuffix: 'yn wir',
+    groupSuffix_not: 'ddim yn wir',
+  },
+});
+// yn dechrau gyda First Name 'Stev', a yn fwy na Age '28'
+```
+
+:::tip
+
+Complete configurations for these languages (plus Korean) are available in the [demo](/demo) — use the language selector on the "Natural language" export tab to preview the output interactively.
+
+:::
 
 ### Rule group processor
 

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- [#1033] `translation` keys for "natural_language" export allow more natural, grammatically correct output for non-English languages.
+  - New keys: `ruleSeparator`, `listSeparator`, `betweenAnd`, `afterSubject`, `afterVerb`, `afterObject`.
+  - Added comprehensive configuration examples for Spanish, Japanese, Korean, and Welsh to website demo.
 - SPARQL export automatically prefixes variables with `?` where appropriate.
 - SPARQL output uses native `IN`/`NOT IN` syntax where appropriate.
 
@@ -2177,6 +2180,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1025]: https://github.com/react-querybuilder/react-querybuilder/pull/1025
 [#1026]: https://github.com/react-querybuilder/react-querybuilder/pull/1026
 [#1030]: https://github.com/react-querybuilder/react-querybuilder/pull/1030
+[#1033]: https://github.com/react-querybuilder/react-querybuilder/pull/1033
 
 <!-- #endregion -->
 
