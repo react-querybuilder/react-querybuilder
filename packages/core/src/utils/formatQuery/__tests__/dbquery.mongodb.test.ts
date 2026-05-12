@@ -66,7 +66,7 @@ beforeAll(async () => {
     })
   );
   await AugmentedSuperHero.insertMany(augmentedSuperUsersMongoDB);
-});
+}, 30_000);
 
 afterAll(async () => {
   await mongoose.disconnect();

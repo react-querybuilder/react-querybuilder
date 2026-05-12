@@ -40,7 +40,7 @@ beforeAll(async () => {
   await Musician.insertMany(
     musicians.map(m => ({ ...m, created_at: new Date(), updated_at: new Date() }))
   );
-});
+}, 30_000);
 
 afterAll(async () => {
   await mongoose.disconnect();
