@@ -453,6 +453,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "mcmcgrath13",
+      "name": "Mary McGrath",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24885580?v=4",
+      "profile": "https://github.com/mcmcgrath13",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
