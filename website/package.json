@@ -15,7 +15,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.1.1",
+    "@ant-design/icons": "^6.2.3",
     "@atlaskit/pragmatic-drag-and-drop": "^1.7.10",
     "@chakra-ui/react": "^3.34.0",
     "@codesandbox/sandpack-react": "^2.20.0",
