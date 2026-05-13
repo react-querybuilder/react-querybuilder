@@ -962,7 +962,10 @@ describe('createDndKitAdapter', () => {
       handle.dispatchEvent(pointerEvent);
 
       expect(onPointerDown).toHaveBeenCalledTimes(1);
-      expect(onPointerDown).toHaveBeenCalledWith({ nativeEvent: pointerEvent });
+      expect(onPointerDown).toHaveBeenCalledWith(
+        expect.objectContaining({ nativeEvent: pointerEvent })
+      );
+      expect(onPointerDown).toHaveBeenCalledWith(expect.any(Event));
     });
 
     it('attaches sensor listeners to drag handle in useRuleGroupDnD', () => {
@@ -1004,7 +1007,10 @@ describe('createDndKitAdapter', () => {
       handle.dispatchEvent(pointerEvent);
 
       expect(onPointerDown).toHaveBeenCalledTimes(1);
-      expect(onPointerDown).toHaveBeenCalledWith({ nativeEvent: pointerEvent });
+      expect(onPointerDown).toHaveBeenCalledWith(
+        expect.objectContaining({ nativeEvent: pointerEvent })
+      );
+      expect(onPointerDown).toHaveBeenCalledWith(expect.any(Event));
     });
   });
 
