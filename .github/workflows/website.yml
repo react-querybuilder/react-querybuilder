@@ -22,11 +22,11 @@ jobs:
   Build_website:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: "24"
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         # with:
         #   bun-version: 1.1.29
       - run: bun install --frozen-lockfile
@@ -34,7 +34,7 @@ jobs:
       - run: bun run website:build
         # "docusaurus deploy" runs "docusaurus build", so no need to run it for non-PR pushes
         if: ${{ github.event_name == 'pull_request' }}
-      - uses: webfactory/ssh-agent@v0.10.0
+      - uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
         # Only run when pushing to the `main` branch
         if: ${{ github.event_name != 'pull_request' }}
         with:
