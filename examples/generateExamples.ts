@@ -4,11 +4,12 @@ import stableStringify from 'fast-json-stable-stringify';
 import type { FormatConfig } from 'oxfmt';
 import { format } from 'oxfmt';
 import { transformWithOxc } from 'vite';
-import origOxfmtConfig from '../.oxfmtrc.json' with { type: 'json5' };
+import _oxfmtConfig from '../.oxfmtrc.json' with { type: 'json5' };
 import { version } from '../lerna.json' with { type: 'json5' };
+import { catalogs } from '../package.json' with { type: 'json5' };
 import { configs } from './exampleConfigs.js';
 
-const oxfmtConfig = origOxfmtConfig as FormatConfig;
+const oxfmtConfig = _oxfmtConfig as FormatConfig;
 
 interface PackageJSON {
   name: string;
@@ -176,7 +177,11 @@ const generateExampleFromTemplate = async (exampleID: string) => {
       if (Array.isArray(depKey)) {
         examplePkgJSON.dependencies[depKey[0]] = depKey[1];
       } else {
-        examplePkgJSON.dependencies[depKey] = compatPkgJson.peerDependencies[depKey];
+        let peerDepVersion = compatPkgJson.peerDependencies[depKey];
+        if (peerDepVersion === 'catalog:peer') {
+          peerDepVersion = catalogs.peer[depKey as keyof typeof catalogs.peer];
+        }
+        examplePkgJSON.dependencies[depKey] = peerDepVersion;
       }
     }
   }
