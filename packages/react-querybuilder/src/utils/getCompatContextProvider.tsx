@@ -11,6 +11,14 @@ import type {
 
 export type GetCompatContextProviderProps = QueryBuilderContextProps;
 
+const QBContextInner = (props: QueryBuilderContextProviderProps) => {
+  const rqbContext = useMergedContext(props);
+
+  return (
+    <QueryBuilderContext.Provider value={rqbContext}>{props.children}</QueryBuilderContext.Provider>
+  );
+};
+
 /**
  * Generates a context provider for a compatibility package.
  */
@@ -19,16 +27,6 @@ export const getCompatContextProvider = <F extends FullField, O extends string>(
 ): QueryBuilderContextProvider => {
   const QBContextWrapper = (props: { children: ReactNode }) => {
     const rqbContext = useMergedContext(gccpProps);
-    return (
-      <QueryBuilderContext.Provider value={rqbContext}>
-        {props.children}
-      </QueryBuilderContext.Provider>
-    );
-  };
-
-  const QBContextInner = (props: QueryBuilderContextProviderProps) => {
-    const rqbContext = useMergedContext(props);
-
     return (
       <QueryBuilderContext.Provider value={rqbContext}>
         {props.children}
