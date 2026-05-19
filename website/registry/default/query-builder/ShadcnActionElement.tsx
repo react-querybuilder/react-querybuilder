@@ -1,12 +1,11 @@
 import * as React from 'react';
 import type { ActionProps } from 'react-querybuilder';
-import type { ButtonProps } from '@/components/ui/button';
 import { Button } from '@/components/ui/button';
 
 /**
  * @group Props
  */
-export interface ShadcnActionProps extends ActionProps, Partial<ButtonProps> {}
+export type ShadcnActionProps = ActionProps;
 
 /**
  * @group Components
@@ -35,7 +34,7 @@ export const ShadcnActionElement = ({
     className={className}
     title={disabledTranslation && disabled ? disabledTranslation.title : title}
     disabled={disabled && !disabledTranslation}
-    onClick={e => handleOnClick(e)}>
+    onClick={(e: React.MouseEvent) => handleOnClick(e)}>
     {disabledTranslation && disabled ? disabledTranslation.label : label}
   </Button>
 );

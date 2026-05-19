@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useId } from 'react';
+import type { ValueEditorProps } from 'react-querybuilder';
+import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import type { ValueEditorProps } from 'react-querybuilder';
-import { getFirstOption, parseNumber, useValueEditor } from 'react-querybuilder';
 
 /**
  * @group Props
@@ -71,7 +71,7 @@ export const ShadcnValueEditor = (allProps: ShadcnValueEditorProps): React.JSX.E
           value={valueAsArray[i] ?? ''}
           className={valueListItemClassName}
           disabled={disabled}
-          onChange={e => multiValueHandler(e.target.value, i)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => multiValueHandler(e.target.value, i)}
           {...extraProps}
         />
       ) : (
@@ -125,7 +125,7 @@ export const ShadcnValueEditor = (allProps: ShadcnValueEditorProps): React.JSX.E
           title={title}
           placeholder={placeHolderText}
           disabled={disabled}
-          onChange={e => handleOnChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnChange(e.target.value)}
           {...extraProps}
         />
       );
@@ -182,7 +182,7 @@ export const ShadcnValueEditor = (allProps: ShadcnValueEditorProps): React.JSX.E
         title={title}
         className={className}
         disabled={disabled}
-        onChange={e => bigIntValueHandler(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => bigIntValueHandler(e.target.value)}
         {...extraProps}
       />
     );
@@ -197,7 +197,9 @@ export const ShadcnValueEditor = (allProps: ShadcnValueEditorProps): React.JSX.E
       title={title}
       className={className}
       disabled={disabled}
-      onChange={e => handleOnChange(parseNumber(e.target.value, { parseNumbers: parseNumberMethod }))}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+        handleOnChange(parseNumber(e.target.value, { parseNumbers: parseNumberMethod }))
+      }
       {...extraProps}
     />
   );

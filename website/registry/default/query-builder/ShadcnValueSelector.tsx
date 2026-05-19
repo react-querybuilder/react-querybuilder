@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import type { SelectProps } from '@/components/ui/select';
+import type { OptionList, VersatileSelectorProps } from 'react-querybuilder';
+import { isOptionGroupArray, useValueSelector } from 'react-querybuilder';
 import {
   Select,
   SelectContent,
@@ -10,13 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { VersatileSelectorProps } from 'react-querybuilder';
-import { isOptionGroupArray, useValueSelector } from 'react-querybuilder';
 
 /**
  * @group Props
  */
-export type ShadcnValueSelectorProps = VersatileSelectorProps & Partial<SelectProps>;
+export type ShadcnValueSelectorProps = VersatileSelectorProps;
 
 /**
  * @group Components
@@ -46,8 +45,9 @@ export const ShadcnValueSelector = ({
   const { onChange, val } = useValueSelector({ handleOnChange, value });
 
   const optionContent = useMemo(() => {
-    if (isOptionGroupArray(options)) {
-      return options.map(og => (
+    const opts = options as OptionList;
+    if (isOptionGroupArray(opts)) {
+      return opts.map(og => (
         <SelectGroup key={og.label}>
           <SelectLabel>{og.label}</SelectLabel>
           {og.options.map(opt => (
@@ -58,13 +58,11 @@ export const ShadcnValueSelector = ({
         </SelectGroup>
       ));
     }
-    return options.map(opt =>
-      'options' in opt ? null : (
-        <SelectItem key={opt.name} value={opt.name}>
-          {opt.label}
-        </SelectItem>
-      )
-    );
+    return opts.map(opt => (
+      <SelectItem key={opt.name} value={opt.name}>
+        {opt.label}
+      </SelectItem>
+    ));
   }, [options]);
 
   return (

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import type { ButtonProps } from '@/components/ui/button';
-import { Button } from '@/components/ui/button';
 import type { ShiftActionsProps } from 'react-querybuilder';
+import { Button } from '@/components/ui/button';
 
 /**
  * @group Components

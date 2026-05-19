@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { useId } from 'react';
-import type { SwitchProps } from '@/components/ui/switch';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import type { NotToggleProps } from 'react-querybuilder';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 /**
  * @group Props
  */
-export interface ShadcnNotToggleProps extends NotToggleProps, Partial<SwitchProps> {}
+export type ShadcnNotToggleProps = NotToggleProps;
 
 /**
  * @group Components

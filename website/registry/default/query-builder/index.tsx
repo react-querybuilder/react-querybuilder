@@ -1,4 +1,8 @@
-import type { ControlElementsProp, FullField, QueryBuilderContextProvider } from 'react-querybuilder';
+import type {
+  ControlElementsProp,
+  FullField,
+  QueryBuilderContextProvider,
+} from 'react-querybuilder';
 import { getCompatContextProvider } from 'react-querybuilder';
 import { ShadcnActionElement } from './ShadcnActionElement';
 import { ShadcnNotToggle } from './ShadcnNotToggle';
