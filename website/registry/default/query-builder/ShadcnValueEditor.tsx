@@ -71,7 +71,9 @@ export const ShadcnValueEditor = (allProps: ShadcnValueEditorProps): React.JSX.E
           value={valueAsArray[i] ?? ''}
           className={valueListItemClassName}
           disabled={disabled}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => multiValueHandler(e.target.value, i)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            multiValueHandler(e.target.value, i)
+          }
           {...extraProps}
         />
       ) : (
