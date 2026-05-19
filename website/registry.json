@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "react-querybuilder",
+  "homepage": "https://react-querybuilder.js.org",
+  "items": [
+    {
+      "name": "query-builder",
+      "type": "registry:block",
+      "title": "React Query Builder",
+      "description": "shadcn/ui-styled components for react-querybuilder. Wrap your <QueryBuilder /> with <QueryBuilderShadcn> to apply shadcn/ui styles.",
+      "dependencies": ["react-querybuilder"],
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "input",
+        "label",
+        "radio-group",
+        "select",
+        "switch",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "registry/default/query-builder/ShadcnActionElement.tsx",
+          "type": "registry:component",
+          "target": "@components/query-builder/ShadcnActionElement.tsx"
+        },
+        {
+          "path": "registry/default/query-builder/ShadcnNotToggle.tsx",
+          "type": "registry:component",
+          "target": "@components/query-builder/ShadcnNotToggle.tsx"
+        },
+        {
+          "path": "registry/default/query-builder/ShadcnShiftActions.tsx",
+          "type": "registry:component",
+          "target": "@components/query-builder/ShadcnShiftActions.tsx"
+        },
+        {
+          "path": "registry/default/query-builder/ShadcnValueEditor.tsx",
+          "type": "registry:component",
+          "target": "@components/query-builder/ShadcnValueEditor.tsx"
+        },
+        {
+          "path": "registry/default/query-builder/ShadcnValueSelector.tsx",
+          "type": "registry:component",
+          "target": "@components/query-builder/ShadcnValueSelector.tsx"
+        },
+        {
+          "path": "registry/default/query-builder/index.tsx",
+          "type": "registry:component",
+          "target": "@components/query-builder/index.tsx"
+        }
+      ]
+    }
+  ]
+}

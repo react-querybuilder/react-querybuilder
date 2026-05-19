@@ -12,7 +12,8 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "generate-shadcn-registry": "shadcn build --output static/r"
   },
   "dependencies": {
     "@ant-design/icons": "^6.2.3",
@@ -90,6 +91,7 @@
     "raw-loader": "^4.0.2",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
+    "shadcn": "4.7.0",
     "stream-browserify": "^3.0.0",
     "stylis-plugin-extra-scope": "^0.3.0",
     "tailwindcss": "^4.3.0",
