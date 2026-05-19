@@ -201,10 +201,10 @@
     "jscodeshift": "^17.3.0",
     "jsdom": "^29.1.1",
     "jsdom-testing-mocks": "^1.16.0",
-    "oxfmt": "^0.50.0",
+    "oxfmt": "^0.51.0",
     "oxlint": "^1.65.0",
-    "oxlint-tsgolint": "^0.22.1",
-    "pkg-pr-new": "^0.0.73",
+    "oxlint-tsgolint": "^0.23.0",
+    "pkg-pr-new": "^0.0.75",
     "postcss": "catalog:",
     "prettier": "3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
@@ -215,6 +215,9 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "^4.1.6"
+  },
+  "overrides": {
+    "fflate": "0.8.2"
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",
