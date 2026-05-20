@@ -4,11 +4,9 @@ import { useColorMode } from '@docusaurus/theme-common';
 import { QueryBuilderTremor } from '@react-querybuilder/tremor';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
-import { Loading } from '../_utils';
+import { loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-tremor.css';
-
-const loading = <Loading />;
 
 function ReactQueryBuilderDemo_TremorBrowser() {
   const { colorMode: _cm } = useColorMode();
@@ -32,7 +30,7 @@ function ReactQueryBuilderDemo_TremorBrowser() {
     };
   }, []);
 
-  if (!Demo) return <Loading />;
+  if (!Demo) return loading;
 
   return (
     <QueryBuilderTremor

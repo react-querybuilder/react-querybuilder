@@ -6,11 +6,9 @@ import Layout from '@theme/Layout';
 import { theme } from 'antd';
 import { useEffect, useState } from 'react';
 import type { ValueSelectorProps } from 'react-querybuilder';
-import { Loading } from '../_utils';
+import { loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-antd.css';
-
-const loading = <Loading />;
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
@@ -41,7 +39,7 @@ function ReactQueryBuilderDemo_AntdBrowser() {
     };
   }, [Demo]);
 
-  if (!Demo || !ConfigProvider) return <Loading />;
+  if (!Demo || !ConfigProvider) return loading;
 
   return (
     <ConfigProvider

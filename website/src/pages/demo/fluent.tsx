@@ -5,11 +5,9 @@ import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-com
 import { QueryBuilderFluent } from '@react-querybuilder/fluent';
 import Layout from '@theme/Layout';
 import { useEffect, useState } from 'react';
-import { Loading } from '../_utils';
+import { loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-fluent.css';
-
-const loading = <Loading />;
 
 function ReactQueryBuilderDemo_FluentBrowser() {
   const { colorMode } = useColorMode();
@@ -33,7 +31,7 @@ function ReactQueryBuilderDemo_FluentBrowser() {
     };
   }, []);
 
-  if (!Demo) return <Loading />;
+  if (!Demo) return loading;
 
   return (
     <FluentProvider theme={colorMode === 'dark' ? webDarkTheme : webLightTheme}>

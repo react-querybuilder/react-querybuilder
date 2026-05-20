@@ -8,7 +8,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import { QueryBuilder } from 'react-querybuilder';
-import { Loading } from './_utils';
+import { loading } from './_utils';
 import { initialQuery } from './demo/_constants';
 import { fields } from './demo/_constants/fields';
 
@@ -18,8 +18,6 @@ const dnd = createPragmaticDndAdapter({
   monitorForElements,
   combine,
 });
-
-const loading = <Loading />;
 
 export const CustomStylesQB = () => (
   <BrowserOnly fallback={loading}>
