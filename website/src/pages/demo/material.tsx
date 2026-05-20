@@ -27,9 +27,7 @@ import TextField from '@mui/material/TextField';
 import { QueryBuilderMaterial } from '@react-querybuilder/material';
 import Layout from '@theme/Layout';
 import { useEffect, useMemo, useState } from 'react';
-import { Loading } from '../_utils';
-
-const loading = <Loading />;
+import { loading } from '../_utils';
 
 const muiComponents = {
   DragIndicator,
@@ -79,7 +77,7 @@ function ReactQueryBuilderDemo_MaterialBrowser() {
 
   const muiTheme = useMemo(() => createTheme({ palette: { mode: colorMode } }), [colorMode]);
 
-  if (!Demo) return <Loading />;
+  if (!Demo) return loading;
 
   return (
     <ThemeProvider theme={muiTheme}>

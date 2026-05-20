@@ -1,0 +1,4 @@
+{
+  "entryPoints": ["src/index.tsx"],
+  "extends": ["../../typedoc.json"]
+}

@@ -1,0 +1,74 @@
+{
+  "name": "@react-querybuilder/prime",
+  "description": "Custom PrimeReact components for react-querybuilder",
+  "version": "8.16.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_prime.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_prime.d.mts",
+        "default": "./dist/react-querybuilder_prime.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/react-querybuilder_prime.legacy-esm.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/prime"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "keywords": [
+    "react",
+    "querybuilder",
+    "primereact",
+    "prime",
+    "query",
+    "builder",
+    "operators",
+    "component",
+    "clause",
+    "expression",
+    "sql"
+  ],
+  "scripts": {
+    "start": "vite",
+    "build": "bun --bun tsdown",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.8.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-querybuilder": "8.16.1",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "peerDependencies": {
+    "primeicons": ">=7",
+    "primereact": ">=10",
+    "react": "catalog:peer",
+    "react-querybuilder": "8.16.1"
+  }
+}

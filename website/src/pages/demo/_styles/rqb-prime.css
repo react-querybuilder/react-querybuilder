@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+
+@source "../../../../../node_modules/primereact/**/*.{js,ts,jsx,tsx}";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+.p-inputtext,
+.p-dropdown {
+  width: auto;
+}
+
+.queryBuilder .p-inputtext.p-dropdown-label {
+  /* Not quite so tall */
+  padding: 0.5rem 0.75rem;
+}
+
+.queryBuilder .p-button.p-button-sm {
+  /* Normal font size even for small buttons */
+  font-size: 1rem;
+}
+
+.queryBuilder .ruleGroup-notToggle {
+  /* Align vertically */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  /* Closer than other elements */
+  gap: calc(var(--rqb-spacing) / 2);
+}

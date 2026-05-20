@@ -41,6 +41,7 @@ const links = [
   'mantine',
   'material',
   'native',
+  'prime',
   'tremor',
 ];
 
