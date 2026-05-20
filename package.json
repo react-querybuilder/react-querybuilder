@@ -116,6 +116,7 @@
     "generate-celparser": "bunx --bun ts-jison -n CEL -t typescript packages/core/src/utils/parseCEL/cel.jison --outfile packages/core/src/utils/parseCEL/celParser.ts",
     "generate-parsers-codemod": "sed -i 's/lexer = new \\(CEL\\|SQL\\)Lexer(/lexer: \\1Lexer = new \\1Lexer(/g' packages/core/src/utils/parse{CEL/cel,SQL/sql}Parser.ts",
     "generate-prisma-client": "./utils/gen-prisma-client.sh",
+    "generate-shadcn-registry": "bun run --filter website generate-shadcn-registry",
     "update-mantine-css": "bun utils/update-mantine-css.ts",
     "outdated": "bun update --interactive --recursive",
     "reset-deps": "rm -rf node_modules packages/*/node_modules website/node_modules bun.lock bun.lockb && bun install --save-text-lockfile",
@@ -124,7 +125,7 @@
     "web:skiptypedoc": "RQB_TYPEDOC_DONE=true bun run --filter website start",
     "website:clearrun": "bun run --filter website clear && bun run --filter website start",
     "website:clearbuild": "bun run --filter website clear && bun run --filter website build",
-    "website:build": "bun run --filter website build",
+    "website:build": "bun run generate-shadcn-registry && bun run --filter website build",
     "website:serve": "bun run --filter website serve",
     "website:deploy": "bun run --filter website deploy",
     "website:clear": "bun run --filter website clear"
@@ -200,10 +201,10 @@
     "jscodeshift": "^17.3.0",
     "jsdom": "^29.1.1",
     "jsdom-testing-mocks": "^1.16.0",
-    "oxfmt": "^0.50.0",
+    "oxfmt": "^0.51.0",
     "oxlint": "^1.65.0",
-    "oxlint-tsgolint": "^0.22.1",
-    "pkg-pr-new": "^0.0.73",
+    "oxlint-tsgolint": "^0.23.0",
+    "pkg-pr-new": "^0.0.75",
     "postcss": "catalog:",
     "prettier": "3.8.3",
     "prettier-plugin-organize-imports": "^4.3.0",
@@ -214,6 +215,9 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "^4.1.6"
+  },
+  "overrides": {
+    "fflate": "0.8.2"
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",

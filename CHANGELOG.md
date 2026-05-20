@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- shadcn/ui registry components (`QueryBuilderShadcn`, `shadcnControlElements`, and individual `Shadcn*` components) installable via `npx shadcn add https://react-querybuilder.js.org/r/query-builder.json`.
 
 ## [v8.16.1] - 2026-05-13
 

@@ -267,3 +267,49 @@ export function App() {
   );
 }
 ```
+
+## shadcn/ui
+
+Because [shadcn/ui](https://ui.shadcn.com/) components are copied directly into your project rather than installed as a dependency, React Query Builder provides a **shadcn registry** instead of an npm compatibility package.
+
+### Installation
+
+Run the following command in your project (requires shadcn CLI and an existing shadcn/ui setup):
+
+```bash npm2yarn
+npx shadcn add https://react-querybuilder.js.org/r/query-builder.json
+```
+
+This installs the React Query Builder components into your project's configured components directory (e.g. `src/components/query-builder/`) and automatically pulls in the required shadcn primitives (`button`, `checkbox`, `input`, `label`, `radio-group`, `select`, `switch`, `textarea`).
+
+### Usage
+
+```tsx
+import { QueryBuilderShadcn } from '@/components/query-builder';
+import { QueryBuilder } from 'react-querybuilder';
+import 'react-querybuilder/dist/query-builder.css';
+import { defaultQuery, fields } from './constants';
+
+export function App() {
+  return (
+    <QueryBuilderShadcn>
+      <QueryBuilder fields={fields} defaultQuery={defaultQuery} />
+    </QueryBuilderShadcn>
+  );
+}
+```
+
+### Manual usage
+
+If you prefer not to use the CLI, copy the component files from [`website/registry/default/query-builder/`](https://github.com/react-querybuilder/react-querybuilder/tree/main/website/registry/default/query-builder) in the React Query Builder repository into your project.
+
+The `shadcnControlElements` named export is also available for the [`controlElements` prop](./components/querybuilder#controlelements):
+
+```tsx
+import { shadcnControlElements } from '@/components/query-builder';
+import { QueryBuilder } from 'react-querybuilder';
+
+export function App() {
+  return <QueryBuilder controlElements={shadcnControlElements} fields={fields} />;
+}
+```
