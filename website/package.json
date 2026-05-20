@@ -44,6 +44,7 @@
     "@react-querybuilder/fluent": "workspace:*",
     "@react-querybuilder/mantine": "workspace:*",
     "@react-querybuilder/material": "workspace:*",
+    "@react-querybuilder/prime": "workspace:*",
     "@react-querybuilder/tremor": "workspace:*",
     "@traqula/parser-sparql-1-2": "^1.1.1",
     "@tremor/react": "^3.18.7",
@@ -57,6 +58,8 @@
     "dayjs": "catalog:",
     "next-themes": "^0.4.6",
     "pako": "^2.1.0",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.8.0",
     "prism-react-renderer": "^2.4.1",
     "query-string": "^9.3.1",
     "react": "catalog:",
@@ -66,7 +69,8 @@
     "react-querybuilder": "workspace:*",
     "react-select": "^5.10.2",
     "react-shadow": "^20.6.0",
-    "sass": "catalog:"
+    "sass": "catalog:",
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@docusaurus/faster": "^3.10.1",

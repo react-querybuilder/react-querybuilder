@@ -19,6 +19,7 @@ See each component package in action by selecting the "Style library" option on 
 | [Fluent UI](https://github.com/microsoft/fluentui/) | [@react-querybuilder/fluent](https://www.npmjs.com/package/@react-querybuilder/fluent)       | [Demo](/demo/fluent)    | [CodeSandbox](/sandbox?t=fluent)    | [StackBlitz](/sandbox?p=sb&t=fluent)    |
 | [Mantine](https://mantine.dev/)                     | [@react-querybuilder/mantine](https://www.npmjs.com/package/@react-querybuilder/mantine)     | [Demo](/demo/mantine)   | [CodeSandbox](/sandbox?t=mantine)   | [StackBlitz](/sandbox?p=sb&t=mantine)   |
 | [MUI](https://mui.com/)                             | [@react-querybuilder/material](https://www.npmjs.com/package/@react-querybuilder/material)   | [Demo](/demo/material)  | [CodeSandbox](/sandbox?t=material)  | [StackBlitz](/sandbox?p=sb&t=material)  |
+| [PrimeReact](https://primereact.org/)               | [@react-querybuilder/prime](https://www.npmjs.com/package/@react-querybuilder/prime)         | [Demo](/demo/prime)     | [CodeSandbox](/sandbox?t=prime)     | [StackBlitz](/sandbox?p=sb&t=prime)     |
 | [React Native](https://reactnative.dev/)            | [@react-querybuilder/native](https://www.npmjs.com/package/@react-querybuilder/native)       | _Coming soon!_          | [CodeSandbox](/sandbox?t=native)    | [StackBlitz](/sandbox?p=sb&t=native)    |
 | [Tremor](https://www.tremor.so/)                    | [@react-querybuilder/tremor](https://www.npmjs.com/package/@react-querybuilder/tremor)       | [Demo](/demo/tremor)    | [CodeSandbox](/sandbox?t=tremor)    | [StackBlitz](/sandbox?p=sb&t=tremor)    |
 
@@ -55,6 +56,7 @@ Each compatibility package exports its own context provider, except `@react-quer
 | `@react-querybuilder/fluent`    | `QueryBuilderFluent`    |
 | `@react-querybuilder/mantine`   | `QueryBuilderMantine`   |
 | `@react-querybuilder/material`  | `QueryBuilderMaterial`  |
+| `@react-querybuilder/prime`     | `QueryBuilderPrime`     |
 | `@react-querybuilder/tremor`    | `QueryBuilderTremor`    |
 
 :::tip

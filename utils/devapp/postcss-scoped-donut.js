@@ -6,7 +6,8 @@ function plugin() {
       rule.selector = rule.selector
         .replaceAll(/(\.rqb-[a-z]+)?\.donut-hole(\.rqb-[a-z]+)? :root\b/g, ':root')
         .replaceAll(/(\.rqb-[a-z]+)?\.donut-hole(\.rqb-[a-z]+)? (html|body)\b/g, '$1.donut-hole$2')
-        .replaceAll(/\.rqb-tremor\s+\.rqb-tremor/g, '.rqb-tremor');
+        .replaceAll(/\.rqb-tremor\s+\.rqb-tremor/g, '.rqb-tremor')
+        .replaceAll(/\.rqb-prime\s+\.rqb-prime/g, '.rqb-prime');
 
       if (rule.every(node => node.type === 'comment')) {
         rule.remove();
