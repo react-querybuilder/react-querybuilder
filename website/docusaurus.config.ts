@@ -67,6 +67,10 @@ const config: Config = {
             prefix: '.rqb-tremor',
             includeFiles: [/rqb-tremor.css/],
           }),
+          require('postcss-prefix-selector')({
+            prefix: '.rqb-prime',
+            includeFiles: [/rqb-prime.css/],
+          }),
           require.resolve('../utils/devapp/postcss-scoped-donut')
         );
         return postcssOptions;

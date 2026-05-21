@@ -8,6 +8,7 @@ import fluentIndexHTML from './pages/fluent.html';
 import mantineIndexHTML from './pages/mantine.html';
 import materialIndexHTML from './pages/material.html';
 import nativeIndexHTML from './pages/native.html';
+import primeIndexHTML from './pages/prime.html';
 import rqbIndexHTML from './pages/rqb.html';
 import rebIndexHTML from './pages/rules-engine.html';
 import tremorIndexHTML from './pages/tremor.html';
@@ -27,6 +28,7 @@ const indexHTMLs = {
   '/': rqbIndexHTML,
   '/rqb': rqbIndexHTML,
   '/react-querybuilder': rqbIndexHTML,
+  '/prime': primeIndexHTML,
   '/tremor': tremorIndexHTML,
 };
 

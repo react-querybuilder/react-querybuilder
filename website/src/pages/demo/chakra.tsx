@@ -21,11 +21,9 @@ import { ThemeProvider } from 'next-themes';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import root from 'react-shadow/emotion';
-import { Loading } from '../_utils';
+import { loading } from '../_utils';
 import './_styles/demo.css';
 import './_styles/rqb-chakra.css';
-
-const loading = <Loading />;
 
 const varRoot = ':host';
 const config = defineConfig({
@@ -105,7 +103,7 @@ function ReactQueryBuilderDemo_ChakraBrowser() {
     };
   }, [Demo]);
 
-  if (!Demo) return <Loading />;
+  if (!Demo) return loading;
 
   return <Demo variant="chakra" queryWrapper={QueryWrapper} />;
 }

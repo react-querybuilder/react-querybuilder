@@ -96,6 +96,15 @@ export const testValueEditor = (
           expect(onChange).toHaveBeenCalledWith('foo');
         });
 
+        it('should call the onChange method for a number input', async () => {
+          const onChange = vi.fn();
+          render(<ValueEditor {...props} inputType="number" handleOnChange={onChange} />);
+          await user.type(findInput(screen.getByTitle(title)), '7');
+          const lastCall = onChange.mock.calls.at(-1)![0];
+          // Packages may pass numeric 7 or string '7'
+          expect(Number(lastCall)).toBe(7);
+        });
+
         it('should make the inputType "text" if operator is "in" or "notIn"', () => {
           const { rerender } = render(<ValueEditor {...props} inputType="number" operator="in" />);
           expect(findInput(screen.getByTitle(title))).toHaveAttribute('type', 'text');

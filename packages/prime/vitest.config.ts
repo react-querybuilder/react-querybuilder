@@ -4,6 +4,12 @@ import shared from '../../vitest.shared';
 export default mergeConfig(shared, {
   test: {
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
+    deps: {
+      optimizer: {
+        web: {
+          include: ['primereact', /^primereact\//],
+        },
+      },
+    },
   },
 });

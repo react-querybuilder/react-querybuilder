@@ -308,6 +308,13 @@ import '@mantine/core/styles.css';`,
         '<QueryBuilderTremor>',
         '</QueryBuilderTremor>',
       ];
+    case 'prime':
+      return [
+        `import { QueryBuilderPrime } from '@react-querybuilder/prime';
+import 'primeicons/primeicons.css';`,
+        '<QueryBuilderPrime>',
+        '</QueryBuilderPrime>',
+      ];
   }
   return ['', '', ''];
 };

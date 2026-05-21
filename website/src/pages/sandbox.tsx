@@ -4,7 +4,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import Layout from '@theme/Layout';
 import queryString from 'query-string';
 import { useState } from 'react';
-import { Loading } from './_utils';
+import { loading } from './_utils';
 
 const ghPathMain = 'react-querybuilder/react-querybuilder/tree/main/examples/_template';
 const ghPathChakra2 = 'react-querybuilder/react-querybuilder-chakra2/tree/main/example';
@@ -17,8 +17,6 @@ const getFinalLink = (platform: 'StackBlitz' | 'CodeSandbox', template: string) 
     ? `https://stackblitz.com/github/${ghPath}?file=src/${fileName}`
     : `https://codesandbox.io/s/github/${ghPath}?file=/src/${fileName}`;
 };
-
-const loading = <Loading />;
 
 function SandboxRedirectTimer() {
   const query = queryString.parse(window.location.search);

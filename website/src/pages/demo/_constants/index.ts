@@ -6,6 +6,7 @@ import packageJSON_rqb_dnd from '@react-querybuilder/dnd/package.json';
 import packageJSON_rqb_fluent from '@react-querybuilder/fluent/package.json';
 import packageJSON_rqb_mantine from '@react-querybuilder/mantine/package.json';
 import packageJSON_rqb_material from '@react-querybuilder/material/package.json';
+import packageJSON_rqb_prime from '@react-querybuilder/prime/package.json';
 import packageJSON_rqb_tremor from '@react-querybuilder/tremor/package.json';
 import type { ExportFormat, RuleGroupType, RuleGroupTypeIC } from 'react-querybuilder';
 import { convertToIC, generateID, objectKeys } from 'react-querybuilder';
@@ -282,6 +283,7 @@ export const styleNameMap: Record<StyleName, string> = {
   fluent: 'Fluent UI',
   mantine: 'Mantine',
   material: 'MUI/Material',
+  prime: 'PrimeReact',
   tremor: 'Tremor',
 };
 
@@ -303,5 +305,6 @@ export const peerDependencies: Record<StyleName | 'dnd', string[]> = {
   fluent: objectKeys(packageJSON_rqb_fluent.peerDependencies).filter(noReactOrRQB),
   mantine: objectKeys(packageJSON_rqb_mantine.peerDependencies).filter(noReactOrRQB),
   material: objectKeys(packageJSON_rqb_material.peerDependencies).filter(noReactOrRQB),
+  prime: objectKeys(packageJSON_rqb_prime.peerDependencies).filter(noReactOrRQB),
   tremor: objectKeys(packageJSON_rqb_tremor.peerDependencies).filter(noReactOrRQB),
 };

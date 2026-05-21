@@ -61,6 +61,7 @@ export type StyleName =
   | 'fluent'
   | 'mantine'
   | 'material'
+  | 'prime'
   | 'tremor';
 
 export interface DemoState {
