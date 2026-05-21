@@ -330,24 +330,6 @@
         "react-querybuilder": "8.16.1",
       },
     },
-    "packages/graph": {
-      "name": "@react-querybuilder/graph",
-      "version": "8.16.1",
-      "devDependencies": {
-        "@react-querybuilder/core": "8.16.1",
-        "@types/react": "catalog:",
-        "@vitejs/plugin-react": "catalog:",
-        "react": "catalog:",
-        "react-dom": "catalog:",
-        "react-querybuilder": "8.16.1",
-        "rollup-plugin-visualizer": "catalog:",
-        "typescript": "catalog:",
-        "vite": "catalog:",
-      },
-      "peerDependencies": {
-        "@react-querybuilder/core": "8.16.1",
-      },
-    },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
       "version": "8.16.1",
@@ -2049,8 +2031,6 @@
     "@react-querybuilder/drizzle": ["@react-querybuilder/drizzle@workspace:packages/drizzle"],
 
     "@react-querybuilder/fluent": ["@react-querybuilder/fluent@workspace:packages/fluent"],
-
-    "@react-querybuilder/graph": ["@react-querybuilder/graph@workspace:packages/graph"],
 
     "@react-querybuilder/mantine": ["@react-querybuilder/mantine@workspace:packages/mantine"],
 
