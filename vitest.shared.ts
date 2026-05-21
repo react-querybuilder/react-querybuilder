@@ -24,5 +24,22 @@ export default {
   test: {
     globals: true,
     setupFiles: [path.resolve(root, 'vitestSetup.ts')],
+    pool: 'threads',
+    projects: [
+      {
+        test: {
+          name: 'Isolated',
+          isolate: true,
+          include: ['packages/{antd,dnd}/src/**/*.test.ts{,x}'],
+        },
+      },
+      {
+        test: {
+          name: 'Non-isolated',
+          isolate: false,
+          exclude: ['packages/{antd,dnd}/src/**/*.test.ts{,x}'],
+        },
+      },
+    ],
   },
 } satisfies ViteUserConfig;
