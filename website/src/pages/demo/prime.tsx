@@ -38,8 +38,9 @@ const primePT = {
   // },
 };
 
-const primeConfig = {
+const primeConfig: React.ComponentProps<typeof PrimeReactProvider>['value'] = {
   unstyled: true,
+  appendTo: 'self' as const,
   pt: { ...Tailwind, ...primePT },
   ptOptions: { mergeSections: true, mergeProps: true, classNameMergeFunction: twMerge },
 };
