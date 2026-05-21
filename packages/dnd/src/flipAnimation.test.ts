@@ -31,7 +31,7 @@ const createMockContainer = (elements: HTMLElement[]) =>
 
 describe('createFlipAnimator', () => {
   it('captures first positions and animates to last positions', () => {
-    const rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
+    using _rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
       cb(0);
       return 0;
     });
@@ -93,12 +93,10 @@ describe('createFlipAnimator', () => {
     expect(el1Moved.style.transition).toContain('transform');
     expect(el1Moved.style.transform).toBe('');
     expect(el2Moved.style.transition).toContain('transform');
-
-    rAF.mockRestore();
   });
 
   it('skips elements without data-rule-id or data-testid', () => {
-    const rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
+    using _rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
       cb(0);
       return 0;
     });
@@ -129,12 +127,10 @@ describe('createFlipAnimator', () => {
 
     // No error, no transform applied
     expect(noIdEl.style.transform).toBe('');
-
-    rAF.mockRestore();
   });
 
   it('skips elements with zero delta (no movement)', () => {
-    const rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
+    using _rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
       cb(0);
       return 0;
     });
@@ -148,12 +144,10 @@ describe('createFlipAnimator', () => {
 
     // No transform because position didn't change
     expect((el as HTMLElement).style.transform).toBe('');
-
-    rAF.mockRestore();
   });
 
   it('skips elements in playLast that were not captured in captureFirst', () => {
-    const rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
+    using _rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
       cb(0);
       return 0;
     });
@@ -169,12 +163,10 @@ describe('createFlipAnimator', () => {
 
     // No error, no transform
     expect((el as HTMLElement).style.transform).toBe('');
-
-    rAF.mockRestore();
   });
 
   it('uses data-testid as fallback key', () => {
-    const rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
+    using _rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
       cb(0);
       return 0;
     });
@@ -226,12 +218,10 @@ describe('createFlipAnimator', () => {
 
     // Transition should be applied
     expect(elMoved.style.transition).toContain('transform');
-
-    rAF.mockRestore();
   });
 
   it('cleans up transition on transitionend event', () => {
-    const rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
+    using _rAF = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(cb => {
       cb(0);
       return 0;
     });
@@ -295,7 +285,5 @@ describe('createFlipAnimator', () => {
     // Transition should be cleared
     expect(elMoved.style.transition).toBe('');
     expect(removeEventListenerMock).toHaveBeenCalledWith('transitionend', handler);
-
-    rAF.mockRestore();
   });
 });
