@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@react-querybuilder/prime": "8.16.1",
+    "primeicons": ">=7",
+    "primereact": ">=10",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-querybuilder": "8.16.1"
+  },
+  "description": "React Query Builder PrimeReact Example",
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6",
+    "typescript": "^6",
+    "vite": "^8"
+  },
+  "name": "react-querybuilder-prime-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "type": "module"
+}

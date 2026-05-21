@@ -29,6 +29,7 @@
       "@react-querybuilder/fluent": ["../packages/fluent/src"],
       "@react-querybuilder/mantine": ["../packages/mantine/src"],
       "@react-querybuilder/material": ["../packages/material/src"],
+      "@react-querybuilder/prime": ["../packages/prime/src"],
       "@react-querybuilder/tremor": ["../packages/tremor/src"],
       "react-querybuilder": ["../packages/react-querybuilder/src"],
       "react-querybuilder/formatQuery": ["../packages/core/src/utils/formatQuery"],

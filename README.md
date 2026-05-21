@@ -48,14 +48,15 @@ _For instructions on migrating from earlier versions of `react-querybuilder`, [c
 [![Ant Design](https://img.shields.io/badge/RQB-Ant%20Design-blue?logo=antdesign&color=0958d9)](https://www.npmjs.com/package/@react-querybuilder/antd)
 [![Bootstrap](https://img.shields.io/badge/RQB-Bootstrap-blue?logo=bootstrap&color=712cf9)](https://www.npmjs.com/package/@react-querybuilder/bootstrap)
 [![Bulma](https://img.shields.io/badge/RQB-Bulma-blue?logo=bulma&color=00d1b2)](https://www.npmjs.com/package/@react-querybuilder/bulma)
-[![Chakra UI](https://img.shields.io/badge/RQB-Chakra%20UI-blue?logo=chakraui&color=81e6d9)](https://www.npmjs.com/package/@react-querybuilder/chakra)<br />
-[![Fluent UI](https://img.shields.io/badge/RQB-Fluent%20UI-blue?logo=fluentui&color=7fba00)](https://www.npmjs.com/package/@react-querybuilder/fluent)
+[![Chakra UI](https://img.shields.io/badge/RQB-Chakra%20UI-blue?logo=chakraui&color=81e6d9)](https://www.npmjs.com/package/@react-querybuilder/chakra)
+[![Fluent UI](https://img.shields.io/badge/RQB-Fluent%20UI-blue?logo=fluentui&color=7fba00)](https://www.npmjs.com/package/@react-querybuilder/fluent)<br />
 [![Mantine](https://img.shields.io/badge/RQB-Mantine-blue?logo=mantine&color=339af0)](https://www.npmjs.com/package/@react-querybuilder/mantine)
 [![MUI](https://img.shields.io/badge/RQB-MUI-blue?logo=mui&color=007FFF)](https://www.npmjs.com/package/@react-querybuilder/material)
+[![PrimeReact](https://img.shields.io/badge/RQB-PrimeReact-blue?logo=primereact&color=03c4e8)](https://www.npmjs.com/package/@react-querybuilder/prime)
 [![React Native](https://img.shields.io/badge/RQB-React_Native-blue?logo=react&color=61dafb)](https://www.npmjs.com/package/@react-querybuilder/native)
 [![Tremor](https://img.shields.io/badge/RQB-Tremor-blue?logo=tremor&color=60a5fa)](https://www.npmjs.com/package/@react-querybuilder/tremor)
 
-In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), [Fluent UI](https://www.npmjs.com/package/@react-querybuilder/fluent), [Mantine](https://www.npmjs.com/package/@react-querybuilder/mantine), [MUI](https://www.npmjs.com/package/@react-querybuilder/material), and [Tremor](https://www.npmjs.com/package/@react-querybuilder/tremor). A [React Native component](https://www.npmjs.com/package/@react-querybuilder/native) is also available.
+In addition to the main [`react-querybuilder`](https://www.npmjs.com/package/react-querybuilder) package, this repo also hosts official compatibility component packages for use with several popular style libraries including [Ant Design](https://www.npmjs.com/package/@react-querybuilder/antd), [Bootstrap](https://www.npmjs.com/package/@react-querybuilder/bootstrap), [Bulma](https://www.npmjs.com/package/@react-querybuilder/bulma), [Chakra UI](https://www.npmjs.com/package/@react-querybuilder/chakra), [Fluent UI](https://www.npmjs.com/package/@react-querybuilder/fluent), [Mantine](https://www.npmjs.com/package/@react-querybuilder/mantine), [MUI](https://www.npmjs.com/package/@react-querybuilder/material), [PrimeReact](https://primereact.org/), and [Tremor](https://www.npmjs.com/package/@react-querybuilder/tremor). A [React Native component](https://www.npmjs.com/package/@react-querybuilder/native) is also available.
 
 ## Development
 

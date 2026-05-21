@@ -39,6 +39,7 @@ Each package has its own `start:*`, `build:*`, and `typecheck:*` scripts.
 | `@react-querybuilder/mantine`      | `bun start:mantine`   | `bun build:mantine`   | `bun typecheck:mantine`   |
 | `@react-querybuilder/material`     | `bun start:material`  | `bun build:material`  | `bun typecheck:material`  |
 | `@react-querybuilder/native`       | `bun start:native`    | `bun build:native`    | `bun typecheck:native`    |
+| `@react-querybuilder/prime`        | `bun start:prime`     | `bun build:prime`     | `bun typecheck:prime`     |
 | `@react-querybuilder/rules-engine` | `bun start:re`        | `bun build:re`        | `bun typecheck:re`        |
 | `@react-querybuilder/tremor`       | `bun start:tremor`    | `bun build:tremor`    | `bun typecheck:tremor`    |
 
