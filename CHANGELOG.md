@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v8.16.1] - 2026-05-13
 
+### Added
+
+- [#1036] [PrimeReact](https://primereact.org/) compatibility package (released 2026-05-21).
+
 ### Fixed
 
 - [#1032] Keyboard navigation now works when using the dnd-kit adapter.
@@ -2189,6 +2193,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1030]: https://github.com/react-querybuilder/react-querybuilder/pull/1030
 [#1032]: https://github.com/react-querybuilder/react-querybuilder/pull/1032
 [#1033]: https://github.com/react-querybuilder/react-querybuilder/pull/1033
+[#1036]: https://github.com/react-querybuilder/react-querybuilder/pull/1036
 
 <!-- #endregion -->
 
