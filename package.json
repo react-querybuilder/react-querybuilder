@@ -156,7 +156,7 @@
     "sass": "^1.99.0",
     "type-fest": "^5.5.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.13"
+    "vite": "^8.0.14"
   },
   "catalogs": {
     "peer": {
@@ -195,7 +195,7 @@
     "@types/react-dom": "catalog:",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.349",
-    "@typescript/native-preview": "^7.0.0-dev.20260515.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260521.1",
     "@vitest/coverage-v8": "^4.1.6",
     "@vitest/ui": "^4.1.6",
     "bun-plugin-tailwind": "^0.1.2",
