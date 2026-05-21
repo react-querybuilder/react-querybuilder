@@ -1,0 +1,12 @@
+@import 'primereact/resources/themes/lara-light-cyan/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+@import 'react-querybuilder/dist/query-builder.css';
+
+body {
+  margin: 0.5rem !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}

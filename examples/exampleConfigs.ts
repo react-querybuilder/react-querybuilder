@@ -197,4 +197,21 @@ const Provider = (props: React.PropsWithChildren) => (
     isCompatPackage: true,
     enableDnD: false,
   },
+  prime: {
+    name: 'PrimeReact',
+    dependencyKeys: ['primereact', 'primeicons'],
+    cssPre: [
+      `@import 'primereact/resources/themes/lara-light-cyan/theme.css';`,
+      `@import 'primereact/resources/primereact.min.css';`,
+      `@import 'primeicons/primeicons.css';`,
+    ],
+    cssPost: [],
+    tsxImports: [`import { QueryBuilderPrime } from '@react-querybuilder/prime';`],
+    additionalDeclarations: [],
+    wrapper: ['<QueryBuilderPrime>', '</QueryBuilderPrime>'],
+    props: [],
+    compileToJS: false,
+    isCompatPackage: true,
+    enableDnD: false,
+  },
 };
