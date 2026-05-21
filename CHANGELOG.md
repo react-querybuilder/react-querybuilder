@@ -13,7 +13,7 @@ N/A
 
 ### Added
 
-- [#1034] shadcn/ui registry components (`QueryBuilderShadcn`, `shadcnControlElements`, and individual `Shadcn*` components) installable via `npx shadcn add https://react-querybuilder.js.org/r/query-builder.json`.
+- [#1034] [shadcn/ui](https://ui.shadcn.com/) registry components (`QueryBuilderShadcn`, `shadcnControlElements`, and individual `Shadcn*` components) installable via `npx shadcn add https://react-querybuilder.js.org/r/query-builder.json`.
 - [#1036] [PrimeReact](https://primereact.org/) compatibility package `@react-querybuilder/prime` (released 2026-05-21).
 
 ### Fixed
