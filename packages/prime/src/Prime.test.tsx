@@ -11,11 +11,7 @@ import {
 } from '@rqb-testing';
 import { render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type {
-  NotToggleProps,
-  ValueEditorProps,
-  ValueSelectorProps,
-} from 'react-querybuilder';
+import type { NotToggleProps, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { QueryBuilder, TestID } from 'react-querybuilder';
 import { QueryBuilderPrime } from './index';
 import { PrimeActionElement } from './PrimeActionElement';
