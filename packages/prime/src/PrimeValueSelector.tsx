@@ -1,4 +1,5 @@
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import type { ComponentPropsWithoutRef } from 'react';
 import * as React from 'react';
 import type { VersatileSelectorProps } from 'react-querybuilder';
@@ -8,7 +9,10 @@ import { joinWith, useValueSelector } from 'react-querybuilder';
  * @group Props
  */
 export type PrimeValueSelectorProps = VersatileSelectorProps &
-  Omit<ComponentPropsWithoutRef<typeof Dropdown>, 'onChange' | 'value'>;
+  Omit<
+    ComponentPropsWithoutRef<typeof Dropdown> & ComponentPropsWithoutRef<typeof MultiSelect>,
+    'onChange' | 'value'
+  >;
 
 /**
  * @group Components
@@ -63,20 +67,16 @@ export const PrimeValueSelector = ({
 
   if (multiple) {
     return (
-      <select
+      <MultiSelect
         title={title}
         className={className}
-        multiple
         disabled={disabled}
         value={val}
-        onChange={e => onChange([...e.target.selectedOptions].map(o => o.value))}
-        {...(extraProps as Record<string, unknown>)}>
-        {(options as { name: string; label: string }[]).map(o => (
-          <option key={o.name} value={o.name}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+        options={options}
+        optionGroupChildren="options"
+        onChange={e => onChange(e.value)}
+        {...extraProps}
+      />
     );
   }
 
@@ -86,9 +86,8 @@ export const PrimeValueSelector = ({
       className={className}
       disabled={disabled}
       value={val}
-      options={options as { name: string; label: string }[]}
-      optionLabel="label"
-      optionValue="name"
+      options={options}
+      optionGroupChildren="options"
       onChange={e => onChange(e.value)}
       {...extraProps}
     />

@@ -33,8 +33,8 @@ vi.mock('primereact/dropdown', () => {
   // oxlint-disable-next-line typescript/no-explicit-any
   const Dropdown = (props: any) => {
     const options = props.options ?? [];
-    // Check if options contain option groups
-    const hasGroups = options.length > 0 && 'options' in options[0];
+    const groupChildrenKey = props.optionGroupChildren;
+    const hasGroups = groupChildrenKey && options.length > 0 && groupChildrenKey in options[0];
 
     return (
       <select
@@ -44,9 +44,10 @@ vi.mock('primereact/dropdown', () => {
         value={props.value ?? ''}
         onChange={e => props.onChange?.({ value: e.target.value })}>
         {hasGroups
-          ? options.map((group: { label: string; options: { name: string; label: string }[] }) => (
+          ? // oxlint-disable-next-line typescript/no-explicit-any
+            options.map((group: any) => (
               <optgroup key={group.label} label={group.label}>
-                {toOpts(group.options)}
+                {toOpts(group[groupChildrenKey])}
               </optgroup>
             ))
           : toOpts(
@@ -60,6 +61,46 @@ vi.mock('primereact/dropdown', () => {
   };
 
   return { Dropdown };
+});
+
+// Mock MultiSelect to render a native <select multiple> for testability
+vi.mock('primereact/multiselect', () => {
+  const toOpts = (arr: { name: string; label: string; disabled?: boolean }[]) =>
+    arr.map(o => (
+      <option key={o.name} value={o.name} disabled={o.disabled}>
+        {o.label}
+      </option>
+    ));
+
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const MultiSelect = (props: any) => {
+    const options = props.options ?? [];
+    const groupChildrenKey = props.optionGroupChildren;
+    const hasGroups = groupChildrenKey && options.length > 0 && groupChildrenKey in options[0];
+
+    return (
+      <select
+        title={props.title}
+        className={props.className}
+        disabled={props.disabled}
+        multiple
+        value={props.value ?? []}
+        onChange={e =>
+          props.onChange?.({ value: [...e.target.selectedOptions].map(o => o.value) })
+        }>
+        {hasGroups
+          ? // oxlint-disable-next-line typescript/no-explicit-any
+            options.map((group: any) => (
+              <optgroup key={group.label} label={group.label}>
+                {toOpts(group[groupChildrenKey])}
+              </optgroup>
+            ))
+          : toOpts(options)}
+      </select>
+    );
+  };
+
+  return { MultiSelect };
 });
 
 // Mock Calendar for testability
@@ -277,6 +318,21 @@ describe('extra PrimeValueSelector tests', () => {
     const props: ValueSelectorProps = { ...defaultValueSelectorProps, multiple: true, value: '' };
     render(<PrimeValueSelector {...props} />);
     expect(screen.getByRole('listbox')).toBeDefined();
+  });
+
+  it('handles multiselect with option groups', () => {
+    const props: ValueSelectorProps = {
+      ...defaultValueSelectorProps,
+      multiple: true,
+      value: 'opt1',
+      options: [
+        { label: 'Group 1', options: [{ name: 'opt1', value: 'opt1', label: 'Option 1' }] },
+        { label: 'Group 2', options: [{ name: 'opt2', value: 'opt2', label: 'Option 2' }] },
+      ],
+    };
+    render(<PrimeValueSelector {...props} />);
+    const listbox = screen.getByRole('listbox');
+    expect(listbox.querySelectorAll('optgroup')).toHaveLength(2);
   });
 });
 
