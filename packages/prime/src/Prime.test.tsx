@@ -13,7 +13,6 @@ import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type {
   NotToggleProps,
-  Option,
   ValueEditorProps,
   ValueSelectorProps,
 } from 'react-querybuilder';
@@ -28,9 +27,12 @@ import { PrimeValueSelector } from './PrimeValueSelector';
 
 // Mock Dropdown to render a native <select> for testability
 vi.mock('primereact/dropdown', () => {
-  const { toOptions } =
-    // oxlint-disable-next-line typescript/consistent-type-imports
-    require('react-querybuilder') as typeof import('react-querybuilder');
+  const toOpts = (arr: { name: string; label: string; disabled?: boolean }[]) =>
+    arr.map(o => (
+      <option key={o.name} value={o.name} disabled={o.disabled}>
+        {o.label}
+      </option>
+    ));
 
   // oxlint-disable-next-line typescript/no-explicit-any
   const Dropdown = (props: any) => {
@@ -48,19 +50,14 @@ vi.mock('primereact/dropdown', () => {
         {hasGroups
           ? options.map((group: { label: string; options: { name: string; label: string }[] }) => (
               <optgroup key={group.label} label={group.label}>
-                {toOptions(
-                  group.options.map((o: { name: string; label: string }) => ({
-                    name: o.name,
-                    label: o.label,
-                  })) as Option[]
-                )}
+                {toOpts(group.options)}
               </optgroup>
             ))
-          : toOptions(
+          : toOpts(
               options.map((o: { name: string; label: string }) => ({
                 name: o.name ?? o[props.optionValue as 'name'],
                 label: o.label ?? o[props.optionLabel as 'label'],
-              })) as Option[]
+              }))
             )}
       </select>
     );
