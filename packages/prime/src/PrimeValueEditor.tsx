@@ -1,5 +1,6 @@
 import { Calendar } from 'primereact/calendar';
 import { Checkbox } from 'primereact/checkbox';
+import { InputNumber } from 'primereact/inputnumber';
 import { InputSwitch } from 'primereact/inputswitch';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -7,6 +8,14 @@ import { RadioButton } from 'primereact/radiobutton';
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
 import { joinWith, useValueEditor, ValueEditor } from 'react-querybuilder';
+import {
+  formatDate,
+  formatDateTime,
+  formatTime,
+  parseDate,
+  parseTime,
+  toNumberInputValue,
+} from './utils';
 
 /**
  * @group Props
@@ -14,57 +23,6 @@ import { joinWith, useValueEditor, ValueEditor } from 'react-querybuilder';
 export interface PrimeValueEditorProps extends ValueEditorProps {
   extraProps?: Record<string, unknown>;
 }
-
-// Format date as YYYY-MM-DD
-const formatDate = (d: Date): string => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
-
-// Format datetime as YYYY-MM-DD HH:mm:ss
-const formatDateTime = (d: Date): string => {
-  const date = formatDate(d);
-  const h = String(d.getHours()).padStart(2, '0');
-  const min = String(d.getMinutes()).padStart(2, '0');
-  const s = String(d.getSeconds()).padStart(2, '0');
-  return `${date} ${h}:${min}:${s}`;
-};
-
-// Format time as HH:mm:ss
-const formatTime = (d: Date): string => {
-  const h = String(d.getHours()).padStart(2, '0');
-  const min = String(d.getMinutes()).padStart(2, '0');
-  const s = String(d.getSeconds()).padStart(2, '0');
-  return `${h}:${min}:${s}`;
-};
-
-// Parse date string to Date object
-const parseDate = (v: string): Date | null => {
-  if (!v) return null;
-  const d = new Date(v);
-  /* v8 ignore start -- @preserve */
-  return Number.isNaN(d.getTime()) ? null : d;
-  /* v8 ignore stop -- @preserve */
-};
-
-// Parse time string "HH:mm:ss" to Date object
-const parseTime = (v: string): Date | null => {
-  /* v8 ignore start -- @preserve */
-  if (!v) return null;
-  const parts = v.split(':');
-  if (parts.length < 2) return null;
-  const d = new Date();
-  d.setHours(
-    Number.parseInt(parts[0], 10),
-    Number.parseInt(parts[1], 10),
-    Number.parseInt(parts[2] ?? '0', 10),
-    0
-  );
-  return Number.isNaN(d.getTime()) ? null : d;
-  /* v8 ignore stop -- @preserve */
-};
 
 /**
  * @group Components
@@ -128,6 +86,28 @@ export const PrimeValueEditor = (allProps: PrimeValueEditorProps): React.JSX.Ele
                 multiValueHandler(d ? formatTime(d) : '', i);
                 /* v8 ignore stop -- @preserve */
               }}
+              {...extraProps}
+            />
+          );
+        }
+        if (inputTypeCoerced === 'number') {
+          return (
+            <InputNumber
+              key={key}
+              value={toNumberInputValue(valueAsArray[i])}
+              className={valueListItemClassName}
+              disabled={disabled}
+              placeholder={placeHolderText}
+              onValueChange={e =>
+                multiValueHandler(
+                  toNumberInputValue(
+                    e.value ?? /* v8 ignore start -- @preserve */ ''
+                    /* v8 ignore stop -- @preserve */
+                  ),
+                  i
+                )
+              }
+              useGrouping={false}
               {...extraProps}
             />
           );
@@ -318,6 +298,29 @@ export const PrimeValueEditor = (allProps: PrimeValueEditorProps): React.JSX.Ele
         className={className}
         disabled={disabled}
         onChange={e => bigIntValueHandler(e.target.value)}
+        {...extraProps}
+      />
+    );
+  }
+
+  if (inputTypeCoerced === 'number') {
+    return (
+      <InputNumber
+        data-testid={testID}
+        value={toNumberInputValue(value)}
+        title={title}
+        className={className}
+        disabled={disabled}
+        placeholder={placeHolderText}
+        onValueChange={e =>
+          handleOnChange(
+            toNumberInputValue(
+              e.value ?? /* v8 ignore start -- @preserve */ ''
+              /* v8 ignore stop -- @preserve */
+            )
+          )
+        }
+        useGrouping={false}
         {...extraProps}
       />
     );

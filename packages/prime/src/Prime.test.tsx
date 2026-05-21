@@ -151,6 +151,27 @@ vi.mock('primereact/inputswitch', () => {
   return { InputSwitch };
 });
 
+// Mock InputNumber for testability
+vi.mock('primereact/inputnumber', () => {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const InputNumber = (props: any) => (
+    <input
+      type="number"
+      title={props.title}
+      className={props.className}
+      disabled={props.disabled}
+      placeholder={props.placeholder}
+      data-testid={props['data-testid']}
+      value={props.value ?? ''}
+      onChange={e => {
+        const val = e.target.value === '' ? null : Number(e.target.value);
+        props.onValueChange?.({ value: val });
+      }}
+    />
+  );
+  return { InputNumber };
+});
+
 const notToggleTitle = 'PrimeNotToggle';
 const valueEditorTitle = 'PrimeValueEditor';
 
