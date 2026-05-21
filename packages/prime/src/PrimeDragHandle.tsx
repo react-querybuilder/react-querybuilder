@@ -34,7 +34,7 @@ export const PrimeDragHandle: React.ForwardRefExoticComponent<
     dragRef
   ) => (
     <i
-      className={`pi pi-bars ${className ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */}`}
+      className={`pi pi-ellipsis-v ${className ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */}`}
       title={title}
       {...extraProps}
       ref={dragRef}
