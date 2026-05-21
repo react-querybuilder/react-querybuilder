@@ -7,15 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- shadcn/ui registry components (`QueryBuilderShadcn`, `shadcnControlElements`, and individual `Shadcn*` components) installable via `npx shadcn add https://react-querybuilder.js.org/r/query-builder.json`.
+N/A
 
 ## [v8.16.1] - 2026-05-13
 
 ### Added
 
-- [#1036] [PrimeReact](https://primereact.org/) compatibility package (released 2026-05-21).
+- [#1034] shadcn/ui registry components (`QueryBuilderShadcn`, `shadcnControlElements`, and individual `Shadcn*` components) installable via `npx shadcn add https://react-querybuilder.js.org/r/query-builder.json`.
+- [#1036] [PrimeReact](https://primereact.org/) compatibility package `@react-querybuilder/prime` (released 2026-05-21).
 
 ### Fixed
 
@@ -2193,6 +2192,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1030]: https://github.com/react-querybuilder/react-querybuilder/pull/1030
 [#1032]: https://github.com/react-querybuilder/react-querybuilder/pull/1032
 [#1033]: https://github.com/react-querybuilder/react-querybuilder/pull/1033
+[#1034]: https://github.com/react-querybuilder/react-querybuilder/pull/1034
 [#1036]: https://github.com/react-querybuilder/react-querybuilder/pull/1036
 
 <!-- #endregion -->
