@@ -4,5 +4,6 @@ import shared from '../../vitest.shared';
 export default mergeConfig(shared, {
   test: {
     environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
   },
 });
