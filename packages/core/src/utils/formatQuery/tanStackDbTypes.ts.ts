@@ -8,7 +8,7 @@ export type TsDbOperators = Pick<
 export type TanStackDbWhereCallbackReturnType = ReturnType<TsDbOperators['and']>;
 
 export type TanStackDbWhereCallback = (
-  refs: Record<string, TanStackDB.Ref>
+  refs: Record<string, unknown>
 ) => TanStackDbWhereCallbackReturnType;
 
 class FallbackExpression {
