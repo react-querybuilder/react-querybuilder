@@ -487,3 +487,109 @@ describe('defaultRuleProcessorTanStackDB', () => {
     ).toBeUndefined();
   });
 });
+
+describe('multi-collection (Phase 2)', () => {
+  const createMockRef2 = (name: string) =>
+    new Proxy({}, { get: (_target, prop) => `${name}.${String(prop)}` });
+
+  const multiRefs = { todo: createMockRef2('todo'), lists: createMockRef2('lists') };
+
+  const fqMulti = (q: Parameters<typeof formatQuery>[0], ctx?: Record<string, unknown>) => {
+    const where = formatQuery(q, {
+      format: 'tanstack_db',
+      context: { tanStackDbOperators: mockOps, ...ctx },
+    }) as unknown as ((refs: unknown) => unknown) | undefined;
+    return typeof where === 'function' ? where(multiRefs) : where;
+  };
+
+  describe('dotted field resolution', () => {
+    it('resolves dotted field to correct ref', () => {
+      expect(
+        fqMulti({ combinator: 'and', rules: [{ field: 'todo.name', operator: '=', value: 'x' }] })
+      ).toEqual(eq('todo.name', 'x'));
+    });
+
+    it('resolves dotted field from second ref', () => {
+      expect(
+        fqMulti({
+          combinator: 'and',
+          rules: [{ field: 'lists.title', operator: '=', value: 'Work' }],
+        })
+      ).toEqual(eq('lists.title', 'Work'));
+    });
+
+    it('mixes dotted fields from different refs', () => {
+      expect(
+        fqMulti({
+          combinator: 'and',
+          rules: [
+            { field: 'todo.completed', operator: '=', value: true },
+            { field: 'lists.title', operator: '=', value: 'Home' },
+          ],
+        })
+      ).toEqual(and(eq('todo.completed', true), eq('lists.title', 'Home')));
+    });
+
+    it('dotted valueSource: field resolves from correct ref', () => {
+      expect(
+        fqMulti({
+          combinator: 'and',
+          rules: [
+            {
+              field: 'todo.dueDate',
+              operator: '>',
+              value: 'lists.createdAt',
+              valueSource: 'field',
+            },
+          ],
+        })
+      ).toEqual(gt('todo.dueDate', 'lists.createdAt'));
+    });
+  });
+
+  describe('bare field resolution with sourcePriority', () => {
+    it('bare field resolves to first ref (default priority)', () => {
+      // Default priority is Object.keys(refs) order: todo, lists
+      expect(
+        fqMulti({ combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'x' }] })
+      ).toEqual(eq('todo.name', 'x'));
+    });
+
+    it('sourcePriority changes bare field resolution', () => {
+      // With sourcePriority: ['lists', 'todo'], bare field resolves to lists ref
+      expect(
+        fqMulti(
+          { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'x' }] },
+          { sourcePriority: ['lists', 'todo'] }
+        )
+      ).toEqual(eq('lists.name', 'x'));
+    });
+
+    it('mixes bare and dotted fields', () => {
+      expect(
+        fqMulti(
+          {
+            combinator: 'and',
+            rules: [
+              { field: 'name', operator: '=', value: 'x' },
+              { field: 'lists.title', operator: '=', value: 'y' },
+            ],
+          },
+          { sourcePriority: ['todo', 'lists'] }
+        )
+      ).toEqual(and(eq('todo.name', 'x'), eq('lists.title', 'y')));
+    });
+
+    it('bare valueSource: field resolves via sourcePriority', () => {
+      expect(
+        fqMulti(
+          {
+            combinator: 'and',
+            rules: [{ field: 'startDate', operator: '>', value: 'endDate', valueSource: 'field' }],
+          },
+          { sourcePriority: ['lists', 'todo'] }
+        )
+      ).toEqual(gt('lists.startDate', 'lists.endDate'));
+    });
+  });
+});

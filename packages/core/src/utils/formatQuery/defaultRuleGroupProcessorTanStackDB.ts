@@ -40,12 +40,13 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
 
     const { and, not, or } = ops as TsDbOperators;
 
-    // Phase 1: single-collection — grab first ref
-    const refKey = Object.keys(refs)[0];
-    const ref = refs[refKey];
+    // Determine ref resolution order
+    const sourcePriority: string[] =
+      (Array.isArray(context.sourcePriority) ? context.sourcePriority : null) ??
+      Object.keys(refs);
 
     /* v8 ignore next -- @preserve */
-    if (!ref) return tanStackDbFallbackExpression;
+    if (sourcePriority.length === 0) return tanStackDbFallbackExpression;
 
     const ruleProcessor = defaultRuleProcessorTanStackDB;
 
@@ -81,7 +82,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
             ...options,
             parseNumbers: getParseNumberBoolean(fieldData?.inputType),
             fieldData,
-            context: { ...context, _tanstackDbRef: ref },
+            context: { ...context, _tanstackDbRefs: refs, _tanstackDbSourcePriority: sourcePriority },
           });
         })
         .filter(Boolean);

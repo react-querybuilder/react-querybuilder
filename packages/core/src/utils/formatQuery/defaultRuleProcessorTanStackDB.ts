@@ -17,19 +17,34 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
   const opts = _options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const ops = context.tanStackDbOperators;
-  const ref = context._tanstackDbRef;
+  const refs = context._tanstackDbRefs;
+  const sourcePriority: string[] | undefined = context._tanstackDbSourcePriority;
 
-  if (!ops || !ref) return undefined;
+  if (!ops || !refs || !sourcePriority) return undefined;
 
   const { and, eq, gt, gte, inArray, isNull, like, lt, lte, not } = ops;
 
+  // Resolve a field name to a ref column:
+  // - Dotted: "todo.age" → refs.todo.age
+  // - Bare: "age" → refs[sourcePriority[0]].age (first ref in priority order)
+  const resolveField = (fieldName: string) => {
+    const dotIdx = fieldName.indexOf('.');
+    if (dotIdx > 0) {
+      const prefix = fieldName.slice(0, dotIdx);
+      const rest = fieldName.slice(dotIdx + 1);
+      if (refs[prefix]) return refs[prefix][rest];
+    }
+    // Bare field: use first ref in priority order
+    return refs[sourcePriority[0]][fieldName];
+  };
+
   const { field, operator, value, valueSource } = rule;
-  const column = ref[field];
+  const column = resolveField(field);
   const operatorLC = lc(operator);
 
   const valueIsField = valueSource === 'field';
   // oxlint-disable-next-line typescript/no-explicit-any
-  const asFieldOrValue = (v: any) => (valueIsField ? ref[v] : v);
+  const asFieldOrValue = (v: any) => (valueIsField ? resolveField(v) : v);
 
   switch (operatorLC) {
     case '=':
