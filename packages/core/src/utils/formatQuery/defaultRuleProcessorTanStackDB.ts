@@ -1,0 +1,112 @@
+import type { RuleProcessor } from '../../types';
+import { toArray } from '../arrayUtils';
+import { lc } from '../misc';
+import { parseNumber } from '../parseNumber';
+import type { TanStackDbWhereCallbackReturnType } from './tanStackDbTypes.ts';
+import { isValidValue, shouldRenderAsNumber } from './utils';
+
+/**
+ * Default rule processor used by {@link formatQuery} for the "tanstack_db" format.
+ *
+ * @group Export
+ */
+export const defaultRuleProcessorTanStackDB: RuleProcessor = (
+  rule,
+  _options
+): TanStackDbWhereCallbackReturnType | undefined => {
+  const opts = _options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  const { parseNumbers, preserveValueOrder, context = {} } = opts;
+  const ops = context.tanStackDbOperators;
+  const ref = context._tanstackDbRef;
+
+  if (!ops || !ref) return undefined;
+
+  const { and, eq, gt, gte, inArray, isNull, like, lt, lte, not } = ops;
+
+  const { field, operator, value, valueSource } = rule;
+  const column = ref[field];
+  const operatorLC = lc(operator);
+
+  const valueIsField = valueSource === 'field';
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const asFieldOrValue = (v: any) => (valueIsField ? ref[v] : v);
+
+  switch (operatorLC) {
+    case '=':
+      return eq(column, asFieldOrValue(value));
+    case '!=':
+      return not(eq(column, asFieldOrValue(value)));
+    case '>':
+      return gt(column, asFieldOrValue(value));
+    case '<':
+      return lt(column, asFieldOrValue(value));
+    case '>=':
+      return gte(column, asFieldOrValue(value));
+    case '<=':
+      return lte(column, asFieldOrValue(value));
+    case 'beginswith':
+    case 'doesnotbeginwith': {
+      const pattern = valueIsField ? undefined : `${value}%`;
+      const expr = like(column, pattern);
+      return operatorLC === 'doesnotbeginwith' ? not(expr) : expr;
+    }
+    case 'contains':
+    case 'doesnotcontain': {
+      const pattern = valueIsField ? undefined : `%${value}%`;
+      const expr = like(column, pattern);
+      return operatorLC === 'doesnotcontain' ? not(expr) : expr;
+    }
+    case 'endswith':
+    case 'doesnotendwith': {
+      const pattern = valueIsField ? undefined : `%${value}`;
+      const expr = like(column, pattern);
+      return operatorLC === 'doesnotendwith' ? not(expr) : expr;
+    }
+    case 'null':
+      return isNull(column);
+    case 'notnull':
+      return not(isNull(column));
+    case 'in':
+    case 'notin': {
+      const valueAsArray = toArray(value).map(v => asFieldOrValue(v));
+      const expr = inArray(column, valueAsArray);
+      return operatorLC === 'notin' ? not(expr) : expr;
+    }
+    case 'between':
+    case 'notbetween': {
+      const valueAsArray = toArray(value);
+      if (
+        valueAsArray.length >= 2 &&
+        isValidValue(valueAsArray[0]) &&
+        isValidValue(valueAsArray[1])
+      ) {
+        let [first, second] = valueAsArray;
+        const shouldParseNumbers = !(parseNumbers === false);
+        if (
+          !valueIsField &&
+          shouldRenderAsNumber(first, shouldParseNumbers) &&
+          shouldRenderAsNumber(second, shouldParseNumbers)
+        ) {
+          const firstNum = parseNumber(first, { parseNumbers: shouldParseNumbers });
+          const secondNum = parseNumber(second, { parseNumbers: shouldParseNumbers });
+          if (!preserveValueOrder && secondNum < firstNum) {
+            const tempNum = secondNum;
+            second = firstNum;
+            first = tempNum;
+          } else {
+            first = firstNum;
+            second = secondNum;
+          }
+        } else if (valueIsField) {
+          first = asFieldOrValue(first);
+          second = asFieldOrValue(second);
+        }
+        const expr = and(gte(column, first), lte(column, second));
+        return operatorLC === 'notbetween' ? not(expr) : expr;
+      }
+      return undefined;
+    }
+    default:
+      return undefined;
+  }
+};

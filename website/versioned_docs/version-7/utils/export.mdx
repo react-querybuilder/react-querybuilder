@@ -21,7 +21,7 @@ function formatQuery(
 - SQL `WHERE` clause
   - Parameterized with anonymous parameters
   - Parameterized with named parameters
-- ORM query objects for Drizzle, Prisma, and Sequelize
+- ORM query objects for Drizzle, Prisma, Sequelize, and TanStack DB
 - MongoDB query object
 - ~~MongoDB query object as string~~ [_(deprecated)_](#mongodb)
 - Common Expression Language (CEL)
@@ -313,6 +313,42 @@ const where = formatQuery(query, {
 
 const users = await Users.findAll({ where });
 ```
+
+#### TanStack DB
+
+Generate a `WhereCallback` for [TanStack DB](https://tanstack.com/db)'s `.where()` method using the "tanstack_db" format. The processor does not import any executable code from `@tanstack/db` — operators are passed in through the `context` option.
+
+Pass the full `@tanstack/db` module or individual operators as `tanStackDbOperators`:
+
+```ts
+import * as tsdb from '@tanstack/db';
+
+const where = formatQuery(query, {
+  format: 'tanstack_db',
+  context: { tanStackDbOperators: tsdb },
+});
+
+const results = useLiveQuery(q => q.from({ users: usersCollection }).where(where));
+```
+
+Or with cherry-picked operators:
+
+```ts
+import { eq, gt, gte, lt, lte, like, inArray, isNull, not, and, or } from '@tanstack/db';
+
+const where = formatQuery(query, {
+  format: 'tanstack_db',
+  context: {
+    tanStackDbOperators: { eq, gt, gte, lt, lte, like, inArray, isNull, not, and, or },
+  },
+});
+```
+
+:::tip
+
+TanStack DB does not expose `ne`, `between`, `notBetween`, `notInArray`, `notLike`, or `isNotNull` — these are composed automatically using `not(...)`. For example, `!=` becomes `not(eq(...))` and `between` becomes `and(gte(...), lte(...))`.
+
+:::
 
 ### MongoDB
 
@@ -694,6 +730,7 @@ The default rule processors for each format are available as exports from `react
 - `defaultRuleProcessorSpEL`
 - `defaultRuleProcessorSQL`
 - `defaultRuleProcessorParameterized`
+- `defaultRuleProcessorTanstackDb`
 
 Refer to the source code to determine the appropriate return type for custom rule processors.
 
@@ -1379,6 +1416,7 @@ The default rule group processors for each format are available as exports from 
 - `defaultRuleGroupProcessorSpEL`
 - `defaultRuleGroupProcessorSQL`
 - `defaultRuleGroupProcessorParameterized`
+- `defaultRuleGroupProcessorTanstackDb`
 
 Use the appropriate default rule group processor as a fallback so your custom processor doesn't need to cover all cases:
 

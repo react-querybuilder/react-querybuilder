@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- New "tanstack_db" export format produces a callback for [TanStack DB](https://tanstack.com/db)'s `.where()` function.
 
 ## [v8.16.1] - 2026-05-13
 

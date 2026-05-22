@@ -177,6 +177,7 @@
     "@electric-sql/pglite": "catalog:test",
     "@grafeo-db/js": "^0.5.42",
     "@prisma/client": "^7.7.0",
+    "@tanstack/db": "^0.6.6",
     "@traqula/parser-sparql-1-2": "^1.1.1",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "catalog:",
@@ -214,6 +215,15 @@
     "spel2js": ">=0.2.0"
   },
   "peerDependenciesMeta": {
+    "@tanstack/db": {
+      "optional": true
+    },
+    "@traqula/parser-sparql-1-2": {
+      "optional": true
+    },
+    "chevrotain": {
+      "optional": true
+    },
     "drizzle-orm": {
       "optional": true
     },
@@ -227,12 +237,6 @@
       "optional": true
     },
     "spel2js": {
-      "optional": true
-    },
-    "chevrotain": {
-      "optional": true
-    },
-    "@traqula/parser-sparql-1-2": {
       "optional": true
     }
   },

@@ -33,6 +33,7 @@ export type ExportFormat =
   | 'natural_language'
   | 'ldap'
   | 'drizzle'
+  | 'tanstack_db'
   | 'prisma'
   | 'sequelize'
   | 'cypher'

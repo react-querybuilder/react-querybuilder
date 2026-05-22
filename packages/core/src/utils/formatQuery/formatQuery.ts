@@ -47,6 +47,7 @@ import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorS
 import { defaultRuleGroupProcessorSPARQL } from './defaultRuleGroupProcessorSPARQL';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
+import { defaultRuleGroupProcessorTanStackDB } from './defaultRuleGroupProcessorTanStackDB';
 import { defaultRuleProcessorCEL } from './defaultRuleProcessorCEL';
 import { defaultRuleProcessorCypher } from './defaultRuleProcessorCypher';
 import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
@@ -64,6 +65,7 @@ import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
 import { defaultRuleProcessorSPARQL } from './defaultRuleProcessorSPARQL';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
 import { defaultOperatorProcessorSQL, defaultRuleProcessorSQL } from './defaultRuleProcessorSQL';
+import { defaultRuleProcessorTanStackDB } from './defaultRuleProcessorTanStackDB';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import { defaultValueProcessorNL } from './defaultValueProcessorNL';
 import {
@@ -127,6 +129,7 @@ const defaultRuleProcessors = {
   sequelize: defaultRuleProcessorSequelize,
   spel: defaultRuleProcessorSpEL,
   sql: defaultRuleProcessorSQL,
+  tanstack_db: defaultRuleProcessorTanStackDB,
   cypher: defaultRuleProcessorCypher,
   gql: defaultRuleProcessorCypher,
   sparql: defaultRuleProcessorSPARQL,
@@ -154,6 +157,7 @@ const defaultOperatorProcessors = {
   sequelize: defaultOperatorProcessor,
   spel: defaultOperatorProcessor,
   sql: defaultOperatorProcessorSQL,
+  tanstack_db: defaultOperatorProcessor,
   cypher: defaultOperatorProcessor,
   gql: defaultOperatorProcessor,
   sparql: defaultOperatorProcessor,
@@ -217,6 +221,7 @@ const valueProcessorCanActAsRuleProcessor = new Set<ExportFormat>([
   'prisma',
   'sequelize',
   'spel',
+  'tanstack_db',
 ]);
 
 const sqlFormats = new Set<ExportFormat>([
@@ -332,7 +337,16 @@ function formatQuery(
   options: 'drizzle' | (FormatQueryOptions & { format: 'drizzle' })
 ): ReturnType<typeof defaultRuleGroupProcessorDrizzle>;
 /**
- * Generates a Sequelize query object from an RQB query object. The object can
+ * Generates a TanStack DB WhereCallback from an RQB query object. The callback can
+ * be passed directly to TanStack DB's `.where()` method.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'tanstack_db' | (FormatQueryOptions & { format: 'tanstack_db' })
+): ReturnType<typeof defaultRuleGroupProcessorTanStackDB>;
+/**
  * be assigned to the `where` property in the Sequelize query functions.
  *
  * @group Export
@@ -501,7 +515,7 @@ function formatQuery(
                       ? false
                       : format === 'elasticsearch'
                         ? {}
-                        : format === 'drizzle' || format === 'sequelize'
+                        : format === 'drizzle' || format === 'sequelize' || format === 'tanstack_db'
                           ? undefined
                           : fallbackExpression;
         }
@@ -614,6 +628,9 @@ function formatQuery(
 
     case 'drizzle':
       return defaultRuleGroupProcessorDrizzle(ruleGroup, finalOptions);
+
+    case 'tanstack_db':
+      return defaultRuleGroupProcessorTanStackDB(ruleGroup, finalOptions);
 
     case 'sequelize':
       return defaultRuleGroupProcessorSequelize(ruleGroup, finalOptions);
