@@ -42,8 +42,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
 
     // Determine ref resolution order
     const sourcePriority: string[] =
-      (Array.isArray(context.sourcePriority) ? context.sourcePriority : null) ??
-      Object.keys(refs);
+      (Array.isArray(context.sourcePriority) ? context.sourcePriority : null) ?? Object.keys(refs);
 
     /* v8 ignore next -- @preserve */
     if (sourcePriority.length === 0) return tanStackDbFallbackExpression;
@@ -82,7 +81,11 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
             ...options,
             parseNumbers: getParseNumberBoolean(fieldData?.inputType),
             fieldData,
-            context: { ...context, _tanstackDbRefs: refs, _tanstackDbSourcePriority: sourcePriority },
+            context: {
+              ...context,
+              _tanstackDbRefs: refs,
+              _tanstackDbSourcePriority: sourcePriority,
+            },
           });
         })
         .filter(Boolean);
