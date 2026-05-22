@@ -127,11 +127,20 @@ type ExportFormat =
   | 'mongodb_query'
   | 'cel'
   | 'jsonlogic'
-  | 'jsonata'
-  | 'ldap'
-  | 'elasticsearch'
   | 'spel'
-  | 'natural_language';
+  | 'elasticsearch'
+  | 'jsonata'
+  | 'natural_language'
+  | 'ldap'
+  | 'drizzle'
+  | 'tanstack_db'
+  | 'prisma'
+  | 'sequelize'
+  | 'cypher'
+  | 'gql'
+  | 'sparql'
+  | 'gremlin'
+  | 'diagnostics';
 
 interface FormatQueryOptions {
   format?: ExportFormat;
