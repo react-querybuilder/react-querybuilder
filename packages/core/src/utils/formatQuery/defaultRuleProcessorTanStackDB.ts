@@ -46,19 +46,26 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
   // oxlint-disable-next-line typescript/no-explicit-any
   const asFieldOrValue = (v: any) => (valueIsField ? resolveField(v) : v);
 
+  // Parse value as number when applicable
+  // oxlint-disable-next-line typescript/no-explicit-any
+  const maybeParseNumber = (v: any) => {
+    if (valueIsField || !parseNumbers) return asFieldOrValue(v);
+    return shouldRenderAsNumber(v, true) ? parseNumber(v, { parseNumbers: true }) : v;
+  };
+
   switch (operatorLC) {
     case '=':
-      return eq(column, asFieldOrValue(value));
+      return eq(column, maybeParseNumber(value));
     case '!=':
-      return not(eq(column, asFieldOrValue(value)));
+      return not(eq(column, maybeParseNumber(value)));
     case '>':
-      return gt(column, asFieldOrValue(value));
+      return gt(column, maybeParseNumber(value));
     case '<':
-      return lt(column, asFieldOrValue(value));
+      return lt(column, maybeParseNumber(value));
     case '>=':
-      return gte(column, asFieldOrValue(value));
+      return gte(column, maybeParseNumber(value));
     case '<=':
-      return lte(column, asFieldOrValue(value));
+      return lte(column, maybeParseNumber(value));
     case 'beginswith':
     case 'doesnotbeginwith': {
       const pattern = valueIsField ? undefined : `${value}%`;
@@ -83,7 +90,7 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
       return not(isNull(column));
     case 'in':
     case 'notin': {
-      const valueAsArray = toArray(value).map(v => asFieldOrValue(v));
+      const valueAsArray = toArray(value).map(v => maybeParseNumber(v));
       const expr = inArray(column, valueAsArray);
       return operatorLC === 'notin' ? not(expr) : expr;
     }

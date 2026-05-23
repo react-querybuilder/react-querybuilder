@@ -53,6 +53,12 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
   const valueIsField = valueSource === 'field';
   const asFieldOrValue = (v: string) => (valueIsField ? columns[v] : v);
 
+  // Parse value as number when applicable
+  const maybeParseNumber = (v: string) => {
+    if (valueIsField || !parseNumbers) return asFieldOrValue(v);
+    return shouldRenderAsNumber(v, true) ? parseNumber(v, { parseNumbers: true }) : v;
+  };
+
   if (!column) return undefined;
 
   const matchEval = processMatchMode(rule);
@@ -101,17 +107,17 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
 
   switch (operatorLC) {
     case '=':
-      return eq(column, asFieldOrValue(value));
+      return eq(column, maybeParseNumber(value));
     case '!=':
-      return ne(column, asFieldOrValue(value));
+      return ne(column, maybeParseNumber(value));
     case '>':
-      return gt(column, asFieldOrValue(value));
+      return gt(column, maybeParseNumber(value));
     case '<':
-      return lt(column, asFieldOrValue(value));
+      return lt(column, maybeParseNumber(value));
     case '>=':
-      return gte(column, asFieldOrValue(value));
+      return gte(column, maybeParseNumber(value));
     case '<=':
-      return lte(column, asFieldOrValue(value));
+      return lte(column, maybeParseNumber(value));
     case 'beginswith':
     case 'doesnotbeginwith':
       return (operatorLC === 'doesnotbeginwith' ? notLike : like)(
@@ -136,7 +142,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
       return isNotNull(column);
     case 'in':
     case 'notin': {
-      const valueAsArray = toArray(value).map(v => asFieldOrValue(v));
+      const valueAsArray = toArray(value).map(v => maybeParseNumber(v));
       return operatorLC === 'notin'
         ? notInArray(column, valueAsArray)
         : inArray(column, valueAsArray);

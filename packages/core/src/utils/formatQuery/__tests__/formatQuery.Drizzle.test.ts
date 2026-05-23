@@ -195,3 +195,63 @@ it('parseNumbers with between operators', () => {
     formatQuery(betweenQuery, { format: 'drizzle', parseNumbers: false })(fields, drizzleOperators)
   ).toBeTruthy();
 });
+
+it('parseNumbers with comparison and in/notIn operators', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'age', operator: '=', value: '26' },
+      { field: 'age', operator: '!=', value: '30' },
+      { field: 'age', operator: '>', value: '10' },
+      { field: 'age', operator: '<', value: '50' },
+      { field: 'age', operator: '>=', value: '18' },
+      { field: 'age', operator: '<=', value: '65' },
+      { field: 'age', operator: 'in', value: '1,2,3' },
+      { field: 'age', operator: 'notIn', value: '4,5' },
+    ],
+  };
+
+  // parseNumbers: true → values parsed to numbers
+  const resultParsed = formatQuery(q, { format: 'drizzle', parseNumbers: true })(
+    fields,
+    drizzleOperators
+  );
+  // operatorStub returns args as an array; and(...) wraps all rule results
+  // Each rule result is [column, parsedValue] from eq/ne/gt/lt/gte/lte/inArray/notInArray
+  const parsed = resultParsed as unknown as unknown[];
+  // eq(age, 26)
+  expect(parsed[0]).toEqual([fields.age, 26]);
+  // ne(age, 30)
+  expect(parsed[1]).toEqual([fields.age, 30]);
+  // gt(age, 10)
+  expect(parsed[2]).toEqual([fields.age, 10]);
+  // lt(age, 50)
+  expect(parsed[3]).toEqual([fields.age, 50]);
+  // gte(age, 18)
+  expect(parsed[4]).toEqual([fields.age, 18]);
+  // lte(age, 65)
+  expect(parsed[5]).toEqual([fields.age, 65]);
+  // inArray(age, [1, 2, 3])
+  expect(parsed[6]).toEqual([fields.age, [1, 2, 3]]);
+  // notInArray(age, [4, 5])
+  expect(parsed[7]).toEqual([fields.age, [4, 5]]);
+
+  // default (no parseNumbers) → values stay as strings
+  const resultDefault = formatQuery(q, { format: 'drizzle' })(fields, drizzleOperators);
+  const unparsed = resultDefault as unknown as unknown[];
+  expect(unparsed[0]).toEqual([fields.age, '26']);
+  expect(unparsed[6]).toEqual([fields.age, ['1', '2', '3']]);
+});
+
+it('parseNumbers does not affect non-numeric strings', () => {
+  const q: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'firstName', operator: '=', value: 'Alice' }],
+  };
+  const result = formatQuery(q, { format: 'drizzle', parseNumbers: true })(
+    fields,
+    drizzleOperators
+  );
+  // and(eq(column, value)) → [[column, value]]
+  expect(result).toEqual([[fields.firstName, 'Alice']]);
+});

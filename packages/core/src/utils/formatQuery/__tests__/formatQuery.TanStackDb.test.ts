@@ -199,6 +199,60 @@ describe('formatQuery("tanstack_db")', () => {
     );
   });
 
+  it('parseNumbers with comparison and in/notIn operators', () => {
+    const q: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'age', operator: '=', value: '26' },
+        { field: 'age', operator: '!=', value: '30' },
+        { field: 'age', operator: '>', value: '10' },
+        { field: 'age', operator: '<', value: '50' },
+        { field: 'age', operator: '>=', value: '18' },
+        { field: 'age', operator: '<=', value: '65' },
+        { field: 'age', operator: 'in', value: '1,2,3' },
+        { field: 'age', operator: 'notIn', value: '4,5' },
+      ],
+    };
+
+    // parseNumbers: true → numeric values
+    expect(fq(q, { format: 'tanstack_db', context: baseContext, parseNumbers: true })).toEqual(
+      and(
+        eq(f('age'), 26),
+        not(eq(f('age'), 30)),
+        gt(f('age'), 10),
+        lt(f('age'), 50),
+        gte(f('age'), 18),
+        lte(f('age'), 65),
+        inArray(f('age'), [1, 2, 3]),
+        not(inArray(f('age'), [4, 5]))
+      )
+    );
+
+    // default (no parseNumbers) → string values
+    expect(fq(q)).toEqual(
+      and(
+        eq(f('age'), '26'),
+        not(eq(f('age'), '30')),
+        gt(f('age'), '10'),
+        lt(f('age'), '50'),
+        gte(f('age'), '18'),
+        lte(f('age'), '65'),
+        inArray(f('age'), ['1', '2', '3']),
+        not(inArray(f('age'), ['4', '5']))
+      )
+    );
+  });
+
+  it('parseNumbers does not affect non-numeric strings', () => {
+    const q: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'name', operator: '=', value: 'Alice' }],
+    };
+    expect(fq(q, { format: 'tanstack_db', context: baseContext, parseNumbers: true })).toEqual(
+      eq(f('name'), 'Alice')
+    );
+  });
+
   it('returns fallback on invalid operator', () => {
     expect(
       fq({ combinator: 'and', rules: [{ field: 'f', operator: 'invalid', value: 'v' }] })
