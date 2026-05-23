@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New "tanstack_db" export format produces a callback for [TanStack DB](https://tanstack.com/db)'s `.where()` function.
+- [#1039] New "tanstack_db" export format produces a callback for [TanStack DB](https://tanstack.com/db)'s `.where()` function.
+
+### Fixed
+
+- [#1039] Drizzle export supports `parseNumbers`.
 
 ## [v8.16.1] - 2026-05-13
 
@@ -2196,6 +2200,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1033]: https://github.com/react-querybuilder/react-querybuilder/pull/1033
 [#1034]: https://github.com/react-querybuilder/react-querybuilder/pull/1034
 [#1036]: https://github.com/react-querybuilder/react-querybuilder/pull/1036
+[#1039]: https://github.com/react-querybuilder/react-querybuilder/pull/1039
 
 <!-- #endregion -->
 
