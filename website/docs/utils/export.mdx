@@ -350,6 +350,45 @@ TanStack DB does not expose `ne`, `between`, `notBetween`, `notInArray`, `notLik
 
 :::
 
+##### Joins (multi-collection queries)
+
+When querying across joined collections, fields can be prefixed with the collection alias to target a specific ref. Bare (unprefixed) fields resolve to the first collection in the `refs` object, or the first entry in `context.sourcePriority` if provided.
+
+```ts
+import * as tsdb from '@tanstack/db';
+
+// Fields use dotted notation: "collectionAlias.fieldName"
+const query = {
+  combinator: 'and',
+  rules: [
+    { field: 'todo.completed', operator: '=', value: false },
+    { field: 'lists.title', operator: '=', value: 'Work' },
+  ],
+};
+
+const where = formatQuery(query, {
+  format: 'tanstack_db',
+  context: { tanStackDbOperators: tsdb },
+});
+
+const results = useLiveQuery(q =>
+  q.from({ todo: todosCollection, lists: listsCollection }).where(where)
+);
+```
+
+Use `context.sourcePriority` to control which collection bare (unprefixed) fields resolve to:
+
+```ts
+const where = formatQuery(query, {
+  format: 'tanstack_db',
+  context: {
+    tanStackDbOperators: tsdb,
+    // Bare fields like "title" resolve to `refs.lists` first
+    sourcePriority: ['lists', 'todo'],
+  },
+});
+```
+
 ### MongoDB
 
 Generate MongoDB queries as JSON objects or strings. Use the "mongodb_query" format (recommended) for JSON objects. The "mongodb" format is the stringified version.
