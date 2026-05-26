@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.16.2] - 2026-05-26
+
 ### Added
 
 - [#1039] New "tanstack_db" export format produces a callback for [TanStack DB](https://tanstack.com/db)'s `.where()` function.
@@ -2206,7 +2210,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.2...HEAD
+[v8.16.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.1...v8.16.2
 [v8.16.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.0...v8.16.1
 [v8.16.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.15.0...v8.16.0
 [v8.15.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.14.4...v8.15.0
