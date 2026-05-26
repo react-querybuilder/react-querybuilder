@@ -1176,6 +1176,9 @@ formatQuery(query, { format: 'sql', preset: 'mssql' });
 | `'sql'`                 | `'(1 = 1)'`                   |
 | `'parameterized'`       | `'(1 = 1)'`                   |
 | `'parameterized_named'` | `'(1 = 1)'`                   |
+| `'cypher'` / `'gql'`    | `'(1 = 1)'`                   |
+| `'sparql'`              | `'1 = 1'`                     |
+| `'gremlin'`             | `''`                          |
 | `'ldap'`                | `''`                          |
 | `'mongodb'`             | `'{"$and":[{"$expr":true}]}'` |
 | `'mongodb_query'`       | `{"$and":[{"$expr":true}]}`   |
@@ -1185,6 +1188,10 @@ formatQuery(query, { format: 'sql', preset: 'mssql' });
 | `'jsonata'`             | `'(1 = 1)'`                   |
 | `'jsonlogic'`           | `false`                       |
 | `'elasticsearch'`       | `{}`                          |
+| `'drizzle'`             | `undefined`                   |
+| `'prisma'`              | `{}`                          |
+| `'sequelize'`           | `{}`                          |
+| `'tanstack_db'`         | `eq(1, 1)`                    |
 
 ### Value sources
 
