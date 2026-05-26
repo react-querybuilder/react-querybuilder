@@ -206,3 +206,25 @@ describe('TanStack DB joins', () => {
     expect(cleaned.every(r => r.su.madeUpName === 'Superman')).toBe(true);
   });
 });
+
+describe('TanStack DB fallback (empty rules)', () => {
+  test('empty rules array returns all rows', async () => {
+    const where = formatQuery(
+      { combinator: 'and', rules: [] },
+      { format: 'tanstack_db', context: { tanStackDbOperators } }
+    );
+
+    const results = await queryOnce(q => q.from({ su: collection }).where(where));
+    expect(stripMeta(results)).toHaveLength(superUserData.length);
+  });
+
+  test('nested empty groups return all rows', async () => {
+    const where = formatQuery(
+      { combinator: 'and', rules: [{ combinator: 'or', rules: [] }] },
+      { format: 'tanstack_db', context: { tanStackDbOperators } }
+    );
+
+    const results = await queryOnce(q => q.from({ su: collection }).where(where));
+    expect(stripMeta(results)).toHaveLength(superUserData.length);
+  });
+});

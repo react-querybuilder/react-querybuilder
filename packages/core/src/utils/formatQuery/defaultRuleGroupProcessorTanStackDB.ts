@@ -9,7 +9,6 @@ import type {
   TanStackDbWhereCallbackReturnType,
   TsDbOperators,
 } from './tanStackDbTypes.ts';
-import { tanStackDbFallbackExpression } from './tanStackDbTypes.ts';
 
 /**
  * Default rule group processor used by {@link formatQuery} for the "tanstack_db" format.
@@ -34,17 +33,19 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
       context = {},
     } = options;
 
-    const ops = context.tanStackDbOperators;
+    const ops = context.tanStackDbOperators as TsDbOperators;
 
-    if (!ops) return tanStackDbFallbackExpression;
+    if (!ops) return undefined as unknown as TanStackDbWhereCallbackReturnType;
 
-    const { and, not, or } = ops as TsDbOperators;
+    const { and, eq, not, or } = ops;
+
+    const fallback = eq(1, 1);
 
     // Grab ref keys for field resolution (first key is primary)
     const refKeys = Object.keys(refs);
 
     /* v8 ignore next -- @preserve */
-    if (refKeys.length === 0) return tanStackDbFallbackExpression;
+    if (refKeys.length === 0) return fallback;
 
     const ruleProcessor = defaultRuleProcessorTanStackDB;
 
@@ -90,7 +91,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
         .filter(Boolean);
 
       if (processedRules.length === 0) {
-        return tanStackDbFallbackExpression;
+        return fallback;
       }
 
       // Single expression: no wrapper needed
@@ -104,5 +105,5 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
       return rg.not ? not(ruleGroupExpr) : ruleGroupExpr;
     };
 
-    return processRuleGroup(convertFromIC(ruleGroup)) ?? tanStackDbFallbackExpression;
+    return processRuleGroup(convertFromIC(ruleGroup)) ?? fallback;
   };

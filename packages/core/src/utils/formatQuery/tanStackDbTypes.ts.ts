@@ -10,18 +10,3 @@ export type TanStackDbWhereCallbackReturnType = ReturnType<TsDbOperators['and']>
 export type TanStackDbWhereCallback = (
   refs: Record<string, unknown>
 ) => TanStackDbWhereCallbackReturnType;
-
-class FallbackExpression {
-  value: boolean;
-  type: 'val';
-  __returnType: boolean;
-
-  constructor(value: boolean) {
-    this.value = value;
-    this.type = 'val';
-    this.__returnType = true;
-    return this;
-  }
-}
-
-export const tanStackDbFallbackExpression: FallbackExpression = new FallbackExpression(true);

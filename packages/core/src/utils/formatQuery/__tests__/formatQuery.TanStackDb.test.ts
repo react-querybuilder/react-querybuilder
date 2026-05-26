@@ -13,7 +13,6 @@ import {
   queryIC,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
-import { tanStackDbFallbackExpression } from '../tanStackDbTypes.ts';
 
 // Mock operators that record call structure for assertion
 const mockOps = {
@@ -256,7 +255,7 @@ describe('formatQuery("tanstack_db")', () => {
   it('returns fallback on invalid operator', () => {
     expect(
       fq({ combinator: 'and', rules: [{ field: 'f', operator: 'invalid', value: 'v' }] })
-    ).toBe(tanStackDbFallbackExpression);
+    ).toEqual(eq(1, 1));
   });
 
   it('returns fallback when operators are missing from context', () => {
@@ -264,8 +263,8 @@ describe('formatQuery("tanstack_db")', () => {
       combinator: 'and',
       rules: [{ field: 'x', operator: '=', value: 1 }],
     };
-    expect(fq(q, { format: 'tanstack_db' })).toBe(tanStackDbFallbackExpression);
-    expect(fq(q, { format: 'tanstack_db', context: {} })).toBe(tanStackDbFallbackExpression);
+    expect(fq(q, { format: 'tanstack_db' })).toBeUndefined();
+    expect(fq(q, { format: 'tanstack_db', context: {} })).toBeUndefined();
   });
 });
 
@@ -306,7 +305,7 @@ describe('operator mapping', () => {
   it('between with insufficient values returns fallback', () => {
     expect(
       fq({ combinator: 'and', rules: [{ field: 'age', operator: 'between', value: '1' }] })
-    ).toBe(tanStackDbFallbackExpression);
+    ).toEqual(eq(1, 1));
   });
 });
 // oxlint-enable jest/expect-expect
