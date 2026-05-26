@@ -18,15 +18,15 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const ops = context.tanStackDbOperators;
   const refs = context._tanstackDbRefs;
-  const sourcePriority: string[] | undefined = context._tanstackDbSourcePriority;
+  const primaryRef: string | undefined = context._tanstackDbPrimaryRef;
 
-  if (!ops || !refs || !sourcePriority) return undefined;
+  if (!ops || !refs || !primaryRef) return undefined;
 
   const { and, eq, gt, gte, inArray, isNull, like, lt, lte, not } = ops;
 
   // Resolve a field name to a ref column:
   // - Dotted: "todo.age" → refs.todo.age
-  // - Bare: "age" → refs[sourcePriority[0]].age (first ref in priority order)
+  // - Bare: "age" → refs[primaryRef].age
   const resolveField = (fieldName: string) => {
     const dotIdx = fieldName.indexOf('.');
     if (dotIdx > 0) {
@@ -34,8 +34,8 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
       const rest = fieldName.slice(dotIdx + 1);
       if (refs[prefix]) return refs[prefix][rest];
     }
-    // Bare field: use first ref in priority order
-    return refs[sourcePriority[0]][fieldName];
+    // Bare field: use primary ref
+    return refs[primaryRef][fieldName];
   };
 
   const { field, operator, value, valueSource } = rule;

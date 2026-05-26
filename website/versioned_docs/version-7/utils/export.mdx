@@ -352,17 +352,18 @@ TanStack DB does not expose `ne`, `between`, `notBetween`, `notInArray`, `notLik
 
 ##### Joins (multi-collection queries)
 
-When querying across joined collections, fields can be prefixed with the collection alias to target a specific ref. Bare (unprefixed) fields resolve to the first collection in the `refs` object, or the first entry in `context.sourcePriority` if provided.
+When querying across joined collections, fields from non-primary collections must use dotted notation (`"alias.fieldName"`) to target the correct ref. Bare (unprefixed) fields always resolve to the primary collection (the first key in the `refs` object).
 
 ```ts
 import * as tsdb from '@tanstack/db';
 
-// Fields use dotted notation: "collectionAlias.fieldName"
 const query = {
   combinator: 'and',
   rules: [
-    { field: 'todo.completed', operator: '=', value: false },
-    { field: 'lists.title', operator: '=', value: 'Work' },
+    // Bare field → resolves to the primary collection (su)
+    { field: 'firstName', operator: '=', value: 'Bruce' },
+    // Dotted field → resolves to the nicknames collection (nn)
+    { field: 'nn.nickname', operator: 'contains', value: 'Dark' },
   ],
 };
 
@@ -372,22 +373,18 @@ const where = formatQuery(query, {
 });
 
 const results = useLiveQuery(q =>
-  q.from({ todo: todosCollection, lists: listsCollection }).where(where)
+  q
+    .from({ su: superUsersCollection })
+    .leftJoin({ nn: nicknamesCollection }, refs => eq(refs.su.id, refs.nn.userId))
+    .where(where)
 );
 ```
 
-Use `context.sourcePriority` to control which collection bare (unprefixed) fields resolve to:
+:::caution
 
-```ts
-const where = formatQuery(query, {
-  format: 'tanstack_db',
-  context: {
-    tanStackDbOperators: tsdb,
-    // Bare fields like "title" resolve to `refs.lists` first
-    sourcePriority: ['lists', 'todo'],
-  },
-});
-```
+Bare fields cannot be disambiguated across collections at export time because TanStack DB refs are proxies that accept any property name. Always use dotted notation for fields on joined (non-primary) collections.
+
+:::
 
 ### MongoDB
 

@@ -1,5 +1,16 @@
 import type { SuperUser, TestSQLParams } from './dbqueryTestUtils';
-import { dbTests } from './dbqueryTestUtils';
+import { dbTests, nicknameMap } from './dbqueryTestUtils';
+
+export interface Nickname {
+  id: string;
+  madeUpName: string;
+  nickname: string;
+}
+
+// Derived from nicknameMap — multiple nicknames per hero (keyed by madeUpName)
+export const nicknameData: Nickname[] = Object.entries(nicknameMap).flatMap(([madeUpName, nicks]) =>
+  nicks.map((nickname, i) => ({ id: `${madeUpName}-${i}`, madeUpName, nickname }))
+);
 
 /**
  * TanStack DB-specific integration test cases.
