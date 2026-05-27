@@ -201,7 +201,7 @@
     "jscodeshift": "^17.3.0",
     "jsdom": "^29.1.1",
     "jsdom-testing-mocks": "^1.16.0",
-    "oxfmt": "^0.51.0",
+    "oxfmt": "^0.52.0",
     "oxlint": "^1.65.0",
     "oxlint-tsgolint": "^0.23.0",
     "pkg-pr-new": "^0.0.75",
