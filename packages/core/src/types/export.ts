@@ -397,6 +397,15 @@ export type ValueProcessor = ValueProcessorLegacy;
  * | `jsonlogic`              | {@link defaultRuleProcessorJsonLogic}     |
  * | `elasticsearch`          | {@link defaultRuleProcessorElasticSearch} |
  * | `jsonata`                | {@link defaultRuleProcessorJSONata}       |
+ * | `natural_language`       | {@link defaultRuleProcessorNL}            |
+ * | `ldap`                   | {@link defaultRuleProcessorLDAP}          |
+ * | `drizzle`                | {@link defaultRuleProcessorDrizzle}       |
+ * | `tanstack_db`            | {@link defaultRuleProcessorTanStackDB}    |
+ * | `prisma`                 | {@link defaultRuleProcessorPrisma}        |
+ * | `sequelize`              | {@link defaultRuleProcessorSequelize}     |
+ * | `cypher`                 | {@link defaultRuleProcessorCypher}        |
+ * | `sparql`                 | {@link defaultRuleProcessorSPARQL}        |
+ * | `gremlin`                | {@link defaultRuleProcessorGremlin}       |
  *
  * @group Export
  */
@@ -429,6 +438,16 @@ export type RuleProcessor = (
  * | `jsonlogic`              | {@link defaultRuleGroupProcessorJsonLogic}     |
  * | `elasticsearch`          | {@link defaultRuleGroupProcessorElasticSearch} |
  * | `jsonata`                | {@link defaultRuleGroupProcessorJSONata}       |
+ * | `natural_language`       | {@link defaultRuleGroupProcessorNL}            |
+ * | `ldap`                   | {@link defaultRuleGroupProcessorLDAP}          |
+ * | `drizzle`                | {@link defaultRuleGroupProcessorDrizzle}       |
+ * | `tanstack_db`            | {@link defaultRuleGroupProcessorTanStackDB}    |
+ * | `prisma`                 | {@link defaultRuleGroupProcessorPrisma}        |
+ * | `sequelize`              | {@link defaultRuleGroupProcessorSequelize}     |
+ * | `cypher`                 | {@link defaultRuleGroupProcessorCypher}        |
+ * | `sparql`                 | {@link defaultRuleGroupProcessorSPARQL}        |
+ * | `gremlin`                | {@link defaultRuleGroupProcessorGremlin}       |
+ * | `diagnostics`            | {@link defaultRuleGroupProcessorDiagnostics}   |
  *
  * @group Export
  */
