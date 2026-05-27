@@ -40,8 +40,6 @@ export interface RuleType<
   /**
    * Opaque metadata for use by extension packages. The core library
    * preserves this property but does not read or interpret it.
-   * Extensions like `@react-querybuilder/graph` use `meta` to store
-   * domain-specific context (e.g., graph pattern information).
    */
   meta?: M;
 }
