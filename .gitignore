@@ -47,6 +47,10 @@ website/static/r/*
 .docusaurus
 .cache-loader
 
+# Agents
+.copilot/session-state/
+.opencode/plans/
+
 # Misc
 .DS_Store
 .env
