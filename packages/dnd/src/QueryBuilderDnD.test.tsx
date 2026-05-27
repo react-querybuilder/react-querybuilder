@@ -828,3 +828,162 @@ it('can group rules/groups to different query builders', async () => {
     rules: [{ field: 'field3', operator: '=', value: '3' }],
   });
 });
+
+describe('onRuleDrop callback', () => {
+  it('fires for same-QB move', () => {
+    const onRuleDrop = vi.fn();
+    const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+      (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+        <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} onRuleDrop={onRuleDrop}>
+          <QueryBuilder {...props} />
+        </QueryBuilderDnD>
+      )
+    );
+    render(
+      <QueryBuilderWrapped
+        fields={[
+          { name: 'field1', label: 'Field 1' },
+          { name: 'field2', label: 'Field 2' },
+        ]}
+        query={{
+          combinator: 'and',
+          rules: [
+            { id: 'r1', field: 'field1', operator: '=', value: '1' },
+            { id: 'r2', field: 'field2', operator: '=', value: '2' },
+          ],
+        }}
+      />
+    );
+    const rules = screen.getAllByTestId(TestID.rule);
+    simulateDragDrop(
+      getHandlerId(rules[0], 'drag'),
+      getHandlerId(rules[1], 'drop'),
+      getDndBackend()!
+    );
+    expect(onRuleDrop).toHaveBeenCalledTimes(1);
+    expect(onRuleDrop).toHaveBeenCalledWith(
+      expect.objectContaining({ dropEffect: 'move', groupItems: false, isCrossBuilder: false })
+    );
+    expect(onRuleDrop.mock.calls[0][0].sourceQbId).toBe(onRuleDrop.mock.calls[0][0].targetQbId);
+  });
+
+  it('fires for same-QB copy', async () => {
+    const onRuleDrop = vi.fn();
+    const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+      (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+        <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} onRuleDrop={onRuleDrop}>
+          <QueryBuilder {...props} />
+        </QueryBuilderDnD>
+      )
+    );
+    render(
+      <QueryBuilderWrapped
+        fields={[
+          { name: 'field1', label: 'Field 1' },
+          { name: 'field2', label: 'Field 2' },
+        ]}
+        query={{
+          combinator: 'and',
+          rules: [
+            { id: 'r1', field: 'field1', operator: '=', value: '1' },
+            { id: 'r2', field: 'field2', operator: '=', value: '2' },
+          ],
+        }}
+      />
+    );
+    const rules = screen.getAllByTestId(TestID.rule);
+    await user.keyboard('{Alt>}');
+    simulateDragDrop(
+      getHandlerId(rules[0], 'drag'),
+      getHandlerId(rules[1], 'drop'),
+      getDndBackend()!
+    );
+    await user.keyboard('{/Alt}');
+    expect(onRuleDrop).toHaveBeenCalledTimes(1);
+    expect(onRuleDrop).toHaveBeenCalledWith(
+      expect.objectContaining({ dropEffect: 'copy', groupItems: false, isCrossBuilder: false })
+    );
+  });
+
+  it('fires for same-QB group', async () => {
+    const onRuleDrop = vi.fn();
+    const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+      (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+        <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} onRuleDrop={onRuleDrop}>
+          <QueryBuilder {...props} />
+        </QueryBuilderDnD>
+      )
+    );
+    render(
+      <QueryBuilderWrapped
+        fields={[
+          { name: 'field1', label: 'Field 1' },
+          { name: 'field2', label: 'Field 2' },
+        ]}
+        query={{
+          combinator: 'and',
+          rules: [
+            { id: 'r1', field: 'field1', operator: '=', value: '1' },
+            { id: 'r2', field: 'field2', operator: '=', value: '2' },
+          ],
+        }}
+      />
+    );
+    const rules = screen.getAllByTestId(TestID.rule);
+    await user.keyboard('{Control>}');
+    simulateDragDrop(
+      getHandlerId(rules[1], 'drag'),
+      getHandlerId(rules[0], 'drop'),
+      getDndBackend()!
+    );
+    await user.keyboard('{/Control}');
+    expect(onRuleDrop).toHaveBeenCalledTimes(1);
+    expect(onRuleDrop).toHaveBeenCalledWith(
+      expect.objectContaining({ dropEffect: 'move', groupItems: true, isCrossBuilder: false })
+    );
+  });
+
+  it('fires for cross-QB move', () => {
+    const onRuleDrop = vi.fn();
+    const fields: Field[] = [
+      { name: 'field1', label: 'Field 1' },
+      { name: 'field2', label: 'Field 2' },
+      { name: 'field3', label: 'Field 3' },
+      { name: 'field4', label: 'Field 4' },
+    ];
+    const query1: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'field1', operator: '=', value: '1' },
+        { field: 'field2', operator: '=', value: '2' },
+      ],
+    };
+    const query2: RuleGroupType = {
+      combinator: 'and',
+      rules: [
+        { field: 'field3', operator: '=', value: '3' },
+        { field: 'field4', operator: '=', value: '4' },
+      ],
+    };
+    const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+      (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+        <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }} onRuleDrop={onRuleDrop}>
+          <QueryBuilder {...props} query={query1} />
+          <QueryBuilder {...props} query={query2} />
+        </QueryBuilderDnD>
+      )
+    );
+    render(<QueryBuilderWrapped fields={fields} enableDragAndDrop />);
+    const [dropRule, , , dragRule] = screen.getAllByTestId(TestID.rule);
+    simulateDragDrop(
+      getHandlerId(dragRule, 'drag'),
+      getHandlerId(dropRule, 'drop'),
+      getDndBackend()!
+    );
+    expect(onRuleDrop).toHaveBeenCalledTimes(1);
+    expect(onRuleDrop).toHaveBeenCalledWith(
+      expect.objectContaining({ dropEffect: 'move', groupItems: false, isCrossBuilder: true })
+    );
+    expect(onRuleDrop.mock.calls[0][0].sourceQbId).not.toBe(onRuleDrop.mock.calls[0][0].targetQbId);
+  });
+});

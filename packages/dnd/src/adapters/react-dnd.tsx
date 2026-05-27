@@ -77,6 +77,7 @@ const useRuleDragCommon = (
           actions: params.actions,
           copyModeModifierKey: params.copyModeModifierKey,
           groupModeModifierKey: params.groupModeModifierKey,
+          onRuleDrop: params.onRuleDrop,
         });
       },
     }),

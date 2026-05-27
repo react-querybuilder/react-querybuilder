@@ -10,6 +10,7 @@ import type {
   Path,
   QueryBuilderContextProviderProps,
   RuleGroupTypeAny,
+  RuleType,
 } from 'react-querybuilder';
 import type { SetOptional } from 'type-fest';
 import type { DndAdapter } from './adapter';
@@ -108,6 +109,11 @@ export interface QueryBuilderDndProps extends QueryBuilderContextProviderProps {
    * prospective layout, and the preview path of the dragged item.
    */
   onDragMove?: OnDragMoveCallback;
+  /**
+   * Callback invoked after a drag-and-drop operation completes. Receives info
+   * about the dragged item, source/target paths, and drop effect.
+   */
+  onRuleDrop?: OnRuleDropCallback;
 }
 
 /**
@@ -145,6 +151,37 @@ export type OnDragMoveCallback = (params: {
 }) => void;
 
 /**
+ * Info provided to the {@link OnRuleDropCallback} after a drop completes.
+ *
+ * @group DnD
+ */
+export interface RuleDropInfo {
+  /** The dragged rule or group. */
+  draggedItem: RuleType | RuleGroupTypeAny;
+  /** The qbId of the source query builder. */
+  sourceQbId: string;
+  /** The qbId of the target query builder. */
+  targetQbId: string;
+  /** Path of the item in the source query builder before the drop. */
+  sourcePath: Path;
+  /** Path where the item was inserted in the target query builder. */
+  targetPath: Path;
+  /** Whether the item was moved or copied. */
+  dropEffect: DropEffect;
+  /** Whether the drop created a new group around the target. */
+  groupItems: boolean;
+  /** Whether the drop crossed query builder boundaries. */
+  isCrossBuilder: boolean;
+}
+
+/**
+ * Callback invoked after a drag-and-drop operation completes.
+ *
+ * @group DnD
+ */
+export type OnRuleDropCallback = (info: RuleDropInfo) => void;
+
+/**
  * Parameters describing a drag target position for shadow query computation.
  *
  * @group DnD
@@ -170,6 +207,7 @@ export interface QueryBuilderDndContextProps extends Pick<
   | 'hideDefaultDragPreview'
   | 'updateWhileDragging'
   | 'onDragMove'
+  | 'onRuleDrop'
 > {
   adapter?: DndAdapter;
   baseControls: Pick<Controls<FullField, string>, 'rule' | 'ruleGroup' | 'combinatorSelector'>;

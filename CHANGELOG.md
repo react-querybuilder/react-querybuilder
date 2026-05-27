@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- `onRuleDrop` callback prop for `QueryBuilderDnD` — fires after any drag-and-drop operation completes (same-QB or cross-QB) with source/target qbIds, paths, drop effect, and group mode.
 
 ## [v8.16.2] - 2026-05-26
 

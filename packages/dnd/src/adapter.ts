@@ -7,7 +7,7 @@ import type {
   RuleType,
   Schema,
 } from 'react-querybuilder';
-import type { CustomCanDropParams } from './types';
+import type { CustomCanDropParams, OnRuleDropCallback } from './types';
 
 /**
  * Parameters for the adapter's `useRuleDnD` hook.
@@ -25,6 +25,7 @@ export interface DndAdapterRuleDnDParams {
   groupModeModifierKey: string;
   groupModeAfterHoverMs?: number;
   hideDefaultDragPreview?: boolean;
+  onRuleDrop?: OnRuleDropCallback;
 }
 
 /**
@@ -43,6 +44,7 @@ export interface DndAdapterRuleGroupDnDParams {
   groupModeModifierKey: string;
   groupModeAfterHoverMs?: number;
   hideDefaultDragPreview?: boolean;
+  onRuleDrop?: OnRuleDropCallback;
 }
 
 /**

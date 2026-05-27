@@ -24,6 +24,7 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     groupModeModifierKey,
     groupModeAfterHoverMs,
     hideDefaultDragPreview,
+    onRuleDrop,
   } = rqbDndContext;
 
   // When updateWhileDragging is active and this is the root group,
@@ -53,6 +54,7 @@ export const RuleGroupDnD = (props: RuleGroupProps): React.JSX.Element => {
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
     groupModeAfterHoverMs,
     hideDefaultDragPreview,
+    onRuleDrop,
   });
 
   // When updateWhileDragging is active, suppress isDragging and isOver

@@ -89,7 +89,8 @@ export const QueryBuilderDnD = (props: QueryBuilderDndProps): React.JSX.Element 
           groupModeAfterHoverMs={props.groupModeAfterHoverMs}
           hideDefaultDragPreview={props.hideDefaultDragPreview}
           updateWhileDragging={props.updateWhileDragging}
-          onDragMove={props.onDragMove}>
+          onDragMove={props.onDragMove}
+          onRuleDrop={props.onRuleDrop}>
           {props.children}
         </QueryBuilderDndWithoutProvider>
       </QueryBuilderContext.Provider>
@@ -141,6 +142,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
     rqbDndContext.updateWhileDragging
   );
   const onDragMove = preferAnyProp(undefined, props.onDragMove, rqbDndContext.onDragMove);
+  const onRuleDrop = preferAnyProp(undefined, props.onRuleDrop, rqbDndContext.onRuleDrop);
   const key = enableDragAndDrop && adapter ? 'dnd' : 'no-dnd';
 
   const baseControls = useMemo(
@@ -197,6 +199,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       hideDefaultDragPreview,
       updateWhileDragging,
       onDragMove,
+      onRuleDrop,
       adapter,
     }),
     [
@@ -209,6 +212,7 @@ export const QueryBuilderDndWithoutProvider = (props: QueryBuilderDndProps): Rea
       hideDefaultDragPreview,
       updateWhileDragging,
       onDragMove,
+      onRuleDrop,
       adapter,
     ]
   );
