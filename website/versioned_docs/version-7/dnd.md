@@ -254,3 +254,33 @@ Default is `false`.
 `(params: { draggedItem, shadowQuery, originalQuery, previewPath }) => void`
 
 Callback invoked on each drag position change when [`updateWhileDragging`](#updatewhiledragging) is `true`. Receives the current shadow query (the preview query with the dragged item at its prospective position), the original query, and the preview path.
+
+### `onRuleDrop`
+
+`(info: RuleDropInfo) => void`
+
+Callback invoked after a drag-and-drop operation completes (both same-builder and cross-builder). The `info` parameter contains:
+
+| Property         | Type                           | Description                                       |
+| ---------------- | ------------------------------ | ------------------------------------------------- |
+| `draggedItem`    | `RuleType \| RuleGroupTypeAny` | The dragged rule or group                         |
+| `sourceQbId`     | `string`                       | The `qbId` of the source query builder            |
+| `targetQbId`     | `string`                       | The `qbId` of the target query builder            |
+| `sourcePath`     | `Path`                         | Path of the item before the drop                  |
+| `targetPath`     | `Path`                         | Path where the item was inserted                  |
+| `dropEffect`     | `'move' \| 'copy'`             | Whether the item was moved or copied              |
+| `groupItems`     | `boolean`                      | Whether a new group was created around the target |
+| `isCrossBuilder` | `boolean`                      | Whether the drop crossed query builder boundaries |
+
+```tsx
+<QueryBuilderDnD
+  dnd={pragmaticDndAdapter}
+  onRuleDrop={info => {
+    console.log(
+      `Rule ${info.isCrossBuilder ? 'transferred' : 'moved'} ` +
+        `from ${info.sourcePath} to ${info.targetPath}`
+    );
+  }}>
+  <QueryBuilder />
+</QueryBuilderDnD>
+```

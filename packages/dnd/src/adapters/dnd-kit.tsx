@@ -461,6 +461,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
               groupModeModifierKey: sourceData.groupModeModifierKey,
               copyModeOverride: copyOverride,
               groupModeOverride: groupOverride,
+              onRuleDrop: sourceData.onRuleDrop,
             });
           }
         }
@@ -538,6 +539,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
         actions: params.actions,
         copyModeModifierKey: params.copyModeModifierKey,
         groupModeModifierKey: params.groupModeModifierKey,
+        onRuleDrop: params.onRuleDrop,
       },
     });
 
@@ -658,6 +660,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
         actions: params.actions,
         copyModeModifierKey: params.copyModeModifierKey,
         groupModeModifierKey: params.groupModeModifierKey,
+        onRuleDrop: params.onRuleDrop,
       },
     });
 

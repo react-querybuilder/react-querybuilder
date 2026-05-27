@@ -23,6 +23,7 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
     groupModeModifierKey,
     groupModeAfterHoverMs,
     hideDefaultDragPreview,
+    onRuleDrop,
   } = rqbDndContext;
 
   const disabled = !!props.parentDisabled || !!props.disabled;
@@ -39,6 +40,7 @@ export const RuleDnD = (props: RuleProps): React.JSX.Element => {
     groupModeModifierKey: groupModeModifierKey ?? 'ctrl',
     groupModeAfterHoverMs,
     hideDefaultDragPreview,
+    onRuleDrop,
   });
 
   // When updateWhileDragging is active, suppress isDragging and isOver

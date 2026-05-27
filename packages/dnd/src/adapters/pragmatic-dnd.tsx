@@ -45,7 +45,7 @@ import type { DragPreviewContextValue } from '../DragPreviewContext';
 import { isHotkeyPressed } from '../isHotkeyPressed';
 import { getQuadrant } from '../quadrantDetection';
 import { computeShadowQuery } from '../shadowQuery';
-import type { DragPreviewState, OnDragMoveCallback } from '../types';
+import type { DragPreviewState, OnDragMoveCallback, OnRuleDropCallback } from '../types';
 
 /**
  * The `@atlaskit/pragmatic-drag-and-drop` exports needed by the adapter.
@@ -403,6 +403,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
                 groupModeModifierKey: sourceData.__rqbGroupModeModifierKey as string,
                 copyModeOverride: copyOverride,
                 groupModeOverride: groupOverride,
+                onRuleDrop: sourceData.__rqbOnRuleDrop as OnRuleDropCallback | undefined,
               });
             }
           }
@@ -482,6 +483,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
             __rqbActions: paramsRef.current.actions,
             __rqbCopyModeModifierKey: paramsRef.current.copyModeModifierKey,
             __rqbGroupModeModifierKey: paramsRef.current.groupModeModifierKey,
+            __rqbOnRuleDrop: paramsRef.current.onRuleDrop,
           }),
           onDragStart: () => setIsDragging(true),
           onDrop: () => setIsDragging(false),
@@ -596,6 +598,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
           __rqbActions: paramsRef.current.actions,
           __rqbCopyModeModifierKey: paramsRef.current.copyModeModifierKey,
           __rqbGroupModeModifierKey: paramsRef.current.groupModeModifierKey,
+          __rqbOnRuleDrop: paramsRef.current.onRuleDrop,
         }),
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),

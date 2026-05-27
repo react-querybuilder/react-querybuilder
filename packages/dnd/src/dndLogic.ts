@@ -19,7 +19,7 @@ import {
   pathsAreEqual,
 } from 'react-querybuilder';
 import { isHotkeyPressed } from './isHotkeyPressed';
-import type { CustomCanDropParams } from './types';
+import type { CustomCanDropParams, OnRuleDropCallback } from './types';
 
 // #region canDrop validators
 
@@ -255,6 +255,7 @@ export const handleDrop = ({
   groupModeModifierKey,
   copyModeOverride,
   groupModeOverride,
+  onRuleDrop,
 }: {
   item: DraggedItem;
   dropResult: DropResult | null;
@@ -265,14 +266,16 @@ export const handleDrop = ({
   groupModeModifierKey: string;
   copyModeOverride?: boolean;
   groupModeOverride?: boolean;
+  onRuleDrop?: OnRuleDropCallback;
 }): void => {
   if (!dropResult) return;
 
   const dropEffect = copyModeOverride || isHotkeyPressed(copyModeModifierKey) ? 'copy' : 'move';
   const groupItems = groupModeOverride || isHotkeyPressed(groupModeModifierKey);
   const destinationPath = getDestinationPath(dropResult, groupItems);
+  const isCrossBuilder = schema.qbId !== dropResult.qbId;
 
-  if (schema.qbId === dropResult.qbId) {
+  if (!isCrossBuilder) {
     if (groupItems) {
       actions.groupRule(item.path, destinationPath, dropEffect === 'copy');
     } else {
@@ -300,6 +303,17 @@ export const handleDrop = ({
       }
     }
   }
+
+  onRuleDrop?.({
+    draggedItem: item,
+    sourceQbId: schema.qbId,
+    targetQbId: dropResult.qbId,
+    sourcePath: item.path,
+    targetPath: destinationPath,
+    dropEffect: dropEffect as DropEffect,
+    groupItems,
+    isCrossBuilder,
+  });
 };
 
 /**
