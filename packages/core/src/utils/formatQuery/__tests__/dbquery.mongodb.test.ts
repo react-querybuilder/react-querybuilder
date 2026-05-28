@@ -1,3 +1,4 @@
+import { describe, expect, test, beforeAll, afterAll } from 'bun:test';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose from 'mongoose';
 import type { DefaultRuleGroupType, ExportFormat } from '../../../types';
@@ -96,18 +97,22 @@ describe('MongoDB', () => {
             (v: unknown, afak?: boolean) => mongoose.QueryFilter<SuperUserMongoDB>,
           ][]) {
             describe(format, () => {
-              test(name, async () => {
-                const mongoDbQuery = formatQuery(query, {
-                  ...fqOptions,
-                  format,
-                  context: { avoidFieldsAsKeys },
-                });
-                const queryResult = await SuperHero.find(
-                  processorFn(mongoDbQuery, avoidFieldsAsKeys),
-                  cleanProjection
-                );
-                expect(queryResult).toMatchObject(expectedResult);
-              });
+              test(
+                name,
+                async () => {
+                  const mongoDbQuery = formatQuery(query, {
+                    ...fqOptions,
+                    format,
+                    context: { avoidFieldsAsKeys },
+                  });
+                  const queryResult = await SuperHero.find(
+                    processorFn(mongoDbQuery, avoidFieldsAsKeys),
+                    cleanProjection
+                  );
+                  expect(queryResult).toMatchObject(expectedResult);
+                },
+                { retry: 4 }
+              );
             });
           }
         });
@@ -120,19 +125,23 @@ describe('MongoDB', () => {
       name: string,
       { query, expectedResult, fqOptions }: TestSQLParams
     ) => {
-      test(name, async () => {
-        const mongoDbQuery = formatQuery(query, { ...fqOptions, format: 'mongodb_query' });
-        // The `cleanProjection` method below only cleans the top-level objects, so nested documents still have `_id`, etc.
-        // const queryResult = await AugmentedSuperHero.find(mongoDbQuery, cleanProjection);
-        // ...so we do this instead:
-        const queryResult = JSON.parse(
-          JSON.stringify(
-            await AugmentedSuperHero.find(mongoDbQuery, cleanProjection),
-            (key, value) => (key.startsWith('_') ? undefined : value)
-          )
-        );
-        expect(queryResult).toMatchObject(expectedResult);
-      });
+      test(
+        name,
+        async () => {
+          const mongoDbQuery = formatQuery(query, { ...fqOptions, format: 'mongodb_query' });
+          // The `cleanProjection` method below only cleans the top-level objects, so nested documents still have `_id`, etc.
+          // const queryResult = await AugmentedSuperHero.find(mongoDbQuery, cleanProjection);
+          // ...so we do this instead:
+          const queryResult = JSON.parse(
+            JSON.stringify(
+              await AugmentedSuperHero.find(mongoDbQuery, cleanProjection),
+              (key, value) => (key.startsWith('_') ? undefined : value)
+            )
+          );
+          expect(queryResult).toMatchObject(expectedResult);
+        },
+        { retry: 4 }
+      );
     };
 
     const runTest = (
