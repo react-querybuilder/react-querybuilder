@@ -51,7 +51,7 @@
     },
     "packages/antd": {
       "name": "@react-querybuilder/antd",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@ant-design/icons": "^6.2.3",
         "@testing-library/dom": "catalog:test",
@@ -62,7 +62,7 @@
         "dayjs": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -72,12 +72,12 @@
         "antd": ">=5.11.0",
         "dayjs": "catalog:peer",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/bootstrap": {
       "name": "@react-querybuilder/bootstrap",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@popperjs/core": "^2.11.8",
         "@testing-library/dom": "catalog:test",
@@ -88,7 +88,7 @@
         "bootstrap-icons": "^1.13.1",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -97,12 +97,12 @@
         "bootstrap": ">=5",
         "bootstrap-icons": ">=1.7.0",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/bulma": {
       "name": "@react-querybuilder/bulma",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@testing-library/dom": "catalog:test",
         "@testing-library/react": "catalog:test",
@@ -111,7 +111,7 @@
         "bulma": "^1.0.4",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -119,12 +119,12 @@
       "peerDependencies": {
         "bulma": "^0.9.4 || ^1",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/chakra": {
       "name": "@react-querybuilder/chakra",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@chakra-ui/react": "^3.34.0",
         "@emotion/react": "^11.14.0",
@@ -136,7 +136,7 @@
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-icons": "^5.6.0",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -147,7 +147,7 @@
         "next-themes": "^0.4.6",
         "react": "catalog:peer",
         "react-icons": "^5",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
       "optionalPeers": [
         "next-themes",
@@ -156,7 +156,7 @@
     },
     "packages/core": {
       "name": "@react-querybuilder/core",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "dependencies": {
         "@ts-jison/lexer": "0.4.1-alpha.1",
         "@ts-jison/parser": "0.4.1-alpha.1",
@@ -212,7 +212,7 @@
     },
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@date-fns/tz": "^1.5.0",
         "@electric-sql/pglite": "catalog:test",
@@ -231,7 +231,7 @@
         "mongoose": "catalog:test",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -241,7 +241,7 @@
         "dayjs": "catalog:peer",
         "luxon": "catalog:peer",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
       "optionalPeers": [
         "date-fns",
@@ -251,7 +251,7 @@
     },
     "packages/dnd": {
       "name": "@react-querybuilder/dnd",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@atlaskit/pragmatic-drag-and-drop": "^1.7.10",
         "@dnd-kit/core": "^6.3.1",
@@ -268,7 +268,7 @@
         "react-dnd-test-utils": "^16.0.1",
         "react-dnd-touch-backend": "^16.0.1",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "type-fest": "catalog:",
         "typescript": "catalog:",
@@ -281,7 +281,7 @@
         "react-dnd": ">=14.0.0",
         "react-dnd-html5-backend": ">=14.0.0",
         "react-dnd-touch-backend": ">=14.0.0",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
       "optionalPeers": [
         "@atlaskit/pragmatic-drag-and-drop",
@@ -293,7 +293,7 @@
     },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@fluentui/react-components": "^9.73.7",
         "@fluentui/react-icons-mdl2": "^1.4.6",
@@ -304,7 +304,7 @@
         "dayjs": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -314,12 +314,12 @@
         "@fluentui/react-icons-mdl2": "^1",
         "dayjs": "catalog:peer",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/mantine": {
       "name": "@react-querybuilder/mantine",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@mantine/core": "9.2.1",
         "@mantine/dates": "9.2.1",
@@ -331,7 +331,7 @@
         "dayjs": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -342,12 +342,12 @@
         "@mantine/hooks": ">=7",
         "dayjs": "catalog:peer",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/material": {
       "name": "@react-querybuilder/material",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -359,7 +359,7 @@
         "@vitejs/plugin-react": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -370,12 +370,12 @@
         "@mui/icons-material": ">=5",
         "@mui/material": ">=5",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/native": {
       "name": "@react-querybuilder/native",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@testing-library/react-native": "^13.3.3",
         "@types/react": "catalog:",
@@ -384,7 +384,7 @@
         "react-dom": "catalog:",
         "react-native": "~0.85.3",
         "react-native-web": "~0.21.2",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "react-redux": "catalog:",
         "react-test-renderer": "catalog:test",
         "rollup-plugin-visualizer": "catalog:",
@@ -394,13 +394,13 @@
       },
       "peerDependencies": {
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "react-redux": "^9.1.0",
       },
     },
     "packages/prime": {
       "name": "@react-querybuilder/prime",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@testing-library/dom": "catalog:test",
         "@testing-library/react": "catalog:test",
@@ -410,7 +410,7 @@
         "primereact": "^10.8.0",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
@@ -419,14 +419,14 @@
         "primeicons": ">=7",
         "primereact": ">=10",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "packages/react-querybuilder": {
       "name": "react-querybuilder",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "dependencies": {
-        "@react-querybuilder/core": "^8.16.2",
+        "@react-querybuilder/core": "^8.17.0",
         "@reduxjs/toolkit": "catalog:",
         "react-redux": "catalog:",
       },
@@ -454,7 +454,7 @@
     },
     "packages/rules-engine": {
       "name": "@react-querybuilder/rules-engine",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "dependencies": {
         "@reduxjs/toolkit": "catalog:",
         "immer": "catalog:",
@@ -485,7 +485,7 @@
     },
     "packages/tremor": {
       "name": "@react-querybuilder/tremor",
-      "version": "8.16.2",
+      "version": "8.17.0",
       "devDependencies": {
         "@headlessui/tailwindcss": "^0.2.2",
         "@tailwindcss/forms": "^0.5.11",
@@ -500,7 +500,7 @@
         "postcss": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
         "rollup-plugin-visualizer": "catalog:",
         "tailwindcss": "^4.3.0",
         "typescript": "catalog:",
@@ -510,7 +510,7 @@
         "@tremor/react": "^3",
         "dayjs": "catalog:peer",
         "react": "catalog:peer",
-        "react-querybuilder": "8.16.2",
+        "react-querybuilder": "8.17.0",
       },
     },
     "website": {
@@ -609,8 +609,8 @@
     },
   },
   "patchedDependencies": {
-    "react-dnd-test-utils@16.0.1": "patches/react-dnd-test-utils@16.0.1.patch",
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",
+    "react-dnd-test-utils@16.0.1": "patches/react-dnd-test-utils@16.0.1.patch",
     "spel2js@0.2.9": "patches/spel2js@0.2.9.patch",
   },
   "overrides": {
