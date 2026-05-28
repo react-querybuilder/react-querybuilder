@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.17.0] - 2026-05-27
+
 ### Changed
 
 - [#1041] **Deprecated**: `@react-querybuilder/drizzle` package. Use `formatQuery(query, 'drizzle')` from `react-querybuilder` or `@react-querybuilder/core` instead.
@@ -2218,7 +2222,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.17.0...HEAD
+[v8.17.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.2...v8.17.0
 [v8.16.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.1...v8.16.2
 [v8.16.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.0...v8.16.1
 [v8.16.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.15.0...v8.16.0
