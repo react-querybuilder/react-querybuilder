@@ -262,12 +262,37 @@ const query = db.select().from(table).where(augmentedWhere);
 
 <summary>`@react-querybuilder/drizzle` _(deprecated)_</summary>
 
-Use the [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select).
+The [`@react-querybuilder/drizzle`](https://npmjs.com/package/@react-querybuilder/drizzle) package previously provided `generateDrizzleRuleGroupProcessor` and `generateDrizzleRuleProcessor` for integration with Drizzle's [query builder API](https://orm.drizzle.team/docs/select). This package is now deprecated.
 
-First, generate a [rule group processor](#rule-group-processor) by passing a Drizzle table config (or a plain object mapping field names to Drizzle `Column` definitions) to `generateDrizzleRuleGroupProcessor`, then use that processor in the `formatQuery` options. The output can be passed to the `.where()` function of a Drizzle query builder chain.
+To achieve the same result, inline the following functions in your project:
 
 ```ts
-import { generateDrizzleRuleGroupProcessor } from '@react-querybuilder/drizzle';
+import type { RuleGroupProcessor, RuleProcessor } from '@react-querybuilder/core';
+import {
+  defaultRuleGroupProcessorDrizzle,
+  defaultRuleProcessorDrizzle,
+} from '@react-querybuilder/core';
+import type { Column, SQL, Table } from 'drizzle-orm';
+import * as drizzleOperators from 'drizzle-orm';
+import { getOperators } from 'drizzle-orm';
+
+export const generateDrizzleRuleGroupProcessor =
+  (columns: Record<string, Column> | Table): RuleGroupProcessor<SQL | undefined> =>
+  (ruleGroup, options) =>
+    defaultRuleGroupProcessorDrizzle(ruleGroup, options)(
+      columns as Record<string, Column>,
+      getOperators()
+    );
+
+export const generateDrizzleRuleProcessor =
+  (table: Table | Record<string, Column>): RuleProcessor =>
+  (rule, options) =>
+    defaultRuleProcessorDrizzle(rule, { ...options, context: { table, drizzleOperators } });
+```
+
+Usage:
+
+```ts
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { formatQuery } from 'react-querybuilder';
 
