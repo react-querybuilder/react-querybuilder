@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Deprecated**: `@react-querybuilder/drizzle` package. Use `formatQuery(query, 'drizzle')` from `react-querybuilder` or `@react-querybuilder/core` instead.
+- [#1041] **Deprecated**: `@react-querybuilder/drizzle` package. Use `formatQuery(query, 'drizzle')` from `react-querybuilder` or `@react-querybuilder/core` instead.
 
 ### Added
 
-- `onRuleDrop` callback prop for `QueryBuilderDnD` — fires after any drag-and-drop operation completes (same-QB or cross-QB) with source/target qbIds, paths, drop effect, and group mode.
+- [#1040] `onRuleDrop` callback prop for `QueryBuilderDnD` — fires after any drag-and-drop operation completes (same-QB or cross-QB) with source/target qbIds, paths, drop effect, and group mode.
 
 ## [v8.16.2] - 2026-05-26
 
@@ -2211,6 +2211,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1034]: https://github.com/react-querybuilder/react-querybuilder/pull/1034
 [#1036]: https://github.com/react-querybuilder/react-querybuilder/pull/1036
 [#1039]: https://github.com/react-querybuilder/react-querybuilder/pull/1039
+[#1040]: https://github.com/react-querybuilder/react-querybuilder/pull/1040
+[#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
 
 <!-- #endregion -->
 
