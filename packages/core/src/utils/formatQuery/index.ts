@@ -14,9 +14,10 @@ const generateValueProcessor =
   (vpbr: ValueProcessorByRule): ValueProcessorLegacy =>
   (field, operator, value, valueSource) =>
     vpbr({ field, operator, value, valueSource }, { parseNumbers: false });
-// TODO: Deprecate defaultValueProcessor.
 /**
  * Default value processor used by {@link formatQuery} for "sql" format.
+ *
+ * @deprecated Prefer {@link defaultValueProcessorByRule}.
  *
  * @group Export
  */
