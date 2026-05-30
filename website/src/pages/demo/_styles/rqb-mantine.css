@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.2.0
+/* BEGIN_MANTINE_STYLES v9.2.2
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -1571,6 +1571,12 @@ fieldset:disabled .mantine-active:active {
   --input-text-align: right;
   --left-section-border-radius: 0 var(--input-radius) var(--input-radius) 0;
   --right-section-border-radius: var(--input-radius) 0 0 var(--input-radius);
+}
+
+.m_6c018570[dir='ltr'] {
+  --input-text-align: left;
+  --left-section-border-radius: var(--input-radius) 0 0 var(--input-radius);
+  --right-section-border-radius: 0 var(--input-radius) var(--input-radius) 0;
 }
 
 .m_8fb7ebe7 {
@@ -5076,13 +5082,11 @@ fieldset:disabled .m_8ee546b8,
 
 .m_1e0e6180 {
   cursor: inherit;
+  display: block;
   overflow: hidden;
-  text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
   height: 100%;
-  text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
+  line-height: var(--pill-height);
+  text-overflow: ellipsis;
 }
 
 .m_ae386778 {
@@ -7542,6 +7546,37 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   position: sticky;
   top: var(--table-sticky-header-offset, 0);
   background-color: var(--mantine-color-body);
+}
+
+/* border-collapse: collapse drops borders on position: sticky cells —
+       the tr's border-bottom scrolls away with the row, so redraw it with
+       box-shadow on the (sticky) th. The tr's border-bottom is suppressed
+       here so the two don't stack into a double line. */
+
+.m_b242d975:where([data-sticky]) :where(.m_4e7aa4fd[data-with-row-border]) {
+  border-bottom: none;
+}
+
+.m_b242d975:where([data-sticky]) :where(.m_4e7aa4fd[data-with-row-border]) :where(.m_4e7aa4f3) {
+  box-shadow: inset 0 -1px 0 var(--table-border-color);
+}
+
+.m_b242d975:where([data-sticky]) :where(.m_4e7aa4f3[data-with-column-border]) {
+  border-inline-start: none;
+  border-inline-end: none;
+}
+
+/* Single pseudo-element per internal boundary, centered on the boundary
+       (-0.5px) to align with the body's border-collapse line. */
+
+.m_b242d975:where([data-sticky])
+  :where(.m_4e7aa4f3[data-with-column-border]:not(:first-child))::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(-0.03125rem * var(--mantine-scale));
+  width: calc(0.0625rem * var(--mantine-scale));
+  background-color: var(--table-border-color);
 }
 
 :where([data-with-table-border]) .m_b242d975[data-sticky] {

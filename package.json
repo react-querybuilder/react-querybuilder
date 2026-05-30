@@ -132,7 +132,7 @@
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "date-fns": "^4.1.0",
+    "date-fns": "^4.4.0",
     "dayjs": "^1.11.20",
     "immer": "^11.1.8",
     "json-logic-js": "^2.0.5",
@@ -163,12 +163,13 @@
       "@testing-library/jest-dom": "^6.9.1",
       "@testing-library/react": "^16.3.2",
       "@testing-library/user-event": "14.6.1",
-      "mongoose": "^9.6.2",
+      "mongodb-memory-server-core": "^11.2.0",
+      "mongoose": "^9.6.3",
       "react-test-renderer": "^19.2.6"
     }
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.2",
+    "@arethetypeswrong/cli": "^0.18.3",
     "@base-ui/react": "^1.4.0",
     "@lerna-lite/cli": "^5.2.1",
     "@lerna-lite/publish": "^5.2.1",
@@ -185,11 +186,11 @@
     "@types/react-dom": "catalog:",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.349",
-    "@typescript/native-preview": "^7.0.0-dev.20260521.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260527.2",
     "@vitest/coverage-v8": "^4.1.6",
     "@vitest/ui": "^4.1.6",
     "bun-plugin-tailwind": "^0.1.2",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.0",
     "esbuild-analyzer": "^0.2.0",
     "fast-json-stable-stringify": "^2.1.0",
     "globals": "^17.6.0",
@@ -206,13 +207,10 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "tsdown": "^0.22.0",
+    "tsdown": "^0.22.1",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "^4.1.6"
-  },
-  "overrides": {
-    "fflate": "0.8.2"
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",
