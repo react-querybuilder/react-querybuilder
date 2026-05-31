@@ -144,7 +144,7 @@
     "react-redux": "^9.3.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass": "^1.99.0",
-    "type-fest": "^5.5.0",
+    "type-fest": "^5.7.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.14"
   },
