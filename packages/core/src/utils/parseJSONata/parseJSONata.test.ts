@@ -64,10 +64,7 @@ it('works for basic relations', () => {
   testParseJSONata('f1 < 1', wrapRule({ field: 'f1', operator: '<', value: 1 }));
   testParseJSONata('f1 <= 1', wrapRule({ field: 'f1', operator: '<=', value: 1 }));
   testParseJSONata('f1 = 12.14', wrapRule({ field: 'f1', operator: '=', value: 12.14 }));
-  // TODO: does JSONata support hexadecimal?
-  // testParseJSONata('f1 = 0x1214', wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
-  // testParseJSONata('f1 = 0x1214u', wrapRule({ field: 'f1', operator: '=', value: 0x1214 }));
-  // testParseJSONata('f1 = 1214u', wrapRule({ field: 'f1', operator: '=', value: 1214 }));
+  // JSONata does not support hexadecimal literals (JSON number syntax only)
   testParseJSONata('f1 = null', wrapRule({ field: 'f1', operator: 'null', value: null }));
   testParseJSONata('f1 != null', wrapRule({ field: 'f1', operator: 'notNull', value: null }));
   testParseJSONata('f1 = true', wrapRule({ field: 'f1', operator: '=', value: true }));

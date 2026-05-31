@@ -186,8 +186,7 @@ it('parseNumbers with between operators', () => {
     ],
   };
 
-  // Default behavior (backwards compatibility) - should NOT parse numbers
-  // TODO: JSONata always did this correctly?
+  // Without parseNumbers, values remain as quoted strings
   expect(formatQuery(betweenQuery, { format: 'jsonata' })).toBe(
     '(age >= "22" and age <= "34") and $not(score >= "10" and score <= "20")'
   );
