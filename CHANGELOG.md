@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `thresholdPlaceholder` prop on `MatchModeEditorProps`, configurable via `translations.matchThreshold.placeholderName`.
 
+### Fixed
+
+- SQL/Parameterized/Drizzle formatters use `count(*)::float` for decimal match mode thresholds (was integer division).
+- CEL formatter wraps `filteredCount` in `double()` for decimal match mode thresholds (was int/double type mismatch).
+
 ## [v8.17.0] - 2026-05-27
 
 ### Changed
