@@ -138,16 +138,18 @@ function parseJsonLogic(
     if (isJsonLogicAnd(logic)) {
       return {
         combinator: 'and',
-        rules: logic.and
-          .map(l => processLogic(l, false, inSubquery))
-          .filter(Boolean) as (DefaultRuleType | DefaultRuleGroupType)[],
+        rules: logic.and.map(l => processLogic(l, false, inSubquery)).filter(Boolean) as (
+          | DefaultRuleType
+          | DefaultRuleGroupType
+        )[],
       };
     } else if (isJsonLogicOr(logic)) {
       return {
         combinator: 'or',
-        rules: logic.or
-          .map(l => processLogic(l, false, inSubquery))
-          .filter(Boolean) as (DefaultRuleType | DefaultRuleGroupType)[],
+        rules: logic.or.map(l => processLogic(l, false, inSubquery)).filter(Boolean) as (
+          | DefaultRuleType
+          | DefaultRuleGroupType
+        )[],
       };
     } else if (isJsonLogicNegation(logic)) {
       const rule = processLogic(logic['!'], false, inSubquery);
@@ -228,7 +230,10 @@ function parseJsonLogic(
         operator = key as DefaultOperatorName;
       }
 
-      if (inSubquery || fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
+      if (
+        inSubquery ||
+        fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)
+      ) {
         rule = { field, operator, value, valueSource };
       }
     } else if (

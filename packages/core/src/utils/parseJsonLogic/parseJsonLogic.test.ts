@@ -543,12 +543,9 @@ it('parses array match modes', () => {
 it('parses subproperty references in subqueries when fields option is provided', () => {
   // Without the inSubquery fix, {"var": "name"} would fail field validation
   // since "name" is not in the top-level fields list
-  const fields = [{ name: 'items', label: 'Items' }];
+  const fields: FullField[] = [{ name: 'items', label: 'Items', value: 'items' }];
   expect(
-    parseJsonLogic(
-      { all: [{ var: 'items' }, { '==': [{ var: 'name' }, 'Widget'] }] },
-      { fields }
-    )
+    parseJsonLogic({ all: [{ var: 'items' }, { '==': [{ var: 'name' }, 'Widget'] }] }, { fields })
   ).toEqual({
     combinator: 'and',
     rules: [
@@ -564,7 +561,7 @@ it('parses subproperty references in subqueries when fields option is provided',
   expect(
     parseJsonLogic(
       { some: [{ var: 'tags' }, { in: ['foo', { var: '' }] }] },
-      { fields: [{ name: 'tags', label: 'Tags' }] }
+      { fields: [{ name: 'tags', label: 'Tags', value: 'tags' }] as FullField[] }
     )
   ).toEqual({
     combinator: 'and',
