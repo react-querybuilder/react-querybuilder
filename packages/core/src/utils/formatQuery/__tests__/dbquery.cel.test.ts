@@ -3,6 +3,7 @@ import { transformQuery } from '../../transformQuery';
 import {
   augmentedSuperUsers,
   dbTests,
+  genObjectsMatchQuery,
   genStringsMatchQuery,
   matchModeTests,
   superUsers,
@@ -19,11 +20,7 @@ const typemap = {
   nickname: 'string',
   powerUpAge: 'number',
 };
-const augmentedTypemap = {
-  ...typemap,
-  nicknames: 'list',
-  // earlyPencilers: 'list',
-};
+const augmentedTypemap = { ...typemap, nicknames: 'list', earlyPencilers: 'list' };
 
 if (celEvaluator) {
   describe('CEL', () => {
@@ -48,7 +45,7 @@ if (celEvaluator) {
       }
     });
 
-    describe('match modes', () => {
+    describe('match modes (strings)', () => {
       const data = augmentedSuperUsers('cel').map(u =>
         Object.fromEntries(Object.entries(u).filter(([k]) => !k.startsWith('early')))
       );
@@ -61,6 +58,21 @@ if (celEvaluator) {
           const result = await celEvaluator({ data, cel, typemap: augmentedTypemap });
           // oxlint-disable-next-line typescript/no-explicit-any
           const expectedResult = data.filter((d: any) => fn(d));
+          expect(result).toEqual(expectedResult.length > 0 ? expectedResult : null);
+        });
+      }
+    });
+
+    describe('match modes (objects)', () => {
+      const data = augmentedSuperUsers('cel');
+      for (const [name, mm, fn] of matchModeTests.objects) {
+        const query = transformQuery(genObjectsMatchQuery(mm), {
+          ruleProcessor: r => ({ ...r, field: `item.${r.field}` }),
+        });
+        test(name, async () => {
+          const cel = formatQuery(query, { format: 'cel', parseNumbers: true });
+          const result = await celEvaluator({ data, cel, typemap: augmentedTypemap });
+          const expectedResult = data.filter(fn);
           expect(result).toEqual(expectedResult.length > 0 ? expectedResult : null);
         });
       }

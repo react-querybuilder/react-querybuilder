@@ -34,6 +34,14 @@ func convertCELToInterface(celVal ref.Val) interface{} {
 			result[i] = convertCELToInterface(elem)
 		}
 		return result
+	case types.MapType:
+		// Convert CEL map back to map[string]interface{}
+		mapVal := celVal.Value().(map[string]interface{})
+		result := make(map[string]interface{}, len(mapVal))
+		for k, v := range mapVal {
+			result[k] = v
+		}
+		return result
 	default:
 		// Fallback to the underlying value
 		return celVal.Value()
@@ -182,20 +190,25 @@ func convertToCELType(value interface{}, expectedType string) ref.Val {
 		}
 		return types.Timestamp{Time: t}
 	case "list":
-		// TODO: Handle lists of objects
 		listValue, ok := value.([]interface{})
 		if !ok {
 			log.Fatalf("Expected list/array but got: %v", value)
 		}
 
-		// Convert each element to a string CEL value
 		celValues := make([]ref.Val, len(listValue))
 		for i, elem := range listValue {
-			strElem, ok := elem.(string)
-			if !ok {
-				log.Fatalf("Expected string element in list but got: %v", elem)
+			switch e := elem.(type) {
+			case string:
+				celValues[i] = types.String(e)
+			case float64:
+				celValues[i] = types.Double(e)
+			case bool:
+				celValues[i] = types.Bool(e)
+			case map[string]interface{}:
+				celValues[i] = types.NewDynamicMap(types.DefaultTypeAdapter, e)
+			default:
+				log.Fatalf("Unsupported element type in list: %T", elem)
 			}
-			celValues[i] = types.String(strElem)
 		}
 
 		return types.NewDynamicList(types.DefaultTypeAdapter, celValues)
