@@ -422,8 +422,7 @@ export const useQueryBuilderSetup = <
   return {
     qbId,
     rqbContext,
-    // TODO: Why is a cast necessary here?
-    fields: fields as FullOptionList<F>,
+    fields,
     fieldMap,
     combinators,
     getMatchModesMain,
