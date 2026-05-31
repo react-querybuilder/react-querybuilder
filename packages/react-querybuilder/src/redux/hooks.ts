@@ -16,7 +16,7 @@ import type { RqbState } from './types';
  */
 export const useQueryBuilderSelector: TypedUseSelectorHook<RqbState> = (selector, other) => {
   const rqbContext = React.useContext(QueryBuilderContext);
-  // TODO: Why is `as` necessary here?
+  // TypedUseSelectorHook's equalityFn param doesn't match internal hook's signature
   const result = useRQB_INTERNAL_QueryBuilderSelector(selector, other as undefined);
   return result ?? rqbContext?.initialQuery;
 };
