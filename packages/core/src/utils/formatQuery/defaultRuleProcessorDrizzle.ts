@@ -99,7 +99,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
         const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
         return threshold > 0 && threshold < 1
-          ? sql`(select count(*) / array_length(${column}, 1) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`
+          ? sql`(select count(*)::float / array_length(${column}, 1) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`
           : sql`(select count(*) from unnest(${column}) as ${sql.raw(arrayElementAlias)} where ${nestedArrayFilter({}, drizzleOperators)}) ${sql.raw(`${op} ${threshold}`)}`;
       }
     }

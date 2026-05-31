@@ -67,7 +67,7 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
         const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '==';
 
         if (threshold > 0 && threshold < 1) {
-          return `${filteredCount} ${op} (${totalCount} * ${threshold})`;
+          return `double(${filteredCount}) ${op} (${totalCount} * ${threshold})`;
         }
         return `${filteredCount} ${op} ${threshold}`;
       }

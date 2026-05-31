@@ -67,7 +67,7 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
       case 'exactly': {
         const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
-        return `(select count(*)${threshold > 0 && threshold < 1 ? ` / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedArrayFilter}) ${op} ${threshold}`;
+        return `(select count(*)${threshold > 0 && threshold < 1 ? `::float / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedArrayFilter}) ${op} ${threshold}`;
       }
     }
   }

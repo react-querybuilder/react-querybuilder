@@ -97,7 +97,7 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
         const op = mode === 'atleast' ? '>=' : mode === 'atmost' ? '<=' : '=';
 
         return finalize(
-          `(select count(*)${threshold > 0 && threshold < 1 ? ` / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) ${op} ${threshold}`
+          `(select count(*)${threshold > 0 && threshold < 1 ? `::float / array_length(${ruleField}, 1)` : ''} from unnest(${ruleField}) as ${wrapFieldName(arrayElementAlias)} where ${nestedSQL}) ${op} ${threshold}`
         );
       }
     }
