@@ -35,7 +35,10 @@ export const NativeMatchModeEditor = (
     useMatchModeEditor(props);
 
   const thresholdFieldData = useMemo<FullField>(
-    () => (thresholdPlaceholder ? { ...dummyFieldData, placeholder: thresholdPlaceholder } : dummyFieldData),
+    () =>
+      thresholdPlaceholder
+        ? { ...dummyFieldData, placeholder: thresholdPlaceholder }
+        : dummyFieldData,
     [thresholdPlaceholder]
   );
 
