@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `thresholdPlaceholder` prop on `MatchModeEditorProps`, configurable via `translations.matchThreshold.placeholderName`.
+- `parseJsonLogic` now supports subproperty references in "all"/"some"/"none" operations (e.g., `{"var": "name"}` scoped to array elements).
 
 ### Fixed
 

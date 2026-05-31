@@ -540,6 +540,45 @@ it('parses array match modes', () => {
   });
 });
 
+it('parses subproperty references in subqueries when fields option is provided', () => {
+  // Without the inSubquery fix, {"var": "name"} would fail field validation
+  // since "name" is not in the top-level fields list
+  const fields = [{ name: 'items', label: 'Items' }];
+  expect(
+    parseJsonLogic(
+      { all: [{ var: 'items' }, { '==': [{ var: 'name' }, 'Widget'] }] },
+      { fields }
+    )
+  ).toEqual({
+    combinator: 'and',
+    rules: [
+      {
+        field: 'items',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: 'name', operator: '=', value: 'Widget' }] },
+        match: { mode: 'all' },
+      },
+    ],
+  });
+  // Empty var (primitive array element) also works with fields
+  expect(
+    parseJsonLogic(
+      { some: [{ var: 'tags' }, { in: ['foo', { var: '' }] }] },
+      { fields: [{ name: 'tags', label: 'Tags' }] }
+    )
+  ).toEqual({
+    combinator: 'and',
+    rules: [
+      {
+        field: 'tags',
+        operator: '=',
+        value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'foo' }] },
+        match: { mode: 'some' },
+      },
+    ],
+  });
+});
+
 it('generates query with independent combinators', () => {
   expect(
     parseJsonLogic(

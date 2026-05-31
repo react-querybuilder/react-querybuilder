@@ -109,12 +109,14 @@ function parseJsonLogic(
   // Overload 2: If not the outermost object, return value could also be a rule
   function processLogic(
     logic: RQBJsonLogic,
-    outermost?: false
+    outermost?: false,
+    inSubquery?: boolean
   ): DefaultRuleGroupType | DefaultRuleType | false;
   // Implementation
   function processLogic(
     logic: RQBJsonLogic,
-    outermost?: boolean
+    outermost?: boolean,
+    inSubquery?: boolean
   ): DefaultRuleGroupType | DefaultRuleType | false {
     // Bail if the outermost logic is not a plain object
     if (outermost && !isPojo(logic)) {
@@ -136,21 +138,19 @@ function parseJsonLogic(
     if (isJsonLogicAnd(logic)) {
       return {
         combinator: 'and',
-        rules: logic.and.map(l => processLogic(l)).filter(Boolean) as (
-          | DefaultRuleType
-          | DefaultRuleGroupType
-        )[],
+        rules: logic.and
+          .map(l => processLogic(l, false, inSubquery))
+          .filter(Boolean) as (DefaultRuleType | DefaultRuleGroupType)[],
       };
     } else if (isJsonLogicOr(logic)) {
       return {
         combinator: 'or',
-        rules: logic.or.map(l => processLogic(l)).filter(Boolean) as (
-          | DefaultRuleType
-          | DefaultRuleGroupType
-        )[],
+        rules: logic.or
+          .map(l => processLogic(l, false, inSubquery))
+          .filter(Boolean) as (DefaultRuleType | DefaultRuleGroupType)[],
       };
     } else if (isJsonLogicNegation(logic)) {
-      const rule = processLogic(logic['!']);
+      const rule = processLogic(logic['!'], false, inSubquery);
       if (rule) {
         if (
           !isRuleGroupType(rule) &&
@@ -172,7 +172,7 @@ function parseJsonLogic(
       }
       return false;
     } else if (isJsonLogicDoubleNegation(logic)) {
-      const rule = processLogic(logic['!!']);
+      const rule = processLogic(logic['!!'], false, inSubquery);
       return rule || false;
     }
 
@@ -228,7 +228,7 @@ function parseJsonLogic(
         operator = key as DefaultOperatorName;
       }
 
-      if (fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
+      if (inSubquery || fieldIsValid(field, operator, valueSource === 'field' ? value : undefined)) {
         rule = { field, operator, value, valueSource };
       }
     } else if (
@@ -244,9 +244,8 @@ function parseJsonLogic(
 
       // oxlint-disable-next-line typescript/no-explicit-any
       const [{ var: fld }, operation] = (logic as any)[match.mode];
-      const matcher = processLogic(operation);
+      const matcher = processLogic(operation, false, true);
 
-      // TODO: Support operations that evaluate array member properties
       if (!matcher) return false;
 
       rule = {
