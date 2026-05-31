@@ -43,9 +43,8 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
   } = drizzleOperators;
 
   const { field, operator, value, valueSource } = rule;
-  // TODO: Improve field validation
   const column =
-    useRawFields && /[a-z][a-z0-9]*/i.test(field)
+    useRawFields && /^[a-z_][a-z0-9_.]*$/i.test(field)
       ? (sql.raw(field) as Exclude<SQLWrapper, SQL.Aliased | Column>)
       : columns[field];
   const operatorLC = lc(operator);
