@@ -34,8 +34,7 @@ export const defaultRuleGroupProcessorNL: RuleGroupProcessor<string> = (ruleGrou
         ]
       )
     ) {
-      // TODO: test for the last case and remove "ignore" comment
-      return outermostOrLonelyInGroup ? fallbackExpression : /* v8 ignore next -- @preserve */ '';
+      return outermostOrLonelyInGroup ? fallbackExpression : '';
     }
 
     const rg2 =

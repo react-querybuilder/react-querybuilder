@@ -112,8 +112,7 @@ export const defaultRuleGroupProcessorParameterized: RuleGroupProcessor<
         ]
       )
     ) {
-      // TODO: test for the last case and remove "ignore" comment
-      return outermostOrLonelyInGroup ? fallbackExpression : /* v8 ignore next -- @preserve */ '';
+      return outermostOrLonelyInGroup ? fallbackExpression : '';
     }
 
     const processedRules = [];

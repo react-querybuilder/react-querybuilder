@@ -435,6 +435,7 @@ describe('muted', () => {
       'should mute sql inner group': '((1 = 1))',
       'should mute sql following combinator of first rule': `(field2 = '' or field3 = '')`,
       'should mute sql preceding combinator of non-first rule': `(field = '' or field3 = '')`,
+      'should omit invalid sql inner group among valid siblings': `(field = '' and field3 = '')`,
     };
 
     for (const vtd of getMuteTestData('sql')) {
@@ -460,6 +461,10 @@ describe('muted', () => {
       },
       'should mute parameterized preceding combinator of non-first rule': {
         sql: '(field = ? or field3 = ?)',
+        params: ['', ''],
+      },
+      'should omit invalid parameterized inner group among valid siblings': {
+        sql: '(field = ? and field3 = ?)',
         params: ['', ''],
       },
     };
@@ -489,6 +494,10 @@ describe('muted', () => {
         sql: '(field = :field_1 or field3 = :field3_1)',
         params: { field_1: '', field3_1: '' },
       },
+      'should omit invalid parameterized_named inner group among valid siblings': {
+        sql: '(field = :field_1 and field3 = :field3_1)',
+        params: { field_1: '', field3_1: '' },
+      },
     };
 
     for (const vtd of getMuteTestData('parameterized_named')) {
@@ -511,6 +520,7 @@ describe('validation', () => {
       'should convert sql inner group with no rules to fallbackExpression': `(field = '' and (1 = 1))`,
       'should invalidate sql following combinator of first rule': `(field2 = '' or field3 = '')`,
       'should invalidate sql preceding combinator of non-first rule': `(field = '' or field3 = '')`,
+      'should omit invalid sql inner group among valid siblings': `(field = '' and field3 = '')`,
     };
 
     for (const vtd of getValidationTestData('sql')) {
@@ -544,6 +554,10 @@ describe('validation', () => {
       },
       'should invalidate parameterized preceding combinator of non-first rule': {
         sql: '(field = ? or field3 = ?)',
+        params: ['', ''],
+      },
+      'should omit invalid parameterized inner group among valid siblings': {
+        sql: '(field = ? and field3 = ?)',
         params: ['', ''],
       },
     };
@@ -582,6 +596,10 @@ describe('validation', () => {
       },
       'should invalidate parameterized_named preceding combinator of non-first rule': {
         sql: '(field = :field_1 or field3 = :field3_1)',
+        params: { field_1: '', field3_1: '' },
+      },
+      'should omit invalid parameterized_named inner group among valid siblings': {
+        sql: '(field = :field_1 and field3 = :field3_1)',
         params: { field_1: '', field3_1: '' },
       },
     };

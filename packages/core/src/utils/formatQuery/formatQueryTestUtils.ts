@@ -416,6 +416,19 @@ export const getValidationTestData = (
     options: { format },
   },
   {
+    title: `should omit invalid ${format} inner group among valid siblings`,
+    query: {
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        { field: 'field', operator: '=', value: '' },
+        { id: 'inner', combinator: 'and', rules: [{ field: 'field2', operator: '=', value: '' }] },
+        { field: 'field3', operator: '=', value: '' },
+      ],
+    },
+    options: { format, validator: () => ({ inner: false }) },
+  },
+  {
     title: `should invalidate ${format} following combinator of first rule`,
     query: {
       id: 'root',
