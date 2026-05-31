@@ -252,7 +252,7 @@ export interface BaseTranslations<LabelType = string> {
   operators: BaseTranslationWithPlaceholders;
   values: BaseTranslationWithPlaceholders;
   matchMode: BaseTranslation;
-  matchThreshold: BaseTranslation;
+  matchThreshold: BaseTranslation & { placeholderName?: string };
   value: BaseTranslation;
   removeRule: BaseTranslationWithLabel<LabelType>;
   removeGroup: BaseTranslationWithLabel<LabelType>;

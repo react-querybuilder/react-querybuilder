@@ -587,7 +587,13 @@ export const useMergedContext = <
         ),
         mergeAnyTranslation(
           'matchThreshold',
-          { title: [propsT.matchThreshold?.title, contextT.matchThreshold?.title] },
+          {
+            title: [propsT.matchThreshold?.title, contextT.matchThreshold?.title],
+            placeholderName: [
+              propsT.matchThreshold?.placeholderName,
+              contextT.matchThreshold?.placeholderName,
+            ],
+          },
           finalize ? defaultTranslations : undefined
         ),
         mergeAnyTranslation(
@@ -635,6 +641,7 @@ export const useMergedContext = <
       contextT.unmuteRule?.title,
       contextT.matchMode?.title,
       contextT.matchThreshold?.title,
+      contextT.matchThreshold?.placeholderName,
       contextT.notToggle?.label,
       contextT.notToggle?.title,
       contextT.operators?.placeholderGroupLabel,
@@ -689,6 +696,7 @@ export const useMergedContext = <
       propsT.unmuteRule?.title,
       propsT.matchMode?.title,
       propsT.matchThreshold?.title,
+      propsT.matchThreshold?.placeholderName,
       propsT.notToggle?.label,
       propsT.notToggle?.title,
       propsT.operators?.placeholderGroupLabel,

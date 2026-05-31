@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `defaultValueProcessor` is now marked `@deprecated` (prefer `defaultValueProcessorByRule`).
 
+### Added
+
+- `thresholdPlaceholder` prop on `MatchModeEditorProps`, configurable via `translations.matchThreshold.placeholderName`.
+
 ## [v8.17.0] - 2026-05-27
 
 ### Changed

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { lc, useMatchModeEditor, type FullField, type Path } from 'react-querybuilder';
 import type { MatchModeEditorNativeProps } from '../types';
 
@@ -25,12 +26,18 @@ export const NativeMatchModeEditor = (
     disabled,
     title,
     schema,
+    thresholdPlaceholder,
     selectorComponent: SelectorComponent = props.schema.controls.valueSelector,
     numericEditorComponent: NumericEditorComponent = props.schema.controls.valueEditor,
   } = props;
 
   const { thresholdNum, thresholdRule, thresholdSchema, handleChangeMode, handleChangeThreshold } =
     useMatchModeEditor(props);
+
+  const thresholdFieldData = useMemo<FullField>(
+    () => (thresholdPlaceholder ? { ...dummyFieldData, placeholder: thresholdPlaceholder } : dummyFieldData),
+    [thresholdPlaceholder]
+  );
 
   return (
     <React.Fragment>
@@ -53,8 +60,6 @@ export const NativeMatchModeEditor = (
           skipHook
           testID={testID}
           inputType="number"
-          // TODO: Implement `matchThresholdPlaceholderText`?
-          // placeholder={placeHolderText}
           title={title}
           className={className}
           disabled={disabled}
@@ -63,7 +68,7 @@ export const NativeMatchModeEditor = (
           operator={''}
           value={`${thresholdNum}`}
           valueSource={'value'}
-          fieldData={dummyFieldData}
+          fieldData={thresholdFieldData}
           schema={thresholdSchema}
           path={dummyPath}
           level={0}

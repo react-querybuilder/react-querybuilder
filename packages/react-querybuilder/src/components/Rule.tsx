@@ -234,6 +234,7 @@ export const RuleComponents: React.MemoExoticComponent<
             fieldData={r.fieldData}
             title={r.translations.matchMode.title}
             options={r.matchModes}
+            thresholdPlaceholder={r.translations.matchThreshold.placeholderName}
             // TODO: Support `defaultMatchMode` at query or field level?
             match={
               r.rule.match ?? /* v8 ignore start -- @preserve */ defaultMatch

@@ -173,6 +173,7 @@ export interface MatchModeEditorProps
   match: MatchConfig;
   selectorComponent?: ComponentType<ValueSelectorProps>;
   numericEditorComponent?: ComponentType<ValueEditorProps>;
+  thresholdPlaceholder?: string;
   classNames: { matchMode: string; matchThreshold: string };
   options: FullOptionList<FullOption<MatchMode>>;
   field: string;

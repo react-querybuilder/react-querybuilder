@@ -106,7 +106,7 @@ export const defaultTranslations: BaseTranslationsFull = {
     placeholderGroupLabel: defaultPlaceholderValueGroupLabel,
   } as const,
   matchMode: { title: 'Match mode' } as const,
-  matchThreshold: { title: 'Match threshold' } as const,
+  matchThreshold: { title: 'Match threshold', placeholderName: '#' } as const,
   value: { title: 'Value' } as const,
   removeRule: { label: '⨯', title: 'Remove rule' } as const,
   removeGroup: { label: '⨯', title: 'Remove group' } as const,

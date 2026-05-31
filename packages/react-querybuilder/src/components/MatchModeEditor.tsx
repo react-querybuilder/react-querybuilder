@@ -1,14 +1,12 @@
 import type { FullField, MatchMode, Path, RuleType } from '@react-querybuilder/core';
 import { lc, parseNumber } from '@react-querybuilder/core';
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { MatchModeEditorProps, Schema } from '../types';
 
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
 const requiresThreshold = (mm?: string | null) =>
-  ['atleast', 'atmost', 'exactly'].includes(
-    lc(mm) ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
-  );
+  ['atleast', 'atmost', 'exactly'].includes(lc(mm) ?? '');
 const dummyPath: Path = [];
 
 /**
@@ -25,12 +23,21 @@ export const MatchModeEditor = (props: MatchModeEditorProps): React.JSX.Element 
     disabled,
     testID,
     schema,
+    thresholdPlaceholder,
     selectorComponent: SelectorComponent = props.schema.controls.valueSelector,
     numericEditorComponent: NumericEditorComponent = props.schema.controls.valueEditor,
   } = props;
 
   const { thresholdNum, thresholdRule, thresholdSchema, handleChangeMode, handleChangeThreshold } =
     useMatchModeEditor(props);
+
+  const thresholdFieldData = useMemo<FullField>(
+    () =>
+      thresholdPlaceholder
+        ? { ...dummyFieldData, placeholder: thresholdPlaceholder }
+        : dummyFieldData,
+    [thresholdPlaceholder]
+  );
 
   return (
     <React.Fragment>
@@ -53,8 +60,6 @@ export const MatchModeEditor = (props: MatchModeEditorProps): React.JSX.Element 
           skipHook
           testID={testID}
           inputType="number"
-          // TODO: Implement `matchThresholdPlaceholderText`?
-          // placeholder={placeHolderText}
           title={title}
           className={className}
           disabled={disabled}
@@ -63,7 +68,7 @@ export const MatchModeEditor = (props: MatchModeEditorProps): React.JSX.Element 
           operator={''}
           value={thresholdNum}
           valueSource={'value'}
-          fieldData={dummyFieldData}
+          fieldData={thresholdFieldData}
           schema={thresholdSchema}
           path={dummyPath}
           level={0}
