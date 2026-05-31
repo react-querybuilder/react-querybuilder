@@ -406,8 +406,6 @@ export const useQueryBuilderSetup = <
           not: false,
         } as RG;
       }
-      // TODO: Avoid `@ts-expect-error`
-      // @ts-expect-error TS can't tell that RG is necessarily RuleGroupType
       return {
         id: idGenerator(),
         rules: addRuleToNewGroups ? [createRule()] : [],
@@ -415,7 +413,7 @@ export const useQueryBuilderSetup = <
           getFirstOption(combinators) ??
           /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */,
         not: false,
-      };
+      } as unknown as RG;
     },
     [addRuleToNewGroups, combinators, createRule, idGenerator]
   );
