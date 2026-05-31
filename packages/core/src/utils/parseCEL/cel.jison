@@ -211,8 +211,7 @@ member
   | member DOT ident -> { type: 'Member', left: $1, right: $3 }
   | member DOT ident '(' expr_list ')' -> { type: 'Member', left: $1, right: $3, list: $5 }
   | member '[' expr ']' -> { type: 'DynamicPropertyAccessor', left: $1, right: $3 }
-  // TODO: This needs a better type name
-  | member '{' field_inits trailing_comma '}' -> { type: 'FieldsObject', left: $1, list: $3, trailingComma: $4 }
+  | member '{' field_inits trailing_comma '}' -> { type: 'MessageInit', left: $1, list: $3, trailingComma: $4 }
   ;
 trailing_comma
   : -> false

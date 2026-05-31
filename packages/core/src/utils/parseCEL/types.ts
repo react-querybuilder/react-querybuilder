@@ -11,7 +11,7 @@ export type CELExpressionType =
   | 'ExpressionList'
   | 'FieldInit'
   | 'FieldInits'
-  | 'FieldsObject'
+  | 'MessageInit'
   | 'FloatLiteral'
   | 'FunctionCall'
   | 'Identifier'
@@ -188,8 +188,8 @@ export interface CELExpressionList extends CELExpression {
   type: 'ExpressionList';
   value: CELExpression[];
 }
-export interface CELFieldsObject extends CELExpression {
-  type: 'FieldsObject';
+export interface CELMessageInit extends CELExpression {
+  type: 'MessageInit';
   left: CELMember;
   list: CELFieldInits;
   trailingComma?: boolean;

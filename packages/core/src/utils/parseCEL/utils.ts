@@ -13,7 +13,7 @@ import type {
   CELExpressionList,
   CELFieldInit,
   CELFieldInits,
-  CELFieldsObject,
+  CELMessageInit,
   CELFloatLiteral,
   CELFunctionCall,
   CELIdentifier,
@@ -95,8 +95,8 @@ export const isCELFieldInit = (expr: CELExpression): expr is CELFieldInit =>
 export const isCELFieldInits = (expr: CELExpression): expr is CELFieldInits =>
   expr.type === 'FieldInits';
 // v8 ignore next
-export const isCELFieldsObject = (expr: CELExpression): expr is CELFieldsObject =>
-  expr.type === 'FieldsObject';
+export const isCELMessageInit = (expr: CELExpression): expr is CELMessageInit =>
+  expr.type === 'MessageInit';
 export const isCELFloatLiteral = (expr: CELExpression): expr is CELFloatLiteral =>
   expr.type === 'FloatLiteral';
 // v8 ignore next

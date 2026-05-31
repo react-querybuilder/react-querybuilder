@@ -79,7 +79,7 @@ case 34:
 this.$ = { type: 'DynamicPropertyAccessor', left: $$[$0-3], right: $$[$0-1] };
 break;
 case 35:
-this.$ = { type: 'FieldsObject', left: $$[$0-4], list: $$[$0-2], trailingComma: $$[$0-1] };
+this.$ = { type: 'MessageInit', left: $$[$0-4], list: $$[$0-2], trailingComma: $$[$0-1] };
 break;
 case 36:
 this.$ = false;
