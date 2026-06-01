@@ -20,8 +20,7 @@ export interface ParseNumberOptions {
  * as-is regardless of the `parseNumbers` option.
  */
 export const parseNumber = (
-  // oxlint-disable-next-line typescript/no-explicit-any
-  val: any,
+  val: unknown,
   { parseNumbers, bigIntOnOverflow }: ParseNumberOptions = {}
   // oxlint-disable-next-line typescript/no-explicit-any
 ): any => {
@@ -30,7 +29,7 @@ export const parseNumber = (
   }
 
   if (parseNumbers === 'native') {
-    return Number.parseFloat(val);
+    return Number.parseFloat(val as string);
   }
 
   const valAsNum: number | bigint =
