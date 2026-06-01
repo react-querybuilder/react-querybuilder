@@ -146,7 +146,7 @@
     "sass": "^1.99.0",
     "type-fest": "^5.7.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.14"
+    "vite": "^8.0.16"
   },
   "catalogs": {
     "peer": {
@@ -187,8 +187,8 @@
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.349",
     "@typescript/native-preview": "^7.0.0-dev.20260527.2",
-    "@vitest/coverage-v8": "^4.1.6",
-    "@vitest/ui": "^4.1.6",
+    "@vitest/coverage-v8": "^4.1.8",
+    "@vitest/ui": "^4.1.8",
     "bun-plugin-tailwind": "^0.1.2",
     "concurrently": "^10.0.0",
     "esbuild-analyzer": "^0.2.0",
@@ -210,7 +210,7 @@
     "tsdown": "^0.22.1",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.8"
   },
   "patchedDependencies": {
     "@testing-library/user-event@14.6.1": "patches/@testing-library%2Fuser-event@14.6.1.patch",
