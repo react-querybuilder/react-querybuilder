@@ -14,8 +14,7 @@ type ClassValue =
 type ClassArray = ClassValue[];
 
 /* v8 ignore start -- @preserve */
-// oxlint-disable-next-line typescript/no-explicit-any
-function toVal(mix: any) {
+function toVal(mix: unknown) {
   let k;
   let y;
   let str = '';
@@ -34,7 +33,7 @@ function toVal(mix: any) {
       }
     } else {
       for (y in mix) {
-        if (mix[y]) {
+        if ((mix as Record<string, unknown>)[y]) {
           // oxlint-disable-next-line no-unused-expressions
           str && (str += ' ');
           str += y;

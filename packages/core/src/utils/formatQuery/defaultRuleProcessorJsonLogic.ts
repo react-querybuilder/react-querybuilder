@@ -30,7 +30,7 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {})
   const { parseNumbers, preserveValueOrder } = options;
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
-  const fieldOrNumberRenderer = (v: string) =>
+  const fieldOrNumberRenderer = (v: unknown) =>
     valueIsField
       ? { var: `${v}` }
       : shouldRenderAsNumber(v, parseNumbers)
@@ -121,7 +121,8 @@ export const defaultRuleProcessorJsonLogic: RuleProcessor = (rule, options = {})
         isValidValue(valueAsArray[0]) &&
         isValidValue(valueAsArray[1])
       ) {
-        let [first, second] = valueAsArray;
+        type ValueAsArray = (string | number | { var: string | number })[];
+        let [first, second]: ValueAsArray = valueAsArray;
         // For backwards compatibility, default to parsing numbers for between operators
         // unless parseNumbers is explicitly set to false
         const shouldParseNumbers = !(parseNumbers === false);

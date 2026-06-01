@@ -67,8 +67,7 @@ const getTextScript = (f: string, o: Lowercase<DefaultOperatorName>, v: string) 
   return o.startsWith('d') ? `!${script}` : script;
 };
 
-// oxlint-disable-next-line typescript/no-explicit-any
-const valueRenderer = (v: any, parseNumbers?: boolean) =>
+const valueRenderer = (v: unknown, parseNumbers?: boolean) =>
   typeof v === 'boolean'
     ? v
     : shouldRenderAsNumber(v, parseNumbers)

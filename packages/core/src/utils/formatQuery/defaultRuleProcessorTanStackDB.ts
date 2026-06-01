@@ -43,12 +43,10 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
   const operatorLC = lc(operator);
 
   const valueIsField = valueSource === 'field';
-  // oxlint-disable-next-line typescript/no-explicit-any
-  const asFieldOrValue = (v: any) => (valueIsField ? resolveField(v) : v);
+  const asFieldOrValue = (v: unknown) => (valueIsField ? resolveField(v as string) : v);
 
   // Parse value as number when applicable
-  // oxlint-disable-next-line typescript/no-explicit-any
-  const maybeParseNumber = (v: any) => {
+  const maybeParseNumber = (v: unknown) => {
     if (valueIsField || !parseNumbers) return asFieldOrValue(v);
     return shouldRenderAsNumber(v, true) ? parseNumber(v, { parseNumbers: true }) : v;
   };

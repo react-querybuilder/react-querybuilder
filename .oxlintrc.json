@@ -25,6 +25,7 @@
     "typescript/ban-ts-comment": "error",
     "typescript/consistent-type-imports": "error",
     "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-base-to-string": "off",
     "typescript/no-empty-function": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-floating-promises": "off",
@@ -36,6 +37,7 @@
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
     "typescript/require-array-sort-compare": "off",
+    "typescript/restrict-template-expressions": "off",
     "typescript/unbound-method": "off",
     "jest/no-disabled-tests": "warn",
     "jest/require-to-throw-message": "off",

@@ -346,7 +346,7 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
       v[idx] = parsedVal;
       // Enforce an array length of (at least) two for "between"/"notBetween"
       if (needsBetweenFix) {
-        v[1] = getFirstOption(values);
+        v[1] = getFirstOption(values)!;
       }
       handleOnChange(listsAsArrays ? v : joinWith(v, ','));
     },

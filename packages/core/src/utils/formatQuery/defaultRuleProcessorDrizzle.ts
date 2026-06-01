@@ -50,11 +50,11 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
   const operatorLC = lc(operator);
 
   const valueIsField = valueSource === 'field';
-  const asFieldOrValue = (v: string) => (valueIsField ? columns[v] : v);
+  const asFieldOrValue = (v: string | number) => (valueIsField ? columns[v] : v);
 
   // Parse value as number when applicable
-  const maybeParseNumber = (v: string) => {
-    if (valueIsField || !parseNumbers) return asFieldOrValue(v);
+  const maybeParseNumber = (v: unknown) => {
+    if (valueIsField || !parseNumbers) return asFieldOrValue(v as string);
     return shouldRenderAsNumber(v, true) ? parseNumber(v, { parseNumbers: true }) : v;
   };
 
@@ -154,7 +154,9 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
         isValidValue(valueAsArray[0]) &&
         isValidValue(valueAsArray[1])
       ) {
-        let [first, second] = valueAsArray;
+        type ColumnType = (typeof columns)[keyof typeof columns];
+        type ValueAsArray = (string | number | ColumnType)[];
+        let [first, second]: ValueAsArray = valueAsArray;
         // For backwards compatibility, default to parsing numbers for between operators
         // unless parseNumbers is explicitly set to false
         const shouldParseNumbers = !(parseNumbers === false);

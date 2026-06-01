@@ -8,8 +8,7 @@ import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './ut
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
-// oxlint-disable-next-line no-explicit-any
-const quote = (v: any, escapeQuotes?: boolean) =>
+const quote = (v: unknown, escapeQuotes?: boolean) =>
   `"${typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`)}"`;
 
 const negate = (clause: string, neg: boolean) => (neg ? `$not(${clause})` : clause);
@@ -43,8 +42,8 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
     typeof value === 'bigint' ||
     shouldRenderAsNumber(value, parseNumbers);
 
-  const qfn = (f: string) =>
-    getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator });
+  const qfn = (f: unknown) =>
+    getQuotedFieldName(f as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
 
   const matchEval = processMatchMode(rule);
 
@@ -185,7 +184,7 @@ export const defaultRuleProcessorJSONata: RuleProcessor = (
 
       const renderAsNumbers =
         shouldRenderAsNumber(first, parseNumbers) && shouldRenderAsNumber(second, parseNumbers);
-      const getValueString = (raw: string, val: string | number) =>
+      const getValueString = (raw: unknown, val: string | number) =>
         valueIsField ? qfn(raw) : renderAsNumbers ? val : quote(val, escapeQuotes);
 
       const expression = `${qfn(field)} >= ${getValueString(first, firstValue)} and ${qfn(field)} <= ${getValueString(second, secondValue)}`;

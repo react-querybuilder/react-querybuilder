@@ -4,8 +4,7 @@ import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils';
 
-// oxlint-disable-next-line no-explicit-any
-const escapeStringValueQuotes = (v: any, quoteChar: string, escapeQuotes?: boolean) =>
+const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
     ? v.replaceAll(`${quoteChar}`, `${quoteChar}${quoteChar}`)
     : v;
@@ -34,14 +33,12 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const operatorLowerCase = lc(operator);
   const quoteChar = quoteValuesWith || "'";
 
-  // oxlint-disable no-explicit-any
-  const quoteValue = (v: any) =>
+  const quoteValue = (v: unknown) =>
     `${wrapValueWith[0]}${quoteChar}${v}${quoteChar}${wrapValueWith[1]}`;
-  const escapeValue = (v: any) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
-  const wrapAndEscape = (v: any) => quoteValue(escapeValue(v));
-  // oxlint-enable no-explicit-any
-  const wrapFieldName = (v: string) =>
-    getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
+  const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
+  const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
+  const wrapFieldName = (v: unknown) =>
+    getQuotedFieldName(v as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
   const concat = (...values: string[]) =>
     concatOperator.toUpperCase() === 'CONCAT'
       ? `CONCAT(${values.join(', ')})`

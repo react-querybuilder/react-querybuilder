@@ -8,8 +8,7 @@ import { processMatchMode, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
-// oxlint-disable-next-line no-explicit-any
-const escapeDoubleQuotes = (v: any, escapeQuotes?: boolean) =>
+const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`);
 
 /**

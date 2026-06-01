@@ -10,8 +10,7 @@ const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('does
 
 const wrapInNegation = (clause: string, negate: boolean) => (negate ? `!(${clause})` : clause);
 
-// oxlint-disable-next-line no-explicit-any
-const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
+const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`'`, `\\'`);
 
 /**

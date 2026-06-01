@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Changed
+
+- Replaced `any` with `unknown` on input parameters of ~20 core utility functions (type guards, array utils, string escape helpers, `clsx`). Return types preserved or tightened to avoid breaking consumers.
 
 ## [v8.18.0] - 2026-05-31
 

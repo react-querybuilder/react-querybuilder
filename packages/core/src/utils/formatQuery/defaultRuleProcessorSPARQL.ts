@@ -2,8 +2,7 @@ import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { shouldRenderAsNumber } from './utils';
 
-// oxlint-disable-next-line no-explicit-any
-const escapeDoubleQuotes = (v: any, escapeQuotes?: boolean) =>
+const escapeDoubleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll(`"`, `\\"`);
 
 /** Auto-prefix a SPARQL variable name with `?` unless it's already prefixed, a URI, or a prefixed name.
@@ -33,8 +32,9 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
     if (v === null || v === undefined) return '""';
     if (typeof v === 'boolean') return `"${v}"^^xsd:boolean`;
     if (typeof v === 'bigint') return String(v);
-    if (valueIsField) return sparqlVar(trimIfString(v));
-    if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers)) return trimIfString(v);
+    if (valueIsField) return sparqlVar(trimIfString(v) as string);
+    if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers))
+      return trimIfString(v) as string;
     const s =
       typeof v === 'string' ? v : /* v8 ignore next -- @preserve */ (JSON.stringify(v) ?? '');
     // Don't quote variable references or URIs

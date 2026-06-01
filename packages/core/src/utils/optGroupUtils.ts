@@ -155,8 +155,7 @@ export const uniqByIdentifier = <
  *
  * @group Option Lists
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =>
+export const isOptionGroupArray = (arr: unknown): arr is OptionGroup<BaseOption>[] =>
   Array.isArray(arr) &&
   arr.length > 0 &&
   isPojo(arr[0]) &&
@@ -168,8 +167,7 @@ export const isOptionGroupArray = (arr: any): arr is OptionGroup<BaseOption>[] =
  *
  * @group Option Lists
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
+export const isFlexibleOptionArray = (arr: unknown): arr is FlexibleOption[] => {
   let isFOA = false;
   if (Array.isArray(arr)) {
     for (const o of arr) {
@@ -188,8 +186,7 @@ export const isFlexibleOptionArray = (arr: any): arr is FlexibleOption[] => {
  *
  * @group Option Lists
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const isFullOptionArray = (arr: any): arr is FullOption[] => {
+export const isFullOptionArray = (arr: unknown): arr is FullOption[] => {
   let isFOA = false;
   if (Array.isArray(arr)) {
     for (const o of arr) {
@@ -209,8 +206,7 @@ export const isFullOptionArray = (arr: any): arr is FullOption[] => {
  * @group Option Lists
  */
 export const isFlexibleOptionGroupArray = (
-  // oxlint-disable-next-line typescript/no-explicit-any
-  arr: any,
+  arr: unknown,
   { allowEmpty = false }: { allowEmpty?: boolean } = {}
 ): arr is FlexibleOptionGroup[] => {
   let isFOGA = false;
@@ -237,8 +233,7 @@ export const isFlexibleOptionGroupArray = (
  * @group Option Lists
  */
 export const isFullOptionGroupArray = (
-  // oxlint-disable-next-line typescript/no-explicit-any
-  arr: any,
+  arr: unknown,
   { allowEmpty = false }: { allowEmpty?: boolean } = {}
 ): arr is OptionGroup<FullOption>[] => {
   let isFOGA = false;

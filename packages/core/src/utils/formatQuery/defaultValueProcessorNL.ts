@@ -34,11 +34,9 @@ export const defaultValueProcessorNL: ValueProcessorByRule = (
   const quoteChar =
     quoteValuesWith || /* v8 ignore start -- @preserve */ "'"; /* v8 ignore stop -- @preserve */
 
-  // oxlint-disable no-explicit-any
-  const quoteValue = (v: any) => `${quoteChar}${v}${quoteChar}`;
-  const escapeValue = (v: any) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
-  const wrapAndEscape = (v: any) => quoteValue(escapeValue(v));
-  // oxlint-enable no-explicit-any
+  const quoteValue = (v: unknown) => `${quoteChar}${v}${quoteChar}`;
+  const escapeValue = (v: unknown) => escapeStringValueQuotes(v, quoteChar, escapeQuotes);
+  const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: string) =>
     getQuotedFieldName(v, { quoteFieldNamesWith, fieldIdentifierSeparator });
 

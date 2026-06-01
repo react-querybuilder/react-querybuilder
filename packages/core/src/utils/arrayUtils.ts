@@ -38,35 +38,46 @@ export const splitBy = (str?: string, splitChar: string = defaultJoinChar): stri
  * // would return
  * 'this\\,\\,that, , the other, , , \\,'
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const joinWith = (strArr: any[], joinChar: string = defaultJoinChar): string =>
+export const joinWith = (strArr: unknown[], joinChar: string = defaultJoinChar): string =>
   strArr.map(str => `${str ?? ''}`.replaceAll(joinChar[0], `\\${joinChar[0]}`)).join(joinChar);
+
+type IsUnknown<T> = unknown extends T ? true : false;
+type Trimmed<T> = IsUnknown<T> extends true ? string : T;
 
 /**
  * Trims the value if it is a string. Otherwise returns the value as is.
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const trimIfString = (val: any): any => (typeof val === 'string' ? val.trim() : val);
+export const trimIfString = <T>(val: T): Trimmed<T> =>
+  (typeof val === 'string' ? val.trim() : val) as Trimmed<T>;
+
+type ToArrayResult<T> =
+  IsUnknown<T> extends true
+    ? string[]
+    : T extends readonly (infer U)[]
+      ? Trimmed<U>[]
+      : T extends string
+        ? string[]
+        : T extends number
+          ? number[]
+          : never[];
 
 /**
  * Splits a string by comma then trims each element. Arrays are returned as is except
  * any string elements are trimmed.
  */
-export const toArray = (
-  // oxlint-disable-next-line typescript/no-explicit-any
-  a: any,
+export const toArray = <T>(
+  a: T,
   { retainEmptyStrings }: { retainEmptyStrings?: boolean } = {}
-  // oxlint-disable-next-line typescript/no-explicit-any
-): any[] =>
-  Array.isArray(a)
-    ? a.map(v => trimIfString(v))
+): ToArrayResult<T> =>
+  (Array.isArray(a)
+    ? a.map(trimIfString)
     : typeof a === 'string'
       ? splitBy(a, defaultJoinChar)
           .filter(retainEmptyStrings ? () => true : s => !/^\s*$/.test(s))
           .map(s => s.trim())
       : typeof a === 'number'
         ? [a]
-        : [];
+        : []) as ToArrayResult<T>;
 
 /**
  * Determines if an array is free of `null`/`undefined`.

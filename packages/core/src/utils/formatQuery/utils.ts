@@ -172,8 +172,7 @@ export const numerifyValues = (
  *
  * @group Export
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const isValidValue = (value: any): boolean =>
+export const isValidValue = (value: unknown): boolean =>
   (typeof value === 'string' && value.length > 0) ||
   (typeof value === 'number' && !Number.isNaN(value)) ||
   (typeof value !== 'string' && typeof value !== 'number');
@@ -185,8 +184,7 @@ export const isValidValue = (value: any): boolean =>
  *
  * @group Export
  */
-// oxlint-disable-next-line typescript/no-explicit-any
-export const shouldRenderAsNumber = (value: any, parseNumbers?: boolean): boolean =>
+export const shouldRenderAsNumber = (value: unknown, parseNumbers?: boolean): boolean =>
   !!parseNumbers &&
   (typeof value === 'number' ||
     typeof value === 'bigint' ||

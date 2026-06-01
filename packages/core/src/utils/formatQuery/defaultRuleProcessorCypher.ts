@@ -2,8 +2,7 @@ import type { RuleProcessor } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { shouldRenderAsNumber } from './utils';
 
-// oxlint-disable-next-line no-explicit-any
-const escapeSingleQuotes = (v: any, escapeQuotes?: boolean) =>
+const escapeSingleQuotes = (v: unknown, escapeQuotes?: boolean) =>
   typeof v !== 'string' || !escapeQuotes ? `${v}` : v.replaceAll("'", "\\'");
 
 /**
@@ -24,8 +23,9 @@ export const defaultRuleProcessorCypher: RuleProcessor = (
   const fmtVal = (v: unknown): string => {
     if (v === null || v === undefined) return 'null';
     if (typeof v === 'boolean' || typeof v === 'bigint') return String(v);
-    if (valueIsField) return trimIfString(v);
-    if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers)) return trimIfString(v);
+    if (valueIsField) return trimIfString(v) as string;
+    if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers))
+      return trimIfString(v) as string;
     return `'${escapeSingleQuotes(v, escapeQuotes)}'`;
   };
 
