@@ -307,8 +307,16 @@ export default function Demo({
           : undefined,
       ...(options.useDateTimePackage
         ? {
+            // Only formats with a matching datetime rule processor override the
+            // default. SQL emits a string; JsonLogic emits an object. Parameterized
+            // and all other formats fall back to the default processor (which returns
+            // the `{ sql, params }` shape parameterized output requires).
             ruleProcessor:
-              format === 'sql' ? datetimeRuleProcessorSQL : datetimeRuleProcessorJsonLogic,
+              format === 'sql'
+                ? datetimeRuleProcessorSQL
+                : format === 'jsonlogic'
+                  ? datetimeRuleProcessorJsonLogic
+                  : undefined,
           }
         : null),
       ...(format === 'natural_language' && nlConfig),
