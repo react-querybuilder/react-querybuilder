@@ -3,6 +3,7 @@ import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDateFns } from './rqbDate
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDayjs } from './rqbDateTimeLibraryAPI.dayjs';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIJS } from './rqbDateTimeLibraryAPI.jsdate';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPILuxon } from './rqbDateTimeLibraryAPI.luxon';
+import type { RelativeDateTimeValue } from './types';
 import type { RQBDateTimeLibraryAPI } from './types';
 
 export const dateLibraryFunctions: [string, RQBDateTimeLibraryAPI][] = [
@@ -108,6 +109,20 @@ VALUES ('${musician.first_name}', '${musician.middle_name}', '${musician.last_na
     .join(';\n');
 };
 
+export const relativeStartOfYear: RelativeDateTimeValue = {
+  mode: 'relative',
+  anchor: 'startOfYear',
+  offset: 0,
+  unit: 'day',
+};
+
+export const relativeMilleniumAgo: RelativeDateTimeValue = {
+  mode: 'relative',
+  anchor: 'now',
+  offset: -1000,
+  unit: 'year',
+};
+
 export const testCases: Record<string, [RuleGroupType, string]> = {
   basic: [
     {
@@ -123,6 +138,24 @@ export const testCases: Record<string, [RuleGroupType, string]> = {
     {
       combinator: 'and',
       rules: [{ field: 'created_at', operator: '>', value: comparisonDate }],
+    },
+    'all',
+  ],
+  // Relative value anchored to a truncated period (start of the current year). Both
+  // musicians were born decades ago, so both predate it regardless of "now".
+  relativeAnchor: [
+    {
+      combinator: 'and',
+      rules: [{ field: 'birthdate', operator: '<', value: relativeStartOfYear }],
+    },
+    'all',
+  ],
+  // Relative value with a (large, time-robust) negative offset from "now". Neither
+  // birthdate predates a millennium ago, so both rows match.
+  relativeOffset: [
+    {
+      combinator: 'and',
+      rules: [{ field: 'birthdate', operator: '>', value: relativeMilleniumAgo }],
     },
     'all',
   ],

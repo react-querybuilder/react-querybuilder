@@ -233,6 +233,7 @@
         "react-dom": "catalog:",
         "react-querybuilder": "8.18.0",
         "rollup-plugin-visualizer": "catalog:",
+        "sass": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",
       },

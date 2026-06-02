@@ -7,8 +7,14 @@ import {
   mapSQLOperator,
   toArray,
 } from 'react-querybuilder';
+import { getRelativeDateTimeSQL } from './getRelativeDateTimeSQL';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, processIsDateField } from './utils';
+import {
+  isISOStringDateOnly,
+  isRelativeDateTimeValue,
+  materializeRelativeValues,
+  processIsDateField,
+} from './utils';
 
 /**
  * Generates a value processor with date/time features for use by
@@ -127,7 +133,67 @@ export const getDatetimeRuleProcessorSQL =
 
     const valueProcessor = presetToValueProcessorMap[opts.preset!](apiFns);
 
-    const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
+    const quotedField = getQuotedFieldName(rule.field, {
+      quoteFieldNamesWith,
+      fieldIdentifierSeparator,
+    });
+
+    // SQL can emit "live" symbolic relative expressions, so relative values stay
+    // symbolic by default. When `context.materializeRelativeDateTime` is set, resolve
+    // them to concrete literals up front and let the standard literal path handle them.
+    const ruleValue = context.materializeRelativeDateTime
+      ? materializeRelativeValues(apiFns, rule.value, opts)
+      : rule.value;
+
+    // Relative date/time values are stored as objects. Intercept them before
+    // `toArray` (which drops objects) and emit symbolic dialect-specific SQL.
+    const rawValues = Array.isArray(ruleValue) ? ruleValue : [ruleValue];
+    if (rawValues.some(isRelativeDateTimeValue)) {
+      const exprFor = (v: unknown): string | undefined => {
+        if (isRelativeDateTimeValue(v)) {
+          return getRelativeDateTimeSQL(v, opts.preset!, opts.fieldData?.datatype);
+        }
+        const dateVal = apiFns.toDate(v as string | Date);
+        if (!apiFns.isValid(dateVal)) return undefined;
+        return valueProcessor(
+          { field: rule.field, operator: '=', value: dateVal },
+          { ...opts, context: { originalValue: v } }
+        );
+      };
+
+      switch (operatorLowerCase) {
+        case 'in':
+        case 'not in': {
+          const exprs = rawValues.map(exprFor).filter((e): e is string => e !== undefined);
+          // v8 ignore next -- a relative operand always yields an expression
+          if (exprs.length === 0) return '';
+          finalValue = `(${exprs.join(', ')})`;
+          break;
+        }
+
+        case 'between':
+        case 'not between': {
+          // Operand order is preserved — symbolic expressions can't be compared
+          // at format time to auto-order them.
+          const first = exprFor(rawValues[0]);
+          const second = exprFor(rawValues[1]);
+          if (first === undefined || second === undefined) return '';
+          finalValue = `${first} and ${second}`;
+          break;
+        }
+
+        default: {
+          const expr = exprFor(rawValues[0]);
+          // v8 ignore next -- a single relative operand always yields an expression
+          if (expr === undefined) return '';
+          finalValue = expr;
+        }
+      }
+
+      return `${quotedField} ${operator} ${finalValue}`.trim();
+    }
+
+    const valueAsArray: string[] = toArray(ruleValue, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
       .map((v): [string, Date] => [v, apiFns.toDate(v)])
       .filter(v => apiFns.isValid(v[1]));
@@ -176,5 +242,5 @@ export const getDatetimeRuleProcessorSQL =
       }
     }
 
-    return `${getQuotedFieldName(rule.field, { quoteFieldNamesWith, fieldIdentifierSeparator })} ${operator} ${finalValue}`.trim();
+    return `${quotedField} ${operator} ${finalValue}`.trim();
   };

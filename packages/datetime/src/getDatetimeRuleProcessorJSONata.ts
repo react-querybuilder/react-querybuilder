@@ -6,7 +6,7 @@ import {
   toArray,
 } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { processIsDateField } from './utils';
+import { materializeRelativeValues, processIsDateField } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -25,13 +25,17 @@ export const getDatetimeRuleProcessorJSONata =
     // v8 ignore next
     const { quoteFieldNamesWith = ['', ''] as [string, string], fieldIdentifierSeparator = '' } =
       opts;
-    const { field, operator, value, valueSource } = rule;
+    const { field, operator, valueSource } = rule;
 
     if (!processIsDateField(context.isDateField, rule, opts)) {
       return defaultRuleProcessorJSONata(rule, opts);
     }
 
     const valueIsField = valueSource === 'field';
+
+    // Resolve any relative value(s) to concrete literals (JSONata has no symbolic relative form).
+    // Field-source values are field names and pass through untouched.
+    const value = valueIsField ? rule.value : materializeRelativeValues(apiFns, rule.value, opts);
 
     const fldToMs = (f: string) =>
       `$toMillis(${getQuotedFieldName(f, { quoteFieldNamesWith, fieldIdentifierSeparator })})`;
@@ -44,10 +48,10 @@ export const getDatetimeRuleProcessorJSONata =
       case '!=':
       case '>':
       case '>=':
-        return `${fldToMs(field)} ${operator} ${valueIsField ? fldToMs(value) : valToMs(value)}`;
+        return `${fldToMs(field)} ${operator} ${valueIsField ? fldToMs(value as string) : valToMs(value as string | Date)}`;
     }
 
-    const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
+    const valueAsArray: string[] = toArray(value, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
       .map(v => apiFns.toDate(v))
       .filter(dateVal => apiFns.isValid(dateVal));

@@ -195,6 +195,10 @@ export interface Classnames {
    * Classname(s) applied to async components in their "loading" state.
    */
   loading: Classname;
+  /**
+   * Classname(s) applied to value editors for relative date/time values.
+   */
+  valueDateTimeRelative: Classname;
 }
 
 /**

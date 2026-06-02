@@ -53,4 +53,5 @@ export const mergeClassnames = (...args: MergeClassnamesParams): Classnames => (
   branches: joinClassnamesByName('branches', args),
   hasSubQuery: joinClassnamesByName('hasSubQuery', args),
   loading: joinClassnamesByName('loading', args),
+  valueDateTimeRelative: joinClassnamesByName('valueDateTimeRelative', args),
 });

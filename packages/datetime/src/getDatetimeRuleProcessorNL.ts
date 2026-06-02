@@ -8,7 +8,7 @@ import {
   toArray,
 } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, processIsDateField } from './utils';
+import { isISOStringDateOnly, materializeRelativeValues, processIsDateField } from './utils';
 
 export const defaultDateTimeNLOperatorMap: ExportOperatorMap = {
   // '=': 'is',
@@ -82,7 +82,11 @@ export const getDatetimeRuleProcessorNL =
       return '';
     }
 
-    const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
+    // Natural language is descriptive (not executable), so relative value(s) are
+    // resolved to concrete dates and rendered like any other literal.
+    const ruleValue = materializeRelativeValues(apiFns, rule.value, opts);
+
+    const valueAsArray: string[] = toArray(ruleValue, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
       .map((v): [string, Date] => [v, apiFns.toDate(v)])
       .filter(v => apiFns.isValid(v[1]));

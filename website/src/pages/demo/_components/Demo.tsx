@@ -8,7 +8,7 @@ import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 // TODO: Find out why this is necessary
 import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
-import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
+import { datetimeRuleProcessorJsonLogic, QueryBuilderDateTime } from '@react-querybuilder/datetime';
 import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
@@ -169,6 +169,11 @@ const defaultQueryWrapper = (props: {
   children: React.ReactNode;
   useDateTimePackage?: boolean;
 }) => <>{props.children}</>;
+
+// Wraps the live query builder with the date/time context provider (which supplies the
+// relative-capable value editor) when the "Use date/time package" option is enabled.
+const DateTimeWrapper = ({ enabled, children }: { enabled?: boolean; children: React.ReactNode }) =>
+  enabled ? <QueryBuilderDateTime>{children}</QueryBuilderDateTime> : <>{children}</>;
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
@@ -405,11 +410,12 @@ export default function Demo({
       ...(options.enableDragAndDrop
         ? ['@react-querybuilder/dnd', '@atlaskit/pragmatic-drag-and-drop']
         : []),
+      ...(options.useDateTimePackage ? ['@react-querybuilder/datetime'] : []),
       ...(variant === 'default'
         ? []
         : [`@react-querybuilder/${variant}`, ...peerDependencies[variant]]),
     ],
-    [options.enableDragAndDrop, variant]
+    [options.enableDragAndDrop, options.useDateTimePackage, variant]
   );
 
   const loadFromSQL = useCallback(() => {
@@ -610,23 +616,25 @@ export default function Demo({
           style={{ display: 'flex', flexDirection: 'column', rowGap: 'var(--ifm-global-spacing)' }}>
           <div id={qbWrapperId} className={qbWrapperClassName}>
             <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
-              <QueryBuilderDnD dnd={dnd}>
-                {options.independentCombinators ? (
-                  <QueryBuilder
-                    key="queryIC"
-                    {...commonRQBProps}
-                    defaultQuery={queryIC}
-                    onQueryChange={onQueryChangeRGIC}
-                  />
-                ) : (
-                  <QueryBuilder
-                    key="query"
-                    {...commonRQBProps}
-                    defaultQuery={query}
-                    onQueryChange={onQueryChangeRG}
-                  />
-                )}
-              </QueryBuilderDnD>
+              <DateTimeWrapper enabled={options.useDateTimePackage}>
+                <QueryBuilderDnD dnd={dnd}>
+                  {options.independentCombinators ? (
+                    <QueryBuilder
+                      key="queryIC"
+                      {...commonRQBProps}
+                      defaultQuery={queryIC}
+                      onQueryChange={onQueryChangeRGIC}
+                    />
+                  ) : (
+                    <QueryBuilder
+                      key="query"
+                      {...commonRQBProps}
+                      defaultQuery={query}
+                      onQueryChange={onQueryChangeRG}
+                    />
+                  )}
+                </QueryBuilderDnD>
+              </DateTimeWrapper>
             </QueryWrapper>
           </div>
           <Tabs

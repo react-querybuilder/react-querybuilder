@@ -1,4 +1,5 @@
 @import '@react-querybuilder/core/dist/query-builder.css';
+@import '@react-querybuilder/datetime/dist/datetime.css';
 @import './classname-diagram.css';
 @import './justified.css';
 

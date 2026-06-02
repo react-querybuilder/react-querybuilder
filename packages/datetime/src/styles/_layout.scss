@@ -1,0 +1,11 @@
+@use './variables' as *;
+
+// Layout-only styles for RelativeDateTimeValueEditor. No colors/borders/fonts so the
+// editor inherits the surrounding theme; compat packages style the sub-controls via
+// the query builder schema's control components.
+.rule-value-dateTimeRelative {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--#{$rqbdt-var-prefix}spacing);
+}

@@ -365,7 +365,6 @@ export const getCodeString = (
     getPropText('showNotToggle'),
     getPropText('showShiftActions'),
     getPropText('suppressStandardClassnames'),
-    getPropText('useDateTimePackage'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
@@ -393,7 +392,11 @@ import {${
   } QueryBuilder } from 'react-querybuilder';
 import { fields } from './fields';
 import 'react-querybuilder/dist/query-builder.${styleLanguage}';
-import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}
+import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
+    options.useDateTimePackage
+      ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime';`
+      : ''
+  }
 ${
   options.enableDragAndDrop
     ? `
@@ -407,11 +410,11 @@ const dnd = createPragmaticDndAdapter({ draggable, dropTargetForElements, monito
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
-  return (${
-    options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''
-  }${styleWrapperPrefix}<QueryBuilder ${props} />${styleWrapperSuffix}${
-    options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''
-  }
+  return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
+    options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
+  }<QueryBuilder ${props} />${
+    options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''
+  }${styleWrapperSuffix}${options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''}
   );
 }`;
 

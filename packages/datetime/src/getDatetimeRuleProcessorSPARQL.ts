@@ -1,7 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorSPARQL, lc, sparqlVar, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, processIsDateField } from './utils';
+import { isISOStringDateOnly, materializeRelativeValues, processIsDateField } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -45,7 +45,10 @@ export const getDatetimeRuleProcessorSPARQL =
       return `NOW() - ${field} <= "${value}"^^xsd:duration`;
     }
 
-    const valueAsArray: string[] = toArray(value, { retainEmptyStrings: false });
+    // Resolve any relative value(s) to concrete literals (SPARQL has no symbolic relative form).
+    const valueAsArray: string[] = toArray(materializeRelativeValues(apiFns, value, opts), {
+      retainEmptyStrings: false,
+    });
     const valueAsDateArray = valueAsArray
       .map((v): [string, Date] => [v, apiFns.toDate(v)])
       .filter(([, d]) => apiFns.isValid(d));

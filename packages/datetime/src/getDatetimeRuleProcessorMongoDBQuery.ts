@@ -1,7 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorMongoDBQuery, mongoOperators, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { processIsDateField } from './utils';
+import { materializeRelativeValues, processIsDateField } from './utils';
 
 /**
  * Generates a rule processor with date/time features for use by
@@ -11,14 +11,17 @@ export const getDatetimeRuleProcessorMongoDBQuery =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
-    const { field, operator, value, valueSource } = rule;
+    const { field, operator, valueSource } = rule;
 
     if (valueSource === 'field' || !processIsDateField(opts.context?.isDateField, rule, opts)) {
       return defaultRuleProcessorMongoDBQuery(rule, opts);
     }
 
+    // Resolve any relative value(s) to concrete literals (MongoDB queries use concrete dates).
+    const value = materializeRelativeValues(apiFns, rule.value, opts);
+
     if (operator === '=') {
-      return { [field]: apiFns.toDate(value) };
+      return { [field]: apiFns.toDate(value as string | Date) };
     }
 
     switch (operator) {
@@ -27,10 +30,10 @@ export const getDatetimeRuleProcessorMongoDBQuery =
       case '!=':
       case '>':
       case '>=':
-        return { [field]: { [mongoOperators[operator]]: apiFns.toDate(value) } };
+        return { [field]: { [mongoOperators[operator]]: apiFns.toDate(value as string | Date) } };
     }
 
-    const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
+    const valueAsArray: string[] = toArray(value, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
       .map(v => apiFns.toDate(v))
       .filter(dateVal => apiFns.isValid(dateVal));

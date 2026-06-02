@@ -58,7 +58,8 @@
         "types": "./dist/cjs/luxon.d.ts",
         "default": "./dist/cjs/luxon.js"
       }
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "types": "./dist/react-querybuilder_datetime.legacy-esm.d.ts",
   "files": [
@@ -69,7 +70,10 @@
     "luxon"
   ],
   "license": "MIT",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",
@@ -85,7 +89,9 @@
   ],
   "scripts": {
     "start": "vite",
-    "build": "bun --bun tsdown",
+    "build": "bun run build:main && bun run build:css",
+    "build:main": "bun --bun tsdown",
+    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
@@ -109,6 +115,7 @@
     "react-dom": "catalog:",
     "react-querybuilder": "8.18.0",
     "rollup-plugin-visualizer": "catalog:",
+    "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

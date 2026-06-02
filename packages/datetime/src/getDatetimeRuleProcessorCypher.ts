@@ -1,7 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorCypher, lc, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, processIsDateField } from './utils';
+import { isISOStringDateOnly, materializeRelativeValues, processIsDateField } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -33,16 +33,19 @@ export const getDatetimeRuleProcessorCypher =
       return defaultRuleProcessorCypher(rule, opts);
     }
 
-    const { field, operator, value } = rule;
+    const { field, operator } = rule;
     const operatorTL = lc(operator);
 
     // Duration math operators — compare elapsed time against a duration literal
     if (operatorTL === 'olderthanduration') {
-      return `datetime() - ${field} > duration('${value}')`;
+      return `datetime() - ${field} > duration('${rule.value}')`;
     }
     if (operatorTL === 'withinduration') {
-      return `datetime() - ${field} <= duration('${value}')`;
+      return `datetime() - ${field} <= duration('${rule.value}')`;
     }
+
+    // Resolve any relative value(s) to concrete literals (Cypher has no symbolic relative form).
+    const value = materializeRelativeValues(apiFns, rule.value, opts);
 
     const valueAsArray: string[] = toArray(value, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray

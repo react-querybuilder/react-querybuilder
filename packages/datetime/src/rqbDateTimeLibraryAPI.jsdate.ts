@@ -1,4 +1,8 @@
-import type { RQBDateTimeLibraryAPI } from './types';
+import type {
+  RelativeDateTimeTruncationUnit,
+  RelativeDateTimeUnit,
+  RQBDateTimeLibraryAPI,
+} from './types';
 import { isISOStringDateOnly } from './utils';
 
 const invalidDate = new Date(Number.NaN);
@@ -34,6 +38,66 @@ const toISOStringDateOnly = (d: string | Date) => {
   return isValid(dToDate) ? dToDate.toISOString().slice(0, 10) : '';
 };
 
+// Week starts on Sunday (matching Day.js/date-fns defaults).
+const startOf = (d: string | Date, unit: RelativeDateTimeTruncationUnit): Date => {
+  const r = new Date(toDate(d).getTime());
+  r.setHours(0, 0, 0, 0);
+  switch (unit) {
+    case 'week':
+      r.setDate(r.getDate() - r.getDay());
+      break;
+    case 'month':
+      r.setDate(1);
+      break;
+    case 'year':
+      r.setMonth(0, 1);
+      break;
+  }
+  return r;
+};
+
+const endOf = (d: string | Date, unit: RelativeDateTimeTruncationUnit): Date => {
+  const r = new Date(toDate(d).getTime());
+  r.setHours(23, 59, 59, 999);
+  switch (unit) {
+    case 'week':
+      r.setDate(r.getDate() + (6 - r.getDay()));
+      break;
+    case 'month':
+      r.setMonth(r.getMonth() + 1, 0);
+      break;
+    case 'year':
+      r.setMonth(11, 31);
+      break;
+  }
+  return r;
+};
+
+const add = (d: string | Date, amount: number, unit: RelativeDateTimeUnit): Date => {
+  const r = new Date(toDate(d).getTime());
+  switch (unit) {
+    case 'minute':
+      r.setMinutes(r.getMinutes() + amount);
+      break;
+    case 'hour':
+      r.setHours(r.getHours() + amount);
+      break;
+    case 'day':
+      r.setDate(r.getDate() + amount);
+      break;
+    case 'week':
+      r.setDate(r.getDate() + amount * 7);
+      break;
+    case 'month':
+      r.setMonth(r.getMonth() + amount);
+      break;
+    case 'year':
+      r.setFullYear(r.getFullYear() + amount);
+      break;
+  }
+  return r;
+};
+
 /**
  * {@link RQBDateTimeLibraryAPI} for JavaScript `Date`
  *
@@ -66,4 +130,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     return isValid(dToDate) ? dToDate.toISOString() : '';
   },
   toISOStringDateOnly,
+  startOf,
+  endOf,
+  add,
 };

@@ -8,6 +8,7 @@ import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
+import { getDatetimeRuleProcessorJSONata } from './getDatetimeRuleProcessorJSONata';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
 import { getDatetimeRuleProcessorSPARQL } from './getDatetimeRuleProcessorSPARQL';
@@ -64,6 +65,12 @@ export const datetimeValueProcessorPostgreSQL: ValueProcessorByRule =
  */
 export const datetimeRuleProcessorCEL: ValueProcessorByRule =
   getDatetimeRuleProcessorCEL(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "jsonata" format using Day.js
+ */
+export const datetimeRuleProcessorJSONata: RuleProcessor =
+  getDatetimeRuleProcessorJSONata(rqbDateTimeLibraryAPI);
 
 /**
  * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "mongodb_query" format using Day.js

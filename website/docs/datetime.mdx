@@ -220,6 +220,93 @@ const nl = formatQuery(query, {
 {/*  */}
 {/* Augments [`ValueEditor`](./components/valueeditor) with date/time functionality. */}
 
+## Components
+
+The `QueryBuilderDateTime` [context provider](./components/querybuilder#context) augments [`ValueEditor`](./components/valueeditor) with date/time functionality. Wrap your `QueryBuilder` with it to enable enhanced date/time editing for any field whose `inputType` is `"date"`/`"datetime-local"` or whose `datatype` begins with "date", "datetime", or "timestamp". Non-date fields fall back to the standard value editor.
+
+```tsx
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+
+const App = () => (
+  <QueryBuilderDateTime>
+    <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+  </QueryBuilderDateTime>
+);
+```
+
+`QueryBuilderDateTime` composes with other context providers (compat/theme packages and [`@react-querybuilder/dnd`](./dnd)). Nest it inside the theme provider so themed sub-controls (selectors, inputs) are used:
+
+```tsx
+<QueryBuilderMantine>
+  <QueryBuilderDateTime>
+    <QueryBuilderDnD dnd={dnd}>
+      <QueryBuilder /* ... */ />
+    </QueryBuilderDnD>
+  </QueryBuilderDateTime>
+</QueryBuilderMantine>
+```
+
+### Relative date/time values
+
+Date/time fields support _relative_ values such as "three months ago" or "the beginning of this year" in addition to absolute (ISO 8601 string) values. The value editor presents an "Absolute"/"Relative" mode selector; in relative mode it shows an anchor selector, a signed offset, and a unit selector (the unit is hidden when the offset is `0`).
+
+A relative value is stored as a structured object (absolute values remain plain strings, preserving backward compatibility):
+
+```ts
+interface RelativeDateTimeValue {
+  mode: 'relative';
+  // Zero-offset reference point:
+  anchor:
+    | 'now'
+    | 'startOfDay'
+    | 'endOfDay'
+    | 'startOfWeek'
+    | 'endOfWeek'
+    | 'startOfMonth'
+    | 'endOfMonth'
+    | 'startOfYear'
+    | 'endOfYear';
+  // Signed offset from the anchor (negative = past, positive = future, 0 = exact anchor):
+  offset: number;
+  unit: 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+}
+```
+
+The final date/time is computed as: apply the `anchor` to the current date/time, then add `offset` units of `unit`.
+
+To use the relative-capable editor on its own (e.g. when providing custom `controlElements`), import `RelativeDateTimeValueEditor`:
+
+```tsx
+import { RelativeDateTimeValueEditor } from '@react-querybuilder/datetime';
+
+<QueryBuilder fields={fields} controlElements={{ valueEditor: RelativeDateTimeValueEditor }} />;
+```
+
+### Materializing relative values
+
+When exporting a query, relative values are resolved according to the target format:
+
+- **SQL** emits a _live_, dialect-specific symbolic expression by default (e.g. PostgreSQL `cast(date_trunc('year', current_date) as date)`, SQLite `date('now', 'start of year')`), so the value stays relative to query-execution time.
+- **JsonLogic** is always live, via a custom `dateRelative` operation resolved at evaluation time.
+- All other formats **materialize** the relative value to a concrete ISO 8601 string at format time.
+
+Two `context` options control this behavior:
+
+- `context.materializeRelativeDateTime` — when `true`, relative values are resolved to concrete literals for _all_ formats, including SQL.
+- `context.relativeDateTimeBase` — a `Date` that pins "now" for deterministic output (useful for testing or reproducible exports).
+
+```ts
+formatQuery(query, {
+  format: 'sql',
+  preset: 'postgresql',
+  ruleProcessor: datetimeRuleProcessorSQL,
+  context: {
+    materializeRelativeDateTime: true,
+    relativeDateTimeBase: new Date('2024-01-15T00:00:00Z'),
+  },
+});
+```
+
 ## Custom plugins
 
 If the official date/time processor plugins do not meet your requirements, you can provide a custom plugin that conforms to the `RQBDateTimeLibraryAPI` interface:
@@ -247,6 +334,12 @@ interface RQBDateTimeLibraryAPI {
   toISOString: (d: DateOrString) => string;
   /** Format `Date` or ISO 8601 string in ISO date-only format ('YYYY-MM-DD') */
   toISOStringDateOnly: (d: DateOrString) => string;
+  /** Truncate `d` to the start of the given period (used for relative values) */
+  startOf: (d: DateOrString, unit: 'day' | 'week' | 'month' | 'year') => Date;
+  /** Advance `d` to the end of the given period (used for relative values) */
+  endOf: (d: DateOrString, unit: 'day' | 'week' | 'month' | 'year') => Date;
+  /** Offset `d` by `amount` units of `unit` (negative `amount` moves into the past) */
+  add: (d: DateOrString, amount: number, unit: RelativeDateTimeUnit) => Date;
 }
 ```
 

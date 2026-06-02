@@ -7,7 +7,6 @@ export * from './getDatetimeRuleProcessorMongoDBQuery';
 export * from './getDatetimeRuleProcessorNL';
 export * from './getDatetimeRuleProcessorSPARQL';
 export * from './getDatetimeRuleProcessorSQL';
+export * from './QueryBuilderDateTime';
+export * from './RelativeDateTimeValueEditor';
 export * from './types';
-
-// TODO: Export this when it gets more functionality
-// export * from './QueryBuilderDateTime';
