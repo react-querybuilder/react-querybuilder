@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#1045] Relative date/time value support in `@react-querybuilder/datetime`.
+  - New `RelativeDateTimeValueEditor` component with an absolute/relative mode toggle. Relative mode edits a structured value (anchor + signed offset + unit, e.g. "3 months ago" or "start of year"); absolute values remain plain ISO 8601 strings for backward compatibility.
+  - `QueryBuilderDateTime` now renders the relative-capable editor for date/datetime fields (falling back to the standard editor otherwise).
+  - All `formatQuery` rule processors handle relative values: SQL emits live, dialect-specific symbolic expressions and JsonLogic stays live via a `dateRelative` operation, while other formats materialize to ISO strings. New `context` options `materializeRelativeDateTime` (force materialization for all formats) and `relativeDateTimeBase` (pin "now" for deterministic output).
+  - `RQBDateTimeLibraryAPI` gains `startOf`, `endOf`, and `add` methods (implemented for the Day.js, date-fns, Luxon, and JS Date plugins).
+  - Demo: "Use date/time package" option now wraps the live query builder with `QueryBuilderDateTime` for interactive relative editing.
+
 ### Changed
 
 - Replaced `any` with `unknown` on input parameters of ~20 core utility functions (type guards, array utils, string escape helpers, `clsx`). Return types preserved or tightened to avoid breaking consumers.
@@ -2235,6 +2244,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1039]: https://github.com/react-querybuilder/react-querybuilder/pull/1039
 [#1040]: https://github.com/react-querybuilder/react-querybuilder/pull/1040
 [#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
+[#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
 
 <!-- #endregion -->
 
