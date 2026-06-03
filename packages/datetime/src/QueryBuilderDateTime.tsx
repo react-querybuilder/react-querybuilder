@@ -1,8 +1,17 @@
 import dayjs from 'dayjs';
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import type { QueryBuilderContextProvider, ValueEditorProps } from 'react-querybuilder';
-import { getCompatContextProvider, useValueEditor, ValueEditor } from 'react-querybuilder';
+import {
+  getCompatContextProvider,
+  QueryBuilderContext,
+  useValueEditor,
+  ValueEditor,
+} from 'react-querybuilder';
+import {
+  InheritedValueEditorContext,
+  useInheritedValueEditor,
+} from './InheritedValueEditorContext';
 import { RelativeDateTimeConfigContext } from './RelativeDateTimeConfigContext';
 import { RelativeDateTimeValueEditor } from './RelativeDateTimeValueEditor';
 import type { RelativeDateTimeEditorConfig } from './types';
@@ -18,9 +27,15 @@ const isDateTimeEditor = (props: ValueEditorProps, inputTypeCoerced: string | un
 
 export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element => {
   const uVE = useValueEditor(props);
+  const InheritedEditor = useInheritedValueEditor();
+
+  // Non-date fields and unparseable values: delegate to the inherited (compat) editor when
+  // present, otherwise the default editor.
+  const fallback = (p: ValueEditorProps) =>
+    InheritedEditor ? <InheritedEditor {...p} /> : <ValueEditor {...p} skipHook />;
 
   if (!isDateTimeEditor(props, uVE.inputTypeCoerced)) {
-    return <ValueEditor {...props} skipHook />;
+    return fallback(props);
   }
 
   const maybeDate = dayjs(props.value);
@@ -28,24 +43,25 @@ export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element 
     const value = maybeDate.format(
       uVE.inputTypeCoerced === 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm'
     );
-    return <ValueEditor {...props} value={value} skipHook />;
+    return fallback({ ...props, value });
   }
 
-  return <ValueEditor {...props} skipHook />;
+  return fallback(props);
 };
 
 /**
  * Provider value editor: renders the relative-capable {@link RelativeDateTimeValueEditor}
- * for date/time fields and falls back to the standard editor for everything else.
+ * for date/time fields and falls back to the inherited (compat) editor for everything else.
  */
 const QueryBuilderDateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element => {
   const uVE = useValueEditor(props);
+  const InheritedEditor = useInheritedValueEditor();
 
   if (isDateTimeEditor(props, uVE.inputTypeCoerced)) {
     return <RelativeDateTimeValueEditor {...props} />;
   }
 
-  return <ValueEditor {...props} skipHook />;
+  return InheritedEditor ? <InheritedEditor {...props} /> : <ValueEditor {...props} skipHook />;
 };
 
 export const QueryBuilderDateTimeContext: QueryBuilderContextProvider = getCompatContextProvider({
@@ -78,9 +94,16 @@ export const QueryBuilderDateTime = ({
     [modeController, anchors, units, toggleLabels]
   );
 
+  // Capture the value editor inherited from any outer compat provider (e.g. QueryBuilderMaterial)
+  // _before_ QueryBuilderDateTimeContext overrides it, so date/time editors can delegate to it.
+  const inheritedValueEditor = (useContext(QueryBuilderContext).controlElements?.valueEditor ??
+    null) as React.ComponentType<ValueEditorProps> | null;
+
   return (
     <RelativeDateTimeConfigContext.Provider value={config}>
-      <QueryBuilderDateTimeContext>{children}</QueryBuilderDateTimeContext>
+      <InheritedValueEditorContext.Provider value={inheritedValueEditor}>
+        <QueryBuilderDateTimeContext>{children}</QueryBuilderDateTimeContext>
+      </InheritedValueEditorContext.Provider>
     </RelativeDateTimeConfigContext.Provider>
   );
 };

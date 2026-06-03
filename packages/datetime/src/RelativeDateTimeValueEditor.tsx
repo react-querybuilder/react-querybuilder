@@ -10,6 +10,7 @@ import {
   ValueEditor,
 } from 'react-querybuilder';
 import { DateTimeValueEditor } from './QueryBuilderDateTime';
+import { useInheritedValueEditor } from './InheritedValueEditorContext';
 import type { ResolvedRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
 import { useRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
 import { defaultRelativeDateTimeValue } from './relativeDateTimeConstants';
@@ -56,6 +57,9 @@ const RelativeDateTimeSingleValueEditor = ({
 }: RelativeDateTimeSingleValueEditorProps): React.JSX.Element => {
   const { schema, disabled, title, testID } = baseProps;
   const { modeController, anchors, units, toggleLabels } = config;
+
+  // Themed numeric offset input from the inherited (compat) editor when present.
+  const NumericEditor = useInheritedValueEditor() ?? ValueEditor;
 
   const isRelative = modeController.isRelative({ ...baseProps, value });
   const relValue: RelativeDateTimeValue = isRelativeDateTimeValue(value)
@@ -119,7 +123,7 @@ const RelativeDateTimeSingleValueEditor = ({
             path={dummyPath}
             level={0}
           />
-          <ValueEditor
+          <NumericEditor
             skipHook
             testID={testID}
             inputType="number"
