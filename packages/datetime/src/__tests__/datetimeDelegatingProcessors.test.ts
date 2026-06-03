@@ -1,6 +1,7 @@
 import type { FullField, RuleGroupType } from '@react-querybuilder/core';
 import { formatQuery } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
+import { getDatetimeRuleProcessorElasticSearch } from '../getDatetimeRuleProcessorElasticSearch';
 import { getDatetimeRuleProcessorGremlin } from '../getDatetimeRuleProcessorGremlin';
 import { getDatetimeRuleProcessorLDAP } from '../getDatetimeRuleProcessorLDAP';
 import { getDatetimeRuleProcessorMongoDB } from '../getDatetimeRuleProcessorMongoDB';
@@ -51,6 +52,7 @@ const stringFormats = [
   ['spel', getDatetimeRuleProcessorSpEL],
   ['ldap', getDatetimeRuleProcessorLDAP],
   ['gremlin', getDatetimeRuleProcessorGremlin],
+  ['elasticsearch', getDatetimeRuleProcessorElasticSearch],
 ] as const;
 
 for (const [libName, apiFns] of dateLibraryFunctions) {

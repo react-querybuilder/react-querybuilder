@@ -9,6 +9,7 @@ import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
 import { getDatetimeRuleProcessorDrizzle } from './getDatetimeRuleProcessorDrizzle';
+import { getDatetimeRuleProcessorElasticSearch } from './getDatetimeRuleProcessorElasticSearch';
 import { getDatetimeRuleProcessorGremlin } from './getDatetimeRuleProcessorGremlin';
 import { getDatetimeRuleProcessorJSONata } from './getDatetimeRuleProcessorJSONata';
 import { getDatetimeRuleProcessorLDAP } from './getDatetimeRuleProcessorLDAP';
@@ -146,6 +147,12 @@ export const datetimeRuleProcessorSequelize: RuleProcessor =
  */
 export const datetimeRuleProcessorDrizzle: RuleProcessor =
   getDatetimeRuleProcessorDrizzle(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "elasticsearch" format using Day.js
+ */
+export const datetimeRuleProcessorElasticSearch: RuleProcessor =
+  getDatetimeRuleProcessorElasticSearch(rqbDateTimeLibraryAPI);
 
 /**
  * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "tanstack_db" format using Day.js

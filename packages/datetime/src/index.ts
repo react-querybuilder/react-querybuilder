@@ -3,6 +3,7 @@ export * from './getDatetimeJsonLogicOperations';
 export * from './getDatetimeRuleProcessorCEL';
 export * from './getDatetimeRuleProcessorCypher';
 export * from './getDatetimeRuleProcessorDrizzle';
+export * from './getDatetimeRuleProcessorElasticSearch';
 export * from './getDatetimeRuleProcessorGremlin';
 export * from './getDatetimeRuleProcessorJSONata';
 export * from './getDatetimeRuleProcessorLDAP';
