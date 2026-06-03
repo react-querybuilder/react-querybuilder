@@ -4,16 +4,23 @@ import { Buffer } from 'buffer';
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
-// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
 import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
 import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
 import {
   datetimeRuleProcessorCEL,
   datetimeRuleProcessorCypher,
+  datetimeRuleProcessorDrizzle,
+  datetimeRuleProcessorElasticSearch,
+  datetimeRuleProcessorGremlin,
   datetimeRuleProcessorJSONata,
+  datetimeRuleProcessorLDAP,
+  datetimeRuleProcessorMongoDB,
   datetimeRuleProcessorMongoDBQuery,
   datetimeRuleProcessorNL,
+  datetimeRuleProcessorPrisma,
+  datetimeRuleProcessorSequelize,
   datetimeRuleProcessorSPARQL,
+  datetimeRuleProcessorSpEL,
   datetimeRuleProcessorSQL,
 } from '@react-querybuilder/datetime/dayjs';
 import clsx from 'clsx';
@@ -37,9 +44,6 @@ import {
 } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
-
-// const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
-const extraStylesCSS = demoStylesCSS;
 
 type OptionsAction =
   | { type: 'all' }
@@ -166,23 +170,22 @@ export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcesso
   sql: datetimeRuleProcessorSQL,
   parameterized: datetimeRuleProcessorSQL,
   parameterized_named: datetimeRuleProcessorSQL,
-  // mongodb: datetimeRuleProcessorMongoDB,
+  mongodb: datetimeRuleProcessorMongoDB,
   mongodb_query: datetimeRuleProcessorMongoDBQuery,
   cel: datetimeRuleProcessorCEL,
   jsonlogic: datetimeRuleProcessorJsonLogic,
-  // spel: datetimeRuleProcessorSpEL,
-  elasticsearch: undefined,
+  spel: datetimeRuleProcessorSpEL,
+  elasticsearch: datetimeRuleProcessorElasticSearch,
   jsonata: datetimeRuleProcessorJSONata,
   natural_language: datetimeRuleProcessorNL,
-  // ldap: datetimeRuleProcessorLDAP,
-  // drizzle: datetimeRuleProcessorDrizzle,
-  // tanstack_db: datetimeRuleProcessorTanstackDB,
-  // prisma: datetimeRuleProcessorPrisma,
-  // sequelize: datetimeRuleProcessorSequelize,
+  ldap: datetimeRuleProcessorLDAP,
+  drizzle: datetimeRuleProcessorDrizzle,
+  prisma: datetimeRuleProcessorPrisma,
+  sequelize: datetimeRuleProcessorSequelize,
   cypher: datetimeRuleProcessorCypher,
   gql: datetimeRuleProcessorCypher,
   sparql: datetimeRuleProcessorSPARQL,
-  // gremlin: datetimeRuleProcessorGremlin,
+  gremlin: datetimeRuleProcessorGremlin,
 };
 
 export const getExportCall = async (
@@ -464,7 +467,7 @@ export const App = () => {
 };
 
 export const extraStyles = () =>
-  prettier.format(extraStylesCSS, {
+  prettier.format(demoStylesCSS, {
     filepath: 'styles.css',
     plugins: [parserPostCSS],
     printWidth: 100,
