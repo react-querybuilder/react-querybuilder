@@ -17,6 +17,7 @@ import {
   datetimeRuleProcessorMongoDB,
   datetimeRuleProcessorMongoDBQuery,
   datetimeRuleProcessorNL,
+  datetimeRuleProcessorParameterized,
   datetimeRuleProcessorPrisma,
   datetimeRuleProcessorSequelize,
   datetimeRuleProcessorSPARQL,
@@ -168,8 +169,8 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
 
 export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
   sql: datetimeRuleProcessorSQL,
-  parameterized: datetimeRuleProcessorSQL,
-  parameterized_named: datetimeRuleProcessorSQL,
+  parameterized: datetimeRuleProcessorParameterized,
+  parameterized_named: datetimeRuleProcessorParameterized,
   mongodb: datetimeRuleProcessorMongoDB,
   mongodb_query: datetimeRuleProcessorMongoDBQuery,
   cel: datetimeRuleProcessorCEL,
