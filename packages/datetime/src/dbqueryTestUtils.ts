@@ -159,4 +159,30 @@ export const testCases: Record<string, [RuleGroupType, string]> = {
     },
     'all',
   ],
+  // `between` with relative bounds on both sides: a millennium ago through the start of
+  // the current year. Both birthdates fall inside that window, so both rows match.
+  relativeBetween: [
+    {
+      combinator: 'and',
+      rules: [
+        {
+          field: 'birthdate',
+          operator: 'between',
+          value: [relativeMilleniumAgo, relativeStartOfYear],
+        },
+      ],
+    },
+    'all',
+  ],
+  // `between` with mixed bounds: an absolute "from" and a relative "to". Vaughan
+  // (1954-10-03) predates the absolute lower bound, so only Vai (1960-06-06) matches.
+  relativeBetweenMixed: [
+    {
+      combinator: 'and',
+      rules: [
+        { field: 'birthdate', operator: 'between', value: ['1955-01-01', relativeStartOfYear] },
+      ],
+    },
+    'Vai',
+  ],
 };

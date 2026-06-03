@@ -314,42 +314,64 @@ Two controllers ship with the package:
 
 #### Operator-driven controller
 
-`operatorModeController` derives the mode from the rule's **operator** instead of rendering a toggle. Register the relative operator(s) on your date fields with `withRelativeOperators`, then pass the controller to `QueryBuilderDateTime`:
-
-```tsx
-import {
-  QueryBuilderDateTime,
-  operatorModeController,
-  withRelativeOperators,
-} from '@react-querybuilder/datetime';
-
-const fieldsWithRelative = withRelativeOperators(fields);
-
-<QueryBuilderDateTime modeController={operatorModeController}>
-  <QueryBuilder fields={fieldsWithRelative} />
-</QueryBuilderDateTime>;
-```
-
-`withRelativeOperators` appends a `"relative"` operator to each field's `operators` list (falling back to the core `defaultOperators` for fields without an explicit list). Selecting that operator puts the editor in relative mode; the value remains a `RelativeDateTimeValue`.
-
-:::caution
-The operators registered for mode-switching signal mode only. If you use a custom (non-standard) operator name, you must add matching [processor support](#materializing-relative-values) so the operator exports correctly. Standard comparison operators (`=`, `<`, etc.) work out of the box.
-:::
-
-#### Custom controllers
-
-Supply your own object to fully control the UX. Use `createOperatorModeController` to build an operator-driven controller from a custom operator list or predicate, or write a controller from scratch:
+An operator-driven controller derives the mode from the rule's **operator** instead of rendering a toggle button — the operator selector _is_ the mode affordance. Build one with `createOperatorModeController`, passing the operator name(s) (or a predicate) that should put the editor in relative mode:
 
 ```tsx
 import { createOperatorModeController } from '@react-querybuilder/datetime';
 
-// From a custom operator list:
-const controller = createOperatorModeController(['relativeTo', 'within']);
+// From an operator list:
+const controller = createOperatorModeController(['relativeEq', 'relativeBefore']);
 
 // Or a predicate:
-const controller = createOperatorModeController(op => op.startsWith('rel'));
+const controller = createOperatorModeController(op => op.startsWith('relative'));
+```
 
-// Fully custom (no built-in affordance; mode derived from value):
+Register those operators on your date fields with `withRelativeOperators(fields, operators)`, then pass the controller to `QueryBuilderDateTime`:
+
+```tsx
+import {
+  QueryBuilderDateTime,
+  createOperatorModeController,
+  withRelativeOperators,
+} from '@react-querybuilder/datetime';
+
+const relativeOperators = [
+  { name: 'relativeEq', value: 'relativeEq', label: 'is (relative)' },
+  { name: 'relativeBefore', value: 'relativeBefore', label: 'is before (relative)' },
+];
+
+const controller = createOperatorModeController(relativeOperators.map(o => o.name));
+const fieldsWithRelative = withRelativeOperators(fields, relativeOperators);
+
+<QueryBuilderDateTime modeController={controller}>
+  <QueryBuilder fields={fieldsWithRelative} />
+</QueryBuilderDateTime>;
+```
+
+`withRelativeOperators` appends the given `operators` to each field's `operators` list (falling back to the core `defaultOperators` for fields without an explicit list). Selecting one of those operators puts the editor in relative mode; the stored value remains a `RelativeDateTimeValue`.
+
+##### Exporting operator-driven values
+
+The operator names registered above signal **mode only** — they aren't real comparison operators, so processors don't know how to export them on their own. Map each one to a real operator at format time via `context.relativeOperatorMap`:
+
+```ts
+formatQuery(query, {
+  format: 'sql',
+  preset: 'postgresql',
+  ruleProcessor: datetimeRuleProcessorSQL,
+  context: {
+    relativeOperatorMap: { relativeEq: '=', relativeBefore: '<' },
+  },
+});
+```
+
+Each date/time processor resolves a rule's operator through this map before exporting. Operators absent from the map pass through unchanged (no warning is emitted), so you only need to map the operators you introduced. To inspect how operators and values are being resolved, use the [`format: 'diagnostics'`](./utils/export#diagnostics) output.
+
+#### Custom controllers
+
+Supply your own object to fully control the UX — for example, a controller that derives the mode purely from the value shape and renders no affordance:
+
+```tsx
 const valueShapeController = {
   isRelative: props => typeof props.value === 'object' && props.value?.mode === 'relative',
 };
@@ -384,6 +406,28 @@ const valueShapeController = {
   <QueryBuilder fields={fields} />
 </QueryBuilderDateTime>
 ```
+
+### Between ranges
+
+For the `between` and `notBetween` operators the editor renders **two independent value editors**, one per bound, each with its own mode affordance. This lets the "from" and "to" bounds be set independently — either can be absolute or relative, and they can be mixed (e.g. an absolute "from" and a relative "to"):
+
+```ts
+const query: RuleGroupType = {
+  combinator: 'and',
+  rules: [
+    {
+      field: 'lastLogin',
+      operator: 'between',
+      value: [
+        '2024-01-01', // absolute "from"
+        { mode: 'relative', anchor: 'now', offset: 0, unit: 'day' }, // relative "to"
+      ],
+    },
+  ],
+};
+```
+
+The bounds are always stored as a **two-element array**, regardless of the `listsAsArrays` option. Relative bounds are objects, which can't survive the comma-joining used for ordinary `between` values, so the array is emitted directly. All processors already handle relative values in either (or both) array slots.
 
 ### Materializing relative values
 

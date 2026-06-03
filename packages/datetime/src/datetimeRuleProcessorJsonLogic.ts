@@ -1,7 +1,12 @@
 import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorJsonLogic, toArray } from 'react-querybuilder';
 import type { RQBJsonLogicDateRelative, RQBDateTimeJsonLogic } from './types';
-import { isDateOnlyDatatype, isRelativeDateTimeValue, processIsDateField } from './utils';
+import {
+  isDateOnlyDatatype,
+  isRelativeDateTimeValue,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 
 const dateOperationMap = {
   '!=': 'dateNotOn',
@@ -34,7 +39,8 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
     return defaultRuleProcessorJsonLogic(rule, opts);
   }
 
-  const { field, operator, value, valueSource } = rule;
+  const { field, value, valueSource } = rule;
+  const operator = resolveDatetimeOperator(rule, opts);
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
   const dateOnly = isDateOnlyDatatype(opts?.fieldData?.datatype);

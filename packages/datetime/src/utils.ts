@@ -82,6 +82,16 @@ export const materializeRelativeValues = (
   return Array.isArray(value) ? value.map(conv) : conv(value);
 };
 
+/**
+ * Resolves a rule's operator for export, applying any `context.relativeOperatorMap`
+ * entry. Operator-driven mode controllers (see `createOperatorModeController`) use
+ * dedicated operator names to signal relative mode; this maps those names to the real
+ * comparison operator at format time. Operators absent from the map pass through unchanged.
+ */
+export const resolveDatetimeOperator = (...[rule, opts]: Parameters<RuleProcessor>): string =>
+  (opts?.context?.relativeOperatorMap as Record<string, string> | undefined)?.[rule.operator] ??
+  rule.operator;
+
 export const defaultIsDateField: IsDateFieldFunction = (
   ...[rule, opts]: Parameters<RuleProcessor>
 ): boolean =>

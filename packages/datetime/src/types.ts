@@ -255,8 +255,9 @@ export interface RelativeDateTimeModeControlProps {
  * unaffected — a controller only decides the current mode and (optionally) renders an
  * affordance to change it.
  *
- * Ships with {@link toggleModeController} (the zero-config default) and
- * {@link operatorModeController}. Supply a custom object to fully control the UX.
+ * Ships with {@link toggleModeController} (the zero-config default); build an
+ * operator-driven controller with {@link createOperatorModeController}, or supply a custom
+ * object to fully control the UX.
  */
 export interface RelativeDateTimeModeController {
   /** Derives the current mode from the rule (its operator and/or value). */
@@ -284,6 +285,23 @@ export interface RelativeDateTimeEditorConfig {
   /** Content/labels for the absolute/relative toggle. */
   toggleLabels?: RelativeDateTimeToggleLabels;
 }
+
+/**
+ * Maps operator names that are used only to _signal_ relative mode (see
+ * {@link createOperatorModeController}) to the real comparison operator that should be used
+ * when exporting via `formatQuery`. Supplied through `context.relativeOperatorMap`. Operators
+ * not present in the map are exported unchanged.
+ *
+ * @example
+ * ```ts
+ * formatQuery(query, {
+ *   format: 'sql',
+ *   ruleProcessor: datetimeRuleProcessorSQL,
+ *   context: { relativeOperatorMap: { relativeEq: '=' } },
+ * });
+ * ```
+ */
+export type RelativeOperatorMap = Record<string, string>;
 
 export type IsDateFieldFunction = (...[rule, opts]: Parameters<RuleProcessor>) => boolean;
 export type IsDateField =

@@ -1,7 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorMongoDBQuery, mongoOperators, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { materializeRelativeValues, processIsDateField } from './utils';
+import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
 
 /**
  * Generates a rule processor with date/time features for use by
@@ -11,7 +11,8 @@ export const getDatetimeRuleProcessorMongoDBQuery =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
-    const { field, operator, valueSource } = rule;
+    const { field, valueSource } = rule;
+    const operator = resolveDatetimeOperator(rule, opts);
 
     if (valueSource === 'field' || !processIsDateField(opts.context?.isDateField, rule, opts)) {
       return defaultRuleProcessorMongoDBQuery(rule, opts);

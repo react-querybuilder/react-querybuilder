@@ -1,7 +1,12 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorSPARQL, lc, sparqlVar, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, materializeRelativeValues, processIsDateField } from './utils';
+import {
+  isISOStringDateOnly,
+  materializeRelativeValues,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -33,7 +38,8 @@ export const getDatetimeRuleProcessorSPARQL =
       return defaultRuleProcessorSPARQL(rule, opts);
     }
 
-    const { field: rawField, operator, value } = rule;
+    const { field: rawField, value } = rule;
+    const operator = resolveDatetimeOperator(rule, opts);
     const field = sparqlVar(rawField);
     const operatorTL = lc(operator);
 

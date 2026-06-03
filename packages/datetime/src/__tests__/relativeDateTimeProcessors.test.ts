@@ -14,7 +14,7 @@ import {
 } from '../index.dayjs';
 import { rqbDateTimeLibraryAPI as apiFns } from '../rqbDateTimeLibraryAPI.dayjs';
 import type { RelativeDateTimeValue } from '../types';
-import { materializeRelativeValues } from '../utils';
+import { materializeRelativeValues, resolveDatetimeOperator } from '../utils';
 
 const base = new Date(2025, 5, 11, 12, 30, 45, 500);
 const ctxObj = { relativeDateTimeBase: base };
@@ -242,5 +242,58 @@ describe('jsonlogic', () => {
       context: ctxObj,
     });
     expect(jl).toBe(false);
+  });
+});
+
+describe('relativeOperatorMap (operator-driven export)', () => {
+  test('resolveDatetimeOperator maps configured operators and passes others through', () => {
+    const opts = { context: { relativeOperatorMap: { relativeEq: '=' } } };
+    expect(resolveDatetimeOperator({ field: 'd', operator: 'relativeEq', value: '' }, opts)).toBe(
+      '='
+    );
+    expect(resolveDatetimeOperator({ field: 'd', operator: '<', value: '' }, opts)).toBe('<');
+    // No context/map -> operator unchanged
+    expect(resolveDatetimeOperator({ field: 'd', operator: 'relativeEq', value: '' }, {})).toBe(
+      'relativeEq'
+    );
+  });
+
+  const relEqQuery = q([{ field: 'ts', operator: 'relativeEq', value: r('now') }]);
+  const eqQuery = q([{ field: 'ts', operator: '=', value: r('now') }]);
+  const map = { relativeEq: '=' };
+
+  test('SQL exports a mapped operator as its comparison', () => {
+    const opts = {
+      format: 'sql' as const,
+      preset: 'ansi' as const,
+      fields,
+      ruleProcessor: datetimeRuleProcessorSQL,
+      valueProcessor: datetimeValueProcessorANSI,
+    };
+    expect(
+      formatQuery(relEqQuery, { ...opts, context: { ...ctxObj, relativeOperatorMap: map } })
+    ).toBe(formatQuery(eqQuery, { ...opts, context: ctxObj }));
+  });
+
+  test('jsonlogic exports a mapped operator as its comparison', () => {
+    const opts = {
+      format: 'jsonlogic' as const,
+      fields,
+      ruleProcessor: datetimeRuleProcessorJsonLogic,
+    };
+    expect(
+      formatQuery(relEqQuery, { ...opts, context: { ...ctxObj, relativeOperatorMap: map } })
+    ).toEqual(formatQuery(eqQuery, { ...opts, context: ctxObj }));
+  });
+
+  test('natural_language renders the mapped operator text', () => {
+    const opts = {
+      format: 'natural_language' as const,
+      fields,
+      ruleProcessor: datetimeRuleProcessorNL,
+    };
+    expect(
+      formatQuery(relEqQuery, { ...opts, context: { ...ctxObj, relativeOperatorMap: map } })
+    ).toBe(formatQuery(eqQuery, { ...opts, context: ctxObj }));
   });
 });

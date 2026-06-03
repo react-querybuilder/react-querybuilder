@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#1045] Relative date/time value support in `@react-querybuilder/datetime`.
-  - New `RelativeDateTimeValueEditor` component with an absolute/relative mode toggle. Relative mode edits a structured value (anchor + signed offset + unit, e.g. "3 months ago" or "start of year"); absolute values remain plain ISO 8601 strings for backward compatibility.
+  - New `RelativeDateTimeValueEditor` component. Relative mode edits a structured value (anchor + signed offset + unit, e.g. "3 months ago" or "start of year"); absolute values remain plain ISO 8601 strings for backward compatibility.
+  - Pluggable mode switching via `RelativeDateTimeModeController`. Ships with `toggleModeController` (the zero-config default absolute/relative toggle button) and an operator-driven option built with `createOperatorModeController` + `withRelativeOperators` (the operator selector chooses the mode, no toggle rendered). Operator-driven values export via the `context.relativeOperatorMap` option, which maps mode-signaling operator names to real comparison operators at format time.
+  - `between`/`notBetween` operators render two independent bounds, each individually absolute or relative (mixable), stored as a two-element array.
   - `QueryBuilderDateTime` now renders the relative-capable editor for date/datetime fields (falling back to the standard editor otherwise).
   - All `formatQuery` rule processors handle relative values: SQL emits live, dialect-specific symbolic expressions and JsonLogic stays live via a `dateRelative` operation, while other formats materialize to ISO strings. New `context` options `materializeRelativeDateTime` (force materialization for all formats) and `relativeDateTimeBase` (pin "now" for deterministic output).
   - `RQBDateTimeLibraryAPI` gains `startOf`, `endOf`, and `add` methods (implemented for the Day.js, date-fns, Luxon, and JS Date plugins).

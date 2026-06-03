@@ -1,7 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorCEL, lc, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { materializeRelativeValues, processIsDateField } from './utils';
+import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -24,7 +24,7 @@ export const getDatetimeRuleProcessorCEL =
     // Resolve any relative value(s) to concrete literals (CEL has no symbolic relative form).
     const value = materializeRelativeValues(apiFns, rule.value, opts);
 
-    const operatorTL = lc(rule.operator.replace(/^=$/, '=='));
+    const operatorTL = lc(resolveDatetimeOperator(rule, opts).replace(/^=$/, '=='));
 
     switch (operatorTL) {
       case '<':

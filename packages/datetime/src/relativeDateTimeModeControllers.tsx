@@ -49,22 +49,16 @@ export const toggleModeController: RelativeDateTimeModeController = {
   ModeControl: RelativeDateTimeModeToggle,
 };
 
-/** Default operator name treated as "relative" by {@link operatorModeController}. */
-export const defaultRelativeOperatorName = 'relative';
-
 /**
- * Operators registered by {@link withRelativeOperators} to trigger relative mode in the
- * operator-driven controller. These signal mode only; the rule's value remains a
- * {@link RelativeDateTimeValue}.
- */
-export const relativeDateTimeOperators: FullOperator[] = [
-  { name: defaultRelativeOperatorName, value: defaultRelativeOperatorName, label: 'relative to' },
-];
-
-/**
- * Builds a {@link RelativeDateTimeModeController} that derives the mode from the rule's
- * operator. Pass a list of operator names (or a predicate) that should put the editor in
- * relative mode. No toggle is rendered — the operator selector is the mode affordance.
+ * Builds an operator-driven {@link RelativeDateTimeModeController} that derives the mode
+ * from the rule's operator. Pass the operator name(s) (or a predicate) that should put the
+ * editor in relative mode. No toggle is rendered — the operator selector is the mode
+ * affordance.
+ *
+ * NOTE: the chosen operators only signal _mode_; the rule's value remains a
+ * {@link RelativeDateTimeValue}. For these operators to export correctly, map each one to a
+ * real comparison operator via `context.relativeOperatorMap` when calling `formatQuery`
+ * (e.g. `{ relativeEq: '=' }`). See the documentation.
  */
 export const createOperatorModeController = (
   relativeOperators: string[] | ((operator: string) => boolean)
@@ -75,31 +69,20 @@ export const createOperatorModeController = (
       : relativeOperators.includes(props.operator),
 });
 
-/**
- * Operator-driven {@link RelativeDateTimeModeController} preconfigured to treat the
- * {@link defaultRelativeOperatorName} operator as relative. Pair with
- * {@link withRelativeOperators} to register the operator on date fields.
- *
- * NOTE: operator names that are not standard comparison operators require matching
- * processor support for export — see the documentation.
- */
-export const operatorModeController: RelativeDateTimeModeController = createOperatorModeController([
-  defaultRelativeOperatorName,
-]);
-
 interface FieldWithOperators {
   operators?: FullOperator[];
   [key: string]: unknown;
 }
 
 /**
- * Appends {@link relativeDateTimeOperators} (or a custom set) to each field's `operators`
- * list, so the operator-driven controller has an operator to switch into relative mode.
- * Fields without an explicit `operators` list fall back to the core `defaultOperators`.
+ * Appends the given `operators` to each field's `operators` list, so the operator-driven
+ * controller (see {@link createOperatorModeController}) has an operator to switch into
+ * relative mode. Fields without an explicit `operators` list fall back to the core
+ * `defaultOperators`.
  */
 export const withRelativeOperators = <F extends FieldWithOperators>(
   fields: F[],
-  operators: FullOperator[] = relativeDateTimeOperators
+  operators: FullOperator[]
 ): F[] =>
   fields.map(field => ({
     ...field,

@@ -1,7 +1,12 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorCypher, lc, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, materializeRelativeValues, processIsDateField } from './utils';
+import {
+  isISOStringDateOnly,
+  materializeRelativeValues,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -33,7 +38,8 @@ export const getDatetimeRuleProcessorCypher =
       return defaultRuleProcessorCypher(rule, opts);
     }
 
-    const { field, operator } = rule;
+    const { field } = rule;
+    const operator = resolveDatetimeOperator(rule, opts);
     const operatorTL = lc(operator);
 
     // Duration math operators — compare elapsed time against a duration literal

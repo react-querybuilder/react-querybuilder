@@ -7,8 +7,6 @@ import { QueryBuilder, standardClassnames } from 'react-querybuilder';
 import { RelativeDateTimeConfigContext } from '../RelativeDateTimeConfigContext';
 import {
   createOperatorModeController,
-  operatorModeController,
-  relativeDateTimeOperators,
   toggleModeController,
   withRelativeOperators,
 } from '../relativeDateTimeModeControllers';
@@ -17,6 +15,9 @@ import type { RelativeDateTimeEditorConfig } from '../types';
 import { isRelativeDateTimeValue } from '../utils';
 
 const user = userEvent.setup();
+
+const relOp = { name: 'relative', value: 'relative', label: 'relative to' };
+const operatorModeController = createOperatorModeController(['relative']);
 
 const fields = [
   { name: 'f1', label: 'Field 1', inputType: 'datetime-local', datatype: 'datetime' },
@@ -165,16 +166,59 @@ describe('toggleModeController', () => {
   });
 });
 
+describe('between / notBetween', () => {
+  it('renders two independent editors and stores a two-element array', async () => {
+    const { editor, getValue } = setup(['', ''], undefined, 'between');
+    expect(editor().getAllByRole('switch')).toHaveLength(2);
+
+    // Toggle the first bound to relative; the second stays absolute.
+    await user.click(editor().getAllByRole('switch')[0]);
+    const value = getValue() as unknown[];
+    expect(Array.isArray(value)).toBe(true);
+    expect(isRelativeDateTimeValue(value[0])).toBe(true);
+    expect(value[1]).toBe('');
+  });
+
+  it('supports mixed absolute/relative bounds', () => {
+    const { editor } = setup(
+      [{ mode: 'relative', anchor: 'now', offset: 0, unit: 'day' }, ''],
+      undefined,
+      'between'
+    );
+    const switches = editor().getAllByRole('switch');
+    expect(switches[0]).toHaveAttribute('aria-checked', 'true');
+    expect(switches[1]).toHaveAttribute('aria-checked', 'false');
+    // Relative first bound (offset 0) shows only its anchor selector.
+    expect(editor().getAllByRole('combobox')).toHaveLength(1);
+  });
+
+  it('edits the second bound independently', async () => {
+    const { editor, getValue } = setup(['', ''], undefined, 'notBetween');
+    await user.click(editor().getAllByRole('switch')[1]);
+    const value = getValue() as unknown[];
+    expect(value[0]).toBe('');
+    expect(isRelativeDateTimeValue(value[1])).toBe(true);
+  });
+
+  it('renders no toggles with an operator-driven controller', () => {
+    const { editor } = setup(['', ''], { modeController: operatorModeController }, 'between');
+    expect(editor().queryByRole('switch')).toBeNull();
+  });
+});
+
 describe('withRelativeOperators', () => {
   it('appends relative operators, defaulting when a field has none', () => {
-    const [withOwn, without] = withRelativeOperators([
-      { name: 'a', label: 'A', operators: [{ name: '=', value: '=', label: '=' }] },
-      { name: 'b', label: 'B' },
-    ]);
-    expect(withOwn.operators).toContainEqual(relativeDateTimeOperators[0]);
+    const [withOwn, without] = withRelativeOperators(
+      [
+        { name: 'a', label: 'A', operators: [{ name: '=', value: '=', label: '=' }] },
+        { name: 'b', label: 'B' },
+      ],
+      [relOp]
+    );
+    expect(withOwn.operators).toContainEqual(relOp);
     expect(withOwn.operators).toHaveLength(2);
     // Field without operators falls back to defaults + relative operators.
-    expect(without.operators).toContainEqual(relativeDateTimeOperators[0]);
+    expect(without.operators).toContainEqual(relOp);
     expect(without.operators!.length).toBeGreaterThan(1);
   });
 

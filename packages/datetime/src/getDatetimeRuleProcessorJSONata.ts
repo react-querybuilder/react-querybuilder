@@ -6,7 +6,7 @@ import {
   toArray,
 } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { materializeRelativeValues, processIsDateField } from './utils';
+import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -25,7 +25,8 @@ export const getDatetimeRuleProcessorJSONata =
     // v8 ignore next
     const { quoteFieldNamesWith = ['', ''] as [string, string], fieldIdentifierSeparator = '' } =
       opts;
-    const { field, operator, valueSource } = rule;
+    const { field, valueSource } = rule;
+    const operator = resolveDatetimeOperator(rule, opts);
 
     if (!processIsDateField(context.isDateField, rule, opts)) {
       return defaultRuleProcessorJSONata(rule, opts);
