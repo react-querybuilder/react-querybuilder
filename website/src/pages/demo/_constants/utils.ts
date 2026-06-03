@@ -6,13 +6,28 @@ import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
 // import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
 import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
+import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
+import {
+  datetimeRuleProcessorCEL,
+  datetimeRuleProcessorCypher,
+  datetimeRuleProcessorJSONata,
+  datetimeRuleProcessorMongoDBQuery,
+  datetimeRuleProcessorNL,
+  datetimeRuleProcessorSPARQL,
+  datetimeRuleProcessorSQL,
+} from '@react-querybuilder/datetime/dayjs';
 import clsx from 'clsx';
 import pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
-import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
+import type {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupTypeAny,
+  RuleProcessor,
+} from 'react-querybuilder';
 import {
   bigIntJsonParseReviver,
   bigIntJsonStringifyReplacer,
@@ -145,6 +160,29 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
   }
 
   return formatQueryResult;
+};
+
+export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
+  sql: datetimeRuleProcessorSQL,
+  parameterized: datetimeRuleProcessorSQL,
+  parameterized_named: datetimeRuleProcessorSQL,
+  // mongodb: datetimeRuleProcessorMongoDB,
+  mongodb_query: datetimeRuleProcessorMongoDBQuery,
+  cel: datetimeRuleProcessorCEL,
+  jsonlogic: datetimeRuleProcessorJsonLogic,
+  // spel: datetimeRuleProcessorSpEL,
+  elasticsearch: undefined,
+  jsonata: datetimeRuleProcessorJSONata,
+  natural_language: datetimeRuleProcessorNL,
+  // ldap: datetimeRuleProcessorLDAP,
+  // drizzle: datetimeRuleProcessorDrizzle,
+  // tanstack_db: datetimeRuleProcessorTanstackDB,
+  // prisma: datetimeRuleProcessorPrisma,
+  // sequelize: datetimeRuleProcessorSequelize,
+  cypher: datetimeRuleProcessorCypher,
+  gql: datetimeRuleProcessorCypher,
+  sparql: datetimeRuleProcessorSPARQL,
+  // gremlin: datetimeRuleProcessorGremlin,
 };
 
 export const getExportCall = async (

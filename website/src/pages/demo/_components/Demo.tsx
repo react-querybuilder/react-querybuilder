@@ -8,8 +8,7 @@ import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 // TODO: Find out why this is necessary
 import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
-import { datetimeRuleProcessorJsonLogic, QueryBuilderDateTime } from '@react-querybuilder/datetime';
-import { datetimeRuleProcessorSQL } from '@react-querybuilder/datetime/dayjs';
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import CodeBlock from '@theme/CodeBlock';
@@ -59,6 +58,7 @@ import type { NLLanguageCode } from '../_constants/nlLanguageConfigs';
 import { nlLanguageCodes, nlLanguageConfigs } from '../_constants/nlLanguageConfigs';
 import type { CommonRQBProps, StyleName } from '../_constants/types';
 import {
+  datetimeRuleProcessorMap,
   extraStyles,
   fieldsTsString,
   getCodeString,
@@ -305,20 +305,7 @@ export default function Demo({
         options.validateQuery || format === 'natural_language' || options.useDateTimePackage
           ? fields
           : undefined,
-      ...(options.useDateTimePackage
-        ? {
-            // Only formats with a matching datetime rule processor override the
-            // default. SQL emits a string; JsonLogic emits an object. Parameterized
-            // and all other formats fall back to the default processor (which returns
-            // the `{ sql, params }` shape parameterized output requires).
-            ruleProcessor:
-              format === 'sql'
-                ? datetimeRuleProcessorSQL
-                : format === 'jsonlogic'
-                  ? datetimeRuleProcessorJsonLogic
-                  : undefined,
-          }
-        : null),
+      ...(options.useDateTimePackage ? { ruleProcessor: datetimeRuleProcessorMap[format] } : null),
       ...(format === 'natural_language' && nlConfig),
     }),
     [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format, nlConfig]
