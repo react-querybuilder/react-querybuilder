@@ -222,7 +222,7 @@ const nl = formatQuery(query, {
 
 ## Components
 
-The `QueryBuilderDateTime` [context provider](./components/querybuilder#context) augments [`ValueEditor`](./components/valueeditor) with date/time functionality. Wrap your `QueryBuilder` with it to enable enhanced date/time editing for any field whose `inputType` is `"date"`/`"datetime-local"` or whose `datatype` begins with "date", "datetime", or "timestamp". Non-date fields fall back to the standard value editor.
+The `QueryBuilderDateTime` [context provider](./components/querybuilder#context) augments [`ValueEditor`](./components/valueeditor) with date/time functionality. Wrap your `QueryBuilder` with it to enable enhanced date/time editing for any field whose `inputType` is `"date"`/`"datetime-local"` or whose `datatype` begins with "date", "datetime", or "timestamp". Non-date fields delegate to the value editor inherited from a surrounding compat/theme provider (e.g. `QueryBuilderMantine`), falling back to the standard value editor when none is present. The themed editor is likewise used for the absolute date input and the relative offset input, so the whole control stays consistent with your theme.
 
 ```tsx
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
@@ -387,6 +387,9 @@ const valueShapeController = {
 | `anchors`        | `FullOption[]`                   | `defaultRelativeDateTimeAnchors` | Anchor (reference-point) options.                  |
 | `units`          | `FullOption[]`                   | `defaultRelativeDateTimeUnits`   | Unit options.                                      |
 | `toggleLabels`   | `RelativeDateTimeToggleLabels`   | _(see below)_                    | Content/labels for the toggle controller's button. |
+| `dateTimeAPI`    | `RQBDateTimeLibraryAPI`          | Day.js adapter                   | Library adapter used to parse/validate editor input. |
+
+By default the absolute date editor parses and validates its input with Day.js. If you export queries with a processor backed by a different library (Luxon, date-fns, native `Date`, etc.), pass the matching adapter as `dateTimeAPI` so editor parsing and export stay consistent. See [Custom plugins](#custom-plugins) for the `RQBDateTimeLibraryAPI` shape.
 
 `toggleLabels` lets you override the toggle's accessible label, tooltips, and rendered content (e.g. to use icon components or localized text instead of the default CSS glyphs):
 
