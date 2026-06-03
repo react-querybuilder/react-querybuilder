@@ -1,0 +1,20 @@
+generator client {
+    provider = "prisma-client"
+    runtime  = "bun"
+    output   = "./generated/prisma-client"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model musicians {
+    first_name  String
+    middle_name String?
+    last_name   String
+    birthdate   DateTime @db.Date
+    created_at  DateTime @db.Timestamptz
+    updated_at  DateTime @db.Timestamptz
+
+    @@id([first_name, last_name])
+}
