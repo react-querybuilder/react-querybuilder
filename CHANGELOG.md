@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `between`/`notBetween` operators render two independent bounds, each individually absolute or relative (mixable), stored as a two-element array.
   - `QueryBuilderDateTime` now renders the relative-capable editor for date/datetime fields (falling back to the standard editor otherwise).
   - All `formatQuery` rule processors handle relative values: SQL emits live, dialect-specific symbolic expressions and JsonLogic stays live via a `dateRelative` operation, while other formats materialize to ISO strings. New `context` options `materializeRelativeDateTime` (force materialization for all formats) and `relativeDateTimeBase` (pin "now" for deterministic output).
+  - Datetime-aware rule processors added for the "parameterized", "spel", "ldap", "gremlin", "prisma", "sequelize", "drizzle", "tanstack_db", and "mongodb" export formats. Relative values are materialized (as ISO strings for text-based formats, `Date` objects for ORM formats) and `between`/`notBetween` bounds are reordered chronologically.
   - `RQBDateTimeLibraryAPI` gains `startOf`, `endOf`, and `add` methods (implemented for the Day.js, date-fns, Luxon, and JS Date plugins).
   - Demo: "Use date/time package" option now wraps the live query builder with `QueryBuilderDateTime` for interactive relative editing.
 

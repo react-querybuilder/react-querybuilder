@@ -8,10 +8,18 @@ import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
+import { getDatetimeRuleProcessorDrizzle } from './getDatetimeRuleProcessorDrizzle';
+import { getDatetimeRuleProcessorGremlin } from './getDatetimeRuleProcessorGremlin';
 import { getDatetimeRuleProcessorJSONata } from './getDatetimeRuleProcessorJSONata';
+import { getDatetimeRuleProcessorLDAP } from './getDatetimeRuleProcessorLDAP';
+import { getDatetimeRuleProcessorMongoDB } from './getDatetimeRuleProcessorMongoDB';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
+import { getDatetimeRuleProcessorParameterized } from './getDatetimeRuleProcessorParameterized';
+import { getDatetimeRuleProcessorPrisma } from './getDatetimeRuleProcessorPrisma';
+import { getDatetimeRuleProcessorSequelize } from './getDatetimeRuleProcessorSequelize';
 import { getDatetimeRuleProcessorSPARQL } from './getDatetimeRuleProcessorSPARQL';
+import { getDatetimeRuleProcessorSpEL } from './getDatetimeRuleProcessorSpEL';
 import {
   getDatetimeRuleProcessorSQL,
   getDatetimeValueProcessorANSI,
@@ -20,6 +28,7 @@ import {
   getDatetimeValueProcessorOracle,
   getDatetimeValueProcessorPostgreSQL,
 } from './getDatetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorTanStackDB } from './getDatetimeRuleProcessorTanStackDB';
 import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.dayjs';
 import type { RQBJsonLogicDateTimeOperations } from './types';
 
@@ -95,5 +104,59 @@ export const datetimeRuleProcessorCypher: ValueProcessorByRule =
  */
 export const datetimeRuleProcessorSPARQL: ValueProcessorByRule =
   getDatetimeRuleProcessorSPARQL(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "parameterized"/"parameterized_named" formats using Day.js
+ */
+export const datetimeRuleProcessorParameterized: RuleProcessor =
+  getDatetimeRuleProcessorParameterized(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "spel" format using Day.js
+ */
+export const datetimeRuleProcessorSpEL: RuleProcessor =
+  getDatetimeRuleProcessorSpEL(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "ldap" format using Day.js
+ */
+export const datetimeRuleProcessorLDAP: RuleProcessor =
+  getDatetimeRuleProcessorLDAP(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "gremlin" format using Day.js
+ */
+export const datetimeRuleProcessorGremlin: RuleProcessor =
+  getDatetimeRuleProcessorGremlin(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "prisma" format using Day.js
+ */
+export const datetimeRuleProcessorPrisma: RuleProcessor =
+  getDatetimeRuleProcessorPrisma(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "sequelize" format using Day.js
+ */
+export const datetimeRuleProcessorSequelize: RuleProcessor =
+  getDatetimeRuleProcessorSequelize(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "drizzle" format using Day.js
+ */
+export const datetimeRuleProcessorDrizzle: RuleProcessor =
+  getDatetimeRuleProcessorDrizzle(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "tanstack_db" format using Day.js
+ */
+export const datetimeRuleProcessorTanStackDB: RuleProcessor =
+  getDatetimeRuleProcessorTanStackDB(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for (deprecated) "mongodb" format using Day.js
+ */
+export const datetimeRuleProcessorMongoDB: RuleProcessor =
+  getDatetimeRuleProcessorMongoDB(rqbDateTimeLibraryAPI);
 
 export * from './rqbDateTimeLibraryAPI.dayjs';

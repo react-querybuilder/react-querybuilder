@@ -6,9 +6,15 @@ import { getDatetimeRuleProcessorJSONata } from '../getDatetimeRuleProcessorJSON
 import {
   datetimeRuleProcessorCEL,
   datetimeRuleProcessorCypher,
+  datetimeRuleProcessorGremlin,
+  datetimeRuleProcessorLDAP,
+  datetimeRuleProcessorMongoDB,
   datetimeRuleProcessorMongoDBQuery,
   datetimeRuleProcessorNL,
+  datetimeRuleProcessorParameterized,
+  datetimeRuleProcessorPrisma,
   datetimeRuleProcessorSPARQL,
+  datetimeRuleProcessorSpEL,
   datetimeRuleProcessorSQL,
   datetimeValueProcessorANSI,
 } from '../index.dayjs';
@@ -73,6 +79,15 @@ const materializingFormats = {
   cypher: { format: 'cypher' as const, ruleProcessor: datetimeRuleProcessorCypher },
   sparql: { format: 'sparql' as const, ruleProcessor: datetimeRuleProcessorSPARQL },
   jsonata: { format: 'jsonata' as const, ruleProcessor: getDatetimeRuleProcessorJSONata(apiFns) },
+  parameterized: {
+    format: 'parameterized' as const,
+    ruleProcessor: datetimeRuleProcessorParameterized,
+  },
+  spel: { format: 'spel' as const, ruleProcessor: datetimeRuleProcessorSpEL },
+  ldap: { format: 'ldap' as const, ruleProcessor: datetimeRuleProcessorLDAP },
+  gremlin: { format: 'gremlin' as const, ruleProcessor: datetimeRuleProcessorGremlin },
+  prisma: { format: 'prisma' as const, ruleProcessor: datetimeRuleProcessorPrisma },
+  mongodb: { format: 'mongodb' as const, ruleProcessor: datetimeRuleProcessorMongoDB },
 };
 
 for (const [formatName, cfg] of Object.entries(materializingFormats)) {

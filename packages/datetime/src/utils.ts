@@ -92,6 +92,49 @@ export const resolveDatetimeOperator = (...[rule, opts]: Parameters<RuleProcesso
   (opts?.context?.relativeOperatorMap as Record<string, string> | undefined)?.[rule.operator] ??
   rule.operator;
 
+/**
+ * Prepares a date/time rule for delegation to a non-symbolic default rule processor
+ * (e.g. "parameterized", "spel", "ldap", "gremlin", "prisma", "sequelize", "drizzle",
+ * "tanstack_db"). Relative values are materialized to concrete dates (these formats have
+ * no symbolic relative form), and `between`/`notBetween` operands are ordered
+ * chronologically (defaults can't reorder non-numeric date operands). When `asDate` is
+ * set, each valid value is converted to a `Date` (for object-based formats); otherwise
+ * the materialized ISO 8601 strings are passed through. The resolved `operator` (after
+ * any `relativeOperatorMap` mapping) is returned alongside the prepared `value`.
+ */
+export const materializeForExport = (
+  apiFns: RQBDateTimeLibraryAPI,
+  rule: Parameters<RuleProcessor>[0],
+  opts: Parameters<RuleProcessor>[1],
+  asDate = false
+): { operator: string; value: unknown } => {
+  const operator = resolveDatetimeOperator(rule, opts);
+  const materialized = materializeRelativeValues(apiFns, rule.value, opts);
+
+  let prepared = materialized;
+  if (Array.isArray(materialized) && materialized.length >= 2) {
+    const opLC = operator.toLowerCase();
+    if (opLC === 'between' || opLC === 'notbetween') {
+      const first = apiFns.toDate(materialized[0] as string | Date);
+      const second = apiFns.toDate(materialized[1] as string | Date);
+      if (apiFns.isValid(first) && apiFns.isValid(second) && !apiFns.isBefore(first, second)) {
+        prepared = [materialized[1], materialized[0], ...materialized.slice(2)];
+      }
+    }
+  }
+
+  if (!asDate) return { operator, value: prepared };
+
+  const toDateVal = (v: unknown) => {
+    const d = apiFns.toDate(v as string | Date);
+    return apiFns.isValid(d) ? d : v;
+  };
+  return {
+    operator,
+    value: Array.isArray(prepared) ? prepared.map(toDateVal) : toDateVal(prepared),
+  };
+};
+
 export const defaultIsDateField: IsDateFieldFunction = (
   ...[rule, opts]: Parameters<RuleProcessor>
 ): boolean =>
