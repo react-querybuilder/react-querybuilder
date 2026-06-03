@@ -9,3 +9,22 @@
   align-items: center;
   gap: var(--#{$rqbdt-var-prefix}spacing);
 }
+
+// Compact absolute/relative mode toggle. Colors/borders inherited from the theme; only
+// the default glyph (keyed on `aria-checked`) and minimal layout are defined here. Set
+// `toggleLabels.absoluteContent`/`relativeContent` to override the glyph entirely.
+.rule-value-dateTimeRelative-toggle {
+  cursor: pointer;
+
+  &:empty::before {
+    content: '\1F4C5'; // 📅 calendar = absolute
+  }
+
+  &[aria-checked='true']:empty::before {
+    content: '\1F552'; // 🕒 clock = relative
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

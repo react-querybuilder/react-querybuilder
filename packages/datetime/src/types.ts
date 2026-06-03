@@ -1,5 +1,6 @@
 import type { RulesLogic } from 'json-logic-js';
-import type { RQBJsonLogic, RuleProcessor } from 'react-querybuilder';
+import type { ComponentType, ReactNode } from 'react';
+import type { FullOption, RQBJsonLogic, RuleProcessor, ValueEditorProps } from 'react-querybuilder';
 
 export interface RQBJsonLogicDateBetween {
   dateBetween: [RQBJsonLogic, RQBJsonLogic, RQBJsonLogic];
@@ -204,6 +205,85 @@ export type RQBJsonLogicDateTimeOperations = {
     dateOnly: boolean
   ) => string;
 };
+
+/**
+ * Customizable content/labels for the absolute/relative mode toggle rendered by
+ * {@link toggleModeController}. The default glyphs come from CSS pseudo-elements, so
+ * `absoluteContent`/`relativeContent` are only needed to override them (e.g. to render
+ * an icon component or localized text).
+ */
+export interface RelativeDateTimeToggleLabels {
+  /** Accessible label (`aria-label`) for the toggle button. */
+  label?: string;
+  /** Tooltip shown while in absolute mode (clicking switches to relative). */
+  absoluteTitle?: string;
+  /** Tooltip shown while in relative mode (clicking switches to absolute). */
+  relativeTitle?: string;
+  /** Custom content rendered while in absolute mode. Defaults to a CSS glyph. */
+  absoluteContent?: ReactNode;
+  /** Custom content rendered while in relative mode. Defaults to a CSS glyph. */
+  relativeContent?: ReactNode;
+}
+
+/**
+ * Props passed to a {@link RelativeDateTimeModeController}'s `ModeControl` component —
+ * the affordance (e.g. a toggle button) that switches a rule between absolute and
+ * relative date/time entry.
+ */
+export interface RelativeDateTimeModeControlProps {
+  /** Whether the rule is currently in relative mode. */
+  isRelative: boolean;
+  /** Switches the rule between absolute and relative mode. */
+  setMode: (mode: 'absolute' | 'relative') => void;
+  /** The value editor's schema (for theme-aware rendering). */
+  schema: ValueEditorProps['schema'];
+  /** Whether the control is disabled. */
+  disabled?: boolean;
+  /** Class name applied to the control. */
+  className?: string;
+  /** Title/tooltip from the value editor (fallback when labels omit titles). */
+  title?: string;
+  /** Test ID from the value editor. */
+  testID?: string;
+  /** Resolved toggle labels (merged with defaults). */
+  labels: Required<RelativeDateTimeToggleLabels>;
+}
+
+/**
+ * A pluggable strategy that governs how a user switches between absolute and relative
+ * date/time entry in the {@link RelativeDateTimeValueEditor}. The stored value shape is
+ * unaffected — a controller only decides the current mode and (optionally) renders an
+ * affordance to change it.
+ *
+ * Ships with {@link toggleModeController} (the zero-config default) and
+ * {@link operatorModeController}. Supply a custom object to fully control the UX.
+ */
+export interface RelativeDateTimeModeController {
+  /** Derives the current mode from the rule (its operator and/or value). */
+  isRelative: (props: ValueEditorProps) => boolean;
+  /**
+   * Optional affordance rendered inside the editor to switch modes. Omit it (as the
+   * operator-driven controller does) when the mode is selected elsewhere, e.g. via the
+   * operator selector.
+   */
+  ModeControl?: ComponentType<RelativeDateTimeModeControlProps>;
+}
+
+/**
+ * Configuration for the {@link RelativeDateTimeValueEditor}, supplied as props to
+ * {@link QueryBuilderDateTime} (or via the relative date/time config context). Every
+ * field is optional; omitting all of them yields the zero-config toggle experience.
+ */
+export interface RelativeDateTimeEditorConfig {
+  /** Strategy for switching between absolute and relative modes. Defaults to {@link toggleModeController}. */
+  modeController?: RelativeDateTimeModeController;
+  /** Anchor (reference-point) options. Defaults to {@link defaultRelativeDateTimeAnchors}. */
+  anchors?: FullOption<RelativeDateTimeAnchor>[];
+  /** Unit options. Defaults to {@link defaultRelativeDateTimeUnits}. */
+  units?: FullOption<RelativeDateTimeUnit>[];
+  /** Content/labels for the absolute/relative toggle. */
+  toggleLabels?: RelativeDateTimeToggleLabels;
+}
 
 export type IsDateFieldFunction = (...[rule, opts]: Parameters<RuleProcessor>) => boolean;
 export type IsDateField =

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import type { FullField, FullOption, Path, ValueEditorProps } from 'react-querybuilder';
+import type { FullField, Path, ValueEditorProps } from 'react-querybuilder';
 import {
   clsx,
   parseNumber,
@@ -9,53 +9,22 @@ import {
   ValueEditor,
 } from 'react-querybuilder';
 import { DateTimeValueEditor } from './QueryBuilderDateTime';
+import { useRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
+import { defaultRelativeDateTimeValue } from './relativeDateTimeConstants';
 import type { RelativeDateTimeAnchor, RelativeDateTimeUnit, RelativeDateTimeValue } from './types';
 import { isRelativeDateTimeValue } from './utils';
 
 const dummyPath: Path = [];
 const dummyFieldData: FullField = { name: '', value: '', label: '' };
 
-/** Default value applied when switching a rule to relative mode. */
-export const defaultRelativeDateTimeValue: RelativeDateTimeValue = {
-  mode: 'relative',
-  anchor: 'now',
-  offset: 0,
-  unit: 'day',
-};
-
-const modeOptions: FullOption<'absolute' | 'relative'>[] = [
-  { name: 'absolute', value: 'absolute', label: 'Absolute' },
-  { name: 'relative', value: 'relative', label: 'Relative' },
-];
-
-const anchorOptions: FullOption<RelativeDateTimeAnchor>[] = [
-  { name: 'now', value: 'now', label: 'now' },
-  { name: 'startOfDay', value: 'startOfDay', label: 'start of day' },
-  { name: 'endOfDay', value: 'endOfDay', label: 'end of day' },
-  { name: 'startOfWeek', value: 'startOfWeek', label: 'start of week' },
-  { name: 'endOfWeek', value: 'endOfWeek', label: 'end of week' },
-  { name: 'startOfMonth', value: 'startOfMonth', label: 'start of month' },
-  { name: 'endOfMonth', value: 'endOfMonth', label: 'end of month' },
-  { name: 'startOfYear', value: 'startOfYear', label: 'start of year' },
-  { name: 'endOfYear', value: 'endOfYear', label: 'end of year' },
-];
-
-const unitOptions: FullOption<RelativeDateTimeUnit>[] = [
-  { name: 'minute', value: 'minute', label: 'minute(s)' },
-  { name: 'hour', value: 'hour', label: 'hour(s)' },
-  { name: 'day', value: 'day', label: 'day(s)' },
-  { name: 'week', value: 'week', label: 'week(s)' },
-  { name: 'month', value: 'month', label: 'month(s)' },
-  { name: 'year', value: 'year', label: 'year(s)' },
-];
-
 /**
  * Value editor with support for {@link RelativeDateTimeValue relative date/time values}
- * (e.g. "three months ago" or "the beginning of this year"). A mode selector toggles
- * between absolute mode (a normal date/time input via {@link DateTimeValueEditor}) and
- * relative mode (anchor + signed offset + unit). The unit selector is hidden when the
- * offset is `0`. All sub-controls render the schema's themed components, so compat
- * packages style them automatically.
+ * (e.g. "three months ago" or "the beginning of this year"). How the user switches
+ * between absolute and relative modes is delegated to a pluggable
+ * {@link RelativeDateTimeModeController} (default: a compact toggle), supplied via
+ * {@link QueryBuilderDateTime}. In relative mode it renders anchor + signed offset + unit
+ * selectors; the unit selector is hidden when the offset is `0`. All sub-controls render
+ * the schema's themed components, so compat packages style them automatically.
  *
  * @group Components
  */
@@ -67,13 +36,18 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
 
   const SelectorComponent = props.selectorComponent ?? schema.controls.valueSelector;
 
-  const isRelative = isRelativeDateTimeValue(value);
-  const relValue: RelativeDateTimeValue = isRelative ? value : defaultRelativeDateTimeValue;
+  const { modeController, anchors, units, toggleLabels } = useRelativeDateTimeConfig();
+
+  const isRelative = modeController.isRelative(props);
+  const relValue: RelativeDateTimeValue = isRelativeDateTimeValue(value)
+    ? value
+    : defaultRelativeDateTimeValue;
 
   const numericSchema = useMemo(() => ({ ...schema, parseNumbers: true }), [schema]);
 
-  const handleChangeMode = useCallback(
-    (mode: string) => handleOnChange(mode === 'relative' ? defaultRelativeDateTimeValue : ''),
+  const handleSetMode = useCallback(
+    (mode: 'absolute' | 'relative') =>
+      handleOnChange(mode === 'relative' ? defaultRelativeDateTimeValue : ''),
     [handleOnChange]
   );
 
@@ -101,22 +75,22 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
     [suppressStandardClassnames, className]
   );
 
+  const { ModeControl } = modeController;
+
   return (
     <span className={outerClassname}>
-      <SelectorComponent
-        schema={schema}
-        testID={testID}
-        title={title}
-        className={valueListItemClassName}
-        handleOnChange={handleChangeMode}
-        disabled={disabled}
-        value={isRelative ? 'relative' : 'absolute'}
-        options={modeOptions}
-        multiple={false}
-        listsAsArrays={false}
-        path={dummyPath}
-        level={0}
-      />
+      {ModeControl && (
+        <ModeControl
+          isRelative={isRelative}
+          setMode={handleSetMode}
+          schema={schema}
+          disabled={disabled}
+          className={valueListItemClassName}
+          title={title}
+          testID={testID}
+          labels={toggleLabels}
+        />
+      )}
       {isRelative ? (
         <React.Fragment>
           <SelectorComponent
@@ -127,7 +101,7 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
             handleOnChange={handleChangeAnchor}
             disabled={disabled}
             value={relValue.anchor}
-            options={anchorOptions}
+            options={anchors}
             multiple={false}
             listsAsArrays={false}
             path={dummyPath}
@@ -160,7 +134,7 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
               handleOnChange={handleChangeUnit}
               disabled={disabled}
               value={relValue.unit}
-              options={unitOptions}
+              options={units}
               multiple={false}
               listsAsArrays={false}
               path={dummyPath}

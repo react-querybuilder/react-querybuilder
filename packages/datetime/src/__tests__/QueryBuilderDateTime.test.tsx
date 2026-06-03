@@ -78,3 +78,18 @@ it('DateTimeValueEditor falls back to the standard editor for non-date fields', 
   await user.type(editor, 'abc');
   expect(editor).toHaveValue('abc');
 });
+
+it('passes relative editor config props through to the editor', async () => {
+  render(
+    <QueryBuilderDateTime toggleLabels={{ label: 'Switch mode' }}>
+      <QueryBuilder fields={fields} addRuleToNewGroups getDefaultField="field1" />
+    </QueryBuilderDateTime>
+  );
+
+  // The configured toggle label reaches the relative editor's switch.
+  expect(screen.getByRole('switch')).toHaveAttribute('aria-label', 'Switch mode');
+
+  // Switching to relative mode renders the relative sub-controls.
+  await user.click(screen.getByRole('switch'));
+  expect(screen.getAllByRole('combobox').length).toBeGreaterThan(1);
+});

@@ -248,7 +248,7 @@ const App = () => (
 
 ### Relative date/time values
 
-Date/time fields support _relative_ values such as "three months ago" or "the beginning of this year" in addition to absolute (ISO 8601 string) values. The value editor presents an "Absolute"/"Relative" mode selector; in relative mode it shows an anchor selector, a signed offset, and a unit selector (the unit is hidden when the offset is `0`).
+Date/time fields support _relative_ values such as "three months ago" or "the beginning of this year" in addition to absolute (ISO 8601 string) values. By default the value editor renders a compact absolute/relative toggle button; in relative mode it shows an anchor selector, a signed offset, and a unit selector (the unit is hidden when the offset is `0`). How the user switches modes is pluggable — see [Mode controllers](#mode-controllers) below.
 
 A relative value is stored as a structured object (absolute values remain plain strings, preserving backward compatibility):
 
@@ -274,12 +274,115 @@ interface RelativeDateTimeValue {
 
 The final date/time is computed as: apply the `anchor` to the current date/time, then add `offset` units of `unit`.
 
-To use the relative-capable editor on its own (e.g. when providing custom `controlElements`), import `RelativeDateTimeValueEditor`:
+The recommended way to enable the relative-capable editor is to wrap your `QueryBuilder` in `QueryBuilderDateTime`. With no props it provides the zero-config toggle experience:
+
+```tsx
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+
+<QueryBuilderDateTime>
+  <QueryBuilder fields={fields} />
+</QueryBuilderDateTime>;
+```
+
+To use the relative-capable editor on its own (e.g. when providing custom `controlElements`), import `RelativeDateTimeValueEditor` directly. Without a surrounding `QueryBuilderDateTime` it falls back to the default config (toggle controller, default anchors/units/labels):
 
 ```tsx
 import { RelativeDateTimeValueEditor } from '@react-querybuilder/datetime';
 
 <QueryBuilder fields={fields} controlElements={{ valueEditor: RelativeDateTimeValueEditor }} />;
+```
+
+### Mode controllers
+
+The strategy for switching a rule between absolute and relative entry is delegated to a pluggable `RelativeDateTimeModeController`. A controller decides the current mode and optionally renders an affordance to change it — the **stored value shape is never affected** (absolute = ISO string, relative = `RelativeDateTimeValue` object), so all processors behave identically regardless of how the mode was chosen.
+
+```ts
+interface RelativeDateTimeModeController {
+  // Derive the current mode from the rule (its operator and/or value):
+  isRelative: (props: ValueEditorProps) => boolean;
+  // Optional affordance rendered inside the editor to switch modes. Omit when
+  // the mode is selected elsewhere (e.g. via the operator selector):
+  ModeControl?: ComponentType<RelativeDateTimeModeControlProps>;
+}
+```
+
+Two controllers ship with the package:
+
+#### Toggle controller (default)
+
+`toggleModeController` derives the mode from the value shape and renders a compact `role="switch"` toggle button. Its glyphs are supplied by CSS pseudo-elements (calendar/clock) keyed on `aria-checked`, and can be overridden via [`toggleLabels`](#configuration). This is the default — no configuration needed.
+
+#### Operator-driven controller
+
+`operatorModeController` derives the mode from the rule's **operator** instead of rendering a toggle. Register the relative operator(s) on your date fields with `withRelativeOperators`, then pass the controller to `QueryBuilderDateTime`:
+
+```tsx
+import {
+  QueryBuilderDateTime,
+  operatorModeController,
+  withRelativeOperators,
+} from '@react-querybuilder/datetime';
+
+const fieldsWithRelative = withRelativeOperators(fields);
+
+<QueryBuilderDateTime modeController={operatorModeController}>
+  <QueryBuilder fields={fieldsWithRelative} />
+</QueryBuilderDateTime>;
+```
+
+`withRelativeOperators` appends a `"relative"` operator to each field's `operators` list (falling back to the core `defaultOperators` for fields without an explicit list). Selecting that operator puts the editor in relative mode; the value remains a `RelativeDateTimeValue`.
+
+:::caution
+The operators registered for mode-switching signal mode only. If you use a custom (non-standard) operator name, you must add matching [processor support](#materializing-relative-values) so the operator exports correctly. Standard comparison operators (`=`, `<`, etc.) work out of the box.
+:::
+
+#### Custom controllers
+
+Supply your own object to fully control the UX. Use `createOperatorModeController` to build an operator-driven controller from a custom operator list or predicate, or write a controller from scratch:
+
+```tsx
+import { createOperatorModeController } from '@react-querybuilder/datetime';
+
+// From a custom operator list:
+const controller = createOperatorModeController(['relativeTo', 'within']);
+
+// Or a predicate:
+const controller = createOperatorModeController(op => op.startsWith('rel'));
+
+// Fully custom (no built-in affordance; mode derived from value):
+const valueShapeController = {
+  isRelative: props => typeof props.value === 'object' && props.value?.mode === 'relative',
+};
+```
+
+### Configuration
+
+`QueryBuilderDateTime` accepts optional `RelativeDateTimeEditorConfig` props. Omitting all of them yields the zero-config toggle experience; any provided option merges over the defaults.
+
+| Prop             | Type                             | Default                          | Description                                        |
+| ---------------- | -------------------------------- | -------------------------------- | -------------------------------------------------- |
+| `modeController` | `RelativeDateTimeModeController` | `toggleModeController`           | Absolute/relative switching strategy.              |
+| `anchors`        | `FullOption[]`                   | `defaultRelativeDateTimeAnchors` | Anchor (reference-point) options.                  |
+| `units`          | `FullOption[]`                   | `defaultRelativeDateTimeUnits`   | Unit options.                                      |
+| `toggleLabels`   | `RelativeDateTimeToggleLabels`   | _(see below)_                    | Content/labels for the toggle controller's button. |
+
+`toggleLabels` lets you override the toggle's accessible label, tooltips, and rendered content (e.g. to use icon components or localized text instead of the default CSS glyphs):
+
+```tsx
+<QueryBuilderDateTime
+  toggleLabels={{
+    label: 'Switch date entry mode',
+    absoluteTitle: 'Absolute date (click for relative)',
+    relativeTitle: 'Relative date (click for absolute)',
+    absoluteContent: <CalendarIcon />,
+    relativeContent: <ClockIcon />,
+  }}
+  anchors={[
+    { name: 'now', value: 'now', label: 'right now' },
+    { name: 'startOfDay', value: 'startOfDay', label: 'midnight' },
+  ]}>
+  <QueryBuilder fields={fields} />
+</QueryBuilderDateTime>
 ```
 
 ### Materializing relative values

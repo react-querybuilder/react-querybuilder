@@ -8,5 +8,8 @@ export * from './getDatetimeRuleProcessorNL';
 export * from './getDatetimeRuleProcessorSPARQL';
 export * from './getDatetimeRuleProcessorSQL';
 export * from './QueryBuilderDateTime';
+export * from './relativeDateTimeConstants';
+export * from './RelativeDateTimeConfigContext';
+export * from './relativeDateTimeModeControllers';
 export * from './RelativeDateTimeValueEditor';
 export * from './types';
