@@ -9,8 +9,8 @@ import {
   useValueEditor,
   ValueEditor,
 } from 'react-querybuilder';
-import { DateTimeValueEditor } from './QueryBuilderDateTime';
 import { useInheritedValueEditor } from './InheritedValueEditorContext';
+import { DateTimeValueEditor } from './QueryBuilderDateTime';
 import type { ResolvedRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
 import { useRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
 import { defaultRelativeDateTimeValue } from './relativeDateTimeConstants';
