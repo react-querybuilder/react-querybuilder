@@ -3,8 +3,11 @@ import { standardClassnames, TestID } from '@react-querybuilder/core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { QueryBuilder } from 'react-querybuilder';
+import type { ValueEditorProps } from 'react-querybuilder';
+import { getCompatContextProvider, QueryBuilder } from 'react-querybuilder';
 import { DateTimeValueEditor, QueryBuilderDateTime } from '../QueryBuilderDateTime';
+import { rqbDateTimeLibraryAPI } from '../rqbDateTimeLibraryAPI.dayjs';
+import type { RQBDateTimeLibraryAPI } from '../types';
 
 const user = userEvent.setup();
 
@@ -92,4 +95,60 @@ it('passes relative editor config props through to the editor', async () => {
   // Switching to relative mode renders the relative sub-controls.
   await user.click(screen.getByRole('switch'));
   expect(screen.getAllByRole('combobox').length).toBeGreaterThan(1);
+});
+
+// Marker editor used to verify delegation to an inherited (compat) value editor.
+const CustomValueEditor = (_props: ValueEditorProps) => (
+  <span data-testid="custom-editor">custom</span>
+);
+const OuterCompatProvider = getCompatContextProvider({
+  controlElements: { valueEditor: CustomValueEditor },
+});
+
+it('delegates non-date fields to the inherited (compat) value editor', () => {
+  render(
+    <OuterCompatProvider>
+      <QueryBuilderDateTime>
+        <QueryBuilder fields={fields} getDefaultField="field2" addRuleToNewGroups />
+      </QueryBuilderDateTime>
+    </OuterCompatProvider>
+  );
+
+  expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
+});
+
+it('delegates the absolute date input and relative offset to the inherited editor', async () => {
+  render(
+    <OuterCompatProvider>
+      <QueryBuilderDateTime>
+        <QueryBuilder fields={fields} getDefaultField="field1" addRuleToNewGroups />
+      </QueryBuilderDateTime>
+    </OuterCompatProvider>
+  );
+
+  // Absolute mode: the date input itself renders through the inherited editor.
+  expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
+
+  // Relative mode: the numeric offset input also renders through the inherited editor.
+  await user.click(screen.getByRole('switch'));
+  expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
+});
+
+it('uses a custom dateTimeAPI prop to parse/format the input value', () => {
+  // Custom adapter that always parses to a fixed date, proving the API is pluggable.
+  const fixedDate = new Date(2020, 5, 15, 9, 30);
+  const customAPI: RQBDateTimeLibraryAPI = {
+    ...rqbDateTimeLibraryAPI,
+    isValid: () => true,
+    toDate: () => fixedDate,
+  };
+
+  render(
+    <QueryBuilderDateTime dateTimeAPI={customAPI}>
+      <QueryBuilder fields={fields} addRuleToNewGroups getDefaultField="field3" />
+    </QueryBuilderDateTime>
+  );
+
+  // datetime-local formatted from the fixed date (local time), not the field default.
+  expect(dateInput()).toHaveValue('2020-06-15T09:30');
 });

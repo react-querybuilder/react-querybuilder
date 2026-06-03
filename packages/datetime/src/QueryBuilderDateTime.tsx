@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import * as React from 'react';
 import { useContext, useMemo } from 'react';
 import type { QueryBuilderContextProvider, ValueEditorProps } from 'react-querybuilder';
@@ -12,7 +11,10 @@ import {
   InheritedValueEditorContext,
   useInheritedValueEditor,
 } from './InheritedValueEditorContext';
-import { RelativeDateTimeConfigContext } from './RelativeDateTimeConfigContext';
+import {
+  RelativeDateTimeConfigContext,
+  useRelativeDateTimeConfig,
+} from './RelativeDateTimeConfigContext';
 import { RelativeDateTimeValueEditor } from './RelativeDateTimeValueEditor';
 import type { RelativeDateTimeEditorConfig } from './types';
 
@@ -25,9 +27,21 @@ const isDateTimeEditor = (props: ValueEditorProps, inputTypeCoerced: string | un
     (inputTypeCoerced === 'date' || inputTypeCoerced === 'datetime-local')) ||
   /^(?:date|datetime|timestamp)\b/i.test(props.fieldData?.datatype as string);
 
+const pad2 = (n: number): string => `${n}`.padStart(2, '0');
+
+/**
+ * Formats a `Date` into the local value expected by a native `date`/`datetime-local`
+ * input (library-agnostic; the date library only handles parsing/validation).
+ */
+const formatDateInputValue = (d: Date, withTime: boolean): string => {
+  const datePart = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  return withTime ? `${datePart}T${pad2(d.getHours())}:${pad2(d.getMinutes())}` : datePart;
+};
+
 export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element => {
   const uVE = useValueEditor(props);
   const InheritedEditor = useInheritedValueEditor();
+  const { dateTimeAPI } = useRelativeDateTimeConfig();
 
   // Non-date fields and unparseable values: delegate to the inherited (compat) editor when
   // present, otherwise the default editor.
@@ -38,10 +52,10 @@ export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element 
     return fallback(props);
   }
 
-  const maybeDate = dayjs(props.value);
-  if (maybeDate.isValid()) {
-    const value = maybeDate.format(
-      uVE.inputTypeCoerced === 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm'
+  if (dateTimeAPI.isValid(props.value)) {
+    const value = formatDateInputValue(
+      dateTimeAPI.toDate(props.value),
+      uVE.inputTypeCoerced !== 'date'
     );
     return fallback({ ...props, value });
   }
@@ -88,10 +102,17 @@ export const QueryBuilderDateTime = ({
   anchors,
   units,
   toggleLabels,
+  dateTimeAPI,
 }: QueryBuilderDateTimeProps): React.JSX.Element => {
   const config = useMemo(
-    (): RelativeDateTimeEditorConfig => ({ modeController, anchors, units, toggleLabels }),
-    [modeController, anchors, units, toggleLabels]
+    (): RelativeDateTimeEditorConfig => ({
+      modeController,
+      anchors,
+      units,
+      toggleLabels,
+      dateTimeAPI,
+    }),
+    [modeController, anchors, units, toggleLabels, dateTimeAPI]
   );
 
   // Capture the value editor inherited from any outer compat provider (e.g. QueryBuilderMaterial)

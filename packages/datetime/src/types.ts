@@ -284,6 +284,13 @@ export interface RelativeDateTimeEditorConfig {
   units?: FullOption<RelativeDateTimeUnit>[];
   /** Content/labels for the absolute/relative toggle. */
   toggleLabels?: RelativeDateTimeToggleLabels;
+  /**
+   * Date/time library adapter used by the value editor to parse/validate the rule value
+   * for the native date input. Defaults to the Day.js adapter. Pass the adapter matching
+   * your chosen entry point (e.g. from `@react-querybuilder/datetime/luxon`) so the editor
+   * interprets values consistently with the rule processors.
+   */
+  dateTimeAPI?: RQBDateTimeLibraryAPI;
 }
 
 /**

@@ -7,12 +7,14 @@ import {
   defaultRelativeDateTimeUnits,
 } from './relativeDateTimeConstants';
 import { toggleModeController } from './relativeDateTimeModeControllers';
+import { rqbDateTimeLibraryAPI as defaultDateTimeAPI } from './rqbDateTimeLibraryAPI.dayjs';
 import type {
   RelativeDateTimeAnchor,
   RelativeDateTimeEditorConfig,
   RelativeDateTimeModeController,
   RelativeDateTimeToggleLabels,
   RelativeDateTimeUnit,
+  RQBDateTimeLibraryAPI,
 } from './types';
 
 /** Fully-resolved relative date/time editor config (no optional fields). */
@@ -21,6 +23,7 @@ export interface ResolvedRelativeDateTimeConfig {
   anchors: FullOption<RelativeDateTimeAnchor>[];
   units: FullOption<RelativeDateTimeUnit>[];
   toggleLabels: Required<RelativeDateTimeToggleLabels>;
+  dateTimeAPI: RQBDateTimeLibraryAPI;
 }
 
 /**
@@ -39,6 +42,7 @@ export const useRelativeDateTimeConfig = (): ResolvedRelativeDateTimeConfig => {
       anchors: config.anchors ?? defaultRelativeDateTimeAnchors,
       units: config.units ?? defaultRelativeDateTimeUnits,
       toggleLabels: { ...defaultRelativeDateTimeToggleLabels, ...config.toggleLabels },
+      dateTimeAPI: config.dateTimeAPI ?? defaultDateTimeAPI,
     }),
     [config]
   );
