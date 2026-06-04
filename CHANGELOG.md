@@ -19,10 +19,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Datetime-aware rule processors added for the "parameterized", "spel", "ldap", "gremlin", "elasticsearch", "prisma", "sequelize", "drizzle", "tanstack_db", and "mongodb" export formats. Relative values are materialized (as ISO strings for text-based formats, `Date` objects for ORM formats) and `between`/`notBetween` bounds are reordered chronologically.
   - `RQBDateTimeLibraryAPI` gains `startOf`, `endOf`, and `add` methods (implemented for the Day.js, date-fns, Luxon, and JS Date plugins).
   - Demo: "Use date/time package" option now wraps the live query builder with `QueryBuilderDateTime` for interactive relative editing.
+- [#1046] Evaluation modes for the rules engine (`@react-querybuilder/rules-engine`). A new `evaluationMode` property (type `EvaluationMode`, i.e. `"cascade" | "cumulative"`) can be set on `RulesEngine`/`RulesEngineIC` objects, or passed as a `formatRulesEngine` option to override the object-level value at export time. Defaults to `"cascade"`.
+  - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior siblings' antecedents failed (if/else-if/else semantics).
+  - `"cumulative"`: every condition is evaluated independently and any number may fire.
+  - `RulesEngineBuilder` renders an evaluation mode toggle in its header, configurable via new `evaluationMode`, `evaluationModeCascade`, and `evaluationModeCumulative` translation keys and an `evaluationMode` classname.
+  - In cumulative mode, `RulesEngineBuilder` labels condition headers "When" and the default consequent "Always" (instead of "If"/"Else If"/"Else"). New translation keys `blockLabelWhen`/`blockLabelAlways` and standard classes `blockLabel-when`/`blockLabel-always`.
+  - New interactive rules engine builder demo on the website.
 
 ### Changed
 
 - Replaced `any` with `unknown` on input parameters of ~20 core utility functions (type guards, array utils, string escape helpers, `clsx`). Return types preserved or tightened to avoid breaking consumers.
+
+### Fixed
+
+- [#1046] Rules engine (`@react-querybuilder/rules-engine`): `useRulesEngineBuilder` no longer enters an infinite update loop. The hook now honors the `defaultRulesEngine` prop and preserves edits in uncontrolled mode (previously the prop-sync effect could overwrite them on each render).
 
 ## [v8.18.0] - 2026-05-31
 
@@ -2249,6 +2259,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1040]: https://github.com/react-querybuilder/react-querybuilder/pull/1040
 [#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
 [#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
+[#1046]: https://github.com/react-querybuilder/react-querybuilder/pull/1046
 
 <!-- #endregion -->
 
