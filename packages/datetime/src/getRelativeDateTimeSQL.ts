@@ -93,6 +93,13 @@ const mysqlBuild: RelativeSQLBuilder = (value, asDate) => {
   let expr = now;
   if (bound !== 'now' && unit) {
     expr = mysqlTrunc(now, bound, unit);
+    if (bound === 'end' && !asDate) {
+      // mysqlTrunc yields the period's last day at midnight. For timestamp
+      // granularity, step to the last instant (one microsecond before the next
+      // period) so intraday values aren't excluded. DATE columns are time-less,
+      // so the date-granular result above is left untouched.
+      expr = `date_sub(date_add(${expr}, interval 1 day), interval 1 microsecond)`;
+    }
   }
 
   if (value.offset) {
@@ -105,12 +112,23 @@ const mysqlBuild: RelativeSQLBuilder = (value, asDate) => {
 
 // --- MSSQL ------------------------------------------------------------------
 
-const mssqlTrunc = (now: string, bound: 'start' | 'end', unit: RelativeDateTimeTruncationUnit) => {
+const mssqlTrunc = (
+  now: string,
+  bound: 'start' | 'end',
+  unit: RelativeDateTimeTruncationUnit,
+  asDate: boolean
+) => {
   // datediff/dateadd truncation: number of <unit> since epoch 0, re-added to 0.
   const start = `dateadd(${unit}, datediff(${unit}, 0, ${now}), 0)`;
   if (bound === 'start') return start;
-  // End = start of next period minus 1 day (date) — callers cast as needed.
-  return `dateadd(day, -1, dateadd(${unit}, datediff(${unit}, 0, ${now}) + 1, 0))`;
+  const nextStart = `dateadd(${unit}, datediff(${unit}, 0, ${now}) + 1, 0)`;
+  // Date granularity: last day at midnight. Timestamp granularity: the last
+  // instant (100ns before the next period, as datetime2). Using datetime2 is
+  // safe for datetime/smalldatetime columns too, since SQL Server promotes the
+  // lower-precision side when comparing, so nothing from the next period leaks in.
+  return asDate
+    ? `dateadd(day, -1, ${nextStart})`
+    : `dateadd(nanosecond, -100, cast(${nextStart} as datetime2))`;
 };
 
 const mssqlBuild: RelativeSQLBuilder = (value, asDate) => {
@@ -119,7 +137,7 @@ const mssqlBuild: RelativeSQLBuilder = (value, asDate) => {
 
   let expr = now;
   if (bound !== 'now' && unit) {
-    expr = mssqlTrunc(now, bound, unit);
+    expr = mssqlTrunc(now, bound, unit, asDate);
   }
 
   if (value.offset) {
@@ -183,10 +201,10 @@ const oracleBuild: RelativeSQLBuilder = (value, asDate) => {
   }
 
   // TRUNC/DATE arithmetic above is second-granular, so cast to TIMESTAMP and
-  // step back one millisecond to reach the period's true last instant (matches
-  // the materialized JS value, e.g. 23:59:59.999).
+  // step back one microsecond to reach the period's true last instant (matches
+  // PostgreSQL; default TIMESTAMP precision is microseconds).
   if (endTimestampStepBack) {
-    expr = `cast(${expr} as timestamp) - numtodsinterval(0.001, 'second')`;
+    expr = `cast(${expr} as timestamp) - numtodsinterval(0.000001, 'second')`;
   }
 
   return expr;
