@@ -465,3 +465,123 @@ it('rules with various operators', () => {
     },
   ]);
 });
+
+it('cascade mode negation-chains prior sibling antecedents', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+        consequent: { type: 'second' },
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    {
+      conditions: {
+        all: [
+          { not: { all: [{ fact: 'a', operator: 'equal', value: 1 }] } },
+          { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+        ],
+      },
+      event: { type: 'second' },
+    },
+  ]);
+});
+
+it('cumulative mode omits prior sibling negations', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+        consequent: { type: 'second' },
+      },
+    ],
+  };
+  expect(
+    formatRulesEngine(re, { format: 'json-rules-engine', evaluationMode: 'cumulative' })
+  ).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    {
+      conditions: { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+      event: { type: 'second' },
+    },
+  ]);
+});
+
+it('cascade default consequent negates all sibling antecedents', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+    ],
+    defaultConsequent: { type: 'fallback' },
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    {
+      conditions: { not: { all: [{ fact: 'a', operator: 'equal', value: 1 }] } },
+      event: { type: 'fallback' },
+    },
+  ]);
+});
+
+it('cumulative default consequent is an always-true rule', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+    ],
+    defaultConsequent: { type: 'fallback' },
+  };
+  expect(
+    formatRulesEngine(re, { format: 'json-rules-engine', evaluationMode: 'cumulative' })
+  ).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    { conditions: { all: [] }, event: { type: 'fallback' } },
+  ]);
+});
+
+it('nested conditions are guarded by ancestor antecedents', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'parent' },
+        conditions: [
+          {
+            antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+            consequent: { type: 'child' },
+          },
+        ],
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] },
+      event: { type: 'parent' },
+    },
+    {
+      conditions: {
+        all: [
+          { all: [{ fact: 'a', operator: 'equal', value: 1 }] },
+          { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+        ],
+      },
+      event: { type: 'child' },
+    },
+  ]);
+});

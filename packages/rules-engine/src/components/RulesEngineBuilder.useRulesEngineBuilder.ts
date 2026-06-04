@@ -122,6 +122,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       consequentBuilderStandalone: classnamesMerged.consequentBuilderStandalone,
       rulesEngineBuilder: classnamesMerged.rulesEngineBuilder,
       rulesEngineHeader: classnamesMerged.rulesEngineHeader,
+      evaluationMode: classnamesMerged.evaluationMode,
     }),
     [
       classnamesMerged.blockLabel,
@@ -137,6 +138,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.consequentBuilderStandalone,
       classnamesMerged.rulesEngineBuilder,
       classnamesMerged.rulesEngineHeader,
+      classnamesMerged.evaluationMode,
     ]
   );
   const headerClassName = useMemo(
@@ -391,6 +393,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   // #endregion
 
   // #region Schema
+  const evaluationMode = rulesEngine.evaluationMode ?? 'cascade';
   const schema = useMemo(
     (): SchemaRE => ({
       addCondition,
@@ -401,6 +404,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       components,
       consequentTypes,
       dispatchRulesEngine,
+      evaluationMode,
       getRulesEngine,
       defaultConsequentType,
       getConsequentTypes: getConsequentTypesMain,
@@ -421,6 +425,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       consequentTypes,
       defaultConsequentType,
       dispatchRulesEngine,
+      evaluationMode,
       getConsequentTypesMain,
       getRulesEngine,
       queryBuilderProps,

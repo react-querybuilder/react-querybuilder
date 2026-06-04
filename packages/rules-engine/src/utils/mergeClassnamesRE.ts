@@ -23,4 +23,5 @@ export const mergeClassnamesRE = (...args: MergeClassnamesREParams): ClassnamesR
   blockLabelIfElse: joinClassnamesByName('blockLabelIfElse', args),
   blockLabelElse: joinClassnamesByName('blockLabelElse', args),
   blockLabelThen: joinClassnamesByName('blockLabelThen', args),
+  evaluationMode: joinClassnamesByName('evaluationMode', args),
 });

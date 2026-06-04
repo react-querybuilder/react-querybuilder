@@ -167,6 +167,29 @@ engine.run({ temperature: 90, humidity: 35 }).then(events => {
 });
 ```
 
+### Evaluation modes
+
+Sibling conditions can be exported with one of two evaluation modes, stored as `evaluationMode` on the rules engine object (defaults to `"cascade"`):
+
+- **`"cascade"`** (default): conditions are evaluated in order, like an `if`/`else-if`/`else` chain. A later sibling only fires when _all_ prior siblings' antecedents failed. This is achieved by AND-ing each exported rule with the negated antecedents of its prior siblings.
+- **`"cumulative"`**: every condition is evaluated independently, so any number of them may fire.
+
+In both modes, nested conditions are guarded by their ancestor antecedents (structural nesting). A `defaultConsequent` behaves differently per mode: in `"cascade"` it is the `else` branch, firing only when _every_ sibling antecedent at its level fails; in `"cumulative"` it is an always-true baseline that fires on every run (still guarded by ancestor antecedents at nested levels).
+
+```tsx
+// Read from the rules engine object (defaults to "cascade")
+formatRulesEngine({ ...rulesEngine, evaluationMode: 'cumulative' }, 'json-rules-engine');
+
+// Or override per-call (takes precedence over the object's value)
+formatRulesEngine(rulesEngine, { format: 'json-rules-engine', evaluationMode: 'cumulative' });
+```
+
+:::note
+
+Earlier versions emitted every condition independently (equivalent to `"cumulative"`) and always emitted the `defaultConsequent` as an always-true rule. The default is now `"cascade"`: overlapping conditions short-circuit, nested conditions are emitted, and the `defaultConsequent` becomes the `else` branch. To keep the always-true `defaultConsequent` behavior, export with `"cumulative"` mode.
+
+:::
+
 ### Custom export formats
 
 Extend export functionality with custom processors:

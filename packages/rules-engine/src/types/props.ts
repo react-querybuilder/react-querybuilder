@@ -13,6 +13,7 @@ import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { Except } from 'type-fest';
 import type { ActionElementREProps, ValueSelectorREProps } from '../components';
+import type { EvaluationMode } from './export';
 import type {
   Consequent,
   REConditionAny,
@@ -36,6 +37,7 @@ export interface SchemaRE {
   suppressStandardClassnames: boolean;
   allowDefaultConsequents: boolean;
   allowNestedConditions: boolean;
+  evaluationMode: EvaluationMode;
   translations: TranslationsFullRE;
   queryBuilderProps?: Except<
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
@@ -113,6 +115,8 @@ export interface ClassnamesRE {
   conditionBuilder: Classname;
   /** Classes applied to condition builder headers ("if"/"else if" labels and controls). */
   conditionBuilderHeader: Classname;
+  /** Classes applied to the evaluation mode toggle control. */
+  evaluationMode: Classname;
 }
 
 /**
@@ -131,6 +135,9 @@ export interface TranslationsRE {
   addDefaultConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
   removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
+  evaluationMode: BaseTranslationWithLabel<React.ReactNode>;
+  evaluationModeCascade: BaseTranslationWithLabel<React.ReactNode>;
+  evaluationModeCumulative: BaseTranslationWithLabel<React.ReactNode>;
 }
 /**
  * The full `translations` interface for {@link RulesEngineBuilder}, with all properties required.

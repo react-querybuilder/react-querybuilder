@@ -43,13 +43,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  font-size: 0.85em;
-}
-
-.paramField input,
-.paramField textarea {
-  font: inherit;
-  padding: 0.25rem 0.4rem;
 }
 
 .resultsTable {

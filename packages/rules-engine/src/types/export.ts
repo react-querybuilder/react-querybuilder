@@ -34,4 +34,21 @@ export interface FormatRulesEngineOptions {
   format?: RulesEngineExportFormat;
   rulesEngineProcessor?: RulesEngineProcessor;
   formatQueryOptions?: FormatQueryOptions;
+  /**
+   * Overrides the {@link react-querybuilder!RulesEngine.evaluationMode evaluationMode} stored on
+   * the rules engine object. If neither is specified, defaults to `"cascade"`.
+   *
+   * - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior
+   *   siblings' antecedents failed (if/else-if/else semantics).
+   * - `"cumulative"`: every condition is evaluated independently and any number may fire.
+   */
+  evaluationMode?: EvaluationMode;
 }
+
+/**
+ * Determines how sibling conditions in a {@link react-querybuilder!RulesEngine RulesEngine}
+ * relate to one another when exported.
+ *
+ * @group Export
+ */
+export type EvaluationMode = 'cascade' | 'cumulative';

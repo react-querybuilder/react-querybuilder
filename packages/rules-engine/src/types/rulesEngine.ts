@@ -5,6 +5,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/core';
+import type { EvaluationMode } from './export';
 
 // #region Conditions
 /**
@@ -55,6 +56,14 @@ export interface RulesEngine<
 > extends CommonRuleAndGroupProperties {
   conditions: REConditionCascade<RuleGroupType<R, C>>;
   defaultConsequent?: Consequent;
+  /**
+   * How sibling conditions relate to one another when exported. Defaults to `"cascade"`.
+   *
+   * - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior
+   *   siblings' antecedents failed (if/else-if/else semantics).
+   * - `"cumulative"`: every condition is evaluated independently and any number may fire.
+   */
+  evaluationMode?: EvaluationMode;
 }
 
 /**
@@ -70,6 +79,14 @@ export interface RulesEngineIC<
 > extends CommonRuleAndGroupProperties {
   conditions: REConditionCascade<RuleGroupTypeIC<R, C>>;
   defaultConsequent?: Consequent;
+  /**
+   * How sibling conditions relate to one another when exported. Defaults to `"cascade"`.
+   *
+   * - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior
+   *   siblings' antecedents failed (if/else-if/else semantics).
+   * - `"cumulative"`: every condition is evaluated independently and any number may fire.
+   */
+  evaluationMode?: EvaluationMode;
 }
 
 /**

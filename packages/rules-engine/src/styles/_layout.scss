@@ -18,6 +18,14 @@
   gap: var(--#{$rqbre-var-prefix}spacing);
 }
 
+.rulesEngineBuilder-evaluationMode {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: calc(var(--#{$rqbre-var-prefix}spacing) / 2);
+  margin-left: auto;
+}
+
 .rulesEngineBuilder-justified {
   .blockLabel {
     margin-right: auto;

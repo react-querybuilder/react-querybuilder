@@ -20,6 +20,7 @@ export const defaultClassnamesRE: ClassnamesRE = {
   blockLabelIfElse: '',
   blockLabelElse: '',
   blockLabelThen: '',
+  evaluationMode: '',
 };
 
 /**
@@ -41,6 +42,7 @@ export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   blockLabelIfElse: 'blockLabel-ifelse',
   blockLabelElse: 'blockLabel-else',
   blockLabelThen: 'blockLabel-then',
+  evaluationMode: 'rulesEngineBuilder-evaluationMode',
 };
 
 export const defaultRulesEngine: RulesEngine = {
@@ -68,6 +70,15 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   addDefaultConsequent: { title: 'Add consequent action/result', label: '+ Else' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
   removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
+  evaluationMode: { title: 'How sibling conditions are evaluated', label: 'Evaluation mode' },
+  evaluationModeCascade: {
+    title: 'Evaluate conditions in order; stop after the first match (if/else-if/else)',
+    label: 'Stop at first match (cascade)',
+  },
+  evaluationModeCumulative: {
+    title: 'Evaluate every condition independently; any number may match',
+    label: 'Evaluate all (cumulative)',
+  },
 };
 
 export const jsonRulesEngineAdditionalOperators: Record<

@@ -1,5 +1,7 @@
+import { clsx } from '@react-querybuilder/core';
 import * as React from 'react';
-import type { RulesEngineBuilderHeaderProps } from '../types';
+import { standardClassnamesRE } from '../defaults';
+import type { EvaluationMode, RulesEngineBuilderHeaderProps } from '../types';
 
 /**
  * Default header component for {@link RulesEngineBuilder}.
@@ -14,11 +16,15 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
   const {
     classnames,
     defaultConsequent,
+    conditionPath,
     schema: {
       addCondition,
       updateCondition,
       allowDefaultConsequents,
       allowNestedConditions,
+      evaluationMode,
+      suppressStandardClassnames,
+      classnames: classnamesRE,
       components: { addConsequent: AddConsequent, addCondition: AddCondition },
       translations,
     },
@@ -32,6 +38,18 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
     if (!defaultConsequent)
       updateCondition([], 'defaultConsequent', { type: props.schema.defaultConsequentType.value });
   }, [defaultConsequent, props.schema.defaultConsequentType.value, updateCondition]);
+
+  const onEvaluationModeChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      updateCondition(conditionPath, 'evaluationMode', event.target.value as EvaluationMode);
+    },
+    [conditionPath, updateCondition]
+  );
+
+  const evaluationModeClassName = clsx(
+    suppressStandardClassnames || standardClassnamesRE.evaluationMode,
+    classnamesRE.evaluationMode
+  );
 
   return (
     <div className={classnames}>
@@ -56,6 +74,17 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
           label={translations.addDefaultConsequent.label}
         />
       )}
+      <label className={evaluationModeClassName} title={translations.evaluationMode.title}>
+        {translations.evaluationMode.label}
+        <select value={evaluationMode} onChange={onEvaluationModeChange}>
+          <option value="cascade" title={translations.evaluationModeCascade.title}>
+            {translations.evaluationModeCascade.label}
+          </option>
+          <option value="cumulative" title={translations.evaluationModeCumulative.title}>
+            {translations.evaluationModeCumulative.label}
+          </option>
+        </select>
+      </label>
     </div>
   );
 });
