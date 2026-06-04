@@ -18,12 +18,7 @@ import {
   isRuleGroupTypeIC,
   queryBuilderStore,
 } from 'react-querybuilder';
-import {
-  defaultClassnamesRE,
-  defaultRulesEngine,
-  defaultTranslationsRE,
-  standardClassnamesRE,
-} from '../defaults';
+import { defaultClassnamesRE, defaultTranslationsRE, standardClassnamesRE } from '../defaults';
 import { useMergeComponents } from '../hooks';
 import { getRulesEngineSelectorById, useRulesEngineBuilderSelector } from '../redux';
 import {
@@ -80,10 +75,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   headerClassName: string;
 } => {
   const [reId] = useState(generateID);
-  const isFirstRender = useRef(true);
 
   const {
-    rulesEngine: rulesEngineProp = defaultRulesEngine,
+    rulesEngine: rulesEngineProp,
     defaultRulesEngine: defaultRulesEngineProp,
     consequentTypes: consequentTypesProp,
     getConsequentTypes,
@@ -252,10 +246,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   // passing back the parameter from the `onRulesEngineChange` callback.
   const candidateRulesEngine =
     rulesEngineProp ?? storeRulesEngine ?? defaultRulesEngineProp ?? fallbackRulesEngine;
-  const rootRE: RulesEngineAny =
-    !candidateRulesEngine.id || isFirstRender.current
-      ? prepareRulesEngine(candidateRulesEngine, { idGenerator })
-      : candidateRulesEngine;
+  const rootRE: RulesEngineAny = candidateRulesEngine.id
+    ? candidateRulesEngine
+    : prepareRulesEngine(candidateRulesEngine, { idGenerator });
 
   // const [initialRulesEngine] = useState(rootRE);
   // const rqbContext = useMemo(
@@ -441,8 +434,6 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     ]
   );
   // #endregion
-
-  isFirstRender.current = false;
 
   return {
     classnames,

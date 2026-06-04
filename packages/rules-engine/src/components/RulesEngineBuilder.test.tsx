@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import type { RulesEngine } from '../types';
 import { RulesEngineBuilder } from './RulesEngineBuilder';
@@ -46,5 +46,30 @@ describe('RulesEngineBuilder block labels', () => {
     expect(screen.queryByText('If')).not.toBeInTheDocument();
     expect(screen.queryByText('Else If')).not.toBeInTheDocument();
     expect(screen.queryByText('Else')).not.toBeInTheDocument();
+  });
+});
+
+describe('RulesEngineBuilder controlled/uncontrolled state', () => {
+  it('honors the defaultRulesEngine prop in uncontrolled mode', () => {
+    render(
+      <RulesEngineBuilder
+        defaultRulesEngine={makeRulesEngine()}
+        consequentTypes={consequentTypes}
+      />
+    );
+    // defaultRulesEngine has two conditions, each with a consequent
+    expect(screen.getByText('If')).toBeInTheDocument();
+    expect(screen.getByText('Else If')).toBeInTheDocument();
+    expect(screen.getAllByText('Then')).toHaveLength(2);
+  });
+
+  it('persists added conditions in fully uncontrolled mode', () => {
+    render(<RulesEngineBuilder consequentTypes={consequentTypes} />);
+    // Fallback rules engine starts with a single condition
+    expect(screen.getByText('If')).toBeInTheDocument();
+    expect(screen.queryByText('Else If')).not.toBeInTheDocument();
+    // The added condition must not be wiped by the prop-sync effect
+    fireEvent.click(screen.getByText('+ Condition'));
+    expect(screen.getByText('Else If')).toBeInTheDocument();
   });
 });
