@@ -58,7 +58,8 @@
         "types": "./dist/cjs/luxon.d.ts",
         "default": "./dist/cjs/luxon.js"
       }
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "types": "./dist/react-querybuilder_datetime.legacy-esm.d.ts",
   "files": [
@@ -69,7 +70,10 @@
     "luxon"
   ],
   "license": "MIT",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/react-querybuilder/react-querybuilder.git",
@@ -85,13 +89,18 @@
   ],
   "scripts": {
     "start": "vite",
-    "build": "bun --bun tsdown",
+    "build": "bun run build:main && bun run build:css",
+    "build:main": "bun --bun tsdown",
+    "build:css": "mkdir -p dist/styles && cp src/*.scss dist && cp src/styles/*.scss dist/styles && bun sass --style=compressed dist:dist",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@date-fns/tz": "^1.5.0",
     "@electric-sql/pglite": "catalog:test",
+    "@grafeo-db/js": "^0.5.42",
+    "@prisma/client": "^7.7.0",
+    "@tanstack/db": "^0.6.6",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@testing-library/user-event": "catalog:test",
@@ -100,15 +109,21 @@
     "@vitejs/plugin-react": "catalog:",
     "date-fns": "catalog:",
     "dayjs": "catalog:",
+    "drizzle-orm": "^0.45.2",
     "json-logic-js": "catalog:",
     "jsonata": "catalog:",
     "luxon": "catalog:",
     "mongodb-memory-server-core": "catalog:test",
     "mongoose": "catalog:test",
+    "pglite-prisma-adapter": "^0.7.2",
+    "prisma": "^7.7.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.18.0",
     "rollup-plugin-visualizer": "catalog:",
+    "sass": "catalog:",
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

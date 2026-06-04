@@ -4,7 +4,6 @@ import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
-import { defaultRuleProcessorDrizzle } from './defaultRuleProcessorDrizzle';
 
 /**
  * Default rule group processor used by {@link formatQuery} for the "drizzle" format. The returned
@@ -31,13 +30,12 @@ export const defaultRuleGroupProcessorDrizzle: RuleGroupProcessor<
       placeholderValueName,
       validateRule,
       validationMap,
+      ruleProcessor,
     } = options;
 
     if (!columns || !drizzleOperators) return undefined;
 
     const { and, not, or } = drizzleOperators;
-
-    const ruleProcessor = defaultRuleProcessorDrizzle;
 
     const processRuleGroup = (rg: RuleGroupType, _outermost?: boolean): SQL | undefined => {
       if (

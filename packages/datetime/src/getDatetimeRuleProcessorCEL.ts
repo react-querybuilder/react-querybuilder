@@ -1,7 +1,7 @@
 import type { RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorCEL, lc, toArray } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { processIsDateField } from './utils';
+import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -21,7 +21,10 @@ export const getDatetimeRuleProcessorCEL =
 
     const ts = (d: string | Date) => `timestamp("${apiFns.toISOString(d)}")`;
 
-    const operatorTL = lc(rule.operator.replace(/^=$/, '=='));
+    // Resolve any relative value(s) to concrete literals (CEL has no symbolic relative form).
+    const value = materializeRelativeValues(apiFns, rule.value, opts);
+
+    const operatorTL = lc(resolveDatetimeOperator(rule, opts).replace(/^=$/, '=='));
 
     switch (operatorTL) {
       case '<':
@@ -30,10 +33,10 @@ export const getDatetimeRuleProcessorCEL =
       case '!=':
       case '>':
       case '>=':
-        return `${rule.field} ${operatorTL} ${ts(rule.value)}`;
+        return `${rule.field} ${operatorTL} ${ts(value as string | Date)}`;
     }
 
-    const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
+    const valueAsArray: string[] = toArray(value, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
       .map(v => apiFns.toDate(v))
       .filter(dateVal => apiFns.isValid(dateVal));

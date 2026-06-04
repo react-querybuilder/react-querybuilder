@@ -1,0 +1,8 @@
+@forward '../../../core/src/styles/variables';
+@use '../../../core/src/styles/variables' as *;
+
+$rqbdt-var-prefix: rqbdt- !default;
+
+// Spacing between the relative date/time editor's sub-controls. Defaults to the
+// core query builder spacing so the editor lines up with surrounding controls.
+$rqbdt-spacing: $rqb-spacing !default;

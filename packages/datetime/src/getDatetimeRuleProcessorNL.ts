@@ -8,7 +8,12 @@ import {
   toArray,
 } from 'react-querybuilder';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { isISOStringDateOnly, processIsDateField } from './utils';
+import {
+  isISOStringDateOnly,
+  materializeRelativeValues,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 
 export const defaultDateTimeNLOperatorMap: ExportOperatorMap = {
   // '=': 'is',
@@ -49,7 +54,8 @@ export const getDatetimeRuleProcessorNL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
     const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
-    const operatorLowerCase = lc(rule.operator);
+    const operator = resolveDatetimeOperator(rule, opts);
+    const operatorLowerCase = lc(operator);
     let finalValue = '';
 
     // v8 ignore next
@@ -82,7 +88,11 @@ export const getDatetimeRuleProcessorNL =
       return '';
     }
 
-    const valueAsArray: string[] = toArray(rule.value, { retainEmptyStrings: false });
+    // Natural language is descriptive (not executable), so relative value(s) are
+    // resolved to concrete dates and rendered like any other literal.
+    const ruleValue = materializeRelativeValues(apiFns, rule.value, opts);
+
+    const valueAsArray: string[] = toArray(ruleValue, { retainEmptyStrings: false });
     const valueAsDateArray = valueAsArray
       .map((v): [string, Date] => [v, apiFns.toDate(v)])
       .filter(v => apiFns.isValid(v[1]));
@@ -138,10 +148,13 @@ export const getDatetimeRuleProcessorNL =
       fieldIdentifierSeparator,
     });
 
-    const processedOperator = operatorProcessor(rule, {
-      ...opts,
-      operatorMap: { ...defaultDateTimeNLOperatorMap, ...operatorMap },
-    });
+    const processedOperator = operatorProcessor(
+      { ...rule, operator },
+      {
+        ...opts,
+        operatorMap: { ...defaultDateTimeNLOperatorMap, ...operatorMap },
+      }
+    );
 
     const wordOrderMap = {
       S: processedField,

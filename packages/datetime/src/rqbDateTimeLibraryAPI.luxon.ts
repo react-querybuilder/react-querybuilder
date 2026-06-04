@@ -1,10 +1,19 @@
 import { DateTime } from 'luxon';
-import type { RQBDateTimeLibraryAPI } from './types';
+import type { RelativeDateTimeUnit, RQBDateTimeLibraryAPI } from './types';
 import { isISOStringDateOnly } from './utils';
 
 const toDateTime = (a: string | Date) =>
   typeof a === 'string' ? DateTime.fromISO(a) : DateTime.fromJSDate(a);
 const iso8601DateOnly = 'yyyy-MM-dd';
+
+const durationKeyMap: Record<RelativeDateTimeUnit, string> = {
+  minute: 'minutes',
+  hour: 'hours',
+  day: 'days',
+  week: 'weeks',
+  month: 'months',
+  year: 'years',
+};
 
 /**
  * {@link RQBDateTimeLibraryAPI} for Luxon
@@ -27,4 +36,10 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const dToDate = toDateTime(d);
     return dToDate.isValid ? dToDate.toFormat(iso8601DateOnly) : '';
   },
+  startOf: (d, unit) => toDateTime(d).startOf(unit).toJSDate(),
+  endOf: (d, unit) => toDateTime(d).endOf(unit).toJSDate(),
+  add: (d, amount, unit) =>
+    toDateTime(d)
+      .plus({ [durationKeyMap[unit]]: amount })
+      .toJSDate(),
 };

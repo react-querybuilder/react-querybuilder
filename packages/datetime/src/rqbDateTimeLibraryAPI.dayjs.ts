@@ -21,4 +21,7 @@ export const rqbDateTimeLibraryAPI: RQBDateTimeLibraryAPI = {
     const dToDate = dayjs(d);
     return dToDate.isValid() ? dToDate.format('YYYY-MM-DD') : '';
   },
+  startOf: (d, unit) => dayjs(d).startOf(unit).toDate(),
+  endOf: (d, unit) => dayjs(d).endOf(unit).toDate(),
+  add: (d, amount, unit) => dayjs(d).add(amount, unit).toDate(),
 };

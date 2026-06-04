@@ -143,6 +143,7 @@ export const useMergedContext = <
       branches: cc.branches,
       hasSubQuery: cc.hasSubQuery,
       loading: cc.loading,
+      valueDateTimeRelative: cc.valueDateTimeRelative,
     }),
     [
       cc.actionElement,
@@ -185,6 +186,7 @@ export const useMergedContext = <
       cc.shiftActions,
       cc.valid,
       cc.value,
+      cc.valueDateTimeRelative,
       cc.valueListItem,
       cc.valueSelector,
       cc.valueSource,

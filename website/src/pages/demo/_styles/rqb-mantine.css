@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.2.2
+/* BEGIN_MANTINE_STYLES v9.3.0
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -858,15 +858,11 @@ fieldset:disabled .mantine-active:active {
   padding: 0;
   appearance: none;
   font-size: var(--mantine-font-size-md);
-  text-align: left;
+  text-align: start;
   text-decoration: none;
   color: inherit;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-}
-
-:where([dir='rtl']) .m_87cf2631 {
-  text-align: right;
 }
 
 .m_515a97f8 {
@@ -1436,7 +1432,6 @@ fieldset:disabled .mantine-active:active {
   --input-radius: var(--mantine-radius-default);
 
   --input-cursor: text;
-  --input-text-align: left;
   --input-line-height: calc(var(--input-height) - calc(0.125rem * var(--mantine-scale)));
   --input-padding: calc(var(--input-height) / 3);
   --input-padding-inline-start: var(--input-padding);
@@ -1475,6 +1470,10 @@ fieldset:disabled .mantine-active:active {
 
 .m_6c018570[data-pointer] {
   --input-cursor: pointer;
+}
+
+.m_6c018570[data-with-bottom-section] {
+  --input-bottom-section-height: calc(1.75rem * var(--mantine-scale));
 }
 
 .m_6c018570[data-multiline] {
@@ -1568,13 +1567,11 @@ fieldset:disabled .mantine-active:active {
 }
 
 :where([dir='rtl']) .m_6c018570 {
-  --input-text-align: right;
   --left-section-border-radius: 0 var(--input-radius) var(--input-radius) 0;
   --right-section-border-radius: var(--input-radius) 0 0 var(--input-radius);
 }
 
 .m_6c018570[dir='ltr'] {
-  --input-text-align: left;
   --left-section-border-radius: var(--input-radius) 0 0 var(--input-radius);
   --right-section-border-radius: 0 var(--input-radius) var(--input-radius) 0;
 }
@@ -1587,7 +1584,7 @@ fieldset:disabled .mantine-active:active {
   width: 100%;
   transition: border-color 100ms ease;
 
-  text-align: var(--input-text-align);
+  text-align: start;
   color: var(--input-color);
   border: calc(0.0625rem * var(--mantine-scale)) solid var(--input-bd);
   background-color: var(--input-bg);
@@ -1666,6 +1663,26 @@ fieldset:disabled .mantine-active:active {
 
 .m_8fb7ebe7[readonly] {
   caret-color: transparent;
+}
+
+[data-with-bottom-section] .m_8fb7ebe7 {
+  padding-bottom: calc(var(--input-padding-y, 0rem) + var(--input-bottom-section-height));
+}
+
+.m_93f4ed57 {
+  position: absolute;
+  bottom: calc(0.0625rem * var(--mantine-scale));
+  left: calc(0.0625rem * var(--mantine-scale));
+  right: calc(0.0625rem * var(--mantine-scale));
+  height: var(--input-bottom-section-height);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline: var(--input-padding);
+  border-radius: 0 0 var(--input-radius) var(--input-radius);
+  pointer-events: all;
+  color: var(--mantine-color-dimmed);
+  font-size: var(--input-fz, var(--mantine-font-size-sm));
 }
 
 .m_82577fc2 {
@@ -2083,6 +2100,7 @@ fieldset:disabled .mantine-active:active {
   font-size: var(--text-fz, var(--mantine-font-size-md));
   line-height: var(--text-lh, var(--mantine-line-height-md));
   font-weight: var(--mantine-font-weight-regular);
+  text-wrap: var(--text-text-wrap, var(--mantine-text-wrap, wrap));
   margin: 0;
   padding: 0;
 }
@@ -2095,12 +2113,12 @@ fieldset:disabled .mantine-active:active {
 
 .m_b6d8b162:where([data-truncate='start']) {
   direction: rtl;
-  text-align: right;
+  text-align: end;
 }
 
 :where([dir='rtl']) .m_b6d8b162:where([data-truncate='start']) {
   direction: ltr;
-  text-align: left;
+  text-align: start;
 }
 
 .m_b6d8b162:where([data-variant='gradient']) {
@@ -2524,6 +2542,14 @@ fieldset:disabled .mantine-active:active {
 
 .m_88b62a41[data-hidden] {
   display: none;
+}
+
+.m_88b62a41[data-floating-height='viewport']:not([data-hidden]) {
+  --combobox-floating-options-max-height: calc(
+    var(--combobox-floating-max-height, 100vh) - var(--combobox-padding) * 2
+  );
+  max-height: var(--combobox-floating-max-height, none);
+  overflow: hidden;
 }
 
 /* Variables must be both on dropdown and options to support usage of Combobox.Options without Combobox.Dropdown */
@@ -3255,6 +3281,7 @@ fieldset:disabled .m_8ee546b8,
 
   position: relative;
   margin: 0;
+  text-wrap: var(--bq-text-wrap, var(--mantine-text-wrap, wrap));
   border-inline-start: var(--blockquote-border);
   border-start-end-radius: var(--bq-radius);
   border-end-end-radius: var(--bq-radius);
@@ -4879,12 +4906,12 @@ fieldset:disabled .m_8ee546b8,
 }
 
 :where([data-mantine-color-scheme='light'])
-  .m_99ac2aa1:where(:hover, :focus):where(:not(:disabled, [data-disabled])) {
+  .m_99ac2aa1:where(:hover, :focus, [data-menu-active]):where(:not(:disabled, [data-disabled])) {
   background-color: var(--menu-item-hover, var(--mantine-color-gray-1));
 }
 
 :where([data-mantine-color-scheme='dark'])
-  .m_99ac2aa1:where(:hover, :focus):where(:not(:disabled, [data-disabled])) {
+  .m_99ac2aa1:where(:hover, :focus, [data-menu-active]):where(:not(:disabled, [data-disabled])) {
   background-color: var(--menu-item-hover, var(--mantine-color-dark-4));
 }
 
@@ -4892,8 +4919,49 @@ fieldset:disabled .m_8ee546b8,
   padding-inline-end: calc(0.3125rem * var(--mantine-scale));
 }
 
+.m_ef8769b6 {
+  --menu-search-padding: var(--popover-padding, 4px);
+
+  margin-inline: calc(var(--menu-search-padding) * -1);
+  margin-top: calc(var(--menu-search-padding) * -1);
+  width: calc(100% + var(--menu-search-padding) * 2);
+  border-top-width: 0;
+  border-inline-width: 0;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  margin-bottom: var(--menu-search-padding);
+}
+
+:where([data-mantine-color-scheme='light']) .m_ef8769b6,
+:where([data-mantine-color-scheme='light']) .m_ef8769b6:focus {
+  border-color: var(--mantine-color-gray-2);
+}
+
+:where([data-mantine-color-scheme='dark']) .m_ef8769b6,
+:where([data-mantine-color-scheme='dark']) .m_ef8769b6:focus {
+  border-color: var(--mantine-color-dark-4);
+}
+
+:where([data-mantine-color-scheme='light']) .m_ef8769b6 {
+  background-color: var(--mantine-color-white);
+}
+
+:where([data-mantine-color-scheme='dark']) .m_ef8769b6 {
+  background-color: var(--mantine-color-dark-7);
+}
+
 .m_5476e0d3 {
   flex: 1;
+}
+
+.m_8395186e {
+  width: calc(0.75rem * var(--mantine-scale));
+  height: calc(0.75rem * var(--mantine-scale));
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: calc(0.5rem * var(--mantine-scale));
 }
 
 .m_8b75e504 {
@@ -5539,6 +5607,10 @@ fieldset:disabled .m_8ee546b8,
   --pagination-active-bg: var(--mantine-primary-color-filled);
 }
 
+.m_4addd315:where([data-layout='responsive']) {
+  container-type: inline-size;
+}
+
 .m_326d024a {
   display: flex;
   align-items: center;
@@ -5625,6 +5697,33 @@ fieldset:disabled .m_8ee546b8,
   align-items: center;
   justify-content: center;
   pointer-events: none;
+}
+
+.m_105fdbed {
+  display: flex;
+  gap: inherit;
+  align-items: center;
+}
+
+@container (width <= 400px) {
+  .m_105fdbed {
+    display: none;
+  }
+}
+
+.m_10817321 {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: var(--pagination-control-size);
+  font-size: var(--pagination-control-fz);
+  white-space: nowrap;
+}
+
+@container (width <= 400px) {
+  .m_10817321 {
+    display: flex;
+  }
 }
 
 .m_f61ca620 {
@@ -7012,6 +7111,83 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   );
 }
 
+.m_19e66008 {
+  display: flex;
+}
+
+.m_19e66008:where([data-orientation='horizontal']) {
+  flex-direction: row;
+}
+
+.m_19e66008:where([data-orientation='vertical']) {
+  flex-direction: column;
+}
+
+.m_19e5428e {
+  flex-grow: 0;
+  flex-shrink: 1;
+  overflow: auto;
+}
+
+.m_27f81bce {
+  flex: 0 0 var(--splitter-line-size, calc(0.125rem * var(--mantine-scale)));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  touch-action: none;
+  outline: none;
+  background-color: var(--splitter-handle-color, var(--mantine-color-body));
+}
+
+.m_27f81bce:where([data-orientation='horizontal']) {
+  cursor: col-resize;
+}
+
+.m_27f81bce:where([data-orientation='vertical']) {
+  cursor: row-resize;
+}
+
+.m_22feb770 {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(62.5rem * var(--mantine-scale));
+  color: var(--mantine-color-dimmed);
+  transition: color 100ms ease;
+}
+
+:where([data-mantine-color-scheme='light']) .m_22feb770 {
+  background-color: var(--mantine-color-white);
+  border: calc(0.0625rem * var(--mantine-scale)) solid var(--mantine-color-gray-3);
+}
+
+:where([data-mantine-color-scheme='dark']) .m_22feb770 {
+  background-color: var(--mantine-color-dark-6);
+  border: calc(0.0625rem * var(--mantine-scale)) solid var(--mantine-color-dark-4);
+}
+
+.m_22feb770:where([data-orientation='horizontal']) {
+  width: calc(0.75rem * var(--mantine-scale));
+  height: calc(3.75rem * var(--mantine-scale));
+}
+
+.m_22feb770:where([data-orientation='vertical']) {
+  width: calc(3.75rem * var(--mantine-scale));
+  height: calc(0.75rem * var(--mantine-scale));
+}
+
+.m_22feb770 > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.m_27f81bce:focus-visible .m_22feb770 {
+  box-shadow: 0 0 0 calc(0.125rem * var(--mantine-scale)) var(--mantine-primary-color-filled);
+}
+
 .m_559cce2d {
   position: relative;
 }
@@ -7229,12 +7405,8 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 }
 
 .m_1956aa2a:where([data-icon-position='right']) {
-  text-align: right;
+  text-align: end;
   margin-inline-end: var(--mantine-spacing-sm);
-}
-
-:where([dir='rtl']) .m_1956aa2a:where([data-icon-position='right']) {
-  text-align: left;
 }
 
 .m_12051f6c {
@@ -7474,11 +7646,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 }
 
 .m_4e7aa4f3 {
-  text-align: left;
-}
-
-:where([dir='rtl']) .m_4e7aa4f3 {
-  text-align: right;
+  text-align: start;
 }
 
 .m_4e7aa4fd {
@@ -7902,8 +8070,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 .m_b59ab47c {
   border-top: calc(0.0625rem * var(--mantine-scale)) solid transparent;
   border-bottom: calc(0.0625rem * var(--mantine-scale)) solid transparent;
-  border-right: calc(0.0625rem * var(--mantine-scale)) solid transparent;
-  border-left: calc(0.0625rem * var(--mantine-scale)) solid transparent;
+  border-inline: calc(0.0625rem * var(--mantine-scale)) solid transparent;
   border-top-color: var(--tab-border-top-color);
   border-bottom-color: var(--tab-border-bottom-color);
   border-radius: var(--tab-radius);
@@ -7920,8 +8087,8 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   position: absolute;
   background-color: var(--tab-border-color);
   bottom: var(--tab-before-bottom, calc(-0.0625rem * var(--mantine-scale)));
-  left: var(--tab-before-left, calc(-0.0625rem * var(--mantine-scale)));
-  right: var(--tab-before-right, auto);
+  inset-inline-start: var(--tab-before-start, calc(-0.0625rem * var(--mantine-scale)));
+  inset-inline-end: var(--tab-before-end, auto);
   top: var(--tab-before-top, auto);
   width: calc(0.0625rem * var(--mantine-scale));
   height: calc(0.0625rem * var(--mantine-scale));
@@ -7932,8 +8099,8 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   position: absolute;
   background-color: var(--tab-border-color);
   bottom: var(--tab-after-bottom, calc(-0.0625rem * var(--mantine-scale)));
-  right: var(--tab-after-right, calc(-0.0625rem * var(--mantine-scale)));
-  left: var(--tab-after-left, auto);
+  inset-inline-end: var(--tab-after-end, calc(-0.0625rem * var(--mantine-scale)));
+  inset-inline-start: var(--tab-after-start, auto);
   top: var(--tab-after-top, auto);
   width: calc(0.0625rem * var(--mantine-scale));
   height: calc(0.0625rem * var(--mantine-scale));
@@ -7966,19 +8133,12 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   --tab-border-inline-start-color: var(--tab-border-color);
   --tab-border-bottom-color: var(--tab-border-color);
 
-  --tab-before-right: calc(-0.0625rem * var(--mantine-scale));
-  --tab-before-left: auto;
+  --tab-before-end: calc(-0.0625rem * var(--mantine-scale));
+  --tab-before-start: auto;
   --tab-before-bottom: auto;
   --tab-before-top: calc(-0.0625rem * var(--mantine-scale));
-  --tab-after-left: auto;
-  --tab-after-right: calc(-0.0625rem * var(--mantine-scale));
-}
-
-[dir='rtl'] .m_b59ab47c:where([data-active])[data-orientation='vertical'][data-placement='left'] {
-  --tab-before-right: auto;
-  --tab-before-left: calc(-0.0625rem * var(--mantine-scale));
-  --tab-after-left: calc(-0.0625rem * var(--mantine-scale));
-  --tab-after-right: auto;
+  --tab-after-start: auto;
+  --tab-after-end: calc(-0.0625rem * var(--mantine-scale));
 }
 
 .m_b59ab47c:where([data-active])[data-orientation='vertical'][data-placement='right'] {
@@ -7986,19 +8146,12 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   --tab-border-inline-end-color: var(--tab-border-color);
   --tab-border-bottom-color: var(--tab-border-color);
 
-  --tab-before-left: calc(-0.0625rem * var(--mantine-scale));
-  --tab-before-right: auto;
+  --tab-before-start: calc(-0.0625rem * var(--mantine-scale));
+  --tab-before-end: auto;
   --tab-before-bottom: auto;
   --tab-before-top: calc(-0.0625rem * var(--mantine-scale));
-  --tab-after-right: auto;
-  --tab-after-left: calc(-0.0625rem * var(--mantine-scale));
-}
-
-[dir='rtl'] .m_b59ab47c:where([data-active])[data-orientation='vertical'][data-placement='right'] {
-  --tab-before-left: auto;
-  --tab-before-right: calc(-0.0625rem * var(--mantine-scale));
-  --tab-after-right: calc(-0.0625rem * var(--mantine-scale));
-  --tab-after-left: auto;
+  --tab-after-end: auto;
+  --tab-after-start: calc(-0.0625rem * var(--mantine-scale));
 }
 
 /*************************************** pills variant ***************************************/
@@ -8094,41 +8247,31 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   pointer-events: none;
   position: absolute;
   top: 0;
-  left: var(--timeline-line-left, 0);
-  right: var(--timeline-line-right, 0);
+  inset-inline-start: var(--timeline-line-start, 0);
+  inset-inline-end: var(--timeline-line-end, 0);
   bottom: calc(var(--mantine-spacing-xl) * -1);
   border-inline-start: var(--item-border);
   display: var(--timeline-line-display, none);
 }
 
 .m_43657ece[data-align='left'] .m_436178ff::before {
-  --timeline-line-left: calc(var(--tl-line-width) * -1);
-  --timeline-line-right: auto;
-}
-
-[dir='rtl'] .m_43657ece[data-align='left'] .m_436178ff::before {
-  --timeline-line-left: auto;
-  --timeline-line-right: calc(var(--tl-line-width) * -1);
+  --timeline-line-start: calc(var(--tl-line-width) * -1);
+  --timeline-line-end: auto;
 }
 
 .m_43657ece[data-align='right'] .m_436178ff::before {
-  --timeline-line-left: auto;
-  --timeline-line-right: calc(var(--tl-line-width) * -1);
-}
-
-[dir='rtl'] .m_43657ece[data-align='right'] .m_436178ff::before {
-  --timeline-line-left: calc(var(--tl-line-width) * -1);
-  --timeline-line-right: auto;
+  --timeline-line-start: auto;
+  --timeline-line-end: calc(var(--tl-line-width) * -1);
 }
 
 .m_43657ece:where([data-align='left']) .m_436178ff {
   padding-inline-start: var(--offset);
-  text-align: left;
+  text-align: start;
 }
 
 .m_43657ece:where([data-align='right']) .m_436178ff {
   padding-inline-end: var(--offset);
-  text-align: right;
+  text-align: end;
 }
 
 :where([data-mantine-color-scheme='light']) .m_436178ff {
@@ -8174,23 +8317,13 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 }
 
 .m_43657ece:where([data-align='left']) .m_8affcee1 {
-  left: calc((var(--tl-bullet-size) / 2 + var(--tl-line-width) / 2) * -1);
-  right: auto;
-}
-
-:where([dir='rtl']) .m_43657ece:where([data-align='left']) .m_8affcee1 {
-  left: auto;
-  right: calc((var(--tl-bullet-size) / 2 + var(--tl-line-width) / 2) * -1);
+  inset-inline-start: calc((var(--tl-bullet-size) / 2 + var(--tl-line-width) / 2) * -1);
+  inset-inline-end: auto;
 }
 
 .m_43657ece:where([data-align='right']) .m_8affcee1 {
-  left: auto;
-  right: calc((var(--tl-bullet-size) / 2 + var(--tl-line-width) / 2) * -1);
-}
-
-:where([dir='rtl']) .m_43657ece:where([data-align='right']) .m_8affcee1 {
-  left: calc((var(--tl-bullet-size) / 2 + var(--tl-line-width) / 2) * -1);
-  right: auto;
+  inset-inline-start: auto;
+  inset-inline-end: calc((var(--tl-bullet-size) / 2 + var(--tl-line-width) / 2) * -1);
 }
 
 .m_8affcee1:where([data-with-child]) {
@@ -8218,20 +8351,12 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
 
 .m_43657ece:where([data-align='left']) .m_540e8f41 {
   padding-inline-start: var(--offset);
-  text-align: left;
-}
-
-:where([dir='rtl']) .m_43657ece:where([data-align='left']) .m_540e8f41 {
-  text-align: right;
+  text-align: start;
 }
 
 .m_43657ece:where([data-align='right']) .m_540e8f41 {
   padding-inline-end: var(--offset);
-  text-align: right;
-}
-
-:where([dir='rtl']) .m_43657ece:where([data-align='right']) .m_540e8f41 {
-  text-align: left;
+  text-align: end;
 }
 
 .m_8a5d1357 {
@@ -8251,10 +8376,13 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   -webkit-box-orient: vertical;
 }
 
-.m_f698e191 {
+:where([data-tree-root]) {
   --level-offset: var(--mantine-spacing-lg);
   --tree-line-width: calc(0.0625rem * var(--mantine-scale));
   --tree-line-color: var(--mantine-color-default-border);
+}
+
+.m_f698e191 {
   margin: 0;
   padding: 0;
   user-select: none;
@@ -8327,7 +8455,9 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   position: relative;
 }
 
-:where([data-with-lines]) .m_75f3ecf > .m_f6970eb1::before {
+/* Horizontal connector at the node's own level — applies to both nested and flat layouts */
+
+:where([data-with-lines]) .m_f6970eb1:not([data-level='1'])::before {
   content: '';
   position: absolute;
   top: calc(0.75rem * var(--mantine-scale));
@@ -8336,7 +8466,11 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   height: 0;
   border-top: var(--tree-line-width) solid var(--tree-line-color);
   pointer-events: none;
+  z-index: 1;
 }
+
+/* Vertical line for nested layout (regular Tree): the line spans the parent <li>'s
+     full height — including descendants — so ancestor columns stay continuous. */
 
 :where([data-with-lines]) .m_75f3ecf > .m_f6970eb1::after {
   content: '';
@@ -8347,9 +8481,44 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   width: 0;
   border-inline-start: var(--tree-line-width) solid var(--tree-line-color);
   pointer-events: none;
+  z-index: 1;
 }
 
 :where([data-with-lines]) .m_75f3ecf > .m_f6970eb1:last-child::after {
+  bottom: auto;
+  height: calc(0.75rem * var(--mantine-scale));
+}
+
+:where([data-with-lines]) .m_f6970eb1:where([data-dragging])::before,
+:where([data-with-lines]) .m_f6970eb1:where([data-dragging])::after {
+  display: none;
+}
+
+:where([data-with-lines]) .m_f6970eb1:where([data-dragging]) .m_c03b303c {
+  display: none;
+}
+
+/* Vertical line markers rendered as DOM children by `FlatTreeNode` for flat layouts
+   (e.g. virtualized trees) where ::after on a single node can't span ancestor rows.
+   Each marker is positioned at column `--flat-line-column` and is only visible
+   inside a `[data-with-lines]` tree. */
+.m_c03b303c {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  inset-inline-start: calc((var(--flat-line-column) - 1.5) * var(--level-offset));
+  border-inline-start: var(--tree-line-width) solid var(--tree-line-color);
+  pointer-events: none;
+  z-index: 1;
+  display: none;
+}
+
+:where([data-with-lines]) .m_c03b303c {
+  display: block;
+}
+
+.m_bf7448d9 {
   bottom: auto;
   height: calc(0.75rem * var(--mantine-scale));
 }
@@ -8642,7 +8811,7 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   color: var(--mantine-color-dimmed);
 }
 .m_d08caa0 :where(table) :where(th) {
-  text-align: left;
+  text-align: start;
   font-weight: bold;
   font-size: var(--mantine-font-size-sm);
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);

@@ -315,6 +315,7 @@ export const standardClassnames = {
   justified: 'queryBuilder-justified',
   hasSubQuery: 'rule-hasSubQuery',
   loading: 'queryBuilder-loading',
+  valueDateTimeRelative: 'rule-value-dateTimeRelative',
 } as const;
 // #endregion
 
@@ -367,6 +368,7 @@ export const defaultControlClassnames: Classnames = {
   branches: '',
   hasSubQuery: '',
   loading: '',
+  valueDateTimeRelative: '',
 } satisfies Classnames;
 
 /**

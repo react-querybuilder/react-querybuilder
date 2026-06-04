@@ -3,7 +3,6 @@ import { convertFromIC } from '../convertQuery';
 import { isRuleGroup } from '../isRuleGroup';
 import { isRuleOrGroupValid } from '../isRuleOrGroupValid';
 import { getOption } from '../optGroupUtils';
-import { defaultRuleProcessorTanStackDB } from './defaultRuleProcessorTanStackDB';
 import type {
   TanStackDbWhereCallback,
   TanStackDbWhereCallbackReturnType,
@@ -31,6 +30,7 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
       validateRule,
       validationMap,
       context = {},
+      ruleProcessor,
     } = options;
 
     const ops = context.tanStackDbOperators as TsDbOperators;
@@ -46,8 +46,6 @@ export const defaultRuleGroupProcessorTanStackDB: RuleGroupProcessor<TanStackDbW
 
     /* v8 ignore next -- @preserve */
     if (refKeys.length === 0) return fallback;
-
-    const ruleProcessor = defaultRuleProcessorTanStackDB;
 
     const processRuleGroup = (rg: RuleGroupType): TanStackDbWhereCallbackReturnType | undefined => {
       if (

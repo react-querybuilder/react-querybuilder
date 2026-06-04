@@ -1,0 +1,5 @@
+@use './variables' as *;
+
+:root {
+  --#{$rqbdt-var-prefix}spacing: #{$rqbdt-spacing};
+}

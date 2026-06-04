@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#1045] Relative date/time value support in `@react-querybuilder/datetime`.
+  - New `RelativeDateTimeValueEditor` component. Relative mode edits a structured value (anchor + signed offset + unit, e.g. "3 months ago" or "start of year"); absolute values remain plain ISO 8601 strings for backward compatibility.
+  - Pluggable mode switching via `RelativeDateTimeModeController`. Ships with `toggleModeController` (the zero-config default absolute/relative toggle button) and an operator-driven option built with `createOperatorModeController` + `withRelativeOperators` (the operator selector chooses the mode, no toggle rendered). Operator-driven values export via the `context.relativeOperatorMap` option, which maps mode-signaling operator names to real comparison operators at format time.
+  - `between`/`notBetween` operators render two independent bounds, each individually absolute or relative (mixable), stored as a two-element array.
+  - `QueryBuilderDateTime` now renders the relative-capable editor for date/datetime fields. Non-date fields delegate to the surrounding compatibility/theme value editor (falling back to the standard editor), and that themed editor is also used for the absolute date input and the relative offset input.
+  - New `dateTimeAPI` prop on `QueryBuilderDateTime` (type `RQBDateTimeLibraryAPI`, default Day.js adapter) controls how the absolute date editor parses and validates input. Pass the adapter matching your export processor (Luxon, date-fns, native `Date`, etc.) to keep editor parsing and export consistent.
+  - All `formatQuery` rule processors handle relative values: SQL emits live, dialect-specific symbolic expressions and JsonLogic stays live via a `dateRelative` operation, while other formats materialize to ISO strings. New `context` options `materializeRelativeDateTime` (force materialization for all formats) and `relativeDateTimeBase` (pin "now" for deterministic output).
+  - Datetime-aware rule processors added for the "parameterized", "spel", "ldap", "gremlin", "elasticsearch", "prisma", "sequelize", "drizzle", "tanstack_db", and "mongodb" export formats. Relative values are materialized (as ISO strings for text-based formats, `Date` objects for ORM formats) and `between`/`notBetween` bounds are reordered chronologically.
+  - `RQBDateTimeLibraryAPI` gains `startOf`, `endOf`, and `add` methods (implemented for the Day.js, date-fns, Luxon, and JS Date plugins).
+  - Demo: "Use date/time package" option now wraps the live query builder with `QueryBuilderDateTime` for interactive relative editing.
+
 ### Changed
 
 - Replaced `any` with `unknown` on input parameters of ~20 core utility functions (type guards, array utils, string escape helpers, `clsx`). Return types preserved or tightened to avoid breaking consumers.
@@ -2235,6 +2248,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1039]: https://github.com/react-querybuilder/react-querybuilder/pull/1039
 [#1040]: https://github.com/react-querybuilder/react-querybuilder/pull/1040
 [#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
+[#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
 
 <!-- #endregion -->
 

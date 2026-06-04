@@ -180,9 +180,10 @@ export const optionsMetadata = {
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
   },
   useDateTimePackage: {
-    link: '/docs/compat#datetime',
+    link: '/docs/datetime',
     label: 'Use date/time package',
-    title: 'Use the Date/Time package',
+    title:
+      'Wrap the query builder with QueryBuilderDateTime for enhanced date/time editing, including relative values ("3 months ago", "start of year")',
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 

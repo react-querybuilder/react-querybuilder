@@ -8,9 +8,19 @@ import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
+import { getDatetimeRuleProcessorDrizzle } from './getDatetimeRuleProcessorDrizzle';
+import { getDatetimeRuleProcessorElasticSearch } from './getDatetimeRuleProcessorElasticSearch';
+import { getDatetimeRuleProcessorGremlin } from './getDatetimeRuleProcessorGremlin';
+import { getDatetimeRuleProcessorJSONata } from './getDatetimeRuleProcessorJSONata';
+import { getDatetimeRuleProcessorLDAP } from './getDatetimeRuleProcessorLDAP';
+import { getDatetimeRuleProcessorMongoDB } from './getDatetimeRuleProcessorMongoDB';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import { getDatetimeRuleProcessorNL } from './getDatetimeRuleProcessorNL';
+import { getDatetimeRuleProcessorParameterized } from './getDatetimeRuleProcessorParameterized';
+import { getDatetimeRuleProcessorPrisma } from './getDatetimeRuleProcessorPrisma';
+import { getDatetimeRuleProcessorSequelize } from './getDatetimeRuleProcessorSequelize';
 import { getDatetimeRuleProcessorSPARQL } from './getDatetimeRuleProcessorSPARQL';
+import { getDatetimeRuleProcessorSpEL } from './getDatetimeRuleProcessorSpEL';
 import {
   getDatetimeRuleProcessorSQL,
   getDatetimeValueProcessorANSI,
@@ -19,6 +29,7 @@ import {
   getDatetimeValueProcessorOracle,
   getDatetimeValueProcessorPostgreSQL,
 } from './getDatetimeRuleProcessorSQL';
+import { getDatetimeRuleProcessorTanStackDB } from './getDatetimeRuleProcessorTanStackDB';
 import { rqbDateTimeLibraryAPI } from './rqbDateTimeLibraryAPI.luxon';
 import type { RQBJsonLogicDateTimeOperations } from './types';
 
@@ -66,6 +77,12 @@ export const datetimeRuleProcessorCEL: ValueProcessorByRule =
   getDatetimeRuleProcessorCEL(rqbDateTimeLibraryAPI);
 
 /**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "jsonata" format using Luxon
+ */
+export const datetimeRuleProcessorJSONata: RuleProcessor =
+  getDatetimeRuleProcessorJSONata(rqbDateTimeLibraryAPI);
+
+/**
  * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "mongodb_query" format using Luxon
  */
 export const datetimeRuleProcessorMongoDBQuery: ValueProcessorByRule =
@@ -88,5 +105,65 @@ export const datetimeRuleProcessorCypher: ValueProcessorByRule =
  */
 export const datetimeRuleProcessorSPARQL: ValueProcessorByRule =
   getDatetimeRuleProcessorSPARQL(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "parameterized"/"parameterized_named" formats
+ */
+export const datetimeRuleProcessorParameterized: RuleProcessor =
+  getDatetimeRuleProcessorParameterized(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "spel" format
+ */
+export const datetimeRuleProcessorSpEL: RuleProcessor =
+  getDatetimeRuleProcessorSpEL(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "ldap" format
+ */
+export const datetimeRuleProcessorLDAP: RuleProcessor =
+  getDatetimeRuleProcessorLDAP(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "gremlin" format
+ */
+export const datetimeRuleProcessorGremlin: RuleProcessor =
+  getDatetimeRuleProcessorGremlin(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "prisma" format
+ */
+export const datetimeRuleProcessorPrisma: RuleProcessor =
+  getDatetimeRuleProcessorPrisma(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "sequelize" format
+ */
+export const datetimeRuleProcessorSequelize: RuleProcessor =
+  getDatetimeRuleProcessorSequelize(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "drizzle" format
+ */
+export const datetimeRuleProcessorDrizzle: RuleProcessor =
+  getDatetimeRuleProcessorDrizzle(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "elasticsearch" format
+ */
+export const datetimeRuleProcessorElasticSearch: RuleProcessor =
+  getDatetimeRuleProcessorElasticSearch(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for "tanstack_db" format
+ */
+export const datetimeRuleProcessorTanStackDB: RuleProcessor =
+  getDatetimeRuleProcessorTanStackDB(rqbDateTimeLibraryAPI);
+
+/**
+ * {@link @react-querybuilder/core!formatQuery formatQuery} rule processor for (deprecated) "mongodb" format
+ */
+export const datetimeRuleProcessorMongoDB: RuleProcessor =
+  getDatetimeRuleProcessorMongoDB(rqbDateTimeLibraryAPI);
 
 export * from './rqbDateTimeLibraryAPI.luxon';

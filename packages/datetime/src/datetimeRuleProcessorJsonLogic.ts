@@ -1,7 +1,12 @@
 import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from 'react-querybuilder';
 import { defaultRuleProcessorJsonLogic, toArray } from 'react-querybuilder';
-import type { RQBDateTimeJsonLogic } from './types';
-import { processIsDateField } from './utils';
+import type { RQBJsonLogicDateRelative, RQBDateTimeJsonLogic } from './types';
+import {
+  isDateOnlyDatatype,
+  isRelativeDateTimeValue,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 
 const dateOperationMap = {
   '!=': 'dateNotOn',
@@ -34,10 +39,22 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
     return defaultRuleProcessorJsonLogic(rule, opts);
   }
 
-  const { field, operator, value, valueSource } = rule;
+  const { field, value, valueSource } = rule;
+  const operator = resolveDatetimeOperator(rule, opts);
   const valueIsField = valueSource === 'field';
   const fieldObject: JsonLogicVar = { var: field };
-  const maybeFieldRenderer = (v: string) => (valueIsField ? { var: `${v}` } : v);
+  const dateOnly = isDateOnlyDatatype(opts?.fieldData?.datatype);
+  // Relative values stay "live": emit a `dateRelative` op resolved at evaluation time.
+  // Field-source values are field names and render as `var` references.
+  const renderValue = (v: unknown) => {
+    if (valueIsField) return { var: `${v}` };
+    if (isRelativeDateTimeValue(v)) {
+      return {
+        dateRelative: [v.anchor, v.offset, v.unit, dateOnly],
+      } as RQBJsonLogicDateRelative;
+    }
+    return v as string;
+  };
 
   switch (operator) {
     case '<':
@@ -47,18 +64,18 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
     case '>':
     case '>=':
       return {
-        [dateOperationMap[operator]]: [fieldObject, maybeFieldRenderer(value)],
+        [dateOperationMap[operator]]: [fieldObject, renderValue(value)],
       } as RQBDateTimeJsonLogic;
 
     case 'in':
     case 'notIn': {
-      const valueAsArray = toArray(value).map(v => maybeFieldRenderer(v));
+      const valueAsArray = (Array.isArray(value) ? value : toArray(value)).map(renderValue);
       return { [dateOperationMap[operator]]: [fieldObject, valueAsArray] } as RQBDateTimeJsonLogic;
     }
 
     case 'between':
     case 'notBetween': {
-      const valueAsArray = toArray(value).map(v => maybeFieldRenderer(v));
+      const valueAsArray = (Array.isArray(value) ? value : toArray(value)).map(renderValue);
 
       if (valueAsArray.length < 2) return false;
 

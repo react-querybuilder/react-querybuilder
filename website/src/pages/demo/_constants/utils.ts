@@ -4,15 +4,38 @@ import { Buffer } from 'buffer';
 import fieldsCode from '!!raw-loader!@site/src/pages/demo/_constants/fields';
 // @ts-expect-error !!raw-loader!
 import musicalInstrumentsCode from '!!raw-loader!@site/src/pages/demo/_constants/musicalInstruments';
-// import justifiedStylesCSS from '!!raw-loader!@site/src/css/justified.css';
 import demoStylesCSS from '!!raw-loader!@site/src/pages/demo/_styles/demo.css';
+import { datetimeRuleProcessorJsonLogic } from '@react-querybuilder/datetime';
+import {
+  datetimeRuleProcessorCEL,
+  datetimeRuleProcessorCypher,
+  datetimeRuleProcessorDrizzle,
+  datetimeRuleProcessorElasticSearch,
+  datetimeRuleProcessorGremlin,
+  datetimeRuleProcessorJSONata,
+  datetimeRuleProcessorLDAP,
+  datetimeRuleProcessorMongoDB,
+  datetimeRuleProcessorMongoDBQuery,
+  datetimeRuleProcessorNL,
+  datetimeRuleProcessorParameterized,
+  datetimeRuleProcessorPrisma,
+  datetimeRuleProcessorSequelize,
+  datetimeRuleProcessorSPARQL,
+  datetimeRuleProcessorSpEL,
+  datetimeRuleProcessorSQL,
+} from '@react-querybuilder/datetime/dayjs';
 import clsx from 'clsx';
 import pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
 import * as prettier from 'prettier/standalone.js';
-import type { ExportFormat, FormatQueryOptions, RuleGroupTypeAny } from 'react-querybuilder';
+import type {
+  ExportFormat,
+  FormatQueryOptions,
+  RuleGroupTypeAny,
+  RuleProcessor,
+} from 'react-querybuilder';
 import {
   bigIntJsonParseReviver,
   bigIntJsonStringifyReplacer,
@@ -22,9 +45,6 @@ import {
 } from 'react-querybuilder';
 import { defaultOptions, optionOrder } from './index';
 import type { DemoOption, DemoOptions, DemoOptionsHash, DemoState, StyleName } from './types';
-
-// const extraStylesCSS = `${demoStylesCSS}\n\n${justifiedStylesCSS}`;
-const extraStylesCSS = demoStylesCSS;
 
 type OptionsAction =
   | { type: 'all' }
@@ -145,6 +165,28 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
   }
 
   return formatQueryResult;
+};
+
+export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
+  sql: datetimeRuleProcessorSQL,
+  parameterized: datetimeRuleProcessorParameterized,
+  parameterized_named: datetimeRuleProcessorParameterized,
+  mongodb: datetimeRuleProcessorMongoDB,
+  mongodb_query: datetimeRuleProcessorMongoDBQuery,
+  cel: datetimeRuleProcessorCEL,
+  jsonlogic: datetimeRuleProcessorJsonLogic,
+  spel: datetimeRuleProcessorSpEL,
+  elasticsearch: datetimeRuleProcessorElasticSearch,
+  jsonata: datetimeRuleProcessorJSONata,
+  natural_language: datetimeRuleProcessorNL,
+  ldap: datetimeRuleProcessorLDAP,
+  drizzle: datetimeRuleProcessorDrizzle,
+  prisma: datetimeRuleProcessorPrisma,
+  sequelize: datetimeRuleProcessorSequelize,
+  cypher: datetimeRuleProcessorCypher,
+  gql: datetimeRuleProcessorCypher,
+  sparql: datetimeRuleProcessorSPARQL,
+  gremlin: datetimeRuleProcessorGremlin,
 };
 
 export const getExportCall = async (
@@ -365,7 +407,6 @@ export const getCodeString = (
     getPropText('showNotToggle'),
     getPropText('showShiftActions'),
     getPropText('suppressStandardClassnames'),
-    getPropText('useDateTimePackage'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.showBranches || options.justifiedLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
@@ -393,7 +434,11 @@ import {${
   } QueryBuilder } from 'react-querybuilder';
 import { fields } from './fields';
 import 'react-querybuilder/dist/query-builder.${styleLanguage}';
-import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}
+import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
+    options.useDateTimePackage
+      ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime';`
+      : ''
+  }
 ${
   options.enableDragAndDrop
     ? `
@@ -407,11 +452,11 @@ const dnd = createPragmaticDndAdapter({ draggable, dropTargetForElements, monito
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);
 
-  return (${
-    options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''
-  }${styleWrapperPrefix}<QueryBuilder ${props} />${styleWrapperSuffix}${
-    options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''
-  }
+  return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
+    options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
+  }<QueryBuilder ${props} />${
+    options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''
+  }${styleWrapperSuffix}${options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''}
   );
 }`;
 
@@ -423,7 +468,7 @@ export const App = () => {
 };
 
 export const extraStyles = () =>
-  prettier.format(extraStylesCSS, {
+  prettier.format(demoStylesCSS, {
     filepath: 'styles.css',
     plugins: [parserPostCSS],
     printWidth: 100,
