@@ -143,17 +143,31 @@ const oracleBuild: RelativeSQLBuilder = (value, asDate) => {
   const { bound, unit } = parseAnchor(value.anchor);
 
   let expr = now;
+  // When true, the end boundary's sub-second step-back is deferred until after
+  // any offset is applied (subtraction commutes with the additive offset), so
+  // precision survives the intermediate DATE arithmetic.
+  let endTimestampStepBack = false;
   if (bound !== 'now' && unit) {
     const start = `trunc(${now}, '${oracleTruncFormat[unit]}')`;
     if (bound === 'start') {
       expr = start;
     } else {
-      // End = next period start minus 1 day.
+      // End = next period start, stepped back to the last instant. Oracle's DATE
+      // always carries a time component (no time-less date type), so even
+      // date-typed columns can hold intraday values; landing on the last instant
+      // avoids excluding them, unlike stepping back a full day to midnight.
       const next =
         unit === 'month' || unit === 'year'
           ? `add_months(${start}, ${unit === 'month' ? 1 : 12})`
-          : `${start} + interval '1' day * ${unit === 'week' ? 7 : 1}`;
-      expr = `${next} - 1`;
+          : `${start} + interval '1' day${unit === 'week' ? ' * 7' : ''}`;
+      if (asDate) {
+        // DATE has only second precision; one second is the smallest step.
+        expr = `${next} - interval '1' second`;
+      } else {
+        // TIMESTAMP: defer cast + 1ms step-back until after offset (see below).
+        expr = next;
+        endTimestampStepBack = true;
+      }
     }
   }
 
@@ -163,9 +177,16 @@ const oracleBuild: RelativeSQLBuilder = (value, asDate) => {
     } else {
       const days = { day: 1, week: 7 }[value.unit as 'day' | 'week'];
       expr = days
-        ? `${expr} + ${value.offset * days}`
+        ? `${expr} ${value.offset < 0 ? '-' : '+'} ${Math.abs(value.offset) * days}`
         : `${expr} + numtodsinterval(${value.offset}, '${value.unit.toUpperCase()}')`;
     }
+  }
+
+  // TRUNC/DATE arithmetic above is second-granular, so cast to TIMESTAMP and
+  // step back one millisecond to reach the period's true last instant (matches
+  // the materialized JS value, e.g. 23:59:59.999).
+  if (endTimestampStepBack) {
+    expr = `cast(${expr} as timestamp) - numtodsinterval(0.001, 'second')`;
   }
 
   return expr;
