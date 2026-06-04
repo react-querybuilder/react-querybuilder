@@ -381,12 +381,12 @@ const valueShapeController = {
 
 `QueryBuilderDateTime` accepts optional `RelativeDateTimeEditorConfig` props. Omitting all of them yields the zero-config toggle experience; any provided option merges over the defaults.
 
-| Prop             | Type                             | Default                          | Description                                        |
-| ---------------- | -------------------------------- | -------------------------------- | -------------------------------------------------- |
-| `modeController` | `RelativeDateTimeModeController` | `toggleModeController`           | Absolute/relative switching strategy.              |
-| `anchors`        | `FullOption[]`                   | `defaultRelativeDateTimeAnchors` | Anchor (reference-point) options.                  |
-| `units`          | `FullOption[]`                   | `defaultRelativeDateTimeUnits`   | Unit options.                                      |
-| `toggleLabels`   | `RelativeDateTimeToggleLabels`   | _(see below)_                    | Content/labels for the toggle controller's button. |
+| Prop             | Type                             | Default                          | Description                                          |
+| ---------------- | -------------------------------- | -------------------------------- | ---------------------------------------------------- |
+| `modeController` | `RelativeDateTimeModeController` | `toggleModeController`           | Absolute/relative switching strategy.                |
+| `anchors`        | `FullOption[]`                   | `defaultRelativeDateTimeAnchors` | Anchor (reference-point) options.                    |
+| `units`          | `FullOption[]`                   | `defaultRelativeDateTimeUnits`   | Unit options.                                        |
+| `toggleLabels`   | `RelativeDateTimeToggleLabels`   | _(see below)_                    | Content/labels for the toggle controller's button.   |
 | `dateTimeAPI`    | `RQBDateTimeLibraryAPI`          | Day.js adapter                   | Library adapter used to parse/validate editor input. |
 
 By default the absolute date editor parses and validates its input with Day.js. If you export queries with a processor backed by a different library (Luxon, date-fns, native `Date`, etc.), pass the matching adapter as `dateTimeAPI` so editor parsing and export stay consistent. See [Custom plugins](#custom-plugins) for the `RQBDateTimeLibraryAPI` shape.
