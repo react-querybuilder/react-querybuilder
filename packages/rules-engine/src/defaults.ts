@@ -1,3 +1,4 @@
+import type { OperatorEvaluator } from 'json-rules-engine';
 import type { ClassnamesRE, RulesEngine, RulesEngineIC, TranslationsFullRE } from './types';
 
 /**
@@ -67,4 +68,16 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   addDefaultConsequent: { title: 'Add consequent action/result', label: '+ Else' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
   removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
+};
+
+export const jsonRulesEngineAdditionalOperators: Record<
+  string,
+  OperatorEvaluator<unknown, unknown>
+> = {
+  beginsWith: (factValue, compareToValue) => `${factValue}`.startsWith(`${compareToValue}`),
+  doesNotBeginWith: (factValue, compareToValue) => !`${factValue}`.startsWith(`${compareToValue}`),
+  endsWith: (factValue, compareToValue) => `${factValue}`.endsWith(`${compareToValue}`),
+  doesNotEndWith: (factValue, compareToValue) => !`${factValue}`.endsWith(`${compareToValue}`),
+  contains: (factValue, compareToValue) => `${factValue}`.includes(`${compareToValue}`),
+  doesNotContain: (factValue, compareToValue) => !`${factValue}`.includes(`${compareToValue}`),
 };
