@@ -1,5 +1,6 @@
 import type {
   BaseOption,
+  BaseTranslation,
   BaseTranslationWithLabel,
   Classname,
   FlexibleOptionList,
@@ -141,7 +142,7 @@ export interface TranslationsRE {
   addDefaultConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
   removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
-  evaluationMode: BaseTranslationWithLabel<React.ReactNode>;
+  evaluationMode: BaseTranslation;
   evaluationModeCascade: BaseTranslationWithLabel<React.ReactNode>;
   evaluationModeCumulative: BaseTranslationWithLabel<React.ReactNode>;
 }

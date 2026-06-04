@@ -76,7 +76,7 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   addDefaultConsequent: { title: 'Add consequent action/result', label: '+ Else' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
   removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
-  evaluationMode: { title: 'How sibling conditions are evaluated', label: 'Evaluation mode' },
+  evaluationMode: { title: 'How sibling conditions are evaluated' },
   evaluationModeCascade: {
     title: 'Evaluate conditions in order; stop after the first match (if/else-if/else)',
     label: 'Stop at first match (cascade)',

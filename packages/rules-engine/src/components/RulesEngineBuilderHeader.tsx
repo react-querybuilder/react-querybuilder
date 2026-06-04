@@ -74,17 +74,18 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
           label={translations.addDefaultConsequent.label}
         />
       )}
-      <label className={evaluationModeClassName} title={translations.evaluationMode.title}>
-        {translations.evaluationMode.label}
-        <select value={evaluationMode} onChange={onEvaluationModeChange}>
-          <option value="cascade" title={translations.evaluationModeCascade.title}>
-            {translations.evaluationModeCascade.label}
-          </option>
-          <option value="cumulative" title={translations.evaluationModeCumulative.title}>
-            {translations.evaluationModeCumulative.label}
-          </option>
-        </select>
-      </label>
+      <select
+        value={evaluationMode}
+        className={evaluationModeClassName}
+        title={translations.evaluationMode.title}
+        onChange={onEvaluationModeChange}>
+        <option value="cascade" title={translations.evaluationModeCascade.title}>
+          {translations.evaluationModeCascade.label}
+        </option>
+        <option value="cumulative" title={translations.evaluationModeCumulative.title}>
+          {translations.evaluationModeCumulative.label}
+        </option>
+      </select>
     </div>
   );
 });
