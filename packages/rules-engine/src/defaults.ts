@@ -20,6 +20,8 @@ export const defaultClassnamesRE: ClassnamesRE = {
   blockLabelIfElse: '',
   blockLabelElse: '',
   blockLabelThen: '',
+  blockLabelWhen: '',
+  blockLabelAlways: '',
   evaluationMode: '',
 };
 
@@ -42,6 +44,8 @@ export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   blockLabelIfElse: 'blockLabel-ifelse',
   blockLabelElse: 'blockLabel-else',
   blockLabelThen: 'blockLabel-then',
+  blockLabelWhen: 'blockLabel-when',
+  blockLabelAlways: 'blockLabel-always',
   evaluationMode: 'rulesEngineBuilder-evaluationMode',
 };
 
@@ -64,6 +68,8 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   blockLabelElseIf: { title: 'Subsequent condition', label: 'Else If' },
   blockLabelElse: { title: 'Fallback/default consequent', label: 'Else' },
   blockLabelThen: { title: 'Consequent action/result', label: 'Then' },
+  blockLabelWhen: { title: 'Independent condition', label: 'When' },
+  blockLabelAlways: { title: 'Always-applied consequent', label: 'Always' },
   addCondition: { title: 'Add condition', label: '+ Condition' },
   addSubcondition: { title: 'Add subcondition', label: '+ Subcondition' },
   addConsequent: { title: 'Add consequent action/result', label: '+ Then' },

@@ -176,6 +176,8 @@ Sibling conditions can be exported with one of two evaluation modes, stored as `
 
 In both modes, nested conditions are guarded by their ancestor antecedents (structural nesting). A `defaultConsequent` behaves differently per mode: in `"cascade"` it is the `else` branch, firing only when _every_ sibling antecedent at its level fails; in `"cumulative"` it is an always-true baseline that fires on every run (still guarded by ancestor antecedents at nested levels).
 
+The builder UI also relabels condition blocks to match the active mode: in `"cascade"` mode conditions read `If`/`Else If` and the default consequent reads `Else`; in `"cumulative"` mode every condition reads `When` and the default consequent reads `Always`. These labels are customizable via the `blockLabelWhen` and `blockLabelAlways` translations.
+
 ```tsx
 // Read from the rules engine object (defaults to "cascade")
 formatRulesEngine({ ...rulesEngine, evaluationMode: 'cumulative' }, 'json-rules-engine');
@@ -328,6 +330,7 @@ const customTranslations: Partial<TranslationsRE> = {
 ```scss
 .rulesEngineBuilder {}
 .rulesEngineBuilder-header {}
+.rulesEngineBuilder-evaluationMode {}
 .consequentBuilder {}
 .consequentBuilder-header {}
 .consequentBuilder-body {}
@@ -339,6 +342,8 @@ const customTranslations: Partial<TranslationsRE> = {
 .blockLabel-ifelse {}
 .blockLabel-else {}
 .blockLabel-then {}
+.blockLabel-when {}
+.blockLabel-always {}
 ```
 
 ### Custom classes

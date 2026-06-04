@@ -95,14 +95,18 @@ export interface ClassnamesRE {
   rulesEngineHeader: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
-  /** Classes applied to all "If" block labels. */
+  /** Classes applied to all "If" block labels (cascade mode initial condition). */
   blockLabelIf: Classname;
-  /** Classes applied to all "If Else" block labels. */
+  /** Classes applied to all "If Else" block labels (cascade mode subsequent conditions). */
   blockLabelIfElse: Classname;
-  /** Classes applied to all "Else" block labels. */
+  /** Classes applied to all "Else" block labels (cascade mode default condition). */
   blockLabelElse: Classname;
   /** Classes applied to all "Then" block labels. */
   blockLabelThen: Classname;
+  /** Classes applied to all "When" block labels (cumulative mode conditions). */
+  blockLabelWhen: Classname;
+  /** Classes applied to all "Always" block labels (cumulative mode default consequent). */
+  blockLabelAlways: Classname;
   /** Classes applied to consequent builders ("then" sections). */
   consequentBuilder: Classname;
   /** Classes applied to consequent builder headers. */
@@ -129,6 +133,8 @@ export interface TranslationsRE {
   blockLabelElseIf: BaseTranslationWithLabel<React.ReactNode>;
   blockLabelElse: BaseTranslationWithLabel<React.ReactNode>;
   blockLabelThen: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelWhen: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelAlways: BaseTranslationWithLabel<React.ReactNode>;
   addCondition: BaseTranslationWithLabel<React.ReactNode>;
   addSubcondition: BaseTranslationWithLabel<React.ReactNode>;
   addConsequent: BaseTranslationWithLabel<React.ReactNode>;
