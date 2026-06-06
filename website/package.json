@@ -47,7 +47,7 @@
     "@react-querybuilder/prime": "workspace:*",
     "@react-querybuilder/rules-engine": "workspace:*",
     "@react-querybuilder/tremor": "workspace:*",
-    "@traqula/parser-sparql-1-2": "^1.1.1",
+    "@traqula/parser-sparql-1-2": "^1.1.2",
     "@tremor/react": "^3.18.7",
     "antd": "^6.4.2",
     "bootstrap": "^5.3.8",
