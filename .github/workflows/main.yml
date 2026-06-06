@@ -82,11 +82,10 @@ jobs:
           # Minor tweak for Mantine 8
           sed -i -E "s/screen\.getByRole\('combobox'\)/screen.getByRole('textbox')/g" ./packages/mantine/src/Mantine.test.tsx
 
-          # React Native Testing Library 14 does not support React 18, so test with RNTL 13
-          sed -i -E 's/"@testing-library\/react-native": ".*"/"@testing-library\/react-native": "^13"/g' ./packages/native/package.json
-
           bun install
-          bunx vitest run --coverage=false
+
+          # React Native Testing Library 14 does not support React 18, so exclude the native package from the Vitest run
+          bunx vitest run --coverage=false --project='!@react-querybuilder/native'
 
   Typecheck_React_18:
     name: Typecheck React 18
