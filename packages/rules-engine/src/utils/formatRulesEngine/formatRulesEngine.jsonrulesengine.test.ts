@@ -585,3 +585,90 @@ it('nested conditions are guarded by ancestor antecedents', () => {
     },
   ]);
 });
+
+it('a condition that only groups nested conditions emits no event of its own', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        // No consequent: this condition is a pure guard wrapper for its nested conditions.
+        conditions: [
+          {
+            antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+            consequent: { type: 'child' },
+          },
+        ],
+      },
+    ],
+  };
+  // Only the child rule is emitted; the wrapper itself contributes no event.
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: {
+        all: [
+          { all: [{ fact: 'a', operator: 'equal', value: 1 }] },
+          { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+        ],
+      },
+      event: { type: 'child' },
+    },
+  ]);
+});
+
+it('maps contains/doesNotContain to the type-tolerant generic operators', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [
+            { field: 'field1', operator: 'contains', value: 'value1' },
+            { field: 'field2', operator: 'doesNotContain', value: 'value2' },
+          ],
+        },
+        consequent: { type: 'containsEvent' },
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: {
+        all: [
+          { fact: 'field1', operator: 'containsGeneric', value: 'value1' },
+          { fact: 'field2', operator: 'doesNotContainGeneric', value: 'value2' },
+        ],
+      },
+      event: { type: 'containsEvent' },
+    },
+  ]);
+});
+
+it('passes between/notBetween through unchanged (array and comma-separated string values)', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [
+            { field: 'age', operator: 'between', value: [18, 65] },
+            { field: 'score', operator: 'between', value: '1,10' },
+            { field: 'rank', operator: 'notBetween', value: [1, 5] },
+          ],
+        },
+        consequent: { type: 'rangeEvent' },
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: {
+        all: [
+          { fact: 'age', operator: 'between', value: [18, 65] },
+          { fact: 'score', operator: 'between', value: '1,10' },
+          { fact: 'rank', operator: 'notBetween', value: [1, 5] },
+        ],
+      },
+      event: { type: 'rangeEvent' },
+    },
+  ]);
+});

@@ -167,6 +167,49 @@ engine.run({ temperature: 90, humidity: 35 }).then(events => {
 });
 ```
 
+### Additional operators
+
+`json-rules-engine` ships with a limited set of built-in operators (`equal`, `notEqual`, `lessThan`, `lessThanInclusive`, `greaterThan`, `greaterThanInclusive`, `in`, `notIn`, `contains`, and `doesNotContain`). Several React Query Builder operators have no direct equivalent, so the export uses a set of supplemental evaluators exported as `jsonRulesEngineAdditionalOperators`:
+
+| RQB operator(s)                   | Exported operator                           | Behavior                                                                                                                                                                                         |
+| --------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `beginsWith` / `doesNotBeginWith` | same                                        | String prefix match.                                                                                                                                                                             |
+| `endsWith` / `doesNotEndWith`     | same                                        | String suffix match.                                                                                                                                                                             |
+| `contains` / `doesNotContain`     | `containsGeneric` / `doesNotContainGeneric` | String substring match. (The built-in `contains` requires the fact to be an array, so the generic versions are used instead.)                                                                    |
+| `between` / `notBetween`          | same                                        | Inclusive range test. Bounds may be an array (`[lo, hi]`) or a comma-separated string (`"lo,hi"`); numeric bounds are parsed and reordered ascending, mirroring [`formatQuery`](./utils/export). |
+
+These operators must be registered on the `Engine` before it evaluates rules that use them. The simplest way is to pass the engine as `context.engine` to `formatRulesEngine`, which registers every additional operator on it as a side effect:
+
+```tsx
+import { formatRulesEngine } from '@react-querybuilder/rules-engine';
+import { Engine } from 'json-rules-engine';
+
+const engine = new Engine();
+
+// Passing `context: { engine }` registers `beginsWith`, `between`, etc. on the engine.
+const rules = formatRulesEngine(rulesEngine, {
+  format: 'json-rules-engine',
+  context: { engine },
+});
+for (const rule of rules) {
+  engine.addRule(rule);
+}
+
+engine.run({ name: 'Dr. Strange', age: 42 }).then(({ events }) => {
+  events.forEach(event => console.log(event.type, event.params));
+});
+```
+
+Alternatively, register them yourself (for example, when you need only a subset):
+
+```tsx
+import { jsonRulesEngineAdditionalOperators } from '@react-querybuilder/rules-engine';
+
+for (const [name, evaluator] of Object.entries(jsonRulesEngineAdditionalOperators)) {
+  engine.addOperator(name, evaluator);
+}
+```
+
 ### Evaluation modes
 
 Sibling conditions can be exported with one of two evaluation modes, stored as `evaluationMode` on the rules engine object (defaults to `"cascade"`):

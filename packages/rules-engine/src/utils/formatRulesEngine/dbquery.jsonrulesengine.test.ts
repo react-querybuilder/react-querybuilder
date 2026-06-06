@@ -501,3 +501,108 @@ it('a condition that only groups nested conditions emits no event of its own', a
 });
 
 // #endregion
+
+// #region Additional operators (registered via the `context` option)
+
+// Builds an engine, registering the additional operators by passing it as `context.engine`, then
+// adds the exported rules and returns the fired event types.
+const runWithAdditionalOperators = async (
+  re: RulesEngine,
+  facts: object,
+  evaluationMode?: RulesEngine['evaluationMode']
+) => {
+  const engine = new Engine([], { allowUndefinedFacts: true });
+  const rules = formatRulesEngine(re, {
+    format: 'json-rules-engine',
+    evaluationMode,
+    context: { engine },
+  });
+  for (const rule of rules) engine.addRule(rule);
+  const { events } = await engine.run(facts);
+  return events.map(e => e.type);
+};
+
+it('evaluates between with array bounds', async () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [{ field: 'age', operator: 'between', value: [18, 65] }],
+        },
+        consequent: { type: 'workingAge' },
+      },
+    ],
+  };
+  expect(await runWithAdditionalOperators(re, { age: 30 })).toEqual(['workingAge']);
+  expect(await runWithAdditionalOperators(re, { age: 18 })).toEqual(['workingAge']); // inclusive
+  expect(await runWithAdditionalOperators(re, { age: 65 })).toEqual(['workingAge']); // inclusive
+  expect(await runWithAdditionalOperators(re, { age: 70 })).toEqual([]);
+});
+
+it('evaluates between with comma-separated string bounds and reordered numbers', async () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          // Bounds given high-to-low and as a string; both are normalized.
+          rules: [{ field: 'score', operator: 'between', value: '10,1' }],
+        },
+        consequent: { type: 'inRange' },
+      },
+    ],
+  };
+  expect(await runWithAdditionalOperators(re, { score: 5 })).toEqual(['inRange']);
+  expect(await runWithAdditionalOperators(re, { score: 11 })).toEqual([]);
+});
+
+it('evaluates notBetween', async () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [{ field: 'temp', operator: 'notBetween', value: [0, 100] }],
+        },
+        consequent: { type: 'outOfRange' },
+      },
+    ],
+  };
+  expect(await runWithAdditionalOperators(re, { temp: 150 })).toEqual(['outOfRange']);
+  expect(await runWithAdditionalOperators(re, { temp: 50 })).toEqual([]);
+});
+
+it('evaluates string operators (beginsWith / endsWith / contains)', async () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [
+            { field: 'name', operator: 'beginsWith', value: 'Dr.' },
+            { field: 'email', operator: 'endsWith', value: '@example.com' },
+            { field: 'bio', operator: 'contains', value: 'engineer' },
+          ],
+        },
+        consequent: { type: 'match' },
+      },
+    ],
+  };
+  expect(
+    await runWithAdditionalOperators(re, {
+      name: 'Dr. Strange',
+      email: 'a@example.com',
+      bio: 'software engineer',
+    })
+  ).toEqual(['match']);
+  expect(
+    await runWithAdditionalOperators(re, {
+      name: 'Mr. Strange',
+      email: 'a@example.com',
+      bio: 'software engineer',
+    })
+  ).toEqual([]);
+});
+
+// #endregion

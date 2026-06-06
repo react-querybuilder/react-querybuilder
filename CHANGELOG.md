@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `RulesEngineBuilder` renders an evaluation mode toggle in its header, configurable via new `evaluationMode`, `evaluationModeCascade`, and `evaluationModeCumulative` translation keys and an `evaluationMode` classname.
   - In cumulative mode, `RulesEngineBuilder` labels condition headers "When" and the default consequent "Always" (instead of "If"/"Else If"/"Else"). New translation keys `blockLabelWhen`/`blockLabelAlways` and standard classes `blockLabel-when`/`blockLabel-always`.
   - New interactive rules engine builder demo on the website.
+- [#1046] Additional operators and operator auto-registration for the rules engine's `"json-rules-engine"` export (`@react-querybuilder/rules-engine`).
+  - `formatRulesEngine(re, 'json-rules-engine')` now supports the React Query Builder operators that `json-rules-engine` has no built-in equivalent for, via supplemental evaluators exported as `jsonRulesEngineAdditionalOperators`: `beginsWith`/`doesNotBeginWith`, `endsWith`/`doesNotEndWith`, `contains`/`doesNotContain` (mapped to `containsGeneric`/`doesNotContainGeneric` to bypass the built-in array-only `contains`), and `between`/`notBetween`.
+  - `between`/`notBetween` mirror `formatQuery`'s robustness: bounds may be an array (`[lo, hi]`) or a comma-separated string (`"lo,hi"`), and numeric bounds are parsed and reordered ascending.
+  - New `context` option for `formatRulesEngine`. For the `"json-rules-engine"` format, passing `context: { engine }` registers every additional operator on the `Engine` as a side effect, so exported rules that use them run without manual `engine.addOperator(...)` calls.
 
 ### Changed
 

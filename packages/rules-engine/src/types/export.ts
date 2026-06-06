@@ -43,6 +43,24 @@ export interface FormatRulesEngineOptions {
    * - `"cumulative"`: every condition is evaluated independently and any number may fire.
    */
   evaluationMode?: EvaluationMode;
+  /**
+   * Arbitrary values passed through to the rules engine processor.
+   *
+   * For the `"json-rules-engine"` format, set the `engine` property to an `Engine` instance and the
+   * {@link jsonRulesEngineAdditionalOperators additional operators} (`beginsWith`, `between`, etc.)
+   * will be registered on it as a side effect, so exported rules that use those operators can be
+   * evaluated without registering the operators yourself.
+   *
+   * @example
+   * const engine = new Engine();
+   * for (const rule of formatRulesEngine(re, {
+   *   format: 'json-rules-engine',
+   *   context: { engine },
+   * })) {
+   *   engine.addRule(rule);
+   * }
+   */
+  context?: Record<string, unknown>;
 }
 
 /**

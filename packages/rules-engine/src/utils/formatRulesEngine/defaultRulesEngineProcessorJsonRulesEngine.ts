@@ -1,14 +1,74 @@
-import { formatQuery } from '@react-querybuilder/core';
-import type { RuleProperties, TopLevelCondition } from 'json-rules-engine';
-import type { Consequent, EvaluationMode, REConditionAny, RulesEngineProcessor } from '../../types';
+import {
+  formatQuery,
+  isValidValue,
+  parseNumber,
+  shouldRenderAsNumber,
+  toArray,
+} from '@react-querybuilder/core';
+import type {
+  Engine,
+  OperatorEvaluator,
+  RuleProperties,
+  TopLevelCondition,
+} from 'json-rules-engine';
+import type {
+  EvaluationMode,
+  REConditionAny,
+  RulesEngine,
+  RulesEngineProcessor,
+} from '../../types';
 import { defaultRuleGroupProcessorJsonRulesEngine } from './defaultRuleGroupProcessorJsonRulesEngine';
 import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonRulesEngine';
 
-/** Node shape shared by a rules engine and any of its nested conditions. */
-interface RENode {
-  conditions: REConditionAny[];
-  defaultConsequent?: Consequent;
-}
+/**
+ * Determines whether `factVal` falls within the inclusive range described by `compareVal`, mirroring
+ * the robustness of the `"between"` handling in {@link react-querybuilder!formatQuery formatQuery}.
+ * The bounds may be supplied as an array (`[lo, hi]`) or a comma-separated string (`"lo,hi"`).
+ * Numeric bounds are parsed and reordered ascending; non-numeric bounds compare lexicographically
+ * in the order given. Returns `null` when fewer than two valid bounds are present.
+ */
+const inRange = (factVal: unknown, compareVal: unknown): boolean | null => {
+  const bounds = toArray(compareVal, { retainEmptyStrings: true });
+  if (bounds.length < 2 || !isValidValue(bounds[0]) || !isValidValue(bounds[1])) {
+    return null;
+  }
+  const [first, second] = bounds;
+  if (shouldRenderAsNumber(first, true) && shouldRenderAsNumber(second, true)) {
+    const a = Number(parseNumber(first, { parseNumbers: 'strict' }));
+    const b = Number(parseNumber(second, { parseNumbers: 'strict' }));
+    const f = Number(factVal);
+    return f >= Math.min(a, b) && f <= Math.max(a, b);
+  }
+  const f = `${factVal}`;
+  return f >= `${first}` && f <= `${second}`;
+};
+
+/**
+ * Operator evaluators for the React Query Builder operators that have no `json-rules-engine`
+ * built-in equivalent. Register these on an `Engine` so that rules exported by
+ * {@link formatRulesEngine} which use these operators can be evaluated—either manually via
+ * `engine.addOperator(...)`, or automatically by passing the engine as `context.engine` to
+ * {@link formatRulesEngine}.
+ *
+ * @group Export
+ */
+export const jsonRulesEngineAdditionalOperators: Record<
+  string,
+  OperatorEvaluator<unknown, unknown>
+> = {
+  beginsWith: (factVal, compareVal) => `${factVal}`.startsWith(`${compareVal}`),
+  doesNotBeginWith: (factVal, compareVal) => !`${factVal}`.startsWith(`${compareVal}`),
+  endsWith: (factVal, compareVal) => `${factVal}`.endsWith(`${compareVal}`),
+  doesNotEndWith: (factVal, compareVal) => !`${factVal}`.endsWith(`${compareVal}`),
+  // These work the same as the non-`*Generic` operators in `json-rules-engine`,
+  // but avoid the type validation that would prevent their use in some cases.
+  containsGeneric: (factVal, compareVal) => `${factVal}`.includes(`${compareVal}`),
+  doesNotContainGeneric: (factVal, compareVal) => !`${factVal}`.includes(`${compareVal}`),
+  // Robust between/notBetween: accept array or comma-separated bounds (parsing/reordering numbers).
+  // Invalid bounds (fewer than two valid values) match nothing for either operator.
+  between: (factVal, compareVal) => inRange(factVal, compareVal) === true,
+  notBetween: (factVal, compareVal) => inRange(factVal, compareVal) === false,
+};
 
 /** Wraps a condition so it only passes when the wrapped condition fails. */
 const negate = (condition: TopLevelCondition): TopLevelCondition => ({ not: condition });
@@ -33,6 +93,21 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
   rulesEngine,
   opts
 ) => {
+  // If a `json-rules-engine` Engine (or anything exposing `addOperator`) is supplied as the
+  // `context.engine` option, register the additional operators on it so exported rules that use
+  // them can be evaluated.
+  const engine = opts.context?.engine;
+  if (
+    engine &&
+    typeof engine === 'object' &&
+    'addOperator' in engine &&
+    typeof engine.addOperator === 'function'
+  ) {
+    for (const [operator, evaluator] of Object.entries(jsonRulesEngineAdditionalOperators)) {
+      (engine as Engine).addOperator(operator, evaluator);
+    }
+  }
+
   const mode: EvaluationMode = opts.evaluationMode ?? rulesEngine.evaluationMode ?? 'cascade';
 
   const processAntecedent = (antecedent: REConditionAny['antecedent']): TopLevelCondition =>
@@ -47,7 +122,7 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
         defaultRuleGroupProcessorJsonRulesEngine,
     }) as unknown as TopLevelCondition;
 
-  const walk = (node: RENode, ancestorGuards: TopLevelCondition[]): RuleProperties[] => {
+  const walk = (node: RulesEngine, ancestorGuards: TopLevelCondition[]): RuleProperties[] => {
     const rules: RuleProperties[] = [];
     const siblingNegations: TopLevelCondition[] = [];
 
@@ -68,7 +143,7 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
       }
 
       if (hasNested) {
-        rules.push(...walk(c as RENode, guards));
+        rules.push(...walk(c as RulesEngine, guards));
       }
 
       siblingNegations.push(negate(ownAntecedent));
@@ -88,5 +163,5 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
     return rules;
   };
 
-  return walk(rulesEngine as RENode, []);
+  return walk(rulesEngine as RulesEngine, []);
 };

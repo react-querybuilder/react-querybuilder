@@ -1,9 +1,5 @@
 import type { RulesEngine } from '@react-querybuilder/rules-engine';
-import {
-  formatRulesEngine,
-  jsonRulesEngineAdditionalOperators,
-  RulesEngineBuilder,
-} from '@react-querybuilder/rules-engine';
+import { formatRulesEngine, RulesEngineBuilder } from '@react-querybuilder/rules-engine';
 import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
 import Tabs from '@theme/Tabs';
@@ -61,10 +57,11 @@ export default function RulesEngineDemo(): React.JSX.Element {
   React.useEffect(() => {
     const timeout = setTimeout(async () => {
       try {
-        const rules = formatRulesEngine(re, 'json-rules-engine');
-        const engine = new Engine(rules, { allowUndefinedFacts: true });
-        for (const [operator, evaluator] of Object.entries(jsonRulesEngineAdditionalOperators)) {
-          engine.addOperator(operator, evaluator);
+        const engine = new Engine([], { allowUndefinedFacts: true });
+        // Passing `context: { engine }` registers the additional operators (beginsWith, between, etc.).
+        const rules = formatRulesEngine(re, { format: 'json-rules-engine', context: { engine } });
+        for (const rule of rules) {
+          engine.addRule(rule);
         }
         const runResults = await Promise.all(
           sampleMusicians.map(async (musician): Promise<RunResult> => {
