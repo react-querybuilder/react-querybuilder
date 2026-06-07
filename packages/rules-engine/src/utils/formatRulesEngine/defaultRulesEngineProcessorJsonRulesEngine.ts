@@ -5,15 +5,11 @@ import type {
   RuleProperties,
   TopLevelCondition,
 } from 'json-rules-engine';
-import type {
-  EvaluationMode,
-  REConditionAny,
-  RulesEngine,
-  RulesEngineProcessor,
-} from '../../types';
+import type { EvaluationMode, REConditionAny, RulesEngineProcessor } from '../../types';
 import { defaultRuleGroupProcessorJsonRulesEngine } from './defaultRuleGroupProcessorJsonRulesEngine';
 import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonRulesEngine';
 import { inRange } from './nativeOperators';
+import { walkRulesEngine } from './walkRulesEngine';
 
 /**
  * Operator evaluators for the React Query Builder operators that have no `json-rules-engine`
@@ -94,46 +90,9 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
         defaultRuleGroupProcessorJsonRulesEngine,
     }) as unknown as TopLevelCondition;
 
-  const walk = (node: RulesEngine, ancestorGuards: TopLevelCondition[]): RuleProperties[] => {
-    const rules: RuleProperties[] = [];
-    const siblingNegations: TopLevelCondition[] = [];
-
-    for (const c of node.conditions) {
-      const ownAntecedent = processAntecedent(c.antecedent);
-      const guards = [
-        ...ancestorGuards,
-        ...(mode === 'cascade' ? siblingNegations : []),
-        ownAntecedent,
-      ];
-
-      const hasNested = Array.isArray(c.conditions) && c.conditions.length > 0;
-
-      // Emit a rule for the consequent. A condition that only groups nested conditions
-      // (no consequent) contributes no event of its own.
-      if (c.consequent || !hasNested) {
-        rules.push({ conditions: combine(guards), event: c.consequent ?? { type: '' } });
-      }
-
-      if (hasNested) {
-        rules.push(...walk(c as RulesEngine, guards));
-      }
-
-      siblingNegations.push(negate(ownAntecedent));
-    }
-
-    if (node.defaultConsequent) {
-      // In cascade mode the default consequent is the `else` branch: it fires only when every
-      // sibling antecedent fails. In cumulative mode there is no `else`, so it is an always-true
-      // baseline (still guarded by ancestor antecedents at nested levels).
-      const guards = [...ancestorGuards, ...(mode === 'cascade' ? siblingNegations : [])];
-      rules.push({
-        conditions: guards.length === 0 ? { all: [] } : combine(guards),
-        event: node.defaultConsequent,
-      });
-    }
-
-    return rules;
-  };
-
-  return walk(rulesEngine as RulesEngine, []);
+  return walkRulesEngine<TopLevelCondition>(rulesEngine, mode, {
+    processAntecedent,
+    combine,
+    negate,
+  }).map(({ guard, consequent }) => ({ conditions: guard, event: consequent }));
 };
