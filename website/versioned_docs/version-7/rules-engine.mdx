@@ -2,12 +2,6 @@
 title: Rules engine
 ---
 
-:::caution
-
-This package is in an early stage of development.
-
-:::
-
 :::tip[Live demo]
 
 Try the interactive [Rules Engine demo](/demo/rules-engine) with a musician-themed example, including live execution against sample data.
@@ -133,7 +127,14 @@ function MyCustomComponent() {
 
 ## Export
 
-The `formatRulesEngine` function converts rules engine objects into formats compatible with external rules engines:
+The `formatRulesEngine` function converts rules engine objects into formats compatible with external rules engines. Four export formats are available:
+
+- [`json-rules-engine`](#json-rules-engine) — an array of rules for [json-rules-engine](https://github.com/CacheControl/json-rules-engine), plus [supplemental operators](#additional-operators).
+- [`native`](#native) — a dependency-free, in-process evaluator function.
+- [`node-rules`](#node-rules) — live [node-rules](https://github.com/mithunsatheesh/node-rules) `Rule` objects.
+- [`rulepilot`](#rulepilot) — a single [rulepilot](https://github.com/andrewbrg/rulepilot) `Rule` (single-outcome decisioning).
+
+The desired format is passed as the second argument—either a bare string or an options object with a `format` property. All formats honor the [evaluation mode](#evaluation-modes).
 
 ### `json-rules-engine`
 
@@ -210,12 +211,66 @@ for (const [name, evaluator] of Object.entries(jsonRulesEngineAdditionalOperator
 }
 ```
 
+### `native`
+
+The `native` format returns a dependency-free, in-process evaluator function with the signature `(facts) => Consequent[]`. Given a facts object, it returns the consequents of every condition that fires, in order, honoring the [evaluation mode](#evaluation-modes). This is the simplest way to run a rules engine—no external library, no async, and no operator registration.
+
+```tsx
+import { formatRulesEngine } from '@react-querybuilder/rules-engine';
+
+const evaluate = formatRulesEngine(rulesEngine, 'native');
+
+const firedConsequents = evaluate({ temperature: 90, humidity: 35 });
+// => [{ type: 'alert', message: 'High temperature detected' }]
+```
+
+### `node-rules`
+
+The `node-rules` format returns an array of live [node-rules](https://github.com/mithunsatheesh/node-rules) `Rule` objects—complete with `condition`/`consequence` functions—ready to pass to a `RuleEngine`. Antecedents are compiled to the same predicates used by the [`native`](#native) format, so evaluation needs no operator registration. Each fired condition's consequent is pushed onto `fact.events`, mirroring the `json-rules-engine` result shape.
+
+```tsx
+import { formatRulesEngine } from '@react-querybuilder/rules-engine';
+import { RuleEngine } from 'node-rules';
+
+const R = new RuleEngine(formatRulesEngine(rulesEngine, 'node-rules'));
+
+R.execute({ temperature: 90, humidity: 35 }, ({ events }) => {
+  events.forEach(event => console.log(event.type, event.message));
+});
+```
+
+### `rulepilot`
+
+The `rulepilot` format returns a single [rulepilot](https://github.com/andrewbrg/rulepilot) `Rule` whose ordered `conditions` reproduce the rules engine's cascade (each condition pairs a guard with its consequent as `result`). Because `RulePilot.evaluate` returns a **single** result—the first matching condition's—this format models single-outcome decisioning.
+
+```tsx
+import { formatRulesEngine } from '@react-querybuilder/rules-engine';
+import { RulePilot } from 'rulepilot';
+
+const rule = formatRulesEngine(rulesEngine, 'rulepilot');
+
+// Pass `true` (trustRule) to skip pre-validation of the always-true guards.
+const result = await RulePilot.evaluate(rule, { temperature: 90, humidity: 35 }, true);
+// => { type: 'alert', message: 'High temperature detected' }
+```
+
+:::caution
+
+The `rulepilot` format has two limitations relative to the other targets:
+
+- **Single result.** A rules engine whose nested or overlapping conditions would fire _multiple_ consequents under the other formats yields only the first match. [Cumulative](#evaluation-modes) evaluation mode therefore has no rulepilot representation and **throws**.
+- **No substring operators.** The `contains`, `beginsWith`, and `endsWith` operators (and their negations) have no faithful rulepilot mapping and are omitted from the exported rule.
+
+Guards built from empty antecedents (and cascade defaults) compile to an always-true `{ all: [] }`, which rulepilot's validator rejects; evaluate such rules with `RulePilot.evaluate(rule, criteria, true)` to skip pre-validation.
+
+:::
+
 ### Evaluation modes
 
 Sibling conditions can be exported with one of two evaluation modes, stored as `evaluationMode` on the rules engine object (defaults to `"cascade"`):
 
 - **`"cascade"`** (default): conditions are evaluated in order, like an `if`/`else-if`/`else` chain. A later sibling only fires when _all_ prior siblings' antecedents failed. This is achieved by AND-ing each exported rule with the negated antecedents of its prior siblings.
-- **`"cumulative"`**: every condition is evaluated independently, so any number of them may fire.
+- **`"cumulative"`**: every condition is evaluated independently, so any number of them may fire. (The [`rulepilot`](#rulepilot) format returns a single result and therefore does not support this mode—it throws if requested.)
 
 In both modes, nested conditions are guarded by their ancestor antecedents (structural nesting). A `defaultConsequent` behaves differently per mode: in `"cascade"` it is the `else` branch, firing only when _every_ sibling antecedent at its level fails; in `"cumulative"` it is an always-true baseline that fires on every run (still guarded by ancestor antecedents at nested levels).
 

@@ -1,4 +1,4 @@
-import type { RulesEngine } from '@react-querybuilder/rules-engine';
+import type { RulesEngine, RulesEngineExportFormat } from '@react-querybuilder/rules-engine';
 import { formatRulesEngine, RulesEngineBuilder } from '@react-querybuilder/rules-engine';
 import CodeBlock from '@theme/CodeBlock';
 import TabItem from '@theme/TabItem';
@@ -38,19 +38,42 @@ const toggleLabels: Record<ToggleKey, string> = {
   autoSelectConsequentType: 'autoSelectConsequentType',
 };
 
+interface ExportTab {
+  format: RulesEngineExportFormat;
+  language: 'json' | 'js';
+  code: string;
+}
+
 export default function RulesEngineDemo(): React.JSX.Element {
   const [re, setRE] = React.useState<RulesEngine>(initialRulesEngine);
   const [toggles, setToggles] = React.useState(toggleDefaults);
   const [results, setResults] = React.useState<RunResult[]>([]);
   const [runError, setRunError] = React.useState<string>('');
 
-  // json-rules-engine export (recomputed on every RE change).
-  const jsonRulesEngine = React.useMemo(() => {
-    try {
-      return JSON.stringify(formatRulesEngine(re, 'json-rules-engine'), null, 2);
-    } catch (error) {
-      return `// Error: ${(error as Error).message}`;
-    }
+  // Serializable export outputs (recomputed on every RE change). `rulepilot` throws in cumulative
+  // mode (the error is shown in place). `native`/`node-rules` are omitted: their results contain
+  // functions and don't have a meaningful serialized representation.
+  const exportTabs = React.useMemo<ExportTab[]>(() => {
+    const build = (
+      format: RulesEngineExportFormat,
+      render: () => Omit<ExportTab, 'format'>
+    ): ExportTab => {
+      try {
+        return { format, ...render() };
+      } catch (error) {
+        return { format, language: 'js', code: `// Error: ${(error as Error).message}` };
+      }
+    };
+    return [
+      build('json-rules-engine', () => ({
+        language: 'json',
+        code: JSON.stringify(formatRulesEngine(re, 'json-rules-engine'), null, 2),
+      })),
+      build('rulepilot', () => ({
+        language: 'json',
+        code: JSON.stringify(formatRulesEngine(re, 'rulepilot'), null, 2),
+      })),
+    ];
   }, [re]);
 
   // Debounced execution against the sample musicians.
@@ -147,12 +170,14 @@ export default function RulesEngineDemo(): React.JSX.Element {
               </table>
             )}
           </TabItem>
-          <TabItem value="json-rules-engine" label="json-rules-engine">
-            <CodeBlock language="json">{jsonRulesEngine}</CodeBlock>
-          </TabItem>
           <TabItem value="rules-engine" label="RulesEngine JSON">
             <CodeBlock language="json">{JSON.stringify(re, null, 2)}</CodeBlock>
           </TabItem>
+          {exportTabs.map(({ format, language, code }) => (
+            <TabItem key={format} value={format} label={format}>
+              <CodeBlock language={language}>{code}</CodeBlock>
+            </TabItem>
+          ))}
         </Tabs>
       </div>
     </div>
