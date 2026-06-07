@@ -70,9 +70,11 @@
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "json-rules-engine": "^7.3.1",
+    "node-rules": "^9.2.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
+    "rulepilot": "^1.4.9",
     "sass": "catalog:",
     "type-fest": "catalog:",
     "typescript": "catalog:",
@@ -80,10 +82,18 @@
   },
   "peerDependencies": {
     "json-rules-engine": "^7",
-    "react": "catalog:peer"
+    "node-rules": "^9",
+    "react": "catalog:peer",
+    "rulepilot": "^1"
   },
   "peerDependenciesMeta": {
     "json-rules-engine": {
+      "optional": true
+    },
+    "node-rules": {
+      "optional": true
+    },
+    "rulepilot": {
       "optional": true
     }
   }

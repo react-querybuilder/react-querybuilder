@@ -1,4 +1,5 @@
 import { Engine } from 'json-rules-engine';
+import type { RuleProperties } from 'json-rules-engine';
 import type { RulesEngine } from '../../types';
 import { formatRulesEngine } from './formatRulesEngine';
 
@@ -310,7 +311,7 @@ it('multiple conditions with different outcomes', async () => {
 
 // #region Evaluation mode: cascade vs cumulative
 
-const runEvents = async (rules: ReturnType<typeof formatRulesEngine>, facts: object) => {
+const runEvents = async (rules: RuleProperties[], facts: object) => {
   const engine = new Engine(rules, { allowUndefinedFacts: true });
   const { events } = await engine.run(facts);
   return events.map(e => e.type);

@@ -1,10 +1,4 @@
-import {
-  formatQuery,
-  isValidValue,
-  parseNumber,
-  shouldRenderAsNumber,
-  toArray,
-} from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 import type {
   Engine,
   OperatorEvaluator,
@@ -19,29 +13,7 @@ import type {
 } from '../../types';
 import { defaultRuleGroupProcessorJsonRulesEngine } from './defaultRuleGroupProcessorJsonRulesEngine';
 import { defaultRuleProcessorJsonRulesEngine } from './defaultRuleProcessorJsonRulesEngine';
-
-/**
- * Determines whether `factVal` falls within the inclusive range described by `compareVal`, mirroring
- * the robustness of the `"between"` handling in {@link react-querybuilder!formatQuery formatQuery}.
- * The bounds may be supplied as an array (`[lo, hi]`) or a comma-separated string (`"lo,hi"`).
- * Numeric bounds are parsed and reordered ascending; non-numeric bounds compare lexicographically
- * in the order given. Returns `null` when fewer than two valid bounds are present.
- */
-const inRange = (factVal: unknown, compareVal: unknown): boolean | null => {
-  const bounds = toArray(compareVal, { retainEmptyStrings: true });
-  if (bounds.length < 2 || !isValidValue(bounds[0]) || !isValidValue(bounds[1])) {
-    return null;
-  }
-  const [first, second] = bounds;
-  if (shouldRenderAsNumber(first, true) && shouldRenderAsNumber(second, true)) {
-    const a = Number(parseNumber(first, { parseNumbers: 'strict' }));
-    const b = Number(parseNumber(second, { parseNumbers: 'strict' }));
-    const f = Number(factVal);
-    return f >= Math.min(a, b) && f <= Math.max(a, b);
-  }
-  const f = `${factVal}`;
-  return f >= `${first}` && f <= `${second}`;
-};
+import { inRange } from './nativeOperators';
 
 /**
  * Operator evaluators for the React Query Builder operators that have no `json-rules-engine`

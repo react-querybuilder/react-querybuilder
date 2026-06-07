@@ -1,12 +1,29 @@
 import type { FormatQueryOptions } from '@react-querybuilder/core';
-import type { RulesEngineAny } from './rulesEngine';
+import type { Consequent, RulesEngineAny } from './rulesEngine';
 
 /**
  * Available export formats for {@link formatRulesEngine}.
  *
  * @group Export
  */
-export type RulesEngineExportFormat = 'json-rules-engine';
+export type RulesEngineExportFormat = 'json-rules-engine' | 'native' | 'rulepilot' | 'node-rules';
+
+/**
+ * A compiled antecedent for the `"native"`/`"node-rules"` export targets: returns `true` when the
+ * supplied facts satisfy the rule group it was compiled from.
+ *
+ * @group Export
+ */
+export type NativePredicate = (facts: unknown) => boolean;
+
+/**
+ * In-process evaluator returned by `formatRulesEngine(re, 'native')`. Given a facts object, returns
+ * the {@link react-querybuilder!Consequent consequents} of every condition that fires, in order,
+ * honoring the {@link react-querybuilder!RulesEngine.evaluationMode evaluationMode}.
+ *
+ * @group Export
+ */
+export type RulesEngineEvaluator = (facts: Record<string, unknown>) => Consequent[];
 
 /**
  * Function to produce a result that {@link formatRulesEngine} uses when processing a
@@ -17,6 +34,9 @@ export type RulesEngineExportFormat = 'json-rules-engine';
  * | Format              | Default rules engine processor                     |
  * | ------------------- | -------------------------------------------------- |
  * | `json-rules-engine` | {@link defaultRulesEngineProcessorJsonRulesEngine} |
+ * | `native`            | {@link defaultRulesEngineProcessorNative}          |
+ * | `rulepilot`         | {@link defaultRulesEngineProcessorRulePilot}       |
+ * | `node-rules`        | {@link defaultRulesEngineProcessorNodeRules}       |
  *
  * @group Export
  */
