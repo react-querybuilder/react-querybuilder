@@ -66,6 +66,7 @@
     {
       "files": [
         "packages/*/dev/**",
+        "examples/rules-engine/**",
         // These are always leaf elements, so new functions/objects/arrays
         // within their JSX have negligible performance impact.
         "packages/*/src/**/*{ActionElement,DragHandle,Editor,NotToggle,ShiftActions,ValueSelector}.tsx"
