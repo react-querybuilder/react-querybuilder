@@ -2,7 +2,7 @@
   "dependencies": {
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.18.0"
+    "react-querybuilder": "8.19.0"
   },
   "description": "React Query Builder Basic TypeScript Example",
   "devDependencies": {
