@@ -21,7 +21,6 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
       addCondition,
       updateCondition,
       allowDefaultConsequents,
-      allowNestedConditions,
       evaluationMode,
       suppressStandardClassnames,
       classnames: classnamesRE,
@@ -53,16 +52,14 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
 
   return (
     <div className={classnames}>
-      {allowNestedConditions && (
-        <AddCondition
-          schema={props.schema}
-          path={props.conditionPath}
-          level={props.conditionPath.length}
-          handleOnClick={addConditionThisPath}
-          title={translations.addCondition.title}
-          label={translations.addCondition.label}
-        />
-      )}
+      <AddCondition
+        schema={props.schema}
+        path={props.conditionPath}
+        level={props.conditionPath.length}
+        handleOnClick={addConditionThisPath}
+        title={translations.addCondition.title}
+        label={translations.addCondition.label}
+      />
       {allowDefaultConsequents && (
         <AddConsequent
           schema={props.schema}
