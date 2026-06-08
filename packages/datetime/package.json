@@ -100,7 +100,7 @@
     "@electric-sql/pglite": "catalog:test",
     "@grafeo-db/js": "^0.5.42",
     "@prisma/client": "^7.7.0",
-    "@tanstack/db": "^0.6.6",
+    "@tanstack/db": "^0.6.8",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@testing-library/user-event": "catalog:test",

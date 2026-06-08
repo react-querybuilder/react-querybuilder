@@ -19,10 +19,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Datetime-aware rule processors added for the "parameterized", "spel", "ldap", "gremlin", "elasticsearch", "prisma", "sequelize", "drizzle", "tanstack_db", and "mongodb" export formats. Relative values are materialized (as ISO strings for text-based formats, `Date` objects for ORM formats) and `between`/`notBetween` bounds are reordered chronologically.
   - `RQBDateTimeLibraryAPI` gains `startOf`, `endOf`, and `add` methods (implemented for the Day.js, date-fns, Luxon, and JS Date plugins).
   - Demo: "Use date/time package" option now wraps the live query builder with `QueryBuilderDateTime` for interactive relative editing.
+- [#1046] Evaluation modes for the rules engine (`@react-querybuilder/rules-engine`). A new `evaluationMode` property (type `EvaluationMode`, i.e. `"cascade" | "cumulative"`) can be set on `RulesEngine`/`RulesEngineIC` objects, or passed as a `formatRulesEngine` option to override the object-level value at export time. Defaults to `"cascade"`.
+  - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior siblings' antecedents failed (if/else-if/else semantics).
+  - `"cumulative"`: every condition is evaluated independently and any number may fire.
+  - `RulesEngineBuilder` renders an evaluation mode toggle in its header, configurable via new `evaluationMode`, `evaluationModeCascade`, and `evaluationModeCumulative` translation keys and an `evaluationMode` classname.
+  - In cumulative mode, `RulesEngineBuilder` labels condition headers "When" and the default consequent "Always" (instead of "If"/"Else If"/"Else"). New translation keys `blockLabelWhen`/`blockLabelAlways` and standard classes `blockLabel-when`/`blockLabel-always`.
+  - New interactive rules engine builder demo on the website.
+- [#1046] Additional operators and operator auto-registration for the rules engine's `"json-rules-engine"` export (`@react-querybuilder/rules-engine`).
+  - `formatRulesEngine(re, 'json-rules-engine')` now supports the React Query Builder operators that `json-rules-engine` has no built-in equivalent for, via supplemental evaluators exported as `jsonRulesEngineAdditionalOperators`: `beginsWith`/`doesNotBeginWith`, `endsWith`/`doesNotEndWith`, `contains`/`doesNotContain` (mapped to `containsGeneric`/`doesNotContainGeneric` to bypass the built-in array-only `contains`), and `between`/`notBetween`.
+  - `between`/`notBetween` mirror `formatQuery`'s robustness: bounds may be an array (`[lo, hi]`) or a comma-separated string (`"lo,hi"`), and numeric bounds are parsed and reordered ascending.
+  - New `context` option for `formatRulesEngine`. For the `"json-rules-engine"` format, passing `context: { engine }` registers every additional operator on the `Engine` as a side effect, so exported rules that use them run without manual `engine.addOperator(...)` calls.
+- [#1046] Additional `formatRulesEngine` export targets for the rules engine (`@react-querybuilder/rules-engine`): `"native"`, `"node-rules"`, and `"rulepilot"` (joining the existing `"json-rules-engine"`).
+  - `"native"` returns a dependency-free in-process `RulesEngineEvaluator`—`(facts) => Consequent[]`—that yields the consequents of every condition that fires, in order, honoring the `evaluationMode`.
+  - `"node-rules"` returns an array of live [node-rules](https://github.com/mithunsatheesh/node-rules) `Rule` objects (with real `condition`/`consequence` functions) ready to pass to `new RuleEngine(...)`. Antecedents reuse the `"native"` predicates, so evaluation needs no operator registration, and each fired consequent is pushed onto `fact.events` (mirroring the `"json-rules-engine"` result shape).
+  - `"rulepilot"` returns a single [rulepilot](https://github.com/andrewbrg/rulepilot) `Rule`. Because `RulePilot.evaluate` returns a single (first-matched) result, this target models single-outcome decisioning: nested or overlapping conditions that would fire multiple consequents under the other targets yield only the first match, cumulative evaluation mode throws, and the substring operators (`contains`/`beginsWith`/`endsWith` and their negations) are omitted as they have no faithful mapping. Evaluate with `RulePilot.evaluate(rule, criteria, true)` to skip pre-validation of the always-true guards.
 
 ### Changed
 
 - Replaced `any` with `unknown` on input parameters of ~20 core utility functions (type guards, array utils, string escape helpers, `clsx`). Return types preserved or tightened to avoid breaking consumers.
+
+### Fixed
+
+- [#1046] Rules engine (`@react-querybuilder/rules-engine`): `useRulesEngineBuilder` no longer enters an infinite update loop. The hook now honors the `defaultRulesEngine` prop and preserves edits in uncontrolled mode (previously the prop-sync effect could overwrite them on each render).
 
 ## [v8.18.0] - 2026-05-31
 
@@ -2249,6 +2267,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1040]: https://github.com/react-querybuilder/react-querybuilder/pull/1040
 [#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
 [#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
+[#1046]: https://github.com/react-querybuilder/react-querybuilder/pull/1046
 
 <!-- #endregion -->
 

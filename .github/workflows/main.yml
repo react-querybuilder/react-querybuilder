@@ -82,7 +82,12 @@ jobs:
           # Minor tweak for Mantine 8
           sed -i -E "s/screen\.getByRole\('combobox'\)/screen.getByRole('textbox')/g" ./packages/mantine/src/Mantine.test.tsx
 
+          # RNTL 14 does not support React 18, and the rules-engine package has a React 18
+          # infinite-loop issue, so exclude both packages from the Vitest projects
+          sed -i "s|'packages/\*'|'packages/*', '\!packages/native', '\!packages/rules-engine'|" ./vitest.config.ts
+
           bun install
+
           bunx vitest run --coverage=false
 
   Typecheck_React_18:

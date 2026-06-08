@@ -18,6 +18,8 @@ export const defaultRuleProcessorJsonRulesEngine: RuleProcessor = (
         '<=': 'lessThanInclusive',
         '>': 'greaterThan',
         '>=': 'greaterThanInclusive',
+        contains: 'containsGeneric',
+        doesNotContain: 'doesNotContainGeneric',
       },
     }
   ).rules[0];

@@ -1,5 +1,6 @@
 import type {
   BaseOption,
+  BaseTranslation,
   BaseTranslationWithLabel,
   Classname,
   FlexibleOptionList,
@@ -13,6 +14,7 @@ import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { Except } from 'type-fest';
 import type { ActionElementREProps, ValueSelectorREProps } from '../components';
+import type { EvaluationMode } from './export';
 import type {
   Consequent,
   REConditionAny,
@@ -36,6 +38,7 @@ export interface SchemaRE {
   suppressStandardClassnames: boolean;
   allowDefaultConsequents: boolean;
   allowNestedConditions: boolean;
+  evaluationMode: EvaluationMode;
   translations: TranslationsFullRE;
   queryBuilderProps?: Except<
     QueryBuilderProps<RuleGroupTypeAny, FullOption, FullOption, FullOption>,
@@ -93,14 +96,18 @@ export interface ClassnamesRE {
   rulesEngineHeader: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
-  /** Classes applied to all "If" block labels. */
+  /** Classes applied to all "If" block labels (cascade mode initial condition). */
   blockLabelIf: Classname;
-  /** Classes applied to all "If Else" block labels. */
+  /** Classes applied to all "If Else" block labels (cascade mode subsequent conditions). */
   blockLabelIfElse: Classname;
-  /** Classes applied to all "Else" block labels. */
+  /** Classes applied to all "Else" block labels (cascade mode default condition). */
   blockLabelElse: Classname;
   /** Classes applied to all "Then" block labels. */
   blockLabelThen: Classname;
+  /** Classes applied to all "When" block labels (cumulative mode conditions). */
+  blockLabelWhen: Classname;
+  /** Classes applied to all "Always" block labels (cumulative mode default consequent). */
+  blockLabelAlways: Classname;
   /** Classes applied to consequent builders ("then" sections). */
   consequentBuilder: Classname;
   /** Classes applied to consequent builder headers. */
@@ -113,6 +120,8 @@ export interface ClassnamesRE {
   conditionBuilder: Classname;
   /** Classes applied to condition builder headers ("if"/"else if" labels and controls). */
   conditionBuilderHeader: Classname;
+  /** Classes applied to the evaluation mode toggle control. */
+  evaluationMode: Classname;
 }
 
 /**
@@ -125,12 +134,17 @@ export interface TranslationsRE {
   blockLabelElseIf: BaseTranslationWithLabel<React.ReactNode>;
   blockLabelElse: BaseTranslationWithLabel<React.ReactNode>;
   blockLabelThen: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelWhen: BaseTranslationWithLabel<React.ReactNode>;
+  blockLabelAlways: BaseTranslationWithLabel<React.ReactNode>;
   addCondition: BaseTranslationWithLabel<React.ReactNode>;
   addSubcondition: BaseTranslationWithLabel<React.ReactNode>;
   addConsequent: BaseTranslationWithLabel<React.ReactNode>;
   addDefaultConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
   removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
+  evaluationMode: BaseTranslation;
+  evaluationModeCascade: BaseTranslationWithLabel<React.ReactNode>;
+  evaluationModeCumulative: BaseTranslationWithLabel<React.ReactNode>;
 }
 /**
  * The full `translations` interface for {@link RulesEngineBuilder}, with all properties required.

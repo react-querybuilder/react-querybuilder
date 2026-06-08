@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import * as React from 'react';
-import { Button, Platform, StyleSheet, Switch, TextInput } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import type {
   ActionProps,
   Field,
@@ -42,8 +42,8 @@ beforeEach(() => {
 });
 
 describe('QueryBuilderNative', () => {
-  it('renders with rules', () => {
-    render(<QueryBuilderNative query={query} />);
+  it('renders with rules', async () => {
+    await render(<QueryBuilderNative query={query} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.combinators)).toBeOnTheScreen();
     expect(() => screen.getByTestId(TestID.inlineCombinator)).toThrow();
@@ -51,14 +51,14 @@ describe('QueryBuilderNative', () => {
     expect(screen.getAllByTestId(TestID.valueEditor)[1]).toBeOnTheScreen();
   });
 
-  it('renders with inline combinators', () => {
-    render(<QueryBuilderNative query={query} showCombinatorsBetweenRules />);
+  it('renders with inline combinators', async () => {
+    await render(<QueryBuilderNative query={query} showCombinatorsBetweenRules />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.inlineCombinator)).toBeOnTheScreen();
   });
 
-  it('renders with independent combinators', () => {
-    render(<QueryBuilderNative query={queryIC} />);
+  it('renders with independent combinators', async () => {
+    await render(<QueryBuilderNative query={queryIC} />);
     expect(screen.getByTestId(TestID.ruleGroup)).toBeOnTheScreen();
     expect(screen.getByTestId(TestID.inlineCombinator)).toBeOnTheScreen();
   });
@@ -67,16 +67,16 @@ describe('QueryBuilderNative', () => {
 describe('NativeMatchModeEditor', () => {
   const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
 
-  it('renders match mode editor', () => {
-    render(<QueryBuilderNative fields={fields} addRuleToNewGroups />);
+  it('renders match mode editor', async () => {
+    await render(<QueryBuilderNative fields={fields} addRuleToNewGroups />);
     expect(screen.getByDisplayValue('all')).toBeOnTheScreen();
-    fireEvent.changeText(screen.getByDisplayValue('all'), 'atLeast');
+    await fireEvent.changeText(screen.getByDisplayValue('all'), 'atLeast');
     expect(screen.getByDisplayValue('1')).toBeOnTheScreen();
   });
 
-  it('renders on web platform', () => {
+  it('renders on web platform', async () => {
     Platform.OS = 'web';
-    render(
+    await render(
       <QueryBuilderNative
         fields={fields}
         addRuleToNewGroups
@@ -110,17 +110,19 @@ describe('NativeActionElement', () => {
   }: Partial<ActionProps> & { testTitle?: string } = {}) => {
     it(testTitle ?? 'should be enabled and call the handleOnClick method', async () => {
       const handleOnPress = vi.fn();
-      render(<NativeActionElement {...props} handleOnClick={handleOnPress} {...additionalProps} />);
+      await render(
+        <NativeActionElement {...props} handleOnClick={handleOnPress} {...additionalProps} />
+      );
       const btn = screen.getByTestId(testID);
       expect(btn).toBeEnabled();
-      fireEvent.press(btn);
+      await fireEvent.press(btn);
       expect(handleOnPress).toHaveBeenCalledTimes(1);
     });
   };
 
-  it('has the label passed into the <button />', () => {
+  it('has the label passed into the <button />', async () => {
     const testLabel = 'Test label';
-    render(<NativeActionElement {...props} label={testLabel} />);
+    await render(<NativeActionElement {...props} label={testLabel} />);
     expect(screen.getByTestId(testID)).toHaveTextContent(testLabel);
   });
 
@@ -143,9 +145,9 @@ describe('NativeActionElement', () => {
     disabledTranslation: dt,
   });
 
-  it('is disabled by disabled prop', () => {
+  it('is disabled by disabled prop', async () => {
     const handleOnPress = vi.fn();
-    render(<NativeActionElement {...props} handleOnClick={handleOnPress} disabled />);
+    await render(<NativeActionElement {...props} handleOnClick={handleOnPress} disabled />);
     const btn = screen.getByTestId(testID);
     expect(btn).toBeDisabled();
     // TODO: enable upon resolution of https://github.com/danfry1/vitest-native/issues/3
@@ -168,14 +170,13 @@ describe('NativeNotToggle', () => {
     ruleGroup: { combinator: 'and', rules: [] },
   };
 
-  it('works', () => {
+  it('works', async () => {
     const handleOnChange = vi.fn();
-    render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const switchEl = screen.getByTestId(TestID.notToggle).findByType(Switch as any);
-    fireEvent(switchEl, 'valueChange', true);
+    await render(<NativeNotToggle {...props} handleOnChange={handleOnChange} />);
+    const switchEl = screen.getByTestId(TestID.notToggle).queryAll(() => true)[1];
+    await fireEvent(switchEl, 'valueChange', true);
     expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
-    fireEvent(switchEl, 'valueChange', false);
+    await fireEvent(switchEl, 'valueChange', false);
     expect(handleOnChange).toHaveBeenNthCalledWith(2, false);
   });
 });
@@ -254,15 +255,16 @@ describe('NativeShiftActions', () => {
 
     // Enabled
     const enabledProps = { ...defaultProps, shiftUp, shiftDown };
-    render(<NativeShiftActions {...enabledProps} />);
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const btnsEnabled = screen.getByTestId(TestID.shiftActions).findAllByType(Button as any);
-    act(() => {
-      fireEvent.press(btnsEnabled[0]);
+    await render(<NativeShiftActions {...enabledProps} />);
+    const btnsEnabled = screen.getByTestId(TestID.shiftActions).children;
+    await act(async () => {
+      // oxlint-disable-next-line typescript/no-explicit-any
+      await fireEvent.press(btnsEnabled[0] as any);
     });
     expect(shiftUp).toHaveBeenCalled();
-    act(() => {
-      fireEvent.press(btnsEnabled[1]);
+    await act(async () => {
+      // oxlint-disable-next-line typescript/no-explicit-any
+      await fireEvent.press(btnsEnabled[1] as any);
     });
     expect(shiftDown).toHaveBeenCalled();
   });
@@ -313,22 +315,22 @@ describe('NativeValueSelector', () => {
 
   describe('ios', () => {
     for (const [testID, selHeight, _optHeight] of variants) {
-      it(`works for testID ${testID}`, () => {
-        render(<NativeValueSelector {...props} testID={testID} />);
+      it(`works for testID ${testID}`, async () => {
+        await render(<NativeValueSelector {...props} testID={testID} />);
         expect(screen.getByTestId(testID)).toHaveStyle({ height: selHeight });
         // TODO: If we ever implement a proper picker by default, test the option styles...
         // expect(screen.getByTestId(testID).findAllByType(Picker.Item)[0]).toHaveStyle({
         //   height: _optHeight,
         // });
-        fireEvent.changeText(screen.getByTestId(testID), 'opt2');
+        await fireEvent.changeText(screen.getByTestId(testID), 'opt2');
         expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
       });
     }
   });
 
-  it('renders on web platform', () => {
+  it('renders on web platform', async () => {
     Platform.OS = 'web';
-    render(<NativeValueSelectorWeb {...props} testID={TestID.combinators} />);
+    await render(<NativeValueSelectorWeb {...props} testID={TestID.combinators} />);
     expect(screen.getByTestId(TestID.combinators)).toBeOnTheScreen();
   });
 });
@@ -358,45 +360,45 @@ describe('NativeValueEditor', () => {
     handleOnChange.mockClear();
   });
 
-  it('displays nothing for "null"/"notNull" operator', () => {
-    render(<NativeValueEditor {...props} operator="null" />);
+  it('displays nothing for "null"/"notNull" operator', async () => {
+    await render(<NativeValueEditor {...props} operator="null" />);
     expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
   });
 
   for (const t of [undefined, 'text', 'textarea'] as const) {
-    it(`changes the value of ${t} input type`, () => {
-      render(<NativeValueEditor {...props} type={t} />);
-      fireEvent.changeText(screen.getByTestId(TestID.valueEditor), 'val');
+    it(`changes the value of ${t} input type`, async () => {
+      await render(<NativeValueEditor {...props} type={t} />);
+      await fireEvent.changeText(screen.getByTestId(TestID.valueEditor), 'val');
       expect(handleOnChange).toHaveBeenNthCalledWith(1, 'val');
     });
   }
 
   for (const t of ['select', 'multiselect'] as const) {
-    it(`changes the value of ${t} input type`, () => {
-      render(<NativeValueEditor {...props} type={t} values={values} />);
-      fireEvent.changeText(screen.getByTestId(TestID.valueEditor), 'opt2');
+    it(`changes the value of ${t} input type`, async () => {
+      await render(<NativeValueEditor {...props} type={t} values={values} />);
+      await fireEvent.changeText(screen.getByTestId(TestID.valueEditor), 'opt2');
       expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2');
     });
   }
 
   for (const t of ['switch', 'checkbox'] as const) {
-    it(`changes the value of ${t}`, () => {
-      render(<NativeValueEditor {...props} type={t} value={false} />);
-      fireEvent(screen.getByTestId(TestID.valueEditor), 'valueChange', true);
+    it(`changes the value of ${t}`, async () => {
+      await render(<NativeValueEditor {...props} type={t} value={false} />);
+      await fireEvent(screen.getByTestId(TestID.valueEditor), 'valueChange', true);
       expect(handleOnChange).toHaveBeenNthCalledWith(1, true);
     });
   }
 
-  it('changes the value of each text input', () => {
-    render(<NativeValueEditor {...props} operator="between" type="text" />);
-    fireEvent.changeText(screen.getAllByPlaceholderText(TestID.valueEditor)[0], 'val');
-    fireEvent.changeText(screen.getAllByPlaceholderText(TestID.valueEditor)[1], 'val');
+  it('changes the value of each text input', async () => {
+    await render(<NativeValueEditor {...props} operator="between" type="text" />);
+    await fireEvent.changeText(screen.getAllByPlaceholderText(TestID.valueEditor)[0], 'val');
+    await fireEvent.changeText(screen.getAllByPlaceholderText(TestID.valueEditor)[1], 'val');
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'val,');
     expect(handleOnChange).toHaveBeenNthCalledWith(2, ',val');
   });
 
-  it('renders the first option when none is provided for "between"', () => {
-    render(
+  it('renders the first option when none is provided for "between"', async () => {
+    await render(
       <NativeValueEditor
         {...props}
         operator="between"
@@ -405,13 +407,13 @@ describe('NativeValueEditor', () => {
         value={[null, null]}
       />
     );
-    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(NativeValueSelector);
+    const selectors = screen.getByTestId(TestID.valueEditor).queryAll(() => true);
     expect(selectors[0].props).toHaveProperty('value', 'opt1');
     expect(selectors[1].props).toHaveProperty('value', 'opt1');
   });
 
-  it('changes the value of each select', () => {
-    render(
+  it('changes the value of each select', async () => {
+    await render(
       <NativeValueEditor
         {...props}
         operator="between"
@@ -420,18 +422,17 @@ describe('NativeValueEditor', () => {
         value={'opt1,opt1'}
       />
     );
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const selectors = screen.getByTestId(TestID.valueEditor).findAllByType(TextInput as any);
+    const selectors = screen.getByTestId(TestID.valueEditor).queryAll(() => true);
     for (const i of [0, 1]) {
-      fireEvent.changeText(selectors[i], 'opt2');
+      await fireEvent.changeText(selectors[i], 'opt2');
     }
     expect(handleOnChange).toHaveBeenNthCalledWith(1, 'opt2,opt1');
     expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt1,opt2');
   });
 
-  it('renders on web platform', () => {
+  it('renders on web platform', async () => {
     Platform.OS = 'web';
-    render(<NativeValueEditorWeb {...props} />);
+    await render(<NativeValueEditorWeb {...props} />);
     expect(screen.getByTestId(TestID.valueEditor)).toBeOnTheScreen();
   });
 });

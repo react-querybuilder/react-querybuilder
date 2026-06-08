@@ -16,11 +16,20 @@ export const ConsequentBuilderHeader: React.MemoExoticComponent<
     standalone,
     schema: {
       components: { removeConsequent: RemoveConsequent },
-      classnames: { consequentBuilderHeader, blockLabel, blockLabelElse, blockLabelThen },
+      evaluationMode,
+      classnames: {
+        consequentBuilderHeader,
+        blockLabel,
+        blockLabelElse,
+        blockLabelThen,
+        blockLabelAlways,
+      },
       translations,
       suppressStandardClassnames,
     },
   } = props;
+
+  const isCumulative = evaluationMode === 'cumulative';
 
   const wrapperClassName = React.useMemo(
     () =>
@@ -36,17 +45,35 @@ export const ConsequentBuilderHeader: React.MemoExoticComponent<
         suppressStandardClassnames || standardClassnamesRE.blockLabel,
         blockLabel,
         standalone
-          ? [suppressStandardClassnames || standardClassnamesRE.blockLabelElse, blockLabelElse]
+          ? isCumulative
+            ? [
+                suppressStandardClassnames || standardClassnamesRE.blockLabelAlways,
+                blockLabelAlways,
+              ]
+            : [suppressStandardClassnames || standardClassnamesRE.blockLabelElse, blockLabelElse]
           : [suppressStandardClassnames || standardClassnamesRE.blockLabelThen, blockLabelThen]
       ),
-    [blockLabel, blockLabelElse, blockLabelThen, standalone, suppressStandardClassnames]
+    [
+      blockLabel,
+      blockLabelAlways,
+      blockLabelElse,
+      blockLabelThen,
+      isCumulative,
+      standalone,
+      suppressStandardClassnames,
+    ]
   );
 
   const removeConsequent = React.useCallback(() => onConsequentChange(), [onConsequentChange]);
 
   const { label, title } = React.useMemo(
-    () => (standalone ? translations.blockLabelElse : translations.blockLabelThen),
-    [standalone, translations]
+    () =>
+      standalone
+        ? isCumulative
+          ? translations.blockLabelAlways
+          : translations.blockLabelElse
+        : translations.blockLabelThen,
+    [isCumulative, standalone, translations]
   );
 
   return (

@@ -5,6 +5,7 @@ import type {
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/core';
+import type { EvaluationMode } from './export';
 
 // #region Conditions
 /**
@@ -55,6 +56,14 @@ export interface RulesEngine<
 > extends CommonRuleAndGroupProperties {
   conditions: REConditionCascade<RuleGroupType<R, C>>;
   defaultConsequent?: Consequent;
+  /**
+   * How sibling conditions relate to one another when exported. Defaults to `"cascade"`.
+   *
+   * - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior
+   *   siblings' antecedents failed (if/else-if/else semantics).
+   * - `"cumulative"`: every condition is evaluated independently and any number may fire.
+   */
+  evaluationMode?: EvaluationMode;
 }
 
 /**
@@ -70,6 +79,14 @@ export interface RulesEngineIC<
 > extends CommonRuleAndGroupProperties {
   conditions: REConditionCascade<RuleGroupTypeIC<R, C>>;
   defaultConsequent?: Consequent;
+  /**
+   * How sibling conditions relate to one another when exported. Defaults to `"cascade"`.
+   *
+   * - `"cascade"`: conditions are evaluated in order; a later sibling only fires if all prior
+   *   siblings' antecedents failed (if/else-if/else semantics).
+   * - `"cumulative"`: every condition is evaluated independently and any number may fire.
+   */
+  evaluationMode?: EvaluationMode;
 }
 
 /**
@@ -96,50 +113,3 @@ export interface Consequent extends ConsequentBase {
   [etc: string]: unknown;
 }
 // #endregion
-
-// -------------------------------------------
-// Playground:
-// -------------------------------------------
-
-interface _ExampleConsequent extends ConsequentBase<'rea' | 'hope'> {
-  command: string;
-  args: unknown[] | Record<string, unknown>;
-  options?: {
-    async?: boolean;
-    timeout?: number;
-    retries?: number;
-  };
-  metadata?: {
-    name?: string;
-    description?: string;
-    tags?: string[];
-  };
-}
-
-const _myREA: _ExampleConsequent = { type: 'rea', command: 'cmd', args: [] };
-
-const _rngn: RulesEngine = {
-  conditions: [
-    // IF
-    {
-      antecedent: {
-        combinator: 'and',
-        rules: [],
-      },
-      // consequent: { type: 'cmd', payload: { command: '', args: [] }},
-    },
-    // ELSE IF
-    {
-      antecedent: { combinator: 'and', rules: [{ field: '', operator: '', value: '' }] },
-      consequent: { type: 'cmd', payload: { command: '', args: [] } },
-      conditions: [
-        {
-          antecedent: { combinator: 'and', rules: [] },
-          consequent: { type: 'cmd', payload: { command: '', args: [] } },
-        },
-      ],
-    },
-  ],
-  // ELSE
-  defaultConsequent: { type: 'hope' },
-};

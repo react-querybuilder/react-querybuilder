@@ -465,3 +465,210 @@ it('rules with various operators', () => {
     },
   ]);
 });
+
+it('cascade mode negation-chains prior sibling antecedents', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+        consequent: { type: 'second' },
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    {
+      conditions: {
+        all: [
+          { not: { all: [{ fact: 'a', operator: 'equal', value: 1 }] } },
+          { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+        ],
+      },
+      event: { type: 'second' },
+    },
+  ]);
+});
+
+it('cumulative mode omits prior sibling negations', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+        consequent: { type: 'second' },
+      },
+    ],
+  };
+  expect(
+    formatRulesEngine(re, { format: 'json-rules-engine', evaluationMode: 'cumulative' })
+  ).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    {
+      conditions: { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+      event: { type: 'second' },
+    },
+  ]);
+});
+
+it('cascade default consequent negates all sibling antecedents', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+    ],
+    defaultConsequent: { type: 'fallback' },
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    {
+      conditions: { not: { all: [{ fact: 'a', operator: 'equal', value: 1 }] } },
+      event: { type: 'fallback' },
+    },
+  ]);
+});
+
+it('cumulative default consequent is an always-true rule', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'first' },
+      },
+    ],
+    defaultConsequent: { type: 'fallback' },
+  };
+  expect(
+    formatRulesEngine(re, { format: 'json-rules-engine', evaluationMode: 'cumulative' })
+  ).toEqual([
+    { conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] }, event: { type: 'first' } },
+    { conditions: { all: [] }, event: { type: 'fallback' } },
+  ]);
+});
+
+it('nested conditions are guarded by ancestor antecedents', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        consequent: { type: 'parent' },
+        conditions: [
+          {
+            antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+            consequent: { type: 'child' },
+          },
+        ],
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: { all: [{ fact: 'a', operator: 'equal', value: 1 }] },
+      event: { type: 'parent' },
+    },
+    {
+      conditions: {
+        all: [
+          { all: [{ fact: 'a', operator: 'equal', value: 1 }] },
+          { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+        ],
+      },
+      event: { type: 'child' },
+    },
+  ]);
+});
+
+it('a condition that only groups nested conditions emits no event of its own', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: { combinator: 'and', rules: [{ field: 'a', operator: '=', value: 1 }] },
+        // No consequent: this condition is a pure guard wrapper for its nested conditions.
+        conditions: [
+          {
+            antecedent: { combinator: 'and', rules: [{ field: 'b', operator: '=', value: 2 }] },
+            consequent: { type: 'child' },
+          },
+        ],
+      },
+    ],
+  };
+  // Only the child rule is emitted; the wrapper itself contributes no event.
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: {
+        all: [
+          { all: [{ fact: 'a', operator: 'equal', value: 1 }] },
+          { all: [{ fact: 'b', operator: 'equal', value: 2 }] },
+        ],
+      },
+      event: { type: 'child' },
+    },
+  ]);
+});
+
+it('maps contains/doesNotContain to the type-tolerant generic operators', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [
+            { field: 'field1', operator: 'contains', value: 'value1' },
+            { field: 'field2', operator: 'doesNotContain', value: 'value2' },
+          ],
+        },
+        consequent: { type: 'containsEvent' },
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: {
+        all: [
+          { fact: 'field1', operator: 'containsGeneric', value: 'value1' },
+          { fact: 'field2', operator: 'doesNotContainGeneric', value: 'value2' },
+        ],
+      },
+      event: { type: 'containsEvent' },
+    },
+  ]);
+});
+
+it('passes between/notBetween through unchanged (array and comma-separated string values)', () => {
+  const re: RulesEngine = {
+    conditions: [
+      {
+        antecedent: {
+          combinator: 'and',
+          rules: [
+            { field: 'age', operator: 'between', value: [18, 65] },
+            { field: 'score', operator: 'between', value: '1,10' },
+            { field: 'rank', operator: 'notBetween', value: [1, 5] },
+          ],
+        },
+        consequent: { type: 'rangeEvent' },
+      },
+    ],
+  };
+  expect(formatRulesEngine(re, 'json-rules-engine')).toEqual([
+    {
+      conditions: {
+        all: [
+          { fact: 'age', operator: 'between', value: [18, 65] },
+          { fact: 'score', operator: 'between', value: '1,10' },
+          { fact: 'rank', operator: 'notBetween', value: [1, 5] },
+        ],
+      },
+      event: { type: 'rangeEvent' },
+    },
+  ]);
+});

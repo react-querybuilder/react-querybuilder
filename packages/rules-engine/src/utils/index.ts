@@ -1,3 +1,4 @@
+export * from './formatRulesEngine';
 export * from './isRulesEngine';
 export * from './mergeClassnamesRE';
 export * from './pathUtils';

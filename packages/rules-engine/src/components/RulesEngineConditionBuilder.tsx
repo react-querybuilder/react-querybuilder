@@ -26,7 +26,14 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
       updateCondition,
       allowNestedConditions,
       removeCondition,
-      classnames: { conditionBuilderHeader, blockLabel, blockLabelIf, blockLabelIfElse },
+      evaluationMode,
+      classnames: {
+        conditionBuilderHeader,
+        blockLabel,
+        blockLabelIf,
+        blockLabelIfElse,
+        blockLabelWhen,
+      },
       components: {
         addCondition: AddCondition,
         addConsequent: AddConsequent,
@@ -37,6 +44,7 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
     },
   } = props;
 
+  const isCumulative = evaluationMode === 'cumulative';
   const isIf = conditionPath.at(-1) === 0;
 
   const wrapperClassName = React.useMemo(
@@ -52,16 +60,31 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
       clsx(
         suppressStandardClassnames || standardClassnamesRE.blockLabel,
         blockLabel,
-        isIf
-          ? [suppressStandardClassnames || standardClassnamesRE.blockLabelIf, blockLabelIf]
-          : [suppressStandardClassnames || standardClassnamesRE.blockLabelIfElse, blockLabelIfElse]
+        isCumulative
+          ? [suppressStandardClassnames || standardClassnamesRE.blockLabelWhen, blockLabelWhen]
+          : isIf
+            ? [suppressStandardClassnames || standardClassnamesRE.blockLabelIf, blockLabelIf]
+            : [
+                suppressStandardClassnames || standardClassnamesRE.blockLabelIfElse,
+                blockLabelIfElse,
+              ]
       ),
-    [blockLabel, blockLabelIf, blockLabelIfElse, isIf, suppressStandardClassnames]
+    [
+      blockLabel,
+      blockLabelIf,
+      blockLabelIfElse,
+      blockLabelWhen,
+      isCumulative,
+      isIf,
+      suppressStandardClassnames,
+    ]
   );
 
-  const { label: blockLabelLabel, title: blockLabelTitle } = isIf
-    ? translations.blockLabelIf
-    : translations.blockLabelElseIf;
+  const { label: blockLabelLabel, title: blockLabelTitle } = isCumulative
+    ? translations.blockLabelWhen
+    : isIf
+      ? translations.blockLabelIf
+      : translations.blockLabelElseIf;
 
   const addSubCondition = React.useCallback(() => {
     addCondition(conditionPath);

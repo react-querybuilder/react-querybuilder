@@ -19,6 +19,9 @@ export const defaultClassnamesRE: ClassnamesRE = {
   blockLabelIfElse: '',
   blockLabelElse: '',
   blockLabelThen: '',
+  blockLabelWhen: '',
+  blockLabelAlways: '',
+  evaluationMode: '',
 };
 
 /**
@@ -40,6 +43,9 @@ export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   blockLabelIfElse: 'blockLabel-ifelse',
   blockLabelElse: 'blockLabel-else',
   blockLabelThen: 'blockLabel-then',
+  blockLabelWhen: 'blockLabel-when',
+  blockLabelAlways: 'blockLabel-always',
+  evaluationMode: 'rulesEngineBuilder-evaluationMode',
 };
 
 export const defaultRulesEngine: RulesEngine = {
@@ -61,10 +67,21 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   blockLabelElseIf: { title: 'Subsequent condition', label: 'Else If' },
   blockLabelElse: { title: 'Fallback/default consequent', label: 'Else' },
   blockLabelThen: { title: 'Consequent action/result', label: 'Then' },
+  blockLabelWhen: { title: 'Independent condition', label: 'When' },
+  blockLabelAlways: { title: 'Always-applied consequent', label: 'Always' },
   addCondition: { title: 'Add condition', label: '+ Condition' },
   addSubcondition: { title: 'Add subcondition', label: '+ Subcondition' },
   addConsequent: { title: 'Add consequent action/result', label: '+ Then' },
   addDefaultConsequent: { title: 'Add consequent action/result', label: '+ Else' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
   removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
+  evaluationMode: { title: 'How sibling conditions are evaluated' },
+  evaluationModeCascade: {
+    title: 'Evaluate conditions in order; stop after the first match (if/else-if/else)',
+    label: 'Stop at first match (cascade)',
+  },
+  evaluationModeCumulative: {
+    title: 'Evaluate every condition independently; any number may match',
+    label: 'Evaluate all (cumulative)',
+  },
 };
