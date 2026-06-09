@@ -30,7 +30,7 @@ export const commonBuildOptions: UserConfig = {
   dts: { oxc: true },
   deps: {
     neverBundle: ['jsonata', 'numeric-quantity', 'sequelize', 'spel2js', '@tanstack/db'],
-    onlyBundle: ['type-fest'],
+    onlyBundle: ['clsx', 'type-fest'],
   },
   checks: { pluginTimings: false },
 };

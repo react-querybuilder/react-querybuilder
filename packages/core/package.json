@@ -182,6 +182,7 @@
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "catalog:",
     "chevrotain": "^12.0.0",
+    "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
     "json-logic-js": "catalog:",
     "jsonata": "catalog:",
