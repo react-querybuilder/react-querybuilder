@@ -31,8 +31,11 @@ const getOptionsFromHash = () =>
 // Initialize options from URL hash
 const initialOptionsFromHash = getOptionsFromHash();
 
+const emptyObject = {} as const;
+
 export const useDevApp = <ExtraOptions extends Record<string, boolean | undefined>>(
-  extraOptions: Partial<ExtraOptions> = {}
+  extraOptions: Partial<ExtraOptions> = emptyObject,
+  exportFormats: Record<string, string> = emptyObject
 ): {
   actions: [string, () => void][];
   commonRQBProps: CommonRQBProps;
@@ -71,16 +74,25 @@ export const useDevApp = <ExtraOptions extends Record<string, boolean | undefine
 
   const formatQueryResults = useMemo(
     () =>
-      formatMap.map(([format]) => {
-        const formatQueryOptions: FormatQueryOptions = {
-          format,
-          fields: optVals.validateQuery ? fields : undefined,
-          parseNumbers: optVals.parseNumbers,
-        };
-        const q = optVals.independentCombinators ? queryIC : query;
-        return [format, getFormatQueryString(q, formatQueryOptions)] as const;
-      }),
-    [optVals.validateQuery, optVals.parseNumbers, optVals.independentCombinators, queryIC, query]
+      Object.keys(exportFormats).length > 0
+        ? (Object.entries(exportFormats) as (readonly [ExportFormat, string])[])
+        : formatMap.map(([format]) => {
+            const formatQueryOptions: FormatQueryOptions = {
+              format,
+              fields: optVals.validateQuery ? fields : undefined,
+              parseNumbers: optVals.parseNumbers,
+            };
+            const q = optVals.independentCombinators ? queryIC : query;
+            return [format, getFormatQueryString(q, formatQueryOptions)] as const;
+          }),
+    [
+      exportFormats,
+      optVals.validateQuery,
+      optVals.parseNumbers,
+      optVals.independentCombinators,
+      queryIC,
+      query,
+    ]
   );
 
   const actions = useMemo(
