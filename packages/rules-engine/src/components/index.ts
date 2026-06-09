@@ -5,6 +5,6 @@ export * from './ConsequentBuilderHeader';
 export * from './defaultComponents';
 export * from './RulesEngineBuilder';
 export * from './RulesEngineBuilderHeader';
-export * from './RulesEngineConditionBuilder';
-export * from './RulesEngineConditionCascade';
+export * from './ConditionBuilder';
+export * from './ConditionCascade';
 export * from './ValueSelectorRE';

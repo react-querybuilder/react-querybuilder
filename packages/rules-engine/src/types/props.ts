@@ -94,6 +94,8 @@ export interface ClassnamesRE {
   rulesEngineBuilder: Classname;
   /** Classes applied to the rules engine header. */
   rulesEngineHeader: Classname;
+  /** Classes applied to the rules engine body. */
+  rulesEngineBody: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
   /** Classes applied to all "If" block labels (cascade mode initial condition). */
@@ -118,6 +120,8 @@ export interface ClassnamesRE {
   consequentBuilderStandalone: Classname;
   /** Classes applied to condition builders ("if"/"else if" sections). */
   conditionBuilder: Classname;
+  /** Classes applied to condition builder bodies ("if"/"else if" content). */
+  conditionBuilderBody: Classname;
   /** Classes applied to condition builder headers ("if"/"else if" labels and controls). */
   conditionBuilderHeader: Classname;
   /** Classes applied to the evaluation mode toggle control. */
@@ -185,6 +189,7 @@ export interface RulesEngineProps {
   allowDefaultConsequents?: boolean;
   allowNestedConditions?: boolean;
   enableMountRulesEngineChange?: boolean;
+  showBranches?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
   translations?: Partial<TranslationsRE>;
@@ -213,7 +218,7 @@ export interface RulesEngineBuilderHeaderProps {
 }
 
 /**
- * Props for {@link RulesEngineConditionCascade}.
+ * Props for {@link ConditionCascade}.
  *
  * @group Props
  */
@@ -225,7 +230,7 @@ export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
 }
 
 /**
- * Props for {@link RulesEngineConditionBuilder}.
+ * Props for {@link ConditionBuilder}.
  *
  * @group Props
  */

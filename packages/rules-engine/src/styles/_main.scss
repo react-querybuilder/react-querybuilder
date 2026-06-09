@@ -21,15 +21,46 @@
 }
 
 .conditionBuilder {
-  background: var(--#{$rqbre-var-prefix}ifelseblock-background-color);
+  background-color: var(--#{$rqbre-var-prefix}ifelseblock-background-color);
   border-color: var(--#{$rqbre-var-prefix}ifelseblock-border-color);
   border-style: var(--#{$rqbre-var-prefix}ifelseblock-border-style);
   border-radius: var(--#{$rqbre-var-prefix}ifelseblock-border-radius);
 }
 
 .conditionBuilder:first-child {
-  background: var(--#{$rqbre-var-prefix}ifblock-background-color);
+  background-color: var(--#{$rqbre-var-prefix}ifblock-background-color);
   border-color: var(--#{$rqbre-var-prefix}ifblock-border-color);
   border-style: var(--#{$rqbre-var-prefix}ifblock-border-style);
   border-radius: var(--#{$rqbre-var-prefix}ifblock-border-radius);
 }
+
+/* #region Branch styles */
+@mixin branch-styles($direction) {
+  $before-after: if($direction == rtl, after, before);
+  $border-side: if($direction == rtl, right, left);
+
+  .queryBuilder,
+  .consequentBuilder,
+  .conditionBuilder {
+    &::before,
+    &::after {
+      border-color: var(--#{$rqbre-var-prefix}branch-color);
+      border-style: var(--#{$rqbre-var-prefix}branch-style);
+    }
+
+    &:last-child::#{$before-after} {
+      border-bottom-#{$border-side}-radius: var(--#{$rqbre-var-prefix}branch-radius);
+    }
+  }
+}
+
+/* LTR */
+.rulesEngineBuilder-branches:dir(ltr) {
+  @include branch-styles(ltr);
+}
+
+/* RTL */
+.rulesEngineBuilder-branches:dir(rtl) {
+  @include branch-styles(rtl);
+}
+/* #endregion */

@@ -1,8 +1,8 @@
 import type { Path } from '@react-querybuilder/core';
 import * as React from 'react';
 import type { RulesEngineProps } from '../types';
+import { ConditionCascade } from './ConditionCascade';
 import { useRulesEngineBuilder } from './RulesEngineBuilder.useRulesEngineBuilder';
-import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
 
 const rootConditionPath: Path = [];
 
@@ -25,12 +25,14 @@ export const RulesEngineBuilderInternal: React.MemoExoticComponent<
         schema={re.schema}
         defaultConsequent={re.rulesEngine.defaultConsequent}
       />
-      <RulesEngineConditionCascade
-        conditionPath={rootConditionPath}
-        conditions={re.rulesEngine.conditions}
-        defaultConsequent={re.rulesEngine.defaultConsequent}
-        schema={re.schema}
-      />
+      <div className={re.bodyClassName}>
+        <ConditionCascade
+          conditionPath={rootConditionPath}
+          conditions={re.rulesEngine.conditions}
+          defaultConsequent={re.rulesEngine.defaultConsequent}
+          schema={re.schema}
+        />
+      </div>
     </div>
   );
 });

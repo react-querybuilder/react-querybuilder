@@ -73,6 +73,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   schema: SchemaRE;
   wrapperClassName: string;
   headerClassName: string;
+  bodyClassName: string;
 } => {
   const [reId] = useState(generateID);
 
@@ -86,6 +87,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     allowNestedConditions = true,
     autoSelectConsequentType = true,
     suppressStandardClassnames = false,
+    showBranches = false,
     onRulesEngineChange,
     onAddCondition = returnTrue,
     onRemoveCondition = returnTrue,
@@ -111,6 +113,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       blockLabelWhen: classnamesMerged.blockLabelWhen,
       blockLabelAlways: classnamesMerged.blockLabelAlways,
       conditionBuilder: classnamesMerged.conditionBuilder,
+      conditionBuilderBody: classnamesMerged.conditionBuilderBody,
       conditionBuilderHeader: classnamesMerged.conditionBuilderHeader,
       consequentBuilder: classnamesMerged.consequentBuilder,
       consequentBuilderBody: classnamesMerged.consequentBuilderBody,
@@ -118,6 +121,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       consequentBuilderStandalone: classnamesMerged.consequentBuilderStandalone,
       rulesEngineBuilder: classnamesMerged.rulesEngineBuilder,
       rulesEngineHeader: classnamesMerged.rulesEngineHeader,
+      rulesEngineBody: classnamesMerged.rulesEngineBody,
       evaluationMode: classnamesMerged.evaluationMode,
     }),
     [
@@ -129,6 +133,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.blockLabelWhen,
       classnamesMerged.blockLabelAlways,
       classnamesMerged.conditionBuilder,
+      classnamesMerged.conditionBuilderBody,
       classnamesMerged.conditionBuilderHeader,
       classnamesMerged.consequentBuilder,
       classnamesMerged.consequentBuilderBody,
@@ -136,6 +141,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.consequentBuilderStandalone,
       classnamesMerged.rulesEngineBuilder,
       classnamesMerged.rulesEngineHeader,
+      classnamesMerged.rulesEngineBody,
       classnamesMerged.evaluationMode,
     ]
   );
@@ -147,10 +153,19 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       ),
     [classnames.rulesEngineHeader, suppressStandardClassnames]
   );
+  const bodyClassName = useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.rulesEngineBody,
+        classnames.rulesEngineBody
+      ),
+    [classnames.rulesEngineBody, suppressStandardClassnames]
+  );
   const wrapperClassName = useMemo(
     () =>
       clsx(
         suppressStandardClassnames || standardClassnamesRE.rulesEngineBuilder,
+        showBranches && standardClassnamesRE.rulesEngineBuilder + '-branches',
         classnames.rulesEngineBuilder
         // TODO: implement locking and validation
         // // custom conditional classes
@@ -164,7 +179,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         //   [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
         // }
       ),
-    [classnames.rulesEngineBuilder, suppressStandardClassnames]
+    [classnames.rulesEngineBuilder, showBranches, suppressStandardClassnames]
   );
   // #endregion
 
@@ -439,11 +454,12 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     classnames,
     components,
     consequentTypes,
-    headerClassName,
     onChange,
     onDefaultConsequentChange,
     rulesEngine,
     schema,
     wrapperClassName,
+    headerClassName,
+    bodyClassName,
   };
 };

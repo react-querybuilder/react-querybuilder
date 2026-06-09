@@ -18,12 +18,11 @@
   gap: var(--#{$rqbre-var-prefix}spacing);
 }
 
-.rulesEngineBuilder-evaluationMode {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  gap: calc(var(--#{$rqbre-var-prefix}spacing) / 2);
-  margin-left: auto;
+.rulesEngineBuilder-body,
+.conditionBuilder-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--#{$rqbre-var-prefix}spacing);
 }
 
 .rulesEngineBuilder-justified {
@@ -35,3 +34,101 @@
     justify-content: flex-end;
   }
 }
+
+/* #region Branches */
+@mixin branch-layout-styles($direction) {
+  $ltr-after: if($direction == rtl, before, after);
+  $ltr-before: if($direction == rtl, after, before);
+  $margin-side: if($direction == rtl, right, left);
+
+  .rulesEngineBuilder-body,
+  .conditionBuilder-body {
+    margin-#{$margin-side}: calc(2 * var(--#{$rqbre-var-prefix}branch-indent));
+  }
+
+  .queryBuilder,
+  .consequentBuilder,
+  .conditionBuilder {
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      width: var(--#{$rqbre-var-prefix}branch-indent);
+      #{$margin-side}: calc(
+        -1 * (var(--#{$rqbre-var-prefix}branch-indent) + var(--#{$rqbre-var-prefix}branch-width))
+      );
+      border-radius: 0;
+      position: absolute;
+    }
+
+    &::#{$ltr-before} {
+      top: calc(-1 * var(--#{$rqbre-var-prefix}spacing));
+      height: calc(50% + var(--#{$rqbre-var-prefix}spacing));
+      @if $direction == rtl {
+        border-width: 0
+          var(--#{$rqbre-var-prefix}branch-width)
+          var(--#{$rqbre-var-prefix}branch-width)
+          0;
+      } @else {
+        border-width: 0
+          0
+          var(--#{$rqbre-var-prefix}branch-width)
+          var(--#{$rqbre-var-prefix}branch-width);
+      }
+    }
+
+    &::#{$ltr-after} {
+      top: 50%;
+      height: 50%;
+      @if $direction == rtl {
+        border-width: 0 var(--#{$rqbre-var-prefix}branch-width) 0 0;
+      } @else {
+        border-width: 0 0 0 var(--#{$rqbre-var-prefix}branch-width);
+      }
+    }
+
+    &:last-child::#{$ltr-after} {
+      display: none;
+    }
+  }
+
+  // .queryBuilder,
+  .consequentBuilder,
+  .conditionBuilder {
+    &::before,
+    &::after {
+      #{$margin-side}: calc(
+        -1 *
+          (
+            var(--#{$rqbre-var-prefix}branch-indent) + var(--#{$rqbre-var-prefix}branch-width) +
+              var(--#{$rqbre-var-prefix}border-width)
+          )
+      );
+    }
+
+    &::#{$ltr-before} {
+      top: calc(
+        -1 * (var(--#{$rqbre-var-prefix}spacing) + var(--#{$rqbre-var-prefix}border-width))
+      );
+      height: calc(
+        50% + var(--#{$rqbre-var-prefix}spacing) + var(--#{$rqbre-var-prefix}border-width)
+      );
+    }
+
+    &::#{$ltr-after} {
+      height: calc(50% + var(--#{$rqbre-var-prefix}border-width));
+    }
+  }
+}
+
+/* LTR */
+.rulesEngineBuilder-branches:dir(ltr) {
+  @include branch-layout-styles(ltr);
+}
+
+/* RTL */
+.rulesEngineBuilder-branches:dir(rtl) {
+  @include branch-layout-styles(rtl);
+}
+/* #endregion */

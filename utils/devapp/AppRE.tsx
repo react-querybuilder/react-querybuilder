@@ -97,6 +97,7 @@ export const AppRE = (): React.JSX.Element => {
         allowNestedConditions={devApp.optVals.allowNestedConditions}
         autoSelectConsequentType={devApp.optVals.autoSelectConsequentType}
         suppressStandardClassnames={devApp.optVals.suppressStandardClassnames}
+        showBranches={devApp.optVals.showBranches}
         classnames={rebClassnames}
         rulesEngine={re}
         queryBuilderProps={queryBuilderProps}

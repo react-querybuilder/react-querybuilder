@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `showBranches` prop to `RulesEngineBuilder` along with accompanying styles.
+
 ### Fixed
 
 - In `RulesEngineBuilder`, the top-level "Add condition" button is not hidden when `allowNestedConditions` is `false`.

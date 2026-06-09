@@ -12,7 +12,7 @@ type QueryBuilderPropsStandard = QueryBuilderProps<
 >;
 
 /**
- * Default header component for {@link RulesEngineConditionBuilder}.
+ * Default header component for {@link ConditionBuilder}.
  *
  */
 export const ConditionBuilderHeader: React.MemoExoticComponent<
@@ -138,16 +138,18 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
 });
 
 /**
- * Default body component for {@link RulesEngineConditionBuilder}.
+ * Default body component for {@link ConditionBuilder}.
  * @group Components
  */
-export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
+export const ConditionBuilderBody: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element
-> = React.memo(function RulesEngineConditionBuilderBody(props: ConditionProps): React.JSX.Element {
+> = React.memo(function ConditionBuilderBody(props: ConditionProps): React.JSX.Element {
   const {
     conditionPath,
     schema: {
       updateCondition,
+      classnames: { conditionBuilderBody },
+      suppressStandardClassnames,
       components: {
         consequentBuilder: ConsequentBuilder,
         conditionBuilderCascade: ConditionCascade,
@@ -155,6 +157,14 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
       },
     },
   } = props;
+  const className = React.useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.conditionBuilderBody,
+        conditionBuilderBody
+      ),
+    [conditionBuilderBody, suppressStandardClassnames]
+  );
   const onConsequentChange = React.useCallback(
     (consequent?: Consequent) => updateCondition(conditionPath, 'consequent', consequent),
     [conditionPath, updateCondition]
@@ -170,7 +180,7 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
   );
 
   return (
-    <React.Fragment>
+    <div className={className}>
       <QueryBuilder
         {...(props.schema.queryBuilderProps as QueryBuilderPropsStandard)}
         defaultQuery={props.condition.antecedent as RuleGroupType}
@@ -194,7 +204,7 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
           schema={props.schema}
         />
       )}
-    </React.Fragment>
+    </div>
   );
 });
 
@@ -203,9 +213,9 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
  *
  * @group Components
  */
-export const RulesEngineConditionBuilder: React.MemoExoticComponent<
+export const ConditionBuilder: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element
-> = React.memo(function RulesEngineConditionBuilder(props: ConditionProps): React.JSX.Element {
+> = React.memo(function ConditionBuilder(props: ConditionProps): React.JSX.Element {
   const {
     schema: {
       classnames: { conditionBuilder },
