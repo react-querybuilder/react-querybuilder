@@ -18,6 +18,23 @@
   gap: var(--#{$rqbre-var-prefix}spacing);
 }
 
+.consequentBuilder-body {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--#{$rqbre-var-prefix}spacing);
+
+  & > label {
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--#{$rqbre-var-prefix}spacing) / 2);
+    align-items: flex-start;
+  }
+}
+
 .shiftActions {
   display: flex;
   flex-direction: column;

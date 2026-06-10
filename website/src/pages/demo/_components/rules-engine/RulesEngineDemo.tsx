@@ -9,7 +9,6 @@ import { consequentTypes } from './_constants/consequentTypes';
 import { initialRulesEngine } from './_constants/initialRulesEngine';
 import { reFields } from './_constants/reFields';
 import { sampleMusicians } from './_constants/sampleMusicians';
-import { ConsequentParamsEditor } from './ConsequentParamsEditor';
 import styles from './RulesEngineDemo.module.css';
 
 interface FiredEvent {
@@ -22,20 +21,22 @@ interface RunResult {
   events: FiredEvent[];
 }
 
-const components = { consequentBuilderBody: ConsequentParamsEditor };
-
 const toggleDefaults = {
+  addConsequentToNewConditions: false,
   allowNestedConditions: true,
   allowDefaultConsequents: true,
   autoSelectConsequentType: true,
+  showShiftActions: false,
 };
 
 type ToggleKey = keyof typeof toggleDefaults;
 
 const toggleLabels: Record<ToggleKey, string> = {
+  addConsequentToNewConditions: 'addConsequentToNewConditions',
   allowNestedConditions: 'allowNestedConditions',
   allowDefaultConsequents: 'allowDefaultConsequents',
   autoSelectConsequentType: 'autoSelectConsequentType',
+  showShiftActions: 'showShiftActions',
 };
 
 interface ExportTab {
@@ -125,10 +126,11 @@ export default function RulesEngineDemo(): React.JSX.Element {
             onRulesEngineChange={setRE}
             consequentTypes={consequentTypes}
             queryBuilderProps={{ fields: reFields }}
-            components={components}
+            addConsequentToNewConditions={toggles.addConsequentToNewConditions}
             allowNestedConditions={toggles.allowNestedConditions}
             allowDefaultConsequents={toggles.allowDefaultConsequents}
             autoSelectConsequentType={toggles.autoSelectConsequentType}
+            showShiftActions={toggles.showShiftActions}
           />
         </div>
 

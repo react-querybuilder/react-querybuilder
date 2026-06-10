@@ -1,10 +1,14 @@
 import type {
   CommonRuleAndGroupProperties,
+  FlexibleOption,
+  FullOption,
+  Option,
   RuleGroupType,
   RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
 } from '@react-querybuilder/core';
+import type { Simplify } from 'type-fest';
 import type { EvaluationMode } from './export';
 
 // #region Conditions
@@ -112,4 +116,61 @@ export type ConsequentBase<T extends string = string> = {
 export interface Consequent extends ConsequentBase {
   [etc: string]: unknown;
 }
+// #endregion
+
+// #region Consequent property definitions
+/**
+ * Supported input types for a built-in consequent property editor.
+ *
+ * @group Rules Engine
+ */
+export type ConsequentPropertyInputType = 'text' | 'textarea' | 'number' | 'checkbox' | 'select';
+
+/**
+ * Definition of a single editable property of a consequent type. Used by the built-in
+ * {@link ConsequentBuilderBody} to render an appropriate input for each property. Property
+ * values are stored on the consequent under `params[name]`.
+ *
+ * @group Rules Engine
+ */
+export interface ConsequentPropertyDef {
+  /** Key under which the value is stored in the consequent's `params` object. */
+  name: string;
+  /** Visible label for the input. Defaults to `name`. */
+  label?: string;
+  /** Input type to render. Defaults to `"text"`. */
+  inputType?: ConsequentPropertyInputType;
+  /** Options for the `"select"` input type. */
+  values?: FlexibleOption[];
+  /** Value seeded into `params[name]` when the consequent type is selected. */
+  defaultValue?: unknown;
+}
+
+/**
+ * A consequent type option that may carry editable property definitions. Pass an array of these
+ * as the `consequentTypes` prop (or from `getConsequentTypes`) to enable the built-in property
+ * editor. Only `name` (the identifier stored as the consequent's `type`) and `label` are
+ * required; see {@link FullConsequentTypeOption} for the resolved form used internally.
+ *
+ * @group Rules Engine
+ */
+export type ConsequentTypeOption<N extends string = string> = Simplify<
+  Option<N> & {
+    /** Editable property definitions for this consequent type. */
+    properties?: ConsequentPropertyDef[];
+  }
+>;
+
+/**
+ * A {@link ConsequentTypeOption} resolved to a {@link react-querybuilder!FullOption FullOption}
+ * (both `name` and `value` guaranteed). This is the form passed to subcomponents via the schema.
+ *
+ * @group Rules Engine
+ */
+export type FullConsequentTypeOption<N extends string = string> = Simplify<
+  FullOption<N> & {
+    /** Editable property definitions for this consequent type. */
+    properties?: ConsequentPropertyDef[];
+  }
+>;
 // #endregion

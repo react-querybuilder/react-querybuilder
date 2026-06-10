@@ -1,6 +1,5 @@
-import type { BaseOption, Field, FullOptionList } from '@react-querybuilder/core';
-import { toFullOptionList } from '@react-querybuilder/core';
-import type { RulesEngine } from '@react-querybuilder/rules-engine';
+import type { Field } from '@react-querybuilder/core';
+import type { ConsequentTypeOption, RulesEngine } from '@react-querybuilder/rules-engine';
 import {
   formatRulesEngine,
   regenerateREIDs,
@@ -12,10 +11,35 @@ import { useDevApp } from './useDevApp';
 
 const fields: Field[] = [{ name: 'age', label: 'Age', inputType: 'number' }];
 
-const consequentTypes: FullOptionList<BaseOption> = toFullOptionList([
-  { value: 'send_email', label: 'Send Email' },
-  { value: 'log_event', label: 'Log Event' },
-]);
+const consequentTypes: ConsequentTypeOption[] = [
+  {
+    name: 'send_email',
+    label: 'Send Email',
+    properties: [
+      { name: 'to', label: 'To' },
+      { name: 'subject', label: 'Subject' },
+      { name: 'body', label: 'Body', inputType: 'textarea' },
+    ],
+  },
+  {
+    name: 'log_event',
+    label: 'Log Event',
+    properties: [
+      { name: 'message', label: 'Message' },
+      {
+        name: 'level',
+        label: 'Level',
+        inputType: 'select',
+        defaultValue: 'info',
+        values: [
+          { name: 'info', label: 'Info' },
+          { name: 'warn', label: 'Warning' },
+          { name: 'error', label: 'Error' },
+        ],
+      },
+    ],
+  },
+];
 
 const initialRE: RulesEngine = regenerateREIDs({
   defaultConsequent: { id: '3', type: 'log_event' },
@@ -71,10 +95,12 @@ export const AppRE = (): React.JSX.Element => {
 
   const devApp = useDevApp(
     {
+      addConsequentToNewConditions: false,
       allowDefaultConsequents: true,
       allowNestedConditions: true,
       autoSelectConsequentType: true,
-    },
+      showShiftActions: false,
+    } as Record<string, boolean>,
     exportFormats
   );
 
@@ -93,11 +119,13 @@ export const AppRE = (): React.JSX.Element => {
   return (
     <DevLayout {...devApp}>
       <RulesEngineBuilder
+        addConsequentToNewConditions={devApp.optVals.addConsequentToNewConditions}
         allowDefaultConsequents={devApp.optVals.allowDefaultConsequents}
         allowNestedConditions={devApp.optVals.allowNestedConditions}
         autoSelectConsequentType={devApp.optVals.autoSelectConsequentType}
         suppressStandardClassnames={devApp.optVals.suppressStandardClassnames}
         showBranches={devApp.optVals.showBranches}
+        showShiftActions={devApp.optVals.showShiftActions}
         classnames={rebClassnames}
         rulesEngine={re}
         queryBuilderProps={queryBuilderProps}

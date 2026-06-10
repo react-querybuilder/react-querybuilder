@@ -25,13 +25,21 @@
   border-color: var(--#{$rqbre-var-prefix}ifelseblock-border-color);
   border-style: var(--#{$rqbre-var-prefix}ifelseblock-border-style);
   border-radius: var(--#{$rqbre-var-prefix}ifelseblock-border-radius);
-}
 
-.conditionBuilder:first-child {
-  background-color: var(--#{$rqbre-var-prefix}ifblock-background-color);
-  border-color: var(--#{$rqbre-var-prefix}ifblock-border-color);
-  border-style: var(--#{$rqbre-var-prefix}ifblock-border-style);
-  border-radius: var(--#{$rqbre-var-prefix}ifblock-border-radius);
+  &:first-child {
+    background-color: var(--#{$rqbre-var-prefix}ifblock-background-color);
+    border-color: var(--#{$rqbre-var-prefix}ifblock-border-color);
+    border-style: var(--#{$rqbre-var-prefix}ifblock-border-style);
+    border-radius: var(--#{$rqbre-var-prefix}ifblock-border-radius);
+  }
+
+  .shiftActions {
+    & > * {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+  }
 }
 
 /* #region Branch styles */

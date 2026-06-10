@@ -383,6 +383,39 @@ Define available consequence types for rules:
 />
 ```
 
+### Consequent properties
+
+Attach a `properties` array to any consequent type and the built-in consequent body will render an editable input for each property—no custom `consequentBuilderBody` component required. Property values are stored on the consequent under `params[name]`.
+
+```tsx
+<RulesEngineBuilder
+  consequentTypes={[
+    {
+      name: 'email',
+      label: 'Send Email',
+      properties: [
+        { name: 'to', label: 'To' },
+        { name: 'subject', label: 'Subject' },
+        { name: 'body', label: 'Body', inputType: 'textarea' },
+        {
+          name: 'priority',
+          label: 'Priority',
+          inputType: 'select',
+          defaultValue: 'normal',
+          values: [
+            { name: 'low', label: 'Low' },
+            { name: 'normal', label: 'Normal' },
+            { name: 'high', label: 'High' },
+          ],
+        },
+      ],
+    },
+  ]}
+/>
+```
+
+Each property's `inputType` may be `'text'` (default), `'textarea'`, `'number'`, `'checkbox'`, or `'select'`. A `defaultValue` is seeded into `params[name]` when the type is first selected, and `'select'` inputs render the options listed in `values`. Selecting a different consequent type reseeds `params` from the new type's `defaultValue`s, or clears the managed `params` when the new type defines no `properties`.
+
 ### Nested conditions
 
 Disallow nested condition logic:
@@ -398,6 +431,16 @@ Disallow "else" blocks:
 ```tsx
 <RulesEngineBuilder allowDefaultConsequents={false} />
 ```
+
+### Shifting conditions
+
+Set `showShiftActions` to render up/down buttons in each condition header, letting users reorder sibling conditions. Buttons are automatically disabled at the first and last position within a sibling group.
+
+```tsx
+<RulesEngineBuilder showShiftActions={true} />
+```
+
+The button titles and labels are customizable via the `shiftActionUp` and `shiftActionDown` [translations](#custom-translations). To intercept, cancel, or replace a shift, use the [`onMoveCondition`](#event-handlers) handler.
 
 ### Custom Translations
 
@@ -428,6 +471,7 @@ const customTranslations: Partial<TranslationsRE> = {
 ```scss
 .rulesEngineBuilder {}
 .rulesEngineBuilder-header {}
+.rulesEngineBuilder-body {}
 .rulesEngineBuilder-evaluationMode {}
 .consequentBuilder {}
 .consequentBuilder-header {}
@@ -435,6 +479,8 @@ const customTranslations: Partial<TranslationsRE> = {
 .consequentBuilder-standalone {}
 .conditionBuilder {}
 .conditionBuilder-header {}
+.conditionBuilder-body {}
+.shiftActions {}
 .blockLabel {}
 .blockLabel-if {}
 .blockLabel-ifelse {}
@@ -469,6 +515,7 @@ import type {
   RulesEngineAny,
   RECondition,
   Consequent,
+  ConsequentTypeOption,
   FormatRulesEngineOptions,
 } from '@react-querybuilder/rules-engine';
 
@@ -482,6 +529,11 @@ const rulesEngine: RulesEngine = {
   ],
   defaultConsequent: { type: 'default' },
 };
+
+// Consequent type options for the `consequentTypes` prop
+const consequentTypes: ConsequentTypeOption[] = [
+  { name: 'email', label: 'Send Email', properties: [{ name: 'to', label: 'To' }] },
+];
 
 // Custom consequent type
 interface MyConsequent extends Consequent {
@@ -542,6 +594,12 @@ if (isRulesEngine(unknownObject)) {
   onRemoveCondition={(condition, path, rulesEngine) => {
     console.log('Condition removed:', condition);
     return true; // Return true to proceed with removal
+  }}
+  onMoveCondition={(condition, fromPath, direction, rulesEngine, nextRulesEngine) => {
+    console.log('Condition moved:', direction);
+    // Return true to apply the default move, false to cancel,
+    // or a new rules engine object to replace the next state.
+    return true;
   }}
 />
 ```

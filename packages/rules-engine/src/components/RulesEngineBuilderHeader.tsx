@@ -1,7 +1,11 @@
-import { clsx } from '@react-querybuilder/core';
+import { clsx, type RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
 import type { EvaluationMode, RulesEngineBuilderHeaderProps } from '../types';
+
+// The root default consequent has no antecedent; consequent-type resolution falls back to the
+// global default for an empty group.
+const emptyAntecedent: RuleGroupTypeAny = { combinator: 'and', rules: [] };
 
 /**
  * Default header component for {@link RulesEngineBuilder}.
@@ -22,6 +26,7 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
       updateCondition,
       allowDefaultConsequents,
       evaluationMode,
+      getDefaultConsequentType,
       suppressStandardClassnames,
       classnames: classnamesRE,
       components: { addConsequent: AddConsequent, addCondition: AddCondition },
@@ -35,8 +40,10 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
 
   const ensureDefaultConsequent = React.useCallback(() => {
     if (!defaultConsequent)
-      updateCondition([], 'defaultConsequent', { type: props.schema.defaultConsequentType.value });
-  }, [defaultConsequent, props.schema.defaultConsequentType.value, updateCondition]);
+      updateCondition([], 'defaultConsequent', {
+        type: getDefaultConsequentType([], emptyAntecedent),
+      });
+  }, [defaultConsequent, getDefaultConsequentType, updateCondition]);
 
   const onEvaluationModeChange = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {

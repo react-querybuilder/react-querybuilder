@@ -1,5 +1,4 @@
 import type {
-  BaseOption,
   FullOptionList,
   Path,
   RuleGroupType,
@@ -8,6 +7,7 @@ import type {
 import {
   clsx,
   generateID,
+  getFirstOption,
   mergeAnyTranslations,
   prepareOptionList,
 } from '@react-querybuilder/core';
@@ -31,6 +31,7 @@ import type {
   ClassnamesRE,
   ComponentsRE,
   Consequent,
+  FullConsequentTypeOption,
   RECondition,
   REConditionAny,
   REConditionCascade,
@@ -68,7 +69,7 @@ queryBuilderStore.addSlice(rulesEngineSlice);
 export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
 ): {
-  consequentTypes: FullOptionList<BaseOption>;
+  consequentTypes: FullOptionList<FullConsequentTypeOption>;
   classnames: ClassnamesRE;
   components: ComponentsRE;
   onChange: (conditions: REConditionCascade<RG>) => void;
@@ -93,6 +94,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     suppressStandardClassnames = false,
     showBranches = false,
     showShiftActions = false,
+    addConsequentToNewConditions = false,
     onRulesEngineChange,
     onAddCondition = returnTrue,
     onRemoveCondition = returnTrue,
@@ -209,7 +211,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   // #region `consequentTypes`
   const { optionList: consequentTypes, defaultOption: defaultConsequentType } = useMemo(
     () =>
-      prepareOptionList({
+      prepareOptionList<FullConsequentTypeOption>({
         optionList: consequentTypesProp ?? [],
         placeholder: {
           placeholderName: defaultPlaceholderName,
@@ -225,7 +227,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
 
   const getConsequentTypesMain = useCallback(
     (conditionPath: Path, antecedent: RuleGroupTypeAny, context?: unknown) =>
-      prepareOptionList({
+      prepareOptionList<FullConsequentTypeOption>({
         optionList:
           consequentTypes ??
           getConsequentTypes?.(conditionPath, antecedent, context) ??
@@ -239,6 +241,15 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         autoSelectOption: autoSelectConsequentType,
       }).optionList,
     [consequentTypesProp, getConsequentTypes, consequentTypes, autoSelectConsequentType]
+  );
+  // #endregion
+
+  // #region Default consequent type
+  const getDefaultConsequentType = useCallback(
+    (conditionPath: Path, antecedent: RuleGroupTypeAny, context?: unknown): string =>
+      getFirstOption(getConsequentTypesMain(conditionPath, antecedent, context)) ??
+      defaultConsequentType.value,
+    [getConsequentTypesMain, defaultConsequentType]
   );
   // #endregion
 
@@ -372,13 +383,31 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         return;
       }
       const newCondition = nextCondition === true ? condition : nextCondition;
-      const newRulesEngine = addRE(reLocal, newCondition, parentConditionPath, {
+      const conditionToAdd =
+        addConsequentToNewConditions && !newCondition.consequent
+          ? {
+              ...newCondition,
+              consequent: {
+                type: getDefaultConsequentType(parentConditionPath, newCondition.antecedent),
+              },
+            }
+          : newCondition;
+      const newRulesEngine = addRE(reLocal, conditionToAdd, parentConditionPath, {
         idGenerator,
       });
       // log({ reId, type: LogType.add, rulesEngine: reLocal, newRulesEngine, newCondition, parentConditionPath });
       dispatchRulesEngine(newRulesEngine);
     },
-    [dispatchRulesEngine, idGenerator, independentCombinators, onAddCondition, qbStore, reId]
+    [
+      addConsequentToNewConditions,
+      dispatchRulesEngine,
+      getDefaultConsequentType,
+      idGenerator,
+      independentCombinators,
+      onAddCondition,
+      qbStore,
+      reId,
+    ]
   );
 
   const removeCondition = useCallback(
@@ -453,6 +482,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       getRulesEngine,
       defaultConsequentType,
       getConsequentTypes: getConsequentTypesMain,
+      getDefaultConsequentType,
       moveCondition,
       queryBuilderProps,
       reId,
@@ -474,6 +504,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       dispatchRulesEngine,
       evaluationMode,
       getConsequentTypesMain,
+      getDefaultConsequentType,
       getRulesEngine,
       moveCondition,
       queryBuilderProps,

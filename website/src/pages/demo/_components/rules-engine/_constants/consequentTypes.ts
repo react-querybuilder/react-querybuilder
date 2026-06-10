@@ -1,34 +1,38 @@
-import type { BaseOption, FullOptionList } from 'react-querybuilder';
-import { toFullOptionList } from 'react-querybuilder';
+import type { ConsequentTypeOption } from '@react-querybuilder/rules-engine';
 
-export type ParamInputType = 'text' | 'textarea' | 'number';
-
-export interface ParamSchema {
-  name: string;
-  label: string;
-  inputType: ParamInputType;
-}
-
-// Musician-themed consequent (action) types available in the demo.
-export const consequentTypes: FullOptionList<BaseOption> = toFullOptionList([
-  { value: 'book_gig', label: 'Book a gig' },
-  { value: 'send_fan_email', label: 'Send fan email' },
-  { value: 'add_to_playlist', label: 'Add to playlist' },
-  { value: 'assign_tour', label: 'Assign to tour' },
-  { value: 'flag_review', label: 'Flag for review' },
-]);
-
-// Editable params per consequent type, consumed by ConsequentParamsEditor.
-export const paramSchemas: Record<string, ParamSchema[]> = {
-  book_gig: [
-    { name: 'venue', label: 'Venue', inputType: 'text' },
-    { name: 'fee', label: 'Fee', inputType: 'number' },
-  ],
-  send_fan_email: [
-    { name: 'subject', label: 'Subject', inputType: 'text' },
-    { name: 'body', label: 'Body', inputType: 'textarea' },
-  ],
-  add_to_playlist: [{ name: 'playlist', label: 'Playlist', inputType: 'text' }],
-  assign_tour: [{ name: 'tour', label: 'Tour', inputType: 'text' }],
-  flag_review: [{ name: 'reason', label: 'Reason', inputType: 'text' }],
-};
+// Musician-themed consequent (action) types available in the demo. Each type carries
+// `properties`, which the built-in `consequentBuilderBody` renders as editable inputs.
+// Property values are stored on the consequent under `params[name]`.
+export const consequentTypes: ConsequentTypeOption[] = [
+  {
+    name: 'book_gig',
+    label: 'Book a gig',
+    properties: [
+      { name: 'venue', label: 'Venue' },
+      { name: 'fee', label: 'Fee', inputType: 'number' },
+    ],
+  },
+  {
+    name: 'send_fan_email',
+    label: 'Send fan email',
+    properties: [
+      { name: 'subject', label: 'Subject' },
+      { name: 'body', label: 'Body', inputType: 'textarea' },
+    ],
+  },
+  {
+    name: 'add_to_playlist',
+    label: 'Add to playlist',
+    properties: [{ name: 'playlist', label: 'Playlist' }],
+  },
+  {
+    name: 'assign_tour',
+    label: 'Assign to tour',
+    properties: [{ name: 'tour', label: 'Tour' }],
+  },
+  {
+    name: 'flag_review',
+    label: 'Flag for review',
+    properties: [{ name: 'reason', label: 'Reason' }],
+  },
+];

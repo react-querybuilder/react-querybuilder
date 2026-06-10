@@ -28,6 +28,7 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
       removeCondition,
       moveCondition,
       showShiftActions,
+      getDefaultConsequentType,
       evaluationMode,
       classnames: {
         conditionBuilderHeader,
@@ -97,9 +98,15 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
   const ensureConsequent = React.useCallback(() => {
     if (!consequent)
       updateCondition(conditionPath, 'consequent', {
-        type: props.schema.defaultConsequentType.value,
+        type: getDefaultConsequentType(conditionPath, props.condition.antecedent),
       });
-  }, [conditionPath, consequent, props.schema.defaultConsequentType.value, updateCondition]);
+  }, [
+    conditionPath,
+    consequent,
+    getDefaultConsequentType,
+    props.condition.antecedent,
+    updateCondition,
+  ]);
 
   const removeThisCondition = React.useCallback(() => {
     removeCondition(conditionPath);

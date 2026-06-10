@@ -1,5 +1,4 @@
 import type {
-  BaseOption,
   BaseTranslation,
   BaseTranslationWithLabel,
   Classname,
@@ -21,6 +20,8 @@ import type {
 import type { EvaluationMode } from './export';
 import type {
   Consequent,
+  ConsequentTypeOption,
+  FullConsequentTypeOption,
   REConditionAny,
   REConditionCascade,
   RulesEngine,
@@ -37,7 +38,7 @@ export interface SchemaRE {
   reId: string;
   components: ComponentsRE;
   classnames: ClassnamesRE;
-  consequentTypes: FullOptionList<BaseOption>;
+  consequentTypes: FullOptionList<FullConsequentTypeOption>;
   autoSelectConsequentType: boolean;
   suppressStandardClassnames: boolean;
   allowDefaultConsequents: boolean;
@@ -60,7 +61,12 @@ export interface SchemaRE {
     conditionPath: Path,
     antecedent: RuleGroupTypeAny,
     context?: unknown
-  ) => FullOptionList<BaseOption>;
+  ) => FullOptionList<FullConsequentTypeOption>;
+  getDefaultConsequentType: (
+    conditionPath: Path,
+    antecedent: RuleGroupTypeAny,
+    context?: unknown
+  ) => string;
 }
 
 /**
@@ -179,12 +185,12 @@ export interface RulesEngineProps {
   rulesEngine?: RulesEngine;
   defaultRulesEngine?: RulesEngine;
   onRulesEngineChange?: (re: RulesEngine) => void;
-  consequentTypes?: FlexibleOptionList<BaseOption>;
+  consequentTypes?: FlexibleOptionList<ConsequentTypeOption>;
   getConsequentTypes?: (
     conditionPath: Path,
     antecedent: RuleGroupTypeAny,
     context?: unknown
-  ) => FlexibleOptionListProp<BaseOption> | null;
+  ) => FlexibleOptionListProp<ConsequentTypeOption> | null;
   onAddCondition?: (
     condition: REConditionAny,
     parentConditionPath: Path,
@@ -211,6 +217,11 @@ export interface RulesEngineProps {
   allowDefaultConsequents?: boolean;
   allowNestedConditions?: boolean;
   showShiftActions?: boolean;
+  /**
+   * When `true`, newly added conditions are seeded with a consequent using the default
+   * consequent type for that condition.
+   */
+  addConsequentToNewConditions?: boolean;
   enableMountRulesEngineChange?: boolean;
   showBranches?: boolean;
   components?: Partial<ComponentsRE>;
@@ -261,7 +272,7 @@ export interface ConditionProps {
   schema: SchemaRE;
   conditionPath: Path;
   condition: REConditionAny;
-  consequentTypes?: FullOptionList<BaseOption>;
+  consequentTypes?: FullOptionList<FullConsequentTypeOption>;
   isOnlyCondition: boolean;
   // onConditionChange: (condition: REConditionAny) => void;
   autoSelectConsequentType?: boolean;
@@ -277,7 +288,7 @@ export interface ConditionProps {
 export interface ConsequentProps {
   schema: SchemaRE;
   conditionPath: Path;
-  consequentTypes?: FullOptionList<BaseOption>;
+  consequentTypes?: FullOptionList<FullConsequentTypeOption>;
   consequent: Consequent;
   standalone?: boolean;
   onConsequentChange: (consequent?: Consequent) => void;
