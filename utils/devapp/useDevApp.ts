@@ -19,7 +19,7 @@ import {
 } from './constants';
 import type { CommonRQBProps, DemoOptions } from './types';
 import type { OptionsAction } from './utils';
-import { generatePermalinkHash, getFormatQueryString, optionsReducer } from './utils';
+import { generatePermalinkHash, getFormatQueryString, generateOptionsReducer } from './utils';
 
 Object.defineProperty(globalThis, 'RQButils', { value: RQButils });
 
@@ -31,10 +31,10 @@ const getOptionsFromHash = () =>
 // Initialize options from URL hash
 const initialOptionsFromHash = getOptionsFromHash();
 
-const emptyObject = {} as const;
+const emptyObject = {};
 
 export const useDevApp = <ExtraOptions extends Record<string, boolean | undefined>>(
-  extraOptions: Partial<ExtraOptions> = emptyObject,
+  extraOptions: ExtraOptions = emptyObject as ExtraOptions,
   exportFormats: Record<string, string> = emptyObject
 ): {
   actions: [string, () => void][];
@@ -48,9 +48,11 @@ export const useDevApp = <ExtraOptions extends Record<string, boolean | undefine
   updateOptions: React.ActionDispatch<
     [action: OptionsAction<Partial<ExtraOptions> & { [k: string]: boolean }>]
   >;
+  optionsReducer: ReturnType<typeof generateOptionsReducer<ExtraOptions>>;
 } => {
   const [query, setQuery] = useState(initialQuery);
   const [queryIC, setQueryIC] = useState(initialQueryIC);
+  const optionsReducer = useMemo(() => generateOptionsReducer(extraOptions), [extraOptions]);
   const [optVals, updateOptions] = useReducer(optionsReducer, {
     ...defaultOptions,
     ...extraOptions,
@@ -135,7 +137,7 @@ export const useDevApp = <ExtraOptions extends Record<string, boolean | undefine
           },
         ],
       ] satisfies [string, () => void][],
-    [optVals]
+    [optVals, optionsReducer]
   );
 
   const onQueryChange = useCallback((q: RuleGroupType) => setQuery(q), []);
@@ -150,6 +152,7 @@ export const useDevApp = <ExtraOptions extends Record<string, boolean | undefine
     optVals,
     query,
     queryIC,
+    optionsReducer,
     updateOptions,
   };
 };

@@ -16,7 +16,8 @@ import { optionOrder } from './constants';
 import './styles.css';
 import type { DemoOption, DemoOptions } from './types';
 import type { useDevApp } from './useDevApp';
-import { generatePermalinkHash, optionsReducer } from './utils';
+import type { generateOptionsReducer } from './utils';
+import { generatePermalinkHash } from './utils';
 
 // oxlint-disable-next-line typescript/no-explicit-any
 const parserMap: Record<string, any> = {
@@ -63,10 +64,12 @@ const OptionCheckbox = ({
   opt,
   optVals,
   updateOptions,
+  optionsReducer,
 }: {
   opt: string;
   optVals: Record<string, boolean>;
   updateOptions: ReturnType<typeof useDevApp>['updateOptions'];
+  optionsReducer: ReturnType<typeof generateOptionsReducer>;
 }) => {
   const onChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
     e => {
@@ -85,7 +88,7 @@ const OptionCheckbox = ({
         payload: { optionName: opt as DemoOption, value: e.target.checked },
       });
     },
-    [opt, optVals, updateOptions]
+    [opt, optionsReducer, optVals, updateOptions]
   );
 
   return (
@@ -120,6 +123,7 @@ export const DevLayout = ({
   updateOptions,
   onQueryChange,
   onQueryChangeIC,
+  optionsReducer,
 }: ReturnType<typeof useDevApp> & { children: React.ReactNode }): React.JSX.Element => {
   const [importText, setImportText] = React.useState('');
   const [importFmt, setImportFmt] = React.useState('sql');
@@ -162,6 +166,7 @@ export const DevLayout = ({
               opt={opt}
               optVals={optVals as DemoOptions}
               updateOptions={updateOptions}
+              optionsReducer={optionsReducer}
             />
           ))}
           {actions.map(([label, action]) => (
