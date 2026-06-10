@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.3.0
+/* BEGIN_MANTINE_STYLES v9.3.1
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -1584,7 +1584,7 @@ fieldset:disabled .mantine-active:active {
   width: 100%;
   transition: border-color 100ms ease;
 
-  text-align: start;
+  text-align: var(--input-text-align, start);
   color: var(--input-color);
   border: calc(0.0625rem * var(--mantine-scale)) solid var(--input-bd);
   background-color: var(--input-bg);
@@ -6524,7 +6524,10 @@ fieldset:disabled .m_8ee546b8,
   position: absolute;
   display: block;
   z-index: 1;
-  border-radius: calc(var(--sc-radius, var(--mantine-radius-default)) - 4px);
+  border-radius: max(
+    calc(var(--sc-radius, var(--mantine-radius-default)) - 4px),
+    calc(var(--sc-radius, var(--mantine-radius-default)) / 4)
+  );
 }
 
 :where([data-mantine-color-scheme='light']) .m_9e182ccd {

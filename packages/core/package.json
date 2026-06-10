@@ -178,7 +178,7 @@
     "@grafeo-db/js": "^0.5.42",
     "@prisma/client": "^7.7.0",
     "@tanstack/db": "^0.6.8",
-    "@traqula/parser-sparql-1-2": "^1.1.2",
+    "@traqula/parser-sparql-1-2": "^1.1.4",
     "@types/json-logic-js": "^2.0.8",
     "@types/node": "catalog:",
     "chevrotain": "^12.0.0",
