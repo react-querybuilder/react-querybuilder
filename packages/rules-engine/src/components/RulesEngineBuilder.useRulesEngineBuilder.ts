@@ -53,6 +53,9 @@ import {
 const defaultConditionIC: REConditionIC = { antecedent: { rules: [] } };
 const defaultCondition: RECondition = { antecedent: { combinator: 'and', rules: [] } };
 const returnTrue = () => true;
+// Stable empty-object default; a fresh `{}` literal default would break the
+// `translations` memo (new identity every render) and cascade into `schema`.
+const emptyObject = {} as const;
 
 queryBuilderStore.addSlice(rulesEngineSlice);
 
@@ -93,14 +96,16 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     onRemoveCondition = returnTrue,
     classnames: classnamesProp = defaultClassnamesRE,
     components: componentsProp,
-    translations: translationsProp = {},
+    translations: translationsProp = emptyObject,
     queryBuilderProps,
     idGenerator = generateID,
   } = props;
 
   // #region Classnames
   const classnamesMerged = useMemo(
-    () => mergeClassnamesRE(defaultClassnamesRE, classnamesProp),
+    // Classname defaults are all empty strings, so a base/defaults argument
+    // contributes nothing to the merge; merge the prop directly.
+    () => mergeClassnamesRE(classnamesProp),
     [classnamesProp]
   );
   const classnames = useMemo(
