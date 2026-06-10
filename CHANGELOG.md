@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `showBranches` prop to `RulesEngineBuilder` along with accompanying styles.
+- [#1047] Added `showBranches` prop to `RulesEngineBuilder` along with accompanying styles.
 
 ### Fixed
 
-- In `RulesEngineBuilder`, the top-level "Add condition" button is not hidden when `allowNestedConditions` is `false`.
+- [#1047] In `RulesEngineBuilder`, the top-level "Add condition" button is not hidden when `allowNestedConditions` is `false`.
 
 ## [v8.19.0] - 2026-06-07
 
@@ -2279,6 +2279,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
 [#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
 [#1046]: https://github.com/react-querybuilder/react-querybuilder/pull/1046
+[#1047]: https://github.com/react-querybuilder/react-querybuilder/pull/1047
 
 <!-- #endregion -->
 
