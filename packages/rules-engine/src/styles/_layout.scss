@@ -18,6 +18,11 @@
   gap: var(--#{$rqbre-var-prefix}spacing);
 }
 
+.shiftActions {
+  display: flex;
+  flex-direction: column;
+}
+
 .rulesEngineBuilder-body,
 .conditionBuilder-body {
   display: flex;

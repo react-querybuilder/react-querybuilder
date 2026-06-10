@@ -37,4 +37,5 @@ export const mergeClassnamesRE = (...args: MergeClassnamesREParams): ClassnamesR
   blockLabelWhen: joinClassnamesByName('blockLabelWhen', args),
   blockLabelAlways: joinClassnamesByName('blockLabelAlways', args),
   evaluationMode: joinClassnamesByName('evaluationMode', args),
+  shiftActions: joinClassnamesByName('shiftActions', args),
 });

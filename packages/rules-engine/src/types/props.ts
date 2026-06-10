@@ -13,7 +13,11 @@ import type {
 import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { Except } from 'type-fest';
-import type { ActionElementREProps, ValueSelectorREProps } from '../components';
+import type {
+  ActionElementREProps,
+  ShiftActionsREProps,
+  ValueSelectorREProps,
+} from '../components';
 import type { EvaluationMode } from './export';
 import type {
   Consequent,
@@ -38,6 +42,7 @@ export interface SchemaRE {
   suppressStandardClassnames: boolean;
   allowDefaultConsequents: boolean;
   allowNestedConditions: boolean;
+  showShiftActions: boolean;
   evaluationMode: EvaluationMode;
   translations: TranslationsFullRE;
   queryBuilderProps?: Except<
@@ -48,6 +53,7 @@ export interface SchemaRE {
   dispatchRulesEngine: (re: RulesEngineAny) => void;
   addCondition: (parentConditionPath: Path, condition?: REConditionAny) => void;
   removeCondition: (conditionPath: Path) => void;
+  moveCondition: (conditionPath: Path, direction: 'up' | 'down') => void;
   updateCondition: (conditionPath: Path, property: string, value: unknown) => void;
   defaultConsequentType: FullOption;
   getConsequentTypes: (
@@ -80,6 +86,7 @@ export interface ComponentsRE {
   addConsequent: React.ComponentType<ActionElementREProps>;
   removeCondition: React.ComponentType<ActionElementREProps>;
   removeConsequent: React.ComponentType<ActionElementREProps>;
+  shiftActions: React.ComponentType<ShiftActionsREProps>;
   consequentSelector: React.ComponentType<ValueSelectorREProps>;
   valueSelector: React.ComponentType<ValueSelectorREProps>;
 }
@@ -126,6 +133,8 @@ export interface ClassnamesRE {
   conditionBuilderHeader: Classname;
   /** Classes applied to the evaluation mode toggle control. */
   evaluationMode: Classname;
+  /** Classes applied to the shift up/down action container in condition headers. */
+  shiftActions: Classname;
 }
 
 /**
@@ -146,6 +155,8 @@ export interface TranslationsRE {
   addDefaultConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
   removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
+  shiftActionUp: BaseTranslationWithLabel<React.ReactNode>;
+  shiftActionDown: BaseTranslationWithLabel<React.ReactNode>;
   evaluationMode: BaseTranslation;
   evaluationModeCascade: BaseTranslationWithLabel<React.ReactNode>;
   evaluationModeCumulative: BaseTranslationWithLabel<React.ReactNode>;
@@ -184,10 +195,22 @@ export interface RulesEngineProps {
     conditionPath: Path,
     rulesEngine: RulesEngineAny
   ) => REConditionAny | boolean;
+  /**
+   * This callback is invoked before a condition is shifted up or down. Return `true` to allow
+   * the shift, `false` to cancel it, or a new rules engine object which will become the new state.
+   */
+  onMoveCondition?: (
+    condition: REConditionAny,
+    fromPath: Path,
+    direction: 'up' | 'down',
+    rulesEngine: RulesEngineAny,
+    nextRulesEngine: RulesEngineAny
+  ) => RulesEngineAny | boolean;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
   allowDefaultConsequents?: boolean;
   allowNestedConditions?: boolean;
+  showShiftActions?: boolean;
   enableMountRulesEngineChange?: boolean;
   showBranches?: boolean;
   components?: Partial<ComponentsRE>;
@@ -242,6 +265,8 @@ export interface ConditionProps {
   isOnlyCondition: boolean;
   // onConditionChange: (condition: REConditionAny) => void;
   autoSelectConsequentType?: boolean;
+  shiftUpDisabled?: boolean;
+  shiftDownDisabled?: boolean;
 }
 
 /**

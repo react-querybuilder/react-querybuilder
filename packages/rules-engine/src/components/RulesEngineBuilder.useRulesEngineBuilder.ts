@@ -45,6 +45,7 @@ import {
   addRE,
   findConditionPath,
   mergeClassnamesRE,
+  moveRE,
   prepareRulesEngine,
   removeRE,
   updateRE,
@@ -91,9 +92,11 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     autoSelectConsequentType = true,
     suppressStandardClassnames = false,
     showBranches = false,
+    showShiftActions = false,
     onRulesEngineChange,
     onAddCondition = returnTrue,
     onRemoveCondition = returnTrue,
+    onMoveCondition = returnTrue,
     classnames: classnamesProp = defaultClassnamesRE,
     components: componentsProp,
     translations: translationsProp = emptyObject,
@@ -128,6 +131,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       rulesEngineHeader: classnamesMerged.rulesEngineHeader,
       rulesEngineBody: classnamesMerged.rulesEngineBody,
       evaluationMode: classnamesMerged.evaluationMode,
+      shiftActions: classnamesMerged.shiftActions,
     }),
     [
       classnamesMerged.blockLabel,
@@ -148,6 +152,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.rulesEngineHeader,
       classnamesMerged.rulesEngineBody,
       classnamesMerged.evaluationMode,
+      classnamesMerged.shiftActions,
     ]
   );
   const headerClassName = useMemo(
@@ -400,6 +405,29 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     [dispatchRulesEngine, onRemoveCondition, reId, qbStore]
   );
 
+  const moveCondition = useCallback(
+    (conditionPath: Path, direction: 'up' | 'down') => {
+      const reLocal = getRulesEngineSelectorById(reId)(qbStore.getState());
+      // v8 ignore if
+      if (!reLocal) return;
+      const condition = findConditionPath(conditionPath, reLocal);
+      // v8 ignore else
+      if (condition) {
+        const newRE = moveRE(reLocal, conditionPath, direction);
+        const nextRE = onMoveCondition(
+          condition as REConditionAny,
+          conditionPath,
+          direction,
+          reLocal,
+          newRE
+        );
+        if (!nextRE) return;
+        dispatchRulesEngine(nextRE === true ? newRE : nextRE);
+      }
+    },
+    [dispatchRulesEngine, onMoveCondition, reId, qbStore]
+  );
+
   const updateCondition = useCallback(
     (conditionPath: Path, property: string, value: unknown) => {
       const newRE = updateRE(rulesEngine, property, value, conditionPath);
@@ -425,9 +453,11 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       getRulesEngine,
       defaultConsequentType,
       getConsequentTypes: getConsequentTypesMain,
+      moveCondition,
       queryBuilderProps,
       reId,
       removeCondition,
+      showShiftActions,
       suppressStandardClassnames,
       translations,
       updateCondition,
@@ -445,9 +475,11 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       evaluationMode,
       getConsequentTypesMain,
       getRulesEngine,
+      moveCondition,
       queryBuilderProps,
       reId,
       removeCondition,
+      showShiftActions,
       suppressStandardClassnames,
       translations,
       updateCondition,

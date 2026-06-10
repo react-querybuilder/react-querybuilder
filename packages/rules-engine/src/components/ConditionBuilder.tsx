@@ -26,6 +26,8 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
       updateCondition,
       allowNestedConditions,
       removeCondition,
+      moveCondition,
+      showShiftActions,
       evaluationMode,
       classnames: {
         conditionBuilderHeader,
@@ -33,11 +35,13 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
         blockLabelIf,
         blockLabelIfElse,
         blockLabelWhen,
+        shiftActions,
       },
       components: {
         addCondition: AddCondition,
         addConsequent: AddConsequent,
         removeCondition: RemoveCondition,
+        shiftActions: ShiftActions,
       },
       translations,
       suppressStandardClassnames,
@@ -101,11 +105,54 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
     removeCondition(conditionPath);
   }, [conditionPath, removeCondition]);
 
+  const shiftConditionUp = React.useCallback(() => {
+    moveCondition(conditionPath, 'up');
+  }, [conditionPath, moveCondition]);
+
+  const shiftConditionDown = React.useCallback(() => {
+    moveCondition(conditionPath, 'down');
+  }, [conditionPath, moveCondition]);
+
+  const shiftActionsClassName = React.useMemo(
+    () => clsx(suppressStandardClassnames || standardClassnamesRE.shiftActions, shiftActions),
+    [shiftActions, suppressStandardClassnames]
+  );
+
+  const shiftActionsLabels = React.useMemo(
+    () => ({
+      shiftUp: translations.shiftActionUp.label,
+      shiftDown: translations.shiftActionDown.label,
+    }),
+    [translations.shiftActionUp.label, translations.shiftActionDown.label]
+  );
+
+  const shiftActionsTitles = React.useMemo(
+    () => ({
+      shiftUp: translations.shiftActionUp.title,
+      shiftDown: translations.shiftActionDown.title,
+    }),
+    [translations.shiftActionUp.title, translations.shiftActionDown.title]
+  );
+
   return (
     <div className={wrapperClassName}>
       <div className={labelClassName} title={blockLabelTitle}>
         {blockLabelLabel}
       </div>
+      {showShiftActions && (
+        <ShiftActions
+          schema={props.schema}
+          path={conditionPath}
+          level={conditionPath.length}
+          className={shiftActionsClassName}
+          labels={shiftActionsLabels}
+          titles={shiftActionsTitles}
+          shiftUp={shiftConditionUp}
+          shiftDown={shiftConditionDown}
+          shiftUpDisabled={props.shiftUpDisabled}
+          shiftDownDisabled={props.shiftDownDisabled}
+        />
+      )}
       {allowNestedConditions && (
         <AddCondition
           schema={props.schema}

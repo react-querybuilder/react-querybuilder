@@ -7,6 +7,7 @@ import { ConsequentBuilder } from './ConsequentBuilder';
 import { ConsequentBuilderBody } from './ConsequentBuilderBody';
 import { ConsequentBuilderHeader } from './ConsequentBuilderHeader';
 import { RulesEngineBuilderHeader } from './RulesEngineBuilderHeader';
+import { ShiftActionsRE } from './ShiftActionsRE';
 import { ValueSelectorRE } from './ValueSelectorRE';
 
 /**
@@ -31,6 +32,7 @@ export const defaultComponentsRE: {
   removeConsequent: typeof ActionElementRE;
   removeCondition: typeof ActionElementRE;
   rulesEngineBuilderHeader: typeof RulesEngineBuilderHeader;
+  shiftActions: typeof ShiftActionsRE;
   valueSelector: typeof ValueSelectorRE;
 } = {
   consequentBuilder: ConsequentBuilder,
@@ -49,5 +51,6 @@ export const defaultComponentsRE: {
   removeConsequent: ActionElementRE,
   removeCondition: ActionElementRE,
   rulesEngineBuilderHeader: RulesEngineBuilderHeader,
+  shiftActions: ShiftActionsRE,
   valueSelector: ValueSelectorRE,
 } satisfies ComponentsRE;

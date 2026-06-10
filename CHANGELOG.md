@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [#1047] Added `showBranches` prop to `RulesEngineBuilder` along with accompanying styles.
+- [#1047] New `showBranches` prop on `RulesEngineBuilder`, with accompanying styles.
+- [#1047] New `showShiftActions` prop on `RulesEngineBuilder`, with accompanying component and styles.
 
 ### Fixed
 

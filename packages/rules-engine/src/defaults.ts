@@ -24,6 +24,7 @@ export const defaultClassnamesRE: ClassnamesRE = {
   blockLabelWhen: '',
   blockLabelAlways: '',
   evaluationMode: '',
+  shiftActions: '',
 };
 
 /**
@@ -50,6 +51,7 @@ export const standardClassnamesRE: Record<keyof ClassnamesRE, string> = {
   blockLabelWhen: 'blockLabel-when',
   blockLabelAlways: 'blockLabel-always',
   evaluationMode: 'rulesEngineBuilder-evaluationMode',
+  shiftActions: 'shiftActions',
 };
 
 export const defaultRulesEngine: RulesEngine = {
@@ -79,6 +81,8 @@ export const defaultTranslationsRE: TranslationsFullRE = {
   addDefaultConsequent: { title: 'Add consequent action/result', label: '+ Else' },
   removeCondition: { title: 'Remove condition', label: '⨯' },
   removeConsequent: { title: 'Remove consequent action/result', label: '⨯' },
+  shiftActionUp: { title: 'Shift condition up', label: '˄' },
+  shiftActionDown: { title: 'Shift condition down', label: '˅' },
   evaluationMode: { title: 'How sibling conditions are evaluated' },
   evaluationModeCascade: {
     title: 'Evaluate conditions in order; stop after the first match (if/else-if/else)',

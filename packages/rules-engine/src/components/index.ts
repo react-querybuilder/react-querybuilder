@@ -7,4 +7,5 @@ export * from './RulesEngineBuilder';
 export * from './RulesEngineBuilderHeader';
 export * from './ConditionBuilder';
 export * from './ConditionCascade';
+export * from './ShiftActionsRE';
 export * from './ValueSelectorRE';

@@ -55,6 +55,8 @@ export const ConditionCascade: React.MemoExoticComponent<
             condition={c}
             isOnlyCondition={conditions.length === 1}
             autoSelectConsequentType={autoSelectConsequentType}
+            shiftUpDisabled={i === 0}
+            shiftDownDisabled={i === conditions.length - 1}
           />
         );
       })}
