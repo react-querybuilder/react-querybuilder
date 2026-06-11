@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.19.1] - 2026-06-10
+
 ### Added
 
 - [#1047] New `showBranches` prop on `RulesEngineBuilder`, with accompanying styles.
@@ -2288,7 +2292,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.1...HEAD
+[v8.19.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.0...v8.19.1
 [v8.19.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.18.0...v8.19.0
 [v8.18.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.17.0...v8.18.0
 [v8.17.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.16.2...v8.17.0
