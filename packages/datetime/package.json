@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/datetime",
   "description": "Date/time features for react-querybuilder",
-  "version": "8.19.0",
+  "version": "8.19.1",
   "publishConfig": {
     "access": "public"
   },
@@ -119,7 +119,7 @@
     "prisma": "^7.7.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.19.0",
+    "react-querybuilder": "8.19.1",
     "rollup-plugin-visualizer": "catalog:",
     "sass": "catalog:",
     "sequelize": "^6.37.8",
@@ -132,7 +132,7 @@
     "dayjs": "catalog:peer",
     "luxon": "catalog:peer",
     "react": "catalog:peer",
-    "react-querybuilder": "8.19.0"
+    "react-querybuilder": "8.19.1"
   },
   "peerDependenciesMeta": {
     "date-fns": {

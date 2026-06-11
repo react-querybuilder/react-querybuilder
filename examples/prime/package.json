@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@react-querybuilder/prime": "8.19.0",
+    "@react-querybuilder/prime": "8.19.1",
     "primeicons": ">=7",
     "primereact": ">=10",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.19.0"
+    "react-querybuilder": "8.19.1"
   },
   "description": "React Query Builder PrimeReact Example",
   "devDependencies": {

@@ -3,7 +3,7 @@
     "next": "^16",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.19.0"
+    "react-querybuilder": "8.19.1"
   },
   "devDependencies": {
     "@types/node": "^24",
