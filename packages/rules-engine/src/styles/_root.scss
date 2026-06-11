@@ -6,6 +6,11 @@
   --#{$rqbre-var-prefix}border-width: #{$rqbre-border-width};
   // #endregion
 
+  /* #region Branches layout */
+  --#{$rqbre-var-prefix}branch-indent: var(--#{$rqbre-var-prefix}spacing);
+  --#{$rqbre-var-prefix}branch-width: var(--#{$rqbre-var-prefix}border-width);
+  /* #endregion */
+
   // #region Basic aesthetic
   --#{$rqbre-var-prefix}base-color: #{$rqbre-base-color};
   --#{$rqbre-var-prefix}background-color: #{$rqbre-background-color};
@@ -40,4 +45,10 @@
   --#{$rqbre-var-prefix}elseblock-border-style: #{$rqbre-elseblock-border-style};
   --#{$rqbre-var-prefix}elseblock-border-radius: #{$rqbre-elseblock-border-radius};
   // #endregion
+
+  /* #region Branches aesthetic */
+  --#{$rqbre-var-prefix}branch-color: var(--#{$rqbre-var-prefix}border-color);
+  --#{$rqbre-var-prefix}branch-radius: var(--#{$rqbre-var-prefix}border-radius);
+  --#{$rqbre-var-prefix}branch-style: var(--#{$rqbre-var-prefix}border-style);
+  /* #endregion */
 }

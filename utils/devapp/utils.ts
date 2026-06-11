@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { defaultOptions, optionOrder } from './constants';
 import type { DemoOption, DemoOptions } from './types';
 
-export type OptionsAction<ExtraOptions extends Record<string, boolean>> =
+export type OptionsAction<ExtraOptions extends Record<string, boolean | undefined>> =
   | { type: 'all' }
   | { type: 'reset' }
   | {
@@ -19,29 +19,31 @@ export type OptionsAction<ExtraOptions extends Record<string, boolean>> =
       payload: DemoOptions & ExtraOptions;
     };
 
-export const optionsReducer = <ExtraOptions extends Record<string, boolean>>(
-  state: DemoOptions & ExtraOptions,
-  action: OptionsAction<ExtraOptions>
-): DemoOptions & ExtraOptions => {
-  switch (action.type) {
-    case 'reset':
-      return defaultOptions as DemoOptions & ExtraOptions;
-    case 'all': {
-      const allSelected: DemoOptions = { ...defaultOptions };
-      for (const opt of optionOrder) {
-        allSelected[opt] =
-          opt !== 'disabled' &&
-          opt !== 'independentCombinators' &&
-          opt !== 'suppressStandardClassnames';
+export const generateOptionsReducer =
+  <ExtraOptions extends Record<string, boolean | undefined>>(extraOptions: ExtraOptions) =>
+  (
+    state: DemoOptions & Partial<ExtraOptions>,
+    action: OptionsAction<Partial<ExtraOptions> & { [k: string]: boolean }>
+  ): DemoOptions & Partial<ExtraOptions> => {
+    switch (action.type) {
+      case 'reset':
+        return { ...defaultOptions, ...extraOptions };
+      case 'all': {
+        const allSelected: DemoOptions & ExtraOptions = { ...defaultOptions, ...extraOptions };
+        for (const opt of optionOrder) {
+          allSelected[opt] =
+            opt !== 'disabled' &&
+            opt !== 'independentCombinators' &&
+            opt !== 'suppressStandardClassnames';
+        }
+        return allSelected;
       }
-      return allSelected as DemoOptions & ExtraOptions;
+      case 'replace':
+        return action.payload;
     }
-    case 'replace':
-      return action.payload;
-  }
-  const { optionName, value } = action.payload;
-  return { ...state, [optionName]: value };
-};
+    const { optionName, value } = action.payload;
+    return { ...state, [optionName]: value };
+  };
 
 export const getFormatQueryString = (
   query: RuleGroupTypeAny,

@@ -1,18 +1,45 @@
-import type { BaseOption, Field, FullOptionList } from '@react-querybuilder/core';
-import { toFullOptionList } from '@react-querybuilder/core';
-import type { RulesEngine } from '@react-querybuilder/rules-engine';
-import { regenerateREIDs, RulesEngineBuilder } from '@react-querybuilder/rules-engine';
+import type { Field } from '@react-querybuilder/core';
+import type { ConsequentTypeOption, RulesEngine } from '@react-querybuilder/rules-engine';
+import {
+  formatRulesEngine,
+  regenerateREIDs,
+  RulesEngineBuilder,
+} from '@react-querybuilder/rules-engine';
 import * as React from 'react';
 import { DevLayout } from './DevLayout';
 import { useDevApp } from './useDevApp';
 
-const fields: Field[] = [{ name: 'age', label: 'Age' }];
-const queryBuilderProps = { fields };
+const fields: Field[] = [{ name: 'age', label: 'Age', inputType: 'number' }];
 
-const consequentTypes: FullOptionList<BaseOption> = toFullOptionList([
-  { value: 'send_email', label: 'Send Email' },
-  { value: 'log_event', label: 'Log Event' },
-]);
+const consequentTypes: ConsequentTypeOption[] = [
+  {
+    name: 'send_email',
+    label: 'Send Email',
+    properties: [
+      { name: 'to', label: 'To' },
+      { name: 'subject', label: 'Subject' },
+      { name: 'body', label: 'Body', inputType: 'textarea' },
+    ],
+  },
+  {
+    name: 'log_event',
+    label: 'Log Event',
+    properties: [
+      { name: 'message', label: 'Message' },
+      {
+        name: 'level',
+        label: 'Level',
+        inputType: 'select',
+        defaultValue: 'info',
+        values: [
+          { name: 'info', label: 'Info' },
+          { name: 'warn', label: 'Warning' },
+          { name: 'error', label: 'Error' },
+        ],
+      },
+    ],
+  },
+];
 
 const initialRE: RulesEngine = regenerateREIDs({
   defaultConsequent: { id: '3', type: 'log_event' },
@@ -51,36 +78,60 @@ const initialRE: RulesEngine = regenerateREIDs({
   ],
 });
 
-const preStyle: React.CSSProperties = { marginTop: 'var(--rqbre-spacing)' };
-
 export const AppRE = (): React.JSX.Element => {
-  const devApp = useDevApp();
   const [re, setRE] = React.useState(initialRE);
+  const exportFormats = React.useMemo(
+    () => ({
+      'rules-engine': formatRulesEngine(re),
+      'json-rules-engine': JSON.stringify(
+        formatRulesEngine(re, { format: 'json-rules-engine' }),
+        null,
+        2
+      ),
+      rulepilot: JSON.stringify(formatRulesEngine(re, { format: 'rulepilot' }), null, 2),
+    }),
+    [re]
+  );
 
-  const {
-    optVals: { justifiedLayout, suppressStandardClassnames },
-  } = devApp;
+  const devApp = useDevApp(
+    {
+      addConsequentToNewConditions: false,
+      allowDefaultConsequents: true,
+      allowNestedConditions: true,
+      autoSelectConsequentType: true,
+      showShiftActions: false,
+    } as Record<string, boolean>,
+    exportFormats
+  );
 
   const rebClassnames = React.useMemo(
-    () => ({ rulesEngineBuilder: justifiedLayout ? 'rulesEngineBuilder-justified' : '' }),
-    [justifiedLayout]
+    () => ({
+      rulesEngineBuilder: devApp.optVals.justifiedLayout ? 'rulesEngineBuilder-justified' : '',
+    }),
+    [devApp.optVals.justifiedLayout]
+  );
+
+  const queryBuilderProps = React.useMemo(
+    () => ({ ...devApp.commonRQBProps, fields }),
+    [devApp.commonRQBProps]
   );
 
   return (
     <DevLayout {...devApp}>
       <RulesEngineBuilder
-        // {...devApp.commonRQBProps}
-        // allowNestedConditions={false}
-        suppressStandardClassnames={suppressStandardClassnames}
+        addConsequentToNewConditions={devApp.optVals.addConsequentToNewConditions}
+        allowDefaultConsequents={devApp.optVals.allowDefaultConsequents}
+        allowNestedConditions={devApp.optVals.allowNestedConditions}
+        autoSelectConsequentType={devApp.optVals.autoSelectConsequentType}
+        suppressStandardClassnames={devApp.optVals.suppressStandardClassnames}
+        showBranches={devApp.optVals.showBranches}
+        showShiftActions={devApp.optVals.showShiftActions}
         classnames={rebClassnames}
         rulesEngine={re}
         queryBuilderProps={queryBuilderProps}
         onRulesEngineChange={setRE}
         consequentTypes={consequentTypes}
       />
-      <pre style={preStyle}>
-        <code>{JSON.stringify(re, null, 2)}</code>
-      </pre>
     </DevLayout>
   );
 };

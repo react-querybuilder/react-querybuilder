@@ -1,16 +1,13 @@
 import { QueryBuilder } from 'react-querybuilder';
 import type { ComponentsRE } from '../types';
 import { ActionElementRE } from './ActionElementRE';
+import { ConditionBuilderHeader, ConditionBuilder, ConditionBuilderBody } from './ConditionBuilder';
+import { ConditionCascade } from './ConditionCascade';
 import { ConsequentBuilder } from './ConsequentBuilder';
 import { ConsequentBuilderBody } from './ConsequentBuilderBody';
 import { ConsequentBuilderHeader } from './ConsequentBuilderHeader';
 import { RulesEngineBuilderHeader } from './RulesEngineBuilderHeader';
-import {
-  ConditionBuilderHeader,
-  RulesEngineConditionBuilder,
-  RulesEngineConditionBuilderBody,
-} from './RulesEngineConditionBuilder';
-import { RulesEngineConditionCascade } from './RulesEngineConditionCascade';
+import { ShiftActionsRE } from './ShiftActionsRE';
 import { ValueSelectorRE } from './ValueSelectorRE';
 
 /**
@@ -27,14 +24,15 @@ export const defaultComponentsRE: {
   addConsequent: typeof ActionElementRE;
   addCondition: typeof ActionElementRE;
   addSubcondition: typeof ActionElementRE;
-  conditionBuilder: typeof RulesEngineConditionBuilder;
-  conditionBuilderBody: typeof RulesEngineConditionBuilderBody;
-  conditionBuilderCascade: typeof RulesEngineConditionCascade;
+  conditionBuilder: typeof ConditionBuilder;
+  conditionBuilderBody: typeof ConditionBuilderBody;
+  conditionBuilderCascade: typeof ConditionCascade;
   conditionBuilderHeader: typeof ConditionBuilderHeader;
   queryBuilder: typeof QueryBuilder;
   removeConsequent: typeof ActionElementRE;
   removeCondition: typeof ActionElementRE;
   rulesEngineBuilderHeader: typeof RulesEngineBuilderHeader;
+  shiftActions: typeof ShiftActionsRE;
   valueSelector: typeof ValueSelectorRE;
 } = {
   consequentBuilder: ConsequentBuilder,
@@ -45,13 +43,14 @@ export const defaultComponentsRE: {
   addConsequent: ActionElementRE,
   addCondition: ActionElementRE,
   addSubcondition: ActionElementRE,
-  conditionBuilder: RulesEngineConditionBuilder,
-  conditionBuilderBody: RulesEngineConditionBuilderBody,
-  conditionBuilderCascade: RulesEngineConditionCascade,
+  conditionBuilder: ConditionBuilder,
+  conditionBuilderBody: ConditionBuilderBody,
+  conditionBuilderCascade: ConditionCascade,
   conditionBuilderHeader: ConditionBuilderHeader,
   queryBuilder: QueryBuilder,
   removeConsequent: ActionElementRE,
   removeCondition: ActionElementRE,
   rulesEngineBuilderHeader: RulesEngineBuilderHeader,
+  shiftActions: ShiftActionsRE,
   valueSelector: ValueSelectorRE,
 } satisfies ComponentsRE;

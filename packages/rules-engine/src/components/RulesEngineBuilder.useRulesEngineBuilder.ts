@@ -1,5 +1,4 @@
 import type {
-  BaseOption,
   FullOptionList,
   Path,
   RuleGroupType,
@@ -8,6 +7,7 @@ import type {
 import {
   clsx,
   generateID,
+  getFirstOption,
   mergeAnyTranslations,
   prepareOptionList,
 } from '@react-querybuilder/core';
@@ -31,6 +31,7 @@ import type {
   ClassnamesRE,
   ComponentsRE,
   Consequent,
+  FullConsequentTypeOption,
   RECondition,
   REConditionAny,
   REConditionCascade,
@@ -45,6 +46,7 @@ import {
   addRE,
   findConditionPath,
   mergeClassnamesRE,
+  moveRE,
   prepareRulesEngine,
   removeRE,
   updateRE,
@@ -53,6 +55,9 @@ import {
 const defaultConditionIC: REConditionIC = { antecedent: { rules: [] } };
 const defaultCondition: RECondition = { antecedent: { combinator: 'and', rules: [] } };
 const returnTrue = () => true;
+// Stable empty-object default; a fresh `{}` literal default would break the
+// `translations` memo (new identity every render) and cascade into `schema`.
+const emptyObject = {} as const;
 
 queryBuilderStore.addSlice(rulesEngineSlice);
 
@@ -64,7 +69,7 @@ queryBuilderStore.addSlice(rulesEngineSlice);
 export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupType>(
   props: RulesEngineProps = {}
 ): {
-  consequentTypes: FullOptionList<BaseOption>;
+  consequentTypes: FullOptionList<FullConsequentTypeOption>;
   classnames: ClassnamesRE;
   components: ComponentsRE;
   onChange: (conditions: REConditionCascade<RG>) => void;
@@ -73,6 +78,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   schema: SchemaRE;
   wrapperClassName: string;
   headerClassName: string;
+  bodyClassName: string;
 } => {
   const [reId] = useState(generateID);
 
@@ -86,19 +92,25 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     allowNestedConditions = true,
     autoSelectConsequentType = true,
     suppressStandardClassnames = false,
+    showBranches = false,
+    showShiftActions = false,
+    addConsequentToNewConditions = false,
     onRulesEngineChange,
     onAddCondition = returnTrue,
     onRemoveCondition = returnTrue,
+    onMoveCondition = returnTrue,
     classnames: classnamesProp = defaultClassnamesRE,
     components: componentsProp,
-    translations: translationsProp = {},
+    translations: translationsProp = emptyObject,
     queryBuilderProps,
     idGenerator = generateID,
   } = props;
 
   // #region Classnames
   const classnamesMerged = useMemo(
-    () => mergeClassnamesRE(defaultClassnamesRE, classnamesProp),
+    // Classname defaults are all empty strings, so a base/defaults argument
+    // contributes nothing to the merge; merge the prop directly.
+    () => mergeClassnamesRE(classnamesProp),
     [classnamesProp]
   );
   const classnames = useMemo(
@@ -111,6 +123,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       blockLabelWhen: classnamesMerged.blockLabelWhen,
       blockLabelAlways: classnamesMerged.blockLabelAlways,
       conditionBuilder: classnamesMerged.conditionBuilder,
+      conditionBuilderBody: classnamesMerged.conditionBuilderBody,
       conditionBuilderHeader: classnamesMerged.conditionBuilderHeader,
       consequentBuilder: classnamesMerged.consequentBuilder,
       consequentBuilderBody: classnamesMerged.consequentBuilderBody,
@@ -118,7 +131,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       consequentBuilderStandalone: classnamesMerged.consequentBuilderStandalone,
       rulesEngineBuilder: classnamesMerged.rulesEngineBuilder,
       rulesEngineHeader: classnamesMerged.rulesEngineHeader,
+      rulesEngineBody: classnamesMerged.rulesEngineBody,
       evaluationMode: classnamesMerged.evaluationMode,
+      shiftActions: classnamesMerged.shiftActions,
     }),
     [
       classnamesMerged.blockLabel,
@@ -129,6 +144,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.blockLabelWhen,
       classnamesMerged.blockLabelAlways,
       classnamesMerged.conditionBuilder,
+      classnamesMerged.conditionBuilderBody,
       classnamesMerged.conditionBuilderHeader,
       classnamesMerged.consequentBuilder,
       classnamesMerged.consequentBuilderBody,
@@ -136,7 +152,9 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       classnamesMerged.consequentBuilderStandalone,
       classnamesMerged.rulesEngineBuilder,
       classnamesMerged.rulesEngineHeader,
+      classnamesMerged.rulesEngineBody,
       classnamesMerged.evaluationMode,
+      classnamesMerged.shiftActions,
     ]
   );
   const headerClassName = useMemo(
@@ -147,10 +165,19 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       ),
     [classnames.rulesEngineHeader, suppressStandardClassnames]
   );
+  const bodyClassName = useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.rulesEngineBody,
+        classnames.rulesEngineBody
+      ),
+    [classnames.rulesEngineBody, suppressStandardClassnames]
+  );
   const wrapperClassName = useMemo(
     () =>
       clsx(
         suppressStandardClassnames || standardClassnamesRE.rulesEngineBuilder,
+        showBranches && standardClassnamesRE.rulesEngineBuilder + '-branches',
         classnames.rulesEngineBuilder
         // TODO: implement locking and validation
         // // custom conditional classes
@@ -164,7 +191,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         //   [standardClassnames.invalid]: typeof validationResult === 'boolean' && !validationResult,
         // }
       ),
-    [classnames.rulesEngineBuilder, suppressStandardClassnames]
+    [classnames.rulesEngineBuilder, showBranches, suppressStandardClassnames]
   );
   // #endregion
 
@@ -184,7 +211,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
   // #region `consequentTypes`
   const { optionList: consequentTypes, defaultOption: defaultConsequentType } = useMemo(
     () =>
-      prepareOptionList({
+      prepareOptionList<FullConsequentTypeOption>({
         optionList: consequentTypesProp ?? [],
         placeholder: {
           placeholderName: defaultPlaceholderName,
@@ -200,7 +227,7 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
 
   const getConsequentTypesMain = useCallback(
     (conditionPath: Path, antecedent: RuleGroupTypeAny, context?: unknown) =>
-      prepareOptionList({
+      prepareOptionList<FullConsequentTypeOption>({
         optionList:
           consequentTypes ??
           getConsequentTypes?.(conditionPath, antecedent, context) ??
@@ -214,6 +241,15 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         autoSelectOption: autoSelectConsequentType,
       }).optionList,
     [consequentTypesProp, getConsequentTypes, consequentTypes, autoSelectConsequentType]
+  );
+  // #endregion
+
+  // #region Default consequent type
+  const getDefaultConsequentType = useCallback(
+    (conditionPath: Path, antecedent: RuleGroupTypeAny, context?: unknown): string =>
+      getFirstOption(getConsequentTypesMain(conditionPath, antecedent, context)) ??
+      defaultConsequentType.value,
+    [getConsequentTypesMain, defaultConsequentType]
   );
   // #endregion
 
@@ -347,13 +383,31 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
         return;
       }
       const newCondition = nextCondition === true ? condition : nextCondition;
-      const newRulesEngine = addRE(reLocal, newCondition, parentConditionPath, {
+      const conditionToAdd =
+        addConsequentToNewConditions && !newCondition.consequent
+          ? {
+              ...newCondition,
+              consequent: {
+                type: getDefaultConsequentType(parentConditionPath, newCondition.antecedent),
+              },
+            }
+          : newCondition;
+      const newRulesEngine = addRE(reLocal, conditionToAdd, parentConditionPath, {
         idGenerator,
       });
       // log({ reId, type: LogType.add, rulesEngine: reLocal, newRulesEngine, newCondition, parentConditionPath });
       dispatchRulesEngine(newRulesEngine);
     },
-    [dispatchRulesEngine, idGenerator, independentCombinators, onAddCondition, qbStore, reId]
+    [
+      addConsequentToNewConditions,
+      dispatchRulesEngine,
+      getDefaultConsequentType,
+      idGenerator,
+      independentCombinators,
+      onAddCondition,
+      qbStore,
+      reId,
+    ]
   );
 
   const removeCondition = useCallback(
@@ -378,6 +432,29 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       }
     },
     [dispatchRulesEngine, onRemoveCondition, reId, qbStore]
+  );
+
+  const moveCondition = useCallback(
+    (conditionPath: Path, direction: 'up' | 'down') => {
+      const reLocal = getRulesEngineSelectorById(reId)(qbStore.getState());
+      // v8 ignore if
+      if (!reLocal) return;
+      const condition = findConditionPath(conditionPath, reLocal);
+      // v8 ignore else
+      if (condition) {
+        const newRE = moveRE(reLocal, conditionPath, direction);
+        const nextRE = onMoveCondition(
+          condition as REConditionAny,
+          conditionPath,
+          direction,
+          reLocal,
+          newRE
+        );
+        if (!nextRE) return;
+        dispatchRulesEngine(nextRE === true ? newRE : nextRE);
+      }
+    },
+    [dispatchRulesEngine, onMoveCondition, reId, qbStore]
   );
 
   const updateCondition = useCallback(
@@ -405,9 +482,12 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       getRulesEngine,
       defaultConsequentType,
       getConsequentTypes: getConsequentTypesMain,
+      getDefaultConsequentType,
+      moveCondition,
       queryBuilderProps,
       reId,
       removeCondition,
+      showShiftActions,
       suppressStandardClassnames,
       translations,
       updateCondition,
@@ -424,10 +504,13 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
       dispatchRulesEngine,
       evaluationMode,
       getConsequentTypesMain,
+      getDefaultConsequentType,
       getRulesEngine,
+      moveCondition,
       queryBuilderProps,
       reId,
       removeCondition,
+      showShiftActions,
       suppressStandardClassnames,
       translations,
       updateCondition,
@@ -439,11 +522,12 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     classnames,
     components,
     consequentTypes,
-    headerClassName,
     onChange,
     onDefaultConsequentChange,
     rulesEngine,
     schema,
     wrapperClassName,
+    headerClassName,
+    bodyClassName,
   };
 };

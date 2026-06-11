@@ -11,9 +11,9 @@ const disabledPaths: Path[] = [];
  *
  * @group Components
  */
-export const RulesEngineConditionCascade: React.MemoExoticComponent<
+export const ConditionCascade: React.MemoExoticComponent<
   <RG extends RuleGroupTypeAny>(props: ConditionCascadeProps<RG>) => React.JSX.Element
-> = React.memo(function RulesEngineConditionCascade<RG extends RuleGroupTypeAny>(
+> = React.memo(function ConditionCascade<RG extends RuleGroupTypeAny>(
   props: ConditionCascadeProps<RG>
 ): React.JSX.Element {
   const { conditionPath, conditions, defaultConsequent, schema } = props;
@@ -55,6 +55,8 @@ export const RulesEngineConditionCascade: React.MemoExoticComponent<
             condition={c}
             isOnlyCondition={conditions.length === 1}
             autoSelectConsequentType={autoSelectConsequentType}
+            shiftUpDisabled={i === 0}
+            shiftDownDisabled={i === conditions.length - 1}
           />
         );
       })}

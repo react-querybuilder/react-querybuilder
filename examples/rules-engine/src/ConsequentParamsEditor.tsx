@@ -1,12 +1,11 @@
 import type { ConsequentProps } from '@react-querybuilder/rules-engine';
-import * as React from 'react';
-import { paramSchemas } from './_constants/consequentTypes';
-import styles from './RulesEngineDemo.module.css';
+import { useCallback } from 'react';
+import { paramSchemas } from './consequentTypes';
 
 // Custom `components.consequentBuilderBody`. Renders the built-in type selector plus
 // editable inputs for the selected consequent type's params (the built-in UI edits
 // only `type`).
-export const ConsequentParamsEditor = (props: ConsequentProps): React.JSX.Element => {
+export const ConsequentParamsEditor = (props: ConsequentProps) => {
   const {
     consequent,
     consequentTypes = [],
@@ -19,7 +18,7 @@ export const ConsequentParamsEditor = (props: ConsequentProps): React.JSX.Elemen
   const params = (consequent.params ?? {}) as Record<string, unknown>;
   const schema = paramSchemas[consequent.type] ?? [];
 
-  const handleTypeChange = React.useCallback(
+  const handleTypeChange = useCallback(
     (type: string) => onConsequentChange({ ...consequent, type, params: {} }),
     [onConsequentChange, consequent]
   );
@@ -28,7 +27,7 @@ export const ConsequentParamsEditor = (props: ConsequentProps): React.JSX.Elemen
     onConsequentChange({ ...consequent, params: { ...params, [name]: value } });
 
   return (
-    <div className={styles.consequentParams}>
+    <div>
       {props.consequentTypes && (
         <ConsequentSelector
           schema={props.schema}
@@ -43,8 +42,8 @@ export const ConsequentParamsEditor = (props: ConsequentProps): React.JSX.Elemen
         const value = params[name] ?? '';
         const id = `${consequent.id ?? conditionPath.join('-')}-${name}`;
         return (
-          <label key={name} className={styles.paramField} htmlFor={id}>
-            <span>{label}</span>
+          <label key={name} htmlFor={id}>
+            <span>{label}</span>{' '}
             {inputType === 'textarea' ? (
               <textarea
                 id={id}

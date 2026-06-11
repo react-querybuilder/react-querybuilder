@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#1047] New `showBranches` prop on `RulesEngineBuilder`, with accompanying styles.
+- [#1047] New `showShiftActions` prop on `RulesEngineBuilder`, with accompanying component and styles.
+- [#1047] `RulesEngineBuilder` consequent types can now define editable `properties`. When a `consequentTypes` option carries a `properties` array (`ConsequentPropertyDef[]`), the built-in `ConsequentBuilderBody` renders an input (`"text"`, `"textarea"`, `"number"`, `"checkbox"`, or `"select"`) for each one, storing the values on the consequent under `params[name]`. New types: `ConsequentTypeOption`, `FullConsequentTypeOption`, `ConsequentPropertyDef`, and `ConsequentPropertyInputType`.
+- [#1047] New `addConsequentToNewConditions` prop on `RulesEngineBuilder`. When `true`, newly added conditions are seeded with a consequent of the default consequent type for that condition.
+
+### Fixed
+
+- [#1047] In `RulesEngineBuilder`, the top-level "Add condition" button is not hidden when `allowNestedConditions` is `false`.
 
 ## [v8.19.0] - 2026-06-07
 
@@ -2273,6 +2282,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1041]: https://github.com/react-querybuilder/react-querybuilder/pull/1041
 [#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
 [#1046]: https://github.com/react-querybuilder/react-querybuilder/pull/1046
+[#1047]: https://github.com/react-querybuilder/react-querybuilder/pull/1047
 
 <!-- #endregion -->
 

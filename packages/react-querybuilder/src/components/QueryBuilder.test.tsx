@@ -3272,6 +3272,7 @@ describe('null controlElements', () => {
     expect(screen.queryAllByTestId(TestID.valueSourceSelector)).toHaveLength(0);
   };
 
+  // oxlint-disable-next-line jest/expect-expect
   it('uses `null` from context', () => {
     render(
       <QueryBuilderContext.Provider value={{ controlElements }}>
@@ -3287,6 +3288,7 @@ describe('null controlElements', () => {
     expectNothing();
   });
 
+  // oxlint-disable-next-line jest/expect-expect
   it('uses `null` from props', () => {
     render(
       <QueryBuilder
@@ -3299,6 +3301,7 @@ describe('null controlElements', () => {
     expectNothing();
   });
 
+  // oxlint-disable-next-line jest/expect-expect
   it('overrides bulk overrides with `null` from context', () => {
     render(
       <QueryBuilderContext.Provider
@@ -3321,6 +3324,7 @@ describe('null controlElements', () => {
     expectNothing();
   });
 
+  // oxlint-disable-next-line jest/expect-expect
   it('overrides bulk overrides with `null` from props', () => {
     render(
       <QueryBuilder

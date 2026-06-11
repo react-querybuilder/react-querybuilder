@@ -18,6 +18,10 @@ it('handles arrays and objects', () => {
   });
 });
 
+it('handles non-string values that normalize to empty', () => {
+  expect(mergeClassnames({ rule: [] }, { rule: {} })).toEqual(defaultControlClassnames);
+});
+
 it('handles multiple objects and declaration types', () => {
   expect(
     mergeClassnames(

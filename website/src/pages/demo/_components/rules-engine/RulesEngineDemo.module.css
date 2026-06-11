@@ -32,19 +32,6 @@
   padding: 1rem;
 }
 
-.consequentParams {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: flex-end;
-}
-
-.paramField {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
 .resultsTable {
   width: 100%;
   display: table;

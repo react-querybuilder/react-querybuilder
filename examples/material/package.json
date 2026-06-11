@@ -13,9 +13,9 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^6",
+    "@vitejs/plugin-react": "^5",
     "typescript": "^6",
-    "vite": "^8"
+    "vite": "^7"
   },
   "name": "react-querybuilder-material-example",
   "private": true,

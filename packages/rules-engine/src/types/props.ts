@@ -1,5 +1,4 @@
 import type {
-  BaseOption,
   BaseTranslation,
   BaseTranslationWithLabel,
   Classname,
@@ -13,10 +12,16 @@ import type {
 import * as React from 'react';
 import type { QueryBuilderProps } from 'react-querybuilder';
 import type { Except } from 'type-fest';
-import type { ActionElementREProps, ValueSelectorREProps } from '../components';
+import type {
+  ActionElementREProps,
+  ShiftActionsREProps,
+  ValueSelectorREProps,
+} from '../components';
 import type { EvaluationMode } from './export';
 import type {
   Consequent,
+  ConsequentTypeOption,
+  FullConsequentTypeOption,
   REConditionAny,
   REConditionCascade,
   RulesEngine,
@@ -33,11 +38,12 @@ export interface SchemaRE {
   reId: string;
   components: ComponentsRE;
   classnames: ClassnamesRE;
-  consequentTypes: FullOptionList<BaseOption>;
+  consequentTypes: FullOptionList<FullConsequentTypeOption>;
   autoSelectConsequentType: boolean;
   suppressStandardClassnames: boolean;
   allowDefaultConsequents: boolean;
   allowNestedConditions: boolean;
+  showShiftActions: boolean;
   evaluationMode: EvaluationMode;
   translations: TranslationsFullRE;
   queryBuilderProps?: Except<
@@ -48,13 +54,19 @@ export interface SchemaRE {
   dispatchRulesEngine: (re: RulesEngineAny) => void;
   addCondition: (parentConditionPath: Path, condition?: REConditionAny) => void;
   removeCondition: (conditionPath: Path) => void;
+  moveCondition: (conditionPath: Path, direction: 'up' | 'down') => void;
   updateCondition: (conditionPath: Path, property: string, value: unknown) => void;
   defaultConsequentType: FullOption;
   getConsequentTypes: (
     conditionPath: Path,
     antecedent: RuleGroupTypeAny,
     context?: unknown
-  ) => FullOptionList<BaseOption>;
+  ) => FullOptionList<FullConsequentTypeOption>;
+  getDefaultConsequentType: (
+    conditionPath: Path,
+    antecedent: RuleGroupTypeAny,
+    context?: unknown
+  ) => string;
 }
 
 /**
@@ -80,6 +92,7 @@ export interface ComponentsRE {
   addConsequent: React.ComponentType<ActionElementREProps>;
   removeCondition: React.ComponentType<ActionElementREProps>;
   removeConsequent: React.ComponentType<ActionElementREProps>;
+  shiftActions: React.ComponentType<ShiftActionsREProps>;
   consequentSelector: React.ComponentType<ValueSelectorREProps>;
   valueSelector: React.ComponentType<ValueSelectorREProps>;
 }
@@ -94,6 +107,8 @@ export interface ClassnamesRE {
   rulesEngineBuilder: Classname;
   /** Classes applied to the rules engine header. */
   rulesEngineHeader: Classname;
+  /** Classes applied to the rules engine body. */
+  rulesEngineBody: Classname;
   /** Classes applied to all block labels ("If", "Else", etc.). */
   blockLabel: Classname;
   /** Classes applied to all "If" block labels (cascade mode initial condition). */
@@ -118,10 +133,14 @@ export interface ClassnamesRE {
   consequentBuilderStandalone: Classname;
   /** Classes applied to condition builders ("if"/"else if" sections). */
   conditionBuilder: Classname;
+  /** Classes applied to condition builder bodies ("if"/"else if" content). */
+  conditionBuilderBody: Classname;
   /** Classes applied to condition builder headers ("if"/"else if" labels and controls). */
   conditionBuilderHeader: Classname;
   /** Classes applied to the evaluation mode toggle control. */
   evaluationMode: Classname;
+  /** Classes applied to the shift up/down action container in condition headers. */
+  shiftActions: Classname;
 }
 
 /**
@@ -142,6 +161,8 @@ export interface TranslationsRE {
   addDefaultConsequent: BaseTranslationWithLabel<React.ReactNode>;
   removeCondition: BaseTranslationWithLabel<React.ReactNode>;
   removeConsequent: BaseTranslationWithLabel<React.ReactNode>;
+  shiftActionUp: BaseTranslationWithLabel<React.ReactNode>;
+  shiftActionDown: BaseTranslationWithLabel<React.ReactNode>;
   evaluationMode: BaseTranslation;
   evaluationModeCascade: BaseTranslationWithLabel<React.ReactNode>;
   evaluationModeCumulative: BaseTranslationWithLabel<React.ReactNode>;
@@ -164,12 +185,12 @@ export interface RulesEngineProps {
   rulesEngine?: RulesEngine;
   defaultRulesEngine?: RulesEngine;
   onRulesEngineChange?: (re: RulesEngine) => void;
-  consequentTypes?: FlexibleOptionList<BaseOption>;
+  consequentTypes?: FlexibleOptionList<ConsequentTypeOption>;
   getConsequentTypes?: (
     conditionPath: Path,
     antecedent: RuleGroupTypeAny,
     context?: unknown
-  ) => FlexibleOptionListProp<BaseOption> | null;
+  ) => FlexibleOptionListProp<ConsequentTypeOption> | null;
   onAddCondition?: (
     condition: REConditionAny,
     parentConditionPath: Path,
@@ -180,11 +201,29 @@ export interface RulesEngineProps {
     conditionPath: Path,
     rulesEngine: RulesEngineAny
   ) => REConditionAny | boolean;
+  /**
+   * This callback is invoked before a condition is shifted up or down. Return `true` to allow
+   * the shift, `false` to cancel it, or a new rules engine object which will become the new state.
+   */
+  onMoveCondition?: (
+    condition: REConditionAny,
+    fromPath: Path,
+    direction: 'up' | 'down',
+    rulesEngine: RulesEngineAny,
+    nextRulesEngine: RulesEngineAny
+  ) => RulesEngineAny | boolean;
   autoSelectConsequentType?: boolean;
   suppressStandardClassnames?: boolean;
   allowDefaultConsequents?: boolean;
   allowNestedConditions?: boolean;
+  showShiftActions?: boolean;
+  /**
+   * When `true`, newly added conditions are seeded with a consequent using the default
+   * consequent type for that condition.
+   */
+  addConsequentToNewConditions?: boolean;
   enableMountRulesEngineChange?: boolean;
+  showBranches?: boolean;
   components?: Partial<ComponentsRE>;
   classnames?: Partial<ClassnamesRE>;
   translations?: Partial<TranslationsRE>;
@@ -213,7 +252,7 @@ export interface RulesEngineBuilderHeaderProps {
 }
 
 /**
- * Props for {@link RulesEngineConditionCascade}.
+ * Props for {@link ConditionCascade}.
  *
  * @group Props
  */
@@ -225,7 +264,7 @@ export interface ConditionCascadeProps<RG extends RuleGroupTypeAny> {
 }
 
 /**
- * Props for {@link RulesEngineConditionBuilder}.
+ * Props for {@link ConditionBuilder}.
  *
  * @group Props
  */
@@ -233,10 +272,12 @@ export interface ConditionProps {
   schema: SchemaRE;
   conditionPath: Path;
   condition: REConditionAny;
-  consequentTypes?: FullOptionList<BaseOption>;
+  consequentTypes?: FullOptionList<FullConsequentTypeOption>;
   isOnlyCondition: boolean;
   // onConditionChange: (condition: REConditionAny) => void;
   autoSelectConsequentType?: boolean;
+  shiftUpDisabled?: boolean;
+  shiftDownDisabled?: boolean;
 }
 
 /**
@@ -247,7 +288,7 @@ export interface ConditionProps {
 export interface ConsequentProps {
   schema: SchemaRE;
   conditionPath: Path;
-  consequentTypes?: FullOptionList<BaseOption>;
+  consequentTypes?: FullOptionList<FullConsequentTypeOption>;
   consequent: Consequent;
   standalone?: boolean;
   onConsequentChange: (consequent?: Consequent) => void;

@@ -5,7 +5,6 @@ import type {
   RuleGroupTypeAny,
 } from '@react-querybuilder/core';
 import {
-  defaultControlClassnames,
   defaultTranslations,
   mergeAnyTranslation,
   mergeClassnames,
@@ -89,13 +88,10 @@ export const useMergedContext = <
     : (props.enableDragAndDrop ?? (rqbContext.enableDragAndDrop as boolean));
 
   const cc = useMemo(
-    () =>
-      mergeClassnames(
-        finalize ? Object.assign({}, defaultControlClassnames) : emptyObject,
-        rqbContext.controlClassnames,
-        props.controlClassnames
-      ),
-    [rqbContext.controlClassnames, props.controlClassnames, finalize]
+    // Classname defaults are all empty strings, so a base/defaults argument
+    // contributes nothing to the merge; merge context and props directly.
+    () => mergeClassnames(rqbContext.controlClassnames, props.controlClassnames),
+    [rqbContext.controlClassnames, props.controlClassnames]
   );
 
   const controlClassnames = useMemo(

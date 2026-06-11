@@ -12,7 +12,7 @@ type QueryBuilderPropsStandard = QueryBuilderProps<
 >;
 
 /**
- * Default header component for {@link RulesEngineConditionBuilder}.
+ * Default header component for {@link ConditionBuilder}.
  *
  */
 export const ConditionBuilderHeader: React.MemoExoticComponent<
@@ -26,6 +26,9 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
       updateCondition,
       allowNestedConditions,
       removeCondition,
+      moveCondition,
+      showShiftActions,
+      getDefaultConsequentType,
       evaluationMode,
       classnames: {
         conditionBuilderHeader,
@@ -33,11 +36,13 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
         blockLabelIf,
         blockLabelIfElse,
         blockLabelWhen,
+        shiftActions,
       },
       components: {
         addCondition: AddCondition,
         addConsequent: AddConsequent,
         removeCondition: RemoveCondition,
+        shiftActions: ShiftActions,
       },
       translations,
       suppressStandardClassnames,
@@ -93,19 +98,68 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
   const ensureConsequent = React.useCallback(() => {
     if (!consequent)
       updateCondition(conditionPath, 'consequent', {
-        type: props.schema.defaultConsequentType.value,
+        type: getDefaultConsequentType(conditionPath, props.condition.antecedent),
       });
-  }, [conditionPath, consequent, props.schema.defaultConsequentType.value, updateCondition]);
+  }, [
+    conditionPath,
+    consequent,
+    getDefaultConsequentType,
+    props.condition.antecedent,
+    updateCondition,
+  ]);
 
   const removeThisCondition = React.useCallback(() => {
     removeCondition(conditionPath);
   }, [conditionPath, removeCondition]);
+
+  const shiftConditionUp = React.useCallback(() => {
+    moveCondition(conditionPath, 'up');
+  }, [conditionPath, moveCondition]);
+
+  const shiftConditionDown = React.useCallback(() => {
+    moveCondition(conditionPath, 'down');
+  }, [conditionPath, moveCondition]);
+
+  const shiftActionsClassName = React.useMemo(
+    () => clsx(suppressStandardClassnames || standardClassnamesRE.shiftActions, shiftActions),
+    [shiftActions, suppressStandardClassnames]
+  );
+
+  const shiftActionsLabels = React.useMemo(
+    () => ({
+      shiftUp: translations.shiftActionUp.label,
+      shiftDown: translations.shiftActionDown.label,
+    }),
+    [translations.shiftActionUp.label, translations.shiftActionDown.label]
+  );
+
+  const shiftActionsTitles = React.useMemo(
+    () => ({
+      shiftUp: translations.shiftActionUp.title,
+      shiftDown: translations.shiftActionDown.title,
+    }),
+    [translations.shiftActionUp.title, translations.shiftActionDown.title]
+  );
 
   return (
     <div className={wrapperClassName}>
       <div className={labelClassName} title={blockLabelTitle}>
         {blockLabelLabel}
       </div>
+      {showShiftActions && (
+        <ShiftActions
+          schema={props.schema}
+          path={conditionPath}
+          level={conditionPath.length}
+          className={shiftActionsClassName}
+          labels={shiftActionsLabels}
+          titles={shiftActionsTitles}
+          shiftUp={shiftConditionUp}
+          shiftDown={shiftConditionDown}
+          shiftUpDisabled={props.shiftUpDisabled}
+          shiftDownDisabled={props.shiftDownDisabled}
+        />
+      )}
       {allowNestedConditions && (
         <AddCondition
           schema={props.schema}
@@ -138,16 +192,18 @@ export const ConditionBuilderHeader: React.MemoExoticComponent<
 });
 
 /**
- * Default body component for {@link RulesEngineConditionBuilder}.
+ * Default body component for {@link ConditionBuilder}.
  * @group Components
  */
-export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
+export const ConditionBuilderBody: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element
-> = React.memo(function RulesEngineConditionBuilderBody(props: ConditionProps): React.JSX.Element {
+> = React.memo(function ConditionBuilderBody(props: ConditionProps): React.JSX.Element {
   const {
     conditionPath,
     schema: {
       updateCondition,
+      classnames: { conditionBuilderBody },
+      suppressStandardClassnames,
       components: {
         consequentBuilder: ConsequentBuilder,
         conditionBuilderCascade: ConditionCascade,
@@ -155,6 +211,14 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
       },
     },
   } = props;
+  const className = React.useMemo(
+    () =>
+      clsx(
+        suppressStandardClassnames || standardClassnamesRE.conditionBuilderBody,
+        conditionBuilderBody
+      ),
+    [conditionBuilderBody, suppressStandardClassnames]
+  );
   const onConsequentChange = React.useCallback(
     (consequent?: Consequent) => updateCondition(conditionPath, 'consequent', consequent),
     [conditionPath, updateCondition]
@@ -170,7 +234,7 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
   );
 
   return (
-    <React.Fragment>
+    <div className={className}>
       <QueryBuilder
         {...(props.schema.queryBuilderProps as QueryBuilderPropsStandard)}
         defaultQuery={props.condition.antecedent as RuleGroupType}
@@ -194,7 +258,7 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
           schema={props.schema}
         />
       )}
-    </React.Fragment>
+    </div>
   );
 });
 
@@ -203,9 +267,9 @@ export const RulesEngineConditionBuilderBody: React.MemoExoticComponent<
  *
  * @group Components
  */
-export const RulesEngineConditionBuilder: React.MemoExoticComponent<
+export const ConditionBuilder: React.MemoExoticComponent<
   (props: ConditionProps) => React.JSX.Element
-> = React.memo(function RulesEngineConditionBuilder(props: ConditionProps): React.JSX.Element {
+> = React.memo(function ConditionBuilder(props: ConditionProps): React.JSX.Element {
   const {
     schema: {
       classnames: { conditionBuilder },

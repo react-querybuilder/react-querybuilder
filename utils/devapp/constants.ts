@@ -6,6 +6,7 @@ import type {
   RuleType,
 } from '@react-querybuilder/core';
 import { convertToIC, defaultOperators, generateID } from '@react-querybuilder/core';
+import type { RulesEngine } from '@react-querybuilder/rules-engine';
 import { musicalInstruments } from './musicalInstruments';
 import type { DemoOption, DemoOptions, HttpsURL } from './types';
 
@@ -277,6 +278,9 @@ export const fields: Field[] = [
 
 export const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
 export const emptyQueryIC: RuleGroupTypeIC = convertToIC(emptyQuery);
+export const emptyRulesEngine: RulesEngine = {
+  conditions: [{ antecedent: { combinator: 'and', rules: [] } }],
+};
 
 export const initialQuery: RuleGroupType = {
   id: generateID(),
