@@ -9,12 +9,14 @@ import type { ShiftActionsProps } from '../types';
 export const ShiftActions = (props: ShiftActionsProps): React.JSX.Element => (
   <div data-testid={props.testID} className={props.className}>
     <button
+      type="button"
       disabled={props.disabled || props.shiftUpDisabled}
       onClick={props.shiftUp}
       title={props.titles?.shiftUp}>
       {props.labels?.shiftUp}
     </button>
     <button
+      type="button"
       disabled={props.disabled || props.shiftDownDisabled}
       onClick={props.shiftDown}
       title={props.titles?.shiftDown}>
