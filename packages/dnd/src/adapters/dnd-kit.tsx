@@ -606,6 +606,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     );
 
     // Set ARIA attributes on drag handle
+    // TODO: Spread these as JSX props instead of imperitive DOM manipulation
     useEffect(() => {
       const node = activatorNodeRef.current;
       if (!node || !attributes) return;
@@ -731,6 +732,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     );
 
     // Set ARIA attributes on drag handle
+    // TODO: Spread these as JSX props instead of imperitive DOM manipulation
     useEffect(() => {
       const node = activatorNodeRef.current;
       if (!node || !attributes || isDragDisabled) return;
