@@ -59,11 +59,10 @@ export function useAsyncOptionList<PropsType extends VersatileSelectorProps | Va
 
   const options = cached?.data ?? optionsProp ?? valuesProp;
 
-  const isLoading =
-    params.isLoading ||
-    useRQB_INTERNAL_QueryBuilderSelector(s =>
-      asyncOptionListsSlice.selectors.selectIsLoadingByKey(s, cacheKey)
-    );
+  const isLoadingFromState = useRQB_INTERNAL_QueryBuilderSelector(s =>
+    asyncOptionListsSlice.selectors.selectIsLoadingByKey(s, cacheKey)
+  );
+  const isLoading = params.isLoading || isLoadingFromState;
 
   const errors = useRQB_INTERNAL_QueryBuilderSelector(s =>
     asyncOptionListsSlice.selectors.selectErrorByKey(s, cacheKey)

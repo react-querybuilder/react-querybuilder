@@ -305,11 +305,8 @@ export const useRulesEngineBuilder = <RG extends RuleGroupTypeAny = RuleGroupTyp
     }
   }, [rulesEngineProp, reId, storeRulesEngine, queryBuilderDispatch]);
 
-  const independentCombinators = useMemo(
-    () => isRuleGroupTypeIC(rootRE.conditions[0]?.antecedent),
-    // oxlint-disable-next-line exhaustive-deps
-    [rootRE.conditions[0]?.antecedent]
-  );
+  const antecedent1 = rootRE.conditions[0]?.antecedent;
+  const independentCombinators = useMemo(() => isRuleGroupTypeIC(antecedent1), [antecedent1]);
 
   const hasRunMountRulesEngineChange = useRef(false);
   useEffect(() => {

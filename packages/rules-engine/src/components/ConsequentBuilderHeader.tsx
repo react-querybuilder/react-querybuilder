@@ -66,15 +66,11 @@ export const ConsequentBuilderHeader: React.MemoExoticComponent<
 
   const removeConsequent = React.useCallback(() => onConsequentChange(), [onConsequentChange]);
 
-  const { label, title } = React.useMemo(
-    () =>
-      standalone
-        ? isCumulative
-          ? translations.blockLabelAlways
-          : translations.blockLabelElse
-        : translations.blockLabelThen,
-    [isCumulative, standalone, translations]
-  );
+  const { label, title } = standalone
+    ? isCumulative
+      ? translations.blockLabelAlways
+      : translations.blockLabelElse
+    : translations.blockLabelThen;
 
   return (
     <div className={wrapperClassName}>
