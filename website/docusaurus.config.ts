@@ -117,6 +117,20 @@ const config: Config = {
             expandObjects: true,
             expandParameters: true,
             strikeDeprecatedPageTitles: true,
+            // Converter options (excludeExternals/externalPattern) only apply per-package via
+            // packageOptions in packages mode; top-level placement is silently ignored.
+            packageOptions: {
+              excludeExternals: true,
+              externalPattern: [
+                '**/@types/react/**',
+                '**/styled-system/generated/system.gen.d.ts',
+                '**/styled-system/generated/conditions.gen.d.ts',
+                '**/@mui/material/ButtonBase/ButtonBase.d.mts',
+                '**/@mantine/core/lib/core/Box/**',
+                '**/@mantine/core/lib/core/styles-api/styles-api.types.d.ts',
+                '**/primereact/tooltip/tooltipoptions.d.ts',
+              ],
+            },
             plugin: ['typedoc-plugin-frontmatter', './api-gitkeep.mjs'],
           } satisfies Partial<DocusaurusPluginTypedocOptions & TypeDocOptions>,
         ],
