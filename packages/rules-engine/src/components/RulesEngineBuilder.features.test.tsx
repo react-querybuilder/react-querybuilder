@@ -50,8 +50,8 @@ describe('shift actions', () => {
 
   it('disables shift-up on the first and shift-down on the last condition', () => {
     renderRE({ rulesEngine: reTwo(), consequentTypes: twoTypes, showShiftActions: true });
-    const ups = screen.getAllByTitle('Shift condition up') as HTMLButtonElement[];
-    const downs = screen.getAllByTitle('Shift condition down') as HTMLButtonElement[];
+    const ups = screen.getAllByTitle<HTMLButtonElement>('Shift condition up');
+    const downs = screen.getAllByTitle<HTMLButtonElement>('Shift condition down');
     expect(ups[0].disabled).toBe(true);
     expect(ups[1].disabled).toBe(false);
     expect(downs[0].disabled).toBe(false);
