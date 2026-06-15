@@ -47,6 +47,7 @@ import type {
 import type {
   ComponentType,
   ForwardRefExoticComponent,
+  HTMLAttributes,
   MouseEvent as ReactMouseEvent,
   ReactNode,
   Ref,
@@ -352,6 +353,13 @@ export interface ShiftActionsProps extends CommonSubComponentProps {
 export interface DragHandleProps extends CommonSubComponentProps {
   label?: ReactNode;
   ruleOrGroup: RuleGroupTypeAny | RuleType;
+  /**
+   * Props to spread onto the drag handle element, supplied by the active
+   * drag-and-drop adapter (e.g. ARIA attributes and sensor event listeners).
+   * Custom `dragHandle` components should spread these onto the same element
+   * that receives the forwarded `ref`.
+   */
+  dragHandleProps?: HTMLAttributes<HTMLElement>;
 }
 
 /**
@@ -650,6 +658,8 @@ export interface UseRuleGroupDnD {
   previewRef: Ref<HTMLDivElement>;
   dragRef: Ref<HTMLSpanElement>;
   dropRef: Ref<HTMLDivElement>;
+  /** Props to spread onto the drag handle element (ARIA attributes, listeners). */
+  dragHandleProps?: HTMLAttributes<HTMLElement>;
   /** `"move"` by default; `"copy"` if the modifier key is pressed. */
   dropEffect?: DropEffect;
   /** True if the dragged and hovered items should form a new group. */
@@ -689,6 +699,8 @@ export interface UseRuleDnD {
   dropMonitorId: string | symbol;
   dragRef: Ref<HTMLSpanElement>;
   dndRef: Ref<HTMLDivElement>;
+  /** Props to spread onto the drag handle element (ARIA attributes, listeners). */
+  dragHandleProps?: HTMLAttributes<HTMLElement>;
   /** `"move"` by default; `"copy"` if the modifier key is pressed. */
   dropEffect?: DropEffect;
   /** True if the dragged and hovered items should form a new group. */

@@ -1,4 +1,4 @@
-import type { Ref } from 'react';
+import type { HTMLAttributes, Ref } from 'react';
 import type {
   DropEffect,
   Path,
@@ -73,6 +73,12 @@ export interface AdapterUseRuleDnDResult {
   dropMonitorId: string | symbol;
   dragRef: Ref<HTMLSpanElement>;
   dndRef: Ref<HTMLDivElement>;
+  /**
+   * Props to spread onto the drag handle element (e.g. ARIA attributes and
+   * sensor event listeners). Applied as JSX props rather than imperative DOM
+   * manipulation.
+   */
+  dragHandleProps?: HTMLAttributes<HTMLElement>;
   dropEffect?: DropEffect;
   groupItems?: boolean;
   dropNotAllowed?: boolean;
@@ -90,6 +96,12 @@ export interface AdapterUseRuleGroupDnDResult {
   previewRef: Ref<HTMLDivElement>;
   dragRef: Ref<HTMLSpanElement>;
   dropRef: Ref<HTMLDivElement>;
+  /**
+   * Props to spread onto the drag handle element (e.g. ARIA attributes and
+   * sensor event listeners). Applied as JSX props rather than imperative DOM
+   * manipulation.
+   */
+  dragHandleProps?: HTMLAttributes<HTMLElement>;
   dropEffect?: DropEffect;
   groupItems?: boolean;
   dropNotAllowed?: boolean;

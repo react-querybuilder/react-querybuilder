@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- New `dragHandleProps` prop on the `DragHandle` component. The `@dnd-kit` adapter uses it to pass drag-handle ARIA attributes and sensor listeners through as JSX props; its `useRuleDnD`/`useRuleGroupDnD` hooks now return a `dragHandleProps` object.
+
+### Changed
+
+- The `@dnd-kit` adapter now applies drag-handle ARIA attributes and sensor listeners as JSX props (via `dragHandleProps`) instead of through imperative DOM manipulation. Custom `dragHandle` components used with the dnd-kit adapter must now spread `dragHandleProps` onto their root element to remain draggable. Disabled rule groups now expose drag-handle ARIA attributes (without activator listeners).
 
 ## [v8.19.1] - 2026-06-10
 

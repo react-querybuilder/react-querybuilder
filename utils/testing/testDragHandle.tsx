@@ -30,5 +30,10 @@ export const testDragHandle = (
       render(<DragHandle {...props} className="foo" />);
       expect(screen.getByTitle(title)).toHaveClass('foo');
     });
+
+    it('should spread dragHandleProps onto the handle', () => {
+      render(<DragHandle {...props} dragHandleProps={{ 'aria-roledescription': 'draggable' }} />);
+      expect(screen.getByTitle(title)).toHaveAttribute('aria-roledescription', 'draggable');
+    });
   });
 };
