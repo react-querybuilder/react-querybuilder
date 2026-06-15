@@ -8,14 +8,7 @@ import type {
   useSensors as useSensorsImport,
 } from '@dnd-kit/core';
 import * as React from 'react';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type {
   DndDropTargetType,
   DraggedItem,
