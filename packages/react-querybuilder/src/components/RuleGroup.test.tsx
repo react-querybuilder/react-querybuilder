@@ -532,6 +532,13 @@ describe('dynamic classNames', () => {
       'custom-combinatorBased-class'
     );
   });
+
+  // Covers dnd-only branches normally exercised by @react-querybuilder/dnd
+  it('adds dnd classNames to the header for copy/disallowed states', () => {
+    render(<RuleGroup {...getRuleGroupProps()} isOver dropEffect="copy" dropNotAllowed />);
+    const header = screen.getByTestId(TestID.ruleGroup).querySelector(`.${sc.header}`)!;
+    expect(header).toHaveClass(sc.dndOver, sc.dndCopy, sc.dndDropNotAllowed);
+  });
 });
 
 describe('dnd warnings', () => {

@@ -8,15 +8,7 @@ import type {
   useSensors as useSensorsImport,
 } from '@dnd-kit/core';
 import * as React from 'react';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type {
   DndDropTargetType,
   DraggedItem,
@@ -91,41 +83,6 @@ const getDropId = (
   path: number[],
   qbId: string
 ): string => `drop-${type}-${qbId}-${path.join('_')}`;
-
-/**
- * Attaches dnd-kit's React synthetic event listeners (e.g. `onPointerDown`)
- * as native DOM event listeners on the given node. This bridges the gap
- * between the ref-based adapter interface and dnd-kit's listener-based API.
- */
-const useNativeListeners = (
-  nodeRef: React.RefObject<HTMLElement | null>,
-  listeners: Record<string, Function> | undefined
-): void => {
-  useEffect(() => {
-    const node = nodeRef.current;
-    if (!node || !listeners) return undefined;
-
-    const nativeHandlers: [string, EventListener][] = [];
-
-    for (const [reactEventName, handler] of Object.entries(listeners)) {
-      const nativeEventName = reactEventName.slice(2).toLowerCase();
-      const nativeHandler: EventListener = e => {
-        // Need to make sure the instance type stays the same, so add property
-        // instead of create new event with nativeEvent property
-        (e as Event & { nativeEvent: Event }).nativeEvent = e;
-        return handler(e);
-      };
-      node.addEventListener(nativeEventName, nativeHandler);
-      nativeHandlers.push([nativeEventName, nativeHandler]);
-    }
-
-    return () => {
-      for (const [name, handler] of nativeHandlers) {
-        node.removeEventListener(name, handler);
-      }
-    };
-  }, [nodeRef, listeners]);
-};
 
 // #endregion
 
@@ -518,7 +475,6 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
 
   const useRuleDnD = (params: DndAdapterRuleDnDParams): AdapterUseRuleDnDResult => {
     const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
-    const activatorNodeRef = useRef<HTMLSpanElement>(null);
     const containerNodeRef = useRef<HTMLDivElement>(null);
 
     const dragId = getDragId('rule', params.path, params.schema.qbId);
@@ -599,26 +555,19 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     // Drag handle ref: activator node
     const dragRef: React.RefCallback<HTMLSpanElement> = useCallback(
       (node: HTMLSpanElement | null) => {
-        activatorNodeRef.current = node;
         setActivatorNodeRef(node);
       },
       [setActivatorNodeRef]
     );
 
-    // Set ARIA attributes on drag handle
-    // TODO: Spread these as JSX props instead of imperitive DOM manipulation
-    useEffect(() => {
-      const node = activatorNodeRef.current;
-      if (!node || !attributes) return;
-      for (const [key, value] of Object.entries(attributes)) {
-        if (value != null) {
-          node.setAttribute(key === 'tabIndex' ? 'tabindex' : key, String(value));
-        }
-      }
-    }, [attributes]);
-
-    // Attach sensor listeners (e.g. onPointerDown) to the drag handle
-    useNativeListeners(activatorNodeRef, listeners);
+    // ARIA attributes and sensor listeners (e.g. onPointerDown) for the drag
+    // handle, spread as JSX props by the consuming component. `listeners` is
+    // `undefined` when dragging is disabled, so a disabled handle still gets
+    // its ARIA attributes (incl. `aria-disabled`) but no activation listeners.
+    const dragHandleProps = useMemo(
+      () => ({ ...attributes, ...listeners }) as React.HTMLAttributes<HTMLElement>,
+      [attributes, listeners]
+    );
 
     return {
       isDragging,
@@ -627,6 +576,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       dropMonitorId: dropId,
       dndRef,
       dragRef,
+      dragHandleProps,
       dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
       groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,
@@ -639,7 +589,6 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
 
   const useRuleGroupDnD = (params: DndAdapterRuleGroupDnDParams): AdapterUseRuleGroupDnDResult => {
     const { activeDragItem, timerCopyMode, timerGroupMode } = useContext(DragStateContext);
-    const activatorNodeRef = useRef<HTMLSpanElement>(null);
 
     const dragId = getDragId('ruleGroup', params.path, params.schema.qbId);
     const dropId = getDropId('ruleGroup', params.path, params.schema.qbId);
@@ -725,26 +674,20 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     // Drag handle ref: activator node
     const dragRef: React.RefCallback<HTMLSpanElement> = useCallback(
       (node: HTMLSpanElement | null) => {
-        activatorNodeRef.current = node;
         setActivatorNodeRef(node);
       },
       [setActivatorNodeRef]
     );
 
-    // Set ARIA attributes on drag handle
-    // TODO: Spread these as JSX props instead of imperitive DOM manipulation
-    useEffect(() => {
-      const node = activatorNodeRef.current;
-      if (!node || !attributes || isDragDisabled) return;
-      for (const [key, value] of Object.entries(attributes)) {
-        if (value != null) {
-          node.setAttribute(key === 'tabIndex' ? 'tabindex' : key, String(value));
-        }
-      }
-    }, [attributes, isDragDisabled]);
-
-    // Attach sensor listeners (e.g. onPointerDown) to the drag handle
-    useNativeListeners(activatorNodeRef, listeners);
+    // ARIA attributes and sensor listeners for the drag handle, spread as JSX
+    // props by the consuming component. Treated identically to rules: dnd-kit
+    // returns `listeners: undefined` when `isDragDisabled`, so a disabled group
+    // handle still gets its ARIA attributes (incl. `aria-disabled`) but no
+    // activation listeners.
+    const dragHandleProps = useMemo(
+      () => ({ ...attributes, ...listeners }) as React.HTMLAttributes<HTMLElement>,
+      [attributes, listeners]
+    );
 
     return {
       isDragging,
@@ -754,6 +697,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       previewRef,
       dragRef,
       dropRef,
+      dragHandleProps,
       dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
       groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,

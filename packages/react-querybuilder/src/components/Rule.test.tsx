@@ -404,6 +404,18 @@ describe('dynamic classNames', () => {
     );
     expect(getRuleClassname).toHaveBeenCalledWith(rule, { fieldData: fieldMap.f1 });
   });
+
+  // Covers dnd-only branches normally exercised by @react-querybuilder/dnd
+  it('adds dnd classNames for dragging/copy/group/disallowed states', () => {
+    render(<Rule {...getProps()} isDragging isOver dropEffect="copy" groupItems dropNotAllowed />);
+    expect(screen.getByTestId(TestID.rule)).toHaveClass(
+      sc.dndDragging,
+      sc.dndOver,
+      sc.dndCopy,
+      sc.dndGroup,
+      sc.dndDropNotAllowed
+    );
+  });
 });
 
 describe('deprecated props', () => {

@@ -19,6 +19,7 @@ export const PrimeDragHandle: React.ForwardRefExoticComponent<
     {
       className,
       title,
+      dragHandleProps,
       // Props that should not be in extraProps
       testID: _testID,
       level: _level,
@@ -37,6 +38,7 @@ export const PrimeDragHandle: React.ForwardRefExoticComponent<
       className={`pi pi-ellipsis-v ${className ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */}`}
       title={title}
       {...extraProps}
+      {...dragHandleProps}
       ref={dragRef}
     />
   )

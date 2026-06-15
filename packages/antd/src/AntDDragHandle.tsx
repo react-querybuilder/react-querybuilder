@@ -22,6 +22,7 @@ export const AntDDragHandle: React.ForwardRefExoticComponent<
     {
       className,
       title,
+      dragHandleProps,
       // Props that should not be in extraProps
       testID: _testID,
       level: _level,
@@ -35,5 +36,13 @@ export const AntDDragHandle: React.ForwardRefExoticComponent<
       ...extraProps
     },
     dragRef
-  ) => <HolderOutlined className={className} title={title} {...extraProps} ref={dragRef} />
+  ) => (
+    <HolderOutlined
+      className={className}
+      title={title}
+      {...extraProps}
+      {...dragHandleProps}
+      ref={dragRef}
+    />
+  )
 );

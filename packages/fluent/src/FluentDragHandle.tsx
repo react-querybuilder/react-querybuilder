@@ -11,10 +11,25 @@ export const FluentDragHandle: React.ForwardRefExoticComponent<
   (DragHandleProps & TextProps) & React.RefAttributes<HTMLSpanElement>
 > = forwardRef<HTMLSpanElement, DragHandleProps & TextProps>(
   (
-    { className, title, label, testID, schema: _schema, ruleOrGroup: _ruleOrGroup, ...otherProps },
+    {
+      className,
+      title,
+      label,
+      testID,
+      dragHandleProps,
+      schema: _schema,
+      ruleOrGroup: _ruleOrGroup,
+      ...otherProps
+    },
     dragRef
   ) => (
-    <Text data-testid={testID} className={className} title={title} {...otherProps} ref={dragRef}>
+    <Text
+      data-testid={testID}
+      className={className}
+      title={title}
+      {...otherProps}
+      {...dragHandleProps}
+      ref={dragRef}>
       {label}
     </Text>
   )
