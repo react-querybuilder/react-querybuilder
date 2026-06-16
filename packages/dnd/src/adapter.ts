@@ -78,7 +78,7 @@ export interface AdapterUseRuleDnDResult {
    * sensor event listeners). Applied as JSX props rather than imperative DOM
    * manipulation.
    */
-  dragHandleProps?: HTMLAttributes<HTMLElement>;
+  dragHandleAttributes?: HTMLAttributes<HTMLElement>;
   dropEffect?: DropEffect;
   groupItems?: boolean;
   dropNotAllowed?: boolean;
@@ -101,7 +101,7 @@ export interface AdapterUseRuleGroupDnDResult {
    * sensor event listeners). Applied as JSX props rather than imperative DOM
    * manipulation.
    */
-  dragHandleProps?: HTMLAttributes<HTMLElement>;
+  dragHandleAttributes?: HTMLAttributes<HTMLElement>;
   dropEffect?: DropEffect;
   groupItems?: boolean;
   dropNotAllowed?: boolean;

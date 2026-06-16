@@ -359,7 +359,7 @@ export interface DragHandleProps extends CommonSubComponentProps {
    * Custom `dragHandle` components should spread these onto the same element
    * that receives the forwarded `ref`.
    */
-  dragHandleProps?: HTMLAttributes<HTMLElement>;
+  dragHandleAttributes?: HTMLAttributes<HTMLElement>;
 }
 
 /**
@@ -659,7 +659,7 @@ export interface UseRuleGroupDnD {
   dragRef: Ref<HTMLSpanElement>;
   dropRef: Ref<HTMLDivElement>;
   /** Props to spread onto the drag handle element (ARIA attributes, listeners). */
-  dragHandleProps?: HTMLAttributes<HTMLElement>;
+  dragHandleAttributes?: HTMLAttributes<HTMLElement>;
   /** `"move"` by default; `"copy"` if the modifier key is pressed. */
   dropEffect?: DropEffect;
   /** True if the dragged and hovered items should form a new group. */
@@ -700,7 +700,7 @@ export interface UseRuleDnD {
   dragRef: Ref<HTMLSpanElement>;
   dndRef: Ref<HTMLDivElement>;
   /** Props to spread onto the drag handle element (ARIA attributes, listeners). */
-  dragHandleProps?: HTMLAttributes<HTMLElement>;
+  dragHandleAttributes?: HTMLAttributes<HTMLElement>;
   /** `"move"` by default; `"copy"` if the modifier key is pressed. */
   dropEffect?: DropEffect;
   /** True if the dragged and hovered items should form a new group. */

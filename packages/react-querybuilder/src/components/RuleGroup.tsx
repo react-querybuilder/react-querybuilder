@@ -190,7 +190,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           title={rg.translations.dragHandle.title}
           label={rg.translations.dragHandle.label}
           className={rg.classNames.dragHandle}
-          dragHandleProps={rg.dragHandleProps}
+          dragHandleAttributes={rg.dragHandleAttributes}
           ruleOrGroup={rg.ruleGroup}
         />
       )}

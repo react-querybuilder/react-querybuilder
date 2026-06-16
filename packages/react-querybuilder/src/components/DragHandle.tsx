@@ -11,7 +11,7 @@ export const DragHandle: React.ForwardRefExoticComponent<
   DragHandleProps & React.RefAttributes<HTMLSpanElement>
 > = forwardRef<HTMLSpanElement, DragHandleProps>((props, dragRef) => (
   <span
-    {...props.dragHandleProps}
+    {...props.dragHandleAttributes}
     data-testid={props.testID}
     ref={dragRef}
     className={props.className}

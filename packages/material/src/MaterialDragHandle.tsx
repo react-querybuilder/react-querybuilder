@@ -35,7 +35,7 @@ export const MaterialDragHandle: React.ForwardRefExoticComponent<
       validation,
       schema,
       ruleOrGroup,
-      dragHandleProps,
+      dragHandleAttributes,
       muiComponents: muiComponentsProp,
       ...otherProps
     },
@@ -58,7 +58,7 @@ export const MaterialDragHandle: React.ForwardRefExoticComponent<
           validation={validation}
           schema={schema}
           ruleOrGroup={ruleOrGroup}
-          dragHandleProps={dragHandleProps}
+          dragHandleAttributes={dragHandleAttributes}
         />
       );
     }
@@ -66,7 +66,7 @@ export const MaterialDragHandle: React.ForwardRefExoticComponent<
     const { DragIndicator } = muiComponents;
 
     return (
-      <span key={key} ref={dragRef} className={className} title={title} {...dragHandleProps}>
+      <span key={key} ref={dragRef} className={className} title={title} {...dragHandleAttributes}>
         <DragIndicator {...otherProps} />
       </span>
     );

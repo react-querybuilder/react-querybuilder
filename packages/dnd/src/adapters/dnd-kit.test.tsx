@@ -821,7 +821,7 @@ describe('createDndKitAdapter', () => {
       const adapter = createDndKitAdapter(mock);
 
       const TestComponent = () => {
-        const { dragRef, dragHandleProps } = adapter.useRuleDnD({
+        const { dragRef, dragHandleAttributes } = adapter.useRuleDnD({
           path: [0],
           disabled: false,
           schema: mockSchema(),
@@ -830,7 +830,7 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        return <span ref={dragRef} data-testid="handle" {...dragHandleProps} />;
+        return <span ref={dragRef} data-testid="handle" {...dragHandleAttributes} />;
       };
 
       render(
@@ -860,7 +860,7 @@ describe('createDndKitAdapter', () => {
       const adapter = createDndKitAdapter(mock);
 
       const TestComponent = () => {
-        const { dragRef, dragHandleProps } = adapter.useRuleGroupDnD({
+        const { dragRef, dragHandleAttributes } = adapter.useRuleGroupDnD({
           path: [1],
           disabled: false,
           schema: mockSchema(),
@@ -869,7 +869,7 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        return <span ref={dragRef} data-testid="handle" {...dragHandleProps} />;
+        return <span ref={dragRef} data-testid="handle" {...dragHandleAttributes} />;
       };
 
       render(
@@ -896,7 +896,7 @@ describe('createDndKitAdapter', () => {
       });
       const adapter = createDndKitAdapter(mock);
 
-      let dragHandleProps: ReturnType<typeof adapter.useRuleGroupDnD>['dragHandleProps'];
+      let dragHandleAttributes: ReturnType<typeof adapter.useRuleGroupDnD>['dragHandleAttributes'];
       const TestComponent = () => {
         const r = adapter.useRuleGroupDnD({
           path: [],
@@ -907,8 +907,8 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        dragHandleProps = r.dragHandleProps;
-        return <span ref={r.dragRef} data-testid="handle" {...r.dragHandleProps} />;
+        dragHandleAttributes = r.dragHandleAttributes;
+        return <span ref={r.dragRef} data-testid="handle" {...r.dragHandleAttributes} />;
       };
 
       render(
@@ -923,7 +923,7 @@ describe('createDndKitAdapter', () => {
       expect(handle.getAttribute('role')).toBe('button');
       expect(handle.getAttribute('aria-disabled')).toBe('true');
       // ...but carries no activation listeners.
-      expect(dragHandleProps).not.toHaveProperty('onPointerDown');
+      expect(dragHandleAttributes).not.toHaveProperty('onPointerDown');
     });
   });
 
@@ -944,7 +944,7 @@ describe('createDndKitAdapter', () => {
       const adapter = createDndKitAdapter(mock);
 
       const TestComponent = () => {
-        const { dragRef, dragHandleProps } = adapter.useRuleDnD({
+        const { dragRef, dragHandleAttributes } = adapter.useRuleDnD({
           path: [0],
           disabled: false,
           schema: mockSchema(),
@@ -953,7 +953,7 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        return <span ref={dragRef} data-testid="handle" {...dragHandleProps} />;
+        return <span ref={dragRef} data-testid="handle" {...dragHandleAttributes} />;
       };
 
       render(
@@ -989,7 +989,7 @@ describe('createDndKitAdapter', () => {
       const adapter = createDndKitAdapter(mock);
 
       const TestComponent = () => {
-        const { dragRef, dragHandleProps } = adapter.useRuleGroupDnD({
+        const { dragRef, dragHandleAttributes } = adapter.useRuleGroupDnD({
           path: [1],
           disabled: false,
           schema: mockSchema(),
@@ -998,7 +998,7 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        return <span ref={dragRef} data-testid="handle" {...dragHandleProps} />;
+        return <span ref={dragRef} data-testid="handle" {...dragHandleAttributes} />;
       };
 
       render(
@@ -1535,7 +1535,7 @@ describe('createDndKitAdapter', () => {
       const adapter = createDndKitAdapter(mock);
 
       const TestComponent = () => {
-        const { dragRef, dragHandleProps } = adapter.useRuleDnD({
+        const { dragRef, dragHandleAttributes } = adapter.useRuleDnD({
           path: [0],
           disabled: false,
           schema: mockSchema(),
@@ -1544,7 +1544,7 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        return <span ref={dragRef} data-testid="handle" {...dragHandleProps} />;
+        return <span ref={dragRef} data-testid="handle" {...dragHandleAttributes} />;
       };
 
       render(
@@ -1573,7 +1573,7 @@ describe('createDndKitAdapter', () => {
       const adapter = createDndKitAdapter(mock);
 
       const TestComponent = () => {
-        const { dragRef, dragHandleProps } = adapter.useRuleGroupDnD({
+        const { dragRef, dragHandleAttributes } = adapter.useRuleGroupDnD({
           path: [1],
           disabled: false,
           schema: mockSchema(),
@@ -1582,7 +1582,7 @@ describe('createDndKitAdapter', () => {
           copyModeModifierKey: 'alt',
           groupModeModifierKey: 'ctrl',
         });
-        return <span ref={dragRef} data-testid="handle" {...dragHandleProps} />;
+        return <span ref={dragRef} data-testid="handle" {...dragHandleAttributes} />;
       };
 
       render(

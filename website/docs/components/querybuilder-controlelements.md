@@ -228,19 +228,19 @@ Provides a draggable handle for reordering rules and groups. Defaults to [`DragH
 
 Receives the forwarded `ref` and the following props per the `DragHandleProps` interface:
 
-| Prop              | Type                                      | Description                                                                                                                                                                   |
-| ----------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`           | `ReactNode`                               | `translations.dragHandle.label`, e.g. "⁞⁞"                                                                                                                                    |
-| `title`           | `string`                                  | `translations.dragHandle.title`, e.g. "Drag handle"                                                                                                                           |
-| `className`       | `string`                                  | CSS `classNames` to be applied                                                                                                                                                |
-| `level`           | `number`                                  | The `level` of this rule/group                                                                                                                                                |
-| `context`         | `any`                                     | Container for custom props that are passed to all components                                                                                                                  |
-| `validation`      | <code>boolean \| ValidationResult</code>  | Validation result of this rule/group                                                                                                                                          |
-| `disabled`        | `boolean`                                 | Whether this rule/group is disabled/locked                                                                                                                                    |
-| `path`            | `Path`                                    | [Path](../tips/path) of this rule/group                                                                                                                                       |
-| `schema`          | `Schema`                                  | Query [schema](../typescript#miscellaneous)                                                                                                                                   |
-| `ruleOrGroup`     | <code>RuleGroupTypeAny \| RuleType</code> | This group or rule, depending on the parent component                                                                                                                         |
-| `dragHandleProps` | `HTMLAttributes<HTMLElement>`             | Props (e.g. ARIA attributes and drag event listeners) supplied by the active [drag-and-drop adapter](../dnd); spread these onto the element that receives the forwarded `ref` |
+| Prop                   | Type                                      | Description                                                                                                                                                                   |
+| ---------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`                | `ReactNode`                               | `translations.dragHandle.label`, e.g. "⁞⁞"                                                                                                                                    |
+| `title`                | `string`                                  | `translations.dragHandle.title`, e.g. "Drag handle"                                                                                                                           |
+| `className`            | `string`                                  | CSS `classNames` to be applied                                                                                                                                                |
+| `level`                | `number`                                  | The `level` of this rule/group                                                                                                                                                |
+| `context`              | `any`                                     | Container for custom props that are passed to all components                                                                                                                  |
+| `validation`           | <code>boolean \| ValidationResult</code>  | Validation result of this rule/group                                                                                                                                          |
+| `disabled`             | `boolean`                                 | Whether this rule/group is disabled/locked                                                                                                                                    |
+| `path`                 | `Path`                                    | [Path](../tips/path) of this rule/group                                                                                                                                       |
+| `schema`               | `Schema`                                  | Query [schema](../typescript#miscellaneous)                                                                                                                                   |
+| `ruleOrGroup`          | <code>RuleGroupTypeAny \| RuleType</code> | This group or rule, depending on the parent component                                                                                                                         |
+| `dragHandleAttributes` | `HTMLAttributes<HTMLElement>`             | Props (e.g. ARIA attributes and drag event listeners) supplied by the active [drag-and-drop adapter](../dnd); spread these onto the element that receives the forwarded `ref` |
 
 </details>
 

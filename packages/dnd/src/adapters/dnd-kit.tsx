@@ -564,7 +564,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     // handle, spread as JSX props by the consuming component. `listeners` is
     // `undefined` when dragging is disabled, so a disabled handle still gets
     // its ARIA attributes (incl. `aria-disabled`) but no activation listeners.
-    const dragHandleProps = useMemo(
+    const dragHandleAttributes = useMemo(
       () => ({ ...attributes, ...listeners }) as React.HTMLAttributes<HTMLElement>,
       [attributes, listeners]
     );
@@ -576,7 +576,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       dropMonitorId: dropId,
       dndRef,
       dragRef,
-      dragHandleProps,
+      dragHandleAttributes,
       dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
       groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,
@@ -684,7 +684,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     // returns `listeners: undefined` when `isDragDisabled`, so a disabled group
     // handle still gets its ARIA attributes (incl. `aria-disabled`) but no
     // activation listeners.
-    const dragHandleProps = useMemo(
+    const dragHandleAttributes = useMemo(
       () => ({ ...attributes, ...listeners }) as React.HTMLAttributes<HTMLElement>,
       [attributes, listeners]
     );
@@ -697,7 +697,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
       previewRef,
       dragRef,
       dropRef,
-      dragHandleProps,
+      dragHandleAttributes,
       dropEffect: timerCopyMode || isHotkeyPressed(params.copyModeModifierKey) ? 'copy' : 'move',
       groupItems: timerGroupMode || isHotkeyPressed(params.groupModeModifierKey),
       dropNotAllowed,

@@ -208,7 +208,7 @@ export const RuleComponents: React.MemoExoticComponent<
           title={r.translations.dragHandle.title}
           label={r.translations.dragHandle.label}
           className={r.classNames.dragHandle}
-          dragHandleProps={r.dragHandleProps}
+          dragHandleAttributes={r.dragHandleAttributes}
           ruleOrGroup={r.rule}
         />
       )}
