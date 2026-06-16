@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New opt-in `queryBuilder-responsive` class, now included in the default stylesheet. Apply it via the `controlClassnames` prop (or to any ancestor element) to let rule and group header rows wrap onto multiple lines—with a hanging indent for the wrapped content—instead of overflowing when horizontal space runs short. No media or container queries are involved, so the layout reflows based on the actual available width, even for deeply nested groups. These styles are intentionally minimal and only lightly opinionated; think of them as a convenient starting point for responsive behavior rather than a canonical or prescribed approach, and feel free to override or replace them to suit your design.
 - New `dragHandleAttributes` prop on the `DragHandle` component. The `@dnd-kit` adapter uses it to pass drag-handle ARIA attributes and sensor listeners through as JSX props; its `useRuleDnD`/`useRuleGroupDnD` hooks now return a `dragHandleAttributes` object.
 
 ### Changed

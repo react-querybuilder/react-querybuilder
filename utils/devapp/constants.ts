@@ -32,6 +32,7 @@ export const defaultOptions: DemoOptions = {
   validateQuery: false,
   showBranches: false,
   justifiedLayout: false,
+  responsiveLayout: false,
   showShiftActions: false,
   suppressStandardClassnames: false,
 };
@@ -56,6 +57,7 @@ export const optionOrder: DemoOption[] = [
   'showNotToggle',
   'showBranches',
   'justifiedLayout',
+  'responsiveLayout',
   'suppressStandardClassnames',
   'validateQuery',
 ];
@@ -174,6 +176,12 @@ export const optionsMetadata: Record<
     link: '/docs/styling/overview#justified-layout',
     label: 'Justified layout',
     title: 'Add the `.queryBuilder-justified` class to justify the layout',
+  },
+  responsiveLayout: {
+    link: '/docs/styling/overview#responsive-layout',
+    label: 'Responsive layout',
+    title:
+      'Add the `.queryBuilder-responsive` class to let controls wrap instead of overflowing on narrow screens',
   },
 };
 

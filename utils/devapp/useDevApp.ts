@@ -69,6 +69,7 @@ export const useDevApp = <ExtraOptions extends Record<string, boolean | undefine
         queryBuilder: {
           [standardClassnames.branches]: opts.showBranches,
           [standardClassnames.justified]: opts.justifiedLayout,
+          [standardClassnames.responsive]: opts.responsiveLayout,
         },
       },
     };

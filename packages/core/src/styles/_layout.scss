@@ -243,3 +243,23 @@
   @include justified-auto-margin(rtl);
 }
 /* #endregion */
+
+/* #region Responsive */
+.queryBuilder-responsive {
+  .rule,
+  .ruleGroup-header {
+    flex-wrap: wrap;
+  }
+
+  // Hanging indent: pad the container by one spacing unit and pull the first
+  // child back so line 1 stays flush while wrapped lines are indented.
+  .rule:not(.rule-hasSubQuery),
+  .ruleGroup-header {
+    padding-inline-start: var(--#{$rqb-var-prefix}spacing);
+
+    & > :first-child {
+      margin-inline-start: calc(-1 * var(--#{$rqb-var-prefix}spacing));
+    }
+  }
+}
+/* #endregion */
