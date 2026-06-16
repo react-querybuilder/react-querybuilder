@@ -29,6 +29,8 @@
     "build:bulma": "bun --bun run --filter @react-querybuilder/bulma build",
     "build:chakra": "bun --bun run --filter @react-querybuilder/chakra build",
     "build:core": "bun --bun run --filter @react-querybuilder/core build",
+    "build:core:main": "bun --bun run --filter @react-querybuilder/core build:main",
+    "build:core:css": "bun --bun run --filter @react-querybuilder/core build:css",
     "build:datetime": "bun --bun run --filter @react-querybuilder/datetime build",
     "build:dnd": "bun --bun run --filter @react-querybuilder/dnd build",
     "build:fluent": "bun --bun run --filter @react-querybuilder/fluent build",
