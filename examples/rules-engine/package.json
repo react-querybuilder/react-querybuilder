@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@react-querybuilder/rules-engine": "8.19.1",
+    "@react-querybuilder/rules-engine": "8.20.0",
     "json-rules-engine": "^7.3.1",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.19.1"
+    "react-querybuilder": "8.20.0"
   },
   "description": "React Query Builder Rules Engine Example",
   "devDependencies": {

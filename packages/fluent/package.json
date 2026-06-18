@@ -1,7 +1,7 @@
 {
   "name": "@react-querybuilder/fluent",
   "description": "Custom Fluent UI components for react-querybuilder",
-  "version": "8.19.1",
+  "version": "8.20.0",
   "publishConfig": {
     "access": "public"
   },
@@ -61,7 +61,7 @@
     "dayjs": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-querybuilder": "8.19.1",
+    "react-querybuilder": "8.20.0",
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
@@ -71,6 +71,6 @@
     "@fluentui/react-icons-mdl2": "^1",
     "dayjs": "catalog:peer",
     "react": "catalog:peer",
-    "react-querybuilder": "8.19.1"
+    "react-querybuilder": "8.20.0"
   }
 }
