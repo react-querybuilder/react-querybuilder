@@ -35,6 +35,8 @@ interface RelativeDateTimeSingleValueEditorProps {
   absoluteOperator: string;
   config: ResolvedRelativeDateTimeConfig;
   SelectorComponent: React.ComponentType<ValueSelectorProps>;
+  /** Themed numeric offset input: the inherited (compat) editor when present, else the default. */
+  NumericEditorComponent: React.ComponentType<ValueEditorProps>;
   valueListItemClassName?: string;
   numericSchema: ValueEditorProps['schema'];
 }
@@ -52,14 +54,12 @@ const RelativeDateTimeSingleValueEditor = ({
   absoluteOperator,
   config,
   SelectorComponent,
+  NumericEditorComponent,
   valueListItemClassName,
   numericSchema,
 }: RelativeDateTimeSingleValueEditorProps): React.JSX.Element => {
   const { schema, disabled, title, testID } = baseProps;
   const { modeController, anchors, units, toggleLabels } = config;
-
-  // Themed numeric offset input from the inherited (compat) editor when present.
-  const NumericEditor = useInheritedValueEditor() ?? ValueEditor;
 
   const isRelative = modeController.isRelative({ ...baseProps, value });
   const relValue: RelativeDateTimeValue = isRelativeDateTimeValue(value)
@@ -123,7 +123,7 @@ const RelativeDateTimeSingleValueEditor = ({
             path={dummyPath}
             level={0}
           />
-          <NumericEditor
+          <NumericEditorComponent
             skipHook
             testID={testID}
             inputType="number"
@@ -193,6 +193,9 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
 
   const SelectorComponent = props.selectorComponent ?? schema.controls.valueSelector;
 
+  // Themed numeric offset input from the inherited (compat) editor when present, else default.
+  const NumericEditorComponent = useInheritedValueEditor() ?? ValueEditor;
+
   const config = useRelativeDateTimeConfig();
 
   const numericSchema = useMemo(() => ({ ...schema, parseNumbers: true }), [schema]);
@@ -228,6 +231,7 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
           absoluteOperator="="
           config={config}
           SelectorComponent={SelectorComponent}
+          NumericEditorComponent={NumericEditorComponent}
           valueListItemClassName={valueListItemClassName}
           numericSchema={numericSchema}
         />
@@ -239,6 +243,7 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
           absoluteOperator="="
           config={config}
           SelectorComponent={SelectorComponent}
+          NumericEditorComponent={NumericEditorComponent}
           valueListItemClassName={valueListItemClassName}
           numericSchema={numericSchema}
         />
@@ -255,6 +260,7 @@ export const RelativeDateTimeValueEditor = (props: ValueEditorProps): React.JSX.
         absoluteOperator={operator}
         config={config}
         SelectorComponent={SelectorComponent}
+        NumericEditorComponent={NumericEditorComponent}
         valueListItemClassName={valueListItemClassName}
         numericSchema={numericSchema}
       />

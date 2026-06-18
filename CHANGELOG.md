@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The `@dnd-kit` adapter now applies drag-handle ARIA attributes and sensor listeners as JSX props (via `dragHandleAttributes`) instead of through imperative DOM manipulation. Custom `dragHandle` components used with the dnd-kit adapter must now spread `dragHandleAttributes` onto their root element to remain draggable. Disabled rule groups now expose drag-handle ARIA attributes (without activator listeners).
 
+### Fixed
+
+- `useAsyncOptionList` no longer recomputes cache validity during render or includes it in its effect dependencies, avoiding redundant option-list refetches when a cached entry expires (cache TTL is still enforced by the loader).
+
 ## [v8.19.1] - 2026-06-10
 
 ### Added

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 
 /**
  * Returns the prop value from the last render.
@@ -8,15 +8,15 @@ import { useRef } from 'react';
  * @group Hooks
  */
 export const usePrevious = <T>(value: T): T | null => {
-  const ref = useRef<{ value: T | null; prev: T | null }>({ value, prev: null });
+  const [current, setCurrent] = useState<T | null>(value);
+  const [previous, setPrevious] = useState<T | null>(null);
 
-  const current = ref.current.value;
-
+  // Adjust state during render instead of mutating a ref's `current` (which the
+  // React Compiler forbids during render). Returns the prior distinct value.
   if (value !== current) {
-    // ref.current = { value, prev: current };
-    ref.current.prev = current;
-    ref.current.value = value;
+    setPrevious(current);
+    setCurrent(value);
   }
 
-  return ref.current.prev;
+  return previous;
 };

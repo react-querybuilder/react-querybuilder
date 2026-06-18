@@ -60,6 +60,7 @@ const defaultSubproperties: FullOption[] = [{ name: '', value: '', label: '' }];
 export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element> = React.memo(
   function Rule(props: RuleProps): React.JSX.Element {
     const r = useRule(props);
+    const { dndRef } = r;
 
     const cloneRule = useStopEventPropagation(r.cloneRule);
     const toggleLockRule = useStopEventPropagation(r.toggleLockRule);
@@ -82,7 +83,7 @@ export const Rule: React.MemoExoticComponent<(r: RuleProps) => React.JSX.Element
 
     return (
       <div
-        ref={r.dndRef}
+        ref={dndRef}
         data-testid={TestID.rule}
         data-dragmonitorid={r.dragMonitorId}
         data-dropmonitorid={r.dropMonitorId}
@@ -117,6 +118,7 @@ export const RuleComponents: React.MemoExoticComponent<
   (r: RuleComponentsProps) => React.JSX.Element
 > = React.memo(function RuleComponents(r: RuleComponentsProps) {
   const {
+    dragRef,
     schema: {
       controls: {
         shiftActions: ShiftActionsControlElement,
@@ -204,7 +206,7 @@ export const RuleComponents: React.MemoExoticComponent<
           key={TestID.dragHandle}
           {...commonSubcomponentProps}
           testID={TestID.dragHandle}
-          ref={r.dragRef}
+          ref={dragRef}
           title={r.translations.dragHandle.title}
           label={r.translations.dragHandle.label}
           className={r.classNames.dragHandle}

@@ -467,36 +467,45 @@ describe('edge cases', () => {
     expect(cached && cached.validUntil - cached.timestamp).toBe(customTTL);
   });
 
-  // This test is flaky in React 18
-  // oxlint-disable no-standalone-expect
-  (React.version.startsWith('18.') ? it.skip : it)(
-    'handles zero cacheTTL (no caching)',
-    async () => {
-      const field = generateID();
-      const props = createValueSelectorProps({ rule: createRule({ field }) });
+  it('handles zero cacheTTL (no caching)', async () => {
+    const field = generateID();
+    const rule = createRule({ field });
+
+    // Render, settle, then change an input that keeps the same cache key, and report
+    // how many times the option list loaded before vs. after the change.
+    const loadsAcrossInputChange = async (cacheTTL: number) => {
       const loadOptionList = vi.fn().mockResolvedValue([]);
       const params: UseAsyncOptionListParams<VersatileSelectorProps> = {
         loadOptionList,
         getCacheKey: 'field',
-        cacheTTL: 0,
+        cacheTTL,
       };
       const { wrapper } = getWrapper();
 
-      const { rerender } = renderHook(() => useAsyncOptionList(props, params), { wrapper });
+      const { rerender } = renderHook(p => useAsyncOptionList(p, params), {
+        wrapper,
+        initialProps: createValueSelectorProps({ rule }),
+      });
+      await waitABeat(200);
+      const before = loadOptionList.mock.calls.length;
+
+      // Same field (same cache key), changed value → effect re-runs.
+      rerender(createValueSelectorProps({ rule: { ...rule, value: 'changed' } }));
       await waitABeat(200);
 
-      const calls = loadOptionList.mock.calls.length;
+      return { before, after: loadOptionList.mock.calls.length };
+    };
 
-      expect(calls >= 1).toBe(true);
+    // Zero TTL: cache is stale immediately, so the changed input reloads.
+    const zeroTTL = await loadsAcrossInputChange(0);
+    expect(zeroTTL.before).toBeGreaterThanOrEqual(1);
+    expect(zeroTTL.after).toBeGreaterThan(zeroTTL.before);
 
-      // With zero TTL, cache should be invalid immediately, so second call should trigger new load
-      rerender();
-      await waitABeat(200);
-
-      expect(loadOptionList.mock.calls.length > calls).toBe(true);
-    }
-  );
-  // oxlint-enable no-standalone-expect
+    // Long TTL: the cached list is served, so no additional load occurs.
+    const longTTL = await loadsAcrossInputChange(DEFAULT_CACHE_TTL);
+    expect(longTTL.before).toBeGreaterThanOrEqual(1);
+    expect(longTTL.after).toBe(longTTL.before);
+  });
 
   it('handles rejected promises', async () => {
     const field = generateID();

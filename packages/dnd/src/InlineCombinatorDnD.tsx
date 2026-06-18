@@ -27,6 +27,8 @@ export const InlineCombinatorDnD = ({
   // When updateWhileDragging is active, suppress drop indicator
   const isUpdateWhileDragging = dragPreviewState !== null;
 
+  // Hook provided by the context adapter; stable for a given adapter (pluggable-backend pattern).
+  // oxlint-disable-next-line react-compiler
   const { dropRef, dropMonitorId, isOver } = adapter!.useInlineCombinatorDnD({
     path: props.path,
     schema: props.schema,

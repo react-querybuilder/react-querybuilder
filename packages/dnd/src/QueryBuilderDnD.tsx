@@ -385,6 +385,8 @@ export const useReactDnD = (dndParam?: DndProp): UseReactDnD | null => {
   // v8 ignore next
   if (dnd && !dnd.ReactDndBackend) {
     // Prefer touch backend if this is a touch device
+    // One-time lazy backend selection on the mutable dnd-exports object (deprecated hook).
+    // oxlint-disable-next-line react-compiler
     dnd.ReactDndBackend = isTouchDevice()
       ? (dnd.TouchBackend ?? dnd.HTML5Backend)
       : (dnd.HTML5Backend ?? dnd.TouchBackend);

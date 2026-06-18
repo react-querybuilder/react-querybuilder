@@ -53,6 +53,9 @@ export function Provider(props: ThemeProviderProps) {
       key: 'root',
       container: shadow.shadowRoot,
     });
+    // One-time init: cache must bind to the shadow root, which react-shadow attaches
+    // post-commit (unavailable during render/ref), so it can't be derived in render.
+    // oxlint-disable-next-line react-compiler
     setCache(emotionCache);
   }, [shadow, cache]);
 
