@@ -7,18 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.20.0] - 2026-06-17
+
 ### Added
 
-- New opt-in `queryBuilder-responsive` class, now included in the default stylesheet. Apply it via the `controlClassnames` prop (or to any ancestor element) to let rule and group header rows wrap onto multiple lines—with a hanging indent for the wrapped content—instead of overflowing when horizontal space runs short. No media or container queries are involved, so the layout reflows based on the actual available width, even for deeply nested groups. These styles are intentionally minimal and only lightly opinionated; think of them as a convenient starting point for responsive behavior rather than a canonical or prescribed approach, and feel free to override or replace them to suit your design.
-- New `dragHandleAttributes` prop on the `DragHandle` component. The `@dnd-kit` adapter uses it to pass drag-handle ARIA attributes and sensor listeners through as JSX props; its `useRuleDnD`/`useRuleGroupDnD` hooks now return a `dragHandleAttributes` object.
+- [#1049] New opt-in `queryBuilder-responsive` class, now included in the default stylesheet. Apply it via the `controlClassnames` prop (or to any ancestor element) to let rule and group header rows wrap onto multiple lines—with a hanging indent for the wrapped content—instead of overflowing when horizontal space runs short. No media or container queries are involved, so the layout reflows based on the actual available width, even for deeply nested groups. These styles are intentionally minimal and only lightly opinionated; think of them as a convenient starting point for responsive behavior rather than a canonical or prescribed approach, and feel free to override or replace them to suit your design.
+- [#1049] New `dragHandleAttributes` prop on the `DragHandle` component. The `@dnd-kit` adapter uses it to pass drag-handle ARIA attributes and sensor listeners through as JSX props; its `useRuleDnD`/`useRuleGroupDnD` hooks now return a `dragHandleAttributes` object.
 
 ### Changed
 
-- The `@dnd-kit` adapter now applies drag-handle ARIA attributes and sensor listeners as JSX props (via `dragHandleAttributes`) instead of through imperative DOM manipulation. Custom `dragHandle` components used with the dnd-kit adapter must now spread `dragHandleAttributes` onto their root element to remain draggable. Disabled rule groups now expose drag-handle ARIA attributes (without activator listeners).
+- [#1048] The `@dnd-kit` adapter now applies drag-handle ARIA attributes and sensor listeners as JSX props (via `dragHandleAttributes`) instead of through imperative DOM manipulation. Custom `dragHandle` components used with the dnd-kit adapter must now spread `dragHandleAttributes` onto their root element to remain draggable. Disabled rule groups now expose drag-handle ARIA attributes (without activator listeners).
 
 ### Fixed
 
-- `useAsyncOptionList` no longer recomputes cache validity during render or includes it in its effect dependencies, avoiding redundant option-list refetches when a cached entry expires (cache TTL is still enforced by the loader).
+- [#1049] `useAsyncOptionList` no longer recomputes cache validity during render or includes it in its effect dependencies, avoiding redundant option-list refetches when a cached entry expires (cache TTL is still enforced by the loader).
 
 ## [v8.19.1] - 2026-06-10
 
@@ -2298,12 +2302,15 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1045]: https://github.com/react-querybuilder/react-querybuilder/pull/1045
 [#1046]: https://github.com/react-querybuilder/react-querybuilder/pull/1046
 [#1047]: https://github.com/react-querybuilder/react-querybuilder/pull/1047
+[#1048]: https://github.com/react-querybuilder/react-querybuilder/pull/1048
+[#1049]: https://github.com/react-querybuilder/react-querybuilder/pull/1049
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.0...HEAD
+[v8.20.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.1...v8.20.0
 [v8.19.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.0...v8.19.1
 [v8.19.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.18.0...v8.19.0
 [v8.18.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.17.0...v8.18.0
