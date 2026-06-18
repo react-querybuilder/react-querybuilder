@@ -15,9 +15,55 @@ on:
       customVersionTag:
         description: "Custom version tag"
         type: string
+  release:
+    types: [released, prereleased]
 
 jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      dist-tag: ${{ steps.resolve.outputs.dist-tag }}
+      should-publish: ${{ steps.resolve.outputs.should-publish }}
+    steps:
+      - name: Resolve dist-tag and publish decision
+        id: resolve
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          VERSION_TAG: ${{ inputs.versionTag }}
+          CUSTOM_VERSION_TAG: ${{ inputs.customVersionTag }}
+        run: |
+          set -euo pipefail
+          # Manual run: honor the chosen version tag (custom -> customVersionTag).
+          if [ "$EVENT_NAME" = workflow_dispatch ]; then
+            [ "$VERSION_TAG" = custom ] && DIST_TAG="$CUSTOM_VERSION_TAG" || DIST_TAG="$VERSION_TAG"
+            printf 'dist-tag=%s\nshould-publish=true\n' "$DIST_TAG" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Release event, prerelease -> "next".
+          if [ "$IS_PRERELEASE" = true ]; then
+            printf 'dist-tag=next\nshould-publish=true\n' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Release event, stable -> "latest" only if it's the repo's "latest" release.
+          IS_LATEST=$(gh api graphql \
+            -f owner="${GITHUB_REPOSITORY%/*}" -f name="${GITHUB_REPOSITORY#*/}" -f tag="$TAG_NAME" \
+            -f query='query($owner:String!,$name:String!,$tag:String!){repository(owner:$owner,name:$name){release(tagName:$tag){isLatest}}}' \
+            --jq '.data.repository.release.isLatest')
+          if [ "$IS_LATEST" = true ]; then
+            printf 'dist-tag=latest\nshould-publish=true\n' >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Release $TAG_NAME is not marked latest; skipping publish."
+            echo "should-publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
   Publish:
+    needs: resolve
+    if: needs.resolve.outputs.should-publish == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -41,4 +87,4 @@ jobs:
       - run: bun --bun run build
       - run: bun ./utils/decatalog.ts # temp workaround for lerna-lite catalog issue
       - name: Publish
-        run: npx lerna publish from-package --yes --no-git-reset --dist-tag ${{ inputs.versionTag == 'custom' && inputs.customVersionTag || inputs.versionTag }}
+        run: npx lerna publish from-package --yes --no-git-reset --dist-tag ${{ needs.resolve.outputs.dist-tag }}

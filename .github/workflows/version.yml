@@ -49,6 +49,13 @@ jobs:
           git config --global user.email "actions@github.com"
       - name: Bump version
         run: npx lerna version ${{ inputs.versionBump == 'custom' && inputs.customVersion || inputs.versionBump }} ${{ inputs.runType == 'Live' && '--yes' || '--yes --dry-run' }}
+      # App token (not the default GITHUB_TOKEN) so the created release triggers the Publish workflow.
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
       - name: Create GitHub Release
         run: |
           VERSION=$(node -p "require('./lerna.json').version")
@@ -80,10 +87,13 @@ jobs:
           echo "----------------------------------------"
           echo "$RELEASE_BODY"
           echo "----------------------------------------"
+          # Flag semver prereleases (e.g. 8.0.0-next.1) so they fire "prereleased", not "released".
+          PRERELEASE_FLAG=""
+          case "$VERSION" in *-*) PRERELEASE_FLAG=--prerelease ;; esac
           if [ "${{ inputs.runType }}" = "Live" ]; then
-            echo "$RELEASE_BODY" | gh release create "v$VERSION" --title "v$VERSION" --notes-file -
+            echo "$RELEASE_BODY" | gh release create "v$VERSION" --title "v$VERSION" --notes-file - $PRERELEASE_FLAG
           else
             echo "Dry run - release would be created with the above content"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
