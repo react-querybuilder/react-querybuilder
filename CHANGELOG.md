@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v8.20.1] - 2026-06-18
+
+### Added
+
+- [#1050] Automated npm publish. No changes to packages from previous version.
+
 ## [v8.20.0] - 2026-06-17
 
 ### Added
@@ -2304,12 +2310,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1047]: https://github.com/react-querybuilder/react-querybuilder/pull/1047
 [#1048]: https://github.com/react-querybuilder/react-querybuilder/pull/1048
 [#1049]: https://github.com/react-querybuilder/react-querybuilder/pull/1049
+[#1050]: https://github.com/react-querybuilder/react-querybuilder/pull/1050
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.1...HEAD
+[v8.20.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.0...v8.20.1
 [v8.20.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.1...v8.20.0
 [v8.19.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.0...v8.19.1
 [v8.19.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.18.0...v8.19.0
