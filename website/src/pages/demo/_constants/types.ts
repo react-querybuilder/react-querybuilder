@@ -28,6 +28,7 @@ export type DemoOption =
   | 'debugMode'
   | 'parseNumbers'
   | 'justifiedLayout'
+  | 'responsiveLayout'
   | 'showBranches'
   | 'suppressStandardClassnames'
   | 'useDateTimePackage';
@@ -45,10 +46,11 @@ export type CommonRQBProps = Pick<
       | 'validateQuery'
       | 'independentCombinators'
       | 'justifiedLayout'
+      | 'responsiveLayout'
       | 'showBranches'
       | 'useDateTimePackage'
     >
-> & { independentCombinators?: boolean; justifiedLayout?: boolean };
+> & { independentCombinators?: boolean; justifiedLayout?: boolean; responsiveLayout?: boolean };
 
 export type HttpsURL = `${'https'}://${string}`;
 

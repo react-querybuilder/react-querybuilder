@@ -55,8 +55,6 @@ export function useAsyncOptionList<PropsType extends VersatileSelectorProps | Va
     asyncOptionListsSlice.selectors.selectCacheByKey(s, cacheKey)
   );
 
-  const cacheIsValid = !!cached && Date.now() <= cached.validUntil;
-
   const options = cached?.data ?? optionsProp ?? valuesProp;
 
   const isLoadingFromState = useRQB_INTERNAL_QueryBuilderSelector(s =>
@@ -86,6 +84,8 @@ export function useAsyncOptionList<PropsType extends VersatileSelectorProps | Va
   );
 
   useEffect(() => {
+    const cacheIsValid = !!cached && Date.now() <= cached.validUntil;
+
     if (
       !isLoading &&
       (!cacheIsValid || !cached) &&
@@ -98,7 +98,6 @@ export function useAsyncOptionList<PropsType extends VersatileSelectorProps | Va
     }
   }, [
     cacheKey,
-    cacheIsValid,
     cacheTTL,
     isLoading,
     loadOptionList,

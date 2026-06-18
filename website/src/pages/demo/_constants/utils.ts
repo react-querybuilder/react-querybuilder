@@ -408,10 +408,11 @@ export const getCodeString = (
     getPropText('showShiftActions'),
     getPropText('suppressStandardClassnames'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
-    options.showBranches || options.justifiedLayout
+    options.showBranches || options.justifiedLayout || options.responsiveLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
           [standardClassnames.branches]: options.showBranches,
           [standardClassnames.justified]: options.justifiedLayout,
+          [standardClassnames.responsive]: options.responsiveLayout,
         })}' }}`
       : '',
   ]

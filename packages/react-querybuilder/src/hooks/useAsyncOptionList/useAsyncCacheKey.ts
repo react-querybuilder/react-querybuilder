@@ -27,12 +27,10 @@ export const useAsyncCacheKey = <PropsType extends VersatileSelectorProps | Valu
       getCacheKey,
       // Spread all properties of `props`—in alphabetical order—to allow passing `props`
       // to `getCacheKey` function without having `props` in the dependency array.
-      // oxlint-disable exhaustive-deps
+      // oxlint-disable exhaustive-deps, react-compiler
       ...Object.keys(props)
         .toSorted()
-        // oxlint-disable-next-line no-explicit-any
-        .map(k => (props as any)[k]),
-      // oxlint-enable exhaustive-deps
+        .map(k => props[k as keyof PropsType]),
     ]
   );
 };

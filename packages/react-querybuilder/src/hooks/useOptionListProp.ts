@@ -20,8 +20,10 @@ export const useOptionListProp = <O extends FullOption>(
 ): UseOptionListProp<O> =>
   useMemo(
     () => prepareOptionList(props),
-    // oxlint-disable-next-line exhaustive-deps
-    Object.values(props)
+    // oxlint-disable-next-line exhaustive-deps, react-compiler
+    Object.keys(props)
+      .toSorted()
+      .map(key => props[key as keyof UseOptionListPropParams<O>])
   );
 
 // // "Enumerated props" version:

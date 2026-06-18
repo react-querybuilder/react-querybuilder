@@ -43,6 +43,8 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
     const rg = useRuleGroup(props);
 
     const {
+      previewRef,
+      dropRef,
       schema: {
         controls: {
           ruleGroupBodyElements: RuleGroupBodyElements,
@@ -85,7 +87,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
 
     return (
       <div
-        ref={rg.previewRef}
+        ref={previewRef}
         title={rg.accessibleDescription}
         className={rg.outerClassName}
         data-testid={TestID.ruleGroup}
@@ -95,7 +97,7 @@ export const RuleGroup: React.MemoExoticComponent<(props: RuleGroupProps) => Rea
         data-rule-group-id={rg.id}
         data-level={rg.path.length}
         data-path={JSON.stringify(rg.path)}>
-        <div ref={rg.dropRef} className={rg.classNames.header}>
+        <div ref={dropRef} className={rg.classNames.header}>
           <RuleGroupHeaderElements {...rg} {...actions} />
         </div>
         <div className={rg.classNames.body}>
@@ -115,6 +117,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
   (rg: UseRuleGroup) => React.JSX.Element
 > = React.memo(function RuleGroupHeaderComponents(rg: UseRuleGroup) {
   const {
+    dragRef,
     schema: {
       controls: {
         shiftActions: ShiftActionsControlElement,
@@ -186,7 +189,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           key={TestID.dragHandle}
           {...commonSubcomponentProps}
           testID={TestID.dragHandle}
-          ref={rg.dragRef}
+          ref={dragRef}
           title={rg.translations.dragHandle.title}
           label={rg.translations.dragHandle.label}
           className={rg.classNames.dragHandle}

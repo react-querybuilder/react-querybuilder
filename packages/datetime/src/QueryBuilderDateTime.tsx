@@ -38,6 +38,18 @@ const formatDateInputValue = (d: Date, withTime: boolean): string => {
   return withTime ? `${datePart}T${pad2(d.getHours())}:${pad2(d.getMinutes())}` : datePart;
 };
 
+/**
+ * Renders the inherited (compat) editor when one is provided, otherwise the default
+ * {@link react-querybuilder!ValueEditor ValueEditor}. The editor is received as a prop (rather
+ * than read from context here) so the JSX element type stays prop-sourced and stable.
+ */
+const FallbackValueEditor = ({
+  editor: Editor,
+  ...props
+}: ValueEditorProps & {
+  editor: React.ComponentType<ValueEditorProps> | null;
+}): React.JSX.Element => (Editor ? <Editor {...props} /> : <ValueEditor {...props} skipHook />);
+
 export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element => {
   const uVE = useValueEditor(props);
   const InheritedEditor = useInheritedValueEditor();
@@ -45,8 +57,7 @@ export const DateTimeValueEditor = (props: ValueEditorProps): React.JSX.Element 
 
   // Non-date fields and unparseable values: delegate to the inherited (compat) editor when
   // present, otherwise the default editor.
-  const fallback = (p: ValueEditorProps) =>
-    InheritedEditor ? <InheritedEditor {...p} /> : <ValueEditor {...p} skipHook />;
+  const fallback = (p: ValueEditorProps) => <FallbackValueEditor editor={InheritedEditor} {...p} />;
 
   if (!isDateTimeEditor(props, uVE.inputTypeCoerced)) {
     return fallback(props);
@@ -75,7 +86,7 @@ const QueryBuilderDateTimeValueEditor = (props: ValueEditorProps): React.JSX.Ele
     return <RelativeDateTimeValueEditor {...props} />;
   }
 
-  return InheritedEditor ? <InheritedEditor {...props} /> : <ValueEditor {...props} skipHook />;
+  return <FallbackValueEditor editor={InheritedEditor} {...props} />;
 };
 
 export const QueryBuilderDateTimeContext: QueryBuilderContextProvider = getCompatContextProvider({

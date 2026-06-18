@@ -36,6 +36,7 @@ export const defaultOptions = {
   showShiftActions: false,
   suppressStandardClassnames: false,
   useDateTimePackage: false,
+  responsiveLayout: false,
 } satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
@@ -60,6 +61,7 @@ export const optionOrder: DemoOption[] = [
   'parseNumbers',
   'justifiedLayout',
   'showBranches',
+  'responsiveLayout',
   'suppressStandardClassnames',
   'useDateTimePackage',
 ];
@@ -178,6 +180,12 @@ export const optionsMetadata = {
     link: '/docs/styling/overview#branch-lines',
     label: 'Show branches',
     title: 'Add the `.queryBuilder-branches` class to display "tree view" branches',
+  },
+  responsiveLayout: {
+    link: '/docs/styling/overview#responsive-layout',
+    label: 'Responsive layout',
+    title:
+      'Add the `.queryBuilder-responsive` class to let controls wrap to new lines instead of overflowing on narrow screens',
   },
   useDateTimePackage: {
     link: '/docs/datetime',

@@ -160,7 +160,7 @@
       "react": ">=18"
     },
     "test": {
-      "@electric-sql/pglite": "^0.5.2",
+      "@electric-sql/pglite": "^0.5.3",
       "@testing-library/dom": "^10.4.1",
       "@testing-library/jest-dom": "^6.9.1",
       "@testing-library/react": "^16.3.2",
@@ -188,7 +188,7 @@
     "@types/react-dom": "catalog:",
     "@types/react-native-web": "^0.19.2",
     "@types/web": "^0.0.350",
-    "@typescript/native-preview": "^7.0.0-dev.20260615.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260617.2",
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/ui": "^4.1.9",
     "bun-plugin-tailwind": "^0.1.2",
@@ -209,7 +209,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "tsdown": "^0.22.2",
+    "tsdown": "^0.22.3",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "^4.1.9"

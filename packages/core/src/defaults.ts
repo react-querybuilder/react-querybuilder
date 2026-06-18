@@ -313,6 +313,7 @@ export const standardClassnames = {
   valueListItem: 'rule-value-list-item',
   branches: 'queryBuilder-branches',
   justified: 'queryBuilder-justified',
+  responsive: 'queryBuilder-responsive',
   hasSubQuery: 'rule-hasSubQuery',
   loading: 'queryBuilder-loading',
   valueDateTimeRelative: 'rule-value-dateTimeRelative',

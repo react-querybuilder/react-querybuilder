@@ -229,6 +229,44 @@ Justified layout styles augment the default styles by pushing "+ Rule", "+ Group
   />
 </BrowserWindow>
 
+## Responsive layout
+
+For a layout that adapts to narrow containers (e.g. mobile), add the `queryBuilder-responsive` class using the [`controlClassnames` prop](../components/querybuilder#controlclassnames) or to any ancestor element.
+
+Responsive layout styles augment the default styles so that rule and group header rows wrap onto multiple lines when they run out of horizontal space instead of overflowing. No media or container queries are involved, so the layout reflows based on the actual available width—even for deeply nested groups.
+
+These styles are intentionally minimal and only lightly opinionated; think of them as a convenient starting point for responsive behavior rather than a canonical or prescribed approach. Override or replace them freely to suit your design.
+
+```tsx
+<QueryBuilder
+  // highlight-start
+  controlClassnames={{ queryBuilder: 'queryBuilder-responsive' }}
+  // highlight-end
+/>
+```
+
+<BrowserWindow>
+  <div style={{ maxWidth: 360 }}>
+    <QueryBuilderEmbed
+      fields={fields}
+      controlClassnames={{ queryBuilder: 'queryBuilder-responsive' }}
+      defaultQuery={{
+        combinator: 'and',
+        rules: [
+          { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+          {
+            combinator: 'or',
+            rules: [
+              { field: 'lastName', operator: '=', value: 'Vai' },
+              { field: 'lastName', operator: '=', value: 'Vaughan' },
+            ],
+          },
+        ],
+      }}
+    />
+  </div>
+</BrowserWindow>
+
 ## Drag-and-drop
 
 When [drag-and-drop is enabled](../dnd), these variables control styles for dragged and hovered elements:

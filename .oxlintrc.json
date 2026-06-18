@@ -47,8 +47,7 @@
     "react/jsx-key": ["warn", { "checkKeyMustBeforeSpread": true }],
     "react/react-in-jsx-scope": "error",
     "react/rules-of-hooks": "error",
-    // TODO?: enable this when oxlint plugin is available
-    // "react-compiler/react-compiler": "error",
+    "react/react-compiler": "error",
     "unicorn/catch-error-name": "off",
     "unicorn/consistent-function-scoping": "error",
     "unicorn/filename-case": "off",

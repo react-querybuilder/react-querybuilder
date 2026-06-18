@@ -544,11 +544,19 @@ export default function Demo({
           validateQuery: options.validateQuery,
           [standardClassnames.justified]: options.justifiedLayout,
           [standardClassnames.branches]: options.showBranches,
+          [standardClassnames.responsive]: options.responsiveLayout,
         },
         variant === 'default' ? '' : qbWrapperId,
         'donut-hole'
       ),
-    [options.justifiedLayout, options.showBranches, options.validateQuery, qbWrapperId, variant]
+    [
+      options.justifiedLayout,
+      options.showBranches,
+      options.responsiveLayout,
+      options.validateQuery,
+      qbWrapperId,
+      variant,
+    ]
   );
 
   const queryWrapperKey = useMemo(() => `${query.id}-${queryIC.id}`, [query.id, queryIC.id]);
