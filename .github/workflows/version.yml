@@ -59,37 +59,46 @@ jobs:
       - name: Create GitHub Release
         run: |
           VERSION=$(node -p "require('./lerna.json').version")
-          CHANGELOG_SECTION=$(awk "/^## \[v${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
-          if [ -z "$CHANGELOG_SECTION" ]; then
-            echo "No changelog section found for version $VERSION. Skipping release creation."
-            exit 0
-          fi
-          PREV_VERSION=$(awk "/^## \[v${VERSION}\]/{getline; while(getline && !/^## \[v/) continue; if(/^## \[v/) {gsub(/^## \[v|\].*/,\"\"); print; exit}}" CHANGELOG.md)
-          CHANGELOG_ANCHOR=$(echo "v${VERSION}" | sed 's/\.//g' | tr '[:upper:]' '[:lower:]')
-          FULL_HEADER=$(awk "/^## \[v${VERSION}\]/" CHANGELOG.md)
-          if [[ "$FULL_HEADER" =~ - ]]; then
-            DATE_PART=$(echo "$FULL_HEADER" | sed 's/.*- //')
-            CHANGELOG_ANCHOR="${CHANGELOG_ANCHOR}---${DATE_PART}"
-          fi
-          # Remove brackets around issue numbers
-          CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/\[(#[0-9]+)\]/\1/g')
-          # Increase header level for sections
-          CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/^#(### (Added|Changed|Fixed))$/\1/g')
-          RELEASE_BODY="${CHANGELOG_SECTION}
-
-          [CHANGELOG entry for v${VERSION}](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#${CHANGELOG_ANCHOR})"
-          if [ -n "$PREV_VERSION" ]; then
-            RELEASE_BODY="${RELEASE_BODY}
-
-          https://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION}"
-          fi
-          echo "Release body content for v$VERSION:"
-          echo "----------------------------------------"
-          echo "$RELEASE_BODY"
-          echo "----------------------------------------"
           # Flag semver prereleases (e.g. 8.0.0-next.1) so they fire "prereleased", not "released".
           PRERELEASE_FLAG=""
           case "$VERSION" in *-*) PRERELEASE_FLAG=--prerelease ;; esac
+          CHANGELOG_SECTION=$(awk "/^## \[v${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
+          if [ -n "$CHANGELOG_SECTION" ]; then
+            PREV_VERSION=$(awk "/^## \[v${VERSION}\]/{getline; while(getline && !/^## \[v/) continue; if(/^## \[v/) {gsub(/^## \[v|\].*/,\"\"); print; exit}}" CHANGELOG.md)
+            CHANGELOG_ANCHOR=$(echo "v${VERSION}" | sed 's/\.//g' | tr '[:upper:]' '[:lower:]')
+            FULL_HEADER=$(awk "/^## \[v${VERSION}\]/" CHANGELOG.md)
+            if [[ "$FULL_HEADER" =~ - ]]; then
+              DATE_PART=$(echo "$FULL_HEADER" | sed 's/.*- //')
+              CHANGELOG_ANCHOR="${CHANGELOG_ANCHOR}---${DATE_PART}"
+            fi
+            # Remove brackets around issue numbers
+            CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/\[(#[0-9]+)\]/\1/g')
+            # Increase header level for sections
+            CHANGELOG_SECTION=$(echo "$CHANGELOG_SECTION" | sed -r 's/^#(### (Added|Changed|Fixed))$/\1/g')
+            CHANGELOG_LINK="[CHANGELOG entry for v${VERSION}](https://github.com/react-querybuilder/react-querybuilder/blob/main/CHANGELOG.md#${CHANGELOG_ANCHOR})"
+            RELEASE_BODY=$(printf '%s\n\n%s' "$CHANGELOG_SECTION" "$CHANGELOG_LINK")
+            if [ -n "$PREV_VERSION" ]; then
+              COMPARE_LINK="https://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION}"
+              RELEASE_BODY=$(printf '%s\n\n%s' "$RELEASE_BODY" "$COMPARE_LINK")
+            fi
+            echo "Release body content for v$VERSION:"
+            echo "----------------------------------------"
+            echo "$RELEASE_BODY"
+            echo "----------------------------------------"
+          else
+            echo "No changelog section found for version $VERSION; release body will contain only the compare link."
+            # No section for this version, so the topmost changelog version (!= current) is the predecessor.
+            PREV_VERSION=$(awk -v cur="$VERSION" '/^## \[v/{v=$0; gsub(/^## \[v|\].*/,"",v); if (v != cur) {print v; exit}}' CHANGELOG.md)
+            if [ -n "$PREV_VERSION" ]; then
+              RELEASE_BODY="https://github.com/react-querybuilder/react-querybuilder/compare/v${PREV_VERSION}...v${VERSION}"
+            else
+              RELEASE_BODY=""
+            fi
+            echo "Release body content for v$VERSION:"
+            echo "----------------------------------------"
+            echo "$RELEASE_BODY"
+            echo "----------------------------------------"
+          fi
           if [ "${{ inputs.runType }}" = "Live" ]; then
             echo "$RELEASE_BODY" | gh release create "v$VERSION" --title "v$VERSION" --notes-file - $PRERELEASE_FLAG
           else
