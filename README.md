@@ -164,5 +164,5 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 [badge-codecov]: https://codecov.io/gh/react-querybuilder/react-querybuilder/branch/main/graph/badge.svg?token=AeYWGCFJO0
 [codecov-link]: https://codecov.io/gh/react-querybuilder/react-querybuilder
 [badge-discord]: https://img.shields.io/badge/discord-blue.svg?logo=discord&logoColor=white
-[badge-pkg-pr-new]: https://pkg.pr.new/badge/react-querybuilder/react-querybuilder?badgeColor=blue
+[badge-pkg-pr-new]: https://pkg.pr.new/badge/react-querybuilder/react-querybuilder
 [pkg-pr-new-link]: https://pkg.pr.new/~/react-querybuilder/react-querybuilder
