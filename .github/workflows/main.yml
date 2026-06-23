@@ -6,10 +6,16 @@ on:
     branches: [main]
     paths:
       - "packages/**"
+      - "utils/**"
+      - "package.json"
+      - "bun.lock"
   pull_request:
     branches: [main]
     paths:
       - "packages/**"
+      - "utils/**"
+      - "package.json"
+      - "bun.lock"
 
 jobs:
   Build:
@@ -30,7 +36,8 @@ jobs:
         with:
           name: packs
           path: packs/*.tgz
-      - run: bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
+      - name: Publish to pkg.pr.new
+        run: bunx pkg-pr-new publish './packages/*' --template './examples/*' --packageManager=bun --bun
 
   Typecheck_and_lint:
     runs-on: ubuntu-latest

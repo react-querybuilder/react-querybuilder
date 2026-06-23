@@ -1,19 +1,20 @@
 name: Website
 
-# Netlify builds the website for PRs, so this workflow is probably
-# unnecessary except on push to the `main` branch.
-
 on:
   workflow_dispatch:
   pull_request:
     paths:
       - "website/**"
       - "packages/**"
+      - "package.json"
+      - "bun.lock"
   push:
     branches: [main]
     paths:
       - "website/**"
       - "packages/**"
+      - "package.json"
+      - "bun.lock"
 
 env:
   NODE_OPTIONS: --max-old-space-size=4096
@@ -48,4 +49,4 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          yarn run website:deploy
+          bun run website:deploy
