@@ -56,8 +56,8 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
+    "bootstrap": "catalog:",
+    "bootstrap-icons": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.20.1",
@@ -66,8 +66,8 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "bootstrap": ">=5",
-    "bootstrap-icons": ">=1.7.0",
+    "bootstrap": "catalog:peer",
+    "bootstrap-icons": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.20.1"
   }

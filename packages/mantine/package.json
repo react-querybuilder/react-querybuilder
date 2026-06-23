@@ -51,9 +51,9 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@mantine/core": "9.3.2",
-    "@mantine/dates": "9.3.2",
-    "@mantine/hooks": "9.3.2",
+    "@mantine/core": "catalog:",
+    "@mantine/dates": "catalog:",
+    "@mantine/hooks": "catalog:",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
@@ -67,9 +67,9 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "@mantine/core": ">=7",
-    "@mantine/dates": ">=7",
-    "@mantine/hooks": ">=7",
+    "@mantine/core": "catalog:peer",
+    "@mantine/dates": "catalog:peer",
+    "@mantine/hooks": "catalog:peer",
     "dayjs": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.20.1"

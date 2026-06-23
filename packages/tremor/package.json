@@ -53,11 +53,11 @@
   "devDependencies": {
     "@headlessui/tailwindcss": "^0.2.2",
     "@tailwindcss/forms": "^0.5.11",
-    "@tailwindcss/postcss": "^4.3.1",
+    "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/vite": "^4.3.1",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
-    "@tremor/react": "^3.18.7",
+    "@tremor/react": "catalog:",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dayjs": "catalog:",
@@ -66,12 +66,12 @@
     "react-dom": "catalog:",
     "react-querybuilder": "8.20.1",
     "rollup-plugin-visualizer": "catalog:",
-    "tailwindcss": "^4.3.1",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "@tremor/react": "^3",
+    "@tremor/react": "catalog:peer",
     "dayjs": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.20.1"

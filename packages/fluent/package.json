@@ -52,8 +52,8 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@fluentui/react-components": "^9.74.1",
-    "@fluentui/react-icons-mdl2": "^1.4.6",
+    "@fluentui/react-components": "catalog:",
+    "@fluentui/react-icons-mdl2": "catalog:",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
@@ -67,8 +67,8 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "@fluentui/react-components": "^9",
-    "@fluentui/react-icons-mdl2": "^1",
+    "@fluentui/react-components": "catalog:peer",
+    "@fluentui/react-icons-mdl2": "catalog:peer",
     "dayjs": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.20.1"

@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.3.1
+/* BEGIN_MANTINE_STYLES v9.4.0
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -405,6 +405,7 @@ fieldset:disabled .mantine-active:active {
   --mantine-color-text: var(--mantine-color-dark-0);
   --mantine-color-body: var(--mantine-color-dark-7);
   --mantine-color-error: var(--mantine-color-red-8);
+  --mantine-color-success: var(--mantine-color-teal-8);
   --mantine-color-placeholder: var(--mantine-color-dark-3);
   --mantine-color-anchor: var(--mantine-color-blue-4);
   --mantine-color-default: var(--mantine-color-dark-6);
@@ -537,6 +538,7 @@ fieldset:disabled .mantine-active:active {
   --mantine-color-text: #000;
   --mantine-color-body: #fff;
   --mantine-color-error: var(--mantine-color-red-6);
+  --mantine-color-success: var(--mantine-color-teal-8);
   --mantine-color-placeholder: var(--mantine-color-gray-5);
   --mantine-color-anchor: var(--mantine-color-blue-6);
   --mantine-color-default: var(--mantine-color-white);
@@ -1566,6 +1568,14 @@ fieldset:disabled .mantine-active:active {
   --input-section-color: var(--mantine-color-error);
 }
 
+[data-mantine-color-scheme] .m_6c018570[data-success]:not([data-variant='unstyled']) {
+  --input-bd: var(--mantine-color-success);
+}
+
+[data-mantine-color-scheme] .m_6c018570[data-success] {
+  --input-section-color: var(--mantine-color-success);
+}
+
 :where([dir='rtl']) .m_6c018570 {
   --left-section-border-radius: 0 var(--input-radius) var(--input-radius) 0;
   --right-section-border-radius: var(--input-radius) 0 0 var(--input-radius);
@@ -1621,9 +1631,14 @@ fieldset:disabled .mantine-active:active {
   --input-bd: var(--input-bd-focus);
 }
 
-[data-error] .m_8fb7ebe7:focus,
-[data-error] .m_8fb7ebe7:focus-within {
+.m_6c018570[data-error] .m_8fb7ebe7:focus,
+.m_6c018570[data-error] .m_8fb7ebe7:focus-within {
   --input-bd: var(--mantine-color-error);
+}
+
+.m_6c018570[data-success] .m_8fb7ebe7:focus,
+.m_6c018570[data-success] .m_8fb7ebe7:focus-within {
+  --input-bd: var(--mantine-color-success);
 }
 
 .m_8fb7ebe7::placeholder {
@@ -1739,7 +1754,7 @@ fieldset:disabled .mantine-active:active {
 .m_88bacfd0 {
   color: var(--input-placeholder-color, var(--mantine-color-placeholder));
 }
-[data-error] .m_88bacfd0 {
+.m_6c018570[data-error] .m_88bacfd0 {
   --input-placeholder-color: var(--input-color, var(--mantine-color-placeholder));
 }
 
@@ -1762,6 +1777,7 @@ fieldset:disabled .mantine-active:active {
 }
 
 .m_8f816625,
+.m_9d9d40e0,
 .m_fe47ce59 {
   word-wrap: break-word;
   line-height: 1.2;
@@ -1774,6 +1790,14 @@ fieldset:disabled .mantine-active:active {
   color: var(--mantine-color-error);
   font-size: var(
     --input-error-size,
+    calc(var(--mantine-font-size-sm) - calc(0.125rem * var(--mantine-scale)))
+  );
+}
+
+.m_9d9d40e0 {
+  color: var(--mantine-color-success);
+  font-size: var(
+    --input-success-size,
     calc(var(--mantine-font-size-sm) - calc(0.125rem * var(--mantine-scale)))
   );
 }
@@ -2100,7 +2124,7 @@ fieldset:disabled .mantine-active:active {
   font-size: var(--text-fz, var(--mantine-font-size-md));
   line-height: var(--text-lh, var(--mantine-line-height-md));
   font-weight: var(--mantine-font-weight-regular);
-  text-wrap: var(--text-text-wrap, var(--mantine-text-wrap, wrap));
+  text-wrap: var(--text-text-wrap, var(--mantine-text-wrap));
   margin: 0;
   padding: 0;
 }
@@ -3281,7 +3305,7 @@ fieldset:disabled .m_8ee546b8,
 
   position: relative;
   margin: 0;
-  text-wrap: var(--bq-text-wrap, var(--mantine-text-wrap, wrap));
+  text-wrap: var(--bq-text-wrap, var(--mantine-text-wrap));
   border-inline-start: var(--blockquote-border);
   border-start-end-radius: var(--bq-radius);
   border-end-end-radius: var(--bq-radius);
@@ -4328,6 +4352,61 @@ fieldset:disabled .m_8ee546b8,
   margin-inline: auto;
 }
 
+.m_f84d0407 {
+  --data-list-fz: var(--mantine-font-size-sm);
+  --data-list-lh: var(--mantine-line-height-sm);
+  --data-list-gap: var(--mantine-spacing-sm);
+  --data-list-label-width: calc(7.5rem * var(--mantine-scale));
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--data-list-gap);
+  font-size: var(--data-list-fz);
+  line-height: var(--data-list-lh);
+  margin: 0;
+  padding: 0;
+}
+
+.m_f84d0407:where([data-with-divider]) {
+  gap: 0;
+}
+
+.m_f848fe38 {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--mantine-spacing-xs);
+}
+
+.m_f84d0407:where([data-orientation='vertical']) > .m_f848fe38 {
+  flex-direction: column;
+  gap: 0;
+}
+
+.m_c791b39c {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--data-list-fz);
+  line-height: var(--data-list-lh);
+  min-width: var(--data-list-label-width);
+  margin: 0;
+}
+
+.m_f84d0407:where([data-orientation='vertical']) .m_c791b39c {
+  min-width: 100%;
+}
+
+.m_c81ec619 {
+  font-size: var(--data-list-fz);
+  line-height: var(--data-list-lh);
+  margin: 0;
+}
+
+.m_f84d0407:where([data-with-divider]) > .m_f848fe38:where(:not(:first-of-type)) {
+  border-top: calc(0.0625rem * var(--mantine-scale)) solid var(--mantine-color-default-border);
+  padding-top: var(--data-list-gap);
+  margin-top: var(--data-list-gap);
+}
+
 .m_e2125a27 {
   --dialog-size-xs: calc(10rem * var(--mantine-scale));
   --dialog-size-sm: calc(12.5rem * var(--mantine-scale));
@@ -4443,6 +4522,127 @@ fieldset:disabled .m_8ee546b8,
   display: flex;
   justify-content: var(--drawer-justify, flex-start);
   align-items: var(--drawer-align, flex-start);
+}
+
+.m_7ffcadab {
+  --empty-state-indicator-size-xs: calc(2rem * var(--mantine-scale));
+  --empty-state-indicator-size-sm: calc(2.5rem * var(--mantine-scale));
+  --empty-state-indicator-size-md: calc(3rem * var(--mantine-scale));
+  --empty-state-indicator-size-lg: calc(3.75rem * var(--mantine-scale));
+  --empty-state-indicator-size-xl: calc(4.5rem * var(--mantine-scale));
+
+  --empty-state-gap-xs: calc(0.375rem * var(--mantine-scale));
+  --empty-state-gap-sm: calc(0.5rem * var(--mantine-scale));
+  --empty-state-gap-md: calc(0.625rem * var(--mantine-scale));
+  --empty-state-gap-lg: calc(0.75rem * var(--mantine-scale));
+  --empty-state-gap-xl: calc(1rem * var(--mantine-scale));
+
+  --empty-state-title-fz-xs: var(--mantine-font-size-sm);
+  --empty-state-title-fz-sm: var(--mantine-font-size-md);
+  --empty-state-title-fz-md: var(--mantine-font-size-lg);
+  --empty-state-title-fz-lg: var(--mantine-font-size-xl);
+  --empty-state-title-fz-xl: calc(var(--mantine-font-size-xl) * 1.2);
+
+  --empty-state-description-fz-xs: var(--mantine-font-size-xs);
+  --empty-state-description-fz-sm: var(--mantine-font-size-sm);
+  --empty-state-description-fz-md: var(--mantine-font-size-sm);
+  --empty-state-description-fz-lg: var(--mantine-font-size-md);
+  --empty-state-description-fz-xl: var(--mantine-font-size-lg);
+
+  display: flex;
+  gap: var(--empty-state-gap, var(--empty-state-gap-md));
+}
+
+.m_7ffcadab[data-align='center'] {
+  flex-direction: column;
+  align-items: center;
+}
+
+.m_7ffcadab[data-align='left'] {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.m_7ffcadab[data-align='right'] {
+  flex-direction: row-reverse;
+  align-items: flex-start;
+}
+
+.m_7ff5666b {
+  display: flex;
+  flex-direction: column;
+  gap: var(--empty-state-gap, var(--empty-state-gap-md));
+  min-width: 0;
+}
+
+[data-align='center'] > .m_7ff5666b {
+  align-items: center;
+  text-align: center;
+}
+
+[data-align='left'] > .m_7ff5666b {
+  align-items: flex-start;
+  text-align: left;
+}
+
+[data-align='right'] > .m_7ff5666b {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.m_866226e6 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--empty-state-indicator-color, var(--mantine-color-dimmed));
+  font-size: var(--empty-state-indicator-size, var(--empty-state-indicator-size-md));
+  line-height: 1;
+}
+
+.m_866226e6 > svg {
+  width: 1em;
+  height: 1em;
+}
+
+[data-mantine-color-scheme='light'] .m_866226e6[data-with-background] {
+  --empty-state-indicator-default-bg: var(--mantine-color-gray-1);
+}
+
+[data-mantine-color-scheme='dark'] .m_866226e6[data-with-background] {
+  --empty-state-indicator-default-bg: var(--mantine-color-dark-6);
+}
+
+.m_866226e6[data-with-background] {
+  width: 2em;
+  height: 2em;
+  border-radius: calc(62.5rem * var(--mantine-scale));
+  background-color: var(--empty-state-indicator-bg, var(--empty-state-indicator-default-bg));
+}
+
+.m_7fb28eaf {
+  font-size: var(--empty-state-title-fz, var(--empty-state-title-fz-md));
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--mantine-color-bright);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.m_5f111313 {
+  font-size: var(--empty-state-description-fz, var(--empty-state-description-fz-md));
+  line-height: 1.55;
+  color: var(--mantine-color-dimmed);
+  margin: 0;
+  max-width: 32rem;
+  text-wrap: pretty;
+}
+
+.m_65f4fb94 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-sm);
 }
 
 .m_e9408a47 {
@@ -4984,6 +5184,42 @@ fieldset:disabled .m_8ee546b8,
 
 :where([dir='rtl']) .m_b85b0bed {
   transform: rotate(90deg);
+}
+
+.m_de2654db {
+  display: flex;
+  align-items: center;
+}
+
+.m_f08a2b4a {
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1;
+  padding: calc(var(--mantine-spacing-xs) / 1.5) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-default);
+  color: var(--mantine-color-text);
+  background-color: transparent;
+  user-select: none;
+  cursor: pointer;
+}
+
+.m_f08a2b4a:where([data-disabled], :disabled) {
+  color: var(--mantine-color-disabled-color);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+:where([data-mantine-color-scheme='light'])
+  .m_f08a2b4a:where(:hover, :focus-visible, [data-expanded]):where(
+    :not(:disabled, [data-disabled])
+  ) {
+  background-color: var(--mantine-color-gray-1);
+}
+
+:where([data-mantine-color-scheme='dark'])
+  .m_f08a2b4a:where(:hover, :focus-visible, [data-expanded]):where(
+    :not(:disabled, [data-disabled])
+  ) {
+  background-color: var(--mantine-color-dark-5);
 }
 
 .m_9df02822 {
@@ -6737,6 +6973,7 @@ fieldset:disabled .m_1738fcb2,
   transition:
     stroke-dashoffset var(--scp-transition-duration) ease,
     stroke-dasharray var(--scp-transition-duration) ease,
+    stroke-opacity var(--scp-transition-duration) ease,
     stroke var(--scp-transition-duration);
 }
 

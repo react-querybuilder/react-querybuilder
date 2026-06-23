@@ -55,7 +55,7 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "bulma": "^1.0.4",
+    "bulma": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-querybuilder": "8.20.1",
@@ -64,7 +64,7 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "bulma": "^0.9.4 || ^1",
+    "bulma": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.20.1"
   }

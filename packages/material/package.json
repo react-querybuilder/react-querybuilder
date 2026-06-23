@@ -52,10 +52,10 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^9.1.1",
-    "@mui/material": "^9.1.1",
+    "@emotion/react": "catalog:",
+    "@emotion/styled": "catalog:",
+    "@mui/icons-material": "catalog:",
+    "@mui/material": "catalog:",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
@@ -68,10 +68,10 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
-    "@mui/icons-material": ">=5",
-    "@mui/material": ">=5",
+    "@emotion/react": "catalog:peer",
+    "@emotion/styled": "catalog:peer",
+    "@mui/icons-material": "catalog:peer",
+    "@mui/material": "catalog:peer",
     "react": "catalog:peer",
     "react-querybuilder": "8.20.1"
   }

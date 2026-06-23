@@ -69,7 +69,7 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "json-rules-engine": "^7.3.1",
+    "json-rules-engine": "catalog:",
     "node-rules": "^9.2.0",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -81,10 +81,10 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
-    "json-rules-engine": "^7",
-    "node-rules": "^9",
+    "json-rules-engine": "catalog:peer",
+    "node-rules": "catalog:peer",
     "react": "catalog:peer",
-    "rulepilot": "^1"
+    "rulepilot": "catalog:peer"
   },
   "peerDependenciesMeta": {
     "json-rules-engine": {
