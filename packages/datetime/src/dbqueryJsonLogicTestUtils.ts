@@ -1,6 +1,6 @@
-import { add_operation, apply } from 'json-logic-js';
 import type { RuleGroupType } from '@react-querybuilder/core';
 import { formatQuery } from '@react-querybuilder/core';
+import { add_operation, apply } from 'json-logic-js';
 import { datetimeRuleProcessorJsonLogic } from './datetimeRuleProcessorJsonLogic';
 import {
   comparisonDate,

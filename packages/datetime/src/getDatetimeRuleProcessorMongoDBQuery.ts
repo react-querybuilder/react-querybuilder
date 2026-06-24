@@ -1,5 +1,9 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
-import { defaultRuleProcessorMongoDBQuery, mongoOperators, toArray } from '@react-querybuilder/core';
+import {
+  defaultRuleProcessorMongoDBQuery,
+  mongoOperators,
+  toArray,
+} from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
 

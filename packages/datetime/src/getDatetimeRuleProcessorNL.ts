@@ -1,4 +1,8 @@
-import type { ExportOperatorMap, RuleProcessor, ValueProcessorByRule } from '@react-querybuilder/core';
+import type {
+  ExportOperatorMap,
+  RuleProcessor,
+  ValueProcessorByRule,
+} from '@react-querybuilder/core';
 import {
   defaultOperatorProcessorNL,
   defaultRuleProcessorNL,
