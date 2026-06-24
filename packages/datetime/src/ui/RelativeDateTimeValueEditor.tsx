@@ -9,13 +9,13 @@ import {
   useValueEditor,
   ValueEditor,
 } from 'react-querybuilder';
+import type { RelativeDateTimeAnchor, RelativeDateTimeUnit, RelativeDateTimeValue } from '../types';
+import { isRelativeDateTimeValue } from '../utils';
 import { useInheritedValueEditor } from './InheritedValueEditorContext';
 import { DateTimeValueEditor } from './QueryBuilderDateTime';
 import type { ResolvedRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
 import { useRelativeDateTimeConfig } from './RelativeDateTimeConfigContext';
 import { defaultRelativeDateTimeValue } from './relativeDateTimeConstants';
-import type { RelativeDateTimeAnchor, RelativeDateTimeUnit, RelativeDateTimeValue } from './types';
-import { isRelativeDateTimeValue } from './utils';
 
 const dummyPath: Path = [];
 const dummyFieldData: FullField = { name: '', value: '', label: '' };

@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#1053] New `@react-querybuilder/datetime/ui` entry point containing all React components and utilities (`QueryBuilderDateTime`, `RelativeDateTimeValueEditor`, the relative-date mode controllers, etc.).
+
+### Changed
+
+- [#1053] **Breaking:** React-related exports must now be imported from `@react-querybuilder/datetime/ui` instead of the package root. The root and per-library entry points (`/dayjs`, `/date-fns`, `/jsdate`, `/luxon`) no longer import `react` or `react-querybuilder`, so their rule/value processors can be used in non-React/server environments. (`react` and `react-querybuilder` are now optional peer dependencies; `@react-querybuilder/core` is required.)
+- [#1053] `QueryBuilderDateTime` now uses the native JavaScript `Date` API by default instead of `dayjs`. Override with the `dateTimeAPI` prop.
+
+### Fixed
+
+- [#1053] Reverted `dayjs` to an optional peer dependency for `@react-querybuilder/datetime`. It was accidentally made a direct dependency in [v8.19.0](#v8190---2026-06-07).
 
 ## [v8.20.1] - 2026-06-18
 
@@ -2311,6 +2322,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1048]: https://github.com/react-querybuilder/react-querybuilder/pull/1048
 [#1049]: https://github.com/react-querybuilder/react-querybuilder/pull/1049
 [#1050]: https://github.com/react-querybuilder/react-querybuilder/pull/1050
+[#1053]: https://github.com/react-querybuilder/react-querybuilder/pull/1053
 
 <!-- #endregion -->
 

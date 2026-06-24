@@ -1,4 +1,4 @@
-import type { ExportOperatorMap, RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
+import type { ExportOperatorMap, RuleProcessor, ValueProcessorByRule } from '@react-querybuilder/core';
 import {
   defaultOperatorProcessorNL,
   defaultRuleProcessorNL,
@@ -6,7 +6,7 @@ import {
   lc,
   normalizeConstituentWordOrder,
   toArray,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import {
   isISOStringDateOnly,

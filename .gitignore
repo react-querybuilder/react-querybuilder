@@ -15,6 +15,7 @@ packages/datetime/dayjs/package.json
 packages/datetime/date-fns/package.json
 packages/datetime/jsdate/package.json
 packages/datetime/luxon/package.json
+packages/datetime/ui/package.json
 
 packages/dnd/react-dnd/package.json
 packages/dnd/dnd-kit/package.json

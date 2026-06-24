@@ -59,6 +59,16 @@
         "default": "./dist/cjs/luxon.js"
       }
     },
+    "./ui": {
+      "import": {
+        "types": "./dist/react-querybuilder_datetime.ui.d.mts",
+        "default": "./dist/react-querybuilder_datetime.ui.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/ui.d.ts",
+        "default": "./dist/cjs/ui.js"
+      }
+    },
     "./dist/*": "./dist/*"
   },
   "types": "./dist/react-querybuilder_datetime.legacy-esm.d.ts",
@@ -67,7 +77,8 @@
     "dayjs",
     "date-fns",
     "jsdate",
-    "luxon"
+    "luxon",
+    "ui"
   ],
   "license": "MIT",
   "sideEffects": [
@@ -126,6 +137,9 @@
     "typescript": "catalog:",
     "vite": "catalog:"
   },
+  "dependencies": {
+    "@react-querybuilder/core": "8.20.1"
+  },
   "peerDependencies": {
     "date-fns": "catalog:peer",
     "dayjs": "catalog:peer",
@@ -141,6 +155,12 @@
       "optional": true
     },
     "luxon": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-querybuilder": {
       "optional": true
     }
   }

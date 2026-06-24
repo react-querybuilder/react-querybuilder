@@ -1,20 +1,18 @@
 import * as React from 'react';
 import { createContext, useContext, useMemo } from 'react';
 import type { FullOption } from 'react-querybuilder';
+import { rqbDateTimeLibraryAPI as defaultDateTimeAPI } from '../rqbDateTimeLibraryAPI.jsdate';
+import type { RelativeDateTimeAnchor, RelativeDateTimeUnit, RQBDateTimeLibraryAPI } from '../types';
 import {
   defaultRelativeDateTimeAnchors,
   defaultRelativeDateTimeToggleLabels,
   defaultRelativeDateTimeUnits,
 } from './relativeDateTimeConstants';
 import { toggleModeController } from './relativeDateTimeModeControllers';
-import { rqbDateTimeLibraryAPI as defaultDateTimeAPI } from './rqbDateTimeLibraryAPI.dayjs';
 import type {
-  RelativeDateTimeAnchor,
   RelativeDateTimeEditorConfig,
   RelativeDateTimeModeController,
   RelativeDateTimeToggleLabels,
-  RelativeDateTimeUnit,
-  RQBDateTimeLibraryAPI,
 } from './types';
 
 /** Fully-resolved relative date/time editor config (no optional fields). */

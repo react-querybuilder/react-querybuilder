@@ -1,5 +1,5 @@
-import type { RuleProcessor } from 'react-querybuilder';
-import { defaultRuleProcessorSPARQL, lc, sparqlVar, toArray } from 'react-querybuilder';
+import type { RuleProcessor } from '@react-querybuilder/core';
+import { defaultRuleProcessorSPARQL, lc, sparqlVar, toArray } from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import {
   isISOStringDateOnly,

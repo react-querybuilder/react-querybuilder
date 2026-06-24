@@ -4,7 +4,7 @@ import type { UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import { getCjsIndexWriter, tsdownCommonConfig } from '../../utils/tsdown.common';
 
-const apiLibs = ['dayjs', 'date-fns', 'jsdate', 'luxon'] as const;
+const apiLibs = ['dayjs', 'date-fns', 'jsdate', 'luxon', 'ui'] as const;
 
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);

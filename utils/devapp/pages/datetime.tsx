@@ -1,16 +1,39 @@
-// import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { NavBar } from '../DevLayout';
-// import { QueryBuilder } from 'react-querybuilder';
-// import { App } from './App';
+import { QueryBuilder } from 'react-querybuilder';
+import { DevLayout } from '../DevLayout';
+import { useDevApp } from '../useDevApp';
+import '@react-querybuilder/datetime/dist/datetime.css';
+
+const App = () => {
+  const devApp = useDevApp();
+
+  return (
+    <DevLayout {...devApp}>
+      <QueryBuilderDateTime>
+        {devApp.optVals.independentCombinators ? (
+          <QueryBuilder
+            key="queryIC"
+            {...devApp.commonRQBProps}
+            query={devApp.queryIC}
+            onQueryChange={devApp.onQueryChangeIC}
+          />
+        ) : (
+          <QueryBuilder
+            key="query"
+            {...devApp.commonRQBProps}
+            query={devApp.query}
+            onQueryChange={devApp.onQueryChange}
+          />
+        )}
+      </QueryBuilderDateTime>
+    </DevLayout>
+  );
+};
 
 createRoot(document.querySelector('#app')!).render(
   <React.StrictMode>
-    <NavBar />
-
-    {/* <QueryBuilderDateTime> */}
-    <div>Not implemented yet</div>
-    {/* </QueryBuilderDateTime> */}
+    <App />
   </React.StrictMode>
 );

@@ -213,6 +213,9 @@
     "packages/datetime": {
       "name": "@react-querybuilder/datetime",
       "version": "8.20.1",
+      "dependencies": {
+        "@react-querybuilder/core": "8.20.1",
+      },
       "devDependencies": {
         "@electric-sql/pglite": "catalog:test",
         "@grafeo-db/js": "catalog:test",
@@ -255,6 +258,8 @@
         "date-fns",
         "dayjs",
         "luxon",
+        "react",
+        "react-querybuilder",
       ],
     },
     "packages/dnd": {
@@ -533,6 +538,7 @@
         "@atlaskit/pragmatic-drag-and-drop": "catalog:",
         "@chakra-ui/react": "catalog:",
         "@codesandbox/sandpack-react": "^2.20.0",
+        "@date-fns/tz": "^1.5.0",
         "@docusaurus/core": "^3.10.1",
         "@docusaurus/plugin-client-redirects": "^3.10.1",
         "@docusaurus/preset-classic": "^3.10.1",
@@ -1182,6 +1188,8 @@
     "@csstools/utilities": ["@csstools/utilities@2.0.0", "", { "peerDependencies": { "postcss": "^8.4" } }, "sha512-5VdOr0Z71u+Yp3ozOx8T11N703wIFGVRgOWbOZMKgglPJsWA54MRIoMNVMa7shUToIhx5J8vX4sOZgD2XiihiQ=="],
 
     "@ctrl/tinycolor": ["@ctrl/tinycolor@3.6.1", "", {}, "sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA=="],
+
+    "@date-fns/tz": ["@date-fns/tz@1.5.0", "", {}, "sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg=="],
 
     "@discoveryjs/json-ext": ["@discoveryjs/json-ext@0.5.7", "", {}, "sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw=="],
 

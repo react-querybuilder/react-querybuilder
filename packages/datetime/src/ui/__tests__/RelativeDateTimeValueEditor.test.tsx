@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import type { RuleType } from 'react-querybuilder';
 import { QueryBuilder, standardClassnames } from 'react-querybuilder';
+import { isRelativeDateTimeValue } from '../../utils';
 import { RelativeDateTimeConfigContext } from '../RelativeDateTimeConfigContext';
 import {
   createOperatorModeController,
@@ -12,7 +13,6 @@ import {
 } from '../relativeDateTimeModeControllers';
 import { RelativeDateTimeValueEditor } from '../RelativeDateTimeValueEditor';
 import type { RelativeDateTimeEditorConfig } from '../types';
-import { isRelativeDateTimeValue } from '../utils';
 
 const user = userEvent.setup();
 

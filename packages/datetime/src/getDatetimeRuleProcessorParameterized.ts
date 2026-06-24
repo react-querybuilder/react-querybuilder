@@ -1,5 +1,5 @@
-import type { RuleProcessor } from 'react-querybuilder';
-import { defaultRuleProcessorParameterized } from 'react-querybuilder';
+import type { RuleProcessor } from '@react-querybuilder/core';
+import { defaultRuleProcessorParameterized } from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { materializeForExport, processIsDateField } from './utils';
 

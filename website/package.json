@@ -20,6 +20,7 @@
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@chakra-ui/react": "catalog:",
     "@codesandbox/sandpack-react": "^2.20.0",
+    "@date-fns/tz": "^1.5.0",
     "@docusaurus/core": "^3.10.1",
     "@docusaurus/plugin-client-redirects": "^3.10.1",
     "@docusaurus/preset-classic": "^3.10.1",

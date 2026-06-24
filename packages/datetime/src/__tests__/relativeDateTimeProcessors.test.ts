@@ -1,5 +1,6 @@
-import { apply, add_operation } from 'json-logic-js';
-import { formatQuery, type FullField, type RuleGroupType } from 'react-querybuilder';
+import type { FullField, RuleGroupType } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
+import { add_operation, apply } from 'json-logic-js';
 import { datetimeRuleProcessorJsonLogic } from '../datetimeRuleProcessorJsonLogic';
 import { getDatetimeJsonLogicOperations } from '../getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorJSONata } from '../getDatetimeRuleProcessorJSONata';

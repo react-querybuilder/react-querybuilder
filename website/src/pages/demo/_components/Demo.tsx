@@ -8,7 +8,7 @@ import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 // TODO: Find out why this is necessary
 import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/internal';
-import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import CodeBlock from '@theme/CodeBlock';

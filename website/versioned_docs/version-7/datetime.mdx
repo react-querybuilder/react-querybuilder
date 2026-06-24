@@ -216,16 +216,18 @@ const nl = formatQuery(query, {
 });
 ```
 
-{/* ## Value editor */}
-{/*  */}
-{/* Augments [`ValueEditor`](./components/valueeditor) with date/time functionality. */}
-
 ## Components
 
 The `QueryBuilderDateTime` [context provider](./components/querybuilder#context) augments [`ValueEditor`](./components/valueeditor) with date/time functionality. Wrap your `QueryBuilder` with it to enable enhanced date/time editing for any field whose `inputType` is `"date"`/`"datetime-local"` or whose `datatype` begins with "date", "datetime", or "timestamp". Non-date fields delegate to the value editor inherited from a surrounding compat/theme provider (e.g. `QueryBuilderMantine`), falling back to the standard value editor when none is present. The themed editor is likewise used for the absolute date input and the relative offset input, so the whole control stays consistent with your theme.
 
+:::info
+
+All React-related exports must be imported from `@react-querybuilder/datetime/ui` (note the **`/ui`**), not the root entry point. The root entry point exports only non-React utilities and types.
+
+:::
+
 ```tsx
-import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 
 const App = () => (
   <QueryBuilderDateTime>
@@ -277,7 +279,7 @@ The final date/time is computed as: apply the `anchor` to the current date/time,
 The recommended way to enable the relative-capable editor is to wrap your `QueryBuilder` in `QueryBuilderDateTime`. With no props it provides the zero-config toggle experience:
 
 ```tsx
-import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
+import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 
 <QueryBuilderDateTime>
   <QueryBuilder fields={fields} />
@@ -287,7 +289,7 @@ import { QueryBuilderDateTime } from '@react-querybuilder/datetime';
 To use the relative-capable editor on its own (e.g. when providing custom `controlElements`), import `RelativeDateTimeValueEditor` directly. Without a surrounding `QueryBuilderDateTime` it falls back to the default config (toggle controller, default anchors/units/labels):
 
 ```tsx
-import { RelativeDateTimeValueEditor } from '@react-querybuilder/datetime';
+import { RelativeDateTimeValueEditor } from '@react-querybuilder/datetime/ui';
 
 <QueryBuilder fields={fields} controlElements={{ valueEditor: RelativeDateTimeValueEditor }} />;
 ```
@@ -317,7 +319,7 @@ Two controllers ship with the package:
 An operator-driven controller derives the mode from the rule's **operator** instead of rendering a toggle button — the operator selector _is_ the mode affordance. Build one with `createOperatorModeController`, passing the operator name(s) (or a predicate) that should put the editor in relative mode:
 
 ```tsx
-import { createOperatorModeController } from '@react-querybuilder/datetime';
+import { createOperatorModeController } from '@react-querybuilder/datetime/ui';
 
 // From an operator list:
 const controller = createOperatorModeController(['relativeEq', 'relativeBefore']);
@@ -333,7 +335,7 @@ import {
   QueryBuilderDateTime,
   createOperatorModeController,
   withRelativeOperators,
-} from '@react-querybuilder/datetime';
+} from '@react-querybuilder/datetime/ui';
 
 const relativeOperators = [
   { name: 'relativeEq', value: 'relativeEq', label: 'is (relative)' },
@@ -387,9 +389,9 @@ const valueShapeController = {
 | `anchors`        | `FullOption[]`                   | `defaultRelativeDateTimeAnchors` | Anchor (reference-point) options.                    |
 | `units`          | `FullOption[]`                   | `defaultRelativeDateTimeUnits`   | Unit options.                                        |
 | `toggleLabels`   | `RelativeDateTimeToggleLabels`   | _(see below)_                    | Content/labels for the toggle controller's button.   |
-| `dateTimeAPI`    | `RQBDateTimeLibraryAPI`          | Day.js adapter                   | Library adapter used to parse/validate editor input. |
+| `dateTimeAPI`    | `RQBDateTimeLibraryAPI`          | Native JS `Date` adapter         | Library adapter used to parse/validate editor input. |
 
-By default the absolute date editor parses and validates its input with Day.js. If you export queries with a processor backed by a different library (Luxon, date-fns, native `Date`, etc.), pass the matching adapter as `dateTimeAPI` so editor parsing and export stay consistent. See [Custom plugins](#custom-plugins) for the `RQBDateTimeLibraryAPI` shape.
+By default the absolute date editor parses and validates its input with a native JavaScript `Date` processor. If you export queries with a processor backed by a different library (Luxon, date-fns, Day.js, etc.), pass the matching adapter as `dateTimeAPI` so editor parsing and export stay consistent. See [Custom plugins](#custom-plugins) for the `RQBDateTimeLibraryAPI` shape.
 
 `toggleLabels` lets you override the toggle's accessible label, tooltips, and rendered content (e.g. to use icon components or localized text instead of the default CSS glyphs):
 

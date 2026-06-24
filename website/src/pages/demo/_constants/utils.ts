@@ -437,7 +437,7 @@ import { fields } from './fields';
 import 'react-querybuilder/dist/query-builder.${styleLanguage}';
 import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
     options.useDateTimePackage
-      ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime';`
+      ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';`
       : ''
   }
 ${

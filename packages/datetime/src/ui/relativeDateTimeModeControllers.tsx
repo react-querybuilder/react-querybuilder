@@ -1,9 +1,9 @@
 import * as React from 'react';
 import type { FullOperator } from 'react-querybuilder';
 import { clsx, defaultOperators } from 'react-querybuilder';
+import { isRelativeDateTimeValue } from '../utils';
 import { relativeDateTimeToggleClassName } from './relativeDateTimeConstants';
 import type { RelativeDateTimeModeController, RelativeDateTimeModeControlProps } from './types';
-import { isRelativeDateTimeValue } from './utils';
 
 /**
  * Compact absolute/relative toggle rendered by {@link toggleModeController}. A

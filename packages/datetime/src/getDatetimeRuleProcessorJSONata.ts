@@ -1,10 +1,10 @@
-import type { RuleProcessor } from 'react-querybuilder';
+import type { RuleProcessor } from '@react-querybuilder/core';
 import {
   defaultRuleProcessorJSONata,
   getQuotedFieldName,
   nullOrUndefinedOrEmpty,
   toArray,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
 

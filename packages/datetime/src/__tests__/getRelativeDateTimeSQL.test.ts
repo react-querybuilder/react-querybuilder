@@ -1,4 +1,4 @@
-import type { SQLPreset } from 'react-querybuilder';
+import type { SQLPreset } from '@react-querybuilder/core';
 import { getRelativeDateTimeSQL } from '../getRelativeDateTimeSQL';
 import type { RelativeDateTimeAnchor, RelativeDateTimeUnit, RelativeDateTimeValue } from '../types';
 

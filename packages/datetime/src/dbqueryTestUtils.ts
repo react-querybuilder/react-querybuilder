@@ -1,4 +1,4 @@
-import type { Field, RuleGroupType } from 'react-querybuilder';
+import type { Field, RuleGroupType } from '@react-querybuilder/core';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDateFns } from './rqbDateTimeLibraryAPI.date-fns';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIDayjs } from './rqbDateTimeLibraryAPI.dayjs';
 import { rqbDateTimeLibraryAPI as rqbDateTimeLibraryAPIJS } from './rqbDateTimeLibraryAPI.jsdate';

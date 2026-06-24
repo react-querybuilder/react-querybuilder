@@ -1,4 +1,4 @@
-import type { RuleProcessor, SQLPreset, ValueProcessorByRule } from 'react-querybuilder';
+import type { RuleProcessor, SQLPreset, ValueProcessorByRule } from '@react-querybuilder/core';
 import {
   defaultRuleProcessorSQL,
   defaultValueProcessorByRule,
@@ -6,7 +6,7 @@ import {
   lc,
   mapSQLOperator,
   toArray,
-} from 'react-querybuilder';
+} from '@react-querybuilder/core';
 import { getRelativeDateTimeSQL } from './getRelativeDateTimeSQL';
 import type { RQBDateTimeLibraryAPI } from './types';
 import {

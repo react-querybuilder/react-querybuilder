@@ -1,4 +1,4 @@
-import type { FullField } from 'react-querybuilder';
+import type { FullField } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields } from '../dbqueryTestUtils';
 import { rqbDateTimeLibraryAPI as apiFnsJS } from '../rqbDateTimeLibraryAPI.jsdate';
 import type { RelativeDateTimeValue } from '../types';

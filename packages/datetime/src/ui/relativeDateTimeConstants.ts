@@ -1,10 +1,6 @@
-import type { FullOption } from 'react-querybuilder';
-import type {
-  RelativeDateTimeAnchor,
-  RelativeDateTimeToggleLabels,
-  RelativeDateTimeUnit,
-  RelativeDateTimeValue,
-} from './types';
+import type { FullOption } from '@react-querybuilder/core';
+import type { RelativeDateTimeAnchor, RelativeDateTimeUnit, RelativeDateTimeValue } from '../types';
+import type { RelativeDateTimeToggleLabels } from './types';
 
 /**
  * Class name applied to the absolute/relative mode toggle button. Package-local (not part

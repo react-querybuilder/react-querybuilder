@@ -1,4 +1,4 @@
-import type { RuleProcessor } from 'react-querybuilder';
+import type { RuleProcessor } from '@react-querybuilder/core';
 import type {
   IsDateField,
   IsDateFieldFunction,

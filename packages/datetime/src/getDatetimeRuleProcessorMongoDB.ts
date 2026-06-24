@@ -1,4 +1,4 @@
-import type { RuleProcessor } from 'react-querybuilder';
+import type { RuleProcessor } from '@react-querybuilder/core';
 import { getDatetimeRuleProcessorMongoDBQuery } from './getDatetimeRuleProcessorMongoDBQuery';
 import type { RQBDateTimeLibraryAPI } from './types';
 

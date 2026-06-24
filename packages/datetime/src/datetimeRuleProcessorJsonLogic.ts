@@ -1,5 +1,5 @@
-import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from 'react-querybuilder';
-import { defaultRuleProcessorJsonLogic, toArray } from 'react-querybuilder';
+import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from '@react-querybuilder/core';
+import { defaultRuleProcessorJsonLogic, toArray } from '@react-querybuilder/core';
 import type { RQBJsonLogicDateRelative, RQBDateTimeJsonLogic } from './types';
 import {
   isDateOnlyDatatype,

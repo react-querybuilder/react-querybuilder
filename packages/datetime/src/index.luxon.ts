@@ -4,7 +4,7 @@
  * @module luxon
  */
 
-import type { RuleProcessor, ValueProcessorByRule } from 'react-querybuilder';
+import type { RuleProcessor, ValueProcessorByRule } from '@react-querybuilder/core';
 import { getDatetimeJsonLogicOperations } from './getDatetimeJsonLogicOperations';
 import { getDatetimeRuleProcessorCEL } from './getDatetimeRuleProcessorCEL';
 import { getDatetimeRuleProcessorCypher } from './getDatetimeRuleProcessorCypher';
