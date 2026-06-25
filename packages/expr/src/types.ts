@@ -1,11 +1,8 @@
-/**
- * A single node in an expression tree. Expressions are recursive: a `func` node's
- * arguments are themselves `ExpressionNode`s, enabling arbitrary nesting.
- */
-export type ExpressionNode =
-  | { kind: 'field'; field: string }
-  | { kind: 'value'; value: unknown; valueType?: string }
-  | { kind: 'func'; fn: string; args: ExpressionNode[] };
+import type { ExpressionNode } from '@react-querybuilder/core';
+
+// `ExpressionNode` now lives in core; re-export so existing
+// `import { ExpressionNode } from '../types'` paths keep resolving.
+export type { ExpressionNode };
 
 /**
  * Definition of a function usable in an expression. Arithmetic operators (`+ - * /`)
@@ -34,16 +31,13 @@ export interface ExpressionFunction {
 /** Map of registry keys to {@link ExpressionFunction} definitions. */
 export type ExpressionFunctionRegistry = Record<string, ExpressionFunction>;
 
-/** The expression payload stored under `rule.meta.expressions`. */
-export interface RuleExpressions {
-  version: 1;
-  /** When present, the rule's left-hand side is this expression (field is a sentinel mirror). */
+/**
+ * Expression operands resolved from a rule's `lhs` property and its `value`/`valueSource`
+ * (when `valueSource` is `"expression"`). Returned by {@link getExpressions}.
+ */
+export interface ResolvedExpressions {
+  /** Left-hand side expression, from `rule.lhs`. */
   lhs?: ExpressionNode;
-  /** When present, the rule's right-hand side is this expression (value is a mirror). */
+  /** Right-hand side expression, from `rule.value` when `valueSource` is `"expression"`. */
   rhs?: ExpressionNode;
-}
-
-/** Shape this package owns within `rule.meta`. */
-export interface RuleExpressionMeta {
-  expressions?: RuleExpressions;
 }

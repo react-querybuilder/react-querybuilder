@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client';
 import type { Field, RuleGroupType } from 'react-querybuilder';
 import { formatQuery, QueryBuilder } from 'react-querybuilder';
 import 'react-querybuilder/dist/query-builder.css';
-import type { RuleExpressionMeta } from '../src';
+import type { ExpressionNode } from '../src';
 import {
   expressionRuleProcessorJsonLogic,
   expressionRuleProcessorParameterized,
@@ -20,26 +20,22 @@ const fields: Field[] = [
   { name: '(expression)', label: 'ƒ(x) Expression' },
 ];
 
-// `price * quantity >= 100`
-const expressionMeta: RuleExpressionMeta = {
-  expressions: {
-    version: 1,
-    lhs: {
-      kind: 'func',
-      fn: 'multiply',
-      args: [
-        { kind: 'field', field: 'price' },
-        { kind: 'field', field: 'quantity' },
-      ],
-    },
-  },
+// `price * quantity` — LHS expression stored on `rule.lhs`.
+const priceTimesQuantity: ExpressionNode = {
+  kind: 'func',
+  fn: 'multiply',
+  args: [
+    { kind: 'field', field: 'price' },
+    { kind: 'field', field: 'quantity' },
+  ],
 };
 
+// `price * quantity >= 100`
 const query: RuleGroupType = {
   combinator: 'and',
   rules: [
     { field: 'discount', operator: '<', value: 10 },
-    { field: '(expression)', operator: '>=', value: 100, meta: expressionMeta },
+    { field: '(expression)', operator: '>=', value: 100, lhs: priceTimesQuantity },
   ],
 };
 

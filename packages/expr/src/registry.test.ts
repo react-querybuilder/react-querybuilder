@@ -1,7 +1,7 @@
-import type { RuleType } from '@react-querybuilder/core';
+import type { ExpressionNode, RuleType } from '@react-querybuilder/core';
 import { defaultFunctions } from './defaultFunctions';
 import { getExpressions, mergeFunctions } from './registry';
-import type { ExpressionFunctionRegistry, RuleExpressions } from './types';
+import type { ExpressionFunctionRegistry } from './types';
 
 describe('mergeFunctions', () => {
   it('returns a copy of the defaults when called with no arguments', () => {
@@ -28,19 +28,36 @@ describe('mergeFunctions', () => {
 });
 
 describe('getExpressions', () => {
-  const expressions: RuleExpressions = { version: 1, lhs: { kind: 'field', field: 'a' } };
+  const lhs: ExpressionNode = { kind: 'field', field: 'a' };
+  const rhs: ExpressionNode = { kind: 'func', fn: 'abs', args: [{ kind: 'field', field: 'b' }] };
 
-  it('reads the payload from rule.meta', () => {
-    const rule = { field: 'a', operator: '=', value: 1, meta: { expressions } } as RuleType;
-    expect(getExpressions(rule)).toBe(expressions);
+  it('reads an LHS expression from rule.lhs', () => {
+    const rule = { field: 'a', operator: '=', value: 1, lhs } as RuleType;
+    expect(getExpressions(rule)).toEqual({ lhs, rhs: undefined });
   });
 
-  it('returns undefined when meta is absent', () => {
-    expect(getExpressions({ field: 'a', operator: '=', value: 1 } as RuleType)).toBeUndefined();
+  it('reads an RHS expression from value when valueSource is "expression"', () => {
+    const rule = { field: 'a', operator: '=', value: rhs, valueSource: 'expression' } as RuleType;
+    expect(getExpressions(rule)).toEqual({ lhs: undefined, rhs });
   });
 
-  it('returns undefined when meta has no expressions', () => {
-    const rule = { field: 'a', operator: '=', value: 1, meta: {} } as RuleType;
+  it('reads both sides at once', () => {
+    const rule = {
+      field: 'a',
+      operator: '=',
+      value: rhs,
+      valueSource: 'expression',
+      lhs,
+    } as RuleType;
+    expect(getExpressions(rule)).toEqual({ lhs, rhs });
+  });
+
+  it('ignores value when valueSource is not "expression"', () => {
+    const rule = { field: 'a', operator: '=', value: rhs } as RuleType;
     expect(getExpressions(rule)).toBeUndefined();
+  });
+
+  it('returns undefined when the rule carries no expression', () => {
+    expect(getExpressions({ field: 'a', operator: '=', value: 1 } as RuleType)).toBeUndefined();
   });
 });

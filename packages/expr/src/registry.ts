@@ -1,6 +1,6 @@
-import type { RuleType } from '@react-querybuilder/core';
+import type { ExpressionNode, RuleType } from '@react-querybuilder/core';
 import { defaultFunctions } from './defaultFunctions';
-import type { ExpressionFunctionRegistry, RuleExpressionMeta, RuleExpressions } from './types';
+import type { ExpressionFunctionRegistry, ResolvedExpressions } from './types';
 
 /**
  * Merges one or more function registries (later entries win), defaulting the first
@@ -11,7 +11,12 @@ export const mergeFunctions = (
 ): ExpressionFunctionRegistry => Object.assign({}, defaultFunctions, ...registries);
 
 /**
- * Reads the expression payload stored under `rule.meta.expressions`, if any.
+ * Resolves a rule's expression operands: `lhs` from `rule.lhs`, and `rhs` from `rule.value`
+ * when `valueSource` is `"expression"`. Returns `undefined` when the rule carries no
+ * expression on either side.
  */
-export const getExpressions = (rule: RuleType): RuleExpressions | undefined =>
-  (rule.meta as RuleExpressionMeta | undefined)?.expressions;
+export const getExpressions = (rule: RuleType): ResolvedExpressions | undefined => {
+  const lhs = rule.lhs;
+  const rhs = rule.valueSource === 'expression' ? (rule.value as ExpressionNode) : undefined;
+  return lhs || rhs ? { lhs, rhs } : undefined;
+};
