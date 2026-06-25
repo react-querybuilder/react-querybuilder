@@ -25,7 +25,7 @@ export type Classname = string | string[] | Record<string, any>;
 /**
  * A source for the `value` property of a rule.
  */
-export type ValueSource = 'value' | 'field';
+export type ValueSource = 'value' | 'field' | 'expression';
 
 /**
  * Type of {@link react-querybuilder!ValueEditor ValueEditor} that will be displayed.

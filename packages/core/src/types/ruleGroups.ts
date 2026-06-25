@@ -1,4 +1,5 @@
 import type { FullCombinator, FullOperator, MatchConfig, Path, ValueSource } from './basic';
+import type { ExpressionNode } from './expression';
 
 /**
  * Properties common to both rules and groups.
@@ -33,6 +34,11 @@ export interface RuleType<
   value: V;
   valueSource?: ValueSource;
   match?: MatchConfig;
+  /**
+   * When present, the rule's left-hand side is this expression. The `field`
+   * property continues to drive operator selection and validation.
+   */
+  lhs?: ExpressionNode;
   /**
    * Only used when adding a rule to a query that uses independent combinators.
    */
