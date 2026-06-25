@@ -304,6 +304,36 @@
         "react-dnd-touch-backend",
       ],
     },
+    "packages/expr": {
+      "name": "@react-querybuilder/expr",
+      "version": "8.20.1",
+      "dependencies": {
+        "@react-querybuilder/core": "8.20.1",
+      },
+      "devDependencies": {
+        "@testing-library/dom": "catalog:test",
+        "@testing-library/react": "catalog:test",
+        "@types/json-logic-js": "catalog:",
+        "@types/react": "catalog:",
+        "@vitejs/plugin-react": "catalog:",
+        "json-logic-js": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "react-querybuilder": "8.20.1",
+        "rollup-plugin-visualizer": "catalog:",
+        "type-fest": "catalog:",
+        "typescript": "catalog:",
+        "vite": "catalog:",
+      },
+      "peerDependencies": {
+        "react": "catalog:peer",
+        "react-querybuilder": "8.20.1",
+      },
+      "optionalPeers": [
+        "react",
+        "react-querybuilder",
+      ],
+    },
     "packages/fluent": {
       "name": "@react-querybuilder/fluent",
       "version": "8.20.1",
@@ -2092,6 +2122,8 @@
     "@react-querybuilder/datetime": ["@react-querybuilder/datetime@workspace:packages/datetime"],
 
     "@react-querybuilder/dnd": ["@react-querybuilder/dnd@workspace:packages/dnd"],
+
+    "@react-querybuilder/expr": ["@react-querybuilder/expr@workspace:packages/expr"],
 
     "@react-querybuilder/fluent": ["@react-querybuilder/fluent@workspace:packages/fluent"],
 

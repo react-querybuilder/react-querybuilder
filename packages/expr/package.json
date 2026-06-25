@@ -1,0 +1,96 @@
+{
+  "name": "@react-querybuilder/expr",
+  "description": "Arithmetic and function expression support for react-querybuilder",
+  "version": "8.20.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_expressions.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_expressions.d.mts",
+        "default": "./dist/react-querybuilder_expressions.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./ui": {
+      "import": {
+        "types": "./dist/react-querybuilder_expressions.ui.d.mts",
+        "default": "./dist/react-querybuilder_expressions.ui.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/ui.d.ts",
+        "default": "./dist/cjs/ui.js"
+      }
+    },
+    "./dist/*": "./dist/*"
+  },
+  "types": "./dist/react-querybuilder_expressions.legacy-esm.d.ts",
+  "files": [
+    "dist",
+    "ui"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/expr"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "keywords": [
+    "react",
+    "querybuilder",
+    "expression",
+    "expressions",
+    "arithmetic",
+    "function",
+    "calculation",
+    "operators",
+    "query",
+    "builder",
+    "sql"
+  ],
+  "scripts": {
+    "start": "vite",
+    "build": "bun --bun tsdown",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@types/json-logic-js": "catalog:",
+    "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "json-logic-js": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-querybuilder": "8.20.1",
+    "rollup-plugin-visualizer": "catalog:",
+    "type-fest": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "dependencies": {
+    "@react-querybuilder/core": "8.20.1"
+  },
+  "peerDependencies": {
+    "react": "catalog:peer",
+    "react-querybuilder": "8.20.1"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-querybuilder": {
+      "optional": true
+    }
+  }
+}
