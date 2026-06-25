@@ -29,7 +29,7 @@ const projects: Record<string, AnsiBg> = {
   core: 'magenta', // #663399
   datetime: 'cyan', // cyan
   dnd: 'blue', // #4078c0
-  expressions: 'yellowBright', // arithmetic/function expressions
+  expr: 'yellowBright', // arithmetic/function expressions
   fluent: 'greenBright', // #7fba00
   mantine: 'blueBright', // #339af0
   material: 'blue', // #007fff

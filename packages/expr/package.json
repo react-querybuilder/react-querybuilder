@@ -6,35 +6,24 @@
     "access": "public"
   },
   "main": "./dist/cjs/index.js",
-  "module": "./dist/react-querybuilder_expressions.legacy-esm.js",
+  "module": "./dist/react-querybuilder_expr.legacy-esm.js",
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/react-querybuilder_expressions.d.mts",
-        "default": "./dist/react-querybuilder_expressions.mjs"
+        "types": "./dist/react-querybuilder_expr.d.mts",
+        "default": "./dist/react-querybuilder_expr.mjs"
       },
       "require": {
         "types": "./dist/cjs/index.d.ts",
         "default": "./dist/cjs/index.js"
       }
     },
-    "./ui": {
-      "import": {
-        "types": "./dist/react-querybuilder_expressions.ui.d.mts",
-        "default": "./dist/react-querybuilder_expressions.ui.mjs"
-      },
-      "require": {
-        "types": "./dist/cjs/ui.d.ts",
-        "default": "./dist/cjs/ui.js"
-      }
-    },
     "./dist/*": "./dist/*"
   },
-  "types": "./dist/react-querybuilder_expressions.legacy-esm.d.ts",
+  "types": "./dist/react-querybuilder_expr.legacy-esm.d.ts",
   "files": [
-    "dist",
-    "ui"
+    "dist"
   ],
   "sideEffects": false,
   "repository": {

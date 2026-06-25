@@ -39,7 +39,7 @@ export default defineConfig(async options => {
         await onSuccess();
         await Promise.all(
           presentUiLibs.map(async uiLib => {
-            await getCjsIndexWriter('react-querybuilder_expressions', uiLib)();
+            await getCjsIndexWriter('react-querybuilder_expr', uiLib)();
             await mkdir(uiLib, { recursive: true });
             await Bun.write(
               `${uiLib}/package.json`,
