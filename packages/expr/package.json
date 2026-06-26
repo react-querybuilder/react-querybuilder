@@ -19,11 +19,22 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./ui": {
+      "import": {
+        "types": "./dist/react-querybuilder_expr.ui.d.mts",
+        "default": "./dist/react-querybuilder_expr.ui.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/ui.d.ts",
+        "default": "./dist/cjs/ui.js"
+      }
+    },
     "./dist/*": "./dist/*"
   },
   "types": "./dist/react-querybuilder_expr.legacy-esm.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "ui"
   ],
   "sideEffects": false,
   "repository": {
