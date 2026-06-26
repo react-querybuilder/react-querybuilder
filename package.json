@@ -93,7 +93,7 @@
     "tsnext:examples": "tsgo -p examples",
     "tsnext:website": "tsgo -p website",
     "tsnext:utils": "tsgo -p ./tsconfig.json",
-    "are-the-types-wrong": "bun run attw:rqb && bun run attw:antd && bun run attw:bootstrap && bun run attw:bulma && bun run attw:chakra && bun run attw:core && bun run attw:datetime && bun run attw:expr && bun run attw:dnd && bun run attw:fluent && bun run attw:mantine && bun run attw:material && bun run attw:native && bun run attw:prime && bun run attw:re && bun run attw:tremor",
+    "are-the-types-wrong": "concurrently --timings bun:attw:core bun:attw:rqb bun:attw:antd bun:attw:bootstrap bun:attw:bulma bun:attw:chakra bun:attw:datetime bun:attw:dnd bun:attw:expr bun:attw:fluent bun:attw:mantine bun:attw:material bun:attw:native bun:attw:prime bun:attw:tremor",
     "attw:antd": "attw --format table-flipped --pack ./packages/antd",
     "attw:bootstrap": "attw --format table-flipped --pack ./packages/bootstrap",
     "attw:bulma": "attw --format table-flipped --pack ./packages/bulma",
