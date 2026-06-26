@@ -10,6 +10,7 @@ export * from './processors/getExpressionRuleProcessorParameterized';
 export * from './processors/getExpressionRuleProcessorSQL';
 export * from './registry';
 export * from './types';
+export * from './utils/createExpressionValidator';
 export * from './utils/leafValue';
 export * from './utils/serializeJsonLogic';
 export * from './utils/serializeParameterized';
