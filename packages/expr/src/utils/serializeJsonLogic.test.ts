@@ -31,7 +31,7 @@ describe('serializeJsonLogic', () => {
   });
 
   it('supports an operator-name string serializer', () => {
-    const reg: ExpressionFunctionRegistry = { eqop: { name: 'eqop', jsonLogic: '==' } };
+    const reg: ExpressionFunctionRegistry = { eqop: { jsonLogic: '==' } };
     const node: ExpressionNode = {
       kind: 'func',
       fn: 'eqop',
@@ -44,7 +44,7 @@ describe('serializeJsonLogic', () => {
   });
 
   it('throws when a function lacks a jsonLogic serializer', () => {
-    const reg: ExpressionFunctionRegistry = { nofmt: { name: 'nofmt', arity: 1 } };
+    const reg: ExpressionFunctionRegistry = { nofmt: { arity: 1 } };
     const node: ExpressionNode = {
       kind: 'func',
       fn: 'nofmt',

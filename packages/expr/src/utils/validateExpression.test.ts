@@ -48,7 +48,7 @@ describe('validateExpression', () => {
   });
 
   describe('range arity', () => {
-    const reg: ExpressionFunctionRegistry = { rng: { name: 'rng', arity: [1, 2] } };
+    const reg: ExpressionFunctionRegistry = { rng: { arity: [1, 2] } };
     const node = (count: number): ExpressionNode => ({
       kind: 'func',
       fn: 'rng',
@@ -72,7 +72,7 @@ describe('validateExpression', () => {
   });
 
   describe('undefined arity (defaults to "at least 1")', () => {
-    const reg: ExpressionFunctionRegistry = { any: { name: 'any' } };
+    const reg: ExpressionFunctionRegistry = { any: {} };
 
     it('rejects zero args', () => {
       const result = validateExpression({ kind: 'func', fn: 'any', args: [] }, reg);
@@ -110,7 +110,7 @@ describe('validateExpression', () => {
 
   describe('serializer presence', () => {
     const reg: ExpressionFunctionRegistry = {
-      sqlOnly: { name: 'sqlOnly', arity: 1, sql: x => `S(${x})` },
+      sqlOnly: { arity: 1, sql: x => `S(${x})` },
     };
     const node: ExpressionNode = { kind: 'func', fn: 'sqlOnly', args: [val] };
 

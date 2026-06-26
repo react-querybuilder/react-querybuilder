@@ -132,7 +132,7 @@ it('edits a function node, resizing args and editing nested args', () => {
 });
 
 it('labels function options by key when no label is defined', () => {
-  const registry: ExpressionFunctionRegistry = { weird: { name: 'weird', arity: 1 } };
+  const registry: ExpressionFunctionRegistry = { weird: { arity: 1 } };
   render(
     <Harness
       registry={registry}

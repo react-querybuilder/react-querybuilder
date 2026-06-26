@@ -15,15 +15,15 @@ describe('mergeFunctions', () => {
   });
 
   it('adds custom functions on top of the defaults', () => {
-    const custom: ExpressionFunctionRegistry = { pow: { name: 'pow', arity: 2 } };
+    const custom: ExpressionFunctionRegistry = { pow: { arity: 2 } };
     const merged = mergeFunctions(custom);
     expect(merged.pow).toBe(custom.pow);
     expect(merged.add).toBe(defaultFunctions.add);
   });
 
   it('lets later registries win', () => {
-    const merged = mergeFunctions({ add: { name: 'first' } }, { add: { name: 'second' } });
-    expect(merged.add.name).toBe('second');
+    const merged = mergeFunctions({ add: { label: 'first' } }, { add: { label: 'second' } });
+    expect(merged.add.label).toBe('second');
   });
 });
 

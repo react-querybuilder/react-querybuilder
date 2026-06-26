@@ -55,7 +55,7 @@ describe('serializeSQL', () => {
   });
 
   it('throws when a function lacks a sql serializer', () => {
-    const reg: ExpressionFunctionRegistry = { nofmt: { name: 'nofmt', arity: 1 } };
+    const reg: ExpressionFunctionRegistry = { nofmt: { arity: 1 } };
     const node: ExpressionNode = {
       kind: 'func',
       fn: 'nofmt',

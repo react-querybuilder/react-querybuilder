@@ -9,7 +9,6 @@ import type { ExpressionFunctionRegistry } from './types';
  */
 export const defaultFunctions: ExpressionFunctionRegistry = {
   add: {
-    name: 'add',
     label: '+',
     arity: 2,
     returnType: 'number',
@@ -18,7 +17,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
     jsonLogic: (a, b) => ({ '+': [a, b] }),
   },
   subtract: {
-    name: 'subtract',
     label: '-',
     arity: 2,
     returnType: 'number',
@@ -27,7 +25,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
     jsonLogic: (a, b) => ({ '-': [a, b] }),
   },
   multiply: {
-    name: 'multiply',
     label: '×',
     arity: 2,
     returnType: 'number',
@@ -36,7 +33,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
     jsonLogic: (a, b) => ({ '*': [a, b] }),
   },
   divide: {
-    name: 'divide',
     label: '÷',
     arity: 2,
     returnType: 'number',
@@ -45,7 +41,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
     jsonLogic: (a, b) => ({ '/': [a, b] }),
   },
   abs: {
-    name: 'abs',
     label: 'ABS',
     arity: 1,
     returnType: 'number',

@@ -10,8 +10,6 @@ export type { ExpressionNode };
  * already-serialized argument strings/values.
  */
 export interface ExpressionFunction {
-  /** Registry key, e.g. `'multiply'`. Optional since the registry key identifies it. */
-  name?: string;
   /** UI label, e.g. `'×'` or `'Absolute value'`. */
   label?: string;
   /** Fixed arity (`number`) or inclusive range (`[min, max]`); variadic => `[n, Infinity]`. */

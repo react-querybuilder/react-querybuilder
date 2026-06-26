@@ -76,7 +76,7 @@ describe('createExpressionValidator', () => {
     });
 
     // With it, the rule validates cleanly.
-    const validate = createExpressionValidator({ pow: { name: 'pow', arity: 2 } });
+    const validate = createExpressionValidator({ pow: { arity: 2 } });
     expect(run(validate, customRule)).toEqual({});
   });
 

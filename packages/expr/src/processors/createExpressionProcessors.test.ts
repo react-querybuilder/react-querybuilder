@@ -51,7 +51,6 @@ describe('createExpressionProcessors', () => {
   it('flows one custom registry to every format (configure once)', () => {
     const procs = createExpressionProcessors({
       pow: {
-        name: 'pow',
         arity: 2,
         sql: (a, b) => `POWER(${a}, ${b})`,
         parameterized: (a, b) => `POWER(${a}, ${b})`,
@@ -75,7 +74,7 @@ describe('createExpressionProcessors', () => {
 
   it('omits rather than throws when a function lacks the target serializer', () => {
     const procs = createExpressionProcessors({
-      jlOnly: { name: 'jlOnly', arity: 1, jsonLogic: 'abs' },
+      jlOnly: { arity: 1, jsonLogic: 'abs' },
     });
     const rule = exprRule(
       { operator: '=' },

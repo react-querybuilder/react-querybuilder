@@ -72,7 +72,7 @@ describe('serializeParameterized', () => {
   });
 
   it('throws when a function lacks a parameterized serializer', () => {
-    const reg: ExpressionFunctionRegistry = { nofmt: { name: 'nofmt', arity: 1 } };
+    const reg: ExpressionFunctionRegistry = { nofmt: { arity: 1 } };
     const ctx = makeCtx({ registry: reg });
     const node: ExpressionNode = {
       kind: 'func',

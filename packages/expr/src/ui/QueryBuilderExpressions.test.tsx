@@ -115,7 +115,7 @@ describe('right-hand side (value editor host)', () => {
 describe('function registry', () => {
   it('merges the `functions` prop over the built-ins', () => {
     const functions: ExpressionFunctionRegistry = {
-      power: { name: 'power', label: 'POW', arity: 2 },
+      power: { label: 'POW', arity: 2 },
     };
     render(<App functions={functions} />);
 
