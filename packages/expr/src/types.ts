@@ -12,7 +12,10 @@ export type { ExpressionNode };
 export interface ExpressionFunction {
   /** UI label, e.g. `'×'` or `'Absolute value'`. */
   label?: string;
-  /** Fixed arity (`number`) or inclusive range (`[min, max]`); variadic => `[n, Infinity]`. */
+  /**
+   * Fixed arity (`number`) or inclusive range (`[min, max]`, e.g. `[n, Infinity]` for
+   * variadic). Omit to leave the count unconstrained (any number of args, including 0).
+   */
   arity?: number | [min: number, max: number];
   /** SQL serializer; receives serialized arg strings, returns a SQL fragment. */
   sql?: (...args: string[]) => string;

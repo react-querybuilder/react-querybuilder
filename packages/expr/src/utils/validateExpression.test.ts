@@ -71,22 +71,21 @@ describe('validateExpression', () => {
     });
   });
 
-  describe('undefined arity (defaults to "at least 1")', () => {
+  describe('undefined arity (unconstrained)', () => {
     const reg: ExpressionFunctionRegistry = { any: {} };
 
-    it('rejects zero args', () => {
+    it('accepts zero args', () => {
       const result = validateExpression({ kind: 'func', fn: 'any', args: [] }, reg);
-      expect(result.valid).toBe(false);
-      expect(result.reasons[0]).toMatch(/at least 1/);
+      expect(result.valid).toBe(true);
     });
 
     it('accepts one arg', () => {
       expect(validateExpression({ kind: 'func', fn: 'any', args: [val] }, reg).valid).toBe(true);
     });
 
-    it('treats a missing args property as zero args', () => {
+    it('treats a missing args property as zero args (still valid)', () => {
       const node = { kind: 'func', fn: 'any' } as unknown as ExpressionNode;
-      expect(validateExpression(node, reg).valid).toBe(false);
+      expect(validateExpression(node, reg).valid).toBe(true);
     });
   });
 

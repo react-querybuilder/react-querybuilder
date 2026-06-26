@@ -9,16 +9,12 @@ export interface ExpressionValidationResult {
   reasons: string[];
 }
 
-const checkArity = (arity: ExpressionFunction['arity'], argc: number): boolean => {
-  if (arity === undefined) return argc >= 1;
-  if (typeof arity === 'number') return argc === arity;
-  return argc >= arity[0] && argc <= arity[1];
-};
-
-const describeArity = (arity: ExpressionFunction['arity']): string => {
-  if (arity === undefined) return 'at least 1';
-  if (typeof arity === 'number') return `${arity}`;
-  return `${arity[0]}–${arity[1]}`;
+// Expected-arity description when `argc` violates `arity`, else `null`. Undefined arity is
+// unconstrained (any count, incl. 0) — declare a `number`/`[min, max]` to enforce a count.
+const arityError = (arity: ExpressionFunction['arity'], argc: number): string | null => {
+  if (arity === undefined) return null;
+  if (typeof arity === 'number') return argc === arity ? null : `${arity}`;
+  return argc >= arity[0] && argc <= arity[1] ? null : `${arity[0]}–${arity[1]}`;
 };
 
 /**
@@ -57,10 +53,9 @@ export const validateExpression = (
           break;
         }
         const argc = n.args?.length ?? 0;
-        if (!checkArity(fn.arity, argc)) {
-          reasons.push(
-            `Function "${n.fn}" expects ${describeArity(fn.arity)} argument(s), received ${argc}`
-          );
+        const expected = arityError(fn.arity, argc);
+        if (expected !== null) {
+          reasons.push(`Function "${n.fn}" expects ${expected} argument(s), received ${argc}`);
         }
         if (serializer && !fn[serializer]) {
           reasons.push(`Function "${n.fn}" has no "${serializer}" serializer`);
