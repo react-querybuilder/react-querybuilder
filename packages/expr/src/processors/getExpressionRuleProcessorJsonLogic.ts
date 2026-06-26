@@ -6,7 +6,7 @@ import {
   shouldRenderAsNumber,
 } from '@react-querybuilder/core';
 import { defaultFunctions } from '../defaultFunctions';
-import { getExpressions } from '../registry';
+import { getRuleExpressions } from '../registry';
 import type { ExpressionFunctionRegistry } from '../types';
 import { serializeJsonLogic } from '../utils/serializeJsonLogic';
 import { validateExpression } from '../utils/validateExpression';
@@ -38,7 +38,7 @@ export const getExpressionRuleProcessorJsonLogic =
   (rule, options) => {
     const opts = options ?? {};
     const reg = registry ?? defaultFunctions;
-    const expr = getExpressions(rule);
+    const expr = getRuleExpressions(rule);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorJsonLogic(rule, opts);
 
     const operator = lc(rule.operator);

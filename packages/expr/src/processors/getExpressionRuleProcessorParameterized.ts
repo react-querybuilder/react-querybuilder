@@ -6,7 +6,7 @@ import {
   mapSQLOperator,
 } from '@react-querybuilder/core';
 import { defaultFunctions } from '../defaultFunctions';
-import { getExpressions } from '../registry';
+import { getRuleExpressions } from '../registry';
 import type { ExpressionFunctionRegistry } from '../types';
 import type { ParameterizedSerializeContext } from '../utils/serializeParameterized';
 import { serializeParameterized } from '../utils/serializeParameterized';
@@ -28,7 +28,7 @@ export const getExpressionRuleProcessorParameterized =
   (rule, options, meta) => {
     const opts = options ?? {};
     const reg = registry ?? defaultFunctions;
-    const expr = getExpressions(rule);
+    const expr = getRuleExpressions(rule);
     const parameterized = opts.format !== 'parameterized_named';
     const empty = () => ({ sql: '', params: parameterized ? [] : {} });
 

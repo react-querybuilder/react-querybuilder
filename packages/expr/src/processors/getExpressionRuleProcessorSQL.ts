@@ -7,7 +7,7 @@ import {
   mapSQLOperator,
 } from '@react-querybuilder/core';
 import { defaultFunctions } from '../defaultFunctions';
-import { getExpressions } from '../registry';
+import { getRuleExpressions } from '../registry';
 import type { ExpressionFunctionRegistry } from '../types';
 import { serializeSQL } from '../utils/serializeSQL';
 import { validateExpression } from '../utils/validateExpression';
@@ -24,7 +24,7 @@ export const getExpressionRuleProcessorSQL =
   (rule, options) => {
     const opts = options ?? {};
     const reg = registry ?? defaultFunctions;
-    const expr = getExpressions(rule);
+    const expr = getRuleExpressions(rule);
     if (!expr || (!expr.lhs && !expr.rhs)) return defaultRuleProcessorSQL(rule, opts);
 
     const operator = lc(mapSQLOperator(rule.operator));

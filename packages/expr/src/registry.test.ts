@@ -1,6 +1,6 @@
 import type { ExpressionNode, RuleType } from '@react-querybuilder/core';
 import { defaultFunctions } from './defaultFunctions';
-import { getExpressions, mergeFunctions } from './registry';
+import { getRuleExpressions, mergeFunctions } from './registry';
 import type { ExpressionFunctionRegistry } from './types';
 
 describe('mergeFunctions', () => {
@@ -27,18 +27,18 @@ describe('mergeFunctions', () => {
   });
 });
 
-describe('getExpressions', () => {
+describe('getRuleExpressions', () => {
   const lhs: ExpressionNode = { kind: 'field', field: 'a' };
   const rhs: ExpressionNode = { kind: 'func', fn: 'abs', args: [{ kind: 'field', field: 'b' }] };
 
   it('reads an LHS expression from rule.lhs', () => {
     const rule = { field: 'a', operator: '=', value: 1, lhs } as RuleType;
-    expect(getExpressions(rule)).toEqual({ lhs, rhs: undefined });
+    expect(getRuleExpressions(rule)).toEqual({ lhs, rhs: undefined });
   });
 
   it('reads an RHS expression from value when valueSource is "expression"', () => {
     const rule = { field: 'a', operator: '=', value: rhs, valueSource: 'expression' } as RuleType;
-    expect(getExpressions(rule)).toEqual({ lhs: undefined, rhs });
+    expect(getRuleExpressions(rule)).toEqual({ lhs: undefined, rhs });
   });
 
   it('reads both sides at once', () => {
@@ -49,15 +49,15 @@ describe('getExpressions', () => {
       valueSource: 'expression',
       lhs,
     } as RuleType;
-    expect(getExpressions(rule)).toEqual({ lhs, rhs });
+    expect(getRuleExpressions(rule)).toEqual({ lhs, rhs });
   });
 
   it('ignores value when valueSource is not "expression"', () => {
     const rule = { field: 'a', operator: '=', value: rhs } as RuleType;
-    expect(getExpressions(rule)).toBeUndefined();
+    expect(getRuleExpressions(rule)).toBeUndefined();
   });
 
   it('returns undefined when the rule carries no expression', () => {
-    expect(getExpressions({ field: 'a', operator: '=', value: 1 } as RuleType)).toBeUndefined();
+    expect(getRuleExpressions({ field: 'a', operator: '=', value: 1 } as RuleType)).toBeUndefined();
   });
 });

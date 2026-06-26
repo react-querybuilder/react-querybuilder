@@ -5,7 +5,7 @@ import type {
   ValidationMap,
 } from '@react-querybuilder/core';
 import { isRuleGroup } from '@react-querybuilder/core';
-import { getExpressions, mergeFunctions } from '../registry';
+import { getRuleExpressions, mergeFunctions } from '../registry';
 import type { ExpressionFunctionRegistry } from '../types';
 import { validateExpression } from './validateExpression';
 
@@ -32,7 +32,7 @@ export const createExpressionValidator = (
   const registry = mergeFunctions(functions);
 
   const reasonsFor = (rule: RuleType): string[] => {
-    const expr = getExpressions(rule);
+    const expr = getRuleExpressions(rule);
     if (!expr) return [];
     const reasons: string[] = [];
     if (expr.lhs) reasons.push(...validateExpression(expr.lhs, registry).reasons);

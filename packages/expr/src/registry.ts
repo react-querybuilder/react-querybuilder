@@ -15,7 +15,7 @@ export const mergeFunctions = (
  * when `valueSource` is `"expression"`. Returns `undefined` when the rule carries no
  * expression on either side.
  */
-export const getExpressions = (rule: RuleType): ResolvedExpressions | undefined => {
+export const getRuleExpressions = (rule: RuleType): ResolvedExpressions | undefined => {
   const lhs = rule.lhs;
   const rhs = rule.valueSource === 'expression' ? (rule.value as ExpressionNode) : undefined;
   return lhs || rhs ? { lhs, rhs } : undefined;

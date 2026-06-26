@@ -27,7 +27,7 @@ export type ExpressionFunctionRegistry = Record<string, ExpressionFunction>;
 
 /**
  * Expression operands resolved from a rule's `lhs` property and its `value`/`valueSource`
- * (when `valueSource` is `"expression"`). Returned by {@link getExpressions}.
+ * (when `valueSource` is `"expression"`). Returned by {@link getRuleExpressions}.
  */
 export interface ResolvedExpressions {
   /** Left-hand side expression, from `rule.lhs`. */
