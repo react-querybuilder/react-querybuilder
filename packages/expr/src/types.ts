@@ -14,10 +14,6 @@ export interface ExpressionFunction {
   label?: string;
   /** Fixed arity (`number`) or inclusive range (`[min, max]`); variadic => `[n, Infinity]`. */
   arity?: number | [min: number, max: number];
-  /** Return type hint for nesting/validation, e.g. `'number'`. */
-  returnType?: string;
-  /** Optional per-argument type hints. */
-  argTypes?: (string | undefined)[];
   /** SQL serializer; receives serialized arg strings, returns a SQL fragment. */
   sql?: (...args: string[]) => string;
   /** Parameterized-SQL serializer; receives serialized arg strings (placeholders/fields). */

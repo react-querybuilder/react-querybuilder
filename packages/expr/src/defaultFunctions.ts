@@ -11,7 +11,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
   add: {
     label: '+',
     arity: 2,
-    returnType: 'number',
     sql: (a, b) => `(${a} + ${b})`,
     parameterized: (a, b) => `(${a} + ${b})`,
     jsonLogic: (a, b) => ({ '+': [a, b] }),
@@ -19,7 +18,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
   subtract: {
     label: '-',
     arity: 2,
-    returnType: 'number',
     sql: (a, b) => `(${a} - ${b})`,
     parameterized: (a, b) => `(${a} - ${b})`,
     jsonLogic: (a, b) => ({ '-': [a, b] }),
@@ -27,7 +25,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
   multiply: {
     label: '×',
     arity: 2,
-    returnType: 'number',
     sql: (a, b) => `(${a} * ${b})`,
     parameterized: (a, b) => `(${a} * ${b})`,
     jsonLogic: (a, b) => ({ '*': [a, b] }),
@@ -35,7 +32,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
   divide: {
     label: '÷',
     arity: 2,
-    returnType: 'number',
     sql: (a, b) => `(${a} / ${b})`,
     parameterized: (a, b) => `(${a} / ${b})`,
     jsonLogic: (a, b) => ({ '/': [a, b] }),
@@ -43,7 +39,6 @@ export const defaultFunctions: ExpressionFunctionRegistry = {
   abs: {
     label: 'ABS',
     arity: 1,
-    returnType: 'number',
     sql: x => `ABS(${x})`,
     parameterized: x => `ABS(${x})`,
     jsonLogic: x => ({ abs: [x] }),
