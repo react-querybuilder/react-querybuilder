@@ -3,7 +3,9 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import * as React from 'react';
 import { useState } from 'react';
 import type {
+  Field,
   FieldSelectorProps,
+  ParseNumbersPropConfig,
   QueryBuilderContextProvider,
   RuleGroupType,
   RuleType,
@@ -14,7 +16,7 @@ import { getCompatContextProvider, QueryBuilder } from 'react-querybuilder';
 import { QueryBuilderExpressions } from '../index.ui';
 import type { ExpressionFunctionRegistry } from '../types';
 
-const fields = [
+const fields: Field[] = [
   { name: 'price', label: 'Price' },
   { name: 'qty', label: 'Qty' },
 ];
@@ -28,15 +30,24 @@ interface AppProps {
   functions?: ExpressionFunctionRegistry;
   /** Optional outer compat provider, to test inherited-control delegation. */
   Outer?: QueryBuilderContextProvider;
+  /** Threaded to the wrapped {@link QueryBuilder}, then on to the expression editors. */
+  parseNumbers?: ParseNumbersPropConfig;
+  /** Field list override (e.g. to give the sentinel field an `inputType`). */
+  fields?: Field[];
 }
 
 // Stateful host: a controlled QueryBuilder wrapped by the expression provider, dumping the
 // live query so assertions can read `rule.lhs` / `valueSource` / `value` after each edit.
-const App = ({ functions, Outer }: AppProps) => {
+const App = ({ functions, Outer, parseNumbers, fields: fieldsProp = fields }: AppProps) => {
   const [query, setQuery] = useState<RuleGroupType>(initialQuery);
   const inner = (
     <QueryBuilderExpressions functions={functions}>
-      <QueryBuilder fields={fields} query={query} onQueryChange={setQuery} />
+      <QueryBuilder
+        fields={fieldsProp}
+        query={query}
+        onQueryChange={setQuery}
+        parseNumbers={parseNumbers}
+      />
     </QueryBuilderExpressions>
   );
   return (
@@ -84,6 +95,16 @@ describe('left-hand side (field selector host)', () => {
     expect(rule0().lhs).toBeUndefined();
     expect(screen.queryByTestId('expr-lhs')).toBeNull();
   });
+
+  it('synthesizes field data when the sentinel field is unconfigured', () => {
+    // `price` (the rule's field) is absent from this list, so the inputType resolver must
+    // fall back to a synthesized field instead of choking on the fieldMap miss.
+    render(<App fields={[{ name: 'qty', label: 'Qty' }]} />);
+
+    fireEvent.click(screen.getByTestId('expr-lhs-toggle'));
+    // Toggling still works; the seeded node uses the first available field.
+    expect(rule0().lhs).toEqual({ kind: 'field', field: 'qty' });
+  });
 });
 
 describe('right-hand side (value editor host)', () => {
@@ -102,13 +123,39 @@ describe('right-hand side (value editor host)', () => {
 
     // Edit the literal: written straight into `rule.value` via `handleOnChange`.
     fireEvent.change(screen.getByTestId('expr-rhs-value'), { target: { value: '5' } });
-    expect(rule0().value).toEqual({ kind: 'value', value: '5', valueType: undefined });
+    expect(rule0().value).toEqual({ kind: 'value', value: '5' });
 
     // Disable: reverts to `valueSource: 'value'` and resets the scalar value.
     fireEvent.click(screen.getByTestId('expr-rhs-toggle'));
     expect(rule0().valueSource).toBe('value');
     expect(rule0().value).toBe('');
     expect(screen.queryByTestId('expr-rhs')).toBeNull();
+  });
+
+  it("threads the QueryBuilder's parseNumbers through to the RHS literal", () => {
+    render(<App parseNumbers />);
+
+    fireEvent.click(screen.getByTestId('expr-rhs-toggle'));
+    // With parseNumbers enabled, a numeric literal is stored as an actual number.
+    fireEvent.change(screen.getByTestId('expr-rhs-value'), { target: { value: '5' } });
+    expect(rule0().value).toEqual({ kind: 'value', value: 5 });
+  });
+
+  it('inherits the field inputType so a "-limited" parseNumbers parses for number fields', () => {
+    // `strict-limited` only parses when the field's resolved inputType is `'number'`.
+    render(
+      <App
+        parseNumbers="strict-limited"
+        fields={[
+          { name: 'price', label: 'Price', inputType: 'number' },
+          { name: 'qty', label: 'Qty' },
+        ]}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('expr-rhs-toggle'));
+    fireEvent.change(screen.getByTestId('expr-rhs-value'), { target: { value: '5' } });
+    expect(rule0().value).toEqual({ kind: 'value', value: 5 });
   });
 });
 

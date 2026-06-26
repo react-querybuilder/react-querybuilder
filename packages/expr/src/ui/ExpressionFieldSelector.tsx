@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import type { FieldSelectorProps } from 'react-querybuilder';
+import type { FullField, FieldSelectorProps } from 'react-querybuilder';
 import { update, ValueSelector } from 'react-querybuilder';
 import type { ExpressionNode } from '../types';
 import { ExpressionEditor } from './ExpressionEditor';
@@ -22,6 +22,17 @@ export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.El
   const lhs = rule.lhs;
 
   const fields = useMemo(() => toFieldOptions(schema.fields), [schema.fields]);
+
+  // Resolve the sentinel field's input type (same precedence as the core Rule component) so
+  // literals inside the LHS expression are parsed like a normal value for that field.
+  const inputType = useMemo(() => {
+    const fieldData: FullField = schema.fieldMap[rule.field] ?? {
+      name: rule.field,
+      value: rule.field,
+      label: rule.field,
+    };
+    return fieldData.inputType ?? schema.getInputType(rule.field, rule.operator, { fieldData });
+  }, [schema, rule.field, rule.operator]);
 
   const writeLhs = useCallback(
     (value: ExpressionNode | undefined) =>
@@ -53,6 +64,7 @@ export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.El
           registry={registry}
           fields={fields}
           schema={schema}
+          inputType={inputType}
           testID="expr-lhs"
         />
       )}

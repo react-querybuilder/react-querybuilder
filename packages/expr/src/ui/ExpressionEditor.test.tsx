@@ -2,7 +2,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { useState } from 'react';
-import type { FullField, Schema } from 'react-querybuilder';
+import type { FullField, InputType, ParseNumbersPropConfig, Schema } from 'react-querybuilder';
 import { defaultControlElements } from 'react-querybuilder';
 import { defaultFunctions } from '../defaultFunctions';
 import type { ExpressionNode } from '../types';
@@ -15,22 +15,29 @@ const FIELDS: ExpressionFieldOption[] = [
   { name: 'qty', label: 'Qty' },
 ];
 
-// Minimal schema: only `controls` (for nested selectors/editor) and the classname fields
-// the default value editor reads are exercised at runtime.
-const schema = {
-  controls: defaultControlElements,
-  classNames: {},
-  suppressStandardClassnames: false,
-} as unknown as Schema<FullField, string>;
+// Minimal schema: only `controls` (for nested selectors/editor), the classname fields the
+// default value editor reads, and `parseNumbers` (threaded to the literal editor) are
+// exercised at runtime.
+const makeSchema = (parseNumbers?: ParseNumbersPropConfig): Schema<FullField, string> =>
+  ({
+    controls: defaultControlElements,
+    classNames: {},
+    suppressStandardClassnames: false,
+    parseNumbers,
+  }) as unknown as Schema<FullField, string>;
 
 const Harness = ({
   initial,
   registry = defaultFunctions,
   fields = FIELDS,
+  parseNumbers,
+  inputType,
 }: {
   initial?: ExpressionNode;
   registry?: ExpressionFunctionRegistry;
   fields?: ExpressionFieldOption[];
+  parseNumbers?: ParseNumbersPropConfig;
+  inputType?: InputType | null;
 }) => {
   const [node, setNode] = useState<ExpressionNode | undefined>(initial);
   return (
@@ -40,7 +47,8 @@ const Harness = ({
         onChange={setNode}
         registry={registry}
         fields={fields}
-        schema={schema}
+        schema={makeSchema(parseNumbers)}
+        inputType={inputType}
       />
       <pre data-testid="out">{JSON.stringify(node)}</pre>
     </>
@@ -54,7 +62,7 @@ it('defaults an undefined node to an editable value node', () => {
   render(<Harness />);
   expect(sel('expr-kind')).toHaveValue('value');
   fireEvent.change(screen.getByTestId('expr-value'), { target: { value: 'hello' } });
-  expect(out()).toEqual({ kind: 'value', value: 'hello', valueType: undefined });
+  expect(out()).toEqual({ kind: 'value', value: 'hello' });
 });
 
 it('switches between node kinds, seeding sensible defaults', () => {
@@ -83,34 +91,68 @@ it('edits a field reference', () => {
   expect(out()).toEqual({ kind: 'field', field: 'qty' });
 });
 
-it('edits a literal as a string, then as a number via the toggle', () => {
+it('keeps a literal as a string when parseNumbers is off (no "#" toggle)', () => {
   render(<Harness initial={{ kind: 'value', value: undefined }} />);
+  // No numeric toggle is rendered.
+  expect(screen.queryByTestId('expr-number')).toBeNull();
   // `?? ''` guard for a missing value
   expect(screen.getByTestId('expr-value')).toHaveValue('');
 
   fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '100' } });
-  expect(out()).toEqual({ kind: 'value', value: '100', valueType: undefined });
-
-  // Enable numeric: existing string is coerced
-  fireEvent.click(screen.getByTestId('expr-number'));
-  expect(out()).toEqual({ kind: 'value', value: 100, valueType: 'number' });
-
-  // Editing while numeric coerces input
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '250' } });
-  expect(out()).toEqual({ kind: 'value', value: 250, valueType: 'number' });
-
-  // Disable numeric: value reverts to a string
-  fireEvent.click(screen.getByTestId('expr-number'));
-  expect(out()).toEqual({ kind: 'value', value: '250', valueType: undefined });
+  expect(out()).toEqual({ kind: 'value', value: '100' });
 });
 
-it('falls back to an empty string when disabling the number toggle on a nullish value', () => {
-  render(<Harness initial={{ kind: 'value', value: undefined, valueType: 'number' }} />);
-  expect(screen.getByTestId('expr-number')).toBeChecked();
+it('parses a numeric literal when parseNumbers threads through from the schema', () => {
+  render(<Harness initial={{ kind: 'value', value: '' }} parseNumbers />);
 
-  // Unchecking while `value` is nullish exercises the `?? ''` fallback.
-  fireEvent.click(screen.getByTestId('expr-number'));
-  expect(out()).toEqual({ kind: 'value', value: '', valueType: undefined });
+  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '250' } });
+  expect(out()).toEqual({ kind: 'value', value: 250 });
+
+  // Non-numeric input is left untouched (numeric-quantity returns NaN -> original string).
+  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: 'abc' } });
+  expect(out()).toEqual({ kind: 'value', value: 'abc' });
+});
+
+it('uses numeric-quantity for enhanced parsing (fractions, trailing text)', () => {
+  render(<Harness initial={{ kind: 'value', value: '' }} parseNumbers="enhanced" />);
+
+  // Fraction/mixed-number parsing is beyond the old `Number()`-based coercion.
+  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '1 1/2' } });
+  expect(out()).toEqual({ kind: 'value', value: 1.5 });
+
+  // Enhanced mode tolerates trailing non-numeric characters.
+  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '3px' } });
+  expect(out()).toEqual({ kind: 'value', value: 3 });
+});
+
+it('inherits inputType so "-limited" parseNumbers parses for a number field', () => {
+  render(
+    <Harness
+      initial={{ kind: 'value', value: '' }}
+      parseNumbers="strict-limited"
+      inputType="number"
+    />
+  );
+
+  // The literal editor renders as a number input (inherited from the field config).
+  expect(screen.getByTestId('expr-value')).toHaveAttribute('type', 'number');
+
+  // `-limited` only parses for `inputType: 'number'`, which we now inherit.
+  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '5' } });
+  expect(out()).toEqual({ kind: 'value', value: 5 });
+});
+
+it('leaves "-limited" parseNumbers as a no-op for a non-number field', () => {
+  render(
+    <Harness
+      initial={{ kind: 'value', value: '' }}
+      parseNumbers="strict-limited"
+      inputType="text"
+    />
+  );
+
+  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '5' } });
+  expect(out()).toEqual({ kind: 'value', value: '5' });
 });
 
 it('edits a function node, resizing args and editing nested args', () => {

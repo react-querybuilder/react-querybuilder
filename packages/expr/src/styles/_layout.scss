@@ -16,13 +16,6 @@
   gap: var(--#{$rqbexpr-var-prefix}spacing);
 }
 
-// Numeric-literal toggle: the checkbox sits beside its `#` glyph.
-.expr-value-number {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-}
-
 // Compact `ƒ(x)` button toggling a side between scalar and expression editing.
 .expr-toggle {
   cursor: pointer;

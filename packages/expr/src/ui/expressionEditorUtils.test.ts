@@ -1,7 +1,7 @@
 import { defaultFunctions } from '../defaultFunctions';
 import type { ExpressionFunctionRegistry } from '../types';
 import type { ExpressionFieldOption } from './expressionEditorUtils';
-import { arityCount, changeFunction, coerceNumber, defaultNode } from './expressionEditorUtils';
+import { arityCount, changeFunction, defaultNode } from './expressionEditorUtils';
 
 const fields: ExpressionFieldOption[] = [
   { name: 'price', label: 'Price' },
@@ -21,25 +21,6 @@ describe('arityCount', () => {
 
   it('falls back to the current count when arity is absent', () => {
     expect(arityCount(undefined, 3)).toBe(3);
-  });
-});
-
-describe('coerceNumber', () => {
-  it('returns the (string) input for empty/blank values', () => {
-    expect(coerceNumber('')).toBe('');
-    expect(coerceNumber('   ')).toBe('   ');
-    expect(coerceNumber(null)).toBe('');
-    expect(coerceNumber(undefined)).toBe('');
-  });
-
-  it('parses numeric strings', () => {
-    expect(coerceNumber('42')).toBe(42);
-    expect(coerceNumber('3.5')).toBe(3.5);
-    expect(coerceNumber(7)).toBe(7);
-  });
-
-  it('returns the original string for non-numeric input', () => {
-    expect(coerceNumber('abc')).toBe('abc');
   });
 });
 

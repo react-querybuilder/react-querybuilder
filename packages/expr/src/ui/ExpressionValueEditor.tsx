@@ -16,7 +16,7 @@ import { toFieldOptions } from './fieldOptions';
 export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Element => {
   const { registry, inheritedValueEditor } = useExpressionUI();
   const InheritedEditor = inheritedValueEditor;
-  const { schema, path, value, valueSource, handleOnChange } = props;
+  const { schema, path, value, valueSource, inputType, handleOnChange } = props;
   const isExpression = valueSource === 'expression';
 
   const fields = useMemo(() => toFieldOptions(schema.fields), [schema.fields]);
@@ -49,6 +49,7 @@ export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Elemen
           registry={registry}
           fields={fields}
           schema={schema}
+          inputType={inputType}
           testID="expr-rhs"
         />
       ) : InheritedEditor ? (

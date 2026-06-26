@@ -22,14 +22,6 @@ export const arityCount = (arity: ExpressionFunction['arity'], current: number):
       ? Math.max(arity[0], Math.min(current, arity[1]))
       : current;
 
-/** Coerces a string to a number, returning the original string when not numeric. */
-export const coerceNumber = (value: unknown): number | string => {
-  const s = `${value ?? ''}`;
-  if (s.trim() === '') return s;
-  const n = Number(s);
-  return Number.isNaN(n) ? s : n;
-};
-
 /** Builds a fresh default node of the given `kind`. */
 export const defaultNode = (
   kind: ExpressionNodeKind,
