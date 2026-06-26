@@ -109,9 +109,7 @@ describe('validateExpression', () => {
   });
 
   describe('serializer presence', () => {
-    const reg: ExpressionFunctionRegistry = {
-      sqlOnly: { arity: 1, sql: x => `S(${x})` },
-    };
+    const reg: ExpressionFunctionRegistry = { sqlOnly: { arity: 1, sql: x => `S(${x})` } };
     const node: ExpressionNode = { kind: 'func', fn: 'sqlOnly', args: [val] };
 
     it('passes when the requested serializer is present', () => {

@@ -73,9 +73,7 @@ describe('createExpressionProcessors', () => {
   });
 
   it('omits rather than throws when a function lacks the target serializer', () => {
-    const procs = createExpressionProcessors({
-      jlOnly: { arity: 1, jsonLogic: 'abs' },
-    });
+    const procs = createExpressionProcessors({ jlOnly: { arity: 1, jsonLogic: 'abs' } });
     const rule = exprRule(
       { operator: '=' },
       { lhs: fn('jlOnly', field('x')), rhs: value(1, 'number') }

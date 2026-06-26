@@ -125,9 +125,7 @@ describe('SQL processor', () => {
   });
 
   it('uses a custom registry', () => {
-    const reg = mergeFunctions({
-      pow: { arity: 2, sql: (a, b) => `POWER(${a}, ${b})` },
-    });
+    const reg = mergeFunctions({ pow: { arity: 2, sql: (a, b) => `POWER(${a}, ${b})` } });
     const proc = getExpressionRuleProcessorSQL(reg);
     const rule = exprRule(
       { operator: '=' },
@@ -317,9 +315,7 @@ describe('Parameterized processor', () => {
   });
 
   it('uses a custom registry and binds nested value args', () => {
-    const reg = mergeFunctions({
-      pow: { arity: 2, parameterized: (a, b) => `POWER(${a}, ${b})` },
-    });
+    const reg = mergeFunctions({ pow: { arity: 2, parameterized: (a, b) => `POWER(${a}, ${b})` } });
     const proc = getExpressionRuleProcessorParameterized(reg);
     const rule = exprRule(
       { operator: '=' },
@@ -425,9 +421,7 @@ describe('JsonLogic processor', () => {
   });
 
   it('uses a custom registry', () => {
-    const reg = mergeFunctions({
-      pow: { arity: 2, jsonLogic: (a, b) => ({ pow: [a, b] }) },
-    });
+    const reg = mergeFunctions({ pow: { arity: 2, jsonLogic: (a, b) => ({ pow: [a, b] }) } });
     const proc = getExpressionRuleProcessorJsonLogic(reg);
     const rule = exprRule(
       { operator: '=' },

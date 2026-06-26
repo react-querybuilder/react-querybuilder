@@ -114,9 +114,7 @@ describe('right-hand side (value editor host)', () => {
 
 describe('function registry', () => {
   it('merges the `functions` prop over the built-ins', () => {
-    const functions: ExpressionFunctionRegistry = {
-      power: { label: 'POW', arity: 2 },
-    };
+    const functions: ExpressionFunctionRegistry = { power: { label: 'POW', arity: 2 } };
     render(<App functions={functions} />);
 
     fireEvent.click(screen.getByTestId('expr-lhs-toggle'));
