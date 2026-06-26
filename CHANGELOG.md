@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- New `@react-querybuilder/expr` package adding arithmetic/function expression support to rules—either side of a rule can hold a recursive expression tree (e.g. `price * quantity`).
+  - Core additions: a recursive `ExpressionNode` type (`field`/`value`/`func` nodes), a new `lhs` property on `RuleType` for left-hand side expressions, and a new `"expression"` `valueSource` (the right-hand side node is stored in `value`). Core preserves these nodes but does not interpret them.
+  - Functions—including the arithmetic operators `+ - * /`—are defined in an `ExpressionFunctionRegistry`, each entry carrying an optional `label`, `arity`, and per-format serializers (`sql`, `parameterized`, `jsonLogic`). Ships with `defaultFunctions` (`add`/`subtract`/`multiply`/`divide` plus `abs`) and a `mergeFunctions` helper for extending them.
+  - `formatQuery` rule processors for the "sql", "parameterized"/"parameterized_named", and "jsonlogic" formats. Bind a custom registry once with `createExpressionProcessors` (or the individual `getExpressionRuleProcessorSQL`/`getExpressionRuleProcessorParameterized`/`getExpressionRuleProcessorJsonLogic` factories), or use the ready-made `expressionRuleProcessorSQL`/`expressionRuleProcessorParameterized`/`expressionRuleProcessorJsonLogic` bound to the built-ins. Rules without expressions, or with an unsupported operator, fall back to the stock processor.
+  - `createExpressionValidator` returns a `QueryValidator` that flags rules with invalid expressions (unknown function, arity mismatch, empty field reference) for use as `formatQuery`'s `validator` option (annotating "diagnostics" output and skipping invalid rules) or a `<QueryBuilder>` `validator` prop. `validateExpression` is also exported for one-off checks.
+  - React components live in the separate `@react-querybuilder/expr/ui` entry point (the root is non-React/server-safe). `QueryBuilderExpressions` wraps a `QueryBuilder`, hosting an `ExpressionEditor` on each side of a rule, toggled per-rule via a `ƒ(x)` button. Inherited compatibility/theme controls continue to render non-expression rules, and `parseNumbers`/`inputType` are threaded into expression literal inputs.
+  - Demo: new "Enable expressions" option wraps the live query builder with `QueryBuilderExpressions`.
 
 ## [v8.20.2] - 2026-06-25
 
