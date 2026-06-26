@@ -148,9 +148,11 @@ describe('inherited (compat) controls', () => {
     expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
     expect(screen.getByTestId('custom-field')).toBeInTheDocument();
 
-    // Enabling the RHS expression replaces the inherited editor with the expression editor.
+    // Enabling the RHS expression swaps the rule's editor for the expression editor, whose
+    // literal sub-input still renders via the inherited (themed) editor.
     fireEvent.click(screen.getByTestId('expr-rhs-toggle'));
-    expect(screen.queryByTestId('custom-editor')).toBeNull();
-    expect(screen.getByTestId('expr-rhs')).toBeInTheDocument();
+    const exprRhs = screen.getByTestId('expr-rhs');
+    expect(exprRhs).toBeInTheDocument();
+    expect(within(exprRhs).getByTestId('custom-editor')).toBeInTheDocument();
   });
 });

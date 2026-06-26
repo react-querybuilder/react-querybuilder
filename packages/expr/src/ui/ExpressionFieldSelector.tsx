@@ -52,6 +52,7 @@ export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.El
           onChange={writeLhs}
           registry={registry}
           fields={fields}
+          schema={schema}
           testID="expr-lhs"
         />
       )}

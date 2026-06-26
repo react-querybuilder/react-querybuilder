@@ -2,6 +2,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { useState } from 'react';
+import type { FullField, Schema } from 'react-querybuilder';
+import { defaultControlElements } from 'react-querybuilder';
 import { defaultFunctions } from '../defaultFunctions';
 import type { ExpressionNode } from '../types';
 import type { ExpressionFunctionRegistry } from '../types';
@@ -12,6 +14,14 @@ const FIELDS: ExpressionFieldOption[] = [
   { name: 'price', label: 'Price' },
   { name: 'qty', label: 'Qty' },
 ];
+
+// Minimal schema: only `controls` (for nested selectors/editor) and the classname fields
+// the default value editor reads are exercised at runtime.
+const schema = {
+  controls: defaultControlElements,
+  classNames: {},
+  suppressStandardClassnames: false,
+} as unknown as Schema<FullField, string>;
 
 const Harness = ({
   initial,
@@ -25,7 +35,13 @@ const Harness = ({
   const [node, setNode] = useState<ExpressionNode | undefined>(initial);
   return (
     <>
-      <ExpressionEditor node={node} onChange={setNode} registry={registry} fields={fields} />
+      <ExpressionEditor
+        node={node}
+        onChange={setNode}
+        registry={registry}
+        fields={fields}
+        schema={schema}
+      />
       <pre data-testid="out">{JSON.stringify(node)}</pre>
     </>
   );

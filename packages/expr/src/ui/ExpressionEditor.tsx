@@ -1,8 +1,32 @@
 import * as React from 'react';
-import type { ExpressionNode } from '../types';
-import type { ExpressionFunctionRegistry } from '../types';
+import { useMemo } from 'react';
+import type {
+  FullField,
+  FullOption,
+  Path,
+  RuleType,
+  Schema,
+  ValueEditorProps,
+} from 'react-querybuilder';
+import { ValueEditor } from 'react-querybuilder';
+import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
 import type { ExpressionFieldOption, ExpressionNodeKind } from './expressionEditorUtils';
 import { changeFunction, coerceNumber, defaultNode } from './expressionEditorUtils';
+import { useExpressionUI } from './ExpressionUIContext';
+
+// Inert rule-scoped props for the schema-provided controls, which normally live inside a
+// rule. The expression editor owns its node state, so these placeholders just satisfy the
+// control contract.
+const dummyPath: Path = [];
+const dummyFieldData: FullField = { name: '', value: '', label: '' };
+const dummyRule: RuleType = { field: '', operator: '=', value: '' };
+
+// Static options for the node-`kind` selector.
+const kindOptions: FullOption[] = [
+  { name: 'field', value: 'field', label: 'Field' },
+  { name: 'value', value: 'value', label: 'Value' },
+  { name: 'func', value: 'func', label: 'Function' },
+];
 
 /** Props for {@link ExpressionEditor}. */
 export interface ExpressionEditorProps {
@@ -14,6 +38,12 @@ export interface ExpressionEditorProps {
   registry: ExpressionFunctionRegistry;
   /** Fields selectable for `field` nodes. */
   fields: ExpressionFieldOption[];
+  /**
+   * Query builder schema. The nested selectors render via `schema.controls.valueSelector`
+   * (and the literal editor via the inherited value editor) so they inherit the active
+   * theme (Bootstrap, MUI, etc.).
+   */
+  schema: Schema<FullField, string>;
   /** Test/id prefix for this node (children derive nested ids from it). */
   testID?: string;
 }
@@ -22,57 +52,94 @@ export interface ExpressionEditorProps {
  * Recursive editor for a single {@link ExpressionNode}. A `kind` selector switches between
  * a field reference, a literal value (with an optional numeric toggle), and a function call
  * whose arguments are themselves {@link ExpressionEditor}s — enabling arbitrary nesting.
+ *
+ * Selectors render via `schema.controls.valueSelector` and the literal editor via the
+ * _inherited_ value editor (the compat editor captured before {@link QueryBuilderExpressions}
+ * overrides it), so nested controls match the host theme without re-entering the expression
+ * wrapper.
  */
 export const ExpressionEditor = ({
   node,
   onChange,
   registry,
   fields,
+  schema,
   testID = 'expr',
 }: ExpressionEditorProps): React.JSX.Element => {
+  const { inheritedValueEditor } = useExpressionUI();
   const n: ExpressionNode = node ?? { kind: 'value', value: '' };
+  const ValueSelectorControl = schema.controls.valueSelector;
+  // `schema.controls.valueEditor` is the expression override itself; use the inherited
+  // (or default) editor for the literal so it stays themed and doesn't recurse.
+  const ValueEditorControl: React.ComponentType<ValueEditorProps> =
+    inheritedValueEditor ?? ValueEditor;
+
+  const fieldOptions = useMemo<FullOption[]>(
+    () => fields.map(f => ({ name: f.name, value: f.name, label: f.label })),
+    [fields]
+  );
+  const fnOptions = useMemo<FullOption[]>(
+    () =>
+      Object.keys(registry).map(key => ({
+        name: key,
+        value: key,
+        label: registry[key].label ?? key,
+      })),
+    [registry]
+  );
 
   return (
     <span className="expr-node" data-testid={testID}>
-      <select
+      <ValueSelectorControl
+        testID={`${testID}-kind`}
         className="expr-kind"
-        data-testid={`${testID}-kind`}
-        aria-label="Expression kind"
+        title="Expression kind"
+        schema={schema}
+        path={dummyPath}
+        level={0}
         value={n.kind}
-        onChange={e =>
-          onChange(defaultNode(e.target.value as ExpressionNodeKind, fields, registry))
-        }>
-        <option value="field">Field</option>
-        <option value="value">Value</option>
-        <option value="func">Function</option>
-      </select>
+        options={kindOptions}
+        multiple={false}
+        listsAsArrays={false}
+        handleOnChange={v => onChange(defaultNode(v as ExpressionNodeKind, fields, registry))}
+      />
 
       {n.kind === 'field' && (
-        <select
+        <ValueSelectorControl
+          testID={`${testID}-field`}
           className="expr-field"
-          data-testid={`${testID}-field`}
-          aria-label="Field"
+          title="Field"
+          schema={schema}
+          path={dummyPath}
+          level={0}
           value={n.field}
-          onChange={e => onChange({ kind: 'field', field: e.target.value })}>
-          {fields.map(f => (
-            <option key={f.name} value={f.name}>
-              {f.label}
-            </option>
-          ))}
-        </select>
+          options={fieldOptions}
+          multiple={false}
+          listsAsArrays={false}
+          handleOnChange={v => onChange({ kind: 'field', field: `${v}` })}
+        />
       )}
 
       {n.kind === 'value' && (
         <>
-          <input
+          <ValueEditorControl
+            skipHook
+            testID={`${testID}-value`}
             className="expr-value"
-            data-testid={`${testID}-value`}
-            aria-label="Value"
-            value={`${n.value ?? ''}`}
-            onChange={e =>
+            title="Value"
+            schema={schema}
+            path={dummyPath}
+            level={0}
+            field=""
+            operator="="
+            fieldData={dummyFieldData}
+            rule={dummyRule}
+            valueSource="value"
+            value={n.value ?? ''}
+            handleOnChange={v =>
               onChange({
                 kind: 'value',
-                value: n.valueType === 'number' ? coerceNumber(e.target.value) : e.target.value,
+                value: n.valueType === 'number' ? coerceNumber(v) : v,
                 valueType: n.valueType,
               })
             }
@@ -97,18 +164,19 @@ export const ExpressionEditor = ({
 
       {n.kind === 'func' && (
         <span className="expr-func">
-          <select
+          <ValueSelectorControl
+            testID={`${testID}-fn`}
             className="expr-fn"
-            data-testid={`${testID}-fn`}
-            aria-label="Function"
+            title="Function"
+            schema={schema}
+            path={dummyPath}
+            level={0}
             value={n.fn}
-            onChange={e => onChange(changeFunction(e.target.value, n.args, fields, registry))}>
-            {Object.keys(registry).map(key => (
-              <option key={key} value={key}>
-                {registry[key].label ?? key}
-              </option>
-            ))}
-          </select>
+            options={fnOptions}
+            multiple={false}
+            listsAsArrays={false}
+            handleOnChange={v => onChange(changeFunction(`${v}`, n.args, fields, registry))}
+          />
           {n.args.map((arg, i) => (
             <ExpressionEditor
               // Positional function args: their index *is* the stable identity.
@@ -120,6 +188,7 @@ export const ExpressionEditor = ({
               }
               registry={registry}
               fields={fields}
+              schema={schema}
               testID={`${testID}-arg${i}`}
             />
           ))}

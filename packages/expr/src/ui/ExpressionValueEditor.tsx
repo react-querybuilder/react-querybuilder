@@ -48,6 +48,7 @@ export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Elemen
           onChange={handleOnChange}
           registry={registry}
           fields={fields}
+          schema={schema}
           testID="expr-rhs"
         />
       ) : InheritedEditor ? (
