@@ -4,6 +4,7 @@ import { getExpressionRuleProcessorParameterized } from './processors/getExpress
 import { getExpressionRuleProcessorSQL } from './processors/getExpressionRuleProcessorSQL';
 
 export * from './defaultFunctions';
+export * from './processors/createExpressionProcessors';
 export * from './processors/getExpressionRuleProcessorJsonLogic';
 export * from './processors/getExpressionRuleProcessorParameterized';
 export * from './processors/getExpressionRuleProcessorSQL';

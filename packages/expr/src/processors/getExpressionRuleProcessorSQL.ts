@@ -32,8 +32,8 @@ export const getExpressionRuleProcessorSQL =
     if (!unary && !SCALAR_OPERATORS.has(operator)) return defaultRuleProcessorSQL(rule, opts);
 
     if (
-      (expr.lhs && !validateExpression(expr.lhs, reg).valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, reg).valid)
+      (expr.lhs && !validateExpression(expr.lhs, reg, 'sql').valid) ||
+      (expr.rhs && !validateExpression(expr.rhs, reg, 'sql').valid)
     ) {
       return '';
     }

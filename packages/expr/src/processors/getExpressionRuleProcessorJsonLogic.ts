@@ -47,8 +47,8 @@ export const getExpressionRuleProcessorJsonLogic =
     if (!unary && !jlOp) return defaultRuleProcessorJsonLogic(rule, opts);
 
     if (
-      (expr.lhs && !validateExpression(expr.lhs, reg).valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, reg).valid)
+      (expr.lhs && !validateExpression(expr.lhs, reg, 'jsonLogic').valid) ||
+      (expr.rhs && !validateExpression(expr.rhs, reg, 'jsonLogic').valid)
     ) {
       return false;
     }

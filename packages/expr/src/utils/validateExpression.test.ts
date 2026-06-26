@@ -107,4 +107,25 @@ describe('validateExpression', () => {
     expect(result.valid).toBe(false);
     expect(result.reasons[0]).toMatch(/Unknown expression node kind "bogus"/);
   });
+
+  describe('serializer presence', () => {
+    const reg: ExpressionFunctionRegistry = {
+      sqlOnly: { name: 'sqlOnly', arity: 1, sql: x => `S(${x})` },
+    };
+    const node: ExpressionNode = { kind: 'func', fn: 'sqlOnly', args: [val] };
+
+    it('passes when the requested serializer is present', () => {
+      expect(validateExpression(node, reg, 'sql').valid).toBe(true);
+    });
+
+    it('flags a function missing the requested serializer', () => {
+      const result = validateExpression(node, reg, 'jsonLogic');
+      expect(result.valid).toBe(false);
+      expect(result.reasons).toContain('Function "sqlOnly" has no "jsonLogic" serializer');
+    });
+
+    it('ignores serializer presence when none is requested', () => {
+      expect(validateExpression(node, reg).valid).toBe(true);
+    });
+  });
 });

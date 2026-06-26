@@ -43,8 +43,8 @@ export const getExpressionRuleProcessorParameterized =
     }
 
     if (
-      (expr.lhs && !validateExpression(expr.lhs, reg).valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, reg).valid)
+      (expr.lhs && !validateExpression(expr.lhs, reg, 'parameterized').valid) ||
+      (expr.rhs && !validateExpression(expr.rhs, reg, 'parameterized').valid)
     ) {
       return empty();
     }

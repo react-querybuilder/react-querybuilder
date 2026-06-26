@@ -1,5 +1,8 @@
 import type { ExpressionFunction, ExpressionFunctionRegistry, ExpressionNode } from '../types';
 
+/** Serializer a target export format requires on each {@link ExpressionFunction}. */
+export type ExpressionSerializerKey = 'sql' | 'parameterized' | 'jsonLogic';
+
 /** Result of {@link validateExpression}. */
 export interface ExpressionValidationResult {
   valid: boolean;
@@ -20,12 +23,15 @@ const describeArity = (arity: ExpressionFunction['arity']): string => {
 
 /**
  * Recursively validates an expression node against a function registry. Flags unknown
- * functions, arity mismatches, and empty field references. `formatQuery` skips rules
- * whose expressions fail validation (the rule processors return empty/`false`).
+ * functions, arity mismatches, and empty field references. When `serializer` is supplied,
+ * also flags functions lacking the serializer that target format requires (so the rule is
+ * omitted from export rather than throwing at serialization time). `formatQuery` skips
+ * rules whose expressions fail validation (the rule processors return empty/`false`).
  */
 export const validateExpression = (
   node: ExpressionNode | undefined,
-  registry: ExpressionFunctionRegistry
+  registry: ExpressionFunctionRegistry,
+  serializer?: ExpressionSerializerKey
 ): ExpressionValidationResult => {
   const reasons: string[] = [];
 
@@ -55,6 +61,9 @@ export const validateExpression = (
           reasons.push(
             `Function "${n.fn}" expects ${describeArity(fn.arity)} argument(s), received ${argc}`
           );
+        }
+        if (serializer && !fn[serializer]) {
+          reasons.push(`Function "${n.fn}" has no "${serializer}" serializer`);
         }
         for (const arg of n.args ?? []) walk(arg);
         break;
