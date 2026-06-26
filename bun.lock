@@ -321,6 +321,7 @@
         "react-dom": "catalog:",
         "react-querybuilder": "8.20.1",
         "rollup-plugin-visualizer": "catalog:",
+        "sass": "catalog:",
         "type-fest": "catalog:",
         "typescript": "catalog:",
         "vite": "catalog:",

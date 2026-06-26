@@ -1,0 +1,33 @@
+@use './variables' as *;
+
+// Layout-only styles for the expression editor. No colors/borders/fonts so controls
+// inherit the surrounding theme; compat packages style the nested selects/inputs via
+// the query builder schema's control components (see ExpressionEditor Part B).
+
+// Wrapper spans for the rule's expression-bearing sides and each (possibly nested)
+// expression node, plus the function-call group holding the fn selector and its args.
+.expr-lhs,
+.expr-rhs,
+.expr-node,
+.expr-func {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--#{$rqbexpr-var-prefix}spacing);
+}
+
+// Numeric-literal toggle: the checkbox sits beside its `#` glyph.
+.expr-value-number {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+// Compact `ƒ(x)` button toggling a side between scalar and expression editing.
+.expr-toggle {
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
