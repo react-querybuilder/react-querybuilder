@@ -31,7 +31,8 @@ export type DemoOption =
   | 'responsiveLayout'
   | 'showBranches'
   | 'suppressStandardClassnames'
-  | 'useDateTimePackage';
+  | 'useDateTimePackage'
+  | 'enableExpressions';
 
 export type DemoOptions = Record<DemoOption, boolean>;
 
@@ -49,6 +50,7 @@ export type CommonRQBProps = Pick<
       | 'responsiveLayout'
       | 'showBranches'
       | 'useDateTimePackage'
+      | 'enableExpressions'
     >
 > & { independentCombinators?: boolean; justifiedLayout?: boolean; responsiveLayout?: boolean };
 

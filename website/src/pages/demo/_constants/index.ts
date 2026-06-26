@@ -37,6 +37,7 @@ export const defaultOptions = {
   suppressStandardClassnames: false,
   useDateTimePackage: false,
   responsiveLayout: false,
+  enableExpressions: false,
 } satisfies DemoOptions;
 
 export const optionOrder: DemoOption[] = [
@@ -64,6 +65,7 @@ export const optionOrder: DemoOption[] = [
   'responsiveLayout',
   'suppressStandardClassnames',
   'useDateTimePackage',
+  'enableExpressions',
 ];
 
 export const optionsMetadata = {
@@ -192,6 +194,12 @@ export const optionsMetadata = {
     label: 'Use date/time package',
     title:
       'Wrap the query builder with QueryBuilderDateTime for enhanced date/time editing, including relative values ("3 months ago", "start of year")',
+  },
+  enableExpressions: {
+    link: '',
+    label: 'Enable expressions',
+    title:
+      'Wrap the query builder with QueryBuilderExpressions to build arithmetic/function expressions (e.g. price * quantity) on either side of a rule via the ƒ(x) toggle',
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 

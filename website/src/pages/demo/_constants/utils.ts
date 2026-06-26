@@ -24,6 +24,7 @@ import {
   datetimeRuleProcessorSpEL,
   datetimeRuleProcessorSQL,
 } from '@react-querybuilder/datetime/dayjs';
+import { createExpressionProcessors } from '@react-querybuilder/expr';
 import clsx from 'clsx';
 import pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
@@ -187,6 +188,17 @@ export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcesso
   gql: datetimeRuleProcessorCypher,
   sparql: datetimeRuleProcessorSPARQL,
   gremlin: datetimeRuleProcessorGremlin,
+};
+
+// Configure-once expression processors (built-in functions). Only the formats expr
+// supports are mapped; other formats fall back to the default processor.
+const expressionProcessors = createExpressionProcessors();
+
+export const expressionRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
+  sql: expressionProcessors.sql,
+  parameterized: expressionProcessors.parameterized,
+  parameterized_named: expressionProcessors.parameterized,
+  jsonlogic: expressionProcessors.jsonLogic,
 };
 
 export const getExportCall = async (
@@ -439,6 +451,10 @@ import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
     options.useDateTimePackage
       ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';`
       : ''
+  }${
+    options.enableExpressions
+      ? `\nimport { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';`
+      : ''
   }
 ${
   options.enableDragAndDrop
@@ -455,7 +471,9 @@ export const App = () => {
 
   return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
     options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
-  }<QueryBuilder ${props} />${
+  }${options.enableExpressions ? '<QueryBuilderExpressions>' : ''}<QueryBuilder ${props} />${
+    options.enableExpressions ? '</QueryBuilderExpressions>' : ''
+  }${
     options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''
   }${styleWrapperSuffix}${options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''}
   );
