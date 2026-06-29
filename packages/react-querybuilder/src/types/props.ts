@@ -601,6 +601,7 @@ export interface Schema<F extends FullField, O extends string> {
   getValueSources(field: string, operator: string, meta: { fieldData: F }): ValueSourceFullOptions;
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
+  getRuleDefaultValue(rule: RuleType): unknown;
   getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
   getSubQueryBuilderProps(
     field: GetOptionIdentifierType<F>,

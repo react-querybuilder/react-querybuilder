@@ -8,6 +8,7 @@ export * from './generateAccessibleDescription';
 export * from './generateID';
 export * from './getMatchModesUtil';
 export * from './getParseNumberMethod';
+export * from './getRuleDefaultValue';
 export * from './getValidationClassNames';
 export * from './getValueSourcesUtil';
 export * from './isRuleGroup';

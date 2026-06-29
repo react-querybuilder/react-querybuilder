@@ -37,6 +37,7 @@ export const basicSchema: Schema<FullField, string> = {
   getInputType: admonish('getInputType'),
   getValues: admonish('getValues'),
   getRuleClassname: admonish('getRuleClassname'),
+  getRuleDefaultValue: admonish('getRuleDefaultValue'),
   getRuleGroupClassname: admonish('getRuleGroupClassname'),
   getSubQueryBuilderProps: admonish('getSubQueryBuilderProps'),
   accessibleDescriptionGenerator: admonish('accessibleDescriptionGenerator'),

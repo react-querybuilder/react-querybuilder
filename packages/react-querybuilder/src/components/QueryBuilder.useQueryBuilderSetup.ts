@@ -23,38 +23,18 @@ import {
   defaultCombinators,
   defaultOperatorLabelMap,
   defaultOperators,
-  filterFieldsByComparator,
   generateID,
   getFirstOption,
   getMatchModesUtil,
   getOption,
+  getRuleDefaultValue as getRuleDefaultValueCore,
   getValueSourcesUtil,
-  joinWith,
   prepareOptionList,
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
 import type { UseMergedContext } from '../hooks';
 import { useFields, useMergedContext } from '../hooks';
 import type { QueryBuilderProps } from '../types';
-
-// oxlint-disable-next-line typescript/no-explicit-any
-const getFirstOptionsFrom = (opts: any[], r: RuleType, listsAsArrays?: boolean) => {
-  const firstOption = getFirstOption(opts);
-
-  if (r.operator === 'between' || r.operator === 'notBetween') {
-    const valueAsArray = [firstOption, firstOption];
-    return listsAsArrays
-      ? valueAsArray
-      : joinWith(
-          valueAsArray.map(
-            v => v ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
-          ),
-          ','
-        );
-  }
-
-  return firstOption;
-};
 
 export type UseQueryBuilderSetup<
   RG extends RuleGroupTypeAny,
@@ -286,48 +266,16 @@ export const useQueryBuilderSetup = <
 
   const getRuleDefaultValue = useCallback(
     // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
-    <RT extends RuleType = R>(r: RT) => {
-      const fieldData = (fieldMap[r.field as FieldName] ?? {}) as F;
-      if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
-        return fieldData.defaultValue;
-      } else if (getDefaultValue) {
-        return getDefaultValue(r, { fieldData });
-      }
-
-      let value: string | (string | null)[] | boolean | null = '';
-
-      const values = getValuesMain(r.field as FieldName, r.operator as OperatorName, {
-        fieldData,
-      });
-
-      if (r.valueSource === 'field') {
-        const filteredFields = filterFieldsByComparator(fieldData, fields, r.operator);
-        value =
-          filteredFields.length > 0 ? getFirstOptionsFrom(filteredFields, r, listsAsArrays) : '';
-      } else if (values.length > 0) {
-        const editorType = getValueEditorTypeMain(
-          r.field as FieldName,
-          r.operator as OperatorName,
-          { fieldData }
-        );
-        if (editorType === 'multiselect') {
-          value = listsAsArrays ? [] : '';
-        } else if (editorType === 'select' || editorType === 'radio') {
-          value = getFirstOptionsFrom(values, r, listsAsArrays);
-        }
-      } else {
-        const editorType = getValueEditorTypeMain(
-          r.field as FieldName,
-          r.operator as OperatorName,
-          { fieldData }
-        );
-        if (editorType === 'checkbox') {
-          value = false;
-        }
-      }
-
-      return value;
-    },
+    <RT extends RuleType = R>(r: RT) =>
+      getRuleDefaultValueCore<F>(r, {
+        fieldData: (fieldMap[r.field as FieldName] ?? {}) as F,
+        fields,
+        listsAsArrays,
+        getValueEditorType: (f, o, m) =>
+          getValueEditorTypeMain(f as FieldName, o as OperatorName, m),
+        getValues: (f, o, m) => getValuesMain(f as FieldName, o as OperatorName, m),
+        getDefaultValue: getDefaultValue && ((rule, m) => getDefaultValue(rule as R, m)),
+      }),
     [fieldMap, fields, getDefaultValue, getValueEditorTypeMain, getValuesMain, listsAsArrays]
   );
 
