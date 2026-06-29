@@ -1,12 +1,13 @@
+import { toFullOption } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import type { FullField, FieldSelectorProps } from 'react-querybuilder';
-import { update, ValueSelector } from 'react-querybuilder';
+import type { FieldSelectorProps, FullField } from 'react-querybuilder';
+import { ActionElement, update, ValueSelector } from 'react-querybuilder';
 import type { ExpressionNode } from '../types';
+import { ExprTestID } from './defaults';
 import { ExpressionEditor } from './ExpressionEditor';
 import { defaultNode } from './expressionEditorUtils';
 import { useExpressionUI } from './ExpressionUIContext';
-import { toFieldOptions } from './fieldOptions';
 
 /**
  * Field-selector override hosting the rule's left-hand side. The inherited (or default)
@@ -16,23 +17,29 @@ import { toFieldOptions } from './fieldOptions';
  * normally.
  */
 export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.Element => {
-  const { registry, inheritedFieldSelector } = useExpressionUI();
+  const {
+    registry,
+    translations,
+    showFieldExpressionToggle,
+    inheritedActionElement,
+    inheritedFieldSelector,
+  } = useExpressionUI();
+  const ActionButton = inheritedActionElement ?? ActionElement;
   const FieldSelector = inheritedFieldSelector ?? ValueSelector;
-  const { rule, schema, path } = props;
-  const lhs = rule.lhs;
-
-  const fields = useMemo(() => toFieldOptions(schema.fields), [schema.fields]);
+  const {
+    rule: { field, lhs, operator },
+    schema,
+    path,
+    level,
+    rule,
+  } = props;
 
   // Resolve the sentinel field's input type (same precedence as the core Rule component) so
   // literals inside the LHS expression are parsed like a normal value for that field.
   const inputType = useMemo(() => {
-    const fieldData: FullField = schema.fieldMap[rule.field] ?? {
-      name: rule.field,
-      value: rule.field,
-      label: rule.field,
-    };
-    return fieldData.inputType ?? schema.getInputType(rule.field, rule.operator, { fieldData });
-  }, [schema, rule.field, rule.operator]);
+    const fieldData: FullField = schema.fieldMap[field] ?? toFullOption(field);
+    return fieldData.inputType ?? schema.getInputType(field, operator, { fieldData });
+  }, [schema, field, operator]);
 
   const writeLhs = useCallback(
     (value: ExpressionNode | undefined) =>
@@ -41,31 +48,36 @@ export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.El
   );
 
   const toggleLhs = useCallback(
-    () => writeLhs(lhs ? undefined : defaultNode('field', fields, registry)),
-    [writeLhs, lhs, fields, registry]
+    () => writeLhs(lhs ? undefined : defaultNode('field', schema.fields, registry)),
+    [writeLhs, lhs, registry, schema]
   );
 
-  return (
+  const toggle = lhs ? translations.exprToggleLHSActive : translations.exprToggleLHS;
+
+  return !showFieldExpressionToggle ? (
+    <FieldSelector {...props} />
+  ) : (
     <span className="expr-lhs">
       <FieldSelector {...props} />
-      <button
-        type="button"
+      <ActionButton
+        path={path}
+        level={level}
+        schema={schema}
+        testID={ExprTestID.exprLhsToggle}
         className="expr-toggle"
-        data-testid="expr-lhs-toggle"
-        aria-label="Toggle left-hand side expression"
-        aria-pressed={!!lhs}
-        onClick={toggleLhs}>
-        ƒ(x)
-      </button>
+        label={toggle.label}
+        title={toggle.title}
+        ruleOrGroup={rule}
+        handleOnClick={toggleLhs}
+      />
       {lhs && (
         <ExpressionEditor
           node={lhs}
           onChange={writeLhs}
           registry={registry}
-          fields={fields}
           schema={schema}
           inputType={inputType}
-          testID="expr-lhs"
+          testID={ExprTestID.exprLhsEditor}
         />
       )}
     </span>

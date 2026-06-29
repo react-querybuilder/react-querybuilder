@@ -1,11 +1,7 @@
-import type { ExpressionNode } from '../types';
-import type { ExpressionFunction, ExpressionFunctionRegistry } from '../types';
-
-/** A selectable field option for the expression editor (identifier + display label). */
-export interface ExpressionFieldOption {
-  name: string;
-  label: string;
-}
+import type { OptionList, RuleType } from '@react-querybuilder/core';
+import { getFirstOption } from '@react-querybuilder/core';
+import type { FullField, Schema } from 'react-querybuilder';
+import type { ExpressionFunction, ExpressionFunctionRegistry, ExpressionNode } from '../types';
 
 /** Node `kind` discriminants, for the kind selector. */
 export type ExpressionNodeKind = ExpressionNode['kind'];
@@ -25,12 +21,12 @@ export const arityCount = (arity: ExpressionFunction['arity'], current: number):
 /** Builds a fresh default node of the given `kind`. */
 export const defaultNode = (
   kind: ExpressionNodeKind,
-  fields: ExpressionFieldOption[],
+  options: OptionList,
   registry?: ExpressionFunctionRegistry
 ): ExpressionNode => {
   switch (kind) {
     case 'field':
-      return { kind: 'field', field: fields[0]?.name ?? '' };
+      return { kind: 'field', field: getFirstOption(options) ?? '' };
     case 'value':
       return { kind: 'value', value: '' };
     default: {
@@ -39,10 +35,34 @@ export const defaultNode = (
       return {
         kind: 'func',
         fn,
-        args: Array.from({ length: count }, () => defaultNode('field', fields)),
+        args: Array.from({ length: count }, () => defaultNode('field', options)),
       };
     }
   }
+};
+
+/**
+ * Seeds the initial right-hand-side node when a rule's value is toggled into expression
+ * mode. Mirrors the rule's natural default by honoring the field's first configured
+ * `valueSource`: `'field'` yields a field node naming a comparator-valid field, anything
+ * else a value node carrying the field/operator default (field `defaultValue`, first
+ * `values` option, `getDefaultValue` override, etc.) computed by `schema.getRuleDefaultValue`.
+ */
+export const rhsDefaultNode = (
+  schema: Schema<FullField, string>,
+  rule: RuleType
+): ExpressionNode => {
+  const fieldData = schema.fieldMap[rule.field] ?? ({} as FullField);
+  const valueSource = getFirstOption(
+    schema.getValueSources(rule.field, rule.operator, { fieldData })
+  );
+  const value = schema.getRuleDefaultValue({
+    ...rule,
+    valueSource: valueSource === 'field' ? 'field' : 'value',
+  });
+  return valueSource === 'field'
+    ? { kind: 'field', field: typeof value === 'string' ? value : '' }
+    : { kind: 'value', value };
 };
 
 /**
@@ -52,7 +72,7 @@ export const defaultNode = (
 export const changeFunction = (
   fn: string,
   args: ExpressionNode[],
-  fields: ExpressionFieldOption[],
+  fields: OptionList,
   registry: ExpressionFunctionRegistry
 ): Extract<ExpressionNode, { kind: 'func' }> => {
   const count = arityCount(registry[fn]?.arity, args.length);

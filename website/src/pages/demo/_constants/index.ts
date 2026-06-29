@@ -199,7 +199,7 @@ export const optionsMetadata = {
     link: '',
     label: 'Enable expressions',
     title:
-      'Wrap the query builder with QueryBuilderExpressions to build arithmetic/function expressions (e.g. price * quantity) on either side of a rule via the ƒ(x) toggle',
+      'Wrap the query builder with QueryBuilderExpressions to build arithmetic/function expressions (e.g. price * quantity) on either side of a rule via the 𝑓(𝑥) toggle',
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 

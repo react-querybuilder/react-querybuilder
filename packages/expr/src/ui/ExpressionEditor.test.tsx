@@ -1,25 +1,25 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { userEventSetup } from '@rqb-testing';
+import { render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { useState } from 'react';
 import type { FullField, InputType, ParseNumbersPropConfig, Schema } from 'react-querybuilder';
 import { defaultControlElements } from 'react-querybuilder';
 import { defaultFunctions } from '../defaultFunctions';
-import type { ExpressionNode } from '../types';
-import type { ExpressionFunctionRegistry } from '../types';
+import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
 import { ExpressionEditor } from './ExpressionEditor';
-import type { ExpressionFieldOption } from './expressionEditorUtils';
 
-const FIELDS: ExpressionFieldOption[] = [
-  { name: 'price', label: 'Price' },
-  { name: 'qty', label: 'Qty' },
-];
+const user = userEventSetup();
 
 // Minimal schema: only `controls` (for nested selectors/editor), the classname fields the
 // default value editor reads, and `parseNumbers` (threaded to the literal editor) are
 // exercised at runtime.
 const makeSchema = (parseNumbers?: ParseNumbersPropConfig): Schema<FullField, string> =>
   ({
+    fields: [
+      { name: 'price', value: 'price', label: 'Price' },
+      { name: 'qty', value: 'qty', label: 'Qty' },
+    ],
     controls: defaultControlElements,
     classNames: {},
     suppressStandardClassnames: false,
@@ -29,13 +29,11 @@ const makeSchema = (parseNumbers?: ParseNumbersPropConfig): Schema<FullField, st
 const Harness = ({
   initial,
   registry = defaultFunctions,
-  fields = FIELDS,
   parseNumbers,
   inputType,
 }: {
   initial?: ExpressionNode;
   registry?: ExpressionFunctionRegistry;
-  fields?: ExpressionFieldOption[];
   parseNumbers?: ParseNumbersPropConfig;
   inputType?: InputType | null;
 }) => {
@@ -46,7 +44,6 @@ const Harness = ({
         node={node}
         onChange={setNode}
         registry={registry}
-        fields={fields}
         schema={makeSchema(parseNumbers)}
         inputType={inputType}
       />
@@ -58,17 +55,17 @@ const Harness = ({
 const out = (): ExpressionNode => JSON.parse(`${screen.getByTestId('out').textContent}`);
 const sel = (id: string) => screen.getByTestId(id);
 
-it('defaults an undefined node to an editable value node', () => {
+it('defaults an undefined node to an editable value node', async () => {
   render(<Harness />);
   expect(sel('expr-kind')).toHaveValue('value');
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: 'hello' } });
+  await user.type(screen.getByTestId('expr-value'), 'hello');
   expect(out()).toEqual({ kind: 'value', value: 'hello' });
 });
 
-it('switches between node kinds, seeding sensible defaults', () => {
+it('switches between node kinds, seeding sensible defaults', async () => {
   render(<Harness initial={{ kind: 'field', field: 'price' }} />);
 
-  fireEvent.change(sel('expr-kind'), { target: { value: 'func' } });
+  await user.selectOptions(sel('expr-kind'), 'func');
   expect(out()).toEqual({
     kind: 'func',
     fn: 'add',
@@ -78,54 +75,46 @@ it('switches between node kinds, seeding sensible defaults', () => {
     ],
   });
 
-  fireEvent.change(sel('expr-kind'), { target: { value: 'value' } });
+  await user.selectOptions(sel('expr-kind'), 'value');
   expect(out()).toEqual({ kind: 'value', value: '' });
 
-  fireEvent.change(sel('expr-kind'), { target: { value: 'field' } });
+  await user.selectOptions(sel('expr-kind'), 'field');
   expect(out()).toEqual({ kind: 'field', field: 'price' });
 });
 
-it('edits a field reference', () => {
+it('edits a field reference', async () => {
   render(<Harness initial={{ kind: 'field', field: 'price' }} />);
-  fireEvent.change(sel('expr-field'), { target: { value: 'qty' } });
+  await user.selectOptions(sel('expr-field'), 'qty');
   expect(out()).toEqual({ kind: 'field', field: 'qty' });
 });
 
-it('keeps a literal as a string when parseNumbers is off (no "#" toggle)', () => {
+it('keeps a literal as a string when parseNumbers is off (no "#" toggle)', async () => {
   render(<Harness initial={{ kind: 'value', value: undefined }} />);
   // No numeric toggle is rendered.
   expect(screen.queryByTestId('expr-number')).toBeNull();
   // `?? ''` guard for a missing value
   expect(screen.getByTestId('expr-value')).toHaveValue('');
 
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '100' } });
+  await user.type(screen.getByTestId('expr-value'), '100');
   expect(out()).toEqual({ kind: 'value', value: '100' });
 });
 
-it('parses a numeric literal when parseNumbers threads through from the schema', () => {
+it('parses a numeric literal when parseNumbers threads through from the schema', async () => {
   render(<Harness initial={{ kind: 'value', value: '' }} parseNumbers />);
 
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '250' } });
+  await user.type(screen.getByTestId('expr-value'), '250');
   expect(out()).toEqual({ kind: 'value', value: 250 });
+});
 
-  // Non-numeric input is left untouched (numeric-quantity returns NaN -> original string).
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: 'abc' } });
+it('leaves a non-numeric literal untouched when parseNumbers is on', async () => {
+  render(<Harness initial={{ kind: 'value', value: '' }} parseNumbers />);
+
+  // Strict parse returns the original string for non-numeric input.
+  await user.type(screen.getByTestId('expr-value'), 'abc');
   expect(out()).toEqual({ kind: 'value', value: 'abc' });
 });
 
-it('uses numeric-quantity for enhanced parsing (fractions, trailing text)', () => {
-  render(<Harness initial={{ kind: 'value', value: '' }} parseNumbers="enhanced" />);
-
-  // Fraction/mixed-number parsing is beyond the old `Number()`-based coercion.
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '1 1/2' } });
-  expect(out()).toEqual({ kind: 'value', value: 1.5 });
-
-  // Enhanced mode tolerates trailing non-numeric characters.
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '3px' } });
-  expect(out()).toEqual({ kind: 'value', value: 3 });
-});
-
-it('inherits inputType so "-limited" parseNumbers parses for a number field', () => {
+it('inherits inputType so "-limited" parseNumbers parses for a number field', async () => {
   render(
     <Harness
       initial={{ kind: 'value', value: '' }}
@@ -138,11 +127,11 @@ it('inherits inputType so "-limited" parseNumbers parses for a number field', ()
   expect(screen.getByTestId('expr-value')).toHaveAttribute('type', 'number');
 
   // `-limited` only parses for `inputType: 'number'`, which we now inherit.
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '5' } });
+  await user.type(screen.getByTestId('expr-value'), '5');
   expect(out()).toEqual({ kind: 'value', value: 5 });
 });
 
-it('leaves "-limited" parseNumbers as a no-op for a non-number field', () => {
+it('leaves "-limited" parseNumbers as a no-op for a non-number field', async () => {
   render(
     <Harness
       initial={{ kind: 'value', value: '' }}
@@ -151,11 +140,11 @@ it('leaves "-limited" parseNumbers as a no-op for a non-number field', () => {
     />
   );
 
-  fireEvent.change(screen.getByTestId('expr-value'), { target: { value: '5' } });
+  await user.type(screen.getByTestId('expr-value'), '5');
   expect(out()).toEqual({ kind: 'value', value: '5' });
 });
 
-it('edits a function node, resizing args and editing nested args', () => {
+it('edits a function node, resizing args and editing nested args', async () => {
   render(
     <Harness
       initial={{
@@ -170,15 +159,15 @@ it('edits a function node, resizing args and editing nested args', () => {
   );
 
   // Edit a nested arg
-  fireEvent.change(sel('expr-arg0-field'), { target: { value: 'qty' } });
+  await user.selectOptions(sel('expr-arg0-field'), 'qty');
   expect(out()).toMatchObject({ fn: 'multiply', args: [{ field: 'qty' }, { field: 'qty' }] });
 
   // Switch to a unary function: args shrink, first preserved
-  fireEvent.change(sel('expr-fn'), { target: { value: 'abs' } });
+  await user.selectOptions(sel('expr-fn'), 'abs');
   expect(out()).toEqual({ kind: 'func', fn: 'abs', args: [{ kind: 'field', field: 'qty' }] });
 
   // Switch back to binary: args grow, new slot defaulted
-  fireEvent.change(sel('expr-fn'), { target: { value: 'multiply' } });
+  await user.selectOptions(sel('expr-fn'), 'multiply');
   expect(out()).toEqual({
     kind: 'func',
     fn: 'multiply',

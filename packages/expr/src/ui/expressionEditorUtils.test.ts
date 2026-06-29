@@ -1,11 +1,12 @@
+import type { Option } from '@react-querybuilder/core';
+import type { FullField, RuleType, Schema } from 'react-querybuilder';
 import { defaultFunctions } from '../defaultFunctions';
 import type { ExpressionFunctionRegistry } from '../types';
-import type { ExpressionFieldOption } from './expressionEditorUtils';
-import { arityCount, changeFunction, defaultNode } from './expressionEditorUtils';
+import { arityCount, changeFunction, defaultNode, rhsDefaultNode } from './expressionEditorUtils';
 
-const fields: ExpressionFieldOption[] = [
-  { name: 'price', label: 'Price' },
-  { name: 'qty', label: 'Qty' },
+const fields: Option[] = [
+  { name: 'price', value: 'price', label: 'Price' },
+  { name: 'qty', value: 'qty', label: 'Qty' },
 ];
 
 describe('arityCount', () => {
@@ -80,6 +81,48 @@ describe('changeFunction', () => {
       kind: 'func',
       fn: 'nope',
       args: [{ kind: 'value', value: 1 }],
+    });
+  });
+});
+
+describe('rhsDefaultNode', () => {
+  const rule: RuleType = { field: 'price', operator: '=', value: '' };
+
+  // Stubs only the three schema members the helper reads: a single-source list, the
+  // rule-default resolver, and the fieldMap used to resolve `fieldData`.
+  const mkSchema = (
+    valueSource: string | null,
+    defaultValue: unknown,
+    fieldMap: Record<string, FullField> = {}
+  ): Schema<FullField, string> =>
+    ({
+      fieldMap,
+      getValueSources: () =>
+        valueSource ? [{ name: valueSource, value: valueSource, label: valueSource }] : [],
+      getRuleDefaultValue: () => defaultValue,
+    }) as unknown as Schema<FullField, string>;
+
+  it('seeds a value node from the rule default when valueSource is "value"', () => {
+    expect(rhsDefaultNode(mkSchema('value', 'abc'), rule)).toEqual({ kind: 'value', value: 'abc' });
+  });
+
+  it('seeds a field node naming the comparator field when valueSource is "field"', () => {
+    expect(rhsDefaultNode(mkSchema('field', 'qty'), rule)).toEqual({ kind: 'field', field: 'qty' });
+  });
+
+  it('falls back to an empty field name when the field default is not a string', () => {
+    expect(rhsDefaultNode(mkSchema('field', 42), rule)).toEqual({ kind: 'field', field: '' });
+  });
+
+  it('defaults to a value node when no valueSource is configured', () => {
+    expect(rhsDefaultNode(mkSchema(null, ''), rule)).toEqual({ kind: 'value', value: '' });
+  });
+
+  it('resolves fieldData from the schema fieldMap when the field is present', () => {
+    const fieldMap = { price: { name: 'price', value: 'price', label: 'Price' } as FullField };
+    expect(rhsDefaultNode(mkSchema('value', 'x', fieldMap), rule)).toEqual({
+      kind: 'value',
+      value: 'x',
     });
   });
 });
