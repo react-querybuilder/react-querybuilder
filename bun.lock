@@ -311,6 +311,7 @@
         "@react-querybuilder/core": "8.20.1",
       },
       "devDependencies": {
+        "@electric-sql/pglite": "catalog:test",
         "@testing-library/dom": "catalog:test",
         "@testing-library/react": "catalog:test",
         "@types/json-logic-js": "catalog:",

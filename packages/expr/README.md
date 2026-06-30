@@ -67,35 +67,23 @@ const processors = createExpressionProcessors(functions);
 formatQuery(query, { format: 'sql', ruleProcessor: processors.sql });
 ```
 
-#### Applying JSONLogic output
+#### Applying JsonLogic output
 
-Before applying the `jsonlogic` output, register the operators the expressions emit. JSONLogic ships `+` `-` `*` `/` `%`, `min`, and `max` as built-ins, but `abs`, `upper`, and `lower` are not—`registerJsonLogicExpressionOperators` adds them to your JSONLogic instance:
+Before applying the `jsonlogic` output, register the operators the expressions emit. JsonLogic ships `+` `-` `*` `/` `%`, `min`, and `max` as built-ins, but others like `abs`, `upper`, and `lower` are not. Add them to your JsonLogic instance like so:
 
 ```ts
-import * as jsonLogic from 'json-logic-js';
-import { registerJsonLogicExpressionOperators } from '@react-querybuilder/expr';
+import { add_operation, apply } from 'json-logic-js';
+import { expressionJsonLogicOperators } from '@react-querybuilder/expr';
 
-registerJsonLogicExpressionOperators(jsonLogic);
+for (const [op, func] of Object.entries(expressionJsonLogicOperators)) {
+  add_operation(op, func);
+}
 
 const logic = formatQuery(query, {
   format: 'jsonlogic',
   ruleProcessor: expressionRuleProcessorJsonLogic,
 });
-jsonLogic.apply(logic, data);
-```
-
-For custom functions that emit their own operators, pass a record—spread the built-ins to keep `abs`/`upper`/`lower`:
-
-```ts
-import {
-  jsonLogicExpressionOperators,
-  registerJsonLogicExpressionOperators,
-} from '@react-querybuilder/expr';
-
-registerJsonLogicExpressionOperators(jsonLogic, {
-  ...jsonLogicExpressionOperators,
-  pow: (base, exp) => Math.pow(Number(base), Number(exp)),
-});
+apply(logic, data);
 ```
 
 ### Validation

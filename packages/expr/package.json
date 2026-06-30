@@ -69,6 +69,7 @@
     "typecheck:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "catalog:test",
     "@testing-library/dom": "catalog:test",
     "@testing-library/react": "catalog:test",
     "@types/json-logic-js": "catalog:",

@@ -7,7 +7,7 @@ import type { ExpressionFunctionRegistry } from './types';
  *
  * JSONLogic note: `+ - * / %` and `min`/`max` are stock operators; `abs`, `upper`, and
  * `lower` are not — register them on your JSONLogic instance before applying the exported
- * logic via {@link registerJsonLogicExpressionOperators} (or override the serializer).
+ * logic via {@link expressionJsonLogicOperators} (or override the serializer).
  */
 export const defaultFunctions: ExpressionFunctionRegistry = {
   add: {
