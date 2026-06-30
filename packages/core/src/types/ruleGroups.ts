@@ -80,6 +80,13 @@ export type UpdateableProperties =
   | (string & {});
 
 /**
+ * A map of {@link UpdateableProperties} to their new values, for updating
+ * multiple properties of a rule or group in a single operation.
+ */
+// oxlint-disable-next-line typescript/no-explicit-any
+export type UpdateValueMap = Partial<Record<UpdateableProperties, any>>;
+
+/**
  * The type of the `rules` array in a {@link DefaultRuleGroupType}.
  */
 export type DefaultRuleGroupArray<F extends string = string> = RuleGroupArray<

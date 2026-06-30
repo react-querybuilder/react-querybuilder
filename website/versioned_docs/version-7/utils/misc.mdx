@@ -105,6 +105,20 @@ Removes a rule or group (and the preceding independent combinator if one exists)
 
 Updates a property of a rule or group, or an independent combinator, at the specified `path` or with the given `id`.
 
+Multiple properties can be updated at once by passing either a property-to-value map or parallel arrays of property names and values (note that `pathOrID` shifts to the third argument for the map form):
+
+`(query: RuleGroupTypeAny, props: UpdateValueMap, pathOrID: Path | string, options: UpdateOptions) => RuleGroupTypeAny`
+
+`(query: RuleGroupTypeAny, props: string[], values: any[], pathOrID: Path | string, options: UpdateOptions) => RuleGroupTypeAny`
+
+```ts
+// Equivalent ways to set `valueSource` and `value` in a single call:
+update(query, { valueSource: 'field', value: 'otherField' }, rulePath);
+update(query, ['valueSource', 'value'], ['field', 'otherField'], rulePath);
+```
+
+Regardless of the order in which properties are listed, `field`, `operator`, and `valueSource` are applied before `value`. This ensures an explicitly-provided `value` is never reset by a change to one of those properties (e.g. updating `field` normally resets `value`).
+
 <Details summary="UpdateOptions">
 
 %importcode /packages/core/src/utils/queryTools.ts#blockName=UpdateOptions
