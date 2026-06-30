@@ -35,7 +35,7 @@ const App = () => (
 - **Right-hand side** — add `"expression"` to a field's `valueSources` to offer it in that rule's value-source selector. The expression is stored in `rule.value` (with `valueSource: "expression"`).
 - **Left-hand side** — set `allowFunctionsOnLHS` to wrap the rule's `field` in a unary function, stored on `rule.lhs`.
 
-Pass custom functions via the `functions` prop; they are merged over the built-in `defaultFunctions` (the four arithmetic operators plus `abs`).
+Pass custom functions via the `functions` prop; they are merged over the built-in `defaultFunctions` (arithmetic `+` `-` `*` `/`, plus `min`, `max`, `mod`, `abs`, `upper`, and `lower`).
 
 ### Export
 
@@ -65,6 +65,37 @@ import { createExpressionProcessors } from '@react-querybuilder/expr';
 const processors = createExpressionProcessors(functions);
 
 formatQuery(query, { format: 'sql', ruleProcessor: processors.sql });
+```
+
+#### Applying JSONLogic output
+
+Before applying the `jsonlogic` output, register the operators the expressions emit. JSONLogic ships `+` `-` `*` `/` `%`, `min`, and `max` as built-ins, but `abs`, `upper`, and `lower` are not—`registerJsonLogicExpressionOperators` adds them to your JSONLogic instance:
+
+```ts
+import * as jsonLogic from 'json-logic-js';
+import { registerJsonLogicExpressionOperators } from '@react-querybuilder/expr';
+
+registerJsonLogicExpressionOperators(jsonLogic);
+
+const logic = formatQuery(query, {
+  format: 'jsonlogic',
+  ruleProcessor: expressionRuleProcessorJsonLogic,
+});
+jsonLogic.apply(logic, data);
+```
+
+For custom functions that emit their own operators, pass a record—spread the built-ins to keep `abs`/`upper`/`lower`:
+
+```ts
+import {
+  jsonLogicExpressionOperators,
+  registerJsonLogicExpressionOperators,
+} from '@react-querybuilder/expr';
+
+registerJsonLogicExpressionOperators(jsonLogic, {
+  ...jsonLogicExpressionOperators,
+  pow: (base, exp) => Math.pow(Number(base), Number(exp)),
+});
 ```
 
 ### Validation
