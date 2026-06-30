@@ -35,6 +35,8 @@
     "build:datetime": "bun --bun run --filter @react-querybuilder/datetime build",
     "build:dnd": "bun --bun run --filter @react-querybuilder/dnd build",
     "build:expr": "bun --bun run --filter @react-querybuilder/expr build",
+    "build:expr:main": "bun --bun run --filter @react-querybuilder/expr build:main",
+    "build:expr:css": "bun --bun run --filter @react-querybuilder/expr build:css",
     "build:fluent": "bun --bun run --filter @react-querybuilder/fluent build",
     "build:mantine": "bun --bun run --filter @react-querybuilder/mantine build",
     "build:material": "bun --bun run --filter @react-querybuilder/material build",

@@ -6,32 +6,32 @@ import { useState } from 'react';
 import type {
   Field,
   FieldSelectorProps,
-  ParseNumbersPropConfig,
   QueryBuilderContextProvider,
   RuleGroupType,
   RuleType,
   ValueEditorProps,
+  ValueSourceSelectorProps,
 } from 'react-querybuilder';
-import { getCompatContextProvider, QueryBuilder } from 'react-querybuilder';
+import { getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
 // Import through the public `/ui` barrel so the re-export modules are covered too.
 import { ExprTestID, QueryBuilderExpressions } from '../index.ui';
-import type { TranslationsExpr } from '../index.ui';
+import type { AllowFunctionsOnLHS, TranslationsExpr } from '../index.ui';
 import type { ExpressionFunctionRegistry } from '../types';
 
-// Expression control testIDs. Each editor derives child IDs from its root testID
-// (`${root}-kind` / `-field` / `-fn` / `-value`); toggles use their own constants.
-const lhsToggle = ExprTestID.exprLhsToggle;
-const lhsEditor = ExprTestID.exprLhsEditor;
-const lhsKind = `${lhsEditor}-kind`;
-const lhsField = `${lhsEditor}-field`;
-const lhsFn = `${lhsEditor}-fn`;
-const rhsToggle = ExprTestID.exprRhsToggle;
+// Core control testIDs we drive: field selector, value editor, value-source selector.
+const fieldSel = TestID.fields;
+const valueEditor = TestID.valueEditor;
+const valueSourceSel = TestID.valueSourceSelector;
+// LHS unary-function wrapper selector + RHS nested expression editor (children derive
+// `${rhsEditor}-fn` / `-arg0-kind` / `-arg0-field` / `-arg0-value`).
+const lhsFn = ExprTestID.exprLhsFnSelector;
 const rhsEditor = ExprTestID.exprRhsEditor;
-const rhsValue = `${rhsEditor}-value`;
 
+// `expression` is offered as a value source, so the RHS expression editor is reachable
+// through the standard value-source selector rather than a bespoke toggle.
 const fields: Field[] = [
-  { name: 'price', label: 'Price' },
-  { name: 'qty', label: 'Qty' },
+  { name: 'price', label: 'Price', valueSources: ['value', 'expression'] },
+  { name: 'qty', label: 'Qty', valueSources: ['value', 'expression'] },
 ];
 
 const initialQuery: RuleGroupType = {
@@ -43,15 +43,11 @@ interface AppProps {
   functions?: ExpressionFunctionRegistry;
   /** Optional outer compat provider, to test inherited-control delegation. */
   Outer?: QueryBuilderContextProvider;
-  /** Threaded to the wrapped {@link QueryBuilder}, then on to the expression editors. */
-  parseNumbers?: ParseNumbersPropConfig;
-  /** Field list override (e.g. to give the sentinel field an `inputType`). */
+  /** Field list override. */
   fields?: Field[];
-  /** Defaults to `true` here (the harness exercises the LHS toggle) unlike the prop's own default. */
-  showFieldExpressionToggle?: boolean;
-  /** Left `undefined` so the provider's own `true` default applies unless a test opts out. */
-  showValueExpressionToggle?: boolean;
-  /** Per-key overrides for the expression-toggle labels/titles. */
+  /** Gates the LHS unary-function wrapper (default `false`, matching the prop's own default). */
+  allowFunctionsOnLHS?: AllowFunctionsOnLHS;
+  /** Per-key overrides for the expression UI labels/titles. */
   translations?: Partial<TranslationsExpr>;
 }
 
@@ -60,25 +56,17 @@ interface AppProps {
 const App = ({
   functions,
   Outer,
-  parseNumbers,
   fields: fieldsProp = fields,
-  showFieldExpressionToggle = true,
-  showValueExpressionToggle,
+  allowFunctionsOnLHS,
   translations,
 }: AppProps) => {
   const [query, setQuery] = useState<RuleGroupType>(initialQuery);
   const inner = (
     <QueryBuilderExpressions
       functions={functions}
-      showFieldExpressionToggle={showFieldExpressionToggle}
-      showValueExpressionToggle={showValueExpressionToggle}
+      allowFunctionsOnLHS={allowFunctionsOnLHS}
       translations={translations}>
-      <QueryBuilder
-        fields={fieldsProp}
-        query={query}
-        onQueryChange={setQuery}
-        parseNumbers={parseNumbers}
-      />
+      <QueryBuilder fields={fieldsProp} query={query} onQueryChange={setQuery} />
     </QueryBuilderExpressions>
   );
   return (
@@ -94,25 +82,122 @@ const rule0 = (): RuleType => currentQuery().rules[0] as RuleType;
 
 const user = userEventSetup();
 
-describe('left-hand side (field selector host)', () => {
-  it('toggles an LHS expression on, edits it, then clears it', async () => {
+describe('left-hand side function wrapper', () => {
+  it('renders the plain field selector when allowFunctionsOnLHS is false (default)', () => {
+    render(<App />);
+    // Gating off: no wrapper selector, just the inherited (default) field selector.
+    expect(screen.queryByTestId(lhsFn)).toBeNull();
+    expect(screen.getByTestId(fieldSel)).toBeInTheDocument();
+    expect(rule0().lhs).toBeUndefined();
+  });
+
+  it('wraps the field in a unary function, then clears it', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    // Wrapper visible, "no function" selected, `rule.lhs` absent.
+    const fnSel = screen.getByTestId(lhsFn);
+    expect(fnSel).toHaveValue('');
+    expect(rule0().lhs).toBeUndefined();
+
+    // Only unary functions are offered (plus the "no function" sentinel); binary `+` is not.
+    expect(within(fnSel).getByRole('option', { name: '—' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: 'ABS' })).toBeInTheDocument();
+    expect(within(fnSel).queryByRole('option', { name: '+' })).toBeNull();
+
+    // Choose `abs`: wraps the current field.
+    await user.selectOptions(fnSel, 'abs');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+
+    // Back to "no function": clears `rule.lhs`.
+    await user.selectOptions(screen.getByTestId(lhsFn), '');
+    expect(rule0().lhs).toBeUndefined();
+  });
+
+  it('re-points the wrapper to the new field on field change', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'abs');
+    // Field change re-wraps atomically so the stored expression names the current field.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'qty' }],
+    });
+  });
+
+  it('changes the field without a wrapper when no function is selected', async () => {
+    render(<App allowFunctionsOnLHS />);
+    // No wrapper chosen: a field change updates `field` and leaves `lhs` absent.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toBeUndefined();
+  });
+
+  it('gates the wrapper per field with a predicate, dropping lhs when disallowed', async () => {
+    render(<App allowFunctionsOnLHS={f => f === 'price'} />);
+
+    // `price` is allowed: wrapper visible.
+    expect(screen.getByTestId(lhsFn)).toBeInTheDocument();
+    await user.selectOptions(screen.getByTestId(lhsFn), 'abs');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+
+    // Switching to the disallowed `qty` drops the wrapper and the stored `lhs`.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toBeUndefined();
+    expect(screen.queryByTestId(lhsFn)).toBeNull();
+  });
+
+  it('merges a custom unary function into the wrapper options', async () => {
+    const functions: ExpressionFunctionRegistry = {
+      neg: { label: 'NEG', arity: 1 },
+      raw: { arity: 1 },
+    };
+    render(<App allowFunctionsOnLHS functions={functions} />);
+
+    const fnSel = screen.getByTestId(lhsFn);
+    // Custom unary function joins the retained built-in unary `abs`; binary `+` is excluded.
+    expect(within(fnSel).getByRole('option', { name: 'NEG' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: 'ABS' })).toBeInTheDocument();
+    expect(within(fnSel).queryByRole('option', { name: '+' })).toBeNull();
+    // A label-less function falls back to its registry key for the option text.
+    expect(within(fnSel).getByRole('option', { name: 'raw' })).toBeInTheDocument();
+
+    await user.selectOptions(fnSel, 'neg');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'neg',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+  });
+});
+
+describe('right-hand side expression value source', () => {
+  it('renders the standard value editor until the expression source is selected', () => {
+    render(<App />);
+    // Two value sources are offered, defaulting to the scalar editor (no expression node).
+    expect(screen.getByTestId(valueSourceSel)).toBeInTheDocument();
+    expect(screen.getByTestId(valueEditor)).toBeInTheDocument();
+    expect(screen.queryByTestId(rhsEditor)).toBeNull();
+  });
+
+  it('seeds and edits an expression when the expression source is selected', async () => {
     render(<App />);
 
-    // Off by default: no editor, `rule.lhs` absent.
-    expect(rule0().lhs).toBeUndefined();
-    expect(screen.queryByTestId(lhsEditor)).toBeNull();
-
-    // Toggle on: seeds a field node from the first field.
-    await user.click(screen.getByTestId(lhsToggle));
-    expect(rule0().lhs).toEqual({ kind: 'field', field: 'price' });
-
-    // Edit the field reference.
-    await user.selectOptions(screen.getByTestId(lhsField), 'qty');
-    expect(rule0().lhs).toEqual({ kind: 'field', field: 'qty' });
-
-    // Switch to a function node (fresh default args, independent of the prior field edit).
-    await user.selectOptions(screen.getByTestId(lhsKind), 'func');
-    expect(rule0().lhs).toEqual({
+    // Selecting `expression` flips the source and seeds a default function node.
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    expect(rule0().valueSource).toBe('expression');
+    expect(rule0().value).toEqual({
       kind: 'func',
       fn: 'add',
       args: [
@@ -121,157 +206,48 @@ describe('left-hand side (field selector host)', () => {
       ],
     });
 
-    // Toggle off: clears `rule.lhs`.
-    await user.click(screen.getByTestId(lhsToggle));
-    expect(rule0().lhs).toBeUndefined();
-    expect(screen.queryByTestId(lhsEditor)).toBeNull();
+    // The root node's `kind` selector is hidden (it is always a function call).
+    expect(screen.getByTestId(rhsEditor)).toBeInTheDocument();
+    expect(screen.getByTestId(`${rhsEditor}-fn`)).toBeInTheDocument();
+    expect(screen.queryByTestId(`${rhsEditor}-kind`)).toBeNull();
+
+    // Editing a nested argument writes straight into the stored node.
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-arg0-field`), 'qty');
+    expect((rule0().value as { args: unknown[] }).args[0]).toEqual({ kind: 'field', field: 'qty' });
   });
 
-  it('synthesizes field data when the sentinel field is unconfigured', async () => {
-    // `price` (the rule's field) is absent from this list, so the inputType resolver must
-    // fall back to a synthesized field instead of choking on the fieldMap miss.
-    render(<App fields={[{ name: 'qty', label: 'Qty' }]} />);
-
-    await user.click(screen.getByTestId(lhsToggle));
-    // Toggling still works; the seeded node uses the first available field.
-    expect(rule0().lhs).toEqual({ kind: 'field', field: 'qty' });
-  });
-
-  it('renders the plain field selector when showFieldExpressionToggle is false', () => {
-    render(<App showFieldExpressionToggle={false} />);
-    // Gating off: no expression toggle/editor, just the inherited (default) field selector.
-    expect(screen.queryByTestId(lhsToggle)).toBeNull();
-    expect(screen.queryByTestId(lhsEditor)).toBeNull();
-    expect(screen.getAllByRole('combobox').length).toBeGreaterThan(0);
-  });
-});
-
-describe('right-hand side (value editor host)', () => {
-  it('toggles an RHS expression on, edits it, then disables it', async () => {
+  it('reverts to a scalar value when switching back to the value source', async () => {
     render(<App />);
 
-    // Off by default: standard editor (no expression node), source is the default `'value'`.
-    expect(screen.queryByTestId(rhsEditor)).toBeNull();
-
-    // Enable: flips `valueSource` to `'expression'` and seeds an empty value node.
-    await user.click(screen.getByTestId(rhsToggle));
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
     expect(rule0().valueSource).toBe('expression');
-    expect(rule0().value).toEqual({ kind: 'value', value: '' });
 
-    // Edit the literal: written straight into `rule.value` via `handleOnChange`.
-    await user.type(screen.getByTestId(rhsValue), '5');
-    expect(rule0().value).toEqual({ kind: 'value', value: '5' });
-
-    // Disable: reverts to `valueSource: 'value'` and resets the scalar value.
-    await user.click(screen.getByTestId(rhsToggle));
+    // Switching away delegates to the standard handler, resetting the scalar value.
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'value');
     expect(rule0().valueSource).toBe('value');
     expect(rule0().value).toBe('');
     expect(screen.queryByTestId(rhsEditor)).toBeNull();
   });
 
-  it("threads the QueryBuilder's parseNumbers through to the RHS literal", async () => {
-    render(<App parseNumbers />);
-
-    await user.click(screen.getByTestId(rhsToggle));
-    // With parseNumbers enabled, a numeric literal is stored as an actual number.
-    await user.type(screen.getByTestId(rhsValue), '5');
-    expect(rule0().value).toEqual({ kind: 'value', value: 5 });
+  it('relabels the expression option via translations', () => {
+    render(<App translations={{ valueSourceExpression: { label: 'EXPR' } }} />);
+    expect(
+      within(screen.getByTestId(valueSourceSel)).getByRole('option', { name: 'EXPR' })
+    ).toBeInTheDocument();
   });
 
-  it('inherits the field inputType so a "-limited" parseNumbers parses for number fields', async () => {
-    // `strict-limited` only parses when the field's resolved inputType is `'number'`.
-    render(
-      <App
-        parseNumbers="strict-limited"
-        fields={[
-          { name: 'price', label: 'Price', inputType: 'number' },
-          { name: 'qty', label: 'Qty' },
-        ]}
-      />
-    );
-
-    await user.click(screen.getByTestId(rhsToggle));
-    await user.type(screen.getByTestId(rhsValue), '5');
-    expect(rule0().value).toEqual({ kind: 'value', value: 5 });
-  });
-
-  it("seeds the field's default value into the RHS expression node", async () => {
-    render(
-      <App
-        fields={[
-          { name: 'price', label: 'Price', defaultValue: 'abc' },
-          { name: 'qty', label: 'Qty' },
-        ]}
-      />
-    );
-
-    await user.click(screen.getByTestId(rhsToggle));
-    // The seeded value node carries the field's configured `defaultValue`.
-    expect(rule0().value).toEqual({ kind: 'value', value: 'abc' });
-  });
-
-  it('seeds the first value-list option when the field uses a select editor', async () => {
-    render(
-      <App
-        fields={[
-          {
-            name: 'price',
-            label: 'Price',
-            valueEditorType: 'select',
-            values: [
-              { name: 'a', label: 'A' },
-              { name: 'b', label: 'B' },
-            ],
-          },
-          { name: 'qty', label: 'Qty' },
-        ]}
-      />
-    );
-
-    await user.click(screen.getByTestId(rhsToggle));
-    // First option of the field's value list seeds the value node.
-    expect(rule0().value).toEqual({ kind: 'value', value: 'a' });
-  });
-
-  it("seeds a field node when the field's first valueSource is 'field'", async () => {
-    render(
-      <App
-        fields={[
-          { name: 'price', label: 'Price', valueSources: ['field'] },
-          { name: 'qty', label: 'Qty' },
-        ]}
-      />
-    );
-
-    await user.click(screen.getByTestId(rhsToggle));
-    // `valueSource: 'field'` seeds a field node naming the first comparator-valid field.
-    expect(rule0().value).toEqual({ kind: 'field', field: 'qty' });
-  });
-
-  it('renders the plain value editor when showValueExpressionToggle is false', () => {
-    render(<App showValueExpressionToggle={false} />);
-    // Gating off: no expression toggle/editor, just the inherited (default) value editor.
-    expect(screen.queryByTestId(rhsToggle)).toBeNull();
-    expect(screen.queryByTestId(rhsEditor)).toBeNull();
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
-  });
-});
-
-describe('function registry', () => {
-  it('merges the `functions` prop over the built-ins', async () => {
+  it('merges a custom function into the expression editor function options', async () => {
     const functions: ExpressionFunctionRegistry = { power: { label: 'POW', arity: 2 } };
     render(<App functions={functions} />);
 
-    await user.click(screen.getByTestId(lhsToggle));
-    await user.selectOptions(screen.getByTestId(lhsKind), 'func');
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    const fnSel = screen.getByTestId(`${rhsEditor}-fn`);
+    // Both custom and built-in functions are selectable for the expression root.
+    expect(within(fnSel).getByRole('option', { name: 'POW' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: '+' })).toBeInTheDocument();
 
-    const fnSelect = screen.getByTestId(lhsFn);
-    // Custom function is selectable alongside the retained built-ins.
-    expect(within(fnSelect).getByRole('option', { name: 'POW' })).toBeInTheDocument();
-    expect(within(fnSelect).getByRole('option', { name: '+' })).toBeInTheDocument();
-
-    await user.selectOptions(fnSelect, 'power');
-    expect(rule0().lhs).toMatchObject({ kind: 'func', fn: 'power' });
+    await user.selectOptions(fnSel, 'power');
+    expect(rule0().value).toMatchObject({ kind: 'func', fn: 'power' });
   });
 });
 
@@ -282,79 +258,35 @@ describe('inherited (compat) controls', () => {
   const CustomFieldSelector = (_props: FieldSelectorProps) => (
     <span data-testid="custom-field">custom</span>
   );
-  const Outer: QueryBuilderContextProvider = getCompatContextProvider({
-    controlElements: { valueEditor: CustomValueEditor, fieldSelector: CustomFieldSelector },
-  });
+  const CustomValueSourceSelector = (_props: ValueSourceSelectorProps) => (
+    <span data-testid="custom-vss">custom</span>
+  );
 
-  it('renders inherited controls for the non-expression case, then overrides on enable', async () => {
+  it('hosts inherited field selector and value editor, overriding on expression enable', async () => {
+    const Outer = getCompatContextProvider({
+      controlElements: { valueEditor: CustomValueEditor, fieldSelector: CustomFieldSelector },
+    });
     render(<App Outer={Outer} />);
 
-    // Non-expression RHS delegates to the inherited editor; LHS hosts the inherited selector.
-    expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
+    // LHS hosts the inherited field selector; the non-expression RHS delegates to the editor.
     expect(screen.getByTestId('custom-field')).toBeInTheDocument();
+    expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
 
-    // Enabling the RHS expression swaps the rule's editor for the expression editor, whose
-    // literal sub-input still renders via the inherited (themed) editor.
-    await user.click(screen.getByTestId(rhsToggle));
+    // Enabling the expression swaps the rule's editor for the expression editor; a literal
+    // argument still renders via the inherited (themed) editor.
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
     const exprRhs = screen.getByTestId(rhsEditor);
     expect(exprRhs).toBeInTheDocument();
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-arg0-kind`), 'value');
     expect(within(exprRhs).getByTestId('custom-editor')).toBeInTheDocument();
   });
-});
 
-describe('expression toggle labels', () => {
-  const exprGlyph = '𝑓(𝑥)'; // active (is an expression)
-  const plainGlyph = '𝑥'; // inactive (plain field/value)
-
-  it('shows state-indicating label/title for the LHS toggle', async () => {
-    render(<App />);
-    const lhs = () => screen.getByTestId(lhsToggle);
-
-    // Off: plain-operand glyph, title naming the enable action.
-    expect(lhs()).toHaveTextContent(plainGlyph);
-    expect(lhs()).toHaveAttribute('title', 'Use a left-hand side expression');
-
-    await user.click(lhs());
-    // On: function glyph, title naming the revert action.
-    expect(lhs()).toHaveTextContent(exprGlyph);
-    expect(lhs()).toHaveAttribute('title', 'Use a left-hand side field');
-  });
-
-  it('shows state-indicating label/title for the RHS toggle', async () => {
-    render(<App />);
-    const rhs = () => screen.getByTestId(rhsToggle);
-
-    expect(rhs()).toHaveTextContent(plainGlyph);
-    expect(rhs()).toHaveAttribute('title', 'Use a right-hand side expression');
-
-    await user.click(rhs());
-    expect(rhs()).toHaveTextContent(exprGlyph);
-    expect(rhs()).toHaveAttribute('title', 'Use a right-hand side value');
-  });
-
-  it('applies per-state translation overrides on both sides', async () => {
-    render(
-      <App
-        translations={{
-          exprToggleLHS: { label: 'LHS-OFF', title: 'lhs-off' },
-          exprToggleLHSActive: { label: 'LHS-ON', title: 'lhs-on' },
-          exprToggleRHS: { label: 'RHS-OFF', title: 'rhs-off' },
-          exprToggleRHSActive: { label: 'RHS-ON', title: 'rhs-on' },
-        }}
-      />
-    );
-
-    // Inactive overrides applied up front.
-    expect(screen.getByTestId(lhsToggle)).toHaveTextContent('LHS-OFF');
-    expect(screen.getByTestId(rhsToggle)).toHaveTextContent('RHS-OFF');
-
-    await user.click(screen.getByTestId(lhsToggle));
-    await user.click(screen.getByTestId(rhsToggle));
-
-    // Active overrides applied after enabling each side.
-    expect(screen.getByTestId(lhsToggle)).toHaveTextContent('LHS-ON');
-    expect(screen.getByTestId(lhsToggle)).toHaveAttribute('title', 'lhs-on');
-    expect(screen.getByTestId(rhsToggle)).toHaveTextContent('RHS-ON');
-    expect(screen.getByTestId(rhsToggle)).toHaveAttribute('title', 'rhs-on');
+  it('hosts an inherited value-source selector', () => {
+    const Outer = getCompatContextProvider({
+      controlElements: { valueSourceSelector: CustomValueSourceSelector },
+    });
+    render(<App Outer={Outer} />);
+    // The expression provider delegates rendering to the inherited value-source selector.
+    expect(screen.getByTestId('custom-vss')).toBeInTheDocument();
   });
 });

@@ -45,7 +45,7 @@ export type ValueEditorType =
  *
  * @see {@link ValueSource}
  */
-export type ValueSources = ['value'] | ['value', 'field'] | ['field', 'value'] | ['field'];
+export type ValueSources = [ValueSource, ...ValueSource[]];
 
 export type ValueSourceFlexibleOptions = ToFlexibleOptionArrays<ValueSources>;
 

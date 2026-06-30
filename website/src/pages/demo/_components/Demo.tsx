@@ -26,6 +26,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   SQLPreset,
+  ValueSources,
 } from 'react-querybuilder';
 import {
   convertToIC,
@@ -187,7 +188,21 @@ const ExpressionsWrapper = ({
 }: {
   enabled?: boolean;
   children: React.ReactNode;
-}) => (enabled ? <QueryBuilderExpressions>{children}</QueryBuilderExpressions> : <>{children}</>);
+}) =>
+  enabled ? (
+    <QueryBuilderExpressions allowFunctionsOnLHS>{children}</QueryBuilderExpressions>
+  ) : (
+    <>{children}</>
+  );
+
+// With expressions enabled, every field also accepts the `expression` value source (appended
+// to its own configured sources) so the right-hand side can hold an expression tree.
+const getExpressionValueSources = (field: string): ValueSources => {
+  const configured = fields.find(f => f.name === field)?.valueSources;
+  const base: ValueSources =
+    Array.isArray(configured) && configured.length > 0 ? (configured as ValueSources) : ['value'];
+  return base.includes('expression') ? base : [...base, 'expression'];
+};
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
@@ -560,6 +575,7 @@ export default function Demo({
       ...opts,
       validator: opts.validateQuery ? defaultValidator : undefined,
       parseNumbers: opts.parseNumbers ? 'strict-limited' : false,
+      getValueSources: options.enableExpressions ? getExpressionValueSources : undefined,
     };
   }, [options]);
 

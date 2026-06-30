@@ -196,10 +196,10 @@ export const optionsMetadata = {
       'Wrap the query builder with QueryBuilderDateTime for enhanced date/time editing, including relative values ("3 months ago", "start of year")',
   },
   enableExpressions: {
-    link: '',
+    link: '/docs/expr',
     label: 'Enable expressions',
     title:
-      'Wrap the query builder with QueryBuilderExpressions to build arithmetic/function expressions (e.g. price * quantity) on either side of a rule via the 𝑓(𝑥) toggle',
+      'Wrap the query builder with QueryBuilderExpressions to build arithmetic/function expressions (e.g. price * quantity): pick the "expression" value source on the right-hand side, or wrap a field in a function on the left',
   },
 } satisfies Record<DemoOption, { link: string; label: string; title: string }>;
 

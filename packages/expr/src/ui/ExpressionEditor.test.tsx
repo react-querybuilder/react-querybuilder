@@ -31,11 +31,13 @@ const Harness = ({
   registry = defaultFunctions,
   parseNumbers,
   inputType,
+  hideKindSelector,
 }: {
   initial?: ExpressionNode;
   registry?: ExpressionFunctionRegistry;
   parseNumbers?: ParseNumbersPropConfig;
   inputType?: InputType | null;
+  hideKindSelector?: boolean;
 }) => {
   const [node, setNode] = useState<ExpressionNode | undefined>(initial);
   return (
@@ -46,6 +48,7 @@ const Harness = ({
         registry={registry}
         schema={makeSchema(parseNumbers)}
         inputType={inputType}
+        hideKindSelector={hideKindSelector}
       />
       <pre data-testid="out">{JSON.stringify(node)}</pre>
     </>
@@ -188,4 +191,28 @@ it('labels function options by key when no label is defined', () => {
   );
   const option = sel('expr-fn').querySelector('option')!;
   expect(option.textContent).toBe('weird');
+});
+
+it('hides the root kind selector while keeping function controls when hideKindSelector is set', () => {
+  render(
+    <Harness
+      hideKindSelector
+      initial={{
+        kind: 'func',
+        fn: 'multiply',
+        args: [
+          { kind: 'field', field: 'price' },
+          { kind: 'field', field: 'qty' },
+        ],
+      }}
+    />
+  );
+
+  // Root `kind` selector suppressed...
+  expect(screen.queryByTestId('expr-kind')).toBeNull();
+  // ...but the function selector and its nested-argument editors still render.
+  expect(sel('expr-fn')).toBeInTheDocument();
+  expect(sel('expr-arg0-field')).toBeInTheDocument();
+  // Nested arguments keep their own kind selectors so users can pick fields/values/calls.
+  expect(sel('expr-arg0-kind')).toBeInTheDocument();
 });

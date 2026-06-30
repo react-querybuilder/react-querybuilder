@@ -38,6 +38,7 @@ export const basicSchema: Schema<FullField, string> = {
   getValues: admonish('getValues'),
   getRuleClassname: admonish('getRuleClassname'),
   getRuleDefaultValue: admonish('getRuleDefaultValue'),
+  getRuleDefaultOperator: admonish('getRuleDefaultOperator'),
   getRuleGroupClassname: admonish('getRuleGroupClassname'),
   getSubQueryBuilderProps: admonish('getSubQueryBuilderProps'),
   accessibleDescriptionGenerator: admonish('accessibleDescriptionGenerator'),
@@ -59,6 +60,8 @@ export const basicSchema: Schema<FullField, string> = {
   disabledPaths: [],
   suppressStandardClassnames: false,
   maxLevels: Infinity,
+  resetOnFieldChange: true,
+  resetOnOperatorChange: false,
 };
 
 export const findInput = (el: HTMLElement) =>

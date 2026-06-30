@@ -1,85 +1,129 @@
-import { toFullOption } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import type { FieldSelectorProps, FullField } from 'react-querybuilder';
-import { ActionElement, update, ValueSelector } from 'react-querybuilder';
+import type {
+  FieldSelectorProps,
+  FullOption,
+  MatchModeOptions,
+  ValueSourceFullOptions,
+} from 'react-querybuilder';
+import { update } from 'react-querybuilder';
 import type { ExpressionNode } from '../types';
 import { ExprTestID } from './defaults';
-import { ExpressionEditor } from './ExpressionEditor';
-import { defaultNode } from './expressionEditorUtils';
+import { isUnaryArity } from './expressionEditorUtils';
 import { useExpressionUI } from './ExpressionUIContext';
+
+/** Sentinel value for the wrapper selector's "no function" option. */
+const NONE = '';
 
 /**
  * Field-selector override hosting the rule's left-hand side. The inherited (or default)
  * field selector still picks the rule's `field` — which drives operator selection and
- * validation (the "sentinel field") — while a toggle reveals an {@link ExpressionEditor}
- * bound to `rule.lhs`. When the toggle is off, `rule.lhs` is cleared and the rule behaves
- * normally.
+ * validation — while an optional wrapper selector in front of it applies a _unary_ function
+ * around that field, stored as `rule.lhs = fn(field)`. Selecting "no function" clears
+ * `rule.lhs`. Field changes re-wrap (or drop) the LHS atomically so the stored expression
+ * always references the current field.
+ *
+ * The wrapper is shown only when {@link QueryBuilderExpressionsProps.allowFunctionsOnLHS}
+ * permits it for the current field/operator; otherwise the plain field selector renders.
  */
 export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.Element => {
-  const {
-    registry,
-    translations,
-    showFieldExpressionToggle,
-    inheritedActionElement,
-    inheritedFieldSelector,
-  } = useExpressionUI();
-  const ActionButton = inheritedActionElement ?? ActionElement;
-  const FieldSelector = inheritedFieldSelector ?? ValueSelector;
-  const {
-    rule: { field, lhs, operator },
-    schema,
-    path,
-    level,
-    rule,
-  } = props;
+  const { registry, translations, allowFunctionsOnLHS, inheritedFieldSelector } = useExpressionUI();
+  const { rule, schema, path, level } = props;
+  const { field, lhs, operator } = rule;
+  const ValueSelectorControl = schema.controls.valueSelector;
+  const FieldSelector = inheritedFieldSelector ?? ValueSelectorControl;
 
-  // Resolve the sentinel field's input type (same precedence as the core Rule component) so
-  // literals inside the LHS expression are parsed like a normal value for that field.
-  const inputType = useMemo(() => {
-    const fieldData: FullField = schema.fieldMap[field] ?? toFullOption(field);
-    return fieldData.inputType ?? schema.getInputType(field, operator, { fieldData });
-  }, [schema, field, operator]);
-
-  const writeLhs = useCallback(
-    (value: ExpressionNode | undefined) =>
-      schema.dispatchQuery(update(schema.getQuery(), 'lhs', value, path)),
-    [schema, path]
+  const allow = useCallback(
+    (f: string, op: string): boolean =>
+      typeof allowFunctionsOnLHS === 'function' ? allowFunctionsOnLHS(f, op) : allowFunctionsOnLHS,
+    [allowFunctionsOnLHS]
   );
 
-  const toggleLhs = useCallback(
-    () => writeLhs(lhs ? undefined : defaultNode('field', schema.fields, registry)),
-    [writeLhs, lhs, registry, schema]
+  // The "no function" option plus every registered unary function.
+  const fnOptions = useMemo<FullOption[]>(
+    () => [
+      { name: NONE, value: NONE, label: translations.exprLhsNone.label },
+      ...Object.keys(registry)
+        .filter(key => isUnaryArity(registry[key].arity))
+        .map(key => ({ name: key, value: key, label: registry[key].label ?? key })),
+    ],
+    [registry, translations]
   );
 
-  const toggle = lhs ? translations.exprToggleLHSActive : translations.exprToggleLHS;
+  // Mirrors the core `onPropChange` reset cascade so a field change applied alongside
+  // `lhs` resets operator/value/valueSource exactly as a normal field change would.
+  const updateOptions = useMemo(
+    () => ({
+      resetOnFieldChange: schema.resetOnFieldChange,
+      resetOnOperatorChange: schema.resetOnOperatorChange,
+      getRuleDefaultOperator: schema.getRuleDefaultOperator,
+      getValueSources: schema.getValueSources as unknown as (
+        field: string,
+        operator: string
+      ) => ValueSourceFullOptions,
+      getRuleDefaultValue: schema.getRuleDefaultValue,
+      getMatchModes: schema.getMatchModes as unknown as (field: string) => MatchModeOptions,
+    }),
+    [schema]
+  );
 
-  return !showFieldExpressionToggle ? (
-    <FieldSelector {...props} />
-  ) : (
+  // Wrap the field in the chosen unary function (or clear the wrapper).
+  const onFnChange = useCallback(
+    (v: string) =>
+      schema.dispatchQuery(
+        update(
+          schema.getQuery(),
+          'lhs',
+          v === NONE
+            ? undefined
+            : ({ kind: 'func', fn: v, args: [{ kind: 'field', field }] } satisfies ExpressionNode),
+          path
+        )
+      ),
+    [schema, path, field]
+  );
+
+  // Re-point the LHS wrapper's inner field on field change (or drop it if the new field
+  // disallows functions), applied atomically with the field update so reducers see one change.
+  const onFieldChange = useCallback(
+    (v: string) => {
+      const nextField = `${v}`;
+      const stillAllowed = allow(nextField, schema.getRuleDefaultOperator(nextField));
+      const nextLhs: ExpressionNode | undefined =
+        stillAllowed && lhs?.kind === 'func'
+          ? { kind: 'func', fn: lhs.fn, args: [{ kind: 'field', field: nextField }] }
+          : undefined;
+      schema.dispatchQuery(
+        update(schema.getQuery(), { field: nextField, lhs: nextLhs }, path, updateOptions)
+      );
+    },
+    [schema, path, lhs, allow, updateOptions]
+  );
+
+  if (!allowFunctionsOnLHS) {
+    return <FieldSelector {...props} />;
+  }
+
+  const currentFn = lhs?.kind === 'func' ? lhs.fn : NONE;
+
+  return (
     <span className="expr-lhs">
-      <FieldSelector {...props} />
-      <ActionButton
-        path={path}
-        level={level}
-        schema={schema}
-        testID={ExprTestID.exprLhsToggle}
-        className="expr-toggle"
-        label={toggle.label}
-        title={toggle.title}
-        ruleOrGroup={rule}
-        handleOnClick={toggleLhs}
-      />
-      {lhs && (
-        <ExpressionEditor
-          node={lhs}
-          onChange={writeLhs}
-          registry={registry}
+      {allow(field, operator) && (
+        <ValueSelectorControl
+          testID={ExprTestID.exprLhsFnSelector}
+          className="expr-fn"
+          title={translations.exprLhsFunction.title}
           schema={schema}
-          inputType={inputType}
-          testID={ExprTestID.exprLhsEditor}
+          path={path}
+          level={level}
+          value={currentFn}
+          options={fnOptions}
+          multiple={false}
+          listsAsArrays={false}
+          handleOnChange={onFnChange}
         />
       )}
+      <FieldSelector {...props} handleOnChange={onFieldChange} />
     </span>
   );
 };

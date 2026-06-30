@@ -1,7 +1,8 @@
 // Interactive dev harness for the expressions package, built on the shared `@rqb-devapp`
-// chrome (DevLayout + option toggles). Demonstrates the core storage contract — LHS on
-// `rule.lhs`, RHS via `valueSource: 'expression'` — wired through `QueryBuilderExpressions`,
-// with live expr-aware SQL / parameterized / JSONLogic output in the harness export panel.
+// chrome (DevLayout + option toggles). Demonstrates the core storage contract — a unary
+// function wrapper on `rule.lhs`, and a right-hand side expression via
+// `valueSource: 'expression'` (node stored in `value`) — wired through
+// `QueryBuilderExpressions`, with live expr-aware SQL / parameterized / JSONLogic output.
 import { DevLayout, useDevApp } from '@rqb-devapp';
 import * as React from 'react';
 import { useMemo, useState } from 'react';
@@ -17,35 +18,43 @@ import { QueryBuilderExpressions } from '../src/ui';
 import './styles.scss';
 
 const fields: Field[] = [
-  { name: 'price', label: 'Price' },
+  // `price` additionally allows an expression on its right-hand side.
+  { name: 'price', label: 'Price', valueSources: ['value', 'expression'] },
   { name: 'quantity', label: 'Quantity' },
   { name: 'discount', label: 'Discount' },
-  { name: '(expression)', label: 'ƒ(x) Expression' },
 ];
 
-// `price * quantity >= 100`: LHS expression on `rule.lhs`, scalar RHS in `value`.
 const initialQuery: RuleGroupType = {
   combinator: 'and',
   rules: [
-    { field: 'discount', operator: '<', value: 10 },
+    // LHS unary wrapper: `ABS(discount) > 5`.
     {
-      field: '(expression)',
-      operator: '>=',
-      value: 100,
-      lhs: {
+      field: 'discount',
+      operator: '>',
+      value: 5,
+      lhs: { kind: 'func', fn: 'abs', args: [{ kind: 'field', field: 'discount' }] },
+    },
+    // RHS expression: `price = (quantity * 2)`.
+    {
+      field: 'price',
+      operator: '=',
+      valueSource: 'expression',
+      value: {
         kind: 'func',
         fn: 'multiply',
         args: [
-          { kind: 'field', field: 'price' },
           { kind: 'field', field: 'quantity' },
+          { kind: 'value', value: 2 },
         ],
       },
     },
   ],
 };
 
-// expr exposes no extra harness toggles; stable identity avoids reducer churn.
-const noExtraOptions: Record<string, boolean> = {};
+// Toggle the LHS function wrapper on/off; stable identity avoids reducer churn.
+const extraOptions: Record<string, boolean> = {
+  allowFunctionsOnLHS: true,
+};
 
 const App = () => {
   const [query, setQuery] = useState(initialQuery);
@@ -75,9 +84,9 @@ const App = () => {
     [query]
   );
 
-  const devApp = useDevApp(noExtraOptions, exportFormats);
+  const devApp = useDevApp(extraOptions, exportFormats);
 
-  // Override the default demo fields with expr-specific fields incl. the `(expression)` sentinel.
+  // Override the default demo fields with the expr-specific fields.
   const queryBuilderProps = useMemo(
     () => ({ ...devApp.commonRQBProps, fields }),
     [devApp.commonRQBProps]
@@ -85,7 +94,7 @@ const App = () => {
 
   return (
     <DevLayout {...devApp}>
-      <QueryBuilderExpressions>
+      <QueryBuilderExpressions allowFunctionsOnLHS={devApp.optVals.allowFunctionsOnLHS}>
         <QueryBuilder {...queryBuilderProps} query={query} onQueryChange={setQuery} />
       </QueryBuilderExpressions>
     </DevLayout>

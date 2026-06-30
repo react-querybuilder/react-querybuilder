@@ -420,6 +420,9 @@ export const getCodeString = (
     getPropText('showShiftActions'),
     getPropText('suppressStandardClassnames'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
+    options.enableExpressions
+      ? `getValueSources={(field) => { const configured = fields.find((f) => f.name === field)?.valueSources; const base = Array.isArray(configured) && configured.length > 0 ? configured : ['value']; return base.includes('expression') ? base : [...base, 'expression']; }}`
+      : '',
     options.showBranches || options.justifiedLayout || options.responsiveLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
           [standardClassnames.branches]: options.showBranches,
@@ -471,7 +474,7 @@ export const App = () => {
 
   return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
     options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
-  }${options.enableExpressions ? '<QueryBuilderExpressions>' : ''}<QueryBuilder ${props} />${
+  }${options.enableExpressions ? '<QueryBuilderExpressions allowFunctionsOnLHS>' : ''}<QueryBuilder ${props} />${
     options.enableExpressions ? '</QueryBuilderExpressions>' : ''
   }${
     options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''

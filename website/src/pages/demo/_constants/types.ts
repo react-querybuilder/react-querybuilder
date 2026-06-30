@@ -42,6 +42,7 @@ export type CommonRQBProps = Pick<
   QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>,
   | 'fields'
   | 'validator'
+  | 'getValueSources'
   | Exclude<
       DemoOption,
       | 'validateQuery'

@@ -1,68 +1,33 @@
 import * as React from 'react';
 import type { ValueEditorProps } from 'react-querybuilder';
-import { ActionElement, update, ValueEditor } from 'react-querybuilder';
+import { ValueEditor } from 'react-querybuilder';
 import { ExprTestID } from './defaults';
 import { ExpressionEditor } from './ExpressionEditor';
-import { rhsDefaultNode } from './expressionEditorUtils';
 import { useExpressionUI } from './ExpressionUIContext';
 
 /**
- * Value-editor override hosting the rule's right-hand side. A toggle flips the rule's
- * `valueSource` between its normal scalar/field editor and an {@link ExpressionEditor}
- * (`valueSource: 'expression'`, with the node stored in `value`). The inherited (or
- * default) value editor renders for the non-expression case.
+ * Value-editor override hosting the rule's right-hand side. When `valueSource` is
+ * `expression`, the rule's `value` holds an {@link ExpressionNode} (rooted at a function
+ * call) edited by {@link ExpressionEditor}. Every other value source renders the inherited
+ * (or default) value editor unchanged. The `expression` source is offered by
+ * {@link ExpressionValueSourceSelector}, which seeds the initial node.
  */
 export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Element => {
-  const {
-    registry,
-    translations,
-    showValueExpressionToggle,
-    inheritedActionElement,
-    inheritedValueEditor,
-  } = useExpressionUI();
-  const ActionButton = inheritedActionElement ?? ActionElement;
+  const { registry, inheritedValueEditor } = useExpressionUI();
   const ValEditor = inheritedValueEditor ?? ValueEditor;
-  const { schema, path, value, valueSource, inputType, handleOnChange, level, rule } = props;
-  const isExpression = valueSource === 'expression';
-  const toggle = isExpression ? translations.exprToggleRHSActive : translations.exprToggleRHS;
+  const { schema, value, valueSource, inputType, handleOnChange } = props;
 
-  const enable = () => {
-    const node = rhsDefaultNode(schema, rule);
-    schema.dispatchQuery(
-      update(update(schema.getQuery(), 'valueSource', 'expression', path), 'value', node, path)
-    );
-  };
-
-  const disable = () =>
-    schema.dispatchQuery(update(schema.getQuery(), 'valueSource', 'value', path));
-
-  return !showValueExpressionToggle ? (
-    <ValEditor {...props} />
+  return valueSource === 'expression' ? (
+    <ExpressionEditor
+      node={value}
+      onChange={handleOnChange}
+      registry={registry}
+      schema={schema}
+      inputType={inputType}
+      hideKindSelector
+      testID={ExprTestID.exprRhsEditor}
+    />
   ) : (
-    <span className="expr-rhs">
-      <ActionButton
-        testID={ExprTestID.exprRhsToggle}
-        className="expr-toggle"
-        label={toggle.label}
-        title={toggle.title}
-        path={path}
-        level={level}
-        schema={schema}
-        ruleOrGroup={rule}
-        handleOnClick={isExpression ? disable : enable}
-      />
-      {isExpression ? (
-        <ExpressionEditor
-          node={value}
-          onChange={handleOnChange}
-          registry={registry}
-          schema={schema}
-          inputType={inputType}
-          testID={ExprTestID.exprRhsEditor}
-        />
-      ) : (
-        <ValEditor {...props} />
-      )}
-    </span>
+    <ValEditor {...props} />
   );
 };

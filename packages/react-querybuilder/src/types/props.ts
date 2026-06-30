@@ -602,6 +602,7 @@ export interface Schema<F extends FullField, O extends string> {
   getInputType(field: string, operator: string, meta: { fieldData: F }): InputType | null;
   getValues(field: string, operator: string, meta: { fieldData: F }): FullOptionList<Option>;
   getRuleDefaultValue(rule: RuleType): unknown;
+  getRuleDefaultOperator(field: string): string;
   getMatchModes(field: string, misc: { fieldData: F }): MatchModeOptions;
   getSubQueryBuilderProps(
     field: GetOptionIdentifierType<F>,
@@ -628,6 +629,8 @@ export interface Schema<F extends FullField, O extends string> {
   disabledPaths: Path[];
   suppressStandardClassnames: boolean;
   maxLevels: number;
+  resetOnFieldChange: boolean;
+  resetOnOperatorChange: boolean;
 }
 
 /**

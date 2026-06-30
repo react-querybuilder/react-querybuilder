@@ -8,8 +8,10 @@ import type { ExpressionFunctionRegistry } from '../types';
 import type { TranslationsExpr, TranslationsFullExpr } from './defaults';
 import { defaultTranslationsExpr } from './defaults';
 import { ExpressionFieldSelector } from './ExpressionFieldSelector';
+import type { AllowFunctionsOnLHS } from './ExpressionUIContext';
 import { ExpressionUIContext } from './ExpressionUIContext';
 import { ExpressionValueEditor } from './ExpressionValueEditor';
+import { ExpressionValueSourceSelector } from './ExpressionValueSourceSelector';
 
 const emptyObject = {};
 
@@ -17,6 +19,7 @@ const QueryBuilderExpressionsContext: QueryBuilderContextProvider = getCompatCon
   controlElements: {
     fieldSelector: ExpressionFieldSelector,
     valueEditor: ExpressionValueEditor,
+    valueSourceSelector: ExpressionValueSourceSelector,
   },
 });
 
@@ -24,37 +27,32 @@ const QueryBuilderExpressionsContext: QueryBuilderContextProvider = getCompatCon
 export interface QueryBuilderExpressionsProps {
   /** Custom functions merged over the built-in {@link defaultFunctions}. */
   functions?: ExpressionFunctionRegistry;
-  /** Per-key overrides for the expression-toggle labels/titles ({@link defaultTranslationsExpr}). */
+  /** Per-key overrides for the expression UI labels/titles ({@link defaultTranslationsExpr}). */
   translations?: Partial<TranslationsExpr>;
   /**
-   * Whether to show the expression toggle for the field selector.
+   * Whether the left-hand side may wrap its field in a unary function. `false` (default)
+   * hides the wrapper selector entirely; `true` always offers it; a predicate gates it
+   * per field/operator.
    *
    * @default false
    */
-  showFieldExpressionToggle?: boolean;
-  /**
-   * Whether to show the expression toggle for the value editor.
-   *
-   * @default true
-   */
-  showValueExpressionToggle?: boolean;
+  allowFunctionsOnLHS?: AllowFunctionsOnLHS;
   children?: React.ReactNode;
 }
 
 /**
  * Context provider enabling arithmetic/function expression support for a wrapped
- * {@link react-querybuilder!QueryBuilder QueryBuilder}: overrides the field selector and
- * value editor to host left- and right-hand side expressions, and supplies the function
- * registry. Any value editor / field selector inherited from an outer compat provider is
- * captured first so non-expression rules continue to render with it.
+ * {@link react-querybuilder!QueryBuilder QueryBuilder}: overrides the field selector,
+ * value-source selector, and value editor to host left- and right-hand side expressions,
+ * and supplies the function registry. Any control inherited from an outer compat provider
+ * is captured first so non-expression rules continue to render with it.
  *
  * @group Components
  */
 export const QueryBuilderExpressions = ({
   functions,
   translations: translationsProp = emptyObject,
-  showFieldExpressionToggle = false,
-  showValueExpressionToggle = true,
+  allowFunctionsOnLHS = false,
   children,
 }: QueryBuilderExpressionsProps): React.JSX.Element => {
   const inherited = useContext(QueryBuilderContext).controlElements;
@@ -73,13 +71,12 @@ export const QueryBuilderExpressions = ({
     () => ({
       registry,
       translations,
-      showFieldExpressionToggle,
-      showValueExpressionToggle,
-      inheritedActionElement: inherited?.actionElement ?? null,
+      allowFunctionsOnLHS,
       inheritedFieldSelector: inherited?.fieldSelector ?? null,
       inheritedValueEditor: inherited?.valueEditor ?? null,
+      inheritedValueSourceSelector: inherited?.valueSourceSelector ?? null,
     }),
-    [registry, translations, inherited, showFieldExpressionToggle, showValueExpressionToggle]
+    [registry, translations, allowFunctionsOnLHS, inherited]
   );
 
   return (

@@ -50,6 +50,12 @@ export interface ExpressionEditorProps {
    * as the base configuration would parse a value for that field.
    */
   inputType?: InputType | null;
+  /**
+   * Hides this node's `kind` selector. Used for the root right-hand side node, which is
+   * always a function call; nested argument editors keep their selectors so users can pick
+   * fields, literals, or further function calls.
+   */
+  hideKindSelector?: boolean;
   /** Test/id prefix for this node (children derive nested ids from it). */
   testID?: string;
 }
@@ -71,6 +77,7 @@ export const ExpressionEditor = ({
   registry,
   schema,
   inputType,
+  hideKindSelector = false,
   testID = 'expr',
 }: ExpressionEditorProps): React.JSX.Element => {
   const { inheritedValueEditor } = useExpressionUI();
@@ -93,22 +100,23 @@ export const ExpressionEditor = ({
 
   return (
     <span className="expr-node" data-testid={testID}>
-      <ValueSelectorControl
-        testID={`${testID}-kind`}
-        className="expr-kind"
-        title="Expression kind"
-        schema={schema}
-        path={dummyPath}
-        level={0}
-        value={n.kind}
-        options={kindOptions}
-        multiple={false}
-        listsAsArrays={false}
-        handleOnChange={v =>
-          onChange(defaultNode(v as ExpressionNodeKind, schema.fields, registry))
-        }
-      />
-
+      {!hideKindSelector && (
+        <ValueSelectorControl
+          testID={`${testID}-kind`}
+          className="expr-kind"
+          title="Expression kind"
+          schema={schema}
+          path={dummyPath}
+          level={0}
+          value={n.kind}
+          options={kindOptions}
+          multiple={false}
+          listsAsArrays={false}
+          handleOnChange={v =>
+            onChange(defaultNode(v as ExpressionNodeKind, schema.fields, registry))
+          }
+        />
+      )}
       {n.kind === 'field' && (
         <ValueSelectorControl
           testID={`${testID}-field`}

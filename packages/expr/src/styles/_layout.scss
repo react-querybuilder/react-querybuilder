@@ -4,10 +4,10 @@
 // inherit the surrounding theme; compat packages style the nested selects/inputs via
 // the query builder schema's control components (see ExpressionEditor Part B).
 
-// Wrapper spans for the rule's expression-bearing sides and each (possibly nested)
-// expression node, plus the function-call group holding the fn selector and its args.
+// Wrapper spans for the rule's left-hand side (function wrapper selector + field selector)
+// and each (possibly nested) expression node, plus the function-call group holding the fn
+// selector and its args.
 .expr-lhs,
-.expr-rhs,
 .expr-node,
 .expr-func {
   display: inline-flex;
@@ -16,11 +16,34 @@
   gap: var(--#{$rqbexpr-var-prefix}spacing);
 }
 
-// Compact `𝑓(𝑥)` button toggling a side between scalar and expression editing.
-.expr-toggle {
-  cursor: pointer;
+/* #region Bracket/comma styles */
+// Pull each bracket/comma half a gap toward the content it hugs. Pseudo positions
+// stay fixed (open `:before`, comma `:before`, close `:after`) -- the browser mirrors
+// the glyphs in RTL (see `_main.scss`) -- so only the physical margin side flips for
+// direction. Selectors mirror those in `_main.scss` exactly.
+@mixin bracket-comma-styles($direction) {
+  $open-side: if($direction == rtl, left, right);
+  $rest-side: if($direction == rtl, right, left);
 
-  &:disabled {
-    cursor: not-allowed;
+  // Open paren hugs the first arg.
+  .expr-func > .expr-fn + .expr-node:before {
+    margin-#{$open-side}: calc(-0.5 * var(--#{$rqbexpr-var-prefix}spacing));
+  }
+
+  // Commas hug the preceding arg; close paren hugs the last arg.
+  .expr-func > .expr-node ~ .expr-node:before,
+  .expr-func > .expr-node:last-child:after {
+    margin-#{$rest-side}: calc(-0.5 * var(--#{$rqbexpr-var-prefix}spacing));
   }
 }
+
+/* LTR */
+.queryBuilder:dir(ltr) {
+  @include bracket-comma-styles(ltr);
+}
+
+/* RTL */
+.queryBuilder:dir(rtl) {
+  @include bracket-comma-styles(rtl);
+}
+/* #endregion */

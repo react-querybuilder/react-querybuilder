@@ -1,8 +1,13 @@
 import type { Option } from '@react-querybuilder/core';
-import type { FullField, RuleType, Schema } from 'react-querybuilder';
 import { defaultFunctions } from '../defaultFunctions';
 import type { ExpressionFunctionRegistry } from '../types';
-import { arityCount, changeFunction, defaultNode, rhsDefaultNode } from './expressionEditorUtils';
+import {
+  arityCount,
+  changeFunction,
+  defaultNode,
+  isUnaryArity,
+  rhsDefaultNode,
+} from './expressionEditorUtils';
 
 const fields: Option[] = [
   { name: 'price', value: 'price', label: 'Price' },
@@ -86,43 +91,36 @@ describe('changeFunction', () => {
 });
 
 describe('rhsDefaultNode', () => {
-  const rule: RuleType = { field: 'price', operator: '=', value: '' };
-
-  // Stubs only the three schema members the helper reads: a single-source list, the
-  // rule-default resolver, and the fieldMap used to resolve `fieldData`.
-  const mkSchema = (
-    valueSource: string | null,
-    defaultValue: unknown,
-    fieldMap: Record<string, FullField> = {}
-  ): Schema<FullField, string> =>
-    ({
-      fieldMap,
-      getValueSources: () =>
-        valueSource ? [{ name: valueSource, value: valueSource, label: valueSource }] : [],
-      getRuleDefaultValue: () => defaultValue,
-    }) as unknown as Schema<FullField, string>;
-
-  it('seeds a value node from the rule default when valueSource is "value"', () => {
-    expect(rhsDefaultNode(mkSchema('value', 'abc'), rule)).toEqual({ kind: 'value', value: 'abc' });
-  });
-
-  it('seeds a field node naming the comparator field when valueSource is "field"', () => {
-    expect(rhsDefaultNode(mkSchema('field', 'qty'), rule)).toEqual({ kind: 'field', field: 'qty' });
-  });
-
-  it('falls back to an empty field name when the field default is not a string', () => {
-    expect(rhsDefaultNode(mkSchema('field', 42), rule)).toEqual({ kind: 'field', field: '' });
-  });
-
-  it('defaults to a value node when no valueSource is configured', () => {
-    expect(rhsDefaultNode(mkSchema(null, ''), rule)).toEqual({ kind: 'value', value: '' });
-  });
-
-  it('resolves fieldData from the schema fieldMap when the field is present', () => {
-    const fieldMap = { price: { name: 'price', value: 'price', label: 'Price' } as FullField };
-    expect(rhsDefaultNode(mkSchema('value', 'x', fieldMap), rule)).toEqual({
-      kind: 'value',
-      value: 'x',
+  it('roots the RHS at the first registered function with default field args', () => {
+    expect(rhsDefaultNode(fields, defaultFunctions)).toEqual({
+      kind: 'func',
+      fn: 'add',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'field', field: 'price' },
+      ],
     });
+  });
+
+  it('falls back to an empty func node when the registry is empty', () => {
+    expect(rhsDefaultNode(fields, {})).toEqual({ kind: 'func', fn: '', args: [] });
+  });
+});
+
+describe('isUnaryArity', () => {
+  it('accepts a fixed arity of exactly 1', () => {
+    expect(isUnaryArity(1)).toBe(true);
+    expect(isUnaryArity(2)).toBe(false);
+    expect(isUnaryArity(0)).toBe(false);
+  });
+
+  it('accepts a [min, max] range that includes 1', () => {
+    expect(isUnaryArity([1, 2])).toBe(true);
+    expect(isUnaryArity([0, 3])).toBe(true);
+    expect(isUnaryArity([2, 4])).toBe(false);
+  });
+
+  it('treats an absent arity as variadic (eligible)', () => {
+    expect(isUnaryArity(undefined)).toBe(true);
   });
 });

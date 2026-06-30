@@ -1,6 +1,5 @@
-import type { OptionList, RuleType } from '@react-querybuilder/core';
+import type { OptionList } from '@react-querybuilder/core';
 import { getFirstOption } from '@react-querybuilder/core';
-import type { FullField, Schema } from 'react-querybuilder';
 import type { ExpressionFunction, ExpressionFunctionRegistry, ExpressionNode } from '../types';
 
 /** Node `kind` discriminants, for the kind selector. */
@@ -17,6 +16,18 @@ export const arityCount = (arity: ExpressionFunction['arity'], current: number):
     : Array.isArray(arity)
       ? Math.max(arity[0], Math.min(current, arity[1]))
       : current;
+
+/**
+ * Whether a function admits exactly one argument — i.e. is eligible as a left-hand side
+ * wrapper around the rule's field. Fixed arity must equal `1`; a `[min, max]` range must
+ * include `1`; absent arity is treated as variadic (eligible).
+ */
+export const isUnaryArity = (arity: ExpressionFunction['arity']): boolean =>
+  typeof arity === 'number'
+    ? arity === 1
+    : Array.isArray(arity)
+      ? arity[0] <= 1 && 1 <= arity[1]
+      : true;
 
 /** Builds a fresh default node of the given `kind`. */
 export const defaultNode = (
@@ -42,28 +53,14 @@ export const defaultNode = (
 };
 
 /**
- * Seeds the initial right-hand-side node when a rule's value is toggled into expression
- * mode. Mirrors the rule's natural default by honoring the field's first configured
- * `valueSource`: `'field'` yields a field node naming a comparator-valid field, anything
- * else a value node carrying the field/operator default (field `defaultValue`, first
- * `values` option, `getDefaultValue` override, etc.) computed by `schema.getRuleDefaultValue`.
+ * Seeds the right-hand-side node when a rule's value source switches to `expression`.
+ * The RHS is always rooted at a function call (first registered function) with default
+ * field arguments, giving the user an editable expression skeleton to fill in.
  */
 export const rhsDefaultNode = (
-  schema: Schema<FullField, string>,
-  rule: RuleType
-): ExpressionNode => {
-  const fieldData = schema.fieldMap[rule.field] ?? ({} as FullField);
-  const valueSource = getFirstOption(
-    schema.getValueSources(rule.field, rule.operator, { fieldData })
-  );
-  const value = schema.getRuleDefaultValue({
-    ...rule,
-    valueSource: valueSource === 'field' ? 'field' : 'value',
-  });
-  return valueSource === 'field'
-    ? { kind: 'field', field: typeof value === 'string' ? value : '' }
-    : { kind: 'value', value };
-};
+  fields: OptionList,
+  registry: ExpressionFunctionRegistry
+): ExpressionNode => defaultNode('func', fields, registry);
 
 /**
  * Re-shapes a `func` node when its function changes: keeps existing args where the new
