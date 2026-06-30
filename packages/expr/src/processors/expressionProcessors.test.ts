@@ -72,6 +72,31 @@ describe('SQL processor', () => {
     );
   });
 
+  it('serializes a variadic min with three args', () => {
+    const q = group(
+      exprRule(
+        { operator: '>' },
+        { lhs: fn('min', field('a'), field('b'), field('c')), rhs: value(0, 'number') }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      '(LEAST(a, b, c) > 0)'
+    );
+  });
+
+  it('serializes mod and upper', () => {
+    const q = group(
+      exprRule(
+        { operator: '=' },
+        { lhs: fn('mod', field('n'), value(2, 'number')), rhs: value(0, 'number') }
+      ),
+      exprRule({ field: 'name', operator: '=', value: 'ACME' }, { lhs: fn('upper', field('name')) })
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      `((n % 2) = 0 and UPPER(name) = 'ACME')`
+    );
+  });
+
   it('handles unary operators', () => {
     const isNull = group(
       exprRule({ operator: 'null', value: null }, { lhs: fn('abs', field('y')) })
@@ -195,6 +220,21 @@ describe('Parameterized processor', () => {
         ruleProcessor: expressionRuleProcessorParameterized,
       })
     ).toEqual({ sql: '(("price" * "qty") = $1)', params: [100] });
+  });
+
+  it('binds params for a binary mod expression', () => {
+    const q = group(
+      exprRule(
+        { operator: '=' },
+        { lhs: fn('mod', field('n'), value(2, 'number')), rhs: value(0, 'number') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '((n % ?) = ?)', params: [2, 0] });
   });
 
   it('continues numbered params across preceding rules', () => {
@@ -345,10 +385,10 @@ describe('JsonLogic processor', () => {
       { lhs: fn('abs', field('price')) }
     );
     expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
-      '>': [{ abs: [{ var: 'price' }] }, '50'],
+      '>': [{ abs: { var: 'price' } }, '50'],
     });
     expect(expressionRuleProcessorJsonLogic(rule, { parseNumbers: true })).toEqual({
-      '>': [{ abs: [{ var: 'price' }] }, 50],
+      '>': [{ abs: { var: 'price' } }, 50],
     });
   });
 
@@ -362,10 +402,33 @@ describe('JsonLogic processor', () => {
     });
   });
 
+  it('serializes variadic max and unary lower', () => {
+    const rule = exprRule(
+      { operator: '=' },
+      {
+        lhs: fn('max', field('a'), field('b'), value(10, 'number')),
+        rhs: fn('lower', field('name')),
+      }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
+      '==': [{ max: [{ var: 'a' }, { var: 'b' }, 10] }, { lower: { var: 'name' } }],
+    });
+  });
+
+  it('serializes mod via the % operator', () => {
+    const rule = exprRule(
+      { operator: '=' },
+      { lhs: fn('mod', field('n'), value(2, 'number')), rhs: value(0, 'number') }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
+      '==': [{ '%': [{ var: 'n' }, 2] }, 0],
+    });
+  });
+
   it('handles unary operators', () => {
     const isNull = exprRule({ operator: 'null', value: null }, { lhs: fn('abs', field('y')) });
     expect(expressionRuleProcessorJsonLogic(isNull, {})).toEqual({
-      '==': [{ abs: [{ var: 'y' }] }, null],
+      '==': [{ abs: { var: 'y' } }, null],
     });
     const notNull = exprRule({ operator: 'notNull', value: null }, { lhs: field('z') });
     expect(expressionRuleProcessorJsonLogic(notNull, {})).toEqual({ '!=': [{ var: 'z' }, null] });
@@ -377,7 +440,7 @@ describe('JsonLogic processor', () => {
       { lhs: fn('abs', field('price')) }
     );
     expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
-      '==': [{ abs: [{ var: 'price' }] }, { var: 'otherCol' }],
+      '==': [{ abs: { var: 'price' } }, { var: 'otherCol' }],
     });
   });
 

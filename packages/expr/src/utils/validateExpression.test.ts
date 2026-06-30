@@ -47,6 +47,15 @@ describe('validateExpression', () => {
     expect(validateExpression(node, defaultFunctions).valid).toBe(true);
   });
 
+  it('treats mod as binary (arity 2)', () => {
+    expect(
+      validateExpression({ kind: 'func', fn: 'mod', args: [val, val] }, defaultFunctions).valid
+    ).toBe(true);
+    const result = validateExpression({ kind: 'func', fn: 'mod', args: [val] }, defaultFunctions);
+    expect(result.valid).toBe(false);
+    expect(result.reasons[0]).toMatch(/expects 2 argument/);
+  });
+
   describe('range arity', () => {
     const reg: ExpressionFunctionRegistry = { rng: { arity: [1, 2] } };
     const node = (count: number): ExpressionNode => ({
