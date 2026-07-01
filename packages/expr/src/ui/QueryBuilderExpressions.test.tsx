@@ -22,9 +22,10 @@ import type { ExpressionFunctionMetaRegistry } from '../types';
 const fieldSel = TestID.fields;
 const valueEditor = TestID.valueEditor;
 const valueSourceSel = TestID.valueSourceSelector;
-// LHS unary-function wrapper selector + RHS nested expression editor (children derive
-// `${rhsEditor}-fn` / `-arg0-kind` / `-arg0-field` / `-arg0-value`).
+// LHS function-wrapper selector + its extra-operand editors, plus the RHS nested expression
+// editor (children derive `${editor}-fn` / `-arg0-kind` / `-arg0-field` / `-arg0-value`).
 const lhsFn = ExprTestID.exprLhsFnSelector;
+const lhsArg = ExprTestID.exprLhsArgEditor;
 const rhsEditor = ExprTestID.exprRhsEditor;
 
 // `expression` is offered as a value source, so the RHS expression editor is reachable
@@ -32,6 +33,7 @@ const rhsEditor = ExprTestID.exprRhsEditor;
 const fields: Field[] = [
   { name: 'price', label: 'Price', valueSources: ['value', 'expression'] },
   { name: 'qty', label: 'Qty', valueSources: ['value', 'expression'] },
+  { name: 'weight', label: 'Weight', inputType: 'number', valueSources: ['value', 'expression'] },
 ];
 
 const initialQuery: RuleGroupType = {
@@ -45,6 +47,8 @@ interface AppProps {
   Outer?: QueryBuilderContextProvider;
   /** Field list override. */
   fields?: Field[];
+  /** Initial query override. */
+  initialQuery?: RuleGroupType;
   /** Gates the LHS unary-function wrapper (default `false`, matching the prop's own default). */
   allowFunctionsOnLHS?: AllowFunctionsOnLHS;
   /** Per-key overrides for the expression UI labels/titles. */
@@ -57,10 +61,11 @@ const App = ({
   functions,
   Outer,
   fields: fieldsProp = fields,
+  initialQuery: initialQueryProp = initialQuery,
   allowFunctionsOnLHS,
   translations,
 }: AppProps) => {
-  const [query, setQuery] = useState<RuleGroupType>(initialQuery);
+  const [query, setQuery] = useState<RuleGroupType>(initialQueryProp);
   const inner = (
     <QueryBuilderExpressions
       functions={functions}
@@ -91,7 +96,7 @@ describe('left-hand side function wrapper', () => {
     expect(rule0().lhs).toBeUndefined();
   });
 
-  it('wraps the field in a unary function, then clears it', async () => {
+  it('wraps the field in a function, then clears it', async () => {
     render(<App allowFunctionsOnLHS />);
 
     // Wrapper visible, "no function" selected, `rule.lhs` absent.
@@ -99,18 +104,20 @@ describe('left-hand side function wrapper', () => {
     expect(fnSel).toHaveValue('');
     expect(rule0().lhs).toBeUndefined();
 
-    // Only unary functions are offered (plus the "no function" sentinel); binary `+` is not.
+    // Every function that admits an argument is offered (plus the "no function" sentinel):
+    // unary `abs` and binary `+` alike.
     expect(within(fnSel).getByRole('option', { name: '—' })).toBeInTheDocument();
     expect(within(fnSel).getByRole('option', { name: 'ABS' })).toBeInTheDocument();
-    expect(within(fnSel).queryByRole('option', { name: '+' })).toBeNull();
+    expect(within(fnSel).getByRole('option', { name: '+' })).toBeInTheDocument();
 
-    // Choose `abs`: wraps the current field.
+    // Choose `abs`: wraps the current field. Being unary, no extra-operand editor appears.
     await user.selectOptions(fnSel, 'abs');
     expect(rule0().lhs).toEqual({
       kind: 'func',
       fn: 'abs',
       args: [{ kind: 'field', field: 'price' }],
     });
+    expect(screen.queryByTestId(`${lhsArg}-1`)).toBeNull();
 
     // Back to "no function": clears `rule.lhs`.
     await user.selectOptions(screen.getByTestId(lhsFn), '');
@@ -158,7 +165,7 @@ describe('left-hand side function wrapper', () => {
     expect(screen.queryByTestId(lhsFn)).toBeNull();
   });
 
-  it('merges a custom unary function into the wrapper options', async () => {
+  it('merges a custom function into the wrapper options', async () => {
     const functions: ExpressionFunctionMetaRegistry = {
       neg: { label: 'NEG', arity: 1 },
       raw: { arity: 1 },
@@ -166,10 +173,11 @@ describe('left-hand side function wrapper', () => {
     render(<App allowFunctionsOnLHS functions={functions} />);
 
     const fnSel = screen.getByTestId(lhsFn);
-    // Custom unary function joins the retained built-in unary `abs`; binary `+` is excluded.
+    // Custom functions join the built-ins; every function that admits an argument is offered,
+    // including binary `+`.
     expect(within(fnSel).getByRole('option', { name: 'NEG' })).toBeInTheDocument();
     expect(within(fnSel).getByRole('option', { name: 'ABS' })).toBeInTheDocument();
-    expect(within(fnSel).queryByRole('option', { name: '+' })).toBeNull();
+    expect(within(fnSel).getByRole('option', { name: '+' })).toBeInTheDocument();
     // A label-less function falls back to its registry key for the option text.
     expect(within(fnSel).getByRole('option', { name: 'raw' })).toBeInTheDocument();
 
@@ -179,6 +187,109 @@ describe('left-hand side function wrapper', () => {
       fn: 'neg',
       args: [{ kind: 'field', field: 'price' }],
     });
+  });
+
+  it('wraps the field in a multi-argument function, seeding an extra-operand editor', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    // `mod` is binary: arg 0 is the governing field, arg 1 an extra operand seeded as a field.
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'mod',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'field', field: 'price' },
+      ],
+    });
+
+    // Exactly one extra-operand editor (for arg 1); arg 0 stays in the plain field selector.
+    expect(screen.getByTestId(`${lhsArg}-1`)).toBeInTheDocument();
+    expect(screen.queryByTestId(`${lhsArg}-2`)).toBeNull();
+
+    // Edit the extra operand into a literal value; it writes straight into the wrapper node.
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    await user.type(screen.getByTestId(`${lhsArg}-1-value`), '2');
+    expect((rule0().lhs as { args: unknown[] }).args[1]).toEqual({ kind: 'value', value: '2' });
+  });
+
+  it('preserves extra operands when the governing field changes', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    await user.type(screen.getByTestId(`${lhsArg}-1-value`), '2');
+
+    // Field change re-points arg 0 to `qty` while retaining the literal extra operand.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'mod',
+      args: [
+        { kind: 'field', field: 'qty' },
+        { kind: 'value', value: '2' },
+      ],
+    });
+  });
+
+  it('carries extra operands across a switch between multi-argument functions', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    await user.type(screen.getByTestId(`${lhsArg}-1-value`), '2');
+
+    // `min` also takes >= 2 args, so the extra operand carries over.
+    await user.selectOptions(screen.getByTestId(lhsFn), 'min');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'min',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'value', value: '2' },
+      ],
+    });
+  });
+
+  it('drops the extra operand when switching to a single-argument function', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    expect(screen.getByTestId(`${lhsArg}-1`)).toBeInTheDocument();
+
+    // `abs` is unary: only the governing field remains and the extra editor disappears.
+    await user.selectOptions(screen.getByTestId(lhsFn), 'abs');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+    expect(screen.queryByTestId(`${lhsArg}-1`)).toBeNull();
+  });
+
+  it('threads the governing field input type to extra-operand literal editors', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    // Switch to the number-typed `weight` field, then wrap it in binary `mod`.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'weight');
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+
+    // The extra operand's literal editor inherits the field's `number` input type.
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    expect(screen.getByTestId(`${lhsArg}-1-value`)).toHaveAttribute('type', 'number');
+  });
+
+  it('still wraps a governing field that is absent from the field map', () => {
+    // A saved rule may reference a field no longer configured; the wrapper still renders,
+    // resolving its input type from a synthetic field entry instead of crashing.
+    render(
+      <App
+        allowFunctionsOnLHS
+        initialQuery={{ combinator: 'and', rules: [{ field: 'gone', operator: '=', value: '' }] }}
+      />
+    );
+    expect(screen.getByTestId(lhsFn)).toBeInTheDocument();
   });
 });
 

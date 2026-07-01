@@ -22,16 +22,13 @@ export const arityCount = (arity: ExpressionFunctionMeta['arity'], current: numb
       : current;
 
 /**
- * Whether a function admits exactly one argument — i.e. is eligible as a left-hand side
- * wrapper around the rule's field. Fixed arity must equal `1`; a `[min, max]` range must
- * include `1`; absent arity is treated as variadic (eligible).
+ * Whether a function can wrap the governing field on the left-hand side — i.e. it accepts
+ * at least one argument (arg 0 holds the field). Fixed arity must be `>= 1`; a `[min, max]`
+ * range must allow `>= 1` (`max >= 1`); absent arity is unconstrained (eligible). Only a
+ * fixed arity of `0` (or a range capped at `0`) is excluded.
  */
-export const isUnaryArity = (arity: ExpressionFunctionMeta['arity']): boolean =>
-  typeof arity === 'number'
-    ? arity === 1
-    : Array.isArray(arity)
-      ? arity[0] <= 1 && 1 <= arity[1]
-      : true;
+export const admitsLHSArg = (arity: ExpressionFunctionMeta['arity']): boolean =>
+  typeof arity === 'number' ? arity >= 1 : Array.isArray(arity) ? arity[1] >= 1 : true;
 
 /** Builds a fresh default node of the given `kind`. */
 export const defaultNode = (
@@ -82,4 +79,24 @@ export const changeFunction = (
     fn,
     args: Array.from({ length: count }, (_, i) => args[i] ?? defaultNode('field', fields)),
   };
+};
+
+/**
+ * Builds the left-hand-side wrapper node `fn(field, …args)`. Argument 0 is always the
+ * governing `field` (which still drives operator/value/validation); arguments 1…N are the
+ * function's remaining operands, preserved from `existingArgs` where the new arity allows and
+ * otherwise seeded with default field nodes. At least the governing field arg is guaranteed,
+ * even for a nominally zero-arity function.
+ */
+export const lhsFuncNode = (
+  fn: string,
+  field: string,
+  existingArgs: ExpressionNode[],
+  fields: OptionList,
+  meta: ExpressionFunctionMetaRegistry
+): Extract<ExpressionNode, { kind: 'func' }> => {
+  const fieldNode: ExpressionNode = { kind: 'field', field };
+  // Re-shape to the new arity: pin arg 0 to the governing field, keep any extra operands.
+  const node = changeFunction(fn, [fieldNode, ...existingArgs.slice(1)], fields, meta);
+  return node.args.length > 0 ? node : { kind: 'func', fn, args: [fieldNode] };
 };

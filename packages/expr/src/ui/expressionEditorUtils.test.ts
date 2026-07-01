@@ -2,10 +2,11 @@ import type { Option } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import type { ExpressionFunctionMetaRegistry } from '../types';
 import {
+  admitsLHSArg,
   arityCount,
   changeFunction,
   defaultNode,
-  isUnaryArity,
+  lhsFuncNode,
   rhsDefaultNode,
 } from './expressionEditorUtils';
 
@@ -107,20 +108,92 @@ describe('rhsDefaultNode', () => {
   });
 });
 
-describe('isUnaryArity', () => {
-  it('accepts a fixed arity of exactly 1', () => {
-    expect(isUnaryArity(1)).toBe(true);
-    expect(isUnaryArity(2)).toBe(false);
-    expect(isUnaryArity(0)).toBe(false);
+describe('admitsLHSArg', () => {
+  it('accepts a fixed arity of at least 1', () => {
+    expect(admitsLHSArg(1)).toBe(true);
+    expect(admitsLHSArg(2)).toBe(true);
+    expect(admitsLHSArg(0)).toBe(false);
   });
 
-  it('accepts a [min, max] range that includes 1', () => {
-    expect(isUnaryArity([1, 2])).toBe(true);
-    expect(isUnaryArity([0, 3])).toBe(true);
-    expect(isUnaryArity([2, 4])).toBe(false);
+  it('accepts a [min, max] range whose max is at least 1', () => {
+    expect(admitsLHSArg([1, 2])).toBe(true);
+    expect(admitsLHSArg([2, 4])).toBe(true);
+    expect(admitsLHSArg([0, 0])).toBe(false);
   });
 
-  it('treats an absent arity as variadic (eligible)', () => {
-    expect(isUnaryArity(undefined)).toBe(true);
+  it('treats an absent arity as eligible', () => {
+    expect(admitsLHSArg(undefined)).toBe(true);
+  });
+});
+
+describe('lhsFuncNode', () => {
+  it('wraps the governing field as arg 0 for a single-argument function', () => {
+    expect(lhsFuncNode('abs', 'price', [], fields, defaultFunctionMeta)).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+  });
+
+  it('seeds extra operand slots with default field nodes', () => {
+    expect(lhsFuncNode('mod', 'price', [], fields, defaultFunctionMeta)).toEqual({
+      kind: 'func',
+      fn: 'mod',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'field', field: 'price' },
+      ],
+    });
+  });
+
+  it('re-points arg 0 to the new field while preserving extra operands', () => {
+    const existing = [
+      { kind: 'field', field: 'price' } as const,
+      { kind: 'value', value: 2 } as const,
+    ];
+    expect(lhsFuncNode('mod', 'qty', existing, fields, defaultFunctionMeta)).toEqual({
+      kind: 'func',
+      fn: 'mod',
+      args: [
+        { kind: 'field', field: 'qty' },
+        { kind: 'value', value: 2 },
+      ],
+    });
+  });
+
+  it('carries extra operands across a switch between multi-argument functions', () => {
+    const existing = [
+      { kind: 'field', field: 'price' } as const,
+      { kind: 'value', value: 2 } as const,
+    ];
+    expect(lhsFuncNode('min', 'price', existing, fields, defaultFunctionMeta)).toEqual({
+      kind: 'func',
+      fn: 'min',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'value', value: 2 },
+      ],
+    });
+  });
+
+  it('drops extra operands when switching to a single-argument function', () => {
+    const existing = [
+      { kind: 'field', field: 'price' } as const,
+      { kind: 'value', value: 2 } as const,
+    ];
+    expect(lhsFuncNode('abs', 'price', existing, fields, defaultFunctionMeta)).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+  });
+
+  it('guarantees the governing field arg for a zero-arity function', () => {
+    const reg: ExpressionFunctionMetaRegistry = { zero: { arity: 0 } };
+    expect(lhsFuncNode('zero', 'price', [], fields, reg)).toEqual({
+      kind: 'func',
+      fn: 'zero',
+      args: [{ kind: 'field', field: 'price' }],
+    });
   });
 });

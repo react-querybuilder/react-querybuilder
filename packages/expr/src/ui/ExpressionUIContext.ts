@@ -11,7 +11,7 @@ import { defaultTranslationsExpr } from './defaults';
 import type { TranslationsFullExpr } from './defaults';
 
 /**
- * Whether (and when) the left-hand side may wrap its field in a unary function. `boolean`
+ * Whether (and when) the left-hand side may wrap its field in a function. `boolean`
  * applies globally; a predicate decides per field/operator.
  */
 export type AllowFunctionsOnLHS = boolean | ((field: string, operator: string) => boolean);
@@ -23,7 +23,7 @@ export interface ExpressionUIContextValue {
   /** Titles and labels for expression UI elements. */
   translations: TranslationsFullExpr;
   /**
-   * Whether the left-hand side may wrap its field in a unary function. `false` (default)
+   * Whether the left-hand side may wrap its field in a function. `false` (default)
    * hides the wrapper selector entirely; a predicate gates it per field/operator.
    */
   allowFunctionsOnLHS: AllowFunctionsOnLHS;

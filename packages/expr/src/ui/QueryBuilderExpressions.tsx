@@ -34,7 +34,7 @@ export interface QueryBuilderExpressionsProps {
   /** Per-key overrides for the expression UI labels/titles ({@link defaultTranslationsExpr}). */
   translations?: Partial<TranslationsExpr>;
   /**
-   * Whether the left-hand side may wrap its field in a unary function. `false` (default)
+   * Whether the left-hand side may wrap its field in a function. `false` (default)
    * hides the wrapper selector entirely; `true` always offers it; a predicate gates it
    * per field/operator.
    *

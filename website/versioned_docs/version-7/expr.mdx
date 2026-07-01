@@ -8,7 +8,7 @@ The [`@react-querybuilder/expr`](https://www.npmjs.com/package/@react-querybuild
 
 Ordinarily a rule compares a single field against a literal value (`price > 100`). Expressions let _either side_ of a rule be a computed operand built from fields, literals, and functions—including the four arithmetic operators—so a rule can express things like `(price * quantity) > 100` or `ABS(discount) >= 5`:
 
-- **Left-hand side** — wrap the rule's `field` in a unary function, stored on `rule.lhs`. The `field` itself still drives operator selection and validation.
+- **Left-hand side** — wrap the rule's `field` in a function, stored on `rule.lhs`. The `field` becomes the function's first (governing) argument—still driving operator selection and validation—while any further arguments are edited as nested expressions.
 - **Right-hand side** — select the `"expression"` value source; the expression is stored in `rule.value` (with `valueSource: "expression"`).
 
 Expressions can nest arbitrarily—a function argument may itself be another function call—so `((a + b) * c)` is representable.
@@ -42,7 +42,7 @@ A rule carries expressions in two places. The left-hand side lives on the dedica
 const query: RuleGroupType = {
   combinator: 'and',
   rules: [
-    // LHS unary wrapper → `ABS(discount) > 5`
+    // LHS wrapper → `ABS(discount) > 5`
     {
       field: 'discount',
       operator: '>',
@@ -105,7 +105,7 @@ A value-source selector only appears when a field has more than one value source
 
 ### Left-hand side: `allowFunctionsOnLHS`
 
-By default the left-hand side is just the field selector. Set `allowFunctionsOnLHS` to add a wrapper selector _in front of_ the field selector that wraps the field in a **unary** (single-argument) function—only functions whose arity admits one argument are offered. Selecting "no function" (the `—` option) clears `rule.lhs`.
+By default the left-hand side is just the field selector. Set `allowFunctionsOnLHS` to add a wrapper selector _in front of_ the field selector that wraps the field in a function—every function that accepts at least one argument is offered. The field becomes the function's **first (governing) argument**, so it still drives operator selection, the value editor, and validation. For a multi-argument function, the remaining arguments are edited by nested expression editors that appear after the field selector (each may be a field, a literal, or a further function call). Selecting "no function" (the `—` option) clears `rule.lhs`.
 
 ```tsx
 <QueryBuilderExpressions allowFunctionsOnLHS>
@@ -122,7 +122,7 @@ By default the left-hand side is just the field selector. Set `allowFunctionsOnL
 </QueryBuilderExpressions>
 ```
 
-Changing the rule's field re-points the wrapper's inner field automatically (or drops the wrapper if the new field disallows functions), applied atomically with the field change so the operator/value reset cascade behaves like an ordinary field change.
+Changing the rule's field re-points the wrapper's governing argument (arg 0) automatically—preserving any extra arguments—or drops the wrapper if the new field disallows functions, applied atomically with the field change so the operator/value reset cascade behaves like an ordinary field change.
 
 ### Composing with theme providers
 
@@ -357,6 +357,6 @@ Override the expression UI's labels and titles per-key with the `translations` p
 
 | Key                     | Description                                                           |
 | ----------------------- | --------------------------------------------------------------------- |
-| `exprLhsFunction`       | Accessible title for the LHS unary-function wrapper selector.         |
+| `exprLhsFunction`       | Accessible title for the LHS function-wrapper selector.               |
 | `exprLhsNone`           | Label/title for the wrapper's "no function" option (field as-is).     |
 | `valueSourceExpression` | Label/title for the `expression` option in the value-source selector. |

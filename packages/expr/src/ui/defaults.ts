@@ -6,7 +6,7 @@ import type { BaseTranslation, BaseTranslationWithLabel } from '@react-querybuil
  * @group Props
  */
 export interface TranslationsExpr {
-  /** Accessible title for the left-hand side unary-function wrapper selector. */
+  /** Accessible title for the left-hand side function-wrapper selector. */
   exprLhsFunction: BaseTranslation;
   /** Label for the wrapper selector's "no function" option (field used as-is). */
   exprLhsNone: BaseTranslationWithLabel;
@@ -47,5 +47,6 @@ export const defaultTranslationsExpr: TranslationsFullExpr = {
  */
 export const ExprTestID = {
   exprLhsFnSelector: 'expr-lhs-fn-selector',
+  exprLhsArgEditor: 'expr-lhs-arg-editor',
   exprRhsEditor: 'expr-rhs-editor',
 } as const;
