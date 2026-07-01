@@ -159,7 +159,9 @@ Only fall back to `node:*` APIs when no Bun equivalent exists.
 
 - Vitest + Testing Library
 - Helpers in `utils/testing/`
-- 100% coverage required - use `bunx vitest run --coverage` to test for coverage
+- 100% coverage required
+  - Use scoped `bun test:[pkg]` for granular coverage checking
+  - Use `bunx vitest run --coverage` to test for full coverage
 
 - Test files: `ComponentName.test.tsx`
 - Describe blocks: component/function name
