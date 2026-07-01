@@ -1,6 +1,10 @@
 import type { OptionList } from '@react-querybuilder/core';
 import { getFirstOption } from '@react-querybuilder/core';
-import type { ExpressionFunction, ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import type {
+  ExpressionFunctionMeta,
+  ExpressionFunctionMetaRegistry,
+  ExpressionNode,
+} from '../types';
 
 /** Node `kind` discriminants, for the kind selector. */
 export type ExpressionNodeKind = ExpressionNode['kind'];
@@ -10,7 +14,7 @@ export type ExpressionNodeKind = ExpressionNode['kind'];
  * verbatim; a `[min, max]` range clamps the current arg count into the range; an absent
  * arity falls back to the current count.
  */
-export const arityCount = (arity: ExpressionFunction['arity'], current: number): number =>
+export const arityCount = (arity: ExpressionFunctionMeta['arity'], current: number): number =>
   typeof arity === 'number'
     ? arity
     : Array.isArray(arity)
@@ -22,7 +26,7 @@ export const arityCount = (arity: ExpressionFunction['arity'], current: number):
  * wrapper around the rule's field. Fixed arity must equal `1`; a `[min, max]` range must
  * include `1`; absent arity is treated as variadic (eligible).
  */
-export const isUnaryArity = (arity: ExpressionFunction['arity']): boolean =>
+export const isUnaryArity = (arity: ExpressionFunctionMeta['arity']): boolean =>
   typeof arity === 'number'
     ? arity === 1
     : Array.isArray(arity)
@@ -33,7 +37,7 @@ export const isUnaryArity = (arity: ExpressionFunction['arity']): boolean =>
 export const defaultNode = (
   kind: ExpressionNodeKind,
   options: OptionList,
-  registry?: ExpressionFunctionRegistry
+  meta?: ExpressionFunctionMetaRegistry
 ): ExpressionNode => {
   switch (kind) {
     case 'field':
@@ -41,8 +45,8 @@ export const defaultNode = (
     case 'value':
       return { kind: 'value', value: '' };
     default: {
-      const fn = Object.keys(registry ?? {})[0] ?? '';
-      const count = arityCount(registry?.[fn]?.arity, 0);
+      const fn = Object.keys(meta ?? {})[0] ?? '';
+      const count = arityCount(meta?.[fn]?.arity, 0);
       return {
         kind: 'func',
         fn,
@@ -59,8 +63,8 @@ export const defaultNode = (
  */
 export const rhsDefaultNode = (
   fields: OptionList,
-  registry: ExpressionFunctionRegistry
-): ExpressionNode => defaultNode('func', fields, registry);
+  meta: ExpressionFunctionMetaRegistry
+): ExpressionNode => defaultNode('func', fields, meta);
 
 /**
  * Re-shapes a `func` node when its function changes: keeps existing args where the new
@@ -70,9 +74,9 @@ export const changeFunction = (
   fn: string,
   args: ExpressionNode[],
   fields: OptionList,
-  registry: ExpressionFunctionRegistry
+  meta: ExpressionFunctionMetaRegistry
 ): Extract<ExpressionNode, { kind: 'func' }> => {
-  const count = arityCount(registry[fn]?.arity, args.length);
+  const count = arityCount(meta[fn]?.arity, args.length);
   return {
     kind: 'func',
     fn,

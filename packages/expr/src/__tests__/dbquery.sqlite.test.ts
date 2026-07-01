@@ -7,15 +7,12 @@ import {
   FIND_PRODUCTS_TABLE,
   INSERT_PRODUCTS,
   sqlBase,
-  sqliteFunctions,
   sqlOrderBy,
   testCases,
 } from '../dbqueryTestUtils';
-import { getExpressionRuleProcessorParameterized, getExpressionRuleProcessorSQL } from '../index';
+import { expressionRuleProcessorParameterized, expressionRuleProcessorSQL } from '../index';
 
-// SQLite uses the `sqliteFunctions` registry (MIN/MAX instead of LEAST/GREATEST).
-const sqlProcessor = getExpressionRuleProcessorSQL(sqliteFunctions);
-const parameterizedProcessor = getExpressionRuleProcessorParameterized(sqliteFunctions);
+// SQLite lacks LEAST/GREATEST; the `sqlite` preset resolves `min`/`max` to scalar MIN/MAX.
 
 const db = new Database();
 
@@ -33,7 +30,12 @@ afterAll(() => {
 for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
   describe(testCaseName, () => {
     test('sql', () => {
-      const sql = formatQuery(query, { format: 'sql', fields, ruleProcessor: sqlProcessor });
+      const sql = formatQuery(query, {
+        format: 'sql',
+        preset: 'sqlite',
+        fields,
+        ruleProcessor: expressionRuleProcessorSQL,
+      });
       const rows = db.prepare(`${sqlBase} ${sql} ${sqlOrderBy}`).all() as { id: number }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
@@ -41,8 +43,9 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
     test('parameterized', () => {
       const { sql, params } = formatQuery(query, {
         format: 'parameterized',
+        preset: 'sqlite',
         fields,
-        ruleProcessor: parameterizedProcessor,
+        ruleProcessor: expressionRuleProcessorParameterized,
       });
       const rows = db
         .prepare(`${sqlBase} ${sql} ${sqlOrderBy}`)
@@ -55,7 +58,7 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         format: 'parameterized_named',
         preset: 'sqlite',
         fields,
-        ruleProcessor: parameterizedProcessor,
+        ruleProcessor: expressionRuleProcessorParameterized,
       });
       const rows = db
         .prepare(`${sqlBase} ${sql} ${sqlOrderBy}`)

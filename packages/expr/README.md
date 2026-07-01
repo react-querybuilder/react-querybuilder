@@ -15,7 +15,7 @@ npm i react-querybuilder @react-querybuilder/expr
 
 ## Usage
 
-All React exports live in the `/ui` entry point (`@react-querybuilder/expr/ui`); the root entry is framework-agnostic, exporting only rule processors, the validator, the function registry helpers, and types (so it can run server-side).
+All React exports live in the `/ui` entry point (`@react-querybuilder/expr/ui`); the root entry is framework-agnostic, exporting only rule processors, the validator, the function-metadata and serializer helpers, and types (so it can run server-side).
 
 ### Components
 
@@ -35,11 +35,11 @@ const App = () => (
 - **Right-hand side** — add `"expression"` to a field's `valueSources` to offer it in that rule's value-source selector. The expression is stored in `rule.value` (with `valueSource: "expression"`).
 - **Left-hand side** — set `allowFunctionsOnLHS` to wrap the rule's `field` in a unary function, stored on `rule.lhs`.
 
-Pass custom functions via the `functions` prop; they are merged over the built-in `defaultFunctions` (arithmetic `+` `-` `*` `/`, plus `min`, `max`, `mod`, `abs`, `upper`, and `lower`).
+Pass custom function metadata (UI label + arity) via the `functions` prop; it is merged over the built-in `defaultFunctionMeta` (arithmetic `+` `-` `*` `/`, plus `min`, `max`, `mod`, `abs`, `upper`, and `lower`). Serialization for each export format is registered separately on the [export processors](#export).
 
 ### Export
 
-`formatQuery` needs an expression-aware rule processor to serialize the `lhs`/`rhs` nodes. The package provides ready-to-use processors bound to `defaultFunctions`:
+`formatQuery` needs an expression-aware rule processor to serialize the `lhs`/`rhs` nodes. The package provides ready-to-use processors bound to the built-in serializers:
 
 ```ts
 import { formatQuery } from 'react-querybuilder';
@@ -57,15 +57,19 @@ formatQuery(query, {
 formatQuery(query, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessorJsonLogic });
 ```
 
-When using custom functions, build matching processors with `createExpressionProcessors`, passing the **same** registry you gave the UI (a function registered only for the UI silently drops out of the export):
+When using custom functions, pass matching serializers to each format's processor factory (a function present in the UI but missing a serializer for the export format is omitted from that format's output):
 
 ```ts
-import { createExpressionProcessors } from '@react-querybuilder/expr';
+import { getExpressionRuleProcessorSQL } from '@react-querybuilder/expr';
 
-const processors = createExpressionProcessors(functions);
+const sqlProcessor = getExpressionRuleProcessorSQL({
+  pow: (_opts, base, exp) => `POWER(${base}, ${exp})`,
+});
 
-formatQuery(query, { format: 'sql', ruleProcessor: processors.sql });
+formatQuery(query, { format: 'sql', ruleProcessor: sqlProcessor });
 ```
+
+`getExpressionRuleProcessorParameterized` and `getExpressionRuleProcessorJsonLogic` cover the other formats; each takes a single serializer registry merged over that format's built-ins.
 
 #### Applying JsonLogic output
 
@@ -73,9 +77,9 @@ Before applying the `jsonlogic` output, register the operators the expressions e
 
 ```ts
 import { add_operation, apply } from 'json-logic-js';
-import { expressionJsonLogicOperators } from '@react-querybuilder/expr';
+import { jsonLogicExpressionOperators } from '@react-querybuilder/expr';
 
-for (const [op, func] of Object.entries(expressionJsonLogicOperators)) {
+for (const [op, func] of Object.entries(jsonLogicExpressionOperators)) {
   add_operation(op, func);
 }
 

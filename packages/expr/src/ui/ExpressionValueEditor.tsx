@@ -13,7 +13,7 @@ import { useExpressionUI } from './ExpressionUIContext';
  * {@link ExpressionValueSourceSelector}, which seeds the initial node.
  */
 export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Element => {
-  const { registry, inheritedValueEditor } = useExpressionUI();
+  const { meta, inheritedValueEditor } = useExpressionUI();
   const ValEditor = inheritedValueEditor ?? ValueEditor;
   const { schema, value, valueSource, inputType, handleOnChange } = props;
 
@@ -21,7 +21,7 @@ export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Elemen
     <ExpressionEditor
       node={value}
       onChange={handleOnChange}
-      registry={registry}
+      meta={meta}
       schema={schema}
       inputType={inputType}
       hideKindSelector

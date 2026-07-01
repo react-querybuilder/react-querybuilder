@@ -1,11 +1,12 @@
 import type { ValueProcessorOptions } from '@react-querybuilder/core';
 import { getQuotedFieldName } from '@react-querybuilder/core';
-import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import type { ExpressionNode, ParameterizedSerializerRegistry } from '../types';
 import { coerceLeafValue } from './leafValue';
+import { resolvePresetSerializer } from './resolvePresetSerializer';
 
 /** Mutable context threaded through {@link serializeParameterized}. */
 export interface ParameterizedSerializeContext {
-  registry: ExpressionFunctionRegistry;
+  serializers: ParameterizedSerializerRegistry;
   options: ValueProcessorOptions;
   /** `true` for the "parameterized" (array) format, `false` for "parameterized_named". */
   parameterized: boolean;
@@ -23,7 +24,8 @@ export interface ParameterizedSerializeContext {
  * Recursively serializes an expression node to a parameterized SQL fragment, binding
  * `value` leaves as placeholders (`?` / numbered / `:name`) and pushing their values into
  * the context accumulators. `field` nodes inline the quoted field name; `func` nodes
- * delegate to the registered `parameterized` serializer.
+ * delegate to the registered `parameterized` serializer, resolved for the active preset
+ * and invoked opts-first.
  */
 export const serializeParameterized = (
   node: ExpressionNode,
@@ -46,9 +48,10 @@ export const serializeParameterized = (
     ctx.paramsNamed[`${options.paramsKeepPrefix ? paramPrefix : ''}${name}`] = value;
     return `${paramPrefix}${name}`;
   }
-  const fn = ctx.registry[node.fn];
-  if (!fn?.parameterized) {
+  const serializer = ctx.serializers[node.fn];
+  if (!serializer) {
     throw new Error(`No "parameterized" serializer for expression function "${node.fn}"`);
   }
-  return fn.parameterized(...node.args.map(arg => serializeParameterized(arg, ctx)));
+  const args = node.args.map(arg => serializeParameterized(arg, ctx));
+  return resolvePresetSerializer(serializer, ctx.options.preset)(ctx.options, ...args);
 };

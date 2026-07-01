@@ -27,7 +27,7 @@ const NONE = '';
  * permits it for the current field/operator; otherwise the plain field selector renders.
  */
 export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.Element => {
-  const { registry, translations, allowFunctionsOnLHS, inheritedFieldSelector } = useExpressionUI();
+  const { meta, translations, allowFunctionsOnLHS, inheritedFieldSelector } = useExpressionUI();
   const { rule, schema, path, level } = props;
   const { field, lhs, operator } = rule;
   const ValueSelectorControl = schema.controls.valueSelector;
@@ -43,11 +43,11 @@ export const ExpressionFieldSelector = (props: FieldSelectorProps): React.JSX.El
   const fnOptions = useMemo<FullOption[]>(
     () => [
       { name: NONE, value: NONE, label: translations.exprLhsNone.label },
-      ...Object.keys(registry)
-        .filter(key => isUnaryArity(registry[key].arity))
-        .map(key => ({ name: key, value: key, label: registry[key].label ?? key })),
+      ...Object.keys(meta)
+        .filter(key => isUnaryArity(meta[key].arity))
+        .map(key => ({ name: key, value: key, label: meta[key].label ?? key })),
     ],
-    [registry, translations]
+    [meta, translations]
   );
 
   // Mirrors the core `onPropChange` reset cascade so a field change applied alongside

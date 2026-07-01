@@ -4,7 +4,7 @@ import type { add_operation } from 'json-logic-js';
 export type JsonLogicOperator = Parameters<typeof add_operation>[1];
 
 /**
- * Runtime implementations for the non-stock operators emitted by {@link defaultFunctions}.
+ * Runtime implementations for the non-stock operators emitted by {@link defaultJsonLogicSerializers}.
  * Keys match the operator names produced by the default `abs`/`upper`/`lower` serializers.
  *
  * @example

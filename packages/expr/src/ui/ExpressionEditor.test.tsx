@@ -5,8 +5,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import type { FullField, InputType, ParseNumbersPropConfig, Schema } from 'react-querybuilder';
 import { defaultControlElements } from 'react-querybuilder';
-import { defaultFunctions } from '../defaultFunctions';
-import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import { defaultFunctionMeta } from '../functions/meta';
+import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import { ExpressionEditor } from './ExpressionEditor';
 
 const user = userEventSetup();
@@ -28,13 +28,13 @@ const makeSchema = (parseNumbers?: ParseNumbersPropConfig): Schema<FullField, st
 
 const Harness = ({
   initial,
-  registry = defaultFunctions,
+  meta = defaultFunctionMeta,
   parseNumbers,
   inputType,
   hideKindSelector,
 }: {
   initial?: ExpressionNode;
-  registry?: ExpressionFunctionRegistry;
+  meta?: ExpressionFunctionMetaRegistry;
   parseNumbers?: ParseNumbersPropConfig;
   inputType?: InputType | null;
   hideKindSelector?: boolean;
@@ -45,7 +45,7 @@ const Harness = ({
       <ExpressionEditor
         node={node}
         onChange={setNode}
-        registry={registry}
+        meta={meta}
         schema={makeSchema(parseNumbers)}
         inputType={inputType}
         hideKindSelector={hideKindSelector}
@@ -182,10 +182,10 @@ it('edits a function node, resizing args and editing nested args', async () => {
 });
 
 it('labels function options by key when no label is defined', () => {
-  const registry: ExpressionFunctionRegistry = { weird: { arity: 1 } };
+  const meta: ExpressionFunctionMetaRegistry = { weird: { arity: 1 } };
   render(
     <Harness
-      registry={registry}
+      meta={meta}
       initial={{ kind: 'func', fn: 'weird', args: [{ kind: 'field', field: 'price' }] }}
     />
   );

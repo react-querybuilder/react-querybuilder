@@ -1,7 +1,5 @@
 import type { Field, RuleGroupType, RuleType } from '@react-querybuilder/core';
-import { defaultFunctions } from './defaultFunctions';
-import { mergeFunctions } from './registry';
-import type { ExpressionFunctionRegistry, ExpressionNode, ResolvedExpressions } from './types';
+import type { ExpressionNode, ResolvedExpressions } from './types';
 
 // Shared fixtures for the `dbquery.*` integration tests (run under `bun test`). Each
 // `testCases` entry is an expression-bearing query plus the `id`s it should match; tests
@@ -63,21 +61,6 @@ export const INSERT_PRODUCTS = (): string =>
         `INSERT INTO products (id, name, price, qty, discount, rating) VALUES (${p.id}, '${p.name}', ${p.price}, ${p.qty}, ${p.discount}, ${p.rating === null ? 'NULL' : p.rating})`
     )
     .join(';\n');
-
-// SQLite lacks LEAST/GREATEST (the default `min`/`max` SQL serializers) but has scalar
-// MIN/MAX; override just those serializers, keeping arity/label/jsonLogic from the defaults.
-export const sqliteFunctions: ExpressionFunctionRegistry = mergeFunctions({
-  min: {
-    ...defaultFunctions.min,
-    sql: (...args) => `MIN(${args.join(', ')})`,
-    parameterized: (...args) => `MIN(${args.join(', ')})`,
-  },
-  max: {
-    ...defaultFunctions.max,
-    sql: (...args) => `MAX(${args.join(', ')})`,
-    parameterized: (...args) => `MAX(${args.join(', ')})`,
-  },
-});
 
 // JSONLogic ops missing from the stock runtime; register before evaluating (`+ - * / %`
 // and `min`/`max` are stock, so only these three need registering).

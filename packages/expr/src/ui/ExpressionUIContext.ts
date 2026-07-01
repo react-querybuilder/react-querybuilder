@@ -5,8 +5,8 @@ import type {
   ValueEditorProps,
   ValueSourceSelectorProps,
 } from 'react-querybuilder';
-import { defaultFunctions } from '../defaultFunctions';
-import type { ExpressionFunctionRegistry } from '../types';
+import { defaultFunctionMeta } from '../functions/meta';
+import type { ExpressionFunctionMetaRegistry } from '../types';
 import { defaultTranslationsExpr } from './defaults';
 import type { TranslationsFullExpr } from './defaults';
 
@@ -18,8 +18,8 @@ export type AllowFunctionsOnLHS = boolean | ((field: string, operator: string) =
 
 /** Value carried by {@link ExpressionUIContext}. */
 export interface ExpressionUIContextValue {
-  /** Function registry available to the expression editors. */
-  registry: ExpressionFunctionRegistry;
+  /** Function metadata (label/arity) available to the expression editors. */
+  meta: ExpressionFunctionMetaRegistry;
   /** Titles and labels for expression UI elements. */
   translations: TranslationsFullExpr;
   /**
@@ -47,7 +47,7 @@ export interface ExpressionUIContextValue {
 /** Carries the registry + inherited controls down to the expression control elements. */
 export const ExpressionUIContext: Context<ExpressionUIContextValue> =
   createContext<ExpressionUIContextValue>({
-    registry: defaultFunctions,
+    meta: defaultFunctionMeta,
     translations: defaultTranslationsExpr,
     allowFunctionsOnLHS: false,
     inheritedFieldSelector: null,

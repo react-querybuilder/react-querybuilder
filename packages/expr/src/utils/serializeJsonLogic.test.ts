@@ -1,20 +1,27 @@
-import { defaultFunctions } from '../defaultFunctions';
-import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import { defaultJsonLogicSerializers } from '../functions/jsonLogic';
+import type { ExpressionNode, JsonLogicSerializerRegistry } from '../types';
 import { serializeJsonLogic } from './serializeJsonLogic';
 
 describe('serializeJsonLogic', () => {
   it('serializes a field node to a var', () => {
-    expect(serializeJsonLogic({ kind: 'field', field: 'x' }, defaultFunctions)).toEqual({
+    expect(serializeJsonLogic({ kind: 'field', field: 'x' }, defaultJsonLogicSerializers)).toEqual({
       var: 'x',
     });
   });
 
   it('emits coerced value leaves', () => {
-    expect(serializeJsonLogic({ kind: 'value', value: 5 }, defaultFunctions)).toBe(5);
-    expect(serializeJsonLogic({ kind: 'value', value: 'foo' }, defaultFunctions)).toBe('foo');
-    expect(serializeJsonLogic({ kind: 'value', value: '5' }, defaultFunctions)).toBe('5');
+    expect(serializeJsonLogic({ kind: 'value', value: 5 }, defaultJsonLogicSerializers)).toBe(5);
+    expect(serializeJsonLogic({ kind: 'value', value: 'foo' }, defaultJsonLogicSerializers)).toBe(
+      'foo'
+    );
+    expect(serializeJsonLogic({ kind: 'value', value: '5' }, defaultJsonLogicSerializers)).toBe(
+      '5'
+    );
     expect(
-      serializeJsonLogic({ kind: 'value', value: '5', valueType: 'number' }, defaultFunctions)
+      serializeJsonLogic(
+        { kind: 'value', value: '5', valueType: 'number' },
+        defaultJsonLogicSerializers
+      )
     ).toBe(5);
   });
 
@@ -27,11 +34,13 @@ describe('serializeJsonLogic', () => {
         { kind: 'value', value: 3 },
       ],
     };
-    expect(serializeJsonLogic(node, defaultFunctions)).toEqual({ '+': [{ var: 'a' }, 3] });
+    expect(serializeJsonLogic(node, defaultJsonLogicSerializers)).toEqual({
+      '+': [{ var: 'a' }, 3],
+    });
   });
 
   it('supports an operator-name string serializer', () => {
-    const reg: ExpressionFunctionRegistry = { eqop: { jsonLogic: '==' } };
+    const reg: JsonLogicSerializerRegistry = { eqop: '==' };
     const node: ExpressionNode = {
       kind: 'func',
       fn: 'eqop',
@@ -44,7 +53,7 @@ describe('serializeJsonLogic', () => {
   });
 
   it('throws when a function lacks a jsonLogic serializer', () => {
-    const reg: ExpressionFunctionRegistry = { nofmt: { arity: 1 } };
+    const reg: JsonLogicSerializerRegistry = { other: '!' };
     const node: ExpressionNode = {
       kind: 'func',
       fn: 'nofmt',

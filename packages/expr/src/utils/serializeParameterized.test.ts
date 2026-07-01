@@ -1,12 +1,12 @@
-import { defaultFunctions } from '../defaultFunctions';
-import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import { defaultParameterizedSerializers } from '../functions/parameterized';
+import type { ExpressionNode, ParameterizedSerializerRegistry } from '../types';
 import type { ParameterizedSerializeContext } from './serializeParameterized';
 import { serializeParameterized } from './serializeParameterized';
 
 const makeCtx = (
   overrides: Partial<ParameterizedSerializeContext> = {}
 ): ParameterizedSerializeContext => ({
-  registry: defaultFunctions,
+  serializers: defaultParameterizedSerializers,
   options: {},
   parameterized: true,
   processedParamsLength: 0,
@@ -71,9 +71,24 @@ describe('serializeParameterized', () => {
     expect(ctx.params).toEqual([4]);
   });
 
+  it('resolves preset-specific serializers (min/max)', () => {
+    const node: ExpressionNode = {
+      kind: 'func',
+      fn: 'max',
+      args: [
+        { kind: 'field', field: 'a' },
+        { kind: 'field', field: 'b' },
+      ],
+    };
+    expect(serializeParameterized(node, makeCtx())).toBe('GREATEST(a, b)');
+    expect(serializeParameterized(node, makeCtx({ options: { preset: 'sqlite' } }))).toBe(
+      'MAX(a, b)'
+    );
+  });
+
   it('throws when a function lacks a parameterized serializer', () => {
-    const reg: ExpressionFunctionRegistry = { nofmt: { arity: 1 } };
-    const ctx = makeCtx({ registry: reg });
+    const reg: ParameterizedSerializerRegistry = { other: (_opts, x) => `O(${x})` };
+    const ctx = makeCtx({ serializers: reg });
     const node: ExpressionNode = {
       kind: 'func',
       fn: 'nofmt',

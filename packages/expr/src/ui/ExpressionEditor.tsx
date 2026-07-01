@@ -10,7 +10,7 @@ import type {
   ValueEditorProps,
 } from 'react-querybuilder';
 import { ValueEditor } from 'react-querybuilder';
-import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import type { ExpressionFunctionMetaRegistry, ExpressionNode } from '../types';
 import type { ExpressionNodeKind } from './expressionEditorUtils';
 import { changeFunction, defaultNode } from './expressionEditorUtils';
 import { useExpressionUI } from './ExpressionUIContext';
@@ -35,8 +35,8 @@ export interface ExpressionEditorProps {
   node: ExpressionNode | undefined;
   /** Called with the next node on any edit. */
   onChange: (node: ExpressionNode) => void;
-  /** Functions selectable for `func` nodes. */
-  registry: ExpressionFunctionRegistry;
+  /** Function metadata (label/arity) for functions selectable in `func` nodes. */
+  meta: ExpressionFunctionMetaRegistry;
   /**
    * Query builder schema. The nested selectors render via `schema.controls.valueSelector`
    * (and the literal editor via the inherited value editor) so they inherit the active
@@ -74,7 +74,7 @@ export interface ExpressionEditorProps {
 export const ExpressionEditor = ({
   node,
   onChange,
-  registry,
+  meta,
   schema,
   inputType,
   hideKindSelector = false,
@@ -90,12 +90,12 @@ export const ExpressionEditor = ({
 
   const fnOptions = useMemo<FullOption[]>(
     () =>
-      Object.keys(registry).map(key => ({
+      Object.keys(meta).map(key => ({
         name: key,
         value: key,
-        label: registry[key].label ?? key,
+        label: meta[key].label ?? key,
       })),
-    [registry]
+    [meta]
   );
 
   return (
@@ -112,9 +112,7 @@ export const ExpressionEditor = ({
           options={kindOptions}
           multiple={false}
           listsAsArrays={false}
-          handleOnChange={v =>
-            onChange(defaultNode(v as ExpressionNodeKind, schema.fields, registry))
-          }
+          handleOnChange={v => onChange(defaultNode(v as ExpressionNodeKind, schema.fields, meta))}
         />
       )}
       {n.kind === 'field' && (
@@ -167,7 +165,7 @@ export const ExpressionEditor = ({
             options={fnOptions}
             multiple={false}
             listsAsArrays={false}
-            handleOnChange={v => onChange(changeFunction(`${v}`, n.args, schema.fields, registry))}
+            handleOnChange={v => onChange(changeFunction(`${v}`, n.args, schema.fields, meta))}
           />
           {n.args.map((arg, i) => (
             <ExpressionEditor
@@ -178,7 +176,7 @@ export const ExpressionEditor = ({
               onChange={next =>
                 onChange({ ...n, args: n.args.map((a, j) => (j === i ? next : a)) })
               }
-              registry={registry}
+              meta={meta}
               schema={schema}
               inputType={inputType}
               testID={`${testID}-arg${i}`}

@@ -1,14 +1,17 @@
-import type { ExpressionFunctionRegistry, ExpressionNode } from '../types';
+import type { ValueProcessorOptions } from '@react-querybuilder/core';
+import type { ExpressionNode, JsonLogicSerializerRegistry } from '../types';
 import { coerceLeafValue } from './leafValue';
 
 /**
  * Recursively serializes an expression node to a JSONLogic value. `field` nodes become
  * `{ var: field }`; `value` nodes emit the raw (number-coerced) value; `func` nodes
- * delegate to the registered `jsonLogic` serializer (a function or an operator name).
+ * delegate to the registered `jsonLogic` serializer (an operator name, or an opts-first
+ * function).
  */
 export const serializeJsonLogic = (
   node: ExpressionNode,
-  registry: ExpressionFunctionRegistry
+  serializers: JsonLogicSerializerRegistry,
+  options: ValueProcessorOptions = {}
 ): unknown => {
   if (node.kind === 'field') {
     return { var: node.field };
@@ -16,10 +19,10 @@ export const serializeJsonLogic = (
   if (node.kind === 'value') {
     return coerceLeafValue(node);
   }
-  const fn = registry[node.fn];
-  if (!fn?.jsonLogic) {
+  const serializer = serializers[node.fn];
+  if (!serializer) {
     throw new Error(`No "jsonLogic" serializer for expression function "${node.fn}"`);
   }
-  const args = node.args.map(arg => serializeJsonLogic(arg, registry));
-  return typeof fn.jsonLogic === 'function' ? fn.jsonLogic(...args) : { [fn.jsonLogic]: args };
+  const args = node.args.map(arg => serializeJsonLogic(arg, serializers, options));
+  return typeof serializer === 'function' ? serializer(options, ...args) : { [serializer]: args };
 };

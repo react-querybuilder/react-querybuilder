@@ -1,14 +1,14 @@
 import type { ExpressionNode, RuleType } from '@react-querybuilder/core';
-import { defaultFunctions } from './defaultFunctions';
-import type { ExpressionFunctionRegistry, ResolvedExpressions } from './types';
+import { defaultFunctionMeta } from './functions/meta';
+import type { ExpressionFunctionMetaRegistry, ResolvedExpressions } from './types';
 
 /**
- * Merges one or more function registries (later entries win), defaulting the first
- * source to {@link defaultFunctions} so callers extend the built-ins by default.
+ * Merges one or more function-metadata registries (later entries win), defaulting the first
+ * source to {@link defaultFunctionMeta} so callers extend the built-ins by default.
  */
-export const mergeFunctions = (
-  ...registries: (ExpressionFunctionRegistry | undefined)[]
-): ExpressionFunctionRegistry => Object.assign({}, defaultFunctions, ...registries);
+export const mergeFunctionMeta = (
+  ...registries: (ExpressionFunctionMetaRegistry | undefined)[]
+): ExpressionFunctionMetaRegistry => Object.assign({}, defaultFunctionMeta, ...registries);
 
 /**
  * Resolves a rule's expression operands: `lhs` from `rule.lhs`, and `rhs` from `rule.value`

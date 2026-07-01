@@ -1,28 +1,28 @@
 import type { ExpressionNode, RuleType } from '@react-querybuilder/core';
-import { defaultFunctions } from './defaultFunctions';
-import { getRuleExpressions, mergeFunctions } from './registry';
-import type { ExpressionFunctionRegistry } from './types';
+import { defaultFunctionMeta } from './functions/meta';
+import { getRuleExpressions, mergeFunctionMeta } from './registry';
+import type { ExpressionFunctionMetaRegistry } from './types';
 
-describe('mergeFunctions', () => {
+describe('mergeFunctionMeta', () => {
   it('returns a copy of the defaults when called with no arguments', () => {
-    const merged = mergeFunctions();
-    expect(merged).toEqual(defaultFunctions);
-    expect(merged).not.toBe(defaultFunctions);
+    const merged = mergeFunctionMeta();
+    expect(merged).toEqual(defaultFunctionMeta);
+    expect(merged).not.toBe(defaultFunctionMeta);
   });
 
   it('ignores undefined sources', () => {
-    expect(mergeFunctions(undefined)).toEqual(defaultFunctions);
+    expect(mergeFunctionMeta(undefined)).toEqual(defaultFunctionMeta);
   });
 
-  it('adds custom functions on top of the defaults', () => {
-    const custom: ExpressionFunctionRegistry = { pow: { arity: 2 } };
-    const merged = mergeFunctions(custom);
+  it('adds custom function metadata on top of the defaults', () => {
+    const custom: ExpressionFunctionMetaRegistry = { pow: { arity: 2 } };
+    const merged = mergeFunctionMeta(custom);
     expect(merged.pow).toBe(custom.pow);
-    expect(merged.add).toBe(defaultFunctions.add);
+    expect(merged.add).toBe(defaultFunctionMeta.add);
   });
 
   it('lets later registries win', () => {
-    const merged = mergeFunctions({ add: { label: 'first' } }, { add: { label: 'second' } });
+    const merged = mergeFunctionMeta({ add: { label: 'first' } }, { add: { label: 'second' } });
     expect(merged.add.label).toBe('second');
   });
 });

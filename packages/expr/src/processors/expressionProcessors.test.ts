@@ -8,7 +8,6 @@ import {
   getExpressionRuleProcessorParameterized,
   getExpressionRuleProcessorSQL,
 } from '../index';
-import { mergeFunctions } from '../registry';
 import type { ExpressionNode, ResolvedExpressions } from '../types';
 
 const field = (f: string): ExpressionNode => ({ kind: 'field', field: f });
@@ -149,9 +148,8 @@ describe('SQL processor', () => {
     );
   });
 
-  it('uses a custom registry', () => {
-    const reg = mergeFunctions({ pow: { arity: 2, sql: (a, b) => `POWER(${a}, ${b})` } });
-    const proc = getExpressionRuleProcessorSQL(reg);
+  it('uses custom serializers', () => {
+    const proc = getExpressionRuleProcessorSQL({ pow: (_opts, a, b) => `POWER(${a}, ${b})` });
     const rule = exprRule(
       { operator: '=' },
       { lhs: fn('pow', field('x'), value(2, 'number')), rhs: value(9, 'number') }
@@ -354,9 +352,10 @@ describe('Parameterized processor', () => {
     expect(expressionRuleProcessorParameterized(rule)).toEqual({ sql: 'price = ?', params: [100] });
   });
 
-  it('uses a custom registry and binds nested value args', () => {
-    const reg = mergeFunctions({ pow: { arity: 2, parameterized: (a, b) => `POWER(${a}, ${b})` } });
-    const proc = getExpressionRuleProcessorParameterized(reg);
+  it('uses custom serializers and binds nested value args', () => {
+    const proc = getExpressionRuleProcessorParameterized({
+      pow: (_opts, a, b) => `POWER(${a}, ${b})`,
+    });
     const rule = exprRule(
       { operator: '=' },
       { lhs: fn('pow', field('x'), value(2, 'number')), rhs: value(9, 'number') }
@@ -483,9 +482,8 @@ describe('JsonLogic processor', () => {
     ).toEqual({ '==': [{ var: 'x' }, '1'] });
   });
 
-  it('uses a custom registry', () => {
-    const reg = mergeFunctions({ pow: { arity: 2, jsonLogic: (a, b) => ({ pow: [a, b] }) } });
-    const proc = getExpressionRuleProcessorJsonLogic(reg);
+  it('uses custom serializers', () => {
+    const proc = getExpressionRuleProcessorJsonLogic({ pow: (_opts, a, b) => ({ pow: [a, b] }) });
     const rule = exprRule(
       { operator: '=' },
       { lhs: fn('pow', field('x'), value(2, 'number')), rhs: value(9, 'number') }

@@ -5,16 +5,16 @@ import type {
   ValidationMap,
 } from '@react-querybuilder/core';
 import { isRuleGroup } from '@react-querybuilder/core';
-import { getRuleExpressions, mergeFunctions } from '../registry';
-import type { ExpressionFunctionRegistry } from '../types';
+import { getRuleExpressions, mergeFunctionMeta } from '../registry';
+import type { ExpressionFunctionMetaRegistry } from '../types';
 import { validateExpression } from './validateExpression';
 
 /**
  * Configure-once factory returning a `QueryValidator` that flags rules whose `lhs`/`rhs`
  * expressions are invalid — unknown function, arity mismatch, or empty field reference —
- * checked against `functions` merged over the built-in {@link defaultFunctions} (the same
- * merge `QueryBuilderExpressions` and {@link createExpressionProcessors} apply, so one
- * registry drives the UI, export processors, and validation alike).
+ * checked against `functionMeta` merged over the built-in {@link defaultFunctionMeta} (the
+ * same merge `QueryBuilderExpressions` applies, so one metadata registry drives the UI and
+ * validation alike).
  *
  * The returned validator produces a sparse {@link ValidationMap}: only invalid,
  * expression-bearing rules get an entry (`{ valid: false, reasons }`), keyed by `rule.id`.
@@ -27,16 +27,16 @@ import { validateExpression } from './validateExpression';
  * `validator` prop for live in-UI feedback.
  */
 export const createExpressionValidator = (
-  functions?: ExpressionFunctionRegistry
+  functionMeta?: ExpressionFunctionMetaRegistry
 ): QueryValidator => {
-  const registry = mergeFunctions(functions);
+  const meta = mergeFunctionMeta(functionMeta);
 
   const reasonsFor = (rule: RuleType): string[] => {
     const expr = getRuleExpressions(rule);
     if (!expr) return [];
     const reasons: string[] = [];
-    if (expr.lhs) reasons.push(...validateExpression(expr.lhs, registry).reasons);
-    if (expr.rhs) reasons.push(...validateExpression(expr.rhs, registry).reasons);
+    if (expr.lhs) reasons.push(...validateExpression(expr.lhs, { meta }).reasons);
+    if (expr.rhs) reasons.push(...validateExpression(expr.rhs, { meta }).reasons);
     return reasons;
   };
 

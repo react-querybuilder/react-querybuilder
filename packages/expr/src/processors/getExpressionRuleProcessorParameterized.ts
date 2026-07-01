@@ -5,9 +5,10 @@ import {
   lc,
   mapSQLOperator,
 } from '@react-querybuilder/core';
-import { defaultFunctions } from '../defaultFunctions';
+import { defaultFunctionMeta } from '../functions/meta';
+import { defaultParameterizedSerializers } from '../functions/parameterized';
 import { getRuleExpressions } from '../registry';
-import type { ExpressionFunctionRegistry } from '../types';
+import type { ParameterizedSerializerRegistry } from '../types';
 import type { ParameterizedSerializeContext } from '../utils/serializeParameterized';
 import { serializeParameterized } from '../utils/serializeParameterized';
 import { validateExpression } from '../utils/validateExpression';
@@ -19,15 +20,18 @@ const safeParamBase = (field: string): string => (/^[A-Za-z_]\w*$/.test(field) ?
 /**
  * Generates a rule processor with expression support for use by
  * {@link @react-querybuilder/core!formatQuery formatQuery} with the "parameterized" and
- * "parameterized_named" formats. Bound values are pushed following the standard
- * accumulator contract. Rules without expressions, or with an unsupported operator,
- * fall back to the stock processor.
+ * "parameterized_named" formats. Pass custom `serializers` to add functions or override
+ * built-ins; they are merged over {@link defaultParameterizedSerializers}. Bound values are
+ * pushed following the standard accumulator contract. Rules without expressions, or with an
+ * unsupported operator, fall back to the stock processor.
  */
 export const getExpressionRuleProcessorParameterized =
-  (registry?: ExpressionFunctionRegistry): RuleProcessor =>
+  (serializers?: ParameterizedSerializerRegistry): RuleProcessor =>
   (rule, options, meta) => {
     const opts = options ?? {};
-    const reg = registry ?? defaultFunctions;
+    const serial = serializers
+      ? { ...defaultParameterizedSerializers, ...serializers }
+      : defaultParameterizedSerializers;
     const expr = getRuleExpressions(rule);
     const parameterized = opts.format !== 'parameterized_named';
     const empty = () => ({ sql: '', params: parameterized ? [] : {} });
@@ -42,16 +46,17 @@ export const getExpressionRuleProcessorParameterized =
       return defaultRuleProcessorParameterized(rule, opts, meta);
     }
 
+    const validate = { functions: serial, meta: defaultFunctionMeta };
     if (
-      (expr.lhs && !validateExpression(expr.lhs, reg, 'parameterized').valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, reg, 'parameterized').valid)
+      (expr.lhs && !validateExpression(expr.lhs, validate).valid) ||
+      (expr.rhs && !validateExpression(expr.rhs, validate).valid)
     ) {
       return empty();
     }
 
     const processedParams = meta?.processedParams;
     const ctx: ParameterizedSerializeContext = {
-      registry: reg,
+      serializers: serial,
       options: opts,
       parameterized,
       processedParamsLength: Array.isArray(processedParams) ? processedParams.length : 0,

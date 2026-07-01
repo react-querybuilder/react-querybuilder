@@ -14,7 +14,7 @@ import { useExpressionUI } from './ExpressionUIContext';
 export const ExpressionValueSourceSelector = (
   props: ValueSourceSelectorProps
 ): React.JSX.Element => {
-  const { registry, translations, inheritedValueSourceSelector } = useExpressionUI();
+  const { meta, translations, inheritedValueSourceSelector } = useExpressionUI();
   const { schema, path, options, handleOnChange } = props;
   const Selector = inheritedValueSourceSelector ?? schema.controls.valueSelector;
 
@@ -36,7 +36,7 @@ export const ExpressionValueSourceSelector = (
         schema.dispatchQuery(
           update(
             schema.getQuery(),
-            { valueSource: 'expression', value: rhsDefaultNode(schema.fields, registry) },
+            { valueSource: 'expression', value: rhsDefaultNode(schema.fields, meta) },
             path
           )
         );
@@ -44,7 +44,7 @@ export const ExpressionValueSourceSelector = (
         handleOnChange(v);
       }
     },
-    [schema, path, registry, handleOnChange]
+    [schema, path, meta, handleOnChange]
   );
 
   return <Selector {...props} options={relabeled} handleOnChange={onChange} />;

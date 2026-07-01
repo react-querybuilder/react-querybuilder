@@ -1,6 +1,6 @@
 import type { Option } from '@react-querybuilder/core';
-import { defaultFunctions } from '../defaultFunctions';
-import type { ExpressionFunctionRegistry } from '../types';
+import { defaultFunctionMeta } from '../functions/meta';
+import type { ExpressionFunctionMetaRegistry } from '../types';
 import {
   arityCount,
   changeFunction,
@@ -41,7 +41,7 @@ describe('defaultNode', () => {
   });
 
   it('builds a func node from the first registry entry with default args', () => {
-    expect(defaultNode('func', fields, defaultFunctions)).toEqual({
+    expect(defaultNode('func', fields, defaultFunctionMeta)).toEqual({
       kind: 'func',
       fn: 'add',
       args: [
@@ -62,7 +62,7 @@ describe('changeFunction', () => {
       { kind: 'field', field: 'price' } as const,
       { kind: 'field', field: 'qty' } as const,
     ];
-    expect(changeFunction('abs', args, fields, defaultFunctions)).toEqual({
+    expect(changeFunction('abs', args, fields, defaultFunctionMeta)).toEqual({
       kind: 'func',
       fn: 'abs',
       args: [{ kind: 'field', field: 'price' }],
@@ -70,7 +70,7 @@ describe('changeFunction', () => {
   });
 
   it('fills new arg slots with default field nodes', () => {
-    expect(changeFunction('multiply', [], fields, defaultFunctions)).toEqual({
+    expect(changeFunction('multiply', [], fields, defaultFunctionMeta)).toEqual({
       kind: 'func',
       fn: 'multiply',
       args: [
@@ -81,7 +81,7 @@ describe('changeFunction', () => {
   });
 
   it('uses the current arg count for an unknown function', () => {
-    const reg: ExpressionFunctionRegistry = {};
+    const reg: ExpressionFunctionMetaRegistry = {};
     expect(changeFunction('nope', [{ kind: 'value', value: 1 }], fields, reg)).toEqual({
       kind: 'func',
       fn: 'nope',
@@ -92,7 +92,7 @@ describe('changeFunction', () => {
 
 describe('rhsDefaultNode', () => {
   it('roots the RHS at the first registered function with default field args', () => {
-    expect(rhsDefaultNode(fields, defaultFunctions)).toEqual({
+    expect(rhsDefaultNode(fields, defaultFunctionMeta)).toEqual({
       kind: 'func',
       fn: 'add',
       args: [

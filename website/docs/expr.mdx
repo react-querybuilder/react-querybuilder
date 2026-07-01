@@ -21,7 +21,7 @@ npm install react-querybuilder @react-querybuilder/expr
 
 :::info
 
-All React-related exports (the `QueryBuilderExpressions` component, editors, etc.) must be imported from `@react-querybuilder/expr/ui` (note the **`/ui`**). The root entry point exports only non-React utilities and types—the `formatQuery` rule processors, the validator, the function registry helpers, and the `ExpressionFunction`/`ExpressionNode` types—so it can be used server-side.
+All React-related exports (the `QueryBuilderExpressions` component, editors, etc.) must be imported from `@react-querybuilder/expr/ui` (note the **`/ui`**). The root entry point exports only non-React utilities and types—the `formatQuery` rule processors, the validator, the function-metadata and serializer helpers, and the `ExpressionFunctionMeta`/`ExpressionNode` types—so it can be used server-side.
 
 :::
 
@@ -71,7 +71,7 @@ Because the LHS keeps the rule's plain `field`, and the RHS rides on `valueSourc
 
 ## Components
 
-Wrap your `QueryBuilder` in the `QueryBuilderExpressions` [context provider](./components/querybuilder#context). It overrides the field selector, value-source selector, and value editor to host expressions, and supplies the function registry to those controls. Rules without expressions render exactly as before.
+Wrap your `QueryBuilder` in the `QueryBuilderExpressions` [context provider](./components/querybuilder#context). It overrides the field selector, value-source selector, and value editor to host expressions, and supplies the function metadata to those controls. Rules without expressions render exactly as before.
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
@@ -138,50 +138,71 @@ Changing the rule's field re-points the wrapper's inner field automatically (or 
 
 ## Functions
 
-Functions—including the arithmetic operators—are defined in an `ExpressionFunctionRegistry` (a map of keys to `ExpressionFunction` definitions). Each function declares an optional UI label, an optional arity, and per-format serializers:
+Functions—including the arithmetic operators—are split into two concerns, mirroring the datetime package's format-specific processors:
+
+- **Metadata** (`ExpressionFunctionMeta`) — the UI label and arity. Drives the expression editor and the format-agnostic validator. Passed to `QueryBuilderExpressions` via the `functions` prop.
+- **Serializers** — how a function renders in each export format. Each format has its own registry (`SQLSerializerRegistry`, `ParameterizedSerializerRegistry`, `JsonLogicSerializerRegistry`), passed to that format's [export processor](#export).
+
+Keeping them separate means the UI and validator never carry serialization logic, and you only implement the formats you actually export.
 
 ```ts
-interface ExpressionFunction {
+interface ExpressionFunctionMeta {
   /** UI label, e.g. '×' or 'Absolute value'. Falls back to the registry key. */
   label?: string;
   /** Fixed arity (number) or inclusive [min, max] range. Omit for unconstrained. */
   arity?: number | [min: number, max: number];
-  /** SQL serializer; receives already-serialized arg strings. */
-  sql?: (...args: string[]) => string;
-  /** Parameterized-SQL serializer. */
-  parameterized?: (...args: string[]) => string;
-  /** JSONLogic serializer: an operator name, or a function receiving serialized args. */
-  jsonLogic?: string | ((...args: unknown[]) => unknown);
 }
+```
+
+Serializers are **opts-first**—each receives the `formatQuery` options (for preset/`parseNumbers` awareness) followed by the already-serialized argument strings:
+
+```ts
+type SQLSerializerFn = (opts: ValueProcessorOptions, ...args: string[]) => string;
+
+// A SQL serializer is either a single function, or a preset-keyed map for dialect
+// variance (`default` covers any preset without an explicit override):
+type SQLSerializer =
+  | SQLSerializerFn
+  | ({ default: SQLSerializerFn } & Partial<Record<SQLPreset, SQLSerializerFn>>);
+
+// JSONLogic: an operator name (wraps args in `{ [op]: args }`) or a function:
+type JsonLogicSerializer = string | ((opts: ValueProcessorOptions, ...args: unknown[]) => unknown);
 ```
 
 ### Built-in functions
 
-`defaultFunctions` ships the four arithmetic operators plus `abs` (to demonstrate call-style functions):
+`defaultFunctionMeta` ships the arithmetic operators plus a handful of common functions. The matching serializers live in `defaultSQLSerializers`, `defaultParameterizedSerializers` (identical to the SQL map), and `defaultJsonLogicSerializers`.
 
-| Key        | Label | Arity | SQL          |
-| ---------- | ----- | ----- | ------------ |
-| `add`      | `+`   | 2     | `(a + b)`    |
-| `subtract` | `-`   | 2     | `(a - b)`    |
-| `multiply` | `×`   | 2     | `(a * b)`    |
-| `divide`   | `÷`   | 2     | `(a / b)`    |
-| `abs`      | `ABS` | 1     | `ABS(a)`     |
+| Key        | Label   | Arity | SQL             | JSONLogic |
+| ---------- | ------- | ----- | --------------- | --------- |
+| `add`      | `+`     | 2     | `(a + b)`       | `+`       |
+| `subtract` | `-`     | 2     | `(a - b)`       | `-`       |
+| `multiply` | `×`     | 2     | `(a * b)`       | `*`       |
+| `divide`   | `÷`     | 2     | `(a / b)`       | `/`       |
+| `min`      | `MIN`   | 2+    | `LEAST(...)`    | `min`     |
+| `max`      | `MAX`   | 2+    | `GREATEST(...)` | `max`     |
+| `abs`      | `ABS`   | 1     | `ABS(a)`        | `abs`     |
+| `mod`      | `MOD`   | 2     | `(a % b)`       | `%`       |
+| `upper`    | `UPPER` | 1     | `UPPER(a)`      | `upper`   |
+| `lower`    | `LOWER` | 1     | `LOWER(a)`      | `lower`   |
+
+:::note
+
+`min`/`max` emit `LEAST`/`GREATEST` by default (PostgreSQL, MySQL 8+, Oracle, SQL Server 2022+), overridden to the scalar `MIN`/`MAX` for the `sqlite` [preset](./utils/export#presets). This dialect variance uses the preset-keyed serializer form shown above.
+
+:::
 
 ### Custom functions
 
-Provide a registry to `QueryBuilderExpressions` via the `functions` prop; it is merged over `defaultFunctions`, so you extend the built-ins by default (later entries win, letting you override a built-in by reusing its key):
+A custom function needs metadata (for the UI and validator) plus a serializer for each export format you use. Most applications export a single format, so you typically register just one serializer.
+
+Provide metadata to `QueryBuilderExpressions` via the `functions` prop; it is merged over `defaultFunctionMeta`, so you extend the built-ins by default (later entries win, letting you override a built-in by reusing its key):
 
 ```tsx
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 
 const functions = {
-  pow: {
-    label: 'POWER',
-    arity: 2,
-    sql: (base, exp) => `POWER(${base}, ${exp})`,
-    parameterized: (base, exp) => `POWER(${base}, ${exp})`,
-    jsonLogic: (base, exp) => ({ pow: [base, exp] }),
-  },
+  pow: { label: 'POWER', arity: 2 },
 };
 
 <QueryBuilderExpressions functions={functions} allowFunctionsOnLHS>
@@ -189,23 +210,31 @@ const functions = {
 </QueryBuilderExpressions>;
 ```
 
+Then register a matching serializer when you build each [export processor](#custom-serializers) you need:
+
+```ts
+const sqlSerializers = {
+  pow: (_opts, base, exp) => `POWER(${base}, ${exp})`,
+};
+```
+
 :::warning
 
-Pass the **same** `functions` object to both `QueryBuilderExpressions` and the [export processors](#export) (`createExpressionProcessors`). A function registered only for the UI will silently drop out of the exported query, since the processors validate against their own registry.
+The UI `functions` metadata and each processor's serializer registry are validated independently. A function present in the UI but missing a serializer for the export format is treated as unknown, and its rule is omitted from that format's output.
 
 :::
 
-Use `mergeFunctions(...registries)` to combine registries yourself (the first source defaults to `defaultFunctions`):
+Use `mergeFunctionMeta(...registries)` to combine metadata registries yourself (the first source defaults to `defaultFunctionMeta`):
 
 ```ts
-import { mergeFunctions } from '@react-querybuilder/expr';
+import { mergeFunctionMeta } from '@react-querybuilder/expr';
 
-const registry = mergeFunctions(functions);
+const meta = mergeFunctionMeta(functions);
 ```
 
 ## Export
 
-`formatQuery` needs an expression-aware **rule processor** to serialize the `lhs`/`rhs` nodes; without one, `lhs` is ignored and the `"expression"` value source isn't handled. The package provides ready-to-use processors bound to the built-in `defaultFunctions`:
+`formatQuery` needs an expression-aware **rule processor** to serialize the `lhs`/`rhs` nodes; without one, `lhs` is ignored and the `"expression"` value source isn't handled. The package provides ready-to-use processors bound to the built-in serializers:
 
 ```ts
 import { formatQuery } from 'react-querybuilder';
@@ -218,36 +247,73 @@ import {
 formatQuery(query, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL });
 // "((price * quantity) = 100)"
 
-formatQuery(query, { format: 'parameterized', ruleProcessor: expressionRuleProcessorParameterized });
+formatQuery(query, {
+  format: 'parameterized',
+  ruleProcessor: expressionRuleProcessorParameterized,
+});
 // { sql: "((price * quantity) = ?)", params: [100] }
 
 formatQuery(query, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessorJsonLogic });
 // { "==": [{ "*": [{ var: "price" }, { var: "quantity" }] }, 100] }
 ```
 
-The parameterized processor also supports the `parameterized_named` format and respects presets (e.g. PostgreSQL's `$1` numbered placeholders), continuing the binding sequence across preceding rules.
+The parameterized processor also supports the `parameterized_named` format and respects presets (e.g. PostgreSQL's `$1` numbered placeholders), continuing the binding sequence across preceding rules. SQL-dialect presets also select the matching function serializer—e.g. `min`/`max` emit `MIN`/`MAX` under the `sqlite` preset and `LEAST`/`GREATEST` otherwise.
 
 :::note
 
-JSONLogic's `+ - * /` are stock operations, but `abs` (and any custom function) is not—register it before evaluating, e.g. `jsonLogic.add_operation('abs', Math.abs)`.
+JSONLogic's `+ - * /`, `%`, `min`, and `max` are stock operations, but `abs`, `upper`, and `lower` (and any custom function) are not—register them before evaluating. The package exports `jsonLogicExpressionOperators` covering the built-ins:
+
+```ts
+import { add_operation } from 'json-logic-js';
+import { jsonLogicExpressionOperators } from '@react-querybuilder/expr';
+
+for (const [op, fn] of Object.entries(jsonLogicExpressionOperators)) {
+  add_operation(op, fn);
+}
+```
 
 :::
 
-### Binding a custom registry
+### Custom serializers
 
-When you use [custom functions](#custom-functions), build matching processors with `createExpressionProcessors`, passing the same registry you gave the UI:
+When you use [custom functions](#custom-functions), pass matching serializers to that format's processor factory. Each factory takes a single serializer registry, merged over the format's built-in serializers—so you extend the defaults, and reusing a key overrides a built-in:
 
 ```ts
-import { createExpressionProcessors } from '@react-querybuilder/expr';
+import {
+  getExpressionRuleProcessorSQL,
+  getExpressionRuleProcessorJsonLogic,
+} from '@react-querybuilder/expr';
 
-const processors = createExpressionProcessors(functions);
+const sqlProcessor = getExpressionRuleProcessorSQL({
+  pow: (_opts, base, exp) => `POWER(${base}, ${exp})`,
+});
 
-formatQuery(query, { format: 'sql', ruleProcessor: processors.sql });
-formatQuery(query, { format: 'parameterized', ruleProcessor: processors.parameterized });
-formatQuery(query, { format: 'jsonlogic', ruleProcessor: processors.jsonLogic });
+const jsonLogicProcessor = getExpressionRuleProcessorJsonLogic({
+  pow: (_opts, base, exp) => ({ pow: [base, exp] }),
+});
+
+formatQuery(query, { format: 'sql', ruleProcessor: sqlProcessor });
+formatQuery(query, { format: 'jsonlogic', ruleProcessor: jsonLogicProcessor });
 ```
 
-Each `get*` factory (`getExpressionRuleProcessorSQL`, `getExpressionRuleProcessorParameterized`, `getExpressionRuleProcessorJsonLogic`) is also exported individually if you only need one format.
+`getExpressionRuleProcessorParameterized` completes the trio for the `parameterized`/`parameterized_named` formats. Only build the processors for the formats you actually export.
+
+:::tip
+
+To vary a SQL serializer by dialect, use the preset-keyed form. For example, string concatenation differs across databases:
+
+```ts
+const sqlProcessor = getExpressionRuleProcessorSQL({
+  concat: {
+    default: (_opts, a, b) => `CONCAT(${a}, ${b})`, // MySQL, SQL Server
+    postgresql: (_opts, a, b) => `(${a} || ${b})`, // ANSI string concat
+    sqlite: (_opts, a, b) => `(${a} || ${b})`,
+    oracle: (_opts, a, b) => `(${a} || ${b})`,
+  },
+});
+```
+
+:::
 
 ### Supported operators and fallback
 
@@ -255,7 +321,7 @@ The processors handle the scalar comparison operators (`=`, `!=`, `<`, `<=`, `>`
 
 ## Validation
 
-`createExpressionValidator` returns a [`QueryValidator`](./utils/validation) that flags rules whose expressions are invalid—an unknown function, an arity mismatch, or an empty field reference—checked against the same merged registry the UI and processors use. Pass the same `functions` you used elsewhere:
+`createExpressionValidator` returns a [`QueryValidator`](./utils/validation) that flags rules whose expressions are invalid—an unknown function, an arity mismatch, or an empty field reference—checked against the same merged metadata the UI uses. Pass the same `functions` metadata you gave `QueryBuilderExpressions`:
 
 ```ts
 import { createExpressionValidator } from '@react-querybuilder/expr';
@@ -289,8 +355,8 @@ Override the expression UI's labels and titles per-key with the `translations` p
 </QueryBuilderExpressions>
 ```
 
-| Key                     | Description                                                            |
+| Key                     | Description                                                           |
 | ----------------------- | --------------------------------------------------------------------- |
 | `exprLhsFunction`       | Accessible title for the LHS unary-function wrapper selector.         |
-| `exprLhsNone`           | Label/title for the wrapper's "no function" option (field as-is).    |
+| `exprLhsNone`           | Label/title for the wrapper's "no function" option (field as-is).     |
 | `valueSourceExpression` | Label/title for the `expression` option in the value-source selector. |

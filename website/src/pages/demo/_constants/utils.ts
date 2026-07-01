@@ -24,7 +24,11 @@ import {
   datetimeRuleProcessorSpEL,
   datetimeRuleProcessorSQL,
 } from '@react-querybuilder/datetime/dayjs';
-import { createExpressionProcessors } from '@react-querybuilder/expr';
+import {
+  expressionRuleProcessorJsonLogic,
+  expressionRuleProcessorParameterized,
+  expressionRuleProcessorSQL,
+} from '@react-querybuilder/expr';
 import clsx from 'clsx';
 import pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
@@ -190,15 +194,13 @@ export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcesso
   gremlin: datetimeRuleProcessorGremlin,
 };
 
-// Configure-once expression processors (built-in functions). Only the formats expr
+// Ready-made expression processors (built-in functions). Only the formats expr
 // supports are mapped; other formats fall back to the default processor.
-const expressionProcessors = createExpressionProcessors();
-
 export const expressionRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
-  sql: expressionProcessors.sql,
-  parameterized: expressionProcessors.parameterized,
-  parameterized_named: expressionProcessors.parameterized,
-  jsonlogic: expressionProcessors.jsonLogic,
+  sql: expressionRuleProcessorSQL,
+  parameterized: expressionRuleProcessorParameterized,
+  parameterized_named: expressionRuleProcessorParameterized,
+  jsonlogic: expressionRuleProcessorJsonLogic,
 };
 
 export const getExportCall = async (

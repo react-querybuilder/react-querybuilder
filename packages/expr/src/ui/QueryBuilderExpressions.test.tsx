@@ -16,7 +16,7 @@ import { getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuild
 // Import through the public `/ui` barrel so the re-export modules are covered too.
 import { ExprTestID, QueryBuilderExpressions } from '../index.ui';
 import type { AllowFunctionsOnLHS, TranslationsExpr } from '../index.ui';
-import type { ExpressionFunctionRegistry } from '../types';
+import type { ExpressionFunctionMetaRegistry } from '../types';
 
 // Core control testIDs we drive: field selector, value editor, value-source selector.
 const fieldSel = TestID.fields;
@@ -40,7 +40,7 @@ const initialQuery: RuleGroupType = {
 };
 
 interface AppProps {
-  functions?: ExpressionFunctionRegistry;
+  functions?: ExpressionFunctionMetaRegistry;
   /** Optional outer compat provider, to test inherited-control delegation. */
   Outer?: QueryBuilderContextProvider;
   /** Field list override. */
@@ -159,7 +159,7 @@ describe('left-hand side function wrapper', () => {
   });
 
   it('merges a custom unary function into the wrapper options', async () => {
-    const functions: ExpressionFunctionRegistry = {
+    const functions: ExpressionFunctionMetaRegistry = {
       neg: { label: 'NEG', arity: 1 },
       raw: { arity: 1 },
     };
@@ -237,7 +237,7 @@ describe('right-hand side expression value source', () => {
   });
 
   it('merges a custom function into the expression editor function options', async () => {
-    const functions: ExpressionFunctionRegistry = { power: { label: 'POW', arity: 2 } };
+    const functions: ExpressionFunctionMetaRegistry = { power: { label: 'POW', arity: 2 } };
     render(<App functions={functions} />);
 
     await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
