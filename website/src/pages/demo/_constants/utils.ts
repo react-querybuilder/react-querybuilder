@@ -24,6 +24,11 @@ import {
   datetimeRuleProcessorSpEL,
   datetimeRuleProcessorSQL,
 } from '@react-querybuilder/datetime/dayjs';
+import {
+  expressionRuleProcessorJsonLogic,
+  expressionRuleProcessorParameterized,
+  expressionRuleProcessorSQL,
+} from '@react-querybuilder/expr';
 import clsx from 'clsx';
 import pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
@@ -187,6 +192,15 @@ export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcesso
   gql: datetimeRuleProcessorCypher,
   sparql: datetimeRuleProcessorSPARQL,
   gremlin: datetimeRuleProcessorGremlin,
+};
+
+// Ready-made expression processors (built-in functions). Only the formats expr
+// supports are mapped; other formats fall back to the default processor.
+export const expressionRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
+  sql: expressionRuleProcessorSQL,
+  parameterized: expressionRuleProcessorParameterized,
+  parameterized_named: expressionRuleProcessorParameterized,
+  jsonlogic: expressionRuleProcessorJsonLogic,
 };
 
 export const getExportCall = async (
@@ -408,6 +422,9 @@ export const getCodeString = (
     getPropText('showShiftActions'),
     getPropText('suppressStandardClassnames'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
+    options.enableExpressions
+      ? `getValueSources={(field) => { const configured = fields.find((f) => f.name === field)?.valueSources; const base = Array.isArray(configured) && configured.length > 0 ? configured : ['value']; return base.includes('expression') ? base : [...base, 'expression']; }}`
+      : '',
     options.showBranches || options.justifiedLayout || options.responsiveLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
           [standardClassnames.branches]: options.showBranches,
@@ -439,6 +456,10 @@ import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
     options.useDateTimePackage
       ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';`
       : ''
+  }${
+    options.enableExpressions
+      ? `\nimport { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';`
+      : ''
   }
 ${
   options.enableDragAndDrop
@@ -455,7 +476,9 @@ export const App = () => {
 
   return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
     options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
-  }<QueryBuilder ${props} />${
+  }${options.enableExpressions ? '<QueryBuilderExpressions allowFunctionsOnLHS>' : ''}<QueryBuilder ${props} />${
+    options.enableExpressions ? '</QueryBuilderExpressions>' : ''
+  }${
     options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''
   }${styleWrapperSuffix}${options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''}
   );

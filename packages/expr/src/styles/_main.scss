@@ -1,0 +1,23 @@
+/* #region Bracket/comma content */
+// Logical glyphs only. `(` U+0028 / `)` U+0029 are Bidi_Mirrored, so the browser
+// draws the mirrored glyph automatically in an RTL-resolved run -- no direction
+// branching needed. Selectors key off the `.expr-fn` class marker and child/sibling
+// position (not tag type) so brackets render regardless of how a compat library
+// tags its function-selector element. Margins for these same pseudo-elements live
+// in `_layout.scss` and must stay in sync.
+
+// Open paren: first arg (the `.expr-node` immediately after the fn selector).
+.expr-func > .expr-fn + .expr-node:before {
+  content: '(';
+}
+
+// Comma: every arg after the first.
+.expr-func > .expr-node ~ .expr-node:before {
+  content: ',';
+}
+
+// Close paren: last arg.
+.expr-func > .expr-node:last-child:after {
+  content: ')';
+}
+/* #endregion */

@@ -40,6 +40,7 @@ export const operators: Operator[] = [
 const valueSourceLabelMap: Record<ValueSource, string> = {
   value: 'ערך',
   field: 'שדה',
+  expression: 'ביטוי',
 };
 
 const rtlLabels: Record<string, string> = {

@@ -41,6 +41,7 @@
     "@react-querybuilder/core": "workspace:*",
     "@react-querybuilder/datetime": "workspace:*",
     "@react-querybuilder/dnd": "workspace:*",
+    "@react-querybuilder/expr": "workspace:*",
     "@react-querybuilder/fluent": "workspace:*",
     "@react-querybuilder/mantine": "workspace:*",
     "@react-querybuilder/material": "workspace:*",

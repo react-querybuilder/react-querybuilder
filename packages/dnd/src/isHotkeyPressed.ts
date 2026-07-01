@@ -1,5 +1,7 @@
 /* oxlint-disable prefer-global-this */
 
+/* v8 ignore file -- @preserve */
+
 /**
  * Adapted from
  * https://github.com/JohannesKlauss/react-hotkeys-hook/blob/bc55a281f1d212d09de786aeb5cd236c58d9531d/src/isHotkeyPressed.ts

@@ -60,6 +60,8 @@ type GenerateConfig<DateType> = {
   };
 };
 
+/* v8 ignore file -- @preserve */
+
 dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 dayjs.extend(weekday);

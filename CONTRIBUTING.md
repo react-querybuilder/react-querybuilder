@@ -23,25 +23,26 @@ Your IDE should check for TypeScript and lint problems as you code, but to check
 
 <summary>Testing individual packages</summary>
 
-Each package has its own `start:*`, `build:*`, and `typecheck:*` scripts.
+Each package has its own `start:*`, `build:*`, and `typecheck:*` scripts, as well as `test:*` scripts with coverage checking bounded to the subject package (for granular coverage checks).
 
-| Package                            | Start script          | Build script          | Typecheck script          |
-| ---------------------------------- | --------------------- | --------------------- | ------------------------- |
-| All packages                       | `bun start`           | `bun run build`       | `bun typecheck`           |
-| `react-querybuilder`               | `bun start:rqb`       | `bun build:rqb`       | `bun typecheck:rqb`       |
-| `@react-querybuilder/antd`         | `bun start:antd`      | `bun build:antd`      | `bun typecheck:antd`      |
-| `@react-querybuilder/bootstrap`    | `bun start:bootstrap` | `bun build:bootstrap` | `bun typecheck:bootstrap` |
-| `@react-querybuilder/bulma`        | `bun start:bulma`     | `bun build:bulma`     | `bun typecheck:bulma`     |
-| `@react-querybuilder/chakra`       | `bun start:chakra`    | `bun build:chakra`    | `bun typecheck:chakra`    |
-| `@react-querybuilder/datetime`     | `bun start:datetime`  | `bun build:datetime`  | `bun typecheck:datetime`  |
-| `@react-querybuilder/dnd`          | `bun start:dnd`       | `bun build:dnd`       | `bun typecheck:dnd`       |
-| `@react-querybuilder/fluent`       | `bun start:fluent`    | `bun build:fluent`    | `bun typecheck:fluent`    |
-| `@react-querybuilder/mantine`      | `bun start:mantine`   | `bun build:mantine`   | `bun typecheck:mantine`   |
-| `@react-querybuilder/material`     | `bun start:material`  | `bun build:material`  | `bun typecheck:material`  |
-| `@react-querybuilder/native`       | `bun start:native`    | `bun build:native`    | `bun typecheck:native`    |
-| `@react-querybuilder/prime`        | `bun start:prime`     | `bun build:prime`     | `bun typecheck:prime`     |
-| `@react-querybuilder/rules-engine` | `bun start:re`        | `bun build:re`        | `bun typecheck:re`        |
-| `@react-querybuilder/tremor`       | `bun start:tremor`    | `bun build:tremor`    | `bun typecheck:tremor`    |
+| Package                            | Start script          | Build script          | Typecheck script          | Test script          |
+| ---------------------------------- | --------------------- | --------------------- | ------------------------- | -------------------- |
+| All packages                       | `bun start`           | `bun run build`       | `bun typecheck`           | `bun run test`       |
+| `react-querybuilder`               | `bun start:rqb`       | `bun build:rqb`       | `bun typecheck:rqb`       | `bun test:rqb`       |
+| `@react-querybuilder/antd`         | `bun start:antd`      | `bun build:antd`      | `bun typecheck:antd`      | `bun test:antd`      |
+| `@react-querybuilder/bootstrap`    | `bun start:bootstrap` | `bun build:bootstrap` | `bun typecheck:bootstrap` | `bun test:bootstrap` |
+| `@react-querybuilder/bulma`        | `bun start:bulma`     | `bun build:bulma`     | `bun typecheck:bulma`     | `bun test:bulma`     |
+| `@react-querybuilder/chakra`       | `bun start:chakra`    | `bun build:chakra`    | `bun typecheck:chakra`    | `bun test:chakra`    |
+| `@react-querybuilder/datetime`     | `bun start:datetime`  | `bun build:datetime`  | `bun typecheck:datetime`  | `bun test:datetime`  |
+| `@react-querybuilder/dnd`          | `bun start:dnd`       | `bun build:dnd`       | `bun typecheck:dnd`       | `bun test:dnd`       |
+| `@react-querybuilder/expr`         | `bun start:expr`      | `bun build:expr`      | `bun typecheck:expr`      | `bun test:expr`      |
+| `@react-querybuilder/fluent`       | `bun start:fluent`    | `bun build:fluent`    | `bun typecheck:fluent`    | `bun test:fluent`    |
+| `@react-querybuilder/mantine`      | `bun start:mantine`   | `bun build:mantine`   | `bun typecheck:mantine`   | `bun test:mantine`   |
+| `@react-querybuilder/material`     | `bun start:material`  | `bun build:material`  | `bun typecheck:material`  | `bun test:material`  |
+| `@react-querybuilder/native`       | `bun start:native`    | `bun build:native`    | `bun typecheck:native`    | `bun test:native`    |
+| `@react-querybuilder/prime`        | `bun start:prime`     | `bun build:prime`     | `bun typecheck:prime`     | `bun test:prime`     |
+| `@react-querybuilder/rules-engine` | `bun start:re`        | `bun build:re`        | `bun typecheck:re`        | `bun test:re`        |
+| `@react-querybuilder/tremor`       | `bun start:tremor`    | `bun build:tremor`    | `bun typecheck:tremor`    | `bun test:tremor`    |
 
 </details>
 

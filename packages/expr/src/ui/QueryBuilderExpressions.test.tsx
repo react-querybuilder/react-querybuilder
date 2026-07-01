@@ -1,0 +1,403 @@
+// @vitest-environment jsdom
+import { userEventSetup } from '@rqb-testing';
+import { render, screen, within } from '@testing-library/react';
+import * as React from 'react';
+import { useState } from 'react';
+import type {
+  Field,
+  FieldSelectorProps,
+  QueryBuilderContextProvider,
+  RuleGroupType,
+  RuleType,
+  ValueEditorProps,
+  ValueSourceSelectorProps,
+} from 'react-querybuilder';
+import { getCompatContextProvider, QueryBuilder, TestID } from 'react-querybuilder';
+// Import through the public `/ui` barrel so the re-export modules are covered too.
+import { ExprTestID, QueryBuilderExpressions } from '../index.ui';
+import type { AllowFunctionsOnLHS, TranslationsExpr } from '../index.ui';
+import type { ExpressionFunctionMetaRegistry } from '../types';
+
+// Core control testIDs we drive: field selector, value editor, value-source selector.
+const fieldSel = TestID.fields;
+const valueEditor = TestID.valueEditor;
+const valueSourceSel = TestID.valueSourceSelector;
+// LHS function-wrapper selector + its extra-operand editors, plus the RHS nested expression
+// editor (children derive `${editor}-fn` / `-arg0-kind` / `-arg0-field` / `-arg0-value`).
+const lhsFn = ExprTestID.exprLhsFnSelector;
+const lhsArg = ExprTestID.exprLhsArgEditor;
+const rhsEditor = ExprTestID.exprRhsEditor;
+
+// `expression` is offered as a value source, so the RHS expression editor is reachable
+// through the standard value-source selector rather than a bespoke toggle.
+const fields: Field[] = [
+  { name: 'price', label: 'Price', valueSources: ['value', 'expression'] },
+  { name: 'qty', label: 'Qty', valueSources: ['value', 'expression'] },
+  { name: 'weight', label: 'Weight', inputType: 'number', valueSources: ['value', 'expression'] },
+];
+
+const initialQuery: RuleGroupType = {
+  combinator: 'and',
+  rules: [{ field: 'price', operator: '=', value: '' }],
+};
+
+interface AppProps {
+  functions?: ExpressionFunctionMetaRegistry;
+  /** Optional outer compat provider, to test inherited-control delegation. */
+  Outer?: QueryBuilderContextProvider;
+  /** Field list override. */
+  fields?: Field[];
+  /** Initial query override. */
+  initialQuery?: RuleGroupType;
+  /** Gates the LHS unary-function wrapper (default `false`, matching the prop's own default). */
+  allowFunctionsOnLHS?: AllowFunctionsOnLHS;
+  /** Per-key overrides for the expression UI labels/titles. */
+  translations?: Partial<TranslationsExpr>;
+}
+
+// Stateful host: a controlled QueryBuilder wrapped by the expression provider, dumping the
+// live query so assertions can read `rule.lhs` / `valueSource` / `value` after each edit.
+const App = ({
+  functions,
+  Outer,
+  fields: fieldsProp = fields,
+  initialQuery: initialQueryProp = initialQuery,
+  allowFunctionsOnLHS,
+  translations,
+}: AppProps) => {
+  const [query, setQuery] = useState<RuleGroupType>(initialQueryProp);
+  const inner = (
+    <QueryBuilderExpressions
+      functions={functions}
+      allowFunctionsOnLHS={allowFunctionsOnLHS}
+      translations={translations}>
+      <QueryBuilder fields={fieldsProp} query={query} onQueryChange={setQuery} />
+    </QueryBuilderExpressions>
+  );
+  return (
+    <>
+      {Outer ? <Outer>{inner}</Outer> : inner}
+      <pre data-testid="q">{JSON.stringify(query)}</pre>
+    </>
+  );
+};
+
+const currentQuery = (): RuleGroupType => JSON.parse(`${screen.getByTestId('q').textContent}`);
+const rule0 = (): RuleType => currentQuery().rules[0] as RuleType;
+
+const user = userEventSetup();
+
+describe('left-hand side function wrapper', () => {
+  it('renders the plain field selector when allowFunctionsOnLHS is false (default)', () => {
+    render(<App />);
+    // Gating off: no wrapper selector, just the inherited (default) field selector.
+    expect(screen.queryByTestId(lhsFn)).toBeNull();
+    expect(screen.getByTestId(fieldSel)).toBeInTheDocument();
+    expect(rule0().lhs).toBeUndefined();
+  });
+
+  it('wraps the field in a function, then clears it', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    // Wrapper visible, "no function" selected, `rule.lhs` absent.
+    const fnSel = screen.getByTestId(lhsFn);
+    expect(fnSel).toHaveValue('');
+    expect(rule0().lhs).toBeUndefined();
+
+    // Every function that admits an argument is offered (plus the "no function" sentinel):
+    // unary `abs` and binary `+` alike.
+    expect(within(fnSel).getByRole('option', { name: '—' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: 'ABS' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: '+' })).toBeInTheDocument();
+
+    // Choose `abs`: wraps the current field. Being unary, no extra-operand editor appears.
+    await user.selectOptions(fnSel, 'abs');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+    expect(screen.queryByTestId(`${lhsArg}-1`)).toBeNull();
+
+    // Back to "no function": clears `rule.lhs`.
+    await user.selectOptions(screen.getByTestId(lhsFn), '');
+    expect(rule0().lhs).toBeUndefined();
+  });
+
+  it('re-points the wrapper to the new field on field change', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'abs');
+    // Field change re-wraps atomically so the stored expression names the current field.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'qty' }],
+    });
+  });
+
+  it('changes the field without a wrapper when no function is selected', async () => {
+    render(<App allowFunctionsOnLHS />);
+    // No wrapper chosen: a field change updates `field` and leaves `lhs` absent.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toBeUndefined();
+  });
+
+  it('gates the wrapper per field with a predicate, dropping lhs when disallowed', async () => {
+    render(<App allowFunctionsOnLHS={f => f === 'price'} />);
+
+    // `price` is allowed: wrapper visible.
+    expect(screen.getByTestId(lhsFn)).toBeInTheDocument();
+    await user.selectOptions(screen.getByTestId(lhsFn), 'abs');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+
+    // Switching to the disallowed `qty` drops the wrapper and the stored `lhs`.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toBeUndefined();
+    expect(screen.queryByTestId(lhsFn)).toBeNull();
+  });
+
+  it('merges a custom function into the wrapper options', async () => {
+    const functions: ExpressionFunctionMetaRegistry = {
+      neg: { label: 'NEG', arity: 1 },
+      raw: { arity: 1 },
+    };
+    render(<App allowFunctionsOnLHS functions={functions} />);
+
+    const fnSel = screen.getByTestId(lhsFn);
+    // Custom functions join the built-ins; every function that admits an argument is offered,
+    // including binary `+`.
+    expect(within(fnSel).getByRole('option', { name: 'NEG' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: 'ABS' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: '+' })).toBeInTheDocument();
+    // A label-less function falls back to its registry key for the option text.
+    expect(within(fnSel).getByRole('option', { name: 'raw' })).toBeInTheDocument();
+
+    await user.selectOptions(fnSel, 'neg');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'neg',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+  });
+
+  it('wraps the field in a multi-argument function, seeding an extra-operand editor', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    // `mod` is binary: arg 0 is the governing field, arg 1 an extra operand seeded as a field.
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'mod',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'field', field: 'price' },
+      ],
+    });
+
+    // Exactly one extra-operand editor (for arg 1); arg 0 stays in the plain field selector.
+    expect(screen.getByTestId(`${lhsArg}-1`)).toBeInTheDocument();
+    expect(screen.queryByTestId(`${lhsArg}-2`)).toBeNull();
+
+    // Edit the extra operand into a literal value; it writes straight into the wrapper node.
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    await user.type(screen.getByTestId(`${lhsArg}-1-value`), '2');
+    expect((rule0().lhs as { args: unknown[] }).args[1]).toEqual({ kind: 'value', value: '2' });
+  });
+
+  it('preserves extra operands when the governing field changes', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    await user.type(screen.getByTestId(`${lhsArg}-1-value`), '2');
+
+    // Field change re-points arg 0 to `qty` while retaining the literal extra operand.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'qty');
+    expect(rule0().field).toBe('qty');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'mod',
+      args: [
+        { kind: 'field', field: 'qty' },
+        { kind: 'value', value: '2' },
+      ],
+    });
+  });
+
+  it('carries extra operands across a switch between multi-argument functions', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    await user.type(screen.getByTestId(`${lhsArg}-1-value`), '2');
+
+    // `min` also takes >= 2 args, so the extra operand carries over.
+    await user.selectOptions(screen.getByTestId(lhsFn), 'min');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'min',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'value', value: '2' },
+      ],
+    });
+  });
+
+  it('drops the extra operand when switching to a single-argument function', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+    expect(screen.getByTestId(`${lhsArg}-1`)).toBeInTheDocument();
+
+    // `abs` is unary: only the governing field remains and the extra editor disappears.
+    await user.selectOptions(screen.getByTestId(lhsFn), 'abs');
+    expect(rule0().lhs).toEqual({
+      kind: 'func',
+      fn: 'abs',
+      args: [{ kind: 'field', field: 'price' }],
+    });
+    expect(screen.queryByTestId(`${lhsArg}-1`)).toBeNull();
+  });
+
+  it('threads the governing field input type to extra-operand literal editors', async () => {
+    render(<App allowFunctionsOnLHS />);
+
+    // Switch to the number-typed `weight` field, then wrap it in binary `mod`.
+    await user.selectOptions(screen.getByTestId(fieldSel), 'weight');
+    await user.selectOptions(screen.getByTestId(lhsFn), 'mod');
+
+    // The extra operand's literal editor inherits the field's `number` input type.
+    await user.selectOptions(screen.getByTestId(`${lhsArg}-1-kind`), 'value');
+    expect(screen.getByTestId(`${lhsArg}-1-value`)).toHaveAttribute('type', 'number');
+  });
+
+  it('still wraps a governing field that is absent from the field map', () => {
+    // A saved rule may reference a field no longer configured; the wrapper still renders,
+    // resolving its input type from a synthetic field entry instead of crashing.
+    render(
+      <App
+        allowFunctionsOnLHS
+        initialQuery={{ combinator: 'and', rules: [{ field: 'gone', operator: '=', value: '' }] }}
+      />
+    );
+    expect(screen.getByTestId(lhsFn)).toBeInTheDocument();
+  });
+});
+
+describe('right-hand side expression value source', () => {
+  it('renders the standard value editor until the expression source is selected', () => {
+    render(<App />);
+    // Two value sources are offered, defaulting to the scalar editor (no expression node).
+    expect(screen.getByTestId(valueSourceSel)).toBeInTheDocument();
+    expect(screen.getByTestId(valueEditor)).toBeInTheDocument();
+    expect(screen.queryByTestId(rhsEditor)).toBeNull();
+  });
+
+  it('seeds and edits an expression when the expression source is selected', async () => {
+    render(<App />);
+
+    // Selecting `expression` flips the source and seeds a default function node.
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    expect(rule0().valueSource).toBe('expression');
+    expect(rule0().value).toEqual({
+      kind: 'func',
+      fn: 'add',
+      args: [
+        { kind: 'field', field: 'price' },
+        { kind: 'field', field: 'price' },
+      ],
+    });
+
+    // The root node's `kind` selector is hidden (it is always a function call).
+    expect(screen.getByTestId(rhsEditor)).toBeInTheDocument();
+    expect(screen.getByTestId(`${rhsEditor}-fn`)).toBeInTheDocument();
+    expect(screen.queryByTestId(`${rhsEditor}-kind`)).toBeNull();
+
+    // Editing a nested argument writes straight into the stored node.
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-arg0-field`), 'qty');
+    expect((rule0().value as { args: unknown[] }).args[0]).toEqual({ kind: 'field', field: 'qty' });
+  });
+
+  it('reverts to a scalar value when switching back to the value source', async () => {
+    render(<App />);
+
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    expect(rule0().valueSource).toBe('expression');
+
+    // Switching away delegates to the standard handler, resetting the scalar value.
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'value');
+    expect(rule0().valueSource).toBe('value');
+    expect(rule0().value).toBe('');
+    expect(screen.queryByTestId(rhsEditor)).toBeNull();
+  });
+
+  it('relabels the expression option via translations', () => {
+    render(<App translations={{ valueSourceExpression: { label: 'EXPR' } }} />);
+    expect(
+      within(screen.getByTestId(valueSourceSel)).getByRole('option', { name: 'EXPR' })
+    ).toBeInTheDocument();
+  });
+
+  it('merges a custom function into the expression editor function options', async () => {
+    const functions: ExpressionFunctionMetaRegistry = { power: { label: 'POW', arity: 2 } };
+    render(<App functions={functions} />);
+
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    const fnSel = screen.getByTestId(`${rhsEditor}-fn`);
+    // Both custom and built-in functions are selectable for the expression root.
+    expect(within(fnSel).getByRole('option', { name: 'POW' })).toBeInTheDocument();
+    expect(within(fnSel).getByRole('option', { name: '+' })).toBeInTheDocument();
+
+    await user.selectOptions(fnSel, 'power');
+    expect(rule0().value).toMatchObject({ kind: 'func', fn: 'power' });
+  });
+});
+
+describe('inherited (compat) controls', () => {
+  const CustomValueEditor = (_props: ValueEditorProps) => (
+    <span data-testid="custom-editor">custom</span>
+  );
+  const CustomFieldSelector = (_props: FieldSelectorProps) => (
+    <span data-testid="custom-field">custom</span>
+  );
+  const CustomValueSourceSelector = (_props: ValueSourceSelectorProps) => (
+    <span data-testid="custom-vss">custom</span>
+  );
+
+  it('hosts inherited field selector and value editor, overriding on expression enable', async () => {
+    const Outer = getCompatContextProvider({
+      controlElements: { valueEditor: CustomValueEditor, fieldSelector: CustomFieldSelector },
+    });
+    render(<App Outer={Outer} />);
+
+    // LHS hosts the inherited field selector; the non-expression RHS delegates to the editor.
+    expect(screen.getByTestId('custom-field')).toBeInTheDocument();
+    expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
+
+    // Enabling the expression swaps the rule's editor for the expression editor; a literal
+    // argument still renders via the inherited (themed) editor.
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    const exprRhs = screen.getByTestId(rhsEditor);
+    expect(exprRhs).toBeInTheDocument();
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-arg0-kind`), 'value');
+    expect(within(exprRhs).getByTestId('custom-editor')).toBeInTheDocument();
+  });
+
+  it('hosts an inherited value-source selector', () => {
+    const Outer = getCompatContextProvider({
+      controlElements: { valueSourceSelector: CustomValueSourceSelector },
+    });
+    render(<App Outer={Outer} />);
+    // The expression provider delegates rendering to the inherited value-source selector.
+    expect(screen.getByTestId('custom-vss')).toBeInTheDocument();
+  });
+});

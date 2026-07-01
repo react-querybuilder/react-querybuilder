@@ -98,6 +98,8 @@ import { add, remove, update, move } from '@react-querybuilder/core';
 const updated = add(query, newRule, parentPath);
 const removed = remove(query, rulePath);
 const modified = update(query, 'value', 'newValue', rulePath);
+// `update` can also set multiple properties at once, via a map or parallel arrays:
+const multi = update(query, { valueSource: 'field', value: 'otherField' }, rulePath);
 const moved = move(query, oldPath, newPath);
 ```
 
