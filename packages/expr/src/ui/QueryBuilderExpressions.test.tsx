@@ -362,6 +362,107 @@ describe('right-hand side expression value source', () => {
   });
 });
 
+describe('between/notBetween expression bounds', () => {
+  // The default function node seeded for each bound (first registered function, `add`).
+  const seed = {
+    kind: 'func',
+    fn: 'add',
+    args: [
+      { kind: 'field', field: 'price' },
+      { kind: 'field', field: 'price' },
+    ],
+  };
+
+  it('seeds a 2-tuple and renders paired editors when expression is selected for between', async () => {
+    render(<App />);
+
+    // Switch to the between operator, then flip the value source to expression.
+    await user.selectOptions(screen.getByTestId(TestID.operators), 'between');
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+
+    // Both bounds seeded with the default function node.
+    expect(rule0().valueSource).toBe('expression');
+    expect(rule0().value).toEqual([seed, seed]);
+
+    // Paired editors render (from/to); no single-node editor.
+    expect(screen.getByTestId(`${rhsEditor}-from`)).toBeInTheDocument();
+    expect(screen.getByTestId(`${rhsEditor}-to`)).toBeInTheDocument();
+  });
+
+  it('edits each bound independently, persisting a complete pair', async () => {
+    render(<App />);
+
+    await user.selectOptions(screen.getByTestId(TestID.operators), 'between');
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+
+    // Edit the lower bound's first arg → qty; the upper bound stays the default.
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-from-arg0-field`), 'qty');
+    const afterLower = rule0().value as [{ args: unknown[] }, unknown];
+    expect(afterLower[0].args[0]).toEqual({ kind: 'field', field: 'qty' });
+    expect(afterLower[1]).toEqual(seed);
+
+    // Edit the upper bound's first arg → weight; the lower bound retains its qty edit.
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-to-arg0-field`), 'weight');
+    const afterUpper = rule0().value as [{ args: unknown[] }, { args: unknown[] }];
+    expect(afterUpper[0].args[0]).toEqual({ kind: 'field', field: 'qty' });
+    expect(afterUpper[1].args[0]).toEqual({ kind: 'field', field: 'weight' });
+  });
+
+  it('seeds a 2-tuple for notBetween as well', async () => {
+    render(<App />);
+    await user.selectOptions(screen.getByTestId(TestID.operators), 'notBetween');
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    expect(rule0().value).toEqual([seed, seed]);
+    expect(screen.getByTestId(`${rhsEditor}-from`)).toBeInTheDocument();
+    expect(screen.getByTestId(`${rhsEditor}-to`)).toBeInTheDocument();
+  });
+
+  it('collapses to the lower bound when switching from between to a scalar operator', async () => {
+    render(<App />);
+    await user.selectOptions(screen.getByTestId(TestID.operators), 'between');
+    await user.selectOptions(screen.getByTestId(valueSourceSel), 'expression');
+    expect(rule0().value).toEqual([seed, seed]);
+
+    // Back to a scalar operator: the stray tuple collapses to its lower bound in a single editor.
+    await user.selectOptions(screen.getByTestId(TestID.operators), '=');
+    expect(screen.getByTestId(rhsEditor)).toBeInTheDocument();
+    expect(screen.queryByTestId(`${rhsEditor}-from`)).toBeNull();
+
+    // Editing writes a single node (not a tuple).
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-arg0-field`), 'qty');
+    expect((rule0().value as { args: unknown[] }).args[0]).toEqual({ kind: 'field', field: 'qty' });
+  });
+
+  it('renders paired editors and back-fills the upper bound for a single-node value', async () => {
+    // A between rule whose value is a stray single node (e.g. left over from a scalar operator).
+    const singleNodeQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'price', operator: 'between', valueSource: 'expression', value: seed }],
+    };
+    render(<App initialQuery={singleNodeQuery} />);
+    expect(screen.getByTestId(`${rhsEditor}-from`)).toBeInTheDocument();
+    expect(screen.getByTestId(`${rhsEditor}-to`)).toBeInTheDocument();
+
+    // Editing the lower bound persists a complete pair, the upper back-filled with the default.
+    await user.selectOptions(screen.getByTestId(`${rhsEditor}-from-arg0-field`), 'qty');
+    const persisted = rule0().value as [{ args: unknown[] }, unknown];
+    expect(persisted).toHaveLength(2);
+    expect(persisted[0].args[0]).toEqual({ kind: 'field', field: 'qty' });
+    expect(persisted[1]).toEqual(seed);
+  });
+
+  it('back-fills both bounds when a between rule stores an empty tuple', () => {
+    const emptyTupleQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'price', operator: 'between', valueSource: 'expression', value: [] }],
+    };
+    render(<App initialQuery={emptyTupleQuery} />);
+    // Both slots are empty, so each editor falls back to the default function node.
+    expect(screen.getByTestId(`${rhsEditor}-from`)).toBeInTheDocument();
+    expect(screen.getByTestId(`${rhsEditor}-to`)).toBeInTheDocument();
+  });
+});
+
 describe('inherited (compat) controls', () => {
   const CustomValueEditor = (_props: ValueEditorProps) => (
     <span data-testid="custom-editor">custom</span>

@@ -71,4 +71,10 @@ export interface ResolvedExpressions {
   lhs?: ExpressionNode;
   /** Right-hand side expression, from `rule.value` when `valueSource` is `"expression"`. */
   rhs?: ExpressionNode;
+  /**
+   * Upper-bound right-hand side expression for `between`/`notBetween` operators, from the
+   * second element of `rule.value` when `valueSource` is `"expression"`. `rhs` holds the
+   * lower bound in that case.
+   */
+  rhs2?: ExpressionNode;
 }

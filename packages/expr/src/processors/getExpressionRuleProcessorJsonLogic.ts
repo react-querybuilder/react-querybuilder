@@ -30,6 +30,8 @@ const STRING_OPERATORS = new Set([
   'doesnotendwith',
 ]);
 
+const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+
 // Builds a JSONLogic string-match rule from resolved operands, mirroring the stock processor:
 // `contains` → `in`, `beginsWith` → `startsWith`, `endsWith` → `endsWith`; `doesNot*` negates.
 const buildStringOp = (operatorLC: string, lhs: unknown, rhs: unknown): object => {
@@ -74,12 +76,17 @@ export const getExpressionRuleProcessorJsonLogic =
     const unary = operator === 'null' || operator === 'notnull';
     const jlOp = OPERATOR_MAP[operator];
     const stringOp = STRING_OPERATORS.has(operator);
-    if (!unary && !jlOp && !stringOp) return defaultRuleProcessorJsonLogic(rule, opts);
+    // Between is supported only with expression-sourced bounds; a plain-value between defers
+    // to the stock processor (which handles number parsing/ordering/field sources).
+    const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
+    if (!unary && !jlOp && !stringOp && !betweenExpr)
+      return defaultRuleProcessorJsonLogic(rule, opts);
 
     const validate = { functions: serial, meta: defaultFunctionMeta };
     if (
       (expr.lhs && !validateExpression(expr.lhs, validate).valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, validate).valid)
+      (expr.rhs && !validateExpression(expr.rhs, validate).valid) ||
+      (expr.rhs2 && !validateExpression(expr.rhs2, validate).valid)
     ) {
       return false;
     }
@@ -87,6 +94,16 @@ export const getExpressionRuleProcessorJsonLogic =
     const lhs = expr.lhs ? serializeJsonLogic(expr.lhs, serial, opts) : { var: rule.field };
     if (unary) {
       return { [operator === 'notnull' ? '!=' : '==']: [lhs, null] };
+    }
+
+    if (betweenExpr) {
+      // Both bounds are required; an incomplete expression between omits the rule.
+      // json-logic-js supports a 3-arg `<=` as `from <= lhs <= to`; negate for notBetween.
+      if (!expr.rhs || !expr.rhs2) return false;
+      const from = serializeJsonLogic(expr.rhs, serial, opts);
+      const to = serializeJsonLogic(expr.rhs2, serial, opts);
+      const jsonRule = { '<=': [from, lhs, to] };
+      return operator === 'notbetween' ? { '!': jsonRule } : jsonRule;
     }
 
     const rhs = expr.rhs ? serializeJsonLogic(expr.rhs, serial, opts) : renderLeaf(rule, opts);

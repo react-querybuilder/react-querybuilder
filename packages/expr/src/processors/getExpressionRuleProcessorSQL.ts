@@ -16,6 +16,7 @@ import { validateExpression } from '../utils/validateExpression';
 
 const SCALAR_OPERATORS = new Set(['=', '!=', '<', '<=', '>', '>=']);
 const LIKE_OPERATORS = new Set(['like', 'not like']);
+const BETWEEN_OPERATORS = new Set(['between', 'not between']);
 
 /**
  * Generates a rule processor with expression support for use by
@@ -36,14 +37,24 @@ export const getExpressionRuleProcessorSQL =
 
     const operator = lc(mapSQLOperator(rule.operator));
     const unary = operator === 'is null' || operator === 'is not null';
-    if (!unary && !SCALAR_OPERATORS.has(operator) && !LIKE_OPERATORS.has(operator)) {
+    // `between`/`not between` are supported only when the range bounds are expression-sourced;
+    // a plain-value between (even with an LHS expression) defers to the stock processor, which
+    // already handles number parsing, ordering, and field-source nuances.
+    const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
+    if (
+      !unary &&
+      !betweenExpr &&
+      !SCALAR_OPERATORS.has(operator) &&
+      !LIKE_OPERATORS.has(operator)
+    ) {
       return defaultRuleProcessorSQL(rule, opts);
     }
 
     const validate = { functions: serial, meta: defaultFunctionMeta };
     if (
       (expr.lhs && !validateExpression(expr.lhs, validate).valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, validate).valid)
+      (expr.rhs && !validateExpression(expr.rhs, validate).valid) ||
+      (expr.rhs2 && !validateExpression(expr.rhs2, validate).valid)
     ) {
       return '';
     }
@@ -52,6 +63,14 @@ export const getExpressionRuleProcessorSQL =
       ? serializeSQL(expr.lhs, serial, opts)
       : getQuotedFieldName(rule.field, opts);
     if (unary) return `${lhs} ${operator}`.trim();
+
+    if (betweenExpr) {
+      // Both bounds are required; an incomplete expression between omits the rule.
+      if (!expr.rhs || !expr.rhs2) return '';
+      const from = serializeSQL(expr.rhs, serial, opts);
+      const to = serializeSQL(expr.rhs2, serial, opts);
+      return `${lhs} ${operator} ${from} and ${to}`;
+    }
 
     // An expression RHS needs its `LIKE` wildcards concatenated in SQL (the fragment is an
     // expression, not a literal); a plain value/field RHS is handled by the stock value

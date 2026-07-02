@@ -17,6 +17,7 @@ import { validateExpression } from '../utils/validateExpression';
 
 const SCALAR_OPERATORS = new Set(['=', '!=', '<', '<=', '>', '>=']);
 const LIKE_OPERATORS = new Set(['like', 'not like']);
+const BETWEEN_OPERATORS = new Set(['between', 'not between']);
 
 const safeParamBase = (field: string): string => (/^[A-Za-z_]\w*$/.test(field) ? field : 'expr');
 
@@ -45,14 +46,23 @@ export const getExpressionRuleProcessorParameterized =
 
     const operator = lc(mapSQLOperator(rule.operator));
     const unary = operator === 'is null' || operator === 'is not null';
-    if (!unary && !SCALAR_OPERATORS.has(operator) && !LIKE_OPERATORS.has(operator)) {
+    // Between is supported only with expression-sourced bounds; a plain-value between defers
+    // to the stock processor (which handles number parsing/ordering/field sources).
+    const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
+    if (
+      !unary &&
+      !betweenExpr &&
+      !SCALAR_OPERATORS.has(operator) &&
+      !LIKE_OPERATORS.has(operator)
+    ) {
       return defaultRuleProcessorParameterized(rule, opts, meta);
     }
 
     const validate = { functions: serial, meta: defaultFunctionMeta };
     if (
       (expr.lhs && !validateExpression(expr.lhs, validate).valid) ||
-      (expr.rhs && !validateExpression(expr.rhs, validate).valid)
+      (expr.rhs && !validateExpression(expr.rhs, validate).valid) ||
+      (expr.rhs2 && !validateExpression(expr.rhs2, validate).valid)
     ) {
       return empty();
     }
@@ -75,6 +85,13 @@ export const getExpressionRuleProcessorParameterized =
     let sql: string;
     if (unary) {
       sql = `${lhs} ${operator}`.trim();
+    } else if (betweenExpr) {
+      // Both bounds are required; an incomplete expression between omits the rule. Serialize
+      // the lower bound first so its bound params precede the upper bound's.
+      if (!expr.rhs || !expr.rhs2) return empty();
+      const from = serializeParameterized(expr.rhs, ctx);
+      const to = serializeParameterized(expr.rhs2, ctx);
+      sql = `${lhs} ${operator} ${from} and ${to}`;
     } else {
       const isLike = LIKE_OPERATORS.has(operator);
       let rhs: string;

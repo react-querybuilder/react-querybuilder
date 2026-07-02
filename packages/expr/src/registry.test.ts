@@ -60,4 +60,71 @@ describe('getRuleExpressions', () => {
   it('returns undefined when the rule carries no expression', () => {
     expect(getRuleExpressions({ field: 'a', operator: '=', value: 1 } as RuleType)).toBeUndefined();
   });
+
+  it('splits a between value tuple into rhs and rhs2', () => {
+    const lower: ExpressionNode = { kind: 'value', value: 1 };
+    const upper: ExpressionNode = { kind: 'value', value: 10 };
+    const rule = {
+      field: 'a',
+      operator: 'between',
+      value: [lower, upper],
+      valueSource: 'expression',
+    } as RuleType;
+    expect(getRuleExpressions(rule)).toEqual({ lhs: undefined, rhs: lower, rhs2: upper });
+  });
+
+  it('splits a notBetween value tuple into rhs and rhs2', () => {
+    const lower: ExpressionNode = { kind: 'value', value: 1 };
+    const upper: ExpressionNode = { kind: 'value', value: 10 };
+    const rule = {
+      field: 'a',
+      operator: 'notBetween',
+      value: [lower, upper],
+      valueSource: 'expression',
+    } as RuleType;
+    expect(getRuleExpressions(rule)).toEqual({ lhs: undefined, rhs: lower, rhs2: upper });
+  });
+
+  it('coerces a non-array between value to a single lower bound', () => {
+    const rule = {
+      field: 'a',
+      operator: 'between',
+      value: rhs,
+      valueSource: 'expression',
+    } as RuleType;
+    expect(getRuleExpressions(rule)).toEqual({ lhs: undefined, rhs, rhs2: undefined });
+  });
+
+  it('reads an LHS expression alongside a between value tuple', () => {
+    const lower: ExpressionNode = { kind: 'value', value: 1 };
+    const upper: ExpressionNode = { kind: 'value', value: 10 };
+    const rule = {
+      field: 'a',
+      operator: 'between',
+      value: [lower, upper],
+      valueSource: 'expression',
+      lhs,
+    } as RuleType;
+    expect(getRuleExpressions(rule)).toEqual({ lhs, rhs: lower, rhs2: upper });
+  });
+
+  it('returns undefined for a between with no bounds and no lhs', () => {
+    const rule = {
+      field: 'a',
+      operator: 'between',
+      value: [],
+      valueSource: 'expression',
+    } as RuleType;
+    expect(getRuleExpressions(rule)).toBeUndefined();
+  });
+
+  it('returns undefined for an expression source with an empty value', () => {
+    const rule = {
+      field: 'a',
+      operator: '=',
+      value: undefined,
+      valueSource: 'expression',
+    } as RuleType;
+    expect(getRuleExpressions(rule)).toBeUndefined();
+  });
 });

@@ -76,15 +76,16 @@ export const fn = (name: string, ...args: ExpressionNode[]): ExpressionNode => (
 });
 
 // Builds a rule using the core storage contract: `lhs` lives on `rule.lhs`, and an `rhs`
-// expression is stored in `rule.value` with `valueSource: 'expression'`.
+// expression is stored in `rule.value` with `valueSource: 'expression'`. For a
+// `between`/`notBetween` range (`rhs` + `rhs2`), `rule.value` is the 2-tuple `[rhs, rhs2]`.
 export const exprRule = (
   rule: Partial<RuleType> & { operator: string },
-  { lhs, rhs }: ResolvedExpressions = {}
+  { lhs, rhs, rhs2 }: ResolvedExpressions = {}
 ): RuleType => {
   const result = { field: '(expression)', value: '', ...rule } as RuleType;
   if (lhs) result.lhs = lhs;
-  if (rhs) {
-    result.value = rhs;
+  if (rhs || rhs2) {
+    result.value = rhs2 ? [rhs, rhs2] : rhs;
     result.valueSource = 'expression';
   }
   return result;
@@ -284,5 +285,32 @@ export const testCases: Record<string, [RuleGroupType, number[]]> = {
       )
     ),
     [3, 4],
+  ],
+  // Range with expression bounds: qty BETWEEN abs(discount) AND (price * qty).
+  // qty: 5,3,2,4,10; abs(discount): 2,5,0,10,3; price*qty: 50,60,100,100,50 -> 1,3,5 in range.
+  between: [
+    group(
+      exprRule(
+        { field: 'qty', operator: 'between' },
+        {
+          rhs: fn('abs', field('discount')),
+          rhs2: fn('multiply', field('price'), field('qty')),
+        }
+      )
+    ),
+    [1, 3, 5],
+  ],
+  // notBetween is the complement of the `between` range.
+  notBetween: [
+    group(
+      exprRule(
+        { field: 'qty', operator: 'notBetween' },
+        {
+          rhs: fn('abs', field('discount')),
+          rhs2: fn('multiply', field('price'), field('qty')),
+        }
+      )
+    ),
+    [2, 4],
   ],
 };

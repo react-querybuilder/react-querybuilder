@@ -23,16 +23,17 @@ const fn = (name: string, ...args: ExpressionNode[]): ExpressionNode => ({
 });
 
 // Builds a rule using the core storage contract: `lhs` lives on `rule.lhs`, and an
-// `rhs` expression is stored in `rule.value` with `valueSource: 'expression'`. A plain
-// value/field RHS is passed through the partial rule untouched.
+// `rhs` expression is stored in `rule.value` with `valueSource: 'expression'`. For a
+// `between`/`notBetween` range (`rhs` + `rhs2`), `rule.value` is the 2-tuple `[rhs, rhs2]`.
+// A plain value/field RHS is passed through the partial rule untouched.
 const exprRule = (
   rule: Partial<RuleType> & { operator: string },
-  { lhs, rhs }: ResolvedExpressions = {}
+  { lhs, rhs, rhs2 }: ResolvedExpressions = {}
 ): RuleType => {
   const result = { field: '(expression)', value: '', ...rule } as RuleType;
   if (lhs) result.lhs = lhs;
-  if (rhs) {
-    result.value = rhs;
+  if (rhs || rhs2) {
+    result.value = rhs2 ? [rhs, rhs2] : rhs;
     result.valueSource = 'expression';
   }
   return result;
@@ -69,6 +70,59 @@ describe('SQL processor', () => {
     expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
       '(price < (a + b))'
     );
+  });
+
+  it('serializes an expression-sourced between range', () => {
+    const q = group(
+      exprRule(
+        { field: 'price', operator: 'between' },
+        {
+          rhs: fn('add', field('a'), field('b')),
+          rhs2: fn('multiply', field('c'), value(2, 'number')),
+        }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      '(price between (a + b) and (c * 2))'
+    );
+  });
+
+  it('serializes between with an LHS expression and expression bounds', () => {
+    const q = group(
+      exprRule(
+        { operator: 'between' },
+        { lhs: fn('abs', field('price')), rhs: value(1, 'number'), rhs2: value(10, 'number') }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      '(ABS(price) between 1 and 10)'
+    );
+  });
+
+  it('serializes an expression-sourced notBetween range', () => {
+    const q = group(
+      exprRule(
+        { field: 'price', operator: 'notBetween' },
+        { rhs: value(1, 'number'), rhs2: value(10, 'number') }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      '(price not between 1 and 10)'
+    );
+  });
+
+  it('omits an expression between missing a bound', () => {
+    const incomplete = exprRule(
+      { field: 'price', operator: 'between' },
+      { rhs: value(1, 'number') }
+    );
+    const plain = { field: 'x', operator: '=', value: '1' } as RuleType;
+    expect(
+      formatQuery(group(incomplete, plain), {
+        format: 'sql',
+        ruleProcessor: expressionRuleProcessorSQL,
+      })
+    ).toBe(`(x = '1')`);
   });
 
   it('serializes a variadic min with three args', () => {
@@ -408,6 +462,83 @@ describe('Parameterized processor', () => {
     ).toEqual({ sql: '(price < (a + b))', params: [] });
   });
 
+  it('binds positional params for an expression-sourced between range', () => {
+    const q = group(
+      exprRule(
+        { field: 'price', operator: 'between' },
+        { rhs: value(1, 'number'), rhs2: value(10, 'number') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '(price between ? and ?)', params: [1, 10] });
+  });
+
+  it('binds positional params for an expression-sourced notBetween range', () => {
+    const q = group(
+      exprRule(
+        { field: 'price', operator: 'notBetween' },
+        { rhs: value(1, 'number'), rhs2: value(10, 'number') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '(price not between ? and ?)', params: [1, 10] });
+  });
+
+  it('binds nested value params within between expression bounds', () => {
+    const q = group(
+      exprRule(
+        { field: 'price', operator: 'between' },
+        { rhs: fn('add', field('a'), value(5, 'number')), rhs2: field('b') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '(price between (a + ?) and b)', params: [5] });
+  });
+
+  it('binds named params for an expression-sourced between range', () => {
+    const q = group(
+      exprRule(
+        { field: 'price', operator: 'between' },
+        { rhs: value(1, 'number'), rhs2: value(10, 'number') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized_named',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({
+      sql: '(price between :price_1 and :price_2)',
+      params: { price_1: 1, price_2: 10 },
+    });
+  });
+
+  it('omits an expression between missing a bound', () => {
+    const incomplete = exprRule(
+      { field: 'price', operator: 'between' },
+      { rhs: value(1, 'number') }
+    );
+    const plain = { field: 'x', operator: '=', value: '1' } as RuleType;
+    expect(
+      formatQuery(group(incomplete, plain), {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '(x = ?)', params: ['1'] });
+  });
+
   it('handles unary operators', () => {
     const rule = exprRule({ operator: 'null', value: null }, { lhs: fn('abs', field('y')) });
     expect(
@@ -513,6 +644,52 @@ describe('JsonLogic processor', () => {
     expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
       '<': [{ var: 'price' }, { '+': [{ var: 'a' }, { var: 'b' }] }],
     });
+  });
+
+  it('serializes an expression-sourced between range', () => {
+    const rule = exprRule(
+      { field: 'price', operator: 'between' },
+      { rhs: value(1, 'number'), rhs2: value(10, 'number') }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({ '<=': [1, { var: 'price' }, 10] });
+  });
+
+  it('negates an expression-sourced notBetween range', () => {
+    const rule = exprRule(
+      { field: 'price', operator: 'notBetween' },
+      { rhs: value(1, 'number'), rhs2: value(10, 'number') }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
+      '!': { '<=': [1, { var: 'price' }, 10] },
+    });
+  });
+
+  it('serializes between with expression operands on all sides', () => {
+    const rule = exprRule(
+      { operator: 'between' },
+      {
+        lhs: fn('abs', field('price')),
+        rhs: fn('add', field('a'), field('b')),
+        rhs2: value(100, 'number'),
+      }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
+      '<=': [{ '+': [{ var: 'a' }, { var: 'b' }] }, { abs: { var: 'price' } }, 100],
+    });
+  });
+
+  it('omits an expression between missing a bound', () => {
+    const incomplete = exprRule(
+      { field: 'price', operator: 'between' },
+      { rhs: value(1, 'number') }
+    );
+    const plain = { field: 'x', operator: '=', value: '1' } as RuleType;
+    expect(
+      formatQuery(group(incomplete, plain), {
+        format: 'jsonlogic',
+        ruleProcessor: expressionRuleProcessorJsonLogic,
+      })
+    ).toEqual({ and: [{ '==': [{ var: 'x' }, '1'] }] });
   });
 
   it('serializes variadic max and unary lower', () => {
