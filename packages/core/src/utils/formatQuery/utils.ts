@@ -51,6 +51,71 @@ export const mapSQLOperator = (rqbOperator: string): string => {
 };
 
 /**
+ * Returns a preset-aware SQL string-concatenation function. Emits `CONCAT(a, b, ...)` when
+ * `concatOperator` is `"CONCAT"` (case-insensitive), otherwise joins with the infix operator
+ * (e.g. `a || b`, `a + b`).
+ *
+ * @group Export
+ */
+export const getSQLConcat =
+  (concatOperator = '||') =>
+  (...values: string[]): string =>
+    concatOperator.toUpperCase() === 'CONCAT'
+      ? `CONCAT(${values.join(', ')})`
+      : values.join(` ${concatOperator} `);
+
+/**
+ * Returns the `[prefix, suffix]` `LIKE` wildcards for a string-match operator (e.g. `contains`
+ * → `['%', '%']`, `beginsWith` → `['', '%']`, `endsWith` → `['%', '']`). Unknown operators
+ * yield `['', '']`.
+ *
+ * @group Export
+ */
+export const getLikeWildcards = (operatorLC: string): [string, string] => {
+  switch (operatorLC) {
+    case 'contains':
+    case 'doesnotcontain':
+      return ['%', '%'];
+    case 'beginswith':
+    case 'doesnotbeginwith':
+      return ['', '%'];
+    case 'endswith':
+    case 'doesnotendwith':
+      return ['%', ''];
+    default:
+      return ['', ''];
+  }
+};
+
+/**
+ * Wraps an already-serialized SQL fragment (a quoted field name or an expression) with the
+ * `LIKE` wildcards for the given (lowercase) string-match operator, concatenating the literal
+ * `%` markers via the preset-aware {@link getSQLConcat}. Returns the fragment untouched for
+ * operators without wildcards.
+ *
+ * @group Export
+ */
+export const wrapLikeFragment = (
+  fragment: string,
+  operatorLC: string,
+  {
+    concatOperator = '||',
+    quoteValuesWith,
+    wrapValueWith = ['', ''],
+  }: {
+    concatOperator?: string;
+    quoteValuesWith?: string;
+    wrapValueWith?: [string, string];
+  } = {}
+): string => {
+  const [pre, post] = getLikeWildcards(operatorLC);
+  const quoteChar = quoteValuesWith || `'`;
+  const quote = (p: string) => `${wrapValueWith[0]}${quoteChar}${p}${quoteChar}${wrapValueWith[1]}`;
+  const parts = [pre && quote(pre), fragment, post && quote(post)].filter(Boolean);
+  return parts.length > 1 ? getSQLConcat(concatOperator)(...parts) : fragment;
+};
+
+/**
  * Maps a (lowercase) {@link DefaultOperatorName} to a MongoDB operator.
  *
  * @group Export

@@ -19,7 +19,7 @@ export const serializeSQL = (
     return getQuotedFieldName(node.field, options);
   }
   if (node.kind === 'value') {
-    const parseNumbers = isNumericLeaf(node) ? true : options.parseNumbers;
+    const parseNumbers = isNumericLeaf(node) || options.parseNumbers;
     return defaultValueProcessorByRule(
       { field: '', operator: '=', value: node.value },
       { ...options, parseNumbers }

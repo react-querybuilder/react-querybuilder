@@ -1,9 +1,11 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
 import {
   defaultRuleProcessorParameterized,
+  getLikeWildcards,
   getQuotedFieldName,
   lc,
   mapSQLOperator,
+  wrapLikeFragment,
 } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { defaultParameterizedSerializers } from '../functions/parameterized';
@@ -14,6 +16,7 @@ import { serializeParameterized } from '../utils/serializeParameterized';
 import { validateExpression } from '../utils/validateExpression';
 
 const SCALAR_OPERATORS = new Set(['=', '!=', '<', '<=', '>', '>=']);
+const LIKE_OPERATORS = new Set(['like', 'not like']);
 
 const safeParamBase = (field: string): string => (/^[A-Za-z_]\w*$/.test(field) ? field : 'expr');
 
@@ -42,7 +45,7 @@ export const getExpressionRuleProcessorParameterized =
 
     const operator = lc(mapSQLOperator(rule.operator));
     const unary = operator === 'is null' || operator === 'is not null';
-    if (!unary && !SCALAR_OPERATORS.has(operator)) {
+    if (!unary && !SCALAR_OPERATORS.has(operator) && !LIKE_OPERATORS.has(operator)) {
       return defaultRuleProcessorParameterized(rule, opts, meta);
     }
 
@@ -73,11 +76,24 @@ export const getExpressionRuleProcessorParameterized =
     if (unary) {
       sql = `${lhs} ${operator}`.trim();
     } else {
-      const rhs = expr.rhs
-        ? serializeParameterized(expr.rhs, ctx)
-        : rule.valueSource === 'field'
-          ? getQuotedFieldName(`${rule.value}`, opts)
-          : serializeParameterized({ kind: 'value', value: rule.value }, ctx);
+      const isLike = LIKE_OPERATORS.has(operator);
+      let rhs: string;
+      if (expr.rhs) {
+        // Expression RHS: `%` wildcards are concatenated in SQL around the fragment.
+        const frag = serializeParameterized(expr.rhs, ctx);
+        rhs = isLike ? wrapLikeFragment(frag, lc(rule.operator), opts) : frag;
+      } else if (rule.valueSource === 'field') {
+        // Field RHS: inline the quoted field name, concatenating `%` wildcards in SQL.
+        const frag = getQuotedFieldName(`${rule.value}`, opts);
+        rhs = isLike ? wrapLikeFragment(frag, lc(rule.operator), opts) : frag;
+      } else if (isLike) {
+        // Plain literal RHS: bake the wildcards into the bound param (matching the stock
+        // processor), so the SQL stays `<lhs> like ?`.
+        const [pre, post] = getLikeWildcards(lc(rule.operator));
+        rhs = serializeParameterized({ kind: 'value', value: `${pre}${rule.value}${post}` }, ctx);
+      } else {
+        rhs = serializeParameterized({ kind: 'value', value: rule.value }, ctx);
+      }
       sql = `${lhs} ${operator} ${rhs}`.trim();
     }
 

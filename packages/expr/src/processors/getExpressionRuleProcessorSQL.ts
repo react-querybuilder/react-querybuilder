@@ -5,6 +5,7 @@ import {
   getQuotedFieldName,
   lc,
   mapSQLOperator,
+  wrapLikeFragment,
 } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { defaultSQLSerializers } from '../functions/sql';
@@ -14,6 +15,7 @@ import { serializeSQL } from '../utils/serializeSQL';
 import { validateExpression } from '../utils/validateExpression';
 
 const SCALAR_OPERATORS = new Set(['=', '!=', '<', '<=', '>', '>=']);
+const LIKE_OPERATORS = new Set(['like', 'not like']);
 
 /**
  * Generates a rule processor with expression support for use by
@@ -34,7 +36,9 @@ export const getExpressionRuleProcessorSQL =
 
     const operator = lc(mapSQLOperator(rule.operator));
     const unary = operator === 'is null' || operator === 'is not null';
-    if (!unary && !SCALAR_OPERATORS.has(operator)) return defaultRuleProcessorSQL(rule, opts);
+    if (!unary && !SCALAR_OPERATORS.has(operator) && !LIKE_OPERATORS.has(operator)) {
+      return defaultRuleProcessorSQL(rule, opts);
+    }
 
     const validate = { functions: serial, meta: defaultFunctionMeta };
     if (
@@ -49,8 +53,13 @@ export const getExpressionRuleProcessorSQL =
       : getQuotedFieldName(rule.field, opts);
     if (unary) return `${lhs} ${operator}`.trim();
 
+    // An expression RHS needs its `LIKE` wildcards concatenated in SQL (the fragment is an
+    // expression, not a literal); a plain value/field RHS is handled by the stock value
+    // processor, which already wildcard-wraps for `LIKE`.
     const rhs = expr.rhs
-      ? serializeSQL(expr.rhs, serial, opts)
+      ? LIKE_OPERATORS.has(operator)
+        ? wrapLikeFragment(serializeSQL(expr.rhs, serial, opts), lc(rule.operator), opts)
+        : serializeSQL(expr.rhs, serial, opts)
       : (opts.valueProcessor ?? defaultValueProcessorByRule)(rule, opts);
     return `${lhs} ${operator} ${rhs}`.trim();
   };

@@ -6,7 +6,10 @@ import { query, queryForNumberParsing, queryWithValueSourceField } from '../form
 import {
   bigIntJsonParseReviver,
   bigIntJsonStringifyReplacer,
+  getLikeWildcards,
   getQuoteFieldNamesWithArray,
+  getSQLConcat,
+  wrapLikeFragment,
 } from '../utils';
 
 it('formats JSON correctly', () => {
@@ -274,5 +277,34 @@ describe('JSON.stringify/parse utils', () => {
   });
   it('parses bigints correctly', () => {
     expect(JSON.parse(queryAsString, bigIntJsonParseReviver)).toEqual(qry);
+  });
+});
+
+describe('SQL concat/LIKE utils', () => {
+  it('getSQLConcat joins with the infix operator or CONCAT', () => {
+    expect(getSQLConcat()('a', 'b')).toBe('a || b');
+    expect(getSQLConcat('+')('a', 'b')).toBe('a + b');
+    expect(getSQLConcat('CONCAT')('a', 'b', 'c')).toBe('CONCAT(a, b, c)');
+  });
+
+  it('getLikeWildcards returns the correct markers, defaulting to none', () => {
+    expect(getLikeWildcards('contains')).toEqual(['%', '%']);
+    expect(getLikeWildcards('beginswith')).toEqual(['', '%']);
+    expect(getLikeWildcards('endswith')).toEqual(['%', '']);
+    expect(getLikeWildcards('=')).toEqual(['', '']);
+  });
+
+  it('wrapLikeFragment wraps per operator and dialect', () => {
+    expect(wrapLikeFragment('UPPER(x)', 'beginswith')).toBe(`UPPER(x) || '%'`);
+    expect(wrapLikeFragment('UPPER(x)', 'endswith')).toBe(`'%' || UPPER(x)`);
+    expect(wrapLikeFragment('UPPER(x)', 'contains')).toBe(`'%' || UPPER(x) || '%'`);
+    expect(wrapLikeFragment('UPPER(x)', 'contains', { concatOperator: 'CONCAT' })).toBe(
+      `CONCAT('%', UPPER(x), '%')`
+    );
+    expect(wrapLikeFragment('UPPER(x)', 'beginswith', { quoteValuesWith: '"' })).toBe(
+      `UPPER(x) || "%"`
+    );
+    // No wildcards for a non-string operator: fragment returned untouched
+    expect(wrapLikeFragment('UPPER(x)', '=')).toBe('UPPER(x)');
   });
 });

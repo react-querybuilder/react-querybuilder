@@ -109,6 +109,81 @@ describe('SQL processor', () => {
     );
   });
 
+  it('wraps an expression RHS with LIKE wildcards (begins/ends/contains)', () => {
+    const begins = group(
+      exprRule(
+        { field: 'lastName', operator: 'beginsWith' },
+        { rhs: fn('upper', field('firstName')) }
+      )
+    );
+    expect(formatQuery(begins, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      `(lastName like UPPER(firstName) || '%')`
+    );
+    const ends = group(
+      exprRule(
+        { field: 'lastName', operator: 'endsWith' },
+        { rhs: fn('upper', field('firstName')) }
+      )
+    );
+    expect(formatQuery(ends, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      `(lastName like '%' || UPPER(firstName))`
+    );
+    const contains = group(
+      exprRule(
+        { field: 'lastName', operator: 'contains' },
+        { rhs: fn('upper', field('firstName')) }
+      )
+    );
+    expect(
+      formatQuery(contains, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })
+    ).toBe(`(lastName like '%' || UPPER(firstName) || '%')`);
+  });
+
+  it('negates a string-match expression to NOT LIKE', () => {
+    const q = group(
+      exprRule(
+        { field: 'lastName', operator: 'doesNotContain' },
+        { rhs: fn('upper', field('firstName')) }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      `(lastName not like '%' || UPPER(firstName) || '%')`
+    );
+  });
+
+  it('concatenates LIKE wildcards per SQL dialect', () => {
+    const q = group(
+      exprRule(
+        { field: 'lastName', operator: 'beginsWith' },
+        { rhs: fn('upper', field('firstName')) }
+      )
+    );
+    expect(
+      formatQuery(q, { format: 'sql', preset: 'mysql', ruleProcessor: expressionRuleProcessorSQL })
+    ).toBe(`(lastName like CONCAT(UPPER(firstName), '%'))`);
+    const c = group(
+      exprRule(
+        { field: 'lastName', operator: 'contains' },
+        { rhs: fn('upper', field('firstName')) }
+      )
+    );
+    expect(
+      formatQuery(c, { format: 'sql', preset: 'mssql', ruleProcessor: expressionRuleProcessorSQL })
+    ).toBe(`([lastName] like '%' + UPPER([firstName]) + '%')`);
+  });
+
+  it('serializes an LHS expression with a plain value RHS for LIKE', () => {
+    const q = group(
+      exprRule(
+        { field: 'name', operator: 'beginsWith', value: 'Stev' },
+        { lhs: fn('upper', field('name')) }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      `(UPPER(name) like 'Stev%')`
+    );
+  });
+
   it('falls back to the default processor for unsupported operators', () => {
     const expressions: ResolvedExpressions = { lhs: fn('multiply', field('price'), field('qty')) };
     const q = group(exprRule({ field: 'price', operator: 'between', value: '1,2' }, expressions));
@@ -281,6 +356,45 @@ describe('Parameterized processor', () => {
     ).toEqual({ sql: '(ABS(price) = ?)', params: ['42'] });
   });
 
+  it('concatenates wildcards in SQL for an expression RHS (LIKE)', () => {
+    const rule = exprRule(
+      { field: 'lastName', operator: 'beginsWith' },
+      { rhs: fn('upper', field('firstName')) }
+    );
+    expect(
+      formatQuery(group(rule), {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: `(lastName like UPPER(firstName) || '%')`, params: [] });
+  });
+
+  it('bakes wildcards into the bound param for a plain literal RHS (LIKE)', () => {
+    const rule = exprRule(
+      { field: 'name', operator: 'beginsWith', value: 'Stev' },
+      { lhs: fn('upper', field('name')) }
+    );
+    expect(
+      formatQuery(group(rule), {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '(UPPER(name) like ?)', params: ['Stev%'] });
+  });
+
+  it('concatenates a field-source RHS wildcard in SQL (LIKE)', () => {
+    const rule = exprRule(
+      { field: 'name', operator: 'endsWith', value: 'otherCol', valueSource: 'field' },
+      { lhs: fn('upper', field('name')) }
+    );
+    expect(
+      formatQuery(group(rule), {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: `(UPPER(name) like '%' || otherCol)`, params: [] });
+  });
+
   it('serializes a plain LHS field with an RHS expression', () => {
     const rule = exprRule(
       { field: 'price', operator: '<' },
@@ -443,9 +557,43 @@ describe('JsonLogic processor', () => {
     });
   });
 
+  it('serializes string-match operators with expression operands', () => {
+    const begins = exprRule(
+      { field: 'lastName', operator: 'beginsWith' },
+      { rhs: fn('upper', field('firstName')) }
+    );
+    expect(expressionRuleProcessorJsonLogic(begins, {})).toEqual({
+      startsWith: [{ var: 'lastName' }, { upper: { var: 'firstName' } }],
+    });
+    const contains = exprRule(
+      { field: 'lastName', operator: 'contains' },
+      { rhs: fn('lower', field('firstName')) }
+    );
+    expect(expressionRuleProcessorJsonLogic(contains, {})).toEqual({
+      in: [{ lower: { var: 'firstName' } }, { var: 'lastName' }],
+    });
+    const ends = exprRule(
+      { field: 'x', operator: 'endsWith', value: 'Z' },
+      { lhs: fn('upper', field('lastName')) }
+    );
+    expect(expressionRuleProcessorJsonLogic(ends, {})).toEqual({
+      endsWith: [{ upper: { var: 'lastName' } }, 'Z'],
+    });
+  });
+
+  it('negates doesNot string-match operators', () => {
+    const rule = exprRule(
+      { field: 'lastName', operator: 'doesNotBeginWith' },
+      { rhs: fn('upper', field('firstName')) }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
+      '!': { startsWith: [{ var: 'lastName' }, { upper: { var: 'firstName' } }] },
+    });
+  });
+
   it('falls back for unsupported operators', () => {
     const expressions: ResolvedExpressions = { lhs: fn('multiply', field('price'), field('qty')) };
-    const q = group(exprRule({ field: 'price', operator: 'contains', value: 'x' }, expressions));
+    const q = group(exprRule({ field: 'price', operator: 'between', value: '1,2' }, expressions));
     expect(
       formatQuery(q, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessorJsonLogic })
     ).toEqual(formatQuery(q, { format: 'jsonlogic' }));

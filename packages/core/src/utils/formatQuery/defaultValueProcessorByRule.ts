@@ -2,7 +2,7 @@ import type { ValueProcessorByRule } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { getQuotedFieldName, isValidValue, shouldRenderAsNumber } from './utils';
+import { getQuotedFieldName, isValidValue, shouldRenderAsNumber, wrapLikeFragment } from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -25,7 +25,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     quoteValuesWith,
     concatOperator = '||',
     fieldIdentifierSeparator,
-    wrapValueWith = ['', ''],
+    wrapValueWith = ['', ''] as [string, string],
     translations,
   } = {}
 ) => {
@@ -39,10 +39,7 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
   const wrapAndEscape = (v: unknown) => quoteValue(escapeValue(v));
   const wrapFieldName = (v: unknown) =>
     getQuotedFieldName(v as string, { quoteFieldNamesWith, fieldIdentifierSeparator });
-  const concat = (...values: string[]) =>
-    concatOperator.toUpperCase() === 'CONCAT'
-      ? `CONCAT(${values.join(', ')})`
-      : values.join(` ${concatOperator} `);
+  const likeOpts = { concatOperator, quoteValuesWith, wrapValueWith };
 
   switch (operatorLowerCase) {
     case 'null':
@@ -121,19 +118,19 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     case 'contains':
     case 'doesnotcontain':
       return valueIsField
-        ? concat(quoteValue('%'), wrapFieldName(value), quoteValue('%'))
+        ? wrapLikeFragment(wrapFieldName(value), operatorLowerCase, likeOpts)
         : quoteValue(`%${escapeValue(value)}%`);
 
     case 'beginswith':
     case 'doesnotbeginwith':
       return valueIsField
-        ? concat(wrapFieldName(value), quoteValue('%'))
+        ? wrapLikeFragment(wrapFieldName(value), operatorLowerCase, likeOpts)
         : quoteValue(`${escapeValue(value)}%`);
 
     case 'endswith':
     case 'doesnotendwith':
       return valueIsField
-        ? concat(quoteValue('%'), wrapFieldName(value))
+        ? wrapLikeFragment(wrapFieldName(value), operatorLowerCase, likeOpts)
         : quoteValue(`%${escapeValue(value)}`);
   }
 

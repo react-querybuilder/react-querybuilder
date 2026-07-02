@@ -21,6 +21,31 @@ const OPERATOR_MAP: Record<string, string> = {
   '>=': '>=',
 };
 
+const STRING_OPERATORS = new Set([
+  'contains',
+  'doesnotcontain',
+  'beginswith',
+  'doesnotbeginwith',
+  'endswith',
+  'doesnotendwith',
+]);
+
+// Builds a JSONLogic string-match rule from resolved operands, mirroring the stock processor:
+// `contains` → `in`, `beginsWith` → `startsWith`, `endsWith` → `endsWith`; `doesNot*` negates.
+const buildStringOp = (operatorLC: string, lhs: unknown, rhs: unknown): object => {
+  const negate = (r: object) => (operatorLC.startsWith('doesnot') ? { '!': r } : r);
+  switch (operatorLC) {
+    case 'contains':
+    case 'doesnotcontain':
+      return negate({ in: [rhs, lhs] });
+    case 'beginswith':
+    case 'doesnotbeginwith':
+      return negate({ startsWith: [lhs, rhs] });
+    default:
+      return negate({ endsWith: [lhs, rhs] });
+  }
+};
+
 const renderLeaf = (rule: RuleType, opts: ValueProcessorOptions): unknown =>
   rule.valueSource === 'field'
     ? { var: `${rule.value}` }
@@ -48,7 +73,8 @@ export const getExpressionRuleProcessorJsonLogic =
     const operator = lc(rule.operator);
     const unary = operator === 'null' || operator === 'notnull';
     const jlOp = OPERATOR_MAP[operator];
-    if (!unary && !jlOp) return defaultRuleProcessorJsonLogic(rule, opts);
+    const stringOp = STRING_OPERATORS.has(operator);
+    if (!unary && !jlOp && !stringOp) return defaultRuleProcessorJsonLogic(rule, opts);
 
     const validate = { functions: serial, meta: defaultFunctionMeta };
     if (
@@ -64,5 +90,5 @@ export const getExpressionRuleProcessorJsonLogic =
     }
 
     const rhs = expr.rhs ? serializeJsonLogic(expr.rhs, serial, opts) : renderLeaf(rule, opts);
-    return { [jlOp]: [lhs, rhs] };
+    return stringOp ? buildStringOp(operator, lhs, rhs) : { [jlOp]: [lhs, rhs] };
   };

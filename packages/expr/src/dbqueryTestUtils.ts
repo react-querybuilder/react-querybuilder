@@ -62,14 +62,6 @@ export const INSERT_PRODUCTS = (): string =>
     )
     .join(';\n');
 
-// JSONLogic ops missing from the stock runtime; register before evaluating (`+ - * / %`
-// and `min`/`max` are stock, so only these three need registering).
-export const expressionJsonLogicOperators: Record<string, (...args: unknown[]) => unknown> = {
-  abs: (...a) => Math.abs(a[0] as number),
-  upper: (...a) => String(a[0]).toUpperCase(),
-  lower: (...a) => String(a[0]).toLowerCase(),
-};
-
 // Expression-node builders (mirror the local helpers in expressionProcessors.test.ts).
 export const field = (f: string): ExpressionNode => ({ kind: 'field', field: f });
 export const value = (v: unknown, valueType?: string): ExpressionNode => ({
@@ -228,5 +220,69 @@ export const testCases: Record<string, [RuleGroupType, number[]]> = {
       exprRule({ field: 'rating', operator: 'notNull', value: null }, { lhs: field('rating') })
     ),
     [2, 4, 5],
+  ],
+  // String-match operators (contains/beginsWith/endsWith + negations -> SQL like/not like).
+  // LHS is UPPER(name) with uppercase patterns so SQLite's case-insensitive LIKE,
+  // PostgreSQL's case-sensitive LIKE, and JSONLogic's case-sensitive JS all agree.
+  // UPPER(name): 1=WIDGET, 2=GADGET, 3=ACME, 4=GIZMO, 5=GADGET.
+  // contains 'AD' via an expression RHS (UPPER('ad')) -> both gadget rows.
+  contains: [
+    group(
+      exprRule(
+        { field: 'name', operator: 'contains' },
+        { lhs: fn('upper', field('name')), rhs: fn('upper', value('ad')) }
+      )
+    ),
+    [2, 5],
+  ],
+  // beginsWith 'G': GADGET, GIZMO, gadget.
+  beginsWith: [
+    group(
+      exprRule(
+        { field: 'name', operator: 'beginsWith', value: 'G' },
+        { lhs: fn('upper', field('name')) }
+      )
+    ),
+    [2, 4, 5],
+  ],
+  // endsWith 'ET': WIDGET, GADGET, gadget.
+  endsWith: [
+    group(
+      exprRule(
+        { field: 'name', operator: 'endsWith', value: 'ET' },
+        { lhs: fn('upper', field('name')) }
+      )
+    ),
+    [1, 2, 5],
+  ],
+  // doesNotContain 'AD' -> complement of the gadget rows.
+  doesNotContain: [
+    group(
+      exprRule(
+        { field: 'name', operator: 'doesNotContain', value: 'AD' },
+        { lhs: fn('upper', field('name')) }
+      )
+    ),
+    [1, 3, 4],
+  ],
+  // doesNotBeginWith 'G'.
+  doesNotBeginWith: [
+    group(
+      exprRule(
+        { field: 'name', operator: 'doesNotBeginWith', value: 'G' },
+        { lhs: fn('upper', field('name')) }
+      )
+    ),
+    [1, 3],
+  ],
+  // doesNotEndWith 'ET'.
+  doesNotEndWith: [
+    group(
+      exprRule(
+        { field: 'name', operator: 'doesNotEndWith', value: 'ET' },
+        { lhs: fn('upper', field('name')) }
+      )
+    ),
+    [3, 4],
   ],
 };

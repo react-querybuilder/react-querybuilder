@@ -1,5 +1,4 @@
 import { add_operation, apply } from 'json-logic-js';
-import { expressionJsonLogicOperators } from './dbqueryTestUtils';
 import { jsonLogicExpressionOperators } from './jsonLogicOperators';
 
 describe('jsonLogicExpressionOperators', () => {
@@ -23,9 +22,9 @@ describe('jsonLogicExpressionOperators', () => {
   });
 });
 
-describe('registered expressionJsonLogicOperators', () => {
+describe('registered jsonLogicExpressionOperators', () => {
   it('produces operators a real json-logic instance can apply', () => {
-    for (const [op, func] of Object.entries(expressionJsonLogicOperators)) {
+    for (const [op, func] of Object.entries(jsonLogicExpressionOperators)) {
       add_operation(op, func);
     }
     expect(apply({ abs: { var: 'x' } }, { x: -5 })).toBe(5);

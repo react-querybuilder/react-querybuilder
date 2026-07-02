@@ -1,3 +1,4 @@
+import { jsonLogicAdditionalOperators } from '@react-querybuilder/core';
 import type { add_operation } from 'json-logic-js';
 
 /** A JSONLogic custom-operator implementation (the `code` arg of `json-logic-js`'s `add_operation`). */
@@ -17,8 +18,12 @@ export type JsonLogicOperator = Parameters<typeof add_operation>[1];
  * }
  * ```
  */
-export const jsonLogicExpressionOperators: Record<'abs' | 'upper' | 'lower', JsonLogicOperator> = {
+export const jsonLogicExpressionOperators: Record<
+  'abs' | 'upper' | 'lower' | 'startsWith' | 'endsWith',
+  JsonLogicOperator
+> = {
   abs: (value: unknown) => Math.abs(Number(value)),
   upper: (value: unknown) => String(value).toUpperCase(),
   lower: (value: unknown) => String(value).toLowerCase(),
+  ...jsonLogicAdditionalOperators,
 };

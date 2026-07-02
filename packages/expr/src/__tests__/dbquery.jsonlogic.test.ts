@@ -1,9 +1,10 @@
 import { formatQuery } from '@react-querybuilder/core';
 import { add_operation, apply } from 'json-logic-js';
-import { expressionJsonLogicOperators, fields, products, testCases } from '../dbqueryTestUtils';
+import { fields, products, testCases } from '../dbqueryTestUtils';
 import { expressionRuleProcessorJsonLogic } from '../index';
+import { jsonLogicExpressionOperators } from '../jsonLogicOperators';
 
-for (const [op, func] of Object.entries(expressionJsonLogicOperators)) {
+for (const [op, func] of Object.entries(jsonLogicExpressionOperators)) {
   add_operation(op, func);
 }
 
