@@ -64,7 +64,7 @@
     "rollup-plugin-visualizer": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest-native": "^0.7.0"
+    "vitest-native": "^0.8.0"
   },
   "peerDependencies": {
     "react": "catalog:peer",

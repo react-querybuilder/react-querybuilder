@@ -63,9 +63,9 @@ it('gates the condition on the compiled guard', () => {
   const { API, log } = makeAPI();
 
   // Matching fact → guard true.
-  rule.condition(API, { experience: 12 } as Fact);
+  rule.condition(API, { experience: 12 });
   // Non-matching fact (fresh fact, never fired) → guard false.
-  rule.condition(API, { experience: 1 } as Fact);
+  rule.condition(API, { experience: 1 });
 
   expect(log.when).toEqual([true, false]);
 });
@@ -100,9 +100,9 @@ it('later cascade siblings negate the antecedents of their prior siblings', () =
   const [, seasoned, rookie] = formatRulesEngine(tieredRE, 'node-rules');
   const { API, log } = makeAPI();
   // rookie's guard ANDs NOT(>=10), NOT(>=3), (>=0).
-  rookie.condition(API, { experience: 12 } as Fact); // NOT(>=10) is false → when(false)
-  seasoned.condition(API, { experience: 1 } as Fact); // NOT(>=10) true but own (>=3) false → when(false)
-  rookie.condition(API, { experience: 1 } as Fact); // all negations hold and (>=0) → when(true)
+  rookie.condition(API, { experience: 12 }); // NOT(>=10) is false → when(false)
+  seasoned.condition(API, { experience: 1 }); // NOT(>=10) true but own (>=3) false → when(false)
+  rookie.condition(API, { experience: 1 }); // all negations hold and (>=0) → when(true)
   expect(log.when).toEqual([false, false, true]);
 });
 
@@ -144,8 +144,8 @@ it('uses a custom ruleProcessor supplied via formatQueryOptions', () => {
     formatQueryOptions: { ruleProcessor },
   });
   const { API, log } = makeAPI();
-  rule.condition(API, { flag: true } as Fact);
-  rule.condition(API, { flag: false } as Fact);
+  rule.condition(API, { flag: true });
+  rule.condition(API, { flag: false });
   expect(log.when).toEqual([true, false]);
 });
 
@@ -166,7 +166,7 @@ it('uses a custom ruleGroupProcessor supplied via formatQueryOptions', () => {
     formatQueryOptions: { ruleGroupProcessor },
   });
   const { API, log } = makeAPI();
-  rule.condition(API, { ok: true } as Fact);
-  rule.condition(API, { ok: false } as Fact);
+  rule.condition(API, { ok: true });
+  rule.condition(API, { ok: false });
   expect(log.when).toEqual([true, false]);
 });

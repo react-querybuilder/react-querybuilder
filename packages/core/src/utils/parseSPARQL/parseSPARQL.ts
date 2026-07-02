@@ -255,7 +255,7 @@ const visitFilter = (
     // Comparison operators
     if (op in sparqlOpToRqb && args.length === 2) {
       const field = termToString(args[0] as TraqulaTerm);
-      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      const value = termToLiteralValue(args[1]);
       out.push({ field, operator: sparqlOpToRqb[op], value } as DefaultRuleType);
       return;
     }
@@ -270,19 +270,19 @@ const visitFilter = (
     // String functions
     if (op === 'contains' && args.length === 2) {
       const field = termToString(args[0] as TraqulaTerm);
-      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      const value = termToLiteralValue(args[1]);
       out.push({ field, operator: 'contains', value } as DefaultRuleType);
       return;
     }
     if (op === 'strstarts' && args.length === 2) {
       const field = termToString(args[0] as TraqulaTerm);
-      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      const value = termToLiteralValue(args[1]);
       out.push({ field, operator: 'beginsWith', value } as DefaultRuleType);
       return;
     }
     if (op === 'strends' && args.length === 2) {
       const field = termToString(args[0] as TraqulaTerm);
-      const value = termToLiteralValue(args[1] as TraqulaExpression);
+      const value = termToLiteralValue(args[1]);
       out.push({ field, operator: 'endsWith', value } as DefaultRuleType);
       return;
     }

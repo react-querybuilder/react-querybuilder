@@ -48,7 +48,7 @@ export const getValueSourcesUtil = <F extends FullField, O extends string>(
     | ((operator: string) => ValueSources | ValueSourceFlexibleOptions) = fd.valueSources ?? false;
 
   if (typeof valueSourcesNEW === 'function') {
-    valueSourcesNEW = valueSourcesNEW(operator as O);
+    valueSourcesNEW = valueSourcesNEW(operator);
   }
 
   if (!valueSourcesNEW && getValueSources) {

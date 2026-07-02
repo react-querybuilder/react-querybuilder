@@ -1,7 +1,7 @@
 import { clsx, type RuleGroupTypeAny } from '@react-querybuilder/core';
 import * as React from 'react';
 import { standardClassnamesRE } from '../defaults';
-import type { EvaluationMode, RulesEngineBuilderHeaderProps } from '../types';
+import type { RulesEngineBuilderHeaderProps } from '../types';
 
 // The root default consequent has no antecedent; consequent-type resolution falls back to the
 // global default for an empty group.
@@ -47,7 +47,7 @@ export const RulesEngineBuilderHeader: React.MemoExoticComponent<
 
   const onEvaluationModeChange = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
-      updateCondition(conditionPath, 'evaluationMode', event.target.value as EvaluationMode);
+      updateCondition(conditionPath, 'evaluationMode', event.target.value);
     },
     [conditionPath, updateCondition]
   );

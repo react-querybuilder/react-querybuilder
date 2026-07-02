@@ -1097,16 +1097,15 @@ describe('insert', () => {
         rules: [r1, `custom-${and}`, r2],
       }
     );
+    const gwr1: DefaultRuleGroupTypeIC = { rules: [r1] };
     testQT(
       'inserts a rule with the default combinator at first position',
-      insert({ rules: [r1] } as DefaultRuleGroupTypeIC, { ...r2, path: [0] }, [0]),
+      insert(gwr1, { ...r2, path: [0] }, [0]),
       { rules: [r2, and, r1] }
     );
     testQT(
       'inserts a rule with the succeeding combinator',
-      insert({ rules: [r1] } as DefaultRuleGroupTypeIC, { ...r2, path: [0] }, [0], {
-        combinatorSucceeding: or,
-      }),
+      insert(gwr1, { ...r2, path: [0] }, [0], { combinatorSucceeding: or }),
       { rules: [r2, or, r1] }
     );
     testQT(

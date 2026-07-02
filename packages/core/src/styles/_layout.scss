@@ -112,14 +112,10 @@
       top: calc(-1 * var(--#{$rqb-var-prefix}spacing));
       height: calc(50% + var(--#{$rqb-var-prefix}spacing));
       @if $direction == rtl {
-        border-width: 0
-          var(--#{$rqb-var-prefix}branch-width)
-          var(--#{$rqb-var-prefix}branch-width)
+        border-width: 0 var(--#{$rqb-var-prefix}branch-width) var(--#{$rqb-var-prefix}branch-width)
           0;
       } @else {
-        border-width: 0
-          0
-          var(--#{$rqb-var-prefix}branch-width)
+        border-width: 0 0 var(--#{$rqb-var-prefix}branch-width)
           var(--#{$rqb-var-prefix}branch-width);
       }
     }
@@ -145,10 +141,8 @@
     &::after {
       #{$margin-side}: calc(
         -1 *
-          (
-            var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width) +
-              var(--#{$rqb-var-prefix}border-width)
-          )
+          (var(--#{$rqb-var-prefix}branch-indent) + var(--#{$rqb-var-prefix}branch-width) +
+            var(--#{$rqb-var-prefix}border-width))
       );
     }
 

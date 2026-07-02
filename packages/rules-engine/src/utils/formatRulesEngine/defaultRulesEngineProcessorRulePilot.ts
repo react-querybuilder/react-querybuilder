@@ -49,7 +49,7 @@ export const defaultRulesEngineProcessorRulePilot: RulesEngineProcessor<RulePilo
         (opts.formatQueryOptions
           ?.ruleGroupProcessor as typeof defaultRuleGroupProcessorRulePilot) ??
         defaultRuleGroupProcessorRulePilot,
-    }) as unknown as Condition;
+    });
 
   const flattened = walkRulesEngine<Condition>(rulesEngine, mode, {
     processAntecedent,

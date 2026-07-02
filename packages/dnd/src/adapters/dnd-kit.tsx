@@ -565,7 +565,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     // `undefined` when dragging is disabled, so a disabled handle still gets
     // its ARIA attributes (incl. `aria-disabled`) but no activation listeners.
     const dragHandleAttributes = useMemo(
-      () => ({ ...attributes, ...listeners }) as React.HTMLAttributes<HTMLElement>,
+      () => ({ ...attributes, ...listeners }),
       [attributes, listeners]
     );
 
@@ -685,7 +685,7 @@ export const createDndKitAdapter = (dndKitExports: DndKitExports): DndAdapter =>
     // handle still gets its ARIA attributes (incl. `aria-disabled`) but no
     // activation listeners.
     const dragHandleAttributes = useMemo(
-      () => ({ ...attributes, ...listeners }) as React.HTMLAttributes<HTMLElement>,
+      () => ({ ...attributes, ...listeners }),
       [attributes, listeners]
     );
 

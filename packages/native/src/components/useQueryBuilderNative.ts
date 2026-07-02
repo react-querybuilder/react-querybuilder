@@ -38,7 +38,7 @@ export const useQueryBuilderSchemaNative = <
 ): ReturnType<typeof useQueryBuilderSchema<RG, F, O, C>> & {
   schema: SchemaNative<F, GetOptionIdentifierType<O>>;
 } => {
-  const qb = useQueryBuilderSchema<RG, F, O, C>(props as QueryBuilderProps<RG, F, O, C>, setup);
+  const qb = useQueryBuilderSchema<RG, F, O, C>(props, setup);
 
   const styles = useMemo(() => StyleSheet.create(props.styles ?? {}), [props.styles]);
 

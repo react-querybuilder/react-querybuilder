@@ -71,7 +71,7 @@ export const getHashFromState = (s: DemoState) =>
 
 export const unzip = (b64string: string) => {
   const buff = Buffer.from(b64string, 'base64');
-  const result = pako.inflate(buff, { to: 'string' });
+  const result = pako.inflate(buff, { toText: true });
   return JSON.parse(result, bigIntJsonParseReviver);
 };
 

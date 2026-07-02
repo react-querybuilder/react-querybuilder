@@ -2,16 +2,12 @@ import type { Store } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { getRqbStore, injectSlice } from '../getRqbStore';
 
-interface CounterState {
-  value: number;
-}
-
 const getAnyState = (store: Store) => store.getState();
 
 it('adds a slice with addSlice', () => {
   const counterSliceAS = createSlice({
     name: 'counter-as',
-    initialState: { value: 0 } as CounterState,
+    initialState: { value: 0 },
     reducers: { increment: state => void state.value++ },
     selectors: { selectValue: state => state.value },
   });
@@ -30,7 +26,7 @@ it('adds a slice with addSlice', () => {
 it('adds a slice with injectSlice', () => {
   const counterSliceIS = createSlice({
     name: 'counter-is',
-    initialState: { value: 0 } as CounterState,
+    initialState: { value: 0 },
     reducers: { increment: state => void state.value++ },
     selectors: { selectValue: state => state.value },
   });

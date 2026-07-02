@@ -477,7 +477,7 @@ function formatQuery(
     defaultRuleProcessorSQL;
 
   const quoteFieldNamesWith = getQuoteFieldNamesWithArray(quoteFieldNamesWith_option);
-  const fields = toFullOptionList(optObj.fields) as FullOptionList<FullField>;
+  const fields = toFullOptionList(optObj.fields);
   const getOperators: FormatQueryOptions['getOperators'] = (f, m) =>
     toFullOptionList(
       getOperators_option(f, m) ??
@@ -532,7 +532,7 @@ function formatQuery(
     if (typeof f.validator === 'function') {
       validatorMap[
         f.value ?? /* v8 ignore start -- @preserve */ f.name /* v8 ignore stop -- @preserve */
-      ] = f.validator;
+      ] = f.validator as RuleValidator;
     }
   }
 
@@ -548,7 +548,7 @@ function formatQuery(
         const field = fieldArr[0];
         // v8 ignore else
         if (typeof field.validator === 'function') {
-          fieldValidator = field.validator;
+          fieldValidator = field.validator as RuleValidator;
         }
       }
     }

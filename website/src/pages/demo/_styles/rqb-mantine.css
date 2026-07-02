@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.4.0
+/* BEGIN_MANTINE_STYLES v9.4.1
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -688,36 +688,36 @@ fieldset:disabled .mantine-active:active {
 }
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='y']):where(
-    [data-offset-scrollbars='xy'],
-    [data-offset-scrollbars='y'],
-    [data-offset-scrollbars='present']
-  ):where([data-vertical-hidden]) {
+  [data-offset-scrollbars='xy'],
+  [data-offset-scrollbars='y'],
+  [data-offset-scrollbars='present']
+):where([data-vertical-hidden]) {
   padding-inline-end: 0;
   padding-inline-start: 0;
 }
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='y']):where(
-    [data-offset-scrollbars='xy'],
-    [data-offset-scrollbars='y'],
-    [data-offset-scrollbars='present']
-  ):not([data-vertical-hidden]) {
+  [data-offset-scrollbars='xy'],
+  [data-offset-scrollbars='y'],
+  [data-offset-scrollbars='present']
+):not([data-vertical-hidden]) {
   padding-inline-end: var(--scrollarea-scrollbar-size);
   padding-inline-start: unset;
 }
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='x']):where(
-    [data-offset-scrollbars='xy'],
-    [data-offset-scrollbars='x'],
-    [data-offset-scrollbars='present']
-  ):where([data-horizontal-hidden]) {
+  [data-offset-scrollbars='xy'],
+  [data-offset-scrollbars='x'],
+  [data-offset-scrollbars='present']
+):where([data-horizontal-hidden]) {
   padding-bottom: 0;
 }
 
 .m_c0783ff9:where([data-scrollbars='xy'], [data-scrollbars='x']):where(
-    [data-offset-scrollbars='xy'],
-    [data-offset-scrollbars='x'],
-    [data-offset-scrollbars='present']
-  ):not([data-horizontal-hidden]) {
+  [data-offset-scrollbars='xy'],
+  [data-offset-scrollbars='x'],
+  [data-offset-scrollbars='present']
+):not([data-horizontal-hidden]) {
   padding-bottom: var(--scrollarea-scrollbar-size);
 }
 
@@ -7334,6 +7334,10 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
+}
+
+:where([dir='rtl']) .m_68c77a5b {
+  transform: translate(calc(50% - var(--slider-size) / 2), calc(var(--mantine-spacing-xs) / 2));
 }
 
 :where([data-mantine-color-scheme='light']) .m_68c77a5b {

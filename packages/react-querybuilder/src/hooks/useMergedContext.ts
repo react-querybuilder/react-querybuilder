@@ -85,7 +85,7 @@ export const useMergedContext = <
   const enableDragAndDrop = finalize
     ? rqbContext.enableDragAndDrop !== false &&
       preferProp(false, props.enableDragAndDrop, rqbContext.enableDragAndDrop)
-    : (props.enableDragAndDrop ?? (rqbContext.enableDragAndDrop as boolean));
+    : (props.enableDragAndDrop ?? rqbContext.enableDragAndDrop!);
 
   const cc = useMemo(
     // Classname defaults are all empty strings, so a base/defaults argument

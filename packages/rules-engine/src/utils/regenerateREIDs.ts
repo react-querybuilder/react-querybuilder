@@ -17,7 +17,7 @@ export const regenerateREIDs = <REC extends RulesEngineAny | REConditionAny>(
     return structuredClone({
       ...subject,
       id: idGenerator(),
-    }) as REC & { id: string };
+    });
   }
 
   const newRE: REConditionAny | RulesEngineAny = { ...subject, id: idGenerator() };

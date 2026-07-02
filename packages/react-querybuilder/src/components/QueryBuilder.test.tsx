@@ -3707,10 +3707,7 @@ describe('string array options', () => {
     });
 
     it('uses default and custom labels from defaultOperators for string arrays', () => {
-      setupWithStringArrays({
-        // oxlint-disable-next-line no-explicit-any
-        operators: ['beginsWith', 'doesNotContain', 'null', 'custom' as any],
-      });
+      setupWithStringArrays({ operators: ['beginsWith', 'doesNotContain', 'null', 'custom'] });
 
       const operatorSelector = screen.getByTestId(TestID.operators);
       const options = operatorSelector.querySelectorAll('option');

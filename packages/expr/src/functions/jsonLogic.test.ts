@@ -1,12 +1,9 @@
-import type { ValueProcessorOptions } from '@react-querybuilder/core';
 import { defaultJsonLogicSerializers } from './jsonLogic';
 
 // Invoke a built-in serializer (all built-ins are opts-first functions; opts ignored).
 const call = (fn: string, ...args: unknown[]): unknown => {
   const serializer = defaultJsonLogicSerializers[fn];
-  return typeof serializer === 'function'
-    ? serializer({} as ValueProcessorOptions, ...args)
-    : { [serializer]: args };
+  return typeof serializer === 'function' ? serializer({}, ...args) : { [serializer]: args };
 };
 
 describe('defaultJsonLogicSerializers', () => {

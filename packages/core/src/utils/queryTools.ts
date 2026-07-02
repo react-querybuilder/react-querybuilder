@@ -1,7 +1,6 @@
 import { current, isDraft, produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
-  MatchMode,
   MatchModeOptions,
   OptionList,
   Path,
@@ -373,7 +372,7 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
           ? null
           : getFirstOption(toFieldMatchModes);
       if (nextMatchMode) {
-        ruleOrGroup.match = { mode: nextMatchMode as MatchMode, threshold: 1 };
+        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
       }
     }
 

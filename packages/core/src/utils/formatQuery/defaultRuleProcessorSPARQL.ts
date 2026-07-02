@@ -35,8 +35,9 @@ export const defaultRuleProcessorSPARQL: RuleProcessor = (
     if (valueIsField) return sparqlVar(trimIfString(v) as string);
     if (typeof v === 'number' || shouldRenderAsNumber(v, parseNumbers))
       return trimIfString(v) as string;
-    const s =
-      typeof v === 'string' ? v : /* v8 ignore next -- @preserve */ (JSON.stringify(v) ?? '');
+    /* v8 ignore start -- @preserve */
+    const s = typeof v === 'string' ? v : (JSON.stringify(v) ?? '');
+    /* v8 ignore stop -- @preserve */
     // Don't quote variable references or URIs
     if (s.startsWith('?') || s.startsWith('<') || s.includes(':')) return s;
     return `"${escapeDoubleQuotes(s, escapeQuotes)}"`;

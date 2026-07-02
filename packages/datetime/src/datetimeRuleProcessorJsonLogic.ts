@@ -1,6 +1,6 @@
 import type { DefaultOperatorName, JsonLogicVar, RuleProcessor } from '@react-querybuilder/core';
 import { defaultRuleProcessorJsonLogic, toArray } from '@react-querybuilder/core';
-import type { RQBJsonLogicDateRelative, RQBDateTimeJsonLogic } from './types';
+import type { RQBDateTimeJsonLogic } from './types';
 import {
   isDateOnlyDatatype,
   isRelativeDateTimeValue,
@@ -51,7 +51,7 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
     if (isRelativeDateTimeValue(v)) {
       return {
         dateRelative: [v.anchor, v.offset, v.unit, dateOnly],
-      } as RQBJsonLogicDateRelative;
+      };
     }
     return v as string;
   };
