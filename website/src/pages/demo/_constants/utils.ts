@@ -30,7 +30,7 @@ import {
   expressionRuleProcessorSQL,
 } from '@react-querybuilder/expr';
 import clsx from 'clsx';
-import pako from 'pako';
+import * as pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
