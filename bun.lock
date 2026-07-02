@@ -5892,6 +5892,10 @@
 
     "@react-native/dev-middleware/open": ["open@7.4.2", "", { "dependencies": { "is-docker": "^2.0.0", "is-wsl": "^2.1.1" } }, "sha512-MVHddDVweXZF3awtlAS+6pgKLlm/JgxZ90+/NBurBoQctVOOB/zDdVjcyPzQ+0laDGbsWgrRkflI65sQeOgT9Q=="],
 
+    "@react-querybuilder/expr/@react-querybuilder/core": ["@react-querybuilder/core@8.20.1", "", { "dependencies": { "@ts-jison/lexer": "0.4.1-alpha.1", "@ts-jison/parser": "0.4.1-alpha.1", "immer": "^11.1.8", "numeric-quantity": "^3.2.2" }, "peerDependencies": { "@tanstack/db": "*", "@traqula/parser-sparql-1-2": ">=0.1.0", "chevrotain": ">=11", "drizzle-orm": ">=0.38.0", "json-logic-js": ">=2", "jsonata": ">=2", "sequelize": ">=6", "spel2js": ">=0.2.0" }, "optionalPeers": ["@tanstack/db", "@traqula/parser-sparql-1-2", "chevrotain", "drizzle-orm", "json-logic-js", "jsonata", "sequelize", "spel2js"] }, "sha512-rLR2hlgrEAfknuHP97BIQ3G9v1K351Cvs8RbVpEcj8rsNoos1xxbR3JQiQW4AefbjXXjI9vZPs36ObF4hYMQoQ=="],
+
+    "@react-querybuilder/expr/react-querybuilder": ["react-querybuilder@8.20.1", "", { "dependencies": { "@react-querybuilder/core": "^8.20.1", "@reduxjs/toolkit": "^2.12.0", "react-redux": "^9.3.0" }, "peerDependencies": { "react": ">=18" } }, "sha512-lAvJUhnFki0vKBb18Rq/p0y0I5a44qAgBHwoVpLTgymkTbTqGiQL/4ryujdN3SB0zv69MhVvHDBLHf8lr4w9DQ=="],
+
     "@rspack/binding-wasm32-wasi/@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.0.7", "", { "dependencies": { "@emnapi/core": "^1.5.0", "@emnapi/runtime": "^1.5.0", "@tybys/wasm-util": "^0.10.1" } }, "sha512-SeDnOO0Tk7Okiq6DbXmmBODgOAb9dp9gjlphokTUxmt8U3liIP1ZsozBahH69j/RJv+Rfs6IwUKHTgQYJ/HBAw=="],
 
     "@slorber/remark-comment/micromark-factory-space": ["micromark-factory-space@1.1.0", "", { "dependencies": { "micromark-util-character": "^1.0.0", "micromark-util-types": "^1.0.0" } }, "sha512-cRzEj7c0OL4Mw2v6nwzttyOZe8XY/Z8G0rzmWQZTBi/jjwyw/U4uqKtUORXQrR5bAZZnbTI/feRV/R7hc4jQYQ=="],
@@ -6499,6 +6503,8 @@
     "@react-native/codegen/yargs/string-width": ["string-width@4.2.3", "", { "dependencies": { "emoji-regex": "^8.0.0", "is-fullwidth-code-point": "^3.0.0", "strip-ansi": "^6.0.1" } }, "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="],
 
     "@react-native/codegen/yargs/yargs-parser": ["yargs-parser@21.1.1", "", {}, "sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw=="],
+
+    "@react-querybuilder/expr/react-querybuilder/@react-querybuilder/core": ["@react-querybuilder/core@workspace:packages/core"],
 
     "@slorber/remark-comment/micromark-factory-space/micromark-util-types": ["micromark-util-types@1.1.0", "", {}, "sha512-ukRBgie8TIAcacscVHSiddHjO4k/q3pnedmzMQ4iwDcK0FtFCohKOlFbaOL/mPgfnPsL3C1ZyxJa4sbWrBl3jg=="],
 
