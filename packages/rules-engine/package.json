@@ -69,6 +69,7 @@
     "@testing-library/react": "catalog:test",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "drizzle-orm": "catalog:test",
     "json-rules-engine": "catalog:",
     "node-rules": "^9.2.0",
     "react": "catalog:",
@@ -81,12 +82,16 @@
     "vite": "catalog:"
   },
   "peerDependencies": {
+    "drizzle-orm": "catalog:peer",
     "json-rules-engine": "catalog:peer",
     "node-rules": "catalog:peer",
     "react": "catalog:peer",
     "rulepilot": "catalog:peer"
   },
   "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    },
     "json-rules-engine": {
       "optional": true
     },

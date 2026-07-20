@@ -33,7 +33,7 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
   rule,
   options
 ): RQBDateTimeJsonLogic => {
-  const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
 
   if (!processIsDateField(opts.context?.isDateField, rule, opts)) {
     return defaultRuleProcessorJsonLogic(rule, opts);

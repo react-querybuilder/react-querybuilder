@@ -212,7 +212,7 @@ export const useQueryBuilderSetup = <
 
       const ops =
         getOperatorsMain(field, { fieldData }) ??
-        /* v8 ignore start -- @preserve */ [] /* v8 ignore stop -- @preserve */;
+        /* v8 ignore start -- @preserve */ []; /* v8 ignore stop -- @preserve */
       return (getFirstOption(ops) ??
         /* v8 ignore start -- @preserve */ '') /* v8 ignore stop -- @preserve */ as OperatorName;
     },

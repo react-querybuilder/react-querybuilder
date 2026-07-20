@@ -14,7 +14,7 @@ export const defaultRuleProcessorTanStackDB: RuleProcessor = (
   rule,
   _options
 ): TanStackDbWhereCallbackReturnType | undefined => {
-  const opts = _options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  const opts = _options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const ops = context.tanStackDbOperators;
   const refs = context._tanstackDbRefs;

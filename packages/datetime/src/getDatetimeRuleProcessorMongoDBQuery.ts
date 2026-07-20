@@ -14,7 +14,7 @@ import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator 
 export const getDatetimeRuleProcessorMongoDBQuery =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
-    const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+    const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
     const { field, valueSource } = rule;
     const operator = resolveDatetimeOperator(rule, opts);
 

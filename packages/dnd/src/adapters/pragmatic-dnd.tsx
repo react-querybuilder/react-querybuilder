@@ -465,7 +465,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     const dropId = getDropId('rule', params.path, params.schema.qbId);
 
     const paramsRef = useRef(params);
-    paramsRef.current = params;
+    useEffect(() => {
+      paramsRef.current = params;
+    });
 
     useEffect(() => {
       const container = containerNodeRef.current;
@@ -580,7 +582,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     const dropId = getDropId('ruleGroup', params.path, params.schema.qbId);
 
     const paramsRef = useRef(params);
-    paramsRef.current = params;
+    useEffect(() => {
+      paramsRef.current = params;
+    });
 
     // Register draggable on the preview element with handle
     useEffect(() => {
@@ -715,7 +719,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     ] as RuleType | RuleGroupTypeAny;
 
     const paramsRef = useRef(params);
-    paramsRef.current = params;
+    useEffect(() => {
+      paramsRef.current = params;
+    });
 
     useEffect(() => {
       const dropEl = dropNodeRef.current;

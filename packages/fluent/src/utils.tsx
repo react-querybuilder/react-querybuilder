@@ -21,4 +21,4 @@ export const toDropdownOptions = (list: OptionList): React.JSX.Element[] | null 
           </Option>
         ))
       : /* v8 ignore start -- @preserve */
-        null /* v8 ignore stop -- @preserve */;
+        null; /* v8 ignore stop -- @preserve */

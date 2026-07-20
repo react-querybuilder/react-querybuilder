@@ -175,8 +175,13 @@ const defaultQueryWrapper = (props: {
 
 // Wraps the live query builder with the date/time context provider (which supplies the
 // relative-capable value editor) when the "Use date/time package" option is enabled.
-const DateTimeWrapper = ({ enabled, children }: { enabled?: boolean; children: React.ReactNode }) =>
-  enabled ? <QueryBuilderDateTime>{children}</QueryBuilderDateTime> : <>{children}</>;
+const DateTimeWrapper = ({
+  enabled,
+  children,
+}: {
+  enabled?: boolean;
+  children: React.ReactNode;
+}) => (enabled ? <QueryBuilderDateTime>{children}</QueryBuilderDateTime> : <>{children}</>);
 
 // Wraps the live query builder with the expressions context provider (overriding the field
 // selector and value editor to host arithmetic/function expressions) when the "Enable

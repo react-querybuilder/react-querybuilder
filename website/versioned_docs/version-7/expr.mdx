@@ -162,8 +162,7 @@ type SQLSerializerFn = (opts: ValueProcessorOptions, ...args: string[]) => strin
 // A SQL serializer is either a single function, or a preset-keyed map for dialect
 // variance (`default` covers any preset without an explicit override):
 type SQLSerializer =
-  | SQLSerializerFn
-  | ({ default: SQLSerializerFn } & Partial<Record<SQLPreset, SQLSerializerFn>>);
+  SQLSerializerFn | ({ default: SQLSerializerFn } & Partial<Record<SQLPreset, SQLSerializerFn>>);
 
 // JSONLogic: an operator name (wraps args in `{ [op]: args }`) or a function:
 type JsonLogicSerializer = string | ((opts: ValueProcessorOptions, ...args: unknown[]) => unknown);

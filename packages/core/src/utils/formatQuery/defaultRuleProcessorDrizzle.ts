@@ -13,7 +13,7 @@ import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
  * @group Export
  */
 export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL | undefined => {
-  const opts = _options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+  const opts = _options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
   // v8 ignore next
   const { parseNumbers, preserveValueOrder, context = {} } = opts;
   const { columns, drizzleOperators, useRawFields } = context as {
