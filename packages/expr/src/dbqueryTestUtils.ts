@@ -93,6 +93,19 @@ export const exprRule = (
 
 export const group = (...rules: RuleType[]): RuleGroupType => ({ combinator: 'and', rules });
 
+// Cases whose operator is a string-match ("like") op. Most processors now render these
+// natively (SQL/parameterized/drizzle/sequelize via `like`; cel/spel/cypher/sparql/jsonata
+// via native string ops; mongodb via `$indexOfCP`/`$substrCP`; jsonlogic in JS). Only
+// tanstack_db defers/omits them (its `like` needs a static pattern). Excluded for that one.
+export const stringMatchCases: Set<string> = new Set([
+  'contains',
+  'beginsWith',
+  'endsWith',
+  'doesNotContain',
+  'doesNotBeginWith',
+  'doesNotEndWith',
+]);
+
 export const testCases: Record<string, [RuleGroupType, number[]]> = {
   // (price * qty): 50, 60, 100, 100, 50 -> > 80 matches the two 100s.
   multiply: [
@@ -314,3 +327,9 @@ export const testCases: Record<string, [RuleGroupType, number[]]> = {
     [2, 4],
   ],
 };
+
+// Arithmetic/function/null/between subset (excludes string-match ops) for structured/string
+// processors that don't preserve an expression LHS through like-operators.
+export const numericTestCases: Record<string, [RuleGroupType, number[]]> = Object.fromEntries(
+  Object.entries(testCases).filter(([k]) => !stringMatchCases.has(k))
+);

@@ -28,6 +28,17 @@ import {
   expressionRuleProcessorJsonLogic,
   expressionRuleProcessorParameterized,
   expressionRuleProcessorSQL,
+  expressionRuleProcessorCEL,
+  expressionRuleProcessorSpEL,
+  expressionRuleProcessorJSONata,
+  expressionRuleProcessorCypher,
+  expressionRuleProcessorDrizzle,
+  expressionRuleProcessorElasticSearch,
+  expressionRuleProcessorMongoDB,
+  expressionRuleProcessorMongoDBQuery,
+  expressionRuleProcessorNL,
+  expressionRuleProcessorSequelize,
+  expressionRuleProcessorSPARQL,
 } from '@react-querybuilder/expr';
 import clsx from 'clsx';
 import * as pako from 'pako';
@@ -201,6 +212,18 @@ export const expressionRuleProcessorMap: Partial<Record<ExportFormat, RuleProces
   parameterized: expressionRuleProcessorParameterized,
   parameterized_named: expressionRuleProcessorParameterized,
   jsonlogic: expressionRuleProcessorJsonLogic,
+  cel: expressionRuleProcessorCEL,
+  spel: expressionRuleProcessorSpEL,
+  jsonata: expressionRuleProcessorJSONata,
+  mongodb: expressionRuleProcessorMongoDB,
+  mongodb_query: expressionRuleProcessorMongoDBQuery,
+  elasticsearch: expressionRuleProcessorElasticSearch,
+  natural_language: expressionRuleProcessorNL,
+  drizzle: expressionRuleProcessorDrizzle,
+  sequelize: expressionRuleProcessorSequelize,
+  cypher: expressionRuleProcessorCypher,
+  gql: expressionRuleProcessorCypher,
+  sparql: expressionRuleProcessorSPARQL,
 };
 
 export const getExportCall = async (

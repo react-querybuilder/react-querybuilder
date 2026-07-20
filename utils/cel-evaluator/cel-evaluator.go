@@ -11,6 +11,7 @@ import (
 	"github.com/google/cel-go/checker/decls"
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
+	"github.com/google/cel-go/ext"
 )
 
 // Converts a CEL value to a regular Go interface{} for JSON serialization
@@ -86,6 +87,8 @@ func main() {
 	// Create a CEL environment
 	env, err := cel.NewEnv(
 		cel.Declarations(decls.NewIdent("item", decls.NewMapType(decls.String, decls.Dyn), nil)),
+		// Strings extension enables macros such as `.upperAscii()`/`.lowerAscii()`.
+		ext.Strings(),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create CEL environment: %v", err)

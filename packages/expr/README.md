@@ -39,23 +39,73 @@ Pass custom function metadata (UI label + arity) via the `functions` prop; it is
 
 ### Export
 
-`formatQuery` needs an expression-aware rule processor to serialize the `lhs`/`rhs` nodes. The package provides ready-to-use processors bound to the built-in serializers:
+`formatQuery` needs an expression-aware rule processor to serialize the `lhs`/`rhs` nodes. The package provides a ready-to-use processor (and a `getExpressionRuleProcessor*` factory) for every export format that can represent computed operands:
 
 ```ts
 import { formatQuery } from 'react-querybuilder';
-import {
-  expressionRuleProcessorSQL,
-  expressionRuleProcessorParameterized,
-  expressionRuleProcessorJsonLogic,
-} from '@react-querybuilder/expr';
+import { expressionRuleProcessorSQL } from '@react-querybuilder/expr';
 
 formatQuery(query, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL });
-formatQuery(query, {
-  format: 'parameterized',
-  ruleProcessor: expressionRuleProcessorParameterized,
-});
-formatQuery(query, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessorJsonLogic });
 ```
+
+#### Supported formats
+
+| `formatQuery` format     | Ready-to-use processor                 | Factory                                   | Extra `context` required                                                   |
+| ------------------------ | -------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------- |
+| `sql`                    | `expressionRuleProcessorSQL`           | `getExpressionRuleProcessorSQL`           | —                                                                          |
+| `parameterized`/`_named` | `expressionRuleProcessorParameterized` | `getExpressionRuleProcessorParameterized` | —                                                                          |
+| `jsonlogic`              | `expressionRuleProcessorJsonLogic`     | `getExpressionRuleProcessorJsonLogic`     | — (register operators before applying, see below)                          |
+| `cel`                    | `expressionRuleProcessorCEL`           | `getExpressionRuleProcessorCEL`           | —                                                                          |
+| `spel`                   | `expressionRuleProcessorSpEL`          | `getExpressionRuleProcessorSpEL`          | —                                                                          |
+| `cypher`/`gql`           | `expressionRuleProcessorCypher`        | `getExpressionRuleProcessorCypher`        | —                                                                          |
+| `sparql`                 | `expressionRuleProcessorSPARQL`        | `getExpressionRuleProcessorSPARQL`        | —                                                                          |
+| `jsonata`                | `expressionRuleProcessorJSONata`       | `getExpressionRuleProcessorJSONata`       | —                                                                          |
+| `mongodb_query`          | `expressionRuleProcessorMongoDBQuery`  | `getExpressionRuleProcessorMongoDBQuery`  | —                                                                          |
+| `mongodb` _(deprecated)_ | `expressionRuleProcessorMongoDB`       | `getExpressionRuleProcessorMongoDB`       | —                                                                          |
+| `elasticsearch`          | `expressionRuleProcessorElasticSearch` | `getExpressionRuleProcessorElasticSearch` | —                                                                          |
+| `natural_language`       | `expressionRuleProcessorNL`            | `getExpressionRuleProcessorNL`            | —                                                                          |
+| `drizzle`                | `expressionRuleProcessorDrizzle`       | `getExpressionRuleProcessorDrizzle`       | `columns`, `drizzleOperators`                                              |
+| `sequelize`              | `expressionRuleProcessorSequelize`     | `getExpressionRuleProcessorSequelize`     | `sequelizeOperators`, `sequelizeWhere`, `sequelizeLiteral`, `sequelizeCol` |
+| `tanstack_db`            | `expressionRuleProcessorTanStackDB`    | `getExpressionRuleProcessorTanStackDB`    | `tanStackDbOperators`, `_tanstackDbRefs`, `_tanstackDbPrimaryRef`          |
+
+Expression rules support scalar comparisons (`=`, `!=`, `<`, `<=`, `>`, `>=`), `null`/`notNull`, and `between`/`notBetween` (with expression bounds). Rules without expressions, with an unsupported operator, or missing required `context`, fall back to the stock processor for that format.
+
+> **Note:** string-match operators (`contains`, `beginsWith`, `endsWith`, and their negations) support expression operands—an expression RHS (search term) and/or LHS—for every export format except `tanstack_db`, each using that dialect's native construct. The `tanstack_db` format omits such rules (its `like` needs a static pattern), and `sequelize` omits a string-match rule whose search term is a bare field reference (`valueSource: 'field'`).
+
+The library-backed formats need the same `context` helpers their stock processors need. For example, `drizzle`:
+
+```ts
+import { getOperators } from 'drizzle-orm';
+import { expressionRuleProcessorDrizzle } from '@react-querybuilder/expr';
+
+const where = formatQuery(query, {
+  format: 'drizzle',
+  preset: 'sqlite', // resolves min/max to MIN/MAX (else LEAST/GREATEST)
+  ruleProcessor: expressionRuleProcessorDrizzle,
+  context: { columns, drizzleOperators: getOperators() },
+});
+```
+
+and `sequelize`:
+
+```ts
+import { col, literal, Op, where } from 'sequelize';
+import { expressionRuleProcessorSequelize } from '@react-querybuilder/expr';
+
+const whereClause = formatQuery(query, {
+  format: 'sequelize',
+  preset: 'sqlite',
+  ruleProcessor: expressionRuleProcessorSequelize,
+  context: {
+    sequelizeOperators: Op,
+    sequelizeWhere: where,
+    sequelizeLiteral: literal,
+    sequelizeCol: col,
+  },
+});
+```
+
+#### Custom functions
 
 When using custom functions, pass matching serializers to each format's processor factory (a function present in the UI but missing a serializer for the export format is omitted from that format's output):
 
@@ -69,7 +119,7 @@ const sqlProcessor = getExpressionRuleProcessorSQL({
 formatQuery(query, { format: 'sql', ruleProcessor: sqlProcessor });
 ```
 
-`getExpressionRuleProcessorParameterized` and `getExpressionRuleProcessorJsonLogic` cover the other formats; each takes a single serializer registry merged over that format's built-ins.
+Each `getExpressionRuleProcessor*` factory takes a single serializer registry merged over that format's built-ins.
 
 #### Applying JsonLogic output
 

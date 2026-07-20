@@ -234,7 +234,7 @@ const meta = mergeFunctionMeta(functions);
 
 ## Export
 
-`formatQuery` needs an expression-aware **rule processor** to serialize the `lhs`/`rhs` nodes; without one, `lhs` is ignored and the `"expression"` value source isn't handled. The package provides ready-to-use processors bound to the built-in serializers:
+`formatQuery` needs an expression-aware **rule processor** to serialize the `lhs`/`rhs` nodes; without one, `lhs` is ignored and the `"expression"` value source isn't handled. The package provides ready-to-use processors bound to the built-in serializers for every supported format (see the [table below](#supported-formats)):
 
 ```ts
 import { formatQuery } from 'react-querybuilder';
@@ -258,6 +258,58 @@ formatQuery(query, { format: 'jsonlogic', ruleProcessor: expressionRuleProcessor
 ```
 
 The parameterized processor also supports the `parameterized_named` format and respects presets (e.g. PostgreSQL's `$1` numbered placeholders), continuing the binding sequence across preceding rules. SQL-dialect presets also select the matching function serializer—e.g. `min`/`max` emit `MIN`/`MAX` under the `sqlite` preset and `LEAST`/`GREATEST` otherwise.
+
+### Supported formats
+
+Every export format that can represent a computed operand has a ready-to-use `expressionRuleProcessor*` (bound to that format's built-in serializers) and a matching `getExpressionRuleProcessor*` factory:
+
+| `formatQuery` format     | Ready-to-use processor                 | Extra `context` required                                                   |
+| ------------------------ | -------------------------------------- | -------------------------------------------------------------------------- |
+| `sql`                    | `expressionRuleProcessorSQL`           | —                                                                          |
+| `parameterized`/`_named` | `expressionRuleProcessorParameterized` | —                                                                          |
+| `jsonlogic`              | `expressionRuleProcessorJsonLogic`     | — (register operators, see above)                                          |
+| `cel`                    | `expressionRuleProcessorCEL`           | —                                                                          |
+| `spel`                   | `expressionRuleProcessorSpEL`          | —                                                                          |
+| `cypher`/`gql`           | `expressionRuleProcessorCypher`        | —                                                                          |
+| `sparql`                 | `expressionRuleProcessorSPARQL`        | —                                                                          |
+| `jsonata`                | `expressionRuleProcessorJSONata`       | —                                                                          |
+| `mongodb_query`          | `expressionRuleProcessorMongoDBQuery`  | —                                                                          |
+| `mongodb` _(deprecated)_ | `expressionRuleProcessorMongoDB`       | —                                                                          |
+| `elasticsearch`          | `expressionRuleProcessorElasticSearch` | —                                                                          |
+| `natural_language`       | `expressionRuleProcessorNL`            | —                                                                          |
+| `drizzle`                | `expressionRuleProcessorDrizzle`       | `columns`, `drizzleOperators`                                              |
+| `sequelize`              | `expressionRuleProcessorSequelize`     | `sequelizeOperators`, `sequelizeWhere`, `sequelizeLiteral`, `sequelizeCol` |
+| `tanstack_db`            | `expressionRuleProcessorTanStackDB`    | `tanStackDbOperators`, `_tanstackDbRefs`, `_tanstackDbPrimaryRef`          |
+
+The library-backed formats need the same `context` helpers their stock processors need. For example, `drizzle` and `sequelize`:
+
+```ts
+import { getOperators } from 'drizzle-orm';
+import { col, literal, Op, where } from 'sequelize';
+import {
+  expressionRuleProcessorDrizzle,
+  expressionRuleProcessorSequelize,
+} from '@react-querybuilder/expr';
+
+const drizzleWhere = formatQuery(query, {
+  format: 'drizzle',
+  preset: 'sqlite', // resolves min/max to MIN/MAX (else LEAST/GREATEST)
+  ruleProcessor: expressionRuleProcessorDrizzle,
+  context: { columns, drizzleOperators: getOperators() },
+});
+
+const sequelizeWhere = formatQuery(query, {
+  format: 'sequelize',
+  preset: 'sqlite',
+  ruleProcessor: expressionRuleProcessorSequelize,
+  context: {
+    sequelizeOperators: Op,
+    sequelizeWhere: where,
+    sequelizeLiteral: literal,
+    sequelizeCol: col,
+  },
+});
+```
 
 :::note
 
@@ -296,7 +348,7 @@ formatQuery(query, { format: 'sql', ruleProcessor: sqlProcessor });
 formatQuery(query, { format: 'jsonlogic', ruleProcessor: jsonLogicProcessor });
 ```
 
-`getExpressionRuleProcessorParameterized` completes the trio for the `parameterized`/`parameterized_named` formats. Only build the processors for the formats you actually export.
+Each format has its own `getExpressionRuleProcessor*` factory (see the [table above](#supported-formats)); only build the processors for the formats you actually export.
 
 :::tip
 
@@ -317,7 +369,9 @@ const sqlProcessor = getExpressionRuleProcessorSQL({
 
 ### Supported operators and fallback
 
-The processors handle the scalar comparison operators (`=`, `!=`, `<`, `<=`, `>`, `>=`) plus the unary `null` / `notNull` operators. A rule with any other operator—or with no expression at all—falls back to the corresponding stock rule processor, so mixing expression and non-expression rules in one query works transparently. Rules whose expressions fail [validation](#validation) are omitted from the output (an empty string for SQL, `false` for JSONLogic).
+The processors handle the scalar comparison operators (`=`, `!=`, `<`, `<=`, `>`, `>=`), the unary `null` / `notNull` operators, and `between` / `notBetween` (with expression bounds). A rule with any other operator—or with no expression at all—falls back to the corresponding stock rule processor, so mixing expression and non-expression rules in one query works transparently. Rules whose expressions fail [validation](#validation) are omitted from the output (an empty string for SQL, `false` for JSONLogic, `undefined` for the library-backed formats).
+
+String-match operators (`contains`, `beginsWith`, `endsWith`, and their negations) support expression operands—including an expression RHS (search term) and/or LHS—for every export format except `tanstack_db`, each emitting its dialect's native construct (e.g. SQL `LIKE`, CEL `.startsWith()`, Cypher `STARTS WITH`, SPARQL `STRSTARTS`, JSONata `$substring`/`$contains`, Painless `.startsWith()` for `elasticsearch`, `$indexOfCP`/`$substrCP` aggregation for `mongodb_query`). The `tanstack_db` format omits string-match rules with an expression operand, since its `like` requires a static pattern. The `sequelize` format omits a string-match rule whose search term is a bare field reference (`valueSource: 'field'`).
 
 ## Validation
 

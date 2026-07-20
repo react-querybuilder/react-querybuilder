@@ -63,6 +63,58 @@ export type JsonLogicSerializer =
 export type JsonLogicSerializerRegistry = Record<string, JsonLogicSerializer>;
 
 /**
+ * MongoDB aggregation-expression serializer: an operator name (wrapping the serialized args
+ * in `{ [op]: args }`), or a function receiving the format options followed by the
+ * serialized args. Used for the "mongodb_query" / "mongodb" formats.
+ */
+export type MongoAggSerializer =
+  | string
+  | ((opts: ValueProcessorOptions, ...args: unknown[]) => unknown);
+
+/** Map of registry keys to {@link MongoAggSerializer} entries. */
+export type MongoAggSerializerRegistry = Record<string, MongoAggSerializer>;
+
+/**
+ * Drizzle's `sql` template tag (plus its `.join`/`.raw` helpers), typed loosely to avoid a
+ * hard dependency on `drizzle-orm`. Provided to Drizzle expression serializers so they can
+ * compose column/value operands into `SQL` fragments.
+ */
+export interface DrizzleSqlTag {
+  (strings: TemplateStringsArray, ...values: unknown[]): unknown;
+  join(chunks: unknown[], separator?: unknown): unknown;
+  raw(str: string): unknown;
+}
+
+/**
+ * Drizzle serializer: receives the `sql` tag, the format options, then the already-serialized
+ * argument operands (Drizzle `Column`s, `SQL` fragments, or literal values), and returns an
+ * `SQL` fragment. Used for the "drizzle" format.
+ */
+export type DrizzleSerializer = (
+  sql: DrizzleSqlTag,
+  opts: ValueProcessorOptions,
+  ...args: unknown[]
+) => unknown;
+
+/** Map of registry keys to {@link DrizzleSerializer} entries. */
+export type DrizzleSerializerRegistry = Record<string, DrizzleSerializer>;
+
+/**
+ * TanStack DB serializer: receives the `tanStackDbOperators` object (its expression
+ * functions — `add`, `upper`, etc.), the format options, then the already-serialized
+ * argument operands (ref columns, nested expression results, or literal values), and returns
+ * a TanStack DB expression. Used for the "tanstack_db" format.
+ */
+export type TanStackDbSerializer = (
+  ops: Record<string, (...args: unknown[]) => unknown>,
+  opts: ValueProcessorOptions,
+  ...args: unknown[]
+) => unknown;
+
+/** Map of registry keys to {@link TanStackDbSerializer} entries. */
+export type TanStackDbSerializerRegistry = Record<string, TanStackDbSerializer>;
+
+/**
  * Expression operands resolved from a rule's `lhs` property and its `value`/`valueSource`
  * (when `valueSource` is `"expression"`). Returned by {@link getRuleExpressions}.
  */
