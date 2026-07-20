@@ -86,7 +86,7 @@
     "vite": "catalog:"
   },
   "dependencies": {
-    "@react-querybuilder/core": "8.20.1"
+    "@react-querybuilder/core": "8.20.2"
   },
   "peerDependencies": {
     "react": "catalog:peer",
