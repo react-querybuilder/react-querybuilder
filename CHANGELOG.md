@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#1061] SpEL export format now produces full-string regular expression match patterns.
+- [#1064] SpEL export format is now verified by integration tests that run against a real SpEL engine.
 
 ## [v8.20.2] - 2026-06-25
 
@@ -2342,6 +2343,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1053]: https://github.com/react-querybuilder/react-querybuilder/pull/1053
 [#1059]: https://github.com/react-querybuilder/react-querybuilder/pull/1059
 [#1061]: https://github.com/react-querybuilder/react-querybuilder/pull/1061
+[#1064]: https://github.com/react-querybuilder/react-querybuilder/pull/1064
 
 <!-- #endregion -->
 
