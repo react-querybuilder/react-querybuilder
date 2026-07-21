@@ -87,34 +87,39 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
       }`;
 
     case 'contains':
-    case 'doesnotcontain':
+    case 'doesnotcontain': {
+      const valueTL = valueIsField
+        ? `'.*'.concat(${trimIfString(value)}).concat('.*')`
+        : `'.*${escapeSingleQuotes(value, escapeQuotes)}.*'`;
+
       return wrapInNegation(
-        `${field} matches ${
-          valueIsField || useBareValue
-            ? trimIfString(value)
-            : `'${escapeSingleQuotes(value, escapeQuotes)}'`
-        }`,
+        `${field} matches ${valueTL}`,
         shouldNegate(operatorTL)
       );
+    }
 
     case 'beginswith':
     case 'doesnotbeginwith': {
       const valueTL = valueIsField
-        ? `'^'.concat(${trimIfString(value)})`
-        : `'${
-            (typeof value === 'string' && !value.startsWith('^')) || useBareValue ? '^' : ''
-          }${escapeSingleQuotes(value, escapeQuotes)}'`;
-      return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
+        ? `'^'.concat(${trimIfString(value)}).concat('.*')`
+        : `'${(typeof value === 'string' && !value.startsWith('^')) || useBareValue ? '^' : ''}${escapeSingleQuotes(value, escapeQuotes)}.*'`;
+
+      return wrapInNegation(
+        `${field} matches ${valueTL}`,
+        shouldNegate(operatorTL)
+      );
     }
 
     case 'endswith':
     case 'doesnotendwith': {
       const valueTL = valueIsField
-        ? `${trimIfString(value)}.concat('$')`
-        : `'${escapeSingleQuotes(value, escapeQuotes)}${
-            (typeof value === 'string' && !value.endsWith('$')) || useBareValue ? '$' : ''
-          }'`;
-      return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
+        ? `'.*'.concat(${trimIfString(value)}).concat('$')`
+        : `'.*${escapeSingleQuotes(value, escapeQuotes)}${(typeof value === 'string' && !value.endsWith('$')) || useBareValue ? '$' : ''}'`;
+
+      return wrapInNegation(
+        `${field} matches ${valueTL}`,
+        shouldNegate(operatorTL)
+      );
     }
 
     case 'null':
