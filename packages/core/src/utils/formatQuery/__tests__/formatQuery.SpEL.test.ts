@@ -18,11 +18,11 @@ import {
 import { defaultSpELValueProcessor } from '../index';
 
 const spelString =
-  "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and isLucky == false and !(gender == 'M' or job != 'Programmer' or email matches '@') and (!(lastName matches 'ab') or job matches '^Prog' or email matches 'com$' or !(job matches '^Man') or !(email matches 'fr$'))";
+  "firstName == null and lastName != null and (firstName == 'Test' or firstName == 'This') and !(lastName == 'Test' or lastName == 'This') and (firstName >= 'Test' and firstName <= 'This') and (firstName >= 'Test' and firstName <= 'This') and (lastName < 'Test' or lastName > 'This') and (age >= 12 and age <= 14) and age == '26' and isMusician == true and isLucky == false and !(gender == 'M' or job != 'Programmer' or email matches '.*@.*') and (!(lastName matches '.*ab.*') or job matches '^Prog.*' or email matches '.*com$' or !(job matches '^Man.*') or !(email matches '.*fr$'))";
 const spelStringForValueSourceField =
-  "firstName == null and lastName != null and (firstName == middleName or firstName == lastName) and !(lastName == middleName or lastName == lastName) and (firstName >= middleName and firstName <= lastName) and (firstName >= middleName and firstName <= lastName) and (lastName < middleName or lastName > lastName) and age == iq and isMusician == isCreative and !(gender == someLetter or job != isBetweenJobs or email matches atSign) and (!(lastName matches firstName) or job matches '^'.concat(jobPrefix) or email matches dotCom.concat('$') or !(job matches '^'.concat(hasNoJob)) or !(email matches isInvalid.concat('$')))";
+  "firstName == null and lastName != null and (firstName == middleName or firstName == lastName) and !(lastName == middleName or lastName == lastName) and (firstName >= middleName and firstName <= lastName) and (firstName >= middleName and firstName <= lastName) and (lastName < middleName or lastName > lastName) and age == iq and isMusician == isCreative and !(gender == someLetter or job != isBetweenJobs or email matches '.*'.concat(atSign).concat('.*')) and (!(lastName matches '.*'.concat(firstName).concat('.*')) or job matches '^'.concat(jobPrefix).concat('.*') or email matches '.*'.concat(dotCom).concat('$') or !(job matches '^'.concat(hasNoJob).concat('.*')) or !(email matches '.*'.concat(isInvalid).concat('$')))";
 const spelStringForMatchModes =
-  "fs.?[#this matches 'S'].size() == fs.size() and fs.?[fv matches 'S'].size() == fs.size() and fs.?[#this matches 'S'].size() == 0 and fs.?[#this matches 'S'].size() >= 1 and fs.?[#this matches 'S'].size() >= 1 and fs.?[#this matches 'S'].size() == 0 and fs.?[#this matches 'S'].size() >= 2 and fs.?[fv matches 'S'].size() >= 2 and fs.?[#this matches 'S'].size() >= (fs.size() * 0.5) and fs.?[#this matches 'S'].size() <= 2 and fs.?[#this matches 'S'].size() <= (fs.size() * 0.5) and fs.?[#this matches 'S'].size() == 2 and fs.?[#this matches 'S'].size() == (fs.size() * 0.5) and fs.?[#this matches 'S' and #this matches 'S'].size() == fs.size() and fs.?[#this matches 'S' and #this matches 'S'].size() >= 2";
+  "fs.?[#this matches '.*S.*'].size() == fs.size() and fs.?[fv matches '.*S.*'].size() == fs.size() and fs.?[#this matches '.*S.*'].size() == 0 and fs.?[#this matches '.*S.*'].size() >= 1 and fs.?[#this matches '.*S.*'].size() >= 1 and fs.?[#this matches '.*S.*'].size() == 0 and fs.?[#this matches '.*S.*'].size() >= 2 and fs.?[fv matches '.*S.*'].size() >= 2 and fs.?[#this matches '.*S.*'].size() >= (fs.size() * 0.5) and fs.?[#this matches '.*S.*'].size() <= 2 and fs.?[#this matches '.*S.*'].size() <= (fs.size() * 0.5) and fs.?[#this matches '.*S.*'].size() == 2 and fs.?[#this matches '.*S.*'].size() == (fs.size() * 0.5) and fs.?[#this matches '.*S.*' and #this matches '.*S.*'].size() == fs.size() and fs.?[#this matches '.*S.*' and #this matches '.*S.*'].size() >= 2";
 
 it('formats SpEL correctly', () => {
   const spelQuery = add(query, { field: 'invalid', operator: 'invalid', value: '' }, []);
@@ -119,7 +119,7 @@ it('parseNumbers', () => {
     ],
   };
   expect(formatQuery(queryForNumberParsingSpEL, { format: 'spel', parseNumbers: true })).toBe(
-    `f matches '^1' and f matches '^hasCaret' and f matches '1$' and f matches 'hasDollarSign$'`
+    `f matches '^1.*' and f matches '^hasCaret.*' and f matches '.*1$' and f matches '.*hasDollarSign$'`
   );
 });
 
