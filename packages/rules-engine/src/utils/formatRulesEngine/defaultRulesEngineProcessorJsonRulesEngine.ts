@@ -88,7 +88,7 @@ export const defaultRulesEngineProcessorJsonRulesEngine: RulesEngineProcessor<Ru
         (opts.formatQueryOptions
           ?.ruleGroupProcessor as typeof defaultRuleGroupProcessorJsonRulesEngine) ??
         defaultRuleGroupProcessorJsonRulesEngine,
-    }) as unknown as TopLevelCondition;
+    });
 
   return walkRulesEngine<TopLevelCondition>(rulesEngine, mode, {
     processAntecedent,

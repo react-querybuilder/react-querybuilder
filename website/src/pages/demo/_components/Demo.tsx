@@ -11,6 +11,7 @@ import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/inter
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
+import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
 import TabItem from '@theme/TabItem';
@@ -25,6 +26,7 @@ import type {
   RuleGroupType,
   RuleGroupTypeIC,
   SQLPreset,
+  ValueSources,
 } from 'react-querybuilder';
 import {
   convertToIC,
@@ -59,6 +61,7 @@ import { nlLanguageCodes, nlLanguageConfigs } from '../_constants/nlLanguageConf
 import type { CommonRQBProps, StyleName } from '../_constants/types';
 import {
   datetimeRuleProcessorMap,
+  expressionRuleProcessorMap,
   extraStyles,
   fieldsTsString,
   getCodeString,
@@ -172,8 +175,39 @@ const defaultQueryWrapper = (props: {
 
 // Wraps the live query builder with the date/time context provider (which supplies the
 // relative-capable value editor) when the "Use date/time package" option is enabled.
-const DateTimeWrapper = ({ enabled, children }: { enabled?: boolean; children: React.ReactNode }) =>
-  enabled ? <QueryBuilderDateTime>{children}</QueryBuilderDateTime> : <>{children}</>;
+const DateTimeWrapper = ({
+  enabled,
+  children,
+}: {
+  enabled?: boolean;
+  children: React.ReactNode;
+}) => (enabled ? <QueryBuilderDateTime>{children}</QueryBuilderDateTime> : <>{children}</>);
+
+// Wraps the live query builder with the expressions context provider (overriding the field
+// selector and value editor to host arithmetic/function expressions) when the "Enable
+// expressions" option is on. Nested inside DateTimeWrapper so non-expression rules still
+// inherit the date/time editors when both options are active.
+const ExpressionsWrapper = ({
+  enabled,
+  children,
+}: {
+  enabled?: boolean;
+  children: React.ReactNode;
+}) =>
+  enabled ? (
+    <QueryBuilderExpressions allowFunctionsOnLHS>{children}</QueryBuilderExpressions>
+  ) : (
+    <>{children}</>
+  );
+
+// With expressions enabled, every field also accepts the `expression` value source (appended
+// to its own configured sources) so the right-hand side can hold an expression tree.
+const getExpressionValueSources = (field: string): ValueSources => {
+  const configured = fields.find(f => f.name === field)?.valueSources;
+  const base: ValueSources =
+    Array.isArray(configured) && configured.length > 0 ? (configured as ValueSources) : ['value'];
+  return base.includes('expression') ? base : [...base, 'expression'];
+};
 
 const ExportInfoLinks = ({ format }: { format: ExportFormat }) => {
   const [_0, _1, formatInfo, exportDocsAnchorName] = formatMap.find(([fmt]) => fmt === format)!;
@@ -306,9 +340,21 @@ export default function Demo({
           ? fields
           : undefined,
       ...(options.useDateTimePackage ? { ruleProcessor: datetimeRuleProcessorMap[format] } : null),
+      // Expressions win the single ruleProcessor slot for the formats they support; other
+      // formats keep the date/time (or default) processor.
+      ...(options.enableExpressions && expressionRuleProcessorMap[format]
+        ? { ruleProcessor: expressionRuleProcessorMap[format] }
+        : null),
       ...(format === 'natural_language' && nlConfig),
     }),
-    [baseFormatOptions, options.validateQuery, options.useDateTimePackage, format, nlConfig]
+    [
+      baseFormatOptions,
+      options.validateQuery,
+      options.useDateTimePackage,
+      options.enableExpressions,
+      format,
+      nlConfig,
+    ]
   );
 
   const timerRG = useRef(setTimeout(() => {}));
@@ -406,11 +452,12 @@ export default function Demo({
         ? ['@react-querybuilder/dnd', '@atlaskit/pragmatic-drag-and-drop']
         : []),
       ...(options.useDateTimePackage ? ['@react-querybuilder/datetime'] : []),
+      ...(options.enableExpressions ? ['@react-querybuilder/expr'] : []),
       ...(variant === 'default'
         ? []
         : [`@react-querybuilder/${variant}`, ...peerDependencies[variant]]),
     ],
-    [options.enableDragAndDrop, options.useDateTimePackage, variant]
+    [options.enableDragAndDrop, options.useDateTimePackage, options.enableExpressions, variant]
   );
 
   const loadFromSQL = useCallback(() => {
@@ -533,6 +580,7 @@ export default function Demo({
       ...opts,
       validator: opts.validateQuery ? defaultValidator : undefined,
       parseNumbers: opts.parseNumbers ? 'strict-limited' : false,
+      getValueSources: options.enableExpressions ? getExpressionValueSources : undefined,
     };
   }, [options]);
 
@@ -621,21 +669,23 @@ export default function Demo({
             <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
               <DateTimeWrapper enabled={options.useDateTimePackage}>
                 <QueryBuilderDnD dnd={dnd}>
-                  {options.independentCombinators ? (
-                    <QueryBuilder
-                      key="queryIC"
-                      {...commonRQBProps}
-                      defaultQuery={queryIC}
-                      onQueryChange={onQueryChangeRGIC}
-                    />
-                  ) : (
-                    <QueryBuilder
-                      key="query"
-                      {...commonRQBProps}
-                      defaultQuery={query}
-                      onQueryChange={onQueryChangeRG}
-                    />
-                  )}
+                  <ExpressionsWrapper enabled={options.enableExpressions}>
+                    {options.independentCombinators ? (
+                      <QueryBuilder
+                        key="queryIC"
+                        {...commonRQBProps}
+                        defaultQuery={queryIC}
+                        onQueryChange={onQueryChangeRGIC}
+                      />
+                    ) : (
+                      <QueryBuilder
+                        key="query"
+                        {...commonRQBProps}
+                        defaultQuery={query}
+                        onQueryChange={onQueryChangeRG}
+                      />
+                    )}
+                  </ExpressionsWrapper>
                 </QueryBuilderDnD>
               </DateTimeWrapper>
             </QueryWrapper>

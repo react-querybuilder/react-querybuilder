@@ -52,7 +52,7 @@ const betweenBounds = (value: unknown): [Constraint['value'], Constraint['value'
     const b = Number(parseNumber(second, { parseNumbers: 'strict' }));
     return [Math.min(a, b), Math.max(a, b)];
   }
-  return [first as Constraint['value'], second as Constraint['value']];
+  return [first, second];
 };
 
 /**

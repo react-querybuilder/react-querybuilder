@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@react-querybuilder/expr": "8.20.2",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-querybuilder": "8.20.2"
+  },
+  "description": "React Query Builder Expressions Example",
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5",
+    "typescript": "^6",
+    "vite": "^7"
+  },
+  "name": "react-querybuilder-expr-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "type": "module"
+}

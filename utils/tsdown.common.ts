@@ -35,8 +35,9 @@ export const commonBuildOptions: UserConfig = {
   checks: { pluginTimings: false },
 };
 
-export const tsdownCommonConfig = (sourceDir: string) =>
-  (async options => {
+export const tsdownCommonConfig =
+  (sourceDir: string) =>
+  async (options: UserConfig): Promise<UserConfig[]> => {
     const pkgName = `react-querybuilder${sourceDir.endsWith('react-querybuilder') ? '' : `_${sourceDir.split('/').at(-1)}`}`;
     const x = (await Bun.file(path.join(sourceDir + '/src/index.tsx')).exists()) ? 'x' : '';
     const entryPoint = `src/index.ts${x}`;
@@ -104,4 +105,4 @@ export const tsdownCommonConfig = (sourceDir: string) =>
     ];
 
     return opts;
-  }) as (options: UserConfig) => Promise<UserConfig[]>;
+  };

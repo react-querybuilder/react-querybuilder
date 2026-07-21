@@ -23,6 +23,7 @@ export type {
 export * from './basic';
 export * from './dnd';
 export * from './export';
+export * from './expression';
 // export * from './import';
 export * from './options';
 export * from './queryBuilder';

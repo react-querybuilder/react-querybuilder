@@ -4,6 +4,7 @@ import bulmaIndexHTML from './pages/bulma.html';
 import chakraIndexHTML from './pages/chakra.html';
 import datetimeIndexHTML from './pages/datetime.html';
 import dndIndexHTML from './pages/dnd.html';
+import exprIndexHTML from './pages/expr.html';
 import fluentIndexHTML from './pages/fluent.html';
 import mantineIndexHTML from './pages/mantine.html';
 import materialIndexHTML from './pages/material.html';
@@ -20,6 +21,7 @@ const indexHTMLs = {
   '/chakra': chakraIndexHTML,
   '/datetime': datetimeIndexHTML, // Not implemented
   '/dnd': dndIndexHTML,
+  '/expr': exprIndexHTML,
   '/fluent': fluentIndexHTML,
   '/mantine': mantineIndexHTML,
   '/material': materialIndexHTML,

@@ -53,8 +53,9 @@ export const App = () => {
             parseNumbers={parseNumbers}
             validator={useValidation ? defaultValidator : undefined}
             query={queryIC}
+            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
             onQueryChange={setQueryIC as (q: typeof queryIC) => void}
-          />
+            />
         ) : (
           <QueryBuilder
             key="rqb"
@@ -63,6 +64,7 @@ export const App = () => {
             parseNumbers={parseNumbers}
             validator={useValidation ? defaultValidator : undefined}
             query={query}
+            // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
             onQueryChange={setQuery as (q: typeof query) => void}
           />
         )}

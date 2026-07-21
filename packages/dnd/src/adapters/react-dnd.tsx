@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource, useDrag as useDragOriginal } from 'react-dnd';
-import type * as ReactDnD from 'react-dnd';
 import type * as ReactDndHtml5Backend from 'react-dnd-html5-backend';
 import type {
   DndDropTargetType,
@@ -108,12 +107,7 @@ const useRuleDragCommon = (
  * @group DnD
  */
 export const createReactDnDAdapter = (dndExports: DndProp): DndAdapter => {
-  const {
-    useDrag,
-    useDrop,
-    DndProvider: RDndProvider,
-    DndContext,
-  } = dndExports as typeof ReactDnD & DndProp;
+  const { useDrag, useDrop, DndProvider: RDndProvider, DndContext } = dndExports;
 
   // Select backend: prefer touch on touch devices
   let backend: ReactDndBackendFactory | undefined = dndExports.ReactDndBackend;

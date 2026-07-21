@@ -1530,7 +1530,7 @@ describe('createPragmaticDndAdapter', () => {
               __rqbGroupModeModifierKey: 'ctrl',
             },
           },
-          location: { current: { dropTargets: [{ data: targetData as Record<string, unknown> }] } },
+          location: { current: { dropTargets: [{ data: targetData }] } },
         });
       });
 
@@ -1756,7 +1756,7 @@ describe('createPragmaticDndAdapter', () => {
 
     const getMonitor = (
       mock: ReturnType<typeof createMockPragmaticDnd>
-    ): ExtendedMonitorRegistration => mock._monitors[0] as ExtendedMonitorRegistration;
+    ): ExtendedMonitorRegistration => mock._monitors[0];
 
     it('initializes shadow query state on drag start', () => {
       const { mock, adapter, schema } = setupUpdateWhileDragging();
@@ -2720,7 +2720,7 @@ describe('createPragmaticDndAdapter', () => {
               __rqbGroupModeModifierKey: 'ctrl',
             },
           },
-          location: { current: { dropTargets: [{ data: targetData as Record<string, unknown> }] } },
+          location: { current: { dropTargets: [{ data: targetData }] } },
         });
       });
 
@@ -3064,7 +3064,7 @@ describe('createPragmaticDndAdapter', () => {
               __rqbGroupModeModifierKey: 'ctrl',
             },
           },
-          location: { current: { dropTargets: [{ data: targetData as Record<string, unknown> }] } },
+          location: { current: { dropTargets: [{ data: targetData }] } },
         });
       });
 

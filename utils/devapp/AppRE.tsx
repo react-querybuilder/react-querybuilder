@@ -78,6 +78,14 @@ const initialRE: RulesEngine = regenerateREIDs({
   ],
 });
 
+const extraOptions = {
+  addConsequentToNewConditions: false,
+  allowDefaultConsequents: true,
+  allowNestedConditions: true,
+  autoSelectConsequentType: true,
+  showShiftActions: false,
+};
+
 export const AppRE = (): React.JSX.Element => {
   const [re, setRE] = React.useState(initialRE);
   const exportFormats = React.useMemo(
@@ -93,16 +101,7 @@ export const AppRE = (): React.JSX.Element => {
     [re]
   );
 
-  const devApp = useDevApp(
-    {
-      addConsequentToNewConditions: false,
-      allowDefaultConsequents: true,
-      allowNestedConditions: true,
-      autoSelectConsequentType: true,
-      showShiftActions: false,
-    } as Record<string, boolean>,
-    exportFormats
-  );
+  const devApp = useDevApp(extraOptions, exportFormats);
 
   const rebClassnames = React.useMemo(
     () => ({

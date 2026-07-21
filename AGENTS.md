@@ -15,7 +15,7 @@ React Query Builder monorepo contains:
 - **Core package**: `@react-querybuilder/core` - Non-React utilities, parsers, formatters
 - **Main package**: `react-querybuilder` - React components and hooks
 - **UI integrations**: Ant Design, Bootstrap, Bulma, Chakra UI, Fluent UI, Mantine, MUI, Tremor
-- **Extensions**: Drag-and-drop (`@react-querybuilder/dnd`), date/time processing (`@react-querybuilder/datetime`), React Native (`@react-querybuilder/native`)
+- **Extensions**: Drag-and-drop (`@react-querybuilder/dnd`), date/time processing (`@react-querybuilder/datetime`), React Native (`@react-querybuilder/native`), expression-related features (`@react-querybuilder/expr`)
 - **Documentation**: Docusaurus website
 
 ## Development Workflow
@@ -159,7 +159,9 @@ Only fall back to `node:*` APIs when no Bun equivalent exists.
 
 - Vitest + Testing Library
 - Helpers in `utils/testing/`
-- 100% coverage required - use `bunx vitest run --coverage` to test for coverage
+- 100% coverage required
+  - Use scoped `bun test:[pkg]` for granular coverage checking
+  - Use `bunx vitest run --coverage` to test for full coverage
 
 - Test files: `ComponentName.test.tsx`
 - Describe blocks: component/function name

@@ -1,8 +1,8 @@
-import type { FullField, OptionList } from '@react-querybuilder/core';
+import type { OptionList } from '@react-querybuilder/core';
 import { standardClassnames } from '@react-querybuilder/core';
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import type { Schema, ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
+import type { ValueEditorProps, ValueSelectorProps } from 'react-querybuilder';
 import { defaultValueSelectorProps, testSelect } from './testValueSelector';
 import {
   basicSchema,
@@ -194,12 +194,7 @@ export const testValueEditor = (
           <ValueEditor
             {...props}
             type="select"
-            schema={
-              { ...props.schema, controls: { ...props.schema.controls, valueSelector } } as Schema<
-                FullField,
-                string
-              >
-            }
+            schema={{ ...props.schema, controls: { ...props.schema.controls, valueSelector } }}
           />
         );
         expect(screen.getByText('valueSelector')).toBeInTheDocument();

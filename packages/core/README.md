@@ -56,6 +56,8 @@ formatQuery(query, 'sql');
 | [Prisma](https://www.prisma.io/)                                                | `"prisma"`                | `Record<string, any>`   | Prisma `where` object                       |
 | [Sequelize](https://sequelize.org/)                                             | `"sequelize"`             | `Record<string, any>`   | Sequelize `where` object                    |
 
+See `@react-querybuilder/datetime` and `@react-querybuilder/expr` for additional, enhanced export capabilities.
+
 ## Import
 
 [Full import documentation](https://react-querybuilder.js.org/docs/utils/import)
@@ -98,6 +100,8 @@ import { add, remove, update, move } from '@react-querybuilder/core';
 const updated = add(query, newRule, parentPath);
 const removed = remove(query, rulePath);
 const modified = update(query, 'value', 'newValue', rulePath);
+// `update` can also set multiple properties at once, via a map or parallel arrays:
+const multi = update(query, { valueSource: 'field', value: 'otherField' }, rulePath);
 const moved = move(query, oldPath, newPath);
 ```
 

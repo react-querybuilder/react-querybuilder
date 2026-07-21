@@ -656,6 +656,95 @@ describe('update', () => {
     });
   });
 
+  describe.each(testLoop)('multiple properties by %s', (_, p) => {
+    testQT(
+      'updates multiple properties via a map',
+      update(rg3wIDs, { field: 'fu', operator: 'between', value: 'vu' }, p([0])),
+      { combinator: and, rules: [{ field: 'fu', operator: 'between', value: 'vu' }, r2, r3] }
+    );
+    testQT(
+      'updates multiple properties via parallel arrays',
+      update(rg3wIDs, ['field', 'operator', 'value'], ['fu', 'between', 'vu'], p([0])),
+      { combinator: and, rules: [{ field: 'fu', operator: 'between', value: 'vu' }, r2, r3] }
+    );
+    testQT(
+      'applies an explicit value after a field change so it is not reset (map)',
+      update(rg3wIDs, { value: 'keep', field: 'fu' }, p([0])),
+      { combinator: and, rules: [{ field: 'fu', operator: '=', value: 'keep' }, r2, r3] }
+    );
+    testQT(
+      'applies an explicit value after a field change so it is not reset (arrays)',
+      update(rg3wIDs, ['value', 'field'], ['keep', 'fu'], p([0])),
+      { combinator: and, rules: [{ field: 'fu', operator: '=', value: 'keep' }, r2, r3] }
+    );
+    testQT(
+      'sets value source and value together without resetting the value',
+      update(pathsAsIDs(rgvsu), { value: 'NODE', valueSource: 'expression' }, p([0])),
+      { combinator: 'and', rules: [{ ...r1, value: 'NODE', valueSource: 'expression' }] }
+    );
+    testQT(
+      'honors options for properties that are not explicitly provided',
+      update(rg3wIDs, { field: 'fu' }, p([0]), { resetOnFieldChange: false }),
+      { combinator: and, rules: [{ ...r1, field: 'fu' }, r2, r3] }
+    );
+    testQT(
+      'updates multiple group properties via a map',
+      update(rg1wID, { combinator: or, not: true }, p([])),
+      { ...rg1, combinator: or, not: true }
+    );
+    testQT(
+      'bails out on a bad path/id',
+      update(rg1wID, { value: 'test', valueSource: 'value' }, p(badPath)),
+      rg1wID,
+      true
+    );
+  });
+
+  describe('multiple properties (additional cases)', () => {
+    it('produces the same result regardless of map key order', () => {
+      const byFieldFirst = update(rg3wIDs, { field: 'fu', operator: 'between', value: 'vu' }, [0]);
+      const byValueFirst = update(rg3wIDs, { value: 'vu', operator: 'between', field: 'fu' }, [0]);
+      expect(stripIDs(byFieldFirst)).toEqual(stripIDs(byValueFirst));
+    });
+    it('returns the original query for an empty map', () => {
+      expect(update(rg3wIDs, {}, [0])).toBe(rg3wIDs);
+    });
+    it('returns the original query for empty parallel arrays', () => {
+      expect(update(rg3wIDs, [], [], [0])).toBe(rg3wIDs);
+    });
+    it('treats missing parallel-array values as undefined', () => {
+      const result = update(
+        { combinator: and, rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
+        ['value'],
+        [],
+        [0]
+      );
+      expect((result.rules[0] as DefaultRuleType).value).toBeUndefined();
+    });
+    it('mutates the original query in place with multiple properties', () => {
+      const original: DefaultRuleGroupType = {
+        combinator: and,
+        rules: [{ field: 'f1', operator: '=', value: 'v1' }],
+      };
+      const result = updateInPlace(original, { field: 'f2', value: 'v2' }, [0]);
+      expect(original).toBe(result);
+      expect((original.rules[0] as DefaultRuleType).field).toBe('f2');
+    });
+  });
+
+  // oxlint-disable-next-line expect-expect
+  it('should have the right types for multiple-property updates', () => {
+    const _mapQuery = update(rg1, { combinator: 'and', not: true }, []);
+    const _arrQuery = update(rg1, ['combinator', 'not'], ['and', true], []);
+    const _mapICQuery = update(rgic1, { disabled: false }, []);
+    const _arrICQuery = update(rgic1, ['disabled'], [false], []);
+
+    const _assertion1: Expect<Equal<DefaultRuleGroupType, typeof _mapQuery>> = true;
+    const _assertion2: Expect<Equal<DefaultRuleGroupType, typeof _arrQuery>> = true;
+    const _assertion3: Expect<Equal<DefaultRuleGroupTypeIC, typeof _mapICQuery>> = true;
+    const _assertion4: Expect<Equal<DefaultRuleGroupTypeIC, typeof _arrICQuery>> = true;
+  });
+
   describe.each(testLoop)('on bad %s', (_, p) => {
     testQT('bails out', update(rg1wID, 'value', 'test', p(badPath)), rg1wID, true);
   });
@@ -1008,16 +1097,15 @@ describe('insert', () => {
         rules: [r1, `custom-${and}`, r2],
       }
     );
+    const gwr1: DefaultRuleGroupTypeIC = { rules: [r1] };
     testQT(
       'inserts a rule with the default combinator at first position',
-      insert({ rules: [r1] } as DefaultRuleGroupTypeIC, { ...r2, path: [0] }, [0]),
+      insert(gwr1, { ...r2, path: [0] }, [0]),
       { rules: [r2, and, r1] }
     );
     testQT(
       'inserts a rule with the succeeding combinator',
-      insert({ rules: [r1] } as DefaultRuleGroupTypeIC, { ...r2, path: [0] }, [0], {
-        combinatorSucceeding: or,
-      }),
+      insert(gwr1, { ...r2, path: [0] }, [0], { combinatorSucceeding: or }),
       { rules: [r2, or, r1] }
     );
     testQT(

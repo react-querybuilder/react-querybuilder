@@ -117,7 +117,7 @@ const presetToValueProcessorMap = {
 export const getDatetimeRuleProcessorSQL =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
-    const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+    const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
     const operator = mapSQLOperator(resolveDatetimeOperator(rule, opts));
     const operatorLowerCase = lc(operator);
     // v8 ignore next

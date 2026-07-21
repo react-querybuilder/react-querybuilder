@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import type { FullField, RuleGroupProps } from 'react-querybuilder';
+import type { FullField } from 'react-querybuilder';
 import {
   RuleGroupBodyComponents,
   RuleGroupHeaderComponents,
@@ -36,10 +36,10 @@ export const RuleGroupNative = (props: RuleGroupNativeProps): React.JSX.Element 
   return (
     <View style={styles.ruleGroup} testID={TestID.ruleGroup}>
       <View style={styles.ruleGroupHeader}>
-        <RuleGroupHeaderComponents {...(rg as RuleGroupProps & ReturnType<typeof useRuleGroup>)} />
+        <RuleGroupHeaderComponents {...rg} />
       </View>
       <View style={styles.ruleGroupBody}>
-        <RuleGroupBodyComponents {...(rg as RuleGroupProps & ReturnType<typeof useRuleGroup>)} />
+        <RuleGroupBodyComponents {...rg} />
       </View>
     </View>
   );

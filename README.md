@@ -37,9 +37,15 @@ export function App() {
 
 For a more complete introduction, see the [main package README](packages/react-querybuilder/README.md), dive into the [full documentation](https://react-querybuilder.js.org/docs/intro), or browse the [example projects](./examples/).
 
-To enable drag-and-drop functionality, use [`@react-querybuilder/dnd`](packages/dnd).
-
-For enhanced date/time support, use [`@react-querybuilder/datetime`](packages/datetime).
+> [!TIP]
+>
+> To enable drag-and-drop, use [`@react-querybuilder/dnd`](./packages/dnd).
+>
+> For enhanced date/time support, use [`@react-querybuilder/datetime`](./packages/datetime).
+>
+> To enable expressions in rules, use [`@react-querybuilder/expr`](./packages/expr).
+>
+> For rules engine functionality (if-then-else) use [`@react-querybuilder/rules-engine`](./packages/rules-engine).
 
 _For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
 
@@ -139,6 +145,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sosso"><img src="https://avatars.githubusercontent.com/u/619968?v=4?s=100" width="100px;" alt="Anthony Sosso"/><br /><sub><b>Anthony Sosso</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sosso" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=sosso" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/armonge"><img src="https://avatars.githubusercontent.com/u/770921?v=4?s=100" width="100px;" alt="Andrés Reyes Monge"/><br /><sub><b>Andrés Reyes Monge</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=armonge" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=armonge" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mcmcgrath13"><img src="https://avatars.githubusercontent.com/u/24885580?v=4?s=100" width="100px;" alt="Mary McGrath"/><br /><sub><b>Mary McGrath</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=mcmcgrath13" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=mcmcgrath13" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/RoKra99"><img src="https://avatars.githubusercontent.com/u/40492443?v=4?s=100" width="100px;" alt="Robert Krause"/><br /><sub><b>Robert Krause</b></sub></a><br /><a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=RoKra99" title="Code">💻</a> <a href="https://github.com/react-querybuilder/react-querybuilder/commits?author=RoKra99" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
@@ -152,7 +159,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 <!-- prettier-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[badge-all-contributors]: https://img.shields.io/badge/all_contributors-47-orange.svg
+[badge-all-contributors]: https://img.shields.io/badge/all_contributors-48-orange.svg
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- prettier-ignore-end -->
 

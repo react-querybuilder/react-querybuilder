@@ -85,6 +85,7 @@
         "jsx-no-new-array-as-prop": "off",
         "jsx-no-new-function-as-prop": "off",
         "jsx-no-new-object-as-prop": "off",
+        "react/react-compiler": "off",
         "unicorn/consistent-function-scoping": "off",
         "unicorn/prefer-module": "off"
       }

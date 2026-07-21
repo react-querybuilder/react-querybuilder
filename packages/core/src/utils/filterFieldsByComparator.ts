@@ -43,7 +43,7 @@ export const filterFieldsByComparator = (
     const filterOutSameField = (f: FullField) =>
       (f.value ?? /* v8 ignore start -- @preserve */ f.name) /* v8 ignore stop -- @preserve */ !==
       (field.value ??
-        /* v8 ignore start -- @preserve */ field.name) /* v8 ignore stop -- @preserve */;
+        /* v8 ignore start -- @preserve */ field.name); /* v8 ignore stop -- @preserve */
     if (isFlexibleOptionGroupArray(fields)) {
       return fields.map(og => ({
         ...og,

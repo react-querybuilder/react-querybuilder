@@ -37,7 +37,7 @@ export const defaultRulesEngineProcessorNative: RulesEngineProcessor<RulesEngine
       ruleGroupProcessor:
         (opts.formatQueryOptions?.ruleGroupProcessor as typeof defaultRuleGroupProcessorNative) ??
         defaultRuleGroupProcessorNative,
-    }) as unknown as NativePredicate;
+    });
 
   const flattened = walkRulesEngine<NativePredicate>(rulesEngine, mode, {
     processAntecedent,

@@ -24,8 +24,24 @@ import {
   datetimeRuleProcessorSpEL,
   datetimeRuleProcessorSQL,
 } from '@react-querybuilder/datetime/dayjs';
+import {
+  expressionRuleProcessorJsonLogic,
+  expressionRuleProcessorParameterized,
+  expressionRuleProcessorSQL,
+  expressionRuleProcessorCEL,
+  expressionRuleProcessorSpEL,
+  expressionRuleProcessorJSONata,
+  expressionRuleProcessorCypher,
+  expressionRuleProcessorDrizzle,
+  expressionRuleProcessorElasticSearch,
+  expressionRuleProcessorMongoDB,
+  expressionRuleProcessorMongoDBQuery,
+  expressionRuleProcessorNL,
+  expressionRuleProcessorSequelize,
+  expressionRuleProcessorSPARQL,
+} from '@react-querybuilder/expr';
 import clsx from 'clsx';
-import pako from 'pako';
+import * as pako from 'pako';
 import prettierPluginEstree from 'prettier/plugins/estree';
 import * as parserPostCSS from 'prettier/plugins/postcss.js';
 import * as parserTypeScript from 'prettier/plugins/typescript.js';
@@ -66,7 +82,7 @@ export const getHashFromState = (s: DemoState) =>
 
 export const unzip = (b64string: string) => {
   const buff = Buffer.from(b64string, 'base64');
-  const result = pako.inflate(buff, { to: 'string' });
+  const result = pako.inflate(buff, { toText: true });
   return JSON.parse(result, bigIntJsonParseReviver);
 };
 
@@ -187,6 +203,27 @@ export const datetimeRuleProcessorMap: Partial<Record<ExportFormat, RuleProcesso
   gql: datetimeRuleProcessorCypher,
   sparql: datetimeRuleProcessorSPARQL,
   gremlin: datetimeRuleProcessorGremlin,
+};
+
+// Ready-made expression processors (built-in functions). Only the formats expr
+// supports are mapped; other formats fall back to the default processor.
+export const expressionRuleProcessorMap: Partial<Record<ExportFormat, RuleProcessor>> = {
+  sql: expressionRuleProcessorSQL,
+  parameterized: expressionRuleProcessorParameterized,
+  parameterized_named: expressionRuleProcessorParameterized,
+  jsonlogic: expressionRuleProcessorJsonLogic,
+  cel: expressionRuleProcessorCEL,
+  spel: expressionRuleProcessorSpEL,
+  jsonata: expressionRuleProcessorJSONata,
+  mongodb: expressionRuleProcessorMongoDB,
+  mongodb_query: expressionRuleProcessorMongoDBQuery,
+  elasticsearch: expressionRuleProcessorElasticSearch,
+  natural_language: expressionRuleProcessorNL,
+  drizzle: expressionRuleProcessorDrizzle,
+  sequelize: expressionRuleProcessorSequelize,
+  cypher: expressionRuleProcessorCypher,
+  gql: expressionRuleProcessorCypher,
+  sparql: expressionRuleProcessorSPARQL,
 };
 
 export const getExportCall = async (
@@ -408,6 +445,9 @@ export const getCodeString = (
     getPropText('showShiftActions'),
     getPropText('suppressStandardClassnames'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
+    options.enableExpressions
+      ? `getValueSources={(field) => { const configured = fields.find((f) => f.name === field)?.valueSources; const base = Array.isArray(configured) && configured.length > 0 ? configured : ['value']; return base.includes('expression') ? base : [...base, 'expression']; }}`
+      : '',
     options.showBranches || options.justifiedLayout || options.responsiveLayout
       ? `controlClassnames={{ queryBuilder: '${clsx({
           [standardClassnames.branches]: options.showBranches,
@@ -439,6 +479,10 @@ import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
     options.useDateTimePackage
       ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';`
       : ''
+  }${
+    options.enableExpressions
+      ? `\nimport { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';`
+      : ''
   }
 ${
   options.enableDragAndDrop
@@ -455,7 +499,9 @@ export const App = () => {
 
   return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
     options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
-  }<QueryBuilder ${props} />${
+  }${options.enableExpressions ? '<QueryBuilderExpressions allowFunctionsOnLHS>' : ''}<QueryBuilder ${props} />${
+    options.enableExpressions ? '</QueryBuilderExpressions>' : ''
+  }${
     options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''
   }${styleWrapperSuffix}${options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''}
   );

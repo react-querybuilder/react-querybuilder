@@ -12,7 +12,7 @@ import { materializeForExport, processIsDateField } from './utils';
 export const getDatetimeRuleProcessorSequelize =
   (apiFns: RQBDateTimeLibraryAPI): RuleProcessor =>
   (rule, options) => {
-    const opts = options ?? /* v8 ignore start -- @preserve */ {} /* v8 ignore stop -- @preserve */;
+    const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
     const { context = {} } = opts;
 
     if (rule.valueSource === 'field' || !processIsDateField(context.isDateField, rule, opts)) {

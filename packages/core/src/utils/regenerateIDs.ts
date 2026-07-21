@@ -32,7 +32,7 @@ export const regenerateIDs = <RG>(
     return structuredClone({
       ...subject,
       id: idGenerator(),
-    }) as RG & { id: string };
+    });
   }
 
   const newGroup = { ...subject, id: idGenerator() } as RuleGroupTypeAny;

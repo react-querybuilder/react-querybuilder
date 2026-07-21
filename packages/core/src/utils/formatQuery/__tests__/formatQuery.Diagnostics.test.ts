@@ -252,7 +252,7 @@ describe('formatQuery("diagnostics")', () => {
       const query: DefaultRuleGroupType = {
         combinator: 'and',
         rules: [{ field: 'firstName', operator: '=', value: 'Steve', muted: true }],
-      } as DefaultRuleGroupType;
+      };
       const result = formatQuery(query, 'diagnostics');
       expect(result.query.valid).toBe(false);
       const mutedDiag = result.diagnostics.find(d => d.code === 'MUTED');

@@ -637,7 +637,7 @@ it('handles custom expressions in subqueries', () => {
         )
           return {
             field: expr.left.value,
-            operator: expr.right.value as DefaultOperatorName,
+            operator: expr.right.value,
             value: expr.list.value[0].value.slice(1, -1), // Remove quotes
           };
         return null;

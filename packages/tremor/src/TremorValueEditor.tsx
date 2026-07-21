@@ -70,7 +70,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     (operator === 'between' || operator === 'notBetween') &&
     (type === 'select' || type === 'text') &&
     // Date and time ranges are handled differently in Tremor--see below
-    (inputTypeCoerced as string) !== 'date'
+    inputTypeCoerced !== 'date'
   ) {
     if (type === 'text') {
       const editors = ['from', 'to'].map((key, i) => {
@@ -134,7 +134,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
       return <ValueEditor {...allProps} skipHook />;
   }
 
-  if ((inputTypeCoerced as string) === 'date') {
+  if (inputTypeCoerced === 'date') {
     if (operator === 'between' || operator === 'notBetween') {
       const twoDateArray = [null, null].map((defaultValue, i) => {
         if (!valueAsArray[i]) return defaultValue;
@@ -182,7 +182,7 @@ export const TremorValueEditor = (allProps: TremorValueEditorProps): React.JSX.E
     );
   }
 
-  if ((inputTypeCoerced as string) === 'number') {
+  if (inputTypeCoerced === 'number') {
     return (
       <NumberInput
         data-testid={testID}

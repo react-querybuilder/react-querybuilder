@@ -171,7 +171,7 @@ const compileGroup = (query: RuleGroupType): Condition =>
   formatQuery(query, {
     ruleProcessor: defaultRuleProcessorRulePilot,
     ruleGroupProcessor: defaultRuleGroupProcessorRulePilot,
-  }) as unknown as Condition;
+  });
 
 describe('defaultRuleGroupProcessorRulePilot', () => {
   it('maps an "and" group to { all }', () => {

@@ -452,7 +452,7 @@ export const prepareOptionList = <O extends FullOption>(
           optionsMap[
             (opt.value ??
               /* v8 ignore start -- @preserve */ opt.name) /* v8 ignore stop -- @preserve */ as OptionIdentifier
-          ] = toFullOption(opt, baseOption) as FullOption;
+          ] = toFullOption(opt, baseOption);
         }
       }
     } else {
@@ -460,7 +460,7 @@ export const prepareOptionList = <O extends FullOption>(
         optionsMap[
           (opt.value ??
             /* v8 ignore start -- @preserve */ opt.name) /* v8 ignore stop -- @preserve */ as OptionIdentifier
-        ] = toFullOption(opt, baseOption) as FullOption;
+        ] = toFullOption(opt, baseOption);
       }
     }
   }

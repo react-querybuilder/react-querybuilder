@@ -310,7 +310,7 @@ export const handleDrop = ({
     targetQbId: dropResult.qbId,
     sourcePath: item.path,
     targetPath: destinationPath,
-    dropEffect: dropEffect as DropEffect,
+    dropEffect,
     groupItems,
     isCrossBuilder,
   });

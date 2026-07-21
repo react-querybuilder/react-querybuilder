@@ -109,13 +109,7 @@ const ruleGroupValid2: RuleGroupTypeIC = {
 
 ```ts
 type ExportFormat =
-  | 'json'
-  | 'sql'
-  | 'json_without_ids'
-  | 'parameterized'
-  | 'parameterized_named'
-  | 'mongodb'
-  | 'cel';
+  'json' | 'sql' | 'json_without_ids' | 'parameterized' | 'parameterized_named' | 'mongodb' | 'cel';
 
 type ValueProcessor = (field: string, operator: string, value: any) => string;
 

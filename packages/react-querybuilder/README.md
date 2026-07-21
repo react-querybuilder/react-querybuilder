@@ -65,6 +65,8 @@ Customizations are not limited to the following libraries, but these have first-
 >
 > For enhanced date/time support, use [`@react-querybuilder/datetime`](https://www.npmjs.com/package/@react-querybuilder/datetime).
 >
+> To enable expressions in rules, use [`@react-querybuilder/expr`](https://www.npmjs.com/package/@react-querybuilder/expr).
+>
 > For rules engine functionality (if-then-else) use [`@react-querybuilder/rules-engine`](https://www.npmjs.com/package/@react-querybuilder/rules-engine).
 
 ## Export

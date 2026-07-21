@@ -1,13 +1,13 @@
 import { current, isDraft, produce } from 'immer';
 import { defaultCombinators } from '../defaults';
 import type {
-  MatchMode,
   MatchModeOptions,
   OptionList,
   Path,
   RuleGroupTypeAny,
   RuleType,
   UpdateableProperties,
+  UpdateValueMap,
   ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types';
@@ -150,6 +150,9 @@ export interface UpdateOptions {
 }
 
 export interface UpdateMethod {
+  /**
+   * Updates a single property of a rule or group.
+   */
   <RG extends RuleGroupTypeAny>(
     /** The query to update. */
     query: RG,
@@ -163,32 +166,151 @@ export interface UpdateMethod {
     /** Options. */
     options?: UpdateOptions
   ): RG;
+  /**
+   * Updates multiple properties of a rule or group using parallel arrays of
+   * property names and corresponding values.
+   */
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** The names of the properties to update. */
+    props: UpdateableProperties[],
+    /** The new values, in the same order as `props`. */
+    // oxlint-disable-next-line typescript/no-explicit-any
+    values: any[],
+    /** The path or ID of the rule or group to update. */
+    pathOrID: Path | string,
+    /** Options. */
+    options?: UpdateOptions
+  ): RG;
+  /**
+   * Updates multiple properties of a rule or group using a map of property
+   * names to their new values.
+   */
+  <RG extends RuleGroupTypeAny>(
+    /** The query to update. */
+    query: RG,
+    /** A map of property names to their new values. */
+    props: UpdateValueMap,
+    /** The path or ID of the rule or group to update. */
+    pathOrID: Path | string,
+    /** Options. */
+    options?: UpdateOptions
+  ): RG;
 }
 
 /**
- * Updates a property of a rule or group within a query without mutating the original query.
- *
- * @returns A new query with the rule or group property updated.
- *
- * @group Query Tools
+ * Relative order in which properties are applied during a multi-property update.
+ * Lower ranks apply first; `value` applies last so an explicitly-provided value
+ * is never clobbered by a reset triggered by a `field`/`operator`/`valueSource`
+ * change. Unranked properties default to `3` (between `valueSource` and `value`).
  */
-export const update: UpdateMethod = (query, prop, value, pathOrID, options = {}): typeof query =>
-  produce(query, q => updateInPlace(q, prop, value, pathOrID, options));
+const updatePropRank: Record<string, number> = { field: 0, operator: 1, valueSource: 2, value: 4 };
+
+/** Stable-sorts `[prop, value]` entries by {@link updatePropRank}. */
+const orderUpdateEntries = (entries: [string, unknown][]): [string, unknown][] =>
+  entries.sort((x, y) => (updatePropRank[x[0]] ?? 3) - (updatePropRank[y[0]] ?? 3));
 
 /**
- * Updates a property of a rule or group within a query in place.
+ * Normalizes the variadic {@link update}/{@link updateInPlace} arguments (single
+ * prop+value, parallel arrays, or property map) into a canonically-ordered list
+ * of `[prop, value]` entries plus the target path/ID and options.
+ */
+const normalizeUpdateArgs = (
+  a: unknown,
+  b: unknown,
+  c: unknown,
+  d: unknown
+): { entries: [string, unknown][]; pathOrID: Path | string; options: UpdateOptions } => {
+  // Single property: (prop, value, pathOrID, options)
+  if (typeof a === 'string') {
+    return { entries: [[a, b]], pathOrID: c as Path | string, options: (d as UpdateOptions) ?? {} };
+  }
+  // Parallel arrays: (props, values, pathOrID, options)
+  if (Array.isArray(a)) {
+    const values = b as unknown[];
+    return {
+      entries: orderUpdateEntries(a.map((prop, i): [string, unknown] => [prop, values[i]])),
+      pathOrID: c as Path | string,
+      options: (d as UpdateOptions) ?? {},
+    };
+  }
+  // Property map: (props, pathOrID, options)
+  return {
+    entries: orderUpdateEntries(Object.entries(a as Record<string, unknown>)),
+    pathOrID: b as Path | string,
+    options: (c as UpdateOptions) ?? {},
+  };
+};
+
+/**
+ * Applies one or more property updates to a query in place. Shared by
+ * {@link update} and {@link updateInPlace}.
+ */
+const applyUpdatesInPlace = <RG extends RuleGroupTypeAny>(
+  query: RG,
+  a: unknown,
+  b: unknown,
+  c: unknown,
+  d: unknown
+): RG => {
+  const { entries, pathOrID, options } = normalizeUpdateArgs(a, b, c, d);
+  for (const [prop, value] of entries) {
+    updateInPlaceSingle(query, prop, value, pathOrID, options);
+  }
+  return query;
+};
+
+/**
+ * Updates one or more properties of a rule or group within a query without
+ * mutating the original query. Properties may be supplied individually
+ * (`prop`, `value`), as parallel arrays (`props`, `values`), or as a
+ * property-to-value map. For multi-property updates, `field`, `operator`, and
+ * `valueSource` are applied before `value`, so an explicit `value` is never
+ * reset by a change to one of those properties.
  *
- * @returns The query (mutated in place) with the rule or group property updated.
+ * @returns A new query with the rule or group properties updated.
  *
  * @group Query Tools
  */
-export const updateInPlace: UpdateMethod = (
-  query,
-  prop,
-  value,
-  pathOrID,
-  options = {}
-): typeof query => {
+export const update = (<RG extends RuleGroupTypeAny>(
+  query: RG,
+  a: unknown,
+  b?: unknown,
+  c?: unknown,
+  d?: unknown
+): RG =>
+  produce(query, q => {
+    applyUpdatesInPlace(q, a, b, c, d);
+  })) as UpdateMethod;
+
+/**
+ * Updates one or more properties of a rule or group within a query in place.
+ * See {@link update} for the supported argument forms and ordering semantics.
+ *
+ * @returns The query (mutated in place) with the rule or group properties updated.
+ *
+ * @group Query Tools
+ */
+export const updateInPlace = (<RG extends RuleGroupTypeAny>(
+  query: RG,
+  a: unknown,
+  b?: unknown,
+  c?: unknown,
+  d?: unknown
+): RG => applyUpdatesInPlace(query, a, b, c, d)) as UpdateMethod;
+
+/**
+ * Updates a single property of a rule or group within a query in place.
+ */
+const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
+  query: RG,
+  prop: UpdateableProperties,
+  // oxlint-disable-next-line typescript/no-explicit-any
+  value: any,
+  pathOrID: Path | string,
+  options: UpdateOptions = {}
+): RG => {
   const {
     resetOnFieldChange: _resetOnFieldChange = true,
     resetOnOperatorChange = false,
@@ -250,7 +372,7 @@ export const updateInPlace: UpdateMethod = (
           ? null
           : getFirstOption(toFieldMatchModes);
       if (nextMatchMode) {
-        ruleOrGroup.match = { mode: nextMatchMode as MatchMode, threshold: 1 };
+        ruleOrGroup.match = { mode: nextMatchMode, threshold: 1 };
       }
     }
 

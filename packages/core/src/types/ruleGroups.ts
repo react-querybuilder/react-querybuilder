@@ -1,4 +1,5 @@
 import type { FullCombinator, FullOperator, MatchConfig, Path, ValueSource } from './basic';
+import type { ExpressionNode } from './expression';
 
 /**
  * Properties common to both rules and groups.
@@ -33,6 +34,11 @@ export interface RuleType<
   value: V;
   valueSource?: ValueSource;
   match?: MatchConfig;
+  /**
+   * When present, the rule's left-hand side is this expression. The `field`
+   * property continues to drive operator selection and validation.
+   */
+  lhs?: ExpressionNode;
   /**
    * Only used when adding a rule to a query that uses independent combinators.
    */
@@ -72,6 +78,13 @@ export type RuleGroupArray<
 export type UpdateableProperties =
   | Exclude<keyof (RuleType & RuleGroupType), 'id' | 'path' | 'rules'>
   | (string & {});
+
+/**
+ * A map of {@link UpdateableProperties} to their new values, for updating
+ * multiple properties of a rule or group in a single operation.
+ */
+// oxlint-disable-next-line typescript/no-explicit-any
+export type UpdateValueMap = Partial<Record<UpdateableProperties, any>>;
 
 /**
  * The type of the `rules` array in a {@link DefaultRuleGroupType}.

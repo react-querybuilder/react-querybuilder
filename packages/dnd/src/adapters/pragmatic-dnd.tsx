@@ -465,7 +465,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     const dropId = getDropId('rule', params.path, params.schema.qbId);
 
     const paramsRef = useRef(params);
-    paramsRef.current = params;
+    useEffect(() => {
+      paramsRef.current = params;
+    });
 
     useEffect(() => {
       const container = containerNodeRef.current;
@@ -491,7 +493,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
         dropTargetForElements({
           element: container,
           getData: () => ({
-            __rqbType: 'rule' as DndDropTargetType,
+            __rqbType: 'rule',
             __rqbPath: paramsRef.current.path,
             __rqbValidate: (dragging: DraggedItem) => {
               const cp = paramsRef.current;
@@ -580,7 +582,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     const dropId = getDropId('ruleGroup', params.path, params.schema.qbId);
 
     const paramsRef = useRef(params);
-    paramsRef.current = params;
+    useEffect(() => {
+      paramsRef.current = params;
+    });
 
     // Register draggable on the preview element with handle
     useEffect(() => {
@@ -613,7 +617,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       return dropTargetForElements({
         element: dropEl,
         getData: () => ({
-          __rqbType: 'ruleGroup' as DndDropTargetType,
+          __rqbType: 'ruleGroup',
           __rqbPath: paramsRef.current.path,
           __rqbValidate: (dragging: DraggedItem) => {
             const cp = paramsRef.current;
@@ -715,7 +719,9 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
     ] as RuleType | RuleGroupTypeAny;
 
     const paramsRef = useRef(params);
-    paramsRef.current = params;
+    useEffect(() => {
+      paramsRef.current = params;
+    });
 
     useEffect(() => {
       const dropEl = dropNodeRef.current;
@@ -724,7 +730,7 @@ export const createPragmaticDndAdapter = (pdndExports: PragmaticDndExports): Dnd
       return dropTargetForElements({
         element: dropEl,
         getData: () => ({
-          __rqbType: 'inlineCombinator' as DndDropTargetType,
+          __rqbType: 'inlineCombinator',
           __rqbValidate: (dragging: DraggedItem) => {
             const cp = paramsRef.current;
             const hItem = (cp.rules ?? [])[cp.path.at(-1)! - 1] as RuleType | RuleGroupTypeAny;

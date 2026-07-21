@@ -6,16 +6,6 @@ import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.css';
 
-const chakraTheme = createSystem(defaultConfig);
-
-const Provider = (props: React.PropsWithChildren) => (
-  <ChakraProvider value={chakraTheme}>
-    <ThemeProvider attribute="class" disableTransitionOnChange>
-      {props.children}
-    </ThemeProvider>
-  </ChakraProvider>
-);
-
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
@@ -28,6 +18,16 @@ const initialQuery: RuleGroupType = {
     { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
   ],
 };
+
+const chakraTheme = createSystem(defaultConfig);
+
+const Provider = (props: React.PropsWithChildren) => (
+  <ChakraProvider value={chakraTheme}>
+    <ThemeProvider attribute="class" disableTransitionOnChange>
+      {props.children}
+    </ThemeProvider>
+  </ChakraProvider>
+);
 
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);

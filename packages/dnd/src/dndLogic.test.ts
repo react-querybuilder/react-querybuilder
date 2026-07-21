@@ -45,16 +45,15 @@ const createMockSchema = (overrides: Partial<Schema<any, any>> = {}): Schema<any
     ...overrides,
   }) as unknown as Schema<any, any>;
 
-const createMockActions = (): QueryActions =>
-  ({
-    onGroupAdd: vi.fn(),
-    onGroupRemove: vi.fn(),
-    onPropChange: vi.fn(),
-    onRuleAdd: vi.fn(),
-    onRuleRemove: vi.fn(),
-    moveRule: vi.fn(),
-    groupRule: vi.fn(),
-  }) as QueryActions;
+const createMockActions = (): QueryActions => ({
+  onGroupAdd: vi.fn(),
+  onGroupRemove: vi.fn(),
+  onPropChange: vi.fn(),
+  onRuleAdd: vi.fn(),
+  onRuleRemove: vi.fn(),
+  moveRule: vi.fn(),
+  groupRule: vi.fn(),
+});
 
 const createDraggedItem = (overrides: Partial<DraggedItem> = {}): DraggedItem =>
   ({

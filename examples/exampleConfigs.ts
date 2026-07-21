@@ -70,6 +70,21 @@ export const configs: Record<string, ExampleConfig> = {
     isCompatPackage: true,
     enableDnD: false,
   },
+  expr: {
+    name: 'Expressions',
+    dependencyKeys: [],
+    cssPre: [`@import '@react-querybuilder/expr/dist/expr.css';`],
+    cssPost: [],
+    tsxImports: [`import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';`],
+    additionalDeclarations: [
+      `for (const field of fields) { field.valueSources = ['value', 'expression']; }`,
+    ],
+    wrapper: [`<QueryBuilderExpressions>`, `</QueryBuilderExpressions>`],
+    props: [],
+    compileToJS: false,
+    isCompatPackage: true,
+    enableDnD: false,
+  },
   antd: {
     name: 'Ant Design',
     dependencyKeys: ['@ant-design/icons', 'antd'],

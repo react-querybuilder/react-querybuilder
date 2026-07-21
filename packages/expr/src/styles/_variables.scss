@@ -1,0 +1,8 @@
+@forward '../../../core/src/styles/variables';
+@use '../../../core/src/styles/variables' as *;
+
+$rqbexpr-var-prefix: rqbexpr- !default;
+
+// Spacing between an expression editor's sub-controls. Defaults to the core query
+// builder spacing so expression controls line up with surrounding rule controls.
+$rqbexpr-spacing: $rqb-spacing !default;

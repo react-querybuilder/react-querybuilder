@@ -4,8 +4,6 @@ import type { Field, RuleGroupType } from 'react-querybuilder';
 import { QueryBuilder, formatQuery } from 'react-querybuilder';
 import './styles.css';
 
-// __ADDITIONAL_DECLARATIONS__
-
 const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
   { name: 'lastName', label: 'Last Name' },
@@ -18,6 +16,8 @@ const initialQuery: RuleGroupType = {
     { field: 'lastName', operator: 'in', value: 'Vai,Vaughan' },
   ],
 };
+
+// __ADDITIONAL_DECLARATIONS__
 
 export const App = () => {
   const [query, setQuery] = useState(initialQuery);

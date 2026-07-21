@@ -218,19 +218,19 @@ export const queryWithMatchModes: DefaultRuleGroupType = {
       field: 'fs',
       operator: '=',
       value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-      match: { mode: 'atMost' as any },
+      match: { mode: 'atMost' },
     },
     {
       field: 'fs',
       operator: '=',
       value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-      match: { mode: 'atLeast' as any },
+      match: { mode: 'atLeast' },
     },
     {
       field: 'fs',
       operator: '=',
       value: { combinator: 'and', rules: [{ field: '', operator: 'contains', value: 'S' }] },
-      match: { mode: 'exactly' as any },
+      match: { mode: 'exactly' },
     },
     /* oxlint-enable typescript/no-explicit-any */
     {
