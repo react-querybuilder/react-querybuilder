@@ -56,6 +56,8 @@ formatQuery(query, 'sql');
 | [Prisma](https://www.prisma.io/)                                                | `"prisma"`                | `Record<string, any>`   | Prisma `where` object                       |
 | [Sequelize](https://sequelize.org/)                                             | `"sequelize"`             | `Record<string, any>`   | Sequelize `where` object                    |
 
+See `@react-querybuilder/datetime` and `@react-querybuilder/expr` for additional, enhanced export capabilities.
+
 ## Import
 
 [Full import documentation](https://react-querybuilder.js.org/docs/utils/import)
