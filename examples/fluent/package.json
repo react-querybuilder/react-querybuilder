@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@fluentui/react-components": "^9",
-    "@react-querybuilder/core": "8.20.2",
     "@react-querybuilder/fluent": "8.20.2",
     "react": "^19",
     "react-dom": "^19",

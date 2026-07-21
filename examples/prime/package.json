@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@react-querybuilder/core": "8.20.2",
     "@react-querybuilder/prime": "8.20.2",
     "primeicons": ">=7",
     "primereact": ">=10",

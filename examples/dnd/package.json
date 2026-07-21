@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@react-querybuilder/core": "8.20.2",
     "@react-querybuilder/dnd": "8.20.2",
     "react": "^19",
     "react-dnd": ">=14.0.0",

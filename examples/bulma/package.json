@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@react-querybuilder/bulma": "8.20.2",
-    "@react-querybuilder/core": "8.20.2",
     "bulma": "^0.9.4 || ^1",
     "react": "^19",
     "react-dom": "^19",

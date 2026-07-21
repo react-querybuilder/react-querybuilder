@@ -2,7 +2,6 @@
   "dependencies": {
     "@ant-design/icons": ">=5",
     "@react-querybuilder/antd": "8.20.2",
-    "@react-querybuilder/core": "8.20.2",
     "antd": ">=5.11.0",
     "react": "^19",
     "react-dom": "^19",

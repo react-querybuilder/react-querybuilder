@@ -3,7 +3,6 @@
     "@mantine/core": ">=7",
     "@mantine/dates": ">=7",
     "@mantine/hooks": ">=7",
-    "@react-querybuilder/core": "8.20.2",
     "@react-querybuilder/mantine": "8.20.2",
     "dayjs": ">=1",
     "react": "^19",

@@ -156,13 +156,6 @@ const generateExampleFromTemplate = async (exampleID: string) => {
   const examplePkgJSON = structuredClone(templatePkgJSON);
   examplePkgJSON.name = `react-querybuilder-${exampleID}-example`;
   examplePkgJSON.description = exampleTitle;
-  // Add `@react-querybuilder/core` as an explicit dependency for any example that depends on
-  // `react-querybuilder` so the React 18 typecheck CI job installs the local core pack (which may
-  // include types not yet published).
-  if (examplePkgJSON.dependencies['react-querybuilder']) {
-    examplePkgJSON.dependencies['@react-querybuilder/core'] =
-      templatePkgJSON.dependencies['react-querybuilder'];
-  }
   if (exampleConfig.isCompatPackage || exampleConfig.enableDnD) {
     examplePkgJSON.dependencies[`@react-querybuilder/${exampleID}`] =
       templatePkgJSON.dependencies['react-querybuilder'];
