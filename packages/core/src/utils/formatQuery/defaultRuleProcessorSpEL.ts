@@ -92,10 +92,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
         ? `'.*'.concat(${trimIfString(value)}).concat('.*')`
         : `'.*${escapeSingleQuotes(value, escapeQuotes)}.*'`;
 
-      return wrapInNegation(
-        `${field} matches ${valueTL}`,
-        shouldNegate(operatorTL)
-      );
+      return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
 
     case 'beginswith':
@@ -104,10 +101,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
         ? `'^'.concat(${trimIfString(value)}).concat('.*')`
         : `'${(typeof value === 'string' && !value.startsWith('^')) || useBareValue ? '^' : ''}${escapeSingleQuotes(value, escapeQuotes)}.*'`;
 
-      return wrapInNegation(
-        `${field} matches ${valueTL}`,
-        shouldNegate(operatorTL)
-      );
+      return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
 
     case 'endswith':
@@ -116,10 +110,7 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
         ? `'.*'.concat(${trimIfString(value)}).concat('$')`
         : `'.*${escapeSingleQuotes(value, escapeQuotes)}${(typeof value === 'string' && !value.endsWith('$')) || useBareValue ? '$' : ''}'`;
 
-      return wrapInNegation(
-        `${field} matches ${valueTL}`,
-        shouldNegate(operatorTL)
-      );
+      return wrapInNegation(`${field} matches ${valueTL}`, shouldNegate(operatorTL));
     }
 
     case 'null':
