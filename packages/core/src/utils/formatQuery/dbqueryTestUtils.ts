@@ -1,6 +1,14 @@
 import type { DefaultRuleGroupType, Field, FormatQueryOptions, MatchConfig } from '../../types';
 
-type DbPlatform = 'postgres' | 'sqlite' | 'jsonlogic' | 'jsonata' | 'mssql' | 'mongodb' | 'cel';
+type DbPlatform =
+  | 'postgres'
+  | 'sqlite'
+  | 'jsonlogic'
+  | 'jsonata'
+  | 'mssql'
+  | 'mongodb'
+  | 'cel'
+  | 'spel';
 
 export interface TestSQLParams {
   query: DefaultRuleGroupType;
@@ -29,6 +37,7 @@ export interface AugmentedSuperUser<
 
 const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   cel: [true, false],
+  spel: [true, false],
   jsonata: [true, false],
   jsonlogic: [true, false],
   mssql: [1, 0],
@@ -64,7 +73,7 @@ export const superUsers = <DBP extends DbPlatform>(
       enhanced: isNotEnhanced,
       madeUpName: 'Batman',
       nickname: 'The Dark Knight',
-      powerUpAge: dbPlatform === 'cel' ? undefined : null,
+      powerUpAge: dbPlatform === 'cel' || dbPlatform === 'spel' ? undefined : null,
     },
     {
       firstName: 'Steve',
@@ -167,6 +176,7 @@ export const augmentedSuperUsers = <DBP extends DbPlatform>(dbPlatform: DBP) =>
 
 const enhancedColumnType: Record<DbPlatform, string> = {
   cel: 'N/A',
+  spel: 'N/A',
   jsonata: 'N/A',
   jsonlogic: 'N/A',
   mongodb: 'boolean',
@@ -177,6 +187,7 @@ const enhancedColumnType: Record<DbPlatform, string> = {
 
 const textColumnType: Record<DbPlatform, string> = {
   cel: 'TEXT',
+  spel: 'TEXT',
   jsonata: 'TEXT',
   jsonlogic: 'TEXT',
   mongodb: 'string',

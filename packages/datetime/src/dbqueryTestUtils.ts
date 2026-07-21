@@ -69,12 +69,14 @@ export const FIND_MUSICIANS_TABLE = (platform: string): string =>
     postgresql: `SELECT * FROM pg_tables WHERE tablename = 'musicians'`,
   })[platform]!;
 
-export function CREATE_MUSICIANS_TABLE(platform: 'jsonlogic' | 'cel' | 'jsonata'): MusicianRecord[];
+export function CREATE_MUSICIANS_TABLE(
+  platform: 'jsonlogic' | 'cel' | 'jsonata' | 'spel'
+): MusicianRecord[];
 export function CREATE_MUSICIANS_TABLE(platform: 'sqlite' | 'postgresql'): string;
 export function CREATE_MUSICIANS_TABLE(
-  platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel' | 'jsonata'
+  platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel' | 'jsonata' | 'spel'
 ): string | MusicianRecord[] {
-  if (platform === 'jsonlogic' || platform === 'cel' || platform === 'jsonata') {
+  if (platform === 'jsonlogic' || platform === 'cel' || platform === 'jsonata' || platform === 'spel') {
     const now = new Date().toISOString();
     return musicians.map<MusicianRecord>(musician => ({
       ...musician,
