@@ -38,7 +38,7 @@
   }
 }
 
-/* BEGIN_MANTINE_STYLES v9.4.1
+/* BEGIN_MANTINE_STYLES v9.4.2
 The rest of this file was copied from node_modules/@mantine/core/styles.css.
 The "CSS reset" section (except for the `html, body` styles) and the `body` styles from
 the "Global styles" section have been commented here and copied into the `.rqb-mantine`
@@ -8645,7 +8645,8 @@ fieldset:disabled .m_38aeed47:where(:not([data-inverted])),
   outline: 0;
 }
 
-.m_f6970eb1:focus-visible > .m_dc283425 {
+.m_f6970eb1:focus-visible > .m_dc283425,
+.m_f6970eb1[data-focus-ring]:focus > .m_dc283425 {
   outline: 2px solid var(--mantine-primary-color-filled);
   outline-offset: calc(0.125rem * var(--mantine-scale));
 }
