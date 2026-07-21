@@ -4,6 +4,7 @@
     "@emotion/styled": "^11",
     "@mui/icons-material": ">=5",
     "@mui/material": ">=5",
+    "@react-querybuilder/core": "8.20.2",
     "@react-querybuilder/material": "8.20.2",
     "react": "^19",
     "react-dom": "^19",

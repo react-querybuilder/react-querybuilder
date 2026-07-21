@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@react-querybuilder/core": "8.20.2",
     "react": "^19",
     "react-dom": "^19",
     "react-querybuilder": "8.20.2"
