@@ -463,6 +463,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "RoKra99",
+      "name": "Robert Krause",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40492443?v=4",
+      "profile": "https://github.com/RoKra99",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
