@@ -1,11 +1,10 @@
 import { SpelExpressionEvaluator } from 'spel2js';
 
 /**
- * Shared contract for a SpEL evaluator backend. Phase 1 provides a `spel2js`-based,
- * in-process implementation ({@link spel2jsEvaluator}); Phase 2 will add a real Spring/Java
- * backend behind this same signature. `typemap` is unused by the JS backend (JS is dynamically
- * typed) but retained for contract parity with the future Java backend, which needs it for value
- * coercion.
+ * Shared contract for a SpEL evaluator backend. Two implementations satisfy it: a `spel2js`-based,
+ * in-process one ({@link spel2jsEvaluator}) and a real Spring/Java one (see `verifySpELEvaluator`).
+ * `typemap` is unused by the JS backend (JS is dynamically typed) but retained for contract parity
+ * with the Java backend.
  */
 export type SpELEvaluator = (params: {
   data: unknown[];
@@ -14,11 +13,10 @@ export type SpELEvaluator = (params: {
 }) => Promise<unknown[]>;
 
 /**
- * Phase 1 backend: evaluates a SpEL expression in-process via `spel2js`.
+ * Evaluates a SpEL expression in-process via `spel2js`.
  *
- * Field references must use `#root['field']` indexer syntax (see `dbquery.spel.test.ts` field
- * transforms). Bare `['field']` does not resolve against the root in `spel2js`; `#root['field']`
- * works in both `spel2js` and real Spring SpEL (Map root, no `MapAccessor` needed).
+ * `spel2js` resolves the bare field identifiers that `formatQuery('spel')` emits by default against
+ * the record root, so no `#root['field']` rewrite is needed (matching the Java backend).
  *
  * Returns the subset of `data` for which the expression evaluates to `true`.
  */

@@ -1,4 +1,4 @@
-import { formatQuery, transformQuery } from '@react-querybuilder/core';
+import { formatQuery } from '@react-querybuilder/core';
 import { spel2jsEvaluator } from '../../../../utils/spel-evaluator/spel2jsEvaluator';
 import type { MusicianRecord } from '../dbqueryTestUtils';
 import {
@@ -8,12 +8,9 @@ import {
   testCases,
 } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorSpEL } from '../getDatetimeRuleProcessorSpEL';
-import type { IsDateFieldFunction } from '../types';
-import { defaultIsDateField } from '../utils';
 
-// SpEL `#root['field']` map-indexer syntax. Resolves against the record root in both spel2js and
-// real Spring SpEL; bare `['field']` does not resolve in spel2js.
-const indexer = (name: string) => `#root['${name}']`;
+// spel2js resolves the bare field identifiers that `formatQuery('spel')` emits by default against
+// the record root, so no `#root['field']` rewrite is needed (matching the Java backend).
 
 const typemap = {
   first_name: 'string',
@@ -26,32 +23,16 @@ const typemap = {
 
 const data = CREATE_MUSICIANS_TABLE('spel');
 
-const isDateField: IsDateFieldFunction = (rule, opts = {}) => {
-  const { fieldData } = opts;
-  if (!fieldData) {
-    return defaultIsDateField(rule, opts);
-  }
-  return defaultIsDateField(rule, {
-    ...opts,
-    fieldData: { ...fieldData, name: indexer(fieldData.name), value: indexer(fieldData.value) },
-  });
-};
-
 describe('SpEL (spel2js)', () => {
   for (const [libName, apiFns] of dateLibraryFunctions) {
     describe(libName, () => {
       for (const [testCaseName, [testQuery, expectation]] of Object.entries(testCases)) {
         test(testCaseName, async () => {
-          const itemFields = fields.map(f => Object.assign({}, f, { name: indexer(f.name) }));
-          const query = transformQuery(testQuery, {
-            ruleProcessor: r => ({ ...r, field: indexer(r.field) }),
-          });
-          const spel = formatQuery(query, {
+          const spel = formatQuery(testQuery, {
             format: 'spel',
             parseNumbers: true,
-            fields: itemFields,
+            fields,
             ruleProcessor: getDatetimeRuleProcessorSpEL(apiFns),
-            context: { isDateField },
           });
           const result = (await spel2jsEvaluator({ data, spel, typemap })) as MusicianRecord[];
           // oxlint-disable no-conditional-expect

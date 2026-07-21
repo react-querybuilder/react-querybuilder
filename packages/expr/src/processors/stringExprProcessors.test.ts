@@ -505,15 +505,17 @@ describe('string-match operators with expression operands', () => {
   it('spel: contains/beginsWith/endsWith with expression RHS and negation', () => {
     const f = (r: RuleType) =>
       formatQuery(group(r), { format: 'spel', ruleProcessor: expressionRuleProcessorSpEL });
-    expect(f(smRule('contains', { rhs: up('b') }))).toBe('name matches b.toUpperCase()');
+    expect(f(smRule('contains', { rhs: up('b') }))).toBe(
+      `name matches '.*'.concat(b.toUpperCase()).concat('.*')`
+    );
     expect(f(smRule('beginsWith', { rhs: up('b') }))).toBe(
-      `name matches '^'.concat(b.toUpperCase())`
+      `name matches '^'.concat(b.toUpperCase()).concat('.*')`
     );
     expect(f(smRule('endsWith', { rhs: up('b') }))).toBe(
-      `name matches b.toUpperCase().concat('$')`
+      `name matches '.*'.concat(b.toUpperCase()).concat('$')`
     );
     expect(f(smRule('doesNotEndWith', { rhs: up('b') }))).toBe(
-      `!(name matches b.toUpperCase().concat('$'))`
+      `!(name matches '.*'.concat(b.toUpperCase()).concat('$'))`
     );
   });
 

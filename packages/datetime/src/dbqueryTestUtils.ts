@@ -76,7 +76,12 @@ export function CREATE_MUSICIANS_TABLE(platform: 'sqlite' | 'postgresql'): strin
 export function CREATE_MUSICIANS_TABLE(
   platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel' | 'jsonata' | 'spel'
 ): string | MusicianRecord[] {
-  if (platform === 'jsonlogic' || platform === 'cel' || platform === 'jsonata' || platform === 'spel') {
+  if (
+    platform === 'jsonlogic' ||
+    platform === 'cel' ||
+    platform === 'jsonata' ||
+    platform === 'spel'
+  ) {
     const now = new Date().toISOString();
     return musicians.map<MusicianRecord>(musician => ({
       ...musician,

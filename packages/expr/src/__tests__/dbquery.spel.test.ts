@@ -3,13 +3,12 @@ import { spel2jsEvaluator } from '../../../../utils/spel-evaluator/spel2jsEvalua
 import { fields, products, testCases } from '../dbqueryTestUtils';
 import { expressionRuleProcessorSpEL } from '../index';
 
-// spel2js (Phase 1 backend) is a partial JS port of SpEL and cannot evaluate two families of
-// output the expr SpEL serializer produces. These are excluded here; Phase 2 (real Spring/Java)
-// will cover them:
+// spel2js is a partial JS port of SpEL and cannot evaluate two families of output the expr SpEL
+// serializer produces. These are excluded here; the real Spring/Java suite (dbquery.spel.java.test.ts)
+// covers them:
 //   - `T(java.lang.Math).abs/min/max(...)` Java type references (abs, min, max, between, notBetween)
 //   - null-property access (`rating == null`), which spel2js throws on (isNull, isNotNull)
-// Field references are plain identifiers (resolved against the record root by spel2js). Emitting
-// indexer syntax for expr output would require a bespoke serializer option (see plan doc).
+// Field references are plain identifiers, resolved against the record root by spel2js.
 const unsupportedBySpel2js = new Set([
   'abs',
   'min',

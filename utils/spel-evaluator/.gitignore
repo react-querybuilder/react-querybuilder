@@ -1,0 +1,3 @@
+# Downloaded Maven jars + compiled Java artifacts for the SpEL evaluator
+lib/
+*.class

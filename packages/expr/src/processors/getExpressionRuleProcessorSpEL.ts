@@ -17,12 +17,15 @@ const factory = makeStringExprProcessor({
   renderBetween: (lhs, from, to, negate) =>
     negate ? `(${lhs} < ${from} or ${lhs} > ${to})` : `(${lhs} >= ${from} and ${lhs} <= ${to})`,
   renderStringMatch: (kind, negate, lhs, rhs) => {
+    // Spring SpEL `matches` delegates to a full-string regex match, so anchor the pattern to the
+    // intended semantics (mirrors core `defaultRuleProcessorSpEL` post-#1061). `rhs` is an arbitrary
+    // expression, so wrap it with `.concat(...)` rather than string-literal interpolation.
     const pattern =
       kind === 'contains'
-        ? rhs
+        ? `'.*'.concat(${rhs}).concat('.*')`
         : kind === 'beginswith'
-          ? `'^'.concat(${rhs})`
-          : `${rhs}.concat('$')`;
+          ? `'^'.concat(${rhs}).concat('.*')`
+          : `'.*'.concat(${rhs}).concat('$')`;
     const clause = `${lhs} matches ${pattern}`;
     return negate ? `!(${clause})` : clause;
   },
