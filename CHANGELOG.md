@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Demo: new "Enable expressions" option wraps the live query builder with `QueryBuilderExpressions`.
 - [#1059] The `update` query tool (and `updateInPlace`) can now update multiple properties of a rule or group in a single call, either with a property-to-value map (`update(query, { valueSource: 'field', value: 'otherField' }, pathOrID)`) or with parallel arrays of property names and values (`update(query, ['valueSource', 'value'], ['field', 'otherField'], pathOrID)`). Properties are applied in a canonical order (`field`/`operator`/`valueSource` before `value`) so an explicitly-provided `value` is never reset by a change to one of those properties. The original single-property signature is unchanged.
 
+### Fixed
+
+- [#1061] SpEL export format now produces full-string regular expression match patterns.
+
 ## [v8.20.2] - 2026-06-25
 
 ### Added
@@ -2337,6 +2341,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1050]: https://github.com/react-querybuilder/react-querybuilder/pull/1050
 [#1053]: https://github.com/react-querybuilder/react-querybuilder/pull/1053
 [#1059]: https://github.com/react-querybuilder/react-querybuilder/pull/1059
+[#1061]: https://github.com/react-querybuilder/react-querybuilder/pull/1061
 
 <!-- #endregion -->
 
