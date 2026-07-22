@@ -23,7 +23,9 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
 ) => {
   const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
   const { field, operator, value, valueSource } = rule;
-  const valueIsField = valueSource === 'field';
+  // Paradigm A: parameters render as bare variable references (like field sources),
+  // since CEL has no external bind-parameter concept.
+  const valueIsField = valueSource === 'field' || valueSource === 'parameter';
   const operatorTL = lc(operator === '=' ? '==' : operator);
   const useBareValue =
     typeof value === 'number' ||

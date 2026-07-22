@@ -25,6 +25,7 @@ const makeOptions = (o: Partial<GetRuleDefaultValueOptions> = {}): GetRuleDefaul
   getValueEditorType: o.getValueEditorType ?? (() => 'text'),
   getValues: o.getValues ?? (() => []),
   getDefaultValue: o.getDefaultValue,
+  parameters: o.parameters,
   listsAsArrays: o.listsAsArrays,
 });
 
@@ -65,6 +66,23 @@ describe('valueSource "field"', () => {
     expect(
       getRuleDefaultValue(rule({ valueSource: 'field' }), makeOptions({ fields: [fieldA] }))
     ).toBe('');
+  });
+});
+
+describe('valueSource "parameter"', () => {
+  const parameters = optionList;
+
+  it('seeds the first parameter when a non-empty list is provided', () => {
+    expect(
+      getRuleDefaultValue(rule({ valueSource: 'parameter' }), makeOptions({ parameters }))
+    ).toBe('opt1');
+  });
+
+  it('returns an empty string when parameters is empty or nullish', () => {
+    expect(
+      getRuleDefaultValue(rule({ valueSource: 'parameter' }), makeOptions({ parameters: [] }))
+    ).toBe('');
+    expect(getRuleDefaultValue(rule({ valueSource: 'parameter' }), makeOptions())).toBe('');
   });
 });
 

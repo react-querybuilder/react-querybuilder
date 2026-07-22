@@ -25,7 +25,9 @@ export const defaultRuleProcessorSpEL: RuleProcessor = (
 ) => {
   const { field, operator, value, valueSource } = rule;
   const { escapeQuotes, parseNumbers, preserveValueOrder } = opts;
-  const valueIsField = valueSource === 'field';
+  // Paradigm A: parameters render as bare variable references (like field sources),
+  // since SpEL has no external bind-parameter concept.
+  const valueIsField = valueSource === 'field' || valueSource === 'parameter';
   const operatorTL = lc(operator === '=' ? '==' : operator);
   const useBareValue =
     typeof value === 'number' ||

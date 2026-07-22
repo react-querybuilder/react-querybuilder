@@ -339,6 +339,29 @@ export const normalizeConstituentWordOrder = (input: string): ConstituentWordOrd
 };
 
 /**
+ * Prefixes a named-parameter value with the given `paramPrefix` unless the value already
+ * begins with it. Used by {@link formatQuery} to render rules whose `valueSource` is
+ * `"parameter"` (e.g. `"p1"` with prefix `":"` → `":p1"`; `":p1"` → `":p1"`).
+ *
+ * @group Export
+ */
+export const withParamPrefix = (value: unknown, paramPrefix = ':'): string => {
+  const v = `${value ?? ''}`;
+  return paramPrefix && v.startsWith(paramPrefix) ? v : `${paramPrefix}${v}`;
+};
+
+/**
+ * Strips a leading `paramPrefix` from a named-parameter value if present. Inverse of
+ * {@link withParamPrefix}; used to normalize parameter names for validation/lookup.
+ *
+ * @group Export
+ */
+export const stripParamPrefix = (value: unknown, paramPrefix = ':'): string => {
+  const v = `${value ?? ''}`;
+  return paramPrefix && v.startsWith(paramPrefix) ? v.slice(paramPrefix.length) : v;
+};
+
+/**
  * Default translations used by {@link formatQuery} for "natural_language" format.
  *
  * @group Export

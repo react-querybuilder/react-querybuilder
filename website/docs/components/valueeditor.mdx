@@ -226,6 +226,62 @@ The `Field#valueSources` property can also be a function that takes an operator 
 
 :::
 
+### The `"parameter"` value source
+
+In addition to `"value"` and `"field"`, the `valueSource` property accepts `"parameter"`. This lets a rule compare a field against a named query parameter (a placeholder resolved at execution time) rather than a literal value or another field.
+
+To enable it, include `"parameter"` in a field's `valueSources` (or the `getValueSources` prop):
+
+```tsx
+const fields: Field[] = [{ name: 'f1', label: 'f1', valueSources: ['value', 'parameter'] }];
+```
+
+When the rule's `valueSource` is `"parameter"`, the value editor's behavior depends on the [`parameters` prop](./querybuilder#parameters):
+
+- If `parameters` is provided (a non-empty option list), the editor renders a `<select>` of the available parameter names.
+- If `parameters` is nullish or empty, the editor renders a free-form text `<input>` for entering a parameter name.
+
+```tsx
+<QueryBuilder
+  fields={fields}
+  parameters={[
+    { name: 'p1', label: 'Param 1' },
+    { name: 'p2', label: 'Param 2' },
+  ]}
+/>
+```
+
+:::tip
+
+Specify parameter names **without** the parameter prefix (e.g. `p1`, not `:p1`). [`formatQuery`](../utils/export) adds the appropriate prefix (`:`, `@`, `$`, etc.) for the target dialect. If a stored value already includes the prefix, it is left as-is.
+
+:::
+
+The selected parameter name is stored directly in the rule's `value`:
+
+```json
+{ "field": "f1", "operator": "=", "value": "p1", "valueSource": "parameter" }
+```
+
+#### Formatting parameter rules
+
+[`formatQuery`](../utils/export) understands the `"parameter"` value source across output formats:
+
+- **SQL** — the prefixed name is emitted inline (e.g. `f1 = :p1`).
+- **`parameterized`** — the name is emitted inline (positional placeholders are _not_ pushed to `params`).
+- **`parameterized_named`** — the name is registered as a key in `params` (with an `undefined` value, to be supplied at execution time).
+- **`cel`, `spel`, `jsonlogic`** — the name is treated as an identifier/variable reference.
+- Other formats emit the name as a literal.
+
+Passing a `parameters` list to `formatQuery` also enables validation: rules referencing a name not in the list are treated as invalid and dropped (or fall back per your options).
+
+```ts
+formatQuery(query, {
+  format: 'sql',
+  parameters: [{ name: 'p1', label: 'Param 1' }],
+});
+```
+
 ### Filtering the field list
 
 Not all fields are compatible with each other, so each field may provide a `comparator` property specifying which fields appear in the value editor list. When `comparator` is a string, only fields with the same value as the current field in the property matching the `comparator` string are listed.

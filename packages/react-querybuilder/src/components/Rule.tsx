@@ -499,6 +499,7 @@ export const useRule = (props: RuleProps): UseRule => {
       classNames: classNamesProp,
       fields,
       fieldMap,
+      parameters,
       getInputType,
       getMatchModes,
       getOperators,
@@ -735,12 +736,20 @@ export const useRule = (props: RuleProps): UseRule => {
     () => valueSourceOptions.map(({ value }) => value) as ValueSources,
     [valueSourceOptions]
   );
+  const parametersAsList = useMemo(
+    () => (parameters && parameters.length > 0 ? parameters : null),
+    [parameters]
+  );
   const valueEditorType = useMemo(
     () =>
       rule.valueSource === 'field'
         ? 'select'
-        : getValueEditorType(rule.field, rule.operator, { fieldData }),
-    [fieldData, getValueEditorType, rule.field, rule.operator, rule.valueSource]
+        : rule.valueSource === 'parameter'
+          ? parametersAsList
+            ? 'select'
+            : 'text'
+          : getValueEditorType(rule.field, rule.operator, { fieldData }),
+    [fieldData, getValueEditorType, parametersAsList, rule.field, rule.operator, rule.valueSource]
   );
   const valueEditorSeparator = useMemo(
     () => getValueEditorSeparator(rule.field, rule.operator, { fieldData }),
@@ -750,9 +759,11 @@ export const useRule = (props: RuleProps): UseRule => {
     const v =
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : getValues(rule.field, rule.operator, { fieldData });
+        : rule.valueSource === 'parameter'
+          ? (parametersAsList ?? [])
+          : getValues(rule.field, rule.operator, { fieldData });
     return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
-  }, [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]);
+  }, [fieldData, fields, getValues, parametersAsList, rule.field, rule.operator, rule.valueSource]);
   const subQueryBuilderProps = useMemo(
     () => getSubQueryBuilderProps(rule.field, { fieldData }) as Record<string, unknown>,
     [fieldData, getSubQueryBuilderProps, rule.field]

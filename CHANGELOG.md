@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - React components live in the separate `@react-querybuilder/expr/ui` entry point (the root is non-React/server-safe). `QueryBuilderExpressions` wraps a `QueryBuilder`, integrating expressions through the standard controls rather than a bespoke toggle: the right-hand side surfaces the new `"expression"` value source in the value-source selector (selecting it seeds an editable function node rendered by a nested `ExpressionEditor`), and the left-hand side can optionally wrap a rule's field in a function via a selector in front of the field selector—the field becomes the function's first (governing) argument, still driving operator/value selection and validation, while any additional arguments are edited as nested `ExpressionEditor`s—gated per field/operator by the `allowFunctionsOnLHS` prop. Inherited compatibility/theme controls continue to render non-expression rules, and `parseNumbers`/`inputType` are threaded into expression literal inputs.
   - Demo: new "Enable expressions" option wraps the live query builder with `QueryBuilderExpressions`.
 - [#1059] The `update` query tool (and `updateInPlace`) can now update multiple properties of a rule or group in a single call, either with a property-to-value map (`update(query, { valueSource: 'field', value: 'otherField' }, pathOrID)`) or with parallel arrays of property names and values (`update(query, ['valueSource', 'value'], ['field', 'otherField'], pathOrID)`). Properties are applied in a canonical order (`field`/`operator`/`valueSource` before `value`) so an explicitly-provided `value` is never reset by a change to one of those properties. The original single-property signature is unchanged.
+- [#1065] New `"parameter"` value source, letting a rule compare a field against a named query parameter (placeholder) instead of a literal value or another field. Enable it by including `"parameter"` in a field's `valueSources` (or the `getValueSources` prop); the rule's `value` holds the selected parameter name.
+  - New `QueryBuilder` prop `parameters` (a `FlexibleOptionList`). When provided and non-empty, the value editor renders a `<select>` of these parameter names; when nullish or empty, it falls back to a free-form text input. Names should be specified without a prefix (e.g. `[{ name: 'p1', label: 'Param 1' }]`).
+  - `formatQuery` understands the `"parameter"` value source across formats: SQL emits the prefix-adjusted name inline (`f1 = :p1`), "parameterized" emits it inline without pushing to `params`, "parameterized_named" registers it as a `params` key with an `undefined` value (respecting `paramsKeepPrefix`), and "cel"/"spel"/"jsonlogic" treat it as an identifier/variable reference (other formats emit it as a literal). The existing `paramPrefix` option controls the emitted prefix, and stored names already carrying the prefix are left as-is.
+  - New `formatQuery` option `parameters` (matching the prop) enables validation: rules referencing a name not in the list are treated as invalid.
 
 ### Fixed
 
@@ -2344,6 +2348,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1059]: https://github.com/react-querybuilder/react-querybuilder/pull/1059
 [#1061]: https://github.com/react-querybuilder/react-querybuilder/pull/1061
 [#1064]: https://github.com/react-querybuilder/react-querybuilder/pull/1064
+[#1065]: https://github.com/react-querybuilder/react-querybuilder/pull/1065
 
 <!-- #endregion -->
 

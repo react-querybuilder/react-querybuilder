@@ -41,6 +41,8 @@ export interface GetRuleDefaultValueOptions<F extends FullField = FullField> {
   getValues: (field: string, operator: string, meta: { fieldData: F }) => FullOptionList<Option>;
   /** Optional escape hatch overriding the computed default. */
   getDefaultValue?: (rule: RuleType, meta: { fieldData: F }) => unknown;
+  /** Named parameter options, used to seed a default when `valueSource` is `'parameter'`. */
+  parameters?: OptionList | null;
   /** When `true`, multi-value defaults are arrays instead of comma-joined strings. */
   listsAsArrays?: boolean;
 }
@@ -59,8 +61,15 @@ export const getRuleDefaultValue = <F extends FullField = FullField>(
   rule: RuleType,
   options: GetRuleDefaultValueOptions<F>
 ): unknown => {
-  const { fieldData, fields, getValueEditorType, getValues, getDefaultValue, listsAsArrays } =
-    options;
+  const {
+    fieldData,
+    fields,
+    getValueEditorType,
+    getValues,
+    getDefaultValue,
+    parameters,
+    listsAsArrays,
+  } = options;
 
   if (fieldData?.defaultValue !== undefined && fieldData.defaultValue !== null) {
     return fieldData.defaultValue;
@@ -76,6 +85,8 @@ export const getRuleDefaultValue = <F extends FullField = FullField>(
     const filteredFields = filterFieldsByComparator(fieldData, fields, rule.operator);
     value =
       filteredFields.length > 0 ? getFirstOptionsFrom(filteredFields, rule, listsAsArrays) : '';
+  } else if (rule.valueSource === 'parameter') {
+    value = parameters && parameters.length > 0 ? getFirstOption(parameters) : '';
   } else if (values.length > 0) {
     const editorType = getValueEditorType(rule.field, rule.operator, { fieldData });
     if (editorType === 'multiselect') {

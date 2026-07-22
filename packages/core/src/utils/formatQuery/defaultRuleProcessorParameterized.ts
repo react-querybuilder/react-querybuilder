@@ -6,7 +6,13 @@ import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  getQuotedFieldName,
+  processMatchMode,
+  shouldRenderAsNumber,
+  stripParamPrefix,
+  withParamPrefix,
+} from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "parameterized" and
@@ -126,6 +132,17 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     return finalize('');
   } else if (sqlOperatorLowerCase === 'is null' || sqlOperatorLowerCase === 'is not null') {
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator}`);
+  } else if (rule.valueSource === 'parameter') {
+    // Named-parameter reference: emit inline (binding supplied externally). For
+    // "parameterized_named", register the key with an `undefined` value so callers
+    // can see which bindings are expected. Positional "parameterized" leaves `params`
+    // untouched to avoid desyncing placeholder indices.
+    const paramRef = withParamPrefix(rule.value, paramPrefix);
+    if (!parameterized) {
+      paramsNamed[paramsKeepPrefix ? paramRef : stripParamPrefix(rule.value, paramPrefix)] =
+        undefined;
+    }
+    return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${paramRef}`.trim());
   } else if (rule.valueSource === 'field') {
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${value}`.trim());
   } else if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {

@@ -52,6 +52,7 @@ export type UseQueryBuilderSetup<
   combinators:
     | WithUnknownIndex<BaseOption & FullOption>[]
     | OptionGroup<WithUnknownIndex<BaseOption & FullOption>>[];
+  parameters: FullOptionList<FullOption> | null;
   getRuleDefaultValue: // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(r: RT) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
@@ -109,6 +110,7 @@ export const useQueryBuilderSetup = <
     baseOperator,
     combinators: combinatorsProp,
     baseCombinator,
+    parameters: parametersProp,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
     controlClassnames: controlClassnamesProp,
@@ -168,6 +170,19 @@ export const useQueryBuilderSetup = <
         autoSelectOption: true,
       }),
     [baseCombinator, combinatorsProp]
+  );
+  // #endregion
+
+  // #region `parameters`
+  const parameters = useMemo(
+    () =>
+      parametersProp
+        ? prepareOptionList({
+            optionList: parametersProp,
+            autoSelectOption: true,
+          }).optionList
+        : null,
+    [parametersProp]
   );
   // #endregion
 
@@ -270,13 +285,22 @@ export const useQueryBuilderSetup = <
       getRuleDefaultValueCore<F>(r, {
         fieldData: (fieldMap[r.field as FieldName] ?? {}) as F,
         fields,
+        parameters,
         listsAsArrays,
         getValueEditorType: (f, o, m) =>
           getValueEditorTypeMain(f as FieldName, o as OperatorName, m),
         getValues: (f, o, m) => getValuesMain(f as FieldName, o as OperatorName, m),
         getDefaultValue: getDefaultValue && ((rule, m) => getDefaultValue(rule as R, m)),
       }),
-    [fieldMap, fields, getDefaultValue, getValueEditorTypeMain, getValuesMain, listsAsArrays]
+    [
+      fieldMap,
+      fields,
+      getDefaultValue,
+      getValueEditorTypeMain,
+      getValuesMain,
+      listsAsArrays,
+      parameters,
+    ]
   );
 
   const getInputTypeMain = useCallback(
@@ -373,6 +397,7 @@ export const useQueryBuilderSetup = <
     fields,
     fieldMap,
     combinators,
+    parameters,
     getMatchModesMain,
     getOperatorsMain,
     getRuleDefaultOperator,

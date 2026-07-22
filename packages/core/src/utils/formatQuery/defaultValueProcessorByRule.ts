@@ -2,7 +2,13 @@ import type { ValueProcessorByRule } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { getQuotedFieldName, isValidValue, shouldRenderAsNumber, wrapLikeFragment } from './utils';
+import {
+  getQuotedFieldName,
+  isValidValue,
+  shouldRenderAsNumber,
+  withParamPrefix,
+  wrapLikeFragment,
+} from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -25,10 +31,16 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     quoteValuesWith,
     concatOperator = '||',
     fieldIdentifierSeparator,
+    paramPrefix,
     wrapValueWith = ['', ''] as [string, string],
     translations,
   } = {}
 ) => {
+  // Parameter value sources render as a (prefix-aware) bind-variable reference.
+  if (valueSource === 'parameter') {
+    return withParamPrefix(value, paramPrefix);
+  }
+
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = lc(operator);
   const quoteChar = quoteValuesWith || "'";

@@ -7,7 +7,7 @@ import type {
   ParseNumbersPropConfig,
   ValueSource,
 } from './basic';
-import type { FlexibleOptionList, FullOptionList } from './options';
+import type { FlexibleOptionList, FullOption, FullOptionList } from './options';
 import type { DefaultOperatorName, RuleGroupArray, RuleGroupType, RuleType } from './ruleGroups';
 import type { RuleGroupICArray, RuleGroupTypeAny, RuleGroupTypeIC } from './ruleGroupsIC';
 import type { QueryValidator, RuleValidator, ValidationMap, ValidationResult } from './validation';
@@ -179,6 +179,15 @@ export interface FormatQueryOptions {
     misc: { fieldData: FullField }
   ): FlexibleOptionList<FullOperator> | null;
   /**
+   * List of valid named parameters, corresponding to the `parameters` prop of
+   * {@link react-querybuilder!QueryBuilder QueryBuilder}. When provided, any rule
+   * whose `valueSource` is `"parameter"` and whose value (with any leading
+   * `paramPrefix` stripped) is not found in this list will be treated as invalid.
+   *
+   * As with the `parameters` prop, prefer names _without_ the parameter prefix.
+   */
+  parameters?: FlexibleOptionList<FullOption>;
+  /**
    * This string will be inserted in place of invalid groups for non-JSON formats.
    * Defaults to `'(1 = 1)'` for "sql"/"parameterized"/"parameterized_named" and
    * `'$and:[{$expr:true}]'` for "mongodb".
@@ -341,6 +350,7 @@ export interface FormatQueryFinalOptions extends Required<
     | 'placeholderValueName'
     | 'ruleGroupProcessor'
     | 'parseNumbers'
+    | 'parameters'
   >
 > {
   fields: FullOptionList<FullField>;
