@@ -73,7 +73,7 @@ export const configs: Record<string, ExampleConfig> = {
   expr: {
     name: 'Expressions',
     dependencyKeys: [],
-    cssPre: [`@import '@react-querybuilder/expr/dist/expr.css';`],
+    cssPre: [`@import '@react-querybuilder/expr/dist/expressions.css';`],
     cssPost: [],
     tsxImports: [`import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';`],
     additionalDeclarations: [
