@@ -7,6 +7,7 @@ import {
   useValueEditor,
   ValueEditor,
 } from 'react-querybuilder';
+import { isNonDateValueSource } from '../utils';
 import {
   InheritedValueEditorContext,
   useInheritedValueEditor,
@@ -21,11 +22,14 @@ import type { RelativeDateTimeEditorConfig } from './types';
 /**
  * Whether a rule should use a date/time editor, based on either the coerced input
  * type (`date`/`datetime-local`) or a date-like `datatype` (`date`/`datetime`/`timestamp`).
+ * Non-`value` sources (`field`/`parameter`) are excluded so they render the standard
+ * field/parameter selector instead of the date UI.
  */
 const isDateTimeEditor = (props: ValueEditorProps, inputTypeCoerced: string | undefined): boolean =>
-  (props.type === 'text' &&
+  !isNonDateValueSource(props.valueSource) &&
+  ((props.type === 'text' &&
     (inputTypeCoerced === 'date' || inputTypeCoerced === 'datetime-local')) ||
-  /^(?:date|datetime|timestamp)\b/i.test(props.fieldData?.datatype as string);
+    /^(?:date|datetime|timestamp)\b/i.test(props.fieldData?.datatype as string));
 
 const pad2 = (n: number): string => `${n}`.padStart(2, '0');
 

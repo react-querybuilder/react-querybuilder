@@ -2,6 +2,7 @@ import type { RuleProcessor } from '@react-querybuilder/core';
 import { defaultRuleProcessorSPARQL, lc, sparqlVar, toArray } from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
 import {
+  isNonDateValueSource,
   isISOStringDateOnly,
   materializeRelativeValues,
   processIsDateField,
@@ -34,7 +35,10 @@ export const getDatetimeRuleProcessorSPARQL =
     const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
     const { context = {} } = opts;
 
-    if (rule.valueSource === 'field' || !processIsDateField(context.isDateField, rule, opts)) {
+    if (
+      isNonDateValueSource(rule.valueSource) ||
+      !processIsDateField(context.isDateField, rule, opts)
+    ) {
       return defaultRuleProcessorSPARQL(rule, opts);
     }
 

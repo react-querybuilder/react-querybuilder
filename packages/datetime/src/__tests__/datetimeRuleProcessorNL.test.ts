@@ -181,3 +181,21 @@ it('uses custom date formats', () => {
     `Created At is before ${new Intl.DateTimeFormat(undefined, context.dateTimeFormat).format(dayjs(dt).toDate())}`
   );
 });
+
+describe('parameter value source', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'birthdate', operator: '=', value: 'startParam', valueSource: 'parameter' }],
+  };
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+
+  test('delegates parameter-source rules to the default processor', () => {
+    expect(
+      formatQuery(query, {
+        format: 'natural_language',
+        fields,
+        ruleProcessor: getDatetimeRuleProcessorNL(apiFns),
+      })
+    ).toEqual(formatQuery(query, { format: 'natural_language', fields }));
+  });
+});

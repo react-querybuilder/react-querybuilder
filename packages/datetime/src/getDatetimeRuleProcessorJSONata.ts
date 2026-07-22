@@ -32,6 +32,12 @@ export const getDatetimeRuleProcessorJSONata =
       return defaultRuleProcessorJSONata(rule, opts);
     }
 
+    // Parameter references are named placeholders (not dates); delegate to the core default,
+    // which emits the name as a literal (paradigm B).
+    if (valueSource === 'parameter') {
+      return defaultRuleProcessorJSONata(rule, opts);
+    }
+
     const valueIsField = valueSource === 'field';
 
     // Resolve any relative value(s) to concrete literals (JSONata has no symbolic relative form).

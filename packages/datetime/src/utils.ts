@@ -1,4 +1,4 @@
-import type { RuleProcessor } from '@react-querybuilder/core';
+import type { RuleProcessor, ValueSource } from '@react-querybuilder/core';
 import type {
   IsDateField,
   IsDateFieldFunction,
@@ -11,6 +11,14 @@ export const isISOStringDateOnly = (
   date: unknown
 ): date is `${number}${number}${number}${number}-${number}${number}-${number}${number}` =>
   typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date);
+
+/**
+ * Whether a rule's value source is one that datetime processors must NOT materialize as a
+ * date (`field` references another column; `parameter` is a named bind placeholder). Both
+ * are delegated to the core default processor, which serializes them per format.
+ */
+export const isNonDateValueSource = (valueSource: ValueSource | undefined): boolean =>
+  valueSource === 'field' || valueSource === 'parameter';
 
 /**
  * Type guard for {@link RelativeDateTimeValue}. Relative values are stored as objects

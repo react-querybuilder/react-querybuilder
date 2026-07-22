@@ -101,3 +101,21 @@ describe('isDateField', () => {
     });
   }
 });
+
+describe('parameter value source', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'birthdate', operator: '=', value: 'startParam', valueSource: 'parameter' }],
+  };
+  const apiFns = dateLibraryFunctions.find(([name]) => name === 'date-fns')![1];
+
+  test('delegates parameter-source rules to the default processor', () => {
+    expect(
+      formatQuery(query, {
+        format: 'sparql',
+        fields,
+        ruleProcessor: getDatetimeRuleProcessorSPARQL(apiFns),
+      })
+    ).toEqual(formatQuery(query, { format: 'sparql', fields }));
+  });
+});

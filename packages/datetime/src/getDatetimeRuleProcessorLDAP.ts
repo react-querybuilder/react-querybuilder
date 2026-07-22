@@ -1,7 +1,7 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
 import { defaultRuleProcessorLDAP } from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { materializeForExport, processIsDateField } from './utils';
+import { isNonDateValueSource, materializeForExport, processIsDateField } from './utils';
 
 /**
  * Generates a rule processor with date/time features for use by
@@ -15,7 +15,10 @@ export const getDatetimeRuleProcessorLDAP =
     const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
     const { context = {} } = opts;
 
-    if (rule.valueSource === 'field' || !processIsDateField(context.isDateField, rule, opts)) {
+    if (
+      isNonDateValueSource(rule.valueSource) ||
+      !processIsDateField(context.isDateField, rule, opts)
+    ) {
       return defaultRuleProcessorLDAP(rule, opts);
     }
 
