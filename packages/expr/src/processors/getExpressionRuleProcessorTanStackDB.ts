@@ -1,9 +1,12 @@
-import type { RuleProcessor } from '@react-querybuilder/core';
+import type { DefaultOperatorName, RuleProcessor } from '@react-querybuilder/core';
 import {
+  betweenOperators,
   defaultRuleProcessorTanStackDB,
   lc,
   parseNumber,
+  relationalOperators,
   shouldRenderAsNumber,
+  substringOperators,
 } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { defaultTanStackDbSerializers } from '../functions/tanstackDb';
@@ -13,18 +16,11 @@ import type { TanStackDbSerializeContext } from '../utils/serializeTanStackDb';
 import { serializeTanStackDb } from '../utils/serializeTanStackDb';
 import { validateExpression } from '../utils/validateExpression';
 
-const SCALAR = new Set(['=', '!=', '<', '<=', '>', '>=']);
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const SCALAR = new Set<string>(relationalOperators);
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 // TanStack DB's `like` takes a static string pattern, so a string-match against an
 // expression operand can't be expressed; such rules are omitted (see below).
-const STRING_MATCH_OPERATORS = new Set([
-  'contains',
-  'doesnotcontain',
-  'beginswith',
-  'doesnotbeginwith',
-  'endswith',
-  'doesnotendwith',
-]);
+const STRING_MATCH_OPERATORS = new Set([...substringOperators].map(lc));
 
 /**
  * Generates a rule processor with expression support for use by
@@ -72,7 +68,7 @@ export const getExpressionRuleProcessorTanStackDB =
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     // A string-match against an expression operand isn't expressible via TanStack DB's
     // static-pattern `like`; omit the rule rather than emit an invalid pattern.
-    if (STRING_MATCH_OPERATORS.has(operator)) return undefined;
+    if (STRING_MATCH_OPERATORS.has(operator as DefaultOperatorName)) return undefined;
     if (!unary && !scalar && !betweenExpr) return defaultRuleProcessorTanStackDB(rule, opts);
 
     const validate = { functions: serial, meta: defaultFunctionMeta };

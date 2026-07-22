@@ -5,6 +5,7 @@ import {
   getQuotedFieldName,
   lc,
   mapSQLOperator,
+  relationalOperators,
   wrapLikeFragment,
 } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
@@ -14,7 +15,7 @@ import type { SQLSerializerRegistry } from '../types';
 import { serializeSQL } from '../utils/serializeSQL';
 import { validateExpression } from '../utils/validateExpression';
 
-const SCALAR_OPERATORS = new Set(['=', '!=', '<', '<=', '>', '>=']);
+const SCALAR_OPERATORS = new Set<string>(relationalOperators);
 const LIKE_OPERATORS = new Set(['like', 'not like']);
 const BETWEEN_OPERATORS = new Set(['between', 'not between']);
 

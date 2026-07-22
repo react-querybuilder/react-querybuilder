@@ -1,9 +1,16 @@
-import type { RuleProcessor, RuleType, ValueProcessorOptions } from '@react-querybuilder/core';
+import type {
+  DefaultOperatorName,
+  RuleProcessor,
+  RuleType,
+  ValueProcessorOptions,
+} from '@react-querybuilder/core';
 import {
+  betweenOperators,
   defaultRuleProcessorJsonLogic,
   lc,
   parseNumber,
   shouldRenderAsNumber,
+  substringOperators,
 } from '@react-querybuilder/core';
 import { defaultJsonLogicSerializers } from '../functions/jsonLogic';
 import { defaultFunctionMeta } from '../functions/meta';
@@ -21,16 +28,9 @@ const OPERATOR_MAP: Record<string, string> = {
   '>=': '>=',
 };
 
-const STRING_OPERATORS = new Set([
-  'contains',
-  'doesnotcontain',
-  'beginswith',
-  'doesnotbeginwith',
-  'endswith',
-  'doesnotendwith',
-]);
+const STRING_OPERATORS = new Set([...substringOperators].map(lc));
 
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 
 // Builds a JSONLogic string-match rule from resolved operands, mirroring the stock processor:
 // `contains` → `in`, `beginsWith` → `startsWith`, `endsWith` → `endsWith`; `doesNot*` negates.
@@ -75,7 +75,7 @@ export const getExpressionRuleProcessorJsonLogic =
     const operator = lc(rule.operator);
     const unary = operator === 'null' || operator === 'notnull';
     const jlOp = OPERATOR_MAP[operator];
-    const stringOp = STRING_OPERATORS.has(operator);
+    const stringOp = STRING_OPERATORS.has(operator as DefaultOperatorName);
     // Between is supported only with expression-sourced bounds; a plain-value between defers
     // to the stock processor (which handles number parsing/ordering/field sources).
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);

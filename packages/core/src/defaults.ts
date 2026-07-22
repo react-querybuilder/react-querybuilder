@@ -221,6 +221,55 @@ export const defaultOperatorNegationMap: Record<DefaultOperatorName, DefaultOper
   null: 'notNull',
 } satisfies Record<DefaultOperatorName, DefaultOperatorName>;
 
+/**
+ * Relational/comparison operators (`=`, `!=`, `<`, `>`, `<=`, `>=`).
+ *
+ * @group Defaults
+ */
+export const relationalOperators: Set<DefaultOperatorName> = new Set([
+  '=',
+  '!=',
+  '<',
+  '>',
+  '<=',
+  '>=',
+]);
+
+/**
+ * Substring/text-matching operators (`contains`, `beginsWith`, `endsWith`, and negations).
+ *
+ * @group Defaults
+ */
+export const substringOperators: Set<DefaultOperatorName> = new Set([
+  'contains',
+  'beginsWith',
+  'endsWith',
+  'doesNotContain',
+  'doesNotBeginWith',
+  'doesNotEndWith',
+]);
+
+/**
+ * Null-check operators (`null`, `notNull`).
+ *
+ * @group Defaults
+ */
+export const nullOperators: Set<DefaultOperatorName> = new Set(['null', 'notNull']);
+
+/**
+ * List-membership operators (`in`, `notIn`).
+ *
+ * @group Defaults
+ */
+export const inOperators: Set<DefaultOperatorName> = new Set(['in', 'notIn']);
+
+/**
+ * Range operators (`between`, `notBetween`).
+ *
+ * @group Defaults
+ */
+export const betweenOperators: Set<DefaultOperatorName> = new Set(['between', 'notBetween']);
+
 export type DefaultCombinators = StringUnionToFullOptionArray<DefaultCombinatorName>;
 
 /**

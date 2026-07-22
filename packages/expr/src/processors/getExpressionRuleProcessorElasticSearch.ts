@@ -1,5 +1,5 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
-import { defaultRuleProcessorElasticSearch, lc } from '@react-querybuilder/core';
+import { betweenOperators, defaultRuleProcessorElasticSearch, lc } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { defaultPainlessSerializers } from '../functions/painless';
 import { getRuleExpressions } from '../registry';
@@ -17,7 +17,7 @@ const COMPARE: Record<string, string> = {
   '>=': '>=',
 };
 
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 
 // Maps a string-match operator to its Painless String method and negation flag.
 const STRING_MATCH: Record<
