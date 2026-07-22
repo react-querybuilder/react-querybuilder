@@ -70,6 +70,14 @@ describe('parameter value source', () => {
       expect(result.params.p1).toBeNull();
       expect(result.params.p2).toBeNull();
     });
+
+    it('renders empty for fewer than two values (sql)', () => {
+      const invalidQuery: RuleGroupType = {
+        combinator: 'and',
+        rules: [{ field: 'f1', operator: 'between', value: 'p1', valueSource: 'parameter' }],
+      };
+      expect(formatQuery(invalidQuery, 'sql')).toBe('(1 = 1)');
+    });
   });
 
   describe('in/notIn operators', () => {
@@ -94,6 +102,14 @@ describe('parameter value source', () => {
       expect(result.sql).toBe('(f1 in (:p1, :p2, :p3))');
       expect(Object.keys(result.params)).toEqual(['p1', 'p2', 'p3']);
       expect(Object.values(result.params)).toEqual([null, null, null]);
+    });
+
+    it('renders empty for an empty value list (sql)', () => {
+      const emptyQuery: RuleGroupType = {
+        combinator: 'and',
+        rules: [{ field: 'f1', operator: 'in', value: '', valueSource: 'parameter' }],
+      };
+      expect(formatQuery(emptyQuery, 'sql')).toBe('(1 = 1)');
     });
   });
 
