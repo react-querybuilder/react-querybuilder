@@ -134,15 +134,33 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator}`);
   } else if (rule.valueSource === 'parameter') {
     // Named-parameter reference: emit inline (binding supplied externally). For
-    // "parameterized_named", register the key with a `null` placeholder so callers
+    // "parameterized_named", register the key(s) with a `null` placeholder so callers
     // can see which bindings are expected (and so the key survives `JSON.stringify`,
     // which drops `undefined`). Positional "parameterized" leaves `params` untouched
     // to avoid desyncing placeholder indices.
-    const paramRef = withParamPrefix(rule.value, paramPrefix);
-    if (!parameterized) {
-      paramsNamed[paramsKeepPrefix ? paramRef : stripParamPrefix(rule.value, paramPrefix)] = null;
+    const registerParam = (v: unknown) => {
+      const ref = withParamPrefix(v, paramPrefix);
+      if (!parameterized) {
+        paramsNamed[paramsKeepPrefix ? ref : stripParamPrefix(v, paramPrefix)] = null;
+      }
+      return ref;
+    };
+    if (sqlOperatorLowerCase === 'between' || sqlOperatorLowerCase === 'not between') {
+      const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
+      const [first, second] = valueAsArray.slice(0, 2);
+      return finalize(
+        `${qPre}${rule.field}${qPost} ${sqlOperator} ${registerParam(first)} and ${registerParam(second)}`.trim()
+      );
     }
-    return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${paramRef}`.trim());
+    if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {
+      const splitValue = toArray(rule.value);
+      return finalize(
+        `${qPre}${rule.field}${qPost} ${sqlOperator} (${splitValue.map(v => registerParam(v)).join(', ')})`
+      );
+    }
+    return finalize(
+      `${qPre}${rule.field}${qPost} ${sqlOperator} ${registerParam(rule.value)}`.trim()
+    );
   } else if (rule.valueSource === 'field') {
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${value}`.trim());
   } else if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {

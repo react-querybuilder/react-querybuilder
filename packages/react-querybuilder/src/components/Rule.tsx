@@ -746,7 +746,9 @@ export const useRule = (props: RuleProps): UseRule => {
         ? 'select'
         : rule.valueSource === 'parameter'
           ? parametersAsList
-            ? 'select'
+            ? lc(rule.operator) === 'in' || lc(rule.operator) === 'notin'
+              ? 'multiselect'
+              : 'select'
             : 'text'
           : getValueEditorType(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorType, parametersAsList, rule.field, rule.operator, rule.valueSource]

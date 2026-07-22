@@ -38,6 +38,30 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
 ) => {
   // Parameter value sources render as a (prefix-aware) bind-variable reference.
   if (valueSource === 'parameter') {
+    const operatorLowerCase = lc(operator);
+    if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
+      const valueAsArray = toArray(value, { retainEmptyStrings: true });
+      if (
+        valueAsArray.length < 2 ||
+        !isValidValue(valueAsArray[0]) ||
+        !isValidValue(valueAsArray[1])
+      ) {
+        return '';
+      }
+      const [first, second] = valueAsArray;
+      // Note: `translations` should not be used for SQL.
+      // This is only here to support the "natural_language" format.
+      return [withParamPrefix(first, paramPrefix), withParamPrefix(second, paramPrefix)].join(
+        ` ${translations?.betweenAnd ?? translations?.and ?? 'and'} `
+      );
+    }
+    if (operatorLowerCase === 'in' || operatorLowerCase === 'notin') {
+      const valueAsArray = toArray(value);
+      if (valueAsArray.length === 0) {
+        return '';
+      }
+      return `(${valueAsArray.map(v => withParamPrefix(v, paramPrefix)).join(', ')})`;
+    }
     return withParamPrefix(value, paramPrefix);
   }
 

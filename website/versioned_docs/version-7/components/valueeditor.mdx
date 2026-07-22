@@ -238,7 +238,7 @@ const fields: Field[] = [{ name: 'f1', label: 'f1', valueSources: ['value', 'par
 
 When the rule's `valueSource` is `"parameter"`, the value editor's behavior depends on the [`parameters` prop](./querybuilder#parameters):
 
-- If `parameters` is provided (a non-empty option list), the editor renders a `<select>` of the available parameter names.
+- If `parameters` is provided (a non-empty option list), the editor renders a `<select>` of the available parameter names (a multiselect when the operator is `in`/`notIn`).
 - If `parameters` is nullish or empty, the editor renders a free-form text `<input>` for entering a parameter name.
 
 ```tsx

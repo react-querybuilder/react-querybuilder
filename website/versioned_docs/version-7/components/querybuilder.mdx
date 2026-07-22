@@ -215,7 +215,7 @@ Defaults to `() => ["value"]`. First array element becomes the initial selection
 
 `FlexibleOptionList<FullOption>`
 
-Option list of named query parameters made available to rules whose `valueSource` is `"parameter"` (see [the `"parameter"` value source](./valueeditor#the-parameter-value-source)). When provided and non-empty, the value editor renders a `<select>` of these parameter names; when nullish or empty, it renders a free-form text input.
+Option list of named query parameters made available to rules whose `valueSource` is `"parameter"` (see [the `"parameter"` value source](./valueeditor#the-parameter-value-source)). When provided and non-empty, the value editor renders a `<select>` of these parameter names (a multiselect for `in`/`notIn` operators); when nullish or empty, it renders a free-form text input.
 
 Specify names **without** the parameter prefix (e.g. `[{ name: 'p1', label: 'Param 1' }]`); [`formatQuery`](../utils/export) adds the dialect-appropriate prefix.
 

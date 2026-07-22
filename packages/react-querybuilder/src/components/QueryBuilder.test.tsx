@@ -2906,6 +2906,22 @@ describe('value source parameter', () => {
     const valueEditor = screen.getByTestId(TestID.valueEditor);
     expect(valueEditor.tagName).toBe('INPUT');
   });
+
+  it('renders a multiselect for "in"/"notIn" operators', async () => {
+    render(
+      <QueryBuilder
+        fields={fields}
+        parameters={parameters}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [{ field: 'f1', operator: 'in', value: '', valueSource: 'parameter' }],
+        }}
+      />
+    );
+    const valueEditor = screen.getByTestId(TestID.valueEditor);
+    expect(valueEditor.tagName).toBe('SELECT');
+    expect((valueEditor as HTMLSelectElement).multiple).toBe(true);
+  });
 });
 
 describe('match modes', () => {

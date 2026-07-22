@@ -46,6 +46,57 @@ describe('parameter value source', () => {
     });
   });
 
+  describe('between/notBetween operators', () => {
+    const betweenQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'between', value: 'p1,p2', valueSource: 'parameter' }],
+    };
+
+    it('joins the two parameter references with "and" (sql)', () => {
+      expect(formatQuery(betweenQuery, 'sql')).toBe('(f1 between :p1 and :p2)');
+    });
+
+    it('emits both references inline without adding to params array (parameterized)', () => {
+      expect(formatQuery(betweenQuery, 'parameterized')).toEqual({
+        sql: '(f1 between :p1 and :p2)',
+        params: [],
+      });
+    });
+
+    it('registers both keys with null (parameterized_named)', () => {
+      const result = formatQuery(betweenQuery, 'parameterized_named');
+      expect(result.sql).toBe('(f1 between :p1 and :p2)');
+      expect(Object.keys(result.params)).toEqual(['p1', 'p2']);
+      expect(result.params.p1).toBeNull();
+      expect(result.params.p2).toBeNull();
+    });
+  });
+
+  describe('in/notIn operators', () => {
+    const inQuery: RuleGroupType = {
+      combinator: 'and',
+      rules: [{ field: 'f1', operator: 'in', value: 'p1,p2,p3', valueSource: 'parameter' }],
+    };
+
+    it('wraps parameter references in a parenthesized list (sql)', () => {
+      expect(formatQuery(inQuery, 'sql')).toBe('(f1 in (:p1, :p2, :p3))');
+    });
+
+    it('emits references inline without adding to params array (parameterized)', () => {
+      expect(formatQuery(inQuery, 'parameterized')).toEqual({
+        sql: '(f1 in (:p1, :p2, :p3))',
+        params: [],
+      });
+    });
+
+    it('registers all keys with null (parameterized_named)', () => {
+      const result = formatQuery(inQuery, 'parameterized_named');
+      expect(result.sql).toBe('(f1 in (:p1, :p2, :p3))');
+      expect(Object.keys(result.params)).toEqual(['p1', 'p2', 'p3']);
+      expect(Object.values(result.params)).toEqual([null, null, null]);
+    });
+  });
+
   describe('validation via parameters option', () => {
     it('drops rules referencing unknown parameters', () => {
       expect(formatQuery(query, { format: 'sql', parameters: [{ name: 'p1', label: 'P1' }] })).toBe(
