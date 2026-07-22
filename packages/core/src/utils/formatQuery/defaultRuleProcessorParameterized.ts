@@ -12,6 +12,7 @@ import {
   shouldRenderAsNumber,
   stripParamPrefix,
   withParamPrefix,
+  wrapLikeFragment,
 } from './utils';
 
 /**
@@ -158,8 +159,10 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
         `${qPre}${rule.field}${qPost} ${sqlOperator} (${splitValue.map(v => registerParam(v)).join(', ')})`
       );
     }
+    // String-match operators concatenate `%` wildcards onto the bind-variable reference;
+    // `wrapLikeFragment` is a no-op for all other operators.
     return finalize(
-      `${qPre}${rule.field}${qPost} ${sqlOperator} ${registerParam(rule.value)}`.trim()
+      `${qPre}${rule.field}${qPost} ${sqlOperator} ${wrapLikeFragment(registerParam(rule.value), lc(rule.operator), { concatOperator })}`.trim()
     );
   } else if (rule.valueSource === 'field') {
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${value}`.trim());

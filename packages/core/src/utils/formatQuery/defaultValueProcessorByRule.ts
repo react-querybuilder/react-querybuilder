@@ -62,7 +62,22 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
       }
       return `(${valueAsArray.map(v => withParamPrefix(v, paramPrefix)).join(', ')})`;
     }
-    return withParamPrefix(value, paramPrefix);
+    const paramRef = withParamPrefix(value, paramPrefix);
+    // String-match operators concatenate `%` wildcards onto the bind-variable reference.
+    switch (operatorLowerCase) {
+      case 'contains':
+      case 'doesnotcontain':
+      case 'beginswith':
+      case 'doesnotbeginwith':
+      case 'endswith':
+      case 'doesnotendwith':
+        return wrapLikeFragment(paramRef, operatorLowerCase, {
+          concatOperator,
+          quoteValuesWith,
+          wrapValueWith,
+        });
+    }
+    return paramRef;
   }
 
   const valueIsField = valueSource === 'field';

@@ -1,4 +1,5 @@
 import { PGlite } from '@electric-sql/pglite';
+import type { DefaultRuleGroupType } from '../../../types';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
 import {
   augmentedSuperUsers,
@@ -60,6 +61,96 @@ describe('PostgreSQL', () => {
         testSQL(t);
       });
     }
+
+    // "parameter" value source: the generated SQL references bind variables that must
+    // be supplied at execution time, so these can't use the shared `dbTests` harness.
+    describe('parameter value source', () => {
+      const testParam = (
+        name: string,
+        query: DefaultRuleGroupType,
+        bindings: (string | number | boolean)[],
+        expectedResult: SuperUser<boolean>[]
+      ) => {
+        test(name, async () => {
+          const sql = formatQuery(query, { format: 'sql', preset: 'postgresql' });
+          const result = await db.query(`${sqlBase} ${sql} ${getSqlOrderBy()}`, bindings);
+          expect(result.rows).toEqual(expectedResult);
+        });
+      };
+
+      const rule = (r: DefaultRuleGroupType['rules'][number]): DefaultRuleGroupType => ({
+        combinator: 'and',
+        rules: [r],
+      });
+
+      testParam(
+        'numeric comparison',
+        rule({ field: 'powerUpAge', operator: '>', value: '1', valueSource: 'parameter' }),
+        [15],
+        superUsersPostgres.filter(u => (u.powerUpAge ?? 0) > 15)
+      );
+
+      testParam(
+        'string equality',
+        rule({ field: 'firstName', operator: '=', value: '1', valueSource: 'parameter' }),
+        ['Peter'],
+        superUsersPostgres.filter(u => u.firstName === 'Peter')
+      );
+
+      testParam(
+        'boolean',
+        rule({ field: 'enhanced', operator: '=', value: '1', valueSource: 'parameter' }),
+        [true],
+        superUsersPostgres.filter(u => u.enhanced)
+      );
+
+      testParam(
+        'beginsWith',
+        rule({ field: 'firstName', operator: 'beginsWith', value: '1', valueSource: 'parameter' }),
+        ['P'],
+        superUsersPostgres.filter(u => u.firstName.startsWith('P'))
+      );
+
+      testParam(
+        'endsWith',
+        rule({ field: 'lastName', operator: 'endsWith', value: '1', valueSource: 'parameter' }),
+        ['s'],
+        superUsersPostgres.filter(u => u.lastName.endsWith('s'))
+      );
+
+      testParam(
+        'contains',
+        rule({ field: 'firstName', operator: 'contains', value: '1', valueSource: 'parameter' }),
+        ['ete'],
+        superUsersPostgres.filter(u => u.firstName.includes('ete'))
+      );
+
+      testParam(
+        'doesNotContain',
+        rule({
+          field: 'madeUpName',
+          operator: 'doesNotContain',
+          value: '1',
+          valueSource: 'parameter',
+        }),
+        ['r'],
+        superUsersPostgres.filter(u => !u.madeUpName.includes('r'))
+      );
+
+      testParam(
+        'in',
+        rule({ field: 'lastName', operator: 'in', value: '1,2', valueSource: 'parameter' }),
+        ['Rogers', 'Wayne'],
+        superUsersPostgres.filter(u => ['Rogers', 'Wayne'].includes(u.lastName))
+      );
+
+      testParam(
+        'between',
+        rule({ field: 'powerUpAge', operator: 'between', value: '1,2', valueSource: 'parameter' }),
+        [10, 30],
+        superUsersPostgres.filter(u => (u.powerUpAge ?? -1) >= 10 && (u.powerUpAge ?? -1) <= 30)
+      );
+    });
   });
 
   // Postgres-specific tests

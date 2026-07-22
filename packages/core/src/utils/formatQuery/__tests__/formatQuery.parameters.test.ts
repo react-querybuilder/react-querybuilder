@@ -113,6 +113,48 @@ describe('parameter value source', () => {
     });
   });
 
+  describe('string-match operators', () => {
+    const mk = (operator: string): RuleGroupType => ({
+      combinator: 'and',
+      rules: [{ field: 'firstName', operator, value: 'p1', valueSource: 'parameter' }],
+    });
+
+    it('concatenates wildcards around the bind reference (sql)', () => {
+      expect(formatQuery(mk('beginsWith'), 'sql')).toBe("(firstName like :p1 || '%')");
+      expect(formatQuery(mk('endsWith'), 'sql')).toBe("(firstName like '%' || :p1)");
+      expect(formatQuery(mk('contains'), 'sql')).toBe("(firstName like '%' || :p1 || '%')");
+      expect(formatQuery(mk('doesNotContain'), 'sql')).toBe(
+        "(firstName not like '%' || :p1 || '%')"
+      );
+    });
+
+    it('respects the dialect param prefix', () => {
+      expect(formatQuery(mk('contains'), { format: 'sql', paramPrefix: '@' })).toBe(
+        "(firstName like '%' || @p1 || '%')"
+      );
+    });
+
+    it('emits wildcards inline without adding to params array (parameterized)', () => {
+      expect(formatQuery(mk('beginsWith'), 'parameterized')).toEqual({
+        sql: "(firstName like :p1 || '%')",
+        params: [],
+      });
+    });
+
+    it('registers the key with null (parameterized_named)', () => {
+      const result = formatQuery(mk('contains'), 'parameterized_named');
+      expect(result.sql).toBe("(firstName like '%' || :p1 || '%')");
+      expect(result.params).toEqual({ p1: null });
+    });
+
+    it('renders as a method/regex reference in CEL and SpEL (paradigm A)', () => {
+      expect(formatQuery(mk('beginsWith'), 'cel')).toBe('firstName.startsWith(p1)');
+      expect(formatQuery(mk('contains'), 'spel')).toBe(
+        "firstName matches '.*'.concat(p1).concat('.*')"
+      );
+    });
+  });
+
   describe('validation via parameters option', () => {
     it('drops rules referencing unknown parameters', () => {
       expect(formatQuery(query, { format: 'sql', parameters: [{ name: 'p1', label: 'P1' }] })).toBe(
