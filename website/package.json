@@ -98,7 +98,7 @@
     "raw-loader": "^4.0.2",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
-    "shadcn": "4.13.1",
+    "shadcn": "4.14.0",
     "stream-browserify": "^3.0.0",
     "tailwindcss": "catalog:",
     "typedoc": "^0.28.20",
