@@ -35,6 +35,7 @@ const exprRule = (
 };
 
 const group = (...rules: RuleType[]): RuleGroupType => ({ combinator: 'and', rules });
+const param = (p: string): ExpressionNode => ({ kind: 'parameter', parameter: p });
 
 describe('ElasticSearch (Painless) processor', () => {
   const script = (q: RuleGroupType): string => {
@@ -57,6 +58,19 @@ describe('ElasticSearch (Painless) processor', () => {
         )
       )
     ).toBe("(doc['price'].value * doc['qty'].value) >= 100");
+  });
+
+  it('emits a parameter node as a string literal (paradigm B)', () => {
+    expect(
+      script(
+        group(
+          exprRule(
+            { operator: '>=' },
+            { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+          )
+        )
+      )
+    ).toBe("(doc['price'].value * 'rate') >= 100");
   });
 
   it('scripts abs/min/max/mod/upper/lower', () => {
@@ -164,6 +178,19 @@ describe('NaturalLanguage processor', () => {
     ).toBe('the minimum of a, b is less than 5');
   });
 
+  it('emits a parameter node as a string literal (paradigm B)', () => {
+    expect(
+      nl(
+        group(
+          exprRule(
+            { operator: '<' },
+            { lhs: fn('min', field('a'), param('rate')), rhs: value(5, 'number') }
+          )
+        )
+      )
+    ).toBe("the minimum of a, 'rate' is less than 5");
+  });
+
   it('renders null and between prose', () => {
     expect(
       nl(group(exprRule({ operator: 'notnull' }, { lhs: fn('add', field('a'), field('b')) })))
@@ -217,6 +244,18 @@ describe('Sequelize processor', () => {
     );
     expect(out.attribute.val).toBe('("price" * "qty")');
     expect(out.logic[Op.gte].val).toBe('100');
+  });
+
+  it('emits a parameter node as a bind reference inside the literal', () => {
+    const out = seq(
+      group(
+        exprRule(
+          { operator: '>=' },
+          { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+        )
+      )
+    );
+    expect(out.attribute.val).toBe('("price" * $rate)');
   });
 
   it('builds null checks and between', () => {
@@ -302,6 +341,19 @@ describe('TanStackDB processor', () => {
         )
       )
     ).toEqual({ fn: 'gte', args: [{ fn: 'multiply', args: ['todo.price', 'todo.qty'] }, 100] });
+  });
+
+  it('emits a parameter node as a string literal (paradigm B)', () => {
+    expect(
+      gen(
+        group(
+          exprRule(
+            { operator: '>=' },
+            { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+          )
+        )
+      )
+    ).toEqual({ fn: 'gte', args: [{ fn: 'multiply', args: ['todo.price', 'rate'] }, 100] });
   });
 
   it('composes upper equality and != negation', () => {

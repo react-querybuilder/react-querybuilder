@@ -1,5 +1,5 @@
 import type { ValueProcessorOptions } from '@react-querybuilder/core';
-import { getQuotedFieldName } from '@react-querybuilder/core';
+import { getQuotedFieldName, stripParamPrefix, withParamPrefix } from '@react-querybuilder/core';
 import type { ExpressionNode, ParameterizedSerializerRegistry } from '../types';
 import { coerceLeafValue } from './leafValue';
 import { resolvePresetSerializer } from './resolvePresetSerializer';
@@ -23,9 +23,10 @@ export interface ParameterizedSerializeContext {
 /**
  * Recursively serializes an expression node to a parameterized SQL fragment, binding
  * `value` leaves as placeholders (`?` / numbered / `:name`) and pushing their values into
- * the context accumulators. `field` nodes inline the quoted field name; `func` nodes
- * delegate to the registered `parameterized` serializer, resolved for the active preset
- * and invoked opts-first.
+ * the context accumulators. `field` nodes inline the quoted field name; `parameter` nodes
+ * emit a (prefix-aware) bind-variable reference to an externally-supplied binding; `func`
+ * nodes delegate to the registered `parameterized` serializer, resolved for the active
+ * preset and invoked opts-first.
  */
 export const serializeParameterized = (
   node: ExpressionNode,
@@ -33,6 +34,20 @@ export const serializeParameterized = (
 ): string => {
   if (node.kind === 'field') {
     return getQuotedFieldName(node.field, ctx.options);
+  }
+  if (node.kind === 'parameter') {
+    // Named-parameter reference: emit inline (binding supplied externally). For
+    // "parameterized_named", register the key with a `null` placeholder (respecting
+    // `paramsKeepPrefix`) so callers see the expected binding. Positional "parameterized"
+    // pushes nothing, to avoid desyncing placeholder indices.
+    const paramPrefix = ctx.options.paramPrefix ?? ':';
+    const ref = withParamPrefix(node.parameter, paramPrefix);
+    if (!ctx.parameterized) {
+      ctx.paramsNamed[
+        ctx.options.paramsKeepPrefix ? ref : stripParamPrefix(node.parameter, paramPrefix)
+      ] = null;
+    }
+    return ref;
   }
   if (node.kind === 'value') {
     const { options } = ctx;

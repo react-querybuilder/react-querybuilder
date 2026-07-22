@@ -86,6 +86,10 @@ formatQuery(query, {
 // `(birthDate < date'1950-01-01' and mathNotDate = '1950-1-1')`
 ```
 
+### Non-value sources
+
+The date/time rule processors only materialize a rule's value as a date when the rule's `valueSource` is the default `"value"`. Rules using the `"field"` or `"parameter"` value source are delegated to the default rule processor for the target format, so a field or [named parameter](./components/valueeditor#the-parameter-value-source) reference is serialized identically to core (never coerced through the date library). Likewise, `QueryBuilderDateTime`'s value editor renders the standard field/parameter selector for those sources instead of the date/time editor.
+
 ### SQL
 
 The `datetimeRuleProcessorSQL` rule processor produces different output based on the `preset` option, which defaults to "ansi". For example, if `preset` is "postgresql", date values are prefixed with `date` (e.g., `date'2000-01-01'`), but for "mssql" they're wrapped in `cast([...] as date)` (e.g., `cast('2000-01-01' as date)`).

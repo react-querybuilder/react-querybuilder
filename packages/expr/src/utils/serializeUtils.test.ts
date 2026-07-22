@@ -73,4 +73,29 @@ describe('serialize util defensive branches', () => {
     ).toBe(5);
     expect(serializeTanStackDb({ kind: 'value', value: '5' }, {}, ctx)).toBe('5');
   });
+
+  it('serializeInfix renders parameter nodes via renderParameter when provided', () => {
+    const dialect = {
+      renderField: (f: string) => f,
+      renderLeaf: (n: { value: unknown }) => `"${n.value}"`,
+      renderParameter: (p: string) => p,
+    };
+    expect(serializeInfix({ kind: 'parameter', parameter: 'p1' }, {}, dialect)).toBe('p1');
+  });
+
+  it('serializeInfix falls back to a literal when the dialect omits renderParameter', () => {
+    const dialect = {
+      renderField: (f: string) => f,
+      renderLeaf: (n: { value: unknown }) => `"${n.value}"`,
+    };
+    expect(serializeInfix({ kind: 'parameter', parameter: 'p1' }, {}, dialect)).toBe('"p1"');
+  });
+
+  it('paradigm-B serializers emit parameter names as literals', () => {
+    expect(serializeMongoAgg({ kind: 'parameter', parameter: 'p1' }, {})).toBe('p1');
+    const dctx = { sql: dz.sql, columns: {} as Record<string, unknown> };
+    expect(serializeDrizzle({ kind: 'parameter', parameter: 'p1' }, {}, dctx)).toBe('p1');
+    const tctx = { ops: {}, resolveField: (f: string) => f };
+    expect(serializeTanStackDb({ kind: 'parameter', parameter: 'p1' }, {}, tctx)).toBe('p1');
+  });
 });

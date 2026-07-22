@@ -590,6 +590,7 @@ export interface Schema<F extends FullField, O extends string> {
   fieldMap: Partial<Record<GetOptionIdentifierType<F>, F>>;
   classNames: Classnames;
   combinators: FullOptionList<FullCombinator>;
+  parameters: FullOptionList<FullOption> | null;
   controls: Controls<F, O>;
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
@@ -856,6 +857,16 @@ export type QueryBuilderProps<
        * ]
        */
       combinators?: FlexibleOptionListProp<C>;
+      /**
+       * List of named parameters presented as options when a rule's `valueSource`
+       * is `"parameter"`. Each entry's `name` is stored in `rule.value` when
+       * selected. When this prop is omitted or resolves to a nullish/empty list,
+       * the value editor accepts free-form text for the parameter name.
+       *
+       * Prefer names _without_ the parameter prefix (e.g. `{ name: 'p1' }`, not
+       * `{ name: ':p1' }`); `formatQuery` adds the appropriate prefix per dialect.
+       */
+      parameters?: FlexibleOptionListProp<FullOption>;
       /**
        * Default properties applied to all objects in the `fields` prop. Properties on
        * individual field definitions will override these.

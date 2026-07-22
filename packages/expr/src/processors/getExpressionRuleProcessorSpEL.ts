@@ -11,6 +11,7 @@ const factory = makeStringExprProcessor({
   dialect: {
     renderField: field => field,
     renderLeaf: (node, opts) => quoteLeaf(node, `'`, opts),
+    renderParameter: parameter => parameter,
   },
   compare: { '=': '==', '!=': '!=', '<': '<', '<=': '<=', '>': '>', '>=': '>=' },
   renderNull: (lhs, notNull) => `${lhs} ${notNull ? '!=' : '=='} null`,

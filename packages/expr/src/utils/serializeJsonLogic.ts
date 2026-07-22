@@ -4,9 +4,9 @@ import { coerceLeafValue } from './leafValue';
 
 /**
  * Recursively serializes an expression node to a JSONLogic value. `field` nodes become
- * `{ var: field }`; `value` nodes emit the raw (number-coerced) value; `func` nodes
- * delegate to the registered `jsonLogic` serializer (an operator name, or an opts-first
- * function).
+ * `{ var: field }`; `parameter` nodes emit the name as a string literal; `value` nodes emit
+ * the raw (number-coerced) value; `func` nodes delegate to the registered `jsonLogic`
+ * serializer (an operator name, or an opts-first function).
  */
 export const serializeJsonLogic = (
   node: ExpressionNode,
@@ -15,6 +15,9 @@ export const serializeJsonLogic = (
 ): unknown => {
   if (node.kind === 'field') {
     return { var: node.field };
+  }
+  if (node.kind === 'parameter') {
+    return node.parameter;
   }
   if (node.kind === 'value') {
     return coerceLeafValue(node);

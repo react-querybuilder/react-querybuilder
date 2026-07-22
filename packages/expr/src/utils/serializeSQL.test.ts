@@ -26,6 +26,21 @@ describe('serializeSQL', () => {
     expect(serializeSQL({ kind: 'value', value: 'foo' }, defaultSQLSerializers)).toBe(`'foo'`);
   });
 
+  it('renders parameter nodes as prefixed bind refs', () => {
+    expect(serializeSQL({ kind: 'parameter', parameter: 'p1' }, defaultSQLSerializers)).toBe(':p1');
+  });
+
+  it('honors a custom param prefix and avoids double-prefixing', () => {
+    expect(
+      serializeSQL({ kind: 'parameter', parameter: 'p1' }, defaultSQLSerializers, {
+        paramPrefix: '$',
+      })
+    ).toBe('$p1');
+    expect(serializeSQL({ kind: 'parameter', parameter: ':p1' }, defaultSQLSerializers)).toBe(
+      ':p1'
+    );
+  });
+
   it('honors parseNumbers from options for plain string leaves', () => {
     expect(
       serializeSQL({ kind: 'value', value: '5' }, defaultSQLSerializers, { parseNumbers: true })

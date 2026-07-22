@@ -8,4 +8,4 @@ Click one of the links above to open this example as an online, editable demo, o
 npx degit github:react-querybuilder/react-querybuilder/examples/prime rqb-example-prime
 ```
 
-> _Development note: Do not modify the files in this folder directly. Edit corresponding files in the [\_template](../_template) folder and/or [exampleConfigs.ts](../exampleConfigs.ts), then run `bun generate-examples` from the repository root directory (requires [Bun](https://bun.sh/))._
+> _Development note: Do not modify the files in this folder directly. Edit corresponding files in the [_template](../_template) folder and/or [exampleConfigs.ts](../exampleConfigs.ts), then run `bun generate-examples` from the repository root directory (requires [Bun](https://bun.sh/))._

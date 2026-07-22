@@ -2,7 +2,13 @@ import type { ValueProcessorByRule } from '../../types';
 import { toArray, trimIfString } from '../arrayUtils';
 import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
-import { getQuotedFieldName, isValidValue, shouldRenderAsNumber, wrapLikeFragment } from './utils';
+import {
+  getQuotedFieldName,
+  isValidValue,
+  shouldRenderAsNumber,
+  withParamPrefix,
+  wrapLikeFragment,
+} from './utils';
 
 const escapeStringValueQuotes = (v: unknown, quoteChar: string, escapeQuotes?: boolean) =>
   escapeQuotes && typeof v === 'string'
@@ -25,10 +31,55 @@ export const defaultValueProcessorByRule: ValueProcessorByRule = (
     quoteValuesWith,
     concatOperator = '||',
     fieldIdentifierSeparator,
+    paramPrefix,
     wrapValueWith = ['', ''] as [string, string],
     translations,
   } = {}
 ) => {
+  // Parameter value sources render as a (prefix-aware) bind-variable reference.
+  if (valueSource === 'parameter') {
+    const operatorLowerCase = lc(operator);
+    if (operatorLowerCase === 'between' || operatorLowerCase === 'notbetween') {
+      const valueAsArray = toArray(value, { retainEmptyStrings: true });
+      if (
+        valueAsArray.length < 2 ||
+        !isValidValue(valueAsArray[0]) ||
+        !isValidValue(valueAsArray[1])
+      ) {
+        return '';
+      }
+      const [first, second] = valueAsArray;
+      // Note: `translations` should not be used for SQL.
+      // This is only here to support the "natural_language" format.
+      return [withParamPrefix(first, paramPrefix), withParamPrefix(second, paramPrefix)].join(
+        ` ${translations?.betweenAnd ?? translations?.and ?? 'and'} `
+      );
+    }
+    if (operatorLowerCase === 'in' || operatorLowerCase === 'notin') {
+      const valueAsArray = toArray(value);
+      if (valueAsArray.length === 0) {
+        return '';
+      }
+      return `(${valueAsArray.map(v => withParamPrefix(v, paramPrefix)).join(', ')})`;
+    }
+    const paramRef = withParamPrefix(value, paramPrefix);
+    // String-match operators concatenate `%` wildcards onto the bind-variable reference.
+    switch (operatorLowerCase) {
+      case 'contains':
+      case 'doesnotcontain':
+      case 'beginswith':
+      case 'doesnotbeginwith':
+      case 'endswith':
+      case 'doesnotendwith':
+        return wrapLikeFragment(paramRef, operatorLowerCase, {
+          concatOperator,
+          quoteValuesWith,
+          wrapValueWith,
+        });
+    }
+    return paramRef;
+  }
+
   const valueIsField = valueSource === 'field';
   const operatorLowerCase = lc(operator);
   const quoteChar = quoteValuesWith || "'";

@@ -2882,6 +2882,48 @@ describe('value source field', () => {
   });
 });
 
+describe('value source parameter', () => {
+  const fields: Field[] = [
+    { name: 'f1', label: 'Field 1', valueSources: ['parameter'] },
+    { name: 'f2', label: 'Field 2', valueSources: ['parameter', 'value'] },
+  ];
+  const parameters = [
+    { name: 'p1', label: 'Param 1' },
+    { name: 'p2', label: 'Param 2' },
+  ];
+
+  it('renders a select of parameters and defaults to the first', async () => {
+    render(<QueryBuilder fields={fields} getDefaultField="f1" parameters={parameters} />);
+    await user.click(screen.getByTestId(TestID.addRule));
+    const valueEditor = screen.getByTestId(TestID.valueEditor);
+    expect(valueEditor.tagName).toBe('SELECT');
+    expect(valueEditor).toHaveValue('p1');
+  });
+
+  it('accepts free-form text when no parameters prop is provided', async () => {
+    render(<QueryBuilder fields={fields} getDefaultField="f1" />);
+    await user.click(screen.getByTestId(TestID.addRule));
+    const valueEditor = screen.getByTestId(TestID.valueEditor);
+    expect(valueEditor.tagName).toBe('INPUT');
+  });
+
+  it('renders a multiselect for "in"/"notIn" operators', async () => {
+    render(
+      <QueryBuilder
+        fields={fields}
+        parameters={parameters}
+        defaultQuery={{
+          combinator: 'and',
+          rules: [{ field: 'f1', operator: 'in', value: '', valueSource: 'parameter' }],
+        }}
+      />
+    );
+    const valueEditor = screen.getByTestId(TestID.valueEditor);
+    expect(valueEditor.tagName).toBe('SELECT');
+    expect((valueEditor as HTMLSelectElement).multiple).toBe(true);
+  });
+});
+
 describe('match modes', () => {
   const fields: Field[] = [{ name: 'tourDates', label: 'Tour dates', matchModes: true }];
 

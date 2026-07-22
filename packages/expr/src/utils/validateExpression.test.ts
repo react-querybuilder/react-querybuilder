@@ -31,6 +31,21 @@ describe('validateExpression', () => {
     expect(validateExpression(val, meta).valid).toBe(true);
   });
 
+  it('accepts a parameter reference', () => {
+    expect(validateExpression({ kind: 'parameter', parameter: 'p1' }, meta).valid).toBe(true);
+  });
+
+  it('flags an empty parameter reference', () => {
+    const result = validateExpression({ kind: 'parameter', parameter: '' }, meta);
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain('Parameter reference is empty');
+  });
+
+  it('flags a non-string parameter reference', () => {
+    const node = { kind: 'parameter', parameter: 5 } as unknown as ExpressionNode;
+    expect(validateExpression(node, meta).valid).toBe(false);
+  });
+
   it('flags an unknown function', () => {
     const result = validateExpression({ kind: 'func', fn: 'nope', args: [] }, meta);
     expect(result.valid).toBe(false);

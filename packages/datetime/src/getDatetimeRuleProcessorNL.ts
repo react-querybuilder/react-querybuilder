@@ -14,6 +14,7 @@ import {
 import type { RQBDateTimeLibraryAPI } from './types';
 import {
   isISOStringDateOnly,
+  isNonDateValueSource,
   materializeRelativeValues,
   processIsDateField,
   resolveDatetimeOperator,
@@ -78,7 +79,7 @@ export const getDatetimeRuleProcessorNL =
       return defaultRuleProcessorNL(rule, opts);
     }
 
-    if (rule.valueSource === 'field') {
+    if (isNonDateValueSource(rule.valueSource)) {
       return defaultRuleProcessorNL(rule, { ...opts, operatorMap: defaultDateTimeNLOperatorMap });
     }
 

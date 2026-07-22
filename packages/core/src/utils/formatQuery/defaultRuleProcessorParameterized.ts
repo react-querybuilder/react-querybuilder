@@ -6,7 +6,14 @@ import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { getQuotedFieldName, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  getQuotedFieldName,
+  processMatchMode,
+  shouldRenderAsNumber,
+  stripParamPrefix,
+  withParamPrefix,
+  wrapLikeFragment,
+} from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for "parameterized" and
@@ -126,6 +133,37 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     return finalize('');
   } else if (sqlOperatorLowerCase === 'is null' || sqlOperatorLowerCase === 'is not null') {
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator}`);
+  } else if (rule.valueSource === 'parameter') {
+    // Named-parameter reference: emit inline (binding supplied externally). For
+    // "parameterized_named", register the key(s) with a `null` placeholder so callers
+    // can see which bindings are expected (and so the key survives `JSON.stringify`,
+    // which drops `undefined`). Positional "parameterized" leaves `params` untouched
+    // to avoid desyncing placeholder indices.
+    const registerParam = (v: unknown) => {
+      const ref = withParamPrefix(v, paramPrefix);
+      if (!parameterized) {
+        paramsNamed[paramsKeepPrefix ? ref : stripParamPrefix(v, paramPrefix)] = null;
+      }
+      return ref;
+    };
+    if (sqlOperatorLowerCase === 'between' || sqlOperatorLowerCase === 'not between') {
+      const valueAsArray = toArray(rule.value, { retainEmptyStrings: true });
+      const [first, second] = valueAsArray.slice(0, 2);
+      return finalize(
+        `${qPre}${rule.field}${qPost} ${sqlOperator} ${registerParam(first)} and ${registerParam(second)}`.trim()
+      );
+    }
+    if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {
+      const splitValue = toArray(rule.value);
+      return finalize(
+        `${qPre}${rule.field}${qPost} ${sqlOperator} (${splitValue.map(v => registerParam(v)).join(', ')})`
+      );
+    }
+    // String-match operators concatenate `%` wildcards onto the bind-variable reference;
+    // `wrapLikeFragment` is a no-op for all other operators.
+    return finalize(
+      `${qPre}${rule.field}${qPost} ${sqlOperator} ${wrapLikeFragment(registerParam(rule.value), lc(rule.operator), { concatOperator })}`.trim()
+    );
   } else if (rule.valueSource === 'field') {
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${value}`.trim());
   } else if (sqlOperatorLowerCase === 'in' || sqlOperatorLowerCase === 'not in') {

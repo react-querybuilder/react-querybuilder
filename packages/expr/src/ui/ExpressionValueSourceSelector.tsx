@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import type { FullOption, ValueSource, ValueSourceSelectorProps } from 'react-querybuilder';
-import { update } from 'react-querybuilder';
+import type {
+  DefaultOperatorName,
+  FullOption,
+  ValueSource,
+  ValueSourceSelectorProps,
+} from 'react-querybuilder';
+import { betweenOperators, update } from 'react-querybuilder';
 import { rhsDefaultNode } from './expressionEditorUtils';
 import { useExpressionUI } from './ExpressionUIContext';
-
-const BETWEEN_OPERATORS = new Set(['between', 'notBetween']);
 
 /**
  * Value-source selector override. Relabels the `expression` option (core emits a raw,
@@ -38,7 +41,7 @@ export const ExpressionValueSourceSelector = (
       if (v === 'expression') {
         // Between compares against a range, so seed both bounds; every other operator
         // compares against a single expression.
-        const value = BETWEEN_OPERATORS.has(rule.operator)
+        const value = betweenOperators.has(rule.operator as DefaultOperatorName)
           ? [rhsDefaultNode(schema.fields, meta), rhsDefaultNode(schema.fields, meta)]
           : rhsDefaultNode(schema.fields, meta);
         schema.dispatchQuery(update(schema.getQuery(), { valueSource: 'expression', value }, path));

@@ -1,13 +1,11 @@
 import * as React from 'react';
-import type { ValueEditorProps } from 'react-querybuilder';
-import { ValueEditor } from 'react-querybuilder';
+import type { DefaultOperatorName, ValueEditorProps } from 'react-querybuilder';
+import { betweenOperators, ValueEditor } from 'react-querybuilder';
 import type { ExpressionNode } from '../types';
 import { ExprTestID } from './defaults';
 import { ExpressionEditor } from './ExpressionEditor';
 import { rhsDefaultNode } from './expressionEditorUtils';
 import { useExpressionUI } from './ExpressionUIContext';
-
-const BETWEEN_OPERATORS = new Set(['between', 'notBetween']);
 
 /**
  * Value-editor override hosting the rule's right-hand side. When `valueSource` is
@@ -37,7 +35,7 @@ export const ExpressionValueEditor = (props: ValueEditorProps): React.JSX.Elemen
     return <ValEditor {...props} />;
   }
 
-  if (BETWEEN_OPERATORS.has(operator)) {
+  if (betweenOperators.has(operator as DefaultOperatorName)) {
     // Between stores a 2-tuple of expression nodes; seed empty slots with a default node so
     // any single edit persists a complete pair (mirroring the core "between fix" that
     // back-fills the untouched bound).

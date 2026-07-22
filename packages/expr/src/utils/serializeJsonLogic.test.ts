@@ -25,6 +25,12 @@ describe('serializeJsonLogic', () => {
     ).toBe(5);
   });
 
+  it('emits a parameter name as a literal', () => {
+    expect(
+      serializeJsonLogic({ kind: 'parameter', parameter: 'p1' }, defaultJsonLogicSerializers)
+    ).toBe('p1');
+  });
+
   it('serializes function nodes via the function-style serializer', () => {
     const node: ExpressionNode = {
       kind: 'func',

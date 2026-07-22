@@ -1,9 +1,10 @@
+import type { DefaultOperatorName, RuleProcessor } from '@react-querybuilder/core';
 import {
   isValidValue,
   parseNumber,
   shouldRenderAsNumber,
+  substringOperators,
   toArray,
-  type RuleProcessor,
 } from '@react-querybuilder/core';
 import type { Condition, Constraint } from 'rulepilot';
 
@@ -16,14 +17,7 @@ import type { Condition, Constraint } from 'rulepilot';
  *
  * @group Export
  */
-export const rulePilotUnsupportedOperators: ReadonlySet<string> = new Set([
-  'contains',
-  'doesNotContain',
-  'beginsWith',
-  'doesNotBeginWith',
-  'endsWith',
-  'doesNotEndWith',
-]);
+export const rulePilotUnsupportedOperators: typeof substringOperators = substringOperators;
 
 const operatorMap: Record<string, Constraint['operator']> = {
   '=': '==',
@@ -73,7 +67,7 @@ export const defaultRuleProcessorRulePilot: RuleProcessor = (
   opts
 ): Constraint | Condition | null => {
   // rulepilot cannot represent these; skip the rule as invalid.
-  if (rulePilotUnsupportedOperators.has(rule.operator)) {
+  if (rulePilotUnsupportedOperators.has(rule.operator as DefaultOperatorName)) {
     return null;
   }
 

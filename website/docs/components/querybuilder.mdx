@@ -205,11 +205,19 @@ Returns the [`ValueEditor`](./valueeditor) type for the given `field` and `opera
 
 `(field: string, operator: string, misc: { fieldData: Field }) => ValueSources | ValueSourceFullOptions`;
 
-Returns allowed value sources for a given `field` and `operator`. Must return array with `"value"`, `"field"`, or both. Array elements can be `FlexibleOption` objects with `name`/`value` of `"value"` or `"field"`.
+Returns allowed value sources for a given `field` and `operator`. Must return array with `"value"`, `"field"`, `"parameter"`, or any combination. Array elements can be `FlexibleOption` objects with `name`/`value` of `"value"`, `"field"`, or `"parameter"`.
 
 Defaults to `() => ["value"]`. First array element becomes the initial selection.
 
 `fieldData` provides the complete `Field` object for accessing custom properties.
+
+### `parameters`
+
+`FlexibleOptionList<FullOption>`
+
+Option list of named query parameters made available to rules whose `valueSource` is `"parameter"` (see [the `"parameter"` value source](./valueeditor#the-parameter-value-source)). When provided and non-empty, the value editor renders a `<select>` of these parameter names (a multiselect for `in`/`notIn` operators); when nullish or empty, it renders a free-form text input.
+
+Specify names **without** the parameter prefix (e.g. `[{ name: 'p1', label: 'Param 1' }]`); [`formatQuery`](../utils/export) adds the dialect-appropriate prefix.
 
 ### `getValueEditorSeparator`
 

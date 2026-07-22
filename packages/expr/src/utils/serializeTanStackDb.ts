@@ -14,9 +14,9 @@ export interface TanStackDbSerializeContext {
 
 /**
  * Recursively serializes an expression node to a TanStack DB expression. `field` nodes
- * resolve to ref columns; `value` nodes emit the raw (number-coerced) literal; `func` nodes
- * delegate to the registered serializer. Throws for unknown functions (caller validates
- * first to omit such rules).
+ * resolve to ref columns; `parameter` nodes emit the name as a string literal; `value` nodes
+ * emit the raw (number-coerced) literal; `func` nodes delegate to the registered serializer.
+ * Throws for unknown functions (caller validates first to omit such rules).
  */
 export const serializeTanStackDb = (
   node: ExpressionNode,
@@ -26,6 +26,9 @@ export const serializeTanStackDb = (
 ): unknown => {
   if (node.kind === 'field') {
     return ctx.resolveField(node.field);
+  }
+  if (node.kind === 'parameter') {
+    return node.parameter;
   }
   if (node.kind === 'value') {
     return coerceLeafValue(node, options.parseNumbers ? true : undefined);

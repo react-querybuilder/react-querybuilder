@@ -13,9 +13,10 @@ export interface DrizzleSerializeContext {
 
 /**
  * Recursively serializes an expression node to a Drizzle operand (`Column`, `SQL` fragment,
- * or literal). `field` nodes resolve to `columns[field]`; `value` nodes emit the raw
- * (number-coerced) literal (interpolated as a bound parameter by callers); `func` nodes
- * delegate to the registered Drizzle serializer. Throws if a referenced column is missing.
+ * or literal). `field` nodes resolve to `columns[field]`; `parameter` nodes emit the name as
+ * a string literal; `value` nodes emit the raw (number-coerced) literal (interpolated as a
+ * bound parameter by callers); `func` nodes delegate to the registered Drizzle serializer.
+ * Throws if a referenced column is missing.
  */
 export const serializeDrizzle = (
   node: ExpressionNode,
@@ -29,6 +30,9 @@ export const serializeDrizzle = (
       throw new Error(`No Drizzle column for expression field "${node.field}"`);
     }
     return column;
+  }
+  if (node.kind === 'parameter') {
+    return node.parameter;
   }
   if (node.kind === 'value') {
     return coerceLeafValue(node, options.parseNumbers ? true : undefined);

@@ -10,6 +10,7 @@ import {
 import { getRelativeDateTimeSQL } from './getRelativeDateTimeSQL';
 import type { RQBDateTimeLibraryAPI } from './types';
 import {
+  isNonDateValueSource,
   isISOStringDateOnly,
   isRelativeDateTimeValue,
   materializeRelativeValues,
@@ -128,7 +129,10 @@ export const getDatetimeRuleProcessorSQL =
     } = opts;
     let finalValue = '';
 
-    if (rule.valueSource === 'field' || !processIsDateField(context.isDateField, rule, opts)) {
+    if (
+      isNonDateValueSource(rule.valueSource) ||
+      !processIsDateField(context.isDateField, rule, opts)
+    ) {
       return defaultRuleProcessorSQL(rule, opts);
     }
 

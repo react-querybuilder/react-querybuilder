@@ -137,6 +137,33 @@ it('delegates the absolute date input and relative offset to the inherited edito
   expect(screen.getByTestId('custom-editor')).toBeInTheDocument();
 });
 
+it('renders the parameter selector (not the date UI) for parameter-source date fields', () => {
+  render(
+    <QueryBuilderDateTime>
+      <QueryBuilder
+        fields={fields}
+        parameters={[
+          { name: 'p1', label: 'Param 1' },
+          { name: 'p2', label: 'Param 2' },
+        ]}
+        query={{
+          combinator: 'and',
+          rules: [{ field: 'field1', operator: '=', value: 'p1', valueSource: 'parameter' }],
+        }}
+      />
+    </QueryBuilderDateTime>
+  );
+
+  // Non-`value` source bypasses the date UI: no relative/absolute date container.
+  expect(dateInput()).toBeNull();
+
+  // The standard value editor renders as a select of the named parameters.
+  const editor = screen.getByTestId(TestID.valueEditor);
+  expect(editor.tagName).toBe('SELECT');
+  expect(editor).toHaveValue('p1');
+  expect(screen.getByRole('option', { name: 'Param 2' })).toBeInTheDocument();
+});
+
 it('uses a custom dateTimeAPI prop to parse/format the input value', () => {
   // Custom adapter that always parses to a fixed date, proving the API is pluggable.
   const fixedDate = new Date(2020, 5, 15, 9, 30);

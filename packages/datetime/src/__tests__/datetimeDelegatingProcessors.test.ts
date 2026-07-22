@@ -37,13 +37,15 @@ const orderedAbsoluteQuery: RuleGroupType = {
   ],
 };
 
-// Non-date field (gate via `processIsDateField`) and a date field with `valueSource: 'field'`
-// (gate via `valueSource === 'field'`) must both fall back to the default processor.
+// Non-date field (gate via `processIsDateField`), a date field with `valueSource: 'field'`,
+// and a date field with `valueSource: 'parameter'` (both gated via `isNonDateValueSource`)
+// must all fall back to the default processor.
 const fallbackQuery: RuleGroupType = {
   combinator: 'and',
   rules: [
     { field: 'firstName', operator: '=', value: 'Steve' },
     { field: 'birthdate', operator: '=', value: 'created_at', valueSource: 'field' },
+    { field: 'birthdate', operator: '=', value: 'startParam', valueSource: 'parameter' },
   ],
 };
 

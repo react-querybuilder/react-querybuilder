@@ -14,12 +14,16 @@ const user = userEventSetup();
 // Minimal schema: only `controls` (for nested selectors/editor), the classname fields the
 // default value editor reads, and `parseNumbers` (threaded to the literal editor) are
 // exercised at runtime.
-const makeSchema = (parseNumbers?: ParseNumbersPropConfig): Schema<FullField, string> =>
+const makeSchema = (
+  parseNumbers?: ParseNumbersPropConfig,
+  parameters: FullField[] | null = null
+): Schema<FullField, string> =>
   ({
     fields: [
       { name: 'price', value: 'price', label: 'Price' },
       { name: 'qty', value: 'qty', label: 'Qty' },
     ],
+    parameters,
     controls: defaultControlElements,
     classNames: {},
     suppressStandardClassnames: false,
@@ -32,12 +36,14 @@ const Harness = ({
   parseNumbers,
   inputType,
   hideKindSelector,
+  parameters,
 }: {
   initial?: ExpressionNode;
   meta?: ExpressionFunctionMetaRegistry;
   parseNumbers?: ParseNumbersPropConfig;
   inputType?: InputType | null;
   hideKindSelector?: boolean;
+  parameters?: FullField[] | null;
 }) => {
   const [node, setNode] = useState<ExpressionNode | undefined>(initial);
   return (
@@ -46,7 +52,7 @@ const Harness = ({
         node={node}
         onChange={setNode}
         meta={meta}
-        schema={makeSchema(parseNumbers)}
+        schema={makeSchema(parseNumbers, parameters)}
         inputType={inputType}
         hideKindSelector={hideKindSelector}
       />
@@ -91,15 +97,36 @@ it('edits a field reference', async () => {
   expect(out()).toEqual({ kind: 'field', field: 'qty' });
 });
 
-it('keeps a literal as a string when parseNumbers is off (no "#" toggle)', async () => {
-  render(<Harness initial={{ kind: 'value', value: undefined }} />);
-  // No numeric toggle is rendered.
-  expect(screen.queryByTestId('expr-number')).toBeNull();
-  // `?? ''` guard for a missing value
-  expect(screen.getByTestId('expr-value')).toHaveValue('');
+it('renders a value node with no value as an empty input', async () => {
+  render(<Harness initial={{ kind: 'value' } as ExpressionNode} />);
+  expect(sel('expr-value')).toHaveValue('');
+  await user.type(sel('expr-value'), 'x');
+  expect(out()).toEqual({ kind: 'value', value: 'x' });
+});
 
-  await user.type(screen.getByTestId('expr-value'), '100');
-  expect(out()).toEqual({ kind: 'value', value: '100' });
+const params: FullField[] = [
+  { name: 'p1', value: 'p1', label: 'Param 1' },
+  { name: 'p2', value: 'p2', label: 'Param 2' },
+];
+
+it('seeds a parameter node from the first configured parameter', async () => {
+  render(<Harness initial={{ kind: 'field', field: 'price' }} parameters={params} />);
+  await user.selectOptions(sel('expr-kind'), 'parameter');
+  expect(out()).toEqual({ kind: 'parameter', parameter: 'p1' });
+});
+
+it('edits a parameter reference via a selector when parameters are configured', async () => {
+  render(<Harness initial={{ kind: 'parameter', parameter: 'p1' }} parameters={params} />);
+  await user.selectOptions(sel('expr-parameter'), 'p2');
+  expect(out()).toEqual({ kind: 'parameter', parameter: 'p2' });
+});
+
+it('falls back to a free-text parameter input when no parameters are configured', async () => {
+  render(<Harness initial={{ kind: 'field', field: 'price' }} />);
+  await user.selectOptions(sel('expr-kind'), 'parameter');
+  expect(out()).toEqual({ kind: 'parameter', parameter: '' });
+  await user.type(sel('expr-parameter'), 'custom');
+  expect(out()).toEqual({ kind: 'parameter', parameter: 'custom' });
 });
 
 it('parses a numeric literal when parseNumbers threads through from the schema', async () => {

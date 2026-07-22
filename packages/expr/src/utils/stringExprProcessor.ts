@@ -1,5 +1,12 @@
 import type { RuleProcessor, RuleType, ValueProcessorOptions } from '@react-querybuilder/core';
-import { lc } from '@react-querybuilder/core';
+import {
+  betweenOperators,
+  defaultOperatorNegationMap,
+  lc,
+  nullOperators,
+  relationalOperators,
+  substringOperators,
+} from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { getRuleExpressions } from '../registry';
 import type { SQLSerializerRegistry } from '../types';
@@ -8,22 +15,22 @@ import { serializeInfix } from './serializeInfix';
 import { validateExpression } from './validateExpression';
 
 /** Canonical scalar comparison operators handled by the string processor. */
-const SCALAR_OPERATORS = new Set(['=', '!=', '<', '<=', '>', '>=']);
-const NULL_OPERATORS = new Set(['null', 'notnull']);
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const SCALAR_OPERATORS = new Set<string>(relationalOperators);
+const NULL_OPERATORS = new Set<string>([...nullOperators].map(lc));
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 
 /** Canonical string-match category emitted by a {@link StringExprConfig.renderStringMatch}. */
 export type StringMatchKind = 'contains' | 'beginswith' | 'endswith';
 
 /** Maps each string-match operator to its canonical category and negation flag. */
-const STRING_MATCH_OPERATORS: Record<string, { kind: StringMatchKind; negate: boolean }> = {
-  contains: { kind: 'contains', negate: false },
-  doesnotcontain: { kind: 'contains', negate: true },
-  beginswith: { kind: 'beginswith', negate: false },
-  doesnotbeginwith: { kind: 'beginswith', negate: true },
-  endswith: { kind: 'endswith', negate: false },
-  doesnotendwith: { kind: 'endswith', negate: true },
-};
+const STRING_MATCH_OPERATORS: Record<string, { kind: StringMatchKind; negate: boolean }> =
+  Object.fromEntries(
+    [...substringOperators].map(op => {
+      const negate = op.startsWith('doesNot');
+      const kind = lc(negate ? defaultOperatorNegationMap[op] : op) as StringMatchKind;
+      return [lc(op), { kind, negate }];
+    })
+  );
 
 /**
  * Configuration for a string-output ("infix") expression rule processor. Describes how to

@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
 import {
+  betweenOperators,
   defaultRuleProcessorMongoDBQuery,
   lc,
   parseNumber,
@@ -21,7 +22,7 @@ const OPERATOR_MAP: Record<string, string> = {
   '>=': '$gte',
 };
 
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 
 /** Maps each string-match operator to its canonical category and negation flag. */
 const STRING_MATCH: Record<

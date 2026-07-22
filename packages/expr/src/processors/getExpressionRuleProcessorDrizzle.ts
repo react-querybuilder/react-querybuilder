@@ -1,5 +1,6 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
 import {
+  betweenOperators,
   defaultRuleProcessorDrizzle,
   lc,
   parseNumber,
@@ -21,7 +22,7 @@ const COMPARE: Record<string, string> = {
   '>=': '>=',
 };
 
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 
 /** Maps each string-match operator to its canonical category and negation flag. */
 const STRING_MATCH: Record<

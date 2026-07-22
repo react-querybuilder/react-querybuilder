@@ -1,10 +1,14 @@
-import type { RuleProcessor } from '@react-querybuilder/core';
+import type { DefaultOperatorName, RuleProcessor } from '@react-querybuilder/core';
 import {
+  betweenOperators,
   defaultOperatorProcessorNL,
   defaultRuleProcessorNL,
   defaultValueProcessorNL,
   getQuotedFieldName,
   lc,
+  nullOperators,
+  relationalOperators,
+  substringOperators,
 } from '@react-querybuilder/core';
 import { defaultFunctionMeta } from '../functions/meta';
 import { defaultNLSerializers } from '../functions/nl';
@@ -14,19 +18,12 @@ import type { InfixDialect } from '../utils/serializeInfix';
 import { quoteLeaf, serializeInfix } from '../utils/serializeInfix';
 import { validateExpression } from '../utils/validateExpression';
 
-const SCALAR = new Set(['=', '!=', '<', '<=', '>', '>=']);
-const NULL_OPERATORS = new Set(['null', 'notnull']);
-const BETWEEN_OPERATORS = new Set(['between', 'notbetween']);
+const SCALAR = new Set<string>(relationalOperators);
+const NULL_OPERATORS = new Set<string>([...nullOperators].map(lc));
+const BETWEEN_OPERATORS = new Set<string>([...betweenOperators].map(lc));
 // String-match ops render as `subject verb object` (verb via operatorProcessor, e.g.
 // "starts with"), identical to scalar; the object is the serialized expression RHS.
-const STRING_MATCH_OPERATORS = new Set([
-  'contains',
-  'doesnotcontain',
-  'beginswith',
-  'doesnotbeginwith',
-  'endswith',
-  'doesnotendwith',
-]);
+const STRING_MATCH_OPERATORS = new Set([...substringOperators].map(lc));
 
 /**
  * Generates a rule processor with expression support for use by
@@ -47,7 +44,8 @@ export const getExpressionRuleProcessorNL =
 
     const operator = lc(rule.operator);
     const unary = NULL_OPERATORS.has(operator);
-    const scalar = SCALAR.has(operator) || STRING_MATCH_OPERATORS.has(operator);
+    const scalar =
+      SCALAR.has(operator) || STRING_MATCH_OPERATORS.has(operator as DefaultOperatorName);
     const betweenExpr = BETWEEN_OPERATORS.has(operator) && !!(expr.rhs || expr.rhs2);
     if (!unary && !scalar && !betweenExpr) return defaultRuleProcessorNL(rule, opts);
 

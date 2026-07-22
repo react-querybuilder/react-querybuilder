@@ -5,8 +5,12 @@ import {
   toArray,
 } from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
-
+import {
+  isNonDateValueSource,
+  materializeRelativeValues,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 /**
  * Generates a rule processor with date/time features for use by
  * {@link @react-querybuilder/core!formatQuery formatQuery} with the "mongodb_query" format.
@@ -18,7 +22,10 @@ export const getDatetimeRuleProcessorMongoDBQuery =
     const { field, valueSource } = rule;
     const operator = resolveDatetimeOperator(rule, opts);
 
-    if (valueSource === 'field' || !processIsDateField(opts.context?.isDateField, rule, opts)) {
+    if (
+      isNonDateValueSource(valueSource) ||
+      !processIsDateField(opts.context?.isDateField, rule, opts)
+    ) {
       return defaultRuleProcessorMongoDBQuery(rule, opts);
     }
 

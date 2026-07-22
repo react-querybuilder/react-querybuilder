@@ -1,7 +1,12 @@
 import type { RuleProcessor } from '@react-querybuilder/core';
 import { defaultRuleProcessorCEL, lc, toArray } from '@react-querybuilder/core';
 import type { RQBDateTimeLibraryAPI } from './types';
-import { materializeRelativeValues, processIsDateField, resolveDatetimeOperator } from './utils';
+import {
+  isNonDateValueSource,
+  materializeRelativeValues,
+  processIsDateField,
+  resolveDatetimeOperator,
+} from './utils';
 
 const shouldNegate = (op: string) => /^(does)?not/i.test(op);
 
@@ -15,7 +20,10 @@ export const getDatetimeRuleProcessorCEL =
     const opts = options ?? /* v8 ignore start -- @preserve */ {}; /* v8 ignore stop -- @preserve */
     const { context = {} } = opts;
 
-    if (rule.valueSource === 'field' || !processIsDateField(context.isDateField, rule, opts)) {
+    if (
+      isNonDateValueSource(rule.valueSource) ||
+      !processIsDateField(context.isDateField, rule, opts)
+    ) {
       return defaultRuleProcessorCEL(rule, opts);
     }
 

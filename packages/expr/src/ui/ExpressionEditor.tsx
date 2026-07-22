@@ -26,6 +26,7 @@ const dummyRule: RuleType = { field: '', operator: '=', value: '' };
 const kindOptions: FullOption[] = [
   { name: 'field', value: 'field', label: 'Field' },
   { name: 'value', value: 'value', label: 'Value' },
+  { name: 'parameter', value: 'parameter', label: 'Parameter' },
   { name: 'func', value: 'func', label: 'Function' },
 ];
 
@@ -63,8 +64,9 @@ export interface ExpressionEditorProps {
 /**
  * Recursive editor for a single {@link ExpressionNode}. A `kind` selector switches between
  * a field reference, a literal value (parsed as a number when the host's `parseNumbers` is
- * enabled), and a function call whose arguments are themselves {@link ExpressionEditor}s —
- * enabling arbitrary nesting.
+ * enabled), a named parameter reference (a selector over `schema.parameters`, or a free-text
+ * input when none are configured), and a function call whose arguments are themselves
+ * {@link ExpressionEditor}s — enabling arbitrary nesting.
  *
  * Selectors render via `schema.controls.valueSelector` and the literal editor via the
  * _inherited_ value editor (the compat editor captured before {@link QueryBuilderExpressions}
@@ -98,6 +100,12 @@ export const ExpressionEditor = ({
     [meta]
   );
 
+  // Mirror ValueEditor: a non-empty parameter list drives a selector, else a free-text input.
+  const parametersAsList = useMemo(
+    () => (schema.parameters && schema.parameters.length > 0 ? schema.parameters : null),
+    [schema.parameters]
+  );
+
   return (
     <span className="expr-node" data-testid={testID}>
       {!hideKindSelector && (
@@ -112,7 +120,9 @@ export const ExpressionEditor = ({
           options={kindOptions}
           multiple={false}
           listsAsArrays={false}
-          handleOnChange={v => onChange(defaultNode(v as ExpressionNodeKind, schema.fields, meta))}
+          handleOnChange={v =>
+            onChange(defaultNode(v as ExpressionNodeKind, schema.fields, meta, schema.parameters))
+          }
         />
       )}
       {n.kind === 'field' && (
@@ -151,6 +161,41 @@ export const ExpressionEditor = ({
           handleOnChange={v => onChange({ kind: 'value', value: v })}
         />
       )}
+
+      {n.kind === 'parameter' &&
+        (parametersAsList ? (
+          <ValueSelectorControl
+            testID={`${testID}-parameter`}
+            className="expr-parameter"
+            title="Parameter"
+            schema={schema}
+            path={dummyPath}
+            level={0}
+            value={n.parameter}
+            options={parametersAsList}
+            multiple={false}
+            listsAsArrays={false}
+            handleOnChange={v => onChange({ kind: 'parameter', parameter: `${v}` })}
+          />
+        ) : (
+          <ValueEditorControl
+            skipHook
+            testID={`${testID}-parameter`}
+            className="expr-parameter"
+            title="Parameter"
+            schema={schema}
+            path={dummyPath}
+            level={0}
+            field=""
+            operator="="
+            fieldData={dummyFieldData}
+            rule={dummyRule}
+            valueSource="value"
+            value={n.parameter}
+            inputType={inputType}
+            handleOnChange={v => onChange({ kind: 'parameter', parameter: `${v}` })}
+          />
+        ))}
 
       {n.kind === 'func' && (
         <span className="expr-func">

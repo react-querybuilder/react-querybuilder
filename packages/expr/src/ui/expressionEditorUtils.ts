@@ -34,13 +34,16 @@ export const admitsLHSArg = (arity: ExpressionFunctionMeta['arity']): boolean =>
 export const defaultNode = (
   kind: ExpressionNodeKind,
   options: OptionList,
-  meta?: ExpressionFunctionMetaRegistry
+  meta?: ExpressionFunctionMetaRegistry,
+  parameters?: OptionList | null
 ): ExpressionNode => {
   switch (kind) {
     case 'field':
       return { kind: 'field', field: getFirstOption(options) ?? '' };
     case 'value':
       return { kind: 'value', value: '' };
+    case 'parameter':
+      return { kind: 'parameter', parameter: getFirstOption(parameters ?? []) ?? '' };
     default: {
       const fn = Object.keys(meta ?? {})[0] ?? '';
       const count = arityCount(meta?.[fn]?.arity, 0);

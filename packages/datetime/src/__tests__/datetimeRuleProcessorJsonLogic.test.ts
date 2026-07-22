@@ -99,3 +99,20 @@ describe('isDateField', () => {
     });
   }
 });
+
+describe('parameter value source', () => {
+  const query: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ field: 'birthdate', operator: '=', value: 'startParam', valueSource: 'parameter' }],
+  };
+
+  test('delegates parameter-source rules to the default processor', () => {
+    expect(
+      formatQuery(query, {
+        format: 'jsonlogic',
+        fields,
+        ruleProcessor: datetimeRuleProcessorJsonLogic,
+      })
+    ).toEqual(formatQuery(query, { format: 'jsonlogic', fields }));
+  });
+});

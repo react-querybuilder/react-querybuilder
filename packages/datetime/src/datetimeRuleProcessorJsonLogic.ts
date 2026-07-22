@@ -39,6 +39,12 @@ export const datetimeRuleProcessorJsonLogic: RuleProcessor = (
     return defaultRuleProcessorJsonLogic(rule, opts);
   }
 
+  // Parameter references are named placeholders (not dates); delegate to the core default,
+  // which emits the name as a literal (paradigm B).
+  if (rule.valueSource === 'parameter') {
+    return defaultRuleProcessorJsonLogic(rule, opts);
+  }
+
   const { field, value, valueSource } = rule;
   const operator = resolveDatetimeOperator(rule, opts);
   const valueIsField = valueSource === 'field';
