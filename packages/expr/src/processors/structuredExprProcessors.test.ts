@@ -21,6 +21,7 @@ const fn = (name: string, ...args: ExpressionNode[]): ExpressionNode => ({
   fn: name,
   args,
 });
+const param = (p: string): ExpressionNode => ({ kind: 'parameter', parameter: p });
 
 const exprRule = (
   rule: Partial<RuleType> & { operator: string },
@@ -52,6 +53,19 @@ describe('MongoDBQuery processor', () => {
         )
       )
     ).toEqual({ $expr: { $gte: [{ $multiply: ['$price', '$qty'] }, 100] } });
+  });
+
+  it('emits a parameter node as a string literal (paradigm B)', () => {
+    expect(
+      mq(
+        group(
+          exprRule(
+            { operator: '>=' },
+            { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+          )
+        )
+      )
+    ).toEqual({ $expr: { $gte: [{ $multiply: ['$price', 'rate'] }, 100] } });
   });
 
   it('serializes abs/mod/min/max/upper/lower', () => {
@@ -243,6 +257,19 @@ describe('Drizzle processor', () => {
     );
     expect(sql).toBe('("t"."price" * "t"."qty") >= $1');
     expect(params).toEqual([100]);
+  });
+
+  it('emits a parameter node as a bound string literal (paradigm B)', () => {
+    const { sql, params } = dq(
+      group(
+        exprRule(
+          { operator: '>=' },
+          { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+        )
+      )
+    );
+    expect(sql).toBe('("t"."price" * $1) >= $2');
+    expect(params).toEqual(['rate', 100]);
   });
 
   it('serializes abs between', () => {

@@ -21,6 +21,7 @@ const fn = (name: string, ...args: ExpressionNode[]): ExpressionNode => ({
   fn: name,
   args,
 });
+const param = (p: string): ExpressionNode => ({ kind: 'parameter', parameter: p });
 
 // Builds a rule using the core storage contract: `lhs` lives on `rule.lhs`, and an
 // `rhs` expression is stored in `rule.value` with `valueSource: 'expression'`. For a
@@ -60,6 +61,18 @@ describe('SQL processor', () => {
     );
     expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
       `(ABS(price) > '100')`
+    );
+  });
+
+  it('emits a parameter node as a prefixed bind reference', () => {
+    const q = group(
+      exprRule(
+        { operator: '=' },
+        { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+      )
+    );
+    expect(formatQuery(q, { format: 'sql', ruleProcessor: expressionRuleProcessorSQL })).toBe(
+      '((price * :rate) = 100)'
     );
   });
 
@@ -331,6 +344,36 @@ describe('Parameterized processor', () => {
         ruleProcessor: expressionRuleProcessorParameterized,
       })
     ).toEqual({ sql: '((price * qty) = :expr_1)', params: { expr_1: 100 } });
+  });
+
+  it('emits a positional parameter reference without binding a value', () => {
+    const q = group(
+      exprRule(
+        { operator: '=' },
+        { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '((price * :rate) = ?)', params: [100] });
+  });
+
+  it('registers a named parameter reference with a null placeholder', () => {
+    const q = group(
+      exprRule(
+        { operator: '=' },
+        { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+      )
+    );
+    expect(
+      formatQuery(q, {
+        format: 'parameterized_named',
+        ruleProcessor: expressionRuleProcessorParameterized,
+      })
+    ).toEqual({ sql: '((price * :rate) = :expr_1)', params: { rate: null, expr_1: 100 } });
   });
 
   it('uses numbered placeholders for the postgresql preset', () => {
@@ -620,6 +663,16 @@ describe('JsonLogic processor', () => {
     );
     expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
       '==': [{ '*': [{ var: 'price' }, { var: 'qty' }] }, 100],
+    });
+  });
+
+  it('emits a parameter node as a string literal', () => {
+    const rule = exprRule(
+      { operator: '=' },
+      { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+    );
+    expect(expressionRuleProcessorJsonLogic(rule, {})).toEqual({
+      '==': [{ '*': [{ var: 'price' }, 'rate'] }, 100],
     });
   });
 

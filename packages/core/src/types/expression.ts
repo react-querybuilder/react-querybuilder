@@ -10,4 +10,5 @@
 export type ExpressionNode =
   | { kind: 'field'; field: string }
   | { kind: 'value'; value: unknown; valueType?: string }
+  | { kind: 'parameter'; parameter: string }
   | { kind: 'func'; fn: string; args: ExpressionNode[] };

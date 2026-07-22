@@ -37,8 +37,8 @@ const arityError = (arity: ExpressionFunctionMeta['arity'], argc: number): strin
 /**
  * Recursively validates an expression node. Flags unknown functions (not present in the
  * known set — see {@link ValidateExpressionOptions.functions}), arity mismatches (against
- * {@link ValidateExpressionOptions.meta}), and empty field references. `formatQuery` skips
- * rules whose expressions fail validation (the rule processors return empty/`false`).
+ * {@link ValidateExpressionOptions.meta}), and empty field/parameter references. `formatQuery`
+ * skips rules whose expressions fail validation (the rule processors return empty/`false`).
  */
 export const validateExpression = (
   node: ExpressionNode | undefined,
@@ -60,6 +60,12 @@ export const validateExpression = (
         break;
       }
       case 'value': {
+        break;
+      }
+      case 'parameter': {
+        if (typeof n.parameter !== 'string' || n.parameter.length === 0) {
+          reasons.push('Parameter reference is empty');
+        }
         break;
       }
       case 'func': {

@@ -4,9 +4,10 @@ import { coerceLeafValue } from './leafValue';
 
 /**
  * Recursively serializes an expression node to a MongoDB aggregation-expression value.
- * `field` nodes become the field-path string `"$field"`; `value` nodes emit the raw
- * (number-coerced) literal; `func` nodes delegate to the registered aggregation serializer
- * (an operator name wrapping the args in `{ [op]: args }`, or an opts-first function).
+ * `field` nodes become the field-path string `"$field"`; `parameter` nodes emit the name as
+ * a string literal; `value` nodes emit the raw (number-coerced) literal; `func` nodes
+ * delegate to the registered aggregation serializer (an operator name wrapping the args in
+ * `{ [op]: args }`, or an opts-first function).
  */
 export const serializeMongoAgg = (
   node: ExpressionNode,
@@ -15,6 +16,9 @@ export const serializeMongoAgg = (
 ): unknown => {
   if (node.kind === 'field') {
     return `$${node.field}`;
+  }
+  if (node.kind === 'parameter') {
+    return node.parameter;
   }
   if (node.kind === 'value') {
     return coerceLeafValue(node);

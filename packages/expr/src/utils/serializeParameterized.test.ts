@@ -57,6 +57,28 @@ describe('serializeParameterized', () => {
     expect(ctx.paramsNamed).toEqual({ ':price_1': 7 });
   });
 
+  it('emits a positional parameter reference without binding a value', () => {
+    const ctx = makeCtx();
+    expect(serializeParameterized({ kind: 'parameter', parameter: 'p1' }, ctx)).toBe(':p1');
+    expect(ctx.params).toEqual([]);
+    expect(ctx.paramsNamed).toEqual({});
+  });
+
+  it('registers a named parameter with a null placeholder', () => {
+    const ctx = makeCtx({ parameterized: false });
+    expect(serializeParameterized({ kind: 'parameter', parameter: 'p1' }, ctx)).toBe(':p1');
+    expect(ctx.paramsNamed).toEqual({ p1: null });
+  });
+
+  it('keeps the prefix in the named parameter key when requested', () => {
+    const ctx = makeCtx({
+      parameterized: false,
+      options: { paramPrefix: '$', paramsKeepPrefix: true },
+    });
+    expect(serializeParameterized({ kind: 'parameter', parameter: 'p1' }, ctx)).toBe('$p1');
+    expect(ctx.paramsNamed).toEqual({ $p1: null });
+  });
+
   it('serializes nested functions and accumulates params in order', () => {
     const ctx = makeCtx();
     const node: ExpressionNode = {

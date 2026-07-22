@@ -21,6 +21,7 @@ const fn = (name: string, ...args: ExpressionNode[]): ExpressionNode => ({
   fn: name,
   args,
 });
+const param = (p: string): ExpressionNode => ({ kind: 'parameter', parameter: p });
 
 const exprRule = (
   rule: Partial<RuleType> & { operator: string },
@@ -52,6 +53,19 @@ describe('CEL processor', () => {
         )
       )
     ).toBe('(price * qty) == 100');
+  });
+
+  it('emits a parameter node as a bare identifier', () => {
+    expect(
+      f(
+        group(
+          exprRule(
+            { operator: '=' },
+            { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+          )
+        )
+      )
+    ).toBe('(price * rate) == 100');
   });
 
   it('serializes abs/min/max/mod and string funcs', () => {
@@ -235,6 +249,18 @@ describe('CEL processor', () => {
 describe('SpEL processor', () => {
   const f = (q: RuleGroupType) =>
     formatQuery(q, { format: 'spel', ruleProcessor: expressionRuleProcessorSpEL });
+  it('emits a parameter node as a bare identifier', () => {
+    expect(
+      f(
+        group(
+          exprRule(
+            { operator: '=' },
+            { lhs: fn('multiply', field('price'), param('rate')), rhs: value(100, 'number') }
+          )
+        )
+      )
+    ).toBe('(price * rate) == 100');
+  });
   it('serializes expressions', () => {
     expect(
       f(
@@ -289,6 +315,18 @@ describe('SpEL processor', () => {
 describe('Cypher processor', () => {
   const f = (q: RuleGroupType) =>
     formatQuery(q, { format: 'cypher', ruleProcessor: expressionRuleProcessorCypher });
+  it('emits a parameter node as a string literal (paradigm B)', () => {
+    expect(
+      f(
+        group(
+          exprRule(
+            { operator: '=' },
+            { lhs: fn('min', field('a'), param('rate')), rhs: value(1, 'number') }
+          )
+        )
+      )
+    ).toBe(`CASE WHEN a < 'rate' THEN a ELSE 'rate' END = 1`);
+  });
   it('serializes expressions', () => {
     expect(
       f(
