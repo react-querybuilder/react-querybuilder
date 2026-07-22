@@ -33,11 +33,11 @@ describe('parameter value source', () => {
   });
 
   describe('parameterized_named', () => {
-    it('registers parameter keys with undefined values', () => {
+    it('registers parameter keys with null values', () => {
       const result = formatQuery(query, 'parameterized_named');
       expect(result.sql).toBe('(f1 = :p1 and f2 = :p2)');
       expect(Object.keys(result.params)).toEqual(['p1', 'p2']);
-      expect(result.params.p1).toBeUndefined();
+      expect(result.params.p1).toBeNull();
     });
 
     it('keeps the prefix in keys when paramsKeepPrefix is set', () => {

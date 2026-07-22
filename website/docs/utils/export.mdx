@@ -1073,7 +1073,7 @@ Behavior by format:
 
 - **`sql`** — the prefixed name is emitted inline (e.g. `f1 = :p1`).
 - **`parameterized`** — the name is emitted inline; positional placeholders are _not_ pushed to `params`.
-- **`parameterized_named`** — the name is registered as a `params` key with an `undefined` value (respecting `paramsKeepPrefix`), to be supplied at execution time.
+- **`parameterized_named`** — the name is registered as a `params` key with a `null` placeholder value (respecting `paramsKeepPrefix`), to be supplied at execution time. (`null` rather than `undefined`, so the key is preserved by `JSON.stringify`.)
 - **`cel`, `spel`, `jsonlogic`** — the name is treated as an identifier/variable reference.
 - Other formats emit the name as a literal.
 

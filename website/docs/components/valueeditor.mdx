@@ -269,7 +269,7 @@ The selected parameter name is stored directly in the rule's `value`:
 
 - **SQL** — the prefixed name is emitted inline (e.g. `f1 = :p1`).
 - **`parameterized`** — the name is emitted inline (positional placeholders are _not_ pushed to `params`).
-- **`parameterized_named`** — the name is registered as a key in `params` (with an `undefined` value, to be supplied at execution time).
+- **`parameterized_named`** — the name is registered as a key in `params` (with a `null` placeholder value, to be supplied at execution time).
 - **`cel`, `spel`, `jsonlogic`** — the name is treated as an identifier/variable reference.
 - Other formats emit the name as a literal.
 

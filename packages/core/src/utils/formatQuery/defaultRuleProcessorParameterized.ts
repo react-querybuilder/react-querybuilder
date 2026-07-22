@@ -134,13 +134,13 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator}`);
   } else if (rule.valueSource === 'parameter') {
     // Named-parameter reference: emit inline (binding supplied externally). For
-    // "parameterized_named", register the key with an `undefined` value so callers
-    // can see which bindings are expected. Positional "parameterized" leaves `params`
-    // untouched to avoid desyncing placeholder indices.
+    // "parameterized_named", register the key with a `null` placeholder so callers
+    // can see which bindings are expected (and so the key survives `JSON.stringify`,
+    // which drops `undefined`). Positional "parameterized" leaves `params` untouched
+    // to avoid desyncing placeholder indices.
     const paramRef = withParamPrefix(rule.value, paramPrefix);
     if (!parameterized) {
-      paramsNamed[paramsKeepPrefix ? paramRef : stripParamPrefix(rule.value, paramPrefix)] =
-        undefined;
+      paramsNamed[paramsKeepPrefix ? paramRef : stripParamPrefix(rule.value, paramPrefix)] = null;
     }
     return finalize(`${qPre}${rule.field}${qPost} ${sqlOperator} ${paramRef}`.trim());
   } else if (rule.valueSource === 'field') {
