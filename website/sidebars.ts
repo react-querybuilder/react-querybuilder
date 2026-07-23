@@ -79,6 +79,7 @@ export default {
         'tips/limit-groups',
         'tips/adding-removing-query-properties',
         'tips/custom-bind-variables',
+        'tips/parameter-manager',
         'tips/path',
         'tips/common-mistakes',
       ],
