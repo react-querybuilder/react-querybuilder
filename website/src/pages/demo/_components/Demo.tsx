@@ -11,7 +11,7 @@ import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/inter
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
-import { expressionParserSQL } from '@react-querybuilder/expr';
+import { expressionParserJsonLogic, expressionParserSQL } from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -179,11 +179,21 @@ const notesGremlin = (
     Gremlin input should be the traversal steps (e.g. <code>.has(...)</code> chains).
   </em>
 );
-const notesJsonLogic = (
-  <em>
-    Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
-    will translate into queries.
-  </em>
+const notesJsonLogic = (enableExpressions: boolean) => (
+  <>
+    <em>
+      Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
+      will translate into queries.
+    </em>
+    {enableExpressions && (
+      <CodeBlock language="ts">
+        {`import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
+import { expressionParserJsonLogic } from '@react-querybuilder/expr';
+
+const query = parseJsonLogic(jsonLogic, { getExpression: expressionParserJsonLogic });`}
+      </CodeBlock>
+    )}
+  </>
 );
 
 const defaultQueryWrapper = (props: {
@@ -505,7 +515,8 @@ export default function Demo({
   }, [mongoDB]);
   const loadFromJsonLogic = useCallback(() => {
     try {
-      const qLocal = parseJsonLogic(jsonLogic);
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserJsonLogic } : {};
+      const qLocal = parseJsonLogic(jsonLogic, exprOpt);
       const qIC = convertToIC(qLocal);
       setQuery(qLocal);
       setQueryIC(qIC);
@@ -513,7 +524,7 @@ export default function Demo({
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
     }
-  }, [jsonLogic]);
+  }, [jsonLogic, options.enableExpressions]);
   const loadFromSpEL = useCallback(() => {
     try {
       const qLocal = parseSpEL(spel);
@@ -1057,7 +1068,7 @@ export default function Demo({
                     setCode={setJsonLogic}
                     error={jsonLogicParseError}
                     loadQueryFromCode={loadFromJsonLogic}
-                    notes={notesJsonLogic}
+                    notes={notesJsonLogic(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="spel">

@@ -259,6 +259,17 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Expressions
+
+`parseJsonLogic` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts an arithmetic/function operand subtree into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Returning `null` drops the rule. Use [`expressionParserJsonLogic`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in JsonLogic inverse, or `getExpressionParserJsonLogic` to add custom operations.
+
+```ts
+import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
+import { expressionParserJsonLogic } from '@react-querybuilder/expr';
+
+const query = parseJsonLogic(jsonLogic, { getExpression: expressionParserJsonLogic });
+```
+
 ### Custom operations
 
 By default, `parseJsonLogic` handles standard JsonLogic operations that correspond to default React Query Builder operators. Use the `jsonLogicOperations` option to handle custom operations.

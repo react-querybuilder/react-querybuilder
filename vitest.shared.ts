@@ -13,6 +13,10 @@ export default {
   resolve: {
     alias: {
       'react-querybuilder': path.resolve(root, 'packages/react-querybuilder/src'),
+      '@react-querybuilder/core/parseJsonLogic': path.resolve(
+        root,
+        'packages/core/src/utils/parseJsonLogic'
+      ),
       '@react-querybuilder/core/parseSQL': path.resolve(root, 'packages/core/src/utils/parseSQL'),
       '@react-querybuilder/core': path.resolve(root, 'packages/core/src'),
       '@rqb-testing': path.resolve(root, 'utils/testing'),
