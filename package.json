@@ -51,7 +51,7 @@
     "build:tremor": "bun --bun run --filter @react-querybuilder/tremor build",
     "checkall": "bun install --frozen-lockfile && bun run build && bun run fmt:check && bun run lint && bun run typecheck && bun run test && bun run are-the-types-wrong && bun run website:build",
     "lint": "oxlint",
-    "test": "bun test:bun && vitest run --coverage",
+    "test": "bun test:bun && bun test:coverage",
     "test:bun": "bun generate-prisma-client; bun test --randomize ./packages/core ./packages/rules-engine/src/**/*.test.ts ./packages/datetime/src/**/*.test.ts ./packages/expr/src/**/*.test.ts # <- Avoids *.test.tsx",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

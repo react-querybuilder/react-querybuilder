@@ -50,6 +50,7 @@ export default defineConfig({
       test: { name: { label: dir, color: color as 'blue' } },
     })),
     coverage: {
+      reportOnFailure: true,
       provider: 'v8',
       exclude: [
         'utils/testing/**',
