@@ -53,10 +53,12 @@ Click the "Import SQL" button in [the demo](/demo) to try it out.
 
 ### Options
 
-Beyond standard [configuration](#configuration) options, `parseSQL` accepts these two options for handling named or anonymous bind variables in SQL strings:
+Beyond standard [configuration](#configuration) options, `parseSQL` accepts these options for handling named or anonymous bind variables in SQL strings:
 
 - `params` (`any[] | Record<string, any>`): An array of parameter values or a parameter-to-value mapping object.
 - `paramPrefix` (`string`): Ignores this string at the beginning of parameter identifiers when matching to parameter names in the `params` object.
+- `parseParameters` (`boolean | { prefix?: string | string[]; positional?: boolean }`): Preserves unresolved bind variables as parameter rules (`valueSource: 'parameter'`) instead of resolving them via `params`. Pass `true` to accept the default named prefix `':'` and positional `?`, or an object to configure one or more named `prefix`es (e.g. `'@'`, `'$'`) and toggle `positional` (default enabled). Positional `?` placeholders are named by 1-based ordinal (`?` → `1`). `params` substitution takes precedence when both are set.
+- `getExpression` (`(node, ctx) => ExpressionNode | null`): A handler that converts an arithmetic/function operand subtree into an [expression](../expr) node (`valueSource: 'expression'`, or a `lhs` when on the left of a comparison). Returning `null` drops the rule. Use [`expressionParserSQL`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in SQL inverse, or `getExpressionParserSQL` to add custom functions/operators.
 
 ### Usage
 
@@ -257,6 +259,17 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Expressions
+
+`parseJsonLogic` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts an arithmetic/function operand subtree into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Returning `null` drops the rule. Use [`expressionParserJsonLogic`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in JsonLogic inverse, or `getExpressionParserJsonLogic` to add custom operations.
+
+```ts
+import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
+import { expressionParserJsonLogic } from '@react-querybuilder/expr';
+
+const query = parseJsonLogic(jsonLogic, { getExpression: expressionParserJsonLogic });
+```
+
 ### Custom operations
 
 By default, `parseJsonLogic` handles standard JsonLogic operations that correspond to default React Query Builder operators. Use the `jsonLogicOperations` option to handle custom operations.
@@ -445,6 +458,17 @@ Output (`RuleGroupType`):
 ```
 
 JSONata lists are always translated to arrays. The [`listsAsArrays` option](#lists-as-arrays) is ignored (effectively always `true`).
+
+### Expressions
+
+`parseJSONata` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts an arithmetic/function operand subtree into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Returning `null` drops the rule. Use [`expressionParserJSONata`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in JSONata inverse, or `getExpressionParserJSONata` to add custom functions.
+
+```ts
+import { parseJSONata } from '@react-querybuilder/core/parseJSONata';
+import { expressionParserJSONata } from '@react-querybuilder/expr';
+
+const query = parseJSONata(jsonataQuery, { getExpression: expressionParserJSONata });
+```
 
 ## Cypher
 

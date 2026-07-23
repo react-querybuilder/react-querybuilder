@@ -11,6 +11,11 @@ import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/inter
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
+import {
+  expressionParserJSONata,
+  expressionParserJsonLogic,
+  expressionParserSQL,
+} from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -124,11 +129,28 @@ interface DemoProps {
   queryWrapper?: React.ComponentType<{ children: React.ReactNode; useDateTimePackage?: boolean }>;
 }
 
-const notesSQL = (
-  <em>
-    SQL can either be the full <code>SELECT</code> statement or the <code>WHERE</code> clause by
-    itself. Trailing semicolon is optional.
-  </em>
+const notesSQL = (enableExpressions: boolean) => (
+  <>
+    <em>
+      SQL can either be the full <code>SELECT</code> statement or the <code>WHERE</code> clause by
+      itself. Trailing semicolon is optional.
+    </em>
+    <br />
+    <em>
+      In this demo, <code>parseParameters</code> is always <code>true</code>, so parameter
+      placeholders are parsed into rules with <code>valueSource: 'parameter'</code>.
+    </em>
+    <CodeBlock language="ts">
+      {enableExpressions
+        ? `import { parseSQL } from 'react-querybuilder/parseSQL';
+import { expressionParserSQL } from '@react-querybuilder/expr';
+
+const query = parseSQL(sql, { getExpression: expressionParserSQL, parseParameters: true });`
+        : `import { parseSQL } from 'react-querybuilder/parseSQL';
+
+const query = parseSQL(sql, { parseParameters: true });`}
+    </CodeBlock>
+  </>
 );
 const notesMongoDB = (
   <em>
@@ -143,7 +165,17 @@ const notesMongoDB = (
 );
 const notesSpEL = '';
 const notesCEL = '';
-const notesJSONata = '';
+const notesJSONata = (enableExpressions: boolean) =>
+  enableExpressions ? (
+    <CodeBlock language="ts">
+      {`import { parseJSONata } from 'react-querybuilder/parseJSONata';
+import { expressionParserJSONata } from '@react-querybuilder/expr';
+
+const query = parseJSONata(jsonata, { getExpression: expressionParserJSONata });`}
+    </CodeBlock>
+  ) : (
+    ''
+  );
 const notesCypher = (
   <em>
     Cypher can be a full <code>MATCH...WHERE</code> query or the <code>WHERE</code> clause by
@@ -161,11 +193,21 @@ const notesGremlin = (
     Gremlin input should be the traversal steps (e.g. <code>.has(...)</code> chains).
   </em>
 );
-const notesJsonLogic = (
-  <em>
-    Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
-    will translate into queries.
-  </em>
+const notesJsonLogic = (enableExpressions: boolean) => (
+  <>
+    <em>
+      Only strings that evaluate to JavaScript objects when processed with <code>JSON.parse</code>{' '}
+      will translate into queries.
+    </em>
+    {enableExpressions && (
+      <CodeBlock language="ts">
+        {`import { parseJsonLogic } from 'react-querybuilder/parseJsonLogic';
+import { expressionParserJsonLogic } from '@react-querybuilder/expr';
+
+const query = parseJsonLogic(jsonLogic, { getExpression: expressionParserJsonLogic });`}
+      </CodeBlock>
+    )}
+  </>
 );
 
 const defaultQueryWrapper = (props: {
@@ -462,15 +504,18 @@ export default function Demo({
 
   const loadFromSQL = useCallback(() => {
     try {
-      const qLocal = parseSQL(sql);
-      const qIC = parseSQL(sql, { independentCombinators: true });
+      const exprOpt = options.enableExpressions
+        ? { getExpression: expressionParserSQL, parseParameters: true }
+        : { parseParameters: true };
+      const qLocal = parseSQL(sql, exprOpt);
+      const qIC = parseSQL(sql, { independentCombinators: true, ...exprOpt });
       setQuery(qLocal);
       setQueryIC(qIC);
       setSQLParseError('');
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
-  }, [sql]);
+  }, [sql, options.enableExpressions]);
   const loadFromMongoDB = useCallback(() => {
     try {
       const qLocal = parseMongoDB(mongoDB);
@@ -484,7 +529,8 @@ export default function Demo({
   }, [mongoDB]);
   const loadFromJsonLogic = useCallback(() => {
     try {
-      const qLocal = parseJsonLogic(jsonLogic);
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserJsonLogic } : {};
+      const qLocal = parseJsonLogic(jsonLogic, exprOpt);
       const qIC = convertToIC(qLocal);
       setQuery(qLocal);
       setQueryIC(qIC);
@@ -492,7 +538,7 @@ export default function Demo({
     } catch (err) {
       setJsonLogicParseError((err as Error).message);
     }
-  }, [jsonLogic]);
+  }, [jsonLogic, options.enableExpressions]);
   const loadFromSpEL = useCallback(() => {
     try {
       const qLocal = parseSpEL(spel);
@@ -517,15 +563,16 @@ export default function Demo({
   }, [cel]);
   const loadFromJSONata = useCallback(() => {
     try {
-      const qLocal = parseJSONata(jsonata);
-      const qIC = parseJSONata(jsonata, { independentCombinators: true });
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserJSONata } : {};
+      const qLocal = parseJSONata(jsonata, exprOpt);
+      const qIC = parseJSONata(jsonata, { ...exprOpt, independentCombinators: true });
       setQuery(qLocal);
       setQueryIC(qIC);
       setJSONataParseError('');
     } catch (err) {
       setJSONataParseError((err as Error).message);
     }
-  }, [jsonata]);
+  }, [jsonata, options.enableExpressions]);
   const loadFromCypher = useCallback(() => {
     try {
       const qLocal = parseCypher(cypher);
@@ -1016,7 +1063,7 @@ export default function Demo({
                     setCode={setSQL}
                     error={sqlParseError}
                     loadQueryFromCode={loadFromSQL}
-                    notes={notesSQL}
+                    notes={notesSQL(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="mongodb">
@@ -1036,7 +1083,7 @@ export default function Demo({
                     setCode={setJsonLogic}
                     error={jsonLogicParseError}
                     loadQueryFromCode={loadFromJsonLogic}
-                    notes={notesJsonLogic}
+                    notes={notesJsonLogic(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="spel">
@@ -1066,7 +1113,7 @@ export default function Demo({
                     setCode={setJSONata}
                     error={jsonataParseError}
                     loadQueryFromCode={loadFromJSONata}
-                    notes={notesJSONata}
+                    notes={notesJSONata(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="cypher">

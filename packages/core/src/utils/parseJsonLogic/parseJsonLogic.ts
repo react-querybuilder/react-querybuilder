@@ -6,6 +6,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  ExpressionNode,
   MatchConfig,
   RQBJsonLogic,
   RQBJsonLogicVar,
@@ -21,6 +22,7 @@ import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
+import type { JsonLogicExpressionOperand, ParseJsonLogicExpressionContext } from './types';
 import {
   isJsonLogicAll,
   isJsonLogicAnd,
@@ -28,6 +30,7 @@ import {
   isJsonLogicBetweenInclusive,
   isJsonLogicDoubleNegation,
   isJsonLogicEqual,
+  isJsonLogicExpressionOperand,
   isJsonLogicGreaterThan,
   isJsonLogicGreaterThanOrEqual,
   isJsonLogicInArray,
@@ -52,6 +55,16 @@ import {
 export interface ParseJsonLogicOptions extends ParserCommonOptions {
   // oxlint-disable-next-line typescript/no-explicit-any
   jsonLogicOperations?: Record<string, (value: any) => RuleType | RuleGroupTypeAny | false>;
+  /**
+   * Handler that converts a JsonLogic arithmetic/function operation object into an
+   * {@link ExpressionNode}. Return `null` to reject (the rule is dropped). Supplied by
+   * `@react-querybuilder/expr` (`expressionParserJsonLogic`). When omitted, expression
+   * operands are ignored (rule dropped).
+   */
+  getExpression?: (
+    node: JsonLogicExpressionOperand,
+    ctx: ParseJsonLogicExpressionContext
+  ) => ExpressionNode | null;
 }
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
@@ -89,7 +102,7 @@ function parseJsonLogic(
   options: ParseJsonLogicOptions = {}
 ): DefaultRuleGroupTypeAny {
   const fieldsFlat = getFieldsArray(options.fields);
-  const { getValueSources, listsAsArrays, jsonLogicOperations } = options;
+  const { getValueSources, listsAsArrays, jsonLogicOperations, getExpression } = options;
 
   const fieldIsValid = (
     fieldName: string,
@@ -103,6 +116,10 @@ function parseJsonLogic(
       subordinateFieldName,
       getValueSources,
     });
+
+  const exprCtx: ParseJsonLogicExpressionContext = {
+    fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
+  };
 
   // Overload 1: Always return a rule group or false for the outermost logic object
   function processLogic(logic: RQBJsonLogic, outermost: true): DefaultRuleGroupType | false;
@@ -201,6 +218,62 @@ function parseJsonLogic(
       isRQBJsonLogicEndsWith(logic)
     ) {
       const [first, second] = keyValue;
+      // Scalar comparisons (not string-match) may carry arithmetic/function expression operands
+      const scalarComparison =
+        isJsonLogicEqual(logic) ||
+        isJsonLogicStrictEqual(logic) ||
+        isJsonLogicNotEqual(logic) ||
+        isJsonLogicStrictNotEqual(logic) ||
+        isJsonLogicGreaterThan(logic) ||
+        isJsonLogicGreaterThanOrEqual(logic) ||
+        isJsonLogicLessThan(logic) ||
+        isJsonLogicLessThanOrEqual(logic);
+      const firstIsExpr = isJsonLogicExpressionOperand(first);
+      const secondIsExpr = isJsonLogicExpressionOperand(second);
+
+      if (getExpression && scalarComparison && (firstIsExpr || secondIsExpr)) {
+        // Operator is lhs-first (export never flips), '=='/'===' → '=', '!='/'!==' → '!='
+        const exprOperator: DefaultOperatorName =
+          isJsonLogicEqual(logic) || isJsonLogicStrictEqual(logic)
+            ? '='
+            : isJsonLogicNotEqual(logic) || isJsonLogicStrictNotEqual(logic)
+              ? '!='
+              : (key as DefaultOperatorName);
+
+        if (firstIsExpr && secondIsExpr) {
+          // expression <op> expression → both sides on lhs/value
+          const lhs = getExpression(first, exprCtx);
+          const rhs = getExpression(second, exprCtx);
+          if (lhs && rhs) {
+            rule = {
+              field: '',
+              operator: exprOperator,
+              lhs,
+              value: rhs,
+              valueSource: 'expression',
+            };
+          }
+        } else if (firstIsExpr && !isPojo(second)) {
+          // expression <op> literal → lhs = expression
+          const lhs = getExpression(first, exprCtx);
+          if (lhs) {
+            rule = { field: '', operator: exprOperator, lhs, value: second };
+          }
+        } else if (isRQBJsonLogicVar(first) && secondIsExpr) {
+          // field <op> expression → rhs expression
+          const node = getExpression(second, exprCtx);
+          if (node && (inSubquery || fieldIsValid(first.var, exprOperator))) {
+            rule = {
+              field: first.var,
+              operator: exprOperator,
+              value: node,
+              valueSource: 'expression',
+            };
+          }
+        }
+        return rule ? (outermost ? { combinator: 'and', rules: [rule] } : rule) : false;
+      }
+
       if (isRQBJsonLogicVar(first) && !isPojo(second)) {
         field = first.var;
         value = second;
@@ -279,6 +352,18 @@ function parseJsonLogic(
       field = logic['<='][1].var;
       operator = 'between';
       const values = [logic['<='][0], logic['<='][2]];
+      if (
+        getExpression &&
+        (isJsonLogicExpressionOperand(values[0]) || isJsonLogicExpressionOperand(values[1]))
+      ) {
+        // field between expression and expression → expression-sourced bounds
+        const from = getExpression(values[0], exprCtx);
+        const to = getExpression(values[1], exprCtx);
+        if (from && to && fieldIsValid(field, operator)) {
+          rule = { field, operator, value: [from, to], valueSource: 'expression' };
+        }
+        return rule ? (outermost ? { combinator: 'and', rules: [rule] } : rule) : false;
+      }
       if (logic['<='].every(v => isRQBJsonLogicVar(v))) {
         const vars = values as RQBJsonLogicVar[];
         valueSource = 'field';

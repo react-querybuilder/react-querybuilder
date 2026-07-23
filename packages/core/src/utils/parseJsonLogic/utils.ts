@@ -22,7 +22,11 @@ import type {
   RQBJsonLogicVar,
 } from '../../types';
 import { isPojo } from '../misc';
-import type { JsonLogicBetweenExclusive, JsonLogicBetweenInclusive } from './types';
+import type {
+  JsonLogicBetweenExclusive,
+  JsonLogicBetweenInclusive,
+  JsonLogicExpressionOperand,
+} from './types';
 
 // Standard JsonLogic operations
 export const isJsonLogicVar = (
@@ -99,6 +103,14 @@ export const isRQBJsonLogicStartsWith = (logic: unknown): logic is RQBJsonLogicS
   isPojo(logic) && 'startsWith' in logic;
 export const isRQBJsonLogicEndsWith = (logic: unknown): logic is RQBJsonLogicEndsWith =>
   isPojo(logic) && 'endsWith' in logic;
+
+/**
+ * A JsonLogic comparison operand that is a candidate expression subtree: a plain object that
+ * is not a variable reference (i.e. an arithmetic/function operation object). The
+ * expr-supplied `getExpression` handler decides whether it maps to a known function.
+ */
+export const isJsonLogicExpressionOperand = (logic: unknown): logic is JsonLogicExpressionOperand =>
+  isPojo(logic) && !isRQBJsonLogicVar(logic);
 
 // Type guards for unused JsonLogic operations
 

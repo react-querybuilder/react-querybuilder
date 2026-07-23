@@ -168,6 +168,32 @@ export const isJSONataComparison = (
   isJSONataLessThan(expr) ||
   isJSONataLessThanOrEqual(expr);
 
+// Arithmetic infix operators eligible as expression operands
+const jsonataArithmeticOperators = new Set(['+', '-', '*', '/', '%']);
+
+/**
+ * A JSONata comparison operand that is a candidate expression subtree: an arithmetic infix node
+ * (`+ - * / %`) or a function-call node (excluding the `not`/`contains` predicates handled
+ * elsewhere). The expr-supplied `getExpression` handler decides whether it maps to a known
+ * function.
+ */
+export const isJSONataExpressionOperand = (expr: Any): expr is JSONataExprNode => {
+  if (!isJSONataExprNode(expr)) return false;
+  // Unwrap parenthesized single-expression blocks (e.g. `(cost * 2)`)
+  if (isJSONataBlock(expr) && expr.expressions.length === 1)
+    return isJSONataExpressionOperand(expr.expressions[0]);
+  if (isJSONataBinaryNode(expr) && jsonataArithmeticOperators.has(expr.value)) return true;
+  return (
+    expr.type === 'function' &&
+    expr.value === '(' &&
+    isJSONataExprNode(expr.procedure) &&
+    expr.procedure.type === 'variable' &&
+    typeof expr.procedure.value === 'string' &&
+    expr.procedure.value !== 'not' &&
+    expr.procedure.value !== 'contains'
+  );
+};
+
 export const getValidValue = (expr: Any): Any => {
   if (isJSONataToMillis(expr)) {
     return getValidValue(expr.arguments[0]);

@@ -375,6 +375,94 @@ The processors handle the scalar comparison operators (`=`, `!=`, `<`, `<=`, `>`
 
 String-match operators (`contains`, `beginsWith`, `endsWith`, and their negations) support expression operands—including an expression RHS (search term) and/or LHS—for every export format except `tanstack_db`, each emitting its dialect's native construct (e.g. SQL `LIKE`, CEL `.startsWith()`, Cypher `STARTS WITH`, SPARQL `STRSTARTS`, JSONata `$substring`/`$contains`, Painless `.startsWith()` for `elasticsearch`, `$indexOfCP`/`$substrCP` aggregation for `mongodb_query`). The `tanstack_db` format omits string-match rules with an expression operand, since its `like` requires a static pattern. The `sequelize` format omits a string-match rule whose search term is a bare field reference (`valueSource: 'field'`).
 
+## Import (parsing)
+
+Several export processors have an import-side mirror: a `getExpression` handler that turns arithmetic/function operands back into expression nodes. Each format supplies a ready-to-use handler bound to its built-in inverse (and a factory for custom operations). The [SQL](#sql), [JsonLogic](#jsonlogic), and [JSONata](#jsonata) parsers are covered below.
+
+An operand on the left of the comparison becomes the rule's `lhs`; on the right it becomes `value` with `valueSource: 'expression'`. `between` bounds parse into a two-element `value` tuple. The handler auto-validates each node and returns `null`—dropping the rule—for unknown functions/operators, arity mismatches, or (via `ctx.fieldExists`) unknown field leaves.
+
+### SQL
+
+`expressionParserSQL` is the ready-to-use handler for [`parseSQL`](./utils/import#sql), bound to the built-in SQL inverse:
+
+```ts
+import { parseSQL } from '@react-querybuilder/core/parseSQL';
+import { expressionParserSQL } from '@react-querybuilder/expr';
+
+parseSQL('(price * quantity) > 100', { getExpression: expressionParserSQL });
+// { field: 'price'..., operator: '>', valueSource: 'expression', value: { kind: 'func', fn: 'multiply', args: [...] } }
+```
+
+Ambiguous inverses accept all known spellings: `%`/`MOD` → `mod`, `LEAST`/`MIN` → `min`, `GREATEST`/`MAX` → `max`. Operators with no mapping (`^`, `|`, `&`, `<<`, `>>`, `DIV`) drop the rule.
+
+To parse [custom functions](#custom-functions), build a handler with `getExpressionParserSQL`, mirroring [`getExpressionRuleProcessorSQL`](#custom-serializers). Pass a partial inverse registry (function names and/or operator tokens → `fn` keys) and matching arity metadata:
+
+```ts
+import { getExpressionParserSQL } from '@react-querybuilder/expr';
+
+const getExpression = getExpressionParserSQL(
+  { functions: { POWER: 'pow' }, operators: { '^': 'pow' } },
+  { pow: { label: 'pow', arity: 2 } }
+);
+
+parseSQL('POWER(x, 2) >= 9', { getExpression });
+```
+
+### JsonLogic
+
+`expressionParserJsonLogic` is the ready-to-use handler for [`parseJsonLogic`](./utils/import#jsonlogic), bound to the built-in JsonLogic inverse:
+
+```ts
+import { parseJsonLogic } from '@react-querybuilder/core/parseJsonLogic';
+import { expressionParserJsonLogic } from '@react-querybuilder/expr';
+
+parseJsonLogic(
+  { '>': [{ '*': [{ var: 'price' }, { var: 'quantity' }] }, 100] },
+  {
+    getExpression: expressionParserJsonLogic,
+  }
+);
+// { field: '', operator: '>', lhs: { kind: 'func', fn: 'multiply', args: [...] }, value: 100 }
+```
+
+The stock arithmetic operators (`+ - * / %`), `min`/`max`, and the custom `abs`/`upper`/`lower` operations map back to their `fn` keys; unknown operations drop the rule. To parse custom operations, build a handler with `getExpressionParserJsonLogic`, passing a partial inverse registry (operation key → `fn` key) and matching arity metadata:
+
+```ts
+import { getExpressionParserJsonLogic } from '@react-querybuilder/expr';
+
+const getExpression = getExpressionParserJsonLogic(
+  { pow: 'pow' },
+  { pow: { label: 'pow', arity: 2 } }
+);
+
+parseJsonLogic({ '>=': [{ pow: [{ var: 'x' }, 2] }, 9] }, { getExpression });
+```
+
+### JSONata
+
+`expressionParserJSONata` is the ready-to-use handler for [`parseJSONata`](./utils/import#jsonata), bound to the built-in JSONata inverse:
+
+```ts
+import { parseJSONata } from '@react-querybuilder/core/parseJSONata';
+import { expressionParserJSONata } from '@react-querybuilder/expr';
+
+parseJSONata('price > (cost * 2)', { getExpression: expressionParserJSONata });
+// { field: 'price'..., operator: '>', valueSource: 'expression', value: { kind: 'func', fn: 'multiply', args: [...] } }
+```
+
+The stock arithmetic operators (`+ - * / %`) and the built-in functions `$abs`/`$min`/`$max`/`$uppercase`/`$lowercase` map back to their `fn` keys (`abs`/`min`/`max`/`upper`/`lower`); unknown operators/functions drop the rule. To parse custom functions, build a handler with `getExpressionParserJSONata`, passing a partial inverse registry (operator token and/or function name—without the leading `$`—→ `fn` key) and matching arity metadata:
+
+```ts
+import { getExpressionParserJSONata } from '@react-querybuilder/expr';
+
+const getExpression = getExpressionParserJSONata(
+  { functions: { power: 'pow' } },
+  { pow: { label: 'pow', arity: 2 } }
+);
+
+parseJSONata('$power(x, 2) >= 9', { getExpression });
+```
+
 ## Validation
 
 `createExpressionValidator` returns a [`QueryValidator`](./utils/validation) that flags rules whose expressions are invalid—an unknown function, an arity mismatch, or an empty field reference—checked against the same merged metadata the UI uses. Pass the same `functions` metadata you gave `QueryBuilderExpressions`:

@@ -17,3 +17,41 @@ export const defaultJSONataSerializers: SQLSerializerRegistry = {
   upper: (_o, x) => `$uppercase(${x})`,
   lower: (_o, x) => `$lowercase(${x})`,
 };
+
+/**
+ * Inverse of {@link defaultJSONataSerializers}: maps JSONata infix operators and function names
+ * back to `fn` keys for the import direction (parsing). Mirrors the {@link SQLInverse} shape.
+ */
+export interface JSONataInverse {
+  /** Arithmetic infix operators, keyed by JSONata operator token. */
+  operators: Record<string, string>;
+  /** Function names (without the leading `$`), each mapping to an `fn` key. */
+  functions: Record<string, string>;
+}
+
+/** Built-in {@link JSONataInverse} registry (mirror of {@link defaultJSONataSerializers}). */
+export const defaultJSONataInverse: JSONataInverse = {
+  operators: {
+    '+': 'add',
+    '-': 'subtract',
+    '*': 'multiply',
+    '/': 'divide',
+    '%': 'mod',
+  },
+  functions: {
+    abs: 'abs',
+    min: 'min',
+    max: 'max',
+    uppercase: 'upper',
+    lowercase: 'lower',
+  },
+};
+
+/** Merges a custom {@link JSONataInverse} (partial) over the built-in {@link defaultJSONataInverse}. */
+export const mergeJSONataInverse = (
+  base: JSONataInverse,
+  custom?: Partial<JSONataInverse>
+): JSONataInverse => ({
+  operators: { ...base.operators, ...custom?.operators },
+  functions: { ...base.functions, ...custom?.functions },
+});

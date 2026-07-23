@@ -38,7 +38,7 @@ export default function ImportTab({
         spellCheck={false}
         value={code}
         onChange={e => setCode(e.target.value)}></textarea>
-      {notes && <p style={{ fontSize: 'smaller', margin: 'unset' }}>{notes}</p>}
+      {notes && <div style={{ fontSize: 'smaller', margin: 'unset' }}>{notes}</div>}
       <div
         style={{
           display: 'flex',

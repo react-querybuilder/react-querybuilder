@@ -186,9 +186,19 @@ export interface SQLXorExpression extends SQLWhereObject {
   right: SQLExpression;
 }
 
+export interface SQLPlaceHolder extends SQLWhereObject {
+  type: 'PlaceHolder';
+  /** Raw token, e.g. `${p1}`. */
+  value: string;
+  /** Prefix-free placeholder name, e.g. `p1`. */
+  param: string;
+}
+
 // Interfaces that might show up but will be ignored
 export interface SQLFunctionCall extends SQLWhereObjectAny {
   type: 'FunctionCall';
+  name: string;
+  params: SQLExpressionOperand[];
 }
 export interface SQLCaseWhen extends SQLWhereObjectAny {
   type: 'CaseWhen';
@@ -204,6 +214,9 @@ export interface SQLIdentifierExpr extends SQLWhereObjectAny {
 }
 export interface SQLBitExpression extends SQLWhereObjectAny {
   type: 'BitExpression';
+  operator: string;
+  left: SQLExpressionOperand;
+  right: SQLExpressionOperand;
 }
 export interface SQLInSubQueryPredicate extends SQLWhereObjectAny {
   type: 'InSubQueryPredicate';
@@ -229,6 +242,7 @@ export type SQLSimpleExpression =
   | SQLSubQuery
   | SQLIdentifierExpr
   | SQLBitExpression
+  | SQLPlaceHolder
   | SQLSimpleExprParentheses;
 export type SQLPredicate =
   | SQLSimpleExpression
@@ -282,3 +296,28 @@ export type MixedAndXorOrList = {
   combinator: DefaultCombinatorNameExtended;
   expressions: (MixedAndXorOrList | SQLExpression)[];
 };
+
+/**
+ * A SQL operand subtree that a {@link ParseSQLOptions.getExpression} handler may receive: a
+ * bare identifier, a (signed) literal, a placeholder, an arithmetic {@link SQLBitExpression},
+ * a {@link SQLFunctionCall}, or a parenthesized wrapper (unwrapped by the handler).
+ */
+export type SQLExpressionOperand =
+  | SQLIdentifier
+  | SQLLiteralValue
+  | SQLSignedNumberValue
+  | SQLPlaceHolder
+  | SQLBitExpression
+  | SQLFunctionCall
+  | SQLSimpleExprParentheses;
+
+/**
+ * Context passed to a {@link ParseSQLOptions.getExpression} handler alongside the operand
+ * node. Carries the same number-parsing option as the rest of `parseSQL` plus a predicate
+ * for validating that `field` leaves inside an expression exist in the configured fields.
+ */
+export interface ParseSQLExpressionContext {
+  bigIntOnOverflow?: boolean;
+  /** `true` when the field exists in the configured fields (or no fields were configured). */
+  fieldExists: (fieldName: string) => boolean;
+}

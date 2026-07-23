@@ -6,3 +6,17 @@
  */
 
 export * from './parseSQL';
+export * from './types';
+export {
+  evalSQLLiteralValue,
+  getFieldName,
+  isSQLBitExpression,
+  isSQLExpressionOperand,
+  isSQLFunctionCall,
+  isSQLIdentifier,
+  isSQLLiteralOrSignedNumberValue,
+  isSQLLiteralValue,
+  isSQLPlaceHolder,
+  isSQLSignedNumber,
+  normalizeOperator,
+} from './utils';
