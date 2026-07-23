@@ -13,6 +13,9 @@ import type {
   SQLLiteralValue,
   SQLOrExpression,
   SQLSignedNumberValue,
+  SQLBitExpression,
+  SQLFunctionCall,
+  SQLPlaceHolder,
   SQLWhereObjectAny,
   SQLXorExpression,
   XorOperator,
@@ -30,6 +33,25 @@ export const isSQLLiteralOrSignedNumberValue = (
 
 export const isSQLIdentifier = (v?: SQLWhereObjectAny): v is SQLIdentifier =>
   v?.type === 'Identifier';
+
+export const isSQLBitExpression = (v?: SQLWhereObjectAny): v is SQLBitExpression =>
+  v?.type === 'BitExpression';
+
+export const isSQLFunctionCall = (v?: SQLWhereObjectAny): v is SQLFunctionCall =>
+  v?.type === 'FunctionCall';
+
+export const isSQLPlaceHolder = (v?: SQLWhereObjectAny): v is SQLPlaceHolder =>
+  v?.type === 'PlaceHolder';
+
+/** An operand that is neither a bare identifier nor a (signed) literal nor a placeholder. */
+export const isSQLExpressionOperand = (v?: SQLWhereObjectAny): boolean => {
+  if (isSQLBitExpression(v) || isSQLFunctionCall(v)) return true;
+  // Unwrap parentheses: `(a + b)` is an expression operand; `(price)` is not.
+  if (v?.type === 'SimpleExprParentheses') {
+    return isSQLExpressionOperand(v.value?.value?.[0]);
+  }
+  return false;
+};
 
 export const isWildcardsOnly = (sqlExpr: SQLExpression): boolean =>
   isSQLLiteralValue(sqlExpr) && sqlExpr.type === 'String' && /^["']?%+["']?$/.test(sqlExpr.value);

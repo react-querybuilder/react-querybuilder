@@ -11,6 +11,7 @@ import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/inter
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
+import { expressionParserSQL } from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -124,11 +125,28 @@ interface DemoProps {
   queryWrapper?: React.ComponentType<{ children: React.ReactNode; useDateTimePackage?: boolean }>;
 }
 
-const notesSQL = (
-  <em>
-    SQL can either be the full <code>SELECT</code> statement or the <code>WHERE</code> clause by
-    itself. Trailing semicolon is optional.
-  </em>
+const notesSQL = (enableExpressions: boolean) => (
+  <>
+    <em>
+      SQL can either be the full <code>SELECT</code> statement or the <code>WHERE</code> clause by
+      itself. Trailing semicolon is optional.
+    </em>
+    <br />
+    <em>
+      In this demo, <code>parseParameters</code> is always <code>true</code>, so parameter
+      placeholders are parsed into rules with <code>valueSource: 'parameter'</code>.
+    </em>
+    <CodeBlock language="ts">
+      {enableExpressions
+        ? `import { parseSQL } from 'react-querybuilder/parseSQL';
+import { expressionParserSQL } from '@react-querybuilder/expr';
+
+const query = parseSQL(sql, { getExpression: expressionParserSQL, parseParameters: true });`
+        : `import { parseSQL } from 'react-querybuilder/parseSQL';
+
+const query = parseSQL(sql, { parseParameters: true });`}
+    </CodeBlock>
+  </>
 );
 const notesMongoDB = (
   <em>
@@ -462,15 +480,18 @@ export default function Demo({
 
   const loadFromSQL = useCallback(() => {
     try {
-      const qLocal = parseSQL(sql);
-      const qIC = parseSQL(sql, { independentCombinators: true });
+      const exprOpt = options.enableExpressions
+        ? { getExpression: expressionParserSQL, parseParameters: true }
+        : { parseParameters: true };
+      const qLocal = parseSQL(sql, exprOpt);
+      const qIC = parseSQL(sql, { independentCombinators: true, ...exprOpt });
       setQuery(qLocal);
       setQueryIC(qIC);
       setSQLParseError('');
     } catch (err) {
       setSQLParseError((err as Error).message);
     }
-  }, [sql]);
+  }, [sql, options.enableExpressions]);
   const loadFromMongoDB = useCallback(() => {
     try {
       const qLocal = parseMongoDB(mongoDB);
@@ -1016,7 +1037,7 @@ export default function Demo({
                     setCode={setSQL}
                     error={sqlParseError}
                     loadQueryFromCode={loadFromSQL}
-                    notes={notesSQL}
+                    notes={notesSQL(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="mongodb">

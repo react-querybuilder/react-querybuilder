@@ -53,10 +53,12 @@ Click the "Import SQL" button in [the demo](/demo) to try it out.
 
 ### Options
 
-Beyond standard [configuration](#configuration) options, `parseSQL` accepts these two options for handling named or anonymous bind variables in SQL strings:
+Beyond standard [configuration](#configuration) options, `parseSQL` accepts these options for handling named or anonymous bind variables in SQL strings:
 
 - `params` (`any[] | Record<string, any>`): An array of parameter values or a parameter-to-value mapping object.
 - `paramPrefix` (`string`): Ignores this string at the beginning of parameter identifiers when matching to parameter names in the `params` object.
+- `parseParameters` (`boolean | { prefix?: string | string[]; positional?: boolean }`): Preserves unresolved bind variables as parameter rules (`valueSource: 'parameter'`) instead of resolving them via `params`. Pass `true` to accept the default named prefix `':'` and positional `?`, or an object to configure one or more named `prefix`es (e.g. `'@'`, `'$'`) and toggle `positional` (default enabled). Positional `?` placeholders are named by 1-based ordinal (`?` → `1`). `params` substitution takes precedence when both are set.
+- `getExpression` (`(node, ctx) => ExpressionNode | null`): A handler that converts an arithmetic/function operand subtree into an [expression](../expr) node (`valueSource: 'expression'`, or a `lhs` when on the left of a comparison). Returning `null` drops the rule. Use [`expressionParserSQL`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in SQL inverse, or `getExpressionParserSQL` to add custom functions/operators.
 
 ### Usage
 

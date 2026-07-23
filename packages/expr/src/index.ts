@@ -30,6 +30,7 @@ export * from './functions/spel';
 export * from './functions/sql';
 export * from './functions/tanstackDb';
 export * from './jsonLogicOperators';
+export * from './parsers/getExpressionParserSQL';
 export * from './processors/getExpressionRuleProcessorCEL';
 export * from './processors/getExpressionRuleProcessorCypher';
 export * from './processors/getExpressionRuleProcessorDrizzle';
