@@ -30,6 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `formatQuery` option `getParameters` (matching the prop) enables validation: rules referencing a name not in the list are treated as invalid.
   - `@react-querybuilder/datetime` supports the `"parameter"` value source. Its datetime-aware rule processors delegate `"parameter"`-source date rules to the corresponding core `defaultRuleProcessor*` (bypassing date materialization) so the parameter reference is serialized identically to core across every export format, and `QueryBuilderDateTime`'s value editor renders the standard parameter `<select>` (from the `getParameters` prop) instead of the date/time editor.
 
+#### Parsing
+
+- [#1065] `parseSQL` gains two options for importing the constructs described above, the inverse of the expression/parameter export serializers.
+  - New `getExpression` option accepts a pluggable handler that converts SQL arithmetic/function expressions on either side of a comparison into `ExpressionNode` trees. Supply the ready-made `expressionParserSQL` from `@react-querybuilder/expr` (or build one with the `getExpressionParserSQL` factory, which takes an inverse registry merged over `defaultSQLInverse`). An expression right-hand side becomes the rule's `value` with `valueSource: "expression"`; an expression left-hand side sets `field: ""` and stores the tree in `lhs`; `between`/`notBetween` bounds become a two-element `value`. Ambiguous SQL spellings collapse to a single function (`%`/`MOD` → `mod`, `LEAST`/`MIN` → `min`, `GREATEST`/`MAX` → `max`); operators with no mapping (`^ | & << >> DIV`), arity mismatches, and unknown field leaves cause the rule to be dropped.
+  - New `parseParameters` option (`true` or `{ prefix?: string | string[]; positional?: boolean }`, default prefix `":"` with positional placeholders enabled) recognizes bind placeholders and imports them as the `"parameter"` value source—the inverse of the export `"parameter"` handling. Named placeholders (`:p1`) use the name; positional placeholders (`?`) become a 1-based ordinal name.
+  - New `@react-querybuilder/core/parseSQL` subpath re-exports the parser internals (including `evalSQLLiteralValue`) so `@react-querybuilder/expr` can supply `expressionParserSQL`/`getExpressionParserSQL` without a runtime dependency cycle.
+
 ### Fixed
 
 - [#1061] SpEL export format now produces full-string regular expression match patterns.
@@ -2357,6 +2364,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1061]: https://github.com/react-querybuilder/react-querybuilder/pull/1061
 [#1064]: https://github.com/react-querybuilder/react-querybuilder/pull/1064
 [#1065]: https://github.com/react-querybuilder/react-querybuilder/pull/1065
+[#1066]: https://github.com/react-querybuilder/react-querybuilder/pull/1066
 
 <!-- #endregion -->
 
