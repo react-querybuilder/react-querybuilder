@@ -42,7 +42,11 @@ export interface GetRuleDefaultValueOptions<F extends FullField = FullField> {
   /** Optional escape hatch overriding the computed default. */
   getDefaultValue?: (rule: RuleType, meta: { fieldData: F }) => unknown;
   /** Named parameter options, used to seed a default when `valueSource` is `'parameter'`. */
-  parameters?: OptionList | null;
+  getParameters?: (
+    field: string,
+    operator: string,
+    meta: { fieldData: F }
+  ) => FullOptionList<Option> | null;
   /** When `true`, multi-value defaults are arrays instead of comma-joined strings. */
   listsAsArrays?: boolean;
 }
@@ -67,7 +71,7 @@ export const getRuleDefaultValue = <F extends FullField = FullField>(
     getValueEditorType,
     getValues,
     getDefaultValue,
-    parameters,
+    getParameters,
     listsAsArrays,
   } = options;
 
@@ -86,6 +90,9 @@ export const getRuleDefaultValue = <F extends FullField = FullField>(
     value =
       filteredFields.length > 0 ? getFirstOptionsFrom(filteredFields, rule, listsAsArrays) : '';
   } else if (rule.valueSource === 'parameter') {
+    const parameters = getParameters
+      ? getParameters(rule.field, rule.operator, { fieldData })
+      : null;
     value = parameters && parameters.length > 0 ? getFirstOption(parameters) : '';
   } else if (values.length > 0) {
     const editorType = getValueEditorType(rule.field, rule.operator, { fieldData });

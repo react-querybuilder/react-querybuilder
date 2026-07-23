@@ -52,7 +52,11 @@ export type UseQueryBuilderSetup<
   combinators:
     | WithUnknownIndex<BaseOption & FullOption>[]
     | OptionGroup<WithUnknownIndex<BaseOption & FullOption>>[];
-  parameters: FullOptionList<FullOption> | null;
+  getParameters(
+    field?: GetOptionIdentifierType<F>,
+    operator?: GetOptionIdentifierType<O>,
+    meta?: { fieldData: F }
+  ): FullOptionList<FullOption>;
   getRuleDefaultValue: // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   <RT extends RuleType = GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>>(r: RT) => any; // oxlint-disable-line typescript/no-explicit-any
   createRule: () => GetRuleTypeFromGroupWithFieldAndOperator<RG, F, O>;
@@ -110,7 +114,7 @@ export const useQueryBuilderSetup = <
     baseOperator,
     combinators: combinatorsProp,
     baseCombinator,
-    parameters: parametersProp,
+    getParameters: getParametersProp,
     translations: translationsProp,
     enableMountQueryChange: enableMountQueryChangeProp = true,
     controlClassnames: controlClassnamesProp,
@@ -173,16 +177,14 @@ export const useQueryBuilderSetup = <
   );
   // #endregion
 
-  // #region `parameters`
-  const parameters = useMemo(
-    () =>
-      parametersProp
-        ? prepareOptionList({
-            optionList: parametersProp,
-            autoSelectOption: true,
-          }).optionList
-        : null,
-    [parametersProp]
+  // #region `getParameters`
+  const getParametersMain = useCallback(
+    (field?: FieldName, operator?: OperatorName, misc?: { fieldData: F }) =>
+      prepareOptionList({
+        optionList: getParametersProp?.(field, operator, misc ?? { fieldData: {} as F }) ?? [],
+        autoSelectOption: true,
+      }).optionList,
+    [getParametersProp]
   );
   // #endregion
 
@@ -285,7 +287,7 @@ export const useQueryBuilderSetup = <
       getRuleDefaultValueCore<F>(r, {
         fieldData: (fieldMap[r.field as FieldName] ?? {}) as F,
         fields,
-        parameters,
+        getParameters: (f, o, m) => getParametersMain(f as FieldName, o as OperatorName, m),
         listsAsArrays,
         getValueEditorType: (f, o, m) =>
           getValueEditorTypeMain(f as FieldName, o as OperatorName, m),
@@ -299,7 +301,7 @@ export const useQueryBuilderSetup = <
       getValueEditorTypeMain,
       getValuesMain,
       listsAsArrays,
-      parameters,
+      getParametersMain,
     ]
   );
 
@@ -397,7 +399,7 @@ export const useQueryBuilderSetup = <
     fields,
     fieldMap,
     combinators,
-    parameters,
+    getParameters: getParametersMain,
     getMatchModesMain,
     getOperatorsMain,
     getRuleDefaultOperator,

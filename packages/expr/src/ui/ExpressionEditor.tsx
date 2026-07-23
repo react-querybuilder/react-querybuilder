@@ -64,8 +64,8 @@ export interface ExpressionEditorProps {
 /**
  * Recursive editor for a single {@link ExpressionNode}. A `kind` selector switches between
  * a field reference, a literal value (parsed as a number when the host's `parseNumbers` is
- * enabled), a named parameter reference (a selector over `schema.parameters`, or a free-text
- * input when none are configured), and a function call whose arguments are themselves
+ * enabled), a named parameter reference (a selector over `schema.getParameters()`, or a
+ * free-text input when none are configured), and a function call whose arguments are themselves
  * {@link ExpressionEditor}s — enabling arbitrary nesting.
  *
  * Selectors render via `schema.controls.valueSelector` and the literal editor via the
@@ -101,10 +101,10 @@ export const ExpressionEditor = ({
   );
 
   // Mirror ValueEditor: a non-empty parameter list drives a selector, else a free-text input.
-  const parametersAsList = useMemo(
-    () => (schema.parameters && schema.parameters.length > 0 ? schema.parameters : null),
-    [schema.parameters]
-  );
+  const parametersAsList = useMemo(() => {
+    const params = schema.getParameters?.();
+    return params && params.length > 0 ? params : null;
+  }, [schema]);
 
   return (
     <span className="expr-node" data-testid={testID}>
@@ -121,7 +121,9 @@ export const ExpressionEditor = ({
           multiple={false}
           listsAsArrays={false}
           handleOnChange={v =>
-            onChange(defaultNode(v as ExpressionNodeKind, schema.fields, meta, schema.parameters))
+            onChange(
+              defaultNode(v as ExpressionNodeKind, schema.fields, meta, schema.getParameters?.())
+            )
           }
         />
       )}

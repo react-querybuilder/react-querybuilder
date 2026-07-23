@@ -2887,13 +2887,13 @@ describe('value source parameter', () => {
     { name: 'f1', label: 'Field 1', valueSources: ['parameter'] },
     { name: 'f2', label: 'Field 2', valueSources: ['parameter', 'value'] },
   ];
-  const parameters = [
+  const getParameters = () => [
     { name: 'p1', label: 'Param 1' },
     { name: 'p2', label: 'Param 2' },
   ];
 
   it('renders a select of parameters and defaults to the first', async () => {
-    render(<QueryBuilder fields={fields} getDefaultField="f1" parameters={parameters} />);
+    render(<QueryBuilder fields={fields} getDefaultField="f1" getParameters={getParameters} />);
     await user.click(screen.getByTestId(TestID.addRule));
     const valueEditor = screen.getByTestId(TestID.valueEditor);
     expect(valueEditor.tagName).toBe('SELECT');
@@ -2911,7 +2911,7 @@ describe('value source parameter', () => {
     render(
       <QueryBuilder
         fields={fields}
-        parameters={parameters}
+        getParameters={getParameters}
         defaultQuery={{
           combinator: 'and',
           rules: [{ field: 'f1', operator: 'in', value: '', valueSource: 'parameter' }],

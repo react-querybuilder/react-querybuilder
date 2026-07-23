@@ -23,7 +23,7 @@ const makeSchema = (
       { name: 'price', value: 'price', label: 'Price' },
       { name: 'qty', value: 'qty', label: 'Qty' },
     ],
-    parameters,
+    getParameters: () => parameters || [],
     controls: defaultControlElements,
     classNames: {},
     suppressStandardClassnames: false,
@@ -36,14 +36,14 @@ const Harness = ({
   parseNumbers,
   inputType,
   hideKindSelector,
-  parameters,
+  getParameters,
 }: {
   initial?: ExpressionNode;
   meta?: ExpressionFunctionMetaRegistry;
   parseNumbers?: ParseNumbersPropConfig;
   inputType?: InputType | null;
   hideKindSelector?: boolean;
-  parameters?: FullField[] | null;
+  getParameters?: () => FullField[] | null;
 }) => {
   const [node, setNode] = useState<ExpressionNode | undefined>(initial);
   return (
@@ -52,7 +52,7 @@ const Harness = ({
         node={node}
         onChange={setNode}
         meta={meta}
-        schema={makeSchema(parseNumbers, parameters)}
+        schema={makeSchema(parseNumbers, getParameters?.())}
         inputType={inputType}
         hideKindSelector={hideKindSelector}
       />
@@ -110,13 +110,13 @@ const params: FullField[] = [
 ];
 
 it('seeds a parameter node from the first configured parameter', async () => {
-  render(<Harness initial={{ kind: 'field', field: 'price' }} parameters={params} />);
+  render(<Harness initial={{ kind: 'field', field: 'price' }} getParameters={() => params} />);
   await user.selectOptions(sel('expr-kind'), 'parameter');
   expect(out()).toEqual({ kind: 'parameter', parameter: 'p1' });
 });
 
 it('edits a parameter reference via a selector when parameters are configured', async () => {
-  render(<Harness initial={{ kind: 'parameter', parameter: 'p1' }} parameters={params} />);
+  render(<Harness initial={{ kind: 'parameter', parameter: 'p1' }} getParameters={() => params} />);
   await user.selectOptions(sel('expr-parameter'), 'p2');
   expect(out()).toEqual({ kind: 'parameter', parameter: 'p2' });
 });

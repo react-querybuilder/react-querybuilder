@@ -1060,12 +1060,12 @@ Previously, [manual post-processing](../tips/custom-bind-variables) was necessar
 
 ### Named parameters (value source)
 
-The `parameters` option supports rules whose `valueSource` is [`"parameter"`](../components/valueeditor#the-parameter-value-source). Provide the same option list passed to the [`parameters` prop](../components/querybuilder#parameters) (names without a prefix):
+The `getParameters` option supports rules whose `valueSource` is [`"parameter"`](../components/valueeditor#the-parameter-value-source). Provide the same function passed to the [`getParameters` prop](../components/querybuilder#getparameters) (names without a prefix):
 
 ```ts
 formatQuery(query, {
   format: 'sql',
-  parameters: [{ name: 'p1', label: 'Param 1' }],
+  getParameters: () => [{ name: 'p1', label: 'Param 1' }],
 });
 ```
 
@@ -1077,7 +1077,7 @@ Behavior by format:
 - **`cel`, `spel`, `jsonlogic`** — the name is treated as an identifier/variable reference.
 - Other formats emit the name as a literal.
 
-When `parameters` is supplied, rules referencing a name not in the list are treated as invalid (dropped or handled per your validation options).
+When `getParameters` is supplied, rules referencing a name not in the list are treated as invalid (dropped or handled per your validation options).
 
 ### Concatenation operator
 

@@ -142,7 +142,7 @@ it('renders the parameter selector (not the date UI) for parameter-source date f
     <QueryBuilderDateTime>
       <QueryBuilder
         fields={fields}
-        parameters={[
+        getParameters={() => [
           { name: 'p1', label: 'Param 1' },
           { name: 'p2', label: 'Param 2' },
         ]}

@@ -499,7 +499,7 @@ export const useRule = (props: RuleProps): UseRule => {
       classNames: classNamesProp,
       fields,
       fieldMap,
-      parameters,
+      getParameters,
       getInputType,
       getMatchModes,
       getOperators,
@@ -735,6 +735,10 @@ export const useRule = (props: RuleProps): UseRule => {
   const valueSources = useMemo(
     () => valueSourceOptions.map(({ value }) => value) as ValueSources,
     [valueSourceOptions]
+  );
+  const parameters = useMemo(
+    () => getParameters(rule.field, rule.operator, { fieldData }),
+    [fieldData, getParameters, rule.field, rule.operator]
   );
   const parametersAsList = useMemo(
     () => (parameters && parameters.length > 0 ? parameters : null),

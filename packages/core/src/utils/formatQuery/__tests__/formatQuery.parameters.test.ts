@@ -157,16 +157,16 @@ describe('parameter value source', () => {
 
   describe('validation via parameters option', () => {
     it('drops rules referencing unknown parameters', () => {
-      expect(formatQuery(query, { format: 'sql', parameters: [{ name: 'p1', label: 'P1' }] })).toBe(
-        '(f1 = :p1)'
-      );
+      expect(
+        formatQuery(query, { format: 'sql', getParameters: () => [{ name: 'p1', label: 'P1' }] })
+      ).toBe('(f1 = :p1)');
     });
 
     it('accepts prefixed names in the parameters list', () => {
       expect(
         formatQuery(query, {
           format: 'sql',
-          parameters: [
+          getParameters: () => [
             { name: 'p1', label: 'P1' },
             { name: ':p2', label: 'P2' },
           ],

@@ -25,7 +25,7 @@ import type {
 } from '../../types';
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
-import { toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
+import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
 import { defaultRuleGroupProcessorCypher } from './defaultRuleGroupProcessorCypher';
 import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
@@ -188,7 +188,7 @@ type MostFormatQueryOptions = SetOptional<
   | 'valueProcessor'
   | 'placeholderValueName'
   | 'parseNumbers'
-  | 'parameters'
+  | 'getParameters'
 >;
 
 const defaultFormatQueryOptions = {
@@ -480,13 +480,6 @@ function formatQuery(
 
   const quoteFieldNamesWith = getQuoteFieldNamesWithArray(quoteFieldNamesWith_option);
   const fields = toFullOptionList(optObj.fields);
-  const validParamNames = optObj.parameters
-    ? new Set(
-        toFlatOptionArray(toFullOptionList(optObj.parameters)).map(p =>
-          stripParamPrefix(p.value, optObj.paramPrefix)
-        )
-      )
-    : null;
   const getOperators: FormatQueryOptions['getOperators'] = (f, m) =>
     toFullOptionList(
       getOperators_option(f, m) ??
@@ -562,12 +555,16 @@ function formatQuery(
       }
     }
     // Invalidate rules referencing an unknown named parameter
-    if (
-      validParamNames &&
-      rule.valueSource === 'parameter' &&
-      !validParamNames.has(stripParamPrefix(rule.value, optObj.paramPrefix))
-    ) {
-      validationResult = false;
+    if (rule.valueSource === 'parameter' && typeof optObj.getParameters === 'function') {
+      const fieldData = getOption(fields, rule.field) as FullField;
+      const validParamNames = new Set(
+        toFlatOptionArray(
+          toFullOptionList(optObj.getParameters(rule.field, rule.operator, { fieldData }))
+        ).map(p => stripParamPrefix(p.value, optObj.paramPrefix))
+      );
+      if (!validParamNames.has(stripParamPrefix(rule.value, optObj.paramPrefix))) {
+        validationResult = false;
+      }
     }
     return [validationResult, fieldValidator] as const;
   };

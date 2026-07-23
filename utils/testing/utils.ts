@@ -24,7 +24,7 @@ export const basicSchema: Schema<FullField, string> = {
   fieldMap: {},
   classNames: {} as Classnames,
   combinators: defaultCombinators,
-  parameters: null,
+  getParameters: admonish('getParameters'),
   controls: defaultControlElements,
   createRule: admonish('createRule'),
   createRuleGroup: admonish('createRuleGroup'),

@@ -179,14 +179,17 @@ export interface FormatQueryOptions {
     misc: { fieldData: FullField }
   ): FlexibleOptionList<FullOperator> | null;
   /**
-   * List of valid named parameters, corresponding to the `parameters` prop of
-   * {@link react-querybuilder!QueryBuilder QueryBuilder}. When provided, any rule
-   * whose `valueSource` is `"parameter"` and whose value (with any leading
-   * `paramPrefix` stripped) is not found in this list will be treated as invalid.
+   * This can be the same `getParameters` function passed to {@link react-querybuilder!QueryBuilder QueryBuilder}.
+   * When provided, any rule whose `valueSource` is `"parameter"` and whose value (with any
+   * leading `paramPrefix` stripped) is not found in this list will be treated as invalid.
    *
-   * As with the `parameters` prop, prefer names _without_ the parameter prefix.
+   * As with the `getParameters` prop, prefer names _without_ the parameter prefix.
    */
-  parameters?: FlexibleOptionList<FullOption>;
+  getParameters?(
+    field?: string,
+    operator?: string,
+    misc?: { fieldData: FullField }
+  ): FlexibleOptionList<FullOption>;
   /**
    * This string will be inserted in place of invalid groups for non-JSON formats.
    * Defaults to `'(1 = 1)'` for "sql"/"parameterized"/"parameterized_named" and
@@ -350,9 +353,10 @@ export interface FormatQueryFinalOptions extends Required<
     | 'placeholderValueName'
     | 'ruleGroupProcessor'
     | 'parseNumbers'
-    | 'parameters'
+    | 'getParameters'
   >
 > {
+  getParameters?: FormatQueryOptions['getParameters'];
   fields: FullOptionList<FullField>;
   getParseNumberBoolean: (inputType?: InputType | null) => boolean | undefined;
   parseNumbers?: ParseNumbersPropConfig | undefined;
