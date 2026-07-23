@@ -6,3 +6,15 @@
  */
 
 export * from './parseJSONata';
+export * from './types';
+export {
+  getFieldFromPath,
+  getValidValue,
+  isJSONataBoolean,
+  isJSONataExpressionOperand,
+  isJSONataIdentifier,
+  isJSONataList,
+  isJSONataNull,
+  isJSONataNumber,
+  isJSONataString,
+} from './utils';

@@ -11,7 +11,11 @@ import type { TabItemProps, TabsProps } from '@docusaurus/theme-common/lib/inter
 import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
-import { expressionParserJsonLogic, expressionParserSQL } from '@react-querybuilder/expr';
+import {
+  expressionParserJSONata,
+  expressionParserJsonLogic,
+  expressionParserSQL,
+} from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
 import CodeBlock from '@theme/CodeBlock';
 import Details from '@theme/Details';
@@ -161,7 +165,17 @@ const notesMongoDB = (
 );
 const notesSpEL = '';
 const notesCEL = '';
-const notesJSONata = '';
+const notesJSONata = (enableExpressions: boolean) =>
+  enableExpressions ? (
+    <CodeBlock language="ts">
+      {`import { parseJSONata } from 'react-querybuilder/parseJSONata';
+import { expressionParserJSONata } from '@react-querybuilder/expr';
+
+const query = parseJSONata(jsonata, { getExpression: expressionParserJSONata });`}
+    </CodeBlock>
+  ) : (
+    ''
+  );
 const notesCypher = (
   <em>
     Cypher can be a full <code>MATCH...WHERE</code> query or the <code>WHERE</code> clause by
@@ -549,15 +563,16 @@ export default function Demo({
   }, [cel]);
   const loadFromJSONata = useCallback(() => {
     try {
-      const qLocal = parseJSONata(jsonata);
-      const qIC = parseJSONata(jsonata, { independentCombinators: true });
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserJSONata } : {};
+      const qLocal = parseJSONata(jsonata, exprOpt);
+      const qIC = parseJSONata(jsonata, { ...exprOpt, independentCombinators: true });
       setQuery(qLocal);
       setQueryIC(qIC);
       setJSONataParseError('');
     } catch (err) {
       setJSONataParseError((err as Error).message);
     }
-  }, [jsonata]);
+  }, [jsonata, options.enableExpressions]);
   const loadFromCypher = useCallback(() => {
     try {
       const qLocal = parseCypher(cypher);
@@ -1098,7 +1113,7 @@ export default function Demo({
                     setCode={setJSONata}
                     error={jsonataParseError}
                     loadQueryFromCode={loadFromJSONata}
-                    notes={notesJSONata}
+                    notes={notesJSONata(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="cypher">

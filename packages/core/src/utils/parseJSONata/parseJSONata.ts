@@ -9,13 +9,18 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  ExpressionNode,
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
-import type { JSONataExprNode } from './types';
+import type {
+  JSONataExprNode,
+  JSONataExpressionOperand,
+  ParseJSONataExpressionContext,
+} from './types';
 import {
   generateFlatAndOrList,
   generateMixedAndOrList,
@@ -25,6 +30,7 @@ import {
   isJSONataBlock,
   isJSONataComparison,
   isJSONataContains,
+  isJSONataExpressionOperand,
   isJSONataIdentifier,
   isJSONataIdentifierList,
   isJSONataIn,
@@ -42,7 +48,18 @@ import {
  *
  * Note: `listsAsArrays` is ignored by `parseJSONata`; lists are _always_ arrays.
  */
-export interface ParseJSONataOptions extends ParserCommonOptions {}
+export interface ParseJSONataOptions extends ParserCommonOptions {
+  /**
+   * Handler that converts a JSONata arithmetic/function operand subtree into an
+   * {@link ExpressionNode}. Return `null` to reject (the rule is dropped). Supplied by
+   * `@react-querybuilder/expr` (`expressionParserJSONata`). When omitted, expression
+   * operands are ignored (rule dropped).
+   */
+  getExpression?: (
+    node: JSONataExpressionOperand,
+    ctx: ParseJSONataExpressionContext
+  ) => ExpressionNode | null;
+}
 
 /**
  * Converts a JSONata string expression into a query suitable for the
@@ -76,7 +93,7 @@ function parseJSONata(
   jsonataInput: string,
   options: ParseJSONataOptions = {}
 ): DefaultRuleGroupTypeAny {
-  const { fields, independentCombinators, listsAsArrays: _laa } = options;
+  const { fields, independentCombinators, listsAsArrays: _laa, getExpression } = options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
 
@@ -96,6 +113,10 @@ function parseJSONata(
   const emptyQuery: DefaultRuleGroupTypeAny = {
     rules: [],
     ...(ic ? {} : { combinator: 'and' }),
+  };
+
+  const exprCtx: ParseJSONataExpressionContext = {
+    fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
   };
 
   const parseJSONataAST = (
@@ -298,6 +319,69 @@ function parseJSONata(
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;
       const { lhs, rhs } = expr;
+
+      // Arithmetic/function expression operands (from `@react-querybuilder/expr`)
+      if (getExpression) {
+        const lhsIsExpr = isJSONataExpressionOperand(lhs);
+        const rhsIsExpr = isJSONataExpressionOperand(rhs);
+        if (lhsIsExpr && rhsIsExpr) {
+          // expression <op> expression → both sides on lhs/value
+          const l = getExpression(lhs, exprCtx);
+          const r = getExpression(rhs, exprCtx);
+          if (l && r) {
+            return {
+              field: '',
+              operator: normalizeOperator(expr.value),
+              lhs: l,
+              value: r,
+              valueSource: 'expression',
+            };
+          }
+          return null;
+        } else if (isJSONataIdentifier(lhs) && rhsIsExpr) {
+          // field <op> expression → rhs expression
+          const node = getExpression(rhs, exprCtx);
+          const f = getFieldFromPath(lhs);
+          const op = normalizeOperator(expr.value);
+          if (node && fieldIsValid(f, op)) {
+            return { field: f, operator: op, value: node, valueSource: 'expression' };
+          }
+          return null;
+        } else if (lhsIsExpr && isJSONataIdentifier(rhs)) {
+          // expression <op> field → flip to field <op> expression
+          const node = getExpression(lhs, exprCtx);
+          const f = getFieldFromPath(rhs);
+          const op = normalizeOperator(expr.value, true);
+          if (node && fieldIsValid(f, op)) {
+            return { field: f, operator: op, value: node, valueSource: 'expression' };
+          }
+          return null;
+        } else if (lhsIsExpr && isJSONataValidValue(rhs)) {
+          // expression <op> literal → lhs = expression, literal value
+          const l = getExpression(lhs, exprCtx);
+          if (l) {
+            return {
+              field: '',
+              operator: normalizeOperator(expr.value),
+              lhs: l,
+              value: getValidValue(rhs),
+            };
+          }
+          return null;
+        } else if (isJSONataValidValue(lhs) && rhsIsExpr) {
+          // literal <op> expression → lhs = expression, flip operator
+          const l = getExpression(rhs, exprCtx);
+          if (l) {
+            return {
+              field: '',
+              operator: normalizeOperator(expr.value, true),
+              lhs: l,
+              value: getValidValue(lhs),
+            };
+          }
+          return null;
+        }
+      }
 
       if (isJSONataIdentifier(lhs) && isJSONataValidValue(rhs)) {
         field = getFieldFromPath(lhs);

@@ -459,6 +459,17 @@ Output (`RuleGroupType`):
 
 JSONata lists are always translated to arrays. The [`listsAsArrays` option](#lists-as-arrays) is ignored (effectively always `true`).
 
+### Expressions
+
+`parseJSONata` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts an arithmetic/function operand subtree into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Returning `null` drops the rule. Use [`expressionParserJSONata`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in JSONata inverse, or `getExpressionParserJSONata` to add custom functions.
+
+```ts
+import { parseJSONata } from '@react-querybuilder/core/parseJSONata';
+import { expressionParserJSONata } from '@react-querybuilder/expr';
+
+const query = parseJSONata(jsonataQuery, { getExpression: expressionParserJSONata });
+```
+
 ## Cypher
 
 ```ts
