@@ -1,5 +1,5 @@
-import { describe, expect, test, beforeAll, afterAll } from 'bun:test';
-import { MongoMemoryServer } from 'mongodb-memory-server-core';
+import { describe, expect, test, beforeAll } from 'bun:test';
+import { getSharedMongo } from '@rqb-dbmongo';
 import mongoose from 'mongoose';
 import type { DefaultRuleGroupType, ExportFormat } from '../../../types';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
@@ -14,8 +14,6 @@ import {
 import { formatQuery } from '../formatQuery';
 
 const cleanProjection = { _id: 0, __v: 0, createdAt: 0, updatedAt: 0 } as const;
-
-const mongoServer = new MongoMemoryServer();
 
 const superUsersMongoDB = superUsers('mongodb');
 const augmentedSuperUsersMongoDB = augmentedSuperUsers('mongodb');
@@ -46,9 +44,8 @@ const superHeroSchema = {
 } as const;
 
 beforeAll(async () => {
-  await mongoServer.start();
-  await mongoose.connect(mongoServer.getUri());
-  SuperHero = mongoose.model('superhero', new mongoose.Schema(superHeroSchema));
+  const conn = await getSharedMongo();
+  SuperHero = conn.model('superhero', new mongoose.Schema(superHeroSchema));
   await SuperHero.insertMany(superUsersMongoDB);
 
   // const nestedSchema = new mongoose.Schema({
@@ -58,7 +55,7 @@ beforeAll(async () => {
     generationalSuffix: { type: String },
   } as const;
   const nestedSchemaMongoose = new mongoose.Schema(nestedSchema, { _id: false });
-  AugmentedSuperHero = mongoose.model(
+  AugmentedSuperHero = conn.model(
     'augmentedsuperhero',
     new mongoose.Schema({
       ...superHeroSchema,
@@ -68,11 +65,6 @@ beforeAll(async () => {
   );
   await AugmentedSuperHero.insertMany(augmentedSuperUsersMongoDB);
 }, 30_000);
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
 
 describe('MongoDB', () => {
   // Common tests

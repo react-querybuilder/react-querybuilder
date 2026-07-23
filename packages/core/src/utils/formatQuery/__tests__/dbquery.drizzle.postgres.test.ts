@@ -1,7 +1,7 @@
 /* @vitest-environment node */
 
-import { PGlite } from '@electric-sql/pglite';
-import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';
+import { createSchema, dropSchema, getSharedPGlite, reserveSchema } from '@rqb-dbpool';
+import { boolean, integer, pgSchema, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/pglite';
 import { convertToIC } from '../../convertQuery';
 import { formatQuery } from '../../formatQuery';
@@ -26,14 +26,14 @@ const columnsPostgres = {
 const columnsPostgresAugmented = { ...columnsPostgres, nicknames: text().array() };
 
 describe('Drizzle relational queries (PostgreSQL)', () => {
-  const superusers = pgTable('superusers', columnsPostgres);
+  const schemaName = reserveSchema('drizzle_pg');
+  const superusers = pgSchema(schemaName).table('superusers', columnsPostgres);
   const superUsersPostgres = superUsers('postgres');
-
-  const pglitePostgresDB = new PGlite();
-  const drizzlePostgresDB = drizzle({ client: pglitePostgresDB, schema: { superusers } });
 
   const testPostgres = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
     test.each(['standard', 'independent combinators'])('%s', async testType => {
+      const pglitePostgresDB = await getSharedPGlite();
+      const drizzlePostgresDB = drizzle({ client: pglitePostgresDB, schema: { superusers } });
       const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
       const where = formatQuery(queryToTest, { ...fqOptions, format: 'drizzle' });
       const result = await drizzlePostgresDB.query.superusers.findMany({ where });
@@ -42,15 +42,18 @@ describe('Drizzle relational queries (PostgreSQL)', () => {
   };
 
   beforeAll(async () => {
-    await pglitePostgresDB.exec(dbSetup('postgres'));
+    const pglitePostgresDB = await createSchema(schemaName);
+    await pglitePostgresDB.exec(dbSetup('postgres', { schema: schemaName }));
   });
 
-  afterAll(() => {
-    pglitePostgresDB.close();
+  afterAll(async () => {
+    await dropSchema(schemaName);
   });
 
   // Test for coverage
   test('undefined column', async () => {
+    const pglitePostgresDB = await getSharedPGlite();
+    const drizzlePostgresDB = drizzle({ client: pglitePostgresDB, schema: { superusers } });
     const where = formatQuery(
       { combinator: 'and', rules: [{ field: 'doesNotExist', operator: '=', value: '' }] },
       { format: 'drizzle' }
@@ -68,17 +71,20 @@ describe('Drizzle relational queries (PostgreSQL)', () => {
 });
 
 describe('Drizzle nested array queries (PostgreSQL)', () => {
-  const augmentedsuperusers = pgTable('augmentedsuperusers', columnsPostgresAugmented);
+  const schemaName = reserveSchema('drizzle_pg_aug');
+  const augmentedsuperusers = pgSchema(schemaName).table(
+    'augmentedsuperusers',
+    columnsPostgresAugmented
+  );
   const augmentedSuperUsersPostgres = augmentedSuperUsers('postgres');
-
-  const pglitePostgresDBaugmented = new PGlite();
-  const drizzlePostgresDBaugmented = drizzle({
-    client: pglitePostgresDBaugmented,
-    schema: { augmentedsuperusers },
-  });
 
   const testPostgresAugmented = ({ query, expectedResult, fqOptions }: TestSQLParams) => {
     test.each(['standard', 'independent combinators'])('%s', async testType => {
+      const pglitePostgresDBaugmented = await getSharedPGlite();
+      const drizzlePostgresDBaugmented = drizzle({
+        client: pglitePostgresDBaugmented,
+        schema: { augmentedsuperusers },
+      });
       const queryToTest = testType === 'independent combinators' ? convertToIC(query) : query;
       const where = formatQuery(queryToTest, {
         ...fqOptions,
@@ -98,13 +104,18 @@ describe('Drizzle nested array queries (PostgreSQL)', () => {
   };
 
   beforeAll(async () => {
+    const pglitePostgresDBaugmented = await createSchema(schemaName);
     await pglitePostgresDBaugmented.exec(
-      dbSetup('postgres', { includeNestedArrays: true, tableName: 'augmentedsuperusers' })
+      dbSetup('postgres', {
+        includeNestedArrays: true,
+        tableName: 'augmentedsuperusers',
+        schema: schemaName,
+      })
     );
   });
 
-  afterAll(() => {
-    pglitePostgresDBaugmented.close();
+  afterAll(async () => {
+    await dropSchema(schemaName);
   });
 
   describe('strings', () => {

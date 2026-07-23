@@ -206,7 +206,12 @@ interface DBCommandOptions {
   unquoted?: boolean;
   includeNestedArrays?: boolean;
   tableName?: string;
+  schema?: string;
 }
+
+// Schema-qualified table reference (schema always quoted; table honors `unquoted`).
+const qualify = (schema: string | undefined, tableName: string) =>
+  schema ? `"${schema}".${tableName}` : tableName;
 
 export const CREATE_TABLE = (
   dbPlatform: DbPlatform,
@@ -214,8 +219,9 @@ export const CREATE_TABLE = (
     unquoted = false,
     includeNestedArrays = false,
     tableName = defaultTableName,
+    schema,
   }: DBCommandOptions = defaultDbCommandOptions
-) => `CREATE TABLE ${tableName ?? defaultTableName} (
+) => `CREATE TABLE ${qualify(schema, tableName ?? defaultTableName)} (
   ${unquote('firstName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('lastName', unquoted)} ${textColumnType[dbPlatform]} NOT NULL,
   ${unquote('enhanced', unquoted)} ${enhancedColumnType[dbPlatform]} NOT NULL,
@@ -232,8 +238,9 @@ export const CREATE_TABLE = (
 export const CREATE_INDEX = ({
   unquoted = false,
   tableName = defaultTableName,
+  schema,
 }: DBCommandOptions = defaultDbCommandOptions) =>
-  `CREATE UNIQUE INDEX ndx${tableName} ON ${tableName} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
+  `CREATE UNIQUE INDEX ndx${tableName} ON ${qualify(schema, tableName)} (${unquote('firstName', unquoted)}, ${unquote('lastName', unquoted)})`;
 
 export const INSERT_INTO = (
   user: AugmentedSuperUser,
@@ -242,9 +249,10 @@ export const INSERT_INTO = (
     unquoted = false,
     includeNestedArrays = false,
     tableName = defaultTableName,
+    schema,
   }: DBCommandOptions = defaultDbCommandOptions
 ) => `
-INSERT INTO ${tableName ?? defaultTableName} (
+INSERT INTO ${qualify(schema, tableName ?? defaultTableName)} (
   ${unquote('firstName', unquoted)},
   ${unquote('lastName', unquoted)},
   ${unquote('enhanced', unquoted)},
@@ -270,7 +278,8 @@ INSERT INTO ${tableName ?? defaultTableName} (
   }
 )`;
 
-export const sqlBase = `SELECT * FROM superusers WHERE `;
+export const sqlBase = (schema?: string, tableName: string = defaultTableName): string =>
+  `SELECT * FROM ${qualify(schema, tableName)} WHERE `;
 export const getSqlOrderBy = (unquoted = false) => ` ORDER BY ${unquote('madeUpName', unquoted)}`;
 
 export const dbSetup = (

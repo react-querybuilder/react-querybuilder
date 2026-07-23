@@ -1,4 +1,4 @@
-import { PGlite } from '@electric-sql/pglite';
+import { createSchema, dropSchema, getSharedPGlite, reserveSchema } from '@rqb-dbpool';
 import type { DefaultRuleGroupType } from '../../../types';
 import type { SuperUser, TestSQLParams } from '../dbqueryTestUtils';
 import {
@@ -13,7 +13,10 @@ import {
 } from '../dbqueryTestUtils';
 import { formatQuery } from '../formatQuery';
 
-const db = new PGlite();
+// Each describe block gets an isolated schema in the shared PGlite instance.
+const commonSchema = reserveSchema('pg_common');
+const unquotedSchema = reserveSchema('pg_unquoted');
+const nestedSchema = reserveSchema('pg_nested');
 
 const superUsersPostgres = superUsers('postgres');
 const augmentedSuperUsersPostgres = augmentedSuperUsers('postgres');
@@ -22,22 +25,27 @@ const augmentedSuperUsersPostgres = augmentedSuperUsers('postgres');
  * Tests both SQL variations that PostgreSQL supports.
  * (PostgreSQL does not support named parameters.)
  */
-const testSQL = ({ query, expectedResult, skipParameterized, fqOptions }: TestSQLParams) => {
+const testSQL = (
+  schema: string,
+  { query, expectedResult, skipParameterized, fqOptions }: TestSQLParams
+) => {
   test('sql', async () => {
+    const db = await getSharedPGlite();
     const sql = formatQuery(query, { ...fqOptions, preset: 'postgresql' });
-    const queryResult = await db.query(`${sqlBase} ${sql} ${getSqlOrderBy()}`);
+    const queryResult = await db.query(`${sqlBase(schema)} ${sql} ${getSqlOrderBy()}`);
     expect(queryResult.rows).toEqual(expectedResult);
   });
 
   if (!skipParameterized) {
     test('parameterized', async () => {
+      const db = await getSharedPGlite();
       const parameterized = formatQuery(query, {
         ...fqOptions,
         format: 'parameterized',
         preset: 'postgresql',
       });
       const queryResult = await db.query(
-        `${sqlBase} ${parameterized.sql} ${getSqlOrderBy()}`,
+        `${sqlBase(schema)} ${parameterized.sql} ${getSqlOrderBy()}`,
         parameterized.params
       );
       expect(queryResult.rows).toEqual(expectedResult);
@@ -49,16 +57,17 @@ describe('PostgreSQL', () => {
   // Common tests
   describe('common', () => {
     beforeAll(async () => {
-      await db.exec(dbSetup('postgres'));
+      const db = await createSchema(commonSchema);
+      await db.exec(dbSetup('postgres', { schema: commonSchema }));
     }, 10_000);
 
     afterAll(async () => {
-      await db.close();
+      await dropSchema(commonSchema);
     });
 
     for (const [name, t] of Object.entries(dbTests(superUsersPostgres))) {
       describe(name, () => {
-        testSQL(t);
+        testSQL(commonSchema, t);
       });
     }
 
@@ -72,8 +81,12 @@ describe('PostgreSQL', () => {
         expectedResult: SuperUser<boolean>[]
       ) => {
         test(name, async () => {
+          const db = await getSharedPGlite();
           const sql = formatQuery(query, { format: 'sql', preset: 'postgresql' });
-          const result = await db.query(`${sqlBase} ${sql} ${getSqlOrderBy()}`, bindings);
+          const result = await db.query(
+            `${sqlBase(commonSchema)} ${sql} ${getSqlOrderBy()}`,
+            bindings
+          );
           expect(result.rows).toEqual(expectedResult);
         });
       };
@@ -155,17 +168,17 @@ describe('PostgreSQL', () => {
 
   // Postgres-specific tests
   describe('unquoted field names', () => {
-    const unquotedDb = new PGlite();
-
     beforeAll(async () => {
-      await unquotedDb.exec(dbSetup('postgres', { unquoted: true }));
+      const db = await createSchema(unquotedSchema);
+      await db.exec(dbSetup('postgres', { unquoted: true, schema: unquotedSchema }));
     });
 
     afterAll(async () => {
-      await unquotedDb.close();
+      await dropSchema(unquotedSchema);
     });
 
     test('unquoted field names', async () => {
+      const db = await getSharedPGlite();
       const sqlWhere = formatQuery(
         {
           combinator: 'or',
@@ -182,7 +195,9 @@ describe('PostgreSQL', () => {
         },
         { format: 'sql' }
       );
-      const result = await unquotedDb.query(`${sqlBase} ${sqlWhere} ${getSqlOrderBy(true)}`);
+      const result = await db.query(
+        `${sqlBase(unquotedSchema)} ${sqlWhere} ${getSqlOrderBy(true)}`
+      );
       expect(result.rows).toEqual(
         superUsersPostgres
           .filter(u => u.madeUpName.startsWith('S'))
@@ -194,14 +209,15 @@ describe('PostgreSQL', () => {
   });
 
   describe('match modes (nested arrays)', () => {
-    const nestedArrayDb = new PGlite();
-
     beforeAll(async () => {
-      await nestedArrayDb.exec(dbSetup('postgres', { unquoted: true, includeNestedArrays: true }));
+      const db = await createSchema(nestedSchema);
+      await db.exec(
+        dbSetup('postgres', { unquoted: true, includeNestedArrays: true, schema: nestedSchema })
+      );
     });
 
     afterAll(async () => {
-      await nestedArrayDb.close();
+      await dropSchema(nestedSchema);
     });
 
     const testPostgresAugmented = (
@@ -209,8 +225,11 @@ describe('PostgreSQL', () => {
       { query, expectedResult, fqOptions }: TestSQLParams
     ) => {
       test(name, async () => {
+        const db = await getSharedPGlite();
         const sqlWhere = formatQuery(query, { ...fqOptions, format: 'sql', preset: 'postgresql' });
-        const result = await nestedArrayDb.query(`${sqlBase} ${sqlWhere} ${getSqlOrderBy(true)}`);
+        const result = await db.query(
+          `${sqlBase(nestedSchema)} ${sqlWhere} ${getSqlOrderBy(true)}`
+        );
         expect(result.rows).toEqual(
           expectedResult.map(u =>
             Object.fromEntries(
@@ -223,13 +242,14 @@ describe('PostgreSQL', () => {
       });
 
       test(`${name} (parameterized)`, async () => {
+        const db = await getSharedPGlite();
         const parameterized = formatQuery(query, {
           ...fqOptions,
           format: 'parameterized',
           preset: 'postgresql',
         });
-        const queryResult = await nestedArrayDb.query(
-          `${sqlBase} ${parameterized.sql} ${getSqlOrderBy(true)}`,
+        const queryResult = await db.query(
+          `${sqlBase(nestedSchema)} ${parameterized.sql} ${getSqlOrderBy(true)}`,
           parameterized.params
         );
         expect(queryResult.rows).toEqual(

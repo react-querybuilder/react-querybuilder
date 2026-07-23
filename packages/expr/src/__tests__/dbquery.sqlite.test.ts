@@ -53,7 +53,7 @@ describe('parameter', () => {
       fields,
       ruleProcessor: expressionRuleProcessorSQL,
     });
-    const rows = db.prepare(`${sqlBase} ${sql} ${sqlOrderBy}`).all({ ':rate': 2 }) as {
+    const rows = db.prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`).all({ ':rate': 2 }) as {
       id: number;
     }[];
     expect(rows.map(r => r.id)).toEqual([3, 4]);
@@ -68,7 +68,7 @@ describe('parameter', () => {
     });
     // `params` registers `:rate: null` (prefix kept); supply the actual binding externally.
     const rows = db
-      .prepare(`${sqlBase} ${sql} ${sqlOrderBy}`)
+      .prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`)
       .all({ ...(params as Record<string, unknown>), ':rate': 2 }) as { id: number }[];
     expect(rows.map(r => r.id)).toEqual([3, 4]);
   });
@@ -83,7 +83,7 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         fields,
         ruleProcessor: expressionRuleProcessorSQL,
       });
-      const rows = db.prepare(`${sqlBase} ${sql} ${sqlOrderBy}`).all() as { id: number }[];
+      const rows = db.prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`).all() as { id: number }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
 
@@ -95,7 +95,7 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         ruleProcessor: expressionRuleProcessorParameterized,
       });
       const rows = db
-        .prepare(`${sqlBase} ${sql} ${sqlOrderBy}`)
+        .prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`)
         .all(...(params as SQLQueryBindings[])) as { id: number }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });
@@ -108,7 +108,7 @@ for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
         ruleProcessor: expressionRuleProcessorParameterized,
       });
       const rows = db
-        .prepare(`${sqlBase} ${sql} ${sqlOrderBy}`)
+        .prepare(`${sqlBase()} ${sql} ${sqlOrderBy}`)
         .all(params as SQLQueryBindings) as { id: number }[];
       expect(rows.map(r => r.id)).toEqual(expectedIds);
     });

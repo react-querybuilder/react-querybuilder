@@ -26,6 +26,8 @@
       "@rqb-parsesql": ["./packages/core/src/utils/parseSQL"],
       "@rqb-devapp": ["./utils/devapp"],
       "@rqb-testing": ["./utils/testing"],
+      "@rqb-dbpool": ["./utils/testing/pglite"],
+      "@rqb-dbmongo": ["./utils/testing/mongo"],
       "@rqb-dbquerytestutils": ["./packages/core/src/utils/formatQuery/dbqueryTestUtils"],
       "@rqb-utils": ["./packages/core/src/utils"]
     }

@@ -69,13 +69,51 @@ export const verifyCELEvaluator = async (): Promise<false | CelEvaluator> => {
     }
   }
 
-  return (
-    !buildInvalid &&
-    !buildOutdated &&
-    (async ({ data, cel, typemap }) => {
-      const result =
-        await $`./cel-evaluator --json=${JSON.stringify(data)} --query=${cel} --types=${JSON.stringify(typemap)}`.text();
-      return JSON.parse(result || 'null');
-    })
-  );
+  if (buildInvalid || buildOutdated) {
+    return false;
+  }
+
+  // Spawn one persistent CEL evaluator (server mode) for the whole test file, amortizing the
+  // process-startup + CEL-env cost across every query instead of paying it per test. Requests/
+  // responses are newline-delimited JSON over stdin/stdout.
+  const bin = `./cel-evaluator${process.platform === 'win32' ? '.exe' : ''}`;
+  const proc = Bun.spawn([bin, '--server'], {
+    cwd: import.meta.dirname,
+    stdin: 'pipe',
+    stdout: 'pipe',
+    stderr: 'inherit',
+  });
+  // Don't keep the test process alive on account of the daemon; it exits on stdin EOF at teardown.
+  proc.unref();
+
+  // Buffered line reader over the daemon's stdout. Requests are issued sequentially (bun test awaits
+  // each call), so a simple FIFO of pending resolvers is sufficient.
+  const decoder = new TextDecoder();
+  const reader = proc.stdout.getReader();
+  const pending: ((line: string) => void)[] = [];
+  let buffer = '';
+  void (async () => {
+    for (;;) {
+      // Sequential by nature - a stream reader must await each chunk in order.
+      // oxlint-disable-next-line no-await-in-loop
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let nl: number;
+      while ((nl = buffer.indexOf('\n')) >= 0) {
+        const line = buffer.slice(0, nl);
+        buffer = buffer.slice(nl + 1);
+        pending.shift()?.(line);
+      }
+    }
+  })();
+
+  const writer = proc.stdin;
+
+  return async ({ data, cel, typemap }) => {
+    const responseLine = new Promise<string>(resolve => pending.push(resolve));
+    writer.write(`${JSON.stringify({ data, query: cel, types: typemap })}\n`);
+    await writer.flush();
+    return JSON.parse((await responseLine) || 'null');
+  };
 };

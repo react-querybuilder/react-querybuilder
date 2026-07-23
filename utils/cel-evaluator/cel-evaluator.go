@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/google/cel-go/cel"
@@ -49,26 +51,9 @@ func convertCELToInterface(celVal ref.Val) interface{} {
 	}
 }
 
-func main() {
-	// Command-line arguments
-	jsonString := flag.String("json", "{}", "JSON input data")
-	typeMap := flag.String("types", "{}", "Property-to-datatype map (e.g., {\"key\":\"string\", \"timestamp\":\"timestamp\", \"items\":\"list\"})")
-	query := flag.String("query", "", "CEL query string")
-
-	flag.Parse()
-
-	// Parse JSON data
-	var data []map[string]interface{}
-	if err := json.Unmarshal([]byte(*jsonString), &data); err != nil {
-		log.Fatalf("Failed to parse JSON: %v", err)
-	}
-
-	// Parse type map
-	var typeMapping map[string]string
-	if err := json.Unmarshal([]byte(*typeMap), &typeMapping); err != nil {
-		log.Fatalf("Failed to parse type map: %v", err)
-	}
-
+// Filters `data` to the records for which `query` evaluates true, given the
+// property-to-datatype `typeMapping`. Returns records as plain Go types for JSON output.
+func filter(data []map[string]interface{}, typeMapping map[string]string, query string) []map[string]interface{} {
 	// Convert JSON data to CEL-compatible types
 	var convertedData []map[string]ref.Val
 	for _, rawData := range data {
@@ -95,7 +80,7 @@ func main() {
 	}
 
 	// Parse the CEL expression
-	ast, issues := env.Parse(*query)
+	ast, issues := env.Parse(query)
 	if issues != nil && issues.Err() != nil {
 		log.Fatalf("Failed to parse CEL query: %v", issues.Err())
 	}
@@ -142,8 +127,64 @@ func main() {
 		jsonResults = append(jsonResults, jsonResult)
 	}
 
+	return jsonResults
+}
+
+// Server loop: one JSON request object per input line, one JSON result array per output line.
+// A single long-lived process amortizes CEL env/startup cost across every query in a test file.
+func runServer() {
+	scanner := bufio.NewScanner(os.Stdin)
+	// Allow large request lines (default token limit is 64KB).
+	scanner.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		if len(line) == 0 {
+			continue
+		}
+		var request struct {
+			Data  []map[string]interface{} `json:"data"`
+			Types map[string]string        `json:"types"`
+			Query string                   `json:"query"`
+		}
+		if err := json.Unmarshal(line, &request); err != nil {
+			log.Fatalf("Failed to parse request: %v", err)
+		}
+		jsonOutput, err := json.Marshal(filter(request.Data, request.Types, request.Query))
+		if err != nil {
+			log.Fatalf("Failed to marshal results: %v", err)
+		}
+		fmt.Println(string(jsonOutput))
+	}
+}
+
+func main() {
+	// Command-line arguments
+	jsonString := flag.String("json", "{}", "JSON input data")
+	typeMap := flag.String("types", "{}", "Property-to-datatype map (e.g., {\"key\":\"string\", \"timestamp\":\"timestamp\", \"items\":\"list\"})")
+	query := flag.String("query", "", "CEL query string")
+	server := flag.Bool("server", false, "Run in persistent server mode (newline-delimited JSON over stdin/stdout)")
+
+	flag.Parse()
+
+	if *server {
+		runServer()
+		return
+	}
+
+	// Parse JSON data
+	var data []map[string]interface{}
+	if err := json.Unmarshal([]byte(*jsonString), &data); err != nil {
+		log.Fatalf("Failed to parse JSON: %v", err)
+	}
+
+	// Parse type map
+	var typeMapping map[string]string
+	if err := json.Unmarshal([]byte(*typeMap), &typeMapping); err != nil {
+		log.Fatalf("Failed to parse type map: %v", err)
+	}
+
 	// Output the results as JSON
-	jsonOutput, err := json.MarshalIndent(jsonResults, "", "  ")
+	jsonOutput, err := json.MarshalIndent(filter(data, typeMapping, *query), "", "  ")
 	if err != nil {
 		log.Fatalf("Failed to marshal results: %v", err)
 	}

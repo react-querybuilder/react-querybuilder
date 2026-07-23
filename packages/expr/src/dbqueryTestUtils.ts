@@ -7,7 +7,7 @@ import type { ExpressionNode, ResolvedExpressions } from './types';
 // assert on the matched id set (numeric, dialect-agnostic) to dodge PGlite/SQLite type
 // coercion differences for numeric/string columns.
 
-export const sqlBase = `SELECT id FROM products WHERE`;
+export const sqlBase = (table: string = 'products'): string => `SELECT id FROM ${table} WHERE`;
 export const sqlOrderBy = `ORDER BY id`;
 
 export const fields: Field[] = [
@@ -43,9 +43,12 @@ export const FIND_PRODUCTS_TABLE = (platform: 'sqlite' | 'postgresql'): string =
     postgresql: `SELECT * FROM pg_tables WHERE tablename = 'products'`,
   })[platform];
 
-export const CREATE_PRODUCTS_TABLE = (platform: 'sqlite' | 'postgresql'): string => {
+export const CREATE_PRODUCTS_TABLE = (
+  platform: 'sqlite' | 'postgresql',
+  table: string = 'products'
+): string => {
   const realType = platform === 'sqlite' ? 'real' : 'double precision';
-  return `CREATE TABLE products (
+  return `CREATE TABLE ${table} (
     id integer PRIMARY KEY,
     name text NOT NULL,
     price ${realType} NOT NULL,
@@ -55,11 +58,11 @@ export const CREATE_PRODUCTS_TABLE = (platform: 'sqlite' | 'postgresql'): string
 };
 
 // Platform-independent: numeric literals + quoted strings + NULL work in both dialects.
-export const INSERT_PRODUCTS = (): string =>
+export const INSERT_PRODUCTS = (table: string = 'products'): string =>
   products
     .map(
       p =>
-        `INSERT INTO products (id, name, price, qty, discount, rating) VALUES (${p.id}, '${p.name}', ${p.price}, ${p.qty}, ${p.discount}, ${p.rating === null ? 'NULL' : p.rating})`
+        `INSERT INTO ${table} (id, name, price, qty, discount, rating) VALUES (${p.id}, '${p.name}', ${p.price}, ${p.qty}, ${p.discount}, ${p.rating === null ? 'NULL' : p.rating})`
     )
     .join(';\n');
 

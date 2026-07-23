@@ -1,7 +1,7 @@
 /* @vitest-environment node */
 
 import { formatQuery } from '@react-querybuilder/core';
-import { MongoMemoryServer } from 'mongodb-memory-server-core';
+import { getSharedMongo } from '@rqb-dbmongo';
 import mongoose from 'mongoose';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
 import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcessorMongoDBQuery';
@@ -9,8 +9,6 @@ import { getDatetimeRuleProcessorMongoDBQuery } from '../getDatetimeRuleProcesso
 if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
   vi.setConfig({ testTimeout: 60_000 });
 }
-
-const mongoServer = new MongoMemoryServer();
 
 type Result = {
   first_name: string;
@@ -33,19 +31,13 @@ const musicianSchema = {
 } as const;
 
 beforeAll(async () => {
-  await mongoServer.start();
-  await mongoose.connect(mongoServer.getUri());
-  Musician = mongoose.model('musician', new mongoose.Schema(musicianSchema));
-  mongoose.syncIndexes();
+  const conn = await getSharedMongo();
+  Musician = conn.model('musician', new mongoose.Schema(musicianSchema));
+  await Musician.syncIndexes();
   await Musician.insertMany(
     musicians.map(m => ({ ...m, created_at: new Date(), updated_at: new Date() }))
   );
 }, 30_000);
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
 
 for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {

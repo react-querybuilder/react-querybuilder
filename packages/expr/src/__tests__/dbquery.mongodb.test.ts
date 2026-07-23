@@ -1,7 +1,7 @@
 /* @vitest-environment node */
 
 import { formatQuery } from '@react-querybuilder/core';
-import { MongoMemoryServer } from 'mongodb-memory-server-core';
+import { getSharedMongo } from '@rqb-dbmongo';
 import mongoose from 'mongoose';
 import { fields, testCases, products } from '../dbqueryTestUtils';
 import { expressionRuleProcessorMongoDBQuery } from '../index';
@@ -9,8 +9,6 @@ import { expressionRuleProcessorMongoDBQuery } from '../index';
 if (typeof vi !== 'undefined' && typeof vi.setConfig === 'function') {
   vi.setConfig({ testTimeout: 60_000 });
 }
-
-const mongoServer = new MongoMemoryServer();
 
 interface ProductDoc {
   id: number;
@@ -24,9 +22,8 @@ interface ProductDoc {
 let Product: mongoose.Model<ProductDoc>;
 
 beforeAll(async () => {
-  await mongoServer.start();
-  await mongoose.connect(mongoServer.getUri());
-  Product = mongoose.model(
+  const conn = await getSharedMongo();
+  Product = conn.model(
     'product',
     new mongoose.Schema<ProductDoc>({
       id: { type: Number, required: true },
@@ -39,11 +36,6 @@ beforeAll(async () => {
   );
   await Product.insertMany(products);
 }, 30_000);
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
 
 for (const [testCaseName, [query, expectedIds]] of Object.entries(testCases)) {
   test(testCaseName, async () => {

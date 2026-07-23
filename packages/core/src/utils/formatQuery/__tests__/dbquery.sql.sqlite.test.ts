@@ -22,14 +22,14 @@ afterAll(() => {
 const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQLParams) => {
   test('sql', () => {
     const sql = formatQuery(query, { format: 'sql', ...fqOptions });
-    const select = db.prepare(`${sqlBase} ${sql} ${getSqlOrderBy()}`);
+    const select = db.prepare(`${sqlBase()} ${sql} ${getSqlOrderBy()}`);
     expect(select.all()).toEqual(expectedResult);
   });
 
   if (!skipParameterized) {
     test('parameterized', () => {
       const parameterized = formatQuery(query, { ...fqOptions, format: 'parameterized' });
-      const selectParam = db.prepare(`${sqlBase} ${parameterized.sql} ${getSqlOrderBy()}`);
+      const selectParam = db.prepare(`${sqlBase()} ${parameterized.sql} ${getSqlOrderBy()}`);
       expect(selectParam.all(...parameterized.params)).toEqual(expectedResult);
     });
 
@@ -39,7 +39,7 @@ const testSQL = ({ query, expectedResult, fqOptions, skipParameterized }: TestSQ
         format: 'parameterized_named',
         preset: 'sqlite',
       });
-      const selectParamNamed = db.prepare(`${sqlBase} ${parameterizedNamed.sql}`);
+      const selectParamNamed = db.prepare(`${sqlBase()} ${parameterizedNamed.sql}`);
       expect(selectParamNamed.all(parameterizedNamed.params)).toEqual(expectedResult);
     });
   }
@@ -81,7 +81,7 @@ describe('SQLite', () => {
     ) => {
       test(name, () => {
         const sql = formatQuery(query, 'sql');
-        const select = db.prepare(`${sqlBase} ${sql} ${getSqlOrderBy()}`);
+        const select = db.prepare(`${sqlBase()} ${sql} ${getSqlOrderBy()}`);
         expect(select.all(bindings)).toEqual(expectedResult);
       });
     };

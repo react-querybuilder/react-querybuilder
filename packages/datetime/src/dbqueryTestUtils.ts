@@ -15,7 +15,7 @@ export const dateLibraryFunctions: [string, RQBDateTimeLibraryAPI][] = [
 
 export const comparisonDate = '1957-01-01';
 export const comparisonDate2 = '1969-01-01';
-export const sqlBase = `SELECT * FROM musicians WHERE`;
+export const sqlBase = (table: string = 'musicians'): string => `SELECT * FROM ${table} WHERE`;
 
 export const fields: Field[] = [
   { name: 'firstName', label: 'First Name' },
@@ -72,9 +72,10 @@ export const FIND_MUSICIANS_TABLE = (platform: string): string =>
 export function CREATE_MUSICIANS_TABLE(
   platform: 'jsonlogic' | 'cel' | 'jsonata' | 'spel'
 ): MusicianRecord[];
-export function CREATE_MUSICIANS_TABLE(platform: 'sqlite' | 'postgresql'): string;
+export function CREATE_MUSICIANS_TABLE(platform: 'sqlite' | 'postgresql', table?: string): string;
 export function CREATE_MUSICIANS_TABLE(
-  platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel' | 'jsonata' | 'spel'
+  platform: 'sqlite' | 'postgresql' | 'jsonlogic' | 'cel' | 'jsonata' | 'spel',
+  table: string = 'musicians'
 ): string | MusicianRecord[] {
   if (
     platform === 'jsonlogic' ||
@@ -92,7 +93,7 @@ export function CREATE_MUSICIANS_TABLE(
 
   const dateType = { sqlite: 'text', postgresql: 'date' }[platform];
   const timestampType = { sqlite: 'text', postgresql: 'timestamp with time zone' }[platform];
-  return `CREATE TABLE musicians (
+  return `CREATE TABLE ${table} (
     first_name text NOT NULL,
     middle_name text,
     last_name text NOT NULL,
@@ -102,7 +103,7 @@ export function CREATE_MUSICIANS_TABLE(
     PRIMARY KEY (first_name, last_name))`;
 }
 
-export const INSERT_MUSICIANS = (platform: string): string => {
+export const INSERT_MUSICIANS = (platform: string, table: string = 'musicians'): string => {
   const now = {
     sqlite: `replace(datetime('now'), ' ', 'T') || 'Z'`,
     postgresql: 'current_timestamp',
@@ -110,7 +111,7 @@ export const INSERT_MUSICIANS = (platform: string): string => {
   return musicians
     .map(
       musician =>
-        `INSERT INTO musicians (first_name, middle_name, last_name, birthdate, created_at, updated_at)
+        `INSERT INTO ${table} (first_name, middle_name, last_name, birthdate, created_at, updated_at)
 VALUES ('${musician.first_name}', '${musician.middle_name}', '${musician.last_name}', '${musician.birthdate}', ${now}, ${now})`
     )
     .join(';\n');

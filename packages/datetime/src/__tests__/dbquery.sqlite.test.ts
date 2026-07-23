@@ -47,7 +47,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           fields,
           ruleProcessor: getDatetimeRuleProcessorSQL(apiFns),
         });
-        const result = db.prepare<Result, SQLQueryBindings[]>(`${sqlBase} ${sql}`).all();
+        const result = db.prepare<Result, SQLQueryBindings[]>(`${sqlBase()} ${sql}`).all();
         // oxlint-disable no-conditional-expect
         if (testCase[1] === 'all') {
           expect(result).toHaveLength(musicians.length);
