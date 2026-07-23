@@ -41,6 +41,15 @@ describe('defaultNode', () => {
     expect(defaultNode('value', fields)).toEqual({ kind: 'value', value: '' });
   });
 
+  it('builds a parameter node from the first parameter (or empty)', () => {
+    const params: Option[] = [{ name: 'p1', value: 'p1', label: 'P1' }];
+    expect(defaultNode('parameter', fields, undefined, params)).toEqual({
+      kind: 'parameter',
+      parameter: 'p1',
+    });
+    expect(defaultNode('parameter', fields)).toEqual({ kind: 'parameter', parameter: '' });
+  });
+
   it('builds a func node from the first registry entry with default args', () => {
     expect(defaultNode('func', fields, defaultFunctionMeta)).toEqual({
       kind: 'func',

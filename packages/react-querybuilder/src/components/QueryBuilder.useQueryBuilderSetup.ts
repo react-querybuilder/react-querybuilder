@@ -181,7 +181,7 @@ export const useQueryBuilderSetup = <
   const getParametersMain = useCallback(
     (field?: FieldName, operator?: OperatorName, misc?: { fieldData: F }) =>
       prepareOptionList({
-        optionList: getParametersProp?.(field, operator, misc ?? { fieldData: {} as F }) ?? [],
+        optionList: getParametersProp?.(field, operator, misc) ?? [],
         autoSelectOption: true,
       }).optionList,
     [getParametersProp]

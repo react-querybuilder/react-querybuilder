@@ -144,6 +144,7 @@ const ruleGroupSchema = {
   getMatchModes: () => [],
   getSubQueryBuilderProps: () => ({}),
   getValueSources: () => [{ name: 'value', value: 'value', label: 'value' }],
+  getParameters: () => [],
   getValues: () => [],
   getRuleClassname: () => '',
   getRuleGroupClassname: () => '',
