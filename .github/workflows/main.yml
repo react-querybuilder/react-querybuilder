@@ -75,6 +75,7 @@ jobs:
           path: utils/spel-evaluator/lib
           key: spel-jars-spring6.1.14-jackson2.17.2
       - run: bun install --frozen-lockfile
+      - run: bun run build:core
       - run: bun run test
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v6
         env:
@@ -105,6 +106,8 @@ jobs:
           sed -i "s|Object.entries(projects)|Object.entries(projects).filter(([dir]) => dir !== 'native' \&\& dir !== 'rules-engine')|" ./vitest.config.ts
 
           bun install
+
+          bun run build:core
 
           bunx vitest run --coverage=false
 
