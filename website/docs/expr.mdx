@@ -377,7 +377,7 @@ String-match operators (`contains`, `beginsWith`, `endsWith`, and their negation
 
 ## Import (parsing)
 
-Several export processors have an import-side mirror: a `getExpression` handler that turns arithmetic/function operands back into expression nodes. Each format supplies a ready-to-use handler bound to its built-in inverse (and a factory for custom operations). The [SQL](#sql), [JsonLogic](#jsonlogic), and [JSONata](#jsonata) parsers are covered below.
+Several export processors have an import-side mirror: a `getExpression` handler that turns arithmetic/function operands back into expression nodes. Each format supplies a ready-to-use handler bound to its built-in inverse (and a factory for custom operations). The [SQL](#sql), [JsonLogic](#jsonlogic), [JSONata](#jsonata), and [MongoDB](#mongodb) parsers are covered below.
 
 An operand on the left of the comparison becomes the rule's `lhs`; on the right it becomes `value` with `valueSource: 'expression'`. `between` bounds parse into a two-element `value` tuple. The handler auto-validates each node and returns `null`—dropping the rule—for unknown functions/operators, arity mismatches, or (via `ctx.fieldExists`) unknown field leaves.
 
@@ -461,6 +461,36 @@ const getExpression = getExpressionParserJSONata(
 );
 
 parseJSONata('$power(x, 2) >= 9', { getExpression });
+```
+
+### MongoDB
+
+`expressionParserMongoDB` is the ready-to-use handler for [`parseMongoDB`](./utils/import#mongodb), bound to the built-in MongoDB inverse. It handles `$expr` aggregation-expression operands:
+
+```ts
+import { parseMongoDB } from '@react-querybuilder/core/parseMongoDB';
+import { expressionParserMongoDB } from '@react-querybuilder/expr';
+
+parseMongoDB(
+  { $expr: { $gt: ['$price', { $multiply: ['$cost', 2] }] } },
+  {
+    getExpression: expressionParserMongoDB,
+  }
+);
+// { field: 'price'..., operator: '>', valueSource: 'expression', value: { kind: 'func', fn: 'multiply', args: [...] } }
+```
+
+The built-in aggregation operators `$add`/`$subtract`/`$multiply`/`$divide`/`$min`/`$max`/`$abs`/`$mod`/`$toUpper`/`$toLower` map back to their `fn` keys (`add`/`subtract`/`multiply`/`divide`/`min`/`max`/`abs`/`mod`/`upper`/`lower`); unknown operators drop the rule. Only `$expr` operands route through expression parsing; bare field references and literals fall through to the stock MongoDB logic. To parse custom operators, build a handler with `getExpressionParserMongoDB`, passing a partial inverse registry (aggregation-operator token, _with_ the leading `$` → `fn` key) and matching arity metadata:
+
+```ts
+import { getExpressionParserMongoDB } from '@react-querybuilder/expr';
+
+const getExpression = getExpressionParserMongoDB(
+  { $pow: 'pow' },
+  { pow: { label: 'pow', arity: 2 } }
+);
+
+parseMongoDB({ $expr: { $gte: [{ $pow: ['$x', 2] }, 9] } }, { getExpression });
 ```
 
 ## Validation

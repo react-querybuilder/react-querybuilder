@@ -212,6 +212,17 @@ Valid MongoDB query strings may not strictly conform to JSON. To handle extended
 
 :::
 
+### Expressions
+
+`parseMongoDB` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts a MongoDB `$expr` aggregation-expression operand into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Only `$expr` operands are routed through this handler; bare field references and literals fall through to the stock logic. Returning `null` drops the rule. Use [`expressionParserMongoDB`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in MongoDB inverse, or `getExpressionParserMongoDB` to add custom operations.
+
+```ts
+import { parseMongoDB } from '@react-querybuilder/core/parseMongoDB';
+import { expressionParserMongoDB } from '@react-querybuilder/expr';
+
+const query = parseMongoDB(mongoDbQuery, { getExpression: expressionParserMongoDB });
+```
+
 ## JsonLogic
 
 ```ts

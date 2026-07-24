@@ -32,6 +32,7 @@ export * from './functions/tanstackDb';
 export * from './jsonLogicOperators';
 export * from './parsers/getExpressionParserJSONata';
 export * from './parsers/getExpressionParserJsonLogic';
+export * from './parsers/getExpressionParserMongoDB';
 export * from './parsers/getExpressionParserSQL';
 export * from './processors/getExpressionRuleProcessorCEL';
 export * from './processors/getExpressionRuleProcessorCypher';

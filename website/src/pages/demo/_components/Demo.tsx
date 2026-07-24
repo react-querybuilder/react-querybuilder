@@ -14,6 +14,7 @@ import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd
 import {
   expressionParserJSONata,
   expressionParserJsonLogic,
+  expressionParserMongoDB,
   expressionParserSQL,
 } from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
@@ -152,16 +153,26 @@ const query = parseSQL(sql, { parseParameters: true });`}
     </CodeBlock>
   </>
 );
-const notesMongoDB = (
-  <em>
-    Input must conform to the <a href="https://www.json.org/">JSON specification</a>. MongoDB
-    queries support an extended JSON format, so you may need to pre-parse query strings with a
-    library like{' '}
-    <a href="https://www.npmjs.com/package/mongodb-query-parser">
-      <code>mongodb-query-parser</code>
-    </a>
-    before submitting them here or passing them to <code>parseMongoDB</code>.
-  </em>
+const notesMongoDB = (enableExpressions: boolean) => (
+  <>
+    <em>
+      Input must conform to the <a href="https://www.json.org/">JSON specification</a>. MongoDB
+      queries support an extended JSON format, so you may need to pre-parse query strings with a
+      library like{' '}
+      <a href="https://www.npmjs.com/package/mongodb-query-parser">
+        <code>mongodb-query-parser</code>
+      </a>
+      before submitting them here or passing them to <code>parseMongoDB</code>.
+    </em>
+    {enableExpressions && (
+      <CodeBlock language="ts">
+        {`import { parseMongoDB } from 'react-querybuilder/parseMongoDB';
+import { expressionParserMongoDB } from '@react-querybuilder/expr';
+
+const query = parseMongoDB(mongoDB, { getExpression: expressionParserMongoDB });`}
+      </CodeBlock>
+    )}
+  </>
 );
 const notesSpEL = '';
 const notesCEL = '';
@@ -518,7 +529,8 @@ export default function Demo({
   }, [sql, options.enableExpressions]);
   const loadFromMongoDB = useCallback(() => {
     try {
-      const qLocal = parseMongoDB(mongoDB);
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserMongoDB } : {};
+      const qLocal = parseMongoDB(mongoDB, exprOpt);
       const qIC = convertToIC(qLocal);
       setQuery(qLocal);
       setQueryIC(qIC);
@@ -526,7 +538,7 @@ export default function Demo({
     } catch (err) {
       setMongoDbParseError((err as Error).message);
     }
-  }, [mongoDB]);
+  }, [mongoDB, options.enableExpressions]);
   const loadFromJsonLogic = useCallback(() => {
     try {
       const exprOpt = options.enableExpressions ? { getExpression: expressionParserJsonLogic } : {};
@@ -1073,7 +1085,7 @@ export default function Demo({
                     setCode={setMongoDB}
                     error={mongoDbParseError}
                     loadQueryFromCode={loadFromMongoDB}
-                    notes={notesMongoDB}
+                    notes={notesMongoDB(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="jsonlogic">

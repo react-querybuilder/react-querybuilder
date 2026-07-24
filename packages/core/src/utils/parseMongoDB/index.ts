@@ -6,3 +6,5 @@
  */
 
 export * from './parseMongoDB';
+export * from './types';
+export { isMongoDBExpressionOperand, mongoDbFieldRef } from './utils';
