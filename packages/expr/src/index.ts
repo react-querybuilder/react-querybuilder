@@ -35,6 +35,7 @@ export * from './parsers/getExpressionParserJSONata';
 export * from './parsers/getExpressionParserJsonLogic';
 export * from './parsers/getExpressionParserMongoDB';
 export * from './parsers/getExpressionParserSQL';
+export * from './parsers/getExpressionParserSpEL';
 export * from './processors/getExpressionRuleProcessorCEL';
 export * from './processors/getExpressionRuleProcessorCypher';
 export * from './processors/getExpressionRuleProcessorDrizzle';

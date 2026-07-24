@@ -76,6 +76,28 @@ export const isSpELBetweenFields = (expr: SpELProcessedExpression): expr is SpEL
   expr.children[1].children.length >= 2 &&
   expr.children[1].children.every(c => isSpELIdentifier(c));
 
+/** A SpEL arithmetic infix node (`op-plus`/`op-minus`/`op-multiply`/`op-divide`/`op-modulus`). */
+export const isSpELMathOperation = (expr: SpELProcessedExpression): boolean =>
+  expr.type === 'op-plus' ||
+  expr.type === 'op-minus' ||
+  expr.type === 'op-multiply' ||
+  expr.type === 'op-divide' ||
+  expr.type === 'op-modulus';
+
+/**
+ * Whether a relation operand should be routed to `getExpression`: an arithmetic infix node.
+ * Bare identifiers, chains, and literals are not expression operands (they retain their normal
+ * handling).
+ *
+ * TODO: Function/method-based operations (`T(java.lang.Math).abs/min/max(...)`,
+ * `.toUpperCase()`/`.toLowerCase()`, and custom calls) are not detectable here because
+ * {@link processCompiledExpression} collapses SpEL `method`/`typeref`/`compound` nodes to
+ * `invalid` with no children. Supporting them would require preserving those nodes during
+ * processing (and routing the raw compiled operand to `getExpression`).
+ */
+export const isSpELExpressionOperand = (expr: SpELProcessedExpression): boolean =>
+  isSpELMathOperation(expr);
+
 export const processCompiledExpression = (
   ce: SpELPropertyNode | SpELExpressionNode
 ): SpELProcessedExpression => {

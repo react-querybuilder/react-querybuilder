@@ -359,6 +359,17 @@ Output (`RuleGroupType`):
 }
 ```
 
+### Expressions
+
+`parseSpEL` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts an arithmetic operand subtree into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Returning `null` drops the rule. Use [`expressionParserSpEL`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in SpEL inverse, or `getExpressionParserSpEL` to override the arithmetic mappings. Note that only infix arithmetic is invertible—function/method calls (`abs`/`min`/`max`/`upper`/`lower`/custom) are dropped on import; see the [expr docs](../expr#spel) for details.
+
+```ts
+import { parseSpEL } from '@react-querybuilder/core/parseSpEL';
+import { expressionParserSpEL } from '@react-querybuilder/expr';
+
+const query = parseSpEL(spelQuery, { getExpression: expressionParserSpEL });
+```
+
 ## Common Expression Language (CEL)
 
 ```ts

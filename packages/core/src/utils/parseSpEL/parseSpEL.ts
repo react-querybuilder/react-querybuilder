@@ -9,6 +9,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  ExpressionNode,
   ValueSource,
 } from '../../types';
 import type { ParserCommonOptions } from '../../types/import';
@@ -16,12 +17,18 @@ import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
-import type { SpELExpressionNode, SpELProcessedExpression } from './types';
+import type {
+  ParseSpELExpressionContext,
+  SpELExpressionNode,
+  SpELExpressionOperand,
+  SpELProcessedExpression,
+} from './types';
 import {
   generateFlatAndOrList,
   generateMixedAndOrList,
   isSpELBetweenFields,
   isSpELBetweenValues,
+  isSpELExpressionOperand,
   isSpELIdentifier,
   isSpELOpAnd,
   isSpELOpMatches,
@@ -35,7 +42,20 @@ import {
 /**
  * Options object for {@link parseSpEL!parseSpEL}.
  */
-export interface ParseSpELOptions extends ParserCommonOptions {}
+export interface ParseSpELOptions extends ParserCommonOptions {
+  /**
+   * Handler that converts a SpEL arithmetic operand subtree into an {@link ExpressionNode}.
+   * Return `null` to reject (the rule is dropped). Supplied by `@react-querybuilder/expr`
+   * (`expressionParserSpEL`). When omitted, expression operands are ignored (rule dropped).
+   *
+   * NOTE: Only arithmetic infix operands are supported; function/method-based operations are
+   * discarded during SpEL processing and cannot be imported. See {@link SpELExpressionOperand}.
+   */
+  getExpression?: (
+    node: SpELExpressionOperand,
+    ctx: ParseSpELExpressionContext
+  ) => ExpressionNode | null;
+}
 
 /**
  * Converts a SpEL string expression into a query suitable for the
@@ -66,7 +86,7 @@ function parseSpEL(
   }
 ): DefaultRuleGroupTypeIC;
 function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGroupTypeAny {
-  const { fields, independentCombinators, listsAsArrays } = options;
+  const { fields, independentCombinators, listsAsArrays, getExpression } = options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
 
@@ -82,6 +102,10 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       subordinateFieldName,
       getValueSources: options?.getValueSources,
     });
+
+  const exprCtx: ParseSpELExpressionContext = {
+    fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
+  };
 
   const emptyQuery: DefaultRuleGroupTypeAny = {
     rules: [],
@@ -255,6 +279,51 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;
       const [left, right] = expr.children;
+
+      // Arithmetic expression operands (from `@react-querybuilder/expr`)
+      if (getExpression) {
+        const leftIsExpr = isSpELExpressionOperand(left);
+        const rightIsExpr = isSpELExpressionOperand(right);
+        if (leftIsExpr || rightIsExpr) {
+          const op = (flipOp: boolean) => normalizeOperator(expr.type, flipOp);
+          if (leftIsExpr && rightIsExpr) {
+            // expression <op> expression → both sides on lhs/value
+            const l = getExpression(left, exprCtx);
+            const r = getExpression(right, exprCtx);
+            return l && r
+              ? { field: '', operator: op(false), lhs: l, value: r, valueSource: 'expression' }
+              : null;
+          }
+          if (isSpELIdentifier(left) && rightIsExpr) {
+            // field <op> expression → rhs expression
+            const node = getExpression(right, exprCtx);
+            const f = left.identifier;
+            const operator = op(false);
+            return node && fieldIsValid(f, operator)
+              ? { field: f, operator, value: node, valueSource: 'expression' }
+              : null;
+          }
+          if (leftIsExpr && isSpELIdentifier(right)) {
+            // expression <op> field → flip to field <op> expression
+            const node = getExpression(left, exprCtx);
+            const f = right.identifier;
+            const operator = op(true);
+            return node && fieldIsValid(f, operator)
+              ? { field: f, operator, value: node, valueSource: 'expression' }
+              : null;
+          }
+          if (leftIsExpr && isSpELPrimitive(right)) {
+            // expression <op> literal → lhs = expression, literal value
+            const l = getExpression(left, exprCtx);
+            return l ? { field: '', operator: op(false), lhs: l, value: right.value } : null;
+          }
+          if (isSpELPrimitive(left)) {
+            // literal <op> expression → lhs = expression, flip operator
+            const r = getExpression(right, exprCtx);
+            return r ? { field: '', operator: op(true), lhs: r, value: left.value } : null;
+          }
+        }
+      }
 
       if (isSpELIdentifier(left)) {
         field = left.identifier;

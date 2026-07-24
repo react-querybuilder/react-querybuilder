@@ -26,6 +26,7 @@ export default {
         root,
         'packages/core/src/utils/parseMongoDB'
       ),
+      '@react-querybuilder/core/parseSpEL': path.resolve(root, 'packages/core/src/utils/parseSpEL'),
       '@react-querybuilder/core/parseSQL': path.resolve(root, 'packages/core/src/utils/parseSQL'),
       '@react-querybuilder/core': path.resolve(root, 'packages/core/src'),
       '@rqb-testing': path.resolve(root, 'utils/testing'),

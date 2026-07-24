@@ -17,3 +17,38 @@ export const defaultSpELSerializers: SQLSerializerRegistry = {
   upper: (_o, x) => `${x}.toUpperCase()`,
   lower: (_o, x) => `${x}.toLowerCase()`,
 };
+
+/**
+ * Inverse of {@link defaultSpELSerializers} for the import direction (parsing). `operators` maps
+ * SpEL arithmetic node types (`op-plus`/`op-minus`/`op-multiply`/`op-divide`/`op-modulus`) to
+ * `fn` keys.
+ *
+ * NOTE: Only arithmetic infix operators are invertible. The function/method-based operations
+ * (`abs`/`min`/`max` via `T(java.lang.Math)`, `upper`/`lower` via `.toUpperCase()`/`.toLowerCase()`,
+ * and any custom function) are **not** invertible: core's SpEL processing collapses `method`/
+ * `typeref`/`compound` nodes to `invalid` with no children before the parser runs, so those
+ * operands never reach the import handler. Supporting them would require preserving those nodes
+ * during processing (see the TODO in `@react-querybuilder/core`'s `parseSpEL` utils).
+ */
+export interface SpELInverse {
+  operators: Record<string, string>;
+}
+
+/** Built-in {@link SpELInverse} registry (mirror of the invertible {@link defaultSpELSerializers}). */
+export const defaultSpELInverse: SpELInverse = {
+  operators: {
+    'op-plus': 'add',
+    'op-minus': 'subtract',
+    'op-multiply': 'multiply',
+    'op-divide': 'divide',
+    'op-modulus': 'mod',
+  },
+};
+
+/** Merges a custom {@link SpELInverse} over the built-in {@link defaultSpELInverse}. */
+export const mergeSpELInverse = (
+  base: SpELInverse,
+  custom?: Partial<SpELInverse>
+): SpELInverse => ({
+  operators: { ...base.operators, ...custom?.operators },
+});

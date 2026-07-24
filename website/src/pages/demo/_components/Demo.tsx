@@ -16,6 +16,7 @@ import {
   expressionParserJSONata,
   expressionParserJsonLogic,
   expressionParserMongoDB,
+  expressionParserSpEL,
   expressionParserSQL,
 } from '@react-querybuilder/expr';
 import { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';
@@ -175,7 +176,25 @@ const query = parseMongoDB(mongoDB, { getExpression: expressionParserMongoDB });
     )}
   </>
 );
-const notesSpEL = '';
+const notesSpEL = (enableExpressions: boolean) =>
+  enableExpressions ? (
+    <>
+      <em>
+        Only arithmetic expressions (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>,{' '}
+        <code>%</code>) are parsed into expression trees. Function/method calls like{' '}
+        <code>T(java.lang.Math).abs(...)</code> or <code>name.toUpperCase()</code> cannot be
+        inverted and are dropped.
+      </em>
+      <CodeBlock language="ts">
+        {`import { parseSpEL } from 'react-querybuilder/parseSpEL';
+import { expressionParserSpEL } from '@react-querybuilder/expr';
+
+const query = parseSpEL(spel, { getExpression: expressionParserSpEL });`}
+      </CodeBlock>
+    </>
+  ) : (
+    ''
+  );
 const notesCEL = (enableExpressions: boolean) =>
   enableExpressions ? (
     <CodeBlock language="ts">
@@ -564,15 +583,16 @@ export default function Demo({
   }, [jsonLogic, options.enableExpressions]);
   const loadFromSpEL = useCallback(() => {
     try {
-      const qLocal = parseSpEL(spel);
-      const qIC = parseSpEL(spel, { independentCombinators: true });
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserSpEL } : {};
+      const qLocal = parseSpEL(spel, exprOpt);
+      const qIC = parseSpEL(spel, { ...exprOpt, independentCombinators: true });
       setQuery(qLocal);
       setQueryIC(qIC);
       setSpELParseError('');
     } catch (err) {
       setSpELParseError((err as Error).message);
     }
-  }, [spel]);
+  }, [spel, options.enableExpressions]);
   const loadFromCEL = useCallback(() => {
     try {
       const exprOpt = options.enableExpressions ? { getExpression: expressionParserCEL } : {};
@@ -1117,7 +1137,7 @@ export default function Demo({
                     setCode={setSpEL}
                     error={spelParseError}
                     loadQueryFromCode={loadFromSpEL}
-                    notes={notesSpEL}
+                    notes={notesSpEL(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="cel">
