@@ -13,6 +13,7 @@ export default {
   resolve: {
     alias: {
       'react-querybuilder': path.resolve(root, 'packages/react-querybuilder/src'),
+      '@react-querybuilder/core/parseCEL': path.resolve(root, 'packages/core/src/utils/parseCEL'),
       '@react-querybuilder/core/parseJSONata': path.resolve(
         root,
         'packages/core/src/utils/parseJSONata'

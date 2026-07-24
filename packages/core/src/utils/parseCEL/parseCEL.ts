@@ -9,6 +9,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  ExpressionNode,
   MatchMode,
   RuleGroupType,
   RuleGroupTypeAny,
@@ -24,9 +25,11 @@ import { prepareRuleGroup } from '../prepareQueryObjects';
 import { CELParser } from './celParser';
 import type {
   CELExpression,
+  CELExpressionOperand,
   CELIdentifier,
   CELLikeExpression,
   CELLiteral,
+  ParseCELExpressionContext,
   ParsedCEL,
 } from './types';
 import {
@@ -40,6 +43,7 @@ import {
   isCELConditionalAnd,
   isCELConditionalOr,
   isCELExpressionGroup,
+  isCELExpressionOperand,
   isCELIdentifier,
   isCELIdentifierOrChain,
   isCELLikeExpression,
@@ -64,6 +68,16 @@ export interface ParseCELOptionsStandard extends Except<
    * Handler for custom CEL expressions.
    */
   customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupType | null;
+  /**
+   * Handler that converts a CEL arithmetic/function operand subtree into an
+   * {@link ExpressionNode}. Return `null` to reject (the rule is dropped). Supplied by
+   * `@react-querybuilder/expr` (`expressionParserCEL`). When omitted, expression operands
+   * are ignored (rule dropped).
+   */
+  getExpression?: (
+    node: CELExpressionOperand,
+    ctx: ParseCELExpressionContext
+  ) => ExpressionNode | null;
 }
 export interface ParseCELOptionsIC extends Except<ParserCommonOptions, 'independentCombinators'> {
   independentCombinators: true;
@@ -71,6 +85,16 @@ export interface ParseCELOptionsIC extends Except<ParserCommonOptions, 'independ
    * Handler for custom CEL expressions.
    */
   customExpressionHandler?: (expr: CELExpression) => RuleType | RuleGroupTypeIC | null;
+  /**
+   * Handler that converts a CEL arithmetic/function operand subtree into an
+   * {@link ExpressionNode}. Return `null` to reject (the rule is dropped). Supplied by
+   * `@react-querybuilder/expr` (`expressionParserCEL`). When omitted, expression operands
+   * are ignored (rule dropped).
+   */
+  getExpression?: (
+    node: CELExpressionOperand,
+    ctx: ParseCELExpressionContext
+  ) => ExpressionNode | null;
 }
 
 /**
@@ -119,7 +143,8 @@ function parseCEL(cel: string, options?: ParseCELOptionsStandard): DefaultRuleGr
  */
 function parseCEL(cel: string, options: ParseCELOptionsIC): DefaultRuleGroupTypeIC;
 function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny {
-  const { fields, independentCombinators, listsAsArrays, customExpressionHandler } = options;
+  const { fields, independentCombinators, listsAsArrays, customExpressionHandler, getExpression } =
+    options;
   const ic = !!independentCombinators;
   const fieldsFlat = getFieldsArray(fields);
 
@@ -139,6 +164,10 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
   const emptyQuery: DefaultRuleGroupTypeAny = {
     rules: [],
     ...(ic ? {} : { combinator: 'and' }),
+  };
+
+  const exprCtx: ParseCELExpressionContext = {
+    fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
   };
 
   const processCELExpression = (
@@ -342,6 +371,69 @@ function parseCEL(cel: string, options: ParseCELOptions = {}): RuleGroupTypeAny 
       let valueSource: ValueSource | undefined = undefined;
       let flip = false;
       const { left, right } = expr;
+
+      // Arithmetic/function expression operands (from `@react-querybuilder/expr`)
+      if (getExpression) {
+        const leftIsExpr = isCELExpressionOperand(left);
+        const rightIsExpr = isCELExpressionOperand(right);
+        const normOp = (flipOp: boolean): DefaultOperatorName => {
+          const o = celNormalizeOperator(expr.operator, flipOp);
+          return forwardedNegation ? defaultOperatorNegationMap[o] : o;
+        };
+        if (leftIsExpr && rightIsExpr) {
+          // expression <op> expression → both sides on lhs/value
+          const l = getExpression(left, exprCtx);
+          const r = getExpression(right, exprCtx);
+          if (l && r) {
+            return {
+              field: '',
+              operator: normOp(false),
+              lhs: l,
+              value: r,
+              valueSource: 'expression',
+            };
+          }
+          return null;
+        } else if (isCELIdentifierOrChain(left) && rightIsExpr) {
+          // field <op> expression → rhs expression
+          const node = getExpression(right, exprCtx);
+          const f = getCELIdentifierFromChain(left);
+          const op = normOp(false);
+          if (node && fieldIsValid(f, op)) {
+            return { field: f, operator: op, value: node, valueSource: 'expression' };
+          }
+          return null;
+        } else if (leftIsExpr && isCELIdentifierOrChain(right)) {
+          // expression <op> field → flip to field <op> expression
+          const node = getExpression(left, exprCtx);
+          const f = getCELIdentifierFromChain(right);
+          const op = normOp(true);
+          if (node && fieldIsValid(f, op)) {
+            return { field: f, operator: op, value: node, valueSource: 'expression' };
+          }
+          return null;
+        } else if (leftIsExpr && isCELLiteral(right)) {
+          // expression <op> literal → lhs = expression, literal value
+          const l = getExpression(left, exprCtx);
+          if (l) {
+            return {
+              field: '',
+              operator: normOp(false),
+              lhs: l,
+              value: evalCELLiteralValue(right),
+            };
+          }
+          return null;
+        } else if (isCELLiteral(left) && rightIsExpr) {
+          // literal <op> expression → lhs = expression, flip operator
+          const r = getExpression(right, exprCtx);
+          if (r) {
+            return { field: '', operator: normOp(true), lhs: r, value: evalCELLiteralValue(left) };
+          }
+          return null;
+        }
+      }
+
       if (isCELIdentifierOrChain(left)) {
         field = getCELIdentifierFromChain(left);
         if (isCELIdentifierOrChain(right)) {

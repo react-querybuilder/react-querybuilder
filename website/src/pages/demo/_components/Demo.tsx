@@ -12,6 +12,7 @@ import { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { createPragmaticDndAdapter } from '@react-querybuilder/dnd/pragmatic-dnd';
 import {
+  expressionParserCEL,
   expressionParserJSONata,
   expressionParserJsonLogic,
   expressionParserMongoDB,
@@ -175,7 +176,17 @@ const query = parseMongoDB(mongoDB, { getExpression: expressionParserMongoDB });
   </>
 );
 const notesSpEL = '';
-const notesCEL = '';
+const notesCEL = (enableExpressions: boolean) =>
+  enableExpressions ? (
+    <CodeBlock language="ts">
+      {`import { parseCEL } from 'react-querybuilder/parseCEL';
+import { expressionParserCEL } from '@react-querybuilder/expr';
+
+const query = parseCEL(cel, { getExpression: expressionParserCEL });`}
+    </CodeBlock>
+  ) : (
+    ''
+  );
 const notesJSONata = (enableExpressions: boolean) =>
   enableExpressions ? (
     <CodeBlock language="ts">
@@ -564,15 +575,16 @@ export default function Demo({
   }, [spel]);
   const loadFromCEL = useCallback(() => {
     try {
-      const qLocal = parseCEL(cel);
-      const qIC = parseCEL(cel, { independentCombinators: true });
+      const exprOpt = options.enableExpressions ? { getExpression: expressionParserCEL } : {};
+      const qLocal = parseCEL(cel, exprOpt);
+      const qIC = parseCEL(cel, { ...exprOpt, independentCombinators: true });
       setQuery(qLocal);
       setQueryIC(qIC);
       setCELParseError('');
     } catch (err) {
       setCELParseError((err as Error).message);
     }
-  }, [cel]);
+  }, [cel, options.enableExpressions]);
   const loadFromJSONata = useCallback(() => {
     try {
       const exprOpt = options.enableExpressions ? { getExpression: expressionParserJSONata } : {};
@@ -1115,7 +1127,7 @@ export default function Demo({
                     setCode={setCEL}
                     error={celParseError}
                     loadQueryFromCode={loadFromCEL}
-                    notes={notesCEL}
+                    notes={notesCEL(options.enableExpressions)}
                   />
                 </TabItem>
                 <TabItem value="jsonata">

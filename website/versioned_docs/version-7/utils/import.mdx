@@ -430,6 +430,17 @@ Output (`RuleGroupType`):
 
 To assist with processing the AST fragments, all types, type guard functions, and other utilities used internally by `parseCEL` are exported.
 
+### Expressions
+
+`parseCEL` accepts a `getExpression` option (`(node, ctx) => ExpressionNode | null`) that converts an arithmetic/function operand subtree into an [expression](../expr) node. An expression on the right of a comparison becomes the rule's `value` with `valueSource: 'expression'`; an expression on the left sets `field: ''` and stores the tree in `lhs`; inclusive-`between`/`notBetween` bounds become a two-element `value`. Returning `null` drops the rule. Use [`expressionParserCEL`](../expr#import-parsing) from `@react-querybuilder/expr` for the built-in CEL inverse, or `getExpressionParserCEL` to add custom functions. Note that `abs`/`upper`/`lower` are not invertible on the CEL side—see the [expr docs](../expr#cel) for details.
+
+```ts
+import { parseCEL } from '@react-querybuilder/core/parseCEL';
+import { expressionParserCEL } from '@react-querybuilder/expr';
+
+const query = parseCEL(celQuery, { getExpression: expressionParserCEL });
+```
+
 ## JSONata
 
 ```ts

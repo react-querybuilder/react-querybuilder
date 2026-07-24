@@ -30,6 +30,7 @@ export * from './functions/spel';
 export * from './functions/sql';
 export * from './functions/tanstackDb';
 export * from './jsonLogicOperators';
+export * from './parsers/getExpressionParserCEL';
 export * from './parsers/getExpressionParserJSONata';
 export * from './parsers/getExpressionParserJsonLogic';
 export * from './parsers/getExpressionParserMongoDB';

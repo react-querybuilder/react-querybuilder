@@ -526,3 +526,25 @@ export const transformAliasInExpression = (
   const isPrimitive = isPrimitiveArrayUsage(expr, alias);
   return transformAliasInExpressionInternal(expr, alias, isPrimitive);
 };
+
+/** A CEL arithmetic infix node (`Addition`/`Subtraction`/`Multiplication`/`Division`/`Modulo`). */
+export const isCELMathOperation = (expr: CELExpression): boolean =>
+  expr.type === 'Addition' ||
+  expr.type === 'Subtraction' ||
+  expr.type === 'Multiplication' ||
+  expr.type === 'Division' ||
+  expr.type === 'Modulo';
+
+/**
+ * Whether a relation operand should be routed to `getExpression`: an arithmetic infix node, a
+ * `FunctionCall`, or a `ConditionalExpr` (`min`/`max` template) — optionally wrapped in one or
+ * more `ExpressionGroup`s. Bare identifiers, chains, and literals are not expression operands
+ * (they retain their normal handling).
+ */
+export const isCELExpressionOperand = (expr: CELExpression): boolean => {
+  const inner = isCELExpressionGroup(expr) ? expr.value : expr;
+  if (isCELExpressionGroup(inner)) return isCELExpressionOperand(inner);
+  return (
+    isCELMathOperation(inner) || inner.type === 'FunctionCall' || inner.type === 'ConditionalExpr'
+  );
+};

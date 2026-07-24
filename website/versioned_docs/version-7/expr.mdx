@@ -377,7 +377,7 @@ String-match operators (`contains`, `beginsWith`, `endsWith`, and their negation
 
 ## Import (parsing)
 
-Several export processors have an import-side mirror: a `getExpression` handler that turns arithmetic/function operands back into expression nodes. Each format supplies a ready-to-use handler bound to its built-in inverse (and a factory for custom operations). The [SQL](#sql), [JsonLogic](#jsonlogic), [JSONata](#jsonata), and [MongoDB](#mongodb) parsers are covered below.
+Several export processors have an import-side mirror: a `getExpression` handler that turns arithmetic/function operands back into expression nodes. Each format supplies a ready-to-use handler bound to its built-in inverse (and a factory for custom operations). The [SQL](#sql), [JsonLogic](#jsonlogic), [JSONata](#jsonata), [MongoDB](#mongodb), and [CEL](#cel) parsers are covered below.
 
 An operand on the left of the comparison becomes the rule's `lhs`; on the right it becomes `value` with `valueSource: 'expression'`. `between` bounds parse into a two-element `value` tuple. The handler auto-validates each node and returns `null`—dropping the rule—for unknown functions/operators, arity mismatches, or (via `ctx.fieldExists`) unknown field leaves.
 
@@ -492,6 +492,37 @@ const getExpression = getExpressionParserMongoDB(
 
 parseMongoDB({ $expr: { $gte: [{ $pow: ['$x', 2] }, 9] } }, { getExpression });
 ```
+
+### CEL
+
+`expressionParserCEL` is the ready-to-use handler for [`parseCEL`](./utils/import#cel), bound to the built-in CEL inverse. It handles arithmetic, function-call, and `min`/`max` template operands:
+
+```ts
+import { parseCEL } from '@react-querybuilder/core/parseCEL';
+import { expressionParserCEL } from '@react-querybuilder/expr';
+
+parseCEL('price > (cost * 2)', { getExpression: expressionParserCEL });
+// { field: 'price'..., operator: '>', valueSource: 'expression', value: { kind: 'func', fn: 'multiply', args: [...] } }
+```
+
+The infix arithmetic operators (`+ - * / %`) map back to their `fn` keys (`add`/`subtract`/`multiply`/`divide`/`mod`), and the emulated `min`/`max` templates (`(a < b ? a : b)` / `(a > b ? a : b)`) are recovered structurally; unknown operators/functions drop the rule. To parse custom functions, build a handler with `getExpressionParserCEL`, passing a partial inverse registry (function-call name → `fn` key) and matching arity metadata:
+
+```ts
+import { getExpressionParserCEL } from '@react-querybuilder/expr';
+
+const getExpression = getExpressionParserCEL(
+  { functions: { pow: 'pow' } },
+  { pow: { label: 'pow', arity: 2 } }
+);
+
+parseCEL('price > pow(cost, 2)', { getExpression });
+```
+
+:::note
+
+Unlike the other formats, `abs`/`upper`/`lower` are **not** invertible on the CEL import side: the CEL grammar cannot parse the unary-minus in the `abs` template (`(x < 0 ? -x : x)`) nor the empty-argument `.upperAscii()`/`.lowerAscii()` method calls the exporters emit. Rules using them are dropped on import.
+
+:::
 
 ## Validation
 
