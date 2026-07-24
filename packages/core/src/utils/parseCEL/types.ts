@@ -265,3 +265,17 @@ export interface ParsedCEL {
   nodeType: 'Main';
   value: CELExpression;
 }
+
+/**
+ * A CEL operand subtree that {@link parseCEL!ParseCELOptions.getExpression} may receive — an
+ * arithmetic infix node (`Addition`/`Subtraction`/`Multiplication`/`Division`/`Modulo`,
+ * optionally wrapped in an `ExpressionGroup`), a `FunctionCall`, or a `ConditionalExpr` (the
+ * `min`/`max` emulated template).
+ */
+export type CELExpressionOperand = CELExpression;
+
+/** Context passed to {@link parseCEL!ParseCELOptions.getExpression}. */
+export interface ParseCELExpressionContext {
+  /** Returns `true` if the field is configured (or if no `fields` were supplied). */
+  fieldExists: (fieldName: string) => boolean;
+}

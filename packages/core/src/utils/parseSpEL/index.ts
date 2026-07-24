@@ -6,3 +6,5 @@
  */
 
 export * from './parseSpEL';
+export * from './types';
+export * from './utils';

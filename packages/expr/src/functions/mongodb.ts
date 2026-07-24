@@ -19,3 +19,29 @@ export const defaultMongoDBSerializers: MongoAggSerializerRegistry = {
   upper: (_opts, x) => ({ $toUpper: x }),
   lower: (_opts, x) => ({ $toLower: x }),
 };
+
+/**
+ * Inverse of {@link defaultMongoDBSerializers}: maps MongoDB aggregation-operator names to
+ * `fn` keys for the import direction (parsing). Keyed by operator token (e.g. `$multiply`).
+ */
+export type MongoDBInverse = Record<string, string>;
+
+/** Built-in {@link MongoDBInverse} registry (mirror of {@link defaultMongoDBSerializers}). */
+export const defaultMongoDBInverse: MongoDBInverse = {
+  $add: 'add',
+  $subtract: 'subtract',
+  $multiply: 'multiply',
+  $divide: 'divide',
+  $min: 'min',
+  $max: 'max',
+  $abs: 'abs',
+  $mod: 'mod',
+  $toUpper: 'upper',
+  $toLower: 'lower',
+};
+
+/** Merges a custom {@link MongoDBInverse} over the built-in {@link defaultMongoDBInverse}. */
+export const mergeMongoDBInverse = (
+  base: MongoDBInverse,
+  custom?: MongoDBInverse
+): MongoDBInverse => ({ ...base, ...custom });

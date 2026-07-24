@@ -6,6 +6,7 @@ import type {
   DefaultRuleGroupTypeAny,
   DefaultRuleGroupTypeIC,
   DefaultRuleType,
+  ExpressionNode,
   RuleGroupType,
   RuleType,
 } from '../../types';
@@ -17,8 +18,20 @@ import { isPojo } from '../misc';
 import { objectKeys } from '../objectUtils';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import { prepareRuleGroup } from '../prepareQueryObjects';
-import type { MongoDbSupportedOperators } from './types';
-import { getRegExStr, isPrimitive, mongoDbToRqbOperatorMap } from './utils';
+import type {
+  MongoDBExpressionOperand,
+  MongoDbSupportedOperators,
+  ParseMongoDBExpressionContext,
+} from './types';
+import {
+  flipMongoDbOperator,
+  getRegExStr,
+  isMongoDBExpressionOperand,
+  isPrimitive,
+  mongoDbExprComparisonMap,
+  mongoDbFieldRef,
+  mongoDbToRqbOperatorMap,
+} from './utils';
 
 /**
  * Options object for {@link parseMongoDB}.
@@ -77,6 +90,16 @@ export interface ParseMongoDbOptions extends ParserCommonOptions {
       options: ParserCommonOptions
     ) => RuleType | RuleGroupType
   >;
+  /**
+   * Handler that converts a MongoDB aggregation-expression operand (within `$expr`) into an
+   * {@link ExpressionNode}. Return `null` to reject (the rule is dropped). Supplied by
+   * `@react-querybuilder/expr` (`expressionParserMongoDB`). When omitted, expression
+   * operands are ignored (rule dropped).
+   */
+  getExpression?: (
+    node: MongoDBExpressionOperand,
+    ctx: ParseMongoDBExpressionContext
+  ) => ExpressionNode | null;
 }
 
 const emptyRuleGroup: DefaultRuleGroupType = { combinator: 'and', rules: [] };
@@ -122,6 +145,7 @@ function parseMongoDB(
   const getValueSources = options.getValueSources;
   const additionalOperators = options.additionalOperators ?? {};
   const preventOperatorNegation = !!options.preventOperatorNegation;
+  const getExpression = options.getExpression;
   const { additionalOperators: _ao, ...otherOptions } = options;
 
   const fieldIsValid = (
@@ -136,6 +160,109 @@ function parseMongoDB(
       subordinateFieldName,
       getValueSources,
     });
+
+  const exprCtx: ParseMongoDBExpressionContext = {
+    fieldExists: fieldName => fieldsFlat.length === 0 || fieldsFlat.some(f => f.name === fieldName),
+  };
+
+  /**
+   * Parses a `$expr` payload that carries arithmetic/function expression operands. Returns a
+   * rule, `false` to drop, or `undefined` when the payload is not an expression form (so the
+   * caller falls through to the stock `$expr` handling).
+   */
+  function processMongoDbExprExpression(
+    op: string,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    payload: any
+  ): DefaultRuleType | false | undefined {
+    // v8 ignore next -- guarded at call site
+    if (!getExpression) return undefined;
+
+    // Comparison: { $gt: [lhs, rhs] } with an expression operand
+    if (op in mongoDbExprComparisonMap && Array.isArray(payload) && payload.length === 2) {
+      const [l, r] = payload;
+      const lIsExpr = isMongoDBExpressionOperand(l);
+      const rIsExpr = isMongoDBExpressionOperand(r);
+      if (!lIsExpr && !rIsExpr) return undefined;
+      const rqbOp = mongoDbExprComparisonMap[op];
+
+      if (lIsExpr && rIsExpr) {
+        // expression <op> expression → both sides on lhs/value
+        const lhs = getExpression(l, exprCtx);
+        const rhs = getExpression(r, exprCtx);
+        if (lhs && rhs) {
+          return { field: '', operator: rqbOp, lhs, value: rhs, valueSource: 'expression' };
+        }
+        return false;
+      }
+
+      if (rIsExpr) {
+        const field = mongoDbFieldRef(l);
+        if (field !== null) {
+          // field <op> expression → rhs expression
+          const node = getExpression(r, exprCtx);
+          if (node && fieldIsValid(field, rqbOp)) {
+            return { field, operator: rqbOp, value: node, valueSource: 'expression' };
+          }
+          return false;
+        }
+        // literal <op> expression → lhs = expression, flip operator
+        const node = getExpression(r, exprCtx);
+        if (node) {
+          return { field: '', operator: flipMongoDbOperator(rqbOp), lhs: node, value: l };
+        }
+        return false;
+      }
+
+      // lIsExpr && !rIsExpr
+      const field = mongoDbFieldRef(r);
+      if (field !== null) {
+        // expression <op> field → flip to field <op> expression
+        const flipped = flipMongoDbOperator(rqbOp);
+        const node = getExpression(l, exprCtx);
+        if (node && fieldIsValid(field, flipped)) {
+          return { field, operator: flipped, value: node, valueSource: 'expression' };
+        }
+        return false;
+      }
+      // expression <op> literal → lhs = expression, plain value
+      const node = getExpression(l, exprCtx);
+      if (node) {
+        return { field: '', operator: rqbOp, lhs: node, value: r };
+      }
+      return false;
+    }
+
+    // Between: { $and: [{ $gte: [lhs, from] }, { $lte: [lhs, to] }] }
+    // notBetween: { $or: [{ $lt: [lhs, from] }, { $gt: [lhs, to] }] }
+    if ((op === '$and' || op === '$or') && Array.isArray(payload) && payload.length === 2) {
+      const between = op === '$and';
+      const [c1, c2] = payload;
+      if (!isPojo(c1) || !isPojo(c2)) return undefined;
+      const k1 = objectKeys(c1)[0];
+      const k2 = objectKeys(c2)[0];
+      const [expK1, expK2] = between ? ['$gte', '$lte'] : ['$lt', '$gt'];
+      if (k1 !== expK1 || k2 !== expK2) return undefined;
+      const a1 = c1[k1];
+      const a2 = c2[k2];
+      if (!Array.isArray(a1) || a1.length !== 2 || !Array.isArray(a2) || a2.length !== 2) {
+        return undefined;
+      }
+      const field = mongoDbFieldRef(a1[0]);
+      if (field === null || field !== mongoDbFieldRef(a2[0])) return undefined;
+      const [from, to] = [a1[1], a2[1]];
+      if (!isMongoDBExpressionOperand(from) && !isMongoDBExpressionOperand(to)) return undefined;
+      const fromNode = getExpression(from, exprCtx);
+      const toNode = getExpression(to, exprCtx);
+      const operator: DefaultOperatorName = between ? 'between' : 'notBetween';
+      if (fromNode && toNode && fieldIsValid(field, operator)) {
+        return { field, operator, value: [fromNode, toNode], valueSource: 'expression' };
+      }
+      return false;
+    }
+
+    return undefined;
+  }
 
   function processMongoDbQueryBooleanOperator(
     field: string,
@@ -316,6 +443,10 @@ function parseMongoDB(
       return false;
     } else if (key === '$expr') {
       const op = objectKeys(keyValue)[0] as MongoDbSupportedOperators;
+      if (getExpression) {
+        const exprRule = processMongoDbExprExpression(op, keyValue[op]);
+        if (exprRule !== undefined) return exprRule;
+      }
       if (
         /^\$(eq|gte?|lte?|n?in)$/.test(op) &&
         Array.isArray(keyValue[op]) &&
@@ -344,6 +475,11 @@ function parseMongoDB(
             }
             return { ...tempRule, valueSource: 'field' };
           }
+        }
+        // An aggregation-object operand requires a `getExpression` handler; without one it
+        // cannot be represented, so drop the rule rather than emit an object-valued rule.
+        if (isPojo(keyValue[op][1])) {
+          return false;
         }
         return processMongoDbQueryBooleanOperator(field, op, keyValue[op][1]);
       }

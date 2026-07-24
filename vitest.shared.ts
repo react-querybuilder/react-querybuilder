@@ -13,6 +13,21 @@ export default {
   resolve: {
     alias: {
       'react-querybuilder': path.resolve(root, 'packages/react-querybuilder/src'),
+      '@react-querybuilder/core/parseCEL': path.resolve(root, 'packages/core/src/utils/parseCEL'),
+      '@react-querybuilder/core/parseJSONata': path.resolve(
+        root,
+        'packages/core/src/utils/parseJSONata'
+      ),
+      '@react-querybuilder/core/parseJsonLogic': path.resolve(
+        root,
+        'packages/core/src/utils/parseJsonLogic'
+      ),
+      '@react-querybuilder/core/parseMongoDB': path.resolve(
+        root,
+        'packages/core/src/utils/parseMongoDB'
+      ),
+      '@react-querybuilder/core/parseSpEL': path.resolve(root, 'packages/core/src/utils/parseSpEL'),
+      '@react-querybuilder/core/parseSQL': path.resolve(root, 'packages/core/src/utils/parseSQL'),
       '@react-querybuilder/core': path.resolve(root, 'packages/core/src'),
       '@rqb-testing': path.resolve(root, 'utils/testing'),
       '@rqb-dbpool': path.resolve(root, 'utils/testing/pglite'),

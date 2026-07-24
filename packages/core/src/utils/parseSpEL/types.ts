@@ -147,3 +147,20 @@ export interface SpELNullLiteral extends SpELProcessedExpression {
   type: 'null';
   value: null;
 }
+
+/**
+ * A SpEL operand subtree that {@link parseSpEL!ParseSpELOptions.getExpression} may receive — an
+ * arithmetic infix node (`op-plus`/`op-minus`/`op-multiply`/`op-divide`/`op-modulus`).
+ *
+ * NOTE: Only arithmetic infix operands reach `getExpression`. Function/method-based operations
+ * (`T(java.lang.Math).abs/min/max(...)`, `.toUpperCase()`/`.toLowerCase()`, and custom calls) are
+ * discarded by {@link parseSpEL!processCompiledExpression} — the SpEL `method`/`typeref`/`compound`
+ * nodes collapse to `invalid` with no children before parsing — so they are not invertible.
+ */
+export type SpELExpressionOperand = SpELProcessedExpression;
+
+/** Context passed to {@link parseSpEL!ParseSpELOptions.getExpression}. */
+export interface ParseSpELExpressionContext {
+  /** Returns `true` if the field is configured (or if no `fields` were supplied). */
+  fieldExists: (fieldName: string) => boolean;
+}

@@ -6,3 +6,5 @@
  */
 
 export * from './parseJsonLogic';
+export * from './types';
+export { isJsonLogicExpressionOperand, isRQBJsonLogicVar } from './utils';

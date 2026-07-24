@@ -123,3 +123,16 @@ export interface JSONataList extends JSONataExprNode {
   value: '[';
   expressions: JSONataExprNode[];
 }
+
+/**
+ * A JSONata operand subtree that {@link parseJSONata!ParseJSONataOptions.getExpression} may
+ * receive — an arithmetic infix node (`+ - * / %`) or a function-call node
+ * (`$abs`/`$min`/`$max`/`$uppercase`/`$lowercase`, etc.).
+ */
+export type JSONataExpressionOperand = JSONataExprNode;
+
+/** Context passed to {@link parseJSONata!ParseJSONataOptions.getExpression}. */
+export interface ParseJSONataExpressionContext {
+  /** Returns `true` if the field is configured (or if no `fields` were supplied). */
+  fieldExists: (fieldName: string) => boolean;
+}
