@@ -526,7 +526,7 @@ Unlike the other formats, `abs`/`upper`/`lower` are **not** invertible on the CE
 
 ### SpEL
 
-`expressionParserSpEL` is the ready-to-use handler for [`parseSpEL`](./utils/import#spring-expression-language-spel), bound to the built-in SpEL inverse. It handles infix arithmetic operands:
+`expressionParserSpEL` is the ready-to-use handler for [`parseSpEL`](./utils/import#spring-expression-language-spel), bound to the built-in SpEL inverse. It handles infix arithmetic, method call, and function call operands:
 
 ```ts
 import { parseSpEL } from '@react-querybuilder/core/parseSpEL';
@@ -534,24 +534,37 @@ import { expressionParserSpEL } from '@react-querybuilder/expr';
 
 parseSpEL('price > (cost * 2)', { getExpression: expressionParserSpEL });
 // { field: 'price'..., operator: '>', valueSource: 'expression', value: { kind: 'func', fn: 'multiply', args: [...] } }
+
+parseSpEL('price > T(java.lang.Math).abs(cost)', { getExpression: expressionParserSpEL });
+// { field: 'price'..., operator: '>', valueSource: 'expression', value: { kind: 'func', fn: 'abs', args: [...] } }
 ```
 
-The infix arithmetic operators (`+ - * / %`) map back to their `fn` keys (`add`/`subtract`/`multiply`/`divide`/`mod`); unknown operators drop the rule. To parse custom operations, build a handler with `getExpressionParserSpEL`, passing a partial inverse registry (arithmetic-operator token → `fn` key) and matching arity metadata:
+The infix arithmetic operators (`+ - * / %`) map back to their `fn` keys (`add`/`subtract`/`multiply`/`divide`/`mod`), `T(java.lang.Math).abs/min/max(...)` static calls map to `abs`/`min`/`max`, and the `.toUpperCase()`/`.toLowerCase()` instance methods map to `upper`/`lower` (the receiver becomes the function's sole argument). Unknown operators, functions, and methods drop the rule.
+
+To parse custom operations, build a handler with `getExpressionParserSpEL`, passing a partial inverse registry and matching arity metadata. The registry has three maps: `operators` (arithmetic node type → `fn` key), `functions` (static/bare call name → `fn` key), and `methods` (instance method name → `fn` key):
 
 ```ts
 import { getExpressionParserSpEL } from '@react-querybuilder/expr';
 
 const getExpression = getExpressionParserSpEL(
-  { operators: { '*': 'scale' } },
-  { scale: { label: 'scale', arity: 2 } }
+  {
+    operators: { 'op-multiply': 'scale' },
+    functions: { pow: 'pow' },
+    methods: { trim: 'trim' },
+  },
+  {
+    scale: { label: 'scale', arity: 2 },
+    pow: { label: 'pow', arity: 2 },
+    trim: { label: 'trim', arity: 1 },
+  }
 );
 
-parseSpEL('price > (cost * 2)', { getExpression });
+parseSpEL('price > pow(cost, 2)', { getExpression });
 ```
 
 :::note
 
-Function and method call operands are **not** invertible on the SpEL import side. The core SpEL processor collapses method invocations, type references, and non-identifier compound nodes (`T(java.lang.Math).abs(cost)`, `name.toUpperCase()`, `pow(cost, 2)`) to invalid nodes with no children, so `abs`/`min`/`max`/`upper`/`lower` and custom functions cannot be recovered. Rules using them are dropped on import; a custom `operators` inverse can only override the five built-in arithmetic mappings.
+`min`/`max` are exported as nested binary calls (`T(java.lang.Math).min(T(java.lang.Math).min(a, b), c)`), so re-importing a call with three or more arguments produces nested two-argument nodes rather than a single variadic node.
 
 :::
 

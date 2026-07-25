@@ -20,21 +20,17 @@ export const defaultSpELSerializers: SQLSerializerRegistry = {
 
 /**
  * Inverse of {@link defaultSpELSerializers} for the import direction (parsing). `operators` maps
- * SpEL arithmetic node types (`op-plus`/`op-minus`/`op-multiply`/`op-divide`/`op-modulus`) to
- * `fn` keys.
- *
- * NOTE: Only arithmetic infix operators are invertible. The function/method-based operations
- * (`abs`/`min`/`max` via `T(java.lang.Math)`, `upper`/`lower` via `.toUpperCase()`/`.toLowerCase()`,
- * and any custom function) are **not** invertible: core's SpEL processing collapses `method`/
- * `typeref`/`compound` nodes to `invalid` with no children before the parser runs, so those
- * operands never reach the import handler. Supporting them would require preserving those nodes
- * during processing (see the TODO in `@react-querybuilder/core`'s `parseSpEL` utils).
+ * SpEL arithmetic node types (`op-plus`/`op-minus`/`op-divide`/`op-multiply`/`op-modulus`) to
+ * `fn` keys, `functions` maps static/bare call names (`T(java.lang.Math).abs(...)`, `myFunc(...)`)
+ * to `fn` keys, and `methods` maps instance method names (`.toUpperCase()`) to `fn` keys.
  */
 export interface SpELInverse {
   operators: Record<string, string>;
+  functions: Record<string, string>;
+  methods: Record<string, string>;
 }
 
-/** Built-in {@link SpELInverse} registry (mirror of the invertible {@link defaultSpELSerializers}). */
+/** Built-in {@link SpELInverse} registry (mirror of {@link defaultSpELSerializers}). */
 export const defaultSpELInverse: SpELInverse = {
   operators: {
     'op-plus': 'add',
@@ -42,6 +38,15 @@ export const defaultSpELInverse: SpELInverse = {
     'op-multiply': 'multiply',
     'op-divide': 'divide',
     'op-modulus': 'mod',
+  },
+  functions: {
+    abs: 'abs',
+    min: 'min',
+    max: 'max',
+  },
+  methods: {
+    toUpperCase: 'upper',
+    toLowerCase: 'lower',
   },
 };
 
@@ -51,4 +56,6 @@ export const mergeSpELInverse = (
   custom?: Partial<SpELInverse>
 ): SpELInverse => ({
   operators: { ...base.operators, ...custom?.operators },
+  functions: { ...base.functions, ...custom?.functions },
+  methods: { ...base.methods, ...custom?.methods },
 });

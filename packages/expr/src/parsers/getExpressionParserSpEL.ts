@@ -12,6 +12,8 @@ import { parseSpELExpression } from '../utils/parseSpELExpression';
 const inverseKnownSet = (inverse: SpELInverse): Record<string, true> => {
   const known: Record<string, true> = {};
   for (const fn of Object.values(inverse.operators)) known[fn] = true;
+  for (const fn of Object.values(inverse.functions)) known[fn] = true;
+  for (const fn of Object.values(inverse.methods)) known[fn] = true;
   return known;
 };
 
@@ -23,14 +25,14 @@ export type SpELExpressionParser = (
 
 /**
  * Generates a `getExpression` handler for {@link @react-querybuilder/core/parseSpEL!parseSpEL}.
- * Pass `customInverse` to add arithmetic operators or override built-ins (merged over
- * {@link defaultSpELInverse}), and `customMeta` to supply arity metadata. The returned handler
- * builds an {@link ExpressionNode} from a SpEL operand subtree and auto-validates it, returning
- * `null` (rule dropped) for unknown operators or arity mismatches — the import-side mirror of
- * {@link getExpressionRuleProcessorSpEL}.
+ * Pass `customInverse` to add arithmetic operators, functions, or methods (or override built-ins;
+ * merged over {@link defaultSpELInverse}), and `customMeta` to supply arity metadata. The returned
+ * handler builds an {@link ExpressionNode} from a SpEL operand subtree and auto-validates it,
+ * returning `null` (rule dropped) for unknown operators or arity mismatches — the import-side
+ * mirror of {@link getExpressionRuleProcessorSpEL}.
  *
- * Note: only arithmetic infix operands are supported; `abs`/`min`/`max`/`upper`/`lower` and custom
- * functions are not invertible (core's SpEL processing discards those nodes).
+ * Note: `min`/`max` serialize as nested binary calls, so a re-imported `min`/`max` of three or more
+ * arguments comes back as a nested pair of two-argument calls rather than a single variadic call.
  */
 export const getExpressionParserSpEL = (
   customInverse?: Partial<SpELInverse>,

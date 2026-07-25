@@ -8,6 +8,8 @@ import type {
   SpELExpressionNode,
   SpELIdentifier,
   SpELListNode,
+  SpELMethodCall,
+  SpELMethodNode,
   SpELNodeType,
   SpELNullLiteral,
   SpELNumericLiteral,
@@ -17,6 +19,7 @@ import type {
   SpELPrimitive,
   SpELProcessedExpression,
   SpELPropertyNode,
+  SpELQualifiedIdentifierNode,
   SpELRelOpType,
   SpELRelation as SpELRelationOp,
   SpELStringLiteral,
@@ -42,7 +45,8 @@ export const isSpELOpMatches = (expr: SpELProcessedExpression): expr is SpELOpMa
     (isSpELIdentifier(expr.children[1]) && isSpELStringLiteral(expr.children[0])) ||
     (isSpELIdentifier(expr.children[0]) && isSpELIdentifier(expr.children[1])));
 export const isSpELIdentifier = (expr: SpELProcessedExpression): expr is SpELIdentifier =>
-  expr.type === 'property' || expr.type === 'variable' || expr.type === 'compound';
+  (expr.type === 'property' || expr.type === 'variable' || expr.type === 'compound') &&
+  expr.identifier !== null;
 export const isSpELStringLiteral = (expr: SpELProcessedExpression): expr is SpELStringLiteral =>
   expr.type === 'string';
 export const isSpELNumericLiteral = (expr: SpELProcessedExpression): expr is SpELNumericLiteral =>
@@ -84,24 +88,115 @@ export const isSpELMathOperation = (expr: SpELProcessedExpression): boolean =>
   expr.type === 'op-divide' ||
   expr.type === 'op-modulus';
 
+/** A method/function invocation node (`.toUpperCase()`, `T(java.lang.Math).abs(x)`, `myFunc(a)`). */
+export const isSpELMethodCall = (expr: SpELProcessedExpression): expr is SpELMethodCall =>
+  expr.type === 'method' && typeof expr.methodName === 'string';
+
 /**
- * Whether a relation operand should be routed to `getExpression`: an arithmetic infix node.
- * Bare identifiers, chains, and literals are not expression operands (they retain their normal
- * handling).
- *
- * TODO: Function/method-based operations (`T(java.lang.Math).abs/min/max(...)`,
- * `.toUpperCase()`/`.toLowerCase()`, and custom calls) are not detectable here because
- * {@link processCompiledExpression} collapses SpEL `method`/`typeref`/`compound` nodes to
- * `invalid` with no children. Supporting them would require preserving those nodes during
- * processing (and routing the raw compiled operand to `getExpression`).
+ * Whether a relation operand should be routed to `getExpression`: an arithmetic infix node or a
+ * method/function invocation. Bare identifiers, chains, and literals are not expression operands
+ * (they retain their normal handling).
  */
 export const isSpELExpressionOperand = (expr: SpELProcessedExpression): boolean =>
-  isSpELMathOperation(expr);
+  isSpELMathOperation(expr) || isSpELMethodCall(expr);
+
+export const isSpELMethodNode = (expr: SpELBaseNode<SpELNodeType>): expr is SpELMethodNode =>
+  expr.getType() === 'method';
+
+/**
+ * Builds a {@link SpELMethodCall} from a SpEL `method` node. Arguments are stored on the
+ * compiled node's `getRaw()` payload (not as children), so they are processed from there.
+ */
+const processMethodNode = (
+  mn: SpELMethodNode,
+  target: SpELProcessedExpression | null,
+  typeRef: string | null
+): SpELMethodCall => {
+  const { methodName, args } = mn.getRaw();
+  return {
+    type: 'method',
+    children: args.map(a => processCompiledExpression(a)),
+    startPosition: mn.getStartPosition(),
+    endPosition: mn.getEndPosition(),
+    value: 'N/A',
+    identifier: null,
+    methodName,
+    target,
+    typeRef,
+  };
+};
+
+/**
+ * Processes a SpEL `compound` node that invokes one or more methods, e.g. `name.toUpperCase()`,
+ * `a.b.toLowerCase()`, `(a + b).toUpperCase()`, or `T(java.lang.Math).abs(cost)`. Leading
+ * property/variable children are collapsed into a dotted receiver identifier, a leading `typeref`
+ * becomes the `typeRef` of the first call, and each subsequent `method` child wraps the previous
+ * result as its `target`. Returns `null` for chain shapes that can't be represented.
+ */
+const processMethodChain = (ce: SpELExpressionNode): SpELMethodCall | null => {
+  const children = ce.getChildren();
+  if (!children.some(c => isSpELMethodNode(c))) {
+    return null;
+  }
+
+  let index = 0;
+  let target: SpELProcessedExpression | null = null;
+  let typeRef: string | null = null;
+  const first = children[0];
+
+  if (first.getType() === 'typeref') {
+    const qualifiedIdentifier = first.getChildren()[0] as unknown as SpELQualifiedIdentifierNode;
+    typeRef = qualifiedIdentifier.getRaw().join('.');
+    index = 1;
+  } else if (isSpELPropertyNode(first)) {
+    const parts: string[] = [];
+    while (index < children.length && isSpELPropertyNode(children[index])) {
+      parts.push((children[index] as unknown as SpELPropertyNode).getRaw());
+      ++index;
+    }
+    target = {
+      type: parts.length > 1 ? 'compound' : first.getType(),
+      children: [],
+      startPosition: first.getStartPosition(),
+      endPosition: children[index - 1].getEndPosition(),
+      value: 'N/A',
+      identifier: parts.join('.'),
+    };
+  } else {
+    // Arbitrary receiver subtree, e.g. `(a + b).toUpperCase()`
+    target = processCompiledExpression(first);
+    index = 1;
+  }
+
+  let result: SpELMethodCall | null = null;
+  for (; index < children.length; ++index) {
+    const child = children[index];
+    if (!isSpELMethodNode(child)) {
+      return null;
+    }
+    result = processMethodNode(child, result ?? target, result ? null : typeRef);
+  }
+  return result;
+};
 
 export const processCompiledExpression = (
   ce: SpELPropertyNode | SpELExpressionNode
 ): SpELProcessedExpression => {
   const type = ce.getType();
+
+  // Bare function calls, e.g. `myFunc(a, b)`
+  if (isSpELMethodNode(ce)) {
+    return processMethodNode(ce, null, null);
+  }
+
+  // Method chains, e.g. `name.toUpperCase()` or `T(java.lang.Math).abs(cost)`
+  if (type === 'compound' && !isSpELCompoundNode(ce)) {
+    const methodChain = processMethodChain(ce);
+    if (methodChain) {
+      return methodChain;
+    }
+  }
+
   const identifier = isSpELCompoundNode(ce)
     ? ce
         .getChildren()

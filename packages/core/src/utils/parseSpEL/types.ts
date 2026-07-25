@@ -78,6 +78,17 @@ export interface SpELListNode extends SpELBaseNode<'list'> {
 export interface SpELCompoundNode extends SpELBaseNode<SpELIdentifierType> {
   getChildren: () => SpELPropertyNode[];
 }
+/**
+ * A SpEL method/function invocation node. Note that arguments are _not_ children — they are
+ * exposed as raw (unprocessed) nodes through `getRaw()`.
+ */
+export interface SpELMethodNode extends SpELBaseNode<'method'> {
+  getRaw: () => { methodName: string; args: SpELExpressionNode[] };
+}
+/** The dotted segments of a `T(...)` type reference, e.g. `["java", "lang", "Math"]`. */
+export interface SpELQualifiedIdentifierNode extends SpELBaseNode<'qualifiedidentifier'> {
+  getRaw: () => string[];
+}
 export interface SpELExpressionNode extends SpELBaseNode<SpELNodeType> {
   getChildren: () => SpELExpressionNode[];
 }
@@ -89,6 +100,24 @@ export interface SpELProcessedExpression {
   startPosition: number;
   endPosition: number;
   identifier: string | null;
+  /** Method/function name, present when `type` is `"method"`. */
+  methodName?: string;
+  /**
+   * The receiver of an instance method call (e.g. `name` in `name.toUpperCase()`), or `null` for
+   * static (`T(...)`) and bare function calls.
+   */
+  target?: SpELProcessedExpression | null;
+  /** Dotted type name of a `T(...)` static call target, e.g. `"java.lang.Math"`. */
+  typeRef?: string | null;
+}
+/**
+ * A method/function invocation. Arguments are stored as `children`; instance-call receivers are
+ * stored as {@link SpELProcessedExpression.target}, and static-call types as
+ * {@link SpELProcessedExpression.typeRef}.
+ */
+export interface SpELMethodCall extends SpELProcessedExpression {
+  type: 'method';
+  methodName: string;
 }
 export interface SpELOpAnd extends SpELProcessedExpression {
   type: 'op-and';
@@ -149,13 +178,10 @@ export interface SpELNullLiteral extends SpELProcessedExpression {
 }
 
 /**
- * A SpEL operand subtree that {@link parseSpEL!ParseSpELOptions.getExpression} may receive — an
- * arithmetic infix node (`op-plus`/`op-minus`/`op-multiply`/`op-divide`/`op-modulus`).
- *
- * NOTE: Only arithmetic infix operands reach `getExpression`. Function/method-based operations
- * (`T(java.lang.Math).abs/min/max(...)`, `.toUpperCase()`/`.toLowerCase()`, and custom calls) are
- * discarded by {@link parseSpEL!processCompiledExpression} — the SpEL `method`/`typeref`/`compound`
- * nodes collapse to `invalid` with no children before parsing — so they are not invertible.
+ * A SpEL operand subtree that {@link parseSpEL!ParseSpELOptions.getExpression} may receive — either
+ * an arithmetic infix node (`op-plus`/`op-minus`/`op-multiply`/`op-divide`/`op-modulus`) or a
+ * method/function invocation ({@link SpELMethodCall}), which covers `T(java.lang.Math).abs/min/max(...)`,
+ * `.toUpperCase()`/`.toLowerCase()`, and custom calls like `myFunc(a, b)`.
  */
 export type SpELExpressionOperand = SpELProcessedExpression;
 

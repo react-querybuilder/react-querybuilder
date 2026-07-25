@@ -44,12 +44,13 @@ import {
  */
 export interface ParseSpELOptions extends ParserCommonOptions {
   /**
-   * Handler that converts a SpEL arithmetic operand subtree into an {@link ExpressionNode}.
+   * Handler that converts a SpEL expression operand subtree into an {@link ExpressionNode}.
    * Return `null` to reject (the rule is dropped). Supplied by `@react-querybuilder/expr`
    * (`expressionParserSpEL`). When omitted, expression operands are ignored (rule dropped).
    *
-   * NOTE: Only arithmetic infix operands are supported; function/method-based operations are
-   * discarded during SpEL processing and cannot be imported. See {@link SpELExpressionOperand}.
+   * Arithmetic infix operands and method/function invocations
+   * (`T(java.lang.Math).abs/min/max(...)`, `.toUpperCase()`/`.toLowerCase()`, and custom calls)
+   * are both supported. See {@link SpELExpressionOperand}.
    */
   getExpression?: (
     node: SpELExpressionOperand,
@@ -280,7 +281,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       let flip = false;
       const [left, right] = expr.children;
 
-      // Arithmetic expression operands (from `@react-querybuilder/expr`)
+      // Arithmetic and method/function expression operands (from `@react-querybuilder/expr`)
       if (getExpression) {
         const leftIsExpr = isSpELExpressionOperand(left);
         const rightIsExpr = isSpELExpressionOperand(right);
