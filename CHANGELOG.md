@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.21.0] - 2026-07-25
+
 ### Added
+
+#### Miscellaneous
 
 - [#1059] The `update`/`updateInPlace` query tools can now update multiple properties of a rule or group in a single call, either with a property-to-value map (`update(query, { valueSource: 'field', value: 'otherField' }, pathOrID)`) or with parallel arrays of property names and values (`update(query, ['valueSource', 'value'], ['field', 'otherField'], pathOrID)`). Properties are applied in a canonical order (`field`/`operator`/`valueSource` before `value`) so an explicitly-provided `value` is never reset by a change to one of those properties. The original single-property signature is unchanged.
 
@@ -2371,7 +2377,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.2...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.0...HEAD
+[v8.21.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.2...v8.21.0
 [v8.20.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.1...v8.20.2
 [v8.20.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.0...v8.20.1
 [v8.20.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.19.1...v8.20.0
