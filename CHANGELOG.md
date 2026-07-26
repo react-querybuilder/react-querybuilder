@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Params for `prepareOptionList` are now accepted in `getOptionListsAsync` and passed directly to `prepareOptionList` when called.
 
+### Fixed
+
+- [#1067] Refactored SCSS to avoid `if()` deprecation warnings.
+
 ## [v8.21.0] - 2026-07-25
 
 ### Added
@@ -2374,6 +2378,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1064]: https://github.com/react-querybuilder/react-querybuilder/pull/1064
 [#1065]: https://github.com/react-querybuilder/react-querybuilder/pull/1065
 [#1066]: https://github.com/react-querybuilder/react-querybuilder/pull/1066
+[#1067]: https://github.com/react-querybuilder/react-querybuilder/pull/1067
 
 <!-- #endregion -->
 

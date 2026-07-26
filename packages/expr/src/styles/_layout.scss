@@ -22,8 +22,13 @@
 // the glyphs in RTL (see `_main.scss`) -- so only the physical margin side flips for
 // direction. Selectors mirror those in `_main.scss` exactly.
 @mixin bracket-comma-styles($direction) {
-  $open-side: if($direction == rtl, left, right);
-  $rest-side: if($direction == rtl, right, left);
+  $open-side: right;
+  $rest-side: left;
+
+  @if $direction == rtl {
+    $open-side: left;
+    $rest-side: right;
+  }
 
   // Open paren hugs the first arg.
   .expr-func > .expr-fn + .expr-node:before {
