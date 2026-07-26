@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- Params for `prepareOptionList` are now accepted in `getOptionListsAsync` and passed directly to `prepareOptionList` when called.
 
 ## [v8.21.0] - 2026-07-25
 

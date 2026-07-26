@@ -3,6 +3,7 @@ import type {
   FlexibleOptionListProp,
   FullOption,
   FullOptionList,
+  PrepareOptionListParams,
   RuleGroupTypeAny,
   RuleType,
 } from '@react-querybuilder/core';
@@ -13,24 +14,34 @@ import type { AsyncOptionListsSliceState } from './types';
 
 export const DEFAULT_CACHE_TTL = 1_800_000; // 30 minutes
 
+export interface GetOptionListsAsyncParams extends PrepareOptionListParams<FullOption> {
+  cacheKey: string;
+  cacheTTL?: number;
+  value: string | undefined;
+  ruleOrGroup?: RuleType | RuleGroupTypeAny;
+  loadOptionList: (
+    value: string | undefined,
+    meta: { ruleOrGroup?: RuleType | RuleGroupTypeAny }
+  ) => Promise<FlexibleOptionListProp<BaseOption>>;
+}
+
 // Generic async thunk for fetching with cache check
 export const getOptionListsAsync: AsyncThunk<
   { cacheKey: string; data: FullOptionList<FullOption>; fromCache: boolean },
-  {
-    cacheKey: string;
-    cacheTTL?: number;
-    value: string | undefined;
-    ruleOrGroup?: RuleType | RuleGroupTypeAny;
-    loadOptionList: (
-      value: string | undefined,
-      meta: { ruleOrGroup?: RuleType | RuleGroupTypeAny }
-    ) => Promise<FlexibleOptionListProp<BaseOption>>;
-  },
+  GetOptionListsAsyncParams,
   AsyncThunkConfig
 > = createAsyncThunk(
   'asyncOptionLists/asyncOptionListsThunk',
   async (params, { getState, rejectWithValue }) => {
-    const { cacheKey, cacheTTL, value, loadOptionList } = params;
+    const {
+      cacheKey,
+      cacheTTL,
+      value,
+      loadOptionList,
+      ruleOrGroup: _rg,
+      optionList: _ol,
+      ...prepareOptionListParams
+    } = params;
     const state = getState() as { asyncOptionLists: AsyncOptionListsSliceState };
     const cached = state.asyncOptionLists.cache[cacheKey];
 
@@ -46,8 +57,10 @@ export const getOptionListsAsync: AsyncThunk<
 
     try {
       const rawList = await loadOptionList(value, params);
-      // TODO?: accept additional params for this function
-      const data = prepareOptionList({ optionList: rawList }).optionList;
+      const data = prepareOptionList({
+        ...prepareOptionListParams,
+        optionList: rawList,
+      }).optionList;
       return { cacheKey, data, fromCache: false };
     } catch (error) {
       return rejectWithValue((error as Error).message);
