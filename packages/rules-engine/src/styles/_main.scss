@@ -44,8 +44,13 @@
 
 /* #region Branch styles */
 @mixin branch-styles($direction) {
-  $before-after: if($direction == rtl, after, before);
-  $border-side: if($direction == rtl, right, left);
+  $before-after: before;
+  $border-side: left;
+
+  @if $direction == rtl {
+    $before-after: after;
+    $border-side: right;
+  }
 
   .queryBuilder,
   .consequentBuilder,

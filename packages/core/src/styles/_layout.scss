@@ -85,9 +85,15 @@
 
 /* #region Branches */
 @mixin branch-layout-styles($direction) {
-  $ltr-after: if($direction == rtl, before, after);
-  $ltr-before: if($direction == rtl, after, before);
-  $margin-side: if($direction == rtl, right, left);
+  $ltr-after: after;
+  $ltr-before: before;
+  $margin-side: left;
+
+  @if $direction == rtl {
+    $ltr-after: before;
+    $ltr-before: after;
+    $margin-side: right;
+  }
 
   .ruleGroup-body {
     margin-#{$margin-side}: calc(2 * var(--#{$rqb-var-prefix}branch-indent));
@@ -191,7 +197,11 @@
 
 /* #region Justified */
 @mixin justified-auto-margin($direction) {
-  $margin-side: if($direction == rtl, right, left);
+  $margin-side: left;
+
+  @if $direction == rtl {
+    $margin-side: right;
+  }
 
   .ruleGroup-combinators,
   .ruleGroup-notToggle,

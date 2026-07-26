@@ -59,9 +59,15 @@
 
 /* #region Branches */
 @mixin branch-layout-styles($direction) {
-  $ltr-after: if($direction == rtl, before, after);
-  $ltr-before: if($direction == rtl, after, before);
-  $margin-side: if($direction == rtl, right, left);
+  $ltr-after: after;
+  $ltr-before: before;
+  $margin-side: left;
+
+  @if $direction == rtl {
+    $ltr-after: before;
+    $ltr-before: after;
+    $margin-side: right;
+  }
 
   .rulesEngineBuilder-body,
   .conditionBuilder-body {
