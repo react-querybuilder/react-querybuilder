@@ -9,7 +9,6 @@ import { getOption } from '../optGroupUtils';
  *
  * @group Export
  */
-// TODO?: make this configurable
 export const prismaFallback = {} as const;
 
 /**

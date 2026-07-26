@@ -104,8 +104,7 @@ describe('MantineValueSelector', () => {
       />
     );
     await user.click(screen.getByRole('combobox').querySelector('button')!);
-    // TODO: find out why this fails
-    // expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt2');
+    expect(handleOnChange).toHaveBeenNthCalledWith(2, 'opt2');
   });
 
   it('handles multiselect', async () => {

@@ -22,7 +22,6 @@ import {
  * @group Export
  */
 export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, meta) => {
-  // TODO?: test for this so we don't have to ignore it
   // v8 ignore next
   const {
     fieldData,

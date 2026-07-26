@@ -33,7 +33,7 @@ export const parseNumber = (
   }
 
   const valAsNum: number | bigint =
-    // TODO: Should these options be configurable?
+    // TODO?: Make these options configurable
     numericQuantity(val, {
       allowTrailingInvalid: parseNumbers === 'enhanced',
       bigIntOnOverflow,

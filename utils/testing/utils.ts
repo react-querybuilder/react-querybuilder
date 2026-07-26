@@ -116,24 +116,8 @@ export const isOrInheritsChecked = (el: HTMLElement | null, attempt = 1): boolea
   return false;
 };
 
-export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> => {
-  const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
-  // TODO: figure out a way to avoid these wrapper functions.
-  // See https://kcd.im/react-act
-  const click: (typeof userEvent)['click'] = async el =>
-    act(async () => {
-      await user.click(el);
-    });
-  const type: (typeof userEvent)['type'] = async (el, txt) =>
-    act(async () => {
-      await user.type(el, txt);
-    });
-  const selectOptions: (typeof userEvent)['selectOptions'] = async (el, opts) =>
-    act(async () => {
-      await user.selectOptions(el, opts);
-    });
-  return { ...user, click, selectOptions, type };
-};
+export const userEventSetup = (): ReturnType<(typeof userEvent)['setup']> =>
+  userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
 
 export const consoleMocks = (): {
   consoleError: Mock;
@@ -145,28 +129,6 @@ export const consoleMocks = (): {
   consoleWarn: Mock;
   consoleWarnActual: typeof console.warn;
 } => {
-  // TODO: This version works for Vitest. Not sure about bun:test yet.
-  /*
-  const consoleLog = vi.spyOn(console, 'log');
-  const consoleError = vi.spyOn(console, 'error');
-  const consoleInfo = vi.spyOn(console, 'info');
-  const consoleWarn = vi.spyOn(console, 'warn');
-
-  afterEach(() => {
-    consoleError.mockReset();
-    consoleInfo.mockReset();
-    consoleLog.mockReset();
-    consoleWarn.mockReset();
-  });
-
-  return {
-    consoleError,
-    consoleInfo,
-    consoleLog,
-    consoleWarn,
-  };
-  */
-
   const consoleErrorActual = console.error;
   const consoleInfoActual = console.info;
   const consoleLogActual = console.log;
