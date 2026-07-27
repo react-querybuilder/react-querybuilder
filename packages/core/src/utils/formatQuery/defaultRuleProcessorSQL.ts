@@ -3,7 +3,12 @@ import { lc } from '../misc';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorSQL } from './defaultRuleGroupProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
-import { getQuotedFieldName, mapSQLOperator, processMatchMode } from './utils';
+import {
+  getQuotedFieldName,
+  getSubqueryElementAlias,
+  mapSQLOperator,
+  processMatchMode,
+} from './utils';
 
 /**
  * Default operator processor used by {@link formatQuery} for "sql" and "parameterized*" formats.
@@ -42,14 +47,14 @@ export const defaultRuleProcessorSQL: RuleProcessor = (rule, opts = {}) => {
 
     const { mode, threshold } = matchEval;
 
-    // TODO?: Randomize this alias
-    const arrayElementAlias = 'elem_alias';
+    const subqueryDepth = opts.subqueryDepth ?? 0;
+    const arrayElementAlias = getSubqueryElementAlias(subqueryDepth);
 
     const nestedArrayFilter = defaultRuleGroupProcessorSQL(
       transformQuery(rule.value as RuleGroupType, {
         ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
       }),
-      opts as FormatQueryFinalOptions
+      { ...(opts as FormatQueryFinalOptions), subqueryDepth: subqueryDepth + 1 }
     );
 
     switch (mode) {

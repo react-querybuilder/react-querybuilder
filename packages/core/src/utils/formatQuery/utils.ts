@@ -475,6 +475,24 @@ export const processMatchMode = (rule: RuleType): null | false | ProcessedMatchM
 };
 
 /**
+ * Base alias assigned to the element binding of a subquery generated for a rule's
+ * {@link MatchMode `match` mode} (e.g. `unnest(field) as elem_alias`).
+ */
+export const subqueryElementAliasBase = 'elem_alias';
+
+/**
+ * Returns the element alias for a subquery at the given nesting depth. Depth 0 (the common,
+ * non-nested case) uses {@link subqueryElementAliasBase} unchanged; deeper levels are suffixed
+ * with the depth, so a subquery nested within a subquery cannot shadow its parent's binding.
+ *
+ * Deterministic by depth rather than randomized, so output remains stable and snapshot-friendly.
+ *
+ * @group Export
+ */
+export const getSubqueryElementAlias = (subqueryDepth = 0): string =>
+  subqueryDepth > 0 ? `${subqueryElementAliasBase}_${subqueryDepth}` : subqueryElementAliasBase;
+
+/**
  * "Replacer" method for JSON.stringify's second argument. Converts `bigint` values to
  * objects with a `$bigint` property having a value of a string representation of
  * the actual `bigint`-type value.

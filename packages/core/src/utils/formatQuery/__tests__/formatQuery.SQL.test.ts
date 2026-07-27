@@ -29,6 +29,7 @@ import {
   queryForXor,
   queryIC,
   queryWithMatchModes,
+  queryWithNestedMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 import { defaultValueProcessor, defaultValueProcessorByRule } from '../index';
@@ -106,6 +107,18 @@ it('formats SQL correctly', () => {
   );
   expect(formatQuery(queryWithMatchModes, { preset: 'postgresql' })).toBe(sqlStringForMatchModes);
   expect(formatQuery(queryWithMatchModes, 'sql')).toBe(`(1 = 1)`);
+});
+
+it('assigns a distinct element alias to each subquery nesting level', () => {
+  expect(formatQuery(queryWithNestedMatchModes, { preset: 'postgresql' })).toBe(
+    `(exists (select 1 from unnest("fs") as "elem_alias" where ((select count(*) from unnest("elem_alias") as "elem_alias_1" where ("elem_alias_1" like '%S%')) = array_length("elem_alias", 1))))`
+  );
+  expect(
+    formatQuery(queryWithNestedMatchModes, { format: 'parameterized', preset: 'postgresql' })
+  ).toEqual({
+    sql: `(exists (select 1 from unnest("fs") as "elem_alias" where ((select count(*) from unnest("elem_alias") as "elem_alias_1" where ("elem_alias_1" like $1)) = array_length("elem_alias", 1))))`,
+    params: ['%S%'],
+  });
 });
 
 it('assumes "sql" format when preset matches a SQL preset', () => {

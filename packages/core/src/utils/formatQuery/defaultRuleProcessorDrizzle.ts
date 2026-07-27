@@ -5,7 +5,12 @@ import { lc } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorDrizzle } from './defaultRuleGroupProcessorDrizzle';
-import { isValidValue, processMatchMode, shouldRenderAsNumber } from './utils';
+import {
+  getSubqueryElementAlias,
+  isValidValue,
+  processMatchMode,
+  shouldRenderAsNumber,
+} from './utils';
 
 /**
  * Default rule processor used by {@link formatQuery} for the "drizzle" format.
@@ -70,8 +75,8 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
 
     const { mode, threshold } = matchEval;
 
-    // TODO?: Randomize this alias
-    const arrayElementAlias = 'elem_alias';
+    const subqueryDepth = opts.subqueryDepth ?? 0;
+    const arrayElementAlias = getSubqueryElementAlias(subqueryDepth);
 
     const sqlQuery = transformQuery(rule.value as RuleGroupType, {
       ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
@@ -80,6 +85,7 @@ export const defaultRuleProcessorDrizzle: RuleProcessor = (rule, _options): SQL 
     const nestedArrayFilter = defaultRuleGroupProcessorDrizzle(sqlQuery, {
       ...(opts as FormatQueryFinalOptions),
       context: { ...opts.context, useRawFields: true },
+      subqueryDepth: subqueryDepth + 1,
     });
 
     switch (mode) {

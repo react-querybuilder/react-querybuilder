@@ -720,6 +720,34 @@ describe('subqueries', () => {
     });
   });
 
+  describe('nested subqueries', () => {
+    it('parses depth-suffixed element aliases without shadowing', () => {
+      testParseCEL(
+        'tourStops.exists(elem_alias, elem_alias.users.all(elem_alias_1, elem_alias_1.city == "Milan"))',
+        wrapRule({
+          field: 'tourStops',
+          operator: '=',
+          match: { mode: 'some' },
+          value: {
+            combinator: 'and',
+            rules: [
+              {
+                field: 'users',
+                operator: '=',
+                match: { mode: 'all' },
+                value: {
+                  combinator: 'and',
+                  rules: [{ field: 'city', operator: '=', value: 'Milan' }],
+                },
+              },
+            ],
+          },
+        }),
+        { fields: subqueryFields }
+      );
+    });
+  });
+
   describe('.exists()', () => {
     it('basic', () => {
       testParseCEL(

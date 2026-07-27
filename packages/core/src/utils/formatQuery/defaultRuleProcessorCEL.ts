@@ -4,7 +4,7 @@ import { lc, nullOrUndefinedOrEmpty } from '../misc';
 import { parseNumber } from '../parseNumber';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
-import { processMatchMode, shouldRenderAsNumber } from './utils';
+import { processMatchMode, getSubqueryElementAlias, shouldRenderAsNumber } from './utils';
 
 const shouldNegate = (op: string) => op.startsWith('not') || op.startsWith('doesnot');
 
@@ -40,16 +40,16 @@ export const defaultRuleProcessorCEL: RuleProcessor = (
   } else if (matchEval) {
     const { mode, threshold } = matchEval;
 
-    // TODO?: Randomize this alias
-    const arrayElementAlias = 'elem_alias';
+    const subqueryDepth = opts.subqueryDepth ?? 0;
+    const arrayElementAlias = getSubqueryElementAlias(subqueryDepth);
 
     const celQuery = transformQuery(rule.value as RuleGroupType, {
       ruleProcessor: r => ({ ...r, field: `${arrayElementAlias}${r.field ? `.${r.field}` : ''}` }),
     });
-    const nestedArrayFilter = defaultRuleGroupProcessorCEL(
-      celQuery,
-      opts as FormatQueryFinalOptions
-    );
+    const nestedArrayFilter = defaultRuleGroupProcessorCEL(celQuery, {
+      ...(opts as FormatQueryFinalOptions),
+      subqueryDepth: subqueryDepth + 1,
+    });
 
     switch (mode) {
       case 'all':

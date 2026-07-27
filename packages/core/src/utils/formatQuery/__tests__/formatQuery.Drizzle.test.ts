@@ -17,6 +17,7 @@ import {
   queryForPreserveValueOrder,
   queryIC,
   queryWithMatchModes,
+  queryWithNestedMatchModes,
   queryWithValueSourceField,
 } from '../formatQueryTestUtils';
 
@@ -89,6 +90,12 @@ it('handles operator case variations', () => {
 it('handles nested arrays', () => {
   expect(
     formatQuery(queryWithMatchModes, { format: 'drizzle', preset: 'postgresql' })(
+      fields,
+      drizzleOperators
+    )
+  ).toBeTruthy();
+  expect(
+    formatQuery(queryWithNestedMatchModes, { format: 'drizzle', preset: 'postgresql' })(
       fields,
       drizzleOperators
     )
