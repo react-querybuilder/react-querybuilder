@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.21.2] - 2026-07-27
+
 ### Fixed
 
-- Subqueries generated for a rule's `match` mode now assign a distinct element alias per nesting level (`elem_alias`, `elem_alias_1`, ...) in the "sql", "parameterized"/"parameterized_named", "cel", and "drizzle" formats. Previously every level reused the same `elem_alias` binding, so a subquery nested within another subquery silently shadowed its parent's binding, making the outer element unreachable from the inner predicate. Output for non-nested subqueries is unchanged.
+- [#1068] Subqueries generated for a rule's `match` mode now assign a distinct element alias per nesting level (`elem_alias`, `elem_alias_1`, ...) in the "sql", "parameterized"/"parameterized_named", "cel", and "drizzle" formats. Previously every level reused the same `elem_alias` binding, so a subquery nested within another subquery silently shadowed its parent's binding, making the outer element unreachable from the inner predicate. Output for non-nested subqueries is unchanged.
 
 ## [v8.21.1] - 2026-07-27
 
@@ -2385,12 +2389,14 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1065]: https://github.com/react-querybuilder/react-querybuilder/pull/1065
 [#1066]: https://github.com/react-querybuilder/react-querybuilder/pull/1066
 [#1067]: https://github.com/react-querybuilder/react-querybuilder/pull/1067
+[#1068]: https://github.com/react-querybuilder/react-querybuilder/pull/1068
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.2...HEAD
+[v8.21.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...v8.21.2
 [v8.21.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.0...v8.21.1
 [v8.21.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.2...v8.21.0
 [v8.20.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.1...v8.20.2
