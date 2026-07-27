@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Fixed
+
+- Subqueries generated for a rule's `match` mode now assign a distinct element alias per nesting level (`elem_alias`, `elem_alias_1`, ...) in the "sql", "parameterized"/"parameterized_named", "cel", and "drizzle" formats. Previously every level reused the same `elem_alias` binding, so a subquery nested within another subquery silently shadowed its parent's binding, making the outer element unreachable from the inner predicate. Output for non-nested subqueries is unchanged.
 
 ## [v8.21.1] - 2026-07-27
 

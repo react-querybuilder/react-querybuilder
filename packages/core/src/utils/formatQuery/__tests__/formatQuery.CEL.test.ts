@@ -10,6 +10,7 @@ import {
   queryForNumberParsing,
   queryIC,
   queryWithMatchModes,
+  queryWithNestedMatchModes,
   queryWithValueSourceField,
   testQueryDQ,
 } from '../formatQueryTestUtils';
@@ -39,6 +40,12 @@ it('formats CEL correctly', () => {
     )
   ).toBe('(f >= 12 && f <= 14)');
   expect(formatQuery(queryWithMatchModes, 'cel')).toBe(celStringForMatchModes);
+});
+
+it('assigns a distinct element alias to each subquery nesting level', () => {
+  expect(formatQuery(queryWithNestedMatchModes, 'cel')).toBe(
+    'fs.exists(elem_alias, elem_alias.fv.all(elem_alias_1, elem_alias_1.contains("S")))'
+  );
 });
 
 it('handles operator case variations', () => {

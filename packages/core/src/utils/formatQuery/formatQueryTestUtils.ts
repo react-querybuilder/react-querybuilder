@@ -266,6 +266,35 @@ export const queryWithMatchModes: DefaultRuleGroupType = {
   ],
 };
 
+/**
+ * Match mode subquery nested within another match mode subquery. Each level's element alias must
+ * be distinct, otherwise the inner binding shadows the outer one.
+ */
+export const queryWithNestedMatchModes: DefaultRuleGroupType = {
+  combinator: 'and',
+  rules: [
+    {
+      field: 'fs',
+      operator: '=',
+      match: { mode: 'some' },
+      value: {
+        combinator: 'and',
+        rules: [
+          {
+            field: 'fv',
+            operator: '=',
+            match: { mode: 'all' },
+            value: {
+              combinator: 'and',
+              rules: [{ field: '', operator: 'contains', value: 'S' }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+};
+
 export const testQueryDQ: DefaultRuleGroupType = {
   combinator: 'and',
   rules: [{ field: 'f1', operator: '=', value: `Te"st` }],

@@ -8,6 +8,7 @@ import { defaultOperatorProcessorSQL } from './defaultRuleProcessorSQL';
 import { defaultValueProcessorByRule } from './defaultValueProcessorByRule';
 import {
   getQuotedFieldName,
+  getSubqueryElementAlias,
   processMatchMode,
   shouldRenderAsNumber,
   stripParamPrefix,
@@ -65,14 +66,18 @@ export const defaultRuleProcessorParameterized: RuleProcessor = (rule, opts, met
 
     const { mode, threshold } = matchEval;
 
-    // TODO?: Randomize this alias
-    const arrayElementAlias = 'elem_alias';
+    const subqueryDepth = opts.subqueryDepth ?? 0;
+    const arrayElementAlias = getSubqueryElementAlias(subqueryDepth);
 
     const { sql: nestedSQL, params: nestedParams } = defaultRuleGroupProcessorParameterized(
       transformQuery(rule.value as RuleGroupType, {
         ruleProcessor: r => ({ ...r, field: arrayElementAlias }),
       }),
-      { ...(opts as FormatQueryFinalOptions), fields: [] as FullField[] }
+      {
+        ...(opts as FormatQueryFinalOptions),
+        fields: [] as FullField[],
+        subqueryDepth: subqueryDepth + 1,
+      }
     );
     // Ignore the "parameterized_named" case because PostgreSQL doesn't support named parameters
     if (Array.isArray(nestedParams)) {

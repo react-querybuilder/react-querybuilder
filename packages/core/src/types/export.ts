@@ -337,6 +337,14 @@ export interface ValueProcessorOptions extends FormatQueryOptions {
    * @default false
    */
   parseNumbers?: boolean;
+  /**
+   * Nesting level of the subquery currently being processed. Incremented each time a rule
+   * processor recurses into a rule group stored in a rule's `value` (see `match` modes).
+   * Used to generate collision-free element aliases.
+   *
+   * @default 0
+   */
+  subqueryDepth?: number;
 }
 
 /**
@@ -366,6 +374,12 @@ export interface FormatQueryFinalOptions extends Required<
   validateRule: FormatQueryValidateRule;
   validationMap: ValidationMap;
   context?: Record<string, unknown>;
+  /**
+   * @see {@link ValueProcessorOptions.subqueryDepth}
+   *
+   * @default 0
+   */
+  subqueryDepth?: number;
 }
 
 /**
