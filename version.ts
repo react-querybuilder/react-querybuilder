@@ -1,6 +1,4 @@
-export const __dummy = null;
-
-const { version } = await Bun.file('./lerna.json').json();
+import { version } from './lerna.json' with { type: 'json' };
 
 const packagesDir = `${import.meta.dirname}/packages`;
 
