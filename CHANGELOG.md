@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+N/A
+
+## [v8.21.1] - 2026-07-27
+
 ### Added
 
 - Params for `prepareOptionList` are now accepted in `getOptionListsAsync` and passed directly to `prepareOptionList` when called.
@@ -2384,7 +2388,8 @@ _(This list may look long, but the breaking changes should only affect a small m
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.1...HEAD
+[v8.21.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.21.0...v8.21.1
 [v8.21.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.2...v8.21.0
 [v8.20.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.1...v8.20.2
 [v8.20.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v8.20.0...v8.20.1
