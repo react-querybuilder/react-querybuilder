@@ -51,6 +51,7 @@ describe('parseRAQB expressions', () => {
     });
 
     it('expands LINEAR_REGRESSION into add/multiply', () => {
+      const onUnsupported = vi.fn();
       expect(
         firstRule(
           wrapRule({
@@ -67,7 +68,8 @@ describe('parseRAQB expressions', () => {
               },
             ],
             valueSrc: ['func'],
-          })
+          }),
+          { onUnsupported }
         ).value
       ).toEqual({
         kind: 'func',
@@ -84,18 +86,24 @@ describe('parseRAQB expressions', () => {
           { kind: 'value', value: 5 },
         ],
       });
+      expect(onUnsupported).not.toHaveBeenCalled();
     });
 
     it('does not expand LINEAR_REGRESSION with the wrong arity', () => {
+      const onUnsupported = vi.fn();
       const result = firstRule(
         wrapRule({
           field: 'score',
           operator: 'greater',
           value: [{ func: 'LINEAR_REGRESSION', args: { coef: { value: 2 } } }],
           valueSrc: ['func'],
-        })
+        }),
+        { onUnsupported }
       );
       expect(result.value).toMatchObject({ fn: 'LINEAR_REGRESSION' });
+      expect(onUnsupported).toHaveBeenCalledWith(
+        expect.objectContaining({ reason: 'func', key: 'LINEAR_REGRESSION' })
+      );
     });
 
     it('nests functions', () => {

@@ -165,13 +165,6 @@ function parseRAQB(
 
   const processFuncValue = (funcValue: RAQBFuncValue): ExpressionNode => {
     const fn = functionMap[funcValue.func];
-    if (!fn) {
-      report({
-        reason: 'func',
-        key: funcValue.func,
-        message: `No @react-querybuilder/expr equivalent for RAQB function "${funcValue.func}"; passed through as-is. Register matching function metadata to render or serialize it.`,
-      });
-    }
     const args = funcValue.args ?? {};
     const argKeys = funcArgOrder[funcValue.func] ?? Object.keys(args);
     const argNodes = argKeys.map(key =>
@@ -187,6 +180,14 @@ function parseRAQB(
         fn: 'add',
         args: [{ kind: 'func', fn: 'multiply', args: [coef, val] }, bias],
       };
+    }
+
+    if (!fn) {
+      report({
+        reason: 'func',
+        key: funcValue.func,
+        message: `No @react-querybuilder/expr equivalent for RAQB function "${funcValue.func}"; passed through as-is. Register matching function metadata to render or serialize it.`,
+      });
     }
 
     return { kind: 'func', fn: fn ?? funcValue.func, args: argNodes };

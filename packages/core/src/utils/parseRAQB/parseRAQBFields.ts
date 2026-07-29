@@ -49,16 +49,6 @@ const valueEditorTypeMap: Record<string, ValueEditorType> = {
   boolean: 'checkbox',
 };
 
-/**
- * Converts the `fields` section of a
- * [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB)
- * `Config` into an RQB {@link index!Field Field} array suitable for the
- * {@link index!QueryBuilder QueryBuilder} component's `fields` prop.
- *
- * RAQB's nested `!struct` fields are flattened into dot-separated field names (matching the field
- * paths stored in RAQB query trees), and `!group` fields become fields with `matchModes` and
- * `subproperties`.
- */
 const translateValueSources = (raqbField: RAQBField): ValueSources | undefined => {
   if (!raqbField.valueSources) return undefined;
   const sources = [
@@ -71,6 +61,16 @@ const translateValueSources = (raqbField: RAQBField): ValueSources | undefined =
   return sources.length > 0 ? (sources as unknown as ValueSources) : undefined;
 };
 
+/**
+ * Converts the `fields` section of a
+ * [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB)
+ * `Config` into an RQB {@link index!Field Field} array suitable for the
+ * {@link index!QueryBuilder QueryBuilder} component's `fields` prop.
+ *
+ * RAQB's nested `!struct` fields are flattened into dot-separated field names (matching the field
+ * paths stored in RAQB query trees), and `!group` fields become fields with `matchModes` and
+ * `subproperties`.
+ */
 export function parseRAQBFields(
   config: RAQBConfig | RAQBConfig['fields'],
   options: ParseRAQBFieldsOptions = {}
