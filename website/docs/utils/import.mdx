@@ -33,6 +33,7 @@ Since `parse*` functions are used less frequently and rarely together, they were
 +import { parseGQL } from '@react-querybuilder/core/parseGQL'
 +import { parseSPARQL } from '@react-querybuilder/core/parseSPARQL'
 +import { parseGremlin } from '@react-querybuilder/core/parseGremlin'
++import { parseRAQB } from '@react-querybuilder/core/parseRAQB'
 ```
 
 These functions were available as separate exports in version 6 (along with [`formatQuery`](./export) and [`transformQuery`](./misc#transformquery)) but could also be imported from `"react-querybuilder"`. In version 7, they're _only_ available as separate exports. (This reduced the main bundle size by almost 50%.)
@@ -613,6 +614,37 @@ Output (`RuleGroupType`):
     { "field": "age", "operator": ">", "value": 30 },
     { "field": "name", "operator": "=", "value": "Alice" }
   ]
+}
+```
+
+## react-awesome-query-builder
+
+```ts
+import { parseRAQB } from '@react-querybuilder/core/parseRAQB';
+
+function parseRAQB(raqbTree: string | RAQBJsonTree, options?: ParseRAQBOptions): RuleGroupTypeAny;
+```
+
+`parseRAQB` accepts a [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder) query tree in its plain-JSON form (the output of RAQB's `Utils.getTree()`), or a JSON string of the same. A companion function, `parseRAQBFields`, converts an RAQB `Config` to an RQB `fields` array.
+
+See [Migrating from react-awesome-query-builder](../tips/migrate-from-raqb) for the full concept mapping, operator translation table, and options.
+
+### Usage
+
+```ts
+parseRAQB({
+  type: 'group',
+  properties: { conjunction: 'AND' },
+  children1: [{ type: 'rule', properties: { field: 'price', operator: 'greater', value: [10] } }],
+});
+```
+
+Output (`RuleGroupType`):
+
+```json
+{
+  "combinator": "and",
+  "rules": [{ "field": "price", "operator": ">", "value": 10 }]
 }
 ```
 

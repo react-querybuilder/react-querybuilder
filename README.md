@@ -47,7 +47,7 @@ For a more complete introduction, see the [main package README](packages/react-q
 >
 > For rules engine functionality (if-then-else) use [`@react-querybuilder/rules-engine`](./packages/rules-engine).
 
-_For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate)._
+_For instructions on migrating from earlier versions of `react-querybuilder`, [click here](https://react-querybuilder.js.org/docs/migrate). To migrate from `react-awesome-query-builder`, [click here](https://react-querybuilder.js.org/docs/tips/migrate-from-raqb)._
 
 ## Compatibility packages
 

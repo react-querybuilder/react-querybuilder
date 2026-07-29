@@ -75,18 +75,19 @@ const query = parseSQL(
 
 ### Supported import formats
 
-| Format                                                                          | Import statement                                                           |
-| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [SQL](https://en.wikipedia.org/wiki/SQL)                                        | `import { parseSQL } from "@react-querybuilder/core/parseSQL"`             |
-| [MongoDB](https://www.mongodb.com/)                                             | `import { parseMongoDB } from "@react-querybuilder/core/parseMongoDB"`     |
-| [JsonLogic](https://jsonlogic.com/)                                             | `import { parseJsonLogic } from "@react-querybuilder/core/parseJsonLogic"` |
-| [JSONata](https://jsonata.org/)                                                 | `import { parseJSONata } from "@react-querybuilder/core/parseJSONata"`     |
-| [CEL](https://cel.dev/)                                                         | `import { parseCEL } from "@react-querybuilder/core/parseCEL"`             |
-| [SpEL](https://docs.spring.io/spring-framework/reference/core/expressions.html) | `import { parseSpEL } from "@react-querybuilder/core/parseSpEL"`           |
-| [Cypher](https://neo4j.com/docs/cypher-manual/current/)                         | `import { parseCypher } from "@react-querybuilder/core/parseCypher"`       |
-| [GQL](https://www.iso.org/standard/76120.html)                                  | `import { parseGQL } from "@react-querybuilder/core/parseCypher"`          |
-| [SPARQL](https://www.w3.org/TR/sparql11-query/)                                 | `import { parseSPARQL } from "@react-querybuilder/core/parseSPARQL"`       |
-| [Gremlin](https://tinkerpop.apache.org/gremlin.html)                            | `import { parseGremlin } from "@react-querybuilder/core/parseGremlin"`     |
+| Format                                                                                  | Import statement                                                           |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [SQL](https://en.wikipedia.org/wiki/SQL)                                                | `import { parseSQL } from "@react-querybuilder/core/parseSQL"`             |
+| [MongoDB](https://www.mongodb.com/)                                                     | `import { parseMongoDB } from "@react-querybuilder/core/parseMongoDB"`     |
+| [JsonLogic](https://jsonlogic.com/)                                                     | `import { parseJsonLogic } from "@react-querybuilder/core/parseJsonLogic"` |
+| [JSONata](https://jsonata.org/)                                                         | `import { parseJSONata } from "@react-querybuilder/core/parseJSONata"`     |
+| [CEL](https://cel.dev/)                                                                 | `import { parseCEL } from "@react-querybuilder/core/parseCEL"`             |
+| [SpEL](https://docs.spring.io/spring-framework/reference/core/expressions.html)         | `import { parseSpEL } from "@react-querybuilder/core/parseSpEL"`           |
+| [Cypher](https://neo4j.com/docs/cypher-manual/current/)                                 | `import { parseCypher } from "@react-querybuilder/core/parseCypher"`       |
+| [GQL](https://www.iso.org/standard/76120.html)                                          | `import { parseGQL } from "@react-querybuilder/core/parseCypher"`          |
+| [SPARQL](https://www.w3.org/TR/sparql11-query/)                                         | `import { parseSPARQL } from "@react-querybuilder/core/parseSPARQL"`       |
+| [Gremlin](https://tinkerpop.apache.org/gremlin.html)                                    | `import { parseGremlin } from "@react-querybuilder/core/parseGremlin"`     |
+| [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder) | `import { parseRAQB } from "@react-querybuilder/core/parseRAQB"`           |
 
 ## Query manipulation
 

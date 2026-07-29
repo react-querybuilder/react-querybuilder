@@ -15,6 +15,7 @@ export default defineConfig(async options => {
     parseJSONata: 'src/utils/parseJSONata/index.ts',
     parseJsonLogic: 'src/utils/parseJsonLogic/index.ts',
     parseMongoDB: 'src/utils/parseMongoDB/index.ts',
+    parseRAQB: 'src/utils/parseRAQB/index.ts',
     parseSPARQL: 'src/utils/parseSPARQL/index.ts',
     parseSpEL: 'src/utils/parseSpEL/index.ts',
     parseSQL: 'src/utils/parseSQL/index.ts',

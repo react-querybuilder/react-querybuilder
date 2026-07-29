@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#1069] [`react-awesome-query-builder`](https://github.com/ukrbublik/react-awesome-query-builder) conversion tools (`parseRAQB`/`parseRAQBFields`) and [migration guide](https://react-querybuilder.js.org/docs/tips/migrate-from-raqb).
 
 ## [v8.21.2] - 2026-07-27
 
@@ -2390,6 +2392,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1066]: https://github.com/react-querybuilder/react-querybuilder/pull/1066
 [#1067]: https://github.com/react-querybuilder/react-querybuilder/pull/1067
 [#1068]: https://github.com/react-querybuilder/react-querybuilder/pull/1068
+[#1069]: https://github.com/react-querybuilder/react-querybuilder/pull/1069
 
 <!-- #endregion -->
 

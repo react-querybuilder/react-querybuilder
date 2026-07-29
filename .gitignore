@@ -33,6 +33,7 @@ packages/*/parseGremlin/package.json
 packages/*/parseJSONata/package.json
 packages/*/parseJsonLogic/package.json
 packages/*/parseMongoDB/package.json
+packages/*/parseRAQB/package.json
 packages/*/parseSPARQL/package.json
 packages/*/parseSpEL/package.json
 packages/*/parseSQL/package.json

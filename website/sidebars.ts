@@ -82,6 +82,8 @@ export default {
         'tips/parameter-manager',
         'tips/path',
         'tips/common-mistakes',
+        'tips/comparison',
+        'tips/migrate-from-raqb',
       ],
     },
     'compat',

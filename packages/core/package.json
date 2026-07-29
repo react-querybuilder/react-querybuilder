@@ -90,6 +90,16 @@
         "default": "./dist/parseMongoDB.js"
       }
     },
+    "./parseRAQB": {
+      "import": {
+        "types": "./dist/parseRAQB.d.mts",
+        "import": "./dist/parseRAQB.mjs"
+      },
+      "require": {
+        "types": "./dist/parseRAQB.d.ts",
+        "default": "./dist/parseRAQB.js"
+      }
+    },
     "./parseSPARQL": {
       "import": {
         "types": "./dist/parseSPARQL.d.mts",
@@ -142,6 +152,7 @@
     "parseJSONata",
     "parseJsonLogic",
     "parseMongoDB",
+    "parseRAQB",
     "parseSPARQL",
     "parseSpEL",
     "parseSQL",

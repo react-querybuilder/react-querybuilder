@@ -32,5 +32,6 @@ export * from './transformQuery';
 // export * from './parseJSONata';
 // export * from './parseJsonLogic';
 // export * from './parseMongoDB';
+// export * from './parseRAQB';
 // export * from './parseSpEL';
 // export * from './parseSQL';
