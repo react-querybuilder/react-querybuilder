@@ -177,6 +177,7 @@ const formatQueryUncached = (query: RuleGroupTypeAny, options: FormatQueryOption
     case 'jsonlogic':
     case 'elasticsearch':
     case 'prisma':
+    case 'raqb':
       return stringify(formatQueryResult);
   }
 

@@ -622,6 +622,81 @@ Output (string):
 .has('firstName', 'Steve').has('lastName', 'Vai')
 ```
 
+### react-awesome-query-builder
+
+Generate a [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB) query tree in its plain-JSON form using the "raqb" format. Pass the result to RAQB's `Utils.loadTree()`.
+
+This is the inverse of [`parseRAQB`](./import#react-awesome-query-builder). See [Migrating from react-awesome-query-builder](../tips/migrate-from-raqb) for the full concept mapping.
+
+```ts
+import { Utils } from '@react-awesome-query-builder/core';
+
+const jsonTree = formatQuery(query, 'raqb');
+const immutableTree = Utils.checkTree(Utils.loadTree(jsonTree), config);
+```
+
+Output (object):
+
+```json
+{
+  "type": "group",
+  "properties": { "conjunction": "AND", "not": false },
+  "children1": [
+    {
+      "type": "rule",
+      "properties": {
+        "field": "firstName",
+        "operator": "equal",
+        "value": ["Steve"],
+        "valueSrc": ["value"]
+      }
+    },
+    {
+      "type": "rule",
+      "properties": {
+        "field": "lastName",
+        "operator": "equal",
+        "value": ["Vai"],
+        "valueSrc": ["value"]
+      }
+    }
+  ]
+}
+```
+
+A companion function, `formatRAQBFields`, converts an RQB `fields` array to the `fields` section of an RAQB `Config`:
+
+```ts
+import { formatRAQBFields } from '@react-querybuilder/core/parseRAQB';
+
+const config = { ...BasicConfig, fields: formatRAQBFields(fields) };
+```
+
+RAQB-specific options are passed through `context`:
+
+```ts
+const jsonTree = formatQuery(query, {
+  format: 'raqb',
+  fields,
+  context: { raqbFieldSeparator: '.', raqbValueTypes: true },
+});
+```
+
+| `context` option        | Default | Description                                                                                            |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `raqbOperatorMap`       | `{}`    | Additional/overriding RQB-to-RAQB operator mappings, keyed by RQB operator name.                       |
+| `raqbFunctionMap`       | `{}`    | Additional/overriding expression-function-to-RAQB function name mappings.                              |
+| `raqbFuncArgOrder`      | `{}`    | Argument names per RAQB function name. Defaults cover RAQB's built-ins; others get `arg0`, `arg1`, ... |
+| `raqbFieldSeparator`    | `"."`   | Separator used to qualify sub-query rule fields with their parent `!group` field name.                 |
+| `raqbRelativeDateTimes` | `true`  | Convert relative date/time values to RAQB's built-in date/time functions.                              |
+| `raqbValueTypes`        | `false` | Emit `valueType` entries inferred from each field's `inputType`/`valueEditorType`.                     |
+
+:::note
+
+RAQB's default configuration has no equivalent for RQB's `doesNotBeginWith`/`doesNotEndWith` operators, the `"parameter"` value source, or `endOf*` relative date/time anchors. Rules using them are omitted (or, for `endOf*` anchors, emitted as plain values). Use `raqbOperatorMap` to map them onto custom RAQB operators.
+
+:::
+
 ### Diagnostics
 
 Generate a diagnostics result object using the "diagnostics" format. The output includes an annotated copy of the query tree, a flat diagnostics array, aggregate statistics, and a per-field summary.

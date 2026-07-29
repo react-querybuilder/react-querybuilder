@@ -40,6 +40,7 @@ export type ExportFormat =
   | 'gql'
   | 'sparql'
   | 'gremlin'
+  | 'raqb'
   | 'diagnostics';
 
 /**
@@ -54,6 +55,7 @@ export type ExportObjectFormats =
   | 'elasticsearch'
   | 'jsonata'
   | 'mongodb_query'
+  | 'raqb'
   | 'diagnostics';
 
 /**

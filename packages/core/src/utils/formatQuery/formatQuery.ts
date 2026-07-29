@@ -26,6 +26,7 @@ import type {
 import { getParseNumberMethod } from '../getParseNumberMethod';
 import { lc } from '../misc';
 import { getOption, toFlatOptionArray, toFullOptionList } from '../optGroupUtils';
+import type { RAQBJsonTree } from '../parseRAQB/types';
 import { defaultRuleGroupProcessorCEL } from './defaultRuleGroupProcessorCEL';
 import { defaultRuleGroupProcessorCypher } from './defaultRuleGroupProcessorCypher';
 import { defaultRuleGroupProcessorDiagnostics } from './defaultRuleGroupProcessorDiagnostics';
@@ -43,6 +44,7 @@ import {
 import { defaultRuleGroupProcessorNL } from './defaultRuleGroupProcessorNL';
 import { defaultRuleGroupProcessorParameterized } from './defaultRuleGroupProcessorParameterized';
 import { defaultRuleGroupProcessorPrisma, prismaFallback } from './defaultRuleGroupProcessorPrisma';
+import { defaultRuleGroupProcessorRAQB, raqbFallback } from './defaultRuleGroupProcessorRAQB';
 import { defaultRuleGroupProcessorSequelize } from './defaultRuleGroupProcessorSequelize';
 import { defaultRuleGroupProcessorSPARQL } from './defaultRuleGroupProcessorSPARQL';
 import { defaultRuleGroupProcessorSpEL } from './defaultRuleGroupProcessorSpEL';
@@ -61,6 +63,7 @@ import { defaultRuleProcessorMongoDBQuery } from './defaultRuleProcessorMongoDBQ
 import { defaultOperatorProcessorNL, defaultRuleProcessorNL } from './defaultRuleProcessorNL';
 import { defaultRuleProcessorParameterized } from './defaultRuleProcessorParameterized';
 import { defaultRuleProcessorPrisma } from './defaultRuleProcessorPrisma';
+import { defaultRuleProcessorRAQB } from './defaultRuleProcessorRAQB';
 import { defaultRuleProcessorSequelize } from './defaultRuleProcessorSequelize';
 import { defaultRuleProcessorSPARQL } from './defaultRuleProcessorSPARQL';
 import { defaultRuleProcessorSpEL } from './defaultRuleProcessorSpEL';
@@ -135,6 +138,7 @@ const defaultRuleProcessors = {
   gql: defaultRuleProcessorCypher,
   sparql: defaultRuleProcessorSPARQL,
   gremlin: defaultRuleProcessorGremlin,
+  raqb: defaultRuleProcessorRAQB,
   diagnostics: defaultRuleProcessorSQL,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -163,6 +167,7 @@ const defaultOperatorProcessors = {
   gql: defaultOperatorProcessor,
   sparql: defaultOperatorProcessor,
   gremlin: defaultOperatorProcessor,
+  raqb: defaultOperatorProcessor,
   diagnostics: defaultOperatorProcessor,
 } satisfies Record<ExportFormat, RuleProcessor>;
 
@@ -379,6 +384,19 @@ function formatQuery(
   options: 'ldap' | (FormatQueryOptions & { format: 'ldap' })
 ): string;
 /**
+ * Generates a [react-awesome-query-builder](https://github.com/ukrbublik/react-awesome-query-builder)
+ * (RAQB) query tree in plain-JSON form from an RQB query object. Pass the result to RAQB's
+ * `Utils.loadTree()`.
+ *
+ * Inverse of `parseRAQB`.
+ *
+ * @group Export
+ */
+function formatQuery(
+  ruleGroup: RuleGroupTypeAny,
+  options: 'raqb' | (FormatQueryOptions & { format: 'raqb' })
+): RAQBJsonTree;
+/**
  * Generates a {@link DiagnosticsResult} from a query object, containing an annotated
  * query tree, a flat diagnostics array, aggregate stats, and a per-field summary.
  *
@@ -515,11 +533,15 @@ function formatQuery(
                     ? prismaFallback
                     : format === 'jsonlogic'
                       ? false
-                      : format === 'elasticsearch'
-                        ? {}
-                        : format === 'drizzle' || format === 'sequelize' || format === 'tanstack_db'
-                          ? undefined
-                          : fallbackExpression;
+                      : format === 'raqb'
+                        ? raqbFallback
+                        : format === 'elasticsearch'
+                          ? {}
+                          : format === 'drizzle' ||
+                              format === 'sequelize' ||
+                              format === 'tanstack_db'
+                            ? undefined
+                            : fallbackExpression;
         }
       }
     } else {
@@ -658,6 +680,9 @@ function formatQuery(
 
     case 'gremlin':
       return defaultRuleGroupProcessorGremlin(ruleGroup, finalOptions);
+
+    case 'raqb':
+      return defaultRuleGroupProcessorRAQB(ruleGroup, finalOptions);
 
     case 'diagnostics':
       return defaultRuleGroupProcessorDiagnostics(ruleGroup, finalOptions);

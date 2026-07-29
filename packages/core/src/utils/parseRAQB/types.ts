@@ -229,3 +229,54 @@ export interface RAQBUnsupportedInfo {
   /** Human-readable explanation. */
   message: string;
 }
+
+/**
+ * Options recognized by the "raqb" {@link formatQuery} format, passed through
+ * {@link FormatQueryOptions.context}.
+ */
+export interface FormatRAQBContext {
+  /**
+   * Character used to qualify sub-query rule field names with their parent `!group` field name
+   * (RAQB stores them as e.g. `cars.vendor`). Should match the config's `settings.fieldSeparator`.
+   *
+   * @default '.'
+   */
+  raqbFieldSeparator?: string;
+  /**
+   * Additional or overriding RQB-to-RAQB operator mappings, merged over the defaults. Keyed by
+   * RQB operator name.
+   */
+  raqbOperatorMap?: Record<string, string>;
+  /**
+   * Additional or overriding `@react-querybuilder/expr`-to-RAQB function name mappings, merged
+   * over the defaults (`lower` → `LOWER`, `upper` → `UPPER`). Functions absent from the merged
+   * map are passed through with their original name.
+   */
+  raqbFunctionMap?: Record<string, string>;
+  /**
+   * RQB expressions store function arguments in an ordered array, while RAQB stores them in a
+   * keyed object. By default, arguments are keyed `arg0`, `arg1`, etc. Use this option to specify
+   * explicit argument names per function, keyed by the _RAQB_ function name.
+   *
+   * @example
+   * ```ts
+   * { raqbFuncArgOrder: { RELATIVE_DATETIME: ['date', 'op', 'val', 'dim'] } }
+   * ```
+   */
+  raqbFuncArgOrder?: Record<string, string[]>;
+  /**
+   * When `false`, relative date/time values (`{ mode: "relative", anchor, offset, unit }`) are
+   * emitted as plain values instead of RAQB built-in date/time function calls.
+   *
+   * @default true
+   */
+  raqbRelativeDateTimes?: boolean;
+  /**
+   * When `true`, `valueType` entries are emitted alongside each operand based on the field's
+   * `inputType`/`valueEditorType`. RAQB only validates `valueType` when present, so this is off
+   * by default to avoid spurious validation errors from imprecise inference.
+   *
+   * @default false
+   */
+  raqbValueTypes?: boolean;
+}

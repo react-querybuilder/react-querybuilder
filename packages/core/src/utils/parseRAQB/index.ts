@@ -15,3 +15,19 @@ export {
   raqbToRqbFunctionMap,
   raqbToRqbOperatorMap,
 } from './utils';
+export * from './formatRAQBFields';
+export {
+  combinatorToRaqbConjunction,
+  isRelativeDateTimeValue,
+  matchModeToRaqbOperatorMap,
+  relativeDateTimeToRaqbFunc,
+  rqbToRaqbFunctionMap,
+  rqbToRaqbMultiselectOperatorMap,
+  rqbToRaqbOperatorMap,
+  rqbToRaqbSelectOperatorMap,
+} from './utils';
+export {
+  defaultRuleGroupProcessorRAQB,
+  raqbFallback,
+} from '../formatQuery/defaultRuleGroupProcessorRAQB';
+export { defaultRuleProcessorRAQB } from '../formatQuery/defaultRuleProcessorRAQB';

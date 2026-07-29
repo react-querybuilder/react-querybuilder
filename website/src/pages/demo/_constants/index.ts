@@ -288,6 +288,7 @@ export const formatMap: [ExportFormat, string, HttpsURL, string][] = [
   ['gql', 'GQL', 'https://www.iso.org/standard/76120.html', 'cypher'],
   ['sparql', 'SPARQL', 'https://www.w3.org/TR/sparql11-query/', 'sparql'],
   ['gremlin', 'Gremlin', 'https://tinkerpop.apache.org/gremlin.html', 'gremlin'],
+  ['raqb', 'react-awesome-query-builder', 'https://github.com/ukrbublik/react-awesome-query-builder', 'react-awesome-query-builder'],
   ['natural_language', 'Natural language', 'https://en.wikipedia.org/wiki/English_language', 'natural-language'],
 ];
 

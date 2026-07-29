@@ -55,6 +55,7 @@ formatQuery(query, 'sql');
 | [Drizzle](https://orm.drizzle.team/)                                            | `"drizzle"`               | Drizzle `SQL`           | Drizzle ORM `where` clause                  |
 | [Prisma](https://www.prisma.io/)                                                | `"prisma"`                | `Record<string, any>`   | Prisma `where` object                       |
 | [Sequelize](https://sequelize.org/)                                             | `"sequelize"`             | `Record<string, any>`   | Sequelize `where` object                    |
+| [RAQB](https://github.com/ukrbublik/react-awesome-query-builder)                | `"raqb"`                  | `RAQBJsonTree`          | react-awesome-query-builder query tree      |
 
 See `@react-querybuilder/datetime` and `@react-querybuilder/expr` for additional, enhanced export capabilities.
 

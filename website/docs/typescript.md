@@ -140,6 +140,7 @@ type ExportFormat =
   | 'gql'
   | 'sparql'
   | 'gremlin'
+  | 'raqb'
   | 'diagnostics';
 
 interface FormatQueryOptions {
