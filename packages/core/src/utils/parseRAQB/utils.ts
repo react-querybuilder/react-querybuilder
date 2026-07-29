@@ -388,6 +388,9 @@ export function relativeDateTimeToRaqbFunc(value: unknown): RAQBFuncValue | null
 
   const { offset } = value;
   if (!Number.isFinite(offset) || offset === 0) return base;
+  // An offset RAQB can't dimension is worse than no function at all: emitting `dim` without a
+  // value produces a tree `checkTree` rejects, so fall back to the plain value instead.
+  if (!raqbRelativeDateTimeUnits.has(value.unit)) return null;
 
   return {
     func: 'RELATIVE_DATETIME',

@@ -154,13 +154,19 @@ describe('RAQB', () => {
             {
               field: 'nicknames',
               operator: '=',
-              value: '',
               match,
-              rules: [{ field: 'name', operator: 'beginsWith', value: 'S' }],
+              value: {
+                combinator: 'and',
+                rules: [{ field: 'name', operator: 'beginsWith', value: 'S' }],
+              },
             } as RuleGroupType['rules'][number],
           ],
         };
         const json = formatQuery(query, { format: 'raqb', fields: matchFields });
+        // Guards against silently regressing to a dropped rule, which would make this vacuous.
+        expect(json.children1).toMatchObject([
+          { type: 'rule_group', properties: { mode: 'array' } },
+        ]);
         expect(raqbErrors(json, matchConfig)).toEqual([]);
       });
     }

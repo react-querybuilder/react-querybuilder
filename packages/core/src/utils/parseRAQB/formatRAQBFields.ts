@@ -141,9 +141,7 @@ export function formatRAQBFields(
   /** Walks the `!struct` chain implied by a dot-separated name, creating containers as needed. */
   const containerFor = (segments: string[]): Record<string, RAQBField> => {
     let container = result;
-    let path = '';
     for (const segment of segments) {
-      path = path ? `${path}${separator}${segment}` : segment;
       const existing = container[segment];
       if (!existing || existing.type !== '!struct') {
         container[segment] = { type: '!struct', label: segment, subfields: {} };

@@ -154,15 +154,20 @@ describe('formatQuery "raqb" format', () => {
       });
     });
 
+    // `between` parses numbers by default, so string operands are emitted as numbers.
     it.each([
       ['1,2', [1, 2]],
       [
         ['1', '2'],
-        ['1', '2'],
+        [1, 2],
       ],
-    ])('splits `between` operands (%j)', (value, _expected) => {
+      [
+        [1, 2],
+        [1, 2],
+      ],
+    ])('splits `between` operands (%j)', (value, expected) => {
       const result = props({ field: 'f1', operator: 'between', value });
-      expect(result.value).toHaveLength(2);
+      expect(result.value).toEqual(expected);
       expect(result.valueSrc).toEqual(['value', 'value']);
     });
 
@@ -444,6 +449,15 @@ describe('formatQuery "raqb" format', () => {
       expect(
         relative({ mode: 'relative', anchor: 'now', offset: Number.NaN, unit: 'day' })
       ).toEqual({ func: 'NOW', args: {} });
+    });
+
+    it('emits offsets with unsupported units as plain values', () => {
+      for (const value of [
+        { mode: 'relative', anchor: 'now', offset: 5, unit: 'fortnight' },
+        { mode: 'relative', anchor: 'now', offset: 5 },
+      ]) {
+        expect(relative(value)).toEqual(value);
+      }
     });
 
     it('emits `endOf*` anchors as plain values', () => {
