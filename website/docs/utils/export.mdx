@@ -695,6 +695,8 @@ const jsonTree = formatQuery(query, {
 
 RAQB's default configuration has no equivalent for RQB's `doesNotBeginWith`/`doesNotEndWith` operators, the `"parameter"` value source, or `endOf*` relative date/time anchors. Rules using them are omitted (or, for `endOf*` anchors, emitted as plain values). Use `raqbOperatorMap` to map them onto custom RAQB operators.
 
+RAQB also restricts some constructs that RQB permits—notably `in`/`notIn` on non-`select` fields and most field-to-field comparisons. See [Migrating from react-awesome-query-builder](../tips/migrate-from-raqb#converting-back-to-raqb) for the full list.
+
 :::
 
 ### Diagnostics

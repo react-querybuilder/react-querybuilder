@@ -166,6 +166,33 @@ describe('formatQuery "raqb" format', () => {
       expect(result.valueSrc).toEqual(['value', 'value']);
     });
 
+    it('orders `between` operands unless `preserveValueOrder` is set', () => {
+      expect(props({ field: 'f1', operator: 'between', value: [100, 0] }).value).toEqual([0, 100]);
+      expect(
+        props({ field: 'f1', operator: 'between', value: [100, 0] }, { preserveValueOrder: true })
+          .value
+      ).toEqual([100, 0]);
+      expect(props({ field: 'f1', operator: 'between', value: [0, 100] }).value).toEqual([0, 100]);
+    });
+
+    it('leaves non-numeric and non-value `between` operands alone', () => {
+      expect(props({ field: 'f1', operator: 'between', value: ['b', 'a'] }).value).toEqual([
+        'b',
+        'a',
+      ]);
+      expect(
+        props({ field: 'f1', operator: 'between', value: [100, 0] }, { parseNumbers: false }).value
+      ).toEqual([100, 0]);
+      expect(
+        props({ field: 'f1', operator: 'between', value: 'f3,f2', valueSource: 'field' }).value
+      ).toEqual(['f3', 'f2']);
+    });
+
+    it('narrows `bigint` values to `number`', () => {
+      expect(props({ field: 'f1', operator: '<', value: 20n }).value).toEqual([20]);
+      expect(props({ field: 'f1', operator: 'in', value: [1n, 2n] }).value).toEqual([[1, 2]]);
+    });
+
     it('nests `in` operands in a list', () => {
       expect(props({ field: 'f1', operator: 'in', value: 'a,b' })).toEqual({
         field: 'f1',

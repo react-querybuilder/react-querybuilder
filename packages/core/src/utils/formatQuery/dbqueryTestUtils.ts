@@ -8,7 +8,8 @@ type DbPlatform =
   | 'mssql'
   | 'mongodb'
   | 'cel'
-  | 'spel';
+  | 'spel'
+  | 'raqb';
 
 export interface TestSQLParams {
   query: DefaultRuleGroupType;
@@ -40,6 +41,7 @@ const platformBoolean: Record<DbPlatform, [1, 0] | [true, false]> = {
   spel: [true, false],
   jsonata: [true, false],
   jsonlogic: [true, false],
+  raqb: [1, 0],
   mssql: [1, 0],
   mongodb: [true, false],
   postgres: [true, false],
@@ -62,7 +64,7 @@ export const fields: Field<keyof SuperUser>[] = [
 
 export const superUsers = <DBP extends DbPlatform>(
   dbPlatform: DBP
-): DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[] => {
+): DBP extends 'mssql' | 'sqlite' | 'raqb' ? SuperUser<0 | 1>[] : SuperUser<boolean>[] => {
   const [isEnhanced, isNotEnhanced] = platformBoolean[dbPlatform];
 
   // Sorted by `madeUpName`
@@ -99,7 +101,7 @@ export const superUsers = <DBP extends DbPlatform>(
       nickname: 'Supes',
       powerUpAge: 0,
     },
-  ] as DBP extends 'mssql' | 'sqlite' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
+  ] as DBP extends 'mssql' | 'sqlite' | 'raqb' ? SuperUser<0 | 1>[] : SuperUser<boolean>[];
 };
 
 export const nicknameMap: Record<string, string[]> = {
@@ -172,13 +174,16 @@ export const augmentedSuperUsers = <DBP extends DbPlatform>(dbPlatform: DBP) =>
       nicknames: [u.nickname, ...nicknameMap[u.madeUpName]],
       earlyPencilers: earlyPencilersMap[u.madeUpName],
     })
-  ) as DBP extends 'mssql' | 'sqlite' ? AugmentedSuperUser<0 | 1>[] : AugmentedSuperUser<boolean>[];
+  ) as DBP extends 'mssql' | 'sqlite' | 'raqb'
+    ? AugmentedSuperUser<0 | 1>[]
+    : AugmentedSuperUser<boolean>[];
 
 const enhancedColumnType: Record<DbPlatform, string> = {
   cel: 'N/A',
   spel: 'N/A',
   jsonata: 'N/A',
   jsonlogic: 'N/A',
+  raqb: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
   mongodb: 'boolean',
   mssql: 'INT CHECK (enhanced = 0 OR enhanced = 1)',
   postgres: 'BOOLEAN',
@@ -190,6 +195,7 @@ const textColumnType: Record<DbPlatform, string> = {
   spel: 'TEXT',
   jsonata: 'TEXT',
   jsonlogic: 'TEXT',
+  raqb: 'TEXT',
   mongodb: 'string',
   mssql: 'VARCHAR(255)',
   postgres: 'TEXT',

@@ -7,6 +7,7 @@ import type {
   RuleType,
 } from '../../types';
 import { toArray } from '../arrayUtils';
+import { parseNumber } from '../parseNumber';
 import type {
   FormatRAQBContext,
   RAQBFuncArgValue,
@@ -31,7 +32,11 @@ import {
 } from '../parseRAQB/utils';
 import { transformQuery } from '../transformQuery';
 import { defaultRuleGroupProcessorRAQB } from './defaultRuleGroupProcessorRAQB';
-import { processMatchMode } from './utils';
+import { processMatchMode, shouldRenderAsNumber } from './utils';
+
+/** RAQB trees must be JSON-serializable, so `bigint` values are narrowed to `number`. */
+const toRaqbValue = (value: unknown): unknown =>
+  typeof value === 'bigint' ? Number(value) : value;
 
 /** RQB `inputType`/`valueEditorType` values mapped to RAQB `valueType`s. */
 const raqbValueTypeMap: Record<string, string> = {
@@ -80,7 +85,7 @@ export const defaultRuleProcessorRAQB: RuleProcessor = (
   // v8 ignore next
   options = {}
 ): RAQBJsonRule | RAQBJsonRuleGroup | false => {
-  const { fieldData, context } = options;
+  const { fieldData, context, parseNumbers, preserveValueOrder } = options;
   const {
     raqbFieldSeparator = '.',
     raqbOperatorMap = {},
@@ -153,7 +158,7 @@ export const defaultRuleProcessorRAQB: RuleProcessor = (
       if (func) return { value: func, valueSrc: 'func' };
     }
 
-    return { value, valueSrc: 'value' };
+    return { value: toRaqbValue(value), valueSrc: 'value' };
   };
 
   // #region Match modes → RAQB `rule_group`
@@ -231,7 +236,20 @@ export const defaultRuleProcessorRAQB: RuleProcessor = (
   const vt = valueType();
 
   if (raqbBinaryOperators.has(operator)) {
-    const [first, second] = toArray(rule.value, { retainEmptyStrings: true });
+    let [first, second] = toArray(rule.value, { retainEmptyStrings: true });
+    // Match the other formatters: default to parsing numbers for `between` operators unless
+    // `parseNumbers` is explicitly false, then swap out-of-order bounds.
+    const shouldParseNumbers = parseNumbers !== false;
+    if (
+      (rule.valueSource ?? 'value') === 'value' &&
+      shouldRenderAsNumber(first, shouldParseNumbers) &&
+      shouldRenderAsNumber(second, shouldParseNumbers)
+    ) {
+      const firstNum = parseNumber(first, { parseNumbers: shouldParseNumbers });
+      const secondNum = parseNumber(second, { parseNumbers: shouldParseNumbers });
+      [first, second] =
+        !preserveValueOrder && secondNum < firstNum ? [secondNum, firstNum] : [firstNum, secondNum];
+    }
     const operands = [
       processOperand(first, rule.valueSource),
       processOperand(second, rule.valueSource),
@@ -246,7 +264,7 @@ export const defaultRuleProcessorRAQB: RuleProcessor = (
   }
 
   if (raqbListOperators.has(operator) && (rule.valueSource ?? 'value') === 'value') {
-    properties.value = [toArray(rule.value, { retainEmptyStrings: true })];
+    properties.value = [toArray(rule.value, { retainEmptyStrings: true }).map(v => toRaqbValue(v))];
     properties.valueSrc = ['value'];
     if (vt) {
       properties.valueType = ['multiselect'];

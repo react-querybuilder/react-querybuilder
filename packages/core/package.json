@@ -188,6 +188,7 @@
     "@electric-sql/pglite": "catalog:test",
     "@grafeo-db/js": "catalog:test",
     "@prisma/client": "catalog:test",
+    "@react-awesome-query-builder/core": "catalog:test",
     "@tanstack/db": "catalog:test",
     "@traqula/parser-sparql-1-2": "catalog:",
     "@types/json-logic-js": "catalog:",

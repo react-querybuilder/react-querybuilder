@@ -227,6 +227,7 @@
     },
     "test": {
       "@prisma/client": "^7.9.1",
+      "@react-awesome-query-builder/core": "6.7.0-alpha.0",
       "@electric-sql/pglite": "^0.5.3",
       "@grafeo-db/js": "^0.5.42",
       "@tanstack/db": "^0.6.17",

@@ -446,4 +446,47 @@ const defaultQuery = parseRAQB(savedTree, { fields });
 export const App = () => <QueryBuilder fields={fields} defaultQuery={defaultQuery} />;
 ```
 
+## Converting back to RAQB
+
+The reverse conversion is available as a [`formatQuery`](../utils/export#react-awesome-query-builder) export format, which is useful for a phased migration where both query builders must read the same stored queries.
+
+```ts
+import { formatQuery } from 'react-querybuilder';
+import { Utils } from '@react-awesome-query-builder/core';
+
+const jsonTree = formatQuery(query, 'raqb');
+const immutableTree = Utils.checkTree(Utils.loadTree(jsonTree), raqbConfig);
+```
+
+`formatRAQBFields`, the inverse of `parseRAQBFields`, is exported from the same sub-path as `parseRAQB`:
+
+```ts
+import { formatRAQBFields } from 'react-querybuilder/parseRAQB';
+
+const raqbConfig = { ...BasicConfig, fields: formatRAQBFields(fields) };
+```
+
+RAQB-specific options are passed to `formatQuery` through `context`:
+
+| `context` option        | Default | Description                                                                                            |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `raqbOperatorMap`       | `{}`    | Additional/overriding RQB-to-RAQB operator mappings, keyed by RQB operator name.                       |
+| `raqbFunctionMap`       | `{}`    | Additional/overriding expression-function-to-RAQB function name mappings.                              |
+| `raqbFuncArgOrder`      | `{}`    | Argument names per RAQB function name. Defaults cover RAQB's built-ins; others get `arg0`, `arg1`, ... |
+| `raqbFieldSeparator`    | `"."`   | Separator used to qualify sub-query rule fields with their parent `!group` field name.                 |
+| `raqbRelativeDateTimes` | `true`  | Convert relative date/time values to RAQB's built-in date/time functions.                              |
+| `raqbValueTypes`        | `false` | Emit `valueType` entries inferred from each field's `inputType`/`valueEditorType`.                     |
+
+The mapping is the inverse of the tables above, with these caveats:
+
+- RQB's `doesNotBeginWith` and `doesNotEndWith` have no RAQB default equivalent (there is no `not_starts_with`/`not_ends_with`); rules using them are omitted unless you supply a `raqbOperatorMap` entry.
+- The `"parameter"` value source has no RAQB counterpart, so those rules are omitted.
+- `in`/`notIn` map to `select_any_in`/`select_not_any_in`, which RAQB only allows for `select` and `multiselect` fields. On a plain text field RAQB's `checkTree` will reject the rule.
+- Field-to-field comparisons are more restricted in RAQB: its `field` widget for the `text` type supports only `equal`, `not_equal`, and `proximity`, so `contains`/`beginsWith`/`endsWith`/`<`/`>` against another field are rejected.
+- RAQB clamps inverted ranges, so a `between` rule with `preserveValueOrder` and out-of-order bounds (e.g. `[100, 0]`) becomes `[100, 100]` once loaded.
+- `bigint` values are narrowed to `number`, since RAQB trees must be JSON-serializable.
+- `endOf*` relative date/time anchors are emitted as plain values, since RAQB's built-in functions only truncate to the _start_ of a period.
+- RAQB defines no `XOR` conjunction. `xor` combinators are emitted as `"XOR"` rather than silently degraded, so RAQB's `checkTree` will flag them unless a matching custom conjunction is configured.
+- RAQB's several operators that collapse to one RQB operator (`equal`/`select_equals`/`multiselect_equals` → `=`) are disambiguated using each field's `valueEditorType`, so pass `fields` for the most faithful output.
+
 RAQB's last stable release was 6.6.15 in May 2025; these utilities exist to give RAQB users a straightforward path to React Query Builder.
