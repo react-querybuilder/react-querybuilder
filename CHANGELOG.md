@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#1070] [Migration guide](https://react-querybuilder.js.org/docs/tips/migrate-from-raqb) for [`react-awesome-query-builder`](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB). The conversion tools themselves (`parseRAQB`, `parseRAQBFields`, `formatRAQBFields`, and `defaultRule[Group]ProcessorRAQB`) live in the standalone [`@react-querybuilder/migrate-raqb`](https://github.com/react-querybuilder/migrate-raqb) package.
 
 ## [v8.21.2] - 2026-07-27
 
@@ -2390,6 +2392,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1066]: https://github.com/react-querybuilder/react-querybuilder/pull/1066
 [#1067]: https://github.com/react-querybuilder/react-querybuilder/pull/1067
 [#1068]: https://github.com/react-querybuilder/react-querybuilder/pull/1068
+[#1070]: https://github.com/react-querybuilder/react-querybuilder/pull/1070
 
 <!-- #endregion -->
 
