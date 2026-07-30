@@ -41,6 +41,7 @@ import {
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderStore,
 } from '../redux/_internal';
+import type { SetQueryStateOptions } from '../redux/queriesSlice';
 import { queriesSlice } from '../redux/queriesSlice';
 import type { QueryBuilderProps, RuleGroupProps, Schema, TranslationsFull } from '../types';
 import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
@@ -322,9 +323,9 @@ export function useQueryBuilderSchema<
    * means that it's wrapped in its own `useCallback`.
    */
   const dispatchQuery = useCallback(
-    (newQuery: RuleGroupTypeAny) => {
+    (newQuery: RuleGroupTypeAny, options?: SetQueryStateOptions) => {
       queryBuilderDispatch(
-        _RQB_INTERNAL_dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange })
+        _RQB_INTERNAL_dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange, options })
       );
     },
     [onQueryChange, qbId, queryBuilderDispatch]

@@ -55,6 +55,7 @@ import type {
 } from 'react';
 import type { SetNonNullable } from 'type-fest';
 import type { UseRuleGroup } from '../components/RuleGroup';
+import type { SetQueryStateOptions } from '../redux/queriesSlice';
 
 /**
  * Base interface for all subcomponents.
@@ -598,7 +599,15 @@ export interface Schema<F extends FullField, O extends string> {
   controls: Controls<F, O>;
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
-  dispatchQuery(query: RuleGroupTypeAny): void;
+  /**
+   * Updates the query for this query builder in React Query Builder's internal Redux store,
+   * then calls the `onQueryChange` callback with the new query.
+   *
+   * The optional `options` parameter augments the dispatched action's `meta` property. Pass
+   * `{ fromHistory: true }` when applying a previously recorded query (e.g. from an undo/redo
+   * implementation) so that history recorders can ignore the update.
+   */
+  dispatchQuery(query: RuleGroupTypeAny, options?: SetQueryStateOptions): void;
   getQuery(): RuleGroupTypeAny;
   getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;

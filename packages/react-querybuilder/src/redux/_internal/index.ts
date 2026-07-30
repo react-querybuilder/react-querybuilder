@@ -1,7 +1,11 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '@react-querybuilder/core';
 import type { ConfigureStoreOptions, PayloadAction, Store, ThunkAction } from '@reduxjs/toolkit';
 import type { TypedUseSelectorHook, UseStore } from 'react-redux';
-import type { SetQueryStateParams } from '../queriesSlice';
+import type {
+  SetQueryStateAction,
+  SetQueryStateOptions,
+  SetQueryStateParams,
+} from '../queriesSlice';
 import { queriesSlice } from '../queriesSlice';
 import { QueryBuilderStateContext } from '../QueryBuilderStateContext';
 import { rootReducer } from '../rootReducer';
@@ -17,12 +21,14 @@ export const _RQB_INTERNAL_dispatchThunk =
   ({
     payload,
     onQueryChange,
+    options,
   }: {
     payload: SetQueryStateParams;
     onQueryChange?: ((query: RuleGroupType) => void) | ((query: RuleGroupTypeIC) => void);
-  }): ThunkAction<void, RqbState, unknown, PayloadAction<SetQueryStateParams>> =>
+    options?: SetQueryStateOptions;
+  }): ThunkAction<void, RqbState, unknown, SetQueryStateAction> =>
   dispatch => {
-    dispatch(queriesSlice.actions.setQueryState(payload));
+    dispatch(queriesSlice.actions.setQueryState(payload, options));
     if (typeof onQueryChange === 'function') {
       onQueryChange(payload.query as never /* ??? */);
     }
