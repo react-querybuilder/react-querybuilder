@@ -222,6 +222,7 @@
     & + .ruleGroup-cloneGroup,
     & + .ruleGroup-lock,
     & + .ruleGroup-remove,
+    & + .undoRedoActions,
     & + .rule-cloneRule,
     & + .rule-lock,
     & + .rule-remove {
@@ -230,7 +231,8 @@
   }
 
   .ruleGroup-addRule,
-  .ruleGroup-addGroup {
+  .ruleGroup-addGroup,
+  .undoRedoActions {
     &:first-child {
       margin-#{$margin-side}: auto !important;
     }
