@@ -317,6 +317,18 @@ export interface QueryBuilderFlags {
    */
   enableMountQueryChange?: boolean;
   /**
+   * By default, when the last `QueryBuilder` component using a given `qbId` unmounts, its
+   * query is removed from the internal Redux store. Set this to `true` to retain the query
+   * state after unmount, which allows a subsequent `QueryBuilder` with the same `qbId` to
+   * pick up where the previous one left off.
+   *
+   * Only meaningful in conjunction with an explicit `qbId` prop, since automatically generated
+   * `qbId`s are never reused.
+   *
+   * @default false
+   */
+  preserveQueryStateOnUnmount?: boolean;
+  /**
    * Enables drag-and-drop features.
    *
    * @default false

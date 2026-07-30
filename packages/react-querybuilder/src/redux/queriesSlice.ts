@@ -9,6 +9,10 @@ export interface SetQueryStateParams {
   query: RuleGroupTypeAny;
 }
 
+export interface UnsetQueryStateParams {
+  qbId: string;
+}
+
 const initialState: QueriesSliceState = {};
 
 export const queriesSlice: Slice<
@@ -17,6 +21,10 @@ export const queriesSlice: Slice<
     setQueryState: (
       state: QueriesSliceState,
       { payload: { qbId, query } }: PayloadAction<SetQueryStateParams>
+    ) => void;
+    unsetQueryState: (
+      state: QueriesSliceState,
+      { payload: { qbId } }: PayloadAction<UnsetQueryStateParams>
     ) => void;
   },
   'queries',
@@ -28,6 +36,13 @@ export const queriesSlice: Slice<
   reducers: {
     setQueryState: (state, { payload: { qbId, query } }) => {
       state[qbId] = query;
+    },
+    /**
+     * Removes a query from the store. Dispatched when the last `QueryBuilder` using a given
+     * `qbId` unmounts, unless the `preserveQueryStateOnUnmount` prop is `true`.
+     */
+    unsetQueryState: (state, { payload: { qbId } }) => {
+      delete state[qbId];
     },
   },
   selectors: {

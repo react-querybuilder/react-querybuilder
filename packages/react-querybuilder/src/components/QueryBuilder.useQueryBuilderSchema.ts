@@ -36,9 +36,12 @@ import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,
+  registerQbId,
+  unregisterQbId,
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderStore,
 } from '../redux/_internal';
+import { queriesSlice } from '../redux/queriesSlice';
 import type { QueryBuilderProps, RuleGroupProps, Schema, TranslationsFull } from '../types';
 import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
@@ -110,6 +113,7 @@ export function useQueryBuilderSchema<
     showLockButtons: showLockButtonsProp = false,
     showMuteButtons: showMuteButtonsProp = false,
     suppressStandardClassnames: suppressStandardClassnamesProp = false,
+    preserveQueryStateOnUnmount: preserveQueryStateOnUnmountProp = false,
     resetOnFieldChange: resetOnFieldChangeProp = true,
     resetOnOperatorChange: resetOnOperatorChangeProp = false,
     autoSelectField: autoSelectFieldProp = true,
@@ -170,6 +174,7 @@ export function useQueryBuilderSchema<
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
+  const preserveQueryStateOnUnmount = !!preserveQueryStateOnUnmountProp;
   const maxLevels = (props.maxLevels ?? 0) > 0 ? Number(props.maxLevels) : Infinity;
   // oxlint-enable typescript/no-unnecessary-type-conversion
   // #endregion
@@ -249,6 +254,40 @@ export function useQueryBuilderSchema<
       })
     );
   }, [enableMountQueryChange, onQueryChange, qbId, queryBuilderDispatch, rootGroup]);
+
+  // Keep the latest query available to the registration effect below without adding it to that
+  // effect's dependency array (which would cause register/unregister churn on every change).
+  // Assigned in an effect rather than during render so that the ref is never written to while
+  // rendering.
+  const rootGroupRef = useRef(rootGroup);
+  useEffect(() => {
+    rootGroupRef.current = rootGroup;
+  }, [rootGroup]);
+
+  // Track this instance in the `qbId` registry, and tear down the query state when the last
+  // instance using this `qbId` unmounts (unless `preserveQueryStateOnUnmount` is `true`).
+  useEffect(() => {
+    registerQbId(qbId);
+
+    // Re-seed the store if a previous teardown removed this query. This happens in React's
+    // StrictMode, where effects are mounted, cleaned up, and mounted again: the cleanup below
+    // removes the query, but the mount-query-change effect above will not re-dispatch it
+    // because its `hasRunMountQueryChange` ref persists across the double-invocation.
+    if (!querySelector(queryBuilderStore.getState())) {
+      queryBuilderDispatch(
+        _RQB_INTERNAL_dispatchThunk({
+          payload: { qbId, query: rootGroupRef.current },
+          onQueryChange: undefined,
+        })
+      );
+    }
+
+    return () => {
+      if (unregisterQbId(qbId) === 0 && !preserveQueryStateOnUnmount) {
+        queryBuilderDispatch(queriesSlice.actions.unsetQueryState({ qbId }));
+      }
+    };
+  }, [preserveQueryStateOnUnmount, qbId, queryBuilderDispatch, queryBuilderStore, querySelector]);
 
   /**
    * Updates the redux-based query, then calls `onQueryChange` with the updated

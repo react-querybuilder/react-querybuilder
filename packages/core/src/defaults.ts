@@ -502,6 +502,7 @@ export const queryBuilderFlagDefaults: Required<QueryBuilderFlags> = {
   enableDragAndDrop: false,
   enableMountQueryChange: true,
   listsAsArrays: false,
+  preserveQueryStateOnUnmount: false,
   resetOnFieldChange: true,
   resetOnOperatorChange: false,
   showCloneButtons: false,

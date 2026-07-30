@@ -11,6 +11,8 @@ import { warningsSlice } from '../warningsSlice';
 import type { UseQueryBuilderDispatch } from './hooks';
 import { getInternalHooks } from './hooks';
 
+export * from '../instanceRegistry';
+
 export const _RQB_INTERNAL_dispatchThunk =
   ({
     payload,
