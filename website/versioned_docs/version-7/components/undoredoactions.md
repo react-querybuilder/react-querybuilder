@@ -24,7 +24,7 @@ See [Undo/redo](../tips/undo-redo) for the full guide.
 
 :::
 
-To render it without `QueryBuilderHistory`—for example to place it somewhere other than the group header—assign it to the [`undoRedoActions`](./querybuilder-controlelements#undoredoactions) control element yourself. It registers its own history recording, so no provider is required:
+To use it without `QueryBuilderHistory`, assign it to the [`undoRedoActions`](./querybuilder-controlelements#undoredoactions) control element yourself. It registers its own history recording, so no provider is required. The buttons still occupy the same slot in the outermost group's header:
 
 ```tsx
 import { UndoRedoActions } from 'react-querybuilder/history';
@@ -35,6 +35,8 @@ import { UndoRedoActions } from 'react-querybuilder/history';
   controlElements={{ undoRedoActions: UndoRedoActions }}
 />;
 ```
+
+To place undo/redo controls anywhere else—a toolbar above the query builder, for example—build your own with the [`useQueryBuilderHistory`](../tips/undo-redo#usequerybuilderhistory) hook instead.
 
 ## Behavior
 
