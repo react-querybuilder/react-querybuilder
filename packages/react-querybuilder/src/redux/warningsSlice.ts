@@ -24,6 +24,7 @@ const initialState: WarningsSliceState = {
   [messages.errorDeprecatedDebugImport]: false,
   [messages.errorDuplicateQbId]: false,
   [messages.errorChangedQbId]: false,
+  [messages.errorShowUndoRedoWithoutProvider]: false,
 };
 
 export const warningsSlice: Slice<

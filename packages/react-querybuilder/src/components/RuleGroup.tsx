@@ -29,7 +29,7 @@ import {
   useReactDndWarning,
   useStopEventPropagation,
 } from '../hooks';
-import type { RuleGroupProps, ShiftActionsProps } from '../types';
+import type { RuleGroupProps, ShiftActionsProps, UndoRedoActionsProps } from '../types';
 
 /**
  * Default component to display {@link RuleGroupType} and {@link RuleGroupTypeIC}
@@ -121,6 +121,7 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
     schema: {
       controls: {
         shiftActions: ShiftActionsControlElement,
+        undoRedoActions: UndoRedoActionsControlElement,
         dragHandle: DragHandleControlElement,
         combinatorSelector: CombinatorSelectorControlElement,
         notToggle: NotToggleControlElement,
@@ -165,6 +166,28 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           }
         : undefined,
     [rg.schema.showShiftActions, rg.translations]
+  );
+
+  const undoRedoTitles = useMemo(
+    (): UndoRedoActionsProps['titles'] =>
+      rg.schema.showUndoRedo
+        ? { undo: rg.translations.undo.title, redo: rg.translations.redo.title }
+        : undefined,
+    [rg.schema.showUndoRedo, rg.translations]
+  );
+  const undoRedoClassNames = useMemo(
+    (): UndoRedoActionsProps['classNames'] =>
+      rg.schema.showUndoRedo
+        ? { undo: rg.classNames.undoAction, redo: rg.classNames.redoAction }
+        : undefined,
+    [rg.classNames.redoAction, rg.classNames.undoAction, rg.schema.showUndoRedo]
+  );
+  const undoRedoLabels = useMemo(
+    (): UndoRedoActionsProps['labels'] =>
+      rg.schema.showUndoRedo
+        ? { undo: rg.translations.undo.label, redo: rg.translations.redo.label }
+        : undefined,
+    [rg.schema.showUndoRedo, rg.translations]
   );
 
   return (
@@ -289,6 +312,18 @@ export const RuleGroupHeaderComponents: React.MemoExoticComponent<
           className={rg.classNames.muteGroup}
           handleOnClick={rg.toggleMuteGroup}
           rules={rg.ruleGroup.rules}
+          ruleOrGroup={rg.ruleGroup}
+        />
+      )}
+      {rg.schema.showUndoRedo && rg.path.length === 0 && UndoRedoActionsControlElement && (
+        <UndoRedoActionsControlElement
+          key={TestID.undoRedoActions}
+          {...commonSubcomponentProps}
+          testID={TestID.undoRedoActions}
+          titles={undoRedoTitles}
+          labels={undoRedoLabels}
+          className={rg.classNames.undoRedoActions}
+          classNames={undoRedoClassNames}
           ruleOrGroup={rg.ruleGroup}
         />
       )}
@@ -437,6 +472,9 @@ export interface UseRuleGroup extends RuleGroupProps {
     { [k in keyof Classnames]: string },
     | 'header'
     | 'shiftActions'
+    | 'undoRedoActions'
+    | 'undoAction'
+    | 'redoAction'
     | 'dragHandle'
     | 'combinators'
     | 'notToggle'
@@ -562,6 +600,20 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
         suppressStandardClassnames || standardClassnames.shiftActions,
         classNamesProp.shiftActions
       ),
+      undoRedoActions: clsx(
+        suppressStandardClassnames || standardClassnames.undoRedoActions,
+        classNamesProp.undoRedoActions
+      ),
+      undoAction: clsx(
+        suppressStandardClassnames || standardClassnames.undoAction,
+        classNamesProp.actionElement,
+        classNamesProp.undoAction
+      ),
+      redoAction: clsx(
+        suppressStandardClassnames || standardClassnames.redoAction,
+        classNamesProp.actionElement,
+        classNamesProp.redoAction
+      ),
       dragHandle: clsx(
         suppressStandardClassnames || standardClassnames.dragHandle,
         classNamesProp.dragHandle
@@ -623,6 +675,9 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
       classNamesProp.notToggle,
       classNamesProp.removeGroup,
       classNamesProp.shiftActions,
+      classNamesProp.undoRedoActions,
+      classNamesProp.undoAction,
+      classNamesProp.redoAction,
       classNamesProp.valueSelector,
       dropEffect,
       dropNotAllowed,

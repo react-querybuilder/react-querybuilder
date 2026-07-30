@@ -32,7 +32,7 @@ import {
   update,
 } from '@react-querybuilder/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
+import { useControlledOrUncontrolled, useDeprecatedProps, useUndoRedoWarning } from '../hooks/';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,
@@ -113,6 +113,7 @@ export function useQueryBuilderSchema<
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
     showNotToggle: showNotToggleProp = false,
     showShiftActions: showShiftActionsProp = false,
+    showUndoRedo: showUndoRedoProp = false,
     showCloneButtons: showCloneButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
     showMuteButtons: showMuteButtonsProp = false,
@@ -168,6 +169,7 @@ export function useQueryBuilderSchema<
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
+  const showUndoRedo = !!showUndoRedoProp;
   const showCloneButtons = !!showCloneButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
   const showMuteButtons = !!showMuteButtonsProp;
@@ -192,6 +194,8 @@ export function useQueryBuilderSchema<
     },
     [debugMode, onLog]
   );
+
+  useUndoRedoWarning(showUndoRedo, !!controls.undoRedoActions);
 
   // #region Controlled vs uncontrolled mode
   useControlledOrUncontrolled({
@@ -720,6 +724,7 @@ export function useQueryBuilderSchema<
       showMuteButtons,
       showNotToggle,
       showShiftActions,
+      showUndoRedo,
       suppressStandardClassnames,
       validationMap,
     }),
@@ -766,6 +771,7 @@ export function useQueryBuilderSchema<
       showMuteButtons,
       showNotToggle,
       showShiftActions,
+      showUndoRedo,
       suppressStandardClassnames,
       validationMap,
     ]

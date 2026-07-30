@@ -119,6 +119,9 @@ export const useMergedContext = <
       rule: cc.rule,
       ruleGroup: cc.ruleGroup,
       shiftActions: cc.shiftActions,
+      undoRedoActions: cc.undoRedoActions,
+      undoAction: cc.undoAction,
+      redoAction: cc.redoAction,
       value: cc.value,
       valueSelector: cc.valueSelector,
       valueSource: cc.valueSource,
@@ -180,6 +183,9 @@ export const useMergedContext = <
       cc.rule,
       cc.ruleGroup,
       cc.shiftActions,
+      cc.undoRedoActions,
+      cc.undoAction,
+      cc.redoAction,
       cc.valid,
       cc.value,
       cc.valueDateTimeRelative,
@@ -279,6 +285,7 @@ export const useMergedContext = <
           contextCE.removeRuleAction
         ),
         mergeControlElement('shiftActions', propsCE.shiftActions, contextCE.shiftActions),
+        mergeControlElement('undoRedoActions', propsCE.undoRedoActions, contextCE.undoRedoActions),
         {
           valueEditor:
             propsCE.valueEditor === null
@@ -344,6 +351,7 @@ export const useMergedContext = <
       contextCE.ruleGroupBodyElements,
       contextCE.ruleGroupHeaderElements,
       contextCE.shiftActions,
+      contextCE.undoRedoActions,
       contextCE.valueEditor,
       contextCE.valueSelector,
       contextCE.valueSourceSelector,
@@ -372,6 +380,7 @@ export const useMergedContext = <
       propsCE.ruleGroupBodyElements,
       propsCE.ruleGroupHeaderElements,
       propsCE.shiftActions,
+      propsCE.undoRedoActions,
       propsCE.valueEditor,
       propsCE.valueSelector,
       propsCE.valueSourceSelector,
@@ -579,6 +588,22 @@ export const useMergedContext = <
           finalize ? defaultTranslations : undefined
         ),
         mergeAnyTranslation(
+          'undo',
+          {
+            label: [propsT.undo?.label, contextT.undo?.label],
+            title: [propsT.undo?.title, contextT.undo?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
+          'redo',
+          {
+            label: [propsT.redo?.label, contextT.redo?.label],
+            title: [propsT.redo?.title, contextT.redo?.title],
+          },
+          finalize ? defaultTranslations : undefined
+        ),
+        mergeAnyTranslation(
           'matchMode',
           { title: [propsT.matchMode?.title, contextT.matchMode?.title] },
           finalize ? defaultTranslations : undefined
@@ -654,6 +679,10 @@ export const useMergedContext = <
       contextT.shiftActionDown?.title,
       contextT.shiftActionUp?.label,
       contextT.shiftActionUp?.title,
+      contextT.undo?.label,
+      contextT.undo?.title,
+      contextT.redo?.label,
+      contextT.redo?.title,
       contextT.value?.title,
       contextT.values?.placeholderGroupLabel,
       contextT.values?.placeholderLabel,
@@ -709,6 +738,10 @@ export const useMergedContext = <
       propsT.shiftActionDown?.title,
       propsT.shiftActionUp?.label,
       propsT.shiftActionUp?.title,
+      propsT.undo?.label,
+      propsT.undo?.title,
+      propsT.redo?.label,
+      propsT.redo?.title,
       propsT.value?.title,
       propsT.values?.placeholderGroupLabel,
       propsT.values?.placeholderLabel,

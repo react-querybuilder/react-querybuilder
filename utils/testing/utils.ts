@@ -46,6 +46,7 @@ export const basicSchema: Schema<FullField, string> = {
   showCombinatorsBetweenRules: false,
   showNotToggle: false,
   showShiftActions: false,
+  showUndoRedo: false,
   showCloneButtons: false,
   showLockButtons: false,
   showMuteButtons: false,

@@ -28,6 +28,9 @@ export const messages = {
   errorDuplicateQbId:
     'QueryBuilder was rendered with a qbId prop that is already in use by another mounted QueryBuilder. Each mounted query builder must have a unique qbId, so this query builder has fallen back to an automatically generated identifier. A qbId may be reused after the previous query builder has unmounted (see the preserveQueryStateOnUnmount prop), but not while it is still mounted.',
 
+  errorShowUndoRedoWithoutProvider:
+    'QueryBuilder was rendered with the showUndoRedo prop set to true, but no undo/redo controls were available. To enable undo/redo, wrap QueryBuilder in the QueryBuilderHistory component from react-querybuilder/history, or provide your own controlElements.undoRedoActions component.',
+
   errorChangedQbId:
     'QueryBuilder was rendered with a qbId prop that is different than the qbId it was mounted with. The qbId prop is only evaluated when the component mounts, so the new value has been ignored. To render a query builder with a different qbId, unmount the existing one first, e.g. by giving it a different React key.',
 } as const;

@@ -95,6 +95,18 @@ export interface Classnames {
    */
   shiftActions: Classname;
   /**
+   * Classname(s) to be applied to the undo/redo actions container.
+   */
+  undoRedoActions: Classname;
+  /**
+   * Classname(s) to be applied to the "undo" button.
+   */
+  undoAction: Classname;
+  /**
+   * Classname(s) to be applied to the "redo" button.
+   */
+  redoAction: Classname;
+  /**
    * Classnames applied to the `<span>` handle for dragging rules/groups.
    */
   dragHandle: Classname;
@@ -268,6 +280,8 @@ export interface BaseTranslations<LabelType = string> {
   cloneRuleGroup: BaseTranslationWithLabel<LabelType>;
   shiftActionUp: BaseTranslationWithLabel<LabelType>;
   shiftActionDown: BaseTranslationWithLabel<LabelType>;
+  undo: BaseTranslationWithLabel<LabelType>;
+  redo: BaseTranslationWithLabel<LabelType>;
   dragHandle: BaseTranslationWithLabel<LabelType>;
   lockRule: BaseTranslationWithLabel<LabelType>;
   lockGroup: BaseTranslationWithLabel<LabelType>;
@@ -359,6 +373,15 @@ export interface QueryBuilderFlags {
    * @default false
    */
   showShiftActions?: boolean;
+  /**
+   * Show the "Undo"/"Redo" actions in the header of the outermost group.
+   *
+   * Requires the `QueryBuilderHistory` component from `react-querybuilder/history`, which
+   * provides the controls and records the history they navigate.
+   *
+   * @default false
+   */
+  showUndoRedo?: boolean;
   /**
    * Show the "Clone rule" and "Clone group" buttons.
    *

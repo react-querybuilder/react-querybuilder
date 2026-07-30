@@ -9,5 +9,6 @@ export * from './QueryBuilderHistory';
 export * from './QueryBuilderHistoryContext';
 export * from './queryHistorySlice';
 export * from './signature';
+export * from './UndoRedoActions';
 export * from './types';
 export * from './useQueryBuilderHistory';

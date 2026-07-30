@@ -310,6 +310,32 @@ export interface NotToggleProps extends CommonSubComponentProps {
 }
 
 /**
+ * Props passed to `undoRedoActions` components.
+ *
+ * @group Props
+ */
+export interface UndoRedoActionsProps extends CommonSubComponentProps {
+  /**
+   * Visible text for the "undo"/"redo" elements.
+   */
+  labels?: { undo?: ReactNode; redo?: ReactNode };
+  /**
+   * Tooltips for the "undo"/"redo" elements.
+   */
+  titles?: { undo?: string; redo?: string };
+  /**
+   * Classnames for the "undo"/"redo" elements. (The `className` prop applies to their
+   * container.)
+   */
+  classNames?: { undo?: string; redo?: string };
+  /**
+   * The {@link RuleGroupType}/{@link RuleGroupTypeIC} associated with this element, i.e. the
+   * outermost group.
+   */
+  ruleOrGroup: RuleGroupTypeAny;
+}
+
+/**
  * Props passed to `shiftActions` components.
  *
  * @group Props
@@ -408,7 +434,12 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
  * @group Props
  */
 export type Controls<F extends FullField, O extends string> = Required<
-  SetNonNullable<ControlElementsProp<F, O>, keyof ControlElementsProp<F, O>>
+  SetNonNullable<
+    ControlElementsProp<F, O>,
+    // `undoRedoActions` remains nullable after finalization because, unlike every other
+    // control, no implementation is available unless `react-querybuilder/history` is in use.
+    Exclude<keyof ControlElementsProp<F, O>, 'undoRedoActions'>
+  >
 >;
 
 /**
@@ -560,6 +591,19 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   shiftActions: ComponentType<ShiftActionsProps> | null;
   /**
+   * Undo/redo buttons for the outermost group, rendered when the `showUndoRedo` prop is `true`.
+   *
+   * Defaults to `null` in the main package because undo/redo requires the history recorder from
+   * `react-querybuilder/history`. Rendering `QueryBuilderHistory` provides an implementation.
+   *
+   * A custom component can be supplied here, in which case it is responsible for calling
+   * `useQueryBuilderHistory(props.schema.qbId)` to obtain the undo/redo controls—rendering the
+   * hook is also what opts a query builder in to history recording.
+   *
+   * @default null
+   */
+  undoRedoActions: ComponentType<UndoRedoActionsProps> | null;
+  /**
    * Updates the `value` property for the current rule.
    *
    * @default ValueEditor
@@ -628,6 +672,7 @@ export interface Schema<F extends FullField, O extends string> {
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showShiftActions: boolean;
+  showUndoRedo: boolean;
   showCloneButtons: boolean;
   showLockButtons: boolean;
   showMuteButtons: boolean;
