@@ -88,6 +88,17 @@ export default defineConfig(async options => {
     {
       ...commonBuildOptions,
       ...options,
+      entry: { history: 'src/history/index.ts' },
+    },
+    {
+      ...commonBuildOptions,
+      ...options,
+      format: 'cjs',
+      entry: { history: 'src/history/index.ts' },
+    },
+    {
+      ...commonBuildOptions,
+      ...options,
       entry: utilEntryPoints,
     },
     {
@@ -95,7 +106,7 @@ export default defineConfig(async options => {
       ...options,
       entry: utilEntryPoints,
       format: 'cjs',
-      onSuccess: () => writeNode10pkg(['async', ...Object.keys(utilEntryPoints)]),
+      onSuccess: () => writeNode10pkg(['async', 'history', ...Object.keys(utilEntryPoints)]),
     },
   ];
 }) as UserConfigExport;

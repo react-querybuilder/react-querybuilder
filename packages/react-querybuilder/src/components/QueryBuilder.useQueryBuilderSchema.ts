@@ -36,7 +36,9 @@ import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,
+  registerDispatchQuery,
   registerQbId,
+  unregisterDispatchQuery,
   unregisterQbId,
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderStore,
@@ -330,6 +332,19 @@ export function useQueryBuilderSchema<
     },
     [onQueryChange, qbId, queryBuilderDispatch]
   );
+
+  // Publish `dispatchQuery` so that code outside this component tree (e.g. an external toolbar
+  // or the undo/redo hook from `react-querybuilder/history`) can apply a query to this query
+  // builder addressed only by its `qbId`. A stable wrapper is registered so that the identity
+  // of `dispatchQuery`—which changes whenever `onQueryChange` does—never causes churn.
+  const dispatchQueryRef = useRef(dispatchQuery);
+  useEffect(() => {
+    dispatchQueryRef.current = dispatchQuery;
+  }, [dispatchQuery]);
+  useEffect(() => {
+    registerDispatchQuery(qbId, (query, options) => dispatchQueryRef.current(query, options));
+    return () => unregisterDispatchQuery(qbId);
+  }, [qbId]);
   // #endregion
 
   // #region Query update methods

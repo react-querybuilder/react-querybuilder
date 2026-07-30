@@ -1,3 +1,6 @@
+import type { RuleGroupTypeAny } from '@react-querybuilder/core';
+import type { SetQueryStateOptions } from './queriesSlice';
+
 /**
  * Tracks how many _mounted_ `QueryBuilder` components are using each `qbId`.
  *
@@ -44,4 +47,42 @@ export const getQbIdInstanceCount = (qbId: string): number => instanceCounts.get
  */
 export const _RQB_INTERNAL_clearQbIdRegistry = (): void => {
   instanceCounts.clear();
+  dispatchQueryFns.clear();
 };
+
+/**
+ * `dispatchQuery` function for each mounted query builder, keyed by `qbId`.
+ *
+ * This is what lets code _outside_ a query builder (an external toolbar, a keyboard shortcut
+ * handler, the undo/redo hook) apply a query to a specific query builder addressed only by its
+ * `qbId`. Going through the query builder's own `dispatchQuery` rather than dispatching
+ * `setQueryState` directly is what makes `onQueryChange` fire, which controlled components
+ * depend on—without it, a controlled query builder would immediately revert the change.
+ *
+ * Held here rather than in the store for the same reason as {@link registerQbId}: it is
+ * ephemeral bookkeeping, nothing renders from it, and functions are not serializable state.
+ */
+const dispatchQueryFns = new Map<string, DispatchQueryFn>();
+
+export type DispatchQueryFn = (query: RuleGroupTypeAny, options?: SetQueryStateOptions) => void;
+
+/**
+ * Associates a `dispatchQuery` function with a `qbId`.
+ */
+export const registerDispatchQuery = (qbId: string, dispatchQuery: DispatchQueryFn): void => {
+  dispatchQueryFns.set(qbId, dispatchQuery);
+};
+
+/**
+ * Removes the `dispatchQuery` function associated with a `qbId`.
+ */
+export const unregisterDispatchQuery = (qbId: string): void => {
+  dispatchQueryFns.delete(qbId);
+};
+
+/**
+ * Returns the `dispatchQuery` function for the query builder with the given `qbId`, or
+ * `undefined` if no such query builder is mounted.
+ */
+export const getDispatchQuery = (qbId: string): DispatchQueryFn | undefined =>
+  dispatchQueryFns.get(qbId);
