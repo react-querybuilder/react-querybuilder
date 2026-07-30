@@ -33,7 +33,7 @@ import {
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
 import type { UseMergedContext } from '../hooks';
-import { useFields, useMergedContext } from '../hooks';
+import { useFields, useMergedContext, useQbId } from '../hooks';
 import type { QueryBuilderProps } from '../types';
 
 export type UseQueryBuilderSetup<
@@ -43,6 +43,7 @@ export type UseQueryBuilderSetup<
   C extends FullCombinator,
 > = {
   qbId: string;
+  resolveQbIdCollision: () => void;
   rqbContext: UseMergedContext<F, GetOptionIdentifierType<O>, true>;
   fields: FullOptionList<F>;
   fieldMap: FullOptionMap<
@@ -105,7 +106,7 @@ export const useQueryBuilderSetup = <
   type FieldName = GetOptionIdentifierType<F>;
   type OperatorName = GetOptionIdentifierType<O>;
 
-  const [qbId] = useState(generateID);
+  const { qbId, resolveQbIdCollision } = useQbId(props.qbId);
 
   const {
     fields: fieldsProp,
@@ -395,6 +396,7 @@ export const useQueryBuilderSetup = <
 
   return {
     qbId,
+    resolveQbIdCollision,
     rqbContext,
     fields,
     fieldMap,

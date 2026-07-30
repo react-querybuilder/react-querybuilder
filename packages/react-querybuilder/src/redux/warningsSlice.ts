@@ -22,6 +22,8 @@ const initialState: WarningsSliceState = {
   [messages.errorControlledToUncontrolled]: false,
   [messages.errorEnabledDndWithoutReactDnD]: false,
   [messages.errorDeprecatedDebugImport]: false,
+  [messages.errorDuplicateQbId]: false,
+  [messages.errorChangedQbId]: false,
 };
 
 export const warningsSlice: Slice<

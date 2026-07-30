@@ -808,6 +808,20 @@ export type QueryBuilderProps<
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
   ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
       /**
+       * Identifier for this query builder instance within React Query Builder's internal
+       * Redux store. Useful for addressing a specific query builder from outside its own
+       * component tree, e.g. from a custom toolbar.
+       *
+       * If not provided, an identifier is generated automatically. Only evaluated when the
+       * component mounts; subsequent changes are ignored (and logged in non-production modes).
+       *
+       * If another _mounted_ query builder is already using the same `qbId`, this query
+       * builder will fall back to a generated identifier and log an error in non-production
+       * modes. Reusing a `qbId` _after_ the previous query builder has unmounted is
+       * supported—see the `preserveQueryStateOnUnmount` prop.
+       */
+      qbId?: string;
+      /**
        * Initial query object for uncontrolled components.
        */
       defaultQuery?: RG;

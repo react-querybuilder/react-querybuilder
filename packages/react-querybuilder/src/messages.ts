@@ -24,4 +24,10 @@ export const messages = {
     'QueryBuilder was rendered with the enableDragAndDrop prop set to true, but either react-dnd was not detected or one of react-dnd-html5-backend or react-dnd-touch-backend was not detected. To enable drag-and-drop functionality, install react-dnd and one of the backend packages and wrap QueryBuilder in QueryBuilderDnD from @react-querybuilder/dnd.',
 
   errorDeprecatedDebugImport: `Importing from react-querybuilder/debug is deprecated. To enable Redux DevTools for React Query Builder's internal store, set globalThis.__RQB_DEVTOOLS__ = true.`,
+
+  errorDuplicateQbId:
+    'QueryBuilder was rendered with a qbId prop that is already in use by another mounted QueryBuilder. Each mounted query builder must have a unique qbId, so this query builder has fallen back to an automatically generated identifier. A qbId may be reused after the previous query builder has unmounted (see the preserveQueryStateOnUnmount prop), but not while it is still mounted.',
+
+  errorChangedQbId:
+    'QueryBuilder was rendered with a qbId prop that is different than the qbId it was mounted with. The qbId prop is only evaluated when the component mounts, so the new value has been ignored. To render a query builder with a different qbId, unmount the existing one first, e.g. by giving it a different React key.',
 } as const;

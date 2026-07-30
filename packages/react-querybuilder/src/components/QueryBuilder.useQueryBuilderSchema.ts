@@ -52,6 +52,7 @@ const icCombinatorPropObject = {} as const;
 const defaultGetValueEditorSeparator = () => null;
 const defaultGetRuleOrGroupClassname = () => '';
 const defaultOnAddMoveRemove = () => true;
+const noopCleanup = () => {};
 // v8 ignore next
 const defaultOnLog = (...params: unknown[]) => {
   console.log(...params);
@@ -131,6 +132,7 @@ export function useQueryBuilderSchema<
 
   const {
     qbId,
+    resolveQbIdCollision,
     rqbContext: incomingRqbContext,
     fields,
     fieldMap,
@@ -267,7 +269,24 @@ export function useQueryBuilderSchema<
   // Track this instance in the `qbId` registry, and tear down the query state when the last
   // instance using this `qbId` unmounts (unless `preserveQueryStateOnUnmount` is `true`).
   useEffect(() => {
-    registerQbId(qbId);
+    if (registerQbId(qbId) > 1) {
+      // Another mounted query builder is already using this `qbId`. Give up the identifier
+      // immediately and switch to a generated one; the effect will run again with the new
+      // `qbId`. No cleanup is returned because this instance never took ownership.
+      //
+      // TODO: Decide whether the fallback instance should re-seed from its own `query`/
+      // `defaultQuery` prop instead of the query it inherited from the `qbId` it collided with.
+      // Because `candidateQuery` prefers `storeQuery` over `defaultQuery`, this instance
+      // adopted the _other_ query builder's query during render, so `rootGroupRef.current`
+      // (used by the re-seed below) holds that query rather than this instance's own initial
+      // query. The net effect is that a query builder that loses a `qbId` collision silently
+      // ignores its own `defaultQuery`. That only happens on an error path that already logs
+      // `messages.errorDuplicateQbId`, but it is arguably surprising. Pinned by the
+      // "does not clobber the existing query when a duplicate qbId is used" test.
+      unregisterQbId(qbId);
+      resolveQbIdCollision();
+      return noopCleanup;
+    }
 
     // Re-seed the store if a previous teardown removed this query. This happens in React's
     // StrictMode, where effects are mounted, cleaned up, and mounted again: the cleanup below
@@ -287,7 +306,14 @@ export function useQueryBuilderSchema<
         queryBuilderDispatch(queriesSlice.actions.unsetQueryState({ qbId }));
       }
     };
-  }, [preserveQueryStateOnUnmount, qbId, queryBuilderDispatch, queryBuilderStore, querySelector]);
+  }, [
+    preserveQueryStateOnUnmount,
+    qbId,
+    queryBuilderDispatch,
+    queryBuilderStore,
+    querySelector,
+    resolveQbIdCollision,
+  ]);
 
   /**
    * Updates the redux-based query, then calls `onQueryChange` with the updated
