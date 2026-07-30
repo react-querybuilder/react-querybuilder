@@ -164,9 +164,11 @@ const useUndoRedoShortcuts = (qbId: string) => {
 
 Each query builder has its own independent history, keyed by `qbId`. Undoing in one has no effect on any other.
 
-## Query state and unmounting
+## History lifetime
 
-When the last query builder using a given `qbId` unmounts, both its query and its history are discarded. To preserve them—so that remounting a query builder with the same `qbId` resumes where it left off—use [`preserveQueryStateOnUnmount`](../components/querybuilder#preservequerystateonunmount).
+History belongs to the query builder, not to whichever component displays it. Several consumers can share one `qbId`—the built-in undo/redo buttons alongside an external toolbar, for example—and one of them unmounting leaves the history intact for the rest.
+
+When the last query builder using a given `qbId` unmounts, both its query and its history are discarded. To preserve them—so that remounting a query builder with the same `qbId` resumes where it left off—use [`preserveQueryStateOnUnmount`](../components/querybuilder#preservequerystateonunmount), which retains the history along with the query.
 
 ## Alternative: controlled mode
 

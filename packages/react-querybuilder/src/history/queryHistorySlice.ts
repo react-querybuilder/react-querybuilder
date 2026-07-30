@@ -117,6 +117,14 @@ export const queryHistorySlice: Slice<
         coalesceMs,
       };
     },
+    /**
+     * Stops recording history for a query builder and discards what has been recorded.
+     *
+     * Not dispatched when a consumer of {@link useQueryBuilderHistory} unmounts—history belongs
+     * to the query builder rather than to any one consumer—but available for explicitly opting
+     * a query builder back out of recording. History is otherwise discarded automatically when
+     * the query builder unmounts (see the `unsetQueryState` matcher below).
+     */
     unregister: (state, { payload: { qbId } }) => {
       delete state[qbId];
     },

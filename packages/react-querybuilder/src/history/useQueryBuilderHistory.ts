@@ -52,6 +52,14 @@ export const useQueryBuilderHistory = (
       // after registration is undoable rather than being swallowed as the seed. Registration
       // happens here rather than in an effect so that no change can slip through between the
       // first render and the first effect.
+      //
+      // Registration is deliberately _not_ undone when this consumer unsubscribes. A query
+      // builder's history belongs to the query builder, not to whichever component happens to
+      // be displaying it: several consumers can share one `qbId` (the built-in undo/redo
+      // buttons plus an external toolbar, say), and unregistering here would destroy the
+      // history still in use by the others. Re-subscribing—which also happens whenever the
+      // options change—would likewise wipe it. The history entry is discarded when the query
+      // builder itself unmounts, via the `unsetQueryState` matcher in the slice.
       dispatch(
         queryHistorySlice.actions.register({
           qbId,
@@ -60,11 +68,7 @@ export const useQueryBuilderHistory = (
           coalesceMs,
         })
       );
-      const unsubscribe = store.subscribe(onStoreChange);
-      return () => {
-        unsubscribe();
-        dispatch(queryHistorySlice.actions.unregister({ qbId }));
-      };
+      return store.subscribe(onStoreChange);
     },
     [coalesceMs, dispatch, maxHistory, qbId, store]
   );

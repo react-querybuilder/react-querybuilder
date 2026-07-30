@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { QueryBuilder } from '../../components/QueryBuilder';
 import { messages } from '../../messages';
 import type { ActionProps, UndoRedoActionsProps } from '../../types';
-import { QueryBuilderHistory } from '../index';
+import { QueryBuilderHistory, UndoRedoActions } from '../index';
 
 const { consoleError } = consoleMocks();
 const user = userEvent.setup();
@@ -231,6 +231,37 @@ describe('without QueryBuilderHistory', () => {
 
     expect(screen.queryByTestId(TestID.undoRedoActions)).toBeNull();
     expect(consoleError).toHaveBeenCalledWith(messages.errorShowUndoRedoWithoutProvider);
+  });
+});
+
+describe('assigned directly as a control element', () => {
+  // Documented alternative to QueryBuilderHistory: UndoRedoActions registers its own history
+  // recording, so it works without the provider.
+  it('records and navigates history without QueryBuilderHistory', async () => {
+    render(
+      <QueryBuilder
+        qbId="ui-direct"
+        fields={fields}
+        defaultQuery={startQuery}
+        showUndoRedo
+        controlElements={{ undoRedoActions: UndoRedoActions }}
+      />
+    );
+
+    expect(consoleError).not.toHaveBeenCalledWith(messages.errorShowUndoRedoWithoutProvider);
+    expect(undoBtn()).toBeDisabled();
+
+    await user.type(valueEditor(), 'ab');
+    expect(undoBtn()).toBeEnabled();
+
+    // The library default `coalesceMs` applies without a provider, so the typing burst is a
+    // single undo step back to the pre-edit value.
+    await user.click(undoBtn());
+    expect(valueEditor().value).toBe('');
+    expect(redoBtn()).toBeEnabled();
+
+    await user.click(redoBtn());
+    expect(valueEditor().value).toBe('ab');
   });
 });
 

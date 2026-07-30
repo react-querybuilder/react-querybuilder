@@ -435,7 +435,12 @@ Displays "undo"/"redo" buttons at the end of the outermost group's header.
 
 :::caution
 
-Like [`enableDragAndDrop`](#enabledraganddrop), this prop only works in conjunction with a context provider—in this case `QueryBuilderHistory` from [`react-querybuilder/history`](../tips/undo-redo), which both supplies the buttons and records the history they navigate. Setting `showUndoRedo` without it logs an error and renders nothing.
+This prop has no effect on its own, because the buttons it displays come from the [`undoRedoActions`](./querybuilder-controlelements#undoredoactions) control element, which defaults to `null`. Provide one of the following:
+
+- `QueryBuilderHistory` from [`react-querybuilder/history`](../tips/undo-redo) higher in the component tree, which supplies the default [`UndoRedoActions`](./undoredoactions) and records the history it navigates. This is the recommended approach.
+- Your own `controlElements.undoRedoActions` component, which is then responsible for calling `useQueryBuilderHistory(props.schema.qbId)` itself.
+
+With neither in place, `showUndoRedo` logs an error and renders nothing.
 
 :::
 

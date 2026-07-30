@@ -273,6 +273,15 @@ export function useQueryBuilderSchema<
     rootGroupRef.current = rootGroup;
   }, [rootGroup]);
 
+  // Also read through a ref instead of a dependency. As a dependency, toggling this prop would
+  // tear down and re-run the registration effect even though nothing unmounted: the cleanup
+  // would run with the stale value, dispatch `unsetQueryState`, and destroy any recorded
+  // undo/redo history for this query builder.
+  const preserveQueryStateOnUnmountRef = useRef(preserveQueryStateOnUnmount);
+  useEffect(() => {
+    preserveQueryStateOnUnmountRef.current = preserveQueryStateOnUnmount;
+  }, [preserveQueryStateOnUnmount]);
+
   // Track this instance in the `qbId` registry, and tear down the query state when the last
   // instance using this `qbId` unmounts (unless `preserveQueryStateOnUnmount` is `true`).
   useEffect(() => {
@@ -309,18 +318,11 @@ export function useQueryBuilderSchema<
     }
 
     return () => {
-      if (unregisterQbId(qbId) === 0 && !preserveQueryStateOnUnmount) {
+      if (unregisterQbId(qbId) === 0 && !preserveQueryStateOnUnmountRef.current) {
         queryBuilderDispatch(queriesSlice.actions.unsetQueryState({ qbId }));
       }
     };
-  }, [
-    preserveQueryStateOnUnmount,
-    qbId,
-    queryBuilderDispatch,
-    queryBuilderStore,
-    querySelector,
-    resolveQbIdCollision,
-  ]);
+  }, [qbId, queryBuilderDispatch, queryBuilderStore, querySelector, resolveQbIdCollision]);
 
   /**
    * Updates the redux-based query, then calls `onQueryChange` with the updated

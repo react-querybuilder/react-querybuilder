@@ -7,17 +7,34 @@ Renders a `<div>` containing two buttons—"undo" and "redo"—in the header of 
 
 The buttons themselves are rendered with the [`actionElement`](./querybuilder-controlelements#actionelement) control element, so they inherit the same styling and behavior as every other action button, including replacements provided by the [compatibility packages](../compat).
 
-Available from the `react-querybuilder/history` entry point:
-
-```ts
-import { UndoRedoActions } from 'react-querybuilder/history';
-```
-
 :::info
 
-You generally won't render or configure this component directly. `QueryBuilderHistory` supplies it automatically. See [Undo/redo](../tips/undo-redo) for the full guide.
+You generally won't import or configure this component directly—rendering `QueryBuilderHistory` supplies it automatically:
+
+```tsx
+import { QueryBuilder } from 'react-querybuilder';
+import { QueryBuilderHistory } from 'react-querybuilder/history';
+
+<QueryBuilderHistory>
+  <QueryBuilder fields={fields} showUndoRedo />
+</QueryBuilderHistory>;
+```
+
+See [Undo/redo](../tips/undo-redo) for the full guide.
 
 :::
+
+To render it without `QueryBuilderHistory`—for example to place it somewhere other than the group header—assign it to the [`undoRedoActions`](./querybuilder-controlelements#undoredoactions) control element yourself. It registers its own history recording, so no provider is required:
+
+```tsx
+import { UndoRedoActions } from 'react-querybuilder/history';
+
+<QueryBuilder
+  fields={fields}
+  showUndoRedo
+  controlElements={{ undoRedoActions: UndoRedoActions }}
+/>;
+```
 
 ## Behavior
 
