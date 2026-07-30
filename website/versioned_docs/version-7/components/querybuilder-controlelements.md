@@ -46,6 +46,7 @@ The following control overrides are supported via the `Controls` interface. Sett
 | [`ruleGroupBodyElements`](#rulegroupbodyelements)     | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
 | [`ruleGroupHeaderElements`](#rulegroupheaderelements) | <code>React.ComponentType&lt;RuleGroupProps &amp; ReturnType&lt;typeof useRuleGroup&gt;&gt;</code>                       |
 | [`shiftActions`](#shiftactions)                       | <code>React.ComponentType&lt;ShiftActionsProps&gt; \| null</code>                                                        |
+| [`undoRedoActions`](#undoredoactions)                 | <code>React.ComponentType&lt;UndoRedoActionsProps&gt; \| null</code>                                                     |
 | [`valueEditor`](#valueeditor)                         | <code>React.ComponentType&lt;ValueEditorProps&gt; \| null</code>                                                         |
 | [`valueSelector`](#valueselector)                     | <code>React.ComponentType&lt;ValueSelectorProps&gt;</code>                                                               |
 | [`valueSourceSelector`](#valuesourceselector)         | <code>React.ComponentType&lt;ValueSourceSelectorProps&gt; \| null</code>                                                 |
@@ -621,6 +622,35 @@ Per the `ShiftActionsProps` interface:
 | `shiftDown`         | `() => void`                                    | Method to shift the rule/group down one place                                                                 |
 | `shiftUpDisabled`   | `boolean`                                       | Whether shifting the rule/group up is disallowed                                                              |
 | `shiftDownDisabled` | `boolean`                                       | Whether shifting the rule/group down is disallowed                                                            |
+
+</details>
+
+### `undoRedoActions`
+
+Undoes/redoes changes to the query. Rendered in the header of the outermost group when [`showUndoRedo`](./querybuilder#showundoredo) is `true`.
+
+Unlike every other control element, this one defaults to `null`—undo/redo requires the history recorder from `react-querybuilder/history`. Rendering `QueryBuilderHistory` supplies the default implementation, [`UndoRedoActions`](./undoredoactions). See [Undo/redo](../tips/undo-redo).
+
+A custom component provided here is responsible for calling `useQueryBuilderHistory(props.schema.qbId)` itself, since rendering that hook is also what opts a query builder in to history recording.
+
+<details>
+<summary>Props for `undoRedoActions`</summary>
+
+Per the `UndoRedoActionsProps` interface:
+
+| Prop          | Type                                     | Description                                                                     |
+| ------------- | ---------------------------------------- | ------------------------------------------------------------------------------- |
+| `labels`      | `{ undo: ReactNode; redo: ReactNode; }`  | `translations.undo.label` and `translations.redo.label`, e.g. "↶" and "↷"       |
+| `titles`      | `{ undo: string; redo: string; }`        | `translations.undo.title` and `translations.redo.title`, e.g. "Undo" and "Redo" |
+| `className`   | `string`                                 | CSS `classNames` to be applied to the container                                 |
+| `classNames`  | `{ undo: string; redo: string; }`        | CSS `classNames` to be applied to each button                                   |
+| `ruleOrGroup` | `RuleGroupTypeAny`                       | The outermost group                                                             |
+| `level`       | `number`                                 | The `level` of the group (always `0`)                                           |
+| `context`     | `any`                                    | Container for custom props that are passed to all components                    |
+| `validation`  | <code>boolean \| ValidationResult</code> | Validation result of the group                                                  |
+| `disabled`    | `boolean`                                | Whether the query builder is disabled                                           |
+| `path`        | `Path`                                   | [Path](../tips/path) of the group (always `[]`)                                 |
+| `schema`      | `Schema`                                 | Query [schema](../typescript#miscellaneous)                                     |
 
 </details>
 

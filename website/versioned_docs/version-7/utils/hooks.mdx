@@ -31,6 +31,29 @@ As a React hook, this function must follow the [appropriate rules](https://react
 
 :::
 
+### `useQueryBuilderHistory`
+
+Records undo/redo history for the query builder with the given `qbId`, and returns controls for navigating it. Available from the `react-querybuilder/history` entry point.
+
+Unlike the other hooks in this section, it does not need to be rendered beneath a `QueryBuilder`, which is what allows external toolbars and keyboard shortcut handlers to drive a query builder's history.
+
+```ts
+function useQueryBuilderHistory(
+  qbId: string,
+  options?: { maxHistory?: number; coalesceMs?: number }
+): {
+  undo: () => void;
+  redo: () => void;
+  clear: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  past: RuleGroupTypeAny[];
+  future: RuleGroupTypeAny[];
+};
+```
+
+See [Undo/redo](../tips/undo-redo) for the full guide.
+
 ### `useQueryBuilderSelector`
 
 :::tip

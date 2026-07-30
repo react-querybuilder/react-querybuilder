@@ -443,6 +443,7 @@ export const getCodeString = (
     getPropText('showLockButtons'),
     getPropText('showNotToggle'),
     getPropText('showShiftActions'),
+    getPropText('showUndoRedo'),
     getPropText('suppressStandardClassnames'),
     options.validateQuery ? 'validator={defaultValidator}' : '',
     options.enableExpressions
@@ -480,6 +481,10 @@ import './styles.${styleLanguage}';${styleImport ? `\n${styleImport}` : ''}${
       ? `\nimport { QueryBuilderDateTime } from '@react-querybuilder/datetime/ui';`
       : ''
   }${
+    options.showUndoRedo
+      ? `\nimport { QueryBuilderHistory } from 'react-querybuilder/history';`
+      : ''
+  }${
     options.enableExpressions
       ? `\nimport { QueryBuilderExpressions } from '@react-querybuilder/expr/ui';`
       : ''
@@ -499,9 +504,11 @@ export const App = () => {
 
   return (${options.enableDragAndDrop ? '<QueryBuilderDnD dnd={dnd}>' : ''}${styleWrapperPrefix}${
     options.useDateTimePackage ? '<QueryBuilderDateTime>' : ''
-  }${options.enableExpressions ? '<QueryBuilderExpressions allowFunctionsOnLHS>' : ''}<QueryBuilder ${props} />${
+  }${options.showUndoRedo ? '<QueryBuilderHistory>' : ''}${
+    options.enableExpressions ? '<QueryBuilderExpressions allowFunctionsOnLHS>' : ''
+  }<QueryBuilder ${props} />${
     options.enableExpressions ? '</QueryBuilderExpressions>' : ''
-  }${
+  }${options.showUndoRedo ? '</QueryBuilderHistory>' : ''}${
     options.useDateTimePackage ? '</QueryBuilderDateTime>' : ''
   }${styleWrapperSuffix}${options.enableDragAndDrop ? '</QueryBuilderDnD>' : ''}
   );

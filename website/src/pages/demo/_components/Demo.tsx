@@ -44,6 +44,7 @@ import {
   QueryBuilder,
   standardClassnames,
 } from 'react-querybuilder';
+import { QueryBuilderHistory } from 'react-querybuilder/history';
 import rqbPkgJson from 'react-querybuilder/package.json';
 import { parseCEL } from 'react-querybuilder/parseCEL';
 import { parseCypher } from 'react-querybuilder/parseCypher';
@@ -760,23 +761,25 @@ export default function Demo({
             <QueryWrapper key={queryWrapperKey} useDateTimePackage={options.useDateTimePackage}>
               <DateTimeWrapper enabled={options.useDateTimePackage}>
                 <QueryBuilderDnD dnd={dnd}>
-                  <ExpressionsWrapper enabled={options.enableExpressions}>
-                    {options.independentCombinators ? (
-                      <QueryBuilder
-                        key="queryIC"
-                        {...commonRQBProps}
-                        defaultQuery={queryIC}
-                        onQueryChange={onQueryChangeRGIC}
-                      />
-                    ) : (
-                      <QueryBuilder
-                        key="query"
-                        {...commonRQBProps}
-                        defaultQuery={query}
-                        onQueryChange={onQueryChangeRG}
-                      />
-                    )}
-                  </ExpressionsWrapper>
+                  <QueryBuilderHistory>
+                    <ExpressionsWrapper enabled={options.enableExpressions}>
+                      {options.independentCombinators ? (
+                        <QueryBuilder
+                          key="queryIC"
+                          {...commonRQBProps}
+                          defaultQuery={queryIC}
+                          onQueryChange={onQueryChangeRGIC}
+                        />
+                      ) : (
+                        <QueryBuilder
+                          key="query"
+                          {...commonRQBProps}
+                          defaultQuery={query}
+                          onQueryChange={onQueryChangeRG}
+                        />
+                      )}
+                    </ExpressionsWrapper>
+                  </QueryBuilderHistory>
                 </QueryBuilderDnD>
               </DateTimeWrapper>
             </QueryWrapper>
