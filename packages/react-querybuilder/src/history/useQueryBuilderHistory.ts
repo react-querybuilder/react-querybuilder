@@ -1,10 +1,12 @@
 import type { Store } from '@reduxjs/toolkit';
 import { useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
-import { QueryBuilderStateContext } from '../redux';
-import { getDispatchQuery } from '../redux/_internal';
-import { getRqbStore } from '../redux/getRqbStore';
-import { getQuerySelectorById } from '../redux/selectors';
-import type { RqbState } from '../redux/types';
+import type { RqbState } from 'react-querybuilder';
+import {
+  getDispatchQueryById,
+  getQuerySelectorById,
+  getRqbStore,
+  QueryBuilderStateContext,
+} from 'react-querybuilder';
 import { QueryBuilderHistoryContext } from './QueryBuilderHistoryContext';
 import { queryHistorySlice } from './queryHistorySlice';
 import type { QueryHistoryEntry, QueryHistoryOptions, UseQueryBuilderHistory } from './types';
@@ -92,7 +94,7 @@ export const useQueryBuilderHistory = (
       ?.past.at(-1);
     if (!restored) return;
     dispatch(queryHistorySlice.actions.undo({ qbId }));
-    getDispatchQuery(qbId)?.(restored, { fromHistory: true });
+    getDispatchQueryById(qbId)?.(restored, { fromHistory: true });
   }, [dispatch, qbId, store]);
 
   const redo = useCallback(() => {
@@ -100,7 +102,7 @@ export const useQueryBuilderHistory = (
       ?.future[0];
     if (!restored) return;
     dispatch(queryHistorySlice.actions.redo({ qbId }));
-    getDispatchQuery(qbId)?.(restored, { fromHistory: true });
+    getDispatchQueryById(qbId)?.(restored, { fromHistory: true });
   }, [dispatch, qbId, store]);
 
   const clear = useCallback(() => {

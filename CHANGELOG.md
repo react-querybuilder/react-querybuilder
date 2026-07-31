@@ -16,11 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `qbId` prop assigns a stable identifier to a query builder within the internal Redux store, making it addressable from outside its own component tree. If another _mounted_ query builder is already using the same identifier, the new one falls back to a generated identifier and logs an error in non-production modes.
   - New `preserveQueryStateOnUnmount` prop retains a query builder's query (and history) after it unmounts, so a subsequent query builder with the same `qbId` resumes where the previous one left off.
   - `schema.dispatchQuery` accepts an optional second parameter (`{ fromHistory }`) so history-originated updates can be distinguished from user edits.
+  - New `getDispatchQueryById(qbId)` export returns the `dispatchQuery` function for a mounted query builder, applying a query exactly as a user edit would (including firing `onQueryChange`, so it works in both controlled and uncontrolled mode). This is how undo/redo applies restored queries, and it makes external controls possible without hoisting query state.
 - [#1070] [Migration guide](https://react-querybuilder.js.org/docs/tips/migrate-from-raqb) for [`react-awesome-query-builder`](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB). The conversion tools themselves (`parseRAQB`, `parseRAQBFields`, `formatRAQBFields`, and `defaultRule[Group]ProcessorRAQB`) live in the standalone [`@react-querybuilder/migrate-raqb`](https://github.com/react-querybuilder/migrate-raqb) package.
 
 ### Fixed
 
 - [#1072] Query state is now removed from the internal Redux store when the last query builder using a given identifier unmounts. Previously it was retained for the lifetime of the page. Pass the new `preserveQueryStateOnUnmount` prop to opt out.
+- [#1072] The `react-querybuilder/async` entry point now shares the internal Redux store and React contexts with the main bundle instead of bundling its own copies, so `useAsyncOptionList` and the query builder rendering it operate on the same state.
 
 ## [v8.21.2] - 2026-07-27
 

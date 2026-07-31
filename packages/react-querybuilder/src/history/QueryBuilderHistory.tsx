@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useContext, useMemo } from 'react';
-import { QueryBuilderContext } from '../components/QueryBuilderContext';
-import type { QueryBuilderContextProps } from '../types';
+import type { QueryBuilderContextProps } from 'react-querybuilder';
+import { QueryBuilderContext } from 'react-querybuilder';
 import { QueryBuilderHistoryContext } from './QueryBuilderHistoryContext';
 import { defaultCoalesceMs, defaultMaxHistory } from './queryHistorySlice';
 import type { QueryHistoryOptions } from './types';

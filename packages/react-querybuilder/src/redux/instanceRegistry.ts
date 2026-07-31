@@ -84,5 +84,5 @@ export const unregisterDispatchQuery = (qbId: string): void => {
  * Returns the `dispatchQuery` function for the query builder with the given `qbId`, or
  * `undefined` if no such query builder is mounted.
  */
-export const getDispatchQuery = (qbId: string): DispatchQueryFn | undefined =>
+export const getDispatchQueryById = (qbId: string): DispatchQueryFn | undefined =>
   dispatchQueryFns.get(qbId);

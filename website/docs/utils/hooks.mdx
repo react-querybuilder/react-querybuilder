@@ -81,6 +81,23 @@ const CustomValueEditor = (props: ValueEditorProps) => {
 };
 ```
 
+### `getDispatchQueryById`
+
+Not a hook, but the write-side counterpart to the selectors above. Returns the `dispatchQuery` function for the mounted query builder with the given `qbId`, or `undefined` if no such query builder is mounted.
+
+```ts
+function getDispatchQueryById(qbId: string): DispatchQueryFn | undefined;
+```
+
+Updating a query through this function is equivalent to a user edit: the query is applied to the internal store _and_ the query builder's `onQueryChange` callback fires, so it works whether the query builder is [controlled or uncontrolled](../components/querybuilder#query). That makes it possible to drive a query builder from outside its own component tree—an external toolbar, a keyboard shortcut handler, or the undo/redo controls in [`react-querybuilder/history`](../tips/undo-redo), which use it to apply restored queries.
+
+Requires an explicit [`qbId`](../components/querybuilder#qbid) prop, since automatically generated identifiers are not discoverable from outside the component.
+
+```ts
+const dispatchQuery = getDispatchQueryById('main');
+dispatchQuery?.(add(currentQuery, { field: 'firstName', operator: '=', value: '' }, []));
+```
+
 ## Component logic
 
 The core logic of each component is encapsulated in a reusable hook. Each main component is little more than a call to its respective hook plus the JSX that uses the properties returned from that hook. This enables creating a custom presentation layer without copying logic code from the default components.

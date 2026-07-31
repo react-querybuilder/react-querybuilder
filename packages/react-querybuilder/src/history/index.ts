@@ -1,4 +1,4 @@
-import { injectSlice } from '../redux/getRqbStore';
+import { injectSlice } from 'react-querybuilder';
 import { queryHistorySlice } from './queryHistorySlice';
 
 // Injected at module scope so that the slice is only added to the store—and only included in

@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { format } from 'oxfmt';
-import type { UserConfigExport } from 'tsdown';
+import type { UserConfig, UserConfigExport } from 'tsdown';
 import { defineConfig } from 'tsdown';
 import {
   commonBuildOptions,
@@ -36,6 +36,18 @@ const writeNode10pkg = async (entryPointNames: string[]) => {
     })
   );
 };
+
+const sharesMainBundle = {
+  deps: {
+    ...commonBuildOptions.deps,
+    neverBundle: [
+      ...(Array.isArray(commonBuildOptions.deps?.neverBundle)
+        ? commonBuildOptions.deps.neverBundle
+        : []),
+      'react-querybuilder',
+    ],
+  },
+} satisfies Pick<UserConfig, 'deps'>;
 
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
@@ -74,25 +86,35 @@ export default defineConfig(async options => {
 
   return [
     ...buildConfig,
+    // These entry points augment the main bundle's singletons—the Redux store, the React
+    // contexts, and the `dispatchQuery` registry—rather than standing alone, so `react-
+    // querybuilder` must stay external. Bundling it would give each entry point its own copy of
+    // every singleton: a provider in one bundle would populate a context that the other bundle
+    // never reads, and a slice injected into one store would never see actions dispatched to the
+    // other.
     {
       ...commonBuildOptions,
       ...options,
+      ...sharesMainBundle,
       entry: 'src/async.ts',
     },
     {
       ...commonBuildOptions,
       ...options,
+      ...sharesMainBundle,
       format: 'cjs',
       entry: 'src/async.ts',
     },
     {
       ...commonBuildOptions,
       ...options,
+      ...sharesMainBundle,
       entry: { history: 'src/history/index.ts' },
     },
     {
       ...commonBuildOptions,
       ...options,
+      ...sharesMainBundle,
       format: 'cjs',
       entry: { history: 'src/history/index.ts' },
     },
