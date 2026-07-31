@@ -37,17 +37,30 @@ const writeNode10pkg = async (entryPointNames: string[]) => {
   );
 };
 
-const sharesMainBundle = {
-  deps: {
-    ...commonBuildOptions.deps,
-    neverBundle: [
-      ...(Array.isArray(commonBuildOptions.deps?.neverBundle)
-        ? commonBuildOptions.deps.neverBundle
-        : []),
-      'react-querybuilder',
-    ],
-  },
-} satisfies Pick<UserConfig, 'deps'>;
+/**
+ * Adds `react-querybuilder` to a build's external dependencies, preserving whatever `deps`
+ * configuration the build already had. Applied to the fully merged config (rather than spread
+ * over it) so that `deps` coming from either `commonBuildOptions` or the incoming `options` is
+ * extended instead of replaced.
+ */
+const sharesMainBundle = (config: UserConfig): UserConfig => {
+  const { neverBundle } = config.deps ?? {};
+
+  // `true` (bundle nothing) and predicate functions cannot be extended with an extra entry
+  // without changing their meaning. Fail the build rather than silently dropping either them or
+  // `react-querybuilder`—a miss here gives the entry point its own copy of the Redux store and
+  // React contexts, which stays invisible until the published bundles are loaded together.
+  if (neverBundle === true || typeof neverBundle === 'function') {
+    throw new TypeError(
+      'sharesMainBundle cannot add `react-querybuilder` to a non-list `deps.neverBundle`'
+    );
+  }
+
+  return {
+    ...config,
+    deps: { ...config.deps, neverBundle: [...[neverBundle ?? []].flat(), 'react-querybuilder'] },
+  };
+};
 
 export default defineConfig(async options => {
   const buildConfig = await tsdownCommonConfig(import.meta.dirname)(options);
@@ -92,32 +105,28 @@ export default defineConfig(async options => {
     // every singleton: a provider in one bundle would populate a context that the other bundle
     // never reads, and a slice injected into one store would never see actions dispatched to the
     // other.
-    {
+    sharesMainBundle({
       ...commonBuildOptions,
       ...options,
-      ...sharesMainBundle,
       entry: 'src/async.ts',
-    },
-    {
+    }),
+    sharesMainBundle({
       ...commonBuildOptions,
       ...options,
-      ...sharesMainBundle,
       format: 'cjs',
       entry: 'src/async.ts',
-    },
-    {
+    }),
+    sharesMainBundle({
       ...commonBuildOptions,
       ...options,
-      ...sharesMainBundle,
       entry: { history: 'src/history/index.ts' },
-    },
-    {
+    }),
+    sharesMainBundle({
       ...commonBuildOptions,
       ...options,
-      ...sharesMainBundle,
       format: 'cjs',
       entry: { history: 'src/history/index.ts' },
-    },
+    }),
     {
       ...commonBuildOptions,
       ...options,
