@@ -146,6 +146,16 @@
         "types": "./dist/async.d.ts",
         "default": "./dist/async.js"
       }
+    },
+    "./history": {
+      "import": {
+        "types": "./dist/history.d.mts",
+        "default": "./dist/history.mjs"
+      },
+      "require": {
+        "types": "./dist/history.d.ts",
+        "default": "./dist/history.js"
+      }
     }
   },
   "react-native": "dist/react-querybuilder.mjs",
@@ -155,6 +165,7 @@
     "debug",
     "dist",
     "formatQuery",
+    "history",
     "parseCEL",
     "parseCypher",
     "parseGremlin",

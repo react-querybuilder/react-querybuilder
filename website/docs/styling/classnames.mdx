@@ -16,6 +16,7 @@ The following standard classnames are not labeled below. For most of them, the e
 - `.rule.queryBuilder-valid` (<span style={{ fontWeight: 'bold', color:'green' }}>green</span> outline for valid rules)
 - `.rule.queryBuilder-invalid` (<span style={{ fontWeight: 'bold', color:'red' }}>red</span> outline for invalid rules)
 - `.shiftActions` (<span style={{ fontWeight: 'bold', color:'#ff7e16' }}>orange</span> outline for the wrapper `<div>` around the "Shift up"/"Shift down" buttons)
+- `.undoRedoActions` (the wrapper `<div>` around the ["undo"/"redo" buttons](../tips/undo-redo))
 - `.rule-hasSubQuery` (applied to rules that render a subquery)
 - `.queryBuilder-loading` (applied to rules/groups while an [async promise is pending](../tips/async-option-lists))
 - `.dndDragging` (applied to "preview" element while dragging)
@@ -36,6 +37,7 @@ Disable application of all standard classnames with the [`suppressStandardClassn
 import { QueryBuilderDnD } from '@react-querybuilder/dnd';
 import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
 import { standardClassnames as sc } from 'react-querybuilder';
+import { QueryBuilderHistory } from 'react-querybuilder/history';
 
 export const fields = [
   {
@@ -137,6 +139,12 @@ export const translations = {
     label: `.${sc.lockGroup}`,
     title: `.${sc.lockGroup}`,
   },
+  undo: {
+    label: `.${sc.undoAction}`,
+  },
+  redo: {
+    label: `.${sc.redoAction}`,
+  },
   // shiftActionUp: { label: `.${sc.shiftActions}` },
   // shiftActionDown: { label: `.${sc.shiftActions}` },
   valueSourceSelector: {
@@ -172,21 +180,24 @@ export const defaultQuery = {
 };
 
 <div className="rqb-structure-wrapper">
-  <QueryBuilderDnD>
-    <QueryBuilderEmbed
-      showNotToggle
-      showCloneButtons
-      showLockButtons
-      showShiftActions
-      enableDragAndDrop
-      fields={fields}
-      combinators={combinators}
-      getOperators={getOperators}
-      controlClassnames={controlClassnames}
-      translations={translations}
-      defaultQuery={defaultQuery}
-    />
-  </QueryBuilderDnD>
+  <QueryBuilderHistory>
+    <QueryBuilderDnD>
+      <QueryBuilderEmbed
+        showNotToggle
+        showCloneButtons
+        showLockButtons
+        showShiftActions
+        showUndoRedo
+        enableDragAndDrop
+        fields={fields}
+        combinators={combinators}
+        getOperators={getOperators}
+        controlClassnames={controlClassnames}
+        translations={translations}
+        defaultQuery={defaultQuery}
+      />
+    </QueryBuilderDnD>
+  </QueryBuilderHistory>
 </div>
 
 ## Standard classnames

@@ -51,6 +51,22 @@ const ShiftUpIconWrapper = () => {
   const { KeyboardArrowUpIcon } = muiComponents;
   return <KeyboardArrowUpIcon />;
 };
+const UndoIconWrapper = () => {
+  const muiComponents = React.useContext(RQBMaterialContext);
+  if (!muiComponents) {
+    return defaultTranslations.undo.label;
+  }
+  const { UndoIcon } = muiComponents;
+  return <UndoIcon />;
+};
+const RedoIconWrapper = () => {
+  const muiComponents = React.useContext(RQBMaterialContext);
+  if (!muiComponents) {
+    return defaultTranslations.redo.label;
+  }
+  const { RedoIcon } = muiComponents;
+  return <RedoIcon />;
+};
 
 export const materialTranslations: Pick<
   Translations,
@@ -64,6 +80,8 @@ export const materialTranslations: Pick<
   | 'lockRuleDisabled'
   | 'shiftActionDown'
   | 'shiftActionUp'
+  | 'undo'
+  | 'redo'
 > = {
   removeGroup: { label: <CloseIconWrapper /> },
   removeRule: { label: <CloseIconWrapper /> },
@@ -75,4 +93,6 @@ export const materialTranslations: Pick<
   lockRuleDisabled: { label: <LockIconWrapper /> },
   shiftActionDown: { label: <ShiftDownIconWrapper /> },
   shiftActionUp: { label: <ShiftUpIconWrapper /> },
+  undo: { label: <UndoIconWrapper /> },
+  redo: { label: <RedoIconWrapper /> },
 };

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {
+  FaArrowCircleLeft,
+  FaArrowCircleRight,
   FaChevronDown,
   FaChevronUp,
   FaCopy,
@@ -50,6 +52,8 @@ export const chakraTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <FaLock /> },
   shiftActionDown: { label: <FaChevronDown /> },
   shiftActionUp: { label: <FaChevronUp /> },
+  undo: { label: <FaArrowCircleLeft /> },
+  redo: { label: <FaArrowCircleRight /> },
 };
 
 /**

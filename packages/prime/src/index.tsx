@@ -46,6 +46,8 @@ export const primeTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <i className="pi pi-lock" /> },
   shiftActionUp: { label: <i className="pi pi-chevron-up" /> },
   shiftActionDown: { label: <i className="pi pi-chevron-down" /> },
+  undo: { label: <i className="pi pi-undo" /> },
+  redo: { label: <i className="pi pi-refresh" /> },
 };
 
 /**

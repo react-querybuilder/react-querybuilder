@@ -65,11 +65,12 @@ export const asyncOptionListsSlice: Slice<
       },
       fulfilled: (state, action) => {
         const { cacheKey, data } = action.payload;
+        const now = Date.now();
         state.cache[cacheKey] = {
           data,
-          timestamp: Date.now(),
+          timestamp: now,
           validUntil:
-            Date.now() +
+            now +
             (action.meta.arg.cacheTTL ??
               /* v8 ignore start -- @preserve */ DEFAULT_CACHE_TTL) /* v8 ignore stop -- @preserve */,
         };

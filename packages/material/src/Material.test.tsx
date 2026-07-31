@@ -5,6 +5,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import RedoIcon from '@mui/icons-material/Redo';
+import UndoIcon from '@mui/icons-material/Undo';
 import type {
   ListSubheaderProps,
   MenuItemProps,
@@ -110,6 +112,8 @@ const muiComponents = {
   Switch,
   TextareaAutosize,
   TextField,
+  UndoIcon,
+  RedoIcon,
   showInputLabels: false,
 };
 const theme = createTheme();

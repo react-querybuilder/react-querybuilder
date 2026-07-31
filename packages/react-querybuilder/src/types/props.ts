@@ -55,6 +55,7 @@ import type {
 } from 'react';
 import type { SetNonNullable } from 'type-fest';
 import type { UseRuleGroup } from '../components/RuleGroup';
+import type { SetQueryStateOptions } from '../redux/queriesSlice';
 
 /**
  * Base interface for all subcomponents.
@@ -309,6 +310,32 @@ export interface NotToggleProps extends CommonSubComponentProps {
 }
 
 /**
+ * Props passed to `undoRedoActions` components.
+ *
+ * @group Props
+ */
+export interface UndoRedoActionsProps extends CommonSubComponentProps {
+  /**
+   * Visible text for the "undo"/"redo" elements.
+   */
+  labels?: { undo?: ReactNode; redo?: ReactNode };
+  /**
+   * Tooltips for the "undo"/"redo" elements.
+   */
+  titles?: { undo?: string; redo?: string };
+  /**
+   * Classnames for the "undo"/"redo" elements. (The `className` prop applies to their
+   * container.)
+   */
+  classNames?: { undo?: string; redo?: string };
+  /**
+   * The {@link RuleGroupType}/{@link RuleGroupTypeIC} associated with this element, i.e. the
+   * outermost group.
+   */
+  ruleOrGroup: RuleGroupTypeAny;
+}
+
+/**
  * Props passed to `shiftActions` components.
  *
  * @group Props
@@ -407,7 +434,12 @@ export interface ValueEditorProps<F extends FullField = FullField, O extends str
  * @group Props
  */
 export type Controls<F extends FullField, O extends string> = Required<
-  SetNonNullable<ControlElementsProp<F, O>, keyof ControlElementsProp<F, O>>
+  SetNonNullable<
+    ControlElementsProp<F, O>,
+    // `undoRedoActions` remains nullable after finalization because, unlike every other
+    // control, no implementation is available unless `react-querybuilder/history` is in use.
+    Exclude<keyof ControlElementsProp<F, O>, 'undoRedoActions'>
+  >
 >;
 
 /**
@@ -559,6 +591,19 @@ export type ControlElementsProp<F extends FullField, O extends string> = Partial
    */
   shiftActions: ComponentType<ShiftActionsProps> | null;
   /**
+   * Undo/redo buttons for the outermost group, rendered when the `showUndoRedo` prop is `true`.
+   *
+   * Defaults to `null` in the main package because undo/redo requires the history recorder from
+   * `react-querybuilder/history`. Rendering `QueryBuilderHistory` provides an implementation.
+   *
+   * A custom component can be supplied here, in which case it is responsible for calling
+   * `useQueryBuilderHistory(props.schema.qbId)` to obtain the undo/redo controls—rendering the
+   * hook is also what opts a query builder in to history recording.
+   *
+   * @default null
+   */
+  undoRedoActions: ComponentType<UndoRedoActionsProps> | null;
+  /**
    * Updates the `value` property for the current rule.
    *
    * @default ValueEditor
@@ -598,7 +643,15 @@ export interface Schema<F extends FullField, O extends string> {
   controls: Controls<F, O>;
   createRule(): RuleType;
   createRuleGroup(ic?: boolean): RuleGroupTypeAny;
-  dispatchQuery(query: RuleGroupTypeAny): void;
+  /**
+   * Updates the query for this query builder in React Query Builder's internal Redux store,
+   * then calls the `onQueryChange` callback with the new query.
+   *
+   * The optional `options` parameter augments the dispatched action's `meta` property. Pass
+   * `{ fromHistory: true }` when applying a previously recorded query (e.g. from an undo/redo
+   * implementation) so that history recorders can ignore the update.
+   */
+  dispatchQuery(query: RuleGroupTypeAny, options?: SetQueryStateOptions): void;
   getQuery(): RuleGroupTypeAny;
   getOperators(field: string, meta: { fieldData: F }): FullOptionList<FullOperator>;
   getValueEditorType(field: string, operator: string, meta: { fieldData: F }): ValueEditorType;
@@ -619,6 +672,7 @@ export interface Schema<F extends FullField, O extends string> {
   showCombinatorsBetweenRules: boolean;
   showNotToggle: boolean;
   showShiftActions: boolean;
+  showUndoRedo: boolean;
   showCloneButtons: boolean;
   showLockButtons: boolean;
   showMuteButtons: boolean;
@@ -807,6 +861,20 @@ export type QueryBuilderProps<
   C extends FullCombinator,
 > = RG extends RuleGroupType<infer R> | RuleGroupTypeIC<infer R>
   ? QueryBuilderContextProps<F, GetOptionIdentifierType<O>> & {
+      /**
+       * Identifier for this query builder instance within React Query Builder's internal
+       * Redux store. Useful for addressing a specific query builder from outside its own
+       * component tree, e.g. from a custom toolbar.
+       *
+       * If not provided, an identifier is generated automatically. Only evaluated when the
+       * component mounts; subsequent changes are ignored (and logged in non-production modes).
+       *
+       * If another _mounted_ query builder is already using the same `qbId`, this query
+       * builder will fall back to a generated identifier and log an error in non-production
+       * modes. Reusing a `qbId` _after_ the previous query builder has unmounted is
+       * supported—see the `preserveQueryStateOnUnmount` prop.
+       */
+      qbId?: string;
       /**
        * Initial query object for uncontrolled components.
        */

@@ -10,6 +10,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import RedoIcon from '@mui/icons-material/Redo';
+import UndoIcon from '@mui/icons-material/Undo';
 import { createTheme, ThemeProvider } from '@mui/material';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -46,10 +48,12 @@ const muiComponents = {
   MenuItem,
   Radio,
   RadioGroup,
+  RedoIcon,
   Select,
   Switch,
   TextareaAutosize,
   TextField,
+  UndoIcon,
 };
 
 function ReactQueryBuilderDemo_MaterialBrowser() {

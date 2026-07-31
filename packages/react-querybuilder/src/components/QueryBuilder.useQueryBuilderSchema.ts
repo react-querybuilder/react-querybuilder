@@ -32,13 +32,19 @@ import {
   update,
 } from '@react-querybuilder/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useControlledOrUncontrolled, useDeprecatedProps } from '../hooks/';
+import { useControlledOrUncontrolled, useDeprecatedProps, useUndoRedoWarning } from '../hooks/';
 import { getQuerySelectorById, useQueryBuilderSelector } from '../redux';
 import {
   _RQB_INTERNAL_dispatchThunk,
+  registerDispatchQuery,
+  registerQbId,
+  unregisterDispatchQuery,
+  unregisterQbId,
   useRQB_INTERNAL_QueryBuilderDispatch,
   useRQB_INTERNAL_QueryBuilderStore,
 } from '../redux/_internal';
+import type { SetQueryStateOptions } from '../redux/queriesSlice';
+import { queriesSlice } from '../redux/queriesSlice';
 import type { QueryBuilderProps, RuleGroupProps, Schema, TranslationsFull } from '../types';
 import type { UseQueryBuilderSetup } from './QueryBuilder.useQueryBuilderSetup';
 
@@ -49,6 +55,7 @@ const icCombinatorPropObject = {} as const;
 const defaultGetValueEditorSeparator = () => null;
 const defaultGetRuleOrGroupClassname = () => '';
 const defaultOnAddMoveRemove = () => true;
+const noopCleanup = () => {};
 // v8 ignore next
 const defaultOnLog = (...params: unknown[]) => {
   console.log(...params);
@@ -110,6 +117,7 @@ export function useQueryBuilderSchema<
     showLockButtons: showLockButtonsProp = false,
     showMuteButtons: showMuteButtonsProp = false,
     suppressStandardClassnames: suppressStandardClassnamesProp = false,
+    preserveQueryStateOnUnmount: preserveQueryStateOnUnmountProp = false,
     resetOnFieldChange: resetOnFieldChangeProp = true,
     resetOnOperatorChange: resetOnOperatorChangeProp = false,
     autoSelectField: autoSelectFieldProp = true,
@@ -127,6 +135,7 @@ export function useQueryBuilderSchema<
 
   const {
     qbId,
+    resolveQbIdCollision,
     rqbContext: incomingRqbContext,
     fields,
     fieldMap,
@@ -151,6 +160,7 @@ export function useQueryBuilderSchema<
     debugMode,
     enableDragAndDrop,
     enableMountQueryChange,
+    showUndoRedo: showUndoRedoContext,
     translations,
   } = incomingRqbContext;
 
@@ -159,6 +169,7 @@ export function useQueryBuilderSchema<
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
+  const showUndoRedo = !!showUndoRedoContext;
   const showCloneButtons = !!showCloneButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
   const showMuteButtons = !!showMuteButtonsProp;
@@ -170,6 +181,7 @@ export function useQueryBuilderSchema<
   const addRuleToNewGroups = !!addRuleToNewGroupsProp;
   const listsAsArrays = !!listsAsArraysProp;
   const suppressStandardClassnames = !!suppressStandardClassnamesProp;
+  const preserveQueryStateOnUnmount = !!preserveQueryStateOnUnmountProp;
   const maxLevels = (props.maxLevels ?? 0) > 0 ? Number(props.maxLevels) : Infinity;
   // oxlint-enable typescript/no-unnecessary-type-conversion
   // #endregion
@@ -182,6 +194,8 @@ export function useQueryBuilderSchema<
     },
     [debugMode, onLog]
   );
+
+  useUndoRedoWarning(showUndoRedo, !!controls.undoRedoActions);
 
   // #region Controlled vs uncontrolled mode
   useControlledOrUncontrolled({
@@ -250,6 +264,66 @@ export function useQueryBuilderSchema<
     );
   }, [enableMountQueryChange, onQueryChange, qbId, queryBuilderDispatch, rootGroup]);
 
+  // Keep the latest query available to the registration effect below without adding it to that
+  // effect's dependency array (which would cause register/unregister churn on every change).
+  // Assigned in an effect rather than during render so that the ref is never written to while
+  // rendering.
+  const rootGroupRef = useRef(rootGroup);
+  useEffect(() => {
+    rootGroupRef.current = rootGroup;
+  }, [rootGroup]);
+
+  // Also read through a ref instead of a dependency. As a dependency, toggling this prop would
+  // tear down and re-run the registration effect even though nothing unmounted: the cleanup
+  // would run with the stale value, dispatch `unsetQueryState`, and destroy any recorded
+  // undo/redo history for this query builder.
+  const preserveQueryStateOnUnmountRef = useRef(preserveQueryStateOnUnmount);
+  useEffect(() => {
+    preserveQueryStateOnUnmountRef.current = preserveQueryStateOnUnmount;
+  }, [preserveQueryStateOnUnmount]);
+
+  // Track this instance in the `qbId` registry, and tear down the query state when the last
+  // instance using this `qbId` unmounts (unless `preserveQueryStateOnUnmount` is `true`).
+  useEffect(() => {
+    if (registerQbId(qbId) > 1) {
+      // Another mounted query builder is already using this `qbId`. Give up the identifier
+      // immediately and switch to a generated one; the effect will run again with the new
+      // `qbId`. No cleanup is returned because this instance never took ownership.
+      //
+      // TODO: Decide whether the fallback instance should re-seed from its own `query`/
+      // `defaultQuery` prop instead of the query it inherited from the `qbId` it collided with.
+      // Because `candidateQuery` prefers `storeQuery` over `defaultQuery`, this instance
+      // adopted the _other_ query builder's query during render, so `rootGroupRef.current`
+      // (used by the re-seed below) holds that query rather than this instance's own initial
+      // query. The net effect is that a query builder that loses a `qbId` collision silently
+      // ignores its own `defaultQuery`. That only happens on an error path that already logs
+      // `messages.errorDuplicateQbId`, but it is arguably surprising. Pinned by the
+      // "does not clobber the existing query when a duplicate qbId is used" test.
+      unregisterQbId(qbId);
+      resolveQbIdCollision();
+      return noopCleanup;
+    }
+
+    // Re-seed the store if a previous teardown removed this query. This happens in React's
+    // StrictMode, where effects are mounted, cleaned up, and mounted again: the cleanup below
+    // removes the query, but the mount-query-change effect above will not re-dispatch it
+    // because its `hasRunMountQueryChange` ref persists across the double-invocation.
+    if (!querySelector(queryBuilderStore.getState())) {
+      queryBuilderDispatch(
+        _RQB_INTERNAL_dispatchThunk({
+          payload: { qbId, query: rootGroupRef.current },
+          onQueryChange: undefined,
+        })
+      );
+    }
+
+    return () => {
+      if (unregisterQbId(qbId) === 0 && !preserveQueryStateOnUnmountRef.current) {
+        queryBuilderDispatch(queriesSlice.actions.unsetQueryState({ qbId }));
+      }
+    };
+  }, [qbId, queryBuilderDispatch, queryBuilderStore, querySelector, resolveQbIdCollision]);
+
   /**
    * Updates the redux-based query, then calls `onQueryChange` with the updated
    * query object. NOTE: `useCallback` is only effective here when the user's
@@ -257,13 +331,26 @@ export function useQueryBuilderSchema<
    * means that it's wrapped in its own `useCallback`.
    */
   const dispatchQuery = useCallback(
-    (newQuery: RuleGroupTypeAny) => {
+    (newQuery: RuleGroupTypeAny, options?: SetQueryStateOptions) => {
       queryBuilderDispatch(
-        _RQB_INTERNAL_dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange })
+        _RQB_INTERNAL_dispatchThunk({ payload: { qbId, query: newQuery }, onQueryChange, options })
       );
     },
     [onQueryChange, qbId, queryBuilderDispatch]
   );
+
+  // Publish `dispatchQuery` so that code outside this component tree (e.g. an external toolbar
+  // or the undo/redo hook from `react-querybuilder/history`) can apply a query to this query
+  // builder addressed only by its `qbId`. A stable wrapper is registered so that the identity
+  // of `dispatchQuery`—which changes whenever `onQueryChange` does—never causes churn.
+  const dispatchQueryRef = useRef(dispatchQuery);
+  useEffect(() => {
+    dispatchQueryRef.current = dispatchQuery;
+  }, [dispatchQuery]);
+  useEffect(() => {
+    registerDispatchQuery(qbId, (query, options) => dispatchQueryRef.current(query, options));
+    return () => unregisterDispatchQuery(qbId);
+  }, [qbId]);
   // #endregion
 
   // #region Query update methods
@@ -639,6 +726,7 @@ export function useQueryBuilderSchema<
       showMuteButtons,
       showNotToggle,
       showShiftActions,
+      showUndoRedo,
       suppressStandardClassnames,
       validationMap,
     }),
@@ -685,6 +773,7 @@ export function useQueryBuilderSchema<
       showMuteButtons,
       showNotToggle,
       showShiftActions,
+      showUndoRedo,
       suppressStandardClassnames,
       validationMap,
     ]

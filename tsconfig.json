@@ -16,6 +16,7 @@
     "types": ["vitest/globals", "@testing-library/jest-dom", "node", "web", "bun"],
     "paths": {
       "react-querybuilder": ["./packages/react-querybuilder/src"],
+      "react-querybuilder/history": ["./packages/react-querybuilder/src/history"],
       "@react-querybuilder/core": ["./packages/core/src"],
       "@react-querybuilder/rules-engine": ["./packages/rules-engine/src"],
       "@rqb-parsecel": ["./packages/core/src/utils/parseCEL"],

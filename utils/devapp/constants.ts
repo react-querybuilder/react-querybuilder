@@ -34,6 +34,7 @@ export const defaultOptions: DemoOptions = {
   justifiedLayout: false,
   responsiveLayout: false,
   showShiftActions: false,
+  showUndoRedo: false,
   suppressStandardClassnames: false,
 };
 
@@ -50,6 +51,7 @@ export const optionOrder: DemoOption[] = [
   'resetOnFieldChange',
   'resetOnOperatorChange',
   'showShiftActions',
+  'showUndoRedo',
   'showCloneButtons',
   'showCombinatorsBetweenRules',
   'showLockButtons',
@@ -84,6 +86,11 @@ export const optionsMetadata: Record<
     link: '/docs/components/querybuilder#showshiftactions',
     label: 'Show shift up/down actions',
     title: 'Display links to shift rules and groups up or down in the query hierarchy',
+  },
+  showUndoRedo: {
+    link: '/docs/components/querybuilder#showundoredo',
+    label: 'Show undo/redo actions',
+    title: 'Display buttons to undo and redo changes to the query',
   },
   showCloneButtons: {
     link: '/docs/components/querybuilder#showclonebuttons',

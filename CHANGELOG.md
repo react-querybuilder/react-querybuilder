@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#1072] [Undo/redo support](https://react-querybuilder.js.org/docs/tips/undo-redo) through the new `react-querybuilder/history` entry point. Recording is opt-in, and nothing is added to the main bundle unless the entry point is imported. This works in controlled or uncontrolled mode—no need to lift the query into your own state.
+  - `QueryBuilderHistory` records history for descendant query builders and supplies the undo/redo controls. The new `showUndoRedo` prop displays them at the end of the outermost group's header, rendered by the new `undoRedoActions` control element (which uses `actionElement` for the buttons themselves) and configurable via the new `undo`/`redo` translations and `undoRedoActions`/`undoRedoActions-undo`/`undoRedoActions-redo` classnames. `showUndoRedo` defaults to `true` for query builders descending from `QueryBuilderHistory` (pass `showUndoRedo={false}` on either component to opt out); it otherwise defaults to `false`. Compatibility packages use icons from their respective icon packages where appropriate.
+  - `useQueryBuilderHistory(qbId)` returns `{ undo, redo, clear, canUndo, canRedo, past, future }` for custom controls. It does not need to be rendered beneath a `QueryBuilder`, so external toolbars and keyboard shortcut handlers can drive a query builder's history knowing only its `qbId`.
+  - Consecutive changes to the same property of the same rule are coalesced into a single undo step, so typing a value produces one history entry instead of one per keystroke. Configurable with `coalesceMs` (default `500`; `0` disables), alongside `maxHistory` (default `50`). Structural changes—adding, removing, moving, or reordering rules and groups—never coalesce.
+  - New `qbId` prop assigns a stable identifier to a query builder within the internal Redux store, making it addressable from outside its own component tree. If another _mounted_ query builder is already using the same identifier, the new one falls back to a generated identifier and logs an error in non-production modes.
+  - New `preserveQueryStateOnUnmount` prop retains a query builder's query (and history) after it unmounts, so a subsequent query builder with the same `qbId` resumes where the previous one left off.
+  - `schema.dispatchQuery` accepts an optional second parameter (`{ fromHistory }`) so history-originated updates can be distinguished from user edits.
+  - New `getDispatchQueryById(qbId)` export returns the `dispatchQuery` function for a mounted query builder, applying a query exactly as a user edit would (including firing `onQueryChange`, so it works in both controlled and uncontrolled mode). This is how undo/redo applies restored queries, and it makes external controls possible without hoisting query state.
 - [#1070] [Migration guide](https://react-querybuilder.js.org/docs/tips/migrate-from-raqb) for [`react-awesome-query-builder`](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB). The conversion tools themselves (`parseRAQB`, `parseRAQBFields`, `formatRAQBFields`, and `defaultRule[Group]ProcessorRAQB`) live in the standalone [`@react-querybuilder/migrate-raqb`](https://github.com/react-querybuilder/migrate-raqb) package.
+
+### Fixed
+
+- [#1072] Query state is now removed from the internal Redux store when the last query builder using a given identifier unmounts. Previously it was retained for the lifetime of the page. Pass the new `preserveQueryStateOnUnmount` prop to opt out.
+- [#1072] The `react-querybuilder/async` entry point now shares the internal Redux store and React contexts with the main bundle instead of bundling its own copies, so `useAsyncOptionList` and the query builder rendering it operate on the same state.
 
 ## [v8.21.2] - 2026-07-27
 
@@ -2393,6 +2406,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1067]: https://github.com/react-querybuilder/react-querybuilder/pull/1067
 [#1068]: https://github.com/react-querybuilder/react-querybuilder/pull/1068
 [#1070]: https://github.com/react-querybuilder/react-querybuilder/pull/1070
+[#1072]: https://github.com/react-querybuilder/react-querybuilder/pull/1072
 
 <!-- #endregion -->
 

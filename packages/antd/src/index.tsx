@@ -3,6 +3,8 @@ import {
   CopyOutlined,
   DownOutlined,
   LockOutlined,
+  RedoOutlined,
+  UndoOutlined,
   UnlockOutlined,
   UpOutlined,
 } from '@ant-design/icons';
@@ -54,6 +56,8 @@ export const antdTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <LockOutlined /> },
   shiftActionUp: { label: <UpOutlined /> },
   shiftActionDown: { label: <DownOutlined /> },
+  undo: { label: <UndoOutlined /> },
+  redo: { label: <RedoOutlined /> },
 };
 
 /**

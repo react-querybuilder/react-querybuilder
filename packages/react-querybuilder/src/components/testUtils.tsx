@@ -3,6 +3,7 @@ import type { RenderOptions, RenderResult } from '@testing-library/react';
 import { render as og_render } from '@testing-library/react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
+import type { queryHistorySlice } from '../history/queryHistorySlice';
 import type { asyncOptionListsSlice } from '../hooks/useAsyncOptionList/asyncOptionListsSlice';
 import type { RqbState } from '../redux';
 import { QueryBuilderStateContext } from '../redux';
@@ -20,12 +21,16 @@ const initialAsyncOptionListState = { cache: {}, loading: {}, errors: {} };
 const asyncOptionListsReducer: (typeof asyncOptionListsSlice)['reducer'] = () =>
   initialAsyncOptionListState;
 
+const initialQueryHistoryState = {};
+const queryHistoryReducer: (typeof queryHistorySlice)['reducer'] = () => initialQueryHistoryState;
+
 const getNewStore = () =>
   configureStore({
     reducer: {
       queries: queriesSlice.reducer,
       warnings: warningsSlice.reducer,
       asyncOptionLists: asyncOptionListsReducer,
+      queryHistory: queryHistoryReducer,
     },
     preloadedState,
   });

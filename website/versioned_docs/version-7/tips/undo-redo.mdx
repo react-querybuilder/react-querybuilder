@@ -1,0 +1,177 @@
+---
+title: Undo / redo
+description: Recording and navigating query history
+---
+
+React Query Builder can record a history of query changes and step backward and forward through it. History is opt-in and lives in a separate entry point, so applications that don't use it pay nothing for it.
+
+```bash npm2yarn
+npm install react-querybuilder
+```
+
+```tsx
+import { QueryBuilder } from 'react-querybuilder';
+import { QueryBuilderHistory } from 'react-querybuilder/history';
+
+const App = () => (
+  <QueryBuilderHistory>
+    <QueryBuilder fields={fields} />
+  </QueryBuilderHistory>
+);
+```
+
+That's the whole setup. `QueryBuilderHistory` records changes for descendant query builders and defaults their [`showUndoRedo`](../components/querybuilder#showundoredo) prop to `true`, which displays undo/redo controls at the end of the outermost group's header. Pass `showUndoRedo={false}` to a particular `QueryBuilder`, or to `QueryBuilderHistory` itself, to opt out while still recording history.
+
+:::tip
+
+Unlike most undo/redo recipes, this works in [uncontrolled mode](../components/querybuilder#defaultquery)—you don't need to lift the query into your own state.
+
+:::
+
+## How it works
+
+Every query change—no matter which button, editor, or drag-and-drop interaction caused it—flows through a single action in React Query Builder's internal Redux store. The history recorder listens for that action, so recording requires no instrumentation of individual controls.
+
+Because query updates use [Immer](https://immerjs.github.io/immer/), snapshots share structure with one another: an undo entry is a reference to a previous query object, not a deep copy, so keeping many of them is inexpensive. Snapshots also retain rule `id`s, which means undo preserves React keys and drag-and-drop state.
+
+## Options
+
+Both options can be set on `QueryBuilderHistory`:
+
+```tsx
+<QueryBuilderHistory maxHistory={50} coalesceMs={500}>
+  <QueryBuilder fields={fields} />
+</QueryBuilderHistory>
+```
+
+### `maxHistory`
+
+`number` (default `50`)
+
+Maximum number of undo steps to retain. Older entries are discarded.
+
+### `coalesceMs`
+
+`number` (default `500`)
+
+Consecutive changes to the same property of the same rule within this many milliseconds are merged into a single undo step. Typing `hello` into a value editor therefore produces one undo entry that restores the original value, rather than five entries that remove one character at a time.
+
+Set to `0` to record every change separately.
+
+Structural changes—adding, removing, moving, or reordering rules and groups—never merge with each other, so each one is always its own undo step.
+
+:::note
+
+Coalescing relies on the structural sharing that Immer guarantees: nodes that didn't change keep their identity. If your application rebuilds the query wholesale between changes—deep-cloning it, round-tripping it through JSON, or re-parsing it from a string—then no two consecutive queries share any identity and every change becomes its own history entry. Undo/redo still works correctly; it's just less granular.
+
+:::
+
+## Custom controls
+
+`useQueryBuilderHistory` gives you the same controls that power the default buttons. It takes a query builder's [`qbId`](../components/querybuilder#qbid) and can be used anywhere—including _outside_ the query builder's component tree, which is what makes external toolbars possible.
+
+```tsx
+import { QueryBuilder } from 'react-querybuilder';
+import { QueryBuilderHistory, useQueryBuilderHistory } from 'react-querybuilder/history';
+
+const Toolbar = ({ qbId }: { qbId: string }) => {
+  const { undo, redo, clear, canUndo, canRedo, past, future } = useQueryBuilderHistory(qbId);
+
+  return (
+    <div>
+      <button type="button" onClick={undo} disabled={!canUndo}>
+        Undo
+      </button>
+      <button type="button" onClick={redo} disabled={!canRedo}>
+        Redo
+      </button>
+      <button type="button" onClick={clear} disabled={!canUndo && !canRedo}>
+        Clear history
+      </button>
+      <span>
+        {past.length} undo / {future.length} redo
+      </span>
+    </div>
+  );
+};
+
+const App = () => (
+  <QueryBuilderHistory>
+    <Toolbar qbId="main" />
+    <QueryBuilder qbId="main" fields={fields} />
+  </QueryBuilderHistory>
+);
+```
+
+Note the explicit `qbId` on both components. Without it, the query builder generates an identifier internally that outside code has no way to discover.
+
+### `useQueryBuilderHistory`
+
+```ts
+useQueryBuilderHistory(qbId: string, options?: { maxHistory?: number; coalesceMs?: number })
+```
+
+| Property  | Type                 | Description                                                   |
+| --------- | -------------------- | ------------------------------------------------------------- |
+| `undo`    | `() => void`         | Restores the previous query. No-op when `canUndo` is `false`. |
+| `redo`    | `() => void`         | Restores the most recently undone query.                      |
+| `clear`   | `() => void`         | Discards all history without changing the current query.      |
+| `canUndo` | `boolean`            | Whether there is anything to undo.                            |
+| `canRedo` | `boolean`            | Whether there is anything to redo.                            |
+| `past`    | `RuleGroupTypeAny[]` | Previous queries, oldest first.                               |
+| `future`  | `RuleGroupTypeAny[]` | Undone queries, newest first.                                 |
+
+Options passed here override those from the nearest `QueryBuilderHistory` ancestor.
+
+:::info
+
+Rendering this hook is what opts a query builder in to history recording. A query builder that neither uses the hook nor renders undo/redo controls retains no history at all, which is what keeps the feature free for everyone else.
+
+:::
+
+## Keyboard shortcuts
+
+Keyboard shortcuts aren't built in, because a library-level listener would hijack the browser's native text undo inside the query builder's own inputs and could conflict with your application's shortcuts. Wiring them up yourself is straightforward:
+
+```tsx
+import { useEffect } from 'react';
+import { useQueryBuilderHistory } from 'react-querybuilder/history';
+
+const useUndoRedoShortcuts = (qbId: string) => {
+  const { undo, redo } = useQueryBuilderHistory(qbId);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'z') return;
+      // Leave text inputs alone so native undo keeps working while editing a value
+      const target = event.target as HTMLElement | null;
+      if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA') return;
+      event.preventDefault();
+      if (event.shiftKey) {
+        redo();
+      } else {
+        undo();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [redo, undo]);
+};
+```
+
+## Multiple query builders
+
+Each query builder has its own independent history, keyed by `qbId`. Undoing in one has no effect on any other.
+
+## History lifetime
+
+History belongs to the query builder, not to whichever component displays it. Several consumers can share one `qbId`—the built-in undo/redo buttons alongside an external toolbar, for example—and one of them unmounting leaves the history intact for the rest.
+
+When the last query builder using a given `qbId` unmounts, both its query and its history are discarded. To preserve them—so that remounting a query builder with the same `qbId` resumes where it left off—use [`preserveQueryStateOnUnmount`](../components/querybuilder#preservequerystateonunmount), which retains the history along with the query.
+
+## Alternative: controlled mode
+
+If your application already keeps the query in its own state, you can implement undo/redo without this entry point by maintaining `past`/`present`/`future` stacks and snapshotting the previous query on each `onQueryChange`. Because query update functions return the _same_ object reference when an operation is a no-op, you can skip recording those by comparing references.
+
+This approach requires [controlled mode](../components/querybuilder#query) and doesn't benefit from coalescing, so `QueryBuilderHistory` is generally the better option unless you have lifted the query into your own state for other reasons.

@@ -421,8 +421,16 @@ it('respects updated canDrop function between renders', () => {
   // Rerender with secondCanDrop
   rerender(<QBforDnD canDrop={secondCanDrop} query={query} onQueryChange={onQueryChange} />);
 
-  // Second drag attempt - should use secondCanDrop
-  simulateDragDrop(getHandlerId(rules[1], 'drag'), getHandlerId(rules[0], 'drop'), getDndBackend());
+  // Second drag attempt - should use secondCanDrop. Re-query the rule elements instead of
+  // reusing `rules`: QueryBuilderDnD remounts its children (via a `key` change) once the DnD
+  // backend has loaded, so the original elements' drag/drop handlers are bound to a query
+  // builder instance that is no longer mounted.
+  const rulesAfterRerender = screen.getAllByTestId(TestID.rule);
+  simulateDragDrop(
+    getHandlerId(rulesAfterRerender[1], 'drag'),
+    getHandlerId(rulesAfterRerender[0], 'drop'),
+    getDndBackend()
+  );
 
   expect(secondCanDrop).toHaveBeenCalledWith({
     dragging: { path: [1], field: 'f2', operator: '=', value: 'v2', qbId: expect.any(String) },

@@ -26,7 +26,8 @@
   }
 
   .ruleGroup-header,
-  .rule {
+  .rule,
+  .undoRedoActions {
     display: flex;
     gap: var(--#{$rqb-var-prefix}spacing);
     align-items: center;
@@ -222,6 +223,7 @@
     & + .ruleGroup-cloneGroup,
     & + .ruleGroup-lock,
     & + .ruleGroup-remove,
+    & + .undoRedoActions,
     & + .rule-cloneRule,
     & + .rule-lock,
     & + .rule-remove {
@@ -230,7 +232,8 @@
   }
 
   .ruleGroup-addRule,
-  .ruleGroup-addGroup {
+  .ruleGroup-addGroup,
+  .undoRedoActions {
     &:first-child {
       margin-#{$margin-side}: auto !important;
     }
