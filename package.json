@@ -126,6 +126,7 @@
     "website:clearrun": "bun run --filter website clear && bun run --filter website start",
     "website:clearbuild": "bun run --filter website clear && bun run --filter website build",
     "website:build": "bun run generate-shadcn-registry && bun run --filter website build",
+    "website:build:full": "bun run generate-shadcn-registry && RQB_ALL_VERSIONS=true bun run --filter website build",
     "website:serve": "bun run --filter website serve",
     "website:deploy": "bun run --filter website deploy",
     "website:clear": "bun run --filter website clear"

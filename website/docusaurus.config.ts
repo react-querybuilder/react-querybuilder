@@ -16,7 +16,10 @@ const config: Config = {
   tagline: 'A minimally opinionated, fully customizable query builder solution',
   url: 'https://react-querybuilder.js.org',
   baseUrl: '/',
-  onBrokenLinks: 'throw',
+  // Old versioned docs (v3-v5) are excluded from the build by default (see `onlyIncludeVersions`
+  // below), which causes known dead links from migrate.mdx files that reference them. Only
+  // enforce strict broken-link checking when those versions are included in the build.
+  onBrokenLinks: process.env.RQB_ALL_VERSIONS ? 'throw' : 'warn',
   markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
   favicon: 'img/react-querybuilder.png',
   organizationName: 'react-querybuilder',
@@ -227,6 +230,10 @@ const config: Config = {
             7: { label: 'v7 / v8' },
             current: { label: 'Next' },
           },
+          // v3-v5 are archived versions that rarely change. Excluding them from the default
+          // build keeps local/PR builds fast. Set RQB_ALL_VERSIONS=true to include them (used
+          // for the `main`-branch deploy build, or manually via `bun run website:build:full`).
+          onlyIncludeVersions: process.env.RQB_ALL_VERSIONS ? undefined : ['current', '6', '7'],
         },
         // blog: {
         //   showReadingTime: true,

@@ -46,6 +46,7 @@ jobs:
         env:
           USE_SSH: true
           GIT_USER: git
+          RQB_ALL_VERSIONS: true
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
