@@ -377,7 +377,8 @@ export interface QueryBuilderFlags {
    * Show the "Undo"/"Redo" actions in the header of the outermost group.
    *
    * Requires the `QueryBuilderHistory` component from `react-querybuilder/history`, which
-   * provides the controls and records the history they navigate.
+   * provides the controls and records the history they navigate. Defaults to `true` when a
+   * `QueryBuilderHistory` ancestor is present (pass `false` explicitly to opt out).
    *
    * @default false
    */

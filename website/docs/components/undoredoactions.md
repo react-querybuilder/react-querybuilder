@@ -9,16 +9,18 @@ The buttons themselves are rendered with the [`actionElement`](./querybuilder-co
 
 :::info
 
-You generally won't import or configure this component directly—rendering `QueryBuilderHistory` supplies it automatically:
+You generally won't import or configure this component directly—rendering `QueryBuilderHistory` supplies it automatically, and defaults descendant query builders' `showUndoRedo` prop to `true`:
 
 ```tsx
 import { QueryBuilder } from 'react-querybuilder';
 import { QueryBuilderHistory } from 'react-querybuilder/history';
 
 <QueryBuilderHistory>
-  <QueryBuilder fields={fields} showUndoRedo />
+  <QueryBuilder fields={fields} />
 </QueryBuilderHistory>;
 ```
+
+Pass `showUndoRedo={false}` to a `QueryBuilder` (or to `QueryBuilderHistory` itself) to opt a query builder tree back out while still recording history.
 
 See [Undo/redo](../tips/undo-redo) for the full guide.
 

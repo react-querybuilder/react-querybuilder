@@ -113,7 +113,6 @@ export function useQueryBuilderSchema<
     showCombinatorsBetweenRules: showCombinatorsBetweenRulesProp = false,
     showNotToggle: showNotToggleProp = false,
     showShiftActions: showShiftActionsProp = false,
-    showUndoRedo: showUndoRedoProp = false,
     showCloneButtons: showCloneButtonsProp = false,
     showLockButtons: showLockButtonsProp = false,
     showMuteButtons: showMuteButtonsProp = false,
@@ -161,6 +160,7 @@ export function useQueryBuilderSchema<
     debugMode,
     enableDragAndDrop,
     enableMountQueryChange,
+    showUndoRedo: showUndoRedoContext,
     translations,
   } = incomingRqbContext;
 
@@ -169,7 +169,7 @@ export function useQueryBuilderSchema<
   const showCombinatorsBetweenRules = !!showCombinatorsBetweenRulesProp;
   const showNotToggle = !!showNotToggleProp;
   const showShiftActions = !!showShiftActionsProp;
-  const showUndoRedo = !!showUndoRedoProp;
+  const showUndoRedo = !!showUndoRedoContext;
   const showCloneButtons = !!showCloneButtonsProp;
   const showLockButtons = !!showLockButtonsProp;
   const showMuteButtons = !!showMuteButtonsProp;

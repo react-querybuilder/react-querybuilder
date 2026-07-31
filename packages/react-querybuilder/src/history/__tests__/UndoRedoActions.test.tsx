@@ -52,6 +52,38 @@ describe('rendering', () => {
     expect(screen.queryByTestId(TestID.undoRedoActions)).toBeNull();
   });
 
+  it('renders undo/redo actions by default when wrapped in QueryBuilderHistory', () => {
+    render(
+      <QueryBuilderHistory>
+        <QueryBuilder qbId="ui-default" fields={fields} defaultQuery={startQuery} />
+      </QueryBuilderHistory>
+    );
+    expect(undoRedo()).toBeInTheDocument();
+  });
+
+  it('does not render undo/redo actions when explicitly disabled inside QueryBuilderHistory', () => {
+    render(
+      <QueryBuilderHistory>
+        <QueryBuilder
+          qbId="ui-explicit-false"
+          fields={fields}
+          defaultQuery={startQuery}
+          showUndoRedo={false}
+        />
+      </QueryBuilderHistory>
+    );
+    expect(screen.queryByTestId(TestID.undoRedoActions)).toBeNull();
+  });
+
+  it('does not render undo/redo actions when QueryBuilderHistory disables it by default', () => {
+    render(
+      <QueryBuilderHistory showUndoRedo={false}>
+        <QueryBuilder qbId="ui-provider-false" fields={fields} defaultQuery={startQuery} />
+      </QueryBuilderHistory>
+    );
+    expect(screen.queryByTestId(TestID.undoRedoActions)).toBeNull();
+  });
+
   it('uses the default labels and titles', () => {
     render(<Basic />);
     expect(undoBtn()).toHaveTextContent(t.undo.label);

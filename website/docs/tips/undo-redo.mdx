@@ -15,12 +15,12 @@ import { QueryBuilderHistory } from 'react-querybuilder/history';
 
 const App = () => (
   <QueryBuilderHistory>
-    <QueryBuilder fields={fields} showUndoRedo />
+    <QueryBuilder fields={fields} />
   </QueryBuilderHistory>
 );
 ```
 
-That's the whole setup. `QueryBuilderHistory` records changes for descendant query builders that render undo/redo controls, and [`showUndoRedo`](../components/querybuilder#showundoredo) displays those controls at the end of the outermost group's header.
+That's the whole setup. `QueryBuilderHistory` records changes for descendant query builders and defaults their [`showUndoRedo`](../components/querybuilder#showundoredo) prop to `true`, which displays undo/redo controls at the end of the outermost group's header. Pass `showUndoRedo={false}` to a particular `QueryBuilder` (or `showUndoRedo={false}` to `QueryBuilderHistory` itself) to opt out while still recording history.
 
 :::tip
 
@@ -40,7 +40,7 @@ Both options can be set on `QueryBuilderHistory`:
 
 ```tsx
 <QueryBuilderHistory maxHistory={50} coalesceMs={500}>
-  <QueryBuilder fields={fields} showUndoRedo />
+  <QueryBuilder fields={fields} />
 </QueryBuilderHistory>
 ```
 

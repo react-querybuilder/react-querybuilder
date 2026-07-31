@@ -433,6 +433,8 @@ Displays "shift up"/"shift down" buttons at the front of each rule and group (ex
 
 Displays "undo"/"redo" buttons at the end of the outermost group's header.
 
+Defaults to `true` for any query builder descending from [`QueryBuilderHistory`](../tips/undo-redo) (pass `showUndoRedo={false}` on either component to opt out), mirroring how [`enableDragAndDrop`](#enabledraganddrop) defaults to `true` under `QueryBuilderDnD`.
+
 :::caution
 
 This prop has no effect on its own, because the buttons it displays come from the [`undoRedoActions`](./querybuilder-controlelements#undoredoactions) control element, which defaults to `null`. Provide one of the following:
