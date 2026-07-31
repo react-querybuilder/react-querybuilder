@@ -106,6 +106,7 @@ export const ExternalControlsDemo = () => (
 #### Code
 
 ```tsx
+import type { ChangeEvent } from 'react';
 import {
   add,
   defaultCombinators,
@@ -152,7 +153,7 @@ const ExternalControls = () => {
   const removeFirstRule = () => dispatchQuery(remove(query, [0]));
 
   // update
-  const updateCombinator = (e: React.ChangeEvent<HTMLSelectElement>) =>
+  const updateCombinator = (e: ChangeEvent<HTMLSelectElement>) =>
     dispatchQuery(update(query, 'combinator', e.target.value, []));
 
   // move
@@ -212,6 +213,7 @@ When your component already owns the query, the same query tools apply—call th
 <SandpackRQB rqbVersion={7} options={{ editorHeight: 480 }}>
 
 ```tsx
+import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import {
   add,
@@ -249,7 +251,7 @@ export default () => {
   const removeFirstRule = () => setQuery(remove(query, [0]));
 
   // update
-  const updateCombinator = (e: React.ChangeEvent<HTMLSelectElement>) =>
+  const updateCombinator = (e: ChangeEvent<HTMLSelectElement>) =>
     setQuery(update(query, 'combinator', e.target.value, []));
 
   // move
