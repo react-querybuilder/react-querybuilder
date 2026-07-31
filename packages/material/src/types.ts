@@ -5,6 +5,8 @@ import type KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import type KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import type LockIcon from '@mui/icons-material/Lock';
 import type LockOpenIcon from '@mui/icons-material/LockOpen';
+import type RedoIcon from '@mui/icons-material/Redo';
+import type UndoIcon from '@mui/icons-material/Undo';
 import type Button from '@mui/material/Button';
 import type Checkbox from '@mui/material/Checkbox';
 import type FormControl from '@mui/material/FormControl';
@@ -43,6 +45,8 @@ export interface RQBMaterialComponents {
   Switch: typeof Switch;
   TextareaAutosize: typeof TextareaAutosize;
   TextField: typeof TextField;
+  UndoIcon: typeof UndoIcon;
+  RedoIcon: typeof RedoIcon;
 }
 
 /**

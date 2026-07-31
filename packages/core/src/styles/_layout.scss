@@ -26,7 +26,8 @@
   }
 
   .ruleGroup-header,
-  .rule {
+  .rule,
+  .undoRedoActions {
     display: flex;
     gap: var(--#{$rqb-var-prefix}spacing);
     align-items: center;

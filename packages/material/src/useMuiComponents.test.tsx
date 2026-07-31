@@ -29,6 +29,8 @@ const componentMocks = {
   Switch: () => <>Switch</>,
   TextareaAutosize: () => <>TextareaAutosize</>,
   TextField: () => <>TextField</>,
+  UndoIcon: () => <>UndoIcon</>,
+  RedoIcon: () => <>RedoIcon</>,
 } as unknown as RQBMaterialComponents;
 
 // We don't *actually* need to load the components, just test that
@@ -55,6 +57,8 @@ vi.mock('@mui/material/Select', () => ({ default: () => <>Select</> }));
 vi.mock('@mui/material/Switch', () => ({ default: () => <>Switch</> }));
 vi.mock('@mui/material/TextareaAutosize', () => ({ default: () => <>TextareaAutosize</> }));
 vi.mock('@mui/material/TextField', () => ({ default: () => <>TextField</> }));
+vi.mock('@mui/icons-material/Undo', () => ({ default: () => <>UndoIcon</> }));
+vi.mock('@mui/icons-material/Redo', () => ({ default: () => <>RedoIcon</> }));
 
 it('returns the MUI components', async () => {
   let hookResult: RenderHookResult<RQBMaterialComponents | null, undefined>;

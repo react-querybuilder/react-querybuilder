@@ -216,6 +216,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import RedoIcon from '@mui/icons-material';
+import UndoIcon from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -248,10 +250,12 @@ const muiComponents = {
   MenuItem,
   Radio,
   RadioGroup,
+  RedoIcon, // (after 8.22.0)
   Select,
   Switch,
   TextareaAutosize,
   TextField, // (Use `Input` instead of `TextField` in versions lower than 7.7.1)
+  UndoIcon, // (after 8.22.0)
 };
 // highlight-end
 

@@ -34,6 +34,8 @@ export const bootstrapControlClassnames: Partial<Classnames> = {
   lockRule: 'btn-secondary',
   removeGroup: 'btn-danger',
   removeRule: 'btn-danger',
+  undoAction: 'btn-secondary',
+  redoAction: 'btn-secondary',
   // BootstrapValueEditor adds its own classnames
   // value: '',
   valueSelector: 'form-select form-select-sm',
@@ -54,6 +56,8 @@ export const bootstrapTranslations: Partial<Translations> = {
   lockRuleDisabled: { label: <i className="bi bi-lock" /> },
   shiftActionUp: { label: <i className="bi bi-chevron-compact-up" /> },
   shiftActionDown: { label: <i className="bi bi-chevron-compact-down" /> },
+  undo: { label: <i className="bi bi-arrow-counterclockwise" /> },
+  redo: { label: <i className="bi bi-arrow-clockwise" /> },
 };
 
 /**
