@@ -246,7 +246,7 @@ Neither method adds anything to the query; pass the result to `add` or `insert`.
 Each method below delegates to the query tool of the same name, using the manager's configuration (`combinators`, `idGenerator`, and the default resolvers) as the default options. Per-call options take precedence.
 
 - `add(ruleOrGroup, parentPathOrID?, options?)` — Unlike the `add` query tool, `parentPathOrID` is optional and defaults to the root group.
-- `remove(pathOrID)`
+- `remove(pathOrID, options?)`
 - `update(prop, value, pathOrID, options?)`, `update(props, values, pathOrID, options?)`, or `update(propsMap, pathOrID, options?)` — All three argument forms of the `update` query tool are supported.
 - `move(oldPathOrID, newPath, options?)`
 - `insert(ruleOrGroup, path, options?)` — Like the `insert` query tool, this accepts a path only, not an `id`.
