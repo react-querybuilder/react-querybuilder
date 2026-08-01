@@ -56,7 +56,14 @@ export default {
         description:
           'Hooks, tools for managing queries, importing from/exporting to different query languages, etc.',
       },
-      items: ['utils/export', 'utils/import', 'utils/hooks', 'utils/validation', 'utils/misc'],
+      items: [
+        'utils/export',
+        'utils/import',
+        'utils/query-management',
+        'utils/hooks',
+        'utils/validation',
+        'utils/misc',
+      ],
     },
     {
       type: 'category',

@@ -90,7 +90,7 @@ const query = parseSQL(
 
 ## Query manipulation
 
-[Full documentation](https://react-querybuilder.js.org/docs/utils/misc#query-tools)
+[Full documentation](https://react-querybuilder.js.org/docs/utils/query-management#query-tools)
 
 Programmatically modify query objects with the same functions used internally by the `<QueryBuilder />` component:
 

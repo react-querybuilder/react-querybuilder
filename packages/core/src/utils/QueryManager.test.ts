@@ -1157,3 +1157,332 @@ describe('strict mode', () => {
     expect(q.canUndo()).toBe(false);
   });
 });
+
+describe('walk', () => {
+  const nested: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { ...rule('firstName'), id: 'r1' },
+      { id: 'g1', combinator: 'or', rules: [{ ...rule('lastName'), id: 'r2' }] },
+      { ...rule('age', '30'), id: 'r3' },
+    ],
+    id: 'root',
+  };
+
+  it('yields every node depth-first in pre-order, starting with the root', () => {
+    const q = new QueryManager(nested);
+    expect([...q.walk()].map(e => e.path)).toEqual([[], [0], [1], [1, 0], [2]]);
+  });
+
+  it('reports the containing group as parent, and null for the root', () => {
+    const q = new QueryManager(nested);
+    const entries = [...q.walk()];
+    expect(entries[0].parent).toBeNull();
+    expect(entries[1].parent).toBe(q.getQuery());
+    expect(entries[3].parent).toBe(q.getGroup('g1'));
+  });
+
+  it('filters with rulesOnly and groupsOnly', () => {
+    const q = new QueryManager(nested);
+    expect([...q.walk({ rulesOnly: true })].map(e => e.path)).toEqual([[0], [1, 0], [2]]);
+    expect([...q.walk({ groupsOnly: true })].map(e => e.path)).toEqual([[], [1]]);
+  });
+
+  it('traverses a subtree with `from`, by path or id', () => {
+    const q = new QueryManager(nested);
+    expect([...q.walk({ from: [1] })].map(e => e.path)).toEqual([[1], [1, 0]]);
+    expect([...q.walk({ from: 'g1' })].map(e => e.path)).toEqual([[1], [1, 0]]);
+  });
+
+  it('reports the correct parent when starting from a subtree', () => {
+    const q = new QueryManager(nested);
+    expect([...q.walk({ from: [1] })][0].parent).toBe(q.getQuery());
+    expect([...q.walk({ from: [] })][0].parent).toBeNull();
+  });
+
+  it('yields nothing when `from` cannot be resolved', () => {
+    const q = new QueryManager(nested);
+    expect([...q.walk({ from: [9] })]).toEqual([]);
+    expect([...q.walk({ from: 'nope' })]).toEqual([]);
+  });
+
+  it('skips combinator strings in independent-combinator groups', () => {
+    const icQuery: RuleGroupTypeIC = { rules: [rule('firstName'), 'and', rule('lastName')] };
+    const q = new QueryManager<RuleGroupTypeIC>(icQuery);
+    expect([...q.walk()].map(e => e.path)).toEqual([[], [0], [2]]);
+  });
+
+  it('is iterable', () => {
+    const q = new QueryManager(nested);
+    expect([...q].map(e => e.path)).toEqual([[], [0], [1], [1, 0], [2]]);
+  });
+
+  it('provides rules() and groups() shorthands', () => {
+    const q = new QueryManager(nested);
+    expect([...q.rules()].map(e => e.path)).toEqual([[0], [1, 0], [2]]);
+    expect([...q.groups()].map(e => e.path)).toEqual([[], [1]]);
+    expect([...q.rules({ from: [1] })].map(e => e.path)).toEqual([[1, 0]]);
+    expect([...q.groups({ from: [1] })].map(e => e.path)).toEqual([[1]]);
+  });
+
+  it('finds and filters', () => {
+    const q = new QueryManager(nested);
+    expect(q.find(e => 'field' in e.node && e.node.field === 'age')?.path).toEqual([2]);
+    expect(q.find(() => false)).toBeNull();
+    expect(q.filter(e => 'field' in e.node).map(e => e.path)).toEqual([[0], [1, 0], [2]]);
+    expect(q.filter(() => false)).toEqual([]);
+    expect(q.filter(e => 'field' in e.node, { from: [1] }).map(e => e.path)).toEqual([[1, 0]]);
+    expect(q.find(e => 'field' in e.node, { from: [1] })?.path).toEqual([1, 0]);
+  });
+});
+
+describe('path utilities', () => {
+  const nested: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { ...rule('firstName'), id: 'r1' },
+      { id: 'g1', combinator: 'or', rules: [{ ...rule('lastName'), id: 'r2' }] },
+    ],
+    id: 'root',
+  };
+
+  it('findPath', () => {
+    const q = new QueryManager(nested);
+    expect(q.findPath([])).toBe(q.getQuery());
+    expect(q.findPath([1, 0])).toMatchObject({ field: 'lastName' });
+    expect(q.findPath([9])).toBeNull();
+  });
+
+  it('findID', () => {
+    const q = new QueryManager(nested);
+    expect(q.findID('root')).toBe(q.getQuery());
+    expect(q.findID('r2')).toMatchObject({ field: 'lastName' });
+    expect(q.findID('nope')).toBeNull();
+  });
+
+  it('getPathOfID', () => {
+    const q = new QueryManager(nested);
+    expect(q.getPathOfID('root')).toEqual([]);
+    expect(q.getPathOfID('r1')).toEqual([0]);
+    expect(q.getPathOfID('r2')).toEqual([1, 0]);
+    expect(q.getPathOfID('nope')).toBeNull();
+  });
+
+  it('ignores duplicate ids after the first, like findID', () => {
+    const q = new QueryManager({
+      combinator: 'and',
+      rules: [
+        { ...rule('firstName'), id: 'dupe' },
+        { ...rule('lastName'), id: 'dupe' },
+      ],
+      id: 'root',
+    } satisfies RuleGroupType);
+    expect(q.getPathOfID('dupe')).toEqual([0]);
+  });
+
+  it('pathIsDisabled', () => {
+    const q = new QueryManager({
+      combinator: 'and',
+      rules: [rule('firstName'), { combinator: 'or', disabled: true, rules: [rule('lastName')] }],
+    } satisfies RuleGroupType);
+    expect(q.pathIsDisabled([0])).toBe(false);
+    expect(q.pathIsDisabled([1, 0])).toBe(true);
+  });
+
+  it('getNode by path and id', () => {
+    const q = new QueryManager(nested);
+    expect(q.getNode([1, 0])).toMatchObject({ field: 'lastName' });
+    expect(q.getNode('g1')).toMatchObject({ combinator: 'or' });
+    expect(q.getNode('nope')).toBeNull();
+    expect(q.getNode([9])).toBeNull();
+  });
+
+  it('getRule returns null for groups', () => {
+    const q = new QueryManager(nested);
+    expect(q.getRule('r1')).toMatchObject({ field: 'firstName' });
+    expect(q.getRule('g1')).toBeNull();
+    expect(q.getRule('nope')).toBeNull();
+  });
+
+  it('getGroup returns null for rules', () => {
+    const q = new QueryManager(nested);
+    expect(q.getGroup('g1')).toMatchObject({ combinator: 'or' });
+    expect(q.getGroup([])).toBe(q.getQuery());
+    expect(q.getGroup('r1')).toBeNull();
+    expect(q.getGroup('nope')).toBeNull();
+  });
+
+  it('getParent', () => {
+    const q = new QueryManager(nested);
+    expect(q.getParent('r2')).toBe(q.getGroup('g1'));
+    expect(q.getParent('g1')).toBe(q.getQuery());
+    expect(q.getParent('root')).toBeNull();
+    expect(q.getParent([])).toBeNull();
+    expect(q.getParent('nope')).toBeNull();
+    expect(q.getParent([9])).toBeNull();
+  });
+});
+
+describe('query inspection', () => {
+  it('isIC', () => {
+    expect(new QueryManager().isIC()).toBe(false);
+    expect(new QueryManager<RuleGroupTypeIC>({ rules: [] }).isIC()).toBe(true);
+  });
+
+  it('signatureOf', () => {
+    const q = new QueryManager({ combinator: 'and', rules: [rule()] } satisfies RuleGroupType);
+    expect(q.signatureOf(q.getQuery())).toBe('');
+    expect(typeof q.signatureOf({ combinator: 'and', rules: [] })).toBe('string');
+  });
+
+  it('diagnostics', () => {
+    const q = new QueryManager({ combinator: 'and', rules: [rule()] } satisfies RuleGroupType);
+    expect(q.diagnostics()).toEqual(formatQuery(q.getQuery(), 'diagnostics'));
+  });
+
+  it('toJSON round-trips through JSON.stringify', () => {
+    const q = new QueryManager({ combinator: 'and', rules: [rule()] } satisfies RuleGroupType);
+    expect(q.toJSON()).toBe(q.getQuery());
+    expect(JSON.stringify(q)).toBe(JSON.stringify(q.getQuery()));
+  });
+});
+
+describe('transforms', () => {
+  it('toIC converts and returns a new manager', () => {
+    const q = new QueryManager({
+      combinator: 'and',
+      rules: [rule('firstName'), rule('lastName')],
+    } satisfies RuleGroupType);
+    const before = q.getQuery();
+    const ic = q.toIC();
+    expect(ic).not.toBe(q);
+    expect(ic.isIC()).toBe(true);
+    expect(ic.getQuery().rules[1]).toBe('and');
+    // Original is untouched.
+    expect(q.getQuery()).toBe(before);
+    // Idempotent.
+    expect(ic.toIC().getQuery().rules[1]).toBe('and');
+  });
+
+  it('fromIC converts and returns a new manager', () => {
+    const q = new QueryManager<RuleGroupTypeIC>({
+      rules: [rule('firstName'), 'or', rule('lastName')],
+    });
+    const nonIC = q.fromIC();
+    expect(nonIC).not.toBe(q);
+    expect(nonIC.isIC()).toBe(false);
+    expect(nonIC.getQuery().combinator).toBe('or');
+    expect(nonIC.fromIC().getQuery().combinator).toBe('or');
+  });
+
+  it('carries configuration but not history or subscribers', () => {
+    const onChange = vi.fn();
+    const q = new QueryManager({ combinator: 'and', rules: [] }, { fields, history: true });
+    q.subscribe(onChange);
+    q.add(rule());
+    const ic = q.toIC();
+    expect(ic.canUndo()).toBe(false);
+    ic.add(rule());
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(ic.createRule().field).toBe('firstName');
+  });
+
+  it('transform returns the raw transformQuery result', () => {
+    const q = new QueryManager({ combinator: 'and', rules: [rule()] } satisfies RuleGroupType);
+    const before = q.getQuery();
+    expect(q.transform({ propertyMap: { combinator: 'AndOr' } })).toMatchObject({ AndOr: 'and' });
+    expect(q.transform()).toMatchObject({ combinator: 'and' });
+    expect(q.getQuery()).toBe(before);
+  });
+});
+
+describe('cache invalidation', () => {
+  const initial: RuleGroupType = {
+    combinator: 'and',
+    rules: [{ ...rule('firstName'), id: 'r1' }],
+    id: 'root',
+  };
+
+  it('reindexes after a mutation', () => {
+    const q = new QueryManager(initial);
+    expect(q.getPathOfID('r1')).toEqual([0]);
+    // `insert` assigns a fresh `id`, so identify the new rule by position.
+    q.insert(rule('lastName'), [0]);
+    expect(q.getPathOfID('r1')).toEqual([1]);
+    const insertedID = q.getQuery().rules[0].id!;
+    expect(q.getPathOfID(insertedID)).toEqual([0]);
+    q.remove(insertedID);
+    expect(q.getPathOfID(insertedID)).toBeNull();
+    expect(q.getPathOfID('r1')).toEqual([0]);
+  });
+
+  it('reindexes after setQuery', () => {
+    const q = new QueryManager(initial);
+    expect(q.findID('r1')).toMatchObject({ field: 'firstName' });
+    q.setQuery({ combinator: 'and', rules: [{ ...rule('age', '30'), id: 'r9' }], id: 'root2' });
+    expect(q.getPathOfID('r1')).toBeNull();
+    expect(q.getPathOfID('r9')).toEqual([0]);
+  });
+
+  it('reindexes after undo and redo, which bypass #commit', () => {
+    const q = new QueryManager(initial, { history: true });
+    expect(q.getPathOfID('r1')).toEqual([0]);
+    q.add(rule('lastName'));
+    const addedID = q.getQuery().rules[1].id!;
+    expect(q.getPathOfID(addedID)).toEqual([1]);
+
+    q.undo();
+    expect(q.getPathOfID(addedID)).toBeNull();
+    expect([...q.walk()].map(e => e.path)).toEqual([[], [0]]);
+
+    q.redo();
+    expect(q.getPathOfID(addedID)).toEqual([1]);
+    expect([...q.walk()].map(e => e.path)).toEqual([[], [0], [1]]);
+  });
+
+  it('reindexes after a batch rollback, which bypasses #commit', () => {
+    const q = new QueryManager(initial, { history: true });
+    expect(q.getPathOfID('r1')).toEqual([0]);
+    let addedID: string | undefined;
+    expect(() =>
+      q.batch(() => {
+        q.add(rule('lastName'));
+        expect(q.getQuery().rules).toHaveLength(2);
+        addedID = q.getQuery().rules[1].id!;
+        throw new Error('nope');
+      })
+    ).toThrow('nope');
+    expect(q.getPathOfID(addedID!)).toBeNull();
+    expect(q.getQuery().rules).toHaveLength(1);
+    expect(q.getPathOfID('r1')).toEqual([0]);
+  });
+
+  it('caches validation until the query changes', () => {
+    const validator = vi.fn(() => true);
+    const q = new QueryManager(initial, { validator });
+    expect(q.validate()).toBe(true);
+    expect(q.validate()).toBe(true);
+    expect(validator).toHaveBeenCalledTimes(1);
+
+    q.add(rule('lastName'));
+    expect(q.validate()).toBe(true);
+    expect(validator).toHaveBeenCalledTimes(2);
+  });
+
+  it('caches a falsy validation result', () => {
+    const validator = vi.fn(() => false);
+    const q = new QueryManager(initial, { validator });
+    expect(q.validate()).toBe(false);
+    expect(q.validate()).toBe(false);
+    expect(validator).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not invalidate when a mutation is a no-op', () => {
+    const validator = vi.fn(() => true);
+    const q = new QueryManager(initial, { validator });
+    q.validate();
+    q.remove([9]);
+    q.validate();
+    expect(validator).toHaveBeenCalledTimes(1);
+  });
+});

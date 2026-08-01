@@ -34,6 +34,8 @@ import type {
   RuleGroupType,
   RuleGroupTypeAny,
   RuleType,
+  ToRuleGroupType,
+  ToRuleGroupTypeIC,
   UpdateableProperties,
   UpdateValueMap,
   ValidationMap,
@@ -41,6 +43,7 @@ import type {
   ValueSourceFlexibleOptions,
   ValueSources,
 } from '../types';
+import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
 import { formatQuery } from './formatQuery';
 import type {
@@ -52,7 +55,10 @@ import { generateID } from './generateID';
 import { getMatchModesUtil } from './getMatchModesUtil';
 import { getRuleDefaultValue } from './getRuleDefaultValue';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
+import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
 import { getFirstOption, prepareOptionList } from './optGroupUtils';
+import type { FindPathReturnType } from './pathUtils';
+import { findPath, getParentPath, pathIsDisabled } from './pathUtils';
 import { prepareRuleGroup } from './prepareQueryObjects';
 import type {
   AbortInfo,
@@ -67,6 +73,8 @@ import type {
 import { add, group, insert, move, remove, update } from './queryTools';
 import { regenerateIDs } from './regenerateIDs';
 import { signatureOf, structuralSignature, unchangedSignature } from './signature';
+import type { TransformQueryOptions } from './transformQuery';
+import { transformQuery } from './transformQuery';
 
 /**
  * Abort reasons that {@link QueryManager}'s `strict` mode treats as errors. The remaining
@@ -232,6 +240,43 @@ interface QueryManagerSnapshot<RG extends RuleGroupTypeAny> {
 }
 
 /**
+ * A single rule or group encountered by {@link QueryManager.walk}, along with where it was found.
+ *
+ * @group Query Tools
+ */
+export interface QueryNode<RG extends RuleGroupTypeAny = RuleGroupType> {
+  /** The rule or group itself. */
+  node: RG | RuleType;
+  /** The {@link Path} of `node` within the query. The root group's path is `[]`. */
+  path: Path;
+  /** The group containing `node`, or `null` for the root group. */
+  parent: RG | null;
+}
+
+/**
+ * Options for {@link QueryManager.walk} and its derivatives.
+ *
+ * @group Query Tools
+ */
+export interface WalkOptions {
+  /**
+   * Traverse only the subtree rooted at this path or `id` instead of the whole query. The node
+   * itself is visited first. When the path or `id` can't be resolved, nothing is visited.
+   */
+  from?: Path | string;
+  /** Visit only rules. Groups are still traversed, just not yielded (except as `parent`). */
+  rulesOnly?: boolean;
+  /** Visit only groups. */
+  groupsOnly?: boolean;
+}
+
+/**
+ * Coerces the result of a conditional query type back into something assignable to
+ * {@link QueryManager}'s `RG` parameter, which TypeScript cannot verify on its own.
+ */
+type AsRuleGroup<T> = T extends RuleGroupTypeAny ? T : RuleGroupTypeAny;
+
+/**
  * Stateful wrapper around the {@link add}/{@link remove}/{@link update}/{@link move}/
  * {@link insert}/{@link group} query tools, plus rule/group factories, {@link defaultValidator
  * validation}, and {@link formatQuery formatting}.
@@ -280,6 +325,14 @@ export class QueryManager<
   #lastAt = 0;
   #batchDepth = 0;
   #batchSnapshot: QueryManagerSnapshot<RG> | undefined;
+  /**
+   * The query the cached fields below were derived from. Caches are keyed on query _identity_
+   * rather than invalidated from {@link QueryManager.#commit} because `undo`, `redo`, and
+   * `batch`'s rollback all assign `#query` directly.
+   */
+  #cacheFor: RG | undefined;
+  #idPathIndex: Map<string, Path> | undefined;
+  #validation: boolean | ValidationMap | undefined;
 
   constructor(query?: RG, options: QueryManagerOptions<F, O, C> = {}) {
     this.#options = options;
@@ -490,6 +543,58 @@ export class QueryManager<
 
   #notify(): void {
     for (const listener of this.#listeners) listener();
+  }
+
+  /**
+   * Discards every cached derivation when the query has been replaced since they were computed.
+   * Called at the top of each cached reader.
+   */
+  #ensureCache(): void {
+    if (this.#cacheFor === this.#query) return;
+
+    this.#cacheFor = this.#query;
+    this.#idPathIndex = undefined;
+    this.#validation = undefined;
+  }
+
+  /**
+   * The single traversal implementation. Combinator strings in independent-combinator groups
+   * are skipped.
+   *
+   * @yields The subtree rooted at `node`, depth-first in pre-order, starting with `node` itself.
+   */
+  *#walkFrom(node: RG | RuleType, path: Path, parent: RG | null): Generator<QueryNode<RG>> {
+    yield { node, path, parent };
+
+    if (!isRuleGroup(node)) return;
+
+    const startGroup = node as RG;
+    for (const [index, child] of startGroup.rules.entries()) {
+      // Independent-combinator groups interleave combinator strings among the rules.
+      if (typeof child === 'string') continue;
+      yield* this.#walkFrom(child as RG | RuleType, [...path, index], startGroup);
+    }
+  }
+
+  /** Builds (once per query) the `id` to {@link Path} index backing `findID`/`getPathOfID`. */
+  #index(): Map<string, Path> {
+    this.#ensureCache();
+
+    if (!this.#idPathIndex) {
+      const index = new Map<string, Path>();
+      for (const { node, path } of this.#walkFrom(this.#query, [], null)) {
+        // The first occurrence wins, matching `findID`'s depth-first search order.
+        if (node.id !== undefined && !index.has(node.id)) index.set(node.id, path);
+      }
+      this.#idPathIndex = index;
+    }
+
+    return this.#idPathIndex;
+  }
+
+  /** Resolves a path or `id` to a path, or `null` when the `id` isn't present. */
+  #toPath(pathOrID: Path | string): Path | null {
+    return typeof pathOrID === 'string' ? (this.#index().get(pathOrID) ?? null) : pathOrID;
   }
 
   // #endregion
@@ -853,9 +958,16 @@ export class QueryManager<
 
   // #region Validation
 
-  /** Validates the current query with the configured validator. */
+  /**
+   * Validates the current query with the configured validator.
+   *
+   * The result is cached until the query changes, so a custom `validator` with side effects (or
+   * one that depends on anything other than the query) may run fewer times than expected.
+   */
   validate(): boolean | ValidationMap {
-    return this.#validator(this.#query);
+    this.#ensureCache();
+    this.#validation ??= this.#validator(this.#query);
+    return this.#validation;
   }
 
   // #endregion
@@ -919,6 +1031,235 @@ export class QueryManager<
   format(options: FormatQueryOptions): string;
   format(options?: FormatQueryOptions | ExportFormat): unknown {
     return formatQuery(this.#query, options as FormatQueryOptions);
+  }
+
+  // #endregion
+
+  // #region Traversal
+
+  /**
+   * Yields every rule and group in the query, depth-first in pre-order, starting with the root
+   * group itself. Combinator strings in independent-combinator groups are skipped.
+   *
+   * ```ts
+   * for (const { node, path, parent } of qm.walk({ rulesOnly: true })) {
+   *   console.log(path, node.field);
+   * }
+   * ```
+   *
+   * The generator reads the query as it goes, so mutating the manager mid-iteration continues
+   * walking the query as it was when iteration began.
+   *
+   * @yields Every rule and group in the query, subject to `options`.
+   */
+  *walk(options: WalkOptions = {}): Generator<QueryNode<RG>> {
+    const { from, rulesOnly, groupsOnly } = options;
+
+    let start: RG | RuleType = this.#query;
+    let startPath: Path = [];
+    let startParent: RG | null = null;
+
+    if (from !== undefined) {
+      const path = this.#toPath(from);
+      const node = path && findPath(path, this.#query);
+      // An unresolvable path or `id` yields nothing rather than falling back to the root.
+      if (!path || !node) return;
+      start = node as RG | RuleType;
+      startPath = path;
+      startParent = path.length === 0 ? null : (findPath(getParentPath(path), this.#query) as RG);
+    }
+
+    for (const entry of this.#walkFrom(start, startPath, startParent)) {
+      if (rulesOnly && isRuleGroup(entry.node)) continue;
+      if (groupsOnly && !isRuleGroup(entry.node)) continue;
+      yield entry;
+    }
+  }
+
+  /** Yields every rule in the query. Shorthand for `walk({ ...options, rulesOnly: true })`. */
+  rules(options: Omit<WalkOptions, 'rulesOnly' | 'groupsOnly'> = {}): Generator<QueryNode<RG>> {
+    return this.walk({ ...options, rulesOnly: true });
+  }
+
+  /**
+   * Yields every group in the query, including the root group. Shorthand for
+   * `walk({ ...options, groupsOnly: true })`.
+   */
+  groups(options: Omit<WalkOptions, 'rulesOnly' | 'groupsOnly'> = {}): Generator<QueryNode<RG>> {
+    return this.walk({ ...options, groupsOnly: true });
+  }
+
+  /** Returns the first node matching `predicate`, or `null` if there is none. */
+  find(
+    predicate: (entry: QueryNode<RG>) => boolean,
+    options: WalkOptions = {}
+  ): QueryNode<RG> | null {
+    for (const entry of this.walk(options)) {
+      if (predicate(entry)) return entry;
+    }
+    return null;
+  }
+
+  /** Returns every node matching `predicate`. */
+  filter(predicate: (entry: QueryNode<RG>) => boolean, options: WalkOptions = {}): QueryNode<RG>[] {
+    const results: QueryNode<RG>[] = [];
+    for (const entry of this.walk(options)) {
+      if (predicate(entry)) results.push(entry);
+    }
+    return results;
+  }
+
+  /** Equivalent to {@link QueryManager.walk} with no options, enabling `for...of` and spread. */
+  [Symbol.iterator](): Generator<QueryNode<RG>> {
+    return this.walk();
+  }
+
+  // #endregion
+
+  // #region Path utilities
+
+  /**
+   * Returns the rule or group at the given path, or `null` if the path can't be resolved.
+   *
+   * Unlike the standalone {@link findPath}, which can return `undefined` for an out-of-range
+   * index, unresolvable paths are always normalized to `null` here.
+   */
+  findPath(path: Path): FindPathReturnType {
+    return findPath(path, this.#query) ?? null;
+  }
+
+  /**
+   * Returns the rule or group with the given `id`, or `null` if there is none. Backed by an
+   * index built once per query, so repeated lookups are constant time.
+   */
+  findID(id: string): FindPathReturnType {
+    const path = this.#index().get(id);
+    // A path from the index always resolves, so no normalization is needed here.
+    return path === undefined ? null : findPath(path, this.#query);
+  }
+
+  /**
+   * Returns the {@link Path} of the rule or group with the given `id`, or `null` if there is
+   * none. Backed by an index built once per query, so repeated lookups are constant time.
+   */
+  getPathOfID(id: string): Path | null {
+    return this.#index().get(id) ?? null;
+  }
+
+  /**
+   * Determines whether the rule or group at the given path is disabled, either itself or by an
+   * ancestor group.
+   */
+  pathIsDisabled(path: Path): boolean {
+    return pathIsDisabled(path, this.#query);
+  }
+
+  /** Returns the rule or group at the given path or `id`, or `null` if it can't be resolved. */
+  getNode(pathOrID: Path | string): FindPathReturnType {
+    const path = this.#toPath(pathOrID);
+    return path === null ? null : (findPath(path, this.#query) ?? null);
+  }
+
+  /**
+   * Returns the rule at the given path or `id`, or `null` if it can't be resolved _or_ resolves
+   * to a group.
+   */
+  getRule(pathOrID: Path | string): RuleType | null {
+    const node = this.getNode(pathOrID);
+    return node && !isRuleGroup(node) ? node : null;
+  }
+
+  /**
+   * Returns the group at the given path or `id`, or `null` if it can't be resolved _or_
+   * resolves to a rule.
+   */
+  getGroup(pathOrID: Path | string): RG | null {
+    const node = this.getNode(pathOrID);
+    return node && isRuleGroup(node) ? (node as RG) : null;
+  }
+
+  /**
+   * Returns the group containing the rule or group at the given path or `id`. Returns `null`
+   * for the root group, which has no parent, and when the target can't be resolved.
+   */
+  getParent(pathOrID: Path | string): RG | null {
+    const path = this.#toPath(pathOrID);
+    if (path === null || path.length === 0) return null;
+    // Confirm the target itself exists, so a bogus path doesn't return a real parent.
+    if (!findPath(path, this.#query)) return null;
+    // An existing non-root node always has a parent group.
+    return findPath(getParentPath(path), this.#query) as RG;
+  }
+
+  // #endregion
+
+  // #region Query inspection
+
+  /** Whether the current query uses independent combinators. */
+  isIC(): boolean {
+    return isRuleGroupTypeIC(this.#query);
+  }
+
+  /**
+   * Returns the signature describing how the current query differs from `other`, as used by
+   * this manager's history coalescing.
+   */
+  signatureOf(other: RuleGroupTypeAny): string {
+    return signatureOf(this.#query, other);
+  }
+
+  /** Generates a {@link DiagnosticsResult}. Shorthand for `format('diagnostics')`. */
+  diagnostics(): DiagnosticsResult {
+    return formatQuery(this.#query, 'diagnostics');
+  }
+
+  /**
+   * Returns the current query, so `JSON.stringify(queryManager)` produces the same output as
+   * `JSON.stringify(queryManager.getQuery())`.
+   */
+  toJSON(): RG {
+    return this.#query;
+  }
+
+  // #endregion
+
+  // #region Transforms
+
+  /**
+   * Returns a new manager with the same configuration and the current query converted to use
+   * independent combinators. Idempotent, and never modifies this manager. As with
+   * {@link QueryManager.clone}, subscribers and history are not carried over.
+   */
+  toIC(): QueryManager<AsRuleGroup<ToRuleGroupTypeIC<RG>>, F, O, C> {
+    return new QueryManager(
+      convertToIC(this.#query) as AsRuleGroup<ToRuleGroupTypeIC<RG>>,
+      this.#options
+    );
+  }
+
+  /**
+   * Returns a new manager with the same configuration and the current query converted to use a
+   * single combinator per group. Idempotent, and never modifies this manager. As with
+   * {@link QueryManager.clone}, subscribers and history are not carried over.
+   */
+  fromIC(): QueryManager<AsRuleGroup<ToRuleGroupType<RG>>, F, O, C> {
+    return new QueryManager(
+      convertFromIC(this.#query) as AsRuleGroup<ToRuleGroupType<RG>>,
+      this.#options
+    );
+  }
+
+  /**
+   * Runs {@link transformQuery} against the current query and returns its result.
+   *
+   * Unlike {@link QueryManager.toIC}/{@link QueryManager.fromIC}, this returns the raw
+   * transformed value rather than a new manager, since `transformQuery` can produce arbitrary
+   * shapes that are no longer valid queries. This manager is never modified.
+   */
+  // oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unnecessary-type-parameters
+  transform<T = any>(options?: TransformQueryOptions<RG>): T {
+    // oxlint-disable-next-line typescript/no-explicit-any
+    return (transformQuery as any)(this.#query, options);
   }
 
   // #endregion

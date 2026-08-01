@@ -2,7 +2,7 @@ import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 
 if (ExecutionEnvironment.canUseDOM) {
   const [
-    formatQuery,
+    core,
     parseCEL,
     parseCypher,
     parseGremlin,
@@ -12,22 +12,20 @@ if (ExecutionEnvironment.canUseDOM) {
     parseSPARQL,
     parseSpEL,
     parseSQL,
-    transformQuery,
   ] = await Promise.all([
-    import('react-querybuilder/formatQuery'),
-    import('react-querybuilder/parseCEL'),
-    import('react-querybuilder/parseCypher'),
-    import('react-querybuilder/parseGremlin'),
-    import('react-querybuilder/parseJSONata'),
-    import('react-querybuilder/parseJsonLogic'),
-    import('react-querybuilder/parseMongoDB'),
-    import('react-querybuilder/parseSPARQL'),
-    import('react-querybuilder/parseSpEL'),
-    import('react-querybuilder/parseSQL'),
-    import('react-querybuilder/transformQuery'),
+    import('@react-querybuilder/core'),
+    import('@react-querybuilder/core/parseCEL'),
+    import('@react-querybuilder/core/parseCypher'),
+    import('@react-querybuilder/core/parseGremlin'),
+    import('@react-querybuilder/core/parseJSONata'),
+    import('@react-querybuilder/core/parseJsonLogic'),
+    import('@react-querybuilder/core/parseMongoDB'),
+    import('@react-querybuilder/core/parseSPARQL'),
+    import('@react-querybuilder/core/parseSpEL'),
+    import('@react-querybuilder/core/parseSQL'),
   ]);
   Object.assign(globalThis, {
-    formatQuery: formatQuery.formatQuery,
+    formatQuery: core.formatQuery,
     parseCEL: parseCEL.parseCEL,
     parseCypher: parseCypher.parseCypher,
     parseGremlin: parseGremlin.parseGremlin,
@@ -37,7 +35,8 @@ if (ExecutionEnvironment.canUseDOM) {
     parseSPARQL: parseSPARQL.parseSPARQL,
     parseSpEL: parseSpEL.parseSpEL,
     parseSQL: parseSQL.parseSQL,
-    transformQuery: transformQuery.transformQuery,
+    transformQuery: core.transformQuery,
+    QueryManager: core.QueryManager,
   });
   console.log(
     `RQB utilities available in the console:
@@ -51,6 +50,7 @@ if (ExecutionEnvironment.canUseDOM) {
  • parseSPARQL
  • parseSpEL
  • parseSQL
- • transformQuery`
+ • transformQuery
+ • QueryManager`
   );
 }
