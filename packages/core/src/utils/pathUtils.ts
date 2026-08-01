@@ -80,16 +80,25 @@ export const getParentPath = (path: Path): Path => path.slice(0, -1);
 /**
  * Determines if two paths (each `Path`) are equivalent.
  */
-export const pathsAreEqual = (path1: Path, path2: Path): boolean =>
-  path1.length === path2.length && path1.every((val, idx) => val === path2[idx]);
+export const pathsAreEqual = (path1: Path, path2: Path): boolean => {
+  if (path1.length !== path2.length) return false;
+  for (let i = 0; i < path1.length; i++) {
+    if (path1[i] !== path2[i]) return false;
+  }
+  return true;
+};
 
 /**
  * Determines if the first path is an ancestor of the second path. The first path must
  * be shorter and exactly match the second path up through the length of the first path.
  */
-export const isAncestor = (maybeAncestor: Path, path: Path): boolean =>
-  maybeAncestor.length < path.length &&
-  new RegExp(`^${maybeAncestor.join('-')}`).test(path.join('-'));
+export const isAncestor = (maybeAncestor: Path, path: Path): boolean => {
+  if (maybeAncestor.length >= path.length) return false;
+  for (let i = 0; i < maybeAncestor.length; i++) {
+    if (maybeAncestor[i] !== path[i]) return false;
+  }
+  return true;
+};
 
 /**
  * Finds the deepest/longest path that two paths have in common.
