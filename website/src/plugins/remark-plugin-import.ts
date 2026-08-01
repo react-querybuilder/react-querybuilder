@@ -107,8 +107,9 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
               ];
             }
           } else if (block) {
+            // The opening brace may be on a later line when the declaration has type parameters.
             const start = codeLines.findIndex(v =>
-              v.match(`^(export )?(const|let|type|interface) ${block[1]} \\{$`)
+              v.match(`^(export )?(const|let|type|interface) ${block[1]}(<.*)?( \\{)?$`)
             );
             const end = codeLines.findIndex((v, i) => i >= start && v.match(/^}/));
             if (start >= 0) {
