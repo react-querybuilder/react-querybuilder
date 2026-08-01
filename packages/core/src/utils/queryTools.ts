@@ -27,11 +27,67 @@ import { prepareRuleOrGroup } from './prepareQueryObjects';
 import { regenerateIDs } from './regenerateIDs';
 
 /**
+ * Why a query tool returned the query unmodified. Query tools never throw; when they cannot
+ * carry out an operation they return the original query and report the reason through
+ * {@link AbortOptions.onAbort}.
+ *
+ * `"same-location"` and `"no-change"` describe operations that were valid but had nothing to
+ * do, so they are not errors. Every other reason indicates a target that could not be used.
+ *
+ * @group Query Tools
+ */
+export type AbortReason =
+  /** The rule/group identified by the given path or `id` does not exist. */
+  | 'target-not-found'
+  /** The parent group identified by the given path or `id` does not exist. */
+  | 'parent-not-found'
+  /** The given parent path or `id` refers to a rule rather than a group. */
+  | 'parent-not-a-group'
+  /** The destination's parent group does not exist. */
+  | 'destination-not-found'
+  /** The root group cannot be removed, moved, or grouped. */
+  | 'root-not-allowed'
+  /** In a query with independent combinators, the target index holds a rule, not a combinator. */
+  | 'not-a-combinator-slot'
+  /** The rule/group is already at the destination. Not an error. */
+  | 'same-location'
+  /** The property already has the given value. Not an error. */
+  | 'no-change';
+
+/**
+ * Details about an aborted query tool operation.
+ *
+ * @group Query Tools
+ */
+export interface AbortInfo {
+  /** Why the operation was aborted. */
+  reason: AbortReason;
+  /** The query tool that aborted. */
+  operation: 'add' | 'remove' | 'update' | 'move' | 'insert' | 'group';
+  /** The path or `id` that could not be used, when the reason relates to a specific target. */
+  pathOrID?: Path | string;
+}
+
+/**
+ * Options for reporting aborted query tool operations.
+ *
+ * @group Query Tools
+ */
+export interface AbortOptions {
+  /**
+   * Called when the operation returns the query unmodified, with the reason why. Query tools
+   * never throw, so this is the only way to distinguish "the target was invalid" from
+   * "the operation had nothing to do".
+   */
+  onAbort?: (info: AbortInfo) => void;
+}
+
+/**
  * Options for {@link add}.
  *
  * @group Query Tools
  */
-export interface AddOptions {
+export interface AddOptions extends AbortOptions {
   /**
    * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
    * combinators), then the first combinator in this list will be inserted
@@ -91,12 +147,21 @@ export const addInPlace: AddMethod = (
     combinators = defaultCombinators,
     combinatorPreceding,
     idGenerator = generateID,
+    onAbort,
   } = options;
   const parent = Array.isArray(parentPathOrID)
     ? findPath(parentPathOrID, query)
     : findID(parentPathOrID, query);
 
-  if (!parent || !isRuleGroup(parent)) return query;
+  if (!parent) {
+    onAbort?.({ reason: 'parent-not-found', operation: 'add', pathOrID: parentPathOrID });
+    return query;
+  }
+
+  if (!isRuleGroup(parent)) {
+    onAbort?.({ reason: 'parent-not-a-group', operation: 'add', pathOrID: parentPathOrID });
+    return query;
+  }
 
   if (isRuleGroupTypeIC(parent) && parent.rules.length > 0) {
     const prevCombinator = parent.rules.at(-2);
@@ -119,7 +184,7 @@ export const addInPlace: AddMethod = (
  *
  * @group Query Tools
  */
-export interface UpdateOptions {
+export interface UpdateOptions extends AbortOptions {
   /**
    * When updating the `field` of a rule, the rule's `operator`, `value`, and `valueSource`
    * will be reset to their respective defaults. Defaults to `true`.
@@ -318,6 +383,7 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
     getValueSources = () => ['value'],
     getRuleDefaultValue = () => '',
     getMatchModes = () => [],
+    onAbort,
   } = options;
 
   let resetOnFieldChange = _resetOnFieldChange;
@@ -325,7 +391,10 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
   const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
 
   // Ignore invalid paths/ids
-  if (!path) return query;
+  if (!path) {
+    onAbort?.({ reason: 'target-not-found', operation: 'update', pathOrID });
+    return query;
+  }
 
   // Independent combinators
   if (prop === 'combinator' && !isRuleGroupType(query)) {
@@ -333,6 +402,8 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
     // Only update an independent combinator if it occupies an odd index
     if (path.at(-1)! % 2 === 1) {
       parentRules[path.at(-1)!] = value;
+    } else {
+      onAbort?.({ reason: 'not-a-combinator-slot', operation: 'update', pathOrID });
     }
     return query;
   }
@@ -340,13 +411,19 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
   const ruleOrGroup = findPath(path, query);
 
   // Ignore invalid paths
-  if (!ruleOrGroup) return query;
+  if (!ruleOrGroup) {
+    onAbort?.({ reason: 'target-not-found', operation: 'update', pathOrID });
+    return query;
+  }
 
   const isGroup = isRuleGroup(ruleOrGroup);
 
   // Only update if there is actually a change
   // @ts-expect-error prop can refer to rule or group properties
-  if (ruleOrGroup[prop] === value) return query;
+  if (ruleOrGroup[prop] === value) {
+    onAbort?.({ reason: 'no-change', operation: 'update', pathOrID });
+    return query;
+  }
 
   // Handle valueSource updates later
   if (prop !== 'valueSource') {
@@ -423,12 +500,21 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
   return query;
 };
 
+/**
+ * Options for {@link remove}.
+ *
+ * @group Query Tools
+ */
+export interface RemoveOptions extends AbortOptions {}
+
 export interface RemoveMethod {
   <RG extends RuleGroupTypeAny>(
     /** The query to update. */
     query: RG,
     /** The path or ID of the rule or group to remove. */
-    pathOrID: Path | string
+    pathOrID: Path | string,
+    /** Options. */
+    options?: RemoveOptions
   ): RG;
 }
 
@@ -439,8 +525,8 @@ export interface RemoveMethod {
  *
  * @group Query Tools
  */
-export const remove: RemoveMethod = (query, pathOrID): typeof query =>
-  produce(query, q => removeInPlace(q, pathOrID));
+export const remove: RemoveMethod = (query, pathOrID, options = {}): typeof query =>
+  produce(query, q => removeInPlace(q, pathOrID, options));
 
 /**
  * Removes a rule or group from a query in place.
@@ -449,17 +535,25 @@ export const remove: RemoveMethod = (query, pathOrID): typeof query =>
  *
  * @group Query Tools
  */
-export const removeInPlace: RemoveMethod = (query, pathOrID): typeof query => {
+export const removeInPlace: RemoveMethod = (query, pathOrID, options = {}): typeof query => {
+  const { onAbort } = options;
   const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
 
-  if (
-    // Ignore invalid paths/ids
-    !path ||
-    // Can't remove the root group
-    path.length === 0 ||
-    // Can't independently remove independent combinators
-    (!isRuleGroupType(query) && !findPath(path, query))
-  ) {
+  // Ignore invalid paths/ids
+  if (!path) {
+    onAbort?.({ reason: 'target-not-found', operation: 'remove', pathOrID });
+    return query;
+  }
+
+  // Can't remove the root group
+  if (path.length === 0) {
+    onAbort?.({ reason: 'root-not-allowed', operation: 'remove', pathOrID });
+    return query;
+  }
+
+  // Can't independently remove independent combinators
+  if (!isRuleGroupType(query) && !findPath(path, query)) {
+    onAbort?.({ reason: 'target-not-found', operation: 'remove', pathOrID });
     return query;
   }
 
@@ -539,7 +633,7 @@ const getNextPath = (
  *
  * @group Query Tools
  */
-export interface MoveOptions {
+export interface MoveOptions extends AbortOptions {
   /**
    * When `true`, the source rule/group will not be removed from its original path.
    */
@@ -594,25 +688,43 @@ export const moveInPlace: MoveMethod = (
   newPath,
   options = {}
 ): typeof query => {
-  const { clone = false, combinators = defaultCombinators, idGenerator = generateID } = options;
+  const {
+    clone = false,
+    combinators = defaultCombinators,
+    idGenerator = generateID,
+    onAbort,
+  } = options;
   const oldPath = Array.isArray(oldPathOrID) ? oldPathOrID : getPathOfID(oldPathOrID, query);
 
   // Ignore invalid paths/ids
-  if (!oldPath) return query;
+  if (!oldPath) {
+    onAbort?.({ reason: 'target-not-found', operation: 'move', pathOrID: oldPathOrID });
+    return query;
+  }
 
   const nextPath = getNextPath(query, oldPath, newPath);
 
-  // Don't move to the same location or a path that doesn't exist yet
-  if (
-    oldPath.length === 0 ||
-    pathsAreEqual(oldPath, nextPath) ||
-    !findPath(getParentPath(nextPath), query)
-  ) {
+  // Can't move the root group
+  if (oldPath.length === 0) {
+    onAbort?.({ reason: 'root-not-allowed', operation: 'move', pathOrID: oldPathOrID });
+    return query;
+  }
+
+  // Don't move to the same location
+  if (pathsAreEqual(oldPath, nextPath)) {
+    onAbort?.({ reason: 'same-location', operation: 'move', pathOrID: oldPathOrID });
+    return query;
+  }
+
+  // Don't move to a path that doesn't exist yet
+  if (!findPath(getParentPath(nextPath), query)) {
+    onAbort?.({ reason: 'destination-not-found', operation: 'move', pathOrID: newPath });
     return query;
   }
 
   const ruleOrGroupOriginal = findPath(oldPath, query);
   if (!ruleOrGroupOriginal) {
+    onAbort?.({ reason: 'target-not-found', operation: 'move', pathOrID: oldPathOrID });
     return query;
   }
   const ruleOrGroup = clone
@@ -700,7 +812,7 @@ export const moveInPlace: MoveMethod = (
  *
  * @group Query Tools
  */
-export interface InsertOptions {
+export interface InsertOptions extends AbortOptions {
   /**
    * If the query extends `RuleGroupTypeIC` (i.e. the query has independent
    * combinators), then the first combinator in this list will be inserted
@@ -776,10 +888,19 @@ export const insertInPlace: InsertMethod = (
     combinatorSucceeding,
     idGenerator = generateID,
     replace = false,
+    onAbort,
   } = options;
 
   const parentToInsertInto = findPath(getParentPath(path), query) as typeof query;
-  if (!parentToInsertInto || !isRuleGroup(parentToInsertInto)) return query;
+  if (!parentToInsertInto) {
+    onAbort?.({ reason: 'parent-not-found', operation: 'insert', pathOrID: path });
+    return query;
+  }
+
+  if (!isRuleGroup(parentToInsertInto)) {
+    onAbort?.({ reason: 'parent-not-a-group', operation: 'insert', pathOrID: path });
+    return query;
+  }
 
   const rorg = regenerateIDs(ruleOrGroup, { idGenerator });
   const independentCombinators = isRuleGroupTypeIC(query);
@@ -829,7 +950,7 @@ export const insertInPlace: InsertMethod = (
  *
  * @group Query Tools
  */
-export interface GroupOptions {
+export interface GroupOptions extends AbortOptions {
   /**
    * When `true`, the source rule/group will not be removed from its original path.
    */
@@ -890,7 +1011,12 @@ export const groupInPlace: GroupMethod = (
   targetPathOrID,
   options = {}
 ): typeof query => {
-  const { clone = false, combinators = defaultCombinators, idGenerator = generateID } = options;
+  const {
+    clone = false,
+    combinators = defaultCombinators,
+    idGenerator = generateID,
+    onAbort,
+  } = options;
   const sourcePath = Array.isArray(sourcePathOrID)
     ? sourcePathOrID
     : getPathOfID(sourcePathOrID, query);
@@ -899,22 +1025,45 @@ export const groupInPlace: GroupMethod = (
     : getPathOfID(targetPathOrID, query);
 
   // Ignore invalid paths/ids
-  if (!sourcePath || !targetPath) return query;
+  if (!sourcePath) {
+    onAbort?.({ reason: 'target-not-found', operation: 'group', pathOrID: sourcePathOrID });
+    return query;
+  }
+
+  if (!targetPath) {
+    onAbort?.({ reason: 'target-not-found', operation: 'group', pathOrID: targetPathOrID });
+    return query;
+  }
 
   const nextPath = getNextPath(query, sourcePath, targetPath);
 
-  // Don't move to the same location or a path that doesn't exist yet
-  if (
-    sourcePath.length === 0 ||
-    pathsAreEqual(sourcePath, nextPath) ||
-    !findPath(getParentPath(nextPath), query)
-  ) {
+  // Can't group the root group
+  if (sourcePath.length === 0) {
+    onAbort?.({ reason: 'root-not-allowed', operation: 'group', pathOrID: sourcePathOrID });
+    return query;
+  }
+
+  // Don't move to the same location
+  if (pathsAreEqual(sourcePath, nextPath)) {
+    onAbort?.({ reason: 'same-location', operation: 'group', pathOrID: sourcePathOrID });
+    return query;
+  }
+
+  // Don't move to a path that doesn't exist yet
+  if (!findPath(getParentPath(nextPath), query)) {
+    onAbort?.({ reason: 'destination-not-found', operation: 'group', pathOrID: targetPathOrID });
     return query;
   }
 
   const sourceRuleOrGroupOriginal = findPath(sourcePath, query);
   const targetRuleOrGroup = findPath(targetPath, query);
-  if (!sourceRuleOrGroupOriginal || !targetRuleOrGroup) {
+  if (!sourceRuleOrGroupOriginal) {
+    onAbort?.({ reason: 'target-not-found', operation: 'group', pathOrID: sourcePathOrID });
+    return query;
+  }
+
+  if (!targetRuleOrGroup) {
+    onAbort?.({ reason: 'target-not-found', operation: 'group', pathOrID: targetPathOrID });
     return query;
   }
   const sourceRuleOrGroup = clone

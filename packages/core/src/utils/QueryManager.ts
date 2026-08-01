@@ -54,15 +54,82 @@ import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { getFirstOption, prepareOptionList } from './optGroupUtils';
 import { prepareRuleGroup } from './prepareQueryObjects';
 import type {
+  AbortInfo,
+  AbortReason,
   AddOptions,
   GroupOptions,
   InsertOptions,
   MoveOptions,
+  RemoveOptions,
   UpdateOptions,
 } from './queryTools';
 import { add, group, insert, move, remove, update } from './queryTools';
 import { regenerateIDs } from './regenerateIDs';
 import { signatureOf, structuralSignature, unchangedSignature } from './signature';
+
+/**
+ * Abort reasons that {@link QueryManager}'s `strict` mode treats as errors. The remaining
+ * reasons—`"same-location"` and `"no-change"`—describe valid operations that had nothing to do,
+ * so they are reported to `onInvalidTarget` but never throw.
+ *
+ * @group Query Tools
+ */
+export const strictAbortReasons: readonly AbortReason[] = [
+  'target-not-found',
+  'parent-not-found',
+  'parent-not-a-group',
+  'destination-not-found',
+  'root-not-allowed',
+  'not-a-combinator-slot',
+];
+
+const strictAbortReasonSet = new Set<AbortReason>(strictAbortReasons);
+
+/**
+ * Thrown by {@link QueryManager} methods in `strict` mode when an operation cannot be carried
+ * out because its target could not be used.
+ *
+ * @group Query Tools
+ */
+export class QueryManagerError extends Error {
+  /** Why the operation was aborted. */
+  readonly code: AbortReason;
+  /** Full details about the aborted operation. */
+  readonly info: AbortInfo;
+
+  constructor(info: AbortInfo) {
+    super(
+      `QueryManager: "${info.operation}" aborted (${info.reason})${
+        info.pathOrID === undefined ? '' : ` for target ${JSON.stringify(info.pathOrID)}`
+      }.`
+    );
+    this.name = 'QueryManagerError';
+    this.code = info.reason;
+    this.info = info;
+    // Required for `instanceof` to work when targeting ES5.
+    Object.setPrototypeOf(this, QueryManagerError.prototype);
+  }
+}
+
+/**
+ * Per-call overrides for {@link QueryManager}'s abort handling. Every mutating method accepts
+ * these alongside the options of the query tool it delegates to.
+ *
+ * @group Query Tools
+ */
+export interface StrictOptions {
+  /**
+   * Throw a {@link QueryManagerError} when an operation is aborted for one of the
+   * {@link strictAbortReasons}. Overrides the manager's own `strict` option.
+   */
+  strict?: boolean;
+  /**
+   * Called whenever an operation is aborted, including for the non-error reasons
+   * `"same-location"` and `"no-change"`. Runs before any `strict` throw, so an operation can be
+   * both observed and enforced. Overrides the manager's own `onInvalidTarget` option.
+   */
+  onInvalidTarget?: (info: AbortInfo) => void;
+}
 
 /**
  * Options for {@link QueryManager}. Mirrors the subset of
@@ -137,10 +204,30 @@ export interface QueryManagerOptions<
    * retain no extra references.
    */
   history?: boolean | QueryHistoryOptions;
+  /**
+   * Throw a {@link QueryManagerError} when a mutation is aborted because its target could not
+   * be used. Disabled by default, in which case such mutations are silent no-ops. Can be
+   * overridden per call.
+   */
+  strict?: boolean;
+  /**
+   * Called whenever a mutation is aborted, including for the non-error reasons
+   * `"same-location"` and `"no-change"`. Can be overridden per call.
+   */
+  onInvalidTarget?: (info: AbortInfo) => void;
   /** Validates the query. Defaults to {@link defaultValidator}. */
   validator?: QueryValidator;
   /** Generates `id` properties for new rules and groups. Defaults to {@link generateID}. */
   idGenerator?: () => string;
+}
+
+/** Everything {@link QueryManager.batch} restores when the batched function throws. */
+interface QueryManagerSnapshot<RG extends RuleGroupTypeAny> {
+  query: RG;
+  past: RG[];
+  future: RG[];
+  lastSig: string | undefined;
+  lastAt: number;
 }
 
 /**
@@ -160,8 +247,9 @@ export interface QueryManagerOptions<
  * ```
  *
  * Like the underlying query tools, methods are a no-op when the target path or `id` can't be
- * resolved (including attempts to remove the root group). Nothing is thrown; compare
- * {@link QueryManager.getQuery} by reference to detect whether a call had any effect.
+ * resolved (including attempts to remove the root group). By default nothing is thrown; pass
+ * `strict: true` to raise a {@link QueryManagerError} instead, or `onInvalidTarget` to observe
+ * aborted operations without changing control flow.
  *
  * @group Query Tools
  */
@@ -179,6 +267,8 @@ export class QueryManager<
   readonly #combinators: FullOptionList<C>;
   readonly #idGenerator: () => string;
   readonly #validator: QueryValidator;
+  readonly #strict: boolean;
+  readonly #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
   readonly #listeners = new Set<() => void>();
   readonly #historyEnabled: boolean;
   readonly #maxHistory: number;
@@ -188,12 +278,14 @@ export class QueryManager<
   #lastSig: string | undefined;
   #lastAt = 0;
   #batchDepth = 0;
-  #batchBase: RG | undefined;
+  #batchSnapshot: QueryManagerSnapshot<RG> | undefined;
 
   constructor(query?: RG, options: QueryManagerOptions<F, O, C> = {}) {
     this.#options = options;
     this.#idGenerator = options.idGenerator ?? generateID;
     this.#validator = options.validator ?? defaultValidator;
+    this.#strict = options.strict ?? false;
+    this.#onInvalidTarget = options.onInvalidTarget;
 
     const history = options.history ?? false;
     const historyOptions: QueryHistoryOptions = typeof history === 'object' ? history : {};
@@ -318,6 +410,24 @@ export class QueryManager<
   /** Defaults shared by every mutating method, overridable per call. */
   #toolOptions() {
     return { combinators: this.#combinators, idGenerator: this.#idGenerator };
+  }
+
+  /**
+   * Builds the `onAbort` handler passed to the query tools, applying the per-call overrides on
+   * top of the manager's own options.
+   */
+  #onAbort({ strict, onInvalidTarget }: StrictOptions): (info: AbortInfo) => void {
+    const strictMain = strict ?? this.#strict;
+    const handler = onInvalidTarget ?? this.#onInvalidTarget;
+
+    return info => {
+      // The handler always runs, for every reason, before `strict` is considered.
+      handler?.(info);
+
+      if (strictMain && strictAbortReasonSet.has(info.reason)) {
+        throw new QueryManagerError(info);
+      }
+    };
   }
 
   /** Defaults for {@link update}, so resets mirror `QueryBuilder`'s behavior. */
@@ -458,19 +568,31 @@ export class QueryManager<
    * Adds a rule or group to the end of the group at `parentPathOrID`, which defaults to the
    * root group.
    */
-  add(ruleOrGroup: RG | RuleType, parentPathOrID: Path | string = [], options?: AddOptions): this {
+  add(
+    ruleOrGroup: RG | RuleType,
+    parentPathOrID: Path | string = [],
+    options: AddOptions & StrictOptions = {}
+  ): this {
+    const { strict, onInvalidTarget, ...toolOptions } = options;
     this.#commit(
       add(this.#query, ruleOrGroup, parentPathOrID, {
         ...this.#toolOptions(),
-        ...options,
+        ...toolOptions,
+        onAbort: this.#onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
   }
 
   /** Removes the rule or group at the given path or `id`. The root group cannot be removed. */
-  remove(pathOrID: Path | string): this {
-    this.#commit(remove(this.#query, pathOrID));
+  remove(pathOrID: Path | string, options: RemoveOptions & StrictOptions = {}): this {
+    const { strict, onInvalidTarget, ...toolOptions } = options;
+    this.#commit(
+      remove(this.#query, pathOrID, {
+        ...toolOptions,
+        onAbort: this.#onAbort({ strict, onInvalidTarget }),
+      })
+    );
     return this;
   }
 
@@ -479,22 +601,32 @@ export class QueryManager<
     prop: UpdateableProperties,
     value: unknown,
     pathOrID: Path | string,
-    options?: UpdateOptions
+    options?: UpdateOptions & StrictOptions
   ): this;
   /** Updates multiple properties using parallel arrays of names and values. */
   update(
     props: UpdateableProperties[],
     values: unknown[],
     pathOrID: Path | string,
-    options?: UpdateOptions
+    options?: UpdateOptions & StrictOptions
   ): this;
   /** Updates multiple properties using a map of names to values. */
-  update(props: UpdateValueMap, pathOrID: Path | string, options?: UpdateOptions): this;
+  update(
+    props: UpdateValueMap,
+    pathOrID: Path | string,
+    options?: UpdateOptions & StrictOptions
+  ): this;
   update(a: unknown, b?: unknown, c?: unknown, d?: unknown): this {
     // The property map form shifts `pathOrID` and `options` one position earlier.
     const optionsIndex = typeof a === 'string' || Array.isArray(a) ? 3 : 2;
     const args = [a, b, c, d];
-    args[optionsIndex] = { ...this.#updateOptions(), ...(args[optionsIndex] as UpdateOptions) };
+    const { strict, onInvalidTarget, ...toolOptions }: UpdateOptions & StrictOptions =
+      args[optionsIndex] ?? {};
+    args[optionsIndex] = {
+      ...this.#updateOptions(),
+      ...toolOptions,
+      onAbort: this.#onAbort({ strict, onInvalidTarget }),
+    };
 
     // oxlint-disable-next-line typescript/no-explicit-any
     this.#commit((update as any)(this.#query, ...args.slice(0, optionsIndex + 1)));
@@ -502,11 +634,17 @@ export class QueryManager<
   }
 
   /** Moves the rule or group at `oldPathOrID` to `newPath`, or shifts it `'up'`/`'down'`. */
-  move(oldPathOrID: Path | string, newPath: Path | 'up' | 'down', options?: MoveOptions): this {
+  move(
+    oldPathOrID: Path | string,
+    newPath: Path | 'up' | 'down',
+    options: MoveOptions & StrictOptions = {}
+  ): this {
+    const { strict, onInvalidTarget, ...toolOptions } = options;
     this.#commit(
       move(this.#query, oldPathOrID, newPath, {
         ...this.#toolOptions(),
-        ...options,
+        ...toolOptions,
+        onAbort: this.#onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -516,11 +654,17 @@ export class QueryManager<
    * Inserts a rule or group at the given path. Unlike the other methods, this accepts a path
    * only—inserting _at_ an `id` would be ambiguous.
    */
-  insert(ruleOrGroup: RG | RuleType, path: Path, options?: InsertOptions): this {
+  insert(
+    ruleOrGroup: RG | RuleType,
+    path: Path,
+    options: InsertOptions & StrictOptions = {}
+  ): this {
+    const { strict, onInvalidTarget, ...toolOptions } = options;
     this.#commit(
       insert(this.#query, ruleOrGroup, path, {
         ...this.#toolOptions(),
-        ...options,
+        ...toolOptions,
+        onAbort: this.#onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -533,12 +677,14 @@ export class QueryManager<
   group(
     sourcePathOrID: Path | string,
     targetPathOrID: Path | string,
-    options?: GroupOptions
+    options: GroupOptions & StrictOptions = {}
   ): this {
+    const { strict, onInvalidTarget, ...toolOptions } = options;
     this.#commit(
       group(this.#query, sourcePathOrID, targetPathOrID, {
         ...this.#toolOptions(),
-        ...options,
+        ...toolOptions,
+        onAbort: this.#onAbort({ strict, onInvalidTarget }),
       })
     );
     return this;
@@ -597,21 +743,43 @@ export class QueryManager<
    * whole batch becomes a single undo step and triggers a single notification, or neither if
    * the query ends up unchanged.
    *
-   * Batches may be nested; only the outermost one commits. If `fn` throws, changes made before
-   * the throw are kept and committed, then the error propagates.
+   * Batches may be nested; only the outermost one commits. If `fn` throws, the query and its
+   * history are restored to their pre-batch state and the error propagates, so a batch either
+   * applies completely or not at all.
    */
   batch(fn: () => void): this {
     this.#batchDepth++;
-    if (this.#batchDepth === 1) this.#batchBase = this.#query;
+    if (this.#batchDepth === 1) {
+      this.#batchSnapshot = {
+        query: this.#query,
+        past: [...this.#past],
+        future: [...this.#future],
+        lastSig: this.#lastSig,
+        lastAt: this.#lastAt,
+      };
+    }
 
     try {
       fn();
+    } catch (error) {
+      // Only the outermost batch rolls back; `#batchDepth` has not been decremented yet.
+      if (this.#batchDepth === 1) {
+        const snapshot = this.#batchSnapshot!;
+        // History is restored alongside the query because `undo`/`redo` may have run inside
+        // the batch, which mutates the stacks directly.
+        this.#query = snapshot.query;
+        this.#past = snapshot.past;
+        this.#future = snapshot.future;
+        this.#lastSig = snapshot.lastSig;
+        this.#lastAt = snapshot.lastAt;
+      }
+      throw error;
     } finally {
       this.#batchDepth--;
 
       if (this.#batchDepth === 0) {
-        const base = this.#batchBase!;
-        this.#batchBase = undefined;
+        const { query: base } = this.#batchSnapshot!;
+        this.#batchSnapshot = undefined;
 
         if (base !== this.#query) {
           this.#record(base, this.#query);
@@ -645,7 +813,8 @@ export class QueryManager<
     this.#query = this.#past.pop()!;
     // Prevent the next change from coalescing into the restored entry.
     this.#lastSig = undefined;
-    this.#notify();
+    // Within a batch, the outermost call notifies once for everything.
+    if (this.#batchDepth === 0) this.#notify();
 
     return this;
   }
@@ -657,7 +826,7 @@ export class QueryManager<
     this.#past.push(this.#query);
     this.#query = this.#future.shift()!;
     this.#lastSig = undefined;
-    this.#notify();
+    if (this.#batchDepth === 0) this.#notify();
 
     return this;
   }

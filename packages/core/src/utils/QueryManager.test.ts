@@ -6,7 +6,7 @@ import type {
   ValidationMap,
 } from '../types';
 import { formatQuery } from './formatQuery';
-import { QueryManager } from './QueryManager';
+import { QueryManager, QueryManagerError } from './QueryManager';
 
 const fields = [
   { name: 'firstName', label: 'First Name' },
@@ -871,9 +871,10 @@ describe('batch', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('commits changes made before a throw, then rethrows', () => {
+  it('rolls back and rethrows when the batched function throws', () => {
     const listener = vi.fn();
     const q = new QueryManager(undefined, { fields, history: true });
+    const before = q.getQuery();
     q.subscribe(listener);
 
     expect(() =>
@@ -883,13 +884,276 @@ describe('batch', () => {
       })
     ).toThrow('boom');
 
-    expect(q.getQuery().rules).toHaveLength(1);
-    expect(listener).toHaveBeenCalledTimes(1);
-    expect(q.canUndo()).toBe(true);
+    expect(q.getQuery()).toBe(before);
+    expect(listener).not.toHaveBeenCalled();
+    expect(q.canUndo()).toBe(false);
+  });
+
+  it('restores history when the batched function undoes and then throws', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.add(rule());
+    const afterAdd = q.getQuery();
+    const history = q.getHistory();
+
+    expect(() =>
+      q.batch(() => {
+        q.undo();
+        throw new Error('boom');
+      })
+    ).toThrow('boom');
+
+    expect(q.getQuery()).toBe(afterAdd);
+    expect(q.getHistory()).toEqual(history);
+    expect(q.canRedo()).toBe(false);
+  });
+
+  it('only the outermost batch rolls back', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    const before = q.getQuery();
+
+    expect(() =>
+      q.batch(() => {
+        q.add(rule());
+        q.batch(() => {
+          q.add(rule('lastName'));
+          throw new Error('boom');
+        });
+      })
+    ).toThrow('boom');
+
+    expect(q.getQuery()).toBe(before);
   });
 
   it('returns the instance', () => {
     const q = new QueryManager(undefined, { fields });
     expect(q.batch(() => q.add(rule()))).toBe(q);
+  });
+});
+
+describe('strict mode', () => {
+  const strictQM = () => new QueryManager(undefined, { fields, strict: true });
+
+  /** Runs `fn` and returns the `code` of the {@link QueryManagerError} it throws, if any. */
+  const codeOf = (fn: () => void): string | undefined => {
+    try {
+      fn();
+      return undefined;
+    } catch (error) {
+      return (error as QueryManagerError).code;
+    }
+  };
+
+  it('throws a QueryManagerError with a code', () => {
+    const q = strictQM();
+    let error: unknown;
+    try {
+      q.remove('nonexistent');
+    } catch (error_) {
+      error = error_;
+    }
+
+    expect(error).toBeInstanceOf(QueryManagerError);
+    expect((error as QueryManagerError).code).toBe('target-not-found');
+    expect((error as QueryManagerError).info).toMatchObject({
+      operation: 'remove',
+      reason: 'target-not-found',
+      pathOrID: 'nonexistent',
+    });
+    expect((error as QueryManagerError).message).toContain('remove');
+  });
+
+  it('omits the target from the message when there is none', () => {
+    const error = new QueryManagerError({ reason: 'root-not-allowed', operation: 'remove' });
+    expect(error.message).not.toContain('for target');
+    expect(error.name).toBe('QueryManagerError');
+  });
+
+  it.each([
+    [
+      'add to a missing parent',
+      (q: ReturnType<typeof strictQM>) => q.add(rule(), 'nope'),
+      'parent-not-found',
+    ],
+    ['add to a rule', (q: ReturnType<typeof strictQM>) => q.add(rule(), [0]), 'parent-not-a-group'],
+    [
+      'remove an unknown id',
+      (q: ReturnType<typeof strictQM>) => q.remove('nope'),
+      'target-not-found',
+    ],
+    ['remove the root group', (q: ReturnType<typeof strictQM>) => q.remove([]), 'root-not-allowed'],
+    [
+      'update an unknown id',
+      (q: ReturnType<typeof strictQM>) => q.update('value', 'x', 'nope'),
+      'target-not-found',
+    ],
+    [
+      'move an unknown id',
+      (q: ReturnType<typeof strictQM>) => q.move('nope', 'up'),
+      'target-not-found',
+    ],
+    [
+      'move the root group',
+      (q: ReturnType<typeof strictQM>) => q.move([], [0]),
+      'root-not-allowed',
+    ],
+    [
+      'insert into a missing parent',
+      (q: ReturnType<typeof strictQM>) => q.insert(rule(), [9, 9]),
+      'parent-not-found',
+    ],
+    [
+      'group an unknown id',
+      (q: ReturnType<typeof strictQM>) => q.group('nope', [0]),
+      'target-not-found',
+    ],
+  ])('throws when attempting to %s', (_label, act, code) => {
+    const q = strictQM();
+    q.add({ ...rule(), id: 'r1' });
+
+    expect(() => act(q)).toThrow(QueryManagerError);
+    expect(codeOf(() => act(q))).toBe(code);
+  });
+
+  it('throws for a combinator update at a rule index', () => {
+    const q = new QueryManager<RuleGroupTypeIC>(
+      { rules: [rule(), 'and', rule('lastName')] },
+      { fields, strict: true }
+    );
+    expect(() => q.update('combinator', 'or', [0])).toThrow(QueryManagerError);
+  });
+
+  it('does not throw for a move to the same location', () => {
+    const q = strictQM();
+    q.add({ ...rule(), id: 'r1' });
+    expect(() => q.move('r1', [0])).not.toThrow();
+  });
+
+  it('does not throw when a value is already set', () => {
+    const q = strictQM();
+    q.add({ ...rule(), id: 'r1' });
+    expect(() => q.update('value', 'Steve', 'r1')).not.toThrow();
+  });
+
+  it('does not throw when disabled', () => {
+    const q = new QueryManager(undefined, { fields });
+    expect(() => q.remove('nonexistent')).not.toThrow();
+  });
+
+  it('leaves the query unchanged when it throws', () => {
+    const q = strictQM();
+    q.add(rule());
+    const before = q.getQuery();
+
+    expect(() => q.remove('nonexistent')).toThrow();
+    expect(q.getQuery()).toBe(before);
+  });
+
+  describe('per-call overrides', () => {
+    it('enables strict for a single call', () => {
+      const q = new QueryManager(undefined, { fields });
+      expect(() => q.remove('nope', { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.remove('nope')).not.toThrow();
+    });
+
+    it('disables strict for a single call', () => {
+      const q = strictQM();
+      expect(() => q.remove('nope', { strict: false })).not.toThrow();
+      expect(() => q.remove('nope')).toThrow(QueryManagerError);
+    });
+
+    it('applies to every mutator', () => {
+      const q = new QueryManager(undefined, { fields });
+      q.add({ ...rule(), id: 'r1' });
+
+      expect(() => q.add(rule(), 'nope', { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.update('value', 'x', 'nope', { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.move('nope', 'up', { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.insert(rule(), [9, 9], { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.group('nope', [0], { strict: true })).toThrow(QueryManagerError);
+    });
+
+    it('applies to every update overload form', () => {
+      const q = new QueryManager(undefined, { fields });
+      expect(() => q.update('value', 'x', 'nope', { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.update(['value'], ['x'], 'nope', { strict: true })).toThrow(QueryManagerError);
+      expect(() => q.update({ value: 'x' }, 'nope', { strict: true })).toThrow(QueryManagerError);
+    });
+  });
+
+  describe('onInvalidTarget', () => {
+    it('is called without throwing', () => {
+      const onInvalidTarget = vi.fn();
+      const q = new QueryManager(undefined, { fields, onInvalidTarget });
+
+      expect(() => q.remove('nope')).not.toThrow();
+      expect(onInvalidTarget).toHaveBeenCalledTimes(1);
+      expect(onInvalidTarget.mock.calls[0][0]).toMatchObject({
+        reason: 'target-not-found',
+        operation: 'remove',
+      });
+    });
+
+    it('is called for non-error reasons', () => {
+      const onInvalidTarget = vi.fn();
+      const q = new QueryManager(undefined, { fields, onInvalidTarget, strict: true });
+      q.add({ ...rule(), id: 'r1' });
+
+      q.update('value', 'Steve', 'r1');
+      q.move('r1', [0]);
+
+      expect(onInvalidTarget.mock.calls.map(([info]) => info.reason)).toEqual([
+        'no-change',
+        'same-location',
+      ]);
+    });
+
+    it('runs before a strict throw', () => {
+      const onInvalidTarget = vi.fn();
+      const q = new QueryManager(undefined, { fields, onInvalidTarget, strict: true });
+
+      expect(() => q.remove('nope')).toThrow(QueryManagerError);
+      expect(onInvalidTarget).toHaveBeenCalledTimes(1);
+    });
+
+    it('can be overridden per call', () => {
+      const fromOptions = vi.fn();
+      const perCall = vi.fn();
+      const q = new QueryManager(undefined, { fields, onInvalidTarget: fromOptions });
+
+      q.remove('nope', { onInvalidTarget: perCall });
+
+      expect(perCall).toHaveBeenCalledTimes(1);
+      expect(fromOptions).not.toHaveBeenCalled();
+    });
+  });
+
+  it('defers redo notification inside a batch', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.add(rule());
+    q.undo();
+    q.subscribe(listener);
+
+    q.batch(() => {
+      q.redo();
+    });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(q.getQuery().rules).toHaveLength(1);
+  });
+
+  it('rolls back a batch when a strict throw occurs mid-batch', () => {
+    const q = new QueryManager(undefined, { fields, strict: true, history: true });
+    const before = q.getQuery();
+
+    expect(() =>
+      q.batch(() => {
+        q.add(rule());
+        q.remove('nonexistent');
+      })
+    ).toThrow(QueryManagerError);
+
+    expect(q.getQuery()).toBe(before);
+    expect(q.canUndo()).toBe(false);
   });
 });
