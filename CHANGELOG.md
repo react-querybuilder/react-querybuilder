@@ -2413,6 +2413,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1068]: https://github.com/react-querybuilder/react-querybuilder/pull/1068
 [#1070]: https://github.com/react-querybuilder/react-querybuilder/pull/1070
 [#1072]: https://github.com/react-querybuilder/react-querybuilder/pull/1072
+[#1073]: https://github.com/react-querybuilder/react-querybuilder/pull/1073
 
 <!-- #endregion -->
 
