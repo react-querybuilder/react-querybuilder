@@ -401,7 +401,11 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
     const parentRules = (findPath(getParentPath(path), query) as typeof query).rules;
     // Only update an independent combinator if it occupies an odd index
     if (path.at(-1)! % 2 === 1) {
-      parentRules[path.at(-1)!] = value;
+      if (parentRules[path.at(-1)!] === value) {
+        onAbort?.({ reason: 'no-change', operation: 'update', pathOrID });
+      } else {
+        parentRules[path.at(-1)!] = value;
+      }
     } else {
       onAbort?.({ reason: 'not-a-combinator-slot', operation: 'update', pathOrID });
     }
