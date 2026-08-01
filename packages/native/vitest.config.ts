@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig(
-  import('vitest-native').then(({ reactNative }) => ({
+export default import('vitest-native').then(({ reactNative }) =>
+  defineConfig({
     plugins: [reactNative({ engine: 'mock' })],
     oxc: {
       jsx: {
@@ -19,5 +19,5 @@ export default defineConfig(
         '@rqb-dbquerytestutils': '../../packages/core/src/utils/formatQuery/dbqueryTestUtils',
       },
     },
-  }))
+  })
 );
