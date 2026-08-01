@@ -1471,6 +1471,14 @@ describe('onAbort', () => {
       expect(reasons()).toEqual(['not-a-combinator-slot']);
     });
 
+    it('reports a combinator non-update at a rule index', () => {
+      const { onAbort, reasons } = abort();
+      // oxlint-disable-next-line typescript/no-explicit-any
+      const rgic_malformed = { rules: [r1, and] } as any;
+      expect(update(rgic_malformed, 'combinator', and, [1], { onAbort })).toBe(rgic_malformed);
+      expect(reasons()).toEqual(['no-change']);
+    });
+
     it('reports an unchanged value', () => {
       const { onAbort, reasons } = abort();
       expect(update(rg3, 'operator', r1.operator, [0], { onAbort })).toBe(rg3);
