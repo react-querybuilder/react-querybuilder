@@ -16,6 +16,14 @@ describe('signatureOf', () => {
     expect(signatureOf(group('g', [r]), group('g', [r]))).toBe(unchangedSignature);
   });
 
+  it('returns unchangedSignature when a rule is replaced by an identical copy', () => {
+    // The rules arrays differ by reference, so the walk descends to the leaf rules, which
+    // differ by reference but have no differing properties.
+    expect(signatureOf(group('g', [rule('r1')]), group('g', [rule('r1')]))).toBe(
+      unchangedSignature
+    );
+  });
+
   it('identifies a changed rule property', () => {
     const before = group('g', [rule('r1', 'f1', 'v1')]);
     const after = group('g', [rule('r1', 'f1', 'v2')]);

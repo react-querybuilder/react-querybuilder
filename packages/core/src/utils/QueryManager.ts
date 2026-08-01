@@ -1,4 +1,10 @@
-import { defaultCombinators, defaultOperatorLabelMap, defaultOperators } from '../defaults';
+import {
+  defaultCoalesceMs,
+  defaultCombinators,
+  defaultMaxHistory,
+  defaultOperatorLabelMap,
+  defaultOperators,
+} from '../defaults';
 import type {
   BaseOptionMap,
   DiagnosticsResult,
@@ -20,6 +26,7 @@ import type {
   ParameterizedNamedSQL,
   ParameterizedSQL,
   Path,
+  QueryHistoryOptions,
   QueryValidator,
   RQBJsonLogic,
   RuleGroupProcessor,
@@ -54,6 +61,8 @@ import type {
   UpdateOptions,
 } from './queryTools';
 import { add, group, insert, move, remove, update } from './queryTools';
+import { regenerateIDs } from './regenerateIDs';
+import { signatureOf, structuralSignature, unchangedSignature } from './signature';
 
 /**
  * Options for {@link QueryManager}. Mirrors the subset of
@@ -122,6 +131,12 @@ export interface QueryManagerOptions<
   listsAsArrays?: boolean;
   /** When `true`, groups created by {@link QueryManager.createRuleGroup} contain one new rule. */
   addRuleToNewGroups?: boolean;
+  /**
+   * Enables undo/redo recording. Pass `true` for the defaults, or an object to configure
+   * `maxHistory` and/or `coalesceMs`. Disabled by default, so instances that never undo
+   * retain no extra references.
+   */
+  history?: boolean | QueryHistoryOptions;
   /** Validates the query. Defaults to {@link defaultValidator}. */
   validator?: QueryValidator;
   /** Generates `id` properties for new rules and groups. Defaults to {@link generateID}. */
@@ -164,11 +179,27 @@ export class QueryManager<
   readonly #combinators: FullOptionList<C>;
   readonly #idGenerator: () => string;
   readonly #validator: QueryValidator;
+  readonly #listeners = new Set<() => void>();
+  readonly #historyEnabled: boolean;
+  readonly #maxHistory: number;
+  readonly #coalesceMs: number;
+  #past: RG[] = [];
+  #future: RG[] = [];
+  #lastSig: string | undefined;
+  #lastAt = 0;
+  #batchDepth = 0;
+  #batchBase: RG | undefined;
 
   constructor(query?: RG, options: QueryManagerOptions<F, O, C> = {}) {
     this.#options = options;
     this.#idGenerator = options.idGenerator ?? generateID;
     this.#validator = options.validator ?? defaultValidator;
+
+    const history = options.history ?? false;
+    const historyOptions: QueryHistoryOptions = typeof history === 'object' ? history : {};
+    this.#historyEnabled = history !== false;
+    this.#maxHistory = historyOptions.maxHistory ?? defaultMaxHistory;
+    this.#coalesceMs = historyOptions.coalesceMs ?? defaultCoalesceMs;
 
     const { optionList: fields, optionsMap: fieldMap } = prepareOptionList<F>({
       optionList: options.fields,
@@ -299,6 +330,56 @@ export class QueryManager<
     };
   }
 
+  /**
+   * Applies a new query, recording history and notifying subscribers as appropriate. Every
+   * mutation funnels through here. A tool that could not resolve its target returns the same
+   * query object, which is treated as a no-op.
+   */
+  #commit(next: RG): void {
+    const prev = this.#query;
+    if (prev === next) return;
+
+    this.#query = next;
+
+    // Within a batch, history and notification are deferred until the outermost call ends,
+    // so a batch produces one undo step and one notification.
+    if (this.#batchDepth > 0) return;
+
+    this.#record(prev, next);
+    this.#notify();
+  }
+
+  /**
+   * Records a change, either as a new history entry or by absorbing it into the current one.
+   * Mirrors the recording semantics of the `react-querybuilder/history` entry point.
+   */
+  #record(prev: RG, next: RG): void {
+    if (!this.#historyEnabled) return;
+
+    const sig = signatureOf(prev, next);
+
+    // The query object changed but nothing observable did, so an entry here would appear to do
+    // nothing when undone.
+    if (sig === unchangedSignature) return;
+
+    const now = Date.now();
+    const canCoalesce =
+      sig !== structuralSignature && sig === this.#lastSig && now - this.#lastAt < this.#coalesceMs;
+
+    if (!canCoalesce) {
+      this.#past.push(prev);
+      if (this.#past.length > this.#maxHistory) this.#past.shift();
+      this.#future = [];
+    }
+
+    this.#lastSig = sig;
+    this.#lastAt = now;
+  }
+
+  #notify(): void {
+    for (const listener of this.#listeners) listener();
+  }
+
   // #endregion
 
   // #region State access
@@ -313,7 +394,7 @@ export class QueryManager<
 
   /** Replaces the current query, ensuring every rule and group has an `id`. */
   setQuery(query: RG): this {
-    this.#query = prepareRuleGroup(query, { idGenerator: this.#idGenerator });
+    this.#commit(prepareRuleGroup(query, { idGenerator: this.#idGenerator }));
     return this;
   }
 
@@ -378,16 +459,18 @@ export class QueryManager<
    * root group.
    */
   add(ruleOrGroup: RG | RuleType, parentPathOrID: Path | string = [], options?: AddOptions): this {
-    this.#query = add(this.#query, ruleOrGroup, parentPathOrID, {
-      ...this.#toolOptions(),
-      ...options,
-    });
+    this.#commit(
+      add(this.#query, ruleOrGroup, parentPathOrID, {
+        ...this.#toolOptions(),
+        ...options,
+      })
+    );
     return this;
   }
 
   /** Removes the rule or group at the given path or `id`. The root group cannot be removed. */
   remove(pathOrID: Path | string): this {
-    this.#query = remove(this.#query, pathOrID);
+    this.#commit(remove(this.#query, pathOrID));
     return this;
   }
 
@@ -414,16 +497,18 @@ export class QueryManager<
     args[optionsIndex] = { ...this.#updateOptions(), ...(args[optionsIndex] as UpdateOptions) };
 
     // oxlint-disable-next-line typescript/no-explicit-any
-    this.#query = (update as any)(this.#query, ...args.slice(0, optionsIndex + 1));
+    this.#commit((update as any)(this.#query, ...args.slice(0, optionsIndex + 1)));
     return this;
   }
 
   /** Moves the rule or group at `oldPathOrID` to `newPath`, or shifts it `'up'`/`'down'`. */
   move(oldPathOrID: Path | string, newPath: Path | 'up' | 'down', options?: MoveOptions): this {
-    this.#query = move(this.#query, oldPathOrID, newPath, {
-      ...this.#toolOptions(),
-      ...options,
-    });
+    this.#commit(
+      move(this.#query, oldPathOrID, newPath, {
+        ...this.#toolOptions(),
+        ...options,
+      })
+    );
     return this;
   }
 
@@ -432,10 +517,12 @@ export class QueryManager<
    * only—inserting _at_ an `id` would be ambiguous.
    */
   insert(ruleOrGroup: RG | RuleType, path: Path, options?: InsertOptions): this {
-    this.#query = insert(this.#query, ruleOrGroup, path, {
-      ...this.#toolOptions(),
-      ...options,
-    });
+    this.#commit(
+      insert(this.#query, ruleOrGroup, path, {
+        ...this.#toolOptions(),
+        ...options,
+      })
+    );
     return this;
   }
 
@@ -448,11 +535,147 @@ export class QueryManager<
     targetPathOrID: Path | string,
     options?: GroupOptions
   ): this {
-    this.#query = group(this.#query, sourcePathOrID, targetPathOrID, {
-      ...this.#toolOptions(),
-      ...options,
-    });
+    this.#commit(
+      group(this.#query, sourcePathOrID, targetPathOrID, {
+        ...this.#toolOptions(),
+        ...options,
+      })
+    );
     return this;
+  }
+
+  // #endregion
+
+  // #region Cloning
+
+  /**
+   * Creates an independent manager with the same configuration and the current query.
+   *
+   * Subscribers and history are _not_ carried over: the clone starts with no listeners and an
+   * empty undo stack. Because every mutation produces a new query object, the two managers
+   * share the initial query safely and diverge from the first change.
+   *
+   * Pass `{ regenerateIDs: true }` to give every rule and group in the clone a new `id`, which
+   * is useful when both queries will be used together (e.g. inserted into the same tree).
+   */
+  clone(options?: { regenerateIDs?: boolean }): QueryManager<RG, F, O, C> {
+    const query = options?.regenerateIDs
+      ? regenerateIDs(this.#query, { idGenerator: this.#idGenerator })
+      : this.#query;
+    return new QueryManager<RG, F, O, C>(query, this.#options);
+  }
+
+  // #endregion
+
+  // #region Subscriptions
+
+  /**
+   * Registers a listener called after every change to the query, and returns a function that
+   * unregisters it. Mutations that resolve to a no-op do not notify, and a
+   * {@link QueryManager.batch batch} notifies once no matter how many changes it contains.
+   *
+   * Together with {@link QueryManager.getQuery}, this satisfies React's `useSyncExternalStore`
+   * contract. This method is bound to the instance, so it is a stable reference across renders:
+   *
+   * ```ts
+   * const query = useSyncExternalStore(q.subscribe, () => q.getQuery());
+   * ```
+   */
+  subscribe = (listener: () => void): (() => void) => {
+    this.#listeners.add(listener);
+    return () => {
+      this.#listeners.delete(listener);
+    };
+  };
+
+  // #endregion
+
+  // #region Batching
+
+  /**
+   * Runs `fn`, deferring history recording and subscriber notification until it returns. The
+   * whole batch becomes a single undo step and triggers a single notification, or neither if
+   * the query ends up unchanged.
+   *
+   * Batches may be nested; only the outermost one commits. If `fn` throws, changes made before
+   * the throw are kept and committed, then the error propagates.
+   */
+  batch(fn: () => void): this {
+    this.#batchDepth++;
+    if (this.#batchDepth === 1) this.#batchBase = this.#query;
+
+    try {
+      fn();
+    } finally {
+      this.#batchDepth--;
+
+      if (this.#batchDepth === 0) {
+        const base = this.#batchBase!;
+        this.#batchBase = undefined;
+
+        if (base !== this.#query) {
+          this.#record(base, this.#query);
+          this.#notify();
+        }
+      }
+    }
+
+    return this;
+  }
+
+  // #endregion
+
+  // #region History
+
+  /** Whether there is a previous query to restore. Always `false` unless `history` is enabled. */
+  canUndo(): boolean {
+    return this.#past.length > 0;
+  }
+
+  /** Whether there is an undone query to restore. Always `false` unless `history` is enabled. */
+  canRedo(): boolean {
+    return this.#future.length > 0;
+  }
+
+  /** Restores the previous query. No-op when {@link QueryManager.canUndo} is `false`. */
+  undo(): this {
+    if (this.#past.length === 0) return this;
+
+    this.#future.unshift(this.#query);
+    this.#query = this.#past.pop()!;
+    // Prevent the next change from coalescing into the restored entry.
+    this.#lastSig = undefined;
+    this.#notify();
+
+    return this;
+  }
+
+  /** Restores the most recently undone query. No-op when {@link QueryManager.canRedo} is `false`. */
+  redo(): this {
+    if (this.#future.length === 0) return this;
+
+    this.#past.push(this.#query);
+    this.#query = this.#future.shift()!;
+    this.#lastSig = undefined;
+    this.#notify();
+
+    return this;
+  }
+
+  /** Discards all undo/redo history without changing the current query. */
+  clearHistory(): this {
+    this.#past = [];
+    this.#future = [];
+    this.#lastSig = undefined;
+    return this;
+  }
+
+  /**
+   * The recorded history: `past` oldest first, `future` newest first. Both are copies, so
+   * mutating them does not affect the manager.
+   */
+  getHistory(): { past: RG[]; future: RG[] } {
+    return { past: [...this.#past], future: [...this.#future] };
   }
 
   // #endregion

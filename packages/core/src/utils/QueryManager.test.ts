@@ -1,4 +1,10 @@
-import type { RuleGroupType, RuleGroupTypeIC, RuleType, ValidationMap } from '../types';
+import type {
+  QueryHistoryOptions,
+  RuleGroupType,
+  RuleGroupTypeIC,
+  RuleType,
+  ValidationMap,
+} from '../types';
 import { formatQuery } from './formatQuery';
 import { QueryManager } from './QueryManager';
 
@@ -429,6 +435,14 @@ describe('insert', () => {
     q.insert(rule('lastName'), [1]);
     expect(q.getQuery().rules[1]).toBe('and');
   });
+
+  it('honors combinatorSucceeding when inserting first in an independent combinators group', () => {
+    const q = new QueryManager<RuleGroupTypeIC>({ rules: [rule()] });
+    // `combinatorSucceeding` only applies when the inserted item reports an original
+    // path ending at index 0.
+    q.insert({ ...rule('lastName'), path: [0] }, [0], { combinatorSucceeding: 'or' });
+    expect(q.getQuery().rules[1]).toBe('or');
+  });
 });
 
 describe('group', () => {
@@ -520,9 +534,362 @@ describe('format', () => {
     expect(q.format('parameterized')).toEqual({ sql: '(firstName = ?)', params: ['Steve'] });
   });
 
+  it('accepts a custom ruleGroupProcessor', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.add(rule());
+    expect(q.format({ ruleGroupProcessor: rg => rg.rules.length })).toBe(1);
+  });
+
   it('matches formatQuery called directly', () => {
     const q = new QueryManager(undefined, { fields });
     q.add(rule());
     expect(q.format('mongodb_query')).toEqual(formatQuery(q.getQuery(), 'mongodb_query'));
+  });
+});
+
+describe('clone', () => {
+  it('produces an independent manager with the same query', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.add({ ...rule(), id: 'r1' });
+    const c = q.clone();
+
+    expect(c).not.toBe(q);
+    expect(c.getQuery()).toBe(q.getQuery());
+
+    c.add(rule('lastName'));
+    expect(c.getQuery().rules).toHaveLength(2);
+    expect(q.getQuery().rules).toHaveLength(1);
+  });
+
+  it('carries configuration over to the clone', () => {
+    const q = new QueryManager(undefined, { fields, getDefaultField: 'age' });
+    expect(q.clone().createRule().field).toBe('age');
+  });
+
+  it('regenerates ids on request', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.add({ ...rule(), id: 'r1' });
+    const c = q.clone({ regenerateIDs: true });
+
+    expect((c.getQuery().rules[0] as RuleType).id).not.toBe('r1');
+    expect((c.getQuery().rules[0] as RuleType).field).toBe('firstName');
+  });
+
+  it('does not carry over subscribers or history', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.subscribe(listener);
+    q.add(rule());
+
+    expect(q.canUndo()).toBe(true);
+
+    const c = q.clone();
+    expect(c.canUndo()).toBe(false);
+
+    listener.mockClear();
+    c.add(rule('lastName'));
+    expect(listener).not.toHaveBeenCalled();
+  });
+});
+
+describe('subscribe', () => {
+  it('notifies listeners on every change', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.subscribe(listener);
+
+    q.add({ ...rule(), id: 'r1' });
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    q.update('value', 'Vai', 'r1');
+    expect(listener).toHaveBeenCalledTimes(2);
+
+    q.setQuery({ combinator: 'or', rules: [] });
+    expect(listener).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not notify for no-op mutations', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.add(rule());
+    q.subscribe(listener);
+
+    q.remove('nonexistent');
+    q.remove([]);
+    q.move('nonexistent', 'up');
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('stops notifying after unsubscribe', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    const unsubscribe = q.subscribe(listener);
+
+    q.add(rule());
+    unsubscribe();
+    q.add(rule('lastName'));
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('supports multiple listeners', () => {
+    const l1 = vi.fn();
+    const l2 = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.subscribe(l1);
+    q.subscribe(l2);
+
+    q.add(rule());
+
+    expect(l1).toHaveBeenCalledTimes(1);
+    expect(l2).toHaveBeenCalledTimes(1);
+  });
+
+  it('is bound to the instance', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    const { subscribe } = q;
+    subscribe(listener);
+
+    q.add(rule());
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('history', () => {
+  const withHistory = (history: boolean | QueryHistoryOptions = true) =>
+    new QueryManager(undefined, { fields, history });
+
+  it('records nothing when disabled', () => {
+    const q = new QueryManager(undefined, { fields });
+    q.add(rule());
+    expect(q.canUndo()).toBe(false);
+    expect(q.getHistory()).toEqual({ past: [], future: [] });
+  });
+
+  it('undoes and redoes a change', () => {
+    const q = withHistory();
+    const empty = q.getQuery();
+    q.add(rule());
+    const added = q.getQuery();
+
+    expect(q.canUndo()).toBe(true);
+    q.undo();
+    expect(q.getQuery()).toBe(empty);
+    expect(q.canRedo()).toBe(true);
+
+    q.redo();
+    expect(q.getQuery()).toBe(added);
+  });
+
+  it('is a no-op when there is nothing to undo or redo', () => {
+    const q = withHistory();
+    const before = q.getQuery();
+
+    expect(q.undo()).toBe(q);
+    expect(q.redo()).toBe(q);
+    expect(q.getQuery()).toBe(before);
+  });
+
+  it('notifies subscribers on undo and redo', () => {
+    const listener = vi.fn();
+    const q = withHistory();
+    q.add(rule());
+    q.subscribe(listener);
+
+    q.undo();
+    q.redo();
+
+    expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  it('coalesces consecutive edits to the same property', () => {
+    const q = withHistory({ coalesceMs: 10_000 });
+    q.add({ ...rule(), id: 'r1' });
+    const afterAdd = q.getQuery();
+
+    q.update('value', 'V', 'r1');
+    q.update('value', 'Va', 'r1');
+    q.update('value', 'Vai', 'r1');
+
+    // All three edits collapsed into one entry, so a single undo restores the pre-typing query.
+    expect(q.getHistory().past).toHaveLength(2);
+    q.undo();
+    expect(q.getQuery()).toBe(afterAdd);
+  });
+
+  it('does not coalesce when coalesceMs is 0', () => {
+    const q = withHistory({ coalesceMs: 0 });
+    q.add({ ...rule(), id: 'r1' });
+
+    q.update('value', 'V', 'r1');
+    q.update('value', 'Va', 'r1');
+
+    expect(q.getHistory().past).toHaveLength(3);
+  });
+
+  it('never coalesces structural changes', () => {
+    const q = withHistory({ coalesceMs: 10_000 });
+    q.add(rule());
+    q.add(rule('lastName'));
+    q.add(rule('age'));
+
+    expect(q.getHistory().past).toHaveLength(3);
+  });
+
+  it('does not coalesce edits to different properties', () => {
+    const q = withHistory({ coalesceMs: 10_000 });
+    q.add({ ...rule(), id: 'r1' });
+    q.update('value', 'Vai', 'r1');
+    q.update('operator', 'contains', 'r1');
+
+    expect(q.getHistory().past).toHaveLength(3);
+  });
+
+  it('records no entry when nothing observable changes', () => {
+    const q = withHistory();
+    q.add({ ...rule(), id: 'r1' });
+    const past = q.getHistory().past.length;
+
+    // A structurally identical replacement: the references change but no property does.
+    const current = q.getQuery() as RuleGroupType;
+    q.setQuery({ ...current, rules: [...current.rules] });
+
+    expect(q.getHistory().past).toHaveLength(past);
+  });
+
+  it('discards the oldest entries beyond maxHistory', () => {
+    const q = withHistory({ maxHistory: 2, coalesceMs: 0 });
+    q.add(rule('firstName'));
+    q.add(rule('lastName'));
+    q.add(rule('age'));
+
+    expect(q.getHistory().past).toHaveLength(2);
+  });
+
+  it('clears the redo stack on a new change', () => {
+    const q = withHistory({ coalesceMs: 0 });
+    q.add(rule());
+    q.undo();
+    expect(q.canRedo()).toBe(true);
+
+    q.add(rule('lastName'));
+    expect(q.canRedo()).toBe(false);
+  });
+
+  it('does not coalesce a change into a restored entry', () => {
+    const q = withHistory({ coalesceMs: 10_000 });
+    q.add({ ...rule(), id: 'r1' });
+    q.update('value', 'V', 'r1');
+    q.undo();
+
+    q.update('value', 'Va', 'r1');
+
+    expect(q.canUndo()).toBe(true);
+    expect(q.getHistory().past).toHaveLength(2);
+  });
+
+  it('clears history without changing the query', () => {
+    const q = withHistory();
+    q.add(rule());
+    const query = q.getQuery();
+
+    expect(q.clearHistory()).toBe(q);
+    expect(q.canUndo()).toBe(false);
+    expect(q.canRedo()).toBe(false);
+    expect(q.getQuery()).toBe(query);
+  });
+
+  it('returns copies from getHistory', () => {
+    const q = withHistory();
+    q.add(rule());
+    const history = q.getHistory();
+    history.past.push(q.getQuery());
+
+    expect(q.getHistory().past).toHaveLength(1);
+  });
+});
+
+describe('batch', () => {
+  it('notifies once for multiple changes', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.subscribe(listener);
+
+    q.batch(() => {
+      q.add(rule());
+      q.add(rule('lastName'));
+      q.add(rule('age'));
+    });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(q.getQuery().rules).toHaveLength(3);
+  });
+
+  it('records a single history entry', () => {
+    const q = new QueryManager(undefined, { fields, history: true });
+    const before = q.getQuery();
+
+    q.batch(() => {
+      q.add(rule());
+      q.add(rule('lastName'));
+    });
+
+    expect(q.getHistory().past).toHaveLength(1);
+    q.undo();
+    expect(q.getQuery()).toBe(before);
+  });
+
+  it('does nothing when the query is unchanged', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.subscribe(listener);
+
+    q.batch(() => {
+      q.remove('nonexistent');
+    });
+
+    expect(listener).not.toHaveBeenCalled();
+    expect(q.canUndo()).toBe(false);
+  });
+
+  it('commits only at the outermost level when nested', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields });
+    q.subscribe(listener);
+
+    q.batch(() => {
+      q.add(rule());
+      q.batch(() => {
+        q.add(rule('lastName'));
+      });
+      expect(listener).not.toHaveBeenCalled();
+    });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('commits changes made before a throw, then rethrows', () => {
+    const listener = vi.fn();
+    const q = new QueryManager(undefined, { fields, history: true });
+    q.subscribe(listener);
+
+    expect(() =>
+      q.batch(() => {
+        q.add(rule());
+        throw new Error('boom');
+      })
+    ).toThrow('boom');
+
+    expect(q.getQuery().rules).toHaveLength(1);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(q.canUndo()).toBe(true);
+  });
+
+  it('returns the instance', () => {
+    const q = new QueryManager(undefined, { fields });
+    expect(q.batch(() => q.add(rule()))).toBe(q);
   });
 });

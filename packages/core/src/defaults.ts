@@ -525,3 +525,18 @@ export const queryBuilderFlagDefaults: Required<QueryBuilderFlags> = {
   showUndoRedo: false,
   suppressStandardClassnames: false,
 };
+
+/**
+ * Default maximum number of undo steps retained by query history.
+ *
+ * @group Defaults
+ */
+export const defaultMaxHistory = 50;
+
+/**
+ * Default time window (in milliseconds) within which consecutive changes to the same
+ * property of the same rule are coalesced into a single undo step.
+ *
+ * @group Defaults
+ */
+export const defaultCoalesceMs = 500;

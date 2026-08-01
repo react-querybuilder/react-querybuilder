@@ -228,6 +228,47 @@ As with the query tools themselves, these methods are a no-op when the target pa
 - `validate(): boolean | ValidationMap` — Validates the current query with the configured `validator`, defaulting to [`defaultValidator`](#defaultvalidator).
 - `format(options?)` — Passes the current query to [`formatQuery`](./export). Accepts everything `formatQuery` accepts as its second parameter, including the format-name shorthand (`q.format('sql')`), and has the same return types.
 
+### Cloning
+
+`clone(options?: { regenerateIDs?: boolean })` returns an independent manager with the same configuration and the current query. Subscribers and history are not carried over. Because every mutation produces a new query object, the two managers share the initial query safely and diverge from the first change. Pass `{ regenerateIDs: true }` to give every rule and group in the clone a new `id`, which is useful when both queries will be used together.
+
+### Subscriptions
+
+`subscribe(listener: () => void)` registers a listener called after every change to the query, and returns a function that unregisters it. Mutations that resolve to a no-op do not notify, and a [batch](#batching) notifies once no matter how many changes it contains.
+
+The method is bound to the instance, so it is a stable reference across renders and can be passed directly to React's `useSyncExternalStore`:
+
+```ts
+const query = useSyncExternalStore(q.subscribe, () => q.getQuery());
+```
+
+### Batching
+
+`batch(fn: () => void)` runs `fn`, deferring history recording and subscriber notification until it returns. The whole batch becomes a single undo step and triggers a single notification, or neither if the query ends up unchanged. Batches may be nested; only the outermost one commits. If `fn` throws, changes made before the throw are kept and committed, then the error propagates.
+
+```ts
+q.batch(() => {
+  q.add(rule1);
+  q.add(rule2);
+  q.add(rule3);
+}); // one notification, one undo step
+```
+
+### Undo/redo
+
+Recording is opt-in through the `history` option, so instances that never undo retain no extra references. Pass `true` for the defaults, or an object to configure `maxHistory` (default `50`) and/or `coalesceMs` (default `500`).
+
+```ts
+const q = new QueryManager(undefined, { fields, history: true });
+```
+
+- `undo()` / `redo()` — Restore the previous or most recently undone query. No-ops when the corresponding `can*` method returns `false`. Both notify subscribers.
+- `canUndo(): boolean` / `canRedo(): boolean`
+- `clearHistory()` — Discards all history without changing the current query.
+- `getHistory(): { past, future }` — Copies of the recorded queries, `past` oldest first and `future` newest first.
+
+Recording follows the same semantics as the [`react-querybuilder/history`](../tips/undo-redo) entry point: consecutive changes to the same property of the same rule within `coalesceMs` are merged into a single undo step (so typing a value produces one entry rather than one per keystroke), structural changes never coalesce, and changes that alter no observable property are not recorded at all.
+
 ## Number parsing
 
 HTML `<input>` controls store values as strings (even for `type="number"`), but your requirements may call for true numeric values. The [`parseNumbers`](../components/querybuilder#parsenumbers) prop on the `QueryBuilder` component and the `formatQuery` function's [`parseNumbers`](./export#parse-numbers) option can be used to convert values to numeric types from the UI or during export, respectively. Both configuration options have the same valid values (per the type below) and behave similarly.

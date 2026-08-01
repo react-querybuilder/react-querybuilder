@@ -1,6 +1,7 @@
 import type { RuleGroupTypeAny } from '@react-querybuilder/core';
+import { defaultCoalesceMs, defaultMaxHistory } from '@react-querybuilder/core';
 import { queriesSlice } from '../../redux/queriesSlice';
-import { defaultCoalesceMs, defaultMaxHistory, queryHistorySlice } from '../queryHistorySlice';
+import { queryHistorySlice } from '../queryHistorySlice';
 import type { QueryHistorySliceState } from '../types';
 
 const { register, unregister, undo, redo, clear } = queryHistorySlice.actions;
