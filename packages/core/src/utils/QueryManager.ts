@@ -325,6 +325,8 @@ export class QueryManager<
   #lastAt = 0;
   #batchDepth = 0;
   #batchSnapshot: QueryManagerSnapshot<RG> | undefined;
+  /** Whether a history-stack method ran inside the batch currently in progress. */
+  #historyBypassed = false;
   /**
    * The query the cached fields below were derived from. Caches are keyed on query _identity_
    * rather than invalidated from {@link QueryManager.#commit} because `undo`, `redo`, and
@@ -543,6 +545,16 @@ export class QueryManager<
 
   #notify(): void {
     for (const listener of this.#listeners) listener();
+  }
+
+  /**
+   * Records that a history-stack method ran inside the current batch. Those methods manage
+   * `#past`/`#future` themselves, so the batch must not also record an entry on completion —
+   * doing so would push a duplicate onto `#past` and clear the redo stack that `undo` just
+   * populated.
+   */
+  #markHistoryBypassed(): void {
+    if (this.#batchDepth > 0) this.#historyBypassed = true;
   }
 
   /**
@@ -853,6 +865,11 @@ export class QueryManager<
    * Batches may be nested; only the outermost one commits. If `fn` throws, the query and its
    * history are restored to their pre-batch state and the error propagates, so a batch either
    * applies completely or not at all.
+   *
+   * {@link QueryManager.undo}, {@link QueryManager.redo}, and {@link QueryManager.clearHistory}
+   * may be called inside a batch; their notifications are deferred like everything else. Because
+   * they manage the history stacks themselves, a batch containing one of them records no entry of
+   * its own, leaving the stacks exactly as those methods left them.
    */
   batch(fn: () => void): this {
     this.#batchDepth++;
@@ -889,9 +906,12 @@ export class QueryManager<
         this.#batchSnapshot = undefined;
 
         if (base !== this.#query) {
-          this.#record(base, this.#query);
+          // `undo`/`redo`/`clearHistory` already positioned the stacks deliberately; recording
+          // here would duplicate the batch's own base entry and discard the redo stack.
+          if (!this.#historyBypassed) this.#record(base, this.#query);
           this.#notify();
         }
+        this.#historyBypassed = false;
       }
     }
 
@@ -920,6 +940,7 @@ export class QueryManager<
     this.#query = this.#past.pop()!;
     // Prevent the next change from coalescing into the restored entry.
     this.#lastSig = undefined;
+    this.#markHistoryBypassed();
     // Within a batch, the outermost call notifies once for everything.
     if (this.#batchDepth === 0) this.#notify();
 
@@ -933,6 +954,7 @@ export class QueryManager<
     this.#past.push(this.#query);
     this.#query = this.#future.shift()!;
     this.#lastSig = undefined;
+    this.#markHistoryBypassed();
     if (this.#batchDepth === 0) this.#notify();
 
     return this;
@@ -940,6 +962,7 @@ export class QueryManager<
 
   /** Discards all undo/redo history without changing the current query. */
   clearHistory(): this {
+    this.#markHistoryBypassed();
     this.#past = [];
     this.#future = [];
     this.#lastSig = undefined;
@@ -1047,8 +1070,9 @@ export class QueryManager<
    * }
    * ```
    *
-   * The generator reads the query as it goes, so mutating the manager mid-iteration continues
-   * walking the query as it was when iteration began.
+   * Traversal operates on the query as it was when iteration began, so mutating the manager
+   * mid-iteration does not affect a walk already in progress. Because generators are lazy, that
+   * happens on the first iteration step rather than when `walk` is called.
    *
    * @yields Every rule and group in the query, subject to `options`.
    */

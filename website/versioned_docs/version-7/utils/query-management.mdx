@@ -220,6 +220,8 @@ const query = useSyncExternalStore(q.subscribe, () => q.getQuery());
 
 If `fn` throws, the query and its history are restored to their pre-batch state and the error propagates, so a batch either applies completely or not at all.
 
+[`undo()`, `redo()`, and `clearHistory()`](#undoredo) may be called inside a batch, and their notifications are deferred like everything else. Because they manage the history stacks themselves, a batch containing one of them records no entry of its own, leaving the stacks exactly as those methods left them.
+
 ```ts
 q.batch(() => {
   q.add(rule1);
@@ -283,6 +285,8 @@ const q = new QueryManager(undefined, { fields, history: true });
 - `clearHistory()` — Discards all history without changing the current query.
 - `getHistory(): { past, future }` — Copies of the recorded queries, `past` oldest first and `future` newest first.
 
+`undo()`, `redo()`, and `clearHistory()` may be called inside a [batch](#batching); see [Batching](#batching) for how that interacts with the batch's own history entry.
+
 Recording follows the same semantics as the [`react-querybuilder/history`](../tips/undo-redo) entry point: consecutive changes to the same property of the same rule within `coalesceMs` are merged into a single undo step (so typing a value produces one entry rather than one per keystroke), structural changes never coalesce, and changes that alter no observable property are not recorded at all.
 
 ### Traversal
@@ -320,7 +324,7 @@ Derived methods:
 - `filter(predicate, options?): QueryNode[]` — All matching nodes.
 - `[Symbol.iterator]()` — Equivalent to `walk()` with no options, so a manager can be spread (`[...q]`) or used directly in `for...of`.
 
-The generator reads the query as it goes, so mutating the manager mid-iteration continues walking the query as it was when iteration began.
+Traversal operates on the query as it was when iteration began, so mutating the manager mid-iteration does not affect a walk already in progress. Because generators are lazy, that snapshot is taken on the first iteration step rather than when `walk()` is called.
 
 ### Lookups
 

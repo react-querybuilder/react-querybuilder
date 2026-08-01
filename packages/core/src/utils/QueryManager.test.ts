@@ -1,6 +1,7 @@
 import type {
   QueryHistoryOptions,
   RuleGroupType,
+  RuleGroupTypeAny,
   RuleGroupTypeIC,
   RuleType,
   ValidationMap,
@@ -927,6 +928,112 @@ describe('batch', () => {
   it('returns the instance', () => {
     const q = new QueryManager(undefined, { fields });
     expect(q.batch(() => q.add(rule()))).toBe(q);
+  });
+
+  describe('history interaction', () => {
+    /** Two recorded changes, so there is something to undo and then redo. */
+    const twoEdits = () => {
+      const q = new QueryManager(undefined, { fields, history: true });
+      q.add(rule('firstName'));
+      q.add(rule('lastName'));
+      return q;
+    };
+
+    /** History reduced to rule counts, so managers with different `id`s can be compared. */
+    const shape = (q: {
+      getHistory: () => { past: RuleGroupTypeAny[]; future: RuleGroupTypeAny[] };
+    }) => {
+      const { past, future } = q.getHistory();
+      return { past: past.map(p => p.rules.length), future: future.map(f => f.rules.length) };
+    };
+
+    it('batched undo leaves the same history as an unbatched undo', () => {
+      const plain = twoEdits();
+      plain.undo();
+
+      const batched = twoEdits();
+      batched.batch(() => batched.undo());
+
+      expect(shape(batched)).toEqual(shape(plain));
+      // The batch must not consume the redo stack that `undo` just populated.
+      expect(batched.canRedo()).toBe(true);
+      expect(batched.getQuery().rules).toHaveLength(1);
+    });
+
+    it('batched redo leaves the same history as an unbatched redo', () => {
+      const plain = twoEdits();
+      plain.undo();
+      plain.redo();
+
+      const batched = twoEdits();
+      batched.undo();
+      batched.batch(() => batched.redo());
+
+      expect(shape(batched)).toEqual(shape(plain));
+      expect(batched.canRedo()).toBe(false);
+      expect(batched.getQuery().rules).toHaveLength(2);
+    });
+
+    it('a batched undo remains redoable', () => {
+      const q = twoEdits();
+      q.batch(() => q.undo());
+      q.redo();
+      expect(q.getQuery().rules).toHaveLength(2);
+      expect(q.canRedo()).toBe(false);
+    });
+
+    it('batched clearHistory leaves the history empty', () => {
+      const q = new QueryManager(undefined, { fields, history: true });
+      q.add(rule('firstName'));
+
+      q.batch(() => {
+        q.add(rule('lastName'));
+        q.clearHistory();
+      });
+
+      expect(shape(q)).toEqual({ past: [], future: [] });
+      expect(q.canUndo()).toBe(false);
+    });
+
+    it('records no entry of its own when a batch also navigates history', () => {
+      const q = twoEdits();
+      const historyBefore = shape(q);
+
+      q.batch(() => {
+        q.add(rule('age'));
+        q.undo();
+      });
+
+      // The batch defers to `undo`'s bookkeeping rather than adding a second entry.
+      expect(shape(q)).toEqual({ past: historyBefore.past.slice(0, -1), future: [3] });
+    });
+
+    it('does not leak the bypass flag into a later batch', () => {
+      const q = twoEdits();
+      q.batch(() => q.undo());
+
+      q.batch(() => q.add(rule('age')));
+
+      // This batch contains no history navigation, so it records normally.
+      expect(q.canUndo()).toBe(true);
+      expect(shape(q).past.at(-1)).toBe(1);
+    });
+
+    it('does not leak the bypass flag out of a rolled-back batch', () => {
+      const q = twoEdits();
+      const before = shape(q);
+
+      expect(() =>
+        q.batch(() => {
+          q.undo();
+          throw new Error('boom');
+        })
+      ).toThrow('boom');
+      expect(shape(q)).toEqual(before);
+
+      q.batch(() => q.add(rule('age')));
+      expect(shape(q).past).toHaveLength(before.past.length + 1);
+    });
   });
 });
 
