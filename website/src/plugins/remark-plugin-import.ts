@@ -113,7 +113,9 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
             // or an `extends` clause.
             const blockName = escapeRegExp(block[1]);
             const start = codeLines.findIndex(v =>
-              v.match(`^(export )?(const|let|type|interface) ${blockName}(<.*)?( extends .*)?( \\{)?$`)
+              v.match(
+                `^(export )?(const|let|type|interface) ${blockName}(<.*)?( extends .*)?( \\{)?$`
+              )
             );
             const end = codeLines.findIndex((v, i) => i >= start && v.match(/^}/));
             if (start >= 0) {
