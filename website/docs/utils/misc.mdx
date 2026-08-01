@@ -81,6 +81,8 @@ Several methods are available to assist with programmatic manipulation of query 
 
 Check out the ["External controls" Tips & Tricks page](../tips/external-controls) to see these methods used outside the `<QueryBuilder />` component context.
 
+For a stateful, chainable wrapper around these methods that holds the query for you, see [`QueryManager`](#query-manager) below.
+
 ### `add`
 
 `(query: RuleGroupTypeAny, ruleOrGroup: RuleGroupTypeAny | RuleType, parentPathOrID: Path | string, options: AddOptions) => RuleGroupTypeAny`
@@ -160,6 +162,71 @@ Creates a new group at the target `path` (based on the specified `path` or given
 %importcode /packages/core/src/utils/queryTools.ts#blockName=GroupOptions
 
 </Details>
+
+## Query manager
+
+`QueryManager` is a stateful wrapper around the [query tools](#query-tools) above. It holds the query internally, so each method takes the same arguments as its query tool counterpart minus the leading `query` parameter, and returns the manager itself for chaining. It has no React dependency, so it can be used on the server, in a CLI, or anywhere else a query needs to be built or modified programmatically.
+
+```ts
+import { QueryManager } from 'react-querybuilder';
+// or: import { QueryManager } from '@react-querybuilder/core';
+
+const q = new QueryManager(undefined, { fields });
+
+q.add({ field: 'firstName', operator: '=', value: 'Steve' })
+  .add({ field: 'lastName', operator: '=', value: 'Vai' })
+  .update('operator', 'contains', 'rule-id-1');
+
+q.validate(); // boolean | ValidationMap
+q.format('sql'); // string
+q.getQuery(); // RuleGroupType
+```
+
+### Constructor
+
+`new QueryManager(query?: RuleGroupTypeAny, options?: QueryManagerOptions)`
+
+Without a `query`, an empty group is created using the configured `combinators` and `addRuleToNewGroups` options. With one, every rule and group is assigned an `id` if it doesn't already have one. Pass a `RuleGroupTypeIC` to manage a query with independent combinators.
+
+<Details summary="QueryManagerOptions">
+
+%importcode /packages/core/src/utils/QueryManager.ts#blockName=QueryManagerOptions
+
+</Details>
+
+### State access
+
+- `getQuery(): RuleGroupTypeAny` — The current query. The returned object is frozen and structurally shared, so it's safe to retain and compare by reference to detect changes.
+- `setQuery(query: RuleGroupTypeAny)` — Replaces the current query, assigning `id`s as needed.
+
+### Factories
+
+- `createRule(): RuleType` — Creates a rule using the configured fields, operators, and defaults, applying the same precedence rules as the `<QueryBuilder />` component.
+- `createRuleGroup(independentCombinators?: boolean): RuleGroupTypeAny` — Creates a group.
+
+Neither method adds anything to the query; pass the result to `add` or `insert`.
+
+### Mutation
+
+Each method below delegates to the query tool of the same name, using the manager's configuration (`combinators`, `idGenerator`, and the default resolvers) as the default options. Per-call options take precedence.
+
+- `add(ruleOrGroup, parentPathOrID?, options?)` — Unlike the `add` query tool, `parentPathOrID` is optional and defaults to the root group.
+- `remove(pathOrID)`
+- `update(prop, value, pathOrID, options?)`, `update(props, values, pathOrID, options?)`, or `update(propsMap, pathOrID, options?)` — All three argument forms of the `update` query tool are supported.
+- `move(oldPathOrID, newPath, options?)`
+- `insert(ruleOrGroup, path, options?)` — Like the `insert` query tool, this accepts a path only, not an `id`.
+- `group(sourcePathOrID, targetPathOrID, options?)`
+
+:::note
+
+As with the query tools themselves, these methods are a no-op when the target path or `id` can't be resolved—including attempts to remove the root group. Nothing is thrown, and mutators always return the manager, so compare `getQuery()` by reference if you need to know whether a call had any effect.
+
+:::
+
+### Validation and export
+
+- `validate(): boolean | ValidationMap` — Validates the current query with the configured `validator`, defaulting to [`defaultValidator`](#defaultvalidator).
+- `format(options?)` — Passes the current query to [`formatQuery`](./export). Accepts everything `formatQuery` accepts as its second parameter, including the format-name shorthand (`q.format('sql')`), and has the same return types.
 
 ## Number parsing
 
