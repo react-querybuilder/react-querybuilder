@@ -1,3 +1,4 @@
+import { freeze } from 'immer';
 import {
   defaultCoalesceMs,
   defaultCombinators,
@@ -313,9 +314,10 @@ export class QueryManager<
       baseOption: options.baseCombinator,
     }).optionList;
 
-    this.#query = query
-      ? prepareRuleGroup(query, { idGenerator: this.#idGenerator })
-      : this.createRuleGroup();
+    this.#query = freeze(
+      query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup(),
+      true
+    );
   }
 
   // #region Internal resolution
@@ -504,7 +506,7 @@ export class QueryManager<
 
   /** Replaces the current query, ensuring every rule and group has an `id`. */
   setQuery(query: RG): this {
-    this.#commit(prepareRuleGroup(query, { idGenerator: this.#idGenerator }));
+    this.#commit(freeze(prepareRuleGroup(query, { idGenerator: this.#idGenerator }), true));
     return this;
   }
 
