@@ -1,4 +1,5 @@
 import type { RuleGroupTypeAny } from '@react-querybuilder/core';
+import { signatureOf, structuralSignature, unchangedSignature } from '@react-querybuilder/core';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice, original } from '@reduxjs/toolkit';
 // Imported relatively rather than from `react-querybuilder` on purpose: this slice is only used
@@ -8,7 +9,6 @@ import { createSlice, original } from '@reduxjs/toolkit';
 // from `react-querybuilder` so that both bundles share one instance.
 import { queriesSlice } from '../redux/queriesSlice';
 import type { SetQueryStateAction } from '../redux/queriesSlice';
-import { signatureOf, structuralSignature, unchangedSignature } from './signature';
 import type { QueryHistoryEntry, QueryHistorySliceState } from './types';
 
 export const defaultMaxHistory = 50;

@@ -1,5 +1,5 @@
-import type { RuleGroupTypeAny, RuleType } from '@react-querybuilder/core';
-import { isRuleGroup } from '@react-querybuilder/core';
+import type { RuleGroupTypeAny, RuleType } from '../types';
+import { isRuleGroup } from './isRuleGroup';
 
 /**
  * Signature returned when a change alters the _shape_ of the query—rules or groups added,

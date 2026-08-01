@@ -24,6 +24,7 @@ export * from './preferProp';
 export * from './prepareQueryObjects';
 export * from './queryTools';
 export * from './regenerateIDs';
+export * from './signature';
 export * from './transformQuery';
 
 // To reduce bundle size, these are only available as

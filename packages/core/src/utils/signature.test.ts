@@ -1,4 +1,4 @@
-import { signatureOf, structuralSignature, unchangedSignature } from '../signature';
+import { signatureOf, structuralSignature, unchangedSignature } from './signature';
 
 const rule = (id: string, field = 'f1', value = 'v1') => ({ id, field, operator: '=', value });
 
