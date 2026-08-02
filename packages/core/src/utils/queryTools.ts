@@ -21,6 +21,7 @@ import {
   getCommonAncestorPath,
   getParentPath,
   getPathOfID,
+  pathIsDisabled,
   pathsAreEqual,
 } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -52,7 +53,13 @@ export type AbortReason =
   /** The rule/group is already at the destination. Not an error. */
   | 'same-location'
   /** The property already has the given value. Not an error. */
-  | 'no-change';
+  | 'no-change'
+  /** The target rule/group is disabled, or descends from a disabled group. */
+  | 'target-disabled'
+  /** The parent group is disabled, or descends from a disabled group. */
+  | 'parent-disabled'
+  /** Adding the group would nest it deeper than `maxLevels` allows. */
+  | 'max-levels-exceeded';
 
 /**
  * Details about an aborted query tool operation.
@@ -69,11 +76,39 @@ export interface AbortInfo {
 }
 
 /**
+ * Options that block a mutation before it is attempted.
+ *
+ * `disabled` is a property of the query itself, so honoring it is a matter of data integrity
+ * rather than presentation: a query saved with a locked rule should stay locked when it is
+ * loaded again. It is opt-in here only to preserve the existing behavior of the standalone
+ * query tools; {@link QueryManager} enables it by default.
+ *
+ * @group Query Tools
+ */
+export interface GuardOptions {
+  /**
+   * Abort when the target (or its parent, for `add`/`insert`) is disabled, either directly or
+   * by descending from a disabled group. Defaults to `false`.
+   *
+   * Updating a rule or group's own `disabled` property is always permitted, since it is the
+   * only way to re-enable it.
+   */
+  respectDisabled?: boolean;
+  /** Abort every mutation, as though the entire query were disabled. Defaults to `false`. */
+  queryDisabled?: boolean;
+  /**
+   * The maximum depth at which a group may be added. A group whose parent path is already this
+   * deep is rejected by `add` and `insert`. Rules are unaffected. Defaults to `Infinity`.
+   */
+  maxLevels?: number;
+}
+
+/**
  * Options for reporting aborted query tool operations.
  *
  * @group Query Tools
  */
-export interface AbortOptions {
+export interface AbortOptions extends GuardOptions {
   /**
    * Called when the operation returns the query unmodified, with the reason why. Query tools
    * never throw, so this is the only way to distinguish "the target was invalid" from
@@ -81,6 +116,43 @@ export interface AbortOptions {
    */
   onAbort?: (info: AbortInfo) => void;
 }
+
+/**
+ * Whether a mutation targeting `pathOrID` is blocked by the given guards, and why.
+ * Returns `null` when the mutation may proceed.
+ *
+ * Exported so that callers which run their own logic before mutating—such as a UI layer that
+ * invokes a confirmation callback—can apply the same rules without duplicating them.
+ *
+ * @group Query Tools
+ */
+export const getGuardAbortReason = (
+  query: RuleGroupTypeAny,
+  pathOrID: Path | string | undefined,
+  guards: GuardOptions = {},
+  { asParent = false }: { asParent?: boolean } = {}
+): AbortReason | null => {
+  if (guards.queryDisabled) return asParent ? 'parent-disabled' : 'target-disabled';
+
+  if (!guards.respectDisabled || pathOrID === undefined) return null;
+
+  const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
+  if (path && pathIsDisabled(path, query)) {
+    return asParent ? 'parent-disabled' : 'target-disabled';
+  }
+
+  return null;
+};
+
+/**
+ * Whether adding a group beneath `parentPath` would exceed `maxLevels`.
+ *
+ * @group Query Tools
+ */
+export const exceedsMaxLevels = (
+  parentPath: Path | undefined,
+  { maxLevels = Infinity }: GuardOptions = {}
+): boolean => !!parentPath && parentPath.length >= maxLevels;
 
 /**
  * Options for {@link add}.
@@ -160,6 +232,22 @@ export const addInPlace: AddMethod = (
 
   if (!isRuleGroup(parent)) {
     onAbort?.({ reason: 'parent-not-a-group', operation: 'add', pathOrID: parentPathOrID });
+    return query;
+  }
+
+  // The parent is known to exist by this point, so the path always resolves.
+  const parentPath = (
+    Array.isArray(parentPathOrID) ? parentPathOrID : getPathOfID(parentPathOrID, query)
+  ) as Path;
+
+  const addGuardReason = getGuardAbortReason(query, parentPath, options, { asParent: true });
+  if (addGuardReason) {
+    onAbort?.({ reason: addGuardReason, operation: 'add', pathOrID: parentPathOrID });
+    return query;
+  }
+
+  if (isRuleGroup(ruleOrGroup) && exceedsMaxLevels(parentPath, options)) {
+    onAbort?.({ reason: 'max-levels-exceeded', operation: 'add', pathOrID: parentPathOrID });
     return query;
   }
 
@@ -396,6 +484,16 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
     return query;
   }
 
+  // A node's own `disabled` property is exempt from `respectDisabled`—otherwise a disabled node
+  // could never be re-enabled. `queryDisabled` still blocks it, since that disables everything.
+  const updateGuards =
+    prop === 'disabled' ? { queryDisabled: options.queryDisabled } : (options as GuardOptions);
+  const updateGuardReason = getGuardAbortReason(query, path, updateGuards);
+  if (updateGuardReason) {
+    onAbort?.({ reason: updateGuardReason, operation: 'update', pathOrID });
+    return query;
+  }
+
   // Independent combinators
   if (prop === 'combinator' && !isRuleGroupType(query)) {
     const parentRules = (findPath(getParentPath(path), query) as typeof query).rules;
@@ -555,6 +653,12 @@ export const removeInPlace: RemoveMethod = (query, pathOrID, options = {}): type
     return query;
   }
 
+  const removeGuardReason = getGuardAbortReason(query, path, options);
+  if (removeGuardReason) {
+    onAbort?.({ reason: removeGuardReason, operation: 'remove', pathOrID });
+    return query;
+  }
+
   // Can't independently remove independent combinators
   if (!isRuleGroupType(query) && !findPath(path, query)) {
     onAbort?.({ reason: 'target-not-found', operation: 'remove', pathOrID });
@@ -711,6 +815,12 @@ export const moveInPlace: MoveMethod = (
   // Can't move the root group
   if (oldPath.length === 0) {
     onAbort?.({ reason: 'root-not-allowed', operation: 'move', pathOrID: oldPathOrID });
+    return query;
+  }
+
+  const moveGuardReason = getGuardAbortReason(query, oldPath, options);
+  if (moveGuardReason) {
+    onAbort?.({ reason: moveGuardReason, operation: 'move', pathOrID: oldPathOrID });
     return query;
   }
 
@@ -906,6 +1016,18 @@ export const insertInPlace: InsertMethod = (
     return query;
   }
 
+  const parentPath = getParentPath(path);
+  const insertGuardReason = getGuardAbortReason(query, parentPath, options, { asParent: true });
+  if (insertGuardReason) {
+    onAbort?.({ reason: insertGuardReason, operation: 'insert', pathOrID: path });
+    return query;
+  }
+
+  if (isRuleGroup(ruleOrGroup) && exceedsMaxLevels(parentPath, options)) {
+    onAbort?.({ reason: 'max-levels-exceeded', operation: 'insert', pathOrID: path });
+    return query;
+  }
+
   const rorg = regenerateIDs(ruleOrGroup, { idGenerator });
   const independentCombinators = isRuleGroupTypeIC(query);
   const newIndex = path.at(-1)!;
@@ -1044,6 +1166,12 @@ export const groupInPlace: GroupMethod = (
   // Can't group the root group
   if (sourcePath.length === 0) {
     onAbort?.({ reason: 'root-not-allowed', operation: 'group', pathOrID: sourcePathOrID });
+    return query;
+  }
+
+  const groupGuardReason = getGuardAbortReason(query, sourcePath, options);
+  if (groupGuardReason) {
+    onAbort?.({ reason: groupGuardReason, operation: 'group', pathOrID: sourcePathOrID });
     return query;
   }
 

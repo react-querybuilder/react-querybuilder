@@ -1796,3 +1796,132 @@ describe('group configuration', () => {
     });
   });
 });
+
+describe('guards', () => {
+  const withDisabledRule = (): RuleGroupType => ({
+    combinator: 'and',
+    rules: [
+      { id: 'r1', field: 'firstName', operator: '=', value: 'Steve', disabled: true },
+      { id: 'r2', field: 'lastName', operator: '=', value: 'Vai' },
+    ],
+  });
+
+  describe('respectDisabled', () => {
+    it('is enabled by default, matching the QueryBuilder component', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), { fields });
+      const before = q.getQuery();
+      q.update('value', 'x', [0]);
+      expect(q.getQuery()).toBe(before);
+    });
+
+    it('still allows re-enabling a disabled node', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), { fields });
+      q.update('disabled', false, [0]);
+      expect((q.getQuery().rules[0] as RuleType).disabled).toBe(false);
+    });
+
+    it('can be turned off', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), {
+        fields,
+        respectDisabled: false,
+      });
+      q.update('value', 'x', [0]);
+      expect((q.getQuery().rules[0] as RuleType).value).toBe('x');
+    });
+
+    it('does not affect enabled nodes', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), { fields });
+      q.update('value', 'x', [1]);
+      expect((q.getQuery().rules[1] as RuleType).value).toBe('x');
+    });
+
+    it('blocks remove of a disabled rule', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), { fields });
+      q.remove([0]);
+      expect(q.getQuery().rules).toHaveLength(2);
+    });
+
+    it('throws in strict mode', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), { fields, strict: true });
+      expect(() => q.update('value', 'x', [0])).toThrow(QueryManagerError);
+      expect(() => q.remove([0])).toThrow(expect.objectContaining({ code: 'target-disabled' }));
+    });
+  });
+
+  describe('queryDisabled', () => {
+    it('blocks every mutation, including `disabled` itself', () => {
+      const q = new QueryManager<RuleGroupType>(withDisabledRule(), {
+        fields,
+        queryDisabled: true,
+      });
+      const before = q.getQuery();
+      q.update('value', 'x', [1]);
+      q.update('disabled', false, [0]);
+      q.remove([1]);
+      expect(q.getQuery()).toBe(before);
+    });
+  });
+
+  describe('maxLevels', () => {
+    it('blocks groups deeper than the limit', () => {
+      const q = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [] }, { maxLevels: 1 });
+      q.add(q.createRuleGroup());
+      expect(q.getQuery().rules).toHaveLength(1);
+      // The nested group is one level deep, so a further group is rejected.
+      q.add(q.createRuleGroup(), [0]);
+      expect((q.getQuery().rules[0] as RuleGroupType).rules).toHaveLength(0);
+    });
+
+    it('does not restrict rules', () => {
+      const q = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [] },
+        { fields, maxLevels: 0 }
+      );
+      q.add(q.createRule());
+      expect(q.getQuery().rules).toHaveLength(1);
+    });
+  });
+
+  describe('reset options', () => {
+    it('honors resetOnOperatorChange', () => {
+      const q = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [rule()] },
+        { fields, resetOnOperatorChange: true }
+      );
+      q.update('operator', 'contains', [0]);
+      expect((q.getQuery().rules[0] as RuleType).value).toBe('');
+    });
+
+    it('honors resetOnFieldChange: false', () => {
+      const q = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [rule()] },
+        { fields, resetOnFieldChange: false }
+      );
+      q.update('field', 'lastName', [0]);
+      expect((q.getQuery().rules[0] as RuleType).value).toBe('Steve');
+    });
+  });
+
+  describe('getInputType and getSubQueryBuilderProps', () => {
+    it('surfaces both through getRuleContext', () => {
+      const q = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [rule()] },
+        {
+          fields,
+          getInputType: () => 'date',
+          getSubQueryBuilderProps: () => ({ showNotToggle: true }),
+        }
+      );
+      const ctx = q.getRuleContext([0])!;
+      expect(ctx.inputType).toBe('date');
+      expect(ctx.subQueryBuilderProps).toEqual({ showNotToggle: true });
+    });
+
+    it('defaults to null and an empty object', () => {
+      const q = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [rule()] }, { fields });
+      const ctx = q.getRuleContext([0])!;
+      expect(ctx.inputType).toBeNull();
+      expect(ctx.subQueryBuilderProps).toEqual({});
+    });
+  });
+});

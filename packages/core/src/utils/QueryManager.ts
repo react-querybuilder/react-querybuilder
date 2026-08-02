@@ -41,6 +41,7 @@ import type {
   ValidationMap,
   ValueEditorType,
   ValueSourceFlexibleOptions,
+  InputType,
   OptionList,
   ValueSourceFullOptions,
   ValueSources,
@@ -67,6 +68,7 @@ import { prepareRuleGroup } from './prepareQueryObjects';
 import type {
   AbortInfo,
   AbortReason,
+  GuardOptions,
   AddOptions,
   GroupOptions,
   InsertOptions,
@@ -94,6 +96,9 @@ export const strictAbortReasons: readonly AbortReason[] = [
   'destination-not-found',
   'root-not-allowed',
   'not-a-combinator-slot',
+  'target-disabled',
+  'parent-disabled',
+  'max-levels-exceeded',
 ];
 
 const strictAbortReasonSet = new Set<AbortReason>(strictAbortReasons);
@@ -212,6 +217,33 @@ export interface QueryManagerOptions<
   /** When `true`, groups created by {@link QueryManager.createRuleGroup} contain one new rule. */
   addRuleToNewGroups?: boolean;
   /**
+   * When updating a rule's `field`, reset its `operator`, `value`, and `valueSource` to their
+   * defaults. Defaults to `true`, matching the `QueryBuilder` prop of the same name.
+   */
+  resetOnFieldChange?: boolean;
+  /**
+   * When updating a rule's `operator`, reset its `value` to the default. Defaults to `false`,
+   * matching the `QueryBuilder` prop of the same name.
+   */
+  resetOnOperatorChange?: boolean;
+  /**
+   * The maximum depth at which groups may be added. Defaults to `Infinity`.
+   */
+  maxLevels?: number;
+  /**
+   * Honor `disabled` properties within the query, so mutations targeting a disabled rule or
+   * group (or a descendant of a disabled group) are aborted. Updating a node's own `disabled`
+   * property is always permitted. Defaults to `true`, matching the `QueryBuilder` component;
+   * pass `false` to mutate freely regardless of the property.
+   */
+  respectDisabled?: boolean;
+  /** Abort every mutation, as though the entire query were disabled. Defaults to `false`. */
+  queryDisabled?: boolean;
+  /** The input type for a given field/operator, surfaced by {@link QueryManager.getRuleContext}. */
+  getInputType?: (field: string, operator: string, misc: { fieldData: F }) => InputType | null;
+  /** Extra props for a subquery builder, surfaced by {@link QueryManager.getRuleContext}. */
+  getSubQueryBuilderProps?: (field: string, misc: { fieldData: F }) => Record<string, unknown>;
+  /**
    * Enables undo/redo recording. Pass `true` for the defaults, or an object to configure
    * `maxHistory` and/or `coalesceMs`. Disabled by default, so instances that never undo
    * retain no extra references.
@@ -318,6 +350,7 @@ export class QueryManager<
   readonly #idGenerator: () => string;
   readonly #validator: QueryValidator;
   readonly #strict: boolean;
+  readonly #respectDisabled: boolean;
   readonly #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
   readonly #listeners = new Set<() => void>();
   readonly #historyEnabled: boolean;
@@ -345,6 +378,7 @@ export class QueryManager<
     this.#idGenerator = options.idGenerator ?? generateID;
     this.#validator = options.validator ?? defaultValidator;
     this.#strict = options.strict ?? false;
+    this.#respectDisabled = options.respectDisabled ?? true;
     this.#onInvalidTarget = options.onInvalidTarget;
 
     const history = options.history ?? false;
@@ -480,8 +514,20 @@ export class QueryManager<
   }
 
   /** Defaults shared by every mutating method, overridable per call. */
+  #guardOptions(): GuardOptions {
+    return {
+      maxLevels: this.#options.maxLevels,
+      respectDisabled: this.#respectDisabled,
+      queryDisabled: this.#options.queryDisabled,
+    };
+  }
+
   #toolOptions() {
-    return { combinators: this.#combinators, idGenerator: this.#idGenerator };
+    return {
+      combinators: this.#combinators,
+      idGenerator: this.#idGenerator,
+      ...this.#guardOptions(),
+    };
   }
 
   /**
@@ -509,6 +555,9 @@ export class QueryManager<
       getRuleDefaultValue: r => this.#defaultValue(r),
       getValueSources: (f, o) => this.#valueSourcesFor(f, o),
       getMatchModes: f => this.#matchModesFor(f),
+      resetOnFieldChange: this.#options.resetOnFieldChange,
+      resetOnOperatorChange: this.#options.resetOnOperatorChange,
+      ...this.#guardOptions(),
     };
   }
 
@@ -724,6 +773,7 @@ export class QueryManager<
     const { strict, onInvalidTarget, ...toolOptions } = options;
     this.#commit(
       remove(this.#query, pathOrID, {
+        ...this.#guardOptions(),
         ...toolOptions,
         onAbort: this.#onAbort({ strict, onInvalidTarget }),
       })
@@ -1307,8 +1357,8 @@ export class QueryManager<
       {
         fields: this.#fields as OptionList<F>,
         fieldMap: this.#fieldMap,
-        // `QueryManager` has no `getInputType` option; field-level `inputType` still applies.
-        getInputType: () => null,
+        getInputType: (f: string, o: string, misc: { fieldData: F }) =>
+          this.#options.getInputType?.(f, o, misc) ?? null,
         getMatchModes: (f: string) => this.#matchModesFor(f),
         getOperators: (f: string) => this.#operatorsFor(f),
         getParameters: (f: string, o: string, misc: { fieldData: F }) =>
@@ -1316,6 +1366,8 @@ export class QueryManager<
         getValueEditorType: (f: string, o: string) => this.#valueEditorTypeFor(f, o),
         getValues: (f: string, o: string) => this.#valuesFor(f, o),
         getValueSources: (f: string, o: string) => this.getValueSources(f, o),
+        getSubQueryBuilderProps: (f: string, misc: { fieldData: F }) =>
+          this.#options.getSubQueryBuilderProps?.(f, misc) ?? {},
       },
       {
         validationMap: typeof validation === 'boolean' ? {} : validation,

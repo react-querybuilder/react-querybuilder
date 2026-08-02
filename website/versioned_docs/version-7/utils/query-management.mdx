@@ -132,8 +132,33 @@ const newQuery = remove(query, 'some-id', {
 | `"not-a-combinator-slot"` | In an independent combinators query, the target index holds a rule.   |
 | `"same-location"`         | The rule/group is already at the destination. _Not an error._         |
 | `"no-change"`             | The property already has the given value. _Not an error._             |
+| `"target-disabled"`       | The target is disabled, or descends from a disabled group.            |
+| `"parent-disabled"`       | The parent group is disabled, or descends from a disabled group.      |
+| `"max-levels-exceeded"`   | Adding the group would nest it deeper than `maxLevels` allows.        |
 
 [`QueryManager`](#query-manager)'s [strict mode](#strict-mode) builds on this channel.
+
+### Guards
+
+The last three reasons above are produced by opt-in guards, accepted by every query tool alongside `onAbort`:
+
+- `respectDisabled` — abort when the target (or, for `add`/`insert`, the parent) is disabled, either directly or by descending from a disabled group. Defaults to `false`.
+- `queryDisabled` — abort every mutation, as though the whole query were disabled. Defaults to `false`.
+- `maxLevels` — the maximum depth at which a _group_ may be added by `add` or `insert`. Rules are unaffected. Defaults to `Infinity`.
+
+`disabled` is a property of the query itself, so honoring it is a matter of data integrity rather than presentation—a query saved with a locked rule should still be locked when it is loaded again. It is opt-in here only to preserve the existing behavior of the standalone tools; [`QueryManager`](#query-manager) enables it by default.
+
+Updating a rule or group's own `disabled` property is always permitted under `respectDisabled`, since that is the only way to re-enable it. `queryDisabled` blocks even that.
+
+```ts
+// Aborts: the rule at [0] is disabled
+update(query, 'value', 'x', [0], { respectDisabled: true });
+
+// Succeeds: re-enabling is always allowed
+update(query, 'disabled', false, [0], { respectDisabled: true });
+```
+
+`getGuardAbortReason(query, pathOrID, guards, { asParent })` and `exceedsMaxLevels(parentPath, guards)` are exported so a UI layer that runs its own logic before mutating—invoking a confirmation callback, for example—can apply the same rules without duplicating them.
 
 ## Query manager
 
@@ -165,6 +190,8 @@ Without a `query`, an empty group is created using the configured `combinators` 
 %importcode /packages/core/src/utils/QueryManager.ts#blockName=QueryManagerOptions
 
 </Details>
+
+The constructor also accepts the [guard options](#guards) `respectDisabled` (defaulting to **`true`** here, matching the `QueryBuilder` component), `queryDisabled`, and `maxLevels`, plus `resetOnFieldChange` (default `true`) and `resetOnOperatorChange` (default `false`), which mirror the props of the same names.
 
 ### State access
 

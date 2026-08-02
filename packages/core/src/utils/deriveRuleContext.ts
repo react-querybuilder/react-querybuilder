@@ -55,6 +55,7 @@ export interface RuleContextResolvers<F extends FullField = FullField> {
     operator: string,
     misc: { fieldData: F }
   ) => ValueSourceFullOptions;
+  getSubQueryBuilderProps?: (field: string, misc: { fieldData: F }) => Record<string, unknown>;
 }
 
 /**
@@ -73,6 +74,7 @@ export interface RuleContext<F extends FullField = FullField> {
   values: FlexibleOptionList<Option>;
   valueSourceOptions: ValueSourceFullOptions;
   valueSources: ValueSources;
+  subQueryBuilderProps: Record<string, unknown>;
 }
 
 /**
@@ -215,6 +217,7 @@ export const deriveRuleContext = <F extends FullField = FullField>(
     getValueEditorType,
     getValues,
     getValueSources,
+    getSubQueryBuilderProps,
   } = resolvers;
 
   const fieldData = getFieldData(rule.field, fieldMap) as F;
@@ -238,6 +241,7 @@ export const deriveRuleContext = <F extends FullField = FullField>(
     values: getRuleValues(rule, fieldData, fields, parameters, getValues),
     valueSourceOptions,
     valueSources: valueSourceOptions.map(({ value }) => value) as ValueSources,
+    subQueryBuilderProps: getSubQueryBuilderProps?.(rule.field, { fieldData }) ?? {},
   };
 };
 
