@@ -208,11 +208,13 @@ As with the query tools themselves, these methods are a no-op when the target pa
 
 `subscribe(listener: () => void)` registers a listener called after every change to the query, and returns a function that unregisters it. Mutations that resolve to a no-op do not notify, and a [batch](#batching) notifies once no matter how many changes it contains.
 
-The method is bound to the instance, so it is a stable reference across renders and can be passed directly to React's `useSyncExternalStore`:
+The method is bound to the instance, so it is a stable reference across renders and can be passed directly to React's `useSyncExternalStore`. `getQuery` is bound as well, so it can serve as the snapshot getter without a wrapper:
 
 ```ts
-const query = useSyncExternalStore(q.subscribe, () => q.getQuery());
+const query = useSyncExternalStore(q.subscribe, q.getQuery);
 ```
+
+In React, prefer the [`useQueryManager`](./hooks#usequerymanager) hook, which wraps this and handles creating the manager exactly once.
 
 ### Batching
 

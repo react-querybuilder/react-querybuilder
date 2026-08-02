@@ -98,6 +98,50 @@ const dispatchQuery = getDispatchQueryById('main');
 dispatchQuery?.(add(currentQuery, { field: 'firstName', operator: '=', value: '' }, []));
 ```
 
+### `useQueryManager`
+
+Subscribes to a [`QueryManager`](./query-management#query-manager) and returns its current query alongside the manager itself, re-rendering whenever the query changes. Returns a `[query, manager]` tuple.
+
+```ts
+function useQueryManager<RG, F, O, C>(
+  manager: QueryManager<RG, F, O, C>
+): [RG, QueryManager<RG, F, O, C>];
+function useQueryManager<RG, F, O, C>(
+  query?: RG,
+  options?: QueryManagerOptions<F, O, C>
+): [RG, QueryManager<RG, F, O, C>];
+```
+
+Unlike every other hook in this section, `useQueryManager` does _not_ use Redux and does not need to be rendered beneath a `QueryBuilder`. `QueryManager` maintains its own state, so queries managed this way are invisible to [`useQueryBuilderQuery`](#usequerybuilderquery), [`useQueryBuilderSelector`](#usequerybuilderselector), [`useQueryBuilderHistory`](#usequerybuilderhistory), and [`getDispatchQueryById`](#getdispatchquerybyid). Use it to build a headless or fully custom interface; it is not a replacement for the [`QueryBuilder`](../components/querybuilder) component.
+
+Pass an existing manager to control its lifetime yourself:
+
+```tsx
+const qm = useMemo(() => new QueryManager(initialQuery, { fields }), []);
+
+const CustomUI = () => {
+  const [query] = useQueryManager(qm);
+  // ...
+};
+```
+
+Or let the hook create one. The manager is created on the first render and never recreated, so `query` is an _initial_ value and `options` are captured once—later changes to either argument are ignored:
+
+```tsx
+const CustomUI = () => {
+  const [query, qm] = useQueryManager(initialQuery, { fields });
+
+  return (
+    <>
+      <button onClick={() => qm.add(qm.createRule())}>Add rule</button>
+      <pre>{JSON.stringify(query, null, 2)}</pre>
+    </>
+  );
+};
+```
+
+Since the manager is stable, its methods are safe to call from event handlers and to use in dependency arrays. A [batch](./query-management#batching) triggers a single re-render regardless of how many changes it contains, and mutations that resolve to a no-op trigger none.
+
 ## Component logic
 
 The core logic of each component is encapsulated in a reusable hook. Each main component is little more than a call to its respective hook plus the JSX that uses the properties returned from that hook. This enables creating a custom presentation layer without copying logic code from the default components.

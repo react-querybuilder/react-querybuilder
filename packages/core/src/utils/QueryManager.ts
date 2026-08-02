@@ -616,10 +616,11 @@ export class QueryManager<
   /**
    * The current query. The returned object is frozen and structurally shared, so it is safe to
    * retain and compare by reference to detect changes.
+   *
+   * Like {@link QueryManager.subscribe}, this method is bound to the instance, so it can be
+   * passed as a bare reference (e.g. as the `getSnapshot` argument to `useSyncExternalStore`).
    */
-  getQuery(): RG {
-    return this.#query;
-  }
+  getQuery = (): RG => this.#query;
 
   /** Replaces the current query, ensuring every rule and group has an `id`. */
   setQuery(query: RG): this {
@@ -840,11 +841,14 @@ export class QueryManager<
    * {@link QueryManager.batch batch} notifies once no matter how many changes it contains.
    *
    * Together with {@link QueryManager.getQuery}, this satisfies React's `useSyncExternalStore`
-   * contract. This method is bound to the instance, so it is a stable reference across renders:
+   * contract. Both methods are bound to the instance, so they are stable references across
+   * renders and can be passed directly:
    *
    * ```ts
-   * const query = useSyncExternalStore(q.subscribe, () => q.getQuery());
+   * const query = useSyncExternalStore(q.subscribe, q.getQuery);
    * ```
+   *
+   * In React, prefer the `useQueryManager` hook from `react-querybuilder`, which wraps this.
    */
   subscribe = (listener: () => void): (() => void) => {
     this.#listeners.add(listener);
