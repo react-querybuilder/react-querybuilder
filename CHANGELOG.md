@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- [#1079] `moveRule` and `groupRule` now abort when the source path no longer resolves. Previously the `onMoveRule`/`onMoveGroup`/`onGroupRule`/`onGroupGroup` callback was invoked with `null` (despite the parameter being typed non-null) and `onQueryChange` fired with an unchanged query, even though the underlying operation was always a no-op.
 - [#1072] Query state is now removed from the internal Redux store when the last query builder using a given identifier unmounts. Previously it was retained for the lifetime of the page. Pass the new `preserveQueryStateOnUnmount` prop to opt out.
 - [#1072] The `react-querybuilder/async` entry point now shares the internal Redux store and React contexts with the main bundle instead of bundling its own copies, so `useAsyncOptionList` and the query builder rendering it operate on the same state.
 

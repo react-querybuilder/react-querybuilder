@@ -234,7 +234,8 @@ export interface QueryManagerOptions<
    */
   resetOnOperatorChange?: boolean;
   /**
-   * The maximum depth at which groups may be added. Defaults to `Infinity`.
+   * The maximum depth at which groups may be added. As with the `QueryBuilder` prop of the same
+   * name, a non-positive value means unlimited. Defaults to `Infinity`.
    */
   maxLevels?: number;
   /**
@@ -399,9 +400,11 @@ export class QueryManager<
       baseOption: options.baseField,
       autoSelectOption: options.autoSelectField,
     });
-    // Frozen because `getFields` hands this array out directly; see also `#combinators`.
+    // Both are frozen because `getFields` and `getFieldData` hand their contents out directly.
+    // `prepareOptionList` builds the map's values as separate objects from the list's, so
+    // freezing one does not freeze the other.
     this.#fields = freeze(fields, true);
-    this.#fieldMap = fieldMap;
+    this.#fieldMap = freeze(fieldMap, true);
 
     this.#operators = prepareOptionList<O>({
       optionList: (options.operators ?? defaultOperators) as FlexibleOptionListProp<O>,
@@ -513,8 +516,11 @@ export class QueryManager<
 
   /** Defaults shared by every mutating method, overridable per call. */
   #guardOptions(): GuardOptions {
+    const { maxLevels } = this.#options;
+
     return {
-      maxLevels: this.#options.maxLevels,
+      // `QueryBuilder` treats a non-positive `maxLevels` as unlimited; match that.
+      maxLevels: (maxLevels ?? 0) > 0 ? Number(maxLevels) : Infinity,
       respectDisabled: this.#respectDisabled,
       queryDisabled: this.#options.queryDisabled,
     };

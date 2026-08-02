@@ -105,6 +105,16 @@ describe('createQueryActions', () => {
       ).toHaveLength(3);
     });
 
+    it('honors combinatorPreceding for independent combinators', () => {
+      const q: RuleGroupTypeIC = { rules: [{ id: 'r1', ...rule() }] };
+      const result = createQueryActions().addGroup(
+        q,
+        { rules: [], combinatorPreceding: 'or' } as RuleGroupTypeIC,
+        []
+      );
+      expect(result.rules[1]).toBe('or');
+    });
+
     it('aborts when onAddGroup declines', () => {
       expect(
         createQueryActions({ onAddGroup: () => false }).addGroup(query(), newGroup(), [])
@@ -274,6 +284,20 @@ describe('createQueryActions', () => {
       const onGroupRule = vi.fn(() => true);
       createQueryActions({ onGroupGroup, onGroupRule }).groupRule(q, [0], [1]);
       expect(onGroupGroup).toHaveBeenCalled();
+      expect(onGroupRule).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('unresolvable paths', () => {
+    it('aborts moveRule without invoking the callback', () => {
+      const onMoveRule = vi.fn(() => true);
+      expect(createQueryActions({ onMoveRule }).moveRule(query(), [99], [0])).toBeUndefined();
+      expect(onMoveRule).not.toHaveBeenCalled();
+    });
+
+    it('aborts groupRule without invoking the callback', () => {
+      const onGroupRule = vi.fn(() => true);
+      expect(createQueryActions({ onGroupRule }).groupRule(query(), [99], [0])).toBeUndefined();
       expect(onGroupRule).not.toHaveBeenCalled();
     });
   });

@@ -236,9 +236,13 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
         return undefined;
       }
 
+      // A path that no longer resolves isn't caught by the guards, so confirm it before
+      // computing anything or handing a null node to the callback.
+      const ruleOrGroup = findPath(oldPath, query);
+      if (!ruleOrGroup) return undefined;
+
       // Computed before the callback so it can inspect the prospective result.
       const nextQuery = move(query, oldPath, newPath, { clone, combinators, idGenerator });
-      const ruleOrGroup = findPath(oldPath, query)!;
       const isGroup = isRuleGroup(ruleOrGroup);
       const callback = isGroup ? onMoveGroup : onMoveRule;
       const callbackResult = callback
@@ -269,9 +273,13 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
         return undefined;
       }
 
+      // A path that no longer resolves isn't caught by the guards, so confirm it before
+      // computing anything or handing a null node to the callback.
+      const ruleOrGroup = findPath(sourcePath, query);
+      if (!ruleOrGroup) return undefined;
+
       // Computed before the callback so it can inspect the prospective result.
       const nextQuery = group(query, sourcePath, targetPath, { clone, combinators, idGenerator });
-      const ruleOrGroup = findPath(sourcePath, query)!;
       const isGroup = isRuleGroup(ruleOrGroup);
       const callback = isGroup ? onGroupGroup : onGroupRule;
       const callbackResult = callback

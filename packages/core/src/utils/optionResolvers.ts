@@ -131,6 +131,7 @@ export const resolveValueList = <F extends FullField = FullField>({
   fieldData,
   getValues,
   placeholder,
+  baseOption,
   autoSelectOption,
 }: {
   field: string;
@@ -145,5 +146,6 @@ export const resolveValueList = <F extends FullField = FullField>({
   prepareOptionList<FullOption>({
     optionList: fieldData?.values ?? getValues?.(field, operator, { fieldData }) ?? [],
     placeholder,
+    baseOption,
     autoSelectOption,
   }).optionList;

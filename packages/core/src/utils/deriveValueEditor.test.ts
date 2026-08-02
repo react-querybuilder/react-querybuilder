@@ -89,9 +89,9 @@ describe('getMultiValueUpdate', () => {
   });
 
   it('returns the array as-is when unchanged and listsAsArrays is set', () => {
-    const valueAsArray = ['a', 'b'];
-    expect(getMultiValueUpdate({ ...base, value: 'a', index: 0, listsAsArrays: true })).toEqual(
-      valueAsArray
+    // Reference identity: the same array is handed back, not a copy.
+    expect(getMultiValueUpdate({ ...base, value: 'a', index: 0, listsAsArrays: true })).toBe(
+      base.valueAsArray
     );
   });
 
@@ -146,6 +146,24 @@ describe('getMultiValueUpdate', () => {
           listsAsArrays: true,
         })
       ).toEqual(['a', 'opt1']);
+    });
+
+    it('seeds an empty string when no values are available', () => {
+      expect(
+        getMultiValueUpdate({
+          valueAsArray: ['a'],
+          operator: 'between',
+          value: 'x',
+          index: 0,
+          listsAsArrays: true,
+        })
+      ).toEqual(['x', '']);
+    });
+
+    it('produces a trailing empty segment when joined', () => {
+      expect(
+        getMultiValueUpdate({ valueAsArray: ['a'], operator: 'between', value: 'x', index: 0 })
+      ).toBe('x,');
     });
 
     it('does not backfill when editing the second bound', () => {

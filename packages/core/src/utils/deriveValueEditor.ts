@@ -95,7 +95,9 @@ export const getMultiValueUpdate = ({
   const v = [...valueAsArray];
   v[index] = parsedVal;
   if (needsBetweenFix) {
-    v[1] = getFirstOption(values)!;
+    // `values` may be absent or empty (a plain text editor, for example), in which case the
+    // second bound is seeded with an empty string rather than `undefined`.
+    v[1] = getFirstOption(values) ?? '';
   }
 
   return listsAsArrays ? v : joinWith(v, ',');

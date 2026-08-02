@@ -1636,6 +1636,16 @@ describe('rule configuration', () => {
     expect(m.getFieldData('nope')).toEqual(m.getRuleContext([0])!.fieldData);
   });
 
+  it('hands out frozen field data', () => {
+    // `prepareOptionList` builds the map's values as separate objects from the list's, so both
+    // have to be frozen for `getFieldData` to be safe.
+    const fd = q().getFieldData('firstName');
+    expect(Object.isFrozen(fd)).toBe(true);
+    expect(() => {
+      (fd as { label: string }).label = 'mutated';
+    }).toThrow();
+  });
+
   it('hands out frozen option lists', () => {
     const m = q();
     expect(Object.isFrozen(m.getFields())).toBe(true);
@@ -1892,11 +1902,21 @@ describe('guards', () => {
 
     it('does not restrict rules', () => {
       const q = new QueryManager<RuleGroupType>(
-        { combinator: 'and', rules: [] },
-        { fields, maxLevels: 0 }
+        { combinator: 'and', rules: [{ combinator: 'and', rules: [] }] },
+        { fields, maxLevels: 1 }
       );
-      q.add(q.createRule());
-      expect(q.getQuery().rules).toHaveLength(1);
+      // A rule may be added at a depth where a group would be rejected.
+      q.add(q.createRule(), [0]);
+      expect((q.getQuery().rules[0] as RuleGroupType).rules).toHaveLength(1);
+    });
+
+    it('treats a non-positive value as unlimited, matching QueryBuilder', () => {
+      for (const maxLevels of [0, -1]) {
+        const q = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [] }, { maxLevels });
+        q.add(q.createRuleGroup());
+        q.add(q.createRuleGroup(), [0]);
+        expect((q.getQuery().rules[0] as RuleGroupType).rules).toHaveLength(1);
+      }
     });
   });
 
