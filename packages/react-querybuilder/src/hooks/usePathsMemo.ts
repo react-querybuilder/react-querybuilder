@@ -1,10 +1,8 @@
-import { pathsAreEqual, type Path } from '@react-querybuilder/core';
+import type { Path, PathInfo } from '@react-querybuilder/core';
+import { derivePathInfo } from '@react-querybuilder/core';
 import { useMemo } from 'react';
 
-export interface PathInfo {
-  path: Path;
-  disabled: boolean;
-}
+export type { PathInfo };
 
 // Memoize the path info so every render doesn't generate a new array
 export const usePathsMemo = ({
@@ -20,15 +18,8 @@ export const usePathsMemo = ({
 }): PathInfo[] => {
   const nestedArrayLength = nestedArray.length;
 
-  return useMemo(() => {
-    const paths: PathInfo[] = [];
-    for (let i = 0; i < nestedArrayLength; i++) {
-      const thisPath = [...path, i];
-      paths[i] = {
-        path: thisPath,
-        disabled: disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p)),
-      };
-    }
-    return paths;
-  }, [disabled, path, nestedArrayLength, disabledPaths]);
+  return useMemo(
+    () => derivePathInfo(path, nestedArrayLength, { disabled, disabledPaths }),
+    [disabled, path, nestedArrayLength, disabledPaths]
+  );
 };

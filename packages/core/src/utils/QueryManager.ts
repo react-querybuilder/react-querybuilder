@@ -41,10 +41,15 @@ import type {
   ValidationMap,
   ValueEditorType,
   ValueSourceFlexibleOptions,
+  InputType,
+  OptionList,
+  ValueSourceFullOptions,
   ValueSources,
 } from '../types';
 import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
+import type { RuleContext, RuleGroupContext } from './deriveRuleContext';
+import { deriveRuleContext, deriveRuleGroupContext, getFieldData } from './deriveRuleContext';
 import { formatQuery } from './formatQuery';
 import type {
   defaultRuleGroupProcessorDrizzle,
@@ -56,13 +61,20 @@ import { getMatchModesUtil } from './getMatchModesUtil';
 import { getRuleDefaultValue } from './getRuleDefaultValue';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
-import { getFirstOption, prepareOptionList } from './optGroupUtils';
+import { prepareOptionList } from './optGroupUtils';
+import {
+  resolveDefaultOperator,
+  resolveOperatorList,
+  resolveValueEditorType,
+  resolveValueList,
+} from './optionResolvers';
 import type { FindPathReturnType } from './pathUtils';
 import { findPath, getParentPath, pathIsDisabled } from './pathUtils';
 import { prepareRuleGroup } from './prepareQueryObjects';
 import type {
   AbortInfo,
   AbortReason,
+  GuardOptions,
   AddOptions,
   GroupOptions,
   InsertOptions,
@@ -72,6 +84,7 @@ import type {
 } from './queryTools';
 import { add, group, insert, move, remove, update } from './queryTools';
 import { regenerateIDs } from './regenerateIDs';
+import { createRule, createRuleGroup } from './ruleFactory';
 import { signatureOf, structuralSignature, unchangedSignature } from './signature';
 import type { TransformQueryOptions } from './transformQuery';
 import { transformQuery } from './transformQuery';
@@ -90,6 +103,9 @@ export const strictAbortReasons: readonly AbortReason[] = [
   'destination-not-found',
   'root-not-allowed',
   'not-a-combinator-slot',
+  'target-disabled',
+  'parent-disabled',
+  'max-levels-exceeded',
 ];
 
 const strictAbortReasonSet = new Set<AbortReason>(strictAbortReasons);
@@ -208,6 +224,34 @@ export interface QueryManagerOptions<
   /** When `true`, groups created by {@link QueryManager.createRuleGroup} contain one new rule. */
   addRuleToNewGroups?: boolean;
   /**
+   * When updating a rule's `field`, reset its `operator`, `value`, and `valueSource` to their
+   * defaults. Defaults to `true`, matching the `QueryBuilder` prop of the same name.
+   */
+  resetOnFieldChange?: boolean;
+  /**
+   * When updating a rule's `operator`, reset its `value` to the default. Defaults to `false`,
+   * matching the `QueryBuilder` prop of the same name.
+   */
+  resetOnOperatorChange?: boolean;
+  /**
+   * The maximum depth at which groups may be added. As with the `QueryBuilder` prop of the same
+   * name, a non-positive value means unlimited. Defaults to `Infinity`.
+   */
+  maxLevels?: number;
+  /**
+   * Honor `disabled` properties within the query, so mutations targeting a disabled rule or
+   * group (or a descendant of a disabled group) are aborted. Updating a node's own `disabled`
+   * property is always permitted. Defaults to `true`, matching the `QueryBuilder` component;
+   * pass `false` to mutate freely regardless of the property.
+   */
+  respectDisabled?: boolean;
+  /** Abort every mutation, as though the entire query were disabled. Defaults to `false`. */
+  queryDisabled?: boolean;
+  /** The input type for a given field/operator, surfaced by {@link QueryManager.getRuleContext}. */
+  getInputType?: (field: string, operator: string, misc: { fieldData: F }) => InputType | null;
+  /** Extra props for a subquery builder, surfaced by {@link QueryManager.getRuleContext}. */
+  getSubQueryBuilderProps?: (field: string, misc: { fieldData: F }) => Record<string, unknown>;
+  /**
    * Enables undo/redo recording. Pass `true` for the defaults, or an object to configure
    * `maxHistory` and/or `coalesceMs`. Disabled by default, so instances that never undo
    * retain no extra references.
@@ -314,6 +358,7 @@ export class QueryManager<
   readonly #idGenerator: () => string;
   readonly #validator: QueryValidator;
   readonly #strict: boolean;
+  readonly #respectDisabled: boolean;
   readonly #onInvalidTarget: ((info: AbortInfo) => void) | undefined;
   readonly #listeners = new Set<() => void>();
   readonly #historyEnabled: boolean;
@@ -341,6 +386,7 @@ export class QueryManager<
     this.#idGenerator = options.idGenerator ?? generateID;
     this.#validator = options.validator ?? defaultValidator;
     this.#strict = options.strict ?? false;
+    this.#respectDisabled = options.respectDisabled ?? true;
     this.#onInvalidTarget = options.onInvalidTarget;
 
     const history = options.history ?? false;
@@ -354,8 +400,11 @@ export class QueryManager<
       baseOption: options.baseField,
       autoSelectOption: options.autoSelectField,
     });
-    this.#fields = fields;
-    this.#fieldMap = fieldMap;
+    // Both are frozen because `getFields` and `getFieldData` hand their contents out directly.
+    // `prepareOptionList` builds the map's values as separate objects from the list's, so
+    // freezing one does not freeze the other.
+    this.#fields = freeze(fields, true);
+    this.#fieldMap = freeze(fieldMap, true);
 
     this.#operators = prepareOptionList<O>({
       optionList: (options.operators ?? defaultOperators) as FlexibleOptionListProp<O>,
@@ -364,10 +413,14 @@ export class QueryManager<
       autoSelectOption: options.autoSelectOperator,
     }).optionList;
 
-    this.#combinators = prepareOptionList<C>({
-      optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
-      baseOption: options.baseCombinator,
-    }).optionList;
+    // Frozen because `getCombinators` hands this array out directly; see also `#fields`.
+    this.#combinators = freeze(
+      prepareOptionList<C>({
+        optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
+        baseOption: options.baseCombinator,
+      }).optionList,
+      true
+    );
 
     this.#query = freeze(
       query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup(),
@@ -384,31 +437,24 @@ export class QueryManager<
 
   /** Resolves the operator list for a field, mirroring `QueryBuilder`'s precedence. */
   #operatorsFor(field: string): FullOptionList<O> {
-    const fieldData = this.#fieldData(field);
-    return prepareOptionList<O>({
-      optionList: (fieldData?.operators ??
-        this.#options.getOperators?.(field, { fieldData }) ??
-        this.#operators) as FlexibleOptionListProp<O>,
+    return resolveOperatorList<F, O>({
+      field,
+      fieldData: this.#fieldData(field),
+      getOperators: this.#options.getOperators,
+      operators: this.#operators,
       baseOption: this.#options.baseOperator,
-      labelMap: defaultOperatorLabelMap,
       autoSelectOption: this.#options.autoSelectOperator,
-    }).optionList;
+    });
   }
 
   /** Resolves the default operator for a field, mirroring `QueryBuilder`'s precedence. */
   #defaultOperator(field: string): string {
-    const fieldData = this.#fieldData(field);
-
-    if (fieldData?.defaultOperator) return fieldData.defaultOperator;
-
-    const { getDefaultOperator } = this.#options;
-    if (getDefaultOperator) {
-      return typeof getDefaultOperator === 'function'
-        ? getDefaultOperator(field, { fieldData })
-        : getDefaultOperator;
-    }
-
-    return getFirstOption(this.#operatorsFor(field)) ?? '';
+    return resolveDefaultOperator<F>({
+      field,
+      fieldData: this.#fieldData(field),
+      getDefaultOperator: this.#options.getDefaultOperator,
+      getOperators: (f: string) => this.#operatorsFor(f),
+    });
   }
 
   #valueSourcesFor(field: string, operator: string) {
@@ -424,24 +470,22 @@ export class QueryManager<
   }
 
   #valuesFor(field: string, operator: string): FullOptionList<Option> {
-    const fieldData = this.#fieldData(field);
-    return prepareOptionList<FullOption>({
-      optionList:
-        fieldData?.values ?? this.#options.getValues?.(field, operator, { fieldData }) ?? [],
+    return resolveValueList<F>({
+      field,
+      operator,
+      fieldData: this.#fieldData(field),
+      getValues: this.#options.getValues,
       autoSelectOption: this.#options.autoSelectValue,
-    }).optionList;
+    });
   }
 
   #valueEditorTypeFor(field: string, operator: string): ValueEditorType {
-    const fieldData = this.#fieldData(field);
-
-    if (fieldData?.valueEditorType) {
-      return typeof fieldData.valueEditorType === 'function'
-        ? fieldData.valueEditorType(operator)
-        : fieldData.valueEditorType;
-    }
-
-    return this.#options.getValueEditorType?.(field, operator, { fieldData }) ?? 'text';
+    return resolveValueEditorType<F>({
+      field,
+      operator,
+      fieldData: this.#fieldData(field),
+      getValueEditorType: this.#options.getValueEditorType,
+    });
   }
 
   /** Computes the default `value` for a rule, mirroring `QueryBuilder`'s precedence. */
@@ -454,19 +498,40 @@ export class QueryManager<
       getValueEditorType: (f, o) => this.#valueEditorTypeFor(f, o),
       getValues: (f, o) => this.#valuesFor(f, o),
       getDefaultValue: getDefaultValue && ((r, misc) => getDefaultValue(r, misc)),
-      getParameters:
-        getParameters &&
-        ((f, o, misc) =>
-          prepareOptionList<FullOption>({
-            optionList: getParameters(f, o, misc) ?? [],
-            autoSelectOption: this.#options.autoSelectValue,
-          }).optionList),
+      getParameters: getParameters && ((f, o, misc) => this.#parametersFor(f, o, misc)),
     });
   }
 
+  /**
+   * Resolves the parameter list for a field/operator pair, normalized the same way as every
+   * other option list. Shared by {@link QueryManager.#defaultValue} and
+   * {@link QueryManager.getRuleContext} so both see the same shape.
+   */
+  #parametersFor(field: string, operator: string, misc: { fieldData: F }): FullOptionList<Option> {
+    return prepareOptionList<FullOption>({
+      optionList: this.#options.getParameters?.(field, operator, misc) ?? [],
+      autoSelectOption: this.#options.autoSelectValue,
+    }).optionList;
+  }
+
   /** Defaults shared by every mutating method, overridable per call. */
+  #guardOptions(): GuardOptions {
+    const { maxLevels } = this.#options;
+
+    return {
+      // `QueryBuilder` treats a non-positive `maxLevels` as unlimited; match that.
+      maxLevels: (maxLevels ?? 0) > 0 ? Number(maxLevels) : Infinity,
+      respectDisabled: this.#respectDisabled,
+      queryDisabled: this.#options.queryDisabled,
+    };
+  }
+
   #toolOptions() {
-    return { combinators: this.#combinators, idGenerator: this.#idGenerator };
+    return {
+      combinators: this.#combinators,
+      idGenerator: this.#idGenerator,
+      ...this.#guardOptions(),
+    };
   }
 
   /**
@@ -494,6 +559,9 @@ export class QueryManager<
       getRuleDefaultValue: r => this.#defaultValue(r),
       getValueSources: (f, o) => this.#valueSourcesFor(f, o),
       getMatchModes: f => this.#matchModesFor(f),
+      resetOnFieldChange: this.#options.resetOnFieldChange,
+      resetOnOperatorChange: this.#options.resetOnOperatorChange,
+      ...this.#guardOptions(),
     };
   }
 
@@ -616,10 +684,11 @@ export class QueryManager<
   /**
    * The current query. The returned object is frozen and structurally shared, so it is safe to
    * retain and compare by reference to detect changes.
+   *
+   * Like {@link QueryManager.subscribe}, this method is bound to the instance, so it can be
+   * passed as a bare reference (e.g. as the `getSnapshot` argument to `useSyncExternalStore`).
    */
-  getQuery(): RG {
-    return this.#query;
-  }
+  getQuery = (): RG => this.#query;
 
   /** Replaces the current query, ensuring every rule and group has an `id`. */
   setQuery(query: RG): this {
@@ -636,28 +705,15 @@ export class QueryManager<
    * to the query—pass it to {@link QueryManager.add} or {@link QueryManager.insert}.
    */
   createRule(): RuleType {
-    const { getDefaultField } = this.#options;
-
-    let field: string = getFirstOption(this.#fields) ?? '';
-    if (getDefaultField) {
-      field =
-        typeof getDefaultField === 'function' ? getDefaultField(this.#fields) : getDefaultField;
-    }
-
-    const operator = this.#defaultOperator(field);
-    const valueSource = getFirstOption(this.#valueSourcesFor(field, operator)) ?? 'value';
-    const matchMode = getFirstOption(this.#matchModesFor(field));
-
-    const newRule: RuleType = {
-      id: this.#idGenerator(),
-      field,
-      operator,
-      valueSource,
-      value: '',
-      ...(matchMode ? { match: { mode: matchMode, threshold: 1 } } : null),
-    };
-
-    return { ...newRule, value: this.#defaultValue(newRule) };
+    return createRule<F>({
+      fields: this.#fields,
+      getDefaultField: this.#options.getDefaultField,
+      getRuleDefaultOperator: f => this.#defaultOperator(f),
+      getValueSources: (f, o) => this.#valueSourcesFor(f, o),
+      getMatchModes: f => this.#matchModesFor(f),
+      getRuleDefaultValue: r => this.#defaultValue(r),
+      idGenerator: this.#idGenerator,
+    });
   }
 
   /**
@@ -665,18 +721,15 @@ export class QueryManager<
    * added to the query—pass it to {@link QueryManager.add} or {@link QueryManager.insert}.
    */
   createRuleGroup(independentCombinators?: boolean): RG {
-    const rules = this.#options.addRuleToNewGroups ? [this.createRule()] : [];
-
-    if (independentCombinators) {
-      return { id: this.#idGenerator(), rules, not: false } as unknown as RG;
-    }
-
-    return {
-      id: this.#idGenerator(),
-      rules,
-      combinator: getFirstOption(this.#combinators) ?? '',
-      not: false,
-    } as unknown as RG;
+    return createRuleGroup<C>(
+      {
+        combinators: this.#combinators,
+        addRuleToNewGroups: this.#options.addRuleToNewGroups,
+        createRule: () => this.createRule(),
+        idGenerator: this.#idGenerator,
+      },
+      independentCombinators
+    ) as RG;
   }
 
   // #endregion
@@ -708,6 +761,7 @@ export class QueryManager<
     const { strict, onInvalidTarget, ...toolOptions } = options;
     this.#commit(
       remove(this.#query, pathOrID, {
+        ...this.#guardOptions(),
         ...toolOptions,
         onAbort: this.#onAbort({ strict, onInvalidTarget }),
       })
@@ -840,11 +894,14 @@ export class QueryManager<
    * {@link QueryManager.batch batch} notifies once no matter how many changes it contains.
    *
    * Together with {@link QueryManager.getQuery}, this satisfies React's `useSyncExternalStore`
-   * contract. This method is bound to the instance, so it is a stable reference across renders:
+   * contract. Both methods are bound to the instance, so they are stable references across
+   * renders and can be passed directly:
    *
    * ```ts
-   * const query = useSyncExternalStore(q.subscribe, () => q.getQuery());
+   * const query = useSyncExternalStore(q.subscribe, q.getQuery);
    * ```
+   *
+   * In React, prefer the `useQueryManager` hook from `react-querybuilder`, which wraps this.
    */
   subscribe = (listener: () => void): (() => void) => {
     this.#listeners.add(listener);
@@ -1213,6 +1270,116 @@ export class QueryManager<
     if (!findPath(path, this.#query)) return null;
     // An existing non-root node always has a parent group.
     return findPath(getParentPath(path), this.#query) as RG;
+  }
+
+  // #endregion
+
+  // #region Rule configuration
+
+  /**
+   * The normalized field list, as the `QueryBuilder` component would render it. Needed to
+   * populate a field selector.
+   */
+  getFields(): FullOptionList<F> {
+    return this.#fields;
+  }
+
+  /**
+   * The normalized combinator list, as the `QueryBuilder` component would render it. Needed to
+   * populate a combinator selector.
+   */
+  getCombinators(): FullOptionList<C> {
+    return this.#combinators;
+  }
+
+  /**
+   * The field configuration for a field name. When the field isn't configured, returns the same
+   * minimal fallback (`{ name, value, label }`, all set to the field name) that
+   * {@link QueryManager.getRuleContext} reports as `fieldData`, so both access paths agree.
+   */
+  getFieldData(field: string): F {
+    return getFieldData(field, this.#fieldMap) as F;
+  }
+
+  /** The operator list for a field, mirroring `QueryBuilder`'s precedence. */
+  getOperators(field: string): FullOptionList<O> {
+    return this.#operatorsFor(field);
+  }
+
+  /** The value sources available for a field/operator pair. */
+  getValueSources(field: string, operator: string): ValueSourceFullOptions {
+    return this.#valueSourcesFor(field, operator);
+  }
+
+  /** The match modes available for a field. */
+  getMatchModes(field: string): MatchModeOptions {
+    return this.#matchModesFor(field);
+  }
+
+  /** The value option list for a field/operator pair. */
+  getValues(field: string, operator: string): FullOptionList<Option> {
+    return this.#valuesFor(field, operator);
+  }
+
+  /** The value editor type for a field/operator pair. */
+  getValueEditorType(field: string, operator: string): ValueEditorType {
+    return this.#valueEditorTypeFor(field, operator);
+  }
+
+  /**
+   * Resolves everything about a rule that depends on the field/operator configuration—field data,
+   * operators, value editor type, value list, value sources, match modes, and validation result.
+   * Returns `null` when the target can't be resolved or isn't a rule.
+   *
+   * This is the same derivation the `useRule` hook performs, so a non-React implementation can
+   * render a rule without reimplementing the configuration precedence rules.
+   */
+  getRuleContext(pathOrID: Path | string): RuleContext<F> | null {
+    const rule = this.getRule(pathOrID);
+    if (!rule) return null;
+
+    const validation = this.validate();
+
+    return deriveRuleContext<F>(
+      rule,
+      {
+        fields: this.#fields as OptionList<F>,
+        fieldMap: this.#fieldMap,
+        getInputType: (f: string, o: string, misc: { fieldData: F }) =>
+          this.#options.getInputType?.(f, o, misc) ?? null,
+        getMatchModes: (f: string) => this.#matchModesFor(f),
+        getOperators: (f: string) => this.#operatorsFor(f),
+        getParameters: (f: string, o: string, misc: { fieldData: F }) =>
+          this.#parametersFor(f, o, misc),
+        getValueEditorType: (f: string, o: string) => this.#valueEditorTypeFor(f, o),
+        getValues: (f: string, o: string) => this.#valuesFor(f, o),
+        getValueSources: (f: string, o: string) => this.getValueSources(f, o),
+        getSubQueryBuilderProps: (f: string, misc: { fieldData: F }) =>
+          this.#options.getSubQueryBuilderProps?.(f, misc) ?? {},
+      },
+      {
+        validationMap: typeof validation === 'boolean' ? {} : validation,
+        id: rule.id,
+      }
+    );
+  }
+
+  /**
+   * Resolves everything about a rule group that depends on the combinator configuration, plus its
+   * validation result. Returns `null` when the target can't be resolved or isn't a group.
+   *
+   * This is the same derivation the `useRuleGroup` hook performs.
+   */
+  getRuleGroupContext(pathOrID: Path | string = []): RuleGroupContext<C> | null {
+    const ruleGroup = this.getGroup(pathOrID);
+    if (!ruleGroup) return null;
+
+    const validation = this.validate();
+
+    return deriveRuleGroupContext<C>(ruleGroup, this.#combinators, {
+      validationMap: typeof validation === 'boolean' ? {} : validation,
+      id: ruleGroup.id,
+    });
   }
 
   // #endregion

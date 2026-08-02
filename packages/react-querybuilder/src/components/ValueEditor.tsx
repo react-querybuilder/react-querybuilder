@@ -1,11 +1,13 @@
 import type { FullField, InputType, ParseNumberMethod } from '@react-querybuilder/core';
 import {
-  clsx,
+  coerceBigIntValue,
+  coerceInputType,
+  deriveRuleClassName,
   getFirstOption,
+  getMultiValueUpdate,
   getParseNumberMethod,
-  joinWith,
+  getValueEditorReset,
   parseNumber,
-  standardClassnames,
   toArray,
 } from '@react-querybuilder/core';
 import * as React from 'react';
@@ -310,14 +312,15 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
   } = props;
 
   useEffect(() => {
-    if (
-      !skipHook &&
-      type !== 'multiselect' &&
-      !['between', 'notBetween', 'in', 'notIn'].includes(operator) &&
-      (Array.isArray(value) ||
-        (inputType === 'number' && typeof value === 'string' && value.includes(',')))
-    ) {
-      handleOnChange(toArray(value, { retainEmptyStrings: true })[0] ?? '');
+    const { reset, value: nextValue } = getValueEditorReset({
+      skipHook,
+      type: type ?? undefined,
+      operator,
+      value,
+      inputType,
+    });
+    if (reset) {
+      handleOnChange(nextValue);
     }
   }, [handleOnChange, inputType, operator, skipHook, type, value]);
 
@@ -329,58 +332,35 @@ export const useValueEditor = <F extends FullField = FullField, O extends string
   );
 
   const multiValueHandler = useCallback(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    (val: any, idx: number) => {
-      const parsedVal = parseNumber(val, { parseNumbers: parseNumberMethod });
-      const needsBetweenFix =
-        idx === 0 &&
-        (operator === 'between' || operator === 'notBetween') &&
-        (valueAsArray.length < 2 || valueAsArray[1] === undefined);
-      // Check if value at index is already the same and no between/notBetween fix needed
-      if (valueAsArray[idx] === parsedVal && !needsBetweenFix) {
-        // Return the array as-is
-        handleOnChange(listsAsArrays ? valueAsArray : joinWith(valueAsArray, ','));
-        return;
-      }
-      const v = [...valueAsArray];
-      v[idx] = parsedVal;
-      // Enforce an array length of (at least) two for "between"/"notBetween"
-      if (needsBetweenFix) {
-        v[1] = getFirstOption(values)!;
-      }
-      handleOnChange(listsAsArrays ? v : joinWith(v, ','));
+    (val: unknown, idx: number) => {
+      handleOnChange(
+        getMultiValueUpdate({
+          value: val,
+          index: idx,
+          valueAsArray,
+          operator,
+          values,
+          listsAsArrays,
+          parseNumberMethod,
+        })
+      );
     },
     [handleOnChange, listsAsArrays, operator, parseNumberMethod, valueAsArray, values]
   );
 
   const bigIntValueHandler = useCallback(
     (v: unknown) => {
-      const valAsMaybeNumber = parseNumber(v, {
-        parseNumbers: parseNumberMethod,
-        bigIntOnOverflow: true,
-      });
-      let bi: bigint;
-      try {
-        bi = BigInt(valAsMaybeNumber);
-      } catch {
-        handleOnChange(valAsMaybeNumber);
-        return;
-      }
-      handleOnChange(bi);
+      handleOnChange(coerceBigIntValue(v, parseNumberMethod));
     },
     [handleOnChange, parseNumberMethod]
   );
 
-  const valueListItemClassName = clsx(
-    suppressStandardClassnames || standardClassnames.valueListItem,
-    // Optional chaining is necessary for QueryBuilderNative
-    classNamesProp?.valueListItem
-  );
+  const valueListItemClassName = deriveRuleClassName('valueListItem', {
+    classNames: classNamesProp,
+    suppressStandardClassnames,
+  });
 
-  const inputTypeCoerced =
-    inputType === 'bigint' || operator === 'in' || operator === 'notIn'
-      ? 'text'
-      : inputType || 'text';
+  const inputTypeCoerced = coerceInputType(inputType, operator);
 
   return {
     valueAsArray,

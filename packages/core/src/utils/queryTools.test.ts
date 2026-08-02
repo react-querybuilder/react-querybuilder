@@ -8,6 +8,7 @@ import type {
   DefaultRuleType,
   Path,
   RuleGroupType,
+  RuleType,
   ValueSources,
 } from '../types';
 import { formatQuery } from './formatQuery';
@@ -16,6 +17,8 @@ import { numericRegex } from './misc';
 import {
   add,
   addInPlace,
+  exceedsMaxLevels,
+  getGuardAbortReason,
   group,
   groupInPlace,
   insert,
@@ -1574,6 +1577,199 @@ describe('onAbort', () => {
       expect(group(rg3, [0], [5], { onAbort })).toBe(rg3);
       expect(reasons()).toEqual(['target-not-found']);
       expect(onAbort.mock.calls[0][0]).toMatchObject({ pathOrID: [5] });
+    });
+  });
+});
+
+describe('guard options', () => {
+  const disabledRuleQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { id: 'r1', field: 'f1', operator: '=', value: 'v1', disabled: true },
+      { id: 'r2', field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+  const disabledGroupQuery: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      {
+        id: 'g1',
+        combinator: 'and',
+        disabled: true,
+        rules: [{ id: 'r1', field: 'f1', operator: '=', value: 'v1' }],
+      },
+    ],
+  };
+  const guards = { respectDisabled: true } as const;
+
+  describe('respectDisabled', () => {
+    it('is off by default', () => {
+      expect(update(disabledRuleQuery, 'value', 'x', [0])).not.toBe(disabledRuleQuery);
+    });
+
+    it('blocks update of a disabled rule', () => {
+      const onAbort = vi.fn();
+      expect(update(disabledRuleQuery, 'value', 'x', [0], { ...guards, onAbort })).toBe(
+        disabledRuleQuery
+      );
+      expect(onAbort).toHaveBeenCalledWith(
+        expect.objectContaining({ reason: 'target-disabled', operation: 'update' })
+      );
+    });
+
+    it('always allows toggling `disabled` itself', () => {
+      const next = update(disabledRuleQuery, 'disabled', false, [0], guards);
+      expect((next.rules[0] as RuleType).disabled).toBe(false);
+    });
+
+    it('blocks a descendant of a disabled group', () => {
+      expect(update(disabledGroupQuery, 'value', 'x', [0, 0], guards)).toBe(disabledGroupQuery);
+    });
+
+    it('leaves enabled siblings alone', () => {
+      expect(update(disabledRuleQuery, 'value', 'x', [1], guards)).not.toBe(disabledRuleQuery);
+    });
+
+    it('blocks remove, move, and group', () => {
+      expect(remove(disabledRuleQuery, [0], guards)).toBe(disabledRuleQuery);
+      expect(move(disabledRuleQuery, [0], [2], guards)).toBe(disabledRuleQuery);
+      expect(group(disabledRuleQuery, [0], [1], guards)).toBe(disabledRuleQuery);
+    });
+
+    it('blocks add into a disabled group', () => {
+      const onAbort = vi.fn();
+      expect(
+        add(disabledGroupQuery, { field: 'f1', operator: '=', value: '' }, [0], {
+          ...guards,
+          onAbort,
+        })
+      ).toBe(disabledGroupQuery);
+      expect(onAbort).toHaveBeenCalledWith(
+        expect.objectContaining({ reason: 'parent-disabled', operation: 'add' })
+      );
+    });
+
+    it('resolves an `id` as well as a path', () => {
+      expect(update(disabledRuleQuery, 'value', 'x', 'r1', guards)).toBe(disabledRuleQuery);
+    });
+  });
+
+  describe('queryDisabled', () => {
+    it('blocks every mutation', () => {
+      const q = { queryDisabled: true } as const;
+      expect(update(disabledRuleQuery, 'value', 'x', [1], q)).toBe(disabledRuleQuery);
+      expect(remove(disabledRuleQuery, [1], q)).toBe(disabledRuleQuery);
+    });
+
+    it('blocks add, reporting the parent as disabled', () => {
+      const onAbort = vi.fn();
+      expect(
+        add(disabledRuleQuery, { field: 'f1', operator: '=', value: '' }, [], {
+          queryDisabled: true,
+          onAbort,
+        })
+      ).toBe(disabledRuleQuery);
+      expect(onAbort).toHaveBeenCalledWith(
+        expect.objectContaining({ reason: 'parent-disabled', operation: 'add' })
+      );
+    });
+
+    it('blocks even a `disabled` update', () => {
+      expect(update(disabledRuleQuery, 'disabled', false, [0], { queryDisabled: true })).toBe(
+        disabledRuleQuery
+      );
+    });
+  });
+
+  describe('maxLevels', () => {
+    const q: RuleGroupType = { combinator: 'and', rules: [] };
+
+    it('is unlimited by default', () => {
+      expect(add(q, { combinator: 'and', rules: [] }, []).rules).toHaveLength(1);
+    });
+
+    it('blocks a group at or beyond the limit', () => {
+      const onAbort = vi.fn();
+      expect(add(q, { combinator: 'and', rules: [] }, [], { maxLevels: 0, onAbort })).toBe(q);
+      expect(onAbort).toHaveBeenCalledWith(
+        expect.objectContaining({ reason: 'max-levels-exceeded', operation: 'add' })
+      );
+    });
+
+    it('does not affect rules', () => {
+      expect(
+        add(q, { field: 'f1', operator: '=', value: '' }, [], { maxLevels: 0 }).rules
+      ).toHaveLength(1);
+    });
+
+    it('resolves a parent `id` when checking depth', () => {
+      const nested: RuleGroupType = {
+        combinator: 'and',
+        rules: [{ id: 'g1', combinator: 'and', rules: [] }],
+      };
+      expect(add(nested, { combinator: 'and', rules: [] }, 'g1', { maxLevels: 1 })).toBe(nested);
+    });
+
+    it('applies to insert as well', () => {
+      expect(insert(q, { combinator: 'and', rules: [] }, [0], { maxLevels: 0 })).toBe(q);
+    });
+  });
+
+  describe('getGuardAbortReason', () => {
+    it('returns null when no guards are configured', () => {
+      expect(getGuardAbortReason(disabledRuleQuery, [0])).toBeNull();
+    });
+
+    it('resolves an `id`', () => {
+      expect(getGuardAbortReason(disabledRuleQuery, 'r1', guards)).toBe('target-disabled');
+      expect(getGuardAbortReason(disabledRuleQuery, 'r2', guards)).toBeNull();
+    });
+
+    it('returns null for an unresolvable `id`', () => {
+      expect(getGuardAbortReason(disabledRuleQuery, 'nope', guards)).toBeNull();
+    });
+
+    it('returns null for an undefined target', () => {
+      expect(getGuardAbortReason(disabledRuleQuery, undefined, guards)).toBeNull();
+    });
+
+    it('reports the parent variant when asked', () => {
+      expect(getGuardAbortReason(disabledRuleQuery, 'r1', guards, { asParent: true })).toBe(
+        'parent-disabled'
+      );
+    });
+  });
+
+  describe('exceedsMaxLevels', () => {
+    it('is false without a path or limit', () => {
+      expect(exceedsMaxLevels(undefined)).toBe(false);
+      expect(exceedsMaxLevels([0, 1])).toBe(false);
+    });
+
+    it('compares depth against the limit', () => {
+      expect(exceedsMaxLevels([0], { maxLevels: 1 })).toBe(true);
+      expect(exceedsMaxLevels([], { maxLevels: 1 })).toBe(false);
+    });
+  });
+
+  describe('insert', () => {
+    it('blocks insertion into a disabled group', () => {
+      const onAbort = vi.fn();
+      expect(
+        insert(disabledGroupQuery, { field: 'f1', operator: '=', value: '' }, [0, 0], {
+          ...guards,
+          onAbort,
+        })
+      ).toBe(disabledGroupQuery);
+      expect(onAbort).toHaveBeenCalledWith(
+        expect.objectContaining({ reason: 'parent-disabled', operation: 'insert' })
+      );
+    });
+
+    it('allows insertion into an enabled group', () => {
+      expect(
+        insert(disabledRuleQuery, { field: 'f1', operator: '=', value: '' }, [1], guards).rules
+      ).toHaveLength(3);
     });
   });
 });

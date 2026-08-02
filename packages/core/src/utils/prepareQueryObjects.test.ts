@@ -1,6 +1,11 @@
 import type { RuleGroupType, RuleGroupTypeIC, RuleType } from '../types';
 import { uuidV4regex } from './generateID';
-import { prepareRule, prepareRuleGroup, prepareRuleOrGroup } from './prepareQueryObjects';
+import {
+  prepareRule,
+  prepareRuleGroup,
+  prepareRuleOrGroup,
+  resolveCandidateQuery,
+} from './prepareQueryObjects';
 
 describe('prepareRule', () => {
   it('should not generate new ID if rule provides it', () => {
@@ -106,5 +111,51 @@ describe('prepareRuleOrGroup', () => {
     expect(
       prepareRuleOrGroup({ field: 'firstName', operator: '=', value: 'Test without ID' }).id
     ).toMatch(uuidV4regex);
+  });
+});
+
+describe('resolveCandidateQuery', () => {
+  const fallbackQuery: RuleGroupType = { id: 'fallback', combinator: 'and', rules: [] };
+  const controlled: RuleGroupType = { id: 'controlled', combinator: 'and', rules: [] };
+  const stored: RuleGroupType = { id: 'stored', combinator: 'and', rules: [] };
+  const defaulted: RuleGroupType = { id: 'defaulted', combinator: 'and', rules: [] };
+
+  it('prefers the controlled query', () => {
+    expect(
+      resolveCandidateQuery({
+        query: controlled,
+        storeQuery: stored,
+        defaultQuery: defaulted,
+        fallbackQuery,
+      }).id
+    ).toBe('controlled');
+  });
+
+  it('falls back to the store, then the default, then the fallback', () => {
+    expect(
+      resolveCandidateQuery({ storeQuery: stored, defaultQuery: defaulted, fallbackQuery }).id
+    ).toBe('stored');
+    expect(resolveCandidateQuery({ defaultQuery: defaulted, fallbackQuery }).id).toBe('defaulted');
+    expect(resolveCandidateQuery({ fallbackQuery }).id).toBe('fallback');
+  });
+
+  it('prepares a query that has no id', () => {
+    const raw = { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] };
+    const result = resolveCandidateQuery({ query: raw as RuleGroupType, fallbackQuery });
+    expect(result.id).toBeDefined();
+    expect((result.rules[0] as RuleType).id).toBeDefined();
+  });
+
+  it('leaves an already-prepared query untouched', () => {
+    expect(resolveCandidateQuery({ query: controlled, fallbackQuery })).toBe(controlled);
+  });
+
+  it('uses the given idGenerator', () => {
+    let i = 0;
+    const result = resolveCandidateQuery(
+      { query: { combinator: 'and', rules: [] } as RuleGroupType, fallbackQuery },
+      { idGenerator: () => `id-${i++}` }
+    );
+    expect(result.id).toBe('id-0');
   });
 });

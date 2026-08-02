@@ -84,3 +84,29 @@ export const prepareRuleOrGroup = (
   { idGenerator = generateID }: PreparerOptions = {}
 ): RuleGroupType | RuleGroupTypeIC | RuleType =>
   isRuleGroup(rg) ? prepareRuleGroup(rg, { idGenerator }) : prepareRule(rg, { idGenerator });
+
+/**
+ * Resolves the query a query builder should render from the available sources, in precedence
+ * order: the controlled `query`, then whatever is already in the store, then the uncontrolled
+ * `defaultQuery`, then a freshly created empty group.
+ *
+ * The result is prepared with {@link prepareRuleGroup} unless it already has an `id`, which is
+ * taken to mean it has been prepared before—most often because the caller is passing back the
+ * object it received from `onQueryChange`.
+ *
+ * @group Query Tools
+ */
+export const resolveCandidateQuery = <RG extends RuleGroupTypeAny>(
+  sources: {
+    query?: RG;
+    storeQuery?: RG;
+    defaultQuery?: RG;
+    fallbackQuery: RG;
+  },
+  options?: { idGenerator?: () => string }
+): RG => {
+  const candidateQuery =
+    sources.query ?? sources.storeQuery ?? sources.defaultQuery ?? sources.fallbackQuery;
+
+  return candidateQuery.id ? candidateQuery : prepareRuleGroup(candidateQuery, options);
+};

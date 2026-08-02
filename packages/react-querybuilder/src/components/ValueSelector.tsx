@@ -1,5 +1,5 @@
 import type { FullOption } from '@react-querybuilder/core';
-import { joinWith, toArray } from '@react-querybuilder/core';
+import { getValueSelectorUpdate, normalizeValueSelectorValue } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { useSelectElementChangeHandler } from '../hooks/useSelectElementChangeHandler';
@@ -62,19 +62,12 @@ export const useValueSelector = (
 
   const onChange = useCallback(
     (v: string | string[]) => {
-      if (multiple) {
-        const valueAsArray = toArray(v);
-        handleOnChange(listsAsArrays ? valueAsArray : joinWith(valueAsArray, ','));
-      } else {
-        handleOnChange(v);
-      }
+      handleOnChange(getValueSelectorUpdate(v, { multiple, listsAsArrays }));
     },
     [handleOnChange, listsAsArrays, multiple]
   );
 
-  // Normalize multiselect values to strings so they match option names,
-  // which are always strings (e.g., value [42] becomes ["42"]).
-  const val = useMemo(() => (multiple ? toArray(value).map(String) : value), [multiple, value]);
+  const val = useMemo(() => normalizeValueSelectorValue(value, multiple), [multiple, value]);
 
   return {
     onChange,

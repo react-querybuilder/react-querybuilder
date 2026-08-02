@@ -3495,6 +3495,10 @@ describe('debug mode', () => {
     await user.click(screen.getByTestId(TestID.removeGroup));
     expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.remove });
 
+    // Restore a second rule so that path [1] resolves; `groupRule` aborts on a stale path.
+    await user.click(screen.getByTestId(TestID.addRule));
+    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.add });
+
     await user.click(screen.getAllByText('groupRule')[0]);
     expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.group });
   });
