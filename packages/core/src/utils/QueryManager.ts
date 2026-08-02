@@ -41,10 +41,14 @@ import type {
   ValidationMap,
   ValueEditorType,
   ValueSourceFlexibleOptions,
+  OptionList,
+  ValueSourceFullOptions,
   ValueSources,
 } from '../types';
 import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
+import type { RuleContext } from './deriveRuleContext';
+import { deriveRuleContext } from './deriveRuleContext';
 import { formatQuery } from './formatQuery';
 import type {
   defaultRuleGroupProcessorDrizzle,
@@ -1217,6 +1221,78 @@ export class QueryManager<
     if (!findPath(path, this.#query)) return null;
     // An existing non-root node always has a parent group.
     return findPath(getParentPath(path), this.#query) as RG;
+  }
+
+  // #endregion
+
+  // #region Rule configuration
+
+  /**
+   * The field configuration for a field name, or an empty object when the field isn't configured.
+   */
+  getFieldData(field: string): F {
+    return this.#fieldData(field);
+  }
+
+  /** The operator list for a field, mirroring `QueryBuilder`'s precedence. */
+  getOperators(field: string): FullOptionList<O> {
+    return this.#operatorsFor(field);
+  }
+
+  /** The value sources available for a field/operator pair. */
+  getValueSources(field: string, operator: string): ValueSourceFullOptions {
+    return this.#valueSourcesFor(field, operator);
+  }
+
+  /** The match modes available for a field. */
+  getMatchModes(field: string): MatchModeOptions {
+    return this.#matchModesFor(field);
+  }
+
+  /** The value option list for a field/operator pair. */
+  getValues(field: string, operator: string): FullOptionList<Option> {
+    return this.#valuesFor(field, operator);
+  }
+
+  /** The value editor type for a field/operator pair. */
+  getValueEditorType(field: string, operator: string): ValueEditorType {
+    return this.#valueEditorTypeFor(field, operator);
+  }
+
+  /**
+   * Resolves everything about a rule that depends on the field/operator configuration—field data,
+   * operators, value editor type, value list, value sources, match modes, and validation result.
+   * Returns `null` when the target can't be resolved or isn't a rule.
+   *
+   * This is the same derivation the `useRule` hook performs, so a non-React implementation can
+   * render a rule without reimplementing the configuration precedence rules.
+   */
+  getRuleContext(pathOrID: Path | string): RuleContext<F> | null {
+    const rule = this.getRule(pathOrID);
+    if (!rule) return null;
+
+    const validation = this.validate();
+
+    return deriveRuleContext<F>(
+      rule,
+      {
+        fields: this.#fields as OptionList<F>,
+        fieldMap: this.#fieldMap,
+        // `QueryManager` has no `getInputType` option; field-level `inputType` still applies.
+        getInputType: () => null,
+        getMatchModes: (f: string) => this.#matchModesFor(f),
+        getOperators: (f: string) => this.#operatorsFor(f),
+        getParameters: (f: string, o: string, misc: { fieldData: F }) =>
+          this.#options.getParameters?.(f, o, misc) ?? [],
+        getValueEditorType: (f: string, o: string) => this.#valueEditorTypeFor(f, o),
+        getValues: (f: string, o: string) => this.#valuesFor(f, o),
+        getValueSources: (f: string, o: string) => this.getValueSources(f, o),
+      },
+      {
+        validationMap: typeof validation === 'boolean' ? {} : validation,
+        id: rule.id,
+      }
+    );
   }
 
   // #endregion

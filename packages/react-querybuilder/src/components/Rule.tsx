@@ -17,20 +17,24 @@ import type {
   ValueSources,
 } from '@react-querybuilder/core';
 import {
-  clsx,
-  filterFieldsByComparator,
+  deriveRuleClassNames,
+  deriveRuleOuterClassName,
+  getFieldData,
+  getRuleInputType,
   getOption,
+  getParametersAsList,
+  getRuleValidationResult,
+  getRuleValueEditorType,
+  getRuleValues,
+  getRuleValueSourceOptions,
+  hideValueControlsForOperator,
   getParentPath,
   getValidationClassNames,
-  isFlexibleOptionArray,
-  isFlexibleOptionGroupArray,
   isPojo,
   isRuleGroup,
   lc,
   rootPath,
-  standardClassnames,
   TestID,
-  toFullOptionList,
 } from '@react-querybuilder/core';
 import type { MouseEvent } from 'react';
 import * as React from 'react';
@@ -556,84 +560,8 @@ export const useRule = (props: RuleProps): UseRule => {
   );
 
   const classNames = useMemo(
-    () => ({
-      shiftActions: clsx(
-        suppressStandardClassnames || standardClassnames.shiftActions,
-        classNamesProp.shiftActions
-      ),
-      dragHandle: clsx(
-        suppressStandardClassnames || standardClassnames.dragHandle,
-        classNamesProp.dragHandle
-      ),
-      fields: clsx(
-        suppressStandardClassnames || standardClassnames.fields,
-        classNamesProp.valueSelector,
-        classNamesProp.fields
-      ),
-      matchMode: clsx(
-        suppressStandardClassnames || standardClassnames.matchMode,
-        classNamesProp.valueSelector,
-        classNamesProp.matchMode
-      ),
-      matchThreshold: clsx(
-        suppressStandardClassnames || standardClassnames.matchThreshold,
-        classNamesProp.valueSelector,
-        classNamesProp.matchThreshold
-      ),
-      operators: clsx(
-        suppressStandardClassnames || standardClassnames.operators,
-        classNamesProp.valueSelector,
-        classNamesProp.operators
-      ),
-      valueSource: clsx(
-        suppressStandardClassnames || standardClassnames.valueSource,
-        classNamesProp.valueSelector,
-        classNamesProp.valueSource
-      ),
-      value: clsx(suppressStandardClassnames || standardClassnames.value, classNamesProp.value),
-      cloneRule: clsx(
-        suppressStandardClassnames || standardClassnames.cloneRule,
-        classNamesProp.actionElement,
-        classNamesProp.cloneRule
-      ),
-      lockRule: clsx(
-        suppressStandardClassnames || standardClassnames.lockRule,
-        classNamesProp.actionElement,
-        classNamesProp.lockRule
-      ),
-      muteRule: clsx(
-        suppressStandardClassnames || standardClassnames.muteRule,
-        classNamesProp.actionElement,
-        classNamesProp.muteRule
-      ),
-      removeRule: clsx(
-        suppressStandardClassnames || standardClassnames.removeRule,
-        classNamesProp.actionElement,
-        classNamesProp.removeRule
-      ),
-      valueListItem: clsx(
-        suppressStandardClassnames || standardClassnames.valueListItem,
-        classNamesProp.valueListItem
-      ),
-    }),
-    [
-      classNamesProp.shiftActions,
-      classNamesProp.dragHandle,
-      classNamesProp.valueSelector,
-      classNamesProp.fields,
-      classNamesProp.matchMode,
-      classNamesProp.matchThreshold,
-      classNamesProp.operators,
-      classNamesProp.valueSource,
-      classNamesProp.value,
-      classNamesProp.actionElement,
-      classNamesProp.cloneRule,
-      classNamesProp.lockRule,
-      classNamesProp.muteRule,
-      classNamesProp.removeRule,
-      classNamesProp.valueListItem,
-      suppressStandardClassnames,
-    ]
+    () => deriveRuleClassNames({ classNames: classNamesProp, suppressStandardClassnames }),
+    [classNamesProp, suppressStandardClassnames]
   );
 
   const getChangeHandler = useCallback(
@@ -700,11 +628,11 @@ export const useRule = (props: RuleProps): UseRule => {
   );
 
   const fieldData: FullField = useMemo(
-    () => fieldMap?.[rule.field] ?? { name: rule.field, value: rule.field, label: rule.field },
+    () => getFieldData(rule.field, fieldMap),
     [fieldMap, rule.field]
   );
   const inputType = useMemo(
-    () => fieldData.inputType ?? getInputType(rule.field, rule.operator, { fieldData }),
+    () => getRuleInputType(rule.field, rule.operator, fieldData, getInputType),
     [fieldData, getInputType, rule.field, rule.operator]
   );
   const matchModes = useMemo(
@@ -719,19 +647,16 @@ export const useRule = (props: RuleProps): UseRule => {
     () => getOption(operators, rule.operator),
     [operators, rule.operator]
   );
-  const arity = operatorObject?.arity;
-  const hideValueControls =
-    (typeof arity === 'string' && arity === 'unary') || (typeof arity === 'number' && arity < 2);
-  const valueSourceOptions = useMemo(() => {
-    const configuredVSs = getValueSources(rule.field, rule.operator, { fieldData });
-    if (rule.valueSource && !getOption(configuredVSs, rule.valueSource)) {
-      return [
-        ...configuredVSs,
-        { name: rule.valueSource, value: rule.valueSource, label: rule.valueSource },
-      ] as ValueSourceFullOptions;
-    }
-    return configuredVSs;
-  }, [fieldData, getValueSources, rule.field, rule.operator, rule.valueSource]);
+  const hideValueControls = hideValueControlsForOperator(operatorObject);
+  const valueSourceOptions = useMemo(
+    () =>
+      getRuleValueSourceOptions(
+        { field: rule.field, operator: rule.operator, valueSource: rule.valueSource },
+        fieldData,
+        getValueSources
+      ),
+    [fieldData, getValueSources, rule.field, rule.operator, rule.valueSource]
+  );
   const valueSources = useMemo(
     () => valueSourceOptions.map(({ value }) => value) as ValueSources,
     [valueSourceOptions]
@@ -740,36 +665,32 @@ export const useRule = (props: RuleProps): UseRule => {
     () => getParameters(rule.field, rule.operator, { fieldData }),
     [fieldData, getParameters, rule.field, rule.operator]
   );
-  const parametersAsList = useMemo(
-    () => (parameters && parameters.length > 0 ? parameters : null),
-    [parameters]
-  );
+  const parametersAsList = useMemo(() => getParametersAsList(parameters), [parameters]);
   const valueEditorType = useMemo(
     () =>
-      rule.valueSource === 'field'
-        ? 'select'
-        : rule.valueSource === 'parameter'
-          ? parametersAsList
-            ? lc(rule.operator) === 'in' || lc(rule.operator) === 'notin'
-              ? 'multiselect'
-              : 'select'
-            : 'text'
-          : getValueEditorType(rule.field, rule.operator, { fieldData }),
+      getRuleValueEditorType(
+        { field: rule.field, operator: rule.operator, valueSource: rule.valueSource },
+        fieldData,
+        parametersAsList,
+        getValueEditorType
+      ),
     [fieldData, getValueEditorType, parametersAsList, rule.field, rule.operator, rule.valueSource]
   );
   const valueEditorSeparator = useMemo(
     () => getValueEditorSeparator(rule.field, rule.operator, { fieldData }),
     [fieldData, getValueEditorSeparator, rule.field, rule.operator]
   );
-  const values = useMemo(() => {
-    const v =
-      rule.valueSource === 'field'
-        ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : rule.valueSource === 'parameter'
-          ? (parametersAsList ?? [])
-          : getValues(rule.field, rule.operator, { fieldData });
-    return isFlexibleOptionArray(v) || isFlexibleOptionGroupArray(v) ? toFullOptionList(v) : v;
-  }, [fieldData, fields, getValues, parametersAsList, rule.field, rule.operator, rule.valueSource]);
+  const values = useMemo(
+    () =>
+      getRuleValues(
+        { field: rule.field, operator: rule.operator, valueSource: rule.valueSource },
+        fieldData,
+        fields,
+        parametersAsList,
+        getValues
+      ),
+    [fieldData, fields, getValues, parametersAsList, rule.field, rule.operator, rule.valueSource]
+  );
   const subQueryBuilderProps = useMemo(
     () => getSubQueryBuilderProps(rule.field, { fieldData }) as Record<string, unknown>,
     [fieldData, getSubQueryBuilderProps, rule.field]
@@ -782,9 +703,12 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const validationResult = useMemo(
     () =>
-      validationMap[
+      getRuleValidationResult(
+        rule,
+        fieldData,
+        validationMap,
         id ?? /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */
-      ] ?? (typeof fieldData.validator === 'function' ? fieldData.validator(rule) : null),
+      ),
     [fieldData, id, rule, validationMap]
   );
   const validationClassName = useMemo(
@@ -797,44 +721,26 @@ export const useRule = (props: RuleProps): UseRule => {
 
   const outerClassName = useMemo(
     () =>
-      clsx(
-        getRuleClassname(rule, { fieldData }),
-        fieldBasedClassName,
-        operatorBasedClassName,
-        suppressStandardClassnames || standardClassnames.rule,
-        classNamesProp.rule,
-        // custom conditional classes
-        disabled && classNamesProp.disabled,
-        muted && classNamesProp.muted,
-        isDragging && classNamesProp.dndDragging,
-        isOver && classNamesProp.dndOver,
-        isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
-        isOver && groupItems && classNamesProp.dndGroup,
-        dropNotAllowed && classNamesProp.dndDropNotAllowed,
-        hasSubQuery && classNamesProp.hasSubQuery,
-        // standard conditional classes
-        suppressStandardClassnames || {
-          [standardClassnames.disabled]: disabled,
-          [standardClassnames.muted]: muted,
-          [standardClassnames.dndDragging]: isDragging,
-          [standardClassnames.dndOver]: isOver,
-          [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
-          [standardClassnames.dndGroup]: isOver && groupItems,
-          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
-          [standardClassnames.hasSubQuery]: hasSubQuery,
-        },
-        validationClassName
-      ),
+      deriveRuleOuterClassName({
+        classNames: classNamesProp,
+        suppressStandardClassnames,
+        leadingClassNames: [
+          getRuleClassname(rule, { fieldData }),
+          fieldBasedClassName,
+          operatorBasedClassName,
+        ],
+        disabled,
+        muted,
+        isDragging,
+        isOver,
+        dropEffect,
+        groupItems,
+        dropNotAllowed,
+        hasSubQuery,
+        validationClassName,
+      }),
     [
-      classNamesProp.disabled,
-      classNamesProp.muted,
-      classNamesProp.dndCopy,
-      classNamesProp.dndDragging,
-      classNamesProp.dndGroup,
-      classNamesProp.dndOver,
-      classNamesProp.dndDropNotAllowed,
-      classNamesProp.hasSubQuery,
-      classNamesProp.rule,
+      classNamesProp,
       disabled,
       dropEffect,
       dropNotAllowed,

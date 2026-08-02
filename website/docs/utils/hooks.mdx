@@ -162,6 +162,8 @@ function useRule(props: RuleProps): {
 };
 ```
 
+The configuration-dependent half of its result—field data, operators, value editor type, value list, value sources, match modes, and validation result—is derived by the framework-agnostic `deriveRuleContext` utility from `@react-querybuilder/core`. [`QueryManager.getRuleContext()`](./query-management#rule-configuration) calls the same utility, so non-React implementations resolve rules identically. Its `classNames` and `outerClassName` come from the equally framework-agnostic [`deriveRuleClassNames`/`deriveRuleOuterClassName`](./query-management#classnames).
+
 ### `useRuleGroup`
 
 Called by the [`RuleGroup`](../components/rulegroup) component. See [source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/hooks/useRuleGroup.ts) for returned properties.
@@ -171,6 +173,8 @@ function useRuleGroup(props: RuleGroupProps): {
   // See source code for returned properties
 };
 ```
+
+Its `classNames` come from [`deriveRuleGroupClassNames`](./query-management#classnames).
 
 ### `useValueEditor`
 

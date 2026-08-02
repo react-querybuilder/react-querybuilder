@@ -354,6 +354,75 @@ Unlike the standalone `findPath`, which can return `undefined` for an out-of-ran
 
 :::
 
+### Rule configuration
+
+These methods resolve the same field/operator configuration the `QueryBuilder` component uses, applying the same precedence rules (field-level properties first, then the corresponding `get*` option, then the manager-level defaults).
+
+- `getFieldData(field): FullField` — The configured field, or an empty object if the field isn't configured.
+- `getOperators(field): FullOptionList<FullOperator>` — The operator list for a field.
+- `getValueSources(field, operator): ValueSourceFullOptions` — The available value sources.
+- `getMatchModes(field): MatchModeOptions` — The available match modes.
+- `getValues(field, operator): FullOptionList<Option>` — The value option list.
+- `getValueEditorType(field, operator): ValueEditorType` — The value editor type.
+
+`getRuleContext(pathOrID)` resolves all of the above for a specific rule at once, plus its validation result, returning `null` when the target can't be resolved or isn't a rule.
+
+```ts
+interface RuleContext {
+  fieldData: FullField;
+  hideValueControls: boolean;
+  inputType: InputType | null;
+  matchModes: MatchModeOptions;
+  operatorObject: FullOperator | undefined;
+  operators: OptionList<FullOperator>;
+  parameters: FlexibleOptionList<Option> | null;
+  validationResult: boolean | ValidationResult;
+  valueEditorType: ValueEditorType;
+  values: FlexibleOptionList<Option>;
+  valueSourceOptions: ValueSourceFullOptions;
+  valueSources: ValueSources;
+}
+```
+
+This is the same derivation the [`useRule`](./hooks#userule) hook performs—both call the shared `deriveRuleContext` utility—so a non-React implementation can render a rule without reimplementing the precedence rules.
+
+```ts
+const ctx = q.getRuleContext([0]);
+// => { fieldData: { name: 'firstName', ... }, valueEditorType: 'text', valueSources: ['value'], ... }
+```
+
+:::note
+
+`QueryManager` has no `getInputType` option, so `inputType` reflects only a field's own `inputType` property and is otherwise `null`.
+
+:::
+
+### Classnames
+
+`@react-querybuilder/core` also exports the classname derivations used by `useRule` and `useRuleGroup`, so an implementation in any framework can produce a byte-identical `class` attribute for every element:
+
+- `deriveRuleClassNames({ classNames, suppressStandardClassnames })` — the per-element classnames for a rule (`fields`, `operators`, `value`, `removeRule`, and so on).
+- `deriveRuleOuterClassName({ classNames, suppressStandardClassnames, ...state })` — the rule's wrapper classname, including conditional state classes for `disabled`, `muted`, drag-and-drop, subqueries, and validation.
+- `deriveRuleGroupClassNames({ classNames, suppressStandardClassnames, ...dndState })` — the per-element classnames for a rule group, including its `header`.
+
+Each takes the merged [`controlClassnames`](../components/querybuilder#controlclassnames) object and returns plain strings.
+
+Composition is declared as data rather than code: every derived classname names the `controlClassnames` keys that contribute to it (in application order, after the standard classname) plus any state-dependent classes. Conditional elements—the rule wrapper and the group `header`—use the same declaration, so there is no element a port can handle differently by accident.
+
+```ts
+interface ClassnameSpec {
+  sources: readonly (keyof Classnames)[];
+  conditions?: readonly { key; when; standardOnly? }[];
+}
+```
+
+For each entry the result is the standard classname, then each `sources` entry, then each active condition's custom class, then a single object of active standard classes.
+
+```ts
+deriveRuleClassNames({ classNames: { valueSelector: 'vs', fields: 'f' } });
+// => { fields: 'rule-fields vs f', operators: 'rule-operators vs', ... }
+```
+
 ### Inspection
 
 - `isIC(): boolean` — Whether the current query uses independent combinators.

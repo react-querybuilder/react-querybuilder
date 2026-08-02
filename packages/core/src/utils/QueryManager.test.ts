@@ -1593,3 +1593,90 @@ describe('cache invalidation', () => {
     expect(validator).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('rule configuration', () => {
+  const q = () =>
+    new QueryManager<RuleGroupType>({ combinator: 'and', rules: [rule()] }, { fields });
+
+  it('exposes field data', () => {
+    expect(q().getFieldData('firstName')).toMatchObject({ name: 'firstName' });
+  });
+
+  it('returns an empty object for an unknown field', () => {
+    expect(q().getFieldData('nope')).toEqual({});
+  });
+
+  it('exposes operators, value sources, match modes, values, and value editor type', () => {
+    const m = q();
+    expect(m.getOperators('firstName').length).toBeGreaterThan(0);
+    expect(m.getValueSources('firstName', '=').map(vs => vs.value)).toEqual(['value']);
+    expect(m.getMatchModes('firstName')).toEqual([]);
+    expect(m.getValues('firstName', '=')).toEqual([]);
+    expect(m.getValueEditorType('firstName', '=')).toBe('text');
+  });
+
+  describe('getRuleContext', () => {
+    it('resolves context by path', () => {
+      const ctx = q().getRuleContext([0]);
+      expect(ctx?.fieldData).toMatchObject({ name: 'firstName' });
+      expect(ctx?.operatorObject?.value).toBe('=');
+      expect(ctx?.valueEditorType).toBe('text');
+      expect(ctx?.valueSources).toEqual(['value']);
+      expect(ctx?.hideValueControls).toBe(false);
+    });
+
+    it('resolves context by id', () => {
+      const m = q();
+      const id = (m.getQuery().rules[0] as RuleType).id!;
+      expect(m.getRuleContext(id)?.fieldData).toMatchObject({ name: 'firstName' });
+    });
+
+    it("uses the field's inputType", () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [rule('age', 30 as never)] },
+        { fields }
+      );
+      expect(m.getRuleContext([0])?.inputType).toBe('number');
+    });
+
+    it('returns null for a nonexistent target', () => {
+      expect(q().getRuleContext([99])).toBeNull();
+    });
+
+    it('returns null when the target is a group', () => {
+      expect(q().getRuleContext([])).toBeNull();
+    });
+
+    it('includes the validation result', () => {
+      const seed = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [rule()] });
+      const id = (seed.getQuery().rules[0] as RuleType).id!;
+      const m = new QueryManager<RuleGroupType>(seed.getQuery(), {
+        fields,
+        validator: () => ({ [id]: { valid: false, reasons: ['nope'] } }),
+      });
+      expect(m.getRuleContext([0])?.validationResult).toEqual({ valid: false, reasons: ['nope'] });
+    });
+
+    it('tolerates a boolean validation result', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [rule()] },
+        { fields, validator: () => true }
+      );
+      expect(m.getRuleContext([0])?.validationResult).toBeNull();
+    });
+
+    it('resolves parameters when configured', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [{ ...rule(), valueSource: 'parameter' }] },
+        { fields, getParameters: () => [{ name: 'p1', value: 'p1', label: 'p1' }] }
+      );
+      const ctx = m.getRuleContext([0]);
+      expect(ctx?.parameters).toEqual([{ name: 'p1', value: 'p1', label: 'p1' }]);
+      expect(ctx?.valueEditorType).toBe('select');
+    });
+
+    it('reports no parameters when none are configured', () => {
+      expect(q().getRuleContext([0])?.parameters).toBeNull();
+    });
+  });
+});

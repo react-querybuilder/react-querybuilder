@@ -10,6 +10,7 @@ import type {
 } from '@react-querybuilder/core';
 import {
   clsx,
+  deriveRuleGroupClassNames,
   getFirstOption,
   getOption,
   getParentPath,
@@ -583,106 +584,15 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
   }, [combinator, independentCombinators, notProp, ruleGroupProp, rulesProp]);
 
   const classNames = useMemo(
-    () => ({
-      header: clsx(
-        suppressStandardClassnames || standardClassnames.header,
-        classNamesProp.header,
-        isOver && dropEffect === 'copy' && classNamesProp.dndCopy,
-        dropNotAllowed && classNamesProp.dndDropNotAllowed,
-        suppressStandardClassnames || {
-          [standardClassnames.dndOver]: isOver,
-          [standardClassnames.dndCopy]: isOver && dropEffect === 'copy',
-          [standardClassnames.dndDropNotAllowed]: dropNotAllowed,
-        }
-      ),
-      shiftActions: clsx(
-        suppressStandardClassnames || standardClassnames.shiftActions,
-        classNamesProp.shiftActions
-      ),
-      undoRedoActions: clsx(
-        suppressStandardClassnames || standardClassnames.undoRedoActions,
-        classNamesProp.undoRedoActions
-      ),
-      undoAction: clsx(
-        suppressStandardClassnames || standardClassnames.undoAction,
-        classNamesProp.actionElement,
-        classNamesProp.undoAction
-      ),
-      redoAction: clsx(
-        suppressStandardClassnames || standardClassnames.redoAction,
-        classNamesProp.actionElement,
-        classNamesProp.redoAction
-      ),
-      dragHandle: clsx(
-        suppressStandardClassnames || standardClassnames.dragHandle,
-        classNamesProp.dragHandle
-      ),
-      combinators: clsx(
-        suppressStandardClassnames || standardClassnames.combinators,
-        classNamesProp.valueSelector,
-        classNamesProp.combinators
-      ),
-      notToggle: clsx(
-        suppressStandardClassnames || standardClassnames.notToggle,
-        classNamesProp.notToggle
-      ),
-      addRule: clsx(
-        suppressStandardClassnames || standardClassnames.addRule,
-        classNamesProp.actionElement,
-        classNamesProp.addRule
-      ),
-      addGroup: clsx(
-        suppressStandardClassnames || standardClassnames.addGroup,
-        classNamesProp.actionElement,
-        classNamesProp.addGroup
-      ),
-      cloneGroup: clsx(
-        suppressStandardClassnames || standardClassnames.cloneGroup,
-        classNamesProp.actionElement,
-        classNamesProp.cloneGroup
-      ),
-      lockGroup: clsx(
-        suppressStandardClassnames || standardClassnames.lockGroup,
-        classNamesProp.actionElement,
-        classNamesProp.lockGroup
-      ),
-      muteGroup: clsx(
-        suppressStandardClassnames || standardClassnames.muteGroup,
-        classNamesProp.actionElement,
-        classNamesProp.muteGroup
-      ),
-      removeGroup: clsx(
-        suppressStandardClassnames || standardClassnames.removeGroup,
-        classNamesProp.actionElement,
-        classNamesProp.removeGroup
-      ),
-      body: clsx(suppressStandardClassnames || standardClassnames.body, classNamesProp.body),
-    }),
-    [
-      classNamesProp.actionElement,
-      classNamesProp.addGroup,
-      classNamesProp.addRule,
-      classNamesProp.body,
-      classNamesProp.cloneGroup,
-      classNamesProp.combinators,
-      classNamesProp.dndCopy,
-      classNamesProp.dndDropNotAllowed,
-      classNamesProp.dragHandle,
-      classNamesProp.header,
-      classNamesProp.lockGroup,
-      classNamesProp.muteGroup,
-      classNamesProp.notToggle,
-      classNamesProp.removeGroup,
-      classNamesProp.shiftActions,
-      classNamesProp.undoRedoActions,
-      classNamesProp.undoAction,
-      classNamesProp.redoAction,
-      classNamesProp.valueSelector,
-      dropEffect,
-      dropNotAllowed,
-      isOver,
-      suppressStandardClassnames,
-    ]
+    () =>
+      deriveRuleGroupClassNames({
+        classNames: classNamesProp,
+        suppressStandardClassnames,
+        isOver,
+        dropEffect,
+        dropNotAllowed,
+      }),
+    [classNamesProp, dropEffect, dropNotAllowed, isOver, suppressStandardClassnames]
   );
 
   const onCombinatorChange: ValueChangeEventHandler = useCallback(
