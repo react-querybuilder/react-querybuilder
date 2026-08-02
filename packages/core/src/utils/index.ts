@@ -4,6 +4,7 @@ export * from './convertQuery';
 export * from './deriveClassNames';
 export * from './defaultValidator';
 export * from './deriveRuleContext';
+export * from './deriveValueEditor';
 export * from './filterFieldsByComparator';
 export * from './formatQuery';
 export * from './generateAccessibleDescription';

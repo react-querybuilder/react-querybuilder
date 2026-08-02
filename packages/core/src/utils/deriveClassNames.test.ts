@@ -1,5 +1,6 @@
 import { standardClassnames as sc } from '../defaults';
 import {
+  deriveRuleClassName,
   deriveRuleClassNames,
   deriveRuleGroupClassNames,
   deriveRuleGroupOuterClassName,
@@ -49,6 +50,26 @@ describe('deriveRuleClassNames', () => {
         'valueSource',
       ].toSorted()
     );
+  });
+});
+
+describe('deriveRuleClassName', () => {
+  it('composes a single key from the same table as deriveRuleClassNames', () => {
+    const options = { classNames: { valueSelector: 'vs', fields: 'f' } };
+    expect(deriveRuleClassName('fields', options)).toBe(deriveRuleClassNames(options).fields);
+  });
+
+  it('honors suppressStandardClassnames', () => {
+    expect(
+      deriveRuleClassName('valueListItem', {
+        classNames: { valueListItem: 'vli' },
+        suppressStandardClassnames: true,
+      })
+    ).toBe('vli');
+  });
+
+  it('tolerates an undefined classNames object', () => {
+    expect(deriveRuleClassName('valueListItem', { classNames: undefined })).toBe(sc.valueListItem);
   });
 });
 

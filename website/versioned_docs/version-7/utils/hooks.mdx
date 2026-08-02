@@ -199,6 +199,8 @@ This hook updates the `value` as a side effect when these conditions are true:
 
 If all of these conditions are met, `handleOnChange` will be called with the first element of the array, or any characters before the first comma if `value` is a string.
 
+Everything except that side effect is derived by the framework-agnostic [value editor utilities](./query-management#value-editors) from `@react-querybuilder/core`, so an implementation in another framework can reuse the logic without reimplementing it.
+
 ### `useValueSelector`
 
 Called by the [`ValueSelector`](../components/valueselector) component. Returns the given value as an array (unchanged if already an array) and a memoized change handler.

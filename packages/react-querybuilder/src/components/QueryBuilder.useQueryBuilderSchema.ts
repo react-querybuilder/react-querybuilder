@@ -26,7 +26,7 @@ import {
   LogType,
   move,
   pathIsDisabled,
-  prepareRuleGroup,
+  resolveCandidateQuery,
   remove,
   standardClassnames,
   update,
@@ -215,12 +215,14 @@ export function useQueryBuilderSchema<
 
   const fallbackQuery = useMemo(() => createRuleGroup(), [createRuleGroup]);
 
-  // We assume here that if the query has an `id` property, the query has already
-  // been prepared. If `candidateQuery === query`, the user is probably just
-  // passing back the parameter from the `onQueryChange` callback.
-  const candidateQuery = queryProp ?? storeQuery ?? defaultQueryProp ?? fallbackQuery;
-  const rootGroup = (
-    candidateQuery.id ? candidateQuery : prepareRuleGroup(candidateQuery, { idGenerator })
+  const rootGroup = resolveCandidateQuery(
+    {
+      query: queryProp,
+      storeQuery,
+      defaultQuery: defaultQueryProp,
+      fallbackQuery,
+    },
+    { idGenerator }
   ) as RuleGroupTypeAny<R>;
 
   const [initialQuery] = useState(rootGroup);

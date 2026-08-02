@@ -154,7 +154,7 @@ const ruleGroupOuterConditions: readonly ClassnameCondition<RuleClassNameState>[
 /** Options common to every classname derivation. */
 export interface DeriveClassNamesOptions {
   /** The merged `controlClassnames` for the query builder. */
-  classNames: Partial<Classnames>;
+  classNames: Partial<Classnames> | undefined;
   /** When `true`, standard (`rule`, `ruleGroup-*`, etc.) classnames are omitted. */
   suppressStandardClassnames?: boolean;
 }
@@ -173,12 +173,32 @@ const conditionArgs = <S>(
   return [
     ...evaluated
       .filter(([condition]) => !condition.standardOnly)
-      .map(([condition, active]) => active && classNames[condition.key]),
+      .map(([condition, active]) => active && classNames?.[condition.key]),
     suppressStandardClassnames ||
       Object.fromEntries(
         evaluated.map(([condition, active]) => [standardClassnames[condition.key], active])
       ),
   ];
+};
+
+/** Composes the classname for a single entry of a spec map. */
+const deriveFromSpec = <S>(
+  key: string,
+  spec: readonly (keyof Classnames)[] | ClassnameSpec<S>,
+  state: S,
+  options: DeriveClassNamesOptions
+): string => {
+  const { sources, conditions }: ClassnameSpec<S> = Array.isArray(spec)
+    ? { sources: spec }
+    : (spec as ClassnameSpec<S>);
+
+  // `classNames` is optional chained because React Native passes a partial schema.
+  return clsx(
+    options.suppressStandardClassnames ||
+      standardClassnames[key as keyof typeof standardClassnames],
+    ...sources.map(source => options.classNames?.[source]),
+    ...(conditions ? conditionArgs(conditions, state, options) : [])
+  );
 };
 
 const deriveFromSpecs = <K extends string, S>(
@@ -192,16 +212,7 @@ const deriveFromSpecs = <K extends string, S>(
     K,
     readonly (keyof Classnames)[] | ClassnameSpec<S>,
   ][]) {
-    const { sources, conditions }: ClassnameSpec<S> = Array.isArray(spec)
-      ? { sources: spec }
-      : (spec as ClassnameSpec<S>);
-
-    result[key] = clsx(
-      options.suppressStandardClassnames ||
-        standardClassnames[key as keyof typeof standardClassnames],
-      ...sources.map(source => options.classNames[source]),
-      ...(conditions ? conditionArgs(conditions, state, options) : [])
-    );
+    result[key] = deriveFromSpec(key, spec, state, options);
   }
 
   return result;
@@ -216,6 +227,18 @@ const deriveFromSpecs = <K extends string, S>(
 export const deriveRuleClassNames = (
   options: DeriveClassNamesOptions
 ): Record<RuleClassnameKey, string> => deriveFromSpecs(ruleClassnameSources, {}, options);
+
+/**
+ * The classname for a single element of a rule, composed from the same table as
+ * {@link deriveRuleClassNames}. Useful where only one is needed, such as the items of a
+ * multi-value editor.
+ *
+ * @group Query Tools
+ */
+export const deriveRuleClassName = (
+  key: RuleClassnameKey,
+  options: DeriveClassNamesOptions
+): string => deriveFromSpec(key, ruleClassnameSources[key], {}, options);
 
 /**
  * Classnames for each element rendered by a rule group, including its conditionally-classed
@@ -256,7 +279,7 @@ const deriveOuterClassName = (
   return clsx(
     ...leadingClassNames,
     suppressStandardClassnames || standardClassnames[standardKey],
-    classNames[standardKey],
+    classNames?.[standardKey],
     ...conditionArgs(conditions, options, options),
     validationClassName
   );

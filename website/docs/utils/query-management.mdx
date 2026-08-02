@@ -457,6 +457,7 @@ Unlike a rule, a group's `validationResult` comes _only_ from the query-level va
 - `deriveRuleOuterClassName({ classNames, suppressStandardClassnames, ...state })` — the rule's wrapper classname, including conditional state classes for `disabled`, `muted`, drag-and-drop, subqueries, and validation.
 - `deriveRuleGroupClassNames({ classNames, suppressStandardClassnames, ...dndState })` — the per-element classnames for a rule group, including its `header`.
 - `deriveRuleGroupOuterClassName({ ... })` — the group's wrapper classname.
+- `deriveRuleClassName(key, { ... })` — a single rule classname, for cases where only one is needed.
 
 :::caution
 
@@ -499,6 +500,21 @@ Each accepts an optional `placeholder` so a UI layer can supply translated place
 `createRule` computes `value` in a second pass, once `field`, `operator`, and `valueSource` are known, since the default value depends on all three. `createRuleGroup` generates the group's own `id` _before_ any contained rule's — observable when `idGenerator` is deterministic.
 
 :::
+
+### Value editors
+
+The logic behind the [`useValueEditor`](./hooks#usevalueeditor) hook is exported separately, since a value editor is the control an implementation is most likely to rewrite:
+
+- `getValueEditorReset({ skipHook, type, operator, value, inputType })` — returns `{ reset, value }`. A rule's `value` must collapse to a single element when it's an array (or a comma-containing string in a `number` input) but the operator is no longer one of `between`/`notBetween`/`in`/`notIn` and the editor isn't a multiselect. React applies this in an effect; apply it wherever is idiomatic.
+- `getMultiValueUpdate({ value, index, valueAsArray, operator, values, listsAsArrays, parseNumberMethod })` — the next value when the editor at `index` in a series changes. For `between`/`notBetween`, editing the first bound guarantees an array of at least two elements, seeding the second from the first available option.
+- `coerceBigIntValue(value, parseNumberMethod)` — a `bigint`, falling back to the parsed number when the value can't be represented as one.
+- `coerceInputType(inputType, operator)` — the `type` an `<input>` should use. `bigint` values and the `in`/`notIn` operators both require a text input.
+- `isBetweenOperator(operator)` — whether an operator's value is a pair of bounds.
+- `getValueSelectorUpdate(value, { multiple, listsAsArrays })` / `normalizeValueSelectorValue(value, multiple)` — the equivalents for [`useValueSelector`](./hooks#usevalueselector). The latter stringifies multiselect values so they match option names, which are always strings.
+
+### Controlled and uncontrolled queries
+
+`resolveCandidateQuery({ query, storeQuery, defaultQuery, fallbackQuery }, { idGenerator })` applies the precedence a query builder uses to decide what to render: the controlled `query`, then whatever is already in its store, then the uncontrolled `defaultQuery`, then a freshly created empty group. The result is passed through `prepareRuleGroup` unless it already has an `id`, which is taken to mean it has been prepared before—most often because the caller is passing back the object it received from `onQueryChange`.
 
 ### Paths
 
