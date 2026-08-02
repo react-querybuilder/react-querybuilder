@@ -26,6 +26,7 @@ export * from './parseNumber';
 export * from './pathUtils';
 export * from './preferProp';
 export * from './prepareQueryObjects';
+export * from './queryActions';
 export * from './queryTools';
 export * from './QueryManager';
 export * from './regenerateIDs';

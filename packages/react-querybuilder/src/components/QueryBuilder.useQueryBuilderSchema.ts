@@ -10,26 +10,17 @@ import type {
   QueryActions,
   QueryValidator,
   RuleGroupTypeAny,
-  RuleGroupTypeIC,
   UpdateableProperties,
   ValidationMap,
   ValueSourceFullOptions,
 } from '@react-querybuilder/core';
 import {
-  add,
   clsx,
-  findPath,
+  createQueryActions,
   generateAccessibleDescription,
-  group,
-  isRuleGroup,
   isRuleGroupTypeIC,
-  LogType,
-  move,
-  pathIsDisabled,
   resolveCandidateQuery,
-  remove,
   standardClassnames,
-  update,
 } from '@react-querybuilder/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useControlledOrUncontrolled, useDeprecatedProps, useUndoRedoWarning } from '../hooks/';
@@ -360,100 +351,14 @@ export function useQueryBuilderSchema<
   const queryDisabled = disabled === true;
   const rootGroupDisabled = rootGroup.disabled || disabledPaths.some(p => p.length === 0);
 
-  const onRuleAdd = useCallback(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    (rule: R, parentPath: Path, context?: any) => {
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // v8 ignore if
-      if (!queryLocal) return;
-      if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
-        log({ qbId, type: LogType.parentPathDisabled, rule, parentPath, query: queryLocal });
-        return;
-      }
-      // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
-      const nextRule = onAddRule(rule, parentPath, queryLocal, context);
-      if (!nextRule) {
-        log({ qbId, type: LogType.onAddRuleFalse, rule, parentPath, query: queryLocal });
-        return;
-      }
-      const newRule = nextRule === true ? rule : nextRule;
-      const newQuery = add(queryLocal, newRule, parentPath, {
+  const actionsCore = useMemo(
+    () =>
+      createQueryActions({
+        qbId,
         combinators,
-        combinatorPreceding: newRule.combinatorPreceding ?? undefined,
         idGenerator,
-      });
-      log({ qbId, type: LogType.add, query: queryLocal, newQuery, newRule, parentPath });
-      dispatchQuery(newQuery);
-    },
-    [
-      combinators,
-      dispatchQuery,
-      idGenerator,
-      log,
-      onAddRule,
-      qbId,
-      queryBuilderStore,
-      queryDisabled,
-    ]
-  );
-
-  const onGroupAdd = useCallback(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    (ruleGroup: RG, parentPath: Path, context?: any) => {
-      if (parentPath.length >= maxLevels) return;
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // v8 ignore if
-      if (!queryLocal) return;
-      if (pathIsDisabled(parentPath, queryLocal) || queryDisabled) {
-        log({
-          qbId,
-          type: LogType.parentPathDisabled,
-          ruleGroup,
-          parentPath,
-          query: queryLocal,
-        });
-        return;
-      }
-      // @ts-expect-error `queryLocal` is type `RuleGroupTypeAny`, but it doesn't matter here
-      const nextGroup = onAddGroup(ruleGroup, parentPath, queryLocal, context);
-      if (!nextGroup) {
-        log({ qbId, type: LogType.onAddGroupFalse, ruleGroup, parentPath, query: queryLocal });
-        return;
-      }
-      const newGroup = nextGroup === true ? ruleGroup : nextGroup;
-      const newQuery = add(queryLocal, newGroup, parentPath, {
-        combinators,
-        combinatorPreceding: (newGroup as RuleGroupTypeIC).combinatorPreceding ?? undefined,
-        idGenerator,
-      });
-      log({ qbId, type: LogType.add, query: queryLocal, newQuery, newGroup, parentPath });
-      dispatchQuery(newQuery);
-    },
-    [
-      combinators,
-      dispatchQuery,
-      idGenerator,
-      log,
-      maxLevels,
-      onAddGroup,
-      qbId,
-      queryBuilderStore,
-      queryDisabled,
-    ]
-  );
-
-  const onPropChange = useCallback(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    (prop: UpdateableProperties, value: any, path: Path) => {
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState());
-      // v8 ignore if
-      if (!queryLocal) return;
-      if ((pathIsDisabled(path, queryLocal) && prop !== 'disabled') || queryDisabled) {
-        log({ qbId, type: LogType.pathDisabled, path, prop, value, query: queryLocal });
-        return;
-      }
-
-      const newQuery = update(queryLocal, prop, value, path, {
+        maxLevels,
+        queryDisabled,
         resetOnFieldChange,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as (field: string) => string,
@@ -463,163 +368,101 @@ export function useQueryBuilderSchema<
         ) => ValueSourceFullOptions,
         getRuleDefaultValue,
         getMatchModes: getMatchModesMain as (field: string) => MatchModeOptions,
-      });
-      log({ qbId, type: LogType.update, query: queryLocal, newQuery, prop, value, path });
-      dispatchQuery(newQuery);
-    },
+        onAddRule,
+        onAddGroup,
+        onRemove,
+        onMoveRule,
+        onMoveGroup,
+        onGroupRule,
+        onGroupGroup,
+        onLog: log,
+      }),
     [
-      dispatchQuery,
+      combinators,
       getMatchModesMain,
       getRuleDefaultOperator,
       getRuleDefaultValue,
       getValueSourcesMain,
+      idGenerator,
       log,
+      maxLevels,
+      onAddGroup,
+      onAddRule,
+      onGroupGroup,
+      onGroupRule,
+      onMoveGroup,
+      onMoveRule,
+      onRemove,
       qbId,
-      queryBuilderStore,
       queryDisabled,
       resetOnFieldChange,
       resetOnOperatorChange,
     ]
   );
 
-  const onRuleOrGroupRemove = useCallback(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    (path: Path, context?: any) => {
+  /**
+   * Reads the current query from the store, runs `action`, and dispatches the result. The store
+   * read keeps the handlers stable across query changes and free of stale closures.
+   */
+  const runAction = useCallback(
+    (action: (query: RG) => RuleGroupTypeAny | undefined) => {
       const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
       // v8 ignore if
       if (!queryLocal) return;
-      if (pathIsDisabled(path, queryLocal) || queryDisabled) {
-        log({ qbId, type: LogType.pathDisabled, path, query: queryLocal });
-        return;
-      }
-      const ruleOrGroup = findPath(path, queryLocal) as RG | R;
-      // v8 ignore else
-      if (ruleOrGroup) {
-        // @ts-expect-error `ruleOrGroup` and `queryLocal` are type `RuleGroupTypeAny`,
-        // but it doesn't matter here
-        if (onRemove(ruleOrGroup, path, queryLocal, context)) {
-          const newQuery = remove(queryLocal, path);
-          log({ qbId, type: LogType.remove, query: queryLocal, newQuery, path, ruleOrGroup });
-          dispatchQuery(newQuery);
-        } else {
-          log({ qbId, type: LogType.onRemoveFalse, ruleOrGroup, path, query: queryLocal });
-        }
-      }
+      const newQuery = action(queryLocal);
+      if (newQuery) dispatchQuery(newQuery as RG);
     },
-    [dispatchQuery, log, onRemove, qbId, queryBuilderStore, queryDisabled]
+    [dispatchQuery, qbId, queryBuilderStore]
+  );
+
+  const onRuleAdd = useCallback(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    (rule: R, parentPath: Path, context?: any) => {
+      runAction(query => actionsCore.addRule(query, rule, parentPath, context));
+    },
+    [actionsCore, runAction]
+  );
+
+  const onGroupAdd = useCallback(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    (ruleGroup: RG, parentPath: Path, context?: any) => {
+      runAction(query => actionsCore.addGroup(query, ruleGroup, parentPath, context));
+    },
+    [actionsCore, runAction]
+  );
+
+  const onPropChange = useCallback(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    (prop: UpdateableProperties, value: any, path: Path) => {
+      runAction(query => actionsCore.propChange(query, prop, value, path));
+    },
+    [actionsCore, runAction]
+  );
+
+  const onRuleOrGroupRemove = useCallback(
+    // oxlint-disable-next-line typescript/no-explicit-any
+    (path: Path, context?: any) => {
+      runAction(query => actionsCore.removeRuleOrGroup(query, path, context));
+    },
+    [actionsCore, runAction]
   );
 
   const moveRule = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
     (oldPath: Path, newPath: Path | 'up' | 'down', clone?: boolean, context?: any) => {
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // v8 ignore if
-      if (!queryLocal) return;
-      if (pathIsDisabled(oldPath, queryLocal) || queryDisabled) {
-        log({ qbId, type: LogType.pathDisabled, oldPath, newPath, query: queryLocal });
-        return;
-      }
-      const nextQuery = move(queryLocal, oldPath, newPath, { clone, combinators, idGenerator });
-      const ruleOrGroup = findPath(oldPath, queryLocal)!;
-      const isGroup = isRuleGroup(ruleOrGroup);
-      const callbackResult = (
-        (isGroup ? onMoveGroup : onMoveRule) as (...args: unknown[]) => RG | boolean
-      )(ruleOrGroup, oldPath, newPath, queryLocal, nextQuery, { clone, combinators }, context);
-      if (!callbackResult) {
-        log({
-          qbId,
-          type: isGroup ? LogType.onMoveGroupFalse : LogType.onMoveRuleFalse,
-          ruleOrGroup,
-          oldPath,
-          newPath,
-          clone,
-          query: queryLocal,
-          nextQuery,
-        });
-        return;
-      }
-      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
-      log({ qbId, type: LogType.move, query: queryLocal, newQuery, oldPath, newPath, clone });
-      dispatchQuery(newQuery);
+      runAction(query => actionsCore.moveRule(query, oldPath, newPath, clone, context));
     },
-    [
-      combinators,
-      dispatchQuery,
-      idGenerator,
-      log,
-      onMoveGroup,
-      onMoveRule,
-      qbId,
-      queryBuilderStore,
-      queryDisabled,
-    ]
+    [actionsCore, runAction]
   );
 
   const groupRule = useCallback(
     // oxlint-disable-next-line typescript/no-explicit-any
     (sourcePath: Path, targetPath: Path, clone?: boolean, context?: any) => {
-      const queryLocal = getQuerySelectorById(qbId)(queryBuilderStore.getState()) as RG;
-      // v8 ignore if
-      if (!queryLocal) return;
-      if (pathIsDisabled(sourcePath, queryLocal) || queryDisabled) {
-        log({ qbId, type: LogType.pathDisabled, sourcePath, targetPath, query: queryLocal });
-        return;
-      }
-      const nextQuery = group(queryLocal, sourcePath, targetPath, {
-        clone,
-        combinators,
-        idGenerator,
-      });
-      const ruleOrGroup = findPath(sourcePath, queryLocal)!;
-      const isGroup = isRuleGroup(ruleOrGroup);
-      const callbackResult = (
-        (isGroup ? onGroupGroup : onGroupRule) as (...args: unknown[]) => RG | boolean
-      )(
-        ruleOrGroup,
-        sourcePath,
-        targetPath,
-        queryLocal,
-        nextQuery,
-        { clone, combinators },
-        context
-      );
-      if (!callbackResult) {
-        log({
-          qbId,
-          type: isGroup ? LogType.onGroupGroupFalse : LogType.onGroupRuleFalse,
-          ruleOrGroup,
-          sourcePath,
-          targetPath,
-          clone,
-          query: queryLocal,
-          nextQuery,
-        });
-        return;
-      }
-      const newQuery = isRuleGroup(callbackResult) ? callbackResult : nextQuery;
-      log({
-        qbId,
-        type: LogType.group,
-        query: queryLocal,
-        newQuery,
-        sourcePath,
-        targetPath,
-        clone,
-      });
-      dispatchQuery(newQuery);
+      runAction(query => actionsCore.groupRule(query, sourcePath, targetPath, clone, context));
     },
-    [
-      combinators,
-      dispatchQuery,
-      idGenerator,
-      log,
-      onGroupGroup,
-      onGroupRule,
-      qbId,
-      queryBuilderStore,
-      queryDisabled,
-    ]
+    [actionsCore, runAction]
   );
+
   // #endregion
 
   // #region Validation

@@ -512,6 +512,54 @@ The logic behind the [`useValueEditor`](./hooks#usevalueeditor) hook is exported
 - `isBetweenOperator(operator)` — whether an operator's value is a pair of bounds.
 - `getValueSelectorUpdate(value, { multiple, listsAsArrays })` / `normalizeValueSelectorValue(value, multiple)` — the equivalents for [`useValueSelector`](./hooks#usevalueselector). The latter stringifies multiselect values so they match option names, which are always strings.
 
+### Query actions
+
+`createQueryActions(config)` builds the six mutations a query builder performs as pure functions of the current query. Each returns the next query, or `undefined` when the mutation was aborted—because the target is disabled, a confirmation callback declined, or `maxLevels` was reached.
+
+```ts
+const actions = createQueryActions({
+  qbId,
+  combinators,
+  idGenerator,
+  maxLevels,
+  queryDisabled,
+  respectDisabled,
+  resetOnFieldChange,
+  resetOnOperatorChange,
+  getRuleDefaultOperator,
+  getValueSources,
+  getRuleDefaultValue,
+  getMatchModes,
+  onAddRule,
+  onAddGroup,
+  onRemove,
+  onMoveRule,
+  onMoveGroup,
+  onGroupRule,
+  onGroupGroup,
+  onLog,
+});
+
+// { addRule, addGroup, propChange, removeRuleOrGroup, moveRule, groupRule }
+```
+
+This is the policy that surrounds the [query tools](#query-tools)—disabled gating, the confirmation callback protocol, depth limits, and debug logging. An implementation supplies only its own storage: read the current query, call the action, apply a non-`undefined` result.
+
+```ts
+const newQuery = actions.addRule(currentQuery, rule, parentPath);
+if (newQuery) applyQuery(newQuery);
+```
+
+The confirmation callbacks have three distinct return contracts:
+
+| Callback                                                   | Return value                                                                       |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `onAddRule`, `onAddGroup`                                  | `true` to proceed, falsy to cancel, or a **replacement rule/group** to add instead |
+| `onMoveRule`, `onMoveGroup`, `onGroupRule`, `onGroupGroup` | `true` to proceed, falsy to cancel, or a **replacement query** to apply instead    |
+| `onRemove`                                                 | boolean only                                                                       |
+
+The move and group actions compute the prospective query _before_ invoking their callback, so it can inspect the result it is being asked to approve.
+
 ### Controlled and uncontrolled queries
 
 `resolveCandidateQuery({ query, storeQuery, defaultQuery, fallbackQuery }, { idGenerator })` applies the precedence a query builder uses to decide what to render: the controlled `query`, then whatever is already in its store, then the uncontrolled `defaultQuery`, then a freshly created empty group. The result is passed through `prepareRuleGroup` unless it already has an `id`, which is taken to mean it has been prepared before—most often because the caller is passing back the object it received from `onQueryChange`.
