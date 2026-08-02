@@ -21,12 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `getDispatchQueryById(qbId)` export returns the `dispatchQuery` function for a mounted query builder, applying a query exactly as a user edit would (including firing `onQueryChange`, so it works in both controlled and uncontrolled mode). This is how undo/redo applies restored queries, and it makes external controls possible without hoisting query state.
   - New `signatureOf(prev, next)` utility, alongside the `structuralSignature` and `unchangedSignature` constants, describes _what changed_ between two queries as a short string. It backs the coalescing logic and is exported from `@react-querybuilder/core`.
 
-#### Enhanced query management
+#### Query management options
 
 - [#1078] [`QueryManager`](https://react-querybuilder.js.org/docs/utils/query-management#query-manager), a stateful, chainable wrapper around the [query tools](https://react-querybuilder.js.org/docs/utils/query-management#query-tools). Each method takes the same arguments as its query tool counterpart minus the leading `query` parameter. Adds `createRule`/`createRuleGroup` factories, `validate`, and `format`. Accepts the same `fields`, `operators`, `combinators`, and `getDefault*` configuration as the `QueryBuilder` component. No React dependency.
   - `clone(options?)` returns an independent manager with the same configuration and query, optionally regenerating every `id`.
   - `subscribe(listener)` registers a change listener and returns an unsubscribe function. It and `getQuery` are both bound to the instance, so they can be passed directly to `useSyncExternalStore`.
-  - New `useQueryManager` hook subscribes to a `QueryManager` and returns a `[query, manager]` tuple, re-rendering when the query changes. Pass an existing manager, or a query and options to have one created on the first render (and never recreated). Unlike the other hooks, it does not use Redux and does not need to be rendered beneath a `QueryBuilder`, so it suits headless or fully custom interfaces; queries managed this way are correspondingly invisible to `useQueryBuilderQuery`, `useQueryBuilderSelector`, `useQueryBuilderHistory`, and `getDispatchQueryById`.
   - `batch(fn)` defers history recording and notification until `fn` returns, so a batch is one undo step and one notification. Batches may be nested. If `fn` throws, the query and its history are restored to their pre-batch state. `undo`/`redo`/`clearHistory` may be called inside a batch; since they manage the history stacks themselves, such a batch records no entry of its own.
   - Opt-in `strict` mode throws a `QueryManagerError` (carrying a `code` and the full abort `info`) when a mutation's target can't be used, instead of failing silently. `onInvalidTarget` observes aborts without changing control flow. Both are configurable on the constructor and per call.
   - Opt-in undo/redo via the `history` option (`true` or `{ maxHistory, coalesceMs }`), with `undo`, `redo`, `canUndo`, `canRedo`, `clearHistory`, and `getHistory`. Coalescing, `maxHistory` (default `50`), and `coalesceMs` (default `500`) match the `react-querybuilder/history` entry point; `defaultMaxHistory`, `defaultCoalesceMs`, and the `QueryHistoryOptions` type are now exported from `@react-querybuilder/core` and shared by both.
@@ -35,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `findID`, `getPathOfID`, and the `pathOrID` methods are backed by an `id`-to-`Path` index built once per query, making repeated lookups constant time instead of a tree walk. `validate()` results are cached the same way, so a custom `validator` with side effects may run fewer times than before.
   - New inspection methods `isIC()`, `signatureOf(other)`, `diagnostics()` (shorthand for `format('diagnostics')`), and `toJSON()` (so `JSON.stringify(manager)` matches `JSON.stringify(manager.getQuery())`).
   - `toIC()` and `fromIC()` return a _new_ manager with the same configuration and the query converted to or from the independent combinators structure; the original is unmodified. `transform(options?)` runs `transformQuery` against the current query and returns its result directly, since the output may no longer be a valid query.
+- [#1079] New `useQueryManager` hook subscribes to a `QueryManager` and returns a `[query, manager]` tuple, re-rendering when the query changes. Pass an existing manager, or a query and options to have one created on the first render (and never recreated). Unlike the other hooks, it does not use Redux and does not need to be rendered beneath a `QueryBuilder`, so it suits headless or fully custom interfaces; queries managed this way are correspondingly invisible to `useQueryBuilderQuery`, `useQueryBuilderSelector`, `useQueryBuilderHistory`, and `getDispatchQueryById`.
 - [#1078] Query tools accept an `onAbort` callback, called with an `AbortInfo` object (`reason`, `operation`, `pathOrID`) when an operation returns the query unmodified. Because the tools return the original query whether the target was invalid or the operation simply had nothing to do, this is the only way to tell the two apart. The tools themselves still never throw. `remove` accordingly gains an optional third `options` parameter.
 
 #### Miscellaneous
@@ -2430,6 +2430,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1070]: https://github.com/react-querybuilder/react-querybuilder/pull/1070
 [#1072]: https://github.com/react-querybuilder/react-querybuilder/pull/1072
 [#1078]: https://github.com/react-querybuilder/react-querybuilder/pull/1078
+[#1079]: https://github.com/react-querybuilder/react-querybuilder/pull/1079
 
 <!-- #endregion -->
 
