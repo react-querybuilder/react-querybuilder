@@ -233,6 +233,12 @@ describe('createQueryActions', () => {
       ).toBe(replacement);
     });
 
+    it('aborts on an unresolvable source path, without invoking the callback', () => {
+      const onMoveRule = vi.fn(() => true);
+      expect(createQueryActions({ onMoveRule }).moveRule(query(), [99], [0])).toBeUndefined();
+      expect(onMoveRule).not.toHaveBeenCalled();
+    });
+
     it('uses onMoveGroup for groups', () => {
       const q: RuleGroupType = {
         combinator: 'and',
@@ -272,6 +278,12 @@ describe('createQueryActions', () => {
       ).toBe(replacement);
     });
 
+    it('aborts on an unresolvable source path, without invoking the callback', () => {
+      const onGroupRule = vi.fn(() => true);
+      expect(createQueryActions({ onGroupRule }).groupRule(query(), [99], [0])).toBeUndefined();
+      expect(onGroupRule).not.toHaveBeenCalled();
+    });
+
     it('uses onGroupGroup for groups', () => {
       const q: RuleGroupType = {
         combinator: 'and',
@@ -284,20 +296,6 @@ describe('createQueryActions', () => {
       const onGroupRule = vi.fn(() => true);
       createQueryActions({ onGroupGroup, onGroupRule }).groupRule(q, [0], [1]);
       expect(onGroupGroup).toHaveBeenCalled();
-      expect(onGroupRule).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('unresolvable paths', () => {
-    it('aborts moveRule without invoking the callback', () => {
-      const onMoveRule = vi.fn(() => true);
-      expect(createQueryActions({ onMoveRule }).moveRule(query(), [99], [0])).toBeUndefined();
-      expect(onMoveRule).not.toHaveBeenCalled();
-    });
-
-    it('aborts groupRule without invoking the callback', () => {
-      const onGroupRule = vi.fn(() => true);
-      expect(createQueryActions({ onGroupRule }).groupRule(query(), [99], [0])).toBeUndefined();
       expect(onGroupRule).not.toHaveBeenCalled();
     });
   });
