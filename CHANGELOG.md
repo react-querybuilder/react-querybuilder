@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### History tracking (undo/redo)
+
 - [#1072] [Undo/redo support](https://react-querybuilder.js.org/docs/tips/undo-redo) through the new `react-querybuilder/history` entry point. Recording is opt-in, and nothing is added to the main bundle unless the entry point is imported. This works in controlled or uncontrolled mode—no need to lift the query into your own state.
   - `QueryBuilderHistory` records history for descendant query builders and supplies the undo/redo controls. The new `showUndoRedo` prop displays them at the end of the outermost group's header, rendered by the new `undoRedoActions` control element (which uses `actionElement` for the buttons themselves) and configurable via the new `undo`/`redo` translations and `undoRedoActions`/`undoRedoActions-undo`/`undoRedoActions-redo` classnames. `showUndoRedo` defaults to `true` for query builders descending from `QueryBuilderHistory` (pass `showUndoRedo={false}` on either component to opt out); it otherwise defaults to `false`. Compatibility packages use icons from their respective icon packages where appropriate.
   - `useQueryBuilderHistory(qbId)` returns `{ undo, redo, clear, canUndo, canRedo, past, future }` for custom controls. It does not need to be rendered beneath a `QueryBuilder`, so external toolbars and keyboard shortcut handlers can drive a query builder's history knowing only its `qbId`.
@@ -17,7 +19,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `preserveQueryStateOnUnmount` prop retains a query builder's query (and history) after it unmounts, so a subsequent query builder with the same `qbId` resumes where the previous one left off.
   - `schema.dispatchQuery` accepts an optional second parameter (`{ fromHistory }`) so history-originated updates can be distinguished from user edits.
   - New `getDispatchQueryById(qbId)` export returns the `dispatchQuery` function for a mounted query builder, applying a query exactly as a user edit would (including firing `onQueryChange`, so it works in both controlled and uncontrolled mode). This is how undo/redo applies restored queries, and it makes external controls possible without hoisting query state.
-  - The coalescing logic is backed by the new `signatureOf(prev, next)` utility (alongside the `structuralSignature` and `unchangedSignature` constants), which describes _what changed_ between two queries as a short string. It is exported from `@react-querybuilder/core`—not the history entry point—since it is pure, framework-agnostic query diffing that relies only on the structural sharing guaranteed by the standard query tools.
+  - New `signatureOf(prev, next)` utility, alongside the `structuralSignature` and `unchangedSignature` constants, describes _what changed_ between two queries as a short string. It backs the coalescing logic and is exported from `@react-querybuilder/core`.
+
+#### Enhanced query management
+
+- [#1078] [`QueryManager`](https://react-querybuilder.js.org/docs/utils/query-management#query-manager), a stateful, chainable wrapper around the [query tools](https://react-querybuilder.js.org/docs/utils/query-management#query-tools). Each method takes the same arguments as its query tool counterpart minus the leading `query` parameter. Adds `createRule`/`createRuleGroup` factories, `validate`, and `format`. Accepts the same `fields`, `operators`, `combinators`, and `getDefault*` configuration as the `QueryBuilder` component. No React dependency.
+  - `clone(options?)` returns an independent manager with the same configuration and query, optionally regenerating every `id`.
+  - `subscribe(listener)` registers a change listener and returns an unsubscribe function. It is bound to the instance, so it can be passed directly to `useSyncExternalStore`.
+  - `batch(fn)` defers history recording and notification until `fn` returns, so a batch is one undo step and one notification. Batches may be nested. If `fn` throws, the query and its history are restored to their pre-batch state. `undo`/`redo`/`clearHistory` may be called inside a batch; since they manage the history stacks themselves, such a batch records no entry of its own.
+  - Opt-in `strict` mode throws a `QueryManagerError` (carrying a `code` and the full abort `info`) when a mutation's target can't be used, instead of failing silently. `onInvalidTarget` observes aborts without changing control flow. Both are configurable on the constructor and per call.
+  - Opt-in undo/redo via the `history` option (`true` or `{ maxHistory, coalesceMs }`), with `undo`, `redo`, `canUndo`, `canRedo`, `clearHistory`, and `getHistory`. Coalescing, `maxHistory` (default `50`), and `coalesceMs` (default `500`) match the `react-querybuilder/history` entry point; `defaultMaxHistory`, `defaultCoalesceMs`, and the `QueryHistoryOptions` type are now exported from `@react-querybuilder/core` and shared by both.
+  - `walk(options?)` is a generator yielding every rule and group in the query—depth-first, pre-order, starting with the root group—as `QueryNode` objects (`{ node, path, parent }`). `WalkOptions` can restrict traversal to a subtree (`from`, a `Path` or `id`) and/or to rules or groups only (`rulesOnly`, `groupsOnly`). Also available as `rules()`, `groups()`, `find(predicate)`, `filter(predicate)`, and `[Symbol.iterator]()`, so a manager can be spread or used directly in `for...of`.
+  - The query-taking path utilities are available as methods, minus the trailing `query` parameter: `findPath`, `findID`, `getPathOfID`, and `pathIsDisabled`. New `getNode`, `getRule`, `getGroup`, and `getParent` accept either a `Path` or an `id` and narrow the result, returning `null` when the target can't be resolved or is of the wrong kind.
+  - `findID`, `getPathOfID`, and the `pathOrID` methods are backed by an `id`-to-`Path` index built once per query, making repeated lookups constant time instead of a tree walk. `validate()` results are cached the same way, so a custom `validator` with side effects may run fewer times than before.
+  - New inspection methods `isIC()`, `signatureOf(other)`, `diagnostics()` (shorthand for `format('diagnostics')`), and `toJSON()` (so `JSON.stringify(manager)` matches `JSON.stringify(manager.getQuery())`).
+  - `toIC()` and `fromIC()` return a _new_ manager with the same configuration and the query converted to or from the independent combinators structure; the original is unmodified. `transform(options?)` runs `transformQuery` against the current query and returns its result directly, since the output may no longer be a valid query.
+- [#1078] Query tools accept an `onAbort` callback, called with an `AbortInfo` object (`reason`, `operation`, `pathOrID`) when an operation returns the query unmodified. Because the tools return the original query whether the target was invalid or the operation simply had nothing to do, this is the only way to tell the two apart. The tools themselves still never throw. `remove` accordingly gains an optional third `options` parameter.
+
+#### Miscellaneous
+
 - [#1070] [Migration guide](https://react-querybuilder.js.org/docs/tips/migrate-from-raqb) for [`react-awesome-query-builder`](https://github.com/ukrbublik/react-awesome-query-builder) (RAQB). The conversion tools themselves (`parseRAQB`, `parseRAQBFields`, `formatRAQBFields`, and `defaultRule[Group]ProcessorRAQB`) live in the standalone [`@react-querybuilder/migrate-raqb`](https://github.com/react-querybuilder/migrate-raqb) package.
 
 ### Fixed
@@ -2408,6 +2428,7 @@ _(This list may look long, but the breaking changes should only affect a small m
 [#1068]: https://github.com/react-querybuilder/react-querybuilder/pull/1068
 [#1070]: https://github.com/react-querybuilder/react-querybuilder/pull/1070
 [#1072]: https://github.com/react-querybuilder/react-querybuilder/pull/1072
+[#1078]: https://github.com/react-querybuilder/react-querybuilder/pull/1078
 
 <!-- #endregion -->
 

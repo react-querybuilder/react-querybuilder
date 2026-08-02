@@ -11,9 +11,6 @@ import { queriesSlice } from '../redux/queriesSlice';
 import type { SetQueryStateAction } from '../redux/queriesSlice';
 import type { QueryHistoryEntry, QueryHistorySliceState } from './types';
 
-export const defaultMaxHistory = 50;
-export const defaultCoalesceMs = 500;
-
 export interface RegisterHistoryParams {
   qbId: string;
   /** Current query, used to seed `present` so that the first recorded change is undoable. */

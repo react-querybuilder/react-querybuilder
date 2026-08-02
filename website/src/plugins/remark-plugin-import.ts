@@ -12,6 +12,8 @@ const importCodeRegExp = /^%importcode\s+(.*?)$/;
 const lineNumbersRegExp = /^l(\d+)(-(l(\d+))?)?$/i;
 const regionRegExp = /^region=(.+)$/i;
 const blockRegExp = /^blockname=(.+)$/i;
+
+const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const rootDir = path.resolve(__dirname, '../../..');
 
 const getSourceLink = (filePath: string, start?: number, end?: number) => {
@@ -107,8 +109,13 @@ export const remarkPluginImport = () => async (ast: any, vfile: any) => {
               ];
             }
           } else if (block) {
+            // The opening brace may be on a later line when the declaration has type parameters
+            // or an `extends` clause.
+            const blockName = escapeRegExp(block[1]);
             const start = codeLines.findIndex(v =>
-              v.match(`^(export )?(const|let|type|interface) ${block[1]} \\{$`)
+              v.match(
+                `^(export )?(const|let|type|interface) ${blockName}(<.*)?( extends .*)?( \\{)?$`
+              )
             );
             const end = codeLines.findIndex((v, i) => i >= start && v.match(/^}/));
             if (start >= 0) {

@@ -1,3 +1,4 @@
+import type { QueryHistoryOptions } from '@react-querybuilder/core';
 import type { Store } from '@reduxjs/toolkit';
 import { useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
 import type { RqbState } from 'react-querybuilder';
@@ -9,7 +10,7 @@ import {
 } from 'react-querybuilder';
 import { QueryBuilderHistoryContext } from './QueryBuilderHistoryContext';
 import { queryHistorySlice } from './queryHistorySlice';
-import type { QueryHistoryEntry, QueryHistoryOptions, UseQueryBuilderHistory } from './types';
+import type { QueryHistoryEntry, UseQueryBuilderHistory } from './types';
 
 const emptyStack: never[] = [];
 

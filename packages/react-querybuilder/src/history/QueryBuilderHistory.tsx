@@ -1,10 +1,10 @@
+import type { QueryHistoryOptions } from '@react-querybuilder/core';
+import { defaultCoalesceMs, defaultMaxHistory } from '@react-querybuilder/core';
 import * as React from 'react';
 import { useContext, useMemo } from 'react';
 import type { QueryBuilderContextProps } from 'react-querybuilder';
 import { QueryBuilderContext } from 'react-querybuilder';
 import { QueryBuilderHistoryContext } from './QueryBuilderHistoryContext';
-import { defaultCoalesceMs, defaultMaxHistory } from './queryHistorySlice';
-import type { QueryHistoryOptions } from './types';
 import { UndoRedoActions } from './UndoRedoActions';
 
 export interface QueryBuilderHistoryProps extends QueryHistoryOptions {

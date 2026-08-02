@@ -16,7 +16,6 @@ import {
   getValidationClassNames,
   isRuleGroup,
   isRuleGroupType,
-  pathsAreEqual,
   standardClassnames,
   TestID,
 } from '@react-querybuilder/core';
@@ -370,7 +369,7 @@ export const RuleGroupBodyComponents: React.MemoExoticComponent<
         const thisPathMemo = rg.pathsMemo[idx];
         const thisPath = thisPathMemo.path;
         const thisPathDisabled = thisPathMemo.disabled || (typeof r !== 'string' && r.disabled);
-        const shiftUpDisabled = pathsAreEqual([0], thisPath);
+        const shiftUpDisabled = rg.path.length === 0 && idx === 0;
         const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
         const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
         return (

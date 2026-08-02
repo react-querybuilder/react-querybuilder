@@ -1404,3 +1404,176 @@ describe('draft handling', () => {
     });
   });
 });
+
+describe('onAbort', () => {
+  const abort = () => {
+    const onAbort = vi.fn();
+    return { onAbort, reasons: () => onAbort.mock.calls.map(([info]) => info.reason) };
+  };
+
+  describe('add', () => {
+    it('reports a missing parent', () => {
+      const { onAbort, reasons } = abort();
+      expect(add(rg3, r4, badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['parent-not-found']);
+      expect(onAbort.mock.calls[0][0]).toMatchObject({ operation: 'add', pathOrID: badPath });
+    });
+
+    it('reports a parent that is a rule', () => {
+      const { onAbort, reasons } = abort();
+      expect(add(rg3, r4, [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['parent-not-a-group']);
+    });
+
+    it('is not called on success', () => {
+      const { onAbort } = abort();
+      add(rg3, r4, [], { onAbort });
+      expect(onAbort).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('remove', () => {
+    it('reports an unknown id', () => {
+      const { onAbort, reasons } = abort();
+      expect(remove(rg3, 'nope', { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports removal of the root group', () => {
+      const { onAbort, reasons } = abort();
+      expect(remove(rg3, [], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['root-not-allowed']);
+    });
+
+    it('reports an unresolvable path in an independent combinators query', () => {
+      const { onAbort, reasons } = abort();
+      expect(remove(rgic2, badPath, { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+  });
+
+  describe('update', () => {
+    it('reports an unknown id', () => {
+      const { onAbort, reasons } = abort();
+      expect(update(rg3, 'value', 'x', 'nope', { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports an unresolvable path', () => {
+      const { onAbort, reasons } = abort();
+      expect(update(rg3, 'value', 'x', badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a combinator update at a rule index', () => {
+      const { onAbort, reasons } = abort();
+      expect(update(rgic2, 'combinator', or, [0], { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['not-a-combinator-slot']);
+    });
+
+    it('reports a combinator non-update at a rule index', () => {
+      const { onAbort, reasons } = abort();
+      // oxlint-disable-next-line typescript/no-explicit-any
+      const rgic_malformed = { rules: [r1, and] } as any;
+      expect(update(rgic_malformed, 'combinator', and, [1], { onAbort })).toBe(rgic_malformed);
+      expect(reasons()).toEqual(['no-change']);
+    });
+
+    it('reports an unchanged value', () => {
+      const { onAbort, reasons } = abort();
+      expect(update(rg3, 'operator', r1.operator, [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['no-change']);
+    });
+  });
+
+  describe('move', () => {
+    it('reports an unknown id', () => {
+      const { onAbort, reasons } = abort();
+      expect(move(rg3, 'nope', [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports moving the root group', () => {
+      const { onAbort, reasons } = abort();
+      expect(move(rg3, [], [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['root-not-allowed']);
+    });
+
+    it('reports a move to the same location', () => {
+      const { onAbort, reasons } = abort();
+      expect(move(rg3, [0], [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['same-location']);
+    });
+
+    it('reports a missing destination', () => {
+      const { onAbort, reasons } = abort();
+      expect(move(rg3, [0], badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['destination-not-found']);
+    });
+
+    it('reports an unresolvable source path', () => {
+      const { onAbort, reasons } = abort();
+      expect(move(rg3, [5], [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+  });
+
+  describe('insert', () => {
+    it('reports a missing parent', () => {
+      const { onAbort, reasons } = abort();
+      expect(insert(rg3, r4, badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['parent-not-found']);
+    });
+
+    it('reports a parent that is a rule', () => {
+      const { onAbort, reasons } = abort();
+      expect(insert(rg3, r4, [0, 0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['parent-not-a-group']);
+    });
+  });
+
+  describe('group', () => {
+    it('reports an unknown source id', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3wIDs, 'nope', [0], { onAbort })).toBe(rg3wIDs);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports an unknown target id', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3wIDs, [0], 'nope', { onAbort })).toBe(rg3wIDs);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports grouping the root group', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3, [], [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['root-not-allowed']);
+    });
+
+    it('reports grouping with the same location', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3, [0], [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['same-location']);
+    });
+
+    it('reports a missing destination', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3, [0], badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['destination-not-found']);
+    });
+
+    it('reports an unresolvable source path', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3, [5], [0], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports an unresolvable target path', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rg3, [0], [5], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+      expect(onAbort.mock.calls[0][0]).toMatchObject({ pathOrID: [5] });
+    });
+  });
+});

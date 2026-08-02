@@ -1,6 +1,6 @@
+import type { QueryHistoryOptions } from '@react-querybuilder/core';
+import { defaultCoalesceMs, defaultMaxHistory } from '@react-querybuilder/core';
 import * as React from 'react';
-import { defaultCoalesceMs, defaultMaxHistory } from './queryHistorySlice';
-import type { QueryHistoryOptions } from './types';
 
 export interface QueryBuilderHistoryContextProps extends Required<QueryHistoryOptions> {
   /** `true` when a {@link QueryBuilderHistory} provider is present. */

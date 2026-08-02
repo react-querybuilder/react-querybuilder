@@ -180,6 +180,18 @@ describe('isAncestor', () => {
     expect(isAncestor([0, 1, 2], [0, 1, 2, 3, 4, 5])).toBe(true);
     expect(isAncestor([0, 1, 2, 4], [0, 1, 2, 3])).toBe(false);
   });
+
+  it('compares path segments, not their string representations', () => {
+    // Index 1 is a sibling of index 10/11, not an ancestor of anything beneath them.
+    expect(isAncestor([1], [10, 0])).toBe(false);
+    expect(isAncestor([1], [11, 0])).toBe(false);
+    expect(isAncestor([0, 1], [0, 10, 2])).toBe(false);
+    expect(isAncestor([1, 2], [1, 20, 3])).toBe(false);
+    // Genuine ancestors with multi-digit segments still match.
+    expect(isAncestor([10], [10, 0])).toBe(true);
+    expect(isAncestor([1], [1, 0])).toBe(true);
+    expect(isAncestor([0, 10], [0, 10, 2])).toBe(true);
+  });
 });
 
 describe('pathsAreEqual', () => {

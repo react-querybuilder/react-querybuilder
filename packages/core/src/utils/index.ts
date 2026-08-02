@@ -23,6 +23,7 @@ export * from './pathUtils';
 export * from './preferProp';
 export * from './prepareQueryObjects';
 export * from './queryTools';
+export * from './QueryManager';
 export * from './regenerateIDs';
 export * from './signature';
 export * from './transformQuery';
