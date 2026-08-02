@@ -19,6 +19,7 @@ export * from './mergeAnyTranslations';
 export * from './mergeClassnames';
 export * from './misc';
 export * from './objectUtils';
+export * from './optionResolvers';
 export * from './optGroupUtils';
 export * from './parseNumber';
 export * from './pathUtils';
@@ -27,6 +28,7 @@ export * from './prepareQueryObjects';
 export * from './queryTools';
 export * from './QueryManager';
 export * from './regenerateIDs';
+export * from './ruleFactory';
 export * from './signature';
 export * from './transformQuery';
 

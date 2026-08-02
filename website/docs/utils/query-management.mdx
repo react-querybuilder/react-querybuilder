@@ -482,6 +482,24 @@ deriveRuleClassNames({ classNames: { valueSelector: 'vs', fields: 'f' } });
 // => { fields: 'rule-fields vs f', operators: 'rule-operators vs', ... }
 ```
 
+### Option resolvers and factories
+
+The precedence rules the `QueryBuilder` component applies when resolving a rule's configuration are exported as standalone functions, so `useQueryBuilderSetup` and `QueryManager` share one implementation rather than each keeping its own:
+
+- `resolveOperatorList({ field, fieldData, getOperators, operators, ... })` — the field's own `operators`, then `getOperators`, then the query-level list.
+- `resolveDefaultOperator({ field, fieldData, getDefaultOperator, getOperators })` — the field's `defaultOperator`, then `getDefaultOperator` (string or function), then the first available operator.
+- `resolveValueEditorType({ field, operator, fieldData, getValueEditorType })` — the field's `valueEditorType` (string or function of the operator), then `getValueEditorType`, then `"text"`.
+- `resolveValueList({ field, operator, fieldData, getValues, ... })` — the field's own `values`, then `getValues`, then an empty list.
+- `createRule(options)` / `createRuleGroup(options, independentCombinators?)` — build a new rule or group from that configuration.
+
+Each accepts an optional `placeholder` so a UI layer can supply translated placeholder options; omit it where translations don't apply.
+
+:::note
+
+`createRule` computes `value` in a second pass, once `field`, `operator`, and `valueSource` are known, since the default value depends on all three. `createRuleGroup` generates the group's own `id` _before_ any contained rule's — observable when `idGenerator` is deterministic.
+
+:::
+
 ### Paths
 
 `derivePathInfo(path, childCount, { disabled, disabledPaths })` returns `{ path, disabled }` for each child of a group, applying the rule that a child is disabled if its parent is disabled or its own path appears in `disabledPaths`. The `usePathsMemo` hook wraps it to keep the array referentially stable across renders.

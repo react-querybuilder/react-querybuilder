@@ -61,7 +61,13 @@ import { getMatchModesUtil } from './getMatchModesUtil';
 import { getRuleDefaultValue } from './getRuleDefaultValue';
 import { getValueSourcesUtil } from './getValueSourcesUtil';
 import { isRuleGroup, isRuleGroupTypeIC } from './isRuleGroup';
-import { getFirstOption, prepareOptionList } from './optGroupUtils';
+import { prepareOptionList } from './optGroupUtils';
+import {
+  resolveDefaultOperator,
+  resolveOperatorList,
+  resolveValueEditorType,
+  resolveValueList,
+} from './optionResolvers';
 import type { FindPathReturnType } from './pathUtils';
 import { findPath, getParentPath, pathIsDisabled } from './pathUtils';
 import { prepareRuleGroup } from './prepareQueryObjects';
@@ -78,6 +84,7 @@ import type {
 } from './queryTools';
 import { add, group, insert, move, remove, update } from './queryTools';
 import { regenerateIDs } from './regenerateIDs';
+import { createRule, createRuleGroup } from './ruleFactory';
 import { signatureOf, structuralSignature, unchangedSignature } from './signature';
 import type { TransformQueryOptions } from './transformQuery';
 import { transformQuery } from './transformQuery';
@@ -427,31 +434,24 @@ export class QueryManager<
 
   /** Resolves the operator list for a field, mirroring `QueryBuilder`'s precedence. */
   #operatorsFor(field: string): FullOptionList<O> {
-    const fieldData = this.#fieldData(field);
-    return prepareOptionList<O>({
-      optionList: (fieldData?.operators ??
-        this.#options.getOperators?.(field, { fieldData }) ??
-        this.#operators) as FlexibleOptionListProp<O>,
+    return resolveOperatorList<F, O>({
+      field,
+      fieldData: this.#fieldData(field),
+      getOperators: this.#options.getOperators,
+      operators: this.#operators,
       baseOption: this.#options.baseOperator,
-      labelMap: defaultOperatorLabelMap,
       autoSelectOption: this.#options.autoSelectOperator,
-    }).optionList;
+    });
   }
 
   /** Resolves the default operator for a field, mirroring `QueryBuilder`'s precedence. */
   #defaultOperator(field: string): string {
-    const fieldData = this.#fieldData(field);
-
-    if (fieldData?.defaultOperator) return fieldData.defaultOperator;
-
-    const { getDefaultOperator } = this.#options;
-    if (getDefaultOperator) {
-      return typeof getDefaultOperator === 'function'
-        ? getDefaultOperator(field, { fieldData })
-        : getDefaultOperator;
-    }
-
-    return getFirstOption(this.#operatorsFor(field)) ?? '';
+    return resolveDefaultOperator<F>({
+      field,
+      fieldData: this.#fieldData(field),
+      getDefaultOperator: this.#options.getDefaultOperator,
+      getOperators: (f: string) => this.#operatorsFor(f),
+    });
   }
 
   #valueSourcesFor(field: string, operator: string) {
@@ -467,24 +467,22 @@ export class QueryManager<
   }
 
   #valuesFor(field: string, operator: string): FullOptionList<Option> {
-    const fieldData = this.#fieldData(field);
-    return prepareOptionList<FullOption>({
-      optionList:
-        fieldData?.values ?? this.#options.getValues?.(field, operator, { fieldData }) ?? [],
+    return resolveValueList<F>({
+      field,
+      operator,
+      fieldData: this.#fieldData(field),
+      getValues: this.#options.getValues,
       autoSelectOption: this.#options.autoSelectValue,
-    }).optionList;
+    });
   }
 
   #valueEditorTypeFor(field: string, operator: string): ValueEditorType {
-    const fieldData = this.#fieldData(field);
-
-    if (fieldData?.valueEditorType) {
-      return typeof fieldData.valueEditorType === 'function'
-        ? fieldData.valueEditorType(operator)
-        : fieldData.valueEditorType;
-    }
-
-    return this.#options.getValueEditorType?.(field, operator, { fieldData }) ?? 'text';
+    return resolveValueEditorType<F>({
+      field,
+      operator,
+      fieldData: this.#fieldData(field),
+      getValueEditorType: this.#options.getValueEditorType,
+    });
   }
 
   /** Computes the default `value` for a rule, mirroring `QueryBuilder`'s precedence. */
@@ -701,28 +699,15 @@ export class QueryManager<
    * to the query—pass it to {@link QueryManager.add} or {@link QueryManager.insert}.
    */
   createRule(): RuleType {
-    const { getDefaultField } = this.#options;
-
-    let field: string = getFirstOption(this.#fields) ?? '';
-    if (getDefaultField) {
-      field =
-        typeof getDefaultField === 'function' ? getDefaultField(this.#fields) : getDefaultField;
-    }
-
-    const operator = this.#defaultOperator(field);
-    const valueSource = getFirstOption(this.#valueSourcesFor(field, operator)) ?? 'value';
-    const matchMode = getFirstOption(this.#matchModesFor(field));
-
-    const newRule: RuleType = {
-      id: this.#idGenerator(),
-      field,
-      operator,
-      valueSource,
-      value: '',
-      ...(matchMode ? { match: { mode: matchMode, threshold: 1 } } : null),
-    };
-
-    return { ...newRule, value: this.#defaultValue(newRule) };
+    return createRule<F>({
+      fields: this.#fields,
+      getDefaultField: this.#options.getDefaultField,
+      getRuleDefaultOperator: f => this.#defaultOperator(f),
+      getValueSources: (f, o) => this.#valueSourcesFor(f, o),
+      getMatchModes: f => this.#matchModesFor(f),
+      getRuleDefaultValue: r => this.#defaultValue(r),
+      idGenerator: this.#idGenerator,
+    });
   }
 
   /**
@@ -730,18 +715,15 @@ export class QueryManager<
    * added to the query—pass it to {@link QueryManager.add} or {@link QueryManager.insert}.
    */
   createRuleGroup(independentCombinators?: boolean): RG {
-    const rules = this.#options.addRuleToNewGroups ? [this.createRule()] : [];
-
-    if (independentCombinators) {
-      return { id: this.#idGenerator(), rules, not: false } as unknown as RG;
-    }
-
-    return {
-      id: this.#idGenerator(),
-      rules,
-      combinator: getFirstOption(this.#combinators) ?? '',
-      not: false,
-    } as unknown as RG;
+    return createRuleGroup<C>(
+      {
+        combinators: this.#combinators,
+        addRuleToNewGroups: this.#options.addRuleToNewGroups,
+        createRule: () => this.createRule(),
+        idGenerator: this.#idGenerator,
+      },
+      independentCombinators
+    ) as RG;
   }
 
   // #endregion

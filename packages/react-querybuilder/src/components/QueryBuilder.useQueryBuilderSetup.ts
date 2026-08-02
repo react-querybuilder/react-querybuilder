@@ -24,12 +24,16 @@ import {
   defaultOperatorLabelMap,
   defaultOperators,
   generateID,
-  getFirstOption,
   getMatchModesUtil,
-  getOption,
   getRuleDefaultValue as getRuleDefaultValueCore,
   getValueSourcesUtil,
+  createRule as createRuleCore,
+  createRuleGroup as createRuleGroupCore,
   prepareOptionList,
+  resolveDefaultOperator,
+  resolveOperatorList,
+  resolveValueEditorType,
+  resolveValueList,
 } from '@react-querybuilder/core';
 import { useCallback, useMemo, useState } from 'react';
 import type { UseMergedContext } from '../hooks';
@@ -87,6 +91,21 @@ export type UseQueryBuilderSetup<
       ...p: Parameters<NonNullable<QueryBuilderProps<RG, F, O, C>['getValues']>>
     ) => FullOptionList<Option>;
   };
+
+/**
+ * The core resolvers are identifier-agnostic (plain `string`), while these props use branded
+ * identifier types. These aliases name the resolver-side signatures for the casts below.
+ */
+type ResolveOperators<F extends FullField, O extends FullOperator> = NonNullable<
+  Parameters<typeof resolveOperatorList<F, O>>[0]['getOperators']
+>;
+type ResolveDefaultOperator<F extends FullField> = Parameters<
+  typeof resolveDefaultOperator<F>
+>[0]['getDefaultOperator'];
+type ResolveValueEditorType<F extends FullField> = Parameters<
+  typeof resolveValueEditorType<F>
+>[0]['getValueEditorType'];
+type ResolveValues<F extends FullField> = Parameters<typeof resolveValueList<F>>[0]['getValues'];
 
 /**
  * Massages the props as necessary and prepares the basic update/generate methods
@@ -206,52 +225,40 @@ export const useQueryBuilderSetup = <
 
   const getOperatorsMain = useCallback(
     (field: FieldName, { fieldData }: { fieldData: F }) =>
-      prepareOptionList({
-        optionList: fieldData?.operators ?? getOperators?.(field, { fieldData }) ?? operators,
+      resolveOperatorList<F, O>({
+        field,
+        fieldData,
+        // The props use branded identifier types; the resolvers are identifier-agnostic.
+        getOperators: getOperators as ResolveOperators<F, O>,
+        operators,
         placeholder: translations.operators,
         baseOption: baseOperator,
-        labelMap: defaultOperatorLabelMap,
         autoSelectOption: autoSelectOperator,
-      }).optionList as FullOptionList<O>,
+      }),
     [autoSelectOperator, baseOperator, getOperators, operators, translations.operators]
   );
 
   const getRuleDefaultOperator = useCallback(
-    (field: FieldName): OperatorName => {
-      const fieldData = fieldMap[field] as F;
-
-      if (fieldData?.defaultOperator) {
-        return fieldData.defaultOperator as OperatorName;
-      }
-
-      if (getDefaultOperator) {
-        return typeof getDefaultOperator === 'function'
-          ? (getDefaultOperator(field, { fieldData }) as OperatorName)
-          : getDefaultOperator;
-      }
-
-      const ops =
-        getOperatorsMain(field, { fieldData }) ??
-        /* v8 ignore start -- @preserve */ []; /* v8 ignore stop -- @preserve */
-      return (getFirstOption(ops) ??
-        /* v8 ignore start -- @preserve */ '') /* v8 ignore stop -- @preserve */ as OperatorName;
-    },
+    (field: FieldName): OperatorName =>
+      resolveDefaultOperator<F>({
+        field,
+        fieldData: fieldMap[field] as F,
+        getDefaultOperator: getDefaultOperator as ResolveDefaultOperator<F>,
+        getOperators: (f: string, misc: { fieldData: F }) => getOperatorsMain(f as FieldName, misc),
+      }) as OperatorName,
     [fieldMap, getDefaultOperator, getOperatorsMain]
   );
   // #endregion
 
   // #region Rule property getters
   const getValueEditorTypeMain = useCallback(
-    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) => {
-      if (fieldData.valueEditorType) {
-        if (typeof fieldData.valueEditorType === 'function') {
-          return fieldData.valueEditorType(operator);
-        }
-        return fieldData.valueEditorType;
-      }
-
-      return getValueEditorType?.(field, operator, { fieldData }) ?? 'text';
-    },
+    (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) =>
+      resolveValueEditorType<F>({
+        field,
+        operator,
+        fieldData,
+        getValueEditorType: getValueEditorType as ResolveValueEditorType<F>,
+      }),
     [getValueEditorType]
   );
 
@@ -276,11 +283,14 @@ export const useQueryBuilderSetup = <
 
   const getValuesMain = useCallback(
     (field: FieldName, operator: OperatorName, { fieldData }: { fieldData: F }) =>
-      prepareOptionList({
-        optionList: fieldData?.values ?? getValues?.(field, operator, { fieldData }) ?? [],
+      resolveValueList<F>({
+        field,
+        operator,
+        fieldData,
+        getValues: getValues as ResolveValues<F>,
         placeholder: translations.values,
         autoSelectOption: autoSelectValue,
-      }).optionList,
+      }),
     [autoSelectValue, getValues, translations.values]
   );
 
@@ -322,78 +332,38 @@ export const useQueryBuilderSetup = <
   // #endregion
 
   // #region Rule/group creators
-  const createRule = useCallback((): R => {
-    let field = '' as FieldName;
-    const flds = fields as FullOptionList<F>;
-    /* v8 ignore else -- @preserve */
-    if (flds?.length > 0 && flds[0]) {
-      const fo = getFirstOption(flds) as FieldName;
-      /* v8 ignore else -- @preserve */
-      if (fo) field = fo;
-    }
-    if (getDefaultField) {
-      if (typeof getDefaultField === 'function') {
-        const df = getDefaultField(flds) as FieldName;
-        /* v8 ignore else -- @preserve */
-        if (df) field = df;
-      } else {
-        field = getDefaultField;
-      }
-    }
-
-    const operator = getRuleDefaultOperator(field);
-
-    const valueSource =
-      getFirstOption(
-        getValueSourcesMain(field, operator, { fieldData: getOption(flds, field) as F })
-      ) ?? 'value';
-
-    const matchMode = getFirstOption(
-      getMatchModesMain(field, { fieldData: getOption(flds, field) as F })
-    );
-
-    const newRule = {
-      id: idGenerator(),
-      field,
-      operator,
-      valueSource,
-      value: '',
-      ...(matchMode ? { match: { mode: matchMode, threshold: 1 } } : null),
-    } as R;
-
-    const value = getRuleDefaultValue(newRule);
-
-    return { ...newRule, value };
-  }, [
-    fields,
-    getDefaultField,
-    getMatchModesMain,
-    getRuleDefaultOperator,
-    getRuleDefaultValue,
-    getValueSourcesMain,
-    idGenerator,
-  ]);
+  const createRule = useCallback(
+    (): R =>
+      createRuleCore<F>({
+        fields,
+        getDefaultField,
+        getRuleDefaultOperator: f => getRuleDefaultOperator(f as FieldName),
+        getValueSources: (f, o, misc) =>
+          getValueSourcesMain(f as FieldName, o as OperatorName, misc),
+        getMatchModes: (f, misc) => getMatchModesMain(f as FieldName, misc),
+        getRuleDefaultValue: r => getRuleDefaultValue(r as R),
+        idGenerator,
+      }) as R,
+    [
+      fields,
+      getDefaultField,
+      getMatchModesMain,
+      getRuleDefaultOperator,
+      getRuleDefaultValue,
+      getValueSourcesMain,
+      idGenerator,
+    ]
+  );
 
   const createRuleGroup = useCallback(
-    (independentCombinators?: boolean): RG => {
-      if (independentCombinators) {
-        return {
-          id: idGenerator(),
-          rules: addRuleToNewGroups ? [createRule() as RuleType] : [],
-          not: false,
-        } as RG;
-      }
-      return {
-        id: idGenerator(),
-        rules: addRuleToNewGroups ? [createRule()] : [],
-        combinator:
-          getFirstOption(combinators) ??
-          /* v8 ignore start -- @preserve */ '' /* v8 ignore stop -- @preserve */,
-        not: false,
-      } as unknown as RG;
-    },
+    (independentCombinators?: boolean): RG =>
+      createRuleGroupCore<C>(
+        { combinators, addRuleToNewGroups, createRule, idGenerator },
+        independentCombinators
+      ) as RG,
     [addRuleToNewGroups, combinators, createRule, idGenerator]
   );
+
   // #endregion
 
   return {

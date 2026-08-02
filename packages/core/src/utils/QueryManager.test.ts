@@ -52,6 +52,24 @@ describe('constructor', () => {
     expect((q.getQuery().rules[0] as RuleType).id).toBeDefined();
   });
 
+  it('generates the group id before any contained rule id', () => {
+    // Matches the order the `QueryBuilder` component has always used. Observable only with a
+    // deterministic `idGenerator`.
+    let i = 0;
+    const q = new QueryManager<RuleGroupType>(
+      { id: 'root', combinator: 'and', rules: [] },
+      { fields, addRuleToNewGroups: true, idGenerator: () => `id-${i++}` }
+    );
+    const g = q.createRuleGroup();
+    expect(g.id).toBe('id-0');
+    expect((g.rules[0] as RuleType).id).toBe('id-1');
+  });
+
+  it('keeps the first field when getDefaultField returns a falsy value', () => {
+    const q = new QueryManager<RuleGroupType>(undefined, { fields, getDefaultField: () => '' });
+    expect(q.createRule().field).toBe('firstName');
+  });
+
   it('uses a custom idGenerator', () => {
     let i = 0;
     const q = new QueryManager(undefined, { idGenerator: () => `id-${i++}` });
