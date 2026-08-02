@@ -48,7 +48,7 @@ import type {
 import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
 import type { RuleContext, RuleGroupContext } from './deriveRuleContext';
-import { deriveRuleContext, deriveRuleGroupContext } from './deriveRuleContext';
+import { deriveRuleContext, deriveRuleGroupContext, getFieldData } from './deriveRuleContext';
 import { formatQuery } from './formatQuery';
 import type {
   defaultRuleGroupProcessorDrizzle,
@@ -358,7 +358,8 @@ export class QueryManager<
       baseOption: options.baseField,
       autoSelectOption: options.autoSelectField,
     });
-    this.#fields = fields;
+    // Frozen because `getFields` hands this array out directly; see also `#combinators`.
+    this.#fields = freeze(fields, true);
     this.#fieldMap = fieldMap;
 
     this.#operators = prepareOptionList<O>({
@@ -368,10 +369,14 @@ export class QueryManager<
       autoSelectOption: options.autoSelectOperator,
     }).optionList;
 
-    this.#combinators = prepareOptionList<C>({
-      optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
-      baseOption: options.baseCombinator,
-    }).optionList;
+    // Frozen because `getCombinators` hands this array out directly; see also `#fields`.
+    this.#combinators = freeze(
+      prepareOptionList<C>({
+        optionList: (options.combinators ?? defaultCombinators) as FlexibleOptionListProp<C>,
+        baseOption: options.baseCombinator,
+      }).optionList,
+      true
+    );
 
     this.#query = freeze(
       query ? prepareRuleGroup(query, { idGenerator: this.#idGenerator }) : this.createRuleGroup(),
@@ -458,14 +463,20 @@ export class QueryManager<
       getValueEditorType: (f, o) => this.#valueEditorTypeFor(f, o),
       getValues: (f, o) => this.#valuesFor(f, o),
       getDefaultValue: getDefaultValue && ((r, misc) => getDefaultValue(r, misc)),
-      getParameters:
-        getParameters &&
-        ((f, o, misc) =>
-          prepareOptionList<FullOption>({
-            optionList: getParameters(f, o, misc) ?? [],
-            autoSelectOption: this.#options.autoSelectValue,
-          }).optionList),
+      getParameters: getParameters && ((f, o, misc) => this.#parametersFor(f, o, misc)),
     });
+  }
+
+  /**
+   * Resolves the parameter list for a field/operator pair, normalized the same way as every
+   * other option list. Shared by {@link QueryManager.#defaultValue} and
+   * {@link QueryManager.getRuleContext} so both see the same shape.
+   */
+  #parametersFor(field: string, operator: string, misc: { fieldData: F }): FullOptionList<Option> {
+    return prepareOptionList<FullOption>({
+      optionList: this.#options.getParameters?.(field, operator, misc) ?? [],
+      autoSelectOption: this.#options.autoSelectValue,
+    }).optionList;
   }
 
   /** Defaults shared by every mutating method, overridable per call. */
@@ -1244,10 +1255,12 @@ export class QueryManager<
   }
 
   /**
-   * The field configuration for a field name, or an empty object when the field isn't configured.
+   * The field configuration for a field name. When the field isn't configured, returns the same
+   * minimal fallback (`{ name, value, label }`, all set to the field name) that
+   * {@link QueryManager.getRuleContext} reports as `fieldData`, so both access paths agree.
    */
   getFieldData(field: string): F {
-    return this.#fieldData(field);
+    return getFieldData(field, this.#fieldMap) as F;
   }
 
   /** The operator list for a field, mirroring `QueryBuilder`'s precedence. */
@@ -1299,7 +1312,7 @@ export class QueryManager<
         getMatchModes: (f: string) => this.#matchModesFor(f),
         getOperators: (f: string) => this.#operatorsFor(f),
         getParameters: (f: string, o: string, misc: { fieldData: F }) =>
-          this.#options.getParameters?.(f, o, misc) ?? [],
+          this.#parametersFor(f, o, misc),
         getValueEditorType: (f: string, o: string) => this.#valueEditorTypeFor(f, o),
         getValues: (f: string, o: string) => this.#valuesFor(f, o),
         getValueSources: (f: string, o: string) => this.getValueSources(f, o),

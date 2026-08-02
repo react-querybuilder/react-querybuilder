@@ -360,7 +360,10 @@ These methods resolve the same field/operator configuration the `QueryBuilder` c
 
 - `getFields(): FullOptionList<FullField>` — The normalized field list, for populating a field selector.
 - `getCombinators(): FullOptionList<FullCombinator>` — The normalized combinator list, for populating a combinator selector.
-- `getFieldData(field): FullField` — The configured field, or an empty object if the field isn't configured.
+- `getFieldData(field): FullField` — The configured field. For an unconfigured field, returns the same minimal fallback (`{ name, value, label }`, all set to the field name) that `getRuleContext` reports as `fieldData`.
+
+`getFields` and `getCombinators` return frozen arrays, so they are safe to hand to rendering code without defensive copying.
+
 - `getOperators(field): FullOptionList<FullOperator>` — The operator list for a field.
 - `getValueSources(field, operator): ValueSourceFullOptions` — The available value sources.
 - `getMatchModes(field): MatchModeOptions` — The available match modes.

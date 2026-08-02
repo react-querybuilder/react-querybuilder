@@ -1,6 +1,8 @@
+import { defaultPlaceholderName } from '../defaults';
 import type {
   FullCombinator,
   FullField,
+  FullOption,
   QueryHistoryOptions,
   RuleGroupType,
   RuleGroupTypeAny,
@@ -1604,8 +1606,27 @@ describe('rule configuration', () => {
     expect(q().getFieldData('firstName')).toMatchObject({ name: 'firstName' });
   });
 
-  it('returns an empty object for an unknown field', () => {
-    expect(q().getFieldData('nope')).toEqual({});
+  it('returns a minimal fallback for an unknown field', () => {
+    expect(q().getFieldData('nope')).toEqual({ name: 'nope', value: 'nope', label: 'nope' });
+  });
+
+  it('agrees with the fieldData reported by getRuleContext', () => {
+    const m = new QueryManager<RuleGroupType>(
+      { combinator: 'and', rules: [rule('nope')] },
+      { fields }
+    );
+    expect(m.getFieldData('nope')).toEqual(m.getRuleContext([0])!.fieldData);
+  });
+
+  it('hands out frozen option lists', () => {
+    const m = q();
+    expect(Object.isFrozen(m.getFields())).toBe(true);
+    expect(Object.isFrozen(m.getCombinators())).toBe(true);
+    // Mutating the returned list must not affect the manager.
+    expect(() =>
+      (m.getFields() as FullField[]).push({ name: 'x', value: 'x', label: 'x' })
+    ).toThrow();
+    expect(m.getFields()).toHaveLength(3);
   });
 
   it('exposes operators, value sources, match modes, values, and value editor type', () => {
@@ -1675,6 +1696,30 @@ describe('rule configuration', () => {
       const ctx = m.getRuleContext([0]);
       expect(ctx?.parameters).toEqual([{ name: 'p1', value: 'p1', label: 'p1' }]);
       expect(ctx?.valueEditorType).toBe('select');
+    });
+
+    it('normalizes a shorthand parameter list, like default values do', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [{ ...rule(), valueSource: 'parameter' }] },
+        // No `value` property: `prepareOptionList` fills it in from `name`.
+        { fields, getParameters: () => [{ name: 'p1', label: 'P1' }] }
+      );
+      expect(m.getRuleContext([0])?.parameters).toEqual([{ name: 'p1', value: 'p1', label: 'P1' }]);
+    });
+
+    it('applies autoSelectValue to parameters', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [{ ...rule(), valueSource: 'parameter' }] },
+        {
+          fields,
+          autoSelectValue: false,
+          getParameters: () => [{ name: 'p1', value: 'p1', label: 'p1' }],
+        }
+      );
+      // A placeholder option is prepended when `autoSelectValue` is false.
+      const params = m.getRuleContext([0])?.parameters as FullOption[];
+      expect(params).toHaveLength(2);
+      expect(params[0].value).toBe(defaultPlaceholderName);
     });
 
     it('reports no parameters when none are configured', () => {
