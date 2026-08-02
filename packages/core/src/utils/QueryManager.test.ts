@@ -1,4 +1,6 @@
 import type {
+  FullCombinator,
+  FullField,
   QueryHistoryOptions,
   RuleGroupType,
   RuleGroupTypeAny,
@@ -1677,6 +1679,75 @@ describe('rule configuration', () => {
 
     it('reports no parameters when none are configured', () => {
       expect(q().getRuleContext([0])?.parameters).toBeNull();
+    });
+  });
+});
+
+describe('group configuration', () => {
+  const q = () =>
+    new QueryManager<RuleGroupType>({ combinator: 'or', rules: [rule()] }, { fields });
+
+  it('exposes the normalized field and combinator lists', () => {
+    const m = q();
+    expect((m.getFields() as FullField[]).map(f => f.value)).toEqual([
+      'firstName',
+      'lastName',
+      'age',
+    ]);
+    expect((m.getCombinators() as FullCombinator[]).map(c => c.value)).toEqual(['and', 'or']);
+  });
+
+  describe('getRuleGroupContext', () => {
+    it('defaults to the root group', () => {
+      const ctx = q().getRuleGroupContext()!;
+      expect(ctx.combinator).toBe('or');
+      expect(ctx.independentCombinators).toBe(false);
+      expect((ctx.combinators as FullCombinator[]).map(c => c.value)).toEqual(['and', 'or']);
+    });
+
+    it('resolves a nested group by path and id', () => {
+      const m = new QueryManager<RuleGroupType>({
+        combinator: 'and',
+        rules: [{ combinator: 'or', rules: [] }],
+      });
+      expect(m.getRuleGroupContext([0])?.combinator).toBe('or');
+      const id = (m.getQuery().rules[0] as RuleGroupType).id!;
+      expect(m.getRuleGroupContext(id)?.combinator).toBe('or');
+    });
+
+    it('reports independent combinators', () => {
+      const m = new QueryManager<RuleGroupTypeIC>({ rules: [] });
+      const ctx = m.getRuleGroupContext();
+      expect(ctx?.independentCombinators).toBe(true);
+      expect(ctx?.combinatorBasedClassName).toBeNull();
+    });
+
+    it('returns null for a nonexistent target', () => {
+      expect(q().getRuleGroupContext([99])).toBeNull();
+    });
+
+    it('returns null when the target is a rule', () => {
+      expect(q().getRuleGroupContext([0])).toBeNull();
+    });
+
+    it('includes the validation result', () => {
+      const seed = new QueryManager<RuleGroupType>({ combinator: 'and', rules: [] });
+      const id = seed.getQuery().id!;
+      const m = new QueryManager<RuleGroupType>(seed.getQuery(), {
+        validator: () => ({ [id]: { valid: false, reasons: ['nope'] } }),
+      });
+      expect(m.getRuleGroupContext()?.validationResult).toEqual({
+        valid: false,
+        reasons: ['nope'],
+      });
+    });
+
+    it('tolerates a boolean validation result', () => {
+      const m = new QueryManager<RuleGroupType>(
+        { combinator: 'and', rules: [] },
+        { validator: () => true }
+      );
+      expect(m.getRuleGroupContext()?.validationResult).toBeNull();
     });
   });
 });

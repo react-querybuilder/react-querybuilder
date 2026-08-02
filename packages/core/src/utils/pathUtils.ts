@@ -135,3 +135,31 @@ export const pathIsDisabled = (path: Path, query: RuleGroupTypeAny): boolean => 
   }
   return disabled;
 };
+
+/** The path of a child rule or group, and whether it is disabled. */
+export interface PathInfo {
+  path: Path;
+  disabled: boolean;
+}
+
+/**
+ * Builds the {@link PathInfo} for each child of a group at `path`. A child is disabled if its
+ * parent is disabled or if its own path appears in `disabledPaths`.
+ *
+ * @group Paths
+ */
+export const derivePathInfo = (
+  path: Path,
+  childCount: number,
+  { disabled = false, disabledPaths = [] }: { disabled?: boolean; disabledPaths?: Path[] } = {}
+): PathInfo[] => {
+  const paths: PathInfo[] = [];
+  for (let i = 0; i < childCount; i++) {
+    const thisPath = [...path, i];
+    paths[i] = {
+      path: thisPath,
+      disabled: disabled || disabledPaths.some(p => pathsAreEqual(thisPath, p)),
+    };
+  }
+  return paths;
+};

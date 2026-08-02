@@ -358,6 +358,8 @@ Unlike the standalone `findPath`, which can return `undefined` for an out-of-ran
 
 These methods resolve the same field/operator configuration the `QueryBuilder` component uses, applying the same precedence rules (field-level properties first, then the corresponding `get*` option, then the manager-level defaults).
 
+- `getFields(): FullOptionList<FullField>` — The normalized field list, for populating a field selector.
+- `getCombinators(): FullOptionList<FullCombinator>` — The normalized combinator list, for populating a combinator selector.
 - `getFieldData(field): FullField` — The configured field, or an empty object if the field isn't configured.
 - `getOperators(field): FullOptionList<FullOperator>` — The operator list for a field.
 - `getValueSources(field, operator): ValueSourceFullOptions` — The available value sources.
@@ -397,6 +399,26 @@ const ctx = q.getRuleContext([0]);
 
 :::
 
+`getRuleGroupContext(pathOrID)` is the equivalent for groups, defaulting to the root group. It returns `null` when the target can't be resolved or isn't a group.
+
+```ts
+interface RuleGroupContext {
+  combinator: string;
+  combinatorObject: FullCombinator | undefined;
+  combinators: FullOptionList<FullCombinator>;
+  /** The selected combinator's `className`, or `null` for independent combinators. */
+  combinatorBasedClassName: Classname | null;
+  independentCombinators: boolean;
+  validationResult: boolean | ValidationResult;
+}
+```
+
+:::note
+
+Unlike a rule, a group's `validationResult` comes _only_ from the query-level validation map—there is no field-level validator fallback.
+
+:::
+
 ### Classnames
 
 `@react-querybuilder/core` also exports the classname derivations used by `useRule` and `useRuleGroup`, so an implementation in any framework can produce a byte-identical `class` attribute for every element:
@@ -404,6 +426,13 @@ const ctx = q.getRuleContext([0]);
 - `deriveRuleClassNames({ classNames, suppressStandardClassnames })` — the per-element classnames for a rule (`fields`, `operators`, `value`, `removeRule`, and so on).
 - `deriveRuleOuterClassName({ classNames, suppressStandardClassnames, ...state })` — the rule's wrapper classname, including conditional state classes for `disabled`, `muted`, drag-and-drop, subqueries, and validation.
 - `deriveRuleGroupClassNames({ classNames, suppressStandardClassnames, ...dndState })` — the per-element classnames for a rule group, including its `header`.
+- `deriveRuleGroupOuterClassName({ ... })` — the group's wrapper classname.
+
+:::caution
+
+A group's wrapper reflects **fewer** states than a rule's: `dndOver`, `dndCopy`, `dndDropNotAllowed`, and `hasSubQuery` apply to rules only. The two condition sets are declared separately for exactly this reason, so use the matching function rather than assuming symmetry.
+
+:::
 
 Each takes the merged [`controlClassnames`](../components/querybuilder#controlclassnames) object and returns plain strings.
 
@@ -422,6 +451,10 @@ For each entry the result is the standard classname, then each `sources` entry, 
 deriveRuleClassNames({ classNames: { valueSelector: 'vs', fields: 'f' } });
 // => { fields: 'rule-fields vs f', operators: 'rule-operators vs', ... }
 ```
+
+### Paths
+
+`derivePathInfo(path, childCount, { disabled, disabledPaths })` returns `{ path, disabled }` for each child of a group, applying the rule that a child is disabled if its parent is disabled or its own path appears in `disabledPaths`. The `usePathsMemo` hook wraps it to keep the array referentially stable across renders.
 
 ### Inspection
 

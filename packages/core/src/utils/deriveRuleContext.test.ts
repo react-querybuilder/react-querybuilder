@@ -8,6 +8,8 @@ import type {
 } from '../types';
 import {
   deriveRuleContext,
+  deriveRuleGroupContext,
+  getRuleGroupCombinator,
   getFieldData,
   getParametersAsList,
   getRuleInputType,
@@ -272,5 +274,71 @@ describe('deriveRuleContext', () => {
       id: 'r1',
     });
     expect(ctx.validationResult).toEqual({ valid: false, reasons: ['nope'] });
+  });
+});
+
+describe('getRuleGroupCombinator', () => {
+  const combinators = toFullOptionList([
+    { name: 'and', label: 'AND' },
+    { name: 'or', label: 'OR' },
+  ]);
+
+  it("uses the group's own combinator", () => {
+    expect(getRuleGroupCombinator({ combinator: 'or', rules: [] }, combinators)).toBe('or');
+  });
+
+  it('falls back to the first combinator for independent combinators', () => {
+    expect(getRuleGroupCombinator({ rules: [] }, combinators)).toBe('and');
+  });
+
+  it('returns an empty string when no combinators are configured', () => {
+    expect(getRuleGroupCombinator({ rules: [] }, toFullOptionList([]))).toBe('');
+  });
+});
+
+describe('deriveRuleGroupContext', () => {
+  const combinators = toFullOptionList([
+    { name: 'and', label: 'AND', className: 'and-class' },
+    { name: 'or', label: 'OR' },
+  ]);
+
+  it('resolves a standard group', () => {
+    const ctx = deriveRuleGroupContext({ combinator: 'and', rules: [] }, combinators);
+    expect(ctx.combinator).toBe('and');
+    expect(ctx.combinatorObject?.value).toBe('and');
+    expect(ctx.combinatorBasedClassName).toBe('and-class');
+    expect(ctx.independentCombinators).toBe(false);
+    expect(ctx.validationResult).toBeNull();
+  });
+
+  it('returns an empty class when the combinator has none', () => {
+    const ctx = deriveRuleGroupContext({ combinator: 'or', rules: [] }, combinators);
+    expect(ctx.combinatorBasedClassName).toBe('');
+  });
+
+  it('returns a null class for independent combinators', () => {
+    const ctx = deriveRuleGroupContext({ rules: [] }, combinators);
+    expect(ctx.independentCombinators).toBe(true);
+    expect(ctx.combinatorBasedClassName).toBeNull();
+  });
+
+  it('reads the validation result from the map', () => {
+    const ctx = deriveRuleGroupContext({ id: 'g1', combinator: 'and', rules: [] }, combinators, {
+      validationMap: { g1: { valid: false, reasons: ['nope'] } },
+    });
+    expect(ctx.validationResult).toEqual({ valid: false, reasons: ['nope'] });
+  });
+
+  it('accepts an explicit id', () => {
+    const ctx = deriveRuleGroupContext({ combinator: 'and', rules: [] }, combinators, {
+      validationMap: { g1: false },
+      id: 'g1',
+    });
+    expect(ctx.validationResult).toBe(false);
+  });
+
+  it('has no field-validator fallback, unlike rules', () => {
+    const ctx = deriveRuleGroupContext({ id: 'g1', combinator: 'and', rules: [] }, combinators);
+    expect(ctx.validationResult).toBeNull();
   });
 });

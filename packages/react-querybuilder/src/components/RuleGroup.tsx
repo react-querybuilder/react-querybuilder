@@ -9,15 +9,15 @@ import type {
   ValueChangeEventHandler,
 } from '@react-querybuilder/core';
 import {
-  clsx,
   deriveRuleGroupClassNames,
+  getRuleGroupCombinator,
+  deriveRuleGroupOuterClassName,
   getFirstOption,
   getOption,
   getParentPath,
   getValidationClassNames,
   isRuleGroup,
   isRuleGroupType,
-  standardClassnames,
   TestID,
 } from '@react-querybuilder/core';
 import type { MouseEvent } from 'react';
@@ -562,11 +562,10 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const combinator = useMemo(
     () =>
-      ruleGroupProp && isRuleGroupType(ruleGroupProp)
-        ? ruleGroupProp.combinator
-        : ruleGroupProp
-          ? getFirstOption(combinators)!
-          : (combinatorProp ?? getFirstOption(combinators)!),
+      ruleGroupProp
+        ? getRuleGroupCombinator(ruleGroupProp, combinators)
+        : // Deprecated `combinator` prop fallback, only reachable without a `ruleGroup` prop.
+          (combinatorProp ?? getFirstOption(combinators)!),
     [combinatorProp, combinators, ruleGroupProp]
   );
 
@@ -703,29 +702,19 @@ export const useRuleGroup = (props: RuleGroupProps): UseRuleGroup => {
 
   const outerClassName = useMemo(
     () =>
-      clsx(
-        ruleGroupClassname,
-        combinatorBasedClassName,
-        suppressStandardClassnames || standardClassnames.ruleGroup,
-        classNamesProp.ruleGroup,
-        disabled && classNamesProp.disabled,
-        muted && classNamesProp.muted,
-        isDragging && classNamesProp.dndDragging,
-        isOver && groupItems && classNamesProp.dndGroup,
-        suppressStandardClassnames || {
-          [standardClassnames.disabled]: disabled,
-          [standardClassnames.muted]: muted,
-          [standardClassnames.dndDragging]: isDragging,
-          [standardClassnames.dndGroup]: isOver && groupItems,
-        },
-        validationClassName
-      ),
+      deriveRuleGroupOuterClassName({
+        classNames: classNamesProp,
+        suppressStandardClassnames,
+        leadingClassNames: [ruleGroupClassname, combinatorBasedClassName],
+        disabled,
+        muted,
+        isDragging,
+        isOver,
+        groupItems,
+        validationClassName,
+      }),
     [
-      classNamesProp.disabled,
-      classNamesProp.muted,
-      classNamesProp.dndDragging,
-      classNamesProp.dndGroup,
-      classNamesProp.ruleGroup,
+      classNamesProp,
       combinatorBasedClassName,
       disabled,
       muted,

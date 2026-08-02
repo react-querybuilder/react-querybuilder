@@ -47,8 +47,8 @@ import type {
 } from '../types';
 import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
-import type { RuleContext } from './deriveRuleContext';
-import { deriveRuleContext } from './deriveRuleContext';
+import type { RuleContext, RuleGroupContext } from './deriveRuleContext';
+import { deriveRuleContext, deriveRuleGroupContext } from './deriveRuleContext';
 import { formatQuery } from './formatQuery';
 import type {
   defaultRuleGroupProcessorDrizzle,
@@ -1228,6 +1228,22 @@ export class QueryManager<
   // #region Rule configuration
 
   /**
+   * The normalized field list, as the `QueryBuilder` component would render it. Needed to
+   * populate a field selector.
+   */
+  getFields(): FullOptionList<F> {
+    return this.#fields;
+  }
+
+  /**
+   * The normalized combinator list, as the `QueryBuilder` component would render it. Needed to
+   * populate a combinator selector.
+   */
+  getCombinators(): FullOptionList<C> {
+    return this.#combinators;
+  }
+
+  /**
    * The field configuration for a field name, or an empty object when the field isn't configured.
    */
   getFieldData(field: string): F {
@@ -1293,6 +1309,24 @@ export class QueryManager<
         id: rule.id,
       }
     );
+  }
+
+  /**
+   * Resolves everything about a rule group that depends on the combinator configuration, plus its
+   * validation result. Returns `null` when the target can't be resolved or isn't a group.
+   *
+   * This is the same derivation the `useRuleGroup` hook performs.
+   */
+  getRuleGroupContext(pathOrID: Path | string = []): RuleGroupContext<C> | null {
+    const ruleGroup = this.getGroup(pathOrID);
+    if (!ruleGroup) return null;
+
+    const validation = this.validate();
+
+    return deriveRuleGroupContext<C>(ruleGroup, this.#combinators, {
+      validationMap: typeof validation === 'boolean' ? {} : validation,
+      id: ruleGroup.id,
+    });
   }
 
   // #endregion

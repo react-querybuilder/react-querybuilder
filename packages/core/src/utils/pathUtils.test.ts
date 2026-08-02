@@ -1,5 +1,6 @@
 import type { RuleGroupType, RuleGroupTypeIC } from '../types';
 import {
+  derivePathInfo,
   findID,
   findPath,
   getCommonAncestorPath,
@@ -226,5 +227,35 @@ describe('pathIsDisabled', () => {
     expect(pathIsDisabled([2, 0], query)).toBe(true);
     expect(pathIsDisabled([1, 1], queryDeepDisabled)).toBe(true);
     expect(pathIsDisabled([1, 1], queryDeepDisabled2)).toBe(false);
+  });
+});
+
+describe('derivePathInfo', () => {
+  it('builds child paths', () => {
+    expect(derivePathInfo([1], 3)).toEqual([
+      { path: [1, 0], disabled: false },
+      { path: [1, 1], disabled: false },
+      { path: [1, 2], disabled: false },
+    ]);
+  });
+
+  it('returns an empty array for no children', () => {
+    expect(derivePathInfo([], 0)).toEqual([]);
+  });
+
+  it('disables every child when the parent is disabled', () => {
+    expect(derivePathInfo([], 2, { disabled: true }).every(p => p.disabled)).toBe(true);
+  });
+
+  it('disables only the listed paths', () => {
+    expect(derivePathInfo([0], 3, { disabledPaths: [[0, 1]] }).map(p => p.disabled)).toEqual([
+      false,
+      true,
+      false,
+    ]);
+  });
+
+  it('defaults options', () => {
+    expect(derivePathInfo([], 1)).toEqual([{ path: [0], disabled: false }]);
   });
 });

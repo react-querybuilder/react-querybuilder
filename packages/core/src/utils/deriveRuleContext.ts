@@ -1,5 +1,8 @@
 import type {
+  Classname,
   FlexibleOptionList,
+  FullCombinator,
+  FullOptionList,
   FullField,
   FullOperator,
   FullOptionRecord,
@@ -7,6 +10,7 @@ import type {
   MatchModeOptions,
   Option,
   OptionList,
+  RuleGroupTypeAny,
   RuleType,
   ValidationMap,
   ValidationResult,
@@ -15,8 +19,10 @@ import type {
   ValueSources,
 } from '../types';
 import { filterFieldsByComparator } from './filterFieldsByComparator';
+import { isRuleGroupType, isRuleGroupTypeIC } from './isRuleGroup';
 import { lc } from './misc';
 import {
+  getFirstOption,
   getOption,
   isFlexibleOptionArray,
   isFlexibleOptionGroupArray,
@@ -232,5 +238,59 @@ export const deriveRuleContext = <F extends FullField = FullField>(
     values: getRuleValues(rule, fieldData, fields, parameters, getValues),
     valueSourceOptions,
     valueSources: valueSourceOptions.map(({ value }) => value) as ValueSources,
+  };
+};
+
+/**
+ * Everything {@link deriveRuleGroupContext} resolves for a single rule group.
+ */
+export interface RuleGroupContext<C extends FullCombinator = FullCombinator> {
+  combinator: string;
+  combinatorObject: C | undefined;
+  combinators: FullOptionList<C>;
+  /** The `className` of the selected combinator, or `null` for independent combinators. */
+  combinatorBasedClassName: Classname | null;
+  independentCombinators: boolean;
+  validationResult: boolean | ValidationResult;
+}
+
+/**
+ * The effective combinator for a group: its own `combinator` when it has one, otherwise the
+ * first configured combinator (which is the case for groups with independent combinators).
+ *
+ * This intentionally covers only the current property-based API. The `RuleGroup` component
+ * additionally falls back to its deprecated `combinator` prop; that fallback stays in the hook.
+ */
+export const getRuleGroupCombinator = <C extends FullCombinator = FullCombinator>(
+  ruleGroup: RuleGroupTypeAny,
+  combinators: FullOptionList<C>
+): string =>
+  isRuleGroupType(ruleGroup) ? ruleGroup.combinator : (getFirstOption(combinators) ?? '');
+
+/**
+ * Resolves everything about a rule group that depends on the combinator configuration, plus its
+ * validation result.
+ *
+ * Note that unlike {@link deriveRuleContext}, there is no field-level validator fallback—a
+ * group's validation result comes only from the query-level {@link ValidationMap}.
+ *
+ * @group Query Tools
+ */
+export const deriveRuleGroupContext = <C extends FullCombinator = FullCombinator>(
+  ruleGroup: RuleGroupTypeAny,
+  combinators: FullOptionList<C>,
+  options: { validationMap?: ValidationMap; id?: string } = {}
+): RuleGroupContext<C> => {
+  const independentCombinators = isRuleGroupTypeIC(ruleGroup);
+  const combinator = getRuleGroupCombinator(ruleGroup, combinators);
+  const combinatorObject = getOption(combinators, combinator);
+
+  return {
+    combinator,
+    combinatorObject,
+    combinators,
+    combinatorBasedClassName: independentCombinators ? null : (combinatorObject?.className ?? ''),
+    independentCombinators,
+    validationResult: (options.validationMap ?? {})[options.id ?? ruleGroup.id ?? ''] ?? null,
   };
 };

@@ -174,7 +174,7 @@ function useRuleGroup(props: RuleGroupProps): {
 };
 ```
 
-Its `classNames` come from [`deriveRuleGroupClassNames`](./query-management#classnames).
+Its `classNames` and `outerClassName` come from [`deriveRuleGroupClassNames`/`deriveRuleGroupOuterClassName`](./query-management#classnames), and its combinator resolution from `getRuleGroupCombinator` (see [`QueryManager.getRuleGroupContext()`](./query-management#rule-configuration)).
 
 ### `useValueEditor`
 

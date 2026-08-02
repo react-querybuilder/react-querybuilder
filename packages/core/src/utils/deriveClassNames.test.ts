@@ -2,6 +2,7 @@ import { standardClassnames as sc } from '../defaults';
 import {
   deriveRuleClassNames,
   deriveRuleGroupClassNames,
+  deriveRuleGroupOuterClassName,
   deriveRuleOuterClassName,
 } from './deriveClassNames';
 
@@ -217,5 +218,83 @@ describe('deriveRuleGroupClassNames', () => {
         'undoRedoActions',
       ].toSorted()
     );
+  });
+});
+
+describe('deriveRuleGroupOuterClassName', () => {
+  it('includes the standard ruleGroup class', () => {
+    expect(deriveRuleGroupOuterClassName({ classNames: {} })).toBe(sc.ruleGroup);
+  });
+
+  it('applies leading classnames first, tolerating null', () => {
+    expect(deriveRuleGroupOuterClassName({ classNames: {}, leadingClassNames: ['g', null] })).toBe(
+      `g ${sc.ruleGroup}`
+    );
+  });
+
+  it.each([
+    ['disabled', { disabled: true }, sc.disabled],
+    ['muted', { muted: true }, sc.muted],
+    ['dragging', { isDragging: true }, sc.dndDragging],
+  ])('adds the %s class', (_label, state, expected) => {
+    expect(deriveRuleGroupOuterClassName({ classNames: {}, ...state })).toContain(expected);
+  });
+
+  it('adds the group class only when over', () => {
+    expect(
+      deriveRuleGroupOuterClassName({ classNames: {}, isOver: true, groupItems: true })
+    ).toContain(sc.dndGroup);
+    expect(deriveRuleGroupOuterClassName({ classNames: {}, groupItems: true })).not.toContain(
+      sc.dndGroup
+    );
+  });
+
+  it('does NOT reflect the rule-only drag-and-drop states', () => {
+    // A group reflects fewer states than a rule; this asymmetry is deliberate.
+    const result = deriveRuleGroupOuterClassName({
+      classNames: {},
+      isOver: true,
+      dropEffect: 'copy',
+      dropNotAllowed: true,
+      hasSubQuery: true,
+    });
+    expect(result).not.toContain(sc.dndOver);
+    expect(result).not.toContain(sc.dndCopy);
+    expect(result).not.toContain(sc.dndDropNotAllowed);
+    expect(result).not.toContain(sc.hasSubQuery);
+  });
+
+  it('appends the validation classname last', () => {
+    const result = deriveRuleGroupOuterClassName({
+      classNames: {},
+      validationClassName: 'invalid',
+    });
+    expect(result.endsWith('invalid')).toBe(true);
+  });
+
+  it('applies custom conditional classnames', () => {
+    const result = deriveRuleGroupOuterClassName({
+      classNames: { disabled: 'd', muted: 'm', dndDragging: 'dg', dndGroup: 'gr' },
+      disabled: true,
+      muted: true,
+      isDragging: true,
+      isOver: true,
+      groupItems: true,
+    });
+    for (const cn of ['d', 'm', 'dg', 'gr']) expect(result).toContain(cn);
+  });
+
+  it('omits standard classnames when suppressed', () => {
+    expect(
+      deriveRuleGroupOuterClassName({
+        classNames: {},
+        suppressStandardClassnames: true,
+        disabled: true,
+        muted: true,
+        isDragging: true,
+        isOver: true,
+        groupItems: true,
+      })
+    ).toBe('');
   });
 });

@@ -125,7 +125,13 @@ const ruleGroupClassnameSources: ClassnameSpecMap<RuleGroupClassnameKey, DndClas
   body: ['body'],
 };
 
-/** Conditional classes applied to a rule's wrapper element. */
+/**
+ * Conditional classes applied to a rule's wrapper element.
+ *
+ * Note that this is deliberately _not_ the same set as {@link ruleGroupOuterConditions}: a rule
+ * reflects more drag-and-drop states than a group does. Declaring each set separately is what
+ * keeps an implementation from assuming they're symmetric.
+ */
 const ruleOuterConditions: readonly ClassnameCondition<RuleClassNameState>[] = [
   { key: 'disabled', when: s => s.disabled },
   { key: 'muted', when: s => s.muted },
@@ -135,6 +141,14 @@ const ruleOuterConditions: readonly ClassnameCondition<RuleClassNameState>[] = [
   { key: 'dndGroup', when: s => s.isOver && s.groupItems },
   { key: 'dndDropNotAllowed', when: s => s.dropNotAllowed },
   { key: 'hasSubQuery', when: s => s.hasSubQuery },
+];
+
+/** Conditional classes applied to a rule group's wrapper element. */
+const ruleGroupOuterConditions: readonly ClassnameCondition<RuleClassNameState>[] = [
+  { key: 'disabled', when: s => s.disabled },
+  { key: 'muted', when: s => s.muted },
+  { key: 'dndDragging', when: s => s.isDragging },
+  { key: 'dndGroup', when: s => s.isOver && s.groupItems },
 ];
 
 /** Options common to every classname derivation. */
@@ -215,20 +229,23 @@ export const deriveRuleGroupClassNames = (
 ): Record<RuleGroupClassnameKey, string> =>
   deriveFromSpecs(ruleGroupClassnameSources, options, options);
 
-/** Inputs to {@link deriveRuleOuterClassName}. */
-export interface RuleOuterClassNameOptions extends DeriveClassNamesOptions, RuleClassNameState {
-  /** Classnames contributed by the rule itself, its field, and its operator, applied first. */
-  leadingClassNames?: Classname[];
+/** Inputs to {@link deriveRuleOuterClassName} and {@link deriveRuleGroupOuterClassName}. */
+export interface OuterClassNameOptions extends DeriveClassNamesOptions, RuleClassNameState {
+  /**
+   * Classnames contributed by the rule or group itself and its configuration, applied first.
+   * For a rule that is the rule/field/operator classnames; for a group, the group and combinator
+   * classnames.
+   */
+  leadingClassNames?: (Classname | null)[];
   /** Appended last, as produced by `getValidationClassNames`. */
   validationClassName?: Classname;
 }
 
-/**
- * The outer (wrapper) classname for a rule, including every conditional state class.
- *
- * @group Query Tools
- */
-export const deriveRuleOuterClassName = (options: RuleOuterClassNameOptions): string => {
+const deriveOuterClassName = (
+  standardKey: 'rule' | 'ruleGroup',
+  conditions: readonly ClassnameCondition<RuleClassNameState>[],
+  options: OuterClassNameOptions
+): string => {
   const {
     classNames,
     suppressStandardClassnames,
@@ -238,9 +255,29 @@ export const deriveRuleOuterClassName = (options: RuleOuterClassNameOptions): st
 
   return clsx(
     ...leadingClassNames,
-    suppressStandardClassnames || standardClassnames.rule,
-    classNames.rule,
-    ...conditionArgs(ruleOuterConditions, options, options),
+    suppressStandardClassnames || standardClassnames[standardKey],
+    classNames[standardKey],
+    ...conditionArgs(conditions, options, options),
     validationClassName
   );
 };
+
+/**
+ * The outer (wrapper) classname for a rule, including every conditional state class.
+ *
+ * @group Query Tools
+ */
+export const deriveRuleOuterClassName = (options: OuterClassNameOptions): string =>
+  deriveOuterClassName('rule', ruleOuterConditions, options);
+
+/**
+ * The outer (wrapper) classname for a rule group, including every conditional state class.
+ *
+ * A group reflects fewer drag-and-drop states than a rule—`dndOver`, `dndCopy`,
+ * `dndDropNotAllowed`, and `hasSubQuery` do not apply—so this is not interchangeable with
+ * {@link deriveRuleOuterClassName}.
+ *
+ * @group Query Tools
+ */
+export const deriveRuleGroupOuterClassName = (options: OuterClassNameOptions): string =>
+  deriveOuterClassName('ruleGroup', ruleGroupOuterConditions, options);
