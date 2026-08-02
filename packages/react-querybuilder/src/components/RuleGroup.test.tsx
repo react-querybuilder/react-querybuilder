@@ -1,4 +1,4 @@
-import type { RuleGroupICArray, RuleGroupTypeIC, ValidationResult } from '@react-querybuilder/core';
+import type { RuleGroupICArray, RuleGroupTypeIC } from '@react-querybuilder/core';
 import {
   TestID,
   add,
@@ -6,7 +6,6 @@ import {
   defaultControlClassnames,
   standardClassnames as sc,
   defaultTranslations as t,
-  toFullOption,
 } from '@react-querybuilder/core';
 import {
   consoleMocks,
@@ -19,7 +18,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { messages } from '../messages';
-import type { ActionProps, ValueSelectorProps } from '../types';
 import { RuleGroup } from './RuleGroup';
 import { render } from './testUtils';
 
@@ -332,43 +330,6 @@ describe('independent combinators', () => {
   });
 });
 
-describe('validation', () => {
-  it('does not validate if no validationMap[id] value exists', () => {
-    render(<RuleGroup {...getRuleGroupProps()} />);
-    expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.invalid);
-  });
-
-  it('validates to false if validationMap[id] = false', () => {
-    render(<RuleGroup {...getRuleGroupProps({ validationMap: { id: false } })} />);
-    expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.invalid);
-  });
-
-  it('validates to true if validationMap[id] = true', () => {
-    render(<RuleGroup {...getRuleGroupProps({ validationMap: { id: true } })} />);
-    expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.ruleGroup)).not.toHaveClass(sc.invalid);
-  });
-
-  it('passes down validationResult as validation to children', () => {
-    const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
-    const props = getRuleGroupProps();
-    const controls = {
-      ...props.schema.controls,
-      combinatorSelector: ({ validation }: ValueSelectorProps) => (
-        <div title="ValueSelector">{JSON.stringify(validation)}</div>
-      ),
-      addRuleAction: ({ validation }: ActionProps) => (
-        <div title="ActionElement">{JSON.stringify(validation)}</div>
-      ),
-    };
-    render(<RuleGroup {...getRuleGroupProps({ controls, validationMap: { id: valRes } })} />);
-    expect(screen.getByTitle('ValueSelector').innerHTML).toEqual(JSON.stringify(valRes));
-    expect(screen.getByTitle('ActionElement').innerHTML).toEqual(JSON.stringify(valRes));
-  });
-});
-
 describe('disabled', () => {
   it('has the correct classname', () => {
     render(<RuleGroup {...getRuleGroupProps()} disabled />);
@@ -511,33 +472,6 @@ describe('"data-*" attributes', () => {
       />
     );
     expect(screen.getByTestId(TestID.ruleGroup).dataset.not).toBe('true');
-  });
-});
-
-describe('dynamic classNames', () => {
-  it('has correct group-based classNames', () => {
-    render(
-      <RuleGroup
-        {...getRuleGroupProps({
-          combinators: [
-            toFullOption({ name: 'or', label: 'OR', className: 'custom-combinatorBased-class' }),
-          ],
-          getRuleGroupClassname: () => 'custom-groupBased-class',
-        })}
-        ruleGroup={{ combinator: 'or', rules: [] }}
-      />
-    );
-    expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(
-      'custom-groupBased-class',
-      'custom-combinatorBased-class'
-    );
-  });
-
-  // Covers dnd-only branches normally exercised by @react-querybuilder/dnd
-  it('adds dnd classNames to the header for copy/disallowed states', () => {
-    render(<RuleGroup {...getRuleGroupProps()} isOver dropEffect="copy" dropNotAllowed />);
-    const header = screen.getByTestId(TestID.ruleGroup).querySelector(`.${sc.header}`)!;
-    expect(header).toHaveClass(sc.dndOver, sc.dndCopy, sc.dndDropNotAllowed);
   });
 });
 

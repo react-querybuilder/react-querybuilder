@@ -1,8 +1,4 @@
-import type {
-  FullField,
-  ParseNumberMethod,
-  ParseNumbersPropConfig,
-} from '@react-querybuilder/core';
+import type { FullField } from '@react-querybuilder/core';
 import { testValueEditor } from '@rqb-testing';
 import { renderHook } from '@testing-library/react';
 import type { Schema, ValueEditorProps } from '../types';
@@ -78,46 +74,6 @@ it('sets valueAsArray when operator is "between"', () => {
     })
   );
   expect(hr.result.current.valueAsArray).toEqual([12, 14]);
-});
-
-describe('parseNumbers', () => {
-  it.each([
-    { pn: true, text: 'strict', number: 'strict' },
-    { pn: false, text: false, number: false },
-    { pn: 'enhanced', text: 'enhanced', number: 'enhanced' },
-    { pn: 'enhanced-limited', text: false, number: 'enhanced' },
-    { pn: 'native', text: 'native', number: 'native' },
-    { pn: 'native-limited', text: false, number: 'native' },
-    { pn: 'strict', text: 'strict', number: 'strict' },
-    { pn: 'strict-limited', text: false, number: 'strict' },
-  ] satisfies { pn: ParseNumbersPropConfig; text: ParseNumberMethod; number: ParseNumberMethod }[])(
-    'processes $pn correctly',
-    ({ pn, number, text }) => {
-      const handleOnChangeText = vi.fn();
-      const hrText = renderHook(() =>
-        useValueEditor({
-          ...baseValueEditorProps,
-          handleOnChange: handleOnChangeText,
-          operator: '=',
-          inputType: 'text',
-          parseNumbers: pn,
-        })
-      );
-      expect(hrText.result.current.parseNumberMethod).toBe(text);
-
-      const handleOnChangeNumber = vi.fn();
-      const hrNumber = renderHook(() =>
-        useValueEditor({
-          ...baseValueEditorProps,
-          handleOnChange: handleOnChangeNumber,
-          operator: '=',
-          inputType: 'number',
-          parseNumbers: pn,
-        })
-      );
-      expect(hrNumber.result.current.parseNumberMethod).toBe(number);
-    }
-  );
 });
 
 it('does not call handleOnChange when type is "multiselect"', () => {

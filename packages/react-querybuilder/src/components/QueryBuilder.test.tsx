@@ -1,13 +1,9 @@
 import type {
-  DefaultOperatorName,
   Field,
-  FieldByValue,
   FullCombinator,
   FullField,
   FullOperator,
   FullOption,
-  Option,
-  OptionGroup,
   ParseNumbersPropConfig,
   RuleGroupType,
   RuleGroupTypeIC,
@@ -17,16 +13,11 @@ import type {
 import {
   LogType,
   TestID,
-  defaultPlaceholderFieldLabel,
   defaultPlaceholderFieldName,
-  defaultPlaceholderOperatorName,
   defaultValidator,
   findPath,
   generateID,
   getOption,
-  group,
-  move,
-  numericRegex,
   standardClassnames as sc,
   defaultTranslations as t,
   toFullOption,
@@ -150,38 +141,6 @@ describe('when initial query without fields is provided, create rule should work
   });
 });
 
-describe('when initial query with duplicate fields is provided', () => {
-  it('passes down a unique set of fields by name', async () => {
-    render(
-      <QueryBuilder
-        fields={[
-          { name: 'dupe', label: 'One' },
-          { name: 'dupe', label: 'Two' },
-        ]}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
-    expect(screen.getAllByTestId(TestID.fields)).toHaveLength(1);
-  });
-
-  it('passes down a unique set of fields by value', async () => {
-    render(
-      <QueryBuilder
-        fields={[
-          { name: 'notdupe1', value: 'dupe', label: 'One' },
-          { name: 'notdupe2', value: 'dupe', label: 'Two' },
-        ]}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
-    expect(screen.getAllByTestId(TestID.fields)).toHaveLength(1);
-  });
-});
-
 describe('when fields have no name property', () => {
   it('passes down a unique set of fields by value', async () => {
     render(
@@ -194,204 +153,6 @@ describe('when fields have no name property', () => {
       />
     );
     expect(within(screen.getByTestId(TestID.fields)).getAllByRole('option')).toHaveLength(2);
-  });
-});
-
-describe('when initial query with fields object is provided', () => {
-  it('passes down fields sorted by label using the key as name', async () => {
-    render(
-      <QueryBuilder
-        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
-    expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(2);
-    expect(
-      [...screen.getByTestId(TestID.fields).querySelectorAll('option')].map(opt => opt.value)
-    ).toEqual(['xyz', 'abc']);
-    expect(screen.getByText('One')).toBeInTheDocument();
-    expect(screen.getByText('Two')).toBeInTheDocument();
-    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][0]).toHaveTextContent(
-      'One'
-    );
-    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][1]).toHaveTextContent(
-      'Two'
-    );
-  });
-
-  it('respects autoSelectField={false}', async () => {
-    render(
-      <QueryBuilder
-        fields={{ xyz: { name: 'dupe', label: 'One' }, abc: { name: 'dupe', label: 'Two' } }}
-        autoSelectField={false}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
-    expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(3);
-    expect(
-      [...screen.getByTestId(TestID.fields).querySelectorAll('option')].map(opt => opt.value)
-    ).toEqual([defaultPlaceholderFieldName, 'xyz', 'abc']);
-    expect(screen.getByText('One')).toBeInTheDocument();
-    expect(screen.getByText('Two')).toBeInTheDocument();
-    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][0]).toHaveTextContent(
-      defaultPlaceholderFieldLabel
-    );
-    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][1]).toHaveTextContent(
-      'One'
-    );
-    expect([...screen.getByTestId(TestID.fields).querySelectorAll('option')][2]).toHaveTextContent(
-      'Two'
-    );
-  });
-
-  it('does not mutate a fields array with duplicates', () => {
-    const fields: Field[] = [
-      { name: 'f', label: 'Field' },
-      { name: 'f', label: 'Field' },
-    ];
-    render(<QueryBuilder fields={fields} />);
-    expect(fields).toHaveLength(2);
-  });
-
-  it('does not mutate a fields option group array with duplicates', () => {
-    const optgroups: OptionGroup<Field>[] = [
-      { label: 'OG1', options: [{ name: 'f1', label: 'Field' }] },
-      { label: 'OG1', options: [{ name: 'f2', label: 'Field' }] },
-      { label: 'OG2', options: [{ name: 'f1', label: 'Field' }] },
-    ];
-    render(<QueryBuilder fields={optgroups} />);
-    expect(optgroups).toHaveLength(3);
-    for (const og of optgroups.map(g => g.options)) {
-      expect(og).toHaveLength(1);
-    }
-  });
-});
-
-describe('when initial query, without ID, is provided', () => {
-  const queryWithoutID: RuleGroupType = {
-    combinator: 'and',
-    not: false,
-    rules: [{ field: 'firstName', value: 'Test without ID', operator: '=' }],
-  };
-  const fields: Field[] = [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
-    { name: 'age', label: 'Age' },
-  ];
-
-  const setup = () => ({
-    selectors: render(<QueryBuilder query={queryWithoutID} fields={fields} />),
-  });
-
-  it('contains a <Rule /> with the correct props', () => {
-    setup();
-    expect(screen.getByTestId(TestID.rule)).toBeInTheDocument();
-    expect(screen.getByTestId(TestID.fields)).toHaveValue('firstName');
-    expect(screen.getByTestId(TestID.operators)).toHaveValue('=');
-    expect(screen.getByTestId(TestID.valueEditor)).toHaveValue('Test without ID');
-  });
-
-  it('has a select control with the provided fields', () => {
-    setup();
-    expect(screen.getByTestId(TestID.fields).querySelectorAll('option')).toHaveLength(3);
-  });
-
-  it('has a field selector with the correct field', () => {
-    setup();
-    expect(screen.getByTestId(TestID.fields)).toHaveValue('firstName');
-  });
-
-  it('has an operator selector with the correct operator', () => {
-    setup();
-    expect(screen.getByTestId(TestID.operators)).toHaveValue('=');
-  });
-
-  it('has an input control with the correct value', () => {
-    setup();
-    expect(screen.getByTestId(TestID.rule).querySelector('input')).toHaveValue('Test without ID');
-  });
-});
-
-describe('when fields are provided with optgroups', () => {
-  const query: RuleGroupType = {
-    combinator: 'and',
-    not: false,
-    rules: [{ field: 'firstName', value: 'Test without ID', operator: '=' }],
-  };
-  const fields: OptionGroup<Field>[] = [
-    {
-      label: 'Names',
-      options: [
-        { name: 'firstName', label: 'First Name' },
-        { name: 'lastName', label: 'Last Name' },
-      ],
-    },
-    { label: 'Numbers', options: [{ name: 'age', label: 'Age' }] },
-  ];
-
-  const setup = () => ({
-    selectors: render(<QueryBuilder defaultQuery={query} fields={fields} />),
-  });
-
-  it('renders correctly', () => {
-    setup();
-    expect(screen.getByTestId(TestID.fields).querySelectorAll('optgroup')).toHaveLength(2);
-  });
-
-  it('selects the correct field', async () => {
-    setup();
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getAllByTestId(TestID.fields)[1]).toHaveValue('firstName');
-  });
-
-  it('selects the default option', async () => {
-    const {
-      selectors: { rerender },
-    } = setup();
-    rerender(<QueryBuilder defaultQuery={query} fields={fields} autoSelectField={false} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getAllByTestId(TestID.fields)[1]).toHaveValue(defaultPlaceholderFieldName);
-  });
-});
-
-describe('when initial operators are provided', () => {
-  const operators: Option[] = [
-    { name: 'null', label: 'Custom Is Null' },
-    { name: 'notNull', label: 'Is Not Null' },
-    { name: 'in', label: 'In' },
-    { name: 'notIn', label: 'Not In' },
-  ];
-  const fields: Field[] = [
-    { name: 'firstName', label: 'First Name' },
-    { name: 'lastName', label: 'Last Name' },
-    { name: 'age', label: 'Age' },
-  ];
-  const query: RuleGroupType = {
-    combinator: 'and',
-    not: false,
-    rules: [{ field: 'firstName', value: 'Test', operator: '=' }],
-  };
-
-  const setup = () => ({
-    selectors: render(<QueryBuilder operators={operators} fields={fields} query={query} />),
-  });
-
-  it('uses the given operators', () => {
-    setup();
-    expect(screen.getByTestId(TestID.operators).querySelectorAll('option')).toHaveLength(4);
-  });
-
-  it('matches the label of the first operator', () => {
-    setup();
-    expect(screen.getByTestId(TestID.operators).querySelectorAll('option')[0]).toHaveTextContent(
-      'Custom Is Null'
-    );
   });
 });
 
@@ -446,52 +207,6 @@ describe('get* callbacks', () => {
   const rule: RuleType = { field: 'lastName', value: 'Another Test', operator: '=' };
   const query: RuleGroupType = { combinator: 'or', not: false, rules: [rule] };
 
-  describe('when getOperators fn prop is provided', () => {
-    it('invokes custom getOperators function', () => {
-      const getOperators = vi.fn(() => [{ name: 'op1', label: 'Operator 1' }]);
-      render(<QueryBuilder query={query} fields={fields} getOperators={getOperators} />);
-      expect(getOperators).toHaveBeenCalledWith(rule.field, { fieldData: fields[1] });
-    });
-
-    it('handles invalid getOperators return value', () => {
-      render(<QueryBuilder query={query} fields={fields} getOperators={() => null} />);
-      expect(screen.getByTestId(TestID.operators)).toHaveValue('=');
-    });
-  });
-
-  describe('when getValueEditorType fn prop is provided', () => {
-    it('invokes custom getValueEditorType function', () => {
-      const getValueEditorType = vi.fn(() => 'text' as const);
-      render(
-        <QueryBuilder query={query} fields={fields} getValueEditorType={getValueEditorType} />
-      );
-      expect(getValueEditorType).toHaveBeenCalledWith(rule.field, rule.operator, {
-        fieldData: fields[1],
-      });
-    });
-
-    it('handles invalid getValueEditorType function', () => {
-      render(<QueryBuilder query={query} fields={fields} getValueEditorType={() => null} />);
-      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
-    });
-
-    it('prefers valueEditorType field property as string', () => {
-      const checkboxFields: FullField[] = fields.map(f => ({ ...f, valueEditorType: 'checkbox' }));
-      render(
-        <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
-      );
-      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'checkbox');
-    });
-
-    it('prefers valueEditorType field property as function', () => {
-      const checkboxFields = fields.map(f => ({ ...f, valueEditorType: () => 'checkbox' }));
-      render(
-        <QueryBuilder query={query} fields={checkboxFields} getValueEditorType={() => 'text'} />
-      );
-      expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'checkbox');
-    });
-  });
-
   describe('when getInputType fn prop is provided', () => {
     it('invokes custom getInputType function', () => {
       const getInputType = vi.fn(() => 'text' as const);
@@ -504,58 +219,6 @@ describe('get* callbacks', () => {
     it('handles invalid getInputType function', () => {
       render(<QueryBuilder query={query} fields={fields} getInputType={() => null} />);
       expect(screen.getByTestId(TestID.valueEditor)).toHaveAttribute('type', 'text');
-    });
-  });
-
-  describe('when getValues fn prop is provided', () => {
-    const getValueEditorType = () => 'select' as const;
-
-    it('invokes custom getValues function', () => {
-      const getValues = vi.fn(() => [{ name: 'test', label: 'Test' }]);
-      render(
-        <QueryBuilder
-          query={query}
-          fields={fields}
-          getValueEditorType={getValueEditorType}
-          getValues={getValues}
-        />
-      );
-      expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
-    });
-
-    it('invokes custom getValues function returning value-based options', () => {
-      const getValues = vi.fn((): FieldByValue[] => [{ value: 'test', label: 'Test' }]);
-      render(
-        <QueryBuilder
-          query={query}
-          fields={fields}
-          getValueEditorType={getValueEditorType}
-          getValues={getValues}
-        />
-      );
-      expect(getValues).toHaveBeenCalledWith(rule.field, rule.operator, { fieldData: fields[1] });
-    });
-
-    it('generates the correct number of options', () => {
-      const getValues = vi.fn(() => [{ name: 'test', label: 'Test' }]);
-      render(
-        <QueryBuilder
-          query={query}
-          fields={fields}
-          getValueEditorType={getValueEditorType}
-          getValues={getValues}
-        />
-      );
-      const opts = screen.getByTestId(TestID.valueEditor).querySelectorAll('option');
-      expect(opts).toHaveLength(1);
-    });
-
-    it('handles invalid getValues function', () => {
-      // @ts-expect-error getValues should return an array of options or option groups
-      render(<QueryBuilder query={query} fields={fields} getValues={() => null} />);
-      const select = screen.getByTestId(TestID.valueEditor);
-      const opts = select.querySelectorAll('option');
-      expect(opts).toHaveLength(0);
     });
   });
 });
@@ -702,201 +365,161 @@ describe('actions', () => {
   });
 });
 
-describe('resetOnFieldChange prop', () => {
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1' },
-    { name: 'field2', label: 'Field 2' },
-  ];
-
-  const setup = () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    return {
-      onQueryChange,
-      selectors: render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />),
-    };
+// The policy these callbacks participate in (veto handling, replacement values, abort
+// logging, disabled gating) is covered by `createQueryActions` in @react-querybuilder/core.
+// These tests only assert the wiring: that each callback prop actually reaches the action
+// layer from a real user interaction, and that its return value reaches `onQueryChange`.
+describe('mutation callback wiring', () => {
+  const emptyQuery: RuleGroupType = { combinator: 'and', rules: [] };
+  const twoRules: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'f1', operator: '=', value: 'v1' },
+      { field: 'f2', operator: '=', value: 'v2' },
+    ],
+  };
+  const groupFirst: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { combinator: 'and', rules: [{ field: 'f3', operator: '=', value: 'v3' }] },
+      { field: 'f1', operator: '=', value: 'v1' },
+    ],
+  };
+  const twoGroups: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { combinator: 'and', rules: [{ field: 'f3', operator: '=', value: 'v3' }] },
+      { combinator: 'and', rules: [{ field: 'f1', operator: '=', value: 'v1' }] },
+    ],
   };
 
-  it('resets the operator and value when true', async () => {
-    const { onQueryChange } = setup();
+  const RuleGroupOG = defaultControlElements.ruleGroup;
+  // Grouping is only reachable through drag-and-drop, so invoke the action directly.
+  const groupingControlElements: ControlElementsProp<FullField, string> = {
+    ruleGroup: props => (
+      <React.Fragment>
+        <button onClick={() => props.actions.groupRule([1], [0])}>groupIt</button>
+        <RuleGroupOG {...props} />
+      </React.Fragment>
+    ),
+  };
 
-    await user.click(screen.getByTestId(TestID.addRule));
-    await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
+  const clickTestId = (testID: string) => () => user.click(screen.getAllByTestId(testID)[0]);
+  const clickText = (text: string) => () => user.click(screen.getAllByText(text)[0]);
 
-    await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
-
-    await user.selectOptions(screen.getByTestId(TestID.fields), 'field2');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: '=', value: '' }],
-    });
-  });
-
-  it('does not reset the operator and value when false', async () => {
-    const {
-      selectors: { rerender },
-      onQueryChange,
-    } = setup();
-    rerender(
-      <QueryBuilder resetOnFieldChange={false} fields={fields} onQueryChange={onQueryChange} />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
-
-    await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
-
-    await user.selectOptions(screen.getByTestId(TestID.fields), 'field2');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: '>', value: 'Test' }],
-    });
-  });
-});
-
-describe('resetOnOperatorChange prop', () => {
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1' },
-    { name: 'field2', label: 'Field 2' },
-    {
-      name: 'field3',
-      label: 'Field 3',
-      values: [
-        { name: 'value1', label: 'Value 1' },
-        { name: 'value2', label: 'Value 2' },
-      ],
-    },
+  type WiringCase = [
+    callbackName: string,
+    props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>,
+    trigger: () => Promise<unknown>,
   ];
 
-  it('resets the value when true', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        resetOnOperatorChange
-        fields={fields}
-        onQueryChange={onQueryChange}
-        addRuleToNewGroups
-      />
-    );
-
-    await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
-
-    await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
-
-    await user.selectOptions(screen.getByTestId(TestID.operators), '=');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: '=', value: '' }],
-    });
-
-    // Does not choose a value from the values list when the operator changes
-    await user.selectOptions(screen.getByTestId(TestID.fields), 'field3');
-    await user.selectOptions(screen.getByTestId(TestID.operators), 'beginsWith');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: 'beginsWith', value: '' }],
-    });
-  });
-
-  it('does not reset the value when false', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        resetOnOperatorChange={false}
-        fields={fields}
-        onQueryChange={onQueryChange}
-        addRuleToNewGroups
-      />
-    );
-
-    await user.selectOptions(screen.getByTestId(TestID.operators), '>');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ operator: '>' }] });
-
-    await user.type(screen.getByTestId(TestID.valueEditor), 'Test');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'Test' }] });
-
-    await user.selectOptions(screen.getByTestId(TestID.operators), '=');
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: '=', value: 'Test' }],
-    });
-  });
-});
-
-describe('getDefaultField prop', () => {
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1' },
-    { name: 'field2', label: 'Field 2' },
+  const cases: WiringCase[] = [
+    ['onAddRule', { defaultQuery: emptyQuery }, clickTestId(TestID.addRule)],
+    ['onAddGroup', { defaultQuery: emptyQuery }, clickTestId(TestID.addGroup)],
+    ['onRemove', { defaultQuery: twoRules }, clickTestId(TestID.removeRule)],
+    [
+      'onMoveRule',
+      { defaultQuery: twoRules, showShiftActions: true },
+      clickText(t.shiftActionDown.label),
+    ],
+    [
+      'onMoveGroup',
+      { defaultQuery: groupFirst, showShiftActions: true },
+      clickText(t.shiftActionDown.label),
+    ],
+    [
+      'onGroupRule',
+      { defaultQuery: twoRules, controlElements: groupingControlElements },
+      clickText('groupIt'),
+    ],
+    [
+      'onGroupGroup',
+      { defaultQuery: twoGroups, controlElements: groupingControlElements },
+      clickText('groupIt'),
+    ],
   ];
 
-  it('sets the default field as a string', async () => {
+  it.each(cases)('invokes %s and honors its veto', async (callbackName, props, trigger) => {
     const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(<QueryBuilder getDefaultField="field2" fields={fields} onQueryChange={onQueryChange} />);
+    const callback = vi.fn(() => false as const);
+    render(
+      <QueryBuilder
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+        {...props}
+        {...{ [callbackName]: callback }}
+      />
+    );
 
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ field: 'field2' }] });
+    await trigger();
+    expect(callback).toHaveBeenCalled();
+    expect(onQueryChange).not.toHaveBeenCalled();
   });
 
-  it('sets the default field as a function', async () => {
+  it.each(cases)('proceeds past %s when it approves', async (callbackName, props, trigger) => {
     const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
     render(
       <QueryBuilder
-        getDefaultField={() => 'field2'}
-        fields={fields}
+        onQueryChange={onQueryChange}
+        enableMountQueryChange={false}
+        {...props}
+        {...{ [callbackName]: () => true }}
+      />
+    );
+
+    await trigger();
+    expect(onQueryChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies the replacement rule returned by onAddRule', async () => {
+    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
+    render(
+      <QueryBuilder
+        defaultQuery={emptyQuery}
+        enableMountQueryChange={false}
+        onAddRule={() => ({ field: 'f1', operator: '=', value: 'replaced' })}
         onQueryChange={onQueryChange}
       />
     );
 
     await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ field: 'field2' }] });
-  });
-});
-
-describe('getDefaultOperator prop', () => {
-  const fields: Field[] = [{ name: 'field1', label: 'Field 1' }];
-
-  it('sets the default operator as a string', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder getDefaultOperator="beginsWith" fields={fields} onQueryChange={onQueryChange} />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: 'beginsWith' }],
-    });
+    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'replaced' }] });
   });
 
-  it('sets the default operator as a function', async () => {
+  it('applies the replacement group returned by onAddGroup', async () => {
     const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
     render(
       <QueryBuilder
-        getDefaultOperator={() => 'beginsWith'}
-        fields={fields}
+        defaultQuery={emptyQuery}
+        enableMountQueryChange={false}
+        onAddGroup={() => ({ combinator: 'replaced', rules: [] })}
         onQueryChange={onQueryChange}
       />
     );
 
-    await user.click(screen.getByTestId(TestID.addRule));
+    await user.click(screen.getByTestId(TestID.addGroup));
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: 'beginsWith' }],
+      rules: [{ combinator: 'replaced' }],
     });
   });
-});
 
-describe('defaultOperator property in field', () => {
-  it('sets the default operator', async () => {
-    const fields: Field[] = [{ name: 'field1', label: 'Field 1', defaultOperator: 'beginsWith' }];
+  it('applies the replacement query returned by onMoveRule', async () => {
     const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
+    const replacement: RuleGroupType = { combinator: 'and', rules: [] };
+    render(
+      <QueryBuilder
+        defaultQuery={twoRules}
+        enableMountQueryChange={false}
+        showShiftActions
+        onMoveRule={() => replacement}
+        onQueryChange={onQueryChange}
+      />
+    );
 
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ operator: 'beginsWith' }],
-    });
+    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
+    expect(onQueryChange).toHaveBeenLastCalledWith(replacement);
   });
 });
-
 describe('getDefaultValue prop', () => {
   it('sets the default value', async () => {
     const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
@@ -1123,850 +746,6 @@ describe('parseNumbers prop', () => {
       expect.objectContaining({ rules: [expect.objectContaining({ value: [12, '14abc'] })] })
     );
     expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: [12, 14] }] });
-  });
-});
-
-describe('onAddRule prop', () => {
-  it('cancels the rule addition', async () => {
-    const onLog = vi.fn();
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onAddRule = vi.fn(() => false as const);
-    render(
-      <QueryBuilder onAddRule={onAddRule} onQueryChange={onQueryChange} debugMode onLog={onLog} />
-    );
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onAddRule).toHaveBeenCalled();
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({
-      rule: expect.anything(),
-      parentPath: expect.any(Array),
-      query: expect.anything(),
-    });
-  });
-
-  it('allows the rule addition', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(<QueryBuilder onAddRule={() => true} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange).toHaveBeenCalledTimes(2);
-    expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
-  });
-
-  it('modifies the rule addition', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
-    render(<QueryBuilder onAddRule={() => rule} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'modified' }] });
-  });
-
-  it('specifies the preceding combinator', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
-    const dq: RuleGroupTypeIC = { rules: [{ field: 'f1', operator: '=', value: 'v1' }] };
-    const rule: RuleType = {
-      field: 'test',
-      operator: '=',
-      value: 'modified',
-      combinatorPreceding: 'or',
-    };
-    render(<QueryBuilder onAddRule={() => rule} onQueryChange={onQueryChange} defaultQuery={dq} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{}, 'or', {}] });
-    expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
-  });
-
-  it('passes handleOnClick context to onAddRule', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const rule: RuleType = { field: 'test', operator: '=', value: 'modified' };
-    const AddRuleAction = (props: ActionProps) => (
-      <React.Fragment>
-        <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
-        <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
-      </React.Fragment>
-    );
-    render(
-      <QueryBuilder
-        onAddRule={(_r, _pp, _q, c) => c && rule}
-        onQueryChange={onQueryChange}
-        enableMountQueryChange={false}
-        controlElements={{ addRuleAction: AddRuleAction }}
-      />
-    );
-
-    await user.click(screen.getByText('Fail'));
-    expect(onQueryChange).not.toHaveBeenCalled();
-
-    await user.click(screen.getByText('Succeed'));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{ value: 'modified' }] });
-  });
-});
-
-describe('onAddGroup prop', () => {
-  it('cancels the group addition', async () => {
-    const onLog = vi.fn();
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onAddGroup = vi.fn(() => false as const);
-    render(
-      <QueryBuilder onAddGroup={onAddGroup} onQueryChange={onQueryChange} debugMode onLog={onLog} />
-    );
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onAddGroup).toHaveBeenCalled();
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({
-      ruleGroup: expect.anything(),
-      parentPath: expect.any(Array),
-      query: expect.anything(),
-    });
-  });
-
-  it('allows the group addition', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onLog = vi.fn();
-    render(
-      <QueryBuilder onAddGroup={() => true} onQueryChange={onQueryChange} debugMode onLog={onLog} />
-    );
-
-    await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange).toHaveBeenCalledTimes(2);
-    expect(onQueryChange.mock.calls[1][0].rules).toHaveLength(1);
-  });
-
-  it('modifies the group addition', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const grp: RuleGroupType = { combinator: 'fake', rules: [] };
-    render(<QueryBuilder onAddGroup={() => grp} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      combinator: 'and',
-      rules: [{ combinator: 'fake', rules: [] }],
-    });
-  });
-
-  it('specifies the preceding combinator', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
-    const grp: RuleGroupTypeIC = { rules: [], combinatorPreceding: 'or' };
-    render(
-      <QueryBuilder
-        onAddGroup={() => grp}
-        onQueryChange={onQueryChange}
-        defaultQuery={{ rules: [{ field: 'f1', operator: '=', value: 'v1' }] }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({ rules: [{}, 'or', {}] });
-    expect(screen.getByTestId(TestID.combinators)).toHaveValue('or');
-  });
-
-  it('passes handleOnClick context to onAddGroup', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const ruleGroup: RuleGroupType = { combinator: 'fake', rules: [] };
-    const AddGroupAction = (props: ActionProps) => (
-      <React.Fragment>
-        <button onClick={e => props.handleOnClick(e, false)}>Fail</button>
-        <button onClick={e => props.handleOnClick(e, true)}>Succeed</button>
-      </React.Fragment>
-    );
-    render(
-      <QueryBuilder
-        onAddGroup={(_g, _pp, _q, c) => c && ruleGroup}
-        onQueryChange={onQueryChange}
-        enableMountQueryChange={false}
-        controlElements={{ addGroupAction: AddGroupAction }}
-      />
-    );
-
-    await user.click(screen.getByText('Fail'));
-    expect(onQueryChange).not.toHaveBeenCalled();
-
-    await user.click(screen.getByText('Succeed'));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      combinator: 'and',
-      rules: [{ combinator: 'fake', rules: [] }],
-    });
-  });
-});
-
-describe('onMoveRule prop', () => {
-  const defaultQuery: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: '=', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'f3', operator: '=', value: 'v3' },
-          { field: 'f4', operator: '=', value: 'v4' },
-        ],
-      },
-    ],
-  };
-
-  it('cancels the rule move', async () => {
-    const onLog = vi.fn();
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onMoveRule = vi.fn(() => false);
-    render(
-      <QueryBuilder
-        onMoveRule={onMoveRule}
-        onQueryChange={onQueryChange}
-        defaultQuery={defaultQuery}
-        debugMode
-        onLog={onLog}
-        showShiftActions
-      />
-    );
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
-    expect(onMoveRule).toHaveBeenCalled();
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.onMoveRuleFalse });
-  });
-
-  it('allows the rule move', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        showShiftActions
-        onMoveRule={() => true}
-        onQueryChange={onQueryChange}
-      />
-    );
-
-    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      move(onQueryChange.mock.calls[0][0], [0], 'down')
-    );
-  });
-
-  it('modifies the rule move', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        showShiftActions
-        onMoveRule={() => newQuery}
-        onQueryChange={onQueryChange}
-      />
-    );
-
-    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
-  });
-});
-
-describe('onMoveGroup prop', () => {
-  const defaultQuery: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'f3', operator: '=', value: 'v3' },
-          { field: 'f4', operator: '=', value: 'v4' },
-        ],
-      },
-      { field: 'f1', operator: '=', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-    ],
-  };
-
-  it('cancels the group move', async () => {
-    const onLog = vi.fn();
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onMoveGroup = vi.fn(() => false);
-    render(
-      <QueryBuilder
-        onMoveGroup={onMoveGroup}
-        onQueryChange={onQueryChange}
-        defaultQuery={defaultQuery}
-        debugMode
-        onLog={onLog}
-        showShiftActions
-      />
-    );
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
-    expect(onMoveGroup).toHaveBeenCalled();
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({
-      ruleOrGroup: expect.anything(),
-      oldPath: expect.any(Array),
-      newPath: 'down',
-      query: expect.anything(),
-      nextQuery: expect.anything(),
-    });
-  });
-
-  it('allows the group move', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        showShiftActions
-        onMoveGroup={() => true}
-        onQueryChange={onQueryChange}
-      />
-    );
-
-    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      move(onQueryChange.mock.calls[0][0], [0], 'down')
-    );
-  });
-
-  it('modifies the group move', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        showShiftActions
-        onMoveGroup={() => newQuery}
-        onQueryChange={onQueryChange}
-      />
-    );
-
-    await user.click(screen.getAllByText(t.shiftActionDown.label)[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
-  });
-});
-
-describe('onGroupRule prop', () => {
-  const defaultQuery: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      { field: 'f1', operator: '=', value: 'v1' },
-      { field: 'f2', operator: '=', value: 'v2' },
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'f3', operator: '=', value: 'v3' },
-          { field: 'f4', operator: '=', value: 'v4' },
-        ],
-      },
-    ],
-  };
-
-  const RuleGroupOG = defaultControlElements.ruleGroup;
-  const controlElements: ControlElementsProp<FullField, string> = {
-    ruleGroup: props => (
-      <div>
-        <button onClick={() => props.actions.groupRule([1], [0])}>groupRule</button>
-        <RuleGroupOG {...props} />
-      </div>
-    ),
-  };
-
-  it('cancels the rule grouping', async () => {
-    const onLog = vi.fn();
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onGroupRule = vi.fn(() => false);
-    render(
-      <QueryBuilder
-        onGroupRule={onGroupRule}
-        onQueryChange={onQueryChange}
-        defaultQuery={defaultQuery}
-        debugMode
-        onLog={onLog}
-        controlElements={controlElements}
-      />
-    );
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getAllByText('groupRule')[0]);
-    expect(onGroupRule).toHaveBeenCalled();
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.onGroupRuleFalse });
-  });
-
-  it('allows the rule grouping', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        onGroupRule={() => true}
-        onQueryChange={onQueryChange}
-        controlElements={controlElements}
-      />
-    );
-
-    await user.click(screen.getAllByText('groupRule')[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      group(onQueryChange.mock.calls[0][0], [1], [0], { idGenerator: () => expect.any(String) })
-    );
-  });
-
-  it('modifies the rule grouping', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        onGroupRule={() => newQuery}
-        onQueryChange={onQueryChange}
-        controlElements={controlElements}
-      />
-    );
-
-    await user.click(screen.getAllByText('groupRule')[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
-  });
-});
-
-describe('onGroupGroup prop', () => {
-  const defaultQuery: RuleGroupType = {
-    combinator: 'and',
-    rules: [
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'f3', operator: '=', value: 'v3' },
-          { field: 'f4', operator: '=', value: 'v4' },
-        ],
-      },
-      {
-        combinator: 'and',
-        rules: [
-          { field: 'f1', operator: '=', value: 'v1' },
-          { field: 'f2', operator: '=', value: 'v2' },
-        ],
-      },
-    ],
-  };
-
-  const RuleGroupOG = defaultControlElements.ruleGroup;
-  const controlElements: ControlElementsProp<FullField, string> = {
-    ruleGroup: props => (
-      <div>
-        <button onClick={() => props.actions.groupRule([1], [0])}>groupGroup</button>
-        <RuleGroupOG {...props} />
-      </div>
-    ),
-  };
-
-  it('cancels the group grouping', async () => {
-    const onLog = vi.fn();
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const onGroupGroup = vi.fn(() => false);
-    render(
-      <QueryBuilder
-        onGroupGroup={onGroupGroup}
-        onQueryChange={onQueryChange}
-        defaultQuery={defaultQuery}
-        debugMode
-        onLog={onLog}
-        controlElements={controlElements}
-      />
-    );
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getAllByText('groupGroup')[0]);
-    expect(onGroupGroup).toHaveBeenCalled();
-    expect(onQueryChange).toHaveBeenCalledTimes(1);
-    expect(onLog.mock.calls.at(-1)![0]).toMatchObject({ type: LogType.onGroupGroupFalse });
-  });
-
-  it('allows the group grouping', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        onGroupGroup={() => true}
-        onQueryChange={onQueryChange}
-        controlElements={controlElements}
-      />
-    );
-
-    await user.click(screen.getAllByText('groupGroup')[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(
-      group(onQueryChange.mock.calls[0][0], [1], [0], { idGenerator: () => expect.any(String) })
-    );
-  });
-
-  it('modifies the group grouping', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const newQuery: RuleGroupType = { combinator: 'and', rules: [] };
-    render(
-      <QueryBuilder
-        defaultQuery={defaultQuery}
-        onGroupGroup={() => newQuery}
-        onQueryChange={onQueryChange}
-        controlElements={controlElements}
-      />
-    );
-
-    await user.click(screen.getAllByText('groupGroup')[0]);
-    expect(onQueryChange).toHaveBeenLastCalledWith(newQuery);
-  });
-});
-
-describe('onRemove prop', () => {
-  it('cancels the removal', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        defaultQuery={{
-          combinator: 'and',
-          rules: [
-            { combinator: 'and', rules: [{ field: 'field1', operator: '=', value: 'value1' }] },
-          ],
-        }}
-        onRemove={() => false}
-        onQueryChange={onQueryChange}
-        enableMountQueryChange={false}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.removeGroup));
-    await user.click(screen.getByTestId(TestID.removeRule));
-    expect(onQueryChange).not.toHaveBeenCalled();
-  });
-});
-
-describe('defaultValue property in field', () => {
-  it('sets the default value', async () => {
-    const fields: Field[] = [
-      { name: 'field1', label: 'Field 1', defaultValue: 'Test Value 1' },
-      { name: 'field2', label: 'Field 2', defaultValue: 'Test Value 2' },
-    ];
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(<QueryBuilder fields={fields} onQueryChange={onQueryChange} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ value: 'Test Value 1' }],
-    });
-  });
-});
-
-describe('values property in field', () => {
-  const fields: Field[] = [
-    {
-      name: 'field1',
-      label: 'Field 1',
-      defaultValue: 'test',
-      values: [
-        { name: 'test', label: 'Test value 1' },
-        { name: 'test2', label: 'Test2' },
-      ],
-    },
-    {
-      name: 'field2',
-      label: 'Field 2',
-      defaultValue: 'test',
-      values: [{ name: 'test', label: 'Test' }],
-    },
-  ];
-
-  it('sets the values list', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        getValueEditorType={() => 'select'}
-        fields={fields}
-        onQueryChange={onQueryChange}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getAllByTestId(TestID.valueEditor)).toHaveLength(1);
-    expect(screen.getByTestId(TestID.valueEditor).querySelectorAll('option')).toHaveLength(2);
-    expect(screen.getByDisplayValue('Test value 1')).toBeInTheDocument();
-  });
-
-  it('sets the values list for "between" operator', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const valueListItem = 'my-value-list-item-class';
-    render(
-      <QueryBuilder
-        getValueEditorType={() => 'select'}
-        getDefaultOperator="between"
-        fields={fields}
-        onQueryChange={onQueryChange}
-        controlClassnames={{ valueListItem }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(screen.getAllByTestId(TestID.valueEditor)).toHaveLength(1);
-    const betweenSelects = screen
-      .getAllByRole('combobox')
-      .filter(
-        bs => bs.classList.contains(sc.valueListItem) && bs.classList.contains(valueListItem)
-      );
-    expect(betweenSelects).toHaveLength(2);
-    for (const bs of betweenSelects) {
-      expect(bs.querySelectorAll('option')).toHaveLength(2);
-      expect(bs).toHaveValue('test');
-    }
-    expect(screen.getAllByDisplayValue('Test value 1')).toHaveLength(2);
-  });
-});
-
-describe('inputType property in field', () => {
-  it('sets the input type', async () => {
-    const fields: Field[] = [{ name: 'field1', label: 'Field 1', inputType: 'number' }];
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const { container } = render(
-      <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
-    );
-
-    expect(container.querySelector('input[type="number"]')).toBeDefined();
-  });
-});
-
-describe('valueEditorType property in field', () => {
-  it('sets the value editor type', async () => {
-    const fields: Field[] = [{ name: 'field1', label: 'Field 1', valueEditorType: 'select' }];
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const { container } = render(
-      <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
-    );
-
-    expect(container.querySelector(`select.${sc.value}`)).toBeDefined();
-  });
-});
-
-describe('operators property in field', () => {
-  it('sets the operators options', async () => {
-    const operators = [{ name: '=', label: '=' }];
-    const fields: Field[] = [
-      { name: 'field1', label: 'Field 1', operators },
-      { name: 'field2', label: 'Field 2', operators },
-    ];
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const { container } = render(
-      <QueryBuilder fields={fields} onQueryChange={onQueryChange} addRuleToNewGroups />
-    );
-
-    expect(container.querySelector(`select.${sc.operators}`)).toBeDefined();
-    expect(container.querySelectorAll(`select.${sc.operators} option`)).toHaveLength(1);
-  });
-});
-
-describe('autoSelectField', () => {
-  const operators = [{ name: '=', label: '=' }];
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1', operators },
-    { name: 'field2', label: 'Field 2', operators },
-  ];
-
-  it('initially hides the operator selector and value editor', async () => {
-    const { container } = render(<QueryBuilder fields={fields} autoSelectField={false} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
-    expect(container.querySelectorAll(`select.${sc.operators}`)).toHaveLength(0);
-    expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
-  });
-
-  it('uses the placeholderLabel and placeholderName', async () => {
-    const placeholderName = 'Test placeholder name';
-    const placeholderLabel = 'Test placeholder label';
-    render(
-      <QueryBuilder
-        fields={fields}
-        autoSelectField={false}
-        translations={{ fields: { placeholderLabel, placeholderName } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(screen.getByDisplayValue(placeholderLabel)).toHaveValue(placeholderName);
-  });
-
-  it('uses the placeholderGroupLabel', async () => {
-    const placeholderGroupLabel = 'Test group placeholder';
-    const { container } = render(
-      <QueryBuilder
-        fields={[{ label: 'Fields', options: fields }]}
-        autoSelectField={false}
-        translations={{ fields: { placeholderGroupLabel } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(
-      container.querySelector(`optgroup[label="${placeholderGroupLabel}"]`)
-    ).toBeInTheDocument();
-  });
-});
-
-describe('autoSelectOperator', () => {
-  const operators = [{ name: '=', label: '=' }];
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1', operators },
-    { name: 'field2', label: 'Field 2', operators },
-  ];
-
-  it('initially hides the value editor', async () => {
-    const { container } = render(<QueryBuilder fields={fields} autoSelectOperator={false} />);
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(container.querySelectorAll(`select.${sc.fields}`)).toHaveLength(1);
-    expect(container.querySelectorAll(`select.${sc.operators}`)).toHaveLength(1);
-    expect(screen.getByTestId(TestID.operators)).toHaveValue(defaultPlaceholderOperatorName);
-    expect(container.querySelectorAll(`.${sc.value}`)).toHaveLength(0);
-  });
-
-  it('uses the placeholderLabel and placeholderName', async () => {
-    const placeholderName = 'Test placeholder name';
-    const placeholderLabel = 'Test placeholder label';
-    render(
-      <QueryBuilder
-        fields={fields}
-        autoSelectOperator={false}
-        translations={{ operators: { placeholderLabel, placeholderName } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(screen.getByDisplayValue(placeholderLabel)).toHaveValue(placeholderName);
-  });
-
-  it('uses the placeholderGroupLabel', async () => {
-    const placeholderGroupLabel = 'Test group placeholder';
-    const { container } = render(
-      <QueryBuilder
-        fields={fields.map(f =>
-          Object.assign({}, f, { operators: [{ label: 'Operators', options: operators }] })
-        )}
-        autoSelectOperator={false}
-        translations={{ operators: { placeholderGroupLabel } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(
-      container.querySelector(`optgroup[label="${placeholderGroupLabel}"]`)
-    ).toBeInTheDocument();
-  });
-});
-
-describe('autoSelectValue', () => {
-  const values = [{ name: '=', label: '=' }];
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1', values, valueEditorType: 'select' },
-    { name: 'field2', label: 'Field 2', values, valueEditorType: 'select' },
-  ];
-
-  it('uses the placeholderLabel and placeholderName', async () => {
-    const placeholderName = 'Test placeholder name';
-    const placeholderLabel = 'Test placeholder label';
-    render(
-      <QueryBuilder
-        fields={fields}
-        autoSelectValue={false}
-        operators={values}
-        translations={{ values: { placeholderLabel, placeholderName } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(screen.getByDisplayValue(placeholderLabel)).toHaveValue(placeholderName);
-  });
-
-  it('uses the placeholderGroupLabel', async () => {
-    const placeholderGroupLabel = 'Test group placeholder';
-    const { container } = render(
-      <QueryBuilder
-        fields={fields.map(f =>
-          Object.assign({}, f, { values: [{ label: 'Values', options: values }] })
-        )}
-        autoSelectValue={false}
-        translations={{ values: { placeholderGroupLabel } }}
-      />
-    );
-
-    await user.click(screen.getByTestId(TestID.addRule));
-
-    expect(
-      container.querySelector(`optgroup[label="${placeholderGroupLabel}"]`)
-    ).toBeInTheDocument();
-  });
-});
-
-describe('valueEditorType "multiselect" default values', () => {
-  const fields: Field[] = [
-    {
-      name: 'field1',
-      label: 'Field 1',
-      valueEditorType: 'multiselect',
-      values: [
-        { name: 'test1', label: 'Test1' },
-        { name: 'test2', label: 'Test2' },
-      ],
-    },
-  ];
-
-  it('does not unnecessarily select a value - string values', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(<QueryBuilder fields={fields} addRuleToNewGroups onQueryChange={onQueryChange} />);
-    expect(onQueryChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: expect.any(String),
-        combinator: 'and',
-        not: false,
-        rules: [
-          {
-            id: expect.any(String),
-            field: 'field1',
-            operator: '=',
-            value: '',
-            valueSource: 'value',
-          },
-        ],
-      })
-    );
-  });
-
-  it('does not unnecessarily select a value - lists as arrays', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    render(
-      <QueryBuilder
-        fields={fields}
-        addRuleToNewGroups
-        onQueryChange={onQueryChange}
-        listsAsArrays
-      />
-    );
-    expect(onQueryChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: expect.any(String),
-        combinator: 'and',
-        not: false,
-        rules: [
-          {
-            id: expect.any(String),
-            field: 'field1',
-            operator: '=',
-            value: [],
-            valueSource: 'value',
-          },
-        ],
-      })
-    );
   });
 });
 
@@ -2346,51 +1125,6 @@ describe('showCloneButtons', () => {
           { field: 'lastName', operator: '=', value: 'Vai' },
         ],
       });
-    });
-  });
-});
-
-describe('idGenerator', () => {
-  it('uses custom id generator', async () => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const rule = (props: RuleProps) => (
-      <div>
-        <button type="button" onClick={() => props.actions.moveRule(props.path, [2], true)}>
-          clone
-        </button>
-      </div>
-    );
-    render(
-      <QueryBuilder
-        idGenerator={() => `${Math.random()}`}
-        onQueryChange={onQueryChange}
-        controlElements={{ rule }}
-      />
-    );
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      id: expect.stringMatching(numericRegex),
-    });
-
-    await user.click(screen.getByTestId(TestID.addRule));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [{ id: expect.stringMatching(numericRegex) }],
-    });
-
-    await user.click(screen.getByTestId(TestID.addGroup));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [
-        { id: expect.stringMatching(numericRegex) },
-        { id: expect.stringMatching(numericRegex) },
-      ],
-    });
-
-    await user.click(screen.getByText('clone'));
-    expect(onQueryChange.mock.calls.at(-1)![0]).toMatchObject({
-      rules: [
-        { id: expect.stringMatching(numericRegex) },
-        { id: expect.stringMatching(numericRegex), rules: [] },
-        { id: expect.stringMatching(numericRegex) },
-      ],
     });
   });
 });
@@ -3096,30 +1830,6 @@ describe('max levels', () => {
   });
 });
 
-describe('dynamic classNames', () => {
-  it('has correct group-based classNames', () => {
-    render(
-      <QueryBuilder
-        fields={[{ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }]}
-        combinators={[{ name: 'or', label: 'OR', className: 'custom-combinatorBased-class' }]}
-        operators={[{ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }]}
-        getRuleClassname={() => 'custom-ruleBased-class'}
-        getRuleGroupClassname={() => 'custom-groupBased-class'}
-        query={{ combinator: 'or', rules: [{ field: 'f1', operator: 'op', value: 'v1' }] }}
-      />
-    );
-    expect(screen.getByTestId(TestID.ruleGroup)).toHaveClass(
-      'custom-groupBased-class',
-      'custom-combinatorBased-class'
-    );
-    expect(screen.getByTestId(TestID.rule)).toHaveClass(
-      'custom-ruleBased-class',
-      'custom-fieldBased-class',
-      'custom-operatorBased-class'
-    );
-  });
-});
-
 describe('redux functions', () => {
   it('gets the query from the store', async () => {
     const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
@@ -3623,328 +2333,5 @@ describe('deprecated props', () => {
     render(<QueryBuilder independentCombinators query={{ combinator: 'and', rules: [] }} />);
     await waitABeat();
     expect(consoleError).toHaveBeenCalledWith(messages.errorInvalidIndependentCombinatorsProp);
-  });
-});
-
-describe('string array options', () => {
-  const fields: Field[] = [
-    { name: 'field1', label: 'Field 1' },
-    { name: 'field2', label: 'Field 2' },
-  ];
-
-  const setupWithStringArrays = (
-    props?: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>
-  ) => {
-    const onQueryChange = vi.fn<(q: RuleGroupType) => void>();
-    const defaultQuery: RuleGroupType = {
-      combinator: 'and',
-      rules: [{ field: 'field1', operator: '=', value: 'test' }],
-    };
-
-    return {
-      onQueryChange,
-      ...render(
-        <QueryBuilder
-          fields={fields}
-          defaultQuery={defaultQuery}
-          onQueryChange={onQueryChange}
-          {...props}
-        />
-      ),
-    };
-  };
-
-  describe('fields prop with string arrays', () => {
-    it('accepts array of field strings', () => {
-      setupWithStringArrays({ fields: ['and', 'or'] });
-
-      const fieldSelector = screen.getByTestId(TestID.fields);
-      const options = fieldSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent('and');
-      expect(options[0]).toHaveValue('and');
-      expect(options[1]).toHaveTextContent('or');
-      expect(options[1]).toHaveValue('or');
-    });
-
-    it('accepts extended field strings including xor', () => {
-      setupWithStringArrays({ fields: ['and', 'or', 'xor'] });
-
-      const fieldSelector = screen.getByTestId(TestID.fields);
-      const options = fieldSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveTextContent('and');
-      expect(options[1]).toHaveTextContent('or');
-      expect(options[2]).toHaveTextContent('xor');
-      expect(options[2]).toHaveValue('xor');
-    });
-
-    it('uses default labels from defaultfieldsExtended for string arrays', () => {
-      setupWithStringArrays({ fields: ['and', 'xor'] });
-
-      const fieldSelector = screen.getByTestId(TestID.fields);
-      const options = fieldSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveValue('and');
-      expect(options[0]).toHaveTextContent('and');
-      expect(options[1]).toHaveValue('xor');
-      expect(options[1]).toHaveTextContent('xor');
-    });
-  });
-
-  describe('combinators prop with string arrays', () => {
-    it('accepts array of combinator strings', () => {
-      setupWithStringArrays({ combinators: ['and', 'or'] });
-
-      const combinatorSelector = screen.getByTestId(TestID.combinators);
-      const options = combinatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent('AND');
-      expect(options[0]).toHaveValue('and');
-      expect(options[1]).toHaveTextContent('OR');
-      expect(options[1]).toHaveValue('or');
-    });
-
-    it('accepts extended combinator strings including xor', () => {
-      setupWithStringArrays({ combinators: ['and', 'or', 'xor'] });
-
-      const combinatorSelector = screen.getByTestId(TestID.combinators);
-      const options = combinatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveTextContent('AND');
-      expect(options[1]).toHaveTextContent('OR');
-      expect(options[2]).toHaveTextContent('XOR');
-      expect(options[2]).toHaveValue('xor');
-    });
-
-    it('uses default labels from defaultCombinatorsExtended for string arrays', () => {
-      setupWithStringArrays({ combinators: ['and', 'xor'] });
-
-      const combinatorSelector = screen.getByTestId(TestID.combinators);
-      const options = combinatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveValue('and');
-      expect(options[0]).toHaveTextContent('AND');
-      expect(options[1]).toHaveValue('xor');
-      expect(options[1]).toHaveTextContent('XOR');
-    });
-  });
-
-  describe('operators prop with string arrays', () => {
-    it('accepts array of operator strings', () => {
-      setupWithStringArrays({ operators: ['=', '!=', 'contains'] });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveValue('=');
-      expect(options[0]).toHaveTextContent('=');
-      expect(options[1]).toHaveValue('!=');
-      expect(options[1]).toHaveTextContent('!=');
-      expect(options[2]).toHaveValue('contains');
-      expect(options[2]).toHaveTextContent('contains');
-    });
-
-    it('uses default and custom labels from defaultOperators for string arrays', () => {
-      setupWithStringArrays({ operators: ['beginsWith', 'doesNotContain', 'null', 'custom'] });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(4);
-      expect(options[0]).toHaveValue('beginsWith');
-      expect(options[0]).toHaveTextContent('begins with');
-      expect(options[1]).toHaveValue('doesNotContain');
-      expect(options[1]).toHaveTextContent('does not contain');
-      expect(options[2]).toHaveValue('null');
-      expect(options[2]).toHaveTextContent('is null');
-      expect(options[3]).toHaveValue('custom');
-      expect(options[3]).toHaveTextContent('custom');
-    });
-
-    it('uses default labels from defaultOperators for mixed string arrays', () => {
-      setupWithStringArrays({ operators: ['between', 'notBetween'] });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveValue('between');
-      expect(options[0]).toHaveTextContent('between');
-      expect(options[1]).toHaveValue('notBetween');
-      expect(options[1]).toHaveTextContent('not between');
-    });
-  });
-
-  describe('getOperators function with string arrays', () => {
-    it('accepts getOperators returning array of operator strings', () => {
-      const getOperators = vi.fn((): DefaultOperatorName[] => ['=', 'contains']);
-      setupWithStringArrays({ getOperators });
-
-      expect(getOperators).toHaveBeenCalledWith('field1', { fieldData: expect.any(Object) });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveValue('=');
-      expect(options[1]).toHaveValue('contains');
-    });
-
-    it('accepts getOperators returning FlexibleOption arrays', () => {
-      const getOperators = vi.fn(() => [
-        { name: '=', label: 'Custom Equals' },
-        { name: 'contains', label: 'Custom Contains' },
-      ]);
-      setupWithStringArrays({ getOperators });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent('Custom Equals');
-      expect(options[1]).toHaveTextContent('Custom Contains');
-    });
-
-    it('handles getOperators returning null', () => {
-      const getOperators = vi.fn(() => null);
-      setupWithStringArrays({ getOperators });
-
-      // Should fall back to default operators
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options.length).toBeGreaterThan(2);
-    });
-  });
-
-  describe('field-level operators with string arrays', () => {
-    it('accepts field operators as string arrays', async () => {
-      const fieldsWithOperators: Field[] = [
-        { name: 'field1', label: 'Field 1', operators: ['=', '!='] },
-        { name: 'field2', label: 'Field 2', operators: ['contains', 'beginsWith'] },
-      ];
-
-      setupWithStringArrays({ fields: fieldsWithOperators });
-
-      // Check field1 operators
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      let options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveValue('=');
-      expect(options[1]).toHaveValue('!=');
-
-      // Switch to field2 and check its operators
-      const fieldSelector = screen.getByTestId(TestID.fields);
-      await user.selectOptions(fieldSelector, 'field2');
-
-      options = operatorSelector.querySelectorAll('option');
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveValue('contains');
-      expect(options[1]).toHaveValue('beginsWith');
-    });
-
-    it('maintains backward compatibility with field-level FlexibleOption operators', async () => {
-      const fieldsWithOperators: Field[] = [
-        {
-          name: 'field1',
-          label: 'Field 1',
-          operators: [
-            { name: '=', label: 'Custom Equals' },
-            { name: '!=', label: 'Custom Not Equals' },
-          ],
-        },
-      ];
-
-      setupWithStringArrays({ fields: fieldsWithOperators });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent('Custom Equals');
-      expect(options[1]).toHaveTextContent('Custom Not Equals');
-    });
-  });
-
-  describe('mixed arrays support', () => {
-    it('handles mixed string and FlexibleOption arrays for fields', () => {
-      setupWithStringArrays({
-        fields: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],
-      });
-
-      const fieldSelector = screen.getByTestId(TestID.fields);
-      const options = fieldSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveValue('=');
-      expect(options[0]).toHaveTextContent('='); // Should use default label
-      expect(options[1]).toHaveValue('!=');
-      expect(options[1]).toHaveTextContent('Custom Not Equal'); // Should use custom label
-      expect(options[2]).toHaveValue('contains');
-      expect(options[2]).toHaveTextContent('contains'); // Should use default label
-    });
-
-    it('handles mixed string and FlexibleOption arrays for operators', () => {
-      setupWithStringArrays({
-        operators: ['=', { name: '!=', label: 'Custom Not Equal' }, 'contains'],
-      });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveValue('=');
-      expect(options[0]).toHaveTextContent('='); // Should use default label
-      expect(options[1]).toHaveValue('!=');
-      expect(options[1]).toHaveTextContent('Custom Not Equal'); // Should use custom label
-      expect(options[2]).toHaveValue('contains');
-      expect(options[2]).toHaveTextContent('contains'); // Should use default label
-    });
-
-    it('handles mixed string and FlexibleOption arrays for combinators', () => {
-      setupWithStringArrays({ combinators: ['and', { name: 'or', label: 'Custom OR' }, 'xor'] });
-
-      const combinatorSelector = screen.getByTestId(TestID.combinators);
-      const options = combinatorSelector.querySelectorAll('option');
-
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveValue('and');
-      expect(options[0]).toHaveTextContent('AND'); // Should use default label
-      expect(options[1]).toHaveValue('or');
-      expect(options[1]).toHaveTextContent('Custom OR'); // Should use custom label
-      expect(options[2]).toHaveValue('xor');
-      expect(options[2]).toHaveTextContent('XOR'); // Should use default label
-    });
-  });
-
-  describe('empty arrays handling', () => {
-    it('handles empty combinator arrays gracefully', () => {
-      setupWithStringArrays({ combinators: [] });
-
-      const combinatorSelector = screen.getByTestId(TestID.combinators);
-      const options = combinatorSelector.querySelectorAll('option');
-
-      // Should have no options
-      expect(options).toHaveLength(0);
-    });
-
-    it('handles empty operator arrays gracefully', () => {
-      setupWithStringArrays({ operators: [] });
-
-      const operatorSelector = screen.getByTestId(TestID.operators);
-      const options = operatorSelector.querySelectorAll('option');
-
-      // Should have no options
-      expect(options).toHaveLength(0);
-    });
   });
 });

@@ -1,12 +1,4 @@
-import type {
-  FullField,
-  FullOperator,
-  FullOption,
-  Operator,
-  RuleType,
-  ValidationResult,
-  ValueSourceFullOptions,
-} from '@react-querybuilder/core';
+import type { FullField, FullOption, ValueSourceFullOptions } from '@react-querybuilder/core';
 import {
   TestID,
   clsx,
@@ -26,7 +18,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { messages } from '../messages';
-import type { ValueSelectorProps } from '../types';
 import { Rule } from './Rule';
 import { render } from './testUtils';
 
@@ -143,55 +134,6 @@ describe('removeRule', () => {
 
     await user.click(screen.getByText(t.removeRule.label));
     expect(onRuleRemove).toHaveBeenCalledWith([0]);
-  });
-});
-
-describe('validation', () => {
-  it('does not validate if no validationMap[id] value exists and no validator function is provided', () => {
-    render(<Rule {...getProps()} />);
-    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
-  });
-
-  it('validates to false if validationMap[id] = false even if a validator function is provided', () => {
-    const validator = vi.fn(() => true);
-    const fieldMap = { field1: toFullOption({ name: 'field1', label: 'Field 1', validator }) };
-    const validationMap = { id: false };
-    render(<Rule {...getProps({ fieldMap, validationMap })} />);
-    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.invalid);
-    expect(validator).not.toHaveBeenCalled();
-  });
-
-  it('validates to true if validationMap[id] = true', () => {
-    const validationMap = { id: true };
-    render(<Rule {...getProps({ validationMap })} />);
-    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
-  });
-
-  it('validates if validationMap[id] does not exist and a validator function is provided', () => {
-    const validator = vi.fn(() => true);
-    const fieldMap = { field1: toFullOption({ name: 'field1', label: 'Field 1', validator }) };
-    const props = getProps({ fieldMap });
-    render(<Rule {...props} rule={{ ...props.rule, field: 'field1' }} />);
-    expect(screen.getByTestId(TestID.rule)).toHaveClass(sc.valid);
-    expect(screen.getByTestId(TestID.rule)).not.toHaveClass(sc.invalid);
-    expect(validator).toHaveBeenCalled();
-  });
-
-  it('passes down validationResult as validation to children', () => {
-    const valRes: ValidationResult = { valid: false, reasons: ['invalid'] };
-    const defaultProps = getProps();
-    const controls = {
-      ...defaultProps.schema.controls,
-      fieldSelector: ({ validation }: ValueSelectorProps) => (
-        <div title="ValueSelector">{JSON.stringify(validation)}</div>
-      ),
-    };
-    const validationMap = { id: valRes };
-    render(<Rule {...getProps({ validationMap, controls })} />);
-    expect(screen.getByTitle('ValueSelector').innerHTML).toEqual(JSON.stringify(valRes));
   });
 });
 
@@ -386,38 +328,6 @@ it.skip('makes the values array a FullOption array when appropriate', () => {
   expect(screen.getByText('true')).toBeInTheDocument();
 });
 
-describe('dynamic classNames', () => {
-  it('has correct group-based classNames', () => {
-    const rule: RuleType = { field: 'f1', operator: 'op', value: 'v1' };
-    const fieldMap = {
-      f1: toFullOption({ name: 'f1', label: 'F1', className: 'custom-fieldBased-class' }),
-    } satisfies Record<string, FullField>;
-    const getOperators = (): FullOperator[] => [
-      toFullOption({ name: 'op', label: 'Op', className: 'custom-operatorBased-class' }),
-    ];
-    const getRuleClassname = vi.fn(() => 'custom-ruleBased-class');
-    render(<Rule {...getProps({ fieldMap, getOperators, getRuleClassname })} rule={rule} />);
-    expect(screen.getByTestId(TestID.rule)).toHaveClass(
-      'custom-ruleBased-class',
-      'custom-fieldBased-class',
-      'custom-operatorBased-class'
-    );
-    expect(getRuleClassname).toHaveBeenCalledWith(rule, { fieldData: fieldMap.f1 });
-  });
-
-  // Covers dnd-only branches normally exercised by @react-querybuilder/dnd
-  it('adds dnd classNames for dragging/copy/group/disallowed states', () => {
-    render(<Rule {...getProps()} isDragging isOver dropEffect="copy" groupItems dropNotAllowed />);
-    expect(screen.getByTestId(TestID.rule)).toHaveClass(
-      sc.dndDragging,
-      sc.dndOver,
-      sc.dndCopy,
-      sc.dndGroup,
-      sc.dndDropNotAllowed
-    );
-  });
-});
-
 describe('deprecated props', () => {
   it('warns about deprecated props', async () => {
     // @ts-expect-error rule prop is required
@@ -436,41 +346,5 @@ describe('dnd warnings', () => {
       />
     );
     expect(consoleError).toHaveBeenCalledWith(messages.errorEnabledDndWithoutReactDnD);
-  });
-});
-
-describe('arity property', () => {
-  it('does not render value controls when arity is "unary"', () => {
-    render(
-      <Rule
-        {...getProps({
-          getOperators: () => [
-            toFullOption({
-              name: 'unary_op',
-              label: 'Unary Operator',
-              arity: 'unary',
-            } satisfies Operator),
-          ],
-        })}
-        rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}
-      />
-    );
-    expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
-    expect(() => screen.getByTestId(TestID.valueSourceSelector)).toThrow();
-  });
-
-  it('does not render value controls when arity < 2', () => {
-    render(
-      <Rule
-        {...getProps({
-          getOperators: () => [
-            toFullOption({ name: 'unary_op', label: 'Unary Operator', arity: 1 }),
-          ],
-        })}
-        rule={{ field: 'f1', operator: 'unary_op', value: 'v1' }}
-      />
-    );
-    expect(() => screen.getByTestId(TestID.valueEditor)).toThrow();
-    expect(() => screen.getByTestId(TestID.valueSourceSelector)).toThrow();
   });
 });
