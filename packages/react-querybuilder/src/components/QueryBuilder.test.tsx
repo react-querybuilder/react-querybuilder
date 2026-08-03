@@ -1402,6 +1402,85 @@ describe('disabled', () => {
     expect(screen.getAllByTestId(TestID.valueEditor)[2]).toBeDisabled();
   });
 
+  it('prevents changes to a path-disabled node from rogue components', async () => {
+    // `disabled={[[2]]}` used to be presentation-only: it disabled the controls but the action
+    // handlers knew nothing about it, so anything calling them directly could still mutate a
+    // path-disabled node. The paths are now threaded into core's guards.
+    const onQueryChange = vi.fn();
+    render(
+      <QueryBuilder
+        disabled={[[2]]}
+        enableMountQueryChange={false}
+        onQueryChange={onQueryChange}
+        controlElements={{
+          ruleGroupBodyElements: ({ actions }) => (
+            <React.Fragment>
+              <button onClick={() => actions.onPropChange('value', 'x', [2, 0])}>
+                editDisabledDescendant
+              </button>
+              <button onClick={() => actions.onPropChange('combinator', 'or', [2])}>
+                editDisabledGroup
+              </button>
+              <button
+                onClick={() => actions.onRuleAdd({ field: 'f', operator: '=', value: '' }, [2])}>
+                addToDisabledGroup
+              </button>
+              <button onClick={() => actions.onGroupRemove([2])}>removeDisabledGroup</button>
+              <button onClick={() => actions.moveRule([2], [0])}>moveDisabledGroup</button>
+            </React.Fragment>
+          ),
+        }}
+        query={{
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            { combinator: 'and', rules: [{ field: 'age', operator: '>', value: 28 }] },
+          ],
+        }}
+      />
+    );
+
+    for (const label of [
+      'editDisabledDescendant',
+      'editDisabledGroup',
+      'addToDisabledGroup',
+      'removeDisabledGroup',
+      'moveDisabledGroup',
+    ]) {
+      // The body elements render in every group, so target the root group's copy.
+      await user.click(screen.getAllByText(label)[0]);
+    }
+    expect(onQueryChange).not.toHaveBeenCalled();
+  });
+
+  it('still allows changes to enabled siblings of a path-disabled node', async () => {
+    const onQueryChange = vi.fn();
+    render(
+      <QueryBuilder
+        disabled={[[2]]}
+        enableMountQueryChange={false}
+        onQueryChange={onQueryChange}
+        controlElements={{
+          ruleGroupBodyElements: ({ actions }) => (
+            <button onClick={() => actions.onPropChange('value', 'x', [0])}>editEnabled</button>
+          ),
+        }}
+        query={{
+          combinator: 'and',
+          rules: [
+            { field: 'firstName', operator: '=', value: 'Steve' },
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            { combinator: 'and', rules: [{ field: 'age', operator: '>', value: 28 }] },
+          ],
+        }}
+      />
+    );
+
+    await user.click(screen.getByText('editEnabled'));
+    expect(onQueryChange).toHaveBeenCalled();
+  });
+
   it('prevents changes from rogue components when disabled', async () => {
     const onQueryChange = vi.fn<(q: RuleGroupTypeIC) => void>();
     const ruleToAdd: RuleType = { field: 'f1', operator: '=', value: 'v1' };

@@ -245,6 +245,16 @@ export interface QueryManagerOptions<
    * pass `false` to mutate freely regardless of the property.
    */
   respectDisabled?: boolean;
+  /**
+   * Paths that are disabled without the corresponding rule or group carrying a `disabled`
+   * property. This mirrors the array form of the `QueryBuilder` `disabled` prop
+   * (e.g. `disabled={[[2]]}`), which disables nodes by position rather than by data.
+   *
+   * A path is treated as disabled if it appears here or descends from a path that does. Honored
+   * only when `respectDisabled` is `true`; as with the `disabled` property, a node's own
+   * `disabled` can always be changed so it is never permanently locked.
+   */
+  disabledPaths?: Path[];
   /** Abort every mutation, as though the entire query were disabled. Defaults to `false`. */
   queryDisabled?: boolean;
   /** The input type for a given field/operator, surfaced by {@link QueryManager.getRuleContext}. */
@@ -522,6 +532,7 @@ export class QueryManager<
       // `QueryBuilder` treats a non-positive `maxLevels` as unlimited; match that.
       maxLevels: (maxLevels ?? 0) > 0 ? Number(maxLevels) : Infinity,
       respectDisabled: this.#respectDisabled,
+      disabledPaths: this.#options.disabledPaths,
       queryDisabled: this.#options.queryDisabled,
     };
   }

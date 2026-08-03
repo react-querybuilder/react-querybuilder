@@ -22,6 +22,7 @@ import {
   getParentPath,
   getPathOfID,
   pathIsDisabled,
+  pathIsDisabledByPaths,
   pathsAreEqual,
 } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -94,6 +95,15 @@ export interface GuardOptions {
    * only way to re-enable it.
    */
   respectDisabled?: boolean;
+  /**
+   * Paths that are disabled without the corresponding rule or group carrying a `disabled`
+   * property, mirroring the array form of the `QueryBuilder` `disabled` prop. A path is treated
+   * as disabled if it appears here or descends from a path that does.
+   *
+   * Like the `disabled` property, this is only honored when `respectDisabled` is `true`, and
+   * updating a rule or group's own `disabled` property is still permitted.
+   */
+  disabledPaths?: Path[];
   /** Abort every mutation, as though the entire query were disabled. Defaults to `false`. */
   queryDisabled?: boolean;
   /**
@@ -137,7 +147,7 @@ export const getGuardAbortReason = (
   if (!guards.respectDisabled || pathOrID === undefined) return null;
 
   const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
-  if (path && pathIsDisabled(path, query)) {
+  if (path && (pathIsDisabled(path, query) || pathIsDisabledByPaths(path, guards.disabledPaths))) {
     return asParent ? 'parent-disabled' : 'target-disabled';
   }
 
@@ -659,21 +669,22 @@ export const removeInPlace: RemoveMethod = (query, pathOrID, options = {}): type
     return query;
   }
 
-  // Can't independently remove independent combinators
-  if (!isRuleGroupType(query) && !findPath(path, query)) {
+  // The target must actually exist. This also covers independent combinators, which `findPath`
+  // reports as missing because they are bare strings rather than rules—they can only be removed
+  // alongside the rule they precede or follow.
+  if (!findPath(path, query)) {
     onAbort?.({ reason: 'target-not-found', operation: 'remove', pathOrID });
     return query;
   }
 
+  // The target resolved, so at a non-root path its parent is necessarily an existing group.
   const index = path.at(-1)!;
-  const parent = findPath(getParentPath(path), query);
-  if (parent && isRuleGroup(parent)) {
-    if (!isRuleGroupType(parent) && parent.rules.length > 1) {
-      const idxStartDelete = index === 0 ? 0 : index - 1;
-      parent.rules.splice(idxStartDelete, 2);
-    } else {
-      parent.rules.splice(index, 1);
-    }
+  const parent = findPath(getParentPath(path), query) as RuleGroupTypeAny;
+  if (!isRuleGroupType(parent) && parent.rules.length > 1) {
+    const idxStartDelete = index === 0 ? 0 : index - 1;
+    parent.rules.splice(idxStartDelete, 2);
+  } else {
+    parent.rules.splice(index, 1);
   }
 
   return query;

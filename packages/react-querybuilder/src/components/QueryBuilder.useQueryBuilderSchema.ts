@@ -359,6 +359,7 @@ export function useQueryBuilderSchema<
         idGenerator,
         maxLevels,
         queryDisabled,
+        disabledPaths,
         resetOnFieldChange,
         resetOnOperatorChange,
         getRuleDefaultOperator: getRuleDefaultOperator as (field: string) => string,
@@ -395,6 +396,7 @@ export function useQueryBuilderSchema<
       onRemove,
       qbId,
       queryDisabled,
+      disabledPaths,
       resetOnFieldChange,
       resetOnOperatorChange,
     ]

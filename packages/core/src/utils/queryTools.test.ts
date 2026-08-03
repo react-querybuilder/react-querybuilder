@@ -1453,6 +1453,28 @@ describe('onAbort', () => {
       expect(remove(rgic2, badPath, { onAbort })).toBe(rgic2);
       expect(reasons()).toEqual(['target-not-found']);
     });
+
+    it('reports an unresolvable path in a standard rule group query', () => {
+      // The `findPath` check used to be gated behind `!isRuleGroupType(query)`, so this was a
+      // silent no-op even though the equivalent unresolvable `id` was reported.
+      const { onAbort, reasons } = abort();
+      expect(remove(rg3, badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a path whose parent exists but whose index does not', () => {
+      const { onAbort, reasons } = abort();
+      expect(remove(rg3, [99], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a combinator slot in an independent combinators query', () => {
+      // Independent combinators are bare strings, so they can only be removed alongside the rule
+      // they precede or follow.
+      const { onAbort, reasons } = abort();
+      expect(remove(rgic2, [1], { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
   });
 
   describe('update', () => {
@@ -1737,6 +1759,117 @@ describe('guard options', () => {
       expect(getGuardAbortReason(disabledRuleQuery, 'r1', guards, { asParent: true })).toBe(
         'parent-disabled'
       );
+    });
+
+    describe('disabledPaths', () => {
+      const q: DefaultRuleGroupType = {
+        combinator: and,
+        rules: [r1, r2, { combinator: or, rules: [r3, r4] }],
+      };
+      const dp = { respectDisabled: true, disabledPaths: [[2]] };
+
+      it('disables the listed path', () => {
+        expect(getGuardAbortReason(q, [2], dp)).toBe('target-disabled');
+        expect(getGuardAbortReason(q, [2], dp, { asParent: true })).toBe('parent-disabled');
+      });
+
+      it('disables descendants of the listed path', () => {
+        expect(getGuardAbortReason(q, [2, 0], dp)).toBe('target-disabled');
+        expect(getGuardAbortReason(q, [2, 1], dp)).toBe('target-disabled');
+      });
+
+      it('leaves siblings and ancestors alone', () => {
+        expect(getGuardAbortReason(q, [0], dp)).toBeNull();
+        expect(getGuardAbortReason(q, [1], dp)).toBeNull();
+        expect(getGuardAbortReason(q, [], dp)).toBeNull();
+      });
+
+      it('is ignored when respectDisabled is false', () => {
+        expect(getGuardAbortReason(q, [2, 0], { disabledPaths: [[2]] })).toBeNull();
+      });
+
+      it('resolves an `id` to a disabled path', () => {
+        const withIDs = pathsAsIDs(q);
+        expect(getGuardAbortReason(withIDs, '[2,0]', dp)).toBe('target-disabled');
+        expect(getGuardAbortReason(withIDs, '[0]', dp)).toBeNull();
+      });
+
+      it('disables everything when the root path is listed', () => {
+        const rootDP = { respectDisabled: true, disabledPaths: [[]] };
+        expect(getGuardAbortReason(q, [], rootDP)).toBe('target-disabled');
+        expect(getGuardAbortReason(q, [0], rootDP)).toBe('target-disabled');
+      });
+    });
+
+    describe('the query tools honor disabledPaths', () => {
+      const q: DefaultRuleGroupType = pathsAsIDs({
+        combinator: and,
+        rules: [r1, r2, { combinator: or, rules: [r3, r4] }],
+      });
+      const dp = { respectDisabled: true, disabledPaths: [[2]] };
+
+      it('blocks add', () => {
+        const onAbort = vi.fn();
+        expect(add(q, r5, [2], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'parent-disabled', operation: 'add' })
+        );
+      });
+
+      it('blocks update', () => {
+        const onAbort = vi.fn();
+        expect(update(q, 'value', 'x', [2, 0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'update' })
+        );
+      });
+
+      it('blocks remove', () => {
+        const onAbort = vi.fn();
+        expect(remove(q, [2], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'remove' })
+        );
+      });
+
+      it('blocks move', () => {
+        const onAbort = vi.fn();
+        expect(move(q, [2], [0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'move' })
+        );
+      });
+
+      it('blocks insert', () => {
+        const onAbort = vi.fn();
+        expect(insert(q, r5, [2, 0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'parent-disabled', operation: 'insert' })
+        );
+      });
+
+      it('blocks group', () => {
+        const onAbort = vi.fn();
+        expect(group(q, [2], [0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'group' })
+        );
+      });
+
+      it('still allows a path-disabled node to be re-enabled', () => {
+        // Otherwise a node disabled by path could never be unlocked from within the query.
+        const result = update(q, 'disabled', false, [2], dp);
+        expect(result).not.toBe(q);
+        expect((result.rules[2] as DefaultRuleGroupType).disabled).toBe(false);
+      });
+
+      it('does not allow re-enabling when the whole query is disabled', () => {
+        expect(update(q, 'disabled', false, [2], { ...dp, queryDisabled: true })).toBe(q);
+      });
+
+      it('allows mutations that do not target a disabled path', () => {
+        expect(update(q, 'value', 'x', [0], dp)).not.toBe(q);
+      });
     });
   });
 
