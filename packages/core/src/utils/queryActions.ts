@@ -109,9 +109,9 @@ export interface QueryActionHandlers {
  * Builds the query builder's six mutation handlers as pure functions of the current query.
  *
  * This is the framework-agnostic core of the action handlers in `useQueryBuilderSchema`. It owns
- * the policy that surrounds the [query tools](#query-tools)—disabled gating, the confirmation
- * callback protocol, `maxLevels`, and debug logging—so an implementation only has to supply its
- * own storage: read the current query, call the action, and apply a non-`undefined` result.
+ * the policy that surrounds the query tools—disabled gating, the confirmation callback protocol,
+ * `maxLevels`, and debug logging—so an implementation only has to supply its own storage: read
+ * the current query, call the action, and apply a non-`undefined` result.
  *
  * @group Query Tools
  */

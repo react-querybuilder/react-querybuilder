@@ -234,7 +234,7 @@
     "build": "bun run build:main && bun run build:css",
     "build:main": "bun --bun tsdown",
     "build:css": "mkdir -p dist/styles && cp ../core/src/*.scss dist && cp ../core/src/styles/*.scss dist/styles && bun sass --style=compressed dist",
-    "typecheck": "tsc --noEmit",
-    "typecheck:watch": "tsc --noEmit --watch"
+    "typecheck": "../../node_modules/typescript/bin/tsc --noEmit",
+    "typecheck:watch": "../../node_modules/typescript/bin/tsc --noEmit --watch"
   }
 }
