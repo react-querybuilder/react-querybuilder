@@ -800,7 +800,7 @@ export const sequences: Sequence[] = [
   {
     name: 'disabledPaths: edit a path-disabled rule',
     fixture: 'withoutDisabled',
-    options: { disabledPaths: [[2]] },
+    options: { disabledPaths: [[0]] },
     ops: [{ kind: 'update', prop: 'value', value: 'nope', target: [0] }],
   },
   {
