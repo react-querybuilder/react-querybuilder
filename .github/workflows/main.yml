@@ -70,7 +70,7 @@ jobs:
           java-version: "17"
       # Cache the Maven-fetched jars (see verifySpELEvaluator.ts). Key is pinned to the hard-coded
       # Spring/Jackson versions so a version bump forces a fresh download.
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: utils/spel-evaluator/lib
           key: spel-jars-spring6.1.14-jackson2.17.2
