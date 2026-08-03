@@ -897,11 +897,19 @@ export const moveInPlace: MoveMethod = (
   }
 
   const newNewPath = [...nextPath];
+  if (independentCombinators && newNewPath.at(-1)! % 2 === 1) {
+    // Odd indexes in an independent combinator array identify combinators, not
+    // rules/groups. Dropping on a combinator means "insert after the rule that
+    // precedes it", which is the same slot as the next (even) index. Normalizing
+    // here keeps the destination index even, which the insertion logic below
+    // relies on to maintain the rule/combinator alternation.
+    newNewPath[newNewPath.length - 1] += 1;
+  }
   const commonAncestorPath = getCommonAncestorPath(oldPath, nextPath);
   if (
     !clone &&
     oldPath.length === commonAncestorPath.length + 1 &&
-    nextPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
+    newNewPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
   ) {
     // Getting here means there will be a shift of paths upward at the common
     // ancestor level because the object at `oldPath` will be spliced out. The
@@ -911,6 +919,10 @@ export const moveInPlace: MoveMethod = (
   const newNewParentPath = getParentPath(newNewPath);
   const parentToInsertInto = findPath(newNewParentPath, query) as typeof query;
   const newIndex = newNewPath.at(-1)!;
+  // For independent combinator arrays, `newIndex` is the (even) index the moved
+  // rule/group should end up at, but the splice inserts a `[combinator, ruleOrGroup]`
+  // pair, so it must happen one slot earlier.
+  const spliceIndex = independentCombinators && newIndex > 0 ? newIndex - 1 : newIndex;
 
   /**
    * This function 1) glosses over the need for type assertions to splice directly
@@ -918,7 +930,7 @@ export const moveInPlace: MoveMethod = (
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   const insertRuleOrGroup = (...args: any[]) =>
-    parentToInsertInto.rules.splice(newIndex, 0, ...args);
+    parentToInsertInto.rules.splice(spliceIndex, 0, ...args);
 
   // Insert the source item at the target path
   if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
@@ -937,7 +949,7 @@ export const moveInPlace: MoveMethod = (
         insertRuleOrGroup(oldPrevCombinator, ruleOrGroup);
       } else {
         const newPrevCombinator =
-          parentToInsertInto.rules[newIndex - 2] ??
+          parentToInsertInto.rules[spliceIndex - 2] ??
           oldNextCombinator ??
           getFirstOption(combinators);
         insertRuleOrGroup(newPrevCombinator, ruleOrGroup);

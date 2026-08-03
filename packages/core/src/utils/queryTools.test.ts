@@ -882,6 +882,26 @@ describe('move', () => {
       { rules: [r1, or, r3, and, r2] }
     );
     testQT(
+      'moves a rule from first to a later rule index within the same group',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [4]),
+      { rules: [r2, and, r1, or, r3] }
+    );
+    testQT(
+      'clones a rule to a later rule index within the same group',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [2], { clone: true }),
+      { rules: [r1, and, r1, and, r2, or, r3] }
+    );
+    testQT(
+      'does not alter the query when dropping a rule on the combinator that follows it',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [1]),
+      { rules: [r1, and, r2, or, r3] }
+    );
+    testQT(
+      'does not alter the query when dropping a rule on the combinator that precedes it',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([2]), [1]),
+      { rules: [r1, and, r2, or, r3] }
+    );
+    testQT(
       'moves a first-child rule to a different group as the first child',
       move(pathsAsIDs({ rules: [r1, and, { rules: [r2, and, r3] }] }), p([0]), [2, 0]),
       { rules: [{ rules: [r1, and, r2, and, r3] }] }

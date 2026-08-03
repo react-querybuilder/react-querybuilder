@@ -69,13 +69,8 @@ const arbitrarySeeds = (kinds?: readonly Op['kind'][]) =>
 const fixtureNames = Object.keys(queries) as (keyof typeof queries)[];
 const arbitraryFixture = fc.constantFrom(...fixtureNames);
 
-/**
- * Independent-combinator queries are excluded from the structural invariants below because
- * `move` mishandles some IC destinations today — see the note in `RQB_CONFORMANCE_TESTS.md`.
- * The conformance properties still cover IC: all three implementations misbehave identically,
- * which is what this suite exists to pin.
- */
-const nonICFixture = fc.constantFrom(...fixtureNames.filter(n => !n.startsWith('ic')));
+/** Independent-combinator fixtures only, for the IC-specific structural invariant. */
+const icFixture = fc.constantFrom(...fixtureNames.filter(n => n.startsWith('ic')));
 
 const idAt = (query: RuleGroupTypeAny, path: Path): string | undefined =>
   (findPath(path, query) as { id?: string } | null)?.id;
@@ -268,7 +263,7 @@ describe('mutation invariants', () => {
 
   it('never produces duplicate ids', () => {
     fc.assert(
-      fc.property(nonICFixture, arbitrarySeeds(), (fixture, seeds) => {
+      fc.property(arbitraryFixture, arbitrarySeeds(), (fixture, seeds) => {
         const ops = materializeOps(seeds, queries[fixture]);
         const { manager } = run(ops, fixture);
 
@@ -279,6 +274,43 @@ describe('mutation invariants', () => {
           .filter(Boolean);
 
         expect(new Set(ids).size).toBe(ids.length);
+      }),
+      params
+    );
+  });
+
+  it('preserves the rule/combinator alternation of independent-combinator queries', () => {
+    /**
+     * Describes every group in the query as a string of `r` (rule or group) and `c`
+     * (combinator), depth-first. A valid IC group alternates, starting and ending with `r`.
+     */
+    const shapesOf = (rg: RuleGroupTypeAny): string[] => [
+      (rg.rules as unknown[]).map(child => (typeof child === 'string' ? 'c' : 'r')).join(''),
+      ...(rg.rules as unknown[]).flatMap(child =>
+        typeof child !== 'string' && 'rules' in (child as object)
+          ? shapesOf(child as RuleGroupTypeAny)
+          : []
+      ),
+    ];
+
+    /** The alternating shape a group of the same length must have. */
+    const alternating = (shapes: string[]): string[] =>
+      shapes.map(shape =>
+        Array.from({ length: shape.length }, (_, index) => (index % 2 === 0 ? 'r' : 'c')).join('')
+      );
+
+    fc.assert(
+      fc.property(icFixture, arbitrarySeeds(), (fixture, seeds) => {
+        const ops = materializeOps(seeds, queries[fixture]);
+        const { manager, tools } = run(ops, fixture);
+
+        for (const query of [manager.query, tools.query]) {
+          const shapes = shapesOf(query);
+          expect(shapes).toEqual(alternating(shapes));
+          // An alternating shape of even length would end with a dangling combinator. Empty
+          // groups are legal.
+          expect(shapes.filter(shape => shape.length > 0 && shape.length % 2 === 0)).toEqual([]);
+        }
       }),
       params
     );
