@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@react-querybuilder/datetime": "8.21.2",
+    "@react-querybuilder/datetime": "8.22.0",
     "react": "^19",
     "react-dom": "^19",
-    "react-querybuilder": "8.21.2"
+    "react-querybuilder": "8.22.0"
   },
   "description": "React Query Builder Date/Time Example",
   "devDependencies": {
