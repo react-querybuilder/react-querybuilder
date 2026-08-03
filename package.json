@@ -236,6 +236,7 @@
       "@testing-library/react": "^16.3.2",
       "@testing-library/user-event": "14.6.1",
       "drizzle-orm": "^0.45.2",
+      "fast-check": "^4.5.0",
       "mongodb-memory-server-core": "^11.2.0",
       "mongoose": "^9.9.1",
       "pglite-prisma-adapter": "^0.7.2",

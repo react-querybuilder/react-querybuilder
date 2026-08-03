@@ -184,6 +184,7 @@
     "chevrotain": "catalog:",
     "clsx": "catalog:",
     "drizzle-orm": "catalog:test",
+    "fast-check": "catalog:test",
     "json-logic-js": "catalog:",
     "jsonata": "catalog:",
     "mongodb-memory-server-core": "catalog:test",

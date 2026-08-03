@@ -21,9 +21,11 @@ import type {
   FullOption,
   FullOptionList,
   FullOptionRecord,
+  InputType,
   MatchMode,
   MatchModeOptions,
   Option,
+  OptionList,
   ParameterizedNamedSQL,
   ParameterizedSQL,
   Path,
@@ -41,8 +43,6 @@ import type {
   ValidationMap,
   ValueEditorType,
   ValueSourceFlexibleOptions,
-  InputType,
-  OptionList,
   ValueSourceFullOptions,
   ValueSources,
 } from '../types';
@@ -50,12 +50,12 @@ import { convertFromIC, convertToIC } from './convertQuery';
 import { defaultValidator } from './defaultValidator';
 import type { RuleContext, RuleGroupContext } from './deriveRuleContext';
 import { deriveRuleContext, deriveRuleGroupContext, getFieldData } from './deriveRuleContext';
-import { formatQuery } from './formatQuery';
 import type {
   defaultRuleGroupProcessorDrizzle,
   defaultRuleGroupProcessorSequelize,
   defaultRuleGroupProcessorTanStackDB,
 } from './formatQuery';
+import { formatQuery } from './formatQuery';
 import { generateID } from './generateID';
 import { getMatchModesUtil } from './getMatchModesUtil';
 import { getRuleDefaultValue } from './getRuleDefaultValue';
@@ -74,9 +74,9 @@ import { prepareRuleGroup } from './prepareQueryObjects';
 import type {
   AbortInfo,
   AbortReason,
-  GuardOptions,
   AddOptions,
   GroupOptions,
+  GuardOptions,
   InsertOptions,
   MoveOptions,
   RemoveOptions,

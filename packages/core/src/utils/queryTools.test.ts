@@ -63,6 +63,11 @@ const rgvsf: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueS
 const rg1wID: DefaultRuleGroupType = id(rg1, '[]');
 const rgic1wID: DefaultRuleGroupTypeIC = id(rgic1, '[]');
 const rg3wIDs = pathsAsIDs(rg3);
+/** A group at `[0]` containing a single rule at `[0, 0]`. */
+const rgNested: DefaultRuleGroupType = {
+  combinator: and,
+  rules: [{ combinator: or, rules: [r1] }],
+};
 
 const testQT = (
   title: string,
@@ -1496,6 +1501,21 @@ describe('onAbort', () => {
       expect(reasons()).toEqual(['not-a-combinator-slot']);
     });
 
+    it('reports a combinator update at a path whose parent does not exist', () => {
+      // Combinator slots are bare strings, so `findPath` can't confirm the target exists and the
+      // containing group has to be resolved instead. Before this check, an unresolvable path
+      // threw a `TypeError` rather than aborting.
+      const { onAbort, reasons } = abort();
+      expect(update(rgic2, 'combinator', or, badPath, { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a combinator update at a path whose parent is a rule', () => {
+      const { onAbort, reasons } = abort();
+      expect(update(rgic2, 'combinator', or, [0, 1], { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
     it('reports a combinator non-update at a rule index', () => {
       const { onAbort, reasons } = abort();
       // oxlint-disable-next-line typescript/no-explicit-any
@@ -1540,6 +1560,24 @@ describe('onAbort', () => {
       const { onAbort, reasons } = abort();
       expect(move(rg3, [5], [0], { onAbort })).toBe(rg3);
       expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a move of a group into its own subtree', () => {
+      // The destination is part of the subtree being relocated, so it ceases to exist the moment
+      // the source is spliced out. Before this check, the ensuing splice threw a `TypeError`.
+      const { onAbort, reasons } = abort();
+      expect(move(rgNested, [0], [0, 0], { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['destination-not-found']);
+    });
+
+    it('allows cloning a group into its own subtree', () => {
+      // Cloning leaves the source in place, so the destination still exists.
+      const { onAbort, reasons } = abort();
+      expect(stripIDs(move(rgNested, [0], [0, 0], { clone: true, onAbort }))).toEqual({
+        combinator: and,
+        rules: [{ combinator: or, rules: [{ combinator: or, rules: [r1] }, r1] }],
+      });
+      expect(reasons()).toEqual([]);
     });
   });
 
@@ -1592,6 +1630,26 @@ describe('onAbort', () => {
       const { onAbort, reasons } = abort();
       expect(group(rg3, [5], [0], { onAbort })).toBe(rg3);
       expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports grouping a group with something inside itself', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rgNested, [0], [0, 0], { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['destination-not-found']);
+    });
+
+    it('allows cloning a group into its own subtree', () => {
+      const { onAbort, reasons } = abort();
+      expect(stripIDs(group(rgNested, [0], [0, 0], { clone: true, onAbort }))).toEqual({
+        combinator: and,
+        rules: [
+          {
+            combinator: or,
+            rules: [{ combinator: and, rules: [r1, { combinator: or, rules: [r1] }] }],
+          },
+        ],
+      });
+      expect(reasons()).toEqual([]);
     });
 
     it('reports an unresolvable target path', () => {

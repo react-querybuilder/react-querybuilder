@@ -21,6 +21,7 @@ import {
   getCommonAncestorPath,
   getParentPath,
   getPathOfID,
+  isAncestor,
   pathIsDisabled,
   pathIsDisabledByPaths,
   pathsAreEqual,
@@ -506,7 +507,14 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
 
   // Independent combinators
   if (prop === 'combinator' && !isRuleGroupType(query)) {
-    const parentRules = (findPath(getParentPath(path), query) as typeof query).rules;
+    // The combinator slot itself is a bare string, so `findPath` can't confirm the target
+    // exists; the containing group has to be resolved instead.
+    const parent = findPath(getParentPath(path), query);
+    if (!parent || !isRuleGroup(parent)) {
+      onAbort?.({ reason: 'target-not-found', operation: 'update', pathOrID });
+      return query;
+    }
+    const parentRules = parent.rules;
     // Only update an independent combinator if it occupies an odd index
     if (path.at(-1)! % 2 === 1) {
       if (parentRules[path.at(-1)!] === value) {
@@ -843,6 +851,14 @@ export const moveInPlace: MoveMethod = (
 
   // Don't move to a path that doesn't exist yet
   if (!findPath(getParentPath(nextPath), query)) {
+    onAbort?.({ reason: 'destination-not-found', operation: 'move', pathOrID: newPath });
+    return query;
+  }
+
+  // Don't move a group inside itself. The destination is part of the subtree being relocated,
+  // so it ceases to exist the moment the source is spliced out. (Cloning is fine: the source
+  // stays put and a regenerated copy is inserted.)
+  if (!clone && isAncestor(oldPath, nextPath)) {
     onAbort?.({ reason: 'destination-not-found', operation: 'move', pathOrID: newPath });
     return query;
   }
@@ -1194,6 +1210,12 @@ export const groupInPlace: GroupMethod = (
 
   // Don't move to a path that doesn't exist yet
   if (!findPath(getParentPath(nextPath), query)) {
+    onAbort?.({ reason: 'destination-not-found', operation: 'group', pathOrID: targetPathOrID });
+    return query;
+  }
+
+  // Don't group a group with something inside itself. See the equivalent check in `moveInPlace`.
+  if (!clone && isAncestor(sourcePath, nextPath)) {
     onAbort?.({ reason: 'destination-not-found', operation: 'group', pathOrID: targetPathOrID });
     return query;
   }

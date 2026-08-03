@@ -33,11 +33,10 @@ import type {
 } from '../../packages/core/src/types';
 import { formatQuery } from '../../packages/core/src/utils/formatQuery';
 import { isRuleGroup } from '../../packages/core/src/utils/isRuleGroup';
-import { getPathOfID } from '../../packages/core/src/utils/pathUtils';
+import { findPath, getPathOfID } from '../../packages/core/src/utils/pathUtils';
 import { prepareRuleGroup } from '../../packages/core/src/utils/prepareQueryObjects';
 import { createQueryActions } from '../../packages/core/src/utils/queryActions';
-import { QueryManager } from '../../packages/core/src/utils/QueryManager';
-import { strictAbortReasons } from '../../packages/core/src/utils/QueryManager';
+import { QueryManager, strictAbortReasons } from '../../packages/core/src/utils/QueryManager';
 import type {
   AbortInfo,
   AbortReason,
@@ -894,5 +893,158 @@ export const sequences: Sequence[] = [
     ],
   },
 ];
+
+// #endregion
+
+// #region Randomized sequences (property-based testing support)
+
+/**
+ * Every path in `query`, in depth-first order, including the root (`[]`). Independent-combinator
+ * slots are bare strings rather than nodes, so they are skipped — `findPath` reports them as
+ * missing, and no operation can target them.
+ */
+export const allPaths = (query: RuleGroupTypeAny, prefix: Path = []): Path[] => {
+  const paths: Path[] = [prefix];
+  for (const [index, child] of query.rules.entries()) {
+    if (typeof child === 'string') continue;
+    const childPath = [...prefix, index];
+    if (isRuleGroup(child)) {
+      paths.push(...allPaths(child, childPath));
+    } else {
+      paths.push(childPath);
+    }
+  }
+  return paths;
+};
+
+/** All paths that resolve to a group, including the root. */
+export const groupPaths = (query: RuleGroupTypeAny): Path[] =>
+  allPaths(query).filter(p => {
+    const node = findPath(p, query);
+    return !!node && isRuleGroup(node);
+  });
+
+/**
+ * An operation described *relative to whatever query it lands on*, rather than in terms of
+ * concrete paths.
+ *
+ * Property-based runs need generated operations to keep targeting nodes that actually exist:
+ * a sequence of independently-generated absolute paths degenerates into a sequence of
+ * `target-not-found` aborts after the first `remove`, which tests nothing. Numeric fields are
+ * therefore _selectors_ — reduced modulo the candidate count at the time the operation is
+ * materialized — so any generated seed produces a meaningful operation against any query.
+ *
+ * Keeping the generated shape this small (all numbers and booleans) is also what makes
+ * `fast-check`'s shrinking useful: a failure shrinks toward low indices and short sequences.
+ */
+export interface OpSeed {
+  kind: Op['kind'];
+  /** Selects the primary target (or parent) from the candidate paths. */
+  target: number;
+  /** Selects the secondary target: `move` destination, `group` destination. */
+  secondary: number;
+  /** Target by `id` rather than by path, where the operation supports it. */
+  useID: boolean;
+  /** `clone` for `move`/`group`, `replace` for `insert`. */
+  flag: boolean;
+  /** Add/insert a group rather than a rule. */
+  addGroup: boolean;
+  /** Selects from {@link seedUpdates}. */
+  prop: number;
+  /** Selects `'up'`/`'down'` instead of a path as a `move` destination. */
+  relativeMove: boolean;
+}
+
+/** The property/value pairs a seeded `update` can choose from. */
+const seedUpdates: { prop: UpdateableProperties; value: unknown }[] = [
+  { prop: 'field', value: 'fX' },
+  { prop: 'operator', value: '<' },
+  { prop: 'value', value: 'vX' },
+  { prop: 'combinator', value: or },
+  { prop: 'not', value: true },
+  { prop: 'disabled', value: true },
+  { prop: 'disabled', value: false },
+  { prop: 'valueSource', value: 'value' },
+];
+
+/** Cycles into a non-empty list. Negative and out-of-range indices are both handled. */
+const pick = <T>(list: readonly T[], index: number): T =>
+  list[((index % list.length) + list.length) % list.length];
+
+const idAt = (query: RuleGroupTypeAny, path: Path): string | undefined =>
+  (findPath(path, query) as { id?: string } | null)?.id;
+
+/**
+ * Turns {@link OpSeed}s into concrete {@link Op}s by applying each one as it is resolved, so
+ * every selector is reduced against the query as it exists at that point in the sequence.
+ *
+ * The query tools are used to advance the intermediate state; the resulting `Op[]` is a plain
+ * value that all three interpreters can then replay independently.
+ */
+export const materializeOps = (
+  seeds: readonly OpSeed[],
+  startQuery: RuleGroupTypeAny,
+  options: RunOptions = {}
+): Op[] => {
+  const idGenerator = options.idGenerator ?? createIdGenerator('mat');
+  let query = prepareRuleGroup(clone(startQuery), { idGenerator });
+  const ops: Op[] = [];
+
+  for (const seed of seeds) {
+    const nodes = allPaths(query).filter(p => p.length > 0);
+    const groups = groupPaths(query);
+
+    // `target`/`from` operations need at least one non-root node; when the query is empty, the
+    // only meaningful operation is an `add`.
+    const kind = nodes.length === 0 ? 'add' : seed.kind;
+
+    const primary = pick(groups, seed.target);
+    const node = nodes.length > 0 ? pick(nodes, seed.target) : [];
+    const other = nodes.length > 0 ? pick(nodes, seed.secondary) : [];
+    const ruleOrGroup = seed.addGroup ? g() : r(seed.prop);
+    const target = (path: Path): Path | string =>
+      (seed.useID ? idAt(query, path) : undefined) ?? path;
+
+    let op: Op;
+    switch (kind) {
+      case 'add': {
+        op = { kind: 'add', ruleOrGroup, parent: target(primary) };
+        break;
+      }
+      case 'update': {
+        const { prop, value } = pick(seedUpdates, seed.prop);
+        op = { kind: 'update', prop, value, target: target(node) };
+        break;
+      }
+      case 'remove': {
+        op = { kind: 'remove', target: target(node) };
+        break;
+      }
+      case 'move': {
+        op = {
+          kind: 'move',
+          from: target(node),
+          to: seed.relativeMove ? (seed.flag ? 'up' : 'down') : other,
+          clone: seed.flag,
+        };
+        break;
+      }
+      case 'insert': {
+        // `insert` takes a path only.
+        op = { kind: 'insert', ruleOrGroup, target: node, replace: seed.flag };
+        break;
+      }
+      case 'group': {
+        op = { kind: 'group', from: target(node), to: target(other), clone: seed.flag };
+        break;
+      }
+    }
+
+    ops.push(op);
+    query = runViaQueryTools([op], query, { ...options, idGenerator }).query;
+  }
+
+  return ops;
+};
 
 // #endregion
