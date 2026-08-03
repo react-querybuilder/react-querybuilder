@@ -227,11 +227,15 @@ describe('mutation invariants', () => {
       .map(rule => JSON.stringify(rule))
       .toSorted();
 
-  it('a non-refused move preserves the multiset of rules', () => {
+  /**
+   * Asserts that a non-cloning operation of the given kind never adds or removes rules. Cloning
+   * variants are excluded via `fc.pre` since they intentionally duplicate rules.
+   */
+  const expectRuleMultiset = (kind: 'move' | 'group') => () => {
     fc.assert(
-      fc.property(arbitraryFixture, arbitrarySeed(['move']), (fixture, seed) => {
+      fc.property(arbitraryFixture, arbitrarySeed([kind]), (fixture, seed) => {
         const [op] = materializeOps([seed], queries[fixture]);
-        if (op.kind !== 'move' || op.clone) return;
+        fc.pre(op.kind === kind && !op.clone);
 
         const before = runViaQueryTools([], queries[fixture], { idGenerator: createIdGenerator() });
         const after = runViaQueryTools([op], queries[fixture], {
@@ -242,24 +246,11 @@ describe('mutation invariants', () => {
       }),
       params
     );
-  });
+  };
 
-  it('a successful group operation preserves the multiset of rules', () => {
-    fc.assert(
-      fc.property(arbitraryFixture, arbitrarySeed(['group']), (fixture, seed) => {
-        const [op] = materializeOps([seed], queries[fixture]);
-        if (op.kind !== 'group' || op.clone) return;
+  it('a non-refused move preserves the multiset of rules', expectRuleMultiset('move'));
 
-        const before = runViaQueryTools([], queries[fixture], { idGenerator: createIdGenerator() });
-        const after = runViaQueryTools([op], queries[fixture], {
-          idGenerator: createIdGenerator(),
-        });
-
-        expect(sortedRules(after.query)).toEqual(sortedRules(before.query));
-      }),
-      params
-    );
-  });
+  it('a successful group operation preserves the multiset of rules', expectRuleMultiset('group'));
 
   it('never produces duplicate ids', () => {
     fc.assert(
@@ -332,7 +323,7 @@ describe('round-trip properties', () => {
     fc.assert(
       fc.property(arbitraryQuery, query => {
         // Only non-IC queries can be converted *to* IC.
-        if (!('combinator' in query)) return;
+        fc.pre('combinator' in query);
 
         const roundTripped = convertFromIC(convertToIC(query as RuleGroupType));
 

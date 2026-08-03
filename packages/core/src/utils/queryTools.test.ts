@@ -222,7 +222,6 @@ describe('add', () => {
     expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
     expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
     expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
-    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
     expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });

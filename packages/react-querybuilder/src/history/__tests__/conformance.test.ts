@@ -277,10 +277,8 @@ describe('recording', () => {
     expectConformance([type_('v1'), type_('v1', 600)], queries.flat);
   });
 
-  it('agrees across every fixture', () => {
-    for (const query of Object.values(queries)) {
-      expectConformance([addRule('a'), addRule('b', 600), undo, redo], query);
-    }
+  it.each(Object.values(queries))('agrees across every fixture', query => {
+    expectConformance([addRule('a'), addRule('b', 600), undo, redo], query);
   });
 });
 

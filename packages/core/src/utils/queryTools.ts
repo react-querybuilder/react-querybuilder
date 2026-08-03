@@ -829,6 +829,14 @@ export const moveInPlace: MoveMethod = (
     return query;
   }
 
+  // Ignore paths that don't identify anything. This must happen before `getNextPath`, which
+  // assumes the source exists when resolving a shift direction.
+  const ruleOrGroupOriginal = findPath(oldPath, query);
+  if (!ruleOrGroupOriginal) {
+    onAbort?.({ reason: 'target-not-found', operation: 'move', pathOrID: oldPathOrID });
+    return query;
+  }
+
   const nextPath = getNextPath(query, oldPath, newPath);
 
   // Can't move the root group
@@ -863,11 +871,6 @@ export const moveInPlace: MoveMethod = (
     return query;
   }
 
-  const ruleOrGroupOriginal = findPath(oldPath, query);
-  if (!ruleOrGroupOriginal) {
-    onAbort?.({ reason: 'target-not-found', operation: 'move', pathOrID: oldPathOrID });
-    return query;
-  }
   const ruleOrGroup = clone
     ? regenerateIDs(
         isDraft(ruleOrGroupOriginal) ? current(ruleOrGroupOriginal) : ruleOrGroupOriginal,
