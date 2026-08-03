@@ -1,5 +1,5 @@
-import type { Equal, Expect, ExpectExtends } from '@rqb-testing';
 import { produce } from 'immer';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { defaultCombinators } from '../defaults';
 import type {
   DefaultRuleGroupType,
@@ -63,6 +63,11 @@ const rgvsf: DefaultRuleGroupType = { combinator: 'and', rules: [{ ...r1, valueS
 const rg1wID: DefaultRuleGroupType = id(rg1, '[]');
 const rgic1wID: DefaultRuleGroupTypeIC = id(rgic1, '[]');
 const rg3wIDs = pathsAsIDs(rg3);
+/** A group at `[0]` containing a single rule at `[0, 0]`. */
+const rgNested: DefaultRuleGroupType = {
+  combinator: and,
+  rules: [{ combinator: or, rules: [r1] }],
+};
 
 const testQT = (
   title: string,
@@ -206,20 +211,18 @@ describe('add', () => {
     testQT('bails out', add(rg1, rg2, p(badPath)), rg1, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = add({ ...rg1 }, { ...rg2 }, []);
     const _newDefaultQuery = add(rg1, rg2, []);
     const _newICQuery = add({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = add(rgic1, rgic2, []);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -272,20 +275,19 @@ describe('remove', () => {
     testQT('bails out', remove(rg1, p(badPath)), rg1, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = remove({ ...rg1 }, [0]);
     const _newDefaultQuery = remove(rg1, [0]);
     const _newICQuery = remove({ ...rgic1 }, [0]);
     const _newDefaultICQuery = remove(rgic1, [0]);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -735,37 +737,35 @@ describe('update', () => {
     });
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types for multiple-property updates', () => {
     const _mapQuery = update(rg1, { combinator: 'and', not: true }, []);
     const _arrQuery = update(rg1, ['combinator', 'not'], ['and', true], []);
     const _mapICQuery = update(rgic1, { disabled: false }, []);
     const _arrICQuery = update(rgic1, ['disabled'], [false], []);
 
-    const _assertion1: Expect<Equal<DefaultRuleGroupType, typeof _mapQuery>> = true;
-    const _assertion2: Expect<Equal<DefaultRuleGroupType, typeof _arrQuery>> = true;
-    const _assertion3: Expect<Equal<DefaultRuleGroupTypeIC, typeof _mapICQuery>> = true;
-    const _assertion4: Expect<Equal<DefaultRuleGroupTypeIC, typeof _arrICQuery>> = true;
+    expectTypeOf(_mapQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_arrQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_mapICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_arrICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 
   describe.each(testLoop)('on bad %s', (_, p) => {
     testQT('bails out', update(rg1wID, 'value', 'test', p(badPath)), rg1wID, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = update({ ...rg1 }, 'combinator', 'and', []);
     const _newDefaultQuery = update(rg1, 'combinator', 'and', []);
     const _newICQuery = update({ ...rgic1 }, 'disabled', false, []);
     const _newDefaultICQuery = update(rgic1, 'disabled', false, []);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -877,6 +877,26 @@ describe('move', () => {
       { rules: [r1, or, r3, and, r2] }
     );
     testQT(
+      'moves a rule from first to a later rule index within the same group',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [4]),
+      { rules: [r2, and, r1, or, r3] }
+    );
+    testQT(
+      'clones a rule to a later rule index within the same group',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [2], { clone: true }),
+      { rules: [r1, and, r1, and, r2, or, r3] }
+    );
+    testQT(
+      'does not alter the query when dropping a rule on the combinator that follows it',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([0]), [1]),
+      { rules: [r1, and, r2, or, r3] }
+    );
+    testQT(
+      'does not alter the query when dropping a rule on the combinator that precedes it',
+      move(pathsAsIDs({ rules: [r1, and, r2, or, r3] }), p([2]), [1]),
+      { rules: [r1, and, r2, or, r3] }
+    );
+    testQT(
       'moves a first-child rule to a different group as the first child',
       move(pathsAsIDs({ rules: [r1, and, { rules: [r2, and, r3] }] }), p([0]), [2, 0]),
       { rules: [{ rules: [r1, and, r2, and, r3] }] }
@@ -922,20 +942,19 @@ describe('move', () => {
     testQT('bails out', move(rg1wID, p([1]), badPath), rg1wID, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], [0]);
     const _newDefaultQuery = move(rg1, [1], [0]);
     const _newICQuery = move({ ...rgic1 }, [1], [0]);
     const _newDefaultICQuery = move(rgic1, [1], [0]);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1027,20 +1046,19 @@ describe('shift', () => {
     testQT('does not alter query for invalid direction', move(rg3, p([0]), 'x'), rg3, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = move({ ...rg1 }, [1], 'up');
     const _newDefaultQuery = move(rg1, [1], 'up');
     const _newICQuery = move({ ...rgic1 }, [1], 'up');
     const _newDefaultICQuery = move(rgic1, [1], 'up');
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1162,20 +1180,19 @@ describe('insert', () => {
 
   testQT('bails out on bad path', insert(rg1, rg2, badPath), rg1);
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = insert({ ...rg1 }, { ...rg2 }, []);
     const _newDefaultQuery = insert(rg1, rg2, []);
     const _newICQuery = insert({ ...rgic1 }, { ...rgic2 }, []);
     const _newDefaultICQuery = insert(rgic1, rgic2, []);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1341,20 +1358,19 @@ describe('group', () => {
     testQT('bails out', group(rg1wID, p([1]), badPath), rg1wID, true);
   });
 
-  // oxlint-disable-next-line expect-expect
   it('should have the right types', () => {
     const _newQuery = group({ ...rg1 }, [1], [0]);
     const _newDefaultQuery = group(rg1, [1], [0]);
     const _newICQuery = group({ ...rgic1 }, [1], [0]);
     const _newDefaultICQuery = group(rgic1, [1], [0]);
 
-    const _assertion1: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newQuery> = false;
-    const _assertion2: ExpectExtends<DefaultRuleGroupType, typeof _newQuery> = true;
-    const _assertion3: ExpectExtends<DefaultRuleGroupType, typeof _newICQuery> = false;
-    const _assertion4: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion5: Expect<Equal<DefaultRuleGroupType, typeof _newDefaultQuery>> = true;
-    const _assertion6: ExpectExtends<DefaultRuleGroupTypeIC, typeof _newICQuery> = true;
-    const _assertion7: Expect<Equal<DefaultRuleGroupTypeIC, typeof _newDefaultICQuery>> = true;
+    expectTypeOf(_newQuery).not.toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newQuery).toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).not.toExtend<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultQuery).toEqualTypeOf<DefaultRuleGroupType>();
+    expectTypeOf(_newICQuery).toExtend<DefaultRuleGroupTypeIC>();
+    expectTypeOf(_newDefaultICQuery).toEqualTypeOf<DefaultRuleGroupTypeIC>();
   });
 });
 
@@ -1453,6 +1469,28 @@ describe('onAbort', () => {
       expect(remove(rgic2, badPath, { onAbort })).toBe(rgic2);
       expect(reasons()).toEqual(['target-not-found']);
     });
+
+    it('reports an unresolvable path in a standard rule group query', () => {
+      // The `findPath` check used to be gated behind `!isRuleGroupType(query)`, so this was a
+      // silent no-op even though the equivalent unresolvable `id` was reported.
+      const { onAbort, reasons } = abort();
+      expect(remove(rg3, badPath, { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a path whose parent exists but whose index does not', () => {
+      const { onAbort, reasons } = abort();
+      expect(remove(rg3, [99], { onAbort })).toBe(rg3);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a combinator slot in an independent combinators query', () => {
+      // Independent combinators are bare strings, so they can only be removed alongside the rule
+      // they precede or follow.
+      const { onAbort, reasons } = abort();
+      expect(remove(rgic2, [1], { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
   });
 
   describe('update', () => {
@@ -1472,6 +1510,21 @@ describe('onAbort', () => {
       const { onAbort, reasons } = abort();
       expect(update(rgic2, 'combinator', or, [0], { onAbort })).toBe(rgic2);
       expect(reasons()).toEqual(['not-a-combinator-slot']);
+    });
+
+    it('reports a combinator update at a path whose parent does not exist', () => {
+      // Combinator slots are bare strings, so `findPath` can't confirm the target exists and the
+      // containing group has to be resolved instead. Before this check, an unresolvable path
+      // threw a `TypeError` rather than aborting.
+      const { onAbort, reasons } = abort();
+      expect(update(rgic2, 'combinator', or, badPath, { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a combinator update at a path whose parent is a rule', () => {
+      const { onAbort, reasons } = abort();
+      expect(update(rgic2, 'combinator', or, [0, 1], { onAbort })).toBe(rgic2);
+      expect(reasons()).toEqual(['target-not-found']);
     });
 
     it('reports a combinator non-update at a rule index', () => {
@@ -1518,6 +1571,24 @@ describe('onAbort', () => {
       const { onAbort, reasons } = abort();
       expect(move(rg3, [5], [0], { onAbort })).toBe(rg3);
       expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports a move of a group into its own subtree', () => {
+      // The destination is part of the subtree being relocated, so it ceases to exist the moment
+      // the source is spliced out. Before this check, the ensuing splice threw a `TypeError`.
+      const { onAbort, reasons } = abort();
+      expect(move(rgNested, [0], [0, 0], { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['destination-not-found']);
+    });
+
+    it('allows cloning a group into its own subtree', () => {
+      // Cloning leaves the source in place, so the destination still exists.
+      const { onAbort, reasons } = abort();
+      expect(stripIDs(move(rgNested, [0], [0, 0], { clone: true, onAbort }))).toEqual({
+        combinator: and,
+        rules: [{ combinator: or, rules: [{ combinator: or, rules: [r1] }, r1] }],
+      });
+      expect(reasons()).toEqual([]);
     });
   });
 
@@ -1570,6 +1641,26 @@ describe('onAbort', () => {
       const { onAbort, reasons } = abort();
       expect(group(rg3, [5], [0], { onAbort })).toBe(rg3);
       expect(reasons()).toEqual(['target-not-found']);
+    });
+
+    it('reports grouping a group with something inside itself', () => {
+      const { onAbort, reasons } = abort();
+      expect(group(rgNested, [0], [0, 0], { onAbort })).toBe(rgNested);
+      expect(reasons()).toEqual(['destination-not-found']);
+    });
+
+    it('allows cloning a group into its own subtree', () => {
+      const { onAbort, reasons } = abort();
+      expect(stripIDs(group(rgNested, [0], [0, 0], { clone: true, onAbort }))).toEqual({
+        combinator: and,
+        rules: [
+          {
+            combinator: or,
+            rules: [{ combinator: and, rules: [r1, { combinator: or, rules: [r1] }] }],
+          },
+        ],
+      });
+      expect(reasons()).toEqual([]);
     });
 
     it('reports an unresolvable target path', () => {
@@ -1737,6 +1828,117 @@ describe('guard options', () => {
       expect(getGuardAbortReason(disabledRuleQuery, 'r1', guards, { asParent: true })).toBe(
         'parent-disabled'
       );
+    });
+
+    describe('disabledPaths', () => {
+      const q: DefaultRuleGroupType = {
+        combinator: and,
+        rules: [r1, r2, { combinator: or, rules: [r3, r4] }],
+      };
+      const dp = { respectDisabled: true, disabledPaths: [[2]] };
+
+      it('disables the listed path', () => {
+        expect(getGuardAbortReason(q, [2], dp)).toBe('target-disabled');
+        expect(getGuardAbortReason(q, [2], dp, { asParent: true })).toBe('parent-disabled');
+      });
+
+      it('disables descendants of the listed path', () => {
+        expect(getGuardAbortReason(q, [2, 0], dp)).toBe('target-disabled');
+        expect(getGuardAbortReason(q, [2, 1], dp)).toBe('target-disabled');
+      });
+
+      it('leaves siblings and ancestors alone', () => {
+        expect(getGuardAbortReason(q, [0], dp)).toBeNull();
+        expect(getGuardAbortReason(q, [1], dp)).toBeNull();
+        expect(getGuardAbortReason(q, [], dp)).toBeNull();
+      });
+
+      it('is ignored when respectDisabled is false', () => {
+        expect(getGuardAbortReason(q, [2, 0], { disabledPaths: [[2]] })).toBeNull();
+      });
+
+      it('resolves an `id` to a disabled path', () => {
+        const withIDs = pathsAsIDs(q);
+        expect(getGuardAbortReason(withIDs, '[2,0]', dp)).toBe('target-disabled');
+        expect(getGuardAbortReason(withIDs, '[0]', dp)).toBeNull();
+      });
+
+      it('disables everything when the root path is listed', () => {
+        const rootDP = { respectDisabled: true, disabledPaths: [[]] };
+        expect(getGuardAbortReason(q, [], rootDP)).toBe('target-disabled');
+        expect(getGuardAbortReason(q, [0], rootDP)).toBe('target-disabled');
+      });
+    });
+
+    describe('the query tools honor disabledPaths', () => {
+      const q: DefaultRuleGroupType = pathsAsIDs({
+        combinator: and,
+        rules: [r1, r2, { combinator: or, rules: [r3, r4] }],
+      });
+      const dp = { respectDisabled: true, disabledPaths: [[2]] };
+
+      it('blocks add', () => {
+        const onAbort = vi.fn();
+        expect(add(q, r5, [2], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'parent-disabled', operation: 'add' })
+        );
+      });
+
+      it('blocks update', () => {
+        const onAbort = vi.fn();
+        expect(update(q, 'value', 'x', [2, 0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'update' })
+        );
+      });
+
+      it('blocks remove', () => {
+        const onAbort = vi.fn();
+        expect(remove(q, [2], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'remove' })
+        );
+      });
+
+      it('blocks move', () => {
+        const onAbort = vi.fn();
+        expect(move(q, [2], [0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'move' })
+        );
+      });
+
+      it('blocks insert', () => {
+        const onAbort = vi.fn();
+        expect(insert(q, r5, [2, 0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'parent-disabled', operation: 'insert' })
+        );
+      });
+
+      it('blocks group', () => {
+        const onAbort = vi.fn();
+        expect(group(q, [2], [0], { ...dp, onAbort })).toBe(q);
+        expect(onAbort).toHaveBeenCalledWith(
+          expect.objectContaining({ reason: 'target-disabled', operation: 'group' })
+        );
+      });
+
+      it('still allows a path-disabled node to be re-enabled', () => {
+        // Otherwise a node disabled by path could never be unlocked from within the query.
+        const result = update(q, 'disabled', false, [2], dp);
+        expect(result).not.toBe(q);
+        expect((result.rules[2] as DefaultRuleGroupType).disabled).toBe(false);
+      });
+
+      it('does not allow re-enabling when the whole query is disabled', () => {
+        expect(update(q, 'disabled', false, [2], { ...dp, queryDisabled: true })).toBe(q);
+      });
+
+      it('allows mutations that do not target a disabled path', () => {
+        expect(update(q, 'value', 'x', [0], dp)).not.toBe(q);
+      });
     });
   });
 

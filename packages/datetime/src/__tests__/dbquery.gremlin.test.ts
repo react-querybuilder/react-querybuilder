@@ -1,5 +1,3 @@
-// oxlint-disable jest/expect-expect
-
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { formatQuery } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
@@ -32,7 +30,7 @@ afterAll(() => {
   db?.close();
 });
 
-const runGremlin = async (
+const expectGremlin = async (
   query: Parameters<typeof formatQuery>[0],
   expectation: string,
   apiFns: (typeof dateLibraryFunctions)[number][1]
@@ -58,7 +56,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
   describe(libName, () => {
     for (const [testCaseName, [query, expectation]] of Object.entries(testCases)) {
       test(testCaseName, async () => {
-        await runGremlin(query, expectation, apiFns);
+        await expectGremlin(query, expectation, apiFns);
       });
     }
   });

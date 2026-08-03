@@ -61,6 +61,12 @@ export interface QueryActionsConfig extends QueryActionCallbacks {
    * `QueryBuilder` component; a node's own `disabled` property can always be changed.
    */
   respectDisabled?: boolean;
+  /**
+   * Paths disabled by position rather than by a `disabled` property on the node itself, mirroring
+   * the array form of the `QueryBuilder` `disabled` prop. Honored only when `respectDisabled` is
+   * `true`; as with the `disabled` property, a node's own `disabled` can always be changed.
+   */
+  disabledPaths?: Path[];
   resetOnFieldChange?: boolean;
   resetOnOperatorChange?: boolean;
   getRuleDefaultOperator?: (field: string) => string;
@@ -103,9 +109,9 @@ export interface QueryActionHandlers {
  * Builds the query builder's six mutation handlers as pure functions of the current query.
  *
  * This is the framework-agnostic core of the action handlers in `useQueryBuilderSchema`. It owns
- * the policy that surrounds the [query tools](#query-tools)—disabled gating, the confirmation
- * callback protocol, `maxLevels`, and debug logging—so an implementation only has to supply its
- * own storage: read the current query, call the action, and apply a non-`undefined` result.
+ * the policy that surrounds the query tools—disabled gating, the confirmation callback protocol,
+ * `maxLevels`, and debug logging—so an implementation only has to supply its own storage: read
+ * the current query, call the action, and apply a non-`undefined` result.
  *
  * @group Query Tools
  */
@@ -117,6 +123,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
     maxLevels = Infinity,
     queryDisabled,
     respectDisabled = true,
+    disabledPaths,
     resetOnFieldChange,
     resetOnOperatorChange,
     getRuleDefaultOperator,
@@ -135,7 +142,7 @@ export const createQueryActions = (config: QueryActionsConfig = {}): QueryAction
 
   const log = (payload: Record<string, any>) => onLog?.({ qbId, ...payload });
 
-  const guards = { respectDisabled, queryDisabled };
+  const guards = { respectDisabled, queryDisabled, disabledPaths };
 
   /** Whether the mutation is blocked, using the same rules the query tools apply internally. */
   const blocked = (query: RuleGroupTypeAny, path: Path, asParent = false) =>

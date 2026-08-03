@@ -268,39 +268,38 @@ describe('formatQuery("tanstack_db")', () => {
   });
 });
 
-// oxlint-disable jest/expect-expect
 describe('operator mapping', () => {
-  const testOp = (operator: string, value: unknown, expected: unknown) => {
+  const expectOp = (operator: string, value: unknown, expected: unknown) => {
     const q: RuleGroupType = { combinator: 'and', rules: [{ field: 'age', operator, value }] };
     expect(fq(q)).toEqual(expected);
   };
 
-  it('=', () => testOp('=', 25, eq(f('age'), 25)));
-  it('!=', () => testOp('!=', 25, not(eq(f('age'), 25))));
-  it('<', () => testOp('<', 10, lt(f('age'), 10)));
-  it('<=', () => testOp('<=', 10, lte(f('age'), 10)));
-  it('>', () => testOp('>', 10, gt(f('age'), 10)));
-  it('>=', () => testOp('>=', 10, gte(f('age'), 10)));
+  it('=', () => expectOp('=', 25, eq(f('age'), 25)));
+  it('!=', () => expectOp('!=', 25, not(eq(f('age'), 25))));
+  it('<', () => expectOp('<', 10, lt(f('age'), 10)));
+  it('<=', () => expectOp('<=', 10, lte(f('age'), 10)));
+  it('>', () => expectOp('>', 10, gt(f('age'), 10)));
+  it('>=', () => expectOp('>=', 10, gte(f('age'), 10)));
 
-  it('null', () => testOp('null', null, isNull(f('age'))));
-  it('notNull', () => testOp('notNull', null, not(isNull(f('age')))));
+  it('null', () => expectOp('null', null, isNull(f('age'))));
+  it('notNull', () => expectOp('notNull', null, not(isNull(f('age')))));
 
-  it('contains', () => testOp('contains', 'foo', like(f('age'), '%foo%')));
-  it('doesNotContain', () => testOp('doesNotContain', 'foo', not(like(f('age'), '%foo%'))));
-  it('beginsWith', () => testOp('beginsWith', 'foo', like(f('age'), 'foo%')));
-  it('doesNotBeginWith', () => testOp('doesNotBeginWith', 'foo', not(like(f('age'), 'foo%'))));
-  it('endsWith', () => testOp('endsWith', 'foo', like(f('age'), '%foo')));
-  it('doesNotEndWith', () => testOp('doesNotEndWith', 'foo', not(like(f('age'), '%foo'))));
+  it('contains', () => expectOp('contains', 'foo', like(f('age'), '%foo%')));
+  it('doesNotContain', () => expectOp('doesNotContain', 'foo', not(like(f('age'), '%foo%'))));
+  it('beginsWith', () => expectOp('beginsWith', 'foo', like(f('age'), 'foo%')));
+  it('doesNotBeginWith', () => expectOp('doesNotBeginWith', 'foo', not(like(f('age'), 'foo%'))));
+  it('endsWith', () => expectOp('endsWith', 'foo', like(f('age'), '%foo')));
+  it('doesNotEndWith', () => expectOp('doesNotEndWith', 'foo', not(like(f('age'), '%foo'))));
 
-  it('in', () => testOp('in', 'a,b,c', inArray(f('age'), ['a', 'b', 'c'])));
-  it('notIn', () => testOp('notIn', 'a,b,c', not(inArray(f('age'), ['a', 'b', 'c']))));
+  it('in', () => expectOp('in', 'a,b,c', inArray(f('age'), ['a', 'b', 'c'])));
+  it('notIn', () => expectOp('notIn', 'a,b,c', not(inArray(f('age'), ['a', 'b', 'c']))));
 
-  it('between', () => testOp('between', '1,10', and(gte(f('age'), 1), lte(f('age'), 10))));
+  it('between', () => expectOp('between', '1,10', and(gte(f('age'), 1), lte(f('age'), 10))));
   it('notBetween', () =>
-    testOp('notBetween', '1,10', not(and(gte(f('age'), 1), lte(f('age'), 10)))));
+    expectOp('notBetween', '1,10', not(and(gte(f('age'), 1), lte(f('age'), 10)))));
 
   it('between swaps when second < first', () =>
-    testOp('between', '10,1', and(gte(f('age'), 1), lte(f('age'), 10))));
+    expectOp('between', '10,1', and(gte(f('age'), 1), lte(f('age'), 10))));
 
   it('between with insufficient values returns fallback', () => {
     expect(
@@ -308,7 +307,6 @@ describe('operator mapping', () => {
     ).toEqual(eq(1, 1));
   });
 });
-// oxlint-enable jest/expect-expect
 
 describe('combinators', () => {
   it('single rule: no wrapper', () => {

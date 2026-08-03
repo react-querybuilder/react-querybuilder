@@ -1,5 +1,3 @@
-// oxlint-disable jest/expect-expect
-
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
@@ -67,7 +65,10 @@ afterAll(() => {
  * Nodes without a `powerUpAge` triple are excluded from results because
  * the required triple pattern `?su <powerUpAge> ?powerUpAge` has no match.
  */
-const runSPARQL = async (query: Parameters<typeof formatQuery>[0], expectedResult: SuperUser[]) => {
+const expectSPARQL = async (
+  query: Parameters<typeof formatQuery>[0],
+  expectedResult: SuperUser[]
+) => {
   const filter = formatQuery(query, { format: 'sparql', parseNumbers: true });
   const sparql = `${selectClause} WHERE {
     ?su a <SuperUser> .
@@ -92,7 +93,7 @@ const superUsersWithAge = superUsers.filter(u => u.powerUpAge !== null);
 //    `?variable` field names and manual triple patterns.
 describe('SPARQL (Grafeo)', () => {
   test('=', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [
@@ -105,21 +106,21 @@ describe('SPARQL (Grafeo)', () => {
   });
 
   test('!=', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'firstName', operator: '!=', value: 'Peter' }] },
       superUsersWithAge.filter(u => u.firstName !== 'Peter')
     );
   });
 
   test('contains', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'contains', value: 'man' }] },
       superUsersWithAge.filter(u => u.madeUpName.includes('man'))
     );
   });
 
   test('doesNotContain', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [{ field: 'madeUpName', operator: 'doesNotContain', value: 'r' }],
@@ -129,63 +130,63 @@ describe('SPARQL (Grafeo)', () => {
   });
 
   test('beginsWith', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'firstName', operator: 'beginsWith', value: 'P' }] },
       superUsersWithAge.filter(u => u.firstName.startsWith('P'))
     );
   });
 
   test('endsWith', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'madeUpName', operator: 'endsWith', value: 'man' }] },
       superUsersWithAge.filter(u => u.madeUpName.endsWith('man'))
     );
   });
 
   test('>', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '>', value: 15 }] },
       superUsersWithAge.filter(u => u.powerUpAge! > 15)
     );
   });
 
   test('>=', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '>=', value: 15 }] },
       superUsersWithAge.filter(u => u.powerUpAge! >= 15)
     );
   });
 
   test('<', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '<', value: 20 }] },
       superUsersWithAge.filter(u => u.powerUpAge! < 20)
     );
   });
 
   test('<=', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '<=', value: 15 }] },
       superUsersWithAge.filter(u => u.powerUpAge! <= 15)
     );
   });
 
   test('boolean', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'enhanced', operator: '=', value: true }] },
       superUsersWithAge.filter(u => u.enhanced)
     );
   });
 
   test('between', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: 'between', value: [10, 30] }] },
       superUsersWithAge.filter(u => u.powerUpAge! >= 10 && u.powerUpAge! <= 30)
     );
   });
 
   test('notBetween', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [{ field: 'firstName', operator: 'notBetween', value: ['C', 'R'] }],
@@ -195,7 +196,7 @@ describe('SPARQL (Grafeo)', () => {
   });
 
   test('in', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [{ field: 'lastName', operator: 'in', value: ['Rogers', 'Wayne'] }],
@@ -205,7 +206,7 @@ describe('SPARQL (Grafeo)', () => {
   });
 
   test('notIn', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [{ field: 'lastName', operator: 'notIn', value: ['Parker', 'Kent'] }],
@@ -215,7 +216,7 @@ describe('SPARQL (Grafeo)', () => {
   });
 
   test('and/or', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'or',
         rules: [
@@ -238,7 +239,7 @@ describe('SPARQL (Grafeo)', () => {
   });
 
   test('NOT group', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [
@@ -259,7 +260,7 @@ describe('SPARQL (Grafeo)', () => {
 describe('SPARQL field-to-field (Grafeo)', () => {
   test('< (alphabetical comparison)', async () => {
     // Clark < Kent → Superman
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [{ field: 'firstName', operator: '<', value: 'lastName', valueSource: 'field' }],
@@ -269,7 +270,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
   });
 
   test('!= (different property values)', async () => {
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [{ field: 'firstName', operator: '!=', value: 'lastName', valueSource: 'field' }],
@@ -280,7 +281,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
 
   test('CONTAINS (madeUpName contains nickname)', async () => {
     // "Captain America" CONTAINS "Cap" → Captain America
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [
@@ -293,7 +294,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
 
   test('STRSTARTS (madeUpName starts with nickname)', async () => {
     // "Captain America" STRSTARTS "Cap" → Captain America
-    await runSPARQL(
+    await expectSPARQL(
       {
         combinator: 'and',
         rules: [
@@ -307,7 +308,7 @@ describe('SPARQL field-to-field (Grafeo)', () => {
 
 // ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
 
-const runSPARQLCustom = async (
+const expectSPARQLCustom = async (
   query: RuleGroupType,
   expectedResult: SuperUser[],
   ruleProcessor: typeof sparqlGraphProcessor
@@ -326,7 +327,7 @@ const runSPARQLCustom = async (
 describe('SPARQL graph patterns (Grafeo)', () => {
   describe('regex', () => {
     test('matchesRegex — names ending in "man"', async () => {
-      await runSPARQLCustom(
+      await expectSPARQLCustom(
         {
           combinator: 'and',
           rules: [{ field: '?madeUpName', operator: 'matchesRegex', value: '.*man$' }],
@@ -337,7 +338,7 @@ describe('SPARQL graph patterns (Grafeo)', () => {
     });
 
     test('doesNotMatchRegex — names not starting with "S"', async () => {
-      await runSPARQLCustom(
+      await expectSPARQLCustom(
         {
           combinator: 'and',
           rules: [{ field: '?madeUpName', operator: 'doesNotMatchRegex', value: '^S.*' }],
@@ -373,7 +374,7 @@ describe('SPARQL graph patterns (Grafeo)', () => {
 
   describe('case-insensitive', () => {
     test('equalsIgnoreCase', async () => {
-      await runSPARQLCustom(
+      await expectSPARQLCustom(
         {
           combinator: 'and',
           rules: [{ field: '?firstName', operator: 'equalsIgnoreCase', value: 'steve' }],
@@ -384,7 +385,7 @@ describe('SPARQL graph patterns (Grafeo)', () => {
     });
 
     test('containsIgnoreCase', async () => {
-      await runSPARQLCustom(
+      await expectSPARQLCustom(
         {
           combinator: 'and',
           rules: [{ field: '?madeUpName', operator: 'containsIgnoreCase', value: 'spider' }],
@@ -395,7 +396,7 @@ describe('SPARQL graph patterns (Grafeo)', () => {
     });
 
     test('beginsWithIgnoreCase', async () => {
-      await runSPARQLCustom(
+      await expectSPARQLCustom(
         {
           combinator: 'and',
           rules: [{ field: '?madeUpName', operator: 'beginsWithIgnoreCase', value: 'super' }],

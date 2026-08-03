@@ -1,5 +1,3 @@
-// oxlint-disable jest/expect-expect
-
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import type { RuleGroupType } from '../../../types';
 import { transformQuery } from '../../transformQuery';
@@ -49,7 +47,10 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runCypher = async (query: Parameters<typeof formatQuery>[0], expectedResult: SuperUser[]) => {
+const expectCypher = async (
+  query: Parameters<typeof formatQuery>[0],
+  expectedResult: SuperUser[]
+) => {
   const where = formatQuery(query, { format: 'cypher', parseNumbers: true });
   const cypher = `MATCH (su:SuperUser)\nWHERE ${where}\n${returnClause}`;
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -66,7 +67,7 @@ const testCypher = ({ query, expectedResult }: TestSQLParams) => {
         ...(r.valueSource === 'field' ? { value: `su.${r.value}` } : {}),
       }),
     });
-    await runCypher(newQuery, expectedResult);
+    await expectCypher(newQuery, expectedResult);
   });
 };
 
@@ -97,7 +98,7 @@ describe('Cypher (Grafeo)', () => {
   }
 
   test('and/or', async () => {
-    await runCypher(
+    await expectCypher(
       {
         combinator: 'or',
         rules: [
@@ -120,35 +121,35 @@ describe('Cypher (Grafeo)', () => {
   });
 
   test('>', async () => {
-    await runCypher(
+    await expectCypher(
       { combinator: 'and', rules: [{ field: 'su.powerUpAge', operator: '>', value: 15 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! > 15)
     );
   });
 
   test('>=', async () => {
-    await runCypher(
+    await expectCypher(
       { combinator: 'and', rules: [{ field: 'su.powerUpAge', operator: '>=', value: 15 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! >= 15)
     );
   });
 
   test('<', async () => {
-    await runCypher(
+    await expectCypher(
       { combinator: 'and', rules: [{ field: 'su.powerUpAge', operator: '<', value: 20 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! < 20)
     );
   });
 
   test('<=', async () => {
-    await runCypher(
+    await expectCypher(
       { combinator: 'and', rules: [{ field: 'su.powerUpAge', operator: '<=', value: 15 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! <= 15)
     );
   });
 
   test('between', async () => {
-    await runCypher(
+    await expectCypher(
       {
         combinator: 'and',
         rules: [{ field: 'su.powerUpAge', operator: 'between', value: [10, 30] }],
@@ -158,7 +159,7 @@ describe('Cypher (Grafeo)', () => {
   });
 
   test('notBetween', async () => {
-    await runCypher(
+    await expectCypher(
       {
         combinator: 'and',
         rules: [{ field: 'su.firstName', operator: 'notBetween', value: ['C', 'R'] }],
@@ -168,7 +169,7 @@ describe('Cypher (Grafeo)', () => {
   });
 
   test('NOT group', async () => {
-    await runCypher(
+    await expectCypher(
       {
         combinator: 'and',
         rules: [
@@ -186,7 +187,7 @@ describe('Cypher (Grafeo)', () => {
 
 // ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
 
-const runCypherCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+const expectCypherCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
   const where = formatQuery(query, {
     format: 'cypher',
     parseNumbers: true,
@@ -201,7 +202,7 @@ const runCypherCustom = async (query: RuleGroupType, expectedResult: SuperUser[]
 describe('Cypher graph patterns (Grafeo)', () => {
   describe('regex', () => {
     test('matchesRegex — names ending in "man"', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.madeUpName', operator: 'matchesRegex', value: '.*man$' }],
@@ -211,7 +212,7 @@ describe('Cypher graph patterns (Grafeo)', () => {
     });
 
     test('doesNotMatchRegex — names not starting with "S"', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.madeUpName', operator: 'doesNotMatchRegex', value: '^S.*' }],
@@ -223,7 +224,7 @@ describe('Cypher graph patterns (Grafeo)', () => {
 
   describe('list containment', () => {
     test('listContains — nicknames containing "Cap"', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.nicknames', operator: 'listContains', value: 'Cap' }],
@@ -233,7 +234,7 @@ describe('Cypher graph patterns (Grafeo)', () => {
     });
 
     test('listDoesNotContain — nicknames not containing "Spidey"', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.nicknames', operator: 'listDoesNotContain', value: 'Spidey' }],
@@ -247,7 +248,7 @@ describe('Cypher graph patterns (Grafeo)', () => {
 
   describe('case-insensitive', () => {
     test('equalsIgnoreCase', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.firstName', operator: 'equalsIgnoreCase', value: 'steve' }],
@@ -257,7 +258,7 @@ describe('Cypher graph patterns (Grafeo)', () => {
     });
 
     test('containsIgnoreCase', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.madeUpName', operator: 'containsIgnoreCase', value: 'spider' }],
@@ -267,7 +268,7 @@ describe('Cypher graph patterns (Grafeo)', () => {
     });
 
     test('beginsWithIgnoreCase', async () => {
-      await runCypherCustom(
+      await expectCypherCustom(
         {
           combinator: 'and',
           rules: [{ field: 'su.madeUpName', operator: 'beginsWithIgnoreCase', value: 'super' }],

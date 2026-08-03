@@ -82,8 +82,8 @@
   "scripts": {
     "start": "vite",
     "build": "bun --bun tsdown",
-    "typecheck": "tsc --noEmit",
-    "typecheck:watch": "tsc --noEmit --watch"
+    "typecheck": "../../node_modules/typescript/bin/tsc --noEmit",
+    "typecheck:watch": "../../node_modules/typescript/bin/tsc --noEmit --watch"
   },
   "devDependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",

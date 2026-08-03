@@ -19,6 +19,13 @@ export interface SetQueryStateOptions {
    * updates they dispatch.
    */
   fromHistory?: boolean;
+  /**
+   * When the update occurred. Defaults to `Date.now()`.
+   *
+   * @internal Test seam. Exists so that history recording can be compared against
+   * `QueryManager`'s implementation without depending on wall-clock timing.
+   */
+  timestamp?: number;
 }
 
 /**
@@ -65,7 +72,7 @@ export const queriesSlice: Slice<
     setQueryState: {
       prepare: (payload: SetQueryStateParams, options?: SetQueryStateOptions) => ({
         payload,
-        meta: { timestamp: Date.now(), fromHistory: !!options?.fromHistory },
+        meta: { timestamp: options?.timestamp ?? Date.now(), fromHistory: !!options?.fromHistory },
       }),
       reducer: (state, { payload: { qbId, query } }: SetQueryStateAction) => {
         state[qbId] = query;

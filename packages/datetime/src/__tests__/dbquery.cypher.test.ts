@@ -1,5 +1,3 @@
-// oxlint-disable jest/expect-expect
-
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import { formatQuery } from '@react-querybuilder/core';
 import { dateLibraryFunctions, fields, musicians, testCases } from '../dbqueryTestUtils';
@@ -64,7 +62,7 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runCypher = async (
+const expectCypher = async (
   query: Parameters<typeof formatQuery>[0],
   expectedResult: (typeof musicians)[number][],
   apiFns: (typeof dateLibraryFunctions)[number][1]
@@ -101,7 +99,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         };
         const expected =
           expectation === 'all' ? musicians : musicians.filter(m => m.last_name === expectation);
-        await runCypher(query, expected, apiFns);
+        await expectCypher(query, expected, apiFns);
       });
     }
 
@@ -110,7 +108,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
         combinator: 'and',
         rules: [{ field: 'm.created_at', operator: '>', value: '1957-01-01T00:00:00.000Z' }],
       };
-      await runCypher(query, musicians, apiFns);
+      await expectCypher(query, musicians, apiFns);
     });
   });
 }

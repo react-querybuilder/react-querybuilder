@@ -21,7 +21,9 @@ import {
   getCommonAncestorPath,
   getParentPath,
   getPathOfID,
+  isAncestor,
   pathIsDisabled,
+  pathIsDisabledByPaths,
   pathsAreEqual,
 } from './pathUtils';
 import { prepareRuleOrGroup } from './prepareQueryObjects';
@@ -94,6 +96,15 @@ export interface GuardOptions {
    * only way to re-enable it.
    */
   respectDisabled?: boolean;
+  /**
+   * Paths that are disabled without the corresponding rule or group carrying a `disabled`
+   * property, mirroring the array form of the `QueryBuilder` `disabled` prop. A path is treated
+   * as disabled if it appears here or descends from a path that does.
+   *
+   * Like the `disabled` property, this is only honored when `respectDisabled` is `true`, and
+   * updating a rule or group's own `disabled` property is still permitted.
+   */
+  disabledPaths?: Path[];
   /** Abort every mutation, as though the entire query were disabled. Defaults to `false`. */
   queryDisabled?: boolean;
   /**
@@ -137,7 +148,7 @@ export const getGuardAbortReason = (
   if (!guards.respectDisabled || pathOrID === undefined) return null;
 
   const path = Array.isArray(pathOrID) ? pathOrID : getPathOfID(pathOrID, query);
-  if (path && pathIsDisabled(path, query)) {
+  if (path && (pathIsDisabled(path, query) || pathIsDisabledByPaths(path, guards.disabledPaths))) {
     return asParent ? 'parent-disabled' : 'target-disabled';
   }
 
@@ -362,7 +373,7 @@ const updatePropRank: Record<string, number> = { field: 0, operator: 1, valueSou
 
 /** Stable-sorts `[prop, value]` entries by {@link updatePropRank}. */
 const orderUpdateEntries = (entries: [string, unknown][]): [string, unknown][] =>
-  entries.sort((x, y) => (updatePropRank[x[0]] ?? 3) - (updatePropRank[y[0]] ?? 3));
+  entries.toSorted((x, y) => (updatePropRank[x[0]] ?? 3) - (updatePropRank[y[0]] ?? 3));
 
 /**
  * Normalizes the variadic {@link update}/{@link updateInPlace} arguments (single
@@ -496,7 +507,14 @@ const updateInPlaceSingle = <RG extends RuleGroupTypeAny>(
 
   // Independent combinators
   if (prop === 'combinator' && !isRuleGroupType(query)) {
-    const parentRules = (findPath(getParentPath(path), query) as typeof query).rules;
+    // The combinator slot itself is a bare string, so `findPath` can't confirm the target
+    // exists; the containing group has to be resolved instead.
+    const parent = findPath(getParentPath(path), query);
+    if (!parent || !isRuleGroup(parent)) {
+      onAbort?.({ reason: 'target-not-found', operation: 'update', pathOrID });
+      return query;
+    }
+    const parentRules = parent.rules;
     // Only update an independent combinator if it occupies an odd index
     if (path.at(-1)! % 2 === 1) {
       if (parentRules[path.at(-1)!] === value) {
@@ -659,21 +677,22 @@ export const removeInPlace: RemoveMethod = (query, pathOrID, options = {}): type
     return query;
   }
 
-  // Can't independently remove independent combinators
-  if (!isRuleGroupType(query) && !findPath(path, query)) {
+  // The target must actually exist. This also covers independent combinators, which `findPath`
+  // reports as missing because they are bare strings rather than rules—they can only be removed
+  // alongside the rule they precede or follow.
+  if (!findPath(path, query)) {
     onAbort?.({ reason: 'target-not-found', operation: 'remove', pathOrID });
     return query;
   }
 
+  // The target resolved, so at a non-root path its parent is necessarily an existing group.
   const index = path.at(-1)!;
-  const parent = findPath(getParentPath(path), query);
-  if (parent && isRuleGroup(parent)) {
-    if (!isRuleGroupType(parent) && parent.rules.length > 1) {
-      const idxStartDelete = index === 0 ? 0 : index - 1;
-      parent.rules.splice(idxStartDelete, 2);
-    } else {
-      parent.rules.splice(index, 1);
-    }
+  const parent = findPath(getParentPath(path), query) as RuleGroupTypeAny;
+  if (!isRuleGroupType(parent) && parent.rules.length > 1) {
+    const idxStartDelete = index === 0 ? 0 : index - 1;
+    parent.rules.splice(idxStartDelete, 2);
+  } else {
+    parent.rules.splice(index, 1);
   }
 
   return query;
@@ -810,6 +829,14 @@ export const moveInPlace: MoveMethod = (
     return query;
   }
 
+  // Ignore paths that don't identify anything. This must happen before `getNextPath`, which
+  // assumes the source exists when resolving a shift direction.
+  const ruleOrGroupOriginal = findPath(oldPath, query);
+  if (!ruleOrGroupOriginal) {
+    onAbort?.({ reason: 'target-not-found', operation: 'move', pathOrID: oldPathOrID });
+    return query;
+  }
+
   const nextPath = getNextPath(query, oldPath, newPath);
 
   // Can't move the root group
@@ -836,11 +863,14 @@ export const moveInPlace: MoveMethod = (
     return query;
   }
 
-  const ruleOrGroupOriginal = findPath(oldPath, query);
-  if (!ruleOrGroupOriginal) {
-    onAbort?.({ reason: 'target-not-found', operation: 'move', pathOrID: oldPathOrID });
+  // Don't move a group inside itself. The destination is part of the subtree being relocated,
+  // so it ceases to exist the moment the source is spliced out. (Cloning is fine: the source
+  // stays put and a regenerated copy is inserted.)
+  if (!clone && isAncestor(oldPath, nextPath)) {
+    onAbort?.({ reason: 'destination-not-found', operation: 'move', pathOrID: newPath });
     return query;
   }
+
   const ruleOrGroup = clone
     ? regenerateIDs(
         isDraft(ruleOrGroupOriginal) ? current(ruleOrGroupOriginal) : ruleOrGroupOriginal,
@@ -870,11 +900,19 @@ export const moveInPlace: MoveMethod = (
   }
 
   const newNewPath = [...nextPath];
+  if (independentCombinators && newNewPath.at(-1)! % 2 === 1) {
+    // Odd indexes in an independent combinator array identify combinators, not
+    // rules/groups. Dropping on a combinator means "insert after the rule that
+    // precedes it", which is the same slot as the next (even) index. Normalizing
+    // here keeps the destination index even, which the insertion logic below
+    // relies on to maintain the rule/combinator alternation.
+    newNewPath[newNewPath.length - 1] += 1;
+  }
   const commonAncestorPath = getCommonAncestorPath(oldPath, nextPath);
   if (
     !clone &&
     oldPath.length === commonAncestorPath.length + 1 &&
-    nextPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
+    newNewPath[commonAncestorPath.length] > oldPath[commonAncestorPath.length]
   ) {
     // Getting here means there will be a shift of paths upward at the common
     // ancestor level because the object at `oldPath` will be spliced out. The
@@ -884,6 +922,10 @@ export const moveInPlace: MoveMethod = (
   const newNewParentPath = getParentPath(newNewPath);
   const parentToInsertInto = findPath(newNewParentPath, query) as typeof query;
   const newIndex = newNewPath.at(-1)!;
+  // For independent combinator arrays, `newIndex` is the (even) index the moved
+  // rule/group should end up at, but the splice inserts a `[combinator, ruleOrGroup]`
+  // pair, so it must happen one slot earlier.
+  const spliceIndex = independentCombinators && newIndex > 0 ? newIndex - 1 : newIndex;
 
   /**
    * This function 1) glosses over the need for type assertions to splice directly
@@ -891,7 +933,7 @@ export const moveInPlace: MoveMethod = (
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   const insertRuleOrGroup = (...args: any[]) =>
-    parentToInsertInto.rules.splice(newIndex, 0, ...args);
+    parentToInsertInto.rules.splice(spliceIndex, 0, ...args);
 
   // Insert the source item at the target path
   if (parentToInsertInto.rules.length === 0 || !independentCombinators) {
@@ -910,7 +952,7 @@ export const moveInPlace: MoveMethod = (
         insertRuleOrGroup(oldPrevCombinator, ruleOrGroup);
       } else {
         const newPrevCombinator =
-          parentToInsertInto.rules[newIndex - 2] ??
+          parentToInsertInto.rules[spliceIndex - 2] ??
           oldNextCombinator ??
           getFirstOption(combinators);
         insertRuleOrGroup(newPrevCombinator, ruleOrGroup);
@@ -1183,6 +1225,12 @@ export const groupInPlace: GroupMethod = (
 
   // Don't move to a path that doesn't exist yet
   if (!findPath(getParentPath(nextPath), query)) {
+    onAbort?.({ reason: 'destination-not-found', operation: 'group', pathOrID: targetPathOrID });
+    return query;
+  }
+
+  // Don't group a group with something inside itself. See the equivalent check in `moveInPlace`.
+  if (!clone && isAncestor(sourcePath, nextPath)) {
     onAbort?.({ reason: 'destination-not-found', operation: 'group', pathOrID: targetPathOrID });
     return query;
   }

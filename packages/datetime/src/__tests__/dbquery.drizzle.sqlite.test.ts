@@ -1,5 +1,4 @@
 /* @vitest-environment node */
-// oxlint-disable jest/expect-expect
 
 import { Database } from 'bun:sqlite';
 import { formatQuery } from '@react-querybuilder/core';
@@ -54,7 +53,7 @@ afterAll(() => {
   bunSQLiteDB.close();
 });
 
-const assertResult = (result: { last_name: string }[], expectation: string) => {
+const expectDrizzleResult = (result: { last_name: string }[], expectation: string) => {
   if (expectation === 'all') {
     expect(result).toHaveLength(musicians.length);
   } else {
@@ -74,7 +73,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
 
       test(`${testCaseName} (relational queries)`, async () => {
         const result = await drizzleDB.query.musicians.findMany({ where });
-        assertResult(result, expectation);
+        expectDrizzleResult(result, expectation);
       });
 
       test(`${testCaseName} (query builder)`, async () => {
@@ -82,7 +81,7 @@ for (const [libName, apiFns] of dateLibraryFunctions) {
           .select()
           .from(musiciansTable)
           .where(where(musiciansTable, getOperators()));
-        assertResult(result, expectation);
+        expectDrizzleResult(result, expectation);
       });
     }
   });

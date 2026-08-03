@@ -438,4 +438,51 @@ describe('createQueryActions', () => {
       expect(() => createQueryActions().addRule(query(), rule(), [])).not.toThrow();
     });
   });
+  describe('disabledPaths', () => {
+    const nested = (): RuleGroupType => ({
+      id: 'root',
+      combinator: 'and',
+      rules: [
+        { id: 'r1', ...rule() },
+        { id: 'g1', combinator: 'or', rules: [{ id: 'r2', ...rule('f2', 'v2') }] },
+      ],
+    });
+    const actions = createQueryActions({ disabledPaths: [[1]] });
+
+    it('aborts a mutation targeting a listed path', () => {
+      expect(actions.propChange(nested(), 'combinator', 'and', [1])).toBeUndefined();
+      expect(actions.removeRuleOrGroup(nested(), [1])).toBeUndefined();
+      expect(actions.moveRule(nested(), [1], [0])).toBeUndefined();
+      expect(actions.groupRule(nested(), [1], [0])).toBeUndefined();
+    });
+
+    it('aborts adding to a listed path', () => {
+      expect(actions.addRule(nested(), rule('f3'), [1])).toBeUndefined();
+      expect(actions.addGroup(nested(), { combinator: 'and', rules: [] }, [1])).toBeUndefined();
+    });
+
+    it('aborts a mutation targeting a descendant of a listed path', () => {
+      expect(actions.propChange(nested(), 'value', 'x', [1, 0])).toBeUndefined();
+    });
+
+    it('allows mutations elsewhere', () => {
+      expect(actions.propChange(nested(), 'value', 'x', [0])).toBeDefined();
+    });
+
+    it('still allows re-enabling a path-disabled node', () => {
+      const result = actions.propChange(nested(), 'disabled', false, [1]);
+      expect((result.rules[1] as RuleGroupType).disabled).toBe(false);
+    });
+
+    it('is ignored when respectDisabled is false', () => {
+      const unguarded = createQueryActions({ disabledPaths: [[1]], respectDisabled: false });
+      expect(unguarded.propChange(nested(), 'combinator', 'and', [1])).toBeDefined();
+    });
+
+    it('logs the same way a `disabled` property does', () => {
+      const onLog = vi.fn();
+      createQueryActions({ disabledPaths: [[1]], onLog }).removeRuleOrGroup(nested(), [1]);
+      expect(onLog).toHaveBeenCalledWith(expect.objectContaining({ type: LogType.pathDisabled }));
+    });
+  });
 });

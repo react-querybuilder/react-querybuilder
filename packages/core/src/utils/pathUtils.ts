@@ -136,8 +136,18 @@ export const pathIsDisabled = (path: Path, query: RuleGroupTypeAny): boolean => 
   return disabled;
 };
 
-/** The path of a child rule or group, and whether it is disabled. */
-export interface PathInfo {
+/**
+ * Determines if the rule or group at the specified path is disabled by `disabledPaths`—the array
+ * form of the `QueryBuilder` `disabled` prop, which disables nodes by position rather than by a
+ * `disabled` property on the node itself. A path is disabled if it appears in `disabledPaths` or
+ * descends from a path that does.
+ *
+ * @group Paths
+ */
+export const pathIsDisabledByPaths = (path: Path, disabledPaths: Path[] = []): boolean =>
+  disabledPaths.some(p => pathsAreEqual(p, path) || isAncestor(p, path));
+
+/** The path of a child rule or group, and whether it is disabled. */ export interface PathInfo {
   path: Path;
   disabled: boolean;
 }

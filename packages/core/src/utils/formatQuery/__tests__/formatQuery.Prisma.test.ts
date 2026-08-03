@@ -17,7 +17,7 @@ import {
   testQueryDQ,
 } from '../formatQueryTestUtils';
 
-const testPrisma = (
+const expectPrisma = (
   query: RuleGroupTypeAny,
   expectation: unknown,
   fqOptions?: FormatQueryOptions
@@ -91,16 +91,15 @@ const prismaQueryExpectation = {
   ],
 };
 
-// oxlint-disable-next-line expect-expect
 it('formats to prisma query correctly', () => {
-  testPrisma(prismaQuery, prismaQueryExpectation);
-  testPrisma({ rules: [{ field: 'f', operator: '=', value: 'v', valueSource: 'field' }] }, {});
-  testPrisma(
+  expectPrisma(prismaQuery, prismaQueryExpectation);
+  expectPrisma({ rules: [{ field: 'f', operator: '=', value: 'v', valueSource: 'field' }] }, {});
+  expectPrisma(
     { rules: [{ field: 'f', operator: '=', value: { rules: [] }, match: { mode: 'all' } }] },
     {}
   );
   // Test for newline in value and `not` at top level
-  testPrisma(
+  expectPrisma(
     {
       not: true,
       combinator: 'and',
@@ -126,14 +125,12 @@ it.todo(
   // }
 );
 
-// oxlint-disable-next-line expect-expect
 it('escapes quotes when appropriate', () => {
-  testPrisma(testQueryDQ, { f1: `Te"st` });
+  expectPrisma(testQueryDQ, { f1: `Te"st` });
 });
 
-// oxlint-disable-next-line expect-expect
 it('independent combinators', () => {
-  testPrisma(queryIC, {
+  expectPrisma(queryIC, {
     OR: [{ AND: [{ firstName: 'Test' }, { middleName: 'Test' }] }, { lastName: 'Test' }],
   });
 });
@@ -160,56 +157,52 @@ describe('validation', () => {
 
     for (const vtd of getValidationTestData(fmt)) {
       if (validationResults[vtd.title] !== undefined) {
-        // oxlint-disable-next-line expect-expect
         it(vtd.title, () => {
-          testPrisma(vtd.query, validationResults[vtd.title], vtd.options);
+          expectPrisma(vtd.query, validationResults[vtd.title], vtd.options);
         });
       }
     }
   }
 });
 
-// oxlint-disable-next-line expect-expect
 it('ruleProcessor', () => {
   const ruleProcessor: RuleProcessor = r =>
     r.operator === 'custom_operator' ? { [r.operator]: true } : defaultRuleProcessorMongoDBQuery(r);
-  testPrisma(
+  expectPrisma(
     queryForRuleProcessor,
     { AND: [{ custom_operator: true }, { f2: 'v2' }] },
     { ruleProcessor: ruleProcessor }
   );
-  testPrisma(
+  expectPrisma(
     queryForRuleProcessor,
     { AND: [{ custom_operator: true }, { f2: 'v2' }] },
     { valueProcessor: ruleProcessor }
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('preserveValueOrder', () => {
-  testPrisma(
+  expectPrisma(
     queryForPreserveValueOrder,
     { AND: [{ f1: { gte: '12', lte: '14' } }, { f2: { gte: '12', lte: '14' } }] },
     {}
   );
-  testPrisma(
+  expectPrisma(
     queryForPreserveValueOrder,
     { AND: [{ f1: { gte: '12', lte: '14' } }, { f2: { gte: '14', lte: '12' } }] },
     { preserveValueOrder: true }
   );
-  testPrisma(
+  expectPrisma(
     queryForPreserveValueOrder,
     { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 12, lte: 14 } }] },
     { parseNumbers: true }
   );
-  testPrisma(
+  expectPrisma(
     queryForPreserveValueOrder,
     { AND: [{ f1: { gte: 12, lte: 14 } }, { f2: { gte: 14, lte: 12 } }] },
     { parseNumbers: true, preserveValueOrder: true }
   );
 });
 
-// oxlint-disable-next-line expect-expect
 it('parseNumbers', () => {
   const allNumbersParsed = {
     AND: [
@@ -232,7 +225,7 @@ it('parseNumbers', () => {
     { parseNumbers: 'strict' },
     { parseNumbers: 'strict-limited', fields: [{ name: 'f', label: 'f', inputType: 'number' }] },
   ] as FormatQueryOptions[]) {
-    testPrisma(queryForNumberParsing, allNumbersParsed, opts);
+    expectPrisma(queryForNumberParsing, allNumbersParsed, opts);
   }
   const noNumbersParsed = {
     AND: [
@@ -250,5 +243,5 @@ it('parseNumbers', () => {
       { f: { gte: {}, lte: {} } },
     ],
   };
-  testPrisma(queryForNumberParsing, noNumbersParsed, { parseNumbers: false });
+  expectPrisma(queryForNumberParsing, noNumbersParsed, { parseNumbers: false });
 });

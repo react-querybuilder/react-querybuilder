@@ -1091,6 +1091,14 @@ describe('strict mode', () => {
     expect((error as QueryManagerError).message).toContain('remove');
   });
 
+  it('throws for an unresolvable path just as it does for an unresolvable id', () => {
+    // These used to disagree: an unresolvable `id` threw, an unresolvable path did not.
+    const q = strictQM();
+    expect(codeOf(() => q.remove('nonexistent'))).toBe('target-not-found');
+    expect(codeOf(() => q.remove([9, 9, 9]))).toBe('target-not-found');
+    expect(codeOf(() => q.remove([99]))).toBe('target-not-found');
+  });
+
   it('omits the target from the message when there is none', () => {
     const error = new QueryManagerError({ reason: 'root-not-allowed', operation: 'remove' });
     expect(error.message).not.toContain('for target');
@@ -1887,6 +1895,74 @@ describe('guards', () => {
       q.update('disabled', false, [0]);
       q.remove([1]);
       expect(q.getQuery()).toBe(before);
+    });
+  });
+
+  describe('disabledPaths', () => {
+    const nested = (): RuleGroupType => ({
+      combinator: 'and',
+      rules: [
+        { id: 'r1', field: 'firstName', operator: '=', value: 'Steve' },
+        {
+          id: 'g1',
+          combinator: 'or',
+          rules: [{ id: 'r2', field: 'lastName', operator: '=', value: 'Vai' }],
+        },
+      ],
+    });
+
+    it('blocks mutations targeting a listed path', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), { fields, disabledPaths: [[1]] });
+      const before = q.getQuery();
+      q.update('combinator', 'and', [1]);
+      q.remove([1]);
+      q.add(q.createRule(), [1]);
+      expect(q.getQuery()).toBe(before);
+    });
+
+    it('blocks mutations targeting a descendant of a listed path', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), { fields, disabledPaths: [[1]] });
+      const before = q.getQuery();
+      q.update('value', 'x', [1, 0]);
+      expect(q.getQuery()).toBe(before);
+    });
+
+    it('resolves an `id` to a listed path', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), { fields, disabledPaths: [[1]] });
+      const before = q.getQuery();
+      q.update('value', 'x', 'r2');
+      expect(q.getQuery()).toBe(before);
+    });
+
+    it('leaves unlisted paths alone', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), { fields, disabledPaths: [[1]] });
+      q.update('value', 'x', [0]);
+      expect((q.getQuery().rules[0] as RuleType).value).toBe('x');
+    });
+
+    it('still allows re-enabling a path-disabled node', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), { fields, disabledPaths: [[1]] });
+      q.update('disabled', false, [1]);
+      expect((q.getQuery().rules[1] as RuleGroupType).disabled).toBe(false);
+    });
+
+    it('is ignored when respectDisabled is false', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), {
+        fields,
+        disabledPaths: [[1]],
+        respectDisabled: false,
+      });
+      q.update('combinator', 'and', [1]);
+      expect((q.getQuery().rules[1] as RuleGroupType).combinator).toBe('and');
+    });
+
+    it('throws in strict mode', () => {
+      const q = new QueryManager<RuleGroupType>(nested(), {
+        fields,
+        disabledPaths: [[1]],
+        strict: true,
+      });
+      expect(() => q.remove([1, 0])).toThrow(expect.objectContaining({ code: 'target-disabled' }));
     });
   });
 

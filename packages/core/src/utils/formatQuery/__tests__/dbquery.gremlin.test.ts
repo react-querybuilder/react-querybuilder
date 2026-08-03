@@ -1,5 +1,3 @@
-// oxlint-disable jest/expect-expect
-
 import type { GrafeoDB as GrafeoDBType } from '@grafeo-db/js';
 import type { RuleGroupType } from '../../../types';
 import type { SuperUser } from '../dbqueryTestUtils';
@@ -43,7 +41,7 @@ afterAll(() => {
 
 // ─── Test Runner ──────────────────────────────────────────────────────────────
 
-const runGremlin = async (
+const expectGremlin = async (
   query: Parameters<typeof formatQuery>[0],
   expectedResult: SuperUser[]
 ) => {
@@ -67,7 +65,7 @@ const runGremlin = async (
 //    and string-typed values and Gremlin is strongly typed.
 describe('Gremlin (Grafeo)', () => {
   test('=', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [
@@ -80,7 +78,7 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('!=', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [
@@ -93,7 +91,7 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('beginsWith', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [
@@ -106,7 +104,7 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('endsWith', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [
@@ -119,7 +117,7 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('contains', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [
@@ -132,49 +130,49 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('>', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '>', value: 15 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! > 15)
     );
   });
 
   test('>=', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '>=', value: 15 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! >= 15)
     );
   });
 
   test('<', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '<', value: 20 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! < 20)
     );
   });
 
   test('<=', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: '<=', value: 15 }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! <= 15)
     );
   });
 
   test('boolean', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'enhanced', operator: '=', value: true }] },
       superUsers.filter(u => u.enhanced)
     );
   });
 
   test('between', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: 'between', value: [10, 30] }] },
       superUsers.filter(u => u.powerUpAge !== null && u.powerUpAge! >= 10 && u.powerUpAge! <= 30)
     );
   });
 
   test('notBetween (outside)', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'powerUpAge', operator: 'notBetween', value: [10, 30] }],
@@ -184,7 +182,7 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('in (within)', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'lastName', operator: 'in', value: ['Rogers', 'Wayne'] }],
@@ -194,7 +192,7 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('notIn (without)', async () => {
-    await runGremlin(
+    await expectGremlin(
       {
         combinator: 'and',
         rules: [{ field: 'lastName', operator: 'notIn', value: ['Parker', 'Kent'] }],
@@ -204,14 +202,14 @@ describe('Gremlin (Grafeo)', () => {
   });
 
   test('null (hasNot)', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: 'null', value: null }] },
       superUsers.filter(u => u.powerUpAge === null)
     );
   });
 
   test('notNull (has)', async () => {
-    await runGremlin(
+    await expectGremlin(
       { combinator: 'and', rules: [{ field: 'powerUpAge', operator: 'notNull', value: null }] },
       superUsers.filter(u => u.powerUpAge !== null)
     );
@@ -220,7 +218,7 @@ describe('Gremlin (Grafeo)', () => {
 
 // ─── Graph-Specific Pattern Tests (custom ruleProcessor) ──────────────────────
 
-const runGremlinCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
+const expectGremlinCustom = async (query: RuleGroupType, expectedResult: SuperUser[]) => {
   const steps = formatQuery(query, {
     format: 'gremlin',
     parseNumbers: true,
@@ -239,7 +237,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
 
   describe('regex', () => {
     test('matchesRegex — names ending in "man"', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'madeUpName', operator: 'matchesRegex', value: '.*man$' }],
@@ -251,7 +249,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     // Grafeo doesn't support negated predicates with arguments (notRegex)
     // oxlint-disable-next-line no-disabled-tests
     test.skip('doesNotMatchRegex — names not starting with "S"', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'madeUpName', operator: 'doesNotMatchRegex', value: '^S.*' }],
@@ -265,7 +263,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     // Grafeo's containing() operates on string contents, not list membership
     // oxlint-disable-next-line no-disabled-tests
     test.skip('listContains — nicknames containing "Cap"', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'nicknames', operator: 'listContains', value: 'Cap' }],
@@ -277,7 +275,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     // Grafeo doesn't support notContaining() predicate
     // oxlint-disable-next-line no-disabled-tests
     test.skip('listDoesNotContain — nicknames not containing "Spidey"', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'nicknames', operator: 'listDoesNotContain', value: 'Spidey' }],
@@ -293,7 +291,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     // Grafeo doesn't support .ignoreCase() method chaining on predicates
     // oxlint-disable-next-line no-disabled-tests
     test.skip('equalsIgnoreCase', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'firstName', operator: 'equalsIgnoreCase', value: 'steve' }],
@@ -305,7 +303,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     // Grafeo doesn't support .ignoreCase() method chaining on predicates
     // oxlint-disable-next-line no-disabled-tests
     test.skip('containsIgnoreCase', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'madeUpName', operator: 'containsIgnoreCase', value: 'spider' }],
@@ -317,7 +315,7 @@ describe('Gremlin graph patterns (Grafeo)', () => {
     // Grafeo doesn't support .ignoreCase() method chaining on predicates
     // oxlint-disable-next-line no-disabled-tests
     test.skip('beginsWithIgnoreCase', async () => {
-      await runGremlinCustom(
+      await expectGremlinCustom(
         {
           combinator: 'and',
           rules: [{ field: 'madeUpName', operator: 'beginsWithIgnoreCase', value: 'super' }],

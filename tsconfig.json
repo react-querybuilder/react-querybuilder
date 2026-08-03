@@ -1,38 +1,8 @@
 {
-  "compilerOptions": {
-    "noEmit": true,
-    "esModuleInterop": true,
-    "declaration": true,
-    "isolatedDeclarations": true,
-    "isolatedModules": true,
-    "jsx": "react",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "noUncheckedSideEffectImports": false,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext",
-    "types": ["vitest/globals", "@testing-library/jest-dom", "node", "web", "bun"],
-    "paths": {
-      "react-querybuilder": ["./packages/react-querybuilder/src"],
-      "react-querybuilder/history": ["./packages/react-querybuilder/src/history"],
-      "@react-querybuilder/core": ["./packages/core/src"],
-      "@react-querybuilder/rules-engine": ["./packages/rules-engine/src"],
-      "@rqb-parsecel": ["./packages/core/src/utils/parseCEL"],
-      "@rqb-parsejsonata": ["./packages/core/src/utils/parseJSONata"],
-      "@rqb-parsejsonlogic": ["./packages/core/src/utils/parseJsonLogic"],
-      "@rqb-parsemongodb": ["./packages/core/src/utils/parseMongoDB"],
-      "@rqb-parsespel": ["./packages/core/src/utils/parseSpEL"],
-      "@rqb-parsesql": ["./packages/core/src/utils/parseSQL"],
-      "@rqb-devapp": ["./utils/devapp"],
-      "@rqb-testing": ["./utils/testing"],
-      "@rqb-dbpool": ["./utils/testing/pglite"],
-      "@rqb-dbmongo": ["./utils/testing/mongo"],
-      "@rqb-dbquerytestutils": ["./packages/core/src/utils/formatQuery/dbqueryTestUtils"],
-      "@rqb-utils": ["./packages/core/src/utils"]
-    }
-  },
-  "include": ["./*.ts", "./utils/**/*.ts", "./utils/**/*.tsx"],
+  // Root-level scripts only (version.ts, vitestSetup.ts).
+  // Shared compiler options live in tsconfig.base.json.
+  // Packages, utils, examples, and website each own their own project.
+  "extends": "./tsconfig.base.json",
+  "include": ["./*.ts"],
   "exclude": ["vitest.config.mts", "vitest.shared.mts", "vitest.workspace.ts"]
 }
